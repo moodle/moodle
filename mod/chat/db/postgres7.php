@@ -16,6 +16,10 @@ function chat_upgrade($oldversion) {
         chat_refresh_events();
     }
 
+    if ($oldversion < 2004043000) {
+        modify_database("", "INSERT INTO prefix_log_display VALUES ('chat', 'talk', 'chat', 'name');");
+    }
+
     return true;
 }
 

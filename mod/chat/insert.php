@@ -20,7 +20,7 @@
     require_login($chat->course);
 
     if ($groupid) {
-        if (!isteacheredit($course->id) and !ismember($groupid)) {
+        if (!isteacheredit($chat->course) and !ismember($groupid)) {
             error("You can't chat here!");
         }
     }
@@ -45,6 +45,10 @@
 
         $chatuser->lastmessageping = time();
         update_record("chat_users", $chatuser);
+
+        if ($cm = get_coursemodule_from_instance("chat", $chat->id, $chat->course)) {
+            add_to_log($chat->course, "chat", "talk", "view.php?id=$cm->id", $chat->id, $cm->id);
+        }
     }
     
 /// Go back to the other page

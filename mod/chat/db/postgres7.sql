@@ -55,3 +55,4 @@ INSERT INTO prefix_log_display VALUES ('chat', 'view', 'chat', 'name');
 INSERT INTO prefix_log_display VALUES ('chat', 'add', 'chat', 'name');
 INSERT INTO prefix_log_display VALUES ('chat', 'update', 'chat', 'name');
 INSERT INTO prefix_log_display VALUES ('chat', 'report', 'chat', 'name');
+INSERT INTO prefix_log_display VALUES ('chat', 'talk', 'chat', 'name');
