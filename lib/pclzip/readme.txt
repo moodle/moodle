@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------
-// PclZip 1.3 - readme.txt
+// PclZip 2.0-rc1 - readme.txt
 // --------------------------------------------------------------------------------
 // License GNU/GPL - january 2003
 // Vincent Blavet - vincent@phpconcept.net
@@ -30,6 +30,25 @@
 
 2 - What's new
 ==============
+
+  Version 2.0-rc1 :
+    ***** Warning : Some new features may break the backward compatibility for your scripts.
+                    Please carefully read the readme file.
+    - Add the ability to add files without compression. This is done with a new attribute
+      which is PCLZIP_OPT_NO_COMPRESSION.
+    - Add the attribute PCLZIP_OPT_EXTRACT_AS_STRING, which allow to extract a file directly
+      in a string without using any file (or temporary file).
+    - Add constant PCLZIP_SEPARATOR for static configuration of filename separators in a single string.
+      The default separator is now a comma (,) and not any more a blank space.
+      THIS BREAK THE BACKWARD COMPATIBILITY : Please check if this may have an impact with
+      your script.
+    - Improve algorythm performance by removing the use of temporary files when adding or 
+      extracting files in an archive.
+    - Add (correct) detection of empty filename zipping. This can occurs when the removed
+      path is the same
+      as a zipped dir. The dir is not zipped (['status'] = filtered), only its content.
+    - Add better support for windows paths (thanks for help from manus@manusfreedom.com).
+
 
   Version 1.3 :
     - Removing the double include check. This is now done by include_once() and require_once()
@@ -110,6 +129,10 @@
 
 3 - Corrected bugs
 ==================
+
+  Corrected in Version 2.0 :
+    - Corrected : During an extraction, if a call-back fucntion is used and try to skip
+                  a file, all the extraction process is stopped. 
 
   Corrected in Version 1.3 :
     - Corrected : Support of static synopsis for method extract() is broken.
