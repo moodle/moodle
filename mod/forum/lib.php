@@ -106,7 +106,7 @@ function get_course_discussion_forum($courseid) {
         $forum->course = $courseid;
         $forum->type = "discussion";
         $forum->name = "Course Discussion";
-        $forum->intro= "Discussions about course content";
+        $forum->intro= "General discussions about course topics";
         $forum->open = 0;
         $forum->assessed = 1;
         $forum->timemodified = time();

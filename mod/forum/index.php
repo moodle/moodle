@@ -32,19 +32,25 @@
 
     $can_subscribe = (isstudent($course->id) || isteacher($course->id) || isadmin());
     if ($can_subscribe) {
-        $table->head = array ("Forum", "Description", "Topics", "Subscribed");
+        $newtable->head = array ("Forum", "Description", "Topics", "Subscribed");
     } else {
-        $table->head = array ("Forum", "Description", "Topics");
+        $newtable->head = array ("Forum", "Description", "Topics");
     }
-    $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER");
+    $newtable->align = array ("LEFT", "LEFT", "CENTER", "CENTER");
+
 
     if ($forums = get_records("forum", "course", $id, "name ASC")) {
+        $table = $newtable;
         foreach ($forums as $forum) {
             if ($forum->type == "teacher") {
                 if (!isteacher($course->id)) {
                     continue;
                 }
             }
+            if ($forum->type == "eachuser" or $forum->type == "discussion") {
+                continue;    // Display these later on.
+            }       
+
             $count = count_records("discuss", "forum", "$forum->id");
 
             if ($can_subscribe) {
@@ -63,9 +69,46 @@
                                   "$count");
             }
         }
+        if ($table) {
+            print_heading("General Forums");
+            print_table($table);
+            $table = $newtable;
+        }
+
+        foreach ($forums as $forum) {
+            if ($forum->type == "teacher") {
+                if (!isteacher($course->id)) {
+                    continue;
+                }
+            }
+            if ($forum->type != "eachuser" and $forum->type != "discussion") {
+                continue;
+            }       
+
+            $count = count_records("discuss", "forum", "$forum->id");
+
+            if ($can_subscribe) {
+                if (is_subscribed($USER->id, $forum->id)) {
+                    $subscribed = "YES";
+                } else {
+                    $subscribed = "NO";
+                }
+                $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
+                                  "$forum->intro", 
+                                  "$count",
+                                  "<A HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>");
+            } else {
+                $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
+                                  "$forum->intro", 
+                                  "$count");
+            }
+        }
+        if ($table) {
+            print_heading("Forums about course content");
+            print_table($table);
+        }
     }
 
-    print_table($table);
     echo "<DIV ALIGN=CENTER>";
     print_discussion_search_form($course, $search);
     echo "</DIV>";

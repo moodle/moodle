@@ -7,7 +7,7 @@ CREATE TABLE forum (
   course int(10) unsigned NOT NULL default '0',
   type enum('discussion','news','general','social','eachuser','teacher') NOT NULL default 'general',
   name varchar(255) NOT NULL default '',
-  intro tinytext NOT NULL,
+  intro mediumtext NOT NULL,
   open tinyint(1) unsigned NOT NULL default '0',
   assessed tinyint(1) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
