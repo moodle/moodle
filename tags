@@ -2556,6 +2556,7 @@ graph	lib/graphlib.php	/^function graph() {$/;"	f
 hasChildNodes	admin/mysql-cvs/libraries/xpath/XPath.class.php	/^  function hasChildNodes($absoluteXPath) {$/;"	f
 hasChildNodes	admin/mysql/libraries/xpath/XPath.class.php	/^  function hasChildNodes($absoluteXPath) {$/;"	f
 helpbutton	lib/weblib.php	/^function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=false, $text="") {$/;"	f
+hide_course_module	course/lib.php	/^function hide_course_module($mod) {$/;"	f
 highlight	lib/weblib.php	/^function highlight($needle, $haystack) {$/;"	f
 highlight_text	beautifier/perl/Beautifier/Core.pm	/^sub highlight_text$/;"	s
 highlight_text	beautifier/php/Beautifier/Core.php	/^function highlight_text($text, $contextstack=undef)$/;"	f
@@ -2629,7 +2630,7 @@ mail_send	lib/phpmailer/class.phpmailer.php	/^    function mail_send($header, $b
 mailerc	lib/phpmailer/mailerc.php	/^class mailerc extends phpmailer$/;"	c
 main_upgrade	lib/db/mysql.php	/^function main_upgrade($oldversion=0) {$/;"	f
 main_upgrade	lib/db/postgres7.php	/^function main_upgrade($oldversion=0) {$/;"	f
-make_editing_buttons	course/lib.php	/^function make_editing_buttons($moduleid, $absolute=false) {$/;"	f
+make_editing_buttons	course/lib.php	/^function make_editing_buttons($moduleid, $absolute=false, $visible=true, $str=NULL) {$/;"	f
 make_log_url	course/lib.php	/^function make_log_url($module, $url) {$/;"	f
 make_mod_upload_directory	lib/moodlelib.php	/^function make_mod_upload_directory($courseid) {$/;"	f
 make_timestamp	lib/moodlelib.php	/^function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99) {$/;"	f
@@ -2716,6 +2717,7 @@ plot	lib/graphlib.php	/^function plot($x, $y, $type, $size, $colour, $offset) {$
 popUpProperties	lib/javascript.php	/^function popUpProperties(inobj) {$/;"	f
 popup_form	lib/weblib.php	/^function popup_form ($common, $options, $formname, $selected="", $nothing="choose", $help="", $helptext="", $return=false) {$/;"	f
 postprocess	mod/quiz/format/aon.php	/^    function postprocess($category, $questionids) {$/;"	f
+postprocess	mod/quiz/format/custom.php	/^    function postprocess($category, $questionids) {$/;"	f
 postprocess	mod/quiz/format/default.php	/^    function postprocess($questionids) {$/;"	f
 postprocess	mod/quiz/format/missingword.php	/^    function postprocess($questionids) {$/;"	f
 preprocess	mod/quiz/format/default.php	/^    function preprocess($category) {$/;"	f
@@ -2834,7 +2836,7 @@ quiz_print_correctanswer	mod/quiz/lib.php	/^function quiz_print_correctanswer($t
 quiz_print_question	mod/quiz/lib.php	/^function quiz_print_question($number, $question, $grade, $courseid, $/;"	f
 quiz_print_question_icon	mod/quiz/lib.php	/^function quiz_print_question_icon($question, $editlink=true) {$/;"	f
 quiz_print_question_list	mod/quiz/lib.php	/^function quiz_print_question_list($questionlist, $grades) {$/;"	f
-quiz_print_quiz_questions	mod/quiz/lib.php	/^function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {$/;"	f
+quiz_print_quiz_questions	mod/quiz/lib.php	/^function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuffleorder=NULL) {$/;"	f
 quiz_print_recent_activity	mod/quiz/lib.php	/^function quiz_print_recent_activity(&$logs, $isteacher=false) {$/;"	f
 quiz_remove_unwanted_questions	mod/quiz/report.php	/^function quiz_remove_unwanted_questions(&$questions, $quiz) {$/;"	f
 quiz_save_attempt	mod/quiz/lib.php	/^function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {$/;"	f
@@ -2860,7 +2862,6 @@ readquestion	mod/quiz/format/missingword.php	/^    function readquestion($lines)
 readquestion	mod/quiz/format/qti.php	/^    function readquestion($lines) {$/;"	f
 readquestion	mod/quiz/format/webct.php	/^    function readquestion($lines) {$/;"	f
 readquestions	mod/quiz/format/custom-template.php	/^    function readquestions($lines) {$/;"	f
-readquestions	mod/quiz/format/custom.php	/^    function readquestions($lines) {$/;"	f
 readquestions	mod/quiz/format/default.php	/^    function readquestions($lines) {$/;"	f
 readquestions	mod/quiz/format/qti.php	/^    function readquestions($lines) {$/;"	f
 readquestions	mod/quiz/format/webct.php	/^    function readquestions($lines) {$/;"	f
@@ -2964,6 +2965,7 @@ set_stats	beautifier/perl/Beautifier/Core.pm	/^sub set_stats$/;"	s
 set_stats	beautifier/php/Beautifier/Core.php	/^function set_stats($statobj)$/;"	f
 setfilelist	files/index.php	/^function setfilelist($VARS) {$/;"	f
 shouldStop	lib/phpmailer/test/phpunit.php	/^  function shouldStop() {$/;"	f
+show_course_module	course/lib.php	/^function show_course_module($mod) {$/;"	f
 smtp_send	lib/phpmailer/class.phpmailer.php	/^    function smtp_send($header, $body) {$/;"	f
 sortlang	admin/mysql-cvs/lang/sort_lang.sh	/^function sortlang()$/;"	f
 sortlang	admin/mysql/lang/sort_lang.sh	/^function sortlang()$/;"	f
