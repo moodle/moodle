@@ -2,6 +2,23 @@
 
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
+	<td align=right><p>chat_method:</td>
+	<td>
+    <?php
+       unset($options);
+       $options['header_js']    = get_string('methodnormal', 'chat');
+       $options['socket']    = get_string('methoddaemon', 'chat');
+       choose_from_menu ($options, "chat_method", $CFG->chat_method, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configmethod", "chat") ?>
+    </td>
+</tr>
+
+<tr><td colspan=3 align=center><hr /><b><?php print_string('methodnormal', 'chat')?></b></td></tr>
+
+<tr valign=top>
 	<td align=right><p>chat_refresh_room:</td>
 	<td>
     <input name=chat_refresh_room type=text size=5 value="<?php p($CFG->chat_refresh_room) ?>">
@@ -28,6 +45,46 @@
     <?php print_string("configoldping", "chat") ?>
     </td>
 </tr>
+
+<tr><td colspan=3 align=center><hr /><b><?php print_string('methoddaemon', 'chat')?></b></td></tr>
+
+<tr valign=top>
+	<td align=right><p>chat_serverhost:</td>
+	<td>
+    <input name=chat_serverhost type=text size=20 value="<?php p($CFG->chat_serverhost) ?>">
+    </td>
+    <td>
+    <?php print_string("configserverhost", "chat") ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p>chat_serverip:</td>
+	<td>
+    <input name=chat_serverip type=text size=16 value="<?php p($CFG->chat_serverip) ?>">
+    </td>
+    <td>
+    <?php print_string("configserverip", "chat") ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p>chat_serverport:</td>
+	<td>
+    <input name=chat_serverport type=text size=5 value="<?php p($CFG->chat_serverport) ?>">
+    </td>
+    <td>
+    <?php print_string("configserverport", "chat") ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p>chat_servermax:</td>
+	<td>
+    <input name=chat_servermax type=text size=5 value="<?php p($CFG->chat_servermax) ?>">
+    </td>
+    <td>
+    <?php print_string("configservermax", "chat") ?>
+    </td>
+</tr>
+
 <tr>
     <td colspan=3 align=center>
 	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
