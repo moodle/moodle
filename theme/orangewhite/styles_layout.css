@@ -676,6 +676,14 @@ TD.cal_event_description {
     padding-top:0.5em;
 }
 
+.sideblockheading .hide-show {
+    float:right;
+}
+
+.sideblockheading a img.hide-show-image {
+    padding-top:0.35em;
+}
+
 .sideblockmain HR {
 	height:1px;
 	border:none;

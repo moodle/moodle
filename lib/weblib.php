@@ -3504,7 +3504,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
         echo '</table>';
     }
 
-    print_side_block_end();
+    print_side_block_end($attributes);
 }
 
 /**
@@ -3516,6 +3516,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
  */
 function print_side_block_start($heading='', $attributes = array()) {
 
+    global $CFG;
     // If there are no special attributes, give a default CSS class
     if(empty($attributes) || !is_array($attributes)) {
         $attributes = array('class' => 'sideblock');
@@ -3536,17 +3537,32 @@ function print_side_block_start($heading='', $attributes = array()) {
 
     echo '<table class="sideblock" cellspacing="0" cellpadding="5"'.$attrtext.'>';
     if ($heading) {
-        echo '<thead><tr><td class="sideblockheading">'.$heading.'</td></tr></thead>';
+        // orig echo '<thead><tr><td class="sideblockheading">'.$heading.'</td></tr></thead>';
+        echo '<thead>
+        <tr>
+            <td class="sideblockheading">'
+            .$heading.
+            '<div class="hide-show">
+                <a href="javascript:containerDisplaySwitching('."'".$attributes['id']."'".');"\ >'."<img src=\"$CFG->pixpath/t/switch.gif\" alt=\"\" height=\"11\" width=\"11\" class=\"hide-show-image\" />".'</a>
+            </div>
+            </td>
+        </tr>
+        </thead>';
     }
-    echo '<tbody><tr><td class="sideblockmain">';
+    // orig echo '<tbody><tr><td class="sideblockmain">';
+    echo '<tbody><tr><td class="sideblockmain"><div class="blockcontent" id="'.$attributes['id']."_cont\">";
 }
 
 
 /**
  * Print table ending tags for a side block box.
  */
-function print_side_block_end() {
-    echo '</td></tr></tbody></table>';
+function print_side_block_end($attributes = array()) {
+    echo '</div></td></tr></tbody></table>';
+    // js call to set block display state which is saved in cookie.
+    echo "\n <script language=\"JavaScript\"> <!-- //hide ";
+    echo "\n containerDisplaySet(\"".$attributes['id']."\");";
+    echo "\n // done hiding --> </script>";
     echo "\n";
 }
 
