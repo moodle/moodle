@@ -74,7 +74,7 @@ function html2text( $badStr ) {
 
     //now that the page is valid (I hope) for strip_tags, strip all unwanted tags
 
-    $goodStr = strip_tags( $goodStr, '<title><hr><h1><h2><h3><h4><h5><h6><div><p><pre><sup><ul><ol><br><dl><dt><table><caption><tr><li><dd><th><td><a><area><img><form><input><textarea><button><select><option>' );
+    $goodStr = strip_tags( $goodStr, '<title><hr /><h1><h2><h3><h4><h5><h6><div><p><pre><sup><ul><ol><br /><dl><dt><table><caption><tr><li><dd><th><td><a><area><img><form><input><textarea><button><select><option>' );
 
     //strip extra whitespace except between <pre> and <textarea> tags
 

@@ -4,7 +4,7 @@
 <head>
 <title>Moodle Environment Test</title>
 </head>
-<body bgcolor=white>
+<body bgcolor="white">
 
 <?php
 
@@ -13,9 +13,9 @@ function print_row($name, $value, $badcomment='') {
     echo "<th align=\"right\">$name</th>";
     echo "<td align=\"left\">$value</td>";
     if ($badcomment) {
-        echo "<td align=\"left\"><font color=red>$badcomment</font></td>";
+        echo "<td align=\"left\"><font color=\"red\">$badcomment</font></td>";
     } else {
-        echo "<td align=\"left\"><font color=green>Looks good</font></td>";
+        echo "<td align=\"left\"><font color=\"green\">Looks good</font></td>";
     }
     echo "</tr>";
 }
@@ -88,7 +88,7 @@ function check_gd_version() {
 
     echo "<h2 align=\"center\">Moodle compatibility tester</h2>";
 
-    echo "<table align=\"center\" border=1>";
+    echo "<table align=\"center\" border=\"1\">";
 
 /// Check that PHP is of a sufficient version
 
@@ -146,10 +146,10 @@ function check_gd_version() {
     echo "</table>";
 
     if ($error == 1) {
-        echo "<h2 align=\"center\"><font color=red>$error error was found.  See <a href=\"http://moodle.org/doc\">http://moodle.org/doc</a></font></h2>";
+        echo "<h2 align=\"center\"><font color=\"red\">$error error was found.  See <a href=\"http://moodle.org/doc\">http://moodle.org/doc</a></font></h2>";
     } else if ($error) {
-        echo "<h2 align=\"center\"><font color=red>$error errors were found.  See <a href=\"http://moodle.org/doc\">http://moodle.org/doc</a></font></h2>";
+        echo "<h2 align=\"center\"><font color=\"red\">$error errors were found.  See <a href=\"http://moodle.org/doc\">http://moodle.org/doc</a></font></h2>";
     } else {
-        echo "<h2 align=\"center\"><font color=green>Server looks good - clear to install!</font></a></h2>";
+        echo "<h2 align=\"center\"><font color=\"green\">Server looks good - clear to install!</font></a></h2>";
     }
 ?>

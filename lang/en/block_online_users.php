@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
 
 $string['blockname'] = 'Online Users';
 $string['periodnminutes'] = 'last $a minutes';

@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // journal.php - created with Moodle 1.2 + (2004032100)
 
 

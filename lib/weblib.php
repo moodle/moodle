@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 ///////////////////////////////////////////////////////////////////////////
 // weblib.php - functions for web output
@@ -1498,7 +1498,7 @@ function print_user($user, $course) {
     echo '<font size="1">';
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
-        echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
+        echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br />";
         if (!iscreator($user->id) or ($isadmin and !isadmin($user->id))) {  // Includes admins
             if ($course->category and isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
                 echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";

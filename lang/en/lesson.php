@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // lesson.php - created with Moodle 1.2 development (2003111400)
 
 

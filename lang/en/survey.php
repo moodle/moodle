@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // survey.php - created with Moodle 1.2 development (2003111400)
 
 
@@ -51,6 +51,8 @@ $string['attls8short'] = 'know why people do';
 $string['attls9'] = 'I often find myself arguing with the authors of books that I read, trying to logically figure out why they\'re wrong.';
 $string['attls9short'] = 'argue with authors';
 $string['attlsintro'] = 'The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning.
+
+
 
 There are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.';
 $string['attlsm1'] = 'Attitudes Towards Thinking and Learning';
@@ -122,21 +124,37 @@ $string['colles9'] = 'I explain my ideas to other students.';
 $string['colles9short'] = 'I explain my ideas';
 $string['collesaintro'] = 'The purpose of this survey is to help us understand how well the online delivery of this unit enabled you to learn.
 
+
+
 Each one of the 24 statements below asks about your experience in this unit.
+
+
 
 There are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
 
+
+
 Your carefully considered responses will help us improve the way this unit is presented online in the future.
+
+
 
 Thanks very much.';
 $string['collesaname'] = 'COLLES (Actual)';
 $string['collesapintro'] = 'The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. 
 
-Each one of the 24 statements below asks you to compare your <B>preferred</B> (ideal) and <B>actual</B> experience in this unit.
+
+
+Each one of the 24 statements below asks you to compare your <b>preferred</b> (ideal) and <b>actual</b> experience in this unit.
+
+
 
 There are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
 
+
+
 Your carefully considered responses will help us improve the way this unit is presented online in the future.
+
+
 
 Thanks very much.';
 $string['collesapname'] = 'COLLES (Preferred and Actual)';
@@ -155,11 +173,19 @@ $string['collesm6short'] = 'Interpretation';
 $string['collesmintro'] = 'In this online unit...';
 $string['collespintro'] = 'The purpose of this survey is to help us understand what you value in an online learning experience.
 
-Each one of the 24 statements below asks about your <B>preferred</B> (ideal) experience in this unit.
+
+
+Each one of the 24 statements below asks about your <b>preferred</b> (ideal) experience in this unit.
+
+
 
 There are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
 
+
+
 Your carefully considered responses will help us improve the way this unit is presented online in the future.
+
+
 
 Thanks very much.';
 $string['collespname'] = 'COLLES (Preferred)';

@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
 
 $string['blockname'] = 'Course List';
 $string['allcourses'] = 'Admin user sees all courses';

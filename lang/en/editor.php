@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // editor.php - created with Moodle 1.2 (2004032000)
 
 

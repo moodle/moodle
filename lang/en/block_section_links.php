@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
 
 $string['blockname'] = 'Section Links';
 $string['topics'] = 'Topics';

@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // glossary.php - created with Moodle 1.2 development (2003111400)
 
 
@@ -86,10 +86,10 @@ $string['entryexported'] = 'Entry succesfully exported';
 $string['entryishidden'] = '(this entry is currently hidden)';
 $string['entryleveldefaultsettings'] = 'Entry Level Default Settings';
 $string['entryusedynalink'] = 'This entry should be automatically linked';
-$string['explainaddentry'] = 'Add a new entry to the current glossary.<br>Concept and definition are mandatory fields.';
+$string['explainaddentry'] = 'Add a new entry to the current glossary.<br />Concept and definition are mandatory fields.';
 $string['explainall'] = 'Shows ALL entries on one page';
 $string['explainalphabet'] = 'Browse the glossary using this index';
-$string['explainexport'] = 'A file has been generated.<br>Download it and keep it safe. You can import it anytime you wish in this or other course.';
+$string['explainexport'] = 'A file has been generated.<br />Download it and keep it safe. You can import it anytime you wish in this or other course.';
 $string['explainimport'] = 'You must specify the file to import and define the criteria of the process.<p>Submit your request and review the results.';
 $string['explainspecial'] = 'Shows entries that do not begin with a letter';
 $string['exportedentry'] = 'Exported entry';

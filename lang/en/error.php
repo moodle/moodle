@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // error.php - created with Moodle 1.2 development (2003122600)
 
 $string['coursegroupunknown'] = 'Course corresponding to group $a not specified';

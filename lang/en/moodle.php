@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // moodle.php - created with Moodle 1.5 development (2004082300)
 
 
@@ -109,7 +109,7 @@ $string['backuplogshelp'] = 'If enabled, then course logs will be included in au
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Notice: You have selected to backup \"none\" users, so all the modules backup have been switched to \"without user data\" mode. Please note that the \"exercise\" and \"workshop\" modules aren\'t compatible with this type of backup, so they have been deactivated completely.';
 $string['backuporiginalname'] = 'Backup Name';
-$string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br>(leave blank to save in its course default dir)';
+$string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br />(leave blank to save in its course default dir)';
 $string['backupuserfileshelp'] = 'Choose whether user files (eg profile images) should be included in automated backups';
 $string['backupusershelp'] = 'Select whether you want to include all the users in the server or only the needed users for each course';
 $string['backupversion'] = 'Backup Version';
@@ -186,7 +186,7 @@ $string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a 
 $string['confignotifyloginfailures'] = 'If login failures have been recorded, email notifications can be sent out.  Who should see these notifications?';
 $string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';
 $string['configopentogoogle'] = 'If you enable this setting, then Google will be allowed to enter your site as a Guest.  In addition, people coming in to your site via a Google search will automatically be logged in as a Guest.  Note that this only provides transparent access to courses that already allow guest access.';
-$string['configproxyhost'] = 'If this <B>server</B> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
+$string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
 $string['configsecureforms'] = 'Moodle can use an additional level of security when accepting data from web forms. If this is enabled, then the browser\'s HTTP_REFERER variable is checked against the current form address.  In a very few cases this can cause problems if the user is using a firewall (eg Zonealarm) configured to strip HTTP_REFERER from their web traffic.  Symptoms are getting \'stuck\' on a form. If your users are having problems with the login page (for example) you might want to disable this setting, although it might leave your site more open to brute-force password attacks.  If in doubt, leave this set to \'Yes\'.';
 $string['configsessioncookie'] = 'This setting customises the name of the cookie used for Moodle sessions.  This is optional, and only useful to avoid cookies being confused when there is more than one copy of Moodle running within the same web site.';
 $string['configsessiontimeout'] = 'If people logged in to this site are idle for a long time (without loading pages) then they are automatically logged out (their session is ended).  This variable specifies how long this time should be.';
@@ -355,9 +355,9 @@ line at the top of your web browser window.
 If you need help, please contact the site administrator,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: account confirmation';
-$string['emailconfirmsent'] = '   <P>An email should have been sent to your address at <B>$a</B>
-   <P>It contains easy instructions to complete your registration.
-   <P>If you continue to have difficulty, contact the site administrator.';
+$string['emailconfirmsent'] = '   <p>An email should have been sent to your address at <b>$a</b>
+   <p>It contains easy instructions to complete your registration.
+   <p>If you continue to have difficulty, contact the site administrator.';
 $string['emaildigest'] = 'Email digest type';
 $string['emaildigestcomplete'] = 'Complete (daily email with full posts)';
 $string['emaildigestoff'] = 'No digest (single email per forum post)';
@@ -407,9 +407,9 @@ $string['enrolledincoursenot'] = 'Not enrolled in course \"$a\"';
 $string['enrollfirst'] = 'You have to enroll in one of the courses before you can use the site activities';
 $string['enrolmentconfirmation'] = 'You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?';
 $string['enrolmentkey'] = 'Enrolment key';
-$string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one-time<BR>
+$string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one-time<br />
 password that you should have received from $a';
-$string['enrolmentkeyhint'] = 'That enrolment key was incorrect, please try again<BR>
+$string['enrolmentkeyhint'] = 'That enrolment key was incorrect, please try again<br />
 (Here\'s a hint - it starts with \'$a\')';
 $string['enrolmentnew'] = 'New enrolment in $a';
 $string['enrolmentnewuser'] = '$a->user has enrolled in course \"$a->course\"';
@@ -785,10 +785,10 @@ $string['passwordconfirmchange'] = 'Confirm password change';
 $string['passwordrecovery'] = 'Yes, help me log in';
 $string['passwordsdiffer'] = 'These passwords do not match';
 $string['passwordsent'] = 'Password has been sent';
-$string['passwordsenttext'] = '   <P>An email has been sent to your address at $a->email.
-   <P><B>Please check your email for your new password</B>
-   <P>The new password was automatically generated, so you might like to
-   <A HREF=$a->link>change it to something easier to remember</A>.';
+$string['passwordsenttext'] = '   <p>An email has been sent to your address at $a->email.
+   <p><b>Please check your email for your new password</b>
+   <p>The new password was automatically generated, so you might like to
+   <a href=$a->link>change it to something easier to remember</a>.';
 $string['pathnotexists'] = 'Path doesn\'t exist in your server!';
 $string['pathslasherror'] = 'Path can\'t end with a slash!!';
 $string['paymentinstant'] = 'Use the button below to pay and be enrolled within minutes!';
@@ -868,7 +868,7 @@ $string['scheduledbackupstatus'] = 'Scheduled backup status';
 $string['search'] = 'Search';
 $string['searchagain'] = 'Search again';
 $string['searchcourses'] = 'Search courses';
-$string['searchhelp'] = 'You can search for multiple words at once.<p>word : find any match of this word within the text.<br>+word : only exact matching words will be found.<br>-word : don\'t include results containing this word.';
+$string['searchhelp'] = 'You can search for multiple words at once.<p>word : find any match of this word within the text.<br />+word : only exact matching words will be found.<br />-word : don\'t include results containing this word.';
 $string['searchresults'] = 'Search results';
 $string['sec'] = 'sec';
 $string['secs'] = 'secs';

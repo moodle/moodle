@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
        // Collection of routines in Moodle related to processing 
        // images using GD.
 

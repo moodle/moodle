@@ -298,15 +298,15 @@ function draw_set($order, $set, $offset) {
   $fromX = 0;
   $fromY = 'none';
 
-  //print "set $set<BR>";
+  //print "set $set<br />";
   //expand_pre($this->calculated['y_plot']);
 
   foreach ($this->x_data as $index => $x) {
-    //print "index $index<BR>";
+    //print "index $index<br />";
     $thisY = $this->calculated['y_plot'][$set][$index];
     $thisX = $this->calculated['x_plot'][$index];
 
-    //print "$thisX, $thisY <BR>";
+    //print "$thisX, $thisY <br />";
 
     if (($bar!='none') && (string)$thisY != 'none') {
         if ($relatedset = $this->offset_relation[$set]) {                               // Moodle
@@ -755,7 +755,7 @@ function init_data() {
             round(($this->y_data[$set][$index] - $this->calculated['y_axis_right']['min'])
               * $this->calculated['y_axis_right']['factor']);
         } else {
-          //print "$set $index<BR>";
+          //print "$set $index<br />";
           $this->calculated['y_plot'][$set][$index] =
             round(($this->y_data[$set][$index] - $this->calculated['y_axis_left']['min'])
               * $this->calculated['y_axis_left']['factor']);
@@ -764,7 +764,7 @@ function init_data() {
       }
     }
   }
-  //print "factor ".$this->calculated['x_axis']['factor']."<BR>";
+  //print "factor ".$this->calculated['x_axis']['factor']."<br />";
   //expand_pre($this->calculated['x_plot']);
 
   // calculate bar parameters if bars are to be drawn.
@@ -793,16 +793,16 @@ function init_x_ticks() {
   $tickX       = $gridLeft; // tick x coord
 
   foreach ($this->calculated['x_axis']['text'] as $set => $value) {
-    //print "index: $set<BR>";
+    //print "index: $set<br />";
     // x tick value
     $this->calculated['x_axis']['tick_x'][$set] = $tickX;
     // if num ticks is auto then x plot value is same as x  tick
     if ($this->parameter['x_axis_gridlines'] == 'auto') $this->calculated['x_plot'][$set] = round($tickX);
-    //print $this->calculated['x_plot'][$set].'<BR>';
+    //print $this->calculated['x_plot'][$set].'<br />';
     $tickX += $xStep;
   }
 
-  //print "xStep: $xStep <BR>";
+  //print "xStep: $xStep <br />";
   // if numeric x axis then calculate x coords for each data point. this is seperate from x ticks.
   $gridX = $gridLeft;
   if (empty($this->calculated['x_axis']['factor'])) {
@@ -816,20 +816,20 @@ function init_x_ticks() {
 
   if ($this->parameter['x_axis_gridlines'] != 'auto') {
     foreach ($this->x_data as $index => $x) {
-      //print "index: $index, x: $x<BR>";
+      //print "index: $index, x: $x<br />";
       $offset = $x - $this->calculated['x_axis']['min'];
 
       //$gridX = ($offset * $this->calculated['x_axis']['factor']);
-      //print "offset: $offset <BR>";
+      //print "offset: $offset <br />";
       //$this->calculated['x_plot'][$set] = $gridLeft + ($offset * $this->calculated['x_axis']['factor']);
 
       $this->calculated['x_plot'][$index] = $gridLeft + ($x - $min) * $factor;
 
-      //print $this->calculated['x_plot'][$set].'<BR>';
+      //print $this->calculated['x_plot'][$set].'<br />';
     }
   }
   //expand_pre($this->calculated['boundary_box']);
-  //print "factor ".$this->calculated['x_axis']['factor']."<BR>";
+  //print "factor ".$this->calculated['x_axis']['factor']."<br />";
   //expand_pre($this->calculated['x_plot']);
 }
 
@@ -1169,7 +1169,7 @@ function find_range($data, $min, $max, $resolution) {
   $max = $factor * @ceil($max / $factor);
   $min = $factor * @floor($min / $factor);
 
-  //print "max=$max, min=$min<BR>";
+  //print "max=$max, min=$min<br />";
 
   return array('min' => $min, 'max' => $max);
 }

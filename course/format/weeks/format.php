@@ -48,7 +48,7 @@
 
 
 /// Layout the whole page as three big columns.
-    echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width="100%">";
+    echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">";
 
     echo "<tr valign=\"top\">\n";
 

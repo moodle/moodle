@@ -1,9 +1,9 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // auth.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['auth_dbdescription'] = 'This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.';
-$string['auth_dbextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>external database fields</B> that you specify here. <P>If you leave these blank, then defaults will be used.<P>In either case, the user will be able to edit all of these fields after they log in.';
+$string['auth_dbextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>external database fields</b> that you specify here. <p>If you leave these blank, then defaults will be used.<p>In either case, the user will be able to edit all of these fields after they log in.';
 $string['auth_dbfieldpass'] = 'Name of the field containing passwords';
 $string['auth_dbfielduser'] = 'Name of the field containing usernames';
 $string['auth_dbhost'] = 'The computer hosting the database server.';
@@ -41,11 +41,15 @@ $string['auth_ldap_user_attribute'] = 'The attribute used to name/search users. 
 $string['auth_ldap_objectclass'] = 'The filter used to name/search users. Usually you will set it to something like objectClass=posixAccount . Defaults to objectClass=* what will return all objects from LDAP.';
 $string['auth_ldap_version'] = 'The version of the LDAP protocol your server is using.';
 $string['auth_ldapdescription'] = 'This method provides authentication against an external LDAP server.
+
                                   If the given username and password are valid, Moodle creates a new user 
+
                                   entry in its database. This module can read user attributes from LDAP and prefill 
+
                                   wanted fields in Moodle.  For following logins only the username and 
+
                                   password are checked.';
-$string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>LDAP fields</B> that you specify here. <P>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<P>In either case, the user will be able to edit all of these fields after they log in.';
+$string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <p>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<p>In either case, the user will be able to edit all of these fields after they log in.';
 $string['auth_ldaptitle'] = 'Use an LDAP server';
 $string['auth_manualdescription'] = 'This method removes any way for users to create their own accounts.  All accounts must be manually created by the admin user.';
 $string['auth_manualtitle'] = 'Manual accounts only';

@@ -1,4 +1,4 @@
-<P ALIGN=CENTER><B>Calculated questions</B></P>
+<p align="center"><b>Calculated questions</b></p>
 Calculated questions offers a way to create individual numerical question by the use of wildcards that are substituted with individual values when the quiz is taken.
 <br/>Below is a shrunken view of the main editing page with some example inputs:<br/>
 
@@ -54,7 +54,7 @@ atan2, pow
 <br/>More details on how to use these PHP-style functions can be found in the <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">documentation at the PHP web site</a>
 <br/><br/>
 As for numerical questions it is possible to allow a margin within which all responses are accepted as correct. The "Tolerance" field is used for this. However, there are three different types of tolerances. These are <b>Relative, Nominal and Geometric</b>. If we say that the correct answer at quiz time is calculated to 200 and the tolerance is set to 0.5 then the different tolerance types work like this:
-<br/><br/><b>Relative:</B> A tolerance interval is calculated by multiplying the correct answer with 0.5, ie in this case we get 100 so for this tolerance the correct response must be between 100 and 300.  (200 ± 100)<br/>
+<br/><br/><b>Relative:</b> A tolerance interval is calculated by multiplying the correct answer with 0.5, ie in this case we get 100 so for this tolerance the correct response must be between 100 and 300.  (200 ± 100)<br/>
 This is useful if the magnitude of the correct answer can differ greatly between different wildcard values.
 <br/><br/><b>Nominal:</b>  This is the simpliest tolerance type but not very powerful. The correct response must be between 199.5 and 200.5 (200 ± 0.5)<br/>
 This tolerance type can be useful if the differences between different correct answers are small.

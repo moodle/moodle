@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
 if ($SITE = get_site()) {
@@ -26,12 +26,12 @@ function execute_sql($command, $feedback=true) {
 
     if ($result) {
         if ($feedback) {
-            echo "<P><FONT COLOR=green><B>".get_string("success")."</B></FONT></P>";
+            echo "<p><font color=\"green\"><b>".get_string("success")."</b></font></p>";
         }
         return true;
     } else {
         if ($feedback) {
-            echo "<P><FONT COLOR=red><B>".get_string("error")."</B></FONT></P>";
+            echo "<p><font color=\"red\"><b>".get_string("error")."</b></font></p>";
         }
         return false;
     }
@@ -57,7 +57,7 @@ function modify_database($sqlfile="", $sqlstring="") {
     if (!empty($sqlfile)) {
         if (!is_readable($sqlfile)) {
             $success = false;
-            echo "<P>Tried to modify database, but \"$sqlfile\" doesn't exist!</P>";
+            echo "<p>Tried to modify database, but \"$sqlfile\" doesn't exist!</p>";
             return $success;
         } else {
             $lines = file($sqlfile);
@@ -2209,7 +2209,7 @@ function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user
         VALUES ('$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')");
 
     if (!$result and ($CFG->debug > 7)) {
-        echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error
+        echo "<p>Error: Could not insert a new entry to the Moodle log</p>";  // Don't throw an error
     }    
     if (!$user and isset($USER->id)) {
         if ($courseid == SITEID) {
@@ -2353,9 +2353,9 @@ function count_login_failures($mode, $username, $lastlogin) {
 */
 function print_object($object) {
 
-    echo "<PRE>";
+    echo "<pre>";
     print_r($object);
-    echo "</PRE>";
+    echo "</pre>";
 }
 
 

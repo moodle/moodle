@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Display the whole course as "topics" made of of modules
       // In fact, this is very similar to the "weeks" format, in that
       // each "topic" is actually a week.  The main difference is that

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 // This file is generally only included from admin/index.php
 // It defines default values for any important configuration variables

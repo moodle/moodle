@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
 
 //This library includes all the necessary stuff to use blocks in course pages
 
@@ -649,7 +649,7 @@ function upgrade_blocks_plugins($continueto) {
                 $db->debug = false;
                 if ($block->id = insert_record('blocks', $block)) {
                     notify(get_string('blocksuccess', '', $blocktitle), 'green');
-                    echo "<HR>";
+                    echo "<hr>";
                 } else {
                     error("$block->name block could not be added to the block list!");
                 }
@@ -677,7 +677,7 @@ function upgrade_blocks_plugins($continueto) {
                 $blockinfo = blocks_get_default_blocks ($course->id,
                                                         blocks_get_config_default($course->format));
                 if ($CFG->debug) {
-                    echo 'Updating blockinfo for course: '.$course->shortname.'('.$blockinfo.')<br>';
+                    echo 'Updating blockinfo for course: '.$course->shortname.'('.$blockinfo.')<br />';
                 }
             }
         }

@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // wiki.php - created with Moodle 1.4 alpha (2004081900)
 
 
@@ -130,7 +130,7 @@ $string['plaintext'] = 'Plain Text';
 $string['preview'] = 'Preview';
 $string['readonly'] = 'Read only page';
 $string['refs'] = 'References';
-$string['removenotice'] = 'Note that only unreferenced pages will be listed here. And because the ewiki engine itself does only limited testing if a page is referenced it may miss some of them here.<br>If you however empty a page first, it will get listed here too. Various other database diagnostics are made as well.';
+$string['removenotice'] = 'Note that only unreferenced pages will be listed here. And because the ewiki engine itself does only limited testing if a page is referenced it may miss some of them here.<br />If you however empty a page first, it will get listed here too. Various other database diagnostics are made as well.';
 $string['removepagecheck'] = 'Are you sure that you want to delete these pages ?';
 $string['removepages'] = 'Remove pages';
 $string['removeselectedpages'] = 'Remove selected pages';
