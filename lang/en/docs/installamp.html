@@ -138,6 +138,12 @@
     <li>You're nearly there now! The rest of the setup is all web-based. Visit 
       <a href="http://localhost/moodle/admin/" target="_blank">http://localhost/moodle/admin/</a> 
       with your browser to continue the setup via your browser.</li>
+    <li>To use zip files with Moodle (for example the backups use zip) you might 
+      need to enable &quot;zlib&quot;. You can do this by going to your EasyPHP 
+      directory (<strong>C:\Program Files\EasyPHP</strong>), and running the program 
+      phpini.exe in there. Put a mark in the checkbox next to &quot;zlib.dll&quot;. 
+      Close that window, then go to the black E in your toolbar and right-click 
+      it to get a menu - select &quot;Restart&quot; from this menu.</li>
     <li>Lastly, you need to set up some sort of cron. See the <a href="./?file=install.html">Installation 
       guide</a> for more details on this.</li>
   </ol>
@@ -147,6 +153,8 @@
     <li>Make sure you enable the GD module so Moodle can process images - you 
       may have to edit php.ini and remove the comment (;) from this line: 'extension=php_gd2.dll'. 
     </li>
+    <li>Make sure you enable the Zlib module so that you can create and unpack 
+      zip files from within Moodle.</li>
     <li>Make sure sessions is turned on - you may have to edit php.ini and fix 
       the directory for <strong>session.save_path</strong> - instead of the default 
       "/tmp" use a Windows directory like "c:/temp".</li>
