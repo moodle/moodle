@@ -41,7 +41,13 @@
     // it's OK to get here if no course was specified
 
     $pathname = "$CFG->dataroot$pathinfo";
+    if ($pathargs = explode("?",$pathname)) {
+        $pathname = $pathargs[0];            // Only keep what's before the '?'
+    }
     $filename = $args[$numargs-1];
+    if ($fileargs = explode("?",$filename)) {
+        $filename = $fileargs[0];            // Only keep what's before the '?'
+    }
 
     if (file_exists($pathname)) {
         $lastmodified = filemtime($pathname);
