@@ -2,8 +2,8 @@
       // reading.php - created with Moodle 1.0.6 dev (2002100200)
 
 
-$string['addreading'] = "Literatur hinzufügen";
-$string['editingareading'] = "Literatur bearbeiten";
+$string['addresource'] = "Literatur hinzufügen";
+$string['editingaresource'] = "Literatur bearbeiten";
 $string['example'] = "Beispiel";
 $string['examplereference'] = "Stefan Münz,
 SelfHTML
@@ -14,17 +14,17 @@ $string['fulltext'] = "Voller Text";
 $string['htmlfragment'] = "HTML-Teil";
 $string['modulename'] = "Literatur";
 $string['modulenameplural'] = "Literatur";
-$string['neverread'] = "Nie gelesen";
+$string['neverseen'] = "Nie gelesen";
 $string['note'] = "Anmerkung";
 $string['notefile'] = "Um mehr als eine Datei für diesen Kurs hochzuladen (damit dieses in der Liste erscheinen) benutzen Sie bitte den 
 <A HREF=\$a >Datei-Manager</A>.";
 $string['notypechosen'] = "Sie müssen einen Typ auswählen. Verwenden Sie den Zurück-Knopf und probieren Sie es erneut";
-$string['readingtype'] = "Typ der Quelle";
-$string['readingtype1'] = "Referenz";
-$string['readingtype2'] = "Internet-Seite";
-$string['readingtype3'] = "Hochgeladene Datei";
-$string['readingtype4'] = "Reiner Text";
-$string['readingtype5'] = "Internet-Verknüpfung";
-$string['readingtype6'] = "HTML-Text";
+$string['resourcetype'] = "Typ der Quelle";
+$string['resourcetype1'] = "Referenz";
+$string['resourcetype2'] = "Internet-Seite";
+$string['resourcetype3'] = "Hochgeladene Datei";
+$string['resourcetype4'] = "Reiner Text";
+$string['resourcetype5'] = "Internet-Verknüpfung";
+$string['resourcetype6'] = "HTML-Text";
 
 ?>
