@@ -89,7 +89,6 @@ body {
     color:#AAAAAA;
 }
 
-
 /* header styles */
 #nav-bar a:link {
     color:#1246A3;
@@ -250,6 +249,12 @@ body {
     border-color:#FFFFFF;
 }
 
+.topicsoutlinecontent span.unread,
+.topicsoutlinecontenthighlight span.unread,
+.topicsoutlinecontenthidden span.unread {
+    border-bottom-color:#FFB63B;
+}
+
 .weeklyoutlineside {
     border-color:#D1D7DC;
 }
@@ -328,6 +333,15 @@ body {
 .forumheaderlist {
     border-color:#D1D7DC;
 }
+
+.forumthread .unread {
+    background: #FFD991;
+}
+
+.unread {
+    border-bottom-color:#FFB63B;
+    color:#555555;
+} 
 
 
 /* glossary */

@@ -313,10 +313,11 @@ table.formtable td {
     border-style:solid;
 }
 
-.topicsoutlinecontent span,
-.topicsoutlinecontenthighlight span,
-.topicsoutlinecontenthidden span {
-    padding:1em 0em;
+.topicsoutlinecontent span.unread,
+.topicsoutlinecontenthighlight span.unread,
+.topicsoutlinecontenthidden span.unread {
+    padding:0em;
+    margin-left:0.8em;
 }
 
 .weeklyoutlineside {
@@ -391,6 +392,10 @@ table.formtable td {
 #forum-post {
     margin:0px;
     width:auto;
+}
+
+.unread {
+    border-bottom:2px solid;
 }
 
 
