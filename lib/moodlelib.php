@@ -1379,15 +1379,18 @@ function isadmin($userid=0) {
  * @return boolean
  * @todo Finish documenting this function
  */
-function isteacher($courseid, $userid=0, $includeadmin=true) {
-    global $USER;
+function isteacher($courseid=0, $userid=0, $includeadmin=true) {
+/// Is the user a teacher or admin?
+    global $USER, $CFG;
 
     if ($includeadmin and isadmin($userid)) {  // admins can do anything the teacher can
         return true;
     }
 
     if (empty($courseid)) {
-        notify('isteacher() should not be used without a valid course id as argument');
+        if (isadmin() or $CFG->debug > 7) {
+            notify('Coding error: isteacher() should not be used without a valid course id as argument.  Please notify a developer.');
+        }
         return isteacherinanycourse($userid, $includeadmin);
     }
 
