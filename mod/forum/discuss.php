@@ -58,12 +58,14 @@
 
     unset($SESSION->fromdiscussion);
 
-    forum_set_display_mode($mode);
+    if ($mode) {
+        set_user_preference("forum_displaymode", $mode);
+    }
 
-    $displaymode = $USER->mode;
+    $displaymode = get_user_preferences("forum_displaymode", $CFG->forum_displaymode);
 
     if ($parent) {
-        if (abs($USER->mode) == 1) {  // If flat AND parent, then force nested display this time
+        if (abs($displaymode) == 1) {  // If flat AND parent, then force nested display this time
             $displaymode = 3;
         }
     } else {
