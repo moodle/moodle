@@ -128,15 +128,13 @@
             //The structure is equal to the db, so insert the lesson_pages
             $newid = insert_record ("lesson_pages",$page);
 
-            // save the new pageids (needed to fix the absolute jumps in the answers)
-            $newpageid[backup_todb($page_info['#']['PAGEID']['0']['#'])] = $newid; 
-            
-            // fix the forwards link of the previous page
+            //Fix the forwards link of the previous page
             if ($prevpageid) {
                 if (!set_field("lesson_pages", "nextpageid", $newid, "id", $prevpageid)) {
                     error("Lesson restorelib: unable to update link");
                 }
             }
+
             $prevpageid = $newid;
             
             //Do some output
@@ -158,15 +156,17 @@
             }
         }
         
-        // we've restored all the pages and answers, we now need to fix the jumps in the
-        // answer records if they are absolute
+        //We've restored all the pages and answers, we now need to fix the jumps in the
+        //answer records if they are absolute
         if ($answers = get_records("lesson_answers", "lessonid", $lessonid)) {
             foreach ($answers as $answer) {
                 if ($answer->jumpto > 0) {
                     // change the absolute page id
-                    if (!set_field("lesson_answers", "jumpto", $newpageid[$answer->jumpto], "id", 
-                                $answer->id)) {
-                        error("Lesson restorelib: unable to reset jump");
+                    $page = backup_getid($restore->backup_unique_code,"lesson_pages",$answer->jumpto);
+                    if ($page) {
+                        if (!set_field("lesson_answers", "jumpto", $page->new_id, "id", $answer->id)) {
+                            error("Lesson restorelib: unable to reset jump");
+                        }
                     }
                 }
             }

@@ -168,21 +168,21 @@
         //If there are attempts
         if ($lesson_attempts) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("ATTEMPTS",4,true));
+            $status =fwrite ($bf,start_tag("ATTEMPTS",8,true));
             //Iterate over each attempt
             foreach ($lesson_attempts as $attempt) {
                 //Start Attempt
-                $status =fwrite ($bf,start_tag("ATTEMPT",5,true));
+                $status =fwrite ($bf,start_tag("ATTEMPT",9,true));
                 //Print attempt contents
-                fwrite ($bf,full_tag("USERID",6,false,$attempt->userid));       
-                fwrite ($bf,full_tag("RETRY",6,false,$attempt->retry));       
-                fwrite ($bf,full_tag("CORRECT",6,false,$attempt->correct));       
-                fwrite ($bf,full_tag("TIMESEEN",6,false,$attempt->timeseen));       
+                fwrite ($bf,full_tag("USERID",10,false,$attempt->userid));       
+                fwrite ($bf,full_tag("RETRY",10,false,$attempt->retry));       
+                fwrite ($bf,full_tag("CORRECT",10,false,$attempt->correct));       
+                fwrite ($bf,full_tag("TIMESEEN",10,false,$attempt->timeseen));       
                 //End attempt
-                $status =fwrite ($bf,end_tag("ATTEMPT",5,true));
+                $status =fwrite ($bf,end_tag("ATTEMPT",9,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("ATTEMPTS",4,true));
+            $status =fwrite ($bf,end_tag("ATTEMPTS",8,true));
         }
         return $status;
     }
