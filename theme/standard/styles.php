@@ -4,6 +4,13 @@
 /// up any necessary variables, and lets us include raw CSS files.
 /// The output of this script should be a completely standard CSS file.
 
+
+/// These are the stylesheets this theme uses
+    $subsheets = array('styles_layout.css', 'styles_fonts.css', 'styles_color.css', 'styles_moz.css');
+
+
+/// There should be no need to touch the following
+
     if (!isset($themename)) {
         $themename = NULL;
     }
@@ -11,11 +18,19 @@
     $nomoodlecookie = true;
     require_once("../../config.php");
 
-    $themeurl = style_sheet_setup(filemtime("styles.php"), 600, $themename);
+    $lastmodified = filemtime('styles.php');
 
-    include('styles_layout.css');
-    include('styles_fonts.css');
-    include('styles_color.css');
-    include('styles_moz.css');
+    foreach ($subsheets as $subsheet) {
+        $lastmodifiedsub = filemtime($subsheet);
+        if ($lastmodifiedsub > $lastmodified) {
+            $lastmodified = $lastmodifiedsub;
+        }
+    }
+
+    $themeurl = style_sheet_setup($lastmodifiedsub, 600, $themename);
+
+    foreach ($subsheets as $subsheet) {
+        include_once($subsheet);
+    }
 
 ?>
