@@ -949,6 +949,7 @@ function main_upgrade($oldversion=0) {
         execute_sql('UPDATE `'.$CFG->prefix.'user` SET timezonename = \'\'');
     }
 
+
     if ($oldversion < 2005032600) {
         execute_sql('DROP TABLE '.$CFG->prefix.'dst_preset', false);
         modify_database('',"CREATE TABLE prefix_timezone (
@@ -969,6 +970,10 @@ function main_upgrade($oldversion=0) {
                               std_skipweeks integer NOT NULL default '0',
                               std_time varchar(5) NOT NULL default '00:00'
                             );");
+    }
+
+    if ($oldversion < 2005032800) {
+       /// Need GRADE TABLES HERE!
     }
 
     return $result;

@@ -1253,6 +1253,65 @@ function main_upgrade($oldversion=0) {
                             ) TYPE=MyISAM COMMENT='Rules for calculating local wall clock time for users';");
     }
 
+    if ($oldversion < 2005032800) {
+        execute_sql("CREATE TABLE `{$CFG->prefix}grade_category` (
+            `id` int(10) unsigned NOT NULL auto_increment,
+            `name` varchar(64) default NULL,
+            `courseid` int(10) unsigned NOT NULL default '0',
+            `drop_x_lowest` int(10) unsigned NOT NULL default '0',
+            `bonus_points` int(10) unsigned NOT NULL default '0',
+            `hidden` int(10) unsigned NOT NULL default '0',
+            `weight` decimal(4,2) default '0.00',
+            PRIMARY KEY  (`id`),
+            KEY `courseid` (`courseid`)
+          ) TYPE=MyISAM ;");
+
+        execute_sql("CREATE TABLE `{$CFG->prefix}grade_exceptions` (
+            `id` int(10) unsigned NOT NULL auto_increment,
+            `courseid` int(10) unsigned NOT NULL default '0',
+            `grade_itemid` int(10) unsigned NOT NULL default '0',
+            `userid` int(10) unsigned NOT NULL default '0',
+            PRIMARY KEY  (`id`),
+            KEY `courseid` (`courseid`)
+          ) TYPE=MyISAM ;");
+
+
+        execute_sql("CREATE TABLE `{$CFG->prefix}grade_item` (
+            `id` int(10) unsigned NOT NULL auto_increment,
+            `courseid` int(10) unsigned default NULL,
+            `category` int(10) unsigned default NULL,
+            `modid` int(10) unsigned default NULL,
+            `cminstance` int(10) unsigned default NULL,
+            `scale_grade` float(11,10) default '1.0000000000',
+            `extra_credit` int(10) unsigned NOT NULL default '0',
+            `sort_order` int(10) unsigned NOT NULL default '0',
+            PRIMARY KEY  (`id`),
+            KEY `courseid` (`courseid`)
+          ) TYPE=MyISAM ;");
+
+
+        execute_sql("CREATE TABLE `{$CFG->prefix}grade_letter` (
+            `id` int(10) unsigned NOT NULL auto_increment,
+            `courseid` int(10) unsigned NOT NULL default '0',
+            `letter` varchar(8) NOT NULL default 'NA',
+            `grade_high` decimal(4,2) NOT NULL default '100.00',
+            `grade_low` decimal(4,2) NOT NULL default '0.00',
+            PRIMARY KEY  (`id`),
+            KEY `courseid` (`courseid`)
+          ) TYPE=MyISAM ;");
+          
+
+        execute_sql("CREATE TABLE `{$CFG->prefix}grade_preferences` (
+            `id` int(10) unsigned NOT NULL auto_increment,
+            `courseid` int(10) unsigned default NULL,
+            `preference` int(10) NOT NULL default '0',
+            `value` int(10) NOT NULL default '0',
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `courseidpreference` (`courseid`,`preference`)
+          ) TYPE=MyISAM ;");
+          
+    }
+
     return $result;
 }
 
