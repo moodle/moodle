@@ -884,8 +884,8 @@ Pour commencer, veuillez modifier votre profil dans ce cours afin que nous nous 
 $a->profileurl';
 $string['whattocallzip'] = 'Quel nom voulez-vous donner au fichier compacté (zip) ?';
 $string['withchosenfiles'] = 'Avec les fichiers choisis';
-$string['withoutuserdata'] = 'sans les données de l\'utilisateur';
-$string['withuserdata'] = 'avec les données de l\'utilisateur';
+$string['withoutuserdata'] = 'sans les données des utilisateurs';
+$string['withuserdata'] = 'avec les données des utilisateurs';
 $string['wordforstudent'] = 'Votre terme pour « étudiant »';
 $string['wordforstudenteg'] = 'exemples : étudiant, apprentis, participant, ...';
 $string['wordforstudents'] = 'Votre terme pour « étudiants »';
