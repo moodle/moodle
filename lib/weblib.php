@@ -3583,7 +3583,9 @@ function print_side_block_start($heading='', $attributes = array()) {
 function print_side_block_end($attributes) {
     echo '</td></tr></tbody></table>';
     // IE workaround: if I do it THIS way, it works! WTF?
-    echo '<script type="text/javascript"><!-- '."\n".'elementCookieHide("'.$attributes['id'].'"); '."\n".'--></script>';
+    if (isset($attributes['id'])) {
+        echo '<script type="text/javascript"><!-- '."\n".'elementCookieHide("'.$attributes['id'].'"); '."\n".'--></script>';
+    }
 }
 
 
