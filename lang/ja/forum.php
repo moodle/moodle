@@ -154,7 +154,7 @@ $string['unsubscribeshort'] = 'メール通知解除';
 $string['yesforever'] = 'Yes, 無期限';
 $string['yesinitially'] = 'Yes, 最初のみ';
 $string['youratedthis'] = 'あなたの評価';
-$string['yournewtopic'] = '新規トピック';
+$string['yournewtopic'] = 'あなたの新しいディスカッショントピック';
 $string['yourreply'] = 'あなたの返信';
 
 ?>
