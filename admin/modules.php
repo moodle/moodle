@@ -24,6 +24,7 @@
     $strconfiguration = get_string("configuration");
     $strmanagemodules = get_string("managemodules");
     $strdelete = get_string("delete");
+    $strversion = get_string("version");
     $strhide = get_string("hide");
     $strshow = get_string("show");
     $strsettings = get_string("settings");
@@ -148,10 +149,10 @@
         $modpixpath = "../theme/$CFG->theme/pix/mod";
     }
 
-    $table->head  = array ($stractivitymodule, "$strhide/$strshow", $strdelete, $strsettings);
-    $table->align = array ("LEFT", "CENTER", "CENTER", "CENTER");
-    $table->wrap = array ("NOWRAP", "", "","");
-    $table->size = array ("100%", "10", "10","12");
+    $table->head  = array ($stractivitymodule, $strversion, "$strhide/$strshow", $strdelete, $strsettings);
+    $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER", "CENTER");
+    $table->wrap = array ("NOWRAP", "", "", "","");
+    $table->size = array ("100%", "10", "10", "10","12");
     $table->width = "100";
 
     foreach ($modulebyname as $modulename => $module) {
@@ -180,7 +181,7 @@
             $visible = "";
             $class = "";
         }
-        $table->data[] = array ("<p $class>$icon $modulename</p>", $visible, $delete, $settings);
+        $table->data[] = array ("<p $class>$icon $modulename</p>", $module->version, $visible, $delete, $settings);
     }
     print_table($table);
 

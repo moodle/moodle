@@ -788,6 +788,7 @@ $string['userprofilefor'] = "User profile for \$a";
 $string['users'] = "Users";
 $string['usingexistingcourse'] = "Using existing course";
 $string['userzones'] = "User zones";
+$string['version'] = "Version";
 $string['view'] = "View";
 $string['webpage'] = "Web page";
 $string['week'] = "Week";
