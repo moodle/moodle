@@ -72,7 +72,7 @@
 
         } else {
 
-            print_simple_box(format_text($survey->intro), "center", "80%");
+            print_simple_box(format_text($survey->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
             print_spacer(30);
 
             $questions = get_records_list("survey_questions", "id", $survey->questions);
@@ -102,7 +102,7 @@
     echo "<form name=\"form\" method=\"post\" action=\"save.php\">";
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
 
-    print_simple_box(format_text($survey->intro), "center", "80%");
+    print_simple_box(format_text($survey->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
 
 // Get all the major questions and their proper order
     if (! $questions = get_records_list("survey_questions", "id", $survey->questions)) {

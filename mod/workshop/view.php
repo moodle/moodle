@@ -178,7 +178,7 @@
 
         // if the student has not yet submitted show the full description
         if (!record_exists('workshop_submissions', 'workshopid', $workshop->id, 'userid', $USER->id)) {
-            print_simple_box(format_text($workshop->description, $workshop->format), 'center');
+            print_simple_box(format_text($workshop->description, $workshop->format), 'center', '70%', '', 5, 'generalbox', 'intro');
         } else {
             print_heading("<b><a href=\"view.php?id=$cm->id&amp;action=showdescription\">".
                 get_string("showdescription", 'workshop')."</a></b>");
@@ -540,7 +540,7 @@
     elseif ($action == 'showdescription') {
 
         workshop_print_assignment_info($workshop);
-        print_simple_box(format_text($workshop->description, $workshop->format), 'center');
+        print_simple_box(format_text($workshop->description, $workshop->format), 'center', '70%', '', 5, 'generalbox', 'intro');
         print_continue($_SERVER["HTTP_REFERER"]);
     }
 

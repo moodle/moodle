@@ -64,7 +64,7 @@
     /************ view **************************************************/
     elseif ($action == 'view') {
 
-        print_simple_box( format_text($dialogue->intro) , "center");
+        print_simple_box(format_text($dialogue->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
         echo "<br />";
         // get some stats
         $countneedingrepliesself = dialogue_count_needing_replies_self($dialogue, $USER);

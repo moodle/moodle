@@ -250,10 +250,7 @@
 
 /// Info box
     if ( $glossary->intro ) {
-        echo '<table align="center" width="70%" border="0">';
-        echo '<tr><td align="center" class="glossaryintrobox">';
-        echo format_text($glossary->intro);
-        print_simple_box_end();
+        print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
 /// Search box

@@ -92,7 +92,7 @@
     print_heading($quiz->name);
 
     if (trim(strip_tags($quiz->intro))) {
-        print_simple_box(format_text($quiz->intro), "center");
+        print_simple_box(format_text($quiz->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
 

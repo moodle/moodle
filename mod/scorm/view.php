@@ -73,7 +73,7 @@
 
     	print_heading($scorm->name);
 
-    	print_simple_box(text_to_html($scorm->summary), "center");
+    	print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
 
     	if (isguest()) {
             print_heading(get_string("guestsno", "scorm"));

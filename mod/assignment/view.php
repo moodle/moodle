@@ -64,7 +64,7 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    print_simple_box_start("center");
+    print_simple_box_start('center', '70%', '', 5, 'generalbox', 'intro');
     print_heading($assignment->name, "center");
 
     $timedifference = $assignment->timedue - time();

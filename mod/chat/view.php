@@ -125,7 +125,7 @@
     }
 
     if ($chat->intro) {
-        print_simple_box( format_text($chat->intro) , 'center');
+        print_simple_box(format_text($chat->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
         echo '<br />';
     }
 
