@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['action'] = '- - Acties - -';
@@ -157,11 +157,9 @@ $string['tabinfo'] = 'Geschiedenis';
 $string['tablinks'] = 'Links';
 $string['tabview'] = 'Toon';
 $string['thanksforcontribution'] = 'Dank je  voor je bijdrage.';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['thispageisntlinkedfromanywhereelse'] = 'Er is geen link naar deze pagina.';
 $string['updatedpages'] = 'Gewijzigde pagina\'s';
+$string['updatedwikipages'] = 'Aangepaste wikipagina\'s';
 $string['uplerror'] = 'Erg jammer, maar het liep fout tijdens het uploaden van het bestand.';
 $string['uplinsect'] = 'Upload naar';
 $string['uplnewnam'] = 'Bewaar met een andere bestandsnaam';

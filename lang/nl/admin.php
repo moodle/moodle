@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -88,12 +88,9 @@ $string['confirmation'] = 'Bevestiging';
 $string['confirmdeletedst'] = 'Het verwijderen van de voorkeuze voor zomertijd  <strong>$a</strong> genoemd, zal onmiddellijk de zomertijdinstellingen voor alle gebruikers van die voorkeuze uitschakelen. Ben je er zeker van dat je verder wil gaan?';
 $string['confirmdeletedstdefault'] = '<strong>De voorkeuze $a genoemd, wordt gebruikt voor alle gebruikers van deze site!</strong> Door deze te verwijderen zal hun instellingen voor de tijd wijzigen zonder waarschuwing. Ben je er zeker van dat je wil doorgaan?';
 $string['cronwarning'] = 'Het onderhoudsscript cron.php heeft de laatste 24 uur niet gelopen. <br />Als je dit nog niet geconfigureerd hebt, lees dan het onderdeel <em>Cron configureren</em> bij de installatie-instructies.';
-$string['dstisapreference'] = 'Elke gebruiker kan kiezen welke voorkeuze voor zomertijd te gebruiken';
-$string['dstisforcedto'] = 'Dwing alle gebruikers om het volgende te gebruiken';
 $string['dstpresetforced'] = 'Dit wordt door de site-beheerder opgelegd';
-$string['dstpresets'] = 'Instellingsmogelijkheden zomertijd';
 $string['edithelpdocs'] = 'Bewerk helpbestanden';
-$string['editingdstpreset'] = 'De instellingsmogelijkheid voor zomertijd bewerken';
+$string['editingtimezone'] = 'Een tijdzone bewerken';
 $string['editstrings'] = 'Bewerk strings';
 $string['emptydstlist'] = 'Er zijn geen instellingsmogelijkheden voor zomertijd gedefiniëerd. Je kunt er één toevoegen door op de toevoegknop te klikken.';
 $string['errordstpresetactivateearlier'] = 'De inschakelmaand moet vroeger zijn dan de uitschakelmaand';
@@ -102,14 +99,14 @@ $string['errordstpresetnameexists'] = 'Er bestaat al een voorkeuze met die naam'
 $string['filteruploadedfiles'] = 'Gebruik de filters in geüploade bestanden';
 $string['helpadminseesall'] = 'Zien beheerders alle gebeurtenissen in de kalender of alleen diegene die ze zelf nodig hebben?';
 $string['helpcalendarsettings'] = 'Configureer de kalender en datum/tijd-gerelateerde instellingen van Moodle';
-$string['helpdstforusers'] = 'Kan elke gebruiker zijn eigen zomertijdinstellingen kiezen?';
-$string['helpmanagedstpresets'] = 'Klik op deze knop om voorkeuzes voor zomertijd die voor deze site beschikbaar zijn, toe te voegen, te bewerken of te verwijderen.';
+$string['helpforcetimezone'] = 'Je kunt je gebruikers elk hun eigen tijdzone laten kiezen of een tijdzone opleggen voor iedereen.';
+$string['helpmanagetimezones'] = 'Je kunt manueel tijdzones voor deze site toevoegen, bewerken en verwijderen of je kunt Moodle automatisch profielen voor tijdzones laten dowloaden  en updaten van moodle.org';
 $string['helpsitemaintenance'] = 'Voor upgrades en ander onderhoud';
 $string['helpstartofweek'] = 'Welke dag start de week in de kalender?';
 $string['helpupcominglookahead'] = 'Hoeveel dagen is de standaardinstelling om kalender vooruit te laten kijken naar aankomende activiteiten?';
 $string['helpupcomingmaxevents'] = 'Hoeveel aankomende activiteiten worden er maximaal getoond aan de gebruikers?';
 $string['helpweekenddays'] = 'Welke dagen van de week worden als \"weekend\" beschouwd en dus in een andere kleur getoond?';
-$string['managedstpresets'] = 'Beheer de voorkeuzes voor zomertijd';
+$string['managetimezones'] = 'Beheer profielen voor tijdzones';
 $string['nodstpresetsexist'] = 'Zomertijd is uitgeschakeld voor alle gebruikers omdat er geen voorkeuzes voor zomertijd gedefiniëerd zijn. Je kunt er definiëren door op onderstaande knop te klikken.';
 $string['optionalmaintenancemessage'] = 'Optionele onderhoudsboodschap';
 $string['returntocalendaroptions'] = 'Terugkeren naar kalenderinstellingen';
@@ -119,6 +116,10 @@ $string['sitemaintenanceoff'] = 'De onderhoudsmodus is uitgeschakeld en de site 
 $string['sitemaintenanceon'] = 'Je site is nu in onderhoudsmodus (alleen beheerders kunnen inloggen of gebruik maken van de site)';
 $string['sitemaintenancewarning'] = 'Je site is nu in onderhoudsmodus (alleen beheerders kunnen inloggen of gebruik maken van de site). Om terug te keren naar normale werking: <a href=\"maintenance.php\">onderhoudsmodus uitschakelen</a>';
 $string['therewereerrors'] = 'Er waren fouten in je gegevens';
+$string['timezoneisforcedto'] = 'Iedereen gebruikt ';
+$string['timezonenotforced'] = 'Gebruikers kunnen hun eigen tijdzone kiezen';
+$string['timezones'] = 'Tijdzones';
+$string['updatetimezones'] = 'Update profielen automatisch';
 $string['upgradelogs'] = 'Om volledige functionaliteit te bekomen moeten je oude logbestanden geüpgraded worden. <a href=\"$a\">Meer informatie</a>';
 $string['upgradelogsinfo'] = 'Sommige wijzigingen hebben invloed op de manier waarom de logs worden opgeslagen. Om al je oude logs per activiteit te kunnen bekijken, moeten je oude logs geüpdated worden. Afhankelijk van je site kan dit lang duren (zelfs enkele uren) en voor lange sites kan dat de databank zwaar belasten. Als je het proces start, dan zou je het moeten laten aflopen (door het browservenster open te laten). Maak je geen zorgen, terwijl je de logs upgradet, zal de site blijven werken voor je gebruikers.<br /><br />Wil je je logs nu upgraden?';
 $string['upgradesure'] = 'De bestanden op je Moodleserver zijn gewijzigd en je gaat zo dadelijk je server automatisch upgraden naar versie: <p><b>$a</b></p>

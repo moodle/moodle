@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['accesscontrol'] = 'Toegangscontrole';
@@ -48,6 +48,7 @@ $string['correctanswerscore'] = 'Cijfer bij juist antwoord';
 $string['correctresponse'] = 'Juist antwoord';
 $string['customscoring'] = 'Aangepaste cijfers';
 $string['deadline'] = 'Deadline';
+$string['defaultessayresponse'] = 'Je antwoord op deze open vraag zal door de leraar beoordeeld worden.';
 $string['deleteattempts'] = 'Verwijder de pogeingen van de leerling voor deze les (user id)';
 $string['deletedpage'] = 'Pagina verwijderd';
 $string['deleting'] = 'Verwijderen';
@@ -165,7 +166,7 @@ $string['pagecontents'] = 'Inhoud van de pagina';
 $string['pages'] = 'Pagina\'s';
 $string['pagetitle'] = 'Titel van de pagina';
 $string['password'] = 'Wachtwoord';
-$string['passwordprotectedlesson'] = '$a is een les die met een wachtwoord beveiligd is';
+$string['passwordprotectedlesson'] = '$a is met een wachtwoord beveiligd.';
 $string['pleasecheckoneanswer'] = 'Duid één antwoord aan';
 $string['pleasecheckoneormoreanswers'] = 'Duid één of meer antwoorden aan';
 $string['pleaseenteryouranswerinthebox'] = 'Geef je antwoord in het vak';

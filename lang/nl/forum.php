@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -85,6 +85,7 @@ $string['nameteacher'] = 'Forum voor leraren';
 $string['newforumposts'] = 'Nieuwe forumberichten';
 $string['nodiscussions'] = 'Er zijn nog geen discussies in dit forum';
 $string['noguestpost'] = 'Sorry, gasten mogen geen berichten posten';
+$string['noguestsubscribe'] = 'Sorry, gasten mogen zich niet inschrijven om forumberichten via mail te kunnen ontvangen.';
 $string['nomorepostscontaining'] = 'Er zijn geen berichten met \'$a\' meer gevonden';
 $string['nonews'] = 'Er zijn nog geen nieuwsberichten';
 $string['noposts'] = 'Geen berichten';
@@ -95,6 +96,7 @@ $string['nownotsubscribed'] = '$a->name zal via e-mail GEEN bijdragen aan \'$a->
 $string['nowsubscribed'] = '$a->naam zal bijdragen aan \'$a->forum\' ontvangen via e-mail.';
 $string['numposts'] = '$a berichten';
 $string['olderdiscussions'] = 'Oudere discussies';
+$string['oldertopics'] = 'Oudere onderwerpen';
 $string['openmode0'] = 'Geen nieuwe discussies, geen antwoorden';
 $string['openmode1'] = 'Geen nieuwe discussies mogelijk, maar antwoorden is toegestaan';
 $string['openmode2'] = 'Nieuwe discussies en antwoorden zijn toegestaan';

@@ -1,7 +1,18 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
+$string['auth_cas_baseuri'] = 'URI van de server (leeg laten als er geen baseUri is)<br />Als de CAS-server bijvoorbeeld antwoord op host.domein.be/CAS/ dan <br />cas_baseuri=CAS/';
+$string['auth_cas_create_user'] = 'Schakel dit in als je gebruikers met CAS-authenticatie in de Moodle-databank wil zetten. Indien niet ingeschakeld zullen enkel gebruikers die al in de Moodle-databank bestaan, kunnen aanmelden.';
+$string['auth_cas_enabled'] = 'Schakel dit in als je CAS-authenticatie wil gebruiken.';
+$string['auth_cas_hostname'] = 'Server-naam van de CAS-server<br />vb: host.domein.nl';
+$string['auth_cas_language'] = 'Gekozen taal';
+$string['auth_cas_port'] = 'Poort van de CAS-server';
+$string['auth_cas_server_settings'] = 'CAS-serverconfiguratie';
+$string['auth_cas_text'] = 'Veilige verbinding';
+$string['auth_cas_version'] = 'CAS-versie';
+$string['auth_casdescription'] = 'Deze methode gebruikt een CAS-server (Central Authentication Service) om gebruikers in een Single Sign On omgeving (SSO) te authenticeren. Als de ingegeven gebuikersnaam en wachtwoord volgens CAS kloppen, dan zal Moodle een nieuwe gebruiker in zijn databank maken en de gebruikersgegevens uit LDAP overnemen indien nodig. Bij volgende aanmeldingen worden dan enkel de gebruikersnaam en wachtwoord gecontroleerd.';
+$string['auth_castitle'] = 'Gebruik een CAS-server (SSO)';
 $string['auth_common_settings'] = 'Algemene instellingen';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Deze methode gebruikt een externe database om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn. Als de account nieuw is dan kan informatie vanuit andere velden ook naar Moodle worden gekopieerd.';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['action'] = 'Actie';
@@ -763,6 +763,7 @@ $string['notifyloginfailuresmessagestart'] = 'Hier is een lijst van mislukte aan
 $string['notifyloginfailuressubject'] = '$a::Notificatie van mislukte aanmeldingen';
 $string['notincluded'] = 'Niet ingevoegd';
 $string['notingroup'] = 'Om deze activiteit te kunnen zien moet je lid zijn van een groep.';
+$string['notpublic'] = 'Niet publiek!';
 $string['nousersmatching'] = 'Er zijn geen gebruikers gevonden met de zoekterm \'$a\'';
 $string['nousersyet'] = 'Er zijn nog geen gebruikers';
 $string['now'] = 'Nu';
@@ -833,6 +834,9 @@ $string['recentactivityreport'] = 'Volledig rapport van recente activiteiten...'
 $string['recreatedcategory'] = 'Categorie $a opnieuw gemaakt';
 $string['refreshingevents'] = 'Kalender bijwerken';
 $string['registration'] = 'Moodleregistratie';
+$string['registrationcontact'] = 'Publiek contact';
+$string['registrationcontactno'] = 'Nee, ik wil geen contactforulier op de site';
+$string['registrationcontactyes'] = 'Ja, toon een formulier zodat andere Moodlegebruikers me kunnen contacteren';
 $string['registrationemail'] = 'E-mailmeldingen';
 $string['registrationinfo'] = '<p>Deze pagina laat je toe om Moodle te registreren bij moodle.org.
 De registratie is gratis.
@@ -941,6 +945,7 @@ $string['specifyname'] = 'Je moet een naam geven';
 $string['startdate'] = 'Begindatum van het vak';
 $string['startsignup'] = 'Begin nu met het maken van een nieuwe account!';
 $string['state'] = 'Staat / Provincie';
+$string['statistics'] = 'Statistieken';
 $string['status'] = 'Status';
 $string['strftimedate'] = '%%d %%B %%Y';
 $string['strftimedateshort'] = '%%d %%B';
