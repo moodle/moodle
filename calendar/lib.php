@@ -1029,7 +1029,7 @@ function calendar_get_default_courses($ignoreref = false) {
     global $USER, $CFG, $SESSION;
 
     if(!empty($SESSION->cal_course_referer) && !$ignoreref) {
-        return array($SESSION->cal_course_referer => SITEID);
+        return array($SESSION->cal_course_referer => 1);
     }
 
     if(empty($USER)) {
@@ -1042,10 +1042,10 @@ function calendar_get_default_courses($ignoreref = false) {
         return $courses;
     }
     if(isset($USER->student) && is_array($USER->student)) {
-        $courses = $USER->student + $courses;
+        $courses = $USER->student;
     }
     if(isset($USER->teacher) && is_array($USER->teacher)) {
-        $courses = $USER->teacher + $courses;
+        $courses = $USER->teacher;
     }
     return $courses;
 }
