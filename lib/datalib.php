@@ -136,7 +136,8 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             $dbver = substr($dbinfo['version'],0,3);
             
             //to prevent conflicts with reserved words
-            $field = "\"$field\"";
+            $realfield = "\"$field\"";
+            $field = "\"${field}_alter_column_tmp\"";
             $oldfield = "\"$oldfield\"";
 
             switch (strtolower($type)) {
@@ -163,14 +164,14 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             //    $after = "AFTER '$after'";
             //}
 
-            if ($oldfield != "\"\"") {
-                if ($field != $oldfield) {
-                    execute_sql("ALTER TABLE {$CFG->prefix}$table RENAME COLUMN $oldfield TO $field");
-                }
-            } else {
-                execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
-                execute_sql("UPDATE {$CFG->prefix}$table SET $field=$default");
-            }
+            //Use transactions
+            execute_sql("BEGIN");
+
+            //Allways use temporaly column
+            execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
+            //Add default values
+            execute_sql("UPDATE {$CFG->prefix}$table SET $field=$default");
+             
 
             if ($dbver >= "7.3") {
                 // modifying 'not null' is posible before 7.3
@@ -183,8 +184,16 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
                 }
             }
 
-            return execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET DEFAULT $default");
+            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET DEFAULT $default");
+            
+            if ( $oldfield != "\"\"" ) {
+                execute_sql("UPDATE {$CFG->prefix}$table SET $field = $oldfield");
+                execute_sql("ALTER TABLE  {$CFG->prefix}$table drop column $oldfield");
+            }
 
+            execute_sql("ALTER TABLE {$CFG->prefix}$table RENAME COLUMN $field TO $realfield"); 
+            
+            return execute_sql("COMMIT");
             break;
 
         default:
