@@ -1,8 +1,8 @@
 <?PHP  // $Id: report.php,
 //  created from the above 2003/11/20 by Tom Robb tom@robb.net
 // Version 2.2  Modified 2003/11/25 pm
-//  $showtext added to toggle display of full text of M/C questions
-//  Discrimination Index figures added
+// Version 2.3  Modified 2004/01/17
+//  Error in display of items followin a matching question fixed
 
 /// This report shows the specific responses made by each student for each question.
 
@@ -16,33 +16,18 @@ class quiz_report extends quiz_default_report {
     optional_variable($debug, "");
 //$debug = 1;
 
-/*
-//These definitions must be in the lang/en/quiz.php file
-$string['corrresp'] = "Correct Response";
-$string['grade'] = "Grade";
-$string['indivresp'] = "Responses of Individuals to Each Item";
-$string['itemanal'] = "Item Response Analysis";
-$string['listitems'] = "Listing of Items in This Quiz";
-$string['noresponse'] = "No Response";
-$string['percentcorrect'] = "Percent Correct";
-$string['question'] = "Question";
-$string['withsummary'] = "with Summary Statistics";
-$string['discrimination'] = "Discrim. Index";
-$string[''] = "";
-*/
 
-        $strindivresp = get_string("indivresp", "quiz");
-        $strname = get_string("name", "quiz");
-        $strgrade = get_string("grade", "quiz");
-        $stritemanal = get_string("itemanal", "quiz");
-        $strcorrresp = get_string("corrresp", "quiz");
-        $strnoresponse = get_string("noresponse", "quiz");
-        $strpercentcorrect = get_string("percentcorrect", "quiz");
-        $strlistitems = get_string("listitems", "quiz");
-        $strquestion = get_string("question", "quiz");
-        $strwithsummary = get_string("withsummary", "quiz");
-        $strdiscrimination = get_string("discrimination", "quiz");
-//        $str = get_string("qr", "quiz");
+    $strindivresp = get_string('indivresp', 'quiz');
+    $strname = get_string('name', 'quiz');
+    $strgrade = get_string('grade');
+    $stritemanal = get_string('itemanal', 'quiz');
+    $strcorrresp = get_string('corrresp', 'quiz');
+    $strnoresponse = get_string('noresponse', 'quiz');
+    $strpercentcorrect = get_string('percentcorrect', 'quiz');
+    $strlistitems = get_string('listitems', 'quiz');
+    $strquestion = get_string('question', 'quiz');
+    $strwithsummary = get_string('withsummary', 'quiz');
+    $strdiscrimination = get_string('discrimination', 'quiz');
 
     //Get the question ids
     //$showtext causes M/C text to whos in top table.  This could be made into a user toggle if we want to complicate matters
@@ -191,7 +176,7 @@ $string[''] = "";
         }
     }
     arsort($scores);
-    //now go through scores from top to bottom and from $data2 accumulate no correct for top 1/3 and bottom 1/3 of scorers
+    //now go through scores from top to bottom and from $data2 accumulate number correct for top 1/3 and bottom 1/3 of scorers
     $totscores = count($scores);
     $numb_to_analyze = floor($totscores/3);
     $skipval = $numb_to_analyze + 1;
@@ -252,7 +237,7 @@ $string[''] = "";
     print_object($pct_correct);
     }
 
-    //display a row for each possible multiple choice with $max_choices being highest row
+    //put the correct values in $analysis
     for ($i = 1; $i<= $max_choices;$i++){
         //prepare answer tallies
         //2 columns already spoken for
@@ -520,20 +505,42 @@ $string[''] = "";
         $qcount = 0;
         $row = 1;
         foreach ($qs_in_order as $qid){
+            if ($quests[$qid]['qtype']==5) { $itemcount = $itemcount + $match_number[$qid];} else {$itemcount++;}
             $row++;
             $qcount++;
             $label = "Q-$qcount";
             $myxls->write_string($row,0,$label,$formatb);
             $myxls->write_string($row,1,$quests[$qid]['qtext'],$formatb);
-            $itemcount = 0;
             if($quests[$qid]['qtype']==3){
                 $nowchoices = $quests[$qid]['choice'];
                 foreach($nowchoices as $thischoice){
-                $row++;
-                $label = "A-$thischoice[choiceno]";
-                $myxls->write_string($row,2,$label,$formatb);
-                $myxls->write_string($row,3,$thischoice[answer],$formatb);
+                    $cno = $thischoice['choiceno'];
+                    $row++;
+                    $label = "A-$thischoice[choiceno]";
+                    $nowstat =  $analysis[$cno][$itemcount];
+                    $pct = qr_make_pct($nowstat,$total_user_count);
+                    $myxls->write_number($row,1,$nowstat,$formatb);
+                    $myxls->write_number($row,2,$pct,$formatbpct);
+                    $myxls->write_string($row,3,$thischoice[answer],$formatb);
                 }
+            }
+            if($quests[$qid]['qtype']==2){
+                //"True" responses
+                $row++;
+                $nowstat =  $analysis[1][$itemcount];
+                $nowresp = substr($nowstat,5);
+                $pct = qr_make_pct($nowresp,$total_user_count);
+                $myxls->write_number($row,1,$nowresp,$formatb);
+                $myxls->write_number($row,2,$pct,$formatbpct);
+                $myxls->write_string($row,3,'True',$formatb);
+                //"False" responses
+                $row++;
+                $nowstat =  $analysis[2][$itemcount];
+                $nowresp = substr($nowstat,6);
+                $pct = qr_make_pct($nowresp,$total_user_count);
+                $myxls->write_number($row,1,$nowresp,$formatb);
+                $myxls->write_number($row,2,$pct,$formatbpct);
+                $myxls->write_string($row,3,'False',$formatb);
             }
         }
 
@@ -750,18 +757,18 @@ $string[''] = "";
         }
         if($quests[$qid]['qtype']==2){
             //"True" responses
-            $nowstat =  $analysis[1][$qcount];
+            $nowstat =  $analysis[1][$itemcount];
             $colpos = strpos($nowstat,":");
             $nowresp = substr($nowstat,$colpos+1);
-            $pct_cor = qr_make_pct($nowresp,$total_user_count);
-            print("<tr valign=top><td align='right'>$nowresp ($pct_cor)&nbsp;</td>");
+            $pct_cor = qr_make_pct($nowresp,$total_user_count) *100;
+            print("<tr valign=top><td align='right'>$nowresp ($pct_cor%)&nbsp;</td>");
             print("<td colspan=2 align=left>True</td></tr>\n");
             //"False" responses
-            $nowstat =  $analysis[2][$qcount];
+            $nowstat =  $analysis[2][$itemcount];
             $colpos = strpos($nowstat,":");
             $nowresp = substr($nowstat,$colpos+1);
-            $pct_cor = qr_make_pct($nowresp,$total_user_count);
-            print("<tr valign=top><td align='right'>$nowresp ($pct_cor)&nbsp;</td>");
+            $pct_cor = qr_make_pct($nowresp,$total_user_count) *100;
+            print("<tr valign=top><td align='right'>$nowresp ($pct_cor%)&nbsp;</td>");
             print("<td colspan=2 align=left>False</td></tr>\n");
         }
     }
