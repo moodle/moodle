@@ -193,7 +193,7 @@ function blocks_have_content(&$pageblocks, $position) {
 function blocks_print_group(&$page, &$pageblocks, $position) {
 
     if(empty($pageblocks[$position])) {
-        return;
+        $pageblocks[$position] = array();
     }
 
     $isediting = $page->user_is_editing();
