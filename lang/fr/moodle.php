@@ -239,32 +239,15 @@ Pour confirmer votre enregistrement, merci de visiter l'adresse suivante :
 
 Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître comme un lien de couleur bleue qu'il vous suffit de cliquer.
 
-
-
 Si cela ne fonctionne pas, copiez et collez ce lien dans la barre d'adresse de votre navigateur Web.
 
 Cordialement,
-
-
-
 --
-
-
-
 \$a->admin
-
-
-
 Administrateur du site « \$a->sitename »";
 $string['emailconfirmationsubject'] = "\$a: confirmation de l'ouverture du compte";
 $string['emailconfirmsent'] = "<p>Un message vous a été envoyé à l'adresse e-mail <b>\$a</b>.
-
-
-
 <p>Il contient les instructions pour terminer votre enregistrement.
-
-
-
 <p>Si vous rencontrez des difficultés, contactez l'administrateur du site.";
 $string['emaildisplay'] = "Affichage de l'adresse e-mail";
 $string['emaildisplaycourse'] = "Seuls les membres du cours sont autorisés à voir mon adresse e-mail";
@@ -283,49 +266,23 @@ Pour confirmer cette demainde et recevoir votre nouveau message par e-mail, visi
 
 Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître comme un lien de couleur bleue qu'il vous suffit de cliquer.
 
-
-
 Si cela ne fonctionne pas, copiez et collez ce lien dans la barre d'adresse de votre navigateur Web.
 
 Cordialement,
-
-
-
 --
-
-
-
 \$a->admin
-
-
-
 Administrateur du site « \$a->sitename »";
 $string['emailpasswordconfirmationsubject'] = "\$a: confirmation du changement de mot de passe";
 $string['emailpasswordconfirmsent'] = "Un message a été envoyé à votre adresse e-mail<b>\$a</b>.
-
-
-
 <p>Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.
-
-
-
 En cas de difficulté, veuillez contacter l'administrateur du site.";
 $string['emailpasswordsent'] = "Merci pour votre confirmation.
-
-
-
 <p>Un message avec votre nouveau mot de passe a été envoyé à votre adresse <b>\$a->email</b>.
-
-
-
 <p>Le nouveau mot de passe a été généré automatiquement. Vous pouvez <a href=\$a->link>le modifier</a> pour le rendre plus facile à retenir.";
 $string['enrolmentconfirmation'] = "Vous allez vous inscrire comme participant à ce cours.<br />Êtes-vous sûr de vouloir le faire ?";
 $string['enrolmentkey'] = "Clef d'inscription";
 $string['enrolmentkeyfrom'] = "Ce cours nécessite une clef d'inscription, un mot de passe à usage unique que vous devez obtenir de \$a";
 $string['enrolmentkeyhint'] = "Cette clef d'inscription est incorrecte, merci d'essayer de nouveau<br />
-
-
-
 (La clef commence par « \$a ».)";
 $string['entercourse'] = "Cliquer pour entrer dans le cours";
 $string['enteremailaddress'] = "Entrez votre adresse e-mail afin qu'un nouveau mot de passe vous soit envoyé par e-mail";
@@ -333,13 +290,13 @@ $string['error'] = "Erreur";
 $string['errortoomanylogins'] = "Désolé, le nombre maximum de tentatives a été atteint. Veuillez redémarrer votre navigateur Web.";
 $string['errorwhenconfirming'] = "Votre inscription n'a pas pu être confirmée en raison d'une erreur. Si vous avez cliqué sur un lien dans un message e-mail pour parvenir à cette page, assurez-vous que la ligne de ce message n'a pas été coupée. Il vous sera peut-être nécessaire de couper et coller pour reconstruire correctement le lien.";
 $string['existing'] = "Existant";
-$string['existingadmins'] = "Administrateurs existant";
+$string['existingadmins'] = "Administrateurs existants";
 $string['existingcourse'] = "Cours existant";
 $string['existingcourseadding'] = "Cours existant, en y ajoutant les données";
 $string['existingcoursedeleting'] = "Cours existant, en le supprimant d'abord";
-$string['existingcreators'] = "Responsables de cours existant";
+$string['existingcreators'] = "Responsables de cours existants";
 $string['existingstudents'] = "Étudiants inscrits";
-$string['existingteachers'] = "Enseignants existant";
+$string['existingteachers'] = "Enseignants existants";
 $string['feedback'] = "Feedback";
 $string['filemissing'] = "\$a est manquant";
 $string['files'] = "Fichiers";
@@ -377,31 +334,13 @@ $string['gdnot'] = "GD n'est pas installé";
 $string['gpl'] = "Copyright (C) 2001-2003 Martin Dougiamas (http://dougiamas.com)
 
 This program is free software; you can redistribute it and/or modify
-
-
-
 it under the terms of the GNU General Public License as published by
-
-
-
 the Free Software Foundation; either version 2 of the License, or
-
-
-
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
-
-
-
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-
-
-
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-
-
-
 GNU General Public License for more details:
 
 http://www.gnu.org/copyleft/gpl.html";
@@ -569,38 +508,20 @@ Le mot de passe de votre compte sur « \$a->sitename  » a été remplacé par un nou
 
 Les informations pour vous identifier sont désormais :
 
-
-
 nom d'utilisateur : \$a->username
-
-
-
 mot de passe : \$a->newpassword
 
 Merci de visiter cette page afin de changer de mot de passe :
-
-
 
 \$a->link
 
 Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître comme un lien de couleur bleue qu'il vous suffit de cliquer.
 
-
-
 Si cela ne fonctionne pas, copiez et collez ce lien dans la barre d'adresse de votre navigateur Web.
 
 Cordialement,
-
-
-
 -- 
-
-
-
 \$a->admin
-
-
-
 Administrateur du site '\$a->sitename'";
 $string['newpicture'] = "Nouvelle image";
 $string['newsitem'] = "article";
@@ -662,13 +583,7 @@ $string['passwordrecovery'] = "Oui, j'ai besoin d'aide pour me connecter";
 $string['passwordsdiffer'] = "Les mots de passe ne correspondent pas";
 $string['passwordsent'] = "Le mot de passe a été envoyé";
 $string['passwordsenttext'] = "<p>Un message vous a été envoyé à cette adresse : \$a->email.
-
-
-
 <P><B>Merci de lire ce message afin de connaître votre nouveau mot de passe</B>
-
-
-
 <P>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href=\$a->link>modifier</a> afin qu'il vous soit plus facile de vous en souvenir.";
 $string['people'] = "La classe";
 $string['personalprofile'] = "Fiche personnelle";
@@ -694,11 +609,8 @@ $string['recentactivity'] = "Activité récente";
 $string['registration'] = "Enregistrement de Moodle";
 $string['registrationemail'] = "Notifications par e-mail";
 $string['registrationinfo'] = "<p>Cette page vous permet d'enregistrer votre site Moodle sur moodle.org. L'enregistrement est gratuit. Le principal avantage de l'enregistrement est l'inscription à une liste e-mail utilisée pour d'importantes informations telles que des alertes de sécurité et des mises à jour de Moodle.</p>
-
 <p>Vos données seront conservées confidentiellement, et ne seront jamais vendues ou divulguées à quiconque. Ces informations ne sont recueillies que pour l'assistance techniques et à des fins de statistique au sujet de la communauté Moodle.</p>
-
 <p>Si vous le désirez, le nom de votre site, votre pays et URL peuvent être ajoutés à la liste publique des sites Moodle.</p>
-
 <p>Les nouveaux enregistrements sont vérifiés manuellement avant d'être ajoutés à la liste. Toutefois, une fois dans cette liste, vous pouvez modifier votre enregistrement en tout temps en remplissant et validant à nouveau ce formulaire.</p>";
 $string['registrationno'] = "Non, je ne désire pas recevoir de messages par e-mail";
 $string['registrationsend'] = "Envoyer les informations d'enregistrement à moodle.org";
@@ -732,17 +644,8 @@ $string['search'] = "Rechercher";
 $string['searchagain'] = "Rechercher de nouveau";
 $string['searchcourses'] = "Rechercher des cours";
 $string['searchhelp'] = "Vous pouvez rechercher plusieurs mots à la fois.<p>
-
-
-
 mot: rechercher toutes les occurences du mot dans le texte.<br />
-
-
-
 +mot: seules les correspondances exactes seront trouvées.<br />
-
-
-
 -word: ne pas inclure les résultats contenant ce mot. ";
 $string['searchresults'] = "Résultats de la recherche";
 $string['sec'] = "sec";
