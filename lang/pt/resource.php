@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 + (2004083100)
+      // resource.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addresource'] = 'Adicionar documento';
 $string['chooseafile'] = 'Escolha ou envie um ficheiro';
+$string['chooseparameter'] = 'Escolha parâmetro';
 $string['configdefaulturl'] = 'Este valor usa-se como valor inicial para o campo URL no formulário de criação de documentos baseados em URLs.';
 $string['configfilterexternalpages'] = 'Se activar esta configuração, todos os documentos externos (páginas web, ficheiros HTML enviados) serão processados pelos filtros que estiverem activos no momento (por exemplo o filtro que sublinha palavras do glossário). Essa configuração poderá tornar as páginas das suas disciplinas muito mais lentas, pelo qual deveria usar esta opção unicamente se achar que é absolutamente necessária.';
 $string['configframesize'] = 'Quando uma página web ou um ficheiro enviado é visualizado num frame, este valor é o tamanho (em pixeis) do frame de cima (onde se encontra o sistema de navegação).';
@@ -20,9 +21,11 @@ $string['configpopupwidth'] = 'Qual deverá ser a largura, por omissão, para nova
 $string['configwebsearch'] = 'Quando se inserir uma URL, por exemplo uma página web o um apontador, esta URL será apresentada aos utilizadores para lhes ajudar a procurar o URL desejado.';
 $string['directlink'] = 'Apontador direito para este ficheiro';
 $string['directoryinfo'] = 'Serão apresentados todos os ficheiros no directório seleccionado.';
+$string['display'] = 'Janela';
 $string['editingaresource'] = 'Editar documento';
+$string['encryptedcode'] = 'Código encriptado';
 $string['example'] = 'Exemplo';
-$string['exampleurl'] = 'http://www.exemple.com/directorio/ficheiro.html';
+$string['exampleurl'] = 'http://www.exemplo.com/directorio/ficheiro.html';
 $string['fetchclienterror'] = 'Foi detectado um erro no seu navegador web enquanto tentava aceder à página (provavelmente o URL está errado).';
 $string['fetcherror'] = 'Foi detectado um erro no acesso para a página web.';
 $string['fetchservererror'] = '<p>Foi detectado um erro no servidor web remoto enquanto se tentava aceder à página (provavelmente algum programa falhou).</p>';
@@ -49,6 +52,10 @@ $string['newwindowopen'] = 'Mostrar este documento em janela separada';
 $string['note'] = 'Nota';
 $string['notefile'] = 'Para subir mais ficheiros no curso (para aparecerem nesta lista) use o <a href=\'$a\'>Gestor de Ficheiros</a>.';
 $string['notypechosen'] = 'Tem que escolher um tipo. Use seu botão de voltar para traz no navegador e tente novamente.';
+$string['pagedisplay'] = 'Mostrar este recurso dentro da janela actual';
+$string['pagewindow'] = 'Na mesma janela';
+$string['parameter'] = 'Parâmetro';
+$string['parameters'] = 'Parâmetros';
 $string['popupresource'] = 'Este documento deverá aparecer numa nova janela.';
 $string['popupresourcelink'] = 'Se não foi assim, click aqui: $a';
 $string['resourcetype'] = 'Tipo de documento';
@@ -61,5 +68,12 @@ $string['resourcetype6'] = 'Texto HTML';
 $string['resourcetype7'] = 'Programa';
 $string['resourcetype8'] = 'Texto Wiki';
 $string['resourcetype9'] = 'Directório';
+$string['resourcetypedirectory'] = 'Mostrar um directório';
+$string['resourcetypefile'] = 'Apontador para ficheiro ou página';
+$string['resourcetypehtml'] = 'Escrever página web';
+$string['resourcetypelabel'] = 'Inserir etiqueta';
+$string['resourcetypetext'] = 'Escrever página de texto';
+$string['searchweb'] = 'Procurar página web';
+$string['variablename'] = 'Nome de variável';
 
 ?>
