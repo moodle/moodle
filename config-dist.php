@@ -204,8 +204,14 @@ $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_
 // The next lines are needed both for bounce handling and any other email to module processing.
 // mailprefix must be EXACTLY four characters.
 // Uncomment and customise this block for Postfix 
-//$CFG->mailprefix = 'mdl+'; // + is postfix default separator. 
+//$CFG->mailprefix = 'mdl+'; // + is the separator for Exim and Postfix.
+//$CFG->mailprefix = 'mdl-'l // - is the separator for qmail 
 //$CFG->maildomain = 'youremaildomain.com';
+//
+// The following setting will tell Moodle to respect your PHP session 
+// settings. Use this if you want to control session configuration
+// from php.ini, httpd.conf or .htaccess files. 
+//     $CFG->respectsessionsettings = true;
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

@@ -172,29 +172,38 @@ global $THEME;
     //$smarty->compile_dir = $CFG->dataroot .'/cache';
 
 /// Set up session handling 
-    if (empty($CFG->dbsessions)) {   /// File-based sessions
-        if (!empty($CFG->sessiontimeout)) {
-            ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
-        }
-    
-        if (!file_exists($CFG->dataroot .'/sessions')) {
-            make_upload_directory('sessions');
-        }
-        ini_set('session.save_path', $CFG->dataroot .'/sessions');
-
-    } else {                         /// Database sessions
-	    ini_set('session.save_handler', 'user');
-
-	    $ADODB_SESSION_DRIVER  = $CFG->dbtype;
-	    $ADODB_SESSION_CONNECT = $CFG->dbhost;
-	    $ADODB_SESSION_USER    = $CFG->dbuser;
-	    $ADODB_SESSION_PWD     = $CFG->dbpass;
-	    $ADODB_SESSION_DB      = $CFG->dbname;
-	    $ADODB_SESSION_TBL     = $CFG->prefix.'sessions';
+    if(empty($CFG->respectsessionsettings)) {
+        if (empty($CFG->dbsessions)) {   /// File-based sessions
+            
+            // Some distros disable GC by setting probability to 0
+            // overriding the PHP default of 1 
+            // (gc_probability is divided by gc_divisor, which defaults to 1000)
+            if (ini_get('session.gc_probability') == 0) {
+                ini_set('session.gc_probability', 1);
+            }
+         
+            if (!empty($CFG->sessiontimeout)) {
+                ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
+            }
         
-	    require_once($CFG->libdir. '/adodb/session/adodb-session.php');
+            if (!file_exists($CFG->dataroot .'/sessions')) {
+                make_upload_directory('sessions');
+            }
+            ini_set('session.save_path', $CFG->dataroot .'/sessions');
+    
+        } else {                         /// Database sessions
+    	    ini_set('session.save_handler', 'user');
+    
+    	    $ADODB_SESSION_DRIVER  = $CFG->dbtype;
+    	    $ADODB_SESSION_CONNECT = $CFG->dbhost;
+    	    $ADODB_SESSION_USER    = $CFG->dbuser;
+    	    $ADODB_SESSION_PWD     = $CFG->dbpass;
+    	    $ADODB_SESSION_DB      = $CFG->dbname;
+    	    $ADODB_SESSION_TBL     = $CFG->prefix.'sessions';
+            
+    	    require_once($CFG->libdir. '/adodb/session/adodb-session.php');
+        }
     }
-
 /// Set sessioncookie variable if it isn't already
     if (!isset($CFG->sessioncookie)) {
         $CFG->sessioncookie = '';
