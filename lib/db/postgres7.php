@@ -470,6 +470,11 @@ function main_upgrade($oldversion=0) {
         table_column("course", "", "blockinfo", "varchar", "255", "", "", "not null", "modinfo");
     }
 
+    if ($oldversion < 2004042600) {     /// Rebuild course caches for resource icons
+        include_once("$CFG->dirroot/course/lib.php");
+        rebuild_course_cache();
+    }
+
     return $result;
 
 }
