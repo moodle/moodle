@@ -129,6 +129,17 @@
     helpbutton("guestaccess", get_string("opentoguests")); ?>
     </td>
 </tr>
+<?php
+    if ($CFG->enrol != internal) {
+?>
+<tr valign=top>
+    <td align="right"><P><?php  print_string("cost") ?>:</td>
+    <td><input type="text" name="cost" maxlength="6" size=6 value="<?php  p($form->cost) ?>">
+    </td>
+</tr>
+<?php
+    }
+?>
 <tr valign=top>
     <td align="right"><P><?php  print_string("hiddensections") ?>:</td>
     <td><?php
