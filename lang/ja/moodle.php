@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004072901)
+      // moodle.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['action'] = '操作';
@@ -9,7 +9,7 @@ $string['activity'] = '活動';
 $string['activityclipboard'] = 'この活動を移動する:<b>$a</b>';
 $string['activityiscurrentlyhidden'] = '申し訳ございません、この活動は現在非表示にされています';
 $string['activitymodule'] = '活動モジュール';
-$string['activityreport'] = '活動報告';
+$string['activityreport'] = '活動レポート';
 $string['activityselect'] = '移動するためにこの活動を選択する';
 $string['activitysince'] = '$a 以降の活動';
 $string['add'] = '追加';
