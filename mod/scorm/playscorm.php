@@ -160,7 +160,8 @@
 	</table>
     </td>
     <td class="fullscreen" height="90%">
-    	<iframe name="main" class="fullscreen" height="100%" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe>
+    	<iframe name="main" class="fullscreen" height="640" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe>
+    	<!--<iframe name="main" class="fullscreen" height="100%" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe> -->
     </td></tr>
     </table>
 </body>

@@ -60,7 +60,7 @@ function scorm_upgrade($oldversion) {
 			userid integer NOT NULL default '0',
 			scormid integer NOT NULL default '0',
 			scoid integer NOT NULL default '0',
-			element varchar(255) NOT NULL deafult '',
+			element varchar(255) NOT NULL default '',
 			value text NOT NULL default '',
 			PRIMARY KEY (userid, scormid, scoid, element),
 			UNIQUE (userid, scormid, scoid, element)
