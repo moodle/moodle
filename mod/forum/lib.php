@@ -1407,15 +1407,15 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     global $THEME, $USER, $CFG;
 
-    static $stredit, $strdelete, $strreply, $strparent, $threadedmode, $isteacher, $adminedit;
+    static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading, $threadedmode, $isteacher, $adminedit;
 
     if (empty($stredit)) {
-        $stredit = get_string("edit", "forum");
-        $strdelete = get_string("delete", "forum");
-        $strreply = get_string("reply", "forum");
-        $strparent = get_string("parent", "forum");
-        $strprune = get_string("prune", "forum");
-        $strpruneheading = get_string("pruneheading", "forum");
+        $stredit = get_string('edit', 'forum');
+        $strdelete = get_string('delete', 'forum');
+        $strreply = get_string('reply', 'forum');
+        $strparent = get_string('parent', 'forum');
+        $strpruneheading = get_string('pruneheading', 'forum');
+        $strprune = get_string('prune', 'forum');
         $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
         $isteacher = isteacher($courseid);
         $adminedit = (isadmin() and !empty($CFG->admineditalways));
@@ -1486,40 +1486,37 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo $attachedimages;
     }
 
-    echo "<p align=right><font size=-1>";
+    $commands = array();
 
     if ($post->parent) {
         if ($threadedmode) {
-            echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">$strparent</a> | ";
+            $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">$strparent</a>";
         } else {
-            echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#$post->parent\">$strparent</a> | ";
+            $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#$post->parent\">$strparent</a>";
         }
     }
 
     $age = time() - $post->created;
     if ($ownpost or $adminedit) {
         if (($age < $CFG->maxeditingtime) or $adminedit) {
-            echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">$stredit</a> | ";
+            $commands[] =  "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">$stredit</a>";
         }
     }
 
     if (isteacheredit($courseid) and $post->parent) {
-        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?prune=$post->id\" title=\"$strpruneheading\">$strprune</a> | ";
+        $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/post.php?prune=$post->id\" title=\"$strpruneheading\">$strprune</a>";
     }
 
     if (($ownpost and $age < $CFG->maxeditingtime) or $isteacher) {
-        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
-        if ($reply) {
-            echo " | ";
-        } else {
-            echo "&nbsp;&nbsp;";
-        }
+        $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
     }
+
     if ($reply) {
-        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>";
-        echo "&nbsp;&nbsp;";
+        $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>";
     }
-    echo "</p>";
+    echo "<p align=right><font size=-1>";
+    echo implode(' | ', $commands).'&nbsp;&nbsp;';
+    echo "</font></p>";
 
     echo "<div align=right><p align=right>";
 
