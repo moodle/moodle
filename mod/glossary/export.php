@@ -5,7 +5,7 @@
     
     require_variable($id);           // Course Module ID
 
-    optional_variable($tab,GLOSSARY_APPROVAL_VIEW);
+    optional_variable($tab,GLOSSARY_STANDARD_VIEW);
     optional_variable($l,"ALL");
 
     if (! $cm = get_record("course_modules", "id", $id)) {

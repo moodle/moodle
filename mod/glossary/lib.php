@@ -11,7 +11,10 @@ define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);
 define("GLOSSARY_STANDARD_VIEW", 0);
 define("GLOSSARY_CATEGORY_VIEW", 1);
 define("GLOSSARY_DATE_VIEW", 2);
-define("GLOSSARY_APPROVAL_VIEW", 3);
+define("GLOSSARY_ADDENTRY_VIEW", 3);
+define("GLOSSARY_IMPORT_VIEW", 4);
+define("GLOSSARY_EXPORT_VIEW", 5);
+define("GLOSSARY_APPROVAL_VIEW", 6);
 
 define("GLOSSARY_FORMAT_SIMPLE", 0);
 define("GLOSSARY_FORMAT_CONTINUOUS", 1);
@@ -93,6 +96,7 @@ function glossary_delete_instance($id) {
             $ents = substr($ents,0,-1);
             if ($ents) {
                 delete_records_select("glossary_comments", "entryid in ($ents)");
+                delete_records_select("glossary_alias", "entryid in ($ents)");
             }
         }
         delete_records("glossary_entries", "glossaryid", "$glossary->id");
@@ -214,15 +218,18 @@ function glossary_log_info($log) {
                               AND u.id = '$log->userid'");
 }
 
-function glossary_get_entries($glossaryid, $entrylist) {
+function glossary_get_entries($glossaryid, $entrylist, $pivot = "") {
     global $CFG;
+    if ($pivot) {
+       $pivot .= ",";
+    }
 
-    return get_records_sql("SELECT id,userid,concept,definition,format
+    return get_records_sql("SELECT $pivot id,userid,concept,definition,format
                             FROM {$CFG->prefix}glossary_entries
                             WHERE glossaryid = '$glossaryid'
                             AND id IN ($entrylist)");
 }
-function glossary_get_entries_sorted($glossary, $where="", $orderby="") {
+function glossary_get_entries_sorted($glossary, $where="", $orderby="", $pivot = "") {
 global $CFG;
     if ($where) {
        $where = " and $where";
@@ -230,12 +237,15 @@ global $CFG;
     if ($orderby) {
        $orderby = " ORDER BY $orderby";
     }
-    return      get_records_sql("SELECT *
+    if ($pivot) {
+       $pivot .= ",";
+    }
+    return      get_records_sql("SELECT $pivot *
                                  FROM {$CFG->prefix}glossary_entries 
                                  WHERE (glossaryid = $glossary->id or sourceglossaryid = $glossary->id) $where $orderby");
 }
 
-function glossary_get_entries_by_category($glossary, $cat, $where="", $orderby="") {
+function glossary_get_entries_by_category($glossary, $cat, $where="", $orderby="", $pivot = "") {
 global $CFG;
     if ($where) {
        $where = " and $where";
@@ -243,7 +253,10 @@ global $CFG;
     if ($orderby) {
        $orderby = " ORDER BY $orderby";
     }
-    return      get_records_sql("SELECT ge.*
+    if ($pivot) {
+       $pivot .= ",";
+    }
+    return      get_records_sql("SELECT $pivot ge.*
                                  FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories c
                                  WHERE (ge.id = c.entryid and c.categoryid = $cat) and
                                              (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) $where $orderby");
@@ -284,9 +297,20 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $tab="",$cat="") 
         }
     }
 }
-function  glossary_print_entry_concept($entry) {
-        echo $entry->concept;
-}
+function  glossary_print_entry_concept($entry, $alias = true) {
+static $glossary; // to avoid unnecessary calls when dealing with the same glossary
+static $cm;
+    echo $entry->concept;
+/*
+    if ($alias) {
+        if ($glossary->id != $entry->glossaryid) {
+            $glossary = get_record("glossary","id",$entry->glossaryid);
+            $cm = get_coursemodule_from_instance("glossary", $glossary->id, $glossary->course);
+        }
+        echo " <a title=\"" . get_string("editalias","glossary") . "\" href=\"alias.php?id=$cm->id&eid=$entry->id\"><img border=0 src=alias.gif></a>";
+    }
+*/
+ }
 
 function glossary_print_entry_definition($entry) {
     $definition = str_ireplace($entry->concept,"<nolink>$entry->concept</nolink>",$entry->definition);
@@ -397,6 +421,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab="",$cat
             echo " <font size=-1>" . get_string("exportedentry","glossary") . "</font>";
         }
     }
+    echo "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
 }
 
 function glossary_search_entries($searchterms, $glossary, $includedefinition) {
@@ -806,6 +831,10 @@ function glossary_print_approval_menu($cm, $glossary, $l, $sortkey, $sortorder =
     glossary_print_all_links($cm, $glossary,$l, $tab);
 	 
     glossary_print_sorting_links($cm, $sortkey,$sortorder, $tab);
+}
+
+function glossary_print_addentry_menu($cm, $glossary, $l, $sortkey, $sortorder = "", $tab=GLOSSARY_STANDARD_VIEW) {
+    echo '<center>' . get_string("explainaddentry","glossary") . '<p>';
 }
 
 function glossary_print_alphabet_menu($cm, $glossary, $l, $sortkey, $sortorder = "", $tab=GLOSSARY_STANDARD_VIEW) {

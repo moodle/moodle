@@ -1,0 +1,84 @@
+<?php
+
+    echo '<p align="center">';
+    $glossary_tCFG->TabTableBGColor = $THEME->cellheading;
+    $glossary_tCFG->ActiveTabColor = $THEME->cellheading;
+    $glossary_tCFG->InactiveTabColor = $THEME->cellcontent2;
+    $glossary_tCFG->InactiveFontColor= $THEME->hidden;
+    $glossary_tCFG->TabTableWidth = "70%";
+    $glossary_tCFG->TabsPerRow = 4;
+    $glossary_tCFG->TabSeparation = 4;
+
+    $data[GLOSSARY_STANDARD_VIEW]->caption = get_string("standardview", "glossary");
+    $data[GLOSSARY_CATEGORY_VIEW]->caption = get_string("categoryview", "glossary");
+    $data[GLOSSARY_DATE_VIEW]->caption = get_string("dateview", "glossary");
+    if (!isguest()) {
+        if ( isteacher($course->id) or $glossary->studentcanpost  ) {
+            $data[GLOSSARY_ADDENTRY_VIEW]->caption = get_string("addentry", "glossary");
+            $data[GLOSSARY_ADDENTRY_VIEW]->link = "edit.php?id=$cm->id";
+        }
+    }
+
+    if ( isteacher($course->id) ) {
+        $data[GLOSSARY_IMPORT_VIEW]->caption = "Import Entries";
+        $data[GLOSSARY_EXPORT_VIEW]->caption = "Export Entries";
+
+//        $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id&tab=$tab";
+//        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&tab=$tab";
+    }
+
+    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_DATE_VIEW;
+    if ( $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
+        $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id";
+        $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_CATEGORY_VIEW;
+    }
+
+
+
+    if (isteacher($course->id)) {
+        $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");
+        $data[GLOSSARY_APPROVAL_VIEW]->link = "";
+
+        $hiddenentries = get_records_select("glossary_entries","glossaryid  = $glossary->id and approved = 0");
+        if ($hiddenentries) {
+            $data[GLOSSARY_APPROVAL_VIEW]->caption .= "<br><font size=1>(" . count($hiddenentries) . " " . get_string("entries","glossary") . ")</font>";
+            $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_APPROVAL_VIEW;
+        } elseif ( $tab == GLOSSARY_APPROVAL_VIEW ) {
+            $tab = $framebydefault;
+        }
+    } elseif ( $tab == GLOSSARY_APPROVAL_VIEW ) {
+        $tab = $framebydefault;
+    }
+
+/// printing header of the current tab
+    echo '<center>';
+    glossary_print_tabbed_table_start($data, $tab, $glossary_tCFG);
+    switch ($tab) {
+        case GLOSSARY_CATEGORY_VIEW:
+            glossary_print_categories_menu($course, $cm, $glossary, $cat, $category);
+        break;
+        case GLOSSARY_APPROVAL_VIEW:
+            glossary_print_approval_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+        break;
+        case GLOSSARY_ADDENTRY_VIEW:
+            $search = "";
+            $l = "";
+            glossary_print_addentry_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+        break;
+        case GLOSSARY_DATE_VIEW:
+            if (!$sortkey) {
+                $sortkey = 'UPDATE';
+            }
+            if (!$sortorder) {
+                $sortorder = 'desc';
+            }
+        case GLOSSARY_STANDARD_VIEW:
+        default:
+            glossary_print_alphabet_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+            if ($search) {
+                echo "<h3>$strsearch: $search</h3>";
+            } 
+        break;
+    } 
+    echo '<hr>';
+?>

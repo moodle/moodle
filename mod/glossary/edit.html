@@ -22,7 +22,10 @@ if (isset($errors)) {
 </tr>
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("categories","glossary") ?>:</b></p></td>
-    <td>	
+    <td>
+    <table border=0>
+    <tr>
+    <td>
     <?php
         $categories = get_records("glossary_categories","glossaryid",$glossary->id);
         echo "<select size=\"6\" name=\"categories[]\" multiple=\"yes\">";
@@ -41,11 +44,10 @@ if (isset($errors)) {
         }
     ?>
     </select>
-    </td>
-</tr>
-<tr valign=top>
-    <td align=right><p><b><?php echo get_string("entryusedynalink","glossary") ?>:</b></p></td>
     <td>
+    <td width=100%>
+    <table border=0 width=100%>
+        <tr><td align=right width=80%><small><?php echo get_string("entryusedynalink","glossary") ?>:</small></td><td width=20%>
     <script>
         var items = ['casesensitive','fullmatch'];
     </script>
@@ -59,61 +61,38 @@ if (isset($errors)) {
         $selected = "checked";
     }
 ?> 
-    <input type="checkbox" name="usedynalink" value=1 <?php p($selected) ?> onclick="return lockoptions('form','usedynalink', items)"> <?php helpbutton("usedynalink", get_string("usedynalink", "glossary"), "glossary") ?>
+    <input type="checkbox" name="usedynalink" value=1 <?php p($selected) ?> onclick="return lockoptions('form','usedynalink', items)"> <?php helpbutton("usedynalink", strip_tags(get_string("usedynalink"), "glossary"), "glossary") ?>
+        </td></tr>
+        <tr><td align=right width=80%><small><?php echo get_string("casesensitive","glossary") ?>:</small></td><td width=20%>
+<?php
+    $selected = "";
+    if ( isset($newentry->casesensitive) ) {
+        if ($newentry->casesensitive) {
+            $selected = "checked";
+        }
+    } elseif ( $CFG->cnfcasesensitive ) {
+        $selected = "checked";
+    }
+?> 
+    <input type="checkbox" name="casesensitive" value=1 <?php p($selected) ?>> <?php helpbutton("casesensitive", strip_tags(get_string("casesensitive", "glossary")), "glossary") ?>
+        </td></tr>
+        <tr><td align=right width=80%><small><?php echo get_string("fullmatch","glossary") ?>:</small></td><td width=20%>
+<?php
+    $selected = "";
+    if ( isset($newentry->fullmatch) ) {
+        if ($newentry->fullmatch) {
+            $selected = "checked";
+        }
+    } elseif ( $CFG->cnffullmatch ) {
+        $selected = "checked";
+    }
+?> 
+    <input type="checkbox" name="fullmatch" value=1 <?php p($selected) ?>> <?php helpbutton("fullmatch", strip_tags(get_string("fullmatch", "glossary")), "glossary") ?>
+        </td></tr>
+    </table>
     </td>
-</tr>
-<tr valign=top>
-    <td align=right><p><b><?php echo get_string("casesensitive","glossary") ?>:</b></p></td>
-    <td>
-    <select size="1" name="casesensitive">
-     <option value=1 <?php
-      if ( isset($newentry->casesensitive) ) {
-          if ( $newentry->casesensitive ) {
-             echo "selected";
-          }
-      } elseif ( $CFG->cnfcasesensitive ) {
-          echo "selected";
-      }
-      ?> 
-      ><?php echo get_string("yes") ?></option>
-     <option value=0 <?php
-      if ( isset($newentry->casesensitive) ) {
-          if ( !$newentry->casesensitive ) {
-             echo "selected";
-          }
-      } elseif ( !$CFG->cnfcasesensitive ) {
-          echo "selected";
-      }
-      ?>><?php echo get_string("no") ?>
-     </option>
-     </select> <?php helpbutton("casesensitive", get_string("casesensitive", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign=top>
-    <td align=right><p><b><?php echo get_string("fullmatch","glossary") ?>:</b></p></td>
-    <td>
-    <select size="1" name="fullmatch">
-     <option value=1 <?php
-      if ( isset($newentry->fullmatch) ) {
-          if ( $newentry->fullmatch ) {
-             echo "selected";
-          }
-      } elseif ( $CFG->cnffullmatch ) {
-          echo "selected";
-      }
-      ?> 
-      ><?php echo get_string("yes") ?></option>
-     <option value=0 <?php
-      if ( isset($newentry->fullmatch) ) {
-          if ( !$newentry->fullmatch ) {
-             echo "selected";
-          }
-      } elseif ( !$CFG->cnffullmatch ) {
-          echo "selected";
-      }
-      ?>><?php echo get_string("no") ?>
-     </option>
-     </select> <?php helpbutton("fullmatch", get_string("fullmatch", "glossary"), "glossary") ?>
+    </tr>
+    </table>
     </td>
 </tr>
 <tr valign=top>
@@ -160,9 +139,9 @@ if (isset($errors)) {
 </tr>
 <tr>
 <td colspan=2>
-	<p align=center>
-	<?php if (isset($newentry->id)) {
-		echo "<input type=\"hidden\" name=e value=\"$newentry->id\">";
+    <p align=center>
+    <?php if (isset($newentry->id)) {
+        echo "<input type=\"hidden\" name=e value=\"$newentry->id\">";
    	 }
 	?>
 

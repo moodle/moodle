@@ -8,6 +8,10 @@
     require_variable($tab,GLOSSARY_STANDARD_VIEW); // format to show the entries
     optional_variable($sortkey,"UPDATE");          // Sorting key if TAB = GLOSSARY_DATE_VIEW
     optional_variable($sortorder,"asc");           // Sorting order if TAB = GLOSSARY_DATE_VIEW
+    optional_variable($l,"ALL");          
+    optional_variable($eid);          
+    optional_variable($search);
+    optional_variable($cat,GLOSSARY_SHOW_ALL_CATEGORIES);          
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -26,16 +30,26 @@
         error("You must be logged to use this page.");
     } 
 
+    if ( $eid ) {
+        $l = '';
+        $tab = GLOSSARY_STANDARD_VIEW;
+    }
 /// Generating the SQL based on the format to show
     switch ($tab) {
     case GLOSSARY_CATEGORY_VIEW:
+        $where = '';
+        if ($cat) {
+            if ( $cat != GLOSSARY_SHOW_ALL_CATEGORIES and $cat != GLOSSARY_SHOW_NOT_CATEGORISED ) {
+                    $where = 'and c.id = ' . $cat;
+            }
+        }
         $entries = get_records_sql("SELECT c.name pivot, e.*
                                     FROM {$CFG->prefix}glossary_entries e,
                                          {$CFG->prefix}glossary_entries_categories ec,
                                          {$CFG->prefix}glossary_categories as c
                                     WHERE e.id = ec.entryid AND ec.categoryid = c.id AND
                                           (e.glossaryid = $glossary->id or e.sourceglossaryid = $glossary->id)
-                                          AND e.approved != 0
+                                          AND e.approved != 0 $where
                                     ORDER BY c.name, e.concept");
 
     break;
@@ -78,14 +92,30 @@
         break;
         }
 
+        if ( $l ) {
+            if ($l != 'ALL' and $l != 'SPECIAL') {
+                switch ($CFG->dbtype) {
+                case 'postgres7':
+                    $where = 'and substr(ucase(concept),1,' .  strlen($l) . ') = \'' . strtoupper($l) . '\'';
+                break;
+                case 'mysql':
+                    $where = 'and left(ucase(concept),' .  strlen($l) . ") = '$l'";
+                break;
+                default:
+                    $where = '';
+                }
+            }
+        } elseif ($eid) {
+            $where = " and e.id = $eid";
+        }
+
         $entries = get_records_sql("SELECT $pivot pivot, e.*
                                     FROM {$CFG->prefix}glossary_entries e
                                     WHERE (e.glossaryid = $glossary->id or e.sourceglossaryid = $glossary->id)
-                                          AND e.approved != 0
+                                          AND e.approved != 0 $where
                                     ORDER BY e.concept $sortorder");
     break;
     } 
-
 
     echo '<p><STRONG>' . get_string("course") . ': <i>' . $course->fullname . '</i><br />';
     echo get_string("modulename","glossary") . ': <i>' . $glossary->name . '</i></STRONG></p>';

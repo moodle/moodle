@@ -67,7 +67,14 @@
                              "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$concept->concept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
                     }
 
-                    $currentconcept = trim(strip_tags($concept->concept));
+                    $currentconcept = trim(strip_tags(str_replace("|", "\|", $concept->concept)));
+                    if ( !$concept->category ) {
+                        if ( $aliases = get_records("glossary_alias","entryid",$concept->id) ) {
+                            foreach ($aliases as $alias) {
+                                $currentconcept .= "|" . trim(strip_tags(str_replace("|", "\|", $alias->alias)));
+                            }
+                        }
+                    }
                     $text = glossary_link_concepts($text,$currentconcept,$href_tag_begin, "</a>",$concept->casesensitive,$concept->fullmatch);
                 }
             }

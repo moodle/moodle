@@ -188,10 +188,25 @@ print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullna
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
               "", true, "", navmenu($course, $cm));
 
-print_heading($glossary->name);
+    echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
+    echo '</b></font></p>';
 
+/// Info box
+
+    if ( $glossary->intro ) {
+        print_simple_box_start('center','70%');
+        echo format_text($glossary->intro);
+        print_simple_box_end();
+    }
+
+/// Tabbed browsing sections
+$tab = GLOSSARY_ADDENTRY_VIEW;
+include("tabs.html");
 
 include("edit.html");
+
+echo '</center>';
+glossary_print_tabbed_table_end();
 
 print_footer($course);
 
