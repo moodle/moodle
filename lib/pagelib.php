@@ -19,6 +19,21 @@ if(record_exists('block_instance', 'pagetype', 'course')) {
 }
 // End of dirty compatibility hack -- remove this before 1.5 goes gold
 
+function page_import_types($path) {
+    global $CFG;
+    $path = clean_param($path, PARAM_PATH);
+    $file = $CFG->dirroot.'/'.$path.'pagelib.php';
+
+    if(is_file($file)) {
+        require($file);
+        if(!isset($DEFINEDPAGES)) {
+            error('Imported '.$file.' but found no page classes');
+        }
+        return $DEFINEDPAGES;
+    }
+    return false;
+}
+
 /**
  * Factory function page_create_object(). Called with a numeric ID for a page, it autodetects
  * the page type, constructs the correct object and returns it.
