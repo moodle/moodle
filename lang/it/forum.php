@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2003111400)
+      // forum.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -97,6 +97,8 @@ $string['rating'] = 'Valutazione';
 $string['ratingeveryone'] = 'Tutti possono valutare i messaggi';
 $string['ratingno'] = 'Nessuna valutazione';
 $string['ratingonlyteachers'] = 'Solo $a può valutare i messaggi';
+$string['ratingpublic'] = '$a può vedere le valutazioni di tutti';
+$string['ratingpublicnot'] = '$a può vedere solo le sue valutazioni';
 $string['ratings'] = 'Voti';
 $string['ratingssaved'] = 'Voti archiviati';
 $string['ratingsuse'] = 'Utilizza valutazioni';

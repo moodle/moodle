@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003111400)
+      // quiz.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -7,6 +7,7 @@ $string['addingquestions'] = 'Questa parte della pagina é dove gestisci il tuo a
 $string['addquestions'] = 'Aggiungi domande';
 $string['addquestionstoquiz'] = 'Aggiungi domande al quiz attuale';
 $string['addselectedtoquiz'] = 'Aggiungi selezione al quiz';
+$string['aiken'] = 'Formato Aiken';
 $string['allowreview'] = 'Autorizza revisione';
 $string['alreadysubmitted'] = 'È probabile che tu abbia già presentato questo tentativo';
 $string['alwaysavailable'] = 'Sempre disponibile';
@@ -15,6 +16,7 @@ $string['answerhowmany'] = 'Una risposta oppure risposte multiple?';
 $string['answersingleno'] = 'Risposte multiple permesse';
 $string['answersingleyes'] = 'Una sola risposta';
 $string['answerswithacceptederrormarginmustbenumeric'] = 'Le risposte con errore accettato devono essere numeriche';
+$string['aon'] = 'Formato AON';
 $string['attempt'] = 'Tentativo $a';
 $string['attemptfirst'] = 'Primo tentativo';
 $string['attemptlast'] = 'Ultimo tentativo';
@@ -41,6 +43,7 @@ $string['corrresp'] = 'Risposta Corretta';
 $string['countdown'] = 'Conto alla rovescia';
 $string['countdownfinished'] = 'Il quiz é terminato, devi sottomettere le tue risposte ora. ';
 $string['countdowntenminutes'] = 'Il quiz terminerà tra dieci minuti';
+$string['coursetestmanager'] = 'Formato Course Test Manager';
 $string['createmultiple'] = 'Crea domande multiple';
 $string['createnewquestion'] = 'Crea una nuova domanda';
 $string['custom'] = 'Formato personalizzato';
@@ -48,8 +51,10 @@ $string['daysavailable'] = 'Giorni disponibili';
 $string['default'] = 'Default';
 $string['defaultgrade'] = 'Punteggio di default della domanda';
 $string['defaultinfo'] = 'La categoria di default per le domande.';
+$string['deleteattemptcheck'] = 'Sei assolutamente sicuro di voler cancellare questi tentativi?';
 $string['deletequestioncheck'] = 'Sei sicuro di voler cancellare \'$a\'?';
 $string['description'] = 'Descrizione';
+$string['discrimination'] = 'Indice di discriminazione';
 $string['eachattemptbuildsonthelast'] = 'Ogni tentativo parte dall\'ultimo';
 $string['editcategories'] = 'Modifica categorie';
 $string['editingdescription'] = 'Modifica una descrizione';
@@ -63,6 +68,7 @@ $string['editingrandom'] = 'Modifica una domanda casuale';
 $string['editingrandomsamatch'] = 'Modifica una domanda a risposta breve con corrispondenze';
 $string['editingshortanswer'] = 'Modifica una domanda a risposta breve';
 $string['editingtruefalse'] = 'Modifica una domanda vero/falso';
+$string['editquestions'] = 'Modifica domande';
 $string['false'] = 'Falso';
 $string['feedback'] = 'Commento';
 $string['fileformat'] = 'Formato file';
@@ -80,6 +86,7 @@ $string['fractionsnomax'] = 'Una delle risposte deve essere 100%%, perchè sia
 <BR>possibile una votazione piena per questa domanda
 <BR> Vuoi tornare indietro e correggere?
 <BR>Vuoi tornare indietro e risolvere la questione?';
+$string['gift'] = 'Formato GIFT';
 $string['gradeaverage'] = 'Voto medio';
 $string['gradehighest'] = 'Voto più alto';
 $string['grademethod'] = 'Metodo di valutazione';
@@ -169,6 +176,7 @@ $string['type'] = 'Tipo';
 $string['viewallanswers'] = 'Vedi $a quiz completati';
 $string['viewallreports'] = 'Vedi risultati per $a tentativi';
 $string['webct'] = 'Formato WebCT';
+$string['withsummary'] = 'con Statistiche generali';
 $string['yourfinalgradeis'] = 'Il tuo voto finale per questo quiz è: $a';
 
 ?>

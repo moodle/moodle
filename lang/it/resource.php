@@ -1,10 +1,23 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003111400)
+      // resource.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
 $string['chooseafile'] = 'Scegli o aggiorna un file';
+$string['configdefaulturl'] = 'Questo valore è utilizzato come preimpostazione degli URL quando si crea una nuova risorsa con URL';
+$string['configfilterexternalpages'] = 'Abilitando questa impostazione tutti le risorse esterne (pagine web, file HTML inviati) saranno processati dai filtri definiti attualmente per il sito (come i collegamenti automatici del glossario, per esempio). Attivare questa opzione potrebbe rallentare il caricamento delle pagine del tuo corso in modo significativo - usalo con attenzione e solo se ti serve veramente.';
 $string['configframesize'] = 'Quando una pagina web  o un file é visualizzato in un frame, questa é la dimensione (in pixel) del frame superiore (che contiene la navigazione).';
+$string['configpopup'] = 'Quando ';
+$string['configpopupdirectories'] = 'Le finestre di popup possono mostrare i collegamenti alla directory?';
+$string['configpopupheight'] = 'Altezza standard per le nuove finestre di popup';
+$string['configpopuplocation'] = 'Mostra la barra dell\'indirizzo delle finestre di popup ';
+$string['configpopupmenubar'] = 'Mostra la barra dei menu delle finestre di popup';
+$string['configpopupresizable'] = 'Le finestre di popup possono essere ridimensionate?';
+$string['configpopupscrollbars'] = 'Le finestre di popup possono avere la barra di scorrimento?';
+$string['configpopupstatus'] = 'Le finestre di popup possono mostrare la barra di stato?';
+$string['configpopuptoolbar'] = 'Le finestre di popup possono mostrare la barra strumenti?';
+$string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup';
+$string['configwebsearch'] = 'Quando aggiungi un URL come una Pagina web o un Collegamento web, questo collegamento è offerto come un sito per aiutare gli utenti a cercare l\'URL che vogliono';
 $string['editingaresource'] = 'Edita una risorsa';
 $string['example'] = 'Esempio';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993)
@@ -15,6 +28,9 @@ Constructivism as a Referent for Teaching and Learning. In: K. Tobin
 
 Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.esempio.com/unadirectory/unfile.html';
+$string['fetchclienterror'] = 'E\' stato rilevato un errore con il tuo browser mentre provavo a recuperare la pagina web (potrebbe essere sbagliato l\'URL).';
+$string['fetcherror'] = 'E\' stato rilevato un errore mentre provavo a recuperare la pagina web.';
+$string['fetchservererror'] = 'E\' stato rilevato un errore con il server mentre provavo a recuperare la pagina web (potrebbe esserci un errore nel codice).<br />';
 $string['filename'] = 'Nome del file';
 $string['fulltext'] = 'Testo integrale';
 $string['htmlfragment'] = 'Codice html';
