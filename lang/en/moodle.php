@@ -494,6 +494,7 @@ $string['groupadd'] = 'Add new group';
 $string['groupaddusers'] = 'Add selected to group';
 $string['groupfor'] = 'for group';
 $string['groupinfo'] = 'Info about selected group';
+$string['groupinfoedit'] = 'Edit group settings';
 $string['groupinfomembers'] = 'Info about selected members';
 $string['groupinfopeople'] = 'Info about selected people';
 $string['groupmembers'] = 'Group members';

@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 /**
  * Library of functions for database manipulation.
