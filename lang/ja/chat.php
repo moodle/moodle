@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.1 development (2003073000)
+      // chat.php - created with Moodle 1.1 Beta + (2003082100)
 
 
 $string['beep'] = "ビープ";
@@ -12,6 +12,7 @@ $string['currentusers'] = "現在のユーザ";
 $string['donotusechattime'] = "チャット時間を表示しない";
 $string['enterchat'] = "クリックしてチャットルームに入室";
 $string['errornousers'] = "ユーザが見つかりませんでした!";
+$string['helpchatting'] = "チャットヘルプ";
 $string['idle'] = "アイドル";
 $string['messagebeepseveryone'] = "\$a が全員にビープします!";
 $string['messagebeepsyou'] = "\$a があなたにビープしました!";

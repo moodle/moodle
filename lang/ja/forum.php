@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 development (2003081600)
+      // forum.php - created with Moodle 1.1 Beta + (2003082100)
 
 
 $string['addanewdiscussion'] = "ディスカッショントピックを追加";
@@ -11,6 +11,10 @@ $string['allowsdiscussions'] = "このフォーラムでは一つのディスカッショントピック
 $string['anyfile'] = "全てのファイル";
 $string['attachment'] = "添付ファイル";
 $string['bynameondate'] = "\$a->date - \$a->name の投稿";
+$string['configdisplaymode'] = "表示モードが設定されていない場合のデフォルト表示モードです。";
+$string['configlongpost'] = "この文字長以上の長さ(HTMLは含まない)は長いと考えられます。";
+$string['configmanydiscussions'] = "フォーラムページに表示されるディスカッションの最大数";
+$string['configshortpost'] = "この文字長以下の長さ(HTMLは含まない)は長いと考えられます。";
 $string['couldnotadd'] = "エラーのため投稿出来ませんでした";
 $string['couldnotdeleteratings'] = "申し訳ございません、評価済みのため削除出来ませんでした";
 $string['couldnotdeletereplies'] = "申し訳ございません、返信済みのため削除出来ませんでした";

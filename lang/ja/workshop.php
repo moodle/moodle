@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.1 development (2003081001)
+      // workshop.php - created with Moodle 1.1 Beta + (2003082100)
 
 
 $string['accumulative'] = "累積方式";
@@ -68,6 +68,7 @@ $string['hidegradesbeforeagreement'] = "同意の前に評価を隠す";
 $string['includeteachersgrade'] = "教師の採点を含む";
 $string['listassessments'] = "評価一覧";
 $string['listofallsubmissions'] = "全提出物一覧";
+$string['liststudentsassessments'] = "学生の提出物を一覧表示する";
 $string['managingassignment'] = "課題を管理";
 $string['maximumsize'] = "最大サイズ";
 $string['modulename'] = "ワークショップ";
@@ -134,6 +135,7 @@ $string['scaleyes'] = "2点 Yes/No 評価";
 $string['selfassessment'] = "自己評価";
 $string['showgrades'] = "評価を表示";
 $string['specimenassessmentform'] = "評価見本フォーム";
+$string['studentassessments'] = "\$a 評価";
 $string['studentgrades'] = "\$a 採点数";
 $string['studentsubmissions'] = "\$a 件の提出物";
 $string['studentsubmissionsforassessment'] = "\$a 学生の評価対象提出物";
@@ -148,6 +150,7 @@ $string['teacherscomment'] = "教師のコメント";
 $string['teachersgrade'] = "教師の採点";
 $string['teachersubmissionsforassessment'] = "\$a 教師の評価対象提出物";
 $string['thegradeis'] = "成績は \$a です";
+$string['thereisfeedbackfromtheteacher'] = "\$a のフィードバックがあります";
 $string['theseasessmentsaregradedbytheteacher'] = "これらの評価は \$a により採点されます";
 $string['timeassessed'] = "評価時間";
 $string['title'] = "題名";

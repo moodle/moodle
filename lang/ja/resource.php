@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1 development (2003072101)
+      // resource.php - created with Moodle 1.1 Beta + (2003082100)
 
 
 $string['addresource'] = "リソースを追加する";
+$string['configframesize'] = "フレーム内にウェブページやアップロードしたファイルが表示される場合のトップフレーム(ナビゲーションを含む)のサイズ(ピクセル)です。";
 $string['editingaresource'] = "リソースを編集する";
 $string['example'] = "例";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
