@@ -1040,6 +1040,7 @@ HTMLArea.prototype.updateToolbar = function(noStatus) {
     var text = (this._editMode == "textmode");
     var ancestors = null;
     if (!text) {
+        this.focusEditor(); // Moodle fix for bug Bug #2521
         ancestors = this.getAllAncestors();
         if (this.config.statusBar && !noStatus) {
             this._statusBarTree.innerHTML = HTMLArea.I18N.msg["Path"] + ": "; // clear
