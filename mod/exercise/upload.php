@@ -7,8 +7,6 @@
     require_variable($id);          // course module ID
     $timenow = time();
 
-    $newfile = $HTTP_POST_FILES["newfile"];
-
     // get some esential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -54,55 +52,38 @@
         notify(get_string("notitlegiven", "exercise") );
     }
     else {  
-        if (is_uploaded_file($newfile['tmp_name']) and $newfile['size'] > 0) {
-            if ($newfile['size'] > $exercise->maxbytes) {
-                notify(get_string("uploadfiletoobig", "assignment", $exercise->maxbytes));
-            } 
-            else {
-                $newfile_name = clean_filename($newfile['name']);
-                if ($newfile_name) {
-                    $newsubmission->exerciseid   = $exercise->id;
-                    if (isteacher($course->id)) {
-                        // it's an exercise submission, flag it as such
-                        $newsubmission->userid         = 0;
-                        $newsubmission->isexercise = 1;  // it's a description of an exercise
-                    }
-                    else {
-                        $newsubmission->userid = $USER->id;
-                    }
-                    $newsubmission->title  = $title;
-                    $newsubmission->timecreated  = $timenow;
-                    if ($timenow > $exercise->deadline) {
-                        $newsubmission->late = 1;
-                    }
-                    if (!$newsubmission->id = insert_record("exercise_submissions", $newsubmission)) {
-                        error("exercise upload: Failure to create new submission record!");
-                    }
-                    if (! $dir = exercise_file_area($exercise, $newsubmission)) {
-                        error("Sorry, an error in the system prevents you from uploading files: contact your teacher or system administrator");
-                    }
-                    if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
-                        add_to_log($course->id, "exercise", "submit", "view.php?id=$cm->id", "$exercise->id");
-                        print_heading(get_string("uploadsuccess", "assignment", $newfile_name) );
-                    }
-                    else {
-                        notify(get_string("uploaderror", "assignment") );
-                    }
-                    // clear resubmit flags
-                    if (!set_field("exercise_submissions", "resubmit", 0, "exerciseid", $exercise->id, "userid", $USER->id)) {
-                        error("Exercise Upload: unable to reset resubmit flag");
-                    }
-                } 
-                else {
-                    notify(get_string("uploadbadname", "assignment") );
-                }
+        require_once($CFG->dirroot.'/lib/uploadlib.php');
+        $um = new upload_manager('newfile',false,false,$course,false,$exercise->maxbytes);
+        if ($um->preprocess_files()) {
+            $newsubmission->exerciseid   = $exercise->id;
+            if (isteacher($course->id)) {
+                // it's an exercise submission, flag it as such
+                $newsubmission->userid         = 0;
+                $newsubmission->isexercise = 1;  // it's a description of an exercise
             }
-        }
-        elseif (!is_uploaded_file($newfile['tmp_name']) and !$newfile['size'] > 0 and $newfile['name']) {
-            notify(get_string("uploadfiletoobig", "assignment", $exercise->maxbytes));
-        } else {
-            notify(get_string("uploadnofilefound", "assignment"));
-        }
+            else {
+                $newsubmission->userid = $USER->id;
+            }
+            $newsubmission->title  = $title;
+            $newsubmission->timecreated  = $timenow;
+            if ($timenow > $exercise->deadline) {
+                $newsubmission->late = 1;
+            }
+            if (!$newsubmission->id = insert_record("exercise_submissions", $newsubmission)) {
+                error("exercise upload: Failure to create new submission record!");
+            }
+            $dir = exercise_file_area_name($exercise, $newsubmission);
+            if ($um->save_files($dir)) {
+                add_to_log($course->id, "exercise", "submit", "view.php?id=$cm->id", "$exercise->id");
+                print_heading(get_string("uploadsuccess", "assignment", $um->get_new_filename()) );
+            }
+            // upload manager will print errors.
+            // clear resubmit flags
+            if (!set_field("exercise_submissions", "resubmit", 0, "exerciseid", $exercise->id, "userid", $USER->id)) {
+                error("Exercise Upload: unable to reset resubmit flag");
+            }
+        } 
+        // upload manager will print errors.
     }
     print_continue("view.php?id=$cm->id");
 

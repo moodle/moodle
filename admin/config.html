@@ -476,6 +476,40 @@
     <?php print_string("configmaxbytes") ?>
     </td>
 </tr>
+<tr valign=top>
+    <td align=right><p>runclamonupload:</p></td>
+    <td>
+    <?php
+      unset($options);
+      $options[0] = get_string("no");
+      $options[1] = get_string("yes");
+      
+      choose_from_menu($options,"runclamonupload",$config->runclamonupload,"","","");
+      ?>
+      </td>
+      <td><?php print_string("configrunclamonupload") ?></td>
+</tr>
+<tr valign=top>
+    <td align=right><p>pathtoclam:</p></td>
+    <td><input type="text" name="pathtoclam" size="30" value="<?php echo $config->pathtoclam ?>" /></td>
+    <td><?php print_string("configpathtoclam") ?></td>
+</tr>
+<tr valign=top>
+    <td align=right><p>quarantinedir:</p></td>
+    <td><input type="text" name="quarantinedir" size="30" value="<?php echo $config->quarantinedir ?>" /></td>
+    <td><?php print_string("configquarantinedir") ?></td>
+</tr>
+<tr valign=top>
+    <td align=right><p>clamfailureonupload</p></td>
+    <td><?php
+     unset($options);
+     $options['donothing'] = get_string('configclamdonothing');
+     $options['actlikevirus'] = get_string('configclamactlikevirus');
+  
+    choose_from_menu($options,"clamfailureonupload",$config->clamfailureonupload,"","","");
+    ?></td>  
+    <td><?php print_string("configclamfailureonupload"); ?></td>
+</tr>
 <tr valign="top">
     <td align="right"><p>fullnamedisplay:</td>
     <td>

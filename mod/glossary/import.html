@@ -3,9 +3,9 @@
 <tr>
     <td align="right" valign="top" width="30%"><p><b><?php print_string("filetoimport","glossary") ?>:</b></p></td>
     <td width="70%">
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size() ?>" />
-    <input type="file" name="file" size="40"> <br />
     <?php 
+       require_once($CFG->dirroot.'/lib/uploadlib.php');
+       upload_print_form_fragment(1,array('file'),null,false,null,0,0);
        helpbutton("filetoimport", get_string("filetoimport", "glossary"), "glossary"); 
        print_string("maxsize", "", display_size(get_max_upload_file_size())); 
     ?>

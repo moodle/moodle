@@ -75,6 +75,15 @@
     $form = data_submitted();
     $file = $_FILES["file"];
 
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    $um = new upload_manager('file',false,false,$course,false,0);
+
+    if (!$um->preprocess_files()) {
+        print_continue('import.php?id='.$id);
+        print_footer();
+        die();
+    }
+
     if ($xml = glossary_read_imported_file($file['tmp_name']) ) {
 
         $importedentries = 0;

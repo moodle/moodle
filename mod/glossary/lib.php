@@ -1010,6 +1010,8 @@ function glossary_move_attachments($entry, $glossaryid) {
 
     global $CFG;
 
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+
     $return = true;
 
     if ($entries = get_records_select("glossary_entries", "glossaryid = '$entry->id' AND attachment <> ''")) {
@@ -1021,8 +1023,13 @@ function glossary_move_attachments($entry, $glossaryid) {
                 $newentry = $oldentry;
                 $newentry->glossaryid = $glossaryid;
                 $newentrydir = "$CFG->dataroot/".glossary_file_area_name($newentry);
+                $files = get_directory_list($oldentrydir); // get it before we rename it.
                 if (! @rename($oldentrydir, $newentrydir)) {
                     $return = false;
+                }
+                foreach ($files as $file) {
+                    // this is not tested as I can't find anywhere that calls this function, grepping the source.
+                    clam_change_log($oldentrydir.'/'.$file,$newentrydir.'/'.$file);                    
                 }
             }
         }
@@ -1030,41 +1037,29 @@ function glossary_move_attachments($entry, $glossaryid) {
     return $return;
 }
 
-function glossary_add_attachment($entry, $newfile) {
+function glossary_add_attachment($entry, $inputname) {
 // $entry is a full entry record, including course and glossary
 // $newfile is a full upload array from $_FILES
 // If successful, this function returns the name of the file
 
     global $CFG;
 
-    if (empty($newfile['name'])) {
-        return "";
+    if (!$glossary = get_record("glossary","id",$entry->glossaryid)) {
+        return false;
+    }
+    
+    if (!$course = get_record("course","id",$glossary->course)) {
+        return false;
     }
 
-    $newfile_name = clean_filename($newfile['name']);
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    $um = new upload_manager($inputname,true,false,$course,false,0);
+    $dir = glossary_file_area_name($entry);
 
-    if (valid_uploaded_file($newfile)) {
-        if (! $newfile_name) {
-            notify("This file had a wierd filename and couldn't be uploaded");
-
-        } else if (! $dir = glossary_file_area($entry)) {
-            notify("Attachment could not be stored");
-            $newfile_name = "";
-
-        } else {
-            if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
-                chmod("$dir/$newfile_name", $CFG->directorypermissions);
-                glossary_delete_old_attachments($entry, $newfile_name);
-            } else {
-                notify("An error happened while saving the file on the server");
-                $newfile_name = "";
-            }
-        }
-    } else {
-        $newfile_name = "";
+    if ($um->process_file_uploads($dir)) {
+        return $um->get_new_filename();
     }
-
-    return $newfile_name;
+    // upload manager will take care of errors.
 }
 
 function glossary_print_attachments($entry, $return=NULL, $align="left") {

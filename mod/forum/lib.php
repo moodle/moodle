@@ -1907,6 +1907,8 @@ function forum_move_attachments($discussion, $forumid) {
 
     global $CFG;
 
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+
     $return = true;
 
     if ($posts = get_records_select("forum_posts", "discussion = '$discussion->id' AND attachment <> ''")) {
@@ -1918,8 +1920,12 @@ function forum_move_attachments($discussion, $forumid) {
                 $newpost = $oldpost;
                 $newpost->forum = $forumid;
                 $newpostdir = forum_file_area($newpost);
+                $files = get_directory_list($oldpostdir); // get it before we rename it.
                 if (! @rename($oldpostdir, $newpostdir)) {
                     $return = false;
+                }
+                foreach ($files as $file) {
+                    clam_change_log($oldpostdir.'/'.$file,$newpostdir.'/'.$file);
                 }
             }
         }
@@ -1979,16 +1985,12 @@ function forum_print_attachments($post, $return=NULL) {
     return $imagereturn;
 }
 
-function forum_add_attachment($post, $newfile) {
+function forum_add_attachment($post, $inputname) {
 // $post is a full post record, including course and forum
 // $newfile is a full upload array from $_FILES
 // If successful, this function returns the name of the file
 
     global $CFG;
-
-    if (empty($newfile['name'])) {
-        return "";
-    }
 
     if (!$forum = get_record("forum", "id", $post->forum)) {
         return "";
@@ -1998,35 +2000,13 @@ function forum_add_attachment($post, $newfile) {
         return "";
     }
 
-    $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $forum->maxbytes);
-
-    $newfile_name = clean_filename($newfile['name']);
-
-    if (valid_uploaded_file($newfile)) {
-        if ($maxbytes and $newfile['size'] > $maxbytes) {
-            return "";
-        }
-        if (! $newfile_name) {
-            notify("This file had a wierd filename and couldn't be uploaded");
-
-        } else if (! $dir = forum_file_area($post)) {
-            notify("Attachment could not be stored");
-            $newfile_name = "";
-
-        } else {
-            if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
-                chmod("$dir/$newfile_name", $CFG->directorypermissions);
-                forum_delete_old_attachments($post, $newfile_name);
-            } else {
-                notify("An error happened while saving the file on the server");
-                $newfile_name = "";
-            }
-        }
-    } else {
-        $newfile_name = "";
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    $um = new upload_manager($inputname,true,false,$course,false,$forum->maxbytes);
+    $dir = forum_file_area_name($post);
+    if ($um->process_file_uploads($dir)) {
+        return $um->get_new_filename();
     }
-
-    return $newfile_name;
+    // upload manager will print any errors.
 }
 
 function forum_add_new_post($post) {
@@ -2034,14 +2014,13 @@ function forum_add_new_post($post) {
     $post->created = $post->modified = time();
     $post->mailed = "0";
 
-    $newfile = $post->attachment;
     $post->attachment = "";
 
     if (! $post->id = insert_record("forum_posts", $post)) {
         return false;
     }
 
-    if ($post->attachment = forum_add_attachment($post, $newfile)) {
+    if ($post->attachment = forum_add_attachment($post, 'attachment')) {
         set_field("forum_posts", "attachment", $post->attachment, "id", $post->id);
     }
 
@@ -2060,7 +2039,7 @@ function forum_update_post($post) {
         set_field("forum_discussions", "name", $post->subject, "id", $post->discussion);
     }
 
-    if ($newfilename = forum_add_attachment($post, $post->attachment)) {
+    if ($newfilename = forum_add_attachment($post, 'attachment')) {
         $post->attachment = $newfilename;
     } else {
         unset($post->attachment);
@@ -2101,7 +2080,7 @@ function forum_add_discussion($discussion) {
         return 0;
     }
 
-    if ($post->attachment = forum_add_attachment($post, $discussion->attachment)) {
+    if ($post->attachment = forum_add_attachment($post, 'attachment')) {
         set_field("forum_posts", "attachment", $post->attachment, "id", $post->id); //ignore errors
     }
 

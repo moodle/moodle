@@ -158,9 +158,9 @@ if (isset($errors)) {
 <tr valign="top">
     <td align="right"><p><b><?php print_string("attachment", "glossary") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></p></td>
     <td>
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size($CFG->maxbytes, $course->maxbytes) ?>" />
-    <input type="file" name="attachment" size="40" />
     <?php
+       require_once($CFG->dirroot.'/lib/uploadlib.php');
+       upload_print_form_fragment(1,array('attachment'),null,false,null,$course->maxbytes,0,false);
        helpbutton("attachment", get_string("attachment", "glossary"), "glossary");
        print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes)));
     ?>
@@ -170,8 +170,8 @@ if (isset($errors)) {
 <td colspan="2">
     <p align="center">
     <?php if (isset($newentry->id)) {
-        echo "<input type=\"hidden\" name="e" value=\"$newentry->id\" />";
-      }
+        echo "<input type=\"hidden\" name=\"e\" value=\"$newentry->id\" />";
+    }
   ?>
 
   <input type="hidden" name="husedynalink" value="1" />

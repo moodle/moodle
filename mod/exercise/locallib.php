@@ -2856,6 +2856,8 @@ function exercise_print_time_to_deadline($time) {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_print_upload_form($exercise) {
 
+    global $CFG;
+
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
         }
@@ -2865,10 +2867,9 @@ function exercise_print_upload_form($exercise) {
 
     echo "<div align=\"center\">";
     echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload.php\">";
-    echo " <input type=\"hidden\" name=\"maxbytes\" value=\"$exercise->maxbytes\" />";
     echo " <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-    echo "<b>".get_string("title", "exercise")."</b>: <input name=\"title\" type=\"text\" size=\"60\" maxsize=\"100\" /><br /><br />\n";
-    echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    upload_print_form_fragment(1,array('newfile'),null,true,array('title'),$course->maxbytes,$exercise->maxbytes,false);
     echo " <input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
     echo " (".get_string("maximumupload").": ".display_size($exercise->maxbytes).")\n"; 
     echo "</form>";

@@ -661,6 +661,7 @@ function assignment_print_user_files($assignment, $user) {
     }
 }
 
+// this function should be defunct now that we're using uploadlib.php
 function assignment_delete_user_files($assignment, $user, $exception) {
 // Deletes all the user files in the assignment area for a user
 // EXCEPT for any file named $exception
@@ -680,11 +681,13 @@ function assignment_delete_user_files($assignment, $user, $exception) {
 function assignment_print_upload_form($assignment) {
 // Arguments are objects
 
+    global $CFG;
+
     echo "<div align=CENTER>";
     echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload.php?id=$assignment->id\">";
-    echo " <input type=hidden name=MAX_FILE_SIZE value=\"$assignment->maxbytes\" />";
     echo " <input type=hidden name=id value=\"$assignment->id\" />";
-    echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    upload_print_form_fragment(1,array('newfile'),false,null,0,$assignment->maxbytes,false);
     echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\" />";
     echo "</form>";
     echo "</div>";
