@@ -2,7 +2,7 @@
     //This php script contains all the stuff to backup/restore
     //quiz mods
 
-    //To see, put your terminal to 132cc
+    //To see, put your terminal to 160cc
 
     //This is the "graphical" structure of the quiz mod:
     //
@@ -23,27 +23,27 @@
     //                                                                                           |
     //                                                                                           |
     //                                                                                           |
-    //             --------------------------------------------------------------------------------------
-    //             |             |              |              |                |                       |    
-    //             |             |              |              |                |                       |
-    //             |             |              |              |                |                       |    quiz_randomsamatch
-    //      quiz_truefalse       |       quiz_multichoice      |         quiz_multianswer               |--(CL,pl->id,fk->question)
-    // (CL,pl->id,fk->question)  |   (CL,pl->id,fk->question)  |    (CL,pl->id,fk->question)            |
-    //             .             |              .              |               .                        |
-    //             .      quiz_shortanswer      .       quiz_numerical         .                        |
-    //             .  (CL,pl->id,fk->question)  .  (CL,pl->id,fk->question)    .                        |         quiz_match 
-    //             .             .              .              .               .                        |--(CL,pl->id,fk->question)
-    //             .             .              .              .               .                        |             .
-    //             .             .              .              .               .                        |             .
-    //             .             .              .              .               .                        |             .
-    //             .             .              .              .               .                        |       quiz_match_sub
-    //             .             .              .              .               .                        |--(CL,pl->id,fk->question)
-    //             .............................................................                        |
-    //                                                   .                                              |
-    //                                                   .                                              |
-    //                                                   .                                              |
-    //                                                quiz_answers                                      |
-    //                                         (CL,pk->id,fk->question)----------------------------------
+    //             --------------------------------------------------------------------------------------------------------------
+    //             |             |              |              |                       |                  |                     |    
+    //             |             |              |              |                       |                  |                     |
+    //             |             |              |              |                 quiz_calculated          |                     |    quiz_randomsamatch
+    //      quiz_truefalse       |       quiz_multichoice      |             (CL,pl->id,fk->question)     |                     |--(CL,pl->id,fk->question)
+    // (CL,pl->id,fk->question)  |   (CL,pl->id,fk->question)  |                       .                  |                     |
+    //             .             |              .              |                       .                  |                     |
+    //             .      quiz_shortanswer      .       quiz_numerical                 .            quiz_multianswer.           |
+    //             .  (CL,pl->id,fk->question)  .  (CL,pl->id,fk->question)            .        (CL,pl->id,fk->question)        |         quiz_match 
+    //             .             .              .              .                       .                  .                     |--(CL,pl->id,fk->question)
+    //             .             .              .              .                       .                  .                     |             .
+    //             .             .              .              .                       .                  .                     |             .
+    //             .             .              .              .                       .                  .                     |             .
+    //             .             .              .              .                       .                  .                     |       quiz_match_sub
+    //             .             .              .              .                       .                  .                     |--(CL,pl->id,fk->question)
+    //             ........................................................................................                     |
+    //                                                   .                                                                      |
+    //                                                   .                                                                      |
+    //                                                   .                                                                      |    quiz_numerical_units
+    //                                                quiz_answers                                                              |--(CL,pl->id,fk->question)
+    //                                         (CL,pk->id,fk->question)----------------------------------------------------------
     // 
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -69,6 +69,7 @@
     //     - quiz_match
     //     - quiz_match_sub
     //     - quiz_answers
+    //     - quiz_numerical_units
     //    All this backup info have its own section in moodle.xml (QUESTION_CATEGORIES) and it's generated
     //    before every module backup standard invocation. And only if to backup quizzes has been selected !!
     //    It's invoked with quiz_backup_question_categories. (course independent).
@@ -332,6 +333,8 @@
                 fwrite ($bf,full_tag("ANSWER",$level+1,false,$numerical->answer));
                 fwrite ($bf,full_tag("MIN",$level+1,false,$numerical->min));
                 fwrite ($bf,full_tag("MAX",$level+1,false,$numerical->max));
+                //Now backup numerical_units
+                $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
                 $status =fwrite ($bf,end_tag("NUMERICAL",$level,true));
             }
             //Now print quiz_answers
@@ -412,8 +415,32 @@
         return $status;
     }
 
+    //This function backups quiz_numerical_units from different question types
+    function quiz_backup_numerical_units($bf,$preferences,$question,$level=7) {
 
+        global $CFG;
 
+        $status = true;
+
+        $numerical_units = get_records("quiz_numerical_units","question",$question,"id");
+        //If there are numericals_units
+        if ($numerical_units) {
+            $status =fwrite ($bf,start_tag("NUMERICAL_UNITS",$level,true));
+            //Iterate over each numerical_unit
+            foreach ($numerical_units as $numerical_unit) {
+                $status =fwrite ($bf,start_tag("NUMERICAL_UNIT",$level+1,true));
+                //Print numerical_unit contents
+                fwrite ($bf,full_tag("MULTIPLIER",$level+2,false,$numerical_unit->multiplier));
+                fwrite ($bf,full_tag("UNIT",$level+2,false,$numerical_unit->unit));
+                //Now backup numerical_units
+                $status =fwrite ($bf,end_tag("NUMERICAL_UNIT",$level+1,true));
+            }
+            $status =fwrite ($bf,end_tag("NUMERICAL_UNITS",$level,true));
+        }
+
+        return $status;
+
+    }
 
 
     //STEP 2. Backup quizzes and associated structures
