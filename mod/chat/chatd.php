@@ -973,8 +973,14 @@ while(true) {
             if($changed > 0) {
                 // Let's see what it has to say
 
-                $data = socket_read($handle, 2048); // should be more to prevent empty pages and repeated messages!!
+                $data = socket_read($handle, 2048); // should be more than 512 to prevent empty pages and repeated messages!!
                 if(empty($data)) {
+                    continue;
+                }
+
+                if (strlen($data) == 2048) { // socket_read has more data, ignore all data
+                    $DAEMON->trace('UFO with '.$handle.': Data too long; connection closed', E_USER_WARNING);
+                    $DAEMON->dismiss_ufo($handle, true, 'Data too long; connection closed');
                     continue;
                 }
 
