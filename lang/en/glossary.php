@@ -23,6 +23,7 @@ $string['displayformat'] = "Display format";
 $string['displayformatdefault'] = "Simple, dictionary style";
 $string['displayformat1'] = "Full without author.";
 $string['displayformat2']  = "Full with author.";
+$string['displayformat3']  = "Encyclopedia.";
 $string['editentry'] = "Edit entry";
 $string['editcategories'] = "Edit categories";
 $string['entries'] = "Entries";
