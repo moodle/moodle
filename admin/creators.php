@@ -1,9 +1,11 @@
-<?PHP  
-      // Admin only  script to assign administrative rights to users
-      // !!! based on admin.php (cut and pasted, then mangled)
+<?PHP // $Id$
+      // Admin only script to assign course creator rights to users
 
 	require_once("../config.php");
 
+    define("MAX_USERS_PER_PAGE", 30);
+
+    optional_variable($search, "");
     optional_variable($add, "");
     optional_variable($remove, "");
 
@@ -45,18 +47,24 @@
         $$strstringtoload = get_string($stringtoload);
     }
 
+    if ($search) {
+        $searchstring = $strsearchagain;
+    } else {
+        $searchstring = $strsearch;
+    }
+
 	print_header("$site->shortname: $course->shortname: $strassigncreators", 
                  "$site->fullname", 
-                 "<A HREF=\"index.php\">$stradministration</A> -> 
-                  <A HREF=\"{$_SERVER['PHP_SELF']}\">$strassigncreators</A>", "");
+                 "<a href=\"index.php\">$stradministration</a> -> 
+                  <a href=\"{$_SERVER['PHP_SELF']}\">$strassigncreators</a>", "");
 
 /// Get all existing creators
     $creators = get_creators();
 
 /// Add an creator if one is specified
-    if ($_REQUEST['add']) {
-        $user = @get_record("user", "id", $_REQUEST['add']) or
-            error("That account (id = {$_REQUEST['add']}) doesn't exist");
+    if ($add) {
+        $user = @get_record("user", "id", $add) or
+            error("That account (id = $add) doesn't exist");
 
         if ($creators) {
             foreach ($creators as $aa) {
@@ -72,10 +80,9 @@
     }
 
 /// Remove an creator if one is specified.
-    if ($_REQUEST['remove']) {
-
-        $user = @get_record("user", "id", $_REQUEST['remove']) or 
-            error("That account (id = {$_REQUEST['remove']}) doesn't exist");
+    if ($remove) {
+        $user = @get_record("user", "id", $remove) or 
+            error("That account (id = $remove) doesn't exist");
 
         if ($creators) {
             foreach ($creators as $key => $aa) {
@@ -89,79 +96,69 @@
 
 
 /// Print the lists of existing and potential creators
-    echo "<TABLE CELLPADDING=2 CELLSPACING=10 ALIGN=CENTER>";
-    echo "<TR><TH WIDTH=50%>$strexistingcreators</TH><TH WIDTH=50%>$strpotentialcreators</TH></TR>";
-    echo "<TR><TD WIDTH=50% NOWRAP VALIGN=TOP>";
+    echo "<table cellpadding=2 cellspacing=10 align=center>";
+    echo "<tr><th width=50%>$strexistingcreators</th><th width=50%>$strpotentialcreators</th></tr>";
+    echo "<tr><td width=50% nowrap valign=top>";
 
 /// First, show existing creators
 
     if (! $creators) { 
-        echo "<P ALIGN=CENTER>$strnoexistingcreators</A>";
+        echo "<p align=center>$strnoexistingcreators</a>";
+
+        $creatorlist = "";
 
     } else {
+        $creatorarray = array();
         foreach ($creators as $creator) {
-            echo "<P ALIGN=right>$creator->firstname $creator->lastname,
+            $creatorarray[] = $creator->id;
+            echo "<p align=right>$creator->firstname $creator->lastname,
             $creator->email &nbsp;&nbsp; ";
-                echo "<A HREF=\"{$_SERVER['PHP_SELF']}?remove=$creator->id\"
-                TITLE=\"$strremovecreator\"><IMG SRC=\"../pix/t/right.gif\"
-                BORDER=0></A>";
-            echo "</P>";
+                echo "<a href=\"{$_SERVER['PHP_SELF']}?remove=$creator->id\"
+                title=\"$strremovecreator\"><img src=\"../pix/t/right.gif\"
+                border=0></a>";
+            echo "</p>";
         }
+        $creatorlist = implode(",",$creatorarray);
+        unset($creatorarray);
     }
 
-    echo "<TD WIDTH=50% NOWRAP VALIGN=TOP>";
+    echo "<td width=50% nowrap valign=top>";
 
-/// Print list of potential  creators
+/// Print list of potential creators
 
-    if ($search) {
-        $users = get_users_search($search);
-    } else {
-        $users = get_users_confirmed();
-    }
+    $usercount = get_users(false, $search, true, $creatorlist);
 
-    
-    if ($users) {
-        foreach ($users as $user) {  // Remove users who are already creators
-            if ($creators) {
-                foreach ($creators as $creator) {
-                    if ($creator->id == $user->id) {
-                        continue 2;
-                    }
-                }
-            }
-            $potential[] = $user;
-        }
-    }
+    if ($usercount == 0) {
+        echo "<p align=center>$strnopotentialcreators</p>";
 
-    if (! $potential) { 
-        echo "<P ALIGN=CENTER>$strnopotentialcreators</A>";
-        if ($search) {
-            echo "<FORM ACTION={$_SERVER['PHP_SELF']} METHOD=POST>";
-            echo "<INPUT TYPE=text NAME=search SIZE=20>";
-            echo "<INPUT TYPE=submit VALUE=\"$strsearchagain\">";
-            echo "</FORM>";
-        }
+    } else if ($usercount > MAX_USERS_PER_PAGE) {
+        echo "<p align=center>$strtoomanytoshow</p>";
 
     } else {
+
         if ($search) {
-            echo "<P ALIGN=CENTER>($strsearchresults)</P>";
+            echo "<p align=center>($strsearchresults : $search)</p>";
         }
-        if (count($potential) <= 20) {
-            foreach ($potential as $user) {
-                echo "<P ALIGN=LEFT><A HREF=\"{$_SERVER['PHP_SELF']}?add=$user->id\"
-                TITLE=\"$straddcreator\"><IMG SRC=\"../pix/t/left.gif\" BORDER=0></A>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
-            }
-        } else {
-            echo "<P ALIGN=CENTER>There are too many users to show.<BR>";
-            echo "Enter a search word here.";
-            echo "<FORM ACTION={$_SERVER['PHP_SELF']} METHOD=POST>";
-            echo "<INPUT TYPE=text NAME=search SIZE=20>";
-            echo "<INPUT TYPE=submit VALUE=\"$strsearch\">";
-            echo "</FORM>";
+
+        if (!$users = get_users(true, $search, true, $creatorlist)) {
+            error("Could not get users!");
+        }
+
+        foreach ($users as $user) {
+            echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?add=$user->id\"".
+                   "title=\"$straddcreator\"><img src=\"../pix/t/left.gif\"".
+                   "border=0></a>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
         }
     }
 
-    echo "</TR></TABLE>";
+    if ($search or $usercount > MAX_USERS_PER_PAGE) {
+        echo "<form action={$_SERVER['PHP_SELF']} method=post>";
+        echo "<input type=text name=search size=20>";
+        echo "<input type=submit value=\"$searchstring\">";
+        echo "</form>";
+    }
+
+    echo "</tr></table>";
 
     print_footer();
 
