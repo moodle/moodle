@@ -126,6 +126,12 @@
 
         // Carry on with the user listing
 
+        if (!$user = get_record_sql("SELECT count(*) as count FROM user WHERE username <> 'guest' AND deleted <> '1'")) {
+            error("Could not search for users?");
+        }
+
+        $usercount = $user->count;
+
         $columns = array("name", "email", "city", "country", "lastaccess");
 
         foreach ($columns as $column) {
@@ -164,7 +170,41 @@
                 $users = $nusers;
             }
 
-            print_heading(get_string("chooseuser"));
+            print_heading("$usercount ".get_string("users"));
+            $a->start = $page;
+            $a->end = $page + $recordsperpage;
+            if ($a->end > $usercount) {
+                $a->end = $usercount;
+            }
+            echo "<TABLE align=center cellpadding=10><TR>";
+            echo "<TD>";
+            if ($page) {
+                $prevpage = $page - $recordsperpage;
+                if ($prevpage < 0) {
+                    $prevpage = 0;
+                }
+                $options["dir"] = $dir;
+                $options["page"] = 0;
+                $options["sort"] = $sort;
+                print_single_button("user.php", $options, "  <<  ");
+                echo "</TD><TD>";
+                $options["page"] = $prevpage;
+                print_single_button("user.php", $options, "  <  ");
+            }
+            echo "</TD><TD>";
+            print_heading(get_string("displayingusers", "", $a));
+            echo "</TD><TD>";
+            $nextpage = $page + $recordsperpage;
+            if ($nextpage < $usercount) {
+                $options["dir"] = $dir;
+                $options["page"] = $nextpage;
+                $options["sort"] = $sort;
+                print_single_button("user.php", $options, "  >  ");
+                echo "</TD><TD>";
+                $options["page"] = $usercount-$recordsperpage;
+                print_single_button("user.php", $options, "  >>  ");
+            }
+            echo "</TD></TR></TABLE>";
 
             $table->head = array ($name, $email, $city, $country, $lastaccess, "", "");
             $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER");
