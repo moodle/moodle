@@ -547,8 +547,15 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 
     if (!isteacher($courseid)) {
         $notteacherforum = "AND f.type <> 'teacher'";
+
+        $forummodule = get_record("modules", "name", "forum");
+        $onlyvisible = " AND f.id = cm.instance AND cm.visible = 1 AND cm.module = $forummodule->id";
+        $onlyvisibletable = ", {$CFG->prefix}course_modules cm";
     } else {
         $notteacherforum = "";
+
+        $onlyvisible = "";
+        $onlyvisibletable = "";
     }
 
     switch ($CFG->dbtype) {
@@ -607,12 +614,12 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     $selectsql = "{$CFG->prefix}forum_posts p,  
                   {$CFG->prefix}forum_discussions d, 
                   {$CFG->prefix}user u, 
-                  {$CFG->prefix}forum f
+                  {$CFG->prefix}forum f $onlyvisibletable
              WHERE ($messagesearch OR $subjectsearch)
                AND p.userid = u.id 
                AND p.discussion = d.id 
                AND d.course = '$courseid' 
-               AND d.forum = f.id $notteacherforum";
+               AND d.forum = f.id $notteacherforum $onlyvisible";
     
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
