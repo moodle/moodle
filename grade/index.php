@@ -44,7 +44,7 @@
         exit();
     }
 
-    print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_get_grades_menu());
+    print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
 
     grade_preferences_menu($action, $course, $group);
 

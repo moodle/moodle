@@ -1042,25 +1042,15 @@ function grade_preferences_menu($action, $course, $group=0) {
 }
 
 
-function grade_get_grades_menu() {
-    global $course;
+function grade_nav($course, $action='grades') {
     global $CFG;
     global $USER;
     global $cview;
 
-    
     $strgrades = get_string('grades', 'grades');
-    $strviewgrades = get_string('viewgrades','grades');
-    
-    $preferences = grade_get_preferences($course->id);
-    
-    if (!isset($action)) {
-        if (isset($_REQUEST['action'])) {
-            $action = $_REQUEST['action'];
-        }
-        else {
-            $action = 'grades';
-        }
+    $gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
+
+    if (isteacher($course->id)) {
         switch ($action) {
             case 'prefs':
             case 'set_grade_preferences':
@@ -1088,44 +1078,29 @@ function grade_get_grades_menu() {
                 unset($strcurpage);
                 break;
         }
-    }
-
-    // just to make the link back to all grades maintain group info    
-    if (isset($_REQUEST['group'])) {
-        $group = clean_param($_REQUEST['group'], PARAM_INT);
-    }
-    else {
-        $group = NULL;
-    }
     
-    $grade_menu = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
-
-
-    if (isteacher($course->id)) {
         if ($action=='grades') {
-            $grade_menu .= " -> $strgrades";
+            $gradenav .= " -> $strgrades";
+        } else {
+            $gradenav .= " -> <a href=\"index.php?id=$course->id&amp;action=grades\">$strgrades</a>";
         }
-        else {
-            $grade_menu .= " -> <a href=\"index.php?id=$course->id&amp;action=grades&amp;group={$group}\">$strgrades</a>";
-        }
-        
-        
         
         // if we are on a grades sub-page provide a link back (including grade preferences and grade items
-    
         
         if (isset($strcurpage)) {
-            $grade_menu .= " -> $strcurpage";
-        }
-        else if($action =='vcats') {
+            $gradenav .= " -> $strcurpage";
+        } else if($action =='vcats') {
             // show sub category
             if (isset($cview)) {
-                $grade_menu .= " -> $cview";
+                $gradenav .= " -> $cview";
             }
         }
+
+    } else {
+        $gradenav .= " -> $strgrades";
     }
     
-    return $grade_menu;    
+    return $gradenav;    
 }
 
 function grade_download_excel() {
