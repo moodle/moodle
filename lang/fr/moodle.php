@@ -658,10 +658,10 @@ $string['scalestip'] = "Pour créer des barêmes personnalisés, utilisez le liens 
 $string['search'] = "Rechercher";
 $string['searchagain'] = "Rechercher de nouveau";
 $string['searchcourses'] = "Rechercher des cours";
-$string['searchhelp'] = "Vous pouvez rechercher plusieurs mots à la fois.<p>
-mot: rechercher toutes les occurences du mot dans le texte.<br />
-+mot: seules les correspondances exactes seront trouvées.<br />
--word: ne pas inclure les résultats contenant ce mot. ";
+$string['searchhelp'] = "Vous pouvez introduire plusieurs termes comme critères de recherche.<p>
+terme : rechercher toutes les occurences du terme dans le texte.<br />
++terme : seules les correspondances exactes du terme (mot entier) seront trouvées.<br />
+-terme : ne pas inclure les résultats contenant ce terme.</p>";
 $string['searchresults'] = "Résultats de la recherche";
 $string['sec'] = "sec";
 $string['secs'] = "secs";
