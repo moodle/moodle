@@ -207,6 +207,120 @@
                 <?php
                 break;
 
+            case UPLOADEDFILE:
+                $strfilename = get_string("filename", "resource");
+                $strnote     = get_string("note", "resource");
+                $strchooseafile = get_string("chooseafile", "resource");
+                $strnewwindow     = get_string("newwindow", "resource");
+                $strnewwindowopen = get_string("newwindowopen", "resource");
+
+                foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
+                    $stringname = "str$optionname";
+                    $$stringname = get_string("new$optionname", "resource");
+                    $window->$optionname = "";
+                    $jsoption[] = "\"$optionname\"";
+                }
+                $alljsoptions = implode(",", $jsoption);
+
+                if ($form->instance) {     // Re-editing
+                    if (!$form->alltext) {
+                        $newwindow = "";
+                        $window->resizable = "checked";  // Defaults
+                        $window->scrollbars = "checked";
+                        $window->status = "checked";
+                        $window->location = "checked";
+                        $window->width = 620;
+                        $window->height = 450;
+                    } else {
+                        $newwindow = "checked";
+                        $rawoptions = explode(',', $form->alltext); 
+                        foreach ($rawoptions as $rawoption) {
+                            $option = explode('=', trim($rawoption));
+                            $optionname = $option[0];
+                            $optionvalue = $option[1];
+                            if ($optionname == "height" or $optionname == "width") {
+                                $window->$optionname = $optionvalue;
+                            } else if ($optionvalue) {
+                                $window->$optionname = "checked";
+                            }
+                        }
+                    }
+                } else {
+                    $newwindow = "checked";
+                    $window->resizable = "checked";
+                    $window->scrollbars = "checked";
+                    $window->status = "checked";
+                    $window->location = "checked";
+                    $window->width = 620;
+                    $window->height = 450;
+                }
+
+                echo $alloptions;
+
+                ?>
+
+                <tr valign="top">
+                    <td align="right" nowrap>
+                        <p><b><?php echo $strfilename?>:</b></p>
+                    </td>
+                    <td>
+                        <?php
+                          echo "<input name=\"reference\" size=\"50\" value=\"$form->reference\">&nbsp;";
+                          echo "<font size=\"-1\">";
+                          link_to_popup_window ("/mod/resource/coursefiles.php?id=$course->id", 
+                                                "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
+                          echo "</font>";
+                        ?>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td align="right" nowrap>
+                        <p><b><?php p($strnewwindow) ?></b></p>
+                    </td>
+                    <td>
+                      <script>
+                          var subitems = [<?php echo $alljsoptions; ?>];
+                      </script>
+                      <input name="setnewwindow" type=hidden value=1>
+                      <input name="newwindow" type=checkbox value=1 <?php p($newwindow) ?> 
+                        onclick="return lockoptions('theform','newwindow', subitems)"> 
+                      <?php p($strnewwindowopen) ?>
+                    <ul>
+                      <?php
+                          foreach ($window as $name => $value) {
+                              if ($name == "height" or $name == "width") {
+                                  continue;
+                              }
+                              echo "<input name=\"h$name\" type=hidden value=0>";
+                              echo "<input name=\"$name\" type=checkbox value=1 ".$window->$name.">";
+                              $stringname = "str$name";
+                              echo $$stringname."<br />";
+                          }
+                      ?>
+
+                      <input name="hwidth" type=hidden value=0>
+                      <input name="width" type=text size=4 value="<?php p($window->width) ?>">
+                        <?php p($strwidth) ?><br />
+
+                      <input name="hheight" type=hidden value=0>
+                      <input name="height" type=text size=4 value="<?php p($window->height) ?>">
+                        <?php p($strheight) ?><br />
+                      <?php
+                        if (!$newwindow) {
+                            echo "<script>";
+                            echo "lockoptions('theform','newwindow', subitems);";
+                            echo "</script>";
+                        }
+                      ?>
+                    </ul>
+                    </p>
+                    </td>
+                </tr>
+
+                <?php
+                break;
+
+
             case PROGRAM:
                 $strexampleurl = get_string("exampleurl", "resource");
                 ?>
@@ -229,38 +343,6 @@
                 <?php
                 break;
 
-            case UPLOADEDFILE:
-                $strfilename = get_string("filename", "resource");
-                $strnote     = get_string("note", "resource");
-                $strnotefile = get_string("notefile", "resource", "$CFG->wwwroot/files/index.php?id=$course->id");
-                ?>
-                <tr valign="top">
-                    <td align="right" nowrap>
-                        <p><b><?php echo $strfilename?>:</b></p>
-                    </td>
-                    <td>
-                        <?php
-                          $rootdir = $CFG->dataroot."/".$course->id;
-                          $coursedirs = get_directory_list($rootdir, $CFG->moddata);
-                          foreach ($coursedirs as $dir) {
-                              $options["$dir"] = $dir;
-                          }
-                          choose_from_menu ($options, "reference", $form->reference);
-                        ?>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <td align="right" nowrap>
-                        <p><b><?php echo $strnote?>:</b></p>
-                    </td>
-                    <td>
-                    <p><?php echo $strnotefile?>
-                    </p>
-                    </td>
-                </tr>
-
-                <?php
-                break;
 
             case PLAINTEXT: 
                 $strfulltext = get_string("fulltext", "resource");
