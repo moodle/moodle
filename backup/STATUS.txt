@@ -6,8 +6,9 @@ This documment shows the current status of the backup/restore option.
 Backup:  WORKING. COMPLETED but only assignments, resources,
                   choices and surveys.
 
-Restore: WORKING. NOT COMPLETED. Only course, users, user_files and 
-                  course_files. No logs, mods or final checks !!!!
+Restore: WORKING. NOT COMPLETED. Only course, users, user_files,
+                  course_files and resources. Final Checks Included.
+                  Delete temp data no exists.
                   
 
 ========== ========== ========== ========== ========== ==========
@@ -176,9 +177,9 @@ Restore Details:
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
-              x resources.......................................IN PROGRESS
-                 + course data..................................IN PROGRESS
-                 + user data....................................IN PROGRESS
+              x resources.......................................DONE
+                 + course data..................................SONE
+                 + user data....................................DONE
                  + files.(ARE COURSE FILES !!!).................DONE
               x surveys.........................................NO EXISTS
                  + course data..................................NO EXISTS
@@ -187,8 +188,8 @@ Restore Details:
    - User files from temp.......................................DONE
    - Course files from temp.....................................DONE
    - Log entries................................................NO EXISTS
-   - Readjust instance in course_modules........................NO EXISTS
-   - Readjust modinfo in course (serialize).....................NO EXISTS
+   - Readjust instance in course_modules........................DONE
+   - Readjust modinfo in course (serialize).....................DONE
    - Delete old entries at restore end.  .......................NO EXISTS   
       - From database...........................................NO EXISTS
       - From filesystem.........................................NO EXISTS
