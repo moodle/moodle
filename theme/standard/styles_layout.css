@@ -456,6 +456,17 @@ td.cal_event_description {
     border-top:1px solid;
 }
 
+.sideblock .sideblockheading .hide-show img {
+    background: url('../../pix/t/switch.gif') no-repeat bottom;
+}
+
+.sideblock.hidden .sideblockheading .hide-show img {
+    background: url('../../pix/t/down.gif') no-repeat bottom;
+}
+
+.sideblock.hidden .sideblockmain {
+    display: none;
+}
 
 /* sideblock weblib.php */
 #block_course_summary .sideblockmain {

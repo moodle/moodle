@@ -16,6 +16,10 @@
     -moz-border-radius-bottomright:20px;
 }
 
+#left-column .hidden, #right-column .hidden {
+    -moz-border-radius: 0px;
+}
+
 .generalbox {
     -moz-border-radius-topleft:3px;
     -moz-border-radius-topright:3px;

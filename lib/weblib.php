@@ -3544,47 +3544,43 @@ function print_side_block_start($heading='', $attributes = array()) {
     else if(!strpos($attributes['class'], 'sideblock')) {
         $attributes['class'] .= ' sideblock';
     }
+
     // OK, the class is surely there and in addition to anything
     // else, it's tagged as a sideblock
+
+    /*
+    
+    // IE misery: if I do it this way, blocks which start hidden cannot be "unhidden"
+    
+    // If there is a cookie to hide this thing, start it hidden
+    if(!empty($attributes['id']) && isset($_COOKIE['hide:'.$attributes['id']])) {
+        $attributes['class'] = 'hidden '.$attributes['class'];
+    }
+    */
 
     $attrtext = '';
     foreach($attributes as $attr => $val) {
        $attrtext .= ' '.$attr.'="'.$val.'"';
     }
 
-    echo '<table class="sideblock" cellspacing="0" cellpadding="5"'.$attrtext.'>';
+    echo '<table'.$attrtext.'>';
     if ($heading) {
-        // orig echo '<thead><tr><td class="sideblockheading">'.$heading.'</td></tr></thead>';
         echo '<thead><tr><td class="sideblockheading">'.$heading;
-        if(isset($attributes['id'])) {
-            echo '<div class="hide-show">
-                <a href="javascript:containerDisplaySwitching('."'".$attributes['id']."'".');"\ >'."<img src=\"$CFG->pixpath/t/switch.gif\" alt=\"\" height=\"11\" width=\"11\" class=\"hide-show-image\" />".'</a>
-            </div>';
-        }
+        echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" height="11" width="11" class="hide-show-image" /></a></div>';
         echo '</td></tr></thead>';
     }
-    // orig echo '<tbody><tr><td class="sideblockmain">';
-    if(isset($attributes['id'])) {
-        echo '<tbody><tr><td class="sideblockmain"><div class="blockcontent" id="'.$attributes['id'].'_cont">';
-    }
-    else {
-        echo '<tbody><tr><td class="sideblockmain"><div class="blockcontent">';
-    }
+
+    echo '<tbody><tr><td class="sideblockmain">';
 }
 
 
 /**
  * Print table ending tags for a side block box.
  */
-function print_side_block_end($attributes = array()) {
-    echo '</div></td></tr></tbody></table>';
-    // js call to set block display state which is saved in cookie.
-    if(isset($attributes['id'])) {
-        echo "\n <script type='text/javascript'> <!-- //hide ";
-        echo "\n containerDisplaySet(\"".$attributes['id']."\");";
-        echo "\n // done hiding --> </script>";
-        echo "\n";
-    }
+function print_side_block_end($attributes) {
+    echo '</td></tr></tbody></table>';
+    // IE workaround: if I do it THIS way, it works! WTF?
+    echo '<script type="text/javascript"><!-- '."\n".'elementCookieHide("'.$attributes['id'].'"); '."\n".'--></script>';
 }
 
 
