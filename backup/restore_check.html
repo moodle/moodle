@@ -149,11 +149,9 @@
             //Print the continue button to execute the restore NOW !!!!
             //All is prepared !!!
             echo "<CENTER>";
-            echo get_string("presscontinuetolaunchrestore");
-            echo "<br>";
             $hidden["launch"]             = "execute";
             $hidden["file"]               =  $file;
-            print_single_button("restore.php", $hidden, get_string("continue"),"post");
+            print_single_button("restore.php", $hidden, get_string("restorecoursenow"),"post");
             echo "</CENTER>";
         } else {
             //Show error
