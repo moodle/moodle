@@ -8,4 +8,8 @@ $THEME->cellcontent2 = "";  // Alternate colour
 $THEME->borders      = "#669966";  // Table borders
 $THEME->highlight    = "#ffff99";  // Highlighted text (eg after a search)
 
+$THEME->custompix    = false;      // If true, then this theme must have a "pix" 
+                                   // subdirectory that contains copies of all 
+                                   // files from the moodle/pix directory
+                                   // See "cordoroyblue" for an up-to-date example.
 ?>
