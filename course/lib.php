@@ -958,7 +958,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strmovehere;
     static $strmovefull;
     static $strunreadpostsone;
-    static $strunreadpostsnumber;
 
     $labelformatoptions = New stdClass;
 
@@ -973,7 +972,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
         $strunreadpostsone    = get_string('unreadpostsone', 'forum');
-        $strunreadpostsnumber = get_string('unreadpostsnumber', 'forum');
     }
     $labelformatoptions->noclean = true;
 
@@ -1049,6 +1047,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     if ($unread == 1) {
                         echo '<span class="unread"> '.$strunreadpostsone.' </span>';
                     } else if ($unread) {
+                        $strunreadpostsnumber = get_string('unreadpostsnumber', 'forum', $unread);
                         echo '<span class="unread"> '.$strunreadpostsnumber.' </span>';
                     }
                 }
