@@ -1343,7 +1343,7 @@ HTMLArea.prototype._insertSmile = function() {
 	var sel = this._getSelection();
 	var range = this._createRange(sel);
 	var editor = this;	// for nested functions
-	this._popupDialog("dlg_ins_char.php", function(imgString) {
+	this._popupDialog("dlg_ins_smile.php", function(imgString) {
 		if(!imgString) {
 			return false;
 		}
