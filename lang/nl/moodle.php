@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta (2004022400)
+      // moodle.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['action'] = 'Actie';
@@ -170,6 +170,7 @@ $string['configvariables'] = 'Configureer variabelen';
 $string['configwarning'] = 'Wees voorzichtig met het veranderen van deze instellingen. Vreemde waarden kunnen problemen opleveren.';
 $string['configzip'] = 'Geef de locatie van je ZIP programma (alleen voor UNIX). Dit is nodig om ZIP archieven op de server te maken.
 ';
+$string['confirm'] = 'Bevestig';
 $string['confirmed'] = 'Je registratie is bevestigd';
 $string['confirmednot'] = 'Je registratie is nog niet bevestigd !';
 $string['continue'] = 'Ga door';
@@ -847,11 +848,13 @@ $string['uploadproblem'] = 'Een was een onbekend probleem tijdens het uploaden v
 $string['uploadthisfile'] = 'Upload dit bestand';
 $string['uploadusers'] = 'Upload gebruikers';
 $string['user'] = 'Gebruiker';
+$string['userconfirmed'] = '$a bevestigd';
 $string['userdeleted'] = 'De account van deze gebruiker is verwijderd';
 $string['userdescription'] = 'Beschrijving';
 $string['userfiles'] = 'Bestanden van de gebruiker';
 $string['username'] = 'Gebruikersnaam';
 $string['usernameexists'] = 'Deze gebruikersnaam bestaat al, kies een andere';
+$string['usernotconfirmed'] = 'Kon $a niet bevestigen';
 $string['userprofilefor'] = 'Het gebruikersprofiel van $a';
 $string['users'] = 'Gebruikers';
 $string['usersnew'] = 'Nieuwe gebruikers';
