@@ -368,13 +368,18 @@
                                     $course_module->deleted = $mod->deleted;
                                     $course_module->score = $mod->score;
                                     $course_module->visible = $mod->visible;
-                                    //NOTE: The instance is calculated and updaed in db in the
+                                    $course_module->instance = null;
+                                    //NOTE: The instance (new) is calculated and updated in db in the
                                     //      final step of the restore. We don't know it yet.
+                                    //print_object($course_module);					//Debug
                                     //Save it to db
                                     $newidmod = insert_record("course_modules",$course_module); 
                                     if ($newidmod) {
                                         //save old and new module id
-                                        backup_putid ($restore->backup_unique_code,"course_modules",$keym,$newidmod);
+                                        //In the info field, we save the original instance of the module
+                                        //to use it later
+                                        backup_putid ($restore->backup_unique_code,"course_modules",
+                                                                $keym,$newidmod,$mod->instance);
                                     } else {
                                         $status = false;
                                     }
@@ -665,14 +670,69 @@
         //Now, if we have anything in info, we have to restore that mods
         //from backup_ids (calling every mod restore function)
         if ($info) {
-print_object($info);
+            //Iterate over each module
+            foreach ($info as $mod) {
+                $modrestore = $mod->modtype."_restore_mods";
+                if (function_exists($modrestore)) {
+                    $status = $modrestore($mod,$restore);
+                } else {
+                    //Something was wrong. Function should exist.
+                    $status = false;
+                }
+            }
+        } else {
+            $status = false;
+        }
+       return $status; 
+    }
 
+    //This function adjusts the instance field into course_modules. It's executed after
+    //modules restore. There, we KNOW the new instance id !!
+    function restore_check_instances($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //We are going to iterate over each course_module saved in backup_ids
+        $course_modules = get_records_sql("SELECT new_id,info as instance
+                                           FROM {$CFG->prefix}backup_ids
+                                           WHERE backup_code = '$restore->backup_unique_code' AND
+                                                 table_name = 'course_modules'");
+        if ($course_modules) {
+            foreach($course_modules as $cm) {
+                //Now we are going to the REAL course_modules to get its type (field module)
+                $module = get_record("course_modules","id",$cm->new_id);
+                if ($module) {
+                    //We know the module type id. Get the name from modules
+                    $type = get_record("modules","id",$module->module);
+                    if ($type) {
+                        //We know the type name and the old_id. Get its new_id
+                        //from backup_ids. It's the instance !!!
+                        $instance = get_record("backup_ids","backup_code",$restore->backup_unique_code,
+                                                            "table_name",$type->name,
+                                                            "old_id",$cm->instance);
+                        if ($instance) {
+                            //We have the new instance, so update the record in course_modules
+                            $module->instance = $instance->new_id;
+                            //print_object ($module); 							//Debug
+                            $status = update_record("course_modules",$module);
+                        } else {
+                            $status = false;
+                        }
+                    } else {
+                        $status = false;
+                    }
+                } else {
+                    $status = false;
+               }
+            }
         } else {
             $status = false;
         }
 
-       return $status; 
 
+        return $status;
     }
 
     //=====================================================================================
@@ -1213,8 +1273,8 @@ print_object($info);
                 //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
                 //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
-                //Reconvert it to utf & htmlchars and trim to generate xml data
-                $this->temp .= utf8_encode(htmlspecialchars(trim($this->content)))."</".$tagName.">";
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
                 //If we've finished a mod, xmlize it an save to db
                 if (($this->level == 4) and ($tagName == "MOD")) {
                     //Prepend XML standard header to info gathered
@@ -1238,7 +1298,9 @@ print_object($info);
                         backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
                                      null,$sla_mod_temp);
                         //Create returning info
-                        $this->info[] = array(id => $mod_id,modtype => $mod_type);
+                        $ret_info->id = $mod_id;
+                        $ret_info->modtype = $mod_type;
+                        $this->info[] = $ret_info;
                     }
                     //Reset info to empty
                     $this->temp = "";

@@ -23,6 +23,19 @@
         error("Site not found!");
     }
 
+    //Checks for the required files/functions to restore every module
+    //and include them
+    if ($allmods = get_records("modules") ) {
+        foreach ($allmods as $mod) {
+            $modname = $mod->name;
+            $modfile = "$mods_home/$modname/restorelib.php";
+            //If file exists and we have selected to restore that type of module
+            if ((file_exists($modfile)) and ($restore->mods[$modname]->restore)) {
+               include_once($modfile);
+            }
+        }
+    }
+
     //Start the main table
     echo "<table cellpadding=5>";
     echo "<tr><td>";
@@ -183,12 +196,22 @@
 
     //Now create log entries as needed
     if ($status and ($restore->logs)) {
-        echo "<li>Creating Log Entries <b>(not implemented)</b>. Execute after everything...";
+        echo "<li>Creating Log Entries <b>(not implemented!!)</b>";
     }    
 
     //Now, if all is OK, adjust the instance field in course_modules !!
+    if ($status) {
+        echo "<li>Checking Instances";
+        $status = restore_check_instances($restore);
+    }
 
     //Now if all is OK, update course modinfo field !!
+    if ($status) {
+        echo "<li>Checking Course";
+        rebuild_course_cache($restore->course_id);
+    }
+
+    //Cleanup temps (files and db)
 
     //End the main ul
     echo "</ul>";
