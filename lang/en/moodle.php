@@ -20,6 +20,7 @@ $string['addcreator'] = "Add course creator";
 $string['addteacher'] = "Add teacher";
 $string['admin'] = "Admin";
 $string['administration'] = "Administration";
+$string['administrator'] = "Administrator";
 $string['again'] = "again";
 $string['all'] = "All";
 $string['alldays'] = "All days";
@@ -382,6 +383,7 @@ $string['missingstrings'] = "Check for missing strings";
 $string['missingstudent'] = "Must choose something";
 $string['missingsummary'] = "Missing summary";
 $string['missingteacher'] = "Must choose something";
+$string['missingurl'] = "Missing URL";
 $string['missingusername'] = "Missing username";
 $string['modified'] = "Modified";
 $string['moduledeleteconfirm'] = "You are about to completely delete the module '\$a'.  This will completely delete everything in the database associated with this activity module.  Are you SURE you want to continue?";
@@ -489,9 +491,26 @@ $string['potentialteachers'] = "Potential teachers";
 $string['preferredlanguage'] = "Preferred language";
 $string['preview'] = "Preview";
 $string['previeworchoose'] = "Preview or choose a theme";
+$string['publicdirectory'] = "Public directory";
+$string['publicdirectory0'] = "Please do not publish this site";
+$string['publicdirectory1'] = "Publish the site name only";
+$string['publicdirectory2'] = "Publish the site name with a link";
 $string['question'] = "Question";
 $string['readme'] = "README";   // This is a file name
 $string['recentactivity'] = "Recent activity";
+$string['registration'] = "Moodle Registration";
+$string['registrationemail'] = "Email notifications";
+$string['registrationinfo'] = "<p>This page allows you to register your Moodle site with moodle.org.  Registration is free.
+The main benefit of registering is that you will be added to a low-volume mailing list 
+for important notifications such as security alerts and new releases of Moodle.
+<p>By default, your information will be kept private, and will never be sold or passed on to anyone else.  The only 
+   reason for collecting this information is for support purposes, and to help build up a statistical 
+   picture of the Moodle community as a whole.
+<p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
+<p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.";
+$string['registrationno'] = "No, I do not want to receive email";
+$string['registrationsend'] = "Send registration information";
+$string['registrationyes'] = "Yes, please notify me about important issues";
 $string['removeadmin'] = "Remove admin";
 $string['removecreator'] = "Remove course creator";
 $string['removeteacher'] = "Remove teacher";
@@ -538,6 +557,7 @@ $string['someallowguest'] = "Some courses may allow guest access";
 $string['someerrorswerefound'] = "Some information was missing or incorrect. Look below for details.";
 $string['startdate'] = "Course start date";
 $string['startsignup'] = "Start now by creating a new account!";
+$string['state'] = "State/Province";
 $string['status'] = "Status";
 $string['strftimedate'] = "%%d %%B %%Y";
 $string['strftimedateshort'] = "%%d %%B";
