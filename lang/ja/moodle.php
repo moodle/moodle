@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004062600)
+      // moodle.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['action'] = '¡‡∫Ó';
@@ -128,13 +128,13 @@ $string['checkingsections'] = '•ª•Ø•∑•Á•Û§Œ≥Œ«ß√Ê';
 $string['checklanguage'] = '∏¿∏Ï§Œ≥Œ«ß';
 $string['choose'] = '¡™¬Ú';
 $string['choosecourse'] = '•≥°º•π§Ú¡™¬Ú§∑§∆§Ø§¿§µ§§';
-$string['chooselivelogs'] = '∫«∂·§Œ≥Ë∆∞§Ú…Ωº®§π§Î';
+$string['chooselivelogs'] = '§ﬁ§ø§œ∫«∂·§Œ≥Ë∆∞§Ú…Ωº®§π§Î';
 $string['chooselogs'] = '…Ωº®§∑§ø§§•Ì•∞§Ú¡™¬Ú§∑§∆§Ø§¿§µ§§';
 $string['choosereportfilter'] = '•Ï•›°º•»§Œ•’•£•Î•ø§Ú¡™¬Ú§∑§∆§Ø§¿§µ§§';
 $string['choosetheme'] = '•∆°º•ﬁ§Œ¡™¬Ú';
 $string['chooseuser'] = '•Ê°º•∂§Ú¡™¬Ú§∑§∆§Ø§¿§µ§§';
 $string['city'] = '≈‘∆ª…‹∏©';
-$string['cleaningtempdata'] = '∞Ïª˛•«°º•ø§Œ•Ø•Í°º•À•Û•∞';
+$string['cleaningtempdata'] = '∞Ïª˛•«°º•ø§Œæ√µÓ';
 $string['clicktochange'] = ' —ππ';
 $string['closewindow'] = '•¶•£•Û•…•¶§Ú ƒ§∏§Î';
 $string['comparelanguage'] = '∏¿∏Ï§Œ»Ê≥”°¶ ‘Ω∏';
@@ -361,6 +361,8 @@ $string['enrolmentkeyfrom'] = '§≥§Œ•≥°º•π§ÿª≤≤√§π§Î§ø§·§À§œ°÷≈–œø•≠°º°◊§¨…¨Õ◊§«§
 
 ';
 $string['enrolmentkeyhint'] = '°÷≈–œø•≠°º°◊§¨∞„§§§ﬁ§π°£∫∆≈Ÿ∆˛Œœ§∑§∆§Ø§¿§µ§§°£<br> (•“•Û•» - \'$a\' §«ªœ§ﬁ§Î∏¿Õ’§«§π)';
+$string['enrolmentnointernal'] = 'ºÍ∆∞≈–œø§œ∏Ω∫ﬂÕ¯Õ—§«§≠§ﬁ§ª§Û';
+$string['enrolments'] = '≈–œø';
 $string['entercourse'] = 'Enter§Ú•Ø•Í•√•Ø§∑§∆§Ø§¿§µ§§°£';
 $string['enteremailaddress'] = '•—•π•Ô°º•…§Ú•Í•ª•√•»§∑§∆ø∑§∑§§•—•π•Ô°º•…§Úºı§±ºË§Î§ø§·§À°¢•·°º•Î•¢•…•Ï•π§Ú∆˛Œœ§∑§∆§Ø§¿§µ§§';
 $string['error'] = '•®•È°º';
