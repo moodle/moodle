@@ -74,7 +74,7 @@ class block_rss_client extends block_base {
         //if the user is an admin, course teacher, or all user are allowed - 
         // then allow the user to add rss feeds
         if ( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) ) {
-            $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br /><br />';
+            $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br />';
         }
 
         // Daryl Hawes note: if count of rssidarray is greater than 1 
