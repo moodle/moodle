@@ -447,6 +447,7 @@ $string['frontpagecourselist'] = 'コース一覧の表示';
 $string['frontpagedescription'] = '表紙の説明';
 $string['frontpageformat'] = '表紙のフォーマット';
 $string['frontpagenews'] = '新しいアイテムの表示';
+$string['frontpagetopiconly'] = '任意のHTMLまたは活動　( トピックセクション ) を表示する ';
 $string['fulllistofcourses'] = '全てのコース';
 $string['fullname'] = '名称';
 $string['fullnamedisplay'] = '$a->lastname $a->firstname';

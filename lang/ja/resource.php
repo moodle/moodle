@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['addresource'] = 'リソースを追加する';
 $string['chooseafile'] = 'ファイルの選択またはアップロード';
 $string['chooseparameter'] = 'パラメータを選択';
+$string['configallowlocalfiles'] = '新しいリソースを作成する時に、CDドライブやハードディスクのようなローカルファイルシステムへのリンクを許可します。この設定は、教室で全ての学生が共通のネットワークドライブやCDに保存されているファイルにアクセスするときに便利です。この機能を使用するには、ブラウザのセキュリティ設定の変更が必要な場合もあります。';
 $string['configdefaulturl'] = 'ここでは新しいURLベースのリソースを作成する場合に前もって入力される値を設定します。';
 $string['configfilterexternalpages'] = 'この設定により全ての外部リソース ( ウェブページ、アップロードしたHTMLファイル ) に現在設定されているフィルター  ( 例えば用語集自動リンク ) が適用されます。設定することでコースページの動作が著しく遅くなる恐れがあります。必要がある時のみ注意してお使いください。';
 $string['configframesize'] = 'フレーム内にウェブページやアップロードしたファイルが表示される場合のトップフレーム ( ナビゲーションを含む )のサイズ ( ピクセル ) です。';
@@ -37,6 +38,12 @@ $string['filtername'] = 'リソースオートリンク';
 $string['frameifpossible'] = 'ナビゲーションを表示したままにするため、リソースをフレーム内に表示する';
 $string['fulltext'] = '詳細';
 $string['htmlfragment'] = 'HTMLフラグメント';
+$string['localfile'] = 'ローカルファイル';
+$string['localfilechoose'] = 'ローカルファイルの選択 (CD-ROM)';
+$string['localfilehelp'] = 'ローカルファイル表示に関するヘルプ';
+$string['localfileinfo'] = 'p>あなたのコンピュータからローカルファイルを選択してください。 ファイルはウェブサイトにアップロードされませんが、Moodleはこのリソースと同じファイル名のファイルをコンピュータ上から探します。</p><p>これは、全ての参加者に、CD-ROMに保存されている大容量メディアを配布した場合に最も便利です。それぞれの参加者は、このようなファイルのために、<a href=\"$a\" target=\"_blank\">ユーザプロフィールを編集</a>することで、独自のローカルパスを選択することができます。.</p> 	';
+$string['localfilepath'] = 'このリソースに独自のローカルパスを設定するには、リソースが存在するあなたのコンピュータのドライブ ( 通常はCD_ROM ) からファイルを選択してください。ファイルはアップロードされませんが、ドライブ情報は保存されます。この情報はローカルリソースの参照に使用されます。';
+$string['localfileselect'] = 'このファイルパスを選択';
 $string['maindirectory'] = 'メインファイルディレクトリ';
 $string['modulename'] = 'リソース';
 $string['modulenameplural'] = 'リソース';
@@ -53,6 +60,7 @@ $string['newtoolbar'] = 'ツールバーを表示';
 $string['newwidth'] = 'デフォルトウンドウ幅 ( ピクセル )';
 $string['newwindow'] = '新しいウインドウ';
 $string['newwindowopen'] = 'ポップアップウインドウにリソースを表示';
+$string['notallowedlocalfileaccess'] = '現在、ローカルファイルへのアクセスは停止されています。このリソースは利用できません。';
 $string['note'] = '注意';
 $string['notefile'] = 'さらにファイルをアップロード ( このリストに表示されます ) する場合、<a href=$a >File Manager</a> を利用してください。';
 $string['notypechosen'] = 'タイプを選択してください。「戻る」ボタンを押して再度入力してください。';
