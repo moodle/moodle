@@ -1,4 +1,4 @@
-<?
+<?php
 	// set the defaults...
     if ($usehtmleditor = can_use_richtext_editor()) {
         $defaultformat = FORMAT_HTML;
@@ -84,7 +84,7 @@
 <tr valign=top>
     <td align=right><P><B><?php  print_string("maximumgrade") ?>:</B></P></TD>
     <td>
-        <?
+        <?php
         for ($i=100; $i>=0; $i--) {
             $grades[$i] = $i;
         }
@@ -110,7 +110,7 @@
 <tr valign=top>
     <td align=right><P><B><?php  print_string("numberofassessmentelements", "workshop") ?>:</B></P></TD>
     <td valign="middle">
-        <?
+        <?php
         for ($i=20; $i>=0; $i--) {
             $numbers[$i] = $i;
         }
@@ -193,7 +193,7 @@
 <tr valign=top>
     <td align=right><P><B><?php  print_string("maximumsize", "workshop") ?>:</B></P></TD>
     <td>
-        <?
+        <?php
         $sizelist = array("10Kb", "50Kb", "100Kb", "500Kb", "1Mb", "2Mb", "5Mb", "10Mb", "20Mb", "50Mb");
         $maxsize = get_max_upload_file_size();
         $sizeinlist = false;
@@ -218,7 +218,7 @@
 
 <tr valign=top>
     <td align=right><P><B><?php  print_string("deadline", "workshop") ?>:</B></td>
-    <td><?
+    <td><?php
            print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
            echo "&nbsp;-&nbsp;";
            print_time_selector("deadlinehour", "deadlineminute", $form->deadline);

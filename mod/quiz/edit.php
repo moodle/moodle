@@ -171,7 +171,7 @@
         <INPUT type="submit" name=cancel value="<?php  print_string("cancel") ?>">
         </FORM>
         </CENTER>
-        <?
+        <?php
         print_simple_box_end();
     echo "</TD><TD VALIGN=top WIDTH=50%>";
         print_simple_box_start("CENTER", "100%", $THEME->body);

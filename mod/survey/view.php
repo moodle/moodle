@@ -149,7 +149,7 @@ function checkform() {
 
 </center>
 
-<?
+<?php
    echo "</form>";
 
    print_footer($course);

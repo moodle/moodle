@@ -69,7 +69,7 @@
                     </td>
                 </TR>
 
-                <?
+                <?php
                 break;
 
             case WEBPAGE:
@@ -91,7 +91,7 @@
                     </td>
                 </tr>
 
-                <?
+                <?php
                 break;
 
             case WEBLINK:
@@ -204,7 +204,7 @@
                     </td>
                 </tr>
 
-                <?
+                <?php
                 break;
 
             case PROGRAM:
@@ -226,7 +226,7 @@
                     </td>
                 </tr>
 
-                <?
+                <?php
                 break;
 
             case UPLOADEDFILE:
@@ -239,7 +239,7 @@
                         <p><b><?php echo $strfilename?>:</b></p>
                     </td>
                     <td>
-                        <?
+                        <?php
                           $rootdir = $CFG->dataroot."/".$course->id;
                           $coursedirs = get_directory_list($rootdir, $CFG->moddata);
                           foreach ($coursedirs as $dir) {
@@ -259,7 +259,7 @@
                     </td>
                 </tr>
 
-                <?
+                <?php
                 break;
 
             case PLAINTEXT: 
@@ -278,7 +278,7 @@
                         <textarea name="alltext" rows=20 cols=50 wrap="virtual"><?php  p($form->alltext) ?></textarea>
                     </td>
                 </tr>
-                <?
+                <?php
                 break;
 
             case WIKITEXT:
@@ -296,7 +296,7 @@
                         <textarea name="alltext" rows="20" cols="50" wrap="virtual"><?php  p($form->alltext) ?></textarea>
                     </td>
                 </tr>
-                <?
+                <?php
                 break;
 
             case HTML:
@@ -318,7 +318,7 @@
                         <?php  print_textarea($usehtmleditor, 20, 50, 680, 400, "alltext", $form->alltext); ?>
                     </td>
                 </tr>
-                <?
+                <?php
                 break;
 
             default:
@@ -344,7 +344,7 @@
         <input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
         </center>
         </form>
-<?
+<?php
         if ($usehtmleditor and $form->type == HTML) {
             print_richedit_javascript("theform", "alltext", "yes");
         }
