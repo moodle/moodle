@@ -589,10 +589,46 @@ function glossary_print_entry_definition($entry) {
     if ( $tags ) {
         $definition = str_replace($tags,array_keys($tags),$definition);
     }
-    
+
+    //Extract all URLS with protocol (http://domain.com) from definition
+    preg_match_all('/([[:space:]]|^|\(|\[)([[:alnum:]]+):\/\/([^[:space:]]*)([[:alnum:]#?\/&=])/is',$definition,$list_of_urls);
+
+    //Save them into urls array to use them later
+    foreach (array_unique($list_of_urls[0]) as $key=>$value) {
+        $urls['<*'.$key.'*>'] = $value;
+    }
+
+    //Take off every url from definition
+    if ( $urls ) {
+        $definition = str_replace($urls,array_keys($urls),$definition);
+    }
+
+    //Extract all WEB ADDRESSES (www.domain.com) from definition
+    preg_match_all('/([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?\/&=])/is',$definition,$list_of_addresses);
+
+    //Save them into addrs array to use them later
+    foreach (array_unique($list_of_addresses[0]) as $key=>$value) {
+        $addrs['<+'.$key.'+>'] = $value;
+    }
+
+    //Take off every addr from definition
+    if ( $addrs ) {
+        $definition = str_replace($addrs,array_keys($addrs),$definition);
+    }
+
     //Put doNolinks (concept + aliases) enclosed by <nolink> tag
     $definition= preg_replace($doNolinks,'<nolink>$1</nolink>',$definition);
         
+    //Restore addrs
+    if ( $addrs ) {
+        $definition = str_replace(array_keys($addrs),$addrs,$definition);
+    }
+
+    //Restore urls
+    if ( $urls ) {
+        $definition = str_replace(array_keys($urls),$urls,$definition);
+    }
+
     //Restore tags
     if ( $tags ) {
         $definition = str_replace(array_keys($tags),$tags,$definition);
