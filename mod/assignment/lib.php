@@ -247,7 +247,7 @@ function assignment_log_info($log) {
                               AND u.id = '$log->userid'");
 }
 
-function assignment_get_all_submissions($assignment, $sort="timemodified", $dir="DESC") {
+function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
 /// Return all assignment submissions by ENROLLED students
     global $CFG;
 

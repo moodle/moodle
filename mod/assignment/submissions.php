@@ -4,6 +4,7 @@
     require_once("lib.php");
 
     require_variable($id);    // Assignment
+    optional_variable($sort, ""); 
 
     if (! $assignment = get_record("assignment", "id", $id)) {
         error("Course module is incorrect");
