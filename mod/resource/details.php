@@ -29,6 +29,10 @@
             error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
         }
 
+        if ($form->instance) {
+            $form->alltext = get_field("resource", "alltext", "id", "$form->instance");
+        }
+
         print_simple_box_start("center", "", "$THEME->cellheading");
 
         if ($usehtmleditor and $form->type == HTML) {
