@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.8 beta test (2003010400)
+      // moodle.php - created with Moodle 1.0.9 development (2003011600)
 
 
 $string['action'] = "Toiminta";
@@ -39,6 +39,7 @@ $string['categories'] = "Kurssi kategoria";
 $string['category'] = "Kategoria";
 $string['categoryadded'] = "Kategoria '\$a' lisätty";
 $string['categorydeleted'] = "Kategoria '\$a' poistettu";
+$string['categoryduplicate'] = "Kategoria '\$a' on jo olemassa";
 $string['changedpassword'] = "Salasana vaihdettu";
 $string['changepassword'] = "Vaihda salasana";
 $string['changessaved'] = "Muutokset tallennettu";
@@ -187,6 +188,7 @@ $string['fullprofile'] = "Kaikki henkilötiedot";
 $string['fullsitename'] = "Koko sivuston nimi";
 $string['gd1'] = "GD 1.x asennetuna";
 $string['gd2'] = "GD 2.x asennettuna";
+$string['gdneed'] = "GD-kirjato pitää olaa asennetuna jotta kuvat näkyy";
 $string['gdnot'] = "GD 3.0 asennettuna";
 $string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 
@@ -226,6 +228,7 @@ $string['hitsoncoursetoday'] = "Sivupyynnöt tänään kurssilla \$a->coursename";
 $string['home'] = "Koti";
 $string['hour'] = "tunti";
 $string['hours'] = "tuntia";
+$string['howtomakethemes'] = "Kuinka tehdä uusi teemoja";
 $string['htmleditor'] = "Käytä Richtext HTML editoria. (Toimii vain IE 5.5 tai uudemmassa) ";
 $string['htmleditoravailable'] = "Richtext HTML editori on käytettävissä";
 $string['htmleditordisabled'] = "Olet poistanut Richtext HTML editorin käytön käyttäjä profiilissasi.";
@@ -490,6 +493,9 @@ $string['updatinga'] = "Päivitetään \$a";
 $string['updatingain'] = "Päivitetään \$a->what  ( \$a->in )";
 $string['upload'] = "Lähetä";
 $string['uploadafile'] = "Lähetä tiedosto";
+$string['uploadedfileto'] = "Tiedosto \$a->file lähetty hakemistoon \$a->directory";
+$string['uploadnofilefound'] = "Tiedostoa ei löytynyt, valitsitko varmasti lähetettävän tiedoston?";
+$string['uploadproblem'] = "Tuntematun virhe talennettaessa tiedostoa '\$a'. (Ehkä se oli liian suuri?)";
 $string['uploadthisfile'] = "Lähetä tämä tiedosto";
 $string['userdeleted'] = "Tämä tunnus on poistettu";
 $string['userdescription'] = "Kuvaus";

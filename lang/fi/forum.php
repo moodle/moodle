@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6.3 dev (2002111200)
+      // forum.php - created with Moodle 1.0.9 development (2003011300)
 
 
 $string['addanewdiscussion'] = "Lis‰‰ uusi keskustelu";
@@ -70,19 +70,6 @@ $string['openmode2'] = "Keskustelut ja vastaukset sallitaan";
 $string['parentofthispost'] = "T‰m‰n viestin alku";
 $string['postadded'] = "Viestisi on lis‰tty.<P>Sinulla \$a aikaa muokata viesti‰ jos haluat muuttaa sit‰.";
 $string['postincontext'] = "Katso t‰t‰ viesti‰ kontektissa";
-$string['postingtip'] = "<B>Vihjeet:</B>
-<br>Kun vastaat:
-<UL>
-<LI>lue viesti tarkkaan ja ajatuksella
-<LI>etsi viestist‰ kommetoitavia asioita
-</UL>
-
-Kun kirjoitat:
-<UL>
-<LI>pid‰ viestisi lyhyen‰ ja aiheessa
-<LI>selit‰ ajatuksesi selke‰sti
-<LI>mieti kysymyksi‰ jota voisit esitt‰‰
-</UL>";
 $string['postmailinfo'] = "T‰m‰ on kopio viestist‰ \$a sivustolla.
 Lis‰t‰ksesi vastauksen viestiin suoraan sivustolle, klikkaa seuraavaa linkki‰:";
 $string['postrating1'] = "Suurimmaksi osaksi eristyv‰‰ osaamista";
@@ -92,6 +79,7 @@ $string['postupdated'] = "Viestisi on p‰ivitetty";
 $string['processingpost'] = "K‰sitell‰‰n viesti‰ \$a";
 $string['rate'] = "Luokka";
 $string['ratings'] = "Luokittelut";
+$string['ratingssaved'] = "Luokittelut tallennettu";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lue loput t‰st‰ aiheesta";
 $string['repliesmany'] = "\$a vastausta t‰h‰n menness‰";

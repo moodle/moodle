@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.0.8 beta test (2003010400)
+      // choice.php - created with Moodle 1.0.9 development (2003011600)
 
 
 $string['answered'] = "Vastattu";
@@ -11,7 +11,7 @@ $string['modulenameplural'] = "Monivalinnat";
 $string['notanswered'] = "Vastaamatta";
 $string['publish'] = "Julkaise tulokset";
 $string['publishanonymous'] = "Julkaise tulokset nimettömasti, piilottaen vastaajien nimet";
-$string['publishnames'] = "Julkaise tulokset, näitä nimet ja vastaukset.";
+$string['publishnames'] = "Julkaise tulokset, näytä nimet ja vastaukset.";
 $string['publishnot'] = "Älä julkaise tuloksia";
 $string['responses'] = "Vastaukset";
 $string['responsesto'] = "Vastaukset \$a";
