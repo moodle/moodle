@@ -70,7 +70,7 @@ class CourseBlock_online_users extends MoodleBlock {
         if (empty($this->course->category)) {  // Site-level
             $courseselect = '';
         } else {
-            $courseselect = "AND s.course = '".$this->course->id;
+            $courseselect = "AND s.course = '".$this->course->id."'";
         }
 
         $timefrom = time()-$timetoshowusers;
