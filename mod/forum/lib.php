@@ -493,7 +493,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output .= format_text($post->message, $post->format);
 
-    $output .= "<BR CLEAR=ALL><P ALIGN=right><FONT SIZE=-1>";
+    $output .= "<P ALIGN=right><FONT SIZE=-1>";
 
     $age = time() - $post->created;
     if ($ownpost) {
@@ -1224,6 +1224,8 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
 
     $replies = forum_count_discussion_replies($forum->id);
 
+    $canreply = forum_user_can_post($forum);
+
     $discussioncount = 0;
 
     foreach ($discussions as $discussion) {
@@ -1252,7 +1254,12 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
                 forum_print_post_header($discussion, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
             break;
             default:
-                forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
+                if ($canreply or $discussion->replies) {
+                    $link = true;
+                } else {
+                    $link = false;
+                }
+                forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link, $assessed=false);
                 echo "<BR>\n";
             break;
         }
