@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.9 development version (2003050700)
+      // journal.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
 
 
 $string['alwaysopen'] = "总是开放";
@@ -9,6 +9,14 @@ $string['editingended'] = "编辑期已经结束";
 $string['editingends'] = "编辑期结束";
 $string['entries'] = "条目";
 $string['feedbackupdated'] = "已更新 \$a 条反馈";
+$string['journalmail'] = "\$a->teacher 已经在“ \$a->journal ”中为你写了反馈意见。
+
+你可以在这里看到反馈意见：
+
+\$a->url";
+$string['journalmailhtml'] = "\$a->teacher 已经在<i>“ \$a->journal ”</i>中为你写了反馈意见。<br/><br/>
+
+你可以在<a href=\\\"\$a->url\\\">这里</a>看到反馈意见：";
 $string['journalname'] = "杂志名称";
 $string['journalquestion'] = "杂志问题";
 $string['journalrating1'] = "不满意";

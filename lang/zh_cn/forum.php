@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development version (2003050700)
+      // forum.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
 
 
 $string['addanewdiscussion'] = "添加一个新的讨论话题";
@@ -109,8 +109,10 @@ $string['subscribe'] = "订阅该讨论区";
 $string['subscribed'] = "订阅";
 $string['subscribers'] = "订阅者";
 $string['subscribersto'] = "订阅‘ \$a ’者";
+$string['subscription'] = "订阅";
 $string['subscriptions'] = "订阅";
 $string['unsubscribe'] = "不再订阅该讨论区";
+$string['unsubscribed'] = "不订阅";
 $string['youratedthis'] = "你对此评分";
 $string['yournewtopic'] = "你的新讨论话题";
 $string['yourreply'] = "你的答复";

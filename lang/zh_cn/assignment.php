@@ -1,9 +1,15 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8 dev (2002121200)
+      // assignment.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
 
 
 $string['allowresubmit'] = "允许重交";
 $string['assignmentdetails'] = "布置作业细节";
+$string['assignmentmail'] = "\$a->teacher  已经在“ \$a->assignment ”中为你提交的作业写了反馈意见。
+你可以在你交的作业后面看到反馈意见：
+
+\$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher  已经在<i>“ \$a->assignment ”</i>中为你提交的作业写了反馈意见。<br /><br />
+你可以在<a href=\\\"\$a->url\\\">你交的作业</a>后面看到反馈意见";
 $string['assignmentname'] = "作业名称";
 $string['assignmenttype'] = "作业类型";
 $string['description'] = "描述";
