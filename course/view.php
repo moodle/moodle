@@ -5,12 +5,24 @@
     require("../config.php");
     require("lib.php");
 
+    optional_variable($id);
+    optional_variable($name);
+
+    if (!$id and !$name) {
+        error("Must specify course id or short name");
+    }
+
+    if ($name) {
+        if (! $course = get_record("course", "shortname", $name) ) {
+            error("That's an invalid short course name");
+        }
+    } else {
+        if (! $course = get_record("course", "id", $id) ) {
+            error("That's an invalid course id");
+        }
+    }
 
     require_login($id);
-
-    if (! $course = get_record("course", "id", $id) ) {
-        error("That's an invalid course id");
-    }
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 
