@@ -84,7 +84,7 @@ $JAVASCRIPT_TAGS = array("javascript:", "onclick=", "ondblclick=", "onkeydown=",
                          "onmouseover=", "onmouseout=", "onmousedown=", "onmouseup=",
                          "onblur=", "onfocus=", "onload=", "onselect=");
 
-$ALLOWED_TAGS = "<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><sup><sub><address><cite><blockquote><pre><strike>";
+$ALLOWED_TAGS = "<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><sup><sub><address><cite><blockquote><pre><strike><embed><object><param>";
 
 
 /// Functions
