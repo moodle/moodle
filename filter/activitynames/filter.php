@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
     //This function provides automatic linking to
     //activities when its name (title) is found inside every Moodle text
     //It's based in the glosssary filter by Williams Castillo
@@ -14,6 +14,9 @@
 
         $course = get_record("course","id",$courseid);
         $modinfo = unserialize($course->modinfo);
+
+        //Sort modinfo by name lenght
+        usort($modinfo,'comparemodulenamesbylenght'); 
 
         if (!empty($modinfo)) {
             $cm = '';
@@ -110,5 +113,13 @@
             $text = str_replace(array_keys($words),$words,$text);
         }
         return $text;
+    }
+
+    //This function is used to order module names from longer to shorter
+    function comparemodulenamesbylenght($a, $b)  {
+        if (strlen($a->name) == strlen($b->name)) {
+            return 0;
+        }
+        return (strlen($a->name) < strlen($b->name)) ? 1 : -1;
     }
 ?>
