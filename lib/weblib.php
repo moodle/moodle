@@ -315,6 +315,8 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
 ///  $help     = The name of a help page if help is required
 ///  $helptext  = The name of the label for the help button
 
+    global $CFG;
+
     if ($nothing == "choose") {
         $nothing = get_string("choose")."...";
     }
