@@ -14,6 +14,8 @@
 
     optional_variable($name);  // confirm the action
 
+    $name = clean_text($name);
+
     $action = strip_tags(urldecode($action));  //XSS
     $hook = strip_tags(urldecode($hook));  //XSS
     $mode = strip_tags(urldecode($mode));  //XSS
