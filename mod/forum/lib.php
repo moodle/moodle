@@ -25,11 +25,11 @@ $FORUM_OPEN_MODES   = array ("2" => get_string("openmode2", "forum"),
                              "0" => get_string("openmode0", "forum") );
 
 
-$FORUM_SHORT_POST = 300;  // Less than this is "short"
+define("FORUM_SHORT_POST", 300);  // Less non-HTML characters than this is short
 
-$FORUM_LONG_POST  = 600;  // More than this is "long"
+define("FORUM_LONG_POST", 600);   // More non-HTML characters than this is long
 
-$FORUM_MANY_DISCUSSIONS = 10;
+define("FORUM_MANY_DISCUSSIONS", 10);
 
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
@@ -558,7 +558,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
 
 function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
-    global $THEME, $USER, $CFG, $FORUM_LONG_POST;
+    global $THEME, $USER, $CFG;
 
     if ($post->parent) {
         echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
@@ -596,10 +596,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo "</DIV>";
     }
 
-    if ($link && (strlen($post->message) > $FORUM_LONG_POST)) {
+    if ($link and (strlen(strip_tags($post->message)) > FORUM_LONG_POST)) {
         // Print shortened version
         echo format_text(forum_shorten_post($post->message), $post->format);
-        $numwords = count_words($post->message);
+        $numwords = count_words(strip_tags($post->message));
         echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
         echo get_string("readtherest", "forum");
         echo "</A> (".get_string("numwords", "", $numwords).")...";
@@ -663,7 +663,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
 
 function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
-    global $THEME, $USER, $CFG, $FORUM_LONG_POST;
+    global $THEME, $USER, $CFG;
 
     if ($post->parent) {
         echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
@@ -712,19 +712,54 @@ function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false
 
 
 function forum_shorten_post($message) {
-    global $FORUM_LONG_POST, $FORUM_SHORT_POST;
+// Given a post object that we already know has a long message
+// this function truncates the message nicely to the first 
+// sane place between FORUM_LONG_POST and FORUM_SHORT_POST
 
-    if (strlen($message) > $FORUM_LONG_POST) {
-        // Look for the first return between $FORUM_SHORT_POST and $FORUM_LONG_POST
-        $shortmessage = substr($message, $FORUM_SHORT_POST, $FORUM_LONG_POST);
-        if ($pos = strpos($shortmessage, "\n")) {
-            return substr($message, 0, $FORUM_SHORT_POST + $pos);
-        } else {
-            return substr($message, 0, $FORUM_LONG_POST)."...";
-        }
-    } else {
-        return $message;
-    }
+   $i = 0;
+   $tag = false;
+   $length = strlen($message);
+   $count = 0;
+   $stopzone = false;
+   $truncate = 0;
+
+   for ($i=0; $i<$length; $i++) {
+       $char = $string[$i];
+
+       switch ($char) {
+           case "<": 
+               $tag = true;
+               break;
+           case ">": 
+               $tag = false;
+               break;
+           default:
+               if (!$tag) {
+                   if ($stopzone) {
+                       if ($char == " " or $char == ".") {
+                           $truncate = $i;
+                           break 2;
+                       }
+                   }
+                   $count++;
+               }
+       }
+       if (!$stopzone) {
+           if ($count > FORUM_SHORT_POST) {
+               $stopzone = true;
+           }
+       }
+   }
+
+   if (!$truncate) {
+       if ($i < FORUM_LONG_POST) {
+           $truncate = $i;
+       } else {
+           $truncate = FORUM_LONG_POST;
+       }
+   }
+
+   return substr($message, 0, $truncate);
 }
 
 
@@ -1214,7 +1249,7 @@ function forum_get_discussions($forum="0", $forum_sort="DESC", $user=0) {
 
 
 function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $forum_style="plain", $forum_sort="DESC") {
-    global $CFG, $USER, $FORUM_MANY_DISCUSSIONS;
+    global $CFG, $USER;
     
     if ($forum_id) {
         if (! $forum = get_record("forum", "id", $forum_id)) {
@@ -1250,7 +1285,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
 
     }
     
-    if ((!$forum_numdiscussions) && ($forum_style == "plain") && (count($discussions) > $FORUM_MANY_DISCUSSIONS) ) { 
+    if ((!$forum_numdiscussions) && ($forum_style == "plain") && (count($discussions) > FORUM_MANY_DISCUSSIONS) ) { 
         $forum_style = "header";  // Abbreviate display if it's going to be long.
     }
 
