@@ -45,7 +45,7 @@ class graph {
                                            //   for WINDOZE this may need to be the full path, not relative.
 
     'title'              => 'Graph Title', // text for graph title
-    'title_font'         => 'arial.ttf',   // title text font. don't forget to set 'path_to_fonts' above.
+    'title_font'         => 'default.ttf',   // title text font. don't forget to set 'path_to_fonts' above.
     'title_size'         =>  16,           // title text point size
     'title_colour'       => 'black',       // colour for title text
 
@@ -54,7 +54,7 @@ class graph {
     'y_label_right'      => '',            // if this is set then this text is printed on right axis of graph.
 
     'label_size'         =>  12,           // label text point size
-    'label_font'         => 'arial.ttf', // label text font. don't forget to set 'path_to_fonts' above.
+    'label_font'         => 'default.ttf', // label text font. don't forget to set 'path_to_fonts' above.
     'label_colour'       => 'gray33',      // label text colour
     'y_label_angle'      =>  90,           // rotation of y axis label
 
@@ -108,7 +108,7 @@ class graph {
     'zero_axis'          => 'none',        // colour to draw zero-axis, or 'none'.
 
 
-    'axis_font'          => 'arial.ttf', // axis text font. don't forget to set 'path_to_fonts' above.
+    'axis_font'          => 'default.ttf', // axis text font. don't forget to set 'path_to_fonts' above.
     'axis_size'          =>  12,            // axis text font size in points
     'axis_colour'        => 'gray33',      // colour of axis text.
     'y_axis_angle'       =>  0,            // rotation of axis text.
@@ -131,7 +131,7 @@ class graph {
                                           //   'outside-top', 'outside-bottom', 'outside-left', or 'outside-right'.
     'legend_offset'      =>  10,           // offset in pixels from graph or outside border.
     'legend_padding'     =>  5,            // padding around legend text.
-    'legend_font'        => 'arial.ttf',   // legend text font. don't forget to set 'path_to_fonts' above.
+    'legend_font'        => 'default.ttf',   // legend text font. don't forget to set 'path_to_fonts' above.
     'legend_size'        =>  9,            // legend text point size.
     'legend_colour'      => 'black',       // legend text colour.
     'legend_border'      => 'none',        // legend border colour, or 'none'.
@@ -145,8 +145,19 @@ class graph {
 
 // init all text - title, labels, and axis text.
 function init() {
+
+
+  /// Moodle mods:  overrides the font path
   global $CFG;
-  $this->parameter['path_to_fonts'] = $CFG->dirroot."/lib/fonts/";  // Moodle
+  $currlang = current_language();
+  $fontpath = $CFG->dirroot."/lang/$currlang/fonts/";
+  if (!file_exists("$fontpath"."default.ttf")) {
+      $fontpath = $CFG->dirroot."/lang/en/fonts/";
+  }
+  $this->parameter['path_to_fonts'] = $fontpath;
+  /// End Moodle mods
+
+
 
   $this->calculated['outer_border'] = $this->calculated['boundary_box'];
 
