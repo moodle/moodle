@@ -99,7 +99,7 @@
 
         //Now, if requested, the user_data
         if ($user_data) {
-            $info[1][0] = get_string("rolls","attendance");
+            $info[1][0] = get_string("entries");
             if ($ids = attendance_roll_ids_by_course ($course)) {
                 $info[1][1] = count($ids);
             } else {
