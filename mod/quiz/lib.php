@@ -1016,7 +1016,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
         switch ($question->qtype) {
             case SHORTANSWER:
                 if ($question->answer) {
-                    $question->answer = trim($question->answer[0]);
+                    $question->answer = trim(stripslashes($question->answer[0]));
                 } else {
                     $question->answer = "";
                 }
