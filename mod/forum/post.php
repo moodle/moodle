@@ -74,7 +74,6 @@
     if (isset($forum)) {      // User is starting a new discussion in a forum
 
         $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
-        save_session("SESSION");
 
         if (! $forum = get_record("forum", "id", $forum)) {
             error("The forum number was incorrect ($forum)");

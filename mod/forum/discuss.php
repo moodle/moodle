@@ -33,7 +33,6 @@
     add_to_log($course->id, "forum", "view discussion", "discuss.php?".$_SERVER["QUERY_STRING"], "$discussion->id");
 
     unset($SESSION->fromdiscussion);
-    save_session("SESSION");
 
     forum_set_display_mode($mode);
 

@@ -20,7 +20,6 @@
     }
 
     unset($SESSION->fromdiscussion);
-    save_session("SESSION");
 
     add_to_log($course->id, "forum", "view forums", "index.php?id=$course->id");
 

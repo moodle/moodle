@@ -1078,7 +1078,6 @@ function forum_set_return() {
         // If the referer is NOT a login screen then save it.
         if (! strncasecmp("$CFG->wwwroot/login", $referer, 300)) {
             $SESSION->fromdiscussion = $_SERVER["HTTP_REFERER"];
-            save_session("SESSION");
         }
     }
 }
@@ -1090,7 +1089,6 @@ function forum_go_back_to($default) {
     if (!empty($SESSION->fromdiscussion)) {
         $returnto = $SESSION->fromdiscussion;
         unset($SESSION->fromdiscussion);
-        save_session("SESSION");
         return $returnto;
     } else {
         return $default;
@@ -1660,10 +1658,8 @@ function forum_set_display_mode($mode=0) {
 
     if ($mode) {
         $USER->mode = $mode;
-        save_session("USER");
     } else if (empty($USER->mode)) {
         $USER->mode = $FORUM_DEFAULT_DISPLAY_MODE;
-        save_session("USER");
     }
 }
 

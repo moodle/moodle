@@ -66,7 +66,6 @@
 
     if ($USER) {
         $SESSION->fromdiscussion = "$FULLME";
-        save_session("SESSION");
         if (forum_is_forcesubscribed($forum->id)) {
             $streveryoneissubscribed = get_string("everyoneissubscribed", "forum");
             $strallowchoice = get_string("allowchoice", "forum");

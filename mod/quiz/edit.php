@@ -18,7 +18,6 @@
         }
 
         $SESSION->modform = $modform;    // Save the form in the current session
-        save_session("SESSION");
 
     } else {
         if (!isset($SESSION->modform)) {
@@ -140,8 +139,6 @@
     }
 
     $SESSION->modform = $modform;
-    save_session("SESSION");
-
 
     $strediting = get_string("editingquiz", "quiz");
     $strname    = get_string("name");
