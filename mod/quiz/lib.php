@@ -461,29 +461,40 @@ function quiz_print_question_icon($question, $editlink=true) {
     }
 }
 
+function quiz_print_possible_question_image($quizid, $question) {
+// Includes the question image is there is one
 
+    global $CFG;
 
-function quiz_print_question($number, $question, $grade, $courseid, 
+    if ($question->image) {
+        echo "<img border=\"0\" src=\"";
+
+        if (substr(strtolower($question->image), 0, 7) == "http://") {
+            echo $question->image;
+
+        } else if ($CFG->slasharguments) {        // Use this method if possible for better caching
+            echo "$CFG->wwwroot/mod/quiz/quizfile.php/$quizid/$question->id/$question->image";
+
+        } else {
+            echo "$CFG->wwwroot/mod/quiz/quizfile.php?file=/$quizid/$question->id/$question->image";
+        }
+        echo "\" />";
+
+    }
+}
+
+function quiz_print_question($number, $question, $grade, $quizid, 
                              $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL,
                              $realquestion=NULL, $shuffleanswers=false, $showgrades=true) {
 
 /// Prints a quiz question, any format
 /// $question is provided as an object
 
-    if ($question->image) {
-        if ($quizcategory = get_record("quiz_categories", "id", $question->category)) {
-            $question->course = $quizcategory->course;
-        } else {
-            $question->course = $courseid;
-        }
-    }
 
     if ($question->qtype == DESCRIPTION) {  // Special case question - has no answers etc
         echo '<p align="center">';
         echo text_to_html($question->questiontext);
-        if ($question->image) {
-            print_file_picture($question->image, $question->course);
-        }
+        quiz_print_possible_question_image($quizid, $question);
         echo '</p>';
         return true;
     }
@@ -507,7 +518,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
     }
     print_spacer(1,100);
     
-    if ($question->recentlyadded) {
+    if (isset($question->recentlyadded) and $question->recentlyadded) {
         echo "</td><td valign=top align=right>";
         // Notify the user of this recently added question
         echo '<font color="red">';
@@ -531,9 +542,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
        case SHORTANSWER: 
        case NUMERICAL:
            echo text_to_html($question->questiontext);
-           if ($question->image) {
-               print_file_picture($question->image, $question->course);
-           }
+           quiz_print_possible_question_image($quizid, $question);
            if ($response) {
                $value = "VALUE=\"$response[0]\"";
            } else {
@@ -566,9 +575,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
                $false->answer = get_string("false", "quiz");
            }
            echo text_to_html($question->questiontext);
-           if ($question->image) {
-               print_file_picture($question->image, $question->course);
-           }
+           quiz_print_possible_question_image($quizid, $question);
 
            $truechecked = "";
            $falsechecked = "";
@@ -611,9 +618,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
                notify("Error: Missing question answers!");
            }
            echo text_to_html($question->questiontext);
-           if ($question->image) {
-               print_file_picture($question->image, $question->course);
-           }
+           quiz_print_possible_question_image($quizid, $question);
            echo "<TABLE ALIGN=right>";
            echo "<TR><TD valign=top>$stranswer:&nbsp;&nbsp;</TD><TD>";
            echo "<TABLE>";
@@ -667,9 +672,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
            if (!empty($question->questiontext)) {
                echo text_to_html($question->questiontext);
            }
-           if (!empty($question->image)) {
-               print_file_picture($question->image, $question->course);
-           }
+           quiz_print_possible_question_image($quizid, $question);
 
            if ($shuffleanswers) {
                $subquestions = draw_rand_array($subquestions, count($subquestions));
@@ -717,9 +720,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
                notify("Error: Missing question options!");
            }
            echo text_to_html($question->questiontext);
-           if ($question->image) {
-               print_file_picture($question->image, $question->course);
-           }
+           quiz_print_possible_question_image($quizid, $question);
 
            /// First, get all the questions available
 
@@ -801,9 +802,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
 
        case MULTIANSWER:
            // For this question type, we better print the image on top:
-           if ($question->image) {
-               print_file_picture($question->image, $question->course);
-           }
+           quiz_print_possible_question_image($quizid, $question);
 
             $qtextremaining = text_to_html($question->questiontext);
             // The regex will recognize text snippets of type {#X} where the X can be any text not containg } or white-space characters.
@@ -1012,7 +1011,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
 
 
         print_simple_box_start("CENTER", "90%");
-        quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->course, 
+        quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->id, 
                             $feedback, $response, $actualgrades, $correct, 
                             $randomquestion, $quiz->shuffleanswers, $quiz->grade);
         print_simple_box_end();
