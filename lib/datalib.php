@@ -1286,7 +1286,7 @@ function make_default_scale() {
     $defaultscale->description = addslashes(implode("", $file));
 
     if ($defaultscale->id = insert_record("scale", $defaultscale)) {
-        execute_sql("UPDATE {$CFG->prefix}forum SET scale = '$defaultscale->id'");
+        execute_sql("UPDATE {$CFG->prefix}forum SET scale = '$defaultscale->id'", false);
     }
 }
 
