@@ -44,7 +44,7 @@
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
 
-        if ($groupid) {
+        if (!empty($groupid)) {
             $groupselect = " AND groupid = '$currentgroup'";
             $groupparam = "&amp;groupid=$currentgroup";
         } else {
@@ -106,7 +106,7 @@
         $currentgroup = false;
     }
 
-    if ($currentgroup) {
+    if (!empty($currentgroup)) {
         $groupselect = " AND groupid = '$currentgroup'";
         $groupparam = "&amp;groupid=$currentgroup";
     } else {
