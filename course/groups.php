@@ -184,7 +184,7 @@
     if ($teachers = get_course_teachers($course->id)) {
         foreach ($teachers as $teacher) {
             $prefix = '- ';
-            if (isteacheredit($course->id, $user->id)) {
+            if (isteacheredit($course->id, $teacher->id)) {
                 $prefix = '# ';
             }
             $nonmembers[$teacher->id] = $prefix.fullname($teacher, true);
