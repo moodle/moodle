@@ -13,6 +13,9 @@
     optional_variable($offset);                    // number of entries to bypass
     optional_variable($displayformat,-1); 
 
+    $mode = strip_tags(urldecode($mode));  //XSS
+    $hook = strip_tags(urldecode($hook));  //XSS
+    $sortkey = strip_tags(urldecode($sortkey));  //XSS
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

@@ -5,16 +5,20 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-     require_variable($id);    // Course Module ID, or
-     optional_variable($mode);  // cat
-     optional_variable($hook);  // category ID
-     optional_variable($action);  // what to do
-     optional_variable($usedynalink);  // category ID
-     optional_variable($confirm);  // confirm the action
+    require_variable($id);    // Course Module ID, or
+    optional_variable($mode);  // cat
+    optional_variable($hook);  // category ID
+    optional_variable($action);  // what to do
+    optional_variable($usedynalink);  // category ID
+    optional_variable($confirm);  // confirm the action
 
-     optional_variable($name);  // confirm the action
+    optional_variable($name);  // confirm the action
 
-     $action = strtolower($action);
+    $action = strip_tags(urldecode($action));  //XSS
+    $hook = strip_tags(urldecode($hook));  //XSS
+    $mode = strip_tags(urldecode($mode));  //XSS
+
+    $action = strtolower($action);
         
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

@@ -29,6 +29,14 @@
     optional_variable($show,"");       // [ concept | alias ] => mode=term hook=$show
     optional_variable($displayformat,-1);  // override of the glossary display format
 
+    $mode = strip_tags(urldecode($mode));  //XSS
+    $hook = strip_tags(urldecode($hook));  //XSS
+    $fullsearch = strip_tags(urldecode($fullsearch));  //XSS
+    $sortkey = strip_tags(urldecode($sortkey));  //XSS
+    $sortorder = strip_tags(urldecode($sortorder));  //XSS
+    $offset = strip_tags(urldecode($offset));  //XSS
+    $show = strip_tags(urldecode($show));  //XSS
+
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");

@@ -12,6 +12,9 @@ optional_variable($confirm,0);    // proceed. Edit the edtry
 optional_variable($mode);   // categories if by category?
 optional_variable($hook);    // CategoryID
 
+$mode = strip_tags(urldecode($mode));  //XSS
+$hook = strip_tags(urldecode($hook));  //XSS
+
 if (! $cm = get_record("course_modules", "id", $id)) {
     error("Course Module ID was incorrect");
 }

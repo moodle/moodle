@@ -9,6 +9,9 @@
     require_variable($prevmode);  //  current frame
     optional_variable($hook);         // pivot id 
 
+    $prevmode = strip_tags(urldecode($prevmode));  //XSS
+    $hook = strip_tags(urldecode($hook));  //XSS
+
     $strglossary = get_string("modulename", "glossary");
     $strglossaries = get_string("modulenameplural", "glossary");
     $stredit = get_string("edit");
