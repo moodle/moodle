@@ -23,10 +23,10 @@
 
     if ($course->category) {
         require_login($course->id);
-        $navigation = "<A TARGET=\"{$CFG->main_frame}\" HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->
-                       <A TARGET=\"{$CFG->main_frame}\" HREF=\"index.php?id=$course->id\">$strresources</A> ->";
+        $navigation = "<A TARGET=\"{$CFG->framename}\" HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->
+                       <A TARGET=\"{$CFG->framename}\" HREF=\"index.php?id=$course->id\">$strresources</A> ->";
     } else {
-        $navigation = "<A TARGET=\"{$CFG->main_frame}\" HREF=\"index.php?id=$course->id\">$strresources</A> ->";
+        $navigation = "<A TARGET=\"{$CFG->framename}\" HREF=\"index.php?id=$course->id\">$strresources</A> ->";
     }
 
 
@@ -54,7 +54,7 @@
         case WEBPAGE:
             if (!empty($frameset)) {
                 print_header("$course->shortname: $resource->name", "$course->fullname", 
-                "$navigation <A TARGET=\"{$CFG->main_frame}\" HREF=\"$resource->reference\" TITLE=\"$resource->reference\">$resource->name</A>",
+                "$navigation <A TARGET=\"{$CFG->framename}\" HREF=\"$resource->reference\" TITLE=\"$resource->reference\">$resource->name</A>",
                 "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
                 echo "<CENTER><FONT SIZE=-1>".text_to_html($resource->summary, true, false)."</FONT></CENTER>";
 

@@ -26,6 +26,7 @@
        "prefix"           => "",
        "guestloginbutton" =>  1,
        "sessiontimeout"   =>  7200,
+       "framename"       =>  "_top",
        "debug"            =>  7
     );
 

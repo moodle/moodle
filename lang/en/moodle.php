@@ -66,6 +66,7 @@ $string['configlang'] = "Choose a default language for the whole site.  Users ca
 $string['configlangdir'] = "Most languages are printed left-to-right, but some, like Arabic and Hebrew, are printed right-to-left.";
 $string['configlocale'] = "Choose a sitewide locale - this will affect the format and language of dates. You need to have this locale data installed on your operating system.  (eg en_US or es_ES).  If you don't know what to choose leave it blank.";
 $string['configlongtimenosee'] = "If students haven't logged in for a very long time, then they are automatically unsubscribed from courses.  This parameter specifies that time limit.";
+$string['configframename'] = "If you are embedding Moodle within a web frame, then put the name of this frame here.  Otherwise this value should remain as '_top'";
 $string['configmaxeditingtime'] = "This specifies the amount of time people have to re-edit forum postings, journal feedback etc.  Usually 30 minutes is a good value.";
 $string['configproxyhost'] = "If this <B>server</B> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.";
 $string['configsessiontimeout'] = "If people logged in to this site are idle for a long time (without loading pages) then they are automatically logged out (their session is ended).  This variable specifies how long this time should be.";

@@ -61,12 +61,12 @@
     switch ($action) {
       case "top":
         if ($course->category) {
-            $navigation = "<A TARGET=\"{$CFG->main_frame}\" HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->
-                           <A TARGET=\"{$CFG->main_frame}\" HREF=\"index.php?id=$course->id\">$strsurveys</A> ->
-                           <A TARGET=\"{$CFG->main_frame}\" HREF=\"view.php?id=$cm->id\">$survey->name</A> -> ";
+            $navigation = "<A TARGET=\"{$CFG->framename}\" HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->
+                           <A TARGET=\"{$CFG->framename}\" HREF=\"index.php?id=$course->id\">$strsurveys</A> ->
+                           <A TARGET=\"{$CFG->framename}\" HREF=\"view.php?id=$cm->id\">$survey->name</A> -> ";
         } else {
-            $navigation = "<A TARGET=\"{$CFG->main_frame}\" HREF=\"index.php?id=$course->id\">$strsurveys</A> ->
-                           <A TARGET=\"{$CFG->main_frame}\" HREF=\"view.php?id=$cm->id\">$survey->name</A> -> ";
+            $navigation = "<A TARGET=\"{$CFG->framename}\" HREF=\"index.php?id=$course->id\">$strsurveys</A> ->
+                           <A TARGET=\"{$CFG->framename}\" HREF=\"view.php?id=$cm->id\">$survey->name</A> -> ";
         }
         print_header("$course->shortname: $survey->name", "$course->fullname", "$navigation $strreport");
         break;

@@ -218,6 +218,19 @@
     <? print_string("configdebug") ?>
     </TD>
 </TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>framename:</TD>
+	<TD>
+    <? if (empty($config->framename)) {
+           $config->framename = "_top";
+       }
+    ?>
+    <INPUT NAME=framename TYPE=text SIZE=15 VALUE="<?=$config->framename?>">
+    </TD>
+    <TD>
+    <? print_string("configframename") ?>
+    </TD>
+</TR>
 
 
 <TR>

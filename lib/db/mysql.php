@@ -88,6 +88,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2002102503) {
+        execute_sql(" ALTER TABLE `course` ADD `modinfo` TEXT NOT NULL AFTER `format` ");
         require_once("$CFG->dirroot/mod/forum/lib.php");
         require_once("$CFG->dirroot/course/lib.php");
 

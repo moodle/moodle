@@ -91,7 +91,7 @@
                   "<A HREF=\"index.php\">$stradministration</A> -> $strauthenticationoptions", "$focus");
 
     echo "<CENTER><P><B>";
-    echo "<form TARGET=\"{$CFG->main_frame}\" NAME=\"authmenu\" method=\"post\" action=\"auth.php\">";
+    echo "<form TARGET=\"{$CFG->framename}\" NAME=\"authmenu\" method=\"post\" action=\"auth.php\">";
     print_string("chooseauthmethod","auth");
 
 	choose_from_menu ($options, "auth", $auth, "","top.location='auth.php?auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");

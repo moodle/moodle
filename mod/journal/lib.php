@@ -1,8 +1,17 @@
 <?PHP // $Id$
 
-$JOURNAL_RATING = array ("3" => get_string("journalrating3", "journal"),
-                         "2" => get_string("journalrating2", "journal"),
-                         "1" => get_string("journalrating1", "journal") );
+//$JOURNAL_RATING = array ("3" => get_string("journalrating3", "journal"),
+//                         "2" => get_string("journalrating2", "journal"),
+//                         "1" => get_string("journalrating1", "journal") );
+
+// Hack to use 0-x grades
+
+$JOURNAL_MAX = 30;
+
+$JOURNAL_RATING = array();
+for ($journal_i=$JOURNAL_MAX; $journal_i>=0; $journal_i--) {
+    $JOURNAL_RATING["$journal_i"] = "$journal_i";
+}
 
 
 
@@ -155,7 +164,7 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
 
 function journal_grades($journalid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-    global $JOURNAL_RATING;
+    global $JOURNAL_RATING, $JOURNAL_MAX;
 
     if ($return->grades = get_records_menu("journal_entries", "journal", $journalid, "", "userid,rating")) {
         foreach ($return->grades as $key => $value) {
@@ -165,7 +174,7 @@ function journal_grades($journalid) {
                 $return->grades[$key] = "-";
             }
         }
-        $return->maxgrade = "";
+        $return->maxgrade = $JOURNAL_MAX;
     }
     return $return;
 }
@@ -312,7 +321,7 @@ function journal_delete_instance($id) {
 
 
 function journal_print_feedback($course, $entry) {
-    global $CFG, $THEME, $JOURNAL_RATING;
+    global $CFG, $THEME, $JOURNAL_RATING, $JOURNAL_MAX;
 
     if (! $teacher = get_record("user", "id", $entry->teacher)) {
         error("Weird journal error");
@@ -335,6 +344,7 @@ function journal_print_feedback($course, $entry) {
     if ($JOURNAL_RATING[$entry->rating]) {
         echo get_string("overallrating", "journal").": ";
         echo $JOURNAL_RATING[$entry->rating];
+        echo " / $JOURNAL_MAX";
     } else {
         print_string("noratinggiven", "journal");
     }

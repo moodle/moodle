@@ -319,7 +319,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         $nothing = get_string("choose")."...";
     }
 
-    $output = "<FORM TARGET=\"{$CFG->main_frame}\" NAME=$formname>";
+    $output = "<FORM TARGET=\"{$CFG->framename}\" NAME=$formname>";
     $output .= "<SELECT NAME=popup onChange=\"top.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
 
     if ($nothing != "") {
@@ -636,10 +636,10 @@ function print_footer ($course=NULL) {
             $course = get_site();
             $homepage = true;
         } else {
-            $homelink = "<A TARGET=\"{$CFG->main_frame}\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
+            $homelink = "<A TARGET=\"{$CFG->framename}\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
         }
     } else {
-        $homelink = "<A TARGET=\"{$CFG->main_frame}\" HREF=\"$CFG->wwwroot\">".get_string("home")."</A>";
+        $homelink = "<A TARGET=\"{$CFG->framename}\" HREF=\"$CFG->wwwroot\">".get_string("home")."</A>";
         $course = get_site();
     }
 
@@ -673,7 +673,7 @@ function print_navigation ($navigation) {
        if (! $site = get_site()) {
            $site->shortname = get_string("home");;
        }
-       echo "<A TARGET=\"{$CFG->main_frame}\" HREF=\"$CFG->wwwroot/\">$site->shortname</A> -> $navigation";
+       echo "<A TARGET=\"{$CFG->framename}\" HREF=\"$CFG->wwwroot/\">$site->shortname</A> -> $navigation";
    }
 }
 
