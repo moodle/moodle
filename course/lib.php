@@ -321,13 +321,13 @@ function print_recent_activity($course) {
         if ($log->module == "forum") {
             $post = NULL;
 
-            if ($log->action == "add post" or $log->action == "add discussion") {
+            if ($log->action == "add post") {
                 $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
                                                u.email, u.picture, u.id as userid
                                         FROM forum_discussions d, forum_posts p, user u 
                                         WHERE p.id = '$log->info' AND d.id = p.discussion AND p.user = u.id");
 
-            } else if ($log->action == "add") {
+            } else if ($log->action == "add discussion") {
                 $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
                                                u.email, u.picture, u.id as userid
                                         FROM forum_discussions d, forum_posts p, user u 
