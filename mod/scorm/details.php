@@ -102,6 +102,10 @@
             if ($form->instance) {     // Re-editing
          	if ($form->popup == "") {
                     $newwindow = "";   // Disable the new window
+                    foreach ($SCORM_WINDOW_OPTIONS as $optionname) {
+                       	$defaultvalue = "scorm_popup$optionname";
+                    	$window->$optionname = $CFG->$defaultvalue;
+         	    }
          	} else {
              	    $newwindow = "checked";
                     $rawoptions = explode(',', $form->popup); 
