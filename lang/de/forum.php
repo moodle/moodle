@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // forum.php - created with Moodle 1.0.8 dev (2002122301)
+<?PHP // $Id$ 
+      // forum.php - created with Moodle 1.2 development (2003102900)
 
 
 $string['addanewdiscussion'] = "Ein neues Diskussionsthema hinzufügen";
@@ -14,9 +14,8 @@ $string['bynameondate'] = "von  \$a->name - \$a->date ";
 $string['configdisplaymode'] = "Anzeige Voreinstellung für Diskussionen, falls keine eingestellt wurde.";
 $string['configlongpost'] = "Jeder Beitrag oberhalb dieser Länge (ohne HTML) wird als lang eingestuft.";
 $string['configmanydiscussions'] = "Maximale Anzahl Diskussionen eines Forums pro Seite";
+$string['configmaxbytes'] = "Maximale Größe für alle Anhänge, die zu den Beiträgen auf diese Seite hochgeladen wurden ";
 $string['configshortpost'] = "Jeder Beitrag unterhalb dieser Länge (ohne HTML) wird als kurz eingestuft.";
-
-
 $string['couldnotadd'] = "Ihr Eintrag konnte aufgrund eines unbekannten Fehlers nicht hinzugefügt werden";
 $string['couldnotdeleteratings'] = "Das kann nicht gelöscht werden, weil es schon bewertet wurde";
 $string['couldnotdeletereplies'] = "Das kann nicht gelöscht werden, weil darauf schon Anworten geschrieben wurden";
@@ -52,6 +51,7 @@ $string['introsocial'] = "Ein offenes Forum, um über alles zu Plaudern";
 $string['introteacher'] = "Ein Forum ausschliesslich für Anmerkungen und Diskussionen der Lehrer";
 $string['lastpost'] = "Letzter Beitrag";
 $string['learningforums'] = "Lernforum";
+$string['maxattachmentsize'] = "Maximale Größe für ein Upload zu diesem Beitrag";
 $string['maxtimehaspassed'] = "Die Höchstdauer für die Bearbeitung diesen Eintrag (\$a) ist überschritten!";
 $string['message'] = "Mitteilung";
 $string['modeflatnewestfirst'] = "Anzeige der Antworten flach, aktuellste zuerst";
@@ -80,6 +80,7 @@ $string['olderdiscussions'] = "Ältere Diskussionen";
 $string['openmode0'] = "Keine Diskussionen, keine Antworten";
 $string['openmode1'] = "Keine Diskussionen, aber Antworten erlaubt";
 $string['openmode2'] = "Diskussionen und Antworten erlaubt";
+$string['parent'] = "Zeige den ersten Eintrag";
 $string['parentofthispost'] = "Verfasser dieses Beitrags";
 $string['postadded'] = "Ihr Eintrag wurde erfolgreich hinzugefügt. <P>Sie haben \$a zu bearbeiten, sofern Sie Änderungen machen möchten.";
 $string['postincontext'] = "Diesen Beitrag im Zusammenhang einsehen";
@@ -93,12 +94,14 @@ $string['posts'] = "Beiträge";
 $string['postupdated'] = "Ihr Beitrag wurde aktualisiert";
 $string['processingpost'] = "Bearbeite Beitrag \$a";
 $string['rate'] = "Bewerte";
+$string['rating'] = "Bewertung";
 $string['ratingeveryone'] = "Jeder kann Beiträge bewerten";
 $string['ratingno'] = "Keine Bewertungen";
 $string['ratingonlyteachers'] = "Nur \$a kann Beiträge bewerten";
-$string['rating'] = "Bewertung";
 $string['ratings'] = "Bewertungen";
 $string['ratingssaved'] = "Bewertungen gespeichert";
+$string['ratingsuse'] = "Bewertungen einschalten";
+$string['ratingtime'] = "Mit diesem Eintrag beschränken Sie die Bewertung auf  Beiträge, die in dem Zeitraum eingestellt werden, der hier angegeben ist.";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lesen Sie den Rest des Themas";
 $string['replies'] = "Antworten";

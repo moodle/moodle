@@ -1,10 +1,10 @@
-<?PHP // $Id$
-      // resource.php - created with Moodle 1.0.8 dev (2002122301)
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.2 development (2003102900)
 
 
 $string['addresource'] = "Literatur hinzufügen";
+$string['chooseafile'] = "Wählen Sie ein Datei aus, oder laden Sie eine auf den Server";
 $string['configframesize'] = "Wenn eine Webseite oder eine hochgeladene Datei in einem Frame angezeigt wird, so gibt dieser Wert die Größe des Top-Frames, der die Navigation beinhaltet, in Pixeln an.";
-
 $string['editingaresource'] = "Literatur bearbeiten";
 $string['example'] = "Beispiel";
 $string['examplereference'] = "Stefan Münz,

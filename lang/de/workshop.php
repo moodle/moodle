@@ -1,5 +1,6 @@
-<?PHP // $Id$
-      // workshop.php - created with Moodle 1.0.8 dev (2002122301)
+<?PHP // $Id$ 
+      // workshop.php - created with Moodle 1.2 development (2003102900)
+
 
 $string['absent'] = "Abwesend";
 $string['accumulative'] = "Akkumuliert";
@@ -37,7 +38,6 @@ $string['comment'] = "Kommentar";
 $string['commentby'] = "Kommentiert von";
 $string['confirmdeletionofthisitem'] = "Löschen dieses Items bestätigen \$a";
 $string['correct'] = "Richtig";
-$string['criteria'] = "Kriterien";
 $string['criterion'] = "Kriterium";
 $string['deadline'] = "Stichtag";
 $string['deadlineis'] = "Der Stichtag ist \$a";
@@ -86,9 +86,10 @@ $string['managingassignment'] = "Handhabung der Aufgaben";
 $string['maximumsize'] = "Maximale Größe";
 $string['modulename'] = "Workshop";
 $string['modulenameplural'] = "Workshops";
-$string['movedtophase'] = "Verschoben in Phase \$a";
-$string['moveonto'] = "Weiterverschieben nach";
 $string['movingtophase'] = "Verschieben in Phase \$a";
+$string['newassessments'] = "Neue Workshop Bewertung";
+$string['newgradings'] = "Neue Benotungen";
+$string['newsubmissions'] = "Neue Workshop Einreichung";
 $string['noassessmentsdone'] = "Keine Bewertung durchgeführt";
 $string['nosubmissionsavailableforassessment'] = "Keine Beiträge für die Bewertung vorhanden";
 $string['notavailable'] = "Nicht verfügbar";
@@ -96,15 +97,13 @@ $string['noteonassessmentelements'] = "Beachten Sie, dass die Benotung in eine A
 Dies macht die Benotung einfacher und plausibler. Als Kursleiter müssen Sie diese<br>
 Kriterien hinzufügen, bevor Sie die Aufgabe dem Kursteilnehmer zugänglich machen. Dies geschieht durch das <br>Klicken auf die Aufgabe im Kurs. Sofern keine Kriterien vorhanden sind, werden Sie gefragt<br>diese hinzuzufügen. Sie können die Anzahl der Kriterien ändern, indem Sie die Seite der Aufgabenbearbeitung benutzen.<br>
 Die Kriterien selbst können über die Seite &quot;Aufgabenverwaltung&quot; bearbeitet werden";
-$string['newassessments'] = "Neue Workshop Bewertung";
-$string['newgradings'] = "Neue Benotungen";
-$string['newsubmissions'] = "Neue Workshop Einreichung";
 $string['notgraded'] = "Nicht benotet";
 $string['notitlegiven'] = "Kein Titel angegeben";
 $string['numberofassessmentelements'] = "Anzahl der Kommentare, Bewertungskriterien, Note des Verbunds oder Kriteriumsaussage";
 $string['numberofassessments'] = "Anzahl der Bewertungen";
 $string['numberofassessmentsofstudentsubmissions'] = "Anzahl Bewertungen der Kursteilnehmer-Beiträge";
 $string['numberofassessmentsofteachersexamples'] = "Anzahl der Bewertungen von Beispielen vom Kursleiter";
+$string['numberofentries'] = "Anzahl der Einträge";
 $string['on'] = "von \$a";
 $string['openassignment'] = "Aufgabe öffnen";
 $string['optionforpeergrade'] = "Auswahl für Durchschnittsnote";
@@ -116,12 +115,17 @@ $string['phase'] = "Phase";
 $string['phase1'] = "Aufgabe erzeugen";
 $string['phase2'] = "\$a Beiträge und Aufgaben";
 $string['phase3'] = "Berechnung der Gesamtnote";
+$string['phase3short'] = "Beides";
 $string['phase4'] = "Gesamtnoten anzeigen";
+$string['phase5'] = "Berechnung des Abschlussnote";
+$string['phase5short'] = "Berechnung";
+$string['phase6'] = "Zeige das Abschlussnote";
+$string['phase6short'] = "Zeige die Noten";
 $string['pleaseassesstheseexamplesfromtheteacher'] = "Bitte bewerten Sie dieses Beispiel von \$a";
 $string['pleaseassessthesestudentsubmissions'] = "Bitte bewerten Sie diese \$a Beiträge";
 $string['pleaseassessyoursubmissions'] = "Bitte Bewerten Sie Ihre Einreichung(en)";
 $string['poor'] = "Schlecht";
-$string['present'] = "Aktuell/Geschenk???";
+$string['present'] = "Aktuell";
 $string['reassess'] = "Erneut bewerten";
 $string['reply'] = "Antworten";
 $string['returnto'] = "Zurückkehren zu";
@@ -145,19 +149,20 @@ $string['select'] = "Auswahl";
 $string['selfassessment'] = "Selbsteinschätzung";
 $string['showgrades'] = "Noten anzeigen";
 $string['specimenassessmentform'] = "Bezeichnung der Bewertungsform";
-$string['studentgrades'] = "\$a Noten";
-$string['studentsassessment'] = "Bewertung der Kursteilnehmer";
 $string['studentassessments'] = "\$a Bewertungen";
+$string['studentgrades'] = "\$a Noten";
 $string['studentsubmissions'] = "\$a Beiträge";
 $string['studentsubmissionsforassessment'] = "\$a Beiträge der Studenten zur Bewertung";
 $string['submission'] = "Beitrag";
 $string['submissions'] = "Beiträge";
+$string['submissionsnolongerallowed'] = "Es sind keine Beiträge mehr erlaubt.";
 $string['submitassignment'] = "Aufgabe einreichen";
+$string['submitassignmentusingform'] = "Reichen Sie ihre Aufgabe ein, unter Verwendung dieser Vorlage";
 $string['submitexampleassignment'] = "Beispielaufgabe einreichen";
+$string['submitrevisedassignment'] = "Reichen Sie ihre überarbeitete Aufgabe, unter Verwendung dieser Vorlage, ein";
 $string['submitted'] = "Eingereicht";
 $string['submittedby'] = "Eingereicht von";
 $string['suggestedgrade'] = "Vorgeschlagene Note";
-$string['teachersassessment'] = "Aufgabe des Kursleiters";
 $string['teacherassessments'] = "\$a Aufgaben des Kursleiters";
 $string['teacherscomment'] = "Kommentar des Kursleiters";
 $string['teachersgrade'] = "Note des Kursleiters";
@@ -175,16 +180,23 @@ $string['view'] = "Ansicht";
 $string['viewassessmentofteacher'] = "Bewertung anzeigen von \$a";
 $string['viewotherassessments'] = "Andere Bewertungen anzeigen";
 $string['warningonamendingelements'] = "WARNUNG: Es existieren eingereichte Bewertungen<br>Ändern Sie nicht die Anzahl der Kriterien, den Skalentyp oder die Kriteriengewichtung";
+$string['weight'] = "Gewichtung";
 $string['weightederrorcount'] = "Durchnittsfehlerzahl: \$a";
 $string['weightforbias'] = "Gewichtung für Vorbereitung";
 $string['weightforgradingofassessments'] = "Gewichtung der Benotung der Bewertungen";
 $string['weightforpeerassessments'] = "Gewichtung für Durchschnittsbewertung";
 $string['weightforreliability'] = "Gewichtung der Zuverlässigkeit";
-$string['weightforteachersassessment'] = "Gewichtung der Kursleiter-Bewertung";
 $string['weightforteacherassessments'] = "Gewichtung der \$a Bewertungen";
 $string['weights'] = "Gewichtungen";
 $string['weightsusedforfinalgrade'] = "Gewichtung, die für die Endnote verwendet wird";
 $string['weightsusedforsubmissions'] = "Gewichtung, die für die Beiträge verwenden wird";
+$string['workshopagreedassessments'] = "Festgelegte Bewertung des Workshop";
+$string['workshopassessments'] = "Bewertungen des Workshop";
+$string['workshopcomments'] = "Kommentare des Workshop";
+$string['workshopfeedback'] = "Anmerkungen zum Workshop";
+$string['workshopsubmissions'] = "Ausführungen zum Workshop";
 $string['yourassessments'] = "Ihre Bewertung";
+$string['yourassessmentsofexamplesfromtheteacher'] = "Ihre Bewertung z.B. von \$a";
 $string['yourfeedbackgoeshere'] = "Ihre Bewertung beginnt hier";
+
 ?>
