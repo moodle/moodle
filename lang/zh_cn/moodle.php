@@ -131,7 +131,7 @@ $string['defaultcourseteachers'] = "教师";
 $string['delete'] = "删除";
 $string['deletecheck'] = "删除 \$a吗？";
 $string['deletecheckfull'] = "你真的确定要彻底删除 \$a 吗？";
-$string['deletecompletely'] = "已经完全删除";
+$string['deletecompletely'] = "彻底删除";
 $string['deletecourse'] = "删除一个课程";
 $string['deletecoursecheck'] = "你真的确定要彻底删除该课程及其所有文件资料吗？";
 $string['deleted'] = "已经删除";
@@ -227,7 +227,7 @@ $string['existingcreators'] = "现有的课程创建者";
 $string['existingteachers'] = "现有教师";
 $string['feedback'] = "反馈";
 $string['filemissing'] = "\$a 找不到";
-$string['files'] = "文件";
+$string['files'] = "文件管理";
 $string['filloutallfields'] = "请填完这个表单的所有空格";
 $string['firstname'] = "姓";
 $string['firsttime'] = "第一次光临本站？";
@@ -626,13 +626,13 @@ $string['week'] = "星期";
 $string['weekhide'] = "从 \$a 隐藏这个星期";
 $string['weeklyoutline'] = "每周概要";
 $string['weekshow'] = "显示这个星期于 \$a";
-$string['welcometocourse'] = "欢迎来到 \$a";
+$string['welcometocourse'] = "欢迎进入 \$a 课程";
 $string['welcometocoursetext'] = "欢迎你来 \$a->coursename！
 
 你首先要做的一件事情是编辑你的个人信息，以便我们更好地了解你：
 
   \$a->profileurl";
-$string['withchosenfiles'] = "用选中的文件";
+$string['withchosenfiles'] = "选中的文件或文件夹用于";
 $string['withoutuserdata'] = "不用用户资料";
 $string['withuserdata'] = "用用户资料";
 $string['wordforstudent'] = "你用于称呼学生的字词";
