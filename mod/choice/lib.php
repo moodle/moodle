@@ -4,13 +4,21 @@ $CHOICE_MAX_NUMBER = 6;
 
 $COLUMN_HEIGHT = 300;
 
-define("CHOICE_PUBLISH_NOT",       "0");
-define("CHOICE_PUBLISH_ANONYMOUS", "1");
-define("CHOICE_PUBLISH_NAMES",     "2");
+define("CHOICE_PUBLISH_ANONYMOUS", "0");
+define("CHOICE_PUBLISH_NAMES",     "1");
 
-$CHOICE_PUBLISH = array (CHOICE_PUBLISH_NOT        => get_string("publishnot", "choice"),
-                         CHOICE_PUBLISH_ANONYMOUS  => get_string("publishanonymous", "choice"),
+define("CHOICE_RELEASE_NOT",          "0");
+define("CHOICE_RELEASE_AFTER_ANSWER", "1");
+define("CHOICE_RELEASE_AFTER_CLOSE",  "2");
+define("CHOICE_RELEASE_ALWAYS",       "3");
+
+$CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string("publishanonymous", "choice"),
                          CHOICE_PUBLISH_NAMES      => get_string("publishnames", "choice"));
+
+$CHOICE_RELEASE = array (CHOICE_RELEASE_NOT          => get_string("releasenot", "choice"),
+                         CHOICE_RELEASE_AFTER_ANSWER => get_string("releaseafteranswer", "choice"),
+                         CHOICE_RELEASE_AFTER_CLOSE  => get_string("releaseafterclose", "choice"),
+                         CHOICE_RELEASE_ALWAYS       => get_string("releasealways", "choice"));
 
 
 /// Standard functions /////////////////////////////////////////////////////////
