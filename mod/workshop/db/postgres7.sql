@@ -1,7 +1,7 @@
 #
 # Table structure for table workshop
 #
-
+BEGIN;
 CREATE TABLE prefix_workshop (
   id SERIAL8 PRIMARY KEY,
   course INT8  NOT NULL default '0',
@@ -110,4 +110,4 @@ INSERT INTO prefix_log_display VALUES ('workshop', 'open', 'workshop', 'name');
 INSERT INTO prefix_log_display VALUES ('workshop', 'submit', 'workshop', 'name');
 INSERT INTO prefix_log_display VALUES ('workshop', 'view', 'workshop', 'name');
 INSERT INTO prefix_log_display VALUES ('workshop', 'update', 'workshop', 'name');
-
+COMMIT;
