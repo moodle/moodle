@@ -48,6 +48,7 @@ $string['backup'] = "Copia de respaldo";
 $string['backupdir'] = "backupdata";
 $string['backupdate'] = "Fecha de la copia de respaldo";
 $string['backupdetails'] = "Detalles de la copia de respaldo";
+$string['backupfilename'] = "backup";
 $string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
 $string['backuporiginalname'] = "Nombre de la copia de respaldo";
 $string['backupversion'] = "Versi&oacute;n de la copia de respaldo";
