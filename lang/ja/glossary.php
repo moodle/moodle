@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 development (2004032800)
+      // glossary.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -49,6 +49,7 @@ $string['commentson'] = 'コメント';
 $string['commentupdated'] = 'コメントが更新されました。';
 $string['concept'] = '概念';
 $string['concepts'] = '概念';
+$string['configenablerssfeeds'] = 'このスイッチは用語集全てにおいてRSSフィードを設置可能にします。更にそれぞれの用語集でRSSフィードを手動設定する必要があります。';
 $string['currentglossary'] = '現在の用語集';
 $string['dateview'] = '日付順';
 $string['defaultapproval'] = 'デフォルト承認状態';
@@ -68,6 +69,7 @@ $string['displayformat6'] = 'エントリーリスト';
 $string['displayformatcontinuous'] = '連続、作者無し';
 $string['displayformatdefault'] = 'シンプル、ディレクトリスタイル';
 $string['displayformats'] = '表示フォーマット';
+$string['displayformatssetup'] = '表示フォーマット設定';
 $string['duplicateentry'] = 'エントリーを複写する';
 $string['editcategories'] = 'カテゴリの編集';
 $string['editentry'] = 'エントリーの編集';
@@ -81,6 +83,7 @@ $string['entryapproved'] = 'エントリーが承認されました';
 $string['entrydeleted'] = 'エントリーが削除されました。';
 $string['entryexported'] = 'エントリーが正常にエクスポートされました。';
 $string['entryishidden'] = '(このエントリーは現在非表示です)';
+$string['entryleveldefaultsettings'] = 'エントリーレベルデフォルト設定';
 $string['entryusedynalink'] = 'エントリーを自動的にリンクさせる';
 $string['explainaddentry'] = '用語集に新しいエントリーを追加します。<br>概念と定義は必須入力項目です。';
 $string['explainall'] = '全てのエントリーを1ページに表示';
@@ -97,6 +100,7 @@ $string['filetoimport'] = 'インポートするファイル';
 $string['fillfields'] = '概念と定義は必須入力項目です。';
 $string['filtername'] = '用語集オートリンク';
 $string['fullmatch'] = '全ての単語を一致させる><small>(自動的にリンクさせる場合)</small>';
+$string['glossaryleveldefaultsettings'] = '用語集レベルデフォルト設定';
 $string['glossarytype'] = '用語集タイプ';
 $string['glosssaryexported'] = '用語集がエクスポートされました。';
 $string['importcategories'] = 'カテゴリをインポートする';
@@ -134,6 +138,7 @@ $string['ratingsuse'] = '評価を使用する';
 $string['ratingtime'] = 'この範囲のエントリーの評価を制限する:';
 $string['rejectedentries'] = '拒否されたエントリ';
 $string['rejectionrpt'] = '拒否レポート';
+$string['rsssubscriberss'] = '\'$a\' 概念のRSSフィードを表示';
 $string['searchindefinition'] = '定義も検索する';
 $string['secondaryglossary'] = 'サブ用語集';
 $string['sendinratings'] = '最新の評価を送る';
@@ -151,6 +156,8 @@ $string['totalentries'] = 'エントリー合計';
 $string['usedynalink'] = '用語集と他のモジュールを自動的にリンクする';
 $string['waitingapproval'] = '承認待ち';
 $string['warningstudentcapost'] = '(用語集がメインで無い場合に適用)';
+$string['withauthor'] = '概念(著者有り)';
+$string['withoutauthor'] = '概念(著者無し)';
 $string['writtenby'] = '作成';
 $string['youarenottheauthor'] = 'あなたはこのコメントの作者ではありません。編集は出来ません。';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2.1 (2004032500)
+      // quiz.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -28,6 +28,7 @@ $string['attemptlast'] = '最終得点';
 $string['attemptquiznow'] = '小テストに挑戦';
 $string['attempts'] = 'チャレンジ';
 $string['attemptsallowed'] = 'チャレンジ回数';
+$string['attemptsexist'] = 'この小テストは既に挑戦されています。';
 $string['attemptsunlimited'] = '制限無し';
 $string['backtoquiz'] = '小テスト編集に戻る';
 $string['bestgrade'] = '最高得点';
@@ -60,6 +61,7 @@ $string['defaultinfo'] = '質問の標準カテゴリー';
 $string['deleteattemptcheck'] = '本当のこれらの挑戦を削除してもよろしいですか?';
 $string['deletequestioncheck'] = ' \'$a\' を本当に削除してもよろしいですか?';
 $string['description'] = '説明';
+$string['discrimination'] = '識別インデックス';
 $string['eachattemptbuildsonthelast'] = 'それぞれの解答を最後に作成する';
 $string['editcategories'] = 'カテゴリーを編集する';
 $string['editingdescription'] = '説明を編集する';

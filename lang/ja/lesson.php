@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 development (2004040500)
+      // lesson.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['actionaftercorrectanswer'] = '正解後の動作';
@@ -7,6 +7,7 @@ $string['addabranchtable'] = '分岐表の追加';
 $string['addanendofbranch'] = '分岐終了の追加';
 $string['addaquestionpage'] = '質問ページの追加';
 $string['answer'] = '解答';
+$string['answersfornumerical'] = '数字の質問に対する解答は最大値及び最小値の範囲内に入る必要があります。';
 $string['attempt'] = '挑戦: $a';
 $string['attempts'] = '挑戦';
 $string['available'] = '利用開始';
@@ -20,12 +21,14 @@ $string['confirmdeletionofthispage'] = 'ページ削除の確認';
 $string['congratulations'] = 'おめでとうございます - 最終レッスンに到達しました';
 $string['continue'] = '続く';
 $string['deadline'] = '利用終了';
+$string['deleting'] = '削除中';
 $string['deletingpage'] = 'ページの削除: $a';
 $string['description'] = '説明';
 $string['displayofgrade'] = '評価を表示する(学生に対して)';
 $string['endofbranch'] = '分岐終了';
 $string['endoflesson'] = 'レッスン終了';
 $string['fileformat'] = 'ファイルフォーマット';
+$string['firstanswershould'] = '最初の解答は\"正しい\"ページに移動する必要があります。';
 $string['gradeis'] = '成績は $a です';
 $string['handlingofretakes'] = '再挑戦時の評価方法';
 $string['here'] = '↓';
@@ -38,6 +41,9 @@ $string['modulename'] = 'レッスン';
 $string['modulenameplural'] = 'レッスン';
 $string['movepagehere'] = 'ページをここに移動する';
 $string['moving'] = 'ページ移動: $a';
+$string['movingtonextpage'] = '次ページに移動中';
+$string['multianswer'] = '重複解答';
+$string['multipleanswer'] = '重複解答';
 $string['nextpage'] = '次ページ';
 $string['noanswer'] = '解答がありません';
 $string['noattemptrecordsfound'] = '挑戦レコードが見つかりません: 評価無し';
@@ -45,6 +51,7 @@ $string['normal'] = '通常 - レッスンパスに従う';
 $string['notdefined'] = '未定義';
 $string['notitle'] = 'タイトル無し';
 $string['numberofcorrectanswers'] = '正答数: $a';
+$string['numberofcorrectmatches'] = '正しいマッチ数: $a';
 $string['numberofpagestoshow'] = 'ページ(カード)の表示数';
 $string['numberofpagesviewed'] = 'ページ閲覧数: $a';
 $string['outof'] = '$a 中';
@@ -55,6 +62,7 @@ $string['pagetitle'] = 'ページタイトル';
 $string['pleasecheckoneanswer'] = '答えを確認してください';
 $string['pleasecheckoneormoreanswers'] = '1またはそれ以上の答えを選択してください';
 $string['pleaseenteryouranswerinthebox'] = 'ボックスに答えを入力してください';
+$string['pleasematchtheabovepairs'] = '上記のペアを合わせてください';
 $string['questionoption'] = '質問オプション';
 $string['questiontype'] = '質問タイプ';
 $string['redisplaypage'] = '再表示';
@@ -63,6 +71,7 @@ $string['sanitycheckfailed'] = '正当性チェックが失敗しました: この挑戦は削除され
 $string['savepage'] = 'ページの保存';
 $string['showanunansweredpage'] = '未解答のページを表示';
 $string['showanunseenpage'] = '未閲覧のページを表示';
+$string['singleanswer'] = '単一解答';
 $string['thatsthecorrectanswer'] = '正しい答えです';
 $string['thatsthewronganswer'] = '間違った答えです';
 $string['thispage'] = 'このページ';
