@@ -98,7 +98,7 @@
     $course->enddate = $course->startdate + ($weekofseconds * $course->numsections);
 
     echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
-    while ($weekdate <= $course->enddate) {
+    while ($weekdate < $course->enddate) {
 
         $nextweekdate = $weekdate + ($weekofseconds);
 
