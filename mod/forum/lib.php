@@ -1283,4 +1283,58 @@ function forum_set_display_mode($mode=0) {
     }
 }
 
+function forum_print_recent_activity(&$logs, $isteacher=false) {
+    global $CFG, $COURSE_TEACHER_COLOR;
+
+    $heading = false;
+    $content = false;
+
+    foreach ($logs as $log) {
+        if ($log->module == "forum") {
+            $post = NULL;
+
+            if ($log->action == "add post") {
+                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
+                                               u.email, u.picture, u.id as userid
+                                        FROM forum_discussions d, forum_posts p, user u 
+                                        WHERE p.id = '$log->info' AND d.id = p.discussion AND p.user = u.id");
+
+            } else if ($log->action == "add discussion") {
+                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
+                                               u.email, u.picture, u.id as userid
+                                        FROM forum_discussions d, forum_posts p, user u 
+                                        WHERE d.id = '$log->info' AND d.firstpost = p.id AND p.user = u.id");
+            }
+
+            if ($post) {
+                $teacherpost = "";
+                if ($forum = get_record("forum", "id", $post->forum) ) {
+                    if ($forum->type == "teacher") {
+                        if ($isteacher) {
+                            continue;
+                        } else {
+                            $teacherpost = "COLOR=$COURSE_TEACHER_COLOR";
+                        }
+                    }
+                }
+                if (! $heading) {
+                    print_headline(get_string("newforumposts", "forum").":");
+                    $heading = true;
+                    $content = true;
+                }
+                $date = userdate($post->modified, "%e %b, %H:%M");
+                echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
+                echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
+                if ($log->action == "add") {
+                    echo "<B>$post->subject</B>";
+                } else {
+                    echo "$post->subject";
+                }
+                echo "</A>\"</FONT></P>";
+            }
+        }
+    }
+    return $content;
+}
+
 ?>

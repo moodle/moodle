@@ -123,6 +123,44 @@ function journal_cron () {
     return true;
 }
 
+function journal_print_recent_activity(&$logs, $isteacher=false) {
+    global $CFG, $COURSE_TEACHER_COLOR;
+
+    $content = false;
+    $journals = NULL;
+
+    foreach ($logs as $log) {
+        if ($log->module == "journal") {
+            if ($log->action == "add entry" or $log->action == "update entry") {
+                if (!isset($journals[$log->info])) {
+                    $journals[$log->info] = get_record_sql("SELECT j.*, u.firstname, u.lastname
+                                           FROM journal j, journal_entries e, user u
+                                           WHERE e.id = '$log->info' AND e.journal = j.id
+                                                 AND e.user = u.id");
+                    $journals[$log->info]->time = $log->time;
+                }
+            }
+        }
+    }
+
+    if ($journals) {
+        $content = true;
+        print_headline(get_string("newjournalentries", "journal").":");
+        foreach ($journals as $journal) {
+            $date = userdate($journal->time, "%e %b, %H:%M");
+            echo "<P><FONT SIZE=1>$date - $journal->firstname $journal->lastname<BR>";
+            echo "\"<A HREF=\"$CFG->wwwroot/mod/journal/view.php?id=$journal->id\">";
+            echo "$journal->name";
+            echo "</A>\"</FONT></P>";
+        }
+    }
+ 
+    return $content;
+}
+
+// End of standard module functions
+
+
 function journal_get_users_done($journal) {
     return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t, journal_entries j
                             WHERE ((s.course = '$journal->course' AND s.user = u.id) OR 

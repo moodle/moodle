@@ -277,7 +277,6 @@ $string['namesocial'] = "section";
 $string['nametopics'] = "topic";
 $string['nameweeks'] = "week";
 $string['newaccount'] = "New account";
-$string['newforumposts'] = "New forum posts";
 $string['newpassword'] = "New password";
 $string['newpasswordtext'] = "Hi \$a->firstname,
 
@@ -423,6 +422,7 @@ $string['updatingain'] = "Updating a \$a->what in \$a->in";
 $string['upload'] = "Upload";
 $string['uploadafile'] = "Upload a file";
 $string['uploadthisfile'] = "Upload this file";
+$string['userdeleted'] = "This user account has been deleted";
 $string['userdescription'] = "Description";
 $string['username'] = "Username";
 $string['usernameexists'] = "This username already exists, choose another";

@@ -360,57 +360,21 @@ function print_recent_activity($course) {
     }
 
 
-    // Now all we need to know are the new posts.
+    // Now display new things from each module
 
-    $heading = false;
-    foreach ($logs as $log) {
-        
-        if ($log->module == "forum") {
-            $post = NULL;
+    $mods = get_list_of_plugins("mod");
 
-            if ($log->action == "add post") {
-                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
-                                               u.email, u.picture, u.id as userid
-                                        FROM forum_discussions d, forum_posts p, user u 
-                                        WHERE p.id = '$log->info' AND d.id = p.discussion AND p.user = u.id");
-
-            } else if ($log->action == "add discussion") {
-                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
-                                               u.email, u.picture, u.id as userid
-                                        FROM forum_discussions d, forum_posts p, user u 
-                                        WHERE d.id = '$log->info' AND d.firstpost = p.id AND p.user = u.id");
+    foreach ($mods as $mod) {
+        include_once("$CFG->dirroot/mod/$mod/lib.php");
+        $print_recent_activity = $mod."_print_recent_activity";
+        if (function_exists($print_recent_activity)) {
+            $modcontent = $print_recent_activity($logs, isteacher($course->id));
+            if ($modcontent) {
+                $content = true;
             }
-
-            if ($post) {
-
-                $teacherpost = "";
-                if ($forum = get_record("forum", "id", $post->forum) ) {
-                    if ($forum->type == "teacher") {
-                        if (!isteacher($course->id)) {
-                            continue;
-                        } else {
-                            $teacherpost = "COLOR=$COURSE_TEACHER_COLOR";
-                        }
-                    }
-                }
-                if (! $heading) {
-                    print_headline(get_string("newforumposts").":");
-                    $heading = true;
-                    $content = true;
-                }
-                $date = userdate($post->modified, "%e %b, %H:%M");
-                echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
-                echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
-                if ($log->action == "add") {
-                    echo "<B>$post->subject</B>";
-                } else {
-                    echo "$post->subject";
-                }
-                echo "</A>\"</FONT></P>";
-            }
-
         }
     }
+
 
     if (! $content) {
         echo "<FONT SIZE=2>".get_string("nothingnew")."</FONT>";

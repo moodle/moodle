@@ -16,6 +16,7 @@ $string['journalquestion'] = "Journal question";
 $string['journalrating1'] = "Not satisfactory";
 $string['journalrating2'] = "Satisfactory";
 $string['journalrating3'] = "Outstanding";
+$string['newjournalentries'] = "New journal entries";
 $string['noentry'] = "No entry";
 $string['notopenuntil'] = "This journal won't be open until";
 $string['notstarted'] = "You have not started this journal yet";

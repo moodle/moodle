@@ -56,6 +56,7 @@ $string['more'] = "more";
 $string['namenews'] = "News forum";
 $string['namesocial'] = "Social forum";
 $string['nameteacher'] = "Teacher forum";
+$string['newforumposts'] = "New forum posts";
 $string['nodiscussions'] = "There are no discussion topics yet in this forum";
 $string['noguestpost'] = "Sorry, guests are not allowed to post";
 $string['noposts'] = "No posts";
