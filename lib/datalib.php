@@ -22,45 +22,52 @@ function execute_sql($command, $feedback=true) {
     }
 }
 
-function modify_database($sqlfile) {
-/// Assumes that the input text file consists of a number 
-/// of SQL statements ENDING WITH SEMICOLONS.  The semicolons
-/// MUST be the last character in a line.
+function modify_database($sqlfile="", $sqlstring="") {
+/// Assumes that the input text (file or string consists of 
+/// a number of SQL statements ENDING WITH SEMICOLONS.  The 
+/// semicolons MUST be the last character in a line.
 /// Lines that are blank or that start with "#" are ignored.
 /// Only tested with mysql dump files (mysqldump -p -d moodle)
 
     global $CFG;
 
-    if (file_exists($sqlfile)) {
-        $success = true;
-        $lines = file($sqlfile);
-        $command = "";
+    $success = true;  // Let's be optimistic :-)
 
-        while ( list($i, $line) = each($lines) ) {
-            $line = chop($line);
-            $length = strlen($line);
+    if (!empty($sqlfile)) {
+        if (!is_readable($sqlfile)) {
+            $success = false;
+            echo "<P>Tried to modify database, but \"$sqlfile\" doesn't exist!</P>";
+            return $success;
+        } else {
+            $lines = file($sqlfile);
+        }
+    } else {
+        $lines[] = $sqlstring;
+    }
 
-            if ($length  &&  substr($line, 0, 1) <> "#") { 
-                if (substr($line, $length-1, 1) == ";") {
-                    $line = substr($line, 0, $length-1);   // strip ;
-                    $command .= $line;
-                    $command = str_replace("prefix_", $CFG->prefix, $command); // Table prefixes
-                    if (! execute_sql($command)) {
-                        $success = false;
-                    }
-                    $command = "";
-                } else {
-                    $command .= $line;
+    $command = "";
+
+    foreach ($lines as $line) {
+        $line = rtrim($line);
+        $length = strlen($line);
+
+        if ($length and $line[0] <> "#") { 
+            if (substr($line, $length-1, 1) == ";") {
+                $line = substr($line, 0, $length-1);   // strip ;
+                $command .= $line;
+                $command = str_replace("prefix_", $CFG->prefix, $command); // Table prefixes
+                if (! execute_sql($command)) {
+                    $success = false;
                 }
+                $command = "";
+            } else {
+                $command .= $line;
             }
         }
-
-    } else {
-        $success = false;
-        echo "<P>Tried to modify database, but \"$sqlfile\" doesn't exist!</P>";
     }
 
     return $success;
+
 }
 
 /// FUNCTIONS TO MODIFY TABLES ////////////////////////////////////////////
@@ -1053,10 +1060,9 @@ function get_logs_userday($userid, $courseid, $daystart) {
 function print_object($object) {
 /// Mostly just for debugging
 
-    $array = (array)$object;
-    foreach ($array as $key => $item) {
-        echo "$key -> $item <BR>";
-    }
+    echo "<PRE>";
+    print_r($object);
+    echo "</PRE>";
 }
 
 
