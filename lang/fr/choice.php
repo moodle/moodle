@@ -5,7 +5,7 @@ $string['answered'] = 'Répondu';
 $string['choice'] = 'Proposition $a';
 $string['choiceclose'] = 'Jusqu\'au';
 $string['choicename'] = 'Nom du sondage';
-$string['choiceopen'] = 'Ouvert';
+$string['choiceopen'] = 'Ouvert le';
 $string['choicetext'] = 'Texte de la question';
 $string['havetologin'] = 'Vous devez vous connecter pour pouvoir répondre à ce sondage';
 $string['modulename'] = 'Sondage';
@@ -25,7 +25,7 @@ $string['responses'] = 'Réponses';
 $string['responsesto'] = 'Réponses à $a';
 $string['savemychoice'] = 'Enregistrer mon vote';
 $string['showunanswered'] = 'Afficher la colonne des « sans réponse »';
-$string['timerestrict'] = 'Ne permettre les réponses que durant cette période';
+$string['timerestrict'] = 'Sondage limité dans le temps';
 $string['viewallresponses'] = 'Voir les $a réponses';
 
 ?>

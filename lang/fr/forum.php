@@ -3,7 +3,7 @@
 $string['addanewdiscussion'] = 'Ajouter un nouveau sujet de discussion';
 $string['addanewtopic'] = 'Ajouter un nouveau sujet';
 $string['allowchoice'] = 'Autoriser tout le monde à choisir de s\'abonner ou non';
-$string['allowdiscussions'] = 'Un $a peut commencer une discussion';
+$string['allowdiscussions'] = 'Interventions autorisées';
 $string['allowratings'] = 'Autoriser l\'évaluation des articles';
 $string['allowsdiscussions'] = 'Tout le monde peut commencer une nouvelle discussion dans ce forum';
 $string['anyfile'] = 'Tout fichier';
