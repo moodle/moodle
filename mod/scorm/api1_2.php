@@ -253,8 +253,8 @@ function SCORMapi() {
 		    }
 		break;	
 		default:
-		    errorCode = "401";  //This is more correct but may have problem with some SCOes
-		    //errorCode = "0"; // With this disable any possible SCO errors alert
+		    //errorCode = "401";  //This is more correct but may have problem with some SCOes
+		    errorCode = "0"; // With this disable any possible SCO errors alert
 		    return "false";
 		break;
 	    }
