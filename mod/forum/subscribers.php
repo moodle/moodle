@@ -27,6 +27,7 @@
 
     add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", $forum->id, $cm->id);
 
+    $strunsubscribeshort = get_string("unsubscribeshort", "forum");
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
 
@@ -55,7 +56,7 @@
             echo "</td><td bgcolor=\"$THEME->cellcontent\">";
             echo "$user->email";
             echo "</td><td>";
-            echo "<font size=1><a href=\"subscribe.php?id=$forum->id&user=$user->id\">unsubscribe</a></font>";
+            echo "<font size=1><a href=\"subscribe.php?id=$forum->id&user=$user->id\">$strunsubscribeshort</a></font>";
             echo "</td></tr>";
         }
         echo "</table>";
