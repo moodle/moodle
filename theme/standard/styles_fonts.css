@@ -273,6 +273,16 @@ table.formtable tbody th {
     font-size:x-small;
 }
 
+body#mod-quiz-report table#attempts .header {
+    text-align: left;
+}
+body#mod-quiz-report table#attempts .picture {
+    text-align: center !important;
+}
+body#mod-quiz-report .controls {
+    text-align: center;
+}
+
 
 /* glossary */
 .glossarypost .commands {

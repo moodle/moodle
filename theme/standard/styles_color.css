@@ -412,6 +412,15 @@ table.message_search_results td {
 }
 
 
+/* quiz */
+
+body#mod-quiz-report table#attempts td {
+    border-color: #dddddd;
+}
+body#mod-quiz-report table#attempts .r1 {
+    background-color: #eeeeee;
+}
+
 
 
 /*****************************

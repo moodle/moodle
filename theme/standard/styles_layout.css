@@ -152,7 +152,9 @@ a img {
 }
 .feedback {
 }
-
+.initialbar {
+    text-align: center;
+}
 
 /* summary of a user in a nice little box - weblib.php */
 .userinfobox {
@@ -566,6 +568,33 @@ table.message_search_results td {
 /* quiz */
 .feedbacktext {
     display:block;
+}
+
+body#mod-quiz-report table#attempts,
+body#mod-quiz-report table#commands
+{
+    width: 80%;
+    margin: auto;
+}
+body#mod-quiz-report table#attempts {
+    margin: 20px auto;
+}
+body#mod-quiz-report table#attempts .header,
+body#mod-quiz-report table#attempts .cell
+{
+    padding: 4px;
+}
+body#mod-quiz-report table#attempts .header .commands {
+    display: inline;
+}
+body#mod-quiz-report table#attempts .picture {
+    width: 40px;
+}
+body#mod-quiz-report table#attempts td {
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-left-style: solid;
+    border-right-style: solid;
 }
 
 
