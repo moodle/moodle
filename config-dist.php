@@ -168,9 +168,10 @@ $CFG->admin = 'admin';
 // web server.
 //      $CFG->loginhttps = true;
 //
-// Aspell path. Required aspell installed on your server (0.50.1 or newer)
-// $CFG->aspellpath = '/usr/bin/aspell'; // *nix
-// $CFG->aspellpath = '"c:\path\to\aspell\aspell.exe"'; // Windows
+// To use spell-checking (experimental) define a path below to your
+// locally-installed copy of Aspell (0.50.1 or newer)
+//      $CFG->aspellpath = '/usr/bin/aspell'; // *nix
+//      $CFG->aspellpath = '"c:\path\to\aspell\aspell.exe"'; // Windows
 
 
 //=========================================================================
