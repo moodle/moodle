@@ -1,0 +1,38 @@
+LDAP-module README
+07.10.2002 Version 0.1, Petri Asikainen <paca@sci.fi>
+
+Ldap-authetication module is work in progress. 
+Right now we are building config-interface to use also with all other auth-modules, 
+but it will take sometime.
+
+If you like to try ldap-authentication now , create following $CFG->variables to
+/moodle/config.php or directly to config-table and activate ldap authentication 
+from admin-configuration page.
+
+Variable			Description
+$CFG->ldap_bind_dn      	"If your like to use bind-user to search
+				users, specify it here. Something like 
+				'cn=ldapuser,ou=public,o=org'"
+$CFG->ldap_bind_pw      	"Password for bind-user."
+$CFG->ldap_contexts    		"List of contexts where users are located.
+				 Separate different contexts with ';'.
+				Something like 
+				'ou=users,o=org; ou=other,o=org'"
+$CFG->ldap_host_url      	"Specify LDAP host in URL-form, like
+				'ldap://ldap.myorg.com/' or 
+				'ldaps//ldap.myorg.com/' "
+$CFG->ldap_search_sub   	"Put value <> 0 if  you like to 
+				search users from subcontexts. 
+				(Subsearching is sometimes slow)"
+$CFG->ldap_user_attribute 	"What attribute is used to name/search
+				users. Usually 'cn' when using 
+				Novell e-directory
+
+And if you like to _very_ experimental:
+Edit /auth/ldap/lib.php function auth_get_userinfo() attribute-mappings and
+set $CFG->auth_update_userinfo = 1
+Then moodle will get user first-, lastname and other information from ldap
+when user is login first time.
+
+
+
