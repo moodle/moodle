@@ -259,7 +259,7 @@ function record_exists_sql($sql) {
     global $db;
 
     if (!$rs = $db->Execute($sql)) {
-        if ($CFG->debug > 7) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg()."<br /><br />$sql");
         }
         return false;
@@ -332,7 +332,7 @@ function count_records_sql($sql) {
 
     $rs = $db->Execute("$sql");
     if (!$rs) {
-        if ($CFG->debug > 7) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg()."<br /><br />$sql");
         }
         return 0;
@@ -388,14 +388,14 @@ function get_record_sql($sql) {
 
     global $db, $CFG;
 
-    if ($CFG->debug > 7) {    // Debugging mode - don't use limit
+    if (isset($CFG->debug) and $CFG->debug > 7) {    // Debugging mode - don't use limit
        $limit = "";
     } else {
        $limit = " LIMIT 1";    // Workaround - limit to one record
     }
 
     if (!$rs = $db->Execute("$sql$limit")) {
-        if ($CFG->debug > 7) {    // Debugging mode - print checks
+        if (isset($CFG->debug) and $CFG->debug > 7) {    // Debugging mode - print checks
             notify( $db->ErrorMsg() . "<br /><br />$sql$limit" );
         }
         return false;
@@ -566,7 +566,7 @@ function get_records_sql($sql) {
     global $CFG,$db;
 
     if (!$rs = $db->Execute($sql)) {
-        if ($CFG->debug > 7) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg()."<br /><br />$sql");
         }
         return false;
@@ -651,7 +651,7 @@ function get_records_sql_menu($sql) {
     global $db;
 
     if (!$rs = $db->Execute($sql)) {
-        if ($CFG->debug > 7) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg()."<br /><br />$sql");
         }
         return false;
@@ -691,7 +691,7 @@ function get_field($table, $return, $field1, $value1, $field2="", $value2="", $f
 
     $rs = $db->Execute("SELECT $return FROM $CFG->prefix$table $select");
     if (!$rs) {
-        if ($CFG->debug > 7) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg()."<br /><br />SELECT $return FROM $CFG->prefix$table $select");
         }
         return false;
@@ -797,7 +797,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
                                                                                                                 
 /// Run the SQL statement
     if (!$rs = $db->Execute($insertSQL)) {
-        if ($CFG->debug > 7) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg()."<br /><br />$insertSQL");
         }
         return false;
@@ -871,7 +871,7 @@ function update_record($table, $dataobject) {
     if ($rs = $db->Execute("UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'")) {
         return true;
     } else {
-        if ($CFG->debug > 7) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg()."<br /><br />UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'");
         }
         return false;
