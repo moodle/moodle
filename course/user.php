@@ -13,13 +13,14 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id)) {
-        error("Only teachers can look at this page");
-    }
-
     if (! $user = get_record("user", "id", $user)) {
         error("User ID is incorrect");
     }
+
+    if (!isteacher($course->id) and $user->id != $USER->id ) {
+        error("You are not allowed to look at this page");
+    }
+
 
     add_to_log($course->id, "course", "user record", "user.php?id=$course->id&user=$user->id", "$user->id"); 
 
@@ -99,9 +100,9 @@
                                     
                                     $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" ".
                                              "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
-                                    echo "<H3>$image $mod->modfullname: ".
+                                    echo "<H4>$image $mod->modfullname: ".
                                          "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                         "$instance->name</A></H3>";
+                                         "$instance->name</A></H4>";
                                     echo "<UL>";
                                     include($userfile);
                                     echo "</UL>";
