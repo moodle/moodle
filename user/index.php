@@ -139,7 +139,7 @@
         $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT");
         $table->size = array ("10",  "*", "*", "*", "*");
         $table->size = array ("10",  "*", "*", "*", "*");
-        $table->cellpadding = 2;
+        $table->cellpadding = 4;
         $table->cellspacing = 0;
         
         foreach ($students as $student) {

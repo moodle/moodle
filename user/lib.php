@@ -171,26 +171,25 @@ function save_user_image($userid, $filename) {
 
 
 function print_user($user, $course, $string, $countries) {
+/// Prints a summary of a user in a nice little box
 
-    global $USER;
-    
-    echo "<TABLE WIDTH=80% ALIGN=CENTER BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
-    echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=5 CELLSPACING=0><TR>";
-    echo "<TD WIDTH=100 BGCOLOR=#FFFFFF VALIGN=top>";
+    echo "<table width=\"80%\" align=\"center\" border=\"0\" cellpadding=\"10\" cellspacing=\"0\" class=\"userinfobox\">";
+    echo "<tr>";
+    echo "<td width=100 bgcolor=#ffffff valign=top class=\"userinfoboxside\">";
     print_user_picture($user->id, $course->id, $user->picture, true);
-    echo "</A>";
-    echo "</TD><TD WIDTH=100% BGCOLOR=#FFFFFF VALIGN=top>";
-    echo "<FONT SIZE=-1>";
-    echo "<FONT SIZE=3><B>$user->firstname $user->lastname</B></FONT>";
-    echo "<P>";
+    echo "</a>";
+    echo "</td><td width=100% bgcolor=#ffffff valign=top class=\"userinfoboxsummary\">";
+    echo "<font size=-1>";
+    echo "<font size=3><b>$user->firstname $user->lastname</b></font>";
+    echo "<p>";
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
-        echo "$string->role: $user->role<BR>";
+        echo "$string->role: $user->role<br />";
     }
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or isteacher($course->id)) {
-        echo "$string->email: <A HREF=\"mailto:$user->email\">$user->email</A><BR>";
+        echo "$string->email: <a href=\"mailto:$user->email\">$user->email</a><br />";
     }
     if ($user->city or $user->country) {
-        echo "$string->location: $user->city, ".$countries["$user->country"]."<BR>";
+        echo "$string->location: $user->city, ".$countries["$user->country"]."<br />";
     }
     if ($user->lastaccess) {
         echo "$string->lastaccess: ".userdate($user->lastaccess);
@@ -198,21 +197,21 @@ function print_user($user, $course, $string, $countries) {
     } else {
         echo "$string->lastaccess: $string->never";
     }
-    echo "</TD><TD VALIGN=bottom BGCOLOR=#FFFFFF NOWRAP>";
+    echo "</td><td valign=bottom bgcolor=#ffffff nowrap class=\"userinfoboxlinkcontent\">";
 
-    echo "<FONT SIZE=1>";
+    echo "<font size=1>";
     if (isteacher($course->id)) {
         $timemidnight = usergetmidnight(time());
-        echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">$string->activity</A><BR>";
+        echo "<a href=\"../course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
         if (isstudent($course->id, $user->id)) {
-            echo "<A HREF=\"../course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</A><BR>";
-            echo "<A HREF=\"../course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</A><BR>";
+            echo "<a href=\"../course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
+            echo "<a href=\"../course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</a><br />";
         }
     } 
-    echo "<A HREF=\"view.php?id=$user->id&course=$course->id\">$string->fullprofile...</A>";
-    echo "</FONT>";
+    echo "<a href=\"view.php?id=$user->id&course=$course->id\">$string->fullprofile...</a>";
+    echo "</font>";
 
-    echo "</TD></TR></TABLE></TD></TR></TABLE>";
+    echo "</td></tr></table>";
 }
 
 ?>

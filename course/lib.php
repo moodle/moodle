@@ -1138,13 +1138,13 @@ function print_course($course, $width="100%") {
         error("Could not find a site!");
     }
 
-    print_simple_box_start("center", "$width");
+    print_simple_box_start("center", "$width", $THEME->cellcontent, 5, "coursebox");
 
     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
 
     echo "<table width=\"100%\">";
     echo "<tr valign=top>";
-    echo "<td valign=top width=50%>";
+    echo "<td valign=top width=\"50%\" class=\"courseboxinfo\">";
     echo "<p><font size=3><b><a title=\"".get_string("entercourse")."\" 
               $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a></b></font></p>";
     if ($teachers = get_course_teachers($course->id)) {
@@ -1171,7 +1171,7 @@ function print_course($course, $width="100%") {
     }
 
 
-    echo "</td><td valign=top width=50%>";
+    echo "</td><td valign=top width=\"50%\" class=\"courseboxsummary\">";
     echo "<p><font size=2>".text_to_html($course->summary)."</font></p>";
     echo "</td></tr>";
     echo "</table>";

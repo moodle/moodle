@@ -34,8 +34,8 @@
 
     if ($course->category) {
         print_header("$personalprofile: $fullname", "$personalprofile: $fullname", 
-                     "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> -> 
-                      <A HREF=\"index.php?id=$course->id\">$participants</A> -> $fullname",
+                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> 
+                      <a href=\"index.php?id=$course->id\">$participants</a> -> $fullname",
                       "", "", true, "&nbsp;", $loggedinas);
     } else {
         print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname", 
@@ -54,42 +54,42 @@
         print_heading(get_string("userdeleted"));
     }
 
-    echo "<TABLE WIDTH=80% ALIGN=CENTER BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
-    echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=3 CELLSPACING=0><TR>";
-    echo "<TD WIDTH=100 BGCOLOR=\"$THEME->body\" VALIGN=top>";
+    echo "<table width=\"80%\" align=\"center\" border=\"0\" cellpadding=\"1\" cellspacing=\"1\" class=\"userinfobox\">";
+    echo "<tr>";
+    echo "<td width=\"100\" valign=\"top\" class=\"userinfoboxside\">";
     print_user_picture($user->id, $course->id, $user->picture, true, false, false);
-    echo "</TD><TD WIDTH=100% BGCOLOR=#FFFFFF>";
+    echo "</td><td width=\"100%\" bgcolor=\"$THEME->cellcontent\" class=\"userinfoboxcontent\">";
 
 
     // Print name and edit button across top
 
-    echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0><TR><TD NOWRAP>";
-    echo "<H3>$fullname</H3>";
-    echo "</TD><TD align=right>";
+    echo "<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td nowrap>";
+    echo "<h3>$fullname</h3>";
+    echo "</td><td align=\"right\">";
     if (empty($USER->id)) {
        $currentuser = false;
     } else {
        $currentuser = ($user->id == $USER->id);
     }
     if (($currentuser and !isguest()) or isadmin()) {
-        echo "<P><FORM ACTION=edit.php METHOD=GET>";
-        echo "<INPUT type=hidden name=id value=\"$id\">";
-        echo "<INPUT type=hidden name=course value=\"$course->id\">";
-        echo "<INPUT type=submit value=\"".get_string("editmyprofile")."\">";
-        echo "</FORM></P>";
+        echo "<p><form action=edit.php method=get>";
+        echo "<input type=hidden name=id value=\"$id\">";
+        echo "<input type=hidden name=course value=\"$course->id\">";
+        echo "<input type=submit value=\"".get_string("editmyprofile")."\">";
+        echo "</form></p>";
     }
-    echo "</TD></TR></TABLE>";
+    echo "</td></tr></table>";
 
 
     // Print the description
 
     if ($user->description) {
-        echo "<P>".text_to_html($user->description)."</P><HR>";
+        echo "<p>".text_to_html($user->description)."</p><hr>";
     }
 
     // Print all the little details in a list
 
-    echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2";
+    echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\"";
 
     if ($user->city or $user->country) {
         print_row(get_string("location").":", "$user->city, ".$countries["$user->country"]);
@@ -112,11 +112,11 @@
     }
 
     if ($user->url) {
-        print_row(get_string("webpage").":", "<A HREF=\"$user->url\">$user->url</A>");
+        print_row(get_string("webpage").":", "<a href=\"$user->url\">$user->url</a>");
     }
 
     if ($user->icq) {
-        print_row("ICQ:","<A HREF=\"http://web.icq.com/wwp?Uin=$user->icq\">$user->icq <IMG SRC=\"http://web.icq.com/whitepages/online?icq=$user->icq&img=5\" WIDTH=18 HEIGHT=18 BORDER=0></A>");
+        print_row("icq:","<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&img=5\" width=18 height=18 border=0></a>");
     }
 
     if ($user->lastaccess) {
@@ -126,9 +126,9 @@
     }
     print_row(get_string("lastaccess").":", $datestring);
 
-    echo "</TABLE>";
+    echo "</table>";
 
-    echo "</TD></TR></TABLE></TABLE>";
+    echo "</td></tr></table>";
 
     $internalpassword = false;
     if (is_internal_auth()) {
@@ -136,43 +136,43 @@
     }
 
 //  Print other functions
-    echo "<CENTER><TABLE ALIGN=CENTER><TR>";
+    echo "<center><table align=center><tr>";
     if ($currentuser and !isguest()) {
         if ($internalpassword) {
-            echo "<TD NOWRAP><P><FORM ACTION=\"$internalpassword\" METHOD=GET>";
-            echo "<INPUT type=hidden name=id value=\"$course->id\">";
-            echo "<INPUT type=submit value=\"".get_string("changepassword")."\">";
-            echo "</FORM></P></TD>";
+            echo "<td nowrap><p><form action=\"$internalpassword\" method=get>";
+            echo "<input type=hidden name=id value=\"$course->id\">";
+            echo "<input type=submit value=\"".get_string("changepassword")."\">";
+            echo "</form></p></td>";
         } else if (strlen($CFG->changepassword) > 1) {
-            echo "<TD NOWRAP><P><FORM ACTION=\"$CFG->changepassword\" METHOD=GET>";
-            echo "<INPUT type=submit value=\"".get_string("changepassword")."\">";
-            echo "</FORM></P></TD>";
+            echo "<td nowrap><p><form action=\"$CFG->changepassword\" method=get>";
+            echo "<input type=submit value=\"".get_string("changepassword")."\">";
+            echo "</form></p></td>";
         }
     }
     if ($course->category and 
         ((isstudent($course->id) and ($user->id == $USER->id) and !isguest() and $CFG->allowunenroll) or 
         (isteacher($course->id) and isstudent($course->id, $user->id))) ) {
-        echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
-        echo "<INPUT type=hidden name=id value=\"$course->id\">";
-        echo "<INPUT type=hidden name=user value=\"$user->id\">";
-        echo "<INPUT type=submit value=\"".get_string("unenrolme", "", $course->shortname)."\">";
-        echo "</FORM></P></TD>";
+        echo "<td nowrap><p><form action=\"../course/unenrol.php\" method=get>";
+        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo "<input type=hidden name=user value=\"$user->id\">";
+        echo "<input type=submit value=\"".get_string("unenrolme", "", $course->shortname)."\">";
+        echo "</form></p></td>";
     }
     if (isteacher($course->id)) {
-        echo "<TD NOWRAP><P><FORM ACTION=\"../course/user.php\" METHOD=GET>";
-        echo "<INPUT type=hidden name=id value=\"$course->id\">";
-        echo "<INPUT type=hidden name=user value=\"$user->id\">";
-        echo "<INPUT type=submit value=\"".get_string("activityreport")."\">";
-        echo "</FORM></P></TD>";
+        echo "<td nowrap><p><form action=\"../course/user.php\" method=get>";
+        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo "<input type=hidden name=user value=\"$user->id\">";
+        echo "<input type=submit value=\"".get_string("activityreport")."\">";
+        echo "</form></p></td>";
         if ($user->id != $USER->id) {
-            echo "<TD NOWRAP><P><FORM ACTION=\"../course/loginas.php\" METHOD=GET>";
-            echo "<INPUT type=hidden name=id value=\"$course->id\">";
-            echo "<INPUT type=hidden name=user value=\"$user->id\">";
-            echo "<INPUT type=submit value=\"".get_string("loginas")."\">";
-            echo "</FORM></P></TD>";
+            echo "<td nowrap><p><form action=\"../course/loginas.php\" method=get>";
+            echo "<input type=hidden name=id value=\"$course->id\">";
+            echo "<input type=hidden name=user value=\"$user->id\">";
+            echo "<input type=submit value=\"".get_string("loginas")."\">";
+            echo "</form></p></td>";
         }
     }
-    echo "</TR></TABLE></CENTER>\n";
+    echo "</tr></table></center>\n";
 
     forum_print_user_discussions($course->id, $user->id);
 
@@ -181,7 +181,7 @@
 /// Functions ///////
 
 function print_row($left, $right) {
-    echo "<TR><TD NOWRAP ALIGN=right><P>$left</TD><TD align=left><P>$right</P></TD></TR>";
+    echo "<tr><td nowrap align=right><p>$left</td><td align=left><p>$right</p></td></tr>";
 }
 
 ?>
