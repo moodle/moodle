@@ -77,7 +77,7 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
      function End()
      {
        $this->xls_data .= pack("vvvvvvvC", 0x7D, 11, 3, 4, 25600,0,0,0);
-       $this->xls_data .= pack( "ss", 0x0A, 0x00 );
+       $this->xls_data .= pack( "vv", 0x0A, 0x00 );
        return;
      }
 
@@ -93,7 +93,7 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
      function WriteText_pos( $row, $col, $value )
      {
         $len = strlen( $value );
-        $this->xls_data .= pack( "s*", 0x0204, 8 + $len, $row, $col, 0x00, $len );
+        $this->xls_data .= pack( "v*", 0x0204, 8 + $len, $row, $col, 0x00, $len );
         $this->xls_data .= $value;
         return;
      }
