@@ -202,7 +202,7 @@ if ($INSTALL['stage'] == 3) {
 
     error_reporting(0);  // Hide errors 
     
-    if (!($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']))) {
+    if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
         /// The following doesn't seem to work but we're working on it
         /// If you come up with a solution for creating a database in MySQL 
         /// feel free to put it in and let us know
@@ -595,7 +595,7 @@ function print_install_help($help) {
             print_string($help, 'install', phpversion());
             break;
         case 'memorylimithelp':
-            print_string($help, 'install', ini_get('memory_limit'));
+            print_string($help, 'install', get_memory_limit());
             break;
         default:
             print_string($help, 'install');

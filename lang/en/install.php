@@ -10,7 +10,7 @@ $string['admindirsetting'] = "
     new name here.  For example: <br/>&nbsp;<br /><b>moodleadmin</b><br />&nbsp;<br />
     This will fix admin links in Moodle.";
 $string['chooselanguage'] = 'Choose a language';
-$string['compatibilitysettings'] = 'The following is a check on the compatibility of the server to run Moodle';
+$string['compatibilitysettings'] = 'Checking your PHP settings ...';
 $string['configfilenotwritten'] = "The installer script was not able to automatically create a config.php file containing your chosen settings. Please copy the following code into a file named config.php within the root directory of Moodle.";
 $string['configfilewritten'] = "config.php has been successfully created";
 $string['configurationcomplete'] = 'Configuration completed';
@@ -61,8 +61,8 @@ $string['gdversionerror'] = 'The GD library should be present to process and cre
 $string['gdversionhelp'] = 'The GD library should be present to process and create images';
 $string['installation'] = 'Installation';
 $string['memorylimit'] = 'Memory Limit';
-$string['memorylimiterror'] = 'The memory limit needs to be set to 16M or more or be changeable';
-$string['memorylimithelp'] = "The memory limit needs to be set to 16M or more or be changeable. Your current memory limit is set to \$a";
+$string['memorylimiterror'] = 'The PHP memory limit setting needs to be set to at least 16M, or be changeable';
+$string['memorylimithelp'] = "The memory limit needs to be set to at least 16M, or be changeable. Your current memory limit is set to \$a.<p>You can change your memory limit in your php.ini file, or sometimes by creating a .htaccess file in the Moodle directory containing this line:<p><ul>php_value memory_limit 16M</ul>";
 $string['pass'] = 'Pass';
 $string['PHPversion'] = 'PHP version';
 $string['PHPversionerror'] = 'PHP version must be at least 4.1.0';
