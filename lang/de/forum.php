@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004041800)
+      // forum.php - created with Moodle 1.3 development (2004042702)
 
 
 $string['addanewdiscussion'] = 'Ein neues Diskussionsthema hinzufügen';
@@ -74,8 +74,8 @@ $string['noposts'] = 'Keine Beiträge';
 $string['nopostscontaining'] = 'Es wurden keine in \'$a\' enthaltenen Beiträge gefunden';
 $string['nosubscribers'] = 'Derzeit gibt es keine Teilnehmer/in in diesem Forum';
 $string['notingroup'] = 'Dieses Forum steht nur den Mitgliedern der Gruppe zur Verfügung.';
-$string['nownotsubscribed'] = '$a->name wird KEINE Kopien von \'$a->forum\' per E-Mail erhalten';
-$string['nowsubscribed'] = '$a->name wird Kopien von \'$a->forum\'  per E-Mail erhalten';
+$string['nownotsubscribed'] = '$a->name wird künftig KEINE Kopien von \'$a->forum\' per E-Mail erhalten';
+$string['nowsubscribed'] = '$a->name wird künftig Kopien von \'$a->forum\'  per E-Mail erhalten';
 $string['numposts'] = '$a Beiträge';
 $string['olderdiscussions'] = 'Ältere Diskussionen';
 $string['openmode0'] = 'Keine Diskussionen, keine Antworten';
@@ -116,20 +116,23 @@ $string['searchforums'] = 'in Foren';
 $string['searcholderposts'] = 'Suche ältere Beiträge...';
 $string['searchresults'] = 'Suchergebnisse';
 $string['sendinratings'] = 'Aktuelle Bewertung senden';
-$string['showsubscribers'] = 'Teilnehmer/innen anzeigen';
+$string['showsubscribers'] = 'Teilnehmer/innen anzeigen/Einträge bearbeiten';
 $string['singleforum'] = 'Eine einzelne, einfache Diskussion';
 $string['startedby'] = 'Beginnt mit';
 $string['subject'] = 'Betreff';
-$string['subscribe'] = 'In diesem Forum anmelden';
-$string['subscribed'] = 'Angemeldet';
+$string['subscribe'] = 'Zum Emailversand für dieses Forum eintragen';
+$string['subscribeall'] = 'Jede/n Teilnehmer/in in diesem Forum eintragen';
+$string['subscribed'] = 'Zum Emailversand eingetragen';
+$string['subscribenone'] = 'ede/n Teilnehmer/in aus diesem Forum austragen';
 $string['subscribers'] = 'Teilnehmer/in';
 $string['subscribersto'] = 'Teilnehmer/innen für \'$a\'';
 $string['subscribestart'] = 'Senden Sie mir Kopien via E-Mail von den Beiträgen zu diesem Forum';
 $string['subscribestop'] = 'Ich möchte keine Kopien via E-Mail von den Beiträgen zu diesem Forum';
 $string['subscription'] = 'Anmeldung';
 $string['subscriptions'] = 'Anmeldungen';
-$string['unsubscribe'] = 'Von diesem Forum abmelden';
+$string['unsubscribe'] = 'Vom Emailversand für dieses Forum abmelden';
 $string['unsubscribed'] = 'Abgemeldet';
+$string['unsubscribeshort'] = 'Abmelden';
 $string['youratedthis'] = 'Ihre Bewertung';
 $string['yournewtopic'] = 'Ihr neues Diskussionsthema';
 $string['yourreply'] = 'Ihre Antwort';

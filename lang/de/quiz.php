@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004021700)
+      // quiz.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['acceptederror'] = 'Akzeptierter Fehler';
@@ -85,7 +85,6 @@ $string['fractionsaddwrong'] = 'Ihre positiven gewählten Punktzahlen ergeben kei
 
 <BR>Möchten Sie zurück gehen und diese Frage korrigieren?';
 $string['fractionsnomax'] = 'Eine dieser Antworten sollte 100%% sein, so dass
-
 <br>es möglich ist, die volle Punktzahl für diese Frage zu bekommen.
 
 <br>Möchten Sie zurück gehen und diese Frage korrigieren?';
