@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+<p align="center"><b>Importieren neuer Fragen</b></p>
+<p>Diese Funktion erm&ouml;glicht das Importieren von Fragen aus
+externen Textdateien, mit Hilfe eines Formulars. </p>
+<p>Eine Zahl von Dateiformaten wird unterst&uuml;tzt:
+</p>
+<p><b>Fehlendes Wort<br>
+</b></p>
+<ul>
+  <p>Dieses Format unterst&uuml;tzt lediglich multiple-choice Fragen.
+Jede Antwort ist getrennt durch eine Tilde (~). Die richtige Antwort
+ist durch ein voran gestelltes Gleichheitszeichen (=) gekennzeichnet.
+Hier ein Beispiel:
+  </p>
+  <blockquote>Sobald wir als S&auml;uglinge beginnen unsere
+K&ouml;rperpartien zu erkunden, werden wir Sch&uuml;ler der {=Anatomie
+und Physiologie ~Reflexologie ~Wissenschaft ~Experimente}, und
+eigentlich bleiben wir Sch&uuml;ler f&uuml;rs Leben.
+  </blockquote>
+  <p align="right"><a
+ href="help.php?file=formatmissingword.html&amp;module=quiz">Mehr
+Informationen &uuml;ber das "Fehlende Wort" Format</a></p>
+</ul>
+<p><b>AON</b></p>
+<ul>
+  <p>Dieses Format ist dasselbe wie das Fehlende Wort Format, ausser
+dass nach dem Import der Fragen alle Fragen mit kurzen Antworten nach
+einer bestimmten Zeit in Fragen mit Antwortauswahlen umgewandelt werden.<br>
+  </p>
+  <p>Zus&auml;tzlich werden die Antworten von multiple-choice Fragen
+w&auml;hrend des Imports zuf&auml;llig verschoben.
+  </p>
+  <p>Dieses Format ist nach einer Organisation benannt, die die
+Entwicklung vieler Test Features gesponsert hat.</p>
+</ul>
+<p><b>Blackboard</b></p>
+<ul>
+  <p>Dieses Modul kann Fragen importieren, die im Blackboard Export
+Format gespeichert sind. Es vertraut auf XML Funktionen, die in Ihr PHP
+kompiliert werden.</p>
+  <p align="right"><a
+ href="help.php?file=formatblackboard.html&amp;module=quiz">Mehr
+Informationen &uuml;ber das "Blackboard" Format</a></p>
+</ul>
+<p><b>Course Test Manager</b></p>
+<ul>
+  <p>Dieses Modul kann Fragen importieren, die als Course Test Manager
+Daten gespeichert sind.
+Es vertraut auf verschiedene M&ouml;glichkeiten, um die CTM Daten zur
+Verf&uuml;gung zu stellen. Diese Daten sind MS Access Datenbanken und
+es h&auml;ngt davon ab, ob Moodle auf einem Windows oder Linux
+Webserver l&auml;uft.</p>
+  <p>Benutzen Sie Windows, k&ouml;nnen Sie die Access Datenbank wie
+jede andere Datenimportdatei einfach hochladen.</p>
+  <p>Benutzen Sie Linux, m&uuml;ssen Sie einen Windows PC im selben
+Netzwerk platzieren und auf diesem die Course Test Manager Datenbanken
+sowie eine kleine Software namens ODBC Socket Server installieren.
+Dieses Programm benutzt XML, um die Daten zu moodle auf dem Linux
+Server zu transferieren.</p>
+  <p>Bitte lesen Sie die unten stehende komplette Hilfedatei bevor Sie
+diese Importklasse benutzen.</p>
+  <p align="right"><a href="help.php?file=formatctm.html&amp;module=quiz">Mehr
+Informationen &uuml;ber das "CTM" Format</a></p>
+</ul>
+<p><b>Standard</b></p>
+<ul>
+  <p>Wenn Sie Ihr eigenes Format importieren m&uuml;ssen, k&ouml;nnen
+Sie dieses implementieren in dem Sie die Datei
+mod/quiz/format/custom.php editieren.
+  </p>
+  <p>Der ben&ouml;tigte Umfang des neuen Quellcodes ist relativ gering
+- gerade genug um eine einzelne Frage aus dem gegebenen Text zu
+analysieren.<br>
+  </p>
+  <p align="right"><a href="help.php?file=formatcustom.html&amp;module=quiz">Mehr
+Informationen &uuml;ber das "Standard" Format</a></p>
+</ul>
+<p>Weitere Formate kommen noch, einschlie&szlig;lich WebCT, IMS QTI und
+was immer Moodle Benutzer noch beisteuern k&ouml;nnen! </p>
+</body>
+</html>

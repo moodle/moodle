@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+<p align="center"><b>Importieren von "Course Test Manager" Dateien</b></p>
+<p>Course Test Manager ist ein Softwarepaket von Course Technology,
+welches sich am Ende seiner "Lebenszeit" befindet. Es wird von Course
+Technology nicht l&auml;nger aktiv weiterentwickelt. Die Anwendung
+wurde durch einen neuen Test Manager namens ExamView ersetzt. Wie auch
+immer, es gab nie einen Migrationsweg, der es diesem Format
+erm&ouml;glichte von CTM zu irgend einem anderen Testformat exportiert
+zu werden. Darum wurde dieses Modul geschrieben. </p>
+<p>Damit Fragen von CTM importiert werden k&ouml;nnen, m&uuml;ssen Sie
+CTM auf einem Windows PC installiert haben und Sie m&uuml;ssen Zugriff
+auf die MS Access&nbsp; Dateien auf diesem PC haben. Zwei Dateien
+werden ben&ouml;tigt, damit auf die Daten zugegriffen werden kann: <br>
+</p>
+<ul>
+  <li>System.mda - Diese Datei liegt im Hauptverzeichnis Ihrer CTM
+Installation und gilt in MS Access - Sprache als die "System Datenbank".</li>
+  <li>ctm.mdb - Dies ist die Datenbank, welche die Fragen enth&auml;lt.
+Eine solche Datenbank ist f&uuml;r jeden Kurs in CTM installiert. Sie
+finden diese Dateien in Unterordnern des CTM
+Installationsverzeichnisses. <br>
+  </li>
+</ul>
+<p></p>
+Die Durchf&uuml;hrung des Importprozesses h&auml;ngt davon ab welches
+Betriebssystem, Windows oder Linux, Sie f&uuml;r moodle benutzen. Egal
+auf welchem Betriebssystem moodle l&auml;uft, Sie m&uuml;ssen ein
+Windows System (Windows 2000 oder Windows XP) im selben Netzwerk wie
+Ihr moodle System haben, um die Access Datenbank f&uuml;r den
+Importprozess verf&uuml;gbar zu machen.<br>
+<p></p>
+<p>Der Prozess ist auf einem <b>Windows-basierenden</b> moodle System
+ziemlich einfach. Alles was Sie tun m&uuml;ssen, um die CTM Import
+Klasse zu benutzen ist:</p>
+<ol>
+  <li>Kopieren Sie die system.mda System Datenbank nach moodle mit
+Hilfe des Dateimanagers. Es spielt keine Rolle in welchem Kurs Sie die
+system.mda Datei platzieren. Moodle wird sie problemlos finden.</li>
+  <li>Erstellen Sie Ihren Test und starten Sie den "Importieren von
+Fragen aus Datei" Prozess. Laden Sie Ihre ausgew&auml;hlte ctm.mdb als
+Datei zum Importieren&nbsp; hoch. Wenn Sie dies korrekt gemacht haben,
+werden Sie einen anderen Bildschirm sehen, der Ihnen die Auswahl von
+Fragenunterkategorien erm&ouml;glicht, die&nbsp; aus der Datenbank
+importiert werden sollen. Der Grund f&uuml;r diesen Schritt liegt
+darin, dass CTM Test Daten oft eine gro&szlig;e Anzahl von
+kategorisierten Fragen enthalten, die auf Grundlage der Buchkapitel
+oder Kurssektionen geordnet sind.</li>
+</ol>
+<p>Der Prozess auf einem <b>Linux-basierenden</b> moodle System
+schlie&szlig;t eine dritte Softwarekomponente namens
+<a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket
+Server</b></a> ein. Um also CTM Datenbanken auf Linux zu importieren,
+m&uuml;ssen Sie zun&auml;chst dieses kleine Netzwerkprogramm
+herunterladen und auf dem Windows System installieren, welches Ihre CTM
+Datenbanken zur Verf&uuml;gung stellt. Folgen Sie <b>nicht</b> den
+Installationsschritten, die in der ODBC Socket Server Installation
+beschrieben sind. Diese Anweisungen sind komplizierter als sie sein
+m&uuml;ssen. Statt dessen befolgen Sie diese Schritte, um das Programm
+auf Ihrem Windows System zu installieren:</p>
+<ol>
+  <li>Entpacken Sie die Installationsdatei, die Sie von <a
+ href="http://odbcsock.sourceforge.net/" target="_new">dieser Seite</a>
+heruntergeladen haben auf Ihrem Windows System.</li>
+  <li>Kopieren Sie die bin&auml;re ODBCSocketServer.exe an einen festen
+Ort, z.B. in Ihr Systemverzeichnis (wahrscheinlich C:\WINNT\ oder
+C:\Windows) oder Ihr Programmeverzeichnis. </li>
+  <li>Installieren Sie den ODBC Socket Server als Dienst auf dem System
+mit Hilfe dieses Befehls:<br>
+    <b>&lt;Geben Sie den Ort an, an den Sie die Datei im vorigen
+Schritt kopiert haben&gt;ODBCSocketServer.exe /Service</b><br>
+Sie k&ouml;nnen dieses Befehl unter Start-&gt;Ausf&uuml;hren ... Dialog
+oder mit Hilfe der Eingabeaufforderung eingeben.</li>
+  <li>&Ouml;ffnen Sie den Dienstemanager. Dazu klicken Sie entweder auf
+Start-&gt;Einstellungen-&gt;Systemsteuerung-&gt;Verwaltung-&gt;Dienste
+oder Sie klicken mit der rechten Maustaste auf <b>Arbeitsplatz</b>,
+w&auml;hlen <b>Verwalten</b> und klicken dann auf <b>Dienste und
+Anwendungen-&gt;Dienste</b> in der rechten Seite des Fensters. Sie
+k&ouml;nnen den Dienstemanager auch mit Eingabe des Befehls <b>services.msc</b>
+im
+Start-&gt;Ausf&uuml;hren ... Dialog starten.<br>
+  </li>
+  <li>Im Dienstemanager suchen Sie den Dienst ODBC Socket Server und
+klicken ihn mit der rechten Maustaste an. Klicken Sie hier auf <b>Starten</b>.
+Der Status des Dienstes sollte auf "gestartet" wechseln, wenn Sie dies
+getan haben. Beachten Sie, dass Sie diesen Dienst komplett stoppen
+und/oder deaktivieren k&ouml;nnen, nachdem Sie den Importprozess
+beendet haben.</li>
+  <li>Stellen Sie sicher, dass die system.mda und die ctm.mdb Access
+Dateien auf dem PC vorhanden sind und dass der MS Access ODBC Treiber
+zur Verf&uuml;gung steht. Dieser ist in einer Standard Windows
+Installation installiert. Sie k&ouml;nnen bestimmen ob dieser Treiber
+installiert ist, indem Sie innerhalb der&nbsp; "Verwaltung" den Punkt
+"Datenquellen" &ouml;ffnen und den Reiter "Treiber" ausw&auml;hlen. Sie
+m&uuml;ssen bestimmen, wo CTM installiert ist und an welchem Ort die
+system.mda Datei sowie die ctm.mdb Datenbanken oder andere Datenbanken,
+aus denen Sie Daten importieren wollen, abgespeichert sind. Notieren
+Sie&nbsp; sich die kompletten lokalen Pfade dieser Dateien, genau so
+wie die IP Adresse oder den Computernamen des Windows Servers. Sie
+werden diese Informationen f&uuml;r den Importprozess ben&ouml;tigen.</li>
+  <li>Jetzt k&ouml;nnen Sie die Datei oder Dateien in moodle
+importieren. Erstellen Sie Ihren Test und starten Sie den "Importieren
+von Fragen aus Datei" Prozess. <b>JETZT KOMMEN DIE UNTERSCHIEDE BEI
+DER BENUTZUNG VON LINUX - </b>SIE M&Uuml;SSEN EINE DUMMY DATEI IM
+UPLOAD FELD ANGEBEN, DAMIT DER IMPORTPROZESS GESTARTET WERDEN KANN.
+DIESE DATEI <b>WIRD NICHT</b> VERARBEITET, SIE IST LEDIGLICH EIN
+PLATZHALTER F&Uuml;R DIE ART DES IMPORTS. ALS N&Auml;CHSTES WERDEN SIE
+DIE M&Ouml;GLICHKEIT HABEN, DIE WINDOWS SERVER INFORMATIONEN ANZUGEBEN.
+Sie werden ein Formular zu sehen bekommen, in dem Sie den Computernamen
+des Windows ODBC Socket Server PC's sowie die Pfadangaben der
+Systemdatenbank und der Fragendatenbanken angeben k&ouml;nnen. Geben
+Sie hier die Informationen ein, die Sie im vorherigen Schritt
+aufgeschrieben haben und klicken Sie dann auf "Verbinde zum Server".
+Wenn alles richtig eingestellt wurde, werden Sie ein weiteres Formular
+sehen, in dem Sie die Unterkategorien der Fragen ausw&auml;hlen
+k&ouml;nnen, die importiert werden sollen. Der Grund f&uuml;r diesen
+Schritt liegt darin, dass CTM Test Daten oft eine
+gro&szlig;e Anzahl von kategorisierten Fragen enthalten, die auf
+Grundlage
+der Buchkapitel oder Kurssektionen geordnet sind. WENN SIE BIS ZU
+DIESEM SCHRITT OHNE FEHLERMELDUNGEN GEKOMMEN SIND, HABEN SIE DEN SOCKET
+SERVER KORREKT EINGESTELLT UND SIE SIND BEREIT FRAGEN NACH MOODLE ZU
+IMPORTIEREN.</li>
+</ol>
+<p>Wenn sie w&auml;hrend dieses Prozesses Fehlermeldungen erhalten,
+werden Sie diese technische Information hilfreich finden. <span
+ style="font-weight: bold;">The ODBC Socket server uses port
+9628 to open a socket and trade and XML query for an XML result table
+of the query results.</span> Die Import Klasse analysiert dieses XML
+und benutzt es so wie ich eine lokale Abfrage benutze, um den Import
+durchzuf&uuml;hren. </p>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+<p align="center"><b>Eingebaute Antworten (Cloze)</b></p>
+<p>Dieser sehr flexible Fragentyp ist identisch mit einem beliebten
+Format, das als Cloze Format bekannt ist. </p>
+<p>Die Fragen bestehen aus einer Textpassage (im Moodle Format) in der
+verschiedene Antworten verschiedenster Fragetypen (multiple-choice,
+numerische Antworten und Fragen mit kurzen Antworten) eingebaut
+sind.&nbsp;
+</p>
+<p>Es gibt zur Zeit keine graphische Oberfl&auml;che, um diese Fragen
+zu erstellen - Sie m&uuml;ssen den Fragentyp mit Hilfe des Textfeldes
+erstellen oder Sie importieren Fragen aus externen Dateien. </p>
+<p>Hier ist ein Beispiel eines Eingabetextes, der solch ein Frage
+spezifiziert:
+</p>
+<form>
+  <center><textarea rows="15" cols="60" wrap="virtual">Dieser
+Fragentext enth&auml;lt eine Antwort genau hier {1:MULTICHOICE:Falsche
+Antwort#Feedback f&uuml;r diese falsche Antwort~Eine weitere falsche
+Antwort#Feedback f&uuml;r diese andere falsche Antwort~=Richtige
+Antwort#Feedback f&uuml;r richtige Antwort~%50%halbrichtige
+Antwort#Feedbach f&uuml;r halbrichtige Antwort} und direkt danach
+m&uuml;ssen Sie mit dieser Frage mit kurzer Antwort umgehen
+{1:SHORTANSWER:Falsche Antwort#Feedback f&uuml;r diese falsche
+Antwort~=Richtige Antwort#feedback f&uuml;r richtige
+Antwort~%50%halbrichtige Antwort#Feedback f&uuml;r halbrichtige
+Antwort} und zum Schlu&szlig; eine Dezimalzahl
+{2:NUMERICAL:=23.8:0.1#Feedback f&uuml;r richtige Antwort
+23.8~%50%N/A#Feedback f&uuml;r halbrichtige Antwort in der N&auml;he
+der richtigen Antwort}. Beachten Sie, dass Adressen wie www.moodle.org
+und smileys :-) gewohnt funktionieren: a) Wie gut ist es?
+{:MULTICHOICE:=Ja#Richtig~Nein#Wir
+haben eine unterschiedliche Meinung}
+b) Welche Bewertung w&uuml;rden Sie abgeben? {3:NUMERICAL:=3:2}
+Viel Gl&uuml;ck! </textarea></center>
+</form>
+<p>Dieses Beispiel wird f&uuml;r Sch&uuml;ler so aussehen: <br>
+</p>
+<form>
+  <table align="center" width="90%" class="generalbox" border="0"
+ cellpadding="5" cellspacing="0">
+    <tbody>
+      <tr>
+        <td bgcolor="#ffffff" class="generalboxcontent">
+        <table width="100%" cellspacing="10">
+          <tbody>
+            <tr>
+              <td nowrap="nowrap" width="100" valign="top">
+              <p align="center"><b>3</b></p>
+              <p align="center"><font size="1">8 Marks</font></p>
+              <img height="1" width="100" src="pix/spacer.gif" alt=""><br>
+              </td>
+              <td valign="top">
+              <p>Dieser Fragentext enth&auml;lt eine Antwort genau hier<br>
+&nbsp;
+              <select name="q4ma1">
+              <option></option>
+              <option value="4">Wrong answer</option>
+              <option value="5">Another wrong answer</option>
+              <option value="6">Correct answer</option>
+              <option value="7">Answer that gives half the credit</option>
+              </select>
+und direkt danach m&uuml;ssen Sie mit dieser Frage mit kurzer Antwort
+umgehen <input name="q4ma2" value="" type="text" size="8"> und zum
+Schlu&szlig; eine Dezimalzahl <input name="q4ma3" value="" type="text"
+ size="8">
+.<br>
+              <br>
+Beachten Sie, dass Adressen wie <a href="http://www.moodle.org"
+ target="newpage">www.moodle.org</a> und smileys <img alt=":-)"
+ width="15" height="15" src="smiley.gif"> gewohnt funktionieren:<br>
+a) Wie gut ist es?
+              <select name="q4ma4">
+              <option></option>
+              <option value="13">Yes</option>
+              <option value="14">No</option>
+              </select>
+              <br>
+b) Welche Bewertung w&uuml;rde Sie abgeben ? <input name="q4ma5"
+ value="" type="text" size="8"> <br>
+              <br>
+Viel Gl&uuml;ck!</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+<br>
+</body>
+</html>
