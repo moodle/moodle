@@ -5,7 +5,7 @@
 $string['auth_common_settings'] = 'Configurações comuns';
 $string['auth_data_mapping'] = 'Mapeamento dos dados';
 $string['auth_dbdescription'] = 'Este método usa uma tabela de uma base de dados externa para verificar se a senha e o nome do usuário são válidos. Se a conta for nova, a informação de outros campos também deve ser copiada em Moodle.';
-$string['auth_dbextrafields'] = 'Estes campos são opcionais. Pode-se optar por preencher alguns dos campos do usuário em Moodle com informação de <b>campos da base de dados externa</b> especificados aqui.<p>Deixando estes campos em branco, serão usados valores predefinidos.<p>Nos dois casos, o usuário poderá editar todos estes campos quando tiver entrado no sistema.';
+$string['auth_dbextrafields'] = 'Estes campos são opcionais. Pode-se optar por preencher alguns dos campos do usuário em Moodle com informação de <b>campos da base de dados externa</b> especificados aqui.<br />Deixando estes campos em branco, serão usados valores predefinidos.<br />Nos dois casos, o usuário poderá editar todos estes campos quando tiver entrado no sistema.';
 $string['auth_dbfieldpass'] = 'Nome do campo que contém as senhas';
 $string['auth_dbfielduser'] = 'Nome do campo que contém os nomes de usuários';
 $string['auth_dbhost'] = 'Computador que hospeda o servidor da base de dados.';
@@ -58,7 +58,7 @@ $string['auth_ldap_user_settings'] = 'Configurações de busca de usuário';
 $string['auth_ldap_user_type'] = 'Seleciona o modo de memorizar os usuários em LDAP. Esta configuração define também as características de expiração do login, grace logins e criação de usuários';
 $string['auth_ldap_version'] = 'A versão do protocolo LDAP que o seu servidor usa';
 $string['auth_ldapdescription'] = 'Este método faz a autenticação em relação a um servidor LDAP externo. Se o nome do usuário e a senha forem válidos, Moodle cria um novo registro de usuário na sua base de dados. Este módulo pode ler atributos do usuário a partir do LDAP e preencher os valores desejados em Moodle. Em ingressos sucessivos serão verificados apenas o nome de usuário e a senha.';
-$string['auth_ldapextrafields'] = 'Estes campos são opcionais. É possivel optar por preencher campos de usuários com informação de <b>campos LDAP</b> especificados aqui.<p>Deixando estes campos em branco, serão usados valores predefinidos.<p>Nos dois casos, o usuário poderá editar todos estes campos quando tiver entrado no sistema.';
+$string['auth_ldapextrafields'] = 'Estes campos são opcionais. É possivel optar por preencher campos de usuários com informação de <b>campos LDAP</b> especificados aqui.<br />Deixando estes campos em branco, serão usados valores predefinidos.<br />Nos dois casos, o usuário poderá editar todos estes campos quando tiver entrado no sistema.';
 $string['auth_ldaptitle'] = 'Use um servidor LDAP';
 $string['auth_manualdescription'] = 'Este método impede que os usuários criem as suas próprias contas. Todas as contas deverão ser criadas manualmente pelo Administrador.';
 $string['auth_manualtitle'] = 'Apenas contas manuais';

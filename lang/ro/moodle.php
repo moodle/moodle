@@ -64,7 +64,7 @@ $string['configlangdir'] = 'Cele mai multe limbi se scriu de la stânga la dreapt
 $string['configlocale'] = 'Alege o locaþie - aceasta va afecta formatul ºi limba pentru datã. Este nevoie ca aceste datã localã sã fie instalatã pe sistemul tãu de operare. (eg en_US or es_ES). Dacã nu ºtii ce sã alegi, lasã câmpul gol.';
 $string['configlongtimenosee'] = 'Dacã studenþii nu ºi-au mai deschis conturile de mult timp, ei sunt în mod automat îndepãrtaþi din lista celor înscriºi la cursuri. Acest parametru stabileºte limita de timp.';
 $string['configmaxeditingtime'] = 'Aici se specificã intervalul de timp în care utilizatorul poate modifica propriile intervenþii din forum, feedback-ul de la jurnal etc. De obicei 30 de minute este o valoare potrivitã.';
-$string['configproxyhost'] = 'Dacã acest <B>server</B> necesitã folosirea unui proxy computer (ex. un firewall) pentru a accesa Internet-ul, scrie portul ºi hostname-ul computer-ului proxy. Altfel lasã câmpul gol. ';
+$string['configproxyhost'] = 'Dacã acest <b>server</b> necesitã folosirea unui proxy computer (ex. un firewall) pentru a accesa Internet-ul, scrie portul ºi hostname-ul computer-ului proxy. Altfel lasã câmpul gol. ';
 $string['configslasharguments'] = 'Fiºierele (imaginile, upload-urile etc) sunt introduse printr-un script care foloseºte \'slash arguments\' (a doua opþiune aici). Aceastã metodã permite ca fiºierele sã fie mai bine manipulate în browserele web sau în proxy servere. Din nefericire, unele servere PHP nu permit aceastã metodã. Aºadar dacã întâmpini dificultãþi în accesarea fiºierelor sau imaginilor (de exemplu imaginea studentului), alege pentru aceastã variabilã prima opþiune.';
 $string['configsmtphosts'] = 'Scrie numele complet al serverului SMTP folosit de site pentru mesageria electronicã (ex. \'mail.a.com\' sau \'mail.a.com;mail.b.com\'). Dacã laºi acest câmp gol, site-ul va folosi metoda prestabilitã PHP pentru trimiterea email-urilor.';
 $string['configsmtpuser'] = 'Dacã ai specificat un server SMTP mai sus, iar serverul necesitã autentificare, atunci scrie aici username-ul ºi parola.';
@@ -137,7 +137,7 @@ atunci copiaza, apoi lipeste adresa in rubrica Address a browserului web pe care
 Numai gânduri bune de la administratorul site-ului \'$a->sitename\'.
 
 $a->admin';
-$string['emailconfirmsent'] = '   <P>Un email a fost trimis la adresa ta e-mail <B>$a</B><P>Mesajul conþine instrucþiuni cu privire la finalizarea înregistrãrii.<P>Dacã întâmpini totuºi dificultãþi, ia legãtura cu administratorul site-ului.';
+$string['emailconfirmsent'] = '   <p>Un email a fost trimis la adresa ta e-mail <b>$a</b></p><p>Mesajul conþine instrucþiuni cu privire la finalizarea înregistrãrii.</p><p>Dacã întâmpini totuºi dificultãþi, ia legãtura cu administratorul site-ului.</p>';
 $string['emaildisplay'] = 'Aratã e-mail';
 $string['emaildisplaycourse'] = 'Doar studenþii înregistraþi pot sã-mi vadã adresa e-mail';
 $string['emaildisplayno'] = 'Ascunde adresa mea e-mail realã';
@@ -246,20 +246,21 @@ $string['loginguest'] = 'Deschide-þi contul ca oaspete';
 $string['loginsite'] = 'Acces site';
 $string['loginsteps'] = 'Salut! Pentru a avea acces nerestricþionat la cursuri e nevoie sã-þi iei câteva minute
                          pentru crearea un cont. Este posibil ca unele cursuri sã necesite o \"cheie de înscriere\" de care deocamdatã nu ai nevoie. Iatã paºii ce trebuie parcurºi pentru crearea contului:
-    <OL size=2> <LI>Completeazã formularul <A HREF=$a>Cont nou</A> cu datele tale.
-   <LI>Un e-mail va fi trimis imediat la adresa e-mail oferitã.
-   <LI>Citeºte mesajul primit, ºi apasã link-ul web conþinut.
-   <LI>Contul tãu va fi validat ºi vei putea pãtrunde în site.
-   <LI>Acum, alege cursul la care vrei sã participi.
-   <LI>Dacã þi se cere o \"cheie de înscriere\" - foloseºte-o pe cea
-   primitã de la profesorul tãu. Astfel te vei înscrie la curs.
-   <LI>Acum poþi accesa cursul complet. De acum înainte va trebui sã introduci
+   <ol> 
+   <li>Completeazã formularul <a href=\"$a\">Cont nou</a> cu datele tale.</li>
+   <li>Un e-mail va fi trimis imediat la adresa e-mail oferitã.</li>
+   <li>Citeºte mesajul primit, ºi apasã link-ul web conþinut.</li>
+   <li>Contul tãu va fi validat ºi vei putea pãtrunde în site.</li>
+   <li>Acum, alege cursul la care vrei sã participi.</li>
+   <li>Dacã þi se cere o \"cheie de înscriere\" - foloseºte-o pe cea
+   primitã de la profesorul tãu. Astfel te vei înscrie la curs.</li>
+   <li>Acum poþi accesa cursul complet. De acum înainte va trebui sã introduci
    doar numele de utilizator ºi parola (în formularul de pe aceastã paginã)
-   pentru a intra în site ºi a accesa cursurile la care te-ai înscris.
-   </OL>';
-$string['loginstepsnone'] = 'Salut!<P>Pentru a accesa fãrã restricþii cursurile ai nevoie de un cont pe acest website.<P>Tot ceea ce trebuie sã faci e sã alegi un nume de utilizator ºi o parolã pe care sã
-le introduci în formularul de pe aceastã paginã!<P>Dacã altcineva a ales numele de utilizator dorit de tine
-eºti nevoit sã încerci din nou, folosind un nume de utilizator diferit.';
+   pentru a intra în site ºi a accesa cursurile la care te-ai înscris.</li>
+   </ol>';
+$string['loginstepsnone'] = '<p>Salut!</p><p>Pentru a accesa fãrã restricþii cursurile ai nevoie de un cont pe acest website.</p><p>Tot ceea ce trebuie sã faci e sã alegi un nume de utilizator ºi o parolã pe care sã
+le introduci în formularul de pe aceastã paginã!</p><p>Dacã altcineva a ales numele de utilizator dorit de tine
+eºti nevoit sã încerci din nou, folosind un nume de utilizator diferit.</p>';
 $string['loginto'] = 'Deschide contul la $a';
 $string['loginusing'] = 'Deschide-þi contul folosind numele de utilizator ºi parola';
 $string['logout'] = 'Închide contul';
@@ -366,10 +367,10 @@ $string['passwordchanged'] = 'Parola a fost schimbatã';
 $string['passwordrecovery'] = 'Da, ajutã-mã sã-mi deschid contul';
 $string['passwordsdiffer'] = 'Parola aceasta nu este acceptatã';
 $string['passwordsent'] = 'Parola a fost trimisã';
-$string['passwordsenttext'] = '   <P>Un e-mail a fost trimis la adresa  $a->email.
-   <P><B>Te rog citeºte-þi e-mailul pentru a afla noua parolã</B>
-   <P>Parola nouã a fost generatã în mod automat, poate doreºti sã o
-   <A HREF=$a->link>schimbi cu ceva mai uºor de reþinut</A>.';
+$string['passwordsenttext'] = '   <p>Un e-mail a fost trimis la adresa  $a->email.
+   </p><p><b>Te rog citeºte-þi e-mailul pentru a afla noua parolã</b>
+   </p><p>Parola nouã a fost generatã în mod automat, poate doreºti sã o
+   <a href=\"$a->link\">schimbi cu ceva mai uºor de reþinut</a>.</p>';
 $string['people'] = 'Persoanã';
 $string['personalprofile'] = 'Profil personal';
 $string['phone'] = 'Telefon';

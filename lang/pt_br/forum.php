@@ -91,7 +91,7 @@ $string['openmode1'] = 'Nenhuma discussão, mas são permitidas respostas';
 $string['openmode2'] = 'São permitidas discussões e respostas';
 $string['parent'] = 'Mostrar principal';
 $string['parentofthispost'] = 'Mensagem original';
-$string['postadded'] = 'A sua mensagem foi enviada com sucesso.<p>Você tem $a para fazer alterações.</p>';
+$string['postadded'] = 'A sua mensagem foi enviada com sucesso.<br />Você tem $a para fazer alterações.';
 $string['postincontext'] = 'Veja esta mensagem em seu contexto';
 $string['postmailinfo'] = 'Esta é a cópia de uma mensagem enviada ao fórum do website $a. 
 Clique o link abaixo para consultar as mensagens no site e participar das discussões:';

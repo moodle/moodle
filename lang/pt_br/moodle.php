@@ -208,7 +208,7 @@ $string['confignotifyloginfailures'] = 'Podem ser mandados avisos via email quan
 $string['confignotifyloginthreshold'] = 'Qual é o número de notificações por usuário ou por IP adequado nos casos em que é ativada a motificação de erros de login via email?';
 $string['configopentogoogle'] = 'Permite que Google acesse o site como visitante. Além disto, quem chegar ao site a partir de um link em uma página de Google fará o login automático como visitante. Isto é aplicável apenas aos cursos che permitem o acesso a visitantes.';
 $string['configpathtoclam'] = 'Percurso de acesso a Clam AV. Algo parecido com /usr/bin/clamscan ou /usr/bin/clamdscan. Necessário para que Clam seja ativado.';
-$string['configproxyhost'] = 'Se este <B>servidor</B> usa um proxy ou firewall para o acesso à rede, indique o  hostname e a porta correspondentes.  Em caso contrário, deixe em branco.';
+$string['configproxyhost'] = 'Se este <b>servidor</b> usa um proxy ou firewall para o acesso à rede, indique o  hostname e a porta correspondentes.  Em caso contrário, deixe em branco.';
 $string['configquarantinedir'] = 'Nome do diretório que deve arquivar os arquivos infectados em quarentena. O diretório deve ter permissão de escritura. Se você deixar isto em branco, indicar um diretório inexistente ou que não aceita escritura, os arquivos infectados serão cancelados. Não inclua um trailing slash.';
 $string['configrunclamonupload'] = 'Usar clam AV durante o upload de arquivos? Você deve indicar um percurso de acesso correto em pathtoclam para que isto funcione. (Clam AV é um virus scanner free que pode ser obtido em http://www.clamav.net/)';
 $string['configsecureforms'] = 'Moodle pode ter um nível adicional de segurança quando recebe dados de web forms. Se isto for ativado, a variável HTTP_REFERER do browser vai ser comparada com o endereço atual do form. Em alguns casos podem surgir problemas se o usuário estiver usando um firewall configurado para eliminar o HTTP_REFERER (ex. Zonealarm). O sintoma típico é a página do form bloqueada. Se os teus usuários tiverem estes problemas com a página de ingresso, por exemplo, você pode desabilitar esta funcionalidade mas lembre-se que assim o site fica mais vulnerável a ataques ligados a senhas. Em caso de dúvidas, escolha \'Sim\'.';
@@ -383,7 +383,7 @@ Se você precisar de ajuda, por favor contate o administrador do site,
 
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: confirmação de cadastramento de novo usuário';
-$string['emailconfirmsent'] = '<P>Uma mensagem foi enviada para o seu endereço <B>$a</B><P>Esta mensagem contem instruções para completar a sua inscrição.<P>Se você encontrar dificuldades contate o administrador do site.';
+$string['emailconfirmsent'] = '<p>Uma mensagem foi enviada para o seu endereço <b>$a</b></p><p>Esta mensagem contem instruções para completar a sua inscrição.</p><p>Se você encontrar dificuldades contate o administrador do site.</p>';
 $string['emaildigest'] = 'Tipo de digest das mensagens';
 $string['emaildigestcomplete'] = 'Completo (um email diário com as mensagens dos fóruns completas)';
 $string['emaildigestoff'] = 'Nenhum (um email para cada mensagem do fórum';
@@ -420,8 +420,8 @@ $string['emailpasswordconfirmationsubject'] = '$a: confirmação da mudança de sen
 $string['emailpasswordconfirmsent'] = 'Um Email será enviada ao seguinte endereço: <b>$a</b>.
 Siga as instruções do Email para completar a mundança de senha.
 Em caso de dificuldades contate o administrador do site.';
-$string['emailpasswordsent'] = '<p>Um Email com a sua nova senha foi enviada ao seguinte endereço: <b>$a->email</b>.
-<p>A nova senha foi criada automaticamente. Se você quiser, é possível <a href=$a->link>mudar a senha</a>.';
+$string['emailpasswordsent'] = '<p>Um Email com a sua nova senha foi enviada ao seguinte endereço: <b>$a->email</b>.</p>
+<p>A nova senha foi criada automaticamente. Se você quiser, é possível <a href=$a->link>mudar a senha</a>.</p>';
 $string['enable'] = 'Ativar';
 $string['encryptedcode'] = 'Código cifrado';
 $string['enrolledincourse'] = 'Inscrito no curso ';
@@ -621,17 +621,17 @@ $string['login_failure_logs'] = 'Relatório dos erros de login';
 $string['loginas'] = 'Acesso como';
 $string['loginguest'] = 'Acessar como visitante';
 $string['loginsite'] = 'Acesso ao site';
-$string['loginsteps'] = 'Olá! <P>Para o acesso completo aos cursos você precisa se cadastrar como usuário do site. Além disso cada curso pode ter um código de inscrição específico, fornecido apenas aos participantes inscritos no curso.
+$string['loginsteps'] = '<p>Olá!</p> <p>Para o acesso completo aos cursos você precisa se cadastrar como usuário do site. Além disso cada curso pode ter um código de inscrição específico, fornecido apenas aos participantes inscritos no curso.
 
-Siga os seguintes passos: 
-<OL size=2>
-<LI>Preencha o <A HREF=$a>Formulário de Cadastramento</A> com os seus dados.
-<LI>Uma mensagem de confirmação da inscrição será enviada imediatamente ao seu endereço de email. 
-<LI>Visite o endereço web indicado na mensagem para confirmar o seu cadastramento automaticamente e começar a navegar.
-<LI>Acesse o seu curso clicando o nome correspondente na lista de cursos disponíveis.
-<LI>Se for pedido um código de inscrição use a senha que foi fornecida pelo administrador ou pelo tutor. Esta senha é reservada aos usuários do site inscritos no curso e será necessária apenas a primeira vez que você entrar no curso.
-<LI>Quando você retornar ao site, para entrar no curso basta usar o seu nome de usuário e a sua senha nesta página de acesso.</OL>';
-$string['loginstepsnone'] = 'Olá! <P>Para o acesso aos cursos você precisa ser cadastrado como usuário do site.<p>Para fazer isto, basta completar o formulário desta página escolhendo um nome de usuário e uma senha que você queira usar.<p>Se alguém já tiver escolhido o mesmo nome você vai ter que mudá-lo e preencher novamente o formulário.';
+Siga os seguintes passos: </p>
+<ol>
+<li>Preencha o <a href=\"$a\">Formulário de Cadastramento</a> com os seus dados.</li>
+<li>Uma mensagem de confirmação da inscrição será enviada imediatamente ao seu endereço de email. </li>
+<li>Visite o endereço web indicado na mensagem para confirmar o seu cadastramento automaticamente e começar a navegar.</li>
+<li>Acesse o seu curso clicando o nome correspondente na lista de cursos disponíveis.</li>
+<li>Se for pedido um código de inscrição use a senha que foi fornecida pelo administrador ou pelo tutor. Esta senha é reservada aos usuários do site inscritos no curso e será necessária apenas a primeira vez que você entrar no curso.</li>
+<li>Quando você retornar ao site, para entrar no curso basta usar o seu nome de usuário e a sua senha nesta página de acesso.</li></ol>';
+$string['loginstepsnone'] = '<p>Olá!</p> <p>Para o acesso aos cursos você precisa ser cadastrado como usuário do site.</p><p>Para fazer isto, basta completar o formulário desta página escolhendo um nome de usuário e uma senha que você queira usar.</p><p>Se alguém já tiver escolhido o mesmo nome você vai ter que mudá-lo e preencher novamente o formulário.</p>';
 $string['loginto'] = 'Acesso a $a';
 $string['loginusing'] = 'Use o seu nome de usuário e a sua senha para acessar';
 $string['logout'] = 'Sair';
@@ -803,8 +803,8 @@ $string['passwordconfirmchange'] = 'Confirme a mudança de senha';
 $string['passwordrecovery'] = 'Sim, preciso de ajuda para acessar';
 $string['passwordsdiffer'] = 'Estas senhas não são iguais';
 $string['passwordsent'] = 'A senha foi enviada ';
-$string['passwordsenttext'] = '<P>Uma mensagem contendo a sua nova senha foi enviada ao endereço $a->email.
-<P>A senha nova foi gerada automaticamente mas é possível <A HREF=$a->link>modificá-la</A> se você quiser.';
+$string['passwordsenttext'] = 'Uma mensagem contendo a sua nova senha foi enviada ao endereço $a->email.
+<p>A senha nova foi gerada automaticamente mas é possível <a href=\"$a->link\">modificá-la</a> se você quiser.';
 $string['pathnotexists'] = 'O percurso não existe no seu servidor!';
 $string['pathslasherror'] = 'O percurso não pode terminar com um slash!!';
 $string['paymentinstant'] = 'Clique o botão abaixo para efetuar o pagamento e fazer a sua inscrição em poucos minutos!';
@@ -841,11 +841,11 @@ $string['recentactivityreport'] = 'Relatório completo da atividade recente';
 $string['refreshingevents'] = 'Atualizando eventos';
 $string['registration'] = 'Registrar';
 $string['registrationemail'] = 'Avisos via Email';
-$string['registrationinfo'] = '<p>Nesta página você pode registrar o seu site Moodle em moodle.org. O registro é gratuito.
+$string['registrationinfo'] = '<p>Nesta página você pode registrar o seu site Moodle em moodle.org. O registro é gratuito.</p>
 O maior benefício será a sua inclusão em uma mailing list limitada a mensagens importantes, como avisos de segurança e novas versões de Moodle.
-<p>Os seus dados não serão públicos e nunca serão vendidos ou compartilhados. Estes dados só serão utilizados para fins de elaboração de estatísticas relativas à comunidade Moodle.
-<p>Se você quiser, o nome do seu site, o país e a URL serão incluídos à lista de sites Moodle.
-<p>Todos os registros são controlados manualmente antes que você seja incluído na lista. Você poderá atualizar os seus dados no futuro utilizando este mesmo formulário.';
+<p>Os seus dados não serão públicos e nunca serão vendidos ou compartilhados. Estes dados só serão utilizados para fins de elaboração de estatísticas relativas à comunidade Moodle.</p>
+<p>Se você quiser, o nome do seu site, o país e a URL serão incluídos à lista de sites Moodle.</p>
+<p>Todos os registros são controlados manualmente antes que você seja incluído na lista. Você poderá atualizar os seus dados no futuro utilizando este mesmo formulário.</p>';
 $string['registrationno'] = 'Não, não quero receber email';
 $string['registrationsend'] = 'Mande a informação de registro para moodle.org';
 $string['registrationyes'] = 'Sim, por favor me avise quando houver assuntos importantes';
@@ -885,7 +885,7 @@ $string['scheduledbackupstatus'] = 'Estado dos Backups programados';
 $string['search'] = 'Buscar';
 $string['searchagain'] = 'Buscar novamente';
 $string['searchcourses'] = 'Buscar cursos';
-$string['searchhelp'] = 'Você pode utilizar mais de uma palavra em cada busca.<p>termo: busca todas as palavras nos textos che contém este termo<br />+termo: busca apenas as palavras que correspondem exatamente ao termo<br />-termo: exclui dos resultados da busca os textos che contém este termo.';
+$string['searchhelp'] = 'Você pode utilizar mais de uma palavra em cada busca.<br />termo: busca todas as palavras nos textos che contém este termo<br />+termo: busca apenas as palavras que correspondem exatamente ao termo<br />-termo: exclui dos resultados da busca os textos che contém este termo.';
 $string['searchresults'] = 'Resultados da busca';
 $string['sec'] = 'segundo';
 $string['secs'] = 'segundos';
@@ -1018,7 +1018,7 @@ $string['uploadafile'] = 'Enviar um arquivo';
 $string['uploadedfile'] = 'Arquivo enviado com sucesso';
 $string['uploadedfileto'] = 'Enviado $a->file a $a->directory';
 $string['uploadedfiletoobig'] = 'Sinto muito, este arquivo é grande demais, o limite é de $a bytes';
-$string['uploadfailednotrecovering'] = 'O envio deste arquivo ao servidor não foi possível em razão de um problema com o seguinte arquivo, $a->name.<br/>Este é o log do problema::<br />$a->problem<br />Not recovering.';
+$string['uploadfailednotrecovering'] = 'O envio deste arquivo ao servidor não foi possível em razão de um problema com o seguinte arquivo, $a->name.<br />Este é o log do problema::<br />$a->problem<br />Not recovering.';
 $string['uploadfilelog'] = 'Relatório de envio do arquivo: $a';
 $string['uploadformlimit'] = 'O tamanho do arquivo é superior ao limite autorizado neste formulário';
 $string['uploadlabel'] = 'Título:';

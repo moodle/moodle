@@ -128,7 +128,7 @@ $string['configlocale'] = 'Vyberte si miestne jazykové nastavenie - toto ovplyvn
 $string['configloglifetime'] = 'Tu ¹pecifikujete èasový interval, poèas ktorého chcete zachova» logy o u¾ívateµských aktivitách. Logy, ktoré sú star¹ie sa automaticky vyma¾ú. Je dobré dr¾a» si logy tak dlho, ako je to mo¾né, ale ak máte veµmi zaneprázdnený server a máte problémy s rýchlos»ou, potom si vyberte krat¹í èas pre uschovanie logov.';
 $string['configlongtimenosee'] = 'Ak sa ¹tudenti dlhý èas neprihlásia, sú automaticky vyradení z kurzov. Tento parameter stanovuje tento èasový limit.';
 $string['configmaxeditingtime'] = 'Toto urèuje èas, ktorý majú µudia na upravovanie príspevkov do fóra, spätnej väzby do spisu atï. Zvyèajne je to 30minút.';
-$string['configproxyhost'] = 'Ak tento <B>server</B> potrebuje pou¾íva» server proxy (napríklad bránu firewall) pri prístupe na internet, tak tu uveïte hostiteµské meno a port. Ak nie, nechajte to prázdne.';
+$string['configproxyhost'] = 'Ak tento <b>server</b> potrebuje pou¾íva» server proxy (napríklad bránu firewall) pri prístupe na internet, tak tu uveïte hostiteµské meno a port. Ak nie, nechajte to prázdne.';
 $string['configsecureforms'] = 'Moodle mô¾e pou¾i» dodatoèné bezpeènostné opatrenia pri akceptovaní vstupov z web-formulárov. Ak to umo¾níte, potom sa bude overova» premenná HTTP_REFERER, ktorú po¹le browser a porovná sa s aktuálnou adresou formulára. Toto mô¾e spôsobi» (vo veµmi zriedkavých prípadoch) problémy. napr. ak je u¾ívateµ za firewall-om, ktorý je nakonfigurovaný tak, ¾e odstráni premennú HTTP_REFERER. Vtedy sa mô¾e sta», ¾e formulár vám \'stvrdne\'. Ak sa na to u¾ívatelia s»a¾ujú. mô¾ete znemo¾ni» toto nastavenie. Ale to vás vystavuje väè¹mi útokom zvonku (brute force password attacks). ';
 $string['configsessiontimeout'] = 'Ak sú µudia pripojení na túto stránku dlho neèinní (bez s»ahovania stránok) sú automaticky odpojení. Táto premenná urèuje aký dlhý by mal by» ten èas neèinnosti.';
 $string['configslasharguments'] = 'Súbory (obrázky atï.) sú prená¹ané prostredníctvom skriptu pou¾ívajúceho znaèku \'lomeno\' (druhá mo¾nos» vo výbere). Táto metóda umo¾òuje, aby boli súbory µah¹ie zachytené na webových prehliadaèoch, proxy serveroch atï. Nane¹»astie, niektoré PHP servery  túto metódu nepodporujú. Ak máte problémy pri zobrazovaní stiahnutých súborov alebo obrázkov, nastavte tu prvú mo¾nos» vo výbere.';
@@ -239,11 +239,11 @@ pou¾ívajúce va¹u emailovú adresu. Na potvrdenie vá¹ho nového konta, choïte prosí
 
 S pozdravom od \'$a->sitename\' administrátora,       $a->admin';
 $string['emailconfirmationsubject'] = '$a: potvrdenie konta';
-$string['emailconfirmsent'] = '   <P>email by mal by» posielaný na va¹u adresu <B>$a</B>
+$string['emailconfirmsent'] = '   <p>email by mal by» posielaný na va¹u adresu <b>$a</b></p>
 
-   <P>Obsahuje jednoduchý návod na ukonèenie va¹ej registrácie.
+   <p>Obsahuje jednoduchý návod na ukonèenie va¹ej registrácie.</p>
 
-   <P>Ak problémy pretrvávajú kontaktujte administrátora stránky.';
+   <p>Ak problémy pretrvávajú kontaktujte administrátora stránky.</p>';
 $string['emaildisplay'] = 'Zobrazenie emailov';
 $string['emaildisplaycourse'] = 'Povoli» zobrazenie mojej emailovej adresy len èlenom kurzu';
 $string['emaildisplayno'] = 'Ukry» moju skutoènú emailovú adresu pre v¹etkých';
@@ -414,32 +414,32 @@ $string['loginsteps'] = 'Ahoj! Na úplný prístup do kurzov potrebujete chvíµu èas
 
    <OL size=2>
 
-   <LI>Doplòte <A HREF=$a>Nové konto</A> do formulára va¹e údaje.
+   <li>Doplòte <A HREF=$a>Nové konto</A> do formulára va¹e údaje.
 
-   <LI>Na va¹u emailovú adresu bude okam¾ite odoslaný email.
+   <li>Na va¹u emailovú adresu bude okam¾ite odoslaný email.
 
-   <LI>Preèítajte si vá¹ email a kliknite na webovú linku, ktorú obsahuje.
+   <li>Preèítajte si vá¹ email a kliknite na webovú linku, ktorú obsahuje.
 
-   <LI>Va¹e konto bude potvrdené a vy budete prihlásený.
+   <li>Va¹e konto bude potvrdené a vy budete prihlásený.
 
-   <LI>Teraz si vyberte kurz, ktorého sa chcete zúèasni».
+   <li>Teraz si vyberte kurz, ktorého sa chcete zúèasni».
 
-   <LI>Ak ste po¾iadaný o  \"enrolment key\" - pou¾ite ten, 
+   <li>Ak ste po¾iadaný o  \"enrolment key\" - pou¾ite ten, 
 
    ktorý vám dal vá¹ uèiteµ. To vás \"enrol\" do kurzu.
 
-   <LI>Teraz máte prístup do celého kurzu. Od teraz budete musie» u¾ len
+   <li>Teraz máte prístup do celého kurzu. Od teraz budete musie» u¾ len
 
    uvies» va¹e osobné u¾ívateµské meno a heslo (vo formulári na tejto strane)
 
    a prihlásite sa a vstúpite do ka¾dého kurzu na ktorý ste sa prihlásili.
 
-   </OL>';
-$string['loginstepsnone'] = 'Ahoj!<P>Aby ste mohli plne vstúpi» do kurzov musíte si vytvori» 
+   </ol>';
+$string['loginstepsnone'] = 'Ahoj!<p>Aby ste mohli plne vstúpi» do kurzov musíte si vytvori» 
 
-svoje konto.<P>Potrebujete si stanovi» u¾ívateµské meno a heslo a pou¾i» ho 
+svoje konto.<p>Potrebujete si stanovi» u¾ívateµské meno a heslo a pou¾i» ho 
 
-vo formulári na tejto strane!<P>Ak si u¾ niekto pred vami vybral také isté u¾ívateµské meno
+vo formulári na tejto strane!<p>Ak si u¾ niekto pred vami vybral také isté u¾ívateµské meno
 
 budete to musie» skúsi» e¹te raz a pou¾i» iné u¾ívateµské meno.';
 $string['loginto'] = 'Prihlásenie na $a';
@@ -590,11 +590,11 @@ $string['passwordconfirmchange'] = 'Potvrdi» zmenu hesla';
 $string['passwordrecovery'] = 'Ano, pomô¾te mi prihlási» sa';
 $string['passwordsdiffer'] = 'Tieto heslá nie sú správne';
 $string['passwordsent'] = 'Heslo bolo poslané';
-$string['passwordsenttext'] = '   <P>Na va¹u adresu $a->email bol poslaný email.
+$string['passwordsenttext'] = '   <p>Na va¹u adresu $a->email bol poslaný email.
 
-   <P><B>Skontroluje, prosím, po¹tu, kvôli novému heslu</B>
+   <p><b>Skontroluje, prosím, po¹tu, kvôli novému heslu</b>
 
-   <P>Nové heslo bolo automaticky vytvorené, tak¾e ho mô¾ete
+   <p>Nové heslo bolo automaticky vytvorené, tak¾e ho mô¾ete
 
    <A HREF=$a->link>change na nieèo µah¹ie zapamätateµné</A>.';
 $string['people'] = '¥udia';

@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = "This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.";
-$string['auth_dbextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>external database fields</B> that you specify here. <P>If you leave these blank, then defaults will be used.<P>In either case, the user will be able to edit all of these fields after they log in.";
+$string['auth_dbextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>external database fields</b> that you specify here. <br />If you leave these blank, then defaults will be used.<br />In either case, the user will be able to edit all of these fields after they log in.";
 $string['auth_dbfieldpass'] = "Name of the field containing passwords";
 $string['auth_dbfielduser'] = "Name of the field containing usernames";
 $string['auth_dbhost'] = "The computer hosting the database server.";
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = "Password matching the above username";
 $string['auth_dbpasstype'] = "Specify the format that the password field is using.  MD5 encryption is useful for connecting to other common web applications like PostNuke";
 $string['auth_dbtable'] = "Name of the table in the database";
 $string['auth_dbtitle'] = "Use an external database";
-$string['auth_dbtype'] = "The database type (See the <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A> for details)";
+$string['auth_dbtype'] = "The database type (See the <a href="\../lib/adodb/readme.htm#drivers"\>ADOdb documentation</a> for details)";
 $string['auth_dbuser'] = "Username with read access to the database";
 $string['auth_emaildescription'] = "Email confirmation is the default authentication method.  When the user signs up, choosing their own new username and password, a confirmation email is sent to the user's email address.  This email contains a secure link to a page where the user can confirm their account. Future logins just check the username and password against the stored values in the Moodle database.";
 $string['auth_emailtitle'] = "Email-based authentication";
@@ -30,11 +30,15 @@ $string['auth_ldap_search_sub'] = "Put value &lt;&gt; 0 if  you like to search u
 $string['auth_ldap_update_userinfo'] = "Update user information (firstname, lastname, address..) from LDAP to Moodle. Look at /auth/ldap/attr_mappings.php for mapping information";
 $string['auth_ldap_user_attribute'] = "The attribute used to name/search users. Usually 'cn'.";
 $string['auth_ldapdescription'] = "This method provides authentication against an external LDAP server.
+
                                   If the given username and password are valid, Moodle creates a new user 
+
                                   entry in its database. This module can read user attributes from LDAP and prefill 
+
                                   wanted fields in Moodle.  For following logins only the username and 
+
                                   password are checked.";
-$string['auth_ldapextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>LDAP fields</B> that you specify here. <P>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<P>In either case, the user will be able to edit all of these fields after they log in.";
+$string['auth_ldapextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <br />If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<br />In either case, the user will be able to edit all of these fields after they log in.";
 $string['auth_ldaptitle'] = "Use an LDAP server";
 $string['auth_nntpdescription'] = "This method uses an NNTP server to check whether a given username and password is valid.";
 $string['auth_nntphost'] = "The NNTP server address. Use the IP number, not DNS name.";

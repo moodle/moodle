@@ -168,7 +168,7 @@ $string['configlongtimenosee'] = 'S to nastavitvijo doloèite èas, po katerem nea
 $string['configmaxbytes'] = 'S to nastavitvijo omejite najveèjo velikost posamezne datoteke, ki se prena&#65533;a na stre&#65533;nik. Ta omejitev je povezana tudi z nastavitvami v: PHP (php.ini, upload_max_filesize) in Apache (httpd.conf, LimitRequestBody).';
 $string['configmaxeditingtime'] = 'Doloèite zgornjo mejo èasa, v katerem uporabniki smejo popravljati svoja sporoèila (npr. na forumu). Priporoèamo 30 minut.';
 $string['configopentogoogle'] = 'S to nastavitvijo omogoèite iskalcem na Google transparenten vstop z uporabni&#65533;kim raèunom Gost.';
-$string['configproxyhost'] = 'Èe ta <B>stre&#65533;nik</B> komunicira z internetom preko proxy stre&#65533;nika (npr. po&#65533;arni zid), navedite ime slednjega in vrata. Sicer pustite prazno.';
+$string['configproxyhost'] = 'Èe ta <b>stre&#65533;nik</b> komunicira z internetom preko proxy stre&#65533;nika (npr. po&#65533;arni zid), navedite ime slednjega in vrata. Sicer pustite prazno.';
 $string['configsecureforms'] = 'Moodle zna uporabiti tudi druge naèine varnega sprejemanja podatkov preko spletnih obrazcev. Èe je ta nastavitev omogoèena, se preveri spremenljivka v brskalniku HTTP_REFERER in naslov spletnega obrazca. Redko to povzroèi te&#65533;ave v kombinaciji s po&#65533;arnim zidom (npr. Zonealarm, ki je nastavljen tako, da odstrani HTTP_REFERER). Tipièen simptom te&#65533;av je, da uporabniki obtièijo na obrazcu za prijavo. Èe onemogoèite to nastavitev, bo stre&#65533;nik bolj izpostavljen napadom tipa brute-force password attacks. Varna izbira je vsekakor \'Da\'.';
 $string['configsessioncookie'] = 'Ta nastavitev doloèi ime pi&#65533;kota (cookie) za seje v portalu Moodle.  Nastavitev je smiselna le v primeru, ko na istem spletnem stre&#65533;niku poganjate veè kopij portala Moodle.';
 $string['configsessiontimeout'] = 'Doloèite èas, po katerem bodo neaktivni uporabniki samodejno odjavljeni. Kriterij za neaktivnost je mirovanje na eni spletni strani.';
@@ -305,9 +305,9 @@ Veèina po&#65533;tnih odjemalcev napi&#65533;e povezavo z modro barvo. Èe klik b
 Èe &#65533;e potrebujete pomoè, se oglasite pri administratorju portala,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: potrditev uporabni&#65533;kega raèuna';
-$string['emailconfirmsent'] = '   <P>Sporoèilo po epo&#65533;ti je bilo poslano na va&#65533; naslov: <B>$a</B>
-   <P>V sporoèilu boste prebrali navodila za vpis.
-   <P>Èe &#65533;e potrebujete pomoè, se oglasite pri administratorju portala.';
+$string['emailconfirmsent'] = '   <p>Sporoèilo po epo&#65533;ti je bilo poslano na va&#65533; naslov: <b>$a</b></p>
+<p>V sporoèilu boste prebrali navodila za vpis.</p>
+<p>Èe &#65533;e potrebujete pomoè, se oglasite pri administratorju portala.</p>';
 $string['emaildisable'] = 'Ta naslov epo&#65533;te je onesposobljen';
 $string['emaildisplay'] = 'Prikaz naslova epo&#65533;te';
 $string['emaildisplaycourse'] = 'Samo &#65533;tudenti, vpisani v predmet, bodo videli nalov epo&#65533;te.';
@@ -331,12 +331,12 @@ Veèina po&#65533;tnih odjemalcev napi&#65533;e povezavo z modro barvo. Èe klik b
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: potrditev spremembe gesla';
 $string['emailpasswordconfirmsent'] = 'Sporoèilo po epo&#65533;ti je bilo poslano na va&#65533; naslov: <b>$a</b>.
-<p>V sporoèilu boste prebrali navodila za potrditev spremembe gesla.
+<br />V sporoèilu boste prebrali navodila za potrditev spremembe gesla.
 Èe &#65533;e potrebujete pomoè, se oglasite pri administratorju portala.';
 $string['emailpasswordsent'] = 'Hvala za potrditev spremembe gesla.
-<p>Sporoèilo, ki vsebuje novo geslo je bilo poslano po epo&#65533;ti na naslov  <b>$a->email</b>.
-<p>Novo geslo vsebuje nakljuèno zaporedje znakov - èe &#65533;elite spremeniti ta niz tako, da si ga boste la&#65533;je zapomnili, sledite povezavi:
-<a href=$a->link>sprememba gesla </a>.';
+<br />Sporoèilo, ki vsebuje novo geslo je bilo poslano po epo&#65533;ti na naslov  <b>$a->email</b>.
+<br />Novo geslo vsebuje nakljuèno zaporedje znakov - èe &#65533;elite spremeniti ta niz tako, da si ga boste la&#65533;je zapomnili, sledite povezavi:
+<a href=\"$a->link\">sprememba gesla </a>.';
 $string['enable'] = 'Omogoèi';
 $string['enrolledincourse'] = 'Vpisan v predmet';
 $string['enrolledincoursenot'] = 'Ni vpisan v predmet';
@@ -511,7 +511,7 @@ $string['loginas'] = 'Prijava kot';
 $string['loginguest'] = 'Prijava kot gost';
 $string['loginsite'] = 'Prijava na stre&#65533;nik';
 $string['loginsteps'] = 'Pozdravljeni, za dostop do vsebin stre&#65533;nika si morate ustvariti uporabni&#65533;ki raèun. Vsak posamezen predmet pa ima lahko &#65533;e poseben vstopni kljuè, ki ga boste vnesli le enkrat. Sledite navodilom:
-   <ol size=\"2\">
+   <ol>
    <li>Izpolnite obrazec <a href=\"$a\">Nov raèun</a> z zahtevanimi podatki.</li>
    <li>Po epo&#65533;ti boste prejeli sporoèilo.</li>
    <li>Preberite sporoèilo in kliknite na povezavo.</li>
@@ -675,9 +675,9 @@ $string['passwordconfirmchange'] = 'Potrditev spremembe gesla';
 $string['passwordrecovery'] = 'Da, pomoè pri prijavi';
 $string['passwordsdiffer'] = 'Gesli se razlikujeta';
 $string['passwordsent'] = 'Geslo je bilo poslano';
-$string['passwordsenttext'] = '<P>Epo&#65533;ta je bila poslana na naslov $a->email. 
-<P><B>Med sporoèili poi&#65533;èite novo geslo.</B>
-<P>Novo geslo vsebuje nakljuèno zaporedje znakov. Èe &#65533;elite spremeniti ta niz, sledite povezavi: <a href=$a->link>sprememba gesla </a>.';
+$string['passwordsenttext'] = '<p>Epo&#65533;ta je bila poslana na naslov $a->email. </p>
+<p><b>Med sporoèili poi&#65533;èite novo geslo.</b></p>
+<p>Novo geslo vsebuje nakljuèno zaporedje znakov. Èe &#65533;elite spremeniti ta niz, sledite povezavi: <a href=\"$a->link\">sprememba gesla </a>.</p>';
 $string['people'] = 'Ljudje';
 $string['personalprofile'] = 'Osebni profil';
 $string['phone'] = 'Telefon';
@@ -704,10 +704,10 @@ $string['recentactivityreport'] = 'Podrobno poroèilo o zadnjih aktivnostih...';
 $string['refreshingevents'] = 'Osve&#65533;evanje dogodkov';
 $string['registration'] = 'Registracija Moodle';
 $string['registrationemail'] = 'Obve&#65533;èanje po epo&#65533;ti';
-$string['registrationinfo'] = '<p>Ta stran vam omogoèa, da registrirate va&#65533; portal pri moodle.org.  Registracija je brezplaèna. Glavna korist registracije je, da boste dodani v seznam za po&#65533;iljanje epo&#65533;te o pomembnih zadevah kot so varnostni popravki in nove razlièice portala Moodle.
-<p>Va&#65533;i podatki bodo skrbno varovani in jih ne bomo prodali ali posredovali nikomur.  Edini razlog za zbiranje podatkov je zagotavljanje va&#65533;e podpore in posodobitev statistike o uporabi portala Moodle.
-<p>Èe &#65533;elite, bomo ime va&#65533;ega stre&#65533;nika, dr&#65533;avo in URL javni dodali na seznam stre&#65533;nikov Moodle.
-<p>Nova registracija je preverjena preden je stre&#65533;nik dodan na seznam. Za posodobitve podatkov zadostuje ponovno po&#65533;iljanje podatkov s tem obrazcem.';
+$string['registrationinfo'] = '<p>Ta stran vam omogoèa, da registrirate va&#65533; portal pri moodle.org.  Registracija je brezplaèna. Glavna korist registracije je, da boste dodani v seznam za po&#65533;iljanje epo&#65533;te o pomembnih zadevah kot so varnostni popravki in nove razlièice portala Moodle.</p>
+<p>Va&#65533;i podatki bodo skrbno varovani in jih ne bomo prodali ali posredovali nikomur.  Edini razlog za zbiranje podatkov je zagotavljanje va&#65533;e podpore in posodobitev statistike o uporabi portala Moodle.</p>
+<p>Èe &#65533;elite, bomo ime va&#65533;ega stre&#65533;nika, dr&#65533;avo in URL javni dodali na seznam stre&#65533;nikov Moodle.</p>
+<p>Nova registracija je preverjena preden je stre&#65533;nik dodan na seznam. Za posodobitve podatkov zadostuje ponovno po&#65533;iljanje podatkov s tem obrazcem.</p>';
 $string['registrationno'] = 'Ne &#65533;elim prejemati epo&#65533;te';
 $string['registrationsend'] = 'Po&#65533;lji podatke za registracijo na moodle.org';
 $string['registrationyes'] = 'Da, obve&#65533;èajte me o pomembnih zadevah';
@@ -745,7 +745,7 @@ $string['scheduledbackupstatus'] = 'Stanje naèrtovanih varovanj podatkov ';
 $string['search'] = 'Iskanje';
 $string['searchagain'] = 'Ponovno iskanje';
 $string['searchcourses'] = 'Iskanje predmeta';
-$string['searchhelp'] = 'I&#65533;èete lahko z veè besedami.<p>beseda : poi&#65533;èi v besedilu.<br />+beseda : poi&#65533;èi le popolnoma enake besede.<br />-beseda : izloèi zadetke s to besedo.';
+$string['searchhelp'] = 'I&#65533;èete lahko z veè besedami.<br />beseda : poi&#65533;èi v besedilu.<br />+beseda : poi&#65533;èi le popolnoma enake besede.<br />-beseda : izloèi zadetke s to besedo.';
 $string['searchresults'] = 'Rezultat iskanja';
 $string['sec'] = 'sek';
 $string['secs'] = 'sekund';
