@@ -362,43 +362,49 @@ function dialogue_delete_expired_conversations() {
 
 //////////////////////////////////////////////////////////////////////////////////////
 function dialogue_get_add_entry_logs($course, $timestart) {
-	// get the "add entry" entries and add the first and last names, we are not interested in the entries 
-	// make by this user (the last condition)!
-	global $CFG, $USER;
+    // get the "add entry" entries and add the first and last names, we are not interested in the entries 
+    // make by this user (the last condition)!
+    global $CFG, $USER;
+    if (!isset($USER->id)) {
+        return false;
+    }
     return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, e.dialogueid, d.name
                              FROM {$CFG->prefix}log l,
-								{$CFG->prefix}dialogue d, 
-        						{$CFG->prefix}dialogue_conversations c, 
+                                {$CFG->prefix}dialogue d, 
+                                {$CFG->prefix}dialogue_conversations c, 
                                 {$CFG->prefix}dialogue_entries e, 
                                 {$CFG->prefix}user u
                             WHERE l.time > $timestart AND l.course = $course->id AND l.module = 'dialogue'
-								AND l.action = 'add entry'
-								AND e.id = l.info 
-								AND c.id = e.conversationid
+                                AND l.action = 'add entry'
+                                AND e.id = l.info 
+                                AND c.id = e.conversationid
                                 AND (c.userid = $USER->id or c.recipientid = $USER->id)
-								AND d.id = e.dialogueid
-								AND u.id = e.userid 
-								AND e.userid != $USER->id");
+                                AND d.id = e.dialogueid
+                                AND u.id = e.userid 
+                                AND e.userid != $USER->id");
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////
 function dialogue_get_closed_logs($course, $timestart) {
-	// get the "closed" entries and add the first and last names, we are not interested in the entries 
-	// make by this user (the last condition)!
-	global $CFG, $USER;
+    // get the "closed" entries and add the first and last names, we are not interested in the entries 
+    // make by this user (the last condition)!
+    global $CFG, $USER;
+    if (!isset($USER->id)) {
+        return false;
+    }
     return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, c.dialogueid, d.name
                              FROM {$CFG->prefix}log l,
-								{$CFG->prefix}dialogue d, 
-        						{$CFG->prefix}dialogue_conversations c, 
+                                {$CFG->prefix}dialogue d, 
+                                {$CFG->prefix}dialogue_conversations c, 
                                 {$CFG->prefix}user u
                             WHERE l.time > $timestart AND l.course = $course->id AND l.module = 'dialogue'
-								AND l.action = 'closed'
-								AND c.id = l.info 
+                                AND l.action = 'closed'
+                                AND c.id = l.info 
                                 AND (c.userid = $USER->id or c.recipientid = $USER->id)
-								AND d.id = c.dialogueid
-								AND u.id = c.lastid 
-								AND c.lastid != $USER->id");
+                                AND d.id = c.dialogueid
+                                AND u.id = c.lastid 
+                                AND c.lastid != $USER->id");
 }
 
 
