@@ -478,7 +478,7 @@ function calendar_top_controls($type, $data) {
     if(!isset($data['d'])) {
         $data['d'] = 1;
     }
-    $time = calendar_gmmktime_check($data['m'], $data['d'], $data['y']);
+    $time = calendar_mktime_check($data['m'], $data['d'], $data['y']);
     $date = getdate($time);
     $data['m'] = $date['mon'];
     $data['y'] = $date['year'];
@@ -524,7 +524,6 @@ function calendar_top_controls($type, $data) {
         break;
         case 'display':
             $content .= '<div style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></div>\n";
-
         break;
         case 'month':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
