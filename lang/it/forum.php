@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // forum.php - created with Moodle 1.0.9 (2003052900)
 
 
 $string['addanewdiscussion'] = "Aggiungi un nuovo argomento di discussione";
@@ -74,9 +74,6 @@ $string['parentofthispost'] = "Relativo a questo post";
 $string['postadded'] = "Il tuo messaggio è stato aggiunto con successo.<P>Hai \$a per editarlo se desideri apportare delle modifiche.";
 $string['postincontext'] = "Vedi questo messaggio nel contesto";
 $string['postmailinfo'] = "Questa è una copia del messaggio postato su \$a .
-
-
-
 Per aggiungere la tua risposta via internet, clicca su questo link:";
 $string['postrating1'] = "Le esposizioni in genere, sono INDIPENDENTI dai saperi";
 $string['postrating2'] = "Equamente indipendenti e connesse";
@@ -105,6 +102,8 @@ $string['subscribe'] = "Iscriviti a questo forum";
 $string['subscribed'] = "Iscritto";
 $string['subscribers'] = "Iscritti";
 $string['subscribersto'] = "Iscritti a '\$a'";
+$string['subscribestart'] = "Spediscimi copia dei post inviati a questo forum";
+$string['subscribestop'] = "Non voglio coipa dei post a questo forum";
 $string['subscription'] = "Iscrizione";
 $string['subscriptions'] = "Iscrizioni";
 $string['unsubscribe'] = "Cancella la tua iscrizione da questo forum";

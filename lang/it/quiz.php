@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // quiz.php - created with Moodle 1.0.9 (2003052900)
 
 
+$string['addingquestions'] = "Questa parte della pagina é dove gestisci il tuo archivio delle domande. Le domande vengono salvate in categorie per aiutarti a mantenerle organizzate, e possono essere utilizzate in qualunque quiz nel tuo corso o in altri corsi se decidi di pubblicarle.<br /><br />Dopo aver selezionato o creato una categoria di domande potrai creare o modificare le domande. Puoi selezionare qualunque di queste domande per aggiungerle al tuo quiz nell'altra parte della pagina.";
 $string['addquestions'] = "Aggiungi domande";
 $string['addquestionstoquiz'] = "Aggiungi domande al quiz attuale";
 $string['addselectedtoquiz'] = "Aggiungi selezione al quiz";
@@ -67,8 +68,6 @@ $string['fractionsnomax'] = "Una delle risposte deve essere 100%%, perchè sia
 
 <BR>possibile una votazione piena per questa domanda
 <BR> Vuoi tornare indietro e correggere?
-
-
 <BR>Vuoi tornare indietro e risolvere la questione?";
 $string['gradeaverage'] = "Voto medio";
 $string['gradehighest'] = "Voto più alto";

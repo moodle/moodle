@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
+      // moodle.php - created with Moodle 1.0.9 (2003052900)
 
 
 $string['action'] = "Azione";
@@ -39,6 +39,9 @@ $string['assignadmins'] = "Assegna amministratori";
 $string['assigncreators'] = "Assegna creatori corsi";
 $string['assignteachers'] = "Attribuisci insegnanti";
 $string['authentication'] = "Autenticazione";
+$string['autosubscribe'] = "Auto iscrizione al forum";
+$string['autosubscribeno'] = "No: non iscrivermi automaticamente ai forum";
+$string['autosubscribeyes'] = "Si: quando invio post, iscrivimi a quel forum";
 $string['availablecourses'] = "Corsi disponibili";
 $string['backup'] = "Copia di sicurezza";
 $string['backupdate'] = "Data copia di sicurezza";
@@ -98,6 +101,7 @@ $string['configunzip'] = "Indica la path del tuo programma di compressione dati 
 $string['configvariables'] = "Configura variabili";
 $string['configzip'] = "Indica la path del tuo programma di compressione dati (Solo per Unix). Questo è necessario per creare gli archivi compressi sul server.";
 $string['confirmed'] = "La tua registrazione è stata confermata";
+$string['confirmednot'] = "La tua registrazione non é stata ancora confermata";
 $string['continue'] = "Continua";
 $string['cookiesenabled'] = "I cookies devono essere abilitati nel tuo browser";
 $string['copyrightnotice'] = "Informazioni sul copyright";
@@ -300,6 +304,7 @@ $string['lastaccess'] = "Ultimo accesso";
 $string['lastedited'] = "Ultima editazione";
 $string['lastmodified'] = "Ultime modifiche";
 $string['lastname'] = "Cognome";
+$string['latestlanguagepack'] = "Controlla l'ultimo \\\"language pack\\\" su moodle.org";
 $string['latestnews'] = "Ultimissime notizie";
 $string['leavetokeep'] = "Lascia in bianco per conservare la tua attuale password";
 $string['license'] = "Licenza GPL";
@@ -403,19 +408,10 @@ username: \$a->username
 password: \$a->newpassword
 
 Per favore vai alla seguente pagina per cambiare la tua password:
-
-
-
 \$a-> link
-
-
-
 Nella maggior parte dei programmi di posta elettronica, questo deve apparire con un link in blu sul quale puoi semplicemente cliccare.
 
 Se questo non funziona, taglia e incolla questo indirizzo nella linea degli indirizzo in alto nel tuo browser web.
-
-
-
 Saluti dall' amministratore del sito '\$a->sitename',
 \$a->signoff";
 $string['newpicture'] = "Nuova immagine";
