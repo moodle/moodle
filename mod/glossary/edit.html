@@ -24,7 +24,7 @@ if (isset($errors)) {
           <td align="right"><p><b><?php echo get_string("categories","glossary") ?>:</b></p></td>
           <td valign="top">
     <?php
-        $categories = get_records("glossary_categories","glossaryid",$glossary->id);
+        $categories = get_records("glossary_categories","glossaryid",$glossary->id,'name ASC');
         echo "<select size=\"5\" name=\"categories[]\" multiple=\"yes\">";
         echo "<option value=\"0\">" . get_string("notcategorised","glossary") . "</optioon>";
 
@@ -60,9 +60,9 @@ if (isset($errors)) {
           <td colspan="2">
 <?PHP 
     if ( !$glossary->usedynalink ) {
-    	echo '<input type="hidden" name=usedynalink value="0">';
-    	echo '<input type="hidden" name=casesensitive value="0">';
-    	echo '<input type="hidden" name=fullmatch value="0">';
+      echo '<input type="hidden" name=usedynalink value="0">';
+      echo '<input type="hidden" name=casesensitive value="0">';
+      echo '<input type="hidden" name=fullmatch value="0">';
     } else {
         echo '<script>var items = [\'casesensitive\',\'fullmatch\'];</script>';
 
@@ -159,21 +159,21 @@ if (isset($errors)) {
     <p align=center>
     <?php if (isset($newentry->id)) {
         echo "<input type=\"hidden\" name=e value=\"$newentry->id\">";
-   	 }
-	?>
+      }
+  ?>
 
-	<input type="hidden" name=husedynalink value="1">
-	<input type="hidden" name=hcasesensitive value="0">
-	<input type="hidden" name=hfullmatch value="1">
+  <input type="hidden" name=husedynalink value="1">
+  <input type="hidden" name=hcasesensitive value="0">
+  <input type="hidden" name=hfullmatch value="1">
 
-	<input type="hidden" name=id value="<?=$cm->id ?>">
-	<input type="hidden" name=mode value="<?=$mode ?>">
-	<input type="hidden" name=hook value="<?=$hook ?>">
-	<input type="hidden" name=confirm value="1">
+  <input type="hidden" name=id value="<?=$cm->id ?>">
+  <input type="hidden" name=mode value="<?=$mode ?>">
+  <input type="hidden" name=hook value="<?=$hook ?>">
+  <input type="hidden" name=confirm value="1">
 
-	<input type="submit" value="<?php print_string("savechanges") ?>">
-	<input type="reset" value="<?php print_string("revert") ?>">
-	</P>
+  <input type="submit" value="<?php print_string("savechanges") ?>">
+  <input type="reset" value="<?php print_string("revert") ?>">
+  </P>
 </td>
 </tr>
 </table>
