@@ -23,6 +23,7 @@
     $stradd          = get_string("add");
     $stractivities   = get_string("activities");
     $strshowallweeks = get_string("showallweeks");
+    $strweek         = get_string("week");
     if (isediting($course->id)) {
         $strstudents = moodle_strtolower($course->students);
         $strweekhide = get_string("weekhide", "", $strstudents);
@@ -118,6 +119,7 @@
     $timenow = time();
     $weekdate = $course->startdate;    // this should be 0:00 Monday of that week
     $section = 1;
+    $sectionmenu = array();
     $weekofseconds = 604800;
     $course->enddate = $course->startdate + ($weekofseconds * $course->numsections);
 
@@ -130,6 +132,7 @@
         $endweekday = userdate($weekdate+518400, $strftimedateshort);
 
         if (!empty($displaysection) and $displaysection != $section) {  // Check this week is visible
+            $sectionmenu["week=$section"] = s("$strweek $section |     $weekday - $endweekday");
             $section++;
             $weekdate = $nextweekdate;
             continue;
@@ -238,6 +241,13 @@
         $weekdate = $nextweekdate;
     }
     echo "</table>";
+
+    if (!empty($sectionmenu)) {
+        echo "<center>";
+        echo popup_form("$CFG->wwwroot/course/view.php?id=$course->id&", $sectionmenu, 
+                   "sectionmenu", "", get_string("jumpto"), "", "", true);
+        echo "</center>";
+    }
     
     if (!empty($news) or !empty($course->showrecent)) {
         echo "</td><td width=210>";
