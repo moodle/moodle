@@ -57,9 +57,6 @@ class CourseBlock_section_links extends MoodleBlock {
         for ($i = $inc; $i <= $this->course->numsections; $i += $inc) {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->course->id, 'section', $i);
             if (!$isvisible and !isteacher($this->course->id)) {
-                if ($i == $highlight) { 
-                    $highlight = 0;
-                }
                 continue;
             }
             $style = ($isvisible) ? '' : ' class="dimmed"';
@@ -71,8 +68,10 @@ class CourseBlock_section_links extends MoodleBlock {
         }
         if ($highlight) {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->course->id, 'section', $highlight);
-            $style = ($isvisible) ? '' : ' class="dimmed"';
-            $text .= "<br><a href=\"$link$highlight\"$style>$linktext</a>";
+            if ($isvisible or isteacher($this->course->id)) {
+                $style = ($isvisible) ? '' : ' class="dimmed"';
+                $text .= "<br><a href=\"$link$highlight\"$style>$linktext</a>";
+            }
         }
 
         $this->content = New stdClass;
