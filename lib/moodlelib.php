@@ -3078,23 +3078,17 @@ function get_string($identifier, $module='', $a=NULL) {
         $module = 'moodle';
     }
 
-    $langpath = $CFG->dirroot .'/lang';
-    $langfile = $langpath .'/'. $lang .'/'. $module .'.php';
+/// Define the two or three major locations of language strings for this module
 
-    // Look for the string - if found then return it
-
-    if (file_exists($langfile)) {
-        if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
-            eval($result);
-            return $resultstring;
-        }
+    $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+    if ($module != 'moodle') {
+        $locations[] =  $CFG->dirroot .'/mod/'.$module.'/lang/';
     }
 
-    // If it's a module, then look within the module pack itself mod/xxxx/lang/en/module.php
+/// First check all the normal locations for the string in the current language
 
-    if ($module != 'moodle') {
-        $modlangpath = $CFG->dirroot .'/mod/'. $module .'/lang';
-        $langfile = $modlangpath .'/'. $lang .'/'. $module .'.php';
+    foreach ($locations as $location) {
+        $langfile = $location.'/'.$lang.'/'.$module.'.php';
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                 eval($result);
@@ -3103,41 +3097,34 @@ function get_string($identifier, $module='', $a=NULL) {
         }
     }
 
-    // If the preferred language was English we can abort now
+/// If the preferred language was English we can abort now
     if ($lang == 'en') {
         return '[['. $identifier .']]';
     }
 
-    // Is a parent language defined?  If so, try it.
+/// Is a parent language defined?  If so, try to find this string in a parent language file
 
-    if ($result = get_string_from_file('parentlanguage', $langpath .'/'. $lang .'/moodle.php', "\$parentlang")) {
-        eval($result);
-        if (!empty($parentlang)) {
-            $langfile = $langpath .'/'. $parentlang .'/'. $module .'.php';
-            if (file_exists($langfile)) {
-                if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
-                    eval($result);
-                    return $resultstring;
+    foreach ($locations as $location) {
+        $langfile = $location.'/'.$lang.'/moodle.php';
+        if ($result = get_string_from_file('parentlanguage', $langfile, "\$parentlang")) {
+            eval($result);
+            if (!empty($parentlang)) {   // found it!
+                $langfile = $location.'/'.$parentlang.'/'.$module.'.php';
+                if (file_exists($langfile)) {
+                    if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+                        eval($result);
+                        return $resultstring;
+                    }
                 }
             }
         }
     }
 
-    // Our only remaining option is to try English
+/// Our only remaining option is to try English
 
-    $langfile = $langpath .'/en/'. $module .'.php';
-    if (!file_exists($langfile)) {
-        return 'ERROR: No lang file ('. $langpath .'/en/'. $module .'.php)!';
-    }
-    if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
-        eval($result);
-        return $resultstring;
-    }
+    foreach ($locations as $location) {
+        $langfile = $location.'/en/'.$module.'.php';
 
-    // If it's a module, then look within the module pack itself mod/xxxx/lang/en/module.php
-
-    if ($module != 'moodle') {
-        $langfile = $modlangpath .'/en/'. $module .'.php';
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                 eval($result);
@@ -3146,7 +3133,7 @@ function get_string($identifier, $module='', $a=NULL) {
         }
     }
 
-    return '[['. $identifier .']]';  // Last resort
+    return '[['.$identifier.']]';  // Last resort
 }
 
 /**
