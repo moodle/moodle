@@ -319,6 +319,7 @@ $string['editordefaultfont'] = 'Police par défaut';
 $string['editorenablespelling'] = 'Activer le correcteur orthographique';
 $string['editorfontlist'] = 'Liste des polices';
 $string['editorfontsize'] = 'Corps par défaut';
+$string['editorresettodefaults'] = 'Rétablir les valeurs par défaut';
 $string['editorsettings'] = 'Configuration de l\'éditeur';
 $string['editsummary'] = 'Modifier le résumé';
 $string['editthisactivity'] = 'Modifier cette activité';
