@@ -1501,7 +1501,7 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $THEME, $SESSION, $ME;
+    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE;
 
 /// This is an ugly hack to be replaced later by a proper global $COURSE
     global $course;
@@ -1543,7 +1543,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         if (isset($course->id)) {
             $menu = user_login_string($course);
         } else {
-            $menu = user_login_string(get_site());
+            $menu = user_login_string($SITE);
         }
     }
 
@@ -1908,13 +1908,16 @@ function theme_setup($theme = '', $params=NULL) {
  * @param course $course {@link $COURSE} object containing course information
  * @param user $user {@link $USER} object containing user information
  * @return string
- * @todo Finish documenting this function
  */
-function user_login_string($course, $user=NULL) {
-    global $USER, $CFG;
+function user_login_string($course=NULL, $user=NULL) {
+    global $USER, $CFG, $SITE;
 
     if (empty($user) and isset($USER->id)) {
         $user = $USER;
+    }
+
+    if (empty($course)) {
+        $course = $SITE;
     }
 
     if (isset($user->realuser)) {

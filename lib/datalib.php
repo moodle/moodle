@@ -1335,18 +1335,16 @@ function get_courses_notin_metacourse($metacourseid,$count=false) {
 
     global $CFG;
 
-    $site = get_site(); // we don't want the site course in here.
-
     if ($count) {
         $sql  = "SELECT COUNT(c.id)";
-    }
-    else {
+    } else {
         $sql = "SELECT c.id,c.shortname,c.fullname";
     }
 
     $alreadycourses = get_courses_in_metacourse($metacourseid);
     
-    $sql .= " FROM {$CFG->prefix}course c WHERE ".((!empty($alreadycourses)) ? "c.id NOT IN (".implode(',',array_keys($alreadycourses)).") AND " : "")." c.id !=$metacourseid and c.id != $site->id and c.metacourse != 1";
+    $sql .= " FROM {$CFG->prefix}course c WHERE ".((!empty($alreadycourses)) ? "c.id NOT IN (".implode(',',array_keys($alreadycourses)).")
+    AND " : "")." c.id !=$metacourseid and c.id != ".SITEID." and c.metacourse != 1";
 
     return get_records_sql($sql);
 }
@@ -1999,9 +1997,15 @@ function user_group($courseid, $userid) {
  * @return course  A {@link $COURSE} object for the site
  * @todo Finish documenting this function.
  */
-function get_site () {
+function get_site() {
 
-    if ( $course = get_record('course', 'category', 0)) {
+    global $SITE;
+
+    if (!empty($SITE->id)) {   // We already have a global to use, so return that
+        return $SITE;
+    }
+
+    if ($course = get_record('course', 'category', 0)) {
         return $course;
     } else {
         return false;
