@@ -499,43 +499,43 @@ TABLE.calendarmonth TBODY TD {
 }
 
 .cal_event_global {
-	background-color: #2EBA0E;
-	border: 2px #2EBA0E solid !important;
+    background-color: #2EBA0E;
+    border: 2px #2EBA0E solid !important;
 }
 
 .cal_event_course {
-	background-color: #ff9966;
-	border: 2px #ff9966 solid !important;
+    background-color: #ff9966;
+    border: 2px #ff9966 solid !important;
 }
 
 .cal_event_group {
-	background-color: #FBBB23;
-	border: 2px #FBBB23 solid !important;
+    background-color: #FBBB23;
+    border: 2px #FBBB23 solid !important;
 }
 
 .cal_event_user {
-	background-color: #A1BECB;
-	border: 2px #A1BECB solid !important;
+    background-color: #A1BECB;
+    border: 2px #A1BECB solid !important;
 }
 
 .cal_duration_global {
-	border-top: 2px #2EBA0E solid !important;
-	border-bottom: 2px #2EBA0E solid !important;
+    border-top: 2px #2EBA0E solid !important;
+    border-bottom: 2px #2EBA0E solid !important;
 }
 
 .cal_duration_course {
-	border-top: 2px #ff9966 solid !important;
-	border-bottom: 2px #ff9966 solid !important;
+    border-top: 2px #ff9966 solid !important;
+    border-bottom: 2px #ff9966 solid !important;
 }
 
 .cal_duration_user {
-	border-top: 2px #A1BECB solid !important;
-	border-bottom: 2px #A1BECB solid !important;
+    border-top: 2px #A1BECB solid !important;
+    border-bottom: 2px #A1BECB solid !important;
 }
 
 .cal_duration_group {
-	border-top: 2px #FBBB23 solid !important;
-	border-bottom: 2px #FBBB23 solid !important;
+    border-top: 2px #FBBB23 solid !important;
+    border-bottom: 2px #FBBB23 solid !important;
 }
 
 .cal_weekend {
@@ -543,14 +543,14 @@ TABLE.calendarmonth TBODY TD {
 }
 
 .cal_today {
-	border: 2px black solid !important;
+    border: 2px black solid !important;
 }
 
 TABLE.calendarmonth TBODY TD TABLE {
-	margin-top: 0px;
-	margin-left: 0px;
-	font-size: 0.75em;
-	line-height: 1.2em;
+    margin-top: 0px;
+    margin-left: 0px;
+    font-size: 0.75em;
+    line-height: 1.2em;
 }
 
 TABLE.calendarmonth TBODY TD TABLE TD {
@@ -558,10 +558,10 @@ TABLE.calendarmonth TBODY TD TABLE TD {
 }
 
 TABLE.calendarmonth TBODY TD DIV {
-	margin-top: 0px;
-	margin-left: 0px;
-	font-size: 0.75em;
-	line-height: 1.2em;
+    margin-top: 0px;
+    margin-left: 0px;
+    font-size: 0.75em;
+    line-height: 1.2em;
 }
 
 TABLE.calendarmini THEAD TD {
@@ -583,7 +583,7 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .sideblockmain .cal_event_date {
-	font-size: 0.6em;
+    font-size: 0.6em;
 }
 
 .mycalendar {
@@ -592,10 +592,10 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .mycalendar .cal_event {
-	font-weight: bold;
+    font-weight: bold;
 }
 .mycalendar .cal_event_date {
-	font-size: 0.8em;
+    font-size: 0.8em;
 }
 
 .mycalendar TABLE.cal_filters {
@@ -626,36 +626,36 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .mycalendar .cal_event_table THEAD {
-	background-color: <?PHP echo $THEME->cellcontent?>;
-	text-align: center;
-	font-weight: bold;
+    background-color: <?PHP echo $THEME->cellcontent?>;
+    text-align: center;
+    font-weight: bold;
 }
 
 .sideblockmain HR {
-	height: 1px;
-	border: none;
-	border-top: 1px #999 solid;
-	margin-top: 4px;
-	margin-bottom: 4px;
+    height: 1px;
+    border: none;
+    border-top: 1px #999 solid;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 .mycalendar HR {
-	height: 1px;
-	border: none;
-	border-top: 1px #999 solid;
-	margin-top: 4px;
-	margin-bottom: 4px;
+    height: 1px;
+    border: none;
+    border-top: 1px #999 solid;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 .calendarreferer {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 TD.cal_event_description {
-	width: 80%;
-	border-left: 2px <?php echo $THEME->borders?> solid;
-	vertical-align: top;
-	padding: 5px;
+    width: 80%;
+    border-left: 2px <?php echo $THEME->borders?> solid;
+    vertical-align: top;
+    padding: 5px;
 }
 
 .cal_popup_fg {
@@ -679,23 +679,23 @@ TD.cal_event_description {
 }
 
 .cal_popup_close {
-	font-size: 75%;
-	font-weight: bold;
+    font-size: 75%;
+    font-weight: bold;
     font-family: sans-serif;
-	margin-right: 5px;
+    margin-right: 5px;
 }
 
 .sideblock .cal_controls {
-	text-align: center;
-	font-size: 9px;
+    text-align: center;
+    font-size: 9px;
 }
 
 A IMG {
-	border: none;
+    border: none;
 }
 
 TABLE.formtable TD {
-	padding: 9px;
+    padding: 9px;
 }
 
 .eventfull {
@@ -740,3 +740,46 @@ TABLE.formtable TD {
     -moz-border-radius: 15px;
 }
 
+.forumaddnew {
+    text-align: center;
+    margin-bottom: 5pt;
+}
+
+.forumnodiscuss {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 12pt;
+    margin-bottom: 12pt;
+}
+
+.forumaddnewminimal {
+    text-align: center;
+    font-size: x-small;
+    margin-bottom: 8pt;
+}
+
+.forumnodiscussminimal {
+    text-align: center;
+    font-size: x-small;
+}
+
+.forumheadminimal {
+    color: #555555;
+    font-size: x-small;
+}
+    
+.foruminfominimal {
+    font-size: x-small;
+}   
+
+.activitydate {
+    text-align: center;
+    font-size: x-small;
+}
+
+.activityhead {
+    text-align: center;
+    font-size: x-small;
+    margin-top: 8pt;
+    margin-bottom: 8pt;
+} 
