@@ -81,7 +81,10 @@
                 }
             }
         }
+
         if ($learningforums) {
+            $currentsection = "";
+
             foreach ($learningforums as $forum) {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
     
@@ -91,6 +94,13 @@
                 if (!$forum->section) {     // forums in the "0" section => generaltable
                     $generalforums[] = $forum;
                     continue;
+                }
+
+                if ($forum->section != $currentsection) {
+                    $printsection = $forum->section;
+                    $currentsection = $forum->section;
+                } else {
+                    $printsection = "";
                 }
 
                 if ($forum->visible) {
@@ -103,18 +113,22 @@
                     if (forum_is_forcesubscribed($forum->id)) {
                         $sublink = get_string("yes");
                     } else {
-                        if (forum_is_subscribed($USER->id, $forum->id)) {
-                            $subscribed = get_string("yes");
-                            $subtitle = get_string("unsubscribe", "forum");
+                        if ($groupmode = groupmode($course, $forum) and !isteacheredit($course->id) and !mygroupid($course->id)) {
+                            $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
                         } else {
-                            $subscribed = get_string("no");
-                            $subtitle = get_string("subscribe", "forum");
+                            if (forum_is_subscribed($USER->id, $forum->id)) {
+                                $subscribed = get_string("yes");
+                                $subtitle = get_string("unsubscribe", "forum");
+                            } else {
+                                $subscribed = get_string("no");
+                                $subtitle = get_string("subscribe", "forum");
+                            }
+                            $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                         }
-                        $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                     }
-                    $learningtable->data[] = array ("$forum->section", $forumlink, "$forum->intro", "$count", "$sublink");
+                    $learningtable->data[] = array ($printsection, $forumlink, "$forum->intro", "$count", "$sublink");
                 } else {
-                    $learningtable->data[] = array ("$forum->section", $forumlink, "$forum->intro", "$count");
+                    $learningtable->data[] = array ($printsection, $forumlink, "$forum->intro", "$count");
                 }
             }
         }
@@ -137,14 +151,18 @@
                 if (forum_is_forcesubscribed($forum->id)) {
                     $sublink = get_string("yes");
                 } else {
-                    if (forum_is_subscribed($USER->id, $forum->id)) {
-                        $subscribed = get_string("yes");
-                        $subtitle = get_string("unsubscribe", "forum");
+                    if ($groupmode = groupmode($course, $forum) and !isteacheredit($course->id) and !mygroupid($course->id)) {
+                        $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
                     } else {
-                        $subscribed = get_string("no");
-                        $subtitle = get_string("subscribe", "forum");
+                        if (forum_is_subscribed($USER->id, $forum->id)) {
+                            $subscribed = get_string("yes");
+                            $subtitle = get_string("unsubscribe", "forum");
+                        } else {
+                            $subscribed = get_string("no");
+                            $subtitle = get_string("subscribe", "forum");
+                        }
+                        $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                     }
-                    $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                 }
                 $generaltable->data[] = array ($forumlink, "$forum->intro", "$count", $sublink);
             } else {
