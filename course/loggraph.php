@@ -69,7 +69,7 @@
        $graph->x_data           = $days;
 
        $graph->y_data['logs']   = $logs;
-       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','legend' =>'actual','bar_size' => 0.9);
+       $graph->y_format['logs'] = array('colour' => 'blue','line' => 'line','point' => 'square');
        $graph->y_label_left     = "Hits";
        $graph->label_size       = "6";
 
