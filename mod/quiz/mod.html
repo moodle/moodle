@@ -41,7 +41,7 @@
         $form->shuffleanswers = 1;
     }
     if (!isset($form->grade)) {
-        $form->grade = "";
+        $form->grade = 0;
     }
     if (!isset($form->questions)) {
         $form->questions = "";
@@ -202,7 +202,7 @@
     <td align=right><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
     <td>
     <?php
-        for ($i=100; $i>=1; $i--) {
+        for ($i=100; $i>=0; $i--) {
             $grades[$i] = $i;
         }
         choose_from_menu($grades, "grade", "$form->grade", "");

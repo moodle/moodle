@@ -210,6 +210,11 @@ function quiz_cron () {
 function quiz_grades($quizid) {
 /// Must return an array of grades, indexed by user, and a max grade.
 
+    $quiz = get_record("quiz", "id", $quizid);
+    if (empty($quiz) or empty($quiz->grade)) {
+        return NULL;
+    }
+
     $return->grades = get_records_menu("quiz_grades", "quiz", $quizid, "", "userid,grade");
     $return->maxgrade = get_field("quiz", "grade", "id", "$quizid");
     return $return;

@@ -101,26 +101,42 @@
     $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
 
     if ($numattempts) { 
-        $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strgrade / $quiz->grade");
-        $table->align = array("center", "center", "left", "right");
-        $table->width = array("", "", "", "");
+        if ($quiz->grade) {
+            $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strgrade / $quiz->grade");
+            $table->align = array("center", "center", "left", "right");
+            $table->width = array("", "", "", "");
+        } else {  // No grades are being used
+            $table->head = array($strattempt, $strtimetaken, $strtimecompleted);
+            $table->align = array("center", "center", "left");
+            $table->width = array("", "", "");
+        }
         foreach ($attempts as $attempt) {
             if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
                 $timetaken = format_time($timetaken);
             } else {
                 $timetaken = "-";
             }
-            $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade);
-            if ($attemptgrade == $mygrade) {
-                $attemptgrade = "<span class=highlight>$attemptgrade</span>";
+            if ($quiz->grade) {
+                $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade);
+                if ($attemptgrade == $mygrade) {
+                    $attemptgrade = "<span class=highlight>$attemptgrade</span>";
+                }
+                if (!$available and $quiz->review) {
+                    $attemptgrade = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a>";
+                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attempt->attempt</a>";
+                }
+                $table->data[] = array( $attempt->attempt, 
+                                        format_time($attempt->timefinish - $attempt->timestart),
+                                        userdate($attempt->timefinish), 
+                                        $attemptgrade);
+            } else {  // No grades are being used
+                if (!$available and $quiz->review) {
+                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attempt->attempt</a>";
+                }
+                $table->data[] = array( $attempt->attempt, 
+                                        format_time($attempt->timefinish - $attempt->timestart),
+                                        userdate($attempt->timefinish));
             }
-            if (!$available and $quiz->review) {
-                $attemptgrade = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a>";
-            }
-            $table->data[] = array( $attempt->attempt, 
-                                    format_time($attempt->timefinish - $attempt->timestart),
-                                    userdate($attempt->timefinish), 
-                                    $attemptgrade);
         }
         print_table($table);
     }
@@ -140,7 +156,7 @@
         if ($numattempts < $quiz->attempts or !$quiz->attempts) { 
             if ($available) {
                 $options["id"] = $cm->id;
-                if ($numattempts) {
+                if ($numattempts and $quiz->grade) {
                     print_heading("$strbestgrade: $mygrade / $quiz->grade.");
                 }
                 echo "<BR>";
@@ -150,7 +166,9 @@
             }
         } else {
             print_heading(get_string("nomoreattempts", "quiz"));
-            print_heading(get_string("yourfinalgradeis", "quiz", "$mygrade / $quiz->grade"));
+            if ($quiz->grade) {
+                print_heading(get_string("yourfinalgradeis", "quiz", "$mygrade / $quiz->grade"));
+            }
         }
     }
 

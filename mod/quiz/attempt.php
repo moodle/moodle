@@ -134,7 +134,9 @@
         $strscore = get_string("score", "quiz");
 
         print_heading("$strscore: $result->sumgrades/$quiz->sumgrades ($result->percentage %)");
-        print_heading("$strgrade: $result->grade/$quiz->grade");
+        if ($quiz->grade) {
+            print_heading("$strgrade: $result->grade/$quiz->grade");
+        }
 
         print_continue("view.php?id=$cm->id");
 
