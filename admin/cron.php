@@ -1,15 +1,15 @@
 <?PHP // $Id$
 
-// This script looks through all the module directories for cron.php files
-// and runs them.  These files can contain cleanup functions, email functions
-// or anything that needs to be run on a regular basis.
-//
-// This file is best run from cron on the host system (ie outside PHP).
-// The script can either be invoked via the web server or via a standalone
-// version of PHP compiled for CGI.
-//
-// eg   wget -q -O /dev/null 'http://moodle.somewhere.edu/admin/cron.php'
-// or   php /web/moodle/admin/cron.php 
+/// This script looks through all the module directories for cron.php files
+/// and runs them.  These files can contain cleanup functions, email functions
+/// or anything that needs to be run on a regular basis.
+///
+/// This file is best run from cron on the host system (ie outside PHP).
+/// The script can either be invoked via the web server or via a standalone
+/// version of PHP compiled for CGI.
+///
+/// eg   wget -q -O /dev/null 'http://moodle.somewhere.edu/admin/cron.php'
+/// or   php /web/moodle/admin/cron.php 
 
     $FULLME = "cron";
 
@@ -27,7 +27,7 @@
 
     $timenow  = time();
 
-//  Run all cron jobs for each module
+///  Run all cron jobs for each module
 
     if ($mods = get_records_select("modules", "cron > 0 AND (($timenow - lastcron) > cron)")) {
         foreach ($mods as $mod) {
@@ -47,7 +47,7 @@
     }
 
 
-// Unenrol users who haven't logged in for $CFG->longtimenosee
+/// Unenrol users who haven't logged in for $CFG->longtimenosee
 
     if ($CFG->longtimenosee) { // value in days
         $longtime = $timenow - ($CFG->longtimenosee * 3600 * 24);
@@ -61,7 +61,7 @@
     }
 
 
-// Delete users who haven't confirmed within seven days
+/// Delete users who haven't confirmed within seven days
 
     $oneweek = $timenow - (7 * 24 * 3600);
     if ($users = get_users_unconfirmed($oneweek)) {
@@ -69,6 +69,15 @@
             if (delete_records("user", "id", $user->id)) {
                 echo "Deleted unconfirmed user for $user->firstname $user->lastname ($user->id)\n";
             }
+        }
+    }
+
+/// Delete old logs to save space (this might need a timer to slow it down...)
+
+    if (!empty($CFG->loglifetime)) {  // value in days
+        $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
+        if (!delete_records_select("log", "time < '$loglifetime'")) {
+            echo "Error occurred while deleting old logs! (before $loglifetime)";
         }
     }
 
