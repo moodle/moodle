@@ -98,6 +98,40 @@
         <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[0]->feedback) ?></textarea>
     </TD>
 </TR>
+<TR valign=top>
+<TD align=right><P><B><?php  print_string("unit", "quiz") ?>:</B></P></TD>
+    <TD>
+        <P><INPUT type="HIDDEN" name="multiplier[]" value="1.0"/>
+        <INPUT align="LEFT" type="text" id="defaultunit" name="unit[]"
+                size="5" value="<?php  p($units[0]->unit) ?>"/>
+        <B>(<?php  print_string("optional", "quiz") ?>)</B></P>
+    </TD>
+</TR>
+<TR valign=top>
+<td></td>
+<TD align=left><P><B><?php  print_string("alternativeunits", "quiz") ?>:</B></P></TD>
+<td></td>
+</TR>
+<?PHP
+for ($i=1; $i<count($units); $i++) {
+    $unit=$units[$i];
+?>
+<TR valign=top>
+<td></td>
+    <TD align=left>
+        <P><B><?php  print_string("multiplier", "quiz") ?>:</B>
+        <INPUT type="text" id="<?php  p("multiplier$i") ?>" size="10"
+                align="RIGHT" name="multiplier[]"
+                value="<?php  p($unit->multiplier) ?>"/>
+        <B>&nbsp;&nbsp;&nbsp;<?php  print_string("unit", "quiz") ?>:</B>
+        <INPUT align="LEFT" type="text" id="<?php  p("unit$i") ?>"
+                name="unit[]"
+                size="5" value="<?php  p($unit->unit) ?>"/></P>
+    </TD>
+</TR>
+<?PHP
+} /// END for
+?>
 </TABLE>
 
 <INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
@@ -113,11 +147,18 @@ function determineMinAndMax() {
         if (correct0.value=='') {
             alert('<?php  print_string("missingcorrectanswer","quiz") ?>');
             return false;
+        } else if (isNaN(correct0.value) && defaultunit.value) {
+            alert('<?php  print_string("unitonlyworksfornumericanswers","quiz") ?>');
+            return false;
+        } else if (''!=defaultunit.value && !isNaN(defaultunit.value)) {
+            alert('<?php  print_string("unitmustnotbenumeric","quiz") ?>');
+            return false;
         } else if (acceptederror0.value=='') {
             var correct= parseFloat(correct0.value);
             if (!isNaN(correct)) {
                 min0.value= correct;
                 max0.value= correct;
+                correct0.value += defaultunit.value;
             }
             return true;
         } else if (isNaN(acceptederror0.value) || isNaN(correct0.value)) {
@@ -128,6 +169,7 @@ function determineMinAndMax() {
             var error= Math.abs(acceptederror0.value);
             min0.value= correct-error;
             max0.value= correct+error;
+            correct0.value += defaultunit.value;
             return true;
         }
     }

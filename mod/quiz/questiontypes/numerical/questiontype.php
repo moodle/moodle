@@ -96,6 +96,45 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             }
         }
 
+        /// Save units
+        /// Make unit records
+        $newunits = array();
+        unset($tmpunit);
+        $tmpunit->question = $question->id;
+        foreach ($question->multiplier as $key => $multiplier) {
+            if ($multiplier && is_numeric($multiplier)) {
+                $tmpunit->multiplier = $multiplier;
+                $tmpunit->unit = trim($question->unit[$key]);
+                $newunits[] = $tmpunit;
+            }
+        }
+        if (1 == count($newunits) && !$newunits[0]->unit) {
+            /// Only default unit and it is empty, so drop it:
+            $newunits = array();
+        }
+        if ($oldunits = get_records('quiz_numerical_units',
+                                    'question', $question->id)) {
+            foreach ($oldunits as $unit) {
+                if ($newunit = array_shift($newunits)) {
+                    $unit->multiplier = $newunit->multiplier;
+                    $unit->unit = $newunit->unit;
+                    if (!update_record('quiz_numerical_units', $unit)) {
+                        $result->error = "Could not update quiz_numerical_unit $unit->unit";
+                        return $result;
+                    }
+                } else {
+                    delete_records('quiz_numerical_units', 'id', $unit->id);
+                }
+            }
+        }
+        foreach ($newunits as $newunit) {
+            // Create new records for the remaining units:
+            if (!insert_record('quiz_numerical_units', $newunit)) {
+                $result->error = "Unable to insert new unit $newunit->unit";
+                return $result;
+            }
+        }
+
         /// Perform sanity checks on fractional grades
         if ($maxfraction != 1) {
             $maxfraction = $maxfraction * 100;
@@ -109,28 +148,58 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     function grade_response($question, $nameprefix, $addedanswercondition='') {
 
         $result->answers = array();
+        $units = get_records('quiz_numerical_units',
+                             'question', $question->id);
         if (isset($question->response[$nameprefix])) {
             $response = trim(stripslashes($question->response[$nameprefix]));
-            if (!is_numeric($response) and is_numeric(
-                    $tmp = str_replace(',', '.', $response))) {
-                /// I haven't ever needed to make a workaround like this
-                /// before, I have no idea why I need to do it now...
-                $response = $tmp;
+            // Arrays with 'wild cards':
+            $search = array(' ',',');
+            $replace = array('','.');
+            $responsenum = str_replace($search, $replace, $response);
+            if (empty($units)) {
+                if ('' !== $responsenum && is_numeric($responsenum)) {
+                    $responsenum = (float)$responsenum;
+                } else {
+                    unset($responsenum); // Answer is not numeric
+                }
+            } else if (ereg(
+                    '^(([0-9]+(\\.[0-9]*)?|[.][0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$',
+                    $responsenum, $responseparts)) {
+                $responsenum = (float)$responseparts[1];
+                if ($responseparts[5]) {
+                    $responseunit = $responseparts[5];
+                } else {
+                    $responseunit = '';
+                }
+                $unitidentified = false;
+                foreach ($units as $unit) {
+                    if (str_replace($search, $replace, $unit->unit)
+                            == $responseunit) {
+                        $unitidentified = true;
+                        $responsenum /= $unit->multiplier;
+                        break;
+                    }
+                }
+                if (!$unitidentified) {
+                    unset($responsenum); // No unit OK
+                }
+            } else {
+                unset($responsenum); // Answer is not numeric
             }
        } else {
-            $response = NULL;
+            $response = '';
         }
         $answers = $this->get_answers($question, $addedanswercondition);
         foreach ($answers as $answer) {
 
             /// Check if response matches answer...
-            if ('' != $response and empty($result->answers)
+            if ('' !== $response and empty($result->answers)
                     || $answer->fraction
                      > $result->answers[$nameprefix]->fraction
                     and strtolower($response) == strtolower($answer->answer)
-                    || '' != trim($answer->min)
-                    && ((float)$response >= (float)$answer->min)
-                    && ((float)$response <= (float)$answer->max)) {
+                    || '' != trim($answer->min) && isset($responsenum)
+                    && $responsenum >= (float)$answer->min
+                    && $responsenum <= (float)$answer->max) {
                 $result->answers[$nameprefix] = $answer;
             }
         }
@@ -143,8 +212,8 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
 
         /////////////////////////////////////////////////
         // For numerical answer we have the policy to 
-        // set feedback for any response, even it the
-        // response does not entitles the student to it.
+        // set feedback for any response, even if the
+        // response does not entitle the student to it.
         /////////////////////////////////////////////////
         if ('' !== $response and empty($result->answers)
                 || empty($result->answers[$nameprefix]->feedback)) {
