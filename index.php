@@ -13,7 +13,7 @@
     if (isset($USER->id)) {
         $headerbutton = update_course_icon($site->id);
     } else {
-        $headerbutton = "<FONT SIZE=2><A HREF=\"login/\">Log in</A></FONT>";
+        $headerbutton = "<FONT SIZE=2><A HREF=\"login/\">".get_string("login")."</A></FONT>";
     }
     print_header("$site->fullname", "$site->fullname", "", "",
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
@@ -30,10 +30,14 @@
       
          if ($site->newsitems > 0 or $readings or $USER->editing) {
       
-             print_simple_box("Main Menu", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+             print_simple_box(get_string("mainmenu"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
 
              if ($site->newsitems > 0 ) {
-                 echo "<LI><A TITLE=\"Available courses on this server\" HREF=\"course/\"><B>Courses</B></A><BR></LI>";
+                 echo "<LI><A TITLE=\"".
+                      get_string("availablecourses").
+                      "\" HREF=\"course/\"><B>".
+                      get_string("courses").
+                      "</B></A><BR></LI>";
              } 
 
              if ($readings) {
@@ -42,7 +46,8 @@
                  }
              }
              if ($USER->editing) {
-                 echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$site->id&section=0&add=reading\">Add Reading</A>...</P>";
+                 echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$site->id&section=0&add=reading\">".
+                      get_string("addreading", "reading")."</A>...</P>";
              } else {
                  echo "<BR><BR>";
              }
@@ -50,10 +55,10 @@
      
 
          if (isadmin()) {
-             print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
-             echo "<LI><A HREF=\"$CFG->wwwroot/admin/\">Admin Page...</A></LI>";
-             echo "<LI><A HREF=\"$CFG->wwwroot/course/log.php?id=$site->id\">Site logs...</A></LI>";
-             echo "<LI><A HREF=\"$CFG->wwwroot/admin/site.php\">Site settings...</A></LI>";
+             print_simple_box(get_string("admin"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+             echo "<LI><A HREF=\"$CFG->wwwroot/admin/\">".get_string("adminpage")."...</A></LI>";
+             echo "<LI><A HREF=\"$CFG->wwwroot/course/log.php?id=$site->id\">".get_string("sitelogs")."...</A></LI>";
+             echo "<LI><A HREF=\"$CFG->wwwroot/admin/site.php\">".get_string("sitesettings")."...</A></LI>";
          }
       ?>
 
@@ -61,7 +66,7 @@
 
     <TD WIDTH="70%" VALIGN="TOP">
       <? if ($site->newsitems == 0 ) {
-             print_simple_box("Available Courses", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+             print_simple_box(get_string("availablecourses"), "CENTER", "100%", "$THEME->cellheading");
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
              print_all_courses();
 
@@ -73,19 +78,19 @@
              if (isset($USER->id)) {
                  $SESSION->fromdiscuss = "$CFG->wwwroot";
                  if (is_subscribed($USER->id, $newsforum->id)) {
-                     $subtext = "Unsubscribe from news";
+                     $subtext = get_string("unsubscribe", "forum");
                  } else {
-                     $subtext = "Subscribe me by mail";
+                     $subtext = get_string("subscribe", "forum");
                  }
                  $headertext = "<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0><TR>
-                                <TD>Site News</TD>
+                                <TD>".get_string("sitenews")."</TD>
                                 <TD ALIGN=RIGHT><FONT SIZE=1>
                                 <A HREF=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</A>
                                 </TD></TR></TABLE>";
              } else {
-                 $headertext = "Site News";
+                 $headertext = get_string("sitenews");
              }
-             print_simple_box("$headertext", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+             print_simple_box($headertext, "CENTER", "100%", $THEME->cellheading);
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
              print_forum_latest_topics($newsforum->id, $site->newsitems);
          }
@@ -97,7 +102,7 @@
          if ($USER->editing) {
              $site->summary .= "<BR><CENTER><A HREF=\"admin/site.php\"><IMG SRC=\"pix/i/edit.gif\" BORDER=0></A>";
          }
-         print_simple_box($site->summary, $align="", $width="100%", $color="$THEME->cellheading");
+         print_simple_box($site->summary, "", "100%", $THEME->cellheading);
       ?>
     </TD>
   </TR>

@@ -17,7 +17,12 @@
 <LINK rel="stylesheet" href="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme?>/styles.css">
 </HEAD>
 <BODY BGCOLOR="<?=$THEME->body ?>">
-<? include("lang/$CFG->lang/page/$file"); ?>
+<? if (file_exists("lang/$CFG->lang/page/$file")) {
+       include("lang/$CFG->lang/page/$file");
+   } else {
+       include("lang/en/page/$file");
+   }
+?>
 </BODY>
 </HTML>
 
