@@ -536,7 +536,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
     if (!$entry->approved) {
         $return .= get_string("entryishidden","glossary");
     }
-
     $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook,'html');
 
     $return .= "</font> ";
@@ -546,7 +545,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=16 width=16 border=0></a> ";
     }
 
-    if ($isteacher or $glossary->studentcanentry and $entry->userid == $USER->id) {
+    if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
         // only teachers can export entries so check it out
         if ($isteacher and !$ismainglossary and !$importedentry) {
             $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
