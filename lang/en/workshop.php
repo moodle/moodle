@@ -226,6 +226,7 @@ $string['weightforbias'] = 'Weight for Bias';
 $string['weightforgradingofassessments'] = 'Weight for Grading of Assessments';
 $string['weightforpeerassessments'] = 'Weight for Peer Assessments';
 $string['weightforreliability'] = 'Weight for Reliability';
+$string['weightforteacherassessments'] = 'Weight for Teacher Assessments';
 $string['weights'] = 'Weights';
 $string['weightsusedforfinalgrade'] = 'Weights used for Final Grade';
 $string['weightsusedforsubmissions'] = 'Weights used for Submissions';
