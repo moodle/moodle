@@ -52,6 +52,10 @@
     } else {
         error("Must specify glossary ID or course module ID");
     }
+
+    if ($CFG->forcelogin) {
+        require_login();
+    }
     
 /// redirecting if adding a new entry
     if ($tab == GLOSSARY_ADDENTRY_VIEW ) {

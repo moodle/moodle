@@ -29,6 +29,10 @@
         $entriesbypage = $CFG->glossary_entbypage;
     }
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if ($course->category) {
         require_login($course->id);    
         if (isguest()) {

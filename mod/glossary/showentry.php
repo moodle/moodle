@@ -7,6 +7,10 @@
     optional_variable($eid,0);
     optional_variable($displayformat,-1);
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if (!empty($courseid)) {
         $course = get_record("course", "id", $courseid);
         if ($course->category) {
