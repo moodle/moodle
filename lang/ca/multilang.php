@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // multilang.php - created with Moodle 1.2 Beta (2004022400)
+      // multilang.php - created with Moodle 1.3 development (2004032800)
 
 
-$string['filtername'] = 'Continguts en diferents idiomes';
+$string['filtername'] = 'Continguts multilingües';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta (2004022400)
+      // moodle.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['action'] = 'Acció';
@@ -68,6 +68,7 @@ $string['allparticipants'] = 'Tots els participants';
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = 'Només pot contenir lletres o números';
 $string['alreadyconfirmed'] = 'Ja se us ha confirmat el registre';
+$string['always'] = 'Sempre';
 $string['answer'] = 'Resposta';
 $string['areyousuretorestorethis'] = 'Voleu continuar?';
 $string['areyousuretorestorethisinfo'] = 'Més endavant tindreu l\'opció d\'afegir aquesta còpia de seguretat a un curs existent o crear un curs completament nou.';
@@ -132,7 +133,9 @@ En cas contrari no els és permès i aquest procés és controlat únicament pels pro
 $string['configcachetext'] = 'En llocs grans o llocs que utilitzen filtres de text, aquest paràmetre pot accelerar realment les coses. S\'emmagatzemen còpies del text ja processat durant el temps que s\'especfica aquí. Si configureu un temps massa breu, de fet el funcionament es pot alentir una mica, però si configureu un temps massa llarg pot implicar que els texts triguin massa a refrescar-se (amb nous enllaços, per exemple).';
 $string['configcountry'] = 'Si definiu aquí un país, quedarà seleccionat per defecte en els nous comptes. Deixeu-lo en blanc per forçar els usuaris a triar un país.';
 $string['configdebug'] = 'Si l\'activeu, s\'incrementaran els informes d\'errors de PHP i apareixeran més avisos. Això només és útil per a desenvolupadors.';
+$string['configdeleteunconfirmed'] = 'Si esteu utilitzant autenticació per correu electronic, aquest es el període de temps durant el qual s\'acceptarà la resposta de l\'usuari. Després d\'aquest períde, els comptes no confirmats se suprimiran.';
 $string['configerrorlevel'] = 'Trieu la quantitat d\'avisos de PHP que voleu visualitzar. La millor elecció sol ser Normal.';
+$string['configfilteruploadedfiles'] = 'Habilitar aquest paràmetre farà que Moodle processi amb els filtres, abans de visualitzar-los, tots els fitxers de text i fitxers HTML que es pengin al servidor.';
 $string['configforcelogin'] = 'Normalment la gent pot veure la pàgina inicial del lloc i les llistes de cursos (no els cursos) sense autenticar-se. Si voleu imposar que la gent s\'autentiqui abans que pugui fer RES, aleshores heu d\'habilitar aquest paràmetre.';
 $string['configframename'] = 'Si esteu incrustant Moodle dins d\'un marc (<i>frame</i>), poseu aquí el nom del marc. En cas contrari deixeu el valor \'_top\'';
 $string['configfullnamedisplay'] = 'Això defineix com es mostren els noms quan es visualitzen complets. Per a la majoria de llocs monolingües el paràmetre més eficient és el de \"Noms + cognoms\" que hi ha per defecte, però podeu triar d\'amagar totalment els cognoms, o deixar que ho decideixi el paquet actual d\'idioma (hi ha llengües que tenen convencions diferents).';
@@ -166,6 +169,7 @@ $string['configuration'] = 'Configuració';
 $string['configvariables'] = 'Variables';
 $string['configwarning'] = 'Aneu amb compte en modificar aquests paràmetres - valors rars podrien causar problemes.';
 $string['configzip'] = 'Indiqueu la localització del vostre programa zip (només Unix, opcional). Si l\'especifiqueu, el servidor l\'utilitzarà per crear els fitxers zip. Si la deixeu en blanc Moodle utilitzarà rutines internes.';
+$string['confirm'] = 'Confirma';
 $string['confirmed'] = 'S\'ha confirmat el vostre registre';
 $string['confirmednot'] = 'Encara no s\'ha confirmat el vostre registre!';
 $string['continue'] = 'Continua';
@@ -415,6 +419,7 @@ $string['groupmode'] = 'Mode de grup';
 $string['groupmodeforce'] = 'Imposa el mode de grup';
 $string['groupmy'] = 'El meu grup';
 $string['groupnonmembers'] = 'Persones que no estan en un grup';
+$string['groupnotamember'] = 'No sou membre d\'aquest grup';
 $string['grouprandomassign'] = 'Assigna tots a grups aleatòriament';
 $string['groupremove'] = 'Suprimeix el grup seleccionat';
 $string['groupremovemembers'] = 'Suprimeix els membres seleccionats';
@@ -846,15 +851,19 @@ $string['upload'] = 'Penja';
 $string['uploadafile'] = 'Penja un fitxer';
 $string['uploadedfileto'] = 'S\'ha penjat $a->file en $a->directory';
 $string['uploadnofilefound'] = 'No s\'ha trobat cap fitxer. Segur que n\'havíeu seleccionat un?';
+$string['uploadnotallowed'] = 'No es permet penjar fitxers';
 $string['uploadproblem'] = 'S\'ha esdevingut un problema desconegut mentre es penjava el fitxer \'$a\' (potser era massa gran?)';
 $string['uploadthisfile'] = 'Penja aquest fitxer';
 $string['uploadusers'] = 'Carrega els usuaris';
 $string['user'] = 'Usuari';
+$string['userconfirmed'] = '$a confirmat';
+$string['userdata'] = 'Dades d\'usuari';
 $string['userdeleted'] = 'S\'ha suprimit aquest compte d\'usuari';
 $string['userdescription'] = 'Descripció';
 $string['userfiles'] = 'Fitxers d\'usuari';
 $string['username'] = 'Nom d\'usuari';
 $string['usernameexists'] = 'Aquest nom d\'usuari ja existeix, trieu-ne un altre';
+$string['usernotconfirmed'] = 'No s\'ha pogut confirmar $a';
 $string['userprofilefor'] = 'Perfil d\'usuari per a $a';
 $string['users'] = 'Usuaris';
 $string['usersnew'] = 'Nous usuaris';

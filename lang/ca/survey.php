@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.1.1 (2003091000)
+      // survey.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['actual'] = 'Actual';
@@ -7,14 +7,14 @@ $string['actualclass'] = 'Classe actual';
 $string['actualstudent'] = '$a actual';
 $string['allquestions'] = 'Tots els temes en ordre, tots els estudiants';
 $string['allscales'] = 'Totes les escales, tots els estudiants';
-$string['alreadysubmitted'] = 'Ja has enviat aquesta informació';
+$string['alreadysubmitted'] = 'Ja heu tramès aquesta informació';
 $string['analysisof'] = 'Anàlisi de $a';
 $string['answers'] = 'Respostes';
 $string['attls1'] = 'Al avaluar el que algú diu, valoro el que diu i no  qui és.';
 $string['attls10'] = 'Per a mi es important mantenir-me el més objectiu posible quan analitzo alguna cosa.';
 $string['attls10short'] = 'Sigues objectiu';
-$string['attls11'] = 'Tracto de pensar amb les persones en lloc de contra elles.';
-$string['attls11short'] = 'Pensa AMB les persones';
+$string['attls11'] = 'Tracto de pensar en les persones en lloc de contra elles.';
+$string['attls11short'] = 'Pensa EN les persones';
 $string['attls12'] = 'Tinc un criteri que utilitzo per a avaluar arguments.';
 $string['attls12short'] = 'Utilitza un criteri per a avaluar';
 $string['attls13'] = 'Prefereixo tractar d’entendre als altres abans que avaluar-los.';

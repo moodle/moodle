@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 Beta (2004022400)
+      // editor.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['about'] = 'Referent a aquest editor';
@@ -73,6 +73,7 @@ $string['preformatted'] = 'Preformatat';
 $string['preview'] = 'Visualització prèvia';
 $string['properties'] = 'Propietats';
 $string['redo'] = 'Refés la darrera acció';
+$string['removelink'] = 'Suprimeix enllaç';
 $string['rename'] = 'Canvia el nom';
 $string['right'] = 'Right';
 $string['rows'] = 'Files';
