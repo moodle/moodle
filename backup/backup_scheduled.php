@@ -1,6 +1,18 @@
 <?PHP //$Id$
     //This file contains all the code needed to execute scheduled backups
 
+//This function is executed via moodle cron
+//It prepares all the info and execute backups as necessary
+function schedule_backup_cron() {
+
+    global $CFG;
+    
+    $status = true;
+
+}
+
+
+
 //This function implements all the needed code to prepare a course
 //to be in backup (insert temp info into backup temp tables).
 function schedule_backup_course_configure($course) {  
