@@ -97,9 +97,16 @@
                     break; // only look at the latest correct attempt 
                 }
                 if ($lastpageseen != $firstpageid) {
-                    notice_yesno(get_string("youhaveseen","lesson"), 
-                        "view.php?id=$cm->id&action=navigation&pageid=$lastpageseen", 
-                        "view.php?id=$cm->id&action=navigation&pageid=$firstpageid");
+                    echo "<form name=\"queryform\" method =\"post\" action=\"view.php\">\n";
+                    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+                    echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
+                    echo "<input type=\"hidden\" name=\"pageid\">\n";
+                    print_simple_box("<p align=\"center\">".get_string("youhaveseen","lesson")."</p>",
+                            "center");
+                    echo "<p align=\"center\"><input type=\"button\" value=\"".get_string("yes").
+                        "\" onclick=\"document.queryform.pageid.value='$lastpageseen';document.queryform.submit();\">&nbsp;&nbsp;&nbsp;<input type=\"button\" value=\"".get_string("no").
+                        "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.submit();\"></p>\n";
+                    echo "</form>\n";
                     print_footer($course);
                     exit();
                 }
