@@ -49,7 +49,7 @@ class block_quiz_results extends block_base {
         }
 
         // Get the grades for this quiz
-        $grades = get_records('quiz_grades', 'quiz', $quizid, 'grade, timemodified DESC');
+        $grades = get_records('quiz_grades', 'quiz', $quizid, 'grade + 0, timemodified DESC');
 
         if(empty($grades)) {
             // No grades, sorry
