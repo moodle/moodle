@@ -1,0 +1,283 @@
+<head>
+    
+<title>Moodle Docs: notas sobre la versi&oacute;n actual</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    
+<style type="text/css">
+<!--       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;} 
+.style1 {font-weight: bold}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Notas sobre versiones</h1>
+
+<h3> Moodle 1.4   (31 de Agosto de 2004)</h3>
+
+<ul><dl>
+    <dt>L&iacute;neas Generales</dt>
+    <dd> 
+      <ul>
+        <li>Compatibilidad con  PHP 5.</li>
+        <li>Nuevo y sencillo asistente de instalaci&oacute;n que te gu&iacute;a
+          en la creaci&oacute;n
+          del fichero config.php inicial.</li>
+        <li>La instalaci&oacute;n est&aacute; ahora completamente localizada
+        en tu lenguaje.</li>
+        <li>M&oacute;dulo Recurso completemente modificado haciendo m&aacute;s sencilla la
+          adici&oacute;n de nuevos recursos y el env&iacute;o de datos a ellos.</li>
+        <li>Nuevo Sistema de Matriculaci&oacute;n que incluye m&oacute;dulos como un sistema
+          autom&aacute;tico de pago con PayPal, control desde ficheros planos o desde
+          bases de datos externas.</li>
+        <li>Los Bloques ahora funcionan en la p&aacute;gina principal y puedes incluir
+          una secci&oacute;n de actividades en la parte central.</li>
+        <li>El Chat incluye ahora un demonio para el servidor (en PHP) que permite
+          utilizar el chat de forma escalable e instant&aacute;nea.</li>
+        <li>&iexcl;Nuevo m&oacute;dulo Wiki!</li>
+        <li>Nuevo soporte para editar el texto en formato Markdown.</li>
+        <li>Soluci&oacute;n de numerosos problemas en distintas partes.</li>
+      </ul>
+    </dd>
+
+    <dt>Cambios Internos</dt>
+    <dd> 
+      <ul>
+        <li>El m&oacute;dulo de Recursos ahora tiene su propio men&uacute; de
+          Agregar, y utiliza m&oacute;dulos basados en clases, haciendo mucho
+          m&aacute;s f&aacute;cil incluir nuevos
+          tipos de recursos a este men&uacute;.</li>
+        <li>El m&oacute;dulo Cuestionario ha sido reprogramado para utilizar m&oacute;dulos
+          basados en clases.</li>
+        <li>El proceso de Matriculaci&oacute;n ha sido reprogramado para utilizar m&oacute;dulos
+          basados en clases.</li>
+        <li>Los formatos de visualizaci&oacute;n de los glosarios est&aacute;n ahora basados
+          en nombres y es m&aacute;s sencillo crear y utilizar nuevos formatos.</li>
+        <li>El comportamiento de muchos m&oacute;dulos has sido mejorado para funcionar
+          correctamente en la p&aacute;gina principal del sitio.</li>
+        <li>La estructura de filtros es ahora m&aacute;s r&aacute;pida y compatible con el
+          acelerador
+          Turck MMcache.</li>
+        <li>Mejor control de campos en blanco al a&ntilde;adir nuevas actividades.</li>
+        <li>Ahora podemos alterar columnas utilizando la funci&oacute;n  table_column().</li>
+        <li>La generaci&oacute;n de canales RSS ha sido acelerada enormemente,
+          cargando mucho menos el sistema cron.</li>
+        <li>Algunos m&oacute;dulos realmente grandes han dividido sus funciones entre
+           lib.php y locallib.php para utilizar menos memoria.</li>
+      </ul>
+    </dd>
+
+    <dt>Lenguajes y localizaci&oacute;n</dt>
+    <dd> 
+      <ul>
+        <li>Actualizaciones en pr&aacute;cticamente todos los lenguajes.</li>
+        <li>Moodle puede ignorar el juego de caracteres por defecto de Apache,
+          haciendo los lenguajes m&aacute;s fiables.</li>
+        <li>Los lenguages multibyte realizan los saltos de l&iacute;nea correctamente.</li>
+        <li>Mejorado el uso de localizaciones y codificaciones en los sitios
+          multilenguaje (como moodle.org).</li>
+        <li>Nuevos lenguajes: &iexcl;Esloveno y Hebreo! </li>
+      </ul>
+    </dd>
+
+    <dt>Mejoras de Seguridad</dt>
+    <dd> 
+      <ul>
+        <li>Solucionados un buen n&uacute;mero de potenciales puntos de entrada XSS
+          y visualizaci&oacute;n de rutas.</li>
+        <li>Los atributos de las etiquetas HTML ahora son comprobados m&aacute;s detalladamente
+          para localizar guiones perversos.</li>
+        <li>Las p&aacute;ginas de Perfil de Usuario ya no son accesibles por defecto.</li>
+        <li>Todos los textos son &quot;limpiados&quot;  antes de su salida (no
+          solo en la entrada).</li>
+        <li>Las direcciones de correo no son utilizadas el el correo saliente
+          si el usuario lo solicita.</li>
+        <li>Nuevo ajuste <strong>loginhttps</strong> que utiliza http seguro
+          para el login, y regresa a http.</li>
+      </ul>
+    </dd>
+
+    <dt>Administraci&oacute;n</dt>
+    <dd> 
+      <ul>
+        <li>Estupendas nuevas pantallas para a&ntilde;adir y borrar alumnos, creadores
+          y administradores.</li>
+        <li>Los errores de acceso ahora son almacenados, y pueden ser mostrados
+          a los usuarios tras un acceso correcto.</li>
+        <li>Los registros pueden ser mostrados ahora por grupos y por errores.</li>
+        <li>Los m&oacute;dulos  ahora se comportan mejor en la portada del sitio.</li>
+        <li>Los &quot;estudiantes&quot; de la portada pueden ser todos los usuarios del
+          sitio o todos los usuarios matriculados, al menos, en un curso del
+          sitio.</li>
+      </ul>
+    </dd>
+
+    <dt>Administraci&oacute;n</dt>
+    <dd> 
+      <ul>
+        <li>El env&iacute;o de correos puede ser activado/desactivado en la p&aacute;gina de
+          Perfil de Usuario.</li>
+        <li>Los visitantes pueden acceder autom&aacute;ticamente como invitados.</li>
+        <li>El men&uacute; &quot;Saltar a&quot; siempre muestra dicho texto para ayudar a reconocer
+          qu&eacute; es lo que hace.</li>
+        <li>El men&uacute; &quot;Saltar a&quot; tiene una forma mucho m&aacute;s clara de mostrar las
+          actividades agrupadas por secciones.</li>
+      </ul>
+    </dd>
+
+    <dt>Autenticaci&oacute;n</dt>
+    <dd> 
+      <ul>
+        <li>Todos los m&eacute;todos de autenticaci&oacute;n pueden coexistir ahora con las
+          cuentas creadas internamente.</li>
+        <li>Soporte para un nuevo sistema de autenticaci&oacute;n contra servidores
+          First Class.</li>
+        <li>Solucionados problemas en la autenticaci&oacute;n POP3.</li>
+      </ul>
+    </dd>
+
+    <dt>Bloques</dt>
+    <dd> 
+      <ul>
+        <li>El sistema de bloque es capaz de funcionar con formatos de curso
+          personalizados y cambios de formato.</li>
+        <li>Nuevo bloque de acceso que permite entrar al sitio desde la portada.</li>
+        <li>El bloque de usuarios activos en la p&aacute;gina principal del sitio muestra
+          los usuarios activos de todo el sitio.</li>
+      </ul>
+    </dd>
+
+    <dt>Editor</dt>
+    <dd> 
+      <ul>
+        <li>Nueva pantalla de configuraci&oacute;n del Editor para el administrador.</li>
+        <li>Nuevo soporte para anclas en las p&aacute;ginas.</li>
+        <li>La correci&oacute;n ortogr&aacute;fica es soportada por el Editor, utilizando el
+          comando aspell de tu sistema operativo.</li>
+      </ul>
+    </dd>
+
+    <dt>Chat</dt>
+    <dd> 
+      <ul>
+        <li>El Chat incluye ahora un demonio para el servidor (en PHP) que permite
+        utilizar el chat de forma escalable e instant&aacute;nea.</li>
+      </ul>
+    </dd>
+
+    <dt>Consultas</dt>
+    <dd> 
+      <ul>
+        <li>Modificadas de forma significativa con m&aacute;s sentido y nuevas
+        opciones.</li>
+      </ul>
+    </dd>
+
+    <dt>Foros</dt>
+    <dd> 
+      <ul>
+        <li>Numerosos ajustes implementados en el soporte de grupos.</li>
+        <li>Los usuarios pueden elegir entre recibir todos los mensajes del d&iacute;a
+          en un solo correo, o por asunto o los mensajes individuales.</li>
+        <li>Las discusiones aparecen paginadas.</li>
+        <li>Los profesores ahora tienen absoluto control sobre las suscripciones
+          a los foros y pueden suscribir a cualquiera.</li>
+        <li>La fecha del &uacute;ltimo "&Uacute;ltimo mensaje" se muestra abreviada
+          y en forma de enlace a dicho mensaje en las discusiones.</li>
+        <li>Los Foros ahora muestran los canales RSS en el listado de los mismos.</li>
+        <li>Los correos HTML se muestran mejor utilizando toda la hoja de estilos.</li>
+        <li>Los correos de m&aacute;s de dos d&iacute;as de antig&uuml;edad no son enviados (para
+          evitar &quot;inundaciones&quot; de mensajes).</li>
+        <li>Los correos que no se pueden enviar son registrados para que los
+          profesores puedan verlos.</li>
+        <li>Las discusiones pueden ser &quot;partidas&quot; por cualquier punto en nuevas
+          discusiones.</li>
+      </ul>
+    </dd>
+
+    <dt>Glosarios</dt>
+    <dd> 
+      <ul>
+        <li>Las entradas del Glosario pueden ser definidas como &quot;siempre editables&quot;.</li>
+        <li>Los Glosarios ahora muestran los canales RSS en el listado de los
+        mismos.</li>
+        <li>Correcci&oacute;n de muchos problemas.</li>
+      </ul>
+    </dd>
+
+    <dt>Cuestionarios</dt>
+    <dd> 
+      <ul>
+        <li>Nuevo temporizador flotante para cuestionarios con tiempo.</li>
+        <li>Los intentos pueden ser restringidos a ciertos ordenadores.</li>
+        <li>Los cuestionarios pueden requerir el uso de una contrase&ntilde;a especial.</li>
+        <li>Nuevo tipo de Preguntas Calculadas.</li>
+        <li>Las preguntas num&eacute;ricas soportan unidades.
+        <li>Las preguntas pueden ser previsualizadas en las p&aacute;ginas de edici&oacute;n.</li>
+        <li>Las preguntas pueden ser exportadas en numerosos formatos.</li>
+        <li>Mejorado el manejo de categor&iacute;as al editar preguntas.</li>
+        <li>Nuevo (e incompleto) formato de exportaci&oacute;n XML, que ser&aacute; finalizado.</li>
+        <li>Las preguntas de respuesta corta pueden contener todo tipo de caracteres
+          extra&ntilde;os.</li>
+      </ul>
+    </dd>
+
+    <dt>Recursos</dt>
+    <dd> 
+      <ul>
+        <li>A&ntilde;adir recursos es ahora un proceso de un solo paso con mucho m&aacute;s
+          control.</li>
+        <li>Los recursos de p&aacute;ginas web, enlaces web, archivos subidos y programas
+          se han combinado en un solo tipo.</li>
+        <li>Los recursos de programa se ha sustituido por Par&aacute;metros que permiten
+          un mont&oacute;n de interacciones con recursos externos, tanto remotos como
+          cargados en Moodle.</li>
+        <li>La configuraci&oacute;n de los recursos se realiza desde una pantalla
+          de items desplegables lo que la hace m&aacute;s sencilla para novatos
+          sin ralentizar a los usuarios expertos.</li>
+      </ul>
+    </dd>
+
+    <dt>SCORM</dt>
+    <dd> 
+      <ul>
+        <li>Solucionados muchos problemas e incluidas muchas mejoras - ahora
+          trabaja con un n&uacute;mero a&uacute;n mayor de paquetes.</li>
+        <li>Se realizan comprobaciones a&ntilde;adidas del archivo de manifiesto de
+          forma opcional.</li>
+      </ul>
+    </dd>
+    </dl>
+  <p>&nbsp;</p>
+  <dl>
+    <dt>
+      <div align="center" class="style1"></div>
+    </dt>
+    <dd>&nbsp;</dd>
+    <dt>&nbsp; </dt>
+    <dd>
+      <div align="center" class="style1"><font size="+1">Por &uacute;ltimo,
+          no olvides examinar alguno de los <a href="http://moodle.org/download/modules/">muchos
+          m&oacute;dulos opcionales e innovadores actualmente en desarrollo</a>.</font></div>
+    </dd>
+  </dl>
+  <p align="center"><strong><font size="+1">Si experimentas cualquier tipo de
+        problema con esta versi&oacute;n, por favor docum&eacute;ntalo en <a href="http://moodle.org/bugs" target="_blank">moodle.org/bugs</a> para
+        que podamos solucionarlo r&aacute;pidamente.</font></strong></p>
+</ul>
+
+    <dd>&nbsp;</dd>
+    <dt>&nbsp; </dt>
+<center>
+  <p>
+<a href="./?file=releaseold.html">Informaci&oacute;n de versiones antiguas</a>
+</p>
+</center>
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="../doc/" target="_top">Documentaci&oacute;n
+      de Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
