@@ -1,8 +1,17 @@
 <?php // $Id$ 
 
+$string['auth_castitle'] = 'Utiliser un serveur CAS (SSO)';
+$string['auth_cas_hostname'] = 'Nom d\'hôte du serveur,<br />par exemple&nbsp;: «&nbsp;host.domaine.fr&nbsp;»';
+$string['auth_cas_baseuri'] = 'Adresse URI du serveur CAS (ne rien mettre s\'il n\'y en a pas).<br />par exemple, si le serveur CAS répond à l\'adresse «&nbsp;host.domaine.fr/CAS/&nbsp;», la valeur à indiquer ici est «&nbsp;CAS/&nbsp;».';
+$string['auth_cas_port'] = 'Port utilisé par le serveur CAS';
+$string['auth_cas_version'] = 'Version du logiciel CAS';
+$string['auth_cas_language'] = 'Langue choisie';
+$string['auth_casdescription'] = 'Cette méthode utilise un serveur CAS (Central Authentication Service) pour authentifier les utilisateurs dans un environnement Single Sign On (SSO). Il est aussi possible d\'utiliser une simple authentification LDAP. Si le nom d\'utilisateur et le mot de passe donnés sont valides suivant le CAS, Moodle crée un nouvel utilisateur dans sa base de données, en héritant si nécessaire des attributs LDAP de l\'utilisateur. Lors des connexions ultérieures, seuls le nom d\'utilisateur et le mot de passe sont vérifiés.';
+$string['auth_cas_use_cas'] = 'Veuillez activer cette option si vous voulez utiliser l\'authentification CAS.';
+$string['auth_cas_text'] = 'Connection sécurisée';
+$string['auth_cas_create_user'] = 'Veuillez activer cette option si vous voulez insérer dans la base de données de Moodle les utilisateurs authentifiés par le CAS. Dans le cas contraire, seuls les utilisateurs déjà présents dans la base de données de Moodle pourront se connecter.';
 $string['auth_common_settings'] = 'Réglages communs';
 $string['auth_data_mapping'] = 'Appariement des données';
-$string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Cette méthode utilise une base de données externe afin de vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides. Si le compte concerné est nouveau, il est possible de copier des données provenant de certains champs vers Moodle.';
 $string['auth_dbextrafields'] = '<p>Ces zones sont facultatives. Il vous est possible de remplir certains champs de Moodle avec des données provenant des <strong>champs de la base de données externe</strong>.</p><p>Si vous laissez ces zones vides, les valeurs par défaut seront utilisées.</p><p>Dans tous les cas, l\'utilisateur a la possibilité de modifier tous ces champs, une fois connecté.</p>';
 $string['auth_dbfieldpass'] = 'Nom du champ contenant les mots de passe';
@@ -42,7 +51,7 @@ $string['auth_ldap_expiration_warning_desc'] = 'Nombre de jours avant que l\'ave
 $string['auth_ldap_expireattr_desc'] = 'Facultatif : ne pas tenir compte de l\'attribut ldap contenant la durée d\'échéance du mot de passe PasswordExpirationTime';
 $string['auth_ldap_graceattr_desc'] = 'Facultatif : ne pas tenir compte de l\'attribut gracelogin';
 $string['auth_ldap_gracelogins_desc'] = 'Activer le support du gracelogin LDAP. Une fois le mot de passe échu, l\'utilisateur peut se connecter jusqu\'à ce que le paramètre gracelogin ait une valeur de 0. L\'activation de ce réglage affiche un message explicite lorsque le mot de passe est échu.';
-$string['auth_ldap_host_url'] = 'Indiquer le serveur LDAP sous form d\'URL comme ceci :<br />« ldap://ldap.organisation.fr/ »<br />ou&nbsp;:<br />« ldaps://ldap.organisation.fr/ ». Si vous utilisez plusieurs serveurs LDAP par sécurité, séparez leurs adresses avec des points-virgules (;).';
+$string['auth_ldap_host_url'] = 'Indiquer le serveur LDAP sous forme d\'URL comme ceci :<br />« ldap://ldap.organisation.fr/ »<br />ou&nbsp;:<br />« ldaps://ldap.organisation.fr/ ». Si vous utilisez plusieurs serveurs LDAP par sécurité, séparez leurs adresses avec des points-virgules (;).';
 $string['auth_ldap_login_settings'] = 'Configuration de la connexion';
 $string['auth_ldap_memberattribute'] = 'Indiquer l\'attribut d\'appartenance à un groupe. D\'habitude cet attribut est « member ».';
 $string['auth_ldap_objectclass'] = 'Le filtre utilisé pour rechercher/renommer des utilisateurs. On y mettra d\'habitude quelque chose comme objectClass=posixAccount. La valeur par défaut est objectClass=*, ce qui retournera tous les objets du serveur LDAP.';
