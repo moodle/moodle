@@ -28,7 +28,8 @@
         if ($user) {
             if (! $user->confirmed ) {       // they never confirmed via email 
                 print_header(get_string("mustconfirm"), get_string("mustconfirm") ); 
-                include("index_confirm.html");
+                print_heading(get_string("mustconfirm"));
+                print_simple_box(get_string("emailconfirmsent", "", $user->email), "center");
                 print_footer();
                 die;
             }

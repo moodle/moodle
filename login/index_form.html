@@ -1,59 +1,57 @@
-<CENTER>
-
-<TABLE WIDTH="90%" BORDER="0" CELLSPACING="10" CELLPADDING="5" ALIGN="CENTER">
-  <TR>
-    <? if ($show_instructions) { ?>
-        <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?> class="headingblock">
-          <P ALIGN="CENTER"><B><FONT SIZE=3><? print_string("returningtosite") ?></FONT></B></P>
-        </TD>
-        <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?> class="headingblock">
-          <P ALIGN="CENTER"><B><FONT SIZE=3><? print_string("firsttime") ?></FONT></B></P>
-        </TD>
-    <? } ?>
-  </TR>
-  <TR>
-    <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellcontent2?>" class="generalbox"> <FONT SIZE=2> 
-      <P ALIGN="CENTER"><? print_string("loginusing") ?>:<BR>
-      (<? print_string("cookiesenabled") ?>)<BR>
-	  <? formerr($errormsg) ?>
+<table width="90%" border="0" cellspacing="10" cellpadding="5" align="center">
+  <tr>
+    <?php if ($show_instructions) { ?>
+        <td width="50%" bgcolor="<?php p($THEME->cellheading2) ?>" class="headingblock">
+          <p align="center"><b><font size="3"><? print_string("returningtosite") ?></font></b></p>
+        </td>
+        <td width="50%" bgcolor="<?php p($THEME->cellheading2) ?>" class="headingblock">
+          <p align="center"><b><font size="3"><? print_string("firsttime") ?></font></b></p>
+        </td>
+    <?php } ?>
+  </tr>
+  <tr>
+    <td width="50%" valign="top" bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox"> <font size="2"> 
+        <p align="center"><?php print_string("loginusing") ?>:<br />
+          (<?php print_string("cookiesenabled") ?>)<br />
+	  <?php formerr($errormsg) ?>
       </p></font>
-      <FORM NAME="form" ACTION="index.php" METHOD=post>
+      <form action="index.php" method="post" name="form" id="form">
         <table border="0" align="center">
         <tr>
-            <td width="80%"><FONT SIZE=2>
-              <TABLE ALIGN=center>
-                <TR> 
-                  <TD align=right><P><FONT SIZE=2><? print_string("username") ?>:</FONT></P></TD>
-                  <TD><INPUT TYPE="text" NAME="username" SIZE="15" value="<? p($frm->username) ?>"> 
-                  </TD>
-                </TR>
-                <TR> 
-                  <TD height="24" align=right><P><FONT SIZE=2><? print_string("password") ?>:</FONT></P></TD>
-                  <TD><INPUT TYPE="password" NAME="password" SIZE="15" value="<? p($frm->password) ?>"> 
-                  </TD>
-                </TR>
-              </TABLE>
-              </FONT></td>
-            <td width="20%"><font size=2>
-              <input type="submit" name="Submit" value="<? print_string("login") ?>">
+            <td width="80%"><font size="2">
+              <table align="center">
+                <tr> 
+                  <td align="right"><p><font size="2"><?php print_string("username") ?>:</font></p></td>
+                  <td><input type="text" name="username" size="15" value="<?php p($frm->username) ?>" /> 
+                  </td>
+                </tr>
+                <tr> 
+                  <td height="24" align="right"><p><font size="2"><?php print_string("password") ?>:</font></p></td>
+                  <td><input type="password" name="password" size="15" value="<?php p($frm->password) ?>" /> 
+                  </td>
+                </tr>
+              </table>
+              </font></td>
+            <td width="20%"><font size="2">
+                <input type="submit" name="Submit" value="<?php print_string("login") ?>" />
               </font></td>
         </tr>
       </table>
-	  </FORM>
-      <FONT SIZE=2> 
-      <BLOCKQUOTE>
-    <? if ($CFG->guestloginbutton) {  ?>
-          <HR>
-            <P ALIGN=CENTER><? print_string("someallowguest") ?>:</P>
-            <CENTER>
-            <FORM NAME="form2" ACTION="index.php" METHOD=post>
-            <INPUT TYPE="hidden" NAME="username" VALUE="guest">
-            <INPUT TYPE="hidden" NAME="password" VALUE="guest">
-            <INPUT type="submit" NAME="Submit"   VALUE="<? print_string("loginguest") ?>">
-            </FORM>
-            </CENTER>
-    <? } ?>
-    <? if ($CFG->changepassword or $CFG->auth == "email" or $CFG->auth == "none") {
+	  </form>
+      <font size="2"> 
+      <blockquote>
+    <?php if ($CFG->guestloginbutton) {  ?>
+          <hr />
+            <p align="center"><?php print_string("someallowguest") ?>:</p>
+            <center>
+            <form action="index.php" method="post" name="form2" id="form2">
+              <input type="hidden" name="username" value="guest" />
+              <input type="hidden" name="password" value="guest" />
+              <input type="submit" name="Submit"   value="<?php print_string("loginguest") ?>" />
+            </form>
+            </center>
+    <?php } ?>
+    <?php if ($CFG->changepassword or $CFG->auth == "email" or $CFG->auth == "none") {
           if ($CFG->auth == "email" or $CFG->auth == "none") {
               $changepassword = "forgot_password.php";
               $changebuttonname = get_string("senddetails");
@@ -63,49 +61,49 @@
           }
     
     ?>
-          <HR>
-            <P ALIGN=CENTER><? print_string("forgotten") ?></P> 
-            <CENTER>
-            <FORM NAME="form3" ACTION="<?=$changepassword ?>" METHOD=get>
-            <INPUT type="submit" VALUE="<?=$changebuttonname?>">
-            </FORM>
-            </CENTER>
-    <? } ?>
-        </BLOCKQUOTE>
-      </FONT> </TD>
-    <? if ($show_instructions) { ?>
-        <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellcontent2?>" class="generalbox">
-          <FONT SIZE=2>
-          <? switch ($CFG->auth) {
+          <hr />
+            <p align="center"><?php print_string("forgotten") ?></p> 
+            <center>
+            <form action="<?php p($changepassword) ?>" method="get" name="form3" id="form3">
+              <input type="submit" value="<?php p($changebuttonname) ?>" />
+            </form>
+            </center>
+    <?php } ?>
+        </blockquote>
+      </font> </td>
+    <?php if ($show_instructions) { ?>
+        <td width="50%" valign="top" bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox">
+          <font size="2">
+          <?php switch ($CFG->auth) {
                case "email":             ?>
-                 <P><? print_string("loginsteps", "", "signup.php") ?></P>
-                 </FONT>
-                 <CENTER>
-                 <FORM NAME="form4" ACTION="signup.php" METHOD=get>
-                 <INPUT type="submit" VALUE="<? print_string("startsignup") ?>">
-                 </FORM>
-                 </CENTER>
-          <?     break;
+                 <p><?php print_string("loginsteps", "", "signup.php") ?></p>
+                 </font>
+                 <center>
+                 <form action="signup.php" method="get" name="form4" id="form4">
+                 
+            <input type="submit" value="<?php print_string("startsignup") ?>" />
+                 </form>
+                 </center>
+          <?php     break;
                case "none":
                  echo "<P>".get_string("loginstepsnone")."</P>";
                  break;
                default:
                  echo "<BLOCKQUOTE>";
                  echo format_text($CFG->auth_instructions);
-                 echo "</BLOCKQUOTE>";
+                 echo "</blockquote>";
                  require_once("../auth/$CFG->auth/lib.php");
                  if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_create') ){?>
-				    <FORM NAME="form4" ACTION="signup.php" METHOD=get>
-                    <INPUT type="submit" VALUE="<? print_string("startsignup") ?>">
-                    </FORM>
-                    </CENTER>
-                 <?
+				    <form action="signup.php" method="get" name="form4" id="form4">
+                    
+          <input type="submit" value="<?php print_string("startsignup") ?>" />
+                    </form>
+                    </td></tr>
+                 <?php
 				 }
              }
           ?>
     
-          </TD>
-    <?  } ?>
-
-  </TR>
-</TABLE>
+          
+    <?php  } ?>
+</table>
