@@ -31,7 +31,8 @@
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
     header("Cache-control: max_age = $lifetime"); // a day
     header("Pragma: ");
-    header("Content-Length: ".filesize($pathname));
+    header("Content-disposition: inline; filename=$image");
+    header("Content-length: ".filesize($pathname));
     header("Content-type: image/jpeg");
     readfile("$pathname");
 
