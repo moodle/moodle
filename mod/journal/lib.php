@@ -176,7 +176,7 @@ function journal_get_users_done($journal) {
 function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
     global $THEME;
 
-    if ($entry->timemarked and $entry->timemarked < $entry->modified) {
+    if ($entry->timemarked < $entry->modified) {
         $colour = $THEME->cellheading2;
     } else {
         $colour = $THEME->cellheading;
