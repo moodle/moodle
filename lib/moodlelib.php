@@ -965,6 +965,17 @@ function remove_teacher($userid, $courseid=0) {
                 delete_records("forum_subscriptions", "forum", $forum->id, "userid", $userid);
             }
         }
+
+        /// Next if the teacher is not registered as a student, but is
+        /// a member of a group, remove them from the group.
+        if (!isstudent($courseid, $userid)) {
+            if ($groups = get_groups($courseid, $userid)) {
+                foreach ($groups as $group) {
+                    delete_records("groups_members", "groupid", $group->id, "userid", $userid);
+                }
+            }
+        }
+
         return delete_records("user_teachers", "userid", $userid, "course", $courseid);
     } else {
         delete_records("forum_subscriptions", "userid", $userid);
