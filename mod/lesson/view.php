@@ -257,24 +257,20 @@
 					error('Navigation: first page not found');
 			}
             /// CDC-FLAG /// -- This is the code for starting a timed test
-            if($lesson->timed && !isset($USER->startlesson[$lesson->id])) {
-                $startlesson = new stdClass;
+            if(!isset($USER->startlesson[$lesson->id]) && !isteacher($course->id)) {
                 $USER->startlesson[$lesson->id] = true;
-                if($timeid = get_field('lesson_timer', 'id', 'lessonid', $lesson->id, 'userid', $USER->id)) {
-                    $startlesson->id = $timeid;
-                }
-        
+                $startlesson = new stdClass;
                 $startlesson->lessonid = $lesson->id;
                 $startlesson->userid = $USER->id;
                 $startlesson->starttime = time();
                 $startlesson->lessontime = time();
                 
-                if (!update_record('lesson_timer', $startlesson)) {
-                    if (!insert_record('lesson_timer', $startlesson)) {
-                        error('Error: could not insert row into lesson_timer table');
-                    }
-                }
-				$timedflag = true;
+				if (!insert_record('lesson_timer', $startlesson)) {
+					error('Error: could not insert row into lesson_timer table');
+				}
+				if ($lesson->timed) {
+					$timedflag = true;
+				}
             }
             /// CDC-FLAG ///
         }
@@ -375,82 +371,68 @@
 			// all of this is displayed above the actual page
 
 			// clock code
-            if($lesson->timed) {
-                if(isteacher($course->id)) {
-                    echo '<p align="center">'. get_string('teachertimerwarning', 'lesson') .'<p>';
-                } else {
-                    if (isset($_POST['startlastseen'])) {
-                        if ($_POST['startlastseen'] == 'yes') {  // continue a previous test, need to update the clock  (think this option is disabled atm)
-                            // get time information for this user
-                            if (!$timer = get_record('lesson_timer', 'lessonid', $lesson->id, 'userid', $USER->id)) {
-                                error('Error: could not find record');
-                            }
-    
-                            $continuelesson = new stdClass;
-                            $continuelesson->id = $timer->id;
-                            $continuelesson->starttime = time() - ($timer->lessontime - $timer->starttime);
-                            $continuelesson->lessontime = time();
-                            if (!update_record('lesson_timer', $continuelesson)) {
-                                error("Error: could not update record in the lesson_timer table");
-                            }	
-                        } elseif ($_POST['startlastseen'] == 'no') {  // starting over
-                            // get time information for this user
-                            if (!$timer = get_record('lesson_timer', 'lessonid', $lesson->id, 'userid', $USER->id)) {
-                                error('Error: could not find record');
-                            }
-    
-                            // starting over, so reset the clock
-                            $startlesson = new stdClass;
-                            $startlesson->id = $timer->id;
-                            $startlesson->starttime = time();
-                            $startlesson->lessontime = time();
-                            
-                            if (!update_record('lesson_timer', $startlesson)) {
-                                error('Error: could not update record in the lesson_timer table');
-                            }
-                        }
-                    }
-                    // get time information for this user
-                    if (!$timer = get_record('lesson_timer', 'lessonid', $lesson->id, 'userid', $USER->id)) {
-                        error('Error: could not find record');
-                    }
-                    if ((($timer->starttime + $lesson->maxtime * 60) - time()) > 0) {
-                        // code for the clock
+			// get time information for this user
+			if(!isteacher($course->id)) {
+				if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
+					error('Error: could not find records');
+				} else {
+					$timer = array_pop($timer); // this will get the latest start time record
+				}
+			}
+	
+			if (isset($_POST['startlastseen'])) {
+				if ($_POST['startlastseen'] == 'yes') {  // continue a previous test, need to update the clock  (think this option is disabled atm)
+					$timer->starttime = time() - ($timer->lessontime - $timer->starttime);
+					$timer->lessontime = time();
+				} elseif ($_POST['startlastseen'] == 'no') {  // starting over
+					// starting over, so reset the clock
+					$timer->starttime = time();
+					$timer->lessontime = time();
+				}
+			}
+				
+			// for timed lessons, display clock
+			if ($lesson->timed) {
+				if(isteacher($course->id)) {
+					echo '<p align="center">'. get_string('teachertimerwarning', 'lesson') .'<p>';
+				} else {
+					if ((($timer->starttime + $lesson->maxtime * 60) - time()) > 0) {
+						// code for the clock
 						print_simple_box_start("right", "150px", "#ffffff", 0);
-                        echo "<table border=\"0\" valign=\"top\" align=\"center\" class=\"generaltable\" width=\"100%\" cellspacing=\"0\">".
+						echo "<table border=\"0\" valign=\"top\" align=\"center\" class=\"generaltable\" width=\"100%\" cellspacing=\"0\">".
 							"<tr><th valign=\"top\" class=\"generaltableheader\">".get_string("timeremaining", "lesson").
 							"</th></tr><tr><td align=\"center\" class=\"generaltablecell\">";
-                        echo "<script language=\"javascript\">\n";
-                            echo "var starttime = ". $timer->starttime . ";\n";
-                            echo "var servertime = ". time() . ";\n";
-                            echo "var testlength = ". $lesson->maxtime * 60 .";\n";
-                            echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"timer.js\"><\/SCRIPT>');\n";
-                            echo "window.onload = function () { show_clock(); }\n";
-                        echo "</script>\n";
-                        echo "</td></tr></table>";
+						echo "<script language=\"javascript\">\n";
+							echo "var starttime = ". $timer->starttime . ";\n";
+							echo "var servertime = ". time() . ";\n";
+							echo "var testlength = ". $lesson->maxtime * 60 .";\n";
+							echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"timer.js\"><\/SCRIPT>');\n";
+							echo "window.onload = function () { show_clock(); }\n";
+						echo "</script>\n";
+						echo "</td></tr></table>";
 						print_simple_box_end();
 						echo "<br /><br /><br />";
-                    } else {
-                        redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=".LESSON_EOL."&amp;outoftime=normal", get_string("outoftime", "lesson"));
-                    }
-                    // update clock when viewing a new page... no special treatment
-                    if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60) {
-                        echo "<p align=\"center\">".get_string('studentoneminwarning', 'lesson')."</p>";
-                    }	
-                                    
-                    $newtime = new stdClass;
-                    $newtime->id = $timer->id;
-                    $newtime->lessontime = time();
-                    
-                    if (!update_record('lesson_timer', $newtime)) {
-                        error('Error: could not update lesson_timer table');
-                    }
-                    
-                    if ($timedflag) {
+					} else {
+						redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=".LESSON_EOL."&amp;outoftime=normal", get_string("outoftime", "lesson"));
+					}
+					// update clock when viewing a new page... no special treatment
+					if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60) {
+						echo "<p align=\"center\">".get_string('studentoneminwarning', 'lesson')."</p>";
+					}	
+					
+					if ($timedflag) {
 						print_simple_box(get_string('maxtimewarning', 'lesson', $lesson->maxtime), 'center');
-                    }
-                }
-            }
+					}
+				}
+			}
+
+			// update the clock
+			if (!isteacher($course->id)) {
+				$timer->lessontime = time();
+				if (!update_record('lesson_timer', $timer)) {
+					error('Error: could not update lesson_timer table');
+				}
+			}
 			
 			if ($attemptflag) {
 				print_heading(get_string('attempt', 'lesson', $retries + 1));
@@ -862,7 +844,6 @@
             // end of lesson reached work out grade
             /// CDC-FLAG ///
             if ($lesson->timed && !isteacher($course->id)) {
-                unset($USER->startlesson[$lesson->id]);  // take this variable out that I put in for timed tests
                 if (isset($_GET["outoftime"])) {
                     if ($_GET["outoftime"] == "normal") {
                         print_simple_box(get_string("eolstudentoutoftime", "lesson"), "center");
@@ -872,6 +853,21 @@
             if (isset($USER->lessonloggedin[$lesson->id])) {
                 unset($USER->lessonloggedin[$lesson->id]);
             }
+			// Update the clock / get time information for this user
+			if (!isteacher($course->id)) {
+				unset($USER->startlesson[$lesson->id]);
+				if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
+					error('Error: could not find records');
+				} else {
+					$timer = array_pop($timer); // this will get the latest start time record
+				}
+				$timer->lessontime = time();
+				
+				if (!update_record("lesson_timer", $timer)) {
+					error("Error: could not update lesson_timer table");
+				}
+			}
+			
             add_to_log($course->id, "lesson", "end", "view.php?id=$cm->id", "$lesson->id", $cm->id);
             print_heading(get_string("congratulations", "lesson"));
             print_simple_box_start("center");
@@ -1039,8 +1035,6 @@
                     } else {
                         echo get_string("welldone", "lesson");
                     }
-
-
                 }   
             } else { 
                 // display for teacher
@@ -1111,8 +1105,6 @@
     /*******************teacher view **************************************/
     elseif ($action == 'teacherview') {
         print_heading_with_help($lesson->name, "overview", "lesson");		
-        print_heading("<a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("checknavigation",
-                        "lesson")."</a>\n");
         // get number of pages
         if ($page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
             $npages = 1;
@@ -1147,6 +1139,8 @@
             echo "</div>"; //CDC Chris Berri added.
             /// CDC-FLAG ///		
         } else {
+			print_heading("<a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("checknavigation",
+				"lesson")."</a>\n");
             // print the pages
             echo "<form name=\"lessonpages\" method=\"post\" action=\"view.php\">\n";
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
@@ -1931,7 +1925,7 @@
         print_heading_with_help($lesson->name, "overview", "lesson");
         echo "<div align=\"center\">";
         if (isset($_POST['name'])) {
-			$name = trim(param_clean($_POST['name'], PARAM_CLEAN));
+			$name = trim(clean_param($_POST['name'], PARAM_CLEAN));
             if (lesson_check_nickname($name)) {
                 redirect("view.php?id=$cm->id&amp;action=updatehighscores&amp;name=$name&amp;sesskey=".$USER->sesskey, get_string("nameapproved", "lesson"));
             } else {
