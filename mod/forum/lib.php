@@ -2774,6 +2774,8 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
             continue;
         }
 
+        $tmpactivity = new Object;
+
         $tmpactivity->type = "forum";
         $tmpactivity->defaultindex = $index;
         $tmpactivity->instance = $post->instance;

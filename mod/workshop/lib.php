@@ -1037,6 +1037,9 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $sincetime, $co
     foreach ($posts as $post) {
 
         if (empty($groupid) || ismember($groupid, $post->userid)) {
+
+            $tmpactivity = new Object;
+
             $tmpactivity->type = "workshop";
             $tmpactivity->defaultindex = $index;
             $tmpactivity->instance = $post->instance;
