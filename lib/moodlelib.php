@@ -954,7 +954,6 @@ function require_login($courseid=0, $autologinguest=true) {
                    Please contact your Moodle Administrator.');
         }
     }
-
     // Check that the user account is properly set up
     if (user_not_fully_set_up($USER)) {
         redirect($CFG->wwwroot .'/user/edit.php?id='. $USER->id .'&amp;course='. SITEID);
@@ -1085,7 +1084,68 @@ function update_user_login_times() {
  * @return boolean
  */
 function user_not_fully_set_up($user) {
-    return ($user->username != 'guest' and (empty($user->firstname) or empty($user->lastname) or empty($user->email)));
+    return ($user->username != 'guest' and (empty($user->firstname) or empty($user->lastname) or empty($user->email) or over_bounce_threshold($user)));
+}
+
+function over_bounce_threshold($user) {
+    
+    global $CFG;
+    
+    if (empty($CFG->handlebounces)) {
+        return false;
+    }
+    // set sensible defaults
+    if (empty($CFG->minbounces)) {
+        $CFG->minbounces = 10;
+    }
+    if (empty($CFG->bounceratio)) {
+        $CFG->bounceratio = .20;
+    }
+    $bouncecount = 0;
+    $sendcount = 0;
+    if ($bounce = get_record('user_preferences','userid',$user->id,'name','email_bounce_count')) {
+        $bouncecount = $bounce->value;
+    }
+    if ($send = get_record('user_preferences','userid',$user->id,'name','email_send_count')) {
+        $sendcount = $send->value;
+    }
+    return ($bouncecount >= $CFG->minbounces && $bouncecount/$sendcount >= $CFG->bounceratio);
+}
+
+/** 
+ * @param $user - object containing an id
+ * @param $reset - will reset the count to 0
+ */
+function set_send_count($user,$reset=false) {
+    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_send_count')) {	
+        $pref->value = (!empty($reset)) ? 0 : $pref->value+1;
+        update_record('user_preferences',$pref);
+    }
+    else if (!empty($reset)) { // if it's not there and we're resetting, don't bother.
+        // make a new one
+        $pref->name = 'email_send_count';
+        $pref->value = 1;
+        $pref->userid = $user->id;
+        insert_record('user_preferences',$pref);
+    }
+}
+
+/** 
+* @param $user - object containing an id
+ * @param $reset - will reset the count to 0
+ */
+function set_bounce_count($user,$reset=false) {
+    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_bounce_count')) {	
+        $pref->value = (!empty($reset)) ? 0 : $pref->value+1;
+        update_record('user_preferences',$pref);
+    }
+    else if (!empty($reset)) { // if it's not there and we're resetting, don't bother.
+        // make a new one
+        $pref->name = 'email_bounce_count';
+        $pref->value = 1;
+        $pref->userid = $user->id;
+        insert_record('user_preferences',$pref);
+    }
 }
 
 /**
@@ -2635,7 +2695,36 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
     return $currentgroup;
 }
 
+function generate_email_processing_address($modid,$modargs) {
+    global $CFG;
+    
+    if (empty($CFG->sitesecret)) {
+        set_config('sitesecret',random_string(10));
+    }
+    
+    $header = $CFG->mailprefix . substr(base64_encode(pack('C',$modid)),0,2).$modargs;
+    return $header . substr(md5($header.$CFG->sitesecret),0,16).'@'.$CFG->maildomain;
+}
 
+
+function moodle_process_email($modargs,$body) {
+    // the first char should be an unencoded letter. We'll take this as an action
+    switch ($modargs{0}) {
+        case 'B': { // bounce
+            list(,$userid) = unpack('V',base64_decode(substr($modargs,1,8)));
+            if ($user = get_record_select("user","id=$userid","id,email")) {
+                // check the half md5 of their email
+                $md5check = substr(md5($user->email),0,16);
+                if ($md5check = substr($modargs, -16)) {
+                    set_bounce_count($user);
+                }
+                // else maybe they've already changed it?
+            }
+        }
+        break;
+        // maybe more later?
+    }
+}
 
 /// CORRESPONDENCE  ////////////////////////////////////////////////
 
@@ -2657,7 +2746,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
  * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
-function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true) {
+function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $repyto='', $replytoname='') {
 
     global $CFG, $FULLME;
 
@@ -2674,6 +2763,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     if (!empty($user->emailstop)) {
         return 'emailstop';
+    }
+    
+    if (over_bounce_threshold($user)) {
+        error_log("User $user->id (".fullname($user).") is over bounce threshold! Not sending.");
+        return false;
     }
 
     $mail = new phpmailer;
@@ -2709,7 +2803,14 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     $adminuser = get_admin();
 
-    $mail->Sender   = $adminuser->email;
+    // make up an email address for handling bounces
+    if (!empty($CFG->handlebounces)) {
+        $modargs = 'B'.base64_encode(pack('V',$user->id)).substr(md5($user->email),0,16);
+        $mail->Sender = generate_email_processing_address(0,$modargs);
+    }
+    else {
+        $mail->Sender   = $adminuser->email;
+    } 
 
     if (is_string($from)) { // So we can pass whatever we want if there is need
         $mail->From     = $CFG->noreplyaddress;
@@ -2720,7 +2821,15 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     } else {
         $mail->From     = $CFG->noreplyaddress;
         $mail->FromName = fullname($from);
+        if (empty($replyto)) {
+            $mail->AddReplyTo($CFG->noreplyaddress,get_string('noreplyname'));
+        }
     }
+        
+    if (!empty($replyto)) {
+        $mail->AddReplyTo($replyto,$replytoname);
+    }
+
     $mail->Subject  =  stripslashes($subject);
 
     $mail->AddAddress($user->email, fullname($user) );
@@ -2759,6 +2868,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     }
 
     if ($mail->Send()) {
+        set_send_count($user);
         return true;
     } else {
         mtrace('ERROR: '. $mail->ErrorInfo);

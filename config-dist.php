@@ -195,6 +195,17 @@ $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_
 // may break things for users coming using proxies that change all the time,
 // like AOL.
 //      $CFG->tracksessionip = true;
+//
+//
+// The following lines are for handling email bounces.
+// $CFG->handlebounces = true;
+// $CFG->minbounces = 10;
+// $CFG->bounceratio = .20;
+// The next lines are needed both for bounce handling and any other email to module processing.
+// mailprefix must be EXACTLY four characters.
+// Uncomment and customise this block for Postfix 
+//$CFG->mailprefix = 'mdl+'; // + is postfix default separator. 
+//$CFG->maildomain = 'youremaildomain.com';
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

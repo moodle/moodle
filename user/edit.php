@@ -165,6 +165,11 @@
                     auth_user_update($userold, $usernew);
                 };
 
+                 if ($userold->email != $usernew->email) {
+                    set_bounce_count($usernew,true);
+                    set_send_count($usernew,true);
+                }
+
                 add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
 
                 if ($user->id == $USER->id) {
@@ -192,6 +197,10 @@
     $streditmyprofile = get_string("editmyprofile");
     $strparticipants = get_string("participants");
     $strnewuser = get_string("newuser");
+
+    if (over_bounce_threshold($user) && empty($err['email'])) {
+        $err['email'] = get_string('toomanybounces');
+    }
 
     if (($user->firstname and $user->lastname) or $newaccount) {
         if ($newaccount) {
@@ -306,6 +315,9 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
 
     if (empty($usernew->email))
         $err["email"] = get_string("missingemail");
+
+    if (over_bounce_threshold($user) && $user->email == $usernew->email) 
+        $err['email'] = get_string('toomanybounces');
 
     if (empty($usernew->description) and !isadmin())
         $err["description"] = get_string("missingdescription");
