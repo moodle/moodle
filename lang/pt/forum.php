@@ -83,7 +83,7 @@ $string['parentofthispost'] = "Padre desta mensagem";
 $string['postadded'] = "<p>A sua mensagem foi inserida com sucesso.</p><p>Tem \$a para a editar se quiser fazer alterações.</p>";
 $string['postincontext'] = "Veja esta mensagem no contexto";
 $string['postmailinfo'] = "Esta é uma cópia de uma mensagem enviada para o servidor web \$a.
-Para subir uma resposta no sitio web, use o apontador que se segue:";
+Para enviar uma resposta para o forum, use o apontador que se segue:";
 $string['postrating1'] = "Contribui principalmente para a aprendizagem INDIVIDUAL";
 $string['postrating2'] = "Aprendizagem Individual e Colectiva por igual";
 $string['postrating3'] = "Contribui principalmente para a aprendizagem COLECTIVA";
