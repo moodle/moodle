@@ -1924,6 +1924,7 @@ function update_categories_button() {
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+               "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
     }
 }

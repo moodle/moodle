@@ -32,7 +32,7 @@ class CourseBlock_admin extends MoodleBlock {
 
 
     function load_content_for_site() {
-        global $CFG;
+        global $CFG, $USER;
 
         if (isadmin()) {
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/configure.php">'.get_string('configuration').'</a>...';
@@ -49,7 +49,7 @@ class CourseBlock_admin extends MoodleBlock {
         }
 
         if (iscreator()) {
-            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/index.php?edit=on">'.get_string('courses').'</a>';
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/index.php?edit=on&sesskey='.$USER->sesskey.'">'.get_string('courses').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/course.gif" height="16" width="16" alt="" />';
         }
 

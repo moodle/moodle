@@ -308,10 +308,10 @@
 
     $userdata .= "<hr><font size=+1>&nbsp;</font><a href=\"enrol.php?sesskey=$USER->sesskey\">".get_string("enrolments")."</a> - <font size=1>".
                  get_string("adminhelpenrolments")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=off&sesskey=$USER->sesskey\">".get_string("assignstudents")."</a> - <font size=1>".
                  get_string("adminhelpassignstudents")."</font><br />";
 
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=on&sesskey=$USER->sesskey\">".get_string("assignteachers")."</a> - <font size=1>".
                  get_string("adminhelpassignteachers").
                  " <img src=\"../pix/t/user.gif\" height=11 width=11></font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php?sesskey=$USER->sesskey\">".get_string("assigncreators")."</a> - <font size=1>".
@@ -321,7 +321,7 @@
 
     $table->data[] = array("<font size=+1><b><a href=\"users.php\">".get_string("users")."</a></b>", $userdata);
 
-    $table->data[] = array("<font size=+1><b><a href=\"../course/index.php?edit=on\">".get_string("courses")."</a></b>",
+    $table->data[] = array("<font size=+1><b><a href=\"../course/index.php?edit=on&sesskey=$USER->sesskey\">".get_string("courses")."</a></b>",
                            "<font size=+1>&nbsp;</font>".get_string("adminhelpcourses"));
     $table->data[] = array("<font size=+1><b><a href=\"../course/log.php?id=$site->id\">".get_string("logs")."</a></b>",
                            "<font size=+1>&nbsp;</font>".get_string("adminhelplogs"));
