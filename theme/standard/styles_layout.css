@@ -460,6 +460,28 @@ dialouge, exercise, forum, lesson, quiz */
     border-style:solid;
     border-collapse:separate;
     margin-bottom: 5px;
+    text-align: left;
+}
+
+
+.entrylist {
+    border-width:0px;
+}
+
+.entrylowersection {
+    padding-top: 10px;
+}
+.entrylowersection table{
+    width: 100%;
+}
+.entrylowersection .aliases {
+    text-align:center;
+    font-size: 0.8em;
+}
+.entrylowersection .icons,
+.entrylowersection .ratings {
+    text-align:right;
+    font-size: 0.8em;
 }
 
 .glossarypost .entry {
@@ -469,6 +491,7 @@ dialouge, exercise, forum, lesson, quiz */
 .glossarypost .picture {
     width: 35px;
 }
+
 
 /* message */
 .message_link {

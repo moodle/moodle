@@ -7,8 +7,7 @@
 /// THERE SHOULD BE NO NEED TO MODIFY THIS FILE!!  USE CONFIG.PHP INSTEAD.
 
 
-    $lifetime  = 600;                                   // Seconds to cache this stylesheet
-    $nomoodlecookie = true;                             // Cookies prevent caching, so don't use them
+    $lifetime  = 0;                                   // Seconds to cache this stylesheet
     require_once("../../config.php");                   // Load up the Moodle libraries
     $themename = basename(dirname(__FILE__));           // Name of the folder we are in
     $forceconfig = optional_param('forceconfig', '', PARAM_FILE);   // Get config from this theme
