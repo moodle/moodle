@@ -7,9 +7,9 @@
     require_once('../../config.php');
     require_once('locallib.php');
 
-    require_variable($id);    // Course Module ID
-    optional_variable($pageid);    // Lesson Page ID
-	optional_variable($action);  // action to take
+    $id     = required_param('id', PARAM_INT);    // Course Module ID
+    $pageid = optional_param('pageid', NULL, PARAM_INT);    // Lesson Page ID
+	$action = optional_param('action');  // action to take
 
     if (! $cm = get_record('course_modules', 'id', $id)) {
         error('Course Module ID was incorrect');
@@ -249,8 +249,8 @@
 					
 	**************************************************************************/
 	else if ($action == 'detail') {
-		optional_variable($userid); // if empty, then will display the general detailed view
-		optional_variable($try);
+		$userid = optional_param('userid', NULL, PARAM_INT); // if empty, then will display the general detailed view
+		$try    = optional_param('try', NULL, PARAM_INT);
 
 		if (! $lessonpages = get_records("lesson_pages", "lessonid", $lesson->id)) {
 			error("Could not find Lesson Pages");
