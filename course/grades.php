@@ -61,28 +61,29 @@
                         require_once($libfile);
                         $gradefunction = $mod->modname."_grades";
                         if (function_exists($gradefunction)) {   // Skip modules without grade function
-                            $modgrades = $gradefunction($mod->instance);
+                            if ($modgrades = $gradefunction($mod->instance)) {
 
-                            if ($modgrades->maxgrade) {
-                                $maxgrade = "<BR>$strmax: $modgrades->maxgrade";
-                            } else {
-                                $maxgrade = "";
-                            }
-
-                            $image = "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"".
-                                     "   TITLE=\"$mod->modfullname\">".
-                                     "<IMG BORDER=0 VALIGN=absmiddle SRC=\"../mod/$mod->modname/icon.gif\" ".
-                                     "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\"></A>";
-                            $columnhtml[] = "$image ".
-                                         "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                         "$instance->name".
-                                         "</A>$maxgrade";
-                            $columns[] = "$mod->modfullname: $instance->name - $modgrades->maxgrade";
-
-                            foreach ($students as $student) {
-                                $grades[$student->id][] = $modgrades->grades[$student->id]; // may be empty, that's ok
                                 if ($modgrades->maxgrade) {
-                                    $totals[$student->id] = (float)($totals[$student->id]) + (float)($modgrades->grades[$student->id]);
+                                    $maxgrade = "<BR>$strmax: $modgrades->maxgrade";
+                                } else {
+                                    $maxgrade = "";
+                                }
+    
+                                $image = "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"".
+                                         "   TITLE=\"$mod->modfullname\">".
+                                         "<IMG BORDER=0 VALIGN=absmiddle SRC=\"../mod/$mod->modname/icon.gif\" ".
+                                         "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\"></A>";
+                                $columnhtml[] = "$image ".
+                                             "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                             "$instance->name".
+                                             "</A>$maxgrade";
+                                $columns[] = "$mod->modfullname: $instance->name - $modgrades->maxgrade";
+    
+                                foreach ($students as $student) {
+                                    $grades[$student->id][] = $modgrades->grades[$student->id]; // may be empty, that's ok
+                                    if ($modgrades->maxgrade) {
+                                        $totals[$student->id] = (float)($totals[$student->id]) + (float)($modgrades->grades[$student->id]);
+                                    }
                                 }
                             }
                         }

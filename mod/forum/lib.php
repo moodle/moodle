@@ -366,6 +366,12 @@ function forum_grades($forumid) {
 /// Must return an array of grades, indexed by user, and a max grade.
     global $FORUM_POST_RATINGS;
 
+    if (!$forum = get_record("forum", "id", $forumid)) {
+        return false;
+    }
+    if (!$forum->assessed) {
+        return false;
+    }
     if ($ratings = get_records_sql_menu("SELECT p.user, r.rating
                                           FROM forum_discussions d, forum_posts p, forum_ratings r
                                          WHERE d.forum = '$forumid' 

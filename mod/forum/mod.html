@@ -34,8 +34,8 @@
 <tr valign=top>
     <td align=right><P><B><? print_string("allowdiscussions", "forum", strtolower("$course->student")) ?>:</B></P></TD>
     <td>
-        <?  choose_from_menu($FORUM_OPEN_MODES, "open", $form->open, ""); ?>
-        <? helpbutton("allowdiscussions", get_string("allowdiscussions", "forum"), "forum") ?>
+        <? choose_from_menu($FORUM_OPEN_MODES, "open", $form->open, ""); ?>
+        <? helpbutton("allowdiscussions", get_string("allowdiscussions", "forum", strtolower("$course->student")), "forum") ?>
     </td>
 </tr>
 
