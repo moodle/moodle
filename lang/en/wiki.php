@@ -170,4 +170,5 @@ $string['meta']='Meta data';
 $string['refs']='References';
 $string['contentsize']='Content size';
 $string['pageslinkingto']="Pages linking to this page";
+$string['thispageisntlinkedfromanywhereelse'] = 'This page isn\'t linked from anywhere else.';
 ?>
