@@ -929,19 +929,24 @@
             $files = array();
             foreach ($filelist as $file) {
                 //If directory, append "/"
-                if (is_dir($basedir."/".$file)) {
-                    $file = $file."/";
-                }
+                //if (is_dir($basedir."/".$file)) {
+                //    $file = $file."/";
+                //}
                 //Include into array
                 //echo "<br>Adding file/dir ".$file;                       //Debug
                 $files[] = $basedir."/".$file;
             }
             include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
+            include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");
+            include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");
+            PclTraceOn(2);
             $archive = new PclZip("$basedir/$name");
             if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,$basedir)) == 0) {
                 error($archive->errorInfo(true));
                 $status = false;
             } 
+            PclTraceDisplay();
+            PclTraceOff();
         } else {                   // Use external zip program
             //echo "<br>Using external zip";                               //Debug
             $files = "";

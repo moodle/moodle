@@ -272,7 +272,7 @@
 
         if (!is_dir($to_file)) {
             //echo "<br>Creating ".$to_file;                                //Debug
-            mkdir($to_file,$CFG->directorypermissions);
+            $status = mkdir($to_file,$CFG->directorypermissions);
         }
         $dir = opendir($from_file);
         while ($file=readdir($dir)) {

@@ -276,9 +276,9 @@
     //Cleanup temps (files and db)
     if ($status) {
         echo "<li>".get_string("cleaningtempdata");
-        if (!$status = clean_temp_data ($restore)) {
-            notify("Could not clean up temporary data from files and database");
-        }
+        //if (!$status = clean_temp_data ($restore)) {
+        //    notify("Could not clean up temporary data from files and database");
+        //}
     }
 
     //End the main ul
