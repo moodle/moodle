@@ -1,3 +1,84 @@
+2002-08-11 Sunday 23:41  martin
+
+	* course/delete.php, course/edit.html, course/edit.php,
+	course/editsection.php, course/enrol.php, course/index.php,
+	course/lib.php, course/log.php, course/loggraph.php,
+	course/loginas.php, course/loglive.php, course/mod.php,
+	course/mod_delete.html, course/social.php, course/teacher.php,
+	course/unenrol.php, course/user.php, lang/en/moodle.php: 
+	Changes related to language support  ... get_string() Minor little
+	interface cleanups along the way
+
+2002-08-11 Sunday 22:22  martin
+
+	* help.php: Ah, that's nicer-looking code. (got rid of the HTML
+	header)
+
+2002-08-11 Sunday 22:21  martin
+
+	* theme/: standard/header.html, standardblue/header.html,
+	standardgreen/header.html, standardred/header.html: Slight tweak to
+	allow completely blank headers (no arguments to print_header will
+	now give a blank header).  Useful for help pages.
+
+2002-08-11 Sunday 22:12  martin
+
+	* lang/en/moodle.php, lang/en/help/courseformats.html,
+	lang/en/help/picture.html, lang/en/help/questions.html,
+	lang/en/help/text.html, lib/moodlelib.php: Moved the help files
+	into their own directory in lang/en/help
+
+2002-08-11 Sunday 22:05  martin
+
+	* course/: topics.php, weeks.php: Don't show news at all if 0
+	newsitems was selected in course settings
+
+2002-08-11 Sunday 14:24  martin
+
+	* config-dist.php: Mention the new themes
+
+2002-08-11 Sunday 14:15  martin
+
+	* theme/standardred/: config.php, styles.css: Minor tweaks to
+	colors
+
+2002-08-11 Sunday 14:11  martin
+
+	* theme/: standardgreen/config.php, standardgreen/favicon.ico,
+	standardgreen/footer.html, standardgreen/header.html,
+	standardgreen/styles.css, standardred/config.php,
+	standardred/favicon.ico, standardred/footer.html,
+	standardred/header.html, standardred/styles.css: New coloured
+	themes (green and red) just to add some options
+
+2002-08-11 Sunday 13:24  martin
+
+	* course/lib.php, lang/en/moodle.php: Changes to strings in
+	print_recent_activity (added, updated, deleted activities)
+
+2002-08-11 Sunday 13:11  martin
+
+	* CHANGES, course/enrol.php, course/lib.php, course/loginas.php,
+	lang/en/moodle.php: Various small changes (mostly to language
+	strings)
+
+2002-08-11 Sunday 13:07  martin
+
+	* lib/moodlelib.php: Moved code from footer.html into
+	print_footer() Don't update user on login check if it isn't a real
+	user.
+
+2002-08-11 Sunday 13:06  martin
+
+	* theme/: standard/footer.html, standardblue/footer.html: Took code
+	out of footer.html (it's in print_footer() instead)
+
+2002-08-11 Sunday 12:30  martin
+
+	* admin/user.php: In user list, name goes to full page instead of
+	editing (because there is an edit link at the end of the row, as
+	well as on the ful page)
+
 2002-08-10 Saturday 23:16  martin
 
 	* user/view.php: Fixes to visibility of unenrol button
@@ -1008,9 +1089,8 @@
 
 2002-07-21 Sunday 16:34  martin
 
-	* help.php, lang/en/strings.php, lang/en/page/help.questions.php,
-	lib/moodlelib.php, lib/weblib.php, user/edit.html: Improvements to
-	the help system
+	* help.php, lang/en/strings.php, lib/moodlelib.php, lib/weblib.php,
+	user/edit.html: Improvements to the help system
 
 2002-07-21 Sunday 03:11  martin
 
@@ -1200,8 +1280,7 @@
 
 2002-06-27 Thursday 16:46  martin
 
-	* help.php, lang/en/page/help.picture.php,
-	lang/en/page/help.text.php: Changes to the location of help files
+	* help.php: Changes to the location of help files
 
 2002-06-26 Wednesday 00:42  martin
 
