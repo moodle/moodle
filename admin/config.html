@@ -50,16 +50,17 @@
            $config->timezone = 99;
        }
        $timenow = time();
+       $timeformat = get_string('strftimedaytime');
 
        for ($tz = -26; $tz <= 26; $tz++) {
            $zone = (float)$tz/2.0;
            $usertime = $timenow + ($tz * 1800);
            if ($tz == 0) {
-               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT)";
+               $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT)";
            } else if ($tz < 0) {
-               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT$zone)";
+               $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT$zone)";
            } else {
-               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT+$zone)";
+               $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT+$zone)";
            }
        }
 

@@ -904,6 +904,7 @@ $string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%I:%%M %%p';
 $string['strftimetime'] = '%%I:%%M %%p';
+$string['strftimedaytime'] = '%%a, %%H:%%M';
 $string['stringsnotset'] = 'The following strings are not defined in $a';
 $string['studentnotallowed'] = 'Sorry, but you can not enter this course as \'$a\'';
 $string['students'] = 'Students';
