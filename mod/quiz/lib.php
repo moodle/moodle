@@ -420,7 +420,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $sincetime, $course
 
 
 function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
-    global $CFG
+    global $CFG;
 
     echo '<table border="0" cellpadding="3" cellspacing="0">';
 
