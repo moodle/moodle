@@ -43,7 +43,7 @@
     if (groupmode($course) == SEPARATEGROUPS and !isteacheredit($course->id)) {   // Groups must be kept separate
         require_login();
 
-        if (!ismember(mygroupid($course->id), $user->id)) {
+        if (!isteacheredit($course->id, $user->id) and !ismember(mygroupid($course->id), $user->id)) {
             print_header("$personalprofile: ", "$personalprofile: ",
                          "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                           <a href=\"index.php?id=$course->id\">$participants</a>",
