@@ -18,7 +18,7 @@
 
 // Default editing time for posts and the like (in seconds)
 
-    $CFG->maxeditingtime = 10;
+    $CFG->maxeditingtime = 1800;
 
 // Location of standard files
 
