@@ -1,6 +1,5 @@
 <?php // $Id$ 
 
-
 $string['action'] = 'Action';
 $string['active'] = 'Actif';
 $string['activities'] = 'Activités';
@@ -110,6 +109,7 @@ $string['blocks'] = 'Blocs';
 $string['blocksetup'] = 'Installation des tables de blocs';
 $string['blocksuccess'] = 'Les tables $a ont été installées correctement';
 $string['bycourseorder'] = 'Ordre dans le cours';
+$string['byname'] = 'par $a';
 $string['cancel'] = 'Annuler';
 $string['categories'] = 'Disciplines';
 $string['category'] = 'Discipline';
@@ -829,6 +829,7 @@ $string['state'] = 'Canton, département';
 $string['status'] = 'Statuts';
 $string['strftimedate'] = '%%d %%B %%Y';
 $string['strftimedayshort'] = '%%A %%d %%B';
+$string['strftimedateshort'] = "%%d %%B";
 $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A %%d %%B %%Y, %%H:%%M';
