@@ -256,6 +256,24 @@
     if (empty($CFG->siteidentifier)) {    // Unique site identification code
         set_config('siteidentifier', random_string(32));
     }
+    
+/// Check if the guest user exists.  If not, create one.
+    if (! record_exists("user", "username", "guest")) {
+        $guest->auth        = "manual"; 
+        $guest->username    = "guest"; 
+        $guest->password    = md5("guest");
+        $guest->firstname   = addslashes(get_string("guestuser"));
+        $guest->lastname    = " ";
+        $guest->email       = "root@localhost";
+        $guest->description = addslashes(get_string("guestuserinfo"));
+        $guest->confirmed   = 1;
+        $guest->lang        = $CFG->lang;
+        $guest->timemodified= time();
+
+        if (! $guest->id = insert_record("user", $guest)) {
+            notify("Could not create guest user record !!!");
+        }
+    }
 
 /// Set up the admin user
     if (! record_exists("user_admins")) {   // No admin user yet
