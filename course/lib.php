@@ -183,7 +183,8 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
 
     if ($modpage and $modid) {
-        $selector .= " AND l.url = '$modpage.php?id=$modid'";
+        $LIKE = $CFG->dbtype == "mysql" ? "LIKE" : "ILIKE";
+        $selector .= " AND l.url $LIKE '$modpage.php?id=$modid%'";
     }
 
     if ($user) {
