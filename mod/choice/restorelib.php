@@ -220,7 +220,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
             }
 
             //We have to recode the userid field
-            $user = backup_getid($restore->backup_unique_code,"user",$response->userid);
+            $user = backup_getid($restore->backup_unique_code,"user",$answer->userid);
             if ($user) {
                 $answer->userid = $user->new_id;
             }
