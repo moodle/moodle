@@ -150,7 +150,7 @@
 
             /// Then write it to our own screen immediately
                 $time = userdate(time(), get_string('strftimemessage', 'chat'));
-                $message = '<p><font size="-1"><b>'.$USER->firstname.' ['.$time.']</b>: '.$message.'</font></p>';
+                $message = '<p><font size="-1"><b>'.addslashes($USER->firstname).' ['.$time.']</b>: '.$message.'</font></p>';
 
                 $script  = "<script>\n";
                 $script .= "parent.messages.document.write('$message\\n');\n";
@@ -172,7 +172,7 @@
 
             $usehtmleditor = can_use_html_editor();
             $usehtmleditor = false; // REMOVE
-            print_textarea($usehtmleditor, 5, 50, 450, 200, 'message', '');
+            print_textarea($usehtmleditor, 5, 40, 450, 200, 'message', '');
             if ($usehtmleditor) {
                 use_html_editor("message");
             }
