@@ -291,6 +291,7 @@ function lang_save_file($path, $file, $strings) {
         $value = str_replace("'", "\\'", $value);           // Add slashes for '
         $value = str_replace('"', "\\\"", $value);          // Add slashes for "
         $value = str_replace("%","%%",$value);              // Escape % characters
+        $value = str_replace("\r", "",$value);              // Remove linefeed characters
         if ($id == "string" and $value != ""){
             fwrite($f,"\$string['$stringname'] = '$value';\n");
         }
