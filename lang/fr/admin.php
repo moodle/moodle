@@ -10,6 +10,7 @@ $string['cachetext'] = 'Durée de vie du cache texte';
 $string['confirmation'] = 'Confirmation';
 $string['confirmdeletedst'] = 'La suppression du réglage <strong>$a</strong> désactivera immédiatement l\'heure d\'été pour tous les utilisateurs de ce réglage. Cela risque de changer leur perception du temps sans avertissement. Voulez-vous vraiment continuer&nbsp;?';
 $string['confirmdeletedstdefault'] = '<strong>Le réglage $a est actuellement utilisé par tous les utilisateurs de ce site&nbsp;!</strong> Sa suppression changera leur perception du temps sans avertissement. Voulez-vous vraiment continuer&nbsp;?';
+$string['cronwarning'] = 'Le <a href=\"cron.php\">script de maintenance cron.php</a> n\'a pas été lancé depuis au moins 24 heures.<br />La <a href=\"../doc/?frame=install.html&sub=cron\">documentation d\'installation</a> explique comment vous pouvez automatiser cette tâche.';
 $string['dstisapreference'] = 'Chaque utilisateur peut choisir son propre réglage';
 $string['dstisforcedto'] = 'Imposer à tous les utilisateurs le réglage';
 $string['dstpresets'] = 'Réglages heure d\'été';
