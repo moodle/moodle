@@ -1,6 +1,7 @@
 <?PHP // $Id$
 
 	require("../config.php");
+	require("../lib/countries.php");
 	require("lib.php");
 
     require_variable($id);       // user id
@@ -130,6 +131,8 @@
                       -> Edit profile", "");
     }
 
+    $teacher = strtolower($course->teacher);
+
     print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<H2>User profile for $user->firstname $user->lastname</H2>";
 	include("edit.html");
@@ -146,6 +149,12 @@ function find_form_errors(&$user, &$usernew, &$err) {
 
     if (empty($usernew->email))
         $err["email"] = "Missing email address";
+
+    if (empty($usernew->city))
+        $err["city"] = "Missing city or town";
+
+    if (empty($usernew->country))
+        $err["country"] = "Missing country";
 
     else if (! validate_email($usernew->email))
         $err["email"] = "Invalid email address, check carefully";

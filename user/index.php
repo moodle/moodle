@@ -3,6 +3,7 @@
 //  Lists all the users within a given course
 
     require("../config.php");
+    require("../lib/countries.php");
     require("lib.php");
 
     require_variable($id);   //course
@@ -54,6 +55,8 @@
 /// FUNCTIONS //////////////////
 
 function print_user($user, $course, $teacherlinks) {
+
+    global $COUNTRIES;
     
     echo "<TABLE WIDTH=80% ALIGN=CENTER BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
     echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0><TR>";
@@ -69,7 +72,7 @@ function print_user($user, $course, $teacherlinks) {
     echo "<FONT SIZE=-1>";
     echo "<FONT SIZE=3><B>$user->firstname $user->lastname</B></FONT>";
     echo "<P>Email: <A HREF=\"mailto:$user->email\">$user->email</A><BR>";
-    echo "Location: $user->city, $user->country<BR>";
+    echo "Location: $user->city, ".$COUNTRIES["$user->country"]."<BR>";
     echo "Last access: ".userdate($user->lastaccess);
     echo "&nbsp (".format_time(time() - $user->lastaccess).")";
     echo "</TD><TD VALIGN=bottom BGCOLOR=#FFFFFF NOWRAP>";

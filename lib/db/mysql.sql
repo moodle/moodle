@@ -153,6 +153,7 @@ CREATE TABLE user (
   picture tinyint(1) default NULL,
   url varchar(255) default NULL,
   description text,
+  mailformat tinyint(1) unsigned NOT NULL default '1',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY username (username),

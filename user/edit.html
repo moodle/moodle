@@ -1,54 +1,79 @@
-<P ALIGN=center>Items marked <B>private</B> will not be made visible to other students</P>
-
 <FORM METHOD="post" ENCTYPE="multipart/form-data" action="edit.php">
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
 	<td><P>New picture:</td>
 	<td>
     <INPUT type="hidden" name="MAX_FILE_SIZE" value="4000000">
-    <input type="file" name="imagefile"> ( .jpg or .png ) <? helpbutton("picture") ?>
+    <input type="file" name="imagefile" size=40> ( .jpg or .png ) <? helpbutton("picture") ?>
 	<? formerr($err["imagefile"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Email:</td>
-	<td><input type="text" name="email" size=25 value="<?=$user->email ?>">
+	<td><P>Description:</td>
+	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><?=$user->description ?></TEXTAREA> 
+    <? helpbutton("text") ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Email address:</td>
+	<td><input type="text" name="email" size=30 value="<?=$user->email ?>">
 	<? formerr($err["email"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>ICQ Number:</td>
+	<td><P>Email format:</td>
+	<td><? 
+    $choices["0"] = "Plain text format";
+    $choices["1"] = "Pretty HTML format";
+    choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Web address (URL):</td>
+	<td><input type="text" name="url" size=30 value="<?=$user->url ?>">
+	<? formerr($err["url"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>ICQ number:</td>
 	<td><input type="text" name="icq" size=25 value="<?=$user->icq ?>">
 	<? formerr($err["icq"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Phone Number 1:</td>
-	<td><input type="text" name="phone1" size=25 value="<?=$user->phone1 ?>"> (private)
+	<td><P>ID Number:</td>
+	<td><input type="text" name="idnumber" size=25 value="<?=$user->idnumber ?>"> (for the <?=$teacher ?> only)
+	<? formerr($err["idnumber"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Phone number 1:</td>
+	<td><input type="text" name="phone1" size=25 value="<?=$user->phone1 ?>"> (for the <?=$teacher ?> only)
 	<? formerr($err["phone1"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Phone Number 2:</td>
-	<td><input type="text" name="phone2" size=25 value="<?=$user->phone2 ?>"> (private)
+	<td><P>Phone number 2:</td>
+	<td><input type="text" name="phone2" size=25 value="<?=$user->phone2 ?>"> (for the <?=$teacher ?> only)
 	<? formerr($err["phone2"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Address:</td>
-	<td><input type="text" name="address" size=25 value="<?=$user->address ?>"> (private)
+	<td><P>Street Address:</td>
+	<td><input type="text" name="address" size=25 value="<?=$user->address ?>"> (for the <?=$teacher ?> only)
 	<? formerr($err["address"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Web Address:</td>
-	<td><input type="text" name="url" size=25 value="<?=$user->url ?>">
-	<? formerr($err["url"]) ?>
+	<td><P>City/town:</td>
+	<td><input type="text" name="city" size=25 value="<?=$user->city ?>">
+	<? formerr($err["city"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Description:</td>
-	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><?=$user->description ?></TEXTAREA>
+	<td><P>Country:</td>
+	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, "Select a country...", "", "") ?>
+	<? formerr($err["country"]) ?>
 	</td>
 </tr>
 <tr valign=top>

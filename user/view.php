@@ -3,6 +3,7 @@
 //  Display profile for a particular user
 
     require("../config.php");
+    require("../lib/countries.php");
     require("lib.php");
 
     require_variable($id);
@@ -78,7 +79,7 @@
 
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2";
 
-    print_row("Location:", "$user->city, $user->country");
+    print_row("Location:", "$user->city, ".$COUNTRIES["$user->country"]);
 
     if (isteacher($course->id)) {
         if ($user->address) {

@@ -170,11 +170,13 @@ function choose_from_menu ($options, $name, $selected="", $nothing="Choose...", 
         $javascript = "onChange=\"$script\"";
     }
     echo "<SELECT NAME=$name $javascript>\n";
-    echo "   <OPTION VALUE=\"$nothingvalue\"\n";
-    if ($nothingvalue == $selected) {
-        echo " SELECTED";
+    if ($nothing) {
+        echo "   <OPTION VALUE=\"$nothingvalue\"\n";
+        if ($nothingvalue == $selected) {
+            echo " SELECTED";
+        }
+        echo ">$nothing</OPTION>\n";
     }
-    echo ">$nothing</OPTION>\n";
     foreach ($options as $value => $label) {
         echo "   <OPTION VALUE=\"$value\"";
         if ($value == $selected) {
