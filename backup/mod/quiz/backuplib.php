@@ -333,7 +333,7 @@
                 fwrite ($bf,full_tag("INTRO",4,false,$quiz->intro));
                 fwrite ($bf,full_tag("TIMEOPEN",4,false,$quiz->timeopen));
                 fwrite ($bf,full_tag("TIMECLOSE",4,false,$quiz->timeclose));
-                fwrite ($bf,full_tag("ATTEMPTS",4,false,$quiz->attempts));
+                fwrite ($bf,full_tag("ATTEMPTS_NUMBER",4,false,$quiz->attempts));
                 fwrite ($bf,full_tag("FEEDBACK",4,false,$quiz->feedback));
                 fwrite ($bf,full_tag("CORRECTANSWERS",4,false,$quiz->correctanswers));
                 fwrite ($bf,full_tag("GRADEMETHOD",4,false,$quiz->grademethod));
@@ -411,7 +411,7 @@
                 //Print grade contents
                 fwrite ($bf,full_tag("ID",6,false,$gra->id));
                 fwrite ($bf,full_tag("USERID",6,false,$gra->userid));
-                fwrite ($bf,full_tag("GRADE",6,false,$gra->grade));
+                fwrite ($bf,full_tag("GRADEVAL",6,false,$gra->grade));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$gra->timemodified));
                 //End question grade
                 $status =fwrite ($bf,end_tag("GRADE",5,true));
@@ -441,7 +441,7 @@
                 //Print attempt contents
                 fwrite ($bf,full_tag("ID",6,false,$attempt->id));
                 fwrite ($bf,full_tag("USERID",6,false,$attempt->userid));
-                fwrite ($bf,full_tag("ATTEMPT",6,false,$attempt->attempt));
+                fwrite ($bf,full_tag("ATTEMPTNUM",6,false,$attempt->attempt));
                 fwrite ($bf,full_tag("SUMGRADES",6,false,$attempt->sumgrades));
                 fwrite ($bf,full_tag("TIMESTART",6,false,$attempt->timestart));
                 fwrite ($bf,full_tag("TIMEFINISH",6,false,$attempt->timefinish));
