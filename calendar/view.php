@@ -337,7 +337,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
 function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     global $CFG, $SESSION, $USER;
-    global $day, $mon, $yr, $defaultcourses;
+    global $day, $mon, $yr;
 
     $getvars = 'from=month&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
@@ -549,16 +549,8 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     }
     echo 'style="width: 8px;"></td><td><strong>'.get_string('courseevents', 'calendar').':</strong> ';
 
-    $defaultcourses = array_diff_assoc($defaultcourses, array(1 => 1)); // Filter the site out
-    $getcourses = array_keys($defaultcourses);
-
-    if(!empty($getcourses)) {
-        $select = 'id IN ('.implode(',', $getcourses).')';
-        $coursesdata = get_records_select('course', $select, 'fullname');
-    }
-    else {
-        $coursedata = false;
-    }
+    $coursesdata = get_my_courses($USER->id);
+    $coursesdata = array_diff_assoc($coursesdata, array(1 => 1));
 
     echo '<select name="course" onchange="document.location.href=\''.CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=\' + this.value;">';
     echo '<option value="0"'.($SESSION->cal_show_course === false?' selected':'').'>'.get_string('hidden', 'calendar')."</option>\n";
@@ -566,9 +558,11 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     if($coursesdata !== false) {
         foreach($coursesdata as $coursedata) {
             echo "\n<option value='$coursedata->id'";
-            if(is_int($SESSION->cal_show_course) && $coursedata->id == $SESSION->cal_show_course) echo ' selected';
-                echo '>'.$coursedata->shortname."</option>\n";
+            if(is_int($SESSION->cal_show_course) && $coursedata->id == $SESSION->cal_show_course) {
+                echo ' selected';
             }
+            echo '>'.$coursedata->shortname."</option>\n";
+        }
     }
     echo '</select>';
     echo '</td>';
