@@ -1,18 +1,39 @@
+<div align="center">
+
+<p><?php print_string("paymentrequired") ?></p>
+<p><b><?php echo get_string("cost").": $CFG->enrol_paypalcurrency $cost"; ?></b></p>
+<p><?php print_string("paymentinstant") ?></p>
+        
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 
 <input type="hidden" name="cmd" value="_xclick">
 <input type="hidden" name="business" value="<?php p($CFG->enrol_paypalbusiness)?>">
 <input type="hidden" name="item_name" value="<?php p($course->fullname) ?>">
-<input type="hidden" name="item_number" value="<?php p($course->id) ?>">
-<input type="hidden" name="custom" value="<?php p($USER->id) ?>">
+<input type="hidden" name="item_number" value="<?php p($course->shortname) ?>">
 <input type="hidden" name="quantity" value="1">
-<input type="hidden" name="return" value="<?php echo "$CFG->wwwroot/enrol/paypal/thankyou.php?courseid=$course->id" ?>">
-<input type="hidden" name="cancel_return" value="<?php echo $CFG->wwwroot ?>">
+<input type="hidden" name="on0" value="<?php print_string("user") ?>">
+<input type="hidden" name="os0" value="<?php echo fullname($USER) ?>">
+<input type="hidden" name="custom" value="<?php echo "$USER->id-$course->id" ?>">
 
 <input type="hidden" name="currency_code" value="<?php p($CFG->enrol_paypalcurrency) ?>">
 <input type="hidden" name="amount" value="<?php p($cost) ?>">
+
+<input type="hidden" name="no_note" value="1">
+<input type="hidden" name="notify_url" value="<?php echo "$CFG->wwwroot/enrol/paypal/ipn.php"?>">
+<input type="hidden" name="return" value="<?php echo "$CFG->wwwroot/enrol/paypal/return.php?id=$course->id" ?>">
+<input type="hidden" name="cancel_return" value="<?php echo $CFG->wwwroot ?>">
+<input type="hidden" name="rm" value="1">
+<input type="hidden" name="cbt" value="<?php print_string("continuetocourse") ?>">
+
+<input type="hidden" name="first_name" value="<?php p($USER->firstname) ?>">
+<input type="hidden" name="last_name" value="<?php p($USER->lastname) ?>">
+<input type="hidden" name="address" value="<?php p($USER->address) ?>">
+<input type="hidden" name="city" value="<?php p($USER->city) ?>">
+<input type="hidden" name="email" value="<?php p($USER->email) ?>">
+<input type="hidden" name="country" value="<?php p($USER->country) ?>">
 
 <input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_paypal") ?>">
 
 </form>
 
+</div>

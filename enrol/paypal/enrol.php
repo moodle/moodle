@@ -22,7 +22,7 @@ class enrolment_plugin extends enrolment_base {
 
 /// Override the base print_entry() function
 function print_entry($course) {
-    global $CFG;
+    global $CFG, $USER;
 
 
     $strloginto = get_string("loginto", "", $course->shortname);
@@ -37,6 +37,7 @@ function print_entry($course) {
     } else {
         $cost = (float) $course->cost;
     }
+    $cost = format_float($cost, 2);
 
 
     if (abs($cost) < 0.01) { // no cost, default to base class entry to course
@@ -46,13 +47,12 @@ function print_entry($course) {
 
     } else {
 
-        print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto");
-        print_course($course);
+        print_header($strloginto, $course->fullname, 
+                     "<a href=\"$CFG->wwwroot/courses/\">$strcourses</a> -> $strloginto");
+        print_course($course, "80%");
         print_simple_box_start("center");
 
-        printf ("<p align=\"center\"><b>$course->fullname</b> has a cost of $CFG->enrol_paypalcurrency %01.2f</p>", $cost);
-        
-        echo "<div align=\"center\">";
+
         include("$CFG->dirroot/enrol/paypal/enrol.html");
         echo "</div>";
 
