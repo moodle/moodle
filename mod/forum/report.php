@@ -31,11 +31,7 @@
         $sort = "r.time";
     }
 
-    if (!$scale = get_record("scale", "id", $forum->scale)) {
-        error("Scale not found!");
-    }
-
-    $scalemenu = make_menu_from_list($scale->scale);
+    $scalemenu = make_grades_menu($forum->scale);
 
     $strratings = get_string("ratings", "forum");
     $strrating = get_string("rating", "forum");
