@@ -110,13 +110,8 @@ input {
     padding:0px;
     border:0px;
 }
-#left-column br,
-#right-column br {
-    display:none;
-}
-#left-column .sideblockmain br,
-#right-column .sideblockmain br {
-    display:inline;
+#left-column .sideblock {
+    margin-bottom:0;
 }
 #middle-column {
     padding:0px 15px;
@@ -144,9 +139,13 @@ h4 { }
 
 .generaltable { }
 
-.generaltableheader { }
-
 .generaltablecell { }
+
+.generaltableheader,
+.headingblock,
+.outlineheadingblock {
+    background-image:none;
+}
 
 .sideblock {
     width:100%;
@@ -155,6 +154,7 @@ h4 { }
 }
 
 .sideblockheading {
+    background-image:none;
     padding:0px 5px;
     border-width:1px 0px 0px 1px;
     border-style:solid;
