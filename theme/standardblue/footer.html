@@ -2,15 +2,6 @@
 <CENTER>
 <HR SIZE=1 NOSHADE>
 <FONT SIZE=1>
-<P>
-<? if ($USER->id) {
-       echo get_string("loggedinas", "moodle", "$USER->firstname $USER->lastname");
-	   echo " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
-   } else { 
-       echo get_string("loggedinnot", "moodle");
-       echo " (<A HREF=\"$CFG->wwwroot/login/\">".get_string("login")."</A>)";
-   } 
-?>
-</P>
+<P><?=$loggedinas ?></P>
 <P><?=$homelink ?></P>
 </FONT>
