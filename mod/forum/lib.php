@@ -2674,7 +2674,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
                 }
                 echo "<br />";
             } else {
-                $by->name = fullname($post, isteacher($course->id));
+                $by->name = fullname($post, isteacher($course));
                 $by->date = userdate($post->modified);
                 echo "<li><p><a name=\"$post->id\"></a><font size=-1><b><a href=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</a></b> ";
                 print_string("bynameondate", "forum", $by);
