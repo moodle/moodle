@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
 
-$string['thislanguage'] = "English";  // Name of this language in the native language eg Français 
+$string['thislanguage'] = "English";    // Name of this language in the native language eg Français 
 $string['thischarset'] = "iso-8859-1";  // The best charset to use for this language
+$string['thisdirection'] = "ltr";       // The direction of the text - rtl or ltr
 $string['action'] = "Action";
 $string['activities'] = "Activities";
 $string['activity'] = "Activity";
@@ -656,6 +657,7 @@ $string['scalescustom'] = "Custom scales";
 $string['scalescustomno'] = "No custom scales have been created yet";
 $string['scalescustomcreate'] = "Add a new scale";
 $string['scalesstandard'] = "Standard scales";
+$string['scalestip'] = "To create custom scales, use the 'Scales...' link in your course administration menu.";
 $string['search'] = "Search";
 $string['searchagain'] = "Search again";
 $string['searchcourses'] = "Search courses";
