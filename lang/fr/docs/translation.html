@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Guide de traduction de Moodle</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body style="background-color: #ffffff;">
+
+<h1>Guide de traduction de Moodle</h1>
+
+<p>La traduction de Moodle n'est pas si difficile. Avant de commencer, il est cependant sage de conna&icirc;tre certaines choses.</p>
+
+<h2>Structure des fichiers de langue de Moodle</h2>
+
+<p style="margin-left: 40px;">Les diff&eacute;rentes traductions sont situ&eacute;es dans le dossier <strong>lang</strong>, chaque langue dans un dossier unique dont le nom est le m&ecirc;me que celui de l'abbr&eacute;viation de la langue&nbsp;: fr, fr_CA, en, de, it, es, ...</p>
+
+<p style="margin-left: 40px;">Les fichiers principaux sont situ&eacute;s directement dans ce dossier, et se terminent tous l'extension &laquo; .php&nbsp;&raquo;, par exemple moodle.php, resource.php, etc. Ces fichiers contiennent des expressions plus ou moins courtes, appel&eacute;es le plus souvent &laquo;&nbsp;<em>cha&icirc;nes de caract&egrave;res</em>&nbsp;&raquo; ou tout simplement &laquo;&nbsp;<em>cha&icirc;nes</em>&nbsp;&raquo;.</p>
+
+<p style="margin-left: 40px;">Certains dossiers contiennent des fichiers avec l'extension &laquo;&nbsp;.html&nbsp;&raquo;&nbsp;(des pages web)&nbsp;: </p>
+
+<ul style="margin-left: 40px;">
+
+<li><strong>help</strong>&nbsp;: contient les fichiers d'aide contextuelle qui s'ouvrent lorsque l'on clique sur les ic&ocirc;nes d'aide de Moodle&nbsp;;</li>
+
+<li><strong>docs</strong>&nbsp;: contient les fichiers de la documentation de base (comme celui-ci&nbsp;!)</li>
+
+</ul>
+
+<h2>Cr&eacute;ation d'une toute nouvelle langue pour Moodle</h2>
+
+<p style="margin-left: 40px;">Si votre langue n'est pas encore support&eacute;e par Moodle, ou si vous voulez juste apporter quelques personnalisations &agrave; l'interface de votre site, vous pouvez commencer une nouvelle traduction.</p>
+
+<p style="margin-left: 40px;">Pour ce faire, commencez par cr&eacute;er un nouveau dossier dans le dossier <strong>lang</strong> en utilisant pour son nom le code &agrave; 2 lettres de votre langue. Ces codes standard sont d&eacute;crits dans le fichier <strong>lib/languages.php</strong>. Si vous faites simplement une adaptation locale d'une autre langue, utilisez comme nom le code de cette langue, suivi d'un caract&egrave;re soulign&eacute; et d'une extension significative de 2 lettres. Par exemple la langue fran&ccedil;aise est d&eacute;sign&eacute;e par <em>fr</em>, et le canadien-fran&ccedil;ais par <em>fr_ca</em>. Si vous faites une version Unicode d'une traduction, ajoutez <em>_utf8</em> &agrave; la fin (par exemple <em>fr_utf8</em>).</p>
+
+<p style="margin-left: 40px;">Ensuite, copiez le fichier <strong>moodle.php</strong> d'une autre langue dans votre nouveau dossier. Celui du dossier <strong>en</strong> est le plus actuel, mais peu importe puisque vous allez de toute fa&ccedil;on le r&eacute;&eacute;crire.</p>
+
+<p style="margin-left: 40px;">Vous &ecirc;tes maintenant pr&ecirc;t &agrave; ins&eacute;rer les cha&icirc;nes de caract&egrave;res de votre langue&nbsp;! Pour plus de d&eacute;tails voyez ci-dessous.</p>
+
+<p style="margin-left: 40px;">Si vous cr&eacute;ez une toute nouvelle langue, la premi&egrave;re cha&icirc;ne &agrave; modifier est celle d&eacute;nomm&eacute;e <strong>thischarset</strong> dans le fichier <strong>moodle.php</strong>. Cette cha&icirc;ne doit contenir un jeu de caract&egrave;res web valide pour votre langue. Apr&egrave;s avoir modifi&eacute; cette cha&icirc;ne, enregistrer le fichier <strong>moodle.php</strong>, puis rechargez la page. Vous pouvez alors continuer &agrave; modifier les autres cha&icirc;nes de caract&egrave;res. </p>
+
+<h2>Modification d'une langue existante</h2>
+
+<h3 style="margin-left: 40px;">Effectuer de petits changements</h3>
+
+<p style="margin-left: 80px;">Si vous voulez juste effectuer quelques petits am&eacute;nagements dans l'interface pour mieux l'adapter &agrave; votre site, <strong>ne modifiez pas les fichiers de langue standard</strong>&nbsp;! Si vous le faites, toutes vos modifications seront effac&eacute;es lors de la prochaine mise &agrave; jour de Moodle que vous effectuerez.</p>
+
+<p style="margin-left: 80px;">Utilisez plut&ocirc;t les instructions ci-dessus pour cr&eacute;er un tout nouveau dossier de langue, et donnez pour valeur &agrave; la cha&icirc;ne <strong>parentlanguage</strong> du fichier <strong>moodle.php</strong> le code de la langue la plus proche de la v&ocirc;tre (la langue &laquo;&nbsp;m&egrave;re&nbsp;&raquo;). Par exemple, une bonne d&eacute;nomination pour une version fran&ccedil;aise locale sera&icirc;t &laquo;&nbsp;<em>fr_local</em>&nbsp;&raquo;, et la cha&icirc;ne <strong>parentlanguage</strong> aura&icirc;t pour valeur <em>fr</em> ou <em>fr_ca</em>.</p>
+
+<p style="margin-left: 80px;">Pour que chacun puisse profiter sur votre site des modifications, vous devrez s&eacute;lectionner cette nouvelle langue comme langue du site par d&eacute;faut et restreindre les langues disponibles dans la page  <strong>Administration -&gt; Configuration -&gt; Param&egrave;tres techniques</strong>.</p>
+
+<h3 style="margin-left: 40px;">Traduire les fichiers de langue de Moodle (les fichiers de cha&icirc;nes)</h3>
+
+<ol>
+
+<ol>
+
+<li>Connectez-vous sur votre serveur Moodle en tant qu'administrateur.</li>
+
+<li>Allez dans <strong>Administration -&gt; Configuration -&gt; Langue</strong>, qui est la page d'administration des langues. </li>
+
+<li>Sur cette page, choisissez votre langue, puis cliquez sur &laquo;&nbsp;Comparer et modifier la langue active&nbsp;&raquo;.</li>
+
+<li>Vous devriez maintenant voir un formulaire o&ugrave; vous pouvez modifer les cha&icirc;nes du fichier <strong>moodle.php</strong>. Si ce n'est pas le cas, vous devrez vous assurez que les fichiers de langue peuvent &ecirc;tre modifi&eacute;s. vous aurez peut-&ecirc;tre &agrave; changer les droits de lecture et d'&eacute;criture sur ces fichiers.</li>
+
+<li>Le formulaire comprend trois colonnes. La premi&egrave;re est le nom de chaque cha&icirc;ne, la deuxi&egrave;me la cha&icirc;ne en anglais et la derni&egrave;re sa traduction dans la langue actuelle.</li>
+
+<li>Modifiez les cha&icirc;nes manquantes, surlign&eacute;es en couleur. N'oubliez pas de cliquer sur le bouton &laquo;&nbsp;Enregistrer: moodle.php&nbsp;&raquo; lorsque vous aurez termin&eacute;. R&eacute;p&eacute;tez ce processus pour les autres fichiers, que vous pouvez modifier en cliquant sur leur nom au sommet de la page.</li>
+
+<li>Vous pouvez laisser des cha&icirc;nes vides. Moodle utilisera dans ce cas la cha&icirc;ne de la langue m&egrave;re (parentlanguage). si vous n'avez pas d&eacute;fini la langue m&egrave;re dans le fichier <strong>moodle.php</strong>, l'anglais sera utilis&eacute; par d&eacute;faut.</li>
+
+<li>Une fa&ccedil;on rapide de voir toutes les cha&icirc;nes manquantes est de cliquer sur &laquo;&nbsp;V&eacute;rifier les textes manquant&nbsp;&raquo;.</li>
+
+</ol>
+
+</ol>
+
+<h3 style="margin-left: 40px;">Traduire les fichiers d'aide et la documentation</h3>
+
+<p style="margin-left: 80px;">Il n'y a pas encore d'&eacute;diteur int&eacute;gr&eacute; dans Moodle pour traduire les fichiers d'aide et la documentation, mais ce n'est pas vraiment difficile. Il est important d'utiliser la langue <strong>en</strong> comme langue de r&eacute;f&eacute;rence. Copiez un fichier d'aide de ce dossier au m&ecirc;me endroit dans votre propre dossier de langue. Utilisez ensuite un &eacute;diteur de texte pour modifier le fichier, en vous assurant de ne pas modifier le code qu'il contient (en g&eacute;n&eacute;ral des balises HTML). N'UTILISEZ PAS UN TRAITEMENT DE TEXTE&nbsp;pour modifier ou &eacute;crire ces fichiers. Ces programmes les font grossir inutilement&nbsp;!</p>
+
+<p style="margin-left: 80px;">Si vous cliquez sur &laquo;&nbsp;V&eacute;rifier les textes manquant&nbsp;&raquo; dans la page d'administration des langues, une liste des fichiers manquant sera &eacute;galement affich&eacute;e. En lieu et place des fichiers manquant, Moodle utilisera les fichiers de la langue m&egrave;re (parentlanguage). Il n'est donc pas n&eacute;cessaire de conserver des copies non traduites des fichiers d'aide dans votre dossier de langue.</p>
+
+<h2>Offrir votre dossier de langue au projet Moodle</h2>
+
+<p style="margin-left: 40px;">En offrant votre traduction au projet Moodle, vous aiderez les autres personnes parlant votre langue. Votre langue sera en outre distribu&eacute;e avec toutes les versions futures de Moodle.</p>
+
+<p style="margin-left: 40px;">Compressez simplement votre dossier de langue complet en un fichier <strong>zip</strong> et envoyez-le &agrave; translation@moodle.org.</p>
+
+<p style="margin-left: 40px;">Nous vous communiquerons alors  tous les d&eacute;tails n&eacute;cessaires.</p>
+
+<h2>Maintenance de fichiers de langue standard</h2>
+
+<p style="margin-left: 40px;">Si vous vous &ecirc;tes engag&eacute; dans la maintenance d'une langue dans Moodle, vous aurez int&eacute;r&ecirc;t &agrave; utiliser le <a href="?file=cvs.html">CVS de Moodle</a> afin d'avoir &agrave; disposition une version de Moodle toujours &agrave; jour et de pouvoir d&eacute;poser vos modifications directement dans le projet Moodle.</p>
+
+<p style="margin-left: 40px;">Pour &ecirc;tre au courant des changements dans le projet, il est des plus judicieux de s'abonner &agrave; la <a href="http://sourceforge.net/mail/?group_id=30935" target="_top">liste de distribution CVS</a>. Cela vous aidera &agrave; garder votre traduction aussi proche du texte anglais que possible.</p>
+
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentation Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>
