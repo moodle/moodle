@@ -876,7 +876,7 @@
                     $dbmetacourse = false;
                     //Check if child course exists in destination server
                     //(by id in the same server or by idnumber and shortname in other server)
-                    if (!$restore->original_wwwroot == $CFG->wwwroot) {
+                    if ($restore->original_wwwroot == $CFG->wwwroot) {
                         //Same server, lets see by id
                         $dbcourse = get_record('course','id',$child->id);
                     } else {
@@ -906,7 +906,7 @@
                     $dbmetacourse = false;
                     //Check if parent course exists in destination server
                     //(by id in the same server or by idnumber and shortname in other server)
-                    if (!$restore->original_wwwroot == $CFG->wwwroot) {
+                    if ($restore->original_wwwroot == $CFG->wwwroot) {
                         //Same server, lets see by id
                         $dbcourse = get_record('course','id',$parent->id);
                     } else {
