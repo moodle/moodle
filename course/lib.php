@@ -1359,6 +1359,7 @@ function print_course_search($value="", $return=false, $format="plain") {
 function add_course_module($mod) {
 
     $mod->added = time();
+    unset($mod->id);
 
     return insert_record("course_modules", $mod);
 }
