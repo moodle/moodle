@@ -3,7 +3,7 @@
 <tr valign="top">
     <td align="right"><p><b><?php print_string("subject", "forum"); ?>:</b></p></td>
     <td>
-        <input type="text" name="subject" size="60" value="<?php p($post->subject) ?>">
+        <input type="text" name="subject" size="60" value="<?php p($post->subject) ?>" />
     </td>
 </tr>
 <tr valign="top">
@@ -45,7 +45,7 @@
     <?php 
         if ($usehtmleditor) {   /// Trying this out for a while
             print_string('formathtml');
-            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'">';
+            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
             choose_from_menu(format_text_menu(), "format", $post->format, "");
         }
@@ -89,8 +89,8 @@
     <td align="right"><p><b><?php print_string("attachment", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></p></td>
     <td>
     <?php $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $forum->maxbytes); ?>
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>">
-    <input type="file" name="attachment" size="40"> 
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>" />
+    <input type="file" name="attachment" size="40" /> 
     <?php 
        helpbutton("attachment", get_string("attachment", "forum"), "forum"); 
        print_string("maxsize", "", display_size($maxbytes)); 
@@ -103,14 +103,14 @@
 
 <tr>
     <td align="center" colspan="2">
-    <input type="hidden" name="course"     value="<?php p($post->course) ?>">
-    <input type="hidden" name="forum"      value="<?php p($post->forum) ?>">
-    <input type="hidden" name="discussion" value="<?php p($post->discussion) ?>">
-    <input type="hidden" name="parent"     value="<?php p($post->parent) ?>">
-    <input type="hidden" name="userid"     value="<?php p($post->userid) ?>">
-    <input type="hidden" name="groupid"    value="<?php p($post->groupid) ?>">
-    <input type="hidden" name="edit"       value="<?php p($post->edit) ?>">
-    <input type="submit" value="<?php p(($post->edit) ? get_string('savechanges') : get_string('posttoforum', 'forum')); ?>">
+    <input type="hidden" name="course"     value="<?php p($post->course) ?>" />
+    <input type="hidden" name="forum"      value="<?php p($post->forum) ?>" />
+    <input type="hidden" name="discussion" value="<?php p($post->discussion) ?>" />
+    <input type="hidden" name="parent"     value="<?php p($post->parent) ?>" />
+    <input type="hidden" name="userid"     value="<?php p($post->userid) ?>" />
+    <input type="hidden" name="groupid"    value="<?php p($post->groupid) ?>" />
+    <input type="hidden" name="edit"       value="<?php p($post->edit) ?>" />
+    <input type="submit" value="<?php p(($post->edit) ? get_string('savechanges') : get_string('posttoforum', 'forum')); ?>" />
     </td>
 
 </tr>

@@ -2015,13 +2015,13 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
         if (isteacher($course->id)) { 
             // ...show two buttons...to resubmit or not to resubmit
             echo "<input type=\"button\" value=\"".get_string("studentnotallowed", "exercise", $course->student)."\" 
-                onclick=\"document.assessmentform.submit();\">\n";
+                onclick=\"document.assessmentform.submit();\" />\n";
             echo "<input type=\"button\" value=\"".get_string("studentallowedtoresubmit", "exercise", $course->student)."\" 
-                onclick=\"document.assessmentform.resubmit.value='1';document.assessmentform.submit();\">\n";
+                onclick=\"document.assessmentform.resubmit.value='1';document.assessmentform.submit();\" />\n";
             }
         else {
             // ... show save button
-            echo "<input type=\"submit\" value=\"".get_string("savemyassessment", "exercise")."\">\n";
+            echo "<input type=\"submit\" value=\"".get_string("savemyassessment", "exercise")."\" />\n";
             }
         }
     echo "</center></form>\n";
@@ -2782,9 +2782,9 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     // ...and close the table and show two buttons...to resubmit or not to resubmit
     echo "</table>\n";
     echo "<br /><input type=\"button\" value=\"".get_string("studentnotallowed", "exercise", $course->student)."\" 
-        onclick=\"document.assessmentform.submit();\">\n";
+        onclick=\"document.assessmentform.submit();\" />\n";
     echo "<input type=\"button\" value=\"".get_string("studentallowedtoresubmit", "exercise", $course->student)."\" 
-        onclick=\"document.assessmentform.resubmit.value='1';document.assessmentform.submit();\">\n";
+        onclick=\"document.assessmentform.resubmit.value='1';document.assessmentform.submit();\" />\n";
     echo "</center></form>\n";
 }
 

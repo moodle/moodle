@@ -41,7 +41,7 @@ if (empty($form->id)) {
 <tr valign=top>
     <td align=right><p><b><?php print_string("name") ?>:</b></p></td>
     <td colspan="3">
-        <input type="text" name="name" size=60 value="<?php p($form->notes)?>">
+        <input type="text" name="name" size=60 value="<?php p($form->notes)?>" />
     </td>
 </tr>
 
@@ -59,7 +59,7 @@ if (empty($form->id)) {
         choose_from_menu($options, "dynsection", "$form->dynsection", "");
         helpbutton("dynsection", get_string("dynamicsection","attendance"), "attendance");
 ?>
-<!--      <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> > -->
+<!--      <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> /> -->
     </TD>
 </tr>
 <tr valign=top>
@@ -74,7 +74,7 @@ if (empty($form->id)) {
         helpbutton("autoattend", get_string("autoattend","attendance"), "attendance");
 ?>
 
-<!--      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> > -->
+<!--      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> /> -->
     </TD>
 </tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
@@ -95,7 +95,7 @@ for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
         choose_from_menu($options, "grade", "$form->grade", "");
         helpbutton("grade", get_string("gradevalue","attendance"), "attendance");
 ?>
-<!--      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> > -->
+<!--      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> /> -->
     </TD>
 </tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
@@ -178,17 +178,17 @@ if ($form->hours >1) {
     if ($rollstatus==1) {$r2c="checked";}
     elseif ($rollstatus==2) {$r3c="checked";}
     else {$r1c="checked";}
-    $radio1="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"0\" ".$r1c.">";
-	  $radio2="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"1\" ".$r2c.">";
-    $radio3="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"2\" ".$r3c.">";  	
+    $radio1="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"0\" ".$r1c." />";
+	  $radio2="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"1\" ".$r2c." />";
+    $radio3="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"2\" ".$r3c." />";  	
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$radio1."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio2."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio3."</td>\n";
 	} // for loop
     echo "</tr>\n";
-//      $radio1="<input type=\"radio\" name=\"student_".$student->id."\" value=\"0\" checked>";
-//	    $radio2="<input type=\"radio\" name=\"student_".$student->id."\" value=\"1\">";
-//      $radio3="<input type=\"radio\" name=\"student_".$student->id."\" value=\"2\">";
+//      $radio1="<input type=\"radio\" name=\"student_".$student->id."\" value=\"0\" checked />";
+//	    $radio2="<input type=\"radio\" name=\"student_".$student->id."\" value=\"1\" />";
+//      $radio3="<input type=\"radio\" name=\"student_".$student->id."\" value=\"2\" />";
 //      $table->data[$i]=array($student->lastname, $student->firstname,
 //	      $student->idnumber, $radio1,$radio2,$radio3);
 //      $i++;

@@ -168,10 +168,10 @@
     if ($allowedtograde) {
         echo '<form action="submissions.php" method="post">';
         echo "<center>";
-        echo "<input type=hidden name=sort value=\"$sort\">";
-        echo "<input type=hidden name=timenow value=\"$timenow\">";
-        echo "<input type=hidden name=id value=\"$assignment->id\">";
-        echo "<input type=submit value=\"$strsaveallfeedback\">";
+        echo "<input type=hidden name=sort value=\"$sort\" />";
+        echo "<input type=hidden name=timenow value=\"$timenow\" />";
+        echo "<input type=hidden name=id value=\"$assignment->id\" />";
+        echo "<input type=submit value=\"$strsaveallfeedback\" />";
         echo "</center>";
     }
     
@@ -186,10 +186,10 @@
 
     if ($allowedtograde) {
         echo "<center>";
-        echo "<input type=hidden name=sort value=\"$sort\">";
-        echo "<input type=hidden name=timenow value=\"$timenow\">";
-        echo "<input type=hidden name=id value=\"$assignment->id\">";
-        echo "<input type=submit value=\"$strsaveallfeedback\">";
+        echo "<input type=hidden name=sort value=\"$sort\" />";
+        echo "<input type=hidden name=timenow value=\"$timenow\" />";
+        echo "<input type=hidden name=id value=\"$assignment->id\" />";
+        echo "<input type=submit value=\"$strsaveallfeedback\" />";
         echo "</center>";
         echo "</form>";
     }

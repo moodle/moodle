@@ -137,8 +137,8 @@
                 if ($names = dialogue_get_available_users($dialogue)) {
                     print_simple_box_start("center");
                     echo "<form name=\"startform\" method=\"post\" action=\"dialogues.php\">\n";
-                    echo "<input type=\"hidden\" name=\"id\"value=\"$cm->id\"/>\n";
-                    echo "<input type=\"hidden\" name=\"action\" value=\"openconversation\"/>\n";
+                    echo "<input type=\"hidden\" name=\"id\"value=\"$cm->id\"/ />\n";
+                    echo "<input type=\"hidden\" name=\"action\" value=\"openconversation\"/ />\n";
                     echo "<table align=\"center\" border=\"0\"><tr>\n";
                     echo "<td align=\"right\"><b>".get_string("openadialoguewith", "dialogue").
                         " : </b></td>\n";
@@ -148,7 +148,7 @@
                     echo "</td></tr>\n";
                     echo "<tr><td align=\"right\"><b>".get_string("subject", "dialogue")." : </b></td>\n";
                     echo "<td><input type=\"text\" size=\"50\" maxsize=\"100\" name=\"subject\" 
-                        value=\"\"></td></tr>\n";
+                        value=\"\" /></td></tr>\n";
                     echo "<tr><td colspan=\"2\" align=\"center\" valign=\"top\"><i>".
                         get_string("typefirstentry", "dialogue")."</i></td></tr>\n";
                     echo "<tr><td valign=\"top\" align=\"right\">\n";

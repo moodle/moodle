@@ -417,8 +417,8 @@ function dialogue_list_conversations_self($dialogue) {
     
     echo "<form name=\"replies\" method=\"post\" action=\"dialogues.php\">\n";
     echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\"/>\n";
-    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\"/>\n";
-    echo "<input type=\"hidden\" name=\"pane\" value=\"1\"/>\n";
+    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+    echo "<input type=\"hidden\" name=\"pane\" value=\"1\" />\n";
 
     // list the conversations requiring a resonse from this user in full
     if ($conversations = dialogue_get_conversations($dialogue, $USER, "lastid != $USER->id AND closed = 0")) {
@@ -531,8 +531,8 @@ function dialogue_print_conversation($dialogue, $conversation) {
     
     echo "<form name=\"replies\" method=\"post\" action=\"dialogues.php\">\n";
     echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\"/>\n";
-    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\"/>\n";
-    echo "<input type=\"hidden\" name=\"pane\" value=\"2\"/>\n";
+    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+    echo "<input type=\"hidden\" name=\"pane\" value=\"2\" />\n";
 
     $showbutton = true;
     print_simple_box_start("center", "", $THEME->cellcontent2);
@@ -597,7 +597,7 @@ function dialogue_print_conversation($dialogue, $conversation) {
     print_simple_box_end();
     if ($showbutton) {
         echo "<hr />\n";
-        echo "<br /><input type=\"submit\" value=\"".get_string("addmynewentry", "dialogue")."\">\n";
+        echo "<br /><input type=\"submit\" value=\"".get_string("addmynewentry", "dialogue")."\" />\n";
     }
     echo "</form>\n";
 }

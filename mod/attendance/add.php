@@ -183,19 +183,19 @@ $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_ho
     <td align=right><p><b><?php print_string("choosedays", "attendance") ?>:</b></p></td>
     <td colspan="3">
     <?php print_string("sunday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="sun" >
+    <input type="checkbox" name="sun" />
     <?php print_string("monday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="mon" "checked">
+    <input type="checkbox" name="mon" checked="checked" />
     <?php print_string("tuesday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="tue" "checked">
+    <input type="checkbox" name="tue" checked="checked" />
     <?php print_string("wednesday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="wed" "checked">
+    <input type="checkbox" name="wed" checked="checked" />
     <?php print_string("thursday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="thu" "checked">
+    <input type="checkbox" name="thu" checked="checked" />
     <?php print_string("friday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="fri" "checked">
+    <input type="checkbox" name="fri" checked="checked" />
     <?php print_string("saturday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="sat" >
+    <input type="checkbox" name="sat" />
 <?php helpbutton("choosedays", get_string("choosedays","attendance"), "attendance");?>
     </td>
 </tr>
@@ -210,7 +210,7 @@ $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_ho
         choose_from_menu($options, "dynsection", "", "");
         helpbutton("dynsection", get_string("dynamicsectionmulti","attendance"), "attendance");
 ?>
-<!--      <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> > -->
+<!--      <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> /> -->
 </td>
 </tr>
 <tr valign=top>
@@ -225,7 +225,7 @@ $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_ho
 ?>
 
 
-<!--      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> > -->
+<!--      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> /> -->
     </td>
 </tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
@@ -248,7 +248,7 @@ for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
         helpbutton("grade", get_string("gradevalue","attendance"), "attendance");
 ?>
 
-<!--      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> > -->
+<!--      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> /> -->
     </td>
 </tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1

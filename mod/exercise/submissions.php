@@ -69,9 +69,9 @@
         print_heading(get_string("amendtitle", "exercise"));
         ?>
         <form name="amendtitleform" action="submissions.php" method="post">
-        <input type="hidden" name="action" value="adminupdatetitle">
-        <input type="hidden" name="id" value="<?php echo $cm->id ?>">
-        <input type="hidden" name="sid" value="<?php echo $_REQUEST['sid'] ?>">
+        <input type="hidden" name="action" value="adminupdatetitle" />
+        <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+        <input type="hidden" name="sid" value="<?php echo $_REQUEST['sid'] ?>" />
         <center>
         <table celpadding="5" border="1">
         <?php
@@ -80,9 +80,9 @@
         echo "<tr valign=\"top\">\n";
         echo "    <td align=\"right\"><p><b>". get_string("title", "exercise").":</b></p></td>\n";
         echo "    <td>\n";
-        echo "        <input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\">\n";
+        echo "        <input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\" />\n";
         echo "    </td></tr></table>\n";
-        echo "<input type=\"submit\" value=\"".get_string("amendtitle", "exercise")."\">\n";
+        echo "<input type=\"submit\" value=\"".get_string("amendtitle", "exercise")."\" />\n";
         echo "</center></form>\n";
 
         }

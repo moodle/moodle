@@ -110,9 +110,9 @@
         echo "<table align=\"center\"border=\"1\" width=\"60%\">\n";
         echo "<tr><td align=\"right\"><b>".get_string("subject", "dialogue")."</b></td>";
         echo "<td><input type=\"text\" size=\"50\" maxsize=\"100\" name=\"subject\" 
-                value=\"\"></td></tr>\n";
+                value=\"\" /></td></tr>\n";
         echo "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"".
-            get_string("addsubject", "dialogue")."\"></td></tr>\n";
+            get_string("addsubject", "dialogue")."\" /></td></tr>\n";
         echo "</table></form>\n";
     }
     

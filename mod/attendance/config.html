@@ -57,9 +57,9 @@
 	    if ($CFG->attendance_default_student_status == 1) {$r2c="checked";}
 	    elseif ($CFG->attendance_default_student_status == 2) {$r3c="checked";}
 	    else {$r1c="checked";}
-      $radio1="<input type=\"radio\" name=\"attendance_default_student_status\" value=\"0\" ".$r1c.">";
- 	    $radio2="<input type=\"radio\" name=\"attendance_default_student_status\" value=\"1\" ".$r2c.">";
-      $radio3="<input type=\"radio\" name=\"attendance_default_student_status\" value=\"2\" ".$r3c.">";  	
+      $radio1="<input type=\"radio\" name=\"attendance_default_student_status\" value=\"0\" ".$r1c." />";
+ 	    $radio2="<input type=\"radio\" name=\"attendance_default_student_status\" value=\"1\" ".$r2c." />";
+      $radio3="<input type=\"radio\" name=\"attendance_default_student_status\" value=\"2\" ".$r3c." />";  	
       echo "<table><tr><td align=\"left\" nowrap class=\"generaltablecell\">".
         $radio1.$P."</td>\n";
       echo "<td align=\"left\" nowrap class=\"generaltablecell\">".
@@ -109,7 +109,7 @@
 
 <tr>
     <td colspan=3 align=center>
-	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
+	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>
 

@@ -12,10 +12,10 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
   echo $arsc_parameters["htmlhead_msginput"];
   ?>
     <form action="../shared/chatins.php" method="POST" name="f">
-     <input type="hidden" name="arsc_sid" value="<?php echo $arsc_sid; ?>">
-     <input type="hidden" name="arsc_chatversion" value="header">
-     <input type="text" name="arsc_message" size="50" maxlength="<?php echo $arsc_parameters["input_maxsize"]; ?>" value="<?php echo $arsc_pretext; ?>">
-     <input type="submit" value="<?php echo $arsc_lang["sendmessage"]; ?>">
+     <input type="hidden" name="arsc_sid" value="<?php echo $arsc_sid; ?>" />
+     <input type="hidden" name="arsc_chatversion" value="header" />
+     <input type="text" name="arsc_message" size="50" maxlength="<?php echo $arsc_parameters["input_maxsize"]; ?>" value="<?php echo $arsc_pretext; ?>" />
+     <input type="submit" value="<?php echo $arsc_lang["sendmessage"]; ?>" />
     </form>
    </body>
   </html>

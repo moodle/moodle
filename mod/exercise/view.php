@@ -251,7 +251,7 @@
 			if (!$correctpass) {
 				print_simple_box_start("center");
 				echo "<form name=\"password\" method=\"post\" action=\"view.php\">\n";
-				echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+				echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
 				echo "<table cellpadding=\"7px\">";
 				if (isset($_POST['userpassword'])) {
 					echo "<tr align=\"center\" style='color:#DF041E;'><td>".get_string("wrongpassword", "exercise").
@@ -260,13 +260,13 @@
 				echo "<tr align=\"center\"><td>".get_string("passwordprotectedexercise", "exercise", $exercise->name).
                     "</td></tr>";
 				echo "<tr align=\"center\"><td>".get_string("enterpassword", "exercise").
-                    " <input type=\"password\" name=\"userpassword\"></td></tr>";
+                    " <input type=\"password\" name=\"userpassword\" /></td></tr>";
 						
 				echo "<tr align=\"center\"><td>";
 				echo "<input type=\"button\" value=\"".get_string("cancel").
                     "\" onclick=\"parent.location='../../course/view.php?id=$course->id';\">  ";
 				echo "<input type=\"button\" value=\"".get_string("continue").
-                    "\" onclick=\"document.password.submit();\">";
+                    "\" onclick=\"document.password.submit();\" />";
 				echo "</td></tr></table>";
 				print_simple_box_end();
 				exit();

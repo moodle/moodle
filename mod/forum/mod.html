@@ -45,7 +45,7 @@
 <tr valign="top">
     <td align="right"><p><b><?php print_string("forumname", "forum")?>:</b></p></td>
     <td>
-        <input type="text" name="name" size="30" value="<?php p($form->name) ?>">
+        <input type="text" name="name" size="30" value="<?php p($form->name) ?>" />
     </td>
 </tr>
 <tr valign="top">
@@ -60,10 +60,10 @@
        }
        if ($form->type == "news") {
            print_string("namenews", "forum");
-           echo "<input type=\"hidden\" name=\"type\" value=\"news\">";
+           echo "<input type=\"hidden\" name=\"type\" value=\"news\" />";
        } else if ($form->type == "social") {
            print_string("namesocial", "forum");
-           echo "<input type=\"hidden\" name=\"type\" value=\"social\">";
+           echo "<input type=\"hidden\" name=\"type\" value=\"social\" />";
        } else {
            choose_from_menu($FORUM_TYPES, "type", $form->type, "");
            helpbutton("forumtype", get_string("forumtype", "forum"), "forum");
@@ -180,7 +180,7 @@
             if ($form->assessed) {
                 echo " checked ";
             }
-            echo ">";
+            echo " />";
             echo get_string("ratingsuse", "forum").":";
             echo "<br />";
 
@@ -209,7 +209,7 @@
                 $form->ratingtime = 1;
                 echo " checked ";
             }
-            echo ">";
+            echo " />";
 
             print_string("ratingtime", "forum");
             echo "<table align=\"left\"><tr><td align=\"right\" nowrap=\"nowrap\">";
@@ -222,20 +222,20 @@
             print_time_selector("finishhour", "finishminute", $form->assesstimefinish);
             echo "<br />";
             echo "</td></tr></table>";
-            echo "<input type=\"hidden\" name=\"hratingtime\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hassessed\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hassesspublic\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hscale\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hstartday\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hstartmonth\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hstartyear\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hstarthour\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hstartminute\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hfinishday\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hfinishmonth\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hfinishyear\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hfinishhour\" value=\"0\">";
-            echo "<input type=\"hidden\" name=\"hfinishminute\" value=\"0\">";
+            echo "<input type=\"hidden\" name=\"hratingtime\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hassessed\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hassesspublic\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hscale\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hstartday\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hstartmonth\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hstartyear\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hstarthour\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hstartminute\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hfinishday\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hfinishmonth\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hfinishyear\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hfinishhour\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hfinishminute\" value=\"0\" />";
 
             echo "<script>";
             echo "lockoptions('form','userating', subitemsall);";
@@ -251,14 +251,14 @@
 </tr>
 </table>
 <center>
-<input type="hidden" name="course"     value="<?php  p($form->course) ?>">
-<input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>">
-<input type="hidden" name="section"       value="<?php  p($form->section) ?>">
-<input type="hidden" name="module"     value="<?php  p($form->module) ?>">
-<input type="hidden" name="modulename" value="<?php  p($form->modulename) ?>">
-<input type="hidden" name="instance"   value="<?php  p($form->instance) ?>">
-<input type="hidden" name="mode"       value="<?php  p($form->mode) ?>">
-<input type="submit" value="<?php  print_string("savechanges") ?>">
-<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+<input type="hidden" name="course"     value="<?php  p($form->course) ?>" />
+<input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>" />
+<input type="hidden" name="section"       value="<?php  p($form->section) ?>" />
+<input type="hidden" name="module"     value="<?php  p($form->module) ?>" />
+<input type="hidden" name="modulename" value="<?php  p($form->modulename) ?>" />
+<input type="hidden" name="instance"   value="<?php  p($form->instance) ?>" />
+<input type="hidden" name="mode"       value="<?php  p($form->mode) ?>" />
+<input type="submit" value="<?php  print_string("savechanges") ?>" />
+<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
 </center>
 </form>

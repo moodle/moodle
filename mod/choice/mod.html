@@ -56,7 +56,7 @@
 <tr valign="top">
     <td align="right"><p><b><?php print_string("choicename","choice") ?>:</b></p></td>
     <td>
-        <input type="text" name="name" size="30" value="<?php p($form->name) ?>">
+        <input type="text" name="name" size="30" value="<?php p($form->name) ?>" />
     </td>
 </tr>
 
@@ -101,7 +101,7 @@
 <tr valign="top">
     <td align="right"><p><b><?php print_string("choice","choice","1") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer1" size="60" value="<?php p($form->answer1) ?>">
+        <input type="text" name="answer1" size="60" value="<?php p($form->answer1) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
@@ -109,7 +109,7 @@
 <tr valign="top">
     <td align="right"><p><b><?php print_string("choice","choice","2") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer2" size="60" value="<?php p($form->answer2) ?>">
+        <input type="text" name="answer2" size="60" value="<?php p($form->answer2) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
@@ -117,28 +117,28 @@
 <tr valign="top">
     <td align="right"><p><b><?php print_string("choice","choice","3") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer3" size="60" value="<?php p($form->answer3) ?>">
+        <input type="text" name="answer3" size="60" value="<?php p($form->answer3) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><p><b><?php print_string("choice","choice","4") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer4" size="60" value="<?php p($form->answer4) ?>">
+        <input type="text" name="answer4" size="60" value="<?php p($form->answer4) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><p><b><?php print_string("choice","choice","5") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer5" size="60" value="<?php p($form->answer5) ?>">
+        <input type="text" name="answer5" size="60" value="<?php p($form->answer5) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><p><b><?php print_string("choice","choice","6") ?>:</b></p></td>
     <td>
-        <input type="text" name="answer6" size="60" value="<?php p($form->answer6) ?>">
+        <input type="text" name="answer6" size="60" value="<?php p($form->answer6) ?>" />
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
@@ -150,7 +150,7 @@
             var timeitems = ['openday','openmonth','openyear','openhour', 'openminute', 'closeday','closemonth','closeyear','closehour','closeminute'];
         </script>
 
-        <input name="timerestrict" type="checkbox" value="1" onclick="return lockoptions('form','timerestrict', timeitems)" <?php if ($form->timerestrict) echo "checked"; ?> >
+        <input name="timerestrict" type="checkbox" value="1" onclick="return lockoptions('form','timerestrict', timeitems)" <?php if ($form->timerestrict) echo "checked"; ?> />
     <?php
         helpbutton("timerestrict", get_string("timerestrict","choice"), "choice");
      ?>
@@ -173,11 +173,11 @@
         print_time_selector("openhour", "openminute", $form->timeopen);
      ?>
      
-                    <input type="hidden" name="hopenday" value="0">
-                    <input type="hidden" name="hopenmonth" value="0">
-                    <input type="hidden" name="hopenyear" value="0">
-                    <input type="hidden" name="hopenhour" value="0">
-                    <input type="hidden" name="hopenminute" value="0">
+                    <input type="hidden" name="hopenday" value="0" />
+                    <input type="hidden" name="hopenmonth" value="0" />
+                    <input type="hidden" name="hopenyear" value="0" />
+                    <input type="hidden" name="hopenhour" value="0" />
+                    <input type="hidden" name="hopenminute" value="0" />
                 </td>
             </tr>
             <tr>
@@ -192,11 +192,11 @@
         print_time_selector("closehour", "closeminute", $form->timeclose);
      ?>
      
-                    <input type="hidden" name="hcloseday" value="0">
-                    <input type="hidden" name="hclosemonth" value="0">
-                    <input type="hidden" name="hcloseyear" value="0">
-                    <input type="hidden" name="hclosehour" value="0">
-                    <input type="hidden" name="hcloseminute" value="0">
+                    <input type="hidden" name="hcloseday" value="0" />
+                    <input type="hidden" name="hclosemonth" value="0" />
+                    <input type="hidden" name="hcloseyear" value="0" />
+                    <input type="hidden" name="hclosehour" value="0" />
+                    <input type="hidden" name="hcloseminute" value="0" />
 
     <?php
         if (! $form->timerestrict) {
@@ -264,14 +264,14 @@
 </table>
 
 <center>
-<input type="hidden" name="course"     value="<?php p($form->course) ?>">
-<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>">
-<input type="hidden" name="section"       value="<?php p($form->section) ?>">
-<input type="hidden" name="module"     value="<?php p($form->module) ?>">
-<input type="hidden" name="modulename" value="<?php p($form->modulename) ?>">
-<input type="hidden" name="instance"   value="<?php p($form->instance) ?>">
-<input type="hidden" name="mode"       value="<?php p($form->mode) ?>">
-<input type="submit" value="<?php print_string("savechanges") ?>">
-<input type="submit" name="cancel" value="<?php print_string("cancel") ?>">
+<input type="hidden" name="course"     value="<?php p($form->course) ?>" />
+<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>" />
+<input type="hidden" name="section"       value="<?php p($form->section) ?>" />
+<input type="hidden" name="module"     value="<?php p($form->module) ?>" />
+<input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
+<input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
+<input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
+<input type="submit" value="<?php print_string("savechanges") ?>" />
+<input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
 </center>
 </form>

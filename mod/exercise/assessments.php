@@ -81,10 +81,10 @@
         print_heading(get_string("amend", "exercise")." ".get_string("gradeforstudentsassessment", 
                     "exercise", $course->student));
         echo "<form name=\"amendgrade\" method=\"post\" action=\"assessments.php\">\n";
-        echo "<input type=\"hidden\" name=\"aid\" value=\"$_GET[aid]\">\n";
-        echo "<input type=\"hidden\" name=\"action\" value=\"updategradinggrade\">\n";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-        echo "<table width=\"50%\" align=\"center\" border=\"1\">\n";
+        echo "<input type=\"hidden\" name=\"aid\" value=\"$_GET[aid]\" />\n";
+        echo "<input type=\"hidden\" name=\"action\" value=\"updategradinggrade\" />\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+        echo "<table width=\"50%\" align=\"center\" border=\"1\" />\n";
         echo "<tr><td align=\"right\"><b>".get_string("gradeforstudentsassessment", "exercise", 
                 $course->student)." :</td><td>\n";
         // set up coment scale
@@ -263,8 +263,8 @@
         print_heading_with_help(get_string("editingassessmentelements", "exercise"), "elements", "exercise");
         ?>
         <form name="form" method="post" action="assessments.php">
-        <input type="hidden" name="id" value="<?php echo $cm->id ?>">
-        <input type="hidden" name="action" value="insertelements">
+        <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+        <input type="hidden" name="action" value="insertelements" />
         <center><table cellpadding="5" border="1">
         <?php
         
@@ -436,8 +436,8 @@
 
         ?>
         </table><br />
-        <input type="submit" value="<?php  print_string("savechanges") ?>">
-        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+        <input type="submit" value="<?php  print_string("savechanges") ?>" />
+        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </center>
 
         </form>

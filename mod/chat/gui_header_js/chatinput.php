@@ -47,16 +47,16 @@ function empty_field_and_submit() {
 
 <form action="../insert.php" method="GET" target="empty" name="f" 
       OnSubmit="return empty_field_and_submit()">
-&gt;&gt;<input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>">
+&gt;&gt;<input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>" />
 <?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
 </form>
 
 <form action="../insert.php" method="GET" target="empty" name="fdummy" 
       OnSubmit="return empty_field_and_submit()">
-    <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>">
-    <input type="hidden" name="groupid" value="<?php echo $groupid ?>">
-    <input type="hidden" name="chat_version" value="header_js">
-    <input type="hidden" name="chat_message">
+    <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
+    <input type="hidden" name="groupid" value="<?php echo $groupid ?>" />
+    <input type="hidden" name="chat_version" value="header_js" />
+    <input type="hidden" name="chat_message" />
 </form>
 
 </body>

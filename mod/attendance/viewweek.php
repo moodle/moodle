@@ -449,7 +449,7 @@ if ($onepage) {$page++; echo "<br /> <br />\n"; }
   if (($numhours-4) > 255) {
     echo "<form><input type=\"button\" value=\"".get_string("downloadexcelfull", "attendance").
     "\" onclick=\"alert('Sorry, you have more than 251 days on this report.  This will not fit into an Excel Spreadsheet. ".
-    " Please try downloading the report week by week instead.')\"></form>";
+    " Please try downloading the report week by week instead.')\" /></form>";
   } else {
     $options["id"] = "$id";
     $options["download"] = "xls";

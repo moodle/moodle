@@ -67,7 +67,7 @@ function reloadusers() {
 <form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport"; ?>" method="GET" target="empty" name="f" onsubmit="return empty_field_and_submit()">
 -->
 <form action="../insert.php" method="get" target="empty" id="inputform" onsubmit="return empty_field_and_submit();">
-&gt;&gt; <input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>">
+&gt;&gt; <input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>" />
 <?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
 </form>
 
