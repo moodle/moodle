@@ -569,6 +569,7 @@
             fwrite ($bf,full_tag("STUDENTS",3,false,$course->students));
             fwrite ($bf,full_tag("GUEST",3,false,$course->guest));
             fwrite ($bf,full_tag("STARTDATE",3,false,$course->startdate));
+            fwrite ($bf,full_tag("ENROLPERIOD",3,false,$course->enrolperiod));
             fwrite ($bf,full_tag("NUMSECTIONS",3,false,$course->numsections));
             //fwrite ($bf,full_tag("SHOWRECENT",3,false,$course->showrecent));    INFO: This is out in 1.3
             fwrite ($bf,full_tag("MAXBYTES",3,false,$course->maxbytes));

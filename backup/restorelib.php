@@ -548,6 +548,7 @@
             $course->students = addslashes($course_header->course_students);
             $course->guest = addslashes($course_header->course_guest);
             $course->startdate = addslashes($course_header->course_startdate);
+            $course->enrolperiod = addslashes($course_header->course_enrolperiod);
             $course->numsections = addslashes($course_header->course_numsections);
             //$course->showrecent = addslashes($course_header->course_showrecent);   INFO: This is out in 1.3
             $course->maxbytes = addslashes($course_header->course_maxbytes);
@@ -2214,6 +2215,9 @@
                             break;
                         case "STARTDATE":
                             $this->info->course_startdate = $this->getContents();
+                            break;
+                        case "ENROLPERIOD":
+                            $this->info->course_enrolperiod = $this->getContents();
                             break;
                         case "NUMSECTIONS":
                             $this->info->course_numsections = $this->getContents();
