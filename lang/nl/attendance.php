@@ -1,19 +1,19 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 Beta (2004022400)
+      // attendance.php - created with Moodle 1.2.1 beta (2004032200)
 
 
 $string['absentlong'] = 'Afwezig';
 $string['absentshort'] = '-';
 $string['addingmultiple'] = 'Meerdere aanwezigheidslijsten toevoegen';
 $string['addmultiple'] = 'Voeg meerdere aanwezigheidslijsten toe';
-$string['allmodulename'] = 'Alle absentielijsten';
+$string['allmodulename'] = 'Alle aanwezigheidslijsten';
 $string['auto'] = 'auto';
-$string['autoattend'] = 'Neem automatisch aanwezigheden op, op basis van de logbestanden van gebruikersactiviteit';
-$string['autoattendmulti'] = 'Neem automatisch aanwezigheden op voor alle aanwezigheidslijsten op basis van de logbestanden van gebruikersactiviteit';
+$string['autoattend'] = 'Neem automatisch aanwezigheid op, op basis van de logbestanden van gebruikersactiviteit';
+$string['autoattendmulti'] = 'Neem automatisch aanwezigheid op voor alle aanwezigheidslijsten op basis van de logbestanden van gebruikersactiviteit';
 $string['autoattendshort'] = 'Automatisch uit logbestanden';
-$string['choosedays'] = 'Dagen van de week om aanwezigheden op te nemen';
+$string['choosedays'] = 'Dagen van de week om aanwezigheid op te nemen';
 $string['dayofroll'] = 'Datum voor de lijst';
-$string['defaultautoattend'] = 'Aanwezigheden opnemen, gebaseerd op logbestanden van gebruikersactiviteit, als standaard instellen';
+$string['defaultautoattend'] = 'Aanwezigheid opnemen, gebaseerd op logbestanden van gebruikersactiviteit, als standaard instellen';
 $string['defaultdynamicsection'] = 'Aanwezigheidslijsten standaard naar de juiste week verplaatsen';
 $string['defaultgrade'] = 'Aanwezigheidslijsten standaard op punten zetten';
 $string['defaulthoursinclass'] = 'Standaard aantal uur in een aanwezigheidslijst';
@@ -23,11 +23,11 @@ $string['downloadexcelfull'] = 'Download volledig Excel-blad';
 $string['downloadexceltotals'] = 'Download samenvattend Excel-blad';
 $string['downloadtextfull'] = 'Download volledig tekstrapport';
 $string['downloadtexttotals'] = 'Download samenvattend tekstrapport';
-$string['dynamicsection'] = 'De week voor het nemen van aanwezigheden baseren op vandaag';
+$string['dynamicsection'] = 'De week voor het nemen van aanwezigheid baseren op vandaag';
 $string['dynamicsectionmulti'] = 'Plaats de aanwezigheidslijsten automatisch in de juiste weeksectie';
 $string['dynsectionshort'] = 'Dynamisch verplaatst naar sectie';
 $string['endbeforestart'] = 'De einddatum is voor de startdatum';
-$string['endmulti'] = 'Datum voor de laatste absentielijst';
+$string['endmulti'] = 'Datum voor de laatste aanwezigheidslijst';
 $string['for'] = 'voor';
 $string['friday'] = 'Vr';
 $string['gradeshort'] = 'Punten gegeven';
