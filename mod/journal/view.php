@@ -52,7 +52,7 @@
     $timenow = time();
 
     if ($course->format == "weeks" and $journal->days) {
-        $timestart = $course->startdate + (($cw->section - 1) * 608400);
+        $timestart = $course->startdate + (($cw->section - 1) * 604800);
         if ($journal->days) {
             $timefinish = $timestart + (3600 * 24 * $journal->days);
         } else {
