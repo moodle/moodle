@@ -310,6 +310,18 @@ function require_login($courseid=0) {
     }
 }
 
+function update_user_login_times() {
+    global $USER;
+
+    $USER->lastlogin = $user->lastlogin = $USER->currentlogin;
+    $USER->currentlogin = $user->currentlogin = time();
+    save_session("USER");
+
+    $user->id = $USER->id;
+
+    return update_record("user", $user);
+}
+
 
 function update_login_count() {
 /// Keeps track of login attempts
@@ -328,7 +340,7 @@ function update_login_count() {
     if ($SESSION->logincount > $max_logins) {
         unset($SESSION->wantsurl);
         save_session("SESSION");
-        error("Sorry, you have exceeded the allowed number of login attempts. Restart your browser.");
+        error(get_string("errortoomanylogins"));
     }
 }
 
@@ -339,7 +351,6 @@ function reset_login_count() {
     $SESSION->logincount = 0;
     save_session("SESSION");
 }
-
 
 
 function isadmin($userid=0) {
@@ -645,6 +656,54 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     }
 }
 
+function reset_password_and_mail($user) {
+
+    global $CFG;
+
+    $site  = get_site();
+    $from = get_admin();
+
+    $newpassword = generate_password();
+
+    if (! set_field("user", "password", md5($newpassword), "id", $user->id) ) {
+        error("Could not set user password!");
+    }
+
+    $a->firstname = $user->firstname;
+    $a->sitename = $site->fullname;
+    $a->username = $user->username;
+    $a->newpassword = $newpassword;
+    $a->link = "$CFG->wwwroot/login/change_password.php";
+    $a->signoff = "$from->firstname $from->lastname ($from->email)";
+
+    $message = get_string("newpasswordtext", "", $a);
+
+    $subject  = "$site->fullname: ".get_string("changedpassword");
+
+    return email_to_user($user, $from, $subject, $message);
+
+}
+
+function send_confirmation_email($user) {
+
+    global $CFG;
+
+    $site = get_site();
+    $from = get_admin();
+
+    $data->firstname = $user->firstname;
+    $data->sitename = $site->fullname;
+    $data->link = "$CFG->wwwroot/login/confirm.php?p=$user->secret&s=$user->username";
+    $data->admin = "$from->firstname $from->lastname ($from->email)";
+
+    $message = get_string("emailconfirmation", "", $data);
+    $subject = "$site->fullname account confirmation";
+
+    return email_to_user($user, $from, $subject, $message);
+
+}
+
+
 
 /// FILE HANDLING  /////////////////////////////////////////////
 
@@ -890,27 +949,6 @@ function get_list_of_languages() {
     return $languages;
 }
 
-function get_list_of_plugins($plugin="mod") {
-/// Lists plugin directories within some directory
-
-    global $CFG;
-
-    $basedir = opendir("$CFG->dirroot/$plugin");
-    while ($dir = readdir($basedir)) {
-        if ($dir == "." || $dir == ".." || $dir == "CVS") {
-            continue;
-        }
-        if (filetype("$CFG->dirroot/$plugin/$dir") != "dir") {
-            continue;
-        }
-        $plugins[] = $dir;
-    }
-    if ($plugins) {
-        asort($plugins);
-    }
-    return $plugins;
-}
-
 
 /// ENCRYPTION  ////////////////////////////////////////////////
 
@@ -983,6 +1021,27 @@ function endecrypt ($pwd, $data, $case) {
 
 
 /// ENVIRONMENT CHECKING  ////////////////////////////////////////////////////////////
+
+function get_list_of_plugins($plugin="mod") {
+/// Lists plugin directories within some directory
+
+    global $CFG;
+
+    $basedir = opendir("$CFG->dirroot/$plugin");
+    while ($dir = readdir($basedir)) {
+        if ($dir == "." || $dir == ".." || $dir == "CVS") {
+            continue;
+        }
+        if (filetype("$CFG->dirroot/$plugin/$dir") != "dir") {
+            continue;
+        }
+        $plugins[] = $dir;
+    }
+    if ($plugins) {
+        asort($plugins);
+    }
+    return $plugins;
+}
 
 function check_php_version($version="4.1.0") {
 /// Returns true is the current version of PHP is greater that the specified one
@@ -1083,6 +1142,20 @@ function count_words($string) {
     $string = strip_tags($string);
     return count(preg_split("/\w\b/", $string)) - 1;
 }
+
+function random_string ($length=15) {
+    $pool  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $pool .= "abcdefghijklmnopqrstuvwxyz";
+    $pool .= "0123456789";
+    $poollen = strlen($pool);
+    mt_srand ((double) microtime() * 1000000);
+    $string = "";
+    for ($i = 0; $i < $length; $i++) {
+        $string .= substr($pool, (mt_rand()%($poollen)), 1);
+    }
+    return $string;
+}
+
 
 function getweek ($startdate, $thedate) {
 /// Given dates in seconds, how many weeks is the date from startdate

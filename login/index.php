@@ -104,15 +104,4 @@
 
     // No footer on this page
 
-function update_user_login_times() {
-    global $db, $USER;
-
-    $USER->lastlogin = $USER->currentlogin;
-    $USER->currentlogin = time();
-    save_session("USER");
-
-    return $db->Execute("UPDATE user 
-                         SET lastlogin='$USER->lastlogin', currentlogin='$USER->currentlogin'
-                         WHERE id = '$USER->id'");
-}
 ?>

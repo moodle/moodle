@@ -20,24 +20,26 @@
 
 				$USER = $user;
 
-				$timenow = time();
-
-				$rs = $db->Execute("UPDATE user SET confirmed=1, lastIP='$REMOTE_ADDR', 
-													firstaccess='$timenow', lastaccess='$timenow'
-									WHERE id = '$USER->id' ");
-				if (!$rs) {
-                    error("Could not update this user while confirming");
+                if (!set_field("user", "confirmed", 1, "id", $USER->id)) {
+                    error("Could not confirm this user!");
+                }
+                if (!set_field("user", "firstaccess", time(), "id", $USER->id)) {
+                    error("Could not set this user's first access date!");
+                }
+                if (!update_user_in_db($USER->id)) {
+                    error("Could not update this user's information");
                 }
 
 				set_moodle_cookie($USER->username);
 
+                // The user has confirmed successfully, let's log them in
+
 				$USER->loggedin = true;
 				$USER->confirmed = 1;
 				$USER->site = $CFG->wwwroot;
-
                 save_session("USER");
 
-				if ( ! empty($SESSION->wantsurl) ) {
+				if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
 					$goto = $SESSION->wantsurl;
                     unset($SESSION->wantsurl);
                     save_session("SESSION");

@@ -163,9 +163,10 @@ $string['enrolmentkeyhint'] = "That enrolment key was incorrect, please try agai
 $string['entercourse'] = "Click to enter this course";
 $string['enteremailaddress'] = "Enter in your email address to reset your 
    password and have the new password sent to you via email.";
+$string['error'] = "Error";
+$string['errortoomanylogins'] = "Sorry, you have exceeded the allowed number of login attempts. Restart your browser.";
 $string['existingadmins'] = "Existing admins";
 $string['existingteachers'] = "Existing teachers";
-$string['error'] = "Error";
 $string['feedback'] = "Feedback";
 $string['filemissing'] = "\$a is missing";
 $string['files'] = "Files";

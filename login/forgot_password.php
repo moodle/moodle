@@ -67,32 +67,4 @@ function validate_form($frm, &$err) {
 }
 
 
-function reset_password_and_mail($user) {
-
-    global $CFG;
-
-    $site  = get_site();
-    $from = get_admin();
-
-    $newpassword = generate_password();
-
-    if (! set_field("user", "password", md5($newpassword), "id", $user->id) ) {
-        error("Could not set user password!");
-    }
-
-    $a->firstname = $user->firstname;
-    $a->sitename = $site->fullname;
-    $a->username = $user->username;
-    $a->newpassword = $newpassword;
-    $a->link = "$CFG->wwwroot/login/change_password.php";
-    $a->signoff = "$from->firstname $from->lastname ($from->email)";
-
-    $message = get_string("newpasswordtext", "", $a);
-
-    $subject  = "$site->fullname: ".get_string("changedpassword");
-
-    return email_to_user($user, $from, $subject, $message);
-
-}
-
 ?>

@@ -100,39 +100,4 @@ function validate_form($user, &$err) {
 }
 
 
-function random_string ($length=15) {
-    $pool  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    $pool .= "abcdefghijklmnopqrstuvwxyz";
-    $pool .= "0123456789";
-    $poollen = strlen($pool);
-    mt_srand ((double) microtime() * 1000000);
-    $string = "";
-    for ($i = 0; $i < $length; $i++) {
-        $string .= substr($pool, (mt_rand()%($poollen)), 1);
-    }
-    return $string;
-}
-
-
-function send_confirmation_email($user) {
-
-    global $CFG;
-
-    $site = get_site();
-    $from = get_admin();
-
-    $data->firstname = $user->firstname;
-    $data->sitename = $site->fullname;
-    $data->link = "$CFG->wwwroot/login/confirm.php?p=$user->secret&s=$user->username";
-    $data->admin = "$from->firstname $from->lastname ($from->email)";
-
-    $message = get_string("emailconfirmation", "", $data);
-    $subject = "$site->fullname account confirmation";
-
-    return email_to_user($user, $from, $subject, $message);
-
-}
-
-
-
 ?>
