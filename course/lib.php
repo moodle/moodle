@@ -72,7 +72,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     // Put today up the top of the list
     $dates = array("$timemidnight" => get_string("today").", ".userdate($timenow, $strftimedate) );
 
-    if (! $course->startdate) {
+    if (!$course->startdate or ($course->startdate > $timenow)) {
         $course->startdate = $course->timecreated;
     }
 
