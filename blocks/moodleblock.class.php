@@ -554,7 +554,7 @@ class block_list extends block_base {
     function _print_block() {
         // Wrap the title in a floating DIV, in case we have edit controls to display
         // These controls will always be wrapped on a right-floating DIV
-        $title = '<div style="float: left;">'.$this->title.'</div>';
+        $title = '<div class="title">'.$this->title.'</div>';
         if ($this->edit_controls !== NULL) {
             $title .= $this->edit_controls;
         }
