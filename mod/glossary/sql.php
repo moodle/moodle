@@ -70,9 +70,9 @@
             $printpivot = 0;
             $sqlselect  = "SELECT ge.*, ce.entryid, c.name $as pivot";
             $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories ce, {$CFG->prefix}glossary_categories c";
-            $sqlwhere   = "WHERE ge.id = ce.entryid AND ce.categoryid = $hook AND
+            $sqlwhere   = "WHERE ge.id = ce.entryid AND ce.categoryid = '$hook' AND
                                  ce.categoryid = c.id AND ge.approved != 0 AND
-                                 (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
+                                 (ge.glossaryid = '$glossary->id' OR ge.sourceglossaryid = '$glossary->id') AND
                           (ge.approved != 0 $userid)";
 
             $sqlorderby = ' ORDER BY c.name, ge.concept';
@@ -114,7 +114,7 @@
         $sqlwhere   = "WHERE ge.userid = u.id  AND
                              (ge.approved != 0 $userid)
                              $where AND 
-                             (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id)";
+                             (ge.glossaryid = '$glossary->id' OR ge.sourceglossaryid = '$glossary->id')";
         $sqlorderby = "ORDER BY $usernamefield $sqlsortorder, ge.concept";
     break;
     case GLOSSARY_APPROVAL_VIEW:
@@ -139,7 +139,7 @@
 
         $sqlselect  = "SELECT ge.*, ge.concept $as pivot";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
-        $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
+        $sqlwhere   = "WHERE (ge.glossaryid = '$glossary->id' OR ge.sourceglossaryid = '$glossary->id') AND
                              ge.approved = 0 $where";
                              
         if ( $sqlsortkey ) {
@@ -218,7 +218,7 @@
         break;
         }
         
-        $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) AND
+        $sqlwhere   = "WHERE (ge.glossaryid = '$glossary->id' or ge.sourceglossaryid = '$glossary->id') AND
                              (ge.approved != 0 $userid)
                               $where";
         switch ( $tab ) {
