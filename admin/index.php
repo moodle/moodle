@@ -22,7 +22,7 @@
     // Find and check all modules and load them up.
     $dir = opendir("$CFG->dirroot/mod");
     while ($mod = readdir($dir)) {
-        if ($mod == "." || $mod == ".." || $mod = "CVS") {
+        if ($mod == "." || $mod == ".." || $mod == "CVS") {
             continue;
         }
 
