@@ -91,6 +91,7 @@
             $form->format = "weeks";
             $form->numsections = 10;
             $form->newsitems = 5;
+            $form->showrecent = 1;
             $form->category = 1;
         }
     }
