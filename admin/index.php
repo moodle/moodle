@@ -46,11 +46,16 @@
                 // do nothing
             } else if ($currmodule->version < $module->version) {
                 notify("$module->name module needs upgrading");  // XXX do the upgrade here
+                $updated_modules = true;
             } else {
                 error("Version mismatch: $module->name can't downgrade $currmodule->version -> $module->version !");
             }
     
         } else {    // module not installed yet, so install it
+            if (!$updated_modules) {
+                print_header("Setting up database", "Setting up database", "Setting up module tables", "");
+            }
+            $updated_modules = true;
             if (modify_database("$fullmod/install.sql")) {
                 if ($module->id = insert_record("modules", $module)) {
                     notify("$module->name tables have been set up correctly");
@@ -61,6 +66,11 @@
                 error("$module->name tables could NOT be set up successfully!");
             }
         }
+    }
+
+    if ($updated_modules) {
+        print_heading("<A HREF=\"index.php\">Continue</A>");
+        die;
     }
 
     // Set up the overall site name etc.

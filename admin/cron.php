@@ -32,6 +32,8 @@
 
     $timenow  = time();
 
+//  Run all cron jobs for each module
+
     if ($mods = get_records_sql("SELECT * FROM modules WHERE cron > 0 AND (($timenow - lastcron) > cron)")) {
         foreach ($mods as $mod) {
             $cronfile = "$CFG->dirroot/mod/$mod->name/cron.php";
@@ -43,6 +45,14 @@
             }
         }
     }
+
+
+//  Any system-wide Moodle cron jobs should be run here
+
+    // Clean up users who never confirmed.
+
+
+
     echo "Cron script completed correctly\n";
 
 ?>
