@@ -28,6 +28,8 @@
     if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
         $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".get_string("addnewuser")."</a></b>",
                                get_string("adminhelpaddnewuser"));
+        $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php\">".get_string("uploadusers")."</a></b>",
+                               get_string("adminhelpuploadusers"));
     }
     $table->data[] = array("<b><a href=\"user.php\">".get_string("edituser")."</a></b>",
                            get_string("adminhelpedituser"));
