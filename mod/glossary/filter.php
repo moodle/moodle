@@ -211,11 +211,11 @@
         if (!empty($links)) {
             $text = str_replace(array_keys($links),$links,$text);
         }
-        if (!empty( $excludes)) {
-            $text = str_replace(array_keys($excludes),$excludes,$text);
-        }
         if (!empty( $nolinkspan)) {
             $text = str_replace(array_keys($nolinkspan),$nolinkspan,$text);
+        }
+        if (!empty( $excludes)) {
+            $text = str_replace(array_keys($excludes),$excludes,$text);
         }
         if ($fullmatch and !empty($words)) {
             $text = str_replace(array_keys($words),$words,$text);
