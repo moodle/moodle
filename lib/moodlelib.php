@@ -1358,6 +1358,10 @@ function add_to_log($course, $module, $action, $url="", $info="") {
 
     global $db, $USER, $REMOTE_ADDR;
 
+    if (isset($USER->realuser)) {  // Don't log
+        return;
+    }
+
     $timenow = time();
     $info = addslashes($info);
 
