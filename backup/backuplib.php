@@ -88,6 +88,8 @@
                     }
                 }
             }
+            //Do some output     
+            backup_flush(30);
         }
             
         //Prepare Info
@@ -143,6 +145,8 @@
                                            (backup_code, file_type, path, old_id)
                                        VALUES
                                            ('$backup_unique_code','user','$dir','$userid')",false);
+            //Do some output
+            backup_flush(30);
             }
         }
 
@@ -184,6 +188,8 @@
                                            VALUES
                                               ('$backup_unique_code','course','$dir')",false);
                 }
+            //Do some output
+            backup_flush(30);
             }
         }
 
