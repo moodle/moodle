@@ -1541,9 +1541,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
             $wwwroot = str_replace('http','https',$CFG->wwwroot);
         }
         if (isset($course->id)) {
-            $menu = user_login_string($course->id);
+            $menu = user_login_string($course);
         } else {
-            $menu = user_login_string(SITEID);
+            $menu = user_login_string(get_site());
         }
     }
 
