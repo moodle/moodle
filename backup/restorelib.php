@@ -109,6 +109,16 @@
         return $info;
     }
 
+    //This function read the xml file and store its data from the groups in
+    //backup_ids->info db (and group's id in $info)
+    function restore_read_xml_groups ($restore,$xml_file) {
+
+        //We call the main read_xml function, with todo = GROUPS
+        $info = restore_read_xml ($xml_file,"GROUPS",$restore);
+
+        return $info;
+    }
+
     //This function read the xml file and store its data from the modules in
     //backup_ids->info
     function restore_read_xml_modules ($restore,$xml_file) {
@@ -762,6 +772,130 @@
         return $status;
     }
 
+    //This function creates all the groups
+    function restore_create_groups($restore,$xml_file) {
+
+        global $CFG, $db;
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //groups will contain the old_id of every scale
+            //in backup_ids->info will be the real info (serialized)
+            $groups = restore_read_xml_groups($restore,$xml_file);
+        }
+        //Now, if we have anything in groups, we have to restore that
+        //groups
+        if ($groups) {
+            if ($groups !== true) {
+                //Iterate over each group
+                foreach ($groups as $group) {
+                    //Get record from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,"group",$group->id);
+                    //Init variables
+                    $create_group = false;
+
+                    if ($data) {
+                        //Now get completed xmlized object
+                        $info = $data->info;
+                        traverse_xmlize($info);                                                                     //Debug
+                        print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                        $GLOBALS['traverse_array']="";                                                              //Debug
+                        //Now build the GROUP record structure
+                        $gro->id = backup_todb($info['GROUP']['#']['ID']['0']['#']);
+                        $gro->courseid = backup_todb($info['GROUP']['#']['COURSEID']['0']['#']);
+                        $gro->name = backup_todb($info['GROUP']['#']['NAME']['0']['#']);
+                        $gro->description = backup_todb($info['GROUP']['#']['DESCRIPTION']['0']['#']);
+                        $gro->lang = backup_todb($info['GROUP']['#']['LANG']['0']['#']);
+                        $gro->picture = backup_todb($info['GROUP']['#']['PICTURE']['0']['#']);
+                        $gro->timecreated = backup_todb($info['GROUP']['#']['TIMECREATED']['0']['#']);
+                        $gro->timemodified = backup_todb($info['GROUP']['#']['TIMEMODIFIED']['0']['#']);
+                
+                        //Now search if that group exists (by name and description field) in 
+                        //restore->course_id course 
+                        $gro_db = get_record("groups","courseid",$restore->course_id,"name",$gro->name,"description",$gro->description);
+                        //If it doesn't exist, create
+                        if (!$gro_db) {
+                            $create_group = true;
+                        }
+                        //If we must create the group
+                        if ($create_group) {
+                            //Me must recode the courseid to the restore->course_id 
+                            $gro->courseid = $restore->course_id;
+                            //The structure is equal to the db, so insert the group
+                            $newid = insert_record ("groups",$gro);
+                        } else { 
+                            //get current group id
+                            $newid = $group_db->id;
+                        }
+                        if ($newid) {
+                            //We have the newid, update backup_ids
+                            backup_putid($restore->backup_unique_code,"group",
+                                         $group->id, $newid);
+                        }
+                        //Now restore members in the groups_members
+                        $status2 = restore_create_groups_members($newid,$info,$restore);
+                    }   
+                }
+            }
+        } else {
+            $status = false;
+        } 
+        return ($status && $status2);
+    }
+
+    //This function restores the groups_members
+    function restore_create_groups_members($group_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the members array
+        $members = $info['GROUP']['#']['MEMBERS']['0']['#']['MEMBER'];
+
+        //Iterate over members
+        for($i = 0; $i < sizeof($members); $i++) {
+            $mem_info = $members[$i];
+            traverse_xmlize($mem_info);                                                                 //Debug
+            print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            $GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the GROUPS_MEMBERS record structure
+            $group_member->groupid = $group_id;
+            $group_member->userid = backup_todb($mem_info['#']['USERID']['0']['#']);
+            $group_member->timeadded = backup_todb($mem_info['#']['TIMEADDED']['0']['#']);
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$group_member->userid);
+            if ($user) {
+                $group_member->userid = $user->new_id;
+            }
+
+            //The structure is equal to the db, so insert the groups_members
+            $newid = insert_record ("groups_members",$group_member);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+            
+            if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
     //This function restores the userfiles from the temp (user_files) directory to the
     //dataroot/users directory
     function restore_user_files($restore) {
@@ -769,6 +903,8 @@
         global $CFG;
 
         $status = true;
+
+        $counter = 0;
 
         //First, we check to "users" exists and create is as necessary
         //in CFG->dataroot
@@ -828,6 +964,8 @@
         global $CFG;
 
         $status = true;
+ 
+        $counter = 0;
 
         //First, we check to "course_id" exists and create is as necessary
         //in CFG->dataroot
@@ -1084,6 +1222,33 @@
             //If we are under a SCALE tag under a SCALES zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
                 if (($this->tree[4] == "SCALE") and ($this->tree[3] == "SCALES")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
+        }
+
+        function startElementGroups($parser, $tagName, $attrs) {
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //if ($tagName == "GROUP" && $this->tree[3] == "GROUPS") {                                 //Debug
+            //    echo "<P>GROUP: ".strftime ("%X",time()),"-";                                        //Debug
+            //}                                                                                        //Debug
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into GROUPS zone
+            //if ($this->tree[3] == "GROUPS")                                                           //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+
+            //If we are under a GROUP tag under a GROUPS zone, accumule it
+            if (isset($this->tree[4]) and isset($this->tree[3])) {
+                if (($this->tree[4] == "GROUP") and ($this->tree[3] == "GROUPS")) {
                     if (!isset($this->temp)) {
                         $this->temp = "";
                     }
@@ -1706,6 +1871,56 @@
             $this->content = "";
         }
 
+        //This is the endTag handler we use where we are reading the groups zone (todo="GROUPS")
+        function endElementGroups($parser, $tagName) {
+            //Check if we are into GROUPS zone
+            if ($this->tree[3] == "GROUPS") {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //Acumulate data to info (content + close tag)
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
+                //If we've finished a group, xmlize it an save to db
+                if (($this->level == 4) and ($tagName == "GROUP")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one GROUP)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                                          //Debug
+                    //traverse_xmlize($data);                                                                     //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                    //$GLOBALS['traverse_array']="";                                                              //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and from data
+                    $group_id = $data["GROUP"]["#"]["ID"]["0"]["#"];
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code,"group",$group_id,
+                                     null,$data);
+                    //Create returning info
+                    $ret_info->id = $group_id;
+                    $this->info[] = $ret_info;
+                    //Reset temp
+                    unset($this->temp);
+                }
+            }
+
+            //Stop parsing if todo = GROUPS and tagName = GROUP (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "GROUPS" and $this->level == 3) {
+                $this->finished = true;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+        }
+
         //This is the endTag handler we use where we are reading the modules zone (todo="MODULES")
         function endElementModules($parser, $tagName) {
             //Check if we are into MODULES zone
@@ -1809,6 +2024,9 @@
         } else if ($todo == "SCALES") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementScales", "endElementScales");
+        } else if ($todo == "GROUPS") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementGroups", "endElementGroups");
         } else if ($todo == "MODULES") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementModules", "endElementModules");

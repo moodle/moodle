@@ -5,7 +5,7 @@ This documment shows the current status of the backup/restore option.
 
 Backup:  WORKING. COMPLETED !!
 
-Restore: WORKING. COMPLETED except logs.
+Restore: WORKING. COMPLETED except logs restore.
                   
 
 ========== ========== ========== ========== ========== ==========
@@ -49,6 +49,7 @@ Backup Details:
                  - All..........................................DONE 
            - Logs...............................................DONE
            - Scales.............................................DONE
+           - Groups.............................................DONE
            - Categories and Questions.(STEP 1)..................DONE
               + categories......................................DONE
               + questions structure.............................DONE
@@ -177,6 +178,7 @@ Restore Details:
               + categories......................................DONE
               + questions structure.............................DONE
            - Scales.............................................DONE
+           - Groups.............................................DONE
            - Mods Info Prepare..................................DONE
               x read modules zone...............................DONE
               x separate every mod..............................DONE

@@ -227,6 +227,14 @@
         }
     }
 
+    //Now create groups as needed
+    if ($status) {
+        echo "<li>".get_string("creatinggroups");
+        if (!$status = restore_create_groups($restore,$xml_file)) {
+            notify("Could not restore groups!");
+        }
+    }
+
     //Now create course modules as needed
     if ($status) {
         echo "<li>".get_string("creatingcoursemodules");
