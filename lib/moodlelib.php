@@ -79,7 +79,17 @@ function print_footer ($course=NULL) {
         }
     }
     if ($USER->id) {
-        $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$USER->firstname $USER->lastname").
+        if ($course) {
+           if ($course == "home") {
+               $site = get_site();
+               $username = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$site->id\">$USER->firstname $USER->lastname</A>";
+           } else {
+               $username = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A>";
+           }
+        } else {
+           $username = "$USER->firstname $USER->lastname";
+        }
+        $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
                       " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
     } else { 
         $loggedinas = get_string("loggedinnot", "moodle").
