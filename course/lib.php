@@ -196,10 +196,10 @@ function print_all_courses($category="all", $style="full", $maxcount=999, $width
         $courses = get_records("course", "category", $category, "fullname ASC");
     }
 
-    if ($courses) {
-        if ($style == "minimal") {
-            $count = 0;
-            $icon  = "<IMG SRC=\"pix/i/course.gif\" HEIGHT=16 WIDTH=16 ALT=\"".get_string("course")."\">";
+    if ($style == "minimal") {
+        $count = 0;
+        $icon  = "<IMG SRC=\"pix/i/course.gif\" HEIGHT=16 WIDTH=16 ALT=\"".get_string("course")."\">";
+        if ($courses) {
             foreach ($courses as $course) {
                 $moddata[]="<A TITLE=\"$course->shortname\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>";
                 $modicon[]=$icon;
@@ -208,17 +208,21 @@ function print_all_courses($category="all", $style="full", $maxcount=999, $width
                 }
             }   
             $fulllist = "<P><A HREF=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</A>...";
-            print_side_block(get_string("courses"), "", $moddata, $modicon, $fulllist, $width);
-
         } else {
-            foreach ($courses as $course) {
-                print_course($course);
-                echo "<BR>\n";
-            }
+            $moddata = array();
+            $modicon = array();
+            $fulllist = get_string("nocoursesyet");
+        }
+        print_side_block(get_string("courses"), "", $moddata, $modicon, $fulllist, $width);
+
+    } else if ($courses) {
+        foreach ($courses as $course) {
+            print_course($course);
+            echo "<BR>\n";
         }
 
     } else {
-        echo "<H3>".get_string("nocoursesyet")."</H3>";
+        echo "<P>".get_string("nocoursesyet")."</P>";
     }
 }
 
