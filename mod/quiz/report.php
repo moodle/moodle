@@ -57,6 +57,7 @@
     $strattempts  = get_string("attempts", "quiz");
     $strscore  = get_string("score", "quiz");
     $strgrade  = get_string("grade");
+    $strbestgrade  = get_string("bestgrade", "quiz");
     $strtimetaken     = get_string("timetaken", "quiz");
     $strtimecompleted = get_string("timecompleted", "quiz");
 
@@ -152,8 +153,8 @@
         exit;
     }
 
-    $table->head = array("", $strname, $strattempts, $strgrade);
-    $table->align = array("CENTER", "LEFT", "LEFT", "RIGHT");
+    $table->head = array("", $strname, $strattempts, $strbestgrade);
+    $table->align = array("CENTER", "LEFT", "LEFT", "CENTER");
     $table->width = array(10, "*", "*", 20);
 
     foreach ($grades as $grade) {
