@@ -129,6 +129,11 @@
     }
 
     foreach ($mods as $mod) {
+
+        if ($mod == "NEWMODULE") {   // Someone has unzipped the template, ignore it
+            continue;
+        }
+
         $fullmod = "$CFG->dirroot/mod/$mod";
 
         unset($module);
