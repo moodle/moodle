@@ -361,7 +361,7 @@ function button_to_popup_window ($url, $name="popup", $linkname="click here",
     $fullscreen = 0;
 
     echo "<input type=\"button\" name=\"popupwindow\" title=\"$title\" value=\"$linkname ...\" ".
-         "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">\n";
+         "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
 }
 
 
@@ -2086,13 +2086,13 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     }
     if ($backmod) {
         $backmod = "<form action=\"$CFG->wwwroot/mod/$backmod->mod/view.php\" target=\"$CFG->framename\">".
-                   "<input type=\"hidden\" name=\"id\" value=\"$backmod->cm\">".
-                   "<input type=\"submit\" value=\"&lt;\"></form>";
+                   "<input type=\"hidden\" name=\"id\" value=\"$backmod->cm\" />".
+                   "<input type=\"submit\" value=\"&lt;\" /></form>";
     }
     if ($nextmod) {
         $nextmod = "<form action=\"$CFG->wwwroot/mod/$nextmod->mod/view.php\" target=\"$CFG->framename\">".
-                   "<input type=\"hidden\" name=\"id\" value=\"$nextmod->cm\">".
-                   "<input type=\"submit\" value=\"&gt;\"></form>";
+                   "<input type=\"hidden\" name=\"id\" value=\"$nextmod->cm\" />".
+                   "<input type=\"submit\" value=\"&gt;\" /></form>";
     }
     return "<table><tr>$logslink<td>$backmod</td><td>" .
             popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, $strjumpto,
