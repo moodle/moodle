@@ -3,7 +3,7 @@
 
 <table cellpadding="9" cellspacing="0" >
 <tr valign="top">
-    <td align="right"><p>forum_displaymode:</td>
+    <td align="right">forum_displaymode:</td>
     <td>
     <?php choose_from_menu ($FORUM_LAYOUT_MODES, "forum_displaymode", $CFG->forum_displaymode, "", "", ""); ?>
     </td>
@@ -12,7 +12,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p>forum_replytouser:</td>
+    <td align="right">forum_replytouser:</td>
     <td>
     <?php
        unset($options);
@@ -26,7 +26,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p>forum_shortpost:</td>
+    <td align="right">forum_shortpost:</td>
     <td>
     <input name="forum_shortpost" type="text" size="5" value="<?php p($CFG->forum_shortpost) ?>" />
     </td>
@@ -35,7 +35,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p>forum_longpost:</td>
+    <td align="right">forum_longpost:</td>
     <td>
     <input name="forum_longpost" type="text" size="5" value="<?php p($CFG->forum_longpost) ?>" />
     </td>
@@ -44,7 +44,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p>forum_manydiscussions:</td>
+    <td align="right">forum_manydiscussions:</td>
     <td>
     <input name="forum_manydiscussions" type="text" size="5" value="<?php p($CFG->forum_manydiscussions) ?>" />
     </td>
@@ -53,7 +53,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p>forum_maxbytes:</td>
+    <td align="right">forum_maxbytes:</td>
     <td><?php
     $choices = get_max_upload_sizes($CFG->maxbytes);
     choose_from_menu ($choices, "forum_maxbytes", $CFG->forum_maxbytes, "");
@@ -65,7 +65,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p>forum_trackreadposts:</td>
+    <td align="right">forum_trackreadposts:</td>
     <td>
     <?php
        unset($options);
@@ -79,7 +79,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p>forum_oldpostdays:</td>
+    <td align="right">forum_oldpostdays:</td>
     <td>
     <input name="forum_oldpostdays" type="text" size="5" value="<?php p($CFG->forum_oldpostdays) ?>" />
     </td>
@@ -88,7 +88,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p>forum_usermarksread:</td>
+    <td align="right">forum_usermarksread:</td>
     <td>
     <?php
        unset($options);
@@ -102,7 +102,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p>forum_cleanreadtime:</td>
+    <td align="right">forum_cleanreadtime:</td>
     <td>
     <?php
        unset($options);
@@ -139,7 +139,7 @@
 </tr>
 
 <tr valign="top">
-        <td align="right"><p>forum_enablerssfeeds:</td>
+        <td align="right">forum_enablerssfeeds:</td>
         <td>
     <?php
         if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {

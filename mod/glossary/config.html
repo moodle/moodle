@@ -10,7 +10,7 @@
     <td colspan = 3 align=center><strong><?php print_string("glossaryleveldefaultsettings","glossary") ?></strong></td>
 </tr>
 <tr valign=top>
-    <td align=right><p>glossary_entbypage:</td>
+    <td align=right>glossary_entbypage:</td>
     <td>
     <input name=glossary_entbypage type=text size=3 value="<?php p(isset($CFG->glossary_entbypage) ? $CFG->glossary_entbypage : 10) ?>" />
     </td>
@@ -19,7 +19,7 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p>glossary_studentspost:</td>
+    <td align=right>glossary_studentspost:</td>
     <td>
     <select size=1 name=glossary_studentspost>
 <?php 
@@ -40,7 +40,7 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p>glossary_dupentries:</td>
+    <td align=right>glossary_dupentries:</td>
     <td>
     <select size=1 name=glossary_dupentries>
 <?php 
@@ -61,7 +61,7 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p>glossary_allowcomments:</td>
+    <td align=right>glossary_allowcomments:</td>
     <td>
     <select size=1 name=glossary_allowcomments>
 <?php 
@@ -82,7 +82,7 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p>glossary_linkbydefault:</td>
+    <td align=right>glossary_linkbydefault:</td>
     <td>
     <select size=1 name=glossary_linkbydefault>
 <?php 
@@ -103,7 +103,7 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p>glossary_defaultapproval:</td>
+    <td align=right>glossary_defaultapproval:</td>
     <td>
     <select size=1 name=glossary_defaultapproval>
 <?php 
@@ -124,10 +124,39 @@
     </td>
 </tr>
 <tr valign=top>
+        <td align=right>glossary_enablerssfeeds:</td>
+        <td>
+    <?php
+        if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
+            print_string("no");
+        } else {
+            unset($options);
+            $options[0] = get_string("no");
+            $options[1] = get_string("yes");
+
+            $glossary_enablerssfeeds = false;
+            if (isset($CFG->glossary_enablerssfeeds) && $CFG->glossary_enablerssfeeds == 1) {
+                $glossary_enablerssfeeds = true;
+            }
+
+            choose_from_menu ($options, "glossary_enablerssfeeds", $glossary_enablerssfeeds, "", "", "");
+        }
+    ?>
+    </td>
+    <td>
+    <?php
+        print_string("configenablerssfeeds","glossary");
+        if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
+            print_string("configenablerssfeedsdisabled");
+        }
+    ?>
+    </td>
+</tr>
+<tr valign=top>
     <td colspan = 3 align=center><strong><?php print_string("entryleveldefaultsettings","glossary") ?></strong></td>
 </tr>
 <tr valign=top>
-    <td align=right><p>glossary_linkentries:</td>
+    <td align=right>glossary_linkentries:</td>
     <td>
     <select size=1 name=glossary_linkentries>
 <?php 
@@ -148,7 +177,7 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p>glossary_casesensitive:</td>
+    <td align=right>glossary_casesensitive:</td>
     <td>
     <select size=1 name=glossary_casesensitive>
 <?php 
@@ -169,7 +198,7 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p>glossary_fullmatch:</td>
+    <td align=right>glossary_fullmatch:</td>
     <td>
     <select size=1 name=glossary_fullmatch>
 <?php 
@@ -207,7 +236,7 @@
     }
     asort($formats);
 
-    echo '<table cellpadding="5" bgcolor="#FFFFFF" class="generaltab" width="40%" align="center">';
+    print_simple_box_start('center');
     foreach ($formats as $formatid=>$formatname) {
         $recformat = get_record('glossary_formats','id',$formatid);
         echo '<tr>';
@@ -225,40 +254,11 @@
         echo '<td align="center" nowrap="nowrap">' . $eicon . '&nbsp;&nbsp;' . $vicon . '</td>';
         echo '</tr>';
     }
-    echo '</table>';
+    print_simple_box_end();
 
 ?>
 
 	</td>
-</tr>
-<tr valign=top>
-        <td align=right><p>glossary_enablerssfeeds:</td>
-        <td>
-    <?php
-        if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
-            print_string("no");
-        } else {
-            unset($options);
-            $options[0] = get_string("no");
-            $options[1] = get_string("yes");
-
-            $glossary_enablerssfeeds = false;
-            if (isset($CFG->glossary_enablerssfeeds) && $CFG->glossary_enablerssfeeds == 1) {
-                $glossary_enablerssfeeds = true;
-            }
-
-            choose_from_menu ($options, "glossary_enablerssfeeds", $glossary_enablerssfeeds, "", "", "");
-        }
-    ?>
-    </td>
-    <td>
-    <?php
-        print_string("configenablerssfeeds","glossary");
-        if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
-            print_string("configenablerssfeedsdisabled");
-        }
-    ?>
-    </td>
 </tr>
 <tr>
     <td colspan=3 align=center>

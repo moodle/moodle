@@ -3,7 +3,7 @@
 
 <table cellpadding="9" cellspacing="0" >
 <tr valign="top">
-	<td align="right"><p>resource_framesize:</td>
+	<td align="right">resource_framesize:</td>
 	<td>
     <input name="resource_framesize" type="text" size="5" value="<?php p($CFG->resource_framesize) ?>" />
     </td>
@@ -12,7 +12,7 @@
     </td>
 </tr>
 <tr valign="top">
-	<td align="right"><p>resource_websearch:</td>
+	<td align="right">resource_websearch:</td>
 	<td>
     <input name="resource_websearch" type="text" size="30" value="<?php p($CFG->resource_websearch) ?>" />
     </td>
@@ -21,7 +21,7 @@
     </td>
 </tr>
 <tr valign="top">
-	<td align="right"><p>resource_defaulturl:</td>
+	<td align="right">resource_defaulturl:</td>
 	<td>
     <input name="resource_defaulturl" type="text" size="30" value="<?php p($CFG->resource_defaulturl) ?>" />
     </td>
@@ -30,7 +30,7 @@
     </td>
 </tr>
 <tr valign="top">
-	<td align="right"><p>resource_secretphrase:</td>
+	<td align="right">resource_secretphrase:</td>
 	<td>
     <input name="resource_secretphrase" type="text" size="30" value="<?php p($CFG->resource_secretphrase) ?>" />
     </td>
@@ -39,7 +39,7 @@
     </td>
 </tr>
 <tr valign="top">
-	<td align="right"><p>resource_filterexternalpages:</td>
+	<td align="right">resource_filterexternalpages:</td>
 	<td>
     <?php
         unset($choices);
@@ -53,7 +53,7 @@
     </td>
 </tr>
 <tr valign="top">
-	<td align="right"><p>resource_popup:</td>
+	<td align="right">resource_popup:</td>
 	<td>
     <?php
         unset($choices);
@@ -69,7 +69,7 @@
 <?php foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
           $defaultvalue = "resource_popup$optionname";
           echo "<tr valign=\"top\">";
-	      echo "<td align=\"right\"><p>$defaultvalue:</td>";
+	      echo "<td align=\"right\">$defaultvalue:</td>";
 	      echo "<td>";
           if ($optionname == "height" or $optionname == "width") {
               echo "<input name=$defaultvalue type=\"text\" size=\"5\" value=\"".$CFG->$defaultvalue."\" />";
@@ -84,7 +84,7 @@
       }
 ?>
 <tr valign="top">
-	<td align="right"><p>resource_windowsettings:</td>
+	<td align="right">resource_windowsettings:</td>
 	<td>
     <?php
         unset($choices);
@@ -98,7 +98,7 @@
     </td>
 </tr>
 <tr valign="top">
-	<td align="right"><p>resource_parametersettings:</td>
+	<td align="right">resource_parametersettings:</td>
 	<td>
     <?php
         unset($choices);
