@@ -945,12 +945,12 @@ function dialogue_print_conversation($dialogue, $conversation) {
 function dialogue_print_tabbed_heading($tabs) {
 // Prints a tabbed heading where one of the tabs highlighted.
 // $tabs is an object with several properties.
-// 		$tabs->names     is an array of tab names
-//		$tabs->urls      is an array of links
+// 		$tabs->names      is an array of tab names
+//		$tabs->urls       is an array of links
 // 		$tabs->align     is an array of column alignments (defaults to "center")
 // 		$tabs->size      is an array of column sizes
 // 		$tabs->wrap      is an array of "nowrap"s or nothing
-// 		$tabs->highlight is an index (zero based) of "active" heading .
+// 		$tabs->highlight    is an index (zero based) of "active" heading .
 // 		$tabs->width     is an percentage of the page (defualts to 80%)
 // 		$tabs->cellpadding    padding on each cell (defaults to 5)
 
@@ -1004,9 +1004,9 @@ function dialogue_print_tabbed_heading($tabs) {
                 $wrapping = "";
             }
 			if ($key == $tabs->highlight) {
-				echo "<td valign=top $alignment $width $wrapping bgcolor=\"$THEME->cellheading2\">$tab</td>\n";
+				echo "<td valign=top class=\"generaltabselected\" $alignment $width $wrapping bgcolor=\"$THEME->cellheading2\">$tab</td>\n";
 			} else {
-				echo "<td valign=top $alignment $width $wrapping bgcolor=\"$THEME->body\">$tab</td>\n";
+				echo "<td valign=top class=\"generaltab\" $alignment $width $wrapping bgcolor=\"$THEME->cellheading\">$tab</td>\n";
 			}
 		echo "<td  class=\"generaltablecell\">".
 			"<img width=\"10\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\"></td>\n";
@@ -1025,6 +1025,7 @@ function dialogue_print_tabbed_heading($tabs) {
 
     return true;
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////
