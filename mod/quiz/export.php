@@ -18,7 +18,7 @@
     require_login($course->id);
 
     if (!isteacher($course->id)) {
-        error("Only the teacher can import quiz questions!");
+        error("Only the teacher can export quiz questions!");
     }
 
     $strexportquestions = get_string("exportquestions", "quiz");
@@ -33,35 +33,34 @@
 
     if ($form = data_submitted()) {   /// Filename
 
+        if (! is_readable("format/$form->format/format.php")) {
+            error("Format not known ($form->format)");
+        }
 
-    if (! is_readable("format/$form->format/format.php")) {
-    error("Format not known ($form->format)");
-    }
+        require("format.php");  // Parent class
+        require("format/$form->format/format.php");
 
-    require("format.php");  // Parent class
-    require("format/$form->format/format.php");
+        $format = new quiz_file_format();
 
-    $format = new quiz_file_format();
+        if (! $format->exportpreprocess($category, $course)) {   // Do anything before that we need to
+            error("Error occurred during pre-processing!", 
+                    "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
+        }
 
-    if (! $format->exportpreprocess($category, $course)) {             // Do anything before that we need to
-    error("Error occurred during pre-processing!", 
-          "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
-    }
+        if (! $format->exportprocess($exportfilename)) {         // Process the export data
+            error("Error occurred during processing!", 
+                    "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
+        }
 
-    if (! $format->exportprocess($exportfilename)) {     // Process the export data
-    error("Error occurred during processing!", 
-          "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
-    }
+        if (! $format->exportpostprocess()) {                    // In case anything needs to be done after
+            error("Error occurred during post-processing!", 
+                    "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
+        }
 
-    if (! $format->exportpostprocess()) {                     // In case anything needs to be done after
-    error("Error occurred during post-processing!", 
-          "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
-    }
-
-    echo "<hr>";
-    print_continue("edit.php");
-    print_footer($course);
-    exit;
+        echo "<hr />";
+        print_continue("edit.php");
+        print_footer($course);
+        exit;
     } 
 
     /// Print upload form

@@ -1825,46 +1825,46 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
     return;
 }
 
-    // this function creates default export filename
-    function default_export_filename($course,$category) {
-        //Take off some characters in the filename !!
-        $takeoff = array(" ", ":", "/", "\\", "|");
-        $export_word = str_replace($takeoff,"_",strtolower(get_string("exportfilename","quiz")));
-        //If non-translated, use "export"
-        if (substr($export_word,0,1) == "[") {
-            $export_word= "export";
-        }
-
-        //Calculate the date format string
-        $export_date_format = str_replace(" ","_",get_string("exportnameformat","quiz"));
-        //If non-translated, use "%Y%m%d-%H%M"
-        if (substr($export_date_format,0,1) == "[") {
-            $export_date_format = "%%Y%%m%%d-%%H%%M";
-        }
-
-        //Calculate the shortname
-        $export_shortname = clean_filename($course->shortname);
-        if (empty($export_shortname) or $export_shortname == '_' ) {
-            $export_shortname = $course->id;
-        }
-
-        //Calculate the category name
-        $export_categoryname = clean_filename($category->name);
-
-        //Calculate the final export filename
-        //The export word
-        $export_name = $export_word."-";
-        //The shortname
-        $export_name .= strtolower($export_shortname)."-";
-        //The category name
-        $export_name .= strtolower($export_categoryname)."-";
-        //The date format
-        $export_name .= userdate(time(),$export_date_format,99,false);
-        //The extension - no extension, supplied by format
-        // $export_name .= ".txt";
-
-        return $export_name;
+// this function creates default export filename
+function default_export_filename($course,$category) {
+    //Take off some characters in the filename !!
+    $takeoff = array(" ", ":", "/", "\\", "|");
+    $export_word = str_replace($takeoff,"_",strtolower(get_string("exportfilename","quiz")));
+    //If non-translated, use "export"
+    if (substr($export_word,0,1) == "[") {
+        $export_word= "export";
     }
+
+    //Calculate the date format string
+    $export_date_format = str_replace(" ","_",get_string("exportnameformat","quiz"));
+    //If non-translated, use "%Y%m%d-%H%M"
+    if (substr($export_date_format,0,1) == "[") {
+        $export_date_format = "%%Y%%m%%d-%%H%%M";
+    }
+
+    //Calculate the shortname
+    $export_shortname = clean_filename($course->shortname);
+    if (empty($export_shortname) or $export_shortname == '_' ) {
+        $export_shortname = $course->id;
+    }
+
+    //Calculate the category name
+    $export_categoryname = clean_filename($category->name);
+
+    //Calculate the final export filename
+    //The export word
+    $export_name = $export_word."-";
+    //The shortname
+    $export_name .= strtolower($export_shortname)."-";
+    //The category name
+    $export_name .= strtolower($export_categoryname)."-";
+    //The date format
+    $export_name .= userdate(time(),$export_date_format,99,false);
+    //The extension - no extension, supplied by format
+    // $export_name .= ".txt";
+
+    return $export_name;
+}
 
 // function to read all questions for category into big array
 // added by Howard Miller June 2004
@@ -1917,48 +1917,48 @@ function get_questions_category( $category ) {
 function get_question_data( $question ) {
     // what to do next depends of question type (qtype)
     switch ($question->qtype)  {
-    case SHORTANSWER:
-        $shortanswer = get_record("quiz_shortanswer","question",$question->id);
-        $question->usecase = $shortanswer->usecase;
-        $question->answers = get_exp_answers( $question->id );
-        break;
-    case TRUEFALSE:
-        if (!$truefalse = get_record("quiz_truefalse","question",$question->id)) {
-            error( "quiz_truefalse record $question->id not found" );
+        case SHORTANSWER:
+            $shortanswer = get_record("quiz_shortanswer","question",$question->id);
+            $question->usecase = $shortanswer->usecase;
+            $question->answers = get_exp_answers( $question->id );
+            break;
+        case TRUEFALSE:
+            if (!$truefalse = get_record("quiz_truefalse","question",$question->id)) {
+                error( "quiz_truefalse record $question->id not found" );
             }
-        $question->trueanswer = get_exp_answer( $truefalse->trueanswer );
-        $question->falseanswer = get_exp_answer( $truefalse->falseanswer );
-        break;
-    case MULTICHOICE:
-        if (!$multichoice = get_record("quiz_multichoice","question",$question->id)) {
-        error( "quiz_multichoice $question->id not found" );
+            $question->trueanswer = get_exp_answer( $truefalse->trueanswer );
+            $question->falseanswer = get_exp_answer( $truefalse->falseanswer );
+            break;
+        case MULTICHOICE:
+            if (!$multichoice = get_record("quiz_multichoice","question",$question->id)) {
+                error( "quiz_multichoice $question->id not found" );
             }
-        $question->layout = $multichoice->layout;
-        $question->single = $multichoice->single;
-        $question->answers = get_exp_answers( $multichoice->question );
-        break;
-    case NUMERICAL:
-        if (!$numeric = get_record("quiz_numerical","question",$question->id)) {
-            error( "quiz_numerical $question->id not found" );
-        }
-        $question->min = $numeric->min;
-        $question->max = $numeric->max;
-        $question->answer = get_exp_answer( $numeric->answer );
-        break;
-    case MATCH:
-        if (!$subquestions = get_records("quiz_match_sub","question",$question->id)) {
-            error( "quiz_match_sub $question->id not found" );
-        }
-        $question->subquestions = $subquestions;
-        break;
-    case DESCRIPTION:
-        // nothing to do
-        break;
-    case MULTIANSWER:
-        // nothing to do
-        break;
-    default:
-        error("No handler for question type $question->qtype in get_question");
+            $question->layout = $multichoice->layout;
+            $question->single = $multichoice->single;
+            $question->answers = get_exp_answers( $multichoice->question );
+            break;
+        case NUMERICAL:
+            if (!$numeric = get_record("quiz_numerical","question",$question->id)) {
+                error( "quiz_numerical $question->id not found" );
+            }
+            $question->min = $numeric->min;
+            $question->max = $numeric->max;
+            $question->answer = get_exp_answer( $numeric->answer );
+            break;
+        case MATCH:
+            if (!$subquestions = get_records("quiz_match_sub","question",$question->id)) {
+                error( "quiz_match_sub $question->id not found" );
+            }
+            $question->subquestions = $subquestions;
+            break;
+        case DESCRIPTION:
+            // nothing to do
+            break;
+        case MULTIANSWER:
+            // nothing to do
+            break;
+        default:
+            notify("No handler for question type $question->qtype in get_question");
     }
     return $question;
 }
@@ -1972,7 +1972,7 @@ function get_question_data( $question ) {
 function get_exp_answer( $id ) {
     if (!$answer = get_record("quiz_answers","id",$id )) {
         error( "quiz_answers record $id not found" );
-        }
+    }
     return $answer;
 }
 
@@ -1980,7 +1980,7 @@ function get_exp_answer( $id ) {
 function get_exp_answers( $question_num ) {
     if (!$answers = get_records("quiz_answers","question",$question_num)) {
         error( "quiz_answers question $question_num not found" );
-        }
+    }
     return $answers;
 }
 
