@@ -147,7 +147,7 @@ class quiz_file_format extends quiz_default_format {
     /// multianswer import
 
         $questions= array();
-        $thequestion= extractMultiAnswerQuestion(implode('',$lines));
+        $thequestion= extractMultiAnswerQuestion(addslashes(implode('',$lines)));
 
         if (!empty($thequestion)) {
             $thequestion->name = $lines[0];
