@@ -192,10 +192,7 @@
         print_section($site, $section, $mods, $modnamesused, true);
 
         if ($editing) {
-            echo "<div align=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$site->id&amp;section=$section->section&add=",
-                        $modnames, "section", "", get_string('add').'...', "mods", get_string('activities'));
-            echo "</div>";
+            print_section_add_menus($site, $section->section, $modnames);
         }
         print_simple_box_end();
         print_spacer(10);
