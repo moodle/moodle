@@ -148,7 +148,7 @@
                      print_simple_box_start("center", "100%");
                      print_whole_category_list();
                      print_simple_box_end();
-                     print_course_search();
+                     print_course_search("", false, "short");
                  } else {
                      print_courses(0, "100%");
                  }
