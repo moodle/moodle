@@ -111,6 +111,7 @@
         require_login($course->id);
     }
     if (!$cm->visible and !isteacher($course->id)) {
+        print_header();
         notice(get_string("activityiscurrentlyhidden"));
     } 
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&amp;tab=$tab", $glossary->id, $cm->id);

@@ -41,6 +41,10 @@
 
     require_course_login($course);
 
+    if (!$cm->visible and !isteacher($course->id)) {
+        notice(get_string("activityiscurrentlyhidden"));
+    }
+
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
     if ( $dp = get_record('glossary_formats','name', $glossary->displayformat) ) {
