@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004072500)
+      // resource.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['addresource'] = 'Lisää aineisto';
@@ -23,7 +23,6 @@ $string['directoryinfo'] = 'Kaikki valitun hakemiston tiedostot näytetään';
 $string['editingaresource'] = 'Aineiston muokkaus';
 $string['encryptedcode'] = 'Suojaa koodi';
 $string['example'] = 'Esimerkki';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.esimerkki.fi/jokuhakemisto/jokutiedosto.html';
 $string['fetchclienterror'] = 'Selaimelle tapahtui virhe sivua haettaessa (ehkä virheellinen osoite)';
 $string['fetcherror'] = 'Tapahtui virhe sivua haettaessa.';
@@ -64,8 +63,7 @@ $string['resourcetypedirectory'] = 'Näytä hakemisto';
 $string['resourcetypefile'] = 'Linkitä  tiedostoon tai web-sivuun';
 $string['resourcetypehtml'] = 'Tee uusi web-sivu';
 $string['resourcetypelabel'] = 'Lisää otsikko';
-$string['resourcetypereference'] = 'Lisää viite';
-$string['resourcetypetext'] = 'Lisää uusi testi-sivu';
+$string['resourcetypetext'] = 'Tee uusi teksti-sivu';
 $string['searchweb'] = 'Etsi web-sivua';
 $string['variablename'] = 'Muuttujan nimi';
 
