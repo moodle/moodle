@@ -8,17 +8,16 @@
 <!--
 dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
 dd {margin-bottom:1em;} 
+.style1 {font-weight: bold}
 -->
 </style> 
 </head>
 <body bgcolor="#FFFFFF">
 <h1>Notes de mise &agrave; jour actuelles</h1>
 
-<h3>Moodle 1.4 b&ecirc;ta (23 ao&ucirc;t 2004)</h3>
+<h3>Moodle 1.4 (31 ao&ucirc;t 2004)</h3>
 	
 <ul>
-
-<p><b>Cette version est mise en place pour vous aider &agrave; nous aider. Elle est assez stable, mais contient probablement quelques bogues par-ci par-l&agrave;, notamment dans le code r&eacute;cemment ajout&eacute;. La version finale sortira le 31 ao&ucirc;t 2004. Merci d'<a target="_top" href="http://moodle.org/bugs/">annoncer les bogues</a> que vous trouvez aussi vite que possible, afin que nous puissions rendre la version finale stable et fiable.</b></p>
 		
   <dl>
     <dt>Manchette</dt>
@@ -60,6 +59,7 @@ dd {margin-bottom:1em;}
         <li>Moodle peut remplacer le jeu de caract&egrave;res par d&eacute;faut fix&eacute; par Apache, ce qui rend les langues plus fiables</li>
         <li>Les textes des langues cod&eacute;es sur plusieurs octets reviennent &agrave; la ligne correctement</li>
         <li>Meilleur traitement des r&eacute;glages locaux (locale) et des encodages  sur les sites tr&egrave;s multilingues (comme moodle.org)</li>
+        <li>Nouvelles langues&nbsp;: slov&egrave;ne et h&eacute;breux&nbsp;!</li>
       </ul>
     </dd>
 
@@ -71,7 +71,7 @@ dd {margin-bottom:1em;}
         <li>Les pages des profils utilisateur ne sont par d&eacute;faut plus accessibles aux &eacute;trangers</li>
         <li>Tout le texte est maintenant nettoy&eacute; lors de la sortie (output), et plus seulement &agrave; l'entr&eacute;e (input)</li>
         <li>Les adresses de courriel ne sont plus utilis&eacute;es sur les messages sortant, si l'utilisateur le demande</li>
-        <li>Un nouveau r&eacute;glage $CFG-&gt;loginhttps permet d'utiliser le protocole s&eacute;curis&eacute; https pour la connexion, et de repasser ensuite en protocole http</li>
+        <li>Un nouveau r&eacute;glage <strong>loginhttps</strong> permet d'utiliser le protocole s&eacute;curis&eacute; https pour la connexion, et de repasser ensuite en protocole http</li>
       </ul>
     </dd>
 
@@ -81,7 +81,9 @@ dd {margin-bottom:1em;}
         <li>Nouvelles interfaces pour l'ajout et le retrait d'&eacute;tudiants, d'enseignants, de cr&eacute;ateurs de cours et d'administrateurs</li>
         <li>Les &eacute;checs de connexion sont enregistr&eacute;s et peuvent &ecirc;tre affich&eacute;s aux utilisateurs lors d'une prochaine connexion valable</li>
         <li>Les historiques permettent l'affichage par groupe et par type d'erreur</li>
-        <li>L'envoi de courriels peut &ecirc;tre activ&eacute; et d&eacute;sactiv&eacute; directement dans le profil des utilisateurs</li>
+        <li>Les modules fonctionnent maintenant de fa&ccedil;on plus coh&eacute;rente sur la page d'accueil du site</li>
+  	    <li>Les &laquo;&nbsp;&eacute;tudiants&nbsp;&raquo; des activit&eacute;s de la page d'accueil peuvent &ecirc;tre soit tous les utilisateurs du site, soit les utilisateurs inscrits &agrave; au moins un cours</li>
+  	    <li>L'envoi de courriels peut &ecirc;tre activ&eacute; et d&eacute;sactiv&eacute; directement dans le profil des utilisateurs</li>
         <li>Les visiteurs peuvent &ecirc;tre automatiquement connect&eacute;s en tant qu'utilisateurs anonymes</li>
         <li>Le menu &laquo; Aller &agrave;...&nbsp;&raquo; affiche toujours le texte &laquo;&nbsp;Aller &agrave;&nbsp;&raquo;, pour indiquer plus clairement &agrave; quoi il sert</li>
         <li>Le menu &laquo; Aller &agrave;...&nbsp;&raquo; regroupe de fa&ccedil;on bien plus claire les activit&eacute;s en sections</li>
@@ -126,14 +128,6 @@ dd {margin-bottom:1em;}
     <dd> 
       <ul>
         <li>Remani&eacute; de fa&ccedil;on significative pour am&eacute;liorer le fonctionnement, avec plus d'options disponibles</li>
-      </ul>
-    </dd>
-
-    <dt>Exercice</dt>
-    <dd> 
-      <ul>
-        <li>Supporte maintenant les groupes</li>
-        <li>De nombreux autres changements</li>
       </ul>
     </dd>
 
@@ -183,18 +177,30 @@ dd {margin-bottom:1em;}
       <ul>
         <li>L'ajout de ressources se passe maintenant en une &eacute;tape, avec plus de contr&ocirc;le sur les options</li>
         <li>Les types de ressource Page web, Lien web, Fichier d&eacute;pos&eacute; et Programme externe ont &eacute;t&eacute; combin&eacute;s en un seul type&nbsp;!</li>
-      </ul>
+        <li>Les ressources de type Programme sont remplac&eacute;es par des param&egrave;tres permettant une grande interaction avec des ressources externes, qu'elle soient h&eacute;berg&eacute;es sur d'autres serveurs ou int&eacute;gr&eacute;es &agrave; Moodle.</li>
+  	    <li>Des formulaires escamotables permettent de rendre l'interface moins complexe pour les d&eacute;butants, sans handicaper les utilisateurs chevronn&eacute;s</li>
+  	    </ul>
     </dd>
 
     <dt>SCORM</dt>
     <dd> 
       <ul>
         <li>De nombreux correctifs et am&eacute;liorations. Le module fonctionne avec une &eacute;ventail encore plus large de paquets SCORM</li>
+        <li>V&eacute;rification suppl&eacute;mentaire optionnelle du fichier &laquo;&nbsp;manifest&nbsp;&raquo;</li>
       </ul>
     </dd>
 
-<hr>
+  </dl>
+  
+</ul>
 
+<p>&nbsp;</p>
+
+  <div align="center" class="style1">
+	N'oubliez pas  de jeter un coup d'oeil aux <a href="http://moodle.org/download/modules/" target="_blank">nombreux modules optionnels innovateurs en d&eacute;veloppement</a>.<br /><br />
+    Si vous d&eacute;couvrez des bogues dans cette version, merci de nous les annoncer sur <a href="http://moodle.org/bugs" target="_blank">moodle.org/bugs</a>, afin que nous puissions les corriger dans la prochaine version.
+  </div>
+  	  
 <center><p><a href="./?file=releaseold.html">Notes de mise &agrave; jour des versions ant&eacute;rieures</a></p></center>
 <p>&nbsp;</p>
 <p align="center"><font size="1"><a href="../doc/" target="_top">Documentation Moodle</a></font></p>
