@@ -80,11 +80,10 @@
 
     $PAGE->print_header($course->shortname.': %fullname%');
 
-    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
-    echo '<tr valign="top">';
+    echo '<table id="layout-table"><tr>';
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $PAGE->user_is_editing()) {
-        echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
+        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
         if ($PAGE->user_is_editing()) {
             blocks_print_adminblock($PAGE, $pageblocks);
@@ -92,7 +91,7 @@
         echo '</td>';
     }
 
-    echo '<td valign="top" width="*" id="middle-column">';
+    echo '<td id="middle-column">';
 
     if (($chat->studentlogs or isteacher($course->id)) and !isguest()) {
         echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".

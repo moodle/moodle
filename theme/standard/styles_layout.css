@@ -100,6 +100,18 @@ a img {
     float:right;
 }
 
+#layout-table {
+    width:100%;
+    border-spacing:5px;
+    border-collapse:separate;
+}
+
+#layout-table #left-column,
+#layout-table #middle-column,
+#layout-table #right-column
+{
+    vertical-align:top;
+}
 
 /* footer styles */
 
@@ -294,76 +306,49 @@ table.message_search_results td {
 ******************************/
 /* calendar */
 
-.event_global {
+#calendar .event_global,
+#calendar .event_course,
+#calendar .event_group,
+#calendar .event_user,
+.minicalendar .event_global,
+.minicalendar .event_course,
+.minicalendar .event_group,
+.minicalendar .event_user,
+.block_calendar_month .event_global,
+.block_calendar_month .event_course,
+.block_calendar_month .event_group,
+.block_calendar_month .event_user
+{
     border:2px solid !important;
 }
 
-.event_course {
-    border:2px solid !important;
-}
-
-.event_group {
-    border:2px solid !important;
-}
-
-.event_user {
-    border:2px solid !important;
-}
-
-.duration_global {
+#calendar .duration_global,
+#calendar .duration_course,
+#calendar .duration_group,
+#calendar .duration_user,
+.minicalendar .duration_global,
+.minicalendar .duration_course,
+.minicalendar .duration_group,
+.minicalendar .duration_user
+{
     border-top:2px solid !important;
     border-bottom:2px solid !important;
 }
 
-.duration_course {
-    border-top:2px solid !important;
-    border-bottom:2px solid !important;
-}
-
-.duration_user {
-    border-top:2px solid !important;
-    border-bottom:2px solid !important;
-}
-
-.duration_group {
-    border-top:2px solid !important;
-    border-bottom:2px solid !important;
-}
-
-.today {
+#calendar .today,
+.minicalendar .today {
     border:2px solid !important;
 }
-
-.mycalendar hr {
-    height:1px;
-    margin-top:4px;
-    margin-bottom:4px;
-    border:none;
-    border-top:1px solid;
-}
-
+    
 .cal_popup_bg {
     padding:0px;
     margin:0px;
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
-    border:2px solid;
+    border:1px solid;
 }
 
 .cal_popup_close {
     margin-right:5px;
 }
-
-.eventfull {
-    border-width:1px;
-    border-style:solid;
-}
-
-.eventfullpicture {
-    padding:8px;
-}
-
 
 /*****************************
 ***
@@ -520,19 +505,10 @@ CALENDAR STYLES -- PROVISIONALLY PLACED HERE UNTIL FINALIZED
 */
 
 .cal_popup_caption {
-    font-family:sans-serif;
-    font-size:75%;
-    font-weight:bold;
-}
-
-.cal_popup_close {
-    font-family:sans-serif;
-    font-size:75%;
-    font-weight:bold;
-}
-
-.calendarreferer {
-    font-weight:bold;
+    background-image:url(gradient.jpg);
+    border-bottom-width:1px;
+    border-bottom-style:solid;
+    padding-bottom:2px;
 }
 
 #calendar .maincalendar .calendarmonth tbody td {
@@ -555,7 +531,7 @@ CALENDAR STYLES -- PROVISIONALLY PLACED HERE UNTIL FINALIZED
 
 #calendar .maincalendar table.calendarmonth thead th {
     padding:10px;
-    border-bottom:2px solid;
+    border-bottom:2px #000000 solid;
 }
 
 #calendar {
@@ -564,7 +540,6 @@ CALENDAR STYLES -- PROVISIONALLY PLACED HERE UNTIL FINALIZED
 }
 
 #calendar,
-#calendar .maincalendar .eventlist table,
 #calendar .maincalendar table.calendarmonth {
     border-collapse: separate;
 }
@@ -653,18 +628,26 @@ table.minicalendar tbody td {
     padding: 10px;
 }
 
-#calendar .eventfull {
+#calendar .eventlist .eventfull {
     margin-bottom:10px;
     width: 100%;
-    border-color:#DDDDDD; /* borders */
+    border-spacing:0px;
+    border-collapse:separate;
+    border-width:1px;
+    border-style:solid;
+    border-color:#DDDDDD;
 }
 
 #calendar .eventfullheader, #calendar .eventfullpicture, #calendar .eventfullside {
     background-color:#EEEEEE;
 }
 
-#calendar .eventfullmessage {
+#calendar .eventlist .eventfullmessage {
     padding: 5px;
+}
+
+#calendar .eventlist .eventfullpicture {
+    padding:8px;
 }
 
 #calendar .maincalendar ul {

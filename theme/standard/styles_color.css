@@ -344,69 +344,72 @@ table.message_search_results td {
     background-color: #EEEEEE;
 }
 
-    
-
-
 /*****************************
 ***
 *** Calendar
 ***
 ******************************/
 
-.event_global {
+#calendar .event_global,
+.minicalendar .event_global,
+.block_calendar_month .event_global {
     border-color:#2EBA0E !important;
     background-color:#2EBA0E;
 }
 
-.event_course {
+#calendar .event_course,
+.minicalendar .event_course,
+.block_calendar_month .event_course {
     border-color:#FF9966 !important;
     background-color:#FF9966;
 }
 
-.event_group {
+#calendar .event_group,
+.minicalendar .event_group,
+.block_calendar_month .event_group {
     border-color:#FBBB23 !important;
     background-color:#FBBB23;
 }
 
-.event_user {
+#calendar .event_user,
+.minicalendar .event_user,
+.block_calendar_month .event_user {
     border-color:#A1BECB !important;
     background-color:#A1BECB;
 }
 
-.duration_global {
+#calendar .duration_global,
+.minicalendar .duration_global {
     border-top-color:#2EBA0E !important;
     border-bottom-color:#2EBA0E !important;
 }
 
-.duration_course {
+#calendar .duration_course,
+.minicalendar .duration_course {
     border-top-color:#FF9966 !important;
     border-bottom-color:#FF9966 !important;
 }
 
-.duration_user {
-    border-top-color:#A1BECB !important;
-    border-bottom-color:#A1BECB !important;
-}
-
-.duration_group {
+#calendar .duration_group,
+.minicalendar .duration_group {
     border-top-color:#FBBB23 !important;
     border-bottom-color:#FBBB23 !important;
 }
 
-.weekend {
+#calendar .duration_user,
+.minicalendar .duration_user {
+    border-top-color:#A1BECB !important;
+    border-bottom-color:#A1BECB !important;
+}
+
+#calendar .weekend,
+.minicalendar .weekend {
     color:#FF0000;
 }
 
-.today {
+#calendar .today,
+.minicalendar .today {
     border-color:#000000 !important;
-}
-
-table.calendarmonth thead td {
-    border-bottom-color:#FFC85F;
-}
-
-td.cal_event_description {
-    border-left-color:#FFC85F;
 }
 
 .cal_popup_fg {
@@ -414,7 +417,8 @@ td.cal_event_description {
 }
 
 .cal_popup_bg {
-    border-color:#FEE6B9;
+    border-color:#000000;
+    background-color:#FFFFFF;
 }
 
 

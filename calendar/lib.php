@@ -392,7 +392,7 @@ function calendar_print_event($event) {
     echo '<td class="eventfullheader">';
 
     if (!empty($event->referer)) {
-        echo '<div style="float:left;" class="calendarreferer">'.$event->referer.'</div>';
+        echo '<div class="referer">'.$event->referer.'</div>';
     } else {
         echo '<div style="float:left;" class="event">'.$event->name."</div>";
     }

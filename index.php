@@ -75,17 +75,17 @@
 ?>
 
 
-<table width="100%" border="0" cellspacing="5" cellpadding="5" id="layout-table">
+<table id="layout-table">
   <tr>
   <?PHP
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;" id="left-column">';
+        echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
         echo '</td>';
     }
 
-    echo '<td style="vertical-align: top;" id="middle-column">';
+    echo '<td id="middle-column">';
 
 
 /// Print Section
@@ -191,7 +191,7 @@
 
     // The right column
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing || isadmin()) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;" id="right-column">';
+        echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         if (isadmin()) {
             echo '<div align="center">'.update_course_icon($site->id).'</div>';
             echo '<br />';

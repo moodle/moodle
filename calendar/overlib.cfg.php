@@ -1,5 +1,4 @@
 ol_delay = 350;
-ol_fgcolor = '#ffffff';
 ol_fgclass = 'cal_popup_fg';
 ol_bgclass = 'cal_popup_bg';
 ol_cgclass = 'cal_popup_cg';

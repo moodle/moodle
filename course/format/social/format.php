@@ -22,16 +22,16 @@
     $strgroupmy      = get_string("groupmy");
     $editing         = isediting($course->id);
 
-    echo '<table width="100%" border="0" cellspacing="5" cellpadding="5" id="layout-table">';
+    echo '<table id="layout-table">';
     echo '<tr>';
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;" id="left-column">';
+        echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
         echo '</td>';
     }
 
-    echo '<td  valign="top" width="*" id="middle-column">';
+    echo '<td id="middle-column">';
     if ($social = forum_get_course_forum($course->id, "social")) {
         if (forum_is_subscribed($USER->id, $social->id)) {
             $subtext = get_string("unsubscribe", "forum");
@@ -55,7 +55,7 @@
 
     // The right column
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;" id="right-column">';
+        echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
         if ($editing) {
             blocks_print_adminblock($PAGE, $pageblocks);

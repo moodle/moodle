@@ -70,16 +70,16 @@
     -moz-border-radius-topright:15px;
 }
 
-.eventfull {
+#calendar .eventlist .eventfull {
     -moz-border-radius-bottomleft:15px;
     -moz-border-radius-bottomright:15px;
 }
 
-.eventfullside {
+#calendar .eventlist .eventfullside {
     -moz-border-radius-bottomleft:15px;
 }
 
-.eventfullmessage {
+#calendar .eventlist .eventfullmessage {
     -moz-border-radius-bottomright:15px;
 }
 
