@@ -1,4 +1,4 @@
-Vietnames languag pack by Vu Thanh Hung <taiwah70ATyahoo.com>
+﻿Vietnames languag pack by Vu Thanh Hung <vthung@moet.edu.vn>
 
 
 ENGLISH
