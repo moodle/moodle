@@ -52,6 +52,18 @@
         }
     }
 
+    if (!$course->category) {  // To reduce possibility of "browsing" userbase at site level
+        if (!isteacher() and !isteacher(0, $user->id) ) {  // Teachers can browse and be browsed at site level
+            print_header("$personalprofile: ", "$personalprofile: ",
+                          "<a href=\"index.php?id=$course->id\">$participants</a>",
+                          "", "", true, "&nbsp;", navmenu($course));
+            print_heading(get_string('usernotavailable', 'error'));
+            print_footer($course);
+            die;
+        }
+    }
+
+
     if ($course->category) {
         print_header("$personalprofile: $fullname", "$personalprofile: $fullname",
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
@@ -63,7 +75,7 @@
     }
 
 
-    if ($course->category and ! isguest() ) {
+    if ($course->category and ! isguest() ) {   // Need to have access to a course to see that info
         if (!isstudent($course->id, $user->id) && !isteacher($course->id, $user->id)) {
             print_heading(get_string("notenrolled", "", $fullname));
             print_footer($course);
