@@ -4,6 +4,7 @@
 // It defines default values for any important configuration variables
 
    $defaults = array (
+       'allowemailaddresses'      =>  '',
        'allowunenroll'            =>  true,
        'allowcoursethemes'        =>  false,
        'allowuserthemes'          =>  false,
@@ -20,6 +21,7 @@
        'dbsessions'               =>  false,
        'debug'                    =>  7,
        'deleteunconfirmed'        =>  168,
+       'denyemailaddresses'       =>  '',
        'digestmailtime'           =>  17,
        'displayloginfailures'     => '',
        'enablerssfeeds'           =>  0,

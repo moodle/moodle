@@ -218,7 +218,7 @@ class configvarrss extends configvar {
 
 /// language list
     $interface['langlist'] = new configvar ( get_string('configlanglist', 'admin'),
-        '<input name="langlist" type="text" size="40" value="'.s($config->langlist).'" alt="langlist" />' );
+        '<input name="langlist" type="text" size="60" value="'.s($config->langlist).'" alt="langlist" />' );
 
 /// locale
     $interface['locale'] = new configvar ( get_string('configlocale', 'admin'),
@@ -284,7 +284,7 @@ class configvarrss extends configvar {
 
 /// sitepolicy
     $user['sitepolicy'] = new configvar (get_string('configsitepolicy', 'admin'),
-        '<input type="text" name="sitepolicy" size="30" value="'.$config->sitepolicy.'" alt="sitepolicy" />' );
+        '<input type="text" name="sitepolicy" size="60" value="'.$config->sitepolicy.'" alt="sitepolicy" />' );
 
 
 /// fullnamedisplay
@@ -458,6 +458,15 @@ class configvarrss extends configvar {
 
     $mail['digestmailtime'] = new configvar (get_string('configdigestmailtime', 'admin'),
         choose_from_menu($hours, 'digestmailtime', $config->digestmailtime, '', '', 0, true) );
+
+/// allowemailaddresses
+    $mail['allowemailaddresses'] = new configvar (get_string('configallowemailaddresses', 'admin'),
+        '<input name="allowemailaddresses" type="text" size="60" value="'.s($config->allowemailaddresses).'" alt="allowemailaddresses" />' );
+
+/// denyemailaddresses
+    $mail['denyemailaddresses'] = new configvar (get_string('configdenyemailaddresses', 'admin'),
+        '<input name="denyemailaddresses" type="text" size="60" value="'.s($config->denyemailaddresses).'" alt="denyemailaddresses" />' );
+
 
 
 
