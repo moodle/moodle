@@ -238,7 +238,7 @@
     }
     asort($formats);
 
-    echo '<table cellpadding="5" bgcolor="#FFFFFF" class="generaltab" width="40%" align="center" style="border-style: solid; border-width: 1px;">';
+    echo '<table cellpadding="5" bgcolor="#FFFFFF" class="generaltab" width="40%" align="center">';
     for ($i = 0; $i <= count($formats); $i++) {
         if ( $formats[$i] ) {
             $format = get_record("glossary_displayformats","fid",$i);
