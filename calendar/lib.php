@@ -1105,9 +1105,13 @@ function calendar_edit_event_allowed($event) {
 }
 
 function calendar_get_default_courses() {
-    global $USER;
+    global $USER, $CFG;
 
     $courses = array();
+    if(isadmin($USER->id)) {
+        $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
+        return $courses;
+    }
     if(isset($USER->student) && is_array($USER->student)) {
         $courses = $USER->student + $courses;
     }

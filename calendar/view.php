@@ -556,7 +556,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         $coursesdata = get_courses('all', 'c.shortname');
     }
     else {
-        $coursesdata = get_my_courses($USER->id);
+        $coursesdata = get_my_courses($USER->id, 'shortname');
     }
     $coursesdata = array_diff_assoc($coursesdata, array(1 => 1));
 
