@@ -29,6 +29,7 @@ $string['everybody'] = 'Everybody';
 $string['furtherinformation'] = 'Further Information';
 $string['lastentry'] = 'Last Entry';
 $string['maildefault'] = 'Mail Default';
+$string['mailnotification'] = 'Mail Notification';
 $string['modulename'] = 'Dialogue';
 $string['modulenameplural'] = 'Dialogues';
 $string['namehascloseddialogue'] = '$a has closed dialogue';
