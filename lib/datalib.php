@@ -489,13 +489,13 @@ function insert_record($table, $dataobject, $returnid=true) {
     foreach ($columns as $column) {
         if ($column->name <> "id") {
             if (isset($data[$column->name])) { 
-                if ($data[$column->name] == "" and isset($column->has_default)) {
+                if ($data[$column->name] == "" and !empty($column->has_default)) {
                     $ddd[$column->name] = $column->default_value;
                 } else {
                     $ddd[$column->name] = $data[$column->name];
                 }
             } else {
-                if (isset($column->has_default)) {
+                if (!empty($column->has_default)) {
                     $ddd[$column->name] = $column->default_value;
                 } 
             }
