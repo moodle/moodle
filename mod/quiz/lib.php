@@ -1623,9 +1623,18 @@ function quiz_grade_attempt_question_result($question,
                     $answer->answer = strtolower($answer->answer);
                     $question->answer = strtolower($question->answer);
                 }
-                if ($question->answer == $answer->answer) {
-                    $feedback[0] = $answer->feedback;
-                    $grade = (float)$answer->fraction * $question->grade;
+
+                if ((strpos(' '.$answer->answer, '*'))) {
+                    $answer->answer = eregi_replace('\*','.*',$answer->answer);
+                    if (eregi('^'.$answer->answer.'$', $question->answer)) {
+                        $feedback[0] = $answer->feedback;
+                        $grade = (float)$answer->fraction * $question->grade;
+                    }
+                } else {
+                    if ($answer->answer == $question->answer) {
+                        $feedback[0] = $answer->feedback;
+                        $grade = (float)$answer->fraction * $question->grade;
+                    }
                 }
             }
             break;
