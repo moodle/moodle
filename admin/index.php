@@ -64,12 +64,12 @@
             $a->newversion = $version;
             $strdatabasechecking = get_string("databasechecking", "", $a);
             $strdatabasesuccess  = get_string("databasesuccess");
-            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
+            print_header($strdatabasechecking, $strdatabasechecking, $strdatabasechecking);
             notify($strdatabasechecking);
             $db->debug=true;
             if (upgrade_moodle($CFG->version)) {
                 $db->debug=false;
-                if (set_field("config", "value", "$version", "name", "version")) {
+                if (set_config("version", $version)) {
                     notify($strdatabasesuccess);
                     print_continue("index.php");
                     die;
@@ -85,12 +85,11 @@
         }
        
     } else {
-        $dversion->name  = "version";
-        $dversion->value = $version;
         $strdatabaseupgrades = get_string("databaseupgrades");
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
-        if (insert_record("config", $dversion)) {
-            notify("You are currently using Moodle version $release ($version)");
+
+        if (set_config("version", $version)) {
+            notify("You are currently using Moodle version $version (Release $release)");
             print_continue("index.php");
             die;
         } else {
@@ -106,14 +105,19 @@
 
 /// Updated human-readable release version if necessary
 
-    if ($CFG->release) { 
-        if ($release <> $drelease) {  // Update the release version
-            set_field("config", "value", "$release", "name", "release");
+    if ($release <> $CFG->release) {  // Update the release version
+        $strdatabaseupgrades = get_string("databaseupgrades");
+        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
+        print_heading($release);
+        if (!set_config("release", $release)) {
+            notify("ERROR: Could not update release version in database!!");
         }
-    } else {
-        $drelease->name  = "release";
-        $drelease->value = $release;
-        insert_record("config", $drelease);
+        print_continue("index.php");
+        print_simple_box_start("CENTER");
+        include("$CFG->dirroot/RELEASE.html");
+        print_simple_box_end();
+        print_continue("index.php");
+        exit;
     }
 
 
