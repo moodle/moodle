@@ -98,8 +98,9 @@
         foreach ($chatusers as $chatuser) {
             $lastping = $timenow - $chatuser->lastmessageping;
             echo "<tr><td width=35>";
+            echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&course=$chat->course\">";
             print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
-            echo "</td><td valign=center>";
+            echo "</a></td><td valign=center>";
             echo "<p><font size=1>";
             echo "$chatuser->firstname $chatuser->lastname<br />";
             echo "<font color=\"#888888\">$stridle: ".format_time($lastping, $str)."</font>";

@@ -407,7 +407,7 @@ function chat_display_version($version, $browser)
 }
 
 
-function chat_format_message($message) {
+function chat_format_message($message, $courseid=0) {
 /// Given a message object full of information, this function 
 /// formats it appropriately into text and html, then 
 /// returns the formatted data.
@@ -421,6 +421,9 @@ function chat_format_message($message) {
     }
 
     $picture = print_user_picture($user->id, 0, $user->picture, false, true, false);
+    if ($courseid) {
+        $picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$courseid\">$picture</a>";
+    }
 
     $strtime = userdate($message->timestamp, get_string("strftimemessage", "chat"));
 

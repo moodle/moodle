@@ -30,7 +30,7 @@
 /// Print the page header
 
     if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
     $strchats = get_string("modulenameplural", "chat");
@@ -58,7 +58,7 @@
 
             print_simple_box_start("center");
             foreach ($messages as $message) {  // We are walking FORWARDS through messages
-                $formatmessage = chat_format_message($message);
+                $formatmessage = chat_format_message($message, $course->id);
                 echo $formatmessage->html;
             }
             print_simple_box_end("center");
