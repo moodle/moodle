@@ -169,7 +169,7 @@ function glossary_get_entries($glossaryid, $entrylist) {
 }
 
 function glossary_print_entry($course, $cm, $glossary, $entry,$currentview="",$cat="") {
-    global $THEME, $USET, $CFG;
+    global $THEME, $USER, $CFG;
     
     $PermissionGranted = 0;
     $formatfile = "$CFG->dirroot/mod/glossary/formats/$glossary->displayformat.php";
@@ -540,12 +540,20 @@ for ($row = 0; $row < $NumRows; $row++) {
                     } else {
                          $CurrentColor = $TabColor;
                     }
-                    ?>
-                    <td width="<? p($TabWidth) ?>%" bgcolor="<? p($CurrentColor) ?>" align="center">
-                    <b><a href="<? p($data[$TabProccessed]->link) ?>"><? p($data[$TabProccessed]->caption) ?></a></b></td>
-                    <? if ($col < $TabsPerRow) { ?>
-                         <td width="<? p($TabSeparation) ?>" align="center">&nbsp;</td>
-                    <? }
+
+                    echo "<td width=\"$TabWidth%\" bgcolor=\"$CurrentColor\" align=\"center\"><b>";
+                    if ($TabProccessed != $CurrentTab) {
+                        echo "<a href=\"" . $data[$TabProccessed]->link . "\">";
+                    }
+                    echo $data[$TabProccessed]->caption;
+                    if ($TabProccessed != $CurrentTab) {
+                        echo "</a>";
+                    }
+                    echo "</b></td>";
+                    
+                    if ( $col < $TabsPerRow ) {
+                        echo "<td width=\"$TabSeparation\" align=\"center\">&nbsp;</td>";
+                    }
                } else {
                     $CurrentColor = "";
                }
@@ -566,12 +574,19 @@ for ($row = 0; $row < $NumRows; $row++) {
                     } else {
                          $CurrentColor = $TabColor;
                     }
-                    ?>
-                    <td width="<? p($TabWidth) ?>%" bgcolor="<? p($CurrentColor) ?>" align="center">
-                    <b><a href="<? p($data[$TabProccessed]->link) ?>"><? p($data[$TabProccessed]->caption) ?></a></b></td>
-                    <? if ($col < $TabsPerRow) { ?>
-                         <td width="<? p($TabSeparation) ?>" align="center">&nbsp;</td>
-                    <? }
+                    echo "<td width=\"$TabWidth%\" bgcolor=\"$CurrentColor\" align=\"center\"><b>";
+                    if ($TabProccessed != $CurrentTab) {
+                        echo "<a href=\"" . $data[$TabProccessed]->link . "\">";
+                    }
+                    echo $data[$TabProccessed]->caption;
+                    if ($TabProccessed != $CurrentTab) {
+                        echo "</a>";
+                    }
+                    echo "</b></td>";
+
+                    if ($col < $TabsPerRow) {
+                         echo "<td width=\"$TabSeparation\" align=\"center\">&nbsp;</td>";
+                    }
                } else {
                     if ($NumRows > 1) {
                          $CurrentColor = $TabColor;
@@ -610,13 +625,23 @@ global $CFG, $THEME;
      $strspecial      = get_string("special", "glossary");
      $strallentries   = get_string("allentries", "glossary");
 
-     echo "<CENTER>$strselectletter";
+     if ($glossary->showalphabet) {
+         $output .= get_string("explainalphabet","glossary");
+     }
+     if ($glossary->showspecial) {
+         $output .= get_string("explainspecial","glossary");
+     }
+     if ($glossary->showall) {
+         $output .= get_string("explainall","glossary");
+     }
+     
+     echo "<CENTER>$output<p>";
 
       if ( $glossary->showspecial ) {
           if ( $l == "SPECIAL" ) {
-               echo "<p><b>$strspecial</b> | ";
+               echo "<b>$strspecial</b> | ";
           } else {
-               echo "<p><a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=SPECIAL\">$strspecial</a> | ";
+               echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=SPECIAL\">$strspecial</a> | ";
           }
       }
 
@@ -645,7 +670,7 @@ global $CFG, $THEME;
           }
       }
 }
-function glossary_print_categories_menu($course, $cm, $glossary, $category) {
+function glossary_print_categories_menu($course, $cm, $glossary, $cat, $category) {
 global $CFG, $THEME;
      echo "<table border=0 width=100%>";
      echo "<tr>";
@@ -663,11 +688,19 @@ global $CFG, $THEME;
      if ( $category ) {
         echo $category->name;
      } else {
-        echo get_string("entrieswithoutcategory","glossary");
+        if ( $cat < 0 ) {
+            echo get_string("entrieswithoutcategory","glossary");
+            $selected = "-1";
+        } elseif ( $cat == 0 ) {
+            echo get_string("allcategories","glossary");
+            $selected = "0";
+        }
      }
      echo "</b></td>";
      echo "<td align=center width=20%>";
-     $menu[0] = get_string("nocategorized","glossary");
+     $menu["0"] = get_string("allcategories","glossary");
+     $menu["-1"] = get_string("nocategorized","glossary");
+//     $menu[""] = "-----------------------------------------";
 
      $categories = get_records("glossary_categories", "glossaryid", $glossary->id, "name ASC");
      if ( $categories ) {
@@ -680,7 +713,7 @@ global $CFG, $THEME;
           }
      }
 
-     echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&currentview=categories&cat=", $menu, "catmenu", $selected, get_string("jumpto"),
+     echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&currentview=categories&cat=", $menu, "catmenu", $selected, "",
                       "", "", false);
 
      echo "</td>";

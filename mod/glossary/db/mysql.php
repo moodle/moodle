@@ -57,7 +57,7 @@ function glossary_upgrade($oldversion) {
 
     if ( $oldversion < 2003092102 ) {
         execute_sql("ALTER TABLE `{$CFG->prefix}glossary_entries_categories` DROP PRIMARY KEY ");
-        execute_sql("ALTER TABLE `{$CFG->prefix}glossary_entries_categories` ADD `ID` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST");
+        execute_sql("ALTER TABLE `{$CFG->prefix}glossary_entries_categories` ADD `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST");
     }
 
     return true;

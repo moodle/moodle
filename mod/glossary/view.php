@@ -28,7 +28,7 @@
     }
 
     require_login($course->id);
-    if ( !$course->visible ) {
+    if (!$cm->visible and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     }
 
@@ -57,11 +57,11 @@
           $l = "";
           $currentview = strtolower($currentview);
           if ( $currentview ) {
-               if ( $cat ) {
+               if ( $cat > 0 ) {
                     $category = get_record("glossary_categories","id",$cat);
-               }
-               if ( !$category ) {
-                    $cat = "";
+                   if ( !$category ) {
+                        $cat = "";
+                   }
                }
           }
     }
@@ -97,7 +97,7 @@
      	</form>
      	<?
           echo "</td><td valign=top align=right width=50%>";
-           if (isteacher($course->id) or $glossary->studentcanpost) {
+           if (isteacher($course->id) or ($glossary->studentcanpost) and !isguest($course->id)) {
               $options = array ("id" => "$cm->id");
               print_single_button("edit.php", $options, $straddentry );
            }
@@ -119,7 +119,8 @@
      print_tabbed_table_start($data, $CurrentTab, $tCFG);
      echo "<center>";
      if ( $currentview ) {
-         glossary_print_categories_menu($course, $cm, $glossary, $category);
+         glossary_print_categories_menu($course, $cm, $glossary, $cat, $category);
+         $currentcategory = "";
      } else {
          glossary_print_alphabet_menu($cm, $glossary, $l);
      
@@ -137,7 +138,17 @@
 		$allentries = glossary_search_entries($searchterms, $glossary, $includedefinition);
 	} elseif ( $eid ) {	// looking for an entry
 		$allentries = get_records("glossary_entries", "id", $eid);
-	} else {			// looking for terms that begin with a specify letter
+	} elseif ( $currentview and $cat == 0 ) {   // Browsing all categories
+        $sql = "SELECT gec.id gecid, gc.name, gc.id CID, ge.*
+            FROM {$CFG->prefix}glossary_entries ge,
+                {$CFG->prefix}glossary_entries_categories gec,
+                {$CFG->prefix}glossary_categories gc
+            WHERE ge.glossaryid = '$glossary->id' AND
+                gec.entryid = ge.id AND
+                gc.id = gec.categoryid
+            ORDER BY gc.name, ge.concept";
+	    $allentries = get_records_sql( $sql );
+	} else {			// looking for terms that begin with a specify letter or entries with no category associated
 		$allentries = get_records("glossary_entries", "glossaryid", $glossary->id,"concept ASC");
 	}
 
@@ -179,9 +190,31 @@
                               $DumpToScreen = 1;
                          }
                     } else {
-                         if ( ! record_exists("glossary_entries_categories","entryid",$entry->id) ) {
-                              $DumpToScreen = 1;
-                         }
+                        if ( $cat < 0 ) {    // No categorized
+                            if ( ! record_exists("glossary_entries_categories","entryid",$entry->id) ) {
+                                $DumpToScreen = 1;
+                            }
+                        } else {    // All categories
+                            if ( $currentcategory != $entry->CID ) {
+                                $currentcategory = $entry->CID;
+        	                    if ( $glossary->displayformat == 0 ) {
+        	                        if ( $DumpedDefinitions > 0) {
+        	                            echo "</table></center><p>";
+        	                        }
+        	                        echo "\n<center><TABLE BORDER=0 CELLSPACING=0 width=95% valign=top cellpadding=10><tr><td align=center BGCOLOR=\"$THEME->cellheading2\">";
+        	                    }
+                                echo "<b>$entry->name</b>";
+                            }
+
+        	                if ( $glossary->displayformat == 0 ) {
+        	                    echo "\n</center></td></tr></TABLE></center>";
+        	                    if ( $DumpedDefinitions > 0) {
+        	                        echo "\n<center><TABLE BORDER=1 CELLSPACING=0 width=95% valign=top cellpadding=10>";
+        	                 	}
+        	                }
+
+                            $DumpToScreen = 1;
+                        }
                     }
                 } else {
                     $DumpToScreen = 1;

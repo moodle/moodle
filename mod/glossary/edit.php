@@ -59,14 +59,16 @@ if ($e) {
 
                 $PermissionGranted = 1;
                 if ( !$glossary->allowduplicatedentries ) {
-          	     $dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept));
-          	     if ($dupentries) {
+          	         $dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept));
+          	         if ($dupentries) {          	
                          foreach ($dupentries as $curentry) {
-                              if ( $curentry->id != $entry) {
-                                   $PermissionGranted = 0;
+                             if ( $glossary->id == $curentry->glossaryid ) {
+                                 if ( $curentry->id != $entry ) {
+                                     $PermissionGranted = 0;
+                                 }
                               }
                          }
-    	               }
+    	             }
                 }
                 if ( $PermissionGranted ) {
                     $newentry->attachment = $_FILES["attachment"];
@@ -76,12 +78,12 @@ if ($e) {
                          unset($newentry->attachment);
                     }
                     if (! update_record("glossary_entries", $newentry)) {
-               	    error("Could not update your glossary");
-               	} else {
-                        add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&eid=$newentry->id", "$newentry->id");
-           	     }
+               	        error("Could not update your glossary");
+               	    } else {
+                      add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&eid=$newentry->id", "$newentry->id");
+           	        }
                 } else {
-               	error("Could not update this glossary entry because this concept already exist.");
+               	   error("Could not update this glossary entry because this concept already exist.");
                 }
           } else {
                 $newentry->userid = $USER->id;
@@ -125,11 +127,13 @@ if ($e) {
            if ( $categories ) {
                 $newcategory->entryid = $newentry->id;
                 foreach ($categories as $category) {
-                    $newcategory->categoryid =$category;
-                    insert_record("glossary_entries_categories",$newcategory);
+                    if ( $category > 0 ) {
+                        $newcategory->categoryid =$category;
+                        insert_record("glossary_entries_categories",$newcategory);
+                    }
                 }
            }
-          redirect("view.php?id=$cm->id&eid=$newentry->id&currentview=$currentview&cat=$cat");
+          redirect("view.php?id=$cm->id&eid=$newentry->id");
           die;
      }
 }
