@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004050200)
+      // calendar.php - created with Moodle 1.3 Beta + (2004051600)
 
 
 $string['april'] = 'Huhtikuu';
@@ -16,11 +16,14 @@ $string['december'] = 'Joulukuu';
 $string['default'] = 'Oletus';
 $string['deleteevent'] = 'Poista tapahtuma';
 $string['detailedmonthview'] = 'Tarkennettu kuukausinäkymä';
+$string['durationminutes'] = 'Kesto minuutteina';
 $string['durationnone'] = 'Ilman kestoa';
 $string['durationuntil'] = 'Päättymisaika';
 $string['editevent'] = 'Muokkaa tapahtumaa';
 $string['errorbeforecoursestart'] = 'Tapahtumaa ei voi asettaa alkavaksi ennen kurssin aloituspäivää';
 $string['errorinvaliddate'] = 'Päivämäärä virheellinen';
+$string['errorinvalidminutes'] = 'Määritä kesto 1 ja 999 minuutin väliltä.';
+$string['errorinvalidrepeats'] = 'Määritä tapahtumien määrä 1 ja 99 välillä.';
 $string['errornodescription'] = 'Tapahtuman kuvaus puuttuu';
 $string['errornoeventname'] = 'Tapahtuman nimi puuttuu';
 $string['eventdate'] = 'Päivämäärä';
@@ -30,6 +33,7 @@ $string['eventendtime'] = 'Tapahtuman päättymisaika';
 $string['eventinstanttime'] = 'Aika';
 $string['eventkind'] = 'Tapahtuman tyyppi';
 $string['eventname'] = 'Nimi';
+$string['eventrepeat'] = 'Toistot';
 $string['eventsfor'] = '$a tapahtumaa';
 $string['eventstarttime'] = 'Tapahtuman alkamisaika';
 $string['eventtime'] = 'Aika';
@@ -43,6 +47,7 @@ $string['february'] = 'Helmikuu';
 $string['fri'] = 'Pe';
 $string['friday'] = 'Perjantai';
 $string['globalevents'] = 'Yhteiset tapahtumat';
+$string['gotocalendar'] = 'Siirry kalenteriin';
 $string['groupevents'] = 'Ryhmän tapahtumat';
 $string['hidden'] = 'Piilotettu';
 $string['january'] = 'Tammikuu';
@@ -65,6 +70,9 @@ $string['pref_startwday'] = 'Viikon ensimmäinen päivä';
 $string['pref_timeformat'] = 'Aikojen muoto';
 $string['preferences'] = 'Asetukset';
 $string['preferences_available'] = 'Henkilökohtaiset asetuksesi';
+$string['repeatnone'] = 'Ei toistoja';
+$string['repeatweeksl'] = 'Toista viikoittain';
+$string['repeatweeksr'] = 'tapahtumat';
 $string['sat'] = 'La';
 $string['saturday'] = 'Lauantai';
 $string['september'] = 'Syyskuu';
