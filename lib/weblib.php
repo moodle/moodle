@@ -1895,13 +1895,13 @@ function print_navigation ($navigation) {
 }
 
 /**
- * Prints a string in a specified size
+ * Prints a string in a specified size  (retained for backward compatibility)
  *
  * @param string $text The text to be displayed
  * @param int $size The size to set the font for text display.
  */
 function print_headline($text, $size=2) {
-    echo '<strong><font size="'. $size .'">'. $text .'</font></strong><br />'."\n";
+    print_heading($text, 'left', $size);
 }
 
 /**
@@ -1911,8 +1911,11 @@ function print_headline($text, $size=2) {
  * @param string $align The alignment of the printed paragraph of text
  * @param int $size The size to set the font for text display.
  */
-function print_heading($text, $align='center', $size=3) {
-    echo '<p align="'. $align .'"><font size="'. $size .'"><strong>'. stripslashes_safe($text) .'</strong></font></p>';
+function print_heading($text, $align='', $size=2) {
+    if ($align) {
+        $align = ' align="'.$align.'"';
+    }
+    echo "<h$size $align>".stripslashes_safe($text)."</h$size>";
 }
 
 /**
@@ -1925,9 +1928,9 @@ function print_heading($text, $align='center', $size=3) {
  * @param string $icon Image to display if needed
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon='') {
-    echo '<p align="center"><font size="3">'. $icon .'<strong>'. stripslashes_safe($text);
+    echo "<h$size>$icon".stripslashes_safe($text);
     helpbutton($helppage, $text, $module);
-    echo '</strong></font></p>';
+    echo "</h$size>";
 }
 
 /**
