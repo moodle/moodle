@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.2 development (2003120700)
+
+
+$string['about'] = '关于此编辑器';
+$string['absbottom'] = 'Absbottom';
+$string['absmiddle'] = 'Absmiddle';
+$string['address'] = 'Address';
+$string['alignment'] = 'Alignment';
+$string['alternatetext'] = 'Alternate text';
+$string['baseline'] = 'Baseline';
+$string['bold'] = '粗体';
+$string['borderthickness'] = 'Border thickness';
+$string['bottom'] = 'Bottom';
+$string['browse'] = '浏览';
+$string['cancel'] = '取消';
+$string['cellpadding'] = '边框';
+$string['cellspacing'] = '边距';
+$string['choosechar'] = '选择字符';
+$string['chooseicon'] = 'Choose an icon to insert';
+$string['close'] = 'Close';
+$string['cols'] = 'Cols';
+$string['copy'] = '复制所选项';
+$string['createlink'] = '插入链接';
+$string['cut'] = '剪切所选项';
+$string['forecolor'] = '字体颜色';
+$string['heading'] = 'Heading';
+$string['hilitecolor'] = '背景色';
+$string['horizontal'] = 'Horizontal';
+$string['horizontalrule'] = 'Horizontal Rule';
+$string['htmlmode'] = 'Toggle HTML Source';
+$string['imageurl'] = '图片网址';
+$string['indent'] = 'Increase Indent';
+$string['insertchar'] = '插入特殊字符';
+$string['insertimage'] = '插入图片';
+$string['insertsmile'] = '插入表情符';
+$string['inserttable'] = '插入表格';
+$string['italic'] = '斜体字';
+$string['justifycenter'] = '正中';
+$string['justifyfull'] = 'Justify Full';
+$string['justifyleft'] = '正左';
+$string['justifyright'] = '正右';
+$string['layout'] = 'Layout';
+$string['left'] = '左';
+$string['middle'] = '中央';
+$string['normal'] = 'Normal';
+$string['notset'] = 'Not Set';
+$string['ok'] = 'OK';
+$string['orderedlist'] = 'Ordered List';
+$string['outdent'] = 'Decrease Indent';
+$string['paste'] = 'Paste from clipboard';
+$string['path'] = '路径';
+$string['percent'] = 'Percent';
+$string['pixels'] = '象素';
+$string['popupeditor'] = 'Enlarge Editor';
+$string['preformatted'] = 'Preformatted';
+$string['preview'] = '预览';
+$string['redo'] = '重做';
+$string['right'] = '右';
+$string['rows'] = '行';
+$string['showhelp'] = 'Help using editor';
+$string['spacing'] = 'Spacing';
+$string['strikethrough'] = '删除线';
+$string['subscript'] = '下标';
+$string['superscript'] = '上标';
+$string['textindicator'] = '当前风格';
+$string['textmode'] = '现在是文本模式.  点击[<>] 按钮返回WYSIWYG模式.';
+$string['texttop'] = 'Texttop';
+$string['top'] = 'Top';
+$string['underline'] = '下划线';
+$string['undo'] = '撤销上步操作';
+$string['unorderedlist'] = 'Bulleted List';
+$string['vertical'] = '垂线';
+$string['width'] = '宽度';
+
+?>
