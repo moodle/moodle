@@ -141,9 +141,11 @@
 
         if (! $thisweek = $sections[$week]) {
             $thisweek->course = $course->id;   // Create a new week structure
-            $thisweek->week = $week;
+            $thisweek->section = $week;
             $thisweek->summary = "";
-            $thisweek->id = insert_record("course_sections", $thisweek);
+            if (!$thisweek->id = insert_record("course_sections", $thisweek)) {
+                notify("Error inserting new week!");
+            }
         }
 
         if (isediting($course->id)) {
