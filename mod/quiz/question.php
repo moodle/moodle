@@ -43,7 +43,7 @@
     require_login($course->id);
 
     if (!isteacher($course->id)) {
-        error("You can't modify this course!");
+        error("You can't modify these questions!");
     }
 
     $streditingquiz = get_string("editingquiz", "quiz");
@@ -51,7 +51,48 @@
 
     print_header("$course->shortname: $streditingquestion", "$course->shortname: $streditingquestion",
                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                   -> <A HREF=\"$HTTP_REFERER\">$streditingquiz</A> -> $streditingquestion");
+                  -> <A HREF=\"$HTTP_REFERER\">$streditingquiz</A> -> $streditingquestion");
+
+    if (isset($delete)) {
+        if (isset($confirm)) {
+            if ($confirm == md5($delete)) {
+                if (!delete_records("quiz_questions", "id", $question->id)) {
+                    error("An error occurred trying to delete question (id $question->id)");
+                }
+                redirect("edit.php");
+            } else {
+                error("Confirmation string was incorrect");
+            }
+            
+        } else {
+            if ($category->publish) {
+                $quizzes = get_records_sql("SELECT * FROM quiz");
+            } else {
+                $quizzes = get_records("quiz", "course", $course->id);
+            }
+            $beingused = array();
+            if ($quizzes) {
+                foreach ($quizzes as $quiz) {
+                    $qqq = explode(",", $quiz->questions);
+                    foreach ($qqq as $key => $value) {
+                        if ($value == $delete) {
+                            $beingused[] = $quiz->name;
+                        }
+                    }
+                }
+            }
+            if ($beingused) {
+                $beingused = implode(", ", $beingused);
+                $beingused = get_string("questioninuse", "quiz", "<I>$question->name</I>")."<P>".$beingused;
+                notice($beingused, "edit.php");
+            } else {
+                notice_yesno(get_string("deletequestioncheck", "quiz", $question->name), 
+                            "question.php?id=$question->id&delete=$delete&confirm=".md5($delete), "edit.php");
+            }
+            print_footer($course);
+            exit;
+        }
+    }
 
     if (match_referer() and isset($HTTP_POST_VARS)) {    // question submitted
 

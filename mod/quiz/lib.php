@@ -19,8 +19,7 @@ define("MULTICHOICE", "3");
 define("RANDOM",      "4");
 $QUIZ_QUESTION_TYPE = array ( MULTICHOICE => get_string("multichoice", "quiz"),
                               TRUEFALSE   => get_string("truefalse", "quiz"),
-                              SHORTANSWER => get_string("shortanswer", "quiz"),
-                              RANDOM      => get_string("random", "quiz") );
+                              SHORTANSWER => get_string("shortanswer", "quiz") );
 
 
 
@@ -672,7 +671,7 @@ function quiz_print_cat_question_list($categoryid) {
         echo "</TD>";
         if ($canedit) {
             echo "<TD>";
-                echo "<A TITLE=\"$strdelete\" HREF=\"question.php?delete=$question->id\"><IMG 
+                echo "<A TITLE=\"$strdelete\" HREF=\"question.php?id=$question->id&delete=$question->id\"><IMG 
                      SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
                 echo "<A TITLE=\"$stredit\" HREF=\"question.php?id=$question->id\"><IMG 
                      SRC=\"../../pix/t/edit.gif\" BORDER=0></A>";

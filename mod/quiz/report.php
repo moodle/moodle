@@ -8,6 +8,8 @@
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
 
+    optional_variable($attempt);     // A particular attempt ID
+
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
@@ -79,7 +81,7 @@
 
         $table->data[] = array ($picture, 
                                 "<A HREF=\"$CFG->wwwroot/user/view.php?id=$grade->user&course=$course->id\">$grade->firstname $grade->lastname</A>", 
-                                "$userattempts", $grade->grade);
+                                "$userattempts", round($grade->grade,0));
     }
 
     print_table($table);
