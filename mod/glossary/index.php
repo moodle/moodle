@@ -44,16 +44,17 @@
     $strname  = get_string("name");
     $strweek  = get_string("week");
     $strtopic  = get_string("topic");
+    $strentries  = get_string("entries", "glossary");
 
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname);
-        $table->align = array ("CENTER", "LEFT");
+        $table->head  = array ($strweek, $strname, $strentries);
+        $table->align = array ("CENTER", "LEFT", "CENTER");
     } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname);
-        $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
+        $table->head  = array ($strtopic, $strname, $strentries);
+        $table->align = array ("CENTER", "LEFT", "CENTER");
     } else {
-        $table->head  = array ($strname);
-        $table->align = array ("LEFT", "LEFT", "LEFT");
+        $table->head  = array ($strname, $strentries);
+        $table->align = array ("LEFT", "CENTER");
     }
 
     foreach ($glossarys as $glossary) {
@@ -65,14 +66,19 @@
             $link = "<A HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
         }
 
+        $count = count_records("glossary_entries", "glossaryid", $glossary->id);
+
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($glossary->section, $link);
+            if (empty($glossary->section)) {
+                $glossary->section = "";
+            }
+            $table->data[] = array ($glossary->section, $link, $count);
         } else {
-            $table->data[] = array ($link);
+            $table->data[] = array ($link, $count);
         }
     }
 
-    echo "<BR>";
+    echo "<br />";
 
     print_table($table);
 
