@@ -394,13 +394,14 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
         $tempmod->course = $log->course;
         $tempmod->id = $post->forum;
         //Obtain the visible property from the instance
-        $modvisible = instance_is_visible($log->module,$tempmod);
+        $modvisible = instance_is_visible($log->module, $tempmod);
   
         //Only if the mod is visible
         if ($modvisible) {
             if ($post) {
+                /// Check whether this is for teachers only
                 $teacheronly = "";
-                if ($forum = get_record("forum", "id", $post->forum) ) {
+                if ($forum = get_record("forum", "id", $post->forum)) {
                     if ($forum->type == "teacher") {
                         if ($isteacher) {
                             $teacheronly = "class=\"teacheronly\"";
@@ -409,6 +410,26 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                         }
                     }
                 }
+                /// Check whether this is belongs to a discussion in a group that 
+                /// should not be accessible to the current user
+                /// TEMPORARY:  This algorithm is ridiculously cumbersome ... 
+                ///             There MUST be a better way of doing this...
+                if ($cm = get_coursemodule_from_instance("forum", $post->forum, $course->id)) {
+                    if (groupmode($course, $cm) == SEPARATEGROUPS) {
+                        if (!isteacheredit($course->id)) {
+                            if ($discussion = get_record("forum_discussions", "id", $post->discussion)) {
+                                if ($firstpost = get_record("forum_posts", "id", $discussion->firstpost)) {
+                                    if ($group = user_group($course->id, $firstpost->userid)) {
+                                        if (mygroupid($course->id) != $group->id) {
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 if (! $heading) {
                     print_headline(get_string("newforumposts", "forum").":");
                     $heading = true;
