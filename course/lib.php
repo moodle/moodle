@@ -1556,28 +1556,29 @@ function make_editing_buttons($moduleid, $absolute=false, $visible=true, $movese
 
     if ($moveselect) {
         $move =     "<a title=\"$str->move\" href=\"$path/mod.php?copy=$moduleid\"><img".
-                    " src=\"$pixpath/t/move.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                    " src=\"$pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a>";
     } else {
         $move =     "<a title=\"$str->moveup\" href=\"$path/mod.php?id=$moduleid&move=-1\"><img".
-                    " src=\"$pixpath/t/up.gif\" height=11 width=11 border=0></a> ".
+                    " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=11 width=11 border=0></a>".
                     "<a title=\"$str->movedown\" href=\"$path/mod.php?id=$moduleid&move=1\"><img".
-                    " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> ";
+                    " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=11 width=11 border=0></a>";
     }
 
     $leftright = "";
     if ($indent > 0) {
         $leftright .= "<a title=\"$str->moveleft\" href=\"$path/mod.php?id=$moduleid&indent=-1\"><img".
-                      " src=\"$pixpath/t/left.gif\" height=11 width=11 border=0></a> ";
+                      " src=\"$pixpath/t/left.gif\" hspace=\"2\" height=11 width=11 border=0></a>";
     }
     if ($indent >= 0) {
         $leftright .= "<a title=\"$str->moveright\" href=\"$path/mod.php?id=$moduleid&indent=1\"><img".
-                      " src=\"$pixpath/t/right.gif\" height=11 width=11 border=0></a> ";
+                      " src=\"$pixpath/t/right.gif\" hspace=\"2\" height=11 width=11 border=0></a>";
     }
 
-    return "$leftright<a title=\"$str->delete\" href=\"$path/mod.php?delete=$moduleid\"><img".
-           " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> $move".
+    return "$leftright$move".
            "<a title=\"$str->update\" href=\"$path/mod.php?update=$moduleid\"><img".
-           " src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a> $hideshow";
+           " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 border=0></a>".
+           "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$moduleid\"><img".
+           " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 border=0></a>$hideshow";
 }
 
 ?>
