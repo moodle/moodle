@@ -1216,13 +1216,16 @@
                     //Get id and modtype from data
                     $mod_id = $data["MOD"]["#"]["ID"]["0"]["#"];
                     $mod_type = $data["MOD"]["#"]["MODTYPE"]["0"]["#"];
-                    //Serialize it
-                    $mod_temp = serialize($data);
-                    //Now add slashes
-                    $sla_mod_temp = addslashes($mod_temp);
-                    //Save to db
-                    backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
-                                 null,$sla_mod_temp);
+                    //Only if we've selected to restore it
+                    if  ($this->preferences->mods[$mod_type]->restore) {
+                        //Serialize it
+                        $mod_temp = serialize($data);
+                        //Now add slashes
+                        $sla_mod_temp = addslashes($mod_temp);
+                        //Save to db
+                        backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
+                                     null,$sla_mod_temp);
+                    }
                     //Reset info to empty
                     $this->info = "";
                 }
