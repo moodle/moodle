@@ -67,16 +67,16 @@
 
     if ($creatorediting) {
         if ($adminediting) {
-	        print_header("$site->shortname: $category->name", "$site->fullname", 
+	        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
                          "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
                          "<a href=\"index.php\">$strcategories</a> -> $category->name",
                          "", "", true, $navbaritem);
         } else {
-	        print_header("$site->shortname: $category->name", "$site->fullname", 
+	        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
                          "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
         }
     } else {
-	    print_header("$site->shortname: $category->name", "$site->fullname", 
+	    print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
                      "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
     }
 
