@@ -124,6 +124,7 @@ $string['noscript'] = 'JavaScript doit être activé pour continuer !';
 $string['notenoughsubquestions'] = 'Vous n\'avez pas défini assez de sous-questions !<br />Souhaitez-vous revenir en arrière pour corriger cela ?';
 $string['notenoughanswers'] = 'Ce type de question requiert au moins $a réponses';
 $string['numerical'] = 'Numérique';
+$string['overdue'] = 'En retard';
 $string['paragraphquestion'] = 'Question paragraphe non supportée à la ligne $a. La question sera ignorée.';
 $string['passworderror'] = 'La clef n\'est pas correcte';
 $string['percentcorrect'] = 'Pourcentage de réponses correctes';
