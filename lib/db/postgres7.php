@@ -946,7 +946,7 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2005032300) {
         table_column('user', 'dstpreset', 'timezonename', 'varchar', '100');
-        execute_sql('UPDATE `'.$CFG->prefix.'user` SET timezonename = \'\'');
+        execute_sql('UPDATE '.$CFG->prefix.'user SET timezonename = \'\'');
     }
 
 
@@ -973,7 +973,59 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2005032800) {
-       /// Need GRADE TABLES HERE!
+        modify_database('',"CREATE TABLE prefix_grade_category (
+                              id SERIAL PRIMARY KEY,
+                              name varchar(64) default NULL,
+                              courseid integer NOT NULL default '0',
+                              drop_x_lowest integer NOT NULL default '0',
+                              bonus_points integer NOT NULL default '0',
+                              hidden integer NOT NULL default '0',
+                              weight decimal(4,2) default '0.00'
+                            );");
+        
+        modify_database('',"CREATE INDEX prefix_grade_category_courseid_idx ON prefix_grade_category (courseid);");
+        
+        modify_database('',"CREATE TABLE prefix_grade_exceptions (
+                              id SERIAL PRIMARY KEY,
+                              courseid integer  NOT NULL default '0',
+                              grade_itemid integer  NOT NULL default '0',
+                              userid integer  NOT NULL default '0'
+                            );");
+        
+        modify_database('',"CREATE INDEX prefix_grade_exceptions_courseid_idx ON prefix_grade_exceptions (courseid);");
+        
+        
+        modify_database('',"CREATE TABLE prefix_grade_item (
+                              id SERIAL PRIMARY KEY,
+                              courseid integer default NULL,
+                              category integer default NULL,
+                              modid integer default NULL,
+                              cminstance integer default NULL,
+                              scale_grade float(11) default '1.0000000000',
+                              extra_credit integer NOT NULL default '0',
+                              sort_order integer  NOT NULL default '0'
+                            );");
+        
+        modify_database('',"CREATE INDEX prefix_grade_item_courseid_idx ON prefix_grade_item (courseid);");
+        
+        modify_database('',"CREATE TABLE prefix_grade_letter (
+                              id SERIAL PRIMARY KEY,
+                              courseid integer NOT NULL default '0',
+                              letter varchar(8) NOT NULL default 'NA',
+                              grade_high decimal(4,2) NOT NULL default '100.00',
+                              grade_low decimal(4,2) NOT NULL default '0.00'
+                            );");
+
+        modify_database('',"CREATE INDEX prefix_grade_letter_courseid_idx ON prefix_grade_letter (courseid);");
+        
+        modify_database('',"CREATE TABLE prefix_grade_preferences (
+                              id SERIAL PRIMARY KEY,
+                              courseid integer default NULL,
+                              preference integer NOT NULL default '0',
+                              value integer NOT NULL default '0'
+                            );");
+        
+        modify_database('',"CREATE UNIQUE INDEX prefix_grade_prefs_courseidpref_uk ON prefix_grade_preferences (courseid,preference);");
     }
 
     return $result;
