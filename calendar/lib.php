@@ -47,7 +47,7 @@ else {
 }
 
 define ('SECS_IN_DAY', 86400);
-define ('CALENDAR_UPCOMING_DAYS', 14);
+define ('CALENDAR_UPCOMING_DAYS', 21);
 define ('CALENDAR_UPCOMING_MAXEVENTS', 10);
 define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
 define ('CALENDAR_TF_24', '%H:%M');
