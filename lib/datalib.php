@@ -1,5 +1,10 @@
 <?PHP // $Id$
 
+/// CONSTANTS /////////////////////////////////////////////////////////////
+
+define('SITEID', 1);
+
+
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
 /**
 * execute a given sql command string
