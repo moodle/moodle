@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 unstable development (2004083000)
+      // glossary.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -88,7 +88,7 @@ $string['entryleveldefaultsettings'] = 'エントリーレベルデフォルト設定';
 $string['entryusedynalink'] = 'エントリーを自動的にリンクさせる';
 $string['explainaddentry'] = '用語集に新しいエントリーを追加します。<br>用語と定義は必須入力項目です。';
 $string['explainall'] = '全てのエントリーを1ページに表示';
-$string['explainalphabet'] = 'インデックスを利用して用語集を閲覧';
+$string['explainalphabet'] = 'インデックスを利用して用語集を表示';
 $string['explainexport'] = 'ファイルが生成されました。<br>ファイルをダウンロードして安全に保管してください。いつでも必要な時に、このコースまたは他のコースにインポートすることが出来ます。';
 $string['explainimport'] = 'インポートするファイル及び処理方法を指定してください。<p>実行後、結果を検証してください。';
 $string['explainspecial'] = '１文字で始まらないエントリーを表示します';
