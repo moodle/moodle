@@ -39,7 +39,7 @@
     print_header("$course->shortname: $assignment->name", "$course->fullname",
                  "$navigation <a href=\"index.php?id=$course->id\">$strassignments</a> -> 
                   <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strsubmissions", 
-                  "", "", true);
+                  "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this assignment
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
