@@ -1,5 +1,9 @@
 <?php //$Id$
 
+// Developer's debug assistant - if true then the display string will not cache, only
+// the magpie object's built in caching will be used
+define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', false);
+
 class block_rss_client extends block_base {
 
     function init() {
@@ -71,7 +75,7 @@ class block_rss_client extends block_base {
             $courseid = $this->instance->pageid;
         }
 
-        //if the user is an admin, course teacher, or all user are allowed - 
+        //if the user is an admin, course teacher, or all users are allowed
         // then allow the user to add rss feeds
         if ( !isguest() && (isadmin() ||  $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
             $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br />';
@@ -86,7 +90,7 @@ class block_rss_client extends block_base {
             foreach ($rssidarray as $rssid) {
                 $rssfeedstring =  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
                 $output .= format_text($rssfeedstring);
-                if ($numids > 1 && $count != $numids -1) {
+                if ($numids > 1 && $count != $numids -1 && !empty($rssfeedstring)) {
                     $output .= '<hr width="80%" />';
                 }
                 $count ++;
@@ -124,9 +128,10 @@ class block_rss_client extends block_base {
         require_once(MAGPIE_DIR .'rss_fetch.inc');
         
         // Check if there is a cached string which has not timed out.
-        if (isset($this->config->{'rssid'. $rssid}) && 
-            isset($this->config->{'rssid'. $rssid .'timestamp'}) && 
-            $this->config->{'rssid'. $rssid .'timestamp'} >= $now - $CFG->block_rss_timeout * 60) {
+        if (BLOCK_RSS_SECONDARY_CACHE_ENABLED &&
+                isset($this->config->{'rssid'. $rssid}) && 
+                    isset($this->config->{'rssid'. $rssid .'timestamp'}) && 
+                        $this->config->{'rssid'. $rssid .'timestamp'} >= $now - $CFG->block_rss_timeout * 60) {
             // If the cached string is not too stale 
             // use it rather than going any further
             return stripslashes_safe($this->config->{'rssid'. $rssid});
@@ -138,17 +143,18 @@ class block_rss_client extends block_base {
             // By capturing the output from fetch_rss this way
             // error messages do not display and clutter up the moodle interface
             // however, we do lose out on seeing helpful messages like "cache hit", etc.
-            ob_start();
+            
+            error_reporting(E_USER_NOTICE);            
+            //ob_start();
             $rss = fetch_rss($rss_record->url);
-            $rsserror = ob_get_contents();
-            ob_end_clean();
-
+            //$rsserror = ob_get_contents();
+            //ob_end_clean();
+            
             if ($rss === false) {
                 if ($CFG->debug && !empty($rsserror)) {
                     // There was a failure in loading the rss feed, print link to full error text
-                    print '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_error.php?error='. urlencode($rsserror) .'">Error loading a feed.</a><br />'; //Daryl Hawes note: localize this line
+                    return '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_error.php?error='. urlencode($rsserror) .'">Error loading a feed.</a><br />'; //Daryl Hawes note: localize this line
                 }
-                return;
             }
 
             if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
@@ -159,8 +165,15 @@ class block_rss_client extends block_base {
                 $feedtitle =  stripslashes_safe(rss_unhtmlentities($rss->channel['title']));
             } else {
                 $feedtitle = stripslashes_safe($rss_record->preferredtitle);
-            }          
-                        
+            }
+//            print_object($rss);
+            if (isset($this->config) && 
+                    isset($this->config->block_rss_client_show_channel_image) && 
+                        $this->config->block_rss_client_show_channel_image &&
+                            isset($rss->image) && isset($rss->image['link']) && isset($rss->image['title']) && isset($rss->image['url']) ) {
+                $returnstring .= '<div class="rssclientimage"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" alt="'. $rss->image['title'] .'"/></a></div><br />';
+            }
+
             if ($showtitle) {
                 $returnstring .= '<div class="rssclienttitle">'. $feedtitle .'</div><br /><br />';
             }                        
@@ -169,6 +182,7 @@ class block_rss_client extends block_base {
                 $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
                 $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
                 if ($item['title'] == '') {
+                    // no title present, use portion of description
                     $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
                 }
         
@@ -198,7 +212,6 @@ class block_rss_client extends block_base {
         if (!empty($feedtitle) and ($feedtitle != '<a href="'. $rss->channel['link'] .'"></a>')) {
             $this->title = $feedtitle;
         }
-        $returnstring .= '<br />';
         
         // store config setting for this rssid so we do not need to read from file each time
         $this->config->{'rssid'. $rssid} = addslashes($returnstring);
