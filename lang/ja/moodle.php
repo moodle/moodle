@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2.1 (2004032500)
+      // moodle.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['action'] = '操作';
@@ -840,6 +840,7 @@ $string['upload'] = 'アップロード';
 $string['uploadafile'] = 'ファイルをアップロードする';
 $string['uploadedfileto'] = '$a->file を $a->directory にアップロードしました';
 $string['uploadnofilefound'] = 'ファイルが見つかりません - アップロードするファイルを選択しましたか?';
+$string['uploadnotallowed'] = 'アップロードは許可されていません';
 $string['uploadproblem'] = 'ファイル \'$a\' のアップロード中に原因不明のエラーが発生しました(ファイルサイズが大きすぎると思われます)';
 $string['uploadthisfile'] = 'ファイルをアップロードする';
 $string['uploadusers'] = 'ユーザをアップロードする';
