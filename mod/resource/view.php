@@ -141,8 +141,8 @@
                 $resourcetype = "mp3";
                 $embedded = true;
 
-            } else if ($mimetype == "video/x-ms-wmv") {   // It's a Media Player file
-                $resourcetype = "wmv";
+            } else if (substr($mimetype, 0, 10) == "video/x-ms") {   // It's a Media Player file
+                $resourcetype = "mediaplayer";
                 $embedded = true;
 
             } else if ($mimetype == "text/html") {    // It's a web page
@@ -262,12 +262,12 @@
                     echo '</object>';
                     echo "</p></center>";
 
-                } else if ($resourcetype == "wmv") {  
+                } else if ($resourcetype == "mediaplayer") {  
                     echo "<center><p>";
                     echo '<object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
                     echo '        codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
                     echo '        standby="Loading Microsoft® Windows® Media Player components..." ';
-                    echo '        id="wmvplayer" align="" type="application/x-oleobject">';
+                    echo '        id="msplayer" align="" type="application/x-oleobject">';
                     echo "<param name=\"Filename\" value=\"$fullurl\">";
                     echo '<param name="ShowControls" value=true>';
                     echo '<param name="AutoRewind" value=true>';
@@ -278,8 +278,8 @@
                     echo '<param name="AnimationAtStart" value=false>';
                     echo '<param name="ShowGotoBar" value=false>';
                     echo '<param name="EnableFullScreenControls" value=true>';
-                    echo "\n<embed src=\"$fullurl\" name=\"wmvplayer\" type=\"application/x-mplayer2\" ";
-                    echo ' ShowControls="1" AutoRewind="1" AutoStart="1" Autosize="1" EnableContextMenu="1"';
+                    echo "\n<embed src=\"$fullurl\" name=\"msplayer\" type=\"$mimetype\" ";
+                    echo ' ShowControls="1" AutoRewind="1" AutoStart="1" Autosize="0" EnableContextMenu="1"';
                     echo ' TransparentAtStart="0" AnimationAtStart="0" ShowGotoBar="0" EnableFullScreenControls="1"';
                     echo ' pluginspage="http://www.microsoft.com/Windows/Downloads/Contents/Products/MediaPlayer/">';
                     echo '</embed>';
