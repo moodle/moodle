@@ -32,8 +32,9 @@
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
-define("FORMAT_MOODLE", "0");
-define("FORMAT_HTML", "1");
+define("FORMAT_MOODLE", "0");   // Does all sorts of transformations and filtering
+define("FORMAT_HTML", "1");     // Plain HTML (with some tags stripped)
+define("FORMAT_PLAIN", "2");    // Plain text (even tags are printed in full)
 
 $JAVASCRIPT_TAGS = array("javascript:", "onclick=", "ondblclick=", "onkeydown=", "onkeypress=", "onkeyup=", 
                          "onmouseover=", "onmouseout=", "onmousedown=", "onmouseup=",
@@ -419,7 +420,8 @@ function parse_slash_arguments($string, $i=0) {
 function format_text_menu() {
 /// Just returns an array of formats suitable for a popup menu
     return array (FORMAT_MOODLE => get_string("formattext"), 
-                  FORMAT_HTML   => get_string("formathtml") );
+                  FORMAT_HTML   => get_string("formathtml"),
+                  FORMAT_PLAIN  => get_string("formatplain"));
 }
 
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
@@ -432,6 +434,13 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
     switch ($format) {
         case FORMAT_HTML:
             $text = replace_smilies($text);
+            return $text;
+            break;
+
+        case FORMAT_PLAIN:
+            $text = htmlentities($text);
+            $text = replace_smilies($text);
+            $text = nl2br($text);
             return $text;
             break;
 
@@ -467,6 +476,9 @@ function clean_text($text, $format) {
             foreach ($JAVASCRIPT_TAGS as $tag) {
                 $text = stri_replace($tag, "", $text);
             }
+            return $text;
+
+        case FORMAT_PLAIN:
             return $text;
     }
 }

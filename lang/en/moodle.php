@@ -187,6 +187,7 @@ $string['followingrequired'] = "The following items are required";
 $string['forgotten'] = "Forgotten your username or password?";
 $string['format'] = "Format";
 $string['formathtml'] = "HTML format";
+$string['formatplain'] = "Plain text format";
 $string['formatsocial'] = "Social format";
 $string['formattext'] = "Moodle auto-format";
 $string['formattexttype'] = "Formatting";
