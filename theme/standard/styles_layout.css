@@ -907,7 +907,7 @@ table.calendar-controls .next
 
 /* contents.php */
 
-.c0 {
+.cell {  /* Very generic table cell*/
     vertical-align: top;
 }
 
