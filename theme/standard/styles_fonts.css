@@ -40,7 +40,7 @@ body, td, th, li {
 }
 
 th {
-    font-weight:bold;
+    font-weight: bold;
 }
 
 a:link,
@@ -48,20 +48,8 @@ a:visited {
     text-decoration:none;
 }
 
-a.dimmed:link,
-a.dimmed:visited {
-    text-decoration:none;
-}
-
-a.autolink:link,
-a.autolink:visited {
-    text-decoration:none;
-}
-
-a.autolink:hover,
-a:hover,
-a.dimmed:hover {
-    text-decoration:underline;
+a:hover {
+    text-decoration: underline;
 }
 
 h1.main,
@@ -77,6 +65,7 @@ h6.main {
 h1 {
     font-size:1.7em;
 }
+
 h2 {
     font-size:1.4em;
 }
@@ -224,7 +213,7 @@ table.formtable tbody th {
     text-align:center;
 }
 
-.forumnodiscuss,
+.forumnodiscuss{
     font-weight:bold;
 }
 
@@ -477,7 +466,7 @@ body#user-index #longtimenosee {
 }
 
 .message .time {
-    font-weight: italic;
+    font-style: italic;
 }
 
 .message .content {
