@@ -172,6 +172,7 @@
 
         $list_of_words_cp = str_replace('{', '\{', $list_of_words_cp);
         $list_of_words_cp = str_replace('+', '\+', $list_of_words_cp);
+        $list_of_words_cp = str_replace('(', '\(', $list_of_words_cp);
 
         $list_of_words_cp = "(".$list_of_words_cp.")";
 
