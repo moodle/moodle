@@ -778,6 +778,7 @@
         global $CFG, $db;
 
         $status = true;
+        $status2 = true;
         //Check it exists
         if (!file_exists($xml_file)) {
             $status = false;
