@@ -170,9 +170,8 @@
         
         case 'term': 
             $printpivot = 0;
-            $sqlfrom .= ", {$CFG->prefix}glossary_alias ga";
-            $where = "AND ge.id = ga.entryid AND                            
-                          (ge.concept = '$hook' OR ga.alias = '$hook' )
+            $sqlfrom .= " left join {$CFG->prefix}glossary_alias ga on ge.id = ga.entryid ";
+            $where = "AND (ge.concept = '$hook' OR ga.alias = '$hook' )
                      ";
         break;
 
@@ -211,6 +210,7 @@
     break;
     } 
     $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+
     $sqllimit = '';
     
     if ( $offset >= 0 ) {
@@ -225,5 +225,4 @@
     }
     
     $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
-
 ?>
