@@ -36,7 +36,11 @@
 
 // Set language/locale of printed times (must be supported by OS)
 
-    setlocale ("LC_TIME", $CFG->locale);
+    if ($CFG->locale) {
+        setlocale ("LC_TIME", $CFG->locale);
+    } else {
+        setlocale ("LC_TIME", $CFG->lang);
+    }
 
 // Load up theme variables (colours etc)
 
