@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004060400)
+      // quiz.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -126,6 +126,7 @@ $string['notenoughanswers'] = 'Este tipo de pregunta requiere al menos $a respue
 $string['notenoughsubquestions'] = 'No se han definido suficientes subpreguntas.<br> ¿Quiere regresar y arreglar esta pregunta?';
 $string['numerical'] = 'Numérico';
 $string['paragraphquestion'] = 'Pregunta de parágrafo no permitida en la línea $a. La pregunta no se tendrá en cuenta';
+$string['passworderror'] = 'La contraseña es incorrecta';
 $string['percentcorrect'] = 'Porcentaje correcto';
 $string['publish'] = 'Publicar';
 $string['publishedit'] = 'Necesita tener permiso en el curso para añadir o editar preguntas en esta categoría';
@@ -164,6 +165,9 @@ $string['reportmulti_resp'] = 'Respuestas individuales';
 $string['reportoverview'] = 'Vista general';
 $string['reportregrade'] = 'Recalificar intentos';
 $string['reportsimplestat'] = 'Estadística simple';
+$string['requirepassword'] = 'Se requiere contraseña';
+$string['requirepasswordmessage'] = 'Para contestar este cuestionario necesita conocer la contraseña';
+$string['requiresubnet'] = 'Se requiere dirección de red';
 $string['review'] = 'Revisión';
 $string['save'] = 'Guardar';
 $string['savegrades'] = 'Guardar calificaciones';
@@ -179,6 +183,7 @@ $string['showcorrectanswer'] = '¿Mostrar la respuesta correcta al finalizar?';
 $string['showfeedback'] = '¿Mostrar resultado al finalizar?';
 $string['shuffleanswers'] = 'Barajar respuestas';
 $string['shufflequestions'] = 'Barajar preguntas';
+$string['subneterror'] = 'Lo sentimos, este cuestionario ha sido bloqueado de modo que sólo es accesible desde ciertas direcciones. En este momento su ordenador no está autorizado para usar este cuestionario.';
 $string['time'] = 'Tiempo';
 $string['timecompleted'] = 'Completado';
 $string['timeleft'] = 'Tiempo restante';
