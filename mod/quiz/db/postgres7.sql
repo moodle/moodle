@@ -25,6 +25,8 @@ CREATE TABLE prefix_quiz (
   correctanswers integer NOT NULL default '1',
   grademethod integer NOT NULL default '1',
   review integer NOT NULL default '0',
+  shufflequestions integer NOT NULL default '0',
+  shuffleanswers integer NOT NULL default '0',
   questions text NOT NULL default '',
   sumgrades integer NOT NULL default '0',
   grade integer NOT NULL default '0',

@@ -47,6 +47,11 @@ function quiz_upgrade($oldversion) {
         modify_database ("", "CREATE INDEX question_quiz_multichoice_idx ON prefix_quiz_multichoice (question);");
     }
 
+    if ($oldversion < 2003040901) {
+        table_column("quiz", "", "shufflequestions", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "review");
+        table_column("quiz", "", "shuffleanswers", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "shufflequestions");
+    }
+
     return true;
 }
 

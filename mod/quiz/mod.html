@@ -4,37 +4,43 @@
 <?PHP 
     require_once("$CFG->dirroot/mod/quiz/lib.php");
 
-    if (empty($form->name)) {
+    if (!isset($form->name)) {
         $form->name = "";
     }
-    if (empty($form->intro)) {
+    if (!isset($form->intro)) {
         $form->intro = "";
     }
-    if (empty($form->timeopen)) {
+    if (!isset($form->timeopen)) {
         $form->timeopen = "";
     }
-    if (empty($form->timeclose)) {
+    if (!isset($form->timeclose)) {
         $form->timeclose = "";
     }
-    if (empty($form->attempts)) {
-        $form->attempts = "0";
+    if (!isset($form->attempts)) {
+        $form->attempts = 0;
     }
-    if (empty($form->grademethod)) {
+    if (!isset($form->grademethod)) {
         $form->grademethod = "";
     }
-    if (empty($form->feedback)) {
+    if (!isset($form->feedback)) {
         $form->feedback = "";
     }
-    if (empty($form->correctanswers)) {
+    if (!isset($form->correctanswers)) {
         $form->correctanswers = "";
     }
-    if (empty($form->review)) {
-        $form->review = "";
+    if (!isset($form->review)) {
+        $form->review = 0;
     }
-    if (empty($form->grade)) {
+    if (!isset($form->shufflequestions)) {
+        $form->shufflequestions = 1;
+    }
+    if (!isset($form->shuffleanswers)) {
+        $form->shuffleanswers = 1;
+    }
+    if (!isset($form->grade)) {
         $form->grade = "";
     }
-    if (empty($form->questions)) {
+    if (!isset($form->questions)) {
         $form->questions = "";
     }
 ?>
@@ -144,6 +150,30 @@
         $options[1] = get_string("yes");
         choose_from_menu($options, "review", "$form->review", "");
         helpbutton("review", get_string("allowreview","quiz"), "quiz");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("shufflequestions", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "shufflequestions", "$form->shufflequestions", "");
+        helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("shuffleanswers", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "shuffleanswers", "$form->shuffleanswers", "");
+        helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
      ?>
     </TD>
 </TR>

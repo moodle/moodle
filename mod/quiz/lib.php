@@ -397,7 +397,7 @@ function quiz_print_question_icon($question, $editlink=true) {
 
 function quiz_print_question($number, $question, $grade, $courseid, 
                              $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL,
-                             $realquestion=NULL) {
+                             $realquestion=NULL, $shuffleanswers=false) {
 
 /// Prints a quiz question, any format
 /// $question is provided as an object
@@ -417,9 +417,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
         echo "<P ALIGN=CENTER><FONT SIZE=1>$grade $strmarks</FONT></P>";
     }
     print_spacer(1,100);
-    echo "<p align=\"center\">";
-    quiz_print_question_icon($question, false);
-    echo "</p></TD><TD VALIGN=TOP>";
+    echo "</TD><TD VALIGN=TOP>";
 
     if (empty($realquestion)) { 
         $realquestion->id = $question->id;
@@ -522,6 +520,10 @@ function quiz_print_question($number, $question, $grade, $courseid,
            echo "<TABLE>";
            $answerids = explode(",", $options->answers);
 
+           if ($shuffleanswers) {
+               $answerids = swapshuffle($answerids);
+           }
+
            foreach ($answerids as $key => $answerid) {
                $answer = $answers[$answerid];
                $qnumchar = chr(ord('a') + $key);
@@ -562,6 +564,9 @@ function quiz_print_question($number, $question, $grade, $courseid,
            }
            if (!$subquestions = get_records_list("quiz_match_sub", "id", $options->subquestions)) {
                notify("Error: Missing subquestions for this question!");
+           }
+           if ($shuffleanswers) {
+               $subquestions = draw_rand_array($subquestions, count($subquestions));
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
@@ -721,6 +726,10 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {
             notify("Error when reading questions from the database!");
             return false;
         }
+
+        if (!empty($quiz->shufflequestions)) {
+            $questions = swapshuffle_assoc($questions);
+        }
     }
 
     if (!$grades = get_records_list("quiz_question_grades", "question", $quiz->questions, "", "question,grade")) {
@@ -802,7 +811,8 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {
 
         print_simple_box_start("CENTER", "90%");
         quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->course, 
-                            $feedback, $response, $actualgrades, $correct, $randomquestion);
+                            $feedback, $response, $actualgrades, $correct, 
+                            $randomquestion, $quiz->shuffleanswers);
         print_simple_box_end();
         echo "<BR>";
     }

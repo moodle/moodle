@@ -53,6 +53,7 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2003030303) {
         table_column("quiz_questions", "", "defaultgrade", "INTEGER", "6", "UNSIGNED", "1", "NOT NULL", "image");
     }
+
 	if ($oldversion < 2003032601) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_answers` ADD INDEX(question) ");
         execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_attempts` ADD INDEX(quiz) ");
@@ -84,6 +85,11 @@ function quiz_upgrade($oldversion) {
                              PRIMARY KEY  (`id`),
                              KEY `question` (`question`)
                            );");
+    }
+
+    if ($oldversion < 2003040901) {
+        table_column("quiz", "", "shufflequestions", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "review");
+        table_column("quiz", "", "shuffleanswers", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "shufflequestions");
     }
 
     return true;
