@@ -720,6 +720,7 @@ $string['noticenewerbackup'] = 'このバックアップファイルは、現在インストールされ
 $string['notifyloginfailuresmessage'] = 'a->time, IP: $a->ip, ユーザ: $a->info';
 $string['notifyloginfailuresmessageend'] = 'ログは、$a/course/log.php?id=1&chooselog=1&modid=site_errors で閲覧出来ます。';
 $string['notifyloginfailuresmessagestart'] = '最後に通知されてから、$a におけるログイン失敗一覧です。';
+$string['notifyloginfailuressubject'] = '$a :: ログイン失敗通知';
 $string['notincluded'] = '含まない';
 $string['notingroup'] = '申し訳ございません。この活動を閲覧する為にはグループに属している必要があります。';
 $string['nousersmatching'] = 'ユーザ \'$a\' は見つかりませんでした。';

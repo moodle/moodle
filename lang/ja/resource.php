@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 development (2004082300)
+      // resource.php - created with Moodle 1.5 development (2004082600)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -20,6 +20,7 @@ $string['configpopupwidth'] = '新しいポップアップウインドウのデフォルトの幅は?';
 $string['configwebsearch'] = 'URLをウェブページまたはリンクとして追加する時、このロケーションは、ユーザがURLを検索する為のヘルプとして提供されます。';
 $string['directlink'] = 'このファイルをダイレクトリンクする';
 $string['directoryinfo'] = '選択したディレクトリの全ファイルが表示されます。';
+$string['display'] = '表示';
 $string['editingaresource'] = 'リソースを編集する';
 $string['encryptedcode'] = '暗号化コード';
 $string['example'] = '例';
