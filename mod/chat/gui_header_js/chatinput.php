@@ -22,6 +22,9 @@ require_login($chat->course);
 <html>
 <head>
 <title>Message Input</title>
+
+<?php include("$CFG->javascript"); ?>
+
 <script language="Javascript">
 <!--
 scroll_active = true;
@@ -43,6 +46,7 @@ function empty_field_and_submit() {
 <form action="../insert.php" method="GET" target="empty" name="f" 
       OnSubmit="return empty_field_and_submit()">
 &gt;&gt;<input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>">
+<?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
 </form>
 
 <form action="../insert.php" method="GET" target="empty" name="fdummy" 

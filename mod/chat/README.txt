@@ -6,9 +6,15 @@ Version 0.2  (for Moodle 1.1)
 This module is still very new and very incomplete compared
 to what it will be one day.
 
-It's based in part on ARSC but I ended up rewriting so much 
-of it there's hardly a line of code in use that has not
-been changed, so perhaps it's better to say *inspired* by ARSC.
+It's based in part on:
+
+    ARSC: A Really Simple Chat
+    by Manuel Kiessling
+    http://manuel.kiessling.net/projects/software/arsc/
+
+but I ended up rewriting so much of it there's hardly a line 
+of code in use that has not been changed, so perhaps it's 
+better to say *inspired* by ARSC.
 
 Things to do yet:
 
