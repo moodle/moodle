@@ -13,6 +13,8 @@
 	listallsubmissions
 	listforassessmentstudent
 	listforassessmentteacher
+	userconfirmdelete
+	userdelete
 	
 
 ************************************************/
@@ -72,7 +74,7 @@
 		}
 
 
-	/******************* admin confirm delete ************************************/
+	/******************* admin amend title ************************************/
 	if ($action == 'adminamendtitle' ) {
 
 		if (!isteacher($course->id)) {
@@ -115,7 +117,7 @@
 			error("Admin confirm delete: submission id missing");
 			}
 			
-		notice_yesno(get_string("confirmdeletionofthisitem","workshop"), 
+		notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("submission", "workshop")), 
 			 "submissions.php?action=admindelete&id=$cm->id&sid=$_GET[sid]", "submissions.php?id=$cm->id&action=adminlist");
 		}
 	
@@ -161,7 +163,7 @@
 			error("Only teachers can look at this page");
 			}
 		if (empty($_GET['order'])) {
-			$order = "title";
+			$order = "name";
 			}
 		else {
 			$order = $_GET['order'];
@@ -864,6 +866,49 @@
 		workshop_list_unassessed_teacher_submissions($workshop, $USER);
 		print_continue("view.php?id=$cm->id");
 		
+		}
+	
+
+	/******************* user confirm delete ************************************/
+	elseif ($action == 'userconfirmdelete' ) {
+
+		if (empty($_GET['sid'])) {
+			error("User Confirm Delete: submission id missing");
+			}
+			
+		notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("submission", "workshop")), 
+			 "submissions.php?action=userdelete&id=$cm->id&sid=$_GET[sid]", "view.php?id=$cm->id");
+		}
+	
+
+	/******************* user delete ************************************/
+	elseif ($action == 'userdelete' ) {
+
+		if (empty($_GET['sid'])) {
+			error("User Delete: submission id missing");
+			}
+	
+		if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
+			error("User Delete: can not get submission record");
+			}
+		print_string("deleting", "workshop");
+		// first get any assessments...
+		if ($assessments = workshop_get_assessments($submission)) {
+			foreach($assessments as $assessment) {
+				// ...and all the associated records...
+				delete_records("workshop_comments", "assessmentid", $assessment->id);
+				delete_records("workshop_grades", "assessmentid", $assessment->id);
+				echo ".";
+				}
+			// ...now delete the assessments...
+			delete_records("workshop_assessments", "submissionid", $submission->id);
+			}
+		// ...and the submission record...
+		delete_records("workshop_submissions", "id", $submission->id);
+		// ..and finally the submitted file
+		workshop_delete_submitted_files($workshop, $submission);
+		
+		print_continue("view.php?id=$cm->id");
 		}
 	
 

@@ -5,6 +5,8 @@
 	ACTIONS handled are:
 
 	addcomment
+	adminconfirmdelete
+	admindelete
 	adminlist
 	agreeassessment
 	assesssubmission
@@ -20,6 +22,8 @@
 	updateassessment
 	updatecomment
 	updategrading
+	userconfirmdelete
+	userdelete
 	viewassessment
 
 ************************************************/
@@ -121,7 +125,7 @@
 			error("Admin confirm delete: assessment id missing");
 			}
 			
-		notice_yesno(get_string("confirmdeletionofthisitem","workshop"), 
+		notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("assessment", "workshop")), 
 			 "assessments.php?action=admindelete&id=$cm->id&aid=$_GET[aid]", "submissions.php?action=adminlist&id=$cm->id");
 		}
 	
@@ -147,7 +151,7 @@
 		}
 	
 
-	/*********************** admin list of asssessments (by teachers)***********************/
+	/*********************** admin list of asssessments (of a submission) (by teachers)**************/
 	elseif ($action == 'adminlist') {
 
 		if (!isteacher($course->id)) {
@@ -159,6 +163,22 @@
 			}
 		$submission = get_record("workshop_submissions", "id", $_GET['sid']);
 		workshop_print_assessments_for_admin($workshop, $submission);
+		print_continue("submissions.php?action=adminlist&a=$workshop->id");
+		}
+
+
+	/*********************** admin list of asssessments by a student (used by teachers only )******************/
+	elseif ($action == 'adminlistbystudent') {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+			
+		if (empty($_GET['userid'])) {
+			error ("Workshop asssessments: adminlistbystudent called with no userid");
+			}
+		$user = get_record("user", "id", $_GET['userid']);
+		workshop_print_assessments_by_user_for_admin($workshop, $user);
 		print_continue("submissions.php?action=adminlist&a=$workshop->id");
 		}
 
@@ -843,6 +863,36 @@
 			}
 		}
 
+
+	/******************* user confirm delete ************************************/
+	elseif ($action == 'userconfirmdelete' ) {
+
+		if (empty($_GET['aid'])) {
+			error("User confirm delete: assessment id missing");
+			}
+			
+		notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("assessment", "workshop")), 
+			 "assessments.php?action=userdelete&id=$cm->id&aid=$_GET[aid]", "view.php?id=$cm->id");
+		}
+	
+
+	/******************* user delete ************************************/
+	elseif ($action == 'userdelete' ) {
+
+		if (empty($_GET['aid'])) {
+			error("User delete: assessment id missing");
+			}
+			
+		print_string("deleting", "workshop");
+		// first delete all the associated records...
+		delete_records("workshop_comments", "assessmentid", $_GET['aid']);
+		delete_records("workshop_grades", "assessmentid", $_GET['aid']);
+		// ...now delete the assessment...
+		delete_records("workshop_assessments", "id", $_GET['aid']);
+		
+		print_continue("view.php?id=$cm->id");
+		}
+	
 
 	/*********************** view all assessments ***********************/
 	elseif ($action == 'viewallassessments') {
