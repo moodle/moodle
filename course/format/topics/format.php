@@ -224,12 +224,12 @@
                 }
 
                 if ($section > 1) {                       // Add a arrow to move section up
-                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'" title="'.$strmoveup.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#'.($section-1).'" title="'.$strmoveup.'">'.
                          '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
                 }
 
                 if ($section < $course->numsections) {    // Add a arrow to move section down
-                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'" title="'.$strmovedown.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#'.($section+1).'" title="'.$strmovedown.'">'.
                          '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
                 }
 
