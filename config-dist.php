@@ -113,6 +113,4 @@ require_once("$CFG->dirroot/lib/setup.php");       // Do not change this
 
 // MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES, 
 // RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.
-
-$CFG->main_frame = '_top';
 ?>
