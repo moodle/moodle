@@ -6,7 +6,7 @@ function dialogue_upgrade($oldversion) {
 
     global $CFG;
 
-    if ($oldversion < 2004111000) {
+    if ($oldversion < 2004060401) {
         modify_database('','CREATE INDEX prefix_dialogue_course_idx ON prefix_dialogue (course);');
         modify_database('','CREATE INDEX prefix_dialogue_conversations_userid_idx ON prefix_dialogue_conversations (userid);');
         modify_database('','CREATE INDEX prefix_dialogue_conversations_recipientid_idx ON prefix_dialogue_conversations (recipientid);');
