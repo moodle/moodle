@@ -30,6 +30,7 @@
     }
     $errorlogs = '';
     if (($result != "regular") && ($result != "found")) {
+    	$result = get_string($result,'scorm');
         if ($CFG->scorm_validate == 'domxml') {
             foreach ($errors as $error) {
                 $errorlogs .= get_string($error->type,"scorm",$error->data) . ".\n";

@@ -49,17 +49,17 @@
 	if ((results[0] == "found") || (results[0] == "regular")) {
 	    theform.launch.value = results[1];
 	    theform.datadir.value = results[2];
+	    return true;
 	} else {
-	    result = 'Result: '+ results[0] + '\n';
-	    result.concat('Errorlog:\n',results[3]);
+	    result = '<?php print_string('validation','scorm') ?>: '+ results[0] + '\n';
+	    result.concat('<?php print_string('errorlogs','scorm') ?>:\n',results[3]);
 	    alert(result);
-	    exit;
+	    return false;
 	}
-	return false;
     }
 </script>
 
-<form name="form" method="post" action="mod.php" onsubmit="validate_scorm(document.form,document.form.reference.value);">
+<form name="form" method="post" action="mod.php" onsubmit="return validate_scorm(document.form,document.form.reference.value);">
     <table cellpadding="5">
 	<tr valign="top">
 	    <td align="right"><b><?php print_string("name") ?>:</b></td>
@@ -295,7 +295,7 @@
     <input type="hidden" name="instance"	value="<?php p($form->instance) ?>" />
     <input type="hidden" name="mode"		value="<?php p($form->mode) ?>" />
     <center>
-	<input type="submit" value="<?php print_string("savechanges") ?>" />
-	<input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
+	<input type="submit" value="<?php print_string('savechanges') ?>" />
+	<input type="button" name="cancel" value="<?php print_string('cancel') ?>" onclick="document.location='view.php?id=<?php echo $form->course ?>'" />
     </center>
 </form>
