@@ -1,9 +1,5 @@
-<?PHP // $Id$
-
-#------------------------------------------------------------
-$string['modulename'] = "Assignment";
-$string['modulenameplural'] = "Assignments";
-#------------------------------------------------------------
+<?PHP // $Id$ 
+      // ass2.php - created with Moodle 1.0.5 dev (2002092300)
 
 
 $string['assignmentdetails'] = "Assignment details";
@@ -17,6 +13,8 @@ $string['feedbackupdated'] = "Submissions feedback updated for \$a people";
 $string['late'] = "\$a late";
 $string['maximumgrade'] = "Maximum grade";
 $string['maximumsize'] = "Maximum size";
+$string['modulename'] = "Assignment";
+$string['modulenameplural'] = "Assignments";
 $string['newsubmissions'] = "Assignments submitted";
 $string['notsubmittedyet'] = "Not submitted yet";
 $string['overwritewarning'] = "Warning: uploading again will REPLACE your current submission";
@@ -29,4 +27,3 @@ $string['viewsubmissions'] = "View \$a submitted assignments";
 $string['yoursubmission'] = "Your submission";
 
 ?>
-
