@@ -1504,7 +1504,8 @@ function ewiki_data_update(&$data, $author="") {
 #-- edit <textarea>
 function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    global $ewiki_plugins, $ewiki_config;   
-   $o="";
+
+   $o='';
       
    #-- previously edited, or db fetched content
    if (@$_REQUEST["content"] || @$_REQUEST["version"]) {
@@ -1547,7 +1548,9 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    if($ewiki_use_editor) {
      ob_start();
      $usehtmleditor = can_use_html_editor();
+     echo '<table><tr><td>';
      print_textarea($usehtmleditor, $rows, $cols, 680, 400, "content", ewiki_format($data["content"]));
+     echo '</td></tr></table>';
      if ($usehtmleditor) {
          use_html_editor("content");
      }
@@ -1585,7 +1588,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    $o .= "\n</form>\n";
    //   . ewiki_t("EDIT_FORM_2");  // MOODLE DELETION
 
-   return('<div class="edit-box">'. $o .'</div>');
+   return('<div align="center" class="edit-box">'. $o .'</div>');
 }
 
 
