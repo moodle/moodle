@@ -777,7 +777,7 @@ function print_file_picture($path, $courseid=0, $height="", $width="", $link="")
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             echo "$CFG->wwwroot/file.php/$courseid/$path";
         } else {
-            echo "$CFG->wwwroot/file.php?file=$courseid/$path";
+            echo "$CFG->wwwroot/file.php?file=/$courseid/$path";
         }
         echo "\">";
     } else {
