@@ -1,10 +1,51 @@
 <?
+	// set the defaults...
     if ($usehtmleditor = can_use_richtext_editor()) {
         $defaultformat = FORMAT_HTML;
         $onsubmit = "onsubmit=\"copyrichtext(document.form.description);\"";
     } else {
         $defaultformat = FORMAT_MOODLE;
         $onsubmit = "";
+    }
+	// ...and fill the form if needed
+    if (empty($form->name)) {
+        $form->name = "";
+    }
+    if (empty($form->description)) {
+        $form->description = "";
+    }
+    if (empty($form->format)) {
+        $form->format = "";
+    }
+    if (!isset($form->grade)) {
+        $form->grade = 100;
+    }
+    if (!isset($form->nelements)) {
+        $form->nelements = 1;
+    }
+    if (empty($form->resubmit)) {
+        $form->resubmit = "";
+    }
+    if (!isset($form->ntassessments)) {
+        $form->ntassessments = 0;
+    }
+    if (!isset($form->nsassessments)) {
+        $form->nsassessments = 0;
+    }
+    if (empty($form->includeself)) {
+        $form->includeself = "";
+    }
+    if (empty($form->agreeassessments)) {
+        $form->agreeassessments = "";
+    }
+    if (empty($form->hidegrades)) {
+        $form->hidegrades = "";
+    }
+    if (empty($form->maxbytes)) {
+        $form->maxbytes = "";
+    }
+    if (empty($form->deadline)) {
+        $form->deadline = "";
     }
 ?>
 
@@ -127,6 +168,28 @@
     </td>
 </tr>
 
+<tr>
+    <td align=right><P><B><? print_string("assessmentsmustbeagreed", "workshop") ?>:</B></P></TD>
+    <td>
+    <?PHP 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "agreeassessments", $form->agreeassessments, "");
+        helpbutton("agreeassessments", get_string("assessmentsmustbeagreed", "workshop"), "workshop");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><P><B><? print_string("hidegradesbeforeagreement", "workshop") ?>:</B></P></TD>
+    <td>
+    <?PHP 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "hidegrades", $form->hidegrades, "");
+        helpbutton("showinggrades", get_string("hidegradesbeforeagreement", "workshop"), "workshop");
+    ?>
+    </td>
+</tr>
+
 <tr valign=top>
     <td align=right><P><B><? print_string("maximumsize", "workshop") ?>:</B></P></TD>
     <td>
@@ -159,7 +222,6 @@
            print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
            echo "&nbsp;-&nbsp;";
            print_time_selector("deadlinehour", "deadlineminute", $form->deadline);
-           formerr($err["deadline"]);
     ?></td>
 </tr>
 

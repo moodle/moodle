@@ -1,13 +1,6 @@
 <?PHP  // $Id: lib.php,v 1.0 30th April 2003
 
-if (defined('COMMENTSCALE')) {  // Being included again - should never happen!!
-    return;
-}
-
-define("COMMENTSCALE", 20);
-
 include_once("$CFG->dirroot/files/mimetypes.php");
-
 
 /*** Constants **********************************/
 
@@ -37,6 +30,9 @@ $WORKSHOP_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0
 $WORKSHOP_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5 => 1,  6 => 1.5, 
 											7 => 2.0, 8 => 3.0, 9 => 5.0, 10 => 7.5, 11=> 10.0); 
 
+if (!defined("COMMENTSCALE")) {
+	define("COMMENTSCALE", 20);
+	}
 
 /*** Standard Moodle functions ******************
 function workshop_add_instance($workshop) 
@@ -141,6 +137,10 @@ function workshop_delete_instance($id) {
 	// delete all the associated records in the workshop tables, start positive...
     $result = true;
 
+    if (! delete_records("workshop_comments", "workshopid", "$workshop->id")) {
+        $result = false;
+    }
+
     if (! delete_records("workshop_grades", "workshopid", "$workshop->id")) {
         $result = false;
     }
@@ -222,82 +222,201 @@ function workshop_cron () {
 
         foreach ($assessments as $assessment) {
 
-            echo "Processing workshop assessment $assessment->id\n";
-
+			echo "Processing workshop assessment $assessment->id\n";
 			if (! $submission = get_record("workshop_submissions", "id", "$assessment->submissionid")) {
-                echo "Could not find submission $assessment->submissionid\n";
-                continue;
-            }
-
+				echo "Could not find submission $assessment->submissionid\n";
+				continue;
+			}
 			if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
-                echo "Could not find user $submission->userid\n";
-                continue;
-            }
-
+				echo "Could not find user $submission->userid\n";
+				continue;
+			}
 			if (! $assessmentowner = get_record("user", "id", "$assessment->userid")) {
-                echo "Could not find user $assessment->userid\n";
-                continue;
-            }
-
-            if (! $course = get_record("course", "id", "$assessment->course")) {
-                echo "Could not find course $assessment->course\n";
-                continue;
-            }
-			
-            if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, $submissionowner->id)) {
-                continue;  // Not an active participant
-            }
-
-            if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, $assessmentowner->id)) {
-                continue;  // Not an active participant
-            }
-
-            if (! $workshop = get_coursemodule_from_instance("workshop", $assessment->workshopid, $course->id)) {
-                echo "Could not find course module for workshop id $submission->workshop\n";
-                continue;
-            }
-
-            $strworkshops = get_string("modulenameplural", "workshop");
-            $strworkshop  = get_string("modulename", "workshop");
-
+				echo "Could not find user $assessment->userid\n";
+				continue;
+			}
+			if (! $course = get_record("course", "id", "$assessment->course")) {
+				echo "Could not find course $assessment->course\n";
+				continue;
+			}
+			if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, $submissionowner->id)) {
+				continue;  // Not an active participant
+			}
+			if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, $assessmentowner->id)) {
+				continue;  // Not an active participant
+			}
+			if (! $workshop = get_coursemodule_from_instance("workshop", $assessment->workshopid, $course->id)) {
+				echo "Could not find course module for workshop id $submission->workshop\n";
+				continue;
+			}
+	
+			$strworkshops = get_string("modulenameplural", "workshop");
+			$strworkshop  = get_string("modulename", "workshop");
+	
 			// it's an assessment, tell the submission owner
 			$USER->lang = $submissionowner->lang;
 			$sendto = $submissionowner;
 			$msg = "Your assignment \"$submission->title\" has been assessed.\n".
 				"The comments and grade can be seen in ".
 				"the workshop assignment '$workshop->name'\n\n";
-
+	
 			$postsubject = "$course->shortname: $strworkshops: $workshop->name";
-            $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
-            $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= $msg;
-            $posttext .= "You can see it in your workshop assignment:\n";
-            $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\n";
-            $posttext .= "---------------------------------------------------------------------\n";
-            if ($user->mailformat == 1) {  // HTML
-                $posthtml = "<P><FONT FACE=sans-serif>".
-              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-              "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-              "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$pgassessment->id\">$workshop->name</A></FONT></P>";
-              $posthtml .= "<HR><FONT FACE=sans-serif>";
-              $posthtml .= "<P>$msg</P>";
-              $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\">";
-              $posthtml .= "in to your peer graded assignment</A>.</P></FONT><HR>";
-            } else {
-              $posthtml = "";
-            }
-
+			$posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
+			$posttext .= "---------------------------------------------------------------------\n";
+			$posttext .= $msg;
+			$posttext .= "You can see it in your workshop assignment:\n";
+			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+			$posttext .= "---------------------------------------------------------------------\n";
+			if ($sendto->mailformat == 1) {  // HTML
+				$posthtml = "<P><FONT FACE=sans-serif>".
+			  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+			  "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+			  "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+			  $posthtml .= "<HR><FONT FACE=sans-serif>";
+			  $posthtml .= "<P>$msg</P>";
+			  $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
+			  $posthtml .= "in to your peer graded assignment</A>.</P></FONT><HR>";
+			} else {
+			  $posthtml = "";
+			}
+	
 			if (!$teacher = get_teacher($course->id)) {
 				echo "Error: can not find teacher for course $course->id!\n";
 				}
 				
-            if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
-                echo "Error: workshop cron: Could not send out mail for id $submission->id to user $sendto->id ($sendto->email)\n";
-            }
-            if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
-                echo "Could not update the mailed field for id $assessment->id\n";
-            }
-        }
+			if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
+				echo "Error: workshop cron: Could not send out mail for id $submission->id to user $sendto->id ($sendto->email)\n";
+				}
+			if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
+				echo "Could not update the mailed field for id $assessment->id\n";
+				}
+			}
+		}
+		
+	// look for new comments
+	if ($comments = workshop_get_unmailed_comments($cutofftime)) {
+        $timenow = time();
+
+        foreach ($comments as $comment) {
+
+			echo "Processing workshop comment $comment->id\n";
+			if (! $assessment = get_record("workshop_assessments", "id", "$comment->assessmentid")) {
+				echo "Could not find assessment $comment->assessmentid\n";
+				continue;
+			}
+			if (! $submission = get_record("workshop_submissions", "id", "$assessment->submissionid")) {
+				echo "Could not find submission $assessment->submissionid\n";
+				continue;
+			}
+			if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
+				echo "Could not find user $submission->userid\n";
+				continue;
+			}
+			if (! $assessmentowner = get_record("user", "id", "$assessment->userid")) {
+				echo "Could not find user $assessment->userid\n";
+				continue;
+			}
+			if (! $course = get_record("course", "id", "$comment->course")) {
+				echo "Could not find course $comment->course\n";
+				continue;
+			}
+			if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, $submissionowner->id)) {
+				continue;  // Not an active participant
+			}
+			if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, $assessmentowner->id)) {
+				continue;  // Not an active participant
+			}
+			if (! $workshop = get_coursemodule_from_instance("workshop", $assessment->workshopid, $course->id)) {
+				echo "Could not find course module for workshop id $submission->workshop\n";
+				continue;
+			}
+	
+			$strworkshops = get_string("modulenameplural", "workshop");
+			$strworkshop  = get_string("modulename", "workshop");
+	
+			// see if the submission owner needs to be told
+			if ($comment->userid != $submission->userid) {
+				$USER->lang = $submissionowner->lang;
+				$sendto = $submissionowner;
+				$msg = "A comment has been added to the assignment \"$submission->title\".\n".
+					"The new comment can be seen in ".
+					"the workshop assignment '$workshop->name'\n\n";
+	
+				$postsubject = "$course->shortname: $strworkshops: $workshop->name";
+				$posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
+				$posttext .= "---------------------------------------------------------------------\n";
+				$posttext .= $msg;
+				$posttext .= "You can see it in your workshop assignment:\n";
+				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+				$posttext .= "---------------------------------------------------------------------\n";
+				if ($sendto->mailformat == 1) {  // HTML
+					$posthtml = "<P><FONT FACE=sans-serif>".
+					"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+					$posthtml .= "<HR><FONT FACE=sans-serif>";
+					$posthtml .= "<P>$msg</P>";
+					$posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
+					$posthtml .= "in to your workshop assignment</A>.</P></FONT><HR>";
+					} 
+				else {
+					$posthtml = "";
+					}
+	
+				if (!$teacher = get_teacher($course->id)) {
+					echo "Error: can not find teacher for course $course->id!\n";
+					}
+					
+				if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
+					echo "Error: workshop cron: Could not send out mail for id $submission->id to user $sendto->id ($sendto->email)\n";
+					}
+				if (! set_field("workshop_comments", "mailed", "1", "id", "$comment->id")) {
+					echo "Could not update the mailed field for comment id $comment->id\n";
+					}
+				}
+			// see if the assessor needs to to told
+			if ($comment->userid != $assessment->userid) {
+				$USER->lang = $assessmentowner->lang;
+				$sendto = $assessmentowner;
+				$msg = "A comment has been added to the assignment \"$submission->title\".\n".
+					"The new comment can be seen in ".
+					"the workshop assignment '$workshop->name'\n\n";
+	
+				$postsubject = "$course->shortname: $strworkshops: $workshop->name";
+				$posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
+				$posttext .= "---------------------------------------------------------------------\n";
+				$posttext .= $msg;
+				$posttext .= "You can see it in your workshop assignment:\n";
+				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+				$posttext .= "---------------------------------------------------------------------\n";
+				if ($sendto->mailformat == 1) {  // HTML
+					$posthtml = "<P><FONT FACE=sans-serif>".
+					"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+					$posthtml .= "<HR><FONT FACE=sans-serif>";
+					$posthtml .= "<P>$msg</P>";
+					$posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
+					$posthtml .= "in to your workshop assignment</A>.</P></FONT><HR>";
+					} 
+				else {
+					$posthtml = "";
+					}
+	
+				if (!$teacher = get_teacher($course->id)) {
+					echo "Error: can not find teacher for course $course->id!\n";
+					}
+					
+				if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
+					echo "Error: workshop cron: Could not send out mail for id $submission->id to user $sendto->id ($sendto->email)\n";
+					}
+				if (! set_field("workshop_comments", "mailed", "1", "id", "$comment->id")) {
+					echo "Could not update the mailed field for comment id $comment->id\n";
+					}
+				}
+			}
+		}
+
 
 	// look for new gradings
 	if ($assessments = workshop_get_unmailed_graded_assessments($cutofftime)) {
@@ -349,8 +468,6 @@ function workshop_cron () {
 			$msg = "Your assessment of the assignment \"$submission->title\" has by graded.\n".
 					"The comments and grade given by the $course->teacher can be seen in ".
 					"the workshop assignment '$workshop->name'\n\n";
-				}
-			
 
 			$postsubject = "$course->shortname: $strworkshops: $workshop->name";
             $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
@@ -359,11 +476,11 @@ function workshop_cron () {
             $posttext .= "You can see it in your workshop assignment:\n";
             $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
-            if ($user->mailformat == 1) {  // HTML
+            if ($sendto->mailformat == 1) {  // HTML
                 $posthtml = "<P><FONT FACE=sans-serif>".
               "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
               "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-              "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$pgassessment->id\">$workshop->name</A></FONT></P>";
+              "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
               $posthtml .= "<HR><FONT FACE=sans-serif>";
               $posthtml .= "<P>$msg</P>";
               $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
@@ -531,6 +648,7 @@ function workshop_grades($workshopid) {
 
 function workshop_count_all_assessments($workshop, $user) {
 function workshop_count_all_submissions_for_assessment($workshop, $user) {
+function workshop_count_comments($assessment) {
 function workshop_count_peer_assessments($workshop, $user) {
 function workshop_count_student_submissions($workshop) {
 function workshop_count_student_submissions_for_assessment($workshop, $user) {
@@ -546,6 +664,7 @@ function workshop_file_area($workshop, $submission) {
 function workshop_file_area_name($workshop, $submission) {
 
 function workshop_get_assessments($submission) {
+function workshop_get_comments($assessment) {
 function workshop_get_student_assessments($workshop, $user) {
 function workshop_get_student_submission_assessments($workshop) {
 function workshop_get_student_submissions($workshop) {
@@ -623,6 +742,13 @@ function workshop_count_assessments($workshop, $stype, $user) {
 		}
 	return $n;
 	}
+
+
+function workshop_count_comments($assessment) {
+	// Return the number comments for this assessment provided they are newer than the assessment, 
+   return count_records_select("workshop_comments", "(assessmentid = $assessment->id) AND 
+		timecreated > $assessment->timecreated");
+}
 
 
 function workshop_count_peer_assessments($workshop, $user) {
@@ -801,12 +927,21 @@ function workshop_file_area_name($workshop, $submission) {
 
 
 function workshop_get_assessments($submission) {
-	// Return all assessments for this submission provided they are after the editing time, oredered oldest first, newest last
+	// Return all assessments for this submission provided they are after the editing time, ordered oldest first, newest last
 	global $CFG;
 
 	$timenow = time();
     return get_records_select("workshop_assessments", "(submissionid = $submission->id) AND 
 		(timecreated < $timenow - $CFG->maxeditingtime)", "timecreated DESC");
+}
+
+
+function workshop_get_comments($assessment) {
+	// Return all comments for this assessment provided they are newer than the assessment, 
+	// and ordered oldest first, newest last
+   return get_records_select("workshop_comments", "(assessmentid = $assessment->id) AND 
+		timecreated > $assessment->timecreated",
+		"timecreated DESC");
 }
 
 
@@ -936,6 +1071,17 @@ function workshop_get_unmailed_assessments($cutofftime) {
 							   AND a.timegraded = 0
                                AND a.timecreated < $cutofftime 
                                AND g.id = a.workshopid");
+}
+
+
+function workshop_get_unmailed_comments($cutofftime) {
+	/// Return list of comments that have not been mailed out
+    global $CFG;
+    return get_records_sql("SELECT c.*, g.course, g.name
+                              FROM {$CFG->prefix}workshop_comments c, {$CFG->prefix}workshop g
+                             WHERE c.mailed = 0 
+						       AND c.timecreated < $cutofftime 
+                               AND g.id = c.workshopid");
 }
 
 
@@ -1130,16 +1276,24 @@ function workshop_list_assessed_submissions($workshop, $user) {
 			if (($timenow - $assessment->timecreated) > $CFG->maxeditingtime) {
 				$action = "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">".
 					get_string("view", "workshop")."</A>";
-				// has teacher graded user's assessment?
-				if ($assessment->timegraded) {
-					if (($timenow - $assessment->timegraded) > $CFG->maxeditingtime) {
-						$comment = get_string("gradedbyteacher", "workshop", $course->teacher);
-						}
-					}
 				}
 			else { // there's still time left to edit...
 				$action = "<A HREF=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
 					get_string("edit", "workshop")."</A>";
+				}
+			$comment = get_string("assessedon", "workshop", userdate($assessment->timecreated));
+			// has teacher commented on user's assessment?
+			if ($assessment->timegraded and ($timenow - $assessment->timegraded > $CFG->maxeditingtime)) {
+				$comment .= "; ".get_string("gradedbyteacher", "workshop", $course->teacher);
+				}
+			// if peer agrrements show whether agreement has been reached
+			if ($workshop->agreeassessments) {
+				if ($assessment->timeagreed) {
+					$comment .= "; ".get_string("assessmentwasagreedon", "workshop", userdate($assessment->timeagreed));
+					}
+				else {
+					$comment .= "; ".get_string("assessmentnotyetagreed", "workshop");
+					}
 				}
 			$table->data[] = array(workshop_print_submission_title($workshop, $submission), $action, $comment);
 			}
@@ -1176,12 +1330,19 @@ function workshop_list_peer_assessments($workshop, $user) {
 						if (($timenow - $assessment->timecreated) > $CFG->maxeditingtime) {
 							$action = "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">".
 								get_string("view", "workshop")."</A>";
+							$comment = get_string("assessedon", "workshop", userdate($assessment->timecreated));
 							// has teacher commented on user's assessment?
 							if ($assessment->timegraded and ($timenow - $assessment->timegraded > $CFG->maxeditingtime)) {
-								$comment = get_string("gradedbyteacher", "workshop", $course->teacher);
+								$comment .= "; ".get_string("gradedbyteacher", "workshop", $course->teacher);
 								}
-							else {
-								$comment = userdate($assessment->timecreated);
+							// if peer agrrements show whether agreement has been reached
+							if ($workshop->agreeassessments) {
+								if ($assessment->timeagreed) {
+									$comment .= "; ".get_string("assessmentwasagreedon", "workshop", userdate($assessment->timeagreed));
+									}
+								else {
+									$comment .= "; ".get_string("assessmentnotyetagreed", "workshop");
+									}
 								}
 							$table->data[] = array(workshop_print_submission_title($workshop, $submission), $action, $comment);
 							}
@@ -1510,31 +1671,117 @@ function workshop_list_user_submissions($workshop, $user) {
 	}
 
 
-function workshop_print_assessment($workshop, $assessment, $allowchanges = FALSE) {
-	global $CFG, $WORKSHOP_SCALES, $WORKSHOP_EWEIGHTS, $THEME;
+function workshop_print_assessment($workshop, $assessment = FALSE, $showcommentlinks = FALSE) {
+	global $CFG, $THEME, $USER, $WORKSHOP_SCALES, $WORKSHOP_EWEIGHTS;
 	if (! $course = get_record("course", "id", $workshop->course)) {
 		error("Course is misconfigured");
 	}
 	if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
 		error("Course Module ID was incorrect");
 	}
+	
+	$timenow = time();
 
-	// only show the grade if grading strategy > 0 and the grade is positive
-	if ($workshop->gradingstrategy and $assessment->grade >= 0) { 
-		echo "<CENTER><B>".get_string("thegradeis", "workshop").": ".number_format($assessment->grade, 2)."% (".
-			get_string("maximumgrade")." ".number_format($workshop->grade)."%)</B></CENTER><BR CLEAR=ALL>\n";
+	// reset the internal flags
+	$allowchanges = false;
+	if ($assessment) {
+		$showgrades = false;
+		}
+	else { // if no assessment, i.e. specimen grade form always show grading scales
+		$showgrades = true;
+		}
+	
+	if ($assessment) {
+		// set the internal flag is necessary
+		if (($assessment->userid == $USER->id) and !$assessment->timeagreed) {
+			$allowchanges = true;
+			}
+		if ($allowchanges or !$workshop->agreeassessments or !$workshop->hidegrades or $assessment->timeagreed) {
+			$showgrades = true;
+			}
+			
+		echo "<CENTER><TABLE BORDER=\"1\" WIDTH=\"30%\"><TR>
+			<TD ALIGN=CENTER BGCOLOR=\"$THEME->cellcontent\">\n";
+		if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
+			error ("Workshop_print_assessment: Submission record not found");
+			}
+		echo workshop_print_submission_title($workshop, $submission);
+		echo "</TD></TR></TABLE><BR CLEAR=ALL>\n";
+		
+		// print agreement time if the workshop requires peer agreement
+		if ($workshop->agreeassessments and $assessment->timeagreed) {
+			echo "<P>".get_string("assessmentwasagreedon", "workshop", userdate($assessment->timeagreed));
+			}
+
+		// first print any comments on this assessment
+		if ($comments = workshop_get_comments($assessment)) {
+			echo "<TABLE CELLPADDING=2 BORDER=1>\n";
+			$firstcomment = TRUE;
+			foreach ($comments as $comment) {
+				echo "<TR valign=top><TD BGCOLOR=\"$THEME->cellheading2\"><P><B>".get_string("commentby","workshop")." ";
+				if (isteacher($workshop->course, $comment->userid)) {
+					echo $course->teacher;
+					}
+				elseif ($assessment->userid == $comment->userid) {
+					print_string("assessor", "workshop");
+					}
+				else {
+					print_string("authorofsubmission", "workshop");
+					}
+				echo " ".get_string("on", "workshop", userdate($comment->timecreated))."</B></P></TD></TR><TR><TD>\n";
+				echo text_to_html($comment->comments)."&nbsp;\n";
+				// add the links if needed
+				if ($firstcomment and $showcommentlinks and !$assessment->timeagreed) {
+					// show links depending on who doing the viewing
+					$firstcomment = FALSE;
+					if (isteacher($workshop->course, $USER->id) and ($comment->userid != $USER->id)) {
+						echo "<P ALIGN=RIGHT><A HREF=\"assessments.php?action=addcomment&a=$workshop->id&aid=$assessment->id\">".
+							get_string("reply", "workshop")."</A>\n";
+						}
+					elseif (($comment->userid ==$USER->id) and (($timenow - $comment->timecreated) < $CFG->maxeditingtime)) {
+						echo "<P ALIGN=RIGHT><A HREF=\"assessments.php?action=editcomment&a=$workshop->id&cid=$comment->id\">".
+							get_string("edit", "workshop")."</A>\n";
+						if ($USER->id == $submission->userid) {
+							echo " | <A HREF=\"assessments.php?action=agreeassessment&a=$workshop->id&aid=$assessment->id\">".
+								get_string("agreetothisassessment", "workshop")."</A>\n";
+							}
+						}
+					elseif (($comment->userid != $USER->id) and (($USER->id == $assessment->userid) or 
+						($USER->id == $submission->userid))) {
+						echo "<P ALIGN=RIGHT><A HREF=\"assessments.php?action=addcomment&a=$workshop->id&aid=$assessment->id\">".
+							get_string("reply", "workshop")."</A>\n";
+						if ($USER->id == $submission->userid) {
+							echo " | <A HREF=\"assessments.php?action=agreeassessment&a=$workshop->id&aid=$assessment->id\">".
+								get_string("agreetothisassessment", "workshop")."</A>\n";
+							}
+						}
+					}
+				echo "</TD></TR>\n";
+				}
+			echo "</TABLE>\n";
+			}
+			
+		// only show the grade if grading strategy > 0 and the grade is positive
+		if ($showgrades and $assessment->grade >= 0) { 
+			echo "<CENTER><B>".get_string("thegradeis", "workshop").": ".number_format($assessment->grade, 2)."% (".
+				get_string("maximumgrade")." ".number_format($workshop->grade)."%)</B></CENTER><BR CLEAR=ALL>\n";
+			}
 		}
 		
 	// now print the grading form with the teacher's comments if any
 	// FORM is needed for Mozilla browsers, else radio bttons are not checked
 		?>
-	<form name="form" method="post" action="assessments.php">
+	<form name="assessmentform" method="post" action="assessments.php">
 	<INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>">
 	<input type="hidden" name="aid" value="<?PHP echo $assessment->id ?>">
 	<input type="hidden" name="action" value="updateassessment">
 	<CENTER>
-	<TABLE CELLPADDING=5 BORDER=1>
+	<TABLE CELLPADDING=2 BORDER=1>
 	<?PHP
+	echo "<TR valign=top>\n";
+	echo "	<TD colspan=2 BGCOLOR=\"$THEME->cellheading2\"><CENTER><B>".get_string("assessment", "workshop").
+		"</B></CENTER></TD>\n";
+	echo "</TR>\n";
 
 	// get the assignment elements...
 	if (!$elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC")) {
@@ -1546,10 +1793,19 @@ function workshop_print_assessment($workshop, $assessment, $allowchanges = FALSE
 			}
 		}
 
-	// get any previous grades...
-	if ($gradesraw = get_records_select("workshop_grades", "assessmentid = $assessment->id", "elementno")) {
-		foreach ($gradesraw as $grade) {
-			$grades[] = $grade;   // to renumber index 0,1,2...
+	if ($assessment) {
+		// get any previous grades...
+		if ($gradesraw = get_records_select("workshop_grades", "assessmentid = $assessment->id", "elementno")) {
+			foreach ($gradesraw as $grade) {
+				$grades[] = $grade;   // to renumber index 0,1,2...
+				}
+			}
+		}
+	else {
+		// setup dummy grades array
+		for($i = 0; $i < count($elementsraw); $i++) { // gives a suitable sized loop
+			$grades[$i]->feedback = get_string("yourfeedbackgoeshere", "workshop");
+			$grades[$i]->grade = 0;
 			}
 		}
 				
@@ -1594,54 +1850,56 @@ function workshop_print_assessment($workshop, $assessment, $allowchanges = FALSE
 				echo "<P align=right><FONT size=1>Weight: "
 					.number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight],2)."</FONT>\n";
 				echo "</TD></TR>\n";
-				echo "<TR valign=top>\n";
-				echo "	<TD align=right><P><B>". get_string("grade"). ":</B></P></TD>\n";
-				echo "	<TD valign=\"top\">\n";
-				
-				// get the appropriate scale
-				$scalenumber=$elements[$i]->scale;
-				$SCALE = (object)$WORKSHOP_SCALES[$scalenumber];
-				switch ($SCALE->type) {
-					case 'radio' :
-							// show selections highest first
-							echo "<CENTER><B>$SCALE->start</B>&nbsp;&nbsp;&nbsp;";
-							for ($j = $SCALE->size - 1; $j >= 0 ; $j--) {
-								$checked = false;
-								if (isset($grades[$i]->grade)) { 
-									if ($j == $grades[$i]->grade) {
-										$checked = true;
+				if ($showgrades) {
+					echo "<TR valign=top>\n";
+					echo "	<TD align=right><P><B>". get_string("grade"). ":</B></P></TD>\n";
+					echo "	<TD valign=\"top\">\n";
+					
+					// get the appropriate scale
+					$scalenumber=$elements[$i]->scale;
+					$SCALE = (object)$WORKSHOP_SCALES[$scalenumber];
+					switch ($SCALE->type) {
+						case 'radio' :
+								// show selections highest first
+								echo "<CENTER><B>$SCALE->start</B>&nbsp;&nbsp;&nbsp;";
+								for ($j = $SCALE->size - 1; $j >= 0 ; $j--) {
+									$checked = false;
+									if (isset($grades[$i]->grade)) { 
+										if ($j == $grades[$i]->grade) {
+											$checked = true;
+											}
+										}
+									else { // there's no previous grade so check the lowest option
+										if ($j == 0) {
+											$checked = true;
+											}
+										}
+									if ($checked) {
+										echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED> &nbsp;&nbsp;&nbsp;\n";
+										}
+									else {
+										echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"> &nbsp;&nbsp;&nbsp;\n";
 										}
 									}
-								else { // there's no previous grade so check the lowest option
-									if ($j == 0) {
-										$checked = true;
-										}
+								echo "&nbsp;&nbsp;&nbsp;<B>$SCALE->end</B></CENTER>\n";
+								break;
+						case 'selection' :	
+								unset($numbers);
+								for ($j = $SCALE->size; $j >= 0; $j--) {
+									$numbers[$j] = $j;
 									}
-								if ($checked) {
-									echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED> &nbsp;&nbsp;&nbsp;\n";
+								if (isset($grades[$i]->grade)) {
+									choose_from_menu($numbers, "grade[$i]", $grades[$i]->grade, "");
 									}
 								else {
-									echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"> &nbsp;&nbsp;&nbsp;\n";
+									choose_from_menu($numbers, "grade[$i]", 0, "");
 									}
-								}
-							echo "&nbsp;&nbsp;&nbsp;<B>$SCALE->end</B></CENTER>\n";
-							break;
-					case 'selection' :	
-							unset($numbers);
-							for ($j = $SCALE->size; $j >= 0; $j--) {
-								$numbers[$j] = $j;
-								}
-							if (isset($grades[$i]->grade)) {
-								choose_from_menu($numbers, "grade[$i]", $grades[$i]->grade, "");
-								}
-							else {
-								choose_from_menu($numbers, "grade[$i]", 0, "");
-								}
-							break;
+								break;
+						}
+			
+					echo "	</TD>\n";
+					echo "</TR>\n";
 					}
-		
-				echo "	</TD>\n";
-				echo "</TR>\n";
 				echo "<TR valign=top>\n";
 				echo "	<TD align=right><P><B>". get_string("feedback").":</B></P></TD>\n";
 				echo "	<TD>\n";
@@ -1834,8 +2092,13 @@ function workshop_print_assessment($workshop, $assessment, $allowchanges = FALSE
 		echo "</textarea>\n";
 		}
 	else {
-		if (isset($assessment->generalcomment)) {
-			echo text_to_html($assessment->generalcomment);
+		if ($assessment) {
+			if (isset($assessment->generalcomment)) {
+				echo text_to_html($assessment->generalcomment);
+				}
+			}
+		else {
+			print_string("yourfeedbackgoeshere", "workshop");
 			}
 		}
 	echo "&nbsp;</TD>\n";
@@ -1864,10 +2127,19 @@ function workshop_print_assessment($workshop, $assessment, $allowchanges = FALSE
 		echo "</TR>\n";
 		}
 		
-	// ...and close the table, show submit button if needed and close the form
+	// ...and close the table, show submit button if needed...
 	echo "</TABLE>\n";
-	if ($allowchanges) {
-		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemyassessment", "workshop")."\">\n";
+	if ($assessment) {
+		if ($allowchanges and ($assessment->userid == $USER->id)) { // second test is OK as dummy assessment record is created 
+			echo "<INPUT TYPE=\"submit\" VALUE=\"".get_string("savemyassessment", "workshop")."\">\n";
+			}
+		// ...if user is author, assessment not agreed and there are no comments then show some buttons
+		if (($submission->userid == $USER->id) and !$assessment->timeagreed and !$comments) {
+			echo "<INPUT TYPE=button VALUE=\"".get_string("agreetothisassessment", "workshop")."\" 
+				ONCLICK=\"document.assessmentform.action.value='agreeassessment';document.assessmentform.submit();\">\n";
+			echo "<INPUT TYPE=submit VALUE=\"".get_string("disagreewiththisassessment", "workshop")."\"
+				ONCLICK=\"document.assessmentform.action.value='addcomment';document.assessmentform.submit();\">\n";
+			}
 		}
 	echo "</CENTER>";
 	echo "</FORM>\n";

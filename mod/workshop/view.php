@@ -18,9 +18,7 @@
 	require("../../config.php");
     require("lib.php");
 	
-	error_reporting(15);
-
-    optional_variable($id);    // Course Module ID
+	optional_variable($id);    // Course Module ID
     optional_variable($a);    // workshop ID
 
     // get some useful stuff...
@@ -124,14 +122,14 @@
 		$gradingweight = get_field("workshop","gradingweight", "id", $workshop->id);
 		// work out what to show in the final grades tables and what to include in the calculation of the final grade
 		// teacher grades?
-		if ($workshop->graded and $teacherweight) {
+		if ($workshop->gradingstrategy and $teacherweight) {
 			$useteachersgrades = 1;
 			}
 		else {
 			$useteachersgrades = 0;
 			}
 		// peergrades?
-		if ($workshop->graded and $workshop->nsassessments and $peerweight) {
+		if ($workshop->gradingstrategy and $workshop->nsassessments and $peerweight) {
 			$usepeergrades = 1;
 			}
 		else {
@@ -322,7 +320,7 @@
 		echo "<B>".get_string("duedate", "assignment")."</B>: $strduedate<BR>";
 		echo "<B>".get_string("maximumgrade")."</B>: $workshop->grade<BR>";
 		echo "<B>".get_string("detailsofassessment", "workshop")."</B>: 
-			<A HREF=\"assessments.php?id=$cm->id&action=displayelements\">".
+			<A HREF=\"assessments.php?id=$cm->id&action=displaygradingform\">".
 			get_string("specimenassessmentform", "workshop")."</A><BR>";
 		print_simple_box_end();
 		echo "<BR>";
@@ -354,8 +352,9 @@
 					workshop_list_teacher_assessments($workshop, $USER);
 					}
 				// if student assessments show any to assess...
-				if ($workshop->nsassessments) { // if there are student assessment display them... 
+				if ($workshop->nsassessments) { // if there are student assessments display them... 
 					workshop_list_student_submissions($workshop, $USER);
+					// ..and any they have already done...
 					echo "<P><CENTER><B>".get_string("yourassessments", "workshop")."</B></CENTER><BR>\n";
 					workshop_list_assessed_submissions($workshop, $USER);
 					// ... and show peer assessments

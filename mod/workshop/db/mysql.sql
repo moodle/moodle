@@ -7,13 +7,13 @@ CREATE TABLE `prefix_workshop` (
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL,
-  `nelements` tinyint(3) unsigned NOT NULL default '10',
+  `nelements` tinyint(3) unsigned NOT NULL default '1',
   `phase` tinyint(2) unsigned NOT NULL default '0',
   `format` tinyint(2) unsigned NOT NULL default '0',
   `gradingstrategy` tinyint(2) unsigned NOT NULL default '1',
   `resubmit` tinyint(2) unsigned NOT NULL default '0',
-  `graded` tinyint(2) unsigned NOT NULL default '1',
-  `showgrades` tinyint(2) unsigned NOT NULL default '0',
+  `agreeassessments` tinyint(2) unsigned NOT NULL default '0',
+  `hidegrades` tinyint(2) unsigned NOT NULL default '0',
   `anonymous` tinyint(2) unsigned NOT NULL default '0',
   `includeself` tinyint(2) unsigned NOT NULL default '0',
   `maxbytes` int(10) unsigned NOT NULL default '100000',
@@ -66,6 +66,7 @@ CREATE TABLE `prefix_workshop_assessments` (
   `userid` int(10) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timegraded` int(10) unsigned NOT NULL default '0',
+  `timeagreed` int(10) unsigned NOT NULL default '0',
   `grade` float NOT NULL default '0',
   `gradinggrade` int(3) NOT NULL default '0',
   `mailed` tinyint(2) unsigned NOT NULL default '0',
@@ -97,7 +98,6 @@ CREATE TABLE `prefix_workshop_elements` (
 
 CREATE TABLE `prefix_workshop_grades` (
   `id` int(10) unsigned NOT NULL auto_increment,
-# workshop not necessary just makes deleting instance easier
   `workshopid` int(10) unsigned NOT NULL default '0', 
   `assessmentid` int(10) unsigned NOT NULL default '0',
   `elementno` int(10) unsigned NOT NULL default '0',
@@ -106,6 +106,24 @@ CREATE TABLE `prefix_workshop_grades` (
   PRIMARY KEY  (`id`)
 ) COMMENT='Info about individual grades given to each element';
 # --------------------------------------------------------
+
+#
+# Table structure for table `workshop_comments`
+#
+
+CREATE TABLE `{$CFG->prefix}workshop_comments` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `workshopid` int(10) unsigned NOT NULL default '0', 
+  `assessmentid` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
+  `timecreated` int(10) unsigned NOT NULL default '0',
+  `mailed` tinyint(2) unsigned NOT NULL default '0',
+  `comments` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) COMMENT='Defines comments';
+# --------------------------------------------------------
+        
+        
 
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'assess', 'workshop', 'name');
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'close', 'workshop', 'name');

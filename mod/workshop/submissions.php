@@ -17,9 +17,7 @@
     require("../../config.php");
     require("lib.php");
 
-	error_reporting(15);
-	
-    optional_variable($id);    // Course Module ID
+	optional_variable($id);    // Course Module ID
     optional_variable($a);    // workshop ID
 
     // get some useful stuff...

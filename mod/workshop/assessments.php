@@ -4,15 +4,20 @@
 /*************************************************
 	ACTIONS handled are:
 
+	addcomment
+	agreeassessment
 	assesssubmission
-	displayelements
+	displaygradingform
+	editcomment
 	editelements (teachers only)
 	gradeassessment (teachers only)
+	insertcomment
 	insertelements (for teachers)
 	listungradedstudentsubmissions (for teachers)
 	listungradedteachersubmissions (for teachers)
 	listteachersubmissions
 	updateassessment
+	updatecomment
 	updategrading
 	viewassessment
 
@@ -21,9 +26,7 @@
     require("../../config.php");
     require("lib.php");
 
-	error_reporting(15);
-	
-    optional_variable($id);    // Course Module ID
+	optional_variable($id);    // Course Module ID
     optional_variable($a);    // workshop ID
 
     // get some useful stuff...
@@ -72,8 +75,59 @@
 	require_variable($action);
 	
 
-/*************** Assess submission (by teacher or student) ***************************/
-	if ($action == 'assesssubmission') {
+	/*************** add comment to assessment (by author, assessor or teacher) ***************************/
+	if ($action == 'addcomment') {
+		
+		print_heading_with_help(get_string("addacomment", "workshop"), "addingacomment", "workshop");
+		// get assessment record
+		if (!$assessmentid = $_REQUEST['aid']) { // comes from link or hidden form variable
+			error("Assessment id not given");
+			}
+		$assessment = get_record("workshop_assessments", "id", $assessmentid);
+		if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
+			error("Submission not found");
+			}
+		?>
+		<FORM NAME="commentform" ACTION="assessments.php" METHOD="post">
+		<INPUT TYPE="HIDDEN" NAME="action" VALUE="insertcomment">
+		<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?PHP echo $cm->id ?>">
+		<INPUT TYPE="HIDDEN" NAME="aid" VALUE="<?PHP echo $_REQUEST['aid'] ?>">
+		<CENTER>
+		<TABLE CELLPADDING=5 BORDER=1>
+		<?PHP
+
+		// now get the comment
+		echo "<TR valign=top>\n";
+		echo "	<TD align=right><P><B>". get_string("comment", "workshop").":</B></P></TD>\n";
+		echo "	<TD>\n";
+		echo "		<textarea name=\"comments\" rows=5 cols=75 wrap=\"virtual\">\n";
+		echo "</textarea>\n";
+		echo "	</TD></TR></TABLE>\n";
+		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemycomment", "workshop")."\">\n";
+		echo "</CENTER></FORM>\n";
+		echo "<P><CENTER><B>".get_string("assessment", "workshop"). "</B></CENTER>\n";
+		workshop_print_assessment($workshop, $assessment);
+		}
+
+
+	/*************** agree (to) assessment (by student) ***************************/
+	elseif ($action == 'agreeassessment') {
+		$timenow = time();
+
+		if (!$assessment = get_record("workshop_assessments", "id", $_GET['aid'])) {
+			error("Assessment : agree assessment failed");
+			}
+		//save time of agreement
+		set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
+		echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTER><BR>\n";
+			
+		add_to_log($course->id, "workshop", "agree", "view.php?id=$cm->id", "$workshop->id");
+		print_continue("view.php?id=$cm->id");
+		}
+
+
+	/*************** Assess submission (by teacher or student) ***************************/
+	elseif ($action == 'assesssubmission') {
 
 		require_variable($sid);
 	
@@ -89,6 +143,7 @@
 			$assessment->userid = $USER->id;
 			$assessment->grade = -1; // set impossible grade
 			$assessment->timecreated = $yearfromnow;
+			$assessment->timeagreed = 0;
 			$assessment->timegraded = 0;
 			if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
 				error("Could not insert workshop assessment!");
@@ -97,20 +152,57 @@
 		
 		print_heading_with_help(get_string("assessthissubmission", "workshop"), "grading", "workshop");
 		
-		echo "<CENTER><TABLE BORDER=1 WIDTH=\"30%\"><TR><TD ALIGN=CENTER BGCOLOR=\"$THEME->cellcontent\">";
-		echo workshop_print_submission_title($workshop, $submission);
-		echo "</TD></TR></TABLE><BR CLEAR=ALL>\n";
-		workshop_print_assessment($workshop, $assessment, TRUE);
+		workshop_print_assessment($workshop, $assessment, TRUE, TRUE);
 		}
 
 
-	/*************** display elements (viewed by student) *********************************/
+	/*************** display grading form (viewed by student) *********************************/
 	elseif ($action == 'displaygradingform') {
 
 	print_heading_with_help(get_string("specimengradingform", "workshop"), "specimen", "workshop");
-	$assessment = ''; // needed?
-	workshop_print_assessment($workshop, $assessment);
+	
+	workshop_print_assessment($workshop); // called with no assessment
+	print_continue("view.php?a=$workshop->id");
 	}
+
+
+	/*************** edit comment on assessment (by author, assessor or teacher) ***************************/
+	elseif ($action == 'editcomment') {
+		
+		print_heading_with_help(get_string("editacomment", "workshop"), "editingacomment", "workshop");
+		// get the comment record...
+		if (!$comment = get_record("workshop_comments", "id", $_GET['cid'])) {
+			error("Edit Comment: Comment not found");
+			}
+		if (!$assessment = get_record("workshop_assessments", "id", $comment->assessmentid)) {
+			error("Edit Comment: Assessment not found");
+			}
+		if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
+			error("Edit Comment: Submission not found");
+			}
+		?>
+		<FORM NAME="gradingform" ACTION="assessments.php" METHOD="post">
+		<INPUT TYPE="HIDDEN" NAME="action" VALUE="updatecomment">
+		<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?PHP echo $cm->id ?>">
+		<INPUT TYPE="HIDDEN" NAME="cid" VALUE="<?PHP echo $_GET['cid'] ?>">
+		<CENTER>
+		<TABLE CELLPADDING=5 BORDER=1>
+		<?PHP
+
+		// now show the comment
+		echo "<TR valign=top>\n";
+		echo "	<TD align=right><P><B>". get_string("comment", "workshop").":</B></P></TD>\n";
+		echo "	<TD>\n";
+		echo "		<textarea name=\"comments\" rows=5 cols=75 wrap=\"virtual\">\n";
+		if (isset($comment->comments)) {
+			echo $comment->comments;
+			}
+		echo "	    </textarea>\n";
+		echo "	</TD></TR></TABLE>\n";
+		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemycomment", "workshop")."\">\n";
+		echo "</CENTER></FORM>\n";
+		workshop_print_assessment($workshop, $assessment);
+		}
 
 
 	/*********************** edit assessment elements (for teachers) ***********************/
@@ -298,15 +390,14 @@
 		if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
 			error("Submission not found");
 			}
-		echo "<BR><P><B>".workshop_print_submission_title($workshop, $submission)."</B><BR><BR>\n";
 		// get the teacher's assessment first
 		if ($teachersassessment = workshop_get_submission_assessment($submission, $USER)) {
-			echo "<P><B>".get_string("teachersassessment", "workshop")."</B>\n";
+			echo "<P><CENTER><B>".get_string("teachersassessment", "workshop")."</B></CENTER>\n";
 			workshop_print_assessment($workshop, $teachersassessment);
 			}
 		// now the student's assessment
-		echo "<P><B>".get_string("studentsassessment", "workshop")."</B>\n";
-		workshop_print_assessment($workshop, $assessment);
+		echo "<P><CENTER><B>".get_string("studentsassessment", "workshop")."</B></CENTER>\n";
+		workshop_print_assessment($workshop, $assessment, true);
 		
 		?>
 		<FORM NAME="gradingform" ACTION="assessments.php" METHOD="post">
@@ -334,6 +425,31 @@
 		echo "</TD></TR></TABLE>\n";
 		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemygrading", "workshop")."\">\n";
 		echo "</CENTER></FORM>\n";
+		}
+
+
+	/*************** insert (new) comment (by author, assessor or teacher) ***************************/
+	elseif ($action == 'insertcomment') {
+		$timenow = time();
+
+		$form = (object)$_POST;
+		
+		if (!$assessment = get_record("workshop_assessments", "id", $_POST['aid'])) {
+			error("Unable to insert comment");
+			}
+		// save the comment...
+		$comment->workshopid = $workshop->id;
+		$comment->assessmentid   = $assessment->id;
+		$comment->userid   = $USER->id;
+		$comment->timecreated   = $timenow;
+		$comment->comments   = $form->comments;
+		if (!$comment->id = insert_record("workshop_comments", $comment)) {
+			error("Could not insert workshop comment!");
+			}
+			
+		add_to_log($course->id, "workshop", "comment", "view.php?id=$cm->id", "$workshop->id");
+
+		print_continue("assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id");
 		}
 
 
@@ -574,6 +690,10 @@
 			
 		// update the time of the assessment record (may be re-edited)...
 		set_field("workshop_assessments", "timecreated", $timenow, "id", $assessment->id);
+		// if the workshop does NOT have allow peer agreement then set timeagreed
+		if (!$workshop->agreeassessments) {
+			set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
+			}
 		set_field("workshop_assessments", "grade", $grade, "id", $assessment->id);
 		// ...and clear any grading of this assessment
 		set_field("workshop_assessments", "timegraded", 0, "id", $assessment->id);
@@ -593,6 +713,34 @@
 		print_continue("view.php?id=$cm->id");
 		
 	    add_to_log($course->id, "workshop", "assess", "view.php?a=$workshop->id", "$workshop->id");
+		}
+
+
+	/*************** update comment (by author, assessor or teacher) ***************************/
+	elseif ($action == 'updatecomment') {
+		$timenow = time();
+
+		$form = (object)$_POST;
+		
+		// get the comment record...
+		if (!$comment = get_record("workshop_comments", "id", $_POST['cid'])) {
+			error("Update to Comment failed");
+			}
+		if (!$assessment = get_record("workshop_assessments", "id", $comment->assessmentid)) {
+			error("Update Comment: Assessment not found");
+			}
+		//save the comment for the assessment...
+		if (isset($form->comments)) {
+			set_field("workshop_comments", "comments", $form->comments, "id", $comment->id);
+			set_field("workshop_comments", "timecreated", $timenow, "id", $comment->id);
+			// ..and kick to comment into life (probably not needed but just in case)
+			set_field("workshop_comments", "mailed", 0, "id", $comment->id);
+			echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTER><BR>\n";
+			
+			add_to_log($course->id, "workshop", "comment", "view.php?id=$cm->id", "$workshop->id");
+			}
+
+		print_continue("assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id");
 		}
 
 
@@ -638,9 +786,6 @@
 			}		
 			
 		if ($assessments = workshop_get_assessments($submission)) {
-			echo "<CENTER><TABLE BORDER=1 WIDTH=\"30%\"><TR><TD ALIGN=CENTER BGCOLOR=\"$THEME->cellcontent\">";
-			echo workshop_print_submission_title($workshop, $submission);
-			echo "</TD></TR></TABLE><BR CLEAR=ALL>\n";
 			foreach ($assessments as $assessment) {
 				workshop_print_assessment($workshop, $assessment);
 				}
@@ -657,12 +802,8 @@
 			error("Assessment record not found");
 			}		
 
-		echo "<CENTER><TABLE BORDER=1 WIDTH=\"30%\"><TR><TD ALIGN=CENTER BGCOLOR=\"$THEME->cellcontent\">";
-		$submission = get_record("workshop_submissions", "id", $assessment->submissionid);
-		echo workshop_print_submission_title($workshop, $submission);
-		echo "</TD></TR></TABLE><BR CLEAR=ALL>\n";
-
-		workshop_print_assessment($workshop, $assessment);
+		workshop_print_assessment($workshop, $assessment, true);
+		
 		print_continue("view.php?a=$workshop->id");
 		}
 
