@@ -1,3 +1,131 @@
+2002-07-27 Saturday 21:33  martin
+
+	* course/: loggraph.php, user.php: Fixed up the graphs (one for
+	userday and they are also now correct for timezones)
+
+2002-07-27 Saturday 21:09  martin
+
+	* README, UPGRADES, UPGRADING, version.php, admin/index.php: Moodle
+	can now upgrade itself, just like the modules do
+
+2002-07-27 Saturday 20:38  martin
+
+	* lib/db/: README, mysql.sql, postgres7.sql: Dropping any pretense
+	of Postgres support for the moment, and added a README
+
+2002-07-27 Saturday 19:54  martin
+
+	* lang/en/strings.php: new strings
+
+2002-07-27 Saturday 18:23  martin
+
+	* user/: index.php, view.php: Altered buttons from index and view
+	pages
+
+2002-07-27 Saturday 17:44  martin
+
+	* course/: lib.php, loggraph.php, user.php: Changes to improve the
+	user activity reports
+
+2002-07-27 Saturday 16:35  martin
+
+	* course/user.php: Fixed up graph pages
+
+2002-07-27 Saturday 16:31  martin
+
+	* course/: loggraph.php, user.php: Improvements to user activity
+	report - including graphs
+
+2002-07-27 Saturday 15:22  martin
+
+	* mod/journal/lib.php: Fix to account for people not in course
+
+2002-07-27 Saturday 15:13  martin
+
+	* mod/assignment/db/mysql.sql: Dummy (for now)
+
+2002-07-27 Saturday 14:58  martin
+
+	* mod/journal/: lib.php, db/mysql.sql: Implemented journal feedback
+	notification (mailouts)
+
+2002-07-27 Saturday 14:19  martin
+
+	* mod/discuss/: cron.php, lib.php: Cron stuff has been moved from
+	cron.php to a function in lib.php
+
+2002-07-27 Saturday 14:10  martin
+
+	* lib/moodlelib.php: Better error checking in update_record
+
+2002-07-27 Saturday 14:09  martin
+
+	* admin/cron.php: Much better cron function method - instead of
+	using a code fragment in mod/cron.php, it now uses a function in
+	mod/lib.php ... more contained
+
+2002-07-27 Saturday 14:08  martin
+
+	* admin/index.php: New upgrading procedure, uses module functions
+	to handle all version changes
+
+2002-07-27 Saturday 14:07  martin
+
+	* mod/: assignment/module.php, chat/module.php, choice/module.php,
+	discuss/module.php, forum/module.php, journal/module.php,
+	reading/module.php, survey/module.php: Changes to suit new
+	upgrading procedure (admin/index.html)
+
+2002-07-26 Friday 10:15  martin
+
+	* mod/journal/mod.html: Fixed 0 days -> ALways Open
+
+2002-07-25 Thursday 22:06  martin
+
+	* mod/discuss/lang/en/strings.php: Added tip for writing (short and
+	on-topic)
+
+2002-07-25 Thursday 21:54  martin
+
+	* mod/survey/lib.php: Extra space at end of file :-)
+
+2002-07-25 Thursday 21:48  martin
+
+	* mod/: choice/lib.php, discuss/lib.php, discuss/user.php,
+	forum/lib.php, journal/lib.php, journal/user.php, reading/lib.php,
+	reading/user.php, survey/lib.php: Got rid of the user.php code
+	fragments and implemented much cleaner system which certain-named
+	functions in lib.php ... called from /course/user.php
+
+2002-07-25 Thursday 21:47  martin
+
+	* course/user.php: Changes to how functions are called from modules
+	- much cleaner now
+
+2002-07-24 Wednesday 02:26  martin
+
+	* course/user.php: cough
+
+2002-07-24 Wednesday 02:26  martin
+
+	* course/user.php: title tweaking
+
+2002-07-24 Wednesday 02:24  martin
+
+	* course/user.php: Formatting outline tweaks
+
+2002-07-24 Wednesday 02:20  martin
+
+	* course/user.php: H3 -> H4
+
+2002-07-24 Wednesday 02:18  martin
+
+	* mod/discuss/lib.php: Formatting tweak (footer)
+
+2002-07-24 Wednesday 02:11  martin
+
+	* CHANGES: Ch ch ch
+
 2002-07-24 Wednesday 02:02  martin
 
 	* mod/journal/: user.php, view.php: Formatting fixes for ratings
