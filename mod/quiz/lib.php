@@ -190,8 +190,18 @@ function quiz_cron () {
 /// Any other quiz functions go here.  Each of them must have a name that 
 /// starts with quiz_
 
-function  quiz_print_question($number, $questionid, $grade, $courseid) {
+function quiz_print_comment($text) {
+    global $THEME;
+
+    echo "<FONT COLOR=\"$THEME->cellheading2\">".text_to_html($text, true, false)."</FONT>";
+}
+
+function  quiz_print_question($number, $questionid, $grade, $courseid, 
+                              $feedback=NULL, $response=NULL, $actualgrade=NULL) {
 /// Prints a quiz question, any format
+    global $THEME;
+
+    $comment = $THEME->cellheading2;
     
     if (!$question = get_record("quiz_questions", "id", $questionid)) {
         notify("Error: Question not found!");
@@ -201,7 +211,12 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
     $strmarks  = get_string("marks", "quiz");
 
     echo "<TABLE WIDTH=100% CELLSPACING=10><TR><TD NOWRAP WIDTH=100 VALIGN=top>";
-    echo "<P ALIGN=CENTER><B>$number</B><BR><FONT SIZE=1>$grade $strmarks</FONT></P>";
+    echo "<P ALIGN=CENTER><B>$number</B></P>";
+    if ($feedback) {
+        echo "<P ALIGN=CENTER><FONT SIZE=1>$strmarks: $actualgrade/$grade</FONT></P>";
+    } else {
+        echo "<P ALIGN=CENTER><FONT SIZE=1>$grade $strmarks</FONT></P>";
+    }
     print_spacer(1,100);
     echo "</TD><TD VALIGN=TOP>";
 
@@ -214,7 +229,13 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
            if ($question->image) {
                print_file_picture($question->image, $courseid, 200);
            }
-           echo "<P ALIGN=RIGHT>$stranswer: <INPUT TYPE=TEXT NAME=q$question->id SIZE=20></P>";
+           if ($response) {
+               $value = "VALUE=\"$response[0]\"";
+           }
+           echo "<P ALIGN=RIGHT>$stranswer: <INPUT TYPE=TEXT NAME=q$question->id SIZE=20 $value></P>";
+           if ($feedback) {
+               quiz_print_comment("<P ALIGN=right>$feedback[0]</P>");
+           }
            break;
 
        case TRUEFALSE:
@@ -237,10 +258,22 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
            if ($question->image) {
                print_file_picture($question->image, $courseid, 200);
            }
+
+           if ($response[$true->id]) {
+               $truechecked = "CHECKED";
+               $feedbackid = $true->id;
+           } else if ($response[$false->id]) {
+               $falsechecked = "CHECKED";
+               $feedbackid = $false->id;
+           }
            echo "<P ALIGN=RIGHT>$stranswer:&nbsp;&nbsp;";
-           echo "<INPUT TYPE=RADIO NAME=\"q$question->id\" VALUE=\"$true->id\">$true->answer";
+           echo "<INPUT $truechecked TYPE=RADIO NAME=\"q$question->id\" VALUE=\"$true->id\">$true->answer";
            echo "&nbsp;&nbsp;&nbsp;";
-           echo "<INPUT TYPE=RADIO NAME=\"q$question->id\" VALUE=\"$false->id\">$false->answer</P>";
+           echo "<INPUT $falsechecked TYPE=RADIO NAME=\"q$question->id\" VALUE=\"$false->id\">$false->answer</P>";
+           if ($feedback) {
+               quiz_print_comment("<P ALIGN=right>$feedback[$feedbackid]</P>");
+           }
+
            break;
 
        case MULTICHOICE:
@@ -258,17 +291,31 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
            echo "<TR><TD valign=top>$stranswer:&nbsp;&nbsp;</TD><TD>";
            echo "<TABLE ALIGN=right>";
            $answerids = explode(",", $options->answers);
+
            foreach ($answerids as $key => $answerid) {
                $answer = $answers[$answerid];
                $qnum = $key + 1;
+
+               if ($feedback and $response[$answerid]) {
+                   $checked = "CHECKED";
+               } else {
+                   $checked = "";
+               }
                echo "<TR><TD valign=top>";
                if ($options->single) {
-                   echo "<INPUT TYPE=RADIO NAME=q$question->id VALUE=\"$answer->id\">";
+                   echo "<INPUT $checked TYPE=RADIO NAME=q$question->id VALUE=\"$answer->id\">";
                } else {
-                   echo "<INPUT TYPE=CHECKBOX NAME=q$question->id"."a$answer->id VALUE=\"$answer->id\">";
+                   echo "<INPUT $checked TYPE=CHECKBOX NAME=q$question->id"."a$answer->id VALUE=\"$answer->id\">";
                }
                echo "</TD>";
                echo "<TD valign=top>$qnum. $answer->answer</TD>";
+               if ($feedback) {
+                   echo "<TD valign=top>&nbsp;";
+                   if ($response[$answerid]) {
+                       quiz_print_comment($feedback[$answerid]);
+                   }
+                   echo "</TD>";
+               }
                echo "</TR>";
            }
            echo "</TABLE>";
@@ -299,13 +346,23 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
 
     echo "<FORM METHOD=POST ACTION=attempt.php>";
     echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
+
     foreach ($questions as $key => $questionid) {
+        if ($results) {
+            $feedback = $results->feedback[$questionid];
+        } else {
+            $feedback = NULL;
+        }
         print_simple_box_start("CENTER", "90%");
-        quiz_print_question($key+1, $questionid, $grades[$questionid]->grade, $quiz->course);
+        quiz_print_question($key+1, $questionid, $grades[$questionid]->grade, $quiz->course, 
+                            $results->feedback[$questionid], $results->response[$questionid], $results->grades[$questionid]);
         print_simple_box_end();
         echo "<BR>";
     }
-    echo "<CENTER><INPUT TYPE=submit VALUE=\"".get_string("savemyanswers", "quiz")."\"></CENTER>";
+
+    if (!$results) {
+        echo "<CENTER><INPUT TYPE=submit VALUE=\"".get_string("savemyanswers", "quiz")."\"></CENTER>";
+    }
     echo "</FORM>";
 
     return true;
@@ -738,6 +795,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
 /// $result->percentage   (Percentage of grades that were correct)
 /// $result->grade        (final grade result for the whole quiz)
 /// $result->grades[]     (array of grades, indexed by question id)
+/// $result->response[]   (array of response arrays, indexed by question id)
 /// $result->feedback[]   (array of feedback arrays, indexed by question id)
 
     if (!$questions) {
@@ -752,7 +810,8 @@ function quiz_grade_attempt_results($quiz, $questions) {
         }
 
         $grade    = 0;   // default
-        $feedback = array ();
+        unset($feedback);
+        unset($response);
 
         switch ($question->type) {
             case SHORTANSWER:
@@ -761,14 +820,16 @@ function quiz_grade_attempt_results($quiz, $questions) {
                 } else {
                     $question->answer = NULL;
                 }
+                $response[0] = $question->answer;
                 foreach($answers as $answer) {  // There might be multiple right answers
-                    $feedback[$answer->id] = $answer->feedback;
                     if (!$answer->usecase) {       // Don't compare case
                         $answer->answer = strtolower($answer->answer);
                         $question->answer = strtolower($question->answer);
                     }
                     if ($question->answer == $answer->answer) {
+                        $feedback[0] = $answer->feedback;
                         $grade = (float)$answer->fraction * $answer->grade;
+                        continue;
                     }
                 }
                 break;
@@ -784,6 +845,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
                     $feedback[$answer->id] = $answer->feedback;
                     if ($question->answer == $answer->id) {
                         $grade = (float)$answer->fraction * $answer->grade;
+                        $response[$answer->id] = true;
                     }
                 }
                 break;
@@ -797,9 +859,11 @@ function quiz_grade_attempt_results($quiz, $questions) {
                             if ($questionanswer == $answer->id) {
                                 if ($answer->single) {
                                     $grade = (float)$answer->fraction * $answer->grade;
+                                    $response[$answer->id] = true;
                                     continue;
                                 } else {
                                     $grade += (float)$answer->fraction * $answer->grade;
+                                    $response[$answer->id] = true;
                                 }
                             }
                         }
@@ -816,6 +880,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
         $result->grades[$question->id] = $grade;
         $result->sumgrades += $grade;
         $result->feedback[$question->id] = $feedback;
+        $result->response[$question->id] = $response;
     }
 
     $fraction = (float)($result->sumgrades / $quiz->sumgrades);

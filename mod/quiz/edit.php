@@ -153,6 +153,7 @@
         <FORM  NAME=theform METHOD=post ACTION=<?=$modform->destination ?>>
         <INPUT TYPE="hidden" NAME=course  VALUE="<? p($modform->course) ?>">
         <INPUT TYPE="submit" VALUE="<? print_string("savequiz", "quiz") ?>">
+        <INPUT type="submit" name=cancel value="<? print_string("cancel") ?>">
         </FORM>
         </CENTER>
         <?

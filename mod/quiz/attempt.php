@@ -36,6 +36,16 @@
     require_login($course->id);
 
 
+/// Check number of attempts
+
+    if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
+        $numattempts = count($attempts) + 1;
+    } else {
+        $numattempts = 1;
+    }
+
+    $strattemptnum = get_string("attempt", "quiz", $numattempts);
+
 
 // Print the page header
 
@@ -47,16 +57,11 @@
     $strquiz  = get_string("modulename", "quiz");
 
     print_header("$course->shortname: $quiz->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> -> $quiz->name", 
+                 "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> -> 
+                  <A HREF=\"view.php?id=$cm->id\">$quiz->name</A> -> $strattemptnum", 
                   "", "", true);
 
-/// Check some quiz parameters
-
-    if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
-        $numattempts = count($attempts) + 1;
-    } else {
-        $numattempts = 1;
-    }
+/// Check availability
 
     if ($quiz->attempts) {
         if ($numattempts > $quiz->attempts) {
@@ -125,7 +130,7 @@
 
         print_continue("view.php?id=$cm->id");
 
-        if ($quiz->correctanswers) {
+        if ($quiz->feedback) {
             quiz_print_quiz_questions($quiz, $result);
             print_continue("view.php?id=$cm->id");
         }
