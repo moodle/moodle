@@ -137,7 +137,7 @@
 		$allentries = glossary_search_entries($searchterms, $glossary, $includedefinition);
 	} elseif ( $eid ) {	// looking for an entry
 		$allentries = get_records("glossary_entries", "id", $eid);
-	} elseif ( $currentview and $cat == 0 ) {   // Browsing all categories
+	} elseif ( $currentview and $cat == -1 ) {   // Browsing all categories
         $sql = "SELECT gec.id gecid, gc.name, gc.id CID, ge.*
                 FROM {$CFG->prefix}glossary_entries ge,
                     {$CFG->prefix}glossary_entries_categories gec,

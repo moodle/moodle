@@ -711,33 +711,39 @@ global $CFG, $THEME;
 
      echo "<td align=center width=60%>";
      echo "<b>";
-     if ( $category ) {
-        echo $category->name;
-     } else {
-        if ( $cat < 0 ) {
-            echo get_string("entrieswithoutcategory","glossary");
-            $selected = "-1";
-        } elseif ( $cat == 0 ) {
-            echo get_string("allcategories","glossary");
-            $selected = "0";
-        }
-     }
-     echo "</b></td>";
-     echo "<td align=center width=20%>";
-     $menu["0"] = get_string("allcategories","glossary");
-     $menu["-1"] = get_string("nocategorized","glossary");
-//     $menu[""] = "-----------------------------------------";
+
+     $menu["-1"] = get_string("allcategories","glossary");
+     $menu["0"] = get_string("nocategorized","glossary");
 
      $categories = get_records("glossary_categories", "glossaryid", $glossary->id, "name ASC");
      if ( $categories ) {
           foreach ($categories as $currentcategory) {
                  $url = $currentcategory->id;
-                 if ($currentcategory->id == $category->id) {
-                     $selected = $url;
+                 if ( $category ) {
+                     if ($currentcategory->id == $category->id) {
+                         $selected = $url;
+                     }
                  }
                  $menu[$url] = $currentcategory->name;
           }
      }
+     if ( !$selected ) {
+         $selected = "0";
+     }
+
+     if ( $category ) {
+        echo $category->name;
+     } else {
+        if ( $cat < 0 ) {
+            echo get_string("allcategories","glossary");
+            $selected = "-1";
+        } elseif ( $cat == 0 ) {
+            echo get_string("entrieswithoutcategory","glossary");
+            $selected = "0";
+        }
+     }
+     echo "</b></td>";
+     echo "<td align=center width=20%>";
 
      echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&currentview=categories&cat=", $menu, "catmenu", $selected, "",
                       "", "", false);
