@@ -6,24 +6,23 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
 
-    optional_variable($id);
-    optional_variable($name);
+    $id          = optional_param('id', 0, PARAM_INT);
+    $name        = optional_param('name');
+    $blockaction = optional_param('blockaction');
+    $instanceid  = optional_param('instanceid', 0, PARAM_INT);
+    $blockid     = optional_param('blockid',    0, PARAM_INT);
 
-    optional_param('blockaction');
-    optional_param('instanceid', 0, PARAM_INT);
-    optional_param('blockid',    0, PARAM_INT);
-
-    if (!$id and !$name) {
+    if (empty($id) && empty($name)) {
         error("Must specify course id or short name");
     }
 
-    if (!empty($_GET['name'])) {
-        if (! ($course = get_record("course", "shortname", $name)) ) {
-            error("That's an invalid short course name");
+    if (!empty($name)) {
+        if (! ($course = get_record('course', 'shortname', $name)) ) {
+            error('Invalid short course name');
         }
     } else {
-        if (! ($course = get_record("course", "id", $id)) ) {
-            error("That's an invalid course id");
+        if (! ($course = get_record('course', 'id', $id)) ) {
+            error('Invalid course id');
         }
     }
 
