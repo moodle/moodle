@@ -20,7 +20,7 @@ $string['assessmentdropped'] = "Évaluation rejetée";
 $string['assessmentgrade'] = "Note de l'évaluation : \$a";
 $string['assessmentnotyetagreed'] = "Il n'a pas encore d'accord sur l'évaluation";
 $string['assessmentofthissubmission'] = "Évaluation de ce travail";
-$string['assessmentsby'] = "Évalués par \$a";
+$string['assessmentsby'] = "Évalués par les \$a";
 $string['assessmentsexcluded'] = "Nombre d'évaluations rejetées pour cet \$a";
 $string['assessmentsmustbeagreed'] = "Un accord doit avoir lieu sur les évaluations";
 $string['assessments'] = "Évaluations";
@@ -206,7 +206,7 @@ $string['teacherscomment'] = "Commentaire de l'enseignant";
 $string['teachersgrade'] = "Note de l'enseignant";
 $string['teachersubmissionsforassessment'] = "\$a travaux remis par l'enseignant pour évaluation";
 $string['thegradeis'] = "La note est \$a";
-$string['thereisfeedbackfromtheteacher'] = "Vous avez un feedback de la part de \$a";
+$string['thereisfeedbackfromtheteacher'] = "Vous avez un feedback de la part de l'enseignant";
 $string['theseasessmentsaregradedbytheteacher'] = "Ces évaluations ont été notées par \$a";
 $string['timeassessed'] = "Date de l'évaluation";
 $string['title'] = "Titre";
@@ -234,7 +234,7 @@ $string['workshopcomments'] = "Commentaire sur l'atelier";
 $string['workshopfeedback'] = "Feedback sur l'atelier";
 $string['workshopsubmissions'] = "Travaux remis de l'atelier";
 $string['yourassessments'] = "Vos évaluations";
-$string['yourassessmentsofexamplesfromtheteacher'] = "Vos évaluations des exemples de \$a";
+$string['yourassessmentsofexamplesfromtheteacher'] = "Vos évaluations des exemples de l'enseignant";
 $string['yourfeedbackgoeshere'] = "Votre feedback s'affichera ici";
 
 ?>
