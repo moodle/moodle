@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-	require("../config.php");
+    require("../config.php");
 
     optional_variable($mode, "");
 
@@ -140,6 +140,11 @@
             }
         }
 
+        print_heading($strcomparelanguage);
+        echo "<CENTER>";
+        helpbutton("langedit",$strcomparelanguage);
+        echo "</CENTER>";
+
         foreach ($stringfiles as $file) {
 
             print_heading("$file", "LEFT", 4);
@@ -152,6 +157,7 @@
             error_reporting(0);
             if ($f = fopen("$langdir/$file","r+")) {
                 $editable = true;
+                fclose($f);
             } else {
                 $editable = false;
                 echo "<P><FONT SIZE=1>".get_string("makeeditable", "", "$langdir/$file")."</FONT></P>";
@@ -173,13 +179,12 @@
             echo "<TABLE WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=3 BORDER=0>";
             foreach ($enstring as $key => $envalue) {
                 $envalue = nl2br(htmlentities($envalue));
-                $envalue = str_replace("$"."a", "\\$"."a", $envalue);
                 echo "<TR>";
                 echo "<TD WIDTH=20% BGCOLOR=\"$THEME->cellheading\" NOWRAP VALIGN=TOP>$key</TD>";
                 echo "<TD WIDTH=40% BGCOLOR=\"$THEME->cellheading\" VALIGN=TOP>$envalue</TD>";
 
-                $value = htmlentities($string[$key]);
-                $value = str_replace("$"."a", "\\$"."a", $value);
+                $value = str_replace("\\","",$string[$key]);               // Delete all slashes
+                $value = htmlentities($value);
                 if ($editable) {
                     echo "<TD WIDTH=40% VALIGN=TOP>";
                     if (isset($string[$key])) {
