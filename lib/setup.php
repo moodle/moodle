@@ -212,23 +212,31 @@ global $THEME;
 
 
 /// Load up theme variables (colours etc)
+    if (isset($_GET['theme'])) {
+        if (confirm_sesskey()) {
+            if (!detect_munged_arguments($_GET['theme'], 0) and file_exists($CFG->dirroot .'/theme/'. $_GET['theme'])) {
+                $SESSION->theme = $_GET['theme'];
+            }
+        }
+    }
 
     if (!isset($CFG->theme)) {
         $CFG->theme = 'standard';
     }
-    include($CFG->dirroot .'/theme/'. $CFG->theme .'/config.php');
+    $currenttheme = current_theme();
+    include($CFG->dirroot .'/theme/'. $currenttheme .'/config.php');
 
     if (empty($CFG->custompix)) {    // Could be set in the above file
         $CFG->pixpath = $CFG->wwwroot .'/pix';
         $CFG->modpixpath = $CFG->wwwroot .'/mod';
     } else {
-        $CFG->pixpath = $CFG->wwwroot .'/theme/'. $CFG->theme .'/pix';
-        $CFG->modpixpath = $CFG->wwwroot .'/theme/'. $CFG->theme .'/pix/mod';
+        $CFG->pixpath = $CFG->wwwroot .'/theme/'. $currenttheme .'/pix';
+        $CFG->modpixpath = $CFG->wwwroot .'/theme/'. $currenttheme .'/pix/mod';
     }
 
-    $CFG->stylesheet  = $CFG->wwwroot .'/theme/'. $CFG->theme .'/styles.php';
-    $CFG->header      = $CFG->dirroot .'/theme/'. $CFG->theme .'/header.html';
-    $CFG->footer      = $CFG->dirroot .'/theme/'. $CFG->theme .'/footer.html';
+    $CFG->stylesheet  = $CFG->wwwroot .'/theme/'. $currenttheme .'/styles.php';
+    $CFG->header      = $CFG->dirroot .'/theme/'. $currenttheme .'/header.html';
+    $CFG->footer      = $CFG->dirroot .'/theme/'. $currenttheme .'/footer.html';
 
 
 /// A hack to get around magic_quotes_gpc being turned off
