@@ -2,7 +2,7 @@
       // quiz.php - created with Moodle 1.0.8 dev (2002122301)
 
 $string['addquestions'] = "Fragen hinzufügen";
-$string['addingquestions'] = "Diese Spalte der Seite ist zum Verwalten Quizfragen. Sie können jede dieser Fragen auswählen und Ihrem Quiz in der anderen Spalte hinzufügen.";
+$string['addingquestions'] = "Diese Spalte der Seite ist zum Verwalten von Quizfragen. Fragen werden in Kategorien gespeichert, um sie besser organisieren zu können, und können von jedem Quiz Ihres Kurses oder sogar von anderen Kursen (Wenn man 'veröffentlichen' ausgewählt hat) benutzt werden. <br /><br />Nachdem Sie eine Kategorie erzeugt haben, können Sie Fragen erzeugen oder bearbeiten. Sie können jede dieser Fragen auswählen und Ihrem Quiz in der anderen Spalte hinzufügen.";
 $string['addquestionstoquiz'] = "Frage zu aktuellem Quiz hinzufügen";
 $string['addselectedtoquiz'] = "Auswahl zum Quiz hinzufügen";
 $string['allowreview'] = "Bericht erlauben";
