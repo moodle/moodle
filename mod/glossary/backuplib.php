@@ -89,21 +89,33 @@
                 fwrite ($bf,full_tag("GLOSSARYID",6,false,$glo_cat->glossaryid));
                 fwrite ($bf,full_tag("NAME",6,false,$glo_cat->name));
 
-                $entries = get_records("glossary_entries_categories","categoryid",$glo_cat->id);
-                if ($entries) {
-                    $status =fwrite ($bf,start_tag("ENTRIES",6,true));
-                    foreach ($entries as $entry) {
-                        fwrite ($bf,start_tag("ENTRY",7,true));
-                        fwrite ($bf,full_tag("ENTRYID",8,false,$entry->entryid));
-                        $status =fwrite ($bf,end_tag("ENTRY",7,true));
-                    }
-                    $status =fwrite ($bf,end_tag("ENTRIES",6,true));
-                }
+                $status = backup_glossary_entries_categories ($bf,$preferences,$glo_cat->id);
+
                 $status =fwrite ($bf,end_tag("CATEGORY",5,true));
 
             }
             //Write end tag
             $status =fwrite ($bf,end_tag("CATEGORIES",4,true));
+        }
+        return $status;
+    }
+
+    //Backup entries_categories contents (executed from backup_glossary_categories)
+    function backup_glossary_entries_categories ($bf,$preferences,$categoryid) {
+
+        global $CFG;
+
+        $status = true;
+
+        $entries = get_records("glossary_entries_categories","categoryid",$categoryid);
+        if ($entries) {
+            $status =fwrite ($bf,start_tag("ENTRIES",6,true));
+            foreach ($entries as $entry) {
+                fwrite ($bf,start_tag("ENTRY",7,true));
+                fwrite ($bf,full_tag("ENTRYID",8,false,$entry->entryid));
+                $status =fwrite ($bf,end_tag("ENTRY",7,true));
+            }
+            $status =fwrite ($bf,end_tag("ENTRIES",6,true));
         }
         return $status;
     }
