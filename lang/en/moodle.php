@@ -217,6 +217,7 @@ $string['currentcourseadding'] = 'Current course, adding data to it';
 $string['currentcoursedeleting'] = 'Current course, deleting it first';
 $string['currentlanguage'] = 'Current language';
 $string['currentlocaltime'] = 'your current local time';
+$string['currentpicture'] = 'Current picture';
 $string['currentrelease'] = 'Current release information';
 $string['currentversion'] = 'Current version';
 $string['databasechecking'] = 'Upgrading Moodle database from version $a->oldversion to $a->newversion...';

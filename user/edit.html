@@ -174,9 +174,7 @@ if (isadmin()) {
     </td>
 </tr>
 <tr>
-    <td colspan=2><br /><b><?php print_string("followingoptional") ?>:</b>&nbsp;&nbsp;&nbsp;
-       <?php print_user_picture($user->id, $course->id, $user->picture, false, false, false); ?>
-    </td>
+    <td colspan=2><br /><b><?php print_string("followingoptional") ?>:</b></td>
 </tr>
 
 
@@ -184,6 +182,17 @@ if (isadmin()) {
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
     if (!empty($CFG->gdversion) and $maxbytes and empty($CFG->disableuserimages)) {  
 ?>
+<tr valign=top>
+    <td><p><?php print_string("currentpicture") ?>:</td>
+    <td>
+       <?php print_user_picture($user->id, $course->id, $user->picture, false, false, false); 
+             if ($user->picture) {
+                 echo '&nbsp;&nbsp;<input type="checkbox" name="deletepicture" value="1">';
+                 print_string("delete");
+             }
+       ?>
+    </td>
+</tr>
 <tr valign=top>
     <td><p><?php print_string("newpicture") ?>:</td>
     <td>

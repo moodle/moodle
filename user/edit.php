@@ -70,6 +70,11 @@
             if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
                 $usernew->picture = save_profile_image($user->id, $filename);
                 set_field('user', 'picture', $usernew->picture, 'id', $user->id);  /// Note picture in DB
+            } else {
+                if (!empty($usernew->deletepicture)) {
+                    set_field('user', 'picture', 0, 'id', $user->id);  /// Delete picture
+                    $usernew->picture = 0;
+                }
             }
 
             $user = $usernew;
@@ -80,7 +85,12 @@
             if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
                 $usernew->picture = save_profile_image($user->id, $filename);
             } else {
-                $usernew->picture = $user->picture;
+                if (!empty($usernew->deletepicture)) {
+                    set_field('user', 'picture', 0, 'id', $user->id);  /// Delete picture
+                    $usernew->picture = 0;
+                } else {
+                    $usernew->picture = $user->picture;
+                }
             }
     
             $usernew->timemodified = time();
