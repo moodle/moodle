@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004011700)
+      // moodle.php - created with Moodle 1.2 development (2004012900)
 
 
 $string['action'] = 'Azione';
@@ -872,6 +872,7 @@ $string['wordforteacherseg'] = 'es. Insegnanti, Tutors, Facilitatori etc.';
 $string['writingcategoriesandquestions'] = 'Scrittura categorie e domande';
 $string['writingcoursedata'] = 'Scrittura dati corso';
 $string['writinggeneralinfo'] = 'Scrittura informazioni generali';
+$string['writinggroupsinfo'] = 'Scrittura informazioni gruppi';
 $string['writingheader'] = 'Scrittura intestazione';
 $string['writingloginfo'] = 'Scrittura informazioni log';
 $string['writingmoduleinfo'] = 'Scrittura informazioni moduli';
