@@ -47,9 +47,9 @@
         $strexistingstudents .= " ($course->students)";
     }
 
-    print_header("$course->shortname: $strassignstudents", 
-                 "$site->fullname", 
-                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassignstudents", 
+    print_header("$course->shortname: $strassignstudents",
+                 "$site->fullname",
+                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassignstudents",
                  "studentform.searchtext");
 
 /// Don't allow restricted teachers to even see this page (because it contains
@@ -60,10 +60,10 @@
 /// Print a help notice about the need to use this page
 
     if (!$frm = data_submitted()) {
-        $note = get_string("assignstudentsnote");   
+        $note = get_string("assignstudentsnote");
 
         if ($course->password) {
-            $note .= "<p>".get_string("assignstudentspass", "", 
+            $note .= "<p>".get_string("assignstudentspass", "",
                                       "<a href=\"edit.php?id=$course->id\">$course->password</a>");
         }
         print_simple_box($note, "center", "50%");
@@ -113,26 +113,26 @@
         $existinguserarray[] = $teacher->id;
     }
     $existinguserlist = implode(',', $existinguserarray);
-    
+
     unset($existinguserarray);
 
 
 /// Get search results excluding any users already in this course
     if (!empty($frm->searchtext) and $previoussearch) {
-        $searchusers = get_users(true, $frm->searchtext, true, $existinguserlist, 'firstname ASC, lastname ASC', 
+        $searchusers = get_users(true, $frm->searchtext, true, $existinguserlist, 'firstname ASC, lastname ASC',
                                       '', '', 0, 99999, 'id, firstname, lastname, email');
-        $usercount = get_users(false, '', true, $studentlist);
+        $usercount = get_users(false, '', true, $existinguserlist);
     }
-    
+
 /// If no search results then get potential students for this course excluding users already in course
     if (empty($searchusers)) {
-        
-        $usercount = get_users(false, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '', 
+
+        $usercount = get_users(false, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '',
                               0, 99999, 'id, firstname, lastname, email') ;
         $users = array();
-        
+
         if ($usercount <= MAX_USERS_PER_PAGE) {
-            $users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '', 
+            $users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '',
                                0, 99999, 'id, firstname, lastname, email');
         }
 
