@@ -229,6 +229,7 @@ $string['confirmednot'] = 'Votre enregistrement n\'a pas encore été confirmé';
 $string['continue'] = 'Continuer';
 $string['continuetocourse'] = 'Cliquer ici pour accéder à votre cours';
 $string['cookiesenabled'] = 'Votre navigateur doit supporter les cookies';
+$string['cookiesnotenabled'] = 'La gestion des cookies n\'est malheureusement pas activée actuellement dans votre navigateur';
 $string['copy'] = 'copie';
 $string['copyingcoursefiles'] = 'Copie des fichiers de cours';
 $string['copyinguserfiles'] = 'Copie des fichiers utilisateurs';
