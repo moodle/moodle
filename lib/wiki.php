@@ -28,7 +28,9 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-
+// set this to 1 *IF* we are running in Moodle
+// it enables Moodle specific functions, otherwise 0
+define( "IN_MOODLE",1 );
 
 // state defines
 define( "STATE_NONE",1 ); // blank line has been detected, so looking for first line on next para
@@ -48,6 +50,7 @@ class Wiki {
   
   var $block_state;
   var $list_state;
+  var $list_depth;
   var $output; // output buffer
 
   function close_block( $state ) {
@@ -91,8 +94,27 @@ class Wiki {
     // do the regex thingy for things like bold, italic etc
     // $mark is the magic character, and $tag the HTML tag to insert
 
-    $regex = '(^| |[(.,])'.$mark.'([^'.$mark.']*)'.$mark.'($| |[.,;:)])';
+    // BODGE: replace inline $mark characters in places where we want them ignored
+    // they will be put back after main substitutue, stops problems with eg, and/or
+    $bodge = chr(1);
+    $line = eregi_replace( '([[:alnum:]])'.$mark.'([[:alnum:]])', '\\1'.$bodge.'\\2',$line );
+
+    $regex = '(^| |[(.,])'.$mark.'([^'.$mark.']*)'.$mark.'([^[:alnum:]])';
     $replace = '\\1<'.$tag.'>\\2</'.$tag.'>\\3';
+    $line = eregi_replace( $regex, $replace, $line );
+
+    // BODGE: back we go
+    $line = eregi_replace( $bodge, $mark, $line );
+
+    return $line;
+  }
+
+  function do_replace_sub( $line, $mark, $tag ) {
+    // do regex for subscript and superscript (slightly different)
+    // $mark is the magic character and $tag the HTML tag to insert
+
+    $regex = $mark.'([^'.$mark.']*)'.$mark;
+    $replace = '<'.$tag.'>\\1</'.$tag.'>';
     return eregi_replace( $regex, $replace, $line );
   }
   
@@ -144,6 +166,10 @@ class Wiki {
   function line_replace( $line ) {
     // return line after various formatting replacements
     // have been made - order is vital to stop them interfering with each other
+   
+    if (IN_MOODLE==1) {
+      global $CFG;
+    }
     
     // ---- (at least) means a <HR>
     $line = eregi_replace( "^-{4}.*", "<hr />", $line );
@@ -172,24 +198,36 @@ class Wiki {
     $line = $this->do_replace( $line, "\*", "strong" );
     $line = $this->do_replace( $line, "\+", "ins" );
     $line = $this->do_replace( $line, "-", "del" );
-    $line = $this->do_replace( $line, "~", "sub" );
-    $line = $this->do_replace( $line, "\^", "sup" );
+    $line = $this->do_replace_sub( $line, "~", "sub" );
+    $line = $this->do_replace_sub( $line, "\^", "sup" );
     $line = $this->do_replace( $line, "\"", "q" );
     $line = $this->do_replace( $line, "'", "q" );
     $line = $this->do_replace( $line, "%", "code" );
     $line = $this->do_replace( $line, "@", "cite" );
-    
+   
+    // convert urls into proper link with optional link text URL(text)
+    $line = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)",
+      "\\1<A HREF=\"\\2://\\3\\4\" TARGET=\"newpage\">\\5</A>", $line);
+    $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)", 
+      "\\1<A HREF=\"http://www.\\2\\3\" TARGET=\"newpage\">\\5</A>", $line);
+ 
     // make urls (with and without httpd) into proper links
     $line = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
       "\\1<A HREF=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</A>", $line);
     $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
       "\\1<A HREF=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</A>", $line);
-                          
+
     // !# at the beginning of any lines means a heading
     $line = eregi_replace( "^!([1-6]) (.*)$", "<h\\1>\\2</h\\1>", $line );
     
     // acronym handing, example HTML(Hypertext Markyp Language)
     $line = ereg_replace( "([A-Z]+)\(([^)]+)\)", "<acronym title=\"\\2\">\\1</acronym>", $line );
+
+    // *Moodle Specific* replace resource link >>##(Description Text)
+    if (IN_MOODLE==1) {
+      $line = eregi_replace( " ([a-zA-Z]+):([0-9]+)\(([^)]+)\)",
+         " <a href=\"".$CFG->wwwroot."/mod/\\1/view.php?id=\\2\">\\3</a> ", $line );
+    }
     
     return $line;
   }
@@ -207,6 +245,9 @@ class Wiki {
     // split content into array of single lines
     $lines = explode( "\n",$content );
     $buffer = "";
+
+    // add a wiki div tag for CSS
+    $buffer = $buffer . "<div class=\"wiki\">\n";
 
     // run through lines
     foreach( $lines as $line ) {
@@ -270,6 +311,9 @@ class Wiki {
 
     // close off any block level tags
     $buffer = $buffer . $this->close_block( $this->block_state );
+
+    // close off wiki div
+    $buffer = $buffer . "</div>\n";
 
     return $buffer;    
   }
