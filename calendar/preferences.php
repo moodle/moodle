@@ -134,49 +134,10 @@
     // Layout the whole page as three big columns.
     echo '<table border="0" cellpadding="3" cellspacing="0" width="100%">';
 
-    // START: The left column
-    echo '<tr valign="top"><td valign="top" width="180">';
+    // START: The main column
+    echo '<tr valign="top">';
 
-    $sections = get_all_sections($site->id);
-
-    if ($site->newsitems > 0 or $sections[0]->sequence or isediting($site->id) or isadmin()) {
-        echo "<td width=\"$side\" valign=top nowrap>";
-        $firstcolumn=true;
-
-        if ($sections[0]->sequence or isediting($site->id)) {
-            get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
-            print_section_block(get_string("mainmenu"), $site, $sections[0],
-                                 $mods, $modnames, $modnamesused, true, $side);
-        }
-
-        print_courses_sideblock(0, $side);
-        if ($site->newsitems) {
-            if ($news = forum_get_course_forum($site->id, "news")) {
-                print_side_block_start(get_string("latestnews"), $side, "sideblocklatestnews");
-                echo "<font size=\"-2\">";
-                forum_print_latest_discussions($news->id, $site->newsitems, "minimal", "", false);
-                echo "</font>";
-                print_side_block_end();
-            }
-        }
-        print_spacer(1,$side);
-    }
-
-    if (iscreator()) {
-        if (!$firstcolumn) {
-            echo "<td width=\"$side\" valign=top nowrap>";
-            $firstcolumn=true;
-        }
-        print_admin_links($site->id, $side);
-    }
-
-    if ($firstcolumn) {
-        echo '</td>';
-    }
-    // END: The left column
-
-    // START: Middle column
-    echo '<td width="70%" valign="top\">';
+    echo '<td width="100%" valign="top\">';
 
     $text = '<div style="float: left;">'.get_string('calendarheading', 'calendar', strip_tags($site->shortname)).'</div><div style="float: right;">';
     $text.= calendar_get_preferences_menu();
@@ -294,7 +255,7 @@
     // END: Middle column
 
     // START: Last column (3-month display)
-    echo '<td valign="top">';
+    echo '<td valign="top" width="'.$side.'">';
     print_side_block_start(get_string('monthlyview', 'calendar'), '', 'sideblockmain');
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
@@ -313,7 +274,7 @@
     print_side_block_end();
     print_spacer(1, $side);
     echo '</td>';
-    // START: Last column (3-month display)
+    // END: Last column (3-month display)
 
     echo '</tr></table>';
     print_footer();
