@@ -643,6 +643,15 @@ function main_upgrade($oldversion=0) {
                                                 FROM {$CFG->prefix}course_modules cm, 
                                                      {$CFG->prefix}modules m
                                                 WHERE cm.module = m.id")) {
+            $cmcount = count($coursemodules);
+            if ($cmcount > 10) {
+                print_simple_box_start("center", "", "#ffcccc");
+                echo '<font size="+1">';
+                echo "<p>Upgrading old logs with new data from $cmcount coursemodules.";
+                echo '<p>This process may take a very long time ... please be patient and let it finish.';
+                echo '</font>';
+                print_simple_box_end();
+            }
             foreach ($coursemodules as $cm) {
                 execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
                              WHERE module = '$cm->name' AND url LIKE 'view.php?id=$cm->id%'");
@@ -650,6 +659,7 @@ function main_upgrade($oldversion=0) {
                     execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
                                  WHERE module = 'forum' AND url LIKE '%?f=$cm->instance%'");
                     if ($discussions = get_records("forum_discussions", "forum", $cm->instance)) {
+                        notify("Processing ".count($discussions)." discussions");
                         foreach ($discussions as $discussion) {
                             execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
                                          WHERE module = 'forum' AND url LIKE '%?d=$discussion->id%'");
