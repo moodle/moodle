@@ -257,6 +257,15 @@
         }       
     }
 
+    //Now create messages as needed
+    if ($status and ($restore->messages)) {
+        echo "<li>".get_string("creatingmessagesinfo");
+        if (!$status = restore_create_messages($restore,$xml_file)) {
+            notify("Could not restore messages!");
+        }
+        echo "</li>";
+    }
+
     //Now create scales as needed
     if ($status) {
         echo "<li>".get_string("creatingscales").'</li>';

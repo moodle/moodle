@@ -87,6 +87,10 @@
         $restore_course_files = 1;
     }
 
+    if (!isset($restore_messages)) {
+        $restore_messages = 1;
+        }
+
     if (!isset($restore_restoreto)) {
         if (isteacheredit($id) and !isadmin()) {
             $restore_restoreto = 1;
@@ -286,6 +290,25 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
         } else {
             echo get_string("no");
             echo "<input type=\"hidden\" name=\"restore_course_files\" value=\"0\" />";
+        }
+        echo "</td></tr>";
+
+        //Now print the Messages tr
+        echo "<tr>";
+        echo "<td align=\"right\"><b>";
+        
+        //This tr is slighty different. Everything becomes hidden if
+        //we haven't messages is the backup, to avoid confusions to users.
+        //If messages are in the backup file, show menu, else fixed to no and show nothing
+        if ($info->backup_messages == "true") {
+            echo get_string ('messages','message').":";
+            echo "</b></td><td>";
+            $message_options[0] = get_string("no");
+            $message_options[1] = get_string("yes");
+            choose_from_menu($message_options, "restore_messages", $restore_messages, "");
+        } else {
+            echo "&nbsp;</b></td><td>";
+            echo "<input type=\"hidden\" name=\"restore_messages\" value=\"0\" />";
         }
         echo "</td></tr>";
     }

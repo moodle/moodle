@@ -291,6 +291,17 @@
         return $info;
     }
 
+    //This function read the xml file and store its data from the messages in
+    //backup_ids->message backup_ids->message_read and backup_ids->contact and db (and their counters in info)
+    function restore_read_xml_messages ($restore,$xml_file) {
+
+        //We call the main read_xml function, with todo = MESSAGES
+        $info = restore_read_xml ($xml_file,"MESSAGES",$restore);
+
+        return $info;
+    }
+
+
     //This function read the xml file and store its data from the questions in
     //backup_ids->info db (and category's id in $info)
     function restore_read_xml_questions ($restore,$xml_file) {
@@ -432,6 +443,14 @@
                 $tab[$elem][1] = get_string("yes");
             } else {
                 $tab[$elem][1] = get_string("no");
+            }
+            $elem++;
+            //Messages info
+            $tab[$elem][0] = "<b>".get_string('messages','message').":</b>";
+            if ($info->backup_messages == 'true') {
+                $tab[$elem][1] = get_string('yes');
+            } else {
+                $tab[$elem][1] = get_string('no');
             }
             $elem++;
             $table->data = $tab;
@@ -1182,6 +1201,226 @@
         }
 
         return $status;
+    }
+
+    //This function creates all the structures messages and contacts
+    function restore_create_messages($restore,$xml_file) {
+
+        global $CFG;
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //info will contain the id and name of every table
+            //(message, message_read and message_contacts)
+            //in backup_ids->info will be the real info (serialized)
+            $info = restore_read_xml_messages($restore,$xml_file);
+
+            //If we have info, then process messages & contacts
+            if ($info > 0) {
+                //Count how many we have
+                $unreadcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message');
+                $readcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message_read');
+                $contactcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message_contacts');
+                if ($unreadcount || $readcount || $contactcount) {
+                    //Start ul
+                    echo '<ul>';
+                    //Number of records to get in every chunk
+                    $recordset_size = 4;
+
+                    //Process unread
+                    $db->debug=true;
+                    if ($unreadcount) {
+                        echo '<li>'.get_string('unreadmessages','message').'</li>';
+                        $counter = 0;
+                        while ($counter < $unreadcount) {
+                            //Fetch recordset_size records in each iteration
+                            $recs = get_records_select("backup_ids","table_name = 'message' AND backup_code = '$restore->backup_unique_code'","old_id","old_id, old_id",$counter,$recordset_size);
+                            if ($recs) {
+                                foreach ($recs as $rec) {
+                                    //Get the full record from backup_ids
+                                    $data = backup_getid($restore->backup_unique_code,"message",$rec->old_id);
+                                    if ($data) {
+                                        //Now get completed xmlized object
+                                        $info = $data->info;
+                                        //traverse_xmlize($info);                            //Debug
+                                        //print_object ($GLOBALS['traverse_array']);         //Debug
+                                        //$GLOBALS['traverse_array']="";                     //Debug
+                                        //Now build the MESSAGE record structure
+                                        $dbrec->useridfrom = backup_todb($info['MESSAGE']['#']['USERIDFROM']['0']['#']);
+                                        $dbrec->useridto = backup_todb($info['MESSAGE']['#']['USERIDTO']['0']['#']);
+                                        $dbrec->message = backup_todb($info['MESSAGE']['#']['MESSAGE']['0']['#']);
+                                        $dbrec->format = backup_todb($info['MESSAGE']['#']['FORMAT']['0']['#']);
+                                        $dbrec->timecreated = backup_todb($info['MESSAGE']['#']['TIMECREATED']['0']['#']);
+                                        $dbrec->messagetype = backup_todb($info['MESSAGE']['#']['MESSAGETYPE']['0']['#']);
+                                        //We have to recode the useridfrom field
+                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->useridfrom);
+                                        if ($user) {
+                                            //echo "User ".$dbrec->useridfrom." to user ".$user->new_id."<br />";   //Debug
+                                            $dbrec->useridfrom = $user->new_id;
+                                        }
+                                        //We have to recode the useridto field
+                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->useridto);
+                                        if ($user) {
+                                            //echo "User ".$dbrec->useridto." to user ".$user->new_id."<br />";   //Debug
+                                            $dbrec->useridto = $user->new_id;
+                                        }
+                                        //Check if the record doesn't exist in DB!
+                                        $exist = get_record('message','useridfrom',$dbrec->useridfrom,
+                                                                      'useridto',  $dbrec->useridto,
+                                                                      'timecreated',$dbrec->timecreated);
+                                        if (!$exist) {
+                                            //Not exist. Insert
+                                            $status = insert_record('message',$dbrec);
+                                        } else {
+                                            //Duplicate. Do nothing
+                                        }
+                                    }
+                                    //Do some output
+                                    $counter++;
+                                    if ($counter % 10 == 0) {
+                                        echo ".";
+                                        if ($counter % 200 == 0) {
+                                            echo "<br />";
+                                        }
+                                        backup_flush(300);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //Process read
+                    if ($readcount) {
+                        echo '<li>'.get_string('readmessages','message').'</li>';
+                        $counter = 0;
+                        while ($counter < $readcount) {
+                            //Fetch recordset_size records in each iteration
+                            $recs = get_records_select("backup_ids","table_name = 'message_read' AND backup_code = '$restore->backup_unique_code'","old_id","old_id, old_id",$counter,$recordset_size);
+                            if ($recs) {
+                                foreach ($recs as $rec) {
+                                    //Get the full record from backup_ids
+                                    $data = backup_getid($restore->backup_unique_code,"message_read",$rec->old_id);
+                                    if ($data) {
+                                        //Now get completed xmlized object
+                                        $info = $data->info;
+                                        //traverse_xmlize($info);                            //Debug
+                                        //print_object ($GLOBALS['traverse_array']);         //Debug
+                                        //$GLOBALS['traverse_array']="";                     //Debug
+                                        //Now build the MESSAGE_READ record structure
+                                        $dbrec->useridfrom = backup_todb($info['MESSAGE']['#']['USERIDFROM']['0']['#']);
+                                        $dbrec->useridto = backup_todb($info['MESSAGE']['#']['USERIDTO']['0']['#']);
+                                        $dbrec->message = backup_todb($info['MESSAGE']['#']['MESSAGE']['0']['#']);
+                                        $dbrec->format = backup_todb($info['MESSAGE']['#']['FORMAT']['0']['#']);
+                                        $dbrec->timecreated = backup_todb($info['MESSAGE']['#']['TIMECREATED']['0']['#']);
+                                        $dbrec->messagetype = backup_todb($info['MESSAGE']['#']['MESSAGETYPE']['0']['#']);
+                                        $dbrec->timeread = backup_todb($info['MESSAGE']['#']['TIMEREAD']['0']['#']);
+                                        $dbrec->mailed = backup_todb($info['MESSAGE']['#']['MAILED']['0']['#']);
+                                        //We have to recode the useridfrom field
+                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->useridfrom);
+                                        if ($user) {
+                                            //echo "User ".$dbrec->useridfrom." to user ".$user->new_id."<br />";   //Debug
+                                            $dbrec->useridfrom = $user->new_id;
+                                        }
+                                        //We have to recode the useridto field
+                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->useridto);
+                                        if ($user) {
+                                            //echo "User ".$dbrec->useridto." to user ".$user->new_id."<br />";   //Debug
+                                            $dbrec->useridto = $user->new_id;
+                                        }
+                                        //Check if the record doesn't exist in DB!
+                                        $exist = get_record('message_read','useridfrom',$dbrec->useridfrom,
+                                                                           'useridto',  $dbrec->useridto,
+                                                                           'timecreated',$dbrec->timecreated);
+                                        if (!$exist) {
+                                            //Not exist. Insert
+                                            $status = insert_record('message_read',$dbrec);
+                                        } else {
+                                            //Duplicate. Do nothing
+                                        }
+                                    }
+                                    //Do some output
+                                    $counter++;
+                                    if ($counter % 10 == 0) {
+                                        echo ".";
+                                        if ($counter % 200 == 0) {
+                                            echo "<br />";
+                                        }
+                                        backup_flush(300);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //Process contacts
+                    if ($contactcount) {
+                        echo '<li>'.strtolower(get_string('contacts','message')).'</li>';
+                        $counter = 0;
+                        while ($counter < $contactcount) {
+                            //Fetch recordset_size records in each iteration
+                            $recs = get_records_select("backup_ids","table_name = 'message_contacts' AND backup_code = '$restore->backup_unique_code'","old_id","old_id, old_id",$counter,$recordset_size);
+                            if ($recs) {
+                                foreach ($recs as $rec) {
+                                    //Get the full record from backup_ids
+                                    $data = backup_getid($restore->backup_unique_code,"message_contacts",$rec->old_id);
+                                    if ($data) {
+                                        //Now get completed xmlized object
+                                        $info = $data->info;
+                                        //traverse_xmlize($info);                            //Debug
+                                        //print_object ($GLOBALS['traverse_array']);         //Debug
+                                        //$GLOBALS['traverse_array']="";                     //Debug
+                                        //Now build the MESSAGE_CONTACTS record structure
+                                        $dbrec->userid = backup_todb($info['CONTACT']['#']['USERID']['0']['#']);
+                                        $dbrec->contactid = backup_todb($info['CONTACT']['#']['CONTACTID']['0']['#']);
+                                        $dbrec->blocked = backup_todb($info['CONTACT']['#']['BLOCKED']['0']['#']);
+                                        //We have to recode the userid field
+                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->userid);
+                                        if ($user) {
+                                            //echo "User ".$dbrec->userid." to user ".$user->new_id."<br />";   //Debug
+                                            $dbrec->userid = $user->new_id;
+                                        }
+                                        //We have to recode the contactid field
+                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->contactid);
+                                        if ($user) {
+                                            //echo "User ".$dbrec->contactid." to user ".$user->new_id."<br />";   //Debug
+                                            $dbrec->contactid = $user->new_id;
+                                        }
+                                        //Check if the record doesn't exist in DB!
+                                        $exist = get_record('message_contacts','userid',$dbrec->userid,
+                                                                               'contactid',  $dbrec->contactid);
+                                        if (!$exist) {
+                                            //Not exist. Insert
+                                            $status = insert_record('message_contacts',$dbrec);
+                                        } else {
+                                            //Duplicate. Do nothing
+                                        }
+                                    }
+                                    //Do some output
+                                    $counter++;
+                                    if ($counter % 10 == 0) {
+                                        echo ".";
+                                        if ($counter % 200 == 0) {
+                                            echo "<br />";
+                                        }
+                                        backup_flush(300);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //End ul
+                    echo '</ul>';
+                    $db->debug=true;
+                }
+            }
+        }
+
+       return $status;
     }
 
     //This function creates all the categories and questions
@@ -2219,6 +2458,29 @@
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
+        //This is the startTag handler we use where we are reading the messages zone (todo="MESSAGES")
+        function startElementMessages($parser, $tagName, $attrs) {
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into MESSAGES zone
+            //if ($this->tree[3] == "MESSAGES")                                                          //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";  //Debug
+
+            //If we are under a MESSAGE tag under a MESSAGES zone, accumule it
+            if (isset($this->tree[4]) and isset($this->tree[3])) {
+                if (($this->tree[4] == "MESSAGE" || $this->tree[5] == "CONTACT" ) and ($this->tree[3] == "MESSAGES")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
+        }
         //This is the startTag handler we use where we are reading the questions zone (todo="QUESTIONS")
         function startElementQuestions($parser, $tagName, $attrs) {
             //Refresh properties
@@ -2447,6 +2709,9 @@
                                 break;
                             case "COURSEFILES":
                                 $this->info->backup_course_files = $this->getContents();
+                                break;
+                            case "MESSAGES":
+                                $this->info->backup_messages = $this->getContents();
                                 break;
                             case 'BLOCKFORMAT':
                                 $this->info->backup_block_format = $this->getContents();
@@ -3047,6 +3312,87 @@
             $this->content = "";
         }
 
+        //This is the endTag handler we use where we are reading the messages zone (todo="MESSAGES")
+        function endElementMessages($parser, $tagName) {
+            //Check if we are into MESSAGES zone
+            if ($this->tree[3] == "MESSAGES") {
+                //if (trim($this->content))                                                             //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n"; //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";//Debug
+                //Acumulate data to info (content + close tag)
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
+                //If we've finished a message, xmlize it an save to db
+                if (($this->level == 4) and ($tagName == "MESSAGE")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one MESSAGE)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $message_id = $data["MESSAGE"]["#"]["ID"]["0"]["#"];
+                    $message_status = $data["MESSAGE"]["#"]["STATUS"]["0"]["#"];
+                    if ($message_status == "READ") {
+                        $table = "message_read";
+                    } else {
+                        $table = "message";
+                    }
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, $table,$message_id, 
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+                //If we've finished a contact, xmlize it an save to db
+                if (($this->level == 5) and ($tagName == "CONTACT")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one MESSAGE)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $contact_id = $data["CONTACT"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'message_contacts' ,$contact_id, 
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+            }
+
+            //Stop parsing if todo = MESSAGES and tagName = MESSAGES (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "MESSAGES" and $this->level == 3) {
+                $this->finished = true;
+                $this->counter = 0;
+
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+        }
+
         //This is the endTag handler we use where we are reading the questions zone (todo="QUESTIONS")  
         function endElementQuestions($parser, $tagName) {
             //Check if we are into QUESTION_CATEGORIES zone
@@ -3413,6 +3759,9 @@
         } else if ($todo == "USERS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementUsers", "endElementUsers");
+        } else if ($todo == "MESSAGES") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementMessages", "endElementMessages");
         } else if ($todo == "QUESTIONS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementQuestions", "endElementQuestions");

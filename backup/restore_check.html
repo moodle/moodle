@@ -59,8 +59,8 @@
         require_variable($restore_user_files);
         //restore_course_files
         require_variable($restore_course_files);
-        //restore_course_files
-        require_variable($restore_course_files);
+        //restore_messages
+        require_variable($restore_messages);
 
         //Check we've selected a course
         if (!isset($course_id)) {
@@ -86,6 +86,7 @@
         $restore->logs=$restore_logs;
         $restore->user_files=$restore_user_files;
         $restore->course_files=$restore_course_files;
+        $restore->messages=$restore_messages;
         $restore->course_id=$course_id;
     } else {
         //We have the object, so check if we have a new course_id
@@ -174,6 +175,10 @@
                 if ($mod->userinfo) {
                     $changed = true;
                 }
+            }
+            //If we have selected user files or messages, then users must be restored too
+            if ($restore->user_files || $restore->messages) {
+                $changed = 1;
             }
             if ($changed) {
                 echo get_string ("noteuserschangednonetocourse");
