@@ -6,16 +6,13 @@
     require_once("lib.php");
     
     require_variable($id);                         // Course Module ID
-    require_variable($mode,"letter");              // mode to show the entries
-    optional_variable($hook,"ALL");                // what to show
-    optional_variable($sortkey,"UPDATE");          // Sorting key 
     optional_variable($sortorder,"asc");           // Sorting order 
     optional_variable($offset);                    // number of entries to bypass
     optional_variable($displayformat,-1); 
 
-    $mode = strip_tags(urldecode($mode));  //XSS
-    $hook = strip_tags(urldecode($hook));  //XSS
-    $sortkey = strip_tags(urldecode($sortkey));  //XSS
+    $mode    = required_param('mode');             // mode to show the entries
+    $hook    = optional_param('hook','ALL');       // what to show
+    $sortkey = optional_param('sortkey','UPDATE'); // Sorting key
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

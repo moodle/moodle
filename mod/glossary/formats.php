@@ -6,9 +6,8 @@
     global $CFG, $THEME;
         
     require_variable($id);    
-    optional_variable($mode); 
   
-    $mode = strip_tags(urldecode($mode));  //XSS
+    $mode = optional_param('mode');
         
     require_login();
     if ( !isadmin() ) {

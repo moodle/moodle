@@ -5,11 +5,9 @@
     require_variable($id);    // course module ID
     require_variable($entry);    // Entry ID
     optional_variable($confirm);     // confirmation
-    optional_variable($mode);
-    optional_variable($hook);
 
-    $hook = strip_tags(urldecode($hook));  //XSS
-    $mode = strip_tags(urldecode($mode));  //XSS
+    $hook = optional_param('hook');
+    $mode = optional_param('mode');
         
     global $THEME, $USER, $CFG;
 

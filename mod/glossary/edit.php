@@ -9,11 +9,8 @@ require_variable($id);    // Course Module ID
 optional_variable($e);    // EntryID
 optional_variable($confirm,0);    // proceed. Edit the edtry
 
-optional_variable($mode);   // categories if by category?
-optional_variable($hook);    // CategoryID
-
-$mode = strip_tags(urldecode($mode));  //XSS
-$hook = strip_tags(urldecode($hook));  //XSS
+$mode = optional_param('mode'); // categories if by category?
+$hook = optional_param('hook'); // CategoryID
 
 if (! $cm = get_record("course_modules", "id", $id)) {
     error("Course Module ID was incorrect");

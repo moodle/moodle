@@ -6,11 +6,9 @@
     require_variable($id);    // course module ID
     optional_variable($confirm);  // commit the operation?
     optional_variable($entry);  // entry id
-    require_variable($prevmode);  //  current frame
-    optional_variable($hook);         // pivot id 
 
-    $prevmode = strip_tags(urldecode($prevmode));  //XSS
-    $hook = strip_tags(urldecode($hook));  //XSS
+    $prevmode = required_param('prevmode');
+    $hook = optional_param('hook');
 
     $strglossary = get_string("modulename", "glossary");
     $strglossaries = get_string("modulenameplural", "glossary");
