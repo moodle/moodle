@@ -22,8 +22,10 @@
     $stradmin = get_string("administration");
     $strconfiguration = get_string("configuration");
     $strbackup = get_string("backup");
+    $strbackupdetails = get_string("backupdetails");
     $strlogs = get_string("logs");
     $strftimedatetime = get_string("strftimerecent");
+    $strftimetime = get_string("strftimetime").":%S";
     $strerror = get_string("error");
     $strok = get_string("ok");
     $strcourse = get_string("course");
@@ -31,15 +33,15 @@
     $strstatus = get_string("status");
     $strnext = get_string("next");
 
-    print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
-                  "<a href=\"../admin/index.php\">$stradmin</a> -> ".
-                  "<a href=\"../admin/configure.php\">$strconfiguration</a> -> ".
-                  "<a href=\"../admin/backup.php\">$strbackup</a> -> ".
-                  $strlogs);
-
     //Decide when to show last execution logs or detailed logs
     //Lastlog view
     if (!$courseid) {
+        print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
+                      "<a href=\"../admin/index.php\">$stradmin</a> -> ".
+                      "<a href=\"../admin/configure.php\">$strconfiguration</a> -> ".
+                      "<a href=\"../admin/backup.php\">$strbackup</a> -> ".
+                      $strlogs);
+
         print_heading($backuploglaststatus);
         print_simple_box_start("center", "", "$THEME->cellheading");
         //Now, get every record from backup_courses
@@ -60,7 +62,7 @@
                 $coursename = get_field ("course","fullname","id",$course->courseid);
                 if ($coursename) {
                     echo "<tr nowrap>";
-                    echo "<td nowrap><font size=2><a href=\"../course/view.php?id=$course->courseid\">".$coursename."</a></td>";
+                    echo "<td nowrap><font size=2><a href=\"log.php?courseid=$course->courseid\">".$coursename."</a></td>";
                     echo "<td nowrap><font size=2>".userdate($course->laststarttime,$strftimedatetime)."</td>";
                     echo "<td nowrap><font size=2> - </td>";
                     echo "<td nowrap><font size=2>".userdate($course->lastendtime,$strftimedatetime)."</td>";
@@ -78,14 +80,55 @@
         print_simple_box_end();
     //Detailed View !!
     } else {
+        print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
+                      "<a href=\"../admin/index.php\">$stradmin</a> -> ".
+                      "<a href=\"../admin/configure.php\">$strconfiguration</a> -> ".
+                      "<a href=\"../admin/backup.php\">$strbackup</a> -> ".
+                      "<a href=\"log.php\">$strlogs</a> -> ".
+                      $strbackupdetails);
+
         print_heading($backuplogdetailed);
+
+        $coursename = get_field("course","fullname","id","$courseid");
+        print_heading("$strcourse: $coursename");
+
         print_simple_box_start("center", "", "$THEME->cellheading");
         
         //First, me get all the distinct backups for that course in backup_log
-        $executions = get_records_sql("SELECT DISTINCT id,laststarttime
+        $executions = get_records_sql("SELECT DISTINCT laststarttime,laststarttime
                                        FROM {$CFG->prefix}backup_log
-                                       WHERE courseid = '$courseid'");
-    
+                                       WHERE courseid = '$courseid'
+                                       ORDER BY laststarttime DESC");
+
+        //Iterate over backup executions
+        if (!$executions) {
+            notify("No logs found!");
+        } else {
+            echo "<table border=0 align=center cellpadding=3 cellspacing=3>";
+            foreach($executions as $execution) {
+                echo "<tr nowrap>";
+                echo "<td nowrap align=center colspan=3>";
+                print_simple_box("<center>".userdate($execution->laststarttime)."</center>", "center");
+                echo "</td>";
+                echo "</tr>";
+                $logs = get_records_sql("SELECT * 
+                                         FROM {$CFG->prefix}backup_log
+                                         WHERE courseid = '$courseid'  AND
+                                               laststarttime = '$execution->laststarttime'
+                                         ORDER BY time");
+                if ($logs) {
+                    foreach ($logs as $log) {
+                        echo "<tr nowrap>";
+                        echo "<td nowrap><font size=2>".userdate($log->time,$strftimetime)."</font></td>";
+                        $log->info = str_replace("- ERROR!!","- <font color=red>ERROR!!</font>",$log->info);
+                        $log->info = str_replace("- OK","- <font color=green>OK</font>",$log->info);
+                        echo "<td nowrap><font size=2>".str_replace("  ","&nbsp;&nbsp;&nbsp;&nbsp;",$log->info)."</font></td>";
+                        echo "</tr>";
+                    }
+                }
+            }
+            echo "</table>";
+        }
         print_simple_box_end();
     }
 
