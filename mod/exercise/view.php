@@ -342,7 +342,8 @@
 					echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentstudent\">".
 						  get_string("studentsubmissionsforassessment", "exercise", 
 						  exercise_count_unassessed_student_submissions($exercise))."</a></b> \n";
-					helpbutton("gradingsubmissions", get_string("studentsubmissionsforassessment", "exercise"), "exercise");
+					helpbutton("grading", get_string("studentsubmissionsforassessment", "exercise"), 
+                            "exercise");
 					break;
 					
 				case 3: // finish assessing
@@ -350,7 +351,8 @@
 					echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentstudent\">".
 						  get_string("studentsubmissionsforassessment", "exercise", 
 						  exercise_count_unassessed_student_submissions($exercise))."</a></b> \n";
-					helpbutton("gradingsubmissions", get_string("studentsubmissionsforassessment", "exercise"), "exercise");
+					helpbutton("grading", get_string("studentsubmissionsforassessment", "exercise"), 
+                            "exercise");
 					break;
 					
 				case 4: // show final grades
