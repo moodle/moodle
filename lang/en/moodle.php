@@ -61,6 +61,7 @@ $string['administrator'] = 'Administrator';
 $string['administrators'] = 'Administrators';
 $string['administratorsall'] = 'All administrators';
 $string['administratorsandteachers'] = 'Administrators and teachers';
+$string['advanced'] = 'Advanced';
 $string['advancedfilter'] = 'Advanced search';
 $string['advancedsettings'] = 'Advanced settings';
 $string['again'] = 'again';
