@@ -264,9 +264,11 @@
     }
 
     function backup_copy_dir($from_file,$to_file) {
+
+        global $CFG;
+
         if (!is_dir($to_file)) {
-            mkdir($to_file);
-            chmod("$to_file",0777);
+            mkdir($to_file,$CFG->directorypermissions);
         }
         $dir = opendir($from_file);
         while ($file=readdir($dir)) {
