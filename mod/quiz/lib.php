@@ -1153,6 +1153,26 @@ function quiz_get_all_question_grades($questionlist, $quizid) {
     return $grades;
 }
 
+function quiz_gradesmenu_options($defaultgrade) {
+// Especially for multianswer questions it is often
+// desirable to have the grade of the question in a quiz
+// larger than the earlier maximum of 10 points.
+// This function makes quiz question list grade selector drop-down
+// have the maximum grade option set to the highest value between 10
+// and the defaultgrade of the question.
+
+    if ($defaultgrade && $defaultgrade>10) {
+        $maxgrade = $defaultgrade;
+    } else {
+        $maxgrade = 10;
+    }
+
+    unset($gradesmenu);
+    for ($i=$maxgrade ; $i>=0 ; --$i) {
+        $gradesmenu[$i] = $i;
+    }
+    return $gradesmenu;
+}
 
 function quiz_print_question_list($questionlist, $grades) {
 // Prints a list of quiz questions in a small layout form with knobs
@@ -1188,9 +1208,6 @@ function quiz_print_question_list($questionlist, $grades) {
     $strsavegrades = get_string("savegrades", "quiz");
     $strtype = get_string("type", "quiz");
 
-    for ($i=10; $i>=0; $i--) {
-        $gradesmenu[$i] = $i;
-    }
     $count = 0;
     $sumgrade = 0;
     $total = count($order);
@@ -1225,7 +1242,8 @@ function quiz_print_question_list($questionlist, $grades) {
         if ($question->qtype == DESCRIPTION) {
             echo "<INPUT TYPE=hidden NAME=q$qnum VALUE=\"0\"> ";
         } else {
-            choose_from_menu($gradesmenu, "q$qnum", (string)$grades[$qnum], "");
+            choose_from_menu(quiz_gradesmenu_options($question->defaultgrade),
+                             "q$qnum", (string)$grades[$qnum], "");
         }
         echo "<TD>";
             echo "<A TITLE=\"$strdelete\" HREF=\"edit.php?delete=$qnum\"><IMG 
