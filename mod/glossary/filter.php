@@ -16,7 +16,7 @@
             case 'mysql':
                 $as = '';
                 break;
-        }    
+        }
 
         $glossarieslist = get_records_select("glossary", "usedynalink != 0 and (course = $courseid or globalglossary != 0)","globalglossary, id");
         if ( $glossarieslist ) {
@@ -25,7 +25,7 @@
                 $glossaries .= "$glossary->id,";
             }
             $glossaries=substr($glossaries,0,-1);
-///         sorting by the lenght of the concept in order to assure that large concepts 
+///         sorting by the lenght of the concept in order to assure that large concepts
 ///            could be linked first, if they exist in the text to parse
             switch ($CFG->dbtype) {
                 case "postgres7":
@@ -38,7 +38,7 @@
                     $cbylenght = "";
                 break;
             }
-            
+
             $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0 and concept != ''","$ebylenght glossaryid","id,glossaryid, concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY $as category,fullmatch");
             $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid","id,glossaryid, name $as concept, 1 $as casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY $as category, 1 $as fullmatch");
             if ( $entries and $categories ) {
@@ -52,7 +52,7 @@
 
             if ( isset($concepts) ) {
                 $lastglossary = 0;
-                $lastcategory = 0;                
+                $lastcategory = 0;
                 $cm = '';
                 foreach ( $concepts as $concept ) {
                     if ( $concept->category ) {
@@ -111,7 +111,7 @@
 
         return $text;
     }
-    
+
     function glossary_link_concepts($text,$concept,$href_tag_begin,$href_tag_end = "</a>",$casesensitive,$fullmatch) {
 
         $list_of_words_cp = strip_tags($concept);
@@ -155,6 +155,18 @@
             $text = str_replace($excludes,array_keys($excludes),$text);
         }
 
+        //Now avoid searching inside the <span class="nolink">tag
+        // This style doesn't break in editor. See bug #2428
+        $nolinkspan = array();
+        preg_match_all('/<span class=\"nolink\">(.+?)<\/span>/is',$text,$list_of_span);
+        foreach (array_unique($list_of_span[0]) as $key=>$value) {
+            $nolinkspan['<%'.$key.'%>'] = $value;
+        }
+
+        if (!empty($nolinkspan)) {
+            $text = str_replace($nolinkspan,array_keys($nolinkspan),$text);
+        }
+
         //Now avoid searching inside links
         $links = array();
         preg_match_all('/<a[\s](.+?)>(.+?)<\/A>/is',$text,$list_of_links);
@@ -192,12 +204,15 @@
         if (!empty( $excludes)) {
             $text = str_replace(array_keys($excludes),$excludes,$text);
         }
+        if (!empty( $nolinkspan)) {
+            $text = str_replace(array_keys($nolinkspan),$nolinkspan,$text);
+        }
         if ($fullmatch and !empty($words)) {
             $text = str_replace(array_keys($words),$words,$text);
         }
         return $text;
     }
-    
+
     function glossary_sort_entries_by_length ( $entry0, $entry1 ) {
         if ( strlen(trim($entry0->concept)) < strlen(trim($entry1->concept)) ) {
             return 1;
