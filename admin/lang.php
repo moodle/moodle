@@ -27,7 +27,7 @@
         case "missing":
             $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strmissingstrings";
             $title = $strmissingstrings;
-            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
+            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
                       '<input type="hidden" name="mode" value="compare" />'.
                       '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
                       '<input type="submit" value="'.$strcomparelanguage.'" /></form>';
@@ -35,7 +35,7 @@
         case "compare":
             $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strcomparelanguage";
             $title = $strcomparelanguage;
-            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
+            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
                       '<input type="hidden" name="mode" value="missing" />'.
                       '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
                       '<input type="submit" value="'.$strmissingstrings.'" /></form>';
@@ -60,7 +60,7 @@
         echo "<table align=\"center\"><tr><td align=\"right\">";
         echo "<b>$strcurrentlanguage:</b>";
         echo "</td><td>";
-        echo popup_form ("$CFG->wwwroot/admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        echo popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
         echo "</td></tr></table>";
         print_heading("<a href=\"lang.php?mode=missing&sesskey=$USER->sesskey\">$strmissingstrings</a>");
         print_heading("<a href=\"lang.php?mode=compare&sesskey=$USER->sesskey\">$strcomparelanguage</a>");

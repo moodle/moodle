@@ -39,8 +39,8 @@
     $strthemesaved = get_string("themesaved");
 
     print_header("$site->shortname: $strthemes", $site->fullname, 
-                 "<a href=\"$CFG->wwwroot/admin/index.php\">$stradministration</a> -> ".
-                 "<a href=\"$CFG->wwwroot/admin/configure.php\">$strconfiguration</a> -> $strthemes");
+                 "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> ".
+                 "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $strthemes");
 
     if ($choose and confirm_sesskey()) {
         if (set_config("theme", $choose)) {
