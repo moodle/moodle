@@ -38,7 +38,7 @@ class CourseBlock_participants extends MoodleBlock {
             }
         }
 
-        if(!empty($USER)) {
+        if (!empty($USER->id)) {
             $fullname = fullname($USER, true);
             $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$this->course->id.'">'.get_string('editmyprofile').'</a>';
             if ($USER->description) {
