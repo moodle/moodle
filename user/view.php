@@ -150,11 +150,11 @@
             if ($user->emailstop) {
                 $switchparam = 'enable';
                 $switchtitle = get_string('emaildisable');
-                $switchpix   = 'show.gif';
+                $switchpix   = 'emailno.gif';
             } else {
                 $switchparam = 'disable';
                 $switchtitle = get_string('emailenable');
-                $switchpix   = 'hide.gif';
+                $switchpix   = 'email.gif';
             }
             $emailswitch = "&nbsp<a title=\"$switchtitle\" ".
                            "href=\"view.php?id=$user->id&course=$course->id&$switchparam=$user->id\">".
