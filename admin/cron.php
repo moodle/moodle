@@ -13,12 +13,6 @@
 
     $FULLME = "cron";
 
-    function microtime_diff($a, $b) {
-        list($a_dec, $a_sec) = explode(" ", $a);
-        list($b_dec, $b_sec) = explode(" ", $b);
-        return $b_sec - $a_sec + $b_dec - $a_dec;
-    }
-
     $starttime = microtime();
 
     require_once("../config.php");
