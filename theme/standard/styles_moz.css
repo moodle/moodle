@@ -1,7 +1,8 @@
 /*******************************************************************
  styles_moz.css
     
- This CSS file contains all mozilla specific definitions.
+ This CSS file uses the non-standard Mozilla CSS extensions
+ to add round corners to the current theme.
 
  Styles are organised into the following sections:
     core
@@ -329,38 +330,4 @@ body#course-user .section {
 #mod-journal-view .feedbackbox .entrycontent {
     -moz-border-radius-bottomright:15px;
 }
-
-
-
-/***
- *** Modules: Label
- ***/
-
-/***
- *** Modules: Lesson
- ***/
-
-/***
- *** Modules: Quiz
- ***/
-
-/***
- *** Modules: Resource
- ***/
-
-/***
- *** Modules: Scorm
- ***/
-
-/***
- *** Modules: Survey
- ***/
-
-/***
- *** Modules: Wiki
- ***/
-
-/***
- *** Modules: Workshop
- ***/
 
