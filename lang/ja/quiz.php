@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004062600)
+      // quiz.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['acceptederror'] = '¥¨¥é¡¼ÈÏ°Ï';
@@ -132,6 +132,7 @@ $string['notenoughanswers'] = '¤³¤Î¥¿¥¤¥×¤Î¼ÁÌä¤Ë¤Ï¾¯¤Ê¤¯¤È¤â $a ¤Î²òÅú¤¬É¬Í×¤Ç¤
 $string['notenoughsubquestions'] = '½½Ê¬¤ÊÉû¼ÁÌä¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡ª<br>
 ¤³¤Î¼ÁÌä¤ò½¤Àµ¤·¤Ş¤¹¤«¡©';
 $string['numerical'] = '¿ô»úÊı¼°';
+$string['passworderror'] = '¥Ñ¥¹¥ï¡¼¥É¤¬´Ö°ã¤Ã¤Æ¤¤¤Ş¤¹';
 $string['percentcorrect'] = 'ÀµÅúÎ¨';
 $string['publish'] = '¸ø³«';
 $string['qti'] = 'IMS QTI¥Õ¥©¡¼¥Ş¥Ã¥È';
@@ -146,6 +147,7 @@ $string['quizclosed'] = '¤³¤Î¾®¥Æ¥¹¥È¤Ï $a ¤ËÊÄ¤¸¤é¤ì¤Ş¤¹';
 $string['quizcloses'] = '¾®¥Æ¥¹¥È½ªÎ»Æü';
 $string['quiznotavailable'] = '¾®¥Æ¥¹¥È¤Ï  $a ¤Ş¤ÇÍøÍÑ¤Ç¤­¤Ş¤»¤ó';
 $string['quizopen'] = '¾®¥Æ¥¹¥È¸ø³«Æü';
+$string['quizopens'] = '³«ºÅÃæ¤Î¾®¥Æ¥¹¥È';
 $string['quiztimelimit'] = '»ş´ÖÀ©¸Â: $a';
 $string['quiztimer'] = '¥¯¥¤¥º¥¿¥¤¥Ş¡¼';
 $string['random'] = '¥é¥ó¥À¥àÊı¼°';
@@ -168,6 +170,7 @@ $string['reportmulti_resp'] = '¸ÄÊÌ¤ÎÊÖÅú';
 $string['reportoverview'] = '³µ´Ñ';
 $string['reportregrade'] = '²òÅú¤ÎºÆÉ¾²Á';
 $string['reportsimplestat'] = 'Ã±½ãÅı·×';
+$string['requirepasswordmessage'] = '¾®¥Æ¥¹¥È¤ò¹Ô¤¦°Ù¤Ë¥Ñ¥¹¥ï¡¼¥É¤òÆşÎÏ¤·¤Æ¤¯¤À¤µ¤¤';
 $string['review'] = '¥ì¥Ó¥å¡¼';
 $string['save'] = 'ÊİÂ¸';
 $string['savegrades'] = 'É¾ÅÀ¤òÊİÂ¸¤¹¤ë';
@@ -183,6 +186,7 @@ $string['showcorrectanswer'] = '¥Õ¥£¡¼¥É¥Ğ¥Ã¥¯¤ÎÃæ¤ËÀµ²ò¤òÉ½¼¨¤·¤Ş¤¹¤«?';
 $string['showfeedback'] = '²òÅú¸å¤Ë¥Õ¥£¡¼¥É¥Ğ¥Ã¥¯¤òÉ½¼¨¤·¤Ş¤¹¤«?';
 $string['shuffleanswers'] = '²òÅú¤òº®¤¼¤ë';
 $string['shufflequestions'] = '¼ÁÌä¤òº®¤¼¤ë';
+$string['subneterror'] = '¿½¤·Ìõ¤´¤¶¤¤¤Ş¤»¤ó¡¢¤³¤Î¾®¥Æ¥¹¥È¤ÏÆÃÄê¤Î¾ì½ê¤«¤é¤Î¤ß¥¢¥¯¥»¥¹²ÄÇ½¤Ç¤¹¡£¤¢¤Ê¤¿¤Î¥³¥ó¥Ô¥å¡¼¥¿¤Ï¤³¤Î¾®¥Æ¥¹¥È¤òÍøÍÑ½ĞÍè¤ë¥³¥ó¥Ô¥å¡¼¥¿¤Ç¤Ï¤¢¤ê¤Ş¤»¤ó¡£';
 $string['time'] = '»ş´Ö';
 $string['timecompleted'] = '²òÅúÆü»ş';
 $string['timeleft'] = '»Ä¤ê»ş´Ö';
