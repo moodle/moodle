@@ -58,7 +58,7 @@
        $maxbuckets2 = max($buckets2);
        $maxbuckets = ($maxbuckets1 > $maxbuckets2) ? $maxbuckets1 : $maxbuckets2;
 
-       $graph = new graph($GWIDTH,$GHEIGHT);
+       $graph = new graph($SURVEY_GWIDTH,$SURVEY_GHEIGHT);
        $graph->parameter['title'] = "$question->text";
 
        $graph->x_data               = $options;
@@ -162,7 +162,7 @@
        $maxbuckets2 = max($buckets2);
 
 
-       $graph = new graph($GWIDTH,$GHEIGHT);
+       $graph = new graph($SURVEY_GWIDTH,$SURVEY_GHEIGHT);
        $graph->parameter['title'] = "$question->text";
 
        $graph->x_data               = $names;
@@ -287,7 +287,7 @@
        $maxbuckets2 = max($buckets2);
 
 
-       $graph = new graph($GWIDTH,$GHEIGHT);
+       $graph = new graph($SURVEY_GWIDTH,$SURVEY_GHEIGHT);
        $graph->parameter['title'] = "$survey->name";
 
        $graph->x_data               = $names;
@@ -433,7 +433,7 @@
        $maxbuckets2 = max($buckets2);
 
 
-       $graph = new graph($GWIDTH,$GHEIGHT);
+       $graph = new graph($SURVEY_GWIDTH,$SURVEY_GHEIGHT);
        $graph->parameter['title'] = "$survey->name";
 
        $graph->x_data               = $names;
@@ -578,7 +578,7 @@
        $maxbuckets2 = max($buckets2);
 
 
-       $graph = new graph($GWIDTH,$GHEIGHT);
+       $graph = new graph($SURVEY_GWIDTH,$SURVEY_GHEIGHT);
        $graph->parameter['title'] = "$question->text";
 
        $graph->x_data               = $names;

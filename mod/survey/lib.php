@@ -1,10 +1,10 @@
 <?PHP // $Id$
 
 // Graph size
-$GHEIGHT = 500;
-$GWIDTH  = 900;
+$SURVEY_GHEIGHT = 500;
+$SURVEY_GWIDTH  = 900;
 
-$QTYPE = array (
+$SURVEY_QTYPE = array (
         "-3" => "Virtual Actual and Preferred",
         "-2" => "Virtual Preferred",
         "-1" => "Virtual Actual",
@@ -18,7 +18,7 @@ function survey_already_done($survey, $user) {
    return record_exists_sql("SELECT * FROM survey_answers WHERE survey='$survey' AND user='$user'");
 }
 
-function get_survey_status($survey) {
+function survey_get_status($survey) {
 
     $timenow = time();
     if ($survey->locked) {
@@ -35,22 +35,25 @@ function get_survey_status($survey) {
 
 }
 
-function get_responses_for_survey($surveyid) {
-        global $db;
-
-        if ($aa = $db->Execute("SELECT user FROM survey_answers WHERE survey = $surveyid GROUP BY user")) {
-                if ($aa) {
-                        return $aa->RowCount();
-                } else {
-                        return -1;
-                }
-        } else {
-                return -1;
-        }
+function survey_get_responses($survey) {
+    return get_records_sql("SELECT a.time as time, count(*) as numanswers, u.*
+                            FROM survey_answers AS a, user AS u
+                            WHERE a.answer1 <> '0' AND a.answer2 <> '0'
+                                  AND a.survey = $survey 
+                                  AND a.user = u.id
+                            GROUP BY a.user ORDER BY a.time ASC");
 }
 
-function print_all_responses($survey, $results) {
+function survey_count_reponses($survey) {
+    if ($responses = survey_get_responses($survey)) {
+        return count($responses);
+    } else {
+        return 0;
+    }
+}
 
+
+function survey_print_all_responses($survey, $results) {
     global $THEME;
 
     echo "<TABLE CELLPADDING=5 CELLSPACING=2 ALIGN=CENTER>";
@@ -67,26 +70,8 @@ function print_all_responses($survey, $results) {
     echo "</TABLE>";
 }
 
-          
-function get_survey_responses($survey) {
-    return get_records_sql("SELECT a.time as time, count(*) as numanswers, u.*
-                            FROM survey_answers AS a, user AS u
-                            WHERE a.answer1 <> '0' AND a.answer2 <> '0'
-                                  AND a.survey = $survey 
-                                  AND a.user = u.id
-                            GROUP BY a.user ORDER BY a.time ASC");
-}
 
-function count_completed_surveys($survey) {
-    if ($responses = get_survey_responses($survey)) {
-        return count($responses);
-    } else {
-        return 0;
-    }
-}
-
-
-function get_template_name($templateid) {
+function survey_get_template_name($templateid) {
     global $db;
 
     if ($templateid) {
@@ -99,14 +84,20 @@ function get_template_name($templateid) {
 }
 
 
-function update_survey_analysis($survey, $user, $notes) {
+function survey_get_analysis($survey, $user) {
+    global $db;
+
+    return get_record_sql("SELECT notes from survey_analysis WHERE survey='$survey' and user='$user'");
+}
+
+function survey_update_analysis($survey, $user, $notes) {
     global $db;
 
     return $db->Execute("UPDATE survey_analysis SET notes='$notes' WHERE survey='$survey' and user='$user'");
 }
 
 
-function add_survey_analysis($survey, $user, $notes) {
+function survey_add_analysis($survey, $user, $notes) {
     global $db;
 
     return $db->Execute("INSERT INTO survey_analysis SET notes='$notes', survey='$survey', user='$user'");

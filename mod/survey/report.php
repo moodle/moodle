@@ -53,7 +53,7 @@
         echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=scales&id=$id\">Scales</A></FONT></P>";
         echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=questions&id=$id\">Questions</A></FONT></P>";
         echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=students&id=$id\">Students</A></FONT></P>";
-        if ($users = get_survey_responses($survey->id)) {
+        if ($users = survey_get_responses($survey->id)) {
             foreach ($users as $user) {
                 echo "<LI><FONT SIZE=1>";
                 echo "<A TARGET=reportmain HREF=\"report.php?action=student&student=$user->id&id=$id\">";
@@ -71,8 +71,8 @@
 
         print_heading("All scales, all students");
 
-        if (count_completed_surveys($survey->id)) {
-            echo "<P ALIGN=CENTER><A HREF=\"report.php?action=scales&id=$id\"><IMG HEIGHT=$GHEIGHT WIDTH=$GWIDTH ALT=\"Click here to see the scales in more detail\" BORDER=0 SRC=\"graph.php?id=$id&type=overall.png\"></A>";
+        if (survey_count_responses($survey->id)) {
+            echo "<P ALIGN=CENTER><A HREF=\"report.php?action=scales&id=$id\"><IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH ALT=\"Click here to see the scales in more detail\" BORDER=0 SRC=\"graph.php?id=$id&type=overall.png\"></A>";
         } else {
             echo "<P ALIGN=CENTER>Nobody has yet completed this survey</P>";
         }
@@ -102,7 +102,7 @@
                     continue;
                 }
                 echo "<P ALIGN=center><A HREF=report.php?action=questions&id=$id&qid=$question->multi>";
-                echo "<IMG HEIGHT=$GHEIGHT WIDTH=$GWIDTH ALT=\"Click here to see subquestions\" BORDER=0
+                echo "<IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH ALT=\"Click here to see subquestions\" BORDER=0
                        SRC=\"graph.php?id=$id&qid=$question->id&type=multiquestion.png\">";
                 echo "</A></P><BR>";
             } 
@@ -151,13 +151,13 @@
                     $subquestion = $subquestions[$val];
                     if ($subquestion->type > 0) {
                         echo "<P ALIGN=CENTER><A HREF=\"report.php?action=question&id=$id&qid=$subquestion->id\">
-                              <IMG HEIGHT=$GHEIGHT WIDTH=$GWIDTH ALT=\"Click here to see all responses\" 
+                              <IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH ALT=\"Click here to see all responses\" 
                                    BORDER=0 SRC=\"graph.php?id=$id&qid=$subquestion->id&type=question.png\"></A></P>";
                     }
                 }
             } else if ($question->type > 0 ) {
                 echo "<P ALIGN=CENTER><A HREF=\"report.php?action=question&id=$id&qid=$question->id\">
-                      <IMG HEIGHT=$GHEIGHT WIDTH=$GWIDTH ALT=\"Click here to see all responses\"
+                      <IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH ALT=\"Click here to see all responses\"
                            BORDER=0 SRC=\"graph.php?id=$id&qid=$question->id&type=question.png\"></A></P>";
             } else {
                 echo "<H3>$question->text</H3>";
@@ -220,10 +220,10 @@
 
          print_header("Analysis by Student", "$survey->name: Students", "", "");
         
-         if (! $results = get_survey_responses($survey->id) ) {
+         if (! $results = survey_get_responses($survey->id) ) {
              notify("There are no responses for this survey.");
          } else {
-             print_all_responses($cm->id, $results);
+             survey_print_all_responses($cm->id, $results);
          }
 
         print_footer($course);
@@ -237,12 +237,12 @@
 
          print_header("Analysis of $user->firstname $user->lastname", "$survey->name: Analysis of a student", "", "");
          if (isset($notes)) {
-             if (record_exists_sql("SELECT * FROM survey_analysis WHERE survey='$survey->id' and user='$user->id'")) {
-                 if (! update_survey_analysis($survey->id, $user->id, $notes)) {
+             if (survey_get_analysis($survey->id, $user->id)) {
+                 if (! survey_update_analysis($survey->id, $user->id, $notes)) {
                      notify("An error occurred while saving your notes.  Sorry.");
                  }
              } else {
-                 if (!add_survey_analysis($survey->id, $user->id, $notes)) {
+                 if (! survey_add_analysis($survey->id, $user->id, $notes)) {
                      notify("An error occurred while saving your notes.  Sorry.");
                  }
              }
@@ -255,7 +255,7 @@
          echo "</P>";
 
          // Print overall summary
-         echo "<P ALIGN=CENTER><IMG HEIGHT=$GHEIGHT WIDTH=$GWIDTH ALIGN=CENTER SRC=\"graph.php?id=$id&sid=$student&type=student.png\"></P>";
+         echo "<P ALIGN=CENTER><IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH ALIGN=CENTER SRC=\"graph.php?id=$id&sid=$student&type=student.png\"></P>";
          
          // Print scales
          $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions)");
@@ -276,13 +276,13 @@
                      continue;
                  }
                  echo "<P ALIGN=center><A HREF=report.php?action=questions&id=$id&qid=$question->multi>";
-                 echo "<IMG HEIGHT=$GHEIGHT WIDTH=$GWIDTH ALT=\"Click here to see subquestions\" BORDER=0
+                 echo "<IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH ALT=\"Click here to see subquestions\" BORDER=0
                         SRC=\"graph.php?id=$id&qid=$question->id&sid=$student&type=studentmultiquestion.png\">";
                  echo "</A></P><BR>";
              } 
          }
 
-         if ($rs = get_record_sql("SELECT notes from survey_analysis WHERE survey='$survey->id' and user='$user->id'")) {
+         if ($rs = survey_get_analysis($survey->id, $user->id)) {
             $notes = $rs->notes;
          } else {
             $notes = "";
