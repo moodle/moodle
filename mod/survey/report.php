@@ -316,33 +316,4 @@
         break;
 
     }
-
-/// FUNCTIONS //////////////////////////////////////////////////////////////
-
-function print_all_responses($survey, $results) {
-
-    global $THEME;
-
-    echo "<TABLE CELLPADDING=5 CELLSPACING=2 ALIGN=CENTER>";
-    echo "<TR><TD>Name<TD>Time<TD>Answered</TR>";
-
-    foreach ($results as $a) {
-                 
-        echo "<TR>";
-        echo "<TD><A HREF=\"report.php?action=student&student=$a->id&id=$survey\">$a->firstname $a->lastname</A></TD>";
-        echo "<TD>".userdate($a->time, "j M Y, h:i A")."</TD>";
-        echo "<TD align=right>$a->numanswers</TD>";
-        echo "</TR>";
-    }
-    echo "</TABLE>";
-}
-
-          
-function get_survey_responses($survey) {
-    return get_records_sql("SELECT a.time as time, count(*) as numanswers, u.*
-                            FROM survey_answers AS a, user AS u
-                            WHERE a.answer1 <> '0' AND a.answer2 <> '0'
-                                  AND a.survey = $survey 
-                                  AND a.user = u.id
-                            GROUP BY a.user ORDER BY a.time ASC");
-}
+?>
