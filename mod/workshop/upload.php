@@ -39,7 +39,7 @@
     // check that this is not a "rapid" second submission, caused by using the back button
     // only check if a student, teachers may want to submit a set of workshop examples rapidly
     if (isstudent($course->id)) {
-        if ($submissions = workshop_get_user_submissions($exercise, $USER)) {
+        if ($submissions = workshop_get_user_submissions($workshop, $USER)) {
             // returns all submissions, newest on first
             foreach ($submissions as $submission) {
                 if ($submission->timecreated > $timenow - $CFG->maxeditingtime) {
