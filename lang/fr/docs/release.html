@@ -15,6 +15,63 @@ dd {margin-bottom:1em;}
 <body bgcolor="#FFFFFF">
 <h1>Notes de mise &agrave; jour actuelles</h1>
 
+<h3>Moodle 1.4.2 (1er octobre 2004)</h3>
+
+<ul>
+  <dl>
+    <dt>Quelques petites nouvelles fonctionnalit&eacute;s</dt>
+    <dd> 
+      <ul>
+        <li>Nouveau module d'authentification PAM permettant l'authentification directe sur Unix/Linux</li>
+        <li>Les responsables de cours peuvent maintenant restaurer les cours dans de nouveaux cours ou dans des cours existants</li>
+        <li>Les messages des forums incluent maintenant un en-t&ecirc;te d&eacute;taill&eacute; pour permettre un suivi correct des sujets dans les clients de courriel</li>
+      </ul>
+    </dd>
+
+    <dt>Quelques am&eacute;liorations importantes de s&eacute;curit&eacute;</dt>
+    <dd> 
+      <ul>
+        <li>Améliorations de la v&eacute;rification et du nettoyage des param&egrave;tres des scripts utilis&eacute;s &agrave; de nombreux endroits dans Moodle (grands mercis &agrave; Petr Skoda pour son r&eacute;cent audit de s&eacute;curit&eacute;&nbsp;!)</li>
+        <li>Ajout de guillemets &agrave; certains param&egrave;tres SQL du module Glossaire pour pr&eacute;venir des injections possibles</li>
+      </ul>
+    </dd>
+
+    <dt>Et un paquet d'autres corrections de bogues</dt>
+    <dd> 
+      <ul>
+
+        <li>La sauvegarde s'en sort mieux en cas d'erreurs (par exemple si elle est interrompue) et peut nettoyer les fichiers incomplets</li>
+        <li>Correctif pour l'authentification &agrave; partir d'une base de donn&eacute;es PostgreSQL</li>
+        <li>Correctifs pour certaines parties de l'installation avec une base de donn&eacute;es PostgreSQL</li>
+        <li>Les lignes de sujets des forums ne sont maintenant s&eacute;par&eacute;es que dans l'affichage des activit&eacute;s r&eacute;centes</li>
+        <li>Maintenant, l'inscription par l'interm&eacute;diaire d'une base de donn&eacute;es fonctionne r&eacute;ellement :-)</li>
+        <li>Correctifs SQL pour la cr&eacute;ation des fils RSS &agrave; partir de PostgreSQL</li>
+        <li>Ajout du protocole rtsp &agrave; la liste des protocoles autoris&eacute;s dans le texte HTML</li>
+        <li>Les profils utilisateurs et la page de modification du profil peuvent &ecirc;tre appel&eacute;s sans param&egrave;tres</li>
+        <li>Mise &agrave; jour de la librairie xmlize &agrave; sa derni&egrave;re version</li>
+        <li>Mise &agrave; jour de la librairie phpmailer &agrave; sa derni&egrave;re version</li>
+        <li>Divers changements cosm&eacute;tiques dans le code</li>
+        <li>Le menu Administration permet maintenant la sauvegarde et la restauration du &laquo;&nbsp;cours de site&nbsp;&raquo; (page d'accueil)</li>
+        <li>Correction d'un bogue d'affichage dans l'index des forums (n'apparaissant que sous PHP5)</li>
+        <li>La fonction de mise en surbrillance (par exemple dans les r&eacute;sultats de recherche) supprimait les barres obliques inverses</li>
+        <li>L'information en provenance de LDAP est maintenant d&eacute;cod&eacute;e en utf8</li>
+        <li>Les listes de cours fonctionnent mieux, lorsqu'il y a un tr&egrave;s grand nombre de cours</li>
+        <li>Deux bogues corrig&eacute;s dans le module SCORM (une faute de frappe et un probl&egrave;me avec onbeforeunload)</li>
+        <li>Quelques am&eacute;liorations cosm&eacute;tiques lors de l'impression des textes, des en-t&ecirc;tes et des pieds de page dans le module Le&ccedil;on</li>
+        <li>Le calendrier fonctionne maintenant correctement, m&ecirc;me si l'on se connecte sous un autre nom</li>
+        <li>Correction de quelques balises PHP abr&eacute;g&eacute;es restantes</li>
+        <li>M&eacute;lange plus al&eacute;atoire des questions al&eacute;atoires (correction d'un bogue introduit dans la version 1.4)</li>
+        <li>Quand des enseignants sont retir&eacute;s d'un cours, ils sont &eacute;galement retir&eacute;s de tous les groupes de ce cours</li>
+        <li>Correction de strip_pages dans le module Wiki</li>
+        <li>Corrections dans la d&eacute;tection du jeu de caract&egrave;res dans les sauvegardes et le filtre multilingue, sous PHP5</li>
+      </ul>
+    </dd>
+
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+
 <h3> Moodle 1.4.1 (12 september 2004)</h3>
   	 
   	 <ul><dl>
@@ -46,7 +103,7 @@ dd {margin-bottom:1em;}
   	         <li>Meilleur comportement du bloc de calendrier sur la page d'accueil</li>
   	         <li>Correction du bogue des guillemets avec la sp&eacute;cification des bases de donn&eacute;es PostgreSQL produite par l'installeur</li>
   	         <li>Correction de l'affichage parfois d&eacute;ficient des r&eacute;ponses correctes durant la relecture des tests</li>
-  	         <li>Les balises &lt;tt> et &lt;code> sont maintenant autoris&eacute;es</li>
+  	         <li>Les balises <tt> et <code> sont maintenant autoris&eacute;es</li>
   	         <li>Le code JavaScript dans les r&eacute;sum&eacute;s des sections, des cours et les &eacute;tiquettes n'est plus filtr&eacute;</li>
   	         <li>Correction d'un rare bogue LDAP pouvant causer la non-cr&eacute;ation de nouveaux comptes</li>
   	       </ul>
