@@ -68,20 +68,14 @@
             $workshop->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $workshop->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
             $workshop->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
+            $workshop->gradinggrade = backup_todb($info['MOD']['#']['GRADINGGRADE']['0']['#']);
             $workshop->ntassessments = backup_todb($info['MOD']['#']['NTASSESSMENTS']['0']['#']);
+            $workshop->assessmentcomps = backup_todb($info['MOD']['#']['ASSESSMENTCOMPS']['0']['#']);
             $workshop->nsassessments = backup_todb($info['MOD']['#']['NSASSESSMENTS']['0']['#']);
             $workshop->overallocation = backup_todb($info['MOD']['#']['OVERALLOCATION']['0']['#']);
             $workshop->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
-            $workshop->mergegrades = backup_todb($info['MOD']['#']['MERGEGRADES']['0']['#']);
             $workshop->teacherweight = backup_todb($info['MOD']['#']['TEACHERWEIGHT']['0']['#']);
-            $workshop->peerweight = backup_todb($info['MOD']['#']['PEERWEIGHT']['0']['#']);
-            $workshop->includeteachersgrade = backup_todb($info['MOD']['#']['INCLUDETEACHERSGRADE']['0']['#']);
-            $workshop->biasweight = backup_todb($info['MOD']['#']['BIASWEIGHT']['0']['#']);
-            $workshop->reliabilityweight = backup_todb($info['MOD']['#']['RELIABILITYWEIGHT']['0']['#']);
-            $workshop->gradingweight = backup_todb($info['MOD']['#']['GRADINGWEIGHT']['0']['#']);
             $workshop->showleaguetable = backup_todb($info['MOD']['#']['SHOWLEAGUETABLE']['0']['#']);
-            $workshop->teacherloading = backup_todb($info['MOD']['#']['TEACHERLOADING']['0']['#']);
-            $workshop->assessmentstodrop = backup_todb($info['MOD']['#']['ASSESSMENTSTODROP']['0']['#']);
 
             //The structure is equal to the db, so insert the workshop
             $newid = insert_record ("workshop",$workshop);

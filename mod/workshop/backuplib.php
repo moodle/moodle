@@ -65,20 +65,14 @@
                 fwrite ($bf,full_tag("MAXBYTES",4,false,$workshop->maxbytes));
                 fwrite ($bf,full_tag("DEADLINE",4,false,$workshop->deadline));
                 fwrite ($bf,full_tag("GRADE",4,false,$workshop->grade));
+                fwrite ($bf,full_tag("GRADINGGRADE",4,false,$workshop->gradinggrade));
                 fwrite ($bf,full_tag("NTASSESSMENTS",4,false,$workshop->ntassessments));
+                fwrite ($bf,full_tag("ASSESSMENTCOMPS",4,false,$workshop->assessmentcomps));
                 fwrite ($bf,full_tag("NSASSESSMENTS",4,false,$workshop->nsassessments));
                 fwrite ($bf,full_tag("OVERALLOCATION",4,false,$workshop->overallocation));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$workshop->timemodified));
-                fwrite ($bf,full_tag("MERGEGRADES",4,false,$workshop->mergegrades));
                 fwrite ($bf,full_tag("TEACHERWEIGHT",4,false,$workshop->teacherweight));
-                fwrite ($bf,full_tag("PEERWEIGHT",4,false,$workshop->peerweight));
-                fwrite ($bf,full_tag("INCLUDETEACHERSGRADE",4,false,$workshop->includeteachersgrade));
-                fwrite ($bf,full_tag("BIASWEIGHT",4,false,$workshop->biasweight));
-                fwrite ($bf,full_tag("RELIABILITYWEIGHT",4,false,$workshop->reliabilityweight));
-                fwrite ($bf,full_tag("GRADINGWEIGHT",4,false,$workshop->gradingweight));
                 fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$workshop->showleaguetable));
-                fwrite ($bf,full_tag("TEACHERLOADING",4,false,$workshop->teacherloading));
-                fwrite ($bf,full_tag("ASSESSMENTSTODROP",4,false,$workshop->assessmentstodrop));
                 //Now we backup workshop elements
                 $status = backup_workshop_elements($bf,$preferences,$workshop->id);
                 //if we've selected to backup users info, then execute backup_workshop_submisions

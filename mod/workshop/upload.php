@@ -11,11 +11,9 @@
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     }
-
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
     }
-
     if (! $workshop = get_record("workshop", "id", $cm->instance)) {
         error("Course module is incorrect");
     }
@@ -108,8 +106,8 @@
         else {
             notify(get_string("uploadnofilefound", "assignment"));
         }
-    }
-    print_continue("view.php?a=$workshop->id");
+	}
+    print_continue("view.php?id=$cm->id");
 
     print_footer($course);
 

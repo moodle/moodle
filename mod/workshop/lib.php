@@ -53,9 +53,14 @@ $WORKSHOP_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0
 $WORKSHOP_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5 => 1.0,  6 => 1.5, 
                              7 => 2.0, 8 => 3.0, 9 => 5.0, 10 => 7.5, 11=> 10.0, 12=>50.0); 
 
-if (!defined("COMMENTSCALE")) {
-    define("COMMENTSCALE", 20);
-    }
+
+$WORKSHOP_ASSESSMENT_COMPS = array (
+                          0 => array('name' => get_string("verylax", "workshop"), 'value' => 1),
+                          1 => array('name' => get_string("lax", "workshop"), 'value' => 0.6),
+                          2 => array('name' => get_string("fair", "workshop"), 'value' => 0.4),
+                          3 => array('name' => get_string("strict", "workshop"), 'value' => 0.33),
+                          4 => array('name' => get_string("verystrict", "workshop"), 'value' => 0.2) );
+
 
 
 /*** Standard Moodle functions ******************
@@ -109,6 +114,15 @@ function workshop_cron () {
 // Function to be run periodically according to the moodle cron
 
     global $CFG, $USER;
+    
+    // if there any ungraded assessments run the grading routine
+    if ($workshops = get_records("workshop")) {
+        foreach ($workshops as $workshop) {
+            if (workshop_count_ungraded_assessments($workshop)) {
+                workshop_grade_assessments($workshop);
+            }
+        }
+    }
     
     // Find all workshop notifications that have yet to be mailed out, and mails them
     $cutofftime = time() - $CFG->maxeditingtime;
@@ -595,24 +609,33 @@ function workshop_delete_instance($id) {
 ///////////////////////////////////////////////////////////////////////////////
 function workshop_grades($workshopid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-/// only retruns grades in phase 6
+/// only retruns grades in phase 2 or greater
 global $CFG;
 
     if ($workshop = get_record("workshop", "id", $workshopid)) {
-        if ($workshop->phase == 6) {
-            if ($bestsubmissions = get_records_sql("SELECT userid, max(finalgrade) finalgrade FROM
-                    {$CFG->prefix}workshop_submissions WHERE workshopid = $workshopid GROUP
-                    BY userid")) {
-                foreach ($bestsubmissions as $bestgrade) {
-                    $return->grades[$bestgrade->userid] = $bestgrade->finalgrade;
+        if ($workshop->phase > 1) {
+            if ($students = get_course_students($workshop->course)) {
+                foreach ($students as $student) {
+                    $gradinggrade = workshop_gradinggrade($workshop, $student);
+                    if ($submissions = workshop_get_user_submissions($workshop, $student)) {
+                        $bestgrade = 0;
+                        foreach ($submissions as $submission) {
+                            $grade = workshop_submission_grade($workshop, $submission);
+                            if ($grade > $bestgrade) {
+                                $bestgrade = $grade;
+                            }
+                        }
+                    }
+                    $return->grades[$student->id] = $gradinggrade + $bestgrade;
                 }
             }
         }
-        $return->maxgrade = $workshop->grade;
+        $return->maxgrade = $workshop->grade + $workshop->gradinggrade;
     }
     return $return;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
 function workshop_is_recent_activity($course, $isteacher, $timestart) {//jlw1 added for adding mark to courses with activity in My Moodle
     global $CFG;
 
@@ -999,6 +1022,70 @@ function workshop_get_participants($workshopid) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Non-standard workshop functions
+///////////////////////////////////////////////////////////////////////////////////////////////
+function workshop_compare_assessments($workshop, $assessment1, $assessment2) {
+    global $WORKSHOP_ASSESSMENT_COMPS, $WORKSHOP_EWEIGHTS;
+    // first get the assignment elements for maxscores...
+    $elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC");
+    foreach ($elementsraw as $element) {
+        $maxscore[] = $element->maxscore;   // to renumber index 0,1,2...
+        $weight[] = $WORKSHOP_EWEIGHTS[$element->weight];   // get real value and renumber index 0,1,2...
+    }
+    for ($i = 0; $i < 2; $i++) {
+        if ($i) {
+            $rawgrades = get_records("workshop_grades", "assessmentid", $assessment1->id, "elementno ASC");
+        } else {
+            $rawgrades = get_records("workshop_grades", "assessmentid", $assessment2->id, "elementno ASC");
+        }
+        foreach ($rawgrades as $grade) {
+            $grades[$i][] = $grade->grade;
+        }
+    }
+    $sumdiffs = 0;
+    $sumweights = 0;
+    switch ($workshop->gradingstrategy) {
+        case 1 : // accumulative grading and...
+        case 4 : // ...rubic grading
+            for ($i=0; $i < $workshop->nelements; $i++) {
+                $diff = ($grades[0][$i] - $grades[1][$i]) * $weight[$i] / $maxscore[$i];
+                $sumdiffs += $diff * $diff; // use squared distances
+                $sumweights += $weight[$i];
+                }
+            break;
+        case 2 :  // error banded grading
+            // ignore maxscores here, the grades are either 0 or 1,
+            for ($i=0; $i < $workshop->nelements; $i++) {
+                $diff = ($grades[0][$i] - $grades[1][$i]) * $weight[$i];
+                $sumdiffs += $diff * $diff; // use squared distances
+                $sumweights += $weight[$i];
+                }
+            break;
+        case 3 : // criterion grading
+            // here we only need to look at the difference between the "zero" grade elements
+            $diff = ($grades[0][0] - $grades[1][0]) / (count($elementsraw) - 1);
+            $sumdiffs = $diff * $diff;
+            $sumweights = 1;
+            break;
+    }            
+    // convert to a sensible grade (always out of 100)
+    $COMP = (object)$WORKSHOP_ASSESSMENT_COMPS[$workshop->assessmentcomps];
+    $factor = $COMP->value;
+    $gradinggrade = (($factor - ($sumdiffs / $sumweights)) / $factor) * 100;
+    if ($gradinggrade < 0) {
+        $gradinggrade = 0;
+    }
+    return $gradinggrade;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_count_ungraded_assessments($workshop) {
+    // function returns the number of ungraded assessments (ANY assessments)
+    
+    return count_records("workshop_assessments", "workshopid", $workshop->id, "timegraded", 0) ;
+    }
+
+
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_file_area($workshop, $submission) {
     return make_upload_directory( workshop_file_area_name($workshop, $submission) );
@@ -1056,6 +1143,24 @@ function workshop_get_assess_logs($course, $timestart) {
                                 AND l.course = $course->id AND l.module = 'workshop' AND l.action = 'assess'
                                 AND a.id = l.info AND s.id = a.submissionid AND s.userid = $USER->id
                                 AND u.id = a.userid AND e.id = a.workshopid");
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_get_assessments($submission, $all = '') {
+    // Return assessments for this submission ordered oldest first, newest last
+    // new assessments made within the editing time are NOT returned unless the
+    // second argument is set to ALL
+    global $CFG;
+
+    if ($all != 'ALL') {
+        $timenow = time();
+        return get_records_select("workshop_assessments", "(submissionid = $submission->id) AND 
+            (timecreated < $timenow - $CFG->maxeditingtime)", "timecreated DESC");
+    } else {
+        return get_records_select("workshop_assessments", "submissionid = $submission->id", 
+                "timecreated DESC");
+    }
 }
 
 
@@ -1117,6 +1222,35 @@ function workshop_get_student_submission($workshop, $user) {
         return $submission;
     }
     return NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_get_student_submissions($workshop, $order = "title") {
+// Return all  ENROLLED student submissions
+    global $CFG;
+    
+    if ($order == "title") {
+        $order = "s.title";
+        }
+    if ($order == "name") {
+        $order = "a.lastname, a.firstname";
+        }
+
+    // make sure it works on the site course
+    $select = "u.course = '$workshop->course' AND";
+    $site = get_site();
+    if ($workshop->course == $site->id) {
+        $select = '';
+    }
+
+    return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, 
+                            {$CFG->prefix}user_students u, {$CFG->prefix}user a 
+                            WHERE $select s.userid = u.userid
+                              AND a.id = u.userid
+                              AND s.workshopid = $workshop->id
+                              AND s.timecreated > 0
+                              ORDER BY $order");
 }
 
 
@@ -1189,33 +1323,10 @@ function workshop_get_unmailed_resubmissions($cutofftime) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function workshop_get_student_submissions($workshop, $order = "title") {
-// Return all  ENROLLED student submissions
-    global $CFG;
-    
-    if ($order == "title") {
-        $order = "s.title";
-        }
-    if ($order == "name") {
-        $order = "a.firstname, a.lastname";
-        }
-    if ($order == "grade") {
-        $order = "$workshop->teacherweight * s.teachergrade + $workshop->peerweight * s.peergrade DESC";
-        }
-
-    // make sure it works on the site course
-    $select = "u.course = '$workshop->course' AND";
-    if ($workshop->course == SITEID) {
-        $select = '';
-    }
-
-    return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_students u, {$CFG->prefix}user a 
-                            WHERE $select s.userid = u.userid
-                              AND a.id = u.userid
-                              AND s.workshopid = $workshop->id
-                              AND s.timecreated > 0
-                              ORDER BY $order");
+function workshop_get_user_assessments($workshop, $user) {
+// Return all the  user's assessments, newest first, oldest last (hot, warm and cold ones)
+    return get_records_select("workshop_assessments", "workshopid = $workshop->id AND userid = $user->id", 
+                "timecreated DESC");
 }
 
 
@@ -1227,5 +1338,252 @@ function workshop_get_user_submissions($workshop, $user) {
         userid = $user->id AND timecreated > 0", "timecreated DESC" );
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_grade_assessments($workshop) {
+    global $WORKSHOP_EWEIGHTS;
+    
+    // timeout after 10 minutes
+    @set_time_limit(600);
+
+    $timenow = time();
+    
+    // set minumim value for the variance (of the elements)
+    $minvar = 0.05;
+
+    // calculate the means for each submission using just the "good" assessments 
+    if ($submissions = get_records("workshop_submissions", "workshopid", $workshop->id)) {
+        foreach ($submissions as $submission) {
+            $nassessments[$submission->id] = 0;
+            if ($assessments = workshop_get_assessments($submission)) {
+                foreach ($assessments as $assessment) {
+                    // test if assessment is "good", a teacher assessment always "good", but may be weighted out 
+                    if (isteacher($workshop->course, $assessment->userid)) {
+                        if (!$workshop->teacherweight) {
+                            // drop teacher's assessment as weight is zero
+                            continue;
+                        }
+                    } elseif ((!$assessment->gradinggrade and $assessment->timegraded) or 
+                            ($workshop->agreeassessments and !$assessment->timeagreed)) {
+                        // it's a duff assessment, or it's not been agreed
+                        continue;
+                        }
+                    if (isset($num[$submission->id])) {
+                        if (isteacher($workshop->course, $assessment->userid)) {
+                            $num[$submission->id] += $workshop->teacherweight; // weight teacher's assessment
+                        } else {
+                            $num[$submission->id]++; // number of assessments
+                        }
+                        $nassessments[$submission->id]++;
+                    } else {
+                        if (isteacher($workshop->course, $assessment->userid)) {
+                            $num[$submission->id] = $workshop->teacherweight;
+                        } else {
+                            $num[$submission->id] = 1;
+                        }
+                        $nassessments[$submission->id] = 1;
+                    }
+                    for ($i = 0; $i < $workshop->nelements; $i++) {
+                        $grade =  get_field("workshop_grades", "grade",
+                                "assessmentid", $assessment->id, "elementno", $i);
+                        if (isset($sum[$submission->id][$i])) {
+                            if (isteacher($workshop->course, $assessment->userid)) {
+                                $sum[$submission->id][$i] += $workshop->teacherweight * $grade; // teacher's grade
+                            } else {
+                                $sum[$submission->id][$i] += $grade; // student's grade
+                            }
+                        } else { 
+                            if (isteacher($workshop->course, $assessment->userid)) {
+                                $sum[$submission->id][$i] = $workshop->teacherweight * $grade; // teacher's grade
+                            } else {
+                                $sum[$submission->id][$i] = $grade; // students's grade
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (!isset($num)) { 
+            // no assessments yet
+            return;
+        }
+        reset($num);
+        // calculate the means for each submission
+        $total = 0;
+        foreach ($num as $submissionid => $n) {
+            if ($n) { // stop division by zero
+                for ($i = 0; $i < $workshop->nelements; $i++) {
+                    $mean[$submissionid][$i] = $sum[$submissionid][$i] / $n;
+                    // echo "Submission: $submissionid; Element: $i; Mean: {$mean[$submissionid][$i]}<br />\n";
+                }
+                $total += $n; // weighted total
+            }
+        }
+        echo "<p align=\"center\">".get_string("numberofsubmissions", "workshop", count($num))."<br />\n";
+        echo get_string("numberofassessmentsweighted", "workshop", $total)."</p>\n";
+
+        // now get an estimate of the standard deviation of each element in the assessment
+        // this is just a rough measure, all assessments are included and teacher's assesments are not weighted
+        $n = 0;
+        for ($i = 0; $i < $workshop->nelements; $i++) {
+            $var[$i] = 0;
+        }
+        foreach ($submissions as $submission) {
+            if ($assessments = workshop_get_assessments($submission)) {
+                foreach ($assessments as $assessment) {
+                    $n++;
+                    for ($i = 0; $i < $workshop->nelements; $i++) {
+                        $grade =  get_field("workshop_grades", "grade",
+                                "assessmentid", $assessment->id, "elementno", $i);
+                        $temp = $mean[$submission->id][$i] - $grade;
+                        $var[$i] += $temp * $temp;
+                    }
+                }
+            }
+        }
+        for ($i = 0; $i < $workshop->nelements; $i++) {
+            $sd[$i] = sqrt($var[$i] / ($n - 1));
+            echo "<p align=\"center\">".get_string("standarddeviationofelement", "workshop", $i+1)." $sd[$i]<br />";
+            if ($sd[$i] <= $minvar) {
+                print_string("standarddeviationnote", "workshop")."<br />\n";
+            }
+            echo "</p>\n";
+        }
+
+        // first get the assignment elements for maxscores (not used) and weights (used)...
+        $elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC");
+        foreach ($elementsraw as $element) {
+            $maxscore[] = $element->maxscore;   // to renumber index 0,1,2...
+            $weight[] = $element->weight;   // to renumber index 0,1,2...
+        }
+
+        // ...if there are three or more assessments calculate the variance of each assessment.
+        // Use the variance to find the "best" assessment. (When there are two assessments they 
+        // are both "best", we cannot distinguish between them.)
+        foreach ($submissions as $submission) {
+            if ($nassessments[$submission->id] > 2) {
+                if ($assessments = workshop_get_assessments($submission)) {
+                    foreach ($assessments as $assessment) {
+                        if ($workshop->agreeassessments and !$assessment->timeagreed) {
+                            // ignore assessments that have not been agreed
+                            continue;
+                        }
+                        $var = 0;
+                        for ($i = 0; $i < $workshop->nelements; $i++) {
+                            $grade =  get_field("workshop_grades", "grade",
+                                    "assessmentid", $assessment->id, "elementno", $i);
+                            if ($sd[$i] > $minvar) {
+                                $temp = ($mean[$submission->id][$i] - $grade) * 
+                                    $WORKSHOP_EWEIGHTS[$weight[$i]] / $sd[$i];
+                            } else {
+                                $temp = 0;
+                            }
+                            $var += $temp * $temp;
+                        }
+                        // find the "best" assessment of each submission
+                        if (!isset($lowest[$submission->id])) {
+                            $lowest[$submission->id] = $var;
+                            $bestassessment[$submission->id] = $assessment->id;
+                        } else {
+                            if ($lowest[$submission->id] > $var) {
+                                $lowest[$submission->id] = $var;
+                                $bestassessment[$submission->id] = $assessment->id;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // run thru the submissions again setting the grading grades using the "best" as the reference
+        $ndrop = 0;
+        foreach ($submissions as $submission) {
+            if ($assessments = workshop_get_assessments($submission)) {
+                if ($nassessments[$submission->id] > 2) {
+                    if (!$best = get_record("workshop_assessments", "id", $bestassessment[$submission->id])) {
+                        error("Workshop assessment analysis: cannot find best assessment");
+                    }
+                    foreach ($assessments as $assessment) {
+                        if ($assessment->id == $bestassessment->id) { 
+                            // it's the best one, set the grading grade to the maximum 
+                            set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
+                            set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
+                        } else {
+                            // it's one of the pack, compare with the best...
+                            $gradinggrade = workshop_compare_assessments($workshop, $best, $assessment);
+                            // ...and save the grade for the assessment 
+                            set_field("workshop_assessments", "gradinggrade", $gradinggrade, "id", $assessment->id);
+                            set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
+                            if (!$gradinggrade) {
+                                $ndrop++;
+                            }
+                        }
+                    }
+                } else { // only one or two assessments, set it/both as "best"
+                    foreach ($assessments as $assessment) {
+                        set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
+                        set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
+                    }
+                }       
+            }
+        }
+    }
+    echo "<p align=\"center\">".get_string("numberofassessmentsdropped", "workshop", $ndrop)."</p>\n";
+    return;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_gradinggrade($workshop, $student) {
+    // returns the current (external) grading grade of the based on their (cold) assessments
+    // (needed as it's called by grade)
+    
+    $gradinggrade = 0;
+    if ($assessments = workshop_get_user_assessments($workshop, $student)) {
+        $n = 0;
+        foreach ($assessments as $assessment) {
+            $gradinggrade += $assessment->gradinggrade;
+            $n++;
+        }
+        if ($n < ($workshop->ntassessments + $workshop->nsassessments)) { // the minimum students should do
+            $n = $workshop->ntassessments + $workshop->nsassessments;
+        }
+        $gradinggrade = $gradinggrade / $n;
+    }
+    return number_format($gradinggrade * $workshop->gradinggrade / 100, 1);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_submission_grade($workshop, $submission) {
+    // returns the current (external) grade of the submission based on the "good" (cold) assessments
+    // (needed as it's called by grade)
+    
+    $grade = 0;
+    if ($assessments = workshop_get_assessments($submission)) {
+        $n = 0;
+        foreach ($assessments as $assessment) {
+            if ($workshop->agreeassessments and !$assessment->timeagreed) {
+                // ignore assessments which have not been agreed
+                continue;
+            }
+            if ($assessment->gradinggrade or !$assessment->timegraded) { 
+                // a good assessment (or one that has not been graded yet)
+                if (isteacher($workshop->course, $assessment->userid)) {
+                    $grade += $workshop->teacherweight * $assessment->grade;
+                    $n += $workshop->teacherweight;
+                } else {
+                    $grade += $assessment->grade;
+                    $n++;
+                }
+            }
+        }
+        if ($n) { // stop division by zero
+            $grade = $grade / $n;
+        }
+    }
+    return number_format($grade * $workshop->grade / 100, 1);
+}
 
 ?>

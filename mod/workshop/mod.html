@@ -1,5 +1,6 @@
 <?php
-	// ...and fill the form if needed
+	require("$CFG->dirroot/mod/workshop/lib.php");  // for parameter arrays
+    // ...and fill the form if needed
     if (empty($form->name)) {
         $form->name = "";
     }
@@ -9,9 +10,15 @@
     if (empty($form->format)) {
         $form->format = "";
     }
+    if (!isset($form->gradinggrade)) {
+        $form->gradinggrade = 100;
+    }
     if (!isset($form->grade)) {
         $form->grade = 100;
     }
+    if (!isset($form->gradingstrategy)) {
+	   $form->gradingstrategy = 1;  // default is accumulative
+	}
     if (!isset($form->nelements)) {
         $form->nelements = 1;
     }
@@ -21,8 +28,17 @@
     if (!isset($form->ntassessments)) {
         $form->ntassessments = 0;
     }
+    if (!isset($form->assessmentcomps)) {
+        $form->assessmentcomps = 2;
+    }
     if (!isset($form->nsassessments)) {
         $form->nsassessments = 0;
+    }
+    if (!isset($form->teacherweight)) {
+        $form->teacherweight = 1;
+    }
+    if (!isset($form->overallocation)) {
+        $form->overallocation = 0;
     }
     if (empty($form->includeself)) {
         $form->includeself = "";
@@ -32,6 +48,12 @@
     }
     if (empty($form->hidegrades)) {
         $form->hidegrades = "";
+    }
+    if (empty($form->showleaguetable)) {
+        $form->showleaguetable = 0;
+    }
+    if (empty($form->anonymous)) {
+        $form->anonymous = 0;
     }
     if (empty($form->maxbytes)) {
         $form->maxbytes = "";
@@ -88,13 +110,24 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("maximumgrade") ?>:</B></P></TD>
+    <td align=right><P><B><?php  print_string("gradeforassessments", "workshop") ?>:</B></P></TD>
     <td>
         <?php
         for ($i=100; $i>=0; $i--) {
             $grades[$i] = $i;
         }
+        choose_from_menu($grades, "gradinggrade", "$form->gradinggrade", "");
+        helpbutton("gradinggrade", get_string("gradeforassessments", "workshop"), "workshop");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("gradeforsubmission", "workshop") ?>:</B></P></TD>
+    <td>
+        <?php
         choose_from_menu($grades, "grade", "$form->grade", "");
+        helpbutton("grade", get_string("gradeforsubmission", "workshop"), "workshop");
         ?>
     </td>
 </tr>
@@ -103,11 +136,7 @@
     <td align=right><P><B><?php  print_string("gradingstrategy", "workshop") ?>:</B></P></TD>
     <td>
     <?PHP
-       require("$CFG->dirroot/mod/workshop/lib.php");
-	   if (!isset($form->gradingstrategy)) {
-		   $form->gradingstrategy = 1;  // default
-		   }
-       choose_from_menu($WORKSHOP_TYPE, "gradingstrategy", $form->gradingstrategy, "");
+	   choose_from_menu($WORKSHOP_TYPE, "gradingstrategy", $form->gradingstrategy, "");
        helpbutton("gradingstrategy", get_string("gradingstrategy", "workshop"), "workshop");
     ?>
     </td>
@@ -141,6 +170,7 @@
     <td align=right><P><B><?php  print_string("numberofassessmentsofteachersexamples", "workshop") ?>:</B></P></TD>
     <td>
 		<?PHP
+        unset($numbers);
 		for ($i=20; $i>=0; $i--) {
 			$numbers[$i] = $i;
 		}
@@ -150,16 +180,59 @@
     </td>
 </tr>
 
+<tr>
+    <td align=right><P><B><?php print_string("comparisonofassessments", "workshop") ?>:</B></P></TD>
+    <td>
+        <?php
+		// set up comparison names
+        foreach ($WORKSHOP_ASSESSMENT_COMPS as $KEY => $COMPARISON) {
+            $COMPARISONS[] = $COMPARISON['name'];
+		}
+        choose_from_menu($COMPARISONS, "assessmentcomps", $form->assessmentcomps, "");
+        helpbutton("comparisonofassessments", get_string("comparisonofassessments", "workshop"), "workshop");
+    ?>
+    </td>
+</tr>
+
 <tr valign=top>
     <td align=right><P><B><?php  print_string("numberofassessmentsofstudentsubmissions", "workshop") ?>:</B></P></TD>
     <td>
 		<?PHP
+        unset($numbers);
 		for ($i=20; $i>=0; $i--) {
 			$numbers[$i] = $i;
 		}
 		choose_from_menu($numbers, "nsassessments", $form->nsassessments, "");
        helpbutton("nassessmentsofstudentsubmissions", get_string("numberofassessmentsofstudentsubmissions", "workshop"), "workshop");
 		?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("weightforteacherassessments", "workshop") ?>:</B></P></TD>
+    <td>
+		<?PHP
+        unset($numbers);
+		for ($i=10; $i>=0; $i--) {
+			$numbers[$i] = $i;
+		}
+		choose_from_menu($numbers, "teacherweight", $form->teacherweight, "");
+       helpbutton("teacherweight", get_string("weightforteacherassessments", "workshop"), "workshop");
+		?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><p><b><?php print_string("overallocation", "workshop") ?>:</b></p></td>
+    <td>
+        <?php
+        unset($numbers);
+        for ($i=2; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "overallocation", "$form->overallocation", "");
+        helpbutton("overallocation", get_string("overallocation", "workshop"), "workshop");
+        ?>
     </td>
 </tr>
 
@@ -178,7 +251,6 @@
     <td align=right><P><B><?php  print_string("assessmentsmustbeagreed", "workshop") ?>:</B></P></TD>
     <td>
     <?PHP 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "agreeassessments", $form->agreeassessments, "");
         helpbutton("agreeassessments", get_string("assessmentsmustbeagreed", "workshop"), "workshop");
     ?>
@@ -189,9 +261,34 @@
     <td align=right><P><B><?php  print_string("hidegradesbeforeagreement", "workshop") ?>:</B></P></TD>
     <td>
     <?PHP 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "hidegrades", $form->hidegrades, "");
         helpbutton("showinggrades", get_string("hidegradesbeforeagreement", "workshop"), "workshop");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><p><b><?php print_string("leaguetable", "workshop"); ?>:</b></p></td>
+    <td>
+    <?php
+        unset($numbers);
+        $numbers[22] = '100';
+        $numbers[21] = 50;
+        for ($i=20; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "showleaguetable", $form->showleaguetable, "");
+        helpbutton("leaguetable", get_string("showleaguetable", "workshop"), "workshop");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><p><b><? print_string("hidenamesfromstudents", "workshop", $course->students) ?>:</b></p></td>
+    <td>
+    <?php
+        choose_from_menu($options, "anonymous", $form->anonymous, "");
+        helpbutton("anonymous", get_string("hidenamesfromstudents", "workshop", $course->students), "workshop");
     ?>
     </td>
 </tr>

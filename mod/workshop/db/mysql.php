@@ -81,6 +81,19 @@ function workshop_upgrade($oldversion) {
         workshop_refresh_events();
     }
 
+    if ($oldversion < 2004081100) {
+		table_column("workshop", "", "gradinggrade", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
+		table_column("workshop", "", "assessmentcomps", "INTEGER", "4", "UNSIGNED", "2", "NOT NULL", "ntassessments");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` DROP COLUMN `gradingweight`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` DROP COLUMN `mergegrades`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` DROP COLUMN `peerweight`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` DROP COLUMN `includeteachersgrade`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` DROP COLUMN `biasweight`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` DROP COLUMN `reliabilityweight`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` DROP COLUMN `teacherloading`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` DROP COLUMN `assessmentstodrop`");
+    }
+
     
     return true;
 }
