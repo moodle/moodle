@@ -34,6 +34,8 @@
 
     if ($form = data_submitted()) {   /// Filename
 
+        $form->format = clean_filename($form->format); // For safety
+
         if (isset($form->filename)) {                 // file already on server
             $newfile['tmp_name'] = $form->filename; 
             $newfile['size'] = filesize($form->filename);
@@ -51,12 +53,12 @@
         } else {  // Valid file is found
 
             if (! is_readable("../quiz/format/$form->format/format.php")) {
-                error("Format not known ($form->format)");
+                error("Format not known (".clean_text($form->format).")");
             }
 
             require("format.php");  // Parent class
-            require("../quiz/lib.php"); // for the constants used in quiz/format/<format>/format.php
-            require("../quiz/format/$form->format/format.php");
+            require("$CFG->dirroot/mod/quiz/lib.php"); // for the constants used in quiz/format/<format>/format.php
+            require("$CFG->dirroot/mod/quiz/format/$form->format/format.php");
 
             $format = new quiz_file_format();
 
