@@ -122,12 +122,10 @@ ul {
 	background-color: #FBFBFB;
 	margin: auto auto 20px 30px;
 	padding: 5px;
-	height: auto;
-	width: auto;
+	width: compact;
 	font-weight: bold;
 	border: 1px solid #999999;
 	white-space: nowrap;
-	display: compact;
 	clear: both;
 	float: none;
 }
