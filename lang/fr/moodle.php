@@ -182,6 +182,7 @@ $string['copyingzipfile'] = 'Copie du fichier compacté (zip)';
 $string['copyrightnotice'] = 'Copyright';
 $string['cost'] = 'Coût';
 $string['costdefault'] = 'Coût par défaut';
+$string['counteditems'] = '$a->count $a->items';
 $string['country'] = 'Pays';
 $string['course'] = 'Cours';
 $string['courseavailable'] = 'Ce cours est ouvert aux étudiants';
