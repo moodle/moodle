@@ -82,11 +82,12 @@
             echo '<td valign="top">';
         }
         echo "<h4>$theme</h4>";
-        echo "<p><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></p>";
 
         if (file_exists("$theme/README.html")) {
+            echo "<p><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></p>";
             link_to_popup_window('/theme/'.$theme.'/README.html', $theme, $strinfo);
         } else if (file_exists("$theme/README.txt")) {
+            echo "<p><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></p>";
             link_to_popup_window('/theme/'.$theme.'/README.txt', $theme, $strinfo);
         }
         if ($CFG->theme != $theme) {
