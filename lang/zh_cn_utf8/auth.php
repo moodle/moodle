@@ -1,7 +1,20 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021601)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
+$string['auth_cas_baseuri'] = '服务器的URI<br />例如，如果CAS服务器位于 host.domaine.fr/CAS/ 那么<br />cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = '如果你希望将CAS认证用户加入到Moodle数据库中，否则只有已经存在于Moodle数据库中的用户可以登录。';
+$string['auth_cas_enabled'] = '如果你希望使用CAS认证请开启此选项。';
+$string['auth_cas_hostname'] = 'CAS服务器主机名<br />例如: host.domain.fr';
+$string['auth_cas_invalidcaslogin'] = '对不起，您登录失败——无法对您进行认证。';
+$string['auth_cas_language'] = '选择语言';
+$string['auth_cas_logincas'] = '安全连接访问';
+$string['auth_cas_port'] = 'CAS服务端口';
+$string['auth_cas_server_settings'] = 'CAS服务配置';
+$string['auth_cas_text'] = '安全连接';
+$string['auth_cas_version'] = 'CAS版本';
+$string['auth_casdescription'] = '这个方法使用CAS服务器(中央认证服务)来认证Single Sing On(SSO)环境中的用户。你也可以使用LDAP认证。如果给定的用户名和密码在CAS中有效，Moodle会在数据库中船舰信用户项目，并从LDAP中取出相应的属性。在后续的登录中，只检查用户名和密码。';
+$string['auth_castitle'] = '使用CAS服务器(SSO)';
 $string['auth_common_settings'] = '公用设置';
 $string['auth_data_mapping'] = '数据映射';
 $string['auth_dbdescription'] = '该方法使用一个外部数据库来检验用户名和密码是否有效。如果是一个新帐号，该帐号其它字段的信息将一起复制到本系统中。';
