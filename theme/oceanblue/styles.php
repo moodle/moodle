@@ -1,10 +1,10 @@
-<?PHP // $Id$
+<?PHP /*  $Id$ */
 
 /// We use PHP so we can do value substitutions into the styles
 
     require_once("../../config.php"); 
 
-    header("Content-type: text/css");  /// Correct MIME type
+    header("Content-type: text/css");  // Correct MIME type
 
     if (isset($themename)) {
         $CFG->theme = $themename;
@@ -12,227 +12,125 @@
 
     $themeurl = "$CFG->wwwroot/theme/$CFG->theme";
 
-/// From here on it's nearly a normal stylesheet.
+/// From here on it's nearly a normal stylesheet. 
 /// First are some CSS definitions for normal tags, 
 /// then custom tags follow.
 ///
-/// Note that colours are all defined in config.php
-/// in this directory
+/// New classes always get added to the end of the file.
+/// 
+/// Note that a group of standard colours are all
+/// defined in config.php in this directory.  The
+/// reason for this is because Moodle uses the same
+/// colours to provide oldstyle formatting for
+/// browsers without CSS.
+/// 
+/// You can hardcode colours in this file if you
+/// don't care about this. 
 
 ?>
 
-a:link    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
 
-           text-decoration: none; 
+body, td, th, li {
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+}
 
-           color: 0000CC;}
+th {
+    font-weight: bold; 
+    background-color: <?PHP echo $THEME->cellheading?>;
+}
 
-a:visited {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
+a:link {
+    text-decoration: none; 
+    color: 0000CC;
+}
 
-           text-decoration: none; 
+a:visited {
+    text-decoration: none; 
+    color: 0000CC;
+}
 
-           color: 0000CC;}
+a:hover {
+    text-decoration: underline; 
+    color: FF0000;
+}
 
-a:hover   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-
-           text-decoration: none; 
-
-           color: FF0000;}
-
-
-
-body {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
-
-
-p    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
-
-
-h1   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
+form { 
+    margin-bottom: 0;
+}
 
 
-h2   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
-
-
-h3   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
-
-
-h4   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
-
-
-th   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-
-      font-weight: bold; 
-
-      background-color: <?PHP echo $THEME->cellheading?>;}
-
-
-
-td   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
-
-
-li   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
-
-
-form { margin-bottom: 0; }
 
 
 
 .highlight {
-
     background-color: <?PHP echo $THEME->highlight?>;
-
 }
-
-
 
 .headingblock {
-
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
-
     border-width: 1px;
-
     border-color: <?PHP echo $THEME->borders?>;
-
     border-style: solid;
-
 }
-
-
 
 .navbar {
-
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
-
 }
-
-
-
-.generalbox {
-
-    border-width: 1px;
-
-    border-color: <?PHP echo $THEME->borders?>;
-
-    border-style: solid;
-
-}
-
-
 
 .generaltable {
-
 }
-
-
 
 .generaltableheader {
-
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
-
 }
-
-
 
 .generaltablecell {
-
 }
-
-
 
 .sideblock {
-
     border-width: 1px;
-
     border-color: <?PHP echo $THEME->borders?>;
-
     border-style: solid;
-
 }
-
-
 
 .sideblockheading {
-
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
-
 }
-
-
 
 .sideblockmain {
-
 }
-
-
 
 .sideblocklinks {
-
 }
-
-
 
 .sideblocklatestnews {
-
 }
-
-
 
 .sideblockrecentactivity {
-
 }
-
-
 
 .outlineheadingblock {
-
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
-
     border-width: 1px;
-
     border-color: <?PHP echo $THEME->borders?>;
-
     border-style: solid;
-
 }
-
-
 
 .forumpost {
-
     border-width: 1px;
-
     border-color: <?PHP echo $THEME->borders?>;
-
     border-style: solid;
-
 }
-
-
-
 
 .forumpostpicture {
-
 }
-
-
 
 .forumpostside {
-
 }
-
-
 
 .forumpostmessage {
-
 }
+
 
 .weeklyoutline {
 }
@@ -318,22 +216,20 @@ form { margin-bottom: 0; }
     color: <?PHP echo $THEME->cellheading2?>;
 }
 
-
 a.dimmed:link {
     text-decoration: none; 
-    color: #AAAAAA;
+    color: <?PHP echo $THEME->hidden?>;
 }
 
 a.dimmed:visited {
     text-decoration: none;
-    color: #AAAAAA;
+    color: <?PHP echo $THEME->hidden?>;
 }
 
 a.dimmed:hover {
     text-decoration: underline;
     color: red;
 }
-
 .dimmed_text {
     color: #AAAAAA;
 }
