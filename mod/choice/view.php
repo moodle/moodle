@@ -85,7 +85,7 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    print_simple_box( format_text($choice->text) , "center");
+    print_simple_box( format_text($choice->text, $choice->format) , "center");
 
 
     // print the form
