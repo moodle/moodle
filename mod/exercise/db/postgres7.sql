@@ -17,7 +17,10 @@ CREATE TABLE prefix_exercise (
   timemodified INT8  NOT NULL default '0',
   grade INT NOT NULL default '0',
   gradinggrade INT  NOT NULL default '0',
-  showleaguetable INT  NOT NULL default '0'
+  showleaguetable INT  NOT NULL default '0',
+  usepassword INT4 NOT NULL default '0',
+  password VARCHAR(32) NOT NULL default ''
+
 );
 # --------------------------------------------------------
 

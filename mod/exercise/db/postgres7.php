@@ -15,6 +15,12 @@ function exercise_upgrade($oldversion) {
 		table_column("exercise", "", "assessmentcomps", "INTEGER", "4", "UNSIGNED", "2", "NOT NULL", "usemaximum");
     }
 
+    if ($oldversion < 2004090200) {
+        table_column("exercise", "", "usepassword", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
+        table_column("exercise", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
+    }
+
+
     return true;
 }
 
