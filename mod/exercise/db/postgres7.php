@@ -31,11 +31,11 @@ function exercise_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004111200) {
-        execute_sql('DROP INDEX prefix_exercise_course_idx;',false);
-        execute_sql('DROP INDEX prefix_exercise_submissions_exerciseid_idx;',false);
-        execute_sql('DROP INDEX prefix_exercise_assessments_exerciseid_idx;',false);
-        execute_sql('DROP INDEX prefix_exercise_rubrics_exerciseid_idx;',false);
-        execute_sql('DROP INDEX prefix_exercise_grades_exerciseid_idx;',false);
+        execute_sql("DROP INDEX {$CFG->prefix}exercise_course_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}exercise_submissions_exerciseid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}exercise_assessments_exerciseid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}exercise_rubrics_exerciseid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}exercise_grades_exerciseid_idx;",false);
 
         modify_database('','CREATE INDEX prefix_exercise_course_idx ON prefix_exercise (course);');
         modify_database('','CREATE INDEX prefix_exercise_submissions_exerciseid_idx ON prefix_exercise_submissions (exerciseid);');

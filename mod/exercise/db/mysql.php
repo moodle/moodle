@@ -41,12 +41,12 @@ function exercise_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004111200) {
-        execute_sql('ALTER TABLE prefix_exercise DROP INDEX course;',false);
-        execute_sql('ALTER TABLE prefix_exercise_submissions DROP INDEX exerciseid;',false); 
-        execute_sql('ALTER TABLE prefix_exercise_assessments DROP INDEX exerciseid;',false); 
-        execute_sql('ALTER TABLE prefix_exercise_elements DROP INDEX exerciseid;',false);
-        execute_sql('ALTER TABLE prefix_exercise_rubrics DROP INDEX exerciseid;',false);
-        execute_sql('ALTER TABLE prefix_exercise_grades DROP INDEX exerciseid;',false);
+        execute_sql("ALTER TABLE {$CFG->prefix}exercise DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}exercise_submissions DROP INDEX exerciseid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}exercise_assessments DROP INDEX exerciseid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}exercise_elements DROP INDEX exerciseid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}exercise_rubrics DROP INDEX exerciseid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}exercise_grades DROP INDEX exerciseid;",false);
 
         modify_database('','ALTER TABLE prefix_exercise ADD INDEX course (course);');
         modify_database('','ALTER TABLE prefix_exercise_submissions ADD INDEX exerciseid (exerciseid);');
