@@ -16,6 +16,8 @@ CREATE TABLE prefix_forum (
   scale integer NOT NULL default '0',
   maxbytes integer NOT NULL default '0',
   forcesubscribe integer NOT NULL default '0',
+  rsstype integer NOT NULL default '0',
+  rssarticles integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
 # --------------------------------------------------------

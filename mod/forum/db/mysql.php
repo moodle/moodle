@@ -108,6 +108,12 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2004020600) {
       table_column("forum_discussions", "", "usermodified", "integer", "10", "unsigned", "0", "", "timemodified");
   }
+
+  if ($oldversion < 2004050300) {
+      table_column("forum","","rsstype","tinyint","2", "unsigned", "0", "", "forcesubscribe");
+      table_column("forum","","rssarticles","tinyint","2", "unsigned", "0", "", "rsstype");
+      set_config("forum_enablerssfeeds",0);
+  }
   
   return true;
 

@@ -435,6 +435,22 @@
     </td>
 </tr>
 
+<tr valign=top>
+        <td align=right><p>enablerssfeeds:</td>
+        <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "enablerssfeeds", $config->enablerssfeeds, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configenablerssfeeds") ?>
+    </td>
+</tr>
+
 <tr>
     <td colspan=3 align=center>
 	<input type="submit" value="<?php print_string("savechanges") ?>"></td>

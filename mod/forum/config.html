@@ -48,6 +48,30 @@
     <?php print_string("configmaxbytes", "forum") ?>
     </td>
 </tr>
+<tr valign=top>
+        <td align=right><p>forum_enablerssfeeds:</td>
+        <td>
+    <?php
+        if ($CFG->enablerssfeeds == 0) {
+            print_string("no");
+        } else {
+            unset($options);
+            $options[0] = get_string("no");
+            $options[1] = get_string("yes");
+ 
+            choose_from_menu ($options, "forum_enablerssfeeds", $CFG->forum_enablerssfeeds, "", "", "");
+        }
+    ?>
+    </td>
+    <td>
+    <?php 
+        print_string("configenablerssfeeds","forum");
+        if ($CFG->enablerssfeeds == 0) {
+            print_string("configenablerssfeedsdisabled","forum");
+        }
+    ?>
+    </td>
+</tr>
 
 <tr>
     <td colspan=3 align=center>

@@ -139,6 +139,20 @@
         }
     }
 
+    if (!empty($CFG->enablerssfeeds)) {  //Defined in admin/variables page
+        if (file_exists("$CFG->dirroot/rss/rsslib.php")) {
+            include_once("$CFG->dirroot/rss/rsslib.php");
+            echo "Running rssfeeds if required...\n";
+            flush();
+
+            if ( ! cron_rss_feeds()) {
+                echo "Something went wrong while generating rssfeeds!!!\n";
+            } else {
+                echo "Rssfeeds finished\n";
+            }
+        }
+    }
+
     echo "Cron script completed correctly\n";
 
     $difftime = microtime_diff($starttime, microtime());

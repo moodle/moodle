@@ -2,6 +2,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    require_once("$CFG->dirroot/rss/rsslib.php");
 
     optional_variable($id);            // Course Module ID
     optional_variable($f);             // Forum ID
@@ -153,6 +154,18 @@
             echo "<br />";
             echo "<font size=1><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></font>";
         }
+
+        //If rss are activated at site and forum level and this forum has rss defined, show link
+        if ($CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
+            echo "<br />";
+            if ($forum->rsstype == 1) {
+                $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+            } else {
+                $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+            }
+            rss_print_link($course->id, $USER->id, "forum", $forum->id, $tooltiptext);
+        }
+
         echo '</td>';
     }
 
