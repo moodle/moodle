@@ -18,6 +18,7 @@ $string['messagebeepsyou'] = "\$a has just beeped you!";
 $string['messageenter'] = "\$a has just entered this chat";
 $string['messageexit'] = "\$a has left this chat";
 $string['neverdeletemessages'] = "Never delete messages";
+$string['nomessages'] = "No messages yet";
 $string['savemessages'] = "Save messages";
 $string['sessions'] = "Chat sessions";
 $string['seesession'] = "See this session";
