@@ -17,7 +17,7 @@
   </tr>
 
   <tr valign="top">
-    <td class="generalbox" bgcolor="<?php p($THEME->cellcontent) ?>">
+    <td class=<?php echo ($course->guest==1 ?'"noticebox"':'"generalbox"'); ?> bgcolor="<?php p($THEME->cellcontent) ?>">
       <center><?php if (! empty($this->errormsg)) {formerr($this->errormsg);} ?></center>
       <form name="form" method="post" action="enrol.php">
         <table>
@@ -41,5 +41,29 @@
         </table>
     </td>
   </tr>
-
+<?php if ($course->guest==1) {
+$strallowguests = get_string("allowguests");
+$strloginguest = get_string("loginguest");
+$bgcolor = $THEME->cellcontent;
+$viewasguest = <<<view_as_guest
+  <tr>
+    <td class="generalbox" bgcolor="$bgcolor">
+      <form name="form" method="post" action="enrol.php">
+        <table align="center" cellpadding="20">
+          <tbody>
+            <tr>
+              <td>$strallowguests:&nbsp; </td>
+              <td>
+                <input name="id" value="$course->id" type="hidden">
+                <input name="loginasguest" value="yes" type="hidden">
+                <input value="$strloginguest" type="submit">&nbsp;&nbsp;
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+    </td>
+  </tr>
+view_as_guest;
+echo $viewasguest;} ?>
 </table> 
