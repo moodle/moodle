@@ -402,7 +402,7 @@ function auth_user_activate ($username) {
 
     $ldapconnection = auth_ldap_connect();
 
-    $userdn = auth_ldap_find_userdn($ldapconnect, $username);
+    $userdn = auth_ldap_find_userdn($ldapconnection, $username);
     
     $newinfo['loginDisabled']="FALSE";
 
