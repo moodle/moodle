@@ -5,6 +5,10 @@
     require("../config.php");
     require("lib.php");
 
+    require_variable($id);    // Course ID
+    optional_variable($user); // User to display
+    optional_variable($date); // Date to display
+
     require_login($id);
 
     if (! $course = get_record("course", "id", $id) ) {
@@ -15,8 +19,15 @@
         error("Only teachers can view logs");
     }
 
+    if (! $course->category) {
+        if (!isadmin()) {
+            error("Only administrators can look at the site logs");
+        }
+        $user = "";
+    }
 
-    if (isset($user) || isset($date)) {
+
+    if ($user || $date) {
 
         $userinfo = "all users";
         $dateinfo = "any day";
@@ -35,7 +46,7 @@
                      "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> ->
                       <A HREF=\"log.php?id=$course->id\">Logs</A> -> Logs for $userinfo, $dateinfo", "");
         
-        print_heading("Logs for $userinfo, $dateinfo (".usertimezone().")");
+        print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
         print_log_selector_form($course, $user, $date);
 

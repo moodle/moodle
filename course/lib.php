@@ -14,18 +14,29 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
     // Get all the possible users
     $users = array();
-    if ($students = get_records_sql("SELECT u.* FROM user u, user_students s 
-                                     WHERE s.course = '$course->id' AND s.user = u.id
-                                     ORDER BY u.lastaccess DESC")) {
-        foreach ($students as $student) {
-            $users["$student->id"] = "$student->firstname $student->lastname";
+
+    if ($course->category) {
+        if ($students = get_records_sql("SELECT u.* FROM user u, user_students s 
+                                         WHERE s.course = '$course->id' AND s.user = u.id
+                                         ORDER BY u.lastaccess DESC")) {
+            foreach ($students as $student) {
+                $users["$student->id"] = "$student->firstname $student->lastname";
+            }
+        }
+        if ($teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
+                                         WHERE t.course = '$course->id' AND t.user = u.id
+                                         ORDER BY u.lastaccess DESC")) {
+            foreach ($teachers as $teacher) {
+                $users["$teacher->id"] = "$teacher->firstname $teacher->lastname";
+            }
         }
     }
-    if ($teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
-                                     WHERE t.course = '$course->id' AND t.user = u.id
-                                     ORDER BY u.lastaccess DESC")) {
-        foreach ($teachers as $teacher) {
-            $users["$teacher->id"] = "$teacher->firstname $teacher->lastname";
+
+    if (isadmin()) {
+        if ($ccc = get_records_sql("SELECT * FROM course ORDER BY fullname")) {
+            foreach ($ccc as $cc) {
+                $courses["$cc->id"] = "$cc->fullname";
+            }
         }
     }
 
@@ -61,8 +72,14 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
     echo "<CENTER>";
     echo "<FORM ACTION=log.php METHOD=get>";
-    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
-    choose_from_menu ($users, "user", $selecteduser, "All participants");
+    if (isadmin()) {
+        choose_from_menu ($courses, "id", $course->id, "All courses");
+    } else {
+        echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
+    }
+    if ($course->category) {
+        choose_from_menu ($users, "user", $selecteduser, "All participants");
+    }
     choose_from_menu ($dates, "date", $selecteddate, "Any day");
     echo "<INPUT TYPE=submit VALUE=\"Show these logs\">";
     echo "</FORM>";
@@ -90,7 +107,16 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 // It is assumed that $date is the GMT time of midnight for that day, 
 // and so the next 86400 seconds worth of logs are printed.
 
-    $selector = "WHERE l.course='$course->id' AND l.user = u.id";
+    if ($course->category) {
+        $selector = "WHERE l.course='$course->id' AND l.user = u.id";
+    } else {
+        $selector = "WHERE l.user = u.id";  // Show all courses
+        if ($ccc = get_records_sql("SELECT * FROM course ORDER BY fullname")) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = "$cc->shortname";
+            }
+        }
+    }
 
     if ($user) {
         $selector .= " AND l.user = '$user'";
@@ -120,6 +146,9 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         }
 
         echo "<TR>";
+        if (! $course->category) {
+            echo "<TD><FONT SIZE=2><A HREF=\"view.php?id=$log->course\">".$courses[$log->course]."</A></TD>";
+        }
         echo "<TD ALIGN=right><FONT SIZE=2>".userdate($log->time, "l")."</TD>";
         echo "<TD><FONT SIZE=2>".userdate($log->time, "j M Y, h:i A")."</TD>";
         echo "<TD><FONT SIZE=2><A TITLE=\"$log->ip\" HREF=\"../user/view.php?id=$log->user&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
