@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta + (2004031000)
+      // moodle.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['action'] = 'Aktion';
@@ -132,6 +132,7 @@ $string['configcachetext'] = 'Diese Einstellung führt zu Beschleunigungen wenn S
 $string['configcountry'] = 'Wenn Sie hier ein Land einstellen, wird dieses Land als Vorgabe für neue Benutzerkonten gewählt.  Um Benutzer/innen zu zwingen, ein Land zu wählen, lassen Sie dieses Feld leer.';
 $string['configdebug'] = 'Wenn Sie dies einschalten, werden die Fehlermeldungen von PHP erweitert, so dass mehr Warnungen ausgegeben werden. Dies ist nur nützlich für Entwickler.';
 $string['configerrorlevel'] = 'Wählen Sie die Menge der PHP Warnungen, die Sie angezeigt bekommen möchten. Normal ist gebräuchlicherweise die beste Wahl.';
+$string['configfilteruploadedfiles'] = 'Beim Aktivieren dieser Option werden alle hochgeladenen HTML- und Textdateien über den Filter bearbeitet bevor sie angezeigt werden.';
 $string['configforcelogin'] = 'Normalerweise können die Startseite und die Kursübersicht (nicht die Kurse) eingesehen werden ohne sich anzumelden. Wenn Sie die Teilnehmer zwingen wollen sich erst anzumelden, bevor Sie irgendetwas auf dieser Seite tun können, dann müssen Sie diese Option aktivieren';
 $string['configframename'] = 'Sofern Sie Moodle innerhalb eines Frames einbinden, tragen Sie hier den Namen des Frames ein. Anderenfalls sollte dieser Wert auf \'_top\' stehen.';
 $string['configfullnamedisplay'] = 'Hier können Sie festlegen, wie die Namen angezeigt werden. In den meisten Fällen wird die Grundeinstellung \"Eingegebener Name und Vorname\" geeignet sein. Sie können jedoch auch die Vornamen ausblenden.';
@@ -359,7 +360,7 @@ $string['files'] = 'Dateien';
 $string['filesfolders'] = 'Dateien/Ordner';
 $string['filloutallfields'] = 'Bitte füllen Sie alle Formular-Felder aus';
 $string['findmorecourses'] = 'Weitere Kurse finden...';
-$string['firstdayofweek'] = '0';
+$string['firstdayofweek'] = 'O';
 $string['firstname'] = 'Vorname';
 $string['firsttime'] = 'Sind Sie das erste Mal hier?';
 $string['followingoptional'] = 'Die folgenden Angaben sind optional';
@@ -408,6 +409,7 @@ $string['groupmode'] = 'Gruppenmodus';
 $string['groupmodeforce'] = 'Übergreifender Gruppenmodus';
 $string['groupmy'] = 'Meine Gruppe';
 $string['groupnonmembers'] = 'Teilnehmer/innen, die kiener Gruppe zugeordnet sind';
+$string['groupnotamember'] = 'Sorry, Sie sind kein Mitglied dieser Gruppe';
 $string['grouprandomassign'] = 'Zufallsverteilung auf die Gruppen';
 $string['groupremove'] = 'Entfernen der ausgewählten Gruppe';
 $string['groupremovemembers'] = 'Entfernen der ausgewählten  Mitglieder';

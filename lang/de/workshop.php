@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2004020300)
+      // workshop.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['absent'] = 'Abwesend';
@@ -223,6 +223,7 @@ $string['weightforbias'] = 'Gewichtung für Tendenz';
 $string['weightforgradingofassessments'] = 'Gewichtung der Benotung der Bewertungen';
 $string['weightforpeerassessments'] = 'Gewichtung für Durchschnittsbewertung';
 $string['weightforreliability'] = 'Gewichtung der Zuverlässigkeit';
+$string['weightforteacherassessments'] = 'Gewichtung für Trainerbewertungen';
 $string['weights'] = 'Gewichtungen';
 $string['weightsusedforfinalgrade'] = 'Gewichtung, die für die Endnote verwendet wird';
 $string['weightsusedforsubmissions'] = 'Gewichtung, die für die Beiträge verwenden wird';

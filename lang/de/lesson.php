@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.2 Beta + (2004030702)
+      // lesson.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['actionaftercorrectanswer'] = 'Aktion nach der richtigen Antwort';
@@ -30,10 +30,10 @@ $string['maximumnumberofanswers'] = 'Maximale Zahl der Antworten';
 $string['maximumnumberofattempts'] = 'Höchstzulässige Zahl der Versuche';
 $string['modulename'] = 'Lektion';
 $string['modulenameplural'] = 'Lektionen';
-$string['morethanoneanswer'] = 'Mehr als eine Antwort';
 $string['movepagehere'] = 'Verschieben der Seite an diese Stelle';
 $string['moving'] = 'Seite  $a verschieben';
 $string['movingtonextpage'] = 'Zur nächsten Seite gehen';
+$string['multianswer'] = 'Mehrere Antworten';
 $string['multipleanswer'] = 'Mehrere Antworten';
 $string['nextpage'] = 'Nächste Seite';
 $string['noanswer'] = 'Sie haben keine Antwort abgegeben';
@@ -52,6 +52,7 @@ $string['pleasecheckoneanswer'] = 'Bitte überprüfen Sie Ihre Antwort noch einmal
 $string['pleasecheckoneormoreanswers'] = 'Bitte überprüfen Sie Ihre Antwort(en)';
 $string['pleaseenteryouranswerinthebox'] = 'Bitte tragen Sie Ihre Antwort in das entsprechende Feld ein.';
 $string['pleasematchtheabovepairs'] = 'Bitte vergleichen Sie die obigen Paare';
+$string['questionoption'] = 'Fragenoptionen';
 $string['questiontype'] = 'Fragentyp';
 $string['response'] = 'Antwort';
 $string['sanitycheckfailed'] = 'Verständlichkeitsprüfung gescheitert: Der Versuch wurde gelöscht.';
