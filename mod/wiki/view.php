@@ -299,7 +299,7 @@
     if ($canedit) {   /// Print tabs with commands for this page
         $tabstyle = ' style="padding-left: 5px;padding-right: 5px" ';
 
-        echo "<table align=right border=0>";
+        echo '<table border="0">';
         echo "<tr>";
         $tabs = array('view', 'edit','links','info');
         if ($binary) {
