@@ -335,7 +335,7 @@ if (!isset($CFG->block_rss_timeout) ) {
 }
 
 // Defines for moodle's use of magpierss classes
-define('MAGPIE_DIR', $CFG->dirroot.'/rss/magpie/');
+define('MAGPIE_DIR', $CFG->dirroot.'/lib/magpie/');
 define('MAGPIE_CACHE_DIR', $CFG->dataroot .'/cache/rsscache/');
 define('MAGPIE_CACHE_ON', true); //should be exposed as an admin config option
 define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config option
@@ -383,7 +383,7 @@ function rss_display_feeds($rssid='none') {
     if ($res->fields){
         $closeTable = true;
         ?>
-            <table width="100%">
+            <table width="100%" cellpadding="8">
             <tr bgcolor="<?php echo $THEME->cellheading;?>" class="forumpostheadertopic">
                 <td><?php print_string('block_rss_feed', 'block_rss_client'); ?></td>
                 <td><?php print_string('edit'); ?></td>
@@ -396,11 +396,11 @@ function rss_display_feeds($rssid='none') {
         while(!$res->EOF) {
             $editString = '&nbsp;';
             $deleteString = '&nbsp;';
-            if ($res->fields['userid'] == $USER->id || isadmin()){
+            if ($res->fields['userid'] == $USER->id || isadmin()) {
                 $editString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=rss_edit&rssid='. $res->fields['id'] .'&blogid='. $blogid .'">';
                 $editString .= '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit');
                 $editString .= '" title="'. get_string('edit') .'" align="absmiddle" height="16" width="16" border="0" /></a>';
-                
+
                 $deleteString = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=delfeed&rssid='. $res->fields['id'];
                 $deleteString .= '&blogid='. $blogid .'" onClick="return confirm(\''. get_string('block_rss_delete_feed_confirm', 'block_rss_client') .'\');">';
                 $deleteString .= '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete');
@@ -408,10 +408,10 @@ function rss_display_feeds($rssid='none') {
             }
             print '<tr bgcolor="'. $THEME->cellcontent .'" class="forumpostmessage"><td><strong><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid=';
             print $res->fields['id'] .'&blogid='. $blogid .'">'. $res->fields['title'] .'</a></strong><br />' ."\n";
-            print $res->fields['description'] .'&nbsp;<br />' ."\n";
-            print $res->fields['url'] .'&nbsp;&nbsp;<a href="'. $res->fields['url'] .'" target=_new><img src="'. $rsspix .'" border="0" /></a>' ."\n";
-            print '<a href="http://feeds.archive.org/validator/check?url='. $res->fields['url'] .'">(Validate)</a>';
-            print '</td><td align="center">'. $editString .'</td>' ."\n";
+            print '<a href="'. $res->fields['url'] .'">'. $res->fields['url'] .'</a><br />'."\n";
+            print $res->fields['description'] .'<br />' ."\n";
+            print '</td>';
+            print '<td align="center">'. $editString .'</td>' ."\n";
             print '<td align="center">'. $deleteString .'</td>' ."\n";
             print '</tr>'."\n";
             $res->MoveNext();
@@ -432,58 +432,49 @@ function rss_display_feeds($rssid='none') {
 function rss_get_form($act, $url, $rssid, $rsstype, $printnow=true) {
     global $USER, $CFG, $_SERVER, $blockid, $blockaction;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
+    $stredit = get_string('edit');
+    $stradd = get_string('add');
+    $strupdatefeed = get_string('block_rss_update_feed', 'block_rss_client');
+    $straddfeed = get_string('block_rss_add_feed', 'block_rss_client');
 
-    $returnstring = '<table><tr><td valign=\"top\">'; 
-    if ($act == 'rss_edit') { 
-        $returnstring .= get_string('edit'); 
+    $returnstring = '<table align="center"><tbody><tr><td>'."\n";
+
+    $returnstring .= '<form action="'. $_SERVER['PHP_SELF'] .'" method="POST" name="block_rss">'."\n";
+    if ($act == 'rss_edit') {
+        $returnstring .= $strupdatefeed; 
     } else { 
-        $returnstring .= get_string('block_rss_add_new', 'block_rss_client');
+        $returnstring .= $straddfeed; 
     }
-    $returnstring .= '  '. get_string('block_rss_feed', 'block_rss_client');
-    
-    $returnstring .= '</td></tr><tr><td>';
-    
-    $returnstring .= '<form action="'. $_SERVER['PHP_SELF'] .'" method=POST name="block_rss">';
-    $returnstring .= 'URL: <input type="text" size="32" maxlength="128" name="url" value="';
+    $returnstring .= '<br /><input type="text" size="60" maxlength="256" name="url" value="';
     if ($act == 'rss_edit') { 
         $returnstring .= $url; 
     } 
-    
-    $returnstring .= '" /><br />';
-    //<select name="rsstype"><option value="R">RSS/RDF</option>
-    //<option value="A"';
-    //if ($act == 'rss_edit' and $rsstype == 'A') {
-    //    $returnstring .= ' selected';
-    //} 
-    
-    //$returnstring .= '>Atom</option></select>';
-    
+
+    $returnstring .= '" />'."\n";
+
     $returnstring .= '<input type="hidden" name="act" value="';
     if ($act == 'rss_edit') {
         $returnstring .= 'updfeed';
     } else {
         $returnstring .= 'addfeed';
-    } 
-    $returnstring .= '" />';
+    }
+    $returnstring .= '" />'."\n";
     if ($act == 'rss_edit') { 
         $returnstring .= '<input type="hidden" name="rssid" value="'. $rssid .'" />'. "\n"; 
-    } 
-    $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />';
-    $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />';
-    $returnstring .= '<input type="submit" value="';
-    if ($act == 'rss_edit') {
-        $returnstring .= get_string('update'); 
-    } else { 
-        $returnstring .= get_string('add'); 
     }
-    $returnstring .= '" />&nbsp;</form>';
-    
-//    $returnstring .= '<ul>' . get_string('block_rss_find_more_feeds', 'block_rss_client');
-// removed as this is possibly out of place here
-//    $returnstring .= '<li><a href="http://www.syndic8.com" target="_new">syndic8</a> <li><a href="http://www.newsisfree.com" target="_new">NewsIsFree</A>';
-//    $returnstring .= '</ul>';
-    $returnstring .= '</td></tr></table>';
-    
+    $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />'."\n";
+    $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
+    $returnstring .= '<br /><input type="submit" value="';
+    if ($act == 'rss_edit') {
+        $returnstring .= $stredit; 
+        $validatestring =  '<a href="http://feeds.archive.org/validator/check?url='. $res->fields['url'] .'">(Validate)</a>';
+    } else {
+        $returnstring .= $stradd;
+        $validatestring = '';
+    }
+    $returnstring .= '" />&nbsp;'. $validatestring .'</form>'."\n";
+    $returnstring .= '</td></tr></tbody></table>'."\n";
+
     if ($printnow){
         print $returnstring;
     }
