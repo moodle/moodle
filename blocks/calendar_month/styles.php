@@ -18,5 +18,6 @@
 .block_calendar_month .event_course,
 .block_calendar_month .event_group,
 .block_calendar_month .event_user {
-    border:2px solid !important;
+    border-width: 2px;
+    border-style: solid;
 }
