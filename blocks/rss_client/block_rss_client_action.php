@@ -154,7 +154,6 @@
         rss_get_form($act, $url, $rssid, $rsstype);
 
     } else if ($act == 'view') {
-        global $THEME;
         //              echo $sql; //debug
         //              print_object($res); //debug
         $rss_record = get_record('block_rss_client', 'id', $rssid);
@@ -181,7 +180,7 @@
                     $rss->items[$y]['title'] = '&gt;&gt;';
                 }
                 
-                print '<tr bgcolor="'. $THEME->cellcontent .'"><td valign=\"middle\">'."\n";
+                print '<tr><td valign=\"middle\">'."\n";
                 print '<a href="'. $rss->items[$y]['link'] .'" target=_new><strong>'. $rss->items[$y]['title'];
                 print '</strong></a>'."\n";
                 print '</td>'."\n";
@@ -194,7 +193,7 @@
                 }
                 print '</td></tr>'."\n";
 //                $rss->items[$y]['description'] = blog_unhtmlentities($rss->items[$y]['description']);
-                print '<tr bgcolor="'. $THEME->cellcontent2 .'"><td colspan=2><small>';
+                print '<tr><td colspan=2><small>';
                 print $rss->items[$y]['description'] .'</small></td></tr>'."\n";
             }
             print '</table>'."\n";
