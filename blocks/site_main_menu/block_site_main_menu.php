@@ -36,7 +36,7 @@ class block_site_main_menu extends block_base {
         $sections = get_all_sections($this->instance->pageid);
         $section = $sections[0];
 
-        if($section->sequence || $isediting) {
+        if (!empty($section->sequence) || $isediting) {
             get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
         }
 
