@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta + (2004030702)
+      // forum.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['addanewdiscussion'] = 'Adicionar um novo tópico de discussão';
@@ -73,6 +73,7 @@ $string['nonews'] = 'Nenhuma notícia enviada ainda';
 $string['noposts'] = 'Nenhuma mensagem';
 $string['nopostscontaining'] = 'Não foi encontrada nenhuma mensagem com \'$a\' ';
 $string['nosubscribers'] = 'Este fórum não tem nenhum assinante';
+$string['notingroup'] = 'Sinto muito mas você precisa ser membro de um grupo para acessar este fórum';
 $string['nownotsubscribed'] = '$a->name não receberá cópias de \'$a->forum\' pelo correio eletrônico.';
 $string['nowsubscribed'] = '$a->name receberá cópias de \'$a->forum\' via Email';
 $string['numposts'] = '$a mensagens';
@@ -120,7 +121,9 @@ $string['singleforum'] = 'Uma única discussão simples';
 $string['startedby'] = 'Autor';
 $string['subject'] = 'Assunto';
 $string['subscribe'] = 'Receber as mensagens via email';
+$string['subscribeall'] = 'Inscrever todos neste forum';
 $string['subscribed'] = 'Assinante';
+$string['subscribenone'] = 'Cancelar inscrição de todos deste forum';
 $string['subscribers'] = 'Assinantes';
 $string['subscribersto'] = 'Assinantes de \'$a\'';
 $string['subscribestart'] = 'Me mande cópias das mensagens deste fórum via Email';
@@ -129,6 +132,7 @@ $string['subscription'] = 'Assinatura';
 $string['subscriptions'] = 'Assinaturas';
 $string['unsubscribe'] = 'Suspender o recebimento de  mensagens deste fórum via email';
 $string['unsubscribed'] = 'Recebimento de mensagens via email cancelado';
+$string['unsubscribeshort'] = 'Cancelar assinatura';
 $string['youratedthis'] = 'Você avaliou este';
 $string['yournewtopic'] = 'Novo tópico de discussão';
 $string['yourreply'] = 'A sua resposta';

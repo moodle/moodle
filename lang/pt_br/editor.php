@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.1 development (2003072800)
+      // editor.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['about'] = 'Informações sobre este editor';
@@ -21,10 +21,14 @@ $string['chooseicon'] = 'Escolher imagem para inserir';
 $string['close'] = 'Fechar';
 $string['cols'] = 'Cols';
 $string['copy'] = 'Copiar elemento selecionado';
+$string['createfolder'] = 'Criar pasta';
 $string['createlink'] = 'Inserir link web';
 $string['cut'] = 'Cortar elemento selecionado';
+$string['delete'] = 'Cancelar';
+$string['filebrowser'] = 'Navegador de arquivos';
 $string['forecolor'] = 'Cor das letras';
 $string['heading'] = 'Titolo';
+$string['height'] = 'Altura';
 $string['hilitecolor'] = 'Cor do fundo';
 $string['horizontal'] = 'Horizontal';
 $string['horizontalrule'] = 'Linha Horizontal';
@@ -33,6 +37,7 @@ $string['imageurl'] = 'Url da imagem';
 $string['indent'] = 'Aumentar distância da margem';
 $string['insertchar'] = 'Inserir caractere especial';
 $string['insertimage'] = 'Inserir imagem';
+$string['insertlink'] = 'Inserir link';
 $string['insertsmile'] = 'Inserir carinha';
 $string['inserttable'] = 'Inserir tabela';
 $string['italic'] = 'itálico';
@@ -42,8 +47,19 @@ $string['justifyleft'] = 'justificar à esquerda';
 $string['justifyright'] = 'justificar à direita';
 $string['layout'] = 'Layout';
 $string['left'] = 'Esquerda';
+$string['linkproperties'] = 'Propriedades do link';
+$string['linktarget'] = 'Target';
+$string['linktargetblank'] = 'Nova janela';
+$string['linktargetnone'] = 'Nenhum';
+$string['linktargetother'] = 'Outro';
+$string['linktargetself'] = 'Mesmo frame';
+$string['linktargettop'] = 'Mesma janela';
+$string['linktitle'] = 'Titulo';
+$string['linkurl'] = 'URL';
 $string['middle'] = 'Centro';
+$string['move'] = 'Mover';
 $string['normal'] = 'Normal';
+$string['notimage'] = 'O arquivo selecionado não é uma imagem';
 $string['notset'] = 'Não definido';
 $string['ok'] = 'OK';
 $string['orderedlist'] = 'Listas Numeradas';
@@ -55,10 +71,15 @@ $string['pixels'] = 'Pixels';
 $string['popupeditor'] = 'Aumentar o editor';
 $string['preformatted'] = 'Formato predefinido';
 $string['preview'] = 'Ver';
+$string['properties'] = 'Propriedades';
 $string['redo'] = 'Repetir a última ação';
+$string['removelink'] = 'Remover link';
+$string['rename'] = 'Mudar o nome';
 $string['right'] = 'Direita';
 $string['rows'] = 'Linhas';
+$string['selection'] = 'Seleção';
 $string['showhelp'] = 'Ajuda para utilizar o editor';
+$string['size'] = 'Tamanho';
 $string['spacing'] = 'Distância';
 $string['strikethrough'] = 'Riscado';
 $string['subscript'] = 'Índice';
@@ -67,10 +88,13 @@ $string['textindicator'] = 'Estilo atual';
 $string['textmode'] = 'Você está usando a modalidae TEXT. Use o botão [<>] para retornar à modalidade WYSIWYG.';
 $string['texttop'] = 'Topo do texto';
 $string['top'] = 'Topo';
+$string['type'] = 'Tipo';
 $string['underline'] = 'Sublinhar';
 $string['undo'] = 'Cancelar a última ação';
 $string['unorderedlist'] = 'Lista con marcadores (bullet)';
+$string['upload'] = 'Enviar';
 $string['vertical'] = 'Vertical';
 $string['width'] = 'Largura';
+$string['zip'] = 'Zip';
 
 ?>

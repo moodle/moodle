@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.1 development (2003072800)
+      // glossary.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['addcomment'] = 'Adicionar comentário';
@@ -18,7 +18,7 @@ $string['areyousuredeletecomment'] = 'Tem certeza que quer cancelar este comentá
 $string['areyousureexport'] = 'Tem certeza que quer exportar este item para';
 $string['ascending'] = '(ascendente)';
 $string['attachment'] = 'Attachment';
-$string['authorview'] = 'Navegar po autor';
+$string['authorview'] = 'Autores';
 $string['back'] = 'Voltar';
 $string['cantinsertcat'] = 'Não é possível inserir uma categoria';
 $string['cantinsertrec'] = 'Não é possível inserir um registro';
@@ -27,7 +27,7 @@ $string['casesensitive'] = 'Este ítem considera a diferença<br>entre letras maiú
 $string['categories'] = 'Categorias';
 $string['category'] = 'Categoria';
 $string['categorydeleted'] = 'Categoria cancelada';
-$string['categoryview'] = 'Navegar por categorias';
+$string['categoryview'] = 'Categorias';
 $string['cnfallowcomments'] = 'Indicar como opção predefinida a aceitação de comentários ao glossário';
 $string['cnfallowdupentries'] = 'Indicar como opção predefinida a aceitação de itens duplicados';
 $string['cnfapprovalstatus'] = 'Indicar como opção predefinida a aprovação de um item enviado por um estudante';
@@ -50,7 +50,7 @@ $string['commentupdated'] = 'O comentário foi atualizado';
 $string['concept'] = 'Conceito';
 $string['concepts'] = 'Conceitos';
 $string['currentglossary'] = 'Glossário atual';
-$string['dateview'] = 'Navegar por data';
+$string['dateview'] = 'data de publicação';
 $string['defaultapproval'] = 'Status de aprovação predefinido';
 $string['definition'] = 'Definição';
 $string['definitions'] = 'Definições';
@@ -95,6 +95,7 @@ $string['exportglossary'] = 'Exportar glossário';
 $string['exporttomainglossary'] = 'Esportar glossário principal';
 $string['filetoimport'] = 'Arquivo a ser importado';
 $string['fillfields'] = 'Conceito e definição são campos obrigatórios';
+$string['filtername'] = 'Links ao glossário automáticos';
 $string['fullmatch'] = 'Verificar igualdade apenas entre palavras inteiras<br><small>(quando o link é automático)</small>';
 $string['glossarytype'] = 'Tipo de glossário';
 $string['glosssaryexported'] = 'Glossário exportado';
@@ -144,7 +145,7 @@ $string['sortbycreation'] = 'Por data de criação';
 $string['sortbylastupdate'] = 'Por data de atualização';
 $string['sortchronogically'] = 'em ordem cronológica';
 $string['special'] = 'Especial';
-$string['standardview'] = 'Navegar usando o alfabeto';
+$string['standardview'] = 'Ordem alfabética';
 $string['studentcanpost'] = 'Estudantes podem adicionar itens';
 $string['totalentries'] = 'Total de itens';
 $string['usedynalink'] = 'Fazer o link automático deste glossário com outros módulos';
