@@ -92,13 +92,13 @@ $ALLOWED_TAGS = "<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul>
 function s($var) {
 /// returns $var with HTML characters (like "<", ">", etc.) properly quoted,
 
-    return htmlSpecialChars(stripslashes($var));
+    return htmlSpecialChars(stripslashes_safe($var));
 }
 
 function p($var) {
 /// prints $var with HTML characters (like "<", ">", etc.) properly quoted,
 
-    echo htmlSpecialChars(stripslashes($var));
+    echo htmlSpecialChars(stripslashes_safe($var));
 }
 
 function nvl(&$var, $default="") {
@@ -206,6 +206,17 @@ function data_submitted($url="") {
     }
 }
 
+function stripslashes_safe($string) {
+/// stripslashes() removes ALL backslashes even from strings 
+/// so  C:\temp becomes C:temp  ... this isn't good.
+/// The following should work as a fairly safe replacement 
+/// to be called on quoted AND unquoted strings (to be sure)
+
+    $string = str_replace("\\'", "'", $string);
+    $string = str_replace('\\"', '"', $string);
+    $string = str_replace('\\\\', '\\', $string);
+    return $string;
+}
 
 function stri_replace($find, $replace, $string ) {
 /// This does a search and replace, ignoring case
@@ -686,12 +697,12 @@ function print_navigation ($navigation) {
 }
 
 function print_heading($text, $align="CENTER", $size=3) {
-    echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>".stripslashes($text)."</B></FONT></P>";
+    echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>".stripslashes_safe($text)."</B></FONT></P>";
 }
 
 function print_heading_with_help($text, $helppage, $module="moodle") {
 // Centered heading with attached help button (same title text)
-    echo "<P ALIGN=\"CENTER\"><FONT SIZE=\"3\"><B>".stripslashes($text);
+    echo "<P ALIGN=\"CENTER\"><FONT SIZE=\"3\"><B>".stripslashes_safe($text);
     helpbutton($helppage, $text, $module);
     echo "</B></FONT></P>";
 }
@@ -708,7 +719,7 @@ function print_continue($link) {
 
 function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5, $class="generalbox") {
     print_simple_box_start($align, $width, $color, $padding, $class);
-    echo stripslashes($message);
+    echo stripslashes_safe($message);
     print_simple_box_end();
 }
 
@@ -906,6 +917,7 @@ function print_editing_switch($courseid) {
 }
 
 function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value="") {
+/// Prints a richtext field or a normal textarea
     global $CFG, $THEME;
 
     if ($richedit) {
