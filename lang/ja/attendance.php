@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.4 development (2004070800)
+      // attendance.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['absentlong'] = '欠席';
@@ -45,6 +45,7 @@ $string['notes'] = '備考';
 $string['notesfor'] = '備考';
 $string['noviews'] = '申し訳ございません、あなたのデータはありません';
 $string['pages'] = 'ページ';
+$string['parentlanguage'] = 'ja';
 $string['presentlong'] = '出席';
 $string['presentshort'] = '出';
 $string['saturday'] = '土';
@@ -56,6 +57,9 @@ $string['tardiesperabsence'] = '何回の遅刻を1回の欠席とするか';
 $string['tardylong'] = '遅刻';
 $string['tardyshort'] = '遅';
 $string['teacheredit'] = '出席を取る';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['thursday'] = '木';
 $string['tuesday'] = '火';
 $string['viewall'] = '全ての出席簿を表示';

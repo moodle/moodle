@@ -184,6 +184,7 @@ $string['nobodyyet'] = 'この調査は解答されていません';
 $string['notdone'] = '未回答';
 $string['notes'] = '個人的な分析とメモ';
 $string['othercomments'] = '他にコメントはありますか?';
+$string['parentlanguage'] = 'ja';
 $string['peoplecompleted'] = '現在 $a 人がこの調査に回答しています ';
 $string['preferred'] = '要望';
 $string['preferredclass'] = 'クラスの要望';
@@ -204,6 +205,9 @@ $string['surveyname'] = '調査名';
 $string['surveysaved'] = '調査が保存されました';
 $string['surveytype'] = '調査タイプ';
 $string['thanksforanswers'] = '$a さん、調査にご協力いただきましてありがとうございます';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['time'] = '時間';
 $string['viewsurveyresponses'] = '$a 件の調査結果を見る';
 

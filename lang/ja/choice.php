@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // choice.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['allowupdate'] = '選択の更新を許可する';
@@ -15,6 +15,7 @@ $string['modulenameplural'] = '選択';
 $string['mustchooseone'] = '保存する前に答えを選択する必要があります。保存処理は行われませんでした。';
 $string['notanswered'] = '未回答';
 $string['notopenyet'] = '申し訳ございません。この活動は $a まで利用できません。';
+$string['parentlanguage'] = 'ja';
 $string['privacy'] = 'プライバシー';
 $string['publish'] = '結果の公開';
 $string['publishafteranswer'] = '回答の後に学生に結果を表示する';
@@ -27,6 +28,9 @@ $string['responses'] = '回答';
 $string['responsesto'] = '$a へ回答する';
 $string['savemychoice'] = '回答を保存する';
 $string['showunanswered'] = '未回答欄を表示する';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['timerestrict'] = '回答期間の制限';
 $string['viewallresponses'] = '回答を表示($a 件)';
 

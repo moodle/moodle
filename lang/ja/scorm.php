@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004072500)
+      // scorm.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';
@@ -25,8 +25,8 @@ $string['entercourse'] = 'SCORMコースの入力';
 $string['errorlogs'] = 'エラーログ';
 $string['failed'] = '失敗';
 $string['found'] = 'マニフェストファイルが見つかりました';
-$string['gradeaverage'] = '平均評価';
-$string['gradehighest'] = '最高評価';
+$string['gradeaverage'] = '平均得点';
+$string['gradehighest'] = '最高得点';
 $string['grademethod'] = '評価方法';
 $string['guestsno'] = 'ゲストはscormのコースを閲覧出来ません';
 $string['incomplete'] = '不完全';
@@ -50,7 +50,9 @@ $string['noreports'] = '表示するレポートがありません';
 $string['normal'] = 'ノーマル';
 $string['not_corr_type'] = 'タグ $a->tag のタイプが合致しません';
 $string['notattempted'] = '未実行';
+$string['organizations'] = '組織';
 $string['packagedir'] = 'ファイルシステムエラー: パッケージディレクトリを作成出来ません。';
+$string['parentlanguage'] = 'ja';
 $string['passed'] = 'パス';
 $string['php5'] = 'PHP 5 (DOMXMLネイティブライブラリ)';
 $string['position_error'] = '$a->tag タグは $a->parent タグの子タグになりません';
@@ -62,6 +64,9 @@ $string['scoes'] = 'Scoes';
 $string['score'] = '得点';
 $string['syntax'] = 'シンタックスエラー';
 $string['tag_error'] = 'コンテンツに不明なタグ($a->tag) があります:  $a->value';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['too_many_attributes'] = 'タグ $a->tag のアトリビュートが多過ぎます';
 $string['too_many_children'] = 'タグ $a->tag の子タグが多過ぎます';
 $string['trackingloose'] = '警告: SCORMデータのトラッキングデータは消滅します!';

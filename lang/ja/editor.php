@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 alpha (2004081900)
+      // editor.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['about'] = 'エディタに関して';
@@ -71,6 +71,7 @@ $string['notset'] = '未設定';
 $string['ok'] = 'OK';
 $string['orderedlist'] = '順序付きリスト';
 $string['outdent'] = 'インデントを減らす';
+$string['parentlanguage'] = 'ja';
 $string['paste'] = 'クリップボードよりコピー';
 $string['path'] = 'パス';
 $string['percent'] = 'パーセント';
@@ -96,6 +97,9 @@ $string['superscript'] = '上付き文字';
 $string['textindicator'] = '現在のスタイル';
 $string['textmode'] = '現在テキストモードです。WYSIWYGモードに戻る場合は[<>]ボタンを押してください。 ';
 $string['texttop'] = 'Texttop';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['top'] = 'トップ';
 $string['type'] = 'タイプ';
 $string['underline'] = 'アンダーライン';

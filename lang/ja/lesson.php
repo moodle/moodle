@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 unstable development (2004083000)
+      // lesson.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['actionaftercorrectanswer'] = '正解後の動作';
@@ -60,6 +60,7 @@ $string['page'] = 'ページ: $a';
 $string['pagecontents'] = 'ページ内容';
 $string['pages'] = 'ページ';
 $string['pagetitle'] = 'ページタイトル';
+$string['parentlanguage'] = 'ja';
 $string['pleasecheckoneanswer'] = '答えを確認してください。';
 $string['pleasecheckoneormoreanswers'] = '1またはそれ以上の答えを選択してください。';
 $string['pleaseenteryouranswerinthebox'] = 'ボックスに答えを入力してください。';
@@ -76,6 +77,9 @@ $string['singleanswer'] = '単一解答';
 $string['thatsthecorrectanswer'] = '正しい答えです';
 $string['thatsthewronganswer'] = '間違った答えです';
 $string['thefollowingpagesjumptothispage'] = '下記のページは、このページにジャンプします。';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['thispage'] = 'このページ';
 $string['useeditor'] = 'エディタを使用';
 $string['usemaximum'] = '最大値を使用';

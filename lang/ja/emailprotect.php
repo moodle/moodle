@@ -3,5 +3,9 @@
 
 
 $string['filtername'] = 'メールプロテクション';
+$string['parentlanguage'] = 'ja';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

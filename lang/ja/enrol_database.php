@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_database.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // enrol_database.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['dbhost'] = 'ホスト名';
@@ -12,7 +12,11 @@ $string['description'] = 'ユーザ登録に外部のデータベース(殆どの種類)を使用するこ
 $string['enrolname'] = '外部データベース';
 $string['localcoursefield'] = 'コーステーブルのフィールド名と比較するリモートデータベースのフィールド名(例 idnumber)';
 $string['localuserfield'] = 'ユーザテーブルのフィールド名と比較するリモートデータベースのフィールド名(例 idnumber)';
+$string['parentlanguage'] = 'ja';
 $string['remotecoursefield'] = 'course IDに対するリモートデータベースのフィールド名';
 $string['remoteuserfield'] = 'user IDに対するリモートデータベースのフィールド名';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

@@ -71,7 +71,11 @@ $string['chooseauthmethod'] = '認証方法の選択:';
 $string['guestloginbutton'] = 'ゲストログインボタン';
 $string['instructions'] = '説明';
 $string['md5'] = 'MD5暗号化';
+$string['parentlanguage'] = 'ja';
 $string['plaintext'] = 'テキスト';
 $string['showguestlogin'] = 'ログインページのゲストログインボタンを表示／非表示に出来ます。';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

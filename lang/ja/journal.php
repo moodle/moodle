@@ -29,9 +29,13 @@ $string['noratinggiven'] = 'Ì¤É¾²Á';
 $string['notopenuntil'] = 'Æü»ï¤¬³«¤­¤Þ¤»¤ó';
 $string['notstarted'] = '¤³¤ÎÆü»ï¤ÏÌ¤»ÈÍÑ¤Ç¤¹';
 $string['overallrating'] = 'ÁíÂÎÅªÉ¾²Á';
+$string['parentlanguage'] = 'ja';
 $string['rate'] = 'É¾²Á';
 $string['saveallfeedback'] = 'Á´¤Æ¤ÎÉ¾²Á¤òÊÝÂ¸¤¹¤ë';
 $string['startoredit'] = 'Æü»ï¤òÊÔ½¸¤¹¤ë';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['viewallentries'] = '$a ·ï¤ÎÅÐÏ¿ºÑ¤ßÆü»ï¤ò¸«¤ë';
 
 ?>

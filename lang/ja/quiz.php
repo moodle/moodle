@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 unstable development (2004090402)
+      // quiz.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -156,6 +156,7 @@ $string['notenoughsubquestions'] = '十分な副質問が定義されていません！<br>
 この質問を修正しますか？';
 $string['numerical'] = '数字方式';
 $string['optional'] = 'オプション';
+$string['parentlanguage'] = 'ja';
 $string['passworderror'] = 'パスワードが間違っています。';
 $string['percentcorrect'] = '正答率';
 $string['preview'] = 'プレビュー';
@@ -218,6 +219,9 @@ $string['showfeedback'] = '解答後にフィードバックを表示しますか?';
 $string['shuffleanswers'] = '解答を混ぜる';
 $string['shufflequestions'] = '質問を混ぜる';
 $string['subneterror'] = '申し訳ございません、この小テストは特定の場所からのみアクセス可能です。あなたのコンピュータはこの小テストを利用出来るコンピュータではありません。';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['time'] = '時間';
 $string['timecompleted'] = '解答日時';
 $string['timeleft'] = '残り時間';

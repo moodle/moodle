@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // install.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
@@ -82,6 +82,7 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $a に設定されて
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>しかし、この設定が<b>全ての</b>PHPページの動作を妨げる場合もあります。ページを閲覧時にエラーが表示される場合は、.htaccessファイルを削除してください。</p>
 </ol>';
+$string['parentlanguage'] = 'ja';
 $string['pass'] = 'パス';
 $string['phpversion'] = 'PHPバージョン';
 $string['phpversionerror'] = 'PHPバージョンは4.1.0以上をお使いください。';
@@ -95,6 +96,9 @@ $string['sessionautostart'] = 'セッション自動スタート';
 $string['sessionautostarterror'] = 'これは無効にしてください。';
 $string['sessionautostarthelp'] = '<p>Moodleはセッションサポートを必要とします。また、セッションサポート無しでは動作しません。.</p>
 <p>セッションは、php.iniファイルで使用可にすることが出来ます ... session.auto_startパラメータを探してください。</p>';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['wwwroot'] = 'ウェブアドレス';
 $string['wwwrooterror'] = 'ウェブアドレスが間違っています - インストール済みMoodleはここに表示されません。';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // enrol_flatfile.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['description'] = 'この方法は、あなたが指定した場所にある特別にフォーマットされたテキストファイルを繰り返しチェックします。ファイルのフォーマットは下記のようになります:
@@ -17,5 +17,9 @@ $string['filelockedmailsubject'] = '重大なエラー:エンロールメントファイル';
 $string['location'] = 'ファイルの場所';
 $string['mailadmin'] = '管理者にメール通知';
 $string['mailusers'] = 'ユーザにメール通知';
+$string['parentlanguage'] = 'ja';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

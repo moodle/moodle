@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 development (2004082600)
+      // chat.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['beep'] = 'ビープ';
@@ -41,6 +41,7 @@ $string['neverdeletemessages'] = 'メッセージを削除しない';
 $string['nextsession'] = '次のスケジュールセッション';
 $string['noguests'] = 'ゲストはこのチャットを利用出来ません。';
 $string['nomessages'] = 'メッセージがありません。';
+$string['parentlanguage'] = 'ja';
 $string['repeatdaily'] = '毎日同じ時間に';
 $string['repeatnone'] = '繰り返し無し - 指定した時間にのみ表示';
 $string['repeattimes'] = 'セッションの繰り返し';
@@ -50,6 +51,9 @@ $string['seesession'] = 'このセッションを見る';
 $string['sessions'] = 'チャットセッション';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = '全ての人が過去のセッションを見ることが出来る';
-$string['viewreport'] = '過去のチャットセッションを閲覧';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
+$string['viewreport'] = '過去のチャットセッションを表示';
 
 ?>
