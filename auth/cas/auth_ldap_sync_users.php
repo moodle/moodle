@@ -1,6 +1,7 @@
 <?php
 /** auth_ldap_sync_users.php
- * 
+ *  Modified for cas Module
+ *
  * This script is meant to be called from a cronjob to sync moodle with the LDAP 
  * backend in those setups where the LDAP backend acts as 'master'.
  * 
@@ -31,7 +32,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php'); // global moodl
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/lib/blocklib.php');
 require_once($CFG->dirroot.'/mod/resource/lib.php');
-require_once($CFG->dirroot.'/auth/ldap/lib.php');
+require_once($CFG->dirroot.'/auth/cas/lib.php');  //cas specific
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 $CFG->debug=10;
 auth_sync_users(1000, true  );
