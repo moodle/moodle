@@ -44,7 +44,7 @@ function empty_field_and_submit() {
 function prepareusers() {
     var frm = window.parent.frames;
     for(i = 0; i < frm.length; ++i) {
-        if(frm[i]).name == "users") {
+        if(frm[i].name == "users") {
             window.userFrame = frm[i];
             window.userHREF  = frm[i].location.href;
             window.setTimeout("reloadusers();", <?php echo $CFG->chat_refresh_userlist; ?> * 1000);
@@ -61,9 +61,9 @@ function reloadusers() {
 </script>
 </head>
 
-<body bgcolor="<?php echo $THEME->body ?>" onload="document.getElementById('inputform').chat_message.focus();document.getElementById('inputform').chat_message.select(); prepareusers();">
+<body bgcolor="<?php echo $THEME->body ?>" onload="document.getElementById('inputform').chat_message.focus(); prepareusers();">
 
-<form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="inputform" onsubmit="return empty_field_and_submit();">
+<form action="../empty.php" method="get" target="empty" id="inputform" onsubmit="return empty_field_and_submit();">
 &gt;&gt; <input type="text" name="chat_message" size="60" value="" />
 <?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
 </form>
