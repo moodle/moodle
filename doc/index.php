@@ -14,6 +14,8 @@
 
     if (!empty($sub)) {
         $sub = "#$sub";
+    } else {
+        $sub = "";
     }
 
     if (empty($file)) {
