@@ -712,6 +712,9 @@ function init_data() {
   $extraTick  = 2 * $this->parameter['x_offset']; // extra tick to account for padding
   $numTicks = $this->calculated['x_axis']['num_ticks'] - 1;    // number of x ticks
 
+  // Hack by rodger to avoid division by zero, see bug 1231
+  if ($numTicks==0) $numTicks=1;
+
   $this->calculated['x_axis']['step'] = $width / ($numTicks + $extraTick);
   $widthPlot = $width - ($this->calculated['x_axis']['step'] * $extraTick);
   $this->calculated['x_axis']['step'] = $widthPlot / $numTicks;
@@ -1325,12 +1328,12 @@ function update_boundaryBox(&$boundaryBox, $coords) {
 }
 
 function get_null_size() {
-	return array('width'      => 0,
-	             'height'     => 0,
-	             'offsetX'    => 0,
-	             'offsetY'    => 0,
-	             //'fontHeight' => 0
-	             );
+  return array('width'      => 0,
+               'height'     => 0,
+               'offsetX'    => 0,
+               'offsetY'    => 0,
+               //'fontHeight' => 0
+               );
 }
 
 function get_boundaryBox($message) {
@@ -1343,16 +1346,16 @@ function get_boundaryBox($message) {
   //expandPre($message);
 
   // get font size
-	$bounds = ImageTTFBBox($points, $angle, $font, "W");
-	if ($angle < 0) {
-		$fontHeight = abs($bounds[7]-$bounds[1]);
-	} else if ($angle > 0) {
-		$fontHeight = abs($bounds[1]-$bounds[7]);
-	} else {
-		$fontHeight = abs($bounds[7]-$bounds[1]);
-	}
+  $bounds = ImageTTFBBox($points, $angle, $font, "W");
+  if ($angle < 0) {
+    $fontHeight = abs($bounds[7]-$bounds[1]);
+  } else if ($angle > 0) {
+    $fontHeight = abs($bounds[1]-$bounds[7]);
+  } else {
+    $fontHeight = abs($bounds[7]-$bounds[1]);
+  }
 
-	// get boundary box and offsets for printing at an angle
+  // get boundary box and offsets for printing at an angle
     if ($this->parameter['lang_decode']) {               // Moodle addition
         include_once($this->parameter['lang_decode']);
         $text = lang_decode($text);
@@ -1360,34 +1363,34 @@ function get_boundaryBox($message) {
     } else if ($this->parameter['lang_transcode']) {
         $text = iconv($this->parameter['lang_transcode'], 'UTF-8', $text);
     }
-	$bounds = ImageTTFBBox($points, $angle, $font, $text);
+  $bounds = ImageTTFBBox($points, $angle, $font, $text);
 
-	if ($angle < 0) {
-		$width = abs($bounds[4]-$bounds[0]);
-		$height = abs($bounds[3]-$bounds[7]);
-		$offsetY = abs($bounds[3]-$bounds[1]);
-		$offsetX = 0;
+  if ($angle < 0) {
+    $width = abs($bounds[4]-$bounds[0]);
+    $height = abs($bounds[3]-$bounds[7]);
+    $offsetY = abs($bounds[3]-$bounds[1]);
+    $offsetX = 0;
 
-	} else if ($angle > 0) {
-		$width = abs($bounds[2]-$bounds[6]);
-		$height = abs($bounds[1]-$bounds[5]);
-		$offsetY = 0;
-		$offsetX = abs($bounds[0]-$bounds[6]);
+  } else if ($angle > 0) {
+    $width = abs($bounds[2]-$bounds[6]);
+    $height = abs($bounds[1]-$bounds[5]);
+    $offsetY = 0;
+    $offsetX = abs($bounds[0]-$bounds[6]);
 
-	} else {
-		$width = abs($bounds[4]-$bounds[6]);
-		$height = abs($bounds[7]-$bounds[1]);
-		$offsetY = 0;
-		$offsetX = 0;
-	}
+  } else {
+    $width = abs($bounds[4]-$bounds[6]);
+    $height = abs($bounds[7]-$bounds[1]);
+    $offsetY = 0;
+    $offsetX = 0;
+  }
 
-	//return values
-	return array('width'      => $width,
-	             'height'     => $height,
-	             'offsetX'    => $offsetX,
-	             'offsetY'    => $offsetY,
-	             //'fontHeight' => $fontHeight
-	             );
+  //return values
+  return array('width'      => $width,
+               'height'     => $height,
+               'offsetX'    => $offsetX,
+               'offsetY'    => $offsetY,
+               //'fontHeight' => $fontHeight
+               );
 }
 
 function draw_rectangle($border, $colour, $type) {
@@ -1517,9 +1520,9 @@ function output() {
 } // function output
 
 function init_variable(&$variable, $value, $default) {
-	if (!empty($value)) $variable = $value;
-	else if (isset($default)) $variable = $default;
-	else unset($variable);
+  if (!empty($value)) $variable = $value;
+  else if (isset($default)) $variable = $default;
+  else unset($variable);
 }
 
 // plot a point. options include square, circle, diamond, triangle, and dot. offset is used for drawing shadows.
