@@ -553,7 +553,7 @@ function get_slash_arguments($file="file.php") {
     $pathinfo = explode($file, $string);
 
     if (!empty($pathinfo[1])) {
-        return $pathinfo[1];
+        return addslashes($pathinfo[1]);
     } else {
         return false;
     }
