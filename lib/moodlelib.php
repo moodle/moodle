@@ -496,16 +496,59 @@ function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
  * @return ?
  * @todo Finish documenting this function
  */
-function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99) {
+function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99, $applydst=true) {
 
     $timezone = get_user_timezone($timezone);
 
     if (abs($timezone) > 13) {
-        return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
+        $time = mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
     } else {
         $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
-        return usertime($time, $timezone);  // This is GMT
+        $time = usertime($time, $timezone);  // This is GMT
     }
+
+    if(!$applydst) {
+        return $time;
+    }
+
+    return $time;
+
+    /*
+    // WARNING: BUG: TODO: This is buggy, but it will do for testing purposes
+    if(($dstid = get_user_preferences('calendar_dstpreset')) !== NULL) {
+        $preset = get_record('dst_preset', 'id', $dstid);
+        if($time > $preset->last_change && $time < $preset->next_change) {
+            return $time;
+        }
+
+        // We need to find out what's going on...
+        $nowuserdate = usergetdate($time);
+
+        $changes = calendar_dst_changes_for_year($year, $preset);
+        if($time < $changes['activate'] || $time > $changes['deactivate']) {
+            // DST will be off at that time
+            if($preset->current_offset != 0) {
+                print_object('Uncompensated time was:');
+                print_object(usergetdate($time));
+                $time += $preset->apply_offset * 60;
+                print_object('Compensated time is:');
+                print_object(usergetdate($time));
+            }
+        }
+        else {
+            // DST will be on at that time
+            if($preset->current_offset == 0) {
+                print_object('Uncompensated time was:');
+                print_object(usergetdate($time));
+                $time -= $preset->apply_offset * 60;
+                print_object('Compensated time is:');
+                print_object(usergetdate($time));
+            }
+        }
+        
+        return $time;
+    }
+    */
 }
 
 /**
@@ -638,16 +681,22 @@ function usergetdate($date, $timezone=99) {
     }
     //There is no gmgetdate so I have to fake it...
     $date = $date + (int)($timezone * HOURSECS);
-    $getdate['seconds'] = gmstrftime("%S", $date);
-    $getdate['minutes'] = gmstrftime("%M", $date);
-    $getdate['hours']   = gmstrftime("%H", $date);
-    $getdate['mday']    = gmstrftime("%d", $date);
-    $getdate['wday']    = gmstrftime("%u", $date);
-    $getdate['mon']     = gmstrftime("%m", $date);
-    $getdate['year']    = gmstrftime("%Y", $date);
-    $getdate['yday']    = gmstrftime("%j", $date);
-    $getdate['weekday'] = gmstrftime("%A", $date);
-    $getdate['month']   = gmstrftime("%B", $date);
+
+    // This is independent of the server's TZ settings,
+    // unlike gmstrftime. It's also a bit faster this way.
+    list(
+        $getdate['seconds'],
+        $getdate['minutes'],
+        $getdate['hours'],
+        $getdate['mday'],
+        $getdate['mon'],
+        $getdate['year'],
+        $getdate['wday'],
+        $getdate['yday'],
+        $getdate['weekday'],
+        $getdate['month']
+    ) = explode(' ', gmdate('s i H d m Y w z l F', $date));
+
     return $getdate;
 }
 
@@ -2160,7 +2209,7 @@ function set_current_group($courseid, $groupid) {
  * @uses $CFG
  * @uses $SESSION
  * @param int $courseid The course being examined - relates to id field in 'course' table.
- * @param boolean $full ?
+ * @param boolean $full If true, the return value is a full record object. If false, just the id of the record.
  * @todo Finish documenting this function
  */
 function get_current_group($courseid, $full=false) {
