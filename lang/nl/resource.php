@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 unstable development (2004083000)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addresource'] = 'Bron toevoegen';
@@ -54,7 +54,7 @@ $string['newwidth'] = 'Standaardvensterbreedte (in pixels)';
 $string['newwindow'] = 'Nieuw venster';
 $string['newwindowopen'] = 'Toon deze bron in een popup-venster';
 $string['note'] = 'Aantekening';
-$string['notefile'] = 'Gebruik <A HREF=$a>Bestandsbeheer</A> om meer bestanden naar de cursus te uploaden (zodat ze in deze lijst verschijnen).';
+$string['notefile'] = 'Gebruik <a href=\"$a\">Bestandsbeheer</a> om meer bestanden naar de cursus te uploaden (zodat ze in deze lijst verschijnen).';
 $string['notypechosen'] = 'Je moet een soort kiezen. Gebruik de \'Back\'-knop om terug te gaan en het opnieuw te proberen.';
 $string['pagedisplay'] = 'Toon deze bron in het huidige venster';
 $string['pagewindow'] = 'Zelfde venster';
@@ -65,7 +65,7 @@ $string['popupresourcelink'] = 'Als ze dat niet deed, klik hier: $a';
 $string['resourcetype'] = 'Soort bron';
 $string['resourcetype1'] = 'Verwijzing';
 $string['resourcetype2'] = 'Webpagina';
-$string['resourcetype3'] = 'Geüpload bestand';
+$string['resourcetype3'] = 'Geüploaded bestand';
 $string['resourcetype4'] = 'Platte tekst';
 $string['resourcetype5'] = 'Web link';
 $string['resourcetype6'] = 'HTML-tekst';
@@ -78,6 +78,9 @@ $string['resourcetypehtml'] = 'Webpagina maken';
 $string['resourcetypelabel'] = 'Label toevoegen';
 $string['resourcetypetext'] = 'Tekstpagina maken';
 $string['searchweb'] = 'Zoek webpagina\'s';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 $string['variablename'] = 'Variable naam';
 
 ?>

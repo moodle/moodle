@@ -93,11 +93,11 @@ $string['newsubmissions'] = "Nové zadania";
 $string['noassessmentsdone'] = "Neprebehli ¾iadne hodnotenia";
 $string['nosubmissionsavailableforassessment'] = "®iadne zadania nie sú prístupné pre hodnotenie";
 $string['notavailable'] = "Neprístupné";
-$string['noteonassessmentelements'] = "\\\"V¹imnite si, ¾e pri zadaní hodnotenom ¹tudentmi je známkovanie rozdelené na niekoµko 'Zlo¾iek hodnotenia'.<BR>
+$string['noteonassessmentelements'] = "\\\"V¹imnite si, ¾e pri zadaní hodnotenom ¹tudentmi je známkovanie rozdelené na niekoµko 'Zlo¾iek hodnotenia'.<br />
 
-Toto zjednodu¹uje a spresòuje známkovanie. Ako uèiteµ musíte tieto zlo¾ky prida» predtým ako sprístupnite<BR>
+Toto zjednodu¹uje a spresòuje známkovanie. Ako uèiteµ musíte tieto zlo¾ky prida» predtým ako sprístupnite<br />
 
-zadanie pre ¹tudentov. Urobíte to tak, ¾e kliknete na zadanie známkované ¹tudentami a vyberiete si<BR>
+zadanie pre ¹tudentov. Urobíte to tak, ¾e kliknete na zadanie známkované ¹tudentami a vyberiete si<br />
 
 prvú mo¾nos» v menu &quot;Managing a Peer Graded Assignment&quot .\\\";";
 $string['notgraded'] = "Neznámkované";
@@ -173,7 +173,7 @@ $string['verypoor'] = "Veµmi slabo";
 $string['view'] = "Prezrie»";
 $string['viewassessmentofteacher'] = "Prezrie» hodnotenie od \$a";
 $string['viewotherassessments'] = "Prezrie» ostatné hodnotenia";
-$string['warningonamendingelements'] = "UPOZORNENIE: Ohodnotenia sú predlo¾ené. <BR>NEMEÒTE poèet zlo¾iek, typy ¹kál alebo hodnotu zlo¾iek.";
+$string['warningonamendingelements'] = "UPOZORNENIE: Ohodnotenia sú predlo¾ené. <br />NEMEÒTE poèet zlo¾iek, typy ¹kál alebo hodnotu zlo¾iek.";
 $string['weightederrorcount'] = "Chyba v hodnote: \$a";
 $string['weightforbias'] = "Váha pre systematickú chybu";
 $string['weightforgradingofassessments'] = "Váha pre známku z hodnotenia";

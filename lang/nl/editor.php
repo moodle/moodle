@@ -1,10 +1,9 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 alpha (2004081500)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['about'] = 'Info';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'Adres';
 $string['alignment'] = 'Uitlijning';
 $string['alternatetext'] = 'Alternatieve tekst';
@@ -96,6 +95,9 @@ $string['superscript'] = 'Superscript';
 $string['textindicator'] = 'Huidige stijl';
 $string['textmode'] = 'Je bent in TEKSTMODUS. Gebruik de [<>] knop om terug om te schakelen naar WYSIWIG.';
 $string['texttop'] = 'Texttop';
+$string['thischarset'] = 'iso-8859-1 ';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 $string['top'] = 'Bovenaan';
 $string['type'] = 'Type';
 $string['underline'] = 'Onderstrepen';

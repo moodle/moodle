@@ -100,7 +100,7 @@ $string['backuplogshelp'] = 'Ja at¶auts, tad kursa ieraksti tiks iek¶auti automà
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Piezïme: Jþs izvºlºjàties veidot rezerves kopijas \"none\" lietotàjiem, tàtad visas modu¶u rezerves kopijas ir pàrslºgtas uz \"whitout user data\" re¾ïmu. Lþdzu ievºrojiet ka \"exercise\" un \"workshop\" modu¶i nav savienojami ar ¹ï veida rezerves kopijàm, rezultàtà tie ir deaktivizºti pilnïbà.';
 $string['backuporiginalname'] = 'Rezerves kopijas nosaukums';
-$string['backupsavetohelp'] = 'Pilna atra¹anàs vieta noràde, kur saglabàt rezervers kopiju<br>(atstàt tukshu, lai saglabàtu ierastajà vietà';
+$string['backupsavetohelp'] = 'Pilna atra¹anàs vieta noràde, kur saglabàt rezervers kopiju<br />(atstàt tukshu, lai saglabàtu ierastajà vietà';
 $string['backupuserfileshelp'] = 'Izvºlieties vai lietotàju faili (piem. profila attºli) tiks iek¶auti automàtiskajàs rezerves kopijàs';
 $string['backupusershelp'] = 'Izvºlieties vai jþs vºlaties iek¶aut visus lietotàjus serverï, vai tikai katram kursam nepiecie¹amos lietotàjus';
 $string['backupversion'] = 'Rezerves kopijas versija';
@@ -141,7 +141,7 @@ $string['complete'] = 'Darïts';
 $string['configallowunenroll'] = 'Ja ¹is ir uzstàdïts uz \'Yes\', tad studentiem ir at¶auts pa¹iem sevi izslºgt no kursiem kad vien vºlas.Cità gadïjumà viñi to darït nevar un ¹o procesu kontrolº tikai skolotàji un administratori.';
 $string['configcachetext'] = 'Dº¶ lielàkàm lapàm vai lapàm kuras izmanto teksta filtrus, ¹is parametrs var visu paàtrinàt. Tekstu kopijas tiks saglabàtas to pàrveidotajà formà, laikà kas ¹eit noteikts. Uzstàdot ¹o pàràk mazu, var visu ievºrojami palºninàt, bet uzstàdot pàràk lielu, teksta atjauno¹ana var aizñemt pàràk ilgu laiku (piem. ar jaunàm saitºm).';
 $string['configcountry'] = 'Ja gribat, ka lietotàjs pats izvºlas valsti, atstàjat ¹o lauku tuk¹u.';
-$string['configdebug'] = 'Ja ieslºgsiet ¹o opciju, tad vairàk PHP k¶þdas tiks izvadïtas. <br> (©ï opcija ir noderïga izstràdº)';
+$string['configdebug'] = 'Ja ieslºgsiet ¹o opciju, tad vairàk PHP k¶þdas tiks izvadïtas. <br /> (©ï opcija ir noderïga izstràdº)';
 $string['configdeleteunconfirmed'] = 'Ja jþs izmantojat e-pasta autentifikàciju, ¹is ir periods, kurà atbilde tiks pieñemta no lietotàjiem. Pºc ¹ï perioda, veci, neapstiprinàti konti tiks izdzºsti.';
 $string['configenablerssfeeds'] = '©ïs slºdzis at¶aus RSS barotni no lapas. Lai manïtu kàdas izmaiñas jums bþs jàat¶auj RSS barotne arï individuàlajos modu¶os - ejiet uz Modu¶u parametriem zem Admina konfiguràcijas';
 $string['configenablerssfeedsdisabled'] = 'Tas nav pieejams, jo RSS barotnes ir neat¶autas visà lapà. Lai tàs at¶autu, ejiet uz Mainïgo parametriem zem Admina konfiguràcijas';
@@ -339,9 +339,9 @@ $string['enrolledincourse'] = 'Re»istrºts kursà ';
 $string['enrolledincoursenot'] = 'Nav re»istrºts kursà ';
 $string['enrolmentconfirmation'] = 'Jþs pieteiks kursam.<br />Vai vºlaties pieteikties?';
 $string['enrolmentkey'] = 'Atslºgas vàrds';
-$string['enrolmentkeyfrom'] = '©im kursam vajag \'atslºgas vàrdu\' - vienreizºju<BR>
+$string['enrolmentkeyfrom'] = '©im kursam vajag \'atslºgas vàrdu\' - vienreizºju<br />
 paroli, ko Jþs sañemsiet no sava skolotàja';
-$string['enrolmentkeyhint'] = 'Atslºgas vàrds nav pareizs<BR>
+$string['enrolmentkeyhint'] = 'Atslºgas vàrds nav pareizs<br />
 (Noràdïjums - tas sàkas ar \'$a\')';
 $string['entercourse'] = 'Spiediet ¹eit, lai ieietu kursà';
 $string['enteremailaddress'] = 'Ievadiet savu e-pastu, lai iegþtu jaunu paroli, kuru nosþtïs Jums pa e-pastu.';
@@ -505,7 +505,7 @@ $string['loginas'] = 'Lietotàjs';
 $string['loginguest'] = 'Ieiet kà viesim';
 $string['loginsite'] = 'Ieiet lapà';
 $string['loginsteps'] = 'Lai iegþtu pilnu pieeju kursiem, Jums vajadzºs izveidot jaunu kontu ¹ajà lapà.
-<br>©ïs ir instrukcijas:
+<br />©ïs ir instrukcijas:
    <OL size=2>
    <LI>Aizpildiet <A HREF=$a>Jauna lietotàja anketu</A> (formu, kas satur Jþsu datus).
    <LI>Jums tiks nosþtïta e-pasta vºstule.
@@ -734,7 +734,7 @@ $string['scheduledbackupstatus'] = 'Ieplànots dubultº¹anas statuss';
 $string['search'] = 'Meklºt';
 $string['searchagain'] = 'Meklºt vºlreiz';
 $string['searchcourses'] = 'Meklºt kursus';
-$string['searchhelp'] = 'Jþs varat vienlaicïgi meklºt vairàkus vàrdus.<p>vàrds : atrast vàrdus tekstà.<br>+vàrds : tie¹i ¹àdu vàrdu tekstà.<br>-vàrds : neiek¶aut rezultàtus, kas satur.';
+$string['searchhelp'] = 'Jþs varat vienlaicïgi meklºt vairàkus vàrdus.<p>vàrds : atrast vàrdus tekstà.<br />+vàrds : tie¹i ¹àdu vàrdu tekstà.<br />-vàrds : neiek¶aut rezultàtus, kas satur.';
 $string['searchresults'] = 'Meklº¹anas rezultàti';
 $string['sec'] = 'sekunde';
 $string['secs'] = 'sekundes';

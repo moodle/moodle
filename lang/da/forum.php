@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3.3 (2004052503)
+      // forum.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addanewdiscussion'] = 'Tilføj en ny diskusion';
@@ -43,6 +43,7 @@ $string['editing'] = 'Redigerer';
 $string['emptymessage'] = 'Der var noget galt med dit indlæg.  Måske har du ikke skrevet noget eller er den vedhæftede fil for stor.  Dine ændringer er IKKE blevet gemt.';
 $string['everyonecanchoose'] = 'Alle kan vælge at blive meldt til';
 $string['everyoneissubscribed'] = 'Alle er meldt til dette forum';
+$string['existingsubscribers'] = 'Eksisterende abonnenter';
 $string['forcesubscribe'] = 'Tilmeld alle';
 $string['forcesubscribeq'] = 'Skal alle tilmeldes?';
 $string['forum'] = 'Forum';
@@ -100,6 +101,7 @@ $string['postrating3'] = 'Viser som regel sammenhængende viden';
 $string['posts'] = 'Poster';
 $string['posttoforum'] = 'Send til forum';
 $string['postupdated'] = 'Dit indlæg er opdateret';
+$string['potentialsubscribers'] = 'Potentielle abonnenter';
 $string['processingdigest'] = 'Behandler email sammendrag for bruger $a';
 $string['processingpost'] = 'Behandler indlæg $a';
 $string['prune'] = 'Del';
@@ -147,6 +149,8 @@ $string['subscriptions'] = 'Abonneringer';
 $string['unsubscribe'] = 'Frameld dig dette forum';
 $string['unsubscribed'] = 'Frameldt';
 $string['unsubscribeshort'] = 'Frameld';
+$string['yesforever'] = 'Ja, for altid';
+$string['yesinitially'] = 'Ja, men kun i starten';
 $string['youratedthis'] = 'Du har bedømt dette';
 $string['yournewtopic'] = 'Dit nye diskussionsemne';
 $string['yourreply'] = 'Dit svar';

@@ -1,8 +1,11 @@
 <?PHP // $Id$ 
-      // block_course_summary.php - created with Moodle 1.4 development (2004072500)
+      // block_course_summary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
-$string['blockname'] = 'Kurssin yhteenveto';
-$string['siteinfo'] = 'Tietoja sivustosta';
+$string['coursesummary'] = 'Kurssi yhteenveto';
+$string['pagedescription'] = 'Kurssin/Sivuston kuvaus';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 
 ?>

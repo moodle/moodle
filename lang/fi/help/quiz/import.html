@@ -1,23 +1,116 @@
 <P align=center><B>Uusien kysymysten tuominen</B></P>
-<P>T‰m‰n toiminnon avulla voit tuoda kysymyksi‰ ulkopuolisista tekstitiedostoista. 
-<P>J‰rjestelm‰ tukee useita tavallisia tiedostomuotoja: 
-<P><B>Missing word format</B></P>
+<P>T‰m‰n toiminnon avulla voit tuoda kysymyksi‰ ulkopuolisista tekstitiedostoista lomakkeen avulla. 
+<P>J‰rjestelm‰ tukee useita tiedostomuotoja: 
+
+
+<P><B>GIFT muoto</B></P>
+<ul>
+<p>GIFT on kattavin tiedoston vienti- tai tuontimuoto, jolla voi siirt‰‰ Moodle tenttikysymyksi‰ tekstitiedostoon. GIFT on alunperin suunniteltu helpoksi tyˆkaluksi, jolla opettaja voi kirjoittaa kysymyksi‰ tekstitiedostoon. GIFT tukee monivalintaa, oikein/v‰‰rin -kysymyksi‰, lyhytvastauksia, yhdistely‰ ja numeerisia kysymyksi‰, sek‰ "puuttuva sana" -aukkoteht‰vi‰. Erilaisia kysymystyyppej‰ voi tallentaa samaan tiedostoon ja tietostotyyppi tukee myˆs rivien kommentointia, kysymysten nimi‰, palautetta ja prosentuaalisesti painotettua arvostelua.  T‰ss‰ muutamia esimerkkej‰:</p>
+<pre>
+Kuka oli Sepeteuksen poikien is‰? {~Ei kukaan ~Virtanen =Sepeteus}
+
+Sepeteus oli poikiensa {~veli =is‰ ~‰iti}.
+
+Sepeteus oli poikiensa ‰iti.{FALSE}
+
+ Mit‰ sukua Sepeteuksen pojat ovat Sepeteukselle?{=poikia =lapsia}
+
+Koska Suomi itsen‰istyi?{#1917}
+</pre>
+
+<p align=right><a href="help.php?file=formatgift.html&module=quiz">Lis‰tietoja GIFT muodosta</a></p>
+</ul>
+
+<P><B>Aiken muoto</B></P>
+<ul>
+<p>Aiken-muoto on hyvin yksinkertainen tapa luoda monivalintakysymyksi‰ k‰ytt‰m‰ll‰ selke‰‰, helposti luettavaa muotoa. Esimerkiksi:</p>
+<pre>
+Mik‰ on ensiavun tarkoitus?
+A. Hengen pelastaminen, enempien vaurioiden est‰minen, terveyden varjeleminen
+B. L‰‰k‰rinavun tarjoaminen kaikille loukkaantuneille tai haavoittuneille
+C. Enempien vaurioiden est‰minen
+D. Apua etsivien uhrien avustaminen
+ANSWER: A
+</pre>
+
+<p align=right><a href="help.php?file=formataiken.html&module=quiz">Lis‰tietoja Aiken muodosta</a></p>
+</ul>
+
+
+<P><B>Puuttuva sana -muoto</B></P>
 <UL>
 <P>T‰m‰ muoto tukee vain monivalintakysymyksi‰. Vastaukset erotetaan toisistaan tildell‰ (~), oikean vastauksen edess‰ on yht‰l‰isyysmerkki (=). Esimerkiksi: 
 <BLOCKQUOTE>Heti kun alamme vauvana tutkia ruumiinosiamme meist‰ tulee&nbsp;{=anatomian ja&nbsp;fysiologian ~refleksologian ~luonnontieteen}opiskelijoita, ja t‰ss‰ mieless‰ me pysymme opiskelijoina koko ik‰mme. </BLOCKQUOTE>
-<P>Lis‰tietoja: <?php  helpbutton("formatmissingword", "", "quiz") ?></P></UL>
-<P><B>IMS QTI format</B></P>
+<p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Lis‰tietoja puuttuva sana muodosta</a></p>
+</UL>
+<P><B>AON</B></P>
 <UL>
-<P>Kysymysten ja testien yhteensopivuuden&nbsp;standardimuoto,&nbsp;IMS:lt‰. 
-<P>Not yet implemented 
-<P>More info: <?php  helpbutton("formatqti", "", "quiz") ?></P></UL>
-<P><B>WebCT format</B></P>
+<P>T‰m‰ on muutoin sama kuin puuttuva sana -muoto, paitsi ett‰ kysymysten tuonnin j‰lkeen kaikki lyhytvastaukset muutetaan nelj‰n ryhmin‰ yhdistelyteht‰viksi.
+</P>
+<p>T‰m‰n lis‰ksi kaikki monivalintakysymykset sekoitetaan satunnaiseen j‰rjestykseen kysymysten tuonnin aikana.
+
+<p>AON-nimi tulee organisaatiosta, joka tuki monien kysymysominaisuuksien kehityst‰.
+</p>
+</UL>
+
+
+<P><B>Blackboard</B></P>
 <UL>
-<P>The format of files exported from WebCT. 
-<P>Not yet implemented 
-<P>More info: <?php  helpbutton("formatwebct", "", "quiz") ?></P></UL>
-<P><B>Custom format</B></P>
+<P>T‰ll‰ moduulilla voi tuoda Blackboard:n vientimuotoon tallennettuja kysymyksi‰. Se k‰ytt‰‰ XML funktioita, jotka k‰‰nnet‰‰n k‰ytt‰m‰‰si PHP:en.
+.</P>
+
+<p align=right><a href="help.php?file=formatblackboard.html&module=quiz">Lis‰tietoja Blackboard muodosta</a></p>
+</UL>
+
+
+<P><B>WebCT</B></P>
 <UL>
-<P>If you have your own format that you need to import, you can implement it yourself by editing mod/quiz/format/custom.php 
-<P>The amount of new code needed is quite small - just enough to parse a single question from given text. 
-<P>More info: <?php  helpbutton("formatcustom", "", "quiz") ?></P></UL>
+<P>T‰ll‰ moduulilla voi tuoda WebCT:ss‰ tekstiksi tallennettuja kysymyksi‰.</P>
+
+<p align=right><a href="help.php?file=formatwebct.html&module=quiz">Lis‰tietoja WebCT muodosta</a></p>
+</UL>
+
+
+<P><B>Course Test Manager</B></P>
+<UL>
+<P>T‰ll‰ modulilla voi tuoda Course Test Manager -koepankkiin tallennettuja kysymyksi‰.
+Se hyˆdynt‰‰ eri tapoja p‰‰st‰ k‰siksi testipankkiin, joka on Microsoft Access tietokanta. Tavat riippuvat siit‰, onko Moodle asennettu Windows vai Linux palvelimelle.
+</P>
+<p>Windowsissa access-tietokanta voidaan siirt‰‰ aivan kuin mik‰ tahansa muukin tuotava tiedosto.
+</p>
+<p>Linuxissa on asennettava Windows-kone samaan verkkoon Course Test Manager -tietokannan kanssa, ja k‰ytett‰v‰ ODBC Socket Serveri‰, joka k‰ytt‰‰ XML:‰‰ siirt‰‰kseen tietoa Linux-palvelimella sijaitsevaan Moodleen.
+</p>  <p>Please read the full help file below before
+using this import class.</p>
+
+
+<p align=right><a href="help.php?file=formatctm.html&module=quiz">Lis‰tietoja CTM muodosta</a></p>
+</UL>
+
+
+
+<P><B>Upotetut vastaukset(Cloze)</B></P>
+<UL>
+<P>T‰m‰ erityinen tiedostontuontityyppi tuo vain yhden tyyppisi‰ kysymyksi‰: upotettuja vastauksia (Cloze) -k‰ytt‰v‰‰ muotoa.
+
+
+</p>
+
+<p align=right><a href="help.php?file=multianswer.html&module=quiz">Lis‰tietoja Cloze muodosta</a></p>
+</UL>
+
+
+
+<P><B>Oma</B></P>
+<UL>
+<P>Jos haluat tuoda jonkun oman tiedostotyyppisi, voit tehd‰ sen itse muokkaamalla tiedostoa mod/quiz/format/custom.php
+
+
+<P>Tarvittavan uuden koodin m‰‰r‰ on varsin pieni - pit‰‰ vain saada j‰sennetty‰ yksi kysymys annetusta tekstist‰.
+
+
+<p align=right><a href="help.php?file=formatcustom.html&module=quiz">Lis‰tietoja omien tiedostotyyppien tuomisesta</a></p>
+</UL>
+
+
+<P>Lis‰‰ tiedostotyyppej‰ on tulossa, mm. WebCT, IMS QTI ja mit‰ ikin‰ Moodlen k‰ytt‰j‰t toteuttavatkaan! </p>
+

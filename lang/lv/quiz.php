@@ -81,10 +81,10 @@ $string['filloutoneanswer'] = 'Jums jàaizpilda vismaz viena atbilde. Tuk¹as atbi
 $string['filloutthreequestions'] = 'Jums jàaizpilda vismaz trïs jautàjumi. Tuk¹i jautàjumi netiks pieñemti.';
 $string['fillouttwochoices'] = 'Jums jàaizpilda vismaz divas izvºles. Tuk¹as izvºles netiks pieñemtas.';
 $string['fractionsaddwrong'] = 'Pozitïvàs atzïmes atbildºs nesastàda 100%%
-<BR>Tàs sastàda $a%%
-<BR>Vai vºlaties doties atpaka¶ un labot ¹o jautàjumu?';
-$string['fractionsnomax'] = 'Vienàm no atbildºm ir jàbþt 100%%,<BR> lai varºtu iegþt pilnu atzïmi par ¹o jautàjumu.
-<BR>Vai vºlaties doties atpaka¶ un labot jautàjumu?';
+<br />Tàs sastàda $a%%
+<br />Vai vºlaties doties atpaka¶ un labot ¹o jautàjumu?';
+$string['fractionsnomax'] = 'Vienàm no atbildºm ir jàbþt 100%%,<br /> lai varºtu iegþt pilnu atzïmi par ¹o jautàjumu.
+<br />Vai vºlaties doties atpaka¶ un labot jautàjumu?';
 $string['gift'] = 'GIFT formàts';
 $string['gradeaverage'] = 'Vidºjà atzïme';
 $string['gradehighest'] = 'Augstàkà atzïme';
@@ -119,7 +119,7 @@ $string['noresponse'] = 'Nav reakcijas';
 $string['noreview'] = 'Jþs nedrïkstiet skatït testu';
 $string['noreviewuntil'] = 'Jþs nedrïkstiet skatït testu lïdz $a';
 $string['notenoughanswers'] = '©ï veida jautàjumam vajag vismaz $a atbildes';
-$string['notenoughsubquestions'] = 'Pàràk maz apak¹ jautàjumu!<br>
+$string['notenoughsubquestions'] = 'Pàràk maz apak¹ jautàjumu!<br />
 Vai vºlaties doties atpaka¶ un labot ¹o jautàjumu?';
 $string['numerical'] = 'Skaitlisks';
 $string['paragraphquestion'] = 'Paragràfa jautàjums nav atbalstïts pie lïnijas $a. Jautàjums tiks ignorºts';

@@ -1,13 +1,15 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['about'] = 'Tietoja editorista';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'Osoite';
 $string['alignment'] = 'Tasaus';
 $string['alternatetext'] = 'Oletusteksti';
+$string['anchorhelp'] = 'Tämä luo vain ankkurin. Sinun pitää luoda akkuriin viittaava linkki itse.';
+$string['anchorname'] = 'Ankkurin nimi';
+$string['anchors'] = 'Ankkurit';
 $string['baseline'] = 'Baseline';
 $string['bold'] = 'Lihavoitu';
 $string['borderthickness'] = 'Reunan paksuus';
@@ -21,6 +23,7 @@ $string['chooseicon'] = 'Valitse liitettävä hymiö';
 $string['close'] = 'Sulje';
 $string['cols'] = 'Solut';
 $string['copy'] = 'Kopioi';
+$string['createanchor'] = 'Luo ankkuri';
 $string['createfolder'] = 'Luo kansio';
 $string['createlink'] = 'Lisää linkki';
 $string['cut'] = 'Leikkaa';
@@ -92,6 +95,9 @@ $string['superscript'] = 'Ylädeksi';
 $string['textindicator'] = 'Nykyinen tyyli';
 $string['textmode'] = 'Olet tekstitilassa.  Käytä [<>] painiketta palataksesi takaisin WYSIWIG -tilaan.';
 $string['texttop'] = 'Texttop';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['top'] = 'Ylös';
 $string['type'] = 'Tyyppi';
 $string['underline'] = 'Alleviivattu';

@@ -112,7 +112,7 @@ $string['noassessmentsdone'] = 'ไม่ได้ทำกิจกรรม';
 $string['nosubmission'] = 'ไม่การส่งงาน';
 $string['nosubmissionsavailableforassessment'] = 'ไม่มีการอนุมัติสำหรับการประเมิน';
 $string['notavailable'] = 'ไม่พบ';
-$string['noteonassessmentelements'] = 'หมายเหตุ การให้คะแนนจะแบ่งเป็นส่วน ๆ โดยแบ่งให้คะแนนแต่ละองค์ประกอบการประเมิน <BR>
+$string['noteonassessmentelements'] = 'หมายเหตุ การให้คะแนนจะแบ่งเป็นส่วน ๆ โดยแบ่งให้คะแนนแต่ละองค์ประกอบการประเมิน <br />
 ครูผู้สอนจำเป็นต้องระบุก่อนว่าจะให้คะแนนด้านใดบ้างแล้วจึงสั่งงานนักเรียน';
 $string['notgraded'] = 'ไม่มีการให้คะแนน';
 $string['notitlegiven'] = 'ไม่มีชื่อเรื่องให้';
@@ -214,7 +214,7 @@ $string['verypoor'] = 'แย่มาก';
 $string['view'] = 'แสดงค่า';
 $string['viewassessmentofteacher'] = 'แสดงค่าการประเมินของ $a';
 $string['viewotherassessments'] = 'แสดงค่าการประเมินอื่น ๆ';
-$string['warningonamendingelements'] = 'คำเตือน: การประเมินได้รับอนุมัติแล้ว <BR> ห้ามเปลี่ยนหมายเลขขององค์ประกอบ, ประเภทสเกลหรือค่าน้ำหนักใด ๆ';
+$string['warningonamendingelements'] = 'คำเตือน: การประเมินได้รับอนุมัติแล้ว <br /> ห้ามเปลี่ยนหมายเลขขององค์ประกอบ, ประเภทสเกลหรือค่าน้ำหนักใด ๆ';
 $string['weight'] = 'ค่าน้ำหนัก';
 $string['weightederrorcount'] = 'จำนวนค่าน้ำหนักความผิดพลาด: $a';
 $string['weightforbias'] = 'ค่าน้ำหนักการความลำเอียง';

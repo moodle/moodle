@@ -22,26 +22,26 @@
     </ul>
   </li>
 </ol>
-<br>
-<p>Vorbemerkung: Dieser Text wird nicht weiter ins Deutsche &uuml;bertragen. Die Entwicklung dieses Programms erfolgt in einer internationalen Gemeinschaft. Die Umgangssprache in Englisch. Wir gehen davon aus, dass alle an der Entwicklung interessierten Personen in der Lage sind, den Oroginaltext zu verstehen. </p><br>
+<br />
+<p>Vorbemerkung: Dieser Text wird nicht weiter ins Deutsche &uuml;bertragen. Die Entwicklung dieses Programms erfolgt in einer internationalen Gemeinschaft. Die Umgangssprache in Englisch. Wir gehen davon aus, dass alle an der Entwicklung interessierten Personen in der Lage sind, den Oroginaltext zu verstehen. </p><br />
 
 <p>&nbsp;</p>
 <h3><a name="architecture"></a>1. Moodle architecture</h3>
 <p>From a system administrator's perspective, Moodle has been designed according
   to the following criteria:</p>
 <ol>
-  <li><strong>Moodle should run on the widest variety of platforms</strong><br>
-    <br>
+  <li><strong>Moodle should run on the widest variety of platforms</strong><br />
+    <br />
     The web application platform that runs on most platforms is PHP combined with
     MySQL, and this is the environment that Moodle has been developed in (on Linux,
     Windows, and Mac OS X). Moodle also uses the ADOdb library for database abstraction,
     which means Moodle can use <a href="http://php.weblogs.com/ADOdb_manual#drivers">more
     than ten different brands of database</a> (unfortunately, though, it can not
     yet <em><strong>set up tables</strong></em> in all these databases - more
-    on this later). <br><br>
+    on this later). <br /><br />
   </li>
-  <li><strong>Moodle should be easy to install, learn and modify</strong><br>
-    <br>
+  <li><strong>Moodle should be easy to install, learn and modify</strong><br />
+    <br />
     Early prototypes of Moodle (1999) were built using <a target=_top href="http://www.zope.org/">Zope</a>
     - an advanced object-oriented web application server. Unfortunately I found
     that although the technology was pretty cool, it had a very steep learning
@@ -53,25 +53,25 @@
     libraries of clearly-named functions and consistent layout of script files.
     PHP is also easy to install (binaries are available for every platform) and
     is widely available to the point that most web hosting services provide it
-    as standard.<br><br>
+    as standard.<br /><br />
   </li>
-  <li><strong>It should be easy to upgrade from one version to the next</strong><br>
-    <br>
+  <li><strong>It should be easy to upgrade from one version to the next</strong><br />
+    <br />
     Moodle knows what version it is (as well as the versions of all plug-in modules)
     and a mechanism has been built-in so that Moodle can properly upgrade itself
     to new versions (for example it can rename database tables or add new fields).
     If using CVS in Unix for example, one can just do a &quot;cvs update -d&quot;
-    and then visit the site home page to complete an upgrade.<br><br>
+    and then visit the site home page to complete an upgrade.<br /><br />
   </li>
-  <li><strong>It should be modular to allow for growth</strong><br>
-    <br>
+  <li><strong>It should be modular to allow for growth</strong><br />
+    <br />
     Moodle has a number of features that are modular, including themes, activities,
     interface languages, database schemas and course formats. This allows anyone
     to add features to the main codebase or to even distribute them separately.
-    More on this below in the next section.<br><br>
+    More on this below in the next section.<br /><br />
   </li>
-  <li><strong>It should be able to be used in conjunction with other systems</strong><br>
-    <br>
+  <li><strong>It should be able to be used in conjunction with other systems</strong><br />
+    <br />
     One thing Moodle does is keep all files for one course within a single, normal
     directory on the server. This would allow a system administrator to provide
     seamless forms of file-level access for each teacher, such as Appletalk, SMB,
@@ -109,7 +109,7 @@
         <li>widget_user_outline() - given an instance, return a summary of a user's
           contribution</li>
         <li>widget_user_complete() - given an instance, print details of a user's
-          contribution<br>
+          contribution<br />
         </li>
         <li>To avoid possible conflict, any module functions should be named starting
           with widget_ and any constants you define should start with WIDGET_
@@ -162,7 +162,7 @@
     around the page).</p>
   <p>More discussion about this in the <a target=_top href="http://moodle.com/mod/forum/view.php?id=46">Themes
     forum on Using Moodle</a>.  If you create a nice theme that you think others
-    might want to use, please post your zip file on the themes forum!<br>
+    might want to use, please post your zip file on the themes forum!<br />
   </p>
 </blockquote>
 
@@ -185,16 +185,16 @@
     <li>quiz.php - strings for quiz module</li>
     <li>resource.php - strings for resource module</li>
     <li>survey.php - strings for survey module</li>
-    <li>.... plus other modules if any.<br>
-      <br>
+    <li>.... plus other modules if any.<br />
+      <br />
       A string is called from these files using the <strong><em>get_string()</em></strong><em>
       </em>or<em> <strong>print_string()</strong> </em>functions. Each string
       supports variable substitution, to support variable ordering in different
-      languages.<em><br>
-      <br>
+      languages.<em><br />
+      <br />
       </em>eg $strdueby = get_string(&quot;assignmentdueby&quot;, &quot;assignment&quot;,
-      userdate($date)); <br>
-      <br>
+      userdate($date)); <br />
+      <br />
       If a string doesn't exist in a particular language, then the equivalent
       in English will automatically be used instead.</li>
   </ul>
@@ -218,7 +218,7 @@
     write access to the Moodle source code</a> so that you can directly maintain
     the files.</p>
 </blockquote>
-<p><br>
+<p><br />
   <strong><a name="database" id="database"></a>Database Schemas</strong></p>
 <blockquote>
   <p>Given a working database with defined tables, the intentionally simple SQL
@@ -273,7 +273,7 @@
   <blockquote>
     <blockquote>
       <p align="center">Thanks for using Moodle!</p>
-      <p align="center">Cheers,<br>
+      <p align="center">Cheers,<br />
         <a target=_top href="http://dougiamas.com/" target="_top">Martin Dougiamas</a></p>
     </blockquote>
   </blockquote>

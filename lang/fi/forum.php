@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004072500)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Tämä mahdollistaa RSS syötteet eri  keskustel
 $string['configlongpost'] = 'Tätä pitemmät keskustelut ovat pitkiä (HTML koodia ei lasketa mukaan).';
 $string['configmanydiscussions'] = 'Samalla sivulla näytettävien keskustelujen suurin määrä';
 $string['configmaxbytes'] = 'Oletusasetus liitetiedoston maksimikoolle koko sivustolla.';
+$string['configreplytouser'] = 'Kun foorumiposti on lähetetty, pitäisikö sen sisältää käyttäjien sähköpostiosoite, jotta vastaanottajat voisivat vastata henkilökohtaisesti ennemmin kuin foorumin kautta? Vaikka asetukseksi valittaisiin kyllä, käyttäjät voivat valita profiilissaan pitävänsä sähköpostiosoitteensa salaisena.';
 $string['configshortpost'] = 'Tätä lyhyemmät keskustelut ovat lyhyitä (HTML koodia ei lasketa mukaan).';
 $string['couldnotadd'] = 'Viestiäsi ei voida lisätä tuntemattoman virheen takia.';
 $string['couldnotdeleteratings'] = 'Valitettavasti viestiä ei voida poistaa, koska se on jo arvioitu';
@@ -42,6 +43,7 @@ $string['editing'] = 'Muokataan';
 $string['emptymessage'] = 'Jotain oli vialla viestissäsi. Ehkä jätit viestisi tyhjäksi tai liitetiedosto oli liian suuri. Muutoksiasi EI tallennettu.';
 $string['everyonecanchoose'] = 'Kaikki voivat tilata tämän keskustelualueen';
 $string['everyoneissubscribed'] = 'Kaikki tilaavat tämän keskustelualueen';
+$string['existingsubscribers'] = 'Nykyiset tilaajat';
 $string['forcesubscribe'] = 'Pakota kaikki tilaajiksi';
 $string['forcesubscribeq'] = 'Pakota kaikki tilaajiksi?';
 $string['forum'] = 'Keskustelualue';
@@ -99,6 +101,7 @@ $string['postrating3'] = 'Suurimmaksi osaksi sosiaalista osaamista';
 $string['posts'] = 'Viestit';
 $string['posttoforum'] = 'Lähetä viesti';
 $string['postupdated'] = 'Viestisi on päivitetty';
+$string['potentialsubscribers'] = 'Mahdolliset tilaajat';
 $string['processingdigest'] = 'Kerätään viestejä käyttäjälle $a';
 $string['processingpost'] = 'Käsitellään viestiä $a';
 $string['prune'] = 'Jaa';
@@ -143,9 +146,14 @@ $string['subscribestart'] = 'Lähetä kopiot viesteistä tälle keskustelualueelle s
 $string['subscribestop'] = 'En halua kopioita viesteistä tälle keskustelualueelle';
 $string['subscription'] = 'Tilaus';
 $string['subscriptions'] = 'Tilaukset';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['unsubscribe'] = 'Peru tämän keskustelualueen tilaus';
 $string['unsubscribed'] = 'Tilaamaton';
 $string['unsubscribeshort'] = 'Peru tilaus';
+$string['yesforever'] = 'Kyllä, aluksi';
+$string['yesinitially'] = 'Kyllä, pysyvästi';
 $string['youratedthis'] = 'Arvioit tämän';
 $string['yournewtopic'] = 'Uusi keskustelun aihe';
 $string['yourreply'] = 'Vastauksesi';

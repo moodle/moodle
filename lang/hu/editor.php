@@ -3,7 +3,7 @@
 
 $string['about'] = "Névjegy";
 $string['absbottom'] = "Alulra";
-$string['absmiddle'] = "Középree";
+$string['middle'] = "Középree";
 $string['alignment'] = "Igazítás";
 $string['alternatetext'] = "Alternatív szöveg";
 $string['baseline'] = "Alapvonal";

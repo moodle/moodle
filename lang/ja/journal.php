@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 unstable development (2004091100)
+<?php // $Id$ 
+      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['alwaysopen'] = '¾ï¤ËÍøÍÑ²ÄÇ½';
@@ -14,7 +14,7 @@ $string['journalmail'] = '$a->teacher ¤¬¤¢¤Ê¤¿¤ÎÆü»ï \'$a->journal\' ¤Ë¥Õ¥£¡¼¥É¥
 ¥Õ¥£¡¼¥É¥Ð¥Ã¥¯¤Ï¤¢¤Ê¤¿¤ÎÆü»ï¤ËÄÉ²Ã¤µ¤ì¤Æ¤¤¤Þ¤¹:
 
 $a->url';
-$string['journalmailhtml'] = '$a->teacher ¤¬¤¢¤Ê¤¿¤ÎÆü»ï\'<i>$a- >journal</i>\' ¤Ë¥Õ¥£¡¼¥É¥Ð¥Ã¥¯¤òÅê¹Æ¤·¤Þ¤·¤¿¡£<br><br>
+$string['journalmailhtml'] = '$a->teacher ¤¬¤¢¤Ê¤¿¤ÎÆü»ï\'<i>$a- >journal</i>\' ¤Ë¥Õ¥£¡¼¥É¥Ð¥Ã¥¯¤òÅê¹Æ¤·¤Þ¤·¤¿¡£<br /><br />
 ¥Õ¥£¡¼¥É¥Ð¥Ã¥¯¤Ï¤¢¤Ê¤¿¤Î<a href=\"$a->url\">Æü»ï</a>¤ËÄÉ²Ã¤µ¤ì¤Æ¤¤¤Þ¤¹¡£';
 $string['journalname'] = 'Æü»ïÌ¾';
 $string['journalquestion'] = 'Æü»ï¼ÁÌä';
@@ -35,6 +35,6 @@ $string['startoredit'] = 'Æü»ï¤òÊÔ½¸¤¹¤ë';
 $string['thischarset'] = 'EUC-JP';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Japanese';
-$string['viewallentries'] = '$a ·ï¤ÎÅÐÏ¿ºÑ¤ßÆü»ï¤ò¸«¤ë';
+$string['viewallentries'] = '$a ·ï¤ÎÆü»ï¥¨¥ó¥È¥ê¤òÉ½¼¨¤¹¤ë';
 
 ?>

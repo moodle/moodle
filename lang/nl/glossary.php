@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004081200)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -23,7 +23,7 @@ $string['back'] = 'Terug';
 $string['cantinsertcat'] = 'Kan geen categorie toevoegen';
 $string['cantinsertrec'] = 'Kan geen record toevoegen';
 $string['cantinsertrel'] = 'Kan geen relatie tussen categorie en invoer toevoegen';
-$string['casesensitive'] = 'Dit woord is<br>hoofdlettergevoelig';
+$string['casesensitive'] = 'Dit woord is<br />hoofdlettergevoelig';
 $string['categories'] = 'Categorieën';
 $string['category'] = 'Categorie';
 $string['categorydeleted'] = 'Categorie verwijderd';
@@ -85,11 +85,13 @@ $string['entrydeleted'] = 'Item verwijderd';
 $string['entryexported'] = 'Item met succes geëxporteerd';
 $string['entryishidden'] = '(dit item is verborgen)';
 $string['entryleveldefaultsettings'] = 'Standaardinstellingen invoer';
-$string['entryusedynalink'] = 'Dit item wordt<br>automatisch gelinkt';
-$string['explainaddentry'] = 'Voeg een nieuwe invoer toe in deze woordenlijst<br>Zowel concept als definitie moeten ingevuld worden.';
+$string['entrysaved'] = 'Dit item is bewaard';
+$string['entryupdated'] = 'Dit item is geüpdatet';
+$string['entryusedynalink'] = 'Dit item wordt<br />automatisch gelinkt';
+$string['explainaddentry'] = 'Voeg een nieuwe invoer toe in deze woordenlijst<br />Zowel concept als definitie moeten ingevuld worden.';
 $string['explainall'] = 'Toon ALLE items op één pagina';
 $string['explainalphabet'] = 'Blader door de woordenlijst met deze index';
-$string['explainexport'] = 'Er is een bestand gemaakt.<br>Download het en bewaar het veilig. Je kunt het altijd in dit of een ander vak importeren.';
+$string['explainexport'] = 'Er is een bestand gemaakt.<br />Download het en bewaar het veilig. Je kunt het altijd in dit of een ander vak importeren.';
 $string['explainimport'] = 'Specifiëer het te importeren bestand en bepaal de criteria van het proces.<p>Verstuur je verzoek en kijk het resultaat na.';
 $string['explainspecial'] = 'Toon items die niet met een letter beginnen';
 $string['exportedentry'] = 'Geëxporteerd item';
@@ -100,7 +102,7 @@ $string['exporttomainglossary'] = 'Exporteer naar hoofdwoordenlijst';
 $string['filetoimport'] = 'Te importeren bestand';
 $string['fillfields'] = 'Concept en definitie zijn verplichte velden.';
 $string['filtername'] = 'Automatisch links maken van de woordenlijst';
-$string['fullmatch'] = 'Alleen volledige woorden gebruiken<br><small>(wanneer automatisch gelinkt)</small>';
+$string['fullmatch'] = 'Alleen volledige woorden gebruiken<br /><small>(wanneer automatisch gelinkt)</small>';
 $string['globalglossary'] = 'Globale woordenlijst';
 $string['glossaryleveldefaultsettings'] = 'Standaardinstellingen woordenlijst';
 $string['glossarytype'] = 'Type woordenlijst';
@@ -154,6 +156,9 @@ $string['sortchronogically'] = 'Sorteer chronologisch';
 $string['special'] = 'Speciale tekens';
 $string['standardview'] = 'Blader alfabetisch';
 $string['studentcanpost'] = 'Leerlingen kunnen items toevoegen';
+$string['thischarset'] = 'iso-8859-1 ';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 $string['totalentries'] = 'Totaal aantal items';
 $string['usedynalink'] = 'Link de items uit de woordenlijst automatisch';
 $string['waitingapproval'] = 'Nog goedkeuren';

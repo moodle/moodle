@@ -17,6 +17,87 @@
 <body bgcolor="#FFFFFF">
 <h1>Notas sobre versiones</h1>
 
+<h3> Moodle 1.4.2   (1 de Octubre de 2004)</h3>
+
+<ul>
+  <dl>
+    <dt>Unas pocas cosas nuevas</dt>
+    <dd> 
+      <ul>
+        <li>Nuevo m&oacute;dulo de autenticaci&oacute;n PAM que permite la autenticaci&oacute;n en
+          Unix/Linux.</li>
+        <li>Los Creadores de Cursos ahora pueden restaurar a cursos nuevos y
+          a cursos existentes.</li>
+        <li>Los mensajes de los foros ahora incluyen cabeceras detalladas para
+          que puedan ser organizados correctamente por discusiones en los clientes
+          de correo.</li>
+      </ul>
+    </dd>
+
+    <dt>Algunos problemas de seguridad solucionados</dt>
+    <dd> 
+      <ul>
+        <li>Mejorado el control y limpieza de los par&aacute;metros de los guiones en
+          bastantes partes de Moodle (&iexcl;Muchas gracias a Petr Skodak por su reciente
+          auditor&iacute;a de seguridad!).</li>
+        <li>Entrecomillados algunos par&aacute;metros SQL en el glosario para prevenir
+          posibles &quot;inyecciones&quot; de c&oacute;digo.</li>
+      </ul>
+    </dd>
+
+    <dt>Y un conjunto de mejoras incluidas</dt>
+    <dd> 
+      <ul>
+        <li>La copia de seguridad ahora controla mejor las situaciones erroneas
+          (posibles interrupciones del proceso) y puede eliminar todos los ficheros
+          incompletos.</li>
+        <li>Solucionada la autenticaci&oacute;n contra bases de datos PostgreSQL.</li>
+        <li>Mejoras en distintas partes de la instalaci&oacute;n en PostgreSQL.</li>
+        <li>Los t&iacute;tulos de los Foros ahora solo son partidos en la visualizaci&oacute;n
+          de actividad reciente.</li>
+        <li>La matriculaci&oacute;n desde Bases de Datos ahora funciona correctamente
+          :-)</li>
+        <li>Solucionados problemas en la creaci&oacute;n de RSS en instalaciones con
+          PostgreSQL.</li>
+        <li>A&ntilde;adido rstp dentro de la lista de protocolos permitidos en el texto
+          HTML.</li>
+        <li>La p&aacute;gina de Perfil del Usuario y de Edici&oacute;n del Usuario ahora pueden
+          ser llamadas sin par&aacute;metros.</li>
+        <li>Actualizada la librer&iacute;a xmlize a la &uacute;ltima versi&oacute;n.</li>
+        <li>Actualizada la librer&iacute;a phpmailer a la &uacute;ltima versi&oacute;n.</li>
+        <li>Limpieza (cosm&eacute;tica) en distintas partes del c&oacute;digo.</li>
+        <li>El men&uacute; de administraci&oacute;n ahora permite la copia de seguridad y la
+          restauraci&oacute;n de cursos desde la portada del sitio.</li>
+        <li>Solucionado un problema de visualizaci&oacute;n en el &iacute;ndice de los Foros
+          que solo ten&iacute;a lugar en PHP5.</li>
+        <li>La funci&oacute;n de resaltado de texto (por ejemplo, tras una b&uacute;squeda)
+          estaba descartando contrabarras (backslashes).</li>
+        <li>La informaci&oacute;n desde servidores LDAP ahora es traducida desde utf8.</li>
+        <li>El listado de cursos ahora funciona mucho mejor con cantidades enormes
+          de cursos.</li>
+        <li>Dos problemas del m&oacute;dulo SCORM solucionados (un error tipogr&aacute;fico
+          y un problema con &quot;onbeforeunload&quot;).</li>
+        <li>Varias mejoras al imprimir texto, cabeceras y variables en el m&oacute;dulo
+          Lecci&oacute;n.</li>
+        <li>El calendario funciona ahora como era esperado incluso cuando al
+          conectarte como otro usuario.</li>
+        <li>Eliminadas algunas etiquetas cortas de PHP.</li>
+        <li>Mejorada la selecci&oacute;n de preguntas aleatorias (soluci&oacute;n a un bug
+          introducido en la versi&oacute;n 1.4).</li>
+        <li>Cuando un profesor es eliminado de un curso, ahora tambi&eacute;n es eliminado
+          de todos los grupos de ese curso.</li>
+        <li>Arreglado un bug de &quot;strip_pages&quot;  en el m&oacute;dulo Wiki.</li>
+        <li>Mejoras en la selecci&oacute;n del juego de caracteres en las copias de
+          seguridad y en el filtro multilenguaje bajo PHP5.</li>
+      </ul>
+    </dd>
+
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+
+
 <h3> Moodle 1.4.1   (12 de Septiembre de 2004)</h3>
 
 <ul><dl>

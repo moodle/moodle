@@ -47,11 +47,11 @@ $string['feedback'] = "Feedback";
 $string['filloutoneanswer'] = "Trebuie sã completezi mãcar un rãspus posibil. Câmpurile necompletate nu vor fi arãtate.";
 $string['fillouttwochoices'] = "Trebuie sã completezi mãcar douã variante. Câmpurile necompletate nu vor fi arãtate.";
 $string['fractionsaddwrong'] = "Notele repartizate nu întrunesc  un 100%%
-<BR>În schimb, ele reprezintã \$a%%
-<BR>Vrei sã te întorci pentru a rezolva aceastã problemã?";
+<br />În schimb, ele reprezintã \$a%%
+<br />Vrei sã te întorci pentru a rezolva aceastã problemã?";
 $string['fractionsnomax'] = "Unul dintre raspunsuri trebuie sa fie 100%%, aºa încât sã fie
-<BR>posibilã obþinerea notei maxime pentru aceastã întrebare.
-<BR>Vrei sã te întorci pentru a rezolva aceastã problemã?";
+<br />posibilã obþinerea notei maxime pentru aceastã întrebare.
+<br />Vrei sã te întorci pentru a rezolva aceastã problemã?";
 $string['gradeaverage'] = "Nota medie";
 $string['gradehighest'] = "Nota maximã";
 $string['grademethod'] = "Metoda de notare";

@@ -231,9 +231,9 @@ $string['enable'] = 'Etkinleþtir';
 $string['encryptedcode'] = 'Þifrelenmiþ kod';
 $string['enrolmentkey'] = 'Kayýt anahtarý';
 $string['enrolmentkeyfrom'] = 'Bu ders kayýt olurken bir defalýðýna kullanacaðýnýz 
-özel bir \'Kayýt Anahtarý\' gerektirmektedir.<BR>
+özel bir \'Kayýt Anahtarý\' gerektirmektedir.<br />
 Eðer bu anahtarý bilmiyorsanýz $a den isteyiniz.';
-$string['enrolmentkeyhint'] = 'Bu anahtar yanlýþtýr, tekrar deneyiniz<BR>
+$string['enrolmentkeyhint'] = 'Bu anahtar yanlýþtýr, tekrar deneyiniz<br />
 (Ýpucu -  \'$a\' ile baþlýyor)';
 $string['entercourse'] = 'Bu derse girmek için týklayýnýz';
 $string['enteremailaddress'] = 'Þifrenizi sýfýrlamak ve yeni þifrenizi

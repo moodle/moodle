@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 development (2004072500)
+      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['allowupdate'] = 'Salli monivalinnan päivitys';
@@ -9,6 +9,7 @@ $string['choiceclose'] = 'Saakka';
 $string['choicename'] = 'Valinnan nimi';
 $string['choiceopen'] = 'Avoinna';
 $string['choicetext'] = 'Valinnan teksti';
+$string['havetologin'] = 'Sinun pitää kirjautua ennen kun voit ottaa osaa monivalintaan ';
 $string['modulename'] = 'Monivalinta';
 $string['modulenameplural'] = 'Monivalinnat';
 $string['mustchooseone'] = 'Sinun pitää valita vastaus ennen tallennusta. Tallennusta ei tehty.';
@@ -26,6 +27,9 @@ $string['responses'] = 'Vastaukset';
 $string['responsesto'] = 'Vastaukset $a';
 $string['savemychoice'] = 'Tallenna valintani';
 $string['showunanswered'] = 'Näytä sarake vastaamattomille';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['timerestrict'] = 'Rajoita vastaaminen ajanjaksolle';
 $string['viewallresponses'] = 'Katsele $a vastausta';
 

@@ -9,7 +9,7 @@
 
 <body bgcolor="#FFFFFF">
 <h1>Moodle Installeren</h1>
-<h2>Niet paniekeren <img src="http://moodle.org/pix/s/smiley.gif"></h2>
+<h2>Niet paniekeren <img alt="glimlach" src="http://moodle.org/pix/s/smiley.gif"></h2>
 <blockquote>
   <p>In deze gids vind je hoe je Moodle de eerste keer moet installeren. Soms wordt er in detail getreden
 om de grote variëteit aan kleine verschillen tussen verschillende installaties van webservers. Zo lijkt dit
@@ -48,7 +48,7 @@ LAMP-platform), maar is ook grondig getest met PostgreSQL en op Windows XP, Mac 
       voor het gebruik met Moodle.</li>
   </ol>
   <p>De meeste webhosts ondersteunen dit allemaal standaard. Als je ingetekend hebt bij een van de weinige 
-     webhosts die deze mogelijkheden niet ondersteunen, vraag hen dan waarom en overweeg om te verhuizen.
+     webhosts die deze mogelijkheden niet ondersteunen, vraag hen dan waarom en overweeg om te verhuizen.</p>
   <p>Als je Moodle op je eigen computer wil laten lopen en dit lijkt je allemaal wat moeilijk, raadpleeg dan onze
      gids: <a href="http://moodle.org/doc/?file=installamp.html">Installing 
     Apache, MySQL and PHP</a>. Die geeft stap voor stap informatie om dit te installeren op de meest gebruikte platforms.</p>
@@ -67,7 +67,7 @@ LAMP-platform), maar is ook grondig getest met PostgreSQL en op Windows XP, Mac 
 <p>&nbsp;</p>
 <h3 class="sectionheading"><a name="site"></a>3. Sitestructuur</h3>
 <blockquote>
-<p>Deze rubriek kun je veilig overslaan, maar hier is een korte samenvatting van de inhoud van de Moodlemap, om je te helpen bij het oriënteren.</P>
+<p>Deze rubriek kun je veilig overslaan, maar hier is een korte samenvatting van de inhoud van de Moodlemap, om je te helpen bij het oriënteren.</p>
 <p><table><tr>
        <td width="130" valign="top">config.php</td>
        <td valign="top">-</td>
@@ -110,14 +110,14 @@ LAMP-platform), maar is ook grondig getest met PostgreSQL en op Windows XP, Mac 
   <p>Om het installatiescript (install.php) te starten volstaat het om de hoofd-URL van je Moodlesite te bezoeken met een browser of om <strong>http://jouwserver/install.php</strong> rechtstreeks te openen. </p>
   <p>(Het installatiescript zal een cookie voor de sessie proberen te plaatsen. Als je hiervoor een waarschuwing krijgt in je browser, accepteer dan die cookie!) </p>
   <p>Moodle zal ontdekken dat verdere configuratie nodig is en zal je door enkele schermen leiden om een nieuw configuratiebestand te maken:  <strong>config.php. </strong>Aan het einde van dat proces zal Moodle proberen dit bestand op de juiste plaats te bewaren. Indien dat niet lukt krijg je de mogelijkheid het bestand te downloaden. Je kunt het dan zelf uploaden naar de Moodlemap op de server. </p>
-  <p>Tijdens deze procedure zal het installatiescript je serveromgeving testen en je suggesties geven over hoe je eventuele problemen kunt oplossen. Voor de meest voorkomende problemen zouden deze suggesties voldoende moeten zijn, maar als je toch vast zou geraken, dan kun je waarschijnlijk verder in dit document lezen wat er juist problemen geeft. <br>
+  <p>Tijdens deze procedure zal het installatiescript je serveromgeving testen en je suggesties geven over hoe je eventuele problemen kunt oplossen. Voor de meest voorkomende problemen zouden deze suggesties voldoende moeten zijn, maar als je toch vast zou geraken, dan kun je waarschijnlijk verder in dit document lezen wat er juist problemen geeft. <br />
   </p>
 
 <h3 class="sectionheading"><a name="webserver" id="webserver"></a>4.1 Algemene instellingen van de webserver</h3>
 <blockquote>
   <p>Zorg er eerst voor dat je webserver ingesteld is om index.php als startpagina te gebruiken (eventueel aangevuld met index.html, default.htm enz).</p>
   <p>In Apache gebeurt dit door een parameter DirectoryIndex te gebruiken in je httpd.conf-bestand. Het mijne ziet 
-     er gewoonlijk zo uit:</P>
+     er gewoonlijk zo uit:</p>
   <blockquote>
     <pre><strong>DirectoryIndex</strong> index.php index.html index.htm </pre>
   </blockquote>
@@ -147,7 +147,7 @@ session.bug_compat_warn = 0
   </blockquote>
   <p>Als je geen toegang hebt tot httpd.conf of tot php.ini op jouw server, of je hebt Moodle geïnstalleerd
      op een server met andere toepassingen die andere instellingen vereisen, maak je dan geen zorgen, je kunt al
-     die standaardinstellingen nog overschrijven. 
+     die standaardinstellingen nog overschrijven. </p>
   <p>Om dit te doen maak je een bestandje met als naam <b>.htaccess</b> in de hoofdmap van Moodle. Daarin zet je al deze instellingen. Dit werkt enkel op Apache servers en alleen als Overrides toegestaan zijn.   
   <blockquote>
     <pre>
@@ -163,6 +163,7 @@ php_flag file_uploads 1
 php_flag session.auto_start 0
 php_flag session.bug_compat_warn 0</pre>
   </blockquote>
+</p>
   <p>Je kunt ook instellingen maken zoals de maximumgrootte voor de geüploade bestanden.
   <blockquote>
     <pre>
@@ -171,6 +172,7 @@ php_value upload_max_filesize 2M
 php_value post_max_size 2M
      </pre>
   </blockquote>
+</p>
   <p>De eenvoudigste manier is het voorbeeldbestand kopiëren uit lib/htaccess en dat bewerken om het aan jouw noden
      aan te passen. Het bevat ook nog meer aanwijzingen. In een Unix shell, bijvoorbeeld:
   <blockquote>
@@ -232,7 +234,7 @@ php_value post_max_size 2M
   <blockquote>
      
     <pre>deny from all</pre>
-  </blockquote>
+  </blockquote></p>
   <p>Om er zeker van te zijn dat Moodle bestanden kan uploaden naar deze map, kijk je best na of de webserver 
      (bijvoorbeeld Apache) het recht heeft om te schrijven in deze map. Voor Unixmachines betekent dit de instellingen voor de eigenaar van de map op &quot;nobody&quaot; of &quot;apache&quot; zetten.</p>
   <p>Op veel gedeelde hostservers zul je waarschijnlijk alle bestandstoegang moeten beperken tot jouw groep
@@ -368,7 +370,7 @@ php_value post_max_size 2M
   <p>Kies &quot;Voeg een nieuw vak toe&quot; vanuit de beheerpagina (of vanuit de beheerlinks op de startpagina).</p>
   <p>Vul het formulier in, met speciale aandacht voor de vakformat. Je moet je geen zorgen maken over de details,
     omdat alles later door de leraar zelf kan veranderd worden.</p>
-  <p>Druk op &quot;Bewaar de wijzigingen&quot;, en je wordt naar een nieuw formulier gebracht waar je leraars aan het
+  <p>Druk op &quot;Bewaar de wijzigingen&quot;, en je wordt naar een nieuw formulier gebracht waar je leraren aan het
     vak kunt toewijzen. Je kunt alleen een bestaande gebruikersaccount aanwijzen vanuit dit formulier - als je een 
     nieuwe lerarenaccount wil maken, dan kun je ofwel de leraar vragen om zelf zijn eigen account te maken (zie logpagina)
     of maak er zelf een voor hen door gebruik te maken van de &quot;Voeg een nieuwe gebruiker toe&quot; 
@@ -378,6 +380,6 @@ php_value post_max_size 2M
   <p>Zie ook de &quot;<a href="./?file=teacher.html">Help...</a>&quot; voor meer details over het opbouwen van een vak.</p>
 </blockquote>
 <p>&nbsp;</p>
-<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id$</font></p>
+<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
 </body>

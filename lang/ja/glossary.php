@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 unstable development (2004091100)
+<?php // $Id$ 
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -13,15 +13,15 @@ $string['allowduplicatedentries'] = '重複エントリを許可する';
 $string['allowratings'] = 'エントリの評価を許可しますか?';
 $string['answer'] = '答え';
 $string['approve'] = '承認';
-$string['areyousuredelete'] = '本当にこのエントリを削除しても宜しいですか?';
-$string['areyousuredeletecomment'] = '本当にこのコメントを削除しても宜しいですか?';
-$string['areyousureexport'] = '本当にこのエントリを次へエクスポートしても宜しいですか';
+$string['areyousuredelete'] = '本当にこのエントリを削除してもよろしいですか?';
+$string['areyousuredeletecomment'] = '本当にこのコメントを削除してもよろしいですか?';
+$string['areyousureexport'] = '本当にこのエントリを次へエクスポートしてもよろしいですか';
 $string['ascending'] = '(降順)';
 $string['attachment'] = '添付';
 $string['authorview'] = '著者順に表示';
 $string['back'] = '戻る';
-$string['cantinsertcat'] = 'カテゴリを追加出来ません。';
-$string['cantinsertrec'] = 'レコードを追加出来ません。';
+$string['cantinsertcat'] = 'カテゴリを追加できません。';
+$string['cantinsertrec'] = 'レコードを追加できません。';
 $string['cantinsertrel'] = '関連カテゴリエントリを追加できません。';
 $string['casesensitive'] = '大文字小文字の区別を行う';
 $string['categories'] = 'カテゴリ';
@@ -61,12 +61,12 @@ $string['deletingnoneemptycategory'] = '空でないカテゴリが削除された場合、関係す
 $string['descending'] = '(昇順)';
 $string['destination'] = 'インポート先';
 $string['displayformat'] = '表示フォーマット';
-$string['displayformatcontinuous'] = '連続、作者無し';
+$string['displayformatcontinuous'] = '連続、著者無し';
 $string['displayformatdictionary'] = 'シンプル、辞書スタイル';
 $string['displayformatencyclopedia'] = '百科事典';
 $string['displayformatentrylist'] = 'エントリリスト';
 $string['displayformatfaq'] = 'FAQ';
-$string['displayformatfullwithauthor'] = 'フル、著者あり';
+$string['displayformatfullwithauthor'] = 'フル、著者有り';
 $string['displayformatfullwithoutauthor'] = 'フル、著者無し';
 $string['displayformats'] = '表示フォーマット';
 $string['displayformatssetup'] = '表示フォーマット設定';
@@ -85,11 +85,13 @@ $string['entrydeleted'] = 'エントリが削除されました。';
 $string['entryexported'] = 'エントリが正常にエクスポートされました。';
 $string['entryishidden'] = '(このエントリは現在非表示です)';
 $string['entryleveldefaultsettings'] = 'エントリレベルデフォルト設定';
+$string['entrysaved'] = 'エントリーが保存されました。';
+$string['entryupdated'] = 'エントリーが更新されました。';
 $string['entryusedynalink'] = 'エントリを自動的にリンクさせる';
-$string['explainaddentry'] = '用語集に新しいエントリを追加します。<br>用語と定義は必須入力項目です。';
+$string['explainaddentry'] = '用語集に新しいエントリを追加します。<br />用語と定義は必須入力項目です。';
 $string['explainall'] = '全てのエントリを1ページに表示';
 $string['explainalphabet'] = 'インデックスを利用して用語集を表示';
-$string['explainexport'] = 'ファイルが生成されました。<br>ファイルをダウンロードして安全に保管してください。いつでも必要な時に、このコースまたは他のコースにインポートすることが出来ます。';
+$string['explainexport'] = 'ファイルが生成されました。<br />ファイルをダウンロードして安全に保管してください。いつでも必要な時に、このコースまたは他のコースにインポートすることができます。';
 $string['explainimport'] = 'インポートするファイル及び処理方法を指定してください。<p>実行後、結果を検証してください。';
 $string['explainspecial'] = '１文字で始まらないエントリを表示します。';
 $string['exportedentry'] = 'エクスポートされたエントリ';
@@ -131,9 +133,9 @@ $string['printerfriendly'] = '印刷形式';
 $string['question'] = '質問';
 $string['rate'] = '評価';
 $string['rating'] = '評価';
-$string['ratingeveryone'] = '誰でもエントリを評価出来る';
+$string['ratingeveryone'] = '誰でもエントリを評価できる';
 $string['ratingno'] = '評価無し';
-$string['ratingonlyteachers'] = '$a のみがエントリを評価出来る';
+$string['ratingonlyteachers'] = '$a のみがエントリを評価できる';
 $string['ratings'] = '評価';
 $string['ratingssaved'] = '評価が保存されました';
 $string['ratingsuse'] = '評価を使用する';
@@ -164,6 +166,6 @@ $string['warningstudentcapost'] = '(用語集がメインで無い場合に適用)';
 $string['withauthor'] = '用語(著者有り)';
 $string['withoutauthor'] = '用語(著者無し)';
 $string['writtenby'] = '作成';
-$string['youarenottheauthor'] = 'あなたはこのコメントの作者ではありません。編集は出来ません。';
+$string['youarenottheauthor'] = 'あなたはこのコメントの作者ではありません。編集はできません。';
 
 ?>

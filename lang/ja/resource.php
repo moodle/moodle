@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 unstable development (2004091100)
+<?php // $Id$ 
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -19,12 +19,12 @@ $string['configpopupscrollbars'] = 'ポップアップウインドウをデフォルトでスクロー
 $string['configpopupstatus'] = 'ポップアップウインドウにデフォルトでステータスバーを表示しますか?';
 $string['configpopuptoolbar'] = 'ポップアップウインドウにデフォルトでツールバーを表示しますか?';
 $string['configpopupwidth'] = '新しいポップアップウインドウのデフォルトの幅は?';
-$string['configsecretphrase'] = 'このシークレットワードは、リソースをパラメータとして送信する時に使用する暗号コードを生成する為に使用されます。暗号コードは、ユーザのIPアドレスとシークレットワードを結びつけてmd5により生成されます。これにより、リソースが高度にセキュリティ対策をとられた通信を実現することが出来ます。';
-$string['configwebsearch'] = 'URLをウェブページまたはリンクとして追加する時、このロケーションは、ユーザがURLを検索する為のヘルプとして提供されます。';
+$string['configsecretphrase'] = 'このシークレットワードは、リソースをパラメータとして送信する時に使用する暗号コードを生成するために使用されます。暗号コードは、ユーザのIPアドレスとシークレットワードを結びつけてmd5により生成されます。これにより、リソースが高度にセキュリティ対策をとられた通信を実現することができます。';
+$string['configwebsearch'] = 'URLをウェブページまたはリンクとして追加する時、このロケーションは、ユーザがURLを検索するためのヘルプとして提供されます。';
 $string['configwindowsettings'] = 'ここでは、新しいリソースを登録する際にフォームに表示されるウインドウ設定に関する値を登録します。最初にリソースを登録した後、この値は個々のユーザのデフォルトとなります。';
 $string['directlink'] = 'このファイルをダイレクトリンクする';
 $string['directoryinfo'] = '選択したディレクトリの全ファイルが表示されます。';
-$string['display'] = '表示';
+$string['display'] = 'ウインドウ';
 $string['editingaresource'] = 'リソースを編集する';
 $string['encryptedcode'] = '暗号化コード';
 $string['example'] = '例';
@@ -34,7 +34,7 @@ $string['fetcherror'] = 'ウェブページを検索している時、エラーが発生しました。';
 $string['fetchservererror'] = 'ウェブページを検索している時、リモートサーバにエラーが発生しました。プログラムエラーだと思われます。';
 $string['filename'] = 'ファイル名';
 $string['filtername'] = 'リソースオートリンク';
-$string['frameifpossible'] = 'ナビゲーションを表示する為、リソースをフレーム内に表示';
+$string['frameifpossible'] = 'ナビゲーションを表示するため、リソースをフレーム内に表示';
 $string['fulltext'] = 'フルテキスト';
 $string['htmlfragment'] = 'HTMLフラグメント';
 $string['maindirectory'] = 'メインファイルディレクトリ';
@@ -54,7 +54,7 @@ $string['newwidth'] = 'デフォルトウンドウ幅(ピクセル)';
 $string['newwindow'] = '新しいウインドウ';
 $string['newwindowopen'] = 'ポップアップウインドウにリソースを表示';
 $string['note'] = '注意';
-$string['notefile'] = '更にファイルをアップロード(このリストに表示されます)する場合、<A HREF=$a >File Manager</A> を利用してください。';
+$string['notefile'] = '更にファイルをアップロード(このリストに表示されます)する場合、<a href=$a >File Manager</a> を利用してください。';
 $string['notypechosen'] = 'タイプを選択してください。「戻る」ボタンを押して再度入力してください。';
 $string['pagedisplay'] = 'リソースを現在のウインドウに表示';
 $string['pagewindow'] = '同一ウインドウ';
@@ -73,7 +73,7 @@ $string['resourcetype7'] = 'プログラム';
 $string['resourcetype8'] = 'Wiki-likeテキスト';
 $string['resourcetype9'] = 'ディレクトリ';
 $string['resourcetypedirectory'] = 'ディレクトリの表示';
-$string['resourcetypefile'] = 'ファイル又はウェブにリンク';
+$string['resourcetypefile'] = 'ファイル・ウェブサイトにリンク';
 $string['resourcetypehtml'] = 'ウェブページの作成';
 $string['resourcetypelabel'] = 'ラベルの挿入';
 $string['resourcetypetext'] = 'テキストページの作成';

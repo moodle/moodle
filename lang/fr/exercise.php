@@ -134,7 +134,7 @@ $string['regradestudentassessments'] = 'Ré-évaluer les évaluations des étudiants
 $string['resubmissionfor'] = 'Nouvelle remise pour $a';
 $string['resubmitnote'] = '* signifie que l\'étudiant peut remettre un autre document.<br />
 	On peut activer ce comportement à chaque document remis en le ré-évaluant et en<br />
-	cliquant sur le bouton <b>Remises multiples autorisées</b>. Les étudiants peuvent<br />
+	cliquant sur le bouton <strong>Remises multiples autorisées</strong>. Les étudiants peuvent<br />
 	remettre un autre document lorsque cela est fait pour tous les travaux remis.';
 $string['rubric'] = 'Rubrique';
 $string['savemyassessment'] = 'Enregistrer mon évaluation';

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 unstable development (2004091100)
+<?php // $Id$ 
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['allowresubmit'] = 'ºÆÄó½Ð¤òµö²Ä¤¹¤ë';
@@ -10,7 +10,7 @@ $string['assignmentmail'] = '$a->teacher ¤¬¤¢¤Ê¤¿¤Î \'$a->assignment\' ¤ËÂÐ¤¹¤ëÄ
 
 $a->url';
 $string['assignmentmailhtml'] = '$a->teacher ¤¬¤¢¤Ê¤¿¤Î \'<i>$a->assignment</i>\' ¤ËÂÐ¤¹¤ëÄó½Ð²ÝÂê¤Ë¥Õ¥£¡¼¥É¥Ð¥Ã¥¯¤òÅê¹Æ¤·¤Þ¤·¤¿¡£
-<br><br>
+<br /><br />
 ¥Õ¥£¡¼¥É¥Ð¥Ã¥¯¤Ï¤¢¤Ê¤¿¤Î<a href=\"$a->url\">Äó½Ð²ÝÂê</a>¤ËÄÉ²Ã¤µ¤ì¤Æ¤¤¤Þ¤¹¡£';
 $string['assignmentname'] = '²ÝÂêÌ¾';
 $string['assignmenttype'] = '²ÝÂê¥¿¥¤¥×';
@@ -42,14 +42,14 @@ $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Japanese';
 $string['typeoffline'] = '¥ª¥Õ¥é¥¤¥ó²ÝÂê';
 $string['typeuploadsingle'] = '¥Õ¥¡¥¤¥ë¤Î¥¢¥Ã¥×¥í¡¼¥É';
-$string['uploadbadname'] = 'ÉÔÀµ¤ÊÊ¸»ú¤¬¥Õ¥¡¥¤¥ëÌ¾¤Ë´Þ¤Þ¤ì¤Æ¤¤¤ë¤¿¤á¡¢¤³¤Î¥Õ¥¡¥¤¥ë¤Ï¥¢¥Ã¥×¥í¡¼¥É½ÐÍè¤Þ¤»¤ó';
+$string['uploadbadname'] = 'ÉÔÀµ¤ÊÊ¸»ú¤¬¥Õ¥¡¥¤¥ëÌ¾¤Ë´Þ¤Þ¤ì¤Æ¤¤¤ë¤¿¤á¡¢¤³¤Î¥Õ¥¡¥¤¥ë¤Ï¥¢¥Ã¥×¥í¡¼¥É¤Ç¤­¤Þ¤»¤ó';
 $string['uploadedfiles'] = '¥Õ¥¡¥¤¥ë¤ò¥¢¥Ã¥×¥í¡¼¥É¤·¤Þ¤·¤¿';
 $string['uploaderror'] = '¥µ¡¼¥Ð¤Ë¥Õ¥¡¥¤¥ë¤òÊÝÂ¸Ãæ¤Ë¥¨¥é¡¼¤¬È¯À¸¤·¤Þ¤·¤¿';
-$string['uploadfailnoupdate'] = '¥Õ¥¡¥¤¥ë¤Ï¥¢¥Ã¥×¥í¡¼¥É¤µ¤ì¤Þ¤·¤¿¤¬Äó½ÐÊª¤Î¹¹¿·¤Ï½ÐÍè¤Þ¤»¤ó¤Ç¤·¤¿!';
+$string['uploadfailnoupdate'] = '¥Õ¥¡¥¤¥ë¤Ï¥¢¥Ã¥×¥í¡¼¥É¤µ¤ì¤Þ¤·¤¿¤¬Äó½ÐÊª¤Î¹¹¿·¤Ï¤Ç¤­¤Þ¤»¤ó¤Ç¤·¤¿!';
 $string['uploadfiletoobig'] = '¿½¤·Ìõ¤´¤¶¤¤¤Þ¤»¤ó¡¢¥Õ¥¡¥¤¥ë¥µ¥¤¥º¤¬À©¸Â¤ò±Û¤¨¤Æ¤¤¤Þ¤¹($a ¥Ð¥¤¥È°ÊÆâ)';
 $string['uploadnofilefound'] = '¥Õ¥¡¥¤¥ë¤¬¸«¤Ä¤«¤ê¤Þ¤»¤ó¤Ç¤·¤¿ - ¼ÂºÝ¤ËÂ¸ºß¤¹¤ë¥Õ¥¡¥¤¥ë¤Ç¤¹¤«?';
-$string['uploadnotregistered'] = '\'$a\' ¤ÏÀµ¾ï¤Ë¥¢¥Ã¥×¥í¡¼¥É¤µ¤ì¤Þ¤·¤¿¤¬ÅÐÏ¿¤µ¤ì¤Þ¤»¤ó¤Ç¤·¤¿!';
-$string['uploadsuccess'] = '\'$a\' ¤Î¥¢¥Ã¥×¥í¡¼¥É¤¬´°Î»¤·¤Þ¤·¤¿';
+$string['uploadnotregistered'] = '¡Ö $a ¡×¤ÏÀµ¾ï¤Ë¥¢¥Ã¥×¥í¡¼¥É¤µ¤ì¤Þ¤·¤¿¤¬ÅÐÏ¿¤µ¤ì¤Þ¤»¤ó¤Ç¤·¤¿!';
+$string['uploadsuccess'] = '¡Ö $a ¡×¤Î¥¢¥Ã¥×¥í¡¼¥É¤¬´°Î»¤·¤Þ¤·¤¿';
 $string['viewfeedback'] = '²ÝÂê¤ÎÉ¾²Á¤È¥Õ¥£¡¼¥É¥Ð¥Ã¥¯¤ò³ÎÇ§¤¹¤ë';
 $string['viewsubmissions'] = '$a ·ï¤ÎÄó½Ð²ÝÂê¤ò³ÎÇ§¤¹¤ë';
 $string['yoursubmission'] = '¤¢¤Ê¤¿¤ÎÄó½ÐÊª';

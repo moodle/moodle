@@ -100,7 +100,7 @@ $string['backuplogshelp'] = 'Para seleccionar se desexa incluír os rexistros de 
 $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
 $string['backupnoneusersinfo'] = 'Nota: Vostede seleccionou facer unha copia de seguridade de \"ningún\" usuario, polo que todas as copias dos módulos foron cambiadas ao modo \"sen datos de usuario\". Por favor, advirta que os módulos \"Exercicio\" e \"Xornal\" non son compatibles con este tipo de copia de seguridade, de modo que foron completamente desactivados.';
 $string['backuporiginalname'] = 'Nome da copia de seguridade';
-$string['backupsavetohelp'] = 'Ruta completa do directorio no que desexa que se garden as copias de seguridade<br>(deixalo en branco para gardalas no directorio por defecto de cada curso)';
+$string['backupsavetohelp'] = 'Ruta completa do directorio no que desexa que se garden as copias de seguridade<br />(deixalo en branco para gardalas no directorio por defecto de cada curso)';
 $string['backupuserfileshelp'] = 'Seleccione se os arquivos de usuario (ex. a foto do usuario) deben ser incluídos nas copias de seguridade automáticas';
 $string['backupusershelp'] = 'Seleccione se desexa incluír todos os usuarios do servidor ou só os vinculados ao curso na copia de seguridade';
 $string['backupversion'] = 'Versión da copia de seguridade';
@@ -345,10 +345,10 @@ $string['enrolledincourse'] = 'Inscritos no curso ';
 $string['enrolledincoursenot'] = 'Non inscritos no curso ';
 $string['enrolmentconfirmation'] = 'Está a punto de inscribirse como alumno/a neste curso. <br />¿Está seguro de que desexa facelo?';
 $string['enrolmentkey'] = 'Clave de acceso';
-$string['enrolmentkeyfrom'] = 'Este curso require o uso dunha \'clave de acceso\'. Se foi admitido/a<BR>
+$string['enrolmentkeyfrom'] = 'Este curso require o uso dunha \'clave de acceso\'. Se foi admitido/a<br />
 
 nel e non lle enviamos a clave, por favor fáganolo saber.';
-$string['enrolmentkeyhint'] = 'Esta \'clave de acceso\' é incorrecta, por favor inténteo de novo<BR>
+$string['enrolmentkeyhint'] = 'Esta \'clave de acceso\' é incorrecta, por favor inténteo de novo<br />
 
 (Unha pista: comeza con \'$a\')';
 $string['entercourse'] = 'Prema aquí para entrar ao curso';
@@ -405,10 +405,10 @@ $string['gd1'] = 'GD 1.x está instalado';
 $string['gd2'] = 'GD 2.x está instalado';
 $string['gdneed'] = 'GD debe estar instalado para ver este gráfico';
 $string['gdnot'] = 'GD non está instalado';
-$string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Tradución: Sonia Álvarez López
+$string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<br /> Tradución: Sonia Álvarez López
 Este programa é software libre. Vd. pode redistribuílo e/ou modificalo baixo os termos de GNU General Public License segundo a publicación de The Free Software Foundation; incluso a versión 2 ou algunha posterior.
 
-<BR>
+<br />
 
 Para máis detalles vexa: http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Cualificación';

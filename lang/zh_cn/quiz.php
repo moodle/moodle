@@ -3,7 +3,7 @@
 
 
 $string['acceptederror'] = '接受错误';
-$string['addingquestions'] = '页面的这一边用来管理题库。题目分门别类，以便管理。题库中的题目可用于你的课程中的任何测验。如果你选择“公布”它们，则甚至可用于其它课程。<br><br>你在选择或创建类别后才能创建或编辑题目。你可以选择任何题目加入到另一边的测验中。';
+$string['addingquestions'] = '页面的这一边用来管理题库。题目分门别类，以便管理。题库中的题目可用于你的课程中的任何测验。如果你选择“公布”它们，则甚至可用于其它课程。<br /><br />你在选择或创建类别后才能创建或编辑题目。你可以选择任何题目加入到另一边的测验中。';
 $string['addquestions'] = '添加题目';
 $string['addquestionstoquiz'] = '向当前测验添加题目';
 $string['addselectedtoquiz'] = '把选中的题目添加到测验中';
@@ -81,14 +81,14 @@ $string['filloutthreequestions'] = '你必须至少填写三个问题。留空不填的问题将作废
 $string['fillouttwochoices'] = '你至少必须填写一个选项。选项留空的将作废。';
 $string['fractionsaddwrong'] = '你选的得分总和不等于 100%%
 
-<BR>而是等于 $a%%
+<br />而是等于 $a%%
 
-<BR>你想回去修改吗?';
+<br />你想回去修改吗?';
 $string['fractionsnomax'] = '答案得分应该有 100%%，
 
-<BR>这样这个题目才有可能得满分。
+<br />这样这个题目才有可能得满分。
 
-<BR>你想回去修改吗？';
+<br />你想回去修改吗？';
 $string['gift'] = 'GIFT format';
 $string['gradeaverage'] = '平均分';
 $string['gradehighest'] = '最高分';
@@ -122,7 +122,7 @@ $string['noquestions'] = '尚未加题目';
 $string['noresponse'] = '无回复';
 $string['noreview'] = '不允许回顾该测验';
 $string['noreviewuntil'] = '在 $a 之前不允许回顾该测验';
-$string['notenoughsubquestions'] = '没有定义足够的小题!<br>你要退回去修改吗？';
+$string['notenoughsubquestions'] = '没有定义足够的小题!<br />你要退回去修改吗？';
 $string['numerical'] = '算术';
 $string['paragraphquestion'] = 'Paragraph Question not supported at line $a. The question will be ignored';
 $string['percentcorrect'] = '分数纠正';

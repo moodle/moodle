@@ -1,9 +1,15 @@
 <?PHP // $Id$ 
-      // block_section_links.php - created with Moodle 1.4 development (2004060400)
+      // block_section_links.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
-$string['blockname'] = '&#1511;&#1497;&#1513;&#1493;&#1512;&#1497; &#1497;&#1495;&#1497;&#1491;&#1493;&#1514;';
-$string['jumptocurrentweek'] = '&#1511;&#1508;&#1493;&#1509; &#1500;&#1513;&#1489;&#1493;&#1506; &#1504;&#1493;&#1499;&#1495;&#1497;';
-$string['weeks'] = '&#1513;&#1489;&#1493;&#1506;&#1493;&#1514;';
+$string['blockname'] = 'קישורי יחידות';
+$string['jumptocurrenttopic'] = 'קפוץ לנושא נוכחי';
+$string['jumptocurrentweek'] = 'קפוץ לשבוע נוכחי';
+$string['parentlanguage'] = 'en';
+$string['thischarset'] = 'ISO-8859-8-I';
+$string['thisdirection'] = 'rtl';
+$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
+$string['topics'] = 'נושאים';
+$string['weeks'] = 'שבועות';
 
 ?>

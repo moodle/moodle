@@ -245,8 +245,8 @@ $string['emailpasswordconfirmsent'] = "'n Email is veronderstel om gestuur te we
 $string['emailpasswordsent'] = "Dankie dat jy die verandering van jou wagwoord bevestig het. <p>'n Email wat jou nuwe wagwoord bevat is gestuur na <b>\$a->email</b>. <p>Die nuwe wagwoord was outomaties gegenereer - jy kan jou wagwoord verander na iets wat makliker is om te onthou. <a href=\$a->link> Verander jou wagwoord hier</a>";
 $string['enrolmentconfirmation'] = "Jy gaan jou self inskryf as 'n lid van die kursus. <br/> Is jy seker jy wil dit doen?";
 $string['enrolmentkey'] = "Registrasie sleutel";
-$string['enrolmentkeyfrom'] = "Die kursus benodig 'n 'registrasie sleutel' - 'n eenmalige<BR> wagwoord wat voorsien moet word deur \$a";
-$string['enrolmentkeyhint'] = "Die registrasie sleutel is nie korrek nie, probeer aseblief weer<BR> (Leidraad: dit begin met '\$a')";
+$string['enrolmentkeyfrom'] = "Die kursus benodig 'n 'registrasie sleutel' - 'n eenmalige<br /> wagwoord wat voorsien moet word deur \$a";
+$string['enrolmentkeyhint'] = "Die registrasie sleutel is nie korrek nie, probeer aseblief weer<br /> (Leidraad: dit begin met '\$a')";
 $string['entercourse'] = "Klik om by die kursus in te gaan";
 $string['enteremailaddress'] = "Sleutel jou email adres in om jou wagwoord te verander,jou nuwe wagwoord sal na jou gestuur word via email.";
 $string['error'] = "Fout";
@@ -553,8 +553,8 @@ $string['searchagain'] = "Soek weer";
 $string['searchcourses'] = "Soek deur kursusse";
 $string['searchhelp'] = "Jy kan vir meer as een woord op 'n slag soek.<p>
 woord: soek vir enige bypassende woord in die teks. 
-<br>+woord: soek slegs vir woorde wat presies die selfde is.
-<br>-woord: moenie resultate insluit waarin die woord is nie.";
+<br />+woord: soek slegs vir woorde wat presies die selfde is.
+<br />-woord: moenie resultate insluit waarin die woord is nie.";
 $string['searchresults'] = "Soektog resultate";
 $string['sec'] = "sekonde";
 $string['secs'] = "sekondes";

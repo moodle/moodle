@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 Beta (2004022400)
+      // dialogue.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['addmynewentries'] = 'Afegeix les meves entrades noves';
@@ -9,7 +9,7 @@ $string['allowmultiple'] = 'Permet més d\'un diàleg amb la mateixa persona';
 $string['allowstudentdialogues'] = 'Permet diàlegs d\'estudiant a estudiant';
 $string['close'] = 'Tanca';
 $string['closed'] = 'Tancat';
-$string['confirmclosure'] = 'Aneu a tancar un diàleg amb $a. Els diàlegs tancats no es poden tornar a obrir. Si tanqueu aquest diàleg el podreu veure, però no el podreu reprendre i haureu d\'obrir un diàleg nou per continuar &quot;xerrant&quot; amb aquesta persona.<br /><br />Esteu segur que voleu tancar aquest diàleg?';
+$string['confirmclosure'] = 'Aneu a tancar un diàleg amb $a. Els diàlegs tancats no es poden tornar a obrir. Si tanqueu aquest diàleg el podreu veure, però no el podreu reprendre i haureu d\'obrir un diàleg nou per continuar \"xerrant\" amb aquesta persona.<br /><br />Esteu segur que voleu tancar aquest diàleg?';
 $string['deleteafter'] = 'Suprimeix els diàlegs tancats després d\'aquests dies';
 $string['dialogueclosed'] = 'Diàleg tancat';
 $string['dialogueintro'] = 'Introducció al diàleg';
@@ -27,6 +27,7 @@ $string['everybody'] = 'Tothom';
 $string['furtherinformation'] = 'Més informació';
 $string['lastentry'] = 'Darrera entrada';
 $string['maildefault'] = 'Envia correu per defecte';
+$string['mailnotification'] = 'Notificació per correu';
 $string['modulename'] = 'Diàleg';
 $string['modulenameplural'] = 'Diàlegs';
 $string['namehascloseddialogue'] = '$a ha tancat el diàleg';

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 unstable development (2004091100)
+<?php // $Id$ 
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';
@@ -8,10 +8,10 @@ $string['badmanifest'] = 'マニフェストファイルエラー: エラーログをご覧ください。
 $string['browse'] = '閲覧';
 $string['browsed'] = '閲覧済み';
 $string['browsemode'] = '閲覧モード';
-$string['chooseapacket'] = 'SCORMパッケージの選択又は更新';
+$string['chooseapacket'] = 'SCORMパッケージの選択または更新';
 $string['completed'] = '完了';
 $string['configframesize'] = 'この値は、SCORMパッケージを使用する時の、ナビゲーションを含むトップフレームのサイズ(ピクセル)';
-$string['configpopup'] = '新しいSCORMパッケージを追加する場合、ポップアップウインドウに表示出来る場合は表示しますか?';
+$string['configpopup'] = '新しいSCORMパッケージを追加する場合、ポップアップウインドウに表示できる場合は表示しますか?';
 $string['configpopupheight'] = '新しいポップアップウインドウのデフォルト高は?';
 $string['configpopupresizable'] = 'ポップアップウインドウをデフォルトでリサイズ可能にしますか?';
 $string['configpopupscrollbars'] = 'ポップアップウインドウをデフォルトでスクロール可能にしますか?';
@@ -19,7 +19,7 @@ $string['configpopupstatus'] = 'ポップアップウインドウにデフォルトでステータスバ
 $string['configpopupwidth'] = '新しいポップアップウインドウのデフォルト幅は?';
 $string['coursepacket'] = 'コースパッケージ';
 $string['coursestruct'] = 'コース構造';
-$string['datadir'] = 'ファイルシステムエラー: コースデータディレクトリを作成出来ません。';
+$string['datadir'] = 'ファイルシステムエラー: コースデータディレクトリを作成できません。';
 $string['domxml'] = 'DOMXML外部ライブラリ';
 $string['entercourse'] = 'SCORMコースの入力';
 $string['errorlogs'] = 'エラーログ';
@@ -28,7 +28,7 @@ $string['found'] = 'マニフェストファイルが見つかりました';
 $string['gradeaverage'] = '平均得点';
 $string['gradehighest'] = '最高得点';
 $string['grademethod'] = '評価方法';
-$string['guestsno'] = 'ゲストはscormのコースを閲覧出来ません';
+$string['guestsno'] = 'ゲストはscormのコースを閲覧できません';
 $string['incomplete'] = '不完全';
 $string['missing_attribute'] = 'タグ $a->tag に属性 $a->attr がありません';
 $string['missing_tag'] = 'タグ無し $a->tag';
@@ -51,7 +51,7 @@ $string['normal'] = 'ノーマル';
 $string['not_corr_type'] = 'タグ $a->tag のタイプが合致しません';
 $string['notattempted'] = '未実行';
 $string['organizations'] = '組織';
-$string['packagedir'] = 'ファイルシステムエラー: パッケージディレクトリを作成出来ません。';
+$string['packagedir'] = 'ファイルシステムエラー: パッケージディレクトリを作成できません。';
 $string['passed'] = 'パス';
 $string['php5'] = 'PHP 5 (DOMXMLネイティブライブラリ)';
 $string['position_error'] = '$a->tag タグは $a->parent タグの子タグになりません';
@@ -72,7 +72,7 @@ $string['trackingloose'] = '警告: SCORMデータのトラッキングデータは消滅します!';
 $string['validateascorm'] = 'SCORMパッケージの確認';
 $string['validation'] = '確認結果';
 $string['validationtype'] = 'ここではSCORMマニフェストファイルを確認するDOMXMLライブラリを設定します。分からない場合は、このままにしてください。';
-$string['versionwarning'] = 'マニフェストファイルのバージョンが1.3より古い為、$a->tag タグに警告があります。';
+$string['versionwarning'] = 'マニフェストファイルのバージョンが1.3より古いため、$a->tag タグに警告があります。';
 $string['viewallreports'] = '$a 回分のレポートを表示';
 
 ?>

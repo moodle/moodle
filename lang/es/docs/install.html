@@ -158,7 +158,7 @@ directorio Moodle, para ayudarle a orientarse:</p>
     no es posible puede presionar un botón para bajarlo desde el instalador y 
     entonces subir config.php al directorio principal de Moodle en el servidor. 
   </p>
-  <p>Durante el proceso, el instalador comprobará las características de su servidor y le dará sugerencias sobre la manera de solucionar algunos problemas. En la mayoría de los casos estas sugerencias deberían de ser suficientes, pero si se queda atascado, siga leyendo para encontrar más información sobre algunas cosas habituales que le deberían permitir continuar. <br>
+  <p>Durante el proceso, el instalador comprobará las características de su servidor y le dará sugerencias sobre la manera de solucionar algunos problemas. En la mayoría de los casos estas sugerencias deberían de ser suficientes, pero si se queda atascado, siga leyendo para encontrar más información sobre algunas cosas habituales que le deberían permitir continuar. <br />
   </p>
 </blockquote>
 <blockquote>
@@ -199,14 +199,14 @@ session.bug_compat_warn = 0
   <blockquote>
     <pre>DirectoryIndex index.php index.html index.htm
     &lt;IfDefine APACHE2>
-    <strong>AcceptPathInfo</strong> on<br>&lt;/IfDefine&gt;<br><br>php_flag magic_quotes_gpc On<br>php_flag magic_quotes_runtime Off<br>php_flag file_uploads On<br>php_flag session.auto_start Off<br>php_flag session.bug_compat_warn Off</pre>
+    <strong>AcceptPathInfo</strong> on<br />&lt;/IfDefine&gt;<br /><br />php_flag magic_quotes_gpc On<br />php_flag magic_quotes_runtime Off<br />php_flag file_uploads On<br />php_flag session.auto_start Off<br />php_flag session.bug_compat_warn Off</pre>
   </blockquote>
 
   <p>También puede usted definir cosas como el tamaño máximo de los archivos que
     podrán enviarse:</p>
   <blockquote>
     <pre>LimitRequestBody 0
-php_value upload_max_filesize 2M<br>php_value post_max_size 2M<br>     </pre>
+php_value upload_max_filesize 2M<br />php_value post_max_size 2M<br />     </pre>
   </blockquote>
 
 <p>La forma más sencilla de hacerlo es copiar el archivo de ejemplo que hay en <strong>lib/htaccess</strong> y editarlo de acuerdo con sus necesidades. Ese archivo contiene más instrucciones. Por ejemplo, en Unix:</p>
@@ -245,10 +245,10 @@ php_value upload_max_filesize 2M<br>php_value post_max_size 2M<br>     </pre>
    > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.*
            TO moodleuser@localhost IDENTIFIED BY 'yourpassword';
    > quit
-   # mysqladmin -p reload<br></pre>
+   # mysqladmin -p reload<br /></pre>
   <p>Ejemplo de líneas de comando para PostgreSQL: </p>
 
-<pre>   # su - postgres<br>   &gt; psql -c "create user moodleuser createdb;" template1<br>   &gt; psql -c "create database moodle;" -U moodleuser template1<br>   &gt; psql -c "alter user moodleuser nocreatedb;" template1<br></pre>
+<pre>   # su - postgres<br />   &gt; psql -c "create user moodleuser createdb;" template1<br />   &gt; psql -c "create database moodle;" -U moodleuser template1<br />   &gt; psql -c "alter user moodleuser nocreatedb;" template1<br /></pre>
   </blockquote>
   <p>&nbsp;</p>
 

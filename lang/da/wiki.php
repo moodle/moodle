@@ -1,9 +1,13 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.3.3 (2004052503)
+      // wiki.php - created with Moodle 1.4 (2004083100)
 
 
 $string['action'] = '-- Action --';
 $string['administration'] = 'Administration';
+$string['allowremovepages'] = 'Tillad \'Fjern sider\'';
+$string['allowrevertchanges'] = 'Tillad \'Genskab alle sider\'';
+$string['allowsetpage'] = 'Tillad \'Set side attributter\'';
+$string['allowstrippages'] = 'Tillad \'Rens sider\'';
 $string['attachments'] = 'Side attachments';
 $string['author'] = 'Forfatter';
 $string['authorfieldpattern'] = 'Forfatter feldt mønster';
@@ -33,6 +37,7 @@ $string['deleteversions'] = 'Slet hvor mange \'sidste versioner\'';
 $string['deleteversionserror'] = 'Skriv venlist et korrekt versionsnummer';
 $string['diff'] = 'Diff';
 $string['differences'] = 'Difference mellem version $a->new_ver og $a->pagename';
+$string['disablecamel'] = 'Slå \'CamelCase\' linkning fra';
 $string['disabledpage'] = 'Denne side er ikke tilgængelig i øjeblikket';
 $string['doesnotexist'] = 'Denne side eksistere ikke endnu, tryk på Ret knabben hvis du ønsker at oprette den.';
 $string['downloadaszip'] = 'Download zipfil';
@@ -107,6 +112,7 @@ $string['nothingtostrip'] = 'Der er ikke nogen sider med mere end een version';
 $string['nowikicreated'] = 'Ingen indlæg kan tilføjes for denne wiki';
 $string['of'] = 'af';
 $string['offline'] = 'OFFLINE';
+$string['optional'] = 'Frivilligt';
 $string['orphanedpage'] = 'Efterladt side';
 $string['orphanedpages'] = 'Efterladte sider';
 $string['otherwikis'] = 'Andre wikis';
@@ -133,7 +139,7 @@ $string['revertchanges'] = 'Genskab ændringer';
 $string['revertlastonly'] = 'Kun hvis det var de sidste ændringer';
 $string['revertpages'] = 'Genskab alle sider';
 $string['revertpagescheck'] = 'Ønsker du at fjerne følgene ændringer:';
-$string['revertthe'] = ' ';
+$string['revertthe'] = ' Versions dykning, men slet kun den påvirkede.';
 $string['safehtml'] = 'Sikker HTML';
 $string['save'] = 'Gem';
 $string['searchwiki'] = 'Søg Wiki';
@@ -145,6 +151,11 @@ $string['strippagecheck'] = 'Er du sikker på at du vil rense gamle versioner for
 $string['strippages'] = 'Rens sider';
 $string['studentadminoptions'] = 'Student admin muligheder';
 $string['submit'] = 'Gem';
+$string['tabattachments'] = 'Vedhæftninger';
+$string['tabedit'] = 'Ret';
+$string['tabinfo'] = 'Historie';
+$string['tablinks'] = 'Links';
+$string['tabview'] = 'Vis';
 $string['thanksforcontribution'] = 'Tak for dit bidrag.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Der er ikke nogle referencer til denne side';
 $string['updatedpages'] = 'Updaterede sider';

@@ -130,7 +130,7 @@ Seite zeigt 'fatal error' an wie z. B.: call to undefined function:
 get_string()</H3>
 <P class=answer>Wenn Sie folgende Fehler sehen:</P>
 <P class=answercode>Parse error: parse error, unexpected T_VARIABLE in
-c:\program files\easyphp\www\moodle\config.php on line 94 <BR>Fatal error: Call
+c:\program files\easyphp\www\moodle\config.php on line 94 <br />Fatal error: Call
 to undefined function: get_string() in c:\program
 files\easyphp\www\moodle\mod\resource\lib.php on line 11</P>
 <P class=answer>dann haben Sie vermutlich ein Semicolon am Ende oder ein abschlie&szlig;endes " in config.php (in Zeile 94) vergessen.</P>
@@ -163,7 +163,7 @@ f&uuml;gen, endet mit einer Fehlermeldung oder er wird mit einem Slash
 gezeigt.</H3>
 <P class=answer>Probleme mit ' liegen in falschen "magic
 quotes" Einstellungen. Moodle ben&ouml;tigt die folgenden Einstellungen (dies sind normalerweise die Standardeinstellungen):</P>
-<P class=answercode>magic_quotes_gpc = On<BR>magic_quotes_runtime = Off</P>
+<P class=answercode>magic_quotes_gpc = On<br />magic_quotes_runtime = Off</P>
 <P class=answer>Beachten Sie auch den folgenden Hinweis zur <A
 href="http://moodle.org/file.php/18/moddata/forum/166/17102/?file=install.html#webserver">Webserver
 Konfiguration</A> in den Installationsdokumenten.</P>
@@ -219,7 +219,7 @@ richten!</H3>
 <P class=answer>Dies ist ein wohl bekannter Fehler in den Versionen bis 1.0.9, er ist nun behoben und sollte sp&auml;testens ab Version 1.1. nicht mehr auftauchen.</P>
 <P class=answer>Er betrifft nicht alle Anwender. Der Fehler tritt auf, wenn die Person, die Moodle installiert hat, in ihrem Browser einen Cookie abgelegt hat f&uuml;r ein anderen Programm auf der gleicehn Seite mit Namen "user", "admin", oder "teacher".</P>
 <P class=answer>L&ouml;schen sie Ihren Cookie vor der Installation von Moodle oder ver&auml;ndern Sie die Datei moodle/admin/user.php durch Einf&uuml;gen folgender Zeile am Anfang der Datei:</P>
-<P class=answercode>unset($user);<BR>unset($admin);<BR>unset($teacher);</P>
+<P class=answercode>unset($user);<br />unset($admin);<br />unset($teacher);</P>
 <P class=answer>Danach sollten Sie alle Tabellen von Moodle in der Datenbank l&ouml;schen und eine komplette Neuinstallation vornehmen.</P>
 <P class=answer>&nbsp;</P>
 <H3><A name=nologin></A>Ich
@@ -235,7 +235,7 @@ http://yourserver/moodle/lib/session-test.php.</P>
 <P class=answer>&nbsp;</P>
 <H3><A name=backup></A>Wie
 kann ich meine Moodleseite sichern?</H3>
-<P class=answer>Von zwei Dingen sollten Sie Kopien anlegen : hochgeladene Dateien und der Datenbank. Die Moodle-Dateien selber sind weniger wichtig, weil Sie sich jederzeit eine aktuelle Version herunterladen k&ouml;nnen.<br>
+<P class=answer>Von zwei Dingen sollten Sie Kopien anlegen : hochgeladene Dateien und der Datenbank. Die Moodle-Dateien selber sind weniger wichtig, weil Sie sich jederzeit eine aktuelle Version herunterladen k&ouml;nnen.<br />
 Sie k&ouml;nnen inzwischen komplette Kurse komfortabel sichern. Eine deutschsprachige Anleitung finden Sie im deutschen Diskussionsforum von Moodle als Ressource. </P>
 <P class=answer>Es gibt verschiedene Wege f&uuml;r solche backups. Hier die Gr&uuml;ndz&uuml;ge eines kleinen Scripts auf UNIX f&uuml;r dsa Backup der Datenbank (Sie k&ouml;nnen es t&auml;glich durch einen cron job laufen lassen</P>
 <P class=answercode>cd /my/backup/directory</P>

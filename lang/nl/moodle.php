@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004090600)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['action'] = 'Actie';
@@ -29,7 +29,7 @@ $string['addnewuser'] = 'Voeg een nieuwe gebruiker toe';
 $string['addresource'] = 'Bron toevoegen';
 $string['address'] = 'Adres';
 $string['addstudent'] = 'Voeg een leerling toe';
-$string['addteacher'] = 'Voeg een docent toe';
+$string['addteacher'] = 'Voeg een leraar toe';
 $string['admin'] = 'Beheer';
 $string['adminhelpaddnewuser'] = 'Handmatig een nieuwe account aanmaken';
 $string['adminhelpassignadmins'] = 'Beheerders kennen geen beperkingen en hebben overal toegang binnen de site';
@@ -74,7 +74,7 @@ $string['allowguests'] = 'In dit vak zijn gasten toegestaan';
 $string['allowinternal'] = 'Laat interne methodes ook toe';
 $string['allownot'] = 'Sta niet toe';
 $string['allparticipants'] = 'Alle deelnemers';
-$string['allteachers'] = 'Alle leraars';
+$string['allteachers'] = 'Alle leraren';
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = 'Mag alleen maar letters of nummers bevatten';
 $string['alreadyconfirmed'] = 'De registratie is al bevestigd';
@@ -88,7 +88,7 @@ $string['assigncreators'] = 'Wijs vak-aanmakers aan';
 $string['assignstudents'] = 'Schrijf leerlingen in';
 $string['assignstudentsnote'] = 'Let op: misschien is het niet per se nodig om deze pagina te gebruiken omdat leerlingen zichzelf kunnen aanmelden voor dit vak.';
 $string['assignstudentspass'] = 'Het enige wat je hoeft te doen is de vaksleutel voor dit vak doorgeven aan de leerlingen. Op dit moment is deze: \'$a\'';
-$string['assignteachers'] = 'Wijs docenten aan';
+$string['assignteachers'] = 'Wijs leraren aan';
 $string['authentication'] = 'Authenticatie';
 $string['autosubscribe'] = 'Automatisch inschrijven op het forum';
 $string['autosubscribeno'] = 'Neen: schrijf me niet automatisch in op forums';
@@ -99,6 +99,7 @@ $string['backup'] = 'Backup';
 $string['backupcoursefileshelp'] = 'Selecteer als je de bestanden van het vak in de backup wil';
 $string['backupdate'] = 'Datum backup';
 $string['backupdetails'] = 'Details van de backup';
+$string['backupfailed'] = 'Sommige vakke zijn niet bewaard!';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'De backup is succesvol afgerond';
 $string['backupincludemoduleshelp'] = 'Selecteer als je vakmodules met of zonder gebruikersgegevens in de backup wil';
@@ -109,10 +110,15 @@ $string['backuplogshelp'] = 'Selecteer als je de logbestanden van het vak mee in
 $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
 $string['backupnoneusersinfo'] = 'Merk op: je hebt ervoor gekozen om \"geen\" gebruikers in de backup op te nemen. De backup van alle modules staat nu in de \"zonder gebruikersgegevens\"-modus. De modules \"oefening\" en \"workshop\" zijn niet compatibel met dit type backup en zullen niet mee in de backup gezet worden.';
 $string['backuporiginalname'] = 'Naam backup';
-$string['backupsavetohelp'] = 'Volledig pad naar de map waar je de backupbestanden wil bewaren<br>(laat blanco als je ze in de standaardmap van het vak wil bewaren)';
+$string['backupsavetohelp'] = 'Volledig pad naar de map waar je de backupbestanden wil bewaren<br />(laat blanco als je ze in de standaardmap van het vak wil bewaren)';
+$string['backuptakealook'] = 'Bekijk je backuplogs eens op: 
+$a';
 $string['backupuserfileshelp'] = 'Selecteer als je gebruikersbestanden in de de backup';
 $string['backupusershelp'] = 'Selecteer als je alle gebruikers op de server of alleen de gebruikers van het vak in de backup wil';
 $string['backupversion'] = 'Versie backup';
+$string['blockconfiga'] = 'Een $a blok configureren';
+$string['blockconfigbad'] = 'Dit blok is niet juist geïmplementeerd en kan dus geen configuratie-interface tonen.Vak: ';
+$string['blockconfigin'] = 'Vak: een blok in $a configureren';
 $string['blockdeleteconfirm'] = 'Je gaat het blok \'$a\' volledig verwijderen. Hiermee zal alles in de databank dat met dit blok geassocieerd is verwijderd worden. Ben je ZEKER dat je hiermee verder wil gaan?';
 $string['blockdeletefiles'] = 'Alle gegevens die met het blok \'$a->block\' geassocieerd zijn, zijn verwijderd uit de databank. Om het verwijderen af te ronden (en om te verhinderen dat het blok zich opnieuw zou installeren), moet je de map $a->directory van je server verwijderen';
 $string['blocks'] = 'Blokken';
@@ -143,16 +149,31 @@ $string['choosereportfilter'] = 'Kies een filter voor het rapport';
 $string['choosetheme'] = 'Kies een thema';
 $string['chooseuser'] = 'Kies een gebruiker ';
 $string['city'] = 'Plaats';
+$string['clambroken'] = 'Je beheerder heeft viruscontrole voor geüploade bestanden ingeschakeld, maar heeft iets fout geconfigureerd.<br />Je bestand is NIET geüpload. Er is een e-mail naar je beheerder gestuurd om hem te verwittigen, zodat hij het kan herstellen.<br />Misschien moet je later nog eens proberen dit bestand te uploaden.';
+$string['clamdeletedfile'] = 'Dit bestand is verwijderd';
+$string['clamdeletedfilefailed'] = 'Dit bestand kon niet verwijderd worden';
+$string['clamemailsubject'] = '$a:: Clam AV-melding';
+$string['clamfailed'] = 'Clam AV is vastgelopen. De foutmelding was $a. Hier is de melding van Clam: ';
+$string['clamlost'] = 'Moodle is geconfigureerd op Clam te lopen voor bestandsupload, maar het pad naar Clam AV, $a, was niet juist.';
+$string['clamlostandactinglikevirus'] = 'Moodle is zo geconfigureerd dat, wanneer Clam niet loopt, alle bestanden als virussen behandeld worden. Dit heeft natuurlijk als gevolg dat geen enkele leerling bestanden kan uploaden tot je dit hersteld hebt';
+$string['clammovedfile'] = 'Het bestand is naar je quarantinemap verplaatst. De nieuwe locatie is $a';
+$string['clammovedfilebasic'] = 'Het bestand is in de quarantinemap gezet';
+$string['clamquarantinedirfailed'] = 'Het bestand kon niet naar de quarantinemap, $a, verplaatst worden. Je moet dit herstellen want de bestanden die als besmet gezien worden, worden verwijderd.';
+$string['clamunknownerror'] = 'Er was iets onbekend fout met clam.';
 $string['cleaningtempdata'] = 'Schoon de tijdelijke data op';
 $string['clicktochange'] = 'Klik om te wijzigen';
 $string['closewindow'] = 'Sluit dit venster';
 $string['comparelanguage'] = 'Vergelijk en bewerk huidige taal ';
 $string['complete'] = 'Voltooid';
-$string['configallowunenroll'] = 'Als dit op \'ja\' staat, dan mogen leerlingen zichzelf uitschrijven uit vakken wanneer ze willen. Anders mogen zij dat niet en dan wordt dit proces uitsluitend door leraars en beheerders gecontroleerd.';
+$string['configallowunenroll'] = 'Als dit op \'ja\' staat, dan mogen leerlingen zichzelf uitschrijven uit vakken wanneer ze willen. Anders mogen zij dat niet en dan wordt dit proces uitsluitend door leraren en beheerders gecontroleerd.';
 $string['configallusersaresitestudents'] = 'Moeten ALLE gebruikers als leerlingen beschouwd worden voor activiteiten op de startpagina van de site? Als je hier \"Ja\" kiest, dan zullen alle bevestigde accounts hier als leerling kunnen meedoen aan alle activiteiten. Als je hier \"Nee\" kiest, dan zullen alleen gebruikers die minstens van één vak lid zijn kunnen meedoen aan die startpagina-activiteiten.';
 $string['configautologinguests'] = 'Moeten bezoekers automatisch als gast aangemeld worden als ze vakken met toegangsrecht voor gasten binnengaan ?';
 $string['configcachetext'] = 'Deze instelling kan de snelheid vergroten voor grotere sites of voor sites die tekstfilters gebruiken. kopieën van teksten zullen in hun gecompileerde vorm bewaard worden voor de tijd die je hier instelt. Als je deze tijd te kort instelt, zou je zelfs een kleine vertraging kunnen krijgen, maar de tijd te lang instellen kan ervoor zorgen dat het te lang duurt voor teksten vernieuwd worden (met nieuwe links bijvoorbeeld).';
+$string['configclamactlikevirus'] = 'Behandel bestanden als virussen';
+$string['configclamdonothing'] = 'Behandel bestanden als OK';
+$string['configclamfailureonupload'] = 'Als je clam geconfigureerd hebt om geüploade bestanden op virussen te scannen, maar het is slecht geconfigureerd of loopt niet om één of andere reden,  hoe moet Moodle zich dan gedragen? Als je kiest voor \"Behandel alle bestanden als virussen\", dan zullen alle bestanden naar de quaraninezone  verplaatst worden of verwijderd worden. Als je kies voor \"Behandel bestanden als OK\", dan zullen de bestanden naar de bedoelde map verplaatst worden zoals normaal. In beide gevallen wordt de beheerder op de hoogte gebracht van het slecht werken van clam. Als kiest voor \"Behandel bestanden als virussen\" en om één of andere reden werkt clam niet (gewoonlijk omdat je een verkeerd pad naar clam gegeven hebt), dan zullen ALLE geuploade bestanden naar de quarantinezone verplaatst worden of verwijderd worden. Wees voorzichtig met deze instelling.';
 $string['configcountry'] = 'Als je hier een land invult zal dit land als standaard worden geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.';
+$string['configdbsessions'] = 'Als dit ingeschakeld is, dan zal de databank gebruikt worden om informatie over de sessies te bewaren. Dit is vooral nuttig op grote, veel gebruikte sites of sites op een cluster van servers.  Voor de meeste sites kan dit waarschijnlijk beter uitgeschakeld zijn zodat de server de informatie op schijf bewaard. Merk op dat het wijzigen van deze instelling alle gebruikers zal afmelden (jij inbegrepen).';
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
 $string['configdeleteunconfirmed'] = 'Als je met e-mailauthenticatie werkt dan is dit de periode waarbinnen gebruikers moeten reageren op de bevestigingsmail voor de nieuwe account. Na deze periode zullen oude, niet-bevestigde accounts verwijderd worden.';
 $string['configdigestmailtime'] = 'Gebruikers die ervoor kiezen dat de e-mails hun als samenvatting toegezonden worden, zullen dagelijks een e-mail ontvangen. Deze instelling controleert op welk moment van de dag dat deze dagelijkse mail verzonden wordt (de mail wordt verstuurd door de cron die volgt op het uur dat hier gekozen wordt)';
@@ -163,7 +184,7 @@ $string['configerrorlevel'] = 'Kies hoeveel PHP-waarschuwingen je wilt dat Moodl
 $string['configextendedusernamechars'] = 'Schakel deze optie in om het mogelijk te maken dat gelijk welke karakters in hun gebruikersnaam gebruikt kunnen worden (merk op dat deze instelling geen invloed heeft op de voornaam of achternaam). De standaardinstelling is \"false\", wat ervoor zorgt dat alleen alfanumerieke tekens kunnen gebruikt worden.';
 $string['configfilteruploadedfiles'] = 'Door deze optie in te schakelen gaat Moodle alle geüploade HTML- en tekstbestanden door de gekozen filters halen voor ze getoond worden';
 $string['configforcelogin'] = 'Standaard kunnen de startpagina van de site en de lijst van de vakken (maar niet de vakken zelf) bekeken worden door iedereen, zonder zich aan te melden op de site. Als je wil afdwingen dat er moet aangemeld worden voor er maar iets van de site te zien is, dan kan dat door deze instelling aan te zetten.';
-$string['configforceloginforprofiles'] = 'Schakel deze optie in om gebruikers te dwingen zich aan te melden met een echte (niet gast) account voor ze de pagina\'s met gebruikersprofielen kunnen zien. Standaard staat deze instelling uit (\"false\") zodat leerlingen op prospectie de profielen van de leraars bij elk vak kunnen lezen. Dit heeft als gevolg dat ook zoekrobots deze informatie kunnen lezen.';
+$string['configforceloginforprofiles'] = 'Schakel deze optie in om gebruikers te dwingen zich aan te melden met een echte (niet gast) account voor ze de pagina\'s met gebruikersprofielen kunnen zien. Standaard staat deze instelling uit (\"false\") zodat leerlingen op prospectie de profielen van de leraren bij elk vak kunnen lezen. Dit heeft als gevolg dat ook zoekrobots deze informatie kunnen lezen.';
 $string['configframename'] = 'Als je Moodle in een webframe opneemt (embedded), zet de naam van het frame dan hier. In alle andere gevallen moet de waarde \'_top\' blijven staan.';
 $string['configfullnamedisplay'] = 'Deze instelling bepaalt hoe de volledige namen getoond worden. Voor de meeste enkeltalige sites is de beste instelling de standaardinstelling, nl \"voornaam + achternaam\", maar je kunt ervoor kiezen de achternaam te verbergen of de gekozen taalinstelling te volgen (sommige talen gebruiken een andere volgorde).';
 $string['configgdversion'] = 'Geef aan welke versie van GD geïnstalleerd is. De versie die standaard getoond wordt is automatisch gevonden. Verander dit niet tenzij je echt weet wat je aan het doen bent.';
@@ -186,11 +207,14 @@ $string['confignoreplyaddress'] = 'Soms verzendt Moodle e-mails voor een gebruik
 $string['confignotifyloginfailures'] = 'Als er mislukte aanmeldingen gelogd worden, dan kunnen er e-mailnotificaties verstuurd worden. Wie moet deze notificaties zien?';
 $string['confignotifyloginthreshold'] = 'Als notificaties over mislukte aanmeldingen verzonden moeten worden, hoeveel aanmeldingspogingen  door één gebruiker of vanaf één IP-adres zijn het melden waard?';
 $string['configopentogoogle'] = 'Als je deze instelling inschakelt, dan zal Google als gast toegelaten worden tot je site. Mensen die jouw site binnenkomen via Moodle zullen automatisch als gast aangemeld zijn. Merk op dat dit alleen toegang zal geven tot vakken waar toegang voor gasten toegelaten is.';
+$string['configpathtoclam'] = 'Pad naar clam AV. Gewoonlijk iets als /usr/bin/clamscan of /usr/bin/clamdscan. Je hebt dit nodig om clam AV te laten lopen.';
 $string['configproxyhost'] = 'Als deze <B>server</B> een proxyserver (zoals bijvoorbeeld een firewall) nodig heeft om op het internet te komen, vul hier dan de hostname en de poort van de proxy in. Laat het leeg als dit niet het geval is.';
+$string['configquarantinedir'] = 'Als je wil dat clam AV besmette bestanden naar een quarantinemap verplaatst, zet het pad dan hier. Het moet beschrijfbaar zijn voor de webserver. Als je dit leeg laat of als je een map opgeeft die niet bestaat of niet beschrijfbaar is, dan zullen besmette bestanden verwijderd worden. Gebruik geen schijne streep achteraan het pad.';
+$string['configrunclamonupload'] = 'Clam AV laten lopen bij het uploaden van een bestand? Je hebt dan een juist pad nodig in pathtoclam om dit te laten werken. (Clam AV is een gratis virusscanner die je kunt downloaden van http://www.clamav.net/)';
 $string['configsecureforms'] = 'Moodle kan een extra beveiliging toepassen wanneer het gegevens aanneemt van webformulieren. Als je dit inschakelt, dan wordt de variable HTTP_REFERER vergeleken met het huidige formulieradres. In zeldzame gevallen kan dit problemen veroorzaken als de gebruiker een firewall gebruikt (zoals Zonealarm) die geconfigureerd is om HTTP_REFERER uit het webverkeer te filteren. Het symptoom is: vastgeraken op een formulier. Als je gebruikers problemen hebben met de inlogpagina (bijvoorbeeld) dan zou je kunnen overwegen om deze instelling uit te zetten, hoewel dit je site meer blootstelt aan brute kracht-aanvallen op je wachtwoord. Bij twijfel laat je deze instelling op \'ja\' staan.';
 $string['configsessioncookie'] = 'Met deze instelling kun je de naam van de cookie die gebruikt wordt voor Moodlesessies, aanpassen. Deze instelling is optioneel en enkel nuttig om te verhinderen dat cookies in conflict komen wanneer meer dan één exemplaar van Moodle binnen dezelfde website draait.';
 $string['configsessiontimeout'] = 'Als mensen die ingelogd zijn op deze site voor een lange tijd niets doen (ze laden geen nieuwe pagina\'s) worden ze automatisch uitgelogd (hun sessie is beëindigd). Deze variabele geeft aan hoe lang deze tijd moet zijn. ';
-$string['configshowsiteparticipantslist'] = 'Al deze siteleerlingen en siteleraars zullen op de deelnemerslijst gezet worden. Wie zal er toelating krijgen om deze lijst met sitedeelnemers te zien?';
+$string['configshowsiteparticipantslist'] = 'Al deze siteleerlingen en siteleraren zullen op de deelnemerslijst gezet worden. Wie zal er toelating krijgen om deze lijst met sitedeelnemers te zien?';
 $string['configslasharguments'] = 'Bestanden (afbeeldingen, uploads en dergelijke) worden via een script aangeleverd dat gebruik maakt van \'slash arguments\' (hier de tweede optie). Deze methode zorgt ervoor dat bestanden makkelijker in webbrowsers, proxyservers en dergelijke kunnen worden gecachet. Helaas staan sommige PHP-servers deze methode niet toe. Dus kies de eerste optie als je problemen hebt met het bekijken van geüploade bestanden of afbeeldingen (bijvoorbeeld afbeeldingen van gebruikers).';
 $string['configsmtphosts'] = 'Geef de volledige naam van één of meer lokale SMTP-servers die Moodle moet gebruiken om mail te versturen (bijvoorbeeld: \'mail.a.com\' of \'mail.a.com;mail.b.com\'). Als je dit leeg laat gebruikt Moodle de standaard PHP-methode voor het versturen van mail.';
 $string['configsmtpuser'] = 'Als je hierboven een SMTP-server hebt ingevuld en deze server authenticatie nodig heeft, vul hier dan de gebruikersnaam en het wachtwoord in.';
@@ -295,6 +319,7 @@ $string['department'] = 'Afdeling';
 $string['description'] = 'Beschrijving';
 $string['detailedless'] = 'Minder gedetailleerd';
 $string['detailedmore'] = 'Meer gedetailleerd';
+$string['directorypaths'] = 'Paden van mappen';
 $string['disable'] = 'Schakel uit';
 $string['displayingfirst'] = 'Alleen de eerste $a->count $a->things worden getoond.';
 $string['displayingrecords'] = '$a records worden getoond';
@@ -308,17 +333,18 @@ $string['doyouagree'] = 'Heb je deze voorwaarden gelezen en begrepen?';
 $string['duplicate'] = 'Dupliceer';
 $string['duplicatinga'] = '$a aan het dupliceren';
 $string['duplicatingain'] = '$a-<what in $a->in aan het dupliceren';
-$string['edhelpbgcolor'] = 'Definiëer de achtergrondkleur van het bewerkingsscherm.<br/>Geldige waarden zijn bijvoorbeeld:#ffffff of white';
+$string['edhelpbgcolor'] = 'Definiëer de achtergrondkleur van het bewerkingsscherm.<br />Geldige waarden zijn bijvoorbeeld:#ffffff of white';
 $string['edhelpcleanword'] = 'Deze instelling schakelt Word-specifieke opmaakfiltering in of uit.';
 $string['edhelpenablespelling'] = 'Schakel spellingscontrole in of uit. Wanneer je dit inschakelt moet <strong>aspell</strong> geïnstalleerd zijn  op deze server.';
 $string['edhelpfontfamily'] = 'De eigenschap font-family is een lijst van namen van lettertypefamilies. De familienamen moeten gescheiden worden met een komma.';
 $string['edhelpfontlist'] = 'Definiëer de lettertypes die gebruikt zullen worden voor het menu van de editor.';
-$string['edhelpfontsize'] = 'De standaard lettertype-grootte stelt de grootte in van een lettertype<br/>Geldige waarden zijn bijvoorbeeld: medium, large, smaller, larger, 10pt, 11px.';
+$string['edhelpfontsize'] = 'De standaard lettertype-grootte stelt de grootte in van een lettertype<br />Geldige waarden zijn bijvoorbeeld: medium, large, smaller, larger, 10pt, 11px.';
 $string['edit'] = '$a bewerken';
 $string['editcoursesettings'] = 'Wijzig vakinstellingen';
 $string['editfiles'] = 'Bewerk bestanden';
 $string['editgroupprofile'] = 'Wijzig groepsprofiel';
 $string['editinga'] = 'Een $a bewerken';
+$string['editlock'] = 'Deze waarde kan niet bewerkt worden!';
 $string['editmyprofile'] = 'Wijzig profiel';
 $string['editorbgcolor'] = 'Achtergrondkleur';
 $string['editorcleanonpaste'] = 'Opgekuiste Word-HTML  bij plakken';
@@ -351,9 +377,9 @@ Veel succes en met vriendelijke groet,
 $a->admin
 (Beheerder van \'$a->sitename\')';
 $string['emailconfirmationsubject'] = '$a: Bevestiging van de account';
-$string['emailconfirmsent'] = '<P>Als het goed is, is er een e-mail verzonden naar <B>$a</B>
-<P>Daarin staan eenvoudige instructies voor het voltooien van de registratie.
-<P>Indien je moeilijkheden blijft ondervinden, neem dan contact op met je sitebeheerder.';
+$string['emailconfirmsent'] = '<p>Als het goed is, is er een e-mail verzonden naar <b>$a</b></p>
+<p>Daarin staan eenvoudige instructies voor het voltooien van de registratie.</p>
+<p>Indien je moeilijkheden blijft ondervinden, neem dan contact op met je sitebeheerder.</p>';
 $string['emaildigest'] = 'Type samenvattende e-mail';
 $string['emaildigestcomplete'] = 'Volledige samenvatting  (dagelijkse e-mail met alle berichten)';
 $string['emaildigestoff'] = 'Geen samenvatting (voor elk forumbericht een e-mail)';
@@ -384,20 +410,20 @@ In de meeste e-mailprogramma\'s zou dit moeten verschijnen als een blauwe link w
 Als je hulp nodig hebt, neem dan contact op met de sitebeheerder, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: bevestiging van de wijziging van het wachtwoord';
 $string['emailpasswordconfirmsent'] = 'Er is een e-mail verstuurd naar jouw adres: <b>$a</b>.
-<p>Indien je moeilijkheden blijft ondervinden, neem dan contact op met je sitebeheerder.';
+Indien je moeilijkheden blijft ondervinden, neem dan contact op met je sitebeheerder.';
 $string['emailpasswordsent'] = 'Bedankt voor de bevestiging van de wijziging van je wachtwoord.
-<p>Er is een e-mail met je nieuw wachtwoord naar <b>$a->email</b> gestuurd.
-<p>Het nieuwe wachtwoord werd automatisch gegenereerd. Misschien wil je het <a href=$a->link>wachtwoord veranderen</a> in iets wat je gemakkelijker kunt onthouden.';
+Er is een e-mail met je nieuw wachtwoord naar <br /><b>$a->email</b><br /> gestuurd.<br />
+Het nieuwe wachtwoord werd automatisch gegenereerd. Misschien wil je het <a href=\"$a->link\">wachtwoord veranderen</a> in iets wat je gemakkelijker kunt onthouden.';
 $string['enable'] = 'Schakel in';
 $string['encryptedcode'] = 'Geëncrypteerde code';
-$string['enrolledincourse'] = 'Aangemeld in vak ';
-$string['enrolledincoursenot'] = 'Niet aangemeld in vak ';
+$string['enrolledincourse'] = 'Aangemeld in vak  \"$a\"';
+$string['enrolledincoursenot'] = 'Niet aangemeld in vak  \"$a\"';
 $string['enrollfirst'] = 'Je moet aangemeld zijn bij één van de vakken voor je de siteactiviteiten kunt gebruiken.';
 $string['enrolmentconfirmation'] = 'Je staat op het punt jezelf aan te melden als lid van dit vak.<br />Weet je zeker dat je dit wilt doen?';
 $string['enrolmentkey'] = 'Vaksleutel';
-$string['enrolmentkeyfrom'] = 'Dit vak vereist een \'Vaksleutel\', een eenmalig<BR>
+$string['enrolmentkeyfrom'] = 'Dit vak vereist een \'Vaksleutel\', een eenmalig<br />
 wachtwoord dat je moet hebben gekregen van $a';
-$string['enrolmentkeyhint'] = 'Die \'Vaksleutel\' was niet correct. Probeer het nog eens.<BR>
+$string['enrolmentkeyhint'] = 'Die \'Vaksleutel\' was niet correct. Probeer het nog eens.<br />
 (Hier een hint: Hij begint met \'$a\')';
 $string['enrolmentnew'] = 'Nieuwe aanmelding in $a';
 $string['enrolmentnewuser'] = '$a->user is aangemeld bij het vak \"$a->course\"';
@@ -420,7 +446,7 @@ $string['existingcourseadding'] = 'Bestaand vak, data toevoegen';
 $string['existingcoursedeleting'] = 'Bestaand vak, het eerst verwijderen';
 $string['existingcreators'] = 'Bestaande vak-aanmakers';
 $string['existingstudents'] = 'Aangemelde leerlingen';
-$string['existingteachers'] = 'Bestaande docenten';
+$string['existingteachers'] = 'Bestaande leraren';
 $string['failedloginattempts'] = '$a->attempts mislukte aanmeldingen sinds je laatste aanmelding';
 $string['failedloginattemptsall'] = '$a->attempts mislukte aanmelding bij $a->accounts accounts';
 $string['feedback'] = 'Feedback';
@@ -439,6 +465,8 @@ $string['force'] = 'Verplicht';
 $string['forcedmode'] = 'Verplichte modus';
 $string['forcelanguage'] = 'Verplicht taal';
 $string['forceno'] = 'Verplicht niet';
+$string['forcepasswordchange'] = 'Verplicht het wijzigen van het wachtwoord';
+$string['forcepasswordchangehelp'] = 'Vraag de gebruiker om het te wijzigen bij de volgende aanmelding';
 $string['forgotten'] = 'Heb je je gebruikersnaam of wachtwoord vergeten?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML-opmaak';
@@ -465,6 +493,7 @@ $string['gd1'] = 'GD 1.x is geïnstalleerd';
 $string['gd2'] = 'GD 2.x is geïnstalleerd';
 $string['gdneed'] = 'GD moet geïnstalleerd zijn om deze grafiek te kunnen bekijken';
 $string['gdnot'] = 'GD is niet geïnstalleerd';
+$string['go'] = 'Start';
 $string['gpl'] = 'Copyright (C) 2001-2002 Martin Dougiamas
 (http://dougiamas.com)
 
@@ -551,6 +580,7 @@ $string['institution'] = 'Instituut';
 $string['invalidemail'] = 'Ongeldig e-mailadres';
 $string['invalidlogin'] = 'Ongeldige log in, probeer het nog eens';
 $string['ip_address'] = 'IP-adres';
+$string['jump'] = 'Spring';
 $string['jumpto'] = 'Ga naar...';
 $string['keep'] = 'Houden';
 $string['langltr'] = 'Taalrichting van links naar rechts';
@@ -581,16 +611,19 @@ $string['loginguest'] = 'Inloggen als gast';
 $string['loginsite'] = 'Op de site inloggen';
 $string['loginsteps'] = 'Hallo! Om volledige toegang tot de vakken te krijgen moet je even de tijd nemen om een nieuwe account voor jezelf aan te maken op deze website. 
 Elk vak kan ook een eenmalige \"Vaksleutel\" hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
-<OL size=2>
-<LI>Vul het formulier <A HREF=$a>Nieuwe account</A> in.
-<LI>Er wordt meteen een e-mail verstuurd naar je e-mailadres.
-<LI>Lees de e-mail en klik op de link die erin staat.
-<LI>Je account wordt bevestigd en je bent dan ingelogd.
-<LI>Kies nu het vak dat je wilt volgen.
-<LI>Als je wordt gevraagd om een \"Vaksleutel\", gebruik dan de sleutel die je van je leraar gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.
-<LI>Je hebt nu toegang tot het hele vak. Vanaf nu hoef je alleen nog maar je gebruikersnaam en wachtwoord in het formulier op deze pagina in te vullen om in te loggen en toegang te krijgen tot de vakken waarvan je lid bent.
-</OL>';
-$string['loginstepsnone'] = 'Hallo!<P>Om volledige toegang te krijgen tot de verschillende vakken moet je een account voor jezelf aanmaken.<P>Het enige wat je hoeft te doen is een gebruikersnaam en wachtwoord bedenken en deze gebruiken in het formulier op deze pagina!<P>Als iemand anders de gebruikersnaam al heeft gebruikt zul je het nog een keer met een andere gebruikersnaam moeten proberen.';
+<ol>
+<li>Vul het formulier <a href=\"=$a\">Nieuwe account</a> in.</li>
+<li>Er wordt meteen een e-mail verstuurd naar je e-mailadres.<li>
+<li>Lees de e-mail en klik op de link die erin staat.</li>
+<li>Je account wordt bevestigd en je bent dan ingelogd.</li>
+<li>Kies nu het vak dat je wilt volgen.</li>
+<li>Als je wordt gevraagd om een \"Vaksleutel\", gebruik dan de sleutel die je van je leraar gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.</li>
+<li>Je hebt nu toegang tot het hele vak. Vanaf nu hoef je alleen nog maar je gebruikersnaam en wachtwoord in het formulier op deze pagina in te vullen om in te loggen en toegang te krijgen tot de vakken waarvan je lid bent.</li>
+</ol>';
+$string['loginstepsnone'] = 'Hallo!<p>Om volledige toegang te krijgen tot de verschillende vakken moet je een account voor jezelf aanmaken.</p>
+<p>Het enige wat je hoeft te doen is een gebruikersnaam en wachtwoord bedenken en deze gebruiken in het formulier op deze pagina!
+</p>
+<p>Als iemand anders de gebruikersnaam al heeft gebruikt zul je het nog een keer met een andere gebruikersnaam moeten proberen.</p>';
 $string['loginto'] = 'Log in op $a';
 $string['loginusing'] = 'Log hier in met gebruik van je gebruikersnaam en wachtwoord';
 $string['logout'] = 'Log uit';
@@ -702,7 +735,7 @@ $string['nocoursesyet'] = 'Er zijn geen vakken in deze categorie';
 $string['noexistingadmins'] = 'Er bestaan geen beheerders. Dit is een ernstige fout die je in normale omstandigheden nooit te zien krijgt.';
 $string['noexistingcreators'] = 'Nog geen vak-aanmakers';
 $string['noexistingstudents'] = 'Nog geen leerlingen';
-$string['noexistingteachers'] = 'Nog geen docenten';
+$string['noexistingteachers'] = 'Nog geen leraren';
 $string['nofilesselected'] = 'Er zijn geen bestanden geselecteerd om terug te zetten';
 $string['nofilesyet'] = 'Er zijn nog geen bestanden naar deze cursus geüpload';
 $string['nograde'] = 'Nog geen cijfer';
@@ -712,14 +745,14 @@ $string['none'] = 'Geen';
 $string['nopotentialadmins'] = 'Geen mogelijke beheerders';
 $string['nopotentialcreators'] = 'Geen mogelijke vak-aanmakers';
 $string['nopotentialstudents'] = 'Geen mogelijke leerlingen';
-$string['nopotentialteachers'] = 'Geen mogelijke docenten';
+$string['nopotentialteachers'] = 'Geen mogelijke leraren';
 $string['normal'] = 'Normaal';
 $string['normalfilter'] = 'Gewoon zoeken';
 $string['nostudentsfound'] = 'Geen $a gevonden';
 $string['nostudentsyet'] = 'Er zijn nog geen leerlingen lid van dit vak';
 $string['nosuchemail'] = 'Dit is geen e-mailadres';
 $string['notavailable'] = 'Niet beschikbaar';
-$string['noteachersyet'] = 'Er zijn nog geen docenten voor dit vak';
+$string['noteachersyet'] = 'Er zijn nog geen leraren voor dit vak';
 $string['notenrolled'] = '$a is geen lid van dit vak.';
 $string['noteuserschangednonetocourse'] = 'Let op: de gebruikers van een vak moeten worden hersteld op het moment dat je gebruikersdata aan het terugzetten bent. Deze instelling is voor je veranderd.';
 $string['nothingnew'] = 'Niets nieuws sinds je laatste log in';
@@ -757,13 +790,15 @@ $string['passwordconfirmchange'] = 'Bevestig de wijziging van het wachtwoord';
 $string['passwordrecovery'] = 'Ja, help me met inloggen';
 $string['passwordsdiffer'] = 'De wachtwoorden komen niet overeen';
 $string['passwordsent'] = 'Het wachtwoord is verzonden';
-$string['passwordsenttext'] = '<P>Er is een e-mail verstuurd naar $a->email.
-<P><B>Bekijk je e-mail voor je nieuwe wachtwoord</B>
-<P>Het nieuwe wachtwoord is automatisch aangemaakt, dus misschien wil je het <A HREF=$a->link>wijzigen naar iets wat makkelijker te onthouden is</A>.';
+$string['passwordsenttext'] = '<p>Er is een e-mail verstuurd naar $a->email.</p>
+<p><b>Bekijk je e-mail voor je nieuwe wachtwoord</b></p>
+<p>Het nieuwe wachtwoord is automatisch aangemaakt, dus misschien wil je het <a hrefr=\"$a->link\">wijzigen naar iets wat makkelijker te onthouden is</a>.</p>';
+$string['pathnotexists'] = 'Dit pad bestaat niet op je server!';
+$string['pathslasherror'] = 'Het pad mag niet eindigen met een schuine streep!';
 $string['paymentinstant'] = 'Gebruik de knop om te betalen en je zult binnen enkele minuten aangemeld zijn!';
 $string['paymentrequired'] = 'Betaling vereist om dit vak binnen te gaan.';
 $string['paymentsorry'] = 'Bedankt voor je betaling! Jammer genoeg is je betaling nog niet volledig verwerkt en ben je nog niet geregistreerd om het vak \"$a->fullname\" binnen te gaan. Probeer binnen enkele seconden nog eens het vak binnen te gaan, maar als je blijft problemen hebben, waarschuw dan de $a->teacher of de site beheerder';
-$string['paymentthanks'] = 'Bedankt voor je betaling! Je bent nu aangemeld in je vak:<br>\"$a\"';
+$string['paymentthanks'] = 'Bedankt voor je betaling! Je bent nu aangemeld in je vak:<br />\"$a\"';
 $string['people'] = 'Mensen';
 $string['personalprofile'] = 'Persoonlijke profiel';
 $string['phone'] = 'Telefoon';
@@ -772,7 +807,7 @@ $string['popupwindow'] = 'Open het bestand in een nieuw venster';
 $string['potentialadmins'] = 'Mogelijke beheerders';
 $string['potentialcreators'] = 'Mogelijke vak-aanmakers';
 $string['potentialstudents'] = 'Mogelijke leerlingen';
-$string['potentialteachers'] = 'Mogelijke docenten';
+$string['potentialteachers'] = 'Mogelijke leraren';
 $string['preferredlanguage'] = 'Voorkeurstaal';
 $string['preview'] = 'Bekijk';
 $string['previeworchoose'] = 'Bekijk of kies een thema';
@@ -793,16 +828,16 @@ $string['registrationemail'] = 'E-mailmeldingen';
 $string['registrationinfo'] = '<p>Deze pagina laat je toe om Moodle te registreren bij moodle.org.
 De registratie is gratis.
 Het belangrijkste voordeel is dat registratie je toevoegt aan een mailinglist, uitsluitend voor belangrijke meldingen zoals beveiligingsproblemen en nieuwe releases van Moodle.
-<p>Je informatie wordt privé gehouden en zal nooit verkocht of doorgegeven worden aan derden. De enige reden voor het inzamelen van deze informatie, is het leveren van hulp en het uitbouwen van een statistisch beeld van de Moodle-gemeenschap.
-<p>Als je wil kan je toelaten om je sitenaam, land en URL toe te voegen aan de openbare lijst van Moodle Sites.
-<p>Alle nieuwe registraties worden manueel gecontroleerd voor ze toegevoegd worden aan de lijst. Je kunt je gegevens steeds bijwerken door dit formulier terug te posten.';
+<p>Je informatie wordt privé gehouden en zal nooit verkocht of doorgegeven worden aan derden. De enige reden voor het inzamelen van deze informatie, is het leveren van hulp en het uitbouwen van een statistisch beeld van de Moodle-gemeenschap.</p>
+<p>Als je wil kan je toelaten om je sitenaam, land en URL toe te voegen aan de openbare lijst van Moodle Sites.</p>
+<p>Alle nieuwe registraties worden manueel gecontroleerd voor ze toegevoegd worden aan de lijst. Je kunt je gegevens steeds bijwerken door dit formulier terug te posten.</p>';
 $string['registrationno'] = 'Nee, ik wil geen e-mail ontvangen';
 $string['registrationsend'] = 'Stuur de registratie-informatie naar moodle.org';
 $string['registrationyes'] = 'Ja, laat me iets weten als er iets belangrijks gebeurt';
 $string['removeadmin'] = 'Verwijder beheerder';
 $string['removecreator'] = 'Verwijder vak-aanmaker';
 $string['removestudent'] = 'Verwijder leerling';
-$string['removeteacher'] = 'Verwijder docent';
+$string['removeteacher'] = 'Verwijder leraar';
 $string['rename'] = 'Hernoem';
 $string['renamefileto'] = 'Hernoem <b>$a</b> naar';
 $string['required'] = 'Verplicht';
@@ -836,7 +871,7 @@ $string['scheduledbackupstatus'] = 'Status van geplande backup';
 $string['search'] = 'Zoek';
 $string['searchagain'] = 'Zoek nog een keer';
 $string['searchcourses'] = 'Zoek vakken';
-$string['searchhelp'] = 'Je kunt naar meer woorden tegelijkertijd zoeken.<p>woord : zoek naar elke instantie van dit woord in de tekst.<br>+word : alleen precies passende woorden worden gevonden.<br>-word : de resultaten waar dit woord in voorkomt worden niet getoond.';
+$string['searchhelp'] = 'Je kunt naar meer woorden tegelijkertijd zoeken.<p>woord : zoek naar elke instantie van dit woord in de tekst.<br />+word : alleen precies passende woorden worden gevonden.<br />-word : de resultaten waar dit woord in voorkomt worden niet getoond.';
 $string['searchresults'] = 'Zoekresultaten';
 $string['sec'] = 'seconde';
 $string['secs'] = 'seconden';
@@ -845,7 +880,7 @@ $string['sections'] = 'Secties';
 $string['select'] = 'Kies';
 $string['selectacountry'] = 'Kies een land';
 $string['selectednowmove'] = '$a bestanden zijn geselecteerd voor verplaatsen. Ga nu naar de bestemming en klik op \'Verplaats bestanden hier naar toe\'';
-$string['senddetails'] = 'Verstuur mijn details via e-mail';
+$string['senddetails'] = 'Stuur me mijn gebruikersnaam en een nieuw wachtwoord';
 $string['separateandconnected'] = 'Gescheiden en Verbonden/relationele manieren van kennen';
 $string['serverlocaltime'] = 'De lokale tijd van de server';
 $string['settings'] = 'Instellingen';
@@ -886,7 +921,7 @@ $string['sizekb'] = 'Kb';
 $string['sizemb'] = 'Mb';
 $string['socialheadline'] = 'Sociale forum - meest recente onderwerpen';
 $string['someallowguest'] = 'Gasten hebben toegang tot sommige vakken';
-$string['someerrorswerefound'] = 'Bepaalde informatie ontbrak of was incorrect. Kijk hieronder voor de details.';
+$string['someerrorswerefound'] = 'Bepaalde informatie ontbrak of was fout. Kijk hieronder voor de details.';
 $string['sortby'] = 'Sorteer volgens';
 $string['specifyname'] = 'Je moet een naam geven';
 $string['startdate'] = 'Begindatum van het vak';
@@ -915,7 +950,7 @@ $string['summaryof'] = 'Samenvatting van $a  ';
 $string['supplyinfo'] = 'Geef alsjeblieft wat informatie over jezelf';
 $string['teacheronly'] = 'alleen maar voor de $a';
 $string['teacherroles'] = '$a rollen';
-$string['teachers'] = 'Docenten';
+$string['teachers'] = 'leraren';
 $string['textediting'] = 'Als je tekst bewerkt';
 $string['texteditor'] = 'Gebruik standaardwebformulieren';
 $string['textformat'] = 'Platte tekst opmaak';
@@ -932,7 +967,7 @@ $string['to'] = 'Tot';
 $string['today'] = 'Vandaag';
 $string['todaylogs'] = 'Statistieken van vandaag';
 $string['toomanytoshow'] = 'Er zijn teveel gebruikers om te laten zien';
-$string['top'] = 'Top';
+$string['top'] = 'Hoogste niveau';
 $string['topic'] = 'Onderwerp';
 $string['topichide'] = 'Verberg dit onderwerp voor $a';
 $string['topicoutline'] = 'Overzicht van het onderwerp';
@@ -946,6 +981,7 @@ $string['unenrolallstudents'] = 'Zeg lidmaatschap van alle deelnemers op';
 $string['unenrolallstudentssure'] = 'Weet je zeker dat je het lidmaatschap voor alle deelnemers van dit vak wil opzeggen?';
 $string['unenrolme'] = 'Zeg mijn lidmaatschap van $a op';
 $string['unenrolsure'] = 'Weet je zeker dat je het lidmaatschap van $a wilt opzeggen?';
+$string['unfinished'] = 'Niet klaar';
 $string['unknowncategory'] = 'Onbekende categorie';
 $string['unlimited'] = 'Onbeperkt';
 $string['unpacking'] = '$a wordt uitgepakt';
@@ -964,12 +1000,20 @@ $string['updatinga'] = 'Een $a wijzigen';
 $string['updatingain'] = 'Een $a->what wijzigen in $a->in';
 $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload een bestand';
-$string['uploadedfileto'] = '$a->file is geüpload naar $a->directory';
+$string['uploadedfile'] = 'Bestand met succes geüploadet';
+$string['uploadedfileto'] = '$a->file is geüploadet naar $a->directory';
+$string['uploadedfiletoobig'] = 'Sorry, maar dit bestand is te groot (limiet is $a bytes)';
+$string['uploadfailednotrecovering'] = 'Je bestandsupload is mislukt omdat er een probleem was met één van de bestanden, $a->name.<br/>Hier is een log van de problemen:<br/>$a->problem<br/>Niet te herstellen.';
+$string['uploadfilelog'] = 'Uploadlog voor bestand $a';
 $string['uploadformlimit'] = 'Het geüploade bestand is groter dan de maximumgrootte ingesteld op het formulier';
+$string['uploadlabel'] = 'Titel:';
 $string['uploadnofilefound'] = 'Er is geen bestand gevonden - weet je zeker dat je een bestand geselecteerd hebt om te uploaden?';
 $string['uploadnotallowed'] = 'Uploads niet toegestaan';
+$string['uploadoldfilesdeleted'] = 'Het oude bestand(en) in je uploadzone is verwijderd';
 $string['uploadpartialfile'] = 'Het bestand was slechts gedeeltelijk geüploaded';
 $string['uploadproblem'] = 'Een was een onbekend probleem tijdens het uploaden van bestand \'$a\' (was het misschien te groot?)';
+$string['uploadrenamedchars'] = 'Het bestand is hernoemd van $a->oldname naar $a->newname omdat er ongeldige tekens in staan.';
+$string['uploadrenamedcollision'] = 'Het bestand is hernoemd van $a->oldname naar $a->newname omdat er een bestandsnaamconflict was.';
 $string['uploadserverlimit'] = 'Het geüploade bestand is groter dan de maximumgrootte die op deze server ingesteld is.';
 $string['uploadthisfile'] = 'Upload dit bestand';
 $string['uploadusers'] = 'Upload gebruikers';
@@ -991,6 +1035,25 @@ $string['userzones'] = 'Gebruikerzones';
 $string['usingexistingcourse'] = 'Gebruik bestaand vak';
 $string['version'] = 'Versie';
 $string['view'] = 'Zien';
+$string['virusfound'] = 'Opgelet beheerder! Clam AV vond een virus in een bestand, geüploadet door $a->user voor het vak $a->course. Hier is de boodschap van clamscan:';
+$string['virusfoundlater'] = 'Een bestand dat geüploadet werd op $a->date met als bestandsnaam $a->filename voor het vak $a->course is  besmet met een virus. Hier is een samenvatting van wat er sinds toen met je bestand gebeurd is:
+
+$a->action
+
+Als dit een taak was, dan wil je het misschien terug insturen, zodat je leraar het kan nakijken.';
+$string['virusfoundlateradmin'] = 'Opgelet beheerder! Een bestand dat geüploadet werd op $a->date met als bestandsnaam $a->filename voor het vak $a->course is  besmet met een virus. Hier is een samenvatting van wat er sinds toen met het bestand gebeurd is:
+
+$a->action
+
+De gebruiker is ook verwittigd.';
+$string['virusfoundlateradminnolog'] = 'Opgelet beheerder! Een bestand dat geüploadet werd met bestandsnaam $a->filename bevat een virus. Moodle kon dit bestand niet terugsturen naar de gebruiker die het oorspronkelijk geüploadet had.
+
+Hier is een samenvatting van wat er met dat bestand gebeurd is:
+
+$a->action';
+$string['virusfoundsubject'] = '$a: Virus gevonden!';
+$string['virusfounduser'] = 'Het bestand $a->filename dat je geüploadet hebt is door een virusscanner gecontroleerd en is geïnfecteerd! Je bestandsupload is mislukt.';
+$string['virusplaceholder'] = 'Dit geüploade bestand bevat een virus en is verplaatst of verwijderd. De gebruiker is verwittigd.';
 $string['webpage'] = 'Website';
 $string['week'] = 'Week';
 $string['weekhide'] = 'Verberg deze week voor $a';
@@ -1010,9 +1073,9 @@ $string['wordforstudent'] = 'Jouw woord voor leerling';
 $string['wordforstudenteg'] = 'bijv. student, deelnemer, cursist, etc.';
 $string['wordforstudents'] = 'Jouw woord voor leerlingen';
 $string['wordforstudentseg'] = 'bijv. studenten, deelnemers, cursisten, etc.';
-$string['wordforteacher'] = 'Jouw woord voor docent';
+$string['wordforteacher'] = 'Jouw woord voor leraar';
 $string['wordforteachereg'] = 'bijv. leraar, mentor, coach, begeleider, etc.';
-$string['wordforteachers'] = 'Jouw woord voor docenten';
+$string['wordforteachers'] = 'Jouw woord voor leraren';
 $string['wordforteacherseg'] = 'bijv. leraren, mentoren, coaches, begeleiders, etc.';
 $string['writingcategoriesandquestions'] = 'Categorieën en vragen schrijven';
 $string['writingcoursedata'] = 'Vak data schrijven';

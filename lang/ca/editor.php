@@ -4,7 +4,7 @@
 
 $string['about'] = 'Referent a aquest editor';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
+$string['middle'] = 'middle';
 $string['address'] = 'Adreça';
 $string['alignment'] = 'Alineació';
 $string['alternatetext'] = 'Text alternatiu';

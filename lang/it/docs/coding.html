@@ -32,20 +32,20 @@
 <ol class="normaltext">
   <li class="spaced">L'<strong>indentazione</strong> deve essere di 4 spazi. Non usate ASSOLUTAMENTE i tab.</li>
   <li class="spaced">I <strong>nomi di variabile</strong> devono essere sempre facili da leggere, costituiti da parole in inglese minuscole. Se avete proprio necessità di più di una parola, attaccate le parti, ma sceglietele più corte possibile. Usate nomi plurali per gli "arrays" di oggetti.
-    <p class="examplecode"><font color="#006600">GOOD: $quiz<br>
-      GOOD: $errorstring<br>
-GOOD: $assignments (for an array of objects)<br>
-      GOOD: $i (but only in little loops)<br>
+    <p class="examplecode"><font color="#006600">GOOD: $quiz<br />
+      GOOD: $errorstring<br />
+GOOD: $assignments (for an array of objects)<br />
+      GOOD: $i (but only in little loops)<br />
       <br />
-      BAD: $Quiz <br>
-      BAD: $aReallyLongVariableNameWithoutAGoodReason<br>
+      BAD: $Quiz <br />
+      BAD: $aReallyLongVariableNameWithoutAGoodReason<br />
       BAD: $error_string</font></p>
   </li>
   <li class="spaced">Le <strong>costanti</strong> devono essere sempre maiuscole, e iniziare sempre col nome del modulo. Devono anche avere le parti separate da trattini di sottolineatura.
     <p class="examplecode"><font color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;, 
       1);</font></p>
   </li>
-  <li class="spaced">I <strong>nomi delle funzioni</strong> devono essere semplici parole in inglese minuscole, e cominciare col nome del modulo per evitare conflitti tra moduli. Le parti di nome devono essere separate da sottolineature. I parametri devono sempre avere una valore di default, se possibile. Da notare che non c'è alcuno spazio tra il nome della funzione e le (parentesi) che seguono.<br>
+  <li class="spaced">I <strong>nomi delle funzioni</strong> devono essere semplici parole in inglese minuscole, e cominciare col nome del modulo per evitare conflitti tra moduli. Le parti di nome devono essere separate da sottolineature. I parametri devono sempre avere una valore di default, se possibile. Da notare che non c'è alcuno spazio tra il nome della funzione e le (parentesi) che seguono.<br />
     <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
@@ -73,11 +73,11 @@ GOOD: $assignments (for an array of objects)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;}<br />
       }</font></p>
   </li>
-  <li class="spaced">Le <strong>stringhe</strong> devono essere definite usando virgolette semplici, ove possibile, per una maggiore velocità.<br>
+  <li class="spaced">Le <strong>stringhe</strong> devono essere definite usando virgolette semplici, ove possibile, per una maggiore velocità.<br />
     <p class="examplecode"> <font color="#006600">$var = 'some text without any 
-      variables';<br>
-      $var = &quot;with special characters like a new line \n&quot;;<br>
-      $var = 'a very, very long string with a '.$single.' variable in it';<br>
+      variables';<br />
+      $var = &quot;with special characters like a new line \n&quot;;<br />
+      $var = 'a very, very long string with a '.$single.' variable in it';<br />
       $var = &quot;some $text with $many variables $within it&quot;; </font></p>
   </li>
   <li class="spaced">I <strong>commenti</strong> devono usare due o tre barre ed essere ben allineati con le istruzioni. 
@@ -97,34 +97,34 @@ GOOD: $assignments (for an array of objects)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates 
       </font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">, 
       </font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">$postid</font><font color="#007700">)) 
-      {<br>
+      {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
       Process each rating in turn</font><font color="#007700"><br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach 
       (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">) 
-      {</font> <br>
+      {</font> <br />
       ....etc </p>
   </li>
-  <li class="spaced">Gli <strong>spazi</strong> devono essere usari liberamente - non abbiate paura di sparpagliare un pò le istruzioni per guadagnare in chiarezza. Normalmente, ci dovrebbe essere uno spazio tra le parentesi e le frasi normali, ma nessuno spazio tra le parentesi e le variabili o le funzioni:<br>
+  <li class="spaced">Gli <strong>spazi</strong> devono essere usari liberamente - non abbiate paura di sparpagliare un pò le istruzioni per guadagnare in chiarezza. Normalmente, ci dovrebbe essere uno spazio tra le parentesi e le frasi normali, ma nessuno spazio tra le parentesi e le variabili o le funzioni:<br />
     <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
       </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB"> 
-      $thing</font><font color="#007700">)</font><font color="#006600"> {<br>
+      $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600"> 
-      <br>
-      } <br>
-      <br>
+      <br />
+      } <br />
+      <br />
       </font><font color="#007700">if (</font><font color="#0000BB">$x </font><font color="#007700">== 
       </font><font color="#0000BB">$y</font><font color="#007700">)</font><font color="#006600"> 
-      {<br>
+      {<br />
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
-      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br>
+      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br />
       } else if (</font><font color="#0000BB">$x </font><font color="#007700">== 
-      </font><font color="#0000BB">$z</font><font color="#006600">) {<br>
+      </font><font color="#0000BB">$z</font><font color="#006600">) {<br />
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
-      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br>
-      } else {<br>
+      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br />
+      } else {<br />
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
-      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br>
+      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br />
       } </font></p>
   </li>
 </ol>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.3 - (2004052400)
+      // attendance.php - created with Moodle 1.4 (2004083100)
 
 
 $string['absentlong'] = 'Nieobecny/a';
@@ -10,10 +10,10 @@ $string['allmodulename'] = 'Wszystkie listy obecno¶ci';
 $string['auto'] = 'automatycznie';
 $string['autoattend'] = 'Automatycznie sprawd¼ obecno¶æ opieraj±c siê na dziennikach aktywno¶ci u¿ytkownika';
 $string['autoattendmulti'] = 'Automatycznie sprawd¼ wszystkie listy obecno¶ci opieraj±c siê na dziennikach aktywno¶ci u¿ytkownika';
-$string['autoattendshort'] = 'Automatycznie z dzienników';
+$string['autoattendshort'] = 'Automatycznie z logów';
 $string['choosedays'] = 'Dni tygodnia w których nale¿y sprawdziæ obecno¶æ';
 $string['dayofroll'] = 'Data sprawdzenia obecno¶ci';
-$string['defaultautoattend'] = 'Czy zawsze sprawdzaæ obecno¶æ opieraj±c siê na dziennikach aktywno¶ci u¿ytkownika?';
+$string['defaultautoattend'] = 'Czy zawsze sprawdzaæ obecno¶æ opieraj±c siê na logach aktywno¶ci u¿ytkownika?';
 $string['defaultdynamicsection'] = 'Czy zawsze przesuwaæ listy obecno¶ci na w³a¶ciwe tygodnie?';
 $string['defaultgrade'] = 'Czy zawsze umo¿liwiaæ ocenianie list obecno¶ci?';
 $string['defaulthoursinclass'] = 'Ile godzin powinno byæ zapisanych w typowej li¶cie obecno¶ci?';
@@ -29,7 +29,7 @@ $string['dynsectionshort'] = 'Automatycznie przesuniête do sekcji';
 $string['endbeforestart'] = 'Data koñcowa jest przed dat± pocz±tkow±.';
 $string['endmulti'] = 'Data ostatniego sprawdzenia obecno¶ci';
 $string['for'] = 'dla';
-$string['friday'] = 'Pi±tek';
+$string['friday'] = 'Pt';
 $string['gradeshort'] = 'Ocenione';
 $string['gradevalue'] = 'Umo¿liw ocenê tej listy obecno¶ci';
 $string['gradevaluemulti'] = 'Umo¿liw ocenê tych list obecno¶ci';
@@ -40,33 +40,33 @@ $string['maxgradeshort'] = 'Maksymalna ocena';
 $string['maxgradevalue'] = 'Maksymalna ocena za brak nieobecno¶ci.';
 $string['modulename'] = 'Obecno¶æ';
 $string['modulenameplural'] = 'Listy obecno¶ci';
-$string['monday'] = 'Poniedzia³ek';
+$string['monday'] = 'Pon';
 $string['norolls'] = 'Nie ma list obecno¶ci przypisanych do tego kursu';
 $string['notes'] = 'Specjalna informacja';
 $string['notesfor'] = 'Specjalna informacja dla';
 $string['noviews'] = 'Przepraszamy, ale nie mamy ¿adnych danych dla Twojego konta';
-$string['of'] = ' ';
+$string['of'] = 'z';
 $string['pages'] = 'stron';
 $string['presentlong'] = 'Obecny/a';
 $string['presentshort'] = 'O';
-$string['saturday'] = 'Sobota';
+$string['saturday'] = 'Sob';
 $string['startafterend'] = 'Data pocz±tkowa zosta³a wyznaczona po zakoñczeniu kursu.';
 $string['startmulti'] = 'Data pierwszego sprawdzenia obecno¶ci';
-$string['sunday'] = 'Niedziela';
+$string['sunday'] = 'Nie';
 $string['takeroll'] = 'Czy sprawdziæ obecno¶æ tego dnia?';
 $string['tardiesperabsence'] = 'Ile spó¼nieñ powinno siê liczyæ jako jedna niebecno¶æ?';
 $string['tardylong'] = 'Spó¼nienie';
 $string['tardyshort'] = 'S';
 $string['teacheredit'] = 'Sprawd¼ obecno¶æ';
-$string['thursday'] = 'Czwartek';
-$string['tuesday'] = 'Wtorek';
+$string['thursday'] = 'Czw';
+$string['tuesday'] = 'Wt';
 $string['viewall'] = 'Wy¶wietl wszystkie listy obecno¶ci';
 $string['viewmulti'] = 'Wy¶wietl raport na paru stronach';
 $string['viewone'] = 'Wy¶wietl wszystkie strony raportu';
 $string['viewsection'] = 'Wy¶wietl wszystkie listy obecno¶ci w tej sekcji';
 $string['viewtable'] = 'Wy¶wietl raport jako jedn± tabelê';
 $string['viewweek'] = 'Wy¶wietl wszystkie listy obecno¶ci z danego tygodnia';
-$string['wednesday'] = '¦roda';
+$string['wednesday'] = '¦r';
 $string['weekmodulename'] = 'Wszystkie listy obecno¶ci w ostatnim tygodniu ';
 
 ?>

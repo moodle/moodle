@@ -4,7 +4,7 @@
 
 $string['about'] = 'Tentang editor ini';
 $string['absbottom'] = 'Bawah Absolut';
-$string['absmiddle'] = 'Tengah Absolut';
+$string['middle'] = 'Tengah Absolut';
 $string['address'] = 'Alamat';
 $string['alignment'] = 'Perataan';
 $string['alternatetext'] = 'teks Alternatif';

@@ -69,11 +69,11 @@ $string['filloutoneanswer'] = "Jy moet een moontlike antwoord kies.  Antwoorde w
 $string['filloutthreequestions'] = "Jy moet ten minste drie keuses maak.  Antwoorde wat oop gelos word,word nie gemerk nie.";
 $string['fillouttwochoices'] = "Jy moet ten minste twee keuses maak.  Antwoorde wat oop gelos word,word nie gemerk nie.";
 $string['fractionsaddwrong'] = "Die positiewe punte wat jy gekies het tel nie op tot 100%% nie
-<BR>Dit tel op tot \$a%%
-<BR>Wil jy terug gaan en die vraag reg maak?";
+<br />Dit tel op tot \$a%%
+<br />Wil jy terug gaan en die vraag reg maak?";
 $string['fractionsnomax'] = "Een van die antwoorde moet 100%% wees, sodat dit
-<BR>moontlik is om vol punte te kry vir die vraag.
-<BR>Wil jy terug gaan en die vraag reg maak?";
+<br />moontlik is om vol punte te kry vir die vraag.
+<br />Wil jy terug gaan en die vraag reg maak?";
 $string['gradeaverage'] = "Gemiddelde punt";
 $string['gradehighest'] = "Hoogste punt";
 $string['grademethod'] = "Graderings metode";
@@ -99,7 +99,7 @@ $string['nomoreattempts'] = "Nog pogings word nie toegelaat nie";
 $string['noquestions'] = "Geen vrae is al by gesit nie";
 $string['noreview'] = "Jy word nie toegelaat om die toets te hersien nie";
 $string['noreviewuntil'] = "Jy mag eers die toets hersien na \$a";
-$string['notenoughsubquestions'] = "Nie genoeg sub-vrae gedefinieer nie!<br>
+$string['notenoughsubquestions'] = "Nie genoeg sub-vrae gedefinieer nie!<br />
 Wil jy terug gaan en die vraag reg maak?";
 $string['numerical'] = "Numeries";
 $string['publish'] = "Publiseer";

@@ -109,7 +109,7 @@ $string['backuplogshelp'] = 'Je-li povoleno, budou do automatických záloh zahrnu
 $string['backupnameformat'] = '%%Y-%%m-%%d-%%H-%%M';
 $string['backupnoneusersinfo'] = 'Poznámka: Zvolili jste, ¾e nechcete zálohovat ¾ádné u¾ivatele. V¹echny zálohy modulù byly proto pøepnuty do re¾imu \"bez dat u¾ivatelù\". Prosím, pov¹imnìte si, ¾e moduly \"cvièení\" a \"workshop\" nejsou s tímto re¾imem kompatibilní, tak¾e jejich zálohování bylo vypnuto úplnì.';
 $string['backuporiginalname'] = 'Název zálohy';
-$string['backupsavetohelp'] = 'Úplná cesta k adresáøi, do nìho¾ chcete ukládat soubory záloh<br>(ponecháte-li pole prázdné, budou se soubory ukládat do vlastního adresáøe daného kurzu)';
+$string['backupsavetohelp'] = 'Úplná cesta k adresáøi, do nìho¾ chcete ukládat soubory záloh<br />(ponecháte-li pole prázdné, budou se soubory ukládat do vlastního adresáøe daného kurzu)';
 $string['backupuserfileshelp'] = 'Vyberte, zda mají být soubory u¾ivatele (napø. jeho fotografie) zahrnuty do automatických záloh.';
 $string['backupusershelp'] = 'Vyberte si, zda chcete zahrnout v¹echny u¾ivatele na serveru, nebo jen potøebné u¾ivatele pro ';
 $string['backupversion'] = 'Verze zálohy';
@@ -376,8 +376,8 @@ $string['enrolledincoursenot'] = 'Nezapsán do kurzu ';
 $string['enrollfirst'] = 'Pøed pou¾itím tìchto èinností se musíte zapsat alespoò do jednoho kurzu';
 $string['enrolmentconfirmation'] = 'Chystáte zapsat sebe sama jako èlena tohoto kurzu.<br />Jste si jistí, ¾e to opravdu chcete?';
 $string['enrolmentkey'] = 'Klíè k zápisu';
-$string['enrolmentkeyfrom'] = 'Tento kurz vy¾aduje \'klíè k zápisu\' - vstupní<br>heslo, které mù¾ete obdr¾et od $a';
-$string['enrolmentkeyhint'] = 'Tento klíè k zápisu nebyl správný, zkuste to je¹tì jednou<br>(Napovím vám - klíè zaèíná na \'$a\')';
+$string['enrolmentkeyfrom'] = 'Tento kurz vy¾aduje \'klíè k zápisu\' - vstupní<br />heslo, které mù¾ete obdr¾et od $a';
+$string['enrolmentkeyhint'] = 'Tento klíè k zápisu nebyl správný, zkuste to je¹tì jednou<br />(Napovím vám - klíè zaèíná na \'$a\')';
 $string['enrolmentnew'] = 'Nový zápis v $a';
 $string['enrolmentnewuser'] = '$a->user je zapsán do kurzu \"$a->course\"';
 $string['enrolmentnointernal'] = 'Ruèní zápisy nejsou momentálnì umo¾nìny.';
@@ -451,7 +451,7 @@ Tento program je volný software; mù¾ete jej ¹íøit a modifikovat podle ustanovení
 Tento program je roz¹iøován v nadìji, ¾e bude u¾iteèný, av¹ak BEZ JAKÉKOLI ZÁRUKY; neposkytují se ani odvozené záruky PRODEJNOSTI anebo VHODNOSTI PRO URÈITÝ ÚÈEL. Dal¹í podrobnosti hledejte ve Obecné veøejné licenci GNU:
 <p>
 http://staff.cesnet.cz/~lhotka/gnugpl-cz.html
-<br>
+<br />
 http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Body';
 $string['grades'] = 'Body';
@@ -688,7 +688,7 @@ $string['noteuserschangednonetocourse'] = 'Poznámka: pokud obnovujete u¾ivatelsk
 $string['nothingnew'] = 'Nic nového od va¹eho posledního pøihlá¹ení';
 $string['noticenewerbackup'] = 'Tato záloha byla vytvoøena v Moodle $a->backuprelease ($a->backupversion) a je novìj¹í, ne¾ va¹e stávající instalace Moodle $a->serverrelease ($a->serverversion). Toto mù¾e zpùsobovat problémy s konzistencí, proto¾e u záloh nelze garantovat zpìtnou kompatibilitu.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Uzivatel: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Tyto protokoly si muzete prohlednout na $a/course/log.php?id=1&chooselog=1&modid=site_errors ';
+$string['notifyloginfailuresmessageend'] = 'Tyto protokoly si muzete prohlednout na $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors ';
 $string['notifyloginfailuresmessagestart'] = 'Zde je seznam neuspesnych pokusu o prihlaseni na $a od doby posledniho zaslani takovehoto upozorneni';
 $string['notifyloginfailuressubject'] = '$a :: Upozorneni na neuspesna prihlaseni';
 $string['notincluded'] = 'Nezahrnuto';
@@ -796,7 +796,7 @@ $string['scheduledbackupstatus'] = 'Stav plánovaných záloh';
 $string['search'] = 'Hledat';
 $string['searchagain'] = 'Hledat znovu';
 $string['searchcourses'] = 'Vyhledat kurzy';
-$string['searchhelp'] = 'Mù¾ete vyhledávat i nìkolik slov najednou.<p>slovo : hledej v textu jakoukoliv shodu s tímto slovem.<br>+slovo : bude nalezena pouze pøesná shoda.<br>-slovo : nezobrazuj výsledky s tímto slovem.';
+$string['searchhelp'] = 'Mù¾ete vyhledávat i nìkolik slov najednou.<p>slovo : hledej v textu jakoukoliv shodu s tímto slovem.<br />+slovo : bude nalezena pouze pøesná shoda.<br />-slovo : nezobrazuj výsledky s tímto slovem.';
 $string['searchresults'] = 'Výsledky hledání';
 $string['sec'] = 'sek';
 $string['secs'] = 'sekund';

@@ -223,9 +223,9 @@ $string['emailformat'] = "Email formátuma";
 $string['emailmustbereal'] = "Megj.: az email-címnek valódinak kell lennie";
 $string['emailpasswordconfirmationsubject'] = "\$a: megváltozott jelszó visszaigazolása";
 $string['enrolmentkey'] = "Beiratkozó kód";
-$string['enrolmentkeyfrom'] = "Ez a kurzus egy 'beiratkozó kódot' igényel - amely egy egyszeri<BR>
+$string['enrolmentkeyfrom'] = "Ez a kurzus egy 'beiratkozó kódot' igényel - amely egy egyszeri<br />
 jelszó, mely \$a -tól kapható meg";
-$string['enrolmentkeyhint'] = "Ez a beiratkozó kódot nem megfelelõ, próbálja újra<BR>
+$string['enrolmentkeyhint'] = "Ez a beiratkozó kódot nem megfelelõ, próbálja újra<br />
 (Egy tipp - '\$a' -val kezdõdik)";
 $string['entercourse'] = "Kattintással lépjen be a tanfolyamra";
 $string['enteremailaddress'] = "Írja be az email-címét jelszavának törléséhez, és új jelszavának emailen történõ elküldéséhez.";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['addmynewentries'] = 'Lisää viestini';
@@ -26,6 +26,7 @@ $string['everybody'] = 'Kaikki';
 $string['furtherinformation'] = 'Lisätietoja';
 $string['lastentry'] = 'Viimeisin viesti';
 $string['maildefault'] = 'Sähköpostin oletusasetus';
+$string['mailnotification'] = 'Sähköposti-ilmoitus';
 $string['modulename'] = 'Vuoropuhelu';
 $string['modulenameplural'] = 'Vuoropuhelut';
 $string['namehascloseddialogue'] = '$a on sulkenut vuoropuhelun';
@@ -60,6 +61,9 @@ $string['studenttostudent'] = 'Opiskelija opiskelijalle';
 $string['subject'] = 'Aihe';
 $string['subjectadded'] = 'Aihe lisätty';
 $string['teachertostudent'] = 'Opettaja opiskelijalle';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['typefirstentry'] = 'Kirjoita ensinmäinen viesti tähän';
 $string['typefollowup'] = 'Kirjoita seuraavat tähän';
 $string['typeofdialogue'] = 'Vuoropuhelun tyyppi';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3.1 (2004052501)
+      // forum.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addanewdiscussion'] = 'Lägg till ett nytt diskussionsämne';
@@ -43,6 +43,7 @@ $string['editing'] = 'Redigering';
 $string['emptymessage'] = 'Något var fel med Ditt inlägg.  Kanske skrev Du inte in någon text, eller så var bilagan för stor.  Dina ändringar har INTE sparats.';
 $string['everyonecanchoose'] = 'Alla kan välja att prenumerera';
 $string['everyoneissubscribed'] = 'Alla prenumererar på detta forum';
+$string['existingsubscribers'] = 'Befintliga prenumeranter';
 $string['forcesubscribe'] = 'Tvinga alla att prenumerera';
 $string['forcesubscribeq'] = 'Tvinga alla att prenumerera?';
 $string['forum'] = 'Forum';
@@ -94,15 +95,17 @@ $string['postadded'] = 'Ditt inlägg har lagts till.<p>Du har $a för att redigera
 $string['postincontext'] = 'Se detta inlägg i sitt sammanhang';
 $string['postmailinfo'] = 'Detta är en kopia på ett meddelande inlagt på $a webbplats.
 För att lägga till Ditt svar via webbplatsen, klicka på denna länk:';
-$string['postrating1'] = 'Visa mest enskilt, (rationellt) inriktat  vetande (kunskap)';
-$string['postrating2'] = 'Enskilt, (rationellt) inriktat  vetande (kunskap) och socialt, (empatiskt) inriktat vetande (kunskap)';
-$string['postrating3'] = 'Visa mest socialt, (empatiskt) inriktat vetande (kunskap)';
+$string['postrating1'] = 'Visar mest enskilt,(rationellt) inriktat  vetande (kunskap)';
+$string['postrating2'] = 'Enskilt,(rationellt) inriktat  vetande (kunskap) och socialt, (empatiskt) inriktat vetande (kunskap)';
+$string['postrating3'] = 'Visar mest socialt, (empatiskt) inriktat vetande (kunskap)';
 $string['posts'] = 'Inlägg';
-$string['posttoforum'] = 'Inlägg i forum';
+$string['posttoforum'] = 'Publicera inlägget i forumet';
 $string['postupdated'] = 'Ditt inlägg har blivit uppdaterat';
+$string['potentialsubscribers'] = 'Möjliga prenumeranter';
 $string['processingdigest'] = 'Bearbetar sammanfattande e-postmeddelande för användare $a';
-$string['processingpost'] = 'Bearbetar inlägg $a ...';
+$string['processingpost'] = 'Bearbetar inlägg $a';
 $string['prune'] = 'Avbryt';
+$string['prunedpost'] = 'Ett nytt diskussionsämne har skapats av posten';
 $string['pruneheading'] = 'Avbryt inlägg och flytta till ett nytt diskussionsämne';
 $string['rate'] = 'Omdöme';
 $string['rating'] = 'Bedömning/värdering';
@@ -122,8 +125,8 @@ $string['repliesmany'] = '$a svar så långt';
 $string['repliesone'] = '$a svar så långt';
 $string['reply'] = 'Svar';
 $string['replyforum'] = 'Svar till forum';
-$string['rsssubscriberssdiscussions'] = 'Visa RSS-inmatningen för  ';
-$string['rsssubscriberssposts'] = 'Visa RSS-inmatningen för  ';
+$string['rsssubscriberssdiscussions'] = 'Visa RSS-inmatningen för  \'$a\' diskussionsämnen';
+$string['rsssubscriberssposts'] = 'Visa RSS-inmatningen för  \'$a\'  inlägg';
 $string['search'] = 'Sök';
 $string['searchforums'] = 'Sök forum';
 $string['searcholderposts'] = 'Sök äldre inlägg...';
@@ -146,6 +149,8 @@ $string['subscriptions'] = 'Prenumerationer';
 $string['unsubscribe'] = 'Avbeställ prenumeration från detta forum';
 $string['unsubscribed'] = 'Avbeställd';
 $string['unsubscribeshort'] = 'Avregistrera prenumeration';
+$string['yesforever'] = 'Ja, permanent';
+$string['yesinitially'] = 'Ja, till att börja med';
 $string['youratedthis'] = 'Du värderade detta';
 $string['yournewtopic'] = 'Ditt nya diskussionsämne';
 $string['yourreply'] = 'Ditt svar';

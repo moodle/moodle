@@ -4,7 +4,7 @@
 
 $string['about'] = 'O tomto editoru';
 $string['absbottom'] = 'Úplnì dolù (absbottom)';
-$string['absmiddle'] = 'Pøesnì uprostøed (absmiddle)';
+$string['middle'] = 'Pøesnì uprostøed (middle)';
 $string['address'] = 'Adresa';
 $string['alignment'] = 'Zarovnání';
 $string['alternatetext'] = 'Alternativní text';

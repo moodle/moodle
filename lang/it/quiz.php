@@ -103,16 +103,16 @@ $string['filloutthreequestions'] = 'Devi fornire almeno tre domande. Le domande 
 $string['fillouttwochoices'] = 'Devi fornire almeno due scelte. Le scelte lasciate in bianco non saranno utilizzate.';
 $string['forceregeneration'] = 'Forza rigenerazione';
 $string['fractionsaddwrong'] = 'I voti positivi che hai scelto non assommano al 100%% ma solo al $a%%
-<BR> Vuoi tornare indietro e correggere?
+<br /> Vuoi tornare indietro e correggere?
 
-<BR>ma solo a $a%%
+<br />ma solo a $a%%
 
-<BR>Vuoi tornare indietro e risolvere la questione?';
+<br />Vuoi tornare indietro e risolvere la questione?';
 $string['fractionsnomax'] = 'Una delle risposte deve essere 100%%, perchè sia
 
-<BR>possibile una votazione piena per questa domanda
-<BR> Vuoi tornare indietro e correggere?
-<BR>Vuoi tornare indietro e risolvere la questione?';
+<br />possibile una votazione piena per questa domanda
+<br /> Vuoi tornare indietro e correggere?
+<br />Vuoi tornare indietro e risolvere la questione?';
 $string['functiontakesatleasttwo'] = 'La funzione $a deve avere come minimo due argomenti';
 $string['functiontakesnoargs'] = 'La funzione $a non ha argomenti';
 $string['functiontakesonearg'] = 'La funzione $a deve avere un solo argomento';
@@ -167,7 +167,7 @@ $string['noreview'] = 'Non hai il permesso di rivedere questo quiz';
 $string['noreviewuntil'] = 'Non hai il permesso di rivedere questo quiz fino a $a';
 $string['noscript'] = 'I JavaScript devono essere abilitati per poter continuare!';
 $string['notenoughanswers'] = 'Questo tipo di domanda richiede come minimo $a risposte';
-$string['notenoughsubquestions'] = 'Non sono state definite abbastanza sottodomande!<br>Vuoi tornare indietro e correggere questa domanda?';
+$string['notenoughsubquestions'] = 'Non sono state definite abbastanza sottodomande!<br />Vuoi tornare indietro e correggere questa domanda?';
 $string['numerical'] = 'Numerica';
 $string['optional'] = 'opzionale';
 $string['overdue'] = 'in ritardo';

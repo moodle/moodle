@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4 alpha (2004081500)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['calendar'] = 'Kalenteri';
@@ -68,6 +68,9 @@ $string['shown'] = 'näkyvissä';
 $string['spanningevents'] = 'Tapahtumia käynnissä parhaillaan';
 $string['sun'] = 'Su';
 $string['sunday'] = 'Sunnuntai';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['thu'] = 'To';
 $string['thursday'] = 'Torstai';
 $string['timeformat_12'] = '12-tuntinen (AP/IP)';

@@ -123,11 +123,11 @@ directorio Moodle, para ayudarle a orientarse:</p>
 <div style="padding-left: 3em;">
 
     <p>config.php - El &Uacute;NICO archivo que necesita editar para empezar a 
-      trabajar <br>
+      trabajar <br />
 
 version.php - Define la versión actual del código de
 
-Moodle<br>
+Moodle<br />
 
 index.php - La página principal del sitio</p>
 
@@ -227,10 +227,10 @@ documentación de los cursos y las fotos de los usuarios.</p>
    > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
            TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
    > quit 
-   # mysqladmin -p reload<br></pre>
+   # mysqladmin -p reload<br /></pre>
   <p>Ejemplo de líneas de comando para PostgreSQL: </p>
 
-<pre>   # su - postgres<br>   &gt; psql -c "create user moodleuser createdb;" template1<br>   &gt; psql -c "create database moodle;" -U moodleuser template1<br>   &gt; psql -c "alter user moodleuser nocreatedb;" template1<br></pre>
+<pre>   # su - postgres<br />   &gt; psql -c "create user moodleuser createdb;" template1<br />   &gt; psql -c "create database moodle;" -U moodleuser template1<br />   &gt; psql -c "alter user moodleuser nocreatedb;" template1<br /></pre>
 
   <p>(Para MySQL yo recomiendo vivamente el uso de <a
 
@@ -332,7 +332,7 @@ opciones por defecto.</p>
 
 <blockquote>
 
-  <pre>DirectoryIndex index.php index.html index.htm<br>&lt;IfDefine APACHE2&gt;<br>     <strong>AcceptPathInfo</strong> on<br>&lt;/IfDefine&gt;<br><br>php_value magic_quotes_gpc On<br>php_value magic_quotes_runtime Off<br>php_value file_uploads On<br>php_value short_open_tag On<br>php_value session.auto_start Off<br>php_value session.bug_compat_warn Off</pre>
+  <pre>DirectoryIndex index.php index.html index.htm<br />&lt;IfDefine APACHE2&gt;<br />     <strong>AcceptPathInfo</strong> on<br />&lt;/IfDefine&gt;<br /><br />php_value magic_quotes_gpc On<br />php_value magic_quotes_runtime Off<br />php_value file_uploads On<br />php_value short_open_tag On<br />php_value session.auto_start Off<br />php_value session.bug_compat_warn Off</pre>
 
 </blockquote>
 
@@ -342,7 +342,7 @@ opciones por defecto.</p>
     podrán enviarse:</p>
   <blockquote> 
     <pre>LimitRequestBody 0
-php_value upload_max_filesize 2M<br>php_value post_max_size 2M<br>     </pre>
+php_value upload_max_filesize 2M<br />php_value post_max_size 2M<br />     </pre>
   </blockquote>
 
 <p>La forma más sencilla de hacerlo es copiar el archivo de
@@ -630,7 +630,7 @@ comandos de PHP.</p>
 
 <blockquote>
 
-  <pre>/opt/bin/php /web/moodle/admin/cron.php<br><br><br>(Windows) C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php<br><br></pre>
+  <pre>/opt/bin/php /web/moodle/admin/cron.php<br /><br /><br />(Windows) C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php<br /><br /></pre>
 
 </blockquote>
 

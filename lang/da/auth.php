@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.3 development (2004041800)
+      // auth.php - created with Moodle 1.4 (2004083100)
 
 
 $string['auth_dbdescription'] = 'Denne metode bruger en ekstern database for at kontrollere om et givet username og password er gyldigt. Hvis konto\'en er ny, kan oplysninger fra andre felter også kopieres ind i Moodle.';
@@ -16,6 +16,13 @@ $string['auth_dbtype'] = 'Database typen(Se <A HREF=../lib/adodb/readme.htm#driv
 $string['auth_dbuser'] = 'Username med læserrettigheder til databasen';
 $string['auth_emaildescription'] = 'Email bekræftigelse er default godkendelsesmetode. Når brugerne melder sig ind og vælger deres username og password, vil en bekræftigelses email blive sendt til brugerens emailaddresse. Denne email indeholder et sikkert link til en side, hvor brugeren kan bekræftige sine oplysninger. Fremtidige logins kontrolleres ved sammenligning af det username og password, som der er gemt i databasen.';
 $string['auth_emailtitle'] = 'Email-baseret godkendelse';
+$string['auth_fccreators'] = 'Liste af grupper hvis medlemmer kan oprette nye kurser. Adskil flere grupper med \';\'. Navne skal staves nøjagtig som på FirstClass serveren. Systemet er case-sensitivt.';
+$string['auth_fcdescription'] = 'Denne metode bruger en FirstClass server til at kontrollere om et givent brugernavn og password er korrekt.';
+$string['auth_fcfppport'] = 'Server port (3333 er den mest brugte)';
+$string['auth_fchost'] = 'FirstClass server adresse. Brug IP-nummeret eller DNS-navnet.';
+$string['auth_fcpasswd'] = 'Password for ovenstående konto';
+$string['auth_fctitle'] = 'Brug en FirstClass Server';
+$string['auth_fcuserid'] = 'BrugerID for FirstClass konto med privilegiet \'Subadministrator\' sat.';
 $string['auth_imapdescription'] = 'Denne metode bruger en IMAP server for at kontrollere om usernam og password er gyldigt.';
 $string['auth_imaphost'] = 'IMAP server addressen. Brug IP nummeret, ikke DNS navn.';
 $string['auth_imapport'] = 'IMAP server port nummer. Sædvanligvis er det 143 eller 993.';
@@ -28,7 +35,7 @@ $string['auth_ldap_create_context'] = 'Hvis du tillader brugeroprettelse med ema
 $string['auth_ldap_creators'] = 'List af grupper hvis medlemmer kan oprette nye kurser. Adskil flere grupper med \';\'. F.eks. i stil med \'cn=teachers, ou=staff, o=myirg\'';
 $string['auth_ldap_host_url'] = 'Angiv LDAP host i URL-form f.eks. \'ldap://ldap.myorg.com/\' eller \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'Angiv bruger attribut, når en bruger tilhører en gruppe. Normalt \'member\'';
-$string['auth_ldap_search_sub'] = 'Sæt værdi &lt;&gt; 0 hvis du vil søge efter brugere ud fra underemner.';
+$string['auth_ldap_search_sub'] = 'Sæt værdi <> 0 hvis du vil søge efter brugere ud fra underemner.';
 $string['auth_ldap_update_userinfo'] = 'Updater bruger information (fornavn, efternavn, addresse..) fra LDAP til Moodle. Se /auth/ldap/attr_mappings.php for information';
 $string['auth_ldap_user_attribute'] = 'Attributten til navngivning/søgning af brugere. Sædvanligvis \'cn\'.';
 $string['auth_ldap_version'] = 'Versionen af LDQP protokollen din server bruger.';

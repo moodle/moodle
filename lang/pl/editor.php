@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 - (2004052400)
+      // editor.php - created with Moodle 1.4 (2004083100)
 
 
 $string['about'] = 'O tym edytorze';
@@ -8,6 +8,9 @@ $string['absmiddle'] = '¦rodek';
 $string['address'] = 'Adres';
 $string['alignment'] = 'Justowanie';
 $string['alternatetext'] = 'Tekst alternatywny';
+$string['anchorhelp'] = 'Tworzy kotwicê. Link i tak bêdziesz musia³ utworzyæ rêcznie.';
+$string['anchorname'] = 'Nazwa ktowicy';
+$string['anchors'] = 'Kotwice';
 $string['baseline'] = 'Dolna linia';
 $string['bold'] = 'Czcionka pogrubiona';
 $string['borderthickness'] = 'Grubo¶æ ramki';
@@ -21,6 +24,7 @@ $string['chooseicon'] = 'Wybierz ikonê do wstawienia';
 $string['close'] = 'Zamknij';
 $string['cols'] = 'Kolumny';
 $string['copy'] = 'Skopiuj zaznaczone';
+$string['createanchor'] = 'Stwórz kotwicê';
 $string['createfolder'] = 'Utwórz folder';
 $string['createlink'] = 'Wstaw link';
 $string['cut'] = 'Wytnij zaznaczone';

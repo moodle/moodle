@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 development (2004082600)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['allowresubmit'] = 'Salli uudelleenlähetys';
@@ -39,6 +39,9 @@ $string['submissionfeedback'] = 'Palaute tehtävästä';
 $string['submissions'] = 'Palautukset';
 $string['submitassignment'] = 'Palauta tehtäväsi käyttäen tätä lomaketta';
 $string['submitted'] = 'Palautettu';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['typeoffline'] = 'Offline-tehtävä';
 $string['typeuploadsingle'] = 'Lähetä yksi tiedosto';
 $string['uploadbadname'] = 'Tiedostonimessä on tuntemattomia merkkejä. Tiedostoa ei voida lähettää.';

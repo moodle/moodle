@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 - (2004052400)
+      // glossary.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addcomment'] = 'Dodaj komentarz';
@@ -61,16 +61,17 @@ $string['deletingnoneemptycategory'] = 'Usuniêcie tej kategorii nie spowoduje us
 $string['descending'] = 'Malej±ce';
 $string['destination'] = 'Importuj do';
 $string['displayformat'] = 'Format s³ownika';
-$string['displayformat2'] = 'Pe³en z autorem';
-$string['displayformat3'] = 'Encyklopedia';
-$string['displayformat4'] = 'Czêsto zadawane pytania (FAQ)';
-$string['displayformat5'] = 'Pe³en bez autora';
-$string['displayformat6'] = 'Lista wpisów';
 $string['displayformatcontinuous'] = 'Ci±g³y bez autora';
-$string['displayformatdefault'] = 'Prosty styl s³ownikowy';
+$string['displayformatdictionary'] = 'Prosty styl s³ownika';
+$string['displayformatencyclopedia'] = 'Encyklopedia';
+$string['displayformatentrylist'] = 'Lista wpisów';
+$string['displayformatfaq'] = 'FAQ';
+$string['displayformatfullwithauthor'] = 'Pe³ny z autorami';
+$string['displayformatfullwithoutauthor'] = 'Pe³ny bez autorów';
 $string['displayformats'] = 'Dostêpne formaty wygl±du';
 $string['displayformatssetup'] = 'Wy¶wietl ustawienia formatów';
 $string['duplicateentry'] = 'Podwójne definicje';
+$string['editalways'] = 'Zawsze mo¿na edytowaæ';
 $string['editcategories'] = 'Edytuj kategorie';
 $string['editentry'] = 'Edytuj wpis';
 $string['editingcomment'] = 'Edytuj komentarz';
@@ -100,6 +101,7 @@ $string['filetoimport'] = 'Plik do importu';
 $string['fillfields'] = 'Pola: Termin i Definicja musz± zostaæ wype³nione';
 $string['filtername'] = 'Automatyczne linkowanie pojêæ';
 $string['fullmatch'] = 'Szukaj tylko wyrazów tak jak zosta³y wpisane<br><small>(je¶li zosta³y automatycznie po³±czone)';
+$string['globalglossary'] = 'S³ownik globalny';
 $string['glossaryleveldefaultsettings'] = 'Domy¶lne ustawienia s³ownika';
 $string['glossarytype'] = 'Typ s³ownika pojêæ';
 $string['glosssaryexported'] = 'Wyeksportowano s³ownik pojêæ';

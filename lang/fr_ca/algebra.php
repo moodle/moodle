@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // algebra.php - created with Moodle 1.2 Beta (2004022400)
+      // algebra.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['filtername'] = 'Notation algébrique';
+$string['parentlanguage'] = 'fr';
+$string['thisdirection'] = 'ltr';
 
 ?>

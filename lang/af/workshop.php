@@ -93,11 +93,11 @@ $string['newsubmissions'] = "Nuwe ingehandige werk";
 $string['noassessmentsdone'] = "Geen Evaluering gedoen";
 $string['nosubmissionsavailableforassessment'] = "Geen ingehandigde werk beskikbaar vir evaluering";
 $string['notavailable'] = "Nie beskikbaar";
-$string['noteonassessmentelements'] = "Evaluering word ingedeel in 'n paar 'Evaluerings Elemente'.<BR>
-	Dit maak evaluering makliker en meer konstant. As onderwyser moet jy die Elemente<BR>
-	byvoeg voordat jy die opdrag beskikbaar stel aan die studente. Dit word gedoen deur<BR>
-	op die opdrag in die kursus te klik, as daar geen elemente is nie sal jy gevra word<BR>
-	om hulle by te sit. Jy kan die aantal elemente redigeer deur die 'Redigeer Evaluasie' skerm,<BR>
+$string['noteonassessmentelements'] = "Evaluering word ingedeel in 'n paar 'Evaluerings Elemente'.<br />
+	Dit maak evaluering makliker en meer konstant. As onderwyser moet jy die Elemente<br />
+	byvoeg voordat jy die opdrag beskikbaar stel aan die studente. Dit word gedoen deur<br />
+	op die opdrag in die kursus te klik, as daar geen elemente is nie sal jy gevra word<br />
+	om hulle by te sit. Jy kan die aantal elemente redigeer deur die 'Redigeer Evaluasie' skerm,<br />
 	die elemente kan bygesit word deur die  'Bestuur Evaluasie skerm. ";
 $string['notgraded'] = "Nie gemerk nie";
 $string['notitlegiven'] = "Geen title gegee";
@@ -172,7 +172,7 @@ $string['verypoor'] = "Baie Sleg";
 $string['view'] = "Vertoon";
 $string['viewassessmentofteacher'] = "Vertoon evaluasie van \$a";
 $string['viewotherassessments'] = "Vertoon ander evaluasies";
-$string['warningonamendingelements'] = "WAARSKUWING:Daar is ingehandigde evaluasies. <BR>Moenie die aantal Evaluasie Elemente, Skaal Tipes of Element Gewig verander nie.";
+$string['warningonamendingelements'] = "WAARSKUWING:Daar is ingehandigde evaluasies. <br />Moenie die aantal Evaluasie Elemente, Skaal Tipes of Element Gewig verander nie.";
 $string['weightederrorcount'] = "Geweegde Fouttelling : \$a";
 $string['weightforbias'] = "Gewig van afronding";
 $string['weightforgradingofassessments'] = "Gewig vir evaluasies";

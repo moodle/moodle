@@ -71,9 +71,9 @@ $string['moveonto'] = "Weiterverschieben nach";
 $string['noassessmentsdone'] = "Keine Bewertung durchgeführt";
 $string['nosubmissionsavailableforassessment'] = "Keine Beiträge für die Bewertung vorhanden";
 $string['notavailable'] = "Nicht verfügbar";
-$string['noteonassessmentelements'] = "Beachte, dass die Benotung aufgeteilt ist in eine Anzahl von 'Bewertungskriterien'.<br>
-Dies macht die Benotung einfacher und plausibeler. Als Kursleiter musst Du diese<br>
-Kriterien hinzufügen, bevor Du die Aufgabe dem Kursteilnehmer zugänglich machst. Dies geschieht durch das <br>Klicken auf die Aufgabe im Kurs. Wenn keine Kriterien vorhanden sind, wirst Du gebeten<br>diese hinzuzufügen. Du kannst die Anzahl der Kriterien ändern, indem Du die Seite der Aufgabenbearbeitung benutzt,<br>
+$string['noteonassessmentelements'] = "Beachte, dass die Benotung aufgeteilt ist in eine Anzahl von 'Bewertungskriterien'.<br />
+Dies macht die Benotung einfacher und plausibeler. Als Kursleiter musst Du diese<br />
+Kriterien hinzufügen, bevor Du die Aufgabe dem Kursteilnehmer zugänglich machst. Dies geschieht durch das <br />Klicken auf die Aufgabe im Kurs. Wenn keine Kriterien vorhanden sind, wirst Du gebeten<br />diese hinzuzufügen. Du kannst die Anzahl der Kriterien ändern, indem Du die Seite der Aufgabenbearbeitung benutzt,<br />
 die Kriterien selbst können über die Seite &quot;Aufgabenverwaltung&quot; bearbeitet werden";
 $string['notgraded'] = "Nicht benotet";
 $string['notitlegiven'] = "Kein Titel angegeben";
@@ -137,7 +137,7 @@ $string['ungradedassessmentsofteachersubmissions'] = "\$a unbenotete Bewertungen
 $string['view'] = "Ansicht";
 $string['viewassessmentofteacher'] = "Bewertung anzeigen von \$a";
 $string['viewotherassessments'] = "Andere Bewertungen anzeigen";
-$string['warningonamendingelements'] = "WARNUNG: Es existieren eingereichte Bewertungen<br>Ändern Sie nicht die Anzahl der Kriterien, den Skalentyp oder die Kriterienwichtung";
+$string['warningonamendingelements'] = "WARNUNG: Es existieren eingereichte Bewertungen<br />Ändern Sie nicht die Anzahl der Kriterien, den Skalentyp oder die Kriterienwichtung";
 $string['weightederrorcount'] = "Durchnittsfehlerzahl: \$a";
 $string['weightforbias'] = "Wichtung für Vorbereitung";
 $string['weightforgradingofassessments'] = "Wichtung der Benotung der Bewertungen";

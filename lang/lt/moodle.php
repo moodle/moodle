@@ -260,9 +260,9 @@ $string['emailpasswordsent'] = "Aèiû kad patvirtinotë slaptaþodþio pakeitimà.
 <p>Naujas slaptaþodis yra automatiðkai sugeneruotas - gal norite já <a href=\$a->link>pakeisti</a> á labiaus ásimenamà.";
 $string['enrolmentconfirmation'] = "Jûs bandote save ásiraðyti á paskaitas.<br />Ar tikrai to norite?";
 $string['enrolmentkey'] = "Ásiraðymo raktas";
-$string['enrolmentkeyfrom'] = "Ði paskaita reikalauja ásiraðymo rakto - vienkartinio slaptaþodþio<BR>
+$string['enrolmentkeyfrom'] = "Ði paskaita reikalauja ásiraðymo rakto - vienkartinio slaptaþodþio<br />
 kurá turëjote gauti ið \$a";
-$string['enrolmentkeyhint'] = "Ásiraðymo raktas neteisingas, bandykite dar kartà<BR>
+$string['enrolmentkeyhint'] = "Ásiraðymo raktas neteisingas, bandykite dar kartà<br />
 (jis turëti prasidëti ið : '\$a')";
 $string['entercourse'] = "Eiti á paskaità";
 $string['enteremailaddress'] = "Áveskite el. paðto adresà ir naujas slaptaþodis bus jums iðsiøstas.";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['allowupdate'] = 'Laat toe de keuze aan te passen';
@@ -27,6 +27,9 @@ $string['responses'] = 'Antwoorden';
 $string['responsesto'] = 'Antwoorden op  $a';
 $string['savemychoice'] = 'Bewaar mijn antwoord';
 $string['showunanswered'] = 'Toon een kolom voor onbeantwoord';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 $string['timerestrict'] = 'Beperk het beantwoorden tot deze periode';
 $string['viewallresponses'] = 'Bekijk $a antwoorden';
 

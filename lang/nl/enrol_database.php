@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_database.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // enrol_database.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['dbhost'] = 'Servernaam van de databank';
@@ -14,5 +14,8 @@ $string['localcoursefield'] = 'De veldnaam in de vaktabel die we gebruiken om te
 $string['localuserfield'] = 'De naam van het veld in de lokale gebruikerstabel die we gebruiken om de gebruiker te koppelen aan een  record in de externe databank (bv idnummer)';
 $string['remotecoursefield'] = 'Het veld in de externe databank waarin course ID staat';
 $string['remoteuserfield'] = 'Het veld in de externe databank waarin user ID staat';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 
 ?>

@@ -199,8 +199,8 @@ $string['emailpasswordsent'] = 'Danke für Deine Bestätigung des neuen Kennworts.
 <p>Das Kennwort wurde automatisch generiert -
 Vielleicht möchtest Du Dein <a href=§a->link>Kennwort ändern</a>, um es Dir leichter zu merken.';
 $string['enrolmentkey'] = 'Zugangs-Schlüssel';
-$string['enrolmentkeyfrom'] = 'Für diesen Kurs benötigst Du einen \'Zugangs-Schlüssel\' - ein einmaliges Kennwort,<br>den Du  von $a bekommen haben solltest<BR>';
-$string['enrolmentkeyhint'] = 'Der Zugangs-Schlüssel war falsch, bitte versuche es erneut<BR>
+$string['enrolmentkeyfrom'] = 'Für diesen Kurs benötigst Du einen \'Zugangs-Schlüssel\' - ein einmaliges Kennwort,<br />den Du  von $a bekommen haben solltest<br />';
+$string['enrolmentkeyhint'] = 'Der Zugangs-Schlüssel war falsch, bitte versuche es erneut<br />
 (Hier ist ein Hinweis - Er startet mit \'$a\'';
 $string['entercourse'] = 'Hier klicken, um den Kurs zu betreten';
 $string['enteremailaddress'] = 'Gebe hier Deine Email-Adresse ein, um Dein Kennwort zurückzusetzen. Ein neues Kennwort wird Dir via Email zugesendet.';

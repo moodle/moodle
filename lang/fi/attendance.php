@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['absentlong'] = 'Puuttuva';
@@ -23,7 +23,7 @@ $string['downloadexcelfull'] = 'Lataa kaikki tiedot Excel-taulukkona';
 $string['downloadexceltotals'] = 'Lataa yhteenveto Excel-taulukkona';
 $string['downloadtextfull'] = 'Lataa kaikki tiedot tekstinä';
 $string['downloadtexttotals'] = 'Lataa yhteenveto tekstinä';
-$string['dynamicsection'] = 'Määritä viikottainen läsnäolo tämän pävän mukaan';
+$string['dynamicsection'] = 'Määritä viikottainen läsnäolo tämän päivän mukaan';
 $string['dynamicsectionmulti'] = 'Sijoita listat viikolle automattisesti';
 $string['dynsectionshort'] = 'Siirtyy dynaamisesti osioon';
 $string['endbeforestart'] = 'Päättymispäivä on ennen lopetus päivää';
@@ -58,6 +58,9 @@ $string['tardiesperabsence'] = 'Kuinka monta myöhästymistä lasketaan poissaoloks
 $string['tardylong'] = 'Myöhästyminen';
 $string['tardyshort'] = 'M';
 $string['teacheredit'] = 'Osallistu';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['thursday'] = 'To';
 $string['tuesday'] = 'Ti';
 $string['viewall'] = 'Katsele kaikkia läsnäololistoja';

@@ -4,7 +4,7 @@
 
 $string['about'] = 'Íæá åĞÇ ÇáãÍÑÑ';
 $string['absbottom'] = 'ÃÓİá ÇáäÕ';
-$string['absmiddle'] = 'æÓØ ÇáÓØÑ';
+$string['middle'] = 'æÓØ ÇáÓØÑ';
 $string['address'] = 'ÚäæÇä';
 $string['alignment'] = 'ãÍÇĞÇÉ';
 $string['alternatetext'] = 'ÇáäÕ ÇáÈÏíá';

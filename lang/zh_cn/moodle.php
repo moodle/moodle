@@ -96,7 +96,7 @@ $string['backupkeephelp'] = '你想要为每门课程保存多少最近的备份? (比较旧的一些将
 $string['backuplogshelp'] = '如果使用,课程记录将会被包含在自动备份中';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = '备份名称';
-$string['backupsavetohelp'] = '存放备份文件的位置的完整路径<br>(不填则保存在课程的默认目录)';
+$string['backupsavetohelp'] = '存放备份文件的位置的完整路径<br />(不填则保存在课程的默认目录)';
 $string['backupuserfileshelp'] = '选择自动备份中是否包含用户文件（如用户图片）';
 $string['backupusershelp'] = '选择是否包含所有用户还是只要各个课程需要的用户';
 $string['backupversion'] = '备份版本';
@@ -334,10 +334,10 @@ $string['enrolledincourse'] = '学习课程 \"$a\"';
 $string['enrolledincoursenot'] = '不再学习课程 \"$a\"';
 $string['enrolmentconfirmation'] = '你想学习该课程。确定吗？';
 $string['enrolmentkey'] = '选课密钥';
-$string['enrolmentkeyfrom'] = '该课程需要‘选课密钥’——<BR>
+$string['enrolmentkeyfrom'] = '该课程需要‘选课密钥’——<br />
 
 一个从 $a 获得的一次性密码';
-$string['enrolmentkeyhint'] = '这个选课密钥不正确，请再试一次<BR>
+$string['enrolmentkeyhint'] = '这个选课密钥不正确，请再试一次<br />
 （提示：以\'$a\'开头）';
 $string['entercourse'] = '点击进入该课程';
 $string['enteremailaddress'] = '输入你的email地址以重设密码，
@@ -736,7 +736,7 @@ $string['scheduledbackupstatus'] = '计划备份状态';
 $string['search'] = '搜索';
 $string['searchagain'] = '再次搜索';
 $string['searchcourses'] = '搜索课程';
-$string['searchhelp'] = '你可以使用多关键字搜索.<p>word :搜索任何包含该关键字的内容.<br>+word :严格匹配.<br>-word :结果中不含该关键词';
+$string['searchhelp'] = '你可以使用多关键字搜索.<p>word :搜索任何包含该关键字的内容.<br />+word :严格匹配.<br />-word :结果中不含该关键词';
 $string['searchresults'] = '搜索结果';
 $string['sec'] = '秒';
 $string['secs'] = '秒';
