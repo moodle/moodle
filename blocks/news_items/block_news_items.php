@@ -31,9 +31,7 @@ class CourseBlock_news_items extends MoodleBlock {
             $news = forum_get_course_forum($this->course->id, 'news');
             // Slightly hacky way to do it but...
             ob_start();
-            echo '<font size="-2">';
             forum_print_latest_discussions($news->id, $this->course->newsitems, "minimal", "", get_current_group($this->course->id));
-            echo '</font>';
             $this->content->text = ob_get_contents();
             ob_end_clean();
         }
