@@ -21,6 +21,7 @@
     $strcourses = get_string("courses");
     $stredit = get_string("edit");
     $strdelete = get_string("delete");
+    $straction = get_string("action");
     $stradd = get_string("add");
 
 	print_header("$site->fullname: $strcategories", "$site->fullname", 
@@ -95,7 +96,7 @@
 
 
 /// Print the table of all categories
-    $table->head  = array ($strcategory, $strcourses, $strdelete);
+    $table->head  = array ($strcategory, $strcourses, $straction);
     $table->align = array ("LEFT", "CENTER", "CENTER");
     $table->size = array ("50", "20", "20");
     $table->width = 100;
@@ -109,7 +110,7 @@
             $delete = "<A HREF=\"categories.php?delete=$category->id\">$strdelete</A>";
         }
         $table->data[] = array ("<INPUT TYPE=text NAME=\"c$category->id\" VALUE=\"$category->name\" SIZE=30>",
-                                "$count", $delete);
+                                "<A HREF=\"index.php?category=$category->id\">$count</A>", $delete);
     }
     $table->data[] = array ("<INPUT TYPE=text NAME=\"new\" VALUE=\"\" SIZE=30>", "", "$stradd");
     print_table($table);
