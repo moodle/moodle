@@ -17,6 +17,7 @@ $string['messaging'] = 'Messaging';
 $string['mycontacts'] = 'My Contacts';
 $string['newsearch'] = 'New search';
 $string['nosearchresults'] = 'There were no results from your search';
+$string['nomessages'] = 'No messages waiting';
 $string['offlinecontacts'] = 'Offline Contacts ($a)';
 $string['onlinecontacts'] = 'Online Contacts ($a)';
 $string['onlyfromme'] = 'Only messages from me';
