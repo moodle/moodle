@@ -58,11 +58,11 @@
         
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
-        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction);
+        print_log_selector_form($course, $user, $date, "", $modid, $modaction);
 
         print_log($course, $user, $date, "l.time DESC", $page, $perpage, 
                   "log.php?id=$course->id&chooselog=1&user=$user&date=$date&modid=$modid&modaction=$modaction", 
-                  $modname, $modid, $modaction);
+                  "", $modid, $modaction);
 
     } else {
         if ($course->category) {
