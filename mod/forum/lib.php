@@ -819,10 +819,7 @@ function forum_get_course_forum($courseid, $type) {
             return false;
         }
         include_once("$CFG->dirroot/course/lib.php");
-        $modinfo = serialize(get_array_of_activities($courseid));
-        if (!set_field("course", "modinfo", $modinfo, "id", $courseid)) {
-            error("Could not cache module information!");
-        }
+        rebuild_course_cache($courseid);
     }
         
     return get_record("forum", "id", "$forum->id");
