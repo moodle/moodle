@@ -5,8 +5,8 @@ This documment shows the current status of the backup/restore option.
 
 Backup:  WORKING. COMPLETED !!
 
-Restore: WORKING. COMPLETED except logs restore.
-                  
+Restore: WORKING. COMPLETED except events and some (forums and lessons)
+                  logs restore (the rest should be working).
 
 ========== ========== ========== ========== ========== ==========
 
@@ -235,7 +235,7 @@ Restore Details:
                  + files........................................DONE
    - User files from temp.......................................DONE
    - Course files from temp.....................................DONE
-   - Log entries................................................NO EXISTS
+   - Log entries................................................IN PROGRESS
    - Readjust instance in course_modules........................DONE
    - Readjust modinfo in course (serialize).....................DONE
    - Delete old entries at restore end.  .......................DONE
