@@ -130,13 +130,16 @@ function format_time($totalsecs, $str=NULL) {
     return get_string("now");
 }
 
-function userdate($date, $format="", $timezone=99) {
+function userdate($date, $format="", $timezone=99, $fixday = true) {
 /// Returns a formatted string that represents a date in user time
 /// WARNING: note that the format is for strftime(), not date().
 /// Because of a bug in most Windows time libraries, we can't use 
 /// the nicer %e, so we have to use %d which has leading zeroes.
 /// A lot of the fuss below is just getting rid of these leading 
 /// zeroes as efficiently as possible.
+///
+/// If parammeter fixday = true (default), then take off leading 
+/// zero from %d, else mantain it.
 
     global $USER;
 
@@ -145,7 +148,9 @@ function userdate($date, $format="", $timezone=99) {
     }
 
     $formatnoday = str_replace("%d", "DD", $format);
-    $fixday = ($formatnoday != $format);
+    if ($fixday) {
+        $fixday = ($formatnoday != $format);
+    }
 
     if ($timezone == 99) {
         if (isset($USER->timezone)) {
