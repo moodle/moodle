@@ -4,11 +4,17 @@
 
 $string['addresource'] = "Agregar material";
 $string['chooseafile'] = "Elija o suba un archivo";
+$string['configdefaulturl'] = "Este valor se usa como pre relleno cuando se crea un nuevo recurso basado en URL.";
+$string['configfilterexternalpages'] = "Activar esta variable ocasionará que todos los recursos externos (páginas web, archivos HTML cargados) se procesen según los filtros definidos en el sitio (como el glosario, los enlaces automáticos, etc.). Esto puede hacer que el rendimiento del sistema disminuya considerablemente --úselo con cuidado, sólo si es necesario.";
 $string['configframesize'] = "Cuando se muestra una página web o un archivo cargado dentro de un marco (frame), este valor es el tamaño en pixeles del marco top que contiene el navegador.";
+$string['configwebsearch'] = "Cuando agregue una URL como página wueb o como enlace, esta ubicación se ofrece como un sitio para que el usuario busque la URL que desea.";
 $string['editingaresource'] = "Editar material";
 $string['example'] = "Ejemplo";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
 $string['exampleurl'] = "http://www.ejemplo.com/directorio/archivo.html";
+$string['fetchclienterror'] = "Ha ocurrido un problema al tratar de abrir la página web (posiblemente la dirección esté equivocada).";
+$string['fetcherror'] = "Ha ocurrido un problema al tratar de abrir la página web.";
+$string['fetchservererror'] = "Ha ocurrido un problema con el servidor remoto al tratar de abrir la página web (posiblemente un error del programa).";
 $string['filename'] = "Nombre del archivo";
 $string['fulltext'] = "Texto completo";
 $string['htmlfragment'] = "Fragmento HTML";

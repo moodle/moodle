@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1 Beta (2003082001)
+      // quiz.php - created with Moodle 1.1 (2003082800)
 
 
 $string['acceptederror'] = "Margen de error";
@@ -73,7 +73,6 @@ $string['fractionsnomax'] = "Una de las preguntas debe ser 100%% para que sea<BR
 $string['gradeaverage'] = "Promedio de calificaciones";
 $string['gradehighest'] = "Calificación más alta";
 $string['grademethod'] = "Método de calificación";
-$string['grades'] = "Calificaciones";
 $string['guestsno'] = "Lo sentimos, los invitados no pueden ver o responder cuestionarios";
 $string['imagedisplay'] = "Imagen a mostrar";
 $string['importquestions'] = "Importar preguntas de un archivo";
@@ -89,14 +88,17 @@ $string['modulename'] = "Cuestionario";
 $string['modulenameplural'] = "Cuestionarios";
 $string['multianswer'] = "Respuestas incrustadas (Cloze)";
 $string['multichoice'] = "Opción múltiple";
+$string['name'] = "Nombre";
 $string['noanswers'] = "No se seleccionó ninguna respuesta";
 $string['noattempts'] = "No se ha participado en este cuestionario";
 $string['nomoreattempts'] = "No se permiten más respuestas";
 $string['noquestions'] = "Aún no se han agregado perguntas";
+$string['noresponse'] = "Sin respuesta";
 $string['noreview'] = "No está autorizado para revisar este cuestionario";
 $string['noreviewuntil'] = "No está autorizado para revistar este cuestionario hasta \$a";
 $string['notenoughsubquestions'] = "No se han definido suficientes subpreguntas.<br> ¿Quiere regresar y arreglar esto?";
 $string['numerical'] = "Numérico";
+$string['percentcorrect'] = "Porcentaje correcto";
 $string['publish'] = "Publicar";
 $string['qti'] = "Formato IMS QTI";
 $string['question'] = "Pregunta";
@@ -122,6 +124,9 @@ $string['regradecomplete'] = "Se han visto todas las repuestas";
 $string['regradecount'] = "Se han cambiado \$a->changed de \$a->attempt calificaciones";
 $string['rename'] = "Renombrar";
 $string['report'] = "Informes";
+$string['reportfullstat'] = "Estadísticas detalladas";
+$string['reportmulti_percent'] = "Porcentajes mútiples";
+$string['reportmulti_q_x_student'] = "Elecciones multi estudinates";
 $string['reportoverview'] = "Vista general";
 $string['reportregrade'] = "Intentos";
 $string['reportsimplestat'] = "Estadística";
@@ -150,6 +155,7 @@ $string['type'] = "Escriba";
 $string['viewallanswers'] = "Ver \$a cuestionarios resueltos";
 $string['viewallreports'] = "Ver los informes de \$a intentos";
 $string['webct'] = "Formato WebCT";
+$string['withsummary'] = "con estadísticas sumarias";
 $string['yourfinalgradeis'] = "Su calificación final en este cuestionario es \$a";
 
 ?>

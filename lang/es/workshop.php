@@ -96,6 +96,7 @@ $string['noassessmentsdone'] = "No se han hecho evaluaciones";
 $string['nosubmissionsavailableforassessment'] = "No hay envíos disponibles para evaluar";
 $string['notavailable'] = "No disponible";
 $string['noteonassessmentelements'] = "Advierta que la calificación está dividida en una serie de 'elementos de evaluación'; esto hace que sea más sencilla y consistente. Como profesor usted debe añadir estos 'elementos de evaluación' antes de plantear la tarea a los estudiantes.</ br>
+
 Esto se consigue haciendo clic en la tarea dentro del curso; de no haber elementos se le pedirá que los añada. Puede cambiar el número de elementos usando la ventana 'editar tarea', el elemento en sí puede ser rectificado desde la pantalla &quot;Administrar tarea&quot;. ";
 $string['notgraded'] = "Ninguna calificación";
 $string['notitlegiven'] = "Aún no tiene título";
@@ -193,5 +194,24 @@ $string['workshopsubmissions'] = "Envíos al taller";
 $string['yourassessments'] = "Sus evaluaciones";
 $string['yourassessmentsofexamplesfromtheteacher'] = "Sus evaluaciones de ejemplo de \$a";
 $string['yourfeedbackgoeshere'] = "Coloque aquí su respuesta";
+$string['assessmentofresubmission'] = "Esta es una evaluación de un trabajo revisado. <br />Este formulario se ha cumplimentado con sus comentarios y calificaciones previos. <br />Por favor, corríjalos tras mirar el trabajo revisado.";
+$string['gradetable'] = "Tabla de Calificaciones";
+$string['mail10'] = "Puede evaluarla en su tarea de Taller ";
+$string['mail8'] = "La tarea \$a es un trabajo revisado. ";
+$string['mail9'] = "Por favor, evalúela en la tarea de taller \$a ";
+$string['numberofnegativeresponses'] = "Número de respuestas negativas";
+$string['optionaladjustment'] = "Ajusste opcional";
+$string['phase1short'] = "Ajustar";
+$string['phase2short'] = "Envíos";
+$string['phase3short'] = "Ambos";
+$string['phase4short'] = "Evaluaciones";
+$string['phase5short'] = "Cálculo";
+$string['phase6'] = "Mostrar calificaciones finales";
+$string['phase6short'] = "Mostrar calificaciones";
+$string['reasonforadjustment'] = "Razón para el ajuste";
+$string['submissionsnolongerallowed'] = "No se permiten más envíos";
+$string['submitassignmentusingform'] = "Envíe su tarea utilizando este formulario";
+$string['submitrevisedassignment'] = "Envíe su tarea revisada utilizando este formulario";
+$string['weight'] = "Peso";
 
 ?>
