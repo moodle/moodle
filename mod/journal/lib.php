@@ -138,6 +138,7 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
                                            WHERE e.id = '$log->info' AND e.journal = j.id
                                                  AND e.user = u.id");
                     $journals[$log->info]->time = $log->time;
+                    $journals[$log->info]->url = $log->url;
                 }
             }
         }
@@ -149,7 +150,7 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
         foreach ($journals as $journal) {
             $date = userdate($journal->time, "%e %b, %H:%M");
             echo "<P><FONT SIZE=1>$date - $journal->firstname $journal->lastname<BR>";
-            echo "\"<A HREF=\"$CFG->wwwroot/mod/journal/view.php?id=$journal->id\">";
+            echo "\"<A HREF=\"$CFG->wwwroot/mod/journal/$journal->url\">";
             echo "$journal->name";
             echo "</A>\"</FONT></P>";
         }
