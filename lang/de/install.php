@@ -92,4 +92,5 @@ $string['sessionautostarthelp'] = '<p>Moodle braucht session support und kann ni
 $string['wwwroot'] = 'URL Adresse';
 $string['wwwrooterror'] = 'Diese URL scheint nicht gültig zu sein. Moodle ist nicht unter dieser Adresse installiert.  ';
 
+
 ?>
