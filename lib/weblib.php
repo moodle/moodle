@@ -474,7 +474,8 @@ function replace_smilies($text) {
     global $CFG;
 
     static $runonce = false;
-    static $smilies = false;
+    static $e = array();
+    static $img = array();
     static $emoticons = array(
         ':-)'  => 'smiley.gif',
         ':)'   => 'smiley.gif',
@@ -502,12 +503,13 @@ function replace_smilies($text) {
 
     if($runonce == false):
         foreach ($emoticons as $emoticon => $image){
-            $smilies[$emoticon] = "<IMG ALT=\"$emoticon\" WIDTH=15 HEIGHT=15 SRC=\"{$CFG->wwwroot}/pix/s/{$image}\">";
+            $e[] = $emoticon;
+            $img[] = "<IMG ALT=\"$emoticon\" WIDTH=15 HEIGHT=15 SRC=\"{$CFG->wwwroot}/pix/s/{$image}\">";
         }
         $runonce = true;
     endif;
 
-    return strtr($text, $smilies);
+    return str_replace($e, $img, $text);
 }
 
 function text_to_html($text, $smiley=true, $para=true) {
