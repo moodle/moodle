@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004122801)
+      // block_rss_client.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
 
 
+$string['block_rss_add_feed'] = 'ニュースフィードURLを追加:';
 $string['block_rss_add_headline_block'] = 'RSSヘッドラインブロックの追加';
 $string['block_rss_add_new'] = 'RSSの追加';
 $string['block_rss_choose_feed'] = 'ブロックに表示するフィードを設定してください:';
@@ -28,5 +29,6 @@ $string['block_rss_shownumentries'] = 'ブロックあたりの最大エントリ表示数';
 $string['block_rss_submitters'] = '誰が新しいRSSフィードを設定できますか? あなたのサイトの全てのメンバーが自分のページにフィードを追加することができます。';
 $string['block_rss_timeout'] = 'タイムアウト';
 $string['block_rss_timeout_desc'] = 'RSSフィードのキャッシュ保存期間 ( 分 )';
+$string['block_rss_update_feed'] = 'ニュースフィードURLの更新:';
 
 ?>

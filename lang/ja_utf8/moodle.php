@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
 
 
 $string['action'] = '操作';
@@ -574,6 +574,7 @@ $string['htmleditordisabledbrowser'] = 'あなたのブラウザの互換性が�
 $string['htmlformat'] = 'HTML形式';
 $string['icqnumber'] = 'ICQナンバー';
 $string['idnumber'] = 'IDナンバー';
+$string['importmetacoursenote'] = 'ここであなたのメタコースにコースを追加します ( ユーザ登録情報をインポートします )。';
 $string['inactive'] = '停止';
 $string['include'] = 'バックアップ';
 $string['includeallusers'] = '全てのユーザを含む';
@@ -648,6 +649,9 @@ $string['makeeditable'] = '「 $a 」をサーバ上 ( 例 apache ) で編集可
 $string['manageblocks'] = 'ブロック';
 $string['managedatabase'] = 'データベース管理';
 $string['managefilters'] = 'フィルタ';
+$string['managemeta'] = 'このコースはメタコースですか?';
+$string['managemetadisabled'] = 'このコースは既にメタコースに登録されていますので利用できません。';
+$string['managemetaexplan'] = '( 他のコースからユーザ登録情報を継承することを意味します)';
 $string['managemodules'] = 'モジュール管理';
 $string['markedthistopic'] = 'このトピックは最新トピックとして強調されています。';
 $string['markthistopic'] = 'このトピックを最新トピックにする。';
@@ -656,6 +660,16 @@ $string['maximumgrade'] = '最大評点';
 $string['maximumshort'] = '最大';
 $string['maximumupload'] = '最大アップロードサイズ';
 $string['maxsize'] = '最大サイズ: $a';
+$string['metaaddcourse'] = 'このコースを追加';
+$string['metaalreadycourses'] = 'コースは既に割り当てられています。';
+$string['metaalreadyhascourses'] = 'このメタコースには既に子コースがあります。';
+$string['metaalreadyhasenrolments'] = 'このコースには既に通常の登録者がいます。';
+$string['metaalreadyinmeta'] = 'このコースは既にメタコースの一部です。';
+$string['metaassigncourses'] = 'コースの割当';
+$string['metanoalreadycourses'] = '割り当てられたコースはありません';
+$string['metanopotentialcourses'] = '利用できるコースはありません';
+$string['metapotentialcourses'] = '利用可能コース';
+$string['metaremovecourse'] = 'このコースを取り消す';
 $string['min'] = '分';
 $string['mins'] = '分';
 $string['minutes'] = '分';
