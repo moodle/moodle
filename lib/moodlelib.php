@@ -338,17 +338,18 @@ function reload_user_preferences() {
  * @todo Add inline links to $USER and user functions in above line.
  * @return boolean
  */
-function set_user_preference($name, $value, $userid=NULL) {
+function set_user_preference($name, $value, $otheruser=NULL) {
 
     global $USER;
 
-    if (empty($userid)){
-        if(!empty($USER) && !empty($USER->id)) {
+    if (empty($otheruser)){
+        if (!empty($USER) && !empty($USER->id)) {
             $userid = $USER->id;
-        }
-        else {
+        } else {
             return false;
         }
+    } else {
+        $userid = $otheruser;
     }
 
     if (empty($name)) {
@@ -357,7 +358,7 @@ function set_user_preference($name, $value, $userid=NULL) {
 
     if ($preference = get_record('user_preferences', 'userid', $userid, 'name', $name)) {
         if (set_field('user_preferences', 'value', $value, 'id', $preference->id)) {
-            if(!empty($USER)) {
+            if (empty($otheruser) and !empty($USER)) {
                 $USER->preference[$name] = $value;
             }
             return true;
@@ -370,7 +371,7 @@ function set_user_preference($name, $value, $userid=NULL) {
         $preference->name   = $name;
         $preference->value  = (string)$value;
         if (insert_record('user_preferences', $preference)) {
-            if(!empty($USER)) {
+            if (empty($otheruser) and !empty($USER)) {
                 $USER->preference[$name] = $value;
             }
             return true;
