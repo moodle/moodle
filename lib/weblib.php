@@ -145,9 +145,13 @@ function close_window_button() {
 }
 
 
-function choose_from_menu ($options, $name, $selected="", $nothing="Choose...", $script="", $nothingvalue="0") {
+function choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0") {
 // $options["value"]["label"]
     
+    if ($nothing == "choose") {
+        $nothing = get_string("choose")."...";
+    }
+
     if ($script) {
         $javascript = "onChange=\"$script\"";
     }
@@ -173,13 +177,17 @@ function choose_from_menu ($options, $name, $selected="", $nothing="Choose...", 
     echo "</SELECT>\n";
 }   
 
-function popup_form ($common, $options, $formname, $selected="", $nothing="Choose...") {
+function popup_form ($common, $options, $formname, $selected="", $nothing="choose") {
 //  Implements a complete little popup form
 //  $common   = the URL up to the point of the variable that changes
 //  $options  = A list of value-label pairs for the popup list
 //  $formname = name must be unique on the page
 //  $selected = the option that is already selected
 //  $nothing  = The label for the "no choice" option
+
+    if ($nothing == "choose") {
+        $nothing = get_string("choose")."...";
+    }
 
     echo "<FORM NAME=$formname>";
     echo "<SELECT NAME=popup onChange=\"window.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";

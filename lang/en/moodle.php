@@ -25,6 +25,7 @@ $string[category] = "Category";
 $string[changepassword] = "Change password";
 $string[changedpassword] = "Changed password";
 $string[changessaved] = "Changes saved";
+$string[choose] = "Choose";
 $string[choosecourse] = "Choose a course";
 $string[chooselivelogs] = "Or watch current activity";
 $string[chooselogs] = "Choose which logs you want to see";
