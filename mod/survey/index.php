@@ -54,13 +54,19 @@
         } else {
             $section = "";
         }
-        if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($section, 
-                                    "<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>",
-                                    "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
+        //Calculate the href
+        if (!$survey->visible) {
+            //Show dimmed if the mod is hidden
+            $tt_href = "<A class=\"dimmed\" HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>";
         } else {
-            $table->data[] = array ("<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>",
-                                    "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
+            //Show normal if the mod is visible
+            $tt_href = "<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>";
+        }
+
+        if ($course->format == "weeks" or $course->format == "topics") {
+            $table->data[] = array ($section, $tt_href, "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
+        } else {
+            $table->data[] = array ($tt_href, "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
         }
     }
 
