@@ -36,6 +36,9 @@
     if (!$site = get_site()) {
         error("Site not found!");
     }
+
+    //Check necessary functions exists. Thanks to gregb@crowncollege.edu
+    backup_required_functions();
     
     //Check backup_version
     if ($file) {
@@ -79,7 +82,7 @@
     print_simple_box_start("center", "", "$THEME->cellheading");
     
     //Adjust some php variables to the execution of this script
-    ini_set("max_execution_time","300");
+    ini_set("max_execution_time","3000");
     ini_set("memory_limit","56M");
 
     //Call the form, depending the step we are
