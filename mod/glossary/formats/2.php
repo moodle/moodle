@@ -11,7 +11,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $curren
     echo "\n<table border=0 width=95% cellspacing=0 valign=top cellpadding=3 class=forumpost align=center>";
 
     echo "\n<tr>";
-    echo "\n<td rowspan=2 bgcolor=\"$colour\" width=35 valign=top class=\"forumpostpicture\">";
+    echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostpicture\">";
     if ($entry) {
         print_user_picture($user->id, $course->id, $user->picture);
     }
@@ -31,7 +31,9 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $curren
     }
     echo "</tr>";
 
-    echo "\n<tr><td width=100% bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
+    echo "\n<tr>";
+    echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostside\">&nbsp;</td>";
+    echo "\n<td width=100% bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
     if ($entry) {
         echo format_text($entry->definition, $entry->format);
         glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
