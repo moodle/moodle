@@ -328,7 +328,9 @@
         
         echo '</td></tr>';
         
+        echo '<tr><td>';
         workshop_print_assignment_info($workshop);
+        echo '</td></tr>';
         
         /// Print grade tables /////////////////////////////////////////////////
         
@@ -344,15 +346,15 @@
                     // If not yet assessed, show assess link
                     if ($teacherassessments == '&nbsp;') {
                         $teacherassessments = '<a href="assess.php?id='.
-                            $cm->id.'&sid='.$submission->id.'">'.get_string('assess', 'workshop').'</a>';
+                            $cm->id.'&amp;sid='.$submission->id.'">'.get_string('assess', 'workshop').'</a>';
                     }
                     $title = workshop_print_submission_title($workshop, $submission).
                         " <a href=\"submissions.php?action=editsubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                         "<img src=\"$CFG->pixpath/t/edit.gif\" ".
-                        'height="11" width="11" border="0" alt="'.get_string('edit').'"></a>'.
+                        'height="11" width="11" border="0" alt="'.get_string('edit').'" /></a>'.
                         " <a href=\"submissions.php?action=confirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
                         "<img src=\"$CFG->pixpath/t/delete.gif\" ".
-                        'height="11" width="11" border="0" alt="'.get_string('delete', 'workshop').'"></a>';
+                        'height="11" width="11" border="0" alt="'.get_string('delete', 'workshop').'" /></a>';
                     $table->data[] = array($title, $teacherassessments,
                         workshop_print_submission_assessments($workshop, $submission, "student"));
                 }
@@ -362,7 +364,6 @@
                 get_string("submitexampleassignment", "workshop")."</a></b>".
                 helpbutton("submissionofexamples", get_string("submitexampleassignment", "workshop"), "workshop", true, false, '', true), 
                 '&nbsp;', '&nbsp;');
-            
             print_table($table);
             workshop_print_key($workshop);
         }
@@ -404,10 +405,10 @@
                     $data[] = workshop_print_submission_title($workshop, $submission).
                         " <a href=\"submissions.php?action=adminamendtitle&amp;id=$cm->id&amp;sid=$submission->id\">".
                         "<img src=\"$CFG->pixpath/t/edit.gif\" ".
-                        'height="11" width="11" border="0" alt="'.get_string('amendtitle', 'workshop').'"></a>'.
+                        'height="11" width="11" border="0" alt="'.get_string('amendtitle', 'workshop').'" /></a>'.
                         " <a href=\"submissions.php?action=confirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
                         "<img src=\"$CFG->pixpath/t/delete.gif\" ".
-                        'height="11" width="11" border="0" alt="'.get_string('delete', 'workshop').'"></a>';
+                        'height="11" width="11" border="0" alt="'.get_string('delete', 'workshop').'" /></a>';
                     $sortdata['title'] = $submission->title;
                     
                     $data[] = userdate($submission->timecreated, get_string('datestr', 'workshop'));
@@ -415,7 +416,7 @@
                     
                     if (($tmp = workshop_print_submission_assessments($workshop, $submission, "teacher")) == '&nbsp;') {
                         $data[] = '<a href="assess.php?id='.
-                            $cm->id.'&sid='.$submission->id.'">'.get_string('assess', 'workshop').'</a>';
+                            $cm->id.'&amp;sid='.$submission->id.'">'.get_string('assess', 'workshop').'</a>';
                         $sortdata['tassmnt'] = -1;
                     } else {
                         $data[] = $tmp;
@@ -476,7 +477,7 @@
                 } else {
                     $columnicon = $dir == 'ASC' ? 'down':'up';
                 }
-                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" />";
+                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"$columnicon\" />";
     
             }
             $$column = "<a href=\"view.php?id=$id&amp;sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
@@ -489,8 +490,12 @@
             $table->head = array ("$firstname / $lastname", $title, $date, $tassmnt, $ograde);
         }
         
+        echo '<tr><td>';
         print_table($table);
+        echo '</td></tr>';
+        echo '<tr><td>';
         workshop_print_key($workshop);
+        echo '</td></tr>';
         
         // grading grade analysis
         unset($table);
@@ -517,8 +522,10 @@
                 number_format($stats->stddev * $workshop->gradinggrade /100, 1), 
                 number_format($stats->max * $workshop->gradinggrade / 100, 1), 
                 number_format($stats->min* $workshop->gradinggrade / 100, 1));
+        echo '<tr><td>';
         print_heading(get_string("gradinggrade", "workshop")." ".get_string("analysis", "workshop"));
         print_table($table);
+        echo '</td></tr>';
         
         if ($workshop->showleaguetable and time() > $workshop->assessmentend) {
             workshop_print_league_table($workshop);
@@ -526,6 +533,7 @@
                 echo "<p>".get_string("namesnotshowntostudents", "workshop", $course->students)."</p>\n";
             }
         } 
+        echo '</table>';
     }
 
 
@@ -533,7 +541,7 @@
     elseif ($action == 'showdescription') {
 
         workshop_print_assignment_info($workshop);
-        print_simple_box(format_text($workshop->description, $workshop->format));
+        print_simple_box(format_text($workshop->description, $workshop->format), 'center');
         print_continue($_SERVER["HTTP_REFERER"]);
     }
 
@@ -555,6 +563,7 @@
     else {
         error("Fatal Error: Unknown Action: ".$action."\n");
     }
+
 
     print_footer($course);
     

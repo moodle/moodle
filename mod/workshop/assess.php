@@ -49,7 +49,7 @@
         print_header_simple("$workshop->name", "",
                      "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> 
                       <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strassess", 
-                      "", '<base target="_parent">', true);
+                      "", '<base target="_parent" />', true);
     
         // there can be an assessment record (for teacher submissions), if there isn't...
         if (!$assessment = get_record("workshop_assessments", "submissionid", $submission->id, "userid", 
@@ -116,7 +116,7 @@
     
     /// print bottom frame with the submission
     
-    print_header();
+    print_header('', '', '', '', '<base target="_parent" />');
     $title = '"'.$submission->title.'" ';
     if (isteacher($course->id)) {
         $title .= ' '.get_string('by', 'workshop').' '.workshop_fullname($submission->userid, $course->id);
@@ -131,7 +131,7 @@
     }
             
     
-    print_footer();
+    print_footer('none');
  
 ?>
 

@@ -73,7 +73,7 @@
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="sid" value="<?php echo $_REQUEST['sid'] ?>" />
         <center>
-        <table celpadding="5" border="1">
+        <table cellpadding="5" border="1">
         <?php
 
         // now get the comment
@@ -256,7 +256,7 @@
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="sid" value="<?php echo $_GET['sid'] ?>" />
         <center>
-        <table celpadding="5" border="1">
+        <table cellpadding="5" border="1">
         <?php
         echo "<tr valign=\"top\"><td><b>". get_string("title", "workshop").":</b>\n";
         echo "<input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\" />\n";
