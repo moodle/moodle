@@ -970,11 +970,15 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 
     if (!empty($CFG->unicode)) {
         $encoding = "utf-8";
-    } else if (!empty($SESSION->encoding) and empty($CFG->courselang)) {
-        $encoding = $SESSION->encoding;
-    } else {
+    } else if (!empty($CFG->courselang)) {
         $encoding = get_string("thischarset");
-        $SESSION->encoding = $encoding;
+        moodle_setlocale();
+    } else {
+        if (!empty($SESSION->encoding)) {
+            $encoding = $SESSION->encoding;
+        } else {
+            $SESSION->encoding = $encoding = get_string("thischarset");
+        }
     }
     $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=$encoding\" />\n$meta\n";
 
@@ -1866,7 +1870,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
                 $selectmod = $mod;
                 $backmod = $previousmod;
                 $flag = true; // set flag so we know to use next mod for "next"
-                $mod->name = get_string('jumpto');
+                $mod->name = $strjumpto;
                 $strjumpto = '';
             } else {
                 $mod->name = strip_tags(urldecode($mod->name));
@@ -1948,19 +1952,22 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
     choose_from_menu($minutes, $minute, $currentdate['minutes'], "");
 }
 
-function print_timer_selector($timelimit = 0) {
+function print_timer_selector($timelimit = 0, $unit = "") {
 /// Prints time limit value selector
-/// to add or edit quiz's time limit
 
     global $CFG;
+
+    if ($unit) {
+        $unit = ' '.$unit;
+    }
 
     // Max timelimit is sessiontimeout - 10 minutes.
     $maxvalue = ($CFG->sessiontimeout / 60) - 10;
 
-    for ($i=0; $i<=$maxvalue; $i++) {
-        $minutes[$i] = sprintf("%02d",$i);
+    for ($i=1; $i<=$maxvalue; $i++) {
+        $minutes[$i] = $i.$unit;
     }
-    choose_from_menu($minutes, "timelimit", $timelimit,"");
+    choose_from_menu($minutes, "timelimit", $timelimit, get_string("none"));
 }
 
 function print_grade_menu($courseid, $name, $current, $includenograde=true) {
