@@ -122,6 +122,9 @@
                     error("You can not change the password like that");
                 }
             }
+            if ($usernew->url and !(substr($usernew->url, 0, 4) == "http")) {
+                $usernew->url = "http://".$usernew->url;
+            }
 
             if (update_record("user", $usernew)) {
                 add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
