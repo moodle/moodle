@@ -97,6 +97,7 @@ $string['backuplogdetailed'] = 'Detailed execution log';
 $string['backuploglaststatus'] = 'Last execution log';
 $string['backuplogshelp'] = 'If enabled, then course logs will be included in automated backups';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
+$string['backupnoneusersinfo'] = 'Notice: You have selected to backup \"none\" users, so all the modules backup have been switched to \"without user data\" mode. Please note that the \"exercise\" and \"workshop\" modules aren\'t compatible with this type of backup, so they have been deactivated completely.';
 $string['backuporiginalname'] = 'Backup Name';
 $string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br>(leave blank to save in its course default dir)';
 $string['backupuserfileshelp'] = 'Choose whether user files (eg profile images) should be included in automated backups';
