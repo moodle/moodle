@@ -3,5 +3,8 @@
 
 
 $string['alwaysopen'] = "Zawsze dostêp";
+$string['journalrating1'] = "Niezadowalaj±cy";
+$string['journalrating2'] = "Zadowalaj±cy";
+$string['journalrating3'] = "Celuj±cy";
 
 ?>

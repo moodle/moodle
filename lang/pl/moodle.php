@@ -54,8 +54,8 @@ $string['closewindow'] = "Zamknij to okno";
 $string['comparelanguage'] = "Porównaj i popraw bie¿±cy jêzyk";
 $string['complete'] = "Zakoñcz";
 $string['configcountry'] = "Je¿eli ustawisz tutaj kraj, wówczas ten kraj bêdzie domy¶lny dla nowych u¿ytkowników. Je¿eli chcesz wymusiæ, aby u¿ytkownicy wyberali kraj samodzielnie zostaw to pole niewype³nione.";
-$string['configdebug'] = "Je¶li w³±czysz t± funkcjê to podniesiony zostanie poziom raportowania b³êdów PHP, dziêki czemu ostrzezeñ bêdzie drukowanych. Ta opcja przydatna jest tylko dla progamistów.";
-$string['configerrorlevel'] = "Wybierz ilo¶æ ostrze¿eñ z PHP, która a byæ wy¶wietlana. Zwykle najl;epszym wyborem jest Normalna";
+$string['configdebug'] = "Je¶li w³±czysz t± funkcjê to podniesiony zostanie poziom raportowania b³êdów PHP, dziêki czemu bêdzie wiêcej drukowanych ostrze¿eñ . Ta opcja przydatna jest tylko dla progamistów.";
+$string['configerrorlevel'] = "Wybierz ilo¶æ ostrze¿eñ z PHP, która a byæ wy¶wietlana. Zwykle najlepszym wyborem jest Normalna";
 $string['configgdversion'] = "Wska¿ wersjê zainstalowanej biblioteki GD. Wersja wyswitlana domy¶lnie jest t±, która zosta³a wykryta automatycznie. Nie zmieniej tego ustawienia, chyba, ¿e dobrze wiesz co robisz.";
 $string['confightmleditor'] = "Ustal czy u¿ytkownicy maj± prawo wykorzystywania edytora tekstu w HTML'u. Nawet je¿eli zezwolisz na to, ten edytor bêdzie dostêny tylko je¿eli uzytkownicy bêd± u¿ywaæ kompatybilnej przegl±drki (Internet Explorer 5.5 lub pó¼niejszej). U¿ytkownik mo¿e samodzielnie zrezygnowaæ z jego wykorzystywania. ";
 $string['configlang'] = "Wybierz domy¶lny jêzyk dla tego serwisu. U¿ytkownicy mog± pó¼niej wybraæ dla siebie inne ustawienie.";
@@ -127,7 +127,7 @@ Aby potwierdziæ zamiar utworzenia konta przejd¼ na stronê:
 W wiêkszo¶ci programów istnieje mo¿liwo¶æ przej¶cia pod powy¿szy adres poprzez klikniêcie go.
 Je¿eli to nie dzia³a skopiuj adres do pola adresowego przegl±darki internetowej i naci¶nij klawisz enter.
 
-Pozdrowienia od administratora '\$a->sitename',
+Pozdrowienia od administratora serwisu '\$a->sitename',
 \$a->admin";
 $string['emailconfirmsent'] = "   <P>Zosta³ do Ciebie wys³any e-mail pod adres <B>\$a</B>
    <P>Zawiera on prost± instrukacjê jak dokoñczyæ rejestracjê.
@@ -202,7 +202,7 @@ $string['howtomakethemes'] = "Jak utworzyæ nowy temat";
 $string['htmleditor'] = "U¿ywaj edytora Richtext HTML  (tylko IE , 5.5 lub pó¼niejszy)";
 $string['htmleditoravailable'] = "Edytor Richtext jest dostêpny";
 $string['htmleditordisabled'] = "Masz wy³±czony edytor Richtext w swoim profilu u¿ytkownika";
-$string['htmleditordisabledadmin'] = "Administrator wy³±czy³ edytor Richtekst w tym serwisie";
+$string['htmleditordisabledadmin'] = "Administrator wy³±czy³ edytor Richtext w tym serwisie";
 $string['htmleditordisabledbrowser'] = "Edytor Richtext jest niedostêpny poniewa¿ nie u¿ywasz Internet Explorera 5.5 lub lepszego.";
 $string['htmlformat'] = "Pe³ny  format HTML";
 $string['icqnumber'] = "Numer ICQ";
@@ -235,7 +235,7 @@ $string['loginsteps'] = "   Witaj! W celu uzyskania pe³nego dostêpu do kursów mu
    Ka¿dy z kursów mo¿e wymagaæ podania jednorazowego &quot;klucza&quot;, który bêdzie niezbêdny tylko przy zapisywaniu siê na kurs. Pó¼niej nie bêdzie ju¿ potrzebny.
    Oto kroki, które musisz wykonaæ:
    <OL size=2>
-   <LI>Wype³nij formulrz <A HREF=\$a> Nowe konto</A> swoimi danymi.
+   <LI>Wype³nij formularz <A HREF=\$a> Nowe konto</A> swoimi danymi.
    <LI>Niezw³ocznie zostanie wys³any do Ciebie e-mail na podany przez Ciebie adres.
    <LI>Przeczytaj e-mail i kliknij zawarty w nim link.   <LI>Twoje konto zostanie potwierdzone i zostaniesz zalogowany.   <LI>Wybierz kurs, w ktorym chcesz wzi±æ udzia³.   <LI>Je¿eli zostaniesz poproszony(a) o podanie &quot;klucza&quot; - wpisz otrzymany od prowadz±cego klucz. To spowoduje zapisanie Ciê na kurs.
    <LI>Od tego momentu bêdziesz mieæ dostêp do kursu. Aby zalogowaæ siê i uzyskaæ dostêp do kursów, na które siê zapisa³e¶(a¶), konieczne bêdzie tylko wpisanie Twojej nazwy u¿ytkownika i has³a (w formularzu obok). </OL>";
@@ -306,7 +306,7 @@ Wejd¼ na t± stronê i zmieñ swoje has³o:
 
 W wiêkszo¶ci programów pocztowych powy¿szy adres jest linkiem, który mo¿esz klikn±æ przenosz±c siê automatycznie na stronê zmiany has³a. Je¿eli twój program pocztowy nie daje takiej mo¿liwo¶ci, skopiuj podany adres do pola adresowego przegl±darki internetowej i naci¶nij klawiesz enter. 
 
-Pozdrowienia od administratora '\$a->sitename',
+Pozdrowienia od administratora serwisu '\$a->sitename',
 \$a->signoff
 ";
 $string['newpicture'] = "Nowy obraz";
@@ -317,7 +317,7 @@ $string['newuser'] = "Nowy u¿ytkownik";
 $string['newusers'] = "Nowi u¿ytkownicy";
 $string['no'] = "Nie";
 $string['nocoursesyet'] = "Brak kursów w tej kategorii";
-$string['noexistingadmins'] = "Brak administratorów. To jest powa¿ny b³±d, a ta informacja nigdy nie powinna siê poajwiæ.";
+$string['noexistingadmins'] = "Brak administratorów. To jest powa¿ny b³±d, a ta informacja nigdy nie powinna siê pojawiæ.";
 $string['noexistingteachers'] = "Brak istniej±cych prowadz±cych";
 $string['nofilesyet'] = "Nie przes³ano jeszcze ¿adnych plików w zwi±zku z tym kursem";
 $string['nograde'] = "Brak oceny";
@@ -384,7 +384,7 @@ $string['selectacountry'] = "Wybierz kraj";
 $string['senddetails'] = "Przy¶lij informacje o mnie e-mail'em";
 $string['serverlocaltime'] = "Lokalny czas serwera";
 $string['settings'] = "Ustawienia";
-$string['shortname'] = "Srócona nazwa";
+$string['shortname'] = "Skrócona nazwa";
 $string['shortsitename'] = "Skrócona nazwa serwisu";
 $string['show'] = "Poka¿";
 $string['showallcourses'] = "Poka¿ wszystkie kursy";
