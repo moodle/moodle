@@ -77,34 +77,34 @@ $string['closewindow'] = "Dieses Fenster schließen";
 $string['comparelanguage'] = "Sprache vergleichen und bearbeiten";
 $string['complete'] = "Fertig";
 $string['configcountry'] = "Wenn Sie hier ein Land einstellen, wird dieses Land als Vorgabe für neue Benutzerkonten gewählt.  Um Benutzer zu zwingen, ein Land zu wählen, lassen Sie dieses Feld leer.";
-$string['configdebug'] = "Wenn Sie dies einschalten, wird das error_reporting von PHP erweitert, so dass mehr Warnungen ausgegeben werden. Dies ist nur nützlich für Entwickler.";
+$string['configdebug'] = "Wenn Sie dies einschalten, werden die Fehlermeldungen von PHP erweitert, so dass mehr Warnungen ausgegeben werden. Dies ist nur nützlich für Entwickler.";
 $string['configerrorlevel'] = "Wählen Sie die Menge der PHP Warnungen, die Sie angezeigt bekommen möchten. Normal ist gebräuchlicherweise die beste Wahl.";
 $string['configframename'] = "Sofern Sie Moodle innerhalb eines Frames einbinden, tragen Sie hier den Namen des Frames ein. Anderenfalls sollte dieser Wert auf '_top' stehen.";
-$string['configgdversion'] = "Zeigt Ihnen die Version von GD an, die installiert. Die Version, die als Standard angezeigt wird, ist die, die automatisch ermittelt worden ist. Ändern Sie diese nicht, es sei denn Sie wissen wirklich, was Sie tun. ";
+$string['configgdversion'] = "Zeigt Ihnen die installierte Version von GD an. Die angezeigte Version wurde automatisch ermittelt. Ändern Sie diese nicht, es sei denn Sie wissen wirklich, was Sie tun. ";
 $string['confightmleditor'] = "Wählen Sie aus, ob Sie die Verwendung der HTML Text-Eingabe zulassen möchten. Selbst, wenn Sie es zulassen, erscheint diese Text-Eingabe nur, wenn der Benutzer einen geeigneten Browser (wie z.B. den IE 5.5 oder höher) benutzt.
 Die Benutzer können ebenso auswählen, diesen nicht zu benutzen.";
 $string['configintro'] = "Auf dieser Seite können Sie eine Anzahl von Konfigurations-Variablen spezifizieren, die Ihnen helfen, dass Moodle auf Ihrem Server vernünftig läuft. Sorgen Sie sich nicht grossartig - Die Standard-Einstellungen funktionieren normalerweise sehr gut und Sie können jederzeit auf diese Seite zurückkommen und diese ändern.";
-$string['configintroadmin'] = "Auf dieser Seite sollten Sie den Zugang des Hauptverwalters eintichten, der die vollständige Kontrolle über siw Seite hat. Achten Sie datauf, dass Sie hier einen sicheren Benutzernamen samt Kennwort, sowie eine gültige E-Mail-Adresse angeben. Sie können sppäter auch noch mehr Verwalter einrichten.";
+$string['configintroadmin'] = "Auf dieser Seite sollten Sie den Zugang des Hauptverwalters eintichten, der die vollständige Kontrolle über siw Seite hat. Achten Sie datauf, dass Sie hier einen sicheren Benutzernamen samt Kennwort, sowie eine gültige E-Mail-Adresse angeben. Sie können später auch noch mehr Verwalter einrichten.";
 $string['configintrosite'] = "Diese Seite erlaubt es Ihnen, die Startseite und den Namen der neuen Seite einzurichten. Sie können später hierher zurückkehren und diese Einstellungen jederzeit ändern, indem Sie die Verknüpfung 'Seiteneinstellungen' auf der Startseite benutzen.";
 $string['configlang'] = "Wählen Sie die Standard-Sprache für die gesamte Seite. Die Benutzer können diese später überschreiben.";
-$string['configlangdir'] = "In den meisten Sprachen schreibt man von links nach rechts, aber in einigen anderen, wie Arabisch oder Hebräisch, schreibt man von rechts nach links";
-$string['configlanglist'] = "Lassen Sie dies leer, um allen Nutzern zu erlauben, aus jeder Sprache installierten Sprache auszuwählen. Sie können ebenso das Sprachmenü verkürzen, indem Sie eine durch Kommas getrennte Liste der Spachcodes angeben, die Sie für die Auswahl möchten. Zum Beispiel en, es_es, fr, it";
-$string['configlangmenu'] = "Wählen Sie aus, ob Sie generell das Sprach-Auswahlmenü auf Ihrer Startseite angezeigt haben möchten, auf der Anmeldungsseite, etc. Dies betrifft nicht die Möglichkeit des Nutzers, seine bevorzugte Sprache in seinem Profil einzustellen.";
+$string['configlangdir'] = "In den meisten Sprachen schreibt man von links nach rechts, aber in einigen anderen, wie Arabisch oder Hebräisch, schreibt man von rechts nach links.";
+$string['configlanglist'] = "Lassen Sie dies leer, um allen Nutzern zu erlauben, aus jeder Sprache installierten Sprache auszuwählen. Sie können ebenso das Sprachmenü verkürzen, indem Sie eine durch Kommas getrennte Liste der Spachcodes angeben, die Sie für die Auswahl möchten. Zum Beispiel en, es_es, fr, it.";
+$string['configlangmenu'] = "Wählen Sie aus, ob Sie generell das Sprach-Auswahlmenü auf Ihrer Startseite angezeigt haben möchten, auf der Anmeldungsseite etc. Dies betrifft nicht die Möglichkeit des Nutzers, seine bevorzugte Sprache in seinem Profil einzustellen.";
 $string['configlocale'] = "Wählen Sie eine seitenweite locale - diese wird die Anzeige jedes Datums beeinflussen. Sie müssen die Daten dieser localen auf Ihrem Betriebssystem installiert haben. Sofern Sie nicht wissen, was Sie auswählen sollen, lassen Sie dieses Feld leer.";
-$string['configloglifetime'] = "Dies definiert die Länge der Zeit, über die Sie die Staistiken der User-Aktivität behalten möchten. Statistiken, die veralted sind, werden automatisch gelöscht. Am besten ist es, diese so lang wie möglich zu behalten, falls Sie diese benötigen. Wenn Sie einen ausgelasteten Server haben und Geschwindigkeitseinbrüche feststellen, solten Sie den Statistik-Zeitraum reduzieren.";
+$string['configloglifetime'] = "Dies definiert die Länge der Zeit, über die Sie die Staistiken der User-Aktivität behalten möchten. Statistiken, die veraltet sind, werden automatisch gelöscht. Am besten ist es, diese so lang wie möglich zu behalten, falls Sie diese benötigen. Wenn Sie einen ausgelasteten Server haben und Geschwindigkeitseinbrüche feststellen, sollten Sie den Statistik-Zeitraum reduzieren.";
 $string['configlongtimenosee'] = "Wenn sich Studenten nach einer sehr langen Zeit nicht mehr angemeldet haben, werden Studenten automatisch nach diesem Termin aus dem Kurs ausgetragen.";
-$string['configmaxeditingtime'] = "Hier bestimmen Sie die Zeitspanne, in der die Leute die Foren-Beiträge, Jounal-Antworten, usw. erneut bearbeiten dürfen. Normalerweise sind 30 Minuten ein guter Wert. ";
-$string['configproxyhost'] = "Wenn dieser <B>Server</B> einen Proxy braucht (beispielsweise eine Firewall), um Internetzugriff zu bekommen, dann tragen Sie hier den Namen und den Port des Proxys ein. Anderenfalls lassen sie das Feld leer";
+$string['configmaxeditingtime'] = "Hier bestimmen Sie die Zeitspanne, in der die Leute die Foren-Beiträge, Journal-Antworten usw. erneut bearbeiten dürfen. Normalerweise sind 30 Minuten ein guter Wert. ";
+$string['configproxyhost'] = "Wenn dieser <B>Server</B> einen Proxy braucht (beispielsweise eine Firewall), um Internetzugriff zu bekommen, dann tragen Sie hier den Namen und den Port des Proxys ein. Anderenfalls lassen sie das Feld leer.";
 $string['configsecureforms'] = "Moodle kann einen zusätzlichen Grad an Sicherheit verwenden, wenn es Daten von Web-Formularen erhält. Sofern dies eingeschaltet ist, dann wird die Variable HTTP_REFERER gegen
 die Adresse des aktuellen Formulars geprüft.
 In einigen wenigen Fällen kann das Probleme verursachen, wenn der Nutzer eine Firewall benutzt (z.B. Zonealarm), die so konfiguriert ist, das der HTTP_REFERER nicht mitgesendet wird.
-Das Ergebnis ist, dass Sie bei einem Formular nicht witerkommen.
-Sofern Nutzer Probleme mit der Zugangsseite haben (zum Beispiel) sollten Sie diese Einstellung deaktivieren, so ist Ihre Seite allerdings offener für Brute-Force-Attacken. Im Zweifelsfall, belasssen Sie es auf 'ja'.";
+Das Ergebnis ist, dass Sie bei einem Formular nicht weiterkommen.
+Sofern Nutzer z.B. Probleme mit der Zugangsseite haben, sollten Sie diese Einstellung deaktivieren, so ist Ihre Seite allerdings offener für Brute-Force-Attacken. Im Zweifelsfall, belassen Sie es auf 'ja'.";
 $string['configsessiontimeout'] = "Wenn angemeldete Benutzer eine lange Zeit fern bleiben (ohne Seiten zu laden), dann werden diese automatisch abgemeldet (Ihre Session/Sitzung wird beendet). Diese Variable gibt an, wie lange diese Zeit sein soll.";
-$string['configslasharguments'] = "Dateien (Bilder, Dokumente, usw.) werden über ein Skript, das 'Slash-Argumente' benutz (hier die zweite Option). Diese Methode erlaubt es Dateien einfacher im Internet-Browsern, Proxy-Servern, usw., zwischengespeichert zu werden.
+$string['configslasharguments'] = "Dateien (Bilder, Dokumente usw.) können über ein Skript, das 'Slash-Argumente' benutzt (zweite Option) einfacher in Internet-Browsern, Proxy-Servern usw. zwischengespeichert werden.
 Leider erlauben nicht alle PHP-Server diese Methode, so dass Sie, sofern Sie Probleme bei der Anzeige von Dateien oder Bildern (beispielsweise den Benutzer-Fotos) haben, diese Variable auf die erste Option stellen müssen. ";
-$string['configsmtphosts'] = "Geben Sie hier den vollen Namen von einem oder mehreren lokalen SMTP-Servern an, die Moodle für den E-Mail-Versnad benutzen soll (beispielsweise 'email.a.de' oder 'email.a.de;email.b.de'). Wenn Sie dieses frei lassen, wird Moodle die Standard-Methode von PHP zum Senden von E-Mails verwenden.";
-$string['configsmtpuser'] = "Sofern Sie einen SMTP-Server angegeben haben und der Server erfordert Zugangsdaten, dann geben Sie hier den Benutzernamen und das Kennwort an.";
+$string['configsmtphosts'] = "Geben Sie hier den vollen Namen von einem oder mehreren lokalen SMTP-Servern an, die Moodle für den E-Mail-Versand benutzen soll (beispielsweise 'E-Mail.a.de' oder 'E-Mail.a.de;E-Mail.b.de'). Wenn Sie dieses frei lassen, wird Moodle die Standard-Methode von PHP zum Senden von E-Mails verwenden.";
+$string['configsmtpuser'] = "Sofern Sie einen SMTP-Server angegeben haben und der Server Zugangsdaten erfordert, dann geben Sie hier Benutzernamen und Passwort an.";
 $string['configunzip'] = "Geben Sie hier den Pfad zum Programm unzip an (Nur Unix). Dieser wird für das Entpacken von ZIP-Archiven auf dem Server benötigt.";
 $string['configvariables'] = "Variablen konfigurieren";
 $string['configzip'] = "Geben Sie hier den Pfad zum Programm zip an (Nur Unix). Dieser wird für die Erstellung ZIP-Archiven auf dem Server benötigt.";
@@ -649,11 +649,11 @@ $string['withuserdata'] = "Mit Nutzer-Daten";
 $string['wordforstudent'] = "Ihre Bezeichnung für Schüler";
 $string['wordforstudenteg'] = "z.B. Student, Teilnehmer usw.";
 $string['wordforstudents'] = "Ihre Bezeichnung für mehrere Schüler";
-$string['wordforstudentseg'] = "z.B. Studenten, Teilnehmer, usw.";
+$string['wordforstudentseg'] = "z.B. Studenten, Teilnehmer usw.";
 $string['wordforteacher'] = "Ihre Bezeichnung für Lehrer";
 $string['wordforteachereg'] = "z.B. Tutor, Professor usw.";
 $string['wordforteachers'] = "Ihre Bezeichnung für mehrere Lehrer";
-$string['wordforteacherseg'] = "z.B. Tutoren, Professoren, usw.";
+$string['wordforteacherseg'] = "z.B. Tutoren, Professoren usw.";
 $string['wrongpassword'] = "Falsches Kennwort oder Benutzername";
 $string['yes'] = "Ja";
 $string['youaregoingtorestorefrom'] = "Sie stellen wieder her vom:";
