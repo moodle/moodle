@@ -46,7 +46,7 @@ CREATE TABLE prefix_glossary_entries (
      sourceglossaryid int4 NOT NULL default '0',
      usedynalink int2 NOT NULL default '1',
      casesensitive int2 NOT NULL default '0',
-     fullmatch tinyint(2) NOT NULL default '1',
+     fullmatch int2 NOT NULL default '1',
      PRIMARY KEY(id)
 );
 
