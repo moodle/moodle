@@ -16,6 +16,10 @@
 class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
     function get_answers($question) {
+    // This function is not used by any other function within this class.
+    // It is possible that it is used by some report that uses the 
+    // function quiz_get_answers in lib.php
+
         /// The returned answers includes subanswers...
         // As this question type embedds some other question types,
         // it is necessary to have access to those:
@@ -37,6 +41,18 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             }
         }
         return $answers;
+    }
+
+    function get_position_multianswer($questionid, $positionkey) {
+    // As a separate function in order to make it overridable
+
+        return get_record('quiz_multianswers', 'question', $questionid,
+                                               'positionkey', $positionkey);
+    }
+
+    function get_multianswers($questionid) {
+    // As a separate function in order to make it overridable
+        return get_records('quiz_multianswers', 'question', $questionid);
     }
 
     function name() {
@@ -203,8 +219,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             echo $qtextsplits[0];
             $qtextremaining = $qtextsplits[1];
 
-            $multianswer = get_record('quiz_multianswers', 'question',
-                                      $question->id, 'positionkey', $regs[1]);           
+            $multianswer = $this->get_position_multianswer($question->id, $regs[1]);
+
             $inputname = $nameprefix.$multianswer->id;
             $response = isset($question->response[$inputname])
                     ? $question->response[$inputname] : '';
@@ -277,8 +293,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         $result->answers = array();
         $result->correctanswers = array();
 
-        $multianswers = get_records('quiz_multianswers',
-                                    'question', $question->id);
+        $multianswers = $this->get_multianswers($question->id);
         // Default settings:
         $subquestion->id = $question->id;
         $normsum = 0;
