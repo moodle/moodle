@@ -238,9 +238,20 @@
             continue;
         }
 
-
         if (!isset($module)) {
             continue;
+        }
+
+        if (!empty($module->requires)) {
+            if ($module->requires > $CFG->version) {
+                $info->modulename = $mod;
+                $info->moduleversion  = $module->version;
+                $info->currentmoodle = $CFG->version;
+                $info->requiremoodle = $module->requires;
+                notify(get_string('modulerequirementsnotmet', 'error', $info));
+                unset($info);
+                continue;
+            }
         }
 
         $module->name = $mod;   // The name MUST match the directory
@@ -249,6 +260,10 @@
             if ($currmodule->version == $module->version) {
                 // do nothing
             } else if ($currmodule->version < $module->version) {
+                if (empty($updated_modules)) {
+                    $strmodulesetup  = get_string("modulesetup");
+                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, "", "", false, "&nbsp;", "&nbsp;");
+                }
                 print_heading("$module->name module needs upgrading");
                 $upgrade_function = $module->name."_upgrade";
                 if (function_exists($upgrade_function)) {
