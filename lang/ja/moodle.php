@@ -463,6 +463,7 @@ $string['opentoguests'] = "ゲストアクセス";
 $string['optional'] = "任意";
 $string['order'] = "表示順";
 $string['outline'] = "概略";
+$string['parentlanguage'] = "ja";
 $string['participants'] = "参加者";
 $string['password'] = "パスワード";
 $string['passwordchanged'] = "パスワードが変更されました";
