@@ -88,6 +88,20 @@ if ( $confirm ) {
     }
 
     if ($e) {
+        //We are updating an entry, so we compare current session user with
+        //existing entry user to avoid some potential problems if secureforms=off
+        //Perhaps too much security? Anyway thanks to skodak (Bug 1823)
+        $old = get_record('glossary_entries', 'id', $e);
+        $ineditperiod = ((time() - $old->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
+        if ( (!$ineditperiod  || $USER->id != $old->userid) and !isteacher($course->id) and $e) {
+            if ( $USER->id != $old->userid ) {
+                error("You can't edit other people's entries!"); 
+            } elseif (!$ineditperiod) {
+                error("You can't edit this. Time expired!"); 
+            }           
+            die;        
+        }
+
         $newentry->id = $e;
 
         $permissiongranted = 1;
@@ -261,13 +275,13 @@ print_header_simple(strip_tags("$glossary->name"), "",
 
 $ineditperiod = ((time() - $newentry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
 if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !isteacher($course->id) and $e) {
-                if ( $USER->id != $newentry->userid ) {
-                    error("You can't edit other people's entries!");
-                } elseif (!$ineditperiod) {
-                    error("You can't edit this. Time expired!");
-                }
-                die;
-            }
+    if ( $USER->id != $newentry->userid ) {
+        error("You can't edit other people's entries!");
+    } elseif (!$ineditperiod) {
+        error("You can't edit this. Time expired!");
+    }
+    die;
+}
 
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     echo '</b></font></p>';
