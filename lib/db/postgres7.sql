@@ -131,7 +131,7 @@ CREATE TABLE prefix_event (
 CREATE INDEX prefix_event_courseid_idx ON prefix_event (courseid);
 CREATE INDEX prefix_event_userid_idx ON prefix_event (userid);
 CREATE INDEX prefix_event_timestart_idx ON prefix_event (timestart);
-CREATE INDEX prefix_event_timeduration_idx ON prefix_event (timeduration)
+CREATE INDEX prefix_event_timeduration_idx ON prefix_event (timeduration);
 
 CREATE TABLE prefix_groups (
    id SERIAL PRIMARY KEY,
