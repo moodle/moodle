@@ -21,7 +21,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 // $menu - HTML code for a popup menu 
     global $USER, $CFG, $THEME;
 
-    if (file_exists($CFG->stylesheet)) {
+    if (file_exists("$CFG->dirroot/theme/$CFG->theme/styles.php")) {
         $styles = $CFG->stylesheet;
     } else {
         $styles = "$CFG->wwwroot/theme/standard/styles.php";
