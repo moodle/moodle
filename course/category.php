@@ -324,10 +324,10 @@
                     echo "&nbsp;";
                 }
                 if ($course->guest ) {
-                    echo "<img title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\">&nbsp;";
+                    echo "<a href=\"view.php?id=$course->id\"><img title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>&nbsp;";
                 }
                 if ($course->password) {
-                    echo "<img title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\">";
+                    echo "<a href=\"view.php?id=$course->id\"><img title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
                 }
                 echo "</td>";
             }
