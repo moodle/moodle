@@ -6,25 +6,35 @@
     //Finally, it calls restore_execute to do the hard work
 
     //Get objects from session
-    $info = $SESSION->info;
-    $course_header = $SESSION->course_header;
+    if ($SESSION) {
+        $info = $SESSION->info;
+        $course_header = $SESSION->course_header;
+    }
 
     //Check that we have all we need
+
     //backup_unique_code
     require_variable($backup_unique_code);
+
     //file
     require_variable($file);
+
     //info
     require_variable($info);
+
     //course_header
     require_variable($course_header);
+
     //Checks for the required restoremod parameters
-    if ($allmods = get_records("modules") ) {
+    if ($allmods = get_records("modules")) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
+            echo $modname;
             $var = "restore_".$modname;
+            echo $var;
             require_variable($$var); 
             $var = "restore_user_info_".$modname;
+            echo $var."<br>";
             require_variable($$var);
         }
     }
@@ -41,18 +51,6 @@
     if (!$site = get_site()) {
         error("Site not found!");
     } 
-
-    //Checks for the required restoremod parameters
-    $count = 0;
-    if ($allmods = get_records("modules") ) {
-        foreach ($allmods as $mod) {
-            $modname = $mod->name;
-            $var = "restore_".$modname;
-            require_variable($$var);       
-            $var = "restore_user_info_".$modname;
-            require_variable($$var);       
-        }
-    }
 
     //Check other parameters
     if (!isset($restore_users)) {
