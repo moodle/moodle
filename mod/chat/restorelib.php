@@ -102,6 +102,7 @@
             //Now, build the CHAT_MESSAGES record structure
             $message->chatid = $new_chat_id;
             $message->userid = backup_todb($mes_info['#']['USERID']['0']['#']);
+            $message->groupid = backup_todb($mes_info['#']['GROUPID']['0']['#']);
             $message->system = backup_todb($mes_info['#']['SYSTEM']['0']['#']);
             $message->message = backup_todb($mes_info['#']['MESSAGE_TEXT']['0']['#']);
             $message->timestamp = backup_todb($mes_info['#']['TIMESTAMP']['0']['#']);
@@ -110,6 +111,12 @@
             $user = backup_getid($restore->backup_unique_code,"user",$message->userid);
             if ($user) {
                 $message->userid = $user->new_id;
+            }
+
+            //We have to recode the groupid field
+            $group = backup_getid($restore->backup_unique_code,"group",$message->groupid);
+            if ($group) {
+                $message->groupid = $group->new_id;
             }
 
             //The structure is equal to the db, so insert the chat_message

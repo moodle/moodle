@@ -74,6 +74,7 @@
                 //Print message contents
                 fwrite ($bf,full_tag("ID",6,false,$cha_mes->id));       
                 fwrite ($bf,full_tag("USERID",6,false,$cha_mes->userid));       
+                fwrite ($bf,full_tag("GROUPID",6,false,$cha_mes->groupid)); 
                 fwrite ($bf,full_tag("SYSTEM",6,false,$cha_mes->system));       
                 fwrite ($bf,full_tag("MESSAGE_TEXT",6,false,$cha_mes->message));       
                 fwrite ($bf,full_tag("TIMESTAMP",6,false,$cha_mes->timestamp));       
