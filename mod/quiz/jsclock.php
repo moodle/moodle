@@ -1,3 +1,7 @@
+<?php // $Id$
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+?>
+
 <script language="javascript">
 <!--
 /// This Javascript clock provides a little countdown in the title bar

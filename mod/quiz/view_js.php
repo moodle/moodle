@@ -1,3 +1,7 @@
+<?php  // $Id$
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+?>
+
 <script language="javascript" type="text/javascript">
 <!--
 document.write('<form action="attempt.php" method="get"' +
