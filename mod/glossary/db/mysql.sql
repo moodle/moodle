@@ -61,7 +61,7 @@ CREATE TABLE prefix_glossary_entries_categories (
      id int(10) unsigned NOT NULL auto_increment,
      categoryid int(10) unsigned NOT NULL default '0',
      entryid int(10) unsigned NOT NULL default '0',
-     PRIMARY KEY  (categoryid, entryid)
+     PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='categories of each glossary entry';
 
 #

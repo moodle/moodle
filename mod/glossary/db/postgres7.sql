@@ -61,7 +61,7 @@ CREATE TABLE prefix_glossary_entries_categories (
      id SERIAL,
      categoryid int4 NOT NULL default '0',
      entryid int4 NOT NULL default '0',
-     PRIMARY KEY  (categoryid, entryid)
+     PRIMARY KEY  (id)
 );
 
 #
