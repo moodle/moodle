@@ -323,34 +323,35 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         $nothing = get_string("choose")."...";
     }
 
-    $output = "<FORM TARGET=\"{$CFG->framename}\" NAME=$formname>";
-    $output .= "<SELECT NAME=popup onChange=\"top.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
+    $startoutput = "<form target=\"{$CFG->framename}\" name=$formname>";
+    $output = "<select name=popup onchange=\"top.location=document.$formname.popup.options[document.$formname.popup.selectedindex].value\">\n";
 
     if ($nothing != "") {
-        $output .= "   <OPTION VALUE=\"javascript:void(0)\">$nothing</OPTION>\n";
+        $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
     }
 
     foreach ($options as $value => $label) {
         if (substr($label,0,1) == "-") {
-            $output .= "   <OPTION VALUE=\"\"";
+            $output .= "   <option value=\"\"";
         } else {
-            $output .= "   <OPTION VALUE=\"$common$value\"";
+            $output .= "   <option value=\"$common$value\"";
             if ($value == $selected) {
-                $output .= " SELECTED";
+                $output .= " selected";
             }
         }
         if ($label) {
-            $output .= ">$label</OPTION>\n";
+            $output .= ">$label</option>\n";
         } else {
-            $output .= ">$value</OPTION>\n";
+            $output .= ">$value</option>\n";
         }
     }
-    $output .= "</SELECT>";
-    $output .= "</FORM>\n";
+    $output .= "</select>";
+    $output .= "</form>\n";
 
     if ($return) {
-        return $output;
+        return $startoutput.$output;
     } else {
+        echo $startoutput;
         if ($help) {
             helpbutton($help, $helptext);
         }

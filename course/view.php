@@ -75,11 +75,15 @@
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
-    if (! $sections = get_all_sections($course->id)) {
-        $section->course = $course->id;   // Create a default section.
-        $section->section = 0;
-        $section->id = insert_record("course_sections", $section);
-        if (! $sections = get_all_sections($course->id) ) {
+    if (! $sections = get_all_sections($course->id)) {   // No sections found
+        // Double-check to be extra sure
+        if (! $section = get_record("course_sections", "course", $course->id, "section", 0)) {
+            $section->course = $course->id;   // Create a default section.
+            $section->section = 0;
+            $section->visible = 1;
+            $section->id = insert_record("course_sections", $section);
+        }
+        if (! $sections = get_all_sections($course->id) ) {      // Try again
             error("Error finding or creating section structures for this course");
         }
     }

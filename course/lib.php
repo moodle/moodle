@@ -581,7 +581,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
     if ($isediting) {
         $editmenu = popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section->section&add=", 
                    $modnames, "section0", "", get_string("add")."...", "mods", get_string("activities"), true);
-        $editmenu = "<DIV ALIGN=right>$editmenu</DIV>";
+        $editmenu = "<div align=right>$editmenu</div>";
     } else {
         $editmenu = "";
     }
@@ -595,7 +595,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     $modinfo = unserialize($course->modinfo);
 
-    echo "<TABLE WIDTH=\"$width\"><TR><TD>\n";
+    echo "<table width=\"$width\"><tr><td>\n";
     if (!empty($section->sequence)) {
 
         $sectionmods = explode(",", $section->sequence);
@@ -612,20 +612,20 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 } else {
                     $link_css = " class=\"dimmed\" ";
                 }
-                echo "<IMG SRC=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
-                echo " <FONT SIZE=2><A TITLE=\"$mod->modfullname\" $link_css";
-                echo "   HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</A></FONT>";
+                echo "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" height=16 width=16 alt=\"$mod->modfullname\">";
+                echo " <font size=2><a title=\"$mod->modfullname\" $link_css";
+                echo "   href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
             }
             if (isediting($course->id)) {
                 echo "&nbsp;&nbsp;";
                 echo make_editing_buttons($mod->id, $absolute, $mod->visible);
             }
             if ($mod->visible or isteacher($course->id)) {
-                echo "<BR>\n";
+                echo "<br />\n";
             }
         }
     }
-    echo "</TD></TR></TABLE><BR>\n\n";
+    echo "</td></tr></table><br />\n\n";
 }
 
 function print_heading_block($heading, $width="100%", $class="headingblock") {

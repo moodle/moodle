@@ -33,8 +33,12 @@
     $stradd         = get_string("add");
     $stractivities  = get_string("activities");
     $strshowalltopics = get_string("showalltopics");
-    $strtopichide = get_string("topichide");
-    $strtopicshow = get_string("topicshow");
+    $strcoursedisplay = get_string("coursedisplay");
+    if (isediting($course->id)) { 
+        $strmarkthistopic = get_string("markthistopic");
+        $strtopichide = get_string("topichide", "", moodle_strtolower($course->students));
+        $strtopicshow = get_string("topicshow", "", moodle_strtolower($course->students));
+    }
 
 
 /// Layout the whole page as three big columns.
@@ -186,7 +190,7 @@
             if (isediting($course->id)) {
                 echo "<div align=right>";
                 popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=", 
-                            $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
+                            $modnames, "section$section", "", "$stradd...");
                 echo "</div>";
             }
     
@@ -195,23 +199,27 @@
             echo "<font size=1>";
 
             if ($displaysection == $section) {      // Show the zoom box
-                echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br><br>";
+                echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\">".
+                     "<img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br />";
             } else {
                 $strshowonlytopic = get_string("showonlytopic", "", $section);
-                echo "<a href=\"view.php?id=$course->id&topic=$section\" title=\"$strshowonlytopic\"><img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a><br><br>";
-            }
-
-            if (isediting($course->id) and $course->marker != $section) {  // Show the "tick"
-                $strmarkthistopic = get_string("markthistopic");
-                echo "<a href=\"view.php?id=$course->id&marker=$section\" title=\"$strmarkthistopic\"><img src=\"$pixpath/i/marker.gif\" height=16 width=16 border=0></a><br><br>";
+                echo "<a href=\"view.php?id=$course->id&topic=$section\" title=\"$strshowonlytopic\">".
+                     "<img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a><br />";
             }
 
             if (isediting($course->id)) {      // Show the hide/show eye
+                    $strmarkthistopic = get_string("markthistopic");
                 if ($thissection->visible) {
-                    echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strtopichide\"><img src=\"$pixpath/i/hide.gif\" height=16 width=16 border=0></a><br><br>";
-                    
+                    echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strtopichide\">".
+                         "<img src=\"$pixpath/i/hide.gif\" height=16 width=16 border=0></a><br />";
                 } else {
-                    echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strtopicshow\"><img src=\"$pixpath/i/show.gif\" height=16 width=16 border=0></a><br><br>";
+                    echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strtopicshow\">".
+                         "<img src=\"$pixpath/i/show.gif\" height=16 width=16 border=0></a><br />";
+                }
+
+                if ($course->marker != $section) {  // Show the "tick"
+                    echo "<a href=\"view.php?id=$course->id&marker=$section\" title=\"$strmarkthistopic\">".
+                         "<img src=\"$pixpath/i/marker.gif\" height=16 width=16 border=0></a><br />";
                 }
             }
 
