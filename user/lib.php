@@ -189,7 +189,9 @@ function print_user($user, $course, $string, $countries) {
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or isteacher($course->id)) {
         echo "$string->email: <A HREF=\"mailto:$user->email\">$user->email</A><BR>";
     }
-    echo "$string->location: $user->city, ".$countries["$user->country"]."<BR>";
+    if ($user->city or $user->country) {
+        echo "$string->location: $user->city, ".$countries["$user->country"]."<BR>";
+    }
     if ($user->lastaccess) {
         echo "$string->lastaccess: ".userdate($user->lastaccess);
         echo "&nbsp (".format_time(time() - $user->lastaccess, $string).")";
