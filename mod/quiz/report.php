@@ -41,7 +41,7 @@
         error("You are not allowed to use this script");
     }
 
-    add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id");
+    add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id", "$cm->id");
 
 /// Print the page header
     if (empty($noheader)) {
