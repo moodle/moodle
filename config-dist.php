@@ -177,6 +177,11 @@ $CFG->admin = 'admin';
 // then all addresses are ALLOWED EXCEPT those listed.
 //      $CFG->allowemailaddresses = "myschool.edu.au hotmail.com";
 //      $CFG->denyemailaddresses = "hotmail.com yahoo.com";
+//
+// The following setting will tell Moodle to respect your PHP session 
+// settings. Use this if you want to control session configuration
+// from php.ini, httpd.conf or .htaccess files. 
+//     $CFG->respectsessionsettings = true;
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
