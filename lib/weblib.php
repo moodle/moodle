@@ -1628,8 +1628,12 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
             } else {
                 echo "&nbsp;&nbsp;<a href=\"{$baseurl}page=$count\">$displaypage</a>";
             }
-            $count++;
             $totalcount -= $perpage;
+            $count++;
+            if ($count > 30) {
+                echo "&nbsp;...";
+                break;
+            }
         }
         $pagenum = $page + 1;
         if ($pagenum != $count) {
