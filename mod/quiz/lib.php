@@ -784,25 +784,29 @@ function quiz_print_question($number, $question, $grade, $courseid,
                     $actualresponse = $responseitems[1];
 
                     if (1.0 == $responsefractiongrade) {
-                        $style = '"background-color:lime"';
+                        $style = 'style="background-color:lime"';
                     } else if (0.0 < $responsefractiongrade) {
-                        $style = '"background-color:yellow"';
-                    } else { // The response must have been totally wrong:
-                        $style = '"background-color:red"';
+                        $style = 'style="background-color:yellow"';
+                    } else if ('' != $actualresponse) {
+                        // The response must have been totally wrong:
+                        $style = 'style="background-color:red"';
+                    } else { 
+                        // There was no response given
+                        $style = '';
                     }
                 } else {
                     $responsefractiongrade = 0.0;
                     $actualresponse = '';
-                    $style = '"background-color:white"';
+                    $style = '';
                 }
 
                 switch ($multianswer->answertype) {
                     case SHORTANSWER:
                     case NUMERICAL:
-                        echo " <input style=$style $inputname value=\"$actualresponse\" type=\"TEXT\" size=\"8\"/> ";
+                        echo " <input $style $inputname value=\"$actualresponse\" type=\"TEXT\" size=\"8\"/> ";
                     break;
                     case MULTICHOICE:
-                        echo (" <select style=$style $inputname>");
+                        echo (" <select $style $inputname>");
                         $answers = get_records_list("quiz_answers", "id", $multianswer->answers);
                         echo ('<option></option>'); // Default empty option 
                         foreach ($answers as $answer) {
@@ -1557,12 +1561,19 @@ function quiz_grade_attempt_question_result($question, $answers) {
                     $correct[$answer->id] = $answer->answer;
                     $bestshortanswer = $answer->fraction;
                 }
-                if ( ((float)$question->answer >= (float)$answer->min) and 
-                     ((float)$question->answer <= (float)$answer->max) ) {
+                if ('' != $question->answer           // Must not be mixed up with zero!
+                    && (float)$answer->fraction > (float)$grade // Do we need to bother?
+                    and                      // and has lower procedence than && and ||.
+                    strtolower($question->answer) == strtolower($answer->answer)
+                    || '' != trim($answer->min) 
+                    && ((float)$question->answer >= (float)$answer->min)
+                    && ((float)$question->answer <= (float)$answer->max))
+                {
                     $feedback[0] = $answer->feedback;
-                    $grade = (float)$answer->fraction * $question->grade;
+                    $grade = (float)$answer->fraction;
                 }
             }
+            $grade *= $question->grade; // Normalize to correct weight
             break;
 
         case TRUEFALSE:
