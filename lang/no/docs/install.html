@@ -5,7 +5,7 @@
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
-<H2>Å installere Moodle</H2>
+<H2><font size="6">Å installere Moodle</font></H2>
 <P>Denne bruksanvisningen forklarer hvordan du installerer Moodle første gang. 
 Den går gjennom noen detaljer om noen av stegene du må ta. Det er stor variasjon 
 og mange store og små ulikheter: Ulike framgangsmåter for ulike innstillinger 
@@ -27,45 +27,47 @@ irritasjon senere.</P>
   <LI><A HREF="#cron">Sete opp cron</A></LI>
   <LI><a href="#course">Lag ett nytt kurs/fag</a></LI>
 </OL>
+<p>&nbsp;</p>
 <H3><A NAME="requirements"></A>1. Systemkrav</H3>
 <blockquote>
-  <p>Moodle er i hovedsak utviklet i Linux med PHP, Apache og MySQL. Moodle blir 
-  ofte testet med PostgreSQL, samt i Windows XP og Mac OS X..</p>
+  <p>Moodle er i hovedsak utviklet i Linux med  Apache, MySQL og PHP (Også kjent 
+  som LAMP-plattformen). Moodle blir 
+  også jevnlig testet med PostgreSQL, samt i operativsystemene Windows XP, Mac OS X 
+  og Netware 6.</p>
   <p>Alt du trenger er:</p>
   <ol>
-    <li>En fungerende installasjon av <A HREF="http://www.php.net/">PHP</A> (versjon 
-      4.1.0 eller senere) med følgende egenskaper aktivert: (De fleste PHP-installasjonene 
-    i dag har alle disse):
+    <li>Programvare for server. De fleste bruker
+    <a href="http://www.apache.org/" target="_blank">Apache</a>, men Moodle 
+    burde fungere fint uansett webserver som støtter PHP, som IIS på 
+    Windows-plattformer.
+      </LI>
+    <li>En fungerende installasjon av <A HREF="http://www.php.net/">PHP</A> 
+    (versjon 4.1.0 eller senere) med følgende egenskaper aktivert:&nbsp;
       <ul>
-      <LI><A HREF="http://www.boutell.com/gd/">GD library</A> med støtte for JPG- 
+      <LI><A HREF="http://www.boutell.com/gd/">GD library</A> slått PÅ med støtte for JPG- 
       og PNG-formater</li>
-      <LI>Støtte for Sessions</LI>
-      <LI>Støtte for opplasting av filer</LI>
+      <LI>zlib library slått PÅ (hvis du vil bruke backup/restore i Windows)</LI>
+      <LI>Støtte for Sessions slått PÅ</LI>
+      <LI>Støtte for opplasting av filer slått PÅ</LI>
+      <LI>Sikkermodus må være slått AV (se foraene på moodle.org for problemer 
+      forårsaket av &quot;Safe Mode&quot;)</LI>
       </UL>
 </LI>
     <li>En fungerende databaseserver: <A HREF="http://www.mysql.com/">MySQL</A> 
-    eller <A HREF="http://www.postgresql.org/">PostgreSQL</A> anbefales. (MSSQL, Oracle, Interbase, Foxpro, Access, ADO, Sybase, DB2 
-    eller ODBC er også teoretisk støttet men du må selv sette opp 
-    databasetabellene manuelt).</li>
+    eller <A HREF="http://www.postgresql.org/">PostgreSQL</A> støttes 
+    fullstendig og anbefales for bruk med Moodle 1.1. Alle andre databaser vil 
+    støttes fullt ut i neste versjon. </li>
   </ol>
-  <p>På en Windowsplattform er den raskeste måten å oppnå dette på å laste ned <A HREF="http://www.foxserv.net/">FoxServ</A> 
-  eller <A HREF="http://www.easyphp.org/">EasyPHP</A> som vil installere Apache, 
-    PHP og&nbsp; MySQL for deg. Pass på at du slår på støtte for GD-modulen slik 
-  at Moodle kan behandle bilder - kanskje må du redigere 'php.ini' og fjerne 
-  kommentaren (;) fra denne linjen: 'extension=php_gd.dll'. Kanskje må du også 
-  endre katalogen for session.save_path - i stedet for standarden "/tmp" bør du 
-  bruke en Windowskatalog som "c:/temp".</p>
-
-  <p>Med Mac OS X anbefaler jeg sterkt <a href="http://fink.sourceforge.net/">fink</a>-prosjektet 
-  som en måte å laste ned lett vedlikeholdbare pakker for alt dette. Hvis du 
-  ikke føler deg trygg på kommandolinjer så er <A HREF="http://www.entropy.ch/software/macosx/php/">Marc Liyanage's PHP Apache Module</A> 
-  den enkleste måten å få PHP til å fungere på en ny Mac OS X-server.</p>
-
-  <p>Hvis du bruker Linux eller en annen Unix regner jeg med at du finner ut av 
-  alt dette selv! ;-) </p>
+  <p>De fleste leverandører av serverplass tilbyr alt dette som standard. Hvis 
+  du har en avtale med en av de få som ikke støtter disse funksjonene, spør dem 
+  hvorfor, og vurder å bytte leverandør.</p>
+  <p>Hvis du vil kjøre Moodle på din egen datamaskin og dette ser vanskelig ut, 
+  vennligst se guiden vår <a href="http://moodle.org/doc/?file=installamp.html">
+  Installing Apache, MySQL and PHP</a>. Den gir noen steg-for-steg-instruksjoner 
+  for å installere alt dette på de vanligste plattformene. </p>
+  <p>&nbsp;</p>
 
 </blockquote>
-<P>&nbsp;</P>
 <H3><A NAME="downloading"></A>2. Nedlasting</H3>
 <blockquote>
   <p>Det er to måter å få tak i Moodle på: Som en komprimert pakke eller med CVS. 
@@ -84,12 +86,12 @@ irritasjon senere.</P>
   <p>Her er en kort oppsummering av innholdet i mappen 'Moodle' som kan gi deg 
   litt bedre oversikt:</p>
   <blockquote>
-    <p>config.php - den eneste filen du må redigere for å komme igang<br>
+    <p>config.php - den ENESTE filen du må redigere for å komme i gang<br>
       version.php - forteller hvilken versjon av koden i Moodle du bruker<BR>
       index.php - sidens forside</p>
     <ul>
       <li>admin/ - kode for å administrere hele serveren </li>
-      <li>auth/ - plugin- moduler for å autentisere brukere</li>
+      <li>auth/ - plugin-moduler for å autentisere brukere</li>
       <li>course/ - kode for å vise og administrere kurs/fag</li>
       <li>doc/ - hjelpefiler for Moodle (som denne siden)</li>
       <li>files/ - kode for å vise og administrere opplastede filer</li>
@@ -185,10 +187,9 @@ derfor trygt dele en database med tabeller fra andre programmer.</p>
   satt opp ulikt. Dette defineres i PHPs konfigurasjonsfil (vanligvis php.ini):</p>
   <blockquote>
 
-<pre>magic_quotes_gpc = 1
-magic_quotes_runtime = 0
+<pre>magic_quotes_gpc = 1 (anbefales men ikke nødvendig)
+magic_quotes_runtime = 0 (nødvendig)
 file_uploads = 1
-short_open_tag = 1
 session.auto_start = 0
 session.bug_compat_warn = 0
 </pre>
@@ -208,7 +209,6 @@ session.bug_compat_warn = 0
 php_flag magic_quotes_gpc 1
 php_flag magic_quotes_runtime 0
 php_flag file_uploads 1
-php_flag short_open_tag 1
 php_flag session.auto_start 0
 php_flag session.bug_compat_warn 0</BLOCKQUOTE></PRE>
      <P>Du kan også endre innstillingene for f.eks. den maksimale filstørrelsen 
@@ -232,11 +232,11 @@ php_value post_max_size 2M
   <p>Nå kan du redigere konfigurasjonsfilen <strong>config.php</strong> med å 
   bruke en tekstredigerer (f.eks. notisblokk). Denne filen brukes av alle de 
   andre filene i Moodle.</p>
-  <p>Lag først en kopi av config-dist.php og kall den config.php. Vi gjør dette 
+  <p>Lag først en kopi av <b>config-dist.php</b> og kall den config.php. Vi gjør dette 
   slik at konfigurasjonsfilen din (config.php) ikke skal overskrives dersom du 
   oppgraderer Moodle 
     senere. </p>
-  <p>Rediger config.php for å spesifisere detaljer i databasen som du akkurat 
+  <p>Rediger <b>config.php</b> for å spesifisere detaljer i databasen som du akkurat 
   har definert (inkludert 'table prefix' - merk at dette KREVES for PostgreSQL), 
   og også med sidens adresse, filsystem og datakatalog. Filen config.php har 
   detaljerte beskrivelser.</p>
@@ -258,17 +258,17 @@ php_value post_max_size 2M
   opprettet. Du burde nå se et sett med SQL-utsagn etterfulgt av en 
   statusbeskjed (i grønt eller rødt) som ser slik ut:</p>
   <blockquote> 
-    <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
-      int(10) unsigned NOT NULL default '0', password varchar(50) NOT NULL default 
-      '', fullname varchar(254) NOT NULL default '', shortname varchar(15) NOT 
-      NULL default '', summary text NOT NULL, format tinyint(4) NOT NULL default 
-      '1', teacher varchar(100) NOT NULL default 'Teacher', startdate int(10) 
-      unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
-      '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
-      TYPE=MyISAM</p>
-    <p><FONT COLOR="#006600">SUCCESS</FONT></p>
-    <p>...og deretter etterfulgt av: <FONT COLOR="#FF0000">Main databases set up 
-      successfully</FONT>. </p>
+    <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, 
+    category int(10) unsigned NOT NULL default '0', password varchar(50) NOT 
+    NULL default '', fullname varchar(254) NOT NULL default '', shortname 
+    varchar(15) NOT NULL default '', summary text NOT NULL, format tinyint(4) 
+    NOT NULL default '1', teacher varchar(100) NOT NULL default 'Teacher', 
+    startdate int(10) unsigned NOT NULL default '0', enddate int(10) unsigned 
+    NOT NULL default '0', timemodified int(10) unsigned NOT NULL default '0', 
+    PRIMARY KEY (id)) TYPE=MyISAM</p>
+    <p><font color="#006600">SUCCESS</font></p>
+    <p>...og deretter etterfulgt av: <font color="#006600">Main databases set up 
+    successfully.</font></p>
   </blockquote>
   <p>Hvis du ikke ser disse har det vært et problem med databasen eller 
   innstillingene du satt i config.php. Sjekk at PHP ikke er satt til en 
@@ -277,7 +277,8 @@ php_value post_max_size 2M
     phpinfo() ?&gt og se på den i en nettleser. Sjekk alle disse og prøv igjen.</p>
   <p>Bla helt nederst på siden og klikk på linken &quot;Fortsett&quot;.</p>
   <p>Deretter vil du se en lignende side som setter opp alle tabellene som de 
-  ulike modulene i Moodle behøver. Som før, de bør alle være grønne. </p>
+  ulike modulene i Moodle behøver. Som før, de bør alle være 
+  <font color="#008000">grønne</font>. </p>
 
   <p>Bla helt nederst på siden og klikk på linken &quot;Fortsett&quot;.</p>
 
@@ -314,6 +315,9 @@ php_value post_max_size 2M
       </blockquote>
     </blockquote>
   </blockquote>
+  <p>(Hvis du av en eller annen grunn måtte avbryte installasjonen eller en 
+  systemfeil nekter deg å logge inn med admin-kontoen kan du vanligvis logge inn 
+  med brukernavn <b>admin </b>og passordet <b>admin</b>.)</p>
   <p>Når du er ferdig returnerer du til hovedsiden for administrator. Den 
   inneholder en rekke linker i en meny. (Disse vises også på hovedsiden når du 
   er logget inn som administrator). All den framtidige administrasjonen av 
@@ -339,8 +343,12 @@ php_value post_max_size 2M
   <P>Merk at maskinen som utfører dette <B>ikke behøver å være den samme 
   maskinen som kjører Moodle</B>.  F. eks. hvis du har servertilgang som ikke 
   støtter cron kan du velge å kjøre det fra en annen server eller på en PC som 
-  er tilkoblet nettet. Det som er viktig er at filen cron.php kjøres f.eks. 
-  hvert femte minutt.</p>
+  er tilkoblet nettet. Det som er viktig er at filen cron.php kjøres jevnlig.</p>
+  <p>Dette scriptet krever ikke mye systemressurser, så fem minutter er 
+  vanligvis fornuftig. Dersom dette bekymrer deg kan du redusere dette til 
+  f.eks. 15 minutter eller til og med 30 minutter. Det er best ikke å sette 
+  denne perioden for lang, ettersom sene e-poster fra sidene kan forsinke 
+  aktiviteten i klassene. </p>
   <p>Først tester du om skriptet fungerer ved å kjøre det direkte i nettleseren 
   din:</p>
   <blockquote> 
@@ -371,15 +379,23 @@ php_value post_max_size 2M
 </PRE>
   </blockquote>
   <h4>Kjør skriptet automatisk hvert femte minutt</h4>
-  <p>Med Unix: Bruk <B>cron</B>. Rediger innstillingene fra kommandolinjen med &quot;crontab -e&quot; 
+  <p><b>Med Unix: </b>Bruk <B>cron</B>. Rediger innstillingene fra kommandolinjen med &quot;crontab -e&quot; 
   og legg til en linje som:</p>
   <blockquote>
     <PRE>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</PRE>
   </blockquote>
-  <p>Med Windows: Den enkleste måten er å bruke pakken <A TITLE="Click to download this package (150k)" HREF="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</A> 
+  <p>Vanligvis vil kommandoen &quot;crontab&quot; føre deg til 'vi'-editoren. Du velger &quot;insert 
+  mode&quot; med å taste &quot;i&quot;, deretter skriv linjen som over. Etterpå gå ut av &quot;insert 
+  mode&quot; ved å trykke ESC. Tast &quot;:wq&quot; for å lagre og avslutte, eller avslutt uten 
+  å lagre med &quot;:q!&quot; (uten hermetegn).</p>
+  <p><b>Med Windows</b>: Den enkleste måten er å bruke pakken <A TITLE="Click to download this package (150k)" HREF="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</A> 
   som gjør dette svært enkelt. Du kan også utforske den innebygde funksjonen i 
   Windows &quot;Planlagte oppgaver&quot;. (Start &gt; Programmer &gt; Tilbehør &gt; Systemverktøy &gt; 
   Planlagte oppgaver.)</p>
+  <p>Hos leverandører av serverplass: Ditt nettbaserte kontrollpanel kan ha en 
+  nettside som lar deg sette opp denne prosessen. Spør administratorein din 
+  etter detaljer for hvordan dette fungerer. </p>
+  <p>&nbsp;</p>
   </p>
 </blockquote>
 <H3><A NAME="course"></A>10. Lag ett nytt kurs/fag</H3>

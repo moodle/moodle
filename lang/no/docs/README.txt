@@ -1,21 +1,23 @@
-Moodle documentation
+Moodledokumentasjon
 --------------------
 
-If you want to translate this documentation into another language,
-I would suggest that you:
+Hvis du vil oversette denne dokumentasjonen til et annet språk
+foreslår jeg at du:
 
- 1) don't include English versions of the files in this directory
-    because they will be used automatically anyway if it is missing
-    from your language pack.
+ 1) ikke inkluderer den engelske versjonen av disse filene i denne katalogen
+    fordi de blir brukt uansett automatisk dersom de mangler 
+    i din språkpakke.
 
- 2) translate them in this order (starting with the important ones):
+ 2) oversett dem i denne rekkefølgen (begynn med de viktigste):
   
-    MOST IMPORTANT
+    VIKTIGST
     |-------------------
     |
     |   - files.php
     |   - install.html
+    |   - installamp.html
     |   - upgrade.html
+    |   - faq.html
     |
     |  -----------------
     |
@@ -37,8 +39,10 @@ I would suggest that you:
     |  -----------------
     |   
     |   - license.html
-    |   - credits.html
     |
     |-------------------
-    LEAST IMPORTANT
+    MINST VIKTIG
+
+ 3) Vennligst ikke oversett 'credits.html' i det hele tatt - den endres for ofte.
+
 
