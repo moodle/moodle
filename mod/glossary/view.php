@@ -2,6 +2,8 @@
 /// This page prints a particular instance of glossary
     require_once("../../config.php");
     require_once("lib.php");
+    require_once("$CFG->dirroot/rss/rsslib.php");
+
     global $CFG, $THEME, $USER;
     $debug = 0;
     $CFG->startpagetime = microtime();            
@@ -217,6 +219,14 @@
         "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
+
+    //If rss are activated at site and glossary level and this glossary has rss defined, show link
+        if ($CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype and $glossary->rssarticles) {
+            echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top"><td align="right">';
+            $tooltiptext = get_string("rsssubscriberss","glossary",$glossary->name);
+            rss_print_link($course->id, $USER->id, "glossary", $glossary->id, $tooltiptext);
+            echo '</td></tr></table>';
+        }
     
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     if ( $isuserframe and $mode != 'search') {

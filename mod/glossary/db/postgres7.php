@@ -13,6 +13,12 @@ function glossary_upgrade($oldversion) {
         }
     }
 
+  if ($oldversion < 2004050900) {
+      table_column("glossary","","rsstype","integer","2", "unsigned", "0", "", "entbypage");
+      table_column("glossary","","rssarticles","integer","2", "unsigned", "0", "", "rsstype");
+      set_config("glossary_enablerssfeeds",0);
+  }
+
     return true;
 }
 

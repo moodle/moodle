@@ -249,6 +249,12 @@ function glossary_upgrade($oldversion) {
             set_config("textfilters", $CFG->textfilters);
         }
     }
+
+  if ($oldversion < 2004050900) {
+      table_column("glossary","","rsstype","tinyint","2", "unsigned", "0", "", "entbypage");
+      table_column("glossary","","rssarticles","tinyint","2", "unsigned", "0", "", "rsstype");
+      set_config("glossary_enablerssfeeds",0);
+  }
     
   return true;
 }
