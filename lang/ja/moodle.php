@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003051200)
+      // moodle.php - created with Moodle 1.0.9 Beta 1 (2003051600)
 
 
 $string['action'] = "操作";
 $string['activities'] = "活動";
 $string['activity'] = "活動";
+$string['activityiscurrentlyhidden'] = "申し訳ございません、この活動は現在非表示にされています";
 $string['activitymodule'] = "活動モジュール";
 $string['activityreport'] = "活動報告";
 $string['add'] = "追加";
@@ -75,7 +76,7 @@ $string['configlangdir'] = "ほとんどの言語は左から右に記述されますが、アラビア語
 $string['configlanglist'] = "ここを空白にすると、インストールしたMoodleに含まれる全ての言語をユーザが選択することが出来ます。コンマで区切ることにより言語メニューを短くすることが出来ます。例：jp,en,es_es,fr,it";
 $string['configlangmenu'] = "言語選択メニューをホームページ、ログイン画面等に表示したい場合に選択してください。この設定はユーザプロフィールの表示言語設定に影響しません。
 ";
-$string['configlocale'] = "全体に適用されるロケールを選択してください。これは日付の書式と言語に影響します。指定した言語が表示される為には、OSに言語データがインストールされている必要があります。(例 en-英語 es-スペイン語)
+$string['configlocale'] = "全体に適用されるロケールを選択してください。これは日付の書式と言語に影響します。指定した言語が表示される為には、OSに言語データがインストールされている必要があります。(例 ja_JP-日本語 en-英語 es-スペイン語)
 
 もし分からない場合は空白のままにしてください。";
 $string['configloglifetime'] = "ここではユーザの活動に関するログの保持期間を設定します。指定した値より古いろログは自動的に削除されます。可能な限り長い間ログを保持する方が良いのですが、アクセス件数が多く、サーバのパフォーマンスに問題がある場合は、短い期間に設定してください。";
@@ -464,12 +465,16 @@ $string['readme'] = "READMEファイル";
 $string['recentactivity'] = "最新の活動";
 $string['registration'] = "Moodle登録";
 $string['registrationemail'] = "メール通知";
+$string['registrationno'] = "いいえ、メールは送信しないでください";
+$string['registrationsend'] = "moodle.orgに登録情報を送信する";
+$string['registrationyes'] = "はい、重要事項を知らせてください。";
 $string['removeadmin'] = "管理者を削除する";
 $string['removecreator'] = "コース作成者を削除する";
 $string['removeteacher'] = "教師を削除する";
 $string['rename'] = "リネーム";
 $string['requireskey'] = "このコースには登録キーが必要です";
 $string['resources'] = "資料";
+$string['restore'] = "リストア";
 $string['returningtosite'] = "アカウントを持ちの方ですか?";
 $string['revert'] = "クリア";
 $string['role'] = "任務";
