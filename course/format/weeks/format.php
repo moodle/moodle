@@ -208,10 +208,10 @@
 
             if (isediting($course->id)) {
                 if ($thissection->visible) {        // Show the hide/show eye
-                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strtopichide.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strweekhide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/hide.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 } else {
-                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strtopichide.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strweekhide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/show.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 }
                 if ($section > 1) {                       // Add a arrow to move section up
