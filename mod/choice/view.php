@@ -106,7 +106,7 @@
             if ($answer) {
                 echo "<TD ALIGN=CENTER>";
                 echo "<INPUT type=radio name=answer value=\"$key\" ".$answerchecked[$key].">";
-                p($answer);
+                echo format_text($answer);
                 echo "</TD>";
             }
         }
