@@ -551,13 +551,13 @@ function calendar_course_filter_selector($getvars = '') {
         return '';
     }
 
-    if (isadmin()) {
+    if (isadmin() && !empty($CFG->calendar_adminseesall)) {
         $courses = get_courses('all', 'c.shortname','c.id,c.shortname');
     } else {
         $courses = get_my_courses($USER->id, 'shortname');
     }
 
-    unset($courses[1]);
+    unset($courses[SITEID]);
 
     $courseoptions[1] = get_string('fulllistofcourses');
     foreach ($courses as $course) {
