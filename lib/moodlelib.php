@@ -795,7 +795,8 @@ function remove_course_contents($courseid, $showfeedback=true) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/lib.php";
-            $moddelete = $modname."_delete_instance";
+            $moddelete = $modname."_delete_instance";       // Delete everything connected to an instance
+            $moddeletecourse = $modname."_delete_course";   // Delete other stray stuff (uncommon)
             $count=0;
             if (file_exists($modfile)) {
                 include_once($modfile);
@@ -815,6 +816,9 @@ function remove_course_contents($courseid, $showfeedback=true) {
                     $result = false;
                 }
 
+                if (function_exists($moddeletecourse)) {
+                    $moddeletecourse($course);
+                }
             }
             if ($showfeedback) {
                 notify("$strdeleted $count x $modname");
