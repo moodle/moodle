@@ -497,7 +497,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         $output .= "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
     }
 
-    $output .= "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    $output .= "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=35 VALIGN=TOP>";
     $output .= print_user_picture($user->id, $course->id, $user->picture, false, true);
     $output .= "</TD>";
 
@@ -513,7 +513,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $by->date = userdate($post->created, "", $touser->timezone);
     $output .= get_string("bynameondate", "forum", $by);
     $output .= "</FONT></P></TD></TR>";
-    $output .= "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=10>";
+    $output .= "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=10>";
     $output .= "&nbsp;";
     $output .= "</TD><TD BGCOLOR=\"$THEME->cellcontent\">\n";
 
@@ -575,7 +575,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
     }
 
-    echo "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($post->userid, $courseid, $post->picture);
     echo "</TD>";
 
@@ -591,7 +591,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     $by->date = userdate($post->created);
     print_string("bynameondate", "forum", $by);
     echo "</FONT></P></TD></TR>";
-    echo "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=10>";
+    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=10>";
     echo "&nbsp;";
     echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\">\n";
 
@@ -680,7 +680,7 @@ function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false
         echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
     }
 
-    echo "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($post->userid, $courseid, $post->picture);
     echo "</TD>";
 
