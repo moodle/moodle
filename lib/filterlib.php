@@ -39,6 +39,8 @@ class filterobject {
  **/
 function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL) {
 
+    global $CFG;
+
 /// A list of open/close tags that we should not replace within
 /// No reason why you can't put full preg expressions in here too
 /// eg '<script(.+?)>' to match any type of script tag
