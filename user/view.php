@@ -143,7 +143,7 @@
             echo "<INPUT type=hidden name=id value=\"$course->id\">";
             echo "<INPUT type=submit value=\"".get_string("changepassword")."\">";
             echo "</FORM></P></TD>";
-        } else if ($CFG->changepassword) {
+        } else if (strlen($CFG->changepassword) > 1) {
             echo "<TD NOWRAP><P><FORM ACTION=\"$CFG->changepassword\" METHOD=GET>";
             echo "<INPUT type=submit value=\"".get_string("changepassword")."\">";
             echo "</FORM></P></TD>";
