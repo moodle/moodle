@@ -17,10 +17,11 @@
         $course = get_record("course","id",$courseid);
         $modinfo = unserialize($course->modinfo);
 
-        //Sort modinfo by name length
-        usort($modinfo,'comparemodulenamesbylength'); 
-
         if (!empty($modinfo)) {
+
+            //Sort modinfo by name length
+            usort($modinfo,'comparemodulenamesbylength'); 
+
             $cm = '';
             foreach ($modinfo as $activity) {
                 //Exclude labels and hidden items
