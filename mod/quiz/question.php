@@ -83,22 +83,7 @@
             
         } else {
             // determine if the question is being used in any quiz
-            if ($category->publish) {
-                $quizzes = get_records("quiz");
-            } else {
-                $quizzes = get_records("quiz", "course", $course->id);
-            }
-            $beingused = array();
-            if ($quizzes) {
-                foreach ($quizzes as $quiz) {
-                    $qqq = explode(",", $quiz->questions);
-                    foreach ($qqq as $key => $value) {
-                        if ($value == $delete) {
-                            $beingused[] = $quiz->name;
-                        }
-                    }
-                }
-            }
+            $beingused = quizzes_question_used( $delete, $category->publish, $course->id );
             if ($beingused) {
                 $beingused = implode(", ", $beingused);
                 $beingused = get_string("questioninuse", "quiz", "<i>$question->name</i>")."<p>".$beingused;
