@@ -492,7 +492,7 @@ function quiz_print_category_form($course, $current) {
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");
 
-    echo "<TABLE width=\"100%\"><TR><TD>";
+    echo "<TABLE width=\"100%\"><TR><TD NOWRAP>";
     echo "<FORM METHOD=POST ACTION=edit.php>"; 
     echo "<B>$strcategory:</B>&nbsp;";
     choose_from_menu($catmenu, "cat", "$current");
@@ -567,7 +567,7 @@ function quiz_print_question_list($questionlist, $grades) {
     $total = count($order);
     echo "<FORM METHOD=post ACTION=edit.php>";
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
-    echo "<TR><TH WIDTH=10 COLSPAN=3>$strorder</TH><TH align=left WIDTH=\"100%\">$strquestionname</TH><TH width=16>$strtype</TH><TH WIDTH=10>$strgrade</TH><TH WIDTH=10>$stredit</TH></TR>";
+    echo "<TR><TH WIDTH=\"*\" COLSPAN=3 NOWRAP>$strorder</TH><TH align=left WIDTH=\"100%\" NOWRAP>$strquestionname</TH><TH width=\"*\" NOWRAP>$strtype</TH><TH WIDTH=\"*\" NOWRAP>$strgrade</TH><TH WIDTH=\"*\" NOWRAP>$stredit</TH></TR>";
     foreach ($order as $qnum) {
         $count++;
         echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
@@ -585,7 +585,7 @@ function quiz_print_question_list($questionlist, $grades) {
         }
         echo "</TD>";
         echo "<TD>".$questions[$qnum]->name."</TD>";
-        echo "<TD WIDTH=16 ALIGN=CENTER>";
+        echo "<TD ALIGN=CENTER>";
         quiz_print_question_icon($questions[$qnum]);
         echo "</TD>";
         echo "<TD>";
@@ -662,9 +662,9 @@ function quiz_print_cat_question_list($categoryid) {
 
     echo "<FORM METHOD=post ACTION=edit.php>";
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
-    echo "<TR><TH width=10>$strselect</TH><TH width=* align=left>$strquestionname</TH><TH WIDTH=16>$strtype</TH>";
+    echo "<TR><TH width=\"*\" NOWRAP>$strselect</TH><TH width=\"100%\" align=left NOWRAP>$strquestionname</TH><TH WIDTH=\"*\" NOWRAP>$strtype</TH>";
     if ($canedit) {
-        echo "<TH width=10>$stredit</TH>";
+        echo "<TH width=\"*\" NOWRAP>$stredit</TH>";
     }
     echo "</TR>";
     foreach ($questions as $question) {
@@ -673,7 +673,7 @@ function quiz_print_cat_question_list($categoryid) {
         echo "<INPUT TYPE=CHECKBOX NAME=q$question->id VALUE=\"1\">";
         echo "</TD>";
         echo "<TD>".$question->name."</TD>";
-        echo "<TD WIDTH=16 ALIGN=CENTER>";
+        echo "<TD ALIGN=CENTER>";
         quiz_print_question_icon($question);
         echo "</TD>";
         if ($canedit) {

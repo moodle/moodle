@@ -98,7 +98,7 @@
 /// Print the table of all categories
     $table->head  = array ($strcategory, $strcourses, $straction);
     $table->align = array ("LEFT", "CENTER", "CENTER");
-    $table->size = array ("50", "20", "20");
+    $table->size = array ("80", "50", "50");
     $table->width = 100;
 
     echo "<FORM ACTION=categories.php METHOD=post>";

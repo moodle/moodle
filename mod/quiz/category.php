@@ -144,8 +144,9 @@
 /// Print the table of all categories
     $table->head  = array ($strcategory, $strcategoryinfo, $strpublish, $strquestions, $straction);
     $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER", "CENTER");
-    $table->size = array ("50", "50", "10", "10", "20");
+    $table->size = array ("80", "80", "40", "40", "50");
     $table->width = 200;
+    $table->nowrap = true;
 
     echo "<FORM ACTION=category.php METHOD=post>";
     foreach ($categories as $category) {
