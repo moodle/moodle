@@ -1128,21 +1128,24 @@
         //in a scheduled_backup to we are able to get a copy
         //from CFG->backup_preferences
         if (!isset($preferences)) {
-            $preferences = $CFG->backup_preferences;
+            $mypreferences = $CFG->backup_preferences;
+        } else {
+            //We are in manual backups so global preferences must exist!!
+            $mypreferences = $preferences;
         }
 
         //First, we check for every call to file.php inside the course
-        $search = array($CFG->wwwroot."/file.php/".$preferences->backup_course);
+        $search = array($CFG->wwwroot."/file.php/".$mypreferences->backup_course);
 
         $replace = array("$@FILEPHP@$");
 
         $result = str_replace($search,$replace,$content);
 
-        foreach ($preferences->mods as $name => $info) {
+        foreach ($mypreferences->mods as $name => $info) {
             //Check if the xxxx_encode_content_links exists
             $function_name = $name."_encode_content_links";
             if (function_exists($function_name)) {
-                $result = $function_name($result,$preferences);
+                $result = $function_name($result,$mypreferences);
             }
         }
 
