@@ -335,6 +335,8 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
 ///  $nothing  = The label for the "no choice" option
 ///  $help     = The name of a help page if help is required
 ///  $helptext  = The name of the label for the help button
+///  $return   = Boolean indicating whether the function should return the text 
+///    as a string or echo it directly to the page being rendered
 
     global $CFG;
 
@@ -501,11 +503,14 @@ function format_text_email($text, $format) {
 
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
+        /// This expression turns links into something nice in a text format. (Russell Jungwirth)
+        /// From: http://php.net/manual/en/function.eregi-replace.php and simplified
+            $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [\\2]', $text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
 
         default:  // FORMAT_MOODLE or anything else
-        // Need to add something in here to create a text-friendly way of presenting URLs
+            $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [\\2]', $text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
     }
@@ -521,10 +526,13 @@ function clean_text($text, $format) {
         case FORMAT_MOODLE:
         case FORMAT_HTML:
         case FORMAT_WIKI:
+        /// Remove javascript: label
             $text = strip_tags($text, $ALLOWED_TAGS);
-            $text = str_ireplace("javascript:", "xxx", $text);           // Remove javascript: label
-            $text = eregi_replace("([^a-z])language([[:space:]]*)=", "xxx", $text);    // Remove javascript/VBScript
-            $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "xxx", $text);  // Remove script events
+        /// Remove javascript/VBScript
+            $text = str_ireplace("javascript:", "xxx", $text);           
+        /// Remove script events
+            $text = eregi_replace("([^a-z])language([[:space:]]*)=", "xxx", $text);    
+            $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "xxx", $text);  
             return $text;
 
         case FORMAT_PLAIN:
@@ -536,6 +544,7 @@ function replace_smilies(&$text) {
 /// Replaces all known smileys in the text with image equivalents
     global $CFG;
 
+/// this builds the mapping array only once
     static $runonce = false;
     static $e = array();
     static $img = array();
@@ -564,7 +573,8 @@ function replace_smilies(&$text) {
         '}-]'  => 'evil.gif',
         );
 
-    if ($runonce == false){
+ /// this is the meat of the code - this is run every time
+     if ($runonce == false){
         foreach ($emoticons as $emoticon => $image){
             $e[] = $emoticon;
             $img[] = "<img alt=\"$emoticon\" width=15 height=15 src=\"$CFG->wwwroot/pix/s/$image\">";
