@@ -1,12 +1,14 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 alpha (2004081500)
+      // resource.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addresource'] = 'Agregar recurso';
 $string['chooseafile'] = 'Elija o suba un archivo';
+$string['chooseparameter'] = 'Elegir parámetro';
 $string['configdefaulturl'] = 'Este valor se usa como pre-relleno cuando se crea un nuevo recurso basado en URL.';
 $string['configfilterexternalpages'] = 'Activar esta variable ocasionará que todos los recursos externos (páginas web, archivos HTML cargados) se procesen según los filtros definidos en el sitio (como el glosario, los enlaces automáticos, etc.). Esto puede hacer que el rendimiento del sistema disminuya considerablemente --úselo con cuidado, sólo si es necesario.';
 $string['configframesize'] = 'Cuando se muestra una página web o un archivo cargado dentro de un marco (frame), este valor es el tamaño en píxeles del marco superior (top) que contiene el navegador.';
+$string['configparametersettings'] = 'Configura el valor por defecto del panel de ajustes de parámetros en el formulario cuando se agregan nuevos recursos. Tras esta primera vez, se convierte en una preferencia del usuario individual.';
 $string['configpopup'] = 'Cuando se agrega un recurso que puede mostrarse en un ventana emergente (\"popup\"), ¿esta opción se debe activar por defecto?';
 $string['configpopupdirectories'] = 'Las ventanas \"popup\", ¿deben por defecto mostrar los enlaces del directorio?';
 $string['configpopupheight'] = '¿Qué altura deben tener por defecto las ventanas \"popup\"?';
@@ -17,9 +19,12 @@ $string['configpopupscrollbars'] = 'Las ventanas \"popup\", ¿deben por defecto m
 $string['configpopupstatus'] = 'Las ventanas \"popup\", ¿deben por defecto mostrar la barra de estado?';
 $string['configpopuptoolbar'] = 'Las ventanas \"popup\", ¿deben por defecto mostrar la barra de herramientas?';
 $string['configpopupwidth'] = '¿Qué ancho deben tener por defecto las ventanas \"popup\"?';
+$string['configsecretphrase'] = 'Esta frase secreta se usa para generar el valor de código encriptado que se enviará a algunos recursos como parámetro. El código encriptado es producido por un valor md5 de la dirección IP current_users concatenado con su frase secreta. Ej., code = md5(IP.frasesecreta). Esto permite al recurso destinatario verificar la conexión para mayor seguridad.';
 $string['configwebsearch'] = 'Cuando agregue una URL como página web o como enlace, esta ubicación se ofrece como un sitio para que el usuario busque la URL que desea.';
+$string['configwindowsettings'] = 'Fija el valor por defecto del panel de ajustes de ventana en el formulario cuando se agregan algunos recursos nuevos. Tras esta primera vez, se convierte en una preferencia del usuario individual.';
 $string['directlink'] = 'Enlace directo a este archivo';
 $string['directoryinfo'] = 'Se mostrarán todos los archivos en el directorio elegido.';
+$string['display'] = 'Ventana';
 $string['editingaresource'] = 'Editar recurso';
 $string['encryptedcode'] = 'Código encriptado';
 $string['example'] = 'Ejemplo';

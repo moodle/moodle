@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 development (2004072500)
+      // chat.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['beep'] = 'beep';
@@ -23,6 +23,10 @@ $string['deletesessionsure'] = '¿Está seguro de que desea borrar esta sesión?';
 $string['donotusechattime'] = 'No publicar horas de chat';
 $string['enterchat'] = 'Entrar a la sala';
 $string['errornousers'] = '¡No puedo encontrar usuarios!';
+$string['explaingeneralconfig'] = 'Estos ajustes están <strong>siempre</strong> en funcionamiento';
+$string['explainmethoddaemon'] = 'Estos ajustes actúan <strong>solamente</strong> si ha seleccionado \"Daemon servidor de chat\" en chat_method';
+$string['explainmethodnormal'] = 'Estos ajustes actúan <strong>solamente</strong> si ha seleccionado \"Método normal\" en chat_method';
+$string['generalconfig'] = 'Configuración general';
 $string['helpchatting'] = 'Ayuda del chat';
 $string['idle'] = 'Inactivo';
 $string['messagebeepseveryone'] = '$a envía un beep a todos';
@@ -36,6 +40,7 @@ $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chats';
 $string['neverdeletemessages'] = 'Nunca borrar mensajes';
 $string['nextsession'] = 'Próxima sesión programada';
+$string['noguests'] = 'El chat no está abierto a invitados';
 $string['nomessages'] = 'Aún no hay mensajes';
 $string['repeatdaily'] = 'A la misma hora todos los días';
 $string['repeatnone'] = 'Sin repeticiones, publicar sólo la hora especificada';

@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.4 alpha (2004081500)
+      // error.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['coursegroupunknown'] = 'No se ha especificado el curso correspondiente al grupo $a';
 $string['erroronline'] = 'Error en la línea $a';
 $string['fieldrequired'] = '\"$a\" es un campo requerido';
+$string['filenotfound'] = 'Lo sentimos, el archivo solicitado no se encuentra';
 $string['groupalready'] = 'El usuario ya pertence al grupo $a';
 $string['groupunknown'] = 'El grupo $a no está asociado al curso especificado';
 $string['invalidfieldname'] = '\"$a\" no es un nombre válido';
