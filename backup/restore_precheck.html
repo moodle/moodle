@@ -64,12 +64,18 @@
         $status = restore_check_moodle_file ($xml_file);
     }
 
+    $info = "";
+    $course_header = "";
+
     //Now read the info tag (all)
     if ($status) {
         echo "<li>Reading info from file";
         //Reading info from file
         $info = restore_read_xml_info ($xml_file);
-        print_object ($info);
+        //Reading course_header from file
+        $course_header = restore_read_xml_course_header ($xml_file);
+print_object ($info);
+print_object ($course_header);
     }
 
     //End the main ul
@@ -82,4 +88,9 @@
     if (!$status) {
         error ("An error has ocurred");
     }
+    
+    if ($info and $course_header) {
+
+    }
+
 ?>

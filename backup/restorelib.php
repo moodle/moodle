@@ -47,7 +47,7 @@
         return $status;  
     }   
 
-    //This function read the xml file and store it data from the info section in an array
+    //This function read the xml file and store it data from the info zone in an object
     function restore_read_xml_info ($xml_file) {
 
         //We call the main read_xml function, with todo = INFO
@@ -55,6 +55,16 @@
 
         return $info;
     }
+
+    //This function read the xml file and store it data from the course header zone in an object  
+    function restore_read_xml_course_header ($xml_file) {
+
+        //We call the main read_xml function, with todo = COURSE_HEADER
+        $info = restore_read_xml ($xml_file,"COURSE_HEADER",false);
+
+        return $info;
+    }
+   
 
     //=====================================================================================
     //==                                                                                 ==
@@ -72,6 +82,12 @@
         var $info = "";        //Information collected. Temp storage.
         var $preferences = ""; //Preferences about what to load !!
         var $finished = false; //Flag to say xml_parse to stop
+
+        //This function is used to get the current contents property value
+        //They are trimed and converted from utf8
+        function getContents() {
+            return trim(utf8_decode($this->content));
+        }
  
         //This is the startTag handler we use where we are reading the info zone (todo="INFO")
         function startElementInfo($parser, $tagName, $attrs) {
@@ -81,6 +97,17 @@
 
             //Check if we are into INFO zone
             //if ($this->tree[2] == "INFO")                                                             //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+        }
+
+        //This is the startTag handler we use where we are reading the course header zone (todo="COURSE_HEADER")
+        function startElementCourseHeader($parser, $tagName, $attrs) {
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //Check if we are into COURSE_HEADER zone
+            //if ($this->tree[3] == "HEADER")                                                           //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
 
@@ -96,28 +123,28 @@
             //Check if we are into INFO zone
             if ($this->tree[2] == "INFO") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".utf8_decode(str_repeat("&nbsp;",($this->level+2)*2).$this->content."<br>\n");    //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
                 //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Dependig of different combinations, do different things
                 if ($this->level == 3) {
                     switch ($tagName) {
                         case "NAME":
-                            $this->info->backup_name = trim($this->content);
+                            $this->info->backup_name = $this->getContents();
                             break;
                         case "MOODLE_VERSION":
-                            $this->info->backup_moodle_version = trim($this->content);
+                            $this->info->backup_moodle_version = $this->getContents();
                             break;
                         case "MOODLE_RELEASE":
-                            $this->info->backup_moodle_release = trim($this->content);
+                            $this->info->backup_moodle_release = $this->getContents();
                             break;
                         case "BACKUP_VERSION":
-                            $this->info->backup_backup_version = trim($this->content);
+                            $this->info->backup_backup_version = $this->getContents();
                             break;
                         case "BACKUP_RELEASE":
-                            $this->info->backup_backup_release = trim($this->content);
+                            $this->info->backup_backup_release = $this->getContents();
                             break;
                         case "DATE":
-                            $this->info->backup_date = trim($this->content);
+                            $this->info->backup_date = $this->getContents();
                             break;
                     }
                 }
@@ -125,37 +152,40 @@
                     if ($this->level == 4) {
                         switch ($tagName) {
                             case "USERS":
-                                $this->info->backup_users = trim($this->content);
+                                $this->info->backup_users = $this->getContents();
                                 break;
                             case "LOGS":
-                                $this->info->backup_logs = trim($this->content);
+                                $this->info->backup_logs = $this->getContents();
                                 break;
                             case "USERFILES":
-                                $this->info->backup_user_files = trim($this->content);
+                                $this->info->backup_user_files = $this->getContents();
                                 break;
                             case "COURSEFILES":
-                                $this->info->backup_course_files = trim($this->content);
+                                $this->info->backup_course_files = $this->getContents();
                                 break;
                         }
                     }
                     if ($this->level == 5) {
                         switch ($tagName) {
                             case "NAME":
-                                $this->info->tempName = trim($this->content);
+                                $this->info->tempName = $this->getContents();
                                 break;
                             case "INCLUDED":
-                                $this->info->mods[$this->info->tempName] = trim($this->content);
+                                $this->info->mods[$this->info->tempName]->backup = $this->getContents();
+                                break;
+                            case "USERINFO":
+                                $this->info->mods[$this->info->tempName]->userinfo = $this->getContents();
                                 break;
                         }
                     }
                 }
-
-
-                //Clear things
-                $this->tree[$this->level] = "";
-                $this->level--;
-                $this->content = "";
             }
+
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
 
             //Stop parsing if todo = INFO and tagName = INFO (en of the tag, of course)
             //Speed up a lot (avoid parse all)
@@ -164,10 +194,102 @@
             }
         }
 
+        //This is the endTag handler we use where we are reading the course_header zone (todo="COURSE_HEADER")
+        function endElementCourseHeader($parser, $tagName) {
+            //Check if we are into COURSE_HEADER zone
+            if ($this->tree[3] == "HEADER") {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //Dependig of different combinations, do different things
+                if ($this->level == 4) {
+                    switch ($tagName) {
+                        case "ID":
+                            $this->info->course_id = $this->getContents();
+                            break;
+                        case "PASSWORD":
+                            $this->info->course_password = $this->getContents();
+                            break;
+                        case "FULLNAME":
+                            $this->info->course_fullname = $this->getContents();
+                            break;
+                        case "SHORTNAME":
+                            $this->info->course_shortname = $this->getContents();
+                            break;
+                        case "SUMMARY":
+                            $this->info->course_summary = $this->getContents();
+                            break;
+                        case "FORMAT":
+                            $this->info->course_format = $this->getContents();
+                            break;
+                        case "NEWSITEMS":
+                            $this->info->course_newsitems = $this->getContents();
+                            break;
+                        case "TEACHER":
+                            $this->info->course_teacher = $this->getContents();
+                            break;
+                        case "TEACHERS":
+                            $this->info->course_teachers = $this->getContents();
+                            break;
+                        case "STUDENT":
+                            $this->info->course_student = $this->getContents();
+                            break;
+                        case "STUDENTS":
+                            $this->info->course_students = $this->getContents();
+                            break;
+                        case "GUEST":
+                            $this->info->course_guest = $this->getContents();
+                            break;
+                        case "STARDATE":
+                            $this->info->course_stardate = $this->getContents();
+                            break;
+                        case "NUMSECTIONS":
+                            $this->info->course_numsections = $this->getContents();
+                            break;
+                        case "SHOWRECENT":
+                            $this->info->course_showrecent = $this->getContents();
+                            break;
+                        case "MARKER":
+                            $this->info->course_marker = $this->getContents();
+                            break;
+                        case "TIMECREATED":
+                            $this->info->course_timecreated = $this->getContents();
+                            break;
+                        case "TIMEMODIFIED":
+                            $this->info->course_timemodified = $this->getContents();
+                            break;
+                    }
+                }
+                if ($this->tree[4] == "CATEGORY") {
+                    if ($this->level == 5) {
+                        switch ($tagName) {
+                            case "ID":
+                                $this->info->category->id = $this->getContents();
+                                break;
+                            case "NAME":
+                                $this->info->category->name = $this->getContents();
+                                break;
+                        }
+                    }
+                }
+
+            }
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+
+            //Stop parsing if todo = COURSE_HEADER and tagName = HEADER (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "HEADER") {
+                $this->finished = true;
+            }
+        }
+
         //This is the endTag default handler we use when todo is undefined
         function endElement($parser, $tagName) {
             if (trim($this->content))                                                                     //Debug
-                echo "C".utf8_decode(str_repeat("&nbsp;",($this->level+2)*2).$this->content."<br>\n");    //Debug
+                echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
             echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
 
             //Clear things
@@ -196,6 +318,9 @@
         if ($todo == "INFO") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");
+        } else if ($todo == "COURSE_HEADER") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementCourseHeader", "endElementCourseHeader");
         } else {
             //Define default handlers (must no be invoked when everything become finished)
             xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");
