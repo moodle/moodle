@@ -34,11 +34,9 @@
 		}
 	}
 
-	if ($err) {
-		foreach ((array)$err as $key => $value) {
-			$focus = "form.$key";
-		}
-	}
+    if ($err) {
+        $focus = 'form.' . array_shift(array_flip(get_object_vars($err)));
+    }
 
     if (!$user->country and $CFG->country) {
         $user->country = $CFG->country;
