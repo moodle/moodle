@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 development (2004060400)
+      // lesson.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['actionaftercorrectanswer'] = 'เมื่อตอบคำถามถูกให้';
@@ -47,6 +47,7 @@ $string['multipleanswer'] = 'คำตอบมากกว่าหนึ่ง';
 $string['nextpage'] = 'หน้าต่อไป';
 $string['noanswer'] = 'ไม่มีคำตอบ';
 $string['noattemptrecordsfound'] = 'ไม่พบบันทึกการเข้าศึกษา ยังไม่มีคะแนน';
+$string['nobranchtablefound'] = 'ไม่พบสารบาญ';
 $string['normal'] = 'ปกติ :: เรียนตามบทเรียนที่วางไว้';
 $string['notdefined'] = 'ไม่กำหนด';
 $string['notitle'] = 'ไม่มีชื่อ';

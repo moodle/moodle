@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004072901)
+      // glossary.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addcomment'] = 'เพิ่มเติมความคิดเห็น';
@@ -71,6 +71,7 @@ $string['displayformatfullwithoutauthor'] = 'เต็มรูปแบบไม่รวมชื่อผู้เขียน';
 $string['displayformats'] = 'รูปแบบนำเสนอ';
 $string['displayformatssetup'] = 'การตั้งค่ารูปแบบนำเสนอ';
 $string['duplicateentry'] = 'มีศัพท์คำนี้แล้ว';
+$string['editalways'] = 'แก้ไขได้ตลอด';
 $string['editcategories'] = 'แก้ไขประเภทคำศัพท์';
 $string['editentry'] = 'แก้ไขคำศัพท์';
 $string['editingcomment'] = 'แก้ไขความคิดเห็น';

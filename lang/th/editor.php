@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 development (2004072901)
+      // editor.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['about'] = 'เกี่ยวกับเครื่องมือแก้ไข';
@@ -8,6 +8,9 @@ $string['absmiddle'] = 'ตรงกลาง';
 $string['address'] = 'ที่อยู่';
 $string['alignment'] = 'การจัดหน้า';
 $string['alternatetext'] = 'ข้อความอธิบาย';
+$string['anchorhelp'] = 'ใช้สำหรับสร้าง anchor เท่านั้นคุณจำเป็นต้องสร้างลิงก์แยกต่างหาก';
+$string['anchorname'] = 'ชื่อ Anchor';
+$string['anchors'] = 'Anchors';
 $string['baseline'] = 'รูปอยู่ต่ำกว่านี้';
 $string['bold'] = 'ตัวหนา';
 $string['borderthickness'] = 'ความหนาของขอบ';
@@ -21,6 +24,7 @@ $string['chooseicon'] = 'เลือกไอคอนภาพที่ต้องการแทรก';
 $string['close'] = 'ปิด';
 $string['cols'] = 'คอลัมน์';
 $string['copy'] = 'ก้อปปี้ที่เลือก';
+$string['createanchor'] = 'ชื่อ Anchors';
 $string['createfolder'] = 'สร้างแฟ้ม';
 $string['createlink'] = 'แทรกลิงก์';
 $string['cut'] = 'ตัด';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 development (2004072901)
+      // chat.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['beep'] = 'เรียก';
@@ -22,6 +22,10 @@ $string['deletesessionsure'] = 'แน่ใจนะคะว่าต้องการลบการเสวนานี้';
 $string['donotusechattime'] = 'ไม่ระบุเวลาเสวนา';
 $string['enterchat'] = 'คลิกที่นี่เพื่อสนทนา';
 $string['errornousers'] = 'ไม่พบสมาชิก';
+$string['explaingeneralconfig'] = 'ใช้ค่านี้ตลอด';
+$string['explainmethoddaemon'] = 'ใช้ค่านี้เมื่อมีการเลือก chatserver daemon เป็นวิธีการติดต่อกับเซิร์ฟเวอร์';
+$string['explainmethodnormal'] = 'ใช้ค่านี้เมื่อเลือกวิธีปกติในการติดต่อกับเซิร์ฟเวอร์';
+$string['generalconfig'] = 'การตั้งค่าทั่วไป';
 $string['helpchatting'] = 'ช่วยเหลือ';
 $string['idle'] = 'นิ่ง';
 $string['messagebeepseveryone'] = '$a เรียกทุกคน';
@@ -35,6 +39,7 @@ $string['modulename'] = 'ห้องสนทนา';
 $string['modulenameplural'] = 'ห้องสนทนา';
 $string['neverdeletemessages'] = 'ไม่มีการลบข้อความ';
 $string['nextsession'] = 'ตารางการสนทนาครั้งต่อไป';
+$string['noguests'] = 'บุคคลทั่วไปไม่สามารถเข้าสนทนาได้';
 $string['nomessages'] = 'ยังไม่มีข้อความ';
 $string['repeatdaily'] = 'เวลาเดียวกันนี้ทุกวัน';
 $string['repeatnone'] = 'ไม่มีการซ้ำหัวข้อเสวนา  เฉพาะเวลาที่ระบุเท่านั้น';

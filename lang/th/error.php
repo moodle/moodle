@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.4 development (2004060400)
+      // error.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['coursegroupunknown'] = 'ไม่มีรายวิชาที่เกี่ยวข้องกับกับกลุ่ม $a';
 $string['erroronline'] = 'บรรทัดที่  $a ผิดพลาด';
 $string['fieldrequired'] = 'คุณต้องใส่  $a';
+$string['filenotfound'] = 'ขออภัยค่ะ ไม่พบไฟล์ที่คุณต้องการค่ะ';
 $string['groupalready'] = 'สมาชิกอยู่ในกลุ่ม $a อยู่แล้ว';
 $string['groupunknown'] = 'กลุ่ม $a ไม่เกี่ยวข้องกับรายวิชาที่คุณเลือก';
 $string['invalidfieldname'] = 'ชื่อ  $a ไม่ถูกต้อง';
@@ -15,5 +16,6 @@ $string['restricteduser'] = 'account ของคุณ ';
 $string['unknowncourse'] = 'ไม่มีรายวิชา ';
 $string['usernotaddederror'] = 'มีข้อผิดพลาดค่ะยังไม่ได้เพิ่ม';
 $string['usernotaddedregistered'] = 'ไม่ได้เพิ่มสมาชิก \"$a\" เพราะลงทะเบียนไปก่อนหน้าแล้ว';
+$string['usernotavailable'] = 'คุณไม่สามารถดูรายละเอียดของสมาชิกท่านนี้ได้';
 
 ?>

@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004072901)
+      // scorm.php - created with Moodle 1.5 unstable development (2004083000)
 
 
+$string['asset'] = 'Asset';
 $string['attr_error'] = 'ค่าไม่ถูกต้องสำหรับแอทริบิวต์ ($a->attr) ในแท็ก $a->tag';
 $string['autocontinue'] = 'เดินหน้าอัตโนมัติ';
 $string['badmanifest'] = 'มีข้อผิลพลาด : ดูบันทึกข้อผิดพลาด';
@@ -52,6 +53,7 @@ $string['noreports'] = 'ไม่มีรายงานแสดง';
 $string['normal'] = 'ปกติ';
 $string['not_corr_type'] = '$a->tag ผิดประเภท';
 $string['notattempted'] = 'ยังไม่ได้ทำ';
+$string['organizations'] = 'องค์กร';
 $string['packagedir'] = 'มีข้อผิดพลาด ไม่สามารถสร้างแพกเกจไดเรคทอรี่';
 $string['passed'] = 'ผ่าน';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
