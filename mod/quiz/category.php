@@ -96,6 +96,7 @@
 
         // Peel out all the data from variable names.
         foreach ($form as $key => $val) {
+            $cat = NULL;
             if ($key == "new" and $val != "") {
                 $cat->name = $val;
                 $cat->info = $form['newinfo'];
