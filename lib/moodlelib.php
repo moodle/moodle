@@ -321,15 +321,22 @@ function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value=
         echo "<object id=richedit style=\"BACKGROUND-COLOR: buttonface\"";
         echo " data=\"$CFG->wwwroot/lib/rte/richedit.html\"";
         echo " width=\"$width\" height=\"$height\" ";
-        echo " type=\"text/x-scriptlet\" VIEWASTEXT></object>";
+        echo " type=\"text/x-scriptlet\" VIEWASTEXT></object>\n";
         echo "<TEXTAREA style=\"display:none\" NAME=\"$name\" ROWS=1 COLS=1>";
         p($value);
-        echo "</TEXTAREA>";
+        echo "</TEXTAREA>\n";
     } else {
         echo "<TEXTAREA name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=virtual>";
         p($value);
-        echo "</TEXTAREA>";
+        echo "</TEXTAREA>\n";
     }
+}
+
+function print_richedit_javascript($form, $name, $source="no") {
+    echo "<SCRIPT language=\"JavaScript\" event=\"onload\" for=\"window\">\n";
+    echo "   document.richedit.options = \"history=no;source=$source\";";
+    echo "   document.richedit.docHtml = $form.$name.innerText;";
+    echo "</SCRIPT>";
 }
 
 
