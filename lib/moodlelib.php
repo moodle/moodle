@@ -496,6 +496,22 @@ function ismoving($courseid) {
     return false;
 }
 
+function fullname($user, $override=false) {
+/// Given a user object, this function returns a 
+/// string with the full name of the person.
+/// The result may depend on system settings
+/// or language.  Override will force both names
+/// to be used even if system settings specify one.
+    global $CFG;
+
+    /// XXX 
+    /// XXX this function is not finished yet!
+    /// XXX 
+
+    return "$user->firstname $user->lastname";
+
+}
+
 
 function set_moodle_cookie($thing) {
 /// Sets a moodle cookie with an encrypted string
