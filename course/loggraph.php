@@ -42,6 +42,7 @@
        }
 
        $maxseconds = COURSE_MAX_LOG_DISPLAY * 3600 * 24;  // seconds
+       //$maxseconds = 60 * 3600 * 24;  // seconds
        if ($timenow - $course->startdate > $maxseconds) {
            $course->startdate = $timenow - $maxseconds;
        }
@@ -94,13 +95,15 @@
 
        $graph->y_data['logs']   = $logs;
        $graph->y_order = array('logs');
-       $graph->y_format['logs'] = array('colour' => 'blue','line' => 'line');
+       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','bar_size' => 0.6);
 
 
        $graph->parameter['y_label_left']     = get_string("hits");
        $graph->parameter['label_size']       = "12";
        $graph->parameter['x_axis_angle']     = 90;
        $graph->parameter['x_label_angle']    = 0;
+       $graph->parameter['bar_spacing'] = 0;
+       $graph->parameter['tick_length'] = 0;
 
        
        $graph->parameter['shadow']          = 'none';
@@ -149,7 +152,7 @@
 
        $graph->y_data['logs']   = $logs;
        $graph->y_order = array('logs');
-       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','legend' =>'actual','bar_size' => 0.9);
+       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','bar_size' => 0.9);
 
        $graph->parameter['y_label_left']     = get_string("hits");
        $graph->parameter['label_size']       = "12";
