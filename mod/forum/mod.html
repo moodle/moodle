@@ -84,28 +84,43 @@
     <td align=right valign=top><p><b><?php print_string("allowratings", "forum") ?>:</b></p></td>
     <td>
         <?php 
+            echo "<script>";
+            echo "  var subitemstime = ['startday','startmonth','startyear','starthour', 'startminute',".
+                                   "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
+            echo "  var subitemsall = ['assessed', 'ratingtime', 'scale', 'startday','startmonth','startyear','starthour', 'startminute',".
+                                   "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
+            echo "</script>";
+
+            echo "<input name=\"userating\" type=checkbox value=1 ";
+            echo " onclick=\"return lockoptions('form','userating', subitemsall)\" ";
+            if ($form->assessed) {
+                echo " checked ";
+            }
+            echo ">";
+            echo get_string("ratingsuse", "forum").":";
+            echo "<br />";
+
             // The odd order below was to maintain backward compatibility
             unset($options);
-            $options[0] = get_string("ratingno", "forum"); 
             $options[2] = get_string("ratingonlyteachers", "forum", moodle_strtolower($course->teachers));
             $options[1] = get_string("ratingeveryone", "forum");
-
+            echo get_string("users").":";
             choose_from_menu($options, "assessed", $form->assessed, "");
             helpbutton("ratings", get_string("allowratings", "forum"), "forum");
             echo "<br />";
+
+            echo get_string("scale").":";
             print_scale_menu($course->id, "scale", $form->scale);
             echo "<br />";
-            echo "<script>";
-            echo "  var subitems = ['startday','startmonth','startyear','starthour', 'startminute',".
-                                   "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
-            echo "</script>";
+
             echo "<input name=\"ratingtime\" type=checkbox value=1 ";
-            echo " onclick=\"return lockoptions('form','ratingtime', subitems)\" ";
+            echo " onclick=\"return lockoptions('form','ratingtime', subitemstime)\" ";
             if ($form->assesstimestart and $form->assesstimefinish and $form->assessed) {
                 $form->ratingtime = 1;
                 echo " checked ";
             }
             echo ">";
+
             print_string("ratingtime", "forum");
             echo "<table align=left><tr><td align=right nowrap>";
             echo get_string("from").":";
@@ -117,6 +132,9 @@
             print_time_selector("finishhour", "finishminute", $form->assesstimefinish);
             echo "<br />";
             echo "</td></tr></table>";
+            echo "<input type=\"hidden\" name=\"hratingtime\" value=0>";
+            echo "<input type=\"hidden\" name=\"hassessed\" value=0>";
+            echo "<input type=\"hidden\" name=\"hscale\" value=0>";
             echo "<input type=\"hidden\" name=\"hstartday\" value=0>";
             echo "<input type=\"hidden\" name=\"hstartmonth\" value=0>";
             echo "<input type=\"hidden\" name=\"hstartyear\" value=0>";
@@ -128,9 +146,13 @@
             echo "<input type=\"hidden\" name=\"hfinishhour\" value=0>";
             echo "<input type=\"hidden\" name=\"hfinishminute\" value=0>";
 
+            echo "<script>";
+            echo "lockoptions('form','userating', subitemsall);";
+            echo "</script>";
+
             if (empty($form->ratingtime)) {
                 echo "<script>";
-                echo "lockoptions('form','ratingtime', subitems);";
+                echo "lockoptions('form','ratingtime', subitemstime);";
                 echo "</script>";
             }
         ?>

@@ -51,6 +51,10 @@ function forum_add_instance($forum) {
         return false;
     }
 
+    if (!$forum->userating) {
+        $forum->assessed = 0;
+    }
+
     if (!empty($forum->ratingtime)) {
         $forum->assesstimestart  = make_timestamp($forum->startyear, $forum->startmonth, $forum->startday, 
                                                   $forum->starthour, $forum->startminute, 0);
@@ -85,6 +89,10 @@ function forum_update_instance($forum) {
 
     $forum->timemodified = time();
     $forum->id = $forum->instance;
+
+    if (!$forum->userating) {
+        $forum->assessed = 0;
+    }
 
     if (!empty($forum->ratingtime)) {
         $forum->assesstimestart  = make_timestamp($forum->startyear, $forum->startmonth, $forum->startday, 
