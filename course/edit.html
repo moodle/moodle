@@ -99,6 +99,16 @@
     </td>
 </tr>
 <tr valign=top>
+    <td align="right"><P><?php  print_string("hiddentopics") ?>:</td>
+    <td><?php
+    unset($choices);
+    $choices["0"] = get_string("hiddentopicscollapsed");
+    $choices["1"] = get_string("hiddentopicsinvisible");
+    choose_from_menu ($choices, "hiddentopics", $form->hiddentopics, "");
+    helpbutton("coursehiddentopics", get_string("hiddentopics")); ?>
+    </td>
+</tr>
+<tr valign=top>
     <td align="right"><P><?php  print_string("enrolmentkey") ?>:</td>
     <td><input type="text" name="password" size=25 value="<?php  p($form->password) ?>">
     <?php  helpbutton("enrolmentkey", get_string("enrolmentkey")) ?>
