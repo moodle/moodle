@@ -155,15 +155,6 @@ function chat_cron () {
     return true;
 }
 
-function chat_grades($chatid) {
-/// Must return an array of grades for a given instance of this module, 
-/// indexed by user.  It also returns a maximum allowed grade.
-
-    $return->grades = NULL;
-    $return->maxgrade = NULL;
-
-    return $return;
-}
 
 
 //////////////////////////////////////////////////////////////////////
