@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 development (2003121500)
+      // editor.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['about'] = 'Tietoja editorista';
@@ -21,10 +21,14 @@ $string['chooseicon'] = 'Valitse liitettävä hymiö';
 $string['close'] = 'Sulje';
 $string['cols'] = 'Solut';
 $string['copy'] = 'Kopioi';
+$string['createfolder'] = 'Luo kansio';
 $string['createlink'] = 'Lisää linkki';
 $string['cut'] = 'Leikkaa';
+$string['delete'] = 'Posta';
+$string['filebrowser'] = 'Tiedostoselain';
 $string['forecolor'] = 'Tekstin väri';
 $string['heading'] = 'Otsikko';
+$string['height'] = 'Korkeus';
 $string['hilitecolor'] = 'Taustan väri';
 $string['horizontal'] = 'Vaaka';
 $string['horizontalrule'] = 'Vaakaviiva';
@@ -33,6 +37,7 @@ $string['imageurl'] = 'Kuvan URL';
 $string['indent'] = 'Lisää sisennystä';
 $string['insertchar'] = 'Lisää merkki';
 $string['insertimage'] = 'Lisää kuva';
+$string['insertlink'] = 'Lisää linkki';
 $string['insertsmile'] = 'Lisää hymiö';
 $string['inserttable'] = 'Lisää taulukko';
 $string['italic'] = 'Kursivoitu';
@@ -42,8 +47,19 @@ $string['justifyleft'] = 'Tasaa vasemmat reunat';
 $string['justifyright'] = 'Tasaa oikeat reunat';
 $string['layout'] = 'Ulkoasu';
 $string['left'] = 'Vasen';
+$string['linkproperties'] = 'Linkin ominaisuudet';
+$string['linktarget'] = 'Linkin kohde';
+$string['linktargetblank'] = 'Uuteen ikkunaan';
+$string['linktargetnone'] = 'Ei kohdetta';
+$string['linktargetother'] = 'Muuhun kehykseen (ei toiminnassa)';
+$string['linktargetself'] = 'Samaan kehykseen';
+$string['linktargettop'] = 'Samaan ikkunaan';
+$string['linktitle'] = 'Otsikko';
+$string['linkurl'] = 'URL';
 $string['middle'] = 'Middle';
+$string['move'] = 'Siirrä';
 $string['normal'] = 'Normaali';
+$string['notimage'] = 'Valittu tiedosto ei ollut kuva. Valitse kuvatiedosto!';
 $string['notset'] = 'Not Set';
 $string['ok'] = 'OK';
 $string['orderedlist'] = 'Numerointi';
@@ -55,10 +71,14 @@ $string['pixels'] = 'Pikseliä';
 $string['popupeditor'] = 'Suurenna editori';
 $string['preformatted'] = 'Muotoiltu (pre)';
 $string['preview'] = 'Esikatsele';
+$string['properties'] = 'Ominaisuudet';
 $string['redo'] = 'Palauta viimeinen toiminto';
+$string['rename'] = 'Nimeä uudelleen';
 $string['right'] = 'Oikea';
 $string['rows'] = 'Rivit';
+$string['selection'] = 'Valinta';
 $string['showhelp'] = 'Ohje';
+$string['size'] = 'Koko';
 $string['spacing'] = 'Välys';
 $string['strikethrough'] = 'Yliviivattu';
 $string['subscript'] = 'Alaindeksi';
@@ -67,10 +87,13 @@ $string['textindicator'] = 'Nykyinen tyyli';
 $string['textmode'] = 'Olet tekstitilassa.  Käytä [<>] painiketta palataksesi takaisin WYSIWIG -tilaan.';
 $string['texttop'] = 'Texttop';
 $string['top'] = 'Ylös';
+$string['type'] = 'Tyyppi';
 $string['underline'] = 'Alleviivattu';
 $string['undo'] = 'Peruuta viimeinen toiminto';
 $string['unorderedlist'] = 'Luettelomerkit';
+$string['upload'] = 'Lataa';
 $string['vertical'] = 'Pysty';
 $string['width'] = 'Leveys';
+$string['zip'] = 'Zip';
 
 ?>

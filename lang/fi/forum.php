@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2004010900)
+      // forum.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -11,14 +11,14 @@ $string['allowsdiscussions'] = 'Tämä foorumi antaa jokaisen aloittaa yhden uuden
 $string['anyfile'] = 'Mikä tahansa tiedosto';
 $string['attachment'] = 'Liite';
 $string['bynameondate'] = '$a->name - $a->date';
-$string['configdisplaymode'] = 'Oletus näyttötapa keskusteluille, jos ei ole valittu mitään.';
+$string['configdisplaymode'] = 'Oletusasetus keskustelujen näyttämiselle, jos sellaista ei ole asetettu.';
 $string['configlongpost'] = 'Tätä pitemmät keskustelut ovat pitkiä (HTML koodia ei lasketa mukaan).';
 $string['configmanydiscussions'] = 'Mksimimäärä keskusteluja samalla sivulla';
 $string['configmaxbytes'] = 'Oletus maksimi koko kaikke liitteille sivostolla.';
 $string['configshortpost'] = 'Tätä lyhyemmät keskustelut ovat lyhyitä (HTML koodia ei lasketa mukaan).';
 $string['couldnotadd'] = 'Viestiäsi ei voida lisätä tuntemattoman virheen takia.';
-$string['couldnotdeleteratings'] = 'Pahus, viestiä ei voida poistaa koska se on jo arvioitu';
-$string['couldnotdeletereplies'] = 'Pahus, viestiä ei voida poistaa koska siihen on jo vastattu';
+$string['couldnotdeleteratings'] = 'Valitettavasti viestiä ei voida poistaa, koska se on jo arvioitu';
+$string['couldnotdeletereplies'] = 'Valitettavasti viestiä ei voida poistaa, koska siihen on jo vastattu';
 $string['couldnotupdate'] = 'Viestiäsi ei voida päivittää tuntemattoman virheen takia';
 $string['delete'] = 'Poista';
 $string['deleteddiscussion'] = 'Keskustelu on poistettu';
@@ -52,7 +52,7 @@ $string['introteacher'] = 'Opettajien oma keskustelufoorumi';
 $string['lastpost'] = 'Viimeisin viesti';
 $string['learningforums'] = 'Opiskelufoorumi';
 $string['maxattachmentsize'] = 'Liitteen maksimi koko';
-$string['maxtimehaspassed'] = 'Pahus, maksimi muokkausaika on ylittynyt tämän ($a) viestin osalta!';
+$string['maxtimehaspassed'] = 'Valitettavasti suurin sallittu muokkausaika on ylittynyt tämän ($a) viestin osalta!';
 $string['message'] = 'Viesti';
 $string['modeflatnewestfirst'] = 'Näytä vastaukset peräkkäin, uusin ensin';
 $string['modeflatoldestfirst'] = 'Näytä vastaukset peräkkäin, vanhin ensin';
@@ -73,6 +73,7 @@ $string['nonews'] = 'Ei vielä uutisia';
 $string['noposts'] = 'Ei viestejä';
 $string['nopostscontaining'] = 'Viestejä jotka sisältävät \'$a\' ei löytynyt';
 $string['nosubscribers'] = 'Tällä foorumilla ei ole tilaajia';
+$string['notingroup'] = 'Sinun pitää olla ryhmän jäsen nähdäksesi tämän keskustelualueen.';
 $string['nownotsubscribed'] = '$a->name EI saa kopioita viesteistä\'$a->forum\' sähköpostiinsa.';
 $string['nowsubscribed'] = '$a->name SAA kopiot viesteistä \'$a->forum\' sähköpostiinsa.';
 $string['numposts'] = '$a viestiä';
@@ -109,6 +110,7 @@ $string['replies'] = 'Vastaukset';
 $string['repliesmany'] = '$a vastausta tähän mennessä';
 $string['repliesone'] = '$a vastaus tähän mennessä';
 $string['reply'] = 'Vastaa';
+$string['replyforum'] = 'Vastaa keskustelualueelle';
 $string['search'] = 'Etsi';
 $string['searchforums'] = 'Etsi Foorumeista';
 $string['searcholderposts'] = 'Selaa vanhoja viestejä';
