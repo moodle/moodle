@@ -79,6 +79,18 @@
         ?>
     </td>
 </tr>
+<tr>
+    <td align=right><p><b><?php print_string("forcesubscribeq", "forum") ?>:</b></p></td>
+    <td>
+        <?php 
+            unset($options);
+            $options[0] = get_string("no"); 
+            $options[1] = get_string("yes");
+            choose_from_menu($options, "forcesubscribe", $form->forcesubscribe, "");
+            helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum");
+        ?>
+    </td>
+</tr>
 
 <tr>
     <td align=right valign=top><p><b><?php print_string("allowratings", "forum") ?>:</b></p></td>
@@ -154,18 +166,6 @@
                 echo "lockoptions('form','ratingtime', subitemstime);";
                 echo "</script>";
             }
-        ?>
-    </td>
-</tr>
-<tr>
-    <td align=right><p><b><?php print_string("forcesubscribeq", "forum") ?>:</b></p></td>
-    <td>
-        <?php 
-            unset($options);
-            $options[0] = get_string("no"); 
-            $options[1] = get_string("yes");
-            choose_from_menu($options, "forcesubscribe", $form->forcesubscribe, "");
-            helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum");
         ?>
     </td>
 </tr>
