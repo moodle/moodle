@@ -633,6 +633,7 @@ $string['order'] = 'Order';
 $string['other'] = 'Other';
 $string['outline'] = 'Outline';
 $string['page'] = 'Page';
+$string['parentlanguage'] = '';
 $string['participants'] = 'Participants';
 $string['password'] = 'Password';
 $string['passwordchanged'] = 'Password has been changed';

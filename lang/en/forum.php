@@ -109,6 +109,7 @@ $string['replies'] = 'Replies';
 $string['repliesmany'] = '$a replies so far';
 $string['repliesone'] = '$a reply so far';
 $string['reply'] = 'Reply';
+$string['replyforum'] = 'Reply to forum';
 $string['search'] = 'Search';
 $string['searchforums'] = 'Search forums';
 $string['searcholderposts'] = 'Search older posts...';
