@@ -11,6 +11,10 @@ class block_quiz_results extends block_base {
         $this->version = 2005012600;
     }
 
+    function applicable_formats() {
+        return array('all' => true);
+    }
+
     function get_content() {
         global $USER, $CFG;
 
@@ -333,7 +337,7 @@ class block_quiz_results extends block_base {
         return $this->content;
     }
 
-    function instance_allow_config() {
+    function instance_allow_multiple() {
         return true;
     }
 }
