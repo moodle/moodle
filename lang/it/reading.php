@@ -15,9 +15,8 @@ $string['modulenameplural'] = "Letture";
 $string['neverread'] = "Mai letto";
 $string['note'] = "Nota";
 $string['notefile'] = "Per trasferire altri files nell'archivio del corso (come quelli che compaiono in questa lista) usa il
-
 <A HREF=\$a >File Manager</A>.";
-$string['notypechosen'] = "é necessario che tu scelga un tipo. Usa il pulsante indietro per ritornare alla pagina precedente e riprovare.";
+$string['notypechosen'] = "È necessario che tu scelga un tipo. Usa il pulsante indietro per ritornare alla pagina precedente e riprovare.";
 $string['readingtype'] = "Tipo di risorsa";
 $string['readingtype1'] = "Riferimento";
 $string['readingtype2'] = "Pagina web";

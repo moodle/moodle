@@ -21,7 +21,6 @@ $string['submissionfeedback'] = "Risposte alla consegna";
 $string['submissions'] = "Consegne";
 $string['submitted'] = "Consegnato";
 $string['typeuploadsingle'] = "Trasferire un singolo file, punteggio
-
 attibuibile per un valore compreso fra 0 e 100 punti";
 $string['uploadedfiles'] = "files trasferiti";
 $string['viewsubmissions'] = "Vedi \$a compiti consegnati";

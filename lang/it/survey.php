@@ -11,7 +11,6 @@ $string['done'] = "Fatto";
 $string['download'] = "Download";
 $string['downloadexcel'] = "Download dati come foglio elettronico di Excel";
 $string['downloadinfo'] = "Puoi fare il download  di questa prova in una
-
 forma adatta all'analisi in formato Excel, SPSS od altro software.";
 $string['downloadtext'] = "Download dati come file di testo";
 $string['editingasurvey'] = "Correzione della prova";
@@ -37,7 +36,6 @@ $string['seemoredetail'] = "Clicca qui per vedere ulteriori dettagli";
 $string['selectedquestions'] = "Domande selezionate da una scala, tutti gli studenti";
 $string['summary'] = "Riassunto";
 $string['surveycompleted'] = "Hai completato questa valutazione. Il grafico sotto riportato mostra una sintesi dei tuoi risultati comparata.
-
 con le medie della classe.";
 $string['surveyname'] = "Nome della valutazione";
 $string['surveysaved'] = "Valutazione acquisita";

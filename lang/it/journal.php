@@ -5,7 +5,7 @@
 $string['alwaysopen'] = "Sempre aperto";
 $string['blankentry'] = "Lasciato vuoto";
 $string['daysavailable'] = "Giorni disponibili";
-$string['editingended'] = "L'intervallo per le modifiche è terminato";
+$string['editingended'] = "L'intervallo per le modifiche Ë terminato";
 $string['editingends'] = "Scadenza dell'intervallo di tempo per le modifiche";
 $string['journalname'] = "Nome del diario";
 $string['journalquestion'] = "Domanda del diario";
@@ -17,7 +17,7 @@ $string['modulenameplural'] = "Diari";
 $string['newjournalentries'] = "Nuove annotazioni sul diario";
 $string['noentry'] = "Nessuna annotazione";
 $string['noratinggiven'] = "Nessuna valutazione data";
-$string['notopenuntil'] = "Questo diario non sarà aperto fino a";
+$string['notopenuntil'] = "Questo diario non sar‡ aperto fino a";
 $string['notstarted'] = "Non hai ancora iniziato questo diario";
 $string['overallrating'] = "Valutazione generale";
 $string['rate'] = "Valutazione";
