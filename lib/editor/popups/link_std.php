@@ -1,11 +1,12 @@
 <?php // $Id$
     include("../../../config.php");
 
-    $id = $_GET['id'];
+    $id = required_param('id');
 
-    require_variable($id);
-
-    if (!$course = get_record("course", "id", $id)) {
+    if ($course = get_record("course", "id", $id)) {
+        $isteacher = isteacher($course->id);
+    } else {
+        $isteacher = false;
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
 ?>
@@ -176,7 +177,10 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 </table>
 
 <div id="buttons">
-  <?php print(isteacher($id))? "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">".get_string("browse","editor")."...</button>" : ""; ?>
+  <?php if ($isteacher) {
+            echo "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">".get_string("browse","editor")."...</button>";
+        }
+  ?>
   <button type="button" name="ok" onclick="return onOK();"><?php print_string("ok","editor");?></button>
   <button type="button" name="cancel" onclick="return onCancel();"><?php print_string("cancel","editor");?></button>
 </div>
