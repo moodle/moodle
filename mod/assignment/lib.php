@@ -767,7 +767,7 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
 
     }
 
-    if (isteacher($USER)) {
+    if (isteacher($course)) {
         $grades = "(" .  $activity->content->grade . " / " . $activity->content->maxgrade . ") ";
 
         $assignment->id = $activity->instance;
