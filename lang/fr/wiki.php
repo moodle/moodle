@@ -170,6 +170,8 @@ $string['contentsize'] = 'Taille du contenu';
 $string['pageslinkingto'] = 'Pages avec un lien vers cette page';
 $string['viewsmfor'] = 'Afficher la carte du site pour';
 $string['smfor'] = 'Carte du site pour';
+$string['cannotchangepage'] = 'Cette page ne peux pas être modifiée.';
+$string['uplinsect'] = 'Déposer dans';
 $string['invalidroot'] = 'Vous n\'êtes pas autorisé à accéder à la page racine actuelle, et donc aucune carte du site ne peut être créée.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Aucun lien n\'existe vers cette page.';
 
