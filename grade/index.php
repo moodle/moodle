@@ -4,7 +4,7 @@
 
     $id       = required_param('id');              // course id
     $download = optional_param('download');
-    $student  = optional_param('student', -1);
+    $user     = optional_param('user', -1);
     $group    = optional_param('group', -1);
     $action   = optional_param('action', 'grades');
 
@@ -72,15 +72,15 @@
                 break;
             case "grades":
                 if ($preferences->use_advanced == 1) {
-                    grade_view_all_grades($student);
+                    grade_view_all_grades($user);
                 }
                 else {
                     // all the grades will be in the 'uncategorized' category
-                    grade_view_category_grades($student);
+                    grade_view_category_grades($user);
                 }
                 break;
             case "vcats":
-                grade_view_category_grades($student);
+                grade_view_category_grades($user);
                 break;
             case "prefs":
                 grade_display_grade_preferences();
@@ -102,51 +102,30 @@
                 grade_set_categories();
                 break;
             case "view_student_grades":
-                grade_view_student_grades();
+                grade_view_all_grades($user);
                 break;
             case "view_student_category_grades":
-                grade_view_student_category_grades();
+                grade_view_category_grades($user);
                 break;
             default:
                 if ($preferences->use_advanced == 1) {
-                    grade_view_all_grades($student);
+                    grade_view_all_grades($user);
                 }
                 else {
-                    grade_view_category_grades($student);
+                    grade_view_category_grades($user);
                 }
         } // end switch
     } // end if isTeacher
     else {
-        if ($preferences->show_weighted || $preferences->show_points || $preferences->show_points)
-        {
-            // teacher has set to show student something
-            $student = $USER->id;
-            switch ($action) {
-                case "view_student_category_grades":
-                    grade_view_student_category_grades();
-                    break;
-                case "view_student_grades":
-                    if ($preferences->use_advanced == 1) {
-                        grade_view_student_grades();
-                    }
-                    else {
-                        grade_view_student_category_grades();
-                    }
-                    break;
-                case "vcats":
-                    grade_view_category_grades($student);
-                    break;
-                default:
-                    if ($preferences->use_advanced == 1) {
-                        grade_view_student_grades($student);
-                    }
-                    else {
-                        grade_view_student_category_grades();
-                    }
-                    break;
-            } // end switch
-        } // end if display something
-        else {
+        if ($preferences->show_weighted || $preferences->show_points || $preferences->show_points) {
+
+            if ($preferences->use_advanced == 1) {
+                grade_view_all_grades($USER->id);
+            } else {
+                grade_view_category_grades($USER->id);
+            }
+
+        } else {
             error(get_string('gradebookhiddenerror','grades'));
         }
     } // end else (!teacher)
