@@ -567,6 +567,7 @@ $string['latestlanguagepack'] = 'moodle.org　で最新の言語パックを確認する';
 $string['latestnews'] = '最新ニュース';
 $string['leavetokeep'] = '現在のパスワードを使う場合は空白にしてください。';
 $string['license'] = 'GPLライセンス';
+$string['liketologin'] = 'フルユーザアカウントでログインしますか?';
 $string['list'] = 'リスト';
 $string['listfiles'] = '$a のファイルリスト';
 $string['listofallpeople'] = '全員を表示する';
