@@ -358,17 +358,17 @@ function quiz_get_answers($question, $answerids=NULL) {
                     (get_record('quiz_questions', 'id', $question->random));
 
         case MULTIANSWER:       // Includes subanswers
-            $multianswers = get_records('quiz_multianswers',
-                                   'question', $question->id);
+            $answers = array();
+            
             $virtualquestion->id = $question->id;
 
-            $answers = array();
-            foreach ($multianswers as $multianswer) {
-                $virtualquestion->qtype = $multianswer->answertype;
-                // Recursive call for subanswers
-                $multianswer->subanswers = quiz_get_answers
-                        ($virtualquestion, $multianswer->answers);
-                $answers[] = $multianswer;
+            if ($multianswers = get_records('quiz_multianswers', 'question', $question->id)) {
+                foreach ($multianswers as $multianswer) {
+                    $virtualquestion->qtype = $multianswer->answertype;
+                    // Recursive call for subanswers
+                    $multianswer->subanswers = quiz_get_answers($virtualquestion, $multianswer->answers);
+                    $answers[] = $multianswer;
+                }
             }
             return $answers;
 
