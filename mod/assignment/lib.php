@@ -681,7 +681,7 @@ function assignment_print_upload_form($assignment) {
 // Arguments are objects
 
     echo "<DIV ALIGN=CENTER>";
-    echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=upload.php>";
+    echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=\"upload.php?id=$assignment->id\">";
     echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$assignment->maxbytes\">";
     echo " <INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\">";
     echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\">";

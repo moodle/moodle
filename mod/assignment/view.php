@@ -130,6 +130,8 @@
                     echo "<p align=\"center\">".get_string("overwritewarning", "assignment")."</p>";
                 }
                 print_heading(get_string("submitassignment", "assignment").":", "center");
+
+                $assignment->maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $assignment->maxbytes);
                 assignment_print_upload_form($assignment);
             }
         }
