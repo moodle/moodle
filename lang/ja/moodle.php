@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 - (2004052400)
+      // moodle.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = '操作';
@@ -144,6 +144,7 @@ $string['configcountry'] = 'ここで国を設定した場合、新規アカウントのユーザに初期
 ';
 $string['configdebug'] = 'この設定を\'Yes\'にした場合、PHPのエラーレポートが増加して、より多くの警告が表示されるようになります。開発者向けの設定です。';
 $string['configdeleteunconfirmed'] = 'メールによる承認を利用している場合、この値はユーザからの返答を受け付ける期間を指します。この期間の終了後、古い未承認のアカウントは削除されます。';
+$string['configdigestmailtime'] = '要約をメール送信する選択をしたユーザに、毎日投稿が要約したメールが送信されます。ここでは1日の内で何時に要約メールを送信するかを設定します(次のcronがここで設定した時間の後に実行されます)。';
 $string['configenablerssfeeds'] = 'ここではRSSフィードの設定を行います。RSSフィードを使用するためには、管理画面のモジュール管理にてRSSモジュールを使用可にする必要があります。';
 $string['configenablerssfeedsdisabled'] = 'サイト全てにおいてRSSフィードが利用不可にされている為、利用出来ません。管理メニュー内の詳細設定でRSSフィードを利用可にすることが出来ます。';
 $string['configerrorlevel'] = '表示したいPHPの警告数を選択してください。通常はNormalが最適です。';
@@ -171,6 +172,7 @@ $string['configloglifetime'] = 'ここではユーザの活動に関するログの保持期間を設定
 $string['configlongtimenosee'] = 'もし学生が長期間ログインしていない場合は、自動的にコースから削除されます。この値は削除期限を決定します。';
 $string['configmaxbytes'] = 'ここではサイト全体でアップロード出来るファイルの最大サイズを設定します。この設定はPHP設定のupload_max_filesize及びApache設定のLimitRequestBodyに制限されます。maxbytesはコースレベルまたはモジュールレベルで選択するサイズ幅を制限します。';
 $string['configmaxeditingtime'] = 'ここではフォーラムの投稿や日誌等を編集可能な時間を設定します。通常30分が適切な値です。';
+$string['confignoreplyaddress'] = 'メールがユーザの為に送信される場合があります(例 フォーラムの投稿)。ここで設定するメールアドレスは、\"From\"に使用され、受信者に返信させないようにします(例 ユーザが個人のメールアドレスを隠したい場合)。';
 $string['configopentogoogle'] = 'この設定を行った場合、Googleはあなたのサイトにゲストとして入ることが出来ます。加えて、Googleがゲストとして自動的に記録したデータを元に、他の人があなたのサイトにアクセス出来ます。これは既にゲストアクセスを許可している場合の透過アクセスのみを提供します。';
 $string['configproxyhost'] = '<B>サーバ</B>のインターネットアクセスにプロクシ(例 ファイアーウォール)が必要な場合は、プロクシのホスト名とポート番号を入力してください。必要でない場合は空白にしてください。';
 $string['configsecureforms'] = 'Moodlでは、フォームデータを受入れる場合の追加的なレベルのセキュリティーを使用することが出来ます。この設定をYesにした場合、ブラウザのHTTP_REFERER変数とフォーム設置のアドレスが照合されます。 ユーザがファイアーウォールソフト(例 Zonealarm)を使用してトラフィックからHTTP_REFERERを取除く設定をしている場合、稀に問題が発生する場合があります。 これはフォーム使用時に画面が固まる現象です。ユーザがログインページ(例えば)で問題を抱えている場合はこの設定をNoにしてください。しかしこの設定ではブルートフォース・パスワードアタックに対して無防備な状態になります。分からない場合は、この設定をYesのままにしてください。';
@@ -284,6 +286,9 @@ $string['down'] = '下へ';
 $string['downloadexcel'] = 'Excel形式でダウンロードする';
 $string['downloadtext'] = 'テキスト形式でダウンロードする';
 $string['doyouagree'] = 'これらの要件を読んで理解できましたか?';
+$string['duplicate'] = '複写';
+$string['duplicatinga'] = '複写: $a';
+$string['duplicatingain'] = '$a->in の $a->what を複写';
 $string['edit'] = '$a 編集';
 $string['editcoursesettings'] = 'コース設定';
 $string['editfiles'] = 'ファイルの編集';
@@ -314,6 +319,10 @@ $string['emailconfirmationsubject'] = '$a: 登録の確定';
 $string['emailconfirmsent'] = '<P>メールが <B>$a</B> 宛に送信されました。
 <P>メールには登録の確定を簡単に行うための説明が記述されています。
 <P>お分かりにならない場合は管理者にご連絡ください。';
+$string['emaildigest'] = 'メール要約タイプ';
+$string['emaildigestcomplete'] = '全部 (全投稿を毎日メール)';
+$string['emaildigestoff'] = '要約無し (フォーラムの投稿毎にメール)';
+$string['emaildigestsubjects'] = '題名 (題名のみを毎日メール)';
 $string['emaildisable'] = 'このメールアドレスは無効です。';
 $string['emaildisplay'] = 'メール公開';
 $string['emaildisplaycourse'] = '他のコースのメンバーにのみメールアドレスを表示する';
