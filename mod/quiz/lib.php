@@ -432,7 +432,7 @@ function quiz_get_attempt_responses($attempt) {
 function quiz_print_comment($text) {
     global $THEME;
 
-    echo "<span class=\"feedbacktext\">".text_to_html($text, true, false)."</span>";
+    echo "<span class=\"feedbacktext\">".format_text($text, true, false)."</span>";
 }
 
 function quiz_print_correctanswer($text) {
