@@ -471,6 +471,7 @@ $string['groupfor'] = 'pour le groupe';
 $string['groupinfo'] = 'Information sur le groupe sélectionné';
 $string['groupinfomembers'] = 'Information sur les membres sélectionnés';
 $string['groupinfopeople'] = 'Information sur les personnes sélectionnées';
+$string['groupmembers'] = 'Membres du groupe';
 $string['groupmemberssee'] = 'Afficher les membres du groupe';
 $string['groupmembersselected'] = 'Membres du groupe sélectionné';
 $string['groupmode'] = 'Type des groupes';
