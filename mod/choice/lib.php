@@ -1,7 +1,5 @@
 <?php // $Id$
 
-$CHOICE_MAX_NUMBER = 6;
-
 $COLUMN_HEIGHT = 300;
 
 define('CHOICE_PUBLISH_ANONYMOUS', '0');
@@ -196,7 +194,6 @@ function choice_get_choice($choiceid) {
         if ($options = get_records("choice_options", "choiceid", $choiceid, "id")) {
             foreach ($options as $option) {                         
                 $choice->option[$option->id] = $option->text;     
-                $choice->optionid[$option->id] = $option->id;            
             }        
             return $choice;
         }
