@@ -5,14 +5,17 @@ function scorm_upgrade($oldversion) {
 /// older versions to match current functionality
     global $CFG;
     if ($oldversion < 2004033000) {
-    	execute_sql(" ALTER TABLE `{$CFG->prefix}scorm` ADD `auto` TINYINT( 1 ) UNSIGNED DEFAULT '0' NOT NULL AFTER `summary`"); 
+    	table_column("scorm", "", "auto", "TINYINT", "1", "UNSIGNED", "0", "NOT NULL", "summary"); 
     }
     if ($oldversion < 2004040900) {
-    	execute_sql(" ALTER TABLE `{$CFG->prefix}scorm_sco_users` ADD `cmi_core_score_raw` FLOAT( 3 ) DEFAULT '0' NOT NULL AFTER `cmi_core_session_time`"); 
+        table_column("scorm_sco_users", "", "cmi_core_score_raw", "FLOAT", "3", "", "0", "NOT NULL", "cmi_core_session_time");
+    }
+    if ($oldversion < 2004061800) {
+    	table_column("scorm", "", "popup", "VARCHAR", "255", "", "", "NOT NULL", "auto");
+    	table_column("scorm", "reference", "reference", "VARCHAR", "255", "", "", "NOT NULL");
     }
     return true;
 }
 
 
 ?>
-

@@ -6,11 +6,12 @@ CREATE TABLE prefix_scorm (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  reference varchar(255) default NULL,
+  reference varchar(255) NOT NULL default '',
   datadir varchar(255) NOT NULL default '',
   launch integer NOT NULL default '0',
   summary text NOT NULL default '',
   auto integer NOT NULL default '0',
+  popup varchar(255) NOT NULL default '',
   timemodified integer NOT NULL default '0'
 );
 

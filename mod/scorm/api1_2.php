@@ -1,47 +1,12 @@
-//
-// CMI Initialization SCORM 1.2
-//
-	var cmi= new Object();
-	
-	cmi.core = new Object();
-	cmi.core._children = "student_id,student_name,lesson_location,credit,lesson_status,exit,entry,session_time,total_time,lesson_mode,score,suspend_data,launch_data";
-	cmi.core.student_id = "<?php echo $USER->username; ?>";
-	cmi.core.student_name = "<?php echo $USER->firstname." ".$USER->lastname; ?>";
-	cmi.core.lesson_location = "<?php echo $sco_user->cmi_core_lesson_location; ?>";
-	cmi.core.credit = "credit";
-	cmi.core.lesson_status = "<?php echo $sco_user->cmi_core_lesson_status; ?>";
-	cmi.core.exit = "<?php echo $sco_user->cmi_core_exit ?>";
-	cmi.core.entry = "<?php if ($sco_user->cmi_core_lesson_status=="not attempted") 
-				    echo 'ab-initio'; 
-				else 
-				    if ($sco_user->cmi_core_lesson_status!="completed") 
-					echo 'resume'; 
-				    else 
-					echo '';?>";
-	cmi.core.session_time = "<?php echo $sco_user->cmi_core_session_time; ?>";
-	cmi.core.total_time = "<?php echo $sco_user->cmi_core_total_time; ?>";
-	cmi.core.lesson_mode = "<?php echo $mode; ?>";
-	
-	cmi.core.score = new Object();
-	cmi.core.score._children = "raw";
-	cmi.core.score.raw = "<?php echo $sco_user->cmi_core_score_raw; ?>";
-	cmi.suspend_data = "<?php echo $sco_user->cmi_suspend_data; ?>";
-	cmi.launch_data = "<?php echo $sco_user->cmi_launch_data; ?>";
-/*	cmi.interactions = new Object();
-	cmi.interactions._children = "id,objectives,time,type,correct_responses,weighting,student_response,result,latency";
-	cmi.interactions._count = 0;
-*/
-	var errorCode = 0;
-
-//
-// end CMI Initialization
-//
-
-
 // 
 // SCORM API 1.2 Implementation
 //
 function SCORMapi() {
+    var cmi= new Object();
+    var nav = new Object();
+
+    var errorCode = 0;
+    
     var Initialized = false;
 
     function LMSInitialize (param) {
@@ -52,6 +17,52 @@ function SCORMapi() {
 	if (!Initialized) {
 	    Initialized = true;
 	    errorCode = 0;
+	    
+	    //
+	    // CMI Initialization SCORM 1.2
+	    //
+	    cmi.core = new Object();
+	    cmi.core._children = "student_id,student_name,lesson_location,credit,lesson_status,exit,entry,session_time,total_time,lesson_mode,score,suspend_data,launch_data";
+	    cmi.core.student_id = "<?php echo $USER->username; ?>";
+	    cmi.core.student_name = "<?php echo $USER->firstname." ".$USER->lastname; ?>";
+	    cmi.core.lesson_location = "<?php echo $sco_user->cmi_core_lesson_location; ?>";
+	    cmi.core.credit = "<?php if ($mode != 'normal') {
+	    				 echo "no-credit";
+	    			     } else {
+					 echo "credit";
+				     }?>";
+	    cmi.core.lesson_status = "<?php echo $sco_user->cmi_core_lesson_status; ?>";
+	    cmi.core.exit = "<?php echo $sco_user->cmi_core_exit ?>";
+	    cmi.core.entry = "<?php if ($sco_user->cmi_core_lesson_status == 'not attempted') {
+					echo 'ab-initio'; 
+				    } else {
+					if ($sco_user->cmi_core_lesson_status != 'completed') {
+					    echo 'resume'; 
+				    	} else {
+					    echo '';
+					}
+				    }?>";
+	    cmi.core.session_time = "00:00:00";
+	    cmi.core.total_time = "<?php echo $sco_user->cmi_core_total_time; ?>";
+	    cmi.core.lesson_mode = "<?php echo $mode; ?>";
+	    cmi.core.score = new Object();
+	    cmi.core.score._children = "raw,min,max";
+	    cmi.core.score.raw = "<?php echo $sco_user->cmi_core_score_raw; ?>";
+	    cmi.suspend_data = "<?php echo $sco_user->cmi_suspend_data; ?>";
+	    cmi.launch_data = "<?php echo $sco_user->cmi_launch_data; ?>";
+	    //
+	    // end CMI Initialization
+	    //
+	    
+	    // Navigation Object
+	    <?php 
+	        if ($scorm->auto) {
+	    	    echo 'nav.event = "continue";'."\n";
+	    	} else {
+	            echo 'nav.event = "";'."\n";
+	        }
+	    ?>
+
 	    return "true";
 	} else {
 	    errorCode = 101;
@@ -61,7 +72,7 @@ function SCORMapi() {
     
     function LMSGetValue (param) {
 	if (Initialized) {
-	    //top.status="GET "+param;
+	    //top.alert("GET "+param);
 	    switch (param) {
 		case "cmi.core._children":
 		case "cmi.core.student_id":
@@ -97,14 +108,29 @@ function SCORMapi() {
     
     function LMSSetValue (param,value) {
 	if (Initialized) {
-	    //top.status="SET "+param+" = "+value;
+	    //top.alert("SET "+param+" = "+value);
 	    switch (param) {
 		case "cmi.core.session_time":
-		    cmi.core.total_time = AddTime(cmi.core.total_time, value);
-		    //top.status="SET cmi.core.total_time = "+cmi.core.total_time;
-		    eval(param+'="'+value+'";');
-		    errorCode = 0;
-		    return "true";
+		    if (typeof(value) == "string") {
+		        var parsedtime = value.match(/^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$/);
+		        if (parsedtime != null) {
+		            //top.alert(parsedtime);
+		            if (((parsedtime.length == 4) || (parsedtime.length == 5)) && (parsedtime[2]>=0) && (parsedtime[2]<=59) && (parsedtime[3]>=0) && (parsedtime[3]<=59)) {
+		                eval(param+'="'+value+'";');
+		        	errorCode = 0;
+		        	return "true";
+		            } else {
+		            	errorCode = 405;
+		            	return "false";
+		       	    }
+		       	} else {
+		       	    errorCode = 405;
+		            return "false";
+		       	}
+		    } else {
+		        errorCode = 405;
+		        return "false";
+		    }
 		break;
 		case "cmi.core.lesson_status":
 		    if ((value!="passed")&&(value!="completed")&&(value!="failed")&&(value!="incomplete")&&(value!="browsed")) {
@@ -116,6 +142,8 @@ function SCORMapi() {
 		    return "true";
 		break;
 		case "cmi.core.score.raw":
+		case "cmi.core.score.min":
+		case "cmi.core.score.max":
 		    if ((parseFloat(value,10)).toString() != value) {
 			errorCode = 405;
 			return "false";
@@ -160,6 +188,16 @@ function SCORMapi() {
 		    errorCode = 403;
 		    return "false";
 		break;
+		case "nav.event":
+		    if ((value == "previous") || (value == "continue")) {
+		        eval(param+'="'+value+'";');
+		    	errorCode = 0;
+		    	return "true";
+		    } else {
+		        erroCode = 405;
+		        return "false";
+		    }
+		break;	
 		default:
 		    //errorCode = 401;  This is more correct but may have problem with some SCOes
 		    errorCode = 0; // With this disable any possible SCO errors alert
@@ -178,14 +216,12 @@ function SCORMapi() {
 	    return "false";
 	}
 	if (Initialized) {
-	    if (top.nav.cmi.document.theform) {
-		cmiform = top.nav.cmi.document.forms[0];
+	    if (<?php echo $navObj ?>cmi.document.theform) {
+		cmiform = <?php echo $navObj ?>cmi.document.forms[0];
 		cmiform.scoid.value = "<?php echo $sco->id; ?>";
 		cmiform.cmi_core_lesson_location.value = cmi.core.lesson_location;
 		cmiform.cmi_core_lesson_status.value = cmi.core.lesson_status;
 		cmiform.cmi_core_exit.value = cmi.core.exit;
-		cmiform.cmi_core_session_time.value = cmi.core.session_time;
-		cmiform.cmi_core_total_time.value = cmi.core.total_time;
 		cmiform.cmi_core_score_raw.value = cmi.core.score.raw;
 		cmiform.cmi_suspend_data.value = cmi.suspend_data;
 		cmiform.submit();
@@ -209,16 +245,25 @@ function SCORMapi() {
 	} else {
 	    Initialized = false;
 	    errorCode = 0;
+	    cmi.core.total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
+	    //top.alert(cmi.core.total_time);
+	    if (<?php echo $navObj ?>cmi.document.theform) {
+		cmiform = <?php echo $navObj ?>cmi.document.forms[0];
+		cmiform.scoid.value = "<?php echo $sco->id; ?>";
+		cmiform.cmi_core_total_time.value = cmi.core.total_time;
+		cmiform.submit();
+		
+	    }
+            if (nav.event != "") {
             <?php
-		 if ($scorm->auto) {
-		     if ($sco != $last) {
-	                 print "setTimeout('top.nav.document.navform.next.click();',500);\n";
-		     } else {
-			 print "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=$cm->id';\n";
-			 print "setTimeout('top.location = exitloc;',500);\n";
-		     }
+		if ($sco != $last) {
+	            echo "setTimeout('top.changeSco(nav.event);',500);\n";
+		} else {
+		    echo "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=".$cm->id."';\n";
+		    echo "setTimeout('top.location = exitloc;',500);\n";
 		} 
 	    ?>
+	    }
 	    return "true";
 	}    
     }
@@ -273,6 +318,7 @@ function SCORMapi() {
 	
 	return hours + ":" + mins + ":" + secs;
     }
+    
     this.LMSInitialize = LMSInitialize;
     this.LMSGetValue = LMSGetValue;
     this.LMSSetValue = LMSSetValue;
