@@ -42,7 +42,7 @@
         
 		foreach ($courses as $course) {
 		    if ($isadmin OR isteacher($course->id, $USER->id)){
-			    echo "<A HREF=\"teacher.php?id=$course->id\">$course->fullname</A><BR>\n";
+			    echo "<A HREF=\"teacher.php?id=$course->id\">$course->fullname ($course->shortname)</A><BR>\n";
 				$coursesfound = TRUE;
 			}
 		}	
@@ -67,7 +67,7 @@
                  "$site->fullname", 
                  "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> 
                   <A HREF=\"teacher.php\">$strassignteachers</A> -> $course->shortname", "");
-    print_heading("<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>");
+    print_heading("<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname ($course->shortname)</A>");
 
 
 /// Get all existing teachers for this course.
