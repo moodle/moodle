@@ -81,59 +81,59 @@ dd {margin-bottom:1em;}
 <dt>Th&egrave;mes</dt>
 <dd> 
 <ul>
-<li>Fixes for Internet Explorer can be more robust at using the style sheet</li>
-<li>Miscellaneous fixes and improvements to themes - custom themes need upgrading.</li>
+<li>Correctifs permettant &agrave; Internet Explorer une utilisation plus robuste des feuilles de styles</li>
+<li>Diverses am&eacute;liorations et corrections - les th&egrave;mes personnalis&eacute;s doivent &ecirc;tre mis &agrave; jour</li>
 </ul>
 </dd>
-<dt>Translations</dt>
+<dt>Traductions</dt>
 <dd> 
 <ul>
-<li>New languages: Galego and Lithuanian</li>
-<li>Improved language editing interface - it allows the current language to be chosen and allows each file to be edited separately.</li>
-<li>The list of country names can now be translated, as can the editor buttons, smiley names and file sizes (Mb, Gb etc)</li>
-<li>Language packs can now define the default language direction (RTL or LTR)</li>
-<li>Language packs can now define the order that people's names should be shown in</li>
-<li>Language files are now written using slightly more efficient PHP code</li>
-<li>Finally got rid of the final bogus linefeeds in the multi-line strings</li>
+<li>Nouvelles langues&nbsp;: Galego et Lituanien</li>
+<li>Am&eacute;lioration de l'interface d'&eacute;dition des langues - on peut maintenant y choisir la langue en cours et d'&eacute;diter s&eacute;par&eacute;ment chaque fichier</li>
+<li>La liste des noms de pays peut &ecirc;tre traduite, ainsi que les boutons de l'&eacute;diteur, les noms des binettes et les unit&eacute;s (MO, GO, etc.)</li>
+<li>Les fichiers de langue permettent de d&eacute;finir une direction d'&eacute;criture (gauche &agrave; droite ou droite &agrave; gauche)</li>
+<li>Les fichiers de langue permettent de d&eacute;finir comment afficher les noms des personnes</li>
+<li>Les fichiers de langue sont &eacute;crits dans un code PHP un peu plus efficient</li>
+<li>Le bogue qui ajoutait des lignes vides dans les cha&icirc;nes de caract&egrave;res de plusieurs lignes est enfin &eacute;radiqu&eacute;</li>
 </ul>
 </dd>
-<dt>Backup / Restore</dt>
+<dt>Sauvegarde et restauration</dt>
 <dd> 
 <ul>
-<li>Automatic backups can be scheduled by the administrator for all courses at once</li>
-<li>All needed users are now included in course backups (even if no longer enrolled)</li>
-<li>Miscellaneous bugfixes</li>
+<li>Des <strong>sauvegardes automatiques</strong> peuvent &ecirc;tre programm&eacute;es par l'administrateur pour tous les cours</li>
+<li>Tous les utilisateurs n&eacute;cessaires sont maintenant inclus dans les sauvegardes des cours (m&ecirc;me ceux qui n'y sont plus inscrits)</li>
+<li>Divers bogues corrig&eacute;s</li>
 </ul>
 </dd>
-<dt>Text Filters and Formatting</dt>
+<dt>Filtres et formats de texte</dt>
 <dd> 
 <ul>
-<li>Warning: the new text filters can increase the load on your server, particularly when used with complex filters. Use them with caution. </li>
-<li>The new <strong>glossary filter</strong> can create links to glossary entries from matching words throughout Moodle.</li>
-<li>The new <strong>TeX filter</strong> can convert TeX code found anywhere in Moodle into true Mathematics notation (GIF format image)</li>
-<li>The new <strong>censor filter</strong> can be enabled to filter out bad words.</li>
-<li>The new <strong>multilang filter</strong> allows texts to be entered in multiple languages, and only the best one will be shown to each user (depending on their language setting)</li>
-<li>The &lt;nolink&gt; tag can be used to prevent autolinking within a passage of text.</li>
-<li>More tags are now allowed, including &lt;acronym&gt; and all &lt;math&gt; tags.</li>
-<li>Some areas where text wasn't being filtered before (security risk) have now been fixed.</li>
+<li>Avertissement&nbsp;! Les nouveaux filtres de texte peuvent augmenter sensiblement la charge sur votre serveur, notamment avec des filtres complexes. &Agrave; utiliser avec pr&eacute;caution</li>
+<li>Le nouveau filtre <strong>glossaire</strong> permet de cr&eacute;er automatiquement des liens vers les entr&eacute;es de glossaire dans tous le Moodle</li>
+<li>Le nouveau filtre <strong>TeX</strong> convertit le code TeX &eacute;crit dans Moodle en une v&eacute;ritable notation math&eacute;matique (images GIF)</li>
+<li>Le nouveau filtre <strong>censure</strong> permet de filtrer automatiquement les mots inad&eacute;quats</li>
+<li>Le nouveau filtre <strong>contenus multi-lingues</strong> permet de de saisir des textes en plusieurs langues. Seule le texte correspondant &agrave; la langue choisie par l'utilisateur (d'apr&egrave;s son profil) sera affich&eacute;.</li>
+<li>La balise &lt;nolink&gt; peut &ecirc;tre utilis&eacute;e pour &eacute;viter la liaison automatique d'un texte</li>
+<li>Plus de balises HTML sont maintenant accept&eacute;e, notamment &lt;acronym&gt; et toutes les balises &lt;math&gt;</li>
+<li>Le texte est maintenant filtr&eacute; l&agrave; o&ugrave; ce n'&eacute;tait pas le cas auparavant pour des raisons de s&eacute;curit&eacute;</li>
 </ul>
 </dd>
-<dt>Developer API</dt>
+<dt>Interface de programmation d'applications (API) pour d&eacute;veloppeurs</dt>
 <dd> 
 <ul>
-<li>A new coding guide is available</li>
-<li>A new Philosophy guide is available ;-)</li>
-<li>Improvements to the template for new modules</li>
-<li>Modules should now specify the minimum version of Moodle they are compatible with</li>
-<li>Scripts can specify to print_header() whether the page is pure XML</li>
-<li>Any module can save and retrieve user preferences that stay around between logins</li>
+<li>Un nouveau &laquo;&nbsp;Manuel du d&eacute;veloppeur&nbsp;&raquo; est disponible</li>
+<li>Un nouveau texte sur la &laquo;&nbsp;Philosophie&nbsp;&raquo; de Moodle est disponible ;-)</li>
+<li>Am&eacute;liorations des mod&egrave;les (templates) pour nouveaux modules</li>
+<li>Les modules doivent d&eacute;sormais indiquer la version minimale de Moodle avec laquelle ils sont compatibles</li>
+<li>Les scripts peuvent indiquer gr&acirc;ce &agrave; la fonction print_header() si une page est &eacute;crite en XML</li>
+<li>Chaque module peut enregistrer et r&eacute;cup&eacute;rer les pr&eacute;f&eacute;rences des utilisateurs  conserv&eacute;es entre les connexions</li>
 </ul>
 </dd>
 <dt>Chats</dt>
 <dd> 
 <ul>
-<li>Chat sessions can now be deleted</li>
-<li>Scheduled chat times now show the timezone to make it clearer</li>
+<li>Les sessions de chat peuvent &ecirc;tre maintenant supprim&eacute;es</li>
+<li>Les horaires des chats annonc&eacute;s indiquent maintenant le fuseau horaire, pour &eacute;viter les ambigu&iuml;t&eacute;s</li>
 </ul>
 </dd>
 <dt>Forums</dt>
