@@ -193,6 +193,10 @@ class Wiki {
     if (IN_MOODLE==1) {
       global $CFG;
     }
+
+    // convert < and > (kills HTML)
+    $line = str_replace( ">", "&gt;", $line );
+    $line = str_replace( "<", "&lt;", $line );
     
     // ---- (at least) means a <HR>
     $line = eregi_replace( "^-{4}.*", "<div class=\"hr\"><hr /></div>", $line );
