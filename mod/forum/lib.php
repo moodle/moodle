@@ -157,6 +157,12 @@ function print_forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style
         }
     }
 
+    if (user_can_post_discussion($forum)) {
+        echo "<P ALIGN=right>";
+        echo "<A HREF=\"$CFG->wwwroot/mod/discuss/post.php?forum=$forum->id\">Add a new topic...</A>";
+        echo "</P>";
+    }
+
     if (! $topics = get_all_topics($forum->id, $forum_sort) ) {
         echo "<P ALIGN=CENTER><B>There are no discussion topics yet in this forum.</B></P>";
 
@@ -193,12 +199,6 @@ function print_forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style
             }
         }
     }
-    if (user_can_post_discussion($forum)) {
-        echo "<P ALIGN=right>";
-        echo "<A HREF=\"$CFG->wwwroot/mod/discuss/post.php?forum=$forum->id\">Add a new topic...</A>";
-        echo "</P>";
-    }
-
 }
 
 

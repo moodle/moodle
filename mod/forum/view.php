@@ -75,7 +75,7 @@
         case "eachuser":
             echo "<P ALIGN=CENTER>";
             if (user_can_post_discussion($forum)) {
-                echo "This forum allows one discussion topic to be posted per person.  Click here to <A HREF=\"../discuss/post.php?forum=$forum->id\">post your topic</A>.";
+                echo "This forum allows one discussion topic to be posted per person.";
             } else {
                 echo "&nbsp";
             }
