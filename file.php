@@ -59,17 +59,6 @@
         error('Access not allowed');
     }
 
-    // security: teachers can view all assignments, students only their own
-    if ((count($args) >= 3)
-        and (strtolower($args[1]) == 'moddata')
-        and (strtolower($args[2]) == 'assignment')) {
-
-        $lifetime = 0;  // do not cache assignments, students may reupload them
-        if ((!isteacher($course->id)) && (count($args) != 6 || $args[4] != $USER->id)) {
-           error('Access not allowed');
-        }
-    }
-
     if (is_dir($pathname)) {
         if (file_exists($pathname.'/index.html')) {
             $pathname = rtrim($pathname, '/').'/index.html';
@@ -83,6 +72,43 @@
         } else {
             // security: do not return directory node!
             not_found($course->id);
+        }
+    }
+
+    // security: teachers can view all assignments, students only their own
+    if ((count($args) >= 3)
+        and (strtolower($args[1]) == 'moddata')
+        and (strtolower($args[2]) == 'assignment')) {
+
+        $lifetime = 0;  // do not cache assignments, students may reupload them
+        if ((!isteacher($course->id)) && (count($args) != 6 || $args[4] != $USER->id)) {
+           error('Access not allowed');
+        }
+    }
+
+    // security: some protection of hidden resource files
+    // warning: it may break backwards compatibility
+    // TODO: case sensitive in PostgresQL, case insensitive in MySQL (ok?)
+    // TODO: should we protect directories too?
+    if ((!empty($CFG->preventaccesstohiddenfiles)) 
+        and (count($args) >= 2)
+        and (!isteacher($course->id))) {
+
+        $reference = ltrim($relativepath, "/{$args[0]}/");
+
+        $sql = "SELECT COUNT(r.id) " .
+                 "FROM {$CFG->prefix}resource r, " .
+                      "{$CFG->prefix}course_modules cm, " .
+                      "{$CFG->prefix}modules m " .
+                 "WHERE r.course    = '{$course->id}' " .
+                   "AND m.name      = 'resource' " .
+                   "AND cm.module   = m.id " .
+                   "AND cm.instance = r.id " .
+                   "AND cm.visible  = 0 " .
+                   "AND r.type      = 'file' " .
+                   "AND r.reference = '{$reference}'";
+        if (count_records_sql($sql)) {
+           error('Access not allowed');
         }
     }
 

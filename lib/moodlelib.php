@@ -221,6 +221,9 @@ function clean_param($param, $options) {
     if ($options & PARAM_FILE) {         // Strip all suspicious characters from filename
         $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':\\/]', '', $param);
         $param = ereg_replace('\.\.+', '', $param);
+        if($param == '.') {
+            $param = '';
+        }
     }
 
     if ($options & PARAM_PATH) {         // Strip all suspicious characters from file path
@@ -230,6 +233,7 @@ function clean_param($param, $options) {
         $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':]', '', $param);
         $param = ereg_replace('\.\.+', '', $param);
         $param = ereg_replace('//+', '/', $param);
+        $param = ereg_replace('/(\./)+', '/', $param);
     }
 
     if ($options & PARAM_HOST) {         // allow FQDN or IPv4 dotted quad
