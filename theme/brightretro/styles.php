@@ -12,45 +12,53 @@
 
 /// From here on it's nearly a normal stylesheet.
 /// First are some CSS definitions for normal tags, 
-/// then custom tags follow.
+/// then custom tags follow.  
 ///
-/// Note that colours are all defined in config.php
-/// in this directory
+/// New classes always get added to the end of the file.
+///
+/// Note that a group of standard colours are all 
+/// defined in config.php in this directory.  The
+/// reason for this is because Moodle uses the same
+/// colours to provide oldstyle formatting for 
+/// browsers without CSS.
+///
+/// You can hardcode colours in this file if you 
+/// don't care about this.
 
 ?>
 
 
-a:link    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-           text-decoration: none; 
-           color: blue;}
-a:visited {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-           text-decoration: none; 
-           color: blue;}
-a:hover   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-           text-decoration: underline; 
-           color: red;}
+body, td, th, li {
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+}
 
-body {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+th {
+    font-weight: bold; 
+    background-color: <?PHP echo $THEME->cellheading?>;
+}
 
-p    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+a:link {
+    text-decoration: none; 
+    color: blue;
+}
 
-h1   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+a:visited {
+    text-decoration: none; 
+    color: blue;
+}
 
-h2   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+a:hover {
+    text-decoration: underline; 
+    color: red;
+}
 
-h3   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+form { 
+    margin-bottom: 0;
+}
 
-h4   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
 
-th   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
-      font-weight: bold; 
-      background-color: <?PHP echo $THEME->cellheading?>;}
 
-td   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
 
-li   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
-
-form { margin-bottom: 0; }
 
 .highlight {
     background-color: <?PHP echo $THEME->highlight?>;
@@ -65,12 +73,6 @@ form { margin-bottom: 0; }
 
 .navbar {
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
-}
-
-.generalbox {
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
 }
 
 .generaltable {
@@ -112,12 +114,6 @@ form { margin-bottom: 0; }
     border-style: solid;
 }
 
-.weeklyoutline {
-}
-
-.topicsoutline {
-}
-
 .forumpost {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
@@ -138,3 +134,56 @@ form { margin-bottom: 0; }
 
 .forumpostmessage {
 }
+
+
+.weeklyoutline {
+}
+
+.weeklyoutlineside {
+}
+
+.weeklyoutlinesidehighlight {
+}
+
+.weeklyoutlinecontent {
+}
+
+.weeklyoutlinecontenthighlight {
+}
+
+
+.topicsoutline {
+}
+
+.topicsoutlineside {
+}
+
+.topicsoutlinesidehighlight {
+}
+
+.topicsoutlinecontent {
+}
+
+.topicsoutlinecontenthighlight {
+}
+
+
+.siteinfo {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.siteinfocontent {
+}
+
+
+.generalbox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.generalboxcontent {
+}
+
