@@ -73,8 +73,30 @@ function glossary_delete_instance($id) {
 
     if (! delete_records("glossary", "id", "$glossary->id")) {
         $result = false;
+    } else {
+        if ($categories = get_records("glossary_categories","glossaryid",$glossary->id)) {
+            $cats = "";
+            foreach ( $categories as $cat ) {
+                $cats .= "$cat->id,";
+            }
+            $cats = substr($cats,0,-1);
+            if ($cats) {
+                delete_records_select("glossary_entries_categories", "categoryid in ($cats)");
+                delete_records("glossary_categories", "glossaryid", $glossary->id);
+            }
+        }
+        if ( $entries = get_records("glossary_entries", "glossaryid", $glossary->id) ) {
+            $ents = "";
+            foreach ( $entries as $entry ) {
+                $ents .= "$entry->id,";
+            }
+            $ents = substr($ents,0,-1);
+            if ($ents) {
+                delete_records_select("glossary_comments", "entryid in ($ents)");
+            }
+        }
+        delete_records("glossary_entries", "glossaryid", "$glossary->id");
     }
-    delete_records("glossary_entries", "glossaryid", "$glossary->id");
 
     return $result;
 }

@@ -123,6 +123,39 @@ function glossary_upgrade($oldversion) {
         execute_sql( "ALTER TABLE `{$CFG->prefix}glossary`" .
                      " ADD `globalglossary` TINYINT(2) UNSIGNED NOT NULL default '0' AFTER `defaultapproval`");
     }
+
+    if ( $oldversion < 2003103100 ) {
+        print_simple_box("This update might take several seconds.<p>The more glossaries, entries and categories you have created, the more it will take so please be patient.","center", "50%", "$THEME->cellheading", "20", "noticebox");
+        if ( $glossaries = get_records("glossary")) {
+            $gids = "";
+            foreach ( $glossaries as $glossary ) {
+                $gids .= "$glossary->id,";
+            }
+            $gids = substr($gids,0,-1);  // ID's of VALID glossaries
+
+            if ($categories = get_records_select("glossary_categories","glossaryid NOT IN ($gids)") ) {
+                $cids = "";
+                foreach ( $categories as $cat ) {
+                    $cids .= "$cat->id,";
+                }
+                $cids = substr($cids,0,-1);   // ID's of INVALID categories
+                if ($cids) {
+                    delete_records_select("glossary_entries_categories", "categoryid IN ($cids)");
+                    delete_records_select("glossary_categories", "id in ($cids)");
+                }
+            }
+            if ( $entries = get_records_select("glossary_entries") ) {
+                $eids = "";
+                foreach ( $entries as $entry ) {
+                    $eids .= "$entry->id,";
+                }
+                $eids = substr($eids,0,-1);  // ID's of VALID entries
+                if ($eids) {
+                    delete_records_select("glossary_comments", "entryid NOT IN ($eids)");
+                }
+            }
+        }
+    }
     return true;
 }
 
