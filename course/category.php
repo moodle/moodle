@@ -205,7 +205,7 @@
 
 /// Print out all the sub-categories
 
-    if ($subcategories = get_records("course_categories", "parent", $category->id), "sortorder ASC") {
+    if ($subcategories = get_records("course_categories", "parent", $category->id, "sortorder ASC")) {
         $firstentry = true;
         foreach ($subcategories as $subcategory) {
             if ($subcategory->visible or iscreator()) {
