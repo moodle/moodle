@@ -1,6 +1,6 @@
 <?php
 /*
-V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -34,14 +34,14 @@ class ADODB_oracle extends ADOConnection {
 	function DBDate($d)
 	{
 		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
-		return 'TO_DATE('.date($this->fmtDate,$d).",'YYYY-MM-DD')";
+		return 'TO_DATE('.adodb_date($this->fmtDate,$d).",'YYYY-MM-DD')";
 	}
 	
 	// format and return date string in database timestamp format
 	function DBTimeStamp($ts)
 	{
 		if (is_string($ts)) $d = ADORecordSet::UnixTimeStamp($ts);
-		return 'TO_DATE('.date($this->fmtTimeStamp,$ts).",'RRRR-MM-DD, HH:MI:SS AM')";
+		return 'TO_DATE('.adodb_date($this->fmtTimeStamp,$ts).",'RRRR-MM-DD, HH:MI:SS AM')";
 	}
 	
 	function BeginTrans()
@@ -145,11 +145,14 @@ class ADORecordset_oracle extends ADORecordSet {
 	var $databaseType = "oracle";
 	var $bind = false;
 
-	function ADORecordset_oracle($queryID)
+	function ADORecordset_oracle($queryID,$mode=false)
 	{
-	global $ADODB_FETCH_MODE;
 		
-		$this->fetchMode = $ADODB_FETCH_MODE;
+		if ($mode === false) { 
+			global $ADODB_FETCH_MODE;
+			$mode = $ADODB_FETCH_MODE;
+		}
+		$this->fetchMode = $mode;
 		
 		$this->_queryID = $queryID;
 	
@@ -228,6 +231,12 @@ class ADORecordset_oracle extends ADORecordSet {
 
 	function MetaType($t,$len=-1)
 	{
+		if (is_object($t)) {
+			$fieldobj = $t;
+			$t = $fieldobj->type;
+			$len = $fieldobj->max_length;
+		}
+		
 		switch (strtoupper($t)) {
 		case 'VARCHAR':
 		case 'VARCHAR2':

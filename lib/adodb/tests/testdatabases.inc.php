@@ -1,7 +1,7 @@
 <?php
   
 /*
-V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -9,6 +9,7 @@ V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
  
  /* this file is used by the ADODB test program: test.php */
  
+
 // cannot test databases below, but we include them anyway to check
 // if they parse ok...
 ADOLoadCode("sybase");
@@ -18,10 +19,10 @@ ADOLoadCode("firebird");
 ADOLoadCode("borland_ibase");
 ADOLoadCode("informix");
 ADOLoadCode("sqlanywhere");
-
+flush();
 if (!empty($testpostgres)) {
 	//ADOLoadCode("postgres");
-	$db = &ADONewConnection('postgres7');
+	$db = &ADONewConnection('postgres');
 	print "<h1>Connecting $db->databaseType...</h1>";
 	if (@$db->PConnect("localhost","tester","test","test")) {
 		testdb($db,"create table ADOXYZ (id integer, firstname char(24), lastname varchar,created date)");
@@ -30,17 +31,16 @@ if (!empty($testpostgres)) {
 }
 if (!empty($testibase)) {
 	
-	$db = &ADONewConnection('ibase');
+	$db = &ADONewConnection('firebird');
 	print "<h1>Connecting $db->databaseType...</h1>";
-	if (@$db->PConnect("localhost:e:\\interbase\\examples\\database\\employee.gdb", "sysdba", "masterkey", ""))
-		testdb($db,"create table ADOXYZ (id integer, firstname char(24), lastname char(24),created date)");
+	if (@$db->PConnect("localhost:e:\\firebird\\examples\\employee.gdb", "sysdba", "masterkey", ""))
+		testdb($db,"create table ADOXYZ (id integer, firstname char(24), lastname char(24),price numeric(12,2),created date)");
 	 else print "ERROR: Interbase test requires a database called employee.gdb".'<BR>'.$db->ErrorMsg();
 	
 }
 
 // REQUIRES ODBC DSN CALLED nwind
 if (!empty($testaccess)) {
-
 	$db = &ADONewConnection('access');
 	print "<h1>Connecting $db->databaseType...</h1>";
 	
@@ -51,7 +51,7 @@ if (!empty($testaccess)) {
 }
 
 if (!empty($testaccess) && !empty($testado)) { // ADO ACCESS
-	
+
 	$db = &ADONewConnection("ado_access");
 	print "<h1>Connecting $db->databaseType...</h1>";
 	
@@ -68,13 +68,12 @@ if (!empty($testaccess) && !empty($testado)) { // ADO ACCESS
 }
 
 if (!empty($testvfp)) { // ODBC
-
-	
 	$db = &ADONewConnection('vfp');
-	print "<h1>Connecting $db->databaseType...</h1>";
-	if (@$db->PConnect("logos2", "", "", ""))
-		testdb($db,"create table d:\\inetpub\\wwwroot\\logos2\\data\\ADOXYZ (id int, firstname char(24), lastname char(24),created date)");
-	 else print "ERROR: Visual FoxPro test requires a Windows ODBC DSN=logos2, VFP driver";
+	print "<h1>Connecting $db->databaseType...</h1>";flush();
+
+	if ( $db->PConnect("vfp-adoxyz")) {
+		testdb($db,"create table d:\\inetpub\\wwwroot\\php\\vfp\\ADOXYZ (id int, firstname char(24), lastname char(24),created date)");
+	 } else print "ERROR: Visual FoxPro test requires a Windows ODBC DSN=logos2, VFP driver";
 	
 }
 
@@ -82,15 +81,30 @@ if (!empty($testvfp)) { // ODBC
 // REQUIRES MySQL server at localhost with database 'test'
 if (!empty($testmysql)) { // MYSQL
 	
-	$db = &ADONewConnection('maxsql');
+	$db = &ADONewConnection('mysql');
 	print "<h1>Connecting $db->databaseType...</h1>";
 	if ($HTTP_SERVER_VARS['HTTP_HOST'] == 'localhost') $server = 'localhost';
 	else $server = "mangrove";
-	if ($db->PConnect($server, "root", "", "test"))
+	if ($db->PConnect('jaguar', "mobydick", "", "test"))
 		testdb($db,
 		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date) type=innodb");
 	else print "ERROR: MySQL test requires a MySQL server on localhost, userid='admin', password='', database='test'".'<BR>'.$db->ErrorMsg();
 }
+
+// REQUIRES MySQL server at localhost with database 'test'
+if (!empty($testmysqlodbc)) { // MYSQL
+	
+	$db = &ADONewConnection('odbc');
+	$db->hasTransactions = false;
+	print "<h1>Connecting $db->databaseType...</h1>";
+	if ($HTTP_SERVER_VARS['HTTP_HOST'] == 'localhost') $server = 'localhost';
+	else $server = "mangrove";
+	if ($db->PConnect('mysql', "mobydick", ""))
+		testdb($db,
+		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date) type=innodb");
+	else print "ERROR: MySQL test requires a MySQL server on localhost, userid='admin', password='', database='test'".'<BR>'.$db->ErrorMsg();
+}
+
 if (!empty($testproxy)){
 	$db = &ADONewConnection('proxy');
 	print "<h1>Connecting $db->databaseType...</h1>";
@@ -149,7 +163,7 @@ if (!empty($testmssql) && !empty($testado) ) { // ADO ACCESS MSSQL -- thru ODBC 
 	print "<h1>Connecting DSN-less $db->databaseType...</h1>";
 	
 	$myDSN="PROVIDER=MSDASQL;DRIVER={SQL Server};"
-		. "SERVER=JAGUAR\VSDOTNET;DATABASE=NorthWind;UID=sa;PWD=natsoft;Trusted_Connection=Yes"  ;
+		. "SERVER=JAGUAR\VSDOTNET;DATABASE=NorthWind;UID=adodb;PWD=natsoft;Trusted_Connection=No"  ;
 
 		
 	if (@$db->PConnect($myDSN, "", "", ""))
@@ -159,7 +173,7 @@ if (!empty($testmssql) && !empty($testado) ) { // ADO ACCESS MSSQL -- thru ODBC 
 }
 
 
-ADOLoadCode("mssql");
+ADOLoadCode("mssqlpo");
 if (!empty($testmssql)) { // MS SQL Server -- the extension is buggy -- probably better to use ODBC
 	$db = ADONewConnection();
 	$db->debug=1;

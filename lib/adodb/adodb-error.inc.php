@@ -1,0 +1,264 @@
+<?php
+/** 
+ * @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * Released under both BSD license and Lesser GPL library license. 
+ * Whenever there is any discrepancy between the two licenses, 
+ * the BSD license will take precedence. 
+ *
+ * Set tabs to 4 for best viewing.
+ * 
+ * The following code is adapted from the PEAR DB error handling code.
+ * Portions (c)1997-2002 The PHP Group.
+ */
+
+if (!defined("DB_ERROR")) define("DB_ERROR",-1);
+
+if (!defined("DB_ERROR_SYNTAX")) {
+	define("DB_ERROR_SYNTAX",              -2);
+	define("DB_ERROR_CONSTRAINT",          -3);
+	define("DB_ERROR_NOT_FOUND",           -4);
+	define("DB_ERROR_ALREADY_EXISTS",      -5);
+	define("DB_ERROR_UNSUPPORTED",         -6);
+	define("DB_ERROR_MISMATCH",            -7);
+	define("DB_ERROR_INVALID",             -8);
+	define("DB_ERROR_NOT_CAPABLE",         -9);
+	define("DB_ERROR_TRUNCATED",          -10);
+	define("DB_ERROR_INVALID_NUMBER",     -11);
+	define("DB_ERROR_INVALID_DATE",       -12);
+	define("DB_ERROR_DIVZERO",            -13);
+	define("DB_ERROR_NODBSELECTED",       -14);
+	define("DB_ERROR_CANNOT_CREATE",      -15);
+	define("DB_ERROR_CANNOT_DELETE",      -16);
+	define("DB_ERROR_CANNOT_DROP",        -17);
+	define("DB_ERROR_NOSUCHTABLE",        -18);
+	define("DB_ERROR_NOSUCHFIELD",        -19);
+	define("DB_ERROR_NEED_MORE_DATA",     -20);
+	define("DB_ERROR_NOT_LOCKED",         -21);
+	define("DB_ERROR_VALUE_COUNT_ON_ROW", -22);
+	define("DB_ERROR_INVALID_DSN",        -23);
+	define("DB_ERROR_CONNECT_FAILED",     -24);
+	define("DB_ERROR_EXTENSION_NOT_FOUND",-25);
+	define("DB_ERROR_NOSUCHDB",           -25);
+	define("DB_ERROR_ACCESS_VIOLATION",   -26);
+}
+
+function adodb_errormsg($value)
+{
+    static $ERRMSG;
+    if (!isset($ERRMSG)) {
+        $ERRMSG = array(
+            DB_ERROR                    => 'unknown error',
+            DB_ERROR_ALREADY_EXISTS     => 'already exists',
+            DB_ERROR_CANNOT_CREATE      => 'can not create',
+            DB_ERROR_CANNOT_DELETE      => 'can not delete',
+            DB_ERROR_CANNOT_DROP        => 'can not drop',
+            DB_ERROR_CONSTRAINT         => 'constraint violation',
+            DB_ERROR_DIVZERO            => 'division by zero',
+            DB_ERROR_INVALID            => 'invalid',
+            DB_ERROR_INVALID_DATE       => 'invalid date or time',
+            DB_ERROR_INVALID_NUMBER     => 'invalid number',
+            DB_ERROR_MISMATCH           => 'mismatch',
+            DB_ERROR_NODBSELECTED       => 'no database selected',
+            DB_ERROR_NOSUCHFIELD        => 'no such field',
+            DB_ERROR_NOSUCHTABLE        => 'no such table',
+            DB_ERROR_NOT_CAPABLE        => 'DB backend not capable',
+            DB_ERROR_NOT_FOUND          => 'not found',
+            DB_ERROR_NOT_LOCKED         => 'not locked',
+            DB_ERROR_SYNTAX             => 'syntax error',
+            DB_ERROR_UNSUPPORTED        => 'not supported',
+            DB_ERROR_VALUE_COUNT_ON_ROW => 'value count on row',
+            DB_ERROR_INVALID_DSN        => 'invalid DSN',
+            DB_ERROR_CONNECT_FAILED     => 'connect failed',
+            0	                       => 'no error', // DB_OK
+            DB_ERROR_NEED_MORE_DATA     => 'insufficient data supplied',
+            DB_ERROR_EXTENSION_NOT_FOUND=> 'extension not found',
+            DB_ERROR_NOSUCHDB           => 'no such database',
+            DB_ERROR_ACCESS_VIOLATION   => 'insufficient permissions'
+        );
+    }
+
+    return isset($ERRMSG[$value]) ? $ERRMSG[$value] : $ERRMSG[DB_ERROR];
+}
+
+function adodb_error($provider,$dbType,$errno)
+{
+	var_dump($errno);
+	if (is_numeric($errno) && $errno == 0) return 0;
+	switch($provider) { 
+	case 'mysql': $map = adodb_error_mysql(); break;
+	
+	case 'oracle':
+	case 'oci8': $map = adodb_error_oci8(); break;
+	
+	case 'ibase': $map = adodb_error_ibase(); break;
+	
+	case 'odbc': $map = adodb_error_odbc(); break;
+	
+	case 'mssql':
+	case 'sybase': $map = adodb_error_mssql(); break;
+	
+	case 'informix': $map = adodb_error_ifx(); break;
+	
+	case 'postgres': return adodb_error_pg($errno); break;
+	default:
+		return DB_ERROR;
+	}	
+	print_r($map);
+	var_dump($errno);
+	if (isset($map[$errno])) return $map[$errno];
+	return DB_ERROR;
+}
+
+//**************************************************************************************
+
+function adodb_error_pg($errormsg)
+{
+    static $error_regexps = array(
+            '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/' => DB_ERROR_NOSUCHTABLE,
+            '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/'      => DB_ERROR_ALREADY_EXISTS,
+            '/divide by zero$/'                     => DB_ERROR_DIVZERO,
+            '/pg_atoi: error in .*: can\'t parse /' => DB_ERROR_INVALID_NUMBER,
+            '/ttribute [\"\'].*[\"\'] not found$|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/' => DB_ERROR_NOSUCHFIELD,
+            '/parser: parse error at or near \"/'   => DB_ERROR_SYNTAX,
+            '/referential integrity violation/'     => DB_ERROR_CONSTRAINT
+        );
+   
+    foreach ($error_regexps as $regexp => $code) {
+        if (preg_match($regexp, $errormsg)) {
+            return $code;
+        }
+    }
+    // Fall back to DB_ERROR if there was no mapping.
+    return DB_ERROR;
+}
+	
+function adodb_error_odbc()
+{
+static $MAP = array(
+            '01004' => DB_ERROR_TRUNCATED,
+            '07001' => DB_ERROR_MISMATCH,
+            '21S01' => DB_ERROR_MISMATCH,
+            '21S02' => DB_ERROR_MISMATCH,
+            '22003' => DB_ERROR_INVALID_NUMBER,
+            '22008' => DB_ERROR_INVALID_DATE,
+            '22012' => DB_ERROR_DIVZERO,
+            '23000' => DB_ERROR_CONSTRAINT,
+            '24000' => DB_ERROR_INVALID,
+            '34000' => DB_ERROR_INVALID,
+            '37000' => DB_ERROR_SYNTAX,
+            '42000' => DB_ERROR_SYNTAX,
+            'IM001' => DB_ERROR_UNSUPPORTED,
+            'S0000' => DB_ERROR_NOSUCHTABLE,
+            'S0001' => DB_ERROR_NOT_FOUND,
+            'S0002' => DB_ERROR_NOSUCHTABLE,
+            'S0011' => DB_ERROR_ALREADY_EXISTS,
+            'S0012' => DB_ERROR_NOT_FOUND,
+            'S0021' => DB_ERROR_ALREADY_EXISTS,
+            'S0022' => DB_ERROR_NOT_FOUND,
+			'S1000' => DB_ERROR_NOSUCHTABLE,
+            'S1009' => DB_ERROR_INVALID,
+            'S1090' => DB_ERROR_INVALID,
+            'S1C00' => DB_ERROR_NOT_CAPABLE
+        );
+		return $MAP;
+}
+
+function adodb_error_ibase()
+{
+static $MAP = array(
+            -104 => DB_ERROR_SYNTAX,
+            -150 => DB_ERROR_ACCESS_VIOLATION,
+            -151 => DB_ERROR_ACCESS_VIOLATION,
+            -155 => DB_ERROR_NOSUCHTABLE,
+            -157 => DB_ERROR_NOSUCHFIELD,
+            -158 => DB_ERROR_VALUE_COUNT_ON_ROW,
+            -170 => DB_ERROR_MISMATCH,
+            -171 => DB_ERROR_MISMATCH,
+            -172 => DB_ERROR_INVALID,
+            -204 => DB_ERROR_INVALID,
+            -205 => DB_ERROR_NOSUCHFIELD,
+            -206 => DB_ERROR_NOSUCHFIELD,
+            -208 => DB_ERROR_INVALID,
+            -219 => DB_ERROR_NOSUCHTABLE,
+            -297 => DB_ERROR_CONSTRAINT,
+            -530 => DB_ERROR_CONSTRAINT,
+            -803 => DB_ERROR_CONSTRAINT,
+            -551 => DB_ERROR_ACCESS_VIOLATION,
+            -552 => DB_ERROR_ACCESS_VIOLATION,
+            -922 => DB_ERROR_NOSUCHDB,
+            -923 => DB_ERROR_CONNECT_FAILED,
+            -924 => DB_ERROR_CONNECT_FAILED
+        );
+		
+		return $MAP;
+}
+
+function adodb_error_ifx()
+{
+static $MAP = array(
+            '-201'    => DB_ERROR_SYNTAX,
+            '-206'    => DB_ERROR_NOSUCHTABLE,
+            '-217'    => DB_ERROR_NOSUCHFIELD,
+            '-329'    => DB_ERROR_NODBSELECTED,
+            '-1204'   => DB_ERROR_INVALID_DATE,
+            '-1205'   => DB_ERROR_INVALID_DATE,
+            '-1206'   => DB_ERROR_INVALID_DATE,
+            '-1209'   => DB_ERROR_INVALID_DATE,
+            '-1210'   => DB_ERROR_INVALID_DATE,
+            '-1212'   => DB_ERROR_INVALID_DATE
+       );
+	   
+	   return $MAP;
+}
+
+function adodb_error_oci8()
+{
+static $MAP = array(
+            900 => DB_ERROR_SYNTAX,
+            904 => DB_ERROR_NOSUCHFIELD,
+            923 => DB_ERROR_SYNTAX,
+            942 => DB_ERROR_NOSUCHTABLE,
+            955 => DB_ERROR_ALREADY_EXISTS,
+            1476 => DB_ERROR_DIVZERO,
+            1722 => DB_ERROR_INVALID_NUMBER,
+            2289 => DB_ERROR_NOSUCHTABLE,
+            2291 => DB_ERROR_CONSTRAINT,
+            2449 => DB_ERROR_CONSTRAINT,
+        );
+	   
+	return $MAP;
+}
+
+function adodb_error_mssql()
+{
+static $MAP = array(
+		  208 => DB_ERROR_NOSUCHTABLE,
+          2601 => DB_ERROR_ALREADY_EXISTS
+       );
+	   
+	return $MAP;
+}
+
+function adodb_error_mysql()
+{
+static $MAP = array(
+           1004 => DB_ERROR_CANNOT_CREATE,
+           1005 => DB_ERROR_CANNOT_CREATE,
+           1006 => DB_ERROR_CANNOT_CREATE,
+           1007 => DB_ERROR_ALREADY_EXISTS,
+           1008 => DB_ERROR_CANNOT_DROP,
+           1046 => DB_ERROR_NODBSELECTED,
+           1050 => DB_ERROR_ALREADY_EXISTS,
+           1051 => DB_ERROR_NOSUCHTABLE,
+           1054 => DB_ERROR_NOSUCHFIELD,
+           1062 => DB_ERROR_ALREADY_EXISTS,
+           1064 => DB_ERROR_SYNTAX,
+           1100 => DB_ERROR_NOT_LOCKED,
+           1136 => DB_ERROR_VALUE_COUNT_ON_ROW,
+           1146 => DB_ERROR_NOSUCHTABLE,
+           1048 => DB_ERROR_CONSTRAINT,
+       );
+	   
+	return $MAP;
+}
+?>

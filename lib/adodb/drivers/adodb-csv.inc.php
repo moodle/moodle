@@ -1,6 +1,6 @@
 <?php
 /*
-V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -18,6 +18,7 @@ include_once(ADODB_DIR.'/adodb-csvlib.inc.php');
  
 class ADODB_csv extends ADOConnection {
 	var $databaseType = 'csv';
+	var $databaseProvider = 'csv';
 	var $hasInsertID = true;
 	var $hasAffectedRows = true;	
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
@@ -25,6 +26,8 @@ class ADODB_csv extends ADOConnection {
 	var $_insertid=0;
 	var $_url;
 	var $replaceQuote = "''"; // string to use to replace quotes
+	var $hasTransactions = false;
+	var $_errorNo = false;
 	
 	function ADODB_csv() 
 	{			
@@ -73,7 +76,9 @@ class ADODB_csv extends ADOConnection {
 	{
 	global $ADODB_FETCH_MODE;
 	
-		$url = $this->_url.'?sql='.urlencode($sql)."&nrows=$nrows&fetch=$ADODB_FETCH_MODE&offset=$offset&arg3=".urlencode($arg3);
+		$url = $this->_url.'?sql='.urlencode($sql)."&nrows=$nrows&fetch=".
+			(($this->fetchMode !== false)?$this->fetchMode : $ADODB_FETCH_MODE).
+			"&offset=$offset&arg3=".urlencode($arg3);
 		$err = false;
 		$rs = csv2rs($url,$err,false);
 		
@@ -92,9 +97,10 @@ class ADODB_csv extends ADOConnection {
 				$fn($this->databaseType,'EXECUTE',$this->ErrorNo(),$this->ErrorMsg(),$sql,'');
 			}
 			
-		if (is_object($rs)) {
+		if (is_object($rs)) {	
+		
 			$rs->databaseType='csv';		
-			$rs->fetchMode = $ADODB_FETCH_MODE;
+			$rs->fetchMode = ($this->fetchMode !== false) ?  $this->fetchMode : $ADODB_FETCH_MODE;
 			$rs->connection = &$this;
 		}
 		return $rs;
@@ -129,7 +135,8 @@ class ADODB_csv extends ADOConnection {
 			$inputarr = false;
 		}
 		
-		$url =  $this->_url.'?sql='.urlencode($sql)."&fetch=$ADODB_FETCH_MODE";
+		$url =  $this->_url.'?sql='.urlencode($sql)."&fetch=".
+			(($this->fetchMode !== false)?$this->fetchMode : $ADODB_FETCH_MODE);
 		if ($arg3) $url .= "&arg3=".urlencode($arg3);
 		$err = false;
 		
@@ -149,7 +156,8 @@ class ADODB_csv extends ADOConnection {
 				$fn($this->databaseType,'EXECUTE',$this->ErrorNo(),$this->ErrorMsg(),$sql,$inputarr);
 			}
 		if (is_object($rs)) {
-			$rs->fetchMode = $ADODB_FETCH_MODE;
+			$rs->fetchMode = ($this->fetchMode !== false) ?  $this->fetchMode : $ADODB_FETCH_MODE;
+			
 			$this->_affectedrows = $rs->affectedrows;
 			$this->_insertid = $rs->insertid;
 			$rs->databaseType='csv';
@@ -178,9 +186,9 @@ class ADODB_csv extends ADOConnection {
 } // class
 
 class ADORecordset_csv extends ADORecordset {
-	function ADORecordset_csv($id)
+	function ADORecordset_csv($id,$mode=false)
 	{
-		$this->ADORecordset($id);
+		$this->ADORecordset($id,$mode);
 	}
 	
 	function _close()

@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * @version V2.50 14 Nov 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -23,7 +23,9 @@ include('../tohtml.inc.php');
 //==========================
 // This code tests an insert
 
-$sql = "SELECT * FROM ADOXYZ WHERE id = -1"; 
+$sql = "
+SELECT * 
+FROM ADOXYZ WHERE id = -1"; 
 // Select an empty record from the database 
 
 $conn = &ADONewConnection("mysql");  // create a connection
@@ -52,7 +54,9 @@ $conn->Execute($insertSQL); // Insert the record into the database
 //==========================
 // This code tests an update
 
-$sql = "SELECT * FROM ADOXYZ WHERE lastname=".$conn->qstr($record['lastname']); 
+$sql = "
+SELECT * 
+FROM ADOXYZ WHERE lastname=".$conn->qstr($record['lastname']); 
 // Select a record to update 
 
 $rs = $conn->Execute($sql); // Execute the query and get the existing record to update
@@ -60,9 +64,9 @@ if (!$rs) print "<p>No record found!</p>";
 $record = array(); // Initialize an array to hold the record data to update
 
 // Set the values for the fields in the record
-$record["firstname"] = "Caroline".rand();
-$record["lastname"] = "Smithy"; // Update Caroline's lastname from Miranda to Smith
-$record["created"] = '2002-12-'.(rand()%30+1);
+$record["firstName"] = "Caroline".rand();
+$record["lasTname"] = "Smithy"; // Update Caroline's lastname from Miranda to Smith
+$record["creAted"] = '2002-12-'.(rand()%30+1);
 
 // Pass the single record recordset and the array containing the data to update
 // into the GetUpdateSQL function. The function will process the data and return

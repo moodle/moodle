@@ -11,7 +11,7 @@
 <body bgcolor="#FFFFFF">
 
 <h2>ADOdb Library for PHP</h2>
-<p>V2.50 14 Nov 2002 (c) 2000-2002 John Lim (<a href="mailto:jlim@natsoft.com.my">jlim@natsoft.com.my</a>)</p>
+<p>V3.40 7 April 2003 (c) 2000-2003 John Lim (<a href="mailto:jlim#natsoft.com.my">jlim#natsoft.com.my</a>)</p>
 <p>This software is dual licensed using BSD-Style and LGPL. 
 Where there is any discrepancy, the BSD-Style license will take precedence. 
 This means you can use it in proprietary and commercial products.</p>
@@ -37,12 +37,15 @@ This means you can use it in proprietary and commercial products.</p>
   <b> <a href="#errorhandling">Using Custom Error Handlers and PEAR_Error</a><br>
   <a href="#DSN">Data Source Names</a><br>
   <a href="#caching">Caching</a><br>
-  <a href="#pivot">Pivot Tables</a></b><p></p>
-<p><a href="#ref"><b>REFERENCE</b></a><br>
-	<a href="#ADOConnection"><b><br>
-	ADOConnection</b></a><br>
-	<font size="2">Connections: <a href="#connect">Connect</a> <a href="#pconnect">PConnect</a> <a href="#nconnect">NConnect</a> 
-	<br>
+  <a href="#pivot">Pivot Tables</a></b>
+<p><a href="#ref"><b>REFERENCE</b></a>
+<p> <font size="2">Variables: <a href="#adodb_countrecs">$ADODB_COUNTRECS</a> 
+	<a href="#adodb_cache_dir">$ADODB_CACHE_DIR</a> </font><font size="2"><a href=#adodb_fetch_mode>$ADODB_FETCH_MODE</a>&nbsp;<br>
+	Constants: </font><font size="2"><a href=#adodb_assoc_case>ADODB_ASSOC_CASE</a> 
+	</font><br>
+	<a href="#ADOConnection"><b> ADOConnection</b></a><br>
+	<font size="2">Connections: <a href="#connect">Connect</a> <a href="#pconnect">PConnect</a> 
+	<a href="#nconnect">NConnect</a> <br>
 	Executing SQL: <a href="#execute">Execute</a> <a href="#cacheexecute"><i>CacheExecute</i></a> 
 	<a href="#SelectLimit">SelectLimit</a> <a href="#cacheSelectLimit"><i>CacheSelectLimit</i></a> 
 	<a href="#prepare">Prepare</a> <a href=#preparesp>PrepareSP</a> <a href="#parameter">Parameter</a><br>
@@ -52,51 +55,52 @@ This means you can use it in proprietary and commercial products.</p>
 	<a href="#getall">GetAll</a> <a href="#cachegetall"><i>CacheGetAll</i></a> 
 	<a href="#getcol">GetCol</a> <a href="#cachegetcol"><i>CacheGetCol</i></a> 
 	<a href="#replace">Replace</a> <br>
-	&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	<a href="#executecursor">ExecuteCursor</a> (oci8 only)<br>
-	Generates SQL: <a href="#getupdatesql">GetUpdateSQL</a> <a href="#getinsertsql">GetInsertSQL</a></font><font size="2"><br>
+	&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#executecursor">ExecuteCursor</a> 
+	(oci8 only)<br>
+	Generates SQL: <a href="#getupdatesql">GetUpdateSQL</a> <a href="#getinsertsql">GetInsertSQL</a><br>
 	Blobs: <a href="#updateblob">UpdateBlob</a> <a href="#updateclob">UpdateClob</a> 
-	<a href="#updateblobfile">UpdateBlobFile</a> <br>
+	<a href="#updateblobfile">UpdateBlobFile</a> <a href="#blobencode">BlobEncode</a> 
+	<a href="#blobdecode">BlobDecode</a><br>
 	Paging/Scrolling: <a href="#pageexecute">PageExecute</a> <a href="#cachepageexecute">CachePageExecute</a><br>
-	Cleanup: <a href="#CacheFlush">CacheFlush</a> <a href="#Close">Close</a><br>
+	Cleanup: <a href="#cacheflush">CacheFlush</a> <a href="#Close">Close</a><br>
 	Transactions: <a href="#begintrans">BeginTrans</a> <a href="#committrans">CommitTrans</a> 
-	<a href="#rollbacktrans">RollbackTrans</a> <br>
-	Fetching Data: <a href="#adodb_fetch_mode">$ADODB_FETCH_MODE</a></font> <br>
-	Strings: <a href="#concat"><font size="2">concat</font></a> <font size="2"><a href="#qstr">qstr</a> 
-	<a href="#quote">quote</a></font><br>
-	Dates: <a href="#dbdate"><font size="2">DBDate</font></a> <font size="2"><a href="#dbtimestamp">DBTimeStamp</a> 
+	<a href="#rollbacktrans">RollbackTrans</a> <a href="#starttrans">StartTrans</a> <a href="#completetrans">CompleteTrans</a> <br>
+	Fetching Data: </font> <font size="2"><a href="#setfetchmode">SetFetchMode</a><br>
+	Strings: <a href="#concat">concat</a> <a href="#qstr">qstr</a> <a href="#quote">quote</a><br>
+	Dates: <a href="#dbdate">DBDate</a> <a href="#dbtimestamp">DBTimeStamp</a> 
 	<a href="#unixdate">UnixDate</a> <a href="#unixtimestamp">UnixTimeStamp</a> 
-	<a href="#OffsetDate">OffsetDate</a> <a href="#SQLDate">SQLDate</a> </font><br>
-	Rows Management: <a href="#affected_rows"><font size="2">Affected_Rows</font></a> 
-	<font size="2"><a href="#inserted_id">Insert_ID</a> <a href="#genid">GenID</a> 
-	</font><font size="2"><br>
-	Error Handling: </font><font size="2"><a href="#errormsg">ErrorMsg</a> <a href="#errorno">ErrorNo</a><br>
+	<a href="#OffsetDate">OffsetDate</a> <a href="#SQLDate">SQLDate</a> <br>
+	Rows Management: <a href="#affected_rows">Affected_Rows</a> <a href="#inserted_id">Insert_ID</a> 
+	<a href="#genid">GenID</a> <a href=#createseq>CreateSequence</a> <a href=#dropseq>DropSequence</a> 
+	<br>
+	Error Handling: <a href="#errormsg">ErrorMsg</a> <a href="#errorno">ErrorNo</a>
+	 <a href="#metaerror">MetaError</a> <a href="#metaerrormsg">MetaErrorMsg</a><br>
 	Data Dictionary (metadata): <a href="#metadatabases">MetaDatabases</a> <a href="#metatables">MetaTables</a> 
 	<a href="#metacolumns">MetaColumns</a> <a href="#metacolumnames">MetaColumnNames</a> 
-	</font><br>
-	<font size="2">Deprecated: <a href="#bind">Bind</a> <a href="#blankrecordset">BlankRecordSet</a></font> 
+	<a href="#metaprimarykeys">MetaPrimaryKeys</a> <a href="#serverinfo">ServerInfo</a> 
 	<br>
-	<a href="#ADORecordSet"><b><br>
+	Statistics and Query-Rewriting: <a href="#fnexecute">fnExecute and fnCacheExecute</a><br>
+	</font><font size="2">Deprecated: <a href="#bind">Bind</a> <a href="#blankrecordset">BlankRecordSet</a></font><br>
+	<a href="#adorecordSet"><b><br>
 	ADORecordSet</b></a><br>
-	<font size="2">Returns one row:</font><font size="2"><a href="#fetchrow">FetchRow</a> 
-	<a href="#fetchinto">FetchInto</a> <a href="#fetchobject">FetchObject</a> 
-	<a href="#fetchnextobject">FetchNextObject</a> </font><font size="2"><br>
-	Returns all rows:</font><font size="2"><a href="#getarray">GetArray</a> <a href="#getrows">GetRows</a> 
-	</font><font size="2"><a href="#getassoc">GetAssoc</a><br>
-	Scrolling:</font><font size="2"><a href="#move">Move</a> <a href="#movenext">MoveNext</a> 
-	<a href="#movefirst">MoveFirst</a> <a href="#movelast">MoveLast</a> <a href="#abspos">AbsolutePosition</a> 
-	<a href="#currentrow">CurrentRow</a> <a href="#atfirstpage">AtFirstPage</a> 
-	<a href="#atlastpage">AtLastPage</a> <a href="#absolutepage">AbsolutePage</a> 
-	</font> <font size="2"><br>
+	<font size="2">Returns one row:<a href="#fetchrow">FetchRow</a> <a href="#fetchinto">FetchInto</a> 
+	<a href="#fetchobject">FetchObject</a> <a href="#fetchnextobject">FetchNextObject</a> 
+	<a href="#fetchobj">FetchObj</a> <a href="#fetchnextobj">FetchNextObj</a><br>
+	Returns all rows:<a href="#getarray">GetArray</a> <a href="#getrows">GetRows</a> 
+	<a href="#getassoc">GetAssoc</a><br>
+	Scrolling:<a href="#move">Move</a> <a href="#movenext">MoveNext</a> <a href="#movefirst">MoveFirst</a> 
+	<a href="#movelast">MoveLast</a> <a href="#abspos">AbsolutePosition</a> <a href="#currentrow">CurrentRow</a> 
+	<a href="#atfirstpage">AtFirstPage</a> <a href="#atlastpage">AtLastPage</a> 
+	<a href="#absolutepage">AbsolutePage</a> </font> <font size="2"><br>
 	Menu generation:<a href="#getmenu">GetMenu</a> <a href="#getmenu2">GetMenu2</a><br>
 	Dates:<a href="#userdate">UserDate</a> <a href="#usertimestamp">UserTimeStamp</a> 
 	<a href="#unixdate">UnixDate</a> <a href="#unixtimestamp">UnixTimeStamp<br>
-	</a>Recordset Info:<a href="#recordcount">RecordCount</a></font><font size="2"> 
-	<a href="#po_recordcount">PO_RecordSet</a><br>
-	Field Info:</font><font size="2"><a href="#fieldcount">FieldCount</a> <a href="#fetchfield">FetchField</a> 
-	<a href="#metatype">MetaType</a></font><font size="2"><br>
-	Cleanup: </font><font size="2"><a href="#rsclose">Close</a></font> <br>
-	<font size="2">Deprecated: <a href="#getrowassoc">GetRowAssoc</a> <a href="#fields">Fields</a></font> 
+	</a>Recordset Info:<a href="#recordcount">RecordCount</a> <a href="#po_recordcount">PO_RecordSet</a> 
+	<a href="#nextrecordset">NextRecordSet</a><br>
+	Field Info:<a href="#fieldcount">FieldCount</a> <a href="#fetchfield">FetchField</a> 
+	<a href="#metatype">MetaType</a><br>
+	Cleanup: <a href="#rsclose">Close</a></font> <font size="2"><br>
+	Deprecated: <a href="#getrowassoc">GetRowAssoc</a> <a href="#fields">Fields</a></font> 
 <p><font size="2"><a href="#rs2html"><b>rs2html</b></a>&nbsp; <a href="#exrs2html">example</a></font><br>
   <a href="#adodiff">Differences between ADOdb and ADO</a><br>
   <a href="#driverguide"><b>Database Driver Guide<br>
@@ -105,7 +109,8 @@ This means you can use it in proprietary and commercial products.</p>
 <h2>Introduction<a name="intro"></a></h2>
 <p>PHP's database access functions are not standardised. This creates a need for 
   a database class library to hide the differences between the different database 
-  API's (encapsulate the differences) so we can easily switch databases.</p>
+  API's (encapsulate the differences) so we can easily switch databases. PHP 4.0.5 or later
+  is now required (because we use array-based str_replace).</p>
 <p>We currently support MySQL, Oracle, Microsoft SQL Server, Sybase, Sybase SQL Anywhere, Informix, 
   PostgreSQL, FrontBase,  Interbase (Firebird and Borland variants), Foxpro, Access, ADO and ODBC. We have had successful reports of connecting
   to Progress and DB2 via ODBC. We hope more people 
@@ -203,8 +208,10 @@ You will use <code>$conn-><a href=#connect>Connect()</a></code> or
   <tr valign="top"> 
 	<td><b><font size="2">ado</font></b></td>
 	<td><font size="2">B</font></td>
-	<td><font size="2">Generic ADO, not tuned for specific databases. Allows DSN-less 
-	  connections. For best performance, use an OLEDB provider.</font></td>
+	<td><p><font size="2">Generic ADO, not tuned for specific databases. Allows 
+				DSN-less connections. For best performance, use an OLEDB provider. 
+				This is the base class for all ado drivers.</font></p>
+			<p><font size="2">You can set $db-&gt;codePage before connecting.</font></p></td>
 	<td><font size="2">? depends on database</font></td>
 	<td><font size="2">ADO or OLEDB provider</font></td>
 	<td><font size="2">Windows only</font></td>
@@ -260,10 +267,13 @@ You will use <code>$conn-><a href=#connect>Connect()</a></code> or
   <tr valign="top"> 
 	<td><b><font size="2">ibase</font></b></td>
 	<td><font size="2">B</font></td>
-	<td><font size="2">Interbase 6 or earlier. Some users report you might need 
-	  to use this<br>
-	  $db->PConnect('localhost:c:/ibase/employee.gdb', "sysdba", "masterkey") 
-	  to connect. Lacks Affected_Rows currently.</font></td>
+	    <td><font size="2">Interbase 6 or earlier. Some users report you might need 
+			to use this<br>
+			$db->PConnect('localhost:c:/ibase/employee.gdb', "sysdba", "masterkey") 
+			to connect. Lacks Affected_Rows currently.<br>
+			<br>
+			You can set $db->dialect, $db-&gt;buffers and $db->charSet before 
+			connecting.</font></td>
 	<td><font size="2">Y/N</font></td>
 	<td><font size="2">Interbase client</font></td>
 	<td><font size="2">Unix and Windows</font></td>
@@ -313,8 +323,10 @@ You will use <code>$conn-><a href=#connect>Connect()</a></code> or
 	<td height="73"><font size="2">Y/N</font></td>
 	<td height="73"><font size="2">Mssql client</font></td>
 	<td height="73"> 
-	  <p><font size="2">Unix and Windows. <a href="http://phpbuilder.com/columns/alberto20000919.php3"><br>
-		Unix install howto</a>.</font></p>
+	  <p><font size="2">Unix and Windows. <br>
+	  <a href="http://phpbuilder.com/columns/alberto20000919.php3">Unix install howto</a> and
+	  <a href=http://linuxjournal.com/article.php?sid=6636&mode=thread&order=0>another one</a>.
+	  </font></p>
 	</td>
   </tr>
 	<tr valign="top"> 
@@ -335,7 +347,8 @@ You will use <code>$conn-><a href=#connect>Connect()</a></code> or
   <tr valign="top"> 
 	<td><b><font size="2">mysql</font></b></td>
 	<td><font size="2">A</font></td>
-	<td><font size="2">MySQL without transaction support</font></td>
+	    <td><font size="2">MySQL without transaction support. You can also set 
+			$db-&gt;clientFlags before connecting.</font></td>
 	<td><font size="2">Y/N</font></td>
 	<td><font size="2">MySQL client</font></td>
 	<td><font size="2">Unix and Windows</font></td>
@@ -399,8 +412,9 @@ You will use <code>$conn-><a href=#connect>Connect()</a></code> or
 	<td><font size="2">A</font></td>
 	<td><font size="2">Generic ODBC, not tuned for specific databases. To connect, 
 	  use <br>
-	  PConnect('DSN','user','pwd').</font></td>
-	<td><font size="2">? depends on database</font></td>
+			PConnect('DSN','user','pwd'). This is the base class for all odbc 
+			derived drivers.</font></td>
+	    <td><font size="2">? depends on database</font></td>
 	<td><font size="2">ODBC</font></td>
 	<td><font size="2">Unix and Windows. <a href="http://phpbuilder.com/columns/alberto20000919.php3?page=4">Unix 
 	  hints.</a></font></td>
@@ -487,17 +501,15 @@ You will use <code>$conn-><a href=#connect>Connect()</a></code> or
   C = user contributed or experimental driver. Might not fully support all of 
   the latest features of ADOdb. </p>
 <p>The column &quot;RecordCount() usable&quot; indicates whether RecordCount() 
-  return the number of rows, or returns -1 when a SELECT statement is executed. 
-  If this column displays Y/N then the RecordCount() is emulated when the global 
-  variable $ADODB_COUNTRECS=true, which is the default. Note that for large recordsets, 
-  it might be better to disable RecordCount() emulation because substantial amounts 
-  of memory are required to cache the recordset for counting. This variable is 
-  checked every time a query is executed, so you can selectively choose which 
-  recordsets to count.</p>
-<p>All databases that support $ADODB_FETCH_MODE work with ADODB_FETCH_NUM and 
-  ADODB_FETCH_ASSOC. How it supports ADODB_FETCH_DEFAULT is implementation dependant 
-  and might not be portable. Similarly ADODB_FETCH_BOTH is implementation dependant 
-  and is not supported by all databases.</p>
+	return the number of rows, or returns -1 when a SELECT statement is executed. 
+	If this column displays Y/N then the RecordCount() is emulated when the global 
+	variable $ADODB_COUNTRECS=true (this is the default). Note that for large 
+	recordsets, it might be better to disable RecordCount() emulation because 
+	substantial amounts of memory are required to cache the recordset for counting. Also
+	there is a speed penalty of 40-50% if emulation is required. This is emulated in
+	most databases except for PostgreSQL and MySQL.
+	This variable is checked every time a query is executed, so you can selectively 
+	choose which recordsets to count.</p>
 <p>
 
 <hr>
@@ -542,14 +554,14 @@ $<font color="#660000">conn</font>->Close(); # optional
   property is set to true when end-of-file is reached. If an error occurs in Execute(), 
   we return false instead of a recordset.</p>
 <p>The <code>$recordSet-&gt;fields[]</code> array is generated by the PHP database 
-  extension. Some database extensions only index by number and do not index the 
-  array by field name. To force indexing by name - that is associative arrays 
-  - use the $ADODB_FETCH_MODE global variable. Each recordset saves and uses whatever 
-  fetch mode was set when the recordset was created in Execute() or SelectLimit().
+	extension. Some database extensions only index by number and do not index 
+	the array by field name. To force indexing by name - that is associative arrays 
+	- use the SetFetchMode function. Each recordset saves and uses whatever fetch 
+	mode was set when the recordset was created in Execute() or SelectLimit(). 
 <pre>
-	$ADODB_<b>FETCH_MODE</b> = ADODB_FETCH_NUM;
+	$db->SetFetchMode(ADODB_FETCH_NUM);
 	$rs1 = $db->Execute('select * from table');
-	$ADODB_<b>FETCH_MODE</b> = ADODB_FETCH_ASSOC;
+	$db->SetFetchMode(ADODB_FETCH_ASSOC);
 	$rs2 = $db->Execute('select * from table');
 	print_r($rs1->fields); # shows <i>array([0]=>'v0',[1] =>'v1')</i>
 	print_r($rs2->fields); # shows <i>array(['col1']=>'v0',['col2'] =>'v1')</i>
@@ -557,7 +569,7 @@ $<font color="#660000">conn</font>->Close(); # optional
 <p>
  </p>
 <p>To get the number of rows in the select statement, you can use <font face="Courier New, Courier, mono">$recordSet-&gt;<a href="#recordcount">RecordCount</a>()</font>. 
- Note that it can return -1 if the number of rows returned cannot be determined.</p>
+	Note that it can return -1 if the number of rows returned cannot be determined.</p>
 <h3>Example 2: Advanced Select with Field Objects<a name="ex2"></a></h3>
 <p>Select a table, display the first two columns. If the second column is a date or timestamp, reformat the date to US format.</p>
 <pre>
@@ -678,13 +690,9 @@ $<font color="#663300">rs</font> = $<font color="#663300">conn</font>->Execute($
 <b>print</b> <b><font color="#336600">$<font color="#663300">rs</font>-&gt;GetMenu('GetCust','Mary Rosli');
 ?&gt;</font></b></font></pre>
 <p>Here we define a menu named GetCust, with the menu option 'Mary Rosli' selected. 
- See <a href="#getmenu"><font face="Courier New, Courier, mono">GetMenu</font></a><font face="Courier New, Courier, mono">()</font>. 
- We also have functions that return the recordset as an array: <font face="Courier New, Courier, mono"><a href="#getarray">GetArray</a>()</font>, 
- and as an associative array with the key being the first column: <a href="#getassoc">GetAssoc</a>().</p>
-<p>
-Aslo new to ADOdb 1.50 or later is the global variable $ADODB_FETCH_MODE. This allows you to define
-whether you want associative or numeric indexing for your arrays.<p>
-
+	See <a href="#getmenu"><font face="Courier New, Courier, mono">GetMenu</font></a><font face="Courier New, Courier, mono">()</font>. 
+	We also have functions that return the recordset as an array: <font face="Courier New, Courier, mono"><a href="#getarray">GetArray</a>()</font>, 
+	and as an associative array with the key being the first column: <a href="#getassoc">GetAssoc</a>().</p>
 <h3>Example 6: Connecting to 2 Databases At Once<a name="ex6"></a></h3>
 <pre>&lt;?
 <b>include</b>('adodb.inc.php');	 # load code common to ADOdb
@@ -732,9 +740,10 @@ $rs = $conn->Execute($sql); # Execute the query and get the empty recordset
 $record = array(); # Initialize an array to hold the record data to insert
 
 # Set the values for the fields in the record
+# Note that field names are case-insensitive
 $record["firstname"] = "Bob";
-$record["lastname"] = "Smith";
-$record["created"] = time();
+$record["lastNamE"] = "Smith";
+$record["creaTed"] = time();
 
 # Pass the empty recordset and the array containing the data to insert
 # into the GetInsertSQL function. The function will process the data and return
@@ -754,8 +763,9 @@ $rs = $conn->Execute($sql); # Execute the query and get the existing record to u
 $record = array(); # Initialize an array to hold the record data to update
 
 # Set the values for the fields in the record
+# Note that field names are case-insensitive
 $record["firstname"] = "Caroline";
-$record["lastname"] = "Smith"; # Update Caroline's lastname from Miranda to Smith
+$record["LasTnAme"] = "Smith"; # Update Caroline's lastname from Miranda to Smith
 
 # Pass the single record recordset and the array containing the data to update
 # into the GetUpdateSQL function. The function will process the data and return
@@ -784,7 +794,7 @@ $sql = "select * from adoxyz ";
 
 $pager = new ADODB_Pager($db,$sql);
 $pager->Render($rows_per_page=5);</pre>
-<p>This will create a basic record pager that looks like this: <a name=scr></a>
+<p>This will create a basic record pager that looks like this: <a name="scr"></a>
 <p>
 <table border=1 bgcolor=beige><tr>
 	<td> <a href="#scr"><code>|&lt;</code></a> &nbsp; <a href="#scr"><code>&lt;&lt;</code></a> 
@@ -847,7 +857,7 @@ $pager->Render($rows_per_page=5);</pre>
 <p>You can also allow display of html by setting $pager->htmlSpecialChars = false.
 <p>Some of the code used here was contributed by Iv&aacute;n Oliva and Cornel 
   G. </p>
-<h3><a name=ex9></a>Example 9: Exporting in CSV or Tab-Delimited Format</h3>
+<h3><a name="ex9"></a>Example 9: Exporting in CSV or Tab-Delimited Format</h3>
 <p>We provide some helper functions to export in comma-separated-value (CSV) and 
   tab-delimited formats:</p>
 <pre><b>include_once('/path/to/adodb/toexport.inc.php');</b><br>include_once('/path/to/adodb/adodb.inc.php');<br>
@@ -1178,19 +1188,19 @@ to 60 minutes.
 	GROUP BY CompanyName</font></code><font size="2"><br>
 	</font> </p>
 <font color="#000000"><hr>
-<h1>Class Reference<a name="Ref"></a></h1>
+<h1>Class Reference<a name="ref"></a></h1>
 <p>Function parameters with [ ] around them are optional.</p>
 </font> 
 <h2>Global Variables</h2>
-<h3>$ADODB_COUNTRECS</h3>
+<h3><font color="#000000"><a name="adodb_countrecs"></a></font>$ADODB_COUNTRECS</h3>
 <p>If the database driver API does not support counting the number of records 
-  returned in a SELECT statement, the function RecordCount() is emulated when 
-  the global variable $ADODB_COUNTRECS is set to true, which is the default. We 
-  emulate this by buffering the records, which can take up large amounts of memory 
-  for big recordsets. Set this variable to false for the best performance. This 
-  variable is checked every time a query is executed, so you can selectively choose 
-  which recordsets to count.</p>
-<h3><font color="#000000">$ADODB_CACHE_DIR</font></h3>
+	returned in a SELECT statement, the function RecordCount() is emulated when 
+	the global variable $ADODB_COUNTRECS is set to true, which is the default. 
+	We emulate this by buffering the records, which can take up large amounts 
+	of memory for big recordsets. Set this variable to false for the best performance. 
+	This variable is checked every time a query is executed, so you can selectively 
+	choose which recordsets to count.</p>
+<h3><font color="#000000"><a name="adodb_cache_dir"></a>$ADODB_CACHE_DIR</font></h3>
 <font color="#000000"> 
 <p>If you are using recordset caching, this is the directory to save your recordsets 
   in. Define this before you call any caching functions such as CacheExecute( 
@@ -1230,18 +1240,36 @@ to 60 minutes.
 	The behaviour of this default mode varies from driver to driver, so do not 
 	rely on ADODB_FETCH_DEFAULT. For portability, we recommend sticking to ADODB_FETCH_NUM 
 	or ADODB_FETCH_ASSOC. Many drivers do not support ADODB_FETCH_BOTH.</p>
-<p>For the odbc and ibase drivers and all drivers derived from them, ADODB_FETCH_ASSOC 
-	will by default generate recordsets where the field name keys are lower-cased. 
-	Use the constant ADODB_FETCH_CASE to change the case of the keys. There are 
-	3 possible values:</p>
-<p>0 = assoc lowercase field names. $rs-&gt;fields['orderid'] -- this is the default<br>
+<p><strong>SetFetchMode Function</strong></p>
+<p>Some programmers prefer to use a more object-oriented solution, where the fetch 
+	mode is set by a object function, <a href="#setfetchmode">SetFetchMode</a>. 
+	Once this function is called for a connection object, that connection object 
+	will ignore the global variable $ADODB_FETCH_MODE and will use the internal 
+	fetchMode property exclusively.</p>
+<pre>
+	$db->SetFetchMode(ADODB_FETCH_NUM);
+	$rs1 = $db->Execute('select * from table');
+	$db->SetFetchMode(ADODB_FETCH_ASSOC);
+	$rs2 = $db->Execute('select * from table');
+	print_r($rs1->fields); # shows <i>array([0]=>'v0',[1] =>'v1')</i>
+	print_r($rs2->fields); # shows <i>array(['col1']=>'v0',['col2'] =>'v1')</i></pre>
+<p>To retrieve the previous fetch mode, you can use check the $db-&gt;fetchMode 
+	property, or use the return value of SetFetchMode( ). 
+<p><strong><a name="adodb_assoc_case"></a>ADODB_ASSOC_CASE</strong></p>
+<p>You can control the associative fetch case for certain drivers which behave 
+	differently. For the sybase, oci8po, mssql, odbc and ibase drivers and all 
+	drivers derived from them, ADODB_ASSOC_CASE will by default generate recordsets 
+	where the field name keys are lower-cased. Use the constant ADODB_ASSOC_CASE 
+	to change the case of the keys. There are 3 possible values:</p>
+<p>0 = assoc lowercase field names. $rs-&gt;fields['orderid']<br>
 	1 = assoc uppercase field names. $rs-&gt;fields['ORDERID']<br>
-	2 = use native-case field names. $rs-&gt;fields['OrderID']</p>
+	2 = use native-case field names. $rs-&gt;fields['OrderID'] -- this is the 
+	default since ADOdb 2.90</p>
 <p>To use it, declare it before you incldue adodb.inc.php.</p>
-<p>define('ADODB_FETCH_CASE', 2); # use native-case for ADODB_FETCH_ASSOC<br>
+<p>define('ADODB_ASSOC_CASE', 2); # use native-case for ADODB_FETCH_ASSOC<br>
 	include('adodb.inc.php'); </p>
 <hr>
-<h2>ADOConnection<a name="ADOConnection"></a></h2>
+<h2>ADOConnection<a name="adoconnection"></a></h2>
 <p>Object that performs the connection to the database, executes SQL statements 
 	and has a set of utility functions for standardising the format of SQL statements 
 	for issues such as concatenation and date formats.</p>
@@ -1340,13 +1368,16 @@ to 60 minutes.
   not guaranteed to rollback existing failed transactions when 
   persistent connections are used. This is implemented in Oracle, 
   MySQL, PgSQL, MSSQL, ODBC currently. 
-</p>
+<p>Since ADOdb 3.11, you can force non-persistent 
+connections even if PConnect is called by defining the constant 
+ADODB_NEVER_PERSIST  before you call PConnect.
 <p><b>NConnect<a name="nconnect"></a>($host,[$user],[$password],[$database])</b></p>
-<p>Always force new connection. In contrast, PHP sometimes reuses connections when you use Connect() or
-PConnect(). Currently works only on oci8 drivers. For other drivers, NConnect() works like
-Connect().
+<p>Always force new connection. In contrast, PHP sometimes reuses connections 
+	when you use Connect() or PConnect(). Currently works only on mysql (PHP 4.3.0 
+	or later) and oci8-derived drivers. For other drivers, NConnect() works like 
+	Connect(). 
 <font color="#000000"> 
-<p><b>Execute<a name="Execute"></a>($sql,$inputarr=false)</b></p>
+<p><b>Execute<a name="execute"></a>($sql,$inputarr=false)</b></p>
 <p>Execute SQL statement $<b>sql</b> and return derived class of ADORecordSet 
 	if successful. Note that a record set is always returned on success, even 
 	if we are executing an insert or update statement.</p>
@@ -1375,7 +1406,7 @@ Variable binding in the oci8 driver.
 $rs = $db->Execute('select name from table where val=:key', 
   array('key' => 10));
 </pre>
-<p><b>CacheExecute<a name="CacheExecute"></a>([$secs2cache,]$sql,$inputarr=false)</b></p>
+<p><b>CacheExecute<a name="cacheexecute"></a>([$secs2cache,]$sql,$inputarr=false)</b></p>
 <p>Similar to Execute, except that the recordset is cached for $secs2cache seconds 
 	in the $ADODB_CACHE_DIR directory. If CacheExecute() is called again with 
 	the same parameters, same database, same userid, same password, and the cached 
@@ -1404,21 +1435,23 @@ only with SELECT statements.
 	overloaded </i>then ADOdb's caching is good because it reduces the load on 
 	your database server. If your database server is lightly loaded or much faster 
 	than your Web server, then caching could actually reduce performance. </p>
-<p><b>ExecuteCursor<a name="executecursor"></a>($sql,$cursorName='rs')</b></p>
+<p><b>ExecuteCursor<a name="executecursor"></a>($sql,$cursorName='rs',$parameters=false)</b></p>
 <p>Execute an Oracle stored procedure, and returns an Oracle REF cursor variable as 
 	a regular ADOdb recordset. Does not work with any other database except oci8. 
 	Thanks to Robert Tuttle for the design.
 <pre>
     $db = ADONewConnection("oci8"); 
     $db->Connect("foo.com:1521", "uid", "pwd", "FOO"); 
-    $rs = $db->ExecuteCursor("begin :cursorvar := getdata('param1'); end;", 'cursorvar'); 
+    $rs = $db->ExecuteCursor("begin :cursorvar := getdata(:param1); end;", 
+					'cursorvar',
+					array('param1'=>10)); 
     # $rs is now just like any other ADOdb recordset object<br>    rs2html($rs);</pre>
 <p>ExecuteCursor() is a helper function that does the following internally: 
 <pre>
 	$stmt = $db->Prepare("BEGIN :RS := SP_FOO(); END;");
 	$db->Parameter($stmt, $cur, 'RS', false, -1, OCI_B_CURSOR);
 	$rs = $db->Execute($stmt);</pre>
-<p><b>SelectLimit<a name="SelectLimit"></a>($sql,$numrows=-1,$offset=-1,$inputarr=false)</b></p>
+<p><b>SelectLimit<a name="selectlimit"></a>($sql,$numrows=-1,$offset=-1,$inputarr=false)</b></p>
 <p>Returns a recordset if successful. Returns false otherwise. Performs a select 
 	statement, simulating PostgreSQL's SELECT statement, LIMIT $numrows OFFSET 
 	$offset clause.</p>
@@ -1444,67 +1477,79 @@ only with SELECT statements.
 </pre>
 <p> 
 <p>Ron Wilson reports that SelectLimit does not work with UNIONs. 
-<p><b>CacheSelectLimit<a name="CacheSelectLimit"></a>([$secs2cache,] $sql, $numrows=-1,$offset=-1,$inputarr=false)</b></p>
+<p><b>CacheSelectLimit<a name="cacheselectlimit"></a>([$secs2cache,] $sql, $numrows=-1,$offset=-1,$inputarr=false)</b></p>
 <p>Similar to SelectLimit, except that the recordset returned is cached for $secs2cache 
 	seconds in the $ADODB_CACHE_DIR directory. </p>
 <p>Since 1.80, $secs2cache has been optional, and you can define the caching time 
 	in $connection-&gt;cacheSecs.</p>
 </font> 
 <pre><font color="#000000">	$conn-&gt;Connect(...);
-   	$conn-&gt;cacheSecs = 3600*24; // cache 24 hours
+   $conn-&gt;cacheSecs = 3600*24; // cache 24 hours
 	$rs = $conn-&gt;CacheSelectLimit('select * from table',10);</font></pre>
 <font color="#000000"> 
-<p><b>CacheFlush<a name="CacheFlush"></a>($sql=false)</b></p>
+<p><b>CacheFlush<a name="cacheflush"></a>($sql=false,$inputarr=false)</b></p>
 <p>Flush (delete) any cached recordsets for the SQL statement $sql in $ADODB_CACHE_DIR. 
-<p>If no parameter is passed in, then all adodb_*.cache files are deleted.
-<p>
-  If you want to flush all cached recordsets manually, execute the following PHP code (works 
-  only under Unix): <br>
-  <code> &nbsp; system(&quot;rm -f `find &quot;.$ADODB_CACHE_DIR.&quot; 
-  -name adodb_*.cache`&quot;);</code></p>
+<p>If no parameter is passed in, then all adodb_*.cache files are deleted. 
+<p> If you want to flush all cached recordsets manually, execute the following 
+	PHP code (works only under Unix): <br>
+	<code> &nbsp; system(&quot;rm -f `find &quot;.$ADODB_CACHE_DIR.&quot; -name 
+	adodb_*.cache`&quot;);</code></p>
 <p>For general cleanup of all expired files, you should use <a href="http://www.superscripts.com/tutorial/crontab.html">crontab</a> 
-  on Unix, or at.exe on Windows, and a shell script similar to the following:</p>
-<p><font face="Courier New, Courier, mono">#------------------------------------------------------ 
-  <br>
-  # TRUNCATING OUTPUT FILES OLDER THAN N DAYS <br>
-  # <br>
-  # Everything between the 3 lines above and their matching <br>
-  # lines at the bottom of this section show you how to <br>
-  # delete any log files whose modification time <br>
-  # is older than AGED. The AGED variable can be coded in the <br>
-  # script or passed on the command line. <br>
-  #------------------------------------------------------ <br>
-  # This particular example deletes files in the TMPPATH <br>
-  # directory with the string &quot;.cache&quot; in their name that <br>
-  # are more than 7 days old. <br>
-  #------------------------------------------------------ <br>
-  AGED=7 <br>
-  find ${TMPPATH} -mtime +$AGED | grep &quot;\.cache&quot; | xargs rm -f <br>
-</font>
-<p><b>ErrorMsg<a name="ErrorMsg"></a>()</b></p>
+	on Unix, or at.exe on Windows, and a shell script similar to the following:<font face="Courier New, Courier, mono"><br>
+	#------------------------------------------------------ <br>
+	# This particular example deletes files in the TMPPATH <br>
+	# directory with the string &quot;.cache&quot; in their name that <br>
+	# are more than 7 days old. <br>
+	#------------------------------------------------------ <br>
+	AGED=7 <br>
+	find ${TMPPATH} -mtime +$AGED | grep &quot;\.cache&quot; | xargs rm -f <br>
+	</font> </p>
+<p><b>MetaError<a name="metaerror"></a>($errno=false)</b></p>
+<p>Returns a virtualized error number, based on PEAR DB's error number system. You might
+need to include adodb-error.inc.php before you call this function. The parameter $errno
+is the native error number you want to convert. If you do not pass any parameter, MetaError
+will call ErrorNo() for you and convert it. If the error number cannot be virtualized, MetaError 
+will return -1 (DB_ERROR).</p>
+
+<p><b>MetaErrorMsg<a name="metaerrormsg"></a>($errno)</b></p>
+<p>Pass the error number returned by MetaError() for the equivalent textual error message.</p>
+<p><b>ErrorMsg<a name="errormsg"></a>()</b></p>
 <p>Returns the last status or error message. This can return a string even if 
-  no error occurs. In general you do not need to call this function unless an 
-  ADOdb function returns false on an error. </p>
+	no error occurs. In general you do not need to call this function unless an 
+	ADOdb function returns false on an error. </p>
 <p>Note: If <b>debug</b> is enabled, the SQL error message is always displayed 
-  when the <b>Execute</b> function is called.</p>
+	when the <b>Execute</b> function is called.</p>
 <p><b>ErrorNo<a name="errorno"></a>()</b></p>
 <p>Returns the last error number. Note that old versions of PHP (pre 4.0.6) do 
-  not support error number for ODBC. In general you do not need to call this function 
-  unless an ADOdb function returns false on an error.</p>
-<p><b>GenID<a name="genid"></a>($seqName = 'ADOdbseq',$startID=1)</b></p>
+	not support error number for ODBC. In general you do not need to call this 
+	function unless an ADOdb function returns false on an error.</p>
+</font>
+<p><font color="#000000"><b>SetFetchMode<a name="setfetchmode"></a>($mode)</b></font></p>
+<p><font color="#000000">Sets the current fetch mode for the connection and stores 
+	it in $db-&gt;fetchMode. Legal modes are ADODB_FETCH_ASSOC and ADODB_FETCH_NUM. 
+	For more info, see <a href="#adodb_fetch_mode">$ADODB_FETCH_MODE</a>.</font></p>
+<p><font color="#000000">Returns the previous fetch mode, which could be false 
+	if SetFetchMode( ) has not been called before.</font></p>
+<font color="#000000"> 
+<p><b>CreateSequence<a name="createseq"></a>($seqName = 'adodbseq',$startID=1)</b></p>
+<p>Create a sequence. The next time GenID( ) is called, the value returned will 
+	be $startID. Added in 2.60. 
+<p><b>DropSequenceD<a name="dropseq"></a>($seqName = 'adodbseq')</b></p>
+<p>Delete a sequence. Added in 2.60. 
+<p><b>GenID<a name="genid"></a>($seqName = 'adodbseq',$startID=1)</b></p>
 <p>Generate a sequence number (an integer except for mssql). Works for interbase, 
-  mysql, postgresql, oci8, oci8po, mssql, ODBC based (access,vfp,db2,etc) drivers 
-  currently. Uses $seqName as the name of the sequence. GenID() will automatically 
-  create the sequence for you if it does not exist (provided the userid has permission 
-  to do so). Otherwise you will have to create the sequence yourself. 
+	mysql, postgresql, oci8, oci8po, mssql, ODBC based (access,vfp,db2,etc) drivers 
+	currently. Uses $seqName as the name of the sequence. GenID() will automatically 
+	create the sequence for you if it does not exist (provided the userid has 
+	permission to do so). Otherwise you will have to create the sequence yourself. 
 <p> If your database driver emulates sequences, the name of the table is the sequence 
-  name. The table has one column, "id" which should be of type integer, or if 
-  you need something larger - numeric(16). 
+	name. The table has one column, "id" which should be of type integer, or if 
+	you need something larger - numeric(16). 
 <p> For ODBC and databases that do not support sequences natively (eg mssql, mysql), 
-  we create a table for each sequence. If the sequence has not been defined earlier, 
-  it is created with the starting value set in $startID.</p>
+	we create a table for each sequence. If the sequence has not been defined 
+	earlier, it is created with the starting value set in $startID.</p>
 <p>Note that the mssql driver's GenID() used to generate 16 byte GUID's. We now 
-  return integers since 1.90.</p>
+	return integers since 1.90.</p>
 <p><b>UpdateBlob<a name="updateblob"></a>($table,$column,$val,$where)</b></p>
 Allows you to store a blob (in $val) into $table into $column in a row at $where. 
 <p> Usage: 
@@ -1519,16 +1564,21 @@ Allows you to store a blob (in $val) into $table into $column in a row at $where
 	$conn->UpdateBlob('blobtable','blobcol',$blobvalue,'id=1');
 </pre>
 <p> Returns true if succesful, false otherwise. Supported by MySQL, PostgreSQL, 
-  Oci8, Oci8po and Interbase drivers. Other drivers might work, depending on the 
-  state of development.</p>
+	Oci8, Oci8po and Interbase drivers. Other drivers might work, depending on 
+	the state of development.</p>
 <p>Note that when an Interbase blob is retrieved using SELECT, it still needs 
-  to be decoded using $connection->DecodeBlob($blob); to derive the original value 
-  in versions of PHP before 4.1.0. 
+	to be decoded using $connection->DecodeBlob($blob); to derive the original 
+	value in versions of PHP before 4.1.0. 
+<p>For PostgreSQL, you can store your blob using blob oid's or as a bytea field. 
+	You can use bytea fields but not blob oid's currently with UpdateBlob( ). 
+	Conversely UpdateBlobFile( ) supports oid's, but not bytea data.<br>
+	<br>
+	If you do not pass in an oid, then UpdateBlob() assumes that you are storing 
+	in bytea fields.
 <p><b>UpdateClob<a name="updateclob"></a>($table,$column,$val,$where)</b></p>
 Allows you to store a clob (in $val) into $table into $column in a row at $where. 
 Similar to UpdateBlob (see above), but for Character Large OBjects. 
-<p> Usage: 
-<p> 
+<p> Usage:
 <pre>
 	# for oracle
 	$conn->Execute('INSERT INTO clobtable (id, clobcol) VALUES (1, empty_clob())');
@@ -1540,21 +1590,48 @@ Similar to UpdateBlob (see above), but for Character Large OBjects.
 </pre>
 <p><b>UpdateBlobFile<a name="updateblobfile"></a>($table,$column,$path,$where,$blobtype='BLOB')</b></p>
 <p>Similar to UpdateBlob, except that we pass in a file path to where the blob 
-  resides. 
-<p>returns true if successful, false otherwise.
+	resides.
+<p>For PostgreSQL, if you are using blob oid's, use this interface. This interface 
+	does not support bytea fields.
+<p>Returns true if successful, false otherwise. 
+<p><b>BlobEncode<a name="blobencode" id="blobencode"></a>($blob)</b> 
+<p>Some databases require blob's to be encoded manually before upload. Note if 
+	you use UpdateBlob( ) or UpdateBlobFile( ) the conversion is done automatically 
+	for you and you do not have to call this function. For PostgreSQL, currently, 
+	BlobEncode() can only be used for bytea fields.
+<p>Returns the encoded blob value.
+<p>Note that there is a connection property called <em>blobEncodeType</em> which 
+	has 3 legal values: 
+<p>false - no need to perform encoding or decoding.<br>
+	'I' - blob encoding required, and returned encoded blob is a numeric value 
+	(no need to quote).<br>
+	'C' - blob encoding required, and returned encoded blob is a character value 
+	(requires quoting).
+<p>This is purely for documentation purposes, so that programs that accept multiple 
+	database drivers know what is the right thing to do when processing blobs.
+<p><strong>BlobDecode<a name="blobdecode"></a>($blob)</strong> 
+<p>Some databases require blob's to be decoded manually after doing a select statement. 
+	If the database does not require decoding, then this function will return 
+	the blob unchanged. Currently BlobDecode is only required for one database, 
+	PostgreSQL, and only if you are using blob oid's (if you are using bytea fields, 
+	we auto-decode for you).</font><font color="#000000">
+<pre>$rs = $db-&gt;Execute(&quot;select bloboid from postgres_table where id=$key&quot;);
+$blob = $db-&gt;BlobDecode( reset($rs-&gt;fields) );</pre>
 <p><b>Replace<a name="replace"></a>($table, $arrFields, $keyCols,$autoQuote=false)</b></p>
-<p>Try to update a record, and if the record is not found,
-an insert statement is generated and executed. 
-Returns 0 on failure, 1 if update statement worked, 2 if no record
-was found and the insert was executed successfully. This differs from MySQL's replace which deletes
-the record and inserts a new record. This also means you cannot update the primary key. The only exception
-to this is Interbase and its derivitives, which uses delete and insert because of some Interbase API
-limitations.
-<p>The parameters are $table which is the table name, the $keyCols which is an associative array where
-the keys are the field names, and keyCols is the name of the primary key, or an array of field names if
-it is a compound key. If $autoQuote is set to true, then Replace() will quote all values that are non-numeric; 
-auto-quoting will not quote nulls. Note that auto-quoting will not work if you use SQL functions or operators.
-<p>Examples:
+<p>Try to update a record, and if the record is not found, an insert statement 
+	is generated and executed. Returns 0 on failure, 1 if update statement worked, 
+	2 if no record was found and the insert was executed successfully. This differs 
+	from MySQL's replace which deletes the record and inserts a new record. This 
+	also means you cannot update the primary key. The only exception to this is 
+	Interbase and its derivitives, which uses delete and insert because of some 
+	Interbase API limitations. 
+<p>The parameters are $table which is the table name, the $keyCols which is an 
+	associative array where the keys are the field names, and keyCols is the name 
+	of the primary key, or an array of field names if it is a compound key. If 
+	$autoQuote is set to true, then Replace() will quote all values that are non-numeric; 
+	auto-quoting will not quote nulls. Note that auto-quoting will not work if 
+	you use SQL functions or operators. 
+<p>Examples: 
 <pre>
 # single field primary key
 $ret = $db->Replace('atable', 
@@ -1577,21 +1654,21 @@ $ret = $db->Replace('atable2',
 	'firstname');	
 
 </pre>
-
 <p><b>GetUpdateSQL<a name="getupdatesql"></a>(&$rs, $arrFields, $forceUpdate=false,$magicq=false)</b></p>
 <p>Generate SQL to update a table given a recordset $rs, and the modified fields 
-  of the array $arrFields (which must be an associative array holding the column 
-  names and the new values) are compared with the current recordset. If $forceUpdate 
-  is true, then we also generate the SQL even if $arrFields is identical to $rs-&gt;fields.	
-  Requires the recordset to be associative. $magicq is used to indicate whether 
-  magic quotes are enabled (see qstr()).</p>
+	of the array $arrFields (which must be an associative array holding the column 
+	names and the new values) are compared with the current recordset. If $forceUpdate 
+	is true, then we also generate the SQL even if $arrFields is identical to 
+	$rs-&gt;fields. Requires the recordset to be associative. $magicq is used 
+	to indicate whether magic quotes are enabled (see qstr()). The field names in the array 
+	are case-insensitive.</p>
 <p><b>GetInsertSQL<a name="getinsertsql"></a>(&$rs, $arrFields,$magicq=false)</b></p>
 <p>Generate SQL to insert into a table given a recordset $rs. Requires the query 
-  to be associative. $magicq is used to indicate whether magic quotes are enabled 
-  (for qstr()).</p>
+	to be associative. $magicq is used to indicate whether magic quotes are enabled 
+	(for qstr()). The field names in the array are case-insensitive.</p>
 <b>PageExecute<a name="pageexecute"></a>($sql, $nrows, $page, $inputarr=false)</b> 
 <p>Used for pagination of recordset. $page is 1-based. See <a href="#ex8">Example 
-  8</a>.</p>
+	8</a>.</p>
 </font> 
 <p><font color="#000000"><b>CachePageExecute<a name="cachepageexecute"></a>($secs2cache, 
   $sql, $nrows, $page, $inputarr=false)</b> </font></p>
@@ -1599,16 +1676,17 @@ $ret = $db->Replace('atable2',
   <a href="#ex8">Example 8</a>. Caching version of PageExecute.</font></p>
 <font color="#000000"> 
 <p></p>
-<p><b>Close<a name="Close"></a>( )</b></p>
+<p><b>Close<a name="close"></a>( )</b></p>
 <p>Close the database connection. PHP4 proudly states that we no longer have to 
   clean up at the end of the connection because the reference counting mechanism 
   of PHP4 will automatically clean up for us.</p>
-<p><b>BeginTrans<a name="Begintrans"></a>( )</b></p>
-<p>Begin a transaction. Turns off autoCommit. Returns true if successful. Some 
-  databases will always return false if transaction support is not available. 
-  Interbase, Oracle and MSSQL support transactions. Any open transactions will 
-  be rolled back when the connection is closed.</p>
-<p> The following is the wrong way to use transactions: 
+  <p><b>StartTrans<a name="starttrans"></a>( )</b></p>
+  <p>Start a monitored transaction. As SQL statements are executed, ADOdb will monitor
+  for SQL errors, and if any are detected, when CompleteTrans() is called, we auto-rollback.
+  <p>
+  <p> To understand why StartTrans() is superior to BeginTrans(), 
+  let us examine a few ways of using BeginTrans().
+  The following is the wrong way to use transactions: 
 <pre>
 $DB->BeginTrans();
 $DB->Execute("update table1 set val=$val1 where id=$id");
@@ -1631,6 +1709,33 @@ $ok = $DB->Execute("update table1 set val=$val1 where id=$id");
 if ($ok) $ok = $DB->Execute("update table2 set val=$val2 where id=$id");
 $DB->CommitTrans($ok);
 </pre>
+<p> Now it is a headache monitoring $ok all over the place. StartTrans() is an
+improvement because it monitors all SQL errors for you. This is particularly
+useful if you are calling black-box functions in which SQL queries might be executed.
+ Also all BeginTrans, CommitTrans and RollbackTrans calls inside a StartTrans block 
+  will be disabled, so even if the black box function does a commit, it will be ignored.
+<pre>
+$DB->StartTrans();
+CallBlackBox();
+$DB->Execute("update table1 set val=$val1 where id=$id");
+$DB->Execute("update table2 set val=$val2 where id=$id");
+$DB->CompleteTrans($ok);
+</pre>
+<p>Note that a StartTrans blocks are nestable, the inner blocks are ignored.
+ <p><b>CompleteTrans<a name="completetrans"></a>($autoComplete=true)</b></p>
+  <p>Complete a transaction called with StartTrans(). This function monitors
+  for SQL errors, and will commit if no errors have occured, otherwise it will rollback. 
+  Returns true on commit, false on rollback. If the parameter $autoComplete is true
+  monitor sql errors and commit and rollback as appropriate. Set $autoComplete to false 
+  to force rollback even if no SQL error detected.
+<p><b>BeginTrans<a name="begintrans"></a>( )</b></p>
+<p>Begin a transaction. Turns off autoCommit. Returns true if successful. Some 
+  databases will always return false if transaction support is not available. 
+  Interbase, Oracle and MSSQL support transactions. Any open transactions will 
+  be rolled back when the connection is closed.</p>
+ <p>Note that <a href=#starttrans>StartTrans()</a> and CompleteTrans() is a superior method of 
+ handling transactions, available since ADOdb 3.40. For a explanation, see the <a href=#starttrans>StartTrans()</a> documentation.
+
 <p>You can also use the ADOdb <a href=#errorhandling>error handler</a> to die 
   and rollback your transactions for you transparently. Some buggy database extensions 
   are known to commit all outstanding tranasactions, so you might want to explicitly 
@@ -1639,21 +1744,21 @@ $DB->CommitTrans($ok);
  <p>Since ADOdb 2.50, you are able to detect when you are inside a transaction. Check
  that $connection->transCnt > 0. This variable is incremented whenever BeginTrans() is called,
  and decremented whenever RollbackTrans() or CommitTrans() is called.
-<p><b>CommitTrans<a name="CommitTrans"></a>($ok=true)</b></p>
+<p><b>CommitTrans<a name="committrans"></a>($ok=true)</b></p>
 <p>End a transaction successfully. Returns true if successful. If the database 
   does not support transactions, will return true also as data is always committed. 
 </p>
 <p>If you pass the parameter $ok=false, the data is rolled back. See example in 
   BeginTrans().</p>
-<p><b>RollbackTrans<a name="RollbackTrans"></a>( )</b></p>
+<p><b>RollbackTrans<a name="rollbacktrans"></a>( )</b></p>
 <p>End a transaction, rollback all changes. Returns true if successful. If the 
   database does not support transactions, will return false as data is never rollbacked. 
 </p>
-<p><b>GetOne<a name="getone"></a>($sql)</b></p>
+<p><b>GetOne<a name="getone"></a>($sql,$inputarr=false)</b></p>
 <p>Executes the SQL and returns the first field of the first row. The recordset 
   and remaining rows are discarded for you automatically. If an error occur, false 
   is returned.</p>
-<p><b>GetRow<a name="getrow"></a>($sql)</b></p>
+<p><b>GetRow<a name="getrow"></a>($sql,$inputarr=false)</b></p>
 <p>Executes the SQL and returns the first row as an array. The recordset and remaining 
   rows are discarded for you automatically. If an error occurs, false is returned.</p>
 <p><b>GetAll<a name="getall"></a>($sql)</b></p>
@@ -1661,22 +1766,22 @@ $DB->CommitTrans($ok);
 <p><font color="#000000">Executes the SQL and returns the all the rows as a 2-dimensional 
   array. The recordset is discarded for you automatically. If an error occurs, 
   false is returned.</font></p>
- <p><b>GetCol<a name="getcol"></a>($sql)</b></p>
+ <p><b>GetCol<a name="getcol"></a>($sql,$inputarr=false,$trim=false)</b></p>
 
 <p><font color="#000000">Executes the SQL and returns all elements of the first column as a 
 1-dimensional array. The recordset is discarded for you automatically. If an error occurs, 
   false is returned.</font></p>
 <p><font color="#000000"><b>CacheGetOne<a name="cachegetone"></a>([$secs2cache,] 
-  $sql), CacheGetRow<a name="cachegetrow"></a>([$secs2cache,] $sql), CacheGetAll<a name="cachegetall"></a>([$secs2cache,] 
-  $sql), CacheGetCol<a name="cachegetcol"></a>([$secs2cache,] 
-  $sql)</b></font></p>
+  $sql,$inputarr=false), CacheGetRow<a name="cachegetrow"></a>([$secs2cache,] $sql,$inputarr=false), CacheGetAll<a name="cachegetall"></a>([$secs2cache,] 
+  $sql,$inputarr=false), CacheGetCol<a name="cachegetcol"></a>([$secs2cache,] 
+  $sql,$inputarr=false,$trim=false)</b></font></p>
 <font color="#000000"> 
 <p>Similar to above Get* functions, except that the recordset is serialized and 
   cached in the $ADODB_CACHE_DIR directory for $secs2cache seconds. Good for speeding 
   up queries on rarely changing data. Note that the $secs2cache parameter is optional. 
   If omitted, we use the value in $connection-&gt;cacheSecs (default is 3600 seconds, 
   or 1 hour).</p>
-<p><b>Prepare<a name="Prepare"></a>($sql )</b></p>
+<p><b>Prepare<a name="prepare"></a>($sql )</b></p>
 </font> 
 <p><font color="#000000">Prepares an SQL query for repeated execution. Only supported 
   internally by interbase, oci8 and selected ODBC-based drivers, otherwise it 
@@ -1690,7 +1795,10 @@ $DB->CommitTrans($ok);
 <p>Example:</p>
 <pre><font color="#000000">$stmt = $DB-&gt;Prepare('insert into table (col1,col2) values (?,?)');
 for ($i=0; $i &lt; $max; $i++)<br></font>	$DB-&gt;<font color="#000000">Execute($stmt,array((string) rand(), $i));
-</font></pre><font color="#000000"> 
+</font></pre><font color="#000000">
+<p>
+Important: Due to limitations or bugs in PHP, if you are getting errors when you using prepared queries, try
+setting $ADODB_COUNTRECS = false before preparing. This behaviour has been observed with ODBC. 
 <p><b>PrepareSP</b><b><a name="preparesp"></a></b><b>($sql)</b></p>
 <p>In the mssql driver, preparing stored procedures requires a special function 
   call, mssql_init( ), which is called by this function. PrepareSP( ) is available 
@@ -1703,7 +1811,7 @@ for ($i=0; $i &lt; $max; $i++)<br></font>	$DB-&gt;<font color="#000000">Execute(
   and Oracle oci8. The parameters are:<br>
   <br>
   $<i><b>stmt</b></i> Statement returned by Prepare() or PrepareSP().<br>
-  $<i><b>var</b></i> PHP variable to bind to.<br>
+  $<i><b>var</b></i> PHP variable to bind to. Make sure you pre-initialize it!<br>
   $<i><b>name</b></i> Name of stored procedure variable name to bind to.<br>
   [$<i><b>isOutput</b></i>] Indicates direction of parameter 0/false=IN 1=OUT 
   2= IN/OUT. This is ignored in oci8 as this driver auto-detects the direction.<br>
@@ -1739,7 +1847,7 @@ $db-&gt;Parameter($stmt,$i, 'i');
 for ($cnt=0; $cnt &lt; 1000; $cnt++) {
 	$id = $cnt; <br>	$i = $cnt * $cnt; <font color="green"># works with oci8!</font>
 	$db-&gt;Execute($stmt); <br>}</pre>
-<p><b>Bind<a name="Bind"></a>($stmt, $var, $size=4001, $type=false, $name=false)</b></p>
+<p><b>Bind<a name="bind"></a>($stmt, $var, $size=4001, $type=false, $name=false)</b></p>
 </font> 
 <p><font color="#000000">This is a low-level function supported only by the oci8 
   driver. <b>Avoid using</b> unless you only want to support Oracle. The Parameter( 
@@ -1775,170 +1883,206 @@ for ($i = 0; $i &lt; $max; $i++) {
    $p1 = ?; $p2 = ?; $p3 = ?;
    $DB-&gt;Execute($stmt);
 }</pre>
-<font color="#000000"> 
+<font color="#000000"> </font>
+<p><font color="#000000"><b>fnExecute and fnCacheExecute properties<a name="fnexecute" id="fnexecute"></a></b></font></p>
+<p>These two properties allow you to define bottleneck functions for all sql statements 
+	processed by ADOdb. This allows you to perform statistical analysis and query-rewriting 
+	of your sql. For example, to count all cached queries and non-cached queries, 
+	you can do this:</p>
+<pre><font color="#006600"># $db is the connection object</font>
+function CountExecs($db, $sql, $inputarray)
+{<br>global $EXECS;  $EXECS++;
+}
+
+<font color="#006600"># $db is the connection object</font>
+function CountCachedExecs($db, $secs2cache, $sql, $inputarray)
+{<br>global $CACHED; $CACHED++;
+}
+<br>$db = NewADOConnection('mysql');
+$db-&gt;Connect(...);
+$db-&gt;<strong>fnExecute</strong> = 'CountExecs';
+$db-&gt;<strong>fnCacheExecute</strong> = 'CountCachedExecs';
+ :
+ :<br><font color="#006600"># After many sql statements:</font>`
+printf(&quot;&lt;p&gt;Total queries=%d; total cached=%d&lt;/p&gt;&quot;,$EXECS+$CACHED, $CACHED);</pre>
+<p>The fnExecute function is called before the sql is parsed and executed, so 
+	you can perform a query rewrite. If you are passing in a prepared statement, 
+	then $sql is an array (see <a href="#prepare">Prepare</a>). The fnCacheExecute 
+	function is only called if the recordset returned was cached.<font color="#000000"> 
+	The function parameters match the Execute and CacheExecute functions respectively, 
+	except that $this (the connection object) is passed as the first parameter.</font></p>
+<font color="#000000">
 <hr>
 <h3>ADOConnection Utility Functions</h3>
 <p><b>BlankRecordSet<a name="blankrecordset"></a>([$queryid])</b></p>
 <p>No longer available - removed since 1.99.</p>
-<p><b>Concat<a name="Concat"></a>($s1,$s2,....)</b></p>
+<p><b>Concat<a name="concat"></a>($s1,$s2,....)</b></p>
 <p>Generates the sql string used to concatenate $s1, $s2, etc together. Uses the 
-  string in the concat_operator field to generate the concatenation. Override 
-  this function if a concatenation operator is not used, eg. MySQL.</p>
+	string in the concat_operator field to generate the concatenation. Override 
+	this function if a concatenation operator is not used, eg. MySQL.</p>
 <p>Returns the concatenated string.</p>
-<p><b>DBDate<a name="DBDate"></a>($date)</b></p>
+<p><b>DBDate<a name="dbdate"></a>($date)</b></p>
 <p>Format the $<b>date</b> in the format the database accepts; this can be a Unix 
-  integer timestamp or an ISO format Y-m-d. Uses the fmtDate field, which holds 
-  the format to use. If null or false or '' is passed in, it will be converted 
-  to an SQL null.</p>
+	integer timestamp or an ISO format Y-m-d. Uses the fmtDate field, which holds 
+	the format to use. If null or false or '' is passed in, it will be converted 
+	to an SQL null.</p>
 <p>Returns the date as a quoted string.</p>
-<p><b>DBTimeStamp<a name="DBTimeStamp"></a>($ts)</b></p>
+<p><b>DBTimeStamp<a name="dbtimestamp"></a>($ts)</b></p>
 <p>Format the timestamp $<b>ts</b> in the format the database accepts; this can 
-  be a Unix integer timestamp or an ISO format Y-m-d H:i:s. Uses the fmtTimeStamp 
-  field, which holds the format to use. If null or false or '' is passed in, it 
-  will be converted to an SQL null.</p>
+	be a Unix integer timestamp or an ISO format Y-m-d H:i:s. Uses the fmtTimeStamp 
+	field, which holds the format to use. If null or false or '' is passed in, 
+	it will be converted to an SQL null.</p>
 <p>Returns the timestamp as a quoted string.</p>
 <p><b>qstr<a name="qstr"></a>($s,[$magic_quotes_enabled</b>=false]<b>)</b></p>
 <p>Quotes a string to be sent to the database. The $<b>magic_quotes_enabled</b> 
-  parameter may look funny, but the idea is if you are quoting a string extracted 
-  from a POST/GET variable, then pass get_magic_quotes_gpc() as the second parameter. 
-  This will ensure that the variable is not quoted twice, once by <i>qstr</i> 
-  and once by the <i>magic_quotes_gpc</i>.</p>
+	parameter may look funny, but the idea is if you are quoting a string extracted 
+	from a POST/GET variable, then pass get_magic_quotes_gpc() as the second parameter. 
+	This will ensure that the variable is not quoted twice, once by <i>qstr</i> 
+	and once by the <i>magic_quotes_gpc</i>.</p>
 <p>Eg.<font face="Courier New, Courier, mono"> $s = $db-&gt;qstr(HTTP_GET_VARS['name'],get_magic_quotes_gpc());</font></p>
 <p>Returns the quoted string.</p>
 <p><b>Quote<a name="quote"></a>($s)</b></p>
-<p>Quotes the string, automatically checking get_magic_quotes_gpc() first. 
-If get_magic_quotes_gpc() is set, then we do not quote the string.
-<p><b>Affected_Rows<a name="Affected_Rows"></a>( )</b></p>
+<p>Quotes the string, automatically checking get_magic_quotes_gpc() first. If 
+	get_magic_quotes_gpc() is set, then we do not quote the string. 
+<p><b>Affected_Rows<a name="affected_rows"></a>( )</b></p>
 <p>Returns the number of rows affected by a update or delete statement. Returns 
-  false if function not supported.</p>
+	false if function not supported.</p>
 <p>Not supported by interbase/firebird currently. </p>
-<p><b>Insert_ID<a name="Inserted_ID"></a>( )</b></p>
+<p><b>Insert_ID<a name="inserted_id"></a>( )</b></p>
 <p>Returns the last autonumbering ID inserted. Returns false if function not supported. 
 </p>
 <p>Only supported by databases that support auto-increment or object id's, such 
-  as PostgreSQL, MySQL and MSSQL currently. PostgreSQL returns the OID, which 
-  can change on a database reload. This function might only give accurate results 
-  if you perform it in a transaction if you are using persistent connections. 
-  This is because the connection you are assigned for one Execute(&nbsp;) might 
-  differ from the next Execute(&nbsp;).</p>
+	as PostgreSQL, MySQL and MSSQL currently. PostgreSQL returns the OID, which 
+	can change on a database reload.</p>
 <p><b>MetaDatabases<a name="metadatabases"></a>()</b></p>
 <p>Returns a list of databases available on the server as an array. You have to 
-  connect to the server first. Only available for ODBC, MySQL and ADO.</p>
+	connect to the server first. Only available for ODBC, MySQL and ADO.</p>
 <p><b>MetaTables<a name="metatables"></a>()</b></p>
 <p>Returns an array of tables and views for the current database as an array. 
-  The array should exclude system catalog tables if possible.</p>
+	The array should exclude system catalog tables if possible.</p>
 <p><b>MetaColumns<a name="metacolumns"></a>($table)</b></p>
 <p>Returns an array of ADOFieldObject's, one field object for every column of 
-  $table. Currently Sybase does not recognise date types, and ADO cannot identify 
-  the correct data type (so we default to varchar).. </p>
+	$table. Currently Sybase does not recognise date types, and ADO cannot identify 
+	the correct data type (so we default to varchar).. </p>
 <p><b>MetaColumnNames<a name="metacolumnames"></a>($table)</b></p>
 <p>Returns an array of column names for $table. 
+<p><font color="#000000"><b>MetaPrimaryKeys<a name="metaprimarykeys"></a>($table)</b></font></font> 
+<p><font color="#000000">Returns an array containing column names that are the 
+	primary keys of $table. Only supported by mysql, postgres, oci8 currently. </font><font color="#000000">
+<p><font color="#000000"><b>ServerInfo<a name="serverinfo" id="serverinfo"></a>($table)</b></font></font> 
+<p><font color="#000000">Returns an array of containing two elements 'description' 
+	and 'version'. The 'description' element contains the string description of 
+	the database. The 'version' naturally holds the version number (which is also 
+	a string).</font><font color="#000000">
 <hr>
-<h2>ADORecordSet<a name="ADORecordSet"></a></h2>
+<h2>ADORecordSet<a name="adorecordset"></a></h2>
 <p>When an SQL statement successfully is executed by <font face="Courier New, Courier, mono">ADOConnection-&gt;Execute($sql),</font>an 
-  ADORecordSet object is returned. This object contains a virtual cursor so we 
-  can move from row to row, functions to obtain information about the columns 
-  and column types, and helper functions to deal with formating the results to 
-  show to the user.</p>
+	ADORecordSet object is returned. This object contains a virtual cursor so 
+	we can move from row to row, functions to obtain information about the columns 
+	and column types, and helper functions to deal with formating the results 
+	to show to the user.</p>
 <h3>ADORecordSet Fields</h3>
 <p><b>fields: </b>Array containing the current row. This is not associative, but 
-  is an indexed array from 0 to columns-1. See also the function <b><a href="#fields">Fields</a></b>, 
-  which behaves like an associative array.</p>
+	is an indexed array from 0 to columns-1. See also the function <b><a href="#fields">Fields</a></b>, 
+	which behaves like an associative array.</p>
 <p><b>dataProvider</b>: The underlying mechanism used to connect to the database. 
-  Normally set to <b>native</b>, unless using <b>odbc</b> or <b>ado</b>.</p>
+	Normally set to <b>native</b>, unless using <b>odbc</b> or <b>ado</b>.</p>
 <p><b>blobSize</b>: Maximum size of a char, string or varchar object before it 
-  is treated as a Blob (Blob's should be shown with textarea's). See the <a href="#metatype">MetaType</a> 
-  function.</p>
+	is treated as a Blob (Blob's should be shown with textarea's). See the <a href="#metatype">MetaType</a> 
+	function.</p>
 <p><b>sql</b>: Holds the sql statement used to generate this record set.</p>
 <p><b>canSeek</b>: Set to true if Move( ) function works.</p>
 <p><b>EOF</b>: True if we have scrolled the cursor past the last record.</p>
 <h3>ADORecordSet Functions</h3>
 <p><b>ADORecordSet( )</b></p>
 <p>Constructer. Normally you never call this function yourself.</p>
-<p><b>GetAssoc<a name="GetAssoc"></a>([$force_array])</b></p>
+<p><b>GetAssoc<a name="getassoc"></a>([$force_array])</b></p>
 <p>Generates an associative array from the recordset if the number of columns 
-  is greater than 2. The array is generated from the current cursor position till 
-  EOF. The first column of the recordset becomes the key to the rest of the array. 
-  If the columns is equal to two, then the key directly maps to the value unless 
-  $force_array is set to true, when an array is created for each key. Inspired 
-  by PEAR's getAssoc.</p>
+	is greater than 2. The array is generated from the current cursor position 
+	till EOF. The first column of the recordset becomes the key to the rest of 
+	the array. If the columns is equal to two, then the key directly maps to the 
+	value unless $force_array is set to true, when an array is created for each 
+	key. Inspired by PEAR's getAssoc.</p>
 <p>Example:</p>
 <p>We have the following data in a recordset:</p>
 <p>row1: Apple, Fruit, Edible<br>
-  row2: Cactus, Plant, Inedible<br>
-  row3: Rose, Flower, Edible</p>
+	row2: Cactus, Plant, Inedible<br>
+	row3: Rose, Flower, Edible</p>
 <p>GetAssoc will generate the following associative array:</p>
 <p>Apple =&gt; [Fruit, Edible]<br>
-  Cactus =&gt; [Plant, Inedible]<br>
-  Rose =&gt; [Flower,Edible]</p>
+	Cactus =&gt; [Plant, Inedible]<br>
+	Rose =&gt; [Flower,Edible]</p>
 <p>Returns:</p>
 <p>The associative array, or false if an error occurs.</p>
-<p><b>GetArray<a name="GetArray"></a>([$number_of_rows])</b></p>
-<p>Generate a 2-dimensional array of records from the current cursor position, indexed from 
-  0 to $number_of_rows - 1. If $number_of_rows is undefined, till EOF.</p>
-<p><b>GetRows<a name="GetRows"></a>([$number_of_rows])</b></p>
-Generate a 2-dimensional array of records from the current cursor position. Synonym for GetArray() 
-for compatibility with Microsoft ADO. 
-<p> <b>GetMenu<a name="GetMenu"></a>($name, [$default_str=''], [$blank1stItem=true], 
-  [$multiple_select=false], [$size=0], [$moreAttr=''])</b></p>
+<p><b>GetArray<a name="getarray"></a>([$number_of_rows])</b></p>
+<p>Generate a 2-dimensional array of records from the current cursor position, 
+	indexed from 0 to $number_of_rows - 1. If $number_of_rows is undefined, till 
+	EOF.</p>
+<p><b>GetRows<a name="getrows"></a>([$number_of_rows])</b></p>
+Generate a 2-dimensional array of records from the current cursor position. Synonym 
+for GetArray() for compatibility with Microsoft ADO. 
+<p> <b>GetMenu<a name="getmenu"></a>($name, [$default_str=''], [$blank1stItem=true], 
+	[$multiple_select=false], [$size=0], [$moreAttr=''])</b></p>
 <p>Generate a HTML menu (&lt;select&gt;&lt;option&gt;&lt;option&gt;&lt;/select&gt;). 
-  The first column of the recordset (fields[0]) will hold the string to display 
-  in the option tags. If the recordset has more than 1 column, the second column 
-  (fields[1]) is the value to send back to the web server.. The menu will be given 
-  the name $<i>name</i>. 
+	The first column of the recordset (fields[0]) will hold the string to display 
+	in the option tags. If the recordset has more than 1 column, the second column 
+	(fields[1]) is the value to send back to the web server.. The menu will be 
+	given the name $<i>name</i>. 
 <p> If $<i>default_str</i> is defined, then if $<i>default_str</i> == fields[0], 
-  that field is selected. If $<i>blank1stItem</i> is true, the first option is 
-  empty. $<i>Default_str</i> can be array for a multiple select listbox.</p>
+	that field is selected. If $<i>blank1stItem</i> is true, the first option 
+	is empty. You can also set the first option strings by setting $blank1stItem 
+	= "$value:$text".</p>
+<p>$<i>Default_str</i> can be array for a multiple select listbox.</p>
 <p>To get a listbox, set the $<i>size</i> to a non-zero value (or pass $default_str 
-  as an array). If $<i>multiple_select</i> is true then a listbox will be generated 
-  with $<i>size</i> items (or if $size==0, then 5 items) visible, and we will 
-  return an array to a server. Lastly use $<i>moreAttr </i> to add additional 
-  attributes such as javascript or styles. </p>
+	as an array). If $<i>multiple_select</i> is true then a listbox will be generated 
+	with $<i>size</i> items (or if $size==0, then 5 items) visible, and we will 
+	return an array to a server. Lastly use $<i>moreAttr </i> to add additional 
+	attributes such as javascript or styles. </p>
 <p>Menu Example 1: <code>GetMenu('menu1','A',true)</code> will generate a menu: 
-  <select name='menu1'>
-	<option> 
-	<option value=1 selected>A 
-	<option value=2>B 
-	<option value=3>C 
-  </select>
-  for the data (A,1), (B,2), (C,3). Also see <a href="#ex5">example 5</a>.</p>
+	<select name='menu1'>
+		<option> 
+		<option value=1 selected>A 
+		<option value=2>B 
+		<option value=3>C 
+	</select>
+	for the data (A,1), (B,2), (C,3). Also see <a href="#ex5">example 5</a>.</p>
 <p>Menu Example 2: For the same data, <code>GetMenu('menu1',array('A','B'),false)</code> 
-  will generate a menu with both A and B selected: <br>
-  <select name='menu1' multiple size=3>
-	<option value=1 selected>A 
-	<option value=2 selected>B 
-	<option value=3>C 
-  </select>
-<p> <b>GetMenu2<a name="GetMenu2"></a>($name, [$default_str=''], [$blank1stItem=true], 
-  [$multiple_select=false], [$size=0], [$moreAttr=''])</b></p>
+	will generate a menu with both A and B selected: <br>
+	<select name='menu1' multiple size=3>
+		<option value=1 selected>A 
+		<option value=2 selected>B 
+		<option value=3>C 
+	</select>
+<p> <b>GetMenu2<a name="getmenu2"></a>($name, [$default_str=''], [$blank1stItem=true], 
+	[$multiple_select=false], [$size=0], [$moreAttr=''])</b></p>
 <p>This is nearly identical to GetMenu, except that the $<i>default_str</i> is 
-  matched to fields[1] (the option values).</p>
+	matched to fields[1] (the option values).</p>
 <p>Menu Example 3: Given the data in menu example 2, <code>GetMenu2('menu1',array('1','2'),false)</code> 
-  will generate a menu with both A and B selected in menu example 2, but this 
-  time the selection is based on the 2nd column, which holds the values to return 
-  to the Web server. 
-<p><b>UserDate<a name="UserDate"></a>($str, [$fmt])</b></p>
+	will generate a menu with both A and B selected in menu example 2, but this 
+	time the selection is based on the 2nd column, which holds the values to return 
+	to the Web server. 
+<p><b>UserDate<a name="userdate"></a>($str, [$fmt])</b></p>
 <p>Converts the date string $<b>str</b> to another format.UserDate calls UnixDate 
-  to parse $<b>str</b>, and $<b>fmt</b> defaults to Y-m-d if not defined.</p>
-<p><b>UserTimeStamp<a name="UserTimeStamp"></a>($str, [$fmt])</b></p>
+	to parse $<b>str</b>, and $<b>fmt</b> defaults to Y-m-d if not defined.</p>
+<p><b>UserTimeStamp<a name="usertimestamp"></a>($str, [$fmt])</b></p>
 <p>Converts the timestamp string $<b>str</b> to another format. The timestamp 
-  format is Y-m-d H:i:s, as in '2002-02-28 23:00:12'. UserTimeStamp calls UnixTimeStamp 
-  to parse $<b>str</b>, and $<b>fmt</b> defaults to Y-m-d H:i:s if not defined. 
+	format is Y-m-d H:i:s, as in '2002-02-28 23:00:12'. UserTimeStamp calls UnixTimeStamp 
+	to parse $<b>str</b>, and $<b>fmt</b> defaults to Y-m-d H:i:s if not defined. 
 </p>
 <p><b>UnixDate<a name="unixdate"></a>($str)</b></p>
 <p>Parses the date string $<b>str</b> and returns it in unix mktime format (eg. 
-  a number indicating the seconds after January 1st, 1970). Expects the date to 
-  be in Y-m-d H:i:s format, except for Sybase and Microsoft SQL Server, where 
-  M d Y is also accepted (the 3 letter month strings are controlled by a global 
-  array, which might need localisation).</p>
+	a number indicating the seconds after January 1st, 1970). Expects the date 
+	to be in Y-m-d H:i:s format, except for Sybase and Microsoft SQL Server, where 
+	M d Y is also accepted (the 3 letter month strings are controlled by a global 
+	array, which might need localisation).</p>
 <p>This function is available in both ADORecordSet and ADOConnection since 1.91.</p>
 <p><b>UnixTimeStamp<a name="unixtimestamp"></a>($str)</b></p>
 <p>Parses the timestamp string $<b>str</b> and returns it in unix mktime format 
-  (eg. a number indicating the seconds after January 1st, 1970). Expects the date 
-  to be in Y-m-d H:i:s format, except for Sybase and Microsoft SQL Server, where 
-  M d Y h:i:sA is also accepted (the 3 letter month strings are controlled by 
-  a global array, which might need localisation).</p>
-</font>
+	(eg. a number indicating the seconds after January 1st, 1970). Expects the 
+	date to be in Y-m-d H:i:s format, except for Sybase and Microsoft SQL Server, 
+	where M d Y h:i:sA is also accepted (the 3 letter month strings are controlled 
+	by a global array, which might need localisation).</p>
+</font> 
 <p><font color="#000000">This function is available in both ADORecordSet and ADOConnection 
   since 1.91. </font></p>
 <p><font color="#000000"><b>OffsetDate<a name="offsetdate"></a>($dayFraction, 
@@ -1976,9 +2120,12 @@ $conn-&gt;Execute(&quot;UPDATE TABLE SET dodate=$fld WHERE ID=$id&quot;);</pre>
  $sqlfn = $db->SQLDate('Y-\QQ','postdate'); # get sql that formats postdate to output 2002-Q1
  $sql = "SELECT $sqlfn,SUM(cogs) FROM table GROUP BY $sqlfn ORDER BY 1 desc";
  </pre>
-<p><b>MoveNext<a name="MoveNext"></a>( )</b></p>
-<p>Move the internal cursor to the next row. The <b>fields</b> array is automatically 
-  updated. Return false if unable to do so, otherwise true.</p>
+<p><b>MoveNext<a name="movenext"></a>( )</b></p>
+<p>Move the internal cursor to the next row. The <i>$this->fields</i> array is automatically 
+  updated. Return false if unable to do so (normally because EOF has been reached), otherwise true.
+  If EOF is reached, then the $this->fields array is set to false (this was only implemented consistently
+  in ADOdb 3.30).
+  Note that if false is returned, then the previous array in <b>$this->fields</b> is preserved.</p>
 <p>Example:</p>
 <pre>$rs = $db-&gt;Execute($sql);
 if ($rs) 
@@ -1986,7 +2133,7 @@ if ($rs)
  		ProcessArray($rs->fields);	
 		$rs->MoveNext();
 	} </pre>
-<p><b>Move<a name="Move"></a>($to)</b></p>
+<p><b>Move<a name="move"></a>($to)</b></p>
 <p>Moves the internal cursor to a specific row $<b>to</b>. Rows are zero-based 
   eg. 0 is the first row. The <b>fields</b> array is automatically updated. For 
   databases that do not support scrolling internally, ADOdb will simulate forward 
@@ -1998,9 +2145,9 @@ if ($rs)
 <p>Returns true or false. If false, the internal cursor is not moved in most implementations, 
   so AbsolutePosition( ) will return the last cursor position before the Move( 
   ). </p>
-<p><b>MoveFirst<a name="MoveFirst"></a>()</b></p>
+<p><b>MoveFirst<a name="movefirst"></a>()</b></p>
 <p>Internally calls Move(0). Note that some databases do not support this function.</p>
-<p><b>MoveLast<a name="MoveLast"></a>()</b></p>
+<p><b>MoveLast<a name="movelast"></a>()</b></p>
 <p>Internally calls Move(RecordCount()-1). Note that some databases do not support 
   this function.</p>
 <p><b>GetRowAssoc</b><a name="getrowassoc"></a>($toUpper=true)</p>
@@ -2018,10 +2165,10 @@ if ($rs)
 <p><font color="#000000"><b>AbsolutePage<a name="absolutepage"></a>($page=-1) </b></font></p>
 <p>Returns the current page. Requires PageExecute()/CachePageExecute() to be called. See <a href=#ex8>Example 8</a>.</p>
 <font color="#000000"> 
-<p><b>AtFirstPage<a name="AtFirstPage">($status='')</a></b></p>
+<p><b>AtFirstPage<a name="atfirstpage">($status='')</a></b></p>
 <p>Returns true if at first page (1-based). Requires PageExecute()/CachePageExecute() 
   to be called. See <a href=#ex8>Example 8</a>.</p>
-<p><b>AtLastPage<a name="AtLastPage">($status='')</a></b></p>
+<p><b>AtLastPage<a name="atlastpage">($status='')</a></b></p>
 <p>Returns true if at last page (1-based). Requires PageExecute()/CachePageExecute() 
   to be called. See <a href=#ex8>Example 8</a>.</p>
 <p><b>Fields</b><a name="fields"></a>(<b>$colname</b>)</p>
@@ -2050,34 +2197,44 @@ if ($rs)
   record after returning the current row. </font></p>
 <p><font color="#000000"> FetchRow() is easier to use. See above.</font></p>
 <font color="#000000"> 
-<p><b>FetchField<a name="FetchField"></a>($column_number)</b></p>
+<p><b>FetchField<a name="fetchfield"></a>($column_number)</b></p>
 <p>Returns an object containing the <b>name</b>, <b>type</b> and <b>max_length</b> 
-  of the associated field. If the max_length cannot be determined reliably, it 
-  will be set to -1. The column numbers are zero-based. See <a href="#ex2">example 
-  2.</a></p>
-<p><b>FieldCount<a name="FieldCount"></a>( )</b></p>
+	of the associated field. If the max_length cannot be determined reliably, 
+	it will be set to -1. The column numbers are zero-based. See <a href="#ex2">example 
+	2.</a></p>
+<p><b>FieldCount<a name="fieldcount"></a>( )</b></p>
 <p>Returns the number of fields (columns) in the record set.</p>
-<p><b>RecordCount<a name="RecordCount"></a>( )</b></p>
+<p><b>RecordCount<a name="recordcount"></a>( )</b></p>
 <p>Returns the number of rows in the record set. If the number of records returned 
-  cannot be determined from the database driver API, we will buffer all rows and 
-  return a count of the rows after all the records have been retrieved. This buffering 
-  can be disabled (for performance reasons) by setting the global variable $ADODB_COUNTRECS 
-  = false. When disabled, RecordCount( ) will return -1 for certain databases. 
-  See the supported databases list above for more details. </p>
+	cannot be determined from the database driver API, we will buffer all rows 
+	and return a count of the rows after all the records have been retrieved. 
+	This buffering can be disabled (for performance reasons) by setting the global 
+	variable $ADODB_COUNTRECS = false. When disabled, RecordCount( ) will return 
+	-1 for certain databases. See the supported databases list above for more 
+	details. </p>
 <p> RowCount is a synonym for RecordCount.</p>
 <p><b>PO_RecordCount<a name="po_recordcount"></a>($table, $where)</b></p>
 <p>Returns the number of rows in the record set. If the database does not support 
-  this, it will perform a SELECT COUNT(*) on the table $table, with the given 
-  $where condition to return an estimate of the recordset size.</p>
+	this, it will perform a SELECT COUNT(*) on the table $table, with the given 
+	$where condition to return an estimate of the recordset size.</p>
 <p>$numrows = $rs-&gt;PO_RecordCount(&quot;articles_table&quot;, &quot;group=$group&quot;);</p>
-<p><b>FetchObject<a name="FetchObject"></a>($toupper=true)</b></p>
+<b> NextRecordSet<a name="nextrecordset" id="nextrecordset"></a>()</b> 
+<p>For databases that allow multiple recordsets to be returned in one query, this 
+	function allows you to switch to the next recordset. Currently only supported 
+	by mssql driver.</p>
+<pre>
+$rs = $db-&gt;Execute('execute return_multiple_rs');
+$arr1 = $rs-&gt;GetArray();
+$rs-&gt;NextRecordSet();
+$arr2 = $rs-&gt;GetArray();</pre>
+<p><b>FetchObject<a name="fetchobject"></a>($toupper=true)</b></p>
 <p>Returns the current row as an object. If you set $toupper to true, then the 
-  object fields are set to upper-case. Note: The newer FetchNextObject() is the 
-  recommended way of accessing rows as objects. See below.</p>
-<p><b>FetchNextObject<a name="FetchNextObject"></a>($toupper=true)</b></p>
+	object fields are set to upper-case. Note: The newer FetchNextObject() is 
+	the recommended way of accessing rows as objects. See below.</p>
+<p><b>FetchNextObject<a name="fetchnextobject"></a>($toupper=true)</b></p>
 <p>Gets the current row as an object and moves to the next row automatically. 
-  Returns false if at end-of-file. If you set $toupper to true, then the object 
-  fields are set to upper-case.</p>
+	Returns false if at end-of-file. If you set $toupper to true, then the object 
+	fields are set to upper-case.</p>
 <pre>
 $rs = $db->Execute('select firstname,lastname from table');
 if ($rs) &#123;
@@ -2087,49 +2244,62 @@ if ($rs) &#123;
 &#125;
 </pre>
 <p>There is some trade-off in speed in using FetchNextObject(). If performance 
-  is important, you should access rows with the <code>fields[]</code> array. 
-<p> 
-<p><b>CurrentRow<a name="CurrentRow"></a>( )</b></p>
+	is important, you should access rows with the <code>fields[]</code> array. 
+<b>FetchObj<a name="fetchobj" id="fetchobj"></a>()</b> 
+<p>Returns the current record as an object. Fields are not upper-cased, unlike 
+	FetchObject.
+</font>
+<p><font color="#000000"><b>FetchNextObj<a name="fetchnextobj" id="fetchnextobj"></a>()</b> </font></p>
+<p><font color="#000000">Returns the current record as an object and moves to 
+	the next record. If EOF, false is returned. Fields are not upper-cased, unlike 
+	FetctNextObject. </font></p>
+<font color="#000000">
+<p><b>CurrentRow<a name="currentrow"></a>( )</b></p>
 <p>Returns the current row of the record set. 0 is the first row.</p>
 <p><b>AbsolutePosition<a name="abspos"></a>( )</b></p>
 <p>Synonym for <b>CurrentRow</b> for compatibility with ADO. Returns the current 
-  row of the record set. 0 is the first row.</p>
-<p><b>MetaType<a name="MetaType"></a>($nativeDBType[,$field_max_length],[$fieldobj])</b></p>
+	row of the record set. 0 is the first row.</p>
+<p><b>MetaType<a name="metatype"></a>($nativeDBType[,$field_max_length],[$fieldobj])</b></p>
 <p>Determine what <i>generic</i> meta type a database field type is given its 
-  native type $<b>nativeDBType</b> and the length of the field $<b>field_max_length</b>. 
-  Note that field_max_length can be -1 if it is not known. The field object returned 
-  by the database driver can be passed in $<b>fieldobj</b>. This is useful for 
-  databases such as <i>mysql</i> which has additional properties in the field 
-  object such as <i>primary_key</i>.</p>
+	native type $<b>nativeDBType</b> as a string and the length of the field $<b>field_max_length</b>. 
+	Note that field_max_length can be -1 if it is not known. The field object 
+	returned by the database driver can be passed in $<b>fieldobj</b>. This is 
+	useful for databases such as <i>mysql</i> which has additional properties 
+	in the field object such as <i>primary_key</i>. </p>
 <p>Uses the field <b>blobSize</b> and compares it with $<b>field_max_length</b> 
-  to determine whether the character field is actually a blob.</p>
+	to determine whether the character field is actually a blob.</p>
+For example, $db-&gt;MetaType('char') will return 'C'. 
 <p>Returns:</p>
 <ul>
-  <li><b>C</b>: Character fields that should be shown in a &lt;input type=&quot;text&quot;&gt; 
-	tag. </li>
-  <li><b>X</b>: Clob (character large objects), or large text fields that should 
-	be shown in a &lt;textarea&gt;</li>
-  <li><b>D</b>: Date field</li>
-  <li><b>T</b>: Timestamp field</li>
-  <li><b>L</b>: Logical field (boolean or bit-field)</li>
-  <li><b>N</b>: Numeric field. Includes decimal, numeric, floating point, and 
-	real. </li>
-  <li><b>I</b>:&nbsp; Integer field. </li>
-  <li><b>R</b>: Counter or Autoincrement field. Must be numeric.</li>
-  <li><b>B</b>: Blob, or binary large objects.</li>
+	<li><b>C</b>: Character fields that should be shown in a &lt;input type=&quot;text&quot;&gt; 
+		tag. </li>
+	<li><b>X</b>: Clob (character large objects), or large text fields that should 
+		be shown in a &lt;textarea&gt;</li>
+	<li><b>D</b>: Date field</li>
+	<li><b>T</b>: Timestamp field</li>
+	<li><b>L</b>: Logical field (boolean or bit-field)</li>
+	<li><b>N</b>: Numeric field. Includes decimal, numeric, floating point, and 
+		real. </li>
+	<li><b>I</b>:&nbsp; Integer field. </li>
+	<li><b>R</b>: Counter or Autoincrement field. Must be numeric.</li>
+	<li><b>B</b>: Blob, or binary large objects.<font color="#000000"> </font></li>
 </ul>
+</font> 
+<p><font color="#000000"> Since ADOdb 3.0, MetaType accepts $fieldobj as the first 
+	parameter, instead of $nativeDBType. </font></p>
+<font color="#000000">
 <p><b>Close( )<a name="rsclose"></a></b></p>
 <p>Close the recordset.</p>
 <hr>
 <h3>function rs2html<a name="rs2html"></a>($adorecordset,[$tableheader_attributes], 
-  [$col_titles])</h3>
+	[$col_titles])</h3>
 <p>This is a standalone function (rs2html = recordset to html) that is similar 
-  to PHP's <i>odbc_result_all</i> function, it prints a ADORecordSet, $<b>adorecordset</b> 
-  as a HTML table. $<b>tableheader_attributes</b> allow you to control the table 
-  <i>cellpadding</i>, <i>cellspacing</i> and <i>border</i> attributes. Lastly 
-  you can replace the database column names with your own column titles with the 
-  array $<b>col_titles</b>. This is designed more as a quick debugging mechanism, 
-  not a production table recordset viewer.</p>
+	to PHP's <i>odbc_result_all</i> function, it prints a ADORecordSet, $<b>adorecordset</b> 
+	as a HTML table. $<b>tableheader_attributes</b> allow you to control the table 
+	<i>cellpadding</i>, <i>cellspacing</i> and <i>border</i> attributes. Lastly 
+	you can replace the database column names with your own column titles with 
+	the array $<b>col_titles</b>. This is designed more as a quick debugging mechanism, 
+	not a production table recordset viewer.</p>
 <p>You will need to include the file <i>tohtml.inc.php</i>.</p>
 <p>Example of rs2html:<b><font color="#336600"><a name="exrs2html"></a></font></b></p>
 <pre><b><font color="#336600">&lt;?
@@ -2144,60 +2314,58 @@ $<font color="#663300">rs</font>   = $<font color="#663300">conn</font>->Execute
 <hr>
 <h3>Differences between this ADOdb library and Microsoft ADO<a name="adodiff"></a></h3>
 <ol>
-  <li>ADOdb only supports recordsets created by a connection object. Recordsets 
-	cannot be created independently.</li>
-  <li>ADO properties are implemented as functions in ADOdb. This makes it easier 
-	to implement any enhanced ADO functionality in the future.</li>
-  <li>ADOdb's <font face="Courier New, Courier, mono">ADORecordSet-&gt;Move()</font> 
-	uses absolute positioning, not relative. Bookmarks are not supported.</li>
-  <li><font face="Courier New, Courier, mono">ADORecordSet-&gt;AbsolutePosition() 
-	</font>cannot be used to move the record cursor.</li>
-  <li>ADO Parameter objects are not supported. Instead we have the ADOConnection::<a href="#parameter">Parameter</a>( 
-	) function, which provides a simpler interface for calling preparing parameters 
-	and calling stored procedures.</li>
-  <li>Recordset properties for paging records are available, but implemented as 
-	in <a href=#ex8>Example 8</a>.</li>
+	<li>ADOdb only supports recordsets created by a connection object. Recordsets 
+		cannot be created independently.</li>
+	<li>ADO properties are implemented as functions in ADOdb. This makes it easier 
+		to implement any enhanced ADO functionality in the future.</li>
+	<li>ADOdb's <font face="Courier New, Courier, mono">ADORecordSet-&gt;Move()</font> 
+		uses absolute positioning, not relative. Bookmarks are not supported.</li>
+	<li><font face="Courier New, Courier, mono">ADORecordSet-&gt;AbsolutePosition() 
+		</font>cannot be used to move the record cursor.</li>
+	<li>ADO Parameter objects are not supported. Instead we have the ADOConnection::<a href="#parameter">Parameter</a>( 
+		) function, which provides a simpler interface for calling preparing parameters 
+		and calling stored procedures.</li>
+	<li>Recordset properties for paging records are available, but implemented 
+		as in <a href=#ex8>Example 8</a>.</li>
 </ol>
 <hr>
-<h1>Database Driver Guide<a name="DriverGuide"></a></h1>
+<h1>Database Driver Guide<a name="driverguide"></a></h1>
 <p>This describes how to create a class to connect to a new database. To ensure 
-  there is no duplication of work, kindly email me at jlim#natsoft.com.my if you 
-  decide to create such a class.</p>
+	there is no duplication of work, kindly email me at jlim#natsoft.com.my if 
+	you decide to create such a class.</p>
 <p>First decide on a name in lower case to call the database type. Let's say we 
-  call it xbase. </p>
-<p>Then we need to create two classes ADOConnection_xbase and ADORecordSet_xbase 
-  in the file adodb-xbase.inc.php.</p>
+	call it xbase. </p>
+<p>Then we need to create two classes ADODB_xbase and ADORecordSet_xbase 
+	in the file adodb-xbase.inc.php.</p>
 <p>The simplest form of database driver is an adaptation of an existing ODBC driver. 
-  Then we just need to create the class <i>ADOConnection_xbase extends ADOConnection_odbc</i> 
-  to support the new <b>date</b> and <b>timestamp</b> formats, the <b>concatenation</b> 
-  operator used, <b>true</b> and <b>false</b>. For the<i> ADORecordSet_xbase extends 
-  ADORecordSet_odbc </i>we need to change the <b>MetaType</b> function. See<b> 
-  adodb-vfp.inc.php</b> as an example.</p>
+	Then we just need to create the class <i>ADODB_xbase extends ADODB_odbc</i> 
+	to support the new <b>date</b> and <b>timestamp</b> formats, the <b>concatenation</b> 
+	operator used, <b>true</b> and <b>false</b>. For the<i> ADORecordSet_xbase 
+	extends ADORecordSet_odbc </i>we need to change the <b>MetaType</b> function. 
+	See<b> adodb-vfp.inc.php</b> as an example.</p>
 <p>More complicated is a totally new database driver that connects to a new PHP 
-  extension. Then you will need to implement several functions. Fortunately, you 
-  do not have to modify most of the complex code. You only need to override a 
-  few stub functions. See <b>adodb-mysql.inc.php</b> for example.</p>
+	extension. Then you will need to implement several functions. Fortunately, 
+	you do not have to modify most of the complex code. You only need to override 
+	a few stub functions. See <b>adodb-mysql.inc.php</b> for example.</p>
 <p>The default date format of ADOdb internally is YYYY-MM-DD (Ansi-92). All dates 
-  should be converted to that format when passing to an ADOdb date function. See 
-  Oracle for an example how we use ALTER SESSION to change the default date format 
-  in _pconnect _connect.</p>
+	should be converted to that format when passing to an ADOdb date function. 
+	See Oracle for an example how we use ALTER SESSION to change the default date 
+	format in _pconnect _connect.</p>
 <p><b>ADOConnection Functions to Override</b></p>
 <p>Defining a constructor for your ADOConnection derived function is optional. 
-  There is no need to call the base class constructor.</p>
+	There is no need to call the base class constructor.</p>
 <p>_<b>connect</b>: Low level implementation of Connect. Returns true or false. 
-  Should set the _<b>connectionID</b>.</p>
+	Should set the _<b>connectionID</b>.</p>
 <p>_<b>pconnect:</b> Low level implemention of PConnect. Returns true or false. 
-  Should set the _<b>connectionID</b>.</p>
+	Should set the _<b>connectionID</b>.</p>
 <p>_<b>query</b>: Execute a query. Returns the queryID, or false.</p>
 <p>_<b>close: </b>Close the connection -- PHP should clean up all recordsets. 
 </p>
 <p><b>ErrorMsg</b>: Stores the error message in the private variable _errorMsg. 
 </p>
-<p>The ADOConnection functions BeginTrans( ), CommitTrans( ), RollbackTrans( ) 
-  are reserved for future expansion.</p>
 <p><b>ADOConnection Fields to Set</b></p>
 <p>_<b>bindInputArray</b>: Set to true if binding of parameters for SQL inserts 
-  and updates is allowed using ?, eg. as with ODBC.</p>
+	and updates is allowed using ?, eg. as with ODBC.</p>
 <p><b>fmtDate</b></p>
 <p><b>fmtTimeStamp</b></p>
 <p><b>true</b></p>
@@ -2208,34 +2376,188 @@ $<font color="#663300">rs</font>   = $<font color="#663300">conn</font>->Execute
 <p><b>hasTop</b> support Microsoft style SELECT TOP 10 * FROM TABLE.</p>
 <p><b>ADORecordSet Functions to Override</b></p>
 <p>You will need to define a constructor for your ADORecordSet derived class that 
-  calls the parent class constructor.</p>
+	calls the parent class constructor.</p>
 <p><b>FetchField: </b> as documented above in ADORecordSet</p>
 <p>_<b>initrs</b>: low level initialization of the recordset: setup the _<b>numOfRows</b> 
-  and _<b>numOfFields</b> fields -- called by the constructor.</p>
+	and _<b>numOfFields</b> fields -- called by the constructor.</p>
 <p>_<b>seek</b>: seek to a particular row. Do not load the data into the fields 
-  array. This is done by _fetch. Returns true or false. Note that some implementations 
-  such as Interbase do not support seek. Set canSeek to false.</p>
+	array. This is done by _fetch. Returns true or false. Note that some implementations 
+	such as Interbase do not support seek. Set canSeek to false.</p>
 <p>_<b>fetch</b>: fetch a row using the database extension function and then move 
-  to the next row. Sets the <b>fields</b> array. If the parameter $ignore_fields 
-  is true then there is no need to populate the <b>fields</b> array, just move 
-  to the next row. then Returns true or false.</p>
+	to the next row. Sets the <b>fields</b> array. If the parameter $ignore_fields 
+	is true then there is no need to populate the <b>fields</b> array, just move 
+	to the next row. then Returns true or false.</p>
 <p>_<b>close</b>: close the recordset</p>
 <p><b>Fields</b>: If the array row returned by the PHP extension is not an associative 
-  one, you will have to override this. See adodb-odbc.inc.php for an example. 
-  For databases such as MySQL and MSSQL where an associative array is returned, 
-  there is no need to override this function.</p>
+	one, you will have to override this. See adodb-odbc.inc.php for an example. 
+	For databases such as MySQL and MSSQL where an associative array is returned, 
+	there is no need to override this function.</p>
 <p><b>ADOConnection Fields to Set</b></p>
 <p>canSeek: Set to true if the _seek function works.</p>
 <h2>ToDo:</h2>
 <p>See the <a href=http://php.weblogs.com/adodb-todo-roadmap>RoadMap</a> article.</p>
 <p>Also see the ADOdb <a href=http://php.weblogs.com/adodb_csv>proxy</a> article 
-  for bridging Windows and Unix databases using http remote procedure calls. For 
-  your education, visit <a href=http://palslib.com/>palslib.com</a> for database 
-  info, and read this article on <a href=http://phplens.com/lens/php-book/optimizing-debugging-php.php>Optimizing 
-  PHP</a>. </p>
+	for bridging Windows and Unix databases using http remote procedure calls. 
+	For your education, visit <a href=http://palslib.com/>palslib.com</a> for 
+	database info, and read this article on <a href=http://phplens.com/lens/php-book/optimizing-debugging-php.php>Optimizing 
+	PHP</a>. </p>
 </font> 
-<h2>Change Log<a name="Changes"></a><a name=ChangeLog></a></h2>
-<p>2.50, 14 Nov 2002
+<h2>Change Log<a name="Changes"></a><a name="changelog"></a></h2>
+<p><b>3.40 ?? March 2003</b></p>
+<p>Modified postgresql UpdateBlobFile() because it did not work in safe mode.
+<p>Now connection object is passed to raiseErrorFn as last parameter. Needed by StartTrans().
+<p>Added StartTrans() and CompleteTrans(). It is recommended that you do not modify transOff, but
+use the above functions.
+<p>oci8po now obeys ADODB_ASSOC_CASE settings.
+<p>Added virtualized error codes, using PEAR DB equivalents. Requires you to manually include
+	adodb-error.inc.php yourself, with MetaError() and MetaErrorMsg($errno).
+<p>GetRowAssoc for mysql and pgsql were flawed. Fix by Ross Smith.
+<p>Added to datadict types I1, I2, I4 and I8. Changed datadict type 'T' to map to
+timestamp instead of datetime for postgresql.
+<p>Error handling in ExecuteSQLArray(), adodb-datadict.inc.php did not work. 
+<p>We now auto-quote postgresql connection parameters when building connection string.
+<p>Added session expiry notification.
+<p>We now test with odbc mysql - made some changes to odbc recordset constructor.
+<p>MetaColumns now special cases access and other databases for odbc.
+<p><b>3.31 17 March 2003</b></p>
+<p>Added row checking for _fetch in postgres.
+<p>Added Interval type to MetaType for postgres.
+<p>Remapped postgres driver to call postgres7 driver internally.
+<p>Adorecordset_array::getarray() did not return array when nRows >= 0.
+<p>Postgresql: at times, no error message returned by pg_result_error()
+ but error message returned in pg_last_error(). Recoded again.
+<p>Interbase blob's now use chunking for updateblob.
+<p>Move() did not set EOF correctly. Reported by Jorma T.
+<p>We properly support mysql timestamp fields when we are creating mysql
+ tables using the data-dict interface.
+<p>Table regex includes backticks character now.
+<p><b>3.30 3 March 2003</b></p>
+<p>Added $ADODB_EXTENSION and $ADODB_COMPAT_FETCH constant.
+<p>Made blank1stItem configurable using syntax "value:text" in GetMenu/GetMenu2. Thx to Gabriel Birke.
+<p>Previously ADOdb differed from the Microsoft standard because it did not define 
+	what to set $this->fields when EOF was reached. Now at EOF, ADOdb sets $this->fields 
+	to false for all databases, which is consist with Microsoft's implementation. 
+	Postgresql and mysql have always worked this way (in 3.11 and earlier). If 
+	you are experiencing compatibility problems (and you are not using postgresql 
+	nor mysql) on upgrading to 3.30, try setting the global variables $ADODB_COUNTRECS 
+	= true (which is the default) and $ADODB_FETCH_COMPAT = true (this is a new 
+	global variable). 
+<p>We now check both pg_result_error and pg_last_error as sometimes pg_result_error does not display anything.
+ Iman Mayes 
+<p>
+We no longer check for magic quotes gpc in Quote().
+<p>
+Misc fixes for table creation in adodb-datadict.inc.php. Thx to iamsure.
+<p>
+Time calculations use adodb_time library for all negative timestamps
+due to problems in Red Hat 7.3 or later. Formerly, only did this for 
+Windows.
+<p>
+In mssqlpo, we now check if $sql in _query is a string before we change || to +. This is
+to support prepared stmts.
+<p>
+Move() and MoveLast() internals changed to support to support EOF and $this->fields change.
+<p>
+Added ADODB_FETCH_BOTH support to mssql. Thx to Angel Fradejas afradejas#mediafusion.es
+<p>
+We now check if link resource exists before we run mysql_escape_string in qstr().
+<p>
+Before we flock in csv code, we check that it is not a http url.
+<p><b>3.20 17 Feb 2003</b></p>
+<p>Added new Data Dictionary classes for creating tables and indexes. Warning - this is very much alpha quality code.
+The API can still change. See adodb/tests/test-datadict.php for more info.
+<p>We now ignore $ADODB_COUNTRECS for mysql, because PHP truncates incomplete recordsets 
+	when mysql_unbuffered_query() is called a second time.
+<p>Now postgresql works correctly when $ADODB_COUNTRECS = false.
+<p>Changed _adodb_getcount to properly support SELECT DISTINCT.
+<p>Discovered that $ADODB_COUNTRECS=true has some problems with prepared queries - suspect
+PHP bug.
+<p>Now GetOne and GetRow run in $ADODB_COUNTRECS=false mode for better performance.
+<p>Added support for mysql_real_escape_string() and pg_escape_string() in qstr().
+<p>Added an intermediate variable for mysql _fetch() and MoveNext() to store fields, to prevent
+overwriting field array with boolean when mysql_fetch_array() returns false.
+<p>Made arrays for getinsertsql and getupdatesql case-insensitive. Suggested by Tim Uckun" tim#diligence.com
+<p><b>3.11 11 Feb 2003</b></p>
+<p>Added check for ADODB_NEVER_PERSIST constant in PConnect(). 
+If defined, then PConnect() will actually call non-persistent Connect().
+<p>Modified interbase to properly work with Prepare().
+<p>Added $this->ibase_timefmt to allow you to change the date and time format.
+<p>Added support for $input_array parameter in CacheFlush().
+<p>Added experimental support for dbx, which was then removed when i found that
+it was slower than using native calls.
+<p>Added MetaPrimaryKeys for mssql and ibase/firebird.
+<p>Added new $trim parameter to GetCol and CacheGetCol
+<p>Uses updated adodb-time.inc.php 0.06.
+<p><b>3.10 27 Jan 2003</b>
+<p>Added adodb_date(), adodb_getdate(), adodb_mktime() and adodb-time.inc.php.
+<p>For interbase, added code to handle unlimited number of bind parameters. 
+From Daniel Hasan daniel#hasan.cl.
+<p>Added BlobDecode and UpdateBlob for informix. Thx to Fernando Ortiz.
+<p>Added constant ADODB_WINDOWS. If defined, means that running on Windows.
+<p>Added constant ADODB_PHPVER which stores php version as a hex num. Removed $ADODB_PHPVER variable.
+<p>Felho Bacsi reported a minor white-space regular expression problem in GetInsertSQL.
+<p>Modified ADO to use variant to store _affectedRows
+<p>Changed ibase to use base class Replace(). Modified base class Replace() to support ibase.
+<p>Changed odbc to auto-detect when 0 records returned is wrong due to bad odbc drivers.
+<p>Changed mssql to use datetimeconvert ini setting only when 4.30 or later (does not work in 4.23).
+<p>ExecuteCursor($stmt, $cursorname, $params) now accepts a new $params array of additional bind 
+parameters -- William Lovaton walovaton#yahoo.com.mx.
+<p>Added support for sybase_unbuffered_query if ADODB_COUNTRECS == false. Thx to chuck may.
+<p>Fixed FetchNextObj() bug. Thx to Jorma Tuomainen.
+<p>We now use SCOPE_IDENTITY() instead of @@IDENTITY for mssql - thx to marchesini#eside.it
+<p>Changed postgresql movenext logic to prevent illegal row number from being passed to pg_fetch_array().
+<p>Postgresql initrs bug found by "Bogdan RIPA" bripa#interakt.ro $f1 accidentally named $f
+<p><b>3.00 6 Jan 2003</b>
+<p>Fixed adodb-pear.inc.php syntax error.
+<p>Improved  _adodb_getcount() to use SELECT COUNT(*) FROM ($sql) for languages that
+accept it.
+<p>Fixed _adodb_getcount() caching error.
+<p>Added sql to retrive table and column info for odbc_mssql.
+<p><strong>2.91 3 Jan 2003</strong>
+<p>Revised PHP version checking to use $ADODB_PHPVER with legal values 0x4000, 0x4050, 0x4200, 0x4300.
+<p>Added support for bytea fields and oid blobs in postgres by allowing BlobDecode() 
+	to detect and convert non-oid fields. Also added BlobEncode to postgres when 
+	you want to encode oid blobs.
+<p>Added blobEncodeType property for connections to inform phpLens what encoding
+method to use for blobs.
+<p>Added BlobDecode() and BlobEncode() to base ADOConnection class.
+<p>Added umask() to _gencachename() when creating directories.
+<p>Added charPage for ado drivers, so you can set the code page.
+<pre>
+$conn->charPage = CP_UTF8;
+$conn->Connect($dsn);
+</pre>
+<p>Modified _seek in mysql to check for num rows=0.
+<p>Added to metatypes new informix types for IDS 9.30. Thx Fernando Ortiz.
+<p>_maxrecordcount returned in CachePageExecute $rsreturn 
+<p>Fixed sybase cacheselectlimit( ) problems
+<p>MetaColumns() max_length should use precision for types X and C for ms access. Fixed.
+<p>Speedup of odbc non-SELECT sql statements.
+<p>Added support in MetaColumns for Wide Char types for ODBC. We halve max_length 
+	if unicode/wide char. 
+<p>Added 'B' to types handled by GetUpdateSQL/GetInsertSQL.
+<p>Fixed warning message in oci8 driver with $persist variable when using PConnect.
+<p><b>2.90 11 Dec 2002</b>
+<p>Mssql and mssqlpo and oci8po now support ADODB_ASSOC_CASE. 
+<p>Now MetaType() can accept a field object as the first parameter. 
+<p>New $arr = $db-&gt;ServerInfo( ) function. Returns $arr['description'] which 
+	is the string description, and $arr['version'].
+<p>PostgreSQL and MSSQL speedups for insert/updates. 
+<p> Implemented new SetFetchMode() that removes the need to use $ADODB_FETCH_MODE. 
+	Each connection has independant fetchMode. 
+<p>ADODB_ASSOC_CASE now defaults to 2, use native defaults. This is because we would
+break backward compat for too many applications otherwise.
+<p>Patched encrypted sessions to use replace()
+<p>The qstr function supports quoting of nulls when escape character is \
+<p>Rewrote bits and pieces of session code to check for time synch and improve reliability.
+<p>Added property ADOConnection::hasTransactions = true/false;
+<p>Added CreateSequence and DropSequence functions
+<p>Found misplaced MoveNext() in adodb-postgres.inc.php. Fixed.
+<p>Sybase SelectLimit not reliable because 'set rowcount' not cached - fixed.
+<p>Moved ADOConnection to adodb-connection.inc.php and ADORecordSet to adodb-recordset.inc.php. 
+This allows us to use doxygen to generate documentation. Doxygen doesn't like the classes 
+in the main adodb.inc.php file for some mysterious reason.
+<p><b>2.50, 14 Nov 2002</b>
 <p>Added transOff and transCnt properties for disabling (transOff = true) 
 and tracking transaction status (transCnt>0).
 <p>Added inputarray handling into _adodb_pageexecute_all_rows - "Ross Smith" RossSmith#bnw.com.
@@ -2246,14 +2568,14 @@ and tracking transaction status (transCnt>0).
 <p>Fixed pager problems with some databases that returned -1 for _currentRow on MoveLast() by 
 switching to MoveNext() in adodb-lib.inc.php.
 <p>Also fixed uninited $discard in adodb-lib.inc.php.
-<p>2.43, 25 Oct 2002</p>
+<p><b>2.43, 25 Oct 2002</b></p>
 Added ADODB_ASSOC_CASE constant to better support ibase and odbc field names.
 <p>Added support for NConnect() for oracle OCINLogin.
 <p>Fixed NumCols() bug.
 <p>Changed session handler to use Replace() on write.
 <p>Fixed oci8 SelectLimit aggregate function bug again.
 <p>Rewrote pivoting code.
-<p>2.42, 4 Oct 2002</p>
+<p><b>2.42, 4 Oct 2002</b></p>
 <p>Fixed ibase_fetch() problem with nulls. Also interbase now does automatic blob decoding,
 and is backward compatible. Suggested by Heinz Hombergs heinz#hhombergs.de.
 <p>Fixed postgresql MoveNext() problems when called repeatedly after EOF. 
@@ -2285,465 +2607,11 @@ trickery there as there seems to be a bug in Zend Engine
 <p>Added render_pagelinks to adodb-pager.inc.php. Code by "Pablo Costa" pablo#cbsp.com.br.
 <p>MetaType() speedup in adodb.inc.php by using hashing instead of switch. Best performance
 if constant arrays are supported, as they are in PHP5.
-<p>adodb-session.php now updates only the expiry date if the crc32 check indicates that the data
-has not been modified.
-<p><b>2.31 20 Aug 2002</b></p>
-<p>Made changes to pivottable.inc.php due to daniel lucuzaeu's suggestions (we sum the pivottable column if desired).
-<p>Fixed ErrorNo() in postgres so it does not depend on _errorMsg property.
-<p>Robert Tuttle added support for oracle cursors. See ExecuteCursor().
-<p>Fixed Replace() so it works with mysql when updating record where data has not changed. Reported by
-Cal Evans (cal#calevans.com).
-<p><b>2.30 1 Aug 2002</b></p>
-<p>Added pivottable.inc.php. Thanks to daniel.lucazeau#ajornet.com for the original 
-  concept.
-<p>Added ADOConnection::outp($msg,$newline) to output error and debugging messages. Now 
-you can override this using the ADODB_OUTP constant and use your own output handler.
-<p>Changed == to === for 'null' comparison. Reported by ericquil#yahoo.com 
-<p>Fixed mssql SelectLimit( ) bug when distinct used.
-<p><b>2.30 1 Aug 2002</b></p>
-<p>New GetCol() and CacheGetCol() from ross#bnw.com that returns the first field as a 1 dim array.
-<p>We have an empty recordset, but RecordCount() could return -1. Fixed. Reported by  "Jonathan Polansky" jonathan#polansky.com.
-<p>We now check for session variable changes using strlen($sessval).crc32($sessval). 
-Formerly we only used crc32().
-<p>Informix SelectLimit() problem with $ADODB_COUNTRECS fixed.
-<p>Fixed informix SELECT FIRST x DISTINCT, and not SELECT DISTINCT FIRST x - reported by F Riosa
-<p>Now default adodb error handlers ignores error if @ used.
-<p>If you set $conn->autoRollback=true, we auto-rollback persistent connections for odbc, mysql, oci8, mssql. 
-Default for autoRollback is false. No need to do so for postgres. 
-As interbase requires a transaction id (what a flawed api), we don't do it for interbase.
-<p>Changed PageExecute() to use non-greedy preg_match when searching for "FROM" keyword.
-<p><b>2.20 9 July 2002</b></p>
-<p>Added CacheGetOne($secs2cache,$sql), CacheGetRow($secs2cache,$sql), CacheGetAll($secs2cache,$sql).
-<p>Added $conn->OffsetDate($dayFraction,$date=false) to generate sql that calcs 
-  date offsets. Useful for scheduling appointments.
-<p>Added connection properties: leftOuter, rightOuter that hold left and right 
-  outer join operators.
-<p>Added connection property: ansiOuter to indicate whether ansi outer joins supported.
-<p>New driver <i>mssqlpo</i>, the portable mssql driver, which converts string 
-  concat operator from || to +.
-<p>Fixed ms access bug - SelectLimit() did not support ties - fixed.
-<p>Karsten Kraus (Karsten.Kraus#web.de), contributed error-handling code to ADONewConnection. 
-  Unfortunately due to backward compat problems, had to rollback most of the changes.
-<p>Added new parameter to GetAssoc() to allow returning an array of key-value pairs, 
-ignoring any additional columns in the recordset. Off by default.
-<p>Corrected mssql $conn->sysDate to return only date using convert().
-<p>CacheExecute() improved debugging output.
-<p>Changed rs2html() so newlines are converted to BR tags. Also optimized rs2html() based
-on feedback by "Jerry Workman" jerry#mtncad.com.
-<p>Added support for Replace() with Interbase, using DELETE and INSERT.
-<p>Some minor optimizations (mostly removing & references when passing arrays).
-<p>Changed  GenID() to allows id's larger than the size of an integer.
-<p>Added force_session property to oci8 for better updateblob() support.
-<p>Fixed PageExecute() which did not work properly with sql containing GROUP BY.
-<p><b>2.12 12 June 2002</b></p>
-<p>Added toexport.inc.php to export recordsets in CSV and tab-delimited format.
-<p>CachePageExecute() does not work - fixed - thx John Huong.
-<p>Interbase aliases not set properly in FetchField() - fixed. Thx Stefan Goethals.
-<p>Added cache property to adodb pager class. The number of secs to cache recordsets.
-<p>SQL rewriting bug in pageexecute() due to skipping of newlines due to missing /s modifier. Fixed.
-<p>Max size of cached recordset due to a bug was 256000 bytes. Fixed.
-<p>Speedup of 1st invocation of CacheExecute() by tuning code.
-<p>We compare $rewritesql with $sql in pageexecute code in case of rewrite failure.
-<p><b>2.11 7 June 2002</b></p>
-<p>Fixed PageExecute() rewrite sql problem - COUNT(*) and ORDER BY don't go together with
-	mssql, access and postgres. Thx to Alexander Zhukov alex#unipack.ru
-<p>DB2 support for CHARACTER type added - thx John Huong huongch#bigfoot.com
-<p>For ado, $argProvider not properly checked. Fixed - kalimero#ngi.it
-<p>Added $conn->Replace() function for update with automatic insert if the record does not exist. 
-	Supported by all databases except interbase.
-<p><b>2.10 4 June 2002</b></p>
-<p>Added uniqueSort property to indicate mssql ORDER BY cols must be unique.
-<p>Optimized session handler by crc32 the data. We only write if session data has changed.
-<p>adodb_sess_read in adodb-session.php now returns ''correctly - thanks to Jorma Tuomainen, webmaster#wizactive.com
-<p>Mssql driver did not throw EXECUTE errors correctly because ErrorMsg() and ErrorNo() called in wrong order. 
-Pointed out by Alexios Fakos. Fixed.
-<p>Changed ado to use client cursors. This fixes BeginTran() problems with ado.
-<p>Added handling of timestamp type in ado.
-<p>Added to ado_mssql support for insert_id() and affected_rows().
-<p>Added support for mssql.datetimeconvert=0, available since php 4.2.0.
-<p>Made UnixDate() less strict, so that the time is ignored if present.
-<p>Changed quote() so that it checks for magic_quotes_gpc.
-<p>Changed maxblobsize for odbc to default to 64000.
-<p><b>2.00 13 May 2002</b></p>
-<p>Added drivers <i>informix72</i> for pre-7.3 versions, and <i>oci805</i> for 
-  oracle 8.0.5, and postgres64 for postgresql 6.4 and earlier. The postgres and postgres7 drivers
-  are now identical.
-<p>Interbase now partially supports ADODB_FETCH_BOTH, by defaulting to ASSOC mode.
-<p>Proper support for blobs in mssql. Also revised blob support code 
-is base class. Now UpdateBlobFile() calls UpdateBlob() for consistency.
-<p>Added support for changed odbc_fetch_into api in php 4.2.0 
-with $conn-&gt;_has_stupid_odbc_fetch_api_change.
-<p>Fixed spelling of tablock locking hint in GenID( ) for mssql. 
-<p>Added RowLock( ) to several databases, including oci8, informix, sybase, etc. 
-  Fixed where error in mssql RowLock().
-<p>Added sysDate and sysTimeStamp properties to most database drivers. These are the sql
-functions/constants for that database that return the current date and current timestamp, and 
-are useful for portable inserts and updates.
-<p>Support for RecordCount() caused date handling in sybase and mssql to break. 
-Fixed, thanks to Toni Tunkkari, by creating derived classes for ADORecordSet_array for
-both databases. Generalized using arrayClass property. Also to support RecordCount(), 
-changed metatype handling for ado drivers. Now the type returned in FetchField 
-  is no longer a number, but the 1-char data type returned by MetaType.
-  At the same time, fixed a lot of date handling. Now mssql support dmy and mdy date formats. 
-Also speedups in sybase and mssql with preg_match and ^ in date/timestamp handling.
-Added support in sybase and mssql for 24 hour clock in timestamps (no AM/PM).
-<p>Extensive revisions to informix driver - thanks to Samuel CARRIERE samuel_carriere#hotmail.com 
-<p>Added $ok parameter to CommitTrans($ok) for easy rollbacks.
-<p>Fixed odbc MetaColumns and MetaTables to save and restore $ADODB_FETCH_MODE.
-<p>Some odbc drivers did not call the base connection class constructor. Fixed.
-<p>Fixed regex for GetUpdateSQL() and GetInsertSQL() to support more legal character combinations.
-
-<p><b>1.99 21 April 2002</b></p>
-<p>Added emulated RecordCount() to all database drivers if $ADODB_COUNTRECS = true 
-  (which it is by default). Inspired by Cristiano Duarte (cunha17#uol.com.br). 
-<p>Unified stored procedure support for mssql and oci8. Parameter() and PrepareSP() 
-  functions implemented. 
-<p>Added support for SELECT FIRST in informix, modified hasTop property to support 
-  this. 
-<p>Changed csv driver to handle updates/deletes/inserts properly (when Execute() returns true).
-Bind params also work now, and raiseErrorFn with csv driver. Added csv driver to QA process. 
-<p>Better error checking in oci8 UpdateBlob() and UpdateBlobFile().
-<p>Added TIME type to MySQL - patch by Manfred h9125297#zechine.wu-wien.ac.at
-<p>Prepare/Execute implemented for Interbase/Firebird 
-<p>Changed some regular expressions to be anchored by /^ $/ for speed.
-<p>Added UnixTimeStamp() and UnixDate() to ADOConnection(). Now these functions 
-  are in both ADOConnection and ADORecordSet classes.
-<p>Empty recordsets were not cached - fixed.
-<p>Thanks to Gaetano Giunta (g.giunta#libero.it) for the oci8 code review. We 
-  didn't agree on everything, but i hoped we agreed to disagree! 
-<p><b>1.90 6 April 2002</b></p>
-<p>Now all database drivers support fetch modes ADODB_FETCH_NUM and ADODB_FETCH_ASSOC, though
-	still not fully tested. Eg. Frontbase, Sybase, Informix.
-<p>NextRecordSet() support for mssql. Contributed by "Sven Axelsson" sven.axelsson#bokochwebb.se
-<p>Added blob support for SQL Anywhere. Contributed by Wade Johnson wade#wadejohnson.de
-<p>Fixed some security loopholes in server.php. Server.php also supports fetch mode.
-<p>Generalized GenID() to support odbc and mssql drivers. Mssql no longer generates GUID's.
-<p>Experimental RowLock($table,$where) for mssql.
-<p>Properly implemented Prepare() in oci8 and ODBC.
-<p>Added Bind() support to oci8 to support Prepare().
-<p>Improved error handler. Catches CacheExecute() and GenID() errors now.
-<p>Now if you are running php from the command line, debugging messages do not output html formating.
-Not 100% complete, but getting there.
-<p><b>1.81 22 March 2002</b></p>
-<p>Restored default $ADODB_FETCH_MODE = ADODB_FETCH_DEFAULT for backward compatibility.
-<p>SelectLimit for oci8 improved - Our FIRST_ROWS optimization now does not overwrite existing hint.
-<p>New Sybase SQL Anywhere driver. Contributed by Wade Johnson wade#wadejohnson.de
-<p><b>1.80 15 March 2002</b></p>
-<p>Redesigned directory structure of ADOdb files. Added new driver directory where
-all database drivers reside.
-<p>Changed caching algorithm to create subdirectories. Now we scale better.
-<p>Informix driver now supports insert_id(). Contribution by "Andrea Pinnisi" pinnisi#sysnet.it
-<p>Added experimental ISO date and FetchField support for informix.
-<p>Fixed a quoting bug in Execute() with bind parameters, causing problems with blobs.
-<p>Mssql driver speedup by 10-15%.
-<p>Now in CacheExecute($secs2cache,$sql,...), $secs2cache is optional. If missing, it will
-take the value defined in $connection->cacheSecs (default is 3600 seconds). Note that
-CacheSelectLimit(), the secs2cache is still compulsory - sigh.
-<p>Sybase SQL Anywhere driver (using ODBC) contributed by Wade Johnson wade#wadejohnson.de
-<p><b>1.72 8 March 2002</b></p>
-<p>Added @ when returning Fields() to prevent spurious error - "Michael William Miller" mille562#pilot.msu.edu
-<p>MetaDatabases() for postgres contributed by Phil pamelant#nerim.net
- <p>Mitchell T. Young (mitch#youngfamily.org) contributed informix driver.
- <p>Fixed rs2html() problem. I cannot reproduce, so probably a problem with pre PHP 4.1.0 versions,
-  when supporting new ADODB_FETCH_MODEs.
- <p>Mattia Rossi (mattia#technologist.com) contributed BlobDecode() and UpdateBlobFile() for postgresql
- using the postgres specific pg_lo_import()/pg_lo_open() - i don't use them but hopefully others will
- find this useful. See <a href="http://phplens.com/lens/lensforum/msgs.php?id=1262">this posting</a>
- for an example of usage.
- <p>Added UpdateBlobFile() for uploading files to a database.
- <p>Made UpdateBlob() compatible with oci8po driver.
- <p>Added noNullStrings support to oci8 driver. Oracle changes all ' ' strings to nulls,
-  so you need to set strings to ' ' to prevent the nullifying of strings. $conn->noNullStrings = true;
-  will do this for you automatically. This is useful when you define a char column as NOT NULL.
-  <p>Fixed UnixTimeStamp() bug - wasn't setting minutes and seconds properly. Patch from Agusti Fita i Borrell agusti#anglatecnic.com.
-  <p>Toni Tunkkari added patch for sybase dates. Problem with spaces in day part of date fixed.
- <p><b>1.71 18 Jan 2002</b></p>
- <p>Sequence start id support. Now $conn->Gen_ID('seqname', 50) to start sequence from 50.
- <p>CSV driver fix for selectlimit, from Andreas - akaiser#vocote.de.
-<P>Gam3r spotted that a global variable was undefined in the session handler. 
-<p>Mssql date regex had error. Fixed - reported by Minh Hoang vb_user#yahoo.com.
-<p>DBTimeStamp() and DBDate() now accept iso dates and unix timestamps. This means
-that the PostgreSQL handling of dates in GetInsertSQL() and GetUpdateSQL() can
-be removed. Also if these functions are passed '' or null or false, we return a SQL null.
-<p>GetInsertSQL() and GetUpdateSQL() now accept a new parameter, $magicq to 
-indicate whether quotes should be inserted based on magic quote settings - suggested by
-dj#4ict.com.
-<p>Reformated docs slightly based on suggestions by Chris Small.
- <p><b>1.65 28 Dec 2001</b></p>
- <p>Fixed borland_ibase class naming bug.
- <p>Now instead of using $rs->fields[0] internally, we use reset($rs->fields) so 
- that we are compatible with ADODB_FETCH_ASSOC mode. Reported by Nico S.
- <p>Changed recordset constructor and _initrs() for oci8 so that it returns the field definitions even
- if no rows in the recordset. Reported by Rick Hickerson (rhickers#mv.mv.com).
- <p>Improved support for postgresql in GetInsertSQL and GetUpdateSQL by
-  "mike" mike#partner2partner.com  and "Ryan Bailey" rebel#windriders.com
- <p><b>1.64 20 Dec 2001</b></p>
-<p>Danny Milosavljevic &lt;danny.milo#gmx.net> added some patches for MySQL error handling
-and displaying default values.
-<p>Fixed some ADODB_FETCH_BOTH inconsistencies in odbc and interbase.
-<p>Added more tests to test suite to cover ADODB_FETCH_* and ADODB_ERROR_HANDLER.
-<p>Added firebird (ibase) driver
-<p>Added borland_ibase driver for interbase 6.5
-<p><b>1.63 13 Dec 2001</b></p>
-Absolute to the adodb-lib.inc.php file not set properly. Fixed.<p>
-
-<p><b>1.62 11 Dec 2001</b></p>
-<p>Major speedup of ADOdb for low-end web sites by reducing the php code loading and compiling
-cycle. We conditionally compile not so common functions. 
-Moved csv code to adodb-csvlib.inc.php to reduce adodb.inc.php parsing. This file
-is loaded only when the csv/proxy driver is used, or CacheExecute() is run.
-Also moved PageExecute(), GetSelectSQL() and GetUpdateSQL() core code to adodb-lib.inc.php.
-This reduced the 70K main adodb.inc.php file to 55K, and since at least 20K of the file
-is comments, we have reduced 50K of code in adodb.inc.php to 35K. There
- should be 35% reduction in memory and thus 35% speedup in compiling the php code for the
-main adodb.inc.php file.
-<p>Highly tuned SelectLimit() for oci8 for massive speed improvements on large files. 
-Selecting 20 rows starting from the 20,000th row of a table is now 7 times faster. 
-Thx to Tomas V V Cox.
-<p>Allow . and # in table definitions in GetInsertSQL and GetUpdateSQL.
- See ADODB_TABLE_REGEX constant. Thx to Ari Kuorikoski.
-<p>Added ADODB_PREFETCH_ROWS constant, defaulting to 10. This determines the number
-of records to prefetch in a SELECT statement. Only used by oci8.</p>
-<p>Added high portability Oracle class called oci8po. This uses ? for bind variables, and 
-lower cases column names.</p>
-<p>Now all database drivers support $ADODB_FETCH_MODE, including interbase, ado, and odbc:
-ADODB_FETCH_NUM and ADODB_FETCH_ASSOC. ADODB_FETCH_BOTH is not fully implemented for all 
-database drivers.
-<p><b>1.61 Nov 2001</b></p>
-<p>Added PO_RecordCount() and PO_Insert_ID(). PO stands for portable. Pablo Roca 
-  [pabloroca#mvps.org]</p>
-<p>GenID now returns 0 if not available. Safer is that you should check $conn->hasGenID 
-  for availability.</p>
-<p>M'soft ADO we now correctly close recordset in _close() peterd#telephonetics.co.uk</p>
-<p>MSSQL now supports GenID(). It generates a 16-byte GUID from mssql newid() 
-  function.</p>
-<p>Changed ereg_replace to preg_replace in SelectLimit. This is a fix for mssql. 
-  Ereg doesn't support t or n! Reported by marino Carlos xaplo#postnuke-espanol.org</p>
-<p>Added $recordset->connection. This is the ADOConnection object for the recordset. 
-Works with cached and normal recordsets. Surprisingly, this had no affect on performance!</p>
-<p><b>1.54 15 Nov 2001</b></p>
-Fixed some more bugs in PageExecute().  I am getting sick of bug in this and will have to 
-reconsider my QA here. The main issue is that I don't use PageExecute() and 
-to check whether it is working requires a visual inspection of the html generated currently.
-It is possible to write a test script but it would be quite complicated :(
-<p> More speedups of SelectLimit() for DB2, Oci8, access, vfp, mssql.
-<p>
-
-<p><b>1.53 7 Nov 2001</b></p>
-Added support for ADODB_FETCH_ASSOC for ado and odbc drivers.<p>
-Tuned GetRowAssoc(false) in postgresql and mysql.<p>
-Stephen Van Dyke contributed ADOdb icon, accepted with some minor mods.<p>
-Enabled Affected_Rows() for postgresql<p>
-Speedup for Concat() using implode() - Benjamin Curtis ben_curtis#yahoo.com<p>
-Fixed some more bugs in PageExecute() to prevent infinite loops<p>
-<p><b>1.52 5 Nov 2001</b></p>
-Spelling error in CacheExecute() caused it to fail. $ql should be $sql in line 625!<p>
-Added fixes for parsing [ and ] in GetUpdateSQL().
-<p><b>1.51 5 Nov 2001</b></p>
-<p>Oci8 SelectLimit() speedup by using OCIFetch().
-<p>Oci8 was mistakenly reporting errors when $db->debug = true.
-<p>If a connection failed with ODBC, it was not correctly reported - fixed.
-<p>_connectionID was inited to -1, changed to false.
-<p>Added $rs->FetchRow(), to simplify API, ala PEAR DB
-<p>Added PEAR DB compat mode, which is still faster than PEAR! See adodb-pear.inc.php.
-<p>Removed postgres pconnect debugging statement.
-<p><b>1.50 31 Oct 2001</b></p>
-<p>ADOdbConnection renamed to ADOConnection, and ADOdbFieldObject to ADOFieldObject.
-<p>PageExecute() now checks for empty $rs correctly, and the errors in the docs on this subject have been fixed.
-<p>odbc_error() does not return 6 digit error correctly at times. Implemented workaround.
-<p>Added ADORecordSet_empty class. This will speedup INSERTS/DELETES/UPDATES because the return
-object created is much smaller.
-<p>Added Prepare() to odbc, and oci8 (but doesn't work properly for oci8 still).
-<p>Made pgsql a synonym for postgre7, and changed SELECT LIMIT to use OFFSET for compat with 
-postgres 7.2.
-<p>Revised adodb-cryptsession.php thanks to Ari.
-<p>Set resources to false on _close, to force freeing of resources.
-<p>Added adodb-errorhandler.inc.php, adodb-errorpear.inc.php and raiseErrorFn on Freek's urging.
-<p>GetRowAssoc($toUpper=true): $toUpper added as default.
-<p>Errors when connecting to a database were not captured formerly. Now we do it correctly.
-<p><b>1.40 19 September 2001</b></p>
-<p>PageExecute() to implement page scrolling added. Code and idea by Iv&aacute;n Oliva.</p>
-<p>Some minor postgresql fixes.</p>
-<p>Added sequence support using GenID() for postgresql, oci8, mysql, interbase.</p>
-<p>Added UpdateBlob support for interbase (untested).</p>
-<p>Added encrypted sessions (see adodb-cryptsession.php). By Ari Kuorikoski &lt;kuoriari#finebyte.com></p>
-<p><b>1.31 21 August 2001</b></p>
-<p>Many bug fixes thanks to "GaM3R (Cameron)" &lt;gamr#outworld.cx>. Some session changes due to Gam3r.
-<p>Fixed qstr() to quote  also.
-<p>rs2html() now pretty printed.
-<p>Jonathan Younger jyounger#unilab.com contributed the great idea GetUpdateSQL() and GetInsertSQL() which
-generates SQL to update and insert into a table from a recordset. Modify the recordset fields
-array, then can this function to generate the SQL (the SQL is not executed).
-<p>"Nicola Fankhauser" &lt;nicola.fankhauser#couniq.com> found some bugs in date handling for mssql.</p>
-<p>Added minimal Oracle support for LOBs. Still under development.</p>
-Added $ADODB_FETCH_MODE so you can control whether recordsets return arrays which are
-numeric, associative or both. This is a global variable you set. Currently only MySQL, Oci8, Postgres
-drivers support this.
-<p>PostgreSQL properly closes recordsets now. Reported by several people.
-<p>
-Added UpdateBlob() for Oracle. A hack to make it easier to save blobs.
-<p>
-Oracle timestamps did not display properly. Fixed.
-<p><b>1.20 6 June 2001</b></p>
-<p>Now Oracle can connect using tnsnames.ora or server and service name</p>
-<p>Extensive Oci8 speed optimizations. 
-Oci8 code revised to support variable binding, and /*+ FIRST_ROWS */ hint.</p>
-<p>Worked around some 4.0.6 bugs in odbc_fetch_into().</p>
-<p>Paolo S. Asioli paolo.asioli#libero.it suggested GetRowAssoc().</p>
-<p>Escape quotes for oracle wrongly set to '. Now '' is used.</p>
-<p>Variable binding now works in ODBC also.</p>
-<p>Jumped to version 1.20 because I don't like 13 :-)</p>
-<p><b>1.12 6 June 2001</b></p>
-<p>Changed $ADODB_DIR to ADODB_DIR constant to plug a security loophole.</p>
-<p>Changed _close() to close persistent connections also. Prevents connection leaks.</p>
-<p>Major revision of oracle and oci8 drivers. 
-Added OCI_RETURN_NULLS and OCI_RETURN_LOBS to OCIFetchInto(). BLOB, CLOB and VARCHAR2 recognition
-in MetaType() improved. MetaColumns() returns columns in correct sort order.</p>
-<p>Interbase timestamp input format was wrong. Fixed.</p>
-<p><b>1.11 20 May 2001</b></p>
-<p>Improved file locking for Windows.</p>
-<p>Probabilistic flushing of cache to avoid avalanche updates when cache timeouts.</p>
-<p>Cached recordset timestamp not saved in some scenarios. Fixed.</p>
-<p><b>1.10 19 May 2001</b></p>
-<p>Added caching. CacheExecute() and CacheSelectLimit().
-<p>Added csv driver. See <a href="http://php.weblogs.com/adodb_csv">http://php.weblogs.com/ADODB_csv</a>. 
-<p>Fixed SelectLimit(), SELECT TOP not working under certain circumstances.
-<p>Added better Frontbase support of MetaTypes() by Frank M. Kromann.
-<p><b>1.01 24 April 2001</b></p>
-<p>Fixed SelectLimit bug.  not quoted properly.
-<p>SelectLimit: SELECT TOP -1 * FROM TABLE not support by Microsoft. Fixed.</p>
-<p>GetMenu improved by glen.davies#cce.ac.nz to support multiple hilited items<p>
-<p>FetchNextObject() did not work with only 1 record returned. Fixed bug reported by $tim#orotech.net</p>
-<p>Fixed mysql field max_length problem. Fix suggested by Jim Nicholson (jnich#att.com)</p>
-<p><b>1.00 16 April 2001</b></p>
-<p>Given some brilliant suggestions on how to simplify ADOdb by akul. You no longer need to
-setup $ADODB_DIR yourself, and ADOLoadCode() is automatically called by ADONewConnection(), 
-simplifying the startup code.</p>
-<p>FetchNextObject() added. Suggested by Jakub Marecek. This makes FetchObject() obsolete, as
-this is more flexible and powerful.</p>
-<p>Misc fixes to SelectLimit() to support Access (top must follow distinct) and Fields() 
-in the array recordset. From Reinhard Balling.</p>
-<p><b>0.96 27 Mar 2001</b></p>
-<p>ADOConnection Close() did not return a value correctly. Thanks to akul#otamedia.com.</p>
-<p>When the horrible magic_quotes is enabled, back-slash () is changed to double-backslash (\).
-This doesn't make sense for Microsoft/Sybase databases. We fix this in qstr().</p>
-<p>Fixed Sybase date problem in UnixDate() thanks to Toni Tunkkari. Also fixed MSSQL problem
-in UnixDate() - thanks to milhouse31#hotmail.com.</p>
-<p>MoveNext() moved to leaf classes for speed in MySQL/PostgreSQL. 10-15% speedup.</p>
-<p>Added null handling in bindInputArray in Execute() -- Ron Baldwin suggestion.</p>
-<p>Fixed some option tags. Thanks to john#jrmstudios.com.</p>
-<p><b>0.95 13 Mar 2001</b></p>
-<p>Added postgres7 database driver which supports LIMIT and other version 7 stuff in the future.</p>
-<p>Added SelectLimit to ADOConnection to simulate PostgreSQL's "select * from table limit 10 offset 3".
-Added helper function GetArrayLimit() to ADORecordSet.</p>
-<p>Fixed mysql metacolumns bug. Thanks to Freek Dijkstra (phpeverywhere#macfreek.com).</p>
-<p>Also many PostgreSQL changes by Freek. He almost rewrote the whole PostgreSQL driver!</p>
-<p>Added fix to input parameters in Execute for non-strings by Ron Baldwin.</p>
-<p>Added new metatype, X for TeXt. Formerly, metatype B for Blob also included
-text fields. Now 'B' is for binary/image data. 'X' for textual data.</p>
-<p>Fixed $this->GetArray() in GetRows().</p>
-<p>Oracle and OCI8: 1st parameter is always blank -- now warns if it is filled.</p>
-<p>Now <i>hasLimit</i> and <i>hasTop</i> added to indicate whether 
-SELECT * FROM TABLE LIMIT 10 or SELECT TOP 10 * FROM TABLE are supported.</p>
-<p><b>0.94 04 Feb 2001</b></p>
-<p>Added ADORecordSet::GetRows() for compatibility with Microsoft ADO. Synonym for GetArray().</p>
-<p>Added new metatype 'R' to represent autoincrement numbers.</p>
-<p>Added ADORecordSet.FetchObject() to return a row as an object.</p>
-<p>Finally got a Linux box to test PostgreSql. Many fixes.</p>
-<p>Fixed copyright misspellings in 0.93.</p>
-<p>Fixed mssql MetaColumns type bug.</p>
-<p>Worked around odbc bug in PHP4 for sessions.</p>
-<p>Fixed many documentation bugs (affected_rows, metadatabases, qstr).</p>
-<p>Fixed MySQL timestamp format (removed comma).</p>
-<p>Interbase driver did not call ibase_pconnect(). Fixed.</p>
-<p><b>0.93 18 Jan 2002</b></p>
-<p>Fixed GetMenu bug.</p>
-<p>Simplified Interbase commit and rollback.</p>
-<p>Default behaviour on closing a connection is now to rollback all active transactions.</p>
-<p>Added field object handling for array recordset for future XML compatibility.</p>
-<p>Added arr2html() to convert array to html table.</p>
-<p><b>0.92 2 Jan 2002</b></p>
-<p>Interbase Commit and Rollback should be working again.</p>
-<p>Changed initialisation of ADORecordSet. This is internal and should not affect users. We
-are doing this to support cached recordsets in the future.</p>
-
-<p>Implemented ADORecordSet_array class. This allows you to simulate a database recordset
-with an array.</p>
-<p>Added UnixDate() and UnixTimeStamp() to ADORecordSet.</p>
-<p><b>0.91 21 Dec 2000</b></p>
-<p>Fixed ODBC so ErrorMsg() is working.</p>
-<p>Worked around ADO unrecognised null (0x1) value problem in COM.</p>
-<p>Added Sybase support for FetchField() type</p>
-<p>Removed debugging code and unneeded html from various files</p>
-<p>Changed to javadoc style comments to adodb.inc.php.</p>
-<p>Added maxsql as synonym for mysqlt</p>
-<p>Now ODBC downloads first 8K of blob by default
-<p><b>0.90 15 Nov 2000</b></p>
-<p>Lots of testing of Microsoft ADO. Should be more stable now.</p>
-<p>Added $ADODB_COUNTREC. Set to false for high speed selects.</p>
-<p>Added Sybase support. Contributed by Toni Tunkkari (toni.tunkkari#finebyte.com). Bug in Sybase 
-  API: GetFields is unable to determine date types.</p>
-<p>Changed behaviour of RecordSet.GetMenu() to support size parameter (listbox) properly.</p>
-<p>Added emptyDate and emptyTimeStamp to RecordSet class that defines how to represent 
-  empty dates.</p>
-<p>Added MetaColumns($table) that returns an array of ADOFieldObject's listing 
-  the columns of a table.</p>
-<p>Added transaction support for PostgresSQL -- thanks to "Eric G. Werk" egw#netguide.dk.</p>
-<p>Added adodb-session.php for session support.</p>
-<p><b>0.80 30 Nov 2000</b></p>
-<p>Added support for charSet for interbase. Implemented MetaTables for most databases. 
-  PostgreSQL more extensively tested.</p>
-<p><b>0.71 22 Nov 2000</b></p>
-<p>Switched from using require_once to include/include_once for backward compatability with PHP 4.02 and earlier.</p>
-<p><b>0.70 15 Nov 2000</b></p>
-<p>Calls by reference have been removed (call_time_pass_reference=Off) to ensure compatibility with future versions of PHP, 
-except in Oracle 7 driver due to a bug in php_oracle.dll.</p>
-<p>PostgreSQL database driver contributed by Alberto Cerezal (acerezalp#dbnet.es). 
-</p>
-<p>Oci8 driver for Oracle 8 contributed by George Fourlanos (fou#infomap.gr).</p>
-<p>Added <i>mysqlt</i> database driver to support MySQL 3.23 which has transaction 
- support. </p>
-<p>Oracle default date format (DD-MON-YY) did not match ADOdb default date format (which is YYYY-MM-DD). Use ALTER SESSION to force the default date.</p>
-<p>Error message checking is now included in test suite.</p>
-<p>MoveNext() did not check EOF properly -- fixed.</p>
-<p><b>0.60 Nov 8 2000</b></p>
-<p>Fixed some constructor bugs in ODBC and ADO. Added ErrorNo function to ADOConnection 
- class. </p>
-<p><b>0.51 Oct 18 2000</b></p>
-<p>Fixed some interbase bugs.</p>
-<p><b>0.50 Oct 16 2000</b></p>
-<p>Interbase commit/rollback changed to be compatible with PHP 4.03. </p>
-<p>CommitTrans( ) will now return true if transactions not supported. </p>
-<p>Conversely RollbackTrans( ) will return false if transactions not supported. 
-</p>
-<p><b>0.46 Oct 12</b></p>
-Many Oracle compatibility issues fixed. 
-<p><b>0.40 Sept 26</b></p>
-<p>Many bug fixes</p>
-<p>Now Code for BeginTrans, CommitTrans and RollbackTrans is working. So is the Affected_Rows
-and Insert_ID. Added above functions to test.php.</p>
-<p>ADO type handling was busted in 0.30. Fixed.</p>
-<p>Generalised Move( ) so it works will all databases, including ODBC.</p>
-<p><b>0.30 Sept 18</b></p>
-<p>Renamed ADOLoadDB to ADOLoadCode. This is clearer.</p>
-<p>Added BeginTrans, CommitTrans and RollbackTrans functions.</p>
-<p>Added Affected_Rows() and Insert_ID(), _affectedrows() and _insertID(), ListTables(), 
- ListDatabases(), ListColumns().</p>
-<p>Need to add New_ID() and hasInsertID and hasAffectedRows, autoCommit </p>
-<p><b>0.20 Sept 12</b></p>
-<p>Added support for Microsoft's ADO.</p>
-<p>Added new field to ADORecordSet -- canSeek</p>
-<p>Added new parameter to _fetch($ignore_fields = false). Setting to true will 
- not update fields array for faster performance.</p>
-<p>Added new field to ADORecordSet/ADOConnection -- dataProvider to indicate whether 
- a class is derived from odbc or ado.</p>
-<p>Changed class ODBCFieldObject to ADOFieldObject -- not documented currently.</p>
-<p>Added benchmark.php and testdatabases.inc.php to the test suite.</p>
-<p>Added to ADORecordSet FastForward( ) for future high speed scrolling. Not documented.</p>
-<p>Realised that ADO's Move( ) uses relative positioning. ADOdb uses absolute. 
-</p>
-<p><b>0.10 Sept 9 2000</b></p>
-<p>First release</p>
+<p>adodb-session.php now updates only the expiry date if the crc32 check indicates 
+	that the data has not been modified. <hr>
+<p><strong>0.10 Sept 9 2000</strong> First release 
+<h3><strong>Old changelog history moved to old-changelog.htm. </strong></h3>
+<p>&nbsp;</p>
 <p>
 </body>
 </html>

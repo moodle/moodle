@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -9,12 +9,19 @@ V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
   Latest version is available at http://php.weblogs.com/
 */
 
-GLOBAL $HTTP_SESSION_VARS;
+function NotifyExpire($ref,$key)
+{
+	print "<p><b>Notify Expiring=$ref, sessionkey=$key</b></p>";
+}
+$USER = 'JLIM'.rand();
+$ADODB_SESSION_EXPIRE_NOTIFY = array('USER','NotifyExpire');
 
+GLOBAL $HTTP_SESSION_VARS;
+	ob_start();
 	error_reporting(E_ALL);
 	
 	$ADODB_SESS_DEBUG = true;
-	include('../adodb-session.php');
+	include('../adodb-cryptsession.php');
 	session_start();
 	
 	print "<h3>PHP ".PHP_VERSION."</h3>";
@@ -28,4 +35,6 @@ GLOBAL $HTTP_SESSION_VARS;
 		print "<p>Random session destroy</p>";
 		session_destroy();
 	}
+	print "<hr>";
+	print_r($HTTP_COOKIE_VARS);
 ?>

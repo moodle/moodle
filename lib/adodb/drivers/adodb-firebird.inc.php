@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -21,6 +21,21 @@ class ADODB_firebird extends ADODB_ibase {
 		$this->ADODB_ibase();
 	}
 	
+	function ServerInfo()
+	{
+		$arr['dialect'] = $this->dialect;
+		switch($arr['dialect']) {
+		case '': 
+		case '1': $s = 'Firebird Dialect 1'; break;
+		case '2': $s = 'Firebird Dialect 2'; break;
+		default:
+		case '3': $s = 'Firebird Dialect 3'; break;
+		}
+		$arr['version'] = ADOConnection::_findvers($s);
+		$arr['description'] = $s;
+		return $arr;
+	}
+	
 	// Note that Interbase 6.5 uses this ROWS instead - don't you love forking wars!
 	// 		SELECT col1, col2 FROM table ROWS 5 -- get 5 rows 
 	//		SELECT col1, col2 FROM TABLE ORDER BY col1 ROWS 3 TO 7 -- first 5 skip 2
@@ -37,6 +52,7 @@ class ADODB_firebird extends ADODB_ibase {
 				$this->Execute($sql,$inputarr,$arg3);
 	}
 	
+	
 };
  
 
@@ -44,9 +60,9 @@ class  ADORecordSet_firebird extends ADORecordSet_ibase {
 	
 	var $databaseType = "firebird";		
 	
-	function ADORecordSet_firebird($id)
+	function ADORecordSet_firebird($id,$mode=false)
 	{
-		$this->ADORecordSet_ibase($id);
+		$this->ADORecordSet_ibase($id,$mode);
 	}
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 /*
-V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -76,22 +76,27 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESS_CONN,
 	$ADODB_SESS_LIFE,
 	$ADODB_SESS_DEBUG,
-	$ADODB_SESS_INSERT; 
+	$ADODB_SESS_INSERT,
+	$ADODB_SESSION_EXPIRE_NOTIFY; 
 
 	//$ADODB_SESS_DEBUG = true;
 	
 	/* SET THE FOLLOWING PARAMETERS */
 if (empty($ADODB_SESSION_DRIVER)) {
 	$ADODB_SESSION_DRIVER='mysql';
-	$ADODB_SESSION_CONNECT='serverName';
-	$ADODB_SESSION_USER ='PhpSessions';
-	$ADODB_SESSION_PWD ='sessions';
-	$ADODB_SESSION_DB ='sessions';
+	$ADODB_SESSION_CONNECT='localhost';
+	$ADODB_SESSION_USER ='root';
+	$ADODB_SESSION_PWD ='';
+	$ADODB_SESSION_DB ='xphplens_2';
 }
+
 if (empty($ADODB_SESSION_TBL)){
 	$ADODB_SESSION_TBL = 'sessions';
 }
 
+if (empty($ADODB_SESSION_EXPIRE_NOTIFY)) {
+	$ADODB_SESSION_EXPIRE_NOTIFY = false;
+}
 
 function ADODB_Session_Key() 
 {
@@ -102,7 +107,7 @@ $ADODB_CRYPT_KEY = 'CRYPTED ADODB SESSIONS ROCK!';
 	return crypt($ADODB_CRYPT_KEY, session_ID());
 }
 
-$ADODB_SESS_LIFE = get_cfg_var('session.gc_maxlifetime');
+$ADODB_SESS_LIFE = ini_get('session.gc_maxlifetime');
 if ($ADODB_SESS_LIFE <= 1) {
 	// bug in PHP 4.0.3 pl 1  -- how about other versions?
 	//print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>";
@@ -165,46 +170,87 @@ global $ADODB_SESS_CONN,$ADODB_SESS_INSERT,$ADODB_SESSION_TBL;
 function adodb_sess_write($key, $val) 
 {
 $Crypt = new MD5Crypt;
-	global $ADODB_SESS_INSERT,$ADODB_SESS_CONN, $ADODB_SESS_LIFE, $ADODB_SESSION_TBL;
+	global $ADODB_SESS_INSERT,$ADODB_SESS_CONN, $ADODB_SESS_LIFE, $ADODB_SESSION_TBL,$ADODB_SESSION_EXPIRE_NOTIFY;
 
 	$expiry = time() + $ADODB_SESS_LIFE;
 
 	// encrypt session data..	
 	$val = $Crypt->Encrypt(rawurlencode($val), ADODB_Session_Key());
-	$qry = "UPDATE $ADODB_SESSION_TBL SET expiry=$expiry,data='$val' WHERE sesskey='$key'";
-	$rs = $ADODB_SESS_CONN->Execute($qry);
-	if ($rs) $rs->Close();
-	else print '<p>Session Update: '.$ADODB_SESS_CONN->ErrorMsg().'</p>';
 	
-	if ($ADODB_SESS_INSERT || $rs === false) {
-		$qry = "INSERT INTO $ADODB_SESSION_TBL(sesskey,expiry,data) VALUES ('$key',$expiry,'$val')";
-		$rs = $ADODB_SESS_CONN->Execute($qry);
-		if ($rs) $rs->Close();
-		else print '<p>Session Insert: '.$ADODB_SESS_CONN->ErrorMsg().'</p>';
+	$arr = array('sesskey' => $key, 'expiry' => $expiry, 'data' => $val);
+	if ($ADODB_SESSION_EXPIRE_NOTIFY) {
+		$var = reset($ADODB_SESSION_EXPIRE_NOTIFY);
+		global $$var;
+		$arr['expireref'] = $$var;
 	}
-	// bug in access driver (could be odbc?) means that info is not commited
-	// properly unless select statement executed in Win2000
-	if ($ADODB_SESS_CONN->databaseType == 'access') $rs = $ADODB_SESS_CONN->Execute("select sesskey from $ADODB_SESSION_TBL WHERE sesskey='$key'");
+	$rs = $ADODB_SESS_CONN->Replace($ADODB_SESSION_TBL,
+	    $arr,
+    	'sesskey',$autoQuote = true);
 
+	if (!$rs) {
+		ADOConnection::outp( '<p>Session Replace: '.$ADODB_SESS_CONN->ErrorMsg().'</p>',false);
+	} else {
+		// bug in access driver (could be odbc?) means that info is not commited
+		// properly unless select statement executed in Win2000
+	
+	if ($ADODB_SESS_CONN->databaseType == 'access') $rs = $ADODB_SESS_CONN->Execute("select sesskey from $ADODB_SESSION_TBL WHERE sesskey='$key'");
+	}
 	return isset($rs);
 }
 
 function adodb_sess_destroy($key) 
 {
-	global $ADODB_SESS_CONN, $ADODB_SESSION_TBL;
-
-	$qry = "DELETE FROM $ADODB_SESSION_TBL WHERE sesskey = '$key'";
-	$rs = $ADODB_SESS_CONN->Execute($qry);
-	if ($rs) $rs->Close();
-	return $rs;
+	global $ADODB_SESS_CONN, $ADODB_SESSION_TBL,$ADODB_SESSION_EXPIRE_NOTIFY;
+	
+	if ($ADODB_SESSION_EXPIRE_NOTIFY) {
+		reset($ADODB_SESSION_EXPIRE_NOTIFY);
+		$fn = next($ADODB_SESSION_EXPIRE_NOTIFY);
+		$savem = $ADODB_SESS_CONN->SetFetchMode(ADODB_FETCH_NUM);
+		$rs = $ADODB_SESS_CONN->Execute("SELECT expireref,sesskey FROM $ADODB_SESSION_TBL WHERE sesskey='$key'");
+		$ADODB_SESS_CONN->SetFetchMode($savem);
+		if ($rs) {
+			$ADODB_SESS_CONN->BeginTrans();
+			while (!$rs->EOF) {
+				$ref = $rs->fields[0];
+				$key = $rs->fields[1];
+				$fn($ref,$key);
+				$del = $ADODB_SESS_CONN->Execute("DELETE FROM $ADODB_SESSION_TBL WHERE sesskey='$key'");
+				$rs->MoveNext();
+			}
+			$ADODB_SESS_CONN->CommitTrans();
+		}
+	} else {
+		$qry = "DELETE FROM $ADODB_SESSION_TBL WHERE sesskey = '$key'";
+		$rs = $ADODB_SESS_CONN->Execute($qry);
+	}
+	return $rs ? true : false;
 }
 
-function adodb_sess_gc($maxlifetime) {
-	global $ADODB_SESS_CONN, $ADODB_SESSION_TBL;
 
-	$qry = "DELETE FROM $ADODB_SESSION_TBL WHERE expiry < " . time();
-	$rs = $ADODB_SESS_CONN->Execute($qry);
-	if ($rs) $rs->Close();
+function adodb_sess_gc($maxlifetime) {
+	global $ADODB_SESS_CONN, $ADODB_SESSION_TBL,$ADODB_SESSION_EXPIRE_NOTIFY;
+
+	if ($ADODB_SESSION_EXPIRE_NOTIFY) {
+		reset($ADODB_SESSION_EXPIRE_NOTIFY);
+		$fn = next($ADODB_SESSION_EXPIRE_NOTIFY);
+		$savem = $ADODB_SESS_CONN->SetFetchMode(ADODB_FETCH_NUM);
+		$rs = $ADODB_SESS_CONN->Execute("SELECT expireref,sesskey FROM $ADODB_SESSION_TBL WHERE expiry < " . time());
+		$ADODB_SESS_CONN->SetFetchMode($savem);
+		if ($rs) {
+			$ADODB_SESS_CONN->BeginTrans();
+			while (!$rs->EOF) {
+				$ref = $rs->fields[0];
+				$key = $rs->fields[1];
+				$fn($ref,$key);
+				$del = $ADODB_SESS_CONN->Execute("DELETE FROM $ADODB_SESSION_TBL WHERE sesskey='$key'");
+				$rs->MoveNext();
+			}
+			$ADODB_SESS_CONN->CommitTrans();
+		}
+	} else {
+		$qry = "DELETE FROM $ADODB_SESSION_TBL WHERE expiry < " . time();
+		$ADODB_SESS_CONN->Execute($qry);
+	}
 	
 	// suggested by Cameron, "GaM3R" <gamr@outworld.cx>
 	if (defined('ADODB_SESSION_OPTIMIZE'))

@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V2.50 14 Nov 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -48,9 +48,9 @@ class ADODB_oci805 extends ADODB_oci8 {
 
 class ADORecordset_oci805 extends ADORecordset_oci8 {	
 	var $databaseType = "oci805";
-	function ADORecordset_oci805($id)
+	function ADORecordset_oci805($id,$mode=false)
 	{
-		$this->ADORecordset_oci8($id);
+		$this->ADORecordset_oci8($id,$mode);
 	}
 }
 ?>

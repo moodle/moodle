@@ -1,7 +1,7 @@
 <?php
 
 /* 
-V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -16,6 +16,8 @@ V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
   Format documented at http://php.weblogs.com/ADODB_CSV
   ==============
 */
+
+
 
 	/**
  	 * convert a recordset into special format
@@ -81,19 +83,20 @@ V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 */
 	function &csv2rs($url,&$err,$timeout=0)
 	{
+		$ishttp = strpos(substr($url,3,10),':') !== false;
 		$fp = @fopen($url,'r');
 		$err = false;
 		if (!$fp) {
 			$err = $url.'file/URL not found';
 			return false;
 		}
-		flock($fp, LOCK_SH);
+		if (!$ishttp) flock($fp, LOCK_SH);
 		$arr = array();
 		$ttl = 0;
 		
-		if ($meta = fgetcsv ($fp, 32000, ",")) {
+		if ($meta = fgetcsv($fp, 32000, ",")) { // first read is larger because contains sql
 			// check if error message
-			if (substr($meta[0],0,4) === '****') {
+			if (strncmp($meta[0],'****',4) === 0) {
 				$err = trim(substr($meta[0],4,1024));
 				fclose($fp);
 				return false;
@@ -102,7 +105,7 @@ V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 			// $meta[0] is -1 means return an empty recordset
 			// $meta[1] contains a time 
 	
-			if (substr($meta[0],0,4) ===  '====') {
+			if (strncmp($meta[0],'====',4) === 0) {
 			
 				if ($meta[0] == "====-1") {
 					if (sizeof($meta) < 5) {
@@ -126,9 +129,13 @@ V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 					$rs->insertid = $meta[4];	
 					return $rs;
 				}
+			
+			# If detect timeout here return false, forcing a fresh query and new cache values
+			#
 			# Under high volume loads, we want only 1 thread/process to _write_file
 			# so that we don't have 50 processes queueing to write the same data.
-			# Would require probabilistic blocking write 
+			#
+			# We implement a probabilistic blocking write:
 			#
 			# -2 sec before timeout, give processes 1/16 chance of writing to file with blocking io
 			# -1 sec after timeout give processes 1/4 chance of writing with blocking
@@ -139,14 +146,14 @@ V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 						if ($tdiff <= 2) {
 							switch($tdiff) {
 							case 2: 
-								if ((rand() & 15) == 0) {
+								if ((rand() & 0xf) == 0) {
 									fclose($fp);
 									$err = "Timeout 2";
 									return false;
 								}
 								break;
 							case 1:
-								if ((rand() & 3) == 0) {
+								if ((rand() & 0x3) == 0) {
 									fclose($fp);
 									$err = "Timeout 1";
 									return false;
@@ -202,9 +209,12 @@ V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 		}
 			
 		fclose($fp);
-		$arr = @unserialize($text);
-		
-		//var_dump($arr);
+		//print "<hr>";
+		//print_r($text);
+		//if (strlen($text) == 0) $arr = array();
+		//else 
+		$arr = unserialize($text);
+		//print_r($arr);
 		if (!is_array($arr)) {
 			$err = "Recordset had unexpected EOF (in serialized recordset)";
 			if (get_magic_quotes_runtime()) $err .= ". Magic Quotes Runtime should be disabled!";
@@ -216,58 +226,4 @@ V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 		return $rs;
 	}
 	
-	/*
-	# The following code was an alternative method of saving 
-	# recordsets and  is experimental and was never used.
-	# It is faster, but provides very little error checking.
-	
-	//High speed rs2csv 10% faster 
-	function & xrs2csv(&$rs)
-	{
-		return time()."\n".serialize($rs);
-	}
-	function & xcsv2rs($url,&$err,$timeout)
-	{
-		$t = filemtime($url);// this is cached - should we clearstatcache() ?
-		if ($t === false) {
-			$err = 'File not found 1';
-			return false;
-		}
-		
-		if (time() > $t + $timeout){
-			$err = " Timeout 1";
-			return false;
-		}
-		
-		$fp = @fopen($url,'r');
-		if (!$fp) {
-			$err = ' file not found ';
-			return false;
-		}
-		
-		flock($fp,LOCK_SH);
-		$t = fgets($fp,100);
-		if ($t === false){
-			fclose($fp);
-			$err =  " EOF 1 ";
-			return false;
-		}
-		/*
-		if (time() > ((integer)$t) + $timeout){
-			fclose($fp);
-			$err = " Timeout 2";
-			return false;
-		}*   /
-		
-		$txt = &fread($fp,1999999); // Increase if EOF 2 error returned
-		fclose($fp);
-		$o = @unserialize($txt);
-		if (!is_object($o)) {
-			$err = " EOF 2";
-			return false;
-		}
-		$o->timeCreated = $t;
-		return $o;
-	}
-	*/
 ?>

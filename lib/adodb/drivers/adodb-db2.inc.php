@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -56,6 +56,14 @@ library.
 So I guess this means the message [above] was related to using a 3rd party
 odbc driver.
 
+Setting SQL_CUR_USE_ODBC
+========================
+To set SQL_CUR_USE_ODBC for drivers that require it, do this:
+
+$db = NewADOConnection('db2');
+$db->curMode = SQL_CUR_USE_ODBC;
+$db->Connect($dsn, $userid, $pwd);
+
 */
 
 if (!defined('_ADODB_ODBC_LAYER')) {
@@ -75,32 +83,6 @@ class ADODB_DB2 extends ADODB_odbc {
 	function ADODB_DB2()
 	{
 		$this->ADODB_odbc();
-	}
-
-	// returns true or false
-	// curmode is not properly supported by DB2 odbc driver according to Mark Newnham
-	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
-	{
-	global $php_errormsg;
-	
-		$php_errormsg = '';
-		$this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
-		$this->_errorMsg = $php_errormsg;
-
-		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
-		return $this->_connectionID != false;
-	}
-	
-	// returns true or false
-	function _pconnect($argDSN, $argUsername, $argPassword, $argDatabasename)
-	{
-	global $php_errormsg;
-		$php_errormsg = '';
-		$this->_connectionID = odbc_pconnect($argDSN,$argUsername,$argPassword);
-		$this->_errorMsg = $php_errormsg;
-		
-		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
-		return $this->_connectionID != false;
 	}
 	
 	function RowLock($tables,$where)
@@ -161,9 +143,9 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 	
 	var $databaseType = "db2";		
 	
-	function ADORecordSet_db2($id)
+	function ADORecordSet_db2($id,$mode=false)
 	{
-		$this->ADORecordSet_odbc($id);
+		$this->ADORecordSet_odbc($id,$mode);
 	}
 
 	function MetaType($t,$len=-1,$fieldobj=false)

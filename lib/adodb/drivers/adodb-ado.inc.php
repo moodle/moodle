@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -29,16 +29,23 @@ class ADODB_ado extends ADOConnection {
 	var $_cursor_location = 3; // 2=adUseServer, 3 = adUseClient;
 	var $_lock_type = -1;
 	var $_execute_option = -1;
-					  
-	
+	var $poorAffectedRows = true; 
+	var $charPage;
+		
 	function ADODB_ado() 
 	{ 	
+		$this->_affectedRows = new VARIANT;
 	}
 
+	function ServerInfo()
+	{
+		if (!empty($this->_connectionID)) $desc = $this->_connectionID->provider;
+		return array('description' => $desc, 'version' => '');
+	}
 	
 	function _affectedrows()
 	{
-			return $this->_affectedRows;
+			return $this->_affectedRows->value;
 	}
 	
 	// you can also pass a connection string like this:
@@ -49,7 +56,11 @@ class ADODB_ado extends ADOConnection {
 		$u = 'UID';
 		$p = 'PWD';
 	
-		$dbc = new COM('ADODB.Connection');
+		if (!empty($this->charPage))
+			$dbc = new COM('ADODB.Connection',null,$this->charPage);
+		else
+			$dbc = new COM('ADODB.Connection');
+			
 		if (! $dbc) return false;
 
 		/* special support if provider is mssql or access */
@@ -190,7 +201,11 @@ class ADODB_ado extends ADOConnection {
 		
 	//	return rs	
 		if ($inputarr) {
-			$oCmd = new COM('ADODB.Command');
+			
+			if (!empty($this->charPage))
+				$oCmd = new COM('ADODB.Command',null,$this->charPage);
+			else
+				$oCmd = new COM('ADODB.Command');
 			$oCmd->ActiveConnection = $dbc;
 			$oCmd->CommandText = $sql;
 			$oCmd->CommandType = 1;
@@ -298,12 +313,14 @@ class ADORecordSet_ado extends ADORecordSet {
 	var $canSeek = true;
   	var $hideErrors = true;
 		  
-	function ADORecordSet_ado(&$id)
+	function ADORecordSet_ado($id,$mode=false)
 	{
-	global $ADODB_FETCH_MODE;
-	
-		$this->fetchMode = $ADODB_FETCH_MODE;
-		return $this->ADORecordSet($id);
+		if ($mode === false) { 
+			global $ADODB_FETCH_MODE;
+			$mode = $ADODB_FETCH_MODE;
+		}
+		$this->fetchMode = $mode;
+		return $this->ADORecordSet($id,$mode);
 	}
 
 
@@ -445,8 +462,14 @@ class ADORecordSet_ado extends ADORecordSet {
 	adPropVariant	= 138,
 	adVarNumeric	= 139
 */
-	function MetaType($t,$len=-1)
+	function MetaType($t,$len=-1,$fieldobj=false)
 	{
+		if (is_object($t)) {
+			$fieldobj = $t;
+			$t = $fieldobj->type;
+			$len = $fieldobj->max_length;
+		}
+		
 		if (!is_numeric($t)) return $t;
 		
 		switch ($t) {
@@ -494,7 +517,10 @@ class ADORecordSet_ado extends ADORecordSet {
 	function _fetch()
 	{	
 		$rs = $this->_queryID;
-		if (!$rs or $rs->EOF) return false;
+		if (!$rs or $rs->EOF) {
+			$this->fields = false;
+			return false;
+		}
 		$this->fields = array();
 	
 		if (!$this->_tarr) {
@@ -545,7 +571,7 @@ class ADORecordSet_ado extends ADORecordSet {
 		if ($this->hideErrors) error_reporting($olde);
 		@$rs->MoveNext(); // @ needed for some versions of PHP!
 		
-		if ($this->fetchMode == ADODB_FETCH_ASSOC) {
+		if ($this->fetchMode & ADODB_FETCH_ASSOC) {
 			$this->fields = $this->GetRowAssoc(ADODB_ASSOC_CASE);
 		}
 		return true;

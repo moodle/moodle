@@ -1,6 +1,6 @@
 <?php
 /*
-	V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+	V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
 	  Released under both BSD license and Lesser GPL library license. 
 	  Whenever there is any discrepancy between the two licenses, 
 	  the BSD license will take precedence. 
@@ -273,9 +273,9 @@ class ADODB_Pager {
 	
 	//------------------------------------------------------
 	// override this to control overall layout and formating
-	function RenderLayout($header,$grid,$footer)
+	function RenderLayout($header,$grid,$footer,$attributes='border=1 bgcolor=beige')
 	{
-		echo "<table border=1 bgcolor=beige><tr><td>",
+		echo "<table ".$attributes."><tr><td>",
 				$header,
 			"</td></tr><tr><td>",
 				$grid,

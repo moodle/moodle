@@ -1,6 +1,6 @@
 <?php
 /**
- * @version V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -26,7 +26,7 @@ define('ADODB_ERROR_HANDLER','ADODB_Error_Handler');
 * @param $p1		$fn specific parameter - see below
 * @param $P2		$fn specific parameter - see below
 	*/
-function ADODB_Error_Handler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
+function ADODB_Error_Handler($dbms, $fn, $errno, $errmsg, $p1, $p2, &$thisConnection)
 {
 	if (error_reporting() == 0) return; // obey @ protocol
 	switch($fn) {
