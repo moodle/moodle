@@ -103,6 +103,13 @@
         array_unshift($table->align, "CENTER");
     
         if ($learningforums = get_all_instances_in_course("forum", $course->id)) {
+            foreach ($learningforums as $key => $forum) {
+                if ($forum->type == "news" or $forum->type == "social") {
+                    unset($learningforums[$key]);  // Remove these
+                }
+            }
+        }
+        if ($learningforums) {
             foreach ($learningforums as $forum) {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
     
