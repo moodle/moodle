@@ -22,6 +22,7 @@ $string['discussion'] = "Diskussion";
 $string['discussionmoved'] = "Diese Diskussion wurde nach '\$a' verschoben";
 $string['discussions'] = "Diskussionen";
 $string['discussionsstartedby'] = "Diskussionen starteten am \$a";
+$string['discussionsstartedbyrecent'] = "Diskussion beginnt bei \$a";
 $string['discussthistopic'] = "Diesen Eintrag diskutieren";
 $string['eachuserforum'] = "Jeder trägt eine Diskussion ein.";
 $string['edit'] = "Bearbeiten";

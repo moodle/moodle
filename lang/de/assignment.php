@@ -26,6 +26,7 @@ $string['maximumsize'] = "Maximale Größe";
 $string['modulename'] = "Aufgabe";
 $string['modulenameplural'] = "Aufgaben";
 $string['newsubmissions'] = "Aufgaben eingereicht";
+$string['notgradedyet'] = "Noch nicht bewertet";
 $string['notsubmittedyet'] = "Noch nichts eingereicht";
 $string['overwritewarning'] = "Hinweis: erneutes Hochladen ERSETZT Ihren gegenwärtigen Eintrag ";
 $string['saveallfeedback'] = "Alle meine Rückmeldungen speichern";
