@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4.3 (2004083130)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['auth_common_settings'] = 'Gemeinsame Einstellungen';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Diese Methode benutzt eine externe Datenbank-Tabelle, um die Gültigkeit eines angegebenen Nutzernamens und Kennwort zu überprüfen, Wenn der Zugang neu ist, werden die Informationen der übrigen Felder ebenso zu Moodle hinüberkopiert.';
 $string['auth_dbextrafields'] = 'Diese Felder sind optional. Sie können auswählen, einige Moodle Nutzer-Felder mit Informationen des <b>externen Datenbank-Feldes</b> vorauszufüllen, das Sie hier angeben.
-<p>Wenn Sie dieses leer lassen, werden Standardwerte benutzt.<P>Im anderen Fall muß der/die Nutzer/in alle Felder nach der Anmeldung ausfüllen.';
+<p>Wenn Sie dieses leer lassen, werden Standardwerte benutzt.</p><p>Im anderen Fall muß der/die Nutzer/in alle Felder nach der Anmeldung ausfüllen.,/p>';
 $string['auth_dbfieldpass'] = 'Name des Feldes, das das Passwort enthält';
 $string['auth_dbfielduser'] = 'Name des Feldes, das den Nutzernamen enthält';
 $string['auth_dbhost'] = 'Der Computer, der die Datenbank bereitstellt';
@@ -15,7 +15,7 @@ $string['auth_dbpass'] = 'Das Passwort, das zum Nutzernamen gehört';
 $string['auth_dbpasstype'] = 'Spezifizieren Sie das Format, das das Passwortfeld benutzt. MD5-Verschlüsselung ist nützlich dafür, mit anderen üblichen Netzanwendungen Verbindung aufzunehmen wie z.B. PostNuke';
 $string['auth_dbtable'] = 'Name der Datenbank-Tabelle';
 $string['auth_dbtitle'] = 'Eine externe Datenbank benutzen';
-$string['auth_dbtype'] = 'Der Datenbank-Typ (Siehe <A HREF=../lib/adodb/readme.htm#drivers>ADOdb Anleitung</A> für Einzelheiten)';
+$string['auth_dbtype'] = 'Der Datenbank-Typ (Siehe <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb Anleitung</a> für Einzelheiten)';
 $string['auth_dbuser'] = 'Nutzername mit Schreibzugriff auf die Datenbank';
 $string['auth_editlock'] = 'Schlüsselwert (lock value)';
 $string['auth_editlock_expl'] = '<p><b>Schlüsselwert (lock value):</b> Wenn das Feld aktiviert wird, können moodle Nutzer und Admins das Feld nicht mehr direkt bearbeiten. Wenden Sie diese Option an, wenn Sie die Daten aus einem externen System übernehmen. </p>';
@@ -58,7 +58,7 @@ $string['auth_ldap_user_settings'] = 'Einstellung zur Nutzerüberprüfung (user lo
 $string['auth_ldap_user_type'] = 'Auswahl wie Nutzer in LDAP hinterlegt werden. Die Einstellungen legen fest wie der Login-Ablauf, grace Logins und Nutzererstellung ablaufen.';
 $string['auth_ldap_version'] = 'Diese Version des LDAP Protokolls nutzt Ihr Server.';
 $string['auth_ldapdescription'] = 'Diese Methode bietet Authentifizierung gegenüber einem externen LDAP-Server.                                   Wenn der vergebene Nutzername und Passwort gültig sind, erstellt Moodle einen                                   neuen Nutzereintrag in seiner Datenbank. Diese Modul kann Nutzereinträge aus LDAP                                  lesen und gewünschte Felder in Moodle vorbelegen. Für die folgenden Zugänge                                  werden nur Benutzername und Passwort überprüft.';
-$string['auth_ldapextrafields'] = 'Diese Felder sind optional. Sie können einige Moodle Nutzer-Felder mit Daten aus <B>LDAP Feldern</B>, die Sie hier spezifizieren, vorbelegen. <P>Wenn Sie diese Felder leer lassen, wird nichts von LDAP transferiert und die Moodle Voreinstellungen werden verwendet.<P>In jedem Fall können Nutzer diese Felder editieren, nachdem Sie sich angemeldet haben.';
+$string['auth_ldapextrafields'] = 'Diese Felder sind optional. Sie können einige Moodle Nutzer-Felder mit Daten aus <b>LDAP Feldern</b>, die Sie hier spezifizieren, vorbelegen. <p>Wenn Sie diese Felder leer lassen, wird nichts von LDAP transferiert und die Moodle Voreinstellungen werden verwendet.</p><p>In jedem Fall können Nutzer diese Felder editieren, nachdem Sie sich angemeldet haben.</p>';
 $string['auth_ldaptitle'] = 'Einen LDAP-Server verwenden';
 $string['auth_manualdescription'] = 'Diese Methode verhindert, dass Nutzer Ihre eigenen Zugänge anlegen können. Jeder Zugang muss manuell vom Administrator selbst eingerichtet werden.';
 $string['auth_manualtitle'] = 'Nur manuelle Zugänge';

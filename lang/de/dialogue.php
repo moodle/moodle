@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.4.3 (2004083130)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['addmynewentries'] = 'Meine neuen Einträge hinzufügen.';
@@ -13,8 +13,8 @@ $string['confirmclosure'] = 'Sie wollen diesen Dialog mit $a schließen. Geschlos
 $string['deleteafter'] = 'Geschlossenen Dialoge nach (Tagen) löschen';
 $string['dialogueclosed'] = 'Der Dialog wurde geschlossen.';
 $string['dialogueintro'] = 'Zusammenfassung';
-$string['dialoguemail'] = '$a->userfrom hat einen neuen Beitrag im Dialog \'$a->dialogue\' geschrieben<p>
-Sie können diesen Beitrag ansehen unter: <p>
+$string['dialoguemail'] = '$a->userfrom hat einen neuen Beitrag im Dialog \'$a->dialogue\' geschrieben.
+Sie können diesen Beitrag ansehen unter: 
 $a->url';
 $string['dialoguemailhtml'] = '$a->userfrom hat einen neuen Beitrag geschrieben im Dialog\'<i>$a->dialogue</i>\'<br /><br />
 Sie können diesen Beitrag ansehen unter <a href=\"$a->url\">dialogue</a>.';

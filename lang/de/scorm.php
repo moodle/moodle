@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4.3 (2004083130)
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['asset'] = 'Asset';
-$string['attr_error'] = 'Falscher Wert für Attribut ($a->atttr) in Tag $a->tag';
+$string['attr_error'] = 'Falscher Wert für Attribut ($a->attr) in Tag $a->tag';
 $string['autocontinue'] = 'Automatische Fortsetzung';
 $string['badmanifest'] = 'Einige dauerhafte Fehler: siehe Fehlerprotokoll';
 $string['browse'] = 'Durchsuchen';

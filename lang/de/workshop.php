@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['absent'] = 'Abwesend';
@@ -248,7 +248,7 @@ $string['showgrades'] = 'Bewertungen anzeigen';
 $string['showsubmission'] = 'Beiträge anzeigen: $a';
 $string['specimenassessmentform'] = 'Bewertungskriterien (Übersicht)';
 $string['standarddeviation'] = 'Standardabweichung des Elements $a:';
-$string['standarddeviationnote'] = 'Elemente mit einer Standardabweichung von Null oder sehr kleinen Werten können die Analyse verzerren.<br/> Dieses Element wurde von der Analyse ausgeschlossen.';
+$string['standarddeviationnote'] = 'Elemente mit einer Standardabweichung von Null oder sehr kleinen Werten können die Analyse verzerren.<br /> Dieses Element wurde von der Analyse ausgeschlossen.';
 $string['standarddeviationofelement'] = 'Standardabweichung des Elements $a:';
 $string['strict'] = 'strict/streng';
 $string['studentassessments'] = '$a Assessments';

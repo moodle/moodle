@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4.3 (2004083130)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['action'] = 'Aktion';
@@ -391,9 +391,9 @@ Viel Erfolg!
 
 Grüße von der \'$a->sitename\'-Verwaltung, $a->admin';
 $string['emailconfirmationsubject'] = '$a: Zugangsbestätigung';
-$string['emailconfirmsent'] = '<P>Um sicherzugehen, dass sich nicht jemand unberechtigt über Ihre E-Mail anmeldet, wird eine automatische Benachrichtigung an die angegebene Adresse <B>$a</B> geschickt. Je nach Netzlast trifft sie sofort oder auch etwas später bei Ihnen ein.
-<P>Die Benachrichtigung enthält einen Link, mit dem Sie Ihre Anmeldung innerhalb einer Woche bestätigen sollten (andernfalls müssten Sie sich nochmal neu anmelden). Danach sind Sie registriert und können sofort loslegen.
-<P>Bei eventuellen Problemen kontaktieren Sie bitte den Verwalter dieser Seite.';
+$string['emailconfirmsent'] = '<p>Um sicherzugehen, dass sich nicht jemand unberechtigt über Ihre E-Mail anmeldet, wird eine automatische Benachrichtigung an die angegebene Adresse <b>$a</b> geschickt. Je nach Netzlast trifft sie sofort oder auch etwas später bei Ihnen ein.</p>
+<p>Die Benachrichtigung enthält einen Link, mit dem Sie Ihre Anmeldung innerhalb einer Woche bestätigen sollten (andernfalls müssten Sie sich nochmal neu anmelden). Danach sind Sie registriert und können sofort loslegen.</p>
+<p>Bei eventuellen Problemen kontaktieren Sie bitte den Verwalter dieser Seite.</p>';
 $string['emaildigest'] = 'E-Mail Zusammenfassung (Digest)';
 $string['emaildigestcomplete'] = 'Vollständig (tägliche E-Mail mit  allen Beiträgen)';
 $string['emaildigestoff'] = 'Keine Zusammenfassung (jeden Beitrag einzeln als E-Mail)';
@@ -426,12 +426,12 @@ Sofern Sie Hilfe benötigen, wenden Sie sich bitte an den Verwalter der Seite,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: Passwort-Bestätigung ändern';
 $string['emailpasswordconfirmsent'] = 'Eine E-Mail zur Bestätigung der Passwortänderung sollte an Ihre Adresse <b>$a</b> verschickt worden sein.
-<p>Sie enthält einfache Anweisungen und einen Link, um die Änderung abzuschließen.
-<b>Bei weiteren Problemen kontaktieren Sie bitte die Moodle-Administration.';
+<br />Sie enthält einfache Anweisungen und einen Link, um die Änderung abzuschließen.
+Bei weiteren Problemen kontaktieren Sie bitte die Moodle-Administration.';
 $string['emailpasswordsent'] = 'Danke für Ihre Bestätigung der Passwortänderung.
-<p>Eine E-Mail mit Ihrem neuen Passwort wurde an Ihre Adresse <b>$a->email</b> verschickt.
-<p>Das Passwort wurde automatisch generiert -
-Sie werden wahrscheinlich dieses <a href=$a->link>Passwort ändern</a> wollen, um es sich besser merken zu können.';
+<br />Eine E-Mail mit Ihrem neuen Passwort wurde an Ihre Adresse <b>$a->email</b> verschickt.
+<br />Das Passwort wurde automatisch generiert -
+Sie werden wahrscheinlich dieses <a href=\"$a->link\">Passwort ändern</a> wollen, um es sich besser merken zu können.';
 $string['enable'] = 'Aktivieren';
 $string['encryptedcode'] = 'Verschlüsselter Code';
 $string['enrolledincourse'] = 'Eingeschrieben in Kurs ';
@@ -625,19 +625,22 @@ $string['loginsite'] = 'Login';
 $string['loginsteps'] = 'Guten Tag,<br /><br />
 hier können Sie sich anmelden, um an den verschiedenen Kursen teilzunehmen. Es sind dazu nur einige Informationen erforderlich.<br /><br />
 
-Gehen Sie bitte wie folgt vor: <OL size=2>
-<LI>
-Füllen Sie das Formular <HREF=$a>Neuer Zugang </A>
-mit Ihren Angaben aus. 
-<LI>Sie erhalten anschließend eine E-Mail an Ihre angegebene E-Mail-Adresse. 
-<LI>Lesen Sie diese E-Mail und klicken Sie den darin enthaltenen Link an. 
-<LI>Ihr Zugang wird dadurch bestätigt und Sie werden automatisch mit Ihren zuvor angegebenen Zugangsdaten auf der Startseite eingeloggt. 
-<LI>Jetzt wählen Sie bitte den Kurs aus, an dem Sie teilnehmen möchten. 
-<LI>Für einige Kurse ist ein Zugangsschlüssel notwendig. Benutzen Sie dazu bitte den Zugangsschlüssel, den Ihnen Ihr/e Trainer/in mitgeteilt hat. Dieser Zugangsschlüssel ermöglicht Ihnen sich für den entsprechenden Kurs \"einzuschreiben\". 
-<LI>Nun können Sie auf den gesamten Kurs zugreifen. Zukünftig brauchen Sie nur den bei Ihrer Anmeldung gewählten Benutzernamen und das Passwort im Formular auf dieser Seite links eingeben, um sich einzuloggen und Zugang zu den verschiedenen Kursen zu erhalten. 
- 
-</OL>';
-$string['loginstepsnone'] = 'Guten Tag!<P>Für den vollen Zugang zu den Kursen müssen Sie sich einen Zugang anlegen. <P> Alles, was Sie tun müssen, ist einen Benutzernamen und ein  Kennwort zu wählen, das Sie im Formular auf dieser Seite eintragen! <P>Sofern jemand anderes bereits Ihren Benutzernamen gewählt hat, müssen Sie einen anderen Benutzernamen verwenden.';
+Gehen Sie bitte wie folgt vor: 
+<ol>
+<li>
+Füllen Sie das Formular <href=\"$a\">Neuer Zugang </a> mit Ihren Angaben aus. </li>
+<li>Sie erhalten anschließend eine E-Mail an Ihre angegebene E-Mail-Adresse. </li>
+<li>Lesen Sie diese E-Mail und klicken Sie den darin enthaltenen Link an. </li>
+<li>Ihr Zugang wird dadurch bestätigt und Sie werden automatisch mit Ihren zuvor angegebenen Zugangsdaten auf der Startseite eingeloggt. </li>
+<li>Jetzt wählen Sie bitte den Kurs aus, an dem Sie teilnehmen möchten. </li>
+<li>Für einige Kurse ist ein Zugangsschlüssel notwendig. Benutzen Sie dazu bitte den Zugangsschlüssel, den Ihnen Ihr/e Trainer/in mitgeteilt hat. Dieser Zugangsschlüssel ermöglicht Ihnen sich für den entsprechenden Kurs \"einzuschreiben\". </li>
+<li>Nun können Sie auf den gesamten Kurs zugreifen. Zukünftig brauchen Sie nur den bei Ihrer Anmeldung gewählten Benutzernamen und das Passwort im Formular auf dieser Seite links eingeben, um sich einzuloggen und Zugang zu den versc/hiedenen Kursen zu erhalten. 
+ </li
+</ol>';
+$string['loginstepsnone'] = '<p>Guten Tag!</p>
+<p>Für den vollen Zugang zu den Kursen müssen Sie sich einen Zugang anlegen.</p>
+<p> Alles, was Sie tun müssen, ist einen Benutzernamen und ein  Kennwort zu wählen, das Sie im Formular auf dieser Seite eintragen! </p>
+<p>Sofern jemand anderes bereits Ihren Benutzernamen gewählt hat, müssen Sie einen anderen Benutzernamen verwenden.</p>';
 $string['loginto'] = 'Angemeldet bei $a';
 $string['loginusing'] = 'Bitte beachten Sie, dass es notwendig ist, sich vor dem ersten Moodle-Login einmalig zu registrieren';
 $string['logout'] = 'LogOut';
@@ -806,11 +809,10 @@ $string['passwordconfirmchange'] = 'Passwortänderung bestätigen';
 $string['passwordrecovery'] = 'Ja, bitte beim Login helfen';
 $string['passwordsdiffer'] = 'Die Passwörter stimmen nicht überein';
 $string['passwordsent'] = 'Passwort wurde verschickt';
-$string['passwordsenttext'] = '<P>Eine E-Mail wurde an Ihre Adresse $a->email gesendet.
-<P><B>Schauen Sie bitte in Ihrer E-Mail nach Ihrem neuen Kennwort
-
-<P>Das Kennwort wurde automatisch erzeugt.
-Sicherlich möchten Sie es <A HREF=$a->link>ändern</a>, um es sich leichter zu merken.';
+$string['passwordsenttext'] = '<p>Eine E-Mail wurde an Ihre Adresse $a->email gesendet.</p>
+<p><b>Schauen Sie bitte in Ihrer E-Mail nach Ihrem neuen Kennwort</b></p>
+<p>Das Kennwort wurde automatisch erzeugt.
+Sicherlich möchten Sie es <a href=\"$a->link\">ändern</a>, um es sich leichter zu merken.</p>';
 $string['pathnotexists'] = 'Der eingegebene Pfad existiert auf dem Server nicht';
 $string['pathslasherror'] = 'Pfadbezeichnung darf nicht mit einem slash enden!!';
 $string['paymentinstant'] = 'Klicken Sie auf den Button, um die Teilnahmegebühr zu bezahlen und sich innerhalb kürzester Zeit anzumelden.';
@@ -849,10 +851,10 @@ $string['registrationemail'] = 'E-Mail Benachrichtigung';
 $string['registrationinfo'] = '<p>Diese Seite ermöglicht es Ihnen, Ihre Moodle Seite auf moodle.org zu registrieren.
 Die Registrierung ist kostenlos.
 Der Haupt-Vorteil besteht darin, dass Sie in einer kleinen Mailingliste aufgenommen werden,
-um wichtige sicherheitsrelevante Informationen und Nachrichten über neue Versionen bekommen.
-<p>Standardmäßig werden Ihre Informationen nicht veröffentlicht oder an dritte Personen weiterverkauft. Der einzige Grund, diese Informationen zu sammeln, besteht aus Gründen des Supports dazu beizutragen, ein statistisches Bild von der Moodle-Gemeinschaft als Ganzheit aufzubauen.
-<p>Wenn Sie es auswählen, können Sie den Seitennamen, das Land und die URL zur öffenlichen Liste der Moodle Seiten hinzufügen.
-<p>Jede neue Registrierung wird manuell geprüft, bevor sie der Liste hinzugefügt wird, aber sofern Sie hinzugefügt wurden, können Sie Ihre Registrierung (und Ihren Eintrag in der öffentlichen Liste)jederzeit aktualisieren, indem Sie dieses Formular erneut absenden.';
+um wichtige sicherheitsrelevante Informationen und Nachrichten über neue Versionen bekommen.</p>
+<p>Standardmäßig werden Ihre Informationen nicht veröffentlicht oder an dritte Personen weiterverkauft. Der einzige Grund, diese Informationen zu sammeln, besteht aus Gründen des Supports dazu beizutragen, ein statistisches Bild von der Moodle-Gemeinschaft als Ganzheit aufzubauen.</p>
+<p>Wenn Sie es auswählen, können Sie den Seitennamen, das Land und die URL zur öffenlichen Liste der Moodle Seiten hinzufügen.</p>
+<p>Jede neue Registrierung wird manuell geprüft, bevor sie der Liste hinzugefügt wird, aber sofern Sie hinzugefügt wurden, können Sie Ihre Registrierung (und Ihren Eintrag in der öffentlichen Liste)jederzeit aktualisieren, indem Sie dieses Formular erneut absenden.</p>';
 $string['registrationno'] = 'Nein, ich möchte keine E-Mail erhalten';
 $string['registrationsend'] = 'Sende Registrierungsinformation an moodle.org';
 $string['registrationyes'] = 'Ja, benachrichtigen Sie mich über wichtige Hinweise';
@@ -893,7 +895,7 @@ $string['scheduledbackupstatus'] = 'Vorgesehener Backupstatus';
 $string['search'] = 'Suchen';
 $string['searchagain'] = 'Erneut Suchen';
 $string['searchcourses'] = 'Kurse suchen';
-$string['searchhelp'] = 'Sie können nach mehreren Begriffen gleichzeitig suchen.<p>word : findet jeden Treffer des Worts im gesamten Text.<br />+word : nur exakte Treffer werden gefunden .<br />-word : schließt Ergebnisse, die dieses Wort beinhalten, aus den Treffern aus.';
+$string['searchhelp'] = 'Sie können nach mehreren Begriffen gleichzeitig suchen.<br /><br />word : findet jeden Treffer des Worts im gesamten Text.<br />+word : nur exakte Treffer werden gefunden .<br />-word : schließt Ergebnisse, die dieses Wort beinhalten, aus den Treffern aus.';
 $string['searchresults'] = 'Suchergebnisse';
 $string['sec'] = 'Sekunde';
 $string['secs'] = 'Sekunden';

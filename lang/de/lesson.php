@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4.3 (2004083130)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['actionaftercorrectanswer'] = 'Aktion nach der richtigen Antwort';
@@ -89,8 +89,8 @@ $string['hightime'] = 'maximale Zeit';
 $string['importquestions'] = 'Fragen importieren';
 $string['jump'] = 'Sprung';
 $string['jumptsto'] = 'springt zu';
-$string['leftduringtimed'] = 'Sie haben die Lektion verlassen. Diese Lektion ist für die Bearbeitung zeitgesteuert. <br>Klicken Sie auf Fortsetzen, um die Lektion erneut zu beginnen.';
-$string['leftduringtimednoretake'] = 'Sie haben die Lektion verlassen. Diese Lektion ist für die Bearbeitung zeitgesteuert. <br>Sie können nicht in diese Lektion zurückkehren oder von Anfang an neu beginnen.';
+$string['leftduringtimed'] = 'Sie haben die Lektion verlassen. Diese Lektion ist für die Bearbeitung zeitgesteuert. <br />Klicken Sie auf Fortsetzen, um die Lektion erneut zu beginnen.';
+$string['leftduringtimednoretake'] = 'Sie haben die Lektion verlassen. Diese Lektion ist für die Bearbeitung zeitgesteuert. <br />Sie können nicht in diese Lektion zurückkehren oder von Anfang an neu beginnen.';
 $string['lesson'] = '§a Lektion';
 $string['lessonclosed'] = 'Diese Lektion schließt am $a.';
 $string['lessondefault'] = 'Grundeinstellungen für Lektionen verwenden';
@@ -118,7 +118,7 @@ $string['movingtonextpage'] = 'Zur nächsten Seite gehen';
 $string['multianswer'] = 'Mehrere richtige Antworten';
 $string['multipleanswer'] = 'Mehrere Antworten';
 $string['nameapproved'] = 'Namen bestätigen';
-$string['namereject'] = 'Der eingegebene Name wurde bei der Prüfung zurückgewiesen.<br>Bitte versuchen Sie es mit einem anderem Namen noch einmal.';
+$string['namereject'] = 'Der eingegebene Name wurde bei der Prüfung zurückgewiesen.<br />Bitte versuchen Sie es mit einem anderem Namen noch einmal.';
 $string['nextpage'] = 'Nächste Seite';
 $string['noanswer'] = 'Sie haben keine Antwort abgegeben';
 $string['noattemptrecordsfound'] = 'Keine aufgezeichneten Daten gefunden: Keine Bewertung vorgenommen';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4.3 (2004083130)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['addresource'] = 'Material hinzufügen';
@@ -55,7 +55,7 @@ $string['newwindow'] = 'Neues Fenster';
 $string['newwindowopen'] = 'Dieses Quelle in einem neuen Popup-Fenster anzeigen';
 $string['note'] = 'Anmerkung';
 $string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit dieses in der Liste erscheinen) benutzen Sie bitte den 
-<A HREF=$a >Datei-Manager</A>.';
+<a href=\"$a\">Datei-Manager</a>.';
 $string['notypechosen'] = 'Sie müssen einen Typ auswählen. Verwenden Sie den Zurück-Knopf und probieren Sie es erneut';
 $string['pagedisplay'] = 'Zeigt das Arbeitsmaterial im derzeitigen Fenster';
 $string['pagewindow'] = 'Gleiches Fenster';
