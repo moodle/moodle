@@ -360,7 +360,7 @@ edit your moodle/filter/algebra/pix.php file to add
 <br /><?PHP echo "case &quot;" . PHP_OS . "&quot;:" ;?><br ?> to the list of operating systems
 in the switch (PHP_OS) statement. Windows users may have a problem properly
 unzipping mimetex.exe. Make sure that mimetex.exe is is <b>PRECISELY</b>
-329728 bytes in size. If not, download fresh copy from
+433152 bytes in size. If not, download fresh copy from
 <a href="http://moodle.org/download/mimetex/windows/mimetex.exe">
 http://moodle.org/download/mimetex/windows/mimetex.exe</a>. Lastly check
 the execute permissions on your mimetex binary, as outlined in item 2 above.</li>

@@ -222,7 +222,7 @@ edit your moodle/filter/tex/pix.php file to add
 <br /><?PHP echo "case &quot;" . PHP_OS . "&quot;:" ;?><br ?> to the list of operating systems
 in the switch (PHP_OS) statement. Windows users may have a problem properly
 unzipping mimetex.exe. Make sure that mimetex.exe is is <b>PRECISELY</b>
-329728 bytes in size. If not, download a fresh copy from
+433152 bytes in size. If not, download a fresh copy from
 <a href="http://moodle.org/download/mimetex/windows/mimetex.exe">
 http://moodle.org/download/mimetex/windows/mimetex.exe</a>. 
 Another possible problem which may affect
