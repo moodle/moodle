@@ -38,19 +38,26 @@
        if ($timenow - $course->startdate > $COURSE_MAX_LOG_DISPLAY) {
            $course->startdate = $timenow - $COURSE_MAX_LOG_DISPLAY;
        }
-       $timestart = usergetmidnight($course->startdate);
+       $timestart = $coursestart = usergetmidnight($course->startdate);
+
        $i = 0;
        while ($timestart < $timenow) {
-           $timefinish = $timestart + (3600 * 24);
-           if (! $logcount = get_record_sql("SELECT COUNT(*) as count FROM log
-                                             WHERE user = '$user->id' AND course = '$course->id'
-                                               AND `time` > '$timestart' AND `time` < '$timefinish'")) {
-               $logs[$i] = 0;
-           }
-           $logs[$i] = $logcount->count;
+           $timefinish = $timestart + 86400;
            $days[$i] = userdate($timestart, "%a %e %b");
+           $logs[$i] = 0;
            $i++;
            $timestart = $timefinish;
+       }
+
+       if ($rawlogs = get_records_sql("SELECT floor((`time` - $coursestart)/86400) as day, 
+                                              count(*) as num FROM log 
+                                       WHERE user = '$user->id' 
+                                         AND course = '$course->id'
+                                         AND `time` > '$coursestart'
+                                       GROUP BY day ")) {
+           foreach ($rawlogs as $rawlog) {
+               $logs[$rawlog->day] = $rawlog->num;
+           }
        }
 
        $maxlogs = max($logs);
