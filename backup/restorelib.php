@@ -99,10 +99,150 @@
                 }
             }
         }
+
+        //Now I'm going to decode to their new location all the links in wiki texts
+        //having the syntax " modulename:moduleid".
+        echo "<li>wiki";
+        $status = restore_decode_wiki_texts($restore);
+
         echo "</ul>";
 
         return $status;
     }
+
+    //This function search for some wiki texts in differenct parts of Moodle to
+    //decode them to their new ids.
+    function restore_decode_wiki_texts($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        echo "<ul>";
+
+        if (file_exists("$CFG->dirroot/mod/resource/lib.php")) {
+            include_once("$CFG->dirroot/mod/resource/lib.php");
+        }
+
+        $formatwiki = FORMAT_WIKI;
+        $typewiki = WIKITEXT;
+ 
+        //FORUM: Decode every POST (message) in the course
+        //Check we are restoring forums
+        if ($restore->mods['forum']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
+            //Get all course posts
+            if ($posts = get_records_sql ("SELECT p.id, p.message
+                                       FROM {$CFG->prefix}forum_posts p,
+                                            {$CFG->prefix}forum_discussions d
+                                       WHERE d.course = $restore->course_id AND
+                                             p.discussion = d.id AND
+                                             p.format = $formatwiki")) {
+                //Iterate over each post->message
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($posts as $post) {
+                    //Increment counter
+                    $i++;
+                    $content = $post->message;
+                    //Decode it 
+                    $result = restore_decode_wiki_content($content,$restore);
+
+                    if ($result != $content) {
+                        //Update record
+                        $post->message = addslashes($result);
+                        $status = update_record("forum_posts",$post);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        //RESOURCE: Decode every RESOURCE (alltext) in the coure
+
+        //Check we are restoring resources
+        if ($restore->mods['resource']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
+            //Get all course resources of type=8 WIKITEXT
+            if ($resources = get_records_sql ("SELECT r.id, r.alltext
+                                       FROM {$CFG->prefix}resource r
+                                       WHERE r.course = $restore->course_id AND
+                                             r.type = $typewiki")) {
+                //Iterate over each resource->alltext
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($resources as $resource) {
+                    //Increment counter
+                    $i++;
+                    $content = $resource->alltext;
+                    //Decode it
+                    $result = restore_decode_wiki_content($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $resource->alltext = addslashes($result);
+                        $status = update_record("resource",$resource);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        return $status;
+
+    }
+
+    //This function receives a wiki text in the restore process and
+    //return it with every link to modules " modulename:moduleid"
+    //converted if possible. See the space before modulename!!
+    function restore_decode_wiki_content($content,$restore) {
+
+        global $CFG;
+        
+        $result = $content;
+        
+        $searchstring='/ ([a-zA-Z]+):([0-9]+)\(([^)]+)\)/';
+        //We look for it
+        preg_match_all($searchstring,$content,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) { 
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids               
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (course id)
+                $rec = backup_getid($restore->backup_unique_code,"course_modules",$old_id);
+                //Personalize the searchstring
+                $searchstring='/ ([a-zA-Z]+):'.$old_id.'\(([^)]+)\)/';
+                //If it is a link to this course, update the link to its new location
+                if($rec->new_id) {
+                    //Now replace it
+                    $result= preg_replace($searchstring,' $1:'.$rec->new_id.'($2)',$result);
+                } else {
+                    //It's a foreign link so redirect it to its original URL
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/$1/view.php?id='.$old_id.'($2)',$result);
+                }
+            }
+        }
+        return $result;
+    }
+
 
     //This function read the xml file and store it data from the info zone in an object
     function restore_read_xml_info ($xml_file) {
