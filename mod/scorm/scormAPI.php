@@ -35,14 +35,20 @@
     require_login($course->id);
 
     if ( $scoes_user = get_records_select("scorm_sco_users","userid = ".$USER->id." AND scormid = ".$scorm->id,"scoid ASC") ) {
-	if ($scoid) {
+        //
+        // Already user
+        //
+	if (!empty($scoid)) {	
+	    // Direct sco request
 	    $sco = get_record("scorm_scoes","id",$scoid);
 	} else {
+	    // Search for first incomplete sco
 	    foreach ( $scoes_user as $sco_user ) {
 		if (($sco_user->cmi_core_lesson_status != "completed") && ($sco_user->cmi_core_lesson_status != "passed") && ($sco_user->cmi_core_lesson_status != "failed")) {
 		    $sco = get_record("scorm_scoes","id",$sco_user->scoid);
 		    break;
 		} else {
+		    // If review mode get the first
 		    if ($mode == "review") {
 			$sco = get_record("scorm_scoes","id",$sco_user->scoid);
 			break;
@@ -50,13 +56,21 @@
 		}
 	    }
 	}
-	if (!$sco)
-	    $sco = get_record_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' order by id ASC");
-    } else {	
+	if (!isset($sco)) {  // If no sco was found get the first of SCORM package
+	    $scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' order by id ASC");
+	    $sco = each($scoes);
+	}
+    } else {
+        //
+        // A new user
+        //
 	if ($scoes = get_records("scorm_scoes","scorm",$scorm->id,"id ASC")) {
+	    //
+	    // Create user scoes records
+	    //
 	    foreach ($scoes as $sco) {
 		if ($sco->launch != "") {
-		    if (!$first)
+		    if (!isset($first))
 			$first = $sco;
 		    $sco_user->userid = $USER->id;
 		    $sco_user->scoid = $sco->id;
@@ -64,13 +78,14 @@
 		    $element = "cmi_core_lesson_status";
 		    if ($sco->type == "sco") 
 			$sco_user->$element = "not attempted";
-		    else if ($sco->type == "sca")
+		    else if (($sco->type == "sca") || ($sco->type == "asset"))
 			$sco_user->$element = "completed";
 		    $ident = insert_record("scorm_sco_users",$sco_user);
 		}
 	    }
-	    $sco = $first;
-	    if ($scoid) {
+	    if (isset($first))
+	        $sco = $first;
+	    if (!empty($scoid)) {
 		if ($sco = get_record("scorm_scoes","id",$scoid))
 		    unset($first);
 	    }
@@ -120,6 +135,12 @@
     include("api1_2.php");
 
 ?>
+function hilightcurrent(popupmenu) {
+    for (i=0;i < popupmenu.options.length;i++) {
+	 if ( popupmenu.options[i].value == <?php echo $sco->id; ?> )
+	    	popupmenu.options[i].selected = true;
+    }
+}
 
 function SCOInitialize() { 
 <?php
@@ -133,10 +154,8 @@ function SCOInitialize() {
     }
 ?>
 	top.main.location="<?php echo $result; ?>";
-	for (i=0;i<top.nav.document.navform.courseStructure.options.length;i++) {
-	    if ( top.nav.document.navform.courseStructure.options[i].value == <?php echo $sco->id; ?> )
-	    	top.nav.document.navform.courseStructure.options[i].selected = true;
-	}
+	hilightcurrent(top.nav.document.navform.courseStructure);
+	
 } 
 
 function changeSco(direction) {

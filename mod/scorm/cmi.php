@@ -49,7 +49,7 @@
    <title>cmi</title>
 </head>
 <body>
-   <form name="theform" method="POST" action="<?php echo $_SERVER["PHP_SELF"] ?>?id=<?php echo $cm->id ?>"> 
+   <form name="theform" method="POST" action="<?php echo $ME ?>?id=<?php echo $cm->id ?>"> 
 	<input type="hidden" name="scoid" />
 	<input type="hidden" name="cmi_core_lesson_location" />
 	<input type="hidden" name="cmi_core_lesson_status" />

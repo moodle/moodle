@@ -227,7 +227,11 @@ function scorm_startElement($parser, $name, $attrs) {
     if ($name == "ITEM") {
 		$i++;
 		$manifest[$i]["identifier"] = $attrs["IDENTIFIER"];
+		if (empty($attrs["IDENTIFIERREF"]))
+		    $attrs["IDENTIFIERREF"] = "";
 		$manifest[$i]["identifierref"] = $attrs["IDENTIFIERREF"];
+		if (empty($attrs["ISVISIBLE"]))
+		    $attrs["ISVISIBLE"] = "";
 		$manifest[$i]["isvisible"] = $attrs["ISVISIBLE"];
 		$manifest[$i]["parent"] = $parent[$level];
 		$level++;
@@ -245,9 +249,9 @@ function scorm_endElement($parser, $name) {
         $level--;
     }
     if ($name == "TITLE" && $level>0)
-		$manifest[$i]["title"] = $datacontent;
-	if ($name == "ADLCP:HIDERTSUI")
-		$manifest[$i][$datacontent] = 1;
+	$manifest[$i]["title"] = $datacontent;
+    if ($name == "ADLCP:HIDERTSUI")
+	$manifest[$i][$datacontent] = 1;
 }
 
 function scorm_characterData($parser, $data) {
@@ -290,14 +294,22 @@ function scorm_parse($basedir,$file,$scorm_id) {
         $sco->identifier = $manifest[$j]["identifier"];
         $sco->parent = $manifest[$j]["parent"];
         $sco->title = $manifest[$j]["title"];
-        $sco->launch = $resources[$manifest[$j]["identifierref"]]["href"];
-		$sco->type = $resources[$manifest[$j]["identifierref"]]["type"];
-		$sco->previous = $manifest[$j]["previous"];
-		$sco->next = $manifest[$j]["continue"];
-		if (scorm_remove_spaces($manifest[$j]["isvisible"]) != "false")
-			$id = insert_record("scorm_scoes",$sco);
-		if ($launch==0 && $sco->launch)
-	   		$launch = $id;	
+        if (empty($resources[($manifest[$j]["identifierref"])]["href"]))
+            $resources[($manifest[$j]["identifierref"])]["href"] = "";
+        $sco->launch = $resources[($manifest[$j]["identifierref"])]["href"];
+        if (empty($resources[($manifest[$j]["identifierref"])]["type"]))
+            $resources[($manifest[$j]["identifierref"])]["type"] = "";
+	$sco->type = $resources[($manifest[$j]["identifierref"])]["type"];
+	if (empty($manifest[$j]["previous"]))
+	    $manifest[$j]["previous"] = 0;
+	$sco->previous = $manifest[$j]["previous"];
+	if (empty($manifest[$j]["continue"]))
+	    $manifest[$j]["continue"] = 0;
+	$sco->next = $manifest[$j]["continue"];
+	if (scorm_remove_spaces($manifest[$j]["isvisible"]) != "false")
+	    $id = insert_record("scorm_scoes",$sco);
+	if ($launch==0 && $sco->launch)
+	    $launch = $id;	
     }
     return $launch;
 }
@@ -345,14 +357,14 @@ function scorm_external_link($link) {
     	$result = true;
     else if (substr($link,0,4) == "www.")
     	$result = true;
-    else if (substr($link,0,7) == "rstp://")
+    /*else if (substr($link,0,7) == "rstp://")
     	$result = true;
     else if (substr($link,0,6) == "rtp://")
     	$result = true;
     else if (substr($link,0,6) == "ftp://")
     	$result = true;
     else if (substr($link,0,9) == "gopher://")
-    	$result = true;
+    	$result = true; */
     return $result;
 }    
 ?>

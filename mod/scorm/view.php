@@ -123,6 +123,8 @@
     		    	if ( $sco_user->cmi_core_lesson_status == "")
     		    	    $sco_user->cmi_core_lesson_status = "not attempted";
     			echo "      <img src=\"pix/".scorm_remove_spaces($sco_user->cmi_core_lesson_status).".gif\" alt=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" title=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" />\n";
+ 			if (($sco_user->cmi_core_lesson_status == "not attempted") || ($sco_user->cmi_core_lesson_status == "incomplete"))
+ 			    $incomplete = true;
     		    } else {
     			echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
     			$incomplete = true;
