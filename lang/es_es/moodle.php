@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // moodle.php - created with Moodle 1.1 Beta ++ (2003082600)
+<?PHP // $Id$ 
+      // moodle.php - created with Moodle 1.1 Beta +++ (2003082702)
 
 
 $string['action'] = "Acción";
@@ -741,6 +741,7 @@ $string['userprofilefor'] = "Información personal de \$a";
 $string['users'] = "Usuarios";
 $string['userzones'] = "Zonas de usuario";
 $string['usingexistingcourse'] = "Usar curso existente";
+$string['view'] = "Vista";
 $string['webpage'] = "Página web";
 $string['week'] = "Semana";
 $string['weekhide'] = "Ocultar esta semana de \$a";
