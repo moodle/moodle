@@ -2,7 +2,7 @@
       // A quick way to add lots of questions to a category (and a quiz)
 
     require_once('../../config.php');
-    require_once('lib.php');
+    require_once('locallib.php');
 
     require_variable($category);
 

@@ -2,7 +2,7 @@
       // Import quiz questions into the given category
 
     require_once("../../config.php");
-    require_once("lib.php");
+    require_once("locallib.php");
 
     require_variable($category);
     optional_variable($format);

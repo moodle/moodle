@@ -1,7 +1,7 @@
 <?php // $Id$
 
 require_once("../../config.php");
-require_once("lib.php");
+require_once("locallib.php");
 
 require_variable($id);        // question id
 optional_variable($quizid, 0);

@@ -5,7 +5,7 @@
 
     require_once('../../config.php');
     require_once('../../files/mimetypes.php');
-    require_once('lib.php');
+    require_once('locallib.php');
 
     if (empty($CFG->filelifetime)) {
         $lifetime = 86400;     // Seconds for files to remain in caches

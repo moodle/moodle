@@ -3,7 +3,7 @@
 // This page prints a review of a particular quiz attempt
 
     require_once("../../config.php");
-    require_once("lib.php");
+    require_once("locallib.php");
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
@@ -113,6 +113,11 @@
     }
 
     $table->align  = array("right", "left");
+    if ($attempt->userid <> $USER->id) {
+       $student = get_record('user', 'id', $attempt->userid);
+       $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
+       $table->data[] = array($picture, fullname($student, true));
+    }
     $table->data[] = array("$strtimetaken:", $timetaken);
     $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
     if (!empty($overtime)) {

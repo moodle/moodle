@@ -2,7 +2,7 @@
       /// For creating and editing quiz questions.
 
     require_once("../../config.php");
-    require_once("lib.php");
+    require_once("locallib.php");
     require_once("../../files/mimetypes.php");
 
     optional_variable($id);        // question id

@@ -3,7 +3,7 @@
 // This script uses installed report plugins to print quiz reports
 
     require_once("../../config.php");
-    require_once("lib.php");
+    require_once("locallib.php");
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
