@@ -167,11 +167,15 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         $result .= rss_full_tag("title",2,false,$title);
         $result .= rss_full_tag("link",2,false,$link);
         $result .= rss_full_tag("description",2,false,$description);
-        $result .= rss_full_tag("language",2,false,substr($USER->lang,0,2));
+        if (!empty($USER->lang)) {
+            $result .= rss_full_tag("language",2,false,substr($USER->lang,0,2));
+        }
         $today = getdate();
         $result .= rss_full_tag("copyright",2,false,"&copy; ".$today['year']." ".$site->fullname);
-        $result .= rss_full_tag("managingEditor",2,false,$USER->email);
-        $result .= rss_full_tag("webMaster",2,false,$USER->email);
+        if (!empty($USER->email)) {
+            $result .= rss_full_tag("managingEditor",2,false,$USER->email);
+            $result .= rss_full_tag("webMaster",2,false,$USER->email);
+        }
 
         //write image info
         //Calculate the origin
@@ -247,6 +251,35 @@ function rss_standard_footer($title = NULL, $link = NULL, $description = NULL) {
     $result .= "</rss>";
 
     return $result;
+}
+
+//This function return an error xml file (string)
+//to be sent when a rss is required (file.php)
+//and something goes wrong
+function rss_geterrorxmlfile() {
+
+    global $CFG;
+
+    $return = '';
+
+    //XML Header
+    $return = rss_standard_header();
+
+    //XML item 
+    if ($return) {
+        $item->title = "RSS Error";
+        $item->link = $CFG->wwwroot;
+        $item->pubdate = time();
+        $item->description = get_string("rsserror");
+        $return .= rss_add_items(array($item));
+    }
+
+    //XML Footer
+    if ($return) {
+        $return .= rss_standard_footer();
+    }
+    
+    return $return;
 }
 
 // ===== This function are used to write XML tags =========
