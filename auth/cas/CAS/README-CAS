@@ -1,6 +1,6 @@
 PHPCAS README
 
-This cas is the PHPCAS project from http://esup-phpcas.sourceforge.net version 0.4.16-2
+This CAS is the PHPCAS project from http://esup-phpcas.sourceforge.net version 0.4.16-2
 The auth/cas module is using this lib.
 
 

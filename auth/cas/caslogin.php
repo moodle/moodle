@@ -5,7 +5,7 @@
  * 10.03.2004 Creation
  */
     require_once($CFG->dirroot."/config.php");
-    include_once($CFG->dirroot.'/auth/cas/CAS/CAS.php');
+    include_once($CFG->dirroot.'/auth/cas/cas/CAS.php');
     $cas_validate=false;
 
 /**

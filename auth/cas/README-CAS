@@ -2,6 +2,7 @@ CAS-module README
 
 Please read comments from lib.php for auth/cas module
 The auth/cas/CAS is the PHPCAS project from http://esup-phpcas.sourceforge.net version 0.4.16-2
+The auth/cas module is using part of the /auth/ldap module. The /auth/ldap directory should exist.
 
 Other changes made:
 
