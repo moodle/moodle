@@ -261,9 +261,9 @@
     }
 
     if ($post->subject) {
-        $formstart = "form.message";
+        $formstart = "theform.message";
     } else {
-        $formstart = "form.subject";
+        $formstart = "theform.subject";
     }
 
     if ($post->parent) {
