@@ -70,6 +70,7 @@
             $workshop->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $workshop->ntassessments = backup_todb($info['MOD']['#']['NTASSESSMENTS']['0']['#']);
             $workshop->nsassessments = backup_todb($info['MOD']['#']['NSASSESSMENTS']['0']['#']);
+            $workshop->overallocation = backup_todb($info['MOD']['#']['OVERALLOCATION']['0']['#']);
             $workshop->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
             $workshop->mergegrades = backup_todb($info['MOD']['#']['MERGEGRADES']['0']['#']);
             $workshop->teacherweight = backup_todb($info['MOD']['#']['TEACHERWEIGHT']['0']['#']);

@@ -21,6 +21,7 @@ CREATE TABLE prefix_workshop (
   grade INT8 NOT NULL default '0',
   ntassessments INT  NOT NULL default '0',
   nsassessments INT  NOT NULL default '0',
+  overallocation INT  NOT NULL default '0',
   timemodified INT8  NOT NULL default '0',
   mergegrades INT  NOT NULL default '0',
   teacherweight INT  NOT NULL default '5',
