@@ -68,20 +68,26 @@
     //Now copy he zip file to dataroot/temp/backup/backup_unique_code
     if ($status) {
         echo "<li>".get_string("copyingzipfile");
-        $status = backup_copy_file($file,$CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file));
+        if (! $status = backup_copy_file($file,$CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
+            notify("Error copying backup file. Invalid name or bad perms.");
+        }
     }
 
     //Now unzip the file
     if ($status) {
         echo "<li>".get_string("unzippingbackup");
-        $status = restore_unzip ($CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file));
+        if (! $status = restore_unzip ($CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
+            notify("Error unzipping backup file. Invalid zip file.");
+        }
     }
 
     //Now check for the moodle.xml file
     if ($status) {
         $xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
         echo "<li>".get_string("checkingbackup");
-        $status = restore_check_moodle_file ($xml_file);
+        if (! $status = restore_check_moodle_file ($xml_file)) {
+            notify("Error checking backup file. Invalid or corrupted.");
+        }
     }
 
     $info = "";
