@@ -10,6 +10,9 @@
     require("../config.php");
 
     require_variable($id);
+    optional_variable($file, "");
+    optional_variable($wdir, "");
+    optional_variable($action, "");
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -70,7 +73,6 @@
     $baseweb = $CFG->wwwroot;
 
 //  End of configuration and access control
-
 
     require("mimetypes.php");
 
@@ -142,7 +144,7 @@
             break;
 
         case "delete":
-            if ($confirm) {
+            if (!empty($confirm)) {
                 html_header($course, $wdir);
                 foreach ($USER->filelist as $file) {
                     $fullfile = $basedir.$file;
@@ -186,7 +188,7 @@
 
         case "paste":
             html_header($course, $wdir);
-            if ($USER->fileop == "move") {
+            if (isset($USER->fileop) and $USER->fileop == "move") {
                 foreach ($USER->filelist as $file) {
                     $shortfile = basename($file);
                     $oldfile = $basedir.$file;
@@ -202,7 +204,7 @@
             break;
 
         case "rename":
-            if ($name) {
+            if (!empty($name)) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
                 if (file_exists($basedir.$wdir."/".$name)) {
@@ -237,7 +239,7 @@
             break;
 
         case "mkdir":
-            if ($name) {
+            if (!empty($name)) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
                 if (file_exists($basedir.$wdir."/".$name)) {
@@ -326,7 +328,7 @@
             break;
 
         case "zip":
-            if ($name) {
+            if (!empty($name)) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
                 $files = "";
@@ -374,7 +376,7 @@
 
         case "unzip":
             html_header($course, $wdir);
-            if ($file) {
+            if (!empty($file)) {
                 echo "<P ALIGN=CENTER>Unzipping $file:</P>";
                 print_simple_box_start("center");
                 echo "<PRE>";
@@ -555,7 +557,7 @@ function displaydir ($wdir) {
 
     $count = 0;
 
-    if ($dirlist) {
+    if (!empty($dirlist)) {
         asort($dirlist);
         foreach ($dirlist as $dir) {
 
@@ -579,7 +581,7 @@ function displaydir ($wdir) {
     }
 
 
-    if ($filelist) {
+    if (!empty($filelist)) {
         asort($filelist);
         foreach ($filelist as $file) {
 
@@ -628,7 +630,7 @@ function displaydir ($wdir) {
     echo "</TABLE>";
     echo "<HR WIDTH=640 ALIGN=CENTER NOSHADE SIZE=1>";
 
-    if (!$wdir) {
+    if (empty($wdir)) {
         $wdir = "/";
     }
 
@@ -641,7 +643,7 @@ function displaydir ($wdir) {
                    "delete" => "$strdeletecompletely",
                    "zip" => "$strcreateziparchive"
                );
-    if ($count) {
+    if (!empty($count)) {
         choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:document.dirform.submit()");
     }
 
