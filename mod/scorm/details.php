@@ -74,17 +74,17 @@
     //
     print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<table cellpadding=\"5\" align=\"center\">\n";
-    echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><p><b>$strname:</b></p></td><td><p>$form->name</p></td></tr>\n";
-    echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><p><b>".get_string("validation","scorm").":</b></p></td><td><p>".get_string($result,"scorm")."</p></td></tr>\n";
+    echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><b>$strname:</b></td><td>$form->name</td></tr>\n";
+    echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><b>".get_string("validation","scorm").":</b></td><td>".get_string($result,"scorm")."</td></tr>\n";
     if ($errorlogs != '') {
         $lines = round(count($errors)/4);
         if ($lines < 5) {
             $lines = 5;
         }
-        echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><p><b>".get_string("errorlogs","scorm").":</b></p></td><td><textarea rows=\"".$lines."\" cols=\"30\" readonly>".$errorlogs."</textarea></a></td></tr>\n";
+        echo "    <tr><td align=\"right\" nowrap=\"nowrap\"><b>".get_string("errorlogs","scorm").":</b></td><td><textarea rows=\"".$lines."\" cols=\"30\" readonly>".$errorlogs."</textarea></a></td></tr>\n";
     }
     if (($form->mode == "update") && ($form->launch == 0) && (get_records("scorm_sco_users","scormid",$form->instance))) {
-        echo "    <tr><td align=\"center\" colspan=\"2\" nowrap=\"nowrap\"><p><b>".get_string("trackingloose","scorm")."</b></p></td></tr>\n";
+        echo "    <tr><td align=\"center\" colspan=\"2\" nowrap=\"nowrap\"><b>".get_string("trackingloose","scorm")."</b></td></tr>\n";
     }
     echo "</table>\n";
     if (($result == "regular") || ($result == "found")) {
@@ -143,7 +143,7 @@
 ?>
     <table cellpadding="5" align="center">
         <tr valign="top">
-            <td align="right"><p><b><?php print_string("grademethod", "scorm") ?>:</b></p></td>
+            <td align="right"><b><?php print_string("grademethod", "scorm") ?>:</b></td>
             <td>
             <?php
                 $options = array();
@@ -156,7 +156,7 @@
             </td>
         </tr>
         <tr valign="top">
-            <td align="right"><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
+            <td align="right"><b><?php print_string("maximumgrade") ?>:</b></td>
             <td>
             <?php
                 for ($i=100; $i>=1; $i--) {
@@ -169,7 +169,7 @@
             </td>
         </tr>
         <tr valign="top">
-            <td align="right"><p><b><?php print_string("autocontinue","scorm") ?>:</b></p></td>
+            <td align="right"><b><?php print_string("autocontinue","scorm") ?>:</b></td>
             <td>
             <?php
                 $options = array();
@@ -181,7 +181,7 @@
         </tr>
         <tr valign="top">
             <td align="right" nowrap="nowrap">
-                <p><b><?php p($strnewwindow) ?></b></p>
+                <b><?php p($strnewwindow) ?>:</b>
             </td>
             <td>
                 <script type="text/javascript">
@@ -222,12 +222,12 @@
                 ?>
 
                 <input name="hwidth" type="hidden" value="0" />
-                <input name="width" type="text" size="4" value="<?php p($window->width) ?>" /> <?php p($strwidth) ?><br />
+                <input name="width" type="text" size="4" value="<?php p($window->width) ?>" alt="width" /> <?php p($strwidth) ?><br />
                 <input name="hheight" type="hidden" value="0" />
-                <input name="height" type="text" size="4" value="<?php p($window->height) ?>" /> <?php p($strheight) ?><br />
+                <input name="height" type="text" size="4" value="<?php p($window->height) ?>" alt="height" /> <?php p($strheight) ?><br />
                 <?php
                      if (!$newwindow) {
-                         echo "<script>\n<!--\n";
+                         echo "<script type=\"text/javascript\">\n<!--\n";
                          echo "\tlockoptions('theform','newwindow', subitems);";
                          echo "\n-->\n</script>";
                      }

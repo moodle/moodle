@@ -109,9 +109,9 @@
         print_heading($strsummary);
 
         if (survey_count_responses($survey->id, $currentgroup)) {
-            echo "<p align=\"center\"><a href=\"report.php?action=scales&amp;id=$id\">";
+            echo "<center><a href=\"report.php?action=scales&amp;id=$id\">";
             survey_print_graph("id=$id&amp;group=$currentgroup&amp;type=overall.png");
-            echo "</a>";
+            echo "</a></center>";
         } else {
             notify(get_string("nobodyyet","survey"));
         }

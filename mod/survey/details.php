@@ -29,12 +29,12 @@
         ?>
         <form name="form" method="post" action="<?php p($form->destination)?>">
         <table cellpadding="5" align="center">
-        <tr><td align="right" nowrap="nowrap"><p><b><?php print_string("name") ?>:</b></p></td>
-            <td><p><?php p($form->name) ?></p></a></td></tr>
+        <tr><td align="right" nowrap="nowrap"><b><?php print_string("name") ?>:</b></td>
+            <td><?php p($form->name) ?></a></td></tr>
 
         <tr valign="top">
             <td align="right" nowrap="nowrap">
-                <p><b><?php print_string("introtext", "survey") ?>:</b></p><br />
+                <b><?php print_string("introtext", "survey") ?>:</b><br />
                 <font size="1">
                 <?php helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?> <br />
                 <?php helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br />
