@@ -1,107 +1,110 @@
 <HEAD>
-    <TITLE>Moodle Docs: Upgrading</TITLE>
+    <TITLE>Moodle Dokumentation: Upgrade</TITLE>
 	<LINK REL="stylesheet" HREF="../theme/standard/styles.php" TYPE="TEXT/CSS">
     <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
-<H2>Upgrading Moodle</H2>
+<H2> Moodle Upgrade</H2>
 
-<p>Moodle is designed to upgrade cleanly from any earlier version to any later 
-  version. </p>
-<p>When upgrading a Moodle installation you should follow these steps:</p>
-<h2>1. Backup important data</h2>
+<p>Moodle ist so designed, dass man problemlos von einer fr&uuml;heren Version 
+  auf eine sp&auml;tere Version 'upgraden' kann.</p>
+<p>Um ein Upgrade einer Moodle-Installation durchzuf&uuml;hren, sollte man folgende 
+  Schriite durchf&uuml;hren:</p>
+<h2>1. Datensicherung wichtiger Daten durchf&uuml;hren</h2>
 <blockquote> 
-  <p>Although it is not strictly necessary, it is always a good idea to make a 
-    backup of any production system before a major upgrade, just in case you need 
-    to revert back to the older version for some reason. In fact, it's a good 
-    idea to automate your server to backup your Moodle installation daily, so 
-    that you can skip this step.</p>
-  <p>There are three areas that need backing up:</p>
-  <blockquote> 
-    <p><strong>1. The Moodle software directory itself</strong></p>
+  <p>Auch wenn es nicht unbedingt notwendig ist, ist es immer eine gute Idee, 
+    eine Datensicherung von einem System zu machen, bevor man ein Upgrade durchf&uuml;hrt, 
+    nur f&uuml;r den Fall, dass man aus irgendeinem Grund zu einer &auml;lteren 
+    Version zur&uuml;ckkehren m&ouml;chte. Tats&auml;chlich ist es sinnvoll, den 
+    Server so zu automatisieren, dass er t&auml;glich eine Datensicherung der 
+    Moodle-Installation durchf&uuml;hrt. Dann kann man diesen Schritt auslassen.</p>
+  <p>Es gibt drei Gebiete, die man sichern sollte:</p>
+  <blockquote>
+    <p><strong> 1. Das Moodle Systemverzeichnis</strong></p>
     <blockquote> 
-      <p>Make a separate copy of these files before the upgrade, so that you can 
-        retrieve your config.php and any modules you have added like themes, languages 
-        etc<strong><br>
-        </strong></p>
+      <p>Mache vor dem Upgrade eine separate Kopie von diesen Dateien, so dass 
+        du deine config.php und andere Module, die du hinzugef&uuml;gt hast, wie 
+        Themen, Sprachen usw., abrufen kannst.</p>
     </blockquote>
-    <p><strong>2. Your data directory.</strong></p>
+    <p><strong>2. Dein Datenverzeichnis.</strong></p>
     <blockquote> 
-      <p>This is where uploaded content resides (such as course resources and 
-        student assignments) so it is very important to have a backup of these 
-        files anyway. Sometimes upgrades may move or rename directories within 
-        your data directory.<strong><br>
-        </strong></p>
+      <p>Dies ist dort, wo sich der hochgeladene Inhalt befindet (so wie Kurs 
+        die Kurs-Inhalte und Studentenarbeiten). Damit ist es sowieso sehr wichtig, 
+        von diesen Dateien eine Datensicherung zu haben. Manchmal k&ouml;nnen 
+        Upgrades Verzeichnisse deines Datenverzeichnisses verschieben oder umbenennen.</p>
     </blockquote>
-    <p><strong>3. Your database</strong></p>
+    <p><strong>3. Deine Datenbank</strong></p>
     <blockquote> 
-      <p>Most Moodle upgrades will alter the database tables, adding or changing 
-        fields. Each database has different ways to backup. One way of backing 
-        up a MySQL database is to 'dump' it to a single SQL file. The following 
-        example shows Unix commands to dump the database called &quot;moodle&quot;:</p>
-      <blockquote>
+      <p>Die meisten Moodleupgrades werden die Datenbanktabellen &auml;ndern, 
+        indem Felder hinzugef&uuml;gt oder ver&auml;ndert werden. Jede Datenbank 
+        hat unterschiedliche methoden f&uuml;r eine Datensicherung. Ein Weg, eine 
+        MySQL-Datenbank zu sichern, ist, sie in eine einzelne SQL-Datei zu 'dumpen'. 
+        Das folgende Beispiel zeigt den Befehl (Unix und Windows), um die Datenbank 
+        &quot;moodle&quot; in die Datei moodle-backup-2002-10-26.sql zu dumpen.</p>
+      <blockquote> 
         <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
       </blockquote>
-      <p>You can also use the &quot;Export&quot; feature in Moodle's &quot;Manage 
-        Database&quot; web interface to do the same thing on all platforms.</p>
+      <p>Du kannst ebenfalls das &quot;Export&quot;-Werkzeug in Moodles &quot;Datenbank 
+        verwalten&quot; Web-Interface nutzen, um die gleiche Sache f&uuml;r alle 
+        Plattformen durchzuf&uuml;hren.</p>
+      <p>&nbsp;</p>
     </blockquote>
   </blockquote>
 </blockquote>
-<h2>&nbsp;</h2>
-<h2>2. Install the new Moodle software</h2>
+<h2>2. Installieren der neuen Moodle-Software</h2>
 <blockquote> 
-  <p><strong>Using a downloaded archive</strong></p>
+  <p><strong>Mit einem heruntergeladenen Archiv</strong></p>
   <blockquote> 
-    <p>Do not overwrite an old installation unless you know what you are doing 
-      ... sometimes old files can cause problems in new installations. The best 
-      way it to rename the current Moodle directory to something else, then unpack 
-      the new Moodle archive into the old location.</p>
+    <p>&Uuml;berschreibe nicht die alte Installtion, es sei denn, du wei&szlig;t, 
+      was du tust ... Manchmal k&ouml;nnen alte Dateien Probleme in der neuen 
+      Installation bewirken. Der beste Weg ist es, das aktuelle Moodle-Verzeichnis 
+      um zu benennen, und dann das neue Moodle-Archiv an die alte Stelle zu entpacken.</p>
     <blockquote> 
       <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br>
         tar xvzf moodle-1.0.6.tgz</font></p>
       </blockquote>
-    <p>Next, copy across your config.php and any other plugins such as custom 
-      themes:</p>
+    <p>Als n&auml;chstes kopiere deine config.php und alle anderen pers&ouml;nlichen 
+      Module wie Themen her&uuml;ber.</p>
     <blockquote>
       <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br>
         cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
     </blockquote>
   </blockquote>
-  <p><strong>Using CVS</strong></p>
+  <p><strong>Mit CVS</strong></p>
   <blockquote> 
-    <p>If you are using CVS, just go into the Moodle root directory and update 
-      to the new files:</p>
+    <p>Falls du CVS benutzt, gehe nur in das Moodle Wurzelvezeichnis und f&uuml;hre 
+      ein Update durch:</p>
     <blockquote> 
       <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
     </blockquote>
-    <p>Make sure you use the &quot;d&quot; parameter to create new directories 
-      if necessary, and the &quot;P&quot; parameter to prune empty directories.</p>
-    <p>If you have been editing Moodle files, watch the messages very closely 
-      for possible conflicts. All your customised themes and non-standard plugins 
-      will be untouched.</p>
+    <p>Gehe sicher, dass du den &quot;d&quot;-Parameter nutzt, um neue Verzeichnisse 
+      zu erstellen und den &quot;P&quot;-Parameter, um leere Verzeichnisse zu 
+      entfernen. </p>
+    <p>Solltest du Moodle-Dateien editiert haben, achte sorgf&auml;ltig auf die 
+      Mitteilungen wegen m&ouml;glicher Konflikte. All deine individuellen Themen 
+      und zus&auml;tzlichen Inhalte bleiben unber&uuml;hrt.</p>
+    <p>&nbsp;</p>
   </blockquote>
-  <p>&nbsp;</p>
-</blockquote>
-<h2>3. Finishing the upgrade</h2>
+  </blockquote>
+<h2>3. Fertigstellen des Upgrades</h2>
 <blockquote> 
-  <p>The last step is to trigger the upgrade processes within Moodle.</p>
-  <p>To do this just visit <a target=_top href="../admin/index.php">the admin page of your 
-    installation</a>.</p>
+  <p>Der letzte Schritt ist es, den Upgradeprozess innerhalb von Moodle auszul&ouml;sen.</p>
+  <p>Um das zu tun, besuche nur <a href="../admin/index.php">die admin Seite deiner 
+    Installation</a>.</p>
   <blockquote> 
     <p><font face="Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
   </blockquote>
-  <p>It doesn't matter if you are logged in as admin or not.</p>
-  <p> Moodle will automatically detect the new version and perform all the database 
-    or filesystem upgrades that are necessary. If there is anything it can't do 
-    itself (very rare) then you will see messages telling you what you need to 
-    do. </p>
+  <p>Es ist nicht wichtig, ob du als root angemeldet bist.</p>
+  <p>Moodle wird automatisch die neue Version entdecken und alle Datenbank- oder 
+    Dateisystemanpassungen durchf&uuml;hren, die notwendig sind. Sollte es irgendetwas 
+    geben, das nicht automatisch durchgef&uuml;hrt werden kann (sehr selten), 
+    dann wirst du Mitteilungen sehen, die dir sagen, was du zu tun hast.</p>
 </blockquote>
-<p>&nbsp; </p>
-<p> Assuming all goes well (no error messages) then you can start using your new 
-  version of Moodle and enjoy the new features!</p>
-<p>If you have trouble with the upgrade, visit <a target=_top href="http://moodle.com/">moodle.com</a> 
-  and post on the <a target=_top href="http://moodle.com/mod/forum/view.php?id=28">Installation 
+<p>Angenommen, alles geht gut (keine Fehlermeldungen), kannst du beginnen, die 
+  neue Moodleversion zu nutzen und die neuen Features zu genie&szlig;en.</p>
+<p>Falls du Probleme mit dem Upgrade hast, besuche <a href="www.moodle.org">moodle.org</a> 
+  und poste in das <a target=_top href="http://moodle.org/mod/forum/view.php?id=28">Installation 
   Support Forum</a>.</p>
 <p>&nbsp;</p>
 <P>&nbsp;</P>
@@ -109,3 +112,4 @@
 <P ALIGN="CENTER"><FONT SIZE="1">Version: $Id$</FONT></P>
 
 </BODY>
+
