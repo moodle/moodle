@@ -157,7 +157,7 @@ HTMLArea.Config = function () {
           "lefttoright", "righttoleft", "separator",
           "insertorderedlist", "insertunorderedlist", "outdent", "indent", "separator",
           "forecolor", "hilitecolor", "separator",
-          "inserthorizontalrule", "createlink", "insertimage", "inserttable",
+          "inserthorizontalrule", "createlink", "unlink", "insertimage", "inserttable",
           "insertsmile", "insertchar", "separator", "htmlmode", "separator", "popupeditor" ]
     ];
 
@@ -233,6 +233,7 @@ HTMLArea.Config = function () {
         hilitecolor: [ "Background Color", "ed_color_bg.gif", false, function(e) {e.execCommand("hilitecolor");} ],
         inserthorizontalrule: [ "Horizontal Rule", "ed_hr.gif", false, function(e) {e.execCommand("inserthorizontalrule");} ],
         createlink: [ "Insert Web Link", "ed_link.gif", false, function(e) {e.execCommand("createlink", true);} ],
+        unlink: [ "Remove Link", "ed_unlink.gif", false, function(e) {e.execCommand("unlink");} ],
         insertimage: [ "Insert/Modify Image", "ed_image.gif", false, function(e) {e.execCommand("insertimage");} ],
         inserttable: [ "Insert Table", "insert_table.gif", false, function(e) {e.execCommand("inserttable");} ],
         htmlmode: [ "Toggle HTML Source", "ed_html.gif", true, function(e) {e.execCommand("htmlmode");} ],
@@ -1629,6 +1630,15 @@ HTMLArea.prototype._insertChar = function() {
         return true;
     }, null);
 };
+
+HTMLArea.prototype._removelink = function() {
+    var editor = this;
+    link = this.getParentElement();
+    editor.selectNodeContents(link);
+    
+    this._doc.execCommand("unlink", false, null);
+    this.focusEditor();
+};
 /************************************************************************
 * Moodle hack's ends
 ************************************************************************/
@@ -1679,6 +1689,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         case "createlink":
         this._createLink();
         break;
+        case "unlink": this._removelink();
         case "popupeditor":
         if (HTMLArea.is_ie) {
             //if (confirm(HTMLArea.I18N.msg["IE-sucks-full-screen"]))
