@@ -2,8 +2,6 @@
 
     require_once("../config.php");
 
-    $recordsperpage = 30;
-
     optional_variable($newuser, "");
     optional_variable($delete, "");
     optional_variable($confirm, "");
@@ -12,6 +10,9 @@
     optional_variable($dir, "ASC");
     optional_variable($page, 0);
     optional_variable($search, "");
+    optional_variable($lastinitial, "");     // only show students with this last initial
+    optional_variable($firstinitial, "");    // only show students with this first initial
+    optional_variable($perpage, "30");       // how many per page
 
     unset($user);
     unset($admin);
@@ -160,38 +161,49 @@
 
         // Carry on with the user listing
 
-
-        $columns = array("name", "email", "city", "country", "lastaccess");
+        $columns = array("firstname", "lastname", "email", "city", "country", "lastaccess");
 
         foreach ($columns as $column) {
             $string[$column] = get_string("$column");
-            $columnsort = "$column";
-            if ($column == "lastaccess") {
-                $columndir = "DESC";
+            if ($sort != $column) {
+                $columnicon = "";
+                if ($column == "lastaccess") {
+                    $columndir = "DESC";
+                } else {
+                    $columndir = "ASC";
+                }
             } else {
-                $columndir = "ASC";
+                $columndir = $dir == "asc" ? "desc":"asc";
+                if ($column == "lastaccess") {
+                    $columnicon = $dir == "asc" ? "up":"down";
+                } else {
+                    $columnicon = $dir == "asc" ? "down":"up";
+                }
+                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" />";
+
             }
-            if ($columnsort == $sort) {
-               $$column = $string[$column];
-            } else {
-               $$column = "<A HREF=\"user.php?sort=$columnsort&dir=$columndir&search=$search\">".$string[$column]."</A>";
-            }
+            $$column = "<a HREF=\"user.php?sort=$column&dir=$columndir&search=$search\">".$string[$column]."</a>$columnicon";
         }
 
         if ($sort == "name") {
             $sort = "firstname";
         }
 
-        if (!$users = get_users_listing($sort, $dir, $page, $recordsperpage, $search)) {
-            if (!$users = get_users_listing($sort, $dir, 0, $recordsperpage)) {
+        if (!$users = get_course_students(0, $sort, $dir, $page*$perpage, $perpage, $firstinitial, $lastinitial, NULL, $search)) {
+            if (!$users = get_course_students(0, $sort, $dir, $page*$perpage, $perpage, $firstinitial, $lastinitial)) {
                 error("No users found!");
             } else {
                 notify(get_string("nousersmatching", "", $search));
-                $search = "";
             }
+            $search = "";
         }
 
         $usercount = get_users(false);
+
+        if ($firstinitial or $lastinitial) {
+            $course->id = 0; // don't look in user_students table, but just user table
+            $usercount = count_course_students($course, "", $firstinitial, $lastinitial);
+        }
 
         if ($search) {
             $usersearchcount = get_users(false, $search);
@@ -200,43 +212,55 @@
         } else {
             print_heading("$usercount ".get_string("users"));
         }
-            
-        $a->start = $page;
-        $a->end = $page + $recordsperpage;
-        if ($a->end > $usercount) {
-            $a->end = $usercount;
-        }
-        echo "<TABLE align=center cellpadding=10><TR>";
-        echo "<TD>";
-        if ($page) {
-            $prevpage = $page - $recordsperpage;
-            if ($prevpage < 0) {
-                $prevpage = 0;
+
+        if ($usercount > $perpage) {
+            $alphabet = explode(',', get_string('alphabet'));
+            $strall = get_string("all");
+
+
+        /// Bar of first initials
+
+            echo "<center><p align=\"center\">";
+            echo get_string("firstname")." : ";
+            if ($firstinitial) {
+                echo " <a href=\"user.php?sort=firstname&dir=ASC&".
+                       "perpage=$perpage&lastinitial=$lastinitial\">$strall</a> ";
+            } else {
+                echo " <b>$strall</b> ";
             }
-            $options["dir"] = $dir;
-            $options["page"] = 0;
-            $options["sort"] = $sort;
-            $options["search"] = $search;
-            print_single_button("user.php", $options, "  <<  ");
-            echo "</TD><TD>";
-            $options["page"] = $prevpage;
-            print_single_button("user.php", $options, "  <  ");
+            foreach ($alphabet as $letter) {
+                if ($letter == $firstinitial) {
+                    echo " <b>$letter</b> ";
+                } else {
+                    echo " <a href=\"user.php?sort=firstname&dir=ASC&".
+                           "perpage=$perpage&lastinitial=$lastinitial&firstinitial=$letter\">$letter</a> ";
+                }
+            }
+            echo "<br />";
+
+        /// Bar of last initials
+
+            echo get_string("lastname")." : ";
+            if ($lastinitial) {
+                echo " <a href=\"user.php?sort=lastname&dir=ASC&".
+                       "perpage=$perpage&firstinitial=$firstinitial\">$strall</a> ";
+            } else {
+                echo " <b>$strall</b> ";
+            }
+            foreach ($alphabet as $letter) {
+                if ($letter == $lastinitial) {
+                    echo " <b>$letter</b> ";
+                } else {
+                    echo " <a href=\"user.php?sort=lastname&dir=ASC&".
+                           "perpage=$perpage&firstinitial=$firstinitial&lastinitial=$letter\">$letter</a> ";
+                }
+            }
+            echo "</p>";
+            echo "</center>";
+    
+            print_paging_bar($usercount, $page, $perpage,
+                             "user.php?sort=$sort&dir=$dir&perpage=$perpage&firstinitial=$firstinitial&lastinitial=$lastinitial&");
         }
-        echo "</TD><TD>";
-        print_heading(get_string("displayingusers", "", $a));
-        echo "</TD><TD>";
-        $nextpage = $page + $recordsperpage;
-        if ($nextpage < $usercount) {
-            $options["dir"] = $dir;
-            $options["page"] = $nextpage;
-            $options["sort"] = $sort;
-            $options["search"] = $search;
-            print_single_button("user.php", $options, "  >  ");
-            echo "</TD><TD>";
-            $options["page"] = $usercount-$recordsperpage;
-            print_single_button("user.php", $options, "  >>  ");
-        }
-        echo "</TD></TR></TABLE>";
 
         flush();
 
@@ -258,7 +282,7 @@
             $users = $nusers;
         }
 
-        $table->head = array ($name, $email, $city, $country, $lastaccess, "", "", "");
+        $table->head = array ("$firstname / $lastname", $email, $city, $country, $lastaccess, "", "", "");
         $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
         $table->width = "95%";
         foreach ($users as $user) {
@@ -299,6 +323,9 @@
         echo "</td></tr></table>";
 
         print_table($table);
+
+        print_paging_bar($usercount, $page, $perpage,
+                         "user.php?sort=$sort&dir=$dir&perpage=$perpage&firstinitial=$firstinitial&lastinitial=$lastinitial&");
 
         if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
             print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
