@@ -520,6 +520,98 @@
 
         return $status;
     }
+
+    //This function restores the userfiles from the temp (user_files) directory to the
+    //dataroot/users directory
+    function restore_user_files($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //First, we check to "users" exists and create is as necessary
+        //in CFG->dataroot
+        $dest_dir = $CFG->dataroot."/users";
+        $status = check_dir_exists($dest_dir,true);
+
+        //Now, we iterate over "user_files" records to check if that user dir must be
+        //copied (and renamed) to the "users" dir.
+        $rootdir = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code."/user_files";
+        //Check if directory exists
+        if (is_dir($rootdir)) {
+            $list = list_directories ($rootdir);
+            if ($list) {
+                //Iterate
+                $counter = 0;
+                foreach ($list as $dir) {
+                    //Look for dir like username in backup_ids
+                    $data = get_record ("backup_ids","backup_code",$restore->backup_unique_code,
+                                                     "table_name","user",
+                                                     "old_id",$dir);
+                    //If thar user exists in backup_ids
+                    if ($data) {
+                        //Only it user has been created now
+                        if (strpos($data->info,"new") !== false) {
+                            //Copy the old_dir to its new location (and name) !!
+                            //Only if destination doesn't exists
+                            if (!file_exists($dest_dir."/".$data->new_id)) {
+                                $status = backup_copy_file($rootdir."/".$dir,
+                                              $dest_dir."/".$data->new_id);
+                                $counter ++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //If status is ok and whe have dirs created, returns counter to inform
+        if ($status and $counter) {
+            return $counter;
+        } else {
+            return $status;
+        }
+    }
+
+    //This function restores the course files from the temp (course_files) directory to the
+    //dataroot/course_id directory
+    function restore_course_files($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //First, we check to "course_id" exists and create is as necessary
+        //in CFG->dataroot
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        $status = check_dir_exists($dest_dir,true);
+
+        //Now, we iterate over "course_files" records to check if that file/dir must be
+        //copied to the "dest_dir" dir.
+        $rootdir = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code."/course_files";
+        //Check if directory exists
+        if (is_dir($rootdir)) {
+            $list = list_directories_and_files ($rootdir);
+            if ($list) {
+                //Iterate
+                $counter = 0;
+                foreach ($list as $dir) {
+                    //Copy the dir to its new location 
+                    //Only if destination file/dir doesn exists
+                    if (!file_exists($dest_dir."/".$dir)) {
+                        $status = backup_copy_file($rootdir."/".$dir,
+                                      $dest_dir."/".$dir);
+                        $counter ++;
+                    }
+                }
+            }
+        }
+        //If status is ok and whe have dirs created, returns counter to inform
+        if ($status and $counter) {
+            return $counter;
+        } else {
+            return $status;
+        }
+    }
    
 
     //=====================================================================================

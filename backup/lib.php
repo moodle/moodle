@@ -67,6 +67,7 @@
             if (!$create) {
                 $status = false;
             } else {
+                umask(0000);
                 $status = mkdir ($dir,$CFG->directorypermissions);
             }
         }
