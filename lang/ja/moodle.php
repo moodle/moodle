@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // moodle.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
 
 
 $string['action'] = "操作";
@@ -33,6 +33,7 @@ $string['allparticipants'] = "全参加者";
 $string['alphanumerical'] = "半角英数字のみ入力";
 $string['alreadyconfirmed'] = "登録作業は既に完了しています";
 $string['answer'] = "回答";
+$string['areyousuretorestorethis'] = "リストアしてもよろしいですか？";
 $string['assessment'] = "評価";
 $string['assignadmins'] = "管理者の割当て";
 $string['assigncreators'] = "コース作成者の割当て";
@@ -40,9 +41,12 @@ $string['assignteachers'] = "教師の割当て";
 $string['authentication'] = "認証オプション";
 $string['availablecourses'] = "コース一覧";
 $string['backup'] = "バックアップ";
+$string['backupdate'] = "バックアップデータ";
 $string['backupdetails'] = "バックアップ詳細";
 $string['backupdir'] = "バックアップデータ";
 $string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
+$string['backuporiginalname'] = "バックアップ名";
+$string['backupversion'] = "バックアップバージョン";
 $string['cancel'] = "キャンセル";
 $string['categories'] = "コースカテゴリー";
 $string['category'] = "カテゴリー";
@@ -102,6 +106,7 @@ $string['course'] = "コース";
 $string['coursebackup'] = "コースバックアップ";
 $string['coursefiles'] = "コースファイル";
 $string['courseformats'] = "コースフォーマット";
+$string['courserestore'] = "コースリストア";
 $string['courses'] = "コース";
 $string['courseupdates'] = "コース更新内容";
 $string['createaccount'] = "アカウントを作成する";
@@ -203,6 +208,7 @@ $string['enteremailaddress'] = "パスワードをリセットして新しいパスワードを受け取
 $string['error'] = "エラー";
 $string['errortoomanylogins'] = "ログイン失敗回数の上限に達しました。ブラウザを再起動してください。";
 $string['existingadmins'] = "管理者一覧";
+$string['existingcourse'] = "コース一覧";
 $string['existingcreators'] = "コース作成者一覧";
 $string['existingteachers'] = "教師一覧";
 $string['feedback'] = "フィードバック";
@@ -370,6 +376,7 @@ $string['missingusername'] = "ユーザ名が入力されていません";
 $string['modified'] = "修正日時";
 $string['modulesetup'] = "Moodleのテーブルを設定する";
 $string['modulesuccess'] = "\$a テーブルが正常に設定されました";
+$string['moodleversion'] = "Moodleバージョン";
 $string['mostrecently'] = "直近の";
 $string['movedown'] = "下へ";
 $string['movefilestohere'] = "ファイルをここに移動する";
@@ -386,6 +393,7 @@ $string['never'] = "無し";
 $string['neverdeletelogs'] = "ログを削除しない";
 $string['new'] = "新しい";
 $string['newaccount'] = "新規アカウント";
+$string['newcourse'] = "新規コース";
 $string['newpassword'] = "新規パスワード";
 $string['newpasswordtext'] = "\$a->firstname さんこんにちは、
 
@@ -413,6 +421,7 @@ $string['nocoursesyet'] = "このカテゴリーにコースはありません";
 $string['noexistingadmins'] = "管理者が存在しません。これは重大なエラーでこのようなメッセージを表示させてはいけません。";
 $string['noexistingcreators'] = "コース作成者は登録されていません";
 $string['noexistingteachers'] = "教師は登録されていません";
+$string['nofilesselected'] = "レストアするファイルが選択されていません";
 $string['nofilesyet'] = "コースにはファイルがアップロードされていません";
 $string['nograde'] = "評価無し";
 $string['noimagesyet'] = "コースには画像がアップロードされていません";
@@ -478,6 +487,7 @@ $string['rename'] = "リネーム";
 $string['requireskey'] = "このコースには登録キーが必要です";
 $string['resources'] = "資料";
 $string['restore'] = "リストア";
+$string['restorecancelled'] = "リストアがキャンセルされました";
 $string['returningtosite'] = "アカウントを持ちの方ですか?";
 $string['revert'] = "クリア";
 $string['role'] = "任務";
