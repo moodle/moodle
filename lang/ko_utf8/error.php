@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+<?php // $Id$ 
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['coursegroupunknown'] = '그룹에 상응하는 코스 $a 명시되 있지 않음.';
@@ -15,7 +15,7 @@ $string['notavailable'] = '유요하지 않습니다. ';
 $string['restricteduser'] = '죄송합니다. 현재 당신의 계정은 차단되었습니다. ';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '한국어';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['unknowncourse'] = '\"$a\"라는 알려지지 않는 강좌(과정)';
 $string['usernotaddederror'] = '사용자(가)\"$a\"를 추가하지 않았습니다.-알려지지 않은 오류';
 $string['usernotaddedregistered'] = '사용자 \"$a\"를 추가하지 않았습니다- 이미 등록되어짐';

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+<?php // $Id$ 
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['allowresubmit'] = '재제출 허가';
@@ -41,6 +41,9 @@ $string['submissionfeedback'] = '과제에 대한 선생님의 의견';
 $string['submissions'] = '제출된 과제들';
 $string['submitassignment'] = '이 양식을 사용하여 과제를 제출함';
 $string['submitted'] = '제출 완료';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['typeoffline'] = '오프라인 활동';
 $string['typeuploadsingle'] = '한 개의 파일을 업로드';
 $string['uploadbadname'] = '이 파일이름에는 알 수 없는 문자가 포함되있어서 업로드 할 수 없음';

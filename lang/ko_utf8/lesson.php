@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
+<?php // $Id$ 
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['actionaftercorrectanswer'] = '옳은 정답후 행동 ';
@@ -96,7 +96,7 @@ $string['thatsthecorrectanswer'] = '옳바른 답입니다.';
 $string['thatsthewronganswer'] = '잘못된 답입니다.';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '한국어';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['thispage'] = '이 페이지';
 $string['youhaveseen'] = '당신은 이미 이 레슨 페이지를 하신적이 있습니다. 당신이 도중에 끝마쳤던 부분부터 시작하시길 원하십니까?';
 $string['youranswer'] = '당신의 대답';

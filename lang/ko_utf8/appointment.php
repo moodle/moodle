@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+<?php // $Id$ 
+      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['allowresubmit'] = '재 제출 허용하기';
@@ -26,6 +26,9 @@ $string['submissionfeedback'] = '피드팩 제출';
 $string['submissions'] = '제출하기';
 $string['submitappointment'] = '약속을 이 형식에 맞도록 제출하세요';
 $string['submitted'] = '제출되어짐';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['timeend'] = '약속 끝';
 $string['timestart'] = '약속 시작';
 $string['typeoffline'] = '오프라인 활동';

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+<?php // $Id$ 
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['addresource'] = '자원 추가';
@@ -70,7 +70,7 @@ $string['resourcetypetext'] = '텍스트 페이지 만들기';
 $string['searchweb'] = '웹 사이트 검색';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '한국어';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['variablename'] = '변덕스러운 이름';
 
 ?>

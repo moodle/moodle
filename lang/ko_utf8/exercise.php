@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+<?php // $Id$ 
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['absent'] = '결석';
@@ -118,6 +118,7 @@ $string['teacherscomment'] = '선생님의 코멘트';
 $string['thegradeis'] = '점수는 $a';
 $string['thereisfeedbackfromthe'] = '$a 에 피드백이 있음.';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['title'] = '제목';
 $string['view'] = '보기';

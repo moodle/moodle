@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+<?php // $Id$ 
+      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['absentlong'] = 'A 결석';
@@ -58,6 +58,9 @@ $string['tardiesperabsence'] = '지각 몇 번을 결석으로 인정할까요';
 $string['tardylong'] = 'T 지각';
 $string['tardyshort'] = 'T';
 $string['teacheredit'] = '줄석함';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['thursday'] = '목요일';
 $string['tuesday'] = '화';
 $string['viewall'] = '보기: 모든 참석자 명단';

@@ -1,6 +1,6 @@
-<?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
-
+<<<<<<< moodle.php
+<?php // $Id$ 
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 $string['action'] = '동작';
 $string['active'] = '액티브';

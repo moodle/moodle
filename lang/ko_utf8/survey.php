@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
+<?php // $Id$ 
+      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['actual'] = '실적';
@@ -71,7 +71,7 @@ $string['surveytype'] = '조사 유형';
 $string['thanksforanswers'] = '조사에 응답해 주셔서 감사합니다.';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '한국어';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['time'] = '시간';
 $string['viewsurveyresponses'] = 'View $a survey responses';
 
