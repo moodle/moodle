@@ -745,12 +745,12 @@ function delete_records_select($table, $select="") {
 *
 * @param	type description
 */
-function insert_record($table, $dataobject, $returnid=true) {
+function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
                                                                                                                 
     global $db, $CFG;
 
     // Get empty record from table
-    $infosql = "SELECT * FROM $CFG->prefix$table WHERE id ='-1'";
+    $infosql = "SELECT * FROM $CFG->prefix$table WHERE $primarykey ='-1'";
 
     // Execute the query and get the empty recordset
     $rs = $db->Execute($infosql);
@@ -772,10 +772,9 @@ function insert_record($table, $dataobject, $returnid=true) {
     switch ($CFG->dbtype) {
         case "postgres7":
             $oid = $db->Insert_ID();
-            if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE oid = $oid")) {
-                // every table needs to have a primary field named 'id' for this to work
+            if ($rs = $db->Execute("SELECT $primarykey FROM $CFG->prefix$table WHERE oid = $oid")) {
                 if ($rs->RecordCount() == 1) {
-                    return (integer) $rs->fields[0]; // id field is integer, but this somehow needed??
+                    return (integer) $rs->fields[0];
                 }
             }
             return false;
@@ -785,96 +784,6 @@ function insert_record($table, $dataobject, $returnid=true) {
     }
 }
 
-
-function insert_record_old($table, $dataobject, $returnid=true) {
-// Will be deleted soon if there are no problems with the new one
-
-    global $db, $CFG;
-
-    // Determine all the fields needed
-    if (! $columns = $db->MetaColumns("$CFG->prefix$table")) {
-        return false;
-    }
-    $data = (array)$dataobject;
-
-    // Pull out data from the dataobject that matches the fields in the table.
-    // If fields are missing or empty, then try to set the defaults explicitly
-    // because some databases (eg PostgreSQL) don't always set them properly
-    foreach ($columns as $column) {
-        if(isset($column->primary_key) and $column->primary_key == 1) {
-            $pkey = $column->name; // take column name of primary key
-        }    
-        if ($column->name <> "id") {
-            if (isset($data[$column->name])) { 
-                if ((string)$data[$column->name] == "" and !empty($column->has_default) and !empty($column->default_value)) {
-                    $ddd[$column->name] = $column->default_value;
-                } else {
-                    $ddd[$column->name] = $data[$column->name];
-                }
-            } else {
-                if (!empty($column->has_default) and !empty($column->default_value)) {
-                    $ddd[$column->name] = $column->default_value;
-                } 
-            }
-        }
-    }
-
-
-    // Construct SQL queries
-    if (! $numddd = count($ddd)) {
-        return false;
-    }
-
-    $count = 0;
-    $inscolumns = "";
-    $insvalues = "";
-    $select = "";
-
-    foreach ($ddd as $key => $value) {
-        if (!is_null($value)){
-            if ($select) {
-                $inscolumns .= ", ";
-                $insvalues .= ", ";
-                $select .= " AND ";
-            }
-            $inscolumns .= "$key";
-            $insvalues .= "'$value'";
-            $select .= "$key = '$value'";
-        }
-    }
-
-    if (! $rs = $db->Execute("INSERT INTO $CFG->prefix$table ($inscolumns) VALUES ($insvalues)")) {
-        return false;
-    }
-
-    if ($returnid) {
-        if ($CFG->dbtype == "mysql" ) { 
-            return $db->Insert_ID();   // ADOdb has stored the ID for us, but it isn't reliable
-        }
-        
-        if ($CFG->dbtype == "postgres7" and isset($pkey)){
-            $oid = $db->Insert_ID();
-            if ($rs = $db->Execute("SELECT $pkey FROM $CFG->prefix$table WHERE oid = $oid")) {
-                if ($rs->RecordCount() == 1) {
-                    return $rs->fields[0];
-                } else {
-                    return false;
-                }
-            }
-        }    
-        // Try to pull the record out again to find the id.  This is the most cross-platform method.
-        if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE $select")) {
-            if ($rs->RecordCount() == 1) {
-                return $rs->fields[0];
-            }
-        }
-
-        return false;
-
-    } else {
-        return true;
-    }
-}
 
 
 /**
