@@ -1,6 +1,5 @@
-<center>
-<form name="form" method="post" <?php p($onsubmit) ?> action="edit.php" enctype="multipart/form-data">
-<table class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
+<form name="form" method="post" action="edit.php" enctype="multipart/form-data">
+<table border="0" cellpadding="5">
 <?php
 if (isset($errors)) {
 ?>
@@ -15,7 +14,7 @@ if (isset($errors)) {
 <td colspan=2>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td valign="top"><table border="0" width="100%" border="0" cellspacing="0" cellpadding="5">
+    <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="5">
         <tr>
           <td width="150" align=right><p><b><?php echo get_string("concept","glossary") ?>:</b></p></td>
           <td><input type="text" name="concept" size=30 value="<?php p($newentry->concept) ?>"></td>
@@ -111,38 +110,50 @@ if (isset($errors)) {
 </table>
 </td>
 </tr>
+<tr valign="top">
+    <td align=right><p><b>
+     <?php print_string("definition", "glossary"); ?>:
+     </b></p></td>
+    <td align="left" rowspan="2">
+    <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "text", $newentry->definition); ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right" valign="center" nowrap>
 
-<tr valign=top>
-    <td align=right><p><b><?php echo get_string("definition","glossary") ?>:</b></p>
-    <font size="1">
+    <font SIZE="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
         if ($usehtmleditor) {
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
-           emoticonhelpbutton("form", "description");
+           emoticonhelpbutton("form", "text");
         }
       ?>
-      <br />
-    </font>
-    </td>
-    <td>
-    <?php
-       print_textarea($usehtmleditor, 20, 60, 680, 400, "text", $newentry->definition);
+     <br />
+     </font>
 
-       echo "<p align=right>";
-       helpbutton("textformat", get_string("helpformatting"));
-       print_string("formattexttype");
-       echo ":&nbsp;";
-       if (!isset($newentry->format)) {
-           $newentry->format = $defaultformat;
-       }
-       choose_from_menu(format_text_menu(), "format", $newentry->format, "");
-       echo "</p>";
-    ?>
     </td>
 </tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("formattexttype"); ?>:</b></p></td>
+    <td>
+    <?php
+        if ($usehtmleditor) {   /// Trying this out for a while
+            print_string('formathtml');
+            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'">';
+        } else {
+            if (!isset($newentry->format)) {
+                $newentry->format = $defaultformat;
+            }
+            choose_from_menu(format_text_menu(), "format", $newentry->format, "");
+        }
+        helpbutton("textformat", get_string("helpformatting"));
+     ?>
+    </td>
+</tr>
+
 <tr valign=top>
     <td align=right><p><b><?php print_string("attachment", "glossary") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></p></td>
     <td>
@@ -177,8 +188,4 @@ if (isset($errors)) {
 </td>
 </tr>
 </table>
-</center>
-
-
 </form>
-
