@@ -1720,9 +1720,10 @@ function quiz_save_question_options($question) {
                         }
                     } else { // completely new answer
                         unset($options);
-                        $options->min= $question->min[$key];
-                        $options->max= $question->max[$key];
-                        $options->answer= $answer->id;
+                        $options->question = $question->id;
+                        $options->answer = $answer->id;
+                        $options->min = $question->min[$key];
+                        $options->max = $question->max[$key];
                         if (!insert_record("quiz_numerical", $options)) {
                             $result->error = "Could not insert quiz numerical options!";
                             return $result;

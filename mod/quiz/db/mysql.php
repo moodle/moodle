@@ -92,10 +92,11 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "", "shuffleanswers", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "shufflequestions");
     }
 
-	if ($oldversion < 2003071000) {
+	if ($oldversion < 2003071001) {
 
         modify_database ("", " CREATE TABLE `prefix_quiz_numerical` (
                                `id` int(10) unsigned NOT NULL auto_increment,
+                               `question` int(10) unsigned NOT NULL default '0',
                                `answer` int(10) unsigned NOT NULL default '0',
                                `min` varchar(255) NOT NULL default '',
                                `max` varchar(255) NOT NULL default '',

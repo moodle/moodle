@@ -222,6 +222,7 @@ CREATE TABLE `prefix_quiz_shortanswer` (
 
 CREATE TABLE `prefix_quiz_numerical` (
   `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
   `answer` int(10) unsigned NOT NULL default '0',
   `min` varchar(255) NOT NULL default '',
   `max` varchar(255) NOT NULL default '',

@@ -59,6 +59,16 @@ function quiz_upgrade($oldversion) {
                                );");
         modify_database ("", "CREATE INDEX prefix_quiz_match_question_idx ON prefix_quiz_match (question);");
     }
+    if ($oldversion < 2003071001) {
+        modify_database ("", " CREATE TABLE prefix_quiz_numerical (
+                               id SERIAL PRIMARY KEY,
+                               question integer NOT NULL default '0',
+                               answer integer NOT NULL default '0',
+                               min varchar(255) NOT NULL default '',
+                               max varchar(255) NOT NULL default ''
+                               ); ");
+        modify_database ("", "CREATE INDEX prefix_quiz_numerical_answer_idx ON prefix_quiz_numerical (answer);");
+    }
     return true;
 }
 

@@ -130,6 +130,20 @@ CREATE TABLE prefix_quiz_multichoice (
 CREATE INDEX prefix_quiz_multichoice_question_idx ON prefix_quiz_multichoice (question);
 
 #
+# Table structure for table quiz_numerical
+#
+
+CREATE TABLE prefix_quiz_numerical (
+  id SERIAL PRIMARY KEY,
+  question integer NOT NULL default '0',
+  answer integer NOT NULL default '0',
+  min varchar(255) NOT NULL default '',
+  max varchar(255) NOT NULL default ''
+);
+# --------------------------------------------------------
+CREATE INDEX prefix_quiz_numerical_answer_idx ON prefix_quiz_numerical (answer);
+
+#
 # Table structure for table quiz_question_grades
 #
 
