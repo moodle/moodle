@@ -570,57 +570,62 @@ table.generaltable th.header,
 }
 
 /******************************************************************/
-/* Stretchy tabs code */
-/*#try4 table {
+/* tabs */
 .tabs {
+    width: auto;
+}
+.tabs td {
+    background-color: white;
+}
+.tabrow {
     border-collapse:collapse;
     width:100%;
     margin:0;
 }
-/*#try4 td {
-.tabs td {
+.tabrow td {
     height:34px;
     padding:0 0 0 14px;
-    background:url(images/gray_left.png) top left no-repeat;
+    background:url(images/tab_left.gif) top left no-repeat;
 }
-#try4 th {
+.tabrow th {
     display:none;
 }
-/*#try4 td a {
-.tabs td a {
+.tabrow td .tablink {
     display:block;
     height:34px;
     line-height:38px;
     padding:0 14px 0 0;
-    background:url(images/gray_right.png) top right no-repeat;
+    background:url(images/tab_right.gif) top right no-repeat;
     text-align:center;
     white-space:nowrap;
     text-decoration:none;
 }
-/*#try4 td:hover {
-    background-image:url(images/gray_left_f2.png);
+.tabrow td:hover {
+    background-image:url(images/tab_left_hover.gif);
 }
-#try4 td:hover a {
+.tabrow td:hover .tablink {
     line-height:32px;
-    background-image:url(images/gray_right_f2.png);
+    background-image:url(images/tab_right_hover.gif);
 }
 
-/*#try4 .last span {
-.tabs .last span {
+.tabrow .last span {
     display:block;
-    padding:0 1px 0 0;
-    background:url(imagesright_end.png) top right no-repeat;
+    padding:0px 1px 0px 0px;
+    background:url(images/tab_right_end.gif) top right no-repeat;
 }
-/*html body #try4 .this {
-.glossarydisplay .tabs .selected {
-    background:url(images/active_left.png) top left no-repeat;
+.tabrow .selected {
+    background:url(images/tab_left_active.gif) top left no-repeat;
 }
-/*html body #try4 .this a {
-.glossarydisplay .tabs .selected a {
-    background:url(images/active_right.png) top right no-repeat;
+.tabrow .selected .tablink {
+    background:url(images/tab_right_active.gif) top right no-repeat;
     line-height:38px;
 }
-*/
+.tabrow td.selected:hover {
+    background-image:url(images/tab_left_active_hover.gif);
+}
+.tabrow td.selected:hover .tablink {
+    background-image:url(images/tab_right_active_hover.gif);
+}
 
 /******************************************************************/
 
