@@ -55,7 +55,7 @@ define('VISIBLEGROUPS', 2);
 /**
  * Time constant - the number of seconds in a week
  */
-define('WEEKSECS', 604800); 
+define('WEEKSECS', 604800);
 
 /**
  * Time constant - the number of seconds in a day
@@ -100,12 +100,12 @@ define('PARAM_PATH',    0x20);
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**
- * Returns a particular value for the named variable, taken from 
- * POST or GET.  If the parameter doesn't exist then an error is 
+ * Returns a particular value for the named variable, taken from
+ * POST or GET.  If the parameter doesn't exist then an error is
  * thrown because we require this variable.
  *
- * This function should be used to initialise all required values 
- * in a script that are based on parameters.  Usually it will be 
+ * This function should be used to initialise all required values
+ * in a script that are based on parameters.  Usually it will be
  * used like this:
  *    $id = required_param('id');
  *
@@ -127,11 +127,11 @@ function required_param($varname, $options=PARAM_CLEAN) {
 }
 
 /**
- * Returns a particular value for the named variable, taken from 
+ * Returns a particular value for the named variable, taken from
  * POST or GET, otherwise returning a given default.
  *
- * This function should be used to initialise all optional values 
- * in a script that are based on parameters.  Usually it will be 
+ * This function should be used to initialise all optional values
+ * in a script that are based on parameters.  Usually it will be
  * used like this:
  *    $name = optional_param('name', 'Fred');
  *
@@ -154,8 +154,8 @@ function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
 }
 
 /**
- * Used by {@link optional_param()} and {@link required_param()} to 
- * clean the variables and/or cast to specific types, based on 
+ * Used by {@link optional_param()} and {@link required_param()} to
+ * clean the variables and/or cast to specific types, based on
  * an options field.
  *
  * @param mixed $param the variable we are cleaning
@@ -196,7 +196,7 @@ function clean_param($param, $options) {
         }
         if ($param === '.' or $param === ' ') {
             $param = '';
-        }        
+        }
     }
 
     if ($options & PARAM_PATH) {         // Strip all suspicious characters from file path
@@ -328,7 +328,7 @@ function set_user_preference($name, $value, $userid=NULL) {
 
     global $USER;
 
-    if (empty($userid)){ 
+    if (empty($userid)){
         $userid = $USER->id;
     }
 
@@ -369,7 +369,7 @@ function unset_user_preference($name, $userid=NULL) {
 
     global $USER;
 
-    if (empty($userid)){ 
+    if (empty($userid)){
         $userid = $USER->id;
     }
 
@@ -391,7 +391,7 @@ function set_user_preferences($prefarray, $userid=NULL) {
         return false;
     }
 
-    if (empty($userid)){ 
+    if (empty($userid)){
         $userid = $USER->id;
     }
 
@@ -407,7 +407,7 @@ function set_user_preferences($prefarray, $userid=NULL) {
 
 /**
  * If no arguments are supplied this function will return
- * all of the current user preferences as an array.  
+ * all of the current user preferences as an array.
  * If a name is specified then this function
  * attempts to return that particular preference value.  If
  * none is found, then the optional value $default is returned,
@@ -538,7 +538,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * the nicer %e, so we have to use %d which has leading zeroes.
  * A lot of the fuss in the function is just getting rid of these leading
  * zeroes as efficiently as possible.
- * 
+ *
  * If parameter fixday = true (default), then take off leading
  * zero from %d, else mantain it.
  *
@@ -587,7 +587,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
 }
 
 /**
- * Given a $date timestamp in GMT (seconds since epoch), 
+ * Given a $date timestamp in GMT (seconds since epoch),
  * returns an array that represents the date in user time
  *
  * @uses HOURSECS
@@ -761,7 +761,7 @@ function require_login($courseid=0, $autologinguest=true) {
         } elseif($CFG->changepassword) {
             redirect($CFG->changepassword);
         } else {
-            error('You cannot proceed without changing your password. 
+            error('You cannot proceed without changing your password.
                    However there is no available page for changing it.
                    Please contact your Moodle Administrator.');
         }
@@ -774,7 +774,7 @@ function require_login($courseid=0, $autologinguest=true) {
     }
 
     // Make sure current IP matches the one for this session (if required)
-    if (!empty($CFG->tracksessionip)) {    
+    if (!empty($CFG->tracksessionip)) {
         if ($USER->sessionIP != md5(getremoteaddr())) {
             error(get_string('sessionipnomatch', 'error'));
         }
@@ -787,7 +787,7 @@ function require_login($courseid=0, $autologinguest=true) {
 
     // Next, check if the user can be in a particular course
     if ($courseid) {
-        if ($courseid == SITEID) {   
+        if ($courseid == SITEID) {
             return;   // Anyone can be in the site course
         }
         if (!empty($USER->student[$courseid]) or !empty($USER->teacher[$courseid]) or !empty($USER->admin)) {
@@ -1031,7 +1031,7 @@ function isteacheredit($courseid, $userid=0) {
  * Determines if a user can create new courses
  *
  * @uses $USER
- * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user. 
+ * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
  * @return boolean
  */
 function iscreator ($userid=0) {
@@ -1051,7 +1051,7 @@ function iscreator ($userid=0) {
 
 /**
  * Determines if a user is a student in the specified course
- * 
+ *
  * If the course id specifies the site then the function determines
  * if the user is a confirmed and valid user of this site.
  *
@@ -1059,7 +1059,7 @@ function iscreator ($userid=0) {
  * @uses $CFG
  * @uses SITEID
  * @param int $courseid The id of the course being tested
- * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user. 
+ * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
  * @return boolean
  */
 function isstudent($courseid, $userid=0) {
@@ -1101,7 +1101,7 @@ function isstudent($courseid, $userid=0) {
  * Determines if the specified user is logged in as guest.
  *
  * @uses $USER
- * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user. 
+ * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
  * @return boolean
  */
 function isguest($userid=0) {
@@ -1158,7 +1158,7 @@ function ismoving($courseid) {
  * full name of the person.
  * The result may depend on system settings
  * or language.  'override' will force both names
- * to be used even if system settings specify one. 
+ * to be used even if system settings specify one.
  * @uses $CFG
  * @uses $SESSION
  * @param    type description
@@ -1366,14 +1366,14 @@ function truncate_userinfo($info) {
                     'country'     =>   2,
                     'url'         => 255,
                     );
-    
+
     // apply where needed
     foreach (array_keys($info) as $key) {
         if (!empty($limit[$key])) {
             $info[$key] = substr($info[$key],0, $limit[$key]);
-        } 
+        }
     }
-    
+
     return $info;
 }
 
@@ -1402,12 +1402,12 @@ function guest_user() {
  * up using the currently selected authentication mechanism,
  * and if the authentication is successful, it returns a
  * valid $user object from the 'user' table.
- * 
+ *
  * Uses auth_ functions from the currently active auth module
  *
  * @uses $CFG
- * @param string $username  User's username 
- * @param string $password  User's password 
+ * @param string $username  User's username
+ * @param string $password  User's password
  * @return user|flase A {@link $USER} object or false if error
  */
 function authenticate_user_login($username, $password) {
@@ -1482,7 +1482,7 @@ function authenticate_user_login($username, $password) {
                         }
                     }
                 }
-            }    
+            }
         }
         $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
         return $user;
@@ -1520,7 +1520,7 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
         $student->time = time();
         $student->enrol = $enrol;
         return update_record('user_students', $student);
-        
+
     } else {
         require_once("$CFG->dirroot/mod/forum/lib.php");
         forum_add_user($userid, $courseid);
@@ -1640,7 +1640,7 @@ function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $ti
  * Does not delete the user account
  *
  * @param int $courseid The id of the course that is being viewed, if any
- * @param int $userid The id of the user that is being tested against. 
+ * @param int $userid The id of the user that is being tested against.
  * @return boolean
  */
 function remove_teacher($userid, $courseid=0) {
@@ -1672,7 +1672,7 @@ function remove_teacher($userid, $courseid=0) {
 /**
  * Add a creator to the site
  *
- * @param int $userid The id of the user that is being tested against. 
+ * @param int $userid The id of the user that is being tested against.
  * @return boolean
  */
 function add_creator($userid) {
@@ -1712,14 +1712,14 @@ function add_admin($userid) {
     if (!record_exists('user_admins', 'userid', $userid)) {
         if (record_exists('user', 'id', $userid)) {
             $admin->userid = $userid;
-            
+
             // any admin is also a teacher on the site course
             if (!record_exists('user_teachers', 'course', SITEID, 'userid', $userid)) {
                 if (!add_teacher($userid, SITEID)) {
                     return false;
                 }
             }
-            
+
             return insert_record('user_admins', $admin);
         }
         return false;
@@ -2235,9 +2235,9 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
  * @param string $messagehtml complete html version of the message (optional)
  * @param string $attachment a file on the filesystem, relative to $CFG->dataroot
  * @param string $attachname the name of the file (extension indicates MIME)
- * @param boolean $usetrueaddress determines whether $from email address should 
+ * @param boolean $usetrueaddress determines whether $from email address should
  *          be sent out. Will be overruled by user profile setting for maildisplay
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email 
+ * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true) {
@@ -2355,7 +2355,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
  *
  * @uses $CFG
  * @param user $user A {@link $USER} object
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email 
+ * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
 function reset_password_and_mail($user) {
@@ -2391,7 +2391,7 @@ function reset_password_and_mail($user) {
  *
  * @uses $CFG
  * @param user $user A {@link $USER} object
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email 
+ * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
  function send_confirmation_email($user) {
@@ -2420,7 +2420,7 @@ function reset_password_and_mail($user) {
  *
  * @uses $CFG
  * @param user $user A {@link $USER} object
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email 
+ * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  * @todo Finish documenting this function
  */
@@ -2663,7 +2663,7 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
  *
  * $filearray is a 1-dimensional sub-array of the $_FILES array
  * eg $filearray = $_FILES['userfile1']
- * If left empty then the first element of the $_FILES array will be used 
+ * If left empty then the first element of the $_FILES array will be used
  *
  * @uses $_FILES
  * @param array $filearray  A 1-dimensional sub-array of the $_FILES array
@@ -2946,7 +2946,7 @@ function current_language() {
  * @param string $module The module where the key identifier is stored. If none is specified then moodle.php is used.
  * @param mixed $a An object, string or number that can be used
  * within translation strings
- */ 
+ */
 function print_string($identifier, $module='', $a=NULL) {
     echo get_string($identifier, $module, $a);
 }
@@ -2973,21 +2973,21 @@ function print_string($identifier, $module='', $a=NULL) {
  * <code>
  * $string['wordforstudent'] = 'Your word for Student';
  * </code>
- * So if you want to display the string 'Your word for student' 
- * in any language that supports it on your site 
+ * So if you want to display the string 'Your word for student'
+ * in any language that supports it on your site
  * you just need to use the identifier 'wordforstudent'
  * <code>
  * $mystring = '<strong>'. get_string('wordforstudent') .'</strong>';
 or
  * </code>
- * If the string you want is in another file you'd take a slightly 
- * different approach. Looking in moodle/lang/en/calendar.php you find 
+ * If the string you want is in another file you'd take a slightly
+ * different approach. Looking in moodle/lang/en/calendar.php you find
  * around line 75:
  * <code>
  * $string['typecourse'] = 'Course event';
  * </code>
- * If you want to display the string "Course event" in any language 
- * supported you would use the identifier 'typecourse' and the module 'calendar' 
+ * If you want to display the string "Course event" in any language
+ * supported you would use the identifier 'typecourse' and the module 'calendar'
  * (because it is in the file calendar.php):
  * <code>
  * $mystring = '<h1>'. get_string('typecourse', 'calendar') .'</h1>';
@@ -3003,7 +3003,7 @@ or
  * within translation strings
  * @return string The localized string.
  */
-function get_string($identifier, $module='', $a=NULL) { 
+function get_string($identifier, $module='', $a=NULL) {
 
     global $CFG;
 
@@ -3179,7 +3179,7 @@ function get_list_of_languages() {
  * @uses $CFG
  * @uses $USER
  * @return string?
- * @todo Finish documenting this function. 
+ * @todo Finish documenting this function.
  */
 function get_list_of_countries() {
     global $CFG, $USER;
@@ -3214,7 +3214,7 @@ function get_list_of_countries() {
  * @return string?
  * @todo Finish documenting this function.
  */
-function get_list_of_pixnames() { 
+function get_list_of_pixnames() {
     global $CFG;
 
     $lang = current_language();
@@ -3246,7 +3246,7 @@ function get_list_of_pixnames() {
  * @return ?
  * @todo Finish documenting this function
  */
-function document_file($file, $include=true) { 
+function document_file($file, $include=true) {
     global $CFG;
 
     $file = clean_filename($file);
@@ -3279,17 +3279,17 @@ function document_file($file, $include=true) {
 * to override it
 *
 * The memory limit should be expressed with a string (eg:'64M')
-* 
+*
 * Return boolean
 *
 * @param    value    string with the new memory limit
 */
 function raise_memory_limit ($newlimit) {
 
-    if (empty($newlimit)) { 
+    if (empty($newlimit)) {
         return false;
     }
-    
+
     $cur = @ini_get('memory_limit');
     if (empty($cur)) {
         // if php is compiled without --enable-memory-limits
@@ -3301,11 +3301,11 @@ function raise_memory_limit ($newlimit) {
         }
       $cur = return_bytes($cur);
     }
-    
+
     $new = return_bytes($newlimit);
     if ($new > $cur) {
         ini_set('memory_limit', $newlimit);
-        return true;    
+        return true;
     }
     return false;
 }
@@ -3373,7 +3373,7 @@ function rc4decrypt($data) {
  * @return string
  * @todo Finish documenting this function
  */
-function endecrypt ($pwd, $data, $case) { 
+function endecrypt ($pwd, $data, $case) {
 
     if ($case == 'de') {
         $data = urldecode($data);
@@ -3636,7 +3636,7 @@ function check_php_version($version='4.1.0') {
  * @return boolean
  * @todo Finish documenting this function
  */
- function check_browser_version($brand='MSIE', $version=5.5) { 
+ function check_browser_version($brand='MSIE', $version=5.5) {
     $agent = $_SERVER['HTTP_USER_AGENT'];
 
     if (empty($agent)) {
@@ -3647,8 +3647,9 @@ function check_php_version($version='4.1.0') {
 
       case 'Gecko':   /// Gecko based browsers
 
-          if (substr_count($agent, 'Camino')) {     // MacOS X Camino not supported.
-              return false;
+          if (substr_count($agent, 'Camino')) {
+              // MacOS X Camino support
+              $version = 20041110;
           }
 
           // the proper string - Gecko/CCYYMMDD Vendor/Version
@@ -3696,7 +3697,7 @@ function check_php_version($version='4.1.0') {
  * @return boolean
  * @todo Finish documenting this function
  */
-function ini_get_bool($ini_get_arg) { 
+function ini_get_bool($ini_get_arg) {
     $temp = ini_get($ini_get_arg);
 
     if ($temp == '1' or strtolower($temp) == 'on') {
@@ -3716,7 +3717,7 @@ function ini_get_bool($ini_get_arg) {
 }
 
 /**
- * Determines if the HTML editor is enabled. 
+ * Determines if the HTML editor is enabled.
  *
  * This depends on site and user
  * settings, as well as the current browser being used.
@@ -3725,7 +3726,7 @@ function ini_get_bool($ini_get_arg) {
  * returns 'MSIE' or 'Gecko'.
  * @todo Finish documenting this function
  */
- function can_use_html_editor() { 
+ function can_use_html_editor() {
     global $USER, $CFG;
 
     if (!empty($USER->htmleditor) and !empty($CFG->htmleditor)) {
@@ -3790,7 +3791,7 @@ function check_gd_version() {
  * @return boolean
  * @todo Finish documenting this function
  */
-function moodle_needs_upgrading() { 
+function moodle_needs_upgrading() {
     global $CFG;
 
     include_once($CFG->dirroot .'/version.php');  # defines $version and upgrades
@@ -3973,7 +3974,7 @@ function moodle_strtolower ($string, $encoding='') {
  * @param string $string The text to be searched for words.
  * @return int The count of words in the specified string
  */
-function count_words($string) { 
+function count_words($string) {
     $string = strip_tags($string);
     return count(preg_split("/\w\b/", $string)) - 1;
 }
@@ -4007,7 +4008,7 @@ function random_string ($length=15) {
  * @return string
  * @todo Finish documenting this function
  */
-function getweek ($startdate, $thedate) { 
+function getweek ($startdate, $thedate) {
     if ($thedate < $startdate) {   // error
         return 0;
     }
@@ -4055,7 +4056,7 @@ function format_float($num, $places=1) {
  * @param array $array The array to be rearranged
  * @return array
  */
-function swapshuffle($array) { 
+function swapshuffle($array) {
 
     srand ((double) microtime() * 10000000);
     $last = count($array) - 1;
@@ -4075,7 +4076,7 @@ function swapshuffle($array) {
  * @return array
  */
 function swapshuffle_assoc($array) {
-/// 
+///
 
     $newkeys = swapshuffle(array_keys($array));
     foreach ($newkeys as $newkey) {
@@ -4142,7 +4143,7 @@ function microtime_diff($a, $b) {
  * @param string $separator ?
  * @todo Finish documenting this function
  */
-function make_menu_from_list($list, $separator=',') { 
+function make_menu_from_list($list, $separator=',') {
 
     $array = array_reverse(explode($separator, $list), true);
     foreach ($array as $key => $item) {
@@ -4352,7 +4353,7 @@ function zip_files ($originalfiles, $destination) {
     }
 
     //If no extension, add it
-    if (empty($extension)) { 
+    if (empty($extension)) {
         $extension = 'zip';
         $destfilename = $destfilename.'.'.$extension;
     }
@@ -4435,7 +4436,7 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
 //SAME directory where the zip file resides.
 
     global $CFG;
-    
+
     //Extract everything from zipfile
     $path_parts = pathinfo(cleardoubleslashes($zipfile));
     $zippath = $path_parts["dirname"];       //The path of the zip file
@@ -4502,7 +4503,7 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
     if ($showstatus) {
         unzip_show_status($list,$destpath);
     }
-  
+
     return true;
 }
 
@@ -4520,7 +4521,7 @@ function unzip_cleanfilename ($p_event, &$p_header) {
         // BSD: none (tested)
         // Linux: ??
         // MacosX: ??
-    }    
+    }
     $p_header['filename'] = cleardoubleslashes($p_header['filename']); //normalize the slashes/backslashes
     return 1;
 }
@@ -4571,7 +4572,7 @@ function unzip_show_status ($list,$removepath) {
 
 /**
  * Returns most reliable client address
- * 
+ *
  * @return string The remote IP address
  */
  function getremoteaddr() {
@@ -4580,7 +4581,7 @@ function unzip_show_status ($list,$removepath) {
     else if(getenv('REMOTE_ADDR')) $ip = getenv('REMOTE_ADDR');
     else $ip = false; //just in case
     return $ip;
-}   
+}
 
 /**
  * html_entity_decode is only supported by php 4.3.0 and higher
