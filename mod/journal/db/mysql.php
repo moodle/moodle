@@ -47,6 +47,15 @@ function journal_upgrade($oldversion) {
         table_column("journal", "", "introformat", "integer", "2", "", "1", "not null", "intro");
     }
 
+    if ($oldversion < 2004111200) {
+        execute_sql("ALTER TABLE {$CFG->prefix}journal DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}journal_entries DROP INDEX journal;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}journal_entries DROP INDEX userid;",false); 
+
+        modify_database('','ALTER TABLE prefix_journal ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_journal_entries ADD INDEX journal (journal);');
+        modify_database('','ALTER TABLE prefix_journal_entries ADD INDEX userid (userid);');
+    }
     
     return $result;
 }

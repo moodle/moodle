@@ -23,7 +23,8 @@ CREATE TABLE prefix_journal (
   days smallint(5) unsigned NOT NULL default '7',
   assessed int(10) NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id),
+  KEY course (course)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
@@ -43,7 +44,9 @@ CREATE TABLE prefix_journal_entries (
   teacher int(10) unsigned NOT NULL default '0',
   timemarked int(10) unsigned NOT NULL default '0',
   mailed int(1) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id), 
+  KEY journal (journal),
+  KEY userid (userid)
 ) TYPE=MyISAM COMMENT='All the journal entries of all people';
 
 #

@@ -24,6 +24,9 @@ CREATE TABLE prefix_journal (
   assessed integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_journal_course_idx ON prefix_journal (course);
+
 # --------------------------------------------------------
 
 #
@@ -43,6 +46,9 @@ CREATE TABLE prefix_journal_entries (
   timemarked integer NOT NULL default '0',
   mailed integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_journal_entries_journal_idx ON prefix_journal_entries (journal);
+CREATE INDEX prefix_journal_entries_userid_idx ON prefix_journal_entries (userid);
 
 #
 # Dumping data for table `log_display`
