@@ -18,6 +18,12 @@
         $USER = get_user_info_from_db("id", $USER->realuser);
         $USER->loggedin = true;
         $USER->site = $CFG->wwwroot;
+
+        if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group"
+            $SESSION->currentgroup[$course->id] = $SESSION->oldcurrentgroup;
+            unset($SESSION->oldcurrentgroup);
+        }
+
         redirect($_SERVER["HTTP_REFERER"]);
         exit;
     }
@@ -41,10 +47,15 @@
     $teacher_name = fullname($USER, true);
     $teacher_id   = "$USER->id";
 
-    $USER = get_user_info_from_db("id", $user);
+    $USER = get_user_info_from_db("id", $user);    // Create the new USER object with all details
     $USER->loggedin = true;
     $USER->site = $CFG->wwwroot;
     $USER->realuser = $teacher_id;
+
+    if (isset($SESSION->currentgroup[$course->id])) {    // Remember current setting for later
+        $SESSION->oldcurrentgroup = $SESSION->currentgroup[$course->id];
+        unset($SESSION->currentgroup[$course->id]);
+    }
 
     set_moodle_cookie($USER->username);
     $student_name = fullname($USER, true);
