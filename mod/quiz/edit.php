@@ -101,7 +101,32 @@
         }
     }
 
-    if (isset($_REQUEST['add']) and confirm_sesskey()) { /// Add a question to the current quiz
+    if (isset($_REQUEST['addquestion']) and confirm_sesskey()) { /// Add a single question to the current quiz
+        
+        // add question to quiz->questions
+        $key = $_REQUEST['addquestion'];
+        if (!empty($modform->questions)) {
+            $questions = explode(",", $modform->questions);
+        }
+        $questions[] = $key;
+        $modform->questions = implode(",", $questions);
+        if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+            error('Could not save question list');
+        }
+        
+        // update question grades
+        $questionrecord = get_record("quiz_questions", "id", $key);
+        if (!empty($questionrecord->defaultgrade)) {
+            $modform->grades[$key] = $questionrecord->defaultgrade;
+        } else if ($questionrecord->qtype == DESCRIPTION){
+            $modform->grades[$key] = 0;
+        } else {
+            $modform->grades[$key] = 1;
+        }
+        quiz_questiongrades_update($modform->grades, $modform->instance);
+    }
+
+    if (isset($_REQUEST['add']) and confirm_sesskey()) { /// Add selected questions to the current quiz
         $rawquestions = $_POST;
         if (!empty($modform->questions)) {
             $questions = explode(",", $modform->questions);

@@ -10,6 +10,7 @@ $string['addquestionstoquiz'] = 'Add questions to current quiz';
 $string['addrandom1'] = ' Add ';
 $string['addrandom2'] = 'random questions ';
 $string['addselectedtoquiz'] = 'Add selected to quiz';
+$string['addtoquiz'] = 'Add to quiz';
 $string['affectedstudents'] = 'Affected $a';
 $string['aiken'] = 'Aiken format';
 $string['allinone'] = 'Unlimited';

@@ -1338,8 +1338,10 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     $strquestionname = get_string("questionname", "quiz");
     $strdelete = get_string("delete");
     $stredit = get_string("edit");
+    $straction = get_string("action");
 
     $straddselectedtoquiz = get_string("addselectedtoquiz", "quiz");
+    $straddtoquiz = get_string("addtoquiz", "quiz");
     $strtype = get_string("type", "quiz");
     $strcreatemultiple = get_string("createmultiple", "quiz");
     $strpreview = get_string("preview","quiz");
@@ -1412,32 +1414,22 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
     echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">";
     echo "<tr>";
-    if ($quizselected) {
-        echo "<th width=\"*\" nowrap=\"nowrap\">$strselect</th>";
+    if ($canedit) {
+        echo "<th width=\"105\" nowrap=\"nowrap\">$straction</th>";
     }
     echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th>";
-    if ($canedit) {
-        echo "<th width=\"70\" nowrap=\"nowrap\">$stredit</th>";
-    }
     echo "</tr>\n";
     foreach ($questions as $question) {
         if ($question->qtype == RANDOM) {
             //continue;
         }
         echo "<tr>\n";
-        if ($quizselected) {
-            echo "<td align=\"center\">";
-            echo "<input type=\"checkbox\" name=\"q$question->id\" value=\"1\" />\n";
-            echo "</td>";
-        }
-        echo "<td>".$question->name."</td>\n";
-        echo "<td align=\"center\">\n";
-        quiz_print_question_icon($question, $canedit);
-        echo "</td>\n";
         if ($canedit) {
             echo "<td>\n";
-                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\">\n<img
-                     src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>&nbsp;";
+                if ($quizselected) {
+                    echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
+                     src=\"../../pix/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
+                }
                 echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
                       src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
                 echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
@@ -1454,8 +1446,18 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
                 }
                 echo "<a title=\"$strhideshow\" href=\"question.php?id=$question->id&amp;hide=$hideshow&amp;sesskey=$USER->sesskey\"><img
                      src=\"../../pix/t/$imghideshow\" border=\"0\" alt=\"$strhideshow\" /></a>";
+                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\">\n<img
+                     src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
+                if ($quizselected) {
+                    echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
+                }
             echo "</td>\n";
         }
+
+        echo "<td>".$question->name."</td>\n";
+        echo "<td align=\"center\">\n";
+        quiz_print_question_icon($question, $canedit);
+        echo "</td>\n";
         echo "</tr>\n";
     }
     $numquestions = count_records_select('quiz_questions', "category IN ($categorylist) AND qtype != '".RANDOM."'");
