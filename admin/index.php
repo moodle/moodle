@@ -9,21 +9,23 @@
 
     // Check databases and modules and install as needed.
     if (! $db->Metatables() ) { 
-        print_header("Setting up database", "Setting up database", "Setting up databases for the first time");
+        $strdatabasesetup    = get_string("databasesetup");
+        $strdatabasesuccess  = get_string("databasesuccess");
+        print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup);
 
         if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
             $db->debug = true;
             if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
-                notify("Main databases set up successfully");
+                notify($strdatabasesuccess);
             } else {
                 $db->debug = false;
                 error("Error: Main databases NOT set up successfully");
             }
         } else {
-            error("Error: Your database ($CFG->dbtype) is not yet supported by Moodle.  See the lib/db directory.");
+            error("Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle.  See the lib/db directory.");
         }
-        print_heading("<A HREF=\"index.php\">Continue</A>");
+        print_continue("index.php");
         die;
     }
 
@@ -34,14 +36,18 @@
 
     if ($dversion = get_field("config", "value", "name", "version")) { 
         if ($version > $dversion) {  // upgrade
-            print_header("Upgrading database", "Upgrading database", "Upgrading main databases");
-            notify("Upgrading databases from version $dversion to $version...");
+            $a->oldversion = $dversion;
+            $a->newversion = $version;
+            $strdatabasechecking = get_string("databasechecking", "", $a);
+            $strdatabasesuccess  = get_string("databasesuccess");
+            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
+            notify($strdatabasechecking);
             $db->debug=true;
             if (upgrade_moodle($dversion)) {
                 $db->debug=false;
                 if (set_field("config", "value", "$version", "name", "version")) {
-                    notify("Databases were successfully upgraded");
-                    print_heading("<A HREF=\"index.php\">Continue</A>");
+                    notify($strdatabasesuccess);
+                    print_continue("$CFG->wwwroot");
                     die;
                 } else {
                     notify("Upgrade failed!  (Could not update version in config table)");
@@ -57,15 +63,16 @@
     } else {
         $dversion->name  = "version";
         $dversion->value = $version;
-        print_header("Upgrading database", "Upgrading database", "Upgrading main databases");
+        $strdatabaseupgrades = get_string("databaseupgrades");
+        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
         if (insert_record("config", $dversion)) {
             notify("You are currently using Moodle version $version");
-            print_heading("<A HREF=\"index.php\">Continue</A>");
+            print_continue("index.php");
             die;
         } else {
             $db->debug=true;
             if (upgrade_moodle(0)) {
-                print_heading("<A HREF=\"index.php\">Continue</A>");
+                print_continue("index.php");
             } else {
                 error("A problem occurred inserting current version into databases");
             }
@@ -109,7 +116,7 @@
                         if (! update_record("modules", $module)) {
                             error("Could not update $module->name record in modules table!");
                         }
-                        notify("$module->name module was successfully upgraded");
+                        notify(get_string("modulesuccess", "", $module->name));
                     } else {
                         $db->debug=false;
                         notify("Upgrading $module->name from $currmodule->version to $module->version FAILED!");
@@ -122,14 +129,15 @@
     
         } else {    // module not installed yet, so install it
             if (!$updated_modules) {
-                print_header("Setting up database", "Setting up database", "Setting up module tables", "");
+                $strmodulesetup    = get_string("modulesetup");
+                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup);
             }
             $updated_modules = true;
             $db->debug = true;
             if (modify_database("$fullmod/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
                 if ($module->id = insert_record("modules", $module)) {
-                    notify("$module->name tables have been set up correctly");
+                    notify(get_string("modulesuccess", "", $module->name));
                 } else {
                     error("$module->name module could not be added to the module list!");
                 }
@@ -140,7 +148,7 @@
     }
 
     if ($updated_modules) {
-        print_heading("<A HREF=\"index.php\">Continue</A>");
+        print_continue("index.php");
         die;
     }
 
