@@ -12,8 +12,10 @@
         redirect("$CFG->wwwroot/course/", "Message sent, thanks", 3);
         die;
     }
+
+    $site = get_site();
     
-    print_header("$CFG->sitename:Error", "$CFG->sitename: Error 404", "", "form.text");
+    print_header("$site->fullname:Error", "$site->fullname: Error 404", "", "form.text");
 
     print_simple_box("An unusual error occurred (tried to reach a page that doesn't exist).<P align=center>$REQUEST_URI", "center", "", "$THEME->cellheading");
   
