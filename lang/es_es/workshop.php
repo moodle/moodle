@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.1 Beta ++ (2003082600)
+      // workshop.php - created with Moodle 1.1 Beta +++ (2003082702)
 
 
+$string['absent'] = "Ausente";
 $string['accumulative'] = "Acumulativo";
 $string['action'] = "Acción";
 $string['addacomment'] = "Añadir un comentario";
@@ -36,6 +37,7 @@ $string['closeassignment'] = "Cerrar la tarea";
 $string['comment'] = "Comentario";
 $string['commentby'] = "Comentado por";
 $string['confirmdeletionofthisitem'] = "Confirmar el borrado de este \$a";
+$string['correct'] = "Correcto";
 $string['criterion'] = "Criterio";
 $string['deadline'] = "Fecha límite";
 $string['deadlineis'] = "La fecha límite es \$a";
@@ -52,8 +54,10 @@ $string['editingassessmentelements'] = "Editando elementos de valoración";
 $string['element'] = "Elementos";
 $string['elementweight'] = "Peso del elemento";
 $string['errorbanded'] = "Error al crear la Franja";
+$string['excellent'] = "Excelente";
 $string['feedbackgoeshere'] = "La respuesta va aquí";
 $string['generalcomment'] = "Comentario General";
+$string['good'] = "Bueno";
 $string['grade'] = "Calificación";
 $string['gradeassessment'] = "Calificar la valoración";
 $string['graded'] = "Calificada";
@@ -66,9 +70,13 @@ $string['gradeofsubmission'] = "Calificación del envío: \$a";
 $string['gradingstrategy'] = "Estrategia de calificación";
 $string['hidegradesbeforeagreement'] = "Ocultar Calificaciones antes de ser aceptadas";
 $string['includeteachersgrade'] = "Incluir la Calificación del Profesor";
+$string['incorrect'] = "Incorrecto";
 $string['listassessments'] = "Listado de Evaluaciones";
 $string['listofallsubmissions'] = "Listado de todos los envíos";
 $string['liststudentsassessments'] = "Listado de las Evaluaciones de los alumnos";
+$string['mail1'] = "Tu tarea '\$a' ha sido evaluada por";
+$string['mail4'] = "Se ha añadido un comentario a la tarea '\$a' por";
+$string['mail6'] = "Su evaluación de la tarea '\$a' ha sido revisada";
 $string['managingassignment'] = "Administrar tarea";
 $string['maximumsize'] = "Tamaño máximo";
 $string['modulename'] = "Taller";
@@ -107,6 +115,8 @@ $string['phase4'] = "Mostrar las Calificaciones Finales";
 $string['pleaseassesstheseexamplesfromtheteacher'] = "Valore por favor estos ejemplos de la \$a";
 $string['pleaseassessthesestudentsubmissions'] = "Por favor valore estos  \$a Envíos";
 $string['pleaseassessyoursubmissions'] = "Por favor, evalúe su(s) envío(s)";
+$string['poor'] = "Pobre";
+$string['present'] = "Presente";
 $string['reassess'] = "Re-evaluar";
 $string['reply'] = "Responder";
 $string['returnto'] = "Devolver a";
@@ -153,6 +163,7 @@ $string['title'] = "Título";
 $string['typeofscale'] = "Tipo de escala";
 $string['ungradedassessmentsofstudentsubmissions'] = "\$a Valoraciones aún por calificar de los envíos de los estudiantes";
 $string['ungradedassessmentsofteachersubmissions'] = "\$a Valoraciones aún por calificar de los envíos del Profesor";
+$string['verypoor'] = "Muy pobre";
 $string['view'] = "Ver";
 $string['viewassessmentofteacher'] = "Ver Valoraciones de \$a";
 $string['viewotherassessments'] = "Ver otras Valoraciones";

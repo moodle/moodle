@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1 Beta ++ (2003082600)
+      // quiz.php - created with Moodle 1.1 Beta +++ (2003082702)
 
 
 $string['acceptederror'] = "Error aceptado";
@@ -110,7 +110,7 @@ $string['numerical'] = "Numérica";
 $string['publish'] = "Publicar";
 $string['qti'] = "IMS <acronym title=Question and Test Interoperability>QTI</acronym> format";
 $string['question'] = "Pregunta";
-$string['questioninuse'] = "la pregunta '\$a' está actualmente en uso:";
+$string['questioninuse'] = "La pregunta '\$a' está actualmente en uso:";
 $string['questionname'] = "Nombre de la pregunta";
 $string['questions'] = "Preguntas";
 $string['quizavailable'] = "El cuestionario está disponible hasta el \$a";

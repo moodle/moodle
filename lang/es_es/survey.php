@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 (2003052900)
+      // survey.php - created with Moodle 1.1 Beta +++ (2003082702)
 
 
 $string['actual'] = "Actual";
@@ -50,8 +50,8 @@ $string['attls8'] = "Estoy siempre interesado en conocer por qué la gente dice y
 $string['attls8short'] = "saber por qué";
 $string['attls9'] = "A menudo me encuentro a mí mismo discutiendo con los autores de los libros que leo, intentando entender la lógica de por qué están equivocados ellos.";
 $string['attls9short'] = "discutir con autores";
-$string['attlsintro'] = "El propósito de este cuestionario es ayudarnos a evaluar sus actitudes hacia el pensamiento y el aprendizaje.
-
+$string['attlsintro'] = "El propósito de este cuestionario es ayudarnos a evaluar sus actitudes hacia el pensamiento y el aprendizaje.
+
 No hay respuestas 'correctas' o 'erróneas', nos interesa sólo su opinión. Tenga por seguro que sus respuestas serán tratadas con un alto grado de confidencialidad y no afectarán a su valoración.";
 $string['attlsm1'] = "Actitudes hacia el pensamiento y el aprendizaje";
 $string['attlsm2'] = "Aprendizaje Colaborativo";
@@ -96,7 +96,7 @@ $string['colles21'] = "entiendo bien los mensajes de otros estudiantes";
 $string['colles21short'] = "Entiendo a los otros estudiantes";
 $string['colles22'] = "los otros estudiantes entienden bien mis mensajes.";
 $string['colles22short'] = "los estudiantes me entienden";
-$string['colles23'] = "entiendo bien los mensajes del tutor";
+$string['colles23'] = "Entiendo bien los mensajes del tutor";
 $string['colles23short'] = "Entiendo al tutor";
 $string['colles24'] = "el tutor entiende bien mis mensajes.";
 $string['colles24short'] = "el tutor me comprende";
@@ -115,22 +115,22 @@ $string['colles8'] = "Pienso críticamente sobre las ideas que leo.";
 $string['colles8short'] = "Soy crítico con lo que leo";
 $string['colles9'] = "Explico mis ieas a otros estudiantes.";
 $string['colles9short'] = "Explico mis ideas";
-$string['collesaintro'] = "El propósito de esta encuesta es ayudarnos a entender hasta qué punto la presentación <em>online</em> de esta unidad le facilitó el aprendizaje.
-
-Cada una de las 24 declaraciones siguientes le interroga acerca de su experiencia en esta unidad.
-
-No hay respuestas 'correctas' o 'erróneas', nosotros estamos interesados sólo en su opinión. Esté seguro de que sus respuestas serán tratadas con un alto grado de confidencialidad y que no afectarán a su valoración.
-
-Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera en que esta unidad se presentará en el futuro. 
-
+$string['collesaintro'] = "El propósito de esta encuesta es ayudarnos a entender hasta qué punto la presentación <em>online</em> de esta unidad le facilitó el aprendizaje.
+
+Cada una de las 24 declaraciones siguientes le interroga acerca de su experiencia en esta unidad.
+
+No hay respuestas 'correctas' o 'erróneas', nosotros estamos interesados sólo en su opinión. Esté seguro de que sus respuestas serán tratadas con un alto grado de confidencialidad y que no afectarán a su valoración.
+
+Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera en que esta unidad se presentará en el futuro. 
+
 Muchas gracias.";
 $string['collesaname'] = "COLLES (Actual)";
-$string['collesapintro'] = "El propósito de este cuestionario es ayudarnos a entender hasta qué punto la presentación <em>online</em> de esta unidad le facilitó el aprendizaje.
-
-Cada una de las declaraciones siguientes le pedirán que compare su experiencia <strong>favorita</strong> (ideal) y su experiencia <strong>real</strong> en esta unidad. Tenga por seguro que sus respuestas serán tratadas con la máxima confidencialidad y que no afectarán a su evaluación.
-
-Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera en que esta unidad se presentará <em>online</em> en el futuro.
-
+$string['collesapintro'] = "El propósito de este cuestionario es ayudarnos a entender hasta qué punto la presentación <em>online</em> de esta unidad le facilitó el aprendizaje.
+
+Cada una de las declaraciones siguientes le pedirán que compare su experiencia <strong>favorita</strong> (ideal) y su experiencia <strong>real</strong> en esta unidad. Tenga por seguro que sus respuestas serán tratadas con la máxima confidencialidad y que no afectarán a su evaluación.
+
+Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera en que esta unidad se presentará <em>online</em> en el futuro.
+
 Muchas gracias por su colaboración.";
 $string['collesapname'] = "COLLES (Favorita y actual)";
 $string['collesm1'] = "Relevancia";
@@ -146,14 +146,14 @@ $string['collesm5short'] = "Apoyo de compañeros";
 $string['collesm6'] = "Interpretación";
 $string['collesm6short'] = "Interpretación";
 $string['collesmintro'] = "En esta unidad <em>online</em>...";
-$string['collespintro'] = "El propósito de esta encuesta es ayudarnos a entender lo que usted valora en una experiencia de aprendizaje <em>online</em>.
-
-Cada una de las 24 declaraciones siguientes le interrogan sobre su experiencia <strong>favorita</em> (ideal) en esta unidad.
-
-No existen respuestas 'correctas' o 'erróneas', a nosotros nos interesa sólo su opinión. Tenga la seguridad de que sus respuestas serán tratadas con la máxima confidencialidad y que no afectarán a su evaluación.
-
-Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera en que esta unidad se presentará en el futuro.
-
+$string['collespintro'] = "El propósito de esta encuesta es ayudarnos a entender lo que usted valora en una experiencia de aprendizaje <em>online</em>.
+
+Cada una de las 24 declaraciones siguientes le interrogan sobre su experiencia <strong>favorita</em> (ideal) en esta unidad.
+
+No existen respuestas 'correctas' o 'erróneas', a nosotros nos interesa sólo su opinión. Tenga la seguridad de que sus respuestas serán tratadas con la máxima confidencialidad y que no afectarán a su evaluación.
+
+Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera en que esta unidad se presentará en el futuro.
+
 Muchas gracias por su colaboración.";
 $string['collespname'] = "COLLES (Preferida)";
 $string['done'] = "Hecho";
