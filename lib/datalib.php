@@ -1628,13 +1628,17 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 
     $teachertable = "";
     $visiblecourses = "";
+    $sqland = "";
+    if (!empty($categoryselect)) {
+        $sqland = "AND ";
+    }
     if (!empty($USER)) {  // May need to check they are a teacher
         if (!iscreator()) {
-            $visiblecourses = "AND ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
+            $visiblecourses = "$sqland ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
             $teachertable = ", {$CFG->prefix}user_teachers t";
         }
     } else {
-        $visiblecourses = "AND c.visible > 0";
+        $visiblecourses = "$sqland c.visible > 0";
     }
 
     if ($categoryselect or $visiblecourses) {
@@ -1667,13 +1671,17 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 
     $teachertable = "";
     $visiblecourses = "";
+    $sqland = "";
+    if (!empty($categoryselect)) {
+        $sqland = "AND ";
+    }
     if (!empty($USER)) {  // May need to check they are a teacher
         if (!iscreator()) {
-            $visiblecourses = "AND ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
+            $visiblecourses = "$sqland ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
             $teachertable = ", {$CFG->prefix}user_teachers t";
         }
     } else {
-        $visiblecourses = "AND c.visible > 0";
+        $visiblecourses = "$sqland c.visible > 0";
     }
 
     if ($limitfrom !== "") {
