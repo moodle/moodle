@@ -212,7 +212,7 @@
 
 /// Info box
     if ( $glossary->intro ) {
-        echo '<table align="center" width="70%" bgcolor="#FFFFFF" class="generaltab" style="border-style: solid; border-width: 1px;"><tr><td>';
+        echo '<table align="center" width="70%" bgcolor="#FFFFFF" class="generaltab"><tr><td>';
         echo format_text($glossary->intro);
         print_simple_box_end();
     }

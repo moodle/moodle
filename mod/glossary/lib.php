@@ -879,7 +879,7 @@ for ($row = 0; $row < $numrows; $row++) {
                          $currentcolor = $tabcolor;
                          $currentstyle = 'generaltab';
                     }
-                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\" style=\"border-color: #000000; border-style: solid; border-width: 1px;\"><b>";
+                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
@@ -925,7 +925,7 @@ for ($row = 0; $row < $numrows; $row++) {
                          $currentcolor = $tabcolor;
                          $currentstyle = 'generaltab';
                     }
-                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\" style=\"border-color: #000000; border-style: solid; border-width: 1px;\"><b>";
+                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
