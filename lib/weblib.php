@@ -1637,13 +1637,17 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         $path .= 'index';
     }
     if (empty($path)) {
-        $pageid    = 'course-view';
-        $pageclass = 'index';
+        $pageid    = 'site-index';
+        $pageclass = 'course course-'.SITEID;
     } else {
         $pageid    = str_replace('/', '-', $path);
         $pageclass = explode('-', $pageid);
         array_pop($pageclass);
         $pageclass = implode('-', $pageclass);
+    }
+
+    if (isset($course->id)) {
+        $pageclass .= ' course-'.$course->id;
     }
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
