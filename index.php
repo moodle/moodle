@@ -38,10 +38,10 @@
      
          if ($USER->editing) {
              echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$site->id&week=0&add=reading\">Add Reading</A>...</P>";
-             echo "<BR><BR>";
          }
 
          if (isadmin()) {
+             echo "<BR><BR>";
              print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
              echo "<LI><A HREF=\"$CFG->wwwroot/admin/\">Admin Page...</A></LI>";
              echo "<LI><A HREF=\"$CFG->wwwroot/admin/site.php\">Site settings...</A></LI>";
