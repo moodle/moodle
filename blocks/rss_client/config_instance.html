@@ -42,15 +42,37 @@
     </td>
     <td>
         <?php 
-            $selected = '';
+            $selectedarray = '';
             if (isset($this->config) && isset($this->config->rssid)) {
-                $selected = $this->config->rssid;
+                if (blog_array_count($this->config->rssid)) {
+                    // rssid is an array of rssids
+                    $selectedarray = $this->config->rssid;
+                } else {
+                    // rssid is a single rssid
+                    $selectedarray = array($this->config->rssid);
+                }
             }
             if ($rssfeeds = get_records('block_rss_client')) {
                 foreach($rssfeeds as $rssfeed){
                     $feedoptions[$rssfeed->id] = $rssfeed->title;
                 }
-                choose_from_menu ($feedoptions, 'rssid', $selected);
+                $dropdownmenustring = choose_from_menu($feedoptions, 'rssid[]', '', '', '', '0', true);
+
+                //Daryl Hawes note:
+                // moodle's choose_from_menu() function does not support
+                // the "multiple" or "size" options, so before printing out the
+                // calculated drop down menu we insert the keyword "multiple"
+                $dropdownmenustring = preg_replace("|\"rssid\[\]\" >*|","\"rssid[]\" multiple>", $dropdownmenustring);
+
+                // since there may be multiple rssids to select
+                // we need to check for each
+                foreach ($selectedarray as $selected) {
+                    $selected = intval($selected);
+                    $dropdownmenustring = preg_replace("|\"$selected\">*|","\"$selected\" selected>", $dropdownmenustring);
+                }
+
+                print $dropdownmenustring;
+
             } else {
                 print_string('block_rss_no_feeds', 'block_rss_client');
                 if ( isadmin() ){
@@ -61,8 +83,14 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string('block_rss_word_title', 'block_rss_client'); ?>:</td>
-    <td><input type="text" name="title" size="30" value="<?php echo $this->config->title; ?>" />
+    <td align="right"><p><?php print_string('uploadlabel'); ?></td>
+    <?php 
+        $title = '';
+        if (!empty($this->config) && !empty($this->config->title)) {
+            $title = $this->config->title;
+        }
+    ?>
+    <td><input type="text" name="title" size="30" value="<?php echo $title; ?>" />
     </td>
 </tr>
 <tr>

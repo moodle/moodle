@@ -9,8 +9,13 @@ class block_rss_client extends block_base {
     }
 
     function specialization() {
+        // After the block has been loaded we customize the block's title display
         if (!empty($this->config) && !empty($this->config->title)) {
+            // There is a customized block title, display it
             $this->title = $this->config->title;
+        } else {
+            // No customized block title, use localized remote news feed string
+            $this->title = get_string('block_rss_remote_news_feed', 'block_rss_client');
         }
     }
     
@@ -22,7 +27,7 @@ class block_rss_client extends block_base {
         }
 
         $this->content = new stdClass;
-        $this->content->footer = '';        
+        $this->content->footer = '';
         
         if (empty($this->instance) || empty($CFG->blog_version)) {
             // Either we're being asked for content without
@@ -43,7 +48,13 @@ class block_rss_client extends block_base {
 
         if (!empty($this->config)) {
             if (!empty($this->config->rssid)) {
-                $rssid = intval($this->config->rssid);
+                if (blog_array_count($this->config->rssid)) {
+                    // rssid is an array of rssids
+                    $rssidarray = $this->config->rssid;
+                } else {
+                    // rssid is a single rssid
+                    $rssidarray = array($this->config->rssid);
+                }
             }
             if (!empty($this->config->display_description)) {
                 $display_description = intval($this->config->display_description);
@@ -70,49 +81,13 @@ class block_rss_client extends block_base {
             }
         }
 
-        $rss_record = get_record('block_rss_client', 'id', $rssid);
-        if (isset($rss_record) && isset($rss_record->id)) {
-            $rss = rss_get_feed($rss_record->id, $rss_record->url, $rss_record->type);
-    //      print_object($rss); //debug	
-
-            if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
-                $count_to = $shownumentries;
-            } else {
-                $count_to = count($rss->items);
-            }
-
-            for ($y = 0; $y < $count_to; $y++) {
-                if ($rss->items[$y]['title'] == '') {
-//                    $rss->items[$y]['description'] = blog_unhtmlentities($rss->items[$y]['description']);
-                    //can define an additional instance/admin config item for this (20) - max_description_length
-                    $rss->items[$y]['title'] = substr(strip_tags($rss->items[$y]['description']), 0, 20) . '...';
-                }
+        // Daryl Hawes note: if count of rssidarray is greater than 1 
+        // we should possibly display a drop down menu of selected feed titles
+        // so user can select a single feed to view (similar to RSSFeed)
+        foreach ($rssidarray as $rssid) {
+            $output .=  $this->get_rss_by_id($rssid, $display_description, $shownumentries);
+        }
         
-                if ($rss->items[$y]['link'] == '') {
-                    $rss->items[$y]['link'] = $rss->items[$y]['guid'];
-                }
-
-                $output .= '<a href="'. $rss->items[$y]['link'] .'" target=_new>'. $rss->items[$y]['title'] . '</a><br />' ."\n";
-                
-                if ($display_description){
-                    $output .= $rss->items[$y]['description'] . '<br />' ."\n";
-                }
-            }
-
-            $output .= '<br />';
-    //      print_object($rss); //debug
-            $feedtitle = get_string('block_rss_remote_news_feed', 'block_rss_client');
-            
-            if ( isset($rss->channel['link']) && isset($rss->channel['title']) ) {
-                $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $rss->channel['title'] .'</a>';
-            }
-        }
-
-        //can we reset the title here?
-        if (isset($feedtitle) && $feedtitle != '') {
-            $this->title = $feedtitle;
-        }
-
         $this->content->text = $output;
         return $this->content;
     }
@@ -128,5 +103,54 @@ class block_rss_client extends block_base {
     function instance_allow_config() {
         return true;
     }
+
+    function get_rss_by_id($rssid, $display_description, $shownumentries) {
+        $returnstring = '';
+        $rss_record = get_record('block_rss_client', 'id', $rssid);
+        if (isset($rss_record) && isset($rss_record->id)) {
+            $rss = rss_get_feed($rss_record->id, $rss_record->url, $rss_record->type);
+    //      print_object($rss); //debug	
+            if (empty($rss)) {
+                // There was a failure in loading the rss feed
+                return;
+            }
+
+            if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
+                $count_to = $shownumentries;
+            } else {
+                $count_to = count($rss->items);
+            }
+
+            for ($y = 0; $y < $count_to; $y++) {
+                if ($rss->items[$y]['title'] == '') {
+//                    $rss->items[$y]['description'] = blog_unhtmlentities($rss->items[$y]['description']);
+                    //Daryl Hawes note: might want to define an additional instance/admin config item for this (20) - max_description_length
+                    $rss->items[$y]['title'] = substr(strip_tags($rss->items[$y]['description']), 0, 20) . '...';
+                }
+        
+                if ($rss->items[$y]['link'] == '') {
+                    $rss->items[$y]['link'] = $rss->items[$y]['guid'];
+                }
+
+                $returnstring .= '<a href="'. $rss->items[$y]['link'] .'" target=_new>'. $rss->items[$y]['title'] . '</a><br />' ."\n";
+                
+                if ($display_description && !empty($rss->items[$y]['description'])){
+                    $returnstring .= $rss->items[$y]['description'] . '<br />' ."\n";
+                }
+            }
+
+    //      print_object($rss); //debug            
+            if ( isset($rss->channel['link']) && isset($rss->channel['title']) ) {
+                $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $rss->channel['title'] .'</a>';
+            }
+        }
+
+        if (isset($feedtitle) && $feedtitle != '' && $feedtitle != '<a href="'. $rss->channel['link'] .'"></a>') {
+            $this->title = $feedtitle;
+        }
+        $returnstring .= '<br />';
+        return $returnstring;
+    }
+
 }
 ?>

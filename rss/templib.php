@@ -9,29 +9,36 @@ if (empty($CFG->block_rss_client_submitters) ) {
 if (empty($CFG->block_rss_client_num_entries) ) {
     $CFG->block_rss_client_num_entries = 5; //default to 5 entries per block
 }
+if (empty($CFG->block_rss_timeout) ) {
+    $CFG->block_rss_timeout = 30;
+}
 
-/*
-* rss_get_feed
-*   Determines whether or not to get a news feed remotely or from cache and reads it into a string
-* rssid - id of feed in blog_rss table
-* url - remote url of feed
-* type - either 'A' or 'R' where A is an atom feed and R is either rss or rdf
-* NOTE that this requires allow_url_fopen be On in your php.ini file (it may
-*  be off for security by your web host)
-*/
+/**
+ *   Determines whether or not to get a news feed remotely or from cache and reads it into a string
+ * @param int rssid - id of feed in blog_rss table
+ * @param string url - url of remote feed
+ * @param string type - either 'A' or 'R' where A is an atom feed and R is either rss or rdf
+ * @return Atom|MagpieRSS|null This function returns an Atom object in the case of an Atom feed, a MagpieRSS object in the case of an RDF/RSS feed or null if there was an error loading the remote feed.
+ * NOTE that this function requires allow_url_fopen be On in your php.ini file 
+ * (it may be off for security by your web host)
+ */
 function rss_get_feed($rssid, $url, $type) {
     
-    global $CFG;;
-    $write = 0;
-
+    global $CFG;
+    $writetofile = false;
+    $urlfailurestring = 'Failed to open remote feed at: ' . $url .'<br /> allow_url_fopen needs to be On in the php.ini file for this file wrapper call to work. Please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a>';
+    $filefailurestring = 'Could not open the file located at: ';
     $secs = $CFG->block_rss_timeout * 60;
 
+    // If moodle dataroot cache folder is missing create it
     if (!file_exists($CFG->dataroot .'/cache/')) {
         mkdir($CFG->dataroot .'/cache');
     }
+    // If moodle dataroot cache/rsscache folder is missing create it
     if (!file_exists($CFG->dataroot .'/cache/rsscache/')) {
         mkdir($CFG->dataroot .'/cache/rsscache');
     }
+
     $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';
 //    echo "file = ". $file; //debug
     
@@ -45,33 +52,60 @@ function rss_get_feed($rssid, $url, $type) {
             $data = @stat($file);
         }
         $now = time();
-        if (($now - $data[10]) > $secs) { //if timedout
-    //          echo "read from original"; //debug
-            //read from source
-            if ($CFG->debug){
-                $xml = file($url) or die ('Could not open the feed located at the url: ' . $url . 'allow_url_fopen needs to be On in the php.ini file for this file wrapper call to work. Please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a>');
+        if (($now - $data[10]) > $secs) {
+            // The cached file has expired. Attempt to read fresh from source
+            $xml = load_feed_from_url($url);
+            if ($xml) {
+                //success
+                $writetofile = true;
             } else {
-                $xml = @file($url) or die ('Could not open the feed located at the url: ' . $url .'allow_url_fopen needs to be On in the php.ini file for this file wrapper call to work. Please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a>');
+                // Failed to load remote feed. Since the file exists attempt to read from cache
+                if ($CFG->debug) {
+                    print $urlfailurestring;
+                }
+                $xml = load_feed_from_file($file);
+                if (!$xml) {
+                    // Failed to load from cache as well!
+                    if ($CFG->debug) {
+                        print $filefailurestring . $file;
+                        return;
+                    }
+                }
             }
-            $write = 1;
         } else {
-    //          echo "read from cache"; //debug
-            //read in from cache
-            if ($CFG->debug){
-                $xml = file($file) or die ('Could not open the file located at: ' . $file);
-            } else {
-                $xml = @file($file) or die ('Could not open the file located at: ' . $file);
+            // Cached file has not expired. Attempt to read from cached file.
+            $xml = load_feed_from_file($file);
+            if (!$xml) {
+                // Failed to load from cache, attempt to read from source
+                if ($CFG->debug) {
+                    print $filefailurestring . $file;
+                }
+                $xml = load_feed_from_url($url);
+                if ($xml) {
+                    // success
+                    $writetofile = true;
+                } else {
+                    // Failed to read from source as well!
+                    if ($CFG->debug) {
+                        print $urlfailurestring;
+                    }
+                    return;
+                }
             }
         }
-    } else { //DNE, read from source
-    //      echo "url: ".$url; //debug
-
-        if ($CFG->debug){
-            $xml = file($url) or die ('Could not open the feed located at the url: ' . $url . 'allow_url_fopen needs to be Onin the php.ini file for this file wrapper call to work. Please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a>');
+    } else { 
+        // No cached fil at all, read from source
+        $xml = load_feed_from_url($url);
+        if ($xml) {
+            //success
+            $writetofile = true;
         } else {
-            $xml = @file($url) or die ('Could not open the feed located at the url: ' . $url . 'allow_url_fopen needs to be On in the php.ini file for this file wrapper call to work. Please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a>');
+            // Failed to read from source url!
+            if ($CFG->debug) {
+                print $urlfailurestring;
+            }
+            return;
         }
-        $write = 1;
     }
     
     //print_object($xml); //debug
@@ -81,7 +115,7 @@ function rss_get_feed($rssid, $url, $type) {
         $xmlstr = @implode(' ', $xml);
     }
     
-    if ( $write && !empty($xmlstr) ) { //write file to cache
+    if ( $writetofile && !empty($xmlstr) ) { //write file to cache
         // jlb: adding file:/ to the start of the file name fixed
         // some caching problems that I was experiencing.
         //$file="file:/" + $file;
@@ -107,7 +141,39 @@ function rss_get_feed($rssid, $url, $type) {
     }
 }
 
+/**
+ * @param string $file The path to the cached feed to load
+ */
+function load_feed_from_file($file) {
+    global $CFG;
+//          echo "read from cache"; //debug
+    //read in from cache
+    if ($CFG->debug){
+        $xml = file($file);
+    } else {
+        $xml = @file($file);
+    }
+    return $xml;
+}
 
+/**
+ * @param string $url The url of the remote news feed to load
+ */
+function load_feed_from_url($url) {
+    global $CFG;
+//          echo "read from original"; //debug
+    //read from source
+    if ($CFG->debug){
+        $xml = file($url);
+    } else {
+        $xml = @file($url);
+    }
+    return $xml;
+}
+
+/**
+ * @param int $rssid .
+ */
 function rss_display_feeds($rssid='none') {
     global $db, $USER, $CFG, $THEME;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
@@ -165,6 +231,13 @@ $deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border=
     }
 }
 
+/**
+ * @param string $act .
+ * @param string $url .
+ * @param int $rssid .
+ * @param string $rsstype .
+ * @param bool $printnow .
+ */
 function rss_get_form($act, $url, $rssid, $rsstype, $printnow=true) {
     global $USER, $CFG, $_SERVER, $blockid, $blockaction;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
@@ -229,6 +302,8 @@ function rss_get_form($act, $url, $rssid, $rsstype, $printnow=true) {
  * added by Daryl Hawes for rss/atom feeds
  * found at http://us4.php.net/manual/en/function.fwrite.php
  * added check for moodle debug option. if off then use '@' to suppress error/warning messages
+ * @param string $filename .
+ * @param string $content .
  */
 if (! function_exists('file_put_contents')){
     function file_put_contents($filename, $content) {

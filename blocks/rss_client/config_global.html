@@ -11,7 +11,7 @@
         } ?>" />
     </td>
     <td>
-        <?php print_string('block_rss_num_entries', 'block_rss_client') ?>
+        <?php print_string('block_rss_client_num_entries', 'block_rss_client') ?>
     </td>
 </tr>
 <tr valign="top">
@@ -39,6 +39,7 @@
     <input type="submit" value="<?php print_string('savechanges') ?>"></td>
 </tr>
 <tr>
-    <td align=center><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?courseid=<?php echo $courseid; ?>"><?php print_string('block_rss_feeds_add_edit', 'block_rss_client')?></a></center><br /><br />
+    
+    <td colspan="3" align="center"><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?courseid=<?php echo $courseid; ?>"><?php print_string('block_rss_feeds_add_edit', 'block_rss_client')?></a></center><br /><br />
     </td>
 </table>

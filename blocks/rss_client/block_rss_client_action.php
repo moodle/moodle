@@ -80,6 +80,10 @@
         }
             
         $rss = rss_get_feed($rssid, $url, $rsstype);
+
+        if (empty($rss)) {
+            print 'There was an error loading this rss feed. You may want to verify the url you have specified before using it.';
+        }
         
         $dataobject->id = $rssid;
         if (!empty($rss->channel['description'])) {
