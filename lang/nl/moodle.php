@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004060100)
+      // moodle.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = 'Actie';
@@ -172,6 +172,7 @@ $string['configloglifetime'] = 'Dit specificeert de lengte van de periode waarin
 $string['configlongtimenosee'] = 'Als het heel lang geleden is dat een leerling heeft ingelogd wordt hij/zij automatisch uit de vakken verwijderd. Deze parameter bepaalt deze tijd limiet.';
 $string['configmaxbytes'] = 'Dit bepaalt de maximumgrootte van geüploade bestanden in heel de site. De instelling is beperkt door de PHP-instelling upload_max_filesize en de Apacheinstelling LimitRequestBody. Anderzijds beperkt maxbytes het bereik van groottes dat gekozen kan worden op vak of moduleniveau.';
 $string['configmaxeditingtime'] = 'Dit bepaalt hoe lang mensen de tijd hebben om hun forumbijdrage, logboek, feedback en dergelijke te wijzigen. Meestal is 30 minuten een goede tijd.';
+$string['confignoreplyaddress'] = 'Soms verzendt Moodle e-mails voor een gebruiker (bijvoorbeeld bij forumberichten) Het e-mailadres dat je hier instelt wordt gebruikt als \"From\"-adres voor die gebruikers die er voor gekozen hebben dat andere gebruikers niet rechtstreeks op hun mail mogen kunnen antwoorden (bijvoorbeeld wanneer een gebruiker zijn e-mailadres privé wil houden';
 $string['configopentogoogle'] = 'Als je deze instelling inschakeld, dat zal Google als gast toegelaten worden tot je site. Mensen die jouw site binnenkomen via Moodle zullen automatisch als gast aangemeld zijn. Merk op dat dit alleen toegang zal geven tot vakken waar toegang voor gasten toegelaten is.';
 $string['configproxyhost'] = 'Als deze <B>server</B> een proxy computer (zoals bijvoorbeeld een firewall) nodig heeft om op het Internet te komen vul hier dan de hostname en de poort van de proxy in. Laat het leeg als dit niet het geval is.';
 $string['configsecureforms'] = 'Moodle kan een extra beveiliging toepassen wanneer het gegevens aanneemt van webformulieren. Als je dit inschakelt, dan wordt de HTTP_REFERER variabele vergeleken met het huidige formulieradres. In zeldzame gevallen kan dit problemen veroorzaken als de gebruiker een firewall gebruikt (zoals Zonealarm) die geconfigureerd is om HTTP_REFERER uit het webverkeer te filteren. Het symptoom is: vastgeraken op een formulier. Als je gebruikers problemen hebben met de login-pagina (bijvoorbeeld) dan zou je kunnen overwegen om deze instelling uit te zetten, Hoewel dit je site meer blootstelt aan brute kracht-aanvallen op je wachtwoord. Bij twijfel laat je deze instelling op \'ja\' staan.';
@@ -850,7 +851,7 @@ $string['thisdirection'] = 'lnr';
 $string['thislanguage'] = 'Nederlands';
 $string['time'] = 'Tijd';
 $string['timezone'] = 'Tijdzone';
-$string['to'] = 'Naar';
+$string['to'] = 'Tot';
 $string['today'] = 'Vandaag';
 $string['todaylogs'] = 'Statistieken van vandaag';
 $string['toomanytoshow'] = 'Er zijn teveel gebruikers om te laten zien';

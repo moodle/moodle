@@ -28,6 +28,7 @@ $string['prev'] = 'Vorige';
 $string['regular'] = 'Normaal manifest';
 $string['report'] = 'Rapport';
 $string['review'] = 'Herzien';
+$string['scoes'] = 'Scoes';
 $string['score'] = 'Score';
 $string['trackingloose'] = 'WAARSCHUWING: de gegevens voor opvolging van dit SCORM-pakket zullen verloren gaan';
 $string['validateascorm'] = 'Bevestig een SCORM-pakket';

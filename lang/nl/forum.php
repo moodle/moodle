@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004060100)
+      // forum.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Met deze instelling kun je de mogelijkheid vo
 $string['configlongpost'] = 'Elk bericht dat langer is dan deze waarde (HTML-code niet inbegrepen) wordt als lang beschouwd.';
 $string['configmanydiscussions'] = 'Maximale aantal discussies van een forum die per pagina getoond worden';
 $string['configmaxbytes'] = 'Standaard maximum grootte voor alle forum bijlagen op deze site (afhankelijk van vak limieten en andere locale instellingen)';
+$string['configreplytouser'] = 'Wil je dat de e-mail van een bericht op het forum het e-mailadres van de verstuurder bevat, zodat de ontvangers eventueel ook persoonlijk kunnen antwoorden, eerder dan via het forum? Zelfs als je hier \'Ja\' instelt, kunnen gebruikers er voor kiezen hun e-mailadres privé te houden via hun profielpagina';
 $string['configshortpost'] = 'Elk bericht dat korter is dan deze waarde (HTML-code niet inbegrepen) wordt als kort beschouwd.';
 $string['couldnotadd'] = 'Door een onbekende fout was het niet mogelijk om je bericht toe te voegen .';
 $string['couldnotdeleteratings'] = 'Helaas, dit kan niet worden verwijderd omdat iemand het bericht al beoordeeld heeft';
@@ -78,6 +79,7 @@ $string['nomorepostscontaining'] = 'Er zijn geen berichten met \'$a\' meer gevon
 $string['nonews'] = 'Er zijn nog geen nieuwsberichten';
 $string['noposts'] = 'Geen berichten';
 $string['nopostscontaining'] = 'Er zijn geen berichten met \'$a\' gevonden';
+$string['noreply'] = '\"\"';
 $string['nosubscribers'] = 'Er is nog niemand lid van dit forum';
 $string['notingroup'] = 'Sorry, je moet bij een groep horen om dit forum te kunnen zien.';
 $string['nownotsubscribed'] = '$a->name zal via e-mail GEEN bijdragen aan \'$a->forum\' ontvangen.

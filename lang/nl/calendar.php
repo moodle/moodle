@@ -1,9 +1,7 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 Beta (2004051100)
+      // calendar.php - created with Moodle 1.4 development (2004060400)
 
 
-$string['april'] = 'April';
-$string['august'] = 'Augustus';
 $string['calendar'] = 'Kalender';
 $string['calendarheading'] = '$a Kalender';
 $string['clickhide'] = 'Verberg';
@@ -12,7 +10,6 @@ $string['confirmeventdelete'] = 'Wil je deze activiteit echt wissen?';
 $string['courseevents'] = 'Vak';
 $string['dayview'] = 'Per dag';
 $string['daywithnoevents'] = 'Vandaag geen activiteiten';
-$string['december'] = 'December';
 $string['default'] = 'Standaard';
 $string['deleteevent'] = 'Wis activiteit';
 $string['detailedmonthview'] = 'Gedetaileerd maandoverzicht';
@@ -43,39 +40,30 @@ $string['explain_lookahead'] = 'Met deze instelling stel het (maximum) aantal da
 $string['explain_maxevents'] = 'Deze instelling stelt het maximum aantal komende activiteiten in dat getoond kan worden. Als je hier een groot getal ingeeft, dan is het mogelijk dat het tonen van de komende activiteiten een groot deel van je scherm zal innemen.';
 $string['explain_startwday'] = 'Een kalenderweek zal starten op de dag die je hier kiest.';
 $string['explain_timeformat'] = 'Je kunt kiezen of de tijd in 12 of 24 uur formaat wordt weergegeven. Als je voor de standaardinstelling kiest, dan zal het formaat automatisch gekozen worden volgens de taal die je gebruikt op je site.';
-$string['february'] = 'Februari';
 $string['fri'] = 'Vr';
 $string['friday'] = 'Vrijdag';
 $string['globalevents'] = 'Site';
 $string['gotocalendar'] = 'Bekijk de kalender';
 $string['groupevents'] = 'Groep';
 $string['hidden'] = 'verborgen';
-$string['january'] = 'Januari';
-$string['july'] = 'Juli';
-$string['june'] = 'Juni';
 $string['manyevents'] = '$a activiteiten';
-$string['march'] = 'Maart';
-$string['may'] = 'Mei';
 $string['mon'] = 'Ma';
 $string['monday'] = 'Maandag';
 $string['monthlyview'] = 'Per maand';
 $string['newevent'] = 'Nieuwe activiteit';
 $string['noupcomingevents'] = 'Er zijn geen activiteiten op komst';
-$string['november'] = 'November';
-$string['october'] = 'Oktober';
 $string['oneevent'] = '1 activiteit';
-$string['pref_lookahead'] = 'Kijk naar komende activiteiten';
+$string['pref_lookahead'] = 'Aantal dagen vooruit kijken naar komende activiteiten';
 $string['pref_maxevents'] = 'Maximum aantal getoonde activiteiten';
 $string['pref_startwday'] = 'Eerste dag van de week';
 $string['pref_timeformat'] = 'Tijdsweergave';
 $string['preferences'] = 'Voorkeuren';
 $string['preferences_available'] = 'Persoonlijke voorkeuren';
 $string['repeatnone'] = 'Geen herhalingen';
-$string['repeatweeksl'] = 'Herhaal wekelijks';
-$string['repeatweeksr'] = 'activiteiten';
+$string['repeatweeksl'] = 'Herhaal deze activiteit';
+$string['repeatweeksr'] = 'weken';
 $string['sat'] = 'Za';
 $string['saturday'] = 'Zaterdag';
-$string['september'] = 'September';
 $string['shown'] = 'Getoond';
 $string['spanningevents'] = 'Komende activiteiten';
 $string['sun'] = 'Zo';
