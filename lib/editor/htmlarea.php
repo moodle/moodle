@@ -596,7 +596,18 @@ HTMLArea.prototype.generate = function () {
             f.__msh_prevOnSubmit.push(funcref);
         }
         f.onsubmit = function() {
-            editor._textArea.value = editor.getHTML();
+            // Moodle hack. Bug fix #2736
+            var test = editor.getHTML();
+            test = test.replace(/<br \/>/gi, '');
+            test = test.replace(/\&nbsp\;/gi, '');
+            test = test.trim();
+            //alert(test + test.length);
+            if (test.length < 1) {
+                editor._textArea.value = test.trim();
+            } else {
+                editor._textArea.value = editor.getHTML();
+            }
+            // Moodle hack end.
             var a = this.__msh_prevOnSubmit;
             // call previous submit methods if they were there.
             if (typeof a != "undefined") {
@@ -2186,7 +2197,7 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
         case 3: // Node.TEXT_NODE
         // If a text node is alone in an element and all spaces, replace it with an non breaking one
         // This partially undoes the damage done by moz, which translates '&nbsp;'s into spaces in the data element
-        if ( !root.previousSibling && !root.nextSibling && root.data.match(/^\s*$/i) ) html = '&nbsp;';
+        if ( !root.previousSibling && !root.nextSibling && root.data.match(/^\s*$/i) && root.data.length > 1 ) html = '&nbsp;';
         else html = HTMLArea.htmlEncode(root.data);
         break;
         case 8: // Node.COMMENT_NODE
