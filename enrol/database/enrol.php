@@ -26,6 +26,7 @@ function get_student_courses(&$user) {
     // The following hack will make the database explicit which keeps it happy
 
     if (strpos($CFG->prefix, $CFG->dbname) === false) {
+        $oldprefix = $CFG->prefix;
         $CFG->prefix = "$CFG->dbname.$CFG->prefix";
     }
 
@@ -76,6 +77,10 @@ function get_student_courses(&$user) {
         }
         
         $enroldb->Close();
+    }
+
+    if (!empty($oldprefix)) {
+        $CFG->prefix = $oldprefix;           // Restore it just in case
     }
 }
 
