@@ -64,6 +64,8 @@
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    } else {
+        $navigation = "";
     }
 
     $strworkshops = get_string("modulenameplural", "workshop");
