@@ -80,6 +80,23 @@ $THEME->langsheets = false;
 /// different styles.
 
 
+$THEME->navmenuwidth = 50;
+
+/// You can use this to control the cutoff point for strings 
+/// in the navmenus (list of activities in popup menu etc)
+/// Default is 50 characters wide.
+
+
+$THEME->makenavmenulist = false;
+
+/// By setting this to true, then you will have access to a
+/// new variable in your header.html and footer.html called
+/// $navmenulist ... this contains a simple XHTML menu of 
+/// all activities in the current course, mostly useful for 
+/// creating popup navigation menus and so on.
+
+
+
 $THEME->resource_mp3player_colors = 
  'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
  'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
