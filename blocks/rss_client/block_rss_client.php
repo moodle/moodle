@@ -143,12 +143,10 @@ class block_rss_client extends block_base {
             // By capturing the output from fetch_rss this way
             // error messages do not display and clutter up the moodle interface
             // however, we do lose out on seeing helpful messages like "cache hit", etc.
-            
-            error_reporting(E_USER_NOTICE);            
-            //ob_start();
+            ob_start();
             $rss = fetch_rss($rss_record->url);
-            //$rsserror = ob_get_contents();
-            //ob_end_clean();
+            $rsserror = ob_get_contents();
+            ob_end_clean();
             
             if ($rss === false) {
                 if ($CFG->debug && !empty($rsserror)) {
