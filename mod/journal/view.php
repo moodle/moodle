@@ -45,7 +45,9 @@
 
     echo "<center>\n";
     
-    print_simple_box( format_text($journal->intro,  $journal->introformat) , "center");
+    if (!empty(trim($journal->intro))) {
+        print_simple_box( format_text($journal->intro,  $journal->introformat) , "center");
+    }
 
     echo "<br />";
 
