@@ -180,10 +180,10 @@ class block_quiz_results extends block_base {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td>';
                     switch($gradeformat) {
                         case GRADE_FORMAT_FRA:
-                            $this->content->text .= ($averagegrade.'/'.$quiz->grade);
+                            $this->content->text .= (format_float($averagegrade,$quiz->decimalpoints).'/'.$quiz->grade);
                         break;
                         case GRADE_FORMAT_ABS:
-                            $this->content->text .= $averagegrade;
+                            $this->content->text .= format_float($averagegrade,$quiz->decimalpoints);
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
@@ -205,10 +205,10 @@ class block_quiz_results extends block_base {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td>';
                     switch($gradeformat) {
                         case GRADE_FORMAT_FRA:
-                            $this->content->text .= ($averagegrade.'/'.$quiz->grade);
+                            $this->content->text .= (format_float($averagegrade,$quiz->decimalpoints).'/'.$quiz->grade);
                         break;
                         case GRADE_FORMAT_ABS:
-                            $this->content->text .= $averagegrade;
+                            $this->content->text .= format_float($averagegrade,$quiz->decimalpoints);
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
@@ -292,10 +292,10 @@ class block_quiz_results extends block_base {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td>';
                     switch($gradeformat) {
                         case GRADE_FORMAT_FRA:
-                            $this->content->text .= ($grades[$gradeid]->grade.'/'.$quiz->grade);
+                            $this->content->text .= (format_float($grades[$gradeid]->grade,$quiz->decimalpoints).'/'.$quiz->grade);
                         break;
                         case GRADE_FORMAT_ABS:
-                            $this->content->text .= $grades[$gradeid]->grade;
+                            $this->content->text .= format_float($grades[$gradeid]->grade,$quiz->decimalpoints);
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
@@ -317,10 +317,10 @@ class block_quiz_results extends block_base {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td>';
                     switch($gradeformat) {
                         case GRADE_FORMAT_FRA:
-                            $this->content->text .= ($grades[$gradeid]->grade.'/'.$quiz->grade);
+                            $this->content->text .= (format_float($grades[$gradeid]->grade,$quiz->decimalpoints).'/'.$quiz->grade);
                         break;
                         case GRADE_FORMAT_ABS:
-                            $this->content->text .= $grades[$gradeid]->grade;
+                            $this->content->text .= format_float($grades[$gradeid]->grade,$quiz->decimalpoints);
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
