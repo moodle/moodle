@@ -227,22 +227,23 @@
             if ($embedded) {       // Display resource embedded in page
                 if ($inpopup) {
                     print_header($pagetitle);
-                    echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
                 } else {
                     print_header($pagetitle, "$course->fullname", 
                                  "$navigation <a target=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
                                  "", "", true, update_module_button($cm->id, $course->id, $strresource), 
                                  navmenu($course, $cm, "self"));
-                    echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
-                    echo '<br />';
                 }
+                if ($resource->summary) {
+                    print_simple_box(format_text($resource->summary), 'center');
+                }
+
                 if ($resourcetype == "image") {  
-                    echo "<br />";
-                    echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
-                    echo "<br />";
-                }
-                if ($resourcetype == "mp3") {  
-                    print_simple_box_start('center');
+                    echo "<center><p>";
+                    echo "<img title=\"$resource->name\" class=\"resourceimage\" src=\"$fullurl\">";
+                    echo "</p></center>";
+
+                } else if ($resourcetype == "mp3") {  
+                    echo "<center><p>";
                     echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
                     echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
                     echo '        width="600" height="100" id="mp3player" align="">';
@@ -255,7 +256,7 @@
                     echo ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
                     echo '</embed>';
                     echo '</object>';
-                    print_simple_box_end();
+                    echo "</p></center>";
                 }
                 if (!$inpopup) {
                     print_footer($course);
