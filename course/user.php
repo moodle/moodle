@@ -55,10 +55,9 @@
 
     switch ($mode) {
         case "summary" :
-            echo "<P>Not done yet</P>";
-            echo "<P>Graph goes here that shows accesses by day over the course</P>";
             echo "<HR>";
-            echo "<P>Table goes here that summarises all activity by this student by module. eg 3/7 journals done, 3/3 surveys, 12 posts in all discussions. Each of these are links so that you can drill down to see all the surveys on one page, or all the posts, or all their journals.";
+            echo "<CENTER><IMG SRC=\"loggraph.php?id=$course->id&user=$user->id&type=user.png\">";
+            echo "<HR>";
             break;
 
         case "outline" :
