@@ -529,24 +529,46 @@ function format_time($totalsecs, $str=NULL) {
 function userdate($date, $format="", $timezone=99) {
 // Returns a formatted string that represents a date in user time
 // WARNING: note that the format is for strftime(), not date().
+// Because of a bug in most Windows time libraries, we can't use 
+// the nicer %e, so we have to use %d which has leading zeroes.
+// A lot of the fuss below is just getting rid of these leading 
+// zeroes as efficiently as possible.
 
     global $USER;
 
     if ($format == "") {
-        $format = "%A, %d %B %Y, %I:%M %p";
+        $format      = "%A, %d %B %Y, %I:%M %p";
+        $formatnoday = "%A, DD %B %Y, %I:%M %p";
+        $fixday = true;
+    } else {
+        $formatnoday = str_replace("%d", "DD", $format);
+        $fixday = ($formatnoday != $format);
     }
+
     if ($timezone == 99) {
         if (isset($USER->timezone)) {
             $timezone = (float)$USER->timezone;
         }
     }
     if (abs($timezone) > 13) {
-        $datestring = strftime("$format", $date);
+        if ($fixday) {
+            $datestring = strftime($formatnoday, $date);
+            $daystring  = str_replace(" 0", "", strftime(" %d", $date));
+            $datestring = str_replace("DD", $daystring, $datestring);
+        } else {
+            $datestring = strftime($format, $date);
+        }
     } else {
-        $datestring = gmstrftime($format, $date + (int)($timezone * 3600));
+        if ($fixday) {
+            $datestring = gmstrftime($formatnoday, $date + (int)($timezone * 3600));
+            $daystring  = str_replace(" 0", "", strftime(" %d", $date));
+            $datestring = str_replace("DD", $daystring, $datestring);
+        } else {
+            $datestring = gmstrftime($format, $date + (int)($timezone * 3600));
+        }
     }
 
-    return str_replace(" 0", " ", $datestring);   // gets rid of unwanted zeroes
+    return $datestring;
 }
 
 function usergetdate($date, $timezone=99) {
