@@ -53,6 +53,9 @@ define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
 define ('CALENDAR_TF_24', '%H:%M');
 define ('CALENDAR_TF_12', '%I:%M %p');
 
+// Initialize the session variables here to be sure
+calendar_session_vars();
+
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
     global $CFG, $USER;
 

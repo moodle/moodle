@@ -23,8 +23,6 @@ class CourseBlock_calendar_month extends MoodleBlock {
         $this->content->text = '';
         $this->content->footer = '';
 
-        calendar_session_vars();
-
         if($this->course === NULL) {
             // Overrides: use no course at all
             $courseshown = false;
