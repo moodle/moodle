@@ -21,9 +21,19 @@
 
     $db = &ADONewConnection($CFG->dbtype);         
 
+    // Try a persistent connection first, but if it fails, fall back to ordinary connection
     if (! $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname)) {
-        echo "<P><FONT COLOR=RED>The database details specified in config.php are not correct, or the database is down.</P>";
-        die;
+        if (! $db->Connect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname)) {
+            echo "<font color=red>";
+            echo "<p>Error: Moodle could not connect to the database.</p>";
+            echo "<p>It's possible the database itself is not working at the moment, but the admin should 
+                     also check that the database details have been correctly specified in config.php</p>";
+            echo "<p>Database host: $CFG->dbhost<br />";
+            echo "Database name: $CFG->dbname<br />";
+            echo "Database user: $CFG->dbuser<br />";
+            echo "</font>";
+            die;
+        }
     }
 
     if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
