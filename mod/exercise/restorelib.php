@@ -75,7 +75,7 @@
             $newid = insert_record ("exercise",$exercise);
 
             //Do some output     
-            echo "<li>".get_string("modulename","exercise")." \"".format_string(stripslashes($exercise->name,true))."\"</li>";
+            echo "<li>".get_string("modulename","exercise")." \"".format_string(stripslashes($exercise->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
