@@ -1,9 +1,6 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.0.7 (2002121000)
 
-#------------------------------------------------------------
-$string['modulename'] = "ãæÑÏ";
-$string['modulenameplural'] = "ãæÇÑÏ";
-#------------------------------------------------------------
 
 $string['addresource'] = "ÃÖİ ãæÑÏ";
 $string['editingaresource'] = "ÊÍÑíÑ ãæÑÏ";
@@ -13,9 +10,11 @@ $string['exampleurl'] = "http://www.example.com/somedirectory/somefile.html";
 $string['filename'] = "ÇÓã Çáãáİ";
 $string['fulltext'] = "ÇáäÕ ÈÇáßÇãá";
 $string['htmlfragment'] = "ÔØÑ ãä HTML";
+$string['modulename'] = "ãæÑÏ";
+$string['modulenameplural'] = "ãæÇÑÏ";
 $string['neverseen'] = "ÛíÑ ãÑÆí ãØáŞÇ";
 $string['note'] = "ãáÍæÙÉ";
-$string['notefile'] = "áÊÍãíá ÇáãÒíÏ ãä ÇáãáİÇÊ Åáì ÇáÍáŞÉ ÇáÏÑÇÓíÉ (æĞáß áÊÙåÑ İí ÇáŞÇÆãÉ) ÇÓÊÎÏã 
+$string['notefile'] = "áÊÍãíá ÇáãáİÇÊ Åáì ÇáÍáŞÉ ÇáÏÑÇÓíÉ (æĞáß áÊÙåÑ İí ÇáŞÇÆãÉ) ÇÓÊÎÏã 
 <A HREF=\$a >ãÏíÑ ÇáãáİÇÊ</A>.";
 $string['notypechosen'] = "áÇÈÏ ãä ÇÎÊíÇÑ äæÚ.  ÇÓÊÎÏã ÒÑ back ááÑÌæÚ æÅÚÇÏÉ ÇáãÍÇæáÉ.";
 $string['resourcetype'] = "äæÚ ÇáãæÑÏ";
