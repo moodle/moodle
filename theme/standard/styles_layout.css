@@ -1,8 +1,10 @@
 /*  $Id$ */
 
-/*
-** layout
-*/
+/************************************************* 
+***
+*** layout
+***
+**************************************************/
 
 /*************************************************
 ***
@@ -15,7 +17,7 @@
 *** basic and general styles
 *** header and footer styles
 *** content styles (alphabetically)
-*** activities, calendar, blocks
+*** admin, course, activities, calendar, blocks
 *** 
 *** Please sort new styles for existing content
 *** into the appropriate part of this CSS file.
@@ -24,6 +26,7 @@
 *** Wouldn't the alphabetical order be better?
 ***
 **************************************************/
+
 
 /* basic styles */
 .clearer {
@@ -91,7 +94,6 @@ form {
 /* footer styles */
 
 
-
 /*****************************
 ***
 *** content styles
@@ -107,16 +109,18 @@ form {
     border-style:solid;
 }
 
+
 /* summary of a user in a nice little box - weblib.php */
 .userinfobox {
+    margin-bottom:5px;
     border-width:1px;
     border-style:solid;
-    margin-bottom:5px;
 }
 
 .userinfoboxside,
 .userinfoboxsummary,
 .userinfoboxlinkcontent { }
+
 
 /* weblib.php table */
 .tabledivider {
@@ -127,15 +131,17 @@ form {
     border-top:0px;
 }
 
+
 /* entry-page index.php */ 
 .sitetopic {
     border-width:1px;
     border-style:solid;
 }
 
+
 /*****************************
 ***
-*** Activities
+*** Admin
 ***
 ******************************/
 /* admin, calendar */
@@ -143,25 +149,12 @@ table.formtable td {
     padding:9px;
 }
 
-/* assignment, forum, glossary */
-.forumheaderlist,
-.forumpost {
-    border-width:1px;
-    border-style:solid;
-}
 
-.forumpostindent {
-    margin-left: 30px;
-}
-
-/* calendar, course, weblib,php, attandance
-dialouge, exercise, forum, lesson, quiz */
-.generaltableheader {
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
-}
-
+/*****************************
+***
+*** Course
+***
+******************************/
 /* course, entry-page, login */
 .headingblock {
     background-image:url(gradient.jpg);
@@ -171,6 +164,7 @@ dialouge, exercise, forum, lesson, quiz */
     border-style:solid;
 }
 
+
 /* course */
 .outlineheadingblock {
     background-image:url(gradient.jpg);
@@ -179,6 +173,7 @@ dialouge, exercise, forum, lesson, quiz */
     border-width:1px;
     border-style:solid;
 }
+
 .weeklyoutlinecontent,
 .topicsoutlinecontent {
     border-width:1px;
@@ -209,11 +204,39 @@ dialouge, exercise, forum, lesson, quiz */
     border-style:solid;
 }
 
+
+/*****************************
+***
+*** Activities
+***
+******************************/
+/* assignment, forum, glossary */
+.forumheaderlist,
+.forumpost {
+    border-width:1px;
+    border-style:solid;
+}
+
+.forumpostindent {
+    margin-left: 30px;
+}
+
+
+/* calendar, course, weblib,php, attandance
+dialouge, exercise, forum, lesson, quiz */
+.generaltableheader {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+}
+
+
 /* glossary, wiki */
 .generaltab,
 .generaltabselected {
     background:none;
 }
+
 
 /* message */
 .message_link {
@@ -231,10 +254,12 @@ table.message_search_results td {
     border-style:solid;
 }
 
+
 /* quiz */
 .feedbacktext {
     display:block;
 }
+
 
 /*****************************
 ***
@@ -377,6 +402,7 @@ td.cal_event_description {
     padding:8px;
 }
 
+
 /*****************************
 ***
 *** Blocks
@@ -393,6 +419,7 @@ td.cal_event_description {
     padding-bottom:8px;
 }
 
+
 /* sideblock */
 .sideblock {
     width: 100%;
@@ -400,6 +427,7 @@ td.cal_event_description {
     border-width:1px;
     border-style:solid;
 }
+
 .sideblockheading {
     background-image:url(gradient.jpg);
     background-position:top;
@@ -413,6 +441,7 @@ td.cal_event_description {
     border:none;
     border-top:1px solid;
 }
+
 
 /* sideblock weblib.php */
 #block_course_summary .sideblockmain {
@@ -438,4 +467,3 @@ td.cal_event_description {
     font-size: 1em;
     margin: 0px;
 }
-

@@ -1,8 +1,10 @@
 /*  $Id$ */
 
-/*
-** fonts
-*/
+/************************************************* 
+***
+*** fonts
+***
+**************************************************/
 
 /*************************************************
 ***
@@ -15,7 +17,7 @@
 *** basic and general styles
 *** header and footer styles
 *** content styles (alphabetically)
-*** activities, calendar, blocks
+*** admin, course, activities, calendar, blocks
 *** 
 *** Please sort new styles for existing content
 *** into the appropriate part of this CSS file.
@@ -55,6 +57,7 @@ a:hover,
 a.dimmed:hover {
     text-decoration:underline;
 }
+
 
 /* general styles */
 body, td, th, li {
@@ -96,7 +99,6 @@ th {
 }
 
 
-
 /*****************************
 ***
 *** content styles
@@ -105,6 +107,18 @@ th {
 /* many places */
 
 
+/*****************************
+***
+*** Admin
+***
+******************************/
+
+
+/*****************************
+***
+*** Course
+***
+******************************/
 
 
 /*****************************
@@ -118,6 +132,7 @@ th {
     font-size:larger;
     font-weight:bold;
 }
+
 
 /* course */
 .activitydate, .activityhead {
@@ -142,6 +157,7 @@ th {
 .courseboxsummary {
     font-size:small;
 }
+
 
 /* forum */
 .forumolddiscuss {
@@ -176,6 +192,7 @@ th {
     font-size:x-small;
 }
 
+
 /* message */
 .message_summary_link {
     font-size:small;
@@ -207,6 +224,7 @@ th {
     font-size:x-small;
 }
 
+
 /* quiz */
 .feedbacktext {
     text-align:right;
@@ -215,6 +233,7 @@ th {
 .editorhelptext {
     font-size:x-small;
 }
+
 
 /*****************************
 ***
@@ -283,6 +302,7 @@ table.calendarmonth tbody td div {
 .mycalendar .cal_event {
     font-weight:bold;
 }
+
 
 /*****************************
 ***

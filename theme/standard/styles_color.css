@@ -1,8 +1,10 @@
 /*  $Id$ */
 
-/*
-** color
-*/
+/************************************************* 
+***
+*** color
+***
+**************************************************/
 
 /*************************************************
 ***
@@ -14,7 +16,7 @@
 *** basic and general styles
 *** header and footer styles
 *** content styles (alphabetically)
-*** activities, calendar, blocks
+*** admin, course, activities, calendar, blocks
 *** 
 *** Please sort new styles for existing content
 *** into the appropriate part of this CSS file.
@@ -26,7 +28,6 @@
 
 
 /* basic styles */
-
 a:link,
 a:visited {
     color:#0000FF;
@@ -49,6 +50,7 @@ a.dimmed:hover {
     color:#FF0000;
 }
 
+
 /* general styles */
 body {
     background-color:#FAFAFA;
@@ -61,6 +63,7 @@ th {
 .highlight {
     background-color:#AAFFAA; /* highlight */
 }
+
 
 /* header styles */
 
@@ -82,15 +85,18 @@ th {
     border-color:#DDDDDD; /* borders */
 }
 
+
 /* summary of a user in a nice little box - weblib.php */
 .userinfobox {
     border-color:#DDDDDD; /* borders */
 }
 
+
 /* weblib.php table */
 .tabledivider {
     border-color:#DDDDDD; /* borders */
 }
+
 
 /* entry-page index.php */ 
 .sitetopic {
@@ -101,7 +107,7 @@ th {
 
 /*****************************
 ***
-*** Activities
+*** Admin
 ***
 ******************************/
 /* admin, calednder, course */
@@ -109,16 +115,17 @@ th {
     color:#AAAAAA;
 }
 
-/* assignment, forum, glossary */
-.forumheaderlist,
-.forumpost {
-    border-color:#DDDDDD; /* borders */
-}
 
+/*****************************
+***
+*** Course
+***
+******************************/
 /* course, entry-page, login */
 .headingblock {
     border-color:#DDDDDD; /* borders */
 }
+
 
 /* course */
 .outlineheadingblock {
@@ -147,9 +154,23 @@ th {
 .courseboxcontent {
     border-color:#DDDDDD; /* borders */
 }
+
 .weeklydatetext {
     color:#DDDDDD; /* cellheading2 */
 }
+
+
+/*****************************
+***
+*** Activities
+***
+******************************/
+/* assignment, forum, glossary */
+.forumheaderlist,
+.forumpost {
+    border-color:#DDDDDD; /* borders */
+}
+
 
 /* glossary, wiki */
 .generaltab {
@@ -160,6 +181,7 @@ th {
     background-color:#DDDDDD; /* cellheading2 */
 }
 
+
 /* lang, forum */
 .teacheronly {
     color:#990000;
@@ -169,15 +191,18 @@ th {
     color:#555555;
 }
 
+
 /* message */
 table.message_search_results td {
     border-color:#DDDDDD; /* borders */
 }
 
+
 /* weblib.php, wiki */
 .sideblockmain hr {
     border-top-color:#999999;
 }
+
 
 /*****************************
 ***
@@ -282,6 +307,7 @@ table.calendarmonth,
     border-color:#DDDDDD; /* borders */
 }
 
+
 /*****************************
 ***
 *** Blocks
@@ -295,6 +321,7 @@ table.calendarmonth,
 .rssclientdescription {
     color:#555555;
 }
+
 
 /* sideblock */
 /* calendar, weblib.php, wiki */
