@@ -34,6 +34,7 @@
        'editorspelling'           =>  0,
        'editorfontlist'           => 'Trebuchet:Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial:arial,helvetica,sans-serif;Courier New:courier new,courier,monospace;Georgia:georgia,times new roman,times,serif;Tahoma:tahoma,arial,helvetica,sans-serif;Times New Roman:times new roman,times,serif;Verdana:verdana,arial,helvetica,sans-serif;Impact:impact;Wingdings:wingdings',
        'editorhidebuttons'        => '',
+       'filterall'                =>  false,
        'filteruploadedfiles'      =>  true,
        'forcelogin'               =>  false,
        'forceloginforprofiles'    =>  false,
@@ -80,7 +81,7 @@
        'textfilters'              => 'mod/glossary/dynalink.php',
        'themelist'                => '',
        'timezone'                 =>  99,
-       'theme'                    => 'standard',
+       'theme'                    => 'standardwhite',
        'unzip'                    => '',
        'zip'                      => ''
     );
