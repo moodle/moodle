@@ -1,12 +1,6 @@
 <?PHP // $Id$
 
-    $textfilter_function = 'glossary_dynamic_link';
-
-    if (function_exists($textfilter_function)) {
-        return;
-    }
-
-    function glossary_dynamic_link($courseid, $text) {
+    function glossary_filter($courseid, $text) {
         global $CFG;
 
         if (empty($courseid)) {

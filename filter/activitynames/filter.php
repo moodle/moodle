@@ -4,12 +4,6 @@
     //It's based in the glosssary filter by Williams Castillo
     //Modifications by stronk7.
 
-    $textfilter_function='activitynames_filter';
-
-    if (function_exists($textfilter_function)) {
-        return;
-    }
-
     function activitynames_filter($courseid, $text) {
 
         global $CFG;

@@ -38,14 +38,6 @@
 
 $CFG->texfilterdir = "filter/tex";
 
-/// These lines are important - the variable must match the name 
-/// of the actual function below
-$textfilter_function='tex_filter';
-
-if (function_exists($textfilter_function)) {
-    return;
-}
-
 
 function string_file_picture_tex($imagefile, $tex= "", $height="", $width="") {
     // Given the path to a picture file in a course, or a URL,

@@ -12,16 +12,6 @@
 //
 //////////////////////////////////////////////////////////////
 
-/// These lines are important - the variable must match the name 
-/// of the actual function below
-
-    $textfilter_function = 'mediaplugin_filter';
-
-    if (function_exists($textfilter_function)) {
-        return;
-    }
-
-
 /// This is the filtering function itself.  It accepts the 
 /// courseid and the text to be filtered (in HTML form).
 

@@ -6,13 +6,7 @@
 
     require_once($CFG->dirroot.'/mod/wiki/lib.php');
 
-    $textfilter_function='wiki_page_filter';
-
-    if (function_exists($textfilter_function)) {
-        return;
-    }
-
-    function wiki_page_filter($courseid, $text) {
+    function wiki_filter($courseid, $text) {
 
         global $CFG;
 

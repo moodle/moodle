@@ -704,8 +704,11 @@ function filter_text($text, $courseid=NULL) {
         $textfilters = explode(',', $CFG->textfilters);
         foreach ($textfilters as $textfilter) {
             if (is_readable("$CFG->dirroot/$textfilter/filter.php")) {
-                include("$CFG->dirroot/$textfilter/filter.php");
-                $text = $textfilter_function($courseid, $text);
+                include_once("$CFG->dirroot/$textfilter/filter.php");
+                $functionname = basename($textfilter).'_filter';
+                if (function_exists($functionname)) {
+                    $text = $functionname($courseid, $text);
+                }
             }
         }
     }

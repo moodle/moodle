@@ -4,13 +4,7 @@
     //It's based in the glosssary filter by Williams Castillo
     //Modifications by stronk7. Enjoy! :-)
 
-    $textfilter_function='resource_names_filter';
-
-    if (function_exists($textfilter_function)) {
-        return;
-    }
-
-    function resource_names_filter($courseid, $text) {
+    function resource_filter($courseid, $text) {
 
         global $CFG;
 

@@ -46,17 +46,6 @@
       $CFG->algebrafilterdirwin = "filter\\algebra";
     }
 
-
-
-/// These lines are important - the variable must match the name 
-/// of the actual function below
-    $textfilter_function='algebra_filter';
-
-    if (function_exists($textfilter_function)) {
-        return;
-    }
-
-
 function string_file_picture_algebra($imagefile, $tex= "", $height="", $width="") {
   // Given the path to a picture file in a course, or a URL,
   // this function includes the picture in the page.

@@ -31,15 +31,6 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// These lines are important - the variable must match the name 
-/// of the actual function below
-
-$textfilter_function = 'multilang_filter';
-
-if (function_exists($textfilter_function)) {
-    return;
-}
-
 
 /// Given XML multilinguage text, return relevant text according to
 /// current language.  i.e.=
