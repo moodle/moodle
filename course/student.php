@@ -20,8 +20,8 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id)) {
-        error("You must be a teacher in this course, or an admin");
+    if (!isteacheredit($course->id)) {
+        error("You must be an editing teacher in this course, or an admin");
     }
 
     $strassignstudents = get_string("assignstudents");
