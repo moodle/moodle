@@ -1,0 +1,69 @@
+<?PHP // $Id$ 
+      // lesson.php - created with Moodle 1.2.1 (2004032500)
+
+
+$string['actionaftercorrectanswer'] = 'Aksi setelah jawaban benar';
+$string['addanewpage'] = 'Tambah halaman baru';
+$string['addpagehere'] = 'Tambah halaman disini';
+$string['answer'] = 'Jawaban';
+$string['answersfornumerical'] = 'Jawaban untuk pertanyaan numerik harus cocok dengan nilai minimum dan maksimum secara berpasangan';
+$string['attempt'] = 'Percobaan ke: $a';
+$string['attempts'] = 'Percobaan';
+$string['available'] = 'Tersedia dari';
+$string['canretake'] = '$a dapat mengambil kembali';
+$string['casesensitive'] = 'Case Sensitif';
+$string['checknavigation'] = 'Periksa navigasi';
+$string['checkquestion'] = 'Periksa pertanyaan';
+$string['confirmdeletionofthispage'] = 'Konfirmasikan penghapusan dari halaman ini';
+$string['congratulations'] = 'Selamat - Akhir dari pelajaran telah sampai';
+$string['continue'] = 'Melanjutkan';
+$string['deadline'] = 'Batas Waktu';
+$string['deletingpage'] = 'Mengahpus halaman: $a';
+$string['displayofgrade'] = 'Tampilan peringkat (hanya untuk siswa)';
+$string['endoflesson'] = 'Akhir pelajaran';
+$string['fileformat'] = 'Format file';
+$string['firstanswershould'] = 'Jawaban yang benar harus melompat ke halaman yang &quot;Benar&quot';
+$string['gradeis'] = 'Tingkat adalah $a';
+$string['importquestions'] = 'Impor Pertanyaan';
+$string['jumpto'] = 'Lompat ke';
+$string['maximumnumberofanswers'] = 'Jumlah maksimum dari jawaban';
+$string['maximumnumberofattempts'] = 'Jumlah maksimum dari percobaan';
+$string['modulename'] = 'Pelajaran';
+$string['modulenameplural'] = 'Pelajaran';
+$string['movepagehere'] = 'Pindahkan halaman kesini';
+$string['moving'] = 'Pindahkan halaman: $a';
+$string['movingtonextpage'] = 'Pindahkan halaman ke halaman selanjutnya';
+$string['multianswer'] = 'Multi Jawaban';
+$string['multipleanswer'] = 'Multiple Jawaban';
+$string['nextpage'] = 'Halaman Selanjutnya';
+$string['noanswer'] = 'Tidak ada jawaban diberikan';
+$string['noattemptrecordsfound'] = 'Tidak ada catatan percobaan ditemukan: Tidak ada tingkat diberikan';
+$string['normal'] = 'Normal - Ikuti Jalur Pelajaran';
+$string['numberofcorrectanswers'] = 'Jumlah jawaban yang benar: $a';
+$string['numberofcorrectmatches'] = 'Jumlah jawaban yang cocok: $a';
+$string['numberofpagestoshow'] = 'Jumlah halaman (kartu) ditampilkan';
+$string['numberofpagesviewed'] = 'Jumlah halaman yang dilihat: $a';
+$string['ordered'] = 'Urutan';
+$string['outof'] = 'Keluar dari $a';
+$string['page'] = 'Halaman: $a';
+$string['pagecontents'] = 'Isi Halaman';
+$string['pagetitle'] = 'Judul halaman';
+$string['pleasecheckoneanswer'] = 'Harap memberi tanda pada satu jawaban';
+$string['pleasecheckoneormoreanswers'] = 'Harap memberi tanda pada satu atau lebih jawaban';
+$string['pleaseenteryouranswerinthebox'] = 'Harap ketikkan jawaban Anda di dalam kotak';
+$string['pleasematchtheabovepairs'] = 'Harap pasangkan dengan yang di atas';
+$string['questionoption'] = 'Pilihan Pertanyaan';
+$string['questiontype'] = 'Jenis Pertanyaan';
+$string['response'] = 'Respon';
+$string['sanitycheckfailed'] = 'Pemeriksaan kesehatan gugur: Percobaan ini telah dihapus';
+$string['savepage'] = 'Simpan halaman';
+$string['showanunansweredpage'] = 'Tampilkan halaman yang tidak terjawab';
+$string['showanunseenpage'] = 'Tampilkan halaman yang tidak dilihat';
+$string['singleanswer'] = 'Jawaban Tunggal';
+$string['thatsthecorrectanswer'] = 'Itu adalah jawaban yang benar';
+$string['thatsthewronganswer'] = 'Itu adalah jawaban yang salah';
+$string['thispage'] = 'Halaman ini';
+$string['youhaveseen'] = 'Anda telah melihat lebih dari satu halaman dari pelajaran ini.<br />Anda ingin mulai dari halaman terakhir yang Anda lihat?';
+$string['youranswer'] = 'Jawaban Anda';
+
+?>

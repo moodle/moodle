@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.2.1 (2004032500)
+
+
+$string['absentlong'] = 'Absen';
+$string['absentshort'] = 'A';
+$string['addingmultiple'] = 'Menambahkan Berbagai Aturan Kehadiran';
+$string['addmultiple'] = 'Menambahkan Berbagai Aturan Kehadiran';
+$string['allmodulename'] = 'Semua Aturan Kehadiran';
+$string['auto'] = 'otomatis';
+$string['autoattend'] = 'Secara otomatis mengambil kehadiran berdasarkan pada aktivitas log pengguna';
+$string['autoattendmulti'] = 'secara otomatis mengira  kehadiran adalah semua Secara otomatis mengambil kehadiran untuk semua aturan berdasarkan log aktivitas pemakai';
+$string['autoattendshort'] = 'Otomatis dari log';
+$string['choosedays'] = 'Jumlah hari dari tiap minggu untuk pengambilan kehadiran';
+$string['dayofroll'] = 'Tanggal pengambilan aturan';
+$string['defaultautoattend'] = 'Apakah untuk mengambil kehadiran didasarkan pada aktivitas log pemakai secara default';
+$string['defaultdynamicsection'] = 'Apakah akan memindahkan aturan kehadiran ke minggu yang benar secara default';
+$string['defaultgrade'] = 'Apakah untuk membuat aturan kehadiran dinilai secara default';
+$string['defaulthoursinclass'] = 'Berapa jam yang harus dipenuhi untuk aturan kehadiran secara default';
+$string['defaultmaxgrade'] = 'Apa aturan default untuk nilai maksimum untuk kehadiran';
+$string['defaultstudentstatus'] = 'Status kehadiran siswa secara default pada aturan kehadiran yang baru';
+$string['downloadexcelfull'] = 'Download lembar kerja Excel lengkap';
+$string['downloadexceltotals'] = 'Download ringkasan lembar kerja Excel';
+$string['downloadtextfull'] = 'Download Teks laporan lengkap';
+$string['downloadtexttotals'] = 'Download ringkasan Teks laporan';
+$string['dynamicsection'] = 'Menetapkan minggu untuk kehadiran berdasarkan tanggal hari ini';
+$string['dynamicsectionmulti'] = 'Tempatkan aturan-aturan ke minggu-minggu secara otomatis';
+$string['dynsectionshort'] = 'Secara dinamis dipindahkan ke bagian';
+$string['endbeforestart'] = 'Tanggal akhir adalah sebelum tanggal awal';
+$string['endmulti'] = 'Tanggal untuk aturan kehadiran yang terakhir';
+$string['for'] = 'untuk';
+$string['friday'] = 'Jumat';
+$string['gradeshort'] = 'Nilai';
+$string['gradevalue'] = 'Buat aturan ini bisa dinilai';
+$string['gradevaluemulti'] = 'Buat aturan-aturan ini bisa dinilai';
+$string['hoursinclass'] = 'Jumlah jam pada periode kelas';
+$string['hoursineachclass'] = 'Jumlah jam pada periode setiap kelas';
+$string['hoursinfullreport'] = 'Jumlah jam maksimum dari kehadiran yang bisa ditampilkan pada satu halaman laporan';
+$string['maxgradeshort'] = 'nilai maksimum';
+$string['maxgradevalue'] = 'Nilai tingkat maksimum untuk kehadiran penuh';
+$string['modulename'] = 'Kehadiran';
+$string['modulenameplural'] = 'Aturan Kehadiran';
+$string['monday'] = 'Senin';
+$string['norolls'] = 'Tidak ada aturan kehadiran pada kursus ini';
+$string['notes'] = 'Informasi tambahan';
+$string['notesfor'] = 'Informasi tambahan untuk';
+$string['noviews'] = 'Maaf, tidak ada data untuk keanggotaan Anda disini';
+$string['of'] = 'dari';
+$string['pages'] = 'Halaman';
+$string['presentlong'] = 'Saat ini';
+$string['presentshort'] = 'S';
+$string['saturday'] = 'Sabtu';
+$string['startafterend'] = 'Tanggal awal adalah sesudah akhir dari kursus';
+$string['startmulti'] = 'Tanggal untuk permulaan aturan kehadiran';
+$string['sunday'] = 'Minggu';
+$string['takeroll'] = 'Ambil aturan untuk haris ini?';
+$string['tardiesperabsence'] = 'Berapa banyak keterlambatan untuk dinilai sebagai absen';
+$string['tardylong'] = 'Terlambat';
+$string['tardyshort'] = 'T';
+$string['thursday'] = 'Kamis';
+$string['tuesday'] = 'Selasa';
+$string['viewall'] = 'Tampilkan semua aturan kehadiran';
+$string['viewmulti'] = 'Tampilkan laporan dalam banyak halaman';
+$string['viewone'] = 'Tampilkan semua halaman laporan';
+$string['viewsection'] = 'Tampilkan semua aturan kehadiran dari bagian ini';
+$string['viewtable'] = 'Tampilkan laporan dalam satu tabel';
+$string['viewweek'] = 'Tampilkan semua aturan kehadiran dari minggu kalender';
+$string['wednesday'] = 'Rabu';
+$string['weekmodulename'] = 'Semua aturan kehadiran dalam minggu terakhir';
+
+?>
