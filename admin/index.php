@@ -39,7 +39,7 @@
 /// Check that config.php has been edited
 
     if ($CFG->wwwroot == "http://example.com/moodle") {
-        error("Moodle has not been configured yet.  You need to to edit config.php first.");
+        error("Moodle has not been configured yet.  You need to edit config.php first.");
     }
 
 
@@ -77,11 +77,11 @@
 
     } else {                                 // Check for missing main tables
         $maintables = true;
-        $mtables = array("config", "course", "course_categories", "course_modules", 
-                         "course_sections", "log", "log_display", "modules", 
+        $mtables = array("config", "course", "course_categories", "course_modules",
+                         "course_sections", "log", "log_display", "modules",
                          "user", "user_admins", "user_students", "user_teachers");
         foreach ($mtables as $mtable) {
-            if (!in_array($CFG->prefix.$mtable, $tables)) { 
+            if (!in_array($CFG->prefix.$mtable, $tables)) {
                 $maintables = false;
                 break;
             }
@@ -98,7 +98,7 @@
             echo text_to_html(get_string("gpl"));
             print_simple_box_end();
             echo "<br />";
-            notice_yesno(get_string("doyouagree"), "index.php?agreelicence=true", 
+            notice_yesno(get_string("doyouagree"), "index.php?agreelicence=true",
                                                    "http://moodle.org/doc/?frame=licence.html");
             exit;
         }
@@ -126,12 +126,12 @@
 /// Check version of Moodle code on disk compared with database
 /// and upgrade if possible.
 
-    include_once("$CFG->dirroot/version.php");              # defines $version 
+    include_once("$CFG->dirroot/version.php");              # defines $version
     include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines upgrades
 
     $stradministration = get_string("administration");
 
-    if ($CFG->version) { 
+    if ($CFG->version) {
         if ($version > $CFG->version) {  // upgrade
 
             $a->oldversion = "$CFG->release ($CFG->version)";
@@ -139,14 +139,14 @@
             $strdatabasechecking = get_string("databasechecking", "", $a);
 
             if (empty($_GET['confirmupgrade'])) {
-                print_header($strdatabasechecking, $stradministration, $strdatabasechecking, 
+                print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", "", false, "&nbsp;", "&nbsp;");
                 notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=yes', 'index.php');
                 exit;
-                
+
             } else {
                 $strdatabasesuccess  = get_string("databasesuccess");
-                print_header($strdatabasechecking, $stradministration, $strdatabasechecking, 
+                print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", "", false, "&nbsp;", "&nbsp;");
                 print_heading($strdatabasechecking);
                 $db->debug=true;
@@ -167,10 +167,10 @@
         } else if ($version < $CFG->version) {
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
         }
-       
+
     } else {
         $strcurrentversion = get_string("currentversion");
-        print_header($strcurrentversion, $stradministration, $strcurrentversion, 
+        print_header($strcurrentversion, $stradministration, $strcurrentversion,
                      "", "", false, "&nbsp;", "&nbsp;");
 
         if (set_config("version", $version)) {
@@ -241,7 +241,7 @@
 
 /// Check all enrolment plugins and upgrade if necessary
     upgrade_enrol_plugins("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
-    
+
 /// Find and check all main modules and load them up or upgrade them if necessary
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
@@ -277,7 +277,7 @@
     print_heading($stradministration);
 
     if (!empty($CFG->upgrade)) {  // Print notice about extra upgrading that needs to be done
-        print_simple_box(get_string("upgrade$CFG->upgrade", "admin", 
+        print_simple_box(get_string("upgrade$CFG->upgrade", "admin",
                                     "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center");
         print_spacer(10,10);
     }
@@ -325,7 +325,7 @@
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"maintenance.php\">". get_string('sitemaintenancemode', 'admin') ."</a> - <font size=\"1\">".
                     get_string('helpsitemaintenance', 'admin')."</font><br />";
 
-    $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>", 
+    $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>",
                             $configdata);
 
 
@@ -367,7 +367,7 @@
     }
 
     print_table($table);
-    
+
     //////////////////////////////////////////////////////////////////////////////////////////////////
     ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO REMOVE OR MODIFY THE COPYRIGHT NOTICE BELOW ////
     $copyrighttext = "<a href=\"http://moodle.org/\">Moodle</a> ".
