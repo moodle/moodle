@@ -29,10 +29,11 @@
 
     if ($data) {
 
-        foreach ($data as $postid => $rating) {
+        foreach ((array)$data as $postid => $rating) {
             if ($postid == "id") {
                 continue;
             }
+
             if ($oldrating = get_record("forum_ratings", "userid", $USER->id, "post", $postid)) {
                 if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
