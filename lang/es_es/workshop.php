@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2004013101)
+      // workshop.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['absent'] = 'Ausente';
@@ -113,16 +113,25 @@ $string['overallpeergrade'] = 'Calificación Total por los compañeros: $a';
 $string['overallteachergrade'] = 'Calificación Total del Profesor: $a';
 $string['ownwork'] = 'Trabajo propio';
 $string['phase'] = 'Fase';
-$string['phase1'] = 'Determinar la tarea';
-$string['phase2'] = '$a Envíos y Valoraciones';
-$string['phase3'] = 'Cálculo de la Calificación Final';
-$string['phase4'] = 'Mostrar las Calificaciones Finales';
+$string['phase1'] = 'Colocar la tarea';
+$string['phase1short'] = 'Colocar';
+$string['phase2'] = 'Permitir $a Envíos';
+$string['phase2short'] = 'Envíos';
+$string['phase3'] = 'Permitir $a Envíos y Valoraciones';
+$string['phase3short'] = 'Ambos';
+$string['phase4'] = 'Permitir $a Valoraciones';
+$string['phase4short'] = 'Evaluaciones';
+$string['phase5'] = 'Cálculo de la calificación final';
+$string['phase5short'] = 'Cálculo';
+$string['phase6'] = 'Mostrar la calificación final';
+$string['phase6short'] = 'Mostrar calificación';
 $string['pleaseassesstheseexamplesfromtheteacher'] = 'Valore por favor estos ejemplos de la $a';
 $string['pleaseassessthesestudentsubmissions'] = 'Por favor valore estos  $a Envíos';
 $string['pleaseassessyoursubmissions'] = 'Por favor, evalúe su(s) envío(s)';
 $string['poor'] = 'Pobre';
 $string['present'] = 'Presente';
 $string['reassess'] = 'Re-evaluar';
+$string['repeatanalysis'] = 'Repetir Análisis';
 $string['reply'] = 'Responder';
 $string['returnto'] = 'Devolver a';
 $string['returntosubmissionpage'] = 'Volver a la página de Envíos';
@@ -145,12 +154,14 @@ $string['select'] = 'Elegir';
 $string['selfassessment'] = 'Auto evaluación';
 $string['showgrades'] = 'Mostrar Calificaciones';
 $string['specimenassessmentform'] = 'Formulario de muestra de valoración';
+$string['standarddeviation'] = 'Desviación estándar del Elemento $a:';
 $string['studentassessments'] = '$a Evaluaciones';
 $string['studentgrades'] = '$a Calificaciones';
 $string['studentsubmissions'] = '$a Envíos';
 $string['studentsubmissionsforassessment'] = '$a Envíos de los estudiantes para valoración';
 $string['submission'] = 'Envío';
 $string['submissions'] = 'Envíos';
+$string['submissionsnolongerallowed'] = 'No se permiten más envíos';
 $string['submitassignment'] = 'Enviar Tarea';
 $string['submitexampleassignment'] = 'Enviar Tarea de Ejemplo';
 $string['submitted'] = 'Enviado';
