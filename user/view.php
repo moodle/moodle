@@ -35,7 +35,7 @@
         print_header("Personal profile: $fullname", "Personal profile: $fullname", "$fullname", "");
     }
 
-    if ($course->category) {
+    if ($course->category and ! isguest() ) {
         if (!isstudent($course->id, $user->id) && !isteacher($course->id, $user->id)) {
             print_heading("$fullname is not enrolled in this course");
             print_footer($course);
@@ -59,7 +59,7 @@
     echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0><TR><TD NOWRAP>";
     echo "<H3>$user->firstname $user->lastname</H3>";
     echo "</TD><TD align=right>";
-    if ($id == $USER->id) {
+    if ($id == $USER->id and !isguest()) {
         echo "<P><FORM ACTION=edit.php METHOD=GET>";
         echo "<INPUT type=hidden name=id value=\"$id\">";
         echo "<INPUT type=hidden name=course value=\"$course->id\">";
@@ -80,7 +80,9 @@
 
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2";
 
-    print_row("Location:", "$user->city, ".$COUNTRIES["$user->country"]);
+    if ($user->city or $user->country) {
+        print_row("Location:", "$user->city, ".$COUNTRIES["$user->country"]);
+    }
 
     if (isteacher($course->id)) {
         if ($user->address) {
@@ -112,7 +114,7 @@
     echo "</TD></TR></TABLE></TABLE>";
 
 //  Print other functions
-    if ($id == $USER->id) {
+    if ($id == $USER->id and !isguest() ) {
         echo "<CENTER><TABLE ALIGN=CENTER><TR>";
         echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
         echo "<INPUT type=hidden name=id value=\"$course->id\">";

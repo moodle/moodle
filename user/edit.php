@@ -21,6 +21,10 @@
         error("You can only edit your own information");
     }
 
+    if (isguest()) {
+        error("The guest user cannot edit their profile.");
+    }
+
 
 /// If data submitted, then process and store.
 
