@@ -3254,9 +3254,19 @@ function raise_memory_limit ($newlimit) {
         return false;
     }
     
-    $cur = return_bytes(@ini_get('memory_limit'));
-    $new = return_bytes($newlimit);
+    $cur = @ini_get('memory_limit');
+    if (empty($cur)) {
+        // if php is compiled without --enable-memory-limits
+        // apparently memory_limit is set to ''
+        $cur=0;
+    } else {
+        if ($cur == -1){
+            return true; // unlimited mem!
+        }
+      $cur = return_bytes($cur);
+    }
     
+    $new = return_bytes($newlimit);
     if ($new > $cur) {
         ini_set('memory_limit', $newlimit);
         return true;    
