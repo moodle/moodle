@@ -73,7 +73,7 @@
     }
 ?>
 
-<form name="form" method="post" <?=$onsubmit ?> action="<?=$ME ?>">
+<form name="form" method="post" <?php echo $onsubmit ?> action="<?php echo $ME ?>">
 <table cellpadding=5>
 <?
 
@@ -213,9 +213,9 @@
 </table>
 <BR>
 <CENTER>
-<input type="hidden" name=id     value="<? p($id) ?>">
+<input type="hidden" name=id     value="<?php  p($id) ?>">
 <input type="hidden" name=launch value="execute">
-<input type="submit" value="<? print_string("continue") ?>">
-<input type="submit" name=cancel value="<? print_string("cancel") ?>">
+<input type="submit" value="<?php  print_string("continue") ?>">
+<input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
 </CENTER>
 </FORM>

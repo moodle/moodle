@@ -1,8 +1,8 @@
 <FORM METHOD="post" action="edit.php" NAME="form">
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
-	<td><P><? print_string("category") ?>:</td>
-	<td><? 
+	<td><P><?php  print_string("category") ?>:</td>
+	<td><?php  
            $displaylist = array();
            $parentlist = array();
            make_categories_list($displaylist, $parentlist);
@@ -12,28 +12,28 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("fullname") ?>:</td>
-	<td><input type="text" name="fullname" maxlength="254" size=50 value="<? p($form->fullname) ?>">
-    <? helpbutton("coursefullname", get_string("fullname")) ?>
-    <? if (isset($err["fullname"])) formerr($err["fullname"]); ?>
+	<td><P><?php  print_string("fullname") ?>:</td>
+	<td><input type="text" name="fullname" maxlength="254" size=50 value="<?php  p($form->fullname) ?>">
+    <?php  helpbutton("coursefullname", get_string("fullname")) ?>
+    <?php  if (isset($err["fullname"])) formerr($err["fullname"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("shortname") ?>:</td>
-	<td><input type="text" name="shortname" maxlength="15"  size="10" value="<? p($form->shortname) ?>">
-    <? helpbutton("courseshortname", get_string("shortname")) ?>
-    <? if (isset($err["shortname"])) formerr($err["shortname"]); ?>
+	<td><P><?php  print_string("shortname") ?>:</td>
+	<td><input type="text" name="shortname" maxlength="15"  size="10" value="<?php  p($form->shortname) ?>">
+    <?php  helpbutton("courseshortname", get_string("shortname")) ?>
+    <?php  if (isset($err["shortname"])) formerr($err["shortname"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("summary") ?>:</td>
-	<td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
-    <? helpbutton("text", get_string("helptext")) ?>
-    <? if (isset($err["summary"])) formerr($err["summary"]); ?>
+	<td><P><?php  print_string("summary") ?>:</td>
+	<td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><?php  p($form->summary) ?></TEXTAREA>
+    <?php  helpbutton("text", get_string("helptext")) ?>
+    <?php  if (isset($err["summary"])) formerr($err["summary"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("availability") ?>:</td>
+	<td><P><?php  print_string("availability") ?>:</td>
 	<td><?
     unset($choices);
     $choices["0"] = get_string("courseavailablenot");
@@ -43,14 +43,14 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("enrolmentkey") ?>:</td>
-	<td><input type="text" name="password" size=25 value="<? p($form->password) ?>">
-    <? helpbutton("enrolmentkey", get_string("enrolmentkey")) ?>
-    <? if (isset($err["password"])) formerr($err["password"]); ?>
+	<td><P><?php  print_string("enrolmentkey") ?>:</td>
+	<td><input type="text" name="password" size=25 value="<?php  p($form->password) ?>">
+    <?php  helpbutton("enrolmentkey", get_string("enrolmentkey")) ?>
+    <?php  if (isset($err["password"])) formerr($err["password"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("opentoguests") ?>:</td>
+	<td><P><?php  print_string("opentoguests") ?>:</td>
 	<td><?
     unset($choices);
     $choices["0"] = get_string("guestsno");
@@ -61,16 +61,16 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("format") ?>:</td>
-	<td><? 
+	<td><P><?php  print_string("format") ?>:</td>
+	<td><?php  
            choose_from_menu ($form->courseformats, "format", "$form->format", "");
            helpbutton("courseformats", get_string("courseformats"));
         ?>
 	</td>
 </tr>
 <tr valign=top>
-    <td><P><? print_string("newsitemsnumber") ?>:</td>
-    <td><? 
+    <td><P><?php  print_string("newsitemsnumber") ?>:</td>
+    <td><?php  
        $newsitem = get_string("newsitem");
        $newsitems = get_string("newsitems");
 
@@ -91,14 +91,14 @@
     </td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("startdate") ?>:</td>
+	<td><P><?php  print_string("startdate") ?>:</td>
 	<td><?
            print_date_selector("startday", "startmonth", "startyear", $form->startdate);
            helpbutton("coursestartdate", get_string("startdate"));
 	?></td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("numberweeks") ?>:</td>
+	<td><P><?php  print_string("numberweeks") ?>:</td>
 	<td><?
            for ($i=1; $i<=52; $i++) {
               $sectionmenu[$i] = "$i";
@@ -108,7 +108,7 @@
 	?></td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("showrecent") ?>:</td>
+	<td><P><?php  print_string("showrecent") ?>:</td>
 	<td><?
     unset($choices);
     $choices["0"] = get_string("no");
@@ -118,7 +118,7 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("showgrades") ?>:</td>
+	<td><P><?php  print_string("showgrades") ?>:</td>
 	<td><?
     unset($choices);
     $choices["0"] = get_string("no");
@@ -128,36 +128,36 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("wordforteacher") ?>:</td>
-	<td><input type="text" name="teacher" maxlength="100" size=25 value="<? p($form->teacher) ?>">
-	(<? print_string("wordforteachereg") ?>) 
-    <? if (isset($err["teacher"])) formerr($err["teacher"]); ?>
+	<td><P><?php  print_string("wordforteacher") ?>:</td>
+	<td><input type="text" name="teacher" maxlength="100" size=25 value="<?php  p($form->teacher) ?>">
+	(<?php  print_string("wordforteachereg") ?>) 
+    <?php  if (isset($err["teacher"])) formerr($err["teacher"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("wordforteachers") ?>:</td>
-	<td><input type="text" name="teachers" maxlength="100" size=25 value="<? p($form->teachers) ?>">
-	(<? print_string("wordforteacherseg") ?>)
-    <? if (isset($err["teachers"])) formerr($err["teachers"]); ?>
+	<td><P><?php  print_string("wordforteachers") ?>:</td>
+	<td><input type="text" name="teachers" maxlength="100" size=25 value="<?php  p($form->teachers) ?>">
+	(<?php  print_string("wordforteacherseg") ?>)
+    <?php  if (isset($err["teachers"])) formerr($err["teachers"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("wordforstudent") ?>:</td>
-	<td><input type="text" name="student" maxlength="100" size=25 value="<? p($form->student) ?>">
-	(<? print_string("wordforstudenteg") ?>) 
-    <? if (isset($err["student"])) formerr($err["student"]); ?>
+	<td><P><?php  print_string("wordforstudent") ?>:</td>
+	<td><input type="text" name="student" maxlength="100" size=25 value="<?php  p($form->student) ?>">
+	(<?php  print_string("wordforstudenteg") ?>) 
+    <?php  if (isset($err["student"])) formerr($err["student"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("wordforstudents") ?>:</td>
-	<td><input type="text" name="students" maxlength="100" size=25 value="<? p($form->students) ?>">
-	(<? print_string("wordforstudentseg") ?>) 
-    <? if (isset($err["students"])) formerr($err["students"]); ?>
+	<td><P><?php  print_string("wordforstudents") ?>:</td>
+	<td><input type="text" name="students" maxlength="100" size=25 value="<?php  p($form->students) ?>">
+	(<?php  print_string("wordforstudentseg") ?>) 
+    <?php  if (isset($err["students"])) formerr($err["students"]); ?>
 	</td>
 </tr>
 <tr>
 	<td></td>
-	<td><input type="submit" value="<? print_string("savechanges") ?>"></td>
+	<td><input type="submit" value="<?php  print_string("savechanges") ?>"></td>
 </TABLE>
-<INPUT type="hidden" name="id" value="<?=$form->id ?>">
+<INPUT type="hidden" name="id" value="<?php echo $form->id ?>">
 </FORM>
