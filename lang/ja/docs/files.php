@@ -5,7 +5,7 @@
 $string['-about'] = "Moodleについて";
 $string['intro.html'] = "イントロダクション";
 $string['background.html'] = "背景";
-$string['philosophy.html'] = "哲学";
+$string['philosophy.html'] = "理念";
 $string['licence.html'] = "ライセンス";
 $string['features.html'] = "特徴";
 $string['release.html'] = "リリースノート";
