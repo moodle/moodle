@@ -2,91 +2,64 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-require_once("$CFG->dirroot/files/mimetypes.php");
 
-optional_variable($id);        // question id
-optional_variable($qtype);
-optional_variable($category);
+require_variable($id);        // question id
+optional_variable($quizid, 0);
 
-if ($id) {
-    if (! $question = get_record("quiz_questions", "id", $id)) {
-        error("This question doesn't exist");
+if (! $question = get_record("quiz_questions", "id", $id)) {
+    error("This question doesn't exist");
+}
+if (! $category = get_record("quiz_categories", "id", $question->category)) {
+    error("This question doesn't belong to a valid category!");
+}
+if ($quizid) {
+    if (! $quiz = get_record('quiz', 'id', $quizid)) {
+        error('Incorrect quiz id');
     }
-    if (!empty($category)) {
-        $question->category = $category;
-    }
-    if (! $category = get_record("quiz_categories", "id", $question->category)) {
-        error("This question doesn't belong to a valid category!");
-    }
-    if (! $course = get_record("course", "id", $category->course)) {
-        error("This question category doesn't belong to a valid course!");
-    }
-
-    $qtype = $question->qtype;
-
-
-} else if ($category) {
-    if (! $category = get_record("quiz_categories", "id", $category)) {
-        error("This wasn't a valid category!");
-    }
-    if (! $course = get_record("course", "id", $category->course)) {
-        error("This category doesn't belong to a valid course!");
-    }
-
-    $question->category = $category->id;
-    $question->qtype    = $qtype;
-
 } else {
-    error("Must specify question id or category");
+    // make fake quiz
+    $quiz->id = 0;
+    $quiz->course = $category->course;
+    $quiz->name = "";
+    $quiz->intro = "";
+    $quiz->timeopen = 0;
+    $quiz->timeclose = 0;
+    $quiz->attempts = $CFG->quiz_attempts;
+    $quiz->attemptonlast = $CFG->quiz_attemptonlast;
+    $quiz->feedback = $CFG->quiz_showfeedback;
+    $quiz->correctanswers = $CFG->quiz_showanswer;
+    $quiz->grademethod = $CFG->quiz_grademethod;
+    $quiz->review = $CFG->quiz_allowreview;
+    $quiz->shufflequestions = $CFG->quiz_shufflequestions;
+    $quiz->shuffleanswers = $CFG->quiz_shuffleanswers;
+    $quiz->questions = "$question->id";
+    $quiz->sumgrades = $question->defaultgrade;
+    $quiz->grade = $CFG->quiz_maximumgrade;
+    $quiz->timecreated = 0;
+    $quiz->timemodified = 0;
+    $quiz->timelimit = $CFG->quiz_timelimit;
+    $quiz->password = $CFG->quiz_password;
+    $quiz->subnet = $CFG->quiz_subnet;
+    $quiz->popup = $CFG->quiz_popup;
 }
 
-if (empty($qtype)) {
-    error("No question type was specified!");
-} else if (!isset($QUIZ_QTYPES[$qtype])) {
-    error("Could not find specified question type");
+$qtype = $question->qtype;
+
+require_login();
+
+if (!isteacher()) {
+    error('This page is for teachers only');
 }
 
-require_login($course->id);
-
-
-if (!isteacheredit($course->id)) {
-    error("You can't modify these questions!");
+if (!isteacher($category->course) and !$category->publish) {
+    error("You can't preview these questions!");
 }
-
-
-$strquizzes = get_string('modulenameplural', 'quiz');
-$streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
-$streditingquestion = get_string("editingquestion", "quiz");
 
 print_header();
 print_heading(get_string("previewquestion","quiz"));
 
-if (empty($question->id)) {
-    $question->id = "";
-}
-if (empty($question->name)) {
-    $question->name = "";
-}
-if (empty($question->questiontext)) {
-    $question->questiontext = "";
-}
-if (empty($question->image)) {
-    $question->image = "";
-}
-
-if ($results && isset($results->details[$question->id])) {
-    $details = $results->details[$question->id];
-} else {
-    $details = false;
-}
-
 if ($rawanswers = data_submitted()) {
     $rawanswers = (array)$rawanswers;
-
-    $answers = array();
-    $feedbacks = array();
-    $qids = array();
-    $fraction = 0;
 
     foreach ($rawanswers as $key => $value) { // Parse input for question->response
         $postedId = quiz_extract_posted_id($key);
@@ -94,23 +67,13 @@ if ($rawanswers = data_submitted()) {
     }
 
     print_simple_box_start("center", "90%");
-
-    //simulate quiz only for quiestion previews
-    class FakeQuiz {
-        var $correctanswers;
-        var $feedback;
-        var $grade;
-        function FakeQuiz() {
-            $this->correctanswers = 1;
-            $this->feedback = 1;
-            $this->grade = 1;
-        }
-    }
-
-    $question->maxgrade = 1; //this shouldn't be like that
+    
     $resultdetails = $QUIZ_QTYPES[$question->qtype]->grade_response($question, quiz_qtype_nameprefix($question));
-    $quiz = new FakeQuiz();
-
+    
+    $question->maxgrade = 1;
+    $quiz->correctanswers=1;
+    $quiz->feedback=1;
+    $quiz->grade=1;
     $QUIZ_QTYPES[$question->qtype]->print_question(1, $quiz, $question, true, $resultdetails);
 
     print_simple_box_end();
@@ -119,12 +82,13 @@ if ($rawanswers = data_submitted()) {
     echo "<input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\" /></p>\n";
 
 } else { //show question list
-    echo "<form method=\"post\" action=\"preview.php\" $onsubmit>\n";
+    echo "<form method=\"post\" action=\"preview.php\">\n";
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
 
     print_simple_box_start("center", "90%");
-    $nextquestionnumber = $QUIZ_QTYPES[$question->qtype]->print_question($nextquestionnumber, $quiz,  
-                                                                         $question, $readonly, $resultdetails);
+    $readonly = false;
+    $resultdetails = NULL;
+    $QUIZ_QTYPES[$question->qtype]->print_question(1, $quiz, $question, $readonly, $resultdetails);
     print_simple_box_end();
 
     echo "<br />";
@@ -134,5 +98,7 @@ if ($rawanswers = data_submitted()) {
     echo "</center>";
     echo "</form>";
 }
+
+print_footer();
 
 ?>
