@@ -529,7 +529,8 @@
                 print_simple_box_start("center");
                 echo $file;
                 print_simple_box_end();
-                echo "<BR>";
+                echo "<br />";
+                echo "<p align=center>".get_string("areyousuretorestorethisinfo")."</p>";
                 $restore_path = "../backup/restore.php";
                 notice_yesno (get_string("areyousuretorestorethis"),
                                 $restore_path."?id=".$id."&file=".$id.$wdir."/".$file,
