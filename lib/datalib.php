@@ -1,8 +1,9 @@
 <?PHP // $Id$
 
 /// CONSTANTS /////////////////////////////////////////////////////////////
+$site=get_site();
+define('SITEID',$site->id);
 
-define('SITEID', 1);
 
 
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
@@ -377,7 +378,7 @@ function count_records_sql($sql) {
 */
 function get_record($table, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
     
-    global $CFG;
+    global $CFG ;
 
     $select = "WHERE $field1 = '$value1'";
 
