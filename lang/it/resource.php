@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // resource.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
@@ -71,6 +71,6 @@ $string['resourcetype5'] = 'Collegamento web';
 $string['resourcetype6'] = 'Testo HTML';
 $string['resourcetype7'] = 'Programma';
 $string['resourcetype8'] = 'Testo Wiki';
-$string['resourcetype9'] = 'Cartella';
+$string['resourcetype9'] = 'Cartella di file';
 
 ?>

@@ -1,6 +1,6 @@
 <head>
     
-<title>Moodle Docs: Current Release notes</title>
+<title>Documentazione di Moodle: Note sulla versione pi&ugrave; recente</title>
 	
 <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
     
@@ -14,7 +14,90 @@
 </head>
 
 <body bgcolor="#FFFFFF">
-<h1>Note sulla release pi&ugrave; recente</h1>
+<h1>Note sulla versione pi&ugrave; recente</h1>
+
+<h3> Novit&agrave; in Moodle 1.3  (24 Maggio 2004)</h3>
+<ul>
+  <dl>
+    <dt>Nuove caratteristiche importanti</dt>
+    <dd> 
+      <ul>
+        <li>Nuova caratteristica <strong>Calendario</strong> (grazie a Jon Papaioannou e alla Greek School Network!)</li>
+        <li>Nuova caratteristica <strong>Blocchi </strong>, ora è possibile aggiungere e spostare i blocchi nella pagina del corso (grazie a Jon Papaioannou, Eloy Lafuente e altri!)</li>
+        <li>Nuovo <strong>Sistema RSS</strong> permetter ai Forum e ai Glossari (e più avanti gli altri moduli) di pubblicare messaggi RSS (Grazie, Eloy!)</li>
+        <li>Il filtro <strong>Mediaplugin</strong> ora supporta l'inserimento automatico dei file di Quicktime, Flash, and Windows Media.</li>
+      </ul>
+    </dd>
+    <dt>Altre nuove caratteristiche</dt>
+    <dd> 
+      <ul>
+        <li>Nuovo tipo di risorsa &quot;Cartella di file&quot; mostrer&agrave; tutti i file contenuti in una cartella (includendo le sotto cartelle)</li>
+        <li>Le risorse che sono file (caricati sul server o pagine web) ora sono mostrate con un icona significativa nella pagina del corso</li>
+        <li>Un nuovo filtro per le risorse pu&ograve; aggiungere collegamenti alle risorse in tutto il sito Moodle.</li>
+        <li>Pi&ugrave; collegamenti HTML tra forum e risorse ora sono preservati durante il salvataggio e il risristino delle copiedi sicurezza</li>
+        <li>Ora &egrave; possibile il normale passaggio di parametri http ai file nella sezione File. Questo permette nuova dinamicit&agrave; con le risorse Flash e HTML.</li>
+        <li>L'impostazione $CFG-&gt;forceloginforprofiles previene la visualizzazione dei profili utente a livello del sito da parte degli ospiti (includendo Google).</li>
+        <li>Quando l'accesso di Google &egrave; abilitato, ora anche la traduzione della pagian web di Google funziona.</li>
+        <li>Le sessioni ora sono salvate privatamente nella directory dei dati di Moodle - questo permette a Moodle di lavorare meglio sui cluster, e risolve alcuni problemi di scadenza delle sessioni sui server web condivisi</li>
+        <li>La foto dell'utente ora pu&ograve; essere facilmente cancellata dalla pagina di modifica del profilo</li>
+        <li>Parlare nelle chat ora appare nei log pricipali.</li>
+        <li>Le sezioni nascoste nei corsi ora possono essere completamente nascoste agli studenti (Impostazioni corso)</li>
+        <li>Miglioramenti al testo dentro i grafici per alcuni linguaggi diversi dall'inglese, utilizzando fonti Unicode.</li>
+        <li>Migliorata l'interfaccia per la gestione delle Scale di valutazione, come anche una migliore gestione dei siti multilingua</li>
+        <li>Tutti gli studenti ora possono essere disiscritti con un pulsante (nella pagina Studenti)</li>
+        <li>Gli iscritti ai forum ora possono essere iscritti e disiscritti in gruppi</li>
+        <li>Miglire gestione dei alcuni caratteri Europei nei nomi dei file e nei nome utente</li>
+        <li>La notifica dei commenti per i compiti nascosti non &egrave; spedita finch&eacute; lo stesso non viene reso visibile</li>
+        <li>Espanso il supporto per l'importazione dei quiz di Blackboard</li>
+        <li>Lo script cron pu&ograve; essere eseguito utilizzando la versione binaria di PHP da qualunque directory</li>
+        <li>L'editor HTML ha subito miglioramenti.</li>
+        <li>La visualizzazione delle attivit&agrave; recenti predefinita ora &egrave; calcolata dall'ultimo accesso al corso (o due giorni, se questo &egrave pi&ugrave; recente). Precedentemente era dall'ultimo accesso al sito.</li>
+        <li>Le mail di conferma ora sono in HTML e testo, per evitare la divisione del collegamento di conferma.</li>
+        <li><b>Nuove Lingue</b>: Farsi, Lettone, Norvegese Scuola primaria, versione Unicode del Cinese Tradizionale.</li>
+      </ul>
+    </dd>
+    <dt>Risoluzione errori</dt>
+    <dd> 
+      <ul>
+        <li>Migliaia di piccoli errori sono stati corretti in tutto Moodle, generalmente per miglirare l'aspetto e la robustezza.</li>
+        <li>Come sempre, se trovate errori in Moodle, per favore <a href="http://moodle.org/bugs/">segnalateli al nostro Bug Tracker</a>!</li>
+      </ul>
+      <p>&nbsp;</p>
+    </dd>
+    <dt><font size="+1">Infine, non scordatevi di guardare alcuni dei <a href="http://moodle.org/download/modules/" target="_blank">molti moduli opzionali in sviluppo</a>, incluso il supporto per SCORM, Wikis, Quiz di Hot Potato e molte altri.</font></dt>
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+<p><br />
+
+
+</p>
+<h3> New in Moodle 1.2.1 (25 Marzo 2004)</h3>
+<ul>
+  <dl>
+    <dt>Alcune piccole correzioni di errori</dt>
+    <dd> 
+      <ul>
+        <li>Corretti alcuni errori che causavano la mancata visualizzazione  dei grafici e dei risultati dei sondaggi in alcune circostanze</li>
+        <li>Corretta l'importazione dei quiz di WebCT con immagini mancanti, risposte brevi e caratteri di escape</li>
+        <li>Corretta la formattazione nella finestra per inserire collegamenti  dell'editor</li>
+        <li>Evitata l'aggiunta di collegamenti del glossario ai nomi delle attivit&agrave; che sono gi&agrave; collegamenti</li>
+        <li>Corretto alcuni calcoli di fuso orario quando l'utente non &egrave; presente</li>
+        <li>Caratteri come :( nel codice Javascript non sono pi&ugrave; convertiti nella faccina triste del filtro HTML</li>
+        <li>Migliorata la gestione delle valutazioni dei singoli forum quando l'impstazione secureforms &egrave attiva.</li>
+        <li>Le domande a scelta multipla ora hanno come preimpostazione il formato singola risposta esatta</li>
+        <li>Gli ospiti non possono pi&ugrave; visualizzare l'indirizzo di posta elettronica se l'opzione "Mostra solo agli partecipanti del corso" è impostata da quel utente</li>
+        <li>L'amministratore principale ora &egrave; quello con il numero  pi&ugrave; basso in user_admins, invece dell'amministratore con l'ID pi&ugrave; piccolo.</li>
+        <li>Modificato il plugin Flash per la riproduzione degli MP3 per migliorare la luminosit&agrave; del pulsante di riproduzione sugli schermo scuri</li>
+        <li>Vari miglioramenti e pulizie in molti pachetti di linguaggio</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<br />
+
 <h3> Novit&agrave; in Moodle 1.2 (20 Marzo 2004)</h3>
 <ul>
   <dl>
@@ -321,5 +404,5 @@
 </p>
 </center>
 <p>&nbsp;</p>
-<p align="CENTER"><font size="1"><a href="../doc" target="_top">Documentazione Moodle</a></font></p>
+<p align="CENTER"><font size="1"><a href="../doc" target="_top">Documentazione di Moodle</a></font></p>
 <p align="CENTER"><font size="1">Version: $Id$</font></p>
