@@ -130,7 +130,7 @@ Markdownは、余分(不必要)な<code>&lt;p&gt;</code>タグをブロック要素の周囲に追加す
 
 
 <p>注意: Markdownフォーマットシンタックスはブロック要素の中では処理されません 
-例、あなたはMarkdown-style <code>*強調*</code> をHTMLブロックの中で使用できません。</p>
+例、あなたはMarkdownスタイル <code>*強調*</code> をHTMLブロックの中で使用できません。</p>
 
 <p>汎用的なインライン要素 - 例 <code>&lt;span&gt;</code>、<code>&lt;cite&gt;</code>、<code>&lt;del&gt;</code> - は、
 Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場合、Markdownフォーマットの
@@ -205,41 +205,21 @@ Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場
 (空白行は空白行に見えるあらゆる行を指します - スペースまたはタブを含んでいるに過ぎない行も空白行と見なされます。)
 標準的な段落はスペースやタブで区切られることはありません。</p>
 
-<p>The implication of the &#8220;one or more consecutive lines of text&#8221; rule is
+<p>「1つまたはそれ以上の連続したテキストの行」ルールは、Markdownが「ハードラップ」テキストの段落をサポートすることを意味します。
+これは他の殆どのtext-toHTMLフォーマッタ(Movable Typeの「改行の変換」オプションも含む)が段落内の全ての改行を <code>&lt;br /&gt;</code>タグに変換する
+のと極めて異なる部分です。
+</p>
 
-that Markdown supports &#8220;hard-wrapped&#8221; text paragraphs. This differs
+<p>あなたがMarkdownを使って<code>&lt;br /&gt;</code>タグを挿入<em>したい</em>場合は、行を1つまたはそれ以上のスペースで終わって、
+改行してください。</p>
 
-significantly from most other text-to-HTML formatters (including Movable
-
-Type&#8217;s &#8220;Convert Line Breaks&#8221; option) which translate every line break
-
-character in a paragraph into a <code>&lt;br /&gt;</code> tag.</p>
-
-
-
-<p>When you <em>do</em> want to insert a <code>&lt;br /&gt;</code> break tag using Markdown, you
-
-end a line with two or more spaces, then type return.</p>
-
-
-
-<p>Yes, this takes a tad more effort to create a <code>&lt;br /&gt;</code>, but a simplistic
-
-&#8220;every line break is a <code>&lt;br /&gt;</code>&#8221; rule wouldn&#8217;t work for Markdown.
-
-Markdown&#8217;s email-style <a href="#blockquote">blockquoting</a> and multi-paragraph <a href="#list">list items</a>
-
-work best &#8212; and look better &#8212; when you format them with hard breaks.</p>
-
-
+<p>そうです、<code>&lt;br /&gt;</code>を作成するには少しばかり努力が必要ですが、単純に「全ての改行は<code>&lt;br /&gt;</code>に変換」
+というルールはMarkdownでは働きません。Markdownのemailスタイル<a href="#blockquote">引用</a>と複数段落の<a href="#list">リストアイテム</a>は、
+ハードブレークのフォーマットを行う時に、最も良く動作し、見栄えが良くなります。</p>
 
 <h3 id="header">ヘッダ</h3>
 
-
-
 <p>Markdown supports two styles of headers, <a href="http://docutils.sourceforge.net/mirror/setext.html">Setext</a> and <a href="http://www.aaronsw.com/2002/atx/">atx</a>.</p>
-
-
 
 <p>Setext-style headers are &#8220;underlined&#8221; using equal signs (for first-level
 
