@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 alpha (2004081500)
+      // forum.php - created with Moodle 1.5 development (2004082300)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -18,14 +18,14 @@ $string['configmanydiscussions'] = 'フォーラムページに表示されるディスカッション
 $string['configmaxbytes'] = '全てのフォーラム添付ファイルに関するデフォルトの最大サイズ(コース制限及び他のローカル設定に従います)';
 $string['configreplytouser'] = 'フォーラムの投稿がメール送信される場合、受信者がフォーラムを通さずに個人的に返信できるように、メールにユーザメールアドレスを表示した方が良いですか?　\'Yes\'に設定した場合でも、ユーザはプロフィール内のメールアドレスを隠すことが出来ます。';
 $string['configshortpost'] = 'この文字長以下の長さ(HTMLは含まない)は短いと考えられます。';
-$string['couldnotadd'] = 'エラーのため投稿出来ませんでした';
-$string['couldnotdeleteratings'] = '申し訳ございません、評価済みのため削除出来ませんでした';
-$string['couldnotdeletereplies'] = '申し訳ございません、返信済みのため削除出来ませんでした';
-$string['couldnotupdate'] = '未確認エラーのため投稿を更新できませんでした';
+$string['couldnotadd'] = 'エラーのため投稿出来ませんでした。';
+$string['couldnotdeleteratings'] = '申し訳ございません、評価済みのため削除出来ませんでした。';
+$string['couldnotdeletereplies'] = '申し訳ございません、返信済みのため削除出来ませんでした。';
+$string['couldnotupdate'] = '未確認エラーのため投稿を更新できませんでした。';
 $string['delete'] = '削除';
-$string['deleteddiscussion'] = 'ディスカッショントピックが削除されました';
-$string['deletedpost'] = '投稿が削除されました';
-$string['deletesure'] = 'この投稿を削除してもよろしいですか?';
+$string['deleteddiscussion'] = 'ディスカッショントピックが削除されました。';
+$string['deletedpost'] = '投稿が削除されました。';
+$string['deletesure'] = 'この投稿を削除しても宜しいですか?';
 $string['digestmailheader'] = 'これは、 $a->sitename フォーラムに投稿された内容のデイリーダイジェストです。メールアドレスを変更する場合は、 $a->userprefs にて設定してください。 ';
 $string['digestmailprefs'] = 'ユーザプロフィール';
 $string['digestmailsubject'] = '$a: フォーラムダイジェスト';
@@ -74,13 +74,13 @@ $string['namenews'] = 'ニュースフォーラム';
 $string['namesocial'] = '一般フォーラム';
 $string['nameteacher'] = '教師用フォーラム';
 $string['newforumposts'] = '新規投稿';
-$string['nodiscussions'] = 'トピックはありません';
-$string['noguestpost'] = '申し訳ございません、ゲストは投稿できません';
-$string['nomorepostscontaining'] = 'これ以上 \'$a\'  を含んだ投稿はありません';
-$string['nonews'] = '新しいニュースはありません';
-$string['noposts'] = '投稿がありません';
-$string['nopostscontaining'] = ' $a が含まれる投稿は見つかりませんでした';
-$string['nosubscribers'] = 'このフォーラムには登録者はいません';
+$string['nodiscussions'] = 'トピックはありません。';
+$string['noguestpost'] = '申し訳ございません、ゲストは投稿できません。';
+$string['nomorepostscontaining'] = 'これ以上 \'$a\'  を含んだ投稿はありません。';
+$string['nonews'] = '新しいニュースはありません。';
+$string['noposts'] = '投稿がありません。';
+$string['nopostscontaining'] = ' $a が含まれる投稿は見つかりませんでした。';
+$string['nosubscribers'] = 'このフォーラムには登録者はいません。';
 $string['notingroup'] = '申し訳ございません。グループ以外の方はこのフォーラムを閲覧できません。';
 $string['nownotsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事はメール送信されません。';
 $string['nowsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事がメール送信されます。';
@@ -99,7 +99,7 @@ $string['postrating2'] = '分離認識と関連認識を同等に持っている';
 $string['postrating3'] = '主に関連認識の傾向がある';
 $string['posts'] = '投稿';
 $string['posttoforum'] = 'フォーラムに投稿';
-$string['postupdated'] = '投稿が更新されました';
+$string['postupdated'] = '投稿が更新されました。';
 $string['potentialsubscribers'] = '潜在的登録ユーザ';
 $string['processingdigest'] = '$a のメールダイジェストを処理中';
 $string['processingpost'] = '投稿 $a を処理中';
@@ -146,7 +146,7 @@ $string['subscribestop'] = 'フォーラムの投稿記事をメール送信しない';
 $string['subscription'] = '登録';
 $string['subscriptions'] = '登録';
 $string['unsubscribe'] = 'メール通知解除';
-$string['unsubscribed'] = 'メール通知を解除しました';
+$string['unsubscribed'] = 'メール通知を解除しました。';
 $string['unsubscribeshort'] = 'メール通知解除';
 $string['youratedthis'] = 'あなたの評価';
 $string['yournewtopic'] = '新規トピック';

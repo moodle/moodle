@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // auth.php - created with Moodle 1.5 development (2004082300)
 
 
 $string['auth_dbdescription'] = '¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤ò³ÎÇ§¤¹¤ë¤¿¤á¤Ë³°Éô¤Î¥Ç¡¼¥¿¥Ù¡¼¥¹¤ò»ÈÍÑ¤·¤Þ¤¹¡£¿·¤·¤¤¥¢¥«¥¦¥ó¥È¤òºîÀ®¤¹¤ë¾ì¹ç¡¢Â¾¤Î¥Õ¥£¡¼¥ë¥É¤Î¾ðÊó¤¬Moodle¤ØÊ£À½¤µ¤ì¤Þ¤¹¡£';
@@ -21,7 +21,7 @@ $string['auth_fcdescription'] = '¤³¤³¤Ç¤Ï¡¢¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤¬Àµ¤·¤¤¤«ÈÝ¤«¤ò¥
 $string['auth_fcfppport'] = '¥µ¡¼¥Ð¥Ý¡¼¥È(3333¤¬ºÇ¤â°ìÈÌÅª)';
 $string['auth_fchost'] = 'FirstClass¥µ¡¼¥Ð¥¢¥É¥ì¥¹¡£IP¥¢¥É¥ì¥¹Ëô¤ÏDNSÌ¾¤ò»ÈÍÑ¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['auth_fcpasswd'] = '¾åµ­¥¢¥«¥¦¥ó¥È¤Î¥Ñ¥¹¥ï¡¼¥É¡£';
-$string['auth_fctitle'] = 'FirstClass¥µ¡¼¥Ð¤ò»ÈÍÑ¤¹¤ë¡£';
+$string['auth_fctitle'] = 'FirstClass¥µ¡¼¥Ð¤ò»ÈÍÑ';
 $string['auth_fcuserid'] = '¸¢¸Â¡ÖSubadministrator¡×¤ò»ý¤Ã¤¿FirstClass¥¢¥«¥¦¥ó¥È¤Î¥æ¡¼¥¶ID¡£';
 $string['auth_imapdescription'] = '¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤ò³ÎÇ§¤¹¤ë¤¿¤á¤ËIMAP¥µ¡¼¥Ð¤ò»ÈÍÑ¤·¤Þ¤¹¡£';
 $string['auth_imaphost'] = 'IMAP¥µ¡¼¥Ð¡¼¥¢¥É¥ì¥¹¤Ç¤¹¡£IP¥¢¥É¥ì¥¹¤Ç¤Ï¤Ê¤¯¥É¥á¥¤¥óÌ¾¤ò»ÈÍÑ¤·¤Æ¤¯¤À¤µ¤¤¡£';

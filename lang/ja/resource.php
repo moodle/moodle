@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 alpha (2004081500)
+      // resource.php - created with Moodle 1.5 development (2004082300)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -29,33 +29,33 @@ $string['fetcherror'] = 'ウェブページを検索している時、エラーが発生しました。';
 $string['fetchservererror'] = 'ウェブページを検索している時、リモートサーバにエラーが発生しました。プログラムエラーだと思われます。';
 $string['filename'] = 'ファイル名';
 $string['filtername'] = 'リソースオートリンク';
-$string['frameifpossible'] = 'サイトナビゲーションを表示する為に、フレーム内にリソースを入れてください。';
+$string['frameifpossible'] = 'ナビゲーションを表示する為、リソースをフレーム内に表示';
 $string['fulltext'] = 'フルテキスト';
 $string['htmlfragment'] = 'HTMLフラグメント';
 $string['maindirectory'] = 'メインファイルディレクトリ';
 $string['modulename'] = 'リソース';
 $string['modulenameplural'] = 'リソース';
 $string['neverseen'] = '未確認';
-$string['newdirectories'] = 'ディレクトリリンクを表示する';
+$string['newdirectories'] = 'ディレクトリリンクを表示';
 $string['newfullscreen'] = '全画面表示';
 $string['newheight'] = 'デフォルトウンドウ高(ピクセル)';
-$string['newlocation'] = 'ロケーションバーを表示する';
-$string['newmenubar'] = 'メニューバーを表示する';
-$string['newresizable'] = 'ウインドウのリサイズを許可する';
-$string['newscrollbars'] = 'ウインドウのスクロールを許可する';
-$string['newstatus'] = 'ステータスバーを表示する';
-$string['newtoolbar'] = 'ツールバーを表示する';
+$string['newlocation'] = 'ロケーションバーを表示';
+$string['newmenubar'] = 'メニューバーを表示';
+$string['newresizable'] = 'ウインドウのリサイズを許可';
+$string['newscrollbars'] = 'ウインドウのスクロールを許可';
+$string['newstatus'] = 'ステータスバーを表示';
+$string['newtoolbar'] = 'ツールバーを表示';
 $string['newwidth'] = 'デフォルトウンドウ幅(ピクセル)';
 $string['newwindow'] = '新しいウインドウ';
-$string['newwindowopen'] = 'ポップアップウインドウにこのリソースを表示する';
-$string['note'] = 'ノート';
+$string['newwindowopen'] = 'ポップアップウインドウにリソースを表示';
+$string['note'] = '注意';
 $string['notefile'] = '更にファイルをアップロード(このリストに表示されます)する場合、<A HREF=$a >File Manager</A> を利用してください。';
 $string['notypechosen'] = 'タイプを選択してください。「戻る」ボタンを押して再度入力してください。';
-$string['pagedisplay'] = 'リソースを現在のウインドウに表示する';
-$string['pagewindow'] = '同じウインドウ';
+$string['pagedisplay'] = 'リソースを現在のウインドウに表示';
+$string['pagewindow'] = '同一ウインドウ';
 $string['parameter'] = 'パラメータ';
 $string['parameters'] = 'パラメータ';
-$string['popupresource'] = 'このリソースをポップアップウインドウに表示させる。';
+$string['popupresource'] = 'リソースをポップアップウインドウに表示';
 $string['popupresourcelink'] = 'ウインドウが表示されない場合はここをクリック： $a';
 $string['resourcetype'] = 'リソースのタイプ';
 $string['resourcetype1'] = '参照';
