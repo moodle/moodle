@@ -52,16 +52,19 @@ scheduler.php
 scorm.php
 wiki.php
 
-La traducció dels mòduls següents no ha estat assignada a ningú. Entre 
-parèntesis figura el percentatge de missatges i d'ajudes traduïdes 
-actualment: 
+Dels mòduls següents, se n'han fet càrrec diversos membres de la comunitat
+"Moodle en català":
 
-attendance.php (0% help 0%)
-exercise.php (0% help 0%)
+attendance.php (Àngels Mustienes)
+exercise.php (Àngels Mustienes)
+hotpot.php (Àngels Mustienes)
+questionnaire.php (Àngels Mustienes)
+lesson.php (Joan Queralt)
+
+Finalment, aquests no han estat assignats encara a ningú. Entre parèntesis 
+figura el percentatge de missatges i de fitxers d'ajuda traduïts actualment: 
+
 glossary.php (100% help 96%)
-hotpot.php (0% help 0%)
-lesson.php (36% help 0%)
-questionnaire.php (0% help 0%)
 quiz.php (77% help 72%)
 survey.php (83% help 100%)
 workshop.php (84% help 74%)
