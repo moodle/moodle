@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004081200)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['addcomment'] = 'ÃÖİ ÊÚáíŞ';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'ÌãíÚ ÇáİÆÇÊ';
 $string['allentries'] = 'Çáßá';
 $string['allowcomments'] = 'ÇáÓãÇÍ ááÊÚáíŞÇÊ Úáì ãÕØáÇÍÇÊ';
 $string['allowduplicatedentries'] = 'ÊßÑÇÑ ãÕØáÇÍÇÊ ãÓãæÍ';
+$string['allowprintview'] = 'ÇáÓãÇÍ ÈÚÑÖ ØÈÇÚÉ';
 $string['allowratings'] = 'ÇáÓãÇÍ ÈÊÕäíİ ãÕØáÇÍÇÊ¿';
 $string['answer'] = 'ÃÌÈ';
 $string['approve'] = 'ÊÕÏíŞ Úáì';
@@ -84,6 +85,8 @@ $string['entrydeleted'] = 'Êã ÍĞİ ÇáãÕØáÍ';
 $string['entryexported'] = 'Êã ÊÕÏíÑ ÇáãÕØáÍ ÈäÌÇÍ';
 $string['entryishidden'] = '(åĞÇ ÇáãÕØáÍ ãÎİíÉ ÍÇáíÇğ)';
 $string['entryleveldefaultsettings'] = 'ÇÅÚÏÇÏ ÇáÅİÊÑÇÖí ááãÕØáÍ';
+$string['entrysaved'] = 'Êã ÍİÙ åĞÇ ÇáãÕØáÍ';
+$string['entryupdated'] = 'Êã ÊÍÏíË åĞÇ ÇáãÕØáÍ';
 $string['entryusedynalink'] = 'íÌÈ ÑÈØ åĞÇ ÇáãÕØáÍ ÂáíÇ';
 $string['explainaddentry'] = 'ÃÖİ ãÕØáÍ ÌÏíÏÉ Åáì ÇáãÓÑÏ ÇáÍÇáí.<br> ÊÚÈÆÉ ÍŞáí Çáãİåæã æ ÇáÊÚÑíİ ÅÌÈÇÑí';
 $string['explainall'] = 'ÃÚÑÖ ÌãíÚ ÇáãÕØáÇÍÇÊ İí ÕİÍÉ æÇÍÏÉ';
@@ -127,6 +130,7 @@ $string['notcategorised'] = 'áã íÊã ÑÈØåÇ ÈİÆÉ';
 $string['numberofentries'] = 'ÚÏÏ ÇáãÕØáÇÍÇÊ';
 $string['onebyline'] = '(æÇÍÏÉ İí ÇáÓØÑ)';
 $string['printerfriendly'] = 'äÓÎÉ ØÈÇÚÉ';
+$string['printviewnotallowed'] = 'ãÚÇíäÉ ÇáØÈÇÚÉ ÛíÑ ãÊÇÍÉ';
 $string['question'] = 'ÓÄÇá';
 $string['rate'] = 'Õäİ';
 $string['rating'] = 'ÊÕäíİ';

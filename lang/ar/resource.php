@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004081200)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['addresource'] = 'ÃÖÝ ãæÑÏ';
@@ -20,6 +20,7 @@ $string['configpopupwidth'] = 'ãÇ åæ ÇáÚÑÖ ÇáÇÝÊÑÇÖí ááäæÇÝÐ ÇáÌÏíÏÉ¿';
 $string['configwebsearch'] = 'ÚäÏ ÅÖÇÝÉ URL Úáì åíÆÉ ÕÝÍÉ Ãæ ÑÇÈØ¡ ÓíÞÏã åÐÇ ÇáãæÞÚ ßãÓÇÚÏÉ ÇáãÓÊÎÏãíä ÇËäÇÁ ÞíÇãåã ÈÇáÈÍË Úä ÇáÑæÇÈØ ÇáÊÔÚÈíÉ ÇáÊí íÑíÏæäåÇ.';
 $string['directlink'] = 'ÑÈØ ãÈÇÔÑ áåÐÇ ÇáãáÝ';
 $string['directoryinfo'] = 'ÓíÊã ÅÖåÇÑ ßá ãáÝ ÇáãÌáÏ ÇáãÎÊÇÑÉ';
+$string['display'] = 'äÇÝÐÉ';
 $string['editingaresource'] = 'ÊÍÑíÑ ãæÑÏ';
 $string['encryptedcode'] = 'ÑãÒ ãÔÝÑ';
 $string['example'] = 'ãËÇá';
@@ -56,11 +57,21 @@ $string['pagewindow'] = 'äÝÓ ÇáäÇÝÐå';
 $string['popupresource'] = 'áÇ ÈÏ Çä íÙåÑ åÐÇ ÇáãæÑÏ Ýí äÇÝÐå ãÓÊÞáå';
 $string['popupresourcelink'] = 'áæ áã ÊÚãá¡ ÃäÞÑ åäÇÁ: $a';
 $string['resourcetype'] = 'äæÚ ÇáãæÑÏ';
+$string['resourcetype1'] = 'ãÑÌÚ';
+$string['resourcetype2'] = 'ÕÝÍÉ ÇäÊÑäÊ';
+$string['resourcetype3'] = 'ÊÍãíá ãáÝ';
+$string['resourcetype4'] = 'äÕ';
+$string['resourcetype5'] = 'ÑÇÈØ ÇäÊÑäÊ';
+$string['resourcetype6'] = 'äÕ ÃÊÔ Êí Ãã Åá';
+$string['resourcetype7'] = 'ÈÑäÇãÌ';
+$string['resourcetype8'] = 'äÕ ãÔÇÈÉ áæíßí';
+$string['resourcetype9'] = 'ãÌáÏ';
 $string['resourcetypedirectory'] = 'ÇÚÑÖ ÇáãÌáÏ';
 $string['resourcetypefile'] = 'ÇÑÈØ ÈãáÝ Ãæ ãæÞÚ';
 $string['resourcetypehtml'] = 'ÃÚÏ ÕÝÍÉ æíÈ';
 $string['resourcetypelabel'] = 'ÇÏÑÌ ãáÕÞÉ';
 $string['resourcetypetext'] = 'ÇÚÏ ÕÝÍÉ äÕíÉ';
 $string['searchweb'] = 'ÇÈÍË Úä ÕÝÍÉ æíÈ';
+$string['variablename'] = 'ÇÓã ÇáãÊÛíÑÇÊ';
 
 ?>

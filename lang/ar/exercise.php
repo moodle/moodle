@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 development (2004081200)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['absent'] = 'ÛÇÆÈ';
@@ -41,6 +41,7 @@ $string['edit'] = 'ÊÍÑíÑ';
 $string['editingassessmentelements'] = 'ÍÑÑ ÚäÇÕÑ ÇáÊŞííã';
 $string['element'] = 'ÚäÕÑ';
 $string['elementweight'] = 'æÒä ÇáÚäÕÑ';
+$string['enterpassword'] = 'ÃÏÎá ßáãÉ ÇáãÑæÑ';
 $string['entriessaved'] = 'Êã ÍİÙ ÇáãæÇÏ';
 $string['errorbanded'] = 'ÊæÍíÏ ÇáÎØÇÁ';
 $string['excellent'] = 'ããÊÇÒ';
@@ -68,9 +69,12 @@ $string['mail3'] = 'ÊÓØíÚ ãÔÇåÏÊåÇ İí ÊãÑíä ãåãÊß';
 $string['mail6'] = 'Êã ãÑÇÌÚÉ ÊŞííã ãåãÊß \'$a\' ÈæÇÓØÉ';
 $string['mail7'] = 'ÇáÊÚáíŞÇÊ ÇáãŞÏãÉ ÈæÇÓØÉ $a íãßä ãÔÇåÏÊåÇİí ÊãÑíä ÇáãåãÉ';
 $string['managingassignment'] = 'ÅÏÇÑÉ ÇáÊãÑíä';
+$string['maximum'] = 'ÇáÇŞÕì';
 $string['maximumgradeforstudentassessments'] = 'ÇáÏÑÌÉ ÇáŞÕæí áÊŞííãÇÊ ÇáØÇáÈ: $a';
 $string['maximumgradeforsubmissions'] = 'ÇáÏÑÌÉ ÇáŞÕæí ááÊÓáíãÇÊ: $a';
 $string['maximumsize'] = 'ÇáÍÌã ÇáÇŞÕì';
+$string['mean'] = 'ãÊæÓØ';
+$string['minimum'] = 'ÇáÇÏäì';
 $string['modulename'] = 'ÊãÑíä';
 $string['modulenameplural'] = 'ÊãÇÑíä';
 $string['movingtophase'] = 'ÃäŞá Åáì ãÑÍáÉ  $a';
@@ -94,6 +98,7 @@ $string['numberofnegativeresponses'] = 'ÚÏÏ ÇáÇÌÇÈÇÊ ÇáÓáÈíÉ';
 $string['onesubmission'] = 'ÊÓáíã æÇÍÏ';
 $string['optionaladjustment'] = 'ÊÚÏíá ÇÎÊíÇÑí';
 $string['overallgrade'] = 'ÇáÏÑÌÉ ÇáÚÇãÉ';
+$string['passwordprotectedexercise'] = 'ÇáÊãÑíä ãÍãí ÈßáãÉ ãÑæÑ';
 $string['phase'] = 'ãÑÍáå';
 $string['phase1'] = 'ÃÚÏ ÇáÊãÑíä';
 $string['phase1short'] = 'ÃÚÏ';
@@ -153,6 +158,7 @@ $string['typeofscale'] = 'äæÚ ÇáŞíÇÓ';
 $string['ungradedstudentassessments'] = ' $a áã íÊã ÑÕÏ ÏÑÌÇÊ áÊŞííãÇÊ ÇáØÇáÈ';
 $string['usemaximum'] = 'ÇÓÊÎÏã ÇáÇŞÕì';
 $string['usemean'] = 'ÇÓÊÎÏã ÇáãÊæÓØ';
+$string['usepassword'] = 'ÇÓÊÎÏã ßáãÉ ãÑæÑ';
 $string['verypoor'] = 'ÖÚíİ ÌÏÇ';
 $string['view'] = 'ÚÑÖ';
 $string['warningonamendingelements'] = 'ÊÍĞíÑ: áŞÏ Êã ÊÓáÈã ÚÏÏ ãä ÇáÊŞííãÇÊ. <br /> áÇ ÊŞã ÈÊÛíÑ ÚÏÏ ÇáÚäÇÕÑ¡ ÃäæÇÚ ÇáãŞÇííÓ¡ Ãæ ÃæÒÇä ÇáÚäÕÑ.';
@@ -162,6 +168,7 @@ $string['weightforteacherassessments'] = 'æÒä áÜ  $a ÇáÊŞííãÇÊ';
 $string['weights'] = 'ÇæÒÇä';
 $string['weightssaved'] = 'Êã ÍİÙ ÇáÇæÒÇä';
 $string['weightsusedforoverallgrade'] = 'ÇáÃæÒÇä ÇáãÓÊÎÏãÉ ááÏÑÌÉ ÇáÇÌãÇáíÉ';
+$string['wrongpassword'] = 'ßáãÉ ÇáãÑæÑ áåĞÇ ÇáÊãÑíä ÛíÑ ÕÍíÍíÉ';
 $string['yourassessment'] = 'ÊŞííãß';
 $string['yourfeedbackgoeshere'] = 'ÊÚáíŞß íæÖÚ åäÇÁ';
 $string['yoursubmission'] = 'ÊÓáíãß';
