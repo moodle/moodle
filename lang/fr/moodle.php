@@ -113,6 +113,7 @@ $string['choosetheme'] = 'Choisir un thème';
 $string['chooseuser'] = 'Choisir un utilisateur';
 $string['city'] = 'Ville';
 $string['cleaningtempdata'] = 'Suppression des données temporaires';
+$string['clicktochange'] = 'Cliquer pour changer';
 $string['closewindow'] = 'Fermer cette fenêtre';
 $string['comparelanguage'] = 'Comparer et éditer la langue active';
 $string['complete'] = 'Complet';
@@ -180,9 +181,10 @@ $string['create'] = 'Créer';
 $string['createaccount'] = 'Créer mon compte';
 $string['createfolder'] = 'Créer un dossier dans $a';
 $string['createuserandpass'] = 'Créer un nouveau compte pour vous connecter';
-$string['createziparchive'] = 'Créer une archive compactŽe zip';
+$string['createziparchive'] = 'Créer une archive compactée zip';
 $string['creatingcategoriesandquestions'] = 'Création des catégories et des questions';
 $string['creatingcoursemodules'] = 'Création des modules de cours';
+$string['creatinggroups'] = 'Création des groupes';
 $string['creatinglogentries'] = 'Création des entrées du journal';
 $string['creatingnewcourse'] = 'Création d\'un nouveau cours';
 $string['creatingscales'] = 'Création des barèmes';
@@ -251,32 +253,19 @@ $string['emailagain'] = 'Courriel (confirmation)';
 $string['emailconfirm'] = 'Confirmer votre enregistrement';
 $string['emailconfirmation'] = '$a->firstname,
 
-
-
 La création d\'un compte sur le site « $a->sitename » a été demandée en utilisant votre adresse de courriel.
-
-
 
 Pour confirmer votre enregistrement, merci de visiter l\'adresse suivante :
 
-
-
 $a->link
-
-
 
 Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître comme un lien de couleur bleue qu\'il vous suffit de cliquer.
 
-
-
 Si cela ne fonctionne pas, copiez et collez ce lien dans la barre d\'adresse de votre navigateur Web.
-
-
 
 Cordialement,
 
 --
-
 $a->admin
 
 Administrateur du site « $a->sitename »';
@@ -295,32 +284,19 @@ $string['emailformat'] = 'Format des courriels';
 $string['emailmustbereal'] = 'Remarque: votre adresse de courriel doit être valide';
 $string['emailpasswordconfirmation'] = 'Bonjour,
 
-
-
 Quelqu\'un (vous probablement) a demandé un nouveau mot de passe pour votre compte sur « $a->sitename ».
-
-
 
 Pour confirmer cette demande et recevoir votre nouveau mot de passe par courriel, visitez l\'adresse suivante :
 
-
-
 $a->link
-
-
 
 Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître comme un lien de couleur bleue qu\'il vous suffit de cliquer.
 
-
-
 Si cela ne fonctionne pas, copiez et collez ce lien dans la barre d\'adresse de votre navigateur Web.
-
-
 
 Cordialement,
 
 --
-
 $a->admin
 
 Administrateur du site « $a->sitename »';
@@ -395,8 +371,6 @@ $string['gdneed'] = 'GD doit être installé pour visualiser ce graphique';
 $string['gdnot'] = 'GD n\'est pas installé';
 $string['gpl'] = 'Copyright (C) 2001-2003 Martin Dougiamas (http://dougiamas.com)
 
-
-
 This program is free software; you can redistribute it and/or modify
 
 it under the terms of the GNU General Public License as published by
@@ -405,8 +379,6 @@ the Free Software Foundation; either version 2 of the License, or
 
 (at your option) any later version.
 
-
-
 This program is distributed in the hope that it will be useful,
 
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -414,8 +386,6 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 
 GNU General Public License for more details:
-
-
 
 http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Niveau';
@@ -480,6 +450,7 @@ $string['includelogentries'] = 'Inclure les journaux d\'événements';
 $string['includemodules'] = 'Inclure les modules';
 $string['includeneededusers'] = 'Inclure les utilisateurs s\'il y a lieu';
 $string['includeuserfiles'] = 'Inclure les fichiers des utilisateurs';
+$string['institution'] = 'Institution';
 $string['invalidemail'] = 'Adresse de courriel incorrecte';
 $string['invalidlogin'] = 'La connexion a échoué, merci d\'essayer de nouveau';
 $string['jumpto'] = 'Aller à...';
@@ -513,11 +484,7 @@ $string['loginsteps'] = 'Bonjour. Pour un accès complet aux cours, prenez une mi
 
 Chaque cours peut également nécessiter une clef d\'inscription à usage unique dont vous n\'avez pas besoin pour l\'instant.<BR>
 
-
-
 Voici les étapes à suivre :
-
-
 
    <OL size=2>
 
@@ -616,42 +583,25 @@ $string['newcourse'] = 'Nouveau cours';
 $string['newpassword'] = 'Nouveau mot de passe';
 $string['newpasswordtext'] = 'Bonjour $a->firstname,
 
-
-
 Le mot de passe de votre compte sur « $a->sitename  » a été remplacé par un nouveau mot de passe temporaire.
 
-
-
 Les informations pour vous connecter sont désormais :
-
-
 
 nom d\'utilisateur : $a->username
 
 mot de passe : $a->newpassword
 
-
-
 Merci de visiter cette page afin de changer de mot de passe :
-
-
 
 $a->link
 
-
-
 Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître comme un lien de couleur bleue qu\'il vous suffit de cliquer.
 
-
-
 Si cela ne fonctionne pas, copiez et collez ce lien dans la barre d\'adresse de votre navigateur Web.
-
-
 
 Cordialement,
 
 -- 
-
 $a->admin
 
 Administrateur du site « $a->sitename »';
@@ -927,11 +877,7 @@ $string['weekshow'] = 'Afficher cette semaine pour $a';
 $string['welcometocourse'] = 'Bienvenue sur $a';
 $string['welcometocoursetext'] = 'Bienvenue au cours $a->coursename !
 
-
-
 Pour commencer, veuillez modifier votre profil dans ce cours afin que nous nous connaissions un peu mieux :
-
-
 
 $a->profileurl';
 $string['whattocallzip'] = 'Quel nom voulez-vous donner au fichier compacté (zip) ?';

@@ -6,6 +6,7 @@ $string['choicename'] = 'Nom du sondage';
 $string['choicetext'] = 'Texte de la question';
 $string['modulename'] = 'Sondage';
 $string['modulenameplural'] = 'Sondages';
+$string['mustchooseone'] = 'Vous devez sélectionner une réponse avant d\'enregistrer. L\'enregistrement n\'a pas eu lieu.';
 $string['notanswered'] = 'Pas encore répondu';
 $string['publish'] = 'Publication des résultats';
 $string['publishanonymous'] = 'Publier les résultats anonymement, sans afficher le nom des étudiants';

@@ -85,8 +85,6 @@ $string['postadded'] = 'Votre message a été enregistré.<p>Il vous est possible d
 $string['postincontext'] = 'Voir ce message dans son contexte';
 $string['postmailinfo'] = 'Ceci est une copie du message posté sur le site $a.
 
-
-
 Pour ajouter une réponse sur le site, cliquer sur ce lien:';
 $string['postrating1'] = 'Globalement non pertinent';
 $string['postrating2'] = 'Moyennement intéressant';
@@ -111,6 +109,7 @@ $string['replies'] = 'Réponses';
 $string['repliesmany'] = '$a réponses';
 $string['repliesone'] = '$a réponse';
 $string['reply'] = 'Répondre';
+$string['replyforum'] = 'Répondre au forum';
 $string['search'] = 'Rechercher';
 $string['searchforums'] = 'Rechercher dans les forums';
 $string['searcholderposts'] = 'Rechercher les anciens messages...';

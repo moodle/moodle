@@ -35,6 +35,7 @@ $string['auth_ldapextrafields'] = 'Ces zones sont facultatives. Il vous est poss
 $string['auth_ldaptitle'] = 'Utiliser un serveur LDAP';
 $string['auth_manualdescription'] = 'Cette méthode supprime pour les utilisateurs le droit de créer eux-mêmes leur compte. Tous les comptes doivent être créés par l\'administrateur.';
 $string['auth_manualtitle'] = 'Création manuelle de comptes';
+$string['auth_multiplehosts'] = 'Vous pouvez indiquer ici plusieurs hôtes SMTP (par exemple host1.com;host2.com;host3.com)';
 $string['auth_nntpdescription'] = 'Cette méthode utilise un serveur NNTP pour vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides.';
 $string['auth_nntphost'] = 'L\'adresse du serveur NNTP. Utiliser l\'adresse IP et non le nom de la machine.';
 $string['auth_nntpport'] = 'Numéro de port du serveur NNTP. Il s\'agit généralement de 119.';
