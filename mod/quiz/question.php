@@ -44,7 +44,7 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id)) {
+    if (!isteacheredit($course->id)) {
         error("You can't modify these questions!");
     }
 
