@@ -1637,8 +1637,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         $path .= 'index';
     }
     if (empty($path)) {
-        $pageid    = 'index';
-        $pageclass = 'course-view';
+        $pageid    = 'course-view';
+        $pageclass = 'index';
     } else {
         $pageid    = str_replace('/', '-', $path);
         $pageclass = explode('-', $pageid);
