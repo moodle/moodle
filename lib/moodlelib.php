@@ -960,7 +960,7 @@ function get_course_teachers($courseid, $sort="t.authority ASC") {
                             ORDER BY $sort");
 }
 
-function get_course_participants($courseid, $sort="u.lastaccess DESC") {
+function get_course_users($courseid, $sort="u.lastaccess DESC") {
     return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
                             WHERE (s.course = '$courseid' AND s.user = u.id) OR 
                                   (t.course = '$courseid' AND t.user = u.id)
