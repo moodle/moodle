@@ -399,42 +399,8 @@
 
                 $file = basename($file);
 
-                if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
-                    include_once("$CFG->libdir/pclzip/pclzip.lib.php");
-                    $archive = new PclZip(cleardoubleslashes("$basedir/$wdir/$file"));
-                    if (!$list = $archive->extract(PCLZIP_OPT_PATH, cleardoubleslashes("$basedir/$wdir"),
-                                                   PCLZIP_CB_PRE_EXTRACT, 'approvefile')) {
-                        error($archive->errorInfo(true));
-                    } else {  // print some output
-                        echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=\"640\">";
-                        echo "<tr><th align=\"left\">$strname</th>";
-                        echo "<th align=\"right\">$strsize</th>";
-                        echo "<th align=\"right\">$strmodified</th>";
-                        echo "<th align=\"right\">$strstatus</th></tr>";
-                        foreach ($list as $item) {
-                            echo "<tr>";
-                            $item['filename'] = str_replace(cleardoubleslashes("$basedir/$wdir/"), "", $item['filename']);
-                            print_cell("left", $item['filename']);
-                            if (! $item['folder']) {
-                                print_cell("right", display_size($item['size']));
-                            } else {
-                                echo "<td>&nbsp;</td>";
-                            }
-                            $filedate  = userdate($item['mtime'], get_string("strftimedatetime"));
-                            print_cell("right", $filedate);
-                            print_cell("right", $item['status']);
-                            echo "</tr>";
-                        }
-                        echo "</table>";
-                    }
-                    
-                } else {                     // Use external unzip program
-                    print_simple_box_start("center");
-                    echo "<pre>";
-                    $command = "cd $basedir/$wdir ; $CFG->unzip -o $file 2>&1";
-                    passthru($command);
-                    echo "</pre>";
-                    print_simple_box_end();
+                if (!unzip_file("$basedir/$wdir/$file")) {
+                    error(get_string("unzipfileserror","error"));
                 }
 
                 echo "<center><form action=\"index.php\" method=\"get\">";
