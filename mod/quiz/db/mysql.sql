@@ -259,7 +259,7 @@ CREATE TABLE `prefix_quiz_multianswers` (
   `norm` int(10) unsigned NOT NULL default '1',
   PRIMARY KEY  (`id`),
   KEY `question` (`question`)
-) TYPE=MyISAM COMMENT='Options for multianswer questions'
+) TYPE=MyISAM COMMENT='Options for multianswer questions';
 # --------------------------------------------------------
 
 INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
