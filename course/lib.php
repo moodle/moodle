@@ -867,7 +867,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
 
     if (!isset($isteacher)) {
-        $groupbuttons     = $course->groupmode;
+        $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
         $groupbuttonslink = (!$course->groupmodeforce);
         $isteacher = isteacher($course->id);
         $isediting = isediting($course->id);
