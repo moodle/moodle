@@ -165,7 +165,6 @@
               if(!$confirm && $form->pagestostrip) {
                 $err=array();
                 $strippages=wiki_admin_strip_versions($form->pagestostrip,$form->version, $err);
-                
                 $confirm="";
                 foreach($strippages as $cnfid => $cnfver) {
                   $confirm.="&confirm[$cnfid]=".urlencode(join(" ",$cnfver));
