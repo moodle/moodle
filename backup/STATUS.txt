@@ -5,7 +5,7 @@ This documment shows the current status of the backup/restore option.
 
 Backup:  WORKING. COMPLETED except workshops.
 
-Restore: WORKING. COMPLETED except workshops, logs and scales.
+Restore: WORKING. COMPLETED except workshops and logs.
                   
 
 ========== ========== ========== ========== ========== ==========
