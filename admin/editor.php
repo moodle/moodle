@@ -10,8 +10,16 @@
 
     if($data = data_submitted()) {
 
-        if(!(editor_update_config($data))) {
-            error("Editor settings could not be updated!");
+        // do we want default values?
+        if(isset($data->resettodefaults)) {
+            if(!(reset_to_defaults())) {
+                error("Editor settings could not be restored!");
+            }
+        } else {
+
+            if(!(editor_update_config($data))) {
+                error("Editor settings could not be updated!");
+            }
         }
         redirect("$CFG->wwwroot/$CFG->admin/editor.php", get_string("changessaved"), 1);
 
@@ -65,11 +73,21 @@ function editor_update_config ($data) {
         return false;
     }
 
+    // Make array for unwanted characters.
+    $nochars = array(chr(33),chr(34),chr(35),chr(36),chr(37),
+                     chr(38),chr(39),chr(40),chr(41),chr(42),
+                     chr(43),chr(46),chr(47),chr(58),chr(59),
+                     chr(60),chr(61),chr(62),chr(63),chr(64),
+                     chr(91),chr(92),chr(93),chr(94),chr(95),
+                     chr(96),chr(123),chr(124),chr(125),chr(126));
+
+    $fontlist = '';
+
     // make font string
     for($i = 0; $i < count($data->fontname); $i++) {
         if(!empty($data->fontname[$i])) {
-            $fontlist .= $data->fontname[$i] .":";
-            $fontlist .= $data->fontnamevalue[$i] .";";
+            $fontlist .= str_replace($nochars, "", $data->fontname[$i]) .":";
+            $fontlist .= str_replace($nochars, "", $data->fontnamevalue[$i]) .";";
         }
     }
     // strip last semicolon
@@ -77,11 +95,11 @@ function editor_update_config ($data) {
 
     // make array of values to update
     $updatedata = array();
-    $updatedata['editorbackgroundcolor'] = $data->backgroundcolor;
-    $updatedata['editorfontfamily'] = $data->fontfamily;
-    $updatedata['editorfontsize'] = $data->fontsize;
-    $updatedata['editorkillword'] = $data->killword;
-    $updatedata['editorspelling'] = $data->spelling;
+    $updatedata['editorbackgroundcolor'] = !empty($data->backgroundcolor) ? $data->backgroundcolor : "#ffffff";
+    $updatedata['editorfontfamily'] = !empty($data->fontfamily) ? str_replace($nochars,"",$data->fontfamily) : "Times New Roman, Times";
+    $updatedata['editorfontsize'] = !empty($data->fontsize) ? $data->fontsize : "";
+    $updatedata['editorkillword'] = !empty($data->killword) ? $data->killword : "true";
+    $updatedata['editorspelling'] = !empty($data->spelling) ? $data->spelling : 0;
     $updatedata['editorfontlist'] = $fontlist;
 
     foreach($updatedata as $name => $value) {
@@ -90,6 +108,27 @@ function editor_update_config ($data) {
         }
     }
 
+    return true;
+}
+
+function reset_to_defaults () {
+    global $CFG;
+    include_once($CFG->dirroot .'/lib/defaults.php');
+
+    $updatedata = array();
+
+    $updatedata['editorbackgroundcolor'] = $defaults['editorbackgroundcolor'];
+    $updatedata['editorfontfamily'] = $defaults['editorfontfamily'];
+    $updatedata['editorfontsize'] = $defaults['editorfontsize'];
+    $updatedata['editorkillword'] = $defaults['editorkillword'];
+    $updatedata['editorspelling'] = $defaults['editorspelling'];
+    $updatedata['editorfontlist'] = $defaults['editorfontlist'];
+
+    foreach($updatedata as $name => $value) {
+        if(!(set_config($name, $value))) {
+            return false;
+        }
+    }
     return true;
 }
 ?>
