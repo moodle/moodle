@@ -88,15 +88,15 @@
 
     // If a course has been supplied in the URL, change the filters to show that one
     if (!empty($_GET['course'])) {
-        if (is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
-            if ($_GET['course'] == 1) {
+        if ($course = get_record('course', 'id', $_GET['course'])) {
+            if ($course->id == 1) {
                 // If coming from the home page, show all courses
                 $SESSION->cal_courses_shown = calendar_get_default_courses(true);
                 calendar_set_referring_course(0);
 
             } else {
                 // Otherwise show just this one
-                $SESSION->cal_courses_shown = intval($_GET['course']);
+                $SESSION->cal_courses_shown = $course->id;
                 calendar_set_referring_course($SESSION->cal_courses_shown);
             }
         }
@@ -117,6 +117,9 @@
         // If we know about the referring course, show a return link and ALSO require login!
         require_login();
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
+        if (empty($course)) {
+            $course = get_record('course', 'id', $SESSION->cal_course_referer); // Useful to have around
+        }
     }
 
     $strcalendar = get_string('calendar', 'calendar');
