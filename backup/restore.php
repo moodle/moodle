@@ -1,5 +1,5 @@
 <?PHP //$Id$
-    //This script is used to configure and execute the backup proccess.
+    //This script is used to configure and execute the restore proccess.
 
     //Define some globals for all the script
 
@@ -56,7 +56,7 @@
     //Print header
     print_header("$site->shortname: $strcourserestore", $site->fullname,
                  "<A HREF=\"$moodle_home/$CFG->admin/index.php\">$stradministration</A> ->
-                  <A HREF=\"backup.php\">$strcourserestore</A> -> ".basename($file));
+                  <A HREF=\"restore.php?file=".$file."\">$strcourserestore</A> -> ".basename($file));
 
     //Print form
     print_heading("$strcourserestore: ".basename($file));

@@ -76,23 +76,21 @@
         var $finished = false; //Flag to say xml_parse to stop
 
         function startElement($parser, $tagName, $attrs) {
-            $this->tree[$this->level] = $tagName;
-            //echo str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";
             $this->level++;
+            $this->tree[$this->level] = $tagName;
+            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
 
         function endElement($parser, $tagName) {
-            if (trim($this->content)) {
-                //echo utf8_decode(str_repeat("&nbsp;",$this->level*2).$this->content."<br>\n");
-            }
+            if (trim($this->content))                                                                     //Debug
+                echo "C".utf8_decode(str_repeat("&nbsp;",($this->level+2)*2).$this->content."<br>\n");    //Debug
+            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
             $this->level--;
-            //echo str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";
             $this->tree[$this->level] = "";
             $this->content = "";
 
-            //Stop parsing if todo = INFO and tagName = INFO
+            //Stop parsing if todo = INFO and tagName = INFO (en of the tag, of course)
             //Speed up a lot (avoid parse all)
-            //echo $tagName."<br>";
             if (($this->todo == "INFO") and ($tagName == "INFO")) {
                 $this->finished = true;
             }
@@ -125,6 +123,10 @@
                                     xml_get_current_line_number($xml_parser)));
             fclose($fp);
         }
+        //Get info from parser
+        $info = $moodle_parser->info;
+        
+        //Clear parser mem
         xml_parser_free($xml_parser);
 
         if ($Status) {
