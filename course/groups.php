@@ -193,14 +193,14 @@
                     unset($nonmembers[$groupuser->id]);
                     $countusers++;
                 }
-                asort($listmembers[$group->id]);
+                natcasesort($listmembers[$group->id]);
             }
             $listgroups[$group->id] = $group->name." ($countusers)";
         }
-        asort($listgroups);
+        natcasesort($listgroups);
     }
 
-    asort($nonmembers);
+    natcasesort($nonmembers);
 
     if (empty($selectedgroup)) {    // Choose the first group by default
         if ($selectedgroup = array_shift(array_keys($listgroups))) {
