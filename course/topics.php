@@ -150,6 +150,7 @@
             $thissection = $sections[$section];
 
         } else {
+            unset($thissection);
             $thissection->course = $course->id;   // Create a new section structure
             $thissection->section = $section;
             $thissection->summary = "";
