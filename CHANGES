@@ -1,3 +1,49 @@
+2002-06-01 Saturday 17:48  martin
+
+	* course/social.php: Added a <BR>
+
+2002-06-01 Saturday 17:44  martin
+
+	* course/: view.php, weeks.php: Modified weekly course format with
+	"People" section and sorted activity modules
+
+2002-06-01 Saturday 17:23  martin
+
+	* course/lib.php: Improvements to Recent Activity to make it
+	clearer.  Formatting, but also logical changes to reduce the logs
+	for course changes: add+update=add add+delete=nothing
+	update+update=update update+delete=delete
+
+2002-06-01 Saturday 17:06  martin
+
+	* course/mod.php: Errors while deleting a module are no longer
+	fatal errors
+
+2002-06-01 Saturday 17:05  martin
+
+	* lib/moodlelib.php: Fixed buglets in get_records_sql and
+	insert_record
+
+2002-06-01 Saturday 17:03  martin
+
+	* mod/discuss/mod.php: Modernised this to use new database
+	functions and also fixed some bugs.
+
+2002-06-01 Saturday 14:37  martin
+
+	* course/mod.php: Slight fix to change some mod->course_module to
+	mod->coursemodule for consistency
+
+2002-06-01 Saturday 12:25  martin
+
+	* course/lib.php: Fixed some display of the logs in "recent
+	activity"
+
+2002-06-01 Saturday 12:06  martin
+
+	* CHANGES: Ch-ch-ch-ch-Changes (turn and face the strain)
+	Ch-ch-changes.
+
 2002-06-01 Saturday 11:46  martin
 
 	* lib/weblib.php: Added lists to allowed html in cleantext
