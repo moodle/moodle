@@ -45,6 +45,7 @@
 
     $loginsite = get_string("loginsite");
 
+    $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
 
     $frm = false;
     $user = false;
@@ -61,10 +62,10 @@
         if ($user) {
         	$frm->username = $user->username;
         } else {
-            $frm = data_submitted($CFG->alternateloginurl);
+            $frm = data_submitted($loginurl);
         }
     } else {
-        $frm = data_submitted($CFG->alternateloginurl);
+        $frm = data_submitted($loginurl);
     }
 
     if ($frm and (get_moodle_cookie() == '')) {    // Login without cookie
@@ -190,12 +191,23 @@
     }
 
     
-    if (empty($errormsg)) {
-        $errormsg = "";
-    }
+/// We need to show a login form
+
+/// First, let's remember where the user was trying to get to before they got here
 
     if (empty($SESSION->wantsurl)) {
         $SESSION->wantsurl = array_key_exists('HTTP_REFERER',$_SERVER) ? $_SERVER["HTTP_REFERER"] : $CFG->wwwroot; 
+    }
+
+    if (!empty($loginurl)) {   // We don't want the standard forms, go elsewhere
+        redirect($loginurl);
+    }
+    
+
+/// Generate the login page
+
+    if (empty($errormsg)) {
+        $errormsg = '';
     }
 
     if (get_moodle_cookie() == '') {   
@@ -219,17 +231,12 @@
         $show_instructions = false;
     }
 
-    if (!empty($CFG->alternateloginurl)) {
-        redirect($CFG->alternateloginurl);
-        exit;
-    }
-    
-    print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
+    print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, $focus, 
+                 '', true, '<div class="langmenu" align="right">'.$langmenu.'</div>'); 
+
     include("index_form.html");
+
     print_footer();
 
-    exit;
-
-    // No footer on this page
 
 ?>
