@@ -38,7 +38,7 @@ body, td, th, li {
 }
 
 th {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 a:link,
@@ -56,7 +56,7 @@ h3.main,
 h4.main,
 h5.main,
 h6.main {
-    font-weight:bold;
+    font-weight:normal;
 }
 
 h1 {
@@ -78,27 +78,27 @@ h4 {
 }
 
 .warning {
-    font-weight: bold;
+    font-weight: normal;
     font-style: italic;
 }
 
 .errorbox .title {
-    font-weight: bold;
+    font-weight: normal;
     font-size: 1.2em;
     text-align: center;
 }
 
 .pagingbar .title {
-    font-weight: bold;
+    font-weight: normal;
 }
 .pagingbar .thispage {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .categoryname,
 .categorynumber {
     font-size:larger;
-    font-weight:bold;
+    font-weight:normal;
 }
 
 .helplink {
@@ -106,7 +106,7 @@ h4 {
 }
 
 .headingblock {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .headingblock .link {
@@ -122,7 +122,7 @@ h4 {
 }
 
 .files .folder .size {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 
@@ -131,7 +131,7 @@ h4 {
  ***/
 
 .headermain {
-    font-weight:bold;
+    font-weight:normal;
 }
 
 #header-home .headermain {
@@ -144,7 +144,7 @@ h4 {
 
 .breadcrumb {
     font-size:0.9em;
-    font-weight:bold;
+    font-weight:normal;
 }
 
 .logininfo,
@@ -204,7 +204,7 @@ table.formtable tbody th {
  ***/
 
 #calendar .maincalendar .eventlist .event .referer {
-    font-weight:bold;
+    font-weight:normal;
 }
 
 #calendar .maincalendar .eventlist .event .course {
@@ -221,7 +221,7 @@ table.formtable tbody th {
 
 #calendar div.header
 {
-    font-weight:bold;
+    font-weight:normal;
 }
 
 #calendar .sidecalendar .filters {
@@ -233,7 +233,7 @@ table.formtable tbody th {
 }
 
 #calendar .maincalendar .day {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 table.minicalendar {
@@ -243,16 +243,16 @@ table.minicalendar {
 .cal_popup_caption {
     font-family:sans-serif;
     font-size:0.8em;
-    font-weight:bold;
+    font-weight:normal;
 }
 
 .cal_popup_close {
     font-family:sans-serif;
     font-size:0.8em;
-    font-weight:bold;
+    font-weight:normal;
 }
 #calendar .maincalendar .calendar-controls .current {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 
@@ -266,7 +266,7 @@ table.minicalendar {
 
 .weeklydatetext {
     font-size:medium;
-    font-weight:bold;
+    font-weight:normal;
 }
 
 .courseboxinfo {
@@ -282,7 +282,7 @@ table.minicalendar {
     font-size:small;
 }
 #course-view .section .left {
-    font-weight:bold;
+    font-weight:normal;
 }
 
 
@@ -323,7 +323,7 @@ body#doc-contents ul {
 
 .message_heading {
     font-size:medium;
-    font-weight:bold;
+    font-weight:normal;
 }
 
 .message_date,
@@ -338,7 +338,7 @@ body#doc-contents ul {
 }
 
 .message .author {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .message .time {
@@ -362,7 +362,7 @@ body#doc-contents ul {
  ***/
 
 .userinfobox .username {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .userinfobox .links {
@@ -387,10 +387,10 @@ body#doc-contents ul {
  ***/
 
 .forumnodiscuss{
-    font-weight:bold;
+    font-weight:normal;
 }
 .forumpost .topic .subject {
-    font-weight: bold;
+    font-weight: normal;
 }
 .forumpost .topic .author {
     font-size: 0.8em;
@@ -399,7 +399,7 @@ body#doc-contents ul {
     font-size: 0.7em;
 }
 body#mod-forum-search .introcontent {
-    font-weight:bold;
+    font-weight:normal;
 }
 
 
@@ -416,7 +416,7 @@ body#mod-forum-search .introcontent {
     font-style: italic;
 }
 .concept {
-    font-weight: bold;
+    font-weight: normal;
 }
 .glossarycomment .time {
     font-size: 0.7em;
@@ -441,14 +441,14 @@ body#mod-forum-search .introcontent {
 }
 #mod-journal-view .author {
     font-size: 1em;
-    font-weight: bold;
+    font-weight: normal;
 }
 #mod-journal-view .time {
     font-size: 0.7em;
     font-style: italic;
 }
 #mod-journal-view .grade {
-    font-weight: bold;
+    font-weight: normal;
     font-style: italic;
 }
 
