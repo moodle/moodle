@@ -61,6 +61,14 @@
                     $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp);
                 break;
                 default:      /// To allow drop-in binaries for other platforms
+                    if (!is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {
+                        echo "Make sure you have an appropriate MimeTeX binary here:\n\n"; 
+                        echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
+                        echo "and that it has the right permissions set on it as executable program.\n\n";
+                        echo "You can get the latest binaries for your ".PHP_OS." platform from: \n\n";
+                        echo "    http://moodle.org/download/mimetex/";
+                        exit;
+                    }
                     $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
                 break;
             }
