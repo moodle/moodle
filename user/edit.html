@@ -34,6 +34,15 @@ if (isadmin()) {
     echo " </td>";
     echo "</tr>\n";
 
+    $modules = get_list_of_plugins("auth");
+    foreach ($modules as $module) {
+        $auth_options[$module] = get_string("auth_$module"."title", "auth");
+    } 
+    echo '<tr valign="top">';
+    echo '<td align="right">' . get_string("chooseauthmethod","auth") . ':</td>' . "\n<td>";
+    choose_from_menu ($auth_options, "auth",$user->auth);
+    echo "</td></tr>\n";
+
     if ($adminself || is_internal_auth($user->auth) ){
         echo "<tr valign=\"top\">";
         echo "<td align=\"right\"> ".get_string("newpassword").": </td>";
