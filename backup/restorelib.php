@@ -532,9 +532,10 @@
                 } else {
                     $newid = $user_data->id;
                 }
-                //Flags to see if we have to create the user and roles
+                //Flags to see if we have to create the user, roles and preferences
                 $create_user = true;
                 $create_roles = true;
+                $create_preferences = true;
 
                 //If we are restoring course users and it isn't a course user
                 if ($restore->users == 1 and !$is_course_user) {
@@ -542,6 +543,7 @@
                     $status = backup_putid($restore->backup_unique_code,"user",$userid,null,'notincourse');
                     $create_user = false;
                     $create_roles = false;
+                    $create_preferences = false;
                 }
 
                 if ($user_exists and $create_user) {
@@ -635,6 +637,27 @@
                             //Put status in backup_ids
                             $currinfo = $currinfo."user,";
                             $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                        }
+                    }
+                }
+
+                //Here, if create_preferences, do it as necessary
+                if ($create_preferences) {
+                    //echo "Checking for preferences of user ".$user->username."<br>";         //Debug
+                    //Get user new id from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,"user",$userid);
+                    $newid = $data->new_id;
+                    if (isset($user->user_preferences)) {
+                        //echo "Preferences exist in backup file<br>";                         //Debug
+                        foreach($user->user_preferences as $user_preference) {
+                            //echo $user_preference->name." = ".$user_preference->value."<br>";    //Debug
+                            //We check if that user_preference exists in DB
+                            if (!record_exists("user_preferences","userid",$newid,"name",$user_preference->name)) {
+                                //echo "Creating it<br>";                                              //Debug
+                                //Prepare the record and insert it
+                                $user_preference->userid = $newid;
+                                $status = insert_record("user_preferences",$user_preference);
+                            }
                         }
                     }
                 }
@@ -1724,6 +1747,11 @@
                             $this->info->tempuser->roles[$this->info->temprole->type] = $this->info->temprole;
                             unset($this->info->temprole);
                             break;
+                        case "USER_PREFERENCE":
+                            //We've finalized a user_preference, get it
+                            $this->info->tempuser->user_preferences[$this->info->tempuserpreference->name] = $this->info->tempuserpreference;
+                            unset($this->info->tempuserpreference);
+                            break;
                     }
                 }
                 if ($this->level == 7) {
@@ -1754,6 +1782,12 @@
                             break;
                         case "TIMEACCESS":
                             $this->info->temprole->timeaccess = $this->getContents();
+                            break;
+                        case "NAME":
+                            $this->info->tempuserpreference->name = $this->getContents();
+                            break;
+                        case "VALUE":
+                            $this->info->tempuserpreference->value = $this->getContents();
                             break;
                     }
                 }

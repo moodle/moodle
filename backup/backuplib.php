@@ -811,6 +811,22 @@
 
                     //End ROLES tag
                     fwrite ($bf,end_tag("ROLES",4,true));
+ 
+                    //Check if we have user_preferences to backup
+                    if ($preferences_data = get_records("user_preferences","userid",$user->old_id)) {
+                        //Start USER_PREFERENCES tag
+                        fwrite ($bf,start_tag("USER_PREFERENCES",4,true));
+                        //Write each user_preference
+                        foreach ($preferences_data as $user_preference) {
+                            fwrite ($bf,start_tag("USER_PREFERENCE",5,true));
+                            fwrite ($bf,full_tag("NAME",6,false,$user_preference->name));
+                            fwrite ($bf,full_tag("VALUE",6,false,$user_preference->value));
+                            fwrite ($bf,end_tag("USER_PREFERENCE",5,true));
+                        }
+                        //End USER_PREFERENCES tag
+                        fwrite ($bf,end_tag("USER_PREFERENCES",4,true));
+                    }
+                    
                 }
                 //End User tag
                 fwrite ($bf,end_tag("USER",3,true));
