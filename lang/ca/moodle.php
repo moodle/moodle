@@ -118,7 +118,7 @@ $string['emailconfirmsent'] = "   <P>S'ha enviat un missatge de correu a la teua
    <P>Si tens dificultats, contacta amb l'administrador del lloc.";
 $string['emaildisplay'] = "Mostrar email";
 $string['emaildisplaycourse'] = "Permetre només als altres membres del curs veure la meua adreça de correu";
-$string['emaildisplayno'] = "Ocultar a tothom la meua adreça de correu electrónic";
+$string['emaildisplayno'] = "Ocultar a tothom la meua adreça de correu electrònic";
 $string['emaildisplayyes'] = "Permetre que tothom veja la meua adreça de correu";
 $string['emailexists'] = "Aquesta adreça de correu ja està registrada.";
 $string['emailformat'] = "Format del correu";
