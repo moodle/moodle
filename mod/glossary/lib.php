@@ -655,22 +655,17 @@ global $CFG, $THEME;
      $strallentries   = get_string("allentries", "glossary");
 
      if ($glossary->showalphabet) {
-         $output .= get_string("explainalphabet","glossary");
-     }
-     if ($glossary->showspecial) {
-         $output .= get_string("explainspecial","glossary");
-     }
-     if ($glossary->showall) {
-         $output .= get_string("explainall","glossary");
+         $output .= get_string("explainalphabet","glossary").'<br />';
      }
      
-     echo "<CENTER>$output<p>";
+     echo "<center>$output<p>";
 
       if ( $glossary->showspecial ) {
           if ( $l == "SPECIAL" ) {
                echo "<b>$strspecial</b> | ";
           } else {
-               echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=SPECIAL\">$strspecial</a> | ";
+               $strexplainspecial = get_string("explainspecial","glossary");
+               echo "<a title=\"$strexplainspecial\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=SPECIAL\">$strspecial</a> | ";
           }
       }
 
@@ -695,7 +690,8 @@ global $CFG, $THEME;
           if ( $l == "ALL" ) {
                echo "<b>$strallentries</b></p>";
           } else {
-               echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=ALL\">$strallentries</a></p>";
+               $strexplainall = get_string("explainall","glossary");
+               echo "<a title=\"$strexplainall\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=ALL\">$strallentries</a></p>";
           }
       }
 }
