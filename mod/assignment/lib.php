@@ -217,6 +217,12 @@ function assignment_print_recent_activity(&$logs, $isteacher=false) {
     return $content;
 }
 
+function assignment_grades($assignmentid) {
+/// Must return an array of grades, indexed by user.  The grade is called "grade".
+
+    return get_records("assignment_submissions", "assignment", $assignmentid, "user ASC", "user,grade");
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 
 function assignment_file_area_name($assignment, $user) {

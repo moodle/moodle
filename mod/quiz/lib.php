@@ -185,6 +185,11 @@ function quiz_cron () {
     return true;
 }
 
+function quiz_grades($quizid) {
+/// Must return an array of grades, indexed by user.  The grade is called "grade".
+    return get_records("quiz_grades", "quiz", $quizid, "user ASC", "user,grade");
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other quiz functions go here.  Each of them must have a name that 
