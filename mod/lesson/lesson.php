@@ -306,7 +306,7 @@
             }
         }
 		notice_yesno(get_string("confirmdeletionofthispage","lesson"), 
-			 "lesson.php?action=delete&id=$cm->id&pageid=$pageid]", 
+			 "lesson.php?action=delete&id=$cm->id&pageid=$pageid", 
              "view.php?id=$cm->id");
 		}
 	
