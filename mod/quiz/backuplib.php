@@ -161,6 +161,8 @@
                     //Description question. Nothing to write.
                 } else if ($question->qtype == "8") {
                     $status = quiz_backup_numerical($bf,$preferences,$question->id);
+                } else if ($question->qtype == "9") {
+                    $status = quiz_backup_multianswer($bf,$preferences,$question->id);
                 }
                 //End question
                 $status =fwrite ($bf,end_tag("QUESTION",5,true));
@@ -207,7 +209,7 @@
 
     //This function backups the data in a shortanswer question (qtype=1) and its
     //asociated data
-    function quiz_backup_shortanswer($bf,$preferences,$question) {
+    function quiz_backup_shortanswer($bf,$preferences,$question,$level=6,$include_answers=true) {
 
         global $CFG;
 
@@ -218,21 +220,23 @@
         if ($shortanswers) {
             //Iterate over each shortanswer
             foreach ($shortanswers as $shortanswer) {
-                $status =fwrite ($bf,start_tag("SHORTANSWER",6,true));
+                $status =fwrite ($bf,start_tag("SHORTANSWER",$level,true));
                 //Print shortanswer contents
-                fwrite ($bf,full_tag("ANSWERS",7,false,$shortanswer->answers));
-                fwrite ($bf,full_tag("USECASE",7,false,$shortanswer->usecase));
-                $status =fwrite ($bf,end_tag("SHORTANSWER",6,true));
+                fwrite ($bf,full_tag("ANSWERS",$level+1,false,$shortanswer->answers));
+                fwrite ($bf,full_tag("USECASE",$level+1,false,$shortanswer->usecase));
+                $status =fwrite ($bf,end_tag("SHORTANSWER",$level,true));
             }
             //Now print quiz_answers
-            $status = quiz_backup_answers($bf,$preferences,$question);
+            if ($include_answers) {
+                $status = quiz_backup_answers($bf,$preferences,$question);
+            }
         }
         return $status;
     } 
 
     //This function backups the data in a multichoice question (qtype=3) and its
     //asociated data
-    function quiz_backup_multichoice($bf,$preferences,$question) {
+    function quiz_backup_multichoice($bf,$preferences,$question,$level=6,$include_answers=true) {
 
         global $CFG;
 
@@ -243,15 +247,17 @@
         if ($multichoices) {
             //Iterate over each multichoice
             foreach ($multichoices as $multichoice) {
-                $status =fwrite ($bf,start_tag("MULTICHOICE",6,true));
+                $status =fwrite ($bf,start_tag("MULTICHOICE",$level,true));
                 //Print multichoice contents
-                fwrite ($bf,full_tag("LAYOUT",7,false,$multichoice->layout));
-                fwrite ($bf,full_tag("ANSWERS",7,false,$multichoice->answers));
-                fwrite ($bf,full_tag("SINGLE",7,false,$multichoice->single));
-                $status =fwrite ($bf,end_tag("MULTICHOICE",6,true));
+                fwrite ($bf,full_tag("LAYOUT",$level+1,false,$multichoice->layout));
+                fwrite ($bf,full_tag("ANSWERS",$level+1,false,$multichoice->answers));
+                fwrite ($bf,full_tag("SINGLE",$level+1,false,$multichoice->single));
+                $status =fwrite ($bf,end_tag("MULTICHOICE",$level,true));
             }
             //Now print quiz_answers
-            $status = quiz_backup_answers($bf,$preferences,$question);
+            if ($include_answers) {
+                $status = quiz_backup_answers($bf,$preferences,$question);
+            }
         }
         return $status;
     }
@@ -306,7 +312,7 @@
 
     //This function backups the data in a numerical question (qtype=8) and its
     //asociated data
-    function quiz_backup_numerical($bf,$preferences,$question) {
+    function quiz_backup_numerical($bf,$preferences,$question,$level=6,$include_answers=true) {
 
         global $CFG;
 
@@ -317,13 +323,58 @@
         if ($numericals) {
             //Iterate over each numerical
             foreach ($numericals as $numerical) {
-                $status =fwrite ($bf,start_tag("NUMERICAL",6,true));
+                $status =fwrite ($bf,start_tag("NUMERICAL",$level,true));
                 //Print numerical contents
-                fwrite ($bf,full_tag("ANSWER",7,false,$numerical->answer));
-                fwrite ($bf,full_tag("MIN",7,false,$numerical->min));
-                fwrite ($bf,full_tag("MAX",7,false,$numerical->max));
-                $status =fwrite ($bf,end_tag("NUMERICAL",6,true));
+                fwrite ($bf,full_tag("ANSWER",$level+1,false,$numerical->answer));
+                fwrite ($bf,full_tag("MIN",$level+1,false,$numerical->min));
+                fwrite ($bf,full_tag("MAX",$level+1,false,$numerical->max));
+                $status =fwrite ($bf,end_tag("NUMERICAL",$level,true));
             }
+            //Now print quiz_answers
+            if ($include_answers) {
+                $status = quiz_backup_answers($bf,$preferences,$question);
+            }
+        }
+        return $status;
+    }
+
+    //This function backups the data in a multianswer question (qtype=9) and its      
+    //asociated data
+    function quiz_backup_multianswer($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $multianswers = get_records("quiz_multianswers","question",$question,"id");
+        //If there are multianswers
+        if ($multianswers) {
+            //Print multianswers header
+            $status =fwrite ($bf,start_tag("MULTIANSWERS",6,true));
+            //Iterate over each multianswer
+            foreach ($multianswers as $multianswer) {
+                $status =fwrite ($bf,start_tag("MULTIANSWER",7,true));
+                //Print multianswer contents
+                fwrite ($bf,full_tag("ID",8,false,$multianswer->id));
+                fwrite ($bf,full_tag("ANSWERS",8,false,$multianswer->answers));
+                fwrite ($bf,full_tag("POSITIONKEY",8,false,$multianswer->positionkey));
+                fwrite ($bf,full_tag("ANSWERTYPE",8,false,$multianswer->answertype));
+                fwrite ($bf,full_tag("NORM",8,false,$multianswer->norm));
+                //Depending of the ANSWERTYPE, we must encode different info
+                //to be able to re-create records in quiz_shortanswer, quiz_multichoice and
+                //quiz_numerical
+                if ($multianswer->answertype == "1") {
+                    $status = quiz_backup_shortanswer($bf,$preferences,$question,8,false);
+                } else if ($multianswer->answertype == "3") {
+                    $status = quiz_backup_multichoice($bf,$preferences,$question,8,false);
+                } else if ($multianswer->answertype == "8") {
+                    $status = quiz_backup_numerical($bf,$preferences,$question,8,false);
+                }
+
+                $status =fwrite ($bf,end_tag("MULTIANSWER",7,true));
+            }
+            //Print multianswers footer
+            $status =fwrite ($bf,end_tag("MULTIANSWERS",6,true));
             //Now print quiz_answers
             $status = quiz_backup_answers($bf,$preferences,$question);
         }

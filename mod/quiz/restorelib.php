@@ -228,6 +228,8 @@
                     //Description question. Nothing to do.
                 } else if ($question->qtype == "8") {
                     $status = quiz_restore_numerical($oldid,$newid,$que_info,$restore);
+                } else if ($question->qtype == "9") {
+                    $status = quiz_restore_multianswer($oldid,$newid,$que_info,$restore);
                 }
             } else {
                 //We are NOT creating the question, but we need to know every quiz_answers
@@ -253,6 +255,8 @@
                     //Description question. Nothing to remap
                 } else if ($question->qtype == "8") {
                     //Numerical question. Nothing to remap
+                } else if ($question->qtype == "9") {
+                    $status = quiz_restore_map_multianswer($oldid,$newid,$que_info,$restore);
                 }
             }
         }
@@ -672,6 +676,61 @@
         return $status;
     }
 
+    function quiz_restore_map_multianswer ($old_question_id,$new_question_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the multianswers array
+        $multianswers = $info['#']['MULTIANSWERS']['0']['#']['MULTIANSWER'];
+        //Iterate over multianswers
+        for($i = 0; $i < sizeof($multianswers); $i++) {
+            $mul_info = $multianswers[$i];
+            //traverse_xmlize($mul_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We need this later
+            $oldid = backup_todb($mul_info['#']['ID']['0']['#']);
+
+            //Now, build the QUIZ_MULTIANSWER record structure
+            $multianswer->question = $new_question_id;
+            $multianswer->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
+            $multianswer->positionkey = backup_todb($mul_info['#']['POSITIONKEY']['0']['#']);
+            $multianswer->answertype = backup_todb($mul_info['#']['ANSWERTYPE']['0']['#']);
+            $multianswer->norm = backup_todb($mul_info['#']['NORM']['0']['#']);
+
+            //If we are in this method is because the question exists in DB, so its
+            //multianswer must exist too.
+            //Now, we are going to look for that multianswer in DB and to create the
+            //mappings in backup_ids to use them later where restoring responses (user level).
+
+            //Get the multianswer from DB (by question and positionkey)
+            $db_multianswer = get_record ("quiz_multianswers","question",$new_question_id,
+                                                      "positionkey",$multianswer->positionkey);
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            //We have the database multianswer, so update backup_ids
+            if ($db_multianswer) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"quiz_multianswers",$oldid,
+                             $db_multianswer->id);
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
     function quiz_restore_randomsamatch ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
@@ -753,6 +812,89 @@
             }
 
             if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    function quiz_restore_multianswer ($old_question_id,$new_question_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the multianswers array
+        $multianswers = $info['#']['MULTIANSWERS']['0']['#']['MULTIANSWER'];       
+        //Iterate over multianswers
+        for($i = 0; $i < sizeof($multianswers); $i++) {
+            $mul_info = $multianswers[$i];
+            //traverse_xmlize($mul_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+            
+            //We need this later
+            $oldid = backup_todb($mul_info['#']['ID']['0']['#']);
+
+            //Now, build the QUIZ_MULTIANSWER record structure
+            $multianswer->question = $new_question_id;
+            $multianswer->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
+            $multianswer->positionkey = backup_todb($mul_info['#']['POSITIONKEY']['0']['#']);
+            $multianswer->answertype = backup_todb($mul_info['#']['ANSWERTYPE']['0']['#']);
+            $multianswer->norm = backup_todb($mul_info['#']['NORM']['0']['#']);
+
+            //We have to recode the answers field (a list of answers id)
+            //Extracts answer id from sequence
+            $answers_field = "";
+            $in_first = true;
+            $tok = strtok($multianswer->answers,",");
+            while ($tok) {
+                //Get the answer from backup_ids
+                $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$tok);
+                if ($answer) {
+                    if ($in_first) {
+                        $answers_field .= $answer->new_id;
+                        $in_first = false;
+                    } else {
+                        $answers_field .= ",".$answer->new_id;
+                    }
+                }
+                //check for next
+                $tok = strtok(",");
+            }
+            //We have the answers field recoded to its new ids
+            $multianswer->answers = $answers_field;
+
+            //The structure is equal to the db, so insert the quiz_multianswers
+            $newid = insert_record ("quiz_multianswers",$multianswer);
+ 
+            //Save ids in backup_ids
+            if ($newid) {
+                backup_putid($restore->backup_unique_code,"quiz_multianswers",
+                             $oldid, $newid);
+            }
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+            
+            //If we have created the quiz_multianswers record, now, depending of the
+            //answertype, delegate the restore to every qtype function
+            if ($newid) {
+                if ($multianswer->answertype == "1") {
+                    $status = quiz_restore_shortanswer ($old_question_id,$new_question_id,$mul_info,$restore);
+                } else if ($multianswer->answertype == "3") {
+                    $status = quiz_restore_multichoice ($old_question_id,$new_question_id,$mul_info,$restore);
+                } else if ($multianswer->answertype == "8") {
+                    $status = quiz_restore_numerical ($old_question_id,$new_question_id,$mul_info,$restore);
+                }
+            } else {
                 $status = false;
             }
         }
@@ -1119,6 +1261,48 @@
                         break;
                     case 8:    //NUMERICAL QTYPE
                         //Nothing to do. The response is a text.
+                        break;
+                    case 9:    //MULTIANSWER QTYPE
+                        //The answer is a comma separated list of hypen separated multianswer_id and answers. We must recode them.
+                        $answer_field = "";
+                        $in_first = true;
+                        $tok = strtok($response->answer,",");
+                        while ($tok) {
+                            //Extract the multianswer_id and the answer
+                            $exploded = explode("-",$tok);
+                            $multianswer_id = $exploded[0];
+                            $answer = $exploded[1];
+                            //Get the multianswer from backup_ids
+                            $mul = backup_getid($restore->backup_unique_code,"quiz_multianswers",$multianswer_id);
+                            if ($mul) {
+                                //Now, depending of the answertype field in quiz_multianswers
+                                //we do diferent things 
+                                $mul_db = get_record ("quiz_multianswers","id",$mul->new_id);
+                                if ($mul_db->answertype == "1") {
+                                    //Shortanswer
+                                    //The answer is text, do nothing
+                                } else if ($mul_db->answertype == "3") {
+                                    //Multichoice
+                                    //The answer is an answer_id, look for it in backup_ids
+                                    $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer);
+                                    $answer = $ans->new_id;
+                                } else if ($mul_db->answertype == "8") {
+                                    //Numeric
+                                    //The answer is text, do nothing
+                                }
+
+                                //Finaly, build the new answer field for each pair
+                                if ($in_first) {
+                                    $answer_field .= $mul->new_id."-".$answer;
+                                    $in_first = false;
+                                } else {
+                                    $answer_field .= ",".$mul->new_id."-".$answer;
+                                }
+                            }
+                            //check for next
+                            $tok = strtok(",");
+                        }
+                        $response->answer = $answer_field;
                         break;
                     default:   //UNMATCHED QTYPE.
                         //This is an error (unimplemented qtype)
