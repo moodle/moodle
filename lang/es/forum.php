@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
+      // forum.php - created with Moodle 1.1 Beta (2003082001)
 
 
 $string['addanewdiscussion'] = "Colocar un mensaje aquí";
@@ -11,6 +11,10 @@ $string['allowsdiscussions'] = "Foro abierto a todos";
 $string['anyfile'] = "Cualquier archivo";
 $string['attachment'] = "Archivo adjunto";
 $string['bynameondate'] = "de \$a->name - \$a->date";
+$string['configdisplaymode'] = "La forma de visualización por defecto, si no se ha configurado ninguna.";
+$string['configlongpost'] = "Cualquier mensaje que exeda este largo (sin incluir código HTML) se consiera largo.";
+$string['configmanydiscussions'] = "Máximo número de temas mostrados en una página de foro.";
+$string['configshortpost'] = "Cualquier mensaje menor que este largo (sin incluir código HTML) se consiera largo.";
 $string['couldnotadd'] = "No se puede colocar su mensaje debido a un problema desconocido.";
 $string['couldnotdeleteratings'] = "Lo sentimos, no podemos borrar este mensaje debido a que ha sido calificado.";
 $string['couldnotdeletereplies'] = "Lo sentimos, no podemos borrar este mensaje debido a que tiene respuestas.";

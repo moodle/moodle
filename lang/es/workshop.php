@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
+      // workshop.php - created with Moodle 1.1 Beta (2003082001)
 
 
 $string['accumulative'] = "Acumulativo";
@@ -124,6 +124,7 @@ $string['scaleyes'] = "Escala de 2 puntos: sí o no";
 $string['selfassessment'] = "Autoevaluación";
 $string['showgrades'] = "Mostrar calificaciones";
 $string['specimenassessmentform'] = "Formulario de muestra de evaluación";
+$string['studentassessments'] = "\$a evaluaciones";
 $string['studentgrades'] = "\$a calificaciones";
 $string['studentsubmissions'] = "\$a envíos";
 $string['studentsubmissionsforassessment'] = "\$a envíos de los estudiantes para evaluación";
@@ -138,6 +139,7 @@ $string['teacherscomment'] = "Comentario del maestro";
 $string['teachersgrade'] = "Calificación del maestro";
 $string['teachersubmissionsforassessment'] = "\$a envíos del profesor para evaluación";
 $string['thegradeis'] = "La calificación es: \$a";
+$string['thereisfeedbackfromtheteacher'] = "Tiene una respuesta de \$a";
 $string['theseasessmentsaregradedbytheteacher'] = "Estas evaluaciones están calificadas por el \$a";
 $string['timeassessed'] = "Tiempo valorado";
 $string['title'] = "Título";
