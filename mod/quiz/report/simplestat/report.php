@@ -71,54 +71,60 @@ class quiz_report extends quiz_default_report {
             }
         }
 
-
     /// If spreadsheet is wanted, produce one
         if ($download == "xls") {
-            include("$CFG->libdir/psxlsgen.php");
-            $myxls = new PhpSimpleXlsGen();
-            $myxls->totalcol = $count+1;
+            require_once("$CFG->libdir/excel/Worksheet.php");
+            require_once("$CFG->libdir/excel/Workbook.php");
+            header("Content-type: application/vnd.ms-excel");
+            header("Content-Disposition: attachment; filename=$course->shortname ".$quiz->name.".xls" );
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+            header("Pragma: public");
+
+            $workbook = new Workbook("-");
+            // Creating the first worksheet
+            $myxls = &$workbook->add_worksheet('Simple Quiz Statistics');
 
         /// Print names of all the fields
-            $myxls->ChangePos(0,0);
-            $myxls->InsertText($quiz->name);
-    
+            $myxls->write_string(0,0,$quiz->name);
+            $myxls->set_column(0,0,25);
+                
+            $myxls->set_column(1,$count,9);
             for ($i=1; $i<=$count; $i++) {
-                $myxls->InsertText($i);
+                $myxls->write_string(0,$i,$i);
             }
         
         /// Print all the user data
 
             $row=1;
             foreach ($data as $userid => $datum) {
-                $myxls->ChangePos($row,0);
-                $myxls->InsertText("$datum->firstname $datum->lastname");
+                $myxls->write_string($row,0,"$datum->firstname $datum->lastname");
                 for ($i=1; $i<=$count; $i++) {
                     if (isset($datum->grades[$i])) {
-                        $myxls->InsertNumber($datum->grades[$i]);
-                    } else {
-                        $myxls->InsertText("");
+                        $myxls->write_number($row,$i,$datum->grades[$i]);
                     }
                 }
                 $row++;
             }
 
         /// Print all the averages
-            $myxls->ChangePos($row,0);
-            $myxls->InsertText("");
             for ($i=1; $i<=$count; $i++) {
-                $myxls->InsertNumber($average[$i]);
+                $myxls->write_number($row,$i,$average[$i]);
             }
 
+            $formatot =& $workbook->add_format();
+            // format number 10 is percent, two digit
+            $formatot->set_num_format(10);
         /// Print all the averages as percentages
             $row++;
-            $myxls->ChangePos($row,0);
-            $myxls->InsertText("%");
+            $myxls->write_string($row,0,"%");
             for ($i=1; $i<=$count; $i++) {
-                $percent = format_float($average[$i] * 100);
-                $myxls->InsertText("$percent%");
+//                $percent = format_float($average[$i] * 100);
+//                $myxls->write_text($row,$i,"$percent%");
+                $myxls->write_number($row,$i,$average[$i],$formatot);
             }
 
-            $myxls->SendFileName("$course->shortname $quiz->name");
+            $workbook->close();
         
             exit;
         }
