@@ -153,7 +153,7 @@
 
     // START: Last column (3-month display)
     echo '<td class="sidecalendar">';
-    echo '<div class="heading">'.get_string('monthlyview', 'calendar').'</div>';
+    echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
 
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
@@ -211,7 +211,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
     $text .= get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars);
 
-    echo '<div class="heading">'.$text.'</div>';
+    echo '<div class="header">'.$text.'</div>';
 
     echo '<div class="controls">'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</div>';
 
@@ -333,7 +333,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
     $text .= get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars);
 
-    echo '<div class="heading">'.$text.'</div>';
+    echo '<div class="header">'.$text.'</div>';
 
     echo '<div class="controls">';
     echo calendar_top_controls('month', array('m' => $m, 'y' => $y));
@@ -531,7 +531,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
     $text .= get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming');
 
-    echo '<div class="heading">'.$text.'</div>';
+    echo '<div class="header">'.$text.'</div>';
 
     if ($events) {
         echo '<div class="eventlist">';

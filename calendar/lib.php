@@ -391,7 +391,7 @@ function calendar_print_event($event) {
         print_spacer(16,16);
     }
     echo '</td>';
-    echo '<td class="header">';
+    echo '<td class="topic">';
 
     if (!empty($event->referer)) {
         echo '<div class="referer">'.$event->referer.'</div>';

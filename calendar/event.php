@@ -252,7 +252,7 @@
                 $d = $eventtime['mday'];
                 $y = $eventtime['year'];
                 // Display confirmation form
-                echo '<div class="heading">'.get_string('deleteevent', 'calendar').': '.$event->name.'</div>';
+                echo '<div class="header">'.get_string('deleteevent', 'calendar').': '.$event->name.'</div>';
                 echo '<h2>'.get_string('confirmeventdelete', 'calendar').'</h2>';
                 echo '<div class="eventlist">';
                 $event->time = calendar_format_event_time($event, time(), '', false);
@@ -293,7 +293,7 @@
                 $course = $site;
             }
 
-            echo '<div class="heading">'.get_string('editevent', 'calendar').'</div>';
+            echo '<div class="header">'.get_string('editevent', 'calendar').'</div>';
             include('event_edit.html');
             if ($usehtmleditor) {
                 use_html_editor("description");
@@ -422,7 +422,7 @@
                 $header = ' ('.$header.')';
             }
 
-            echo '<div class="heading">'.get_string('newevent', 'calendar').$header.'</div>';
+            echo '<div class="header">'.get_string('newevent', 'calendar').$header.'</div>';
 
             if($_REQUEST['type'] == 'select') {
                 $defaultcourse = $SESSION->cal_course_referer;
@@ -460,7 +460,7 @@
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     
     echo '<td class="sidecalendar">';
-    echo '<div class="heading">'.get_string('monthlyview', 'calendar').'</div>';
+    echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
     echo '<div class="filters">';
     echo calendar_filter_controls('event', 'action='.$_REQUEST['action'].'&amp;type='.$_REQUEST['type'].'&amp;id='.$_REQUEST['id']);
     echo '</div>';
