@@ -536,7 +536,8 @@ CREATE TABLE `prefix_user_teachers` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `courseuserid` (course,userid),
-  KEY `userid` (userid)
+  KEY `userid` (userid),
+  KEY `enrol` (enrol)
 ) TYPE=MyISAM COMMENT='One record per teacher per course';
 
 #
