@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.7 (2002121000)
+      // forum.php - created with Moodle 1.0.8 dev (2002121200)
 
 
 $string['addanewdiscussion'] = "トピックを追加";
@@ -9,7 +9,7 @@ $string['allowratings'] = "投稿を評価可能にしますか?";
 $string['allowsdiscussions'] = "このフォーラムでは一つのディスカッショントピックでで開始してください。";
 $string['anyfile'] = "全てのファイル";
 $string['attachment'] = "添付ファイル";
-$string['bynameondate'] = "\$a->date - \$a->name による投稿";
+$string['bynameondate'] = "\$a->date - \$a->name の投稿";
 $string['couldnotadd'] = "エラーのため投稿出来ませんでした";
 $string['couldnotdeleteratings'] = "申し訳ございません、評価済みのため削除出来ませんでした";
 $string['couldnotdeletereplies'] = "申し訳ございません、返信済みのため削除出来ませんでした";
