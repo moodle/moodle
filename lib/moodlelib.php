@@ -1339,7 +1339,7 @@ function isadmin($userid=0) {
     global $USER;
 
     if (!$userid) {
-        return $USER->admin;
+        return record_exists_sql("SELECT * FROM user_admins WHERE user='{$USER->id}'");
     }
 
     return record_exists_sql("SELECT * FROM user_admins WHERE user='$userid'");
@@ -1518,6 +1518,13 @@ function get_admin () {
         return false;
     }
 }
+
+function get_admins() {
+    return get_records_sql("SELECT u.* FROM user u, user_admins a
+                            WHERE a.user = u.id
+                            ORDER BY u.id ASC");
+}
+
 
 function get_teacher($courseid) {
 // Returns $user object of the main teacher for a course
