@@ -759,7 +759,8 @@ function usergetdate($time, $timezone=99) {
     // There is no gmgetdate so we use gmdate instead
     $time += dst_offset_on($time);
     $time += intval((float)$timezone * HOURSECS);
-    $datestring = gmdate('s i H d m Y w z l F', $time);
+
+    $datestring = gmstrftime('%S_%M_%H_%d_%m_%Y_%w_%j_%A_%B', $time);
 
     list(
         $getdate['seconds'],
@@ -772,7 +773,7 @@ function usergetdate($time, $timezone=99) {
         $getdate['yday'],
         $getdate['weekday'],
         $getdate['month']
-    ) = explode(' ', $datestring);
+    ) = explode('_', $datestring);
 
     return $getdate;
 }
