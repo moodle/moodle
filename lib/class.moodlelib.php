@@ -1,4 +1,4 @@
-<?PHP // %Id%
+<?PHP // $Id$
 
 // This file is not currently used within Moodle - see moodlelib.php
 //
