@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 //  Manage all uploaded files in a course file area
 
@@ -9,10 +9,10 @@
 
     require("../config.php");
 
-    require_variable($id);
-    optional_variable($file, "");
-    optional_variable($wdir, "");
-    optional_variable($action, "");
+    $id     = required_param('id', PARAM_INT);
+    $file   = optional_param('file', '');
+    $wdir   = optional_param('wdir', '');
+    $action = optional_param('action', '');
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -83,15 +83,15 @@
 
     require("mimetypes.php");
 
-    $regexp="\\.\\.";
-    if (ereg( $regexp, $file, $regs )| ereg( $regexp, $wdir,$regs )) {           
+    if (!$wdir) {
+        $wdir="/";
+    }
+
+    if (($wdir != '/' and detect_munged_arguments($wdir, 0))
+      or ($file != '' and detect_munged_arguments($file, 0))) {
         $message = "Error: Directories can not contain \"..\"";
         $wdir = "/";
         $action = "";
-    }    
-
-    if (!$wdir) {
-        $wdir="/";
     }
 
     if ($wdir == "/backupdata") {
@@ -341,11 +341,12 @@
                 if (empty($CFG->zip)) {    // Use built-in php-based zip function
                     $files = array();
                     foreach ($USER->filelist as $file) {
-                        $files[] = "$basedir/$file";
+                       $files[] = cleardoubleslashes("$basedir/$file"); // no doubleslashes!
                     }
                     include_once("$CFG->libdir/pclzip/pclzip.lib.php");
-                    $archive = new PclZip("$basedir/$wdir/$name");
-                    if (($list = $archive->create($files,'',"$basedir/$wdir/")) == 0) {
+                    $archive = new PclZip(cleardoubleslashes("$basedir/$wdir/$name"));
+                   if (($list = $archive->create($files, PCLZIP_OPT_REMOVE_PATH,
+                             rtrim(cleardoubleslashes("$basedir/$wdir"), "/"))) == 0) { // no double slashes and trailing slash!
                         error($archive->errorInfo(true));
                     }
                 } else {                   // Use external zip program
@@ -410,8 +411,9 @@
 
                 if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
                     include_once("$CFG->libdir/pclzip/pclzip.lib.php");
-                    $archive = new PclZip("$basedir/$wdir/$file");
-                    if (!$list = $archive->extract("$basedir/$wdir")) {
+                    $archive = new PclZip(cleardoubleslashes("$basedir/$wdir/$file"));
+                    if (!$list = $archive->extract(PCLZIP_OPT_PATH, cleardoubleslashes("$basedir/$wdir"),
+                                                   PCLZIP_CB_PRE_EXTRACT, 'approvefile')) {
                         error($archive->errorInfo(true));
                     } else {  // print some output
                         echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=\"640\">";
@@ -421,7 +423,7 @@
                         echo "<th align=\"right\">$strstatus</th></tr>";
                         foreach ($list as $item) {
                             echo "<tr>";
-                            $item['filename'] = str_replace("$basedir/$wdir/", "", $item['filename']);
+                            $item['filename'] = str_replace(cleardoubleslashes("$basedir/$wdir/"), "", $item['filename']);
                             print_cell("left", $item['filename']);
                             if (! $item['folder']) {
                                 print_cell("right", display_size($item['size']));
@@ -471,8 +473,8 @@
                 $file = basename($file);
 
                 include_once("$CFG->libdir/pclzip/pclzip.lib.php");
-                $archive = new PclZip("$basedir/$wdir/$file");
-                if (!$list = $archive->listContent("$basedir/$wdir")) {
+                $archive = new PclZip(cleardoubleslashes("$basedir/$wdir/$file"));
+                if (!$list = $archive->listContent(cleardoubleslashes("$basedir/$wdir"))) {
                     notify($archive->errorInfo(true));
 
                 } else {
@@ -513,11 +515,11 @@
                 echo $file;
                 print_simple_box_end();
                 echo "<br />";
-                echo "<p align=\"center\">".get_string("areyousuretorestorethisinfo")."</p>";
-                $restore_path = "../backup/restore.php";
+                echo "<p align=center>".get_string("areyousuretorestorethisinfo")."</p>";
+                $restore_path = "$CFG->wwwroot/backup/restore.php";
                 notice_yesno (get_string("areyousuretorestorethis"),
-                                $restore_path."?id=".$id."&amp;file=".$id.$wdir."/".$file,
-                                "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
+                                $restore_path."?id=".$id."&file=".cleardoubleslashes($id.$wdir."/".$file),
+                                "index.php?id=$id&wdir=$wdir&action=cancel");
             } else {
                 displaydir($wdir);
             }
@@ -537,6 +539,13 @@
 
 /// FILE FUNCTIONS ///////////////////////////////////////////////////////////
 
+function approvefile($p_event, &$p_header){
+    if (detect_munged_arguments($p_header['filename'], 0)) {
+        return 0; // do not extract file!!
+    } else {
+        return 1;
+    }
+}
 
 function fulldelete($location) { 
     if (is_dir($location)) {
@@ -580,7 +589,10 @@ function setfilelist($VARS) {
     foreach ($VARS as $key => $val) {
         if (substr($key,0,4) == "file") {
             $count++;
-            $USER->filelist[] = rawurldecode($val);
+            $val = rawurldecode($val);
+            if (!detect_munged_arguments($val, 0)) {
+                $USER->filelist[] = rawurldecode($val);
+            }
         }
     }
     return $count;
