@@ -230,12 +230,10 @@
 
     //If rss are activated at site and glossary level and this glossary has rss defined, show link
         if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
-            $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype and $glossary->rssarticles) {
+            $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype && $glossary->rssarticles) {
             echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top"><td align="right">';
             $tooltiptext = get_string("rsssubscriberss","glossary",$glossary->name);
-            if (isset($USER->id)) {
-                rss_print_link($course->id, $USER->id, "glossary", $glossary->id, $tooltiptext);
-            }
+            rss_print_link($course->id, $USER->id, "glossary", $glossary->id, $tooltiptext);
             echo '</td></tr></table>';
         }
     

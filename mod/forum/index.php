@@ -45,7 +45,7 @@
     $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
     $generaltable->align = array ("left", "left", "center");
 
-    if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
+    if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin() or $course->id == SITEID)) {
         $generaltable->head[] = $strsubscribed;
         $generaltable->align[] = "center";
     }
@@ -182,7 +182,7 @@
     $learningtable->head  = array ($strforum, $strdescription, $strdiscussions);
     $learningtable->align = array ("left", "left", "center");
 
-    if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
+    if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin() or $course->id == SITEID)) {
         $learningtable->head[] = $strsubscribed;
         $learningtable->align[] = "center";
     }

@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
        // This file contains all the common stuff to be used in RSS System
 
 //This function returns the icon (from theme) with the link to rss/file.php
@@ -8,6 +8,12 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext="") {
 
     static $pixpath = '';
     static $rsspath = '';
+
+    //In site course, if no logged (userid), use admin->id. Bug 2048.
+    if ($courseid == SITEID and empty($userid)) {
+        $admin = get_admin();
+        $userid = $admin->id;
+    }
 
     if ($CFG->slasharguments) {
         $rsspath = "$CFG->wwwroot/rss/file.php/$courseid/$userid/$modulename/$id/rss.xml";
