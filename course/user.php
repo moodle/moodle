@@ -19,12 +19,12 @@
         error("Course id is incorrect.");
     }
 
-    if (! (isteacher($course->id) or ($course->showreports and $USER->id == $user))) {
-        error("You are not allowed to look at this page");
-    }
-
     if (! $user = get_record("user", "id", $user)) {
         error("User ID is incorrect");
+    }
+
+    if (! (isteacher($course->id) or ($course->showreports and $USER->id == $user->id))) {
+        error("You are not allowed to look at this page");
     }
 
     add_to_log($course->id, "course", "user report", "user.php?id=$course->id&user=$user->id&mode=$mode", "$user->id"); 
