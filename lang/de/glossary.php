@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 (2004052500)
+      // glossary.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['addcomment'] = 'Kommentar einfügen';
@@ -24,10 +24,10 @@ $string['cantinsertcat'] = 'Eine Kategorie kann nicht eingefügt werden.';
 $string['cantinsertrec'] = 'Eintrag kann nicht eingefügt werden.';
 $string['cantinsertrel'] = 'Verbindung zur Kategorie kann nicht eingefügt werden.';
 $string['casesensitive'] = 'Dieser Eintrag ist <br> abhängig von der Schreibweise.';
-$string['categories'] = 'Kategorien';
-$string['category'] = 'Kategorie';
-$string['categorydeleted'] = 'Kategorie wurde gelöscht';
-$string['categoryview'] = 'Suche nach Kategorie';
+$string['categories'] = 'Begriff';
+$string['category'] = 'Begriffe';
+$string['categorydeleted'] = 'Begriff wurde gelöscht';
+$string['categoryview'] = 'Suche nach Begriff';
 $string['cnfallowcomments'] = 'Kommentare im Glossar sind möglich (Grundeinstellung)';
 $string['cnfallowdupentries'] = 'Doppelte Einträge im Glossar sind möglich (Grundeinstellung)';
 $string['cnfapprovalstatus'] = 'Teilnehmer/innen sollen Beiträge einfügen (Grundeinstellung)';
@@ -61,16 +61,17 @@ $string['deletingnoneemptycategory'] = 'Wenn diese Kategorie gelöscht wird, werd
 $string['descending'] = 'absteigend';
 $string['destination'] = 'Ziel';
 $string['displayformat'] = 'Anzeigeformat';
-$string['displayformat2'] = 'Anzeige mit Autor/in';
-$string['displayformat3'] = 'Anzeige nach Alphabet';
-$string['displayformat4'] = 'FAQ';
-$string['displayformat5'] = 'Anzeige ohne Autor/in';
-$string['displayformat6'] = 'Beitragsliste';
 $string['displayformatcontinuous'] = 'Anzeige fortsetzen ohne Autor/in';
-$string['displayformatdefault'] = 'Kurzanzeige';
+$string['displayformatdictionary'] = 'Einfacher Wörterbuchstil';
+$string['displayformatencyclopedia'] = 'Enzyklopädie';
+$string['displayformatentrylist'] = 'Beitragsliste';
+$string['displayformatfaq'] = 'FAQ';
+$string['displayformatfullwithauthor'] = 'Vollständig mit Autor/in';
+$string['displayformatfullwithoutauthor'] = 'Volltändig ohne Autor/in';
 $string['displayformats'] = 'Anzeigeformat';
 $string['displayformatssetup'] = 'Anzeigeformat Setup';
 $string['duplicateentry'] = 'Doppeleintrag';
+$string['editalways'] = 'Ständig bearbeiten';
 $string['editcategories'] = 'Kategorie bearbeiten';
 $string['editentry'] = 'Eintrag bearbeiten';
 $string['editingcomment'] = 'Kommentar bearbeiten';
@@ -100,6 +101,7 @@ $string['filetoimport'] = 'Datei zum importieren';
 $string['fillfields'] = 'Konzept und Definition sind Pflichtfelder.';
 $string['filtername'] = 'Automatische Verlinkung des Glossars';
 $string['fullmatch'] = 'Überprüfe das ganze Wort nur dann <br><small>(wenn es automatisch verlinkt wurde)</small>';
+$string['globalglossary'] = 'Globales Glossar';
 $string['glossaryleveldefaultsettings'] = 'Grundeinstellung des Glossars';
 $string['glossarytype'] = 'Art des Glossars';
 $string['glosssaryexported'] = 'Glossar wurde exportiert';
