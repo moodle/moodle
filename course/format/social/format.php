@@ -20,10 +20,11 @@
       if ($course->groupmode or !$course->groupmodeforce) {
           if (isteacheredit($course->id) or $course->groupmode == VISIBLEGROUPS) {
               $moddata[]="<a title=\"$strgroups\" href=\"groups.php?id=$course->id\">$strgroups</a>";
+              $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
           } else if ($currentgroup = get_current_group($course->id)) {
               $moddata[]="<a title=\"$strgroupmy\" href=\"group.php?id=$course->id\">$strgroupmy</a>";
+              $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
           }
-          $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
       }
 
       $fullname = fullname($USER, true);
