@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.6 dev (2002101500)
+      // quiz.php - created with Moodle 1.0.6 dev 2 (2002101701)
 
 
 $string['addselectedtoquiz'] = "Auswahl zum Quiz hinzufügen";
@@ -14,6 +14,7 @@ $string['attemptlast'] = "Letzter Versuch";
 $string['attempts'] = "Versuche";
 $string['attemptsallowed'] = "Erlaubte Versuche";
 $string['attemptsunlimited'] = "Unbegrenzte Versuche";
+$string['bestgrade'] = "Höchstnote";
 $string['caseno'] = "Nein, Schreibweise ist unwichtig";
 $string['casesensitive'] = "Schreibweise";
 $string['caseyes'] = "Ja, Schreibweise muss stimmen";
@@ -27,7 +28,7 @@ $string['createnewquestion'] = "Eine neue Frage anlegen";
 $string['daysavailable'] = "Tage verfügbar";
 $string['default'] = "Standard";
 $string['defaultinfo'] = "Die Standard-Rubrik für diese Frage";
-$string['editcategories'] = "";
+$string['editcategories'] = "Rubrik bearbeiten";
 $string['editingmultichoice'] = "Eine Frage mit Mehrfachauswahl bearbeiten";
 $string['editingquestion'] = "Eine Frage bearbeiten";
 $string['editingquiz'] = "Ein Quiz bearbeiten";
@@ -70,6 +71,8 @@ $string['show'] = "Zeigen";
 $string['showcorrectanswer'] = "Nach dem Antworten richtige Antwort anzeigen?";
 $string['showfeedback'] = "Nach dem Antworten Rückmeldung anzeigen?";
 $string['time'] = "Zeit";
+$string['timecompleted'] = "Beendet";
+$string['timetaken'] = "Verbrauchte Zeit";
 $string['true'] = "Wahr";
 $string['truefalse'] = "Wahr/Falsch";
 $string['viewallanswers'] = "Zeige \$a ausgefüllte Quiz";

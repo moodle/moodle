@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6 dev (2002101500)
+      // moodle.php - created with Moodle 1.0.6 dev 2 (2002101701)
 
 
 $string['action'] = "Aktion";
@@ -28,6 +28,7 @@ $string['allparticipants'] = "Alle Teilnehmer";
 $string['alphanumerical'] = "Kann nur Buchstaben und Zahlen haben";
 $string['alreadyconfirmed'] = "Die Registrierung wurde bereits bestätigt";
 $string['answer'] = "Antwort";
+$string['assessment'] = "Beurteilung";
 $string['assignteachers'] = "Lehrer zuweisen";
 $string['availablecourses'] = "Verfügbae Kurse";
 $string['cancel'] = "Abbrechen";
@@ -111,6 +112,8 @@ $string['deletedcourse'] = "\$a wurde erfolgreich gelöscht";
 $string['deletednot'] = "Kann \$a nicht löschen!";
 $string['deletingcourse'] = "Lösche \$a";
 $string['description'] = "Beschreibung";
+$string['downloadexcel'] = "Im Excel-Format herunterladen";
+$string['downloadtext'] = "Im Text-Format herunterladen";
 $string['doyouagree'] = "Haben Sie diese Bedingungen gelesen und verstanden?";
 $string['edit'] = "Bearbeite \$a";
 $string['editcoursesettings'] = "Kurseinstellungen bearbeiten";
@@ -201,6 +204,10 @@ $string['home'] = "Starseite";
 $string['hour'] = "Stunde";
 $string['hours'] = "Stunden";
 $string['htmleditor'] = "WYSIWYG HTML-Text-Eingabe verwenden (Nur IE 5.5. oder höher)";
+$string['htmleditoravailable'] = "Die Richtext-Eingabe ist verfügbar";
+$string['htmleditordisabled'] = "Sie haben die Richtext-Eingabe in Ihrem Benutzer-Profil deaktiviert.";
+$string['htmleditordisabledadmin'] = "Der Verwaltr hat die Richtext-Eingabe in Ihrem Benutzer-Profil deaktiviert.";
+$string['htmleditordisabledbrowser'] = "Die Richtext-Eingabe ist nicht verfügbar, weil Sie nicht den Internet Explorer 5.5 oder höher benutzen";
 $string['htmlformat'] = "Sauberes HTML-Format";
 $string['icqnumber'] = "ICQ-Nummer";
 $string['idnumber'] = "Identifizierungsnummer";
@@ -238,6 +245,7 @@ $string['managedatabase'] = "Datenbank verwalten";
 $string['markthistopic'] = "Dieses Thema als das gegenwärtige Thema kennzeichnen";
 $string['maximumchars'] = "Höchstens \$a Buchstaben";
 $string['maximumgrade'] = "Beste Note";
+$string['maximumshort'] = "Höchstens";
 $string['maxsize'] = "Maximale Größe: \$a";
 $string['min'] = "Minute";
 $string['mins'] = "Minuten";
@@ -408,6 +416,7 @@ $string['todaylogs'] = "Die heutigen Statistiken";
 $string['toomanytoshow'] = "Es sind zuviele Benutzer anzuzeigen";
 $string['topic'] = "Thema";
 $string['topicoutline'] = "Ausstehendes Thema";
+$string['total'] = "Insgesamt";
 $string['turneditingoff'] = "Bearbeiten ausschalten";
 $string['turneditingon'] = "Bearbeiten einschalten";
 $string['undecided'] = "Unbestimmt";
