@@ -86,7 +86,7 @@ CREATE TABLE `course_sections` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `course` int(10) unsigned NOT NULL default '0',
   `section` int(10) unsigned NOT NULL default '0',
-  `summary` varchar(255) NOT NULL default '',
+  `summary` text NOT NULL,
   `sequence` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM;
