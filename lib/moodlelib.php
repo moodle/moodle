@@ -36,7 +36,7 @@
 
 /// CONSTANTS /////////////////////////////////////////////////////////////
 
-define('NOGROUPS', 0);   
+define('NOGROUPS', 0);
 define('SEPARATEGROUPS', 1);
 define('VISIBLEGROUPS', 2);
 
@@ -80,7 +80,7 @@ function reload_user_preferences() {
 
     global $USER;
 
-    unset($USER->preference); 
+    unset($USER->preference);
 
     if ($preferences = get_records('user_preferences', 'userid', $USER->id)) {
         foreach ($preferences as $preference) {
@@ -138,8 +138,8 @@ function set_user_preferences($prefarray) {
 
 function get_user_preferences($name=NULL, $default=NULL) {
 /// Without arguments, returns all the current user preferences
-/// as an array.  If a name is specified, then this function 
-/// attempts to return that particular preference value.  If 
+/// as an array.  If a name is specified, then this function
+/// attempts to return that particular preference value.  If
 /// none is found, then the optional value $default is returned,
 /// otherwise NULL.
 
@@ -230,12 +230,12 @@ function format_time($totalsecs, $str=NULL) {
 function userdate($date, $format="", $timezone=99, $fixday = true) {
 /// Returns a formatted string that represents a date in user time
 /// WARNING: note that the format is for strftime(), not date().
-/// Because of a bug in most Windows time libraries, we can't use 
+/// Because of a bug in most Windows time libraries, we can't use
 /// the nicer %e, so we have to use %d which has leading zeroes.
-/// A lot of the fuss below is just getting rid of these leading 
+/// A lot of the fuss below is just getting rid of these leading
 /// zeroes as efficiently as possible.
 ///
-/// If parammeter fixday = true (default), then take off leading 
+/// If parammeter fixday = true (default), then take off leading
 /// zero from %d, else mantain it.
 
     global $USER, $CFG;
@@ -280,10 +280,10 @@ function userdate($date, $format="", $timezone=99, $fixday = true) {
 }
 
 function usergetdate($date, $timezone=99) {
-/// Given a $date timestamp in GMT, returns an array 
+/// Given a $date timestamp in GMT, returns an array
 /// that represents the date in user time
 
-    global $USER;
+    global $USER, $CFG;
 
     if ($timezone == 99) {                    // Work out the best timezone to use
         if (isset($USER->timezone)) {         // A user is logged in
@@ -311,9 +311,9 @@ function usergetdate($date, $timezone=99) {
 }
 
 function usertime($date, $timezone=99) {
-/// Given a GMT timestamp (seconds since epoch), offsets it by 
+/// Given a GMT timestamp (seconds since epoch), offsets it by
 /// the timezone.  eg 3pm in India is 3pm GMT - 7 * 3600 seconds
-    global $USER;
+    global $USER, $CFG;
 
     if ($timezone == 99) {                    // Work out the best timezone to use
         if (isset($USER->timezone)) {         // A user is logged in
@@ -331,7 +331,7 @@ function usertime($date, $timezone=99) {
 function usergetmidnight($date, $timezone=99) {
 /// Given a time, return the GMT timestamp of the most recent midnight
 /// for the current user.
-    global $USER;
+    global $USER, $CFG;
 
     if ($timezone == 99) {                    // Work out the best timezone to use
         if (isset($USER->timezone)) {         // A user is logged in
@@ -354,7 +354,7 @@ function usergetmidnight($date, $timezone=99) {
 
 function usertimezone($timezone=99) {
 /// Returns a string that prints the user's timezone
-    global $USER;
+    global $USER, $CFG;
 
     if ($timezone == 99) {                    // Work out the best timezone to use
         if (isset($USER->timezone)) {         // A user is logged in
@@ -385,7 +385,7 @@ function require_login($courseid=0) {
 /// If not, then it redirects them to the site login or course enrolment.
 
     global $CFG, $SESSION, $USER, $FULLME, $MoodleSession;
-      
+
     // First check that the user is logged in to the site.
     if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) { // They're not
         $SESSION->wantsurl = $FULLME;
@@ -403,7 +403,7 @@ function require_login($courseid=0) {
         redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
         die;
     }
-    
+
     // Next, check if the user can be in a particular course
     if ($courseid) {
         if (!empty($USER->student[$courseid]) or !empty($USER->teacher[$courseid]) or !empty($USER->admin)) {
@@ -551,7 +551,7 @@ function isteacheredit($courseid, $userid=0) {
 /// Is the user allowed to edit this course?
     global $USER;
 
-    if (isadmin($userid)) {  // admins can do anything 
+    if (isadmin($userid)) {  // admins can do anything
         return true;
     }
 
@@ -630,7 +630,7 @@ function ismoving($courseid) {
 
 function fullname($user, $override=false) {
 /// Given an object containing firstname and lastname
-/// values, this function returns a string with the 
+/// values, this function returns a string with the
 /// full name of the person.
 /// The result may depend on system settings
 /// or language.  'override' will force both names
@@ -696,7 +696,7 @@ function is_internal_auth() {
 }
 
 function create_user_record($username, $password) {
-/// Creates a bare-bones user record 
+/// Creates a bare-bones user record
     global $REMOTE_ADDR, $CFG;
     //just in case check text case
     $username = trim(moodle_strtolower($username));
@@ -736,9 +736,9 @@ function guest_user() {
 }
 
 function authenticate_user_login($username, $password) {
-/// Given a username and password, this function looks them 
+/// Given a username and password, this function looks them
 /// up using the currently selected authentication mechanism,
-/// and if the authentication is successful, it returns a 
+/// and if the authentication is successful, it returns a
 /// valid $user object from the 'user' table.
 ///
 /// Uses auth_ functions from the currently active auth module
@@ -756,8 +756,8 @@ function authenticate_user_login($username, $password) {
     }
 
     // If this is the admin, then just use internal methods
-    // Doing this first (even though it's less efficient) because 
-    // the chosen authentication method might hang and lock the 
+    // Doing this first (even though it's less efficient) because
+    // the chosen authentication method might hang and lock the
     // admin out.
     if (adminlogin($username, $md5password)) {
         return get_user_info_from_db("username", $username);
@@ -793,7 +793,7 @@ function authenticate_user_login($username, $password) {
                  }
             }
          }
-         
+
         return $user;
     } else {
         return false;
@@ -938,7 +938,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     $strdeleted = get_string("deleted");
 
     // First delete every instance of every module
-    
+
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
@@ -1059,11 +1059,11 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 
 /// GROUPS /////////////////////////////////////////////////////////
- 
+
 
 /**
 * Returns a boolean: is the user a member of the given group?
-* 
+*
 * @param	type description
 */
 function ismember($groupid, $userid=0) {
@@ -1090,7 +1090,7 @@ function ismember($groupid, $userid=0) {
 
 /**
 * Returns the group ID of the current user in the given course
-* 
+*
 * @param	type description
 */
 function mygroupid($courseid) {
@@ -1104,10 +1104,10 @@ function mygroupid($courseid) {
 }
 
 /**
-* For a given course, and possibly course module, determine 
+* For a given course, and possibly course module, determine
 * what the current default groupmode is:
 * NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
-* 
+*
 * @param	type description
 */
 function groupmode($course, $cm=null) {
@@ -1121,7 +1121,7 @@ function groupmode($course, $cm=null) {
 
 /**
 * Sets the current group in the session variable
-* 
+*
 * @param	type description
 */
 function set_current_group($courseid, $groupid) {
@@ -1133,7 +1133,7 @@ function set_current_group($courseid, $groupid) {
 
 /**
 * Gets the current group for the current user as an id or an object
-* 
+*
 * @param	type description
 */
 function get_current_group($courseid, $full=false) {
@@ -1166,7 +1166,7 @@ function get_current_group($courseid, $full=false) {
 function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
     if (!$groupmode) {   // Groups don't even apply
-        return false;  
+        return false;
     }
 
     $currentgroupid = get_current_group($course->id);
@@ -1267,10 +1267,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     if (!empty($user->emailstop)) {
         return false;
     }
-    
+
     $mail = new phpmailer;
 
-    $mail->Version = "Moodle $CFG->version";           // mailer version 
+    $mail->Version = "Moodle $CFG->version";           // mailer version
     $mail->PluginDir = "$CFG->libdir/phpmailer/";      // plugin directory (eg smtp plugin)
 
 
@@ -1307,7 +1307,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     $mail->FromName = fullname($from);
     $mail->Subject  =  stripslashes($subject);
 
-    $mail->AddAddress("$user->email", fullname($user) ); 
+    $mail->AddAddress("$user->email", fullname($user) );
 
     $mail->WordWrap = 70;                               // set word wrap
 
@@ -1524,8 +1524,8 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
 }
 
 function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
-/// Related to the above function - this function returns an 
-/// array of possible sizes in an array, translated to the 
+/// Related to the above function - this function returns an
+/// array of possible sizes in an array, translated to the
 /// local language.
 
     if (!$maxsize = get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes)) {
@@ -1534,7 +1534,7 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 
     $filesize[$maxsize] = display_size($maxsize);
 
-    $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152, 
+    $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152,
                       5242880, 10485760, 20971520, 52428800, 104857600);
 
     foreach ($sizelist as $sizebytes) {
@@ -1549,7 +1549,7 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 }
 
 function get_directory_list($rootdir, $excludefile="", $descend=true) {
-/// Returns an array with all the filenames in 
+/// Returns an array with all the filenames in
 /// all subdirectories, relative to the given rootdir.
 /// If excludefile is defined, then that file/directory is ignored
 
@@ -1588,7 +1588,7 @@ function get_directory_list($rootdir, $excludefile="", $descend=true) {
 function get_real_size($size=0) {
 /// Converts numbers like 10M into bytes
     if (!$size) {
-        return 0; 
+        return 0;
     }
     $scan['MB'] = 1048576;
     $scan['Mb'] = 1048576;
@@ -1626,7 +1626,7 @@ function display_size($size) {
         $size = round($size / 1048576 * 10) / 10 . $mb;
     } else if ($size >= 1024) {
         $size = round($size / 1024 * 10) / 10 . $kb;
-    } else { 
+    } else {
         $size = $size ." $b";
     }
     return $size;
@@ -1668,7 +1668,7 @@ function print_string($identifier, $module="", $a=NULL) {
 }
 
 function get_string($identifier, $module="", $a=NULL) {
-/// Return the translated string specified by $identifier as 
+/// Return the translated string specified by $identifier as
 /// for $module.  Uses the same format files as STphp.
 /// $a is an object, string or number that can be used
 /// within translation strings
@@ -1705,12 +1705,12 @@ function get_string($identifier, $module="", $a=NULL) {
 
     // If the preferred language was English we can abort now
 
-    if ($lang == "en") { 
+    if ($lang == "en") {
         return "[[$identifier]]";
     }
 
     // Is a parent language defined?  If so, try it.
-            
+
     if ($result = get_string_from_file("parentlanguage", "$langpath/$lang/moodle.php", "\$parentlang")) {
         eval($result);
         if (!empty($parentlang)) {
@@ -1806,7 +1806,7 @@ function get_list_of_countries() {
         }
     }
 
-    include("$CFG->dirroot/lang/$lang/countries.php"); 
+    include("$CFG->dirroot/lang/$lang/countries.php");
 
     if (!empty($string)) {
         asort($string);
@@ -1833,7 +1833,7 @@ function get_list_of_pixnames() {
         }
     }
 
-    include_once("$CFG->dirroot/lang/$lang/pix.php"); 
+    include_once("$CFG->dirroot/lang/$lang/pix.php");
 
     return $string;
 }
@@ -1961,11 +1961,11 @@ function add_event($event) {
     global $CFG;
 
     $event->timemodified = time();
-    
+
     if (!$event->id = insert_record("event", $event)) {
         return false;
     }
-    
+
     if (!empty($CFG->calendar)) { // call the add_event function of the selected calendar
         if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
             include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
@@ -1975,7 +1975,7 @@ function add_event($event) {
             }
         }
     }
-    
+
     return $event->id;
 }
 
@@ -1987,7 +1987,7 @@ function update_event($event) {
     global $CFG;
 
     $event->timemodified = time();
-    
+
     if (!empty($CFG->calendar)) { // call the update_event function of the selected calendar
         if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
             include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
@@ -2188,7 +2188,7 @@ function moodle_needs_upgrading() {
     global $CFG;
 
     include_once("$CFG->dirroot/version.php");  # defines $version and upgrades
-    if ($CFG->version) { 
+    if ($CFG->version) {
         if ($version > $CFG->version) {
             return true;
         }
@@ -2224,10 +2224,10 @@ function moodle_strtolower ($string, $encoding='') {
            return mb_strtolower($string);          //use multibyte support with default encoding
         } else {
            return mb_strtolower($string,$encoding); //use given encoding
-        }   
+        }
     } else {
         return strtolower($string);                // use common function what rely on current locale setting
-    }    
+    }
 }
 
 function count_words($string) {
@@ -2252,10 +2252,10 @@ function random_string ($length=15) {
 
 function getweek ($startdate, $thedate) {
 /// Given dates in seconds, how many weeks is the date from startdate
-/// The first week is 1, the second 2 etc ... 
-    
+/// The first week is 1, the second 2 etc ...
+
     if ($thedate < $startdate) {   // error
-        return 0;  
+        return 0;
     }
 
     return floor(($thedate - $startdate) / 604800.0) + 1;
@@ -2263,7 +2263,7 @@ function getweek ($startdate, $thedate) {
 
 function generate_password($maxlen=10) {
 /// returns a randomly generated password of length $maxlen.  inspired by
-/// http://www.phpbuilder.com/columns/jesus19990502.php3 
+/// http://www.phpbuilder.com/columns/jesus19990502.php3
 
     global $CFG;
 
@@ -2294,7 +2294,7 @@ function swapshuffle($array) {
         $curr = $array[$i];
         $array[$i] = $array[$from];
         $array[$from] = $curr;
-    }  
+    }
     return $array;
 }
 
@@ -2309,8 +2309,8 @@ function swapshuffle_assoc($array) {
 }
 
 function draw_rand_array($array, $draws) {
-/// Given an arbitrary array, and a number of draws, 
-/// this function returns an array with that amount 
+/// Given an arbitrary array, and a number of draws,
+/// this function returns an array with that amount
 /// of items.  The indexes are retained.
 
     srand ((double) microtime() * 10000000);
@@ -2331,12 +2331,12 @@ function draw_rand_array($array, $draws) {
 
         $return[$keys[$rand]] = $array[$keys[$rand]];
         unset($array[$keys[$rand]]);
-  
+
         $draws--;
     }
 
     return $return;
-} 
+}
 
 function microtime_diff($a, $b) {
     list($a_dec, $a_sec) = explode(" ", $a);
@@ -2345,7 +2345,7 @@ function microtime_diff($a, $b) {
 }
 
 function make_menu_from_list($list, $separator=",") {
-/// Given a list (eg a,b,c,d,e) this function returns 
+/// Given a list (eg a,b,c,d,e) this function returns
 /// an array of 1->a, 2->b, 3->c etc
 
     $array = array_reverse(explode($separator, $list), true);
