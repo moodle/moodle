@@ -10,6 +10,9 @@
     }
 
     if (isset($file)) {     // workaround for situations where / syntax doesn't work
+        if (strpos($file, '..') !== false) {
+            error('File reference contains disallowed characters (double dots)');
+        }
         $pathinfo = $file;
     } else {
         $pathinfo = get_slash_arguments("file.php");
