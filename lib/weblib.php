@@ -157,7 +157,7 @@ function match_referer($goodreferer = "") {
     if (empty($goodreferer)) {
         $goodreferer = qualified_me();
     }
-    
+
     $referer = get_referer();
 
     return (($referer == $goodreferer) or ($referer == "$CFG->wwwroot/"));
@@ -386,7 +386,7 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
     }
 
     if ($script) {
-        $javascript = "onChange=\"$script\"";
+        $javascript = "onchange=\"$script\"";
     } else {
         $javascript = "";
     }
@@ -1828,7 +1828,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         }
     }
 
-    echo "<textarea id=\"$name\" name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=\"virtual\">";
+    echo "<textarea id=\"$name\" name=\"$name\" rows=\"$rows\" cols=\"$cols\">";
     p($value);
     echo "</textarea>\n";
 }
@@ -1846,7 +1846,7 @@ function use_html_editor($name="") {
 ///
 /// In most cases no arguments need to be supplied
 
-    echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"1\">\n";
+    echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"defer\">\n";
     print_editor_config();
     if (empty($name)) {
         echo "\nHTMLArea.replaceAll(config);\n";
