@@ -22,17 +22,31 @@
         error('Site isn\'t defined!');
     }
 
-/*
-function olson_todst ($filename) {
-
-    $zones = olson_simple_zone_parser($filename);
-    $rules = olson_simple_rule_parser($filename);
-*/
-
-$zones = olson_simple_zone_parser($CFG->dataroot.'/temp/olson.txt');
-$rules = olson_simple_rule_parser($CFG->dataroot.'/temp/olson.txt');
 $ddd = olson_todst($CFG->dataroot.'/temp/olson.txt');
-print_object($ddd);
+
+execute_sql('TRUNCATE TABLE '.$CFG->prefix.'timezone');
+
+$timezone = new stdClass;
+$timezone->year = 1970;
+for($i = -13; $i <= 13; $i += .5) {
+    $timezone->gmtoff  = $i * HOURSECS;
+    $timezone->name    = get_string('timezoneunspecifiedlocation').' / GMT';
+    $timezone->sortkey = 'UNSPECIFIED_'.sprintf('%05d', 13 * HOURSECS + $timezone->gmtoff);
+    if($i < 0) {
+        $timezone->name .= $i;
+    }
+    else if($i > 0) {
+        $timezone->name .= '+'.$i;
+    }
+    insert_record('timezone', $timezone);
+}
+
+
+foreach($ddd as $rec) {
+    print_object($rec);
+    insert_record('timezone', $rec);
+}
+
 die();
 
     // These control what kind of operations import_dst_records will be allowed
