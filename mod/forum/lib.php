@@ -1238,7 +1238,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $postdata = "p.*";
     }
 
-    return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified,
+    return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture, 
                                    um.firstname AS umfirstname, um.lastname AS umlastname
                               FROM {$CFG->prefix}forum_discussions d,
@@ -1701,7 +1701,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 }
 
 
-function forum_print_discussion_header(&$post, $forum, $datestring="") {
+function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="") {
 /// This function prints the overview of a discussion in the forum listing.
 /// It needs some discussion information and some post information, these
 /// happen to be combined for efficiency in the $post parameter by the function
@@ -1732,6 +1732,17 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
     echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&amp;course=$forum->course\">$fullname</a>";
     echo "</td>\n";
 
+    // Group picture
+    if ($group !== '-1') {  // Groups are active - group is a group data object or NULL
+        echo "<td class=\"forumpostheadergroup\" align=\"center\">";
+        if (!empty($group->picture)) {
+            print_group_picture($group, $forum->course, false, false, true);
+        } else if (isset($group->id)) {
+            echo '<a href="'.$CFG->wwwroot.'/course/group.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
+        }
+        echo "</td>\n";
+    }
+
     if ($forum->open or $forum->type == "teacher") {   // Show the column with replies
         echo "<td class=\"forumpostheaderreplies\" align=\"center\" nowrap=\"nowrap\">";
         echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
@@ -1741,9 +1752,14 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
         if ($CFG->forum_trackreadposts) {
             echo '<td class="forumpostheaderreplies" align="center" nowrap="nowrap">';
             echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#unread\">";
-            if ($post->unread > 0) echo '<span class="unread">';
+            if ($post->unread > 0) {
+                echo '<span class="unread">';
+            }
             echo $post->unread;
-            if ($post->unread > 0) echo '</span>';
+
+            if ($post->unread > 0) {
+                echo '</span>';
+            }
             echo '</a>';
             echo "</td>\n";
         }
@@ -2612,6 +2628,9 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         echo "<tr class=\"forumpostheader\">";
         echo "<th>".get_string("discussion", "forum")."</th>";
         echo "<th colspan=\"2\">".get_string("startedby", "forum")."</th>";
+        if ($groupmode > 0) {
+            echo '<th>'.get_string('group').'</th>';
+        }
         if ($forum->open or $forum->type == "teacher") {
             echo "<th>".get_string("replies", "forum")."</th>";
         }
@@ -2680,7 +2699,16 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                 echo "</p>\n";
             break;
             case "header":
-                forum_print_discussion_header($discussion, $forum, $strdatestring);
+                if ($groupmode > 0) {
+                    if (isset($groups[$discussion->groupid])) {
+                        $group = $groups[$discussion->groupid];
+                    } else {
+                        $group = $groups[$discussion->groupid] = get_record('groups', 'id', $discussion->groupid);
+                    }
+                } else {
+                    $group = -1;
+                }
+                forum_print_discussion_header($discussion, $forum, $group, $strdatestring);
             break;
             default:
                 if ($canreply or $discussion->replies) {
