@@ -3049,6 +3049,9 @@ function get_question_data( $question ) {
     case DESCRIPTION:
         // nothing to do
         break;
+    case MULTIANSWER:
+        // nothing to do
+        break;
     default:
         error("No handler for question type $question->qtype in get_question");
     }
