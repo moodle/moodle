@@ -179,6 +179,19 @@
             redirect($temp);
             break;
 
+        case WIKITEXT:
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
+                "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+
+            print_simple_box(wiki_to_html($resource->alltext), "CENTER", "", "$THEME->cellcontent", "20" );
+
+            echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
+
+            print_footer($course);
+            break;
+ 
+
         default:
             print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));

@@ -149,6 +149,24 @@
                 <?
                 break;
 
+            case WIKITEXT:
+                $strfulltext = get_string("fulltext", "resource");
+                ?>
+                <tr valign="top">
+                    <td align="right" nowrap="true">
+                        <p><b><?=$strfulltext?>:</b></p><br \>
+                        <font size="1">
+                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
+                        <? helpbutton("wiki", get_string("helpwiki"), "moodle", true, true) ?> <br />
+                        </font>
+                    </td>
+                    <td>
+                        <textarea name="alltext" rows="20" cols="50" wrap="virtual"><? p($form->alltext) ?></textarea>
+                    </td>
+                </tr>
+                <?
+                break;
+
             case HTML:
                 $strhtmlfragment = get_string("htmlfragment", "resource");
                 ?>

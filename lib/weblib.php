@@ -561,6 +561,16 @@ function text_to_html($text, $smiley=true, $para=true) {
     }
 }
 
+function wiki_to_html($text) {
+/// given Wiki formatted text, make it into XHTML
+
+  require('wiki.php');
+
+  // get Tiki object and do the deed
+  $wiki = new Wiki;
+  return $wiki->format($text);
+}
+
 function highlight($needle, $haystack) {
 /// This function will highlight instances of $needle in $haystack
 

@@ -230,6 +230,7 @@ $string['helphtml'] = "How to write html";
 $string['helppicture'] = "How to upload a picture";
 $string['helpreading'] = "Read carefully";
 $string['helptext'] = "How to write text";
+$string['helpwiki'] = "How to write Wiki text";
 $string['helprichtext'] = "About Richtext editor";
 $string['helpsummaries'] = "About these summaries";
 $string['helpquestions'] = "Ask good questions";

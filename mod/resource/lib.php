@@ -7,6 +7,7 @@ define("PLAINTEXT",   "4");
 define("WEBLINK",     "5");
 define("HTML",        "6");
 define("PROGRAM",     "7");
+define("WIKITEXT",    "8");
 
 $RESOURCE_TYPE = array (REFERENCE    => get_string("resourcetype1", "resource"),
                         WEBPAGE      => get_string("resourcetype2", "resource"),
@@ -14,7 +15,8 @@ $RESOURCE_TYPE = array (REFERENCE    => get_string("resourcetype1", "resource"),
                         PLAINTEXT    => get_string("resourcetype4", "resource"),
                         WEBLINK      => get_string("resourcetype5", "resource"),
                         HTML         => get_string("resourcetype6", "resource"),
-                        PROGRAM      => get_string("resourcetype7", "resource") );
+                        PROGRAM      => get_string("resourcetype7", "resource"),
+                        WIKITEXT     => get_string("resourcetype8", "resource") );
 
 $RESOURCE_FRAME_SIZE = 130;
 
