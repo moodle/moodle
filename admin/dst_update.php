@@ -91,6 +91,7 @@
             case STEP_COMPLETED:
                 echo get_string('updatedstpresetscompleted');
                 print_object($results);
+                die();
             break;
         }
     }
