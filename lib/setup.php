@@ -77,6 +77,8 @@
         foreach ($configs as $config) {
             if (!isset($CFG[$config->name])) {
                 $CFG[$config->name] = $config->value;
+            } else {
+                error_log("\$CFG->$config->name in config.php overrides database setting");
             }
         }
         $CFG = (object)$CFG;
