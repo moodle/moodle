@@ -79,7 +79,7 @@ $ALLOWED_TAGS =
  * Allowed protocols - array of protocols that are safe to use in links and so on
  * @global string $ALLOWED_PROTOCOLS
  */
-$ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'color');
+$ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'color', 'callto');
 
 
 /// Functions
