@@ -10,6 +10,8 @@
     optional_variable($parent); // If set, then display this post and all children.
     optional_variable($mode);   // If set, changes the layout of the thread
     optional_variable($move);   // If set, moves this discussion to another forum
+    optional_variable($mark);   // Used for tracking read posts if user initiated.
+    optional_variable($postid); // Used for tracking read posts if user initiated.
 
     if (! $discussion = get_record("forum_discussions", "id", $d)) {
         error("Discussion ID was incorrect or no longer exists");
@@ -93,6 +95,14 @@
         error("Discussion no longer exists", "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
     }
 
+    if ($CFG->forum_trackreadposts && $CFG->forum_usermarksread) {
+        if ($mark == 'read') {
+            forum_tp_add_read_record($USER->id, $postid, $discussion->id, $forum->id);
+        } else if ($mark == 'unread') {
+            forum_tp_delete_read_records($USER->id, $postid);
+        }
+    }
+
     if (empty($navtail)) {
         $navtail = "<a href=\"discuss.php?d=$discussion->id\">$discussion->name</a> -> $post->subject";
     }
@@ -105,14 +115,12 @@
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
-
-        echo '<div id="forum-discuss" class="forum">';  // forum-discuss wrapper start
     } else {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
-
-        echo '<div id="forum-discuss" class="forum">';  // forum-discuss wrapper start
     }
+
+    echo '<div id="forum-discuss" class="forum">';  // forum-discuss wrapper start
 
 
 /// Check to see if groups are being used in this forum

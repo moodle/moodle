@@ -1036,6 +1036,16 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
                          $instancename.'</a></font>';
                 }
+                if ($CFG->forum_trackreadposts && $mod->modname == 'forum') {
+                    $groupmode = groupmode($course, $mod);
+                    $groupid = ($groupmode == SEPARATEGROUPS && !isteacheredit($course->id)) ?
+                        get_current_group($course->id) : false;
+                    $unread = forum_tp_count_forum_posts($mod->instance, $groupid) -
+                        forum_tp_count_forum_read_records($USER->id, $mod->instance, $groupid);
+                    $cssclass = ($unread > 0) ? 'unread' : 'read';
+                    echo '<span class="'.$cssclass.'"> '.get_string('unreadpostsnumber', 'forum', $unread).'.</span>';
+                }
+
                 if ($isediting) {
                     if ($groupbuttons) {
                         if (! $mod->groupmodelink = $groupbuttonslink) {

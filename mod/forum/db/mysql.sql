@@ -117,6 +117,24 @@ CREATE TABLE prefix_forum_subscriptions (
 # --------------------------------------------------------
 
 #
+# Table structure for table `forum_read`
+#
+
+CREATE TABLE prefix_forum_read (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `userid` int(10) NOT NULL default '0',
+  `forumid` int(10) NOT NULL default '0',
+  `discussionid` int(10) NOT NULL default '0',
+  `postid` int(10) NOT NULL default '0',
+  `firstread` int(10) NOT NULL default '0',
+  `lastread` int(10) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `prefix_forum_user_forum_idx` (`userid`,`forumid`),
+  KEY `prefix_forum_user_discussion_idx` (`userid`,`discussionid`),
+  KEY `prefix_forum_user_post_idx` (`userid`,`postid`)
+) COMMENT='Tracks each users read posts';
+
+#
 # Dumping data for table `log_display`
 #
 

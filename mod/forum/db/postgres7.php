@@ -101,6 +101,22 @@ function forum_upgrade($oldversion) {
       modify_database('','CREATE INDEX prefix_forum_subscriptions_forum_idx ON prefix_forum_subscriptions (forum);');
   }
 
+  if ($oldversion < 2005011500) {
+      modify_database('','CREATE TABLE prefix_forum_read (
+                          id SERIAL PRIMARY KEY,
+                          userid integer default 0 NOT NULL,
+                          forumid integer default 0 NOT NULL,
+                          discussionid integer default 0 NOT NULL,
+                          postid integer default 0 NOT NULL,
+                          firstread integer default 0 NOT NULL,
+                          lastread integer default 0 NOT NULL
+                        );');
+
+      modify_database('','CREATE INDEX prefix_forum_user_forum_idx ON prefix_forum_read (userid, forumid);');
+      modify_database('','CREATE INDEX prefix_forum_user_discussion_idx ON prefix_forum_read (userid, discussionid);');
+      modify_database('','CREATE INDEX prefix_forum_user_post_idx ON prefix_forum_read (userid, postid);');
+  }
+
   return true;
 
 }

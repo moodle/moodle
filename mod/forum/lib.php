@@ -46,6 +46,22 @@ if (!isset($CFG->forum_maxbytes)) {
     set_config("forum_maxbytes", 512000);  // Default maximum size for all forums
 }
 
+if (!isset($CFG->forum_trackreadposts)) {
+    set_config("forum_trackreadposts", true);  // Default whether user needs to mark a post as read
+}
+
+if (!isset($CFG->forum_oldpostdays)) {
+    set_config("forum_oldpostdays", 60);  // Default number of days that a post is considered old
+}
+
+if (!isset($CFG->forum_usermarksread)) {
+    set_config("forum_usermarksread", false);  // Default whether user needs to mark a post as read
+}
+
+if (!isset($CFG->forum_cleanreadtime)) {
+    set_config("forum_cleanreadtime", 2);  // Default time (hour) to execute 'clean_read_records' cron
+}
+
 if (!isset($CFG->forum_replytouser)) {
     set_config("forum_replytouser", true);  // Default maximum size for all forums
 }
@@ -182,6 +198,8 @@ function forum_delete_instance($id) {
         $result = false;
     }
 
+    forum_tp_delete_read_records(-1, -1, -1, $forum->id);
+
     if (! delete_records("forum", "id", "$forum->id")) {
         $result = false;
     }
@@ -213,6 +231,7 @@ function forum_cron () {
     $timenow   = time();
     $endtime   = $timenow - $CFG->maxeditingtime;
     $starttime = $endtime - 48 * 3600;   /// Two days earlier
+    $starttime = $endtime - 365 * 24 * 3600;   /// Two days earlier
 
     if ($posts = forum_get_unmailed_posts($starttime, $endtime)) {
 
@@ -330,6 +349,14 @@ function forum_cron () {
                                    substr($post->subject,0,30), $cm->id, $userto->id);
                     } else {
                         $mailcount++;
+
+                    /// Mark post as read if forum_usermarksread is set off
+                        if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread) {
+                            if (!forum_tp_mark_post_read($userto->id, $post, $forum->id)) {
+                                mtrace("Error: mod/forum/cron.php: Could not mark post $post->id read for user $userto->id".
+                                     " while sending email.");
+                            }
+                        }
                     }
                 }
 
@@ -463,6 +490,10 @@ function forum_cron () {
                     $postsarray = $discussionposts[$discussionid];
                     sort($postsarray);
 
+                /// Create an empty array to use for marking read posts.
+                /// (I'm sure there's already a structure I can use here, but I can't be sure.)
+                    $markread = array();
+
                     foreach ($postsarray as $postid) {
                         if (! $post = get_record("forum_posts", "id", "$postid")) {
                             mtrace("Error: Could not find post $postid");
@@ -490,6 +521,12 @@ function forum_cron () {
                             // The full treatment
                             $posttext .= forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, true);
                             $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
+
+                        /// Create an array of postid's for this user to mark as read.
+                            if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread) {
+                                $markread[$post->id]->post = $post;
+                                $markread[$post->id]->forumid = $forum->id;
+                            }
                         }
                     }
                     if ($canunsubscribe) {
@@ -511,6 +548,16 @@ function forum_cron () {
                 } else {
                     mtrace("success.");
                     $usermailcount++;
+                    
+                    /// Mark post as read if forum_usermarksread is set off
+                        if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread) {
+                            foreach ($markread as $postinfo) {
+                                if (!forum_tp_mark_post_read($userto->id, $postinfo->post, $postinfo->forumid)) {
+                                    mtrace("Error: mod/forum/cron.php: Could not mark post $postid read for user $userto->id".
+                                         " while sending digest email.");
+                                }
+                            }
+                        }
                 }
 
             }
@@ -525,6 +572,21 @@ function forum_cron () {
     if (!empty($realuser)) {   // Restore real USER if necessary
         $USER = $realuser;
     }
+
+    if (($lastreadclean = get_record("config", "name", "forum_lastreadclean"))) {
+        $cleantime = mktime($CFG->forum_cleanreadtime, 0);
+        $timenow = time();
+        if (($timenow > $cleantime) && ($lastreadclean->value+(24*3600) < $timenow)) {
+            $lastreadclean->value = $timenow;
+            update_record("config", $lastreadclean);
+            forum_tp_clean_read_records();
+        }
+    } else {
+        $lastreadclean->name = 'forum_lastreadclean';
+        $lastreadclean->value = time();
+        insert_record("config", $lastreadclean);
+    }
+
 
     return true;
 }
@@ -634,6 +696,10 @@ function forum_user_complete($course, $user, $mod, $forum) {
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
         foreach ($posts as $post) {
+        
+    /// Add the forum id to the post object - used by read tracking.
+            $post->forum = $forum->id;
+
             forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false);
         }
 
@@ -1099,12 +1165,15 @@ function forum_count_discussion_replies($forum="0") {
 
     if ($forum) {
         $forumselect = " AND d.forum = '$forum'";
+    } else {
+        $forumselect = '';
     }
     return get_records_sql("SELECT p.discussion, (count(*)) as replies, max(p.id) as lastpostid
                               FROM {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}forum_discussions d
                              WHERE p.parent > 0
                                AND p.discussion = d.id
+                               {$forumselect}
                           GROUP BY p.discussion");
 }
 
@@ -1175,7 +1244,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                AND p.discussion = d.id
                                AND p.parent = 0
                                AND p.userid = u.id $groupselect $userselect
-                               AND d.usermodified = um.id 
+                               AND (d.usermodified = um.id OR d.usermodified = 0) 
                           ORDER BY $forumsort");
 }
 
@@ -1413,11 +1482,13 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
 
 function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false,
-                          $ratings=NULL, $footer="", $highlight="") {
+                          $ratings=NULL, $footer="", $highlight="", $post_read=-99) {
 
     global $USER, $CFG;
 
     static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading, $threadedmode, $isteacher, $adminedit;
+
+    static $strmarkread, $strmarkunread;
 
     if (empty($stredit)) {
         $stredit = get_string('edit', 'forum');
@@ -1429,13 +1500,29 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
         $isteacher = isteacher($courseid);
         $adminedit = (isadmin() and !empty($CFG->admineditalways));
+        $strmarkread = get_string('markread', 'forum');
+        $strmarkunread = get_string('markunread', 'forum');
     }
 
-    echo "<a name=\"$post->id\"></a>";
-    if ($post->parent) {
-        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
+    if ($CFG->forum_trackreadposts) {
+        if ($post_read == -99) {    // If we don't know yet...
+            $post_read = forum_tp_is_post_read($USER->id, $post);
+        }
+        if ($post_read) {
+            $read_style = ' read';
+        } else {
+            $read_style = ' unread';
+            echo '<a name="unread"></a>';
+        }
     } else {
-        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost" width="100%">';
+        $read_style = '';
+    }
+
+    echo '<a name="'.$post->id.'"></a>';
+    if ($post->parent) {
+        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost'.$read_style.'">';
+    } else {
+        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost'.$read_style.'" width="100%">';
     }
 
     echo "<tr><td class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
@@ -1451,16 +1538,20 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     if (!empty($CFG->filterall)) {      /// Put the subject through the filters
         $post->subject = filter_text("<nolink>$post->subject</nolink>", $courseid);
     }
-    echo "<p>";
     echo "<font size=\"3\"><b>$post->subject</b></font><br />";
     echo "<font size=\"2\">";
-
+    
     $fullname = fullname($post, $isteacher);
     $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&amp;course=$courseid\">$fullname</a>";
     $by->date = userdate($post->modified);
     print_string("bynameondate", "forum", $by);
 
-    echo "</font></p></td></tr>";
+    if ($CFG->forum_trackreadposts) {
+        echo "</font></span></td></tr>";
+    } else {
+        echo "</font></td></tr>";
+    }
+
     echo "<tr><td valign=\"top\" class=\"forumpostside\" width=\"10\">";
     if ($group = user_group($courseid, $post->userid)) {
         print_group_picture($group, $courseid, false, false, true);
@@ -1497,6 +1588,23 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     $commands = array();
+
+    if ($CFG->forum_trackreadposts) {
+        if ($CFG->forum_usermarksread) {
+            if ($post_read) {
+                $mcmd = '&amp;mark=unread&amp;postid='.$post->id;
+                $mtxt = $strmarkunread;
+            } else {
+                $mcmd = '&amp;mark=read&amp;postid='.$post->id;
+                $mtxt = $strmarkread;
+            }
+            if ($threadedmode) {
+                $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&amp;parent=$post->id$mcmd\">$mtxt</a>";
+            } else {
+                $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion$mcmd#$post->id\">$mtxt</a>";
+            }
+        }
+    }
 
     if ($post->parent) {
         if ($threadedmode) {
@@ -1574,6 +1682,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "</div>";
     echo "</td></tr>\n</table>\n\n";
 
+/// *** Need to get the forum ID from somewhere. Its not automatically part of post.
+/// *** Backtrack through code to find where 'post' gets set.
+    if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread && !empty($post->forum)) {
+        forum_tp_mark_post_read($USER->id, $post, $post->forum);
+    }
+
     return $ratingsmenuused;
 }
 
@@ -1611,8 +1725,20 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
 
     if ($forum->open or $forum->type == "teacher") {   // Show the column with replies
         echo "<td class=\"forumpostheaderreplies\" align=\"center\" nowrap=\"nowrap\">";
-        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->replies</a>";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
+        echo $post->replies."</a>";
         echo "</td>\n";
+    
+        if ($CFG->forum_trackreadposts) {
+            echo '<td class="forumpostheaderreplies" align="center" nowrap="nowrap">';
+            echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#unread\">";
+            if ($post->unread > 0) echo '<span class="unread">';
+            echo $post->unread;
+            if ($post->unread > 0) echo '</span>';
+            echo '</a>';
+            echo "</td>\n";
+        }
+
     }
 
     echo "<td class=\"forumpostheaderdate\" align=\"right\" nowrap=\"nowrap\">";
@@ -2014,7 +2140,7 @@ function forum_add_attachment($post, $inputname,&$message) {
 
 function forum_add_new_post($post,&$message) {
 
-    global $USER;
+    global $USER, $CFG;
     
     $post->created = $post->modified = time();
     $post->mailed = "0";
@@ -2033,12 +2159,16 @@ function forum_add_new_post($post,&$message) {
     set_field("forum_discussions", "timemodified", $post->modified, "id", $post->discussion);
     set_field("forum_discussions", "usermodified", $post->userid, "id", $post->discussion);
 
+    if ($CFG->forum_trackreadposts) {
+        forum_tp_mark_post_read($post->userid, $post, $post->forum);
+    }
+
     return $post->id;
 }
 
 function forum_update_post($post,&$message) {
 
-    global $USER;
+    global $USER, $CFG;
 
     $post->modified = time();
     $post->userid = $USER->id;
@@ -2057,6 +2187,10 @@ function forum_update_post($post,&$message) {
     set_field("forum_discussions", "timemodified", $post->modified, "id", $post->discussion);
     set_field("forum_discussions", "usermodified", $post->userid, "id", $post->discussion);
 
+    if ($CFG->forum_trackreadposts) {
+        forum_tp_mark_post_read($post->userid, $post, $post->forum);
+    }
+
     return update_record("forum_posts", $post);
 }
 
@@ -2064,7 +2198,7 @@ function forum_add_discussion($discussion,&$message) {
 // Given an object containing all the necessary data,
 // create a new discussion and return the id
 
-    GLOBAL $USER;
+    GLOBAL $USER, $CFG;
 
     $timenow = time();
 
@@ -2112,6 +2246,10 @@ function forum_add_discussion($discussion,&$message) {
         return 0;
     }
 
+    if ($CFG->forum_trackreadposts) {
+        forum_tp_mark_post_read($post->userid, $post, $post->forum);
+    }
+
     return $discussion->id;
 }
 
@@ -2134,6 +2272,8 @@ function forum_delete_discussion($discussion) {
         }
     }
 
+    forum_tp_delete_read_records(-1, -1, $discussion->id);
+
     if (! delete_records("forum_discussions", "id", "$discussion->id")) {
         $result = false;
     }
@@ -2145,6 +2285,9 @@ function forum_delete_discussion($discussion) {
 function forum_delete_post($post) {
    if (delete_records("forum_posts", "id", $post->id)) {
        delete_records("forum_ratings", "post", $post->id);  // Just in case
+
+        forum_tp_delete_read_records(-1, $post->id);
+
        if ($post->attachment) {
            $discussion = get_record("forum_discussions", "id", $post->discussion);
            $post->course = $discussion->course;
@@ -2463,6 +2606,9 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         if ($forum->open or $forum->type == "teacher") {
             echo "<th>".get_string("replies", "forum")."</th>";
         }
+        if ($CFG->forum_trackreadposts) {
+            echo '<th>'.get_string('unread', 'forum').'</th>';
+        }
         echo "<th>".get_string("lastpost", "forum")."</th>";
         echo "</tr>";
     }
@@ -2482,12 +2628,19 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
             $olddiscussionlink = true;
             break;
         }
+        
         if (!empty($replies[$discussion->discussion])) {
             $discussion->replies = $replies[$discussion->discussion]->replies;
             $discussion->lastpostid = $replies[$discussion->discussion]->lastpostid;
         } else {
             $discussion->replies = 0;
         }
+        if ($CFG->forum_trackreadposts) {
+        /// Add in the unread posts. Add one to the replies to include the original post.
+            $discussion->unread = $discussion->replies+1 -
+                                  forum_tp_count_discussion_read_records($USER->id, $discussion->discussion);
+        }
+
         if (!empty($USER->id)) {
             $ownpost = ($discussion->userid == $USER->id);
         } else {
@@ -2520,6 +2673,10 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                 } else {
                     $link = false;
                 }
+
+            /// Need to add in the forum id for forum_print_post.
+                $discussion->forum = $forum_id;
+
                 forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link, $assessed=false);
                 echo "<br />\n";
             break;
@@ -2553,7 +2710,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
 
 function forum_print_discussion($course, $forum, $discussion, $post, $mode, $canreply=NULL) {
 
-    global $USER;
+    global $USER, $CFG;
 
     if (!empty($USER->id)) {
         $ownpost = ($USER->id == $post->userid);
@@ -2580,7 +2737,17 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
         }
     }
 
-    if (forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $ratings)) {
+/// Add the forum id to the post object - used by read tracking.
+    $post->forum = $forum->id;
+
+    if ($CFG->forum_trackreadposts) {
+        $user_read_array = forum_tp_get_discussion_read_records($USER->id, $post->discussion);
+    } else {
+        $user_read_array = array();
+    }
+
+    if (forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $ratings,
+                         '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
         $ratingsmenuused = true;
     }
 
@@ -2588,19 +2755,22 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
         case FORUM_MODE_FLATOLDEST :
         case FORUM_MODE_FLATNEWEST :
         default:
-            if (forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply)) {
+            if (forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply,
+                                       $user_read_array, $post->forum)) {
                 $ratingsmenuused = true;
             }
             break;
 
         case FORUM_MODE_THREADED :
-            if (forum_print_posts_threaded($post->id, $course->id, 0, $ratings, $reply)) {
+            if (forum_print_posts_threaded($post->id, $course->id, 0, $ratings, $reply,
+                                           $user_read_array, $post->forum)) {
                 $ratingsmenuused = true;
             }
             break;
 
         case FORUM_MODE_NESTED :
-            if (forum_print_posts_nested($post->id, $course->id, $ratings, $reply)) {
+            if (forum_print_posts_nested($post->id, $course->id, $ratings, $reply,
+                                         $user_read_array, $post->forum)) {
                 $ratingsmenuused = true;
             }
             break;
@@ -2618,8 +2788,10 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
     }
 }
 
-function forum_print_posts_flat($discussion, $course, $direction, $ratings, $reply) {
-    global $USER;
+/// Add the forum id to the argument list, for use in 'forum_print_post'.
+/// Add the user_read_array to the argument list.
+function forum_print_posts_flat($discussion, $course, $direction, $ratings, $reply, &$user_read_array, $forumid=0) {
+    global $USER, $CFG;
 
     $link  = false;
     $ratingsmenuused = false;
@@ -2632,8 +2804,17 @@ function forum_print_posts_flat($discussion, $course, $direction, $ratings, $rep
 
     if ($posts = forum_get_discussion_posts($discussion, $sort)) {
         foreach ($posts as $post) {
+
+        /// Add the forum id to the post object - used by read tracking.
+            if (!$CFG->forum_usermarksread) {
+                $post->forum = $forumid;
+            } else {
+                $post->forum = 0;
+            }
+
             $ownpost = ($USER->id == $post->userid);
-            if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
+            if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings,
+                                 '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                 $ratingsmenuused = true;
             }
         }
@@ -2642,8 +2823,10 @@ function forum_print_posts_flat($discussion, $course, $direction, $ratings, $rep
     return $ratingsmenuused;
 }
 
-function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) {
-    global $USER;
+/// Add the forum id to the argument list, for use in 'forum_print_post'.
+/// Add the user_read_array to the argument list.
+function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply, &$user_read_array, $forumid=0) {
+    global $USER, $CFG;
 
     $link  = false;
     $ratingsmenuused = false;
@@ -2654,19 +2837,39 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
             echo '<div class="forumpostindent">';
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
-                if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
+
+                if (!$CFG->forum_usermarksread) {
+                    $post->forum = $forumid;
+                } else {
+                    $post->forum = 0;
+                }
+
+                if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings,
+                                     '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                     $ratingsmenuused = true;
                 }
                 echo "<br />";
             } else {
-                $by->name = fullname($post, isteacher($course->id));
+                $by->name = fullname($post, isteacher($course));
                 $by->date = userdate($post->modified);
-                echo "<p><a name=\"$post->id\"></a><font size=\"-1\"><b><a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">$post->subject</a></b> ";
+
+                if ($CFG->forum_trackreadposts) {
+                    if (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)) {
+                        $style = '<span class="forumthread read">';
+                    } else {
+                        $style = '<span class="forumthread unread">';
+                    }
+                } else {
+                    $style = '<span class="forumthread">';
+                }
+                echo $style."<a name=\"$post->id\"></a>".
+                     "<a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">$post->subject</a> ";
                 print_string("bynameondate", "forum", $by);
-                echo "</font></p>";
+                echo "</span>";
             }
 
-            if (forum_print_posts_threaded($post->id, $course, $depth-1, $ratings, $reply)) {
+            if (forum_print_posts_threaded($post->id, $course, $depth-1, $ratings, $reply,
+                                           $user_read_array, $forumid)) {
                 $ratingsmenuused = true;
             }
             echo "</div>\n";
@@ -2675,8 +2878,10 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
     return $ratingsmenuused;
 }
 
-function forum_print_posts_nested($parent, $course, $ratings, $reply) {
-    global $USER;
+/// Add the forum id to the argument list, for use in 'forum_print_post'.
+/// Add the user_read_array to the argument list.
+function forum_print_posts_nested($parent, $course, $ratings, $reply, &$user_read_array, $forumid=0) {
+    global $USER, $CFG;
 
     $link  = false;
     $ratingsmenuused = false;
@@ -2684,18 +2889,26 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
+            echo '<div class="forumpostindent">';
             if (empty($USER->id)) {
                 $ownpost = false;
             } else {
                 $ownpost = ($USER->id == $post->userid);
             }
 
-            echo '<div class="forumpostindent">';
-            if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
+        /// Add the forum id to the post object - used by read tracking.
+            if (!$CFG->forum_usermarksread) {
+                $post->forum = $forumid;
+            } else {
+                $post->forum = 0;
+            }
+
+            if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings,
+                                 '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                 $ratingsmenuused = true;
             }
             echo "<br />";
-            if (forum_print_posts_nested($post->id, $course, $ratings, $reply)) {
+            if (forum_print_posts_nested($post->id, $course, $ratings, $reply, $user_read_array, $forumid)) {
                 $ratingsmenuused = true;
             }
             echo "</div>\n";
@@ -2857,4 +3070,189 @@ function forum_add_user($userid, $courseid) {
     }
 }
 
+function forum_tp_add_read_record($userid, $postid, $discussionid=-1, $forumid=-1) {
+    if (($readrecord = forum_tp_get_read_records($userid, $postid)) === false) {
+        /// New read record
+        unset($readrecord);
+        $readrecord->userid = $userid;
+        $readrecord->postid = $postid;
+        $readrecord->discussionid = $discussionid;
+        $readrecord->forumid = $forumid;
+        $readrecord->firstread = time();
+        $readrecord->lastread = $readrecord->firstread;
+        return insert_record('forum_read', $readrecord, true, 'userid');
+    }
+    else {
+        /// Update read record
+        $readrecord = reset($readrecord);
+        $readrecord->lastread = time();
+
+        /// This shouldn't happen, but just in case...
+        if (!$readrecord->firstread) {
+            $readrecord->firstread = $readrecord->lastread;
+            /// Update the 'firstread' field.
+            set_field('forum_read', 'firstread', $readrecord->firstread, 'userid', $userid, 'postid', $postid);
+        }
+        if ($discussionid > -1) {
+            /// Update the 'discussionid' field.
+            set_field('forum_read', 'discussionid', $discussionid, 'userid', $userid, 'postid', $postid);
+        }
+        if ($forumid > -1) {
+            /// Update the 'forumid' field.
+            set_field('forum_read', 'forumid', $forumid, 'userid', $userid, 'postid', $postid);
+        }
+
+        $readrecord->forumid = $forumid;
+        /// Update the 'lastread' field.
+        return set_field('forum_read', 'lastread', $readrecord->lastread, 'userid', $userid, 'postid', $postid);
+    }
+}
+
+function forum_tp_get_read_records($userid=-1, $postid=-1, $discussionid=-1, $forumid=-1) {
+    /// Returns all records in the 'forum_read' table matching the passed keys, indexed
+    /// by userid.
+    $select = '';
+    if ($userid > -1) {
+        if ($select != '') $select .= ' AND ';
+        $select .= 'userid = \''.$userid.'\'';
+    }
+    if ($postid > -1) {
+        if ($select != '') $select .= ' AND ';
+        $select .= 'postid = \''.$postid.'\'';
+    }
+    if ($discussionid > -1) {
+        if ($select != '') $select .= ' AND ';
+        $select .= 'discussionid = \''.$discussionid.'\'';
+    }
+    if ($forumid > -1) {
+        if ($select != '') $select .= ' AND ';
+        $select .= 'forumid = \''.$forumid.'\'';
+    }
+
+    return get_records_select('forum_read', $select);
+}
+
+function forum_tp_get_discussion_read_records($userid, $discussionid) {
+    /// Returns all read records for the provided user and discussion, indexed by postid.
+    $select = 'userid = \''.$userid.'\' AND discussionid = \''.$discussionid.'\'';
+    $fields = 'postid, firstread, lastread';
+    return get_records_select('forum_read', $select, '', $fields);
+}
+
+function forum_tp_mark_post_read($userid, &$post, $forumid) {
+/// If its an old post, do nothing. If the record exists, the maintenance will clear it up later.
+    if (!forum_tp_is_post_old($post)) {
+        return forum_tp_add_read_record($userid, $post->id, $post->discussion, $forumid);
+    } else {
+        return true;
+    }
+}
+
+function forum_tp_is_post_read($userid, &$post) {
+    return (forum_tp_is_post_old($post) || 
+            (get_record('forum_read', 'userid', $userid, 'postid', $post->id) !== false));
+}
+
+function forum_tp_is_post_old(&$post, $time=null) {
+    global $CFG;
+
+    if (is_null($time)) $time = time();
+    return ($post->modified < ($time - ($CFG->forum_oldpostdays * 24 * 3600)));
+}
+
+function forum_tp_count_discussion_read_records($userid, $discussionid) {
+    /// Returns the count of records for the provided user and discussion.
+    global $CFG;
+
+    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
+
+    $sql = 'SELECT COUNT(DISTINCT p.id) '.
+           'FROM '.$CFG->prefix.'forum_discussions d '.
+           'LEFT JOIN '.$CFG->prefix.'forum_read r ON d.id = r.discussionid AND r.userid = '.$userid.' '.
+           'LEFT JOIN '.$CFG->prefix.'forum_posts p ON p.discussion = d.id '.
+                'AND (p.modified < '.$cutoffdate.' OR p.id = r.postid) '.
+           'WHERE d.id = '.$discussionid;
+
+    return (count_records_sql($sql));
+}
+
+function forum_tp_count_forum_posts($forumid, $groupid=false) {
+    /// Returns the count of posts for the provided forum and [optionally] group.
+    global $CFG;
+
+    $sql = 'SELECT COUNT(*) '.
+           'FROM '.$CFG->prefix.'forum_posts fp,'.$CFG->prefix.'forum_discussions fd '.
+           'WHERE fd.forum = '.$forumid.' AND fp.discussion = fd.id';
+    if ($groupid !== false) {
+        $sql .= ' AND (fd.groupid = '.$groupid.' OR fd.groupid = -1)';
+    }
+    $count = count_records_sql($sql);
+
+
+    return $count;
+}
+
+function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
+    /// Returns the count of records for the provided user and forum and [optionally] group.
+    global $CFG;
+
+    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
+
+    $groupsel = '';
+    if ($groupid !== false) {
+        $groupsel = ' AND (d.groupid = '.$groupid.' OR d.groupid = -1)';
+    }
+
+    $sql = 'SELECT COUNT(DISTINCT p.id) '.
+           'FROM '.$CFG->prefix.'forum_posts p,'.$CFG->prefix.'forum_read r,'.$CFG->prefix.'forum_discussions d '.
+           'WHERE d.forum = '.$forumid.$groupsel.' AND p.discussion = d.id AND '.
+                '((p.id = r.postid AND r.userid = '.$userid.') OR p.modified < '.$cutoffdate.' ) ';
+
+    return (count_records_sql($sql));
+}
+
+function forum_tp_delete_read_records($userid=-1, $postid=-1, $discussionid=-1, $forumid=-1) {
+/// Deletes read records for the specified index. At least one parameter must be specified.
+    $select = '';
+    if ($userid > -1) {
+        if ($select != '') $select .= ' AND ';
+        $select .= 'userid = \''.$userid.'\'';
+    }
+    if ($postid > -1) {
+        if ($select != '') $select .= ' AND ';
+        $select .= 'postid = \''.$postid.'\'';
+    }
+    if ($discussionid > -1) {
+        if ($select != '') $select .= ' AND ';
+        $select .= 'discussionid = \''.$discussionid.'\'';
+    }
+    if ($forumid > -1) {
+        if ($select != '') $select .= ' AND ';
+        $select .= 'forumid = \''.$forumid.'\'';
+    }
+    if ($select == '') {
+        return false;
+    }
+    else {
+        return delete_records_select('forum_read', $select);
+    }
+}
+
+/// Clean old records from the forum_read table.
+function forum_tp_clean_read_records() {
+    global $CFG;
+
+/// Look for records older than the cutoffdate that are still in the forum_read table.
+    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
+    $sql = 'SELECT fr.id, fr.userid, fr.postid '.
+           'FROM '.$CFG->prefix.'forum_posts fp, '.$CFG->prefix.'forum_read fr '.
+           'WHERE fp.modified < '.$cutoffdate.' AND fp.id = fr.postid';
+echo $sql.'<br />';
+    if (($oldreadposts = get_records_sql($sql))) {
+echo 'Deleting records: ';print_object($oldreadposts);
+        foreach($oldreadposts as $oldreadpost) {
+            delete_records('forum_read', 'userid', $oldreadpost->userid, 'postid', $oldreadpost->postid);
+        }
+    }
+}
 ?>

@@ -40,9 +40,7 @@
     if (!$search) {
         print_header_simple("$strsearch", "",
                  "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", "search.search",
-                  "", "", "&nbsp;", navmenu($course));
-
-        echo '<div id="forum-search" class="forum">';  // forum-search wrapper start
+                  "", "", "&nbsp;", navmenu($course), true);
 
         print_simple_box_start("center");
         echo "<center>";
@@ -63,10 +61,7 @@
             print_header_simple("$strsearchresults", "",
                      "<a href=\"index.php?id=$course->id\">$strforums</a> ->
                       <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
-                      "", "", "&nbsp;", navmenu($course));
-
-            echo '<div id="forum-search" class="forum">';  // forum-search wrapper start
-
+                      "", "", "&nbsp;", navmenu($course), true);
             print_heading(get_string("nopostscontaining", "forum", $search));
 
             print_simple_box_start("center");
@@ -78,9 +73,6 @@
             echo "</p>";
             echo "</center>";
             print_simple_box_end();
-
-            echo '</div>';  // forum-search wrapper end
-
             print_footer($course);
             exit;
         }
@@ -88,9 +80,7 @@
         print_header_simple("$strsearchresults", "",
                  "<a href=\"index.php?id=$course->id\">$strforums</a> ->
                   <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
-                  "", "",  $searchform, navmenu($course));
-
-        echo '<div id="forum-search" class="forum">';  // forum-search wrapper start
+                  "", "",  $searchform, navmenu($course), true);
 
         print_heading("$strsearchresults: $totalcount");
 
@@ -120,6 +110,9 @@
 
             $post->subject = $fullsubject;
 
+            /// Add the forum id to the post object - used by read tracking.
+                $post->forum = $forum->id;
+
             $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
             forum_print_post($post, $course->id, false, false, false, false, $fulllink, $search);
 
@@ -130,8 +123,6 @@
         print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
         echo "</center>";
     }
-
-    echo '</div>';  // forum-search wrapper end
 
     print_footer($course);
 

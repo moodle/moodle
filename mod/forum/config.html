@@ -63,6 +63,81 @@
     <?php print_string("configmaxbytes", "forum") ?>
     </td>
 </tr>
+
+<tr valign="top">
+    <td align="right"><p>forum_trackreadposts:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+       choose_from_menu ($options, "forum_trackreadposts", $CFG->forum_trackreadposts, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configtrackreadposts", "forum") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>forum_oldpostdays:</td>
+    <td>
+    <input name="forum_oldpostdays" type="text" size="5" value="<?php p($CFG->forum_oldpostdays) ?>" />
+    </td>
+    <td>
+    <?php print_string("configoldpostdays", "forum") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>forum_usermarksread:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+       choose_from_menu ($options, "forum_usermarksread", $CFG->forum_usermarksread, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configusermarksread", "forum") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>forum_cleanreadtime:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = '0';
+       $options[1] = '1';
+       $options[2] = '2';
+       $options[3] = '3';
+       $options[4] = '4';
+       $options[5] = '5';
+       $options[6] = '6';
+       $options[7] = '7';
+       $options[8] = '8';
+       $options[9] = '9';
+       $options[10] = '10';
+       $options[11] = '11';
+       $options[12] = '12';
+       $options[13] = '13';
+       $options[14] = '14';
+       $options[15] = '15';
+       $options[16] = '16';
+       $options[17] = '17';
+       $options[18] = '18';
+       $options[19] = '19';
+       $options[20] = '20';
+       $options[21] = '21';
+       $options[22] = '22';
+       $options[23] = '23';
+       choose_from_menu ($options, "forum_cleanreadtime", $CFG->forum_cleanreadtime, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configcleanreadtime", "forum") ?>
+    </td>
+</tr>
+
 <tr valign="top">
         <td align="right"><p>forum_enablerssfeeds:</td>
         <td>

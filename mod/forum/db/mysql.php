@@ -159,6 +159,22 @@ function forum_upgrade($oldversion) {
       modify_database('','ALTER TABLE prefix_forum_subscriptions ADD INDEX forum (forum);');
   }
 
+  if ($oldversion < 2005011500) {
+      modify_database('','CREATE TABLE prefix_forum_read (
+                          `id` int(10) unsigned NOT NULL auto_increment, 
+                          `userid` int(10) NOT NULL default \'0\',
+                          `forumid` int(10) NOT NULL default \'0\',
+                          `discussionid` int(10) NOT NULL default \'0\',
+                          `postid` int(10) NOT NULL default \'0\',
+                          `firstread` int(10) NOT NULL default \'0\',
+                          `lastread` int(10) NOT NULL default \'0\',
+                          PRIMARY KEY  (`id`),
+                          KEY `prefix_forum_user_forum_idx` (`userid`,`forumid`),
+                          KEY `prefix_forum_user_discussion_idx` (`userid`,`discussionid`),
+                          KEY `prefix_forum_user_post_idx` (`userid`,`postid`)
+                        ) COMMENT=\'Tracks each users read posts\';');
+  }
+
   return true;
   
 }

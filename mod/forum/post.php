@@ -489,7 +489,7 @@
 
     $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
 
-    if (!empty($discussion) and empty($discussion->name)) {
+    if (empty($discussion->name)) {
         $discussion->name = $forum->name;
     }
 
@@ -509,7 +509,12 @@
     if (!empty($parent)) {
         forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
         if (empty($post->edit)) {
-            forum_print_posts_threaded($parent->id, $course, 0, false, false);
+            if ($CFG->forum_trackreadposts) {
+                $user_read_array = forum_tp_get_discussion_read_records($USER->id, $discussion->id);
+            } else {
+                $user_read_array = array();
+            }
+            forum_print_posts_threaded($parent->id, $course, 0, false, false, $user_read_array, $discussion->forum);
         }
         echo "<center>";
         echo "<h2>".get_string("yourreply", "forum").":</h2>";

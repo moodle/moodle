@@ -121,6 +121,28 @@ CREATE INDEX prefix_forum_subscriptions_forum_idx ON prefix_forum_subscriptions 
 
 # --------------------------------------------------------
 
+
+#
+# Table structure for table `forum_read`
+#
+
+CREATE TABLE prefix_forum_read (
+  id SERIAL PRIMARY KEY,
+  userid integer NOT NULL default '0',
+  forumid integer NOT NULL default '0',
+  discussionid integer NOT NULL default '0',
+  postid integer NOT NULL default '0',
+  firstread integer NOT NULL default '0',
+  lastread integer NOT NULL default '0'
+);
+
+CREATE INDEX prefix_forum_user_forum_idx ON prefix_forum_read (userid, forumid);
+CREATE INDEX prefix_forum_user_discussion_idx ON prefix_forum_read (userid, discussionid);
+CREATE INDEX prefix_forum_user_post_idx ON prefix_forum_read (userid, postid);
+
+
+# --------------------------------------------------------
+
 #
 # Dumping data for table `log_display`
 #
