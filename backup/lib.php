@@ -75,4 +75,104 @@
         return $info;
     }
 
+    //Calculate the number of log entries to backup
+    //Return an array of info (name,value)
+    function log_check_backup($course) {
+
+        global $CFG;
+
+        //Execute the insert
+        $status = execute_sql($sql_insert,false);
+
+        //Now execute the select
+        $ids = get_records_sql("SELECT DISTINCT l.id,l.course
+                                FROM {$CFG->prefix}log l
+                                WHERE l.course = '$course'");
+        //Gets the user data
+        $info[0][0] = get_string("logs");
+        if ($ids) {
+            $info[0][1] = count($ids);
+        } else {
+            $info[0][1] = 0;
+        }
+
+        return $info;
+    }
+
+    //Calculate the number of user files to backup
+    //Under $CFG->dataroot/users
+    //and put them (their path) in backup_ids
+    //Return an array of info (name,value)
+    function user_files_check_backup($course,$backup_unique_code) {
+
+        global $CFG;
+
+        $rootdir = $CFG->dataroot."/users";
+        $coursedirs = get_directory_list($rootdir);
+        foreach ($coursedirs as $dir) {
+            //Extracts user id from file path
+            $tok = strtok($dir,"/");
+            if ($tok) {
+               $userid = $tok;
+            } else {
+               $tok = "";
+            }
+            //Insert them into backup_files
+           $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
+                                      (backup_code, file_type, path, old_id)
+                                  VALUES
+                                      ('$backup_unique_code','user','$dir','$userid')",false);
+        }
+
+        //Now execute the select
+        $ids = get_records_sql("SELECT DISTINCT b.path, b.old_id
+                                FROM {$CFG->prefix}backup_files b
+                                WHERE backup_code = '$backup_unique_code' AND
+                                      file_type = 'user'");
+        //Gets the user data
+        $info[0][0] = get_string("files");
+        if ($ids) {
+            $info[0][1] = count($ids);
+        } else {
+            $info[0][1] = 0;
+        }
+
+        return $info;  
+    }
+
+    //Calculate the number of course files to backup
+    //under $CFG->dataroot/$course, except $CFG->moddata
+    //and put them (their path) in backup_ids
+    //Return an array of info (name,value)
+    function course_files_check_backup($course,$backup_unique_code) {
+
+        global $CFG;
+
+        $rootdir = $CFG->dataroot."/$course";
+        $coursedirs = get_directory_list($rootdir,$CFG->moddata);
+        foreach ($coursedirs as $dir) {
+            //Insert them into backup_files
+           $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
+                                      (backup_code, file_type, path)
+                                  VALUES
+                                      ('$backup_unique_code','course','$dir')",false);
+        }
+
+        //Now execute the select
+        $ids = get_records_sql("SELECT DISTINCT b.path, b.old_id
+                                FROM {$CFG->prefix}backup_files b
+                                WHERE backup_code = '$backup_unique_code' AND
+                                      file_type = 'course'");
+        //Gets the user data
+        $info[0][0] = get_string("files");
+        if ($ids) {
+            $info[0][1] = count($ids);
+        } else {
+            $info[0][1] = 0;
+        }
+
+        return $info; 
+    }
+
+
 ?>

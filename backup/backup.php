@@ -47,6 +47,7 @@
                 $db->debug=false;
                 if (set_config("backup_version", $a->newversion)) {
                     notify($strdatabasesuccess, "green");
+                    notify("You are running Backup/Recovery version ".$backup_release,"black");
                     print_continue("backup.php");
                     die;
                 } else {

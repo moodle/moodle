@@ -97,6 +97,9 @@
     echo get_string("backupdetails").":";
     echo "</td></tr>";
 
+    //This is tha align to every ingo table                
+    $table->align = array ("LEFT","RIGHT");
+
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
@@ -152,7 +155,10 @@
         if ($backup_logs) {
             echo "<tr>";
             echo "<td colspan=\"2\"><P><B>";
-            echo "<li>".get_string("includelogentries");; 
+            echo "<li>".get_string("includelogentries")."<P>";
+            //Print info
+            $table->data = log_check_backup($id);
+            print_table($table);
             echo "</td></tr>";
         }
         //Add as hidden name
@@ -162,7 +168,10 @@
         if ($backup_user_files) {
             echo "<tr>";
             echo "<td colspan=\"2\"><P><B>";
-            echo "<li>".get_string("includeuserfiles");;
+            echo "<li>".get_string("includeuserfiles")."<P>";
+            //Print info
+            $table->data = user_files_check_backup($id,$backup_unique_code);
+            print_table($table);
             echo "</td></tr>";
         }
         //Add as hidden name
@@ -172,7 +181,10 @@
        if ($backup_course_files) {
             echo "<tr>";
             echo "<td colspan=\"2\"><P><B>";
-            echo "<li>".get_string("includecoursefiles");; 
+            echo "<li>".get_string("includecoursefiles")."<P>";
+            //Print info
+            $table->data = course_files_check_backup($id,$backup_unique_code);
+            print_table($table);
             echo "</td></tr>";
         }
         //Add as hidden name

@@ -38,8 +38,23 @@ function backup_upgrade($oldversion=0) {
     if ($oldversion < 2003050301 and $result) {
         $result = execute_sql("ALTER TABLE `{$CFG->prefix}backup_ids`
                          ADD `info` VARCHAR(30)");
+    }
+
+    if ($oldversion < 2003050400 and $result) {
+        $result = execute_sql("ALTER TABLE `{$CFG->prefix}backup_ids`
+                         MODIFY `info` VARCHAR(255)");
     } 
 
+    if ($oldversion < 2003050401 and $result) {
+        $result = execute_sql("CREATE  TABLE  `{$CFG->prefix}backup_files` (
+                                  `backup_code` INT( 10  ) UNSIGNED NOT  NULL ,
+                                  `file_type` VARCHAR( 10  )  NOT  NULL ,
+                                  `path` VARCHAR( 255  )  NOT  NULL ,
+                                  `old_id` INT( 10  ) UNSIGNED,
+                                  `new_id` INT( 10  ) UNSIGNED,
+                               PRIMARY  KEY (  `backup_code` ,  `file_type` ,  `path`  ) 
+                               ) COMMENT  =  'To store and recode ids to user & course files.'");
+    }
 
     //Finally, return result
     return $result;

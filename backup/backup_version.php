@@ -5,6 +5,6 @@
 // database (backup_version) to determine whether upgrades should
 // be performed (see db/backup_*.php)
 
-$backup_version = 2003050301;   // The current version is a date (YYYYMMDDXX)
+$backup_version = 2003050401;   // The current version is a date (YYYYMMDDXX)
 
 $backup_release = "0.1.0 beta";  // User-friendly version number
