@@ -371,30 +371,30 @@ function reset_login_count() {
     $SESSION->logincount = 0;
 }
 
-function isadmin($userid=false) {
+function isadmin($userid=0) {
 /// Is the user an admin?
     global $USER;
     static $admins = array();
     static $nonadmins = array();
 
-    if (empty($USER->id)) {
-        return false;
+    if (!$userid){
+        if (empty($USER->id)) {
+            return false;
+        }
+        $userid = $USER->id;
     }
 
-    $checkid = $userid ? $userid : $USER->id;
-
-    if (in_array($checkid, $admins)) {
+    if (in_array($userid, $admins)) {
         return true;
-    } elseif (in_array($ceckid, $nonadmins)) {
+    } else if (in_array($userid, $nonadmins)) {
         return false;
-    } elseif (record_exists("user_admins", "userid", $checkid)){
-        $admins[] = $checkid;
+    } else if (record_exists("user_admins", "userid", $userid)){
+        $admins[] = $userid;
         return true;
     } else {
-        $nonadmins[] = $checkid;
+        $nonadmins[] = $userid;
         return false;
     }
-
 }
 
 function isteacher($courseid, $userid=0) {
