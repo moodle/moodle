@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+  <TITLE>Moodle Docs: How to use CVS</TITLE>
+  <LINK REL="stylesheet" HREF="../theme/standard/styles.css" TYPE="TEXT/CSS">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+  
+<H2>How to use CVS</H2>
+<BLOCKQUOTE>
+<P>CVS is the Concurrent Versioning System.  It's a commonly used way 
+of storing source code because it keeps versions of all files so 
+that nothing is ever lost, and usage by different people is tracked.</P>
+
+<P>To use Moodle's CVS archive (as a developer) from a Unix machine, you first 
+  need to have an account on <a href="http://www.sf.net/">Sourceforge</a>. For 
+  the example, let's assume your username is <strong>myusername</strong> and your 
+  password is <strong>mypassword</strong>. Secondly, you need to contact &lt;A 
+  HREF=&quot;http://dougiamas.com/&quot;&gt;Martin&lt;/A&gt; to get write access 
+  to particular directories.</P>
+<P>With that done, you should have all the permissions you need, so you just need 
+  to set up your machine and download the current sources so you can start working 
+  on them.</P>
+<P>Sourceforge CVS uses ssh as a transport layer for security, so you will have 
+  to set this CVS_RSH environment variable in your Unix shell:</P>
+<blockquote>
+  <pre><strong>setenv CVS_RSH ssh</strong> (for csh, tcsh etc)</pre>
+  
+  <pre><strong>export CVS_RSH=ssh</strong> (for sh, bash etc)</pre>
+
+</blockquote>
+<p>It's best to put this in your .bashrc or .cshrc so you don't have to type it 
+  all the time. Then, check out Moodle using this (all one line): </p>
+<blockquote>
+  <pre><strong>cvs -z3 -d:ext:myusername@cvs.moodle.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
+
+</blockquote>
+<p>Don't try to do run this first CVS command into an existing moodle directory 
+  - start fresh with a new directory.</p>
+<p>Note that you will be prompted for <strong>mypassword</strong> with each CVS 
+  command. To avoid this, follow the <a href="http://sourceforge.net/account/editsshkeys.php">Sourceforge 
+  directions about using authorized keys</a>.</p>
+<p>Now, you should have a new 'moodle' directory. You can rename it and move it 
+  around if you like. Go into it: </p>
+<blockquote>
+  <pre><strong>cd moodle </strong></pre>
+
+</blockquote>
+<p>All the latest Moodle files should be in there. You can now change files in 
+  your copy. To compare your files against the main CVS copy on the server use 
+  cvs diff, eg: </p>
+<blockquote>
+  <pre><strong>cvs diff -c config-dist.php
+cvs diff -c lang</strong></pre>
+
+</blockquote>
+<p>To fetch the latest updates from the server use: </p>
+<blockquote>
+  <pre><strong>cvs update -dP</strong> </pre>
+
+</blockquote>
+<p>To copy your new files back to the server you would do: </p>
+<blockquote>
+  <pre><strong>cd lang/ca 
+cvs commit</strong> </pre>
+
+</blockquote>
+<p>You will be prompted to add some comments (depends on your default text editor) 
+  ... add a comment and close the editor ... the files will be sent to Sourceforge 
+  and stored. Done! </p>
+<p>To save more time you can put default arguments into a file called .cvsrc in 
+  your home directory. For example, mine contains: </p>
+<blockquote>
+  <pre><strong>diff -c 
+update -dP</strong> </pre>
+
+</blockquote>
+<p>Try 'cvs help' for more details ... </p>
+<P>&nbsp;</P>
+
+</BLOCKQUOTE>
+<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="." TARGET="_top">Moodle Documentation</A></FONT></P>
+<P ALIGN="CENTER"><FONT SIZE="1">Version: $Id: features.html,v 1.2 2001/12/09 
+  10:34:19 martin Exp $</FONT></P>
+
+</BODY>
+</HTML>
