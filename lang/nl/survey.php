@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 development (2003042701)
+      // survey.php - created with Moodle 1.0.9 development (2003051200)
 
 
 $string['actual'] = "Werkelijk";
@@ -9,6 +9,7 @@ $string['allquestions'] = "Alle vragen in volgorde, voor alle leerlingen";
 $string['allscales'] = "Alle schalen, voor alle leerlingen";
 $string['alreadysubmitted'] = "Je hebt dit onderzoek al ingestuurd";
 $string['analysisof'] = "Analyse van \$a";
+$string['answers'] = "Antwoorden ";
 $string['attls1'] = "In mijn beoordeling van wat iemand zegt let ik op de kwaliteit van het argument en niet op de persoon die het argument presenteert.";
 $string['attls10'] = "Het is belangrijk voor mij om zo objectief mogelijk te blijven als ik iets analyseer.";
 $string['attls10short'] = "Blijf objectief";
@@ -49,8 +50,8 @@ $string['attls8'] = "Ik wil altijd graag weten waarom mensen de dingen zeggen en
 $string['attls8short'] = "weten waarom mensen dingen zeggen/geloven";
 $string['attls9'] = "Vaak betrap ik mezelf erop dat ik aan het argumenteren ben met de auteurs van de boeken die ik aan het lezen ben, ik probeer dan op een logische manier uit te vinden waarom ze het bij het verkeerde eind hebben.";
 $string['attls9short'] = "argumenteren met auteurs";
-$string['attlsintro'] = "Deze vragenlijst heeft als bedoeling het helpen evalueren van je meningen/attitudes te opzichte van denken en leren.
-
+$string['attlsintro'] = "Deze vragenlijst heeft als bedoeling het helpen evalueren van je meningen/attitudes te opzichte van denken en leren.
+
 Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.";
 $string['attlsm1'] = "Attitudes ten opzichte van denken en leren";
 $string['attlsm2'] = "Verbonden/relationeel leren";
@@ -114,25 +115,25 @@ $string['colles8'] = "ik denk kritisch na over de ideeën in het lesmateriaal.";
 $string['colles8short'] = "ik ben kritisch op het lesmateriaal";
 $string['colles9'] = "ik leg mijn ideeën aan de andere studenten uit.";
 $string['colles9short'] = "ik leg mijn ideeën uit";
-$string['collesaintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
-
-Elk van de onderstaande 24 beweringen gaan over jouw ervaring binnen dit onderdeel.
-
-Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
-
-Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
-
-Hartstikke bedankt.
+$string['collesaintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
+
+Elk van de onderstaande 24 beweringen gaan over jouw ervaring binnen dit onderdeel.
+
+Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
+
+Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
+
+Hartstikke bedankt.
  ";
 $string['collesaname'] = "COLLES (Werkelijk)";
-$string['collesapintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
-
-Elk van de onderstaande 24 beweringen vraagt je om de je <B>voorkeur</B> (ideaal) te vergelijken met je <B>werkelijke</B> ervaringen met dit onderdeel.
-
-Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
-
-Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
-
+$string['collesapintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
+
+Elk van de onderstaande 24 beweringen vraagt je om de je <B>voorkeur</B> (ideaal) te vergelijken met je <B>werkelijke</B> ervaringen met dit onderdeel.
+
+Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
+
+Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
+
 Hartstikke bedankt.";
 $string['collesapname'] = "COLLES (Voorkeur en Werkelijk)";
 $string['collesm1'] = "Relevantie";
@@ -148,14 +149,14 @@ $string['collesm5short'] = "Leeftijdgenootondersteuning";
 $string['collesm6'] = "Interpretatie";
 $string['collesm6short'] = "Interpretatie";
 $string['collesmintro'] = "In dit online onderdeel...";
-$string['collespintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
-
-Elk van de onderstaande 24 beweringen vraagt je naar je <B>voorkeur</B> (ideale) ervaringen met dit onderdeel.
-
-Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
-
-Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
-
+$string['collespintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
+
+Elk van de onderstaande 24 beweringen vraagt je naar je <B>voorkeur</B> (ideale) ervaringen met dit onderdeel.
+
+Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
+
+Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
+
 Hartstikke bedankt.";
 $string['collespname'] = "COLLES (Voorkeur) ";
 $string['done'] = "Voltooid";
@@ -164,6 +165,7 @@ $string['downloadexcel'] = "Download de gegevens als een Excel spreadsheet";
 $string['downloadinfo'] = "Je kunt de complete ruwe data voor dit onderzoek downloaden in een opmaak die geschikt is voor analyse in Excel, SPSS of een ander pakket.";
 $string['downloadtext'] = "Download de gegevens als een tekstbestand";
 $string['editingasurvey'] = "Een onderzoek bewerken";
+$string['guestsnotallowed'] = "Gasten heben de toelating niet om onderoeken te posten";
 $string['helpsurveys'] = "Help over de verschillende soorten onderzoeken";
 $string['howlong'] = "Hoe lang heb je er over gedaan om dit onderzoek in te vullen?";
 $string['howlongoptions'] = "minder dan 1 min,1-2 min,2-3 min,3-4 min,4-5 min,5-10 min,meer dan 10 min ";

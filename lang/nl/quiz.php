@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003042701)
+      // quiz.php - created with Moodle 1.0.9 development (2003051200)
 
 
 $string['addquestions'] = "Voeg vragen toe";
@@ -21,6 +21,7 @@ $string['attemptsallowed'] = "Toegestane pogingen ";
 $string['attemptsunlimited'] = "Onbeperkt aantal pogingen";
 $string['backtoquiz'] = "Terug naar het bewerken/wijzigen van de test";
 $string['bestgrade'] = "Hoogste cijfer";
+$string['blackboard'] = "Schoolbord";
 $string['caseno'] = "Nee, hoofd/kleine letters zijn niet belangrijk";
 $string['casesensitive'] = "Gevoeligheid voor hoofd/kleine letters";
 $string['caseyes'] = "Ja, hoofd/kleine letters moeten exact hetzelfde zijn";
@@ -56,15 +57,16 @@ $string['fileformat'] = "Bestandsformaat";
 $string['filloutoneanswer'] = "Je moet minstens één mogelijk antwoord invullen. Lege antwoorden zullen niet worden gebruikt.";
 $string['filloutthreequestions'] = "Je moet minstens drie vragen invullen. Leeg gelaten vragen zullen niet worden gebruikt.";
 $string['fillouttwochoices'] = "Je moet minstens twee keuzemogelijkheden invullen. Lege keuzemogelijkheden zullen niet worden gebruikt.";
-$string['fractionsaddwrong'] = "De positieve cijfers die je hebt gekozen tellen niet op tot 100%%
-<BR>In plaats daarvan tellen ze op tot \$a%%
+$string['fractionsaddwrong'] = "De positieve cijfers die je hebt gekozen tellen niet op tot 100%%
+<BR>In plaats daarvan tellen ze op tot \$a%%
 <BR>Wil je terug gaan en deze vraag verbeteren?";
-$string['fractionsnomax'] = "Eén van de antwoorden moet 100%% zijn, zodat het mogelijk is
-<BR>om een vol punt voor deze vraag te krijgen.
+$string['fractionsnomax'] = "Eén van de antwoorden moet 100%% zijn, zodat het mogelijk is
+<BR>om een vol punt voor deze vraag te krijgen.
 <BR>Wil je terug gaan en deze vraag verbeteren?";
 $string['gradeaverage'] = "Gemiddelde cijfer";
 $string['gradehighest'] = "Hoogste cijfer";
 $string['grademethod'] = "Beoordelingsmethode";
+$string['grades'] = "Beoordelingen";
 $string['guestsno'] = "Sorry, gasten kunnen testen niet bekijken noch een poging wagen";
 $string['imagedisplay'] = "Weer te geven plaatje";
 $string['importquestions'] = "Importeer vragen uit een bestand";

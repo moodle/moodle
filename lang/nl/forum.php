@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003042701)
+      // forum.php - created with Moodle 1.0.9 development (2003051200)
 
 
 $string['addanewdiscussion'] = "Voeg een nieuwe onderwerp voor discussie toe";
@@ -19,6 +19,7 @@ $string['deleteddiscussion'] = "De discussie is verwijderd";
 $string['deletedpost'] = "De bijdrage is verwijderd";
 $string['deletesure'] = "Weet je zeker dat je deze bijdrage wilt verwijderen?";
 $string['discussion'] = "Discussie";
+$string['discussionmoved'] = "Deze discussie is verplaatst naar '\$a'.";
 $string['discussions'] = "Discussies";
 $string['discussionsstartedby'] = "Discussies die door \$a zijn gestart";
 $string['discussthistopic'] = "Draag bij aan de discussie";
@@ -62,9 +63,11 @@ $string['noguestpost'] = "Sorry, gasten mogen geen bijdragen leveren";
 $string['noposts'] = "Geen bijdragen";
 $string['nopostscontaining'] = "Er zijn geen bijdragen met '\$a' gevonden";
 $string['nosubscribers'] = "Er is nog niemand lid van dit forum";
-$string['nownotsubscribed'] = "\$a->name zal via e-mail GEEN bijdragen aan '\$a->forum' ontvangen.
+$string['nownotsubscribed'] = "\$a->name zal via e-mail GEEN bijdragen aan '\$a->forum' ontvangen.
+
 ";
-$string['nowsubscribed'] = "\$a->naam zal bijdragen aan '\$a->forum' ontvangen via e-mail.
+$string['nowsubscribed'] = "\$a->naam zal bijdragen aan '\$a->forum' ontvangen via e-mail.
+
 ";
 $string['numposts'] = "\$a bijdragen";
 $string['olderdiscussions'] = "Oudere discussies";
@@ -74,11 +77,13 @@ $string['openmode2'] = "Nieuwe discussies en bijdragen zijn toegestaan";
 $string['parentofthispost'] = "'Moeder' van deze bijdrage";
 $string['postadded'] = "Je bijdrage is met succes toegevoegd.<p> Je hebt \$a de tijd om deze bijdrage te wijzigen als je iets wilt veranderen.";
 $string['postincontext'] = "Bekijk deze bijdrage in zijn context";
-$string['postmailinfo'] = "Dit is een kopie van een bijdrage die is toegevoegd op de \$a website.
+$string['postmailinfo'] = "Dit is een kopie van een bijdrage die is toegevoegd op de \$a website.
+
 Klik op deze link om jouw antwoord via de website toe te voegen:";
 $string['postrating1'] = "Laat voornamelijk 'gescheiden kennen' zien";
 $string['postrating2'] = "Even 'gescheiden' als 'verbonden/relationeel'";
 $string['postrating3'] = "Laat voornamelijk 'verbonden/relationele kennen' zien";
+$string['posts'] = "Bijdragen";
 $string['postupdated'] = "Je bijdrage is bijgewerkt";
 $string['processingpost'] = "Bijdrage \$a aan het verwerken";
 $string['rate'] = "Classificeer  ";
@@ -102,7 +107,10 @@ $string['subscribe'] = "Wordt lid van dit forum";
 $string['subscribed'] = "Lid";
 $string['subscribers'] = "Leden";
 $string['subscribersto'] = "Leden van '\$a'";
+$string['subscription'] = "Lid worden";
+$string['subscriptions'] = "Inschrijvingen";
 $string['unsubscribe'] = "Zeg het lidmaatschap van dit forum op";
+$string['unsubscribed'] = "Lidmaatschap opgezegd";
 $string['youratedthis'] = "Je classificeerde dit als";
 $string['yournewtopic'] = "Je nieuwe discussie onderwerp";
 $string['yourreply'] = "Jouw antwoord";

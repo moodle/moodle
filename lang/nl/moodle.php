@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003042701)
+      // moodle.php - created with Moodle 1.0.9 development (2003051200)
 
 
 $string['action'] = "Actie";
 $string['activities'] = "Activiteiten ";
 $string['activity'] = "Activiteit";
+$string['activitymodule'] = "Activiteitenmodule";
 $string['activityreport'] = "Activiteitenrapport";
 $string['add'] = "Voeg toe";
 $string['addadmin'] = "Voeg beheerder toe";
@@ -18,6 +19,7 @@ $string['address'] = "Adres";
 $string['addteacher'] = "Voeg een docent toe";
 $string['admin'] = "Beheer";
 $string['administration'] = "Beheer";
+$string['administrator'] = "Beheerder";
 $string['again'] = "nogmaals";
 $string['all'] = "Alle";
 $string['alldays'] = "Alle dagen";
@@ -36,6 +38,10 @@ $string['assigncreators'] = "Wijs vak-aanmakers aan";
 $string['assignteachers'] = "Wijs docenten aan";
 $string['authentication'] = "Authenticatie";
 $string['availablecourses'] = "Beschikbare vakken";
+$string['backup'] = "Reservekopie";
+$string['backupdetails'] = "Details van de reservekopie";
+$string['backupdir'] = "Gegevens van de reservekopie";
+$string['backupnameformat'] = "%%d%%m%%Y-%%H%%M";
 $string['cancel'] = "Annuleer ";
 $string['categories'] = "Vak categorieën";
 $string['category'] = "Categorie  ";
@@ -58,17 +64,25 @@ $string['comparelanguage'] = "Vergelijk en bewerk huidige taal ";
 $string['complete'] = "Voltooid";
 $string['configcountry'] = "Als je hier een land invult zal dit land als standaard worden geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.";
 $string['configdebug'] = "Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.";
-$string['configerrorlevel'] = "Kies hoeveel PHP waarschuwingen je wilt dat Moodle laat zien. 'Normaal' is meestal de beste keuze.
+$string['configerrorlevel'] = "Kies hoeveel PHP waarschuwingen je wilt dat Moodle laat zien. 'Normaal' is meestal de beste keuze.
+
 ";
 $string['configframename'] = "Als je Moodle in een webframe opneemt (embed), zet de naam van het frame dan hier. In alle andere gevallen moet de waarde '_top' blijven staan.";
-$string['configgdversion'] = "Geef aan welke versie van GD geïnstalleerd is. De versie die standaard getoond wordt is automatisch gevonden. Verander dit niet tenzij je echt weet wat je aan het doen bent.
+$string['configgdversion'] = "Geef aan welke versie van GD geïnstalleerd is. De versie die standaard getoond wordt is automatisch gevonden. Verander dit niet tenzij je echt weet wat je aan het doen bent.
+
 ";
 $string['confightmleditor'] = "Kies of je het gebruik van de ingebouwde HTML tekst editor wilt toestaan. Zelfs als je het toe staat zal deze editor alleen verschijnen als de gebruiker een geschikte browser gebruikt (IE 5.5 of later). Gebruikers kunnen er ook voor kiezen de editor niet te gebruiken.";
 $string['configintro'] = "Op deze pagina kun je een aantal variabelen voor de configuratie instellen die Moodle kunnen helpen zodat het goed kan werken op jouw server. Maak je er niet teveel zorgen over, de standaardwaarden werken meestal prima en je kunt later altijd nog op deze pagina terugkomen en deze instellingen opnieuw wijzigen.";
+$string['configintroadmin'] = "Op deze pagina configureer je de account van de beheerder die de volledige controle over de site zal hebben. Geef de beheerder een veilige gebruikersnaam en wachtwoord en een geldig e-mailadres. Je kunt later beheerderaccounts bijmaken.";
+$string['configintrosite'] = "Op deze pagina configureer je de startpagina en de naam van deze nieuwe site. Je kunt deze instellingen later bijwerken door de 'Site instellingen'-link te gebruiken op de startpagina.";
 $string['configlang'] = "Kies een standaardtaal voor de gehele site. Gebruikers kunnen deze instelling later eventueel voor zichzelf wijzigen.";
-$string['configlangdir'] = "De meeste talen worden van links naar rechts gedrukt, maar sommige, zoals Arabisch en Herbreeuws, worden van rechts naar links gedrukt.
+$string['configlangdir'] = "De meeste talen worden van links naar rechts gedrukt, maar sommige, zoals Arabisch en Herbreeuws, worden van rechts naar links gedrukt.
+
 ";
-$string['configlocale'] = "Kies een sitebrede 'locale' - dit zal de opmaak en taal van data beïnvloeden. Deze 'locale' moet al geïnstalleerd zijn op je besturingssysteem. (Bijvoorbeeld en_US of es_ES). Laat het leeg als je niet weet wat je moet kiezen.
+$string['configlanglist'] = "Laat dit vak blanco om gebruikers de mogelijkheid te geven om te kiezen uit elke beschikbare taal in deze Moodle-installatie. Je kunt het keuzemenu voor talen inkorten door een lijst in te geven met de gewenste talen, gescheiden door komma's. Bijvoorbeeld:en,es_es,fr,it,nl";
+$string['configlangmenu'] = "Kies of je de gebruiker een taalkeuze wil laten maken op de startpagina, de aanmeldpagina enz. Dit neemt de mogelijkheid niet weg dat de gebruiker een taal kan kiezen in zijn eigen profiel.";
+$string['configlocale'] = "Kies een sitebrede 'locale' - dit zal de opmaak en taal van data beïnvloeden. Deze 'locale' moet al geïnstalleerd zijn op je besturingssysteem. (Bijvoorbeeld en_US of es_ES). Laat het leeg als je niet weet wat je moet kiezen.
+
 ";
 $string['configloglifetime'] = "Dit specificeert de lengte van de periode waarin statistieken van gebruikers-activiteit worden bewaard. Statistieken die ouder zijn dan deze leeftijd worden automatisch verwijderd. Het is verstandig om de statistieken zo lang mogelijk te bewaren, je kunt ze immers altijd nog nodig hebben. Maar als je een zeer drukke server hebt en prestatieproblemen ondervindt, kun je de periode misschien beter minder lang maken.";
 $string['configlongtimenosee'] = "Als het heel lang geleden is dat een leerling heeft ingelogd wordt hij/zij automatisch uit de vakken verwijderd. Deze parameter bepaald deze tijd limiet.";
@@ -80,7 +94,8 @@ $string['configsmtphosts'] = "Geef de volledige naam van één of meerdere lokale 
 $string['configsmtpuser'] = "Als je hierboven een SMTP server hebt ingevuld en deze server authenticatie nodig heeft, vul hier dan de gebruikersnaam en het wachtwoord in.";
 $string['configunzip'] = "Geef de locatie van je UNZIP programma (alleen voor UNIX). Dit is nodig om ZIP archieven op de server uit te pakken.";
 $string['configvariables'] = "Configureer variabelen";
-$string['configzip'] = "Geef de locatie van je ZIP programma (alleen voor UNIX). Dit is nodig om ZIP archieven op de server te maken.
+$string['configzip'] = "Geef de locatie van je ZIP programma (alleen voor UNIX). Dit is nodig om ZIP archieven op de server te maken.
+
 ";
 $string['confirmed'] = "Je registratie is bevestigd";
 $string['continue'] = "Ga door";
@@ -88,6 +103,8 @@ $string['cookiesenabled'] = "Cookies moeten aan staan in je browser";
 $string['copyrightnotice'] = "Auteursrecht verklaring";
 $string['country'] = "Land";
 $string['course'] = "Vak";
+$string['coursebackup'] = "Reservekopie  voor vakken";
+$string['coursefiles'] = "Bestanden voor vakken";
 $string['courseformats'] = "Formats voor vakken";
 $string['courses'] = "Vakken";
 $string['courseupdates'] = "Vak updates";
@@ -96,6 +113,8 @@ $string['createuserandpass'] = "Maak een nieuwe gebruikersnaam en een nieuw wach
 $string['createziparchive'] = "Maak een ZIP archief";
 $string['currentlanguage'] = "Huidige taal ";
 $string['currentlocaltime'] = "hoe laat is het nu bij jou? (instellen lokale tijd)";
+$string['currentrelease'] = "Informatie over de huidige release";
+$string['currentversion'] = "Huidige versie";
 $string['databasechecking'] = "De Moodle database van versie \$a->oldversion naar versie \$a->newversion aan het opwaarderen...";
 $string['databasesetup'] = "Klaarmaken van de database";
 $string['databasesuccess'] = "De database werd met succes opgewaardeerd";
@@ -138,22 +157,38 @@ $string['editthisactivity'] = "Wijzig deze activiteit";
 $string['edituser'] = "Wijzig gebruikers accounts";
 $string['email'] = "E-mail adres";
 $string['emailconfirm'] = "Bevestig je account";
-$string['emailconfirmation'] = "Beste \$a->firstname,
-
-Er is een nieuwe account aangevraagd bij '\$a->sitename' met gebruik van dit e-mail adres.
-
-Klik op de onderstaande link om de account in werking te stellen:
-
-\$a->link
-
-In de meeste mailprogramma's kun je op de bovenstaande link klikken. Als dat niet lukt kun je het adres knippen en vervolgens plakken in het adresveld van je browservenster.
-
-Veel succes en met vriendelijke groet,
-
-\$a->admin
+$string['emailconfirmation'] = "Beste \$a->firstname,
+
+
+
+Er is een nieuwe account aangevraagd bij '\$a->sitename' met gebruik van dit e-mail adres.
+
+
+
+Klik op de onderstaande link om de account in werking te stellen:
+
+
+
+\$a->link
+
+
+
+In de meeste mailprogramma's kun je op de bovenstaande link klikken. Als dat niet lukt kun je het adres knippen en vervolgens plakken in het adresveld van je browservenster.
+
+
+
+Veel succes en met vriendelijke groet,
+
+
+
+\$a->admin
+
 (Beheerder van '\$a->sitename')";
-$string['emailconfirmsent'] = "<P>Als het goed is is er een e-mail verzonden naar <B>\$a</B>
-<P>Daarin staan simpele instructies voor het voltooien van de registratie.
+$string['emailconfirmationsubject'] = "\$a: Bevestiging van de account";
+$string['emailconfirmsent'] = "<P>Als het goed is is er een e-mail verzonden naar <B>\$a</B>
+
+<P>Daarin staan simpele instructies voor het voltooien van de registratie.
+
 <P>Als je toch problemen blijft houden, neem dan contact op met de beheerder van de site.";
 $string['emaildisplay'] = "E-mail weergave";
 $string['emaildisplaycourse'] = "Laat mijn e-mail adres alleen maar zien aan andere leden van dit vak";
@@ -162,11 +197,46 @@ $string['emaildisplayyes'] = "Toon mijn e-mail adres aan iedereen";
 $string['emailexists'] = "Dit e-mail adres is al geregistreerd.";
 $string['emailformat'] = "E-mail opmaak";
 $string['emailmustbereal'] = "N.B. je e-mail adres moet een bestaand en werkend adres zijn";
+$string['emailpasswordconfirmation'] = "Beste \$a->firstname,
+
+
+
+Iemand (waarschijnlijk jij zelf) heeft een nieuw wachtwoord gevraagd voor je account op '\$a->sitename'.
+
+
+
+Ga naar onderstaand adres om dit te bevestigen en om een nieuw wachtwoord te krijgen via mail:
+
+
+
+\$a->link
+
+
+
+In de meeste e-mail programma's zou dit moeten verschijnen als een blauwe link waarop je kunt klikken. Als dat niet werkt, knip en plak het adres dan in de adresbalk van je browser.
+
+
+
+Als je hulp nodig hebt, neem dan contakt op met de site-beheerder, \$a->admin";
+$string['emailpasswordconfirmationsubject'] = "\$a: bevestiging van de wijziging van het paswoord";
+$string['emailpasswordconfirmsent'] = "Er is een e-mail verstuurd naar jouw adres: <b>\$a</b>.
+
+<p>Daarin staan eenvoudige instructies om je aanvraag tot wijziging van je wachtwoord te bevestigen en om deze wijziging door te voeren.
+
+Indien je blijft moeilijkheden ondervinden, neem dan contakt op met je site-beheerder.";
+$string['emailpasswordsent'] = "Bedankt voor de bevestiging van de wijziging van je wachtwoord.
+
+<p>Er is een e-mail met je nieuw wachtwoord naar <b>\$a->email</b> gestuurd.
+
+<p>Het nieuwe wachtwoord werd automatisch gegenereerd. Misschien wil je het <a href=\$a->link>wachtwoord veranderen</a> in iets wat je gemakkelijker kunt onthouden.";
 $string['enrolmentkey'] = "Vak sleutel";
-$string['enrolmentkeyfrom'] = "Dit vak vereist een 'Vak sleutel' een eenmalig<BR>
-wachtwoord dat je moet hebben gekregen van \$a
+$string['enrolmentkeyfrom'] = "Dit vak vereist een 'Vak sleutel' een eenmalig<BR>
+
+wachtwoord dat je moet hebben gekregen van \$a
+
 ";
-$string['enrolmentkeyhint'] = "Die 'Vak sleutel' was niet correct. Probeer het nog eens.<BR>
+$string['enrolmentkeyhint'] = "Die 'Vak sleutel' was niet correct. Probeer het nog eens.<BR>
+
 (Hier een hint: het begint met '\$a')";
 $string['entercourse'] = "Klik om dit vak binnen te gaan";
 $string['enteremailaddress'] = "Typ je e-mail adres om je wachtwoord te resetten en via e-mail een nieuw wachtwoord naar je toegestuurd te krijgen.";
@@ -192,6 +262,7 @@ $string['formattext'] = "Moodle auto-opmaak";
 $string['formattexttype'] = "Opmaken";
 $string['formattopics'] = "Onderwerp format   ";
 $string['formatweeks'] = "Wekelijks format";
+$string['formatwiki'] = "Wiki formaat";
 $string['frontpagedescription'] = "Beschrijving voorpagina";
 $string['frontpageformat'] = "Format voorpagina";
 $string['fulllistofcourses'] = "Alle vakken";
@@ -202,13 +273,20 @@ $string['gd1'] = "GD 1.x is geïnstalleerd";
 $string['gd2'] = "GD 2.x is geïnstalleerd";
 $string['gdneed'] = "GD moet geïnstalleerd zijn om deze grafiek te kunnen bekijken";
 $string['gdnot'] = "GD is niet geïnstalleerd";
-$string['gpl'] = "Copyright (C) 2001-2002 Martin Dougiamas
-(http://dougiamas.com)
-
-Dit programma is gratis software; je kunt het redistribueren en/of wijzigen volgens de voorwaarden van de GNU General Public License zoals deze is gepubliceerd door de Free Software Foundation; versie 2 van de licentie (of een latere versie als daar je voorkeur naar uit gaat).
-
-Dit programma is gedistribueerd met de hoop dat het bruikbaar is, maar ZONDER ENIGE GARANTIE; zelfs zonder een geïmpliceerde garantie tot VERKOOPBAARHEID (merchantability) of BRUIKBAARHEID VOOR EEN BEPAALDE DOELSTELLING (fitness for a particular purpose). Bekijk de GNU General Public License voor meer details:
-
+$string['gpl'] = "Copyright (C) 2001-2002 Martin Dougiamas
+
+(http://dougiamas.com)
+
+
+
+Dit programma is gratis software; je kunt het redistribueren en/of wijzigen volgens de voorwaarden van de GNU General Public License zoals deze is gepubliceerd door de Free Software Foundation; versie 2 van de licentie (of een latere versie als daar je voorkeur naar uit gaat).
+
+
+
+Dit programma is gedistribueerd met de hoop dat het bruikbaar is, maar ZONDER ENIGE GARANTIE; zelfs zonder een geïmpliceerde garantie tot VERKOOPBAARHEID (merchantability) of BRUIKBAARHEID VOOR EEN BEPAALDE DOELSTELLING (fitness for a particular purpose). Bekijk de GNU General Public License voor meer details:
+
+
+
 http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Cijfer";
 $string['grades'] = "Cijfers";
@@ -219,6 +297,8 @@ $string['guestsyes'] = "Laat gasten zonder sleutel toe";
 $string['guestuser'] = "Gast gebruiker";
 $string['guestuserinfo'] = "Deze gebruiker is een speciale gebruiker met alleen-lezen toegang tot sommige vakken.";
 $string['help'] = "Help";
+$string['helpemoticons'] = "Gebruik emoticons";
+$string['helpformatting'] = "Over tekstopmaak";
 $string['helphtml'] = "Hoe je HTML kunt schrijven";
 $string['helppicture'] = "Hoe je een plaatje kunt uploaden";
 $string['helpquestions'] = "Hoe je vragen kunt stellen";
@@ -226,6 +306,7 @@ $string['helpreading'] = "Lees zorgvuldig";
 $string['helprichtext'] = "Over de Richtext HTML editor";
 $string['helpsummaries'] = "Over deze opsommingen";
 $string['helptext'] = "Hoe je een tekst kunt schrijven ";
+$string['helpwiki'] = "Hoe je een Wiki-tekst kunt schrijven";
 $string['helpwriting'] = "Schrijf zorgvuldig";
 $string['hide'] = "Verberg";
 $string['hits'] = "Hits";
@@ -243,13 +324,21 @@ $string['htmleditordisabledbrowser'] = "De Richtext editor is niet beschikbaar o
 $string['htmlformat'] = "Mooie HTML opmaak";
 $string['icqnumber'] = "ICQ nummer";
 $string['idnumber'] = "Nummer (ID)";
+$string['include'] = "Voeg toe";
+$string['includeallusers'] = "Voeg alle gebruikers toe";
+$string['includecoursefiles'] = "Voeg de bestanden voor het vak toe";
+$string['includecourseusers'] = "Voeg de gebruikers van het vak toe";
+$string['includelogentries'] = "Voeg het logboek toe";
+$string['includeneededusers'] = "Voeg de nodige gebruikers toe";
+$string['includeuserfiles'] = "Voeg gebruikersbestanden toe";
 $string['invalidemail'] = "Ongeldig e-mail adres";
 $string['invalidlogin'] = "Ongeldige login, probeer het nog eens";
 $string['jumpto'] = "Ga naar...";
 $string['langltr'] = "Taalrichting van links naar rechts";
 $string['langrtl'] = "Taalrichting van rechts naar links";
 $string['language'] = "Taal";
-$string['languagegood'] = "Dit taal pakket is helemaal bijgewerkt! :-)
+$string['languagegood'] = "Dit taal pakket is helemaal bijgewerkt! :-)
+
 ";
 $string['lastaccess'] = "Voor het laatst bezocht";
 $string['lastedited'] = "Voor het laatst bewerkt";
@@ -270,17 +359,28 @@ $string['login'] = "Log in";
 $string['loginas'] = "Log in als";
 $string['loginguest'] = "Inloggen als gast";
 $string['loginsite'] = "Op de site inloggen";
-$string['loginsteps'] = "Hallo! Om volledige toegang tot de vakken te krijgen moet je even de tijd nemen om een nieuwe account voor jezelf aan te maken op deze website. 
-Elk vak kan ook een eenmalige &quot;Vak sleutel&quot; hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
-<OL size=2>
-<LI>Vul het <A HREF=\$a>Nieuwe account</A> formulier in.
-<LI>Er wordt meteen een e-mail verstuurd naar je e-mail adres.
-<LI>Lees de e-mail en klik op de link die erin staat.
-<LI>Je account wordt bevestigd en je bent dan ingelogd.
-<LI>Kies nu het vak dat je wilt volgen.
-<LI>Als je wordt gevraagd om een &quot;Vak sleutel&quot;, gebruik dan de sleutel die je van je docent gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.
-<LI>Je hebt nu toegang tot het hele vak. Vanaf nu hoef je alleen nog maar je gebruikersnaam en wachtwoord in het formulier op deze pagina in te vullen om in te loggen en toegang te krijgen tot de vakken waar je lid van bent.
-</OL>
+$string['loginsteps'] = "Hallo! Om volledige toegang tot de vakken te krijgen moet je even de tijd nemen om een nieuwe account voor jezelf aan te maken op deze website. 
+
+Elk vak kan ook een eenmalige &quot;Vak sleutel&quot; hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
+
+<OL size=2>
+
+<LI>Vul het <A HREF=\$a>Nieuwe account</A> formulier in.
+
+<LI>Er wordt meteen een e-mail verstuurd naar je e-mail adres.
+
+<LI>Lees de e-mail en klik op de link die erin staat.
+
+<LI>Je account wordt bevestigd en je bent dan ingelogd.
+
+<LI>Kies nu het vak dat je wilt volgen.
+
+<LI>Als je wordt gevraagd om een &quot;Vak sleutel&quot;, gebruik dan de sleutel die je van je docent gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.
+
+<LI>Je hebt nu toegang tot het hele vak. Vanaf nu hoef je alleen nog maar je gebruikersnaam en wachtwoord in het formulier op deze pagina in te vullen om in te loggen en toegang te krijgen tot de vakken waar je lid van bent.
+
+</OL>
+
 ";
 $string['loginstepsnone'] = "Hallo!<P>Om volledige toegang te krijgen tot de verschillende vakken moet je een account voor jezelf aanmaken.<P>Het enige wat je hoeft te doen is een gebruikersnaam en wachtwoord bedenken en deze gebruiken in het formulier op deze pagina!<P>Als iemand anders de gebruikersnaam al heeft gebruikt zul je het nog een keer met een andere gebruikersnaam moeten proberen.";
 $string['loginto'] = "Log in op \$a";
@@ -291,6 +391,8 @@ $string['mainmenu'] = "Hoofd menu  ";
 $string['makeafolder'] = "Maak een map";
 $string['makeeditable'] = "Als je '\$a' bewerkbaar maakt door de het proces op de web server (bijv. apache) dan kun je dit bestand rechtstreeks vanuit deze pagina bewerken";
 $string['managedatabase'] = "Beheer de database";
+$string['managemodules'] = "Beheer de modules";
+$string['markedthistopic'] = "Dit onderwerp is geselecteerd als het huidige onderwerp";
 $string['markthistopic'] = "Selecteer dit onderwerp als het huidige onderwerp";
 $string['maximumchars'] = "Een maximum van \$a characters";
 $string['maximumgrade'] = "Hoogst haalbare cijfer";
@@ -317,8 +419,11 @@ $string['missingstrings'] = "Controleer op ontbrekende 'strings'";
 $string['missingstudent'] = "Je moet iets kiezen";
 $string['missingsummary'] = "Samenvatting ontbreekt";
 $string['missingteacher'] = "Je moet iets kiezen";
+$string['missingurl'] = "URL ontbreekt";
 $string['missingusername'] = "Gebruikersnaam ontbreekt";
 $string['modified'] = "Gewijzigd";
+$string['moduledeleteconfirm'] = "Je staat op het punt de volledige module '\$a' te verwijderen. Hierdoor zal alles wat met deze module is geassocieerd verdwijnen. Ben je ZEKER dat je wil verderdoen?";
+$string['moduledeletefiles'] = "Alle gegevens in verband met de module '\$a->module' is uit de databank verwijderd. Om deze verwijdering af te ronden (en om te verhinderen dat de module zich herinstalleerd), moet je nu de map \$a->directory van je server verwijderen.";
 $string['modulesetup'] = "Klaarmaken van de tabellen van de module";
 $string['modulesuccess'] = "\$a tabellen zijn met succes klaar gemaakt";
 $string['mostrecently'] = "meest recente";
@@ -332,29 +437,48 @@ $string['name'] = "Naam";
 $string['namesocial'] = "sectie";
 $string['nametopics'] = "onderwerp";
 $string['nameweeks'] = "week";
+$string['needed'] = "Nodig";
 $string['never'] = "Nooit";
 $string['neverdeletelogs'] = "Verwijder de statistieken nooit";
 $string['new'] = "Nieuw";
 $string['newaccount'] = "Nieuwe account";
 $string['newpassword'] = "Nieuw wachtwoord";
-$string['newpasswordtext'] = "Beste \$a->firstname,
-
-Het wachtwoord voor je account op '\$a->sitename' is gereset en je hebt een nieuw tijdelijk wachtwoord gekregen.
-
-Je login informatie is nu:
-gebruikersnaam: \$a->username
-wachtwoord: \$a->newpassword
-
-Ga naar deze pagina om je wachtwoord te wijzigen:
-\$a->link
-
-In de meeste mailprogramma's kun je op de bovenstaande link klikken. Als dat niet lukt kun je het adres op knippen en plakken in het adresveld van je browservenster.
-
-Veel succes en met vriendelijke groet,
-
-\$a->admin
-(Beheerder van '\$a->sitename')
-
+$string['newpasswordtext'] = "Beste \$a->firstname,
+
+
+
+Het wachtwoord voor je account op '\$a->sitename' is gereset en je hebt een nieuw tijdelijk wachtwoord gekregen.
+
+
+
+Je login informatie is nu:
+
+gebruikersnaam: \$a->username
+
+wachtwoord: \$a->newpassword
+
+
+
+Ga naar deze pagina om je wachtwoord te wijzigen:
+
+\$a->link
+
+
+
+In de meeste mailprogramma's kun je op de bovenstaande link klikken. Als dat niet lukt kun je het adres op knippen en plakken in het adresveld van je browservenster.
+
+
+
+Veel succes en met vriendelijke groet,
+
+
+
+\$a->admin
+
+(Beheerder van '\$a->sitename')
+
+
+
 \$a->signoff";
 $string['newpicture'] = "Nieuwe foto";
 $string['newsitem'] = "Nieuws item";
@@ -377,6 +501,7 @@ $string['nopotentialteachers'] = "Geen mogelijke docenten";
 $string['normal'] = "Normaal";
 $string['nostudentsyet'] = "Er zijn nog geen leerlingen lid van dit vak";
 $string['nosuchemail'] = "Dit is geen e-mail adres";
+$string['notavailable'] = "Niet beschikbaar";
 $string['noteachersyet'] = "Er zijn nog geen docenten voor dit vak";
 $string['notenrolled'] = "\$a is geen lid van dit vak.";
 $string['nothingnew'] = "Niets nieuws sinds je laatste login";
@@ -399,24 +524,48 @@ $string['outline'] = "Overzicht";
 $string['participants'] = "Deelnemers";
 $string['password'] = "Wachtwoord";
 $string['passwordchanged'] = "Het wachtwoord is veranderd";
+$string['passwordconfirmchange'] = "Bevestig de wijziging van he wachtwoord";
 $string['passwordrecovery'] = "Ja, help me met inloggen";
 $string['passwordsdiffer'] = "De wachtwoorden komen niet overeen";
 $string['passwordsent'] = "Het wachtwoord is verzonden";
-$string['passwordsenttext'] = "<P>Er is een e-mail verstuurd naar \$a->email.
-<P><B>Bekijk je e-mail voor je nieuwe wachtwoord</B>
+$string['passwordsenttext'] = "<P>Er is een e-mail verstuurd naar \$a->email.
+
+<P><B>Bekijk je e-mail voor je nieuwe wachtwoord</B>
+
 <P>Het nieuwe wachtwoord is automatisch aangemaakt, dus misschien wil je het <A HREF=\$a->link>wijzigen naar iets wat makkelijker te onthouden is</A>.";
 $string['people'] = "Mensen";
 $string['personalprofile'] = "Persoonlijke profiel";
 $string['phone'] = "Telefoon";
+$string['popupwindow'] = "Open het bestand in een nieuw venster";
 $string['potentialadmins'] = "Mogelijke beheerders";
 $string['potentialcreators'] = "Mogelijke vak-aanmakers";
 $string['potentialteachers'] = "Mogelijke docenten";
 $string['preferredlanguage'] = "Voorkeurstaal";
 $string['preview'] = "Bekijk";
 $string['previeworchoose'] = "Bekijk of kies een thema";
+$string['publicdirectory'] = "Publieke map";
+$string['publicdirectory0'] = "Publiceer deze site niet";
+$string['publicdirectory1'] = "Publiceer alleen de naam van de site";
+$string['publicdirectory2'] = "Publiceer de naam van de site met een link";
 $string['question'] = "Vraag";
 $string['readme'] = "LEESME";
 $string['recentactivity'] = "Recente activiteiten";
+$string['registration'] = "Moodle Registratie";
+$string['registrationemail'] = "E-mail meldingen";
+$string['registrationinfo'] = "<p>Deze pagina laat je toe om Moodle te registreren bij moodle.org.
+
+De registratie is gratis.
+
+Het belangrijkste voordeel is dat registratie je toevoegt aan een mailinglist, uitsluitend voor belangrijke meldingen zoals beveiligingsproblemen en nieuwe releases van Moodle.
+
+<p>Je informatie wordt privé gehouden en zal nooit verkocht of doorgegeven worden aan derden. De enige reden voor het inzamelen van deze informatie, is het leveren van hulp en het uitbouwen van een statistisch beeld van de Moodle-gemeenschap.
+
+<p>Als je wil kan je toelaten om je site-naam, land en URL toe te voegen aan de openbare lijst van Moodle Sites.
+
+<p>Alle nieuwe registraties worden manueel gecontroleerd voor ze toegevoegd worden aan de lijst. Je kunt je gegevens steeds bijwerken door dit formulier terug te posten.";
+$string['registrationno'] = "Nee, ik wil geen e-mail ontvangen";
+$string['registrationsend'] = "Stuur de registratie-informatie naar moodle.org";
+$string['registrationyes'] = "Ja, laat me iets weten als er iets belangrijks gebeurt";
 $string['removeadmin'] = "Verwijder beheerder";
 $string['removecreator'] = "Verwijder vak-aanmaker";
 $string['removeteacher'] = "Verwijder docent";
@@ -460,10 +609,12 @@ $string['sitesettings'] = "Site instellingen";
 $string['size'] = "Grootte";
 $string['socialheadline'] = "Sociale forum - meest recente onderwerpen";
 $string['someallowguest'] = "Gasten hebben toegang tot sommige vakken";
-$string['someerrorswerefound'] = "Bepaalde informatie ontbrak of was incorrect. Kijk hieronder voor de details.
+$string['someerrorswerefound'] = "Bepaalde informatie ontbrak of was incorrect. Kijk hieronder voor de details.
+
 ";
 $string['startdate'] = "Begindatum van het vak";
 $string['startsignup'] = "Begin nu met het maken van een nieuwe account!";
+$string['state'] = "Staat / Provincie";
 $string['status'] = "Status";
 $string['strftimedate'] = "%%d %%B %%Y";
 $string['strftimedateshort'] = "%%d %%B";
@@ -493,7 +644,9 @@ $string['today'] = "Vandaag";
 $string['todaylogs'] = "Statistieken van vandaag";
 $string['toomanytoshow'] = "Er zijn teveel gebruikers om te laten zien";
 $string['topic'] = "Onderwerp";
+$string['topichide'] = "Verberg dit onderwerp voor \$a";
 $string['topicoutline'] = "Overzicht van het onderwerp";
+$string['topicshow'] = "Toon dit onderwerp aan \$a";
 $string['total'] = "Totaal";
 $string['turneditingoff'] = "Zet wijzigen uit";
 $string['turneditingon'] = "Zet wijzigen aan";
@@ -519,22 +672,32 @@ $string['uploadedfileto'] = "\$a->file is upgeload naar \$a->directory";
 $string['uploadnofilefound'] = "Er is geen bestand gevonden - weet je zeker dat je een bestand geselecteerd hebt om te uploaden?";
 $string['uploadproblem'] = "Een was een onbekend probleem tijdens het uploaden van bestand '\$a' (was het misschien te groot?)";
 $string['uploadthisfile'] = "Upload dit bestand";
+$string['user'] = "Gebruiker";
 $string['userdeleted'] = "De account van deze gebruiker is verwijderd";
 $string['userdescription'] = "Beschrijving";
+$string['userfiles'] = "Bestanden van de gebruiker";
 $string['username'] = "Gebruikersnaam";
 $string['usernameexists'] = "Deze gebruikersnaam bestaat al, kies een andere";
 $string['userprofilefor'] = "Het gebruikersprofiel van \$a";
 $string['users'] = "Gebruikers";
 $string['webpage'] = "Website";
 $string['week'] = "Week";
+$string['weekhide'] = "Verberg deze week voor \$a";
 $string['weeklyoutline'] = "Overzicht van de weken";
+$string['weekshow'] = "Toon deze week aan  \$a";
 $string['welcometocourse'] = "Welkom bij \$a";
-$string['welcometocoursetext'] = "Welkom bij \$a->coursename!
-
-Eén van de eerste dingen die je zou moeten doen is het invullen van je gebruikersprofiel binnen dit vak zodat we wat meer over jou te weten kunnen komen:
-
+$string['welcometocoursetext'] = "Welkom bij \$a->coursename!
+
+
+
+Eén van de eerste dingen die je zou moeten doen is het invullen van je gebruikersprofiel binnen dit vak zodat we wat meer over jou te weten kunnen komen:
+
+
+
 \$a->profileurl";
 $string['withchosenfiles'] = "Met geselecteerde bestanden";
+$string['withoutuserdata'] = "zonder gebruikersgegevens";
+$string['withuserdata'] = "met gebruikersgegevens";
 $string['wordforstudent'] = "Jouw woord voor leerling";
 $string['wordforstudenteg'] = "bijv. student, deelnemer, cursist, etc.";
 $string['wordforstudents'] = "Jouw woord voor leerlingen";
