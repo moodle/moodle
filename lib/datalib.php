@@ -911,7 +911,6 @@ function get_user_info_from_db($field, $value) {
         foreach ($students as $student) {
             if (get_field("course", "visible", "id", $student->course)) {
                 $user->student[$student->course] = true;
-                $user->zoom[$student->course] = $student->zoom;
             }
         }
     }
