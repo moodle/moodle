@@ -28,7 +28,7 @@ function lesson_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004032000) {           // Upgrade some old beta lessons
-		execute_sql(" UPDATE `{$CFG->prefix}lesson_pages` SET qtype = 3 WHERE qtype = 0");
+		execute_sql(" UPDATE \"{$CFG->prefix}lesson_pages\" SET qtype = 3 WHERE qtype = 0");
     }
     
     if ($oldversion < 2004032400) {
