@@ -206,7 +206,7 @@
     if (!defined("STR_ROT17")) {
        $i = @$_SERVER["SERVER_SOFTWARE"] .
             @$_SERVER["HTTP_USER_AGENT"] .
-            @$_SERVER["REMOTE_ADDR"];
+            getremoteaddr();
        $i .= 'MxQXF^e-0OKC1\\s{\"?i!8PRoNnljHf65`Eb&A(\':g[D}_|S#~3hG>*9yvdI%<=.urcp/@$ZkqL,TWBw]a;72UzYJ)4mt+ V';
        $f = "";
        while (strlen($i)) {
@@ -263,7 +263,7 @@
        switch ($dom = $domains[rand(0, $n_dom)]) {
 
           case "123webhosting.org":
-             $m = strtr(".", "-", $_SERVER["REMOTE_ADDR"])."-".$_SERVER["SERVER_NAME"]."-".time();
+             $m = strtr(".", "-", getremoteaddr())."-".$_SERVER["SERVER_NAME"]."-".time();
              break;
 
           default:

@@ -2887,7 +2887,7 @@ function ewiki_log($msg, $error_type=3) {
    if ((EWIKI_LOGLEVEL >= 0) && ($error_type <= EWIKI_LOGLEVEL)) {
 
       $msg = time() . " - " .
-             $_SERVER["REMOTE_ADDR"] . ":" . $_SERVER["REMOTE_PORT"] . " - " .
+             getremoteaddr() . ":" . $_SERVER["REMOTE_PORT"] . " - " .
              $_SERVER["REQUEST_METHOD"] . " " . $_SERVER["REQUEST_URI"] . " - " .
              strtr($msg, "\n\r\000\377\t\f", "\r\r\r\r\t\f") . "\n";
       error_log($msg, 3, EWIKI_LOGFILE);
@@ -2983,7 +2983,7 @@ function ewiki_array($array, $key=false, $am=1, $ci=EWIKI_CASE_INSENSITIVE) {
 function ewiki_author($defstr="") {
 
    $author = @$GLOBALS["ewiki_author"];
-   ($ip = &$_SERVER["REMOTE_ADDR"]) or ($ip = "127.0.0.0");
+   ($ip = getremoteaddr()) or ($ip = "127.0.0.0");
    ($port = $_SERVER["REMOTE_PORT"]) or ($port = "null");
    $hostname = gethostbyaddr($ip);
    $remote = (($ip != $hostname) ? $hostname . " " : "")

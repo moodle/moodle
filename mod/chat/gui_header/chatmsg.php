@@ -58,7 +58,7 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
    echo arsc_filter_posting($arsc_a["user"], $arsc_a["sendtime"], $arsc_a["message"], $arsc_room, $arsc_a["flag_ripped"])."\n";
   }
   $arsc_ping = time();
-  $arsc_ip = getenv("REMOTE_ADDR");
+  $arsc_ip = getremoteaddr();
   mysql_query("UPDATE arsc_users SET lastping = '$arsc_ping', ip = '$arsc_ip' WHERE user = '$arsc_user'");
   ?>
     <a name="end"></a>

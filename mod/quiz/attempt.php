@@ -71,7 +71,7 @@
     }
 
 /// Check subnet access
-    if ($quiz->subnet and !address_in_subnet($_SERVER['REMOTE_ADDR'], $quiz->subnet)) {
+    if ($quiz->subnet and !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
         error(get_string("subneterror", "quiz"), "view.php?id=$cm->id");
     }
 

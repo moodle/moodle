@@ -78,7 +78,7 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
   }
   $arsc_lastid = $arsc_lastid_save;
   $arsc_ping = time();
-  $arsc_ip = getenv("REMOTE_ADDR");
+  $arsc_ip = getremoteaddr();
   mysql_query("UPDATE arsc_users SET lastping = '$arsc_ping', ip = '$arsc_ip' WHERE sid = '$arsc_sid'");
   echo " ";
   flush();

@@ -107,7 +107,7 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
      $arsc_message = "/msg ".$arsc_my["user"]." ".$arsc_lang["welcome"];
      echo arsc_filter_posting("System", $arsc_sendtime, $arsc_message, $arsc_room, 0);
      $arsc_ping = time();
-     $arsc_ip = getenv("REMOTE_ADDR");
+     $arsc_ip = getremoteaddr();
      mysql_query("UPDATE arsc_users SET lastping = '$arsc_ping', ip = '$arsc_ip' WHERE user = '$arsc_user'");
     ?>
    </body>
