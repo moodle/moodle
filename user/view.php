@@ -163,19 +163,19 @@
         echo "<input type=submit value=\"".get_string("unenrolme", "", $course->shortname)."\">";
         echo "</form></p></td>";
     }
-    if (isteacher($course->id)) {
+    if (isteacher($course->id) or ($course->showreports and $USER->id == $user->id)) {
         echo "<td nowrap><p><form action=\"../course/user.php\" method=get>";
         echo "<input type=hidden name=id value=\"$course->id\">";
         echo "<input type=hidden name=user value=\"$user->id\">";
         echo "<input type=submit value=\"".get_string("activityreport")."\">";
         echo "</form></p></td>";
-        if ($user->id != $USER->id) {
-            echo "<td nowrap><p><form action=\"../course/loginas.php\" method=get>";
-            echo "<input type=hidden name=id value=\"$course->id\">";
-            echo "<input type=hidden name=user value=\"$user->id\">";
-            echo "<input type=submit value=\"".get_string("loginas")."\">";
-            echo "</form></p></td>";
-        }
+    }
+    if (isteacher($course->id) and ($USER->id != $user->id)) {
+        echo "<td nowrap><p><form action=\"../course/loginas.php\" method=get>";
+        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo "<input type=hidden name=user value=\"$user->id\">";
+        echo "<input type=submit value=\"".get_string("loginas")."\">";
+        echo "</form></p></td>";
     }
     echo "</tr></table></center>\n";
 
