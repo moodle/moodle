@@ -120,7 +120,7 @@ class block_rss_client extends block_base {
         global $CFG;
         $returnstring = '';
         $now = time();
-        require_once($CFG->dirroot .'/rss/rsslib.php');
+        require_once($CFG->libdir .'/rsslib.php');
         require_once(MAGPIE_DIR .'rss_fetch.inc');
         
         // Check if there is a cached string which has not timed out.
