@@ -64,7 +64,7 @@ CREATE TABLE prefix_dialogue_entries (
   userid INT8  NOT NULL default '0',
   timecreated INT8  NOT NULL default '0',
   mailed INT2  NOT NULL default '0',
-  text text NOT NULL
+  text text NOT NULL default ''
 ) ;
 CREATE INDEX prefix_dialogue_entries_conversationid_idx ON prefix_dialogue_entries  (conversationid) ;
 

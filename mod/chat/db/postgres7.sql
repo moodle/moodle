@@ -6,7 +6,7 @@ CREATE TABLE prefix_chat (
   id SERIAL,
   course INTEGER NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  intro text NOT NULL,
+  intro text NOT NULL default '',
   keepdays INTEGER NOT NULL default '0',
   studentlogs INTEGER NOT NULL default '0',
   chattime INTEGER NOT NULL default '0',
@@ -26,7 +26,7 @@ CREATE TABLE prefix_chat_messages (
   userid integer NOT NULL default '0',
   groupid integer NOT NULL default '0',
   system integer NOT NULL default '0',
-  message text NOT NULL,
+  message text NOT NULL default '',
   timestamp integer NOT NULL default '0',
   PRIMARY KEY  (id)
 );
