@@ -519,6 +519,7 @@ class page_quiz extends page_base {
     // initialized correctly and ready for use.
     var $courserecord = NULL;
     var $modulerecord = NULL;
+    var $quizrecord   = NULL;
 
     // Do any validation of the officially recognized bits of the data and forward to parent.
     // Do NOT load up "expensive" resouces (e.g. SQL data) here!
@@ -544,7 +545,11 @@ class page_quiz extends page_base {
         }
         $this->courserecord = get_record('course', 'id', $this->modulerecord->course);
         if(empty($this->courserecord)) {
-            error('Cannot fully initialize page: invalid course id '. $this->id);
+            error('Cannot fully initialize page: invalid course id '. $this->modulerecord->course);
+        }
+        $this->quizrecord = get_record('quiz', 'id', $this->id);
+        if(empty($this->courserecord)) {
+            error('Cannot fully initialize page: invalid quiz id '. $this->id);
         }
         $this->full_init_done = true;
     }
@@ -572,18 +577,17 @@ class page_quiz extends page_base {
 
         $this->init_full();
         $replacements = array(
-            '%fullname%' => $this->courserecord->fullname
+            '%fullname%' => $this->quizrecord->name
         );
         foreach($replacements as $search => $replace) {
             $title = str_replace($search, $replace, $title);
         }
 
-        if($this->courserecord->id == SITEID) {
-            $breadcrumbs = array();
-        }
-        else {
-            $breadcrumbs = array($this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id);
-        }
+        $breadcrumbs = array(
+            $this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id,
+            get_string('modulenameplural', 'quiz') => $CFG->wwwroot.'/mod/quiz/index.php?id='.$this->courserecord->id,
+            $this->quizrecord->name => $CFG->wwwroot.'/mod/quiz/view.php?id='.$this->modulerecord->id,
+        );
 
         if(!empty($morebreadcrumbs)) {
             $breadcrumbs = array_merge($breadcrumbs, $morebreadcrumbs);
