@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -93,7 +93,7 @@ $string['deleteselected'] = '選択したものを削除';
 $string['description'] = '説明';
 $string['discrimination'] = '識別指数';
 $string['displayoptions'] = '表示オプション';
-$string['eachattemptbuildsonthelast'] = '直近の受験を基にする';
+$string['eachattemptbuildsonthelast'] = '直近の解答内容を反映させる';
 $string['editcategories'] = 'カテゴリの編集';
 $string['editcategory'] = 'カテゴリの編集';
 $string['editdatasets'] = 'データセットの編集';
@@ -226,10 +226,10 @@ $string['questiontypesetupoptions'] = '問題タイプのオプション設定';
 $string['quizavailable'] = '小テストは $a まで利用できます。';
 $string['quizclose'] = '小テスト終了';
 $string['quizclosed'] = 'この小テストは $a に終了しました。';
-$string['quizcloses'] = '小テスト終了日時';
+$string['quizcloses'] = '終了日時';
 $string['quiznotavailable'] = '小テストは  $a まで利用できません。';
 $string['quizopen'] = '小テスト公開';
-$string['quizopens'] = '小テスト公開日時';
+$string['quizopens'] = '公開日時';
 $string['quiztimelimit'] = '時間制限: $a';
 $string['quiztimer'] = '小テストタイマー';
 $string['random'] = 'ランダム問題';
@@ -286,8 +286,8 @@ $string['showfeedback'] = '解答後にフィードバックを表示しますか?';
 $string['showhidden'] = '隠された問題も表示する';
 $string['shownoattempts'] = '未受験の学生を表示';
 $string['showteacherattempts'] = '教師の受験を表示';
-$string['shuffleanswers'] = '答えを混ぜる';
-$string['shufflequestions'] = '問題を混ぜる';
+$string['shuffleanswers'] = '答えをシャッフルする';
+$string['shufflequestions'] = '問題をシャッフルする';
 $string['significantfigures'] = '有効数字 $a 桁';
 $string['significantfiguresformat'] = '有効数字';
 $string['subneterror'] = '申し訳ございません、この小テストは特定の場所からのみアクセス可能です。あなたのコンピュータはこの小テストを利用できるコンピュータではありません。';
