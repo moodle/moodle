@@ -154,11 +154,19 @@ function reset_to_defaults () {
 function editor_get_dictionaries () {
 /// Get all installed dictionaries in the system
 
+    global $CFG;
+
     error_reporting(E_ALL); // for debug, final version shouldn't have this...
     clearstatcache();
 
-    $strerror     = '';
+    $strerror = '';
 
+    // If aspellpath isn't set don't even bother ;-)
+    if (empty($CFG->aspellpath)) {
+        return $strerror = 'Empty aspell path!';
+    }
+
+    // Do we have access to popen function?
     if (!function_exists('popen')) {
         return $strerror = "Popen function disabled!";
         exit;
