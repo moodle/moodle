@@ -20,11 +20,11 @@
     }
 
 
-	if ($frm = data_submitted()) {
+    if ($frm = data_submitted()) {
 
         $user = authenticate_user_login($frm->username, $frm->password);
 
-	    update_login_count();
+        update_login_count();
 
         if ($user) {
             if (! $user->confirmed ) {       // they never confirmed via email 
@@ -50,22 +50,26 @@
                 error("Wierd error: could not update login records");
             }
 
-		    set_moodle_cookie($USER->username);
+            set_moodle_cookie($USER->username);
 
             if (user_not_fully_set_up($USER)) {
                 $site = get_site();
-        	    header("Location: $CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
+                session_write_close();
+                header("Location: $CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
 
             } else if (empty($SESSION->wantsurl)) {
-        	    header("Location: $CFG->wwwroot");
+                session_write_close();
+                header("Location: $CFG->wwwroot");
 
-		    } else {
-        	    header("Location: $SESSION->wantsurl");
-			    unset($SESSION->wantsurl);
+            } else {
+                $wantsurl = $SESSION->wantsurl;
+                unset($SESSION->wantsurl);
                 save_session("SESSION");
-		    }
+                session_write_close();
+                header("Location: $wantsurl");
+            }
     
-		    reset_login_count();
+            reset_login_count();
 
             die;
     
@@ -80,7 +84,7 @@
     }
 
     if (empty($SESSION->wantsurl)) {
-	    $SESSION->wantsurl = $_SERVER["HTTP_REFERER"];
+        $SESSION->wantsurl = $_SERVER["HTTP_REFERER"];
         save_session("SESSION");
     }
     
