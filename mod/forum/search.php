@@ -53,8 +53,10 @@
         print_simple_box_start("center");
         echo "<center>";
         echo $searchform;
-        echo "</center><br />";
+        echo "<br /><p>";
         print_string("searchhelp");
+        echo "</p>";
+        echo "</center>";
         print_simple_box_end();
     }
 
