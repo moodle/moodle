@@ -744,6 +744,10 @@ function main_upgrade($oldversion=0) {
         table_column("event", "", "format", "integer", "4", "unsigned", "0", "not null", "description");
     }
 
+    if ($oldversion < 2004042703) {
+        set_config("enablerssfeeds",0);
+    }
+
     return $result;
 
 }
