@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004091700)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['action'] = 'Acció';
@@ -99,6 +99,7 @@ $string['backup'] = 'Còpia de seguretat';
 $string['backupcoursefileshelp'] = 'Si habiliteu aquesta opció els fitxers del curs s\'inclouran a les còpies de seguretat automàtiques.';
 $string['backupdate'] = 'Data de la còpia';
 $string['backupdetails'] = 'Informació sobre la còpia';
+$string['backupfailed'] = 'Alguns cursos no s\'han desat!';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'La còpia de seguretat s\'ha completat amb èxit';
 $string['backupincludemoduleshelp'] = 'Trieu si voleu incloure els mòduls del curs, amb o sense dades dels usuaris, a les còpies de seguretat automàtiques.';
@@ -110,6 +111,8 @@ $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Nota: heu seleccionat no incloure cap usuari en la còpia de seguretat, de manera que tots els mòduls s\'han commutat al mode \"sense dades d\'usuari\". Si us plau teniu en compte que els mòduls \"Exercici\" i \"Taller\" no són compatibles amb aquest tipus de còpia i s\'han desactivat completament.';
 $string['backuporiginalname'] = 'Nom de la còpia';
 $string['backupsavetohelp'] = 'Camí complet del directori on voleu desar els fitxers de còpies de seguretat<br />(deixeu en blanc per desar-los al directori per defecte del curs)';
+$string['backuptakealook'] = 'Si us plau doneu una ullada al registre de la còpia:
+$a';
 $string['backupuserfileshelp'] = 'Trieu si voleu que els fitxers dels usuaris (p. e. la imatge del perfil) s\'incloguin a les còpies de seguretat automàtiques';
 $string['backupusershelp'] = 'Trieu si voleu incloure tots els usuaris del servidor o només els necessaris per a cada curs.';
 $string['backupversion'] = 'Versió de la còpia';
@@ -143,8 +146,7 @@ $string['choosereportfilter'] = 'Tria un filtre per a l\'informe';
 $string['choosetheme'] = 'Tria tema';
 $string['chooseuser'] = 'Tria un usuari';
 $string['city'] = 'Població';
-$string['clambroken'] = 'L\'administrador ha habilitat la comprovació de virus, però hi ha algun error de configuració.<br />El vostre fitxer NO s\'ha pogut penjar. S\'ha enviat un correu de notificació a l\'administrador per tal que pugui arreglar-ho.<br />Proveu a penjar el fitxer en un altre moment.
-';
+$string['clambroken'] = 'L\'administrador ha habilitat la comprovació de virus, però hi ha algun error de configuració.<br />El vostre fitxer NO s\'ha pogut penjar. S\'ha enviat un correu de notificació a l\'administrador per tal que pugui arreglar-ho.<br />Proveu a penjar el fitxer en un altre moment.';
 $string['clamdeletedfile'] = 'S\'ha suprimit el fitxer';
 $string['clamdeletedfilefailed'] = 'No s\'ha pogut suprimir el fitxer';
 $string['clamemailsubject'] = '$a :: Notificació Clam AV';
@@ -153,8 +155,7 @@ $string['clamlost'] = 'Moodle ha estat configurat per executar Clam amb cada fit
 $string['clamlostandactinglikevirus'] = 'A més a més Moodle ha estat configurat de manera que si Clam no es pot executar, els fitxers es tracten com si fossin virus. Això significa que els estudiants no podran penjar cap fitxer mentre no solucioneu el problema. ';
 $string['clammovedfile'] = 'S\'ha mogut el fitxer al directori de quarantena especificat. La nova ubicació és $a.';
 $string['clammovedfilebasic'] = 'S\'ha mogut el fitxer a un directori de quarantena.';
-$string['clamquarantinedirfailed'] = 'No es pot moure el fitxer al directori de quarantena especificat $a. Fins que solucioneu aquest problema els fitxers infectats seran suprimits.
-';
+$string['clamquarantinedirfailed'] = 'No es pot moure el fitxer al directori de quarantena especificat $a. Fins que solucioneu aquest problema els fitxers infectats seran suprimits.';
 $string['clamunknownerror'] = 'Error desconegut de Clam.';
 $string['cleaningtempdata'] = 'S\'estan netejant les dades temporals';
 $string['clicktochange'] = 'feu clic per canviar';
@@ -170,6 +171,7 @@ $string['configclamactlikevirus'] = 'Tracta els fitxers com si fossin virus';
 $string['configclamdonothing'] = 'Tracta els fitxers com si fossin bons';
 $string['configclamfailureonupload'] = 'Si heu configurat Clam per escanejar els fitxers que es pengin, però la configuració és incorrecta o no es pot executar per alguna raó desconeguda, com s\'hauria de comportar? Si trieu \'Tracta els fitxers com si fossin virus\', els tots els fitxers es mouran a l\'àrea de quarantena o seran suprimits. Si trieu \'Tracta els fitxers com si fossin bons\', els fitxers es mouran al directori de destinació de la manera normal. En tots dos casos, s\'avisarà als administradors que Clam ha fallat. Si trieu \'Tracta els fitxers com si fossin virus\' i per alguna raó Clam no es pot executar (normalment perquè heu introduït un camí incorrecte), TOTS els fitxers que es pengin es mouran a l\'àrea de quarantena o se suprimiran. Tingueu molt de compte amb aquest paràmetre.';
 $string['configcountry'] = 'Si definiu aquí un país, quedarà seleccionat per defecte en els nous comptes. Deixeu-lo en blanc per forçar els usuaris a triar un país.';
+$string['configdbsessions'] = 'Si l\'habiliteu, aquest paràmetre farà que la base de dades emmagatzemi información sobre les sessions actives. Això és útil especialment en llocs grans/molt ocupats o en <i>clusters</i> de servidors. En la majoria de llocs probablement és millor deixar-lo inhabilitat, de manera que s\'utilitzi el disc en lloc de la base de dades. Teniu en compte que si canvieu ara aquest paràmetre desconnectareu tots els usuaris (inclòs vós).';
 $string['configdebug'] = 'Si l\'activeu, s\'incrementaran els informes d\'errors de PHP i apareixeran més avisos. Això només és útil per a desenvolupadors.';
 $string['configdeleteunconfirmed'] = 'Si esteu utilitzant autenticació per correu electronic, aquest es el període de temps durant el qual s\'acceptarà la resposta de l\'usuari. Després d\'aquest períde, els comptes no confirmats se suprimiran.';
 $string['configdigestmailtime'] = 'La gent que vulgui els correus en format resum els rebrà una vegada al dia. Aquest paràmetre controla a quina hora s\'enviarà el resum diari (l\'enviarà el següent cron que s\'executi després d\'aquesta hora).';
@@ -340,6 +342,7 @@ $string['editcoursesettings'] = 'Edita els paràmetres del curs';
 $string['editfiles'] = 'Edita fitxers';
 $string['editgroupprofile'] = 'Edita el perfil del grup';
 $string['editinga'] = 'S\'està editant $a';
+$string['editlock'] = 'Aquest valor no es pot editar!';
 $string['editmyprofile'] = 'Edita perfil';
 $string['editorbgcolor'] = 'Color de fons';
 $string['editorcleanonpaste'] = 'Neteja l\'HTML del Word en enganxar';
@@ -466,6 +469,8 @@ $string['force'] = 'Imposa';
 $string['forcedmode'] = 'Mode imposat';
 $string['forcelanguage'] = 'Imposa idioma';
 $string['forceno'] = 'No imposis';
+$string['forcepasswordchange'] = 'Imposa canvi de contrasenya';
+$string['forcepasswordchangehelp'] = 'L\'usuari haurà de canviar-la la pròxima vegada que es connecti';
 $string['forgotten'] = 'Heu oblidat el nom d\'usuari o la contrasenya?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'Format HTML';
@@ -492,6 +497,7 @@ $string['gd1'] = 'GD 1.x instal·lada';
 $string['gd2'] = 'GD 2.x instal·lada';
 $string['gdneed'] = 'GD ha d\'estar instal·lada per veure aquesta imatge';
 $string['gdnot'] = 'GD no està instal·lada';
+$string['go'] = 'Vés';
 $string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 This program is free software; you can redistribute it and/or modify
 
@@ -586,6 +592,7 @@ $string['institution'] = 'Institució';
 $string['invalidemail'] = 'L\'adreça de correu no és vàlida';
 $string['invalidlogin'] = 'Entrada incorrecta, si us plau torneu a intentar-ho';
 $string['ip_address'] = 'Adreça IP';
+$string['jump'] = 'Salta';
 $string['jumpto'] = 'Salta a...';
 $string['keep'] = 'Manté';
 $string['langltr'] = 'Escriptura d\'esquerra a dreta';
@@ -980,6 +987,7 @@ $string['unenrolallstudents'] = 'Cancel·la la inscripció de tots els estudiants'
 $string['unenrolallstudentssure'] = 'Esteu segur que voleu cancel·lar la inscripció en aquest curs de tots els estudiants?';
 $string['unenrolme'] = 'Cancel·la la meva inscripció en $a';
 $string['unenrolsure'] = 'Esteu segur que voleu cancel·lar la inscripció de: $a en aquest curs?';
+$string['unfinished'] = 'Inacabat';
 $string['unknowncategory'] = 'Categoria desconeguda';
 $string['unlimited'] = 'Il·limitat';
 $string['unpacking'] = 'S\'està desempaquetant $a';
@@ -1048,8 +1056,7 @@ $string['virusfoundlateradminnolog'] = 'Alerta administrador: s\'ha trobat un vi
 
 Heus ací un resum dels esdeveniments:
 
-$a->action
-';
+$a->action';
 $string['virusfoundsubject'] = '$a: s\'ha trobat un virus';
 $string['virusfounduser'] = 'El fitxer que heu penjat, $a->filename, ha estat escanejat i sembla que conté un virus. El fitxer NO s\'ha penjat.';
 $string['virusplaceholder'] = 'S\'ha trobat un virus en aquest fitxer, el qual ha estat mogut o suprimit. S\'ha enviat una notificació a l\'usuari.';
