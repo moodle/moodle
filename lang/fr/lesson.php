@@ -45,6 +45,7 @@ $string['multipleanswer'] = 'Réponses multiples';
 $string['nextpage'] = 'Page suivante';
 $string['noanswer'] = 'Aucune réponse donnée';
 $string['noattemptrecordsfound'] = 'Aucune tentative trouvée : pas de note';
+$string['nobranchtablefound'] = 'Aucune table de branchement trouvée';
 $string['normal'] = 'Normal - suivre le parcours de la leçon';
 $string['notdefined'] = 'Non défini';
 $string['notitle'] = 'Pas de titre';
