@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 development (2003102900)
+      // editor.php - created with Moodle 1.2 development (2003110400)
 
 
 $string['about'] = "Info";
+$string['address'] = "Adres";
 $string['alignment'] = "Uitlijning";
 $string['alternatetext'] = "Alternatieve tekst";
 $string['bold'] = "Vet";
@@ -20,6 +21,7 @@ $string['copy'] = "Kopieren";
 $string['createlink'] = "Weblink invoegen";
 $string['cut'] = "Knippen";
 $string['forecolor'] = "Tekstkleur";
+$string['heading'] = "Koptekst (h)";
 $string['hilitecolor'] = "Achtergrondkleur";
 $string['horizontal'] = "Horizontaal";
 $string['horizontalrule'] = "Horizontale lijn";
@@ -38,6 +40,7 @@ $string['justifyright'] = "Rechts uitlijnen";
 $string['layout'] = "Opmaak";
 $string['left'] = "Links";
 $string['middle'] = "Midden";
+$string['normal'] = "Standaard";
 $string['notset'] = "Niet ingesteld";
 $string['ok'] = "OK";
 $string['orderedlist'] = "Geordende lijst";
@@ -47,6 +50,7 @@ $string['path'] = "Pad";
 $string['percent'] = "Procent";
 $string['pixels'] = "Pixels";
 $string['popupeditor'] = "Vergroot editor";
+$string['preformatted'] = "Vaste opmaak (pre)";
 $string['preview'] = "Voorbeeld";
 $string['redo'] = "Opnieuw";
 $string['right'] = "Rechts";
