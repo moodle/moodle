@@ -4,6 +4,7 @@
 
 $string['addresource'] = 'Add a resource';
 $string['chooseafile'] = 'Choose or upload a file';
+$string['chooseparameter'] = 'Choose parameter';
 $string['configdefaulturl'] = 'This value is used to prefill the URL form when creating a new URL-based resource.';
 $string['configfilterexternalpages'] = 'Enabling this setting will cause all external resources (web pages, uploaded HTML files) to be processed by the currently defined site filters (such as glossary autolinks, for example).  Turning this option on may cause your course pages to slow down significantly - use with caution and only if you really need it.';
 $string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).';
