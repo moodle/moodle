@@ -195,12 +195,12 @@ function forum_cron () {
 /// Finds all posts that have yet to be mailed out, and mails them
 /// out to all subscribers
 
+    global $CFG, $USER, $THEME;
     static $strforums = NULL;
-    if($strforums === NULL) {
+
+    if ($strforums === NULL) {
         $strforums = get_string('forums', 'forum');
     }
-
-    global $CFG, $USER, $THEME;
 
     if (!empty($USER)) { // Remember real USER account if necessary
         $realuser = $USER;
@@ -228,6 +228,9 @@ function forum_cron () {
 
         @set_time_limit(0);   /// so that script does not get timed out when posting to many users
 
+        $urlinfo = parse_url($CFG->wwwroot);
+        $hostname = $urlinfo['host'];
+
         foreach ($posts as $post) {
 
             mtrace(get_string("processingpost", "forum", $post->id), '');
@@ -237,7 +240,15 @@ function forum_cron () {
                 continue;
             }
 
-            $userfrom->precedence = "bulk";   // This gets added to the email header
+
+            $userfrom->customheaders = array (  // Headers to make emails easier to track
+                       "Precedence: Bulk",
+                       "List-id: <moodlecourse{$post->course}@$hostname>",
+                       "Message-Id: <moodlepost{$post->id}@$hostname>",
+                       "In-Reply-To: <moodlepost{$post->parent}@$hostname>",
+                       "References: <moodlepost{$post->parent}@$hostname>"  
+            );
+
 
             if (! $discussion = get_record("forum_discussions", "id", "$post->discussion")) {
                 mtrace("Could not find discussion $post->discussion");
@@ -457,7 +468,7 @@ function forum_cron () {
                     $postsarray = $discussionposts[$discussionid];
                     sort($postsarray);
 
-                    foreach($postsarray as $postid) {
+                    foreach ($postsarray as $postid) {
                         if (! $post = get_record("forum_posts", "id", "$postid")) {
                             mtrace("Error: Could not find post $postid");
                             continue;
@@ -467,8 +478,9 @@ function forum_cron () {
                             continue;
                         }
 
-                        $userfrom->precedence = "bulk";   // This gets added to the email header
-                        if($userto->maildigest == 2) {
+                        $userfrom->customheaders = array ("Precedence: Bulk");
+
+                        if ($userto->maildigest == 2) {
                             // Subjects only
                             $by = New stdClass;
                             $by->name = fullname($userfrom);
@@ -478,8 +490,8 @@ function forum_cron () {
 
                             $by->name = "<a target=\"_blank\" href=\"$CFG->wwwroot/user/view.php?id=$userfrom->id&course=$course->id\">$by->name</a>";
                             $posthtml .= '<div><a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'#'.$post->id.'">'.$post->subject.'</a> '.get_string("bynameondate", "forum", $by).'</div>';
-                        }
-                        else {
+
+                        } else {
                             // The full treatment
                             $posttext .= forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, true);
                             $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
@@ -487,8 +499,7 @@ function forum_cron () {
                     }
                     if ($canunsubscribe) {
                         $posthtml .= "\n<div align=\"right\"><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></div>";
-                    }
-                    else {
+                    } else {
                         $posthtml .= "\n<div align=\"right\"><font size=\"1\">".get_string("everyoneissubscribed", "forum")."</font></div>";
                     }
                     $posthtml .= '<hr size="1" noshade="noshade" /></p>';
