@@ -268,7 +268,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           print "";
       }?><br />
       <?php print(isteacher($id))?
-      "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/coursefiles.php?usecheckboxes=true&id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
+      "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/coursefiles.php?usecheckboxes=1&id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
       "";?>
       </td>
       <td width="45%" valign="top"><?php print_string("preview","editor");?>:<br />
@@ -293,6 +293,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="file" value="" />
           <input type="hidden" name="action" value="rename" />
+          <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input name="btnRename" type="submit" id="btnRename" value="<?php print_string("rename","editor");?>" /></form></td>
           <tr></table>
           <br />
@@ -319,6 +320,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <input type="hidden" name="id" value="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="mkdir" />
+          <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input name="name" type="text" id="foldername" size="35" />
           <input name="btnCfolder" type="submit" id="btnCfolder" value="<?php print_string("createfolder","editor");?>" onclick="return checkvalue('foldername','cfolder');" />
           </form>
@@ -328,6 +330,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <input type="hidden" name="id" VALUE="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="upload" />
+          <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input type="file" name="userfile" id="userfile" size="35" />
           <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="<?php print_string("upload","editor");?>" />
           </form>
