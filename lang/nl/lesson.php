@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 development (2004040500)
+      // lesson.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['actionaftercorrectanswer'] = 'Actie na juist antwoord';
@@ -28,7 +28,7 @@ $string['displayofgrade'] = 'Tonen van het cijfer (voor de leerling)';
 $string['endofbranch'] = 'Einde vertakking';
 $string['endoflesson'] = 'Einde van de les';
 $string['fileformat'] = 'Bestandsformaat';
-$string['firstanswershould'] = 'Het eerste antwoord moet naar de &quot;juiste&quot; pagina verwijzen';
+$string['firstanswershould'] = 'Het eerste antwoord moet naar de \"juiste\" pagina verwijzen';
 $string['gradeis'] = 'Cijfer is $a';
 $string['handlingofretakes'] = 'Behandeling van nieuwe pogingen';
 $string['here'] = 'hier';
@@ -47,6 +47,7 @@ $string['multipleanswer'] = 'Meerdere antwoorden';
 $string['nextpage'] = 'Volgende pagina';
 $string['noanswer'] = 'Er is niet geantwoord';
 $string['noattemptrecordsfound'] = 'Geen pogingen gevonden: geen cijfer gegeven.';
+$string['nobranchtablefound'] = 'Geen vertakkingstabel gevonden';
 $string['normal'] = 'Normaal - volg het lespad';
 $string['notdefined'] = 'Niet gedefinieerd';
 $string['notitle'] = 'Geen titel';

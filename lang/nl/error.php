@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.4 development (2004081200)
+      // error.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['coursegroupunknown'] = 'Het vak dat met groep $a overeenkomt is niet gespecifieerd';
 $string['erroronline'] = 'Fout op lijn $a';
 $string['fieldrequired'] = '\"$a\" is een vereist veld';
+$string['filenotfound'] = 'Het gevraagde bestand is niet gevonden';
 $string['groupalready'] = 'Deze gebruiker behoort al tot groep $a';
 $string['groupunknown'] = 'Groep $a is niet geassocieerd met de gespecifieerde groep';
 $string['invalidfieldname'] = '\"$a\" is geen geldige veldnaam';
