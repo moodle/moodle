@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['action'] = 'Acció';
@@ -116,6 +116,9 @@ $a';
 $string['backupuserfileshelp'] = 'Trieu si voleu que els fitxers dels usuaris (p. e. la imatge del perfil) s\'incloguin a les còpies de seguretat automàtiques';
 $string['backupusershelp'] = 'Trieu si voleu incloure tots els usuaris del servidor o només els necessaris per a cada curs.';
 $string['backupversion'] = 'Versió de la còpia';
+$string['blockconfiga'] = 'S\'està configurant un bloc $a';
+$string['blockconfigbad'] = 'Aquest bloc no s\'ha implementat correctament i no pot proporcionar una interfície de configuració.';
+$string['blockconfigin'] = 'Curs: s\'està configurant un bloc en $a';
 $string['blockdeleteconfirm'] = 'Aneu a suprimir completament el bloc \'$a\'. Això`suprimira completament tots els registres de la base de dades associats amb aquest bloc. Esteu SEGUR que voleu continuar?';
 $string['blockdeletefiles'] = 'S\'han suprimit tots els registres de la base de dades associats amb el bloc \'$a->block\'. Per tal de completar la supressió (i impedir que el bloc es reinstal·li automàticament), ara hauríeu de suprimir aquest directori del servidor: $a->directory';
 $string['blocks'] = 'Blocs';
@@ -434,7 +437,7 @@ $string['enrolmentnewuser'] = '$a->user s\'ha inscrit al curs \"$a->course\"';
 $string['enrolmentnointernal'] = 'Les inscripcions manuals no estan habilitades';
 $string['enrolmentnotyet'] = 'No podeu accedir a aquest curs fins<br />$a';
 $string['enrolments'] = 'Inscripcions';
-$string['enrolperiod'] = 'Període d\'inscripció';
+$string['enrolperiod'] = 'Durada de la inscripció';
 $string['entercourse'] = 'Feu clic per entrar en aquest curs';
 $string['enteremailaddress'] = 'Introduïu la vostra adreça de correu per anul·lar la contrasenya anterior i rebre\'n una de nova per correu electrònic.';
 $string['entries'] = 'Entrades';

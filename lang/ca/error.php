@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
+$string['confirmsesskeybad'] = 'No s\'ha pogut confirmar la vostra clau de sessió per portar a terme aquesta acció. Aquesta característica de seguretat impedeix que s\'executin funcions importants en el vostre nom de manera accidental o fraudulenta. Si us plau confirmeu que volíeu realment executar aquesta funció.';
 $string['coursegroupunknown'] = 'No s\'ha especificat el curs corresponent al grup $a';
 $string['erroronline'] = 'Error a la línia $a';
 $string['fieldrequired'] = '\"$a\" és un camp necessari';
