@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004080300)
+      // quiz.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -10,6 +10,7 @@ $string['addselectedtoquiz'] = '選択したものを小テストに追加する';
 $string['aiken'] = 'Aikenフォーマット';
 $string['allowreview'] = '復習を許可する';
 $string['alreadysubmitted'] = '既に解答されています。';
+$string['alternativeunits'] = '代替ユニット';
 $string['alwaysavailable'] = '常時利用可能';
 $string['answer'] = '答え';
 $string['answerhowmany'] = '解答方法';
@@ -39,8 +40,11 @@ $string['category'] = 'カテゴリ';
 $string['categoryinfo'] = '詳細';
 $string['categorymove'] = 'カテゴリ $a->name には $a->count の質問があります。他のカテゴリを選んでください。';
 $string['categorymoveto'] = 'このカテゴリに移動する';
+$string['checkanswer'] = 'チェック';
 $string['choice'] = '選択';
 $string['choices'] = '利用可能な選択';
+$string['choosedatasetproperties'] = 'データセット属性の選択';
+$string['close'] = 'プレビューを閉じる';
 $string['confirmstartattempt'] = 'このクイズには時間制限が設けられています。本当にスタートしても宜しいですか?';
 $string['correctanswer'] = '正解';
 $string['correctanswers'] = '正解';
@@ -52,6 +56,7 @@ $string['coursetestmanager'] = 'コーステストマネージャーフォーマット';
 $string['createmultiple'] = 'マルチ質問を作成する';
 $string['createnewquestion'] = '新しい質問を作成する';
 $string['custom'] = 'カスタムフォーマット';
+$string['datasetdefinitions'] = 'カテゴリ $a の再利用可能なデータセット定義';
 $string['daysavailable'] = '日利用可能';
 $string['default'] = 'デフォルト';
 $string['defaultgrade'] = '評価の初期値';
@@ -82,6 +87,7 @@ $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['exportquestions'] = '質問をファイルにエクスポートする';
 $string['false'] = '×';
 $string['feedback'] = 'フィードバック';
+$string['file'] = 'ファイル';
 $string['fileformat'] = 'ファイルフォーマット';
 $string['filloutoneanswer'] = '1つ以上の解答可能な質問を入力してください。空白は使用できません。';
 $string['filloutthreequestions'] = '少なくとも3つの質問を入力してください。空白は使用できません。';
@@ -108,6 +114,7 @@ $string['imagedisplay'] = '表示画像';
 $string['imagemissing'] = '$a 行の画像が使用出来ません。ファイル名は無視されます。';
 $string['importquestions'] = 'ファイルから小テストをインポートする';
 $string['introduction'] = '説明';
+$string['link'] = 'リンク';
 $string['listitems'] = '小テストのアイテム一覧';
 $string['marks'] = '得点';
 $string['match'] = '組み合わせ';
@@ -140,6 +147,7 @@ $string['numerical'] = '数字方式';
 $string['optional'] = 'オプション';
 $string['passworderror'] = 'パスワードが間違っています。';
 $string['percentcorrect'] = '正答率';
+$string['preview'] = 'プレビュー';
 $string['publish'] = '公開';
 $string['publishedit'] = 'このカテゴリへの質問の追加・編集を行う為にはコース公開に関する権限を有する必要があります。';
 $string['qti'] = 'IMS QTIフォーマット';
@@ -214,6 +222,7 @@ $string['warningsdetected'] = '$a の警告が見つかりました';
 $string['webct'] = 'WebCTフォーマット';
 $string['wildcard'] = 'ワイルドカード';
 $string['wronggrade'] = '間違った評価($a 以降):';
+$string['xml'] = 'Moodle XMLフォーマット';
 $string['yourfinalgradeis'] = 'あなたの最終成績は $a です。';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004072901)
+      // resource.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -23,7 +23,6 @@ $string['directoryinfo'] = '選択したディレクトリの全ファイルが表示されます。';
 $string['editingaresource'] = 'リソースを編集する';
 $string['encryptedcode'] = '暗号化コード';
 $string['example'] = '例';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
 $string['fetchclienterror'] = 'ウェブページを検索している時、ウェブクライアントにエラーが発生しました。URLが間違っていると思われます。';
 $string['fetcherror'] = 'ウェブページを検索している時、エラーが発生しました。';
@@ -59,11 +58,19 @@ $string['parameters'] = 'パラメータ';
 $string['popupresource'] = 'このリソースをポップアップウインドウに表示させる。';
 $string['popupresourcelink'] = 'ウインドウが表示されない場合はここをクリック： $a';
 $string['resourcetype'] = 'リソースのタイプ';
+$string['resourcetype1'] = '参照';
+$string['resourcetype2'] = 'ウェブページ';
+$string['resourcetype3'] = 'アップロードファイル';
+$string['resourcetype4'] = 'プレインテキスト';
+$string['resourcetype5'] = 'ウェブリンク';
+$string['resourcetype6'] = 'HTMLテキスト';
+$string['resourcetype7'] = 'プログラム';
+$string['resourcetype8'] = 'Wiki-likeテキスト';
+$string['resourcetype9'] = 'ディレクトリ';
 $string['resourcetypedirectory'] = 'ディレクトリの表示';
 $string['resourcetypefile'] = 'ファイル又はウェブにリンク';
 $string['resourcetypehtml'] = 'ウェブページの作成';
 $string['resourcetypelabel'] = 'ラベルの挿入';
-$string['resourcetypereference'] = '参照の追加';
 $string['resourcetypetext'] = 'テキストページの作成';
 $string['searchweb'] = 'ウェブページを検索';
 $string['variablename'] = '変数名';

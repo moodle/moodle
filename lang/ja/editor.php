@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 development (2004072500)
+      // editor.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['about'] = 'エディタに関して';
@@ -8,6 +8,8 @@ $string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'アドレス';
 $string['alignment'] = '配置';
 $string['alternatetext'] = 'Alternate text';
+$string['anchorname'] = 'アンカー名';
+$string['anchors'] = 'アンカー';
 $string['baseline'] = 'Baseline';
 $string['bold'] = '太字';
 $string['borderthickness'] = '線の太さ';
@@ -21,6 +23,7 @@ $string['chooseicon'] = '挿入するアイコンの選択';
 $string['close'] = '閉じる';
 $string['cols'] = 'Cols';
 $string['copy'] = '選択したものをコピー';
+$string['createanchor'] = 'アンカーの作成';
 $string['createfolder'] = 'フォルダの作成';
 $string['createlink'] = 'リンクの挿入';
 $string['cut'] = '選択したものを切り取る';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004080300)
+      // moodle.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['action'] = '操作';
@@ -362,6 +362,7 @@ $string['emailpasswordsent'] = 'パスワードの変更確認ありがとうございます。
 <p>新しいパスワードが記載されたメールがあなたのメールアドレス <b>$a->email</b> に送信されました。<p>新しいパスワードは自動的に生成されたものです - 
 <a href=$a->link>パスワードの変更</a> で覚えやすいものに変更出来ます。';
 $string['enable'] = '有効にする';
+$string['encryptedcode'] = '暗号化コード';
 $string['enrolledincourse'] = 'コース ';
 $string['enrolledincoursenot'] = 'コース ';
 $string['enrolmentconfirmation'] = 'あなたはこのコースに参加します。<br />本当にこの処理を行って宜しいですか?';
@@ -391,6 +392,7 @@ $string['existingteachers'] = '教師一覧';
 $string['failedloginattempts'] = '最終ログインより $a->attempts 回ログインに失敗しました。';
 $string['failedloginattemptsall'] = ' $a->accounts accounts のアカウントで $a->attempts 回ログインに失敗しました。';
 $string['feedback'] = 'フィードバック';
+$string['file'] = 'ファイル';
 $string['filemissing'] = '$a が見つかりません';
 $string['files'] = 'ファイル';
 $string['filesfolders'] = 'ファイル/フォルダ';
@@ -408,6 +410,7 @@ $string['forceno'] = '強制しない';
 $string['forgotten'] = 'ユーザ名またはパスワードを忘れましたか?';
 $string['format'] = 'フォーマット';
 $string['formathtml'] = 'HTMLフォーマット';
+$string['formatmarkdown'] = 'マークダウンフォーマット';
 $string['formatplain'] = 'プレインテキストフォーマット';
 $string['formatsocial'] = 'ソーシャルフォーマット';
 $string['formattext'] = 'Moodleオートフォーマット';
@@ -771,6 +774,7 @@ $string['restoreto'] = 'リストア';
 $string['returningtosite'] = 'アカウントをお持ちの方ですか?';
 $string['revert'] = 'クリア';
 $string['role'] = '任務';
+$string['rss'] = 'RSS';
 $string['rssarticles'] = '最近の記事のRSS数';
 $string['rsstype'] = 'この活動のRSSフィード';
 $string['savechanges'] = '変更を保存';

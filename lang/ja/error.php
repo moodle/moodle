@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.2.1 (2004032500)
+      // error.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['coursegroupunknown'] = '¥³¡¼¥¹¤Ë´ØÏ¢¤¹¤ë¥°¥ë¡¼¥× $a ¤¬»ØÄê¤µ¤ì¤Æ¤¤¤Þ¤»¤ó';
@@ -15,5 +15,6 @@ $string['restricteduser'] = '¿½¤·Ìõ¤´¤¶¤¤¤Þ¤»¤ó¡£¸½ºß¡¢¤³¤Î½èÍý¤ò¹Ô¤¦¤³¤È¤¬½ÐÍè¤
 $string['unknowncourse'] = 'ÉÔÌÀ¤Ê¥³¡¼¥¹Ì¾ \"$a\"';
 $string['usernotaddederror'] = '¥æ¡¼¥¶ \"$a\" ¤ÏÄÉ²Ã¤µ¤ì¤Þ¤»¤ó¤Ç¤·¤¿ - ¸¶°øÉÔÌÀ';
 $string['usernotaddedregistered'] = '¥æ¡¼¥¶ \"$a\" ¤ÏÄÉ²Ã¤µ¤ì¤Þ¤»¤ó¤Ç¤·¤¿ - ÅÐÏ¿ºÑ¤ß';
+$string['usernotavailable'] = '¤³¤Î¥æ¡¼¥¶¤Î¾ÜºÙ¤Ï±ÜÍ÷½ÐÍè¤Þ¤»¤ó¡£';
 
 ?>
