@@ -1,4 +1,4 @@
-<?PHP
+<?PHP // $Id$
 
     $textfilter_function = 'glossary_dynamic_link';
 
