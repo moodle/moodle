@@ -210,7 +210,7 @@
 
         if ($news) {
             print_side_block_start(get_string("latestnews"), 210, "sideblocklatestnews");
-            echo "<FONT SIZE=\"-1\">";
+            echo "<FONT SIZE=\"-2\">";
             forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
             echo "</FONT>";
             print_side_block_end();
