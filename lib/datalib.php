@@ -1095,7 +1095,7 @@ function get_recent_enrolments($courseid, $timestart) {
 
     global $CFG;
 
-    return get_records_sql("SELECT u.id, u.firstname, u.lastname
+    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname
                             FROM {$CFG->prefix}user u,
                                  {$CFG->prefix}user_students s,
                                  {$CFG->prefix}log l
@@ -1106,7 +1106,6 @@ function get_recent_enrolments($courseid, $timestart) {
                               AND l.info = u.id
                               AND u.id = s.userid
                               AND s.course = '$courseid'
-                              GROUP BY l.info
                               ORDER BY l.time ASC");
 }
 
