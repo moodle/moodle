@@ -400,11 +400,11 @@ function isadmin($userid=0) {
     }
 }
 
-function isteacher($courseid, $userid=0) {
+function isteacher($courseid, $userid=0, $includeadmin=true) {
 /// Is the user a teacher or admin?
     global $USER;
 
-    if (isadmin($userid)) {  // admins can do anything the teacher can
+    if ($includeadmin and isadmin($userid)) {  // admins can do anything the teacher can
         return true;
     }
 
