@@ -83,7 +83,7 @@ $string['usemaximum'] = 'Utiliser le maximum';
 $string['usemean'] = 'Utiliser la moyenne';
 $string['youhaveseen'] = 'Vous avez déjà vu au moins une page de cette leçon.<br />Voulez-vous commencer à la dernière page que vous avez vue ?';
 $string['youranswer'] = 'Votre réponse';
-$string['yourcurrentgradeis'] = 'Votre note actuelle est \$a';
-$string['youshouldview'] = 'Vous devriez voir au moins \$a';
+$string['yourcurrentgradeis'] = 'Votre note actuelle est $a';
+$string['youshouldview'] = 'Vous devriez voir au moins $a';
 
 ?>
