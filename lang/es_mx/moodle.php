@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6 (2002102600)
+      // moodle.php - created with Moodle 1.0.6.1 (2002110600)
 
 
 $string['action'] = "Acción";
@@ -63,6 +63,7 @@ $string['configmaxeditingtime'] = "Especifica el tiempo que los participantes ti
 $string['configproxyhost'] = "Si este <B>servidor</B> necesita proxy (por ejemplo firewall) para acceder a Internet, provea el nombre del proxy y el puerto.";
 $string['configslasharguments'] = "Archivos (imágenes, uploads etc.) proveídos por un script que usa 'slash arguments' (la segunda opción). Este método carga los archivos más fácilmente.  Algunos servidores php no permiten este método, por lo que si enfrenta problemas para subir archivos (como fotos de los usuarios), cambie esta variable a la primera opción";
 $string['configsmtphosts'] = "Escriba el nombre completo del servidor SMTP. Si lo deja en blanco se utilizará en mailer de php.";
+$string['configsmtpuser'] = "Si ha especificado un servidor SMTP, y éste requiere autenticación, entre aquí el nombre y la contraseña.";
 $string['configunzip'] = "Indique la ubicación del programa UNZIP (sólo UNIX). Se necesita para descomprimir los archivos en el servidor.";
 $string['configvariables'] = "Configuración general";
 $string['configzip'] = "Indique la ubicación del programa ZIP (sólo UNIX). Se necesita para descomprimir los archivos en el servidor.";
@@ -399,6 +400,7 @@ $string['startdate'] = "Fecha de inicio del curso";
 $string['startsignup'] = "Comience ya creando una cuenta";
 $string['status'] = "Estatus";
 $string['stringsnotset'] = "Las siguientes cadenas no están definidas en \$a";
+$string['studentnotallowed'] = "Lo sentimos '\$a', pero no puede entrar a este curso.";
 $string['success'] = "Éxito";
 $string['summary'] = "Informe";
 $string['summaryof'] = "Informe de \$a";
@@ -450,7 +452,7 @@ $string['weeklyoutline'] = "Diagrama semanal";
 $string['welcometocourse'] = "Bienvenido a \$a";
 $string['welcometocoursetext'] = "Bienvenido a \$a->coursename
 
-Lo primero que debe hacer es actualizar su infromación personal,
+Lo primero que debe hacer es actualizar su información personal,
 así podremos saber algo más sobre usted.
 
   \$a->profileurl";

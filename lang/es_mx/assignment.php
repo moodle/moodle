@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.6 (2002102600)
+      // assignment.php - created with Moodle 1.0.6.1 (2002110600)
 
 
 $string['assignmentdetails'] = "Detalles de la tarea";
@@ -22,6 +22,7 @@ $string['submissionfeedback'] = "Calificación de la tarea";
 $string['submissions'] = "Envíos";
 $string['submitassignment'] = "Enviar su tarea";
 $string['submitted'] = "Enviada";
+$string['typeoffline'] = "Actividad no en línea";
 $string['typeuploadsingle'] = "Subir un solo archivo, valor entre 0 - 100 puntos";
 $string['uploadbadname'] = "El nombre contiene caracteres incompatibles y no se pudo cargar al sistema.";
 $string['uploadedfiles'] = "Archivos enviados";
@@ -31,6 +32,7 @@ $string['uploadfiletoobig'] = "Lo sentimos, su archivo es demasiado grande.";
 $string['uploadnofilefound'] = "No seleccionó ningún archivo.";
 $string['uploadnotregistered'] = "'\$a' se cargó correctamente en el sistema pero no se registró la tarea.";
 $string['uploadsuccess'] = "Envío confirmado.";
+$string['viewfeedback'] = "Ver calificaciones y respuestas";
 $string['viewsubmissions'] = "Ver \$a tareas enviadas";
 $string['yoursubmission'] = "Ud. envió";
 

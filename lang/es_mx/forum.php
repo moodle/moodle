@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6 (2002102600)
+      // forum.php - created with Moodle 1.0.6.1 (2002110600)
 
 
 $string['addanewdiscussion'] = "Colocar un mensaje aquí";
@@ -58,6 +58,7 @@ $string['newforumposts'] = "Nuevos mensajes";
 $string['nodiscussions'] = "No hay temas de debate en este foro";
 $string['noguestpost'] = "Lo sentimos, los invitados no pueden escribir aquí";
 $string['noposts'] = "No hay mensajes";
+$string['nopostscontaining'] = "No se encontraron mensajes con '\$a'";
 $string['nosubscribers'] = "Nadie se ha inscrito aún en este foro";
 $string['nownotsubscribed'] = "\$a->name no recibirá copias de '\$a->forum' por correo.";
 $string['nowsubscribed'] = "\$a->name recibirá copias de '\$a->forum' por correo.";
@@ -68,6 +69,7 @@ $string['openmode1'] = "No permitir debates, permitir respuestas";
 $string['openmode2'] = "Permitir debates y respuestas";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para hacer cualquier cambio.";
+$string['postincontext'] = "Ver el mensaje en su contexto";
 $string['postingtip'] = "<B>Recomendaciones</B><BR>
 Cuando responde:
 <UL>
@@ -97,6 +99,7 @@ $string['repliesone'] = "\$a respuesta";
 $string['reply'] = "Responder";
 $string['search'] = "Buscar";
 $string['searchforums'] = "Buscar foro";
+$string['searchresults'] = "Resultado";
 $string['sendinratings'] = "Envíeme mis últimas calificaiones";
 $string['showsubscribers'] = "Mostrar integrantes";
 $string['singleforum'] = "Un debate sencillo";
