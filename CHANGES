@@ -1,3 +1,16 @@
+2002-09-09 Monday 23:50  martin
+
+	* course/categories.php: 
+	
+	Tweak to modify interface a bit (changed header and made courses a
+	link)
+
+2002-09-09 Monday 20:38  martin
+
+	* CHANGES: 
+	
+	CHANGES
+
 2002-09-09 Monday 20:37  martin
 
 	* course/index.php, course/lib.php, lang/en/moodle.php: 
