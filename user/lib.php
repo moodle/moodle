@@ -136,7 +136,7 @@ function print_user($user, $course, $string) {
     echo "<FONT SIZE=-1>";
     echo "<FONT SIZE=3><B>$user->firstname $user->lastname</B></FONT>";
     echo "<P>";
-    if ($user->role and ($user->role <> $course->teacher)) {
+    if (!empty($user->role) and ($user->role <> $course->teacher)) {
         echo "$string->role: $user->role<BR>";
     }
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or isteacher($course->id)) {

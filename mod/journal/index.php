@@ -52,7 +52,7 @@
         $entrytext = get_field("journal_entries", "text", "userid", $USER->id, "journal", $journal->id);
 
         $journal->timestart  = $course->startdate + (($journal->section - 1) * 608400);
-        if ($journal->daysopen) {
+        if (!empty($journal->daysopen)) {
             $journal->timefinish = $journal->timestart + (3600 * 24 * $journal->daysopen);
         } else {
             $journal->timefinish = 9999999999;
@@ -66,7 +66,7 @@
         } else {
             $text .= "$strview</A></P>";
         }
-        if ($journal->section) {
+        if (!empty($journal->section)) {
             $section = "$journal->section";
         } else {
             $section = "";
