@@ -97,7 +97,7 @@ $string['thursday'] = 'Thursday';
 $string['friday'] = 'Friday';
 $string['saturday'] = 'Saturday';
 
-$string['pref_dstpreset'] = 'Daylight Savings Time';
+$string['timezonename'] = 'Timezone';
 $string['notusingdst'] = 'Not using DST';
 $string['dstpresetname'] = 'Preset name';
 $string['dstpresetactivated'] = 'Activation';

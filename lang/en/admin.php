@@ -86,7 +86,6 @@ $string['configwarning'] = 'Be careful modifying these settings - strange values
 $string['configzip'] = 'Indicate the location of your zip program (Unix only, optional).  If specified, this will be used to create zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['confirmation'] = 'Confirmation';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&sub=cron\">installation documentation</a> explains how you can automate this.';
-$string['dstpresetforced'] = 'This is forced by the site administrator';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editstrings'] = 'Edit strings';
 $string['filteruploadedfiles'] = 'Filter uploaded files';
@@ -108,6 +107,7 @@ $string['sitemaintenanceoff'] = 'Maintenance mode has been disabled and the site
 $string['sitemaintenancewarning'] = 'Your site is currently in maintenance mode (only admins can log in).  To return this site to normal operation, <a href=\"maintenance.php\">disable maintenance mode</a>.';
 $string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tag be placed at the front';
 $string['timezonenotforced'] = 'Users can choose their own timezone';
+$string['timezoneforced'] = 'This is forced by the site administrator';
 $string['timezoneisforcedto'] = 'Force all users to use';
 $string['therewereerrors'] = 'There were errors in your data';
 $string['updatetimezones'] = 'Automatically update profiles';
