@@ -51,7 +51,7 @@
         $filename = $fileargs[0];            // Only keep what's before the '?'
     }
 
-    if (file_exists($pathname)) {
+    if (file_exists($pathname) and !is_dir($pathname)) {
         $lastmodified = filemtime($pathname);
         $mimetype = mimeinfo("type", $filename);
 
@@ -60,6 +60,7 @@
         header("Cache-control: max_age = $CFG->filelifetime");
         header("Pragma: ");
         header("Content-disposition: inline; filename=$filename");
+        header('Accept-Ranges: none');
 
 
         if (empty($CFG->filteruploadedfiles)) {
