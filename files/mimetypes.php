@@ -123,10 +123,16 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
             readfile($path);
         }
     } else {     // Try to put the file through filters
+        global $course;
+        if (!empty($course->id)) {
+            $courseid = $course->id;
+        } else {
+            $courseid = SITEID;
+        }
         if ($mimetype == 'text/html') {
             $options->noclean = true;
             $text = $pathisstring ? $path : implode('', file($path));
-            $output = format_text($text, FORMAT_HTML, $options, $course->id);
+            $output = format_text($text, FORMAT_HTML, $options, $courseid);
 
             @header('Content-length: '.strlen($output));
             @header('Content-type: text/html');
@@ -135,7 +141,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstr
             $options->newlines = false;
             $options->noclean = true;
             $text = htmlentities($pathisstring ? $path : implode('', file($path)));
-            $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $course->id) .'</pre>';
+            $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $courseid) .'</pre>';
 
             @header('Content-length: '.strlen($output));
             @header('Content-type: text/html; charset='. get_string('thischarset')); //add encoding
