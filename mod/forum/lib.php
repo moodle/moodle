@@ -573,7 +573,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
     }
 }
 
-function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC", $user=0) {
+function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC", $user=0, $fullpost=true) {
 /// Get all discussions in a forum
     global $CFG;
 
@@ -585,13 +585,18 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC", $us
     if (empty($forumsort)) {
         $forumsort = "d.timemodified DESC";
     }
-    return get_records_sql("SELECT p.*, d.timemodified, u.firstname, u.lastname, u.email, u.picture
+    if (empty($fullpost)) {
+        $postdata = "p.subject,p.modified,p.discussion,p.userid";
+    } else {
+        $postdata = "p.*";
+    }
+    return get_records_sql("SELECT $postdata, d.timemodified, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_discussions d, 
                                    {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}user u 
                              WHERE d.forum = '$forum' 
                                AND p.discussion = d.id 
-                               AND p.parent= 0 
+                               AND p.parent = 0 
                                AND p.userid = u.id $userselect
                           ORDER BY $forumsort");
 }
@@ -912,7 +917,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 }
 
 
-function forum_print_discussion_header(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
+function forum_print_discussion_header(&$post, $courseid, $datestring="") {
     global $THEME, $USER, $CFG;
 
     echo "<tr class=\"forumpostheader\">";
@@ -934,16 +939,14 @@ function forum_print_discussion_header(&$post, $courseid, $ownpost=false, $reply
 
     // Replies
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderreplies\" align=center nowrap>";
-    if ($link) {
-        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->replies</a>";
-    }
+    echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->replies</a>";
     echo "</td>\n";
 
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=right nowrap>";
     if (!empty($post->timemodified)) {
-        echo userdate($post->timemodified);
+        echo userdate($post->timemodified, $datestring);
     } else {
-        echo userdate($post->modified);
+        echo userdate($post->modified, $datestring);
     }
     echo "</td>\n";
 
@@ -1473,21 +1476,31 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         echo "</P>\n";
     }
 
-    if (! $discussions = forum_get_discussions($forum->id, $forum_sort) ) {
-        echo "<P ALIGN=CENTER><B>(".get_string("nodiscussions", "forum").")</B></P>";
-        return;
-    }
-    
     if ((!$forum_numdiscussions) && ($forum_style == "plain")) { 
         $forum_style = "header";  // Abbreviate display by default
     }
 
+    if ($forum_style == "minimal") { 
+        $forum_sort = "p.modified DESC";
+    }
+
+    $fullpost = false;
+    if ($forum_style == "plain") { 
+        $fullpost = true;
+    }
+
+    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost) ) {
+        echo "<P ALIGN=CENTER><B>(".get_string("nodiscussions", "forum").")</B></P>";
+        return;
+    }
+    
     $replies = forum_count_discussion_replies($forum->id);
 
     $canreply = forum_user_can_post($forum);
 
     $discussioncount = 0;
     $olddiscussionlink = false;
+    $strdatestring = get_string("strftimedaydatetime");
 
     if ($forum_style == "minimal") {
         $strftimerecent = get_string("strftimerecent");
@@ -1530,7 +1543,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
                 echo "</P>\n";
             break;
             case "header":
-                forum_print_discussion_header($discussion, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
+                forum_print_discussion_header($discussion, $forum->course, $strdatestring);
             break;
             default:
                 if ($canreply or $discussion->replies) {
