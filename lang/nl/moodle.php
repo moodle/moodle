@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004041800)
+      // moodle.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['action'] = 'Actie';
@@ -833,6 +833,8 @@ $string['turneditingoff'] = 'Zet wijzigen uit';
 $string['turneditingon'] = 'Zet wijzigen aan';
 $string['undecided'] = 'Onbeslist';
 $string['unenrol'] = 'Zeg lidmaatschap op';
+$string['unenrolallstudents'] = 'Zeg lidmaatschap van alle deelnemers op';
+$string['unenrolallstudentssure'] = 'Weet je zeker dat je het lidmaatschap voor alle deelnemers van dit vak wil opzeggen?';
 $string['unenrolme'] = 'Zeg mijn lidmaatschap van $a op';
 $string['unenrolsure'] = 'Weet je zeker dat je het lidmaatschap van $a wilt opzeggen?';
 $string['unknowncategory'] = 'Onbekende categorie';
