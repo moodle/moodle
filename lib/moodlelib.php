@@ -863,22 +863,28 @@ function authenticate_user_login($username, $password) {
 }
 
 function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
-/// Enrols a student in a given course
+/// Enrols (or re-enrols) a student in a given course
 
-    $course = get_record("course", "id", $courseid);
-
-    if (!record_exists("user_students", "userid", $userid, "course", $courseid)) {
-        if (record_exists("user", "id", $userid)) {
-            $student->userid = $userid;
-            $student->course = $courseid;
-            $student->timestart = $timestart;
-            $student->timeend = $timeend;
-            $student->time = time();
-            return insert_record("user_students", $student);
-        }
+    if (!$course = get_record("course", "id", $courseid)) {  // Check course
         return false;
     }
-    return true;
+    if (!$user = get_record("user", "id", $userid)) {        // Check user
+        return false;
+    }
+    if ($student = get_record("user_students", "userid", $userid, "course", $courseid)) {
+        $student->timestart = $timestart;
+        $student->timeend = $timeend;
+        $student->time = time();
+        return update_record("user_students", $student);
+        
+    } else {
+        $student->userid = $userid;
+        $student->course = $courseid;
+        $student->timestart = $timestart;
+        $student->timeend = $timeend;
+        $student->time = time();
+        return insert_record("user_students", $student);
+    }
 }
 
 function unenrol_student($userid, $courseid=0) {
