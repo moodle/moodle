@@ -166,8 +166,17 @@ function lesson_delete_instance($id) {
     if (! delete_records("lesson_grades", "lessonid", "$lesson->id")) {
         $result = false;
     }
-
-    return $result;
+    if (! delete_records("lesson_timer", "lessonid", "$lesson->id")) {
+            $result = false;
+    }
+    if (! delete_records("lesson_branch", "lessonid", "$lesson->id")) {
+            $result = false;
+    }
+    if (! delete_records("lesson_high_scores", "lessonid", "$lesson->id")) {
+            $result = false;
+    }
+    
+	return $result;
 }
 
 /*******************************************************************/
