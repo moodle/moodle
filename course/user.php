@@ -36,19 +36,20 @@
     $stralllogs        = get_string("alllogs");
     $strtodaylogs      = get_string("todaylogs");
     $strmode           = get_string($mode);
+    $fullname          = fullname($user, true);
 
     if ($course->category) {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
                  "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> ->
                   <A HREF=\"../user/index.php?id=$course->id\">$strparticipants</A> ->
-                  <A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> -> 
+                  <A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$fullname</A> -> 
                   $stractivityreport -> $strmode");
     } else {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
-                 "<A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> -> 
+                 "<A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$fullname</A> -> 
                   $stractivityreport -> $strmode");
     }
-    print_heading("$user->firstname $user->lastname");
+    print_heading($fullname);
 
     echo "<table cellpadding=10 align=center><tr>";
     echo "<td>$stractivityreport: </td>";

@@ -140,7 +140,7 @@ function assignment_cron () {
             }
 
             if (! isstudent($course->id, $user->id) and !isteacher($course->id, $user->id)) {
-                echo "$user->firstname $user->lastname not an active participant in $course->shortname\n";
+                echo fullname($user)." not an active participant in $course->shortname\n";
                 continue;
             }
 
@@ -158,7 +158,7 @@ function assignment_cron () {
             $strassignment  = get_string("modulename", "assignment");
 
             unset($assignmentinfo);
-            $assignmentinfo->teacher = "$teacher->firstname $teacher->lastname";
+            $assignmentinfo->teacher = fullname($teacher);
             $assignmentinfo->assignment = "$submission->name";
             $assignmentinfo->url = "$CFG->wwwroot/mod/assignment/view.php?id=$mod->id";
 
@@ -226,7 +226,7 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
         print_headline(get_string("newsubmissions", "assignment").":");
         foreach ($assignments as $assignment) {
             $date = userdate($assignment->time, $strftimerecent);
-            echo "<p><font size=1>$date - $assignment->firstname $assignment->lastname<br>";
+            echo "<p><font size=1>$date - ".fullname($assignment)."<br />";
             echo "\"<a href=\"$CFG->wwwroot/mod/assignment/$assignment->url\">";
             echo "$assignment->name";
             echo "</a>\"</font></p>";
@@ -404,7 +404,7 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     }
     print_user_picture($user->id, $assignment->course, $user->picture);
     echo "</TD>";
-    echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">$user->firstname $user->lastname";
+    echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">".fullname($user, true);
     if ($assignment->type != OFFLINE and $submission->timemodified) {
         echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastmodified").": ";
         echo userdate($submission->timemodified);
@@ -461,7 +461,7 @@ function assignment_print_feedback($course, $submission) {
     echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$teacher->firstname $teacher->lastname";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">".fullname($teacher);
     echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($submission->timemarked)."</I>";
     echo "</TR>";
 
