@@ -1,0 +1,57 @@
+<?PHP // $Id$
+
+function forum_upgrade($oldversion) {
+// This function does anything necessary to upgrade
+// older versions to match current functionality
+
+  if ($oldversion < 2002073008) {
+    execute_sql("DELETE FROM modules WHERE name = 'discuss' ");
+    execute_sql("ALTER TABLE `discuss` RENAME `forum_discussions` ");
+    execute_sql("ALTER TABLE `discuss_posts` RENAME `forum_posts` ");
+    execute_sql("ALTER TABLE `discuss_ratings` RENAME `forum_ratings` ");
+    execute_sql("ALTER TABLE `forum` CHANGE `intro` `intro` TEXT NOT NULL ");
+    execute_sql("ALTER TABLE `forum` ADD `forcesubscribe` TINYINT(1) UNSIGNED DEFAULT '0' NOT NULL AFTER `assessed`");
+    execute_sql("ALTER TABLE `forum` CHANGE `type` `type` ENUM( 'single', 'news', 'social', 'general', 
+                             'eachuser', 'teacher' ) DEFAULT 'general' NOT NULL ");
+    execute_sql("ALTER TABLE `forum_posts` CHANGE `discuss` `discussion` INT( 10 ) UNSIGNED DEFAULT '0' NOT NULL ");
+    execute_sql("INSERT INTO log_display VALUES ('forum', 'add', 'forum', 'name') ");
+    execute_sql("INSERT INTO log_display VALUES ('forum', 'add discussion', 'forum_discussions', 'name') ");
+    execute_sql("INSERT INTO log_display VALUES ('forum', 'add post', 'forum_posts', 'subject') ");
+    execute_sql("INSERT INTO log_display VALUES ('forum', 'update post', 'forum_posts', 'subject') ");
+    execute_sql("INSERT INTO log_display VALUES ('forum', 'view discussion', 'forum_discussions', 'name') ");
+    execute_sql("DELETE FROM log_display WHERE module = 'discuss' ");
+    execute_sql("UPDATE log SET action = 'view discussion' WHERE module = 'discuss' AND action = 'view' ");
+    execute_sql("UPDATE log SET action = 'add discussion' WHERE module = 'discuss' AND action = 'add' ");
+    execute_sql("UPDATE log SET module = 'forum' WHERE module = 'discuss' ");
+    notify("Renamed all the old discuss tables (now part of forum) and created new forum_types");
+  }
+
+  if ($oldversion < 2002080100) {
+    execute_sql("INSERT INTO log_display VALUES ('forum', 'view subscribers', 'forum', 'name') ");
+    execute_sql("INSERT INTO log_display VALUES ('forum', 'update', 'forum', 'name') ");
+  }
+
+  if ($oldversion < 2002082900) {
+    execute_sql(" ALTER TABLE `forum_posts` ADD `attachment` VARCHAR(100) NOT NULL AFTER `message` ");
+  }
+
+  if ($oldversion < 2002091000) {
+    if (! execute_sql(" ALTER TABLE `forum_posts` ADD `attachment` VARCHAR(100) NOT NULL AFTER `message` ")) {
+      echo "<P>Don't worry about this error - your server already had this upgrade applied";
+    }
+  }
+
+  if ($oldversion < 2002100300) {
+      execute_sql(" ALTER TABLE `forum` CHANGE `open` `open` TINYINT(2) UNSIGNED DEFAULT '2' NOT NULL ");
+      execute_sql(" UPDATE `forum` SET `open` = 2 WHERE `open` = 1 ");
+      execute_sql(" UPDATE `forum` SET `open` = 1 WHERE `open` = 0 ");
+  }
+
+  return true;
+
+}
+
+
+
+?>
+
