@@ -1,40 +1,8 @@
 <form method="post" action="preferences.php" name="form">
 
-<table cellpadding="9" cellspacing="0">
-<tr valign="top">
-	<td nowrap="nowrap" align="right"><?php print_string('pref_dstpreset', 'calendar')?>:</td>
-	<td>
-    <?php
-        if(empty($CFG->calendar_dstforusers)) {
-            $presets = get_records('dst_preset');
-            $presetarray = array('0' => get_string('notusingdst', 'calendar'));
-            if(!empty($presets)) {
-                foreach($presets as $preset) {
-                    $presetarray[$preset->id] = $preset->name;
-                }
-            }
-            choose_from_menu ($presetarray, 'dstpreset', $prefs->dstpreset, '');
-        }
-        else {
-            $preset = get_record('dst_preset', 'id', $CFG->calendar_dstforusers);
-            echo '<strong>'.$preset->name.'</strong>';
-        }
-    ?>
-    </td>
-    <td>
-    <?php
-        if(empty($CFG->calendar_dstforusers)) {
-            print_string('explain_dstpreset', 'calendar');
-        }
-        else {
-            print_string('explain_dstpresetforced', 'calendar');
-        }
-    ?>
-    </td>
-</tr>
-
-<tr valign="top">
-	<td nowrap="nowrap" align="right"><?php print_string('pref_timeformat', 'calendar')?>:</td>
+<table class="formtable">
+<tr>
+	<th style="width: 30%;"><?php print_string('pref_timeformat', 'calendar')?>:</th>
 	<td>
     <?php
         $options = array();
@@ -43,14 +11,12 @@
         $options[CALENDAR_TF_24] = get_string('timeformat_24', 'calendar');
         choose_from_menu ($options, "timeformat", $prefs->timeformat, "", "", "");
     ?>
-    </td>
-    <td>
-    <?php print_string('explain_timeformat', 'calendar'); ?>
+    <p><?php print_string('explain_timeformat', 'calendar'); ?></p>
     </td>
 </tr>
 
-<tr valign="top">
-	<td nowrap="nowrap" align="right"><?php print_string('pref_startwday', 'calendar')?>:</td>
+<tr>
+	<th><?php print_string('pref_startwday', 'calendar')?>:</th>
 	<td>
     <?php
         $options = array();
@@ -63,14 +29,12 @@
         $options[6] = get_string('saturday', 'calendar');
         choose_from_menu($options, 'startwday', $prefs->startwday, '', '', '');
     ?>
-    </td>
-    <td>
-    <?php print_string('explain_startwday', 'calendar'); ?>
+    <p><?php print_string('explain_startwday', 'calendar'); ?></p>
     </td>
 </tr>
 
-<tr valign="top">
-	<td nowrap="nowrap" align="right"><?php print_string('pref_maxevents', 'calendar')?>:</td>
+<tr>
+	<th><?php print_string('pref_maxevents', 'calendar')?>:</th>
 	<td>
     <?php
         $options = NULL;
@@ -79,14 +43,12 @@
         }
         choose_from_menu ($options, "maxevents", $prefs->maxevents, "", "", "");
     ?>
-    </td>
-    <td>
-    <?php print_string('explain_maxevents', 'calendar'); ?>
+    <p><?php print_string('explain_maxevents', 'calendar'); ?></p>
     </td>
 </tr>
 
-<tr valign="top">
-	<td nowrap="nowrap" align="right"><?php print_string('pref_lookahead', 'calendar')?>:</td>
+<tr>
+	<th><?php print_string('pref_lookahead', 'calendar')?>:</th>
 	<td>
     <?php
         $options = NULL;
@@ -95,24 +57,20 @@
         }
         choose_from_menu ($options, "lookahead", $prefs->lookahead, "", "", "");
     ?>
-    </td>
-    <td>
-    <?php print_string('explain_lookahead', 'calendar'); ?>
-    </td>
-</tr>
-
-<tr valign="top">
-	<td nowrap="nowrap" align="right"><?php print_string('pref_persistflt', 'calendar')?>:</td>
-	<td>
-    <?php choose_from_menu (array(0 => get_string('no'), 1 => get_string('yes')), 'persistflt', $prefs->persistflt, '', '', ''); ?>
-    </td>
-    <td>
-    <?php print_string('explain_persistflt', 'calendar'); ?>
+    <p><?php print_string('explain_lookahead', 'calendar'); ?></p>
     </td>
 </tr>
 
 <tr>
-    <td colspan="3" align="center">
+	<th><?php print_string('pref_persistflt', 'calendar')?>:</th>
+	<td>
+    <?php choose_from_menu (array(0 => get_string('no'), 1 => get_string('yes')), 'persistflt', $prefs->persistflt, '', '', ''); ?>
+    <p><?php print_string('explain_persistflt', 'calendar'); ?></p>
+    </td>
+</tr>
+
+<tr>
+    <td colspan="2" style="text-align: center;">
 	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>
