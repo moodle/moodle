@@ -1639,10 +1639,10 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     }
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= '<img align="middle" src="'. $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file.jpg .'"'.
+            $output .= '<img align="middle" src="'. $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg"'.
                        ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
         } else {
-            $output .= '<img align="middle" src="'. $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file.jpg .'"'.
+            $output .= '<img align="middle" src="'. $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg"'.
                        ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
         }
     } else {         // Print default user pictures (use theme version if available)
