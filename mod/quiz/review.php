@@ -74,6 +74,7 @@
     $strbestgrade  = get_string("bestgrade", "quiz");
     $strtimetaken     = get_string("timetaken", "quiz");
     $strtimecompleted = get_string("timecompleted", "quiz");
+    $stroverdue = get_string("overdue", "quiz");
 
     print_header("$course->shortname: $quiz->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> 
@@ -93,7 +94,15 @@
         error("Could not re-grade this quiz attempt!");
     }
 
+    if($quiz->timelimit) {
+        $timelimit = $quiz->timelimit * 60;
+    }
+
     if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
+        if($timelimit && $timetaken > ($timelimit + 60)) {
+            $overtime = $timetaken - $timelimit;
+            $overtime = format_time($overtime);
+        }
         $timetaken = format_time($timetaken);
     } else {
         $timetaken = "-";
@@ -102,7 +111,15 @@
     $table->align  = array("right", "left");
     $table->data[] = array("$strtimetaken:", $timetaken);
     $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
+    if($overtime) {
+        $table->data[] = array("$stroverdue:", $overtime);
+    }
     if ($quiz->grade) {
+        if($overtime) {
+            $result->sumgrades = "0";
+            $result->percentage = "0";
+            $result->grade = "0.0";
+        }
         $table->data[] = array("$strscore:", "$result->sumgrades/$quiz->sumgrades ($result->percentage %)");
         $table->data[] = array("$strgrade:", "$result->grade/$quiz->grade");
     }
