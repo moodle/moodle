@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
       // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
-
 $string['action'] = '동작';
 $string['active'] = '액티브';
 $string['activities'] = '활동들';

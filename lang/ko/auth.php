@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
       // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
-
 $string['auth_common_settings'] = '일반설정';
 $string['auth_data_mapping'] = '데이타 계획';
 $string['auth_dbdescription'] = '이 방식은 외부의 데이터베이스 테이블을 통해 사용자의 아이디와 비밀번호가 유효한 지 확인합니다. 다른 항목의 정보도 Moodle사의 데이터 베이스에 복사될 수 있도록 설정이 가능합니다.';
@@ -84,6 +83,12 @@ $string['instructions'] = '도움말';
 $string['md5'] = 'MD5 인증 ';
 $string['plaintext'] = '단순 텍스트';
 $string['showguestlogin'] = '로그인 페이지에서 손님 로그인 버튼을 보이거나 숨길 수 있습니다.';
+<<<<<<< auth.php
+$string['stdchangepassword'] = '비밀번호 페이지를 사용하기';
+$string['thischarset'] = 'euc-kr';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
+=======
 $string['stdchangepassword'] = '비밀번호 페이지를 사용하기';
 
 ?>

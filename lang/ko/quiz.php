@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
+<?php // $Id$ 
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['acceptederror'] = '인정된 오류';
@@ -228,7 +228,7 @@ $string['subneterror'] = '미안합니다. 이 퀴즈는 잠겨있으므로 특정한 위치에서만 �
 $string['substitutedby'] = '대체됩니다.';
 $string['thischarset'] = 'euc-kr';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '한국어';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['time'] = '시간';
 $string['timecompleted'] = '끝';
 $string['timeleft'] = '남은 시간';

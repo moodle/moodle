@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
+<?php // $Id$ 
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['action'] = '활동';
@@ -162,7 +162,7 @@ $string['tabview'] = '보기';
 $string['thanksforcontribution'] = '당신의 공헌에 감사합니다';
 $string['thischarset'] = 'euc-kr';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '한국어';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['thispageisntlinkedfromanywhereelse'] = '이 페이지는 어디에도 연계되어 있지 않습니다';
 $string['updatedpages'] = '최신페이지';
 $string['uplerror'] = '죄송합니다 파일 업로드중 문제가 발생했습니다';
