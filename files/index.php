@@ -16,7 +16,6 @@
     }
 
     require_login($course->id);
-    add_to_log("Files area", $course->id);
 
     if (! isteacher($course->id) ) {
         error("Only teachers can edit files");
