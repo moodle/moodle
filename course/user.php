@@ -49,7 +49,7 @@
     print_heading("$user->firstname $user->lastname");
 
     echo "<table cellpadding=10 align=center><tr>";
-    echo "<td>reports: </td>";
+    echo "<td>$stractivityreport: </td>";
 
     foreach ($modes as $listmode) {
         $strmode = get_string($listmode);
