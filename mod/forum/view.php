@@ -76,13 +76,15 @@
                 echo "</FONT></DIV>";
                 $subtext = "<A HREF=\"subscribers.php?id=$forum->id\">Show subscribers</A>";
                 echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
+            } else {
+                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
             }
             if (forum_is_subscribed($USER->id, $forum->id)) {
                 $subtext = "Unsubscribe me";
             } else {
                 $subtext = "Subscribe me";
             }
-            $subtext = "<A TITLE=\"For this forum only\" HREF=\"subscribe.php?id=$forum->id\">$subtext</A>";
+            $subtext = "<A TITLE=\"...this forum only\" HREF=\"subscribe.php?id=$forum->id\">$subtext</A>";
             echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
         }
     }
