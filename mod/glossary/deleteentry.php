@@ -65,6 +65,10 @@
                         if ( $entry->attachment ) {
                             glossary_delete_old_attachments($entry);
                         }
+                        delete_records("glossary_comments", "entryid",$entry->id);
+                        delete_records("glossary_alias", "entryid", $entry->id);
+                        delete_records("glossary_ratings", "entryid", $entry->id);
+
                         delete_records("glossary_entries","id", $entry->id);				
                     }
 

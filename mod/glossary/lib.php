@@ -121,7 +121,13 @@ function glossary_delete_instance($id) {
         if ( $entries = get_records("glossary_entries", "glossaryid", $glossary->id) ) {
             $ents = "";
             foreach ( $entries as $entry ) {
-                $ents .= "$entry->id,";
+                if ( $entry->sourceglossaryid ) {
+                    $entry->glossaryid = $entry->sourceglossaryid;
+                    $entry->sourceglossaryid = 0;
+                    update_record("glossary_entries",$entry);
+                } else {
+                    $ents .= "$entry->id,";
+                }
             }
             $ents = substr($ents,0,-1);
             if ($ents) {
@@ -130,7 +136,7 @@ function glossary_delete_instance($id) {
                 delete_records_select("glossary_ratings", "entryid in ($ents)");
             }
         }
-        glossary_delete_glossary_attachments($glossary);
+        glossary_delete_attachments($glossary);
         delete_records("glossary_entries", "glossaryid", "$glossary->id");
     }
 
@@ -806,7 +812,7 @@ function glossary_delete_old_attachments($entry, $exception="") {
         }
     }
 }
-function glossary_delete_glossary_attachments($glossary) {
+function glossary_delete_attachments($glossary) {
 // Deletes all the user files in the attachments area for the glossary
     if ( $entries = get_records("glossary_entries","glossaryid",$glossary->id) ) {
         $deleted = 0;
@@ -1394,37 +1400,40 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     $user = get_record("user", "id", $comment->userid);
     $strby = get_string("writtenby","glossary");
 
-    echo "<table class=\"generalbox\"  BORDER=1 CELLSPACING=0 valign=top cellpadding=0 width=70% border=0><tr><td>";
+    echo '<table border="0" width="70%" cellpadding="3" cellspacing="0" class="forumpost">';
+    echo "<tr>";
 
-    echo "\n<TABLE width=\"100%\" BORDER=0 CELLSPACING=0 valign=top cellpadding=5><tr>";
-  
-    echo "\n<TD BGCOLOR=\"$THEME->cellheading\" WIDTH=25% VALIGN=TOP align=right >";
+    $fullname = fullname($user, isteacher($course->id));
+
+    echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
+    echo "<p>";
     print_user_picture($user->id, $course->id, $user->picture);
-    echo "<br><FONT SIZE=2>$strby $user->firstname $user->lastname</font>";
-    echo "<br><FONT SIZE=1>(".get_string("lastedited").": ".userdate($comment->timemodified).")</FONT></small><br>";
-    echo "</TD>";
+    echo "<font size=3>&nbsp;<b>$fullname</b></font><br \>";
+    echo "<FONT SIZE=1>&nbsp;&nbsp;&nbsp;(".get_string("lastedited").": ".userdate($comment->timemodified).")</FONT></small>";
+    echo "<font size=2>";
 
-    echo "<TD valign=top WIDTH=75% BGCOLOR=\"$THEME->cellcontent\">";
-    if ($comment) {
-        echo format_text($comment->comment, $comment->format);
-    } else {
-      echo "<center>";
-        print_string("nocomment", "glossary");
-      echo "</center>";
-    }
 
-    echo "<p align=right>";
+    echo "</font></p></td></tr>";
+    echo "<tr><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
+
+    echo format_text($comment->comment, $comment->format);
+
+    echo "<p align=right><font size=-1>";
+
+    echo "</p>";
+
+    echo "<div align=right><p align=right>";
     if ( (time() - $comment->timemodified <  $CFG->maxeditingtime and $USER->id == $comment->userid)  or isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a> ";
     }
     if ( $USER->id == $comment->userid or isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=delete\"><img  alt=\"" . get_string("delete") . "\" src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a>";
     }
-    echo "</td>";
     
-    echo "</tr></TABLE>\n";
+    echo "</p>";
+    echo "</div>";
+    echo "</td></tr>\n</table>\n\n";
 
-    echo "</td></tr></table>";
 }
 
 function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
