@@ -34,7 +34,7 @@
     $custom = explode('-', $data->custom);
     $data->userid           = $custom[0];
     $data->courseid         = $custom[1];
-    $data->payment_amount   = $data->mc_gross;
+    $data->payment_gross    = $data->mc_gross;
     $data->payment_currency = $data->mc_currency;
 
 
