@@ -22,10 +22,27 @@
     $strmax = get_string("maximumshort");
     $stractivityreport = get_string("activityreport");
 
+/// Check to see if groups are being used in this course
+    if ($groupmode = groupmode($course)) {   // Groups are being used
+        if (isset($_GET['group'])) {
+            $changegroup = $_GET['group'];  /// 0 or higher
+        } else {
+            $changegroup = -1;              /// This means no group change was specified
+        }
+
+        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+    } else {
+        $currentgroup = false;
+    }
+
+    if ($currentgroup) {
+        $students = get_group_students($currentgroup, "u.lastname ASC");
+    } else {
+        $students = get_course_students($course->id, "u.lastname ASC");
+    }
 
 /// Get a list of all students
-
-    if (!$students = get_course_students($course->id, "u.lastname ASC")) {
+    if (!$students) {
         print_header("$course->shortname: $strgrades", "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $strgrades");
@@ -160,6 +177,9 @@
         foreach ($grades as $studentid => $studentgrades) {
             $i++;
             $student = $students[$studentid];
+            if (empty($totals[$student->id])) {
+                $totals[$student->id] = '';
+            }
     
             $myxls->write_string($i,0,$student->firstname);
             $myxls->write_string($i,1,$student->lastname);
@@ -203,6 +223,9 @@
 
         foreach ($grades as $studentid => $studentgrades) {
             $student = $students[$studentid];
+            if (empty($totals[$student->id])) {
+                $totals[$student->id] = '';
+            }
             echo "$student->firstname\t$student->lastname\t$student->idnumber\t$student->institution\t$student->department\t$student->email";
             foreach ($studentgrades as $grade) {
                 $grade = strip_tags($grade);
@@ -222,6 +245,8 @@
                       -> $strgrades");
     
         print_heading($strgrades);
+
+        setup_and_print_groups($course, $groupmode, "grades.php?id=$course->id");
 
         echo "<TABLE BORDER=0 ALIGN=CENTER><TR>";
         echo "<TD>";
@@ -246,6 +271,9 @@
     
         foreach ($students as $key => $student) {
             $studentgrades = $gradeshtml[$student->id];
+            if (empty($totals[$student->id])) {
+                $totals[$student->id] = '';
+            }
             $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
             $name = array ("$picture", "$student->firstname", "$student->lastname");
             $total = array ($totals[$student->id]);
