@@ -28,6 +28,7 @@ $string['fetchclienterror'] = 'An error was found with your web client while try
 $string['fetcherror'] = 'An error was found while trying to retrieve the web page.';
 $string['fetchservererror'] = 'An error was found with the remote server while trying to retrieve the web page (possibly a program error).</p>';
 $string['filename'] = 'File name';
+$string['filtername'] = "Resource Auto-linking";
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
 $string['maindirectory'] = 'Main files directory';
