@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 $string['calendar'] = 'Calendar';
 $string['calendarheading'] = '$a Calendar';
@@ -11,7 +11,7 @@ $string['daywithnoevents'] = 'There are no events this day.';
 $string['default'] = 'Default';
 $string['deleteevent'] = 'Delete event';
 $string['detailedmonthview'] = 'Detailed Month View';
-$string['durationminutes'] = 'Duration in minutes:';
+$string['durationminutes'] = 'Duration in minutes';
 $string['durationnone'] = 'Without duration';
 $string['durationuntil'] = 'Until';
 $string['editevent'] = 'Editing event';

@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 $string['calendar'] = 'Ημερολόγιο';
 $string['calendarheading'] = 'Ημερολόγιο $a';
@@ -11,11 +11,14 @@ $string['daywithnoevents'] = 'Δεν υπάρχουν γεγονότα για αυτή τη μέρα.';
 $string['default'] = 'Εξ\' ορισμού';
 $string['deleteevent'] = 'Διαγραφή γεγονότος';
 $string['detailedmonthview'] = 'Λεπτομέρειες γεγονότων μήνα';
+$string['durationminutes'] = 'Διάρκεια σε λεπτά';
 $string['durationnone'] = 'Χωρίς διάρκεια';
 $string['durationuntil'] = 'Μέχρι';
 $string['editevent'] = 'Επεξεργασία γεγονότος';
 $string['errorbeforecoursestart'] = 'Το γεγονός δε μπορεί να συμβαίνει πριν την έναρξη του μαθήματος';
 $string['errorinvaliddate'] = 'Μη έγκυρη ημερομηνία';
+$string['errorinvalidminutes'] = 'Η διάρκεια πρέπει να είναι από 1 ως 999 λεπτά.';
+$string['errorinvalidrepeats'] = 'Ο αριθμός των επαναλήψεων πρέπει να είναι από 1 ως 99.';
 $string['errornodescription'] = 'Η περιγραφή είναι απαραίτητη';
 $string['errornoeventname'] = 'Το όνομα είναι απαραίτητο';
 $string['eventdate'] = 'Ημέρα';
@@ -25,6 +28,7 @@ $string['eventendtime'] = 'Λήξη';
 $string['eventinstanttime'] = 'Ώρα';
 $string['eventkind'] = 'Είδος γεγονότος';
 $string['eventname'] = 'Όνομα';
+$string['eventrepeat'] = 'Επαναλήψεις';
 $string['eventsfor'] = 'Γεγονότα: $a';
 $string['eventstarttime'] = 'Έναρξη';
 $string['eventtime'] = 'Ώρα';
@@ -36,6 +40,7 @@ $string['explain_startwday'] = 'Η πρώτη μέρα της εβδομάδας καθορίζει από το ποιά
 $string['explain_timeformat'] = 'Εδώ μπορείτε να επιλέξετε τη μορφή με την οποία θα εμφανίζονται οι ώρες στο ημερολόγιο. Οι επιλογές για 12ωρη και 24ωρη μορφή εμφανίζουν όλες τις ώρες στη μορφή αυτή. Με την επιλογή \"εξ\' ορισμού\" θα χρησιμοποιείται αυτόματα η μορφή απεικόνισης που έχει οριστεί για τη γλώσσα στην οποία βλέπετε τη σελίδα.';
 $string['globalevents'] = 'Γεγονότα συστήματος';
 $string['groupevents'] = 'Ομαδικά γεγονότα';
+$string['gotocalendar'] = 'Ημερολόγιο';
 $string['hidden'] = 'δεν φαίνονται';
 $string['manyevents'] = '$a γεγονότα';
 $string['monthlyview'] = 'Ημερολόγιο μήνα';
@@ -48,6 +53,9 @@ $string['pref_startwday'] = 'Πρώτη μέρα εβδομάδας';
 $string['pref_timeformat'] = 'Μορφή εμφάνισης ώρας';
 $string['preferences'] = 'Προτιμήσεις';
 $string['preferences_available'] = 'Διαθέσιμες προσωπικές προτιμήσεις';
+$string['repeatnone'] = 'Χωρίς επανάληψη';
+$string['repeatweeksl'] = 'Εβδομαδιαία επανάληψη,';
+$string['repeatweeksr'] = 'φορές συνολικά';
 $string['shown'] = 'φαίνονται';
 $string['spanningevents'] = 'Γεγονότα σε εξέλιξη';
 $string['timeformat_12'] = '12ωρη (πμ/μμ)';
