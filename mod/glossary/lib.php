@@ -700,13 +700,24 @@ function glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode="
     return $return;
 }
 
-function glossary_search_entries($searchterms, $glossary, $includedefinition) {
-/// Returns a list of entries found using an array of search terms
-/// eg   word  +word -word
-///
+function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL) {
+// It returns all entries from all glossaries that matches the specified criteria 
+//    within a given $course. It performs an $extended search if necessary.
+// It restrict the search to only one $glossary if the $glossary parameter is set.
 
     global $CFG;
-
+    if ( !$glossary ) {
+        if ( $glossaries = get_records("glossary", "course", $course->id) ) {
+            $glos = "";
+            foreach ( $glossaries as $glossary ) {
+                $glos .= "$glossary->id,";
+            }
+            $glos = substr($ents,0,-1);
+        }
+    } else {
+        $glos = $glossary->id;
+    }
+    
     if (!isteacher($glossary->course)) {
         $glossarymodule = get_record("modules", "name", "glossary");
         $onlyvisible = " AND g.id = cm.instance AND cm.visible = 1 AND cm.module = $glossarymodule->id";
@@ -756,7 +767,7 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
         }
     }
 
-    if ( !$includedefinition ) {
+    if ( !$extended ) {
         $definitionsearch = "0";
     }
 
@@ -764,10 +775,15 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
                   {$CFG->prefix}glossary g $onlyvisibletable
              WHERE ($conceptsearch OR $definitionsearch)
                AND (e.glossaryid = g.id or e.sourceglossaryid = g.id) $onlyvisible
-               AND g.id = $glossary->id AND e.approved != 0";
+               AND g.id IN ($glos) AND e.approved != 0";
 
     return get_records_sql("SELECT e.* 
                             FROM $selectsql ORDER BY e.concept ASC");
+}
+
+function glossary_search_entries($searchterms, $glossary, $extended) {
+    $course = get_record("course","id",$glossary->course);
+    return glossary_search($course,$searchterms,$extended,$glossary);
 }
 
 function glossary_file_area_name($entry) {
