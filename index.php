@@ -1,7 +1,12 @@
 <?PHP  // $Id$
        // index.php - the front page.
 
-    // Bounds for block widths
+    if (!file_exists('./config.php')) {
+        header('Location: install.php');
+        die;
+    }
+
+/// Bounds for block widths on this page
     define('BLOCK_L_MIN_WIDTH', 160);
     define('BLOCK_L_MAX_WIDTH', 210);
     define('BLOCK_R_MIN_WIDTH', 160);
