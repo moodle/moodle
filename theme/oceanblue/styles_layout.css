@@ -127,6 +127,11 @@ a img {
     border-width:1px;
     border-style:solid;
 }
+
+.generalbox#intro {   /* On most modules */
+    text-align:center;
+}
+
 .noticebox {
     border-width:1px;
     border-style:solid;
@@ -1105,6 +1110,12 @@ body#course-enrol .generalbox {
 }
 body#course-enrol .coursebox {
     margin-top: 20px;
+}
+
+.loginbox .content {
+    border-width:1px;
+    border-style:solid;
+    padding:15px;
 }
 
 .headingblock .link {

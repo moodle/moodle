@@ -151,6 +151,10 @@ th {
     background-color:#990000;
 }
 
+.loginbox .content {
+    border-color:#DDDDDD; /* borders */
+}
+
 /* summary of a user in a nice little box - weblib.php */
 .userinfobox {
     border-color:#AAAAFF; /* borders */
