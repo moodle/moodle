@@ -80,7 +80,7 @@
     $groupmode = groupmode($course, $cm);   // Groups are being used
     $currentgroup = get_and_set_current_group($course, $groupmode, $_GET['group']);
 
-    if ($groupmode and !$currentgroup) {
+    if (!isteacheredit($course->id) and $groupmode and !$currentgroup) {
         print_heading("Sorry, but you need to be part of a group to see this forum.");
         print_footer();
         exit;
