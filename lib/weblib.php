@@ -1222,12 +1222,18 @@ function print_user($user, $course) {
 function print_group_picture($group, $courseid, $large=false, $returnstring=false, $link=true) {
     global $CFG;
 
-    if ($group->hidepicture) {
+    static $isteacheredit;
+
+    if (!isset($isteacheredit)) {
+        $isteacheredit = isteacheredit($courseid);
+    }
+
+    if ($group->hidepicture and !$isteacheredit) {
         return '';
     }
 
-    if ($link) {
-        $output = "<a href=\"$CFG->wwwroot/course/groupphp?id=$courseid&amp;group=$group->id\">";
+    if ($link or $isteacheredit) {
+        $output = "<a href=\"$CFG->wwwroot/course/group.php?id=$courseid&amp;group=$group->id\">";
     } else {
         $output = '';
     }
@@ -1241,13 +1247,13 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
     if ($group->picture) {  // Print custom group picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php/$group->id/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" title=\"$group->name\"/>";
         } else {
             $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" title=\"$group->name\"/>";
         }
     }
-    if ($link) {
+    if ($link or $isteacheredit) {
         $output .= "</a>";
     }
 
