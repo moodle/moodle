@@ -118,17 +118,6 @@
         }
     }
 
-    //Bring back the course blocks
-    if($status) {
-        //If we are deleting and bringing into a course or making a new course, same situation
-        if($restore->restoreto == 0 || $restore->restoreto == 2) {
-            echo '<li>'.get_string('creatingblocks').'</li>';
-            if (!$status = restore_create_blocks($restore, $info->backup_block_format, $course_header->blockinfo, $xml_file)) {
-                notify('Error while creating the course blocks');
-            }
-        }
-    }
-
     //Now create the course_sections and their associated course_modules
     if ($status) {
         //Into new course
@@ -295,6 +284,17 @@
         echo "<li>".get_string("creatingcoursemodules");
         if (!$status = restore_create_modules($restore,$xml_file)) {
             notify("Could not restore modules!");
+        }
+    }
+
+    //Bring back the course blocks -- do it AFTER the modules!!!
+    if($status) {
+        //If we are deleting and bringing into a course or making a new course, same situation
+        if($restore->restoreto == 0 || $restore->restoreto == 2) {
+            echo '<li>'.get_string('creatingblocks').'</li>';
+            if (!$status = restore_create_blocks($restore, $info->backup_block_format, $course_header->blockinfo, $xml_file)) {
+                notify('Error while creating the course blocks');
+            }
         }
     }
 

@@ -892,34 +892,64 @@
         // Read all of the block table
         $blocks = blocks_get_record();
 
-        $page = page_create_object(PAGE_COURSE_VIEW, $preferences->backup_course);
+        $pages = array();
+        $pages[] = page_create_object(PAGE_COURSE_VIEW, $preferences->backup_course);
 
-        if ($instances = blocks_get_by_page($page)) {
-            //Blocks open tag
-            fwrite ($bf,start_tag('BLOCKS',2,true));
-            //Iterate over every block
-            foreach ($instances as $position) {
-                foreach ($position as $instance) {
-                    //If we somehow have a block with an invalid id, skip it
-                    if(empty($blocks[$instance->blockid]->name)) {
-                        continue;
-                    }
-                    //Begin Block
-                    fwrite ($bf,start_tag('BLOCK',3,true));
-                    fwrite ($bf,full_tag('NAME',4,false,$blocks[$instance->blockid]->name));
-                    fwrite ($bf,full_tag('PAGEID',4,false,$instance->pageid));
-                    fwrite ($bf,full_tag('PAGETYPE',4,false,$instance->pagetype));
-                    fwrite ($bf,full_tag('POSITION',4,false,$instance->position));
-                    fwrite ($bf,full_tag('WEIGHT',4,false,$instance->weight));
-                    fwrite ($bf,full_tag('VISIBLE',4,false,$instance->visible));
-                    fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));
-                    //End Block
-                    fwrite ($bf,end_tag('BLOCK',3,true));
+        // Let's see if we have to backup blocks from modules
+        $modulerecords = get_records_sql('SELECT name, id FROM '.$CFG->prefix.'modules');
+        
+        foreach($preferences->mods as $module) {
+            if(!$module->backup) {
+                continue;
+            }
+
+            $cmods = get_records_select('course_modules', 'course = '.$preferences->backup_course.' AND module = '.$modulerecords[$module->name]->id);
+            if(empty($cmods)) {
+                continue;
+            }
+
+            $pagetypes = page_import_types('mod/'.$module->name.'/');
+            if(empty($pagetypes)) {
+                continue;
+            }
+
+            foreach($pagetypes as $pagetype) {
+                foreach($cmods as $cmod) {
+                    $pages[] = page_create_object($pagetype, $cmod->instance);
                 }
             }
-            //Blocks close tag
-            $status = fwrite ($bf,end_tag('BLOCKS',2,true));
         }
+
+        //Blocks open tag
+        fwrite ($bf,start_tag('BLOCKS',2,true));
+
+        while($page = array_pop($pages)) {
+            if ($instances = blocks_get_by_page($page)) {
+                //Iterate over every block
+                foreach ($instances as $position) {
+                    foreach ($position as $instance) {
+                        //If we somehow have a block with an invalid id, skip it
+                        if(empty($blocks[$instance->blockid]->name)) {
+                            continue;
+                        }
+                        //Begin Block
+                        fwrite ($bf,start_tag('BLOCK',3,true));
+                        fwrite ($bf,full_tag('NAME',4,false,$blocks[$instance->blockid]->name));
+                        fwrite ($bf,full_tag('PAGEID',4,false,$instance->pageid));
+                        fwrite ($bf,full_tag('PAGETYPE',4,false,$instance->pagetype));
+                        fwrite ($bf,full_tag('POSITION',4,false,$instance->position));
+                        fwrite ($bf,full_tag('WEIGHT',4,false,$instance->weight));
+                        fwrite ($bf,full_tag('VISIBLE',4,false,$instance->visible));
+                        fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));
+                        //End Block
+                        fwrite ($bf,end_tag('BLOCK',3,true));
+                    }
+                }
+            }
+        }
+
+        //Blocks close tag
+        $status = fwrite ($bf,end_tag('BLOCKS',2,true));
 
         return $status;
 

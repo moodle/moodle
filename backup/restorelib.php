@@ -703,45 +703,95 @@
             $info = restore_read_xml_blocks($xml_file);
         }
 
-        $maxweights = array();
+        if(empty($info->instances)) {
+            return $status;
+        }
 
-        if(!empty($info->instances)) {
+        // First of all, iterate over the blocks to see which distinct pages we have
+        // in our hands and arrange the blocks accordingly.
+        $pageinstances = array();
+        foreach($info->instances as $instance) {
+            if(!isset($pageinstances[$instance->pagetype])) {
+                $pageinstances[$instance->pagetype] = array();
+            }
+            if(!isset($pageinstances[$instance->pagetype][$instance->pageid])) {
+                $pageinstances[$instance->pagetype][$instance->pageid] = array();
+            }
 
-            $blocks = get_records_select('block', '', '', 'name, id, multiple');
+            $pageinstances[$instance->pagetype][$instance->pageid][] = $instance;
+        }
 
-            foreach($info->instances as $instance) {
-                if(!isset($blocks[$instance->name])) {
-                    //We are trying to restore a block we don't have...
-                    continue;
+        $blocks = get_records_select('block', '', '', 'name, id, multiple');
+
+        // For each type of page we have restored
+        foreach($pageinstances as $thistypeinstances) {
+
+            // For each page id of that type
+            foreach($thistypeinstances as $thisidinstances) {
+
+                $addedblocks = array();
+                $maxweights  = array();
+
+                // For each block instance in that page
+                foreach($thisidinstances as $instance) {
+
+                    if(!isset($blocks[$instance->name])) {
+                        //We are trying to restore a block we don't have...
+                        continue;
+                    }
+    
+                    //If we have already added this block once and multiples aren't allowed, disregard it
+                    if(!$blocks[$instance->name]->multiple && isset($addedblocks[$instance->name])) {
+                        continue;
+                    }
+
+                    //pagetype and pageid black magic, we have to handle the case of blocks for the
+                    //course, blocks from other pages in that course etc etc etc.
+
+                    if($instance->pagetype == PAGE_COURSE_VIEW) {
+                        // This one's easy...
+                        $instance->pageid  = $restore->course_id;
+                    }
+                    else {
+                        $parts = explode('-', $instance->pagetype);
+                        switch($parts[0]) {
+                            case 'mod':
+                                $getid = backup_getid($restore->backup_unique_code, $parts[1], $instance->pageid);
+                                $instance->pageid = $getid->new_id;
+                            break;
+                            default:
+                                // Not invented here ;-)
+                                continue;
+                            break;
+                        }
+                    }
+
+                    //If its the first block we add to a new position, start weight counter equal to 0.
+                    if(empty($maxweights[$instance->position])) {
+                        $maxweights[$instance->position] = 0;
+                    }
+    
+                    //If the instance weight is greater than the weight counter (we skipped some earlier
+                    //blocks most probably), bring it back in line.
+                    if($instance->weight > $maxweights[$instance->position]) {
+                        $instance->weight = $maxweights[$instance->position];
+                    }
+
+                    //Add this instance
+                    $instance->blockid = $blocks[$instance->name]->id;
+                    
+                    if(!insert_record('block_instance', $instance)) {
+                        $status = false;
+                        break;
+                    }
+    
+                    //Now we can increment the weight counter
+                    ++$maxweights[$instance->position];
+    
+                    //Keep track of block types we have already added
+                    $addedblocks[$instance->name] = true;
+
                 }
-                //If its the first block we add to a new position, start weight counter equal to 0.
-                if(empty($maxweights[$instance->position])) {
-                    $maxweights[$instance->position] = 0;
-                }
-                //If the instance weight is greater than the weight counter (we skipped some earlier
-                //blocks most probably), bring it back in line.
-                if($instance->weight > $maxweights[$instance->position]) {
-                    $instance->weight = $maxweights[$instance->position];
-                }
-
-                //If we have already added this block once and multiples aren't allowed, disregard it
-                if(!empty($blocks[$instance->name]->added)) {
-                    continue;
-                }
-
-                //Add this instance
-                $instance->blockid = $blocks[$instance->name]->id;
-                $instance->pageid  = $restore->course_id;
-                if(!insert_record('block_instance', $instance)) {
-                    $status = false;
-                    break;
-                }
-
-                //Now we can increment the weight counter
-                ++$maxweights[$instance->position];
-
-                //Keep track of block types we have already added
-                $blocks[$instance->name]->added = true;
             }
         }
 
