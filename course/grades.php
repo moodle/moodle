@@ -261,7 +261,7 @@
         echo "</TABLE>";
     
 
-        $table->head  = array_merge(array ("", get_string("firstname"), get_string("lastname")), $columnhtml, get_string("total"));
+        $table->head  = array_merge(array ("", get_string("firstname"), get_string("lastname")), $columnhtml, array(get_string("total")));
         $table->width = array(35, "");
         $table->align = array("LEFT", "RIGHT", "LEFT");
         foreach ($columns as $column) {
