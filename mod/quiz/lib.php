@@ -38,6 +38,7 @@ $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
                             "missingword" => get_string("missingword", "quiz"),
                             "blackboard" => get_string("blackboard", "quiz"),
                             "aon" => "AON",
+                            "aiken" => "Aiken",
                             "multianswer" => get_string("multianswer", "quiz"),
                             "coursetestmanager" => "Course Test Manager"
                             );
