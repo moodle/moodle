@@ -156,21 +156,8 @@
         if ($users = get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess  from user WHERE username <> 'guest' 
                                       AND deleted <> '1' ORDER BY $sort $dir LIMIT $page,$recordsperpage")) {
 
-            foreach ($users as $key => $user) {
-                $users[$key]->country = $COUNTRIES[$user->country];
-            }
-            if ($sort == "country") {  // Need to resort by full country name, not code
-                foreach ($users as $user) {
-                    $susers[$user->id] = $user->country;
-                }
-                asort($susers);
-                foreach ($susers as $key => $value) {
-                    $nusers[] = $users[$key];
-                }
-                $users = $nusers;
-            }
-
             print_heading("$usercount ".get_string("users"));
+            
             $a->start = $page;
             $a->end = $page + $recordsperpage;
             if ($a->end > $usercount) {
@@ -205,6 +192,22 @@
                 print_single_button("user.php", $options, "  >>  ");
             }
             echo "</TD></TR></TABLE>";
+
+            flush();
+
+            foreach ($users as $key => $user) {
+                $users[$key]->country = $COUNTRIES[$user->country];
+            }
+            if ($sort == "country") {  // Need to resort by full country name, not code
+                foreach ($users as $user) {
+                    $susers[$user->id] = $user->country;
+                }
+                asort($susers);
+                foreach ($susers as $key => $value) {
+                    $nusers[] = $users[$key];
+                }
+                $users = $nusers;
+            }
 
             $table->head = array ($name, $email, $city, $country, $lastaccess, "", "");
             $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER");
