@@ -113,11 +113,13 @@
 
                 echo "<table width=\"100%\">";
                 foreach ($userlist as $user) {
-                    echo "<tr><td width=\"10\" nowrap=\"nowrap\">";
-                    print_user_picture($user->id, $course->id, $user->picture);
-                    echo "</td><td width=\"100%\" nowrap=\"nowrap\">";
-                    echo "<p>".fullname($user, true)."</p>";
-                    echo "</td></tr>";
+                    if (!($optionid==0 && isadmin($user->id)) && !($optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
+                        echo "<tr><td width=\"10\" nowrap=\"nowrap\">";
+                        print_user_picture($user->id, $course->id, $user->picture);
+                        echo "</td><td width=\"100%\" nowrap=\"nowrap\">";
+                        echo "<p>".fullname($user, true)."</p>";
+                        echo "</td></tr>";
+                    }
                 }
                 echo "</table>";
 
