@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.2 (2004032000)
+      // survey.php - created with Moodle 1.3.3 + (2004052503)
 
 
 $string['actual'] = 'Tegelik';
@@ -10,7 +10,7 @@ $string['allscales'] = 'Kõik skaalad, kõik õpilased';
 $string['alreadysubmitted'] = 'Sa oled selle uurimuse juba esitanud';
 $string['analysisof'] = 'Analüüs $a';
 $string['answers'] = 'Vastused';
-$string['attls1'] = 'Hinnates kellegi ütlusi keskendun ma tema põhjenduste kvaliteedile, mitte neid esitanud isikule.';
+$string['attls1'] = 'Hinnates kellegi ütlusi, keskendun ma tema põhjenduste kvaliteedile, mitte neid esitanud isikule.';
 $string['attls10'] = 'Minu jaoks on tähtis jääda võimalikult objektiivseks, kui midagi analüüsin.';
 $string['attls10short'] = 'jääda objektiivseks';
 $string['attls11'] = 'Vastu vaidlemise asemel püüan inimestega kaasa mõelda.';

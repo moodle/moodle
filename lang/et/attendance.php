@@ -1,15 +1,15 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 (2004032000)
+      // attendance.php - created with Moodle 1.3.3 + (2004052503)
 
 
-$string['absentlong'] = 'Puuduja';
+$string['absentlong'] = 'Puudub';
 $string['absentshort'] = 'P';
-$string['addingmultiple'] = 'Mitmete osavõtjatega nimistuid lisama';
+$string['addingmultiple'] = 'Mitme osavõtjaga nimistute lisamine';
 $string['addmultiple'] = 'Lisa mitme osavõtjaga nimistu';
 $string['allmodulename'] = 'Kõik osavõtu nimistud';
 $string['auto'] = 'automaatne';
-$string['autoattend'] = 'Tuginedes kasutajate aktiivsuse logidele võta automaatselt osa';
-$string['autoattendmulti'] = 'Tuginedes kasutajate aktiivsuse logidele võta automaatselt osa kõigis nimekirjades';
+$string['autoattend'] = 'Tuginedes kasutajate aktiivsuse logidele, võta automaatselt osa';
+$string['autoattendmulti'] = 'Tuginedes kasutajate aktiivsuse logidele, võta automaatselt osa kõigis nimekirjades';
 $string['autoattendshort'] = 'Automaatselt logidest';
 $string['choosedays'] = 'Osavõtu päevad igas nädalas';
 $string['dayofroll'] = 'Kuupäev, mille kohta nimistu teha';
@@ -44,7 +44,7 @@ $string['monday'] = 'Esmaspäev';
 $string['norolls'] = 'Sellel kursusel puuduvad osalejate nimistud';
 $string['notes'] = 'Erandlik info';
 $string['notesfor'] = 'Erandlik info ... kohta';
-$string['noviews'] = 'Kahju, sinu konto kohta puuduvad andmed';
+$string['noviews'] = 'Kahju, Sinu konto kohta andmed puuduvad';
 $string['of'] = ' ';
 $string['pages'] = 'Leheküljed';
 $string['presentlong'] = 'Olemas';
@@ -55,8 +55,9 @@ $string['startmulti'] = 'Esimese osalejate nimistu kuupäev';
 $string['sunday'] = 'Pühap';
 $string['takeroll'] = 'Tee selle päeva nimistu?';
 $string['tardiesperabsence'] = 'Kui mitu hilinemist saab kokku lugeda üheks puudumiseks?';
-$string['tardylong'] = 'Pikaldane';
-$string['tardyshort'] = 'Pi';
+$string['tardylong'] = 'Hilinemine';
+$string['tardyshort'] = 'Hi';
+$string['teacheredit'] = 'Võta osa';
 $string['thursday'] = 'Neljapäev';
 $string['tuesday'] = 'Teisipäev';
 $string['viewall'] = 'Näita kõiki osavõtjate nimistuid';
