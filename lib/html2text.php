@@ -91,7 +91,7 @@ function html2text( $badStr ) {
 
     //now that the page is valid (I hope) for strip_tags, strip all unwanted tags
 
-    $goodStr = strip_tags( $goodStr, '<title><hr /><h1><h2><h3><h4><h5><h6><div><p><pre><sup><ul><ol><br /><dl><dt><table><caption><tr><li><dd><th><td><a><area><img><form><input><textarea><button><select><option>' );
+    $goodStr = strip_tags( $goodStr, '<title><hr><h1><h2><h3><h4><h5><h6><div><p><pre><sup><ul><ol><br><dl><dt><table><caption><tr><li><dd><th><td><a><area><img><form><input><textarea><button><select><option>' );
 
     //strip extra whitespace except between <pre> and <textarea> tags
 
@@ -102,7 +102,7 @@ function html2text( $badStr ) {
             $goodStr = preg_split( "/<\/?textarea[^>]*>/i", $badStr[$x] );
             for ( $z = 0; isset($goodStr[$z]) && is_string( $goodStr[$z] ); $z++ ) { // Moodle: added isset() test
                 if ( $z % 2 ) { $goodStr[$z] = '<textarea>'.$goodStr[$z].'</textarea>'; } else {
-                    $goodStr[$z] = preg_replace( "/\s+/", ' ', $goodStr[$z] );
+                    $goodStr[$z] = str_replace('  ', ' ', $goodStr[$z] );
                 }
             }
             $badStr[$x] = implode('',$goodStr);
@@ -154,11 +154,17 @@ function html2text( $badStr ) {
     //wordwrap
 
     // $goodStr = wordwrap( $goodStr );   // Moodle
-    $goodStr = wordwrap( $goodStr, 70 );
+    $goodStr = wordwrap( $goodStr, 78 );
 
     //make sure there are no more than 3 linebreaks in a row and trim whitespace
+    $goodStr = str_replace(chr(160), ' ', $goodStr );
+    $goodStr = preg_replace("/\r\n?|\f/", "\n", $goodStr);
+    $goodStr = preg_replace("/\n(\s*\n){2}/", "\n\n\n", $goodStr);
+    $goodStr = preg_replace("/[ \t]+(\n|$)/", "$1", $goodStr);
+    $goodStr = preg_replace("/^\n*|\n*$/", '', $goodStr);
+    $goodStr = str_replace(chr(160), ' ', $goodStr );
 
-    return preg_replace( "/^\n*|\n*$/", '', preg_replace( "/[ \t]+(\n|$)/", "$1", preg_replace( "/\n(\s*\n){2}/", "\n\n\n", preg_replace( "/\r\n?|\f/", "\n", str_replace( chr(160), ' ', $goodStr ) ) ) ) );
+    return $goodStr;
 
 }
 
