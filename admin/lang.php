@@ -87,7 +87,7 @@
             $first = true;
             foreach ($enstring as $key => $value) {
                 if (!isset($string[$key])) {
-                    $value = htmlentities($value);
+                    $value = htmlspecialchars($value);
                     $value = str_replace("$"."a", "\\$"."a", $value);
                     if ($first) {
                         echo "</PRE><HR><P><B>".get_string("stringsnotset","","$langdir/$file")."</B></P><PRE>";
@@ -179,7 +179,7 @@
             }
             echo "<TABLE WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=3 BORDER=0>";
             foreach ($enstring as $key => $envalue) {
-                $envalue = nl2br(htmlentities($envalue));
+                $envalue = nl2br(htmlspecialchars($envalue));
                 $envalue = str_replace("\$a","<B>\$a</B>", $envalue);  // Make variables bold
                 // TODO:  It would be nice if all the $a->something variables were bold too
 
@@ -188,7 +188,7 @@
                 echo "<TD WIDTH=40% BGCOLOR=\"$THEME->cellheading\" VALIGN=TOP>$envalue</TD>";
 
                 $value = str_replace("\\","",$string[$key]);          // Delete all slashes
-                $value = htmlentities($value);
+                $value = htmlspecialchars($value);
                 if ($editable) {
                     echo "<TD WIDTH=40% VALIGN=TOP>";
                     if (isset($string[$key])) {
