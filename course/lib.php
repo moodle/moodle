@@ -871,6 +871,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strmovehere;
     static $strmovefull;
 
+    $labelformatoptions = New stdClass;
 
     if (!isset($isteacher)) {
         $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
