@@ -646,11 +646,6 @@ TABLE.calendarmonth THEAD TD {
 	margin-bottom: 4px;
 }
 
-.calendarexpired {
-	color: red;
-	font-weight: bold;
-}
-
 .calendarreferer {
 	font-weight: bold;
 }
