@@ -184,7 +184,7 @@ th {
 
 
 /* course */
-.headingblock.outline {
+.headingblock .outline {
     border-color:#DDDDDD; /* borders */
 }
 
@@ -334,6 +334,25 @@ th {
 .entrybox {
     border-color: #BBBBBB;
 }
+
+.entry {
+}
+
+.glossarypost {
+    border-color: #DDDDDD;
+}
+
+.glossarypost .entryheader,
+.glossarypost .picture,
+.glossarypost .entryattachment,
+.glossarypost .left {
+    background-color: #F0F0F0;
+}
+
+#mod-glossary-report .generalbox .teacher {
+    background: #F0F0F0;
+}
+
 
 
 

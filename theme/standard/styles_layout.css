@@ -265,7 +265,7 @@ table.formtable tbody th
 #course-view .section .left {
     border-right:0px;
     text-align:center;
-    font-style:bold;
+    font-weight:bold;
     width: 1.5em;
 }
 
@@ -402,7 +402,7 @@ table.userinfobox {
 }
 
 .forumheaderlist .discussion .starter {
-    vertical-align: center;
+    vertical-align: middle;
 }
 
 .forumheaderlist .discussion .lastpost {
@@ -459,16 +459,20 @@ dialouge, exercise, forum, lesson, quiz */
     border-width:1px;
     border-style:solid;
     border-collapse:separate;
+    margin-bottom: 5px;
 }
 
 .glossarypost .entry {
     padding: 3px;
 }
 
+.glossarypost .picture {
+    width: 35px;
+}
 
 /* message */
 .message_link {
-    vertical-align:center;
+    vertical-align:middle;
 }
 
 .message_search_results {
@@ -697,8 +701,8 @@ table.minicalendar th {
 
 .cal_popup_caption {
     background-image:url(gradient.jpg);
-    border-bottom-width:1px;
-    border-bottom-style:solid;
+    border-width:0px 0px 1px 0px;
+    border-style:solid;
     padding-bottom:2px;
 }
 
