@@ -344,16 +344,16 @@ global $EXERCISE_FWEIGHTS;
 	if ($exercise->usemaximum) {
 		// first get the teacher's grade for the best submission
 		if ($bestgrades = exercise_get_best_submission_grades($exercise)) {
-			foreach ($bestgrades as $bestgrade) {
-				$return->grades[$bestgrade->userid] = $bestgrade->grade * 
+			foreach ($bestgrades as $grade) {
+				$return->grades[$grade->userid] = $grade->grade * 
 					$EXERCISE_FWEIGHTS[$exercise->teacherweight] * $scaling;
 			}
 		}
 	}
 	else { // use mean values
 		if ($meangrades = exercise_get_mean_submission_grades($exercise)) {
-			foreach ($meangrades as $meangrade) {
-				$return->grades[$meangrade->userid] = $meangrade->grade * 
+			foreach ($meangrades as $grade) {
+				$return->grades[$grade->userid] = $grade->grade * 
 					$EXERCISE_FWEIGHTS[$exercise->teacherweight] * $scaling;
 			}
 		}
@@ -368,7 +368,8 @@ global $EXERCISE_FWEIGHTS;
 			}
 		}
 	}
-    $return->maxgrade = get_field("exercise", "grade", "id", "$exerciseid");
+    $return->maxgrade = $exercise->grade;
+    
     return $return;
 }
 
@@ -1025,7 +1026,7 @@ function exercise_get_best_submission_grades($exercise) {
 // Returns the grades of students' best submissions
 	global $CFG;
 	
-	return get_records_sql("SELECT DISTINCT MAX(a.grade) grade, u.userid FROM 
+	return get_records_sql("SELECT DISTINCT u.userid, MAX(a.grade) grade FROM 
                         {$CFG->prefix}exercise_submissions s, 
 						{$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_students u 
                             WHERE u.course = $exercise->course
@@ -1072,7 +1073,7 @@ function exercise_get_mean_submission_grades($exercise) {
 // Returns the mean grades of students' submissions
 	global $CFG;
 	
-	return get_records_sql("SELECT DISTINCT AVG(a.grade) grade, u.userid FROM 
+	$grades = get_records_sql("SELECT DISTINCT u.userid, AVG(a.grade) grade FROM 
                         {$CFG->prefix}exercise_submissions s, 
 						{$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_students u 
                             WHERE u.course = $exercise->course
@@ -1080,6 +1081,7 @@ function exercise_get_mean_submission_grades($exercise) {
 							  AND s.exerciseid = $exercise->id
 							  AND a.submissionid = s.id
 							  GROUP BY u.userid");
+    return $grades;
 }
 
 
@@ -1953,10 +1955,13 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
 		if (!$submission = get_record("exercise_submissions", "id", $assessment->submissionid)) {
 			error ("exercise_print_assessment_form: Submission record not found");
 			}
-		
-		if (isteacher($course->id)) { 
-			// show the teacher the exercise: requires getting the student's assessment(s) and finding the assessment which
-			// comes from a teacher submission
+		// test if this assessment is from a teacher or student.
+        // Teacher's assessments are more complicated as we need to go back a couple of steps
+        // to find the exercise. Student's assessments are directly associated with an exercise.
+		if (isteacher($course->id, $assessment->userid)) { 
+			// A teacher's assessment, requires getting the student's assessment(s) 
+            // and finding which of those assessments which comes from a teacher submission,
+            // that is the exercise
 			$exercisefound = false;
 			if (!$submissionowner = get_record("user", "id", $submission->userid)) {
 				error ("exercise_print_assessment_form: User record not found");
@@ -1983,7 +1988,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
 				}
 			}
 		else { 
-			// it's a student, print instructions if it's their own assessment
+			// it's a student assessment, print instructions if it's their own assessment
 			if ($assessment->userid == $USER->id) {
 				print_heading_with_help(get_string("pleaseusethisform", "exercise"), "grading", "exercise");
 				}
