@@ -49,8 +49,6 @@
 
     foreach ($journals as $journal) {
 
-        $entrytext = get_field("journal_entries", "text", "userid", $USER->id, "journal", $journal->id);
-
         $journal->timestart  = $course->startdate + (($journal->section - 1) * 608400);
         if (!empty($journal->daysopen)) {
             $journal->timefinish = $journal->timestart + (3600 * 24 * $journal->daysopen);
@@ -59,12 +57,14 @@
         }
         $journalopen = ($journal->timestart < $timenow && $timenow < $journal->timefinish);
 
+        $entrytext = get_field("journal_entries", "text", "userid", $USER->id, "journal", $journal->id);
 
-        $text = text_to_html($entrytext)."<P ALIGN=right><A HREF=\"view.php?id=$journal->coursemodule\">";
+        $text = text_to_html($entrytext)."<p align=right><a href=\"view.php?id=$journal->coursemodule\">";
+
         if ($journalopen) {
-            $text .= "$stredit</A></P>";
+            $text .= "$stredit</a></p>";
         } else {
-            $text .= "$strview</A></P>";
+            $text .= "$strview</a></p>";
         }
         if (!empty($journal->section)) {
             $section = "$journal->section";
@@ -81,7 +81,7 @@
         }
     }
 
-    echo "<BR>";
+    echo "<br />";
 
     print_table($table);
 
