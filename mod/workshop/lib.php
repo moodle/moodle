@@ -1268,7 +1268,7 @@ function workshop_file_area_name($workshop, $submission) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_agree_logs($course, $timestart) {
-    // get the "agree" entries for this user (the assessment owner and add the first and last names 
+    // get the "agree" entries for this user (the assessment owner) and add the first and last names 
     // the last two probably wont be used...
     global $CFG, $USER;
     if (empty($USER->id)) {
@@ -1452,7 +1452,7 @@ function workshop_get_unmailed_assessments($cutofftime) {
                              WHERE a.mailed = 0 
                                AND a.timecreated < $cutofftime 
                                AND g.id = a.workshopid
-                               AND g.releasegrades < $cutoffime");
+                               AND g.releasegrades < $cutofftime");
 }
 
 
@@ -1504,7 +1504,7 @@ function workshop_get_user_assessments($workshop, $user) {
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_user_submissions($workshop, $user) {
     // return real submissions of user newest first, oldest last. Ignores the dummy submissions
-    // which get created to hold the final grades for users for make no submissions)
+    // which get created to hold the final grades for users that make no submissions
     return get_records_select("workshop_submissions", "workshopid = $workshop->id AND 
         userid = $user->id AND timecreated > 0", "timecreated DESC" );
 }
