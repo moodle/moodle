@@ -333,7 +333,7 @@ function display() {
     /// If we are in a frameset, just print the top of it
 
     if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
-        print_header($pagetitle, $course->fullname, "$this->navigation <a target=\"$CFG->framename\" href=\"$fullurl\">{$resource->name}</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
+        print_header($pagetitle, $course->fullname, "$this->navigation {$resource->name}", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
         echo "<center><font size=\"-1\">".text_to_html($resource->summary, true, false)."</font></center>";
         echo "</body></html>";
