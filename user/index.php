@@ -8,7 +8,8 @@
 
     require_variable($id);   //course
     optional_variable($sort, "lastaccess");  //how to sort students
-    optional_variable($dir,"DESC");   //how to sort students
+    optional_variable($dir,"DESC");          //how to sort students
+    optional_variable($showall,"0");         //show all of the students?
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
@@ -63,15 +64,20 @@
 
     if ($students = get_course_students($course->id, "$dsort $dir")) {
         $numstudents = count($students);
-        echo "<H2 align=center>$numstudents $course->students</H2>";
+        echo "<h2 align=center>$numstudents $course->students</h2>";
         if ($numstudents < $USER_SMALL_CLASS) {
             foreach ($students as $student) {
                 print_user($student, $course, $string);
             }
-        } else if ($numstudents > $USER_HUGE_CLASS) {
-            print_heading(get_string("toomanytoshow"));
 
         } else {  // Print one big table with abbreviated info
+            if ($numstudents > $USER_LARGE_CLASS and $showall == "0") {
+                $a->count  = $USER_LARGE_CLASS;
+                $a->things = strtolower($course->students);
+                echo "<h3 align=center>".get_string("displayingfirst", "", $a);
+                echo "(<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showallusers")."</a>)";
+                echo "</h3>";
+            }
             $columns = array("name", "city", "country", "lastaccess");
 
             foreach ($columns as $column) {
@@ -110,14 +116,19 @@
             $table->cellpadding = 2;
             $table->cellspacing = 0;
             
+            $count = 0;
             foreach ($students as $student) {
+                $count++;
+                if ($showall == "0" and $count > $USER_LARGE_CLASS) {
+                    break;
+                }
                 if ($student->lastaccess) {
                     $lastaccess = format_time(time() - $student->lastaccess, $string);
                 } else {
                     $lastaccess = $string->never;
                 }
 
-                if ($numstudents > $USER_LARGE_CLASS) {  // Don't show pictures
+                if ($numstudents > $USER_LARGE_CLASS and $showall == "1") {  // Don't show pictures
                     $picture = "";
                 } else {
                     $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
