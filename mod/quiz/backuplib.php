@@ -580,6 +580,7 @@
                 fwrite ($bf,full_tag("FEEDBACK",4,false,$quiz->feedback));
                 fwrite ($bf,full_tag("CORRECTANSWERS",4,false,$quiz->correctanswers));
                 fwrite ($bf,full_tag("GRADEMETHOD",4,false,$quiz->grademethod));
+                fwrite ($bf,full_tag("DECIMALPOINTS",4,false,$quiz->decimalpoints));
                 fwrite ($bf,full_tag("REVIEW",4,false,$quiz->review));
                 fwrite ($bf,full_tag("SHUFFLEQUESTIONS",4,false,$quiz->shufflequestions));
                 fwrite ($bf,full_tag("SHUFFLEANSWERS",4,false,$quiz->shuffleanswers));

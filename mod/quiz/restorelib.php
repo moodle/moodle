@@ -1308,6 +1308,7 @@
             $quiz->feedback = backup_todb($info['MOD']['#']['FEEDBACK']['0']['#']);
             $quiz->correctanswers = backup_todb($info['MOD']['#']['CORRECTANSWERS']['0']['#']);
             $quiz->grademethod = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
+            $quiz->decimalpoints = backup_todb($info['MOD']['#']['DECIMALPOINTS']['0']['#']);
             $quiz->review = backup_todb($info['MOD']['#']['REVIEW']['0']['#']);
             $quiz->shufflequestions = backup_todb($info['MOD']['#']['SHUFFLEQUESTIONS']['0']['#']);
             $quiz->shuffleanswers = backup_todb($info['MOD']['#']['SHUFFLEANSWERS']['0']['#']);
@@ -1342,6 +1343,12 @@
             }
             //We have the questions field recoded to its new ids
             $quiz->questions = $questions_field;
+
+            //Examine the decimalpoints field to detect pre 1.5 backups
+            if (!isset($info['MOD']['#']['DECIMALPOINTS']['0']['#'])) {
+                //Default value
+                $quiz->decimalpoints = 2;
+            }
 
             //The structure is equal to the db, so insert the quiz
             $newid = insert_record ("quiz",$quiz);
