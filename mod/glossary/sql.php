@@ -9,6 +9,9 @@
 
 /// Creating the SQL statements
 
+/// Initialise some variables
+    $sqlorderby = '';
+
 /// Pivot is the field that set the break by groups (category, initial, author name, etc)
 
 /// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
@@ -182,7 +185,7 @@
 
         case 'entry': 
             $printpivot = 0;
-            $where = "AND ge.id = $hook";
+            $where = "AND ge.id = '$hook'";
         break;
 
         case 'letter': 
