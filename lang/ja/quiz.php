@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003032500)
+      // quiz.php - created with Moodle 1.0.9 development (2003032602)
 
 
 $string['addquestions'] = "クイズを追加";
@@ -41,17 +41,19 @@ $string['default'] = "デフォルト";
 $string['defaultinfo'] = "質問の標準カテゴリー";
 $string['deletequestioncheck'] = " '\$a' を本当に削除してよろしいですか?";
 $string['editcategories'] = "カテゴリーを編集する";
+$string['editingmatch'] = "マッチング解答方式を編集する";
 $string['editingmultichoice'] = "複数解答方式を編集する";
 $string['editingquestion'] = "質問を編集する";
 $string['editingquiz'] = "クイズを編集する";
-$string['editingrandommatch'] = "ランダムマッチ形式の質問を編集する";
+$string['editingrandomsamatch'] = "ランダム記述マッチング解答方式を編集する";
 $string['editingshortanswer'] = "記述式の質問を編集する";
 $string['editingtruefalse'] = "○/×方式の質問を編集する";
 $string['false'] = "×";
 $string['feedback'] = "フィードバック";
 $string['fileformat'] = "ファイルフォーマット";
-$string['filloutoneanswer'] = "1つ以上の解答可能な質問を入力してください。文字の左側に空白は使用できません。";
-$string['fillouttwochoices'] = "2つ以上の選択を入力してください。文字の左側に空白は使用できません。";
+$string['filloutoneanswer'] = "1つ以上の解答可能な質問を入力してください。空白は使用できません。";
+$string['filloutthreequestions'] = "少なくとも3つの質問を入力してください。空白は使用できません。";
+$string['fillouttwochoices'] = "2つ以上の選択を入力してください。空白は使用できません。";
 $string['fractionsaddwrong'] = "評価の合計が100%%に達していません。
 
 <BR>現在合計 \$a%%　です。
@@ -68,6 +70,8 @@ $string['imagedisplay'] = "表示画像";
 $string['importquestions'] = "ファイルからクイズをインポートする";
 $string['introduction'] = "説明";
 $string['marks'] = "得点";
+$string['match'] = "マッチング";
+$string['matchanswer'] = "マッチング解答";
 $string['missingname'] = "質問名が見つかりません";
 $string['missingquestiontext'] = "質問内容が見つかりません";
 $string['missingword'] = "ワードフォーマットが見つかりません";
@@ -80,6 +84,8 @@ $string['nomoreattempts'] = "解答回数が終了しました";
 $string['noquestions'] = "質問が作成されていません";
 $string['noreview'] = "このクイズの復習を許可されていません";
 $string['noreviewuntil'] = "\$a までこのクイズの復習は出来ません";
+$string['notenoughsubquestions'] = "十分な副質問が定義されていません！<br>
+この質問を修正しますか？";
 $string['publish'] = "公開";
 $string['qti'] = "IMS QTIフォーマット";
 $string['question'] = "質問";
@@ -92,10 +98,10 @@ $string['quizclosed'] = "このクイズは \$a に閉じられます";
 $string['quiznotavailable'] = "クイズは  \$a まで利用できません";
 $string['quizopen'] = "クイズ公開日";
 $string['random'] = "ランダム";
-$string['randommatch'] = "ランダムマッチ";
-$string['randommatchcreate'] = "ランダムマッチ形式の質問を作成する";
-$string['randommatchintro'] = "以降の質問に対して、適当な答えをメニューから選択してください。";
-$string['randommatchnumber'] = "選択する質問の数";
+$string['randomsamatch'] = "ランダム記述マッチング解答方式";
+$string['randomsamatchcreate'] = "ランダム記述マッチング解答方式を作成する";
+$string['randomsamatchintro'] = "各質問のマッチング解答をメニューより選択してください。";
+$string['randomsamatchnumber'] = "選択質問数";
 $string['readytosend'] = "採点のために全てのクイズを送信します。本当に送信してもよろしいですか?";
 $string['regrade'] = "全解答を再評価する";
 $string['regradecomplete'] = "全解答が再評価されました";
