@@ -1,0 +1,20 @@
+<p align=center><b>Requiere una dirección de red</b></p>
+
+<p>Es un campo opcional.</p>
+
+<p>Podemos restringir el acceso a un cuestionario a una subred particular como una red local (LAN) o Internet especificando una lista separada por comas de los números parciales o completos del dirección IP.</p>
+
+<p>Esto es especialmente útil para a proteger el cuestionario y asegurarnos de sólo se realiza desde una determinada aula o red.</p>
+
+<p>Por ejemplo:  <b>192.168. , 231.54.211.0/20, 231.3.56.211</b></p>
+
+<p>Hay tres tipos de números que podemos utilizar (no podemos utilizar dominios basados en texto como example.com):
+<ol>
+<li>Direcciones IP completas, tales como 192.168.10.1 que se asocian a un único ordenador (o 
+Proxy).</li>
+<li>Direcciones parciales, tales como 192.168 que se asocian a cualquier red que comience con esos números.</li>
+<li>Notación CIDR, como <b>231.54.211.0/20</b> que permiten habilitar con más precisión subredes.</li>
+</ol>
+</p>
+
+<p>Los espacios en blanco son ignorados.</p>
