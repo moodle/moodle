@@ -43,16 +43,16 @@ unset($CFG);  // Ignore this line
 //   postgres7  - the prefix is REQUIRED, regardless of whether the      //
 //                database already contains tables.                      //
 
-$CFG->dbtype    = "mysql";       // mysql or postgres7 (for now)
-$CFG->dbhost    = "localhost";   // eg localhost or db.isp.com 
-$CFG->dbname    = "moodle";      // database name, eg moodle
-$CFG->dbuser    = "username";    // your database username
-$CFG->dbpass    = "password";    // your database password
+$CFG->dbtype    = 'mysql';       // mysql or postgres7 (for now)
+$CFG->dbhost    = 'localhost';   // eg localhost or db.isp.com 
+$CFG->dbname    = 'moodle';      // database name, eg moodle
+$CFG->dbuser    = 'username';    // your database username
+$CFG->dbpass    = 'password';    // your database password
 
 $CFG->dbpersist = true;          // Use persistent database connection? 
                                  // (should be 'true' for 99% of sites)
 
-$CFG->prefix    = "mdl_";        // Prefix to use for all table names
+$CFG->prefix    = 'mdl_';        // Prefix to use for all table names
 
 
 //=========================================================================
@@ -63,7 +63,7 @@ $CFG->prefix    = "mdl_";        // Prefix to use for all table names
 // is accessible via multiple URLs then choose the most natural one 
 // that your students would use.  Do not include a trailing slash.
 
-$CFG->wwwroot   = "http://example.com/moodle";
+$CFG->wwwroot   = 'http://example.com/moodle';
 
 
 //=========================================================================
@@ -72,12 +72,12 @@ $CFG->wwwroot   = "http://example.com/moodle";
 // Next, specify the full OS directory path to this same location
 // For Windows this might be something like this:
 //
-//    $CFG->dirroot = "C:\Program Files\Easyphp\www\moodle"
+//    $CFG->dirroot = 'C:\Program Files\Easyphp\www\moodle';
 //
 // NOTE: Make sure all the upper/lower case is EXACTLY the same as it is 
 // on your computer otherwise you may experience some problems (bug in PHP)
 
-$CFG->dirroot   = "/web/moodle";
+$CFG->dirroot   = '/web/moodle';
 
 
 //=========================================================================
@@ -91,9 +91,9 @@ $CFG->dirroot   = "/web/moodle";
 // - On hosting systems you might need to make sure that your "group" has
 //   no permissions at all, but that "others" have full permissions.
 //
-// - On Windows systems you might specify something like "C:\moodledata"
+// - On Windows systems you might specify something like 'C:\moodledata'
 
-$CFG->dataroot  = "/home/moodledata";
+$CFG->dataroot  = '/home/moodledata';
 
 
 //=========================================================================
@@ -105,6 +105,7 @@ $CFG->dataroot  = "/home/moodledata";
 // The default is usually OK, but you may want to change it to 0750 
 // if you are concerned about world-access to the files (you will need
 // to make sure the web server process (eg Apache) can access the files.
+// NOTE: the prefixed 0 is important, and don't use quotes.
 
 $CFG->directorypermissions = 0777;
 
@@ -119,7 +120,7 @@ $CFG->directorypermissions = 0777;
 // renaming the admin directory in your installation, and putting that 
 // new name here.  eg "moodleadmin".  This will fix admin links in Moodle.
 
-$CFG->admin = "admin";
+$CFG->admin = 'admin';
 
 
 //=========================================================================
