@@ -212,7 +212,7 @@ function forum_cron () {
         /// prevents the risk of duplicated mails, which is a worse problem.
 
         if (!forum_mark_old_posts_as_mailed($endtime)) {
-            echo "Errors occurred while trying to mark some posts as being mailed.\n";
+            mtrace("Errors occurred while trying to mark some posts as being mailed.");
             return false;  // Don't continue trying to mail them, in case we are in a cron loop
         }
 
@@ -220,29 +220,27 @@ function forum_cron () {
 
         foreach ($posts as $post) {
 
-            echo "\n";
-            print_string("processingpost", "forum", $post->id);
-            echo "\n";
+            mtrace(get_string("processingpost", "forum", $post->id), '');
 
             if (! $userfrom = get_record("user", "id", "$post->userid")) {
-                echo "Could not find user $post->userid\n";
+                mtrace("Could not find user $post->userid");
                 continue;
             }
 
             $userfrom->precedence = "bulk";   // This gets added to the email header
 
             if (! $discussion = get_record("forum_discussions", "id", "$post->discussion")) {
-                echo "Could not find discussion $post->discussion\n";
+                mtrace("Could not find discussion $post->discussion");
                 continue;
             }
 
             if (! $forum = get_record("forum", "id", "$discussion->forum")) {
-                echo "Could not find forum $discussion->forum\n";
+                mtrace("Could not find forum $discussion->forum");
                 continue;
             }
 
             if (! $course = get_record("course", "id", "$forum->course")) {
-                echo "Could not find course $forum->course\n";
+                mtrace("Could not find course $forum->course");
                 continue;
             }
 
@@ -285,7 +283,7 @@ function forum_cron () {
                         $queue->discussionid = $discussion->id;
                         $queue->postid = $post->id;
                         if(!insert_record('forum_queue', $queue)) {
-                            echo "Error: mod/forum/cron.php: Could not queue for digest mail for id $post->id to user $userto->id ($userto->email) .. not trying again.\n";
+                            mtrace("Error: mod/forum/cron.php: Could not queue for digest mail for id $post->id to user $userto->id ($userto->email) .. not trying again.");
                         }
                         continue;
                     }
@@ -301,8 +299,8 @@ function forum_cron () {
 
                     if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext, 
                                                      $posthtml, '', '', $CFG->forum_replytouser)) {
-                        echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
-                             " ($userto->email) .. not trying again.\n";
+                        mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
+                             " ($userto->email) .. not trying again.");
                         add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id", 
                                    substr($post->subject,0,30), $cm->id, $userto->id);
                         $errorcount++;
@@ -314,7 +312,7 @@ function forum_cron () {
                     }
                 }
 
-                echo ".... mailed to $mailcount users.\n";
+                mtrace(".... mailed to $mailcount users.");
                 if ($errorcount) {
                     set_field("forum_posts", "mailed", "2", "id", "$post->id");
                 }
@@ -326,8 +324,10 @@ function forum_cron () {
 
     if (!empty($realuser)) {   // Restore real USER timezone if necessary
         $sitetimezone = $realuser->timezone;
+        $USER->lang   = $realuser->lang;
     } else {
         $sitetimezone = $CFG->timezone;
+        $USER->lang   = $CFG->lang;
     }
 
     /// Now see if there are any digest mails waiting to be sent, and if we should send them
@@ -340,7 +340,10 @@ function forum_cron () {
     $digesttime = usergetmidnight($timenow, $sitetimezone) + ($CFG->digestmailtime * 3600);
 
     if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
+
         set_config('digestmailtimelast', $timenow);
+
+        mtrace('Sending forum digests: '.userdate($timenow, '', $sitetimezone));
 
         $digestposts = get_records('forum_queue');
         if(!empty($digestposts)) {
@@ -372,7 +375,7 @@ function forum_cron () {
 
             foreach($userdiscussions as $userid => $thesediscussions) {
 
-                echo "\n".get_string('processingdigest', 'forum', $userid).'... ';
+                mtrace(get_string('processingdigest', 'forum', $userid),'... ');
 
                 // First of all delete all the queue entries for this user
                 delete_records('forum_queue', 'userid', $userid);
@@ -404,16 +407,16 @@ function forum_cron () {
                 foreach($thesediscussions as $discussionid) {
                     $discussion = $discussions[$discussionid];
                     if(empty($discussion)) {
-                        echo "Could not find discussion $discussionid\n";
+                        mtrace("Error: Could not find discussion $discussionid");
                         continue;
                     }
 
                     if (! $forum = get_record("forum", "id", "$discussion->forum")) {
-                        echo "Could not find forum $discussion->forum\n";
+                        mtrace("Could not find forum $discussion->forum");
                         continue;
                     }
                     if (! $course = get_record("course", "id", "$forum->course")) {
-                        echo "Could not find course $forum->course\n";
+                        mtrace("Could not find course $forum->course");
                         continue;
                     }
 
@@ -446,11 +449,11 @@ function forum_cron () {
 
                     foreach($postsarray as $postid) {
                         if (! $post = get_record("forum_posts", "id", "$postid")) {
-                            echo "Could not find post $postid\n";
+                            mtrace("Error: Could not find post $postid");
                             continue;
                         }
                         if (! $userfrom = get_record("user", "id", "$post->userid")) {
-                            echo "Could not find user $post->userid\n";
+                            mtrace("Error: Could not find user $post->userid");
                             continue;
                         }
 
@@ -484,13 +487,13 @@ function forum_cron () {
 
                 if (!$mailresult =  email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, 
                                                   '', '', $CFG->forum_replytouser)) {
-                    echo "ERROR!\n";
+                    mtrace("ERROR!");
                     echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
                     add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);
                 } else if ($mailresult === 'emailstop') {
                     add_to_log($course->id, 'forum', 'mail digest blocked', '', '', $cm->id, $userto->id);
                 } else {
-                    echo "success.\n";
+                    mtrace("success.");
                     $usermailcount++;
                 }
 
@@ -500,7 +503,7 @@ function forum_cron () {
     }
 
     if(!empty($usermailcount)) {
-        echo "\n".get_string('digestsentusers', 'forum', $usermailcount)."\n";
+        mtrace(get_string('digestsentusers', 'forum', $usermailcount));
     }
 
     if (!empty($realuser)) {   // Restore real USER if necessary
