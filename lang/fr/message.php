@@ -1,0 +1,52 @@
+<?php  // $Id$
+
+$string['addcontact'] = 'Ajouter un contact';
+$string['ago'] = 'Il y a $a';
+$string['allmine'] = 'Tous mes messages reçus ou envoyés';
+$string['allstudents'] = 'Tous les messages entre les étudiants du cours';
+$string['allusers'] = 'Tous les messages de tous les utilisateurs';
+$string['beepnewmessage'] = 'Bip à l\'arrivée d\'un';
+$string['blockcontact'] = 'Bloc des contacts';
+$string['blockedmessages'] = '$a message(s) de/pour des utilisateurs bloqués';
+$string['deletemessagesdays'] = 'Nombre de jours avant la suppression automatique des anciens messages';
+$string['discussion'] = 'Discussion';
+$string['emailmessages'] = 'Envoyer les messages par courriel quand je suis déconnecté';
+$string['emailtagline'] = 'Ce courriel est une copie d\'un message qui vous a été envoyé sur «&nbsp;$a&nbsp;»';
+$string['emptysearchstring'] = 'Vous devez saisir un critère de recherche';
+$string['includeblockedusers'] = 'Inclure les utilisateurs bloqués';
+$string['incomingcontacts'] = 'Incoming Contacts ($a)';
+$string['keywords'] = 'Mots clefs';
+$string['keywordssearchresults'] = 'Résultats de recherche&nbsp;: $a messages trouvés';
+$string['maxmessages'] = 'Nombre maximal de messages à afficher dans l\'historique des discussions';
+$string['message'] = 'Message';
+$string['messagehistory'] = 'Historique du message';
+$string['messages'] = 'Messages';
+$string['messaging'] = 'Messagerie';
+$string['mycontacts'] = 'Mes contacts';
+$string['newsearch'] = 'Nouvelle recherche';
+$string['nosearchresults'] = 'Cette recherche n\'a délivré aucun résultat';
+$string['nomessages'] = 'Aucun message en attente';
+$string['nomessagesfound'] = 'Aucun message trouvé';
+$string['offlinecontacts'] = 'Contacts hors ligne ($a)';
+$string['onlinecontacts'] = 'Contacts en ligne ($a)';
+$string['onlyfromme'] = 'Uniquement mes messages envoyés';
+$string['onlymycourses'] = 'Uniquement dans mes cours';
+$string['onlytome'] = 'Uniquement mes messages reçus';
+$string['pagerefreshes'] = 'Cette page se rafraîchit automatiquement toutes les $a secondes';
+$string['removecontact'] = 'Supprimer ce contact';
+$string['savemysettings'] = 'Enregistrer mes réglages';
+$string['searchforperson'] = 'Rechercher une personne';
+$string['searchmessages'] = 'Rechercher des messages';
+$string['sendmessage'] = 'Envoyer message';
+$string['sendmessageto'] = 'Envoyer message à $a';
+$string['settingssaved'] = 'Vos réglages ont été enregistrés';
+$string['showmessagewindow'] = 'Afficher automatiquement la messagerie lorsque de nouveaux messages arrivent (votre navigateur doit être configuré de façon à ne pas bloquer l\'ouverture des fenêtre popup de ce site)';
+$string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%I:%%M %%p';
+$string['timenosee'] = 'Minutes since I was last seen online';
+$string['timesent'] = 'Heure d\'envoi';
+$string['unblockcontact'] = 'Débloquer ce contact';
+$string['unreadmessages'] = '$a messages non lus';
+$string['userisblockingyou'] = 'Cet utisateur vous a retiré le droit de lui envoyer des messages';
+$string['userssearchresults'] = 'Résultats de recherche&nbsp;: $a utilisateurs trouvés';
+
+?>
