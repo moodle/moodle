@@ -1069,9 +1069,9 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         echo "<br />";
     }
 
-    $results->attemptbuildsonthelast = isset($results->attemptbuildsonthelast) ? $results->attemptbuildsonthelast : NULL;
+    $attemptbuildsonthelast = isset($results->attemptbuildsonthelast) ? $results->attemptbuildsonthelast : NULL;
 
-    if (empty($results) || $results->attemptbuildsonthelast) {
+    if (empty($results) || $attemptbuildsonthelast) {
         if (!empty($quiz->shufflequestions)) {  // Things have been mixed up, so pass the question order
             $shuffleorder = implode(',', $questionorder);
             echo "<input type=\"hidden\" name=\"shuffleorder\" value=\"$shuffleorder\" />\n";
