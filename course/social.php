@@ -23,21 +23,16 @@
       print_side_block("", $moddata, "", $modicon);
       
 
-      // Then, print all the available readings
-
+      // Then, print all the available resources (Section 0)
       print_simple_box("Resources", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+      print_section($site->id, $sections[0], $mods, $modnamesused, true);
 
-      if ($readings = reading_list_all_readings($course->id, "timemodified DESC", 0, true)) {
-          foreach ($readings as $reading) {
-              $readingdata[] = $reading;
-              $readingicon[] = "<IMG SRC=\"../mod/reading/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"Reading\">";
-          }
-      }
-      if (isediting($course->id)) {
-          $readingdata[] = "<A HREF=\"mod.php?id=$course->id&section=0&add=reading\">Add reading...</A>";
-          $readingicon[] = "&nbsp;";
-      }
-      print_side_block("", $readingdata, "", $readingicon);
+      if (isediting($site->id)) {
+          echo "<DIV ALIGN=right>";
+          popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=0&add=",
+                      $modnames, "section0", "", "Add...");
+          echo "</DIV>";
+      }      
 
       // Print all the recent activity
       print_simple_box("Recent Activity", $align="CENTER", $width="100%", $color="$THEME->cellheading");

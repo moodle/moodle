@@ -49,6 +49,7 @@
                   update_course_icon($course->id));
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused, $modsectioncounts);
+    $sections = get_all_sections($course->id);
 
     switch ($course->format) {
         case "weeks":
