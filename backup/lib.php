@@ -414,10 +414,13 @@
                 $status = false;
             }
         } else {
-            ////First strip slashes
-            $temp = stripslashes($status->info);
-            //Now unserialize
-            $status->info = unserialize($temp);
+            //Only if status (record exists)
+            if ($status) {
+                ////First strip slashes
+                $temp = stripslashes($status->info);
+                //Now unserialize
+                $status->info = unserialize($temp);
+            }
         }
 
         return $status;
