@@ -754,7 +754,7 @@ function require_login($courseid=0, $autologinguest=true) {
     }
 
     // check whether the user should be changing password
-    reload_user_preferences();
+    // reload_user_preferences();    // Why is this necessary?  Seems wasteful.  - MD
     if (!empty($USER->preference['auth_forcepasswordchange'])){
         if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
             redirect($CFG->wwwroot .'/login/change_password.php');
@@ -783,6 +783,14 @@ function require_login($courseid=0, $autologinguest=true) {
     // Make sure the USER has a sesskey set up.  Used for checking script parameters.
     if (empty($USER->sesskey)) {
         $USER->sesskey = random_string(10);
+    }
+
+    // Check that the user has agreed to a site policy if there is one
+    if (!empty($CFG->sitepolicy)) {
+        if (!$USER->policyagreed) {
+            redirect($CFG->wwwroot .'/user/policy.php');
+            die;
+        }
     }
 
     // Next, check if the user can be in a particular course

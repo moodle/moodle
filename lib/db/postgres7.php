@@ -773,6 +773,10 @@ function main_upgrade($oldversion=0) {
         modify_database('', "CREATE UNIQUE INDEX prefix_user_username_uk ON prefix_user (username);");
         
     } 
+
+    if ($oldversion < 2004112900) {
+        table_column('user', '', 'policyagreed', 'integer', '1', 'unsigned', '0', 'not null', 'confirmed');
+    }
     
     return $result;
 }

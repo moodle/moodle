@@ -334,6 +334,7 @@ CREATE TABLE `prefix_user` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `auth` varchar(20) NOT NULL default 'manual',
   `confirmed` tinyint(1) NOT NULL default '0',
+  `policyagreed` tinyint(1) NOT NULL default '0',
   `deleted` tinyint(1) NOT NULL default '0',
   `username` varchar(100) NOT NULL default '',
   `password` varchar(32) NOT NULL default '',

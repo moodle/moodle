@@ -223,6 +223,7 @@ CREATE TABLE prefix_user (
    id SERIAL PRIMARY KEY,
    auth varchar(20) NOT NULL default 'manual',
    confirmed integer NOT NULL default '0',
+   policyagreed integer NOT NULL default '0',
    deleted integer NOT NULL default '0',
    username varchar(100) NOT NULL default '',
    password varchar(32) NOT NULL default '',

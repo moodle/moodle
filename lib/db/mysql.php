@@ -1004,6 +1004,11 @@ function main_upgrade($oldversion=0) {
         modify_database('','ALTER TABLE prefix_user_teachers DROP INDEX courseuserid;');
         modify_database('','ALTER TABLE prefix_user_teachers ADD UNIQUE INDEX courseuserid(course,userid);');        
     } 
+
+    if ($oldversion < 2004112900) {
+        table_column('user', '', 'policyagreed', 'integer', '1', 'unsigned', '0', 'not null', 'confirmed');
+    }
+
        
     return $result;
 
