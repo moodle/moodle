@@ -94,7 +94,6 @@ function olson_todst ($filename) {
 
         // Fix the from year to 1970
         $mdl_tz['from'] = 1970;
-        $mdl_tz['from_timestamp'] = 0;
 
         // add to the array
         $mdl_zones[] = $mdl_tz;
@@ -142,52 +141,14 @@ function olson_todst ($filename) {
                     // just a simple zone
                     $mdl_tz = $zone;
                 } 
-                
-                // start-of-year timestamp
-                // TODO: perhaps should consider the current DST rule
 
-                if(empty($mdl_tz['dst_startday'])) {
-                    // Either 0 or unset, bottom line is that DST doesn't get on that year
-                    $timestamp_dst = 0;
-                }
-                else {
-                    $find_day      = find_day_in_month($mdl_tz['dst_startday'], $mdl_tz['dst_weekday'], $mdl_tz['dst_month'], $mdl_tz['from']);
-                    $timestamp_dst = gmmktime(0, 0, 0, $mdl_tz['dst_month'], $find_day, $mdl_tz['from'], 0) - $mdl_tz['gmtoff'] * 60;
-                    // Add the "nominal GMT time" at that moment
-if(!strpos($mdl_tz['dst_time'], ':')) {
-    print_object('x');
+/*
+if(isset($mdl_tz['dst_time']) && !strpos($mdl_tz['dst_time'], ':') || isset($mdl_tz['std_time']) &&  !strpos($mdl_tz['std_time'], ':')) {
     print_object($mdl_tz);
+    print_object('---');
 }
-                    list($hours, $mins) = explode(':', $mdl_tz['dst_time']);
+*/
 
-                    $timestamp_dst += ($hours * 60 + $mins) * 60;
-                }
-                if(empty($mdl_tz['std_startday'])) {
-                    // Either 0 or unset, bottom line is that DST doesn't get on that year
-                    $timestamp_std = 0;
-                }
-                else {
-                    $find_day      = find_day_in_month($mdl_tz['std_startday'], $mdl_tz['std_weekday'], $mdl_tz['std_month'], $mdl_tz['from']);
-                    $timestamp_std = gmmktime(0, 0, 0, $mdl_tz['std_month'], $find_day, $mdl_tz['from'], 0) - $mdl_tz['gmtoff'] * 60;
-                    // Add the "nominal GMT time" at that moment
-                    list($hours, $mins) = explode(':', $mdl_tz['std_time']);
-                    $timestamp_dst += ($hours * 60 + $mins) * 60;
-                }
-
-                $timestamp = min($timestamp_dst, $timestamp_std);
-                // For zones that use no rule, this will still be 0. If so, make it Jan 1st of that year
-
-                if($timestamp == 0) {
-                    $mdl_tz['from_timestamp'] = gmmktime(0, 0, 0, 1, 1, $mdl_tz['from'], 0) - $mdl_tz['gmtoff'] * 60;
-                }
-                else {
-                    $mdl_tz['from_timestamp'] = $timestamp;
-                }
-
-                if($mdl_tz['from_timestamp'] < 0) {
-                    // This can still happen if $mdl_tz['gmtoff'] < 0
-                    continue;
-                }
                 $mdl_zones[] = $mdl_tz;
             }
         } 
@@ -241,7 +202,9 @@ function olson_simple_rule_parser ($filename) {
              $letter) = $rule;
 
         $srs = ($save === '0') ? 'reset' : 'set';
+        $rules[$name][$from][$srs] = $rule;
 
+        /*
         if($to == 'only' || $to == 'max') {
             // In both cases, a single entry for one year will suffice
             $to = $from;
@@ -250,6 +213,7 @@ function olson_simple_rule_parser ($filename) {
         for($i = $from; $i <= $to; ++$i) {
             $rules[$name][$i][$srs] = $rule;
         }
+        */
         
     }
 
