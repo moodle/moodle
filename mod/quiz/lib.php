@@ -1623,7 +1623,7 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
             return false;
         }
     }
-    return true;
+    return $attempt;
 }
 
 function quiz_grade_attempt_question_result($question,

@@ -77,7 +77,6 @@
 
 /// Check to see if they are submitting answers
     if ($rawanswers = data_submitted()) {
-        add_to_log($course->id, "quiz", "submit", "attempt.php?id=$cm->id", "$quiz->id", $cm->id);
 
         $rawanswers = (array)$rawanswers;
 
@@ -123,7 +122,10 @@
             error("Could not grade your quiz attempt!");
         }
 
-        if (! $attempt = quiz_save_attempt($quiz, $questions, $result, $attemptnumber)) {
+        if ($attempt = quiz_save_attempt($quiz, $questions, $result, $attemptnumber)) {
+            add_to_log($course->id, "quiz", "submit", 
+                       "review.php?q=$quiz->id&attempt=$attempt->id", "$quiz->id", $cm->id);
+        } else {
             notice(get_string("alreadysubmitted", "quiz"), "view.php?id=$cm->id");
             print_footer($course);
             exit;
@@ -154,7 +156,6 @@
         exit;
     }
 
-    add_to_log($course->id, "quiz", "attempt", "attempt.php?id=$cm->id", "$quiz->id", $cm->id);
 
 /// Print the quiz page
 
@@ -167,7 +168,10 @@
 /// Actually seeing the questions marks the start of an attempt
  
     if (!$unfinished = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
-        if (! quiz_start_attempt($quiz->id, $USER->id, $attemptnumber)) {
+        if ($newattemptid = quiz_start_attempt($quiz->id, $USER->id, $attemptnumber)) {
+            add_to_log($course->id, "quiz", "attempt", 
+                       "review.php?q=$quiz->id&attempt=$newattemptid", "$quiz->id", $cm->id);
+        } else {
             error("Sorry! Could not start the quiz (could not save starting time)");
         }
     }
