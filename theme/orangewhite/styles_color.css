@@ -152,14 +152,16 @@ body {
 
 
 /* entry page */
-.index .content {
+#site-index {
     background-color:#FFFFFF;
 }
 
-.index .content #left-column {
+#site-index #left-column {
     background-color:#F9FAFA;
 }
 
+#site-index #middle-column .headingblock,
+#site-index #middle-column .forumpostheadertopic,
 #course-view #middle-column .headingblock,
 #course-view #middle-column .forumpostheadertopic {
     background-color:transparent;

@@ -185,32 +185,37 @@ input {
 
 
 /* entry page */
-.index .content #left-column,
-.index .content #left-column .sideblock
+#site-index #left-column,
+#site-index #left-column .sideblock
 {
     width:250px !important;
 }
 
-.index .content #middle-column
+#site-index #middle-column
 {
     width:auto;
     padding:0em 2.5em;
 }
 
-.index .content #right-column{
+#site-index #right-column{
     width:30%;
 }
 
+#site-index #middle-column .forumpost,
 #course-view #middle-column .forumpost {
     border-width:0px;
     border-style:none;
 }
 
+#site-index #middle-column .forumpostpicture,
+#site-index #middle-column .forumpostside,
 #course-view #middle-column .forumpostpicture,
 #course-view #middle-column .forumpostside {
     display:none;
 }
 
+#site-index #middle-column .headingblock,
+#site-index #middle-column .forumpostheadertopic, 
 #course-view #middle-column .headingblock,
 #course-view #middle-column .forumpostheadertopic {
     padding:1em;
