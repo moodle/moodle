@@ -26,6 +26,15 @@ function scorm_upgrade($oldversion) {
       table_column("scorm", "", "maxgrade", "FLOAT", "3", "", "0", "NOT NULL", "reference");
       table_column("scorm", "", "grademethod", "TINYINT", "2", "", "0", "NOT NULL", "maxgrade");
     }
+
+    if ($oldversion < 2004083124) {
+        modify_database('','ALTER TABLE prefix_scorm ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_scorm_scoes ADD INDEX scorm (scorm);');
+        modify_database('','ALTER TABLE prefix_scorm_sco_users ADD INDEX scormid (scormid);');
+        modify_database('','ALTER TABLE prefix_scorm_sco_users ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_scorm_sco_users ADD INDEX scoid (scoid);');
+    }
+
     return true;
 }
 

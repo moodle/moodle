@@ -16,7 +16,8 @@ CREATE TABLE prefix_scorm (
   popup varchar(255) NOT NULL default '',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id)
+  UNIQUE KEY id (id),
+  KEY course (course)
 ) TYPE=MyISAM;
 
 CREATE TABLE prefix_scorm_scoes (
@@ -33,7 +34,8 @@ CREATE TABLE prefix_scorm_scoes (
   next tinyint(1) unsigned NOT NULL default '0',
   previous tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY (id),
-  UNIQUE KEY id (id)
+  UNIQUE KEY id (id),
+  KEY scorm (scorm)
 ) TYPE=MyISAM;
 
 CREATE TABLE prefix_scorm_sco_users (
@@ -48,7 +50,10 @@ CREATE TABLE prefix_scorm_sco_users (
   cmi_core_session_time varchar(13) NOT NULL default '00:00:00',
   cmi_core_score_raw float(3) NOT NULL default '0',
   cmi_suspend_data longtext,
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id),
+  KEY userid (userid),
+  KEY scormid (scormid),
+  KEY scoid (scoid)
 ) TYPE=MyISAM;
 
 #
