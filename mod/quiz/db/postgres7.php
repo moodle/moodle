@@ -29,7 +29,7 @@ function quiz_upgrade($oldversion) {
 
 	if ($oldversion < 2003033100) {
         modify_database ("", "ALTER TABLE prefix_quiz_randommatch RENAME prefix_quiz_randomsamatch ");
-        modify_database ("", "CREATE TABLE `prefix_quiz_match_sub` (
+        modify_database ("", "CREATE TABLE prefix_quiz_match_sub (
                                  id SERIAL PRIMARY KEY,
                                  question integer NOT NULL default '0',
                                  questiontext text NOT NULL default '',
