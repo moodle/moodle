@@ -181,7 +181,7 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     }
 }
 
-function print_table($table) {
+function print_table($table, $cellpadding=10, $cellspacing=1) {
 // Prints a nicely formatted table.
 // $table is an object with several properties.
 //     $table->head      is an array of heading names.
@@ -214,7 +214,8 @@ function print_table($table) {
     }
 
     print_simple_box_start("CENTER", "$table->width", "#FFFFFF", 0);
-    echo "<TABLE WIDTH=100% BORDER=0 valign=top align=center cellpadding=10 cellspacing=1>\n";
+    echo "<TABLE WIDTH=100% BORDER=0 valign=top align=center ";
+    echo " cellpadding=\"$cellpadding\" cellspacing=\"$cellspacing\">\n";
 
     if ($table->head) {
         echo "<TR>";
