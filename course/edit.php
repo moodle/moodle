@@ -34,7 +34,7 @@
 
         $form = (object)$HTTP_POST_VARS;
 
-        $form->startdate = mktime(0,0,0,(int)$form->startmonth,(int)$form->startday,(int)$form->startyear);
+        $form->startdate = make_timestamp($form->startyear, $form->startmonth, $form->startday);
 
         validate_form($course, $form, $err);
 
@@ -79,9 +79,8 @@
     if (!$form) {
         if ($course) {
             $form = $course;
-            $ts = getdate($course->startdate);
         } else {
-            $ts = getdate(time() + 3600 * 24);
+            $form->startdate = time() + 3600 * 24;
             $form->teacher = "Facilitator";
             $form->student = "Student";
             $form->fullname = "Course Fullname 101";
@@ -92,29 +91,9 @@
             $form->newsitems = 5;
             $form->category = 1;
         }
-
-        $form->startday = $ts[mday];
-        $form->startmonth = $ts[mon];
-        $form->startyear = $ts[year];
-
-        $form->endday = $te[mday];
-        $form->endmonth = $te[mon];
-        $form->endyear = $te[year];
-    }
-
-    for ($i=1;$i<=31;$i++) {
-        $form->days[$i] = "$i";
-    }
-    for ($i=1;$i<=12;$i++) {
-        $form->months[$i] = date("F", mktime(0,0,0,$i,1,2000));
-    }
-    for ($i=2000;$i<=2010;$i++) {
-        $form->years[$i] = $i;
     }
 
     $form->categories = get_records_sql_menu("SELECT id,name FROM course_categories");
-
-    //$form->owners   = get_records_sql_menu("SELECT u.id, CONCAT(u.firstname, " ", u.lastname) FROM users u, teachers t WHERE t.user = u.id");
 
     $editcoursesettings = get_string("editcoursesettings");
 

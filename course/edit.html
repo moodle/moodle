@@ -86,9 +86,7 @@
 <tr valign=top>
 	<td><P><? print_string("startdate") ?>:</td>
 	<td><?
-           choose_from_menu ($form->days, "startday", "$form->startday");
-           choose_from_menu ($form->months, "startmonth", "$form->startmonth");
-           choose_from_menu ($form->years, "startyear", "$form->startyear");
+           print_date_selector("startday", "startmonth", "startyear", $form->startdate);
 	       formerr($err["startdate"]);
 	?></td>
 </tr>
