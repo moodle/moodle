@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003042801)
+      // quiz.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
 
 
+$string['addingquestions'] = "この部分ではデータベース内の質問を管理します。質問は整理しやすいようにカテゴリー毎に保存されます。質問はコース内の全てのクイズに利用出来ます。「公開」を選んだ場合は他のコースでも利用出来ます。<br /><br />質問のカテゴリーを選択又は作成した後に質問を作成・編集してください。このページの反対側にあるクイズにどの質問でも追加することが出来ます。
+";
 $string['addquestions'] = "クイズを追加";
 $string['addquestionstoquiz'] = "現在のクイズに質問を追加する";
 $string['addselectedtoquiz'] = "選択したものをクイズに追加する";
