@@ -32,8 +32,15 @@
 
     require_login($course->id, false, $cm);
     
-    if (isset($_POST['call']) && confirm_sesskey()) {
-	
+    
+    if (isset($_GET['call']) && confirm_sesskey()) {
+	if (strstr($_GET['call'],'LMS') !== false) {
+	    // SCORM 1.2 Call
+	    //require_once('datamodels/scorm1_2.php');
+	} else {
+	    // SCORM 1.3 (aka SCORM 2004) Call
+	    //require_once('datamodels/scorm1_3.php');
+	}
     }
 ?>
 

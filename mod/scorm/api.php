@@ -53,14 +53,13 @@ function closeMain() {
 //
 var errorCode = "0";
 
-function SCORM_Call (call,param,value) {
+function SCORM_Call (call,param) {
     if (arguments.length < 2) {
     	alert ("Invalid SCORM_Call function call: too few arguments.\nYou need pass at least 2 parameters");
-    } else if (arguments.length == 3) {
-    	param = param.concat("&value=",value);
     }
     var myRequest = NewHttpReq();
-    result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php?id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>&call="+call+"&param="+param);
+    result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php?id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>&call="+call+param);
+    //alert('Call: '+call+'\nParam: '+param+'\nResult: '+result);
     results = result.split('\n');
     
     errorCode = results[1];
@@ -71,25 +70,154 @@ function SCORM_Call (call,param,value) {
 // SCORM 1.2 API Implementation
 //
 function SCORMapi1_2() {
+    var Initialized = false;
+    <?php include_once ('datamodels/scorm1_2.js'); ?>
 
     function LMSInitialize (param) {
-	return SCORM_Call('LMSInitialize',param);
+        if (param == "") {
+            if (!Initialized) {
+        	Initialized = true;
+        	errorCode = "0";
+		return "true";
+            } else {
+        	errorCode = "101";
+	    }
+        } else {
+            errorCode = "201";
+        }
+        return "false";
     }
     
     function LMSFinish (param) {
-	return SCORM_Call('LMSGetValue',param);
+	if (param == "") {
+            if (Initialized) {
+		LMSCommit("");
+        	Initialized = false;
+        	errorCode = "0";
+        	return "true";
+            } else {
+        	errorCode = "301";
+            }
+        } else {
+            errorCode = "201";
+	}
     }
     
     function LMSGetValue (element) {
-	return SCORM_Call('LMSGetValue',element);
+	if (Initialized) {
+	    if (element !="") {
+		expression = new RegExp(CMIIndex,'g');
+		element = element.replace(expression,'.n.');
+		if ((typeof eval('datamodel["'+element+'"]')) != "undefined") {
+	            if (eval('datamodel["'+element+'"].mod') != 'w') {
+			errorCode = "0";
+			return eval(element);
+	            } else {
+			errorCode = eval('datamodel["'+element+'"].readerror');
+		    }
+	        } else {
+		    errorCode = "401"
+		}
+	    } else {
+		errorCode = "201";
+	    }
+	} else {
+            errorCode = "301";
+        }
+	return "";
     }
     
     function LMSSetValue (element,value) {
-	return SCORM_Call('LMSGetValue',element,value);
+	if (Initialized) {
+	    if (element != "") {
+		expression = new RegExp(CMIIndex,'g');
+		elementmodel = element.replace(expression,'.n.');
+		if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
+	            if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
+			expression.compile(eval('datamodel["'+elementmodel+'"].format'));
+			value = value+'';
+			matches = value.match(expression);
+			if (matches != null) {
+			    //Create dynamic data model element
+			    if (element != elementmodel) {
+				elementIndexes = element.split('.');
+				subelement = 'cmi';
+				for (i=1;i<elementIndexes.length-1;i++) {
+				    elementIndex = elementIndexes[i];
+				    if (elementIndexes[i+1].match(/^\d+$/)) {
+					//alert(eval(subelement+'.'+elementIndex+'._count')+1.0); 
+					//if (elementIndexes[i+1] > eval(subelement+'.'+elementIndex+'._count')) {
+					//    if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')) {
+					//	eval(subelement+'.'+elementIndex+'._count')+1.0;
+					//    }
+				            subelement = subelement.concat('.'+elementIndex+'_'+elementIndexes[i+1]);
+					    i++;
+					//} 
+				    } else {
+					subelement = subelement.concat('.'+elementIndex);
+				    }
+				    
+				    if ((typeof eval(subelement)) == "undefined") {
+					eval(subelement+' = new Object();');
+					/*if (elementIndexes[i].match(/^\d+$/)) {
+					    alert(subelement.substring(0,subelement.length-elementIndexes[i]-1));
+					    if ((typeof eval(subelement.substring(0,subelement.length-elementIndexes[i]-1))) == "undefined") {
+						// create new count
+					    }
+					} */
+				    }
+				}
+				element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
+				//alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value+'\nMatches: '+matches);
+			    }
+			    //Store data
+			    if ((typeof eval('datamodel["'+elementmodel+'"].range')) != "undefined") {
+				range = eval('datamodel["'+elementmodel+'"].range');
+				ranges = range.split('#');
+				value = value+0.0;
+				if ((value >= ranges[0]) && (value <= ranges[1])) {
+ 				    eval(element+'="'+value+'";');
+				    errorCode = "0";
+	    			    return "true";
+				} else {
+		 		    errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
+				}
+			    } else {
+				eval(element+'="'+value+'";');
+				errorCode = "0";
+	    			return "true";
+			    }
+			} else {
+			    errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
+			}
+	            } else {
+			errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
+		    }
+	        } else {
+		    errorCode = "401"
+		}
+	    } else {
+		errorCode = "201";
+	    }
+	} else {
+            errorCode = "301";
+        }
+	alert('LMSSetValue: '+element+'\nValue: '+value+'\nPattern: '+expression+'\nMatches: '+matches+'\nError Code: '+errorCode);
+	return "false";
     }
     
     function LMSCommit (param) {
-	return SCORM_Call('LMSGetValue',param);
+	if (param == "") {
+            if (Initialized) {
+        	errorCode = "0";
+        	return "true";
+            } else {
+        	errorCode = "301";
+	    }
+        } else {
+            errorCode = "201";
+        }
+        return "false";
     }
     
     function LMSGetLastError () {
@@ -97,22 +225,29 @@ function SCORMapi1_2() {
     }
     
     function LMSGetErrorString (param) {
-	var errorString = new Array();
-	errorString["0"] = "No error";
-	errorString["101"] = "General exception";
-	errorString["201"] = "Invalid argument error";
-	errorString["202"] = "Element cannot have children";
-	errorString["203"] = "Element not an array - cannot have count";
-	errorString["301"] = "Not initialized";
-	errorString["401"] = "Not implemented error";
-	errorString["402"] = "Invalid set value, element is a keyword";
-	errorString["403"] = "Element is read only";
-	errorString["404"] = "Element is write only";
-	errorString["405"] = "Incorrect data type";
-	return errorString[param];
+	if (param != "") {
+	    var errorString = new Array();
+	    errorString["0"] = "No error";
+	    errorString["101"] = "General exception";
+	    errorString["201"] = "Invalid argument error";
+	    errorString["202"] = "Element cannot have children";
+	    errorString["203"] = "Element not an array - cannot have count";
+	    errorString["301"] = "Not initialized";
+	    errorString["401"] = "Not implemented error";
+	    errorString["402"] = "Invalid set value, element is a keyword";
+	    errorString["403"] = "Element is read only";
+	    errorString["404"] = "Element is write only";
+	    errorString["405"] = "Incorrect data type";
+	    return errorString[param];
+	} else {
+	   return "";
+	}
     }
     
     function LMSGetDiagnostic (param) {
+	if (param == "") {
+	    param = errorCode;
+	}
 	return param;
     }
     

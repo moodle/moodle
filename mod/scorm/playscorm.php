@@ -272,7 +272,7 @@
     		    $options[$sco->id] = $indenting."&gt; ".$sco->title;
 	    	}
 	    }
-	    choose_from_menu($options, "courseStructure", "", $scoid, "document.navform.scoid.value=document.navform.courseStructure.options[document.navform.courseStructure.selectedIndex].value;document.navform.submit();");
+	    choose_from_menu($options, "courseStructure", $scoid, "", "document.navform.scoid.value=document.navform.courseStructure.options[document.navform.courseStructure.selectedIndex].value;document.navform.submit();");
 	}
 	echo "     	&nbsp;<input name=\"next\" type=\"button\" value=\"".get_string("next","scorm")."\" onClick=\"top.changeSco('continue')\" />\n";
 	echo "	     </form>
