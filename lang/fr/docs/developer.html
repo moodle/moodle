@@ -100,40 +100,46 @@
 <p>&nbsp;</p>
 <h2><a name="contribute" id="contribute"></a>2. Comment vous pouvez aider</h2>
 <blockquote>
-  <p>As mentioned above, Moodle has a number of features that are modular. Even 
-    if you are not a programmer there are things you can change or help with.</p>
+  <p>Comme indiqu&eacute; ci-dessus, bon nombre de fonctionnalit&eacute;s de Moodle sont modulaires.
+  M&ecirc;me si vous n'&ecirc;tes pas programmeur, il y a des choses que vous pouvez modifier ou
+  pour lesquelles vous pouvez nous aider.</p>
   <h3><a name="activities" id="activities"></a>Activit&eacute;s d'apprentissage</h3>
   <blockquote>
-    <p>These are by far the most important modules, and reside in the 'mod' directory. 
-      There are seven default modules: assignment, choice, forum, journal, quiz, 
-      resource, and survey. Each module is in a separate subdirectory and consists 
-      of the following mandatory elements (plus extra scripts unique to each module):</p>
+    <p>Ce sont les modules les plus importants. Ils sont plac&eacute;s dans le dossier
+    &laquo;&nbsp;mod&nbsp;&raquo;. Il y a sept modules par d&eacute;faut&nbsp;: devoir, sondage, test, forum,
+    journal, questionnaire et ressource. Chaque module est plac&eacute; dans
+    un sous-dossier propre et consiste en divers &eacute;l&eacute;ments obligatoires
+    (ainsi que d'autres scripts propres &agrave; chaque module)&nbsp;:</p>
     <ul>
-      <li>mod.html: a form to set up or update an instance of this module</li>
-      <li>version.php: defines some meta-info and provides upgrading code</li>
-      <li>icon.gif: a 16x16 icon for the module</li>
-      <li>db/: SQL dumps of all the required db tables and data (for each database 
-        type) </li>
-      <li>index.php: a page to list all instances in a course</li>
-      <li>view.php: a page to view a particular instance</li>
-      <li>lib.php: any/all functions defined by the module should be in here. 
-        If the modulename if called widget, then the required functions include: 
+      <li>mod.html&nbsp;: un formulaire pour configurer ou mettre &agrave; jour un instance
+      du module</li>
+      <li>version.php&nbsp;: d&eacute;finit quelques meta-informations et met &agrave; disposition
+      le m&eacute;canisme de mise &agrave; jour</li>
+      <li>icon.gif&nbsp;: une ic&ocirc;ne 16x16 pour le module</li>
+      <li>db/&nbsp;: des &laquo; dumps&nbsp;&raquo; SQL de toutes les tables de base de donn&eacute;es et
+      des donn&eacute;es elles-m&ecirc;mes (pour chaque type de base de donn&eacute;es)</li>
+      <li>index.php&nbsp;: une page permettant d'afficher la liste de toutes les
+      instances du module dans un cours</li>
+      <li>view.php&nbsp;: une page permettant d'afficher une instance particuli&egrave;re</li>
+      <li>lib.php&nbsp;: toutes les fonctions d&eacute;finies par le module doivent s'y
+      trouver. Si le nom du module est &laquo;&nbsp;bidule&nbsp;&raquo;, les fonctions n&eacute;cessaires
+      sont&nbsp;notamment : 
         <ul>
-          <li>widget_add_instance() - code to add a new instance of widget</li>
-          <li>widget_update_instance() - code to update an existing instance</li>
-          <li>widget_delete_instance() - code to delete an instance</li>
-          <li>widget_user_outline() - given an instance, return a summary of a 
-            user's contribution</li>
-          <li>widget_user_complete() - given an instance, print details of a user's 
-            contribution<br />
+          <li>bidule_add_instance() - code pour ajouter une nouvelle instance de bidule</li>
+          <li>bidule_update_instance() - code pour mettre &agrave; jour une instance existante</li>
+          <li>bidule_delete_instance() - code effacer une instance</li>
+          <li>bidule_user_outline() - &eacute;tant donn&eacute;e une instance, retourne un r&eacute;sum&eacute;
+          d'une contribution d'un utilisateur</li>
+          <li>bidule_user_complete() - &eacute;tant donn&eacute;e une instance, affiche les details
+          d'une contribution d'un utilisateur<br />
           </li>
-          <li>To avoid possible conflict, any module functions should be named 
-            starting with widget_ and any constants you define should start with 
-            WIDGET_ </li>
+          <li>Pour &eacute;viter tout conflit &eacute;ventuel, le nom de toutes les fonctions du module
+          doit commencer par &laquo;&nbsp;bidule_&nbsp;&raquo; et celui de toutes les constantes par 
+          &laquo;&nbsp;BIDULE_&nbsp;&raquo;</li>
         </ul>
       </li>
-      <li>Lastly, each module will have some language files that contain strings 
-        for that module. See below.</li>
+      <li>Finalement, chaque module comportera des fichiers de langue, qui contiennent
+      les cha&icirc;nes de caract&egrave;res du module. Voir ci-dessous pour des d&eacute;tails.</li>
     </ul>
     <p>The easiest way to start a new learning activity module is to use the template 
       in <strong><a href="http://moodle.org/mod/newmodule_template.zip">mod/newmodule_template.zip</a>.</strong> 
