@@ -9,16 +9,13 @@
     <td>
     <?php if(!empty($allowed->user)) { ?><p><input type='radio' name='type' value='user' id='type_user' checked='checked' /><label for='type_user'><?php print_string('typeuser', 'calendar') ?></label></p>
     <?php } ?>
-    <?php if(!empty($allowed->groups)) { ?><p><input type='radio' name='type' value='group' id='type_group' /><label for='type_group'><?php print_string('typegroup', 'calendar') ?></label></p>
-      <div style="padding-left: 1.5em;">
-      <?php print_string('course'); echo ' / '; print_string('group'); ?>:
+    <?php if(!empty($allowed->groups)) { ?><p><input type='radio' name='type' value='group' id='type_group' /><label for='type_group'><?php echo get_string('typegroup', 'calendar').' '.get_string('groupfor'); ?></label>
       <select name='groupid'>
         <option value=''></option>
       <?php foreach($allowed->groups as $group) {?>
-        <option value='<?php echo $group->id?>' <?php if($group->id == $groupid) echo 'selected="selected"';?>><?php echo $group->fullname.' - '.$group->name?></option>
+        <option value='<?php echo $group->id?>' <?php if($group->id == $groupid) echo 'selected="selected"';?>><?php echo $group->name?></option>
       <?php }?>
       </select>
-      </div>
     <?php } ?>
     <?php if(!empty($allowed->courses)) { ?>
       <p><input type='radio' name='type' value='course' id='type_course' /><input type="hidden" name="courseid" value="<?php echo($courseid) ?>" /><label for='type_course'><?php print_string('typecourse', 'calendar') ?></label></p>

@@ -260,6 +260,9 @@
             print_side_block_start(get_string('editevent', 'calendar'), '', 'mycalendar');
             include('event_edit.html');
             print_side_block_end();
+            if ($usehtmleditor) {
+                use_html_editor();
+            }
         break;
 
         case 'new':
@@ -380,14 +383,24 @@
 
             print_side_block_start(get_string('newevent', 'calendar').$header, '', 'mycalendar');
             if($_REQUEST['type'] == 'select') {
-                optional_variable($_REQUEST['groupid']);
-                optional_variable($_REQUEST['courseid'], $SESSION->cal_course_referer);
+                $defaultcourse = $SESSION->cal_course_referer;
+                if(isteacheredit($defaultcourse, $USER->id)) {
+                    $defaultgroup = 0;
+                }
+                else {
+                    $defaultgroup = user_group($defaultcourse, $USER->id);
+                }
+                optional_variable($_REQUEST['groupid'], $defaultgroup->id);
+                optional_variable($_REQUEST['courseid'], $defaultcourse);
                 $groupid = $_REQUEST['groupid'];
                 $courseid = $_REQUEST['courseid'];
                 include('event_select.html');
             }
             else {
                 include('event_new.html');
+                if ($usehtmleditor) {
+                    use_html_editor();
+                }
             }
             print_side_block_end();
         break;
@@ -425,10 +438,6 @@
     echo '</td>';
 
     echo '</tr></table>';
-
-    if ($usehtmleditor) {
-        use_html_editor();
-    }
 
     print_footer();
 
@@ -481,12 +490,20 @@ function calendar_add_event_allowed($courseid, $groupid, $userid) {
 }
 
 function calendar_get_allowed_types(&$allowed) {
-    global $USER, $CFG;
+    global $USER, $CFG, $SESSION;
 
     $allowed->user = true; // User events always allowed
     $allowed->groups = false; // This may change just below
     $allowed->courses = false; // This may change just below
     $allowed->site = isadmin($USER->id);
+
+    if(!empty($SESSION->cal_course_referer)) {
+        $allowed->courses = array($SESSION->cal_course_referer => 1);
+        $allowed->groups = get_groups($SESSION->cal_course_referer);
+    }
+
+    //[pj]: This was used when we wanted to display all legal choices
+    /*
     if($allowed->site) {
         $allowed->courses = get_courses('all', 'c.shortname');
         $allowed->groups = get_records_sql('SELECT g.*, c.fullname FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'course c ON g.courseid = c.id ORDER BY c.shortname');
@@ -495,6 +512,7 @@ function calendar_get_allowed_types(&$allowed) {
         $allowed->courses = get_records_select('course', 'id != 1 AND id IN ('.implode(',', array_keys($USER->teacheredit)).')');
         $allowed->groups = get_records_sql('SELECT g.*, c.fullname FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'course c ON g.courseid = c.id WHERE g.courseid IN ('.implode(',', array_keys($USER->teacheredit)).')');
     }
+    */
 }
 
 ?>
