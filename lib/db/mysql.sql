@@ -302,6 +302,20 @@ CREATE TABLE `prefix_scale` (
 
 
 #
+# Table structure for table `sessions`
+#
+
+CREATE TABLE `prefix_sessions` (
+  `sesskey` char(32) NOT null,
+  `expiry` int(11) unsigned NOT null,
+  `expireref` varchar(64),
+  `data` text NOT null,
+  PRIMARY KEY (`sesskey`), 
+  KEY (`expiry`) 
+) TYPE=MyISAM COMMENT='Optional database session storage, not used by default';
+# --------------------------------------------------------
+
+#
 # Table structure for table `user`
 #
 

@@ -172,6 +172,14 @@ CREATE TABLE prefix_scale (
    timemodified integer NOT NULL default '0'
 );
 
+CREATE TABLE prefix_sessions (
+  sesskey char(32) PRIMARY KEY,
+  expiry integer NOT null,
+  expireref varchar(64),
+  data text NOT null
+);
+
+CREATE INDEX prefix_sessions_expiry_idx ON prefix_sessions (expiry);
 
 CREATE TABLE prefix_cache_filters (
    id SERIAL PRIMARY KEY,

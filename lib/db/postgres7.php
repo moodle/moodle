@@ -601,6 +601,17 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004092000) { //redoing this just to be sure that column type is text (postgres type changes didnt work when this was done first time)
         table_column("config", "value", "value", "text", "", "", "");
     }
+
+    if ($oldversion < 2004093001) { // add new table for sessions storage
+        execute_sql(" CREATE TABLE {$CFG->prefix}sessions (
+                          sesskey char(32) PRIMARY KEY,
+                          expiry integer NOT null,
+                          expireref varchar(64),
+                          data text NOT null
+                      );");
+
+        execute_sql(" CREATE INDEX {$CFG->prefix}sessions_expiry_idx ON {$CFG->prefix}sessions (expiry)");
+    }
     
     return $result;
 

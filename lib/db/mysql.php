@@ -863,6 +863,17 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE {$CFG->prefix}user ADD INDEX auth (auth)");
     }
 
+    if ($oldversion < 2004093001) { // add new table for sessions storage
+        execute_sql(" CREATE TABLE `{$CFG->prefix}sessions` (
+                          `sesskey` char(32) NOT null,
+                          `expiry` int(11) unsigned NOT null,
+                          `expireref` varchar(64),
+                          `data` text NOT null,
+                          PRIMARY KEY (`sesskey`), 
+                          KEY (`expiry`) 
+                      ) TYPE=MyISAM COMMENT='Optional database session storage, not used by default';");
+    }
+
     return $result;
 
 }

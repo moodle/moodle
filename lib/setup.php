@@ -169,16 +169,29 @@ global $THEME;
     }
     $smarty->compile_dir = $CFG->dataroot .'/cache';
 
-/// Set session timeouts
-    if (!empty($CFG->sessiontimeout)) {
-        ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
-    }
+/// Set up session handling 
+    if (empty($CFG->dbsessions)) {   /// File-based sessions
+        if (!empty($CFG->sessiontimeout)) {
+            ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
+        }
+    
+        if (!file_exists($CFG->dataroot .'/sessions')) {
+            make_upload_directory('sessions');
+        }
+        ini_set('session.save_path', $CFG->dataroot .'/sessions');
 
-/// Set custom session path
-    if (!file_exists($CFG->dataroot .'/sessions')) {
-        make_upload_directory('sessions');
+    } else {                         /// Database sessions
+	    ini_set('session.save_handler', 'user');
+
+	    $ADODB_SESSION_DRIVER  = $CFG->dbtype;
+	    $ADODB_SESSION_CONNECT = $CFG->dbhost;
+	    $ADODB_SESSION_USER    = $CFG->dbuser;
+	    $ADODB_SESSION_PWD     = $CFG->dbpass;
+	    $ADODB_SESSION_DB      = $CFG->dbname;
+	    $ADODB_SESSION_TBL     = $CFG->prefix.'sessions';
+        
+	    require_once($CFG->libdir. '/adodb/session/adodb-session.php');
     }
-    ini_set('session.save_path', $CFG->dataroot .'/sessions');
 
 /// Set sessioncookie variable if it isn't already
     if (!isset($CFG->sessioncookie)) {
