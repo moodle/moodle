@@ -64,7 +64,7 @@
 
         print_header();
         ?>
-	    <script language="javscript" type="text/javascript">
+	    <script language="javascript" type="text/javascript">
 	    <!--
 	    function set_value(txt) {
 		    opener.document.forms['theform'].reference.value = txt;
