@@ -1,0 +1,72 @@
+
+<form name="studentform" id="studentform" method="post" action="student.php">
+<input type="hidden" name="id" value="<?php echo $id?>">
+  <table align="center" border="0" cellpadding="5" cellspacing="0">
+    <tr>
+      <td valign="top">
+          <?php p($strexistingstudents) ?>
+      </td>
+      <td></td>
+      <td valign="top">
+          <?php p($strpotentialstudents) ?>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+          <select name="removeselect[]" size="20" id="removeselect" multiple
+                  onFocus="document.studentform.add.disabled=true;
+                           document.studentform.remove.disabled=false;
+                           document.studentform.addselect.selectedIndex=-1;">
+          <?php 
+              foreach ($students as $student) {
+                  $fullname = fullname($student, true);
+                  echo "<option value=\"$student->id\">".$fullname.", ".$student->email."</option>\n";
+              }
+          ?>
+          
+          </select></td>
+      <td valign="top">
+        <br />
+        <input name="add" type="submit" id="add" value="&larr;" />
+        <br />
+        <input name="remove" type="submit" id="remove" value="&rarr;" />
+        <br />
+      </td>
+      <td valign="top">
+          <select name="addselect[]" size="20" id="addselect" multiple
+                  onFocus="document.studentform.add.disabled=false;
+                           document.studentform.remove.disabled=true;
+                           document.studentform.removeselect.selectedIndex=-1;">
+          <?php
+              if (!empty($searchusers)) {
+                  echo "<optgroup label=\"$strsearchresults (" . count($searchusers) . ")\">\n";
+                  foreach ($searchusers as $user) {
+                      $fullname = fullname($user, true);
+                      echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                  }
+                  echo "</optgroup>\n";
+              }
+              foreach ($users as $user) {
+                  $fullname = fullname($user, true);
+                  echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+              }
+          ?>
+         </select>
+         <br />
+         <input type="text" name="searchtext" size="30" value="<?php echo $searchtext ?>" 
+                  onFocus ="document.studentform.add.disabled=true;
+                            document.studentform.remove.disabled=true;
+                            document.studentform.removeselect.selectedIndex=-1;
+                            document.studentform.addselect.selectedIndex=-1;">
+         <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
+         <?php
+              if (!empty($searchusers)) {
+                  echo '<input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
+              }
+         ?>
+       </td>
+    </tr>
+  </table>
+</form>
+
+

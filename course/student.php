@@ -33,18 +33,9 @@
     $strremovestudent = get_string("removestudent");
     $strsearch        = get_string("search");
     $strsearchresults  = get_string("searchresults");
-    $strsearchagain   = get_string("searchagain");
-    $strtoomanytoshow   = get_string("toomanytoshow");
     $strstudents   = get_string("students");
-    $strunenrolallstudents  = get_string("unenrolallstudents");
-    $strunenrolallstudentssure  = get_string("unenrolallstudentssure");
+    $strshowall = get_string("showall");
 
-
-    if ($search) {
-        $searchstring = $strsearchagain;
-    } else {
-        $searchstring = $strsearch;
-    }
 
     if ($course->students != $strstudents) {
         $parastudents = " ($course->students)";
@@ -61,125 +52,87 @@
 
     check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
 
-/// Add a student if one is specified
-
-    if (!empty($add)) {
-        if ($course->enrolperiod) {
-            $timestart = time();
-            $timeend   = $timestart + $course->enrolperiod;
-        } else {
-            $timestart = $timeend = 0;
-        }
-        if (! enrol_student($add, $course->id, $timestart, $timeend)) {
-            error("Could not add that student to this course!");
-        }
-    }
-
-/// Remove a student if one is specified.
-
-    if (!empty($remove)) {
-        if (! unenrol_student($remove, $course->id)) {
-            error("Could not remove that student from this course!");
-        }
-    }
-
-/// Remove all students from specified course
-
-    if (!empty($removeall)) {
-        $students = get_course_students($course->id, "u.lastname ASC, u.firstname ASC");
-        foreach ($students as $student) {
-            if (! unenrol_student($student->id, $course->id)) {
-                $fullname = fullname($student, true);
-                notify("Could not remove $fullname from this course!");
-            }
-        }
-    }
-
 /// Print a help notice about the need to use this page
 
-    if (empty($add) and empty($remove) and empty($search)) {
-        $note = get_string("assignstudentsnote");
+    if (!$frm = data_submitted()) {
+        $note = get_string("assignstudentsnote");   
+
         if ($course->password) {
-            $note .= "<p>".get_string("assignstudentspass", "", "<a href=\"edit.php?id=$course->id\">$course->password</a>");
+            $note .= "<p>".get_string("assignstudentspass", "", 
+                                      "<a href=\"edit.php?id=$course->id\">$course->password</a>");
         }
         print_simple_box($note, "center", "50%");
+
+/// A form was submitted so process the input
+
+    } else {
+        if (!empty($frm->add) and !empty($frm->addselect)) {
+            if ($course->enrolperiod) {
+                $timestart = time();
+                $timeend   = $timestart + $course->enrolperiod;
+            } else {
+                $timestart = $timeend = 0;
+            }
+            foreach ($frm->addselect as $addstudent) {
+                if (! enrol_student($addstudent, $course->id, $timestart, $timeend)) {
+                    error("Could not add student with id $addstudent to this course!");
+                }
+            }
+        } else if (!empty($frm->remove) and !empty($frm->removeselect)) {
+            foreach ($frm->removeselect as $removestudent) {
+                if (! unenrol_student($removestudent, $course->id)) {
+                    error("Could not remove student with id $removestudent from this course!");
+                }
+            }
+        } else if (!empty($frm->showall)) {
+            unset($frm->searchtext);
+        }
+
     }
+
 
 /// Get all existing students for this course.
-    $students = get_course_students($course->id, "u.lastname ASC, u.firstname ASC");
-
-/// Print the lists of existing and potential students
-
-    echo "<table cellpadding=1 cellspacing=5 align=center>";
-    echo "<tr><th width=50%>$strexistingstudents$parastudents</th><td>&nbsp;</td><th width=50%>$strpotentialstudents</th></tr>";
-    echo "<tr><td width=50% nowrap valign=top>";
-
-/// First, show existing students for this course
-
-    if (empty($students)) { 
-        echo "<p align=center>$strnoexistingstudents</a>";
-        $studentlist = "";
-
-    } else {
-        $studentarray = array();
-        foreach ($students as $student) {
-            $studentarray[] = $student->id;
-            $fullname = fullname($student, true);
-            echo "<p align=right>$fullname, $student->email &nbsp;&nbsp; <a href=\"student.php?id=$course->id&remove=$student->id\" title=\"$strremovestudent\"><img src=\"../pix/t/right.gif\" border=0></a></p>";
-        }
-        $studentlist = implode(",",$studentarray);
-        unset($studentarray);
-
-        // button to unenrol all students from course
-
-        echo "<p>&nbsp;</p>\n";
-        echo "<p align=\"center\">\n";
-        echo "<input type=\"button\" value=\"$strunenrolallstudents\" ".
-             " OnClick=\"ctemp = window.confirm('".addslashes($strunenrolallstudentssure)."'); ".
-             " if(ctemp) window.location.href='student.php?id=$course->id&removeall=1';\"/>\n";
-        echo "</p>\n";
+    if (!$students = get_course_students($course->id, "u.firstname ASC, u.lastname ASC", "", 0, 99999,
+                                         '', '', NULL, '', 'u.id,u.firstname,u.lastname,u.email')) {
+        $students = array();
     }
+    
+    $studentarray = array();
+    foreach ($students as $student) {
+        $studentarray[] = $student->id;
+    }
+    $studentlist = implode(',', $studentarray);
 
-    echo "<td>&nbsp;</td>";
-    echo "<td width=50% nowrap valign=top>";
 
-/// Print list of potential students
-
-    $usercount = get_users(false, $search, true, $studentlist, "lastname ASC, firstname ASC");
-
-    if ($usercount == 0) {
-        echo "<p align=center>$strnopotentialstudents</p>";
-
-    } else if ($usercount > MAX_USERS_PER_PAGE) {
-        echo "<p align=center>$strtoomanytoshow ($usercount) </p>";
-
-    } else {
-
-        if ($search) {
-            echo "<p align=center>($strsearchresults : $search)</p>";
-        }
-
-        if (!$users = get_users(true, $search, true, $studentlist)) {
-            error("Could not get users!");
-        }
-
-        foreach ($users as $user) {
-            $fullname = fullname($user, true);
-            echo "<p align=left><a href=\"student.php?id=$course->id&add=$user->id\"".
-                   "title=\"$straddstudent\"><img src=\"../pix/t/left.gif\"".
-                   "border=0></a>&nbsp;&nbsp;$fullname, $user->email";
+/// Get search results excluding any users already in this course
+    if (!empty($frm->searchtext)) {
+        if ($searchusers = get_users(true, $frm->searchtext, true, $studentlist, 'firstname ASC, lastname ASC', 
+                                      '', '', 0, 99999, 'id, firstname, lastname, email')) {
+            foreach ($searchusers as $student) {
+                $studentarray[] = $student->id;
+            }
+            $studentlist = implode(',', $studentarray);
         }
     }
 
-    if ($search or $usercount > MAX_USERS_PER_PAGE) {
-        echo "<form action=student.php method=post>";
-        echo "<input type=hidden name=id value=\"$course->id\">";
-        echo "<input type=text name=search size=20>";
-        echo "<input type=submit value=\"$searchstring\">";
-        echo "</form>";
+    unset($studentarray);
+    
+/// Get potential students for this course excluding users already in course or
+/// users in the search results
+    if (empty($searchusers)) {
+        if (!$users = get_users(true, '', true, $studentlist, 'firstname ASC, lastname ASC', '', '', 
+                                0, 99999, 'id, firstname, lastname, email') ) {
+            $users = array();
+        }
     }
 
-    echo "</tr></table>";
+    $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
+
+    print_simple_box_start("center", "", "$THEME->cellheading");
+
+    include('student.html');
+
+    print_simple_box_end();
 
     print_footer();
 
