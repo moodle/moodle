@@ -74,7 +74,8 @@
     }
 
 
-    // Find and check all modules and load them up.
+    // Find and check all modules and load them up or upgrade them if necessary
+
     $dir = opendir("$CFG->dirroot/mod");
     while ($mod = readdir($dir)) {
         if ($mod == "." || $mod == ".." || $mod == "CVS") {
