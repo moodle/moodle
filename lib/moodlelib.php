@@ -695,12 +695,19 @@ function get_moodle_cookie() {
     }
 }
 
-function is_internal_auth() {
+function is_internal_auth($auth='') {
 /// Returns true if an internal authentication method is being used.
+/// if method not specified then, global default is assumed
 
     global $CFG;
 
-    return ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual");
+    $method = $CFG->auth;
+
+    if (!empty($auth)) {
+        $method = $auth;
+    }
+
+    return ($method == "email" || $method == "none" || $method == "manual");
 }
 
 function create_user_record($username, $password) {
@@ -757,26 +764,29 @@ function authenticate_user_login($username, $password) {
     $md5password = md5($password);
 
     if (empty($CFG->auth)) {
-        $CFG->auth = "email";    // Default authentication module
+        $CFG->auth = "manual";   // Default authentication module
     }
 
     if ($username == "guest") {
-        $CFG->auth = "none";     // Guest account always internal
-    }
-
-    // If this is the admin, then just use internal methods
-    // Doing this first (even though it's less efficient) because
-    // the chosen authentication method might hang and lock the
-    // admin out.
-    if (adminlogin($username, $md5password)) {
-        return get_user_info_from_db("username", $username);
+        $CFG->auth = "manual";   // Guest account always internal
     }
 
     // OK, the user is a normal user, so try and authenticate them
-    require_once("$CFG->dirroot/auth/$CFG->auth/lib.php");
+
+    // If the user exists, use their stored authentication method
+    // otherwise just use the set method
+
+    $user = NULL;
+    $auth = $CFG->auth;
+
+    if ($user = get_user_info_from_db("username", $username)) {
+        $auth = $user->auth;
+    }
+
+    require_once("$CFG->dirroot/auth/$auth/lib.php");
 
     if (auth_user_login($username, $password)) {  // Successful authentication
-        if ($user = get_user_info_from_db("username", $username)) {
+        if ($user) {
             if ($md5password <> $user->password) {   // Update local copy of password for reference
                 set_field("user", "password", $md5password, "username", $username);
             }
@@ -786,23 +796,20 @@ function authenticate_user_login($username, $password) {
 
         if (function_exists('auth_iscreator')) {    // Check if the user is a creator
             if (auth_iscreator($username)) {
-                 if (! record_exists("user_coursecreators", "userid", $user->id)) {
-                      $cdata['userid']=$user->id;
-                      $creator = insert_record("user_coursecreators",$cdata);
-                      if (! $creator) {
-                          error("Cannot add user to course creators.");
-                      }
-                  }
+                if (! record_exists("user_coursecreators", "userid", $user->id)) {
+                    $cdata->userid = $user->id;
+                    if (! insert_record("user_coursecreators", $cdata)) {
+                        error("Cannot add user to course creators.");
+                    }
+                }
             } else {
-                 if ( record_exists("user_coursecreators", "userid", $user->id)) {
-                      $creator = delete_records("user_coursecreators", "userid", $user->id);
-                      if (! $creator) {
-                          error("Cannot remove user from course creators.");
-                      }
-                 }
+                if ( record_exists("user_coursecreators", "userid", $user->id)) {
+                    if (! delete_records("user_coursecreators", "userid", $user->id)) {
+                        error("Cannot remove user from course creators.");
+                    }
+                }
             }
-         }
-
+        }
         return $user;
 
     } else {

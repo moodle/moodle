@@ -151,6 +151,7 @@
                         $user->{$name} = addslashes($value);
                     }
                 }
+                $user->auth = 'manual';
                 $user->confirmed = 1;
                 $user->timemodified = time();
                 $linenum++;

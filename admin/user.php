@@ -78,6 +78,7 @@
     }
 
     if ($newuser) {                 // Create a new user
+        $user->auth      = "manual";
         $user->firstname = "";
         $user->lastname  = "";
         $user->username  = "changeme";

@@ -1,9 +1,8 @@
 <?PHP // $Id$
 
-/// Check that config.php exists
+/// Check that config.php exists, if not then call the install script
     if (!file_exists("../config.php")) {
-        echo "<H2 align=center>You need to create a config.php.<BR>
-                  See the <A HREF=\"http://moodle.com/doc/?frame=install.html\">installation instructions</A>.</H2>";
+        header('Location: ../install.php');
         die;
     }
 
@@ -397,14 +396,12 @@
                  get_string("adminhelpauthentication")."</font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"user.php\">".get_string("edituser")."</a> - <font size=1>".
                  get_string("adminhelpedituser")."</font><br />";
-    if (is_internal_auth()) {
-        $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".
-                      get_string("addnewuser")."</a> - <font size=1>".
-                      get_string("adminhelpaddnewuser")."</font><br />";
-        $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php\">".
-                      get_string("uploadusers")."</a> - <font size=1>".
-                      get_string("adminhelpuploadusers")."</font><br />";
-    }
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".
+                 get_string("addnewuser")."</a> - <font size=1>".
+                 get_string("adminhelpaddnewuser")."</font><br />";
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php\">".
+                 get_string("uploadusers")."</a> - <font size=1>".
+                 get_string("adminhelpuploadusers")."</font><br />";
 
     $userdata .= "<hr><font size=+1>&nbsp;</font><a href=\"enrol.php\">".get_string("enrolments")."</a> - <font size=1>".
                  get_string("adminhelpenrolments")."</font><br />";

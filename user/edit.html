@@ -19,7 +19,7 @@ if (isadmin()) {
     $adminself = (($theadmin->id == $USER->id) and ($USER->id == $user->id));
     echo "<tr valign=top>";
     echo "<td align=right><p>".get_string("username").":</td>";
-    if ($adminself || is_internal_auth() ){
+    if ($adminself || is_internal_auth($user->auth) ){
         echo "<td><input type=\"text\" name=\"username\" size=20 value=\"";
         p($user->username);
         echo "\">";
@@ -34,7 +34,7 @@ if (isadmin()) {
     echo "</td>";
     echo "</tr>";
 
-    if ($adminself || is_internal_auth() ){
+    if ($adminself || is_internal_auth($user->auth) ){
         echo "<tr valign=top>";
         echo "<td align=right><p>".get_string("newpassword").":</td>";
         echo "<td><input type=\"text\" name=\"newpassword\" size=20 value=\"";
