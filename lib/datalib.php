@@ -492,8 +492,8 @@ function insert_record($table, $dataobject, $returnid=true) {
                 if ($data[$column->name] == "" and !empty($column->has_default)) {
                     $ddd[$column->name] = $column->default_value;
                 } else {
-			        if (empty($column->not_null)) {
-                   	    $ddd[$column->name] = null;
+                    if (empty($column->not_null)) {
+                        $ddd[$column->name] = null;
                     } else {
                         $ddd[$column->name] = $data[$column->name];
                     }
