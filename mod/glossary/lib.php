@@ -489,13 +489,13 @@ function glossary_print_entry_definition($entry) {
 
     //Calculate all the strings to be no-linked
     //First, the concept
-    $term = preg_quote(trim($entry->concept));
+    $term = preg_quote(trim($entry->concept),"/");
     $pat = '/('.$term.')/is';
     $doNolinks[] = $pat;
     //Now the aliases
     if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
         foreach ($aliases as $alias) {
-            $term = preg_quote(trim($alias->alias));
+            $term = preg_quote(trim($alias->alias),"/");
             $pat = '/('.$term.')/is';
             $doNolinks[] = $pat;
         }
