@@ -1006,6 +1006,10 @@ function document_file($file, $include=true) {
     if (!file_exists($info->filepath)) {
         $info->filepath = "$CFG->dirroot/lang/en/docs/$file";
         $info->urlpath  = "$CFG->wwwroot/lang/en/docs/$file";
+        if (!file_exists($info->filepath)) {
+            error("Error 404 - $file does not exist");
+            return NULL;
+        }
     }
 
     if ($include) {
