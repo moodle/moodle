@@ -444,6 +444,9 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
+            //We'll need this later!!
+            $oldid = backup_todb($mat_info['#']['ID']['0']['#']);
+
             //Now, build the QUIZ_MATCH_SUB record structure
             $match_sub->question = $new_question_id;
             $match_sub->questiontext = backup_todb($mat_info['#']['QUESTIONTEXT']['0']['#']);
@@ -462,6 +465,9 @@
             }
 
             if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"quiz_match_sub",$oldid,
+                             $newid);
                 //We have a new match_sub, append it to subquestions_field
                 if ($in_first) {
                     $subquestions_field .= $newid;
@@ -734,7 +740,171 @@
                 backup_putid($restore->backup_unique_code,"quiz_attempts",$oldid,
                              $newid);
                 //Now process quiz_responses
-                echo "process responses";
+                $status = quiz_responses_restore_mods($newid,$att_info,$restore);
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    //This function restores the quiz_responses       
+    function quiz_responses_restore_mods($attempt_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the quiz_responses array
+        $responses = $info['#']['RESPONSES']['0']['#']['RESPONSE'];
+        //Iterate over responses
+        for($i = 0; $i < sizeof($responses); $i++) {
+            $res_info = $responses[$i];
+            //traverse_xmlize($res_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($res_info['#']['ID']['0']['#']);
+
+            //Now, build the RESPONSES record structure
+            $response->attempt = $attempt_id;
+            $response->question = backup_todb($res_info['#']['QUESTION']['0']['#']);
+            $response->answer = backup_todb($res_info['#']['ANSWER']['0']['#']);
+            $response->grade = backup_todb($res_info['#']['GRADE']['0']['#']);
+
+            //We have to recode the question field
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$response->question);
+            if ($question) {
+                $response->question = $question->new_id;
+            }
+
+            //We have to recode the answer field
+            //It depends of the question type !!
+            //We get the question first
+            $question = get_record("quiz_questions","id",$response->question);
+            //It exists
+            if ($question) {
+                //Depending of the qtype, we make different recodes
+                switch ($question->qtype) {
+                    case 1:    //SHORTANSWER QTYPE
+                        //Nothing to do. The response is a text.
+                        break;
+                    case 2:    //TRUEFALSE QTYPE
+                        //The answer is one answer id. We must recode it
+                        $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$response->answer);
+                        if ($answer) {
+                            $response->answer = $answer->new_id;
+                        }
+                        break;
+                    case 3:    //MULTICHOICE QTYPE
+                        //The answer is a comma separated list of answers. We must recode them
+                        $answer_field = "";
+                        $in_first = true;
+                        $tok = strtok($response->answer,",");
+                        while ($tok) {    
+                            //Get the answer from backup_ids
+                            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$tok);
+                            if ($answer) {
+                                if ($in_first) {    
+                                    $answer_field .= $answer->new_id;          
+                                    $in_first = false;
+                                } else {  
+                                    $answer_field .= ",".$answer->new_id;
+                                }
+                            }       
+                            //check for next
+                            $tok = strtok(",");
+                        }
+                        $response->answer = $answer_field;
+                        break;
+                    case 4:    //RANDOM QTYPE
+                        //The answer links to another question id, we must recode it
+                        $answer_link = backup_getid($restore->backup_unique_code,"quiz_questions",$response->answer);
+                        if ($answer_link) {  
+                            $response->answer = $answer_link->new_id;
+                        }
+                        break;
+                    case 5:    //MATCH QTYPE
+                        //The answer is a comma separated list of hypen separated math_subs (for question and answer)
+                        $answer_field = "";    
+                        $in_first = true;
+                        $tok = strtok($response->answer,",");
+                        while ($tok) {
+                            //Extract the match_sub for the question and the answer
+                            $exploded = explode("-",$tok);      
+                            $match_question_id = $exploded[0];
+                            $match_answer_id = $exploded[1];
+                            //Get the match_sub from backup_ids
+                            $match_que = backup_getid($restore->backup_unique_code,"quiz_match_sub",$match_question_id);
+                            //Get the answer from backup_ids
+                            $match_ans = backup_getid($restore->backup_unique_code,"quiz_match_sub",$match_answer_id);
+                            if ($match_que and $match_ans) {
+                                if ($in_first) {
+                                    $answer_field .= $match_que->new_id."-".$match_ans->new_id;
+                                    $in_first = false;
+                                } else {
+                                    $answer_field .= ",".$match_que->new_id."-".$match_ans->new_id;
+                                }
+                            }
+                            //check for next
+                            $tok = strtok(",");
+                        }
+                        $response->answer = $answer_field;
+                        break;
+                    case 6:    //RANDOMSAMATCH QTYPE
+                        //The answer is a comma separated list of hypen separated question_id and answer_id. We must recode them
+                        $answer_field = "";
+                        $in_first = true;
+                        $tok = strtok($response->answer,",");
+                        while ($tok) {
+                            //Extract the question_id and the answer_id
+                            $exploded = explode("-",$tok);
+                            $question_id = $exploded[0];
+                            $answer_id = $exploded[1];
+                            //Get the question from backup_ids
+                            $que = backup_getid($restore->backup_unique_code,"quiz_questions",$question_id);
+                            //Get the answer from backup_ids
+                            $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer_id);
+                            if ($que and $ans) {
+                                if ($in_first) {
+                                    $answer_field .= $que->new_id."-".$ans->new_id;
+                                    $in_first = false;
+                                } else { 
+                                    $answer_field .= ",".$que->new_id."-".$ans->new_id;
+                                }
+                            }
+                            //check for next
+                            $tok = strtok(",");
+                        }
+                        $response->answer = $answer_field;
+                        break;
+                    default:   //UNMATCHED QTYPE.
+                        //This is an error (unimplemented qtype)
+                        $status = false;
+                        break;
+                }
+            } else {
+                $status = false;
+            }
+
+            //The structure is equal to the db, so insert the quiz_attempts
+            $newid = insert_record ("quiz_responses",$response);
+
+            //Do some output
+            if (($i+1) % 10 == 0) {
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"quiz_responses",$oldid,
+                             $newid);
             } else {
                 $status = false;
             }
@@ -799,6 +969,5 @@
 
         return $status;
     }
-
 
 ?>
