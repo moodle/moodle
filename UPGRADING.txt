@@ -34,7 +34,7 @@ Upgrading the files using CVS
   If you are using CVS, just go to the Moodle root 
   directory and update the files:
 
-     cvs update -d
+     cvs update -dP
   
   If you have been editing Moodle files watch the 
   messages very closely for possible conflicts 
