@@ -175,7 +175,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 }
 
 
-function print_all_courses($category="all", $style="full", $maxcount=999) {
+function print_all_courses($category="all", $style="full", $maxcount=999, $width=180) {
     global $CFG, $USER;
 
     if ($category == "all") {
@@ -208,7 +208,7 @@ function print_all_courses($category="all", $style="full", $maxcount=999) {
                 }
             }   
             $fulllist = "<P><A HREF=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</A>...";
-            print_side_block(get_string("courses"), "", $moddata, $modicon, $fulllist);
+            print_side_block(get_string("courses"), "", $moddata, $modicon, $fulllist, $width);
 
         } else {
             foreach ($courses as $course) {
