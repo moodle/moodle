@@ -1958,16 +1958,20 @@ function instance_is_visible($moduletype, $module) {
 * @param	string	$action	view, edit, post (often but not always the same as the file.php)
 * @param	string	$url	the file and parameters used to see the results of the action
 * @param	string	$info	additional description information 
+* @param	string	$user	optional, if log regards $user other than $USER
 */
-function add_to_log($courseid, $module, $action, $url="", $info="") {
+function add_to_log($courseid, $module, $action, $url="", $info="", $user="") {
 
     global $db, $CFG, $USER, $REMOTE_ADDR;
 
-    if (isset($USER->realuser)) {  // Don't log
-        return;
+    if ($user) {
+        $userid = $user;
+    } else {
+        if (isset($USER->realuser)) {  // Don't log
+            return;
+        }
+        $userid = empty($USER->id) ? "" : $USER->id;
     }
-
-    $userid = empty($USER->id) ? "" : $USER->id;
 
     $timenow = time();
     $info = addslashes($info);
@@ -1992,16 +1996,17 @@ function add_to_log($courseid, $module, $action, $url="", $info="") {
     if (!$result and ($CFG->debug > 7)) {
         echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error
     }    
+    if (!$user) {
+        if (isstudent($courseid)) {
+            $db->Execute("UPDATE {$CFG->prefix}user_students SET timeaccess = '$timenow' ".
+                         "WHERE course = '$courseid' AND userid = '$userid'");
+        }
 
-    if (isstudent($courseid)) {
-        $db->Execute("UPDATE {$CFG->prefix}user_students SET timeaccess = '$timenow' ".
-                     "WHERE course = '$courseid' AND userid = '$userid'");
-    }
-
-    if (isteacher($courseid, false, false)) {
-        $db->Execute("UPDATE {$CFG->prefix}user_teachers SET timeaccess = '$timenow' ".
-                     "WHERE course = '$courseid' AND userid = '$userid'");
-    }
+        if (isteacher($courseid, false, false)) {
+            $db->Execute("UPDATE {$CFG->prefix}user_teachers SET timeaccess = '$timenow' ".
+                         "WHERE course = '$courseid' AND userid = '$userid'");
+        }
+    }     
 }
 
 

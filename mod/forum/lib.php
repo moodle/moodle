@@ -251,6 +251,7 @@ function forum_cron () {
                 $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
 
                 $mailcount=0;
+                $errorcount=0;
                 foreach ($users as $userto) {
                     if ($groupmode) {    // Look for a reason not to send this email
                         if (!isteacheredit($course->id, $userto->id)) {
@@ -328,12 +329,17 @@ function forum_cron () {
    
                     if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
                         echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email) .. not trying again.\n";
+                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id", substr($post->subject,0,15), $userto->id);
+                        $errorcount++;
                     } else {
                         $mailcount++;
                     }
                 }
 
                 echo ".... mailed to $mailcount users.\n";
+                if ($errorcount) {
+                    set_field("forum_posts", "mailed", "2", "id", "$post->id");
+                }
             }
         }
     }
