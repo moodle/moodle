@@ -367,3 +367,25 @@ a.dimmed:hover {
 .teacheronly {
     color: #990000;
 }
+
+.header {
+}
+
+.headermain {
+    font-size: large;
+    font-weight: bold;
+}
+
+.headermenu {
+}
+
+.headerhome {
+}
+
+.headerhomemain {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.headerhomemenu {
+}

@@ -64,10 +64,24 @@ a.dimmed:hover {}
 .weeklydatetext {}
 
 
-/* Style for the notice boxes (surrounding a notice message)  */
+/* Style for the notice boxes (surrounding a notice message) */
 
 .noticebox {}
 .noticeboxcontent {}
+
+
+/* Styles for the headers of all pages (see header.html) */
+
+.header {}
+.headermain {}
+.headermenu {}
+
+
+/* Styles for the headers of the home page (see header.html) */
+
+.headerhome {}
+.headerhomemain {}
+.headerhomemenu {}
 
 
 ALL pix files can now be changed from within a theme, 

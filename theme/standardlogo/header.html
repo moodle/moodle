@@ -1,55 +1,61 @@
-<HTML<?=$direction?>>
-<HEAD>
-<TITLE><?=$title ?></TITLE>
-<META NAME="keywords" CONTENT="Moodle, <?=$title ?> ">
-<?=$meta ?>
-<LINK REL="stylesheet" TYPE="text/css" HREF="<?=$styles ?>">
-<LINK REL="SHORTCUT ICON" HREF="<?=$CFG->wwwroot?>/theme/standardlogo/favicon.ico">
-<? include("$CFG->javascript"); ?>
-</HEAD>
+<!-- No doctype yet - we are slowly migrating towards XHTML transitional 1.0 -->
+<html<?php echo $direction ?>>
+<head>
+<title><?php echo $title ?></title>
+<meta name="keywords" content="moodle, <?php echo $title ?> ">
+<?php echo $meta ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $styles ?>">
+<link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico">
+<?php include("$CFG->javascript"); ?>
+</head>
 
-<BODY <? if ($focus) { echo "onLoad=setfocus()"; } echo " bgcolor=\"$THEME->body\">"; ?>
+<body<?php 
+   if ($focus) { 
+       echo " onload=setfocus()"; 
+   } 
+   echo " bgcolor=\"$THEME->body\">";
+?>
 
-<? if ($home) {  // This is what gets printed on the home page only  ?>
+<?php if ($home) {  // This is what gets printed on the home page only  ?>
 
-     <TABLE WIDTH=100% CELLPADDING=10 CELLSPACING=0 BORDER=0>
-       <TR>
-         <TD VALIGN=TOP>
-             <IMG BORDER=0 SRC="<?=$CFG->wwwroot?>/theme/standardlogo/logo.jpg">
-         </TD>
-         <TD ALIGN=RIGHT VALIGN=TOP><?=$menu ?></TD>
-       </TR>
-     </TABLE>
+  <table width="100%" cellpadding="10" cellspacing="0" border="0" class="headerhome">
+    <tr>
+      <td valign="top" class="headerhomemain"><img 
+          border="0" src="<?php echo "$CFG->wwwroot/theme/$CFG->theme/logo.jpg" ?>"></td>
+      <td align="right" valign="top" class="headerhomemenu"><?php echo $menu ?></td>
+    </tr>
+  </table>
 
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading ?>
 
-<? } else if ($heading) {  // This is what gets printed on any other page with a heading ?>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" class="header">
+    <tr>
+      <td valign="top" class="headermain"><?php echo $heading?></td>
+      <td align="right" valign="top" class="headermenu"><?php echo $menu ?></td>
+    </tr>
+  </table>
 
-     <TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
-       <TR>
-         <TD VALIGN=TOP><FONT SIZE=4><B><?=$heading?></B></FONT></TD>
-         <TD ALIGN=RIGHT VALIGN=TOP><?=$menu ?></TD>
-       </TR>
-     </TABLE>
-
-<? } ?>
+<?php } ?>
 
 
-<? if ($navigation) { // This is the navigation table with breadcrumbs  ?>
+<?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
 
-     <TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>
-       <TR>
-         <TD BGCOLOR="<?=$THEME->cellheading?>" CLASS="navbar">
-           <FONT SIZE=2><B><? print_navigation("$navigation"); ?></B></FONT>
-         </TD>
-         <TD BGCOLOR="<?=$THEME->cellheading?>" CLASS="navbar" ALIGN=RIGHT WIDTH=20 VALIGN=TOP><?=$button ?></TD>
-       </TR>
-     </TABLE>
-     <IMG SRC="<?=$CFG->wwwroot?>/pix/spacer.gif" ALT="" HEIGHT=5 WIDTH=1><BR>
+  <table border="0" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+      <td bgcolor="<?php echo $THEME->cellheading?>" class="navbar">
+        <font size="2"><b><?php print_navigation("$navigation"); ?></b></font>
+      </td>
+      <td bgcolor="<?php echo $THEME->cellheading?>" class="navbar" align="right" width="20" valign="top"><?php 
+          echo $button;
+      ?></td>
+    </tr>
+  </table>
+  <img src="<?php echo $CFG->wwwroot?>/pix/spacer.gif" alt="" height=5 width=1><br>
 
-<? } else if ($heading) { // If no navigation, but a heading, then print a line  ?>
+<?php } else if ($heading) { // If no navigation, but a heading, then print a line  ?>
 
-     <HR SIZE=1 NOSHADE>
+  <hr size="1" noshade />
 
-<? } ?>
+<?php } ?>
 
 <!-- END OF HEADER -->
