@@ -88,6 +88,7 @@
             $submission = $submissions[$num];
             // Only update entries where feedback has actually changed.
             if (($vals[g] <> $submission->grade) || ($vals[c] <> addslashes($submission->comment))) {
+                unset($newsubmission);
                 $newsubmission->grade      = $vals[g];
                 $newsubmission->comment    = $vals[c];
                 $newsubmission->teacher    = $USER->id;
