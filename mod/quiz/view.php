@@ -67,7 +67,7 @@
 
     echo '<table id="layout-table"><tr>';
 
-    if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $PAGE->user_is_editing()) {
+    if(blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()) {
         echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';

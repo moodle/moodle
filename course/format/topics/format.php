@@ -63,7 +63,7 @@
 
 /// The left column ...
 
-    if (blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
+    if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
@@ -254,7 +254,7 @@
     echo '</td>';
 
     // The right column
-    if (blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
+    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
         echo '</td>';

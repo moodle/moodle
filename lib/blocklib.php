@@ -169,8 +169,8 @@ function blocks_delete_instance($instance) {
 // Accepts an array of block instances and checks to see if any of them have content to display
 // (causing them to calculate their content in the process). Returns true or false. Parameter passed
 // by reference for speed; the array is actually not modified.
-function blocks_have_content(&$instances) {
-    foreach($instances as $instance) {
+function blocks_have_content(&$pageblocks, $position) {
+    foreach($pageblocks[$position] as $instance) {
         if (!$instance->visible) {
             continue;
         }

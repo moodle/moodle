@@ -69,7 +69,7 @@
   <tr>
   <?PHP
 
-    if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
+    if(blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         echo '</td>';
@@ -180,7 +180,7 @@
 
 
     // The right column
-    if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing || isadmin()) {
+    if(blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || isadmin()) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         if (isadmin()) {
             echo '<div align="center">'.update_course_icon($SITE->id).'</div>';
