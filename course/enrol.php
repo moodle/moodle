@@ -84,6 +84,9 @@
     }
 
     $teacher = get_teacher($course->id);
+    if (!isset($password)) {
+        $password = "";
+    }
 
     $strloginto = get_string("loginto", "", $course->shortname);
     $strcourses = get_string("courses");
