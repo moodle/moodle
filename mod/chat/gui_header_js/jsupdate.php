@@ -53,6 +53,7 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=<?php echo get_string('thischarset'); ?>" />
+        <base target="_blank" />
         <script type="text/javascript">
         <!--
         if (parent.msg.document.getElementById("msgStarted") == null) {
