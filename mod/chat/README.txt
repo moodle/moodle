@@ -1,29 +1,31 @@
 Official Chat Module for Moodle
 ------------------------------
 
-Version 0.1  (for Moodle 1.1)
+Version 0.2  (for Moodle 1.1)
 
 This module is still very new and very incomplete compared
-to the version that will be shipping with Moodle 1.1
+to what it will be one day.
 
 It's based in part on ARSC but I ended up rewriting so much 
 of it there's hardly a line of code in use that has not
-been changed, so perhaps it's *inspired* by ARSC.
-
-It's fairly useful already and should work with most newer browers.
-
-Note it supports user images, smilies and even HTML already.
+been changed, so perhaps it's better to say *inspired* by ARSC.
 
 Things to do yet:
 
-  - fix up the other chat front-end version (currently only using 
-    header_js)
+  - fix up the other chat front-end versions 
+    (currently only using header_js)
 
   - make the socket server work
 
-  - more useful shortcuts in the user interface
-
   - postgresql support (db schema)
 
+  - pop-up interface to insert images from URL or uploaded
 
-Martin, 7 July 2003
+  - customisable beeps (based on sound in user profile)
+   
+  - add ability to whisper to someone 
+
+  - GUI setting to turn scrolling on/off
+
+
+Martin, 10 August 2003
