@@ -91,7 +91,8 @@
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=top width=20>&nbsp;</td>";
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" width=\"100%\">";
 
-        echo format_text($thissection->summary, FORMAT_HTML);
+        $summaryformatoptions->noclean = true;
+        echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
         if (isediting($course->id)) {
             echo " <a title=\"$streditsummary\" ".
@@ -186,7 +187,8 @@
     
                 echo "<p class=\"weeklydatetext\">$weekday - $endweekday</p>";
     
-                echo format_text($thissection->summary, FORMAT_HTML);
+                $summaryformatoptions->noclean = true;
+                echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
     
                 if (isediting($course->id)) {
                     echo " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
