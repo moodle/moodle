@@ -146,10 +146,12 @@ function workshop_add_instance($workshop) {
 ///////////////////////////////////////////////////////////////////////////////
 // returns true if the dates are valid, false otherwise
 function workshop_check_dates($workshop) {
+    // allow submission and assessment to start on the same date and to end on the same date
+    // but enforce non-empty submission period and non-empty assessment period.
     return ($workshop->submissionstart < $workshop->submissionend and
             $workshop->submissionstart <= $workshop->assessmentstart and
-            $workshop->assessmentstart <= $workshop->assessmentend and
-            $workshop->submissionend < $workshop->assessmentend);
+            $workshop->assessmentstart < $workshop->assessmentend and
+            $workshop->submissionend <= $workshop->assessmentend);
 }
 
 
