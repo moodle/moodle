@@ -55,6 +55,7 @@ $string['takeroll'] = 'Contrôle des présences de ce jour ?';
 $string['tardiesperabsence'] = 'Nombre de retards comptant pour une absence';
 $string['tardylong'] = 'En retard';
 $string['tardyshort'] = 'R';
+$string['teacheredit'] = 'Contrôler les présences';
 $string['thursday'] = 'Jeu';
 $string['tuesday'] = 'Mar';
 $string['viewall'] = 'Afficher toutes les listes de présence';
