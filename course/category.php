@@ -266,44 +266,44 @@
         $count = 0;
         $abletomovecourses = false;  // for now
 
-        foreach ($courses as $course) {
+        foreach ($courses as $acourse) {
             $count++;
             $up = ($count == 1) ? false : true;
             $down = ($count == $numcourses) ? false : true;
 
-            $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
+            $linkcss = $acourse->visible ? "" : " class=\"dimmed\" ";
             echo "<tr>";
-            echo "<td><a $linkcss href=\"view.php?id=$course->id\">$course->fullname</a></td>";
+            echo "<td><a $linkcss href=\"view.php?id=$acourse->id\">$acourse->fullname</a></td>";
             if ($creatorediting) {
                 if ($adminediting) {
                     echo "<td>";
-                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$course->id\"><img".
+                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$acourse->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
-                    echo "<a title=\"$strdelete\" href=\"delete.php?id=$course->id\"><img".
+                    echo "<a title=\"$strdelete\" href=\"delete.php?id=$acourse->id\"><img".
                          " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> ";
-                    if (!empty($course->visible)) {
-                        echo "<a title=\"$strhide\" href=\"category.php?id=$category->id&hide=$course->id\"><img".
+                    if (!empty($acourse->visible)) {
+                        echo "<a title=\"$strhide\" href=\"category.php?id=$category->id&hide=$acourse->id\"><img".
                              " src=\"$pixpath/t/hide.gif\" height=11 width=11 border=0></a> ";
                     } else {
-                        echo "<a title=\"$strshow\" href=\"category.php?id=$category->id&show=$course->id\"><img".
+                        echo "<a title=\"$strshow\" href=\"category.php?id=$category->id&show=$acourse->id\"><img".
                              " src=\"$pixpath/t/show.gif\" height=11 width=11 border=0></a> ";
                     }
     
-                    echo "<a title=\"$strbackup\" href=\"../backup/backup.php?id=$course->id\"><img".
+                    echo "<a title=\"$strbackup\" href=\"../backup/backup.php?id=$acourse->id\"><img".
                          " src=\"$pixpath/t/backup.gif\" height=11 width=11 border=0></a> ";
 
-                        echo "<a title=\"$strrestore\" href=\"../files/index.php?id=$course->id&wdir=/backupdata\"><img".
+                        echo "<a title=\"$strrestore\" href=\"../files/index.php?id=$acourse->id&wdir=/backupdata\"><img".
                              " src=\"$pixpath/t/restore.gif\" height=11 width=11 border=0></a> ";
             
                     if ($up) {
-                        echo "<a title=\"$strmoveup\" href=\"category.php?id=$category->id&moveup=$course->id\"><img".
+                        echo "<a title=\"$strmoveup\" href=\"category.php?id=$category->id&moveup=$acourse->id\"><img".
                              " src=\"$pixpath/t/up.gif\" height=11 width=11 border=0></a> ";
                     } else {
                         echo "<img src=\"$CFG->wwwroot/pix/spacer.gif\" height=11 width=11 border=0></a> ";
                     }
         
                     if ($down) {
-                        echo "<a title=\"$strmovedown\" href=\"category.php?id=$category->id&movedown=$course->id\"><img".
+                        echo "<a title=\"$strmovedown\" href=\"category.php?id=$category->id&movedown=$acourse->id\"><img".
                              " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> ";
                     } else {
                         echo "<img src=\"$CFG->wwwroot/pix/spacer.gif\" height=11 width=11 border=0></a> ";
@@ -311,25 +311,25 @@
     
                     echo "</td>";
                     echo "<td align=\"center\">";
-                    echo "<input type=\"checkbox\" name=\"c$course->id\">";
+                    echo "<input type=\"checkbox\" name=\"c$acourse->id\">";
                     $abletomovecourses = true;
 
-                } else if (isteacheredit($course->id)) {
+                } else if (isteacheredit($acourse->id)) {
                     echo "<td>";
-                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$course->id\"><img".
+                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$acourse->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
                 }
                 echo "</td>";
             } else {
                 echo "<td align=\"right\">";
-                if ($course->guest ) {
-                    echo "<a href=\"view.php?id=$course->id\"><img hspace=2 title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
+                if ($acourse->guest ) {
+                    echo "<a href=\"view.php?id=$acourse->id\"><img hspace=2 title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
                 }
-                if ($course->password) {
-                    echo "<a href=\"view.php?id=$course->id\"><img hspace=2 title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+                if ($acourse->password) {
+                    echo "<a href=\"view.php?id=$acourse->id\"><img hspace=2 title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
                 }
-                if ($course->summary) {
-                    link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo", 
+                if ($acourse->summary) {
+                    link_to_popup_window ("/course/info.php?id=$acourse->id", "courseinfo", 
                                           "<img hspace=2 alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
                                            400, 500, $strsummary);
                 }
