@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['action'] = '- - Acties - -';
@@ -109,7 +109,7 @@ $string['nolinksfound'] = 'Geen links gevonden op de pagina';
 $string['noregexp'] = 'Dit moet een vaste waarde zijn (je kunt geen * of regex gebruiken), gebruik best het IP-adres of computernaam van de aanvaller, maar dan zonder het poortnummer (omdat dat kan wijzigen bij elke http-toegang).';
 $string['notadministratewiki'] = 'Je hebt onvoldoende rechten om deze wiki te beheren!';
 $string['nothingtostrip'] = 'Er zijn geen pagina\'s met meer dan één versie';
-$string['nowikicreated'] = 'Je kunt hier geen wiki maken en er is nog geen gemaakt om te bekijken.';
+$string['nowikicreated'] = 'Deze wiki is nog leeg.';
 $string['of'] = 'van';
 $string['offline'] = 'OFF LINE';
 $string['optional'] = 'Optioneel';
