@@ -227,10 +227,14 @@ function check_entry($form, $course) {
                 error("An error occurred while trying to enrol you.");
             }
 
-            if (($groupid !== false ) and (!add_user_to_group($groupid, $USER->id)) ) {
-                error("An error occurred while trying to add you to a group");
+            if ($groupid !== false) {
+                if (add_user_to_group($groupid, $USER->id)) {
+                    $USER->groupmember[$course->id] = $groupid;
+                } else {
+                    error("An error occurred while trying to add you to a group");
+                }
             }
-            
+
             $subject = get_string("welcometocourse", "", $course->fullname);
             $a->coursename = $course->fullname;
             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id";
