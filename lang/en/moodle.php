@@ -509,7 +509,7 @@ for important notifications such as security alerts and new releases of Moodle.
 <p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
 <p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.";
 $string['registrationno'] = "No, I do not want to receive email";
-$string['registrationsend'] = "Send registration information";
+$string['registrationsend'] = "Send registration information to moodle.org";
 $string['registrationyes'] = "Yes, please notify me about important issues";
 $string['removeadmin'] = "Remove admin";
 $string['removecreator'] = "Remove course creator";
