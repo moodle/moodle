@@ -6,10 +6,10 @@
     if (! record_exists("user", "username", "guest")) {
         $guest->username    = "guest"; 
         $guest->password    = md5("guest");
-        $guest->firstname   = get_string("guestuser");
+        $guest->firstname   = addslashes(get_string("guestuser"));
         $guest->lastname    = " ";
         $guest->email       = "root@localhost";
-        $guest->description = get_string("guestuserinfo");
+        $guest->description = addslashes(get_string("guestuserinfo"));
         $guest->confirmed   = 1;
         $guest->lang        = $CFG->lang;
         $guest->timemodified= time();
