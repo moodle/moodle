@@ -318,7 +318,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
                     // Set printable representation
                     $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
-                        ' ('.$timestart.' - '.$timeend.')';
+                        ' ('.$timestart.' -> '.$timeend.')';
                 }
                 else {
                     // It spans two or more days
@@ -329,7 +329,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
                     // Set printable representation
                     $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
-                        ' ('.$timestart.') - '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
+                        ' ('.$timestart.') -> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
                         ' ('.$timeend.')';
                 }
             }
@@ -759,6 +759,7 @@ function calendar_get_sideblock_upcoming($courses, $groups, $users, $daysinfutur
         } else {
             $content .= $events[$i]->name;
         }
+        $events[$i]->time = str_replace('->', '<br />->', $events[$i]->time);
         $content .= '</div><div class="cal_event_date" style="text-align:right;">'.$events[$i]->time.'</div>';
         if ($i < $lines - 1) $content .= '<hr />';
     }
