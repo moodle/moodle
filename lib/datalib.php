@@ -508,7 +508,7 @@ function get_record_sql($sql) {
             notify("Very strange error in get_record_sql !");
             print_object($rs);
         }
-        print_continue("$CFG->wwwroot/admin/config.php");
+        print_continue("$CFG->wwwroot/$CFG->admin/config.php");
     }
 }
 

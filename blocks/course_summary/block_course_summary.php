@@ -28,7 +28,7 @@ class CourseBlock_course_summary extends MoodleBlock {
         $this->content->text = format_text($this->course->summary, FORMAT_HTML, $options);
         if(isediting($this->course->id)) {
             if($this->course->id == SITEID) {
-                $editpage = $CFG->wwwroot.'/admin/site.php';
+                $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/site.php';
             } else {
                 $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->course->id;
             }
