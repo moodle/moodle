@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 Beta + (2003082100)
+      // forum.php - created with Moodle 1.1 Beta +++ (2003082702)
 
 
 $string['addanewdiscussion'] = "ディスカッショントピックを追加";
@@ -95,6 +95,8 @@ $string['ratingno'] = "評価無し";
 $string['ratingonlyteachers'] = "\$a のみが投稿を評価出来る";
 $string['ratings'] = "評価";
 $string['ratingssaved'] = "評価が保存されました";
+$string['ratingsuse'] = "評価を使用する";
+$string['ratingtime'] = "この期間の投稿に対する評価を制限する:";
 $string['re'] = "Re:";
 $string['readtherest'] = "残りのトピックを読む";
 $string['replies'] = "返事";

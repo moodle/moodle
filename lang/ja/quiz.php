@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1 development (2003081600)
+      // quiz.php - created with Moodle 1.1 Beta +++ (2003082702)
 
 
 $string['acceptederror'] = "エラー範囲";
@@ -52,9 +52,11 @@ $string['defaultgrade'] = "評価の初期値";
 $string['defaultinfo'] = "質問の標準カテゴリー";
 $string['deletequestioncheck'] = " '\$a' を本当に削除してよろしいですか?";
 $string['description'] = "説明";
+$string['eachattemptbuildsonthelast'] = "それぞれの解答を最後に作成する";
 $string['editcategories'] = "カテゴリーを編集する";
 $string['editingdescription'] = "説明を編集する";
 $string['editingmatch'] = "マッチング解答方式を編集する";
+$string['editingmultianswer'] = "隠し解答方式を編集する";
 $string['editingmultichoice'] = "複数解答方式を編集する";
 $string['editingnumerical'] = "数字方式を編集する";
 $string['editingquestion'] = "質問を編集する";
@@ -94,6 +96,7 @@ $string['missingquestiontext'] = "質問内容が見つかりません";
 $string['missingword'] = "穴埋め形式";
 $string['modulename'] = "クイズ";
 $string['modulenameplural'] = "クイズ";
+$string['multianswer'] = "隠し解答方式(Cloze)";
 $string['multichoice'] = "複数選択方式";
 $string['noanswers'] = "解答が選択されていません!";
 $string['noattempts'] = "このクイズは解答されていません";
@@ -130,6 +133,8 @@ $string['regradecount'] = "\$a->attempt 中 \$a->changed の評点が変更されました "
 $string['rename'] = "変名";
 $string['report'] = "レポート";
 $string['reportoverview'] = "概観";
+$string['reportregrade'] = "解答の再評価";
+$string['reportsimplestat'] = "単純統計";
 $string['review'] = "レビュー";
 $string['save'] = "保存";
 $string['savegrades'] = "評点を保存する";
@@ -153,6 +158,7 @@ $string['true'] = "○";
 $string['truefalse'] = "○/×方式";
 $string['type'] = "タイプ";
 $string['viewallanswers'] = "解答済みクイズを見る";
+$string['viewallreports'] = "\$a の解答に関するレポートを見る";
 $string['webct'] = "WebCTフォーマット";
 $string['yourfinalgradeis'] = "あなたの最終成績は \$a です";
 

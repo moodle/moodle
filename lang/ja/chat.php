@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.1 Beta + (2003082100)
+      // chat.php - created with Moodle 1.1 Beta +++ (2003082702)
 
 
 $string['beep'] = "ビープ";
@@ -7,6 +7,9 @@ $string['chatintro'] = "紹介文";
 $string['chatname'] = "チャットルーム名";
 $string['chatreport'] = "チャットセッション";
 $string['chattime'] = "次のチャットタイム";
+$string['configoldping'] = "ユーザからの応答が無くなってから、どれくらいの時間で退室したと見なしますか?";
+$string['configrefreshroom'] = "どのくらいのタイミング(秒数)でチャットルームをリフレッシュしますか?この通知を小さくすればチャットルームはレスポンスが良いように見えますが、多くの人がチャットをする場合、サーバにかかる負担が大きくなります。";
+$string['configrefreshuserlist'] = "どのくらいのタイミング(秒数)でユーザリストをリフレッシュしますか?";
 $string['currentchats'] = "アクティブなチャット";
 $string['currentusers'] = "現在のユーザ";
 $string['donotusechattime'] = "チャット時間を表示しない";
