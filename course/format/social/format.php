@@ -22,7 +22,7 @@
     $strgroupmy      = get_string("groupmy");
     $editing         = isediting($course->id);
 
-    echo '<table width="100%" border="0" cellspacing="5" cellpadding="5"> id="layout-table"';
+    echo '<table width="100%" border="0" cellspacing="5" cellpadding="5" id="layout-table">';
     echo '<tr>';
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
