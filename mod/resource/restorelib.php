@@ -40,7 +40,38 @@
             $resource->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
             $resource->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $resource->alltext = backup_todb($info['MOD']['#']['ALLTEXT']['0']['#']);
+            $resource->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
+            $resource->options = backup_todb($info['MOD']['#']['OPTIONS']['0']['#']);
             $resource->timemodified = $info['MOD']['#']['TIMEMODIFIED']['0']['#'];
+
+            //We are going to mantain here backwards compatibity with 1.4 resorces (exception!!)
+            //so we have to make some conversions...
+            //If  the type field isn't numeric we are restoring a newer (1.4) resource
+            if (!is_numeric($resource->type)) {
+                //Harcode the conversions
+                if ($resource->type == 'reference') {
+                    $resource->type = '1';
+                } else if ($resource->type == 'file' && $resource->options == 'frame') {
+                    $resource->type = '2';
+                } else if ($resource->type == 'file') {
+                    if (strtoupper(substr($resource->reference,0,5)) == 'HTTP:') {
+                        $resource->type = '5';
+                        $resource->alltext = $resource->popup;
+                    } else {
+                        $resource->type = '3';
+                        $resource->alltext = $resource->popup;
+                    }
+                } else if ($resource->type == 'text' && ($resource->options == '0' || $resource->options == '2')) {
+                    $resource->type = '4';
+                } else if ($resource->type == 'html') {
+                    $resource->type = '6';
+                } else if ($resource->type == 'text' && $resource->options == '3') {
+                    $resource->type = '8';
+                } else if ($resource->type == 'directory') {
+                    $resource->type = '9';
+                }
+                    
+            }
  
             //The structure is equal to the db, so insert the resource
             $newid = insert_record ("resource",$resource);
