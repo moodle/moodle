@@ -356,7 +356,37 @@ function dialogue_delete_expired_conversations() {
        }
     }
 }
- 
+
+function dialogue_get_participants($dialogueid) {
+//Returns the users with data in one dialogue
+//(users with records in dialogue_conversations, creators and receivers)
+
+    global $CFG;
+
+    //Get conversation's creators
+    $creators = get_records_sql("SELECT DISTINCT u.*
+                                FROM {$CFG->prefix}user u,
+                                     {$CFG->prefix}dialogue_conversations c
+                                WHERE c.dialogueid = '$dialogueid' and
+                                      u.id = c.userid");
+
+    //Get conversation's receivers
+    $receivers = get_records_sql("SELECT DISTINCT u.*
+                                FROM {$CFG->prefix}user u,
+                                     {$CFG->prefix}dialogue_conversations c
+                                WHERE c.dialogueid = '$dialogueid' and
+                                      u.id = c.recipientid");
+
+    //Add receivers to creators
+    if ($receivers) {
+        foreach ($receivers as $receiver) {
+            $creators[$receiver->id] = $receiver;
+        }
+    }
+
+    //Return creators array (it contains an array of unique users, creators and receivers)
+    return ($creators);
+} 
 
 //////////////////////////////////////////////////////////////////////////////////////
 function dialogue_get_available_users($dialogue) {
