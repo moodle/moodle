@@ -95,7 +95,7 @@
     echo "<form TARGET=\"{$CFG->framename}\" NAME=\"authmenu\" method=\"post\" action=\"auth.php\">";
     print_string("chooseauthmethod","auth");
 
-	choose_from_menu ($options, "auth", $auth, "","top.location='auth.php?auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
+	choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
 
     echo "</B></P></CENTER>";
         
