@@ -30,7 +30,7 @@
      <INPUT TYPE=hidden NAME=requested VALUE="<?php echo $REQUEST_URI ?>">
      <INPUT TYPE=submit VALUE="Send this off">
      </FORM>
-<?
+<?php
 
   print_footer();
 
