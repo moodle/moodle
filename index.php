@@ -116,7 +116,7 @@
     }
 
     // If the block width cache is not set, set it
-    if(!isset($SESSION->blockcache->width->{$site->id}) || $editing) {
+    if(!isset($SESSION) or !isset($SESSION->blockcache->width->{$site->id}) or $editing) {
         // This query might be optimized away if we 're in editing mode
         if(!isset($recblocks)) {
             $recblocks = get_records('blocks','visible','1');
