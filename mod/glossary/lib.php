@@ -729,17 +729,21 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
     }
 
     /// Some differences in syntax for entrygreSQL
-    if ($CFG->dbtype == "entrygres7") {
+    switch ($CFG->dbtype) {
+    case 'postgres7':
         $LIKE = "ILIKE";   // case-insensitive
         $NOTLIKE = "NOT ILIKE";   // case-insensitive
         $REGEXP = "~*";
         $NOTREGEXP = "!~*";
-    } else {
+    break;
+    case 'mysql':
+    default:
         $LIKE = "LIKE";
         $NOTLIKE = "NOT LIKE";
         $REGEXP = "REGEXP";
         $NOTREGEXP = "NOT REGEXP";
-    }
+    break;
+    }    
 
     $conceptsearch = "";
     $definitionsearch = "";
