@@ -539,6 +539,15 @@ class block_base {
         return set_field('block_instance', 'configdata', base64_encode(serialize($data)), 'id', $this->instance->id);
     }
 
+    /**
+     * Replace the instance's configuration data with those currently in $this->config;
+     * @return boolean
+     * @todo finish documenting this function
+     */
+    function instance_config_commit() {
+        return set_field('block_instance', 'configdata', base64_encode(serialize($this->config)), 'id', $this->instance->id);
+    }
+
 }
 
 /**

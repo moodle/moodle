@@ -34,9 +34,15 @@ class block_quiz_results extends block_base {
         else {
             // Assuming we are displayed in the quiz view page
             $quizid    = $this->instance->pageid;
-            $modrecord = get_record('modules', 'name', 'quiz');
-            $cmrecord  = get_record('course_modules', 'module', $modrecord->id, 'instance', $quizid);
-            $courseid = $cmrecord->course;
+
+            // A trick to take advantage of instance config and save queries
+            if(empty($this->config->courseid)) {
+                $modrecord = get_record('modules', 'name', 'quiz');
+                $cmrecord  = get_record('course_modules', 'module', $modrecord->id, 'instance', $quizid);
+                $this->config->courseid = intval($cmrecord->course);
+                $this->instance_config_commit();
+            }
+            $courseid = $this->config->courseid;
         }
 
         if(empty($quizid)) {
