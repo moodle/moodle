@@ -248,7 +248,9 @@ function lang_save_file($path, $file, $strings) {
 
     foreach ($strings as $key => $value) {
         list($id, $stringname) = explode("-",$key);
-        $value = str_replace("\\\\","\\",$value);
+        $value = str_replace("\\","",$value);               // Delete all slashes
+        $value = str_replace("$"."a", "\\$"."a", $value);   // Add slashes for $a
+        $value = str_replace("\"", "\\\"", $value);         // Add slashes for "
         if ($id == "string"){
             fwrite($f,"\$string['$stringname'] = \"$value\";\n");
         }
