@@ -47,7 +47,9 @@
                 if (! $updateinstancefunction($mod)) {
                     error("Could not update the $mod->modulename");
                 }
-                add_to_log($mod->course, "course", "update mod", "../mod/$mod->modulename/view.php?id=$mod->coursemodule", "$mod->modulename $mod->instance"); 
+                add_to_log($mod->course, "course", "update mod", 
+                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
+                           "$mod->modulename $mod->instance"); 
                 break;
 
             case "add":
@@ -66,7 +68,9 @@
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct section");
                 }   
-                add_to_log($mod->course, "course", "add mod", "../mod/$mod->modulename/view.php?id=$mod->coursemodule", "$mod->modulename $mod->instance"); 
+                add_to_log($mod->course, "course", "add mod", 
+                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
+                           "$mod->modulename $mod->instance"); 
                 break;
             case "delete":
                 if (! $deleteinstancefunction($mod->instance)) {
@@ -78,17 +82,18 @@
                 if (! delete_mod_from_section($mod->coursemodule, "$mod->section")) {
                     notify("Could not delete the $mod->modulename from that section");
                 }
-                add_to_log($mod->course, "course", "delete mod", "view.php?id=$mod->course", "$mod->modulename $mod->instance"); 
+                add_to_log($mod->course, "course", "delete mod", 
+                           "view.php?id=$mod->course", 
+                           "$mod->modulename $mod->instance"); 
                 break;
             default:
                 error("No mode defined");
 
         }
 
-        $modinfo = serialize(get_array_of_activities($mod->course));
-        if (!set_field("course", "modinfo", $modinfo, "id", $mod->course)) {
-            error("Could not cache module information!");
-        }
+        $db->debug = true;
+        rebuild_course_cache($mod->course);
+        $db->debug = false;
 
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
@@ -111,10 +116,7 @@
     
         move_module($cm, $move);
 
-        $modinfo = serialize(get_array_of_activities($cm->course));
-        if (!set_field("course", "modinfo", $modinfo, "id", $cm->course)) {
-            error("Could not cache module information!");
-        }
+        rebuild_course_cache($cm->course);
 
         $site = get_site();
         if ($site->id == $cm->course) {
@@ -130,12 +132,9 @@
             error("This course module doesn't exist");
         }
    
-        hide_course_module($hide);
+        hide_course_module($cm->id);
 
-        $modinfo = serialize(get_array_of_activities($cm->course));
-        if (!set_field("course", "modinfo", $modinfo, "id", $cm->course)) {
-            error("Could not cache module information!");
-        }
+        rebuild_course_cache($cm->course);
 
         $site = get_site();
         if ($site->id == $cm->course) {
@@ -151,14 +150,19 @@
             error("This course module doesn't exist");
         }
 
+        if (! $section = get_record("course_sections", "id", $cm->section)) {
+            error("This module doesn't exist");
+        }
+
+        if (! $module = get_record("modules", "id", $cm->module)) {
+            error("This module doesn't exist");
+        }
+
         $site = get_site();
 
-        if ($cm->visible or $site->id == $cm->course) {
-            show_course_module($show);
-            $modinfo = serialize(get_array_of_activities($cm->course));
-            if (!set_field("course", "modinfo", $modinfo, "id", $cm->course)) {
-                error("Could not cache module information!");
-            }
+        if ($module->visible and ($section->visible or ($site->id == $cm->course))) {
+            show_course_module($cm->id);
+            rebuild_course_cache($cm->course);
         }
 
         if ($site->id == $cm->course) {

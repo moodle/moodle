@@ -437,7 +437,7 @@ function get_array_of_activities($courseid) {
 //  mod - name of the module (eg forum)
 //  section - the number of the section (eg week or topic)
 //  name - the name of the instance
-//  visible - when the instance is visible or no
+//  visible - is the instance visible or not
 
     $mod = array();
 
@@ -478,8 +478,10 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 
     if ($allmods = get_records("modules")) {
         foreach ($allmods as $mod) {
-            $modnames[$mod->name] = get_string("modulename", "$mod->name");
-            $modnamesplural[$mod->name] = get_string("modulenameplural", "$mod->name");
+            if ($mod->visible) {
+                $modnames[$mod->name] = get_string("modulename", "$mod->name");
+                $modnamesplural[$mod->name] = get_string("modulenameplural", "$mod->name");
+            }
         }
         asort($modnames);
     } else {
@@ -544,10 +546,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
                 set_field("course_modules", "visible", "$visibility", "id", $moduleid);
             }
         }
-        $modinfo = serialize(get_array_of_activities($courseid));
-        if (!set_field("course", "modinfo", $modinfo, "id", $courseid)) {
-            error("Could not cache module information!");
-        }
+        rebuild_course_cache($courseid);
     }
 }
 
@@ -632,6 +631,28 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     echo "</td></tr></table><br />\n\n";
 }
 
+
+function rebuild_course_cache($courseid=0) {
+// Rebuilds the cached list of course activities stored in the database
+// If a courseid is not specified, then all are rebuilt
+
+    if ($courseid) {
+        $select = "id = '$courseid'";
+    } else {
+        $select = "";
+    }
+
+    if ($courses = get_records_select("course", $select)) {
+        foreach ($courses as $course) {
+            $modinfo = serialize(get_array_of_activities($course->id));
+            if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
+                notify("Could not cache module information for course '$course->fullname'!");
+            }
+        }
+    }
+}
+
+
 function print_heading_block($heading, $width="100%", $class="headingblock") {
     global $THEME;
 
@@ -706,50 +727,52 @@ function print_admin_links ($siteid, $width=180) {
     }
 
     if (isadmin()) {
-	    $moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/config.php\">".get_string("configvariables")."</A>";
+	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/config.php\">".get_string("configvariables")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/site.php\">".get_string("sitesettings")."</A>";
+		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/site.php\">".get_string("sitesettings")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("sitelogs")."</A>";
+		$moddata[]="<a href=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("sitelogs")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/theme/index.php\">".get_string("choosetheme")."</A>";
+		$moddata[]="<a href=\"$CFG->wwwroot/theme/index.php\">".get_string("choosetheme")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/lang.php\">".get_string("checklanguage")."</A>";
+		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/lang.php\">".get_string("checklanguage")."</a>";
+		$modicon[]=$icon;
+		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/modules.php\">".get_string("managemodules")."</a>";
 		$modicon[]=$icon;
 		if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
-            $moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".get_string("managedatabase")."</A>";
+            $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a>";
 			$modicon[]=$icon;
 		}
-		$moddata[]="<HR>";
+		$moddata[]="<hr>";
 		$modicon[]="";
     }
     if (iscreator()) {
-	    $moddata[]="<A HREF=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</A>";
+	    $moddata[]="<a href=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/course/teacher.php\">".get_string("assignteachers")."</A>";
+		$moddata[]="<a href=\"$CFG->wwwroot/course/teacher.php\">".get_string("assignteachers")."</a>";
 		$modicon[]=$icon;
         $fulladmin = "";
     }
     if (isadmin()) {
-	    $moddata[]="<A HREF=\"$CFG->wwwroot/course/categories.php\">".get_string("categories")."</A>";
+	    $moddata[]="<a href=\"$CFG->wwwroot/course/categories.php\">".get_string("categories")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/course/delete.php\">".get_string("deletecourse")."</A>";
+		$moddata[]="<a href=\"$CFG->wwwroot/course/delete.php\">".get_string("deletecourse")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<HR>";
+		$moddata[]="<hr>";
 		$modicon[]="";
         if($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
-		    $moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".get_string("addnewuser")."</A>";
+		    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".get_string("addnewuser")."</a>";
 		    $modicon[]=$icon;
         }
-		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/user.php\">".get_string("edituser")."</A>";
+		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/user.php\">".get_string("edituser")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/admin.php\">".get_string("assignadmins")."</A>";
+		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/admin.php\">".get_string("assignadmins")."</a>";
 		$modicon[]=$icon;
-        $moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/creators.php\">".get_string("assigncreators")."</A>";
+        $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/creators.php\">".get_string("assigncreators")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/auth.php\">".get_string("authentication")."</A>";
+		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/auth.php\">".get_string("authentication")."</a>";
 		$modicon[]=$icon;
-        $fulladmin = "<P><A HREF=\"$CFG->wwwroot/$CFG->admin/\">".get_string("admin")."</A>...";
+        $fulladmin = "<p><a href=\"$CFG->wwwroot/$CFG->admin/\">".get_string("admin")."</a>...";
     }
 
     print_side_block(get_string("administration"), "", $moddata, $modicon, $fulladmin, $width);

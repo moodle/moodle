@@ -19,7 +19,7 @@
 
 function main_upgrade($oldversion=0) {
 
-    global $CFG;
+    global $CFG, $THEME;
 
     $result = true;
 
@@ -381,6 +381,12 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2003050900) {
         table_column("modules", "", "visible", "integer", "1", "unsigned", "1", "", "");
+    }
+
+    if ($oldversion < 2003050902) {
+        if (get_records("modules", "name", "pgassignment")) {
+            print_simple_box("Note: the pgassignment module will soon be deleted from CVS!  Go to the new 'Manage Modules' page and DELETE IT from your system", "center", "50%", "$THEME->cellheading", "20", "noticebox");
+        }
     }
 
     return $result;

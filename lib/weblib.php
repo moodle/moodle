@@ -895,6 +895,7 @@ function print_table($table) {
 //     $table->head      is an array of heading names.
 //     $table->align     is an array of column alignments
 //     $table->size      is an array of column sizes
+//     $table->wrap      is an array of "nowrap"s or nothing
 //     $table->data[]    is an array of arrays containing the data.
 //     $table->width     is an percentage of the page
 //     $table->cellpadding    padding on each cell
@@ -918,6 +919,15 @@ function print_table($table) {
             }
         }
     }
+    if (isset($table->wrap)) {
+        foreach ($table->wrap as $key => $ww) {
+            if ($ww) {
+                $wrap[$key] = " NOWRAP ";
+            } else {
+                $wrap[$key] = "";
+            }
+        }
+    }
 
     if (empty($table->width)) {
         $table->width = "80%";
@@ -931,12 +941,12 @@ function print_table($table) {
         $table->cellspacing = "1";
     }
 
-    print_simple_box_start("CENTER", "$table->width", "#FFFFFF", 0);
-    echo "<TABLE WIDTH=100% BORDER=0 valign=top align=center ";
+    print_simple_box_start("center", "$table->width", "#ffffff", 0);
+    echo "<table width=100% border=0 valign=top align=center ";
     echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"generaltable\">\n";
 
     if (!empty($table->head)) {
-        echo "<TR>";
+        echo "<tr>";
         foreach ($table->head as $key => $heading) {
             if (!isset($size[$key])) {
                 $size[$key] = "";
@@ -944,13 +954,13 @@ function print_table($table) {
             if (!isset($align[$key])) {
                 $align[$key] = "";
             } 
-            echo "<TH VALIGN=top ".$align[$key].$size[$key]." NOWRAP class=\"generaltableheader\">$heading</TH>";
+            echo "<th valign=top ".$align[$key].$size[$key]." nowrap class=\"generaltableheader\">$heading</th>";
         }
         echo "</TR>\n";
     }
 
     foreach ($table->data as $row) {
-        echo "<TR VALIGN=TOP>";
+        echo "<tr valign=top>";
         foreach ($row as $key => $item) {
             if (!isset($size[$key])) {
                 $size[$key] = "";
@@ -958,11 +968,14 @@ function print_table($table) {
             if (!isset($align[$key])) {
                 $align[$key] = "";
             } 
-            echo "<TD ".$align[$key].$size[$key]." class=\"generaltablecell\">$item</TD>";
+            if (!isset($wrap[$key])) {
+                $wrap[$key] = "";
+            } 
+            echo "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"generaltablecell\">$item</td>";
         }
-        echo "</TR>\n";
+        echo "</tr>\n";
     }
-    echo "</TABLE>\n";
+    echo "</table>\n";
     print_simple_box_end();
 
     return true;
