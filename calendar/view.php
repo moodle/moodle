@@ -41,8 +41,11 @@
 //  Display the calendar page.
 
     require_once('../config.php');
-    require_once($CFG->dirroot.'/course/lib.php');
-    require_once($CFG->dirroot.'/calendar/lib.php');
+    require_once('../course/lib.php');
+
+    require_login();
+
+    require_once('lib.php');
 
     optional_variable($_GET['view'], 'upcoming');
     optional_variable($_GET['course'], 0);
@@ -92,20 +95,12 @@
     // If a course has been supplied in the URL, change the filters to show that one
     if(!empty($_GET['course'])) {
         if(is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
-            if($_GET['course'] == 1) {
-                // If coming from the home page, show all courses
-                $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-                calendar_set_referring_course(0);
-            }
-            else {
-                // Otherwise show just this one
-                $SESSION->cal_courses_shown = intval($_GET['course']);
-                calendar_set_referring_course($SESSION->cal_courses_shown);
-            }
+            $SESSION->cal_courses_shown = intval($_GET['course']);
+            calendar_set_referring_course($SESSION->cal_courses_shown);
         }
     }
 
-    if(empty($USER) || isguest($USER->id)) {
+    if(isguest($USER->id)) {
         $defaultcourses = calendar_get_default_courses();
         calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
     }
@@ -117,8 +112,7 @@
     // but NOT for the "main page" course
     if($SESSION->cal_course_referer > 1 &&
       ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
-        // If we know about the referring course, show a return link and ALSO require login!
-        require_login();
+        // If we know about the referring course, show a return link
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
     }
 
@@ -157,7 +151,7 @@
 
     // START: Last column (3-month display)
     echo '<td style="vertical-align: top; width: 180px;">';
-    print_side_block_start(get_string('monthlyview', 'calendar'));
+    print_side_block_start(get_string('monthlyview', 'calendar'), '', 'sideblockmain');
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
@@ -183,7 +177,7 @@
 
 
 function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
-    global $CFG, $THEME, $USER;
+    global $CFG, $THEME, $db;
 
     if (!checkdate($m, $d, $y)) {
         $now = usergetdate(time());
@@ -198,8 +192,9 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     $events = calendar_get_upcoming($courses, $groups, $users, 1, 100, $starttime);
 
     // New event button
-    if (empty($USER) || isguest()) {
+    if (isguest()) {
         $text = get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars);
+
     } else {
         $text = '<div style="float: left;">'.get_string('dayview', 'calendar').': '.
                 calendar_course_filter_selector($getvars).'</div><div style="float: right;">';
@@ -212,7 +207,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         $text.= '</form></div>';
     }
 
-    print_side_block_start($text, array('class' => 'mycalendar'));
+    print_side_block_start($text, '', 'mycalendar');
     echo '<p>'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</p>';
 
     if (empty($events)) {
@@ -226,16 +221,6 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         // First, print details about events that start today
         foreach ($events as $event) {
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
-
-/*
-                print_object($event->time);
-
-                $dayend = calendar_day_representation($event->timestart + $event->timeduration);
-                $timeend = calendar_time_representation($event->timestart + $event->timeduration);
-                $enddate = usergetdate($event->timestart + $event->timeduration);
-                // Set printable representation
-                echo calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).' ('.$timeend.')';
-*/
                 unset($event->time);
                 calendar_print_event($event);
 
@@ -315,10 +300,10 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     }
 
     // Extract information: events vs. time
-    calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
+    calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
 
     // New event button
-    if(empty($USER) || isguest()) {
+    if(isguest()) {
         $text = get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars);
     }
     else {
@@ -331,7 +316,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         $text.= '</form></div>';
     }
 
-    print_side_block_start($text, array('class' => 'mycalendar'));
+    print_side_block_start($text, '', 'mycalendar');
 
     echo calendar_top_controls('month', array('m' => $m, 'y' => $y));
 
@@ -481,7 +466,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
     echo "</tr>\n";
 
-    if(!empty($USER) && !isguest($USER->id)) {
+    if(!isguest($USER->id)) {
         echo '<tr>';
         // Group events
         if($SESSION->cal_show_groups) {
@@ -513,7 +498,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
     $events = calendar_get_upcoming($courses, $groups, $users, $futuredays, $maxevents);
 
     // New event button
-    if(empty($USER) || isguest()) {
+    if(isguest()) {
         $text = get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming');
 
     } else {
@@ -528,7 +513,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         $text.= '</form></div>';
     }
 
-    print_side_block_start($text, array('class' => 'mycalendar'));
+    print_side_block_start($text, '', 'mycalendar');
     if ($events) {
         foreach ($events as $event) {
             calendar_print_event($event);
@@ -577,11 +562,11 @@ function calendar_print_event($event) {
     if (calendar_edit_event_allowed($event)) {
         echo '<div align="right">';
         if (empty($event->cmid)) {
-            $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
+            $editlink = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
             $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id;
         } else {
-            $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true';
-            $deletelink = $CFG->wwwroot.'/course/mod.php?delete='.$event->cmid;
+            $editlink   = "$CFG->wwwroot/mod/$event->modulename/view.php?id=$event->cmid";
+            $deletelink = "$CFG->wwwroot/course/mod.php?delete=$event->cmid";
         }
         echo ' <a href="'.$editlink.'"><img
                   src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'"
@@ -599,7 +584,7 @@ function calendar_print_event($event) {
 function calendar_course_filter_selector($getvars = '') {
     global $USER, $SESSION;
 
-    if (empty($USER) || isguest($USER->id)) {
+    if (isguest($USER->id)) {
         return '';
     }
 

@@ -351,12 +351,10 @@ function get_user_timezone($tz = 99) {
 
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
 
-function require_login($courseid=0, $autologinguest=true) {
+function require_login($courseid=0) {
 /// This function checks that the current user is logged in, and optionally
 /// whether they are "logged in" or allowed to be in a particular course.
 /// If not, then it redirects them to the site login or course enrolment.
-/// $autologinguest determines whether visitors should automatically be
-/// logged in as guests provide $CFG->autologinguests is set to 1
 
     global $CFG, $SESSION, $USER, $FULLME, $MoodleSession;
 
@@ -367,17 +365,7 @@ function require_login($courseid=0, $autologinguest=true) {
             $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
         }
         $USER = NULL;
-        if ($autologinguest and $CFG->autologinguests and $courseid and get_field('course','guest','id',$courseid)) {
-            $loginguest = '?loginguest=true';
-        } else {
-            $loginguest = '';
-        }
-        if (empty($CFG->loginhttps)) {
-            redirect("$CFG->wwwroot/login/index.php$loginguest");
-        } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
-            redirect("$wwwroot/login/index.php$loginguest");
-        }
+        redirect("$CFG->wwwroot/login/index.php");
         die;
     }
 
@@ -516,7 +504,7 @@ function isadmin($userid=0) {
     }
 }
 
-function isteacher($courseid=0, $userid=0, $includeadmin=true) {
+function isteacher($courseid, $userid=0, $includeadmin=true) {
 /// Is the user a teacher or admin?
     global $USER;
 
@@ -526,10 +514,6 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 
     if (!$userid) {
         return !empty($USER->teacher[$courseid]);
-    }
-
-    if (!$courseid) {
-        return record_exists("user_teachers","userid",$userid);
     }
 
     return record_exists("user_teachers", "userid", $userid, "course", $courseid);
@@ -568,23 +552,7 @@ function iscreator ($userid=0) {
 
 function isstudent($courseid, $userid=0) {
 /// Is the user a student in this course?
-/// If course is site, is the user a confirmed user on the site?
     global $USER;
-
-    if (empty($USER->id)) {
-        return false;
-    }
-
-    $site = get_site();
-    if ($courseid == $site->id) {
-        if (!$userid) {
-            $userid = $USER->id;
-        }
-        if (isguest($userid)) {
-            return false;
-        }
-        return record_exists('user', 'id', $userid, 'confirmed', 1, 'deleted', 0);
-    }
 
     if (!$userid) {
         return !empty($USER->student[$courseid]);
@@ -799,26 +767,20 @@ function authenticate_user_login($username, $password) {
          }
 
         return $user;
-
     } else {
-        add_to_log(0, "login", "error", $_SERVER['HTTP_REFERER'], $username);
-        $date = date('Y-m-d H:i:s');
-        error_log("$date\tfailed login\t".$_SERVER['REMOTE_ADDR']."\t".$_SERVER['HTTP_USER_AGENT']."\t$username");
         return false;
     }
 }
 
-function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
+function enrol_student($userid, $courseid) {
 /// Enrols a student in a given course
-
-    $course = get_record("course", "id", $courseid);
 
     if (!record_exists("user_students", "userid", $userid, "course", $courseid)) {
         if (record_exists("user", "id", $userid)) {
             $student->userid = $userid;
             $student->course = $courseid;
-            $student->timestart = $timestart;
-            $student->timeend = $timeend;
+            $student->start = 0;
+            $student->end = 0;
             $student->time = time();
             return insert_record("user_students", $student);
         }
@@ -851,48 +813,27 @@ function unenrol_student($userid, $courseid=0) {
     }
 }
 
-function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $timeend=0) {
+function add_teacher($userid, $courseid) {
 /// Add a teacher to a given course
 
-    if ($teacher = get_record('user_teachers', 'userid', $userid, 'course', $courseid)) {
-        $newteacher = NULL;
-        $newteacher->id = $teacher->id;
-        $newteacher->editall = $editall;
-        if ($role) {
-            $newteacher->role = $role;
+    if (!record_exists("user_teachers", "userid", $userid, "course", $courseid)) {
+        if (record_exists("user", "id", $userid)) {
+            $teacher->userid = $userid;
+            $teacher->course = $courseid;
+            $teacher->editall = 1;
+            $teacher->role = "";
+            if (record_exists("user_teachers", "course", $courseid)) {
+                $teacher->authority = 2;
+            } else {
+                $teacher->authority = 1;
+            }
+            delete_records("user_students", "userid", $userid, "course", $courseid); // Unenrol as student
+
+            return insert_record("user_teachers", $teacher);
         }
-        if ($timestart) {
-            $newteacher->timestart = $timestart;
-        }
-        if ($timeend) {
-            $newteacher->timeend = $timeend;
-        }
-        return update_record('user_teachers', $newteacher);
+        return false;
     }
-
-    if (!record_exists("user", "id", $userid)) {
-        return false;   // no such user
-    }
-
-    if (!record_exists("course", "id", $courseid)) {
-        return false;   // no such course
-    }
-
-    $teacher = NULL;
-    $teacher->userid  = $userid;
-    $teacher->course  = $courseid;
-    $teacher->editall = $editall;
-    $teacher->role    = $role;
-
-    if (record_exists("user_teachers", "course", $courseid)) {
-        $teacher->authority = 2;
-    } else {
-        $teacher->authority = 1;
-    }
-    delete_records("user_students", "userid", $userid, "course", $courseid); // Unenrol as student
-
-    return insert_record("user_teachers", $teacher);
-
+    return true;
 }
 
 function remove_teacher($userid, $courseid=0) {
@@ -1088,116 +1029,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 }
 
-function remove_course_userdata($courseid, $showfeedback=true,
-                                $removestudents=true, $removeteachers=false, $removegroups=true,
-                                $removeevents=true, $removelogs=false) {
-/// This function will empty a course of USER data as much as 
-/// possible.   It will retain the activities and the structure 
-/// of the course.
-
-    global $CFG, $THEME, $USER, $SESSION;
-
-    $result = true;
-
-    if (! $course = get_record("course", "id", $courseid)) {
-        error("Course ID was incorrect (can't find it)");
-    }
-
-    $strdeleted = get_string("deleted");
-
-    // Look in every instance of every module for data to delete
-
-    if ($allmods = get_records("modules") ) {
-        foreach ($allmods as $mod) {
-            $modname = $mod->name;
-            $modfile = "$CFG->dirroot/mod/$modname/lib.php";
-            $moddeleteuserdata = $modname."_delete_userdata";   // Function to delete user data
-            $count=0;
-            if (file_exists($modfile)) {
-                @include_once($modfile);
-                if (function_exists($moddeleteuserdata)) {
-                    $moddeleteuserdata($course, $showfeedback);
-                }
-            }
-        }
-    } else {
-        error("No modules are installed!");
-    }
-
-    // Delete other stuff
-
-    if ($removestudents) {
-        /// Delete student enrolments
-        if (delete_records("user_students", "course", $course->id)) {
-            if ($showfeedback) {
-                notify("$strdeleted user_students");
-            }
-        } else {
-            $result = false;
-        }
-        /// Delete group members (but keep the groups)
-        if ($groups = get_records("groups", "courseid", $course->id)) {
-            foreach ($groups as $group) {
-                if (delete_records("groups_members", "groupid", $group->id)) {
-                    if ($showfeedback) {
-                        notify("$strdeleted groups_members");
-                    }
-                } else {
-                    $result = false;
-                }
-            }
-        }
-    }
-
-    if ($removeteachers) {
-        if (delete_records("user_teachers", "course", $course->id)) {
-            if ($showfeedback) {
-                notify("$strdeleted user_teachers");
-            }
-        } else {
-            $result = false;
-        }
-    }
-
-    if ($removegroups) {
-        if ($groups = get_records("groups", "courseid", $course->id)) {
-            foreach ($groups as $group) {
-                if (delete_records("groups", "id", $group->id)) {
-                    if ($showfeedback) {
-                        notify("$strdeleted groups");
-                    }
-                } else {
-                    $result = false;
-                }
-            }
-        }
-    }
-
-    if ($removeevents) {
-        if (delete_records("event", "courseid", $course->id)) {
-            if ($showfeedback) {
-                notify("$strdeleted event");
-            }
-        } else {
-            $result = false;
-        }
-    }
-
-    if ($removelogs) {
-        if (delete_records("log", "course", $course->id)) {
-            if ($showfeedback) {
-                notify("$strdeleted log");
-            }
-        } else {
-            $result = false;
-        }
-    }
-
-    return $result;
-
-}
-
-
 
 /// GROUPS /////////////////////////////////////////////////////////
 
@@ -1383,7 +1214,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
 /// CORRESPONDENCE  ////////////////////////////////////////////////
 
-function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $attachment="", $attachname="", $usetrueaddress=true) {
+function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $attachment="", $attachname="") {
 ///  user        - a user record as an object
 ///  from        - a user record as an object
 ///  subject     - plain text subject line of the email
@@ -1391,11 +1222,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 ///  messagehtml - complete html version of the message (optional)
 ///  attachment  - a file on the filesystem, relative to $CFG->dataroot
 ///  attachname  - the name of the file (extension indicates MIME)
-///  usetrueaddress - determines whether $from email address should be sent out.
-///                   Will be overruled by user profile setting for maildisplay
-///
-///  Returns "true" if mail was sent OK, "emailstop" if email was blocked by user
-///  and "false" if there was another sort of error.
 
     global $CFG, $_SERVER;
 
@@ -1411,7 +1237,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     }
 
     if (!empty($user->emailstop)) {
-        return 'emailstop';
+        return false;
     }
 
     $mail = new phpmailer;
@@ -1449,16 +1275,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $mail->Sender   = "$adminuser->email";
 
-    if (is_string($from)) { // So we can pass whatever we want if there is need
-        $mail->From     = $CFG->noreplyaddress;
-        $mail->FromName = $from;
-    } else if ($usetrueaddress and $from->maildisplay) {
-        $mail->From     = "$from->email";
-        $mail->FromName = fullname($from);
-    } else {
-        $mail->From     = "$CFG->noreplyaddress";
-        $mail->FromName = fullname($from);
-    }
+    $mail->From     = "$from->email";
+    $mail->FromName = fullname($from);
     $mail->Subject  =  stripslashes($subject);
 
     $mail->AddAddress("$user->email", fullname($user) );
@@ -1837,7 +1655,7 @@ function display_size($size) {
 function clean_filename($string) {
 /// Cleans a given filename by removing suspicious or troublesome characters
 /// Only these are allowed:
-///    alphanumeric _ - .
+///    alphanumeric _ - . 
 
     $string = eregi_replace("\.\.+", "", $string);
     $string = preg_replace('/[^\.a-zA-Z\d\_-]/','_', $string ); // only allowed chars
@@ -1987,15 +1805,6 @@ function get_string_from_file($identifier, $langfile, $destination) {
     return "$destination = sprintf(\"".$string[$identifier]."\");";
 }
 
-function get_strings($array, $module='') {
-/// Converts an array of strings
-
-   $string = NULL;
-   foreach ($array as $item) {
-       $string->$item = get_string($item, $module);
-   }
-   return $string;
-}
 
 function get_list_of_languages() {
 /// Returns a list of language codes and their full names
@@ -2491,112 +2300,6 @@ function moodle_needs_upgrading() {
 
 /// MISCELLANEOUS ////////////////////////////////////////////////////////////////////
 
-function notify_login_failures() {
-    global $CFG, $db;
-
-    // notify admin users or admin user of any failed logins (since last notification).
-    switch ($CFG->notifyloginfailures) {
-        case 'mainadmin' :
-            $recip = array(get_admin());
-            break;
-        case 'alladmins':
-            $recip = get_admins();
-            break;
-    }
-    
-    if (empty($CFG->lastnotifyfailure)) {
-        $CFG->lastnotifyfailure=0;
-    }
-    
-    // we need to deal with the threshold stuff first. 
-    if (empty($CFG->notifyloginthreshold)) {
-        $CFG->notifyloginthreshold = 10; // default to something sensible.
-    }
-
-    $notifyipsrs = $db->Execute("SELECT ip FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure} 
-                          AND module='login' AND action='error' GROUP BY ip HAVING count(*) > $CFG->notifyloginthreshold");
-
-    $notifyusersrs = $db->Execute("SELECT info FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure} 
-                          AND module='login' AND action='error' GROUP BY info HAVING count(*) > $CFG->notifyloginthreshold");
-    
-    if ($notifyipsrs) {
-        $ipstr = '';
-        while ($row = $notifyipsrs->FetchRow()) {
-            $ipstr .= "'".$row['ip']."',";
-        }
-        $ipstr = substr($ipstr,0,strlen($ipstr)-1);
-    }
-    if ($notifyusersrs) {
-        $userstr = '';
-        while ($row = $notifyusersrs->FetchRow()) {
-            $userstr .= "'".$row['info']."',";
-        }
-        $userstr = substr($userstr,0,strlen($userstr)-1);
-    }
-
-    if (strlen($userstr) > 0 || strlen($ipstr) > 0) {
-        $count = 0;
-        $logs = get_logs("time > {$CFG->lastnotifyfailure} AND module='login' AND action='error' "
-                 .((strlen($ipstr) > 0 && strlen($userstr) > 0) ? " AND ( ip IN ($ipstr) OR info IN ($userstr) ) "
-                 : ((strlen($ipstr) != 0) ? " AND ip IN ($ipstr) " : " AND info IN ($userstr) ")),"l.time DESC","","",$count);
-        
-        // if we haven't run in the last hour and we have something useful to report and we are actually supposed to be reporting to somebody
-        if (is_array($recip) and count($recip) > 0 and ((time() - (60 * 60)) > $CFG->lastnotifyfailure) 
-            and is_array($logs) and count($logs) > 0) {
-       
-            $message = '';
-            $site = get_site();
-            $subject = get_string('notifyloginfailuressubject','',$site->fullname);
-            $message .= get_string('notifyloginfailuresmessagestart','',$CFG->wwwroot)
-                 .(($CFG->lastnotifyfailure != 0) ? '('.userdate($CFG->lastnotifyfailure).')' : '')."\n\n";
-            foreach ($logs as $log) {
-                $log->time = userdate($log->time);
-                $message .= get_string('notifyloginfailuresmessage','',$log)."\n";
-            }
-            $message .= "\n\n".get_string('notifyloginfailuresmessageend','',$CFG->wwwroot)."\n\n";
-            foreach ($recip as $admin) {
-                echo "Emailing $admin->username about ".count($logs)." failed login attempts\n";
-                email_to_user($admin,get_admin(),$subject,$message);
-            }
-            $conf->name = "lastnotifyfailure";
-            $conf->value = time();
-            if ($current = get_record("config", "name", "lastnotifyfailure")) {
-                $conf->id = $current->id;
-                if (! update_record("config", $conf)) {
-                    echo "Could not update last notify time";
-                }
-
-            } else if (! insert_record("config", $conf)) {
-                echo "Could not set last notify time";
-            }
-        }
-    }
-}
-
-function moodle_setlocale($locale='') {
-
-    global $SESSION, $USER, $CFG;
-
-    if ($locale) {
-        $CFG->locale = $locale;
-    } else if (!empty($CFG->courselang) and ($CFG->courselang != $CFG->lang) ) {
-        $CFG->locale = get_string('locale');
-    } else if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {
-        $CFG->locale = get_string('locale');
-    } else if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
-        $CFG->locale = get_string('locale');
-    } else if (empty($CFG->locale)) {
-        $CFG->locale = get_string('locale');
-        set_config('locale', $CFG->locale);   // cache it to save lookups in future
-    }
-    setlocale (LC_TIME, $CFG->locale);
-    setlocale (LC_COLLATE, $CFG->locale);
-
-    if ($CFG->locale != 'tr_TR') {            // To workaround a well-known PHP bug with Turkish
-        setlocale (LC_CTYPE, $CFG->locale);
-    }
-}
-
 function moodle_strtolower ($string, $encoding='') {
 /// Converts string to lowercase using most compatible  function available
     if (function_exists('mb_strtolower')) {
@@ -2760,7 +2463,7 @@ function course_scale_used($courseid,$scaleid) {
 ////using scaleid in a courseid
 
     global $CFG;
-
+    
     $return = 0;
 
     if (!empty($scaleid)) {
@@ -2783,7 +2486,7 @@ function course_scale_used($courseid,$scaleid) {
 }
 
 function site_scale_used($scaleid) {
-////This function returns the nummber of activities
+////This function returns the nummber of activities 
 ////using scaleid in the entire site
 
     global $CFG;
@@ -2824,47 +2527,6 @@ function make_unique_id_code($extra="") {
     }
 }
 
-
-/**
-* Function to check the passed address is within the passed subnet
-*
-* The parameter is a comma separated string of subnet definitions.
-* Subnet strings can be in one of two formats:
-*   1: xxx.xxx.xxx.xxx/xx
-*   2: xxx.xxx
-* Return boolean
-* Code for type 1 modified from user posted comments by mediator at
-* http://au.php.net/manual/en/function.ip2long.php
-*
-* @param    addr    the address you are checking
-* @param    subnetstr    the string of subnet addresses
-*/
-
-function address_in_subnet($addr, $subnetstr) {
-
-    $subnets = explode(",", $subnetstr);
-    $found = false;
-    $addr = trim($addr);
-
-    foreach ($subnets as $subnet) {
-        $subnet = trim($subnet);
-        if (strpos($subnet, "/") !== false) { /// type 1
-
-            list($ip, $mask) = explode('/', $subnet);
-            $mask = 0xffffffff << (32 - $mask);
-            $found = ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
-
-        } else { /// type 2
-            $found = (strpos($addr, $subnet) === 0);
-        }
-
-        if ($found) {
-            continue;
-        }
-    }
-
-    return $found;
-}
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

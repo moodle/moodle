@@ -5,7 +5,6 @@
     require_once("lib.php");
 
     require_variable($id);    // Course ID
-    optional_variable($group, -1); // Group to display
     optional_variable($user, 0); // User to display
     optional_variable($date, 0); // Date to display
     optional_variable($modname, ""); // course_module->id
@@ -60,11 +59,11 @@
         
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
-        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group);
+        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction);
 
         print_log($course, $user, $date, "l.time DESC", $page, $perpage, 
-                  "log.php?id=$course->id&chooselog=1&user=$user&date=$date&modid=$modid&modaction=$modaction&group=$group", 
-                  $modname, $modid, $modaction, $group);
+                  "log.php?id=$course->id&chooselog=1&user=$user&date=$date&modid=$modid&modaction=$modaction", 
+                  $modname, $modid, $modaction);
 
     } else {
         if ($course->category) {

@@ -46,15 +46,6 @@
     if (!isset($form->questions)) {
         $form->questions = "";
     }
-    if (!isset($form->password)) {
-        $form->password = "";
-    }
-    if (!isset($form->subnet)) {
-        $form->subnet = "";
-    }
-    if (!isset($form->timelimit)) {
-        $form->timelimit = 0;
-    }
 ?>
 
 
@@ -69,25 +60,11 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p><b><?php print_string("introduction", "quiz") ?>:</b></p>
-      <br />
-    <font size="1">
-     <?php
-        if ($usehtmleditor) {
-           helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
-        } else {
-           helpbutton("text", get_string("helptext"), "moodle", true, true); 
-           echo '<br />';
-           emoticonhelpbutton("form", "description");
-           echo '<br />';
-        } 
-      ?>
-      <br />
-      </font>
-    </td>
+    <td align=right><p><b><?php print_string("introduction", "quiz") ?>:</b></p></td>
     <td>
+        <textarea name="intro" rows=4 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea>
         <?php 
-           print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro);
+           helpbutton("text", get_string("helptext")); 
         ?>
     </td>
 </tr>
@@ -117,17 +94,6 @@
      ?>
     </td>
 </tr>
-<!-- BEGIN EDIT -->
-<tr valign=top>
-    <td align=right><p><b><?php print_string("timelimit", "quiz") ?>:</b></p></td>
-    <td>
-    <?php
-        print_timer_selector($form->timelimit, get_string("minutes","quiz"));
-        helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
-    ?>
-    </td>
-</tr>
-<!-- END EDIT -->
 <tr valign=top>
     <td align=right><p><b><?php print_string("shufflequestions", "quiz") ?>:</b></p></td>
     <td>
@@ -246,21 +212,6 @@
      ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("requirepassword", "quiz") ?>:</b></p></td>
-    <td>
-        <input type="text" name="password" size=40 value="<?php p($form->password) ?>">
-        <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
-    </td>
-</tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("requiresubnet", "quiz") ?>:</b></p></td>
-    <td>
-        <input type="text" name="subnet" size=40 value="<?php p($form->subnet) ?>">
-        <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
-    </td>
-</tr>
-    
 </table>
 <input type="hidden" name=questions     value="<?php p($form->questions) ?>">
 <!-- these hidden variables are always the same -->

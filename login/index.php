@@ -1,7 +1,6 @@
 <?PHP // $Id$
 
     require_once("../config.php");
-    optional_variable($loginguest, false); // determines whether visitors are logged in as guest automatically
 
     // Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {
@@ -21,7 +20,7 @@
     }
 
     $frm = false;
-    if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,"username=guest")) or $loginguest) {
+    if (!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,"username=guest")) {
         /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
         $frm->username = "guest";
         $frm->password = "guest";
@@ -70,7 +69,6 @@
 
             unset($SESSION->wantsurl);
             unset($SESSION->lang);
-            $SESSION->justloggedin = true;
 
             if (user_not_fully_set_up($USER)) {
                 $site = get_site();
@@ -127,12 +125,7 @@
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
-        if (empty($CFG->loginhttps)) {
-            $wwwroot = $CFG->wwwroot;
-        } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
-        }
-        $langmenu = popup_form ("$wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        $langmenu = popup_form ("$CFG->wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
     }
 
     $loginsite = get_string("loginsite");

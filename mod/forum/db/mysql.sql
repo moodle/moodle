@@ -35,7 +35,7 @@ CREATE TABLE prefix_forum_discussions (
   name varchar(255) NOT NULL default '',
   firstpost int(10) unsigned NOT NULL default '0',
   userid int(10) unsigned NOT NULL default '0',
-  groupid int(10) NOT NULL default '-1',
+  groupid int(10) unsigned NOT NULL default '0',
   assessed tinyint(1) NOT NULL default '1',
   timemodified int(10) unsigned NOT NULL default '0',
   usermodified int(10) unsigned NOT NULL default '0',
@@ -62,21 +62,6 @@ CREATE TABLE prefix_forum_posts (
   totalscore tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (id)
 ) COMMENT='All posts are stored in this table';
-# --------------------------------------------------------
-
-#
-# Table structure for table `forum_queue`
-#
-
-CREATE TABLE prefix_forum_queue (
-  id int(10) unsigned NOT NULL auto_increment, 
-  userid int(10) unsigned default 0 NOT NULL,
-  discussionid int(10) unsigned default 0 NOT NULL,
-  postid int(10) unsigned default 0 NOT NULL,
-  PRIMARY KEY  (id),
-  KEY user (userid),
-  KEY post (postid)
-) COMMENT='For keeping track of posts that will be mailed in digest form';
 # --------------------------------------------------------
 
 #

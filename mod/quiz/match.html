@@ -1,0 +1,104 @@
+<FORM name="theform" method="post" <?php echo $onsubmit ?> action="question.php">
+<CENTER>
+<TABLE cellpadding=5>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?php   choose_from_menu($categories, "category", "$question->category", ""); ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
+    <TD>
+        <INPUT type="text" name="name" size=40 value="<?php  p($question->name) ?>">
+        <?php  if (isset($err["name"])) formerr($err["name"]); ?>
+    </TD>
+</TR>
+<tr valign=top>
+    <td align="right"><p><b><?php  print_string("question", "quiz") ?>:</b></p>
+    <br />
+    <br />
+    <br />
+    <p><font SIZE="1">
+    <?php
+           if ($usehtmleditor) {
+               helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+           } else {
+               helpbutton("text", get_string("helptext"), "moodle", true, true);
+           }
+    ?>
+    </font></p>
+    </td>
+    <td>
+        <?php  if (isset($err["questiontext"])) {
+               formerr($err["questiontext"]); 
+               echo "<br />";
+           }
+
+           print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
+
+           if ($usehtmleditor) {   /// Trying this out for a while
+               echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'">';
+           } else {
+               echo "<div align=right>";
+               print_string("formattexttype");
+               echo ":&nbsp;";
+               if (!$question->questiontextformat) {
+                   $question->questiontextformat = FORMAT_MOODLE;
+               }
+               choose_from_menu(format_text_menu(), "questiontextformat", $question->questiontextformat, "");
+               helpbutton("textformat", get_string("helpformatting"));
+               echo "</div>";
+           }
+        ?>
+    </td>
+</tr>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("imagedisplay", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?php   if (empty($images)) {
+            print_string("noimagesyet");
+        } else {
+            choose_from_menu($images, "image", "$question->image", get_string("none"),"","");
+        }
+    ?>
+    </TD>
+</TR>
+
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("choices", "quiz") ?></B>:</P></TD>
+    <TD><P><?php  print_string("filloutthreequestions", "quiz") ?></P>
+    </TD>
+</TR>
+
+<?PHP 
+    for ($i=1; $i<=QUIZ_MAX_NUMBER_ANSWERS; $i++) {
+?>
+
+<TR valign=top>
+    <TD align=right><P><B><?php  echo get_string("question", "quiz")." $i";  ?> :</B></P></TD>
+    <TD>
+        <textarea name="subquestions[]" rows=5 cols=50><?php  p($subquestions[$i-1]) ?></textarea>
+        <br />
+        <?php  echo get_string("matchanswer", "quiz")." $i";  ?>&nbsp;&nbsp;
+        <INPUT type="text" name="subanswers[]" size=50 value="<?php  p($subanswers[$i-1]) ?>">
+    </TD>
+</TR>
+
+<?PHP
+    }
+?>
+
+</TABLE>
+
+<INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
+<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+
+</CENTER>
+</FORM>
+<?php  
+   if ($usehtmleditor) { 
+       print_richedit_javascript("theform", "questiontext", "no");
+   }
+?>

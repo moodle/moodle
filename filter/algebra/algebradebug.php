@@ -11,10 +11,6 @@
     $CFG->texfilterdir = "filter/tex";
     $CFG->algebrafilterdir = "filter/algebra";
     $CFG->algebraimagedir = "filter/algebra";
-    if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
-      $CFG->algebrafilterdirwin = "filter\\algebra";
-    }
-
 
     $query = urldecode($_SERVER['QUERY_STRING']);
     error_reporting(E_ALL);
@@ -90,7 +86,7 @@ function algebra2tex($algebra) {
 
   if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
     $algebra = "\"". str_replace('"','\"',$algebra) . "\"";
-    $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl $algebra";
+    $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir & algebra2tex.pl $algebra";
   } else {      
     $algebra = escapeshellarg($algebra);
     $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl $algebra";
@@ -215,12 +211,7 @@ function tex2image($texexp, $md5) {
        break;
        }
        if (!$cmd) {
-	 if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
-           $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex";
-	   $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
-	 } else {
 	   error($error_message1);
-	 }
        }
        system($cmd, $status);
   }

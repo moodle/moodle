@@ -5,29 +5,14 @@ function scorm_upgrade($oldversion) {
 /// older versions to match current functionality
     global $CFG;
     if ($oldversion < 2004033000) {
-    	table_column("scorm", "", "auto", "TINYINT", "1", "UNSIGNED", "0", "NOT NULL", "summary"); 
+    	execute_sql(" ALTER TABLE `{$CFG->prefix}scorm` ADD `auto` TINYINT( 1 ) UNSIGNED DEFAULT '0' NOT NULL AFTER `summary`"); 
     }
     if ($oldversion < 2004040900) {
-        table_column("scorm_sco_users", "", "cmi_core_score_raw", "FLOAT", "3", "", "0", "NOT NULL", "cmi_core_session_time");
-    }
-    if ($oldversion < 2004061800) {
-    	table_column("scorm", "", "popup", "VARCHAR", "255", "", "", "NOT NULL", "auto");
-    	table_column("scorm", "reference", "reference", "VARCHAR", "255", "", "", "NOT NULL");
-    }
-    if ($oldversion < 2004070800) {
-    	table_column("scorm_scoes", "", "datafromlms", "TEXT", "", "", "", "NOT NULL", "title");
-    	modify_database("", "ALTER TABLE `{$CFG->prefix}scorm_sco_users` DROP `cmi_launch_data`;");
-    }
-    if ($oldversion < 2004071700) {
-    	table_column("scorm_scoes", "", "manifest", "VARCHAR", "255", "", "", "NOT NULL", "scorm");
-    	table_column("scorm_scoes", "", "organization", "VARCHAR", "255", "", "", "NOT NULL", "manifest");
-    }
-    if ($oldversion < 2004071900) {
-      table_column("scorm", "", "maxgrade", "FLOAT", "3", "", "0", "NOT NULL", "reference");
-      table_column("scorm", "", "grademethod", "TINYINT", "2", "", "0", "NOT NULL", "maxgrade");
+    	execute_sql(" ALTER TABLE `{$CFG->prefix}scorm_sco_users` ADD `cmi_core_score_raw` FLOAT( 3 ) DEFAULT '0' NOT NULL AFTER `cmi_core_session_time`"); 
     }
     return true;
 }
 
 
 ?>
+

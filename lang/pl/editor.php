@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 - (2004052400)
+      // editor.php - created with Moodle 1.2.1 beta (2004032200)
 
 
 $string['about'] = 'O tym edytorze';
@@ -27,7 +27,6 @@ $string['cut'] = 'Wytnij zaznaczone';
 $string['delete'] = 'Usuñ';
 $string['filebrowser'] = 'Przejrzyj pliki';
 $string['forecolor'] = 'Kolor czcionki';
-$string['fullscreen'] = 'Edytor pe³noekranowy';
 $string['heading'] = 'Nag³ówek';
 $string['height'] = 'Wysoko¶æ';
 $string['hilitecolor'] = 'Kolor t³a';
@@ -48,7 +47,6 @@ $string['justifyleft'] = 'Wyrównaj do lewej';
 $string['justifyright'] = 'Wyrównaj do prawej';
 $string['layout'] = 'Uk³ad';
 $string['left'] = 'Lewo';
-$string['lefttoright'] = 'Kierunek od lewej do prawej';
 $string['linkproperties'] = 'W³a¶ciwo¶ci linku';
 $string['linktarget'] = 'Cel';
 $string['linktargetblank'] = 'Nowe okno';
@@ -59,7 +57,6 @@ $string['linktargettop'] = 'To samo okno';
 $string['linktitle'] = 'Tytu³';
 $string['linkurl'] = 'URL';
 $string['middle'] = '¦rodek';
-$string['minimize'] = 'Minimalizuj edytor';
 $string['move'] = 'Przesuñ';
 $string['normal'] = 'Normalne';
 $string['notimage'] = 'Wybrany plik nie jest zdjêciem! Proszê wska¿ zdjêcie.';
@@ -79,9 +76,7 @@ $string['redo'] = 'Powtórz swoje ostatnie dzia³anie';
 $string['removelink'] = 'Usuñ link';
 $string['rename'] = 'Zmieñ nazwê';
 $string['right'] = 'Prawo';
-$string['righttoleft'] = 'Kierunek od prawej do lewej';
 $string['rows'] = 'Rowki';
-$string['selectcolor'] = 'Wybierz kolor';
 $string['selection'] = 'Zaznaczenie';
 $string['showhelp'] = 'Pomoc';
 $string['size'] = 'Rozmiar';
@@ -100,7 +95,6 @@ $string['unorderedlist'] = 'Lista wypunktowana';
 $string['upload'] = 'Prze¶lij';
 $string['vertical'] = 'Pionowe';
 $string['width'] = 'Szeroko¶æ';
-$string['wordclean'] = 'Czysty HTML';
 $string['zip'] = 'Skompresuj';
 
 ?>

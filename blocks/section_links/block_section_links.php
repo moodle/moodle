@@ -14,9 +14,9 @@ class CourseBlock_section_links extends MoodleBlock {
         }
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2004052800;
+        $this->version = 2004050500;
     }
-
+    
     function applicable_formats() {
         return (COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS);
     }
@@ -33,12 +33,10 @@ class CourseBlock_section_links extends MoodleBlock {
         if ($this->course->format == 'weeks') {
             $highlight = ceil((time()-$this->course->startdate)/604800);
             $linktext = get_string('jumptocurrentweek', 'block_section_links');
-            $sectionname = 'week';
         }
         else if ($this->course->format == 'topics') {
             $highlight = $this->course->marker;
             $linktext = get_string('jumptocurrenttopic', 'block_section_links');
-            $sectionname = 'topic';
         }
         $inc = 1;
         if ($this->course->numsections > 22) {
@@ -49,32 +47,24 @@ class CourseBlock_section_links extends MoodleBlock {
         }
         $courseid = $this->course->id;
         if ($display = get_field('course_display', 'display', 'course', $courseid, 'userid', $USER->id)) {
-            $link = "$CFG->wwwroot/course/view.php?id=$courseid&amp;$sectionname=";
+            $link = "$CFG->wwwroot/course/view.php?id=$courseid&amp;topic=";
         } else {
             $link = '#';
         }
         $text = '<font size=-1>';
         for ($i = $inc; $i <= $this->course->numsections; $i += $inc) {
-            $isvisible = get_field('course_sections', 'visible', 'course', $this->course->id, 'section', $i);
-            if (!$isvisible and !isteacher($this->course->id)) {
-                continue;
-            }
-            $style = ($isvisible) ? '' : ' class="dimmed"';
             if ($i == $highlight) {
-                $text .= "<a href=\"$link$i\"$style><b>$i</b></a> ";
+                $text .= "<a href=\"$link$i\"><b>$i</b></a> ";
             } else {
-                $text .= "<a href=\"$link$i\"$style>$i</a> ";
+                $text .= "<a href=\"$link$i\">$i</a> ";
             }
         }
         if ($highlight) {
-            $isvisible = get_field('course_sections', 'visible', 'course', $this->course->id, 'section', $highlight);
-            if ($isvisible or isteacher($this->course->id)) {
-                $style = ($isvisible) ? '' : ' class="dimmed"';
-                $text .= "<br><a href=\"$link$highlight\"$style>$linktext</a>";
-            }
+            $text .= "<br><a href=\"$link$highlight\">$linktext</a>";
         }
-
-        $this->content = New stdClass;
+        
+        $this->content = New object;
+        $this->content->header = 'Hello';
         $this->content->footer = '';
         $this->content->text = $text;
         return $this->content;

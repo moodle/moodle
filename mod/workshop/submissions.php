@@ -22,7 +22,6 @@
 
     require("../../config.php");
     require("lib.php");
-    require("locallib.php");
 
 	optional_variable($id);    // Course Module ID
     optional_variable($a);    // workshop ID

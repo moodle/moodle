@@ -17,7 +17,6 @@
 
 	require("../../config.php");
     require("lib.php");
-    require("locallib.php");
 	
 	require_variable($id);    // Course Module ID
 

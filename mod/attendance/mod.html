@@ -4,7 +4,6 @@
 <!-- RJJ I'm using inline CSS styles for some stuff in this page because I want to centralize -->
 <!-- the logic and styles in a single directory -->
 <?php @include_once("$CFG->dirroot/mod/attendance/lib.php");
-      $nohtmleditorneeded = true;
     //require_once("lib.php")
 
 // error_reporting(E_ALL);
@@ -21,6 +20,8 @@ if (empty($form->id)) {
     ?>
 <FORM name="form" method="post" action="<?php echo $ME ?>">
 <CENTER>
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
 <TABLE cellpadding=5>
 
 <!-- <?php  $options[0] = get_string("no"); $options[1] = get_string("yes"); ?> -->
@@ -29,9 +30,9 @@ if (empty($form->id)) {
 <!--     <TD align=left><?php  choose_from_menu($options, "roll", $form->roll, "") ?></td> -->
 <!-- </tr> -->
 <tr valign=top>
-    <td align=right><p><b><?php print_string("name") ?>:</b></p></td>
+    <td align=right><p><b><?php print_string("notes", "attendance") ?>:</b></p></td>
     <td colspan="3">
-        <input type="text" name="name" size=60 value="<?php p($form->notes)?>">
+        <input type="text" name="notes" size=60 value="<?php p($form->notes)?>">
     </td>
 </tr>
 

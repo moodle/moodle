@@ -9,51 +9,9 @@ define('BLOCK_MOVE_RIGHT',  0x02);
 define('BLOCK_MOVE_UP',     0x04);
 define('BLOCK_MOVE_DOWN',   0x08);
 
-define('COURSE_FORMAT_SITE',    0x01);
-define('COURSE_FORMAT_WEEKS',   0x02);
-define('COURSE_FORMAT_TOPICS',  0x04);
-define('COURSE_FORMAT_SOCIAL',  0x08);
-
-// Returns the case-sensitive name of the class' constructor function. This includes both
-// PHP5- and PHP4-style constructors. If no appropriate constructor can be found, returns NULL.
-// If there is no such class, returns boolean false.
-function get_class_constructor($classname) {
-    // Caching
-    static $constructors = array();
-
-    if(!class_exists($classname)) {
-        return false;
-    }
-
-    // Tests indicate this doesn't hurt even in PHP5.
-    $classname = strtolower($classname);
-
-    // Return cached value, if exists
-    if(isset($constructors[$classname])) {
-        return $constructors[$classname];
-    }
-
-    // Get a list of methods. After examining several different ways of
-    // doing the check, (is_callable, method_exists, function_exists etc)
-    // it seems that this is the most reliable one.
-    $methods = get_class_methods($classname);
-
-    // PHP5 constructor?
-    if(phpversion() >= '5') {
-        if(in_array('__construct', $methods)) {
-            return $constructors[$classname] = '__construct';
-        }
-    }
-
-    // If we have PHP5 but no magic constructor, we have to lowercase the methods
-    $methods = array_map('strtolower', $methods);
-
-    if(in_array($classname, $methods)) {
-        return $constructors[$classname] = $classname;
-    }
-
-    return $constructors[$classname] = NULL;
-}
+define('COURSE_FORMAT_WEEKS',   0x01);
+define('COURSE_FORMAT_TOPICS',  0x02);
+define('COURSE_FORMAT_SOCIAL',  0x04);
 
 //This function retrieves a method-defined property of a class WITHOUT instantiating an object
 //It seems that the only way to use the :: operator with variable class names is eval() :(
@@ -355,28 +313,21 @@ function block_find($blockid, $leftblocks, $rightblocks) {
 }
 
 //This function prints the block to admin blocks as necessary
-function block_print_blocks_admin(&$course, $missingblocks) {
-    if (isediting($course->id)) {
+function block_print_blocks_admin($courseid, $missingblocks) {
+    if (isediting($courseid)) {
         $strblocks = get_string('blocks');
         $stradd    = get_string('add');
         if (!empty($missingblocks)) {
             $blockdata = get_records_list('blocks', 'id', implode(',', $missingblocks));
             if ($blockdata !== false) {
                 foreach ($blockdata as $block) {
-                    $blockobject = block_instance($block->name, $course);
+                    $blockobject = block_instance($block->name, NULL);
                     if ($blockobject === false) {
                         continue;
                     }
                     $menu[$block->id] = $blockobject->get_title();
                 }
-
-                if($course->id == 1) {
-                    $target = 'index.php';
-                }
-                else {
-                    $target = 'view.php';
-                }
-                $content = popup_form($target.'?id='.$course->id.'&amp;blockaction=add&amp;blockid=',
+                $content = popup_form('view.php?id='.$courseid.'&amp;blockaction=add&amp;blockid=',
                                       $menu, 'add_block', '', "$stradd...", '', '', true);
                 $content = '<div align="center">'.$content.'</div>';
                 print_side_block($strblocks, $content, NULL, NULL, NULL);
@@ -504,8 +455,8 @@ function upgrade_blocks_plugins($continueto) {
         }
 
         // Let's see if it supports some basic methods
-        $constructor = get_class_constructor($classname);
-        if(empty($constructor)) {
+        $methods = get_class_methods($classname);
+        if(!in_array(strtolower($classname), $methods)) {
             // No constructor
             $notices[] = "Block $blockname: class does not have a constructor";
             $invalidblocks[] = $blockname;
@@ -517,7 +468,7 @@ function upgrade_blocks_plugins($continueto) {
         $blockobj = New $classname($site);
 
         // Inherits from MoodleBlock?
-        if(!is_subclass_of($blockobj, 'moodleblock')) {
+        if(!is_subclass_of($blockobj, "moodleblock")) {
             $notices[] = "Block $blockname: class does not inherit from MoodleBlock";
             continue;
         }
@@ -767,7 +718,7 @@ function block_get_name_by_id ($blockid) {
 //then the function will update the field too!
 
 function blocks_get_default_blocks ($courseid = NULL, $blocknames="") {
-
+ 
     global $CFG;
 
     if (empty($blocknames)) {

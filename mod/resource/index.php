@@ -15,8 +15,6 @@
     if ($course->category) {
         require_login($course->id);
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    } else {
-        $navigation = '';
     }
 
     add_to_log($course->id, "resource", "view all", "index.php?id=$course->id", "");

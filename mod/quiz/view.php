@@ -141,14 +141,11 @@
     }
 
     if ($available) {
-        if ($quiz->timelimit) {
-            echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
-        }
-        echo "<p align=\"center\">".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
+        echo "<p align=center>".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
     } else if ($timenow < $quiz->timeopen) {
-        echo "<p align=\"center\">".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+        echo "<p align=center>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
     } else {
-        echo "<p align=\"center\">".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
+        echo "<p align=center>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
     }
 
 
@@ -161,16 +158,10 @@
                 if ($numattempts and $quiz->grade) {
                     print_heading("$strbestgrade: $mygrade / $quiz->grade.");
                 }
-                $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
-                echo "<br />";
-                echo "<div align=\"center\">";
-                if ($quiz->timelimit) {
-                    include("view_js.php");
-                } else {
-                    print_single_button("attempt.php", $options, get_string("attemptquiznow","quiz"));
-                }
-                echo "</div>\n";
-                echo "</p>";
+                echo "<BR>";
+                echo "<DIV align=CENTER>";
+                print_single_button("attempt.php", $options, get_string("attemptquiznow","quiz"));
+                echo "</P>";
             }
         } else {
             print_heading(get_string("nomoreattempts", "quiz"));

@@ -27,7 +27,7 @@ function quiz_upgrade($oldversion) {
         table_column("quiz_questions", "", "defaultgrade", "INTEGER", "6", "UNSIGNED", "1", "NOT NULL", "image");
     }
 
-    if ($oldversion < 2003033100) {
+	if ($oldversion < 2003033100) {
         modify_database ("", "ALTER TABLE prefix_quiz_randommatch RENAME prefix_quiz_randomsamatch ");
         modify_database ("", "CREATE TABLE prefix_quiz_match_sub (
                                  id SERIAL PRIMARY KEY,
@@ -70,7 +70,7 @@ function quiz_upgrade($oldversion) {
         modify_database ("", "CREATE INDEX prefix_quiz_numerical_answer_idx ON prefix_quiz_numerical (answer);");
     }
 
-    if ($oldversion < 2003072400) {
+	if ($oldversion < 2003072400) {
         execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'review', 'quiz', 'name') ");
     }
 
@@ -130,7 +130,7 @@ function quiz_upgrade($oldversion) {
                     set_field("quiz_questions","stamp",$duplicate->id.$add,"id",$question->id);
                     $add++;
                 }
-            }
+            } 
         } else {
             notify("Checked your quiz questions for stamp duplication errors, but no problems were found.", "green");
         }
@@ -149,15 +149,7 @@ function quiz_upgrade($oldversion) {
         include_once("$CFG->dirroot/mod/quiz/lib.php");
         quiz_refresh_events();
     }
-    if ($oldversion < 2004060200) {
-        table_column("quiz", "", "timelimit", "integer", "", "", "0", "NOT NULL", "");
-    }
 
-    if ($oldversion < 2004070700) {
-        table_column("quiz", "", "password", "varchar", "255", "", "", "not null", "");
-        table_column("quiz", "", "subnet", "varchar", "255", "", "", "not null", "");
-    }
-    
     return true;
 }
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004072901)
+      // resource.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['addresource'] = '¥ê¥½¡¼¥¹¤òÄÉ²Ã¤¹¤ë';
@@ -21,7 +21,6 @@ $string['configwebsearch'] = 'URL¤ò¥¦¥§¥Ö¥Ú¡¼¥¸¤Ş¤¿¤Ï¥ê¥ó¥¯¤È¤·¤ÆÄÉ²Ã¤¹¤ë»ş¡¢¤³¤
 $string['directlink'] = '¤³¤Î¥Õ¥¡¥¤¥ë¤ò¥À¥¤¥ì¥¯¥È¥ê¥ó¥¯¤¹¤ë';
 $string['directoryinfo'] = 'ÁªÂò¤·¤¿¥Ç¥£¥ì¥¯¥È¥ê¤ÎÁ´¥Õ¥¡¥¤¥ë¤¬É½¼¨¤µ¤ì¤Ş¤¹¡£';
 $string['editingaresource'] = '¥ê¥½¡¼¥¹¤òÊÔ½¸¤¹¤ë';
-$string['encryptedcode'] = '°Å¹æ²½¥³¡¼¥É';
 $string['example'] = 'Îã';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
@@ -29,8 +28,7 @@ $string['fetchclienterror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»ş¡¢¥¦¥§¥Ö¥¯¥é¥¤¥¢¥ó¥È¤
 $string['fetcherror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»ş¡¢¥¨¥é¡¼¤¬È¯À¸¤·¤Ş¤·¤¿¡£';
 $string['fetchservererror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»ş¡¢¥ê¥â¡¼¥È¥µ¡¼¥Ğ¤Ë¥¨¥é¡¼¤¬È¯À¸¤·¤Ş¤·¤¿¡£¥×¥í¥°¥é¥à¥¨¥é¡¼¤À¤È»×¤ï¤ì¤Ş¤¹¡£';
 $string['filename'] = '¥Õ¥¡¥¤¥ëÌ¾';
-$string['filtername'] = '¥ê¥½¡¼¥¹¥ª¡¼¥È¥ê¥ó¥¯';
-$string['frameifpossible'] = '¥µ¥¤¥È¥Ê¥Ó¥²¡¼¥·¥ç¥ó¤òÉ½¼¨¤¹¤ë°Ù¤Ë¡¢¥Õ¥ì¡¼¥àÆâ¤Ë¥ê¥½¡¼¥¹¤òÆş¤ì¤Æ¤¯¤À¤µ¤¤¡£';
+$string['filtername'] = '¥ê¥½¡¼¥¹¡¡¥ª¡¼¥È¥ê¥ó¥¯';
 $string['fulltext'] = '¥Õ¥ë¥Æ¥­¥¹¥È';
 $string['htmlfragment'] = 'HTML¥Õ¥é¥°¥á¥ó¥È';
 $string['maindirectory'] = '¥á¥¤¥ó¥Õ¥¡¥¤¥ë¥Ç¥£¥ì¥¯¥È¥ê';
@@ -52,20 +50,17 @@ $string['newwindowopen'] = '¥İ¥Ã¥×¥¢¥Ã¥×¥¦¥¤¥ó¥É¥¦¤Ë¤³¤Î¥ê¥½¡¼¥¹¤òÉ½¼¨¤¹¤ë';
 $string['note'] = '¥Î¡¼¥È';
 $string['notefile'] = '¹¹¤Ë¥Õ¥¡¥¤¥ë¤ò¥¢¥Ã¥×¥í¡¼¥É(¤³¤Î¥ê¥¹¥È¤ËÉ½¼¨¤µ¤ì¤Ş¤¹)¤¹¤ë¾ì¹ç¡¢<A HREF=$a >File Manager</A> ¤òÍøÍÑ¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['notypechosen'] = '¥¿¥¤¥×¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£¡ÖÌá¤ë¡×¥Ü¥¿¥ó¤ò²¡¤·¤ÆºÆÅÙÆşÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£';
-$string['pagedisplay'] = '¥ê¥½¡¼¥¹¤ò¸½ºß¤Î¥¦¥¤¥ó¥É¥¦¤ËÉ½¼¨¤¹¤ë';
-$string['pagewindow'] = 'Æ±¤¸¥¦¥¤¥ó¥É¥¦';
-$string['parameter'] = '¥Ñ¥é¥á¡¼¥¿';
-$string['parameters'] = '¥Ñ¥é¥á¡¼¥¿';
 $string['popupresource'] = '¤³¤Î¥ê¥½¡¼¥¹¤ò¥İ¥Ã¥×¥¢¥Ã¥×¥¦¥¤¥ó¥É¥¦¤ËÉ½¼¨¤µ¤»¤ë¡£';
 $string['popupresourcelink'] = '¥¦¥¤¥ó¥É¥¦¤¬É½¼¨¤µ¤ì¤Ê¤¤¾ì¹ç¤Ï¤³¤³¤ò¥¯¥ê¥Ã¥¯¡§ $a';
 $string['resourcetype'] = '¥ê¥½¡¼¥¹¤Î¥¿¥¤¥×';
-$string['resourcetypedirectory'] = '¥Ç¥£¥ì¥¯¥È¥ê¤ÎÉ½¼¨';
-$string['resourcetypefile'] = '¥Õ¥¡¥¤¥ëËô¤Ï¥¦¥§¥Ö¤Ë¥ê¥ó¥¯';
-$string['resourcetypehtml'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ÎºîÀ®';
-$string['resourcetypelabel'] = '¥é¥Ù¥ë¤ÎÁŞÆş';
-$string['resourcetypereference'] = '»²¾È¤ÎÄÉ²Ã';
-$string['resourcetypetext'] = '¥Æ¥­¥¹¥È¥Ú¡¼¥¸¤ÎºîÀ®';
-$string['searchweb'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷';
-$string['variablename'] = 'ÊÑ¿ôÌ¾';
+$string['resourcetype1'] = '»²¹ÍÊ¸¸¥';
+$string['resourcetype2'] = '¥¦¥§¥Ö¥Ú¡¼¥¸';
+$string['resourcetype3'] = '¥Õ¥¡¥¤¥ë';
+$string['resourcetype4'] = '¥×¥ì¥¤¥ó¥Æ¥­¥¹¥È';
+$string['resourcetype5'] = '¥ê¥ó¥¯';
+$string['resourcetype6'] = 'HTML¥Æ¥­¥¹¥È';
+$string['resourcetype7'] = '¥×¥í¥°¥é¥à';
+$string['resourcetype8'] = 'Wiki¥Æ¥­¥¹¥È';
+$string['resourcetype9'] = '¥Ç¥£¥ì¥¯¥È¥ê';
 
 ?>

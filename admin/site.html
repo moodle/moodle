@@ -2,13 +2,13 @@
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
     <td align=right><P><?php print_string("fullsitename") ?>:</td>
-    <td><input type="text" name="fullname" size="50" maxlength="254" value="<?php p($form->fullname) ?>">
+    <td><input type="text" name="fullname" size=50 value="<?php p($form->fullname) ?>">
     <?php if (isset($err["fullname"])) formerr($err["fullname"]); ?>
     </td>
 </tr>
 <tr valign=top>
     <td align=right><P><?php print_string("shortsitename") ?>:</td>
-    <td><input type="text" name="shortname" size="15" maxlength="15" value="<?php p($form->shortname) ?>">
+    <td><input type="text" name="shortname" size=50 value="<?php p($form->shortname) ?>">
     <?php if (isset($err["shortname"])) formerr($err["shortname"]); ?>
     </td>
 </tr>
@@ -66,42 +66,32 @@
         </td>
 </tr>
 <tr valign=top>
-    <td align="right"><P><?php  print_string("sitesection") ?>:</td>
-    <td><?php
-    unset($choices);
-    $choices["0"] = get_string("no");
-    $choices["1"] = get_string("yes");
-    choose_from_menu ($choices, "numsections", $form->numsections, "");
-    ?>
-    </td>
-</tr>
-<tr valign=top>
-    <td align=right><p><?php print_string("wordforteacher") ?>:</td>
-    <td><input type="text" name="teacher" maxlength="100" size="25" value="<?php p($form->teacher) ?>">
-    (<?php print_string("wordforteachereg") ?>) 
+	<td align=right><p><?php print_string("wordforteacher") ?>:</td>
+	<td><input type="text" name="teacher" maxlength="100" size=25 value="<?php p($form->teacher) ?>">
+	(<?php print_string("wordforteachereg") ?>) 
     <?php if (isset($err["teacher"])) formerr($err["teacher"]); ?>
-    </td>
+	</td>
 </tr>
 <tr valign=top>
-    <td align=right><p><?php print_string("wordforteachers") ?>:</td>
-    <td><input type="text" name="teachers" maxlength="100" size="25" value="<?php p($form->teachers) ?>">
-    (<?php print_string("wordforteacherseg") ?>)
+	<td align=right><p><?php print_string("wordforteachers") ?>:</td>
+	<td><input type="text" name="teachers" maxlength="100" size=25 value="<?php p($form->teachers) ?>">
+	(<?php print_string("wordforteacherseg") ?>)
     <?php if (isset($err["teachers"])) formerr($err["teachers"]); ?>
-    </td>
+	</td>
 </tr>
 <tr valign=top>
-    <td align=right><p><?php print_string("wordforstudent") ?>:</td>
-    <td><input type="text" name="student" maxlength="100" size="25" value="<?php p($form->student) ?>">
-    (<?php print_string("wordforstudenteg") ?>) 
+	<td align=right><p><?php print_string("wordforstudent") ?>:</td>
+	<td><input type="text" name="student" maxlength="100" size=25 value="<?php p($form->student) ?>">
+	(<?php print_string("wordforstudenteg") ?>) 
     <?php if (isset($err["student"])) formerr($err["student"]); ?>
-    </td>
+	</td>
 </tr>
 <tr valign=top>
-    <td align=right><p><?php print_string("wordforstudents") ?>:</td>
-    <td><input type="text" name="students" maxlength="100" size="25" value="<?php p($form->students) ?>">
-    (<?php print_string("wordforstudentseg") ?>) 
+	<td align=right><p><?php print_string("wordforstudents") ?>:</td>
+	<td><input type="text" name="students" maxlength="100" size=25 value="<?php p($form->students) ?>">
+	(<?php print_string("wordforstudentseg") ?>) 
     <?php if (isset($err["students"])) formerr($err["students"]); ?>
-    </td>
+	</td>
 </tr>
 <tr>
     <td></td>

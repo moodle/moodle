@@ -6,28 +6,22 @@ CREATE TABLE prefix_scorm (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  reference varchar(255) NOT NULL default '',
-  maxgrade real NOT NULL default '0',
-  grademethod integer NOT NULL default '0',
+  reference varchar(255) default NULL,
   datadir varchar(255) NOT NULL default '',
   launch integer NOT NULL default '0',
   summary text NOT NULL default '',
   auto integer NOT NULL default '0',
-  popup varchar(255) NOT NULL default '',
   timemodified integer NOT NULL default '0'
 );
 
 CREATE TABLE prefix_scorm_scoes (
   id SERIAL PRIMARY KEY,
   scorm integer NOT NULL default '0',
-  manifest varchar(255) NOT NULL default '',
-  organization varchar(255) NOT NULL default '',
   parent varchar(255) NOT NULL default '',
   identifier varchar(255) NOT NULL default '',
   launch varchar(255) NOT NULL default '',
   type varchar(5) NOT NULL default '',
   title varchar(255) NOT NULL default '',
-  datafromlms text NOT NULL default '',
   next integer NOT NULL default '0',
   previous integer NOT NULL default '0'
 );
@@ -43,7 +37,8 @@ CREATE TABLE prefix_scorm_sco_users (
   cmi_core_total_time varchar(13) NOT NULL default '00:00:00',
   cmi_core_session_time varchar(13) NOT NULL default '00:00:00',
   cmi_core_score_raw real NOT NULL default '0',
-  cmi_suspend_data text NOT NULL default ''
+  cmi_suspend_data text NOT NULL default '',
+  cmi_launch_data text NOT NULL default ''
 );
 
 #

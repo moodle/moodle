@@ -1,6 +1,0 @@
-<?php
-
-$string['enrolname'] = "Intern";
-
-?>
-

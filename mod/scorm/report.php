@@ -79,12 +79,8 @@
 
         	foreach ($sco_users as $sco_user) {
         		$user_data=scorm_get_scoes_records($sco_user);
-        		$userpict = "";
-        		if (isset($user_data->picture)) {
-        		    $userpict = $user_data->picture;
-        		}
-            		$picture = print_user_picture($sco_user->userid, $course->id, $userpict, false, true);
-            		$row="";
+            	$picture = print_user_picture($sco_user->userid, $course->id, $user_data->picture, false, true);
+            	$row="";
     			$row[] = $picture;
     			if (is_array($user_data)) {
     				$data = current($user_data);
@@ -94,15 +90,13 @@
     				    $scoreview = "";
     				    if ($data->cmi_core_score_raw > 0)
     				    	$scoreview = "<br />".get_string("score","scorm").":&nbsp;".$data->cmi_core_score_raw;
-    				    if ( $data->cmi_core_lesson_status == "")
-    		    			$data->cmi_core_lesson_status = "not attempted";
         		    	    $row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\" 
     						   alt=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\"
     						   title=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\">&nbsp;"
     						   .$data->cmi_core_total_time.$scoreview;
         			}
         		}
-            		$table->data[] = $row; 
+            	$table->data[] = $row; 
         	}
     
         	print_table($table);

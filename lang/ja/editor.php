@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 development (2004072500)
+      // editor.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['about'] = 'エディタに関して';
@@ -77,7 +77,7 @@ $string['preview'] = 'プレビュー';
 $string['properties'] = '属性';
 $string['redo'] = 'やり直す';
 $string['removelink'] = 'リンクの削除';
-$string['rename'] = 'リネーム';
+$string['rename'] = '変名';
 $string['right'] = '右';
 $string['righttoleft'] = '右→左';
 $string['rows'] = '列';

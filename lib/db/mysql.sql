@@ -34,7 +34,6 @@ CREATE TABLE `prefix_course` (
   `password` varchar(50) NOT NULL default '',
   `fullname` varchar(254) NOT NULL default '',
   `shortname` varchar(15) NOT NULL default '',
-  `idnumber` varchar(50) NOT NULL default '',
   `summary` text NOT NULL,
   `format` varchar(10) NOT NULL default 'topics',
   `showgrades` smallint(2) unsigned NOT NULL default '1',
@@ -47,7 +46,6 @@ CREATE TABLE `prefix_course` (
   `students` varchar(100) NOT NULL default 'Students',
   `guest` tinyint(2) unsigned NOT NULL default '0',
   `startdate` int(10) unsigned NOT NULL default '0',
-  `enrolperiod` int(10) unsigned NOT NULL default '0',
   `numsections` smallint(5) unsigned NOT NULL default '1',
   `marker` int(10) unsigned NOT NULL default '0',
   `maxbytes` int(10) unsigned NOT NULL default '0',
@@ -57,7 +55,6 @@ CREATE TABLE `prefix_course` (
   `groupmode` int(4) unsigned NOT NULL default '0',
   `groupmodeforce` int(4) unsigned NOT NULL default '0',
   `lang` varchar(10) NOT NULL default '',
-  `cost` varchar(10) NOT NULL default '',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
@@ -336,7 +333,6 @@ CREATE TABLE `prefix_user` (
   `url` varchar(255) default NULL,
   `description` text,
   `mailformat` tinyint(1) unsigned NOT NULL default '1',
-  `maildigest` tinyint(1) unsigned NOT NULL default '0',
   `maildisplay` tinyint(2) unsigned NOT NULL default '2',
   `htmleditor` tinyint(1) unsigned NOT NULL default '1',
   `autosubscribe` tinyint(1) unsigned NOT NULL default '1',
@@ -407,8 +403,6 @@ CREATE TABLE `prefix_user_teachers` (
   `authority` int(10) NOT NULL default '3',
   `role` varchar(40) NOT NULL default '',
   `editall` int(1) unsigned NOT NULL default '1',
-  `timestart` int(10) unsigned NOT NULL default '0',
-  `timeend` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `timeaccess` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
@@ -432,3 +426,4 @@ INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'CONCAT(
 INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'enrol', 'course', 'fullname');
+INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');

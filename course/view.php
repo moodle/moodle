@@ -2,9 +2,9 @@
 
 //  Display the course home page.
 
-    require_once('../config.php');
-    require_once('lib.php');
-    require_once($CFG->libdir.'/blocklib.php');
+    require_once("../config.php");
+    require_once("lib.php");
+    require_once("$CFG->libdir/blocklib.php");
 
     optional_variable($id);
     optional_variable($name);
@@ -25,7 +25,7 @@
 
     require_login($course->id);
 
-    require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
+    require_once('../calendar/lib.php');    /// This is after login because it needs $USER
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 
@@ -199,6 +199,6 @@
 
     require("$CFG->dirroot/course/format/$course->format/format.php");  // Include the actual course format
 
-    print_footer(NULL, $course);
+    print_footer();
 
 ?>

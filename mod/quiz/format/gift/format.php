@@ -83,8 +83,7 @@ class quiz_file_format extends quiz_default_format {
 
         $question = NULL;
         $comment = NULL;
-        // define replaced by simple assignment, stop redefine notices
-        $gift_answerweight_regex = "^%\-*([0-9]{1,2})\.?([0-9]*)%";        
+        define("GIFT_ANSWERWEIGHT_REGEX", "^%\-*([0-9]{1,2})\.?([0-9]*)%");        
 
         // REMOVED COMMENTED LINES and IMPLODE
         foreach ($lines as $key => $line) {
@@ -234,7 +233,7 @@ class quiz_file_format extends quiz_default_format {
                         $answer_weight = 1;
                         $answer = substr($answer, 1);
     
-                    } elseif (ereg($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
+                    } elseif (ereg(GIFT_ANSWERWEIGHT_REGEX, $answer)) {    // check for properly formatted answer weight
                         $answer_weight = $this->answerweightparser($answer);
                     
                     } else {     //default, i.e., wrong anwer
@@ -299,11 +298,9 @@ class quiz_file_format extends quiz_default_format {
                 if ($answer == "T" OR $answer == "TRUE") {
                     $question->answer = 1;
                     $question->feedbackfalse = $comment; //feedback if answer is wrong
-                    $question->feedbacktrue = ""; // make sure this exists to stop notifications
                 } else {
                     $question->answer = 0;
                     $question->feedbacktrue = $comment; //feedback if answer is wrong
-                    $question->feedbackfalse = ""; // make sure this exists to stop notifications
                 }
                 $question->defaultgrade = 1;
                 $question->image = "";   // No images with this format
@@ -431,89 +428,6 @@ class quiz_file_format extends quiz_default_format {
         } // end switch ($question->qtype)
 
     }    // end function readquestion($lines)
-
-function writequestion( $question ) {
-    // turns question into string
-    // question reflects database fields for general question and specific to type
-
-    // initial string;
-    $expout = "";
-
-    // add comment
-    $expout .= "// question: $question->id  name: $question->name \n";
-
-    // output depends on question type
-    switch($question->qtype) {
-    case TRUEFALSE:
-        if ($question->trueanswer->fraction==1) {
-            $answertext = 'TRUE';
-            $wrong_feedback = $question->falseanswer->feedback;
-            $right_feedback = $question->trueanswer->feedback;
-        }
-        else {
-            $answertext = 'FALSE';
-            $wrong_feedback = $question->trueanswer->feedback;
-            $right_feedback = $question->falseanswer->feedback;
-        }
-        $expout .= "::".$question->name."::".$question->questiontext."{".$answertext;
-        if ($wrong_feedback!="") {
-            $expout .= "#".$wrong_feedback;
-        }
-        if ($right_feedback!="") {
-            $expout .= "#".$right_feedback;
-        }
-        $expout .= "}\n";
-        break;
-    case MULTICHOICE:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
-        foreach($question->answers as $answer) {
-            if ($answer->fraction==1) {
-                $answertext = '=';
-            }
-            else {
-                $answertext = '~';
-            }
-            $expout .= "\t".$answertext.$answer->answer;
-            if ($answer->feedback!="") {
-                $expout .= "#".$answer->feedback;
-            }
-            $expout .= "\n";
-        }
-        $expout .= "}\n";
-        break;
-    case SHORTANSWER:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
-        foreach($question->answers as $answer) {
-            $weight = 100 * $answer->fraction;
-            $expout .= "\t=%".$weight."%".$answer->answer."#".$answer->feedback."\n";
-        }
-        $expout .= "}\n";
-        break;
-    case NUMERICAL:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
-        $expout .= "\t#".$question->min."..".$question->max."#".$question->answer->feedback."\n";
-        $expout .= "}\n";
-        break;
-    case MATCH:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
-        foreach($question->subquestions as $subquestion) {
-            $expout .= "\t=".$subquestion->questiontext." -> ".$subquestion->answertext."\n";
-        }
-        $expout .= "}\n";
-        break;
-    case DESCRIPTION:
-        $expout .= "// DESCRIPTION type is not supported\n";
-        break;
-    case MULTIANSWER:
-        $expout .= "// CLOZE type is not supported\n";
-        break;
-    default:
-        error( "No handler for qtype $question->qtype for GIFT export" );
-    }
-    // add empty line to delimit questions
-    $expout .= "\n";
-    return $expout;
-}
 }
 
 ?>

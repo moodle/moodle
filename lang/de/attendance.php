@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.3 (2004052500)
+      // attendance.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['absentlong'] = 'Abwesenheit';
@@ -58,7 +58,6 @@ $string['takeroll'] = 'Liste für diesen Tag erzeugen ?';
 $string['tardiesperabsence'] = 'Wieviele Einträge über Unpünktlichkeit werden zusammengefasst zu einem Abwesenheitstag';
 $string['tardylong'] = 'Unpünktlich';
 $string['tardyshort'] = 'U';
-$string['teacheredit'] = 'Anwesenheitsliste erstellen';
 $string['thursday'] = 'Do';
 $string['tuesday'] = 'Di';
 $string['viewall'] = 'Zeige alle Anwesenheitslisten';

@@ -35,34 +35,14 @@
     require_login($course->id);
 
     if ( $scoes_user = get_records_select("scorm_sco_users","userid = ".$USER->id." AND scormid = ".$scorm->id,"scoid ASC") ) {
-        //
-        // Already user
-        //
-	if (!empty($scoid)) {	
-	    // Direct sco request
-	    //$sco = get_record("scorm_scoes","id",$scoid);
-	    if ($sco = get_record("scorm_scoes","id",$scoid)) {
-	        if ($sco->launch == '') {
-	            // Search for th first launchable sco 
-	            if ($scoes = get_records("scorm_scoes","scorm",$scorm->id,"id ASC")) {
-	                $sco = current($scoes);
-	                while ($sco->id < $scoid) {
-	                    $sco = next($scoes);
-	                }
-	                while ($sco->launch == '') {
-	                    $sco = next($scoes);
-	                }
-	            }
-	        }
-	    }
+	if ($scoid) {
+	    $sco = get_record("scorm_scoes","id",$scoid);
 	} else {
-	    // Search for first incomplete sco
 	    foreach ( $scoes_user as $sco_user ) {
 		if (($sco_user->cmi_core_lesson_status != "completed") && ($sco_user->cmi_core_lesson_status != "passed") && ($sco_user->cmi_core_lesson_status != "failed")) {
 		    $sco = get_record("scorm_scoes","id",$sco_user->scoid);
 		    break;
 		} else {
-		    // If review mode get the first
 		    if ($mode == "review") {
 			$sco = get_record("scorm_scoes","id",$sco_user->scoid);
 			break;
@@ -70,21 +50,13 @@
 		}
 	    }
 	}
-	if (!isset($sco)) {  // If no sco was found get the first of SCORM package
-	    $scoes = get_records_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' order by id ASC");
-	    $sco = each($scoes);
-	}
-    } else {
-        //
-        // A new user
-        //
+	if (!$sco)
+	    $sco = get_record_select("scorm_scoes","scorm=".$scorm->id." AND launch<>'' order by id ASC");
+    } else {	
 	if ($scoes = get_records("scorm_scoes","scorm",$scorm->id,"id ASC")) {
-	    //
-	    // Create user scoes records
-	    //
 	    foreach ($scoes as $sco) {
 		if ($sco->launch != "") {
-		    if (!isset($first))
+		    if (!$first)
 			$first = $sco;
 		    $sco_user->userid = $USER->id;
 		    $sco_user->scoid = $sco->id;
@@ -92,14 +64,13 @@
 		    $element = "cmi_core_lesson_status";
 		    if ($sco->type == "sco") 
 			$sco_user->$element = "not attempted";
-		    else if (($sco->type == "sca") || ($sco->type == "asset"))
+		    else if ($sco->type == "sca")
 			$sco_user->$element = "completed";
 		    $ident = insert_record("scorm_sco_users",$sco_user);
 		}
 	    }
-	    if (isset($first))
-	        $sco = $first;
-	    if (!empty($scoid)) {
+	    $sco = $first;
+	    if ($scoid) {
 		if ($sco = get_record("scorm_scoes","id",$scoid))
 		    unset($first);
 	    }
@@ -146,61 +117,34 @@
 	    $result = "$CFG->wwwroot/file.php?file=/$scorm->course/moddata/scorm$scorm->datadir/$sco->launch";
 	}
     }
-    $navObj = "top.";
-    if ($scorm->popup == "")
-        $navObj = "top.navigation.";
-        
     include("api1_2.php");
 
 ?>
 
-function hilightcurrent(popupmenu) {
-    for (i=0;i < popupmenu.options.length;i++) {
-	 if ( popupmenu.options[i].value == <?php echo $sco->id; ?> )
-	    	popupmenu.options[i].selected = true;
-    }
-}
-
 function SCOInitialize() { 
 <?php
     if ( $sco->previous || $first) {
-    	print "\t".$navObj."document.navform.prev.disabled = true;\n";
-	print "\t".$navObj."document.navform.prev.style.display = 'none';\n";
+    	print "\ttop.nav.document.navform.prev.disabled = true;\n";
+	print "\ttop.nav.document.navform.prev.style.display = 'none';\n";
     }
     if ( $sco->next || $last) {
-    	print "\t".$navObj."document.navform.next.disabled = true;\n";
-	print "\t".$navObj."document.navform.next.style.display = 'none';\n";
+    	print "\ttop.nav.document.navform.next.disabled = true;\n";
+	print "\ttop.nav.document.navform.next.style.display = 'none';\n";
     }
 ?>
-<?php	
-    if ($scorm->popup == "") { 
-	echo "\t    top.main.location=\"$result\";\n";
-	echo "\t    hilightcurrent(".$navObj."document.navform.courseStructure);\n";
-    } else {
-        $popuplocation = '';
-        if (isset($_COOKIE["SCORMpopup"])) {
-            $popuplocation = $_COOKIE["SCORMpopup"];
-        }
-   	echo "\t    top.main = window.open('$result','main','$scorm->popup$popuplocation');\n";
-    }
-?>
+	top.main.location="<?php echo $result; ?>";
+	for (i=0;i<top.nav.document.navform.courseStructure.options.length;i++) {
+	    if ( top.nav.document.navform.courseStructure.options[i].value == <?php echo $sco->id; ?> )
+	    	top.nav.document.navform.courseStructure.options[i].selected = true;
+	}
 } 
 
 function changeSco(direction) {
-    if (direction == "previous")
-	<?php echo $navObj ?>document.navform.scoid.value="<?php echo $prevsco; ?>";
-    else
-	<?php echo $navObj ?>document.navform.scoid.value="<?php echo $nextsco; ?>";
+	if (direction == "prev")
+	    top.nav.document.navform.scoid.value="<?php echo $prevsco; ?>";
+	else
+	    top.nav.document.navform.scoid.value="<?php echo $nextsco; ?>";
 	    
-    //alert ("Prev: <?php echo $prevsco; ?>\nNext: <?php echo $nextsco; ?>\nNew SCO: "+<?php echo $navObj ?>document.navform.scoid.value);
-    <?php echo $navObj ?>document.navform.submit();
-}
-
-function closeMain() {
-    if (document.all) {
-    	document.cookie = "SCORMpopup=" + escape(",top="+top.main.screenTop+",left="+top.main.screenLeft);
-    } else {
-    	document.cookie = "SCORMpopup=" + escape(",top="+top.main.screenY+",left="+top.main.screenX);
-    }
-    top.main.close();
-}
+	//alert ("Prev: <?php echo $prevsco; ?>\nNext: <?php echo $nextsco; ?>\nNew SCO: "+top.nav.document.navform.scoid.value);
+	top.nav.document.navform.submit();
+}   

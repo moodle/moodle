@@ -105,7 +105,7 @@
 
 /// Get and sort the existing blocks
 
-    if (false === ($blocks = get_records('blocks'))) {
+    if (!$blocks = get_records('blocks')) {
         error('No blocks found!');  // Should never happen
     }
 
@@ -117,11 +117,6 @@
         $blockbyname[$blockobject->get_title()] = $block->id;
         $blockobjects[$block->id] = $blockobject;
     }
-
-    if(empty($blockbyname)) {
-        error('One or more blocks are registered in the database, but they all failed to load!');
-    }
-
     ksort($blockbyname);
 
 /// Print the table of all blocks

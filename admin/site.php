@@ -3,7 +3,6 @@
     require_once("../config.php");
 
     if ($site = get_site()) {
-        require_login();
         if (!isadmin()) {
             error("You need to be admin to edit this page");
         }
@@ -29,11 +28,6 @@
                     error("Serious Error! Could not update the site record! (id = $form->id)");
                 }
             } else {
-                // [pj] We are about to create the site, so let's add some blocks...
-                // calendar_month is included as a Moodle feature advertisement ;-)
-                require_once('../lib/blocklib.php');
-                $form->blockinfo = blocks_get_default_blocks(NULL, 'site_main_menu,admin,course_list:course_summary,calendar_month');
-
                 if ($newid = insert_record("course", $form)) {
                     $cat->name = get_string("miscellaneous");
                     if (insert_record("course_categories", $cat)) {
@@ -65,7 +59,6 @@
         $form->shortname = "";
         $form->summary = "";
         $form->newsitems = 3;
-        $form->numsections = 0;
         $form->id = "";
         $form->category = 0;
         $form->format = "social";

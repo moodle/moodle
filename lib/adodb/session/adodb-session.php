@@ -581,7 +581,6 @@ class ADODB_Session {
 		}
 
 		if (!$clob) {	// no lobs, simply use replace()
-			$arr[$data] = $conn->qstr($val);
 			$rs = $conn->Replace($table, $arr, 'sesskey', $autoQuote = true);
 			ADODB_Session::_dumprs($rs);
 		} else {
@@ -681,8 +680,8 @@ class ADODB_Session {
 			if (!$rs->EOF) {
 				$ref = $rs->fields[0];
 				$key = $rs->fields[1];
-				//assert('$ref');
-				//assert('$key');
+				assert('$ref');
+				assert('$key');
 				$fn($ref, $key);
 			}
 			$rs->Close();

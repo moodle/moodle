@@ -8,8 +8,8 @@
     if (empty($form->summary)) {
 	$form->summary = "";
     }
-    if (empty($form->launch)) {
-	$form->launch = "";
+    if (empty($form->auto)) {
+	$form->auto = "";
     }
 ?>
 
@@ -48,10 +48,21 @@
 		    echo "<br \>";
 		    helpbutton("text", get_string("helptext"), "moodle", true, true);
      		?>
+     		   <br />
      	  	</font>
 	    </td>
 	    <td>
-        <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "summary", $form->summary); ?>
+		<textarea name="summary" rows=5 cols=50 wrap="virtual"><?php p($form->summary) ?></textarea>
+	    </td>
+	</tr>
+	<tr valign=top>
+	    <td align=right><p><b><?php print_string("autocontinue","scorm") ?>:</b></p></td>
+	    <td>
+	    <?php
+	    	$options[]=get_string("no");
+	    	$options[]=get_string("yes");
+	        choose_from_menu ($options, "auto", $form->auto);
+	    ?>
 	    </td>
 	</tr>
     </table>
@@ -59,10 +70,6 @@
     <input type="hidden" name=coursemodule	value="<?php p($form->coursemodule) ?>">
     <input type="hidden" name=datadir	value="<?php p($form->datadir) ?>">
     <input type="hidden" name=launch	value="<?php p($form->launch) ?>">
-    <input type="hidden" name=popup	value="<?php p($form->popup) ?>">
-    <input type="hidden" name=auto	value="<?php p($form->auto) ?>">
-    <input type="hidden" name="maxgrade"	value="<?php p($form->maxgrade) ?>" />
-    <input type="hidden" name="grademethod"	value="<?php p($form->grademethod) ?>" />
     <input type="hidden" name=section	value="<?php p($form->section) ?>">
     <input type="hidden" name=module	value="<?php p($form->module) ?>">
     <input type="hidden" name=modulename	value="<?php p($form->modulename) ?>">

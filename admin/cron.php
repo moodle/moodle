@@ -117,12 +117,7 @@
             $cachelifetime = time() - $CFG->cachetext;
             delete_records_select("cache_text", "timemodified < '$cachelifetime'");
         }
-
-        if (!empty($CFG->notifyloginfailures)) {
-            notify_login_failures();
-        }
-
-    } // End of occasional clean-up tasks
+    }
 
     if (file_exists("$CFG->dataroot/cronextra.php")) {
         include("$CFG->dataroot/cronextra.php");
@@ -165,18 +160,6 @@
             }
         }
     }
-
-/// Run the enrolment cron, if any
-    require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
-    $enrol = new enrolment_plugin();
-    $enrol->cron();
-    if (!empty($enrol->log)) {
-        echo $enrol->log;
-    }
-
-    //Unset session variables and destroy it
-    @session_unset();
-    @session_destroy();
 
     echo "Cron script completed correctly\n";
 

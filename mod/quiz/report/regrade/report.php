@@ -27,22 +27,14 @@ class quiz_report extends quiz_default_report {
                 continue;
             }
 
-            if($quiz->timelimit > 0) {
-                $timelimit = ($quiz->timelimit * 60) + 60;
-                $timetaken = $attempt->timefinish - $attempt->timestart;
-                if($timetaken > $timelimit) {
-                    // Skip overdued attempts
-                    continue;
-                }
-            }
-
             $count->attempt++;
 
-            if (! $questions = quiz_get_attempt_questions($quiz, $attempt)) {
+            if (! $questions = quiz_get_attempt_responses($attempt, $quiz)) {
                 error("Could not reconstruct quiz results for attempt $attempt->id!");
             }
+            quiz_remove_unwanted_questions($questions, $quiz);
 
-            if (!$result = quiz_grade_responses($quiz, $questions)) {
+            if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
                 error("Could not re-grade this quiz attempt!");
             }
 
@@ -64,7 +56,7 @@ class quiz_report extends quiz_default_report {
                     notify("Could not save best grade for user $userid!");
                 }
             }
-        }
+        }   
 
         print_heading(get_string("regradecomplete", "quiz"));
         print_heading(get_string("regradecount", "quiz", $count));

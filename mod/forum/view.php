@@ -210,17 +210,17 @@
             }
             echo '</p>';
             if (!empty($showall)) {
-                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup);
             } else {
-                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup);
             }
             break;
 
         case 'teacher':
             if (!empty($showall)) {
-                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup);
             } else {
-                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup);
             }
             break;
 
@@ -230,9 +230,9 @@
             }
             echo '<p>&nbsp;</p>';
             if (!empty($showall)) {
-                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup);
             } else {
-                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup);
             }
             break;
     }

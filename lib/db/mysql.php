@@ -429,7 +429,11 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2003080700) {
         notify("Cleaning up categories and course ordering...");
-        fix_course_sortorder();
+        if ($categories = get_categories()) {
+            foreach ($categories as $category) {
+                fix_course_sortorder($category->id);
+            }
+        }
     }
 
     if ($oldversion < 2003081001) {
@@ -758,46 +762,6 @@ function main_upgrade($oldversion=0) {
                     }
                 }
             }
-        }
-    }
-
-    if ($oldversion < 2004053000) {     /// set defaults for site course
-        $site = get_site();
-        set_field('course', 'numsections', 0, 'id', $site->id);
-        set_field('course', 'groupmodeforce', 1, 'id', $site->id);
-        set_field('course', 'teacher', get_string('administrator'), 'id', $site->id);
-        set_field('course', 'teachers', get_string('administrators'), 'id', $site->id);
-        set_field('course', 'student', get_string('user'), 'id', $site->id);
-        set_field('course', 'students', get_string('users'), 'id', $site->id);
-    }
-
-    if ($oldversion < 2004060100) {
-        set_config('digestmailtime', 0);
-        table_column('user', "", 'maildigest', 'tinyint', '1', '', '0', 'not null', 'mailformat');
-    }
-
-    if ($oldversion < 2004062400) {
-        table_column('user_teachers', "", 'timeend', 'int', '10', 'unsigned', '0', 'not null', 'editall');
-        table_column('user_teachers', "", 'timestart', 'int', '10', 'unsigned', '0', 'not null', 'editall');
-    }
-
-    if ($oldversion < 2004062401) {
-        table_column('course', '', 'idnumber', 'varchar', '100', '', '', 'not null', 'shortname');
-        execute_sql('UPDATE '.$CFG->prefix.'course SET idnumber = shortname');   // By default
-    }
-
-    if ($oldversion < 2004062600) {
-        table_column('course', '', 'cost', 'varchar', '10', '', '', 'not null', 'lang');
-    }
-
-    if ($oldversion < 2004072900) {
-        table_column('course', '', 'enrolperiod', 'int', '10', 'unsigned', '0', 'not null', 'startdate');
-    }
-
-    if ($oldversion < 2004072901) {  // Fixing error in schema
-        if ($record = get_record('log_display', 'module', 'course', 'action', 'update')) {
-            delete_records('log_display', 'module', 'course', 'action', 'update');
-            insert_record('log_display', $record, false, 'module');
         }
     }
 

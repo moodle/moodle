@@ -25,15 +25,15 @@
     }
 
     //Delete old data in backup tables (if exists)
-    //Four hours seem to be appropiate now that backup is stable
+    //Two days seems to be apropiate
     function backup_delete_old_data() {
 
         global $CFG; 
 
         //Change this if you want !!
-        $hours = 4;
+        $days = 2;
         //End change this
-        $seconds = $hours * 60 * 60;
+        $seconds = $days * 24 * 60 * 60;
         $delete_from = time()-$seconds;
         //Now delete from tables
         $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids

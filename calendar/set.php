@@ -39,7 +39,9 @@
 /////////////////////////////////////////////////////////////////////////////
 
     require_once('../config.php');
-    require_once($CFG->dirroot.'/calendar/lib.php');
+    require_once('lib.php');
+
+    require_login();
 
     require_variable($_GET['from']);
     require_variable($_GET['var']);
@@ -50,9 +52,6 @@
     optional_variable($_GET['cal_y']);
 
     switch($_GET['var']) {
-        case 'setuser':
-            // Not implemented yet (or possibly at all)
-        break;
         case 'setcourse':
             $id = intval($_GET['id']);
             if($id == 0) {
@@ -86,7 +85,12 @@
             $SESSION->cal_show_global = !$SESSION->cal_show_global;
         break;
         case 'showuser':
-            $SESSION->cal_show_user = !$SESSION->cal_show_user;
+            if($SESSION->cal_show_user) {
+                $SESSION->cal_show_user = false;
+            }
+            else {
+                $SESSION->cal_show_user = $USER->id;
+            }
         break;
     }
 

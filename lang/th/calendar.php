@@ -1,15 +1,18 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4 development (2004070801)
+      // calendar.php - created with Moodle 1.3 (2004052500)
 
 
+$string['april'] = 'เมษายน';
+$string['august'] = 'สิงหาคม';
 $string['calendar'] = 'ปฏิทิน';
 $string['calendarheading'] = '$a ปฏิทิน';
 $string['clickhide'] = 'คลิกเพื่อซ่อน';
 $string['clickshow'] = 'คลิกเพื่อแสดง';
-$string['confirmeventdelete'] = 'คุณแน่ใจหรือเปล่าคะที่จะลบกิจกรรมนี้';
+$string['confirmeventdelete'] = 'คุณแน่ใจรึคะที่จะลบกิจกรรมนี้';
 $string['courseevents'] = 'ตารางกิจกรรม';
 $string['dayview'] = 'มุมมองรายวัน';
 $string['daywithnoevents'] = 'ไม่มีกิจกรรมวันนี้';
+$string['december'] = 'ธันวาคม';
 $string['default'] = 'ค่าที่ตั้งไว้';
 $string['deleteevent'] = 'ลบกิจกรรม';
 $string['detailedmonthview'] = 'แสดงรายละเอียดของเดือน';
@@ -31,7 +34,7 @@ $string['eventinstanttime'] = 'เวลา';
 $string['eventkind'] = 'ประเภทของกิจกรรม';
 $string['eventname'] = 'ชื่อของกิจกรรม';
 $string['eventrepeat'] = 'จัดซ้ำ';
-$string['eventsfor'] = 'กิจกรรมของวัน$a ';
+$string['eventsfor'] = '$a กิจกรรม';
 $string['eventstarttime'] = 'เริ่มเวลา';
 $string['eventtime'] = 'เวลา';
 $string['eventview'] = 'รายละเอียดกิจกรรม';
@@ -40,18 +43,26 @@ $string['explain_lookahead'] = 'ตั้งค่าจำนวนวันที่มากที่สุดที่คุณต้องการให้กิจกร
 $string['explain_maxevents'] = 'ระบุจำนวนกิจกรรมที่มากที่สุดที่ต้องการแสดง ถ้าหากระบุจำนวนมากเกินไปอาจทำให้เสียพื้นที่หน้าจอ';
 $string['explain_startwday'] = 'เลือกวันที่ต้องการให้เป็นวันแรกในมุมมองรายสัปดาห์';
 $string['explain_timeformat'] = 'คุณสามารถเลือกที่จะแสดงเวลาเป็นแบบ 12 ชั่วโมง (am/pm) หรือแบบ 24 ชั่วโมงก็ได้  ถ้าคุณเลือก \"ค่าที่ตั้งไว้\" เวลาจะถูกแสดงตามภาษาที่คุณใช้บนเว็บไซต์';
+$string['february'] = 'กุมภาพันธ์';
 $string['fri'] = 'ศ.';
 $string['friday'] = 'ศุกร์';
 $string['globalevents'] = 'กิจกรรมทั่วไป';
 $string['gotocalendar'] = 'ไปที่ปฏิทิน';
 $string['groupevents'] = 'กิจกรรมกลุ่ม';
 $string['hidden'] = 'ถูกซ่อน';
+$string['january'] = 'มกราคม';
+$string['july'] = 'กรกฎาคม';
+$string['june'] = 'มิถุนายน';
 $string['manyevents'] = '$a กิจกรรม';
+$string['march'] = 'มีนาคม';
+$string['may'] = 'พฤษภาคม';
 $string['mon'] = 'จ.';
 $string['monday'] = 'จันทร์';
-$string['monthlyview'] = 'มุมมองรายเดือน';
+$string['monthlyview'] = 'ดูรายเดือน';
 $string['newevent'] = 'กิจกรรมใหม่';
 $string['noupcomingevents'] = 'ไม่มีกิจกรรมที่กำลังจะเริ่ม';
+$string['november'] = 'พฤศจิกายน';
+$string['october'] = 'ตุลาคม';
 $string['oneevent'] = '1 กิจกรรม';
 $string['pref_lookahead'] = 'กิจกรรมที่กำลังจะเริ่ม ';
 $string['pref_maxevents'] = 'จำนวนมากที่สุดของกิจกรรมที่กำลังจะเริ่ม';
@@ -64,6 +75,7 @@ $string['repeatweeksl'] = 'ซ้ำเป็นรายสัปดาห์, สร้างพร้อมกัน';
 $string['repeatweeksr'] = 'กิจกรรม';
 $string['sat'] = 'ส.';
 $string['saturday'] = 'เสาร์';
+$string['september'] = 'กันยายน';
 $string['shown'] = 'ถูกแสดง';
 $string['spanningevents'] = 'กิจกรรมขณะนี้';
 $string['sun'] = 'อา.';
@@ -94,6 +106,6 @@ $string['upcomingevents'] = 'กิจกรรมที่กำลังจะมีขึ้น';
 $string['userevents'] = 'กิจกรรมของสมาชิก';
 $string['wed'] = 'พ.';
 $string['wednesday'] = 'พุธ';
-$string['yesterday'] = 'เมื่อวานนี้';
+$string['yesterday'] = 'เมื่อวาน';
 
 ?>

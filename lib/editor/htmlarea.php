@@ -699,12 +699,6 @@ HTMLArea.prototype.generate = function () {
 
     // create the IFRAME
     var iframe = document.createElement("iframe");
-
-    if (HTMLArea.is_ie) {  // http://moodle.org/mod/forum/discuss.php?d=8555
-        // tricky! set src to local url to turn off SSL security alert
-        iframe.src = _editor_url + this.config.popupURL+"blank.html";
-    }
-
     htmlarea.appendChild(iframe);
 
     this._iframe = iframe;
@@ -2171,14 +2165,7 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
 HTMLArea.prototype.stripBaseURL = function(string) {
     var baseurl = this.config.baseURL;
 
-    // IE adds the path to an anchor, converting #anchor
-    // to path/#anchor which of course needs to be fixed
-    var index = string.indexOf("/#")+1;
-    if ((index > 0) && (string.indexOf(baseurl) > -1)) {
-        return string.substr(index);   
-    }
-    return string; // Moodle doesn't use the code below because
-                   // Moodle likes to keep absolute links
+    return string;    // Moodle addition to skip this whole routine
 
     // strip to last directory in case baseurl points to a file
     baseurl = baseurl.replace(/[^\/]+$/, '');

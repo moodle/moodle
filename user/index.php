@@ -47,8 +47,6 @@
                      "$participantslink", "", "", true, "&nbsp;", navmenu($course));
     }
 
-    $exceptions = ''; // This will be a list of userids that are shown as teachers and thus
-                      // do not have to be shown as users as well. Only relevant on site course.
     if ($showteachers) {
         if ($teachers = get_course_teachers($course->id)) {
             echo "<h2 align=\"center\">$course->teachers</h2>";
@@ -56,42 +54,31 @@
                 if ($isseparategroups) {
                     if ($teacher->editall or ismember($currentgroup, $teacher->id)) {
                         print_user($teacher, $course);
-                        $exceptions .= "$teacher->id,";
                     }
                 } else if ($teacher->authority > 0) {    // Don't print teachers with no authority
                     print_user($teacher, $course);
-                    $exceptions .= "$teacher->id,";
                 }
             }
         }
     }
-    $guest = get_guest();
-    $exceptions .= $guest->id;
-    
-    $site = get_site();
-    if ($course->id == $site->id) { // Show all site users (even unconfirmed)
-        $students = get_users(true, '', true, $exceptions, $sort.' '.$dir, $firstinitial, $lastinitial, $page*$perpage, $perpage);
-        $totalcount = get_users(false, '', true, '', '', '', '') - 1; // -1 to not count guest user
-        if ($firstinitial or $lastinitial) {
-            $matchcount = get_users(false, '', true, '', '', $firstinitial, $lastinitial) - 1;
-        } else {
-            $matchcount = $totalcount;
-        }
+
+    if ($sort == "lastaccess") {
+        $dsort = "s.timeaccess";
     } else {
-        if ($sort == "lastaccess") {
-            $dsort = "s.timeaccess";
-        } else {
-            $dsort = "u.$sort";
-        }
-        $students = get_course_students($course->id, $dsort, $dir, $page*$perpage, 
-                                    $perpage, $firstinitial, $lastinitial, $currentgroup);
-        $totalcount = count_course_students($course, "", "", "", $currentgroup);
-        if ($firstinitial or $lastinitial) {
-            $matchcount = count_course_students($course, "", $firstinitial, $lastinitial, $currentgroup);
-        } else {
-            $matchcount = $totalcount;
-        }
+        $dsort = "u.$sort";
     }
+
+    $students = get_course_students($course->id, $dsort, $dir, $page*$perpage, 
+                                    $perpage, $firstinitial, $lastinitial, $currentgroup);
+
+    $totalcount = count_course_students($course, "", "", "", $currentgroup);
+
+    if ($firstinitial or $lastinitial) {
+        $matchcount = count_course_students($course, "", $firstinitial, $lastinitial, $currentgroup);
+    } else {
+        $matchcount = $totalcount;
+    }
+
 
     echo "<h2 align=center>$totalcount $course->students</h2>";
 
@@ -153,7 +140,7 @@
 
     }
 
-    if ($matchcount < 1) {
+    if ($matchcount == 0) {
         print_heading(get_string("nostudentsfound", "", $course->students));
 
     } if (0 < $matchcount and $matchcount < USER_SMALL_CLASS) {    // Print simple listing
@@ -201,7 +188,7 @@
         }
 
         foreach ($students as $key => $student) {
-            $students[$key]->country = ($student->country) ? $countries[$student->country] : '';
+            $students[$key]->country = $countries[$student->country];
         }
         if ($sort == "country") {  // Need to re-sort by full country name, not code
             foreach ($students as $student) {

@@ -110,7 +110,7 @@
     <input type="hidden" name=userid     value="<?php p($post->userid) ?>">
     <input type="hidden" name=groupid    value="<?php p($post->groupid) ?>">
     <input type="hidden" name=edit       value="<?php p($post->edit) ?>">
-    <input type="submit" value="<?php p(($post->edit) ? get_string('savechanges') : get_string('posttoforum', 'forum')); ?>">
+    <input type="submit" value="<?php print_string("savechanges"); ?>">
     </td>
 
 </tr>

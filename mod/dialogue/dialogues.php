@@ -8,7 +8,6 @@
     getsubject
 	insertentries
 	openconversation
-    printdialogue
     showdialogues
     updatesubject
 	
@@ -16,7 +15,6 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("locallib.php");
 
     require_variable($id);    // Course Module ID
 
@@ -28,15 +26,14 @@
         error("Course is misconfigured");
     }
 
+    require_login($course->id);
+
     if (! $dialogue = get_record("dialogue", "id", $cm->instance)) {
         error("Course module dialogue is incorrect");
     }
 
 	require_login($course->id);
 	
-    // set up some general variables
-    $usehtmleditor = can_use_html_editor();
- 
     $navigation = "";
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
@@ -131,18 +128,16 @@
 		if ($conversations = dialogue_get_conversations($dialogue, $USER, "closed = 0")) {
 			foreach ($conversations as $conversation) {
 				$textarea_name = "reply$conversation->id";
-                $stripped_text = '';
-                if (isset($_POST[$textarea_name])) {
-                    $stripped_text = strip_tags(trim($_POST[$textarea_name]));
-                }
-				if ($stripped_text) {
+				if (!empty($_POST[$textarea_name])) {
                     unset($item);
 					$item->dialogueid = $dialogue->id;
 					$item->conversationid = $conversation->id;
 					$item->userid = $USER->id;
 					$item->timecreated = time(); 
-                    // reverse the dialogue mail default 
-					$item->mailed = !$dialogue->maildefault;
+					// set mailed flag if checkbox is not set
+					if (empty($_POST['sendthis'])) {
+						$item->mailed = 1;
+					}
 					$item->text = $_POST[$textarea_name];
 					if (!$item->id = insert_record("dialogue_entries", $item)) {
 						error("Insert Entries: Could not insert dialogue record!");
@@ -181,72 +176,41 @@
 	/****************** open conversation ************************************/
 	elseif ($action == 'openconversation' ) {
 
-		if (empty($_POST['recipientid'])) {
+		if ($_POST['recipientid'] == 0) {
 			redirect("view.php?id=$cm->id", get_string("nopersonchosen", "dialogue"));
+        } elseif (empty($_POST['firstentry'])) {
+			redirect("view.php?id=$cm->id", get_string("notextentered", "dialogue"));
         } else {
-            $recipientid = $_POST['recipientid'];
-            if (substr($recipientid, 0, 1) == 'g') { // it's a group
-                $groupid = intval(substr($recipientid, 1));
-                $recipients = get_records_sql("SELECT u.*
-                                FROM {$CFG->prefix}user u,
-                                     {$CFG->prefix}groups_members g
-                                WHERE g.groupid = $groupid and
-                                      u.id = g.userid");
-            } else {
-                $recipients[$recipientid] = get_record("user", "id", $recipientid);
+			$conversation->dialogueid = $dialogue->id;
+			$conversation->userid = $USER->id;
+			$conversation->recipientid = $_POST['recipientid'];
+			$conversation->lastid = $USER->id; // this USER is adding an entry too
+			$conversation->timemodified = time();
+            $conversation->subject = $_POST['subject']; // may be blank
+			if (!$conversation->id = insert_record("dialogue_conversations", $conversation)) {
+				error("Open dialogue: Could not insert dialogue record!");
+			}
+			add_to_log($course->id, "dialogue", "open", "view.php?id=$cm->id", "$dialogue->id");
+        
+            // now add the entry
+			$entry->dialogueid = $dialogue->id;
+			$entry->conversationid = $conversation->id;
+			$entry->userid = $USER->id;
+			$entry->timecreated = time(); 
+			// set mailed flag if checkbox is not set
+			if (empty($_POST['sendthis'])) {
+				$entry->mailed = 1;
+				}
+			$entry->text = $_POST['firstentry'];
+			if (!$entry->id = insert_record("dialogue_entries", $entry)) {
+				error("Insert Entries: Could not insert dialogue record!");
+			}
+			add_to_log($course->id, "dialogue", "add entry", "view.php?id=$cm->id", "$entry->id");
+			
+            if (!$user =  get_record("user", "id", $conversation->recipientid)) {
+				error("Open dialogue: user record not found");
             }
-            if ($recipients) {
-                $n = 0;
-                foreach ($recipients as $recipient) { 
-                    if ($recipient->id == $USER->id) { // teacher could be member of a group
-                        continue;
-                    }
-                    $stripped_text = strip_tags(trim($_POST['firstentry']));
-                    if (!$stripped_text) {
-                        redirect("view.php?id=$cm->id", get_string("notextentered", "dialogue"));
-                    }
-                    unset($conversation);
-                    $conversation->dialogueid = $dialogue->id;
-                    $conversation->userid = $USER->id;
-                    $conversation->recipientid = $recipient->id;
-                    $conversation->lastid = $USER->id; // this USER is adding an entry too
-                    $conversation->timemodified = time();
-                    $conversation->subject = $_POST['subject']; // may be blank
-                    if (!$conversation->id = insert_record("dialogue_conversations", $conversation)) {
-                        error("Open dialogue: Could not insert dialogue record!");
-                    }
-                    add_to_log($course->id, "dialogue", "open", "view.php?id=$cm->id", "$dialogue->id");
-
-                    // now add the entry
-                    unset($entry);
-                    $entry->dialogueid = $dialogue->id;
-                    $entry->conversationid = $conversation->id;
-                    $entry->userid = $USER->id;
-                    $entry->timecreated = time(); 
-                    // reverse the dialogue default value
-                    $entry->mailed = !$dialogue->maildefault;
-                    $entry->text = $_POST['firstentry'];
-                    if (!$entry->id = insert_record("dialogue_entries", $entry)) {
-                        error("Insert Entries: Could not insert dialogue record!");
-                    }
-                    add_to_log($course->id, "dialogue", "add entry", "view.php?id=$cm->id", "$entry->id");
-                    $n++;
-                }
-                print_heading(get_string("numberofentriesadded", "dialogue", $n));
-            } else {
-                redirect("view.php?id=$cm->id", get_string("noavailablepeople", "dialogue"));
-            }
-            if (isset($groupid)) {
-                if (!$group = get_record("groups", "id", $groupid)) {
-                    error("Dialogue open conversation: Group not found");
-                }
-                redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", $group->name));
-            } else {
-                if (!$user =  get_record("user", "id", $conversation->recipientid)) {
-                    error("Open dialogue: user record not found");
-                }
-                redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", fullname($user) ));
-            }
+			redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", fullname($user) ));
 		}
 	}
 	

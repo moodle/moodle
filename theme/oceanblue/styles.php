@@ -717,22 +717,4 @@ TABLE.formtable TD {
     -moz-border-radius-bottomright: 15px;
 }
 
-#block_course_summary, #block_course_summary .sideblockmain {
-    -moz-border-radius: 20px;
-}
- 
-#block_course_summary .sideblockmain {
-    padding: 10px;
-}
-
-.sitetopic {
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
-    -moz-border-radius: 15px;
-}
-
-.sitetopiccontent {
-    -moz-border-radius: 15px;
-}
 

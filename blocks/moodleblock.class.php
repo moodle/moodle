@@ -66,46 +66,22 @@ class MoodleBlock {
             case BLOCK_TYPE_NUKE:
             case BLOCK_TYPE_TEXT:
                 if(empty($this->content->text) && empty($this->content->footer)) {
-                    if(empty($this->edit_controls)) {
-                        // No content, no edit controls, so just shut up
-                        break;
-                    }
-                    else {
-                        // No content but editing, so show something at least
-                        $this->print_shadow();
-                    }
+                    break;
                 }
-                else {
-                    if($this->hide_header() && empty($this->edit_controls)) {
-                        // Header wants to hide, no edit controls to show, so no header it is
-                        print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
-                    }
-                    else {
-                        // The full treatment, please
-                        print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
-                    }
+                if ($this->edit_controls !== NULL || !$this->hide_header()) {
+                    print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer);
+                } else {
+                    print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer);
                 }
             break;
             case BLOCK_TYPE_LIST:
                 if(empty($this->content->items) && empty($this->content->footer)) {
-                    if(empty($this->edit_controls)) {
-                        // No content, no edit controls, so just shut up
-                        break;
-                    }
-                    else {
-                        // No content but editing, so show something at least
-                        $this->print_shadow();
-                    }
+                    break;
                 }
-                else {
-                    if($this->hide_header() && empty($this->edit_controls)) {
-                        // Header wants to hide, no edit controls to show, so no header it is
-                        print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
-                    }
-                    else {
-                        // The full treatment, please
-                        print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
-                    }
+                if ($this->edit_controls !== NULL || !$this->hide_header()) {
+                    print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer);
+                } else {
+                    print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer);
                 }
             break;
         }
@@ -117,7 +93,6 @@ class MoodleBlock {
         }
         print_side_block($title, '&nbsp;', NULL, NULL, '');
     }
-
     function add_edit_controls($options, $blockid) {
         global $CFG, $THEME;
 
@@ -204,7 +179,7 @@ class MoodleBlock {
             $errors[] = 'version_not_set';
             $correct = false;
         }
-        $allformats = COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
+        $allformats = COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL;
         if(!($this->applicable_formats() & $allformats)) {
             $errors[] = 'no_course_formats';
             $correct = false;
@@ -230,19 +205,19 @@ class MoodleBlock {
     }
     function applicable_formats() {
         // Default case: the block can be used in all course types
-        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
+        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL;
     }
     function preferred_width() {
         // Default case: the block wants to be 180 pixels wide
         return 180;
     }
     function hide_header() {
-        //Default, false--> the header is shown
+        //Default, false--> the header is showed
         return false;
     }
     function html_attributes() {
-        // Default case: just an id for the block, with our name in it
-        return array('id' => 'block_'.$this->name());
+        // Default case: we want no extra attributes
+        return false;
     }
 }
 

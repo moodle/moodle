@@ -201,14 +201,6 @@ function assignment_cron () {
     $cutofftime = time() - $CFG->maxeditingtime;
 
     if ($submissions = assignment_get_unmailed_submissions($cutofftime)) {
-
-        foreach ($submissions as $key => $submission) {
-            if (! set_field("assignment_submissions", "mailed", "1", "id", "$submission->id")) {
-                echo "Could not update the mailed field for id $submission->id.  Not mailed.\n";
-                unset($submissions[$key]);
-            }
-        }
-
         $timenow = time();
 
         foreach ($submissions as $submission) {
@@ -274,6 +266,9 @@ function assignment_cron () {
 
             if (! email_to_user($user, $teacher, $postsubject, $posttext, $posthtml)) {
                 echo "Error: assignment cron: Could not send out mail for id $submission->id to user $user->id ($user->email)\n";
+            }
+            if (! set_field("assignment_submissions", "mailed", "1", "id", "$submission->id")) {
+                echo "Could not update the mailed field for id $submission->id\n";
             }
         }
     }
@@ -416,7 +411,7 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
     global $CFG;
 
     if ($groupid) {     /// How many in a particular group?
-        return count_records_sql("SELECT COUNT(DISTINCT g.userid, g.groupid)
+        return count_records_sql("SELECT COUNT(*) 
                                      FROM {$CFG->prefix}assignment_submissions a,
                                           {$CFG->prefix}groups_members g
                                     WHERE a.assignment = $assignment->id 

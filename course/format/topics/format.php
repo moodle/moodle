@@ -98,7 +98,7 @@
     $thissection = $sections[$section];
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
-        echo '<tr id="section_0">';
+        echo "<tr>";
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top width=20>&nbsp;</td>";
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
 
@@ -115,7 +115,10 @@
         print_section($course, $thissection, $mods, $modnamesused);
 
         if (isediting($course->id)) {
-            print_section_add_menus($course, $section, $modnames);
+            echo "<div align=right>";
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+                        $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
+            echo "</div>";
         }
 
         echo "</td>";
@@ -187,11 +190,11 @@
             echo "</td>";
 
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
-                echo '<td id="section_'.($section).'" style="vertical-align:top; text-align: center; width: 100%;" '.$colormain.'>';
+                echo "<td valign=top align=center $colormain width=\"100%\">";
                 echo get_string("notavailable");
                 echo "</td>";
             } else {
-                echo '<td id="section_'.($section).'" style="vertical-align:top; width: 100%;" '.$colormain.'>';
+                echo "<td valign=top $colormain width=\"100%\">";
 
                 echo format_text($thissection->summary, FORMAT_HTML);
 
@@ -205,7 +208,10 @@
                 print_section($course, $thissection, $mods, $modnamesused);
 
                 if (isediting($course->id)) {
-                    print_section_add_menus($course, $section, $modnames);
+                    echo "<div align=right>";
+                    popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+                                $modnames, "section$section", "", "$stradd...");
+                    echo "</div>";
                 }
 
                 echo "</td>";
@@ -275,7 +281,7 @@
         echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
         print_course_blocks($course, $rightblocks, BLOCK_RIGHT);
         if ($editing && !empty($missingblocks)) {
-            block_print_blocks_admin($course, $missingblocks);
+            block_print_blocks_admin($course->id, $missingblocks);
         }
         print_spacer(1, 120, true);
         echo '</td>';

@@ -130,8 +130,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     // We want to have easy access by day, since the display is on a per-day basis.
     // Arguments passed by reference.
-    //calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
-    calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
+    calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
 
     $content .= '<table class="calendarmini">'; // Begin table
     $content .= '<thead><tr>'; // Header row: day names
@@ -195,7 +194,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     $popupalt  = '';
                 } else if ($event->courseid > 1 and empty($event->groupid)) {      // Course event
                     $popupicon = $CFG->pixpath.'/c/course.gif';
-                    $popupalt  = '';
+                   $popupalt  = '';
                 } else if ($event->groupid) {                                      // Group event
                     $popupicon = $CFG->pixpath.'/c/group.gif';
                     $popupalt  = '';
@@ -203,11 +202,10 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     $popupicon = $CFG->pixpath.'/c/user.gif';
                     $popupalt  = '';
                 }
-                $popupcontent .= '<div><img height="16" width="16" src="'.$popupicon.'" style="vertical-align: middle; margin-right: 4px;" alt="'.$popupalt.'" /><a href="'.$dayhref.'">'.$event->name.'</a></div>';
+                $popupcontent .= '<div><img height=16 width=16 src=\\\''.$popupicon.'\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\''.$popupalt.'\\\' /><a href=\\\''.$dayhref.'\\\'>'.addslashes(htmlspecialchars($event->name)).'</a></div>';
             }
 
             $popupcaption = get_string('eventsfor', 'calendar', userdate($events[$eventid]->timestart, $strftimetimedayshort));
-            $popupcontent = str_replace("'", "\'", htmlspecialchars($popupcontent));
             $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
 
             // Class and cell content
@@ -279,12 +277,13 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
     $processed = 0;
     $now = time(); // We 'll need this later
-    $usermidnighttoday = usergetmidnight($now);
+    $nowsecs = $now % SECS_IN_DAY; // this too
+    $nowdays = $now - $nowsecs; // and this
 
     if ($fromtime) {
         $display->tstart = $fromtime;
     } else {
-        $display->tstart = $usermidnighttoday;
+        $display->tstart = usergetmidnight(time());
     }
 
     // This effectively adds as many days as needed, and the final SECS_IN_DAY - 1
@@ -316,27 +315,29 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
     if($events !== false) {
         foreach($events as $event) {
-
-            if($processed >= $display->maxevents) {
-                break;
-            }
+            if($processed >= $display->maxevents) break;
 
             $startdate = usergetdate($event->timestart);
             $enddate = usergetdate($event->timestart + $event->timeduration);
-            $usermidnightstart = usergetmidnight($event->timestart);
+
+            $starttimesecs = $event->timestart % SECS_IN_DAY; // Seconds after that day's midnight
+            $starttimedays = $event->timestart - $starttimesecs; // Timestamp of midnight of that day
 
             if($event->timeduration) {
                 // To avoid doing the math if one IF is enough :)
-                $usermidnightend = usergetmidnight($event->timestart + $event->timeduration);
+                $endtimesecs = ($event->timestart + $event->timeduration) % SECS_IN_DAY; // Seconds after that day's midnight
+                $endtimedays = ($event->timestart + $event->timeduration) - $endtimesecs; // Timestamp of midnight of that day
             }
             else {
-                $usermidnightend = $usermidnightstart;
+                $endtimesecs = $starttimesecs;
+                $endtimedays = $starttimedays;
             }
 
+            // Keep in mind: $starttimeXXX, $endtimeXXX and $nowXXX are all in GMT-based
             // OK, now to get a meaningful display...
-            // First of all we have to construct a human-readable date/time representation
 
-            if($event->timestart + $event->timeduration < $now) {
+            // First of all we have to construct a human-readable date/time representation
+            if($endtimedays < $nowdays || $endtimedays == $nowdays && $endtimesecs <= $nowsecs) {
                 // It has expired, so we don't care about duration
                 $day = calendar_day_representation($event->timestart + $event->timeduration, $now);
                 $time = calendar_time_representation($event->timestart + $event->timeduration);
@@ -347,8 +348,8 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
             }
             else if($event->timeduration) {
                 // It has a duration
-                if($usermidnightstart == $usermidnightend) {
-                    // But it's all on the same day
+                if($starttimedays == $endtimedays) {
+                    // But it's all on one day
                     $day = calendar_day_representation($event->timestart, $now);
                     $timestart = calendar_time_representation($event->timestart);
                     $timeend = calendar_time_representation($event->timestart + $event->timeduration);
@@ -449,6 +450,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
     if(is_bool($users) && is_bool($groups) && is_bool($courses)) {
         return false;
     }
+
     if(is_array($users) && !empty($users)) {
         // Events from a number of users
         if(!empty($whereclause)) $whereclause .= ' OR';
@@ -463,13 +465,6 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         // Events from ALL users
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' userid != 0 AND courseid = 0 AND groupid = 0';
-    }
-    else if($users === false) {
-        // No user at all
-        if(!empty($whereclause)) {
-            $whereclause .= ' OR';
-        }
-        $whereclause .= ' 0';
     }
     if(is_array($groups) && !empty($groups)) {
         // Events from a number of groups
@@ -486,21 +481,10 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         if(!empty($whereclause)) $whereclause .= ' OR ';
         $whereclause .= ' groupid != 0';
     }
-    if(is_array($courses)) {
-        // A number of courses (maybe none at all!)
-        if(!empty($courses)) {
-            if(!empty($whereclause)) {
-                $whereclause .= ' OR';
-            }
-            $whereclause .= ' groupid = 0 AND courseid IN ('.implode(',', $courses).')';
-        }
-        else {
-            // This means NO courses, not that we don't care!
-            if(!empty($whereclause)) {
-                $whereclause .= ' OR';
-            }
-            $whereclause .= ' 0';
-        }
+    if(is_array($courses) && !empty($courses)) {
+        // A number of courses
+        if(!empty($whereclause)) $whereclause .= ' OR';
+        $whereclause .= ' groupid = 0 AND courseid IN ('.implode(',', $courses).')';
     }
     else if(is_numeric($courses)) {
         // One course
@@ -532,7 +516,6 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         // Just basic time filtering
         $whereclause = $timeclause;
     }
-
     return $whereclause;
 }
 
@@ -628,11 +611,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
             $getvars = '&amp;from='.$type;
         break;
         case 'course':
-            if (isset($_GET['id'])) {
-                $getvars = '&amp;from=course&amp;id='.$_GET['id'];
-            } else {
-                $getvars = '&amp;from=course';
-            }
+            $getvars = '&amp;from=course&amp;id='.$_GET['id'];
             if (isset($course->groupmode) and !$course->groupmode and $course->groupmodeforce) {
                 $groupevents = false;
             }
@@ -659,7 +638,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
         $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
     }
 
-    if(!empty($USER) && !isguest($USER->id)) {
+    if(!isguest($USER->id)) {
         $content .= "</tr>\n<tr>";
 
         if($groupevents) {
@@ -705,28 +684,27 @@ function calendar_day_representation($tstamp, $now = false, $usecommonwords = tr
     // To have it in one place, if a change is needed
     $formal = userdate($tstamp, $shortformat);
 
-    $datestamp = usergetdate($tstamp);
-    $datenow   = usergetdate($now);
+    // Reverse TZ compensation: make GMT stamps correspond to user's TZ
+    $tzfix = calendar_get_tz_offset();
+    $tstamp += $tzfix;
+    $now += $tzfix;
+
+    $eventdays = intval($tstamp / SECS_IN_DAY);
+    $nowdays = intval($now / SECS_IN_DAY);
 
     if($usecommonwords == false) {
         // We don't want words, just a date
         return $formal;
     }
-    else if($datestamp['year'] == $datenow['year'] && $datestamp['yday'] == $datenow['yday']) {
+    else if($eventdays == $nowdays) {
         // Today
         return get_string('today', 'calendar');
     }
-    else if(
-        ($datestamp['year'] == $datenow['year'] && $datestamp['yday'] == $datenow['yday'] - 1 ) ||
-        ($datestamp['year'] == $datenow['year'] - 1 && $datestamp['mday'] == 31 && $datestamp['mon'] == 12 && $datenow['yday'] == 1)
-        ) {
+    else if($eventdays == $nowdays - 1) {
         // Yesterday
         return get_string('yesterday', 'calendar');
     }
-    else if(
-        ($datestamp['year'] == $datenow['year'] && $datestamp['yday'] == $datenow['yday'] + 1 ) ||
-        ($datestamp['year'] == $datenow['year'] + 1 && $datenow['mday'] == 31 && $datenow['mon'] == 12 && $datestamp['yday'] == 1)
-        ) {
+    else if($eventdays == $nowdays + 1) {
         // Tomorrow
         return get_string('tomorrow', 'calendar');
     }
@@ -781,12 +759,23 @@ function calendar_mktime_check($m, $d, $y, $default = false) {
     }
 }
 
+function calendar_month_name($month) {
+    if(is_int($month)) {
+        // 1 ... 12 integer converted to month name
+        $months = array('january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december');
+        return get_string($months[$month - 1], 'calendar');
+    }
+    else {
+        return get_string(strtolower($month), 'calendar');
+    }
+}
+
 function calendar_wday_name($englishname) {
     return get_string(strtolower($englishname), 'calendar');
 }
 
 function calendar_days_in_month($month, $year) {
-   return intval(date('t', mktime(0, 0, 0, $month, 1, $year)));
+   return date('t', mktime(0, 0, 0, $month, 1, $year));
 }
 
 function calendar_get_sideblock_upcoming($courses, $groups, $users, $daysinfuture, $maxevents) {
@@ -832,7 +821,7 @@ function calendar_sub_month($month, $year) {
     }
 }
 
-function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$durationbyday, &$typesbyday) {
+function calendar_events_by_day($events, $starttime, &$eventsbyday, &$durationbyday, &$typesbyday) {
     $eventsbyday = array();
     $typesbyday = array();
     $durationbyday = array();
@@ -841,66 +830,61 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
         return;
     }
 
+    // Reverse TZ compensation: make GMT stamps (from event table) correspond to user's TZ
+    $tzfix = calendar_get_tz_offset();
+
     foreach($events as $event) {
+        $eventdaystart = 1 + floor(($event->timestart + $tzfix - $starttime) / SECS_IN_DAY);
+        $eventdayend = 1 + floor(($event->timestart + $event->timeduration + $tzfix - $starttime) / SECS_IN_DAY);
 
-        $startdate = usergetdate($event->timestart);
-        $enddate   = usergetdate($event->timestart + $event->timeduration);
+        // Give the event to its day
+        $eventsbyday[$eventdaystart][] = $event->id;
 
-        // Simple arithmetic: $year * 13 + $month is a distinct integer for each distinct ($year, $month) pair
-        if(!($startdate['year'] * 13 + $startdate['mon'] <= $year * 13 + $month) && ($enddate['year'] * 13 + $enddate['mon'] >= $year * 13 + $month)) {
-            // Out of bounds
-            continue;
+        // Mark the day as having such an event
+        if($event->courseid == 1 && $event->groupid == 0) {
+            $typesbyday[$eventdaystart]['startglobal'] = true;
+        }
+        else if($event->courseid > 1 && $event->groupid == 0) {
+            $typesbyday[$eventdaystart]['startcourse'] = true;
+        }
+        else if($event->groupid) {
+            $typesbyday[$eventdaystart]['startgroup'] = true;
+        }
+        else if($event->userid) {
+            $typesbyday[$eventdaystart]['startuser'] = true;
         }
 
-        $eventdaystart = intval($startdate['mday']);
+        // Mark all days up to and including ending day as duration
+        if($eventdaystart < $eventdayend) {
 
-        if($startdate['mon'] == $month && $startdate['year'] == $year) {
-            // Give the event to its day
-            $eventsbyday[$eventdaystart][] = $event->id;
+            // Normally this should be
 
-            // Mark the day as having such an event
-            if($event->courseid == 1 && $event->groupid == 0) {
-                $typesbyday[$eventdaystart]['startglobal'] = true;
-            }
-            else if($event->courseid > 1 && $event->groupid == 0) {
-                $typesbyday[$eventdaystart]['startcourse'] = true;
-            }
-            else if($event->groupid) {
-                $typesbyday[$eventdaystart]['startgroup'] = true;
-            }
-            else if($event->userid) {
-                $typesbyday[$eventdaystart]['startuser'] = true;
+            // $bound = min($eventdayend, $display->maxdays);
+            // for($i = $eventdaystart + 1; $i <= $bound; ++$i) {
+
+            // So that we don't go on marking days after the end of
+            // the month if the event continues. However, this code
+            // has moved and now we don't have access to $display->maxdays.
+            // In order to save the overhead of recomputing it, we just
+            // use this "dumb" approach. Anyway, the function that called
+            // us already knows up to what day it should display.
+
+            for($i = $eventdaystart + 1; $i <= $eventdayend; ++$i) {
+                $durationbyday[$i][] = $event->id;
+                if($event->courseid == 1 && $event->groupid == 0) {
+                    $typesbyday[$i]['durationglobal'] = true;
+                }
+                else if($event->courseid > 1 && $event->groupid == 0) {
+                    $typesbyday[$i]['durationcourse'] = true;
+                }
+                else if($event->groupid) {
+                    $typesbyday[$i]['durationgroup'] = true;
+                }
+                else if($event->userid) {
+                    $typesbyday[$i]['durationuser'] = true;
+                }
             }
         }
-
-        if($event->timeduration == 0) {
-            // Proceed with the next
-            continue;
-        }
-
-        // The event starts on $month $year or before. So...
-        $lowerbound = $startdate['mon'] == $month && $startdate['year'] == $year ? intval($startdate['mday']) : 0;
-
-        // Also, it ends on $month $year or later...
-        $upperbound = $enddate['mon'] == $month && $enddate['year'] == $year ? intval($enddate['mday']) : calendar_days_in_month($month, $year);
-
-        // Mark all days between $lowerbound and $upperbound (inclusive) as duration
-        for($i = $lowerbound + 1; $i <= $upperbound; ++$i) {
-            $durationbyday[$i][] = $event->id;
-            if($event->courseid == 1 && $event->groupid == 0) {
-                $typesbyday[$i]['durationglobal'] = true;
-            }
-            else if($event->courseid > 1 && $event->groupid == 0) {
-                $typesbyday[$i]['durationcourse'] = true;
-            }
-            else if($event->groupid) {
-                $typesbyday[$i]['durationgroup'] = true;
-            }
-            else if($event->userid) {
-                $typesbyday[$i]['durationuser'] = true;
-            }
-        }
-
     }
     return;
 }
@@ -938,20 +922,10 @@ function calendar_session_vars() {
         $SESSION->cal_show_course = true;
     }
     if(!isset($SESSION->cal_show_user)) {
-        $SESSION->cal_show_user = true;
+        $SESSION->cal_show_user = isset($USER->id) ? $USER->id : false;
     }
     if(empty($SESSION->cal_courses_shown)) {
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-    }
-    if(empty($SESSION->cal_users_shown)) {
-        // The empty() instead of !isset() here makes a whole world of difference,
-        // as it will automatically change to the user's id when the user first logs
-        // in. With !isset(), it would never do that.
-        $SESSION->cal_users_shown = isset($USER->id) ? $USER->id : false;
-    }
-    else if(is_numeric($SESSION->cal_users_shown) && !empty($USER->id) && $SESSION->cal_users_shown != $USER->id) {
-        // Follow the white rabbit, for example if a teacher logs in as a student
-        $SESSION->cal_users_shown = $USER->id;
     }
 }
 
@@ -1013,8 +987,12 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
     }
 
     if($SESSION->cal_show_user || $ignorefilters) {
-        // This doesn't work for arrays yet (maybe someday it will)
-        $user = $SESSION->cal_users_shown;
+        // This ignores the "which user to see" setting
+        // The functionality to do that does exist, but this was
+        // the most painless way to solve bug 1323. And anyway,
+        // it wasn't being used anywhere.
+        $user = $USER->id;
+        //$user = $SESSION->cal_show_user;
     }
     else {
         $user = false;
@@ -1032,7 +1010,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         // For each course...
         foreach($groupcourses as $courseid) {
             // If the user is an editing teacher in there,
-            if(!empty($USER->id) && isteacheredit($courseid, $USER->id)) {
+            if(isteacheredit($courseid, $USER->id)) {
                 // Show events from all groups
                 if(($grouprecords = get_groups($courseid)) !== false) {
                     $grouparray = array_merge($grouparray, array_keys($grouprecords));
@@ -1057,10 +1035,6 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 
 function calendar_edit_event_allowed($event) {
     global $USER;
-
-    if(empty($USER) || isguest($USER->id)) {
-        return false;
-    }
 
     if (isadmin($USER->id)) return true; // Admins are allowed anything
 
@@ -1098,7 +1072,7 @@ function calendar_get_default_courses($ignoreref = false) {
     }
 
     $courses = array();
-    if(!empty($USER->id) && isadmin($USER->id)) {
+    if(isadmin($USER->id)) {
         $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
         return $courses;
     }
@@ -1158,7 +1132,7 @@ function calendar_preferences_button() {
     global $CFG, $USER;
 
     // Guests have no preferences
-    if (empty($USER->id) || isguest()) {
+    if (empty($USER->id) or isguest()) {
         return '';
     }
 

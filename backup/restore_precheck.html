@@ -52,10 +52,10 @@
     $backup_unique_code = time();
     
     //Now check and create the backup dir (if it doesn't exist)
-    echo "<li>".get_string("creatingtemporarystructures");
     $status = check_and_create_backup_dir($backup_unique_code);
     //Empty dir
     if ($status) {
+        echo "<li>".get_string("creatingtemporarystructures");
         $status = clear_backup_dir($backup_unique_code);
     }
 
@@ -108,16 +108,6 @@
     //End the main table
     echo "</tr></td>";
     echo "</table>";
-
-    //We compare Moodle's versions
-    if ($CFG->version < $info->backup_moodle_version && $status) {
-        $message->serverversion = $CFG->version;
-        $message->serverrelease = $CFG->release;
-        $message->backupversion = $info->backup_moodle_version;
-        $message->backuprelease = $info->backup_moodle_release;
-        print_simple_box(get_string('noticenewerbackup','',$message), "center", "70%", "$THEME->cellheading2", "20", "noticebox");
-
-    }
 
     //Now we print in other table, the backup and the course it contains info
     if ($info and $course_header and $status) {

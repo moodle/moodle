@@ -2,7 +2,7 @@
       // resource.php - created with Moodle 1.2 development (2003120700)
 
 
-$string['addresource'] = 'Add a resource';
+$string['addresource'] = 'Add resource';
 $string['chooseafile'] = 'Choose or upload a file';
 $string['configdefaulturl'] = 'This value is used to prefill the URL form when creating a new URL-based resource.';
 $string['configfilterexternalpages'] = 'Enabling this setting will cause all external resources (web pages, uploaded HTML files) to be processed by the currently defined site filters (such as glossary autolinks, for example).  Turning this option on may cause your course pages to slow down significantly - use with caution and only if you really need it.';
@@ -21,7 +21,6 @@ $string['configwebsearch'] = 'When adding a URL as a webpage or weblink, this lo
 $string['directlink'] = 'Direct link to this file';
 $string['directoryinfo'] = 'All the files in the chosen directory will be displayed.';
 $string['editingaresource'] = 'Editing a resource';
-$string['encryptedcode'] = 'Encrypted code';
 $string['example'] = 'Example';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
@@ -29,8 +28,7 @@ $string['fetchclienterror'] = 'An error was found with your web client while try
 $string['fetcherror'] = 'An error was found while trying to retrieve the web page.';
 $string['fetchservererror'] = 'An error was found with the remote server while trying to retrieve the web page (possibly a program error).</p>';
 $string['filename'] = 'File name';
-$string['filtername'] = "Resource Names Auto-linking";
-$string['frameifpossible'] = 'Put resource in a frame to keep site navigation visible';
+$string['filtername'] = "Resource Auto-linking";
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
 $string['maindirectory'] = 'Main files directory';
@@ -52,19 +50,17 @@ $string['newwindowopen'] = 'Display this resource in a new popup window';
 $string['note'] = 'Note';
 $string['notefile'] = 'To upload more files into the course (so they appear in this list) use the <a href=\"$a\">File Manager</a>.';
 $string['notypechosen'] = 'You need to choose a type.  Use your back button to go back and retry.';
-$string['pagedisplay'] = 'Display this resource within the current window';
-$string['pagewindow'] = 'Same window';
-$string['parameter'] = 'Parameter';
-$string['parameters'] = 'Parameters';
 $string['popupresource'] = 'This resource should appear in a popup window.';
 $string['popupresourcelink'] = 'If it didn\'t, click here: $a';
 $string['resourcetype'] = 'Type of resource';
-$string['resourcetypedirectory'] = 'Display a directory';
-$string['resourcetypefile'] = 'Link to a file or web site';
-$string['resourcetypehtml'] = 'Compose a web page';
-$string['resourcetypelabel'] = 'Insert a label';
-$string['resourcetypereference'] = 'Post a reference';
-$string['resourcetypetext'] = 'Compose a text page';
-$string['searchweb'] = 'Search for web page';
-$string['variablename'] = 'Variable name';
+$string['resourcetype1'] = 'Reference';
+$string['resourcetype2'] = 'Web Page';
+$string['resourcetype3'] = 'Uploaded File';
+$string['resourcetype4'] = 'Plain text';
+$string['resourcetype5'] = 'Web Link';
+$string['resourcetype6'] = 'HTML text';
+$string['resourcetype7'] = 'Program';
+$string['resourcetype8'] = 'Wiki text';
+$string['resourcetype9'] = 'Directory';
+
 ?>

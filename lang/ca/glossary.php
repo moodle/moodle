@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004070800)
+      // glossary.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addcomment'] = 'Afegeix un comentari';
@@ -23,7 +23,7 @@ $string['back'] = 'Enrere';
 $string['cantinsertcat'] = 'No s\'ha pogut inserir la categoria';
 $string['cantinsertrec'] = 'No s\'ha pogut inserir el registre';
 $string['cantinsertrel'] = 'No s\'ha pogut inserir la relació categoria-entrada';
-$string['casesensitive'] = 'Distingeix majúscules i minúscules';
+$string['casesensitive'] = 'Aquesta entrada distingeix entre majúscules i minúscules';
 $string['categories'] = 'Categories';
 $string['category'] = 'Categoria';
 $string['categorydeleted'] = 'La categoria s\'ha suprimit';
@@ -99,8 +99,7 @@ $string['exporttomainglossary'] = 'Exporta al glossari principal';
 $string['filetoimport'] = 'Fitxer per importar';
 $string['fillfields'] = 'El concepte i la definició són camps obligatoris.';
 $string['filtername'] = 'Enllaços automàtics al glossari';
-$string['fullmatch'] = 'Enllaça només paraules completes';
-$string['globalglossary'] = 'Glossari global';
+$string['fullmatch'] = 'Relaciona només les paraules completes';
 $string['glossaryleveldefaultsettings'] = 'Paràmetres per defecte al nivell de glossari';
 $string['glossarytype'] = 'Tipus de glossari';
 $string['glosssaryexported'] = 'S\'ha exportat el glossari.';
@@ -155,7 +154,7 @@ $string['standardview'] = 'Navega alfabèticament';
 $string['studentcanpost'] = 'Els estudiants poden afegir entrades';
 $string['totalentries'] = 'Total d\'entrades';
 $string['usedynalink'] = 'Enllaça automàticament les entrades del glossari';
-$string['waitingapproval'] = 'Esperant aprovació';
+$string['waitingapproval'] = 'S\'està esperant aprovació';
 $string['warningstudentcapost'] = '(Aplicable sols en cas que no sigui el glossari principal)';
 $string['withauthor'] = 'Conceptes amb autor';
 $string['withoutauthor'] = 'Conceptes sense autor';

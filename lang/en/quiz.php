@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
       // quiz.php - created with Moodle 1.2 development (2004010900)
 
 
@@ -10,7 +10,6 @@ $string['addselectedtoquiz'] = 'Add selected to quiz';
 $string['aiken'] = 'Aiken format';
 $string['allowreview'] = 'Allow review';
 $string['alreadysubmitted'] = 'It is likely that you have already submitted this attempt';
-$string['alternativeunits'] = 'Alternative Units';
 $string['alwaysavailable'] = 'Always available';
 $string['answer'] = 'Answer';
 $string['answerhowmany'] = 'One or multiple answers?';
@@ -31,7 +30,6 @@ $string['attemptsunlimited'] = 'Unlimited attempts';
 $string['backtoquiz'] = 'Back to quiz editing';
 $string['bestgrade'] = 'Best grade';
 $string['blackboard'] = 'Blackboard';
-$string['calculated'] = 'Calculated';
 $string['calculatedquestion'] = 'Calculated Question not supported at line $a. The question will be ignored';
 $string['caseno'] = 'No, case is unimportant';
 $string['casesensitive'] = 'Case sensitivity';
@@ -41,12 +39,9 @@ $string['category'] = 'Category';
 $string['categoryinfo'] = 'Category info';
 $string['categorymove'] = 'The category \'$a->name\' contains $a->count questions.  Please choose another category to move them to.';
 $string['categorymoveto'] = 'Move them to this category';
-$string['choosedatasetproperties'] = 'Choose dataset properties';
 $string['choice'] = 'Choice';
 $string['choices'] = 'Available choices';
 $string['correctanswer'] = 'Correct answer';
-$string['correctanswerformula'] = 'Correct Answer Formula';
-$string['correctanswerlength'] = 'Significant Figures';
 $string['correctanswers'] = 'Correct answers';
 $string['corrresp'] = 'Correct Response';
 $string['countdown'] = 'Countdown';
@@ -56,9 +51,7 @@ $string['coursetestmanager'] = 'Course Test Manager format';
 $string['createmultiple'] = 'Create multiple questions';
 $string['createnewquestion'] = 'Create new question';
 $string['custom'] = 'Custom format';
-$string['datasetnumber'] = 'Number';
 $string['daysavailable'] = 'Days available';
-$string['decimals'] = ' with $a ';
 $string['default'] = 'Default';
 $string['defaultgrade'] = 'Default question grade';
 $string['defaultinfo'] = 'The default category for questions.';
@@ -68,13 +61,11 @@ $string['description'] = 'Description';
 $string['discrimination'] = 'Discrim. Index';
 $string['eachattemptbuildsonthelast'] = 'Each attempt builds on the last';
 $string['editcategories'] = 'Edit categories';
-$string['editdatasets'] = 'Edit the datasets';
-$string['editingcalculated'] = 'Editing a Calculated question';
 $string['editingdescription'] = 'Editing a Description';
 $string['editingmatch'] = 'Editing a Matching Question';
 $string['editingmultianswer'] = 'Editing Embedded Answers (Cloze)';
 $string['editingmultichoice'] = 'Editing a Multiple Choice question';
-$string['editingnumerical'] = 'Editing a Numerical question';
+$string['editingnumerical'] = 'Editing a numerical question';
 $string['editingquestion'] = 'Editing a question';
 $string['editingquiz'] = 'Editing quiz';
 $string['editingrandom'] = 'Editing a Random Question';
@@ -83,66 +74,29 @@ $string['editingshortanswer'] = 'Editing a Short-Answer question';
 $string['editingtruefalse'] = 'Editing a True/False question';
 $string['editquestions'] = 'Edit questions';
 $string['errorsdetected'] = '$a error(s) detected';
-$string['existingcategory'] = 'a '
-        // The use of ) and ( below should really not be necessary but
-        // because of some sort of PHP bug it is better to keep'em
-    .'".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a)))."'
-    .' from an already existing set of '
-    .'".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a)))."'
-    .' that are also used by other questions in this category';
-$string['exportfilename'] = 'quiz';
-$string['exportname'] = 'File name';
-$string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
-$string['exportquestions'] = 'Export questions to file';
 $string['false'] = 'False';
 $string['feedback'] = 'Feedback';
 $string['fileformat'] = 'File format';
 $string['filloutoneanswer'] = 'You must fill out at least one possible answer.  Answers left blank will not be used.';
 $string['filloutthreequestions'] = 'You must fill out at least three questions.  Questions left blank will not be used.';
 $string['fillouttwochoices'] = 'You must fill out at least two choices.  Choices left blank will not be used.';
-$string['forceregeneration'] = 'force regeneration';
 $string['fractionsaddwrong'] = 'The positive grades you have chosen do not add up to 100%%<BR>Instead, they add up to $a%%<BR>Do you want to go back and fix this question?';
 $string['fractionsnomax'] = 'One of the answers should be 100%%, so that it is<BR>possible to get a full grade for this question.<BR>Do you want to go back and fix this question?';
-$string['functiontakesatleasttwo'] = 'The function $a must have at least two arguments';
-$string['functiontakesnoargs'] = 'The function $a does not take any arguments';
-$string['functiontakesonearg'] = 'The function $a must have exactly one argument';
-$string['functiontakesoneortwoargs'] = 'The function $a must have either one or two arguments';
-$string['functiontakestwoargs'] = 'The function $a must have exactly two arguments';
-$string['generatevalue'] = 'Generate a new value between';
-$string['geometric'] = 'Geometric';
 $string['gift'] = 'GIFT format';
 $string['gradeaverage'] = 'Average grade';
 $string['gradehighest'] = 'Highest grade';
 $string['grademethod'] = 'Grading method';
 $string['guestsno'] = 'Sorry, guests can not see or attempt quizzes';
-$string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'$a\'';
 $string['imagedisplay'] = 'Image to display';
 $string['imagemissing'] = 'Image not available at line $a. The filename will be ignored';
 $string['importquestions'] = 'Import questions from file';
 $string['indivresp'] = 'Responses of Individuals to Each Item';
 $string['introduction'] = 'Introduction';
 $string['itemanal'] = 'Item Response Analysis';
-$string['keptcategory'] = 'a '
-        // The use of ) and ( below should really not be necessary but
-        // because of some sort of PHP bug it is better to keep'em
-    .'".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a)))."'
-    .' from the same category reusable set of '
-    .'".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a)))."'
-    .' as before';
-$string['keptlocal'] = 'a '
-        // The use of ) and ( below should really not be necessary but
-        // because of some sort of PHP bug it is better to keep'em
-    .'".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a)))."'
-    .' from the same question private set of '
-    .'".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a)))."'
-    .' as before';
 $string['listitems'] = 'Listing of Items in Quiz';
-$string['loguniform'] = 'digits, from a loguniform distribution';
 $string['marks'] = 'Marks';
 $string['match'] = 'Matching';
 $string['matchanswer'] = 'Matching answer';
-$string['max'] = 'Max';
-$string['min'] = 'Min';
 $string['missinganswer'] = 'Too few :ANSWER, :Lx, :Rx statements for question line $a. You must define at last 2 possible answers';
 $string['missingcorrectanswer'] = 'Correct answer must be specified';
 $string['missingname'] = 'Missing question name';
@@ -154,24 +108,8 @@ $string['modulenameplural'] = 'Quizzes';
 $string['multianswer'] = 'Embedded Answers (Cloze)';
 $string['multichoice'] = 'Multiple Choice';
 $string['name'] = 'Name';
-$string['newcategory'] = 'a '
-        // The use of ) and ( below should really not be necessary but
-        // because of some sort of PHP bug it is better to keep'em
-    .'".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a)))."'
-    .' from a new set of '
-    .'".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a)))."'
-    .' that may also be used by other questions in this category';
-$string['newlocal'] = 'a '
-        // The use of ) and ( below should really not be necessary but
-        // because of some sort of PHP bug it is better to keep'em
-    .'".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a)))."'
-    .' from a new set of '
-    .'".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a)))."'
-    .' that will only be used by this question';
 $string['noanswers'] = 'No answers were selected!';
 $string['noattempts'] = 'No attempts have been made on this quiz';
-$string['nodataset'] = 'nothing - it is not a wild card';
-$string['nominal'] = 'Nominal';
 $string['nomoreattempts'] = 'No more attempts are allowed';
 $string['noquestions'] = 'No questions have been added yet';
 $string['noresponse'] = 'No Response';
@@ -179,15 +117,10 @@ $string['noreview'] = 'You are not allowed to review this quiz';
 $string['noreviewuntil'] = 'You are not allowed to review this quiz until $a';
 $string['notenoughsubquestions'] = 'Not enough sub-questions have been defined!<br>Do you want to go back and fix this question?';
 $string['notenoughanswers'] = 'This type of question requires at least $a answers';
-$string['multiplier'] = 'Multiplier';
 $string['numerical'] = 'Numerical';
-$string['optional'] = 'optional';
 $string['paragraphquestion'] = 'Paragraph Question not supported at line $a. The question will be ignored';
-$string['passworderror'] = 'The password entered was incorrect';
-$string['passworderror'] = 'The password entered was incorrect';
 $string['percentcorrect'] = 'Percent Correct';
 $string['publish'] = 'Publish';
-$string['publishedit'] = 'You must have permission in the publishing course to add or edit questions in this category';
 $string['qti'] = 'IMS QTI format';
 $string['question'] = 'Question';
 $string['questioninuse'] = 'The question \'$a\' is currently being used:';
@@ -212,8 +145,6 @@ $string['recentlyaddedquestion'] = 'Recently added question!';
 $string['regrade'] = 'Regrade all attempts';
 $string['regradecomplete'] = 'All attempts have been regraded';
 $string['regradecount'] = '$a->changed out of $a->attempt grades were changed';
-$string['relative'] = 'Relative';
-$string['remove'] = 'Remove';
 $string['rename'] = 'Rename';
 $string['report'] = 'Reports';
 $string['reportfullstat'] = 'Detailed statistics';
@@ -223,10 +154,6 @@ $string['reportmulti_resp'] = 'Individual Responses';
 $string['reportoverview'] = 'Overview';
 $string['reportregrade'] = 'Regrade attempts';
 $string['reportsimplestat'] = 'Simple statistics';
-$string['requirepassword'] = 'Require password';
-$string['requirepasswordmessage'] = 'To attempt this quiz you need to know the quiz password';
-$string['requiresubnet'] = 'Require network address';
-$string['reuseifpossible'] = 'reuse previously removed';
 $string['review'] = 'Review';
 $string['save'] = 'Save';
 $string['savegrades'] = 'Save grades';
@@ -242,38 +169,20 @@ $string['showcorrectanswer'] = 'In feedback, show correct answers?';
 $string['showfeedback'] = 'After answering, show feedback?';
 $string['shuffleanswers'] = 'Shuffle answers';
 $string['shufflequestions'] = 'Shuffle questions';
-$string['significantfigures'] = ' with $a ';
-$string['subneterror'] = 'Sorry, this quiz has been locked so that it is only accessible from certain locations.  Currently your computer is not one of those allowed to use this quiz.';
-$string['substitutedby'] = 'will be substituted by';
 $string['time'] = 'Time';
 $string['timecompleted'] = 'Completed';
 $string['timetaken'] = 'Time taken';
-$string['tolerance'] = 'Tolerance';
-$string['tolerancetype'] = 'Tolerance Type';
 $string['toomanyrandom'] = 'The number of random questions required is more than this category contains! ($a)';
 $string['true'] = 'True';
 $string['truefalse'] = 'True/False';
 $string['type'] = 'Type';
-$string['uniform'] = 'decimals, from a uniform distribution';
-$string['unit'] = 'Unit';
 $string['unknowntype'] = 'Question type not supported at line $a. The question will be ignored';
-$string['unsupportedformulafunction'] = 'The function $a is not supported';
 $string['viewallanswers'] = 'View $a completed quizzes';
 $string['viewallreports'] = 'View reports for $a attempts';
 $string['warningsdetected'] = '$a warning(s) detected';
 $string['webct'] = 'WebCT format';
-$string['wildcard'] = 'Wild card';
 $string['withsummary'] = 'with Summary Statistics';
 $string['wronggrade'] = 'Wrong grade (after line $a) : ';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
-$string['quiztimer'] = 'Quiz Timer';
-$string['timelimit'] = 'Time limit';
-$string['quiztimelimit'] = 'Time limit: $a';
-$string['minutes'] = 'Minutes';
-$string['noscript'] = 'JavaScript must be enabled to continue!';
-$string['timeleft'] = 'Time Remaining';
-$string['timesup'] = 'Time is up!';
-$string['timelimitexeeded'] = 'Sorry! Quiz time limit exeeded!';
-$string['confirmstartattempt'] = 'The Quiz has a time limit. Are you sure that you wish to start?';
-$string['overdue'] = 'Overdue';
+
 ?>

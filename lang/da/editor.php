@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3.3 (2004052503)
+      // editor.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['about'] = 'Om denne editor';
@@ -27,7 +27,6 @@ $string['cut'] = 'Klip markeret tekst';
 $string['delete'] = 'Slet';
 $string['filebrowser'] = 'Fil-browser';
 $string['forecolor'] = 'Bogstavsfarve';
-$string['fullscreen'] = 'Fulskærms editor';
 $string['heading'] = 'Overskrift';
 $string['height'] = 'Højde';
 $string['hilitecolor'] = 'Baggrundsfarve';
@@ -48,7 +47,6 @@ $string['justifyleft'] = 'Venstrestillet tekst';
 $string['justifyright'] = 'Højrestillet tekst';
 $string['layout'] = 'Layout';
 $string['left'] = 'Venstre';
-$string['lefttoright'] = 'Retning fra venstre mod højre';
 $string['linkproperties'] = 'Link egenskaber';
 $string['linktarget'] = 'Destination';
 $string['linktargetblank'] = 'Nyt vindue';
@@ -59,7 +57,6 @@ $string['linktargettop'] = 'Samme vindue';
 $string['linktitle'] = 'Title';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'Midten';
-$string['minimize'] = 'Minimer editor';
 $string['move'] = 'Flyt';
 $string['normal'] = 'Normal';
 $string['notimage'] = 'Valgte fil er ikke et billede. Vælg venlist et billede!';
@@ -79,9 +76,7 @@ $string['redo'] = 'Gendan dine sidste ændringer';
 $string['removelink'] = 'Fjern link';
 $string['rename'] = 'Omdøb';
 $string['right'] = 'Højre';
-$string['righttoleft'] = 'Retning fra højre mod venstre';
 $string['rows'] = 'Rækker';
-$string['selectcolor'] = 'Vælg farve';
 $string['selection'] = 'Valgte';
 $string['showhelp'] = 'Hjælp i brugen af editoren';
 $string['size'] = 'Størrelse';
@@ -100,7 +95,6 @@ $string['unorderedlist'] = 'Punktliste';
 $string['upload'] = 'Upload';
 $string['vertical'] = 'Vertikal';
 $string['width'] = 'Bredde';
-$string['wordclean'] = 'Rens word HTML';
 $string['zip'] = 'Zip';
 
 ?>

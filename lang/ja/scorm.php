@@ -1,74 +1,24 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004072500)
+      // scorm.php - created with Moodle 1.3 - (2004052400)
 
 
-$string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';
 $string['autocontinue'] = '自動継続';
-$string['badmanifest'] = 'マニフェストファイルエラー: エラーログをご覧ください。';
 $string['browse'] = '閲覧';
 $string['browsed'] = '閲覧済み';
 $string['browsemode'] = '閲覧モード';
-$string['chooseapacket'] = 'SCORMパッケージの選択又は更新';
-$string['completed'] = '完了';
-$string['configframesize'] = 'この値は、SCORMパッケージを使用する時の、ナビゲーションを含むトップフレームのサイズ(ピクセル)';
-$string['configpopup'] = '新しいSCORMパッケージを追加する場合、ポップアップウインドウに表示出来る場合は表示しますか?';
-$string['configpopupheight'] = '新しいポップアップウインドウのデフォルト高は?';
-$string['configpopupresizable'] = 'ポップアップウインドウをデフォルトでリサイズ可能にしますか?';
-$string['configpopupscrollbars'] = 'ポップアップウインドウをデフォルトでスクロール可能にしますか?';
-$string['configpopupstatus'] = 'ポップアップウインドウにデフォルトでステータスバーを表示しますか?';
-$string['configpopupwidth'] = '新しいポップアップウインドウのデフォルト幅は?';
 $string['coursepacket'] = 'コースパッケージ';
 $string['coursestruct'] = 'コース構造';
-$string['datadir'] = 'ファイルシステムエラー: コースデータディレクトリを作成出来ません。';
-$string['domxml'] = 'DOMXML外部ライブラリ';
-$string['entercourse'] = 'SCORMコースの入力';
-$string['errorlogs'] = 'エラーログ';
 $string['failed'] = '失敗';
-$string['found'] = 'マニフェストファイルが見つかりました';
-$string['gradeaverage'] = '平均評価';
-$string['gradehighest'] = '最高評価';
-$string['grademethod'] = '評価方法';
-$string['guestsno'] = 'ゲストはscormのコースを閲覧出来ません';
-$string['incomplete'] = '不完全';
-$string['missing_attribute'] = 'タグ $a->tag に属性 $a->attr がありません';
-$string['missing_tag'] = 'タグ無し $a->tag';
 $string['mode'] = 'モード';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorm';
-$string['newheight'] = 'デフォルトウインドウ高(ピクセル)';
-$string['newresizable'] = 'ウインドウのリサイズを許可';
-$string['newscrollbars'] = 'ウインドウのスクロールを許可';
-$string['newstatus'] = 'ステータスバーを表示';
-$string['newwidth'] = 'デフォルトウインドウ幅(ピクセル)';
-$string['newwindow'] = '新しいウインドウ';
-$string['newwindowopen'] = 'このSCORMパッケージを新しいポップアップウインドウで表示する';
 $string['next'] = '続ける';
-$string['no_attributes'] = 'タグ $a->tag にアトリビュートがありません';
-$string['no_children'] = 'タグ $a->tag に子タグがありません';
-$string['nomanifest'] = 'マニフェストファイルが見つかりませんでした';
 $string['noreports'] = '表示するレポートがありません';
 $string['normal'] = 'ノーマル';
-$string['not_corr_type'] = 'タグ $a->tag のタイプが合致しません';
-$string['notattempted'] = '未実行';
-$string['packagedir'] = 'ファイルシステムエラー: パッケージディレクトリを作成出来ません。';
-$string['passed'] = 'パス';
-$string['php5'] = 'PHP 5 (DOMXMLネイティブライブラリ)';
-$string['position_error'] = '$a->tag タグは $a->parent タグの子タグになりません';
-$string['prev'] = '前の';
-$string['regular'] = '標準マニフェストファイル';
 $string['report'] = 'レポート';
 $string['review'] = 'レビュー';
-$string['scoes'] = 'Scoes';
 $string['score'] = '得点';
-$string['syntax'] = 'シンタックスエラー';
-$string['tag_error'] = 'コンテンツに不明なタグ($a->tag) があります:  $a->value';
-$string['too_many_attributes'] = 'タグ $a->tag のアトリビュートが多過ぎます';
-$string['too_many_children'] = 'タグ $a->tag の子タグが多過ぎます';
-$string['trackingloose'] = '警告: SCORMデータのトラッキングデータは消滅します!';
 $string['validateascorm'] = 'SCORMパッケージの確認';
 $string['validation'] = '確認結果';
-$string['validationtype'] = 'ここではSCORMマニフェストファイルを確認するDOMXMLライブラリを設定します。分からない場合は、このままにしてください。';
-$string['versionwarning'] = 'マニフェストファイルのバージョンが1.3より古い為、$a->tag タグに警告があります。';
-$string['viewallreports'] = '$a 回分のレポートを表示';
 
 ?>

@@ -1,11 +1,11 @@
 <?php
 /*
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.  
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.  
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
 
-  Latest version is available at http://adodb.sourceforge.net
+  Latest version is available at http://php.weblogs.com/
   
   Interbase data driver. Requires interbase client. Works on Windows and Unix.
 
@@ -23,17 +23,13 @@ V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights rese
    $conn->Execute("insert into table (id, col1,...) values ($id, $val1,...)");
 */
 
-// security - hide paths
-if (!defined('ADODB_DIR')) die();
 
 class ADODB_ibase extends ADOConnection {
 	var $databaseType = "ibase";
 	var $dataProvider = "ibase";
 	var $replaceQuote = "''"; // string to use to replace quotes
-	var $ibase_datefmt = '%Y-%m-%d'; // For hours,mins,secs change to '%Y-%m-%d %H:%M:%S';
+	var $ibase_timefmt = '%Y-%m-%d'; // For hours,mins,secs change to '%Y-%m-%d %H:%M:%S';
 	var $fmtDate = "'Y-m-d'";
-	var $ibase_timestampfmt = "%Y-%m-%d %H:%M:%S";
-	var $ibase_timefmt = "%H:%M:%S";
 	var $fmtTimeStamp = "'Y-m-d, H:i:s'";
 	var $concat_operator='||';
 	var $_transactionID;
@@ -46,7 +42,7 @@ class ADODB_ibase extends ADOConnection {
 	var $_bindInputArray = true;
 	var $buffers = 0;
 	var $dialect = 1;
-	var $sysDate = "cast('TODAY' as timestamp)";
+	var $sysDate = "cast('TODAY' as date)";
 	var $sysTimeStamp = "cast('NOW' as timestamp)";
 	var $ansiOuter = true;
 	var $hasAffectedRows = false;
@@ -110,23 +106,6 @@ class ADODB_ibase extends ADOConnection {
 			$ret = ibase_commit($this->_transactionID);
 		}
 		$this->_transactionID = false;
-		return $ret;
-	}
-	
-	// there are some compat problems with ADODB_COUNTRECS=false and $this->_logsql currently.
-	// it appears that ibase extension cannot support multiple concurrent queryid's
-	function &_Execute($sql,$inputarr=false) 
-	{
-	global $ADODB_COUNTRECS;
-	
-		if ($this->_logsql) {
-			$savecrecs = $ADODB_COUNTRECS;
-			$ADODB_COUNTRECS = true; // force countrecs
-			$ret =& ADOConnection::_Execute($sql,$inputarr);
-			$ADODB_COUNTRECS = $savecrecs;
-		} else {
-			$ret =& ADOConnection::_Execute($sql,$inputarr);
-		}
 		return $ret;
 	}
 	
@@ -258,14 +237,28 @@ class ADODB_ibase extends ADOConnection {
 	}
 
 	   // returns true or false
-	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename,$persist=false)
+	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{  
-		if (!function_exists('ibase_pconnect')) return null;
+		if (!function_exists('ibase_pconnect')) return false;
 		if ($argDatabasename) $argHostname .= ':'.$argDatabasename;
-		$fn = ($persist) ? 'ibase_pconnect':'ibase_connect';
-		$this->_connectionID = $fn($argHostname,$argUsername,$argPassword,
-					$this->charSet,$this->buffers,$this->dialect);
+		$this->_connectionID = ibase_connect($argHostname,$argUsername,$argPassword,$this->charSet,$this->buffers,$this->dialect);
+	 	if ($this->dialect != 1) { // http://www.ibphoenix.com/ibp_60_del_id_ds.html
+			$this->replaceQuote = "''";
+		}
+		if ($this->_connectionID === false) {
+			$this->_handleerror();
+			return false;
+		}
 		
+		ibase_timefmt($this->ibase_timefmt);	
+		return true;
+	}
+	   // returns true or false
+	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
+	{
+		if (!function_exists('ibase_pconnect')) return false;
+		if ($argDatabasename) $argHostname .= ':'.$argDatabasename;
+		$this->_connectionID = ibase_pconnect($argHostname,$argUsername,$argPassword,$this->charSet,$this->buffers,$this->dialect);
 		if ($this->dialect != 1) { // http://www.ibphoenix.com/ibp_60_del_id_ds.html
 			$this->replaceQuote = "''";
 		}
@@ -274,29 +267,8 @@ class ADODB_ibase extends ADOConnection {
 			return false;
 		}
 		
-		// PHP5 change.
-		if (function_exists('ibase_timefmt')) {
-			ibase_timefmt($this->ibase_datefmt,IBASE_DATE );
-			if ($this->dialect == 1) ibase_timefmt($this->ibase_datefmt,IBASE_TIMESTAMP );
-			else ibase_timefmt($this->ibase_timestampfmt,IBASE_TIMESTAMP );
-			ibase_timefmt($this->ibase_timefmt,IBASE_TIME );
-		} else {
-			ini_set("ibase.timestampformat", $this->base_timestampfmt);
-			ini_set("ibase.dateformat", $this->ibase_datefmt);
-			ini_set("ibase.timeformat", $this->ibase_timefmt);
-		}
-		//you can use
-		/*
-		ini_set("ibase.timestampformat", $this->ibase_timestampfmt);
-		ini_set("ibase.dateformat", $this->ibase_datefmt);
-		ini_set("ibase.timeformat", $this->ibase_timefmt);
-		*/
+		ibase_timefmt($this->ibase_timefmt);
 		return true;
-	}
-	   // returns true or false
-	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
-	{
-		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename,true);
 	}	
 	
 	function Prepare($sql)
@@ -321,9 +293,9 @@ class ADODB_ibase extends ADOConnection {
 		if (is_array($sql)) {
 			$fn = 'ibase_execute';
 			$sql = $sql[1];
-			if (is_array($iarr)) {
-				if  (ADODB_PHPVER >= 0x4050) { // actually 4.0.4
-					if ( !isset($iarr[0]) ) $iarr[0] = ''; // PHP5 compat hack
+			
+			if (is_array($iarr)) {	
+				if (ADODB_PHPVER >= 0x4050) { // actually 4.0.4
 					$fnarr =& array_merge( array($sql) , $iarr);
 					$ret = call_user_func_array($fn,$fnarr);
 				} else {
@@ -345,7 +317,6 @@ class ADODB_ibase extends ADOConnection {
 		
 			if (is_array($iarr)) {	
 				if (ADODB_PHPVER >= 0x4050) { // actually 4.0.4
-					if (sizeof($iarr) == 0) $iarr[0] = ''; // PHP5 compat hack
 					$fnarr =& array_merge( array($conn,$sql) , $iarr);
 					$ret = call_user_func_array($fn,$fnarr);
 				} else {
@@ -377,7 +348,7 @@ class ADODB_ibase extends ADOConnection {
 	 }
 	
 	//OPN STUFF start
-	function _ConvertFieldType(&$fld, $ftype, $flen, $fscale, $fsubtype, $fprecision, $dialect3)
+	function _ConvertFieldType(&$fld, $ftype, $flen, $fscale, $fsubtype, $fprecision, $isInterbase6)
 	{
 		$fscale = abs($fscale);
 		$fld->max_length = $flen;
@@ -385,7 +356,7 @@ class ADODB_ibase extends ADOConnection {
 		switch($ftype){
 			case 7: 
 			case 8:
-				if ($dialect3) {
+				if ($isInterbase6) {
 				    switch($fsubtype){
 				    	case 0: 
 				    		$fld->type = ($ftype == 7 ? 'smallint' : 'integer');
@@ -412,7 +383,7 @@ class ADODB_ibase extends ADOConnection {
 				}
 				break;
 			case 16: 
-				if ($dialect3) {
+				if ($isInterbase6) {
 				    switch($fsubtype){
 				    	case 0: 
 				    		$fld->type = 'decimal';
@@ -448,17 +419,15 @@ class ADODB_ibase extends ADOConnection {
 				}
 				break;
 			case 35:
-				if ($dialect3) {
+				if ($isInterbase6) {
 				    $fld->type = 'timestamp';
 				} else {
 					$fld->type = 'date';
 				}
 				break;
 			case 12:
-				$fld->type = 'date';
-				break;
 			case 13:
-				$fld->type = 'time';
+				$fld->type = 'date';
 				break;
 			case 37:
 				$fld->type = 'varchar';
@@ -490,13 +459,13 @@ class ADODB_ibase extends ADOConnection {
 
 			$retarr = array();
 			//OPN STUFF start
-			$dialect3 = ($this->dialect==3 ? true : false);
+			$isInterbase6 = ($this->dialect==3 ? true : false);
 			//OPN STUFF end
 			while (!$rs->EOF) { //print_r($rs->fields);
 				$fld = new ADOFieldObject();
 				$fld->name = trim($rs->fields[0]);
 				//OPN STUFF start
-				$this->_ConvertFieldType($fld, $rs->fields[7], $rs->fields[3], $rs->fields[4], $rs->fields[5], $rs->fields[6], $dialect3);
+				$this->_ConvertFieldType($fld, $rs->fields[7], $rs->fields[3], $rs->fields[4], $rs->fields[5], $rs->fields[6], $isInterbase6);
 				if (isset($rs->fields[1]) && $rs->fields[1]) {
 					$fld->not_null = true;
 				}				
@@ -695,7 +664,7 @@ class ADODB_ibase extends ADOConnection {
 		 Class Name: Recordset
 --------------------------------------------------------------------------------------*/
 
-class ADORecordset_ibase extends ADORecordSet
+class ADORecordset_ibase extends ADORecordSet 
 {
 
 	var $databaseType = "ibase";
@@ -707,7 +676,7 @@ class ADORecordset_ibase extends ADORecordSet
 	global $ADODB_FETCH_MODE;
 	
 			$this->fetchMode = ($mode === false) ? $ADODB_FETCH_MODE : $mode;
-			$this->ADORecordSet($id);
+			return $this->ADORecordSet($id);
 	}
 
 	/*		Returns: an object containing field information.
@@ -719,47 +688,31 @@ class ADORecordset_ibase extends ADORecordSet
 	{
 			 $fld = new ADOFieldObject;
 			 $ibf = ibase_field_info($this->_queryID,$fieldOffset);
-			 switch (ADODB_ASSOC_CASE) {
-			 case 2: // the default
-			 	$fld->name = ($ibf['alias']);
-				 if (empty($fld->name)) $fld->name = ($ibf['name']);
-				 break;
-			 case 0: 
-				 $fld->name = strtoupper($ibf['alias']);
-				 if (empty($fld->name)) $fld->name = strtoupper($ibf['name']);
-				 break;
-			 case 1: 
-			 	$fld->name = strtolower($ibf['alias']);
-				 if (empty($fld->name)) $fld->name = strtolower($ibf['name']);
-				 break;
-			 }
-			 
+			 $fld->name = strtolower($ibf['alias']);
+			 if (empty($fld->name)) $fld->name = strtolower($ibf['name']);
 			 $fld->type = $ibf['type'];
 			 $fld->max_length = $ibf['length'];
-			 
-			 /*       This needs to be populated from the metadata */ 
-			 $fld->not_null = false;
-			 $fld->has_default = false;
-			 $fld->default_value = 'null';
 			 return $fld;
 	}
 
 	function _initrs()
 	{
-		$this->_numOfRows = -1;
-		$this->_numOfFields = @ibase_num_fields($this->_queryID);
-
-		// cache types for blob decode check
-		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) { 
-			$f1 = $this->FetchField($i); 
-			$this->_cacheType[] = $f1->type;
-		}				
+			$this->_numOfRows = -1;
+			$this->_numOfFields = @ibase_num_fields($this->_queryID);
+			
+			// cache types for blob decode check
+			for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) { 
+				$f1 = $this->FetchField($i); 
+				$this->_cacheType[] = $f1->type;
+			}				
 	}
 
 	function _seek($row)
 	{
 		return false;
 	}
+
+	
 	
 	function _fetch() 
 	{
@@ -813,7 +766,7 @@ class ADORecordset_ibase extends ADORecordSet
 			}
 		}
 		
-		return $this->fields[$this->bind[strtoupper($colname)]];
+		 return $this->fields[$this->bind[strtoupper($colname)]];
 		
 	}
 	
@@ -844,7 +797,7 @@ class ADORecordset_ibase extends ADORecordSet
 			   
 		case 'TIMESTAMP':
 		case 'DATE': return 'D';
-		case 'TIME': return 'T';
+				
 				//case 'T': return 'T';
 
 				//case 'L': return 'L';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 development (2004072901)
+      // editor.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['about'] = 'เกี่ยวกับเครื่องมือแก้ไข';
@@ -14,20 +14,19 @@ $string['borderthickness'] = 'ความหนาของขอบ';
 $string['bottom'] = 'ด้านล่าง';
 $string['browse'] = 'Browse';
 $string['cancel'] = 'ยกเลิก';
-$string['cellpadding'] = 'ขอเซลล์';
-$string['cellspacing'] = 'ช่องว่างระหว่างเซลล์';
+$string['cellpadding'] = 'cell padding ';
+$string['cellspacing'] = 'cell spacing';
 $string['choosechar'] = 'เลือกตัวหนังสือ';
 $string['chooseicon'] = 'เลือกไอคอนภาพที่ต้องการแทรก';
 $string['close'] = 'ปิด';
 $string['cols'] = 'คอลัมน์';
 $string['copy'] = 'ก้อปปี้ที่เลือก';
 $string['createfolder'] = 'สร้างแฟ้ม';
-$string['createlink'] = 'แทรกลิงก์';
+$string['createlink'] = 'แทรกลิงค์';
 $string['cut'] = 'ตัด';
 $string['delete'] = 'ลบ';
 $string['filebrowser'] = 'ไฟล์ Browser';
 $string['forecolor'] = 'สีตัวหนังสือ';
-$string['fullscreen'] = 'โปรแกรมแก้ไขเต็มหน้าจอ';
 $string['heading'] = 'หัว';
 $string['height'] = 'สูง';
 $string['hilitecolor'] = 'สีพื้น';
@@ -48,7 +47,6 @@ $string['justifyleft'] = 'จัดให้มาทางซ้าย';
 $string['justifyright'] = 'จัดให้มาทางขวา';
 $string['layout'] = 'รูปแบบ';
 $string['left'] = 'ซ้าย';
-$string['lefttoright'] = 'จากซ้ายไปขวา';
 $string['linkproperties'] = 'คุณสมบัติของลิงก์';
 $string['linktarget'] = 'ที่หมาย';
 $string['linktargetblank'] = 'หน้าต่างใหม่';
@@ -59,7 +57,6 @@ $string['linktargettop'] = 'หน้าต่างเดียวกัน';
 $string['linktitle'] = 'หัวข้อ';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'กลาง';
-$string['minimize'] = 'ย่อขนาด editor';
 $string['move'] = 'ย้าย';
 $string['normal'] = 'ปกติ';
 $string['notimage'] = 'ไฟล์ที่เลือกไม่ใช่ไฟล์รูปภาพ กรุณาเลือกรูปภาพ';
@@ -76,12 +73,9 @@ $string['preformatted'] = 'Preformatted';
 $string['preview'] = 'preview';
 $string['properties'] = 'คุณสมบัติ';
 $string['redo'] = 'ยกเลิกทำซ้ำ';
-$string['removelink'] = 'ลบลิงก์ออก';
 $string['rename'] = 'เปลี่ยนชื่อ';
 $string['right'] = 'ขวา';
-$string['righttoleft'] = 'จากขวาไปซ้าย';
 $string['rows'] = 'แถว';
-$string['selectcolor'] = 'เลือกสี';
 $string['selection'] = 'เลือก';
 $string['showhelp'] = 'วิธีใช้เครื่องมือแก้ไข';
 $string['size'] = 'ขนาด';
@@ -100,7 +94,6 @@ $string['unorderedlist'] = 'ปุ่มรายการ';
 $string['upload'] = 'อัพโหลด';
 $string['vertical'] = 'แนวตั้ง';
 $string['width'] = 'กว้าง';
-$string['wordclean'] = 'ล้าง HTML';
-$string['zip'] = 'zip';
+$string['zip'] = 'ซิป';
 
 ?>

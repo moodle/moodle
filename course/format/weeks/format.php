@@ -104,7 +104,10 @@
         print_section($course, $thissection, $mods, $modnamesused);
 
         if (isediting($course->id)) {
-            print_section_add_menus($course, $section, $modnames);
+            echo "<div align=right>";
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+                        $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
+            echo "</div>";
         }
 
         echo "</td>";
@@ -198,7 +201,10 @@
                 print_section($course, $thissection, $mods, $modnamesused);
     
                 if (isediting($course->id)) {
-                    print_section_add_menus($course, $section, $modnames);
+                    echo "<div align=right>";
+                    popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+                                $modnames, "section$section", "", "$stradd...");
+                    echo "</div>";
                 }
     
                 echo "</td>";
@@ -261,7 +267,7 @@
         echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
         print_course_blocks($course, $rightblocks, BLOCK_RIGHT);
         if ($editing && !empty($missingblocks)) {
-            block_print_blocks_admin($course, $missingblocks);
+            block_print_blocks_admin($course->id, $missingblocks);
         }
         print_spacer(1, 120, true);
        echo '</td>';

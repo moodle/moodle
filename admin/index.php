@@ -122,26 +122,6 @@
         die;
     }
 
-
-/// Insert default values for any important configuration variables
-
-    include_once("$CFG->dirroot/lib/defaults.php");
-
-    foreach ($defaults as $name => $value) {
-        if (!isset($CFG->$name)) {
-            $CFG->$name = $value;
-            set_config($name, $value);
-            $configchange = true;
-        }
-    }
-
-/// If any new configurations were found then send to the config page to check
-
-    if (!empty($configchange)) {
-        redirect("config.php");
-    }
-
-
 /// Check version of Moodle code on disk compared with database
 /// and upgrade if possible.
 
@@ -332,6 +312,25 @@
     }
 
 
+/// Insert default values for any important configuration variables
+
+    include_once("$CFG->dirroot/lib/defaults.php");
+
+    foreach ($defaults as $name => $value) {
+        if (!isset($CFG->$name)) {
+            $CFG->$name = $value;
+            set_config($name, $value);
+            $configchange = true;
+        }
+    }
+
+
+/// If any new configurations were found then send to the config page to check
+
+    if (!empty($configchange)) {
+        redirect("config.php");
+    }
+
 /// Set up the overall site name etc.
     if (! $site = get_site()) {
         redirect("site.php");
@@ -395,8 +394,7 @@
 
     $userdata = "<font size=+1>&nbsp;</font><a href=\"auth.php\">".get_string("authentication")."</a> - <font size=1>".
                  get_string("adminhelpauthentication")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"user.php\">".get_string("edituser")."</a> - <font size=1>".
-                 get_string("adminhelpedituser")."</font><br />";
+
     if (is_internal_auth()) {
         $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".
                       get_string("addnewuser")."</a> - <font size=1>".
@@ -405,19 +403,17 @@
                       get_string("uploadusers")."</a> - <font size=1>".
                       get_string("adminhelpuploadusers")."</font><br />";
     }
-
-    $userdata .= "<hr><font size=+1>&nbsp;</font><a href=\"enrol.php\">".get_string("enrolments")."</a> - <font size=1>".
-                 get_string("adminhelpenrolments")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a> - <font size=1>".
-                 get_string("adminhelpassignstudents")."</font><br />";
-
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"user.php\">".get_string("edituser")."</a> - <font size=1>".
+                 get_string("adminhelpedituser")."</font><br />";
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=1>".
+                 get_string("adminhelpassignadmins")."</font><br />";
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=1>".
+                 get_string("adminhelpassigncreators")."</font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=1>".
                  get_string("adminhelpassignteachers").
                  " <img src=\"../pix/t/user.gif\" height=11 width=11></font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=1>".
-                 get_string("adminhelpassigncreators")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=1>".
-                 get_string("adminhelpassignadmins")."</font><br />";
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a> - <font size=1>".
+                 get_string("adminhelpassignstudents")."</font>";
 
     $table->data[] = array("<font size=+1><b><a href=\"users.php\">".get_string("users")."</a></b>", $userdata);
 
@@ -463,3 +459,5 @@
     print_footer($site);
 
 ?>
+
+

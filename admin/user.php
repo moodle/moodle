@@ -181,11 +181,11 @@
                     $columndir = "ASC";
                 }
             } else {
-                $columndir = $dir == "ASC" ? "DESC":"ASC";
+                $columndir = $dir == "asc" ? "desc":"asc";
                 if ($column == "lastaccess") {
-                    $columnicon = $dir == "ASC" ? "up":"down";
+                    $columnicon = $dir == "asc" ? "up":"down";
                 } else {
-                    $columnicon = $dir == "ASC" ? "down":"up";
+                    $columnicon = $dir == "asc" ? "down":"up";
                 }
                 $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" />";
 
@@ -331,9 +331,6 @@
             }
             echo "</form>";    
             echo "</td></tr></table>";
-            if (is_internal_auth()){
-                print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
-            }
 
             print_table($table);
 
@@ -343,7 +340,7 @@
 
         }
 
-        if (is_internal_auth()){
+        if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
             print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
         }
 

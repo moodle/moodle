@@ -557,7 +557,6 @@
             fwrite ($bf,full_tag("PASSWORD",3,false,$course->password));
             fwrite ($bf,full_tag("FULLNAME",3,false,$course->fullname));
             fwrite ($bf,full_tag("SHORTNAME",3,false,$course->shortname));
-            fwrite ($bf,full_tag("IDNUMBER",3,false,$course->idnumber));
             fwrite ($bf,full_tag("SUMMARY",3,false,$course->summary));
             fwrite ($bf,full_tag("FORMAT",3,false,$course->format));
             fwrite ($bf,full_tag("SHOWGRADES",3,false,$course->showgrades));
@@ -569,7 +568,6 @@
             fwrite ($bf,full_tag("STUDENTS",3,false,$course->students));
             fwrite ($bf,full_tag("GUEST",3,false,$course->guest));
             fwrite ($bf,full_tag("STARTDATE",3,false,$course->startdate));
-            fwrite ($bf,full_tag("ENROLPERIOD",3,false,$course->enrolperiod));
             fwrite ($bf,full_tag("NUMSECTIONS",3,false,$course->numsections));
             //fwrite ($bf,full_tag("SHOWRECENT",3,false,$course->showrecent));    INFO: This is out in 1.3
             fwrite ($bf,full_tag("MAXBYTES",3,false,$course->maxbytes));
@@ -577,7 +575,6 @@
             fwrite ($bf,full_tag("GROUPMODE",3,false,$course->groupmode));
             fwrite ($bf,full_tag("GROUPMODEFORCE",3,false,$course->groupmodeforce));
             fwrite ($bf,full_tag("LANG",3,false,$course->lang));
-            fwrite ($bf,full_tag("COST",3,false,$course->cost));
             fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
             fwrite ($bf,full_tag("VISIBLE",3,false,$course->visible));
             fwrite ($bf,full_tag("HIDDENSECTIONS",3,false,$course->hiddensections));
@@ -749,7 +746,6 @@
                 fwrite ($bf,full_tag("URL",4,false,$user_data->url));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$user_data->description));
                 fwrite ($bf,full_tag("MAILFORMAT",4,false,$user_data->mailformat));
-                fwrite ($bf,full_tag("MAILDIGEST",4,false,$user_data->maildigest));
                 fwrite ($bf,full_tag("MAILDISPLAY",4,false,$user_data->maildisplay));
                 fwrite ($bf,full_tag("HTMLEDITOR",4,false,$user_data->htmleditor));
                 fwrite ($bf,full_tag("AUTOSUBSCRIBE",4,false,$user_data->autosubscribe));
@@ -798,8 +794,6 @@
                         fwrite ($bf,full_tag("AUTHORITY",6,false,$tea->authority));
                         fwrite ($bf,full_tag("TEA_ROLE",6,false,$tea->role));
                         fwrite ($bf,full_tag("EDITALL",6,false,$tea->editall));
-                        fwrite ($bf,full_tag("TIMESTART",6,false,$tea->timestart));
-                        fwrite ($bf,full_tag("TIMEEND",6,false,$tea->timeend));
                         fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$tea->timemodified));
                         fwrite ($bf,full_tag("TIMEACCESS",6,false,$tea->timeaccess));
                         //Print ROLE end
@@ -1140,9 +1134,8 @@
 
     //This function encode things to make backup multi-site fully functional
     //It does this conversions:
-    // - $CFG->wwwroot/file.php/courseid ------------------> $@FILEPHP@$ (slasharguments links)
-    // - $CFG->wwwroot/file.php?file=/courseid ------------> $@FILEPHP@$ (non-slasharguments links)
-    // - Every module xxxx_encode_content_links() is executed too
+    //    - $CFG->wwwroot/file.php/courseid ----------------------> $@FILEPHP@$
+    //    - Links to forums everywhere (DB) are encoded.
     //
     function backup_encode_absolute_links($content) {
 
@@ -1159,10 +1152,9 @@
         }
 
         //First, we check for every call to file.php inside the course
-        $search = array($CFG->wwwroot.'/file.php/'.$mypreferences->backup_course,
-                        $CFG->wwwroot.'/file.php?file=/'.$mypreferences->backup_course);
+        $search = array($CFG->wwwroot."/file.php/".$mypreferences->backup_course);
 
-        $replace = array('$@FILEPHP@$','$@FILEPHP@$');
+        $replace = array("$@FILEPHP@$");
 
         $result = str_replace($search,$replace,$content);
 

@@ -22,8 +22,6 @@
     if (empty($form->deadline)) {
         $form->deadline = "";
     }
-
-    $nohtmleditorneeded = true;
 ?>
 
 <form name="form" method="post" action="mod.php">
@@ -51,7 +49,7 @@
             $grades[$i] = $i;
         }
         choose_from_menu($grades, "grade", "$form->grade", "");
-        helpbutton("grade", get_string("maximumgrade", "exercise"), "exercise");
+       helpbutton("grade", get_string("maximumgrade", "exercise"), "exercise");
         ?>
     </td>
 </tr>
@@ -85,7 +83,7 @@
             $numbers[$i] = $i;
         }
         choose_from_menu($numbers, "nelements", "$form->nelements", "");
-        helpbutton("nelements", get_string("numberofassessmentelements", "exercise"), "exercise");
+       helpbutton("nelements", get_string("numberofassessmentelements", "exercise"), "exercise");
         ?>
     </td>
 </tr>

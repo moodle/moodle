@@ -1,18 +1,11 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.4 development (2004070800)
+      // attendance.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['absentlong'] = '欠席';
 $string['absentshort'] = '欠';
-$string['addingmultiple'] = '複数の出席簿を追加';
-$string['addmultiple'] = '複数の出席簿を追加する';
 $string['allmodulename'] = '全出席簿';
 $string['auto'] = '自動';
-$string['autoattend'] = 'ログを元に自動的に出席を取る';
-$string['autoattendmulti'] = 'ユーザの活動ログを元に自動的に出席を取る';
-$string['autoattendshort'] = 'ログによる出席';
-$string['choosedays'] = '曜日の指定';
-$string['dayofroll'] = '出席を取る日付';
 $string['defaultautoattend'] = 'デフォルトで活動ログを出席のベースにする';
 $string['defaultdynamicsection'] = 'デフォルトで出席簿を正しい週に移動する';
 $string['defaultgrade'] = 'デフォルトで出席簿を評価する';
@@ -23,24 +16,11 @@ $string['downloadexcelfull'] = 'フル・エクセルシートをダウンロードする';
 $string['downloadexceltotals'] = 'サマリー・エクセルシートをダウンロードする';
 $string['downloadtextfull'] = 'フル・テキストレポートをダウンロードする';
 $string['downloadtexttotals'] = 'サマリー・テキストレポートをダウンロードする';
-$string['dynamicsection'] = '日付を元に週を決定';
-$string['dynamicsectionmulti'] = '出席簿を週に自動的に設置する';
-$string['dynsectionshort'] = '自動設置';
-$string['endbeforestart'] = '設置終了日が設置開始日の前にあります';
-$string['endmulti'] = '出席簿設置終了日';
 $string['friday'] = '金';
-$string['gradeshort'] = '評価済み';
-$string['gradevalue'] = '出席を評価する';
-$string['gradevaluemulti'] = '出席を評価する';
-$string['hoursinclass'] = '授業時間';
-$string['hoursineachclass'] = '授業時間';
-$string['hoursinfullreport'] = 'レポート1ページに表示する最大出席時間数';
-$string['maxgradeshort'] = '最大評価';
-$string['maxgradevalue'] = '出席の最大評価';
+$string['hoursinfullreport'] = 'レポートの1ページ当たりに最大表示する出席時間数';
 $string['modulename'] = '出席';
 $string['modulenameplural'] = '出席簿';
 $string['monday'] = '月';
-$string['norolls'] = 'このコースには出席簿はありません';
 $string['notes'] = '備考';
 $string['notesfor'] = '備考';
 $string['noviews'] = '申し訳ございません、あなたのデータはありません';
@@ -49,21 +29,18 @@ $string['presentlong'] = '出席';
 $string['presentshort'] = '出';
 $string['saturday'] = '土';
 $string['startafterend'] = '開始日がコース終了日以降に設定されています';
-$string['startmulti'] = '出席簿設置開始日';
 $string['sunday'] = '日';
-$string['takeroll'] = 'この日に出席を取りますか?';
 $string['tardiesperabsence'] = '何回の遅刻を1回の欠席とするか';
 $string['tardylong'] = '遅刻';
 $string['tardyshort'] = '遅';
-$string['teacheredit'] = '出席を取る';
 $string['thursday'] = '木';
 $string['tuesday'] = '火';
-$string['viewall'] = '全ての出席簿を表示';
+$string['viewall'] = '全ての出席簿を表示する';
 $string['viewmulti'] = 'レポートを複数ページに表示する';
 $string['viewone'] = 'レポートの全ページを表示する';
 $string['viewsection'] = 'このセクションの全出席簿を表示する';
 $string['viewtable'] = 'レポートを一つのテーブルに表示する';
-$string['viewweek'] = 'カレンダー週の全出席簿を表示';
+$string['viewweek'] = 'カレンダー週の全出席簿を表示する';
 $string['wednesday'] = '水';
 $string['weekmodulename'] = '先週の全出席簿';
 

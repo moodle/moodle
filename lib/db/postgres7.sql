@@ -2,7 +2,7 @@ CREATE TABLE prefix_config (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default '',
    value text NOT NULL default '',
-   CONSTRAINT prefix_config_name_uk UNIQUE (name)
+   CONSTRAINT config_name_uk UNIQUE (name)
 );
 
 CREATE TABLE prefix_course (
@@ -12,7 +12,6 @@ CREATE TABLE prefix_course (
    password varchar(50) NOT NULL default '',
    fullname varchar(254) NOT NULL default '',
    shortname varchar(15) NOT NULL default '',
-   idnumber varchar(100) NOT NULL default '',
    summary text NOT NULL default '',
    format varchar(10) NOT NULL default 'topics',
    showgrades integer NOT NULL default '1',
@@ -25,7 +24,6 @@ CREATE TABLE prefix_course (
    students varchar(100) NOT NULL default 'Students',
    guest integer NOT NULL default '0',
    startdate integer NOT NULL default '0',
-   enrolperiod integer NOT NULL default '0',
    numsections integer NOT NULL default '1',
    marker integer NOT NULL default '0',
    maxbytes integer NOT NULL default '0',
@@ -35,7 +33,6 @@ CREATE TABLE prefix_course (
    groupmode integer NOT NULL default '0',
    groupmodeforce integer NOT NULL default '0',
    lang varchar(10) NOT NULL default '',
-   cost varchar(10) NOT NULL default '',
    timecreated integer NOT NULL default '0',
    timemodified integer NOT NULL default '0'
 );
@@ -226,12 +223,11 @@ CREATE TABLE prefix_user (
    url varchar(255) default NULL,
    description text,
    mailformat integer NOT NULL default '1',
-   maildigest integer NOT NULL default '0',
    maildisplay integer NOT NULL default '2',
    htmleditor integer NOT NULL default '1',
    autosubscribe integer NOT NULL default '1',
    timemodified integer NOT NULL default '0',
-   CONSTRAINT prefix_user_username_uk UNIQUE (username)
+   CONSTRAINT user_username_uk UNIQUE (username)
 );
 
 CREATE TABLE prefix_user_admins (
@@ -267,8 +263,6 @@ CREATE TABLE prefix_user_teachers (
    authority integer NOT NULL default '3',
    role varchar(40) NOT NULL default '',
    editall integer NOT NULL default '1',
-   timestart integer NOT NULL default '0',
-   timeend integer NOT NULL default '0',
    timemodified integer NOT NULL default '0',
    timeaccess integer NOT NULL default '0'
 );
@@ -285,3 +279,4 @@ INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'CONCAT(
 INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'enrol', 'course', 'fullname');
+INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');

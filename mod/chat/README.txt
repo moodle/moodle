@@ -1,34 +1,37 @@
 Official Chat Module for Moodle
 ------------------------------
 
-The chat module now supports a backend daemon for 
-more efficiency.
+Version 0.2  (for Moodle 1.1)
 
-It's still buggy and being worked on, but if you 
-want to test it and help out here are some quick
-instructions:
+This module is still very new and very incomplete compared
+to what it will be one day.
 
-1) Admin -> Config -> Modules -> Chat -> Settings
+It's based in part on:
 
-2) Set the method to "sockets" and set up the ports etc 
+    ARSC: A Really Simple Chat
+    by Manuel Kiessling
+    http://manuel.kiessling.net/projects/software/arsc/
 
-3) Start the server like this (from the Unix command line):
+but I ended up rewriting so much of it there's hardly a line 
+of code in use that has not been changed, so perhaps it's 
+better to say *inspired* by ARSC.
 
-   cd moodle/mod/chat
-   php chatd.php --start &
+Things to do yet:
 
-4) Go to a chat room in Moodle and open it as normal.
+  - fix up the other chat front-end versions 
+    (currently only using header_js)
 
-------
+  - make the socket server work
 
-KNOWN PROBLEMS
+  - postgresql support (db schema)
 
- - User list is not always working
- - Some browsers (eg Safari) cause lines to be repeated
-   by 10 - 20 times
- - Occasionally "Document was empty" messages
+  - pop-up interface to insert images from URL or uploaded
 
-Help solving these very welcome!
+  - customisable beeps (based on sound in user profile)
+   
+  - add ability to whisper to someone 
+
+  - GUI setting to turn scrolling on/off
 
 
-Martin, 31 July 2004
+Martin, 10 August 2003

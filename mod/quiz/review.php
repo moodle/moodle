@@ -74,7 +74,6 @@
     $strbestgrade  = get_string("bestgrade", "quiz");
     $strtimetaken     = get_string("timetaken", "quiz");
     $strtimecompleted = get_string("timecompleted", "quiz");
-    $stroverdue = get_string("overdue", "quiz");
 
     print_header("$course->shortname: $quiz->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> 
@@ -86,23 +85,24 @@
     print_heading($quiz->name);
 
 
-    if (!($questions = quiz_get_attempt_questions($quiz, $attempt))) {
-        error("Unable to get questions from database for quiz $quiz->id attempt $attempt->id number $attempt->attempt");
+    if (! $questions = quiz_get_attempt_responses($attempt)) {
+        if ($user = get_record("user", "id", $attempt->userid)) {
+            $fullname = fullname($user);
+        } else {
+            $fullname = "????";
+        }
+        print_heading(get_string("attemptincomplete", "quiz", $fullname));
+        print_footer($course);
+        exit;
     }
 
-    if (!$result = quiz_grade_responses($quiz, $questions)) {
+    quiz_remove_unwanted_questions($questions, $quiz);
+
+    if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
         error("Could not re-grade this quiz attempt!");
     }
 
-    if($quiz->timelimit) {
-        $timelimit = $quiz->timelimit * 60;
-    }
-
     if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
-        if($timelimit && $timetaken > ($timelimit + 60)) {
-            $overtime = $timetaken - $timelimit;
-            $overtime = format_time($overtime);
-        }
         $timetaken = format_time($timetaken);
     } else {
         $timetaken = "-";
@@ -111,15 +111,7 @@
     $table->align  = array("right", "left");
     $table->data[] = array("$strtimetaken:", $timetaken);
     $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
-    if($overtime) {
-        $table->data[] = array("$stroverdue:", $overtime);
-    }
     if ($quiz->grade) {
-        if($overtime) {
-            $result->sumgrades = "0";
-            $result->percentage = "0";
-            $result->grade = "0.0";
-        }
         $table->data[] = array("$strscore:", "$result->sumgrades/$quiz->sumgrades ($result->percentage %)");
         $table->data[] = array("$strgrade:", "$result->grade/$quiz->grade");
     }
@@ -136,7 +128,7 @@
     $quiz->correctanswers = true;
     $quiz->shuffleanswers = false;
     $quiz->shufflequestions = false;
-    quiz_print_quiz_questions($quiz, $questions, $result);
+    quiz_print_quiz_questions($quiz, $result, $questions);
 
     if (isteacher($course->id)) {
         print_continue("report.php?q=$quiz->id");

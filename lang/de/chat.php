@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 development (2004052800)
+      // chat.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['beep'] = 'Signalton';
@@ -35,7 +35,7 @@ $string['repeattimes'] = 'Sitzungen wiederholen';
 $string['repeatweekly'] = 'Jede Woche zur gleichen Zeit';
 $string['savemessages'] = 'Anzahl der zu speichernden Mitteilungen';
 $string['seesession'] = 'Die Sitzung einsehen';
-$string['sessions'] = 'Chat-Sitzungen';
+$string['sessions'] = 'Chat-Situngen';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'Jeder kann die vorherige Sitzung einsehen';
 $string['viewreport'] = 'Vorherige Chat-Sitzung einsehen';

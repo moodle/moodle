@@ -13,10 +13,6 @@
     if (!isset($CFG->wwwroot)) {
         die;
     }
-    
-    if (!isset($CFG->enrol)) { // This is a hack to fix bug 1598
-        $CFG->enrol = 'internal';
-    }
 
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
@@ -73,8 +69,6 @@
     require_once("$CFG->libdir/moodlelib.php");       // Other general-purpose functions
 
 
-
-
 /// Load up any configuration from the config table
     
     if ($configs = get_records('config')) {
@@ -101,14 +95,6 @@
         $CFG->directorypermissions = 0777;      // Must be octal (that's why it's here)
     }
 
-/// Set up smarty template system
-    require_once("$CFG->libdir/smarty/Smarty.class.php");  
-    $smarty = new Smarty;
-    $smarty->template_dir = "$CFG->dirroot/templates/$CFG->template";
-    if (!file_exists("$CFG->dataroot/cache")) {
-        make_upload_directory('cache');
-    }
-    $smarty->compile_dir = "$CFG->dataroot/cache";
 
 /// Set session timeouts
     if (!empty($CFG->sessiontimeout)) {
@@ -232,16 +218,26 @@
 /// majority of cases), use the stored locale specified by admin.
 
     if (isset($_GET['lang'])) {
-        if (!detect_munged_arguments($lang) and file_exists("$CFG->dirroot/lang/$lang")) {
-            $SESSION->lang = $lang;
-            $SESSION->encoding = get_string('thischarset');
-        }
+        $SESSION->lang = $lang;
+        $SESSION->encoding = get_string('thischarset');
     }
     if (empty($CFG->lang)) {
         $CFG->lang = "en";
     }
+    if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {
+        $CFG->locale = get_string('locale');
+    } else if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
+        $CFG->locale = get_string('locale');
+    } else if (empty($CFG->locale)) {
+        $CFG->locale = get_string('locale');
+        set_config('locale', $CFG->locale);   // cache it to save lookups in future
+    }
+    setlocale (LC_TIME, $CFG->locale);
+    setlocale (LC_COLLATE, $CFG->locale);
 
-    moodle_setlocale();
+    if ($CFG->locale != 'tr_TR') {            // To workaround a well-known PHP bug with Turkish
+        setlocale (LC_CTYPE, $CFG->locale);
+    }
 
     if (!empty($CFG->opentogoogle)) {
         if (empty($_SESSION['USER'])) {

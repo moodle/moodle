@@ -18,6 +18,9 @@ define("GLOSSARY_IMPORT_VIEW", 5);
 define("GLOSSARY_EXPORT_VIEW", 6);
 define("GLOSSARY_APPROVAL_VIEW", 7);
 
+define("GLOSSARY_FORMAT_SIMPLE", 0);
+define("GLOSSARY_FORMAT_CONTINUOUS", 1);
+
 function glossary_add_instance($glossary) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html) this function
@@ -60,9 +63,6 @@ function glossary_update_instance($glossary) {
 global $CFG;
     if ( !isadmin() ) {
         unset($glossary->globalglossary);
-    }
-    if (empty($glossary->globalglossary)) {
-        $glossary->globalglossary = 0;
     }
 
     $glossary->timemodified = time();
@@ -181,13 +181,23 @@ function glossary_user_complete($course, $user, $mod, $glossary) {
     global $CFG;
 
     if ($entries = glossary_get_user_entries($glossary->id, $user->id)) {
-        echo '<table width="95%" border="0"><tr><td>';
+        if ( $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE or
+             $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
+            print_simple_box_start("center","70%");
+        } else {
+            echo '<table width="95%" border="0"><tr><td>';
+        }
         foreach ($entries as $entry) {
             $cm = get_coursemodule_from_instance("glossary", $glossary->id, $course->id);
             glossary_print_entry($course, $cm, $glossary, $entry,"","",0);
             echo '<p>';
         }
-        echo '</td></tr></table>';
+        if ( $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE or
+             $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
+            print_simple_box_end();
+        } else {
+            echo '</td></tr></table>';
+        }
     }
 }
 
@@ -205,8 +215,6 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
                                            " action  = 'approve entry')", "time ASC")) {
         return false;
     }
-
-    $entries = array();
 
     foreach ($logs as $log) {
         //Create a temp valid module structure (course,id)
@@ -372,64 +380,6 @@ function glossary_scale_used ($glossaryid,$scaleid) {
 /// Any other glossary functions go here.  Each of them must have a name that
 /// starts with glossary_
 
-//This function return an array of valid glossary_formats records
-//Everytime it's called, every existing format is checked, new formats
-//are included if detected and old formats are deleted and any glossary
-//using an invalid format is updated to the default (dictionary).
-function glossary_get_available_formats() {
-
-    global $CFG;
-
-    //Get available formats (plugin) and insert (if necessary) them into glossary_formats
-    $formats = get_list_of_plugins('mod/glossary/formats', 'TEMPLATE');
-    $pluginformats = array();
-    foreach ($formats as $format) {
-        //If the format file exists
-        if (file_exists($CFG->dirroot.'/mod/glossary/formats/'.$format.'/'.$format.'_format.php')) {
-            include_once($CFG->dirroot.'/mod/glossary/formats/'.$format.'/'.$format.'_format.php');
-            //If the function exists
-            if (function_exists('glossary_show_entry_'.$format)) {
-                //Acummulate it as a valid format
-                $pluginformats[] = $format;
-                //If the format doesn't exist in the table
-                if (!$rec = get_record('glossary_formats','name',$format)) {
-                    //Insert the record in glossary_formats
-                    $gf->name = $format;
-                    $gf->popupformatname = $format;
-                    $gf->visible = 1;
-                    insert_record("glossary_formats",$gf);
-                }
-            }
-        }
-    }
-
-    //Delete non_existent formats from glossary_formats table
-    $formats = get_records("glossary_formats");
-    foreach ($formats as $format) {
-        $todelete = false;
-        //If the format in DB isn't a valid previously detected format then delete the record
-        if (!in_array($format->name,$pluginformats)) {
-            $todelete = true;
-        }
-
-        if ($todelete) {
-            //Delete the format
-            delete_records('glossary_formats','name',$format->name);
-            //Reasign existing glossaries to default (dictionary) format
-            if ($glossaries = get_records('glossary','displayformat',$format->name)) {
-                foreach($glossaries as $glossary) {
-                    set_field('glossary','displayformat','dictionary','id',$glossary->id);
-                }
-            }
-        }
-    }
-
-    //Now everything is ready in glossary_formats table
-    $formats = get_records("glossary_formats");
-
-    return $formats;
-}
-
 function glossary_debug($debug,$text,$br=1) {
     if ( $debug ) {
         echo '<font color=red>' . $text . '</font>';
@@ -490,19 +440,38 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
         $displayformat = $glossary->displayformat;
     }
     if ($entry->approved or ($USER->id == $entry->userid) or ($mode == 'approval' and !$entry->approved) ) {
-        $formatfile = $CFG->dirroot.'/mod/glossary/formats/'.$displayformat.'/'.$displayformat.'_format.php';
-        $functionname = 'glossary_show_entry_'.$displayformat;
+        $permissiongranted = 0;
+        $formatfile = "$CFG->dirroot/mod/glossary/formats/$displayformat.php";
+        $functionname = "glossary_print_entry_by_format";
 
-        if (file_exists($formatfile)) {
-            include_once($formatfile);
-            if (function_exists($functionname)) {
-                $return = $functionname($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+        $basicformat = ($displayformat == GLOSSARY_FORMAT_SIMPLE or
+                        $displayformat == GLOSSARY_FORMAT_CONTINUOUS);
+        if ( !$basicformat ) {
+            if ( file_exists($formatfile) ) {
+               include_once($formatfile);
+               if (function_exists($functionname) ) {
+                      $permissiongranted = 1;
+               }
+            }
+        } else {
+           $permissiongranted = 1;
+        }
+    
+        if ( !$basicformat and $permissiongranted or $displayformat >= 2) {
+            $return = glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+        } else {
+            switch ( $displayformat ) {
+            case GLOSSARY_FORMAT_SIMPLE:
+                $return = glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+            break;
+            case GLOSSARY_FORMAT_CONTINUOUS:
+                $return = glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+            break;
             }
         }
     }
-    return $return;
+        return $return;
 }
-
 function  glossary_print_entry_concept($entry) {
     $options->para = false;
     $text = format_text('<nolink>' . $entry->concept . '</nolink>', FORMAT_MOODLE, $options);
@@ -663,62 +632,91 @@ function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode
     }
 }
 
-function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons,$ratings,$aliases=true) {
+function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons) {
 
-    if ($aliases) {
-        $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,"html");
-    }
+    $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,"html");
     $icons   = "";
-    $return   = "";
     if ( $printicons ) {
         $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,"html");
     }
-    if ($aliases || $printicons || $ratings) {
-        echo '<table border="0" width="100%" align="center">';
-        if ( $aliases ) {
-            echo '<tr><td align="center"  valign="top"><font size=1>' .
-                  get_string("aliases","glossary") . ': ' . $aliases . '</td></tr>';
-        }
-        if ($icons) {
-            echo '<tr><td align=right valign=top>'.  $icons . '</td></tr>';
-        }
-        if ($ratings) {
-            echo '<tr><td align=right valign=top>';
-            $return = glossary_print_entry_ratings($course, $entry, $ratings);
-            echo '</td></tr>';
-        }
-        echo '</table>';
+    if ( $aliases ) {
+        echo '<table border="0" width="100%" align="center"><tr>' .
+              '<td align="right" width="50%" valign=top><font size=1>' .
+              get_string("aliases","glossary") . ': ' . $aliases . '</td>' .
+              '<td align=right width="50%" valign=top>'.
+              $icons .
+              '</td></tr></table>';
+    } else {
+        echo "<p align=right>$icons";
     }
-    return $return;
 }
 
-function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$insidetable=true) {
+function glossary_print_entry_attachment($entry,$format=NULL,$align="right") {
 ///   valid format values: html  : Return the HTML link for the attachment as an icon
 ///                        text  : Return the HTML link for tha attachment as text
 ///                        blank : Print the output to the screen
     if ($entry->attachment) {
           $glossary = get_record("glossary","id",$entry->glossaryid);		  
           $entry->course = $glossary->course; //used inside print_attachment
-          if ($insidetable) {
-              echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\" nowrap>\n";
-          }
+          echo "<table border=0 align=$align><tr><td>";
           echo glossary_print_attachments($entry,$format,$align);
-          if ($insidetable) {
-              echo "</td></tr></table>\n";
-          }
+          echo "</td></tr></table>";
     }
 }
 
-function  glossary_print_entry_approval($cm, $entry, $mode,$align="right",$insidetable=true) {
+function  glossary_print_entry_approval($cm, $entry, $mode) {
     if ( $mode == 'approval' and !$entry->approved ) {
-        if ($insidetable) {
-            echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\">\n";
-        }
-        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&mode=$mode\"><img align=\"$align\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>\n";
-        if ($insidetable) {
-            echo "</td></tr></table>\n";
-        }
+        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&mode=$mode\"><IMG align=\"right\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>";
     }
+}
+
+function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode="",$hook="",$printicons=1, $ratings=NULL) {
+    global $THEME, $USER;
+
+    $colour = $THEME->cellheading2;
+
+    echo "\n<TR>";
+    echo "<TD WIDTH=100% valign=\"top\" BGCOLOR=\"#FFFFFF\">";
+        glossary_print_entry_approval($cm, $entry, $mode);
+        glossary_print_entry_attachment($entry,"html","right");
+        echo "<b>";
+        glossary_print_entry_concept($entry);
+        echo ":</b> ";
+        glossary_print_entry_definition($entry);
+        glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
+        echo ' ';
+        $return = glossary_print_entry_ratings($course, $entry, $ratings);
+    echo "</td>";
+    echo "</TR>";
+    return $return;
+}
+
+function glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode="",$hook="",$printicons=1, $ratings = NULL) {
+    global $THEME, $USER;
+    $return = false;
+    if ($entry) {
+        glossary_print_entry_approval($cm, $entry, $mode);
+        glossary_print_entry_attachment($entry,"html","right");
+        glossary_print_entry_concept($entry);
+        echo " ";
+        
+        glossary_print_entry_definition($entry);
+        
+        $icons = '';
+        if ( $printicons ) {
+            $icons = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,"html");        
+        }        
+
+        echo '(';
+        if ( $icons ) {
+            echo $icons;
+        }
+        $return = glossary_print_entry_ratings($course, $entry, $ratings);
+        
+        echo ')<br>';
+
+    }
+    return $return;
 }
 
 function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL) {
@@ -1016,7 +1014,7 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
 
                 } else {
                     if ($icon == "image.gif") {    // Image attachments don't get printed as links
-                        $imagereturn .= "<img src=\"$CFG->wwwroot/$ffurl\" align=$align>";
+                        $imagereturn .= "<br /><img src=\"$CFG->wwwroot/$ffurl\" align=$align>";
                     } else {
                         link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
                         echo "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$file</a>";
@@ -1186,7 +1184,7 @@ function glossary_print_tabbed_table_end() {
 }
 
 function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
-    if ($glossary->showalphabet) {
+    if ($glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
         echo '<center>' . get_string("explainalphabet","glossary") . '<p>';
     }
     glossary_print_special_links($cm, $glossary, $mode, $hook);
@@ -1212,7 +1210,7 @@ function glossary_print_export_menu($cm, $glossary, $mode, $hook, $sortkey='', $
 
 function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
     if ( $mode != 'date' ) {
-        if ($glossary->showalphabet) {
+        if ($glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
             echo '<center>' . get_string("explainalphabet","glossary") . '<p>';
         }
 
@@ -1227,7 +1225,7 @@ function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='',
 }
 
 function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
-    if ($glossary->showalphabet) {
+    if ($glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
         echo '<center>' . get_string("explainalphabet","glossary") . '<br />';
     }
 
@@ -1303,7 +1301,7 @@ global $CFG, $THEME;
 
 function glossary_print_all_links($cm, $glossary, $mode, $hook) {
 global $CFG;  
-     if ( $glossary->showall) {
+     if ( $glossary->showall and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
          $strallentries       = get_string("allentries", "glossary");
          if ( $hook == 'ALL' ) {
               echo "<b>$strallentries</b>";
@@ -1316,7 +1314,7 @@ global $CFG;
 
 function glossary_print_special_links($cm, $glossary, $mode, $hook) {
 global $CFG;
-     if ( $glossary->showspecial) {
+     if ( $glossary->showspecial and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
          $strspecial          = get_string("special", "glossary");
          if ( $hook == 'SPECIAL' ) {
               echo "<b>$strspecial</b> | ";
@@ -1329,7 +1327,7 @@ global $CFG;
 
 function glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $sortorder) {
 global $CFG;
-     if ( $glossary->showalphabet) {
+     if ( $glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
           $alphabet = explode(",", get_string("alphabet"));
           $letters_by_line = 14;
           for ($i = 0; $i < count($alphabet); $i++) {
@@ -1483,9 +1481,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
 }
 
 function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
-    
-    global $USER;
-
+global $USER;
     $ratingsmenuused = false;
     if (!empty($ratings) and !empty($USER->id)) {
         $useratings = true;
@@ -1513,7 +1509,7 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
 }
 
 function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
-    global $THEME, $USER,$CFG;
+    global $THEME, $USER;
 
     $colour = $THEME->cellheading2;
 
@@ -1530,32 +1526,14 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
             if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $glossary->course) ) {
                 error("Glossary is misconfigured - don't know what course module it is ");
             }
-
-            //If displayformat is present, override glossary->displayformat
-            if ($displayformat < 0) {
-                $dp = $glossary->displayformat;
-            } else {
-                $dp = $displayformat;
-            }
-
-            //Get popupformatname
-            $format = get_record('glossary_formats','name',$dp);
-            $displayformat = $format->popupformatname;
-
-            //Check displayformat variable and set to default if necessary
-            if (!$displayformat) {
-                $displayformat = 'dictionary';
-            }
-
-            $formatfile = $CFG->dirroot.'/mod/glossary/formats/'.$displayformat.'/'.$displayformat.'_format.php';
-            $functionname = 'glossary_show_entry_'.$displayformat;
-
-            if (file_exists($formatfile)) {
-                include_once($formatfile);
-                if (function_exists($functionname)) {
-                    $functionname($course, $cm, $glossary, $entry,'','','','');
+            $dp = $displayformat;
+            // Hard-coded until the Display formats manager is done.
+            if ( $dprecord = get_record("glossary_displayformats","fid", $glossary->displayformat) ) {
+                if ( $dprecord->relatedview >= 0 ) {
+                    $dp = $dprecord->relatedview;
                 }
             }
+            glossary_print_entry($course, $cm, $glossary, $entry, "","",0,$dp);
         }
     }
     echo "</td>";
@@ -1575,7 +1553,6 @@ global $CFG;
         fwrite ($h,glossary_full_tag("INTRO",2,false,$glossary->intro));
         fwrite ($h,glossary_full_tag("STUDENTCANPOST",2,false,$glossary->studentcanpost));
         fwrite ($h,glossary_full_tag("ALLOWDUPLICATEDENTRIES",2,false,$glossary->allowduplicatedentries));
-        fwrite ($h,glossary_full_tag("DISPLAYFORMAT",2,false,$glossary->displayformat));
         fwrite ($h,glossary_full_tag("SHOWSPECIAL",2,false,$glossary->showspecial));
         fwrite ($h,glossary_full_tag("SHOWALPHABET",2,false,$glossary->showalphabet));
         fwrite ($h,glossary_full_tag("SHOWALL",2,false,$glossary->showall));

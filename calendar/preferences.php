@@ -1,8 +1,9 @@
 <?PHP  // $Id$
        // preferences.php - user prefs for calendar
 
-    require_once('../config.php');
-    require_once($CFG->dirroot.'/calendar/lib.php');
+    require("../config.php");
+    require_once('lib.php');
+
 
     if (isset($SESSION->cal_course_referer)) {
         if (! $course = get_record("course", "id", $SESSION->cal_course_referer)) {
@@ -16,7 +17,7 @@
 
 /// If data submitted, then process and store.
 
-	if ($form = data_submitted()) {
+	if ($form = data_submitted()) {  
         print_header();
         foreach ($form as $preference => $value) {
             switch ($preference) {

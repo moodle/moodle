@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-//  Moves, adds, updates, duplicates or deletes modules in a course
+//  Moves, adds, updates or deletes modules in a course
 
     require("../config.php");
     require("lib.php");
@@ -60,9 +60,6 @@
                 if (is_string($return)) {
                     error($return, "view.php?id=$course->id");
                 }
-
-                $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
-
                 add_to_log($course->id, "course", "update mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
                            "$mod->modulename $mod->instance"); 
@@ -107,9 +104,6 @@
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct section");
                 }   
-
-                $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
-                
                 add_to_log($course->id, "course", "add mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
                            "$mod->modulename $mod->instance"); 
@@ -117,7 +111,6 @@
                            "view.php?id=$mod->coursemodule", 
                            "$mod->instance", $mod->coursemodule); 
                 break;
-                
             case "delete":
                 if (! $deleteinstancefunction($mod->instance)) {
                     notify("Could not delete the $mod->modulename (instance)");
@@ -463,57 +456,6 @@
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
 
-    } else if (isset($_GET['duplicate'])) {   // value = course module
-
-        if (! $cm = get_record("course_modules", "id", $_GET['duplicate'])) {
-            error("This course module doesn't exist");
-        }
-
-        if (! $course = get_record("course", "id", $cm->course)) {
-            error("This course doesn't exist");
-        }
-
-        if (!isteacheredit($course->id)) {
-            error("You can't modify this course!");
-        }
-
-        if (! $module = get_record("modules", "id", $cm->module)) {
-            error("This module doesn't exist");
-        }
-
-        if (! $form = get_record($module->name, "id", $cm->instance)) {
-            error("The required instance of this module doesn't exist");
-        }
-        
-        if (! $cw = get_record("course_sections", "id", $cm->section)) {
-            error("This course section doesn't exist");
-        }
-
-        if (isset($return)) {  
-            $SESSION->returnpage = "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
-        }
-        
-        $section = get_field('course_sections', 'section', 'id', $cm->section);
-
-        $form->coursemodule = $cm->id;
-        $form->section      = $section;     // The section ID
-        $form->course       = $course->id;
-        $form->module       = $module->id;
-        $form->modulename   = $module->name;
-        $form->instance     = $cm->instance;
-        $form->mode         = "add";
-
-        $sectionname    = get_string("name$course->format");
-        $fullmodulename = strtolower(get_string("modulename", $module->name));
-
-        if ($form->section) {
-            $heading->what = $fullmodulename;
-            $heading->in   = "$sectionname $cw->section";
-            $pageheading = get_string("duplicatingain", "moodle", $heading);
-        } else {
-            $pageheading = get_string("duplicatinga", "moodle", $fullmodulename);
-        }
-
         
     } else if (isset($_GET['add'])) {
 
@@ -540,9 +482,6 @@
         $form->instance   = "";
         $form->coursemodule = "";
         $form->mode       = "add";
-        if (isset($_GET['type'])) {
-            $form->type = $_GET['type'];
-        }
 
         $sectionname    = get_string("name$course->format");
         $fullmodulename = get_string("modulename", $module->name);
@@ -588,23 +527,12 @@
 
     if (file_exists($modform)) {
 
-        if ($usehtmleditor = can_use_html_editor()) {
-            $defaultformat = FORMAT_HTML;
-            $editorfields = '';
-        } else {
-            $defaultformat = FORMAT_MOODLE;
-        }
-
         $icon = "<img align=absmiddle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
         print_simple_box_start("center", "", "$THEME->cellheading");
         include_once($modform);
         print_simple_box_end();
-
-        if ($usehtmleditor and empty($nohtmleditorneeded)) { 
-            use_html_editor($editorfields);
-        }
 
     } else {
         notice("This module cannot be added to this course yet! (No file found at: $modform)", "$CFG->wwwroot/course/view.php?id=$course->id");

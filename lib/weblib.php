@@ -32,14 +32,13 @@
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
-define("FORMAT_MOODLE",   "0");   // Does all sorts of transformations and filtering
-define("FORMAT_HTML",     "1");   // Plain HTML (with some tags stripped)
-define("FORMAT_PLAIN",    "2");   // Plain text (even tags are printed in full)
-define("FORMAT_WIKI",     "3");   // Wiki-formatted text
-define("FORMAT_MARKDOWN", "4");   // Markdown-formatted text http://daringfireball.net/projects/markdown/
+define("FORMAT_MOODLE", "0");   // Does all sorts of transformations and filtering
+define("FORMAT_HTML",   "1");   // Plain HTML (with some tags stripped)
+define("FORMAT_PLAIN",  "2");   // Plain text (even tags are printed in full)
+define("FORMAT_WIKI",   "3");   // Wiki-formatted text
 
 $ALLOWED_TAGS =
-"<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml>";
+"<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml>";
 
 
 /// Functions
@@ -106,14 +105,8 @@ function me() {
         }
         return $_SERVER["SCRIPT_NAME"];
 
-    } else if (!empty($_SERVER["URL"])) {     // May help IIS (not well tested)
-        if (!empty($_SERVER["QUERY_STRING"])) {
-            return $_SERVER["URL"]."?".$_SERVER["QUERY_STRING"];
-        }
-        return $_SERVER["URL"];
-
     } else {
-        notify("Warning: Could not find any of these web server variables: \$REQUEST_URI, \$PHP_SELF, \$SCRIPT_NAME or \$URL");
+        notify("Warning: Could not find any of these web server variables: \$REQUEST_URI, \$PHP_SELF or \$SCRIPT_NAME");
         return false;
     }
 }
@@ -203,10 +196,6 @@ function stripslashes_safe($string) {
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 /// Given some normal text, this function will break up any
 /// long words to a given size, by inserting the given character
-
-    if (in_array(current_language(), array('ja', 'zh_cn', 'zh_tw', 'zh_tw_utf8'))) {  // Multibyte languages
-        return $string;
-    }
 
     $output = '';
     $length = strlen($string);
@@ -314,7 +303,7 @@ function frmchecked(&$var, $true_value = "checked", $false_value = "") {
 
 
 function link_to_popup_window ($url, $name="popup", $linkname="click here",
-                               $height=400, $width=500, $title="Popup window", $options="none", $return=false) {
+                               $height=400, $width=500, $title="Popup window", $options="none") {
 /// This will create a HTML link that will work on both
 /// Javascript and non-javascript browsers.
 /// Relies on the Javascript function openpopup in javascript.php
@@ -327,13 +316,8 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
     }
     $fullscreen = 0;
 
-    $link = "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot$url\" ".
-           "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
-    if ($return) {
-        return $link;
-    } else {
-        echo $link;
-    }
+    echo "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot$url\" ".
+         "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
 }
 
 
@@ -458,10 +442,6 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
 
     global $CFG;
 
-    if (empty($options)) {
-        return '';
-    }
-
     if ($nothing == "choose") {
         $nothing = get_string("choose")."...";
     }
@@ -474,9 +454,8 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
     }
 
     foreach ($options as $value => $label) {
-        if (substr($label,0,2) == "--") {
-            $output .= "   <optgroup label=\"$label\"></optgroup>";   // Plain labels
-            continue;
+        if (substr($label,0,1) == "-") {
+            $output .= "   <option value=\"\"";
         } else {
             $output .= "   <option value=\"$common$value\"";
             if ($value == $selected) {
@@ -492,16 +471,14 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
     $output .= "</select>";
     $output .= "</form>\n";
 
-    if ($help) {
-        $button = helpbutton($help, $helptext, 'moodle', true, false, '', true);
-    } else {
-        $button = '';
-    }
-
     if ($return) {
-        return $startoutput.$button.$output;
+        return $startoutput.$output;
     } else {
-        echo $startoutput.$button.$output;
+        echo $startoutput;
+        if ($help) {
+            helpbutton($help, $helptext);
+        }
+        echo $output;
     }
 }
 
@@ -525,7 +502,7 @@ function validate_email ($address) {
 }
 
 function detect_munged_arguments($string) {
-    if (substr_count($string, '..') > 1) {   // We allow one '..' in a URL
+    if (ereg('\.\.', $string)) { // check for parent URLs
         return true;
     }
     if (ereg('[\|\`]', $string)) {  // check for other bad characters
@@ -577,8 +554,7 @@ function format_text_menu() {
     return array (FORMAT_MOODLE => get_string("formattext"),
                   FORMAT_HTML   => get_string("formathtml"),
                   FORMAT_PLAIN  => get_string("formatplain"),
-                  FORMAT_WIKI   => get_string("formatwiki"),
-                  FORMAT_MARKDOWN  => get_string("formatmarkdown"));
+                  FORMAT_WIKI   => get_string("formatwiki"));
 }
 
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL ) {
@@ -616,17 +592,13 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             $text = htmlentities($text);
             $text = rebuildnolinktag($text);
             $text = str_replace("  ", "&nbsp; ", $text);
+            replace_smilies($text);
             $text = nl2br($text);
             break;
 
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
             $text = rebuildnolinktag($text);
-            $text = filter_text($text, $courseid);
-            break;
-
-        case FORMAT_MARKDOWN:
-            $text = markdown_to_html($text);
             $text = filter_text($text, $courseid);
             break;
 
@@ -680,9 +652,7 @@ function format_text_email($text, $format) {
             return html_to_text($text);
             break;
 
-        case FORMAT_MOODLE:
-        case FORMAT_MARKDOWN:
-        default: 
+        default:  // FORMAT_MOODLE or anything else
             $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [\\2]', $text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
@@ -721,29 +691,22 @@ function clean_text($text, $format=FORMAT_MOODLE) {
     global $ALLOWED_TAGS;
 
     switch ($format) {
-        case FORMAT_PLAIN:
-            return $text;
-
-        default:
-
+        case FORMAT_MOODLE:
+        case FORMAT_HTML:
+        case FORMAT_WIKI:
         /// Remove tags that are not allowed
             $text = strip_tags($text, $ALLOWED_TAGS);
-
         /// Munge javascript: label
             $text = str_ireplace("javascript:", "Xjavascript:", $text);
-            $text = str_ireplace("vbscript:", "Xvbscript:", $text);
-
         /// Remove script events
             $text = eregi_replace("([^a-z])language([[:space:]]*)=", "\\1Xlanguage=", $text);
             $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);
+            return $text;
 
-        /// Remove Javascript entities
-            $text = eregi_replace("&{([^};]*)};", "\\1", $text);
-
+        case FORMAT_PLAIN:
             return $text;
     }
 }
-
 
 function replace_smilies(&$text) {
 /// Replaces all known smileys in the text with image equivalents
@@ -849,21 +812,12 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
 
 function wiki_to_html($text) {
 /// Given Wiki formatted text, make it into XHTML using external function
-    global $CFG, $course;
+    global $CFG;
 
     require_once("$CFG->libdir/wiki.php");
 
     $wiki = new Wiki;
     return $wiki->format($text);
-}
-
-function markdown_to_html($text) {
-/// Given Markdown formatted text, make it into XHTML using external function
-    global $CFG;
-
-    require_once("$CFG->libdir/markdown.php");
-
-    return Markdown($text);
 }
 
 function html_to_text($html) {
@@ -960,7 +914,7 @@ function highlightfast($needle, $haystack) {
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
 function print_header ($title="", $heading="", $navigation="", $focus="", $meta="",
-                       $cache=true, $button="&nbsp;", $menu="", $usexml=false, $bodytags="") {
+                       $cache=true, $button="&nbsp;", $menu="", $usexml=false) {
 // $title - appears top of window
 // $heading - appears top of page
 // $navigation - premade navigation string
@@ -970,8 +924,6 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 // $button - HTML code for a button (usually for module editing)
 // $menu - HTML code for a popup menu
 // $usexml - use XML for this page
-// $bodytags - this text will be included verbatim in the <body> tag (useful for onload() etc)
-
     global $USER, $CFG, $THEME, $SESSION;
 
     global $course;                // This is a bit of an ugly hack to be gotten rid of later
@@ -997,36 +949,10 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     }
 
     if (!$menu and $navigation) {
-        if (empty($CFG->loginhttps)) {
-            $wwwroot = $CFG->wwwroot;
-        } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
-        }
         if (isset($USER->id)) {
-            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$wwwroot/login/logout.php\">".get_string("logout")."</a></font>";
+            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a></font>";
         } else {
-            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a></font>";
-        }
-    }
-    
-    if (isset($SESSION->justloggedin)) {
-        unset($SESSION->justloggedin);
-        if (!empty($CFG->displayloginfailures)) {
-            if (!empty($USER->username) and !isguest()) {
-                if ($count = count_login_failures($CFG->displayloginfailures, $USER->username, $USER->lastlogin)) {
-                    $menu .= '&nbsp;<font size="1">';
-                    if (empty($count->accounts)) {
-                        $menu .= get_string('failedloginattempts', '', $count);
-                    } else {
-                        $menu .= get_string('failedloginattemptsall', '', $count);
-                    }
-                    if (isadmin()) {
-                        $menu .= ' (<a href="'.$CFG->wwwroot.'/course/log.php'.
-                                             '?chooselog=1&id=1&modid=site_errors">'.get_string('logs').'</a>)';
-                    }
-                    $menu .= '</font>';
-                }
-            }
+            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a></font>";
         }
     }
 
@@ -1035,20 +961,13 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 
     if (!empty($CFG->unicode)) {
         $encoding = "utf-8";
-    } else if (!empty($CFG->courselang)) {
-        $encoding = get_string("thischarset");
-        moodle_setlocale();
+    } else if (!empty($SESSION->encoding) and empty($CFG->courselang)) {
+        $encoding = $SESSION->encoding;
     } else {
-        if (!empty($SESSION->encoding)) {
-            $encoding = $SESSION->encoding;
-        } else {
-            $SESSION->encoding = $encoding = get_string("thischarset");
-        }
+        $encoding = get_string("thischarset");
+        $SESSION->encoding = $encoding;
     }
     $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=$encoding\" />\n$meta\n";
-    if (!$usexml) {
-        @header('Content-type: text/html; charset='.$encoding);
-    }
 
     if ( get_string("thisdirection") == "rtl" ) {
         $direction = " dir=\"rtl\"";
@@ -1057,12 +976,8 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     }
 
     if (!$cache) {   // Do everything we can to prevent clients and proxies caching
-        @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
-        @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-        @header('Cache-Control: no-store, no-cache, must-revalidate');
-        @header('Cache-Control: post-check=0, pre-check=0', false);
-        @header('Pragma: no-cache');
-
+        @header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+        @header("Pragma: no-cache");
         $meta .= "\n<meta http-equiv=\"pragma\" content=\"no-cache\" />";
         $meta .= "\n<meta http-equiv=\"expires\" content=\"0\" />";
     }
@@ -1092,10 +1007,11 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     include ("$CFG->dirroot/theme/$CFG->theme/header.html");
 }
 
-function print_footer ($course=NULL, $usercourse=NULL) {
+function print_footer ($course=NULL) {
 // Can provide a course object to make the footer contain a link to
 // to the course home page, otherwise the link will go to the site home
     global $USER, $CFG, $THEME;
+
 
 /// Course links
     if ($course) {
@@ -1112,12 +1028,8 @@ function print_footer ($course=NULL, $usercourse=NULL) {
         $course = get_site();
     }
 
-    if (!$usercourse) {
-        $usercourse = $course;
-    }
-
 /// User links
-    $loggedinas = user_login_string($usercourse, $USER);
+    $loggedinas = user_login_string($course, $USER);
 
     include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
 }
@@ -1160,25 +1072,14 @@ function user_login_string($course, $user=NULL) {
         $realuserinfo = "";
     }
 
-    if (empty($CFG->loginhttps)) {
-        $wwwroot = $CFG->wwwroot;
-    } else {
-        $wwwroot = str_replace('http','https',$CFG->wwwroot);
-    }
-
     if (isset($user->id) and $user->id) {
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
-        if (isguest($user->id)) {
-            $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
-                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a>)";
-        } else {
-            $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
+        $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
                       " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a>)";
-        }
     } else {
         $loggedinas = get_string("loggedinnot", "moodle").
-                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a>)";
+                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a>)";
     }
     return $loggedinas;
 }
@@ -1191,8 +1092,7 @@ function print_navigation ($navigation) {
        if (! $site = get_site()) {
            $site->shortname = get_string("home");;
        }
-       $navigation = str_replace('->', '&raquo;', $navigation);
-       echo "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">$site->shortname</a> &raquo; $navigation";
+       echo "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">$site->shortname</a> -> $navigation";
    }
 }
 
@@ -1386,17 +1286,7 @@ function print_user($user, $course) {
         echo "$string->email: <a href=\"mailto:$user->email\">$user->email</a><br />";
     }
     if ($user->city or $user->country) {
-        echo "$string->location: ";
-        if ($user->city) {
-            echo $user->city;
-        }
-        if (!empty($countries[$user->country])) {
-            if ($user->city) {
-                echo ', ';
-            }
-            echo $countries[$user->country];
-        }
-        echo "<br />";
+        echo "$string->location: $user->city, ".$countries["$user->country"]."<br />";
     }
     if ($user->lastaccess) {
         echo "$string->lastaccess: ".userdate($user->lastaccess);
@@ -1411,7 +1301,7 @@ function print_user($user, $course) {
         $timemidnight = usergetmidnight(time());
         echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
         if (!iscreator($user->id)) {  // Includes admins
-            if ($course->category and isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
+            if (isstudent($course->id, $user->id)) {  // Includes admins
                 echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
             }
             if ($USER->id != $user->id) {
@@ -1759,11 +1649,11 @@ function use_html_editor($name="") {
 
     echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"1\">\n";
     if (empty($name)) {
-        echo "HTMLArea.replaceAll();\n";
+        echo "HTMLArea.replaceAll();";
     } else {
-        echo "HTMLArea.replace('$name');\n";
+        echo "HTMLArea.replace('$name')";
     }
-    echo "</script>\n";
+    echo "</script>";
 }
 
 
@@ -1926,10 +1816,8 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     $selectmod = NULL;
     $logslink = NULL;
     $flag = false;
-    $menu = array();
-    $strjumpto = get_string('jumpto');
 
-    $sections = get_records('course_sections','course',$course->id,'section',"section,visible,summary");
+    $sectionrecs = get_records("course_sections","course","$course->id","section","section,visible");
 
     foreach ($modinfo as $mod) {
         if ($mod->mod == "label") {
@@ -1937,19 +1825,9 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
         }
 
         if ($mod->section > 0 and $section <> $mod->section) {
-            $thissection = $sections[$mod->section];
-
-            if ($thissection->visible or !$course->hiddensections or $isteacher) {
-                $thissection->summary = strip_tags($thissection->summary);
-                if ($course->format == 'weeks' or empty($thissection->summary)) {
-                    $menu[] = "-------------- $strsection $mod->section --------------";
-                } else {
-                    if (strlen($thissection->summary) < 47) {
-                        $menu[] = '-- '.$thissection->summary;
-                    } else {
-                        $menu[] = '-- '.substr($thissection->summary, 0, 50).'...';
-                    }
-                }
+            //Only add if visible or collapsed or teacher or course format = weeks
+            if ($sectionrecs[$mod->section]->visible or !$course->hiddensections or $isteacher) {
+                $menu[] = "-------------- $strsection $mod->section --------------";
             }
         }
 
@@ -1967,16 +1845,13 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
                 $selectmod = $mod;
                 $backmod = $previousmod;
                 $flag = true; // set flag so we know to use next mod for "next"
-                $mod->name = $strjumpto;
-                $strjumpto = '';
-            } else {
-                $mod->name = strip_tags(urldecode($mod->name));
-                if (strlen($mod->name) > 55) {
-                    $mod->name = substr($mod->name, 0, 50)."...";
-                }
-                if (!$mod->visible) {
-                    $mod->name = "(".$mod->name.")";
-                }
+            }
+            $mod->name = strip_tags(urldecode($mod->name));
+            if (strlen($mod->name) > 55) {
+                $mod->name = substr($mod->name, 0, 50)."...";
+            }
+            if (!$mod->visible) {
+                $mod->name = "(".$mod->name.")";
             }
             $menu[$url] = $mod->name;
             $previousmod = $mod;
@@ -1999,7 +1874,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
                    "<input type=\"submit\" value=\"&gt;\"></form>";
     }
     return "<table><tr>$logslink<td>$backmod</td><td>" .
-            popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, $strjumpto,
+            popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"),
                        "", "", true, $targetwindow).
             "</td><td>$nextmod</td></tr></table>";
 }
@@ -2047,24 +1922,6 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
     }
     choose_from_menu($hours,   $hour,   $currentdate['hours'],   "");
     choose_from_menu($minutes, $minute, $currentdate['minutes'], "");
-}
-
-function print_timer_selector($timelimit = 0, $unit = "") {
-/// Prints time limit value selector
-
-    global $CFG;
-
-    if ($unit) {
-        $unit = ' '.$unit;
-    }
-
-    // Max timelimit is sessiontimeout - 10 minutes.
-    $maxvalue = ($CFG->sessiontimeout / 60) - 10;
-
-    for ($i=1; $i<=$maxvalue; $i++) {
-        $minutes[$i] = $i.$unit;
-    }
-    choose_from_menu($minutes, "timelimit", $timelimit, get_string("none"));
 }
 
 function print_grade_menu($courseid, $name, $current, $includenograde=true) {
@@ -2143,7 +2000,7 @@ function error ($message, $link="") {
     die;
 }
 
-function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=false, $text="", $return=false) {
+function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=false, $text="") {
     // $page = the keyword that defines a help page
     // $title = the title of links, rollover tips, alt tags etc
     // $module = which module is the page defined in
@@ -2173,14 +2030,7 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
     } else {
         $url = "/help.php?module=$module&amp;file=$page.html";
     }
-
-    $link = link_to_popup_window ($url, "popup", $linkobject, 400, 500, $title, 'none', true);
-
-    if ($return) {
-        return $link;
-    } else {
-        echo $link;
-    }
+    link_to_popup_window ($url, "popup", $linkobject, 400, 500, $title);
 }
 
 function emoticonhelpbutton($form, $field) {
@@ -2365,94 +2215,6 @@ function rebuildnolinktag($text) {
 
     return $text;
 }
-
-
-
-
-// ================================================
-// THREE FUNCTIONS MOVED HERE FROM course/lib.php
-// ================================================
-
-function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) {
-// Prints a nice side block with an optional header.  The content can either
-// be a block of HTML or a list of text with optional icons.
-
-    global $THEME;
-
-    print_side_block_start($heading, $attributes);
-
-    if ($content) {
-        echo $content;
-        if ($footer) {
-            echo "<center><font size=\"-2\">$footer</font></center>";
-        }
-    } else {
-        echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
-        if ($list) {
-            foreach ($list as $key => $string) {
-                echo "<tr bgcolor=\"$THEME->cellcontent2\">";
-                if ($icons) {
-                    echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">".$icons[$key]."</td>";
-                }
-                echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"*\"><font size=\"-1\">$string</font></td>";
-                echo "</tr>";
-            }
-        }
-        if ($footer) {
-            echo "<tr bgcolor=\"$THEME->cellcontent2\">";
-            echo "<td class=\"sideblocklinks\" ";
-            if ($icons) {
-                echo ' colspan="2" ';
-            }
-            echo '>';
-            echo "<center><font size=\"-2\">$footer</font></center>";
-            echo "</td></tr>";
-        }
-        echo "</table>";
-    }
-
-    print_side_block_end();
-}
-
-function print_side_block_start($heading='', $attributes = array()) {
-// Starts a nice side block with an optional header.
-    global $THEME;
-
-    // If there are no special attributes, give a default CSS class
-    if(empty($attributes) || !is_array($attributes)) {
-        $attributes = array('class' => 'sideblock');
-    }
-    else if(!isset($attributes['class'])) {
-        $attributes['class'] = 'sideblock';
-    }
-    else if(!strpos($attributes['class'], 'sideblock')) {
-        $attributes['class'] .= ' sideblock';
-    }
-    // OK, the class is surely there and in addition to anything
-    // else, it's tagged as a sideblock
-
-    $attrtext = '';
-    foreach($attributes as $attr => $val) {
-       $attrtext .= ' '.$attr.'="'.$val.'"';
-    }
-
-    // [pj] UGLY UGLY UGLY! I hate myself for doing this!
-    // When the Lord Moodle 2.0 cometh, his mercy shalt move all this mess
-    // to CSS and banish the evil to the abyss from whence it came.
-    echo '<table style="width: 100%;" cellspacing="0" cellpadding="5"'.$attrtext.'>';
-    if ($heading) {
-        echo '<thead class="sideblockheading"><tr><td>'.$heading.'</td></tr></thead>';
-    }
-    echo '<tbody style="background-color: '.$THEME->cellcontent2.';"><tr><td class="sideblockmain">';
-}
-
-
-
-function print_side_block_end() {
-    echo '</td></tr></tbody></table><br />';
-    echo "\n";
-}
-
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

@@ -58,7 +58,7 @@
     print_simple_box_end();
 
     if ($usehtmleditor) { 
-        use_html_editor("summary");
+        use_html_editor();
     }
     print_footer($course);
 

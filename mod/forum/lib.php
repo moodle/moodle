@@ -43,10 +43,6 @@ if (!isset($CFG->forum_maxbytes)) {
     set_config("forum_maxbytes", 512000);  // Default maximum size for all forums
 }
 
-if (!isset($CFG->forum_replytouser)) {
-    set_config("forum_replytouser", true);  // Default maximum size for all forums
-}
-
 
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
@@ -186,12 +182,7 @@ function forum_cron () {
 /// Finds all posts that have yet to be mailed out, and mails them
 /// out to all subscribers
 
-    static $strforums = NULL;
-    if($strforums === NULL) {
-        $strforums = get_string('forums', 'forum');
-    }
-
-    global $CFG, $USER, $THEME;
+    global $CFG, $USER;
 
     if (!empty($USER)) { // Remember real USER account if necessary
         $realuser = $USER;
@@ -214,8 +205,6 @@ function forum_cron () {
         }
 
         $timenow = time();
-
-        @set_time_limit(0);   /// so that script does not get timed out when posting to many users
 
         foreach ($posts as $post) {
 
@@ -253,7 +242,7 @@ function forum_cron () {
 
             $groupmode = false;
             if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-                if ($groupmode = groupmode($course, $cm) and $discussion->groupid > 0) {   // Groups are being used
+                if ($groupmode = groupmode($course, $cm)) {                  // Groups are being used
                     if (!$group = get_record("groups", "id", $discussion->groupid)) {   // Can't find group
                         continue;                                            // Be safe and don't send it to anyone
                     }
@@ -262,52 +251,91 @@ function forum_cron () {
                 $cm->id = 0;
             }
 
+
             if ($users = forum_subscribed_users($course, $forum)) {
+                $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
 
                 $mailcount=0;
                 $errorcount=0;
                 foreach ($users as $userto) {
                     if ($groupmode) {    // Look for a reason not to send this email
                         if (!isteacheredit($course->id, $userto->id)) {
-                            if (!empty($group->id)) {
-                                if (!ismember($group->id, $userto->id)) {
-                                    continue;
-                                }
+                            if (!ismember($group->id, $userto->id)) {
+                                continue;
                             }
                         }
                     }
 
-                    if ($userto->maildigest > 0) {
-                        // This user wants the mails to be in digest form
-                        $queue = New stdClass;
-                        $queue->userid = $userto->id;
-                        $queue->discussionid = $discussion->id;
-                        $queue->postid = $post->id;
-                        if(!insert_record('forum_queue', $queue)) {
-                            echo "Error: mod/forum/cron.php: Could not queue for digest mail for id $post->id to user $userto->id ($userto->email) .. not trying again.\n";
-                        }
-                        continue;
-                    }
+                    /// GWD: reset timelimit so that script does not get timed out when posting to many users
+                    @set_time_limit(0);
 
                     /// Override the language and timezone of the "current" user, so that
                     /// mail is customised for the receiver.
                     $USER->lang     = $userto->lang;
                     $USER->timezone = $userto->timezone;
 
-                    $postsubject = "$course->shortname: $post->subject";
-                    $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
-                    $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
+                    $canreply = forum_user_can_post($forum, $userto);
 
-                    if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext, 
-                                                     $posthtml, '', '', $CFG->forum_replytouser)) {
-                        echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
-                             " ($userto->email) .. not trying again.\n";
-                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id", 
-                                   substr($post->subject,0,30), $cm->id, $userto->id);
+                    $by->name = fullname($userfrom, isteacher($course->id, $userto->id));
+                    $by->date = userdate($post->modified, "", $userto->timezone);
+                    $strbynameondate = get_string("bynameondate", "forum", $by);
+
+                    $strforums = get_string("forums", "forum");
+
+                    $postsubject = "$course->shortname: $post->subject";
+                    $posttext  = "$course->shortname -> $strforums -> $forum->name";
+
+                    if ($discussion->name == $forum->name) {
+                        $posttext  .= "\n";
+                    } else {
+                        $posttext  .= " -> $discussion->name\n";
+                    }
+                    $posttext .= "---------------------------------------------------------------------\n";
+                    $posttext .= "$post->subject\n";
+                    $posttext .= $strbynameondate."\n";
+                    $posttext .= "---------------------------------------------------------------------\n";
+                    $posttext .= format_text_email($post->message, $post->format);
+                    $posttext .= "\n\n";
+                    if ($post->attachment) {
+                        $post->course = $course->id;
+                        $post->forum = $forum->id;
+                        $posttext .= forum_print_attachments($post, "text");
+                    }
+                    if ($canreply) {
+                        $posttext .= "---------------------------------------------------------------------\n";
+                        $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
+                        $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
+                    }
+                    if ($canunsubscribe) {
+                        $posttext .= "\n---------------------------------------------------------------------\n";
+                        $posttext .= get_string("unsubscribe", "forum");
+                        $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\n";
+                    }
+
+                    if ($userto->mailformat == 1) {  // HTML
+                        $posthtml = "<p><font face=\"sans-serif\">".
+                        "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
+                        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> -> ".
+                        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</a>";
+                        if ($discussion->name == $forum->name) {
+                            $posthtml .= "</font></p>";
+                        } else {
+                            $posthtml .= " -> <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</a></font></p>";
+                        }
+                        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
+
+                        if ($canunsubscribe) {
+                            $posthtml .= "\n<br /><hr size=\"1\" noshade /><p align=\"right\"><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></p>";
+                        }
+
+                    } else {
+                      $posthtml = "";
+                    }
+
+                    if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
+                        echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email) .. not trying again.\n";
+                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id", substr($post->subject,0,15), $cm->id, $userto->id);
                         $errorcount++;
-                    } else if ($mailresult === 'emailstop') {
-                        add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#$post->id", 
-                                   substr($post->subject,0,30), $cm->id, $userto->id);
                     } else {
                         $mailcount++;
                     }
@@ -321,277 +349,11 @@ function forum_cron () {
         }
     }
 
-    unset($CFG->courselang);
-
-    /// Now see if there are any digest mails waiting to be sent, and if we should send them
-
-    if (!isset($CFG->digestmailtimelast)) {    // To catch the first time 
-        set_config('digestmailtimelast', 0);
-    }
-
-    $timenow = time();
-    $digesttime = usergetmidnight($timenow) + ($CFG->digestmailtime * 3600);
-
-    if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
-        set_config('digestmailtimelast', $timenow);
-
-        $digestposts = get_records('forum_queue');
-        if(!empty($digestposts)) {
-
-            // We have work to do
-            $usermailcount = 0;
-            $site = get_site();
-
-            $users = array();
-            $posts = array();
-            $discussions = array();
-            $discussionposts = array();
-            $userdiscussions = array();
-            foreach($digestposts as $digestpost) {
-                if(!isset($users[$digestpost->userid])) {
-                    $users[$digestpost->userid] = get_record('user', 'id', $digestpost->userid);
-                }
-                if(!isset($discussions[$digestpost->discussionid])) {
-                    $discussions[$digestpost->discussionid] = get_record('forum_discussions', 'id', $digestpost->discussionid);
-                }
-                if(!isset($posts[$digestpost->postid])) {
-                    $posts[$digestpost->postid] = get_record('forum_posts', 'id', $digestpost->postid);
-                }
-                $userdiscussions[$digestpost->userid][$digestpost->discussionid] = $digestpost->discussionid;
-                $discussionposts[$digestpost->discussionid][$digestpost->postid] = $digestpost->postid;
-            }
-
-            // Data collected, start sending out emails to each user
-
-            foreach($userdiscussions as $userid => $thesediscussions) {
-
-                echo "\n".get_string('processingdigest', 'forum', $userid).'... ';
-
-                // First of all delete all the queue entries for this user
-                delete_records('forum_queue', 'userid', $userid);
-                $userto = $users[$userid];
-
-                /// Override the language and timezone of the "current" user, so that
-                /// mail is customised for the receiver.
-                $USER->lang     = $userto->lang;
-                $USER->timezone = $userto->timezone;
-
-
-                $postsubject = get_string('digestmailsubject', 'forum', $site->shortname);
-                $headerdata = New stdClass;
-                $headerdata->sitename = $site->fullname;
-                $headerdata->userprefs = $CFG->wwwroot.'/user/edit.php?id='.$userid.'&course='.$site->id;
-
-                $posttext = get_string('digestmailheader', 'forum', $headerdata)."\n\n";
-                $headerdata->userprefs = '<a target="_blank" href="'.$headerdata->userprefs.'">'.get_string('digestmailprefs', 'forum').'</a>';
-
-                $posthtml = "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$CFG->stylesheet."\" /></head>\n";
-                $posthtml .= "<body bgcolor=\"$THEME->cellcontent2\">";
-                $posthtml .= "<style> <!--";       /// Inline styles for autolinks
-                $posthtml .= "a.autolink:link {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-                $posthtml .= "a.autolink:visited {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-                $posthtml .= "a.autolink:hover {text-decoration: underline; color: red}\n";
-                $posthtml .= "--> </style>\n\n";
-                $posthtml .= '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
-
-                foreach($thesediscussions as $discussionid) {
-                    $discussion = $discussions[$discussionid];
-                    if(empty($discussion)) {
-                        echo "Could not find discussion $discussionid\n";
-                        continue;
-                    }
-
-                    if (! $forum = get_record("forum", "id", "$discussion->forum")) {
-                        echo "Could not find forum $discussion->forum\n";
-                        continue;
-                    }
-                    if (! $course = get_record("course", "id", "$forum->course")) {
-                        echo "Could not find course $forum->course\n";
-                        continue;
-                    }
-
-                    $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
-                    $canreply = forum_user_can_post($forum, $userto);
-
-
-                    $posttext .= "\n \n";
-                    $posttext .= '=====================================================================';
-                    $posttext .= "\n \n";
-                    $posttext .= "$course->shortname -> $strforums -> $forum->name";
-                    if ($discussion->name != $forum->name) {
-                        $posttext  .= " -> $discussion->name";
-                    }
-                    $posttext .= "\n";
-
-                    $posthtml .= "<p><font face=\"sans-serif\">".
-                    "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
-                    "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> -> ".
-                    "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</a>";
-                    if ($discussion->name == $forum->name) {
-                        $posthtml .= "</font></p>";
-                    } else {
-                        $posthtml .= " -> <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</a></font></p>";
-                    }
-                    $posthtml .= '<p>';
-
-                    $postsarray = $discussionposts[$discussionid];
-                    sort($postsarray);
-
-                    foreach($postsarray as $postid) {
-                        if (! $post = get_record("forum_posts", "id", "$postid")) {
-                            echo "Could not find post $postid\n";
-                            continue;
-                        }
-                        if (! $userfrom = get_record("user", "id", "$post->userid")) {
-                            echo "Could not find user $post->userid\n";
-                            continue;
-                        }
-
-                        $userfrom->precedence = "bulk";   // This gets added to the email header
-                        if($userto->maildigest == 2) {
-                            // Subjects only
-                            $by = New stdClass;
-                            $by->name = fullname($userfrom);
-                            $by->date = userdate($post->modified);
-                            $posttext .= "\n".$post->subject.' '.get_string("bynameondate", "forum", $by);
-                            $posttext .= "\n---------------------------------------------------------------------";
-
-                            $by->name = "<a target=\"_blank\" href=\"$CFG->wwwroot/user/view.php?id=$userfrom->id&course=$course->id\">$by->name</a>";
-                            $posthtml .= '<div><a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'#'.$post->id.'">'.$post->subject.'</a> '.get_string("bynameondate", "forum", $by).'</div>';
-                        }
-                        else {
-                            // The full treatment
-                            $posttext .= forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, true);
-                            $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
-                        }
-                    }
-                    if ($canunsubscribe) {
-                        $posthtml .= "\n<div align=\"right\"><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></div>";
-                    }
-                    else {
-                        $posthtml .= "\n<div align=\"right\"><font size=\"1\">".get_string("everyoneissubscribed", "forum")."</font></div>";
-                    }
-                    $posthtml .= '<hr size="1" noshade="noshade" /></p>';
-                }
-                $posthtml .= '</body>';
-
-                if (!$mailresult =  email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, 
-                                                  '', '', $CFG->forum_replytouser)) {
-                    echo "ERROR!\n";
-                    echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
-                    add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);
-                } else if ($mailresult === 'emailstop') {
-                    add_to_log($course->id, 'forum', 'mail digest blocked', '', '', $cm->id, $userto->id);
-                } else {
-                    echo "success.\n";
-                    $usermailcount++;
-                }
-
-            }
-
-        }
-    }
-
-    if(!empty($usermailcount)) {
-        echo "\n".get_string('digestsentusers', 'forum', $usermailcount)."\n";
-    }
-
     if (!empty($realuser)) {   // Restore real USER if necessary
         $USER = $realuser;
     }
 
     return true;
-}
-
-function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
-    global $CFG;
-
-    $by = New stdClass;
-    $by->name = fullname($userfrom, isteacher($course->id, $userto->id));
-    $by->date = userdate($post->modified, "", $userto->timezone);
-
-    $strbynameondate = get_string('bynameondate', 'forum', $by);
-
-    $strforums = get_string('forums', 'forum');
-
-    $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
-    $canreply = forum_user_can_post($forum, $userto);
-
-    $posttext = '';
-
-    if(!$bare) {
-        $posttext  = "$course->shortname -> $strforums -> $forum->name";
-
-        if ($discussion->name != $forum->name) {
-            $posttext  .= " -> $discussion->name";
-        }
-    }
-
-    $posttext .= "\n---------------------------------------------------------------------\n";
-    $posttext .= $post->subject;
-    if($bare) {
-        $posttext .= " ($CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id#$post->id)";
-    }
-    $posttext .= "\n".$strbynameondate."\n";
-    $posttext .= "---------------------------------------------------------------------\n";
-    $posttext .= format_text_email($post->message, $post->format);
-    $posttext .= "\n\n";
-    if ($post->attachment) {
-        $post->course = $course->id;
-        $post->forum = $forum->id;
-        $posttext .= forum_print_attachments($post, "text");
-    }
-    if (!$bare && $canreply) {
-        $posttext .= "---------------------------------------------------------------------\n";
-        $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
-        $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
-    }
-    if (!$bare && $canunsubscribe) {
-        $posttext .= "\n---------------------------------------------------------------------\n";
-        $posttext .= get_string("unsubscribe", "forum");
-        $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\n";
-    }
-
-    return $posttext;
-}
-
-function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto) {
-    global $CFG;
-
-    if ($userto->mailformat == 1) {  // HTML
-
-        $strforums = get_string('forums', 'forum');
-        $canreply = forum_user_can_post($forum, $userto);
-        $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
-
-        $posthtml = '';
-        $posthtml .= "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$CFG->stylesheet."\" /></head>\n";
-        $posthtml .= "<body><style> <!--";       /// Inline styles for autolinks
-        $posthtml .= "a.autolink:link {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-        $posthtml .= "a.autolink:visited {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-        $posthtml .= "a.autolink:hover {text-decoration: underline; color: red}\n";
-        $posthtml .= "--> </style>\n\n";
-
-        $posthtml .= "<p><font face=\"sans-serif\">".
-        "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> &raquo; ".
-        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> &raquo; ".
-        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</a>";
-        if ($discussion->name == $forum->name) {
-            $posthtml .= "</font></p>";
-        } else {
-            $posthtml .= " &raquo; <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</a></font></p>";
-        }
-        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
-
-        if ($canunsubscribe) {
-            $posthtml .= "\n<br /><hr size=\"1\" noshade /><p align=\"right\"><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></p>";
-        }
-
-        return $posthtml;
-
-    } else {
-        return '';
-    }
 }
 
 function forum_user_outline($course, $user, $mod, $forum) {
@@ -670,7 +432,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 /// Check whether this is belongs to a discussion in a group that
                 /// should NOT be accessible to the current user
 
-                if (!$isteacheredit and $post->groupid != -1) {   /// Editing teachers or open discussions
+                if (!$isteacheredit) {   /// Because editing teachers can see everything anyway
                     if (!isset($cm[$post->forum])) {
                         $cm[$forum->id] = get_coursemodule_from_instance("forum", $forum->id, $course->id);
                         $groupmode[$forum->id] = groupmode($course, $cm[$forum->id]);
@@ -1105,7 +867,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
 }
 
 function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
-                               $user=0, $fullpost=true, $visiblegroups=-1) {
+                               $user=0, $fullpost=true, $currentgroup=0) {
 /// Get all discussions in a forum
     global $CFG;
 
@@ -1114,14 +876,11 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     } else {
         $userselect = "";
     }
-
-    
-    if ($visiblegroups == -1) {
-        $groupselect = "";
+    if ($currentgroup) {
+        $groupselect = " AND d.groupid = '$currentgroup' ";
     } else  {
-        $groupselect = " AND (d.groupid = '$visiblegroups' OR d.groupid = '-1') ";
+        $groupselect = "";
     }
-
     if (empty($forumsort)) {
         $forumsort = "d.timemodified DESC";
     }
@@ -1131,7 +890,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $postdata = "p.*";
     }
 
-    return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified,
+    return get_records_sql("SELECT $postdata, d.timemodified, d.usermodified,
                                    u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
@@ -1155,7 +914,7 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
         $groupselect = "";
     }
 
-    return get_records_sql("SELECT p.*, d.groupid, u.firstname, u.lastname, u.email, u.picture,
+    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture,
                                    f.type as forumtype, f.name as forumname, f.id as forumid
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
@@ -1194,7 +953,7 @@ function forum_subscribed_users($course, $forum, $groupid=0) {
             return get_site_users();
         }
     }
-    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop,
+    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.emailstop,
                                    u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.lang
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}forum_subscriptions s $grouptables
@@ -1305,16 +1064,23 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output = "";
 
-    $output .= '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
+    $output .= "<style> <!--";       /// Styles for autolinks
+    $output .= "a.autolink:link {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
+    $output .= "a.autolink:visited {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
+    $output .= "a.autolink:hover {text-decoration: underline; color: red}\n";
+    $output .= "--> </style>\n\n";
 
-    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"35\" valign=\"top\" class=\"forumpostpicture\">";
+    $output .= '<table border="0" cellpadding="1" cellspacing="1"><tr><td bgcolor="'.$THEME->borders.'">';
+    $output .= '<table border="0" cellpadding="3" cellspacing="0">';
+
+    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"35\" valign=\"top\">";
     $output .= print_user_picture($user->id, $course->id, $user->picture, false, true);
     $output .= "</td>";
 
     if ($post->parent) {
-        $output .= "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+        $output .= "<td nowrap bgcolor=\"$THEME->cellheading\">";
     } else {
-        $output .= "<td nowrap bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\">";
+        $output .= "<td nowrap bgcolor=\"$THEME->cellheading2\">";
     }
     $output .= "<p>";
     $output .= "<font size=3><b>$post->subject</b></font><br />";
@@ -1326,9 +1092,9 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= get_string("bynameondate", "forum", $by);
 
     $output .= "</font></p></td></tr>";
-    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"10\" class=\"forumpostside\">";
+    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=10>";
     $output .= "&nbsp;";
-    $output .= "</td><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
+    $output .= "</td><td bgcolor=\"$THEME->cellcontent\">\n";
 
     if ($post->attachment) {
         $post->course = $course->id;
@@ -1350,7 +1116,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     if ($ownpost) {
         $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
         if ($reply) {
-            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("replyforum", "forum")."</a>";
+            $output .= " | <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("replyforum", "forum")."</a>";
         }
         $output .= "&nbsp;&nbsp;";
     } else {
@@ -1374,6 +1140,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     if ($footer) {
         $output .= "<p>$footer</p>";
     }
+    $output .= "</td></tr></table>\n";
     $output .= "</td></tr></table>\n\n";
 
     return $output;
@@ -1429,7 +1196,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "</font></p></td></tr>";
     echo "<tr><td bgcolor=\"$THEME->cellcontent2\" valign=\"top\" class=\"forumpostside\" width=\"10\">";
     if ($group = user_group($courseid, $post->userid)) {
-        print_group_picture($group, $courseid, false, false, true);
+        print_group_picture($group, $courseid, false, false, false);
     } else {
         echo "&nbsp;";
     }
@@ -1478,16 +1245,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">$stredit</a> | ";
         }
     }
-
-    if (isteacheredit($courseid) and $post->parent) {
-        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?prune=$post->id\" title=\"".get_string('pruneheading', 'forum').'">'.
-            get_string("prune", "forum")."</a> | ";
-    }
-
     if ($ownpost or $isteacher) {
         echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
         if ($reply) {
-            echo " | ";
+            echo "| ";
         } else {
             echo "&nbsp;&nbsp;";
         }
@@ -1513,10 +1274,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
             if (($isteacher or $ratings->assesspublic) and !$mypost) {
                 forum_print_ratings_mean($post->id, $ratings->scale, $isteacher);
-                if (!empty($ratings->allow)) {
-                    forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
-                    $ratingsmenuused = true;
-                }
+                forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
+                $ratingsmenuused = true;
 
             } else if ($mypost) {
                 forum_print_ratings_mean($post->id, $ratings->scale, true);
@@ -1775,7 +1534,7 @@ function forum_print_search_form($course, $search="", $return=false, $type="") {
         $output = "<table border=0 cellpadding=0 cellspacing=0><tr><td nowrap>";
         $output .= "<form name=search action=\"$CFG->wwwroot/mod/forum/search.php\">";
         $output .= "<font size=\"-1\">";
-        $output .= "<input name=search type=text size=15 value=\"$search\">";
+        $output .= "<input name=search type=text size=20 value=\"$search\">";
         $output .= "<input value=\"".get_string("searchforums", "forum")."\" type=submit>";
         $output .= "</font>";
         $output .= "<input name=id type=hidden value=\"$course->id\">";
@@ -1785,7 +1544,7 @@ function forum_print_search_form($course, $search="", $return=false, $type="") {
         $output = "<table border=0 cellpadding=10 cellspacing=0><tr><td align=center>";
         $output .= "<form name=search action=\"$CFG->wwwroot/mod/forum/search.php\">";
         $output .= "<font size=\"-1\">";
-        $output .= "<input name=search type=text size=15 value=\"$search\"><br>";
+        $output .= "<input name=search type=text size=20 value=\"$search\"><br>";
         $output .= "<input value=\"".get_string("searchforums", "forum")."\" type=submit>";
         $output .= "</font>";
         $output .= "<input name=id type=hidden value=\"$course->id\">";
@@ -2137,22 +1896,12 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
 
     $visible = array();
 
-    $course = get_record("course", "id", $courseid);
-
-    $currentgroup = get_current_group($courseid);
-    $isteacheredit = isteacheredit($courseid);
-
     if ($discussions = forum_get_user_discussions($courseid, $userid, $groupid=0)) {
-
-        $user    = get_record("user", "id", $userid);
-        $fullname = fullname($user, isteacher($courseid));
-
-        $replies = forum_count_discussion_replies();
-
+        $user = get_record("user", "id", $userid);
         echo "<hr />";
-
+        $fullname = fullname($user, isteacher($courseid));
         print_heading( get_string("discussionsstartedbyrecent", "forum", $fullname) );
-
+        $replies = forum_count_discussion_replies();
         foreach ($discussions as $discussion) {
             $countdiscussions++;
             if ($countdiscussions > $maxdiscussions) {
@@ -2170,22 +1919,6 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
             if(!$visible[$discussion->forumid] && !isteacheredit($courseid, $USER->id)) {
                 continue;
             }
-
-            /// Check whether this is belongs to a discussion in a group that
-            /// should NOT be accessible to the current user
-
-            if (!$isteacheredit and $discussion->groupid != -1) {   /// Editing teachers or open discussions
-                if (!isset($cm[$discussion->forum])) {
-                    $cm[$discussion->forum] = get_coursemodule_from_instance("forum", $discussion->forum, $courseid);
-                    $groupmode[$discussion->forum] = groupmode($course, $cm[$discussion->forum]);
-                }
-                if ($groupmode[$discussion->forum] == SEPARATEGROUPS) {
-                    if ($currentgroup != $discussion->groupid) {
-                        continue;
-                    }
-                }
-            }
-
             if (!empty($replies[$discussion->discussion])) {
                 $discussion->replies = $replies[$discussion->discussion]->replies;
             } else {
@@ -2310,7 +2043,7 @@ function forum_user_can_post($forum, $user=NULL) {
 
 function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                                         $forum_style="plain", $forum_sort="",
-                                        $currentgroup=0, $groupmode=-1) {
+                                        $currentgroup=0) {
     global $CFG, $USER;
 
     if ($forum_id) {
@@ -2333,15 +2066,6 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
             error("Could not find or create a main forum in this course (id $course->id)");
         }
     }
-
-    if ($groupmode == -1) {    /// We need to reconstruct groupmode because none was given
-        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            $groupmode = groupmode($course, $cm);
-        } else {
-            $groupmode = SEPARATEGROUPS;
-        }
-    }
-    
 
     if (forum_user_can_post_discussion($forum, $currentgroup)) {
         echo "<p align=center>";
@@ -2367,18 +2091,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         $fullpost = true;
     }
 
-
-/// Decides if current user is allowed to see ALL the current discussions or not
-
-    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or isteacheredit($forum->course)) ) {
-        $visiblegroups = -1;
-    } else {
-        $visiblegroups = $currentgroup;
-    }
-
-/// Get all the recent discussions we're allowed to see
-
-    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $visiblegroups) ) {
+    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $currentgroup) ) {
         if ($forum->type == "news") {
             echo "<p align=center><b>(".get_string("nonews", "forum").")</b></p>";
         } else {
@@ -2429,9 +2142,6 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         } else {
             $ownpost=false;
         }
-        // Use discussion name instead of subject of first post
-        $discussion->subject = $discussion->name;
-
         switch ($forum_style) {
             case "minimal":
                 if (!empty($CFG->filterall)) {
@@ -2632,14 +2342,14 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
     return $ratingsmenuused;
 }
 
-function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $cmid="0", $user="", $groupid="") {
+function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $forum="0", $user="", $groupid="") {
 // Returns all forum posts since a given time.  If forum is specified then
 // this restricts the results
 
     global $CFG;
 
-    if ($cmid) {
-        $forumselect = " AND cm.id = '$cmid'";
+    if ($forum) {
+        $forumselect = " AND cm.id = '$forum'";
     } else {
         $forumselect = "";
     }
@@ -2660,44 +2370,39 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
                               WHERE p.modified > '$sincetime' $forumselect
                                 AND p.userid = u.id $userselect
                                 AND d.course = '$courseid'
-                                AND p.discussion = d.id 
+                                AND p.discussion = d.id $groupselect
                                 AND cm.instance = f.id
                                 AND cm.course = d.course
                                 AND cm.course = f.course
                                 AND f.id = d.forum
                               ORDER BY d.id");
 
-    if (empty($posts)) {
-        return;
-    }
-
-    $isteacheredit = isteacheredit($courseid);
+    if (empty($posts))
+      return;
 
     foreach ($posts as $post) {
 
-        if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$isteacheredit)) {
-            continue;
+        if (empty($groupid) || ismember($groupid, $post->userid)) {
+            $tmpactivity->type = "forum";
+            $tmpactivity->defaultindex = $index;
+            $tmpactivity->instance = $post->instance;
+            $tmpactivity->name = $post->name;
+            $tmpactivity->section = $post->section;
+
+            $tmpactivity->content->id = $post->id;
+            $tmpactivity->content->discussion = $post->discussion;
+            $tmpactivity->content->subject = $post->subject;
+            $tmpactivity->content->parent = $post->parent;
+
+            $tmpactivity->user->userid = $post->userid;
+            $tmpactivity->user->fullname = fullname($post);
+            $tmpactivity->user->picture = $post->picture;
+
+            $tmpactivity->timestamp = $post->modified;
+            $activities[] = $tmpactivity;
+
+            $index++;
         }
-
-        $tmpactivity->type = "forum";
-        $tmpactivity->defaultindex = $index;
-        $tmpactivity->instance = $post->instance;
-        $tmpactivity->name = $post->name;
-        $tmpactivity->section = $post->section;
-
-        $tmpactivity->content->id = $post->id;
-        $tmpactivity->content->discussion = $post->discussion;
-        $tmpactivity->content->subject = $post->subject;
-        $tmpactivity->content->parent = $post->parent;
-
-        $tmpactivity->user->userid = $post->userid;
-        $tmpactivity->user->fullname = fullname($post);
-        $tmpactivity->user->picture = $post->picture;
-
-        $tmpactivity->timestamp = $post->modified;
-        $activities[] = $tmpactivity;
-
-        $index++;
     }
 
     return;
@@ -2738,18 +2443,6 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
     echo "</table>";
 
     return;
-}
-
-function forum_change_discussionid($postid, $discussionid) {
-/// recursively sets the discussion field to $discussionid on $postid and all its children
-/// used when pruning a post
-    set_field('forum_posts', 'discussion', $discussionid, 'id', $postid);
-    if ($posts = get_records('forum_posts', 'parent', $postid)) {
-        foreach ($posts as $post) {
-            forum_change_discussionid($post->id, $discussionid);
-        }
-    }
-    return true;
 }
 
 ?>

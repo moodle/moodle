@@ -1,4 +1,5 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
+
 
 $string['acceptederror'] = 'Erreur acceptée';
 $string['addingquestions'] = 'Vous gérez votre base de données de questions dans cette partie de la page. Les questions sont réparties en catégories, afin de les organiser. Elles peuvent être utilisées dans n\'importe lequel de vos cours, ou même dans d\'autres cours si vous les « publiez ».<br /><br />Créez d\'abord une catégorie. Vous pourrez ensuite créer ou modifier des questions. Vous pouvez choisir une de ces questions pour l\'ajouter à votre test dans l\'autre partie de la page.';
@@ -8,7 +9,6 @@ $string['addselectedtoquiz'] = 'Ajouter la sélection au test';
 $string['aiken'] = 'Format Aiken';
 $string['allowreview'] = 'Autoriser la relecture';
 $string['alreadysubmitted'] = 'Vous avez probablement déjà répondu ainsi à ce test';
-$string['alternativeunits'] = 'Autres unités';
 $string['alwaysavailable'] = 'Toujours disponible';
 $string['answer'] = 'Réponse';
 $string['answerhowmany'] = 'Une ou plusieurs réponses ?';
@@ -28,7 +28,6 @@ $string['attemptsexist'] = 'Quelqu\'un a déjà effectué ce test';
 $string['attemptsunlimited'] = 'Nombre illimité de tentatives';
 $string['backtoquiz'] = 'Retour à l\'édition du test';
 $string['bestgrade'] = 'Meilleure note';
-$string['calculated'] = 'Calculée';
 $string['blackboard'] = 'Format Blackboard';
 $string['calculatedquestion'] = 'Question calculée non supportée (ligne $a). La question sera ignorée';
 $string['caseno'] = 'La casse des caractères indiffère';
@@ -41,11 +40,7 @@ $string['categorymove'] = 'La catégorie « $a->name » contient $a->count question
 $string['categorymoveto'] = 'Les déplacer dans cette catégorie';
 $string['choice'] = 'Proposition';
 $string['choices'] = 'Propositions';
-$string['choosedatasetproperties'] = 'Propriétés du jeu de données';
-$string['confirmstartattempt'] = 'Le temps pour effectuer ce test est limité. Voulez-vous vraiment le commencer ?';
 $string['correctanswer'] = 'Bonne réponse';
-$string['correctanswerformula'] = 'Formule de la bonne réponse';
-$string['correctanswerlength'] = 'Chiffres significatifs';
 $string['correctanswers'] = 'Bonnes réponses';
 $string['corrresp'] = 'Réponse correcte';
 $string['countdown'] = 'Compte à rebours';
@@ -55,9 +50,7 @@ $string['coursetestmanager'] = 'Format CTM';
 $string['createmultiple'] = 'Créer plusieurs questions';
 $string['createnewquestion'] = 'Créer une question';
 $string['custom'] = 'Format personnalisé';
-$string['datasetnumber'] = 'Nombre';
 $string['daysavailable'] = 'Jours disponibles';
-$string['decimals'] = ' avec $a ';
 $string['default'] = 'Défaut';
 $string['defaultgrade'] = 'Note par défaut';
 $string['defaultinfo'] = 'Catégorie par défaut pour les questions.';
@@ -67,8 +60,6 @@ $string['description'] = 'Description';
 $string['discrimination'] = 'Index de discrimination';
 $string['eachattemptbuildsonthelast'] = 'Chaque tentative complète la précédente';
 $string['editcategories'] = 'Modifier les catégories';
-$string['editdatasets'] = 'Modifier les jeux de données';
-$string['editingcalculated'] = 'Modifier une question calculée';
 $string['editingdescription'] = 'Modifier une description';
 $string['editingmatch'] = 'Modifier une question d\'appariement';
 $string['editingmultianswer'] = 'Modifier une question en format Cloze';
@@ -82,67 +73,29 @@ $string['editingshortanswer'] = 'Modifier une question à réponse courte';
 $string['editingtruefalse'] = 'Modifier une question Vrai/Faux';
 $string['editquestions'] = 'Modifier les questions';
 $string['errorsdetected'] = '$a erreur(s) détectée(s)';
-$string['existingcategory'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' d\'un jeu de données existant de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' déjà utilisé dans d\'autres questions de cette catégorie';
-$string['exportfilename'] = 'test';
-$string['exportname'] = 'Nom de fichier';
-$string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
-$string['exportquestions'] = 'Exporter des questions vers un fichier';
 $string['false'] = 'Faux';
 $string['feedback'] = 'Feedback';
 $string['fileformat'] = 'Format de fichier';
 $string['filloutoneanswer'] = 'Vous devez donner au moins une proposition.<br />Les proposition laissées vides ne seront pas prises en compte.';
 $string['filloutthreequestions'] = 'Vous devez donner au moins trois propositions.<br />Les propositions laissées vides ne seront pas prises en compte.';
 $string['fillouttwochoices'] = 'Vous devez donner au moins deux propositions.<br />Les propositions laissées vides ne seront pas prises en compte.';
-$string['forceregeneration'] = 'Forcer le rafraîchissement';
 $string['fractionsaddwrong'] = 'La somme des notes positives que vous avez choisies n\'atteint pas 100%%.<br />Elle est de $a%%.<br />Souhaitez-vous revenir en arrière pour corriger cela ?';
 $string['fractionsnomax'] = 'L\'une des propositions devrait avoir la note 100%% afin qu\'il soit<br />possible d\'obtenir la note maximale à cette question.<br />Souhaitez-vous revenir en arrière pour corriger cela ?';
-$string['functiontakesatleasttwo'] = 'La fonction $a doit avoir au moins deux arguments';
-$string['functiontakesnoargs'] = 'La fonction $a ne prend aucun argument';
-$string['functiontakesonearg'] = 'La fonction $a doit avoir exactement un argument';
-$string['functiontakesoneortwoargs'] = 'La fonction $a doit avoir un ou deux arguments';
-$string['functiontakestwoargs'] = 'La fonction $a doit avoir exactement deux arguments';
-$string['generatevalue'] = 'Générer une nouvelle valeur entre';
-$string['geometric'] = 'Géométrique';
 $string['gift'] = 'Format GIFT';
 $string['gradeaverage'] = 'Note moyenne';
 $string['gradehighest'] = 'Note la plus haute';
 $string['grademethod'] = 'Méthode de notation';
-$string['guestsno'] = 'Désolé, les utilisateurs anonymes n\'ont pas accès aux tests';
-$string['illegalformulasyntax'] = 'Syntaxe de la formule incorrecte (l\'erreur commence à « $a »)';
+$string['guestsno'] = 'Désolé, les visiteurs anonymes n\'ont pas accès aux tests';
 $string['imagedisplay'] = 'Image à afficher';
 $string['imagemissing'] = 'Image non disponible à la ligne $a. Le fichier sera ignoré';
 $string['importquestions'] = 'Importer les questions d\'un fichier';
 $string['indivresp'] = 'Réponses de chaque personne à toutes les questions';
 $string['introduction'] = 'Introduction';
 $string['itemanal'] = 'Analyse des réponses à cette question';
-$string['keptcategory'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' d\'un jeu de données réutilisables de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' de la même catégorie que précédemment';
-$string['keptlocal'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' du même jeu de données privé de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' que précédemment';
 $string['listitems'] = 'Liste des questions du test';
-$string['loguniform'] = 'chiffres, distribution logarithmique uniforme';
 $string['marks'] = 'Points';
 $string['match'] = 'Appariement';
 $string['matchanswer'] = 'Réponse correspondante';
-$string['max'] = 'Max';
-$string['min'] = 'Min';
-$string['minutes'] = 'minutes';
 $string['missinganswer'] = 'Nombre insuffisant d\'indications :ANSWER, :Lx, :Rx pour la question de la ligne $a. Vous devez définir au moins 2 réponses possibles';
 $string['missingcorrectanswer'] = 'La réponse correcte doit être indiquée';
 $string['missingname'] = 'Le nom de la question doit être indiqué';
@@ -154,41 +107,19 @@ $string['modulenameplural'] = 'Tests';
 $string['multianswer'] = 'Format Cloze';
 $string['multichoice'] = 'Choix multiples';
 $string['name'] = 'Nom';
-$string['newcategory'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' d\'un nouveau jeu de données de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' qui pourra aussi être utilisé dans d\'autres questions de cette catégorie';
-$string['newlocal'] = ''
-	// The use of ) and ( below should really not be necessary but
-	// because of some sort of PHP bug it is better to keep'em
-	.'".(1==$a ? \'une lettre\' :(2==$a ? \'un fichier\' :(3==$a ? \'un lien\' : $a)))."'
-	.' d\'un nouveau jeu de données de '
-	.'".(1==$a ? \'lettres\' :(2==$a ? \'fichiers\' : (3==$a ? \'liens\' : $a)))."'
-	.' qui ne sera utilisé que pour cette question';
 $string['noanswers'] = 'Aucune réponse n\'a été sélectionnée !';
 $string['noattempts'] = 'Aucune tentative n\'a été réalisée sur ce test';
-$string['nodataset'] = 'rien - ce n\'est pas un caractère joker';
-$string['nominal'] = 'Nominal';
 $string['nomoreattempts'] = 'Aucune autre tentative n\'est autorisée';
 $string['noquestions'] = 'Aucune question n\'a été encore ajoutée';
 $string['noresponse'] = 'Pas de response';
 $string['noreview'] = 'Vous n\'êtes pas autorisé à relire ce test';
 $string['noreviewuntil'] = 'Vous n\'êtes pas autorisé à relire ce test avant le $a';
-$string['noscript'] = 'JavaScript doit être activé pour continuer !';
 $string['notenoughsubquestions'] = 'Vous n\'avez pas défini assez de sous-questions !<br />Souhaitez-vous revenir en arrière pour corriger cela ?';
 $string['notenoughanswers'] = 'Ce type de question requiert au moins $a réponses';
-$string['multiplier'] = 'Multiplicateur';
 $string['numerical'] = 'Numérique';
-$string['optional'] = 'facultatif';
-$string['overdue'] = 'En retard';
 $string['paragraphquestion'] = 'Question paragraphe non supportée à la ligne $a. La question sera ignorée.';
-$string['passworderror'] = 'La clef n\'est pas correcte';
 $string['percentcorrect'] = 'Pourcentage de réponses correctes';
 $string['publish'] = 'Publier';
-$string['publishedit'] = 'Pour ajouter ou modifier une question de cette catégorie, vous devez avoir ces permissions dans le cours publiant cette catégorie.';
 $string['qti'] = 'Format IMS QTI';
 $string['question'] = 'Libellé de la question';
 $string['questioninuse'] = 'La question « $a » est actuellement utilisée :';
@@ -202,8 +133,6 @@ $string['quizcloses'] = 'Test est fermé';
 $string['quiznotavailable'] = 'Ce test ne sera pas disponible avant le $a';
 $string['quizopen'] = 'Ouvrir ce test';
 $string['quizopens'] = 'Le test est disponible';
-$string['quiztimelimit'] = 'Temps disponible : $a';
-$string['quiztimer'] = 'Chronomètre';
 $string['random'] = 'Question aléatoire';
 $string['randomcreate'] = 'Créer des questions aléatoires';
 $string['randomsamatch'] = 'Question aléatoire à réponse courte';
@@ -215,8 +144,6 @@ $string['recentlyaddedquestion'] = 'Question ajoutée récemment !';
 $string['regrade'] = 'Recalculer les notes de toutes les tentatives';
 $string['regradecomplete'] = 'Toutes les notes ont été recalculées';
 $string['regradecount'] = '$a->changed sur $a->attempt notes ont été changées';
-$string['relative'] = 'Relatif';
-$string['remove'] = 'Supprimer';
 $string['rename'] = 'Renommer';
 $string['report'] = 'Rapports';
 $string['reportfullstat'] = 'Statistiques détaillées';
@@ -226,10 +153,6 @@ $string['reportmulti_resp'] = 'Réponses individuelles';
 $string['reportoverview'] = 'Vue d\'ensemble';
 $string['reportregrade'] = 'Recalculer les notes';
 $string['reportsimplestat'] = 'Statistique simple';
-$string['requirepassword'] = 'Nécessite une clef';
-$string['requirepasswordmessage'] = 'Vous devez connaître la clef du test pour pouvoir l\'effectuer';
-$string['requiresubnet'] = 'Restriction par adresse IP';
-$string['reuseifpossible'] = 'réutiliser supprimés précédemment';
 $string['review'] = 'Relecture';
 $string['save'] = 'Enregistrer';
 $string['savegrades'] = 'Enregistrer les notes';
@@ -245,31 +168,18 @@ $string['showcorrectanswer'] = 'Dans le feedback,<br />afficher les réponses cor
 $string['showfeedback'] = 'Après le test, afficher le feedback ?';
 $string['shuffleanswers'] = 'Mélanger les réponses';
 $string['shufflequestions'] = 'Mélanger les questions';
-$string['significantfigures'] = ' avec $a ';
-$string['subneterror'] = 'Désolé, ce test a été configuré de façon à ne pouvoir être effectué que depuis certains ordinateurs. Votre ordinateur n\'est actuellement pas autorisé.';
-$string['substitutedby'] = 'sera remplacé par';
 $string['time'] = 'Temps';
 $string['timecompleted'] = 'Terminé';
-$string['timeleft'] = 'Temps restant';
-$string['timelimit'] = 'Temps disponible';
-$string['timelimitexeeded'] = 'Désolé ! La limite de temps est échue !';
 $string['timetaken'] = 'Temps mis';
-$string['timesup'] = 'Le chrono est enclenché !';
-$string['tolerance'] = 'Tolerance';
-$string['tolerancetype'] = 'Type de tolerance';
 $string['toomanyrandom'] = 'Le nombre de questions aléatoires demandées est plus grand que le total ($a) des questions de cette catégorie !';
 $string['true'] = 'Vrai';
 $string['truefalse'] = 'Vrai/Faux';
 $string['type'] = 'Type';
-$string['uniform'] = 'décimales, en distribution uniforme';
-$string['unit'] = 'Unité';
 $string['unknowntype'] = 'Type de question non supporté à la ligne $a. La question sera ignorée';
-$string['unsupportedformulafunction'] = 'La fonction $a n\'est pas supportée';
 $string['viewallanswers'] = 'Afficher les $a tests terminés';
 $string['viewallreports'] = 'Afficher le rapport des $a tentatives';
 $string['warningsdetected'] = '$a alerte(s) détectées';
 $string['webct'] = 'Format WebCT';
-$string['wildcard'] = 'Caractère joker';
 $string['withsummary'] = 'avec des statistiques résumées';
 $string['wronggrade'] = 'Note incorrecte (après la ligne $a) :';
 $string['yourfinalgradeis'] = 'Votre note finale pour ce test est $a';

@@ -1,4 +1,5 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
+
 
 $string['about'] = 'À propos de cet éditeur';
 $string['absbottom'] = 'Absbottom';
@@ -57,7 +58,7 @@ $string['linktargettop'] = 'Même fenêtre';
 $string['linktitle'] = 'Titre';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'Milieu';
-$string['minimize'] = 'Minimiser l\'éditeur';
+$string['minimize'] = 'Minimiser l\'Žditeur';
 $string['move'] = 'Déplacer';
 $string['normal'] = 'Normal';
 $string['notimage'] = 'Le fichier sélectionné n\'est pas une image. Veuillez sélectionner une image !';
@@ -95,7 +96,7 @@ $string['type'] = 'Type';
 $string['underline'] = 'Souligné';
 $string['undo'] = 'Annuler la dernière action';
 $string['unorderedlist'] = 'Liste non numérotée';
-$string['upload'] = 'Déposer';
+$string['upload'] = 'Envoyer';
 $string['vertical'] = 'Vertical';
 $string['width'] = 'Largeur';
 $string['wordclean'] = 'Nettoyer le code HTML de Word';

@@ -21,7 +21,6 @@
 
     require("../../config.php");
     require("lib.php");
-    require("locallib.php");
     require("version.php");
 
     require_variable($id);    // Course Module ID
@@ -225,7 +224,7 @@
     /*************** display final grades (by teacher) ***************************/
     elseif ($action == 'displayfinalgrades') {
         // Get all the students
-        if (!$users = get_course_students($course->id, "u.lastname, u.firstname")) {
+        if (!$users = get_course_students($course->id, "u.firstname, u.lastname")) {
             print_heading(get_string("nostudentsyet"));
             print_footer($course);
             exit;

@@ -95,7 +95,7 @@
         foreach ($creators as $creator) {
             $creatorarray[] = $creator->id;
             echo "<p align=right>".fullname($creator, true).", $creator->email &nbsp;&nbsp; ";
-                echo "<a href=\"creators.php?remove=$creator->id\"
+                echo "<a href=\"{$_SERVER['PHP_SELF']}?remove=$creator->id\"
                 title=\"$strremovecreator\"><img src=\"../pix/t/right.gif\"
                 border=0></a>";
             echo "</p>";
@@ -128,14 +128,14 @@
 
         foreach ($users as $user) {
             $fullname = fullname($user, TRUE);
-            echo "<p align=left><a href=\"creators.php?add=$user->id\"".
+            echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?add=$user->id\"".
                    "title=\"$straddcreator\"><img src=\"../pix/t/left.gif\"".
                    "border=0></a>&nbsp;&nbsp;$fullname, $user->email";
         }
     }
 
     if ($search or $usercount > MAX_USERS_PER_PAGE) {
-        echo "<form action=creators.php method=post>";
+        echo "<form action={$_SERVER['PHP_SELF']} method=post>";
         echo "<input type=text name=search size=20>";
         echo "<input type=submit value=\"$searchstring\">";
         echo "</form>";

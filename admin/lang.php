@@ -27,21 +27,14 @@
         case "missing":
             $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strmissingstrings";
             $title = $strmissingstrings;
-            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
-                      '<input type="hidden" name="mode" value="compare" />'.
-                      '<input type="submit" value="'.$strcomparelanguage.'" /></form>';
             break;
         case "compare":
             $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strcomparelanguage";
             $title = $strcomparelanguage;
-            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
-                      '<input type="hidden" name="mode" value="missing" />'.
-                      '<input type="submit" value="'.$strmissingstrings.'" /></form>';
             break;
         default:
             $title = $strlanguage;
             $navigation = $strlanguage;
-            $button = '';
             break;
     }
 
@@ -49,8 +42,7 @@
 
     print_header("$site->shortname: $title", "$site->fullname",
                  "<a href=\"index.php\">$stradministration</a> -> ".
-                 "<a href=\"configure.php\">$strconfiguration</a> -> $navigation",
-                 '', '', true, $button);
+                 "<a href=\"configure.php\">$strconfiguration</a> -> $navigation");
 
     if (!$mode) {
         $currlang = current_language();
@@ -110,18 +102,15 @@
                     $value = str_replace("$"."a", "\\$"."a", $value);
                     $value = str_replace("%%","%",$value);
                     if ($first) {
-                        echo "<p><b>".get_string("stringsnotset","","$langdir/$file")."</b></p><pre>";
+                        echo "</PRE><HR><P><B>".get_string("stringsnotset","","$langdir/$file")."</B></P><PRE>";
                         $first = false;
                         $somethingfound = true;
                     }
-                    echo "$"."string['$key'] = \"$value\";<br />";
+                    echo "$"."string['$key'] = \"$value\";<BR>";
                 }
             }
-            if (!$first) {
-                echo '</pre><hr />';
-            }
         }
-  
+    
         if (! $files = get_directory_list("$CFG->dirroot/lang/en/help", "CVS")) {
             error("Could not find English language help files!");
         }
@@ -216,24 +205,26 @@
             $envalue = str_replace("%%","%",$envalue);
             $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
-            echo "\n\n<tr>";
-            echo "<td dir=ltr lang=en width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>\n";
-            echo "<td dir=ltr lang=en width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>\n";
+            echo "<tr>";
+            echo "<td dir=ltr lang=en width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>";
+            echo "<td dir=ltr lang=en width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>";
 
             $value = $string[$key];
             $value = str_replace("\r","",$value);              // Bad character caused by Windows
-            $value = preg_replace("/\n{3,}/", "\n\n", $value); // Collapse runs of blank lines
-            $value = trim($value, "\n");                       // Delete leading/trailing lines
+            $value = str_replace("\n\n\n\n\n\n","\n",$value);  // Collapse runs of blank lines
+            $value = str_replace("\n\n\n\n\n","\n",$value);
+            $value = str_replace("\n\n\n\n","\n",$value);
+            $value = str_replace("\n\n\n","\n",$value);
+            $value = str_replace("\n\n\n","\n",$value);
             $value = str_replace("\\","",$value);              // Delete all slashes
             $value = str_replace("%%","%",$value);
             $value = str_replace("<","&lt;",$value);
             $value = str_replace(">","&gt;",$value);
-            $value = str_replace('"',"&quot;",$value);
 
             $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
 
             if ($editable) {
-                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>\n";
+                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>";
                 if (isset($string[$key])) {
                     $valuelen = strlen($value);
                 } else {
@@ -242,17 +233,17 @@
                 $cols=50;
                 if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                     $rows = ceil($valuelen / $cols);
-                    echo "<textarea name=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</textarea>\n";
+                    echo "<textarea name=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</textarea>";
                 } else {
                     if ($valuelen) {
                         $cols = $valuelen + 2;
                     }
                     echo "<input type=\"text\" name=\"string-$key\" value=\"$value\" size=\"$cols\"></td>";
                 }
-                echo "</TD>\n";
+                echo "</TD>";
 
             } else {
-                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>$value</td>\n";
+                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>$value</td>";
             }
         }
         if ($editable) {

@@ -59,14 +59,7 @@
 /// Add a student if one is specified
 
     if (!empty($add)) {
-        check_for_restricted_user($USER->username, "$CFG->wwwroot/course/student.php?id=$course->id");
-        if ($course->enrolperiod) {
-            $timestart = time();
-            $timeend   = $timestart + $course->enrolperiod;
-        } else {
-            $timestart = $timeend = 0;
-        }
-        if (! enrol_student($add, $course->id, $timestart, $timeend)) {
+        if (! enrol_student($add, $course->id)) {
             error("Could not add that student to this course!");
         }
     }
@@ -74,7 +67,6 @@
 /// Remove a student if one is specified.
 
     if (!empty($remove)) {
-        check_for_restricted_user($USER->username, "$CFG->wwwroot/course/student.php?id=$course->id");
         if (! unenrol_student($remove, $course->id)) {
             error("Could not remove that student from this course!");
         }
@@ -83,7 +75,6 @@
 /// Remove all students from specified course
 
     if (!empty($removeall)) {
-        check_for_restricted_user($USER->username, "$CFG->wwwroot/course/student.php?id=$course->id");
         $students = get_course_students($course->id, "u.lastname ASC, u.firstname ASC");
         foreach ($students as $student) {
             if (! unenrol_student($student->id, $course->id)) {

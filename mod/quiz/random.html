@@ -1,0 +1,30 @@
+<center>
+<form name="theform" method="post" action="question.php">
+
+<table cellpadding=5>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
+    <td>
+       <?php  choose_from_menu($categories, "category", "$question->category", ""); ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
+    <td>
+        <?php  if (empty($question->name)) {
+               $question->name = get_string("random", "quiz");
+           } ?>
+        <input type="text" name="name" size=40 value="<?php  p($question->name) ?>">
+        <?php  if (isset($err["name"])) formerr($err["name"]); ?>
+    </td>
+</tr>
+</table>
+
+<input type="hidden" name=questiontext value="---">
+
+<input type="hidden" name=id value="<?php  p($question->id) ?>">
+<input type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
+<input type="submit" value="<?php  print_string("savechanges") ?>">
+</form>
+</center>
+

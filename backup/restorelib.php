@@ -125,22 +125,19 @@
         }
 
         $formatwiki = FORMAT_WIKI;
+        $typewiki = WIKITEXT;
  
         //FORUM: Decode every POST (message) in the course
         //Check we are restoring forums
         if ($restore->mods['forum']->restore == 1) {
             echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
-            //Get all course posts being restored
+            //Get all course posts
             if ($posts = get_records_sql ("SELECT p.id, p.message
                                        FROM {$CFG->prefix}forum_posts p,
-                                            {$CFG->prefix}forum_discussions d,
-                                            {$CFG->prefix}backup_ids b
+                                            {$CFG->prefix}forum_discussions d
                                        WHERE d.course = $restore->course_id AND
                                              p.discussion = d.id AND
-                                             p.format = $formatwiki AND
-                                             b.backup_code = $restore->backup_unique_code AND
-                                             b.table_name = 'forum_posts' AND
-                                             b.new_id = p.id")) {
+                                             p.format = $formatwiki")) {
                 //Iterate over each post->message
                 $i = 0;   //Counter to send some output to the browser to avoid timeouts
                 foreach ($posts as $post) {
@@ -175,16 +172,11 @@
         //Check we are restoring resources
         if ($restore->mods['resource']->restore == 1) {
             echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
-            //Get all course resources of type='text' and options=FORMAT_WIKI being restored
+            //Get all course resources of type=8 WIKITEXT
             if ($resources = get_records_sql ("SELECT r.id, r.alltext
-                                       FROM {$CFG->prefix}resource r,
-                                            {$CFG->prefix}backup_ids b
+                                       FROM {$CFG->prefix}resource r
                                        WHERE r.course = $restore->course_id AND
-                                             r.type = 'text' AND
-                                             r.options = $formatwiki AND
-                                             b.backup_code = $restore->backup_unique_code AND
-                                             b.table_name = 'resource' AND
-                                             b.new_id = r.id")) {
+                                             r.type = $typewiki")) {
                 //Iterate over each resource->alltext
                 $i = 0;   //Counter to send some output to the browser to avoid timeouts
                 foreach ($resources as $resource) {
@@ -536,8 +528,7 @@
             $course->password = addslashes($course_header->course_password);
             $course->fullname = addslashes($course_header->course_fullname);
             $course->shortname = addslashes($course_header->course_shortname);
-            $course->idnumber = addslashes($course_header->course_idnumber);
-            $course->summary = restore_decode_absolute_links(addslashes($course_header->course_summary));
+            $course->summary = addslashes($course_header->course_summary);
             $course->format = addslashes($course_header->course_format);
             $course->showgrades = addslashes($course_header->course_showgrades);
             $course->blockinfo = addslashes($course_header->blockinfo);
@@ -548,7 +539,6 @@
             $course->students = addslashes($course_header->course_students);
             $course->guest = addslashes($course_header->course_guest);
             $course->startdate = addslashes($course_header->course_startdate);
-            $course->enrolperiod = addslashes($course_header->course_enrolperiod);
             $course->numsections = addslashes($course_header->course_numsections);
             //$course->showrecent = addslashes($course_header->course_showrecent);   INFO: This is out in 1.3
             $course->maxbytes = addslashes($course_header->course_maxbytes);
@@ -556,7 +546,6 @@
             $course->groupmode = addslashes($course_header->course_groupmode);
             $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
             $course->lang = addslashes($course_header->course_lang);
-            $course->cost = addslashes($course_header->course_cost);
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
             $course->hiddensections = addslashes($course_header->course_hiddensections);
@@ -617,7 +606,7 @@
                 $sequence = "";
                 $section->course = $restore->course_id;
                 $section->section = $sect->number;
-                $section->summary = restore_decode_absolute_links(addslashes($sect->summary));
+                $section->summary = addslashes($sect->summary);
                 $section->visible = $sect->visible;
                 $section->sequence = "";
                 //Now calculate the section's newid
@@ -807,7 +796,7 @@
                     $user->address = addslashes($user->address);
                     $user->city = addslashes($user->city);
                     $user->url = addslashes($user->url);
-                    $user->description = restore_decode_absolute_links(addslashes($user->description));
+                    $user->description = addslashes($user->description);
                     //We are going to create the user
                     //The structure is exactly as we need
                     $newid = insert_record ("user",$user);
@@ -1260,8 +1249,7 @@
 
     //This function decode things to make restore multi-site fully functional
     //It does this conversions:
-    //    - $@FILEPHP@$ ---|------------> $CFG->wwwroot/file.php/courseid (slasharguments on)
-    //                     |------------> $CFG->wwwroot/file.php?file=/courseid (slasharguments off)
+    //    - $@FILEPHP@$ -------------------------------> $CFG->wwwroot/file.php/courseid
     //
     //Note: Inter-activities linking is being implemented as a final
     //step in the restore execution, because we need to have it 
@@ -1272,16 +1260,8 @@
 
         //Now decode wwwroot and file.php calls
         $search = array ("$@FILEPHP@$");
-
-        //Check for the status of the slasharguments config variable
-        $slash = $CFG->slasharguments;
         
-        //Build the replace string as needed
-        if ($slash == 1) {
-            $replace = array ($CFG->wwwroot."/file.php/".$restore->course_id);
-        } else {
-            $replace = array ($CFG->wwwroot."/file.php?file=/".$restore->course_id);
-        }
+        $replace = array ($CFG->wwwroot."/file.php/".$restore->course_id);
     
         $result = str_replace($search,$replace,$content);
 
@@ -2180,9 +2160,6 @@
                         case "SHORTNAME":
                             $this->info->course_shortname = $this->getContents();
                             break;
-                        case "IDNUMBER":
-                            $this->info->course_idnumber = $this->getContents();
-                            break;
                         case "SUMMARY":
                             $this->info->course_summary = $this->getContents();
                             break;
@@ -2216,9 +2193,6 @@
                         case "STARTDATE":
                             $this->info->course_startdate = $this->getContents();
                             break;
-                        case "ENROLPERIOD":
-                            $this->info->course_enrolperiod = $this->getContents();
-                            break;
                         case "NUMSECTIONS":
                             $this->info->course_numsections = $this->getContents();
                             break;
@@ -2239,9 +2213,6 @@
                             break;
                         case "LANG":
                             $this->info->course_lang = $this->getContents();
-                            break;
-                        case "COST":
-                            $this->info->course_cost = $this->getContents();
                             break;
                         case "MARKER":
                             $this->info->course_marker = $this->getContents();
@@ -2509,9 +2480,6 @@
                         case "MAILFORMAT": 
                             $this->info->tempuser->mailformat = $this->getContents();
                             break;
-                        case "MAILDIGEST": 
-                            $this->info->tempuser->maildigest = $this->getContents();
-                            break;
                         case "MAILDISPLAY": 
                             $this->info->tempuser->maildisplay = $this->getContents();
                             break;
@@ -2553,12 +2521,6 @@
                             break;
                         case "EDITALL":
                             $this->info->temprole->editall = $this->getContents();
-                            break;
-                        case "TIMESTART":
-                            $this->info->temprole->timestart = $this->getContents();
-                            break;
-                        case "TIMEEND":
-                            $this->info->temprole->timeend = $this->getContents();
                             break;
                         case "TIMEMODIFIED":
                             $this->info->temprole->timemodified = $this->getContents();

@@ -178,7 +178,7 @@
             include("comment.html");
 
             if ($usehtmleditor) { 
-                use_html_editor("text");
+                use_html_editor();
             }
         }
     }

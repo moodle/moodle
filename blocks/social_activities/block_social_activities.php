@@ -15,11 +15,8 @@ class CourseBlock_social_activities extends MoodleBlock {
     function get_content() {
         global $USER, $CFG;
 
-        if ($this->content !== NULL) {
+        if($this->content !== NULL) {
             return $this->content;
-        }
-        if (empty($this->course)) {
-            return '';
         }
 
         $this->content = New object;
@@ -49,8 +46,8 @@ class CourseBlock_social_activities extends MoodleBlock {
         $editbuttons = '';
 
         if ($ismoving) {
-            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" height="11" width="11">';
-            $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true">'.$strcancel.'</a>)';
+            $this->content->items[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" height="11" width="11">';
+            $this->content->icons[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true">'.$strcancel.'</a>)';
         }
 
         if (!empty($section->sequence)) {
@@ -92,11 +89,6 @@ class CourseBlock_social_activities extends MoodleBlock {
                     } else {
                         $extra = '';
                     }
-                    if (!empty($modinfo[$modnumber]->icon)) {
-                        $icon = $CFG->pixpath.'/'.urldecode($modinfo[$modnumber]->icon);
-                    } else {
-                        $icon = $CFG->modpixpath.'/'.$mod->modname.'/icon.gif';
-                    }
 
                     if ($mod->modname == 'label') {
                         $this->content->items[] = format_text($extra, FORMAT_HTML).$editbuttons;
@@ -104,7 +96,7 @@ class CourseBlock_social_activities extends MoodleBlock {
                     } else {
                         $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                             ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$instancename.'</a>'.$editbuttons;
-                        $this->content->icons[] = '<img src="'.$icon.'" height="16" width="16" alt="'.$mod->modfullname.'">';
+                        $this->content->icons[] = '<img src="'.$CFG->modpixpath.'/'.$mod->modname.'/icon.gif" height="16" width="16" alt="'.$mod->modfullname.'">';
                     }
                 }
             }
@@ -118,7 +110,8 @@ class CourseBlock_social_activities extends MoodleBlock {
 
         if ($isediting && $modnames) {
             $this->content->footer = '<div style="text-align: right;">'.
-                print_section_add_menus($this->course, 0, $modnames, true, true).'</div>';
+                popup_form($CFG->wwwroot.'/course/mod.php?id='.$this->course->id.'&amp;section='.$section->section.'&amp;add=',
+                           $modnames, 'section0', '', get_string('add').'...', 'mods', get_string('activities'), true) . '</div>';
         } else {
             $this->content->footer = '';
         }
