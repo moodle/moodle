@@ -468,6 +468,7 @@ function get_all_categories() {
 function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
     global $CFG;
 
+    $modinfo = unserialize($course->modinfo);
 
     echo "<TABLE WIDTH=\"$width\"><TR><TD>\n";
     if ($section->sequence) {
@@ -476,7 +477,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
         foreach ($sectionmods as $modnumber) {
             $mod = $mods[$modnumber];
-            $instancename = get_field("$mod->modname", "name", "id", "$mod->instance");
+            $instancename = urldecode($modinfo[$modnumber]->name);
             echo "<IMG SRC=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
             echo " <FONT SIZE=2><A TITLE=\"$mod->modfullname\"";
             echo "   HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</A></FONT>";
