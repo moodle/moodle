@@ -274,8 +274,14 @@ function olson_simple_rule_parser ($filename) {
     
             $moodle_rule = array();
     
-            list($hours, $mins) = explode(':', $save);
-            $save = $hours * 60 + $mins;
+            // $save is sometimes just minutes
+            // and othertimes HH:MM -- only
+            // parse if relevant
+            if (!preg_match('/^\d+$/', $save)) {                 
+                list($hours, $mins) = explode(':', $save);
+                $save = $hours * 60 + $mins;
+            }
+
             // we'll parse $at later
             // $at = olson_parse_at($at); 
             $in = strtolower($in);
@@ -586,7 +592,7 @@ function olson_parse_at ($at, $set = 'set', $gmtoffset) {
 
     // find the time "signature";
     $sig = '';
-    if (preg_match('/\w$/', $at, $matches)) {
+    if (preg_match('/[ugzs]$/', $at, $matches)) {
         $sig = $matches[0];
         $at  = substr($at, 0, strlen($at)-1); // chop
     }
@@ -617,7 +623,7 @@ function olson_parse_at ($at, $set = 'set', $gmtoffset) {
         return sprintf('%02d:%02d', $hours, $mins);
     }
 
-    trigger_error('unhandled case - AT flag is ' .  $matches[0]);
+    trigger_error('unhandled case - AT flag is ' . $matches[0]);
 }
 
 
