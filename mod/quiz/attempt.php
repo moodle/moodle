@@ -92,34 +92,24 @@
         }
 
         foreach ($rawanswers as $key => $value) {       // Parse input for question -> answers
-            if (substr($key, 0, 1) == "q") {
-                $key = substr($key,1);
-                if (isset($questions[$key])) {          // It's a real question number, not a coded one
-                    $questions[$key]->answer[] = trim($value);
 
-                } else if (substr_count($key, "rq")) {  // Random Question information
-                    $check = explode("rq", $key);
-                    $key   = $check[0];                 // The random question id
-                    $real  = $check[1];                 // The real question id
-                    $questions[$key]->random = $real;  
+            if (ereg('^q([0-9]+)$', $key, $keyregs)) { // It's a real question number, not a coded one
+                $questions[$keyregs[1]]->answer[] = trim($value);
 
-                } else if (substr_count($key, "a")) {   // Checkbox style multiple answers
-                    $check = explode("a", $key);
-                    $key   = $check[0];                 // The main question number
-                    $value = $check[1];                 // The actual answer
-                    $questions[$key]->answer[] = trim($value);  
+            } else if (ereg('^q([0-9]+)rq([0-9]+)$', $key, $keyregs)) { // Random Question information
+                $questions[$keyregs[1]]->random = $keyregs[2];
 
-                } else if (substr_count($key, "r")) {   // Random-style answers
-                    $check = explode("r", $key);
-                    $key   = $check[0];                 // The main question
-                    $rand  = $check[1];                 // The random sub-question
-                    $questions[$key]->answer[] = "$rand-$value";
+            } else if (ereg('^q([0-9]+)a([0-9]+)$', $key, $keyregs)) { // Checkbox style multiple answers
+                $questions[$keyregs[1]]->answer[] = $keyregs[2];
 
-                } else {
-                    error("Answer received for non-existent question ($key)!");
-                }
-            } else if ($key == "shuffleorder") {
+            } else if (ereg('^q([0-9]+)r([0-9]+)$', $key, $keyregs)) { // Random-style answers
+                $questions[$keyregs[1]]->answer[] = "$keyregs[2]-$value";
+        
+            } else if ('shuffleorder' == $key) {
                 $shuffleorder = explode(",", $value);   // Actual order questions were given in
+            
+            } else {  // Useful for debugging new question types.  Must be last.
+                error("Answer received for non-existent question ($key -> $value)");
             }
         }
 
