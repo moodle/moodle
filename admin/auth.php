@@ -101,11 +101,11 @@
     print_simple_box_start("center", "100%", "$THEME->cellheading");
     print_heading($options[$auth]);
 
-    echo "<BLOCKQUOTE><CENTER><P>";
+    print_simple_box_start("center", "60%", "$THEME->cellcontent");
     print_string("auth_$auth"."description", "auth");
-    echo "</P></CENTER></BLOCKQUOTE>";
+    print_simple_box_end();
 
-    echo "<HR>";
+    echo "<hr>";
 
     print_heading($strsettings);
 
@@ -119,7 +119,7 @@
         print_string("changepassword", "auth");
         echo ":</p></td>";
 	    echo "<td>";
-        echo "<INPUT TYPE=\"text\" NAME=\"changepassword\" SIZE=40 VALUE=\"$config->changepassword\">";
+        echo "<input type=\"text\" name=\"changepassword\" size=40 value=\"$config->changepassword\">";
         echo "</td>";
         echo "<td>";
         print_string("changepasswordhelp","auth");
@@ -151,9 +151,9 @@
 		echo "</td></tr>";
 	}
 
-    echo "</table><CENTER><P><INPUT TYPE=\"submit\" VALUE=\"";
+    echo "</table><center><p><input type=\"submit\" value=\"";
     print_string("savechanges");
-    echo "\"></P></CENTER></FORM>";
+    echo "\"></p></center></form>";
 
     print_simple_box_end(); 
 
