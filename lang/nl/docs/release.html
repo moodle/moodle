@@ -16,6 +16,106 @@
 
 <body bgcolor="#FFFFFF">
 <h1>Laatste  Release notes</h1>
+<h3>Moodle 1.4.3 (17 December, 2004)</h3>
+
+<p>(Omdat in deze release heel wat belangrijke beveiligingsproblemen zijn opgelost, is het ten sterkste aangeraden je oudere Moodleversie zo vlug mogelijk te upgraden tot deze versie.)</p>
+
+<ul>
+  <dl>
+    <dt>Enkele belangrijke herstellingen aan de beveiliging</dt>
+    <dd>
+      <ul>
+        <li>Betere controle/opkuis van de cookiegegevens</li>
+	<li>Preventieve maatregelen voor problemen met sessies</li>
+        <li>Betere controle/opkuis van de parameters voor RSS, IP-atlas, woordenlijkst, forum, themakeuze, SCORM-module, documentenviewer</li>
+        <li>Beveiliging geïntroduceerd voor het bekijken van geüploade bestanden</li>
+        <li>Bescherming tegen directory traversal toegevoegd</li>
+        <li>Herstelling aan de $FULLME-variable die nodig is voor cron</li>
+        <li>Bescherming tegen het rechtstreeks aanroepen van interne bibliotheken.</li>
+        <li>Bescherming tegen het bekijken van een woordenlijst die verborgen is gezet.</li>
+        <li>Verborgen secties ook verborgen in recente activiteiten voor leerlingen</li>
+        <li>Probleem opgelost van de gastgebruiker die de calender kan zien</li>
+        <li>Het encoderen van TEX-uitdrukkingen hersteld</li>
+      </ul>
+    </dd>
+
+    <dt>Enkele nieuwigheden</dt>
+    <dd>
+      <ul>
+        <li>Gedwongen uniciteit van de aanmelding, dit verbetert ook de performantie</li>
+        <li>Transactieondersteuning voor PostgreSQL toegevoegd</li>
+        <li>Aanmelden en afmelden worden nu ook gelogd</li>
+        <li>Wiki en SCORM gebruiken nu een nieuwe zip-code - Dit herstelt ook een aantal SCORM-problemen</li>
+        <li>Nieuw paginasysteem voor woordenlijst</li>
+        <li>De gebruikersinformatie van LDAP wordt verpakt voor invoer in Moodle om gegevensverlies te voorkomen</li>
+        <li>Pclzip geüpdatet naar een nieuwere versie</li>
+        <li>Geheugenlimiet kan nu overschreven worden door hogere waarden dan in de configuratie van php.ini, commandline,  httpd.conf, .htaccess</li>
+        <li>Nieuwe Maori-vertaling</li>
+        <li>Veel toegevoegd aan andere taalpakketten</li>
+        <li>Leraren kunnen nu testen altijd proberen, zelfs als ze nog niet open zijn</li>
+        <li>Het afdrukscherm van de woordenlijst is nu verschillend voor elke opmaak.</li>
+        <li>Zoeken in de woordenlijsten zoekt nu ook in aliassen</li>
+        <li>Sterk verbeterde multilang filter, wat toleranter voor de syntax </li>
+      </ul>
+    </dd>
+	
+   <dt>Verbeteringen aan de performantie</dt>
+    <dd>
+      <ul>
+        <li>Betere caching van de headers geeft een belangrijke performantiewinst op alle pagina's wanneer je de terug-toets van je browser gebruikt</li>
+        <li>Database indexen op vele plaatsen toegevoegd, waardoor je grotere performantie krijgt bij grote installaties</li>
+        <li>Overal in Moodle performantieverbeteringen wanneer lijsten van vakken getoond worden</li>
+        <li>Verschillende verbeteringen door het verwijderen van onnodig ondervragen van de databank en onnodig sorteren</li>
+      </ul>
+    </dd>
+
+    <dt>Andere herstellingen</dt>
+    <dd>
+      <ul>
+        <li>Het genereren van dubbele course ID-nummers door het terugzetten van een backup hersteld</li>
+        <li>Veel kleine Postgres-problemen opgelost</li>
+        <li>Onnodige meldingen in debugmode hersteld</li>
+        <li>Meer PHP5 problemen opgelost</li>
+        <li>Ondersteuning voor apostrophes, aanhalingstekens en backslashes in LDAP-gebruikersgegevens</li>
+        <li>Paginering van zoeken door vakken hersteld voor Postgres </li>
+        <li>Probleem met witte ruimte bij het zoeken in gebruikers hersteld</li>
+        <li>Probleem waarbij chatgebruikers in meerdere chatrooms verschenen opgelost</li>
+        <li>Fout in installatiescript hersteld</li>
+        <li>Hoofdlettergevoelige  gebruikersnamen in bulk gebruikersimport hersteld</li>
+        <li>Een fout hersteld in de redirectie na het beoordelen van een forumbericht</li>
+        <li>Een fout hersteld in testen met koppelvragen</li>
+        <li>Een fout hersteld in de preview van testen</li>
+        <li>Een fout hersteld bij het bewerken van talen</li>
+        <li>Vele kleine herstellingen aan de SCORM-module</li>
+        <li>SCORM-module toont nu de foto van de gebruiker zoals het hoort</li>
+        <li>Namen van activiteiten nu alfabetisch gerangschikt in de activiteitenfilter</li>
+        <li>Zoeken in de woordenlijst zoekt nu ook in aliassen</li>
+        <li>RSS-fouten resulteren nu in een geldige RSS-foutmelding, eerder dan in foute RSS</li>
+        <li>Probleem met validatie van SCORM-pakketten en PHP5 hersteld</li>
+        <li>Probleem met backup/restore en lege categorieën hersteld</li>
+        <li>Betere XHTML in wiki</li>
+        <li>Herstelde fout in chatrapporten voor de eerste chatsessie</li>
+        <li>Een probleem met SCORM hersteld bij het verwijderen van veel of grote bestanden</li>
+        <li>Enkele problemen met de encyclopedieopmaak in de woordenlijst hersteld</li>
+        <li>Een probleem hersteld bij SCORM-integratie met gezipte code</li>
+        <li>Fout hersteld bij e-mailnotificaties in platte tekst door de dialoogmodule</li>
+        <li>Ontbrekende sesskey-variable hersteld in het sociale activiteitenblok</li>
+        <li>Overbodige secties van een vak worden nu verborgen in het navigatiemenu</li>
+        <li>Oplossing voor zomertijd aan kalender toegevoegd</li>
+        <li>De eerste test in een nieuw vak krijgt een standaard.categorie toegewezen</li>
+        <li>Een fout in de paypal=module bij het aanvaarden van de betaling hersteld</li>
+        <li>Een fout hersteld in de bestanden van de vakken bug</li>
+      </ul>
+    </dd>
+
+ 
+
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+
+
 <h3> Moodle 1.4.2   (5 November 2004)</h3>
 <p>(Omdat deze release enkele belangrijke beveiligingslekken dicht, is het belangrijk dat sites met oudere Moodleversies zo vlug mogelijk geüpdatet worden.)
 <ul>
