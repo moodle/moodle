@@ -450,6 +450,7 @@ Sicherlich möchten Sie es <A HREF=\$a->link>ändern</a>, um es sich leichter zu m
 $string['people'] = "Leute";
 $string['personalprofile'] = "Eigenes Profil";
 $string['phone'] = "Telefon";
+$string['popupwindow'] = "Datei in neuem Fenster öffnen";
 $string['potentialadmins'] = "Potentielle Verwalter";
 $string['potentialcreators'] = "Potentielle Kursersteller";
 $string['potentialteachers'] = "Potentielle Lehrer";
