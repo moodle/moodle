@@ -3,7 +3,6 @@
 //  Lists all the users within a given course
 
     require_once("../config.php");
-    require_once("../lib/countries.php");
     require_once("lib.php");
 
     require_variable($id);   //course
@@ -40,6 +39,8 @@
     $string->sec         = get_string("sec");
     $string->secs        = get_string("secs");
 
+    $countries = get_list_of_countries();
+
     $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
 
     $showteachers = ($page == 0 and $sort == "lastaccess" and $dir == "desc");
@@ -65,7 +66,7 @@
             echo "<h2 align=center>$course->teachers</h2>";
             foreach ($teachers as $teacher) {
                 if ($teacher->authority > 0) {    // Don't print teachers with no authority
-                    print_user($teacher, $course, $string);
+                    print_user($teacher, $course, $string, $countries);
                 }
             }
         }
@@ -87,7 +88,7 @@
 
         if ($students = get_course_students($course->id, $dsort, $dir)) {
             foreach ($students as $student) {
-                print_user($student, $course, $string);
+                print_user($student, $course, $string, $countries);
             }
         }
 
@@ -121,7 +122,7 @@
         }
 
         foreach ($students as $key => $student) {
-            $students[$key]->country = $COUNTRIES[$student->country];
+            $students[$key]->country = $countries[$student->country];
         }
         if ($sort == "country") {  // Need to re-sort by full country name, not code
             foreach ($students as $student) {

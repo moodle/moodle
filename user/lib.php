@@ -170,9 +170,9 @@ function save_user_image($userid, $filename) {
 }
 
 
-function print_user($user, $course, $string) {
+function print_user($user, $course, $string, $countries) {
 
-    global $USER, $COUNTRIES;
+    global $USER;
     
     echo "<TABLE WIDTH=80% ALIGN=CENTER BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
     echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=5 CELLSPACING=0><TR>";
@@ -189,7 +189,7 @@ function print_user($user, $course, $string) {
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or isteacher($course->id)) {
         echo "$string->email: <A HREF=\"mailto:$user->email\">$user->email</A><BR>";
     }
-    echo "$string->location: $user->city, ".$COUNTRIES["$user->country"]."<BR>";
+    echo "$string->location: $user->city, ".$countries["$user->country"]."<BR>";
     if ($user->lastaccess) {
         echo "$string->lastaccess: ".userdate($user->lastaccess);
         echo "&nbsp (".format_time(time() - $user->lastaccess, $string).")";

@@ -1,7 +1,6 @@
 <?PHP // $Id$
 
     require_once("../config.php");
-    require_once("../lib/countries.php");
     require_once("../auth/$CFG->auth/lib.php");
 
     if ($user = data_submitted()) {

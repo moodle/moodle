@@ -2,7 +2,6 @@
        // register.php - allows admin to register their site on moodle.org
 
     include("../config.php");
-    require_once("../lib/countries.php");
 
     require_login();
 
@@ -81,7 +80,7 @@
     echo "<tr valign=top>\n";
     echo "<td align=right><p>".get_string("country").":</td>\n";
     echo "<td><p>";
-    choose_from_menu ($COUNTRIES, "country", $admin->country, get_string("selectacountry")."...", "", "");
+    choose_from_menu (get_list_of_countries(), "country", $admin->country, get_string("selectacountry")."...", "", "");
     echo "</td>\n";
     echo "</tr>\n";
 

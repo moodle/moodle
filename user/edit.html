@@ -118,7 +118,7 @@ if (isadmin()) {
         $user->country = $CFG->country;
     }
     
-    choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry")."...", "", "") ?>
+    choose_from_menu (get_list_of_countries(), "country", $user->country, get_string("selectacountry")."...", "", "") ?>
     <?php if (isset($err["country"])) formerr($err["country"]); ?>
     </td>
 </tr>

@@ -73,7 +73,7 @@
 </tr>
 <tr valign="top">
 	<td><p><?php print_string("country") ?>:</p></td>
-	<td><?php choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry"), "", "") ?>
+	<td><?php choose_from_menu (get_list_of_countries(), "country", $user->country, get_string("selectacountry"), "", "") ?>
 	<?php if (!empty($err->country)) { formerr($err->country);} ?>
 	</td>
 </tr>

@@ -3,7 +3,6 @@
 //  Display profile for a particular user
 
     require_once("../config.php");
-    require_once("../lib/countries.php");
     require_once("../mod/forum/lib.php");
     require_once("lib.php");
 
@@ -22,6 +21,8 @@
     if ($course->category) {
         require_login($course->id);
     }
+
+    $countries = get_list_of_countries();
 
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
 
@@ -86,13 +87,12 @@
         echo "<P>".text_to_html($user->description)."</P><HR>";
     }
 
-
     // Print all the little details in a list
 
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2";
 
     if ($user->city or $user->country) {
-        print_row(get_string("location").":", "$user->city, ".$COUNTRIES["$user->country"]);
+        print_row(get_string("location").":", "$user->city, ".$countries["$user->country"]);
     }
 
     if (isteacher($course->id)) {

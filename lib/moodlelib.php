@@ -1284,6 +1284,23 @@ function get_list_of_languages() {
     return $languages;
 }
 
+function get_list_of_countries() {
+/// Returns a list of country names in the current language
+    global $CFG, $USER;
+
+    $lang = current_language();
+
+    if (!file_exists("$CFG->dirroot/lang/$lang/countries.php")) {
+        $lang = "en";  // countries.php must exist in this pack
+    }
+
+    include("$CFG->dirroot/lang/$lang/countries.php"); 
+
+    asort($string);
+
+    return $string;
+}
+
 function document_file($file, $include=true) {
 /// Can include a given document file (depends on second
 /// parameter) or just return info about it

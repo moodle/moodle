@@ -2,7 +2,6 @@
 
     require_once("../config.php");
     require_once("../user/lib.php");
-    require_once("../lib/countries.php");
 
     $recordsperpage = 30;
 
@@ -224,9 +223,11 @@
 
         flush();
 
+        $countries = get_list_of_countries();
+
         foreach ($users as $key => $user) {
             if (!empty($user->country)) {
-                $users[$key]->country = $COUNTRIES[$user->country];
+                $users[$key]->country = $countries[$user->country];
             }
         }
         if ($sort == "country") {  // Need to resort by full country name, not code

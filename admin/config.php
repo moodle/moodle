@@ -2,7 +2,6 @@
        // config.php - allows admin to edit all configuration variables
 
     require_once("../config.php");
-	require_once("../lib/countries.php");
 
 
     if ($site = get_site()) {   // If false then this is a new installation
