@@ -4,6 +4,7 @@
 $string['coursegroupunknown'] = 'Course corresponding to group $a not specified';
 $string['erroronline'] = 'Error on line $a';
 $string['fieldrequired'] = '\"$a\" is a required field';
+$string['filenotfound'] = 'Sorry, the requested file could not be found';
 $string['groupalready'] = 'User already belongs to group $a';
 $string['groupunknown'] = 'Group $a not associated to specified course';
 $string['invalidfieldname'] = '\"$a\" is not a valid field name';
