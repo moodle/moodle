@@ -8,10 +8,6 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
         $this->version = 2004052600;
     }
 
-    function applicable_formats() {
-        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
-    }
-
     function get_content() {
         global $USER, $CFG, $SESSION;
         optional_variable($_GET['cal_m']);

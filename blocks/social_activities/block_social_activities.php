@@ -9,7 +9,7 @@ class CourseBlock_social_activities extends MoodleBlock {
     }
 
     function applicable_formats() {
-        return COURSE_FORMAT_SOCIAL;
+        return array('social' => true);
     }
 
     function get_content() {

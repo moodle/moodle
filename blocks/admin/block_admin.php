@@ -8,10 +8,6 @@ class CourseBlock_admin extends MoodleBlock {
         $this->version = 2004081200;
     }
 
-    function applicable_formats() {
-        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
-    }
-
     function get_content() {
 
         if($this->content !== NULL) {

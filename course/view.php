@@ -33,21 +33,6 @@
         $course->format = 'weeks';  // Default format is weeks
     }
 
-    // Can't avoid this... :(
-    switch($course->format) {
-        case 'weeks':
-            $courseformat = COURSE_FORMAT_WEEKS;
-        break;
-        case 'topics':
-            $courseformat = COURSE_FORMAT_TOPICS;
-        break;
-        case 'social':
-            $courseformat = COURSE_FORMAT_SOCIAL;
-        break;
-        default:
-            $courseformat = 0;
-    }
-
     // Doing this now so we can pass the results to block_action()
     // and dodge the overhead of doing the same work twice.
 
@@ -118,7 +103,13 @@
                 // If it's not hidden or displayed right now...
                 if(!in_array($recblock->id, $allblocks) && !in_array(-($recblock->id), $allblocks)) {
                     // And if it's applicable for display in this format...
-                    if(block_method_result($recblock->name, 'applicable_formats') & $courseformat) {
+                    $formats = block_method_result($recblock->name, 'applicable_formats');
+
+                    if( isset($formats[$course->format]) ? $formats[$course->format] : !empty($formats['all'])) {
+                        // Translation: if the course format is explicitly accepted/rejected, use
+                        // that setting. Otherwise, fallback to the 'all' format. The empty() test
+                        // uses the trick that empty() fails if 'all' is either !isset() or false.
+
                         // Add it to the missing blocks
                         $missingblocks[] = $recblock->id;
                     }

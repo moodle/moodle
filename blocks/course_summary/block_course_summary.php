@@ -12,10 +12,6 @@ class CourseBlock_course_summary extends MoodleBlock {
         $this->version = 2004052600;
     }
 
-    function applicable_formats() {
-        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
-    }
-
     function get_content() {
         global $CFG, $THEME;
 

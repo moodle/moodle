@@ -9,7 +9,7 @@ class CourseBlock_login extends MoodleBlock {
     }
 
     function applicable_formats() {
-        return COURSE_FORMAT_SITE;
+        return array('site' => true);
     }
 
     function get_content () {

@@ -204,11 +204,13 @@ class MoodleBlock {
             $errors[] = 'version_not_set';
             $correct = false;
         }
-        $allformats = COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
-        if(!($this->applicable_formats() & $allformats)) {
+
+        $formats = $this->applicable_formats();
+        if(empty($formats) || array_sum($formats) === 0) {
             $errors[] = 'no_course_formats';
             $correct = false;
         }
+
         $width = $this->preferred_width();
         if(!is_int($width) || $width <= 0) {
             $errors[] = 'invalid_width';
@@ -230,7 +232,7 @@ class MoodleBlock {
     }
     function applicable_formats() {
         // Default case: the block can be used in all course types
-        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
+        return array('all' => true);
     }
     function preferred_width() {
         // Default case: the block wants to be 180 pixels wide

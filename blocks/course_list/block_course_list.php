@@ -27,10 +27,6 @@ class CourseBlock_course_list extends MoodleBlock {
         return true;
     }
 
-    function applicable_formats() {
-        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
-    }
-
     function get_content() {
         global $THEME, $CFG, $USER;
 

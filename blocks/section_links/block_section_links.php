@@ -20,7 +20,7 @@ class CourseBlock_section_links extends MoodleBlock {
     }
 
     function applicable_formats() {
-        return (COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS);
+        return (array('weeks' => true, 'topics' => true));
     }
 
     function get_content() {
