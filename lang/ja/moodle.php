@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['action'] = '操作';
@@ -117,7 +117,6 @@ $string['backupusershelp'] = 'サーバ内の全ユーザを含めるか、各コースに必要なユー
 $string['backupversion'] = 'バックアップバージョン';
 $string['blockconfiga'] = '$a ブロックの設定';
 $string['blockconfigbad'] = 'このブロックは正常に組み込まれていませんので、設定インターフェースを表示することができません。';
-$string['blockconfigin'] = 'コース: $a のブロックを設定';
 $string['blockdeleteconfirm'] = '「 $a 」ブロックを完全に削除しようとしています。削除することでデータベース内の関連するデータ全てが完全に削除されます。本当に削除してもよろしいですか?';
 $string['blockdeletefiles'] = '「 $a->block 」に関連する全てのデータがデータベースより削除されました。削除を完了するため(ブロックが再インストールされることを防ぐため)に、次のディレクトリをサーバより削除してください: $a->directory';
 $string['blocks'] = 'ブロック';
@@ -874,7 +873,7 @@ $string['sections'] = 'セクション';
 $string['select'] = '選択';
 $string['selectacountry'] = '国を選択';
 $string['selectednowmove'] = '$a ファイルが移動するために選択されました。移動先を選択して「ファイルをここに移動する」をクリックしてください。';
-$string['senddetails'] = 'メールで登録内容を送信する';
+$string['senddetails'] = '登録内容をメールで送信する';
 $string['separateandconnected'] = '分離・関連認識';
 $string['serverlocaltime'] = 'サーバのシステム時間';
 $string['settings'] = '設定';
