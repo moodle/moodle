@@ -54,7 +54,9 @@
     }
 
     if ($search) {
-
+      $strippedsearch = str_replace("user:","",$search);
+      $strippedsearch = str_replace("subject:","",$strippedsearch);
+      $strippedsearch = str_replace("&quot;","",$strippedsearch);
         if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
 
 
@@ -97,8 +99,8 @@
                 error("Could not find forum $discussion->forum");
             }
 
-            $post->subject = highlight("$search", $post->subject);
-            $discussion->name = highlight("$search", $discussion->name);
+            $post->subject = highlight("$strippedsearch", $post->subject);
+            $discussion->name = highlight("$strippedsearch", $discussion->name);
 
             $fullsubject = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
             if ($forum->type != "single") {
@@ -114,7 +116,7 @@
                 $post->forum = $forum->id;
 
             $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
-            forum_print_post($post, $course->id, false, false, false, false, $fulllink, $search);
+            forum_print_post($post, $course->id, false, false, false, false, $fulllink, $strippedsearch);
 
             echo "<br />";
         }
