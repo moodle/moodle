@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['action'] = 'Actie';
@@ -877,7 +877,7 @@ $string['sections'] = 'Secties';
 $string['select'] = 'Kies';
 $string['selectacountry'] = 'Kies een land';
 $string['selectednowmove'] = '$a bestanden zijn geselecteerd voor verplaatsen. Ga nu naar de bestemming en klik op \'Verplaats bestanden hier naar toe\'';
-$string['senddetails'] = 'Verstuur mijn details via e-mail';
+$string['senddetails'] = 'Stuur me mijn gebruikersnaam en een nieuw wachtwoord';
 $string['separateandconnected'] = 'Gescheiden en Verbonden/relationele manieren van kennen';
 $string['serverlocaltime'] = 'De lokale tijd van de server';
 $string['settings'] = 'Instellingen';
