@@ -1,5 +1,7 @@
 <?php defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.'); ?>
 
+<style media="print">body {display:none}</style>
+
 <script language="JavaScript" type="text/javascript">
 <!-- 
 
