@@ -249,7 +249,7 @@ function forum_cron () {
 
                     $canreply = forum_user_can_post($forum, $userto);
 
-                    $by->name = "$userfrom->firstname $userfrom->lastname";
+                    $by->name = fullname($userfrom, isteacher($course->id, $userto->id));
                     $by->date = userdate($post->modified, "", $userto->timezone);
                     $strbynameondate = get_string("bynameondate", "forum", $by);
 
@@ -397,7 +397,8 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                     $content = true;
                 }
                 $date = userdate($post->modified, $strftimerecent);
-                echo "<p $teacheronly><font size=1>$date - $post->firstname $post->lastname<br>";
+                $fullname = fullname($post, $isteacher);
+                echo "<p $teacheronly><font size=1>$date - $fullname<br>";
                 echo "\"<a href=\"$CFG->wwwroot/mod/forum/$log->url\">";
                 if ($log->action == "add discussion") {
                     echo "<b>$post->subject</b>";
@@ -439,7 +440,8 @@ function forum_print_recent_instance_activity($forum, $timestart, $detail=false)
         echo $post->subject;
         echo "</a></font><br>";
         echo "<font size=2>";
-        $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$post->course\">$post->firstname $post->lastname</a>";
+        $fullname = fullname($post);
+        $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$post->course\">$fullname</a>";
         $by->date = userdate($post->modified);
         print_string("bynameondate", "forum", $by);
         echo "</font></p></td></tr></table>";
@@ -1029,9 +1031,12 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= "<p>";
     $output .= "<font size=3><b>$post->subject</b></font><br />";
     $output .= "<font size=2>";
-    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a>";
+
+    $fullname = fullname($user, isteacher($course->id));
+    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a>";
     $by->date = userdate($post->modified, "", $touser->timezone);
     $output .= get_string("bynameondate", "forum", $by);
+
     $output .= "</font></p></td></tr>";
     $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=10>";
     $output .= "&nbsp;";
@@ -1122,9 +1127,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "<p>";
     echo "<font size=3><b>$post->subject</b></font><br \>";
     echo "<font size=2>";
-    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</a>";
+
+    $fullname = fullname($post, isteacher($courseid));
+    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$fullname</a>";
     $by->date = userdate($post->modified);
     print_string("bynameondate", "forum", $by);
+
     echo "</font></p></td></tr>";
     echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostside\" width=\"10\">";
     echo "&nbsp;";
@@ -1249,8 +1257,9 @@ function forum_print_discussion_header(&$post, $courseid, $datestring="") {
     echo "</td>\n";
 
     // User name
+    $fullname = fullname($post, isteacher($courseid));
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheadername\" align=left nowrap>";
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</a>";
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$fullname</a>";
     echo "</td>\n";
 
     // Replies
@@ -1810,7 +1819,8 @@ function forum_print_user_discussions($courseid, $userid) {
     if ($discussions = forum_get_user_discussions($courseid, $userid)) {
         $user = get_record("user", "id", $userid);
         echo "<HR>";
-        print_heading( get_string("discussionsstartedbyrecent", "forum", "$user->firstname $user->lastname") );
+        $fullname = fullname($user, isteacher($courseid));
+        print_heading( get_string("discussionsstartedbyrecent", "forum", $fullname) );
         $replies = forum_count_discussion_replies();
         foreach ($discussions as $discussion) {
             $countdiscussions++;
@@ -2174,7 +2184,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
                 }
                 echo "<br />";
             } else {
-                $by->name = "$post->firstname $post->lastname";
+                $by->name = fullname($post, isteacher($course->id));
                 $by->date = userdate($post->modified);
                 echo "<li><p><a name=\"$post->id\"></a><font size=-1><b><a href=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</a></b> ";
                 print_string("bynameondate", "forum", $by);
