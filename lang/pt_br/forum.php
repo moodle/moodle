@@ -1,0 +1,113 @@
+<?PHP // $Id$
+# Traduzido por Fabricio Valadares - Três Corações - MG - Brasil
+# Webdesigner da Universidade Vale do Rio Verde
+#------------------------------------------------------------
+$string[modulename] = "Forum";
+$string[modulenameplural] = "Forums";
+#------------------------------------------------------------
+
+$string[addanewdiscussion] = "Some um tópico de discussão novo";
+$string[allowchoice] = "Permita todo o mundo para escolher";
+$string[allowdiscussions] = "Possa um \$a começo discussões novas?";
+$string[allowratings] = "Permita taxar postos?";
+$string[allowsdiscussions] = "Este forum permite para cada pessoa começar um tópico de discussão.";
+$string[anyfile] = "Qualquer arquivo";
+$string[attachment] = "Anexo";
+$string[bynameondate] = "por \$a->name - \$a->date";
+$string[canstudentsstart] = "Possa um \$a começo discussões novas?";
+$string[couldnotadd] = "Não possa somar seu posto devido a um erro desconhecido";
+$string[couldnotdeleteratings] = "Desculpe, isso não pode ser apagado como pessoas já taxou isto";
+$string[couldnotdeletereplies] = "Desculpe, isso não pode ser apagado como pessoas já respondeu a isto";
+$string[couldnotupdate] = "Não possa atualizar seu posto devido a um erro desconhecido";
+$string[delete] = "Apague";
+$string[deleteddiscussion] = "O tópico de discussão foi apagado";
+$string[deletedpost] = "O posto foi apagado";
+$string[deletesure] = "Você seguramente é você quer apagar este posto?";
+$string[discussion] = "Discussão";
+$string[discussions] = "Discussões";
+$string[discussionsstartedby] = "Discussões começadas por \$a";
+$string[discussthistopic] = "Discuta este tópico";
+$string[eachuserforum] = "Cada pessoa posta uma discussão";
+$string[edit] = "Editar";
+$string[editing] = "Editando";
+$string[emptymessage] = "Algo estava errado com seu posto.  Talvez você deixou isto em branco, ou o anexo era muito grande.  Suas mudanças não foram salvas.";
+$string[everyonecanchoose] = "Todo o mundo pode escolher ser subscrito";
+$string[everyoneissubscribed] = "Todo o mundo é subscrito a este forum";
+$string[forcesubscribe] = "Força todo o mundo ser subscrito";
+$string[forcesubscribeq] = "Força todo o mundo ser subscrito?";
+$string[forum] = "Forum";
+$string[forumintro] = "Introdução do Forum";
+$string[forumname] = "Nome do Forum";
+$string[forums] = "Forums";
+$string[forumtype] = "Tipo do Forum";
+$string[generalforum] = "Forum padão para uso geral";
+$string[generalforums] = "Forums gerais";
+$string[inforum] = "in \$a";
+$string[intronews] = "Notícias gerais e anúncios";
+$string[introsocial] = "Um forum aberto por conversar sobre qualquer coisa você quer";
+$string[introteacher] = "Um forum para professor-só notas e discussão";
+$string[learningforums] = "Foruns aprendendo";
+$string[maxtimehaspassed] = "Desculpe, mas o tempo de máximo por editar este posto (\$a) passou!";
+$string[message] = "Mensagem";
+$string[modeflatoldestfirst] = "Exibição de respostas, com mais velho primeiro";
+$string[modeflatnewestfirst] = "Exibição de respostas, com mais novo primeiro";
+$string[modenested] = "Respostas de exibição em forma aninhada";
+$string[modethreaded] = "Respostas de exibição em forma enfiada";
+$string[more] = "mais";
+$string[namenews] = "Novidades de forum";
+$string[namesocial] = "Forum social";
+$string[nameteacher] = "Forum de professor";
+$string[nodiscussions] = "Não há nenhum tópico de discussão contudo neste forum";
+$string[noguestpost] = "Desculpe, não são permitidos para os convidados postar";
+$string[noposts] = "Nenhum posto";
+$string[nosubscribers] = "Não há nenhum subscritor contudo para este forum";
+$string[nownotsubscribed] = "\$a->name não receba cópias de '\$a->forum' através de email.";
+$string[nowsubscribed] = "\$a->name receba cópias de '\$a->forum' através de email.";
+$string[numposts] = "\$a postos";
+$string[olderdiscussions] = "Discussões mais velhas";
+$string[parentofthispost] = "Pai deste posto";
+$string[postadded] = "Seu posto foi somado prosperamente.<P>Você tem \$a editar isto se você quer fazer qualquer mudança.";
+$string[postmailinfo] = "Esta é uma cópia de uma mensagem postada no \$a website.
+Somar sua resposta pelo website, faça clique neste link:";
+$string[postingtip] = "<B>Gorjetas postando:</B>
+Quando respondendo:
+<UL>
+<LI>leia o posto deles cuidadosamente e empathically
+<LI>procure coisas sobre as que você pode fazer um comentário
+</UL>
+
+Enquanto escrevendo:
+<UL>
+<LI>mantenha seus postos pequeno e em-tópico
+<LI>explique suas próprias idéias claramente
+<LI>pense em perguntas que você pode fazer
+</UL>";
+$string[postrating1] = "Mostre principalmente SEPARE sabendo";
+$string[postrating2] = "Igualmente separe e conectou";
+$string[postrating3] = "Espetáculos CONECTARAM sabendo principalmente";
+$string[postupdated] = "Seu posto foi atualizado";
+$string[processingpost] = "Posto processando \$a";
+$string[rate] = "Taxa";
+$string[ratings] = "Avaliações";
+$string[readtherest] = "Leia o resto deste tópico";
+$string[re] = "Re:";    // Put in front of subjects that are replies to another post
+$string[repliesmany] = "\$a respostas tão longe";
+$string[repliesone] = "\$a responda tão longe";
+$string[reply] = "Resposta";
+$string[search] = "Procura";
+$string[searchforums] = "Procura foruns";
+$string[sendinratings] = "Envie em minhas mais recentes avaliações";
+$string[showsubscribers] = "Mostre para subscritores";
+$string[singleforum] = "Uma única discussão simples";
+$string[subject] = "Assunto";
+$string[subscribe] = "Subscreva a este foro";
+$string[subscribed] = "Subscrito";
+$string[subscribers] = "Subscritores";
+$string[subscribersto] = "Subscritores para '\$a'";
+$string[unsubscribe] = "dessubscritos deste forum";
+$string[youratedthis] = "Você taxou isto";
+$string[yournewtopic] = "Seu tópico de discussão novo";
+$string[yourreply] = "Sua resposta";
+$string[newforumposts] = "Postos de forum novos";
+
+?>
