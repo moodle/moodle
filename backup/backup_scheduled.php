@@ -267,7 +267,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
             $backup_config->backup_sche_destination = "";
         }
         if (!isset($backup_config->backup_sche_keep)) {
-            $backup_config->backup_sche_keep = 0;
+            $backup_config->backup_sche_keep = 1;
         }
     }
 
