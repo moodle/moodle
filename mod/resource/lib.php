@@ -172,15 +172,15 @@ function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
 
     require_once("$CFG->libdir/snoopy/Snoopy.class.inc");
 
-	$client = new Snoopy();
-	$client->agent = MAGPIE_USER_AGENT;
-	$client->read_timeout = MAGPIE_FETCH_TIME_OUT;
-	$client->use_gzip = MAGPIE_USE_GZIP;
-	if (is_array($headers) ) {
-		$client->rawheaders = $headers;
-	}
-	
-	@$client->fetch($url);
+    $client = new Snoopy();
+    $client->agent = MAGPIE_USER_AGENT;
+    $client->read_timeout = MAGPIE_FETCH_TIME_OUT;
+    $client->use_gzip = MAGPIE_USE_GZIP;
+    if (is_array($headers) ) {
+        $client->rawheaders = $headers;
+    }
+    
+    @$client->fetch($url);
     
     $tags = array("A"      => "href=",
                   "IMG"    => "src=",
@@ -197,7 +197,7 @@ function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
         }
         $client->results = resource_redirect_tags($client->results, $url, $tag, $key,$prefix);
     }
-	return $client;
+    return $client;
 }
 
 function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = "" ) {
