@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
        // index.php - the front page.
 
     if (!file_exists('./config.php')) {
@@ -13,17 +13,17 @@
     define('BLOCK_R_MAX_WIDTH', 210);
 
     require_once('config.php');
-    require_once($CFG->dirroot.'/course/lib.php');
-    require_once($CFG->dirroot.'/lib/blocklib.php');
-    require_once($CFG->dirroot.'/mod/resource/lib.php');
-    require_once($CFG->dirroot.'/mod/forum/lib.php');
+    require_once($CFG->dirroot .'/course/lib.php');
+    require_once($CFG->dirroot .'/lib/blocklib.php');
+    require_once($CFG->dirroot .'/mod/resource/lib.php');
+    require_once($CFG->dirroot .'/mod/forum/lib.php');
 
     optional_param('blockaction');
     optional_param('instanceid', 0, PARAM_INT);
     optional_param('blockid',    0, PARAM_INT);
 
     if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/$CFG->admin/index.php");
+        redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
     }
 
     if ($CFG->forcelogin) {
@@ -32,7 +32,7 @@
 
     if (isadmin()) {
         if (moodle_needs_upgrading()) {
-            redirect("$CFG->wwwroot/$CFG->admin/index.php");
+            redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
         }
     }
 
@@ -40,24 +40,24 @@
         if (empty($CFG->loginhttps)) {
             $wwwroot = $CFG->wwwroot;
         } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+            $wwwroot = str_replace('http', 'https', $CFG->wwwroot);
         }
-        $loginstring = "<font size=\"2\"><a href=\"$wwwroot/login/index.php\">".get_string("login")."</a></font>";
+        $loginstring = "<font size=\"2\"><a href=\"$wwwroot/login/index.php\">".get_string('login').'</a></font>';
     } else {
-        $loginstring = "<font size=\"1\">".user_login_string($site)."</font>";
+        $loginstring = '<font size="1">'. user_login_string($site) .'</font>';
     }
 
     if (empty($CFG->langmenu)) {
-        $langmenu = "";
+        $langmenu = '';
     } else {
         $currlang = current_language();
         $langs = get_list_of_languages();
-        $langmenu = popup_form ("$CFG->wwwroot/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        $langmenu = popup_form ($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true);
     }
 
-    print_header(strip_tags($site->fullname), "$site->fullname", "home", "",
-                 "<meta name=\"description\" content=\"".s(strip_tags($site->summary))."\" />",
-                 true, "", "$loginstring$langmenu");
+    print_header(strip_tags($site->fullname), $site->fullname, 'home', '',
+                 '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',
+                 true, '', $loginstring . $langmenu);
 
     $editing = isediting($site->id);
 
@@ -78,7 +78,7 @@
                 blocks_execute_action($page, $pageblocks, strtolower($blockaction), $instance);
             }
             // This re-query could be eliminated by judicious programming in blocks_execute_action(),
-            // but I 'm not sure if it's worth the complexity increase...
+            // but I'm not sure if it's worth the complexity increase...
             $pageblocks = blocks_get_by_page($page);
         }
 
@@ -114,10 +114,10 @@
     
         /// If currently moving a file then show the current clipboard
         if (ismoving($site->id)) {
-            $stractivityclipboard = strip_tags(get_string("activityclipboard", "", addslashes($USER->activitycopyname)));
-            echo "<p><font size=\"2\">";
-            echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">".get_string("cancel")."</a>)";
-            echo "</font></p>";
+            $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
+            echo '<p><font size="2">';
+            echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">". get_string('cancel') .'</a>)';
+            echo '</font></p>';
         }
 
 
@@ -151,16 +151,16 @@
 
     switch ($CFG->frontpage) {     /// Display the main part of the front page.
         case FRONTPAGENEWS:
-            if (! $newsforum = forum_get_course_forum($site->id, "news")) {
-                error("Could not find or create a main news forum for the site");
+            if (! $newsforum = forum_get_course_forum($site->id, 'news')) {
+                error('Could not find or create a main news forum for the site');
             }
 
             if (isset($USER->id)) {
-                $SESSION->fromdiscussion = "$CFG->wwwroot";
+                $SESSION->fromdiscussion = $CFG->wwwroot;
                 if (forum_is_subscribed($USER->id, $newsforum->id)) {
-                    $subtext = get_string("unsubscribe", "forum");
+                    $subtext = get_string('unsubscribe', 'forum');
                 } else {
-                    $subtext = get_string("subscribe", "forum");
+                    $subtext = get_string('subscribe', 'forum');
                 }
                 $headertext = "<table border=\"0\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" class=\"headingblockcontent\"><tr>
                                <td>$newsforum->name</td>
@@ -178,25 +178,25 @@
         case FRONTPAGECOURSELIST:
         case FRONTPAGECATEGORYNAMES:
             if (isset($USER->id) and !isset($USER->admin)) {
-                print_heading_block(get_string("mycourses"));
+                print_heading_block(get_string('mycourses'));
                 print_spacer(8,1);
                 print_my_moodle();
             } else {
-                if (count_records("course_categories") > 1) {
+                if (count_records('course_categories') > 1) {
                     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-                        print_heading_block(get_string("availablecourses"));
+                        print_heading_block(get_string('availablecourses'));
                     } else {
-                        print_heading_block(get_string("categories"));
+                        print_heading_block(get_string('categories'));
                     }
                     print_spacer(8,1);
-                    print_simple_box_start("center", "100%");
+                    print_simple_box_start('center', '100%');
                     print_whole_category_list();
                     print_simple_box_end();
-                    print_course_search("", false, "short");
+                    print_course_search('', false, 'short');
                 } else {
-                    print_heading_block(get_string("availablecourses"));
+                    print_heading_block(get_string('availablecourses'));
                     print_spacer(8,1);
-                    print_courses(0, "100%");
+                    print_courses(0, '100%');
                 }
             }
         break;
@@ -224,4 +224,4 @@
   </tr>
 </table>
 
-<?PHP print_footer('home');     // Please do not modify this line ?>
+<?php print_footer('home');     // Please do not modify this line ?>
