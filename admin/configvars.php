@@ -6,11 +6,11 @@
 
 /// $configvars is parsed by config.php
 /// It is an array of arrays of objects
-/// $configvar[sectionname][configvariablename] = configvar object
+/// $configvars[sectionname][configvariablename] = configvar object
     $configvars = array();
 
-    
-/// no, yes strings and menu options are used in a number of places 
+
+/// no, yes strings and menu options are used in a number of places
 /// so we define them here to save time on repeatedly calling
 /// get_string()
     $stryes = get_string('yes');
@@ -179,9 +179,21 @@ class configvarrss extends configvar {
     $permissions['showsiteparticipantslist'] = new configvar (get_string('configshowsiteparticipantslist', 'admin'),
         choose_from_menu ($options, 'showsiteparticipantslist', $config->showsiteparticipantslist, '', '', '', true) );
 
+/// forcelogin
+    $permissions['forcelogin'] = new configvar (get_string('configforcelogin', 'admin'),
+        choose_from_menu ($noyesoptions, 'forcelogin', $config->forcelogin, '', '', '', true) );
+
+/// forceloginforprofiles
+   $permissions['forceloginforprofiles'] = new configvar (get_string('configforceloginforprofiles', 'admin'),
+        choose_from_menu ($noyesoptions, 'forceloginforprofiles', $config->forceloginforprofiles, '', '', '', true) );
+
+/// opentogoogle
+    $permissions['opentogoogle'] = new configvar (get_string('configopentogoogle', 'admin'),
+        choose_from_menu ($noyesoptions, 'opentogoogle', $config->opentogoogle, '', '', '', true) );
+
 /// maxbytes
     $options = get_max_upload_sizes();
-    
+
     $permissions['maxbytes'] = new configvar (get_string('configmaxbytes', 'admin'),
         choose_from_menu ($options, 'maxbytes', $config->maxbytes, '', '', 0, true) );
 
@@ -203,7 +215,7 @@ class configvarrss extends configvar {
 /// language menu
     $interface['langmenu'] = new configvar ( get_string('configlangmenu', 'admin'),
         choose_from_menu($noyesoptions, 'langmenu', $config->langmenu, '', '', '', true) );
-    
+
 /// language list
     $interface['langlist'] = new configvar ( get_string('configlanglist', 'admin'),
         '<input name="langlist" type="text" size="40" value="'.s($config->langlist).'" alt="langlist" />' );
@@ -338,18 +350,6 @@ class configvarrss extends configvar {
     $security['loginhttps'] = new configvar (get_string('configloginhttps', 'admin'),
         choose_from_menu ($noyesoptions, 'loginhttps', $config->loginhttps, '', '', '', true) );
 
-/// forcelogin
-    $security['forcelogin'] = new configvar (get_string('configforcelogin', 'admin'),
-        choose_from_menu ($noyesoptions, 'forcelogin', $config->forcelogin, '', '', '', true) );
-
-/// forceloginforprofiles
-    $security['forceloginforprofiles'] = new configvar (get_string('configforceloginforprofiles', 'admin'),
-        choose_from_menu ($noyesoptions, 'forceloginforprofiles', $config->forceloginforprofiles, '', '', '', true) );
-
-/// opentogoogle
-    $security['opentogoogle'] = new configvar (get_string('configopentogoogle', 'admin'),
-        choose_from_menu ($noyesoptions, 'opentogoogle', $config->opentogoogle, '', '', '', true) );
-
 /// runclamonupload
     $security['runclamonupload'] = new configvar (get_string('configrunclamonupload', 'admin'),
         choose_from_menu($noyesoptions, 'runclamonupload', $config->runclamonupload, '', '', '', true) );
@@ -455,7 +455,7 @@ class configvarrss extends configvar {
     for ($i=0; $i<=23; $i++) {
         $hours[$i] = sprintf("%02d",$i);
     }
-    
+
     $mail['digestmailtime'] = new configvar (get_string('configdigestmailtime', 'admin'),
         choose_from_menu($hours, 'digestmailtime', $config->digestmailtime, '', '', 0, true) );
 
