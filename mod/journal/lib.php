@@ -305,6 +305,15 @@ function journal_get_users_done($journal) {
                                    AND j.journal = $journal->id
                                    AND t.course = $journal->course)
                               ORDER BY j.modified DESC");
+    if ($studentjournals and !$teacherjournals) {
+        return $studentjournals;
+    }
+    if ($teacherjournals and !$studentjournals) {
+        return $teacherjournals;
+    }
+    if (!$teacherjournals and !$studentjournals) {
+        return array();
+    }
     return(array_merge($studentjournals, $teacherjournals));
 }
 
