@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // chat.php - created with Moodle 1.5 development (2004082300)
 
 
 $string['beep'] = 'Beep';
@@ -8,7 +8,7 @@ $string['chatname'] = 'Naam van deze chatroom';
 $string['chatreport'] = 'Chatsessies';
 $string['chattime'] = 'Volgende chat-tijd';
 $string['configmethod'] = 'De gewone chatmethode laat de clients regelmatig contact opnemen met de server voor updates. Deze methode vraagt geen configuratie en werkt op alle servers, maar kan een zware belasting op de server veroorzaken wanneer er veel chatters tegelijk online zijn. Om een serverdaemon te kunnen gebruiken heb je  shell-toegang tot Unix nodig, maar je krijgt er een snelle, schaalbare chatomgeving mee.';
-$string['configoldping'] = 'Na hoeveel tijd wil je een gebruiker als weg beschouwen, nadat deze een tijd niets van zich heeft laten horen?';
+$string['configoldping'] = 'Na hoeveel tijd zonder activiteit wil je een gebruiker als weg uit de chat beschouwen?';
 $string['configrefreshroom'] = 'Hoe vaak moet de chatroom ververst worden? (in seconden). Als je deze waarde laag in stelt kan de chatroom sneller lijken te werken, maar het kan ook, als veel mensen aan het chatten zijn, een hogere belasting op de webserver veroorzaken.';
 $string['configrefreshuserlist'] = 'Hoe vaak moet de lijst met gebruikers ververst worden? (in seconden)';
 $string['configserverhost'] = 'De naam van de computer waarop de server daemon geïnstalleerd is';
