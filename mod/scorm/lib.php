@@ -349,27 +349,43 @@ function scorm_parse($basedir,$file,$scorm_id) {
     $sco->scorm = $scorm_id;
     delete_records("scorm_scoes","scorm",$scorm_id);
     delete_records("scorm_sco_users","scormid",$scorm_id);
-    print_r($manifest);
+    
     for ($j=1; $j<=$i; $j++) {
         $sco->identifier = $manifest[$j]["identifier"];
         $sco->parent = $manifest[$j]["parent"];
         $sco->title = $manifest[$j]["title"];
-        if (empty($resources[($manifest[$j]["identifierref"])]["href"]))
+        if (!isset($manifest[$j]["datafromlms"])) {
+            $manifest[$j]["datafromlms"] = "";
+        } 
+        $sco->datafromlms = $manifest[$j]["datafromlms"];
+        
+        if (!isset($resources[($manifest[$j]["identifierref"])]["href"])) {
             $resources[($manifest[$j]["identifierref"])]["href"] = "";
+        }
         $sco->launch = $resources[($manifest[$j]["identifierref"])]["href"];
-        if (empty($resources[($manifest[$j]["identifierref"])]["type"]))
+        
+        if (!isset($resources[($manifest[$j]["identifierref"])]["type"])) {
             $resources[($manifest[$j]["identifierref"])]["type"] = "";
-    $sco->type = $resources[($manifest[$j]["identifierref"])]["type"];
-    if (empty($manifest[$j]["previous"]))
-        $manifest[$j]["previous"] = 0;
-    $sco->previous = $manifest[$j]["previous"];
-    if (empty($manifest[$j]["continue"]))
-        $manifest[$j]["continue"] = 0;
-    $sco->next = $manifest[$j]["continue"];
-    if (scorm_remove_spaces($manifest[$j]["isvisible"]) != "false")
-        $id = insert_record("scorm_scoes",$sco);
-    if ($launch==0 && $sco->launch)
-        $launch = $id;  
+        }
+    	$sco->type = $resources[($manifest[$j]["identifierref"])]["type"];
+    	
+    	if (!isset($manifest[$j]["previous"])) {
+            $manifest[$j]["previous"] = 0;
+        }
+    	$sco->previous = $manifest[$j]["previous"];
+    	
+    	if (!isset($manifest[$j]["continue"])) {
+            $manifest[$j]["continue"] = 0;
+        }
+    	$sco->next = $manifest[$j]["continue"];
+    	
+    	if (scorm_remove_spaces($manifest[$j]["isvisible"]) != "false") {
+            $id = insert_record("scorm_scoes",$sco);
+        }
+        
+    	if ($launch==0 && $sco->launch) {
+            $launch = $id;
+        }
     }
     return $launch;
 }

@@ -25,6 +25,7 @@ CREATE TABLE prefix_scorm_scoes (
   launch varchar(255) NOT NULL default '',
   type varchar(5) NOT NULL default '',
   title varchar(255) NOT NULL default '',
+  datafromlms longtext,
   next tinyint(1) unsigned NOT NULL default '0',
   previous tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY (id),
@@ -43,7 +44,6 @@ CREATE TABLE prefix_scorm_sco_users (
   cmi_core_session_time varchar(13) NOT NULL default '00:00:00',
   cmi_core_score_raw float(3) NOT NULL default '0',
   cmi_suspend_data longtext,
-  cmi_launch_data longtext,
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 
