@@ -13,7 +13,7 @@
     add_to_log($course->id, "journal", "view all", "index.php?id=$course->id", "");
 
     if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
     $strjournal = get_string("modulename", "journal");
@@ -37,14 +37,11 @@
     $timenow = time();
 
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strquestion, $stranswer);
-        $table->align = array ("CENTER", "LEFT", "LEFT");
+        $strsection = $strweek;
     } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strquestion, $stranswer);
-        $table->align = array ("CENTER", "LEFT", "LEFT");
+        $strsection = $strtopic;
     } else {
-        $table->head  = array ($strquestion, $stranswer);
-        $table->align = array ("LEFT", "LEFT");
+        $strsection = "";
     }
 
     foreach ($journals as $journal) {
@@ -55,35 +52,14 @@
         } else {
             $journal->timefinish = 9999999999;
         }
+
         $journalopen = ($journal->timestart < $timenow && $timenow < $journal->timefinish);
 
-        $entrytext = get_field("journal_entries", "text", "userid", $USER->id, "journal", $journal->id);
+        journal_user_complete_index($course, $USER, $journal, $journalopen, "$strsection $journal->section");
 
-        $text = text_to_html($entrytext)."<p align=right><a href=\"view.php?id=$journal->coursemodule\">";
-
-        if ($journalopen) {
-            $text .= "$stredit</a></p>";
-        } else {
-            $text .= "$strview</a></p>";
-        }
-        if (!empty($journal->section)) {
-            $section = "$journal->section";
-        } else {
-            $section = "";
-        }
-        if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($section,
-                                    text_to_html($journal->intro),
-                                    $text);
-        } else {
-            $table->data[] = array (text_to_html($journal->intro),
-                                    $text);
-        }
     }
 
     echo "<br />";
-
-    print_table($table);
 
     print_footer($course);
  

@@ -28,13 +28,59 @@ function journal_user_complete($course, $user, $mod, $journal) {
             echo format_text($entry->text, $entry->format);
         }
         if ($entry->teacher) {
-            journal_print_feedback($course, $entry);
+            $grades = make_grades_menu($journal->assessed);
+            journal_print_feedback($course, $entry, $grades);
         }
         print_simple_box_end();
 
     } else {
         print_string("noentry", "journal");
     }
+}
+
+function journal_user_complete_index($course, $user, $journal, $journalopen, $heading) {
+
+    if ($heading) {
+        echo "<h3>$heading - $journal->name</h3>";
+    } else {
+        echo "<h3>$journal->name</h3>";
+    }
+
+    print_simple_box_start("left", "90%");
+    echo format_text($journal->intro);
+    print_simple_box_end();
+    echo "<br clear=all />";
+    echo "<br />";
+
+    print_simple_box_start("right", "90%");
+
+    if ($journalopen) {
+        echo "<p align=right><a href=\"edit.php?id=$journal->coursemodule\">";
+        echo get_string("edit")."</a></p>";
+    } else {
+        echo "<p align=right><a href=\"view.php?id=$journal->coursemodule\">";
+        echo get_string("view")."</a></p>";
+    }
+
+    if ($entry = get_record("journal_entries", "userid", $user->id, "journal", $journal->id)) {
+        if ($entry->modified) {
+            echo "<p align=\"center\"><font size=1>".get_string("lastedited").": ".userdate($entry->modified)."</font></p>";
+        }
+        if ($entry->text) {
+            echo format_text($entry->text, $entry->format);
+        }
+        if ($entry->teacher) {
+            $grades = make_grades_menu($journal->assessed);
+            journal_print_feedback($course, $entry, $grades);
+        }
+    } else {
+        print_string("noentry", "journal");
+    }
+
+    print_simple_box_end();
+    echo "<br clear=all />";
+    echo "<br />";
+
 }
 
 
