@@ -1339,6 +1339,7 @@ function print_courses_sideblock($category=0, $width="100%") {
             $modicon[]=$icon;
         }
         $fulllist = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...";
+        $blocktitle = get_string("categories");
     } else {                          // Just print course names of single category
         $category = array_shift($categories);
         $courses = get_courses($category->id);
@@ -1356,9 +1357,10 @@ function print_courses_sideblock($category=0, $width="100%") {
             $modicon = array();
             $fulllist = get_string("nocoursesyet");
         }
+        $blocktitle = get_string("courses");
     }
 
-    print_side_block( get_string("courses"), "", $moddata, $modicon, $fulllist, $width);
+    print_side_block($blocktitle, "", $moddata, $modicon, $fulllist, $width);
 }
 
     
