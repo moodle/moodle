@@ -826,42 +826,30 @@
         $filelist = list_directories_and_files ($basedir);
 
         if (empty($CFG->zip)) {    // Use built-in php-based zip function
-                    $files = array();
-                    foreach ($filelist as $file) {
-                        //If directory, append "/"
-                        if (is_dir($basedir."/".$file)) {
-                            $file = $file."/";
-                        }
-                        //Include into array
-                        $files[] = $basedir."/".$file;
-                    }
-                    include_once($moodle_home."/lib/pclzip/pclzip.lib.php");
-                    $archive = new PclZip("$basedir/$name");
-                    if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,$basedir)) == 0) {
-                        error($archive->errorInfo(true));
-                        $status = false;
-                    } 
-                    //Debug zip contents
-                    //true->do it, false->don't do it. To debug if necessary.
-                    if (false) {
-                        echo "<br>";
-                        $list = $archive->listContent();
-                        for ($i=0; $i<sizeof($list); $i++) {
-                            for(reset($list[$i]); $key = key($list[$i]); next($list[$i])) {
-                                echo "File $i / [$key] = ".$list[$i][$key]."<br>";
-                            }
-                        echo "<br>";
-                        }
-                    }
-                } else {                   // Use external zip program
-                    $files = "";
-                    foreach ($filelist as $file) {
-                        $files .= basename($file);
-                        $files .= " ";
-                    }
-                    $command = "cd $basedir ; $CFG->zip -r $name $files";
-                    $status = Exec($command);
+            $files = array();
+            foreach ($filelist as $file) {
+                //If directory, append "/"
+                if (is_dir($basedir."/".$file)) {
+                    $file = $file."/";
                 }
+                //Include into array
+                $files[] = $basedir."/".$file;
+            }
+            include_once($moodle_home."/lib/pclzip/pclzip.lib.php");
+            $archive = new PclZip("$basedir/$name");
+            if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,$basedir)) == 0) {
+                error($archive->errorInfo(true));
+                $status = false;
+            } 
+        } else {                   // Use external zip program
+            $files = "";
+            foreach ($filelist as $file) {
+                $files .= basename($file);
+                $files .= " ";
+            }
+            $command = "cd $basedir ; $CFG->zip -r $name $files";
+            $status = Exec($command);
+        }
 
         return $status;
 

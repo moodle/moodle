@@ -254,4 +254,52 @@
     ///Ends copy file/dirs functions
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    //This function upgrades, if necesary, the backup-restore tables
+    //It's called from backup.php and restore.php
+    function upgrade_backup_db($updgradeto,$backup_release,$continueto) {
+    
+        global $CFG,$db;
+
+        //Check backup_version
+        if ($CFG->backup_version) {
+            if ($updgradeto > $CFG->backup_version) {  // upgrade
+                $a->oldversion = $CFG->backup_version;
+                $a->newversion = $updgradeto;
+                $strdatabasechecking = get_string("databasechecking", "", $a);
+                $strdatabasesuccess  = get_string("databasesuccess");
+                print_header($strdatabasechecking, $strdatabasechecking, $strdatabasechecking);
+                print_heading($strdatabasechecking);
+                $db->debug=true;
+                if (backup_upgrade($a->oldversion)) {
+                    $db->debug=false;
+                    if (set_config("backup_version", $a->newversion)) {
+                        notify($strdatabasesuccess, "green");
+                        notify("You are running Backup/Recovery version ".$backup_release,"black");
+                        print_continue($continueto);
+                        die;
+                    } else {
+                        notify("Upgrade failed!  (Could not update version in config table)");
+                        die;
+                    }
+                } else {
+                    $db->debug=false;
+                    notify("Upgrade failed!  See backup_version.php");
+                    die;
+                }
+            } else if ($updgradeto < $CFG->backup_version) {
+                notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+            }
+        //Not exists. Starting installation
+        } else {
+            $strdatabaseupgrades = get_string("databaseupgrades");
+            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
+    
+            if (set_config("backup_version", "2003010100")) {
+                print_heading("You are currently going to install the needed structures to Backup/Recover");
+                print_continue($continue_to);
+                die;
+            }
+        }
+    }
 ?>
