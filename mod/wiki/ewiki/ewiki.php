@@ -1158,7 +1158,7 @@ function ewiki_page_info($id, &$data, $action) {
          continue;
       }
 
-      $o .= '<table align="center" class="version-info" cellpadding="2" cellspacing="1">' . "\n";
+      $o .= '<table  class="version-info" cellpadding="2" cellspacing="1">' . "\n";
 
       #-- additional info-actions
       $commands = '';
@@ -1253,7 +1253,7 @@ function ewiki_page_info($id, &$data, $action) {
          }
 
    ##### BEGIN MOODLE ADDITION #####
-         $o .= '<tr class="page-'.$i.'"><td valign="top" align="right"><b>' .ewiki_t($i). ':</b></td>' .
+         $o .= '<tr class="page-'.$i.'"><td valign="top" align="right" nowrap="nowrap"><b>' .ewiki_t($i). ':</b></td>' .
                '<td>' . $value . "</td></tr>\n";
    ##### END MOODLE ADDITION #####
 
