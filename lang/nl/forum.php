@@ -2,25 +2,25 @@
       // forum.php - created with Moodle 1.0.7 (2002121000)
 
 
-$string['addanewdiscussion'] = "Voeg een nieuwe discussie toe";
+$string['addanewdiscussion'] = "Voeg een nieuwe onderwerp voor discussie toe";
 $string['allowchoice'] = "Sta iedereen toe om te kiezen";
 $string['allowdiscussions'] = "Kan een \$a een bijdrage op dit forum achterlaten?";
-$string['allowratings'] = "Sta toe dat bijdragen worden geclassificieerd?";
-$string['allowsdiscussions'] = "In dit forum mag elke persoon één discussie starten.";
+$string['allowratings'] = "Mogen bijdragen worden geclassificeerd?";
+$string['allowsdiscussions'] = "In dit forum mag iedereen precies één discussie starten.";
 $string['anyfile'] = "Een bestand";
 $string['attachment'] = "Bijlage";
-$string['bynameondate'] = "Bij  \$a->name  - \$a->date";
+$string['bynameondate'] = "op  \$a->name  - \$a->date";
 $string['couldnotadd'] = "Het was niet mogelijk om je bijdrage toe te voegen door een onbekende fout.";
-$string['couldnotdeleteratings'] = "Sorry, dat kan niet worden verwijderd omdat het al geclassificieerd door anderen.";
-$string['couldnotdeletereplies'] = "Sorry, dat kan niet dat worden verwijderd omdat er al mensen zijn die erop hebben geantwoord.";
+$string['couldnotdeleteratings'] = "Helaas, dat kan niet worden verwijderd omdat het al geclassificeerd door anderen.";
+$string['couldnotdeletereplies'] = "Helaas, dat kan niet dat worden verwijderd omdat er al mensen zijn die erop hebben geantwoord.";
 $string['couldnotupdate'] = "Kon je bijdrage niet bijwerken door een onbekende fout.";
 $string['delete'] = "Verwijder";
-$string['deleteddiscussion'] = "De discussie is verwijderd.";
-$string['deletedpost'] = "De bijdrage is verwijderd.";
+$string['deleteddiscussion'] = "De discussie is verwijderd";
+$string['deletedpost'] = "De bijdrage is verwijderd";
 $string['deletesure'] = "Weet je zeker dat je deze bijdrage wilt verwijderen?";
 $string['discussion'] = "Discussie";
 $string['discussions'] = "Discussies";
-$string['discussionsstartedby'] = "Discussie die door \$a zijn gestart";
+$string['discussionsstartedby'] = "Discussies die door \$a zijn gestart";
 $string['discussthistopic'] = "Draag bij aan de discussie";
 $string['eachuserforum'] = "Iedereen voegt een bijdrage toe aan één discussie";
 $string['edit'] = "Wijzig";
@@ -29,7 +29,7 @@ $string['emptymessage'] = "Er was iets mis met je bijdrage. Misschien heb je het
 $string['everyonecanchoose'] = "Iedereen kan kiezen of ze wel of niet lid zijn.";
 $string['everyoneissubscribed'] = "Iedereen is lid van dit forum";
 $string['forcesubscribe'] = "Verplicht iedereen om lid te zijn";
-$string['forcesubscribeq'] = "Verplicht iedereen om lid te zijn?";
+$string['forcesubscribeq'] = "Moet iedereen verplicht lid zijn?";
 $string['forum'] = "Forum";
 $string['forumintro'] = "De inleiding van het forum";
 $string['forumname'] = "Naam van het forum";
@@ -40,13 +40,13 @@ $string['generalforums'] = "Algemene forums";
 $string['inforum'] = "in \$a";
 $string['intronews'] = "Algemeen nieuws en aankondigingen";
 $string['introsocial'] = "Een open forum om te chatten over wat je maar wilt";
-$string['introteacher'] = "Een forum alleen maar bestemd voor docenten";
-$string['learningforums'] = "Forums voor leren";
-$string['maxtimehaspassed'] = "Sorry, maar de maximale tijd voor het wijzigen van deze bijdrage (\$a) is verstreken!";
+$string['introteacher'] = "Een forum alleen bestemd voor discussies en aantekeningen van docenten";
+$string['learningforums'] = "Leer forums";
+$string['maxtimehaspassed'] = "Helaas is de maximale tijd voor het wijzigen van deze bijdrage (\$a) verstreken!";
 $string['message'] = "Bijdrage";
 $string['modeflatnewestfirst'] = "Laat de antwoorden in één lijst zien, met de nieuwste eerst";
 $string['modeflatoldestfirst'] = "Laat de antwoorden in één lijst zien, met de oudste eerst";
-$string['modenested'] = "Laat de antwoorden genest zien";
+$string['modenested'] = "Laat de antwoorden 'genest' zien";
 $string['modethreaded'] = "Laat de antwoorden in hun 'draden' zien";
 $string['modulename'] = "Forum";
 $string['modulenameplural'] = "Forums";
@@ -58,28 +58,38 @@ $string['newforumposts'] = "Nieuwe forum bijdragen";
 $string['nodiscussions'] = "Er zijn nog geen discussies in dit forum";
 $string['noguestpost'] = "Sorry, gasten mogen geen bijdragen leveren";
 $string['noposts'] = "Geen bijdragen";
-$string['nopostscontaining'] = "Er zijn geen bijdrage met '\$a' gevonden";
-$string['nosubscribers'] = "Er zijn nog leden voor dit forum";
-$string['nownotsubscribed'] = "\$a->naam zal GEEN bijdragen aan '\$a->forum' ontvangen via e-mail.
+$string['nopostscontaining'] = "Er zijn geen bijdragen met '\$a' gevonden";
+$string['nosubscribers'] = "Er is nog niemand lid van dit forum";
+$string['nownotsubscribed'] = "\$a->name zal via e-mail GEEN bijdragen aan '\$a->forum' ontvangen.
 ";
 $string['nowsubscribed'] = "\$a->naam zal bijdragen aan '\$a->forum' ontvangen via e-mail.
 ";
 $string['numposts'] = "\$a bijdragen";
 $string['olderdiscussions'] = "Oudere discussies";
-$string['openmode0'] = "Geen discussies, geen bijdragen";
-$string['openmode1'] = "Geen discussies, maar bijdragen zijn toegestaan";
-$string['openmode2'] = "Discussies en bijdragen zijn toegestaan";
+$string['openmode0'] = "Geen nieuwe discussies, geen bijdragen";
+$string['openmode1'] = "Geen nieuwe discussies, maar bijdragen zijn toegestaan";
+$string['openmode2'] = "Nieuwe discussies en bijdragen zijn toegestaan";
 $string['parentofthispost'] = "'Moeder' van deze bijdrage";
-$string['postadded'] = "Je bijdrage is succesvol toegevoegd.<p> Je hebt \$a de tijd om deze bijdrage te wijzigen als je iets wilt veranderen.";
+$string['postadded'] = "Je bijdrage is met succes toegevoegd.<p> Je hebt \$a de tijd om deze bijdrage te wijzigen als je iets wilt veranderen.";
 $string['postincontext'] = "Bekijk deze bijdrage in zijn context";
-$string['postingtip'] = "<B>Tips voor bijdragen:</B><P>Als je een antwoord geeft op een bijdrage: <UL><LI>Lees de bijdrage zorgvuldig en met inlevingsvermogen</LI><LI>zoek naar zaken waar je commentaar op kunt geven</LI></UL><P>Terwijl je schrijft: <UL><LI>Hou de bijdrage kort en blijf bij het onderwerp</LI><LI>Leg je eigen ideeën duidelijk uit</LI><LI>Bedenk welke vragen je kunt stellen</LI></UL>";
-$string['postmailinfo'] = "Dit is een kopie van een bijdrage toegevoegd op de \$a website.
-Klik op deze link om jouw antwoord via de website toe te voegen: 
-Om uw antwoord via de website toe te voegen, klik op deze verbinding:";
+$string['postingtip'] = "<B>Tips voor bijdragen:</B>
+Als je een antwoord geeft op een bijdrage: <UL>
+<LI>Lees de andere bijdrage zorgvuldig en met inlevingsvermogen
+<LI>zoek naar zaken waar je commentaar op kunt geven
+</UL>
+
+Terwijl je schrijft:
+<UL>
+<LI>Hou de bijdrage kort en blijf bij het onderwerp
+<LI>Geef een duidelijke uitleg van je eigen ideeën
+<LI>Bedenk welke vragen je kunt stellen
+</UL>";
+$string['postmailinfo'] = "Dit is een kopie van een bijdrage die is toegevoegd op de \$a website.
+Klik op deze link om jouw antwoord via de website toe te voegen:";
 $string['postrating1'] = "Laat voornamelijk 'gescheiden kennen' zien";
 $string['postrating2'] = "Even 'gescheiden' als 'verbonden/relationeel'";
 $string['postrating3'] = "Laat voornamelijk 'verbonden/relationele kennen' zien";
-$string['postupdated'] = "Je bijdrage is gewijzigd";
+$string['postupdated'] = "Je bijdrage is bijgewerkt";
 $string['processingpost'] = "Bijdrage \$a aan het verwerken";
 $string['rate'] = "Classificeer  ";
 $string['ratings'] = "Classificaties  ";
@@ -101,7 +111,7 @@ $string['subscribers'] = "Leden";
 $string['subscribersto'] = "Leden van '\$a'";
 $string['unsubscribe'] = "Zeg het lidmaatschap van dit forum op";
 $string['youratedthis'] = "Je classificeerde dit als";
-$string['yournewtopic'] = "Je nieuwe onderwerp van discussie";
+$string['yournewtopic'] = "Je nieuwe discussie onderwerp";
 $string['yourreply'] = "Jouw antwoord";
 
 ?>

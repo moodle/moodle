@@ -2,9 +2,9 @@
       // survey.php - created with Moodle 1.0.7 (2002121000)
 
 
-$string['actual'] = "Werkelijke";
-$string['actualclass'] = "Werkelijke klasse";
-$string['actualstudent'] = "werkelijke van \$a";
+$string['actual'] = "Werkelijk";
+$string['actualclass'] = "Klasseresultaat werkelijk";
+$string['actualstudent'] = "werkelijk van \$a";
 $string['allquestions'] = "Alle vragen in volgorde, voor alle leerlingen";
 $string['allscales'] = "Alle schalen, voor alle leerlingen";
 $string['alreadysubmitted'] = "Je hebt dit onderzoek al ingestuurd";
@@ -16,164 +16,182 @@ $string['attls11'] = "I probeer 'met' mensen mee te denken in plaats van 'tegen'
 $string['attls11short'] = "MET mensen denken";
 $string['attls12'] = "Ik gebruik bepaalde criteria bij het beoordelen van argumenten";
 $string['attls12short'] = "Gebruik criteria om te beoordelen";
-$string['attls13'] = "Ik ben meer geneigd om iemand anders mening te begrijpen dan de mening te beoordelen.";
+$string['attls13'] = "Ik ben meer geneigd om de mening van iemand anders te begrijpen dan de mening te beoordelen.";
 $string['attls13short'] = "Proberen te begrijpen";
-$string['attls14'] = "Ik probeer zwakke punten in de het denken van anderen aan te wijzen om te helpen bij het verhelderen van hun argumentatie.";
+$string['attls14'] = "Ik probeer zwakke punten in het denken van anderen aan te wijzen om te helpen bij het verhelderen van hun argumentatie.";
 $string['attls14short'] = "Zwakke punten aanwijzen";
 $string['attls15'] = "Ik ben geneigd om mezelf in andermans schoenen te verplaatsen wanneer ik controversiële onderwerpen bediscussieer, zodat ik kan zien waarom ze denken wat ze denken";
 $string['attls15short'] = "in andermans schoenen verplaatsen";
-$string['attls16'] = "Je zou mijn manier van analyseren 'voor de rechter stellen' kunnen noemen, omdat ik altijd zeer zorgvuldig al het bewijs bekijk.";
-$string['attls16short'] = "voor de rechter stellen";
+$string['attls16'] = "Je zou mijn manier van analyseren 'voor de rechter dagen' kunnen noemen, omdat ik altijd zeer zorgvuldig al het bewijs bekijk.";
+$string['attls16short'] = "voor de rechter dagen";
 $string['attls17'] = "Ik waardeer het gebruik van logica en de rede boven het gebruik van mijn eigen zorgen/aandachtspunten als ik een probleem oplos.";
-$string['attls17short'] = "ik waardeer logica het meest";
+$string['attls17short'] = "ik waardeer logica het meeste";
 $string['attls18'] = "Ik ben in staat empathie te gebruiken om inzicht te krijgen in meningen die verschillen van de mijne.";
 $string['attls18short'] = "Inzicht door middel van empathie";
-$string['attls19'] = "Als ik mensen tegen kom met een mening die af lijkt te wijken van de mijne, doe ik een bewust poging om mezelf 'uit te breiden' in de richting van die persoon, zodat ik kan zien hoe ze aan die mening komen.";
+$string['attls19'] = "Als ik mensen tegen kom met een mening die af lijkt te wijken van de mijne, doe ik een bewuste poging om mezelf 'uit te breiden' in de richting van die persoon, zodat ik kan zien hoe ze aan die mening komen.";
 $string['attls19short'] = "een poging doen tot 'uitbreiden'";
-$string['attls1short'] = "Kwaliteit van het argument scherp stellen";
-$string['attls2'] = "Ik speel graag advocaat van de duivel - het omgekeerde argumenteren van wat iemand ander beweert.";
-$string['attls20'] = "Ich verbringe Zeit, zu begreifen, was 'nicht in Ordnung' mit Dingen ist. Zum Beispiel suche ich etwas in einer literarischen Interpretation, nicht nicht ausreichend diskutiert worden ist.. ";
-$string['attls20short'] = "Wat is verkeerd?";
+$string['attls1short'] = "kwaliteit van het argument in beeld brengen";
+$string['attls2'] = "Ik speel graag advocaat van de duivel - het omgekeerde argumenteren van wat iemand anders beweert.";
+$string['attls20'] = "Ik gebruik mijn tijd om uit te zoeken wat er 'mis' is. Ik ga in een literaire kritiek bijvoorbeeld op zoek naar een punt wat onvoldoende beargumenteerd is.";
+$string['attls20short'] = "wat is er 'mis'";
 $string['attls2short'] = "advocaat van de duivel spelen";
-$string['attls3'] = "Ich möchte verstehen, woher andere Leute 'kommen von', welche Erfahrungen dazu geführt haben, dass in dieser Art fühlen, wie sie es tun. ";
-$string['attls3short'] = "woher die Leute kommen";
-$string['attls4'] = "Der wichtigste Teil meiner Erziehung war es, Leute verstehen zu lernen, die gegenüber mir sehr anders sind. ";
-$string['attls4short'] = "Andersartige leute Verstehen";
-$string['attls5'] = "Ich meine, dass der beste Weg, meine eigene Identität zu erreichen ist, mit einer Vielfalt von anderen Menschen zu interagieren. ";
-$string['attls5short'] = "mit der Vielfalt interagieren";
-$string['attls6'] = "Ich genieße es, die Meinungen von Menschen zu hören, die von Hintergründen kommen, die gegenüber meinen verschieden sind - es hilft mir, zu verstehen, wie dieselben Dinge auf solch verschiedene Weisen gesehen werden können.";
-$string['attls6short'] = "es genießen, Meinungen zu hören";
-$string['attls7'] = "Ich finde, dass ich meine eigene Position dadurch stärken kann, indem ich mit jemandem diskutiere, der mit mir nicht übereinstimmt. ";
-$string['attls7short'] = "sich stärken durch diskutieren";
-$string['attls8'] = "Ich bin immer daran interessiert, zu wissen, warum die Leute die Dinge sagen und glauben, die sie von sich geben. ";
-$string['attls8short'] = "wissen, warum Leute Sachen von sich geben";
-$string['attls9'] = "Ich ertappe mich oft dabei, mit den Autoren von Büchern zu diskutieren, die ich lese und versuche, logisch zu begreifen, warum sie Unrecht haben. ";
-$string['attls9short'] = "mit Autoren diskutieren";
-$string['attlsintro'] = "Der Zweck dieses Fragebogens ist, uns zu helfen, Ihre Einstellungen gegenüber dem Denken und der Gelehrsamkeit zu beurteilen. Es gibt keine 'richtigen' oder 'falschen' Antworten; wir sind nur an Ihrer Meinung interessiert. Bitte,  wir versichern Ihnen, dass Ihre Antworten mit einem hohen Grad an Vertraulichkeit behandelt werden und Ihre Beurteilung nicht beeinflussen. ";
-$string['attlsm1'] = "Einstellungen zu Denken und Gelehrsamkeit ";
-$string['attlsm2'] = "Geimeinsames Lernen ";
-$string['attlsm3'] = "Getrenntes Lernen";
-$string['attlsmintro'] = "In der Diskussion...";
-$string['attlsname'] = "ATTLS (20 Punkte Version)";
-$string['clicktocontinue'] = "Klicken Sie hier, um weiterzumachen ";
-$string['clicktocontinuecheck'] = "Klicken Sie hier, um zu überprüfen und weiterzumachen ";
-$string['colles1'] = "mein Erlernen zielt auf Angelegenheiten, die mich interessieren. ";
-$string['colles10'] = "Ich bitte andere Studenten darum, ihre Ideen zu erklären. ";
-$string['colles10short'] = "Ich bitte um Erklärungen ";
-$string['colles11'] = "andere Schüler bitten mich darum, meine Ideen zu erklären. ";
-$string['colles11short'] = "Ich werde darum gebeten zu erklären ";
-$string['colles12'] = "andere Studenten antworten auf meine Ideen. ";
-$string['colles12short'] = "Studenten antworten mir ";
-$string['colles13'] = "der Tutor regt mein Denken an. ";
-$string['colles13short'] = "Tutor regt  Denken an ";
-$string['colles14'] = "der Tutor ermutigt mich, teilzunehmen. ";
-$string['colles14short'] = "Tutor ermutigt mich";
-$string['colles15'] = "der Tutor modelliert guten Diskurs. ";
-$string['colles15short'] = "Tutor modelliert diDiskurs";
-$string['colles16'] = "der Tutor modelliert kritische Selbstspiegelung. ";
-$string['colles16short'] = "Tutor modelliert Selbstspiegelung ";
-$string['colles17'] = "andere Studenten ermutigen zu meiner Beteiligung. ";
-$string['colles17short'] = "Studenten ermutigen mich ";
-$string['colles18'] = "andere Studenten loben meinen Beitrag. ";
-$string['colles18hort'] = "Studenten loben mich ";
-$string['colles19'] = "andere Studenten schätzen meinen Beitrag. ";
-$string['colles19short'] = "Studenten schätzen mich ";
-$string['colles1short'] = "interessante Angelegenheiten hinweisen";
-$string['colles2'] = "was ich lerne, ist für meine professionelle Übung wichtig. ";
-$string['colles20'] = "andere Studenten fühlen mit, bei meinen Anstrengungen zu lernen. ";
-$string['colles20short'] = "Studenten fühlen mit";
-$string['colles21'] = "Ich profitiere von den Mitteilungen der anderen Studenten. ";
-$string['colles21short'] = "Ik versta  andere Studenten ";
-$string['colles22'] = "andere Studenten machen guten Gebrauch von meinen Mitteilungen.";
-$string['colles22short'] = "Andere studenten verstaan my";
-$string['colles23'] = "Ich profitiere von den Aussagen des Tutors. ";
-$string['colles23short'] = "Ik versta de  Tutor ";
-$string['colles24'] = "der Tutor profitiert von meinen Nachrichten ";
-$string['colles24short'] = "De  Tutor verstaat mij";
-$string['colles2short'] = "für meine Übung wichtig ";
-$string['colles3'] = "Ich erfahre, wie meine professionelle Übung zu verbessern ist. ";
-$string['colles3short'] = "meine Übung verbessern ";
-$string['colles4'] = "was ich lerne, verbindet sich gut mit meiner professionellen Übung. ";
-$string['colles4short'] = "verbindet sich mit meiner Übung ";
-$string['colles5'] = "Ich denke kritisch darüber, wie ich lerne. ";
-$string['colles5short'] = "Ich bin gegenüber meinem Erlernen kritisch ";
-$string['colles6'] = "Ich denke kritisch über meine eigenen Ideen nach. ";
-$string['colles6short'] = "Ik ben kritisch van mijn eigen idean ";
-$string['colles7'] = "Ich denke kritisch über die Ideen der anderen Studenten nach. ";
-$string['colles7short'] = "Ich bin gegenüber anderen Studenten kritisch ";
-$string['colles8'] = "Ich denke kritisch über Ideen in den Materialien nach. ";
-$string['colles8short'] = "Ich bin gegenüber dem Material kritisch ";
-$string['colles9'] = "Ich erkläre anderen Studenten meine Ideen. ";
-$string['colles9short'] = "Ich erkläre meine Ideen ";
-$string['collesaintro'] = "Het doel van dit onderzoek is ons te helpen begrijpen hoe de online levering van deze cursus u toeliet om good te leren.  
+$string['attls3'] = "Ik hou ervan om te begrijpen waar anderen 'vandaan komen', welke ervaringen hebben ervoor gezorgd dat ze zich voelen zoals ze voelen.";
+$string['attls3short'] = "waar mensen 'vandaan komen'";
+$string['attls4'] = "Het belangrijkste onderdeel van mijn scholing was het leren begrijpen van andere mensen die zeer verschillend van mij zijn";
+$string['attls4short'] = "andere mensen begrijpen";
+$string['attls5'] = "Ik heb het gevoel dat de beste manier om mijn eigen identiteit te leren kennen het omgaan met heel veel verschillende mensen is.";
+$string['attls5short'] = "omgaan met verschillen";
+$string['attls6'] = "Ik vind het leuk om de mening van mensen met een andere achtergrond dan de mijne te horen. Het helpt me in het begrijpen van hoe je dezelfde zaken op verschillende manieren kunt bekijken.";
+$string['attls6short'] = "leuk om meningen te horen";
+$string['attls7'] = "Ik ben van mening dat ik mijn eigen positie kan versterken door te discussieren met iemand die het niet met me eens is.";
+$string['attls7short'] = "versterken door discussie";
+$string['attls8'] = "Ik wil altijd graag weten waarom mensen de dingen zeggen en geloven die ze zeggen en geloven.";
+$string['attls8short'] = "weten waarom mensen dingen zeggen/geloven";
+$string['attls9'] = "Vaak betrap ik mezelf erop dat ik aan het argumenteren ben met de auteurs van de boeken die ik aan het lezen ben, ik probeer dan op een logische manier uit te vinden waarom ze het bij het verkeerde eind hebben.";
+$string['attls9short'] = "argumenteren met auteurs";
+$string['attlsintro'] = "Deze vragenlijst heeft als bedoeling het helpen evalueren van je meningen/attitudes te opzichte van denken en leren.
 
-Elke één van de 24 verklaringen hieronder vraagt over uw ervaring in deze cursus.  
+Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.";
+$string['attlsm1'] = "Attitudes ten opzichte van denken en leren";
+$string['attlsm2'] = "Verbonden/relationeel leren";
+$string['attlsm3'] = "Gescheiden leren";
+$string['attlsmintro'] = "In discussie ...";
+$string['attlsname'] = "ATTLS (versie met 20 beweringen)";
+$string['clicktocontinue'] = "Klik hier om door te gaan";
+$string['clicktocontinuecheck'] = "Klik hier om te controleren en door te gaan";
+$string['colles1'] = "mijn leren richt zich op de zaken die me interesseren.";
+$string['colles10'] = "ik vraag de andere studenten om hun ideeën uit te leggen.";
+$string['colles10short'] = "ik vraag naar uitleg";
+$string['colles11'] = "de andere studenten vragen me om mijn ideeën uit te leggen.";
+$string['colles11short'] = "ik word om uitleg gevraagd";
+$string['colles12'] = "de andere studenten reageren op mijn ideeën";
+$string['colles12short'] = "studenten reageren op mij";
+$string['colles13'] = "de docent stimuleert mijn denken";
+$string['colles13short'] = "docent stimuleert denken";
+$string['colles14'] = "de docent moedigt mij aan om te participeren";
+$string['colles14short'] = "docent moedigt me aan";
+$string['colles15'] = "de docent staat model voor een goede verhandeling";
+$string['colles15short'] = "docent staat model voor verhandeling";
+$string['colles16'] = "de docent staat model voor kritische zelfreflectie";
+$string['colles16short'] = "docent staat model voor zelfreflectie";
+$string['colles17'] = "de andere studenten moedigen mijn participatie aan";
+$string['colles17short'] = "studenten moedigen me aan";
+$string['colles18'] = "de andere studenten complimenteren mijn bijdrage(n)";
+$string['colles18hort'] = "studenten complimenteren mij";
+$string['colles19'] = "de andere studenten waarderen mijn bijdrage(n)";
+$string['colles19short'] = "studenten waarderen mij";
+$string['colles1short'] = "interessante zaken in beeld brengen";
+$string['colles2'] = "wat ik leer is belangrijk voor de praktijk van mijn beroepsuitoefening";
+$string['colles20'] = "de andere studenten voelen mee met mijn worsteling om te leren";
+$string['colles20short'] = "studenten voelen mee";
+$string['colles21'] = "ik begrijp de berichten/bijdragen van de andere studenten";
+$string['colles21short'] = "ik begrijp de andere studenten";
+$string['colles22'] = "de andere studenten begrijpen mijn berichten/bijdragen.";
+$string['colles22short'] = "studenten begrijpen me";
+$string['colles23'] = "ik begrijp de berichten/bijdragen van de docent";
+$string['colles23short'] = "ik begrijp de docent";
+$string['colles24'] = "de docent begrijpt mijn berichten/bijdragen";
+$string['colles24short'] = "de docent begrijpt mij";
+$string['colles2short'] = "belangrijk voor mijn beroepsuitoefening";
+$string['colles3'] = "ik leer hoe ik de praktijk van mijn beroepsuitoefening kan verbeteren";
+$string['colles3short'] = "mijn beroepsuitoefening verbeteren";
+$string['colles4'] = "wat ik leer is op een goede manier verbonden met de praktijk van mijn beroepsuitoefening.";
+$string['colles4short'] = "verbonden met mijn beroepsuitoefening";
+$string['colles5'] = "ik denk kritisch na over hoe ik leer.";
+$string['colles5short'] = "ik ben kritisch op mijn leren";
+$string['colles6'] = "ik denk kritisch na over mijn eigen ideeën.";
+$string['colles6short'] = "ik ben kritisch op mijn ideeën";
+$string['colles7'] = "Ik denk kritisch na over de ideeën van de andere studenten.";
+$string['colles7short'] = "ik ben kritisch op de andere studenten";
+$string['colles8'] = "ik denk kritisch na over de ideeën in het lesmateriaal.";
+$string['colles8short'] = "ik ben kritisch op het lesmateriaal";
+$string['colles9'] = "ik leg mijn ideeën aan de andere studenten uit.";
+$string['colles9short'] = "ik leg mijn ideeën uit";
+$string['collesaintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
 
-Er zijn geen ' juiste ' of ' verkeerde ' antwoorden;  wij zijn allen  geinteresseerd naar uw mening.   Wij verzekeren dat  uw reacties met  vertrouwelijkheid zullen worden behandeld. 
-Uw zorgvuldig overwogen reacties zullen ons helpen de manier te verbeteren van deze online cursus in de toekomst.  
+Elk van de onderstaande 24 beweringen gaan over jouw ervaring binnen dit onderdeel.
 
-Hartelijk dank.  
+Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
+
+Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
+
+Hartstikke bedankt.
  ";
-$string['collesaname'] = "PÄSSE (tatsächlich)";
-$string['collesapintro'] = "Der Zweck dieses Fragebogens ist, uns zu helfen, zu verstehen, wie gut die Online-Lieferung dieser Einheit Ihnen ermöglichte zu lernen. Jede der 24 Erklärungen unten bittet Sie darum, Ihre <b>bevorzugte</b> (ideale) und <b>tatsächliche</b> Erfahrung in dieser Einheit zu vergleichen. Es gibt keine 'richtigen' oder 'falschen' Antworten; wir sind nur nach Ihrer Meinung interessiert. Bitte seien Sie versichert, dass Ihre Antworten mit einem hohen Grad an Vertraulichkeit behandelt werden und Ihre Beurteilung nicht beeinflussen. Ihre sorgfältig berücksichtigten Antworten helfen uns, die Art zu verbessern, wie diese Einheit online zukünftig gezeigt wird. Vielen Dank. ";
-$string['collesapname'] = "PÄSSE (bevorzugt und tatsächlich) ";
-$string['collesm1'] = "Relevanz ";
-$string['collesm1short'] = "Relevanz ";
-$string['collesm2'] = "Reflektierendes Denken ";
-$string['collesm2short'] = "Reflektierendes Denken ";
-$string['collesm3'] = "Interaktivität ";
-$string['collesm3short'] = "Interaktivität ";
-$string['collesm4'] = "Tutor Unterstützung";
-$string['collesm4short'] = "Tutor Unterstützung";
-$string['collesm5'] = "Gleichschichtige Unterstützung ";
-$string['collesm5short'] = "Gleichschichtige Unterstützung ";
-$string['collesm6'] = "Interpretation";
-$string['collesm6short'] = "Interpretation";
-$string['collesmintro'] = "In deze online unit";
-$string['collespintro'] = "Der Zweck dieser Studie ist, uns zu helfen, zu verstehen, was Sie an einer Online-Lernerfahrung schätzen. Jede der 24 Erklärungen unten fragt nach Ihrer <b>bevorzugten</b> (idealen) Erfahrungen in dieser Einheit. Es gibt keine 'richtigen' oder 'falschen' Antworten; wir sind nur nach Ihrer Meinung interessiert. Bitte seien Sie versichert, dass Ihre Antworten mit einem hohen Grad Vertraulichkeit behandelt werden und Ihre Beurteilung nicht beeinflussen. Ihre sorgfältig berücksichtigten Antworten helfen uns, die Art zu verbessern, wie diese Einheit online zukünftig gezeigt wird. Vielen Dank. ";
-$string['collespname'] = "PÄSSE (bevorzugt) ";
-$string['done'] = "Erledigt";
-$string['download'] = "Herunterladen";
-$string['downloadexcel'] = "Daten als Excel-Tabelle herunterladen";
-$string['downloadinfo'] = "U kunt de volledige ruwe gegevens voor dit onderzoek in een vorm downloaden geschikt voor analyse in Excel, SPSS of ander pakket. ";
-$string['downloadtext'] = "Download gegevens als en  tekst dossier";
-$string['editingasurvey'] = "Eine Übrsicht bearbeiten";
-$string['helpsurveys'] = "Hilfe zu den verschiedenen Typen der Übersichten";
-$string['howlong'] = "Wie lange brauchten Sie für das Ausfüllen dieser Beurteilung? ";
-$string['howlongoptions'] = "Onder  Min, 1-2 Min, 2-3 Min, 3-4 Min, 4-5 Min, 5-10 Min, meer dan 10 Min ";
+$string['collesaname'] = "COLLES (Werkelijk)";
+$string['collesapintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
+
+Elk van de onderstaande 24 beweringen vraagt je om de je <B>voorkeur</B> (ideaal) te vergelijken met je <B>werkelijke</B> ervaringen met dit onderdeel.
+
+Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
+
+Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
+
+Hartstikke bedankt.";
+$string['collesapname'] = "COLLES (Voorkeur en Werkelijk)";
+$string['collesm1'] = "Relevantie";
+$string['collesm1short'] = "Relevantie";
+$string['collesm2'] = "Reflectief denken";
+$string['collesm2short'] = "Reflectief denken";
+$string['collesm3'] = "Interactiviteit";
+$string['collesm3short'] = "Interactiviteit";
+$string['collesm4'] = "Ondersteuning van de docent";
+$string['collesm4short'] = "Docentenondersteuning";
+$string['collesm5'] = "Ondersteuning van leeftijdgenoten";
+$string['collesm5short'] = "Leeftijdgenootondersteuning";
+$string['collesm6'] = "Interpretatie";
+$string['collesm6short'] = "Interpretatie";
+$string['collesmintro'] = "In dit online onderdeel...";
+$string['collespintro'] = "Door middel van dit onderzoek proberen wij beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
+
+Elk van de onderstaande 24 beweringen vraagt je naar je <B>voorkeur</B> (ideale) ervaringen met dit onderdeel.
+
+Er zijn geen 'goede' en geen 'foute' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
+
+Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden.
+
+Hartstikke bedankt.";
+$string['collespname'] = "COLLES (Voorkeur) ";
+$string['done'] = "Voltooid";
+$string['download'] = "Download";
+$string['downloadexcel'] = "Download de gegevens als een Excel spreadsheet";
+$string['downloadinfo'] = "Je kunt de complete ruwe data voor dit onderzoek downloaden in een opmaak die geschikt is voor analyse in Excel, SPSS of een ander pakket.";
+$string['downloadtext'] = "Download de gegevens als een tekstbestand";
+$string['editingasurvey'] = "Een onderzoek bewerken";
+$string['helpsurveys'] = "Help over de verschillende soorten onderzoeken";
+$string['howlong'] = "Hoe lang heb je er over gedaan om dit onderzoek in te vullen?";
+$string['howlongoptions'] = "minder dan 1 min,1-2 min,2-3 min,3-4 min,4-5 min,5-10 min,meer dan 10 min ";
 $string['ifoundthat'] = "Ik vond dat  ";
-$string['introtext'] = "Introductie  tekst";
-$string['ipreferthat'] = "Ik verkies dat  ";
+$string['introtext'] = "Inleidende tekst";
+$string['ipreferthat'] = "Mijn voorkeur zou zijn";
 $string['modulename'] = "Onderzoek";
 $string['modulenameplural'] = "Onderzoeken";
 $string['name'] = "Naam";
-$string['newsurveyresponses'] = "Nieuwe onderzoeksreacties  ";
-$string['nobodyyet'] = "Niemand heeft  dit onderzoek nog gedaan";
+$string['newsurveyresponses'] = "Nieuwe ingevulde onderzoeken";
+$string['nobodyyet'] = "Nog niemand heeft het onderzoek gedaan";
 $string['notdone'] = "Nog niet gedaan";
-$string['notes'] = "Uw privé analyse en nota's  ";
-$string['othercomments'] = "Hebt u een andere commentaren?  ";
-$string['peoplecompleted'] = "\$a mensen hebben dit onderzoek tot dusver vervolledigd ";
+$string['notes'] = "Je persoonlijke analyse en aantekeningen";
+$string['othercomments'] = "Heb je nog andere opmerkingen?";
+$string['peoplecompleted'] = "\$a mensen hebben dit onderzoek tot nu toe ingevuld";
 $string['preferred'] = "Voorkeur";
-$string['preferredclass'] = "Bevoorkeurde  Klas";
-$string['preferredstudent'] = "\$a  voorkeur";
+$string['preferredclass'] = "Klasseresultaat voorkeur";
+$string['preferredstudent'] = "\$a voorkeur";
 $string['question'] = "Vraag";
 $string['questions'] = "Vragen";
-$string['questionsnotanswered'] = "Enkele veelvoudige keusvragen zijn niet beantwoord.  ";
-$string['report'] = "Onderzook report";
-$string['savednotes'] = "Uw nota's werden bewaard";
-$string['scaleagree5'] = " Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree";
-$string['scales'] = "Scales";
-$string['scaletimes5'] = "Bijna nooit, zelden, soms, vaak, bijna altijd  ";
-$string['seemoredetail'] = "Klik hier om meer detail te zien ";
-$string['selectedquestions'] = "Geselecteerde vragen van een  schaal ,  alle studenten  ";
+$string['questionsnotanswered'] = "Sommige van de multiple choice vragen zijn niet ingevuld.";
+$string['report'] = "Onderzoeksrapport";
+$string['savednotes'] = "Je aantekeningen zijn bewaard";
+$string['scaleagree5'] = "Zeer mee oneens,Enigszins mee oneens,Mee eens noch mee oneens,Enigszins mee eens,Zeer mee eens";
+$string['scales'] = "Schalen";
+$string['scaletimes5'] = "Bijna nooit,Zelden,Soms,Vaak,Bijna altijd";
+$string['seemoredetail'] = "Klik hier om meer details te zien ";
+$string['selectedquestions'] = "Geselecteerde vragen van een schaal, alle studenten  ";
 $string['summary'] = "Samenvatting  ";
-$string['surveycompleted'] = "U hebt dit onderzoek vervolledigd.   De grafiek hieronder toont A- samenvatting VAN uw resultaten vergeleken by de klassen Gemiddelden.  
-Kursdurchschnitten. ";
-$string['surveyname'] = "De naam van het onderzoek ";
-$string['surveysaved'] = "onderzoek  bewaard";
-$string['surveytype'] = "Onderzoek Type";
-$string['thanksforanswers'] = "Dank voor het beantwoorden van dit onderzoek, \$a  ";
+$string['surveycompleted'] = "Je bent klaar met het invullen van dit onderzoek. De grafiek hieronder laat een samenvatting zien van jouw resultaten vergeleken met het klasseresultaat.";
+$string['surveyname'] = "De naam van het onderzoek";
+$string['surveysaved'] = "Het onderzoek is bewaard";
+$string['surveytype'] = "Soort onderzoek";
+$string['thanksforanswers'] = "Bedankt voor het invullen van dit onderzoek, \$a";
 $string['time'] = "Tijd";
-$string['viewsurveyresponses'] = "Toon de \$a  onderzoek  reacties ";
+$string['viewsurveyresponses'] = "Bekijk \$a ingevulde onderzoeken";
 
 ?>
