@@ -521,11 +521,16 @@ function exercise_user_complete($course, $user, $mod, $exercise) {
 			if ($assessments = exercise_get_assessments($submission)) {
 				// should only be one but we'll loop anyway
 				foreach ($assessments as $assessment) {
-					$table->data[] = array(exercise_print_submission_title($exercise, $submission), userdate($submission->timecreated), 
-						userdate($assessment->timecreated), $assessment->grade * $exercise->grade / 100.0);
-					}
+					$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
+                            userdate($submission->timecreated), userdate($assessment->timecreated), 
+                            $assessment->grade * $exercise->grade / 100.0);
 				}
-			}
+			} else {
+                // submission not yet assessed (by teacher)
+       			$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
+                        userdate($submission->timecreated), get_string("notassessedyet", "exercise"), 0);
+            }
+        }
 		print_table($table);
 	    print_simple_box_end();
     } else {

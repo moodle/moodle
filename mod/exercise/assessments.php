@@ -785,9 +785,9 @@
 			
 		// show grade if grading strategy is not zero
 		if ($exercise->gradingstrategy) {
-			redirect($returnto, get_string("thegradeis", "exercise").": ".
+			redirect($returnto, "<p align=\"center\"><b.".get_string("thegradeis", "exercise").": ".
                 number_format($grade * $exercise->grade / 100.0, 1)."% (".get_string("maximumgrade").
-				" ".number_format($exercise->grade)."%)");
+				" ".number_format($exercise->grade)."%)</b></p>", 1);
 			}
 		else {
 			redirect($returnto);
@@ -998,9 +998,9 @@
 			
 		// show grade if grading strategy is not zero
 		if ($exercise->gradingstrategy) {
-			redirect($returnto, get_string("thegradeis", "exercise").": ".
+			redirect($returnto, "<p align=\"center\"><b>".get_string("thegradeis", "exercise").": ".
                 number_format($grade * $exercise->grade / 100.0, 1)."% (".get_string("maximumgrade").
-				" ".number_format($exercise->grade)."%)");
+				" ".number_format($exercise->grade)."%)</b></p>", 1);
 			}
 		else {
 			redirect($returnto);

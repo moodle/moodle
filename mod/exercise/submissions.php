@@ -132,6 +132,7 @@
 		delete_records("exercise_submissions", "id", $submission->id);
 		// ..and finally the submitted file
 		exercise_delete_submitted_files($exercise, $submission);
+        add_to_log($course->id, "exercise", "delete", "view.php?id=$cm->id", "submission $submission->id");
 		
 		print_continue("submissions.php?id=$cm->id&action=adminlist");
 		}
@@ -327,6 +328,7 @@
 		delete_records("exercise_submissions", "id", $submission->id);
 		// ..and finally the submitted file
 		exercise_delete_submitted_files($exercise, $submission);
+        add_to_log($course->id, "exercise", "delete", "view.php?id=$cm->id", "submission $submission->id");
 		
 		print_continue("view.php?id=$cm->id");
 		}

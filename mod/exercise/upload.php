@@ -4,6 +4,7 @@
     require("lib.php");
 
     require_variable($id);          // course module ID
+    $timenow = time();
 
     $newfile = $HTTP_POST_FILES["newfile"];
 
@@ -33,7 +34,22 @@
                  "$navigation <A HREF=index.php?id=$course->id>$strexercises</A> -> 
                   <A HREF=\"view.php?id=$cm->id\">$exercise->name</A> -> $strupload", 
                   "", "", true);
-	if (!$title = $_POST['title']) {
+
+    // check that this is not a "rapid" second submission, caused by using the back button
+    if ($submissions = exercise_get_user_submissions($exercise, $USER)) {
+        // returns all submissions, newest on first
+        foreach ($submissions as $submission) {
+            if ($submission->timecreated > $timenow - $CFG->maxeditingtime) {
+                // ignore this submission
+                redirect("view.php?id=$cm->id");
+                print_footer($course);
+                exit();
+            }
+        }
+    }
+                    
+    // check existence of title
+    if (!$title = $_POST['title']) {
 		notify(get_string("notitlegiven", "exercise") );
 		}
 	else {	
@@ -54,7 +70,7 @@
 						$newsubmission->userid         = $USER->id;
 						}
 					$newsubmission->title  = $title;
-					$newsubmission->timecreated  = time();
+					$newsubmission->timecreated  = $timenow;
 					if (!$newsubmission->id = insert_record("exercise_submissions", $newsubmission)) {
 						error("exercise upload: Failure to create new submission record!");
 						}
