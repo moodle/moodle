@@ -744,19 +744,65 @@ function clean_text($text, $format=FORMAT_MOODLE) {
         /// Remove tags that are not allowed
             $text = strip_tags($text, $ALLOWED_TAGS);
 
-        /// Munge javascript: label
-            $text = str_ireplace("javascript:", "Xjavascript:", $text);
-            $text = str_ireplace("vbscript:", "Xvbscript:", $text);
-
         /// Remove script events
             $text = eregi_replace("([^a-z])language([[:space:]]*)=", "\\1Xlanguage=", $text);
             $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);
 
-        /// Remove Javascript entities
-            $text = eregi_replace('&\{([^};]*)\};', '\1', $text);
+		/// Clean up embedded scripts and , using kses
+            $text = cleanAttributes($text);
 
             return $text;
     }
+}
+
+
+function cleanAttributes($str){
+///  This function takes a string and examines it for html tags.
+///  If tags are detected it passes the string to a helper function cleanAttributes2
+///  which checks for attributes and filters them for malicious content
+///			17/08/2004 				::			Eamon DOT Costello AT dcu DOT ie
+    $result = preg_replace(
+            '%(<[^>]*(>|$)|>)%me', #search for html tags
+            "cleanAttributes2('\\1')", 
+            $str
+            );	  
+    return  $result;
+} 
+
+		
+function cleanAttributes2($htmlTag){
+    ///  This function takes a string with an html tag and strips out any unallowed
+    ///  protocols e.g. javascript:
+    ///  It calls ancillary functions in kses which are prefixed by kses
+    ///			17/08/2004 				::			Eamon DOT Costello AT dcu DOT ie
+
+    global $CFG;
+	require_once("$CFG->libdir/kses.php");
+
+    $htmlTag = kses_stripslashes($htmlTag);
+    if (substr($htmlTag, 0, 1) != '<'){
+        return '&gt;';  //a single character ">" detected
+    }
+    if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9]+)([^>]*)>?$%', $htmlTag, $matches)){
+        return ''; // It's seriously malformed	
+    }  
+    $slash = trim($matches[1]); //trailing xhtml slash
+    $elem = $matches[2];	//the element name
+    $attrlist = $matches[3]; // the list of attributes as a string
+
+    $allowed_protocols = array('http', 'https', 'ftp', 'news', 'mailto');
+    $attrArray =  kses_hair($attrlist, $allowed_protocols) ;
+
+    $attStr = '';  
+    foreach ($attrArray as $arreach)
+    {
+        $attStr .=  ' '.strtolower($arreach['name']).'="'.strtolower($arreach['value']).'" ';
+    }
+    $xhtml_slash = '';
+    if (preg_match('%/\s*$%', $attrlist)){
+        $xhtml_slash = ' /'; 
+    }
+    return "<$slash$elem$attStr$xhtml_slash>";
 }
 
 
