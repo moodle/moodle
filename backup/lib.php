@@ -174,9 +174,10 @@
         //Check if directory exists
         if (is_dir($rootdir)) {
             $coursedirs = get_directory_list($rootdir,$CFG->moddata);
+            $backupdir = get_string("backupdir");
             foreach ($coursedirs as $dir) {
                 //Check it isn't backupdir
-                if (dirname($dir) !== get_string("backupdir")) {
+                if (strpos($dir,$backupdir)!==0) {
                     //Insert them into backup_files
                     $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
                                                   (backup_code, file_type, path)
