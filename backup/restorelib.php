@@ -562,6 +562,12 @@
             } else {
                 $course->sortorder = 100;
             }
+
+            //Now, recode some languages (Moodle 1.5)
+            if ($course->lang == 'ma_nt') {
+                $course->lang = 'mi_nt';
+            }
+
             //Now insert the record
             $newid = insert_record("course",$course);
             if ($newid) {
@@ -792,6 +798,11 @@
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid); 
                 $user = $rec->info;
+
+                //Now, recode some languages (Moodle 1.5)
+                if ($user->lang == 'ma_nt') {
+                    $user->lang = 'mi_nt';
+                }
 
                 //Check if it's admin and coursecreator
                 $is_admin =         !empty($user->roles['admin']);

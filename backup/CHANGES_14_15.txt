@@ -8,9 +8,9 @@ status in backup/restore code.
 
 Now I show the specific detailed status of every item in the process:
 
- 1. TODO: check user->idnumber
- 2. TODO: check user->lang (at restore set mi_nt where ma_nt).
- 3. TODO: check course->lang (at restore set mi_nt where ma_nt).
+ 1. DONE: check user->idnumber
+ 2. DONE: check user->lang (at restore set mi_nt where ma_nt).
+ 3. DONE: check course->lang (at restore set mi_nt where ma_nt).
  4. TODO: user_students->enrol (analyse and proceed).
  5. TODO: user_teachers->enrol (analyse and proceed).
  6. TODO: user->policyagreed (analyse and proceed).
