@@ -25,16 +25,16 @@
         $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
         switch (PHP_OS) {
             case "Linux":
-                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp) );
+                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname -- ". escapeshellarg($texexp) );
             break;
             case "WINNT":
                 case "WIN32":
                 case "Windows":
                 $texexp = str_replace('"','\"',$texexp);
-            system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"");
+            system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname -- \"$texexp\"");
             break;
             case "Darwin":
-                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp) );
+                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname -- ". escapeshellarg($texexp) );
             break;
         }
         if (file_exists($pathname)) {
