@@ -1,29 +1,9 @@
 <?PHP  // $Id$
        // config.php - allows admin to edit all configuration variables
 
-
-    if (isset($_GET['phpinfo'])) {    // For debugging purposes, protected by password
-        if (md5($_GET['phpinfo']) == "caf9b6b99962bf5c2264824231d7a40c") {
-            phpinfo();
-            exit;
-        }
-    }
-
     require_once("../config.php");
 	require_once("../lib/countries.php");
 
-    if (isset($config)) {    // For debugging purposes, protected by password
-        if (md5($config) == "caf9b6b99962bf5c2264824231d7a40c") {
-            if ($site = get_site()) {
-                print_heading("$site->fullname");
-            }
-            $TEMPCFG = $CFG;
-            unset($TEMPCFG->dbuser);
-            unset($TEMPCFG->dbpass);
-            print_object($TEMPCFG);
-            exit;
-        }
-    }
 
     if ($site = get_site()) {   // If false then this is a new installation
         require_login();
@@ -31,7 +11,6 @@
             error("Only the admin can use this page");
         }
     }
-
 
 /// This is to overcome the "insecure forms paradox"
     if (isset($secureforms) and $secureforms == 0) {
