@@ -54,7 +54,7 @@
 /// Define admin directory
 
     if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
-        $CFG->admin = "admin";   // This is relative to the wwwroot and dirroot
+        $CFG->admin = 'admin';   // This is relative to the wwwroot and dirroot
     }
 
 
@@ -67,7 +67,7 @@
 
 /// Load up any configuration from the config table
     
-    if ($configs = get_records("config")) {
+    if ($configs = get_records('config')) {
         $CFG = (array)$CFG;
         foreach ($configs as $config) {
             $CFG[$config->name] = $config->value;
@@ -94,7 +94,7 @@
 
 /// Set session timeouts
     if (!empty($CFG->sessiontimeout)) {
-        ini_set("session.gc_maxlifetime", $CFG->sessiontimeout);
+        ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
     }
 
 /// Set sessioncookie variable if it isn't already
@@ -106,13 +106,13 @@
 
     $CFG->wordlist    = "$CFG->libdir/wordlist.txt";
     $CFG->javascript  = "$CFG->libdir/javascript.php";
-    $CFG->moddata     = "moddata";
+    $CFG->moddata     = 'moddata';
 
 
 /// Load up theme variables (colours etc)
 
     if (!isset($CFG->theme)) {
-        $CFG->theme = "standard";
+        $CFG->theme = 'standard';
     }
     include("$CFG->dirroot/theme/$CFG->theme/config.php");
 
@@ -131,7 +131,7 @@
 
 /// A hack to get around magic_quotes_gpc being turned off
 
-    if (!ini_get_bool("magic_quotes_gpc") ) {
+    if (!ini_get_bool('magic_quotes_gpc') ) {
         foreach ($_GET as $key => $var) {
             if (!is_array($var)) {
                 $_GET[$key] = addslashes($var);
@@ -214,15 +214,18 @@
         $CFG->lang = "en";
     }
     if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {
-        $CFG->locale = get_string("locale");
+        $CFG->locale = get_string('locale');
     } else if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
-        $CFG->locale = get_string("locale");
+        $CFG->locale = get_string('locale');
     } else if (empty($CFG->locale)) {
-        $CFG->locale = get_string("locale");
-        set_config("locale", $CFG->locale);   // cache it to save lookups in future
+        $CFG->locale = get_string('locale');
+        set_config('locale', $CFG->locale);   // cache it to save lookups in future
     }
     setlocale (LC_TIME, $CFG->locale);
-    setlocale (LC_CTYPE, $CFG->locale);
     setlocale (LC_COLLATE, $CFG->locale);
+
+    if ($CFG->locale != 'tr_TR') {            // To workaround a well-known PHP bug with Turkish
+        setlocale (LC_CTYPE, $CFG->locale);
+    }
 
 ?>
