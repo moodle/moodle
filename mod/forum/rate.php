@@ -54,7 +54,7 @@
                 }
             }
         }
-        if ($post = get_record('forum_posts', 'id', $postid)) {
+        if ($post = get_record('forum_posts', 'id', $id)) {
             if ($returntoview and ($discussion = get_record('forum_discussions', 'id', $post->discussion))) {
                 redirect("$CFG->wwwroot/mod/forum/view.php?f=$discussion->forum", get_string("ratingssaved", "forum"));
             } else {
