@@ -8,7 +8,7 @@
 
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
   <TR>
-    <TD WIDTH="15%" VALIGN="TOP">
+    <TD WIDTH="200" VALIGN="TOP"> 
       <? 
       print_simple_box(get_string("people"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
       $moddata[]="<A TITLE=\"".get_string("listofallpeople")."\" HREF=\"../user/index.php?id=$course->id\">".get_string("participants")."</A>";
@@ -51,12 +51,12 @@
 
       // Admin links and controls
       if (isteacher($course->id)) {
-          print_course_admin_links($course);
+          print_course_admin_links($course, "100%");
       }
 
       echo "</TD>";
 
-      echo "<TD WIDTH=\"55%\" VALIGN=\"TOP\">";
+      echo "<TD WIDTH=\"100%\" VALIGN=\"TOP\">";
       if ($social = forum_get_course_forum($course->id, "social")) {
           if (forum_is_subscribed($USER->id, $social->id)) {
               $subtext = get_string("unsubscribe", "forum");
