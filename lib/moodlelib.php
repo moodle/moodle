@@ -382,7 +382,7 @@ function require_login($courseid=0) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
                     print_header();
-                    notice(get_string("studentnotallowed", "", fullname($USER, true)), $CFG->wwwroot);
+                    notice(get_string("studentnotallowed", "", fullname($USER, true)), "$CFG->wwwroot/");
                 }
 
             } else {  // just update their last login time
@@ -395,7 +395,7 @@ function require_login($courseid=0) {
         }
         if (!$course->visible) {
             print_header();
-            notice(get_string("studentnotallowed", "", fullname($USER, true)), $CFG->wwwroot);
+            notice(get_string("studentnotallowed", "", fullname($USER, true)), "$CFG->wwwroot/");
         }
         if ($USER->username == "guest") {
             switch ($course->guest) {
