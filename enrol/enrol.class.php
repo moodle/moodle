@@ -1,0 +1,286 @@
+<?php   /// $Id$
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.org                                            //
+//                                                                       //
+// Copyright (C) 2004  Martin Dougiamas  http://moodle.com               //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+
+/**
+* enrolment_base is the base class for enrolment plugins
+*
+* This class provides all the functionality for an enrolment plugin
+* In fact it includes all the code for the default, "internal" method
+* so that other plugins can override these as necessary.
+*/
+
+class enrolment_base {
+
+var $errormsg;
+
+
+
+/**
+* Returns information about the courses a student has access to
+*
+* Set the $user->student course array
+* Set the $user->timeaccess course array
+*
+* @param    user  referenced object, must contain $user->id already set
+*/
+function get_student_courses(&$user) {
+
+    if ($students = get_records("user_students", "userid", $user->id)) {
+        $currenttime = time();
+        foreach ($students as $student) {
+
+        /// Is course visible?
+
+            if (get_field("course", "visible", "id", $student->course)) {
+
+            /// Is student enrolled for a specific time period?
+
+                if ( ( $student->timestart == 0 or ( $currenttime > $student->timestart )) and 
+                     ( $student->timeend   == 0 or ( $currenttime < $student->timeend )) ) {
+                    $user->student[$student->course] = true;
+                    $user->timeaccess[$student->course] = $student->timeaccess;
+                }
+            }
+        }
+    }   
+}
+
+
+
+/**
+* Returns information about the courses a student has access to
+*
+* Set the $user->teacher course array
+* Set the $user->teacheredit course array
+* Set the $user->timeaccess course array
+*
+* @param    user  referenced object, must contain $user->id already set
+*/
+function get_teacher_courses(&$user) {
+
+    if ($teachers = get_records("user_teachers", "userid", $user->id)) {
+        $currenttime = time();
+        foreach ($teachers as $teacher) {
+
+        /// Is teacher only teaching this course for a specific time period?
+
+            if ( ( $teacher->timestart == 0 or ( $currenttime > $teacher->timestart )) and 
+                 ( $teacher->timeend   == 0 or ( $currenttime < $teacher->timeend )) ) {
+
+                $user->teacher[$teacher->course] = true;
+
+                if ($teacher->editall) {
+                    $user->teacheredit[$teacher->course] = true;
+                }   
+
+                $user->timeaccess[$teacher->course] = $teacher->timeaccess;
+            }
+        }   
+    }
+}
+
+
+
+
+/**
+* Prints the entry form/page for this enrolment
+*
+* This is only called from course/enrol.php
+* Most plugins will probably override this to print payment 
+* forms etc, or even just a notice to say that manual enrolment 
+* is disabled
+*
+* @param    course  current course object
+*/
+function print_entry($course) {
+    global $CFG, $USER, $SESSION;
+
+    $strloginto = get_string("loginto", "", $course->shortname);
+    $strcourses = get_string("courses");
+
+
+/// Double check just in case they are actually enrolled already 
+/// This might occur if they were manually enrolled during this session
+
+    if (record_exists("user_students", "userid", $USER->id, "course", $course->id)) {
+        $USER->student[$course->id] = true;
+
+        if ($SESSION->wantsurl) {
+            $destination = $SESSION->wantsurl;
+            unset($SESSION->wantsurl);
+        } else {
+            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+        }
+
+        redirect($destination);
+    }
+
+
+/// Automatically enrol into courses without password
+
+    if ($course->password == "") {   // no password, so enrol
+
+        if (isguest()) {
+            add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$USER->id");
+
+        } else if (empty($_GET['confirm'])) {
+
+            print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto");
+            echo "<br />";
+            notice_yesno(get_string("enrolmentconfirmation"), "enrol.php?id=$course->id&confirm=1", $CFG->wwwroot);
+            print_footer();
+            exit;
+
+        } else {
+
+            if (! enrol_student($USER->id, $course->id)) {
+                error("An error occurred while trying to enrol you.");
+            }
+            add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
+
+            $USER->student[$course->id] = true;
+
+            if ($SESSION->wantsurl) {
+                $destination = $SESSION->wantsurl;
+                unset($SESSION->wantsurl);
+            } else {
+                $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+            }
+
+            redirect($destination);
+        }
+    }
+
+    $teacher = get_teacher($course->id);
+    if (!isset($password)) {
+        $password = "";
+    }
+
+
+    print_header($strloginto, $course->fullname, "<A HREF=\".\">$strcourses</A> -> $strloginto", "form.password");
+
+    print_course($course);
+
+    include("$CFG->dirroot/enrol/internal/enrol.html");
+
+    print_footer();
+
+}
+
+
+
+/**
+* The other half to print_entry, this checks the form data
+*
+* This function checks that the user has completed the task on the 
+* enrolment entry page and then enrolls them.
+*
+* @param    form    the form data submitted, as an object
+* @param    course  the current course, as an object
+*/
+function check_entry($form, $course) {
+    global $CFG, $USER, $SESSION;
+
+    if ($form->password == $course->password) {
+
+        if (isguest()) {
+        
+            add_to_log($course->id, "course", "guest", "view.php?id=$course->id", $_SERVER['REMOTE_ADDR']);
+            
+        } else if (!record_exists("user_students", "userid", $USER->id, "course", $course->id)) {
+
+            if (! enrol_student($USER->id, $course->id)) {
+                error("An error occurred while trying to enrol you.");
+            }
+            
+            $subject = get_string("welcometocourse", "", $course->fullname);
+            $a->coursename = $course->fullname;
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
+            $message = get_string("welcometocoursetext", "", $a);
+            
+            if (! $teacher = get_teacher($course->id)) {
+                $teacher = get_admin();
+            }
+            
+            email_to_user($USER, $teacher, $subject, $message);
+            add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
+        }
+        
+        $USER->student[$course->id] = true;
+        
+        if ($SESSION->wantsurl) {
+            $destination = $SESSION->wantsurl;
+            unset($SESSION->wantsurl);
+        } else {
+            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+        }
+        
+        redirect($destination);
+
+    } else {
+        $this->errormsg = get_string("enrolmentkeyhint", "", substr($course->password,0,1));
+    }
+                        
+}
+
+
+/**
+* Prints a form for configuring the current enrolment plugin
+*
+* This function is called from admin/enrol.php, and outputs a 
+* full page with a form for defining the current enrolment plugin.
+*
+* @param    page  an object containing all the data for this page
+*/
+function print_config($page) {
+}
+
+
+/**
+* Processes and stored configuration data for the enrolment plugin
+*
+* Processes and stored configuration data for the enrolment plugin
+*
+* @param    config  all the configuration data as entered by the admin
+*/
+function process_config($config) {
+}
+
+
+/**
+* This function is run by admin/cron.php every time 
+*
+* The cron function can perform regular checks for the current 
+* enrollment plugin.  For example it can check a foreign database,
+* all look for a file to pull data in from
+*
+*/
+function cron() {
+}
+
+
+} /// end of class
+
+?>
