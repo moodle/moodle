@@ -63,12 +63,17 @@
                     $teacher[course] = $newid;
                     $teacher[authority] = 1;   // First teacher is the main teacher
                     
-		            $mainteacher = insert_record("user_teachers", $teacher);
-                    if (!$mainteacher) {
-					  error("Could not add main teacher to new course!");
-					}
+		    $mainteacher = insert_record("user_teachers", $teacher);
+                    if (!$mainteacher){
+                        error("Could not add main teacher to new course!");
+                    }
                     
-                    redirect("teacher.php?id=$newid", get_string("changessaved"));
+                    if (isadmin()){ //redirect admin to add teachers
+                        redirect("teacher.php?id=$newid", get_string("changessaved"));
+                    } else { //redirect teachers to course
+                        redirect("$CFG->wwwroot/course/view.php?id=$newid", get_string("changessaved"));
+                    }
+
                 } else {
                     error("Serious Error! Could not create the new course!");
                 }
