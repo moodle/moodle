@@ -796,6 +796,7 @@ function make_upload_directory($directory) {
                 notify("ERROR: Could not find or create a directory ($currdir)");
                 return false;
             }
+            @chmod($currdir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
         }
     }
 
