@@ -266,6 +266,20 @@
     </td>
 </tr>
 <tr valign="top">
+    <td align="right"><p>dbsessions:</td>
+    <td>
+    <?php unset($options);
+       $options[0] = get_string('no');
+       $options[1] = get_string('yes');
+
+       choose_from_menu ($options, "dbsessions", $config->dbsessions, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configdbsessions") ?>
+    </td>
+</tr>
+<tr valign="top">
     <td align="right"><p>sessiontimeout:</td>
     <td>
     <?php
