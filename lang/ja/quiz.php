@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1 development (2003070400)
+      // quiz.php - created with Moodle 1.1 development (2003081001)
 
 
 $string['acceptederror'] = "エラー範囲";
@@ -125,6 +125,7 @@ $string['regradecomplete'] = "全解答が再評価されました";
 $string['regradecount'] = "\$a->attempt 中 \$a->changed の評点が変更されました ";
 $string['rename'] = "変名";
 $string['report'] = "レポート";
+$string['review'] = "レビュー";
 $string['save'] = "保存";
 $string['savegrades'] = "評点を保存する";
 $string['savemyanswers'] = "答えを保存する";

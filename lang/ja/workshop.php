@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.1 development (2003072101)
+      // workshop.php - created with Moodle 1.1 development (2003081001)
 
 
 $string['accumulative'] = "累積方式";
@@ -11,6 +11,7 @@ $string['allgradeshaveamaximumof'] = "全ての成績の最大は \$a です";
 $string['allowresubmit'] = "再提出を許可する";
 $string['alreadyinphase'] = "既にフェーズ \$a　に達しています";
 $string['amendassessmentelements'] = "評価要素を更新する";
+$string['amendtitle'] = "タイトルを更新する";
 $string['assess'] = "評価する";
 $string['assessedon'] = "\$a に対する評価";
 $string['assessment'] = "評価";
@@ -34,10 +35,12 @@ $string['calculationoffinalgrades'] = "最終成績を計算";
 $string['closeassignment'] = "課題を閉じる";
 $string['comment'] = "コメント";
 $string['commentby'] = "コメント";
+$string['confirmdeletionofthisitem'] = "\$a の削除を確定する";
 $string['criteria'] = "基準方式";
 $string['deadline'] = "提出期限";
 $string['deadlineis'] = "提出期限は \$a　です";
 $string['delete'] = "削除";
+$string['deleting'] = "削除中";
 $string['description'] = "詳細";
 $string['detailsofassessment'] = "評価詳細";
 $string['disagreewiththisassessment'] = "この評価に同意しない";
@@ -69,9 +72,9 @@ $string['managingassignment'] = "課題を管理";
 $string['maximumsize'] = "最大サイズ";
 $string['modulename'] = "ワークショップ";
 $string['modulenameplural'] = "ワークショップ";
-$string['movedtophase'] = "段階 \$a に移動";
-$string['moveonto'] = "移動";
+$string['movingtophase'] = "フェーズ \$a に移動";
 $string['newassessments'] = "新しいワークショップの評価";
+$string['newgradings'] = "新しい採点";
 $string['newsubmissions'] = "新しいワークショップの提出物";
 $string['noassessmentsdone'] = "評価されていません";
 $string['nosubmissionsavailableforassessment'] = "評価すべき提出物はありません";
@@ -109,6 +112,7 @@ $string['phase3'] = "最終評価の計算";
 $string['phase4'] = "最終評価を表示";
 $string['pleaseassesstheseexamplesfromtheteacher'] = "\$a によるこれらの模範解答を評価してください";
 $string['pleaseassessthesestudentsubmissions'] = "これらの \$a の提出物を評価してください";
+$string['pleaseassessyoursubmissions'] = "あなたの提出物を評価してください";
 $string['reassess'] = "再評価";
 $string['reply'] = "返事";
 $string['returnto'] = "戻る";
@@ -131,9 +135,9 @@ $string['selfassessment'] = "自己評価";
 $string['showgrades'] = "評価を表示";
 $string['specimenassessmentform'] = "評価見本フォーム";
 $string['studentgrades'] = "\$a 採点数";
-$string['studentsassessment'] = "学生の評価";
 $string['studentsubmissions'] = "\$a 件の提出物";
 $string['studentsubmissionsforassessment'] = "\$a 学生の評価対象提出物";
+$string['submission'] = "提出";
 $string['submissions'] = "提出";
 $string['submitassignment'] = "課題を登録する";
 $string['submitexampleassignment'] = "課題例を登録する";

@@ -17,6 +17,7 @@ $string['messagebeepseveryone'] = "\$a が全員にビープします!";
 $string['messagebeepsyou'] = "\$a があなたにビープしました!";
 $string['messageenter'] = "\$a が入室しました";
 $string['messageexit'] = "\$a が退室しました";
+$string['messages'] = "メッセージ";
 $string['modulename'] = "チャット";
 $string['modulenameplural'] = "チャット";
 $string['neverdeletemessages'] = "メッセージを削除しない";

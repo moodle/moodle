@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 development (2003053000)
+      // forum.php - created with Moodle 1.1 development (2003081001)
 
 
-$string['addanewdiscussion'] = "トピックを追加";
+$string['addanewdiscussion'] = "ディスカッショントピックを追加";
+$string['addanewtopic'] = "トピックを追加";
 $string['allowchoice'] = "全ての人が選択可能にする";
 $string['allowdiscussions'] = "\$a  はこのフォーラムに投稿可能ですか?";
 $string['allowratings'] = "投稿を評価可能にしますか?";
@@ -61,6 +62,8 @@ $string['nameteacher'] = "教師用フォーラム";
 $string['newforumposts'] = "新規投稿";
 $string['nodiscussions'] = "トピックはありません";
 $string['noguestpost'] = "申し訳ございません、ゲストは投稿できません";
+$string['nomorepostscontaining'] = "これ以上 '\$a'  を含んだ投稿はありません";
+$string['nonews'] = "新しいニュースは投稿されていません";
 $string['noposts'] = "投稿がありません";
 $string['nopostscontaining'] = " \$a が含まれる投稿は見つかりませんでした";
 $string['nosubscribers'] = "このフォーラムには登録者はいません";
@@ -92,6 +95,7 @@ $string['repliesone'] = "\$a 件の返信があります";
 $string['reply'] = "返信";
 $string['search'] = "検索";
 $string['searchforums'] = "フォーラムを検索";
+$string['searcholderposts'] = "過去の投稿を検索 ...";
 $string['searchresults'] = "検索結果";
 $string['sendinratings'] = "最新のレーティングを送信する";
 $string['showsubscribers'] = "登録者を表示";
