@@ -333,7 +333,7 @@ class quiz_file_format extends quiz_default_format {
                     $answer = trim($answer);
 
                     // Answer Weight
-                    if (ereg(GIFT_ANSWERWEIGHT_REGEX, $answer)) {    // check for properly formatted answer weight
+                    if (ereg($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
                         $answer_weight = $this->answerweightparser($answer);
                     } else {     //default, i.e., full-credit anwer
                         $answer_weight = 1;
@@ -374,7 +374,7 @@ class quiz_file_format extends quiz_default_format {
                     $answer = trim($answer);
 
                     // Answer weight
-                    if (ereg(GIFT_ANSWERWEIGHT_REGEX, $answer)) {    // check for properly formatted answer weight
+                    if (ereg($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
                         $answer_weight = $this->answerweightparser($answer);
                     } else {     //default, i.e., full-credit anwer
                         $answer_weight = 1;
