@@ -782,6 +782,9 @@ function print_course_admin_links($course, $width=180) {
 
         $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</a>";
         $adminicon[]="<img src=\"$pixpath/i/files.gif\" height=16 width=16 alt=\"\">";
+
+        $admindata[]="<a href=\"$CFG->wwwroot/backup/backup.php?id=$course->id\">".get_string("backup")."...</a>";
+        $adminicon[]="<img src=\"$pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
     
         $admindata[]="<a href=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</a>";
         $adminicon[]="<img src=\"$modpixpath/resource/icon.gif\" height=16 width=16 alt=\"\">";
@@ -790,12 +793,15 @@ function print_course_admin_links($course, $width=180) {
             $admindata[]="<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">".get_string("nameteacher", "forum")."</a>";
             $adminicon[]="<img src=\"$modpixpath/forum/icon.gif\" height=16 width=16 alt=\"\">";
         }
+
     } else {
         $admindata[]="<a href=\"grade.php?id=$course->id\">".get_string("grades")."...</a>";
         $adminicon[]="<img src=\"$pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
     } 
 
-    print_side_block(get_string("administration"), "", $admindata, $adminicon, "", $width);
+    if (!empty($admindata)) {
+        print_side_block(get_string("administration"), "", $admindata, $adminicon, "", $width);
+    }
 }
 
 
