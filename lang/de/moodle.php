@@ -403,6 +403,7 @@ $string['showallweeks'] = "Alle Wochen anzeigen";
 $string['showlistofcourses'] = "Die Liste der Kurse anzeigen";
 $string['showonlytopic'] = "Nur Thema \$a anzeigen";
 $string['showonlyweek'] = "Nur Woche \$a anzeigen";
+$string['showrecent'] = "Neue Aktivitäten anzeigen";
 $string['showtheselogs'] = "Diese Stastiken anzeigen";
 $string['site'] = "Seite";
 $string['sitelogs'] = "Statistiken der Seite";
