@@ -1,6 +1,6 @@
 <?php /// $Id$
 
-$string['filtername'] = "Notation algébrique";
+$string['filtername'] = "Notation Algebra";
 
 ?>
 

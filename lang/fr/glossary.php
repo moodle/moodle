@@ -94,6 +94,7 @@ $string['exportglossary'] = 'Exporter le glossaire';
 $string['exporttomainglossary'] = 'Exporter vers le glossaire principal';
 $string['filetoimport'] = 'Fichier à importer';
 $string['fillfields'] = 'Les champs concept et définition sont obligatoires.';
+$string['filtername'] = 'Liens automatiques des glossaires';
 $string['fullmatch'] = 'Correspondance mot pour mot';
 $string['glossarytype'] = 'Type de glossaire';
 $string['glosssaryexported'] = 'Glossaire exporté.';
