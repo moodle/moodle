@@ -48,13 +48,11 @@ function s10_rfc_1918_ip($in) {
 
 function stuffanalyze($stuff) {
 
-$badstuff = array("bad", "bad", "bad", "bad", "bad");
-
-$stuff2[0] = array_values(preg_grep ("/CITY:/", $stuff)) or return $badstuff;
-$stuff2[1] = array_values(preg_grep ("/STATE:/", $stuff)) or return $badstuff;
-$stuff2[2] = array_values(preg_grep ("/COUNTRY:/", $stuff)) or return $badstuff;
-$stuff2[3] = array_values(preg_grep ("/LAT:/", $stuff)) or return $badstuff;
-$stuff2[4] = array_values(preg_grep ("/LONG:/", $stuff)) or return $badstuff;
+$stuff2[0] = array_values(preg_grep ("/CITY:/", $stuff)) or die("Sorry, but the lookup for this IP address failed! (CITY)");
+$stuff2[1] = array_values(preg_grep ("/STATE:/", $stuff)) or die("Sorry, but the lookup for this IP address failed! (STATE)");
+$stuff2[2] = array_values(preg_grep ("/COUNTRY:/", $stuff)) or die("Sorry, but the lookup for this IP address failed! (COUNTRY)");
+$stuff2[3] = array_values(preg_grep ("/LAT:/", $stuff)) or die("Sorry, but the lookup for this IP address failed! (LAT)");
+$stuff2[4] = array_values(preg_grep ("/LONG:/", $stuff)) or die("Sorry, but the lookup for this IP address failed! (LONG)");
 
 // all the stuff2 values are actually arrays, making the following code look like crap
 
@@ -70,9 +68,13 @@ for ($count = 0; $count < count($stuff2); $count++) {
  } else {
 
    // if no data was found 
-   return $badstuff;
+   $stuff2 = array("bad", "bad", "bad", "bad", "bad");
 
  }
+
+$count = 0;
+
+ return $stuff2;
 
 }
 
