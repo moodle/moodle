@@ -155,6 +155,23 @@ CREATE TABLE `prefix_event` (
   KEY `courseid` (`courseid`),
   KEY `userid` (`userid`)
 ) TYPE=MyISAM COMMENT='For everything with a time associated to it';
+# --------------------------------------------------------
+
+#
+# Table structure for table `text_cache`
+#
+
+CREATE TABLE `prefix_text_cache` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `md5key` varchar(32) NOT NULL default '',
+  `formattedtext` longtext NOT NULL,
+  `timemodified` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `md5key` (`md5key`)
+) TYPE=MyISAM COMMENT='For storing temporary copies of processed texts';
+# --------------------------------------------------------
+
+
 
 #
 # Table structure for table `group`

@@ -154,6 +154,14 @@ $CFG->admin = 'admin';
 // Prevent scheduled backups from operating (and hide the GUI for them)
 // Useful for webhost operators who have alternate methods of backups
 //      $CFG->disablescheduledbackups = true;
+// 
+// On busy sites that use filters (such as the glossary autolinking) this 
+// may help - it specifies time in seconds to keep copies of formatted texts.
+//      $CFG->cachetext = 600;
+// It has some disadvantages:
+// 1) Texts will take this long to regenerate, so changes to the glossary 
+//    will not be evident immediately.
+// 2) It won't work with filters that use user settings eg: multilang
 
 
 
