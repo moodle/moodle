@@ -79,6 +79,30 @@
                 }
             }
 
+            //We are going to mantain here backwards compatibility with 1.4 glossaries (exception!!)
+            //so we have to make some conversions
+            //If the displayformat field isn't numeric we are restoring a newer (1.4) glossary
+            if (!is_numeric($glossary->displayformat)) {
+                //Hardcode the conversions
+                if ($glossary->displayformat == 'dictionary') {
+                    $glossary->displayformat = '0';
+                } else if ($glossary->displayformat == 'continuous') {
+                    $glossary->displayformat = '1';
+                } else if ($glossary->displayformat == 'fullwithauthor') {
+                    $glossary->displayformat = '2';
+                } else if ($glossary->displayformat == 'encyclopedia') {
+                    $glossary->displayformat = '3';
+                } else if ($glossary->displayformat == 'faq') {
+                    $glossary->displayformat = '4';
+                } else if ($glossary->displayformat == 'fullwithoutauthor') {
+                    $glossary->displayformat = '5';
+                } else if ($glossary->displayformat == 'entrylist') {
+                    $glossary->displayformat = '6';
+                } else {
+                    $glossary->displayformat = '0';
+                }
+            }
+
             //The structure is equal to the db, so insert the glossary
             $newid = insert_record ("glossary",$glossary);
 
