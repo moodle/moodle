@@ -619,6 +619,23 @@ function main_upgrade($oldversion=0) {
         modify_database('','CREATE INDEX prefix_user_coursecreators_userid_idx ON prefix_user_coursecreators (userid);');
     }
 
+    if ($oldversion < 2004083128) { // make new indexes on user table.
+        fix_course_sortorder(0,0,1);
+        modify_database('', "DROP INDEX prefix_course_category_idx;");
+        modify_database('', "CREATE UNIQUE INDEX prefix_course_category_sortorder_uk ON prefix_course(category,sortorder)"); 
+        modify_database("","CREATE INDEX prefix_user_deleted_idx ON prefix_user (deleted)");
+        modify_database("","CREATE INDEX prefix_user_confirmed_idx ON prefix_user (confirmed)");
+        modify_database("","CREATE INDEX prefix_user_firstname_idx ON prefix_user (firstname)");
+        modify_database("","CREATE INDEX prefix_user_lastname_idx ON prefix_user (lastname)");
+        modify_database("","CREATE INDEX prefix_user_city_idx ON prefix_user (city)");
+        modify_database("","CREATE INDEX prefix_user_country_idx ON prefix_user (country)");
+        modify_database("","CREATE INDEX prefix_user_lastaccess_idx ON prefix_user (lastaccess)");
+    }
+
+    if ($oldversion < 2004083128) { // one more index for email (for sorting)
+       modify_database('','CREATE INDEX prefix_user_email_idx ON prefix_user (email);');
+     }
+ 
     return $result;
 }
 

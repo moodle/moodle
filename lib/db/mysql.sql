@@ -61,7 +61,7 @@ CREATE TABLE `prefix_course` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `category` (`category`),
+  UNIQUE KEY `category_sortorder` (`category`, `sortorder`),
   KEY `idnumber` (`idnumber`),
   KEY `shortname` (`shortname`)	 
 ) TYPE=MyISAM;
@@ -358,7 +358,15 @@ CREATE TABLE `prefix_user` (
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `user_idnumber` (`idnumber`),
-  KEY `user_auth` (`auth`)
+  KEY `user_auth` (`auth`),
+  KEY `user_deleted` (`deleted`),
+  KEY `user_confirmed` (`confirmed`),
+  KEY `user_firstname` (`firstname`),
+  KEY `user_lastname` (`lastname`),
+  KEY `user_city` (`city`),
+  KEY `user_country` (`country`),
+  KEY `user_lastaccess` (`lastaccess`),
+  KEY `user_email` (`email`)
 ) TYPE=MyISAM COMMENT='One record for each person';
 # --------------------------------------------------------
 

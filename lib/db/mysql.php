@@ -883,9 +883,26 @@ function main_upgrade($oldversion=0) {
         modify_database('','ALTER TABLE prefix_user_admins ADD INDEX userid (userid);');
         modify_database('','ALTER TABLE prefix_user_coursecreators ADD INDEX userid (userid);');
     }
+
+    if ($oldversion < 2004083128) { // replace index on course
+        fix_course_sortorder(0,0,1);
+        modify_database('', "ALTER TABLE `prefix_course` DROP KEY category");
+        modify_database('', "ALTER TABLE `prefix_course` ADD UNIQUE KEY category_sortorder(category,sortorder)"); 
+        modify_database("", "ALTER TABLE `prefix_user` ADD INDEX prefix_user_deleted_idx  (deleted)");
+        modify_database("", "ALTER TABLE `prefix_user` ADD INDEX prefix_user_confirmed_idx (confirmed)");
+        modify_database("", "ALTER TABLE `prefix_user` ADD INDEX prefix_user_firstname_idx (firstname)");
+        modify_database("", "ALTER TABLE `prefix_user` ADD INDEX prefix_user_lastname_idx (lastname)");
+        modify_database("", "ALTER TABLE `prefix_user` ADD INDEX prefix_user_city_idx (city)");
+        modify_database("", "ALTER TABLE `prefix_user` ADD INDEX prefix_user_country_idx (country)");
+        modify_database("", "ALTER TABLE `prefix_user` ADD INDEX prefix_user_lastaccess_idx (lastaccess)");
+    }
+    
+    if ($oldversion < 2004083128) { // one more index for email (for sorting)
+        modify_database('','ALTER TABLE `prefix_user` ADD INDEX prefix_user_email_idx (email);');
+    }
     
     return $result;
-
+    
 }
 
 ?>
