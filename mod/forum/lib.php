@@ -1498,7 +1498,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     if ($CFG->forum_trackreadposts) {
         if ($post_read == -99) {    // If we don't know yet...
-            $post_read = forum_tp_is_post_read($USER->id, $post);
+        /// The front page can display a news item post to non-logged in users. This should
+        /// always appear as 'read'.
+            $post_read = empty($USER) || forum_tp_is_post_read($USER->id, $post);
         }
         if ($post_read) {
             $read_style = ' read';
@@ -1582,7 +1584,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     $commands = array();
 
     if ($CFG->forum_trackreadposts) {
-        if ($CFG->forum_usermarksread) {
+        /// SPECIAL CASE: The front page can display a news item post to non-logged in users.
+        /// Don't display the mark read / unread controls in this case.
+        if ($CFG->forum_usermarksread && !empty($USER)) {
             if ($post_read) {
                 $mcmd = '&amp;mark=unread&amp;postid='.$post->id;
                 $mtxt = $strmarkunread;
@@ -2628,9 +2632,15 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
             $discussion->replies = 0;
         }
         if ($CFG->forum_trackreadposts) {
+        /// SPECIAL CASE: The front page can display a news item post to non-logged in users.
+        /// All posts are read in this case.
+            if (empty($USER)) {
+                $discussion->unread = 0;
+            } else {
         /// Add in the unread posts. Add one to the replies to include the original post.
-            $discussion->unread = $discussion->replies+1 -
-                                  forum_tp_count_discussion_read_records($USER->id, $discussion->discussion);
+                $discussion->unread = $discussion->replies+1 -
+                                      forum_tp_count_discussion_read_records($USER->id, $discussion->discussion);
+            }
         }
 
         if (!empty($USER->id)) {
