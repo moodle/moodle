@@ -799,14 +799,25 @@ function main_upgrade($oldversion=0) {
                                 next_change integer NOT NULL default '0',
                                 current_offset integer NOT NULL default '0'
                              );");
+    }
 
+    if ($oldversion < 2004122800) {
+        execute_sql("DROP TABLE {$CFG->prefix}message", false);
+        execute_sql("DROP TABLE {$CFG->prefix}message_read", false);
+        execute_sql("DROP TABLE {$CFG->prefix}message_contacts", false);
+
+        execute_sql("DROP INDEX {$CFG->prefix}message_useridfrom_idx", false);
+        execute_sql("DROP INDEX {$CFG->prefix}message_useridto_idx", false);
+        execute_sql("DROP INDEX {$CFG->prefix}message_read_useridfrom_idx", false);
+        execute_sql("DROP INDEX {$CFG->prefix}message_read_useridto_idx", false);
+        execute_sql("DROP INDEX {$CFG->prefix}message_contacts_useridcontactid_idx", false);
 
         modify_database('',"CREATE TABLE prefix_message (
                                id SERIAL PRIMARY KEY,
                                useridfrom integer NOT NULL default '0',
                                useridto integer NOT NULL default '0',
                                message text,
-                               timemodified integer NOT NULL default '0',
+                               timecreated integer NOT NULL default '0',
                                messagetype varchar(50) NOT NULL default ''
                             );
 
@@ -818,7 +829,8 @@ function main_upgrade($oldversion=0) {
                                useridfrom integer NOT NULL default '0',
                                useridto integer NOT NULL default '0',
                                message text,
-                               timemodified integer NOT NULL default '0',
+                               timecreated integer NOT NULL default '0',
+                               timeread integer NOT NULL default '0',
                                messagetype varchar(50) NOT NULL default '',
                                mailed integer NOT NULL default '0'
                             );
@@ -826,7 +838,22 @@ function main_upgrade($oldversion=0) {
                             CREATE INDEX prefix_message_read_useridfrom_idx ON prefix_message_read (useridfrom);
                             CREATE INDEX prefix_message_read_useridto_idx ON prefix_message_read (useridto);
                             ");
+      
+        modify_database('',"CREATE TABLE prefix_message_contacts (
+                               id SERIAL PRIMARY KEY,
+                               userid integer NOT NULL default '0',
+                               contactid integer NOT NULL default '0',
+                               blocked integer NOT NULL default '0'
+                            );
+
+                            CREATE INDEX prefix_message_contacts_useridcontactid_idx ON prefix_message_contacts (userid,contactid);
+                            ");
+
+        modify_database('',"INSERT INTO prefix_log_display VALUES ('message', 'write', 'user', 'firstname||\' \'||lastname');
+                            INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'firstname||\' \'||lastname');
+                            ");
     }
+       
                                 
     return $result;
 }

@@ -1037,13 +1037,17 @@ function main_upgrade($oldversion=0) {
             PRIMARY KEY (id))");
     }       
 
-    if ($oldversion < 2004121600) {
+    if ($oldversion < 2004122800) {
+        execute_sql("DROP TABLE {$CFG->prefix}message", false);
+        execute_sql("DROP TABLE {$CFG->prefix}message_read", false);
+        execute_sql("DROP TABLE {$CFG->prefix}message_contacts", false);
+
         modify_database('',"CREATE TABLE `prefix_message` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `useridfrom` int(10) NOT NULL default '0',
                                `useridto` int(10) NOT NULL default '0',
                                `message` text NOT NULL,
-                               `timemodified` int(10) NOT NULL default '0',
+                               `timecreated` int(10) NOT NULL default '0',
                                `messagetype` varchar(50) NOT NULL default '',
                                PRIMARY KEY  (`id`),
                                KEY `useridfrom` (`useridfrom`),
@@ -1055,15 +1059,28 @@ function main_upgrade($oldversion=0) {
                                `useridfrom` int(10) NOT NULL default '0',
                                `useridto` int(10) NOT NULL default '0',
                                `message` text NOT NULL,
-                               `timemodified` int(10) NOT NULL default '0',
+                               `timecreated` int(10) NOT NULL default '0',
+                               `timeread` int(10) NOT NULL default '0',
                                `messagetype` varchar(50) NOT NULL default '',
                                `mailed` tinyint(1) NOT NULL default '0',
                                PRIMARY KEY  (`id`),
                                KEY `useridfrom` (`useridfrom`),
                                KEY `useridto` (`useridto`)
                              ) TYPE=MyISAM COMMENT='Stores all messages that have been read';");
+
+        modify_database('',"CREATE TABLE `prefix_message_contacts` (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                               `userid` int(10) unsigned NOT NULL default '0',
+                               `contactid` int(10) unsigned NOT NULL default '0',
+                               `blocked` tinyint(1) unsigned NOT NULL default '0',
+                               PRIMARY KEY  (`id`),
+                               UNIQUE KEY `usercontact` (`userid`,`contactid`)
+                             ) TYPE=MyISAM COMMENT='Maintains lists of relationships between users';");
+
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'write', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
     }
-       
+
     return $result;
 
 }

@@ -309,7 +309,7 @@ CREATE TABLE `prefix_message` (
   `useridfrom` int(10) NOT NULL default '0',
   `useridto` int(10) NOT NULL default '0',
   `message` text NOT NULL,
-  `timemodified` int(10) NOT NULL default '0',
+  `timecreated` int(10) NOT NULL default '0',
   `messagetype` varchar(50) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `useridfrom` (`useridfrom`),
@@ -326,13 +326,28 @@ CREATE TABLE `prefix_message_read` (
   `useridfrom` int(10) NOT NULL default '0',
   `useridto` int(10) NOT NULL default '0',
   `message` text NOT NULL,
-  `timemodified` int(10) NOT NULL default '0',
+  `timecreated` int(10) NOT NULL default '0',
+  `timeread` int(10) NOT NULL default '0',
   `messagetype` varchar(50) NOT NULL default '',
   `mailed` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `useridfrom` (`useridfrom`),
   KEY `useridto` (`useridto`)
 ) TYPE=MyISAM COMMENT='Stores all messages that have been read';
+# --------------------------------------------------------
+
+#
+# Table structure for table `message_contacts`
+#
+
+CREATE TABLE `prefix_message_contacts` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `userid` int(10) unsigned NOT NULL default '0',
+  `contactid` int(10) unsigned NOT NULL default '0',
+  `blocked` tinyint(1) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `usercontact` (`userid`,`contactid`)
+) TYPE=MyISAM COMMENT='Maintains lists of relationships between users';
 # --------------------------------------------------------
 
 #
@@ -537,3 +552,5 @@ INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'CONCAT(
 INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'enrol', 'course', 'fullname');
+INSERT INTO prefix_log_display VALUES ('message', 'write', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'CONCAT(firstname," ",lastname)');

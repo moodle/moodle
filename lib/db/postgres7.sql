@@ -187,7 +187,7 @@ CREATE TABLE prefix_message (
    useridfrom integer NOT NULL default '0',
    useridto integer NOT NULL default '0',
    message text,
-   timemodified integer NOT NULL default '0',
+   timecreated integer NOT NULL default '0',
    messagetype varchar(50) NOT NULL default ''
 );
 
@@ -199,13 +199,23 @@ CREATE TABLE prefix_message_read (
    useridfrom integer NOT NULL default '0',
    useridto integer NOT NULL default '0',
    message text,
-   timemodified integer NOT NULL default '0',
+   timecreated integer NOT NULL default '0',
+   timeread integer NOT NULL default '0',
    messagetype varchar(50) NOT NULL default '',
    mailed integer NOT NULL default '0'
 );
 
 CREATE INDEX prefix_message_read_useridfrom_idx ON prefix_message_read (useridfrom);
 CREATE INDEX prefix_message_read_useridto_idx ON prefix_message_read (useridto);
+
+CREATE TABLE prefix_message_contacts (
+   id SERIAL PRIMARY KEY,
+   userid integer NOT NULL default '0',
+   contactid integer NOT NULL default '0',
+   blocked integer NOT NULL default '0'
+);
+
+CREATE INDEX prefix_message_contacts_useridcontactid_idx ON prefix_message_contacts (userid,contactid);
 
 CREATE TABLE prefix_modules (
    id SERIAL PRIMARY KEY,
@@ -373,3 +383,5 @@ INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'firstna
 INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'enrol', 'course', 'fullname');
+INSERT INTO prefix_log_display VALUES ('message', 'write', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'firstname||\' \'||lastname');
