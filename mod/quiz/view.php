@@ -65,7 +65,9 @@
 
     print_heading($quiz->name);
 
-    print_simple_box(format_text($quiz->intro), "CENTER");
+    if (trim(strip_tags($quiz->intro))) {
+        print_simple_box(format_text($quiz->intro), "CENTER");
+    }
 
 
     if (isguest()) {

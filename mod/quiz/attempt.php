@@ -81,7 +81,9 @@
     
             print_heading($quiz->name);
             print_heading(get_string("attempt", "quiz", $attemptnumber));
-            print_simple_box(format_text($quiz->intro), "CENTER");
+            if (trim(strip_tags($quiz->intro))) {
+                print_simple_box(format_text($quiz->intro), "CENTER");
+            }
             echo "<br />\n";
         
             echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\">\n";
@@ -244,7 +246,9 @@
     }
 
     print_heading(get_string("attempt", "quiz", $attemptnumber));
-    print_simple_box(format_text($quiz->intro), "CENTER");
+    if (trim(strip_tags($quiz->intro))) {
+        print_simple_box(format_text($quiz->intro), "CENTER");
+    }
 
 
 /// Add the javascript timer in the title bar if the closing time appears close
