@@ -412,10 +412,14 @@
 
         //Now, insert the record
         if ($status) {
-            $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
-                                       (backup_code, table_name, old_id, new_id, info)
-                                   VALUES 
-                                       ($backup_unique_code, '$table', '$old_id', '$new_id', '$info_to_save')",false);
+            //Build the record
+            $rec->backup_code = $backup_unique_code;
+            $rec->table_name = $table;
+            $rec->old_id = $old_id;
+            $rec->new_id =$new_id;
+            $rec->info = $info_to_save;
+            
+            $status = insert_record ("backup_ids", $rec);
         }
         return $status;
     }
