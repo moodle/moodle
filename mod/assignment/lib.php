@@ -198,9 +198,15 @@ function assignment_cron () {
 
     global $CFG, $USER;
 
-    $cutofftime = time() - $CFG->maxeditingtime;
+    /// Notices older than 1 day will not be mailed.  This is to avoid the problem where
+    /// cron has not been running for a long time, and then suddenly people are flooded
+    /// with mail from the past few weeks or months
 
-    if ($submissions = assignment_get_unmailed_submissions($cutofftime)) {
+    $timenow   = time();
+    $endtime   = $timenow - $CFG->maxeditingtime;
+    $starttime = $endtime - 24 * 3600;   /// One day earlier
+
+    if ($submissions = assignment_get_unmailed_submissions($starttime, $endtime)) {
 
         foreach ($submissions as $key => $submission) {
             if (! set_field("assignment_submissions", "mailed", "1", "id", "$submission->id")) {
@@ -481,7 +487,7 @@ function assignment_get_users_done($assignment) {
                           ORDER BY a.timemodified DESC");
 }
 
-function assignment_get_unmailed_submissions($cutofftime) {
+function assignment_get_unmailed_submissions($starttime, $endtime) {
 /// Return list of marked submissions that have not been mailed out for currently enrolled students
     global $CFG;
     return get_records_sql("SELECT s.*, a.course, a.name
@@ -489,8 +495,8 @@ function assignment_get_unmailed_submissions($cutofftime) {
                                    {$CFG->prefix}assignment a,
                                    {$CFG->prefix}user_students us
                              WHERE s.mailed = 0 
-                               AND s.timemarked < $cutofftime 
-                               AND s.timemarked > 0
+                               AND s.timemarked <= $endtime 
+                               AND s.timemarked >= $starttime
                                AND s.assignment = a.id
                                AND s.userid = us.userid
                                AND a.course = us.course");
