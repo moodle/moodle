@@ -55,7 +55,15 @@
                      update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
-    if ($frameset == "top") {
+    
+    if (!empty($_POST["scoid"]))
+    	    $scoid = "&scoid=".$_POST["scoid"];
+    if (($scorm->popup != "") && (!empty($_POST["mode"])))
+    	$mode = $_POST["mode"];
+    if (($scorm->popup == "") && (!empty($_GET["mode"])))
+    	$mode = $_GET["mode"];
+    
+    if (($frameset == "top") || ($scorm->popup != "")) {
     	add_to_log($course->id, "scorm", "view", "playscorm.php?id=$cm->id", "$scorm->id");
 	//
 	// Print the page header
@@ -65,51 +73,15 @@
 		"", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm, '_top'));
     	
     	echo "<table width=\"100%\">\n    <tr><td align=\"center\">".text_to_html($scorm->summary, true, false)."</td>\n";
-    	if ($_GET["mode"] == "browse")
+    	if ($mode == "browse")
 	    echo "<td align=\"right\" width=\"10%\" nowrap>".get_string("browsemode","scorm")."</td>\n";
     	echo "     </tr>\n</table>\n";
     	
-    	
-	    
-    	echo "<table width=\"100%\">\n    <tr>\n";
-    	echo "          <td align=\"center\" nowrap>
-		     <iframe name=\"cmi\" width=\"1\" height=\"1\" src=\"cmi.php?id=$cm->id\" style=\"visibility: hidden;\"></iframe>
-		     <form name=\"navform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\" target=\"_top\">
-		     	<input name=\"scoid\" type=\"hidden\" />
-		     	<input name=\"mode\" type=\"hidden\" value=\"".$_GET["mode"]."\" />
-		     	<input name=\"prev\" type=\"button\" value=\"".get_string("prev","scorm")."\" onClick=\"top.changeSco('prev');\" />&nbsp;\n";
-		     	
-	if ($scorm->popup == "") {
-	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' order by id ASC")){
-    	    	$level=0;			
-    	    	$parents[$level]="/";
-    	    	foreach ($scoes as $sco) {
-    		    if ($parents[$level]!=$sco->parent) {
-    			if ($level>0 && $parents[$level-1]==$sco->parent) {
-    			    $level--;
-    			} else {
-    			    $level++;
-    			    $parents[$level]=$sco->parent;
-    			}
-    		    }
-    		    $indenting = "";
-    		    for ($i=0;$i<$level;$i++) {
-    		        $indenting .= "-";
-    		    }
-    		    $options[$sco->id] = $indenting."&gt; ".$sco->title;
-	    	}
-	    }
-	    choose_from_menu($options, "courseStructure", "", "", "document.navform.scoid.value=document.navform.courseStructure.options[document.navform.courseStructure.selectedIndex].value;document.navform.submit();");
-	}
-	echo "     	&nbsp;<input name=\"next\" type=\"button\" value=\"".get_string("next","scorm")."\" onClick=\"top.changeSco('next')\" />\n";
-	echo "	     </form>
-		</td>\n";
-	
-    	echo "</tr>\n</table>\n";
-        if ($scorm->popup != "") {
+    	if ($scorm->popup != "") {
+    	    echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
 	    $currentSCO = "";
-            if (!empty($_GET['scoid']))
-                $currentSCO = $_GET['scoid'];
+            if (!empty($_POST['scoid']))
+                $currentSCO = $_POST['scoid'];
         ?>
             <br />
             <script language="Javascript">
@@ -173,8 +145,8 @@
     		        $startbold = '';
     		        $endbold = '';
     		        if ($sco->id == $currentSCO) {
-    			    $startbold = '<b><u>';
-    			    $endbold = '</u></b>';
+    			    $startbold = '-> <b><u>';
+    			    $endbold = '</u></b> <-';
     		    	}
     			if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
     			    if ( $sco_user->cmi_core_lesson_status == "")
@@ -184,8 +156,8 @@
  			        if ($currentSCO == "") {
  				    $incomplete = true;
  				    $currentSCO = $sco->id;
- 				    $startbold = '<b><u>';
-    			    	    $endbold = '</u></b>';
+ 				    $startbold = '-> <b><u>';
+    			    	    $endbold = '</u></b> <-';
  				}
  			    }
     			} else {
@@ -204,32 +176,68 @@
 	    echo "</ul></td></tr>\n";
     	    echo "</table>\n";
     	    print_simple_box_end();
+    	    
         }
+	    
+    	echo "<table width=\"100%\">\n    <tr>\n";
+    	echo "          <td align=\"center\" nowrap>
+		     <iframe name=\"cmi\" width=\"1\" height=\"1\" src=\"cmi.php?id=$cm->id\" style=\"visibility: hidden;\"></iframe>
+		     <form name=\"navform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\" target=\"_top\">
+		     	<input name=\"scoid\" type=\"hidden\" />
+		     	<input name=\"mode\" type=\"hidden\" value=\"".$mode."\" />
+		     	<input name=\"prev\" type=\"button\" value=\"".get_string("prev","scorm")."\" onClick=\"top.changeSco('prev');\" />&nbsp;\n";
+		     	
+	if ($scorm->popup == "") {
+	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' order by id ASC")){
+    	    	$level=0;			
+    	    	$parents[$level]="/";
+    	    	foreach ($scoes as $sco) {
+    		    if ($parents[$level]!=$sco->parent) {
+    			if ($level>0 && $parents[$level-1]==$sco->parent) {
+    			    $level--;
+    			} else {
+    			    $level++;
+    			    $parents[$level]=$sco->parent;
+    			}
+    		    }
+    		    $indenting = "";
+    		    for ($i=0;$i<$level;$i++) {
+    		        $indenting .= "-";
+    		    }
+    		    $options[$sco->id] = $indenting."&gt; ".$sco->title;
+	    	}
+	    }
+	    choose_from_menu($options, "courseStructure", "", "", "document.navform.scoid.value=document.navform.courseStructure.options[document.navform.courseStructure.selectedIndex].value;document.navform.submit();");
+	}
+	echo "     	&nbsp;<input name=\"next\" type=\"button\" value=\"".get_string("next","scorm")."\" onClick=\"top.changeSco('next')\" />\n";
+	echo "	     </form>
+		</td>\n";
+	
+    	echo "</tr>\n</table>\n";
+    	
+    	if ($scorm->popup != "") {
+    	?>
+    	    <script language="Javascript">
+    	        top.main = window.open('','main','<?php echo $scorm->popup ?>');
+		SCOInitialize();
+            </script>
+        <?php
+        }
+        
 	echo "</body>\n</html>\n";
     } else {
-        if ($_POST["scoid"])
-    	    $scoid = "&scoid=".$_POST["scoid"];
-    	echo "<html>\n";
-        echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
-        echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$_POST["mode"].$scoid."\"></script>\n";
-
         if ($scorm->popup == "") {
     	    // 
     	    // Frameset
     	    //
+    	    echo "<html>\n";
+            echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
+            echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
 	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\">\n";
-            echo "	    <frame name=\"nav\" src=\"playscorm.php?id=$cm->id&mode=".$_POST["mode"]."&frameset=top\">\n";
+            echo "	    <frame name=\"nav\" src=\"playscorm.php?id=$cm->id&mode=".$mode."&frameset=top\">\n";
             echo "	    <frame name=\"main\" src=\"\">\n";
-        } else {
-            echo "<script language=\"Javascript\">\n";
-            echo '<!--';
-            echo "\nmain = window.open('','SCO Display','$scorm->popup');\n";
-            echo "-->\n";
-            echo '</script>';
-            echo "\n<frameset rows=\"*\" onLoad=\"SCOInitialize();\">\n";
-            echo "	    <frame name=\"nav\" src=\"playscorm.php?id=$cm->id&mode=".$_POST["mode"]."&frameset=top".$scoid."\">\n";
+            echo "</frameset>\n";
+            echo "</html>\n";
         }
-        echo "</frameset>\n";
-        echo "</html>\n";
     }
 ?>

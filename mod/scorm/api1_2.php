@@ -177,8 +177,8 @@ function SCORMapi() {
 	    return "false";
 	}
 	if (Initialized) {
-	    if (top.nav.cmi.document.theform) {
-		cmiform = top.nav.cmi.document.forms[0];
+	    if (<?php echo $navObj ?>cmi.document.theform) {
+		cmiform = <?php echo $navObj ?>cmi.document.forms[0];
 		cmiform.scoid.value = "<?php echo $sco->id; ?>";
 		cmiform.cmi_core_lesson_location.value = cmi.core.lesson_location;
 		cmiform.cmi_core_lesson_status.value = cmi.core.lesson_status;
@@ -211,7 +211,7 @@ function SCORMapi() {
             <?php
 		 if ($scorm->auto) {
 		     if ($sco != $last) {
-	                 print "setTimeout('top.nav.document.navform.next.click();',500);\n";
+	                 print "setTimeout('".$navObj."document.navform.next.click();',500);\n";
 		     } else {
 			 print "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=$cm->id';\n";
 			 print "setTimeout('top.location = exitloc;',500);\n";

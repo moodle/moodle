@@ -132,6 +132,10 @@
 	    $result = "$CFG->wwwroot/file.php?file=/$scorm->course/moddata/scorm$scorm->datadir/$sco->launch";
 	}
     }
+    $navObj = "top.";
+    if ($scorm->popup == "")
+        $navObj = "top.nav.";
+        
     include("api1_2.php");
 
 ?>
@@ -146,26 +150,26 @@ function hilightcurrent(popupmenu) {
 function SCOInitialize() { 
 <?php
     if ( $sco->previous || $first) {
-    	print "\ttop.nav.document.navform.prev.disabled = true;\n";
-	print "\ttop.nav.document.navform.prev.style.display = 'none';\n";
+    	print "\t".$navObj."document.navform.prev.disabled = true;\n";
+	print "\t".$navObj."document.navform.prev.style.display = 'none';\n";
     }
     if ( $sco->next || $last) {
-    	print "\ttop.nav.document.navform.next.disabled = true;\n";
-	print "\ttop.nav.document.navform.next.style.display = 'none';\n";
+    	print "\t".$navObj."document.navform.next.disabled = true;\n";
+	print "\t".$navObj."document.navform.next.style.display = 'none';\n";
     }
 ?>
 	top.main.location="<?php echo $result; ?>";
 <?php	if ($scorm->popup == "") { ?>
-	hilightcurrent(top.nav.document.navform.courseStructure);
+	hilightcurrent(<?php echo $navObj ?>document.navform.courseStructure);
 <?php   } ?>
 } 
 
 function changeSco(direction) {
 	if (direction == "prev")
-	    top.nav.document.navform.scoid.value="<?php echo $prevsco; ?>";
+	    <?php echo $navObj ?>document.navform.scoid.value="<?php echo $prevsco; ?>";
 	else
-	    top.nav.document.navform.scoid.value="<?php echo $nextsco; ?>";
+	    <?php echo $navObj ?>document.navform.scoid.value="<?php echo $nextsco; ?>";
 	    
-	//alert ("Prev: <?php echo $prevsco; ?>\nNext: <?php echo $nextsco; ?>\nNew SCO: "+top.nav.document.navform.scoid.value);
-	top.nav.document.navform.submit();
+	//alert ("Prev: <?php echo $prevsco; ?>\nNext: <?php echo $nextsco; ?>\nNew SCO: "+<?php echo $navObj ?>document.navform.scoid.value);
+	<?php echo $navObj ?>document.navform.submit();
 }   

@@ -37,17 +37,19 @@ function scorm_add_instance($scorm) {
     # May have to add extra stuff in here #
     global $SCORM_WINDOW_OPTIONS;
     
-    if (isset($scorm->setnewwindow)) {
-        $optionlist = array();
-        foreach ($SCORM_WINDOW_OPTIONS as $option) {
-            if (isset($scorm->$option)) {
-                $optionlist[] = $option."=".$scorm->$option;
-            }
+    $scorm->popup = "";
+    
+    $optionlist = array();
+    foreach ($SCORM_WINDOW_OPTIONS as $option) {
+        if (isset($scorm->$option)) {
+            $optionlist[] = $option."=".$scorm->$option;
         }
-        $scorm->popup = implode(',', $optionlist);
-        $scorm->popup .= ',location=0,menubar=0,toolbar=0';
-        $scorm->auto = '0';
     }
+    $scorm->popup = implode(',', $optionlist);
+    $scorm->auto = '0';
+
+    if ($scorm->popup != "")
+    	$scorm->popup .= ',location=0,menubar=0,toolbar=0';
     
     return insert_record("scorm", $scorm);
 }
@@ -64,17 +66,19 @@ function scorm_update_instance($scorm) {
     # May have to add extra stuff in here #
     global $SCORM_WINDOW_OPTIONS;
     
-    if (isset($scorm->setnewwindow)) {
-        $optionlist = array();
-        foreach ($SCORM_WINDOW_OPTIONS as $option) {
-            if (isset($scorm->$option)) {
-                $optionlist[] = $option."=".$scorm->$option;
-            }
+    $scorm->popup = "";
+    
+    $optionlist = array();
+    foreach ($SCORM_WINDOW_OPTIONS as $option) {
+        if (isset($scorm->$option)) {
+            $optionlist[] = $option."=".$scorm->$option;
         }
-        $scorm->popup = implode(',', $optionlist);
-        $scorm->popup .= ',location=0,menubar=0,toolbar=0';
-        $scorm->auto = '0';
     }
+    $scorm->popup = implode(',', $optionlist);
+    $scorm->auto = '0';
+
+    if ($scorm->popup != "")
+    	$scorm->popup .= ',location=0,menubar=0,toolbar=0';
 
     return update_record("scorm", $scorm);
 }
