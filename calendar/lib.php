@@ -943,6 +943,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         else if(is_array($courseeventsfrom)) {
             $courses = array_keys($courseeventsfrom);
         }
+        $courses = array_diff($courses, array(1));
     }
     else if($SESSION->cal_show_global) {
         $courses = array(1);
