@@ -411,12 +411,19 @@ function insert_record($table, $dataobject, $returnid=true) {
     }
 
     if ($returnid) {
-        // Pull it out again to find the id.  This is the most cross-platform method.
-        if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE $select")) {
-            return $rs->fields[0];
-        } else {
-            return false;
+        if ($db->hasInsertID) {
+            return $db->Insert_ID();   // ADOdb has stored the ID for us
         }
+        
+        // Try to pull the record out again to find the id.  This is the most cross-platform method.
+        if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE $select")) {
+            if ($rs->RecordCount() == 1) {
+                return $rs->fields[0];
+            }
+        }
+
+        return false;
+
     } else {
         return true;
     }
