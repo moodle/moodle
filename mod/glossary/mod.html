@@ -198,7 +198,7 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
     <?php
     $formats = array();
     $formats[0] = get_string("displayformatdefault", "glossary");
-    $formats[0] = get_string("displayformatcontinuous", "glossary");
+    $formats[1] = get_string("displayformatcontinuous", "glossary");
 
     $basedir = opendir("$CFG->dirroot/mod/glossary/formats");
     while ($dir = readdir($basedir)) {
