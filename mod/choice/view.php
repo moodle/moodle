@@ -235,7 +235,10 @@
                 if (!$key and !$choice->showunanswered) {
                     continue;
                 }
-                $height = $COLUMN_HEIGHT * ((float)$column[$key] / (float)$maxcolumn);
+                $height = 0;
+                if ($maxcolumn) {
+                    $height = $COLUMN_HEIGHT * ((float)$column[$key] / (float)$maxcolumn);
+                }
                 echo "<td valign=\"bottom\" align=\"center\">";
                 echo "<img src=\"column.png\" height=\"$height\" width=\"49\">";
                 echo "</td>";
