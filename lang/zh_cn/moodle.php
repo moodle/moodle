@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6.4 (2002112400)
+      // moodle.php - created with Moodle 1.0.7 (2002121000)
 
 
 $string['action'] = "动作";
@@ -9,7 +9,7 @@ $string['activityreport'] = "活动报告";
 $string['add'] = "添加";
 $string['added'] = "已添加 \$a";
 $string['addinganew'] = "添加一个新的 \$a";
-$string['addinganewto'] = "Adding a new \$a->what to \$a->to";
+$string['addinganewto'] = "正在添加一个新 \$a->what 到 \$a->to";
 $string['addnewcourse'] = "添加一个新课程";
 $string['addnewuser'] = "添加一个新用户";
 $string['address'] = "地址";
@@ -18,19 +18,19 @@ $string['admin'] = "管理员";
 $string['administration'] = "管理";
 $string['again'] = "再次";
 $string['all'] = "所有";
-$string['alldays'] = "All days";
+$string['alldays'] = "所有天数";
 $string['allfieldsrequired'] = "所有字段都是必需";
 $string['alllogs'] = "所有日志";
 $string['allow'] = "允许";
 $string['allowguests'] = "该课程允许访客进入";
 $string['allownot'] = "不允许";
-$string['allparticipants'] = "所有参与者";
+$string['allparticipants'] = "所有学员";
 $string['alphanumerical'] = "只允许用字母或阿拉伯数字";
 $string['alreadyconfirmed'] = "登记已经确认";
 $string['answer'] = "回答";
 $string['assessment'] = "评价";
 $string['assignteachers'] = "分派教师";
-$string['authentication'] = "";
+$string['authentication'] = "身份验证";
 $string['availablecourses'] = "现有的课程";
 $string['cancel'] = "取消";
 $string['categories'] = "课程类别";
@@ -85,8 +85,8 @@ $string['databasechecking'] = "把数据库从\$a->oldversion版升级到 \$a->newversion
 $string['databasesetup'] = "正在安装数据库";
 $string['databasesuccess'] = "数据库升级成功";
 $string['databaseupgrades'] = "升级数据库";
-$string['day'] = "day";
-$string['days'] = "days";
+$string['day'] = "天";
+$string['days'] = "天";
 $string['defaultcoursefullname'] = "课程全称101";
 $string['defaultcourseshortname'] = "课程简称101";
 $string['defaultcoursestudent'] = "学生";
@@ -187,8 +187,8 @@ $string['gpl'] = "版权所有 (C) 2001-2002  Martin Dougiamas  (http://dougiamas.co
 发布该软件是希望它有用有益，但不提供任何形式的担保，不论是明确的还是隐含的，包括但不限于可销售和适合特定用途的隐含保证。详见GNU通用公共许可证：
 
 http://www.gnu.org/copyleft/gpl.html";
-$string['grade'] = "Grade";
-$string['grades'] = "Grades";
+$string['grade'] = "年级";
+$string['grades'] = "年级";
 $string['guestskey'] = "允许有密钥的访客进入";
 $string['guestsno'] = "不允许访客进入";
 $string['guestsnotallowed'] = "抱歉！ '\$a' 不允许访客进入。";
@@ -232,6 +232,7 @@ $string['leavetokeep'] = "留空以保留现有密码";
 $string['license'] = "GPL许可证";
 $string['listofallpeople'] = "成员列表";
 $string['livelogs'] = "日志";
+$string['locale'] = "en_GB";
 $string['location'] = "位置";
 $string['loggedinas'] = "你以 \$a 登录";
 $string['loggedinnot'] = "你尚未登录。";
@@ -354,7 +355,7 @@ $string['opentoguests'] = "访客进入";
 $string['optional'] = "可选的";
 $string['order'] = "次序";
 $string['outline'] = "概要";
-$string['participants'] = "参与人员";
+$string['participants'] = "学员";
 $string['password'] = "密码";
 $string['passwordchanged'] = "密码已被更改";
 $string['passwordrecovery'] = "是的，帮我登录吧";
@@ -403,7 +404,7 @@ $string['showlistofcourses'] = "显示课程列表";
 $string['showonlytopic'] = "只显示话题 \$a";
 $string['showonlyweek'] = "只显示周安排 \$a";
 $string['showrecent'] = "显示当前活动项目";
-$string['showtheselogs'] = "显示这些日志";
+$string['showtheselogs'] = "显示所有这些日志";
 $string['site'] = "站点";
 $string['sitelogs'] = "本站日志";
 $string['sitenews'] = "本站新闻";
@@ -435,8 +436,8 @@ $string['timezone'] = "时区";
 $string['today'] = "今天";
 $string['todaylogs'] = "今天的日志";
 $string['toomanytoshow'] = "要显示的用户太多";
-$string['topic'] = "话题";
-$string['topicoutline'] = "话题概要";
+$string['topic'] = "主题";
+$string['topicoutline'] = "主题目录";
 $string['total'] = "总计";
 $string['turneditingoff'] = "关掉编辑器";
 $string['turneditingon'] = "打开编辑器";
