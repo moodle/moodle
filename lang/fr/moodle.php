@@ -344,6 +344,7 @@ $string['editcoursesettings'] = 'Modifier les paramètres du cours';
 $string['editfiles'] = 'Modifier les fichiers';
 $string['editgroupprofile'] = 'Modifier le profil du groupe';
 $string['editinga'] = 'Modifier $a';
+$string['editingteachershort'] = 'Éditeur';
 $string['editlock'] = 'Cette valeur ne peut pas être modifiée !';
 $string['editmyprofile'] = 'Modifier mon profil';
 $string['editorbgcolor'] = 'Couleur de fond';
