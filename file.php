@@ -49,20 +49,26 @@
         header("Content-length: ".filesize($pathname));
 
 
-        if ($mimetype == "text/html") {
-            header("Content-type: text/html");
-            echo format_text(implode('', file($pathname)), FORMAT_HTML, NULL, $courseid);  // Filter HTML files
-
-        } else if ($mimetype == "text/plain") {
-            header("Content-type: text/html");
-            $options->newlines = false;
-            echo "<pre>";
-            echo format_text(implode('', file($pathname)), FORMAT_MOODLE, $options, $courseid);  // Filter TEXT files
-            echo "</pre>";
-
-        } else {
+        if (empty($CFG->filteruploadedfiles)) {
             header("Content-type: $mimetype");
             readfile($pathname);
+
+        } else {     /// Try and put the file through filters
+            if ($mimetype == "text/html") {
+                header("Content-type: text/html");
+                echo format_text(implode('', file($pathname)), FORMAT_HTML, NULL, $courseid);
+    
+            } else if ($mimetype == "text/plain") {
+                header("Content-type: text/html");
+                $options->newlines = false;
+                echo "<pre>";
+                echo format_text(implode('', file($pathname)), FORMAT_MOODLE, $options, $courseid);
+                echo "</pre>";
+    
+            } else {    /// Just send it out raw
+                header("Content-type: $mimetype");
+                readfile($pathname);
+            }
         }
     } else {
         error("Sorry, but the file you are looking for was not found ($pathname)", "course/view.php?id=$courseid");

@@ -10,6 +10,7 @@
        "changepassword"   =>  true,
        "country"          => "",
        "debug"            =>  7,
+       "filteruploadedfiles"  =>  true,
        "forcelogin"       =>  false,
        "fullnamedisplay"  => "firstname lastname",
        "framename"        => "_top",

@@ -114,6 +114,21 @@
     </td>
 </tr>
 <tr valign=top>
+	<td nowrap="nowrap" align="right"><?php p($strfilteruploadedfiles) ?>:</td>
+	<td>
+    <?php 
+       unset($options);
+       $options[0] = get_string('no');
+       $options[1] = get_string('yes');
+
+       choose_from_menu ($options, "filteruploadedfiles", $CFG->filteruploadedfiles, "", "", "");
+    ?>
+    </td>
+    <td>
+	<?php p($strconfigfilteruploadedfiles) ?>
+    </td>
+</tr>
+<tr valign=top>
     <td>&nbsp;</td>
     <td><input type="submit" value="<?php print_string("savechanges") ?>"></td>
     <td>&nbsp;</td>

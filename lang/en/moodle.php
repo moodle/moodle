@@ -131,6 +131,7 @@ $string['configcachetext'] = 'For larger sites or sites that use text filters, t
 $string['configcountry'] = 'If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.';
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
 $string['configerrorlevel'] = 'Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.';
+$string['configfilteruploadedfiles'] = 'Enabling this setting will cause Moodle to process all uploaded HTML and text files with the filters before displaying them.';
 $string['configforcelogin'] = 'Normally, the front page of the site and the course listings (but not courses) can be read by people without logging in to the site.  If you want to force people to log in before they do ANYTHING on the site, then you should enable this setting.';
 $string['configframename'] = 'If you are embedding Moodle within a web frame, then put the name of this frame here.  Otherwise this value should remain as \'_top\'';
 $string['configfullnamedisplay'] = 'This defines how names are shown when they are displayed in full. For most mono-lingual sites the most efficient setting is the default \"Given names + Surname\", but you may choose to hide surnames altogether, or to leave it up to the current language pack to decide (some languages have different conventions).';
