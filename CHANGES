@@ -1,3 +1,260 @@
+2002-06-20 Thursday 23:41  martin
+
+	* mod/forum/db/mysql.sql: Bugfixes from move - this is now up to
+	date
+
+2002-06-20 Thursday 23:34  martin
+
+	* mod/discuss/search.php: Default to "", not 0
+
+2002-06-20 Thursday 23:24  martin
+
+	* index.php: Subscibing to forum, not discuss
+
+2002-06-20 Thursday 23:15  martin
+
+	* index.php, course/social.php, course/topics.php,
+	course/unenrol.php, course/weeks.php, lib/moodlelib.php,
+	mod/discuss/cron.php, mod/discuss/index.php, mod/discuss/lib.php,
+	mod/discuss/mod.php, mod/discuss/post.php, mod/discuss/search.php,
+	mod/discuss/subscribe.php, mod/discuss/view.php,
+	mod/discuss/db/mysql.sql, mod/forum/icon.gif, mod/forum/index.php,
+	mod/forum/lib.php, mod/forum/mod.html, mod/forum/mod.php,
+	mod/forum/module.php, mod/forum/subscribe.php, mod/forum/view.php,
+	mod/forum/db/mysql.sql: Mass change related to separating forum
+	from discuss and making it a separate module (again).  This frees
+	up forums for some interesting developments.  Note that database
+	tables have moved around.
+
+2002-06-19 Wednesday 23:42  martin
+
+	* course/unenrol.php, user/index.php: Modifications to unenrol. 
+	Now a teacher can unenrol students from the course.
+
+2002-06-19 Wednesday 13:37  martin
+
+	* lib/db/mysql.sql: Added course->marker
+
+2002-06-19 Wednesday 13:08  martin
+
+	* pix/i/marker.gif: "marker" icon used by "topics" course format to
+	mark a topic
+
+2002-06-19 Wednesday 13:07  martin
+
+	* mod/discuss/lib.php: Slight formatting improvements to search box
+
+2002-06-19 Wednesday 13:06  martin
+
+	* mod/discuss/index.php: Formatting and subscribe/unsubscribe from
+	forum
+
+2002-06-19 Wednesday 13:05  martin
+
+	* mod/journal/report.php: Bugfix in crumbs
+
+2002-06-19 Wednesday 13:04  martin
+
+	* course/: lib.php, topics.php, view.php: Added a "topics" format. 
+	it's very similar to the "Weeks" format, except it isn't
+	constrained by times.  Useful for flexible courses where the pace
+	isn't known and is subject to change.  The teacher can "mark" the
+	current topic and change this marking as necessary.
+
+2002-06-16 Sunday 17:44  martin
+
+	* index.php, mod/discuss/lib.php: Changes to add
+	subscribe/unsubscribe to site News forum
+
+2002-06-16 Sunday 11:25  martin
+
+	* index.php: More accessible log in button up top
+
+2002-06-13 Thursday 20:31  martin
+
+	* lib/adodb/: adodb-cryptsession.php, adodb-csvlib.inc.php,
+	adodb-errorhandler.inc.php, adodb-errorpear.inc.php,
+	adodb-lib.inc.php, adodb-pager.inc.php, adodb-pear.inc.php,
+	adodb-session.php, adodb.inc.php, readme.htm, server.php,
+	tips_portable_sql.htm, toexport.inc.php, tohtml.inc.php,
+	drivers/adodb-access.inc.php, drivers/adodb-ado.inc.php,
+	drivers/adodb-ado_access.inc.php, drivers/adodb-ado_mssql.inc.php,
+	drivers/adodb-borland_ibase.inc.php, drivers/adodb-csv.inc.php,
+	drivers/adodb-db2.inc.php, drivers/adodb-fbsql.inc.php,
+	drivers/adodb-firebird.inc.php, drivers/adodb-ibase.inc.php,
+	drivers/adodb-informix.inc.php, drivers/adodb-informix72.inc.php,
+	drivers/adodb-mssql.inc.php, drivers/adodb-mysql.inc.php,
+	drivers/adodb-mysqlt.inc.php, drivers/adodb-oci8.inc.php,
+	drivers/adodb-oci805.inc.php, drivers/adodb-oci8po.inc.php,
+	drivers/adodb-odbc.inc.php, drivers/adodb-odbc_mssql.inc.php,
+	drivers/adodb-odbc_oracle.inc.php, drivers/adodb-oracle.inc.php,
+	drivers/adodb-postgres.inc.php, drivers/adodb-postgres64.inc.php,
+	drivers/adodb-postgres7.inc.php, drivers/adodb-proxy.inc.php,
+	drivers/adodb-sqlanywhere.inc.php, drivers/adodb-sybase.inc.php,
+	drivers/adodb-vfp.inc.php, tests/benchmark.php, tests/client.php,
+	tests/test.php, tests/test2.php, tests/test3.php, tests/test4.php,
+	tests/test5.php, tests/testcache.php, tests/testdatabases.inc.php,
+	tests/testgenid.php, tests/testmssql.php, tests/testoci8.php,
+	tests/testpaging.php, tests/testpear.php, tests/testsessions.php:
+	Upgraded to ADOdb 2.12
+
+2002-06-13 Thursday 19:18  martin
+
+	* config-dist.php, user/edit.php, user/lib.php: Changes to support
+	GD 1 and GD 2.	Well, to be more accurate, we now rely on the
+	administrator to tell us which is installed because PHP is not
+	reliable  (eg GD 2.* functions are available in 4.0.6 and later
+	EVEN WHEN gd 2 is not present ... sigh).
+	
+	So, new config variable  $CFG->gdversion
+
+2002-06-12 Wednesday 12:31  martin
+
+	* course/lib.php: Whoops ... removed Choose...
+
+2002-06-12 Wednesday 12:29  martin
+
+	* course/lib.php: Changes to course menu
+
+2002-06-12 Wednesday 12:24  martin
+
+	* index.php: Link to site logs
+
+2002-06-12 Wednesday 12:22  martin
+
+	* course/: lib.php, log.php: Improvements to logs for admin user
+	(can view any course)
+
+2002-06-11 Tuesday 15:43  martin
+
+	* index.php: OK, this is better (sigh)
+
+2002-06-11 Tuesday 15:29  martin
+
+	* mod/discuss/: lib.php, search.php: Formatting tweaks
+
+2002-06-11 Tuesday 15:27  martin
+
+	* course/: view.php, weeks.php: Tweaks to course format (search
+	box)
+
+2002-06-11 Tuesday 15:02  martin
+
+	* mod/discuss/search.php: Starting to look good now
+
+2002-06-11 Tuesday 15:01  martin
+
+	* lib/weblib.php: New highlight function for searches etc
+
+2002-06-11 Tuesday 14:34  martin
+
+	* mod/discuss/search.php: Only search in current course (duh)
+
+2002-06-11 Tuesday 14:28  martin
+
+	* theme/: standard/styles.css, standardblue/styles.css: New
+	"highlight" class (eg for search results)
+
+2002-06-11 Tuesday 14:27  martin
+
+	* mod/discuss/search.php: Improved layout
+
+2002-06-11 Tuesday 13:37  martin
+
+	* mod/discuss/lib.php: Tweak
+
+2002-06-11 Tuesday 13:36  martin
+
+	* mod/discuss/search.php: Testing
+
+2002-06-11 Tuesday 13:35  martin
+
+	* mod/discuss/search.php: Layout etc ... not done yet
+
+2002-06-11 Tuesday 12:55  martin
+
+	* mod/discuss/lib.php, course/social.php: Added search form
+
+2002-06-11 Tuesday 12:31  martin
+
+	* index.php: grr
+
+2002-06-11 Tuesday 12:28  martin
+
+	* course/lib.php: Tiny fix so that when today is specified, it's
+	selected in the list
+
+2002-06-11 Tuesday 12:04  martin
+
+	* lib/moodlelib.php: Fixes to usergetdate() ... looks OK now.
+
+2002-06-11 Tuesday 11:10  martin
+
+	* index.php: Fomat tweaking
+
+2002-06-11 Tuesday 11:06  martin
+
+	* index.php: Removed bodgy forums link - it's not necessary
+
+2002-06-10 Monday 23:18  martin
+
+	* mod/discuss/search.php: testing
+
+2002-06-10 Monday 23:08  martin
+
+	* mod/discuss/search.php: Not finished yet, I'm just testing it
+
+2002-06-10 Monday 22:01  martin
+
+	* course/lib.php, lib/moodlelib.php, user/index.php: New
+	usergetmidnight function and use in finding today's logs
+
+2002-06-10 Monday 21:47  martin
+
+	* course/enrol.html: Added generic "your teacher" when there is no
+	teacher defined yet
+
+2002-06-10 Monday 21:40  martin
+
+	* index.php: Tweaking layout
+
+2002-06-10 Monday 21:35  martin
+
+	* index.php: More tweaks and simplification when possible
+
+2002-06-10 Monday 21:11  martin
+
+	* mod/reading/: details.php, lib.php, mod.html, view.php: new
+	reading type: "Web Address" is now Web Page and Web Link, which
+	simply redirects to the external link (no frame)
+
+2002-06-10 Monday 19:35  martin
+
+	* index.php: Tweak: added courses link back in ... because courses
+	page may one day be something different to the display on the front
+	page (eg when there's very many courses)
+
+2002-06-10 Monday 19:34  martin
+
+	* lib/db/mysql.sql: Added course->timecreated
+
+2002-06-10 Monday 19:30  martin
+
+	* course/edit.php: Make sure new courses set the timecreated field
+
+2002-06-10 Monday 19:16  martin
+
+	* course/index.php: Fixed formatting.
+
+2002-06-10 Monday 19:11  martin
+
+	* course/: edit.html, enrol.html, enrol.php, lib.php: Course entry
+	key is now called an enrolment key
+
+2002-06-10 Monday 17:47  martin
+
+	* CHANGES: Changes
+
 2002-06-10 Monday 17:44  martin
 
 	* course/: lib.php, log.php: Fixes related to user timezones.  All
