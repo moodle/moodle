@@ -241,8 +241,10 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
         //get and update available formats
         $recformats = glossary_get_available_formats();
         //reload current format, because of it has changed (deleted format)
-        if ($currentglossary = get_record("glossary",'id',$form->id)) {
-            $form->displayformat = $currentglossary->displayformat;
+        if (isset($form->id)) {
+            if ($currentglossary = get_record("glossary",'id',$form->id)) {
+                $form->displayformat = $currentglossary->displayformat;
+            }
         }
     
         $formats = array(); 
