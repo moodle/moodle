@@ -161,7 +161,7 @@ class quiz_report extends quiz_default_report {
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '.
                'LEFT JOIN '.$CFG->prefix.'quiz_responses qr ON qr.attempt = qa.id '.
-               'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') AND ('.($noattempts ? sql_isnull('qa.quiz').' OR ' : '') . 'qa.quiz = '.$quiz->id.') ';
+               'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') AND qa.timefinish != 0 AND ('.($noattempts ? sql_isnull('qa.quiz').' OR ' : '') . 'qa.quiz = '.$quiz->id.') ';
 
         $total = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$sql);
         $table->pagesize(10, $total);
