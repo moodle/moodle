@@ -114,6 +114,7 @@ $string['noresponse'] = 'Pas de response';
 $string['noreview'] = 'Vous n\'êtes pas autorisé à relire ce test';
 $string['noreviewuntil'] = 'Vous n\'êtes pas autorisé à relire ce test avant le $a';
 $string['notenoughsubquestions'] = 'Vous n\'avez pas défini assez de sous-questions !<br />Souhaitez-vous revenir en arrière pour corriger cela ?';
+$string['notenoughanswers'] = 'Ce type de question requiert au moins $a réponses';
 $string['numerical'] = 'Numérique';
 $string['paragraphquestion'] = 'Question paragraphe non supportée à la ligne $a. La question sera ignorée.';
 $string['percentcorrect'] = 'Pourcentage de réponses correctes';
