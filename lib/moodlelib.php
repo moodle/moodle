@@ -861,54 +861,118 @@ function get_user_timezone($tz = 99) {
     return $tz;
 }
 
-function calculate_user_dst_table() {
+function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     global $CFG, $USER;
-    static $presetname = NULL;
 
-    if (!empty($presetname)) {
-        return true;
+    if (empty($USER)) {
+        return false;
     }
 
     if (empty($CFG->forcetimezone)) {
         if (empty($USER->timezonename)) {
             return false;
         }
-        $presetname = $USER->timezonename;
+        $timezonename = $USER->timezonename;
 
     } else {
-        $presetname = $CFG->forcetimezone;
+        $timezonename = $CFG->forcetimezone;
     }
 
-    $presetrecords = get_records('timezone', 'name', $presetname, 'year ASC');
+    if (!empty($USER->dstoffsets) && empty($from_year) && empty($to_year)) {
+        // Repeat calls which do not request specific year ranges stop here, we have already calculated the table
+        // This will be the return path most of the time, pretty light computationally
+        return true;
+    }
+
+    // Reaching here means we either need to extend our table or create it from scratch
+    if(empty($USER->dstoffsets)) {
+        // If we 're creating from scratch, put the two guard elements in there
+        $USER->dstoffsets = array(1 => NULL, 0 => NULL);
+    }
+    if(empty($USER->dstrange)) {
+        // If creating from scratch
+        $from = max((empty($from_year) ? intval(date('Y')) - 3 : $from_year), 1971);
+        $to   = min((empty($to_year)   ? intval(date('Y')) + 3 : $to_year),   2035);
+
+        // Fill in the array with the extra years we need to process
+        $yearstoprocess = array();
+        for($i = $from; $i <= $to; ++$i) {
+            $yearstoprocess[] = $i;
+        }
+
+        // Take note of which years we have processed for future calls
+        $USER->dstrange = array($from, $to);
+    }
+    else {
+        // If needing to extend the table, do the same
+        $yearstoprocess = array();
+
+        $from = max((empty($from_year) ? $USER->dstrange[0] : $from_year), 1971);
+        $to   = min((empty($to_year)   ? $USER->dstrange[1] : $to_year),   2035);
+
+        if($from < $USER->dstrange[0]) {
+            // Take note of which years we need to process and then note that we have processed them for future calls
+            for($i = $from; $i < $USER->dstrange[0]; ++$i) {
+                $yearstoprocess[] = $i;
+            }
+            $USER->dstrange[0] = $from;
+        }
+        if($to > $USER->dstrange[1]) {
+            // Take note of which years we need to process and then note that we have processed them for future calls
+            for($i = $USER->dstrange[1] + 1; $i <= $to; ++$i) {
+                $yearstoprocess[] = $i;
+            }
+            $USER->dstrange[1] = $to;
+        }
+    }
+
+    if(empty($yearstoprocess)) {
+        // This means that there was a call requesting a SMALLER range than we have already calculated
+        return true;
+    }
+
+    // From now on, we know that the array has at least the two guard elements, and $yearstoprocess has the years we need
+    // Also, the array is sorted in descending timestamp order!
+
+    // Get DB data
+    $presetrecords = get_records('timezone', 'name', $timezonename, 'year DESC', 'year, gmtoff, dstoff, dst_month, dst_startday, dst_weekday, dst_skipweeks, dst_time, std_month, std_startday, std_weekday, std_skipweeks, std_time');
     if(empty($presetrecords)) {
         return false;
     }
 
-    if(!empty($USER)) {
-        if(empty($USER->dstoffsets)) {
-            $USER->dstoffsets = array(0 => NULL);
-            foreach($presetrecords as $presetrecord) {
-                $changes = dst_changes_for_year($presetrecord->year, $presetrecord);
-                
-                if($changes === NULL) {
-                    continue;
-                }
-                if($changes['dst'] != 0) {
-                    $USER->dstoffsets[$changes['dst']] = $presetrecord->dstoff * MINSECS;
-                }
-                if($changes['std'] != 0) {
-                    $USER->dstoffsets[$changes['std']] = 0;
-                }
+    // Remove ending guard (first element of the array)
+    reset($USER->dstoffsets);
+    unset($USER->dstoffsets[key($USER->dstoffsets)]);
+
+    // Add all required change timestamps
+    foreach($yearstoprocess as $y) {
+        // Find the record which is in effect for the year $y
+        foreach($presetrecords as $year => $preset) {
+            if($year <= $y) {
+                break;
             }
-            $calcuntil = make_timestamp(2031, 1, 1, 00, 00, 00, get_user_timezone(99), false);
-            $USER->dstoffsets[$calcuntil] = NULL;
-            krsort($USER->dstoffsets);
+        }
+
+        $changes = dst_changes_for_year($y, $preset);
+
+        if($changes === NULL) {
+            continue;
+        }
+        if($changes['dst'] != 0) {
+            $USER->dstoffsets[$changes['dst']] = $preset->dstoff * MINSECS;
+        }
+        if($changes['std'] != 0) {
+            $USER->dstoffsets[$changes['std']] = 0;
         }
     }
 
-    //print_object($presetrecords);
-    //print_object($USER->dstoffsets);
-    
+    // Put in a guard element at the top
+    $maxtimestamp = max(array_keys($USER->dstoffsets));
+    $USER->dstoffsets[($maxtimestamp + DAYSECS)] = NULL; // DAYSECS is arbitrary, any "small" number will do
+
+    // Sort again
+    krsort($USER->dstoffsets);
+
     return true;
 }
 
@@ -925,14 +989,23 @@ function dst_changes_for_year($year, $timezone) {
     list($std_hour, $std_min) = explode(':', $timezone->std_time);
 
     $tz      = get_user_timezone(99);
-    $timedst = make_timestamp($year, $timezone->dst_month, $monthdaydst, $dst_hour, $dst_min, 0, $tz, false);
-    $timestd = make_timestamp($year, $timezone->std_month, $monthdaystd, $std_hour, $std_min, 0, $tz, false);
+    $timedst = make_timestamp($year, $timezone->dst_month, $monthdaydst, 0, 0, 0, $tz, false);
+    $timestd = make_timestamp($year, $timezone->std_month, $monthdaystd, 0, 0, 0, $tz, false);
+
+    // Instead of putting hour and minute in make_timestamp(), we add them afterwards.
+    // This has the advantage of being able to have negative values for hour, i.e. for timezones
+    // where GMT time would be in the PREVIOUS day than the local one on which DST changes.
+
+    $timedst += $dst_hour * HOURSECS + $dst_min * MINSECS;
+    $timestd += $std_hour * HOURSECS + $std_min * MINSECS;
 
     return array('dst' => $timedst, 0 => $timedst, 'std' => $timestd, 1 => $timestd);
 }
 
 // $time must NOT be compensated at all, it has to be a pure timestamp
 function dst_offset_on($time) {
+    global $USER;
+
     if(!calculate_user_dst_table()) {
         return 0;
     }
@@ -941,22 +1014,38 @@ function dst_offset_on($time) {
         return 0;
     }
 
-    $finaloffset = NULL;
-
-    foreach($USER->dstoffsets as $from => $offset) {
+    reset($USER->dstoffsets);
+    while(list($from, $offset) = each($USER->dstoffsets)) {
         if($from <= $time) {
-            $finaloffset = $offset;
             break;
         }
     }
 
-    if($finaloffset === NULL) {
-        // This means we haven't calculated far enough ahead, do it now?
-        print_object($USER->dstoffsets);
-        error('Error in calculating DST offset for timestamp '.$time);
+    // This is the normal return path
+    if($offset !== NULL) {
+        return $offset;
     }
 
-    return $finaloffset;
+    // Reaching this point means we haven't calculated far enough, do it now:
+    // Calculate extra DST changes if needed and recurse. The recursion always
+    // moves toward the stopping condition, so will always end.
+
+    if($from == 0) {
+        // We need a year smaller than $USER->dstrange[0]
+        if($USER->dstrange[0] == 1971) {
+            return 0;
+        }
+        calculate_user_dst_table($USER->dstrange[0] - 5, NULL);
+        return dst_offset_on($time);
+    }
+    else {
+        // We need a year larger than $USER->dstrange[1]
+        if($USER->dstrange[1] == 2035) {
+            return 0;
+        }
+        calculate_user_dst_table(NULL, $USER->dstrange[1] + 5);
+        return dst_offset_on($time);
+    }
 }
 
 function find_day_in_month($startday, $weekday, $month, $year) {
