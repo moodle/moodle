@@ -1577,6 +1577,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     $mail->Version = "Moodle $CFG->version";           // mailer version 
     $mail->PluginDir = "$CFG->libdir/phpmailer/";      // plugin directory (eg smtp plugin)
 
+
+    if ($CFG->lang != "en") {
+        $mail->Charset = get_string("thischarset");
+    }
+
     if ($CFG->smtphosts) {
         $mail->IsSMTP();                               // use SMTP directly
         $mail->Host = "$CFG->smtphosts";               // specify main and backup servers
