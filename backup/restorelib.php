@@ -54,8 +54,6 @@
         $info = restore_read_xml ($xml_file,"INFO",false);
 
         return $info;
-
-        echo "finished";
     }
 
     //=====================================================================================
@@ -71,31 +69,114 @@
         var $tree = array();   //Array of levels we are
         var $content = "";     //Content under current level
         var $todo = "";        //What we hav to do when parsing
-        var $info = array();   //Information collected (todo = INFO)
+        var $info = "";        //Information collected. Temp storage.
         var $preferences = ""; //Preferences about what to load !!
         var $finished = false; //Flag to say xml_parse to stop
+ 
+        //This is the startTag handler we use where we are reading the info zone (todo="INFO")
+        function startElementInfo($parser, $tagName, $attrs) {
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
 
+            //Check if we are into INFO zone
+            //if ($this->tree[2] == "INFO")                                                             //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+        }
+
+        //This is the startTag default handler we use when todo is undefined
         function startElement($parser, $tagName, $attrs) {
             $this->level++;
             $this->tree[$this->level] = $tagName;
             echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
+ 
+        //This is the endTag handler we use where we are reading the info zone (todo="INFO")
+        function endElementInfo($parser, $tagName) {
+            //Check if we are into INFO zone
+            if ($this->tree[2] == "INFO") {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".utf8_decode(str_repeat("&nbsp;",($this->level+2)*2).$this->content."<br>\n");    //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //Dependig of different combinations, do different things
+                if ($this->level == 3) {
+                    switch ($tagName) {
+                        case "NAME":
+                            $this->info->backup_name = trim($this->content);
+                            break;
+                        case "MOODLE_VERSION":
+                            $this->info->backup_moodle_version = trim($this->content);
+                            break;
+                        case "MOODLE_RELEASE":
+                            $this->info->backup_moodle_release = trim($this->content);
+                            break;
+                        case "BACKUP_VERSION":
+                            $this->info->backup_backup_version = trim($this->content);
+                            break;
+                        case "BACKUP_RELEASE":
+                            $this->info->backup_backup_release = trim($this->content);
+                            break;
+                        case "DATE":
+                            $this->info->backup_date = trim($this->content);
+                            break;
+                    }
+                }
+                if ($this->tree[3] == "DETAILS") {
+                    if ($this->level == 4) {
+                        switch ($tagName) {
+                            case "USERS":
+                                $this->info->backup_users = trim($this->content);
+                                break;
+                            case "LOGS":
+                                $this->info->backup_logs = trim($this->content);
+                                break;
+                            case "USERFILES":
+                                $this->info->backup_user_files = trim($this->content);
+                                break;
+                            case "COURSEFILES":
+                                $this->info->backup_course_files = trim($this->content);
+                                break;
+                        }
+                    }
+                    if ($this->level == 5) {
+                        switch ($tagName) {
+                            case "NAME":
+                                $this->info->tempName = trim($this->content);
+                                break;
+                            case "INCLUDED":
+                                $this->info->mods[$this->info->tempName] = trim($this->content);
+                                break;
+                        }
+                    }
+                }
 
-        function endElement($parser, $tagName) {
-            if (trim($this->content))                                                                     //Debug
-                echo "C".utf8_decode(str_repeat("&nbsp;",($this->level+2)*2).$this->content."<br>\n");    //Debug
-            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
-            $this->level--;
-            $this->tree[$this->level] = "";
-            $this->content = "";
+
+                //Clear things
+                $this->tree[$this->level] = "";
+                $this->level--;
+                $this->content = "";
+            }
 
             //Stop parsing if todo = INFO and tagName = INFO (en of the tag, of course)
             //Speed up a lot (avoid parse all)
-            if (($this->todo == "INFO") and ($tagName == "INFO")) {
+            if ($tagName == "INFO") {
                 $this->finished = true;
             }
         }
 
+        //This is the endTag default handler we use when todo is undefined
+        function endElement($parser, $tagName) {
+            if (trim($this->content))                                                                     //Debug
+                echo "C".utf8_decode(str_repeat("&nbsp;",($this->level+2)*2).$this->content."<br>\n");    //Debug
+            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+        }
+
+        //This is the handler to read data contents (simple accumule it)
         function characterData($parser, $data) {
             $this->content .= $data;
         }
@@ -103,7 +184,7 @@
     
     //This function executes the MoodleParser
     function restore_read_xml ($xml_file,$todo,$preferences) {
-
+        
         $status = true;
 
         $xml_parser = xml_parser_create();
@@ -111,7 +192,14 @@
         $moodle_parser->todo = $todo;
         $moodle_parser->preferences = $preferences;
         xml_set_object($xml_parser,&$moodle_parser);
-        xml_set_element_handler($xml_parser, "startElement", "endElement");
+        //Depending of the todo we use some element_handler or another
+        if ($todo == "INFO") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");
+        } else {
+            //Define default handlers (must no be invoked when everything become finished)
+            xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");
+        }
         xml_set_character_data_handler($xml_parser, "characterData");
         $fp = fopen($xml_file,"r")
             or $status = false;
@@ -129,7 +217,7 @@
         //Clear parser mem
         xml_parser_free($xml_parser);
 
-        if ($Status) {
+        if ($status) {
             return $info;
         } else {
             return $status;
