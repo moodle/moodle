@@ -144,7 +144,9 @@
 /// then use the one from the default language.  Otherwise (and this is the 
 /// majority of cases), use the stored locale specified by admin.
 
-    if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
+    if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {
+        $CFG->locale = get_string("locale");
+    } else if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
         $CFG->locale = get_string("locale");
     } else if (empty($CFG->locale)) {
         $CFG->locale = get_string("locale");
