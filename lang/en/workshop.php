@@ -180,6 +180,7 @@ $string['viewassessmentofteacher'] = "View Assessment of \$a";
 $string['viewotherassessments'] = "View other Assessments";
 $string['warningonamendingelements'] = "WARNING: There are submitted assessments. <BR>Do NOT change the number
  of elements, the scale types or the element weights.";
+$string['weight'] = "Weight";
 $string['weightederrorcount'] = "Weighted Error Count: \$a";
 $string['weightforbias'] = "Weight for Bias";
 $string['weightforgradingofassessments'] = "Weight for Grading of Assessments";
