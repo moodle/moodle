@@ -236,7 +236,7 @@
     unset($course);    // To avoid unwanted language effects later
 
     $courses = get_courses_page($category->id, 'c.sortorder ASC', 
-                                'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible,c.teacher', 
+                                'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible,c.teacher,c.guest,c.password', 
                                 $totalcount, $page*$perpage, $perpage);
     $numcourses = count($courses);
 
@@ -350,13 +350,13 @@
                 echo "</td>";
             } else {
                 echo "<td align=\"right\">";
-                if ($acourse->guest ) {
+                if (!empty($acourse->guest)) {
                     echo "<a href=\"view.php?id=$acourse->id\"><img hspace=2 title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
                 }
-                if ($acourse->password) {
+                if (!empty($acourse->password)) {
                     echo "<a href=\"view.php?id=$acourse->id\"><img hspace=2 title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
                 }
-                if ($acourse->summary) {
+                if (!empty($acourse->summary)) {
                     link_to_popup_window ("/course/info.php?id=$acourse->id", "courseinfo", 
                                           "<img hspace=2 alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
                                            400, 500, $strsummary);
