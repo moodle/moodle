@@ -495,3 +495,15 @@ body#user-index #longtimenosee {
     font-size: 0.9em;
     font-weight: bold;
 }
+
+.files .file {
+    font-size: 0.9em;
+}
+
+.files .folder {
+    font-size: 0.9em;
+}
+
+.files .folder .size {
+    font-weight: bold;
+}
