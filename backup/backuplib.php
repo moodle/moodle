@@ -888,6 +888,7 @@
                     $file = $file."/";
                 }
                 //Include into array
+                //echo "<br>Adding file/dir ".$file;                       //Debug
                 $files[] = $basedir."/".$file;
             }
             include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
