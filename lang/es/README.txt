@@ -5,9 +5,8 @@ Versión:  1.2
 Coordinador de traducción: 
 Claudio Tavares (claudio@enlaceacademico.com)
 
-Participantes: 
+Colaboradores: 
 
-Claudio Tavares (claudio@enlaceacademico.com)
 Antonio Navarro (anavarro@sextaisla.com)
 Emmanuelle Gutiérrez y Restrepo (emmanuelle@mi.madritel.es)
 Sergio Alfaro (salfaro@humanos.cl)
@@ -17,6 +16,9 @@ Raúl Vernengo
 Sergio Zúñiga Sánchez (szuniga@vtr.net)
 Ricardo Dalton (moodle@avmed.com.ar)
 Facundo Ortiz (facundooz@fibertel.com.ar)
+Mauricio Latorre (moodle@chubasco.org)
+Pedro Benito (pedrusko@telefonica.net)
+ 
 
 
 Si desea contribuir puede hacerlo de diferentes maneras:
