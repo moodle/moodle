@@ -145,6 +145,12 @@
             error("Sorry, but you can not post a new discussion in this forum.");
         }
 
+        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            if (!$cm->visible and !isteacher($course->id)) {
+                error(get_string("activityiscurrentlyhidden"));
+            }
+        }
+
         // Load up the $post variable.
 
         $post->course = $course->id;
@@ -183,6 +189,9 @@
                 if (mygroupid($course->id) != $discussion->groupid) {
                     error("Sorry, but you can not post in this discussion.");
                 }
+            }
+            if (!$cm->visible and !isteacher($course->id)) {
+                error(get_string("activityiscurrentlyhidden"));
             }
         }
 
