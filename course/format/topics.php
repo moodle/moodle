@@ -286,7 +286,7 @@
     }
     
 
-    if ($news or $course->showrecent) {
+    if (!empty($news) or $course->showrecent) {
         echo "</td><td width=210>";
 
         /// Print all the news items.
