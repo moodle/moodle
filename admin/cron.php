@@ -110,7 +110,12 @@
         include_once("../backup/backup_scheduled.php");
         include_once("../backup/backuplib.php");
         include_once("../backup/lib.php");
-        schedule_backup_cron();
+        $status = schedule_backup_cron();
+        if (!$status) {
+            echo "Something was wrong in backup tasks!!!\n";
+        } else {
+            echo "Backup tasks finished\n";
+        }
     }
 
     echo "Cron script completed correctly\n";
