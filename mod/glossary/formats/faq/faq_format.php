@@ -6,9 +6,9 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
     if ( $entry ) {
         $colour = $THEME->cellheading2;
 
-        echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" valign=\"top\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
+        echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
 
-        echo '<tr>';
+        echo '<tr valign=\"top\">';
         echo "<td valign=\"top\" width=\"100%\" bgcolor=\"$colour\">";
         $entry->course = $course->id;
 

@@ -303,10 +303,13 @@ if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !isteacher($course-
 /// Info box
 
     if ( $glossary->intro ) {
-        print_simple_box_start('center','70%');
+        echo '<table align="center" width="70%" border="0">';
+        echo '<tr><td align="center" class="glossaryintrobox">';
         echo format_text($glossary->intro);
         print_simple_box_end();
     }
+
+    echo '<br />';
 
 /// Tabbed browsing sections
 $tab = GLOSSARY_ADDENTRY_VIEW;

@@ -245,37 +245,37 @@
     }
     echo '</b></font></p>';
 
+
 /// Info box
     if ( $glossary->intro ) {
-        echo '<table align="center" width="70%" bgcolor="#FFFFFF" class="generaltab"><tr><td>';
+        echo '<table align="center" width="70%" border="0">';
+        echo '<tr><td align="center" class="glossaryintrobox">';
         echo format_text($glossary->intro);
         print_simple_box_end();
     }
 
 /// Search box
-    echo '<br />';
 
     echo '<form method="post" action="view.php">';
 
-    echo '<table align="center" width="70%" bgcolor="' . $THEME->cellheading .'" class="generalbox"><tr><td align="center">';
+    echo '<table align="center" width="70%" border="0">';
+    echo '<tr><td align="center" class="glossarysearchbox">';
     
-    echo '<p align="center">';
     echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
     if ($mode == 'search') {
-        echo '<input type="text" name="hook" size="20" value="'.$hook.'" /> ';
+        echo '<input type="text" name="hook" size="20" value="'.$hook.'" alt="'.$strsearch.'" /> ';
     } else {
-        echo '<input type="text" name="hook" size="20" value="" /> ';
+        echo '<input type="text" name="hook" size="20" value="" alt="'.$strsearch.'" /> ';
     }
     if ($fullsearch) {
         $fullsearchchecked = 'checked="checked"';
     } else {
         $fullsearchchecked = '';
     }
-    echo '<input type="checkbox" name="fullsearch" value="1" '.$fullsearchchecked.' />';
+    echo '<input type="checkbox" name="fullsearch" value="1" '.$fullsearchchecked.' alt="'.$strsearchindefinition.'" />';
     echo '<input type="hidden" name="mode" value="search" />';
     echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
     echo $strsearchindefinition;
-    echo '</p>';
     print_simple_box_end();    
     
     echo '</form>';
@@ -331,7 +331,7 @@
                 if ( $printpivot )  {
                     $currentpivot = strtoupper($pivot);
 
-                    echo '<p>';
+                    echo '<div>';
                     echo '<table width="95%" border="0" class="generaltabselected" bgcolor="' . $THEME->cellheading2 . '">';
 
                     echo '<tr>';
@@ -348,7 +348,7 @@
                     }
 
                     echo "<strong> $pivottoshow</strong>" ;
-                    echo '</td></tr></table>';
+                    echo '</td></tr></table></div>';
 
                 }
             }

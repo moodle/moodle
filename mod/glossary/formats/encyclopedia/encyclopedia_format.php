@@ -8,9 +8,9 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
     $user = get_record("user", "id", $entry->userid);
     $strby = get_string("writtenby", "glossary");
 
-    echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" valign=\"top\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
+    echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
 
-    echo "\n<tr>";
+    echo "\n<tr valign=\"top\">";
     echo "\n<td bgcolor=\"$colour\" width=\"35\" valign=\"top\" class=\"forumpostpicture\">";
     $return = false;
     if ($entry) {

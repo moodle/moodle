@@ -43,7 +43,7 @@
             $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid","id,glossaryid, name $as concept, 1 $as casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY $as category, 1 $as fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
-                usort($concepts,'glossary_sort_entries_by_lenght');
+                usort($concepts,'glossary_sort_entries_by_length');
             } elseif ( $categories ) {
                 $concepts = $categories;
             } elseif ( $entries ) {
@@ -108,6 +108,10 @@
                 }
             }
         }
+        /// <nolink> tags removed for XHTML compatibility
+        $text = str_replace('<nolink>', '', $text);
+        $text = str_replace('</nolink>', '', $text);
+
         return $text;
     }
     
@@ -197,7 +201,7 @@
         return $text;
     }
     
-    function glossary_sort_entries_by_lenght ( $entry0, $entry1 ) {
+    function glossary_sort_entries_by_length ( $entry0, $entry1 ) {
         if ( strlen(trim($entry0->concept)) < strlen(trim($entry1->concept)) ) {
             return 1;
         } elseif ( strlen(trim($entry0->concept)) > strlen(trim($entry1->concept)) ) {

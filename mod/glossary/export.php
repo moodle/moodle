@@ -52,9 +52,12 @@
 /// Info box
 
     if ( $glossary->intro ) {
-        print_simple_box_start('center','70%');
+        echo '<table align="center" width="70%" border="0">';
+        echo '<tr><td align="center" class="glossaryintrobox">';
         echo format_text($glossary->intro);
         print_simple_box_end();
+
+        echo '<br />';
     }
 
 /// Tabbed browsing sections
@@ -72,5 +75,9 @@
     } else {
         $ffurl = "../../file.php?file=$ffurl";
     }
-    echo '<p><center><a href="' . $ffurl . '" target="_blank">' . get_string("exportedfile","glossary") .  '</a></center><p>'
+    echo '<p align="center"><a href="' . $ffurl . '" target="_blank">' . get_string("exportedfile","glossary") .  '</a></p>';
+    
+    echo '</center>';
+    glossary_print_tabbed_table_end();
+    print_footer();
 ?>

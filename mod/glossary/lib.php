@@ -799,7 +799,7 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
         echo '<table border="0" width="100%" align="center">';
         if ( $aliases ) {
             echo '<tr><td align="center"  valign="top"><font size="1">' .
-                  get_string("aliases","glossary") . ': ' . $aliases . '</td></tr>';
+                  get_string("aliases","glossary") . ': ' . $aliases . '</font></td></tr>';
         }
         if ($icons) {
             echo '<tr><td align="right" valign="top">'.  $icons . '</td></tr>';
@@ -1175,7 +1175,6 @@ $currentrow           = ( $currenttab - ( $currenttab % $tabsperrow) ) / $tabspe
 $numrows              = (int) ( $tabs / $tabsperrow ) + 1;
 
 ?>
-  <center>
   <table border="0" cellpadding="0" cellspacing="0" width="<?php p($tablewidth) ?>">
     <tr>
       <td width="100%">

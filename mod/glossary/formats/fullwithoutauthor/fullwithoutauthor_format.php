@@ -5,9 +5,9 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
 
     $colour = $THEME->cellheading2;
 
-    echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" valign=\"top\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
+    echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
 
-    echo "\n<tr>";
+    echo "\n<tr valign=\"top\">";
     $return = false;
     if ($entry) {
 
@@ -28,7 +28,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
 
         echo "</tr>";
 
-        echo "\n<tr>";
+        echo "\n<tr valign=\"top\">";
         echo "\n<td width=\"100%\" colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
 
         glossary_print_entry_definition($entry);

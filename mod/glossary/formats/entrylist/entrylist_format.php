@@ -6,9 +6,9 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=""
     $colour = "#FFFFFF";
     $return = false;
 
-    echo "\n<table border=\"0\" cellspacing=\"0\" width=\"95%\" valign=\"top\" cellpadding=\"10\">";
+    echo "\n<table border=\"0\" cellspacing=\"0\" width=\"95%\" cellpadding=\"10\">";
 
-    echo "\n<tr>";
+    echo "\n<tr valign=\"top\">";
     echo "<td width=\"100%\" bgcolor=\"$colour\">";
     if ($entry) {
         glossary_print_entry_approval($cm, $entry, $mode);
@@ -42,8 +42,8 @@ function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode="
     //Take out autolinking in definitions un print view
     $entry->definition = '<nolink>'.$entry->definition.'</nolink>';
 
-    echo "\n<table border=0 width=95% cellspacing=0 valign=top cellpadding=3 class=forumpost align=center>\n";
-    echo "<tr>\n";
+    echo "\n<table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">\n";
+    echo "<tr valign=\"top\">\n";
     echo "<td width=\"100%\" valign=\"top\" bgcolor=\"#FFFFFF\">\n";
     echo "<b>";
     glossary_print_entry_concept($entry);

@@ -55,9 +55,11 @@
 /// Info box
 
     if ( $glossary->intro ) {
-        print_simple_box_start('center','70%');
+        echo '<table align="center" width="70%" border="0">';
+        echo '<tr><td align="center" class="glossaryintrobox">';
         echo format_text($glossary->intro);
         print_simple_box_end();
+        echo '<br />';
     }
 
 /// Tabbed browsing sections
@@ -67,6 +69,7 @@
     if ( !$step ) {
         include("import.html");        
 
+        echo '</center>';
         glossary_print_tabbed_table_end();
         print_footer($course);
         exit;
@@ -79,6 +82,8 @@
     $um = new upload_manager('file',false,false,$course,false,0);
 
     if (!$um->preprocess_files()) {
+        echo '</center>';
+        glossary_print_tabbed_table_end();
         print_continue('import.php?id='.$id);
         print_footer();
         die();
@@ -146,6 +151,7 @@
                 // Include new glossary and return the new ID
                 if ( !$glossary->id = glossary_add_instance($glossary) ) {
                     notify("Error while trying to create the new glossary.");
+                    echo '</center>';
                     glossary_print_tabbed_table_end();
                     print_footer($course);
                     exit;
@@ -196,6 +202,7 @@
                 }
             } else {
                 notify("Error while trying to create the new glossary.");
+                echo '</center>';
                 glossary_print_tabbed_table_end();
                 print_footer($course);
                 exit;
