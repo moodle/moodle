@@ -927,10 +927,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     if ($messagehtml) {
         $mail->IsHTML(true);
         $mail->Body    =  $messagehtml;
-        $mail->AltBody =  "\n\n$messagetext\n";
+        $mail->AltBody =  "\n$messagetext\n";
     } else {
         $mail->IsHTML(false);
-        $mail->Body =  "\n\n$messagetext\n";
+        $mail->Body =  "\n$messagetext\n";
     }
 
     if ($attachment && $attachname) {
