@@ -582,7 +582,7 @@ function iscreator ($userid=0) {
 function isstudent($courseid, $userid=0) {
 /// Is the user a student in this course?
 /// If course is site, is the user a confirmed user on the site?
-    global $USER;
+    global $USER, $CFG;
 
     if (empty($USER->id) and !$userid) {
         return false;
@@ -595,12 +595,15 @@ function isstudent($courseid, $userid=0) {
         if (isguest($userid)) {
             return false;
         }
+        // a site teacher can never be a site student
+        if (isteacher($courseid, $userid)) {
+            return false;
+        }
         if ($CFG->allusersaresitestudents) {
             return record_exists('user', 'id', $userid);
         } else {
             return (record_exists('user_students', 'userid', $userid)
-                     or (record_exists('user_teachers', 'userid', $userid)
-                       and !record_exists('user_teachers', 'userid', $userid, 'course', SITEID)));
+                     or record_exists('user_teachers', 'userid', $userid));
         }
     }  
 
