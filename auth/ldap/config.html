@@ -83,6 +83,26 @@
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
+        <TD ALIGN=RIGHT><P>ldap_memberattribute:</TD>
+        <TD>
+    <INPUT name=ldap_memberattribute TYPE=text SIZE=30 VALUE="<?=$config->ldap_memberattribute?>">
+    <? if (isset($err["ldap_memberattribute"])) formerr($err["ldap_memberattribute"]); ?>
+    </TD><TD>
+    <? print_string("auth_ldap_memberattribute","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
+        <TD ALIGN=RIGHT><P>ldap_creators:</TD>
+        <TD>
+    <INPUT name=ldap_creators TYPE=text SIZE=30 VALUE="<?=$config->ldap_creators?>">
+    <? if (isset($err["ldap_creators"])) formerr($err["ldap_creators"]); ?>
+    </TD><TD>
+    <? print_string("auth_ldap_creators","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>ldap_create_context:</TD>
 	<TD>
     <INPUT name=ldap_create_context TYPE=text SIZE=30 VALUE="<?=$config->ldap_create_context?>">

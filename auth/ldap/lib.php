@@ -1,5 +1,6 @@
 <?PHP  // $Id$
 //CHANGELOG:
+//24.02.2003 Added support for coursecreators
 //20.02.2003 Added support for user creation
 //12.10.2002 Reformatted source for consistency
 //03.10.2002 First version to CVS
@@ -83,55 +84,14 @@ function auth_get_userinfo($username){
     return $result;
 }
 
-
-
-function auth_get_userlist($filter="*") {
-/// returns all users from ldap servers
+function auth_get_userlist () {
     global $CFG;
-
-    $fresult = array();
-    $ldap_connection = auth_ldap_connect();
-
-    auth_ldap_bind($ldap_connection);
-
-    if (! isset($CFG->ldap_objectclass)) {
-        $CFG->ldap_objectclass="objectClass=*";
-    }
-
-    $contexts = explode(";",$CFG->ldap_contexts);
-  
-    if (!empty($CFG->ldap_create_context)){
-	  array_push($contexts, $CFG->ldap_create_context);
-    }
-
-    foreach ($contexts as $context) {
-
-        if ($CFG->ldap_search_sub) {
-            //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldap_connection, $context, 
-                                       "(&(".$CFG->ldap_user_attribute."=".$filter.")(".$CFG->ldap_objectclass."))", 
-                                       array($CFG->ldap_user_attribute));
-        } else {
-            //search only in this context
-            $ldap_result = ldap_list($ldap_connection, $context, 
-                                     "(&(".$CFG->ldap_user_attribute."=".$filter.")(".$CFG->ldap_objectclass."))",
-                                     array($CFG->ldap_user_attribute));
-        }
-
-        $users = ldap_get_entries($ldap_connection, $ldap_result);
-
-        //add found users to list
-        for ($i=0;$i<$users['count'];$i++) {
-            array_push($fresult, ($users[$i][$CFG->ldap_user_attribute][0]) );
-        }
-    }
-
-    return $fresult;
+    return auth_ldap_get_userlist("($CFG->ldap_user_attribute=*)");
 }
-
 function auth_user_exists ($username) {
-//returns true if given usernname exist on ldap
-   $users = auth_get_userlist($username);
+   global $CFG; 
+   //returns true if given usernname exist on ldap
+   $users = auth_ldap_get_userlist("($CFG->ldap_user_attribute=$username)");
    return count($users); 
 }
 
@@ -196,6 +156,37 @@ function auth_user_disable ($username) {
     $result = ldap_modify($ldapconnect, $userdn, $newinfo);
     ldap_close($ldapconnect);
     return $result;
+}
+
+function auth_iscreator($username=0) {
+///if user is member of creator group return true
+   global $CFG, $USER;
+
+   $ldapconnect = auth_ldap_connect();
+   $ldapbind = auth_ldap_bind($ldapconnect);
+
+   if (! $username) {
+       $username=$USER->username;
+   }
+   
+   if ((! $CFG->ldap_creators) OR (! $CFG->ldap_memberattribute)) {
+      return false;
+   } else {
+      $groups = explode(";",$CFG->ldap_creators);
+   }
+
+
+   //build filter
+   $filter = "(& ($CFG->ldap_user_attribute=$username)(|";
+   foreach ($groups as $group){
+       $filter .= "($CFG->ldap_memberattribute=$group)";
+   }
+   $filter .= "))";
+   //search
+   $result = auth_ldap_get_userlist($filter);
+   
+   return count($result);
+
 }
 
 //PRIVATE FUNCTIONS starts
@@ -304,4 +295,53 @@ function auth_ldap_attributes (){
     }
 	return $moodleattributes;
 }
+
+function auth_ldap_get_userlist($filter="*") {
+/// returns all users from ldap servers
+    global $CFG;
+
+    $fresult = array();
+    $ldap_connection = auth_ldap_connect();
+
+    auth_ldap_bind($ldap_connection);
+
+    if (! isset($CFG->ldap_objectclass)) {
+        $CFG->ldap_objectclass="objectClass=*";
+    }
+
+    if ($filter=="*") {
+       $filter = "(&(".$CFG->ldap_user_attribute."=*)(".$CFG->ldap_objectclass."))";
+    }
+
+    $contexts = explode(";",$CFG->ldap_contexts);
+ 
+    if (!empty($CFG->ldap_create_context)){
+          array_push($contexts, $CFG->ldap_create_context);
+    }
+
+    foreach ($contexts as $context) {
+
+        if ($CFG->ldap_search_sub) {
+            //use ldap_search to find first user from subtree
+            $ldap_result = ldap_search($ldap_connection, $context,
+                                       $filter,
+                                       array($CFG->ldap_user_attribute));
+        } else {
+            //search only in this context
+            $ldap_result = ldap_list($ldap_connection, $context,
+                                     $filter,
+                                     array($CFG->ldap_user_attribute));
+        }
+
+        $users = ldap_get_entries($ldap_connection, $ldap_result);
+
+        //add found users to list
+        for ($i=0;$i<$users['count'];$i++) {
+            array_push($fresult, ($users[$i][$CFG->ldap_user_attribute][0]) );
+        }
+    }
+   
+    return $fresult;
+}
+
 ?>

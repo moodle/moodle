@@ -135,6 +135,10 @@ CREATE TABLE prefix_user_teachers (
    role varchar(40) NOT NULL default ''
 );
 
+CREATE TABLE mdl_user_coursecreators (
+   id SERIAL8 PRIMARY KEY,
+   userid int8  NOT NULL default '0'
+);
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');

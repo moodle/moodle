@@ -133,7 +133,7 @@
 
     class object {};
     
-    session_start();
+    @session_start();
     if (! isset($_SESSION["SESSION"])) { $_SESSION["SESSION"] = new object; }
     if (! isset($_SESSION["USER"]))    { $_SESSION["USER"]    = new object; }
     extract($_SESSION);  // Makes $SESSION and $USER available for read-only access

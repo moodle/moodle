@@ -19,8 +19,8 @@
     } else {  // Admin is creating a new course
         require_login();
 
-        if (!isadmin()) {
-            error("Only administrators can use this page");
+        if (!iscreator()) {
+            error("Only administrators and teachers can use this page");
         }
     }
 
@@ -58,7 +58,17 @@
                     $section->id = insert_record("course_sections", $section);
 
                     add_to_log($newid, "course", "new", "view.php?id=$newid", "");
-		            redirect("teacher.php?id=$newid", get_string("changessaved"));
+                    $teacher = array();
+                    $teacher[userid] = $USER->id;
+                    $teacher[course] = $newid;
+                    $teacher[authority] = 1;   // First teacher is the main teacher
+                    
+		            $mainteacher = insert_record("user_teachers", $teacher);
+                    if (!$mainteacher) {
+					  error("Could not add main teacher to new course!");
+					}
+                    
+                    redirect("teacher.php?id=$newid", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not create the new course!");
                 }

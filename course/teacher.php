@@ -12,8 +12,8 @@
 
     require_login();
 
-    if (!isadmin()) {
-        error("You must be an administrator to use this page.");
+    if (!iscreator()) {
+        error("You must be an administrator or teacher to use this page.");
     }
 
     $strassignteachers = get_string("assignteachers");
@@ -31,19 +31,28 @@
     if (!$id) {
 	    print_header("$site->shortname: $strassignteachers", "$site->fullname", 
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strassignteachers");
+        
+        $isadmin = isadmin(); /// cache value
+        $courses = get_courses();
+        
 
-        if ($courses = get_courses()) {
-
-            print_heading(get_string("choosecourse"));
-            print_simple_box_start("CENTER");
-            foreach ($courses as $course) {
-                echo "<A HREF=\"teacher.php?id=$course->id\">$course->fullname</A><BR>";
-            }
-            print_simple_box_end();
-        } else {
+		print_heading(get_string("choosecourse"));
+		print_simple_box_start("CENTER");
+        
+		foreach ($courses as $course) {
+		    if ($isadmin OR ismainteacher($course->id, $USER->id)){
+			    echo "<A HREF=\"teacher.php?id=$course->id\">$course->fullname</A><BR>\n";
+				$coursesfound = TRUE;
+			}
+		}	
+		
+        print_simple_box_end();
+        
+        if ($coursesfound == FALSE) {         
             print_heading(get_string("nocoursesyet"));
             print_continue("$CFG->wwwroot/admin/");
         }
+
         print_footer();
         exit;
     }
@@ -67,6 +76,10 @@
 /// Add a teacher if one is specified
 
     if (!empty($add)) {
+	    if (!ismainteacher($course->id, $USER->id)){
+		    error("You must be an administrator or teacher to modify this course.");
+        }
+
         if (! $user = get_record("user", "id", $add)) {
             error("That teacher (id = $add) doesn't exist", "teacher.php?id=$course->id");
         }
@@ -96,6 +109,10 @@
 /// Remove a teacher if one is specified.
 
     if (!empty($remove)) {
+
+        if (!ismainteacher($course->id, $USER->id)){
+        	error("You must be an administrator or teacher to modify this course.");
+		}
         if (! $user = get_record("user", "id", $remove)) {
             error("That teacher (id = $remove) doesn't exist", "teacher.php?id=$course->id");
         }

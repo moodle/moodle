@@ -790,6 +790,17 @@ function get_admins() {
                              ORDER BY u.id ASC");
 }
 
+function get_creators() {
+/// Returns list of all admins
+
+    global $CFG;
+
+    return get_records_sql("SELECT u.*
+                              FROM {$CFG->prefix}user u,
+                                   {$CFG->prefix}user_coursecreators a
+                             WHERE a.userid = u.id
+                             ORDER BY u.id ASC");
+}
 
 function get_teacher($courseid) {
 /// Returns $user object of the main teacher for a course

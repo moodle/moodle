@@ -315,8 +315,8 @@
     }
 
 /// Check for valid admin user
-    if (!isadmin()) {
-        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    if (!iscreator()) {
+        error("You need to be an admin user or teacher to use this page.", "$CFG->wwwroot/login/index.php");
     }
 
 
@@ -324,28 +324,34 @@
 
     $stradministration = get_string("administration");
     print_header("$site->shortname: $stradministration","$site->fullname: $stradministration", "$stradministration");
-
-    $table->head  = array (get_string("site"), get_string("courses"), get_string("users"));
-    $table->align = array ("CENTER", "CENTER", "CENTER");
-    $table->data[0][0] = "<P><A HREF=\"config.php\">".get_string("configvariables")."</A></P>".
+    if (isadmin()) {
+        $table->head  = array (get_string("site"), get_string("courses"), get_string("users"));
+		$table->align = array ("CENTER", "CENTER", "CENTER");
+		$table->data[0][0] = "<P><A HREF=\"config.php\">".get_string("configvariables")."</A></P>".
                          "<P><A HREF=\"site.php\">".get_string("sitesettings")."</A></P>".
                          "<P><A HREF=\"../course/log.php?id=$site->id\">".get_string("sitelogs")."</A></P>".
                          "<P><A HREF=\"../theme/index.php\">".get_string("choosetheme")."</A></P>".
                          "<P><A HREF=\"lang.php\">".get_string("checklanguage")."</A></P>";
-    if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
-        $table->data[0][0] .= "<P><A HREF=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</A></P>";
-    }
-    $table->data[0][1] = "<P><A HREF=\"../course/edit.php\">".get_string("addnewcourse")."</A></P>".
+		if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
+            $table->data[0][0] .= "<P><A HREF=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</A></P>";
+		}
+		$table->data[0][1] = "<P><A HREF=\"../course/edit.php\">".get_string("addnewcourse")."</A></P>".
                          "<P><A HREF=\"../course/teacher.php\">".get_string("assignteachers")."</A></P>".
                          "<P><A HREF=\"../course/delete.php\">".get_string("deletecourse")."</A></P>".
                          "<P><A HREF=\"../course/categories.php\">".get_string("categories")."</A></P>";
-    $table->data[0][2] = "<P><A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A></P>".
+		$table->data[0][2] = "<P><A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A></P>".
                          "<P><A HREF=\"user.php\">".get_string("edituser")."</A></P>".
                          "<P><A HREF=\"admin.php\">".get_string("assignadmins")."</A></P>".
+                         "<P><A HREF=\"creators.php\">".get_string("assigncreators")."</A></P>".
                          "<P><A HREF=\"auth.php\">".get_string("authentication")."</A></P>";
-
+    } else { /// user is coursecreator
+	    $table->head  = array (get_string("courses"));
+		$table->align = array ("CENTER");
+		$table->data[0][1] = "<P><A HREF=\"../course/edit.php\">".get_string("addnewcourse")."</A></P>".
+		  "<P><A HREF=\"../course/teacher.php\">".get_string("assignteachers")."</A></P>";
+	}
+    
     print_table($table);
-
     echo "<BR><DIV align=center>";
     print_single_button("$CFG->wwwroot/doc", NULL, get_string("documentation"));
     echo "</DIV>";

@@ -38,7 +38,15 @@ function main_upgrade($oldversion=0) {
         $new->action = "enrol";
         insert_record("log_display", $new);
     }
-
+    
+	//support user based course creating
+    if ($oldversion < 2003032400) {
+	    execute_sql("CREATE TABLE $CFG->prefix_user_coursecreators (
+                                  id int8 SERIAL PRIMARY KEY,
+                                  userid int8  NOT NULL default '0'
+                                  )");
+	}
+	
     return true;
 }
 

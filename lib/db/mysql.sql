@@ -227,6 +227,18 @@ CREATE TABLE `prefix_user_teachers` (
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM COMMENT='One record per teacher per course';
 
+#
+# Table structure for table `user_admins`
+#
+
+CREATE TABLE `prefix_user_coursecreators` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `userid` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `id` (`id`)
+) TYPE=MyISAM COMMENT='One record per course creator';
+# --------------------------------------------------------
+
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');

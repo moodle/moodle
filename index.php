@@ -65,7 +65,7 @@
          print_spacer(1,$side);
      }
  
-     if (isadmin()) {
+     if (iscreator()) {
          if (!$firstcolumn) {
              echo "<TD WIDTH=\"$side\" VALIGN=TOP NOWRAP>"; $firstcolumn=true;
          }

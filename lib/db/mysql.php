@@ -254,6 +254,15 @@ function main_upgrade($oldversion=0) {
         execute_sql(" ALTER TABLE `log_display` CHANGE `module` `module` VARCHAR( 20 ) NOT NULL ");
     }
 
+	if ($oldversion < 2003032400) {
+	    execute_sql("CREATE TABLE `$CFG->prefix_user_coursecreators` (
+                                   `id` int(10) unsigned NOT NULL auto_increment,
+                                   `userid` int(10) unsigned NOT NULL default '0',
+                                    PRIMARY KEY  (`id`),
+                                   UNIQUE KEY `id` (`id`)
+                                   ) TYPE=MyISAM COMMENT='One record per course creator'");
+	}
+
     return true;
 }
 

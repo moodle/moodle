@@ -37,6 +37,7 @@
             $USER = $user;
             $USER->loggedin = true;
             $USER->site = $CFG->wwwroot;   // for added security
+            
             if ($USER->username == "guest") {
                 $USER->lang = $CFG->lang;  // Guest language always same as site
             }
@@ -45,7 +46,7 @@
             if (!update_user_in_db()) {
                 error("Weird error: User not found");
             }
-
+            
             if (!update_user_login_times()) {
                 error("Wierd error: could not update login records");
             }
