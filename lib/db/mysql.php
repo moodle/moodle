@@ -475,6 +475,12 @@ function main_upgrade($oldversion=0) {
                        ) TYPE=MyISAM COMMENT='Defines grading scales'");
     }
 
+
+    if ($oldversion < 2003081503) {
+        get_scales_menu(0);    // Just to force the default scale to be created
+    }
+
+
     return $result;
 
 }
