@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 nearly beta! (2004022400)
+      // editor.php - created with Moodle 1.2 + (2004032100)
 
 
 $string['about'] = 'エディタに関して';
@@ -72,6 +72,7 @@ $string['preformatted'] = '整形された';
 $string['preview'] = 'プレビュー';
 $string['properties'] = '属性';
 $string['redo'] = 'やり直す';
+$string['removelink'] = 'リンクの削除';
 $string['rename'] = '変名';
 $string['right'] = '右';
 $string['rows'] = '列';

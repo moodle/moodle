@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 nearly beta! (2004022400)
+      // forum.php - created with Moodle 1.2 + (2004032100)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -85,7 +85,7 @@ $string['parent'] = '親記事を表示する';
 $string['parentofthispost'] = 'この投稿の親記事';
 $string['postadded'] = '投稿が追加されました。<P>更新したい場合は $a 編集出来ます。';
 $string['postincontext'] = '関連した投稿を見る';
-$string['postmailinfo'] = 'これは $a ウェブサイトに投稿された投稿のコピーです。返信をウェブサイト経由で追加する場合は、このリックをクリックしてください:';
+$string['postmailinfo'] = 'これは $a ウェブサイトに投稿された投稿のコピーです。返信をウェブサイト経由で追加する場合は、このリンクをクリックしてください:';
 $string['postrating1'] = '主に分離認識の傾向がある';
 $string['postrating2'] = '分離認識と関連認識を同等に持っている';
 $string['postrating3'] = '主に関連認識の傾向がある';
