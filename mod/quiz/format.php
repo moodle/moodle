@@ -148,6 +148,13 @@ class quiz_default_format {
 // Export functions
 
 
+    function export_file_extension() {
+    /// return the files extension appropriate for this type
+    /// override if you don't want .txt
+  
+        return ".txt";
+    }
+
     function exportpreprocess($category, $course) {
     /// Does any pre-processing that may be desired
 
@@ -191,7 +198,7 @@ class quiz_default_format {
           }
 
         // write file
-        $filepath = $path."/".$filename;
+        $filepath = $path."/".$filename . $this->export_file_extension();
         if (!$fh=fopen($filepath,"w")) {
             error("Cannot open for writing: $filepath");
         }
