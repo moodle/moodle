@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['action'] = 'Acción';
@@ -445,7 +445,7 @@ $string['enrolmentnewuser'] = '$a->user se ha matriculado en el curso \"$a->cour
 $string['enrolmentnointernal'] = 'Las matriculaciones manuales no están actualmente habilitadas';
 $string['enrolmentnotyet'] = 'Lo sentimos, no puede acceder a este curso hasta <br /> $a';
 $string['enrolments'] = 'Matriculaciones';
-$string['enrolperiod'] = 'Período de matriculación';
+$string['enrolperiod'] = 'Período de vigencia de la matricula';
 $string['entercourse'] = 'Haga clic aquí para entrar al curso';
 $string['enteremailaddress'] = 'Escriba su dirección de correo electrónico.
 Le enviaremos una nueva contraseña.';
