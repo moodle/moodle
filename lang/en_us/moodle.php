@@ -287,7 +287,7 @@ $string['emailpasswordsent'] = "Thank you for confirming the change of password.
 <p>The new password was automatically generated - you might like to
 <a href=\$a->link>change your password</a> to something easier to remember.";
 $string['enrolmentconfirmation'] = "You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?";
-$string['enrolmentkey'] = "Enrolment key";
+$string['enrolmentkey'] = "Enrollment key";
 $string['enrolmentkeyfrom'] = "This course requires an 'enrollment key' - a one-time<BR>
 password that you should have received from \$a";
 $string['enrolmentkeyhint'] = "That enrollment key was incorrect, please try again<BR>
@@ -437,7 +437,7 @@ $string['loginsteps'] = "Hi! For full access to courses you'll need to take
    <LI>Your account will be confirmed and you will be logged in.
    <LI>Now, select the course you want to participate in.
    <LI>If you are prompted for a &quot;enrollment key&quot; - use the one
-   that your teacher has given you. This will &quot;enrol&quot; you in the
+   that your teacher has given you. This will &quot;enroll&quot; you in the
    course.
    <LI>You can now access the full course. From now on you will only need
    to enter your personal username and password (in the form on this page)
@@ -756,9 +756,9 @@ $string['total'] = "Total";
 $string['turneditingoff'] = "Turn editing off";
 $string['turneditingon'] = "Turn editing on";
 $string['undecided'] = "Undecided";
-$string['unenrol'] = "Unenrol";
-$string['unenrolme'] = "Unenrol me from \$a";
-$string['unenrolsure'] = "Are you sure you want to unenrol \$a from this course?";
+$string['unenrol'] = "Unenroll";
+$string['unenrolme'] = "Unenroll me from \$a";
+$string['unenrolsure'] = "Are you sure you want to unenroll \$a from this course?";
 $string['unknowncategory'] = "Unknown category";
 $string['unpacking'] = "Unpacking \$a";
 $string['unsafepassword'] = "Unsafe password - try something else";
