@@ -138,6 +138,7 @@ $string['closewindow'] = 'Fermer cette fenêtre';
 $string['comparelanguage'] = 'Comparer et modifier la langue active';
 $string['complete'] = 'Complet';
 $string['configallowunenroll'] = 'Si vous choisissez « Oui », les étudiants pourront se désinscrire eux-mêmes des cours. Dans le cas contraire, ils ne le peuvent pas, et ce processus sera contrôlé par les enseignants et les administrateurs.';
+$string['configautologinguests'] = 'Enregistrer automatiquement en tant que visiteurs anonymes l\'activité des utilisateurs visitant des cours en accès anonyme.';
 $string['configcachetext'] = 'Ce réglage permet d\'accélérer le temps de réponse des grands sites ou de ceux qui utilisent les filtres. Des copies des textes sont mémorisés pour la durée spécifiée ici. Une valeur trop petite peut allonger légèrement le temps de réponse, mais une valeur trop élevée pourrait engendrer un rafraîchissement des textes pas assez fréquent (avec de nouveaux liens, par exemple).';
 $string['configcountry'] = 'Si vous choisissez un pays ici, il sera sélectionné par défaut lors de la création de nouveaux comptes. Si vous souhaitez forcer les utilisateurs à choisir un pays, laissez ce champ vide.';
 $string['configdebug'] = 'Si vous activez cette option, le paramètre PHP « error_reporting » sera augmenté afin que les avertissements soient affichés. Ceci est utile essentiellement pour les développeurs.';
