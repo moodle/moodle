@@ -95,7 +95,7 @@
                     }
                     if (isset($USER->newadminuser)) {
                         unset($USER->newadminuser);
-                        redirect("$CFG->wwwroot", get_string("changessaved"));
+                        redirect("$CFG->wwwroot/", get_string("changessaved"));
                     }
                     redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", get_string("changessaved"));
                 } else {
@@ -140,7 +140,7 @@
 
         $stradministration = get_string("administration");
         print_header("$course->shortname: $streditmyprofile", "$course->fullname",
-                     "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> ->
+                     "<A HREF=\"$CFG->wwwroot/admin/\">$stradministration</A> ->
                       $straddnewuser", "");
     }
 
