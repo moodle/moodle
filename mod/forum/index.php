@@ -85,7 +85,7 @@
         if ($learningforums) {
             $currentsection = "";
 
-            foreach ($learningforums as $forum) {
+            foreach ($learningforums as $key => $forum) {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
     
                 $forum->intro = forum_shorten_post($forum->intro);
@@ -94,6 +94,7 @@
     
                 if (!$forum->section) {     // forums in the "0" section => generaltable
                     $generalforums[] = $forum;
+                    unset($learningforums[$key]);
                     continue;
                 }
 
