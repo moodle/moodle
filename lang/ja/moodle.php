@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111500)
 
 
 $string['action'] = '操作';
@@ -299,6 +299,7 @@ $string['defaultcourseteacher'] = '教師';
 $string['defaultcourseteachers'] = '教師';
 $string['delete'] = '削除';
 $string['deleteall'] = '全てを削除';
+$string['deletecategorycheck'] = '本当にこのカテゴリ<b>「 $a 」</b>を完全に削除してもよろしいですか? 親カテゴリがある場合は、このカテゴリ内の全てのコースが親カテゴリに移動されます。親カテゴリが無い場合は、その他のカテゴリに移動されます。';
 $string['deletecheck'] = '$a を削除しますか ?';
 $string['deletecheckfiles'] = '本当にこれらのファイルを削除してもよろしいですか?';
 $string['deletecheckfull'] = '本当に $a を完全に削除してもよろしいですか?';
@@ -780,6 +781,7 @@ $string['order'] = '表示順';
 $string['other'] = '他の';
 $string['outline'] = '概要';
 $string['page'] = 'ページ';
+$string['pageheaderconfigablock'] = '%%fullname%% 内のブロック設定';
 $string['participants'] = '参加者';
 $string['password'] = 'パスワード';
 $string['passwordchanged'] = 'パスワードが変更されました。';
