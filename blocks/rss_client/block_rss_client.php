@@ -77,7 +77,13 @@ class block_rss_client extends block_base {
 
         //if the user is an admin, course teacher, or all users are allowed
         // then allow the user to add rss feeds
-        if ( !isguest() && (isadmin() ||  $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
+        global $USER;
+        $userisloggedin = false;
+        if (isset($USER) && isset($USER->id) && $USER->id && !isguest()) {
+            $userisloggedin = true;
+        }
+        if ( $userisloggedin && (isadmin() ||  $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
+            echo 'ADDING TO OUTPUT';
             $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br />';
         }
 
