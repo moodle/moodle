@@ -3,7 +3,7 @@
 <!-- START OF FOOTER -->
 <div id="footer">
 
-<?php if ($navigation) { ?>
+<?php if ($navigation and false) { ?>
     <div class="navbar">
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="menu"><?php echo $menu; ?></div>
@@ -12,6 +12,8 @@
 <?php } ?>
 
 <?php echo $loggedinas ?>
+
+<?php echo $performanceinfo ?>
 
 <?php if (isadmin()) { ?>
 <br />
