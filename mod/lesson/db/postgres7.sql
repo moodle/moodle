@@ -32,6 +32,8 @@ CREATE TABLE prefix_lesson (
   timemodified INT8  NOT NULL default '0'
 );
 
+CREATE INDEX prefix_lesson_course_idx ON prefix_lesson (course);
+
 CREATE TABLE prefix_lesson_pages (
   id SERIAL8 PRIMARY KEY,
   lessonid INT8  NOT NULL default '0',
@@ -47,6 +49,8 @@ CREATE TABLE prefix_lesson_pages (
   contents text NOT NULL default ''
 ) ;
 
+CREATE INDEX prefix_lesson_pages_lessonid_idx ON prefix_lesson_pages (lessonid);
+
 CREATE TABLE prefix_lesson_answers (
   id SERIAL8 PRIMARY KEY,
   lessonid INT8  NOT NULL default '0',
@@ -60,7 +64,9 @@ CREATE TABLE prefix_lesson_answers (
   answer text NOT NULL default '',
   response text NOT NULL default ''
 ) ;
+
 CREATE INDEX prefix_lesson_answers_pageid_idx ON prefix_lesson_answers (pageid);
+CREATE INDEX prefix_lesson_answers_lessonid_idx ON prefix_lesson_answers (lessonid);
 
 CREATE TABLE prefix_lesson_attempts (
   id SERIAL8 PRIMARY KEY,
@@ -73,6 +79,8 @@ CREATE TABLE prefix_lesson_attempts (
   useranswer text NOT NULL default '',
   timeseen INT8  NOT NULL default '0'
 ) ;
+CREATE INDEX prefix_lesson_attempts_lessonid_idx ON prefix_lesson_attempts (lessonid);
+CREATE INDEX prefix_lesson_attempts_pageid_idx ON prefix_lesson_attempts (pageid);
 CREATE INDEX prefix_lesson_attempts_userid_idx ON prefix_lesson_attempts (userid);
 
 CREATE TABLE prefix_lesson_grades (
@@ -83,6 +91,9 @@ CREATE TABLE prefix_lesson_grades (
   late INT  NOT NULL default '0',
   completed INT8  NOT NULL default '0'
 ) ;
+
+CREATE INDEX prefix_lesson_grades_lessonid_idx ON prefix_lesson_grades (lessonid);
+CREATE INDEX prefix_lesson_grades_userid_idx ON prefix_lesson_grades (userid);
 
 CREATE TABLE prefix_lesson_default 
 		( id SERIAL8 PRIMARY KEY,

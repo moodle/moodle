@@ -189,8 +189,30 @@ function lesson_upgrade($oldversion) {
 		//execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_default` ADD `modattempts` tinyint(3) unsigned NOT NULL default '0' AFTER practice");
         table_column('lesson_default', '', 'modattempts', 'INT', '4', 'unsigned', '0', 'NOT NULL', 'practice');
 	}
-    
-    return true;
+
+    if ($oldversion < 2004111200) {
+        execute_sql("DROP INDEX {$CFG->prefix}lesson_course_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}lesson_answers_lessonid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}lesson_answers_pageid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}lesson_attempts_lessonid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}lesson_attempts_pageid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}lesson_attempts_userid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}lesson_grades_lessonid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}lesson_grades_userid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}lesson_pages_lessonid_idx;",false);
+
+        modify_database('','CREATE INDEX prefix_lesson_course_idx ON prefix_lesson (course);');
+        modify_database('','CREATE INDEX prefix_lesson_answers_lessonid_idx ON prefix_lesson_answers (lessonid);');
+        modify_database('','CREATE INDEX prefix_lesson_answers_pageid_idx ON prefix_lesson_answers (pageid);');
+        modify_database('','CREATE INDEX prefix_lesson_attempts_lessonid_idx ON prefix_lesson_attempts (lessonid);');
+        modify_database('','CREATE INDEX prefix_lesson_attempts_pageid_idx ON prefix_lesson_attempts (pageid);');
+        modify_database('','CREATE INDEX prefix_lesson_attempts_userid_idx ON prefix_lesson_attempts (userid);');
+        modify_database('','CREATE INDEX prefix_lesson_grades_lessonid_idx ON prefix_lesson_grades (lessonid);');
+        modify_database('','CREATE INDEX prefix_lesson_grades_userid_idx ON prefix_lesson_grades (userid);');
+        modify_database('','CREATE INDEX prefix_lesson_pages_lessonid_idx ON prefix_lesson_pages (lessonid);');
+   }
+
+   return true;
 }
 
 ?>

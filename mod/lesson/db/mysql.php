@@ -146,6 +146,25 @@ function lesson_upgrade($oldversion) {
 
 	// CDC-FLAG end	
 
+    if ($oldversion < 2004111200) {
+        execute_sql("ALTER TABLE {$CFG->prefix}lesson DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}lesson_answers DROP INDEX lessonid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}lesson_attempts DROP INDEX lessonid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}lesson_attempts DROP INDEX pageid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}lesson_grades DROP INDEX lessonid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}lesson_grades DROP INDEX userid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}lesson_pages DROP INDEX lessonid;",false);
+
+        modify_database('','ALTER TABLE prefix_lesson ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_lesson_answers ADD INDEX lessonid (lessonid);');
+        modify_database('','ALTER TABLE prefix_lesson_attempts ADD INDEX lessonid (lessonid);');
+        modify_database('','ALTER TABLE prefix_lesson_attempts ADD INDEX pageid (pageid);');
+        modify_database('','ALTER TABLE prefix_lesson_grades ADD INDEX lessonid (lessonid);');
+        modify_database('','ALTER TABLE prefix_lesson_grades ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_lesson_pages ADD INDEX lessonid (lessonid);');
+    }
+   
+
 	     
     return true;
 }
