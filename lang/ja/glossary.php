@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 nearly beta! (2004022400)
+      // glossary.php - created with Moodle 1.2 + (2004032100)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -82,7 +82,7 @@ $string['entrydeleted'] = 'エントリーが削除されました。';
 $string['entryexported'] = 'エントリーが正常にエクスポートされました。';
 $string['entryishidden'] = '(このエントリーは現在非表示です)';
 $string['entryusedynalink'] = 'エントリーを自動的にリンクさせる';
-$string['explainaddentry'] = '用語集にアｔらしいエントリーを追加します。<br>概念と定義は必須入力項目です。';
+$string['explainaddentry'] = '用語集に新しいエントリーを追加します。<br>概念と定義は必須入力項目です。';
 $string['explainall'] = '全てのエントリーを1ページに表示';
 $string['explainalphabet'] = 'インデックスを利用して閲覧する';
 $string['explainexport'] = 'ファイルが生成されました。<br>ファイルをダウンロードして安全に保管してください。いつでも必要な時に、このコースまたは他のコースにインポートすることが出来ます。';
