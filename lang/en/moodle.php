@@ -845,6 +845,7 @@ $string['readinginfofrombackup'] = 'Reading info from backup';
 $string['readme'] = 'README';
 $string['recentactivity'] = 'Recent Activity';
 $string['recentactivityreport'] = 'Full report of recent activity...';
+$string['recreatedcategory'] = 'Recreated category $a';
 $string['refreshingevents'] = 'Refreshing events';
 $string['registration'] = 'Moodle Registration';
 $string['registrationemail'] = 'Email notifications';
