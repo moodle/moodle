@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 (2003052900)
+      // quiz.php - created with Moodle 1.1 development (2003081503)
 
 
+$string['acceptederror'] = "Error aceptado";
 $string['addingquestions'] = "Esta parte de la página es donde se maneja la base de datos de preguntas. Las preguntas se guardan en categorías para ayudarle a mantenerlas organizadas, y pueden usarse para cualquier cuestionario en su curso o incluso en otros cursos si usted escoge \\\"publicarlos\\\". <br /> <br />Después de que seleccione o cree una categoría de preguntas podrá crear o editar preguntas. Puede seleccionar cualquiera de estas preguntas para añadirlas a su cuestionario en el otro lado de esta página.";
 $string['addquestions'] = "Añadir preguntas";
 $string['addquestionstoquiz'] = "Añadir preguntas al cuestionario actual";
@@ -13,6 +14,7 @@ $string['answer'] = "Respuesta";
 $string['answerhowmany'] = "¿Una o varias respuestas?";
 $string['answersingleno'] = "Permitido varias respuestas";
 $string['answersingleyes'] = "Sólo una respuesta";
+$string['answerswithacceptederrormarginmustbenumeric'] = "Las respuestas con error aceptado debe ser numérico";
 $string['attempt'] = "Intento \$a";
 $string['attemptfirst'] = "Primer intento";
 $string['attemptlast'] = "Último intento";
@@ -43,6 +45,7 @@ $string['default'] = "Por defecto";
 $string['defaultgrade'] = "Calificación de la pregunta por defecto";
 $string['defaultinfo'] = "La categoría por defecto para preguntas";
 $string['deletequestioncheck'] = "¿Está seguro de que desea borrar '\$a'?";
+$string['description'] = "Descripción";
 $string['editcategories'] = "Editar categorías";
 $string['editingmatch'] = "Editando una pregunta de correspondencia";
 $string['editingmultichoice'] = "Editando una pregunta de múltiple opción";
@@ -58,15 +61,15 @@ $string['fileformat'] = "Formato de archivo";
 $string['filloutoneanswer'] = "Debe rellenar al menos una respuesta. Las respuestas en blanco no cuentan.";
 $string['filloutthreequestions'] = "Debe rellenar al menos tres preguntas. Las preguntas dejadas en blanco no se usarán.";
 $string['fillouttwochoices'] = "Debe elegir al menos dos opciones. Las opciones en blanco no cuentan.";
-$string['fractionsaddwrong'] = "Las calificaciones que ha escogido no suman el 100%%
-
-<br />En lugar de eso, suman un \$a%%
-
+$string['fractionsaddwrong'] = "Las calificaciones que ha escogido no suman el 100%%
+
+<br />En lugar de eso, suman un \$a%%
+
 <br />¿Quieres volver atrás y arreglar esta pregunta?";
-$string['fractionsnomax'] = "Una de las respuestas debería ser 100%%, de forma que sea
-
-<br />posible conseguir la nota máxima para esta cuestión.
-
+$string['fractionsnomax'] = "Una de las respuestas debería ser 100%%, de forma que sea
+
+<br />posible conseguir la nota máxima para esta cuestión.
+
 <br />¿Quieres volver atrás y arreglar esta pregunta?";
 $string['gradeaverage'] = "Promedio de calificaciones";
 $string['gradehighest'] = "Calificación más alta";
@@ -91,9 +94,10 @@ $string['nomoreattempts'] = "No se permiten más respuestas";
 $string['noquestions'] = "Aún no se han añadido preguntas";
 $string['noreview'] = "No le está permitido revisar este cuestionario";
 $string['noreviewuntil'] = "No le está permitido revisar este cuestionario hasta \$a";
-$string['notenoughsubquestions'] = "No se han definido suficientes sub-preguntas
-<br />
+$string['notenoughsubquestions'] = "No se han definido suficientes sub-preguntas
+<br />
 ¿Desea volver atrás y arreglar esta pregunta?";
+$string['numerical'] = "Numérica";
 $string['publish'] = "Publicar";
 $string['qti'] = "IMS <acronym title=Question and Test Interoperability>QTI</acronym> format";
 $string['question'] = "Pregunta";
@@ -117,6 +121,7 @@ $string['regradecomplete'] = "Todos los intentos realizados han sido recalificad
 $string['regradecount'] = "Se han cambiado \$a->changed de \$a->attempt calificaciones";
 $string['rename'] = "Renombrar";
 $string['report'] = "Informes";
+$string['review'] = "Revisar";
 $string['save'] = "Guardar";
 $string['savegrades'] = "Guardar calificaciones";
 $string['savemyanswers'] = "Guardar mis respuestas";

@@ -1,12 +1,13 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 (2003052900)
+      // forum.php - created with Moodle 1.1 development (2003081503)
 
 
 $string['addanewdiscussion'] = "Añadir un nuevo tema de debate";
+$string['addanewtopic'] = "Añadir un nuevo tema";
 $string['allowchoice'] = "Permitir a todos escoger";
 $string['allowdiscussions'] = "¿Puede un \$a poner mensages en este foro?";
 $string['allowratings'] = "¿Permitir la calificación de los mensajes?";
-$string['allowsdiscussions'] = "Este foro está abierto a todos";
+$string['allowsdiscussions'] = "Este foro permite a todos comenzar un tema de debate";
 $string['anyfile'] = "Cualquier archivo";
 $string['attachment'] = "Archivo adjunto";
 $string['bynameondate'] = "de \$a->name - \$a->date";
@@ -22,6 +23,7 @@ $string['discussion'] = "Debate";
 $string['discussionmoved'] = "Este debate se ha movido a '\$a'.";
 $string['discussions'] = "Debates";
 $string['discussionsstartedby'] = "Debate comenzado por \$a";
+$string['discussionsstartedbyrecent'] = "Debate recientemente comenzado por \$a";
 $string['discussthistopic'] = "Debatir este tema";
 $string['eachuserforum'] = "Cada persona plantea un debate";
 $string['edit'] = "Editar";
@@ -60,6 +62,8 @@ $string['nameteacher'] = "Foro de profesores";
 $string['newforumposts'] = "Nuevos mensajes";
 $string['nodiscussions'] = "No hay temas de debate aún en este foro";
 $string['noguestpost'] = "Lo sentimos, los invitados no pueden poner mensages aquí";
+$string['nomorepostscontaining'] = "No se han encontrado más mensajes que contengan '\$a'";
+$string['nonews'] = "No se ha puesto aún ninguna noticia";
 $string['noposts'] = "No hay mensajes";
 $string['nopostscontaining'] = "No se encontraron mensajes que contengan '\$a'";
 $string['nosubscribers'] = "Nadie se ha inscrito aún en este foro";
@@ -73,7 +77,7 @@ $string['openmode2'] = "Permitir debates y respuestas";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para editarlo si quiere hacer cualquier cambio.";
 $string['postincontext'] = "Mira este mensaje en su contexto";
-$string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
+$string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
 Para responder a este mensaje, haga clic en este enlace:";
 $string['postrating1'] = "Muestra un aprendizaje principalmente individualista";
 $string['postrating2'] = "Ambos";
@@ -82,6 +86,10 @@ $string['posts'] = "Mensajes";
 $string['postupdated'] = "Su mensaje se ha actualizado";
 $string['processingpost'] = "Procesando mensaje \$a";
 $string['rate'] = "Calificar";
+$string['rating'] = "Calificación";
+$string['ratingeveryone'] = "Todos pueden calificar los mensajes";
+$string['ratingno'] = "Sin calificar";
+$string['ratingonlyteachers'] = "Solo \$a puede calificar los mensajes";
 $string['ratings'] = "Calificaciones";
 $string['ratingssaved'] = "Calificaciones salvadas";
 $string['re'] = "Re:";
@@ -92,6 +100,7 @@ $string['repliesone'] = "\$a respuesta";
 $string['reply'] = "Responder";
 $string['search'] = "Buscar";
 $string['searchforums'] = "Buscar foros";
+$string['searcholderposts'] = "Buscar mensajes anteriores...";
 $string['searchresults'] = "Resultados de la búsqueda";
 $string['sendinratings'] = "Enviar mis últimas calificaciones";
 $string['showsubscribers'] = "Mostrar participantes";

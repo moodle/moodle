@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.9 (2003052900)
+      // resource.php - created with Moodle 1.1 development (2003081503)
 
 
 $string['addresource'] = "Añadir recurso";
@@ -13,9 +13,10 @@ $string['htmlfragment'] = "Fragmento HTML";
 $string['modulename'] = "Recurso";
 $string['modulenameplural'] = "Recursos";
 $string['neverseen'] = "Nunca visto";
+$string['newwindow'] = "Nueva ventana";
 $string['note'] = "Nota";
-$string['notefile'] = "Para subir más de un archivo (y que se puedan ver en la lista) utilice el
-
+$string['notefile'] = "Para subir más de un archivo (y que se puedan ver en la lista) utilice el
+
 <a href=\$a >Administrador de archivos</a>.";
 $string['notypechosen'] = "Necesita elegir un tipo. Vuelva atrás e inténtelo de nuevo.";
 $string['resourcetype'] = "Tipo de recurso";

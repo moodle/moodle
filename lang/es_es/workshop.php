@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.0.9 (2003052900)
+      // workshop.php - created with Moodle 1.1 development (2003081503)
 
 
 $string['accumulative'] = "Acumulativo";
@@ -38,6 +38,7 @@ $string['criteria'] = "Criterio";
 $string['deadline'] = "Fecha límite";
 $string['deadlineis'] = "La fecha límite es \$a";
 $string['delete'] = "Borrar";
+$string['deleting'] = "Borrando";
 $string['description'] = "Descripción";
 $string['detailsofassessment'] = "Detalles de valoración";
 $string['disagreewiththisassessment'] = "Discrepar de esta valoración";
@@ -69,16 +70,14 @@ $string['managingassignment'] = "Administrar tarea";
 $string['maximumsize'] = "Tamaño máximo";
 $string['modulename'] = "Taller";
 $string['modulenameplural'] = "Talleres";
-$string['movedtophase'] = "Movido a la fase \$a";
-$string['moveonto'] = "Mover hacia";
 $string['noassessmentsdone'] = "No se han hecho valoraciones";
 $string['nosubmissionsavailableforassessment'] = "No hay envíos disponibles para la valoración";
 $string['notavailable'] = "No disponible";
-$string['noteonassessmentelements'] = "Note que la calificación está dividida en una serie de 'Elementos de Valoración'.<br>
-Esto hace la calificación más sencilla y consistente. Como profesor usted debe añadir estos<br>
-Elementos antes de poner a disposición de los estudiantes la tarea. Esto se consigue<br>
-haciendo clic en la tarea en el curso, y si no hay elementos se le pedirá<br> 
-que los añada. Puede cambiar el número de elementos usando la pantalla de Editar Tarea,<br>
+$string['noteonassessmentelements'] = "Note que la calificación está dividida en una serie de 'Elementos de Valoración'.<br>
+Esto hace la calificación más sencilla y consistente. Como profesor usted debe añadir estos<br>
+Elementos antes de poner a disposición de los estudiantes la tarea. Esto se consigue<br>
+haciendo clic en la tarea en el curso, y si no hay elementos se le pedirá<br> 
+que los añada. Puede cambiar el número de elementos usando la pantalla de Editar Tarea,<br>
 el elemento en sí puede ser rectificado desde la pantalla &quot;Administrar Tarea&quot;. ";
 $string['notgraded'] = "No se ha calificado";
 $string['notitlegiven'] = "No se le ha dado un título";
@@ -122,9 +121,9 @@ $string['selfassessment'] = "Auto evaluación";
 $string['showgrades'] = "Mostrar Calificaciones";
 $string['specimenassessmentform'] = "Formulario de muestra de valoración";
 $string['studentgrades'] = "\$a Calificaciones";
-$string['studentsassessment'] = "Valoraciones de los estudiantes";
 $string['studentsubmissions'] = "\$a Envíos";
 $string['studentsubmissionsforassessment'] = "\$a Envíos de los estudiantes para valoración";
+$string['submission'] = "Envío";
 $string['submissions'] = "Envíos";
 $string['submitassignment'] = "Enviar Tarea";
 $string['submitexampleassignment'] = "Enviar Tarea de Ejemplo";

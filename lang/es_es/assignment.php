@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // assignment.php - created with Moodle 1.0.9 (2003052900)
+<?PHP // $Id$ 
+      // assignment.php - created with Moodle 1.1 development (2003081503)
 
 
 $string['allowresubmit'] = "Permitir reenvío";
@@ -25,6 +25,7 @@ $string['maximumsize'] = "Tamaño máximo";
 $string['modulename'] = "Tarea";
 $string['modulenameplural'] = "Tareas";
 $string['newsubmissions'] = "Tareas enviadas";
+$string['notgradedyet'] = "Aún no calificada";
 $string['notsubmittedyet'] = "Aún no ha enviado esta tarea";
 $string['overwritewarning'] = "Advertencia: si envía un nuevo archivo, REEMPLAZARÁ al anterior.";
 $string['saveallfeedback'] = "Guardar mis respuestas";
