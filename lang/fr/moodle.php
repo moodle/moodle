@@ -329,9 +329,7 @@ Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître co
 
 Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site, $a->admin';
 $string['emailconfirmationsubject'] = '$a : confirmation de l\'ouverture du compte';
-$string['emailconfirmsent'] = '<p>Un message vous a été envoyé à l\'adresse de courriel <strong>$a</strong>.</p>
-<p>Il contient les instructions pour terminer votre enregistrement.</p>
-<p>Si vous rencontrez des difficultés, veuillez contacter l\'administrateur du site.</p>';
+$string['emailconfirmsent'] = '<p>Un message vous a été envoyé à l\'adresse de courriel <strong>$a</strong>.</p><p>Il contient les instructions pour terminer votre enregistrement.</p><p>Si vous rencontrez des difficultés, veuillez contacter l\'administrateur du site.</p>';
 $string['emaildigest'] = 'Forme du courriel quotidien';
 $string['emaildigestcomplete'] = 'Complet (courriel quotidien avec l\'intégralité des messages)';
 $string['emaildigestoff'] = 'Pas de courriel quotidien (un courriel par message)';
@@ -361,12 +359,8 @@ Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître co
 
 Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a : confirmation du changement de mot de passe';
-$string['emailpasswordconfirmsent'] = 'Un message a été envoyé à votre adresse de courriel<strong>$a</strong>.<br />
-Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.<br />
-En cas de difficulté, veuillez contacter l\'administrateur du site.';
-$string['emailpasswordsent'] = 'Merci pour votre confirmation de changement de mot de passe.<br />
-Un message avec votre nouveau mot de passe a été envoyé à votre adresse <strong>$a->email</strong>.<br />
-Le nouveau mot de passe a été généré automatiquement. Vous pouvez <a href=\"$a->link\">le modifier</a> pour le rendre plus facile mémoriser.';
+$string['emailpasswordconfirmsent'] = '<p>Un message a été envoyé à votre adresse de courriel<strong>$a</strong>.</p><p>Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.</p><p>En cas de difficulté, veuillez contacter l\'administrateur du site.</p>';
+$string['emailpasswordsent'] = '<p>Merci pour votre confirmation de changement de mot de passe.</p><p>Un message avec votre nouveau mot de passe a été envoyé à votre adresse <strong>$a->email</strong>.</p><p>Le nouveau mot de passe a été généré automatiquement. Vous pouvez <a href=\"$a->link\">le modifier</a> pour le rendre plus facile mémoriser.</p>';
 $string['enable'] = 'Activer';
 $string['encryptedcode'] = 'Code chiffré';
 $string['enrolledincourse'] = 'Inscrit au cours « $a »';
@@ -594,10 +588,7 @@ Chaque cours peut également nécessiter une clef d\'inscription à usage unique do
    <li>Si une clef d\'inscription vous est demandée, utilisez celle que votre enseignant vous aura communiquée.</li>
    <li>Vous aurez alors un accès au cours complet. À votre prochaine visite il vous suffira d\'entrer votre nom d\'utilisateur et mot de passe (dans le formulaire ci-contre) afin de vous connecter et d\'accéder à tous les cours auxquels vous serez inscrit.</li>
    </ol>';
-$string['loginstepsnone'] = '<p>Bonjour !</p>
-<p>Pour un accès complet aux cours vous devez vous créer un compte.</p>
-<p>Pour cela, vous avez seulement besoin de choisir un nom d\'utilisateur et un mot de passe à entrer dans le formulaire de cette page.</p>
-<p>Si ce nom d\'utilisateur est déjà utilisé, il vous sera demandé d\'en choisir un autre.</p>';
+$string['loginstepsnone'] = '<p>Bonjour !</p><p>Pour un accès complet aux cours vous devez vous créer un compte.</p><p>Pour cela, vous avez seulement besoin de choisir un nom d\'utilisateur et un mot de passe à entrer dans le formulaire de cette page.</p><p>Si ce nom d\'utilisateur est déjà utilisé, il vous sera demandé d\'en choisir un autre.</p>';
 $string['loginto'] = 'Se connecter sur $a';
 $string['loginusing'] = 'Connectez-vous ici en utilisant votre nom d\'utilisateur<br />et mot de passe';
 $string['logout'] = 'Déconnexion';
@@ -790,9 +781,7 @@ $string['passwordconfirmchange'] = 'Confirmer le changement de mot de passe';
 $string['passwordrecovery'] = 'Oui, j\'ai besoin d\'aide pour me connecter';
 $string['passwordsdiffer'] = 'Les mots de passe ne correspondent pas';
 $string['passwordsent'] = 'Le mot de passe a été envoyé';
-$string['passwordsenttext'] = '<p>Un message vous a été envoyé à cette adresse&nbsp;: $a->email.</p>
-<p><strong>Merci de lire ce message afin de connaître votre nouveau mot de passe</strong></p>
-<p>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.</p>';
+$string['passwordsenttext'] = '<p>Un message vous a été envoyé à cette adresse&nbsp;: $a->email.</p><p><strong>Merci de lire ce message afin de connaître votre nouveau mot de passe</strong></p><p>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.</p>';
 $string['pathnotexists'] = 'Ce chemin n\'existe pas sur votre serveur !';
 $string['pathslasherror'] = 'Le chemin ne doit pas se terminer par une barre oblique !';
 $string['paymentinstant'] = 'Le bouton ci-dessous vous permet de payer et de vous inscrire en quelques minutes !';
@@ -826,13 +815,11 @@ $string['readinginfofrombackup'] = 'Lecture des informations de la sauvegarde';
 $string['readme'] = 'LISEZMOI';
 $string['recentactivity'] = 'Activité récente';
 $string['recentactivityreport'] = 'Rapport complet des activités récentes...';
+$string['recreatedcategory'] = 'Catégorie $a recréée';
 $string['refreshingevents'] = 'Mise à jour du calendrier';
 $string['registration'] = 'Enregistrement de Moodle';
 $string['registrationemail'] = 'Notifications par courriel';
-$string['registrationinfo'] = '<p>Cette page vous permet d\'enregistrer votre site Moodle sur moodle.org. L\'enregistrement est gratuit. Le principal avantage de l\'enregistrement est l\'inscription à une liste de distribution courriel utilisée pour d\'importantes informations telles que des alertes de sécurité et des mises à jour de Moodle.</p>
-<p>Vos données seront conservées confidentiellement, et ne seront jamais vendues ou divulguées à quiconque. Ces informations ne sont recueillies que pour l\'assistance techniques et à des fins de statistique au sujet de la communauté Moodle.</p>
-<p>Si vous le désirez, le nom de votre site, votre pays et URL peuvent être ajoutés à la liste publique des sites Moodle.</p>
-<p>Les nouveaux enregistrements sont vérifiés manuellement avant d\'être ajoutés à la liste. Toutefois, une fois dans cette liste, vous pouvez modifier votre enregistrement en tout temps en remplissant et validant à nouveau ce formulaire.</p>';
+$string['registrationinfo'] = '<p>Cette page vous permet d\'enregistrer votre site Moodle sur moodle.org. L\'enregistrement est gratuit. Le principal avantage de l\'enregistrement est l\'inscription à une liste de distribution courriel utilisée pour d\'importantes informations telles que des alertes de sécurité et des mises à jour de Moodle.</p><p>Vos données seront conservées confidentiellement, et ne seront jamais vendues ou divulguées à quiconque. Ces informations ne sont recueillies que pour l\'assistance techniques et à des fins de statistique au sujet de la communauté Moodle.</p><p>Si vous le désirez, le nom de votre site, votre pays et URL peuvent être ajoutés à la liste publique des sites Moodle.</p><p>Les nouveaux enregistrements sont vérifiés manuellement avant d\'être ajoutés à la liste. Toutefois, une fois dans cette liste, vous pouvez modifier votre enregistrement en tout temps en remplissant et validant à nouveau ce formulaire.</p>';
 $string['registrationno'] = 'Non, je ne désire pas recevoir de courriels';
 $string['registrationsend'] = 'Envoyer les informations d\'enregistrement à moodle.org';
 $string['registrationyes'] = 'Oui, envoyez-moi les informations importantes';
