@@ -21,8 +21,8 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id) and !$chat->studentlogs) {
-        error("Only teachers are allowed to view these chat reports");
+    if (isguest() or (!isteacher($course->id) and !$chat->studentlogs)) {
+        error("You can not view these chat reports");
     }
 
     add_to_log($course->id, "chat", "view", "view.php?id=$cm->id", "$chat->id");

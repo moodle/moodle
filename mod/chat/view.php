@@ -59,7 +59,7 @@
                   "", "", true, update_module_button($cm->id, $course->id, $strchat), 
                   navmenu($course, $cm));
 
-    if ($chat->studentlogs or isteacher($course->id)) {
+    if (($chat->studentlogs or isteacher($course->id)) and !isguest()) {
         echo "<p align=right><a href=\"report.php?id=$chat->id\">".
               get_string("viewreport", "chat")."</a></p>";
     }
@@ -86,10 +86,12 @@
     print_heading($chat->name);
 
 
-    print_simple_box_start("center");
-    link_to_popup_window ("/mod/chat/gui_$chatversion/index.php?id=$chat->id", 
-                          "chat$course->id$chat->id", "$strenterchat", 500, 700, $strchat);
-    print_simple_box_end();
+    if (!isguest()) {
+        print_simple_box_start("center");
+        link_to_popup_window ("/mod/chat/gui_$chatversion/index.php?id=$chat->id", 
+                              "chat$course->id$chat->id", "$strenterchat", 500, 700, $strchat);
+        print_simple_box_end();
+    }
 
 
     if ($chat->chattime and $chat->schedule) {  // A chat is scheduled

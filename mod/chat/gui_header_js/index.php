@@ -15,6 +15,10 @@ if (!$course = get_record("course", "id", $chat->course)) {
 
 require_login($course->id);
 
+if (isguest()) {
+    error("Guest does not have access to chat rooms");
+}
+
 if (!$chat_sid = chat_login_user($chat->id, "header_js")) {
     error("Could not log in to chat room!!");
 }
