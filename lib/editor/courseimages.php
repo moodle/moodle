@@ -738,7 +738,7 @@ function displaydir ($wdir) {
             $filename = $fullpath."/".$dir;
             $fileurl  = rawurlencode($wdir."/".$dir);
             $filesafe = rawurlencode($dir);
-            $filedate = userdate(filectime($filename), "%d %b %Y, %I:%M %p");
+            $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
     
             echo "<TR>";
 
@@ -764,7 +764,7 @@ function displaydir ($wdir) {
             $fileurl     = "$wdir/$file";
             $filesafe    = rawurlencode($file);
             $fileurlsafe = rawurlencode($fileurl);
-            $filedate    = userdate(filectime($filename), "%d %b %Y, %I:%M %p");
+            $filedate    = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
 
             echo "<tr>";
 
