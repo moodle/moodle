@@ -216,26 +216,24 @@
             $envalue = str_replace("%%","%",$envalue);
             $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
-            echo "<tr>";
-            echo "<td dir=ltr lang=en width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>";
-            echo "<td dir=ltr lang=en width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>";
+            echo "\n\n<tr>";
+            echo "<td dir=ltr lang=en width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>\n";
+            echo "<td dir=ltr lang=en width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>\n";
 
             $value = $string[$key];
             $value = str_replace("\r","",$value);              // Bad character caused by Windows
-            $value = str_replace("\n\n\n\n\n\n","\n",$value);  // Collapse runs of blank lines
-            $value = str_replace("\n\n\n\n\n","\n",$value);
-            $value = str_replace("\n\n\n\n","\n",$value);
-            $value = str_replace("\n\n\n","\n",$value);
-            $value = str_replace("\n\n\n","\n",$value);
+            $value = preg_replace("/\n{3,}/", "\n\n", $value); // Collapse runs of blank lines
+            $value = trim($value, "\n");                       // Delete leading/trailing lines
             $value = str_replace("\\","",$value);              // Delete all slashes
             $value = str_replace("%%","%",$value);
             $value = str_replace("<","&lt;",$value);
             $value = str_replace(">","&gt;",$value);
+            $value = str_replace('"',"&quot;",$value);
 
             $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
 
             if ($editable) {
-                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>";
+                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>\n";
                 if (isset($string[$key])) {
                     $valuelen = strlen($value);
                 } else {
@@ -244,17 +242,17 @@
                 $cols=50;
                 if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                     $rows = ceil($valuelen / $cols);
-                    echo "<textarea name=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</textarea>";
+                    echo "<textarea name=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</textarea>\n";
                 } else {
                     if ($valuelen) {
                         $cols = $valuelen + 2;
                     }
                     echo "<input type=\"text\" name=\"string-$key\" value=\"$value\" size=\"$cols\"></td>";
                 }
-                echo "</TD>";
+                echo "</TD>\n";
 
             } else {
-                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>$value</td>";
+                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>$value</td>\n";
             }
         }
         if ($editable) {
