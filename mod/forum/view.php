@@ -80,7 +80,7 @@
 
     echo '<div id="forum-view" class="forum">';  // forum-view wrapper start
 
-    if (!$cm->visible and !isteacher($course->id)) {
+    if (empty($cm->visible) and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     }
 
