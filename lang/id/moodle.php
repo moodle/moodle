@@ -519,7 +519,7 @@ $string['loginsteps'] = 'Hallo! Untuk akses penuh pada kursus Anda perlu dalam b
    untuk memasukkan nama pengguna dan password Anda (pada form di halaman ini)
    untuk Login dan meng-akses yang telah Anda daftar.</li>
    </li>';
-$string['loginstepsnone'] = <p>'Hai!</p><p>Untuk akses penuh pada kursus, Anda perlu membuat
+$string['loginstepsnone'] = '<p>Hai!</p><p>Untuk akses penuh pada kursus, Anda perlu membuat
 keanggotaan Anda sendiri.</p><p>Yang harus Anda lakukan adalah buatlah nama pengguna dan password dan gunakanlah pada
 form dihalaman ini!</p><p>Jika orang lain telah menggunakan nama pengguna yang Anda pilih
 maka Anda harus mencoba kembali dengan menggunakan nama pengguna yang lain.</p>';
