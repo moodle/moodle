@@ -45,7 +45,9 @@
 
         if (!empty($section)) {
             if (!empty($move)) {
-                move_section($course, $section, $move);
+                if (!move_section($course, $section, $move)) {
+                    notify("An error occurred while moving a section");
+                }
             }
         }
     } else {

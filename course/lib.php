@@ -1263,13 +1263,10 @@ function move_section($course, $section, $move) {
         return false;
     }
 
-    $sectionrecord->section = $sectiondest;
-    $sectiondestrecord->section = $section;
-
-    if (!update_record("course_sections", $sectionrecord)) {
+    if (!set_field("course_sections", "section", $sectiondest, "id", $sectionrecord->id)) {
         return false;
     }
-    if (!update_record("course_sections", $sectiondestrecord)) {
+    if (!set_field("course_sections", "section", $section, "id", $sectiondestrecord->id)) {
         return false;
     }
     return true;
