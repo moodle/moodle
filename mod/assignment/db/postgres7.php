@@ -88,6 +88,9 @@ function assignment_upgrade($oldversion) {
         table_column("assignment", "", "resubmit", "integer", "2", "unsigned", "0", "", "format");
     }
 
+    if ($oldversion < 2004021700) {
+        set_field("log_display", "action", "view submission", "module", "assignment", "action", "view submissions");
+    }
 
     return true;
 }

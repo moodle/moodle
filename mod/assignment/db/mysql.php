@@ -91,6 +91,9 @@ function assignment_upgrade($oldversion) {
     if ($oldversion < 2002122300) {
         execute_sql("ALTER TABLE `assignment_submissions` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
     }
+    if ($oldversion < 2004021700) {
+        set_field("log_display", "action", "view submission", "module", "assignment", "action", "view submissions");
+    }
 
     return true;
 }
