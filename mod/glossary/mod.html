@@ -80,7 +80,6 @@ if (!isset($form->assesstimefinish)) {
 </tr>
 <tr valign="top">
     <td align="right"><b><?php print_string("description") ?>:</b><br />
-     <font size="1">
      <?php
         helpbutton("description", get_string("description"), "glossary", true, true);
         echo "<br />";
@@ -88,8 +87,6 @@ if (!isset($form->assesstimefinish)) {
         echo "<br />";
         helpbutton("text", get_string("helptext"), "moodle", true, true);
      ?>
-     <br />
-     </font>
     </td>
     <td align="left">
         <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro); ?>

@@ -1,7 +1,7 @@
 <form name="prune" method="get" action="post.php" enctype="multipart/form-data">
 <table border="0" cellpadding="5">
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("discussionname", "forum"); ?>:</b></p></td>
+    <td align="right"><b><?php print_string("discussionname", "forum"); ?>:</b></td>
     <td>
         <input type="text" name="name" size="60" value="<?php p($post->subject) ?>" />
     </td>
@@ -10,8 +10,8 @@
 
 <tr>
     <td align="center" colspan="2">
-    <input type="hidden" name="prune"       value="<?php p($prune) ?>" />
-    <input type="hidden" name="confirm"       value="<?php p($prune) ?>" />
+    <input type="hidden" name="prune"   value="<?php p($prune) ?>" />
+    <input type="hidden" name="confirm" value="<?php p($prune) ?>" />
     <input type="submit" value="<?php print_string('prune', 'forum'); ?>" />
     </td>
 

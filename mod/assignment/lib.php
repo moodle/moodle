@@ -168,11 +168,9 @@ function assignment_user_complete($course, $user, $mod, $assignment) {
         }
 
         print_simple_box_start();
-        echo "<p><font size=1>";
         echo get_string("lastmodified").": ";
         echo userdate($submission->timemodified);
         echo assignment_print_difference($assignment->timedue - $submission->timemodified);
-        echo "</font></p>";
 
         assignment_print_user_files($assignment, $user);
 
@@ -321,10 +319,10 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
         print_headline(get_string("newsubmissions", "assignment").":");
         foreach ($assignments as $assignment) {
             $date = userdate($assignment->time, $strftimerecent);
-            echo "<p><font size=1>$date - ".fullname($assignment)."<br />";
+            echo "$date - ".fullname($assignment)."<br />";
             echo "\"<a href=\"$CFG->wwwroot/mod/assignment/$assignment->url\">";
             echo "$assignment->name";
-            echo "</a>\"</font></p>";
+            echo '</a>"';
         }
     }
  
@@ -543,16 +541,15 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     if ($assignment->type == OFFLINE) {
         echo "\n<td bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
     } else {
-        echo "\n<td rowspan=\"2\" bgcolor=\"$THEME->body\" width=\"35\" valign\"top\">";
+        echo "\n<td rowspan=\"2\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
     }
     print_user_picture($user->id, $assignment->course, $user->picture);
     echo "</td>";
     echo "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\">".fullname($user, true);
     if ($assignment->type != OFFLINE and $submission->timemodified) {
-        echo "&nbsp;&nbsp;<font SIZE=1>".get_string("lastmodified").": ";
+        echo "&nbsp;&nbsp;".get_string("lastmodified").": ";
         echo userdate($submission->timemodified);
         echo assignment_print_difference($assignment->timedue - $submission->timemodified);
-        echo "</font>";
     }
     echo "</td>\n";
     echo "</tr>";
@@ -585,7 +582,7 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     echo get_string("feedback", "assignment").":";
     choose_from_menu($grades, "g$submission->id", $submission->grade, get_string("nograde"));
     if ($submission->timemarked) {
-        echo "&nbsp;&nbsp;<font size=1>".userdate($submission->timemarked)."</font>";
+        echo "&nbsp;&nbsp;".userdate($submission->timemarked);
     }
     echo "<br /><textarea name=\"c$submission->id\" rows=\"6\" cols=\"60\">";
     p($submission->comment);
@@ -648,7 +645,7 @@ function assignment_print_user_files($assignment, $user) {
                     $ffurl = "file.php?file=/$filearea/$file";
                 }
 
-                echo "<img src=\"$CFG->pixpath/f/$icon\" height=16 width=16 border=0 alt=\"file\">";
+                echo "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"file\" />";
                 echo "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$file</a>";
                 echo "<br />";
             }
@@ -678,14 +675,14 @@ function assignment_print_upload_form($assignment) {
 
     global $CFG;
 
-    echo "<div align=CENTER>";
-    echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload.php?id=$assignment->id\">";
-    echo " <input type=hidden name=id value=\"$assignment->id\" />";
+    echo '<center>';
+    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"upload.php?id=$assignment->id\">";
+    echo '<input type="hidden" name="id" value="'.$assignment->id.'" />';
     require_once($CFG->dirroot.'/lib/uploadlib.php');
     upload_print_form_fragment(1,array('newfile'),false,null,0,$assignment->maxbytes,false);
-    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\" />";
-    echo "</form>";
-    echo "</div>";
+    echo '<input type="submit" name="save" value="'.get_string('uploadthisfile').'" />';
+    echo '</form>';
+    echo '</center>';
 }
 
 function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $assignment="0", $user="", $groupid="")  {

@@ -7,17 +7,9 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b>
-     <?php print_string("message", "forum"); ?>:
-     </b></td>
-    <td align="left" rowspan="2">
-    <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "message", $post->message); ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right" valign="middle" nowrap="nowrap">
-
-     <?php
+    <td align="right"><b><?php print_string("message", "forum"); ?>:</b>
+    <br /><br />
+      <?php
         helpbutton("reading", get_string("helpreading"), "moodle", true, true);
         echo "<br />";
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
@@ -29,13 +21,13 @@
         } else {
            emoticonhelpbutton("theform", "message");
         } 
+        echo "<br />";
       ?>
-     <br />
-
+    </td>
+    <td align="left">
+    <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "message", $post->message); ?>
     </td>
 </tr>
-
-
 
 <tr valign="top">
     <td align="right"><b><?php print_string("formattexttype"); ?>:</b></td>
@@ -90,7 +82,8 @@
     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>" />
     <input type="file" name="attachment" size="40" alt="<?php print_string("attachment", "forum") ?>" />
     <?php
-    helpbutton("attachment", get_string("attachment", "forum"), "forum"); 
+    helpbutton("attachment", get_string("attachment", "forum"), "forum");
+    echo '&nbsp;';
     print_string("maxsize", "", display_size($maxbytes)); 
     ?>
     </td>

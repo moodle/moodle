@@ -116,7 +116,7 @@
                 print_heading(get_string("notsubmittedyet","assignment"));
             }
         
-            echo "<hr size=1 noshade>";
+            echo '<hr size="1" noshade="noshade" />';
         
             if ($submission and $submission->timemarked) {
                 print_heading(get_string("submissionfeedback", "assignment").":", "center");
