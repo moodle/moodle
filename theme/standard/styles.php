@@ -456,3 +456,5 @@ a.autolink:hover {
     border-top: 0px;
 }
 
+.headingblockcontent {
+}

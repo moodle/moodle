@@ -166,3 +166,8 @@ a.autolink:hover {}
 /* Just a small table cell dividing others in a list */
 .tabledivider {}
 
+
+/* Style for the text/links inside the heading block when there is a
+  subscribe link there, eg front page news, social forum  */
+
+.headingblockcontent {}
