@@ -9,7 +9,7 @@
         error("Course ID is incorrect");
     }
 
-    require_login($course->id);
+    require_course_login($course);
     add_to_log($course->id, "assignment", "view all", "index.php?id=$course->id", "");
 
     $strassignments = get_string("modulenameplural", "assignment");
@@ -52,6 +52,7 @@
     $currentsection = "";
 
     foreach ($assignments as $assignment) {
+        $submitted = get_string("no");
         if (isteacher($course->id)) {
             if ($assignment->type == OFFLINE) {
                 $submitted =  "<a href=\"submissions.php?id=$assignment->id\">" .
@@ -62,14 +63,14 @@
                              get_string("viewsubmissions", "assignment", $count) . "</a>$groupname";
             }
         } else {
-            if ($submission = assignment_get_submission($assignment, $USER)) {
-                if ($submission->timemodified <= $assignment->timedue) {
-                    $submitted = userdate($submission->timemodified);
-                } else {
-                    $submitted = "<font color=red>".userdate($submission->timemodified)."</font>";
+            if (isset($USER->id)) {
+                if ($submission = assignment_get_submission($assignment, $USER)) {
+                    if ($submission->timemodified <= $assignment->timedue) {
+                        $submitted = userdate($submission->timemodified);
+                    } else {
+                        $submitted = "<font color=red>".userdate($submission->timemodified)."</font>";
+                    }
                 }
-            } else {
-                $submitted = get_string("no");
             }
         }
 

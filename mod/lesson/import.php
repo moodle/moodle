@@ -29,8 +29,7 @@
     $strimportquestions = get_string("importquestions", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");
 
-    print_header("$course->shortname: $strimportquestions", "$course->shortname: $strimportquestions",
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ". 
+    print_header_simple("$strimportquestions", " $strimportquestions",
                  "<A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>-> $strimportquestions");
 
     if ($form = data_submitted()) {   /// Filename

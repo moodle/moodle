@@ -224,7 +224,9 @@
             $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype and $glossary->rssarticles) {
             echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top"><td align="right">';
             $tooltiptext = get_string("rsssubscriberss","glossary",$glossary->name);
-            rss_print_link($course->id, $USER->id, "glossary", $glossary->id, $tooltiptext);
+            if (isset($USER->id)) {
+                rss_print_link($course->id, $USER->id, "glossary", $glossary->id, $tooltiptext);
+            }
             echo '</td></tr></table>';
         }
     

@@ -31,7 +31,7 @@
         }
     }
 
-    require_login($course->id);
+    require_course_login($course);
 
     add_to_log($course->id, "assignment", "view", "view.php?id=$cm->id", $assignment->id, $cm->id);
 
@@ -94,7 +94,7 @@
     print_simple_box_end();
     echo "<br />";
 
-    if (!isteacher($course->id) and !isguest()) {
+    if (isstudent($course->id)) {
         $submission = assignment_get_submission($assignment, $USER);
 
         if ($assignment->type == OFFLINE) {

@@ -9,7 +9,7 @@
         error("Course ID is incorrect");
     }
 
-    require_login($course->id);
+    require_course_login($course);
 
     add_to_log($course->id, "survey", "view all", "index.php?id=$course->id", "");
 
@@ -42,7 +42,7 @@
     $currentsection = '';
 
     foreach ($surveys as $survey) {
-        if (survey_already_done($survey->id, $USER->id)) {
+        if (isset($USER->id) and survey_already_done($survey->id, $USER->id)) {
             $ss = $strdone;
         } else {
             $ss = $strnotdone;

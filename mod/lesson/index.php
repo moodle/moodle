@@ -11,7 +11,7 @@
         error("Course ID is incorrect");
     }
 
-    require_login($course->id);
+    require_course_login($course);
 
     add_to_log($course->id, "lesson", "view all", "index.php?id=$course->id", "");
 
@@ -68,10 +68,11 @@
             $due = "<FONT COLOR=\"red\">".userdate($lesson->deadline)."</FONT>";
         }
 
+        $grade_value = '';
         if ($course->format == "weeks" or $course->format == "topics") {
             if (isteacher($course->id)) {
                 $grade_value = $lesson->grade;
-            } else {
+            } elseif (isstudent($course->id)) {
                 // it's a student, show their mean or maximum grade
                 if ($lesson->usemaxgrade) {
                     $grade = get_record_sql("SELECT MAX(grade) as grade FROM {$CFG->prefix}lesson_grades 
@@ -83,8 +84,6 @@
                 if ($grade) {
                     // grades are stored as percentages
                     $grade_value = number_format($grade->grade * $lesson->grade / 100, 1);
-                } else {
-                    $grade_value = 0;
                 }
             }
             $table->data[] = array ($lesson->section, $link, $grade_value, $due);

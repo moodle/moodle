@@ -72,9 +72,8 @@ if ( $confirm ) {
             $onsubmit = "";
         }
 
-        print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
-              <A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
+        print_header_simple(strip_tags("$glossary->name"), "",
+             "<A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
               "", true, "", navmenu($course, $cm));
 
@@ -247,9 +246,8 @@ if ($usehtmleditor = can_use_richtext_editor()) {
     $onsubmit = "";
 }
 
-print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
-              <A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
+print_header_simple(strip_tags("$glossary->name"), "",
+             "<A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
 

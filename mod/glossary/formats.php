@@ -7,7 +7,7 @@
         
     require_variable($id);    
     optional_variable($mode); 
-    	
+        
     require_login();
     if ( !isadmin() ) {
         error("You must be an admin to use this page.");
@@ -52,7 +52,7 @@
     $strmodulename = get_string("modulename", "glossary");
     $strdisplayformats = get_string("displayformats","glossary");
 
-    print_header("$site->shortname: $strmodulename: $strconfiguration", $site->fullname,
+    print_header("$strmodulename: $strconfiguration", $site->fullname,
                   "<a href=\"../../admin/index.php\">$stradmin</a> -> ".
                   "<a href=\"../../admin/configure.php\">$strconfiguration</a> -> ".
                   "<a href=\"../../admin/modules.php\">$strmanagemodules</a> -> <a href=\"../../admin/module.php?module=glossary\">$strmodulename</a> -> $strdisplayformats");
@@ -70,11 +70,11 @@
     echo '<form method="post" action="formats.php" name="form">';
     echo '<table width="90%" align="center" bgcolor="' . $THEME->cellheading . '" class="generalbox">';
     ?>
-	<tr>
-	    <td colspan=3 align=center><strong>
-		<?php echo get_string('displayformat'.$displayformat->name,"glossary"); ?>
+    <tr>
+        <td colspan=3 align=center><strong>
+        <?php echo get_string('displayformat'.$displayformat->name,"glossary"); ?>
         </strong></td>
-	</tr>
+    </tr>
     <tr valign=top>
         <td align="right" width="20%"><?PHP print_string('popupformat','glossary'); ?></td>
         <td>
@@ -255,14 +255,14 @@
         <?php print_string("cnfshowgroup", "glossary") ?><br /><br />
         </td>
     </tr>
-	<tr>
-	    <td colspan=3 align=center>
-		<input type="submit" value="<?php print_string("savechanges") ?>"></td>
-	</tr>
+    <tr>
+        <td colspan=3 align=center>
+        <input type="submit" value="<?php print_string("savechanges") ?>"></td>
+    </tr>
     <input type="hidden" name=id    value="<?php p($id) ?>">
     <input type="hidden" name=mode    value="edit">
-	<?PHP
-	
+    <?PHP
+    
     print_simple_box_end();    
     echo '</form>';
 

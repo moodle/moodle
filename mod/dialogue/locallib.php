@@ -232,16 +232,46 @@ global $USER;
 //////////////////////////////////////////////////////////////////////////////////////
 function dialogue_get_users_done($dialogue) {
     global $CFG;
-    return get_records_sql("SELECT u.* 
+
+    // make sure it works on the site course
+    $select = "s.course = '$dialogue->course' AND";
+    $site = get_site();
+    if ($courseid == $site->id) {
+        $select = '';
+    }
+    if (!$students = get_records_sql("SELECT u.* 
                               FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_students s, 
-                                   {$CFG->prefix}user_teachers t, 
+                                   {$CFG->prefix}user_students s,
                                    {$CFG->prefix}dialogue_entries j
-                             WHERE ((s.course = '$dialogue->course' AND s.userid = u.id) 
-                                OR  (t.course = '$dialogue->course' AND t.userid = u.id))
+                             WHERE ($select s.userid = u.id)
                                AND u.id = j.userid 
                                AND j.dialogue = '$dialogue->id'
-                          ORDER BY j.modified DESC");
+                          ORDER BY j.modified DESC")) {
+        $students = array();
+    }
+    if (!$teachers = get_records_sql("SELECT u.* 
+                              FROM {$CFG->prefix}user u, 
+                                   {$CFG->prefix}user_teachers s,
+                                   {$CFG->prefix}dialogue_entries j
+                             WHERE (s.course = '$dialogue->course' AND s.userid = u.id)
+                               AND u.id = j.userid 
+                               AND j.dialogue = '$dialogue->id'
+                          ORDER BY j.modified DESC")) {
+        $teachers = array();
+    }
+    return $teachers + $students;
+                          
+// The following original version is very inefficient on large sites
+//    return get_records_sql("SELECT u.* 
+//                              FROM {$CFG->prefix}user u, 
+//                                   {$CFG->prefix}user_students s, 
+//                                   {$CFG->prefix}user_teachers t, 
+//                                   {$CFG->prefix}dialogue_entries j
+//                             WHERE ((s.course = '$dialogue->course' AND s.userid = u.id) 
+//                                OR  (t.course = '$dialogue->course' AND t.userid = u.id))
+//                               AND u.id = j.userid 
+//                               AND j.dialogue = '$dialogue->id'
+//                          ORDER BY j.modified DESC");
 }
 
 

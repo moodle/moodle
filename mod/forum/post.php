@@ -406,9 +406,8 @@
 
             $course = get_record('course', 'id', $forum->course);
             $strforums = get_string("modulenameplural", "forum");
-            print_header("$course->shortname: $discussion->name: $post->subject", "$course->fullname",
-                         "<a href=../../course/view.php?id=$course->id>$course->shortname</a> ->
-                          <a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
+            print_header_simple("$discussion->name: $post->subject", "",
+                         "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
                           <a href=\"view.php?f=$forum->id\">$forum->name</a> -> 
                           <a href=\"discuss.php?d=$discussion->id\">$post->subject</a> -> ".
                           get_string("prune", "forum"), '', "", true, "", navmenu($course, $cm));

@@ -68,35 +68,38 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
     print_simple_box_end();
     echo "<br clear=all />";
     echo "<br />";
+    
+    if (isstudent($course->id) or isteacher($course->id)) {
 
-    print_simple_box_start("right", "90%");
-
-    if ($journalopen) {
-        echo "<p align=right><a href=\"edit.php?id=$journal->coursemodule\">";
-        echo get_string("edit")."</a></p>";
-    } else {
-        echo "<p align=right><a href=\"view.php?id=$journal->coursemodule\">";
-        echo get_string("view")."</a></p>";
+        print_simple_box_start("right", "90%");
+    
+        if ($journalopen) {
+            echo "<p align=right><a href=\"edit.php?id=$journal->coursemodule\">";
+            echo get_string("edit")."</a></p>";
+        } else {
+            echo "<p align=right><a href=\"view.php?id=$journal->coursemodule\">";
+            echo get_string("view")."</a></p>";
+        }
+    
+        if ($entry = get_record("journal_entries", "userid", $user->id, "journal", $journal->id)) {
+            if ($entry->modified) {
+                echo "<p align=\"center\"><font size=1>".get_string("lastedited").": ".userdate($entry->modified)."</font></p>";
+            }
+            if ($entry->text) {
+                echo format_text($entry->text, $entry->format);
+            }
+            if ($entry->teacher) {
+                $grades = make_grades_menu($journal->assessed);
+                journal_print_feedback($course, $entry, $grades);
+            }
+        } else {
+            print_string("noentry", "journal");
+        }
+    
+        print_simple_box_end();
+        echo "<br clear=all />";
+        echo "<br />";
     }
-
-    if ($entry = get_record("journal_entries", "userid", $user->id, "journal", $journal->id)) {
-        if ($entry->modified) {
-            echo "<p align=\"center\"><font size=1>".get_string("lastedited").": ".userdate($entry->modified)."</font></p>";
-        }
-        if ($entry->text) {
-            echo format_text($entry->text, $entry->format);
-        }
-        if ($entry->teacher) {
-            $grades = make_grades_menu($journal->assessed);
-            journal_print_feedback($course, $entry, $grades);
-        }
-    } else {
-        print_string("noentry", "journal");
-    }
-
-    print_simple_box_end();
-    echo "<br clear=all />";
-    echo "<br />";
 
 }
 
@@ -311,14 +314,20 @@ function journal_scale_used ($journalid,$scaleid) {
 function journal_get_users_done($journal) {
     global $CFG;
 
+    // make sure it works on the site course
+    $select = "s.course = '$journal->course' AND";
+    $site = get_site();
+    if ($journal->course == $site->id) {
+        $select = '';
+    }
+
     $studentjournals = get_records_sql ("SELECT u.*
                                   FROM {$CFG->prefix}journal_entries j,
                                        {$CFG->prefix}user u, 
                                        {$CFG->prefix}user_students s
                                  WHERE j.userid = u.id
                                    AND s.userid = u.id 
-                                   AND j.journal = $journal->id
-                                   AND s.course = $journal->course
+                                   AND $select j.journal = $journal->id
                               ORDER BY j.modified DESC");
 
     $teacherjournals = get_records_sql ("SELECT u.*
@@ -357,14 +366,21 @@ function journal_count_entries($journal, $groupid=0) {
                                       AND j.userid = g.userid");
 
     } else { /// Count all the entries from the whole course
+    
+        // make sure it works on the site course
+        $select = "s.course = '$journal->course' AND";
+        $site = get_site();
+        if ($journal->course == $site->id) {
+            $select = '';
+        }
+
         $studentjournals = count_records_sql("SELECT COUNT(*)
                                                  FROM {$CFG->prefix}journal_entries j,
                                                       {$CFG->prefix}user u, 
                                                       {$CFG->prefix}user_students s
                                                 WHERE j.userid = u.id
                                                   AND s.userid = u.id 
-                                                  AND j.journal = $journal->id
-                                                  AND s.course = $journal->course ");
+                                                  AND $select j.journal = $journal->id");
 
         $teacherjournals = count_records_sql("SELECT COUNT(*)
                                                  FROM {$CFG->prefix}journal_entries j,

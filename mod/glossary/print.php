@@ -30,7 +30,7 @@
         $entriesbypage = $CFG->glossary_entbypage;
     }
 
-    print_header(strip_tags("$course->shortname: $glossary->name"));
+    print_header_simple(strip_tags("$glossary->name"));
 
     if ($CFG->forcelogin) {
         require_login();

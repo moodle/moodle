@@ -31,44 +31,44 @@ function attendance_add_module(&$mod) {
 }
 
 function attendance_add_instance($attendance) {
-	global $mod;
+    global $mod;
      $attendance->timemodified = time();
      $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
     $attendance->autoattend = !empty($attendance->autoattend) ? 1 : 0;
     $attendance->grade = !empty($attendance->grade) ? 1 : 0;
      if (empty($attendance->day)) {
        $attendance->day = make_timestamp($attendance->theyear, 
-			   $attendance->themonth, $attendance->theday);
+               $attendance->themonth, $attendance->theday);
      }
      $attendance->notes = $attendance->name;
      $attendance->name=userdate($attendance->day, get_string("strftimedate"));
-	 if ($attendance->notes) { 
-	 	$attendance->name = $attendance->name . " - " .  $attendance->notes;
-	 }  
-	  $attendance->edited = 0;
+     if ($attendance->notes) { 
+        $attendance->name = $attendance->name . " - " .  $attendance->notes;
+     }  
+      $attendance->edited = 0;
 if ($attendance->dynsection) { 
-	if ($mod->course) {
-		if (! $course = get_record("course", "id", $mod->course)) {
-			error("Course is misconfigured");
-		}
-	}
+    if ($mod->course) {
+        if (! $course = get_record("course", "id", $mod->course)) {
+            error("Course is misconfigured");
+        }
+    }
   if ($course->format =="weeks") {
-//	floor($date_relative / 604800) + 1
-	  $attendance->section = floor(($attendance->day - $course->startdate)/604800) +1;
-	  if($attendance->section > $course->numsections){
-		  $attendance->section = 0;
-	  }
-	  $attendance->section = "$attendance->section";
-	  $mod->section = "$attendance->section";
+//  floor($date_relative / 604800) + 1
+      $attendance->section = floor(($attendance->day - $course->startdate)/604800) +1;
+      if($attendance->section > $course->numsections){
+          $attendance->section = 0;
+      }
+      $attendance->section = "$attendance->section";
+      $mod->section = "$attendance->section";
   }
 }
-	 // insert the main record first
-	 return $attendance->id = insert_record("attendance", $attendance);
+     // insert the main record first
+     return $attendance->id = insert_record("attendance", $attendance);
 }
 
 
 function attendance_update_instance($attendance) {
-	global $mod;
+    global $mod;
     $attendance->edited = 1;
     $attendance->timemodified = time();
 //    $attendance->oldid=$attendance->id;
@@ -78,76 +78,76 @@ function attendance_update_instance($attendance) {
     $attendance->grade = !empty($attendance->grade) ? 1 : 0;
 
      $attendance->day = make_timestamp($attendance->theyear, 
-			$attendance->themonth, $attendance->theday); 
+            $attendance->themonth, $attendance->theday); 
      $attendance->notes = $attendance->name;
      $attendance->name=userdate($attendance->day, get_string("strftimedate"));
-	 if ($attendance->notes) { 
-	 	$attendance->name = $attendance->name . " - " .  $attendance->notes;
-	 }  
+     if ($attendance->notes) { 
+        $attendance->name = $attendance->name . " - " .  $attendance->notes;
+     }  
   if ($attendance->dynsection) { 
-	    //get info about the course
-		if ($attendance->course) {
-			if (! $course = get_record("course", "id", $attendance->course)) {
-				error("Course is misconfigured");
-			}
-		}		
-		//work out which section this should be in
-		$attendance->section = floor(($attendance->day - $course->startdate)/604800) +1;
-		if (($attendance->section > $course->numsections) || ($attendance->section < 0)){
-			$attendance->section = 0;
-		}
-//		$attendance->section = "$attendance->section";
-  }	
-	// get the data from the attendance grid
+        //get info about the course
+        if ($attendance->course) {
+            if (! $course = get_record("course", "id", $attendance->course)) {
+                error("Course is misconfigured");
+            }
+        }       
+        //work out which section this should be in
+        $attendance->section = floor(($attendance->day - $course->startdate)/604800) +1;
+        if (($attendance->section > $course->numsections) || ($attendance->section < 0)){
+            $attendance->section = 0;
+        }
+//      $attendance->section = "$attendance->section";
+  } 
+    // get the data from the attendance grid
   if ($data = data_submitted()) {      
     // Peel out all the data from variable names.
     $attrec->dayid = $attendance->id;
     if ($data) foreach ($data as $key => $val) {
       $pieces = explode('_',$key);
       if ($pieces[0] == 'student') {
-     	  $attrec->userid=$pieces[1];
+          $attrec->userid=$pieces[1];
         $attrec->hour=$pieces[2];
         $attrec->status=$val;
         // clear out any old records for the student
-     	  delete_records("attendance_roll", 
+          delete_records("attendance_roll", 
           "dayid",$attrec->dayid,
           "hour", $attrec->hour, 
           "userid",$attrec->userid);
         if ($attrec->status != 0) { 
           // student is registered as absent or tardy
-	        insert_record("attendance_roll",$attrec, false);
+            insert_record("attendance_roll",$attrec, false);
         }
-    	} // if we have a piece of the student roll data
+        } // if we have a piece of the student roll data
     } // foreach for all form variables
-  } // if	
+  } // if   
 
 
-	if(!update_record("attendance", $attendance)){
-		error("Couldn't update record");
-	}
-	
-	if ($attendance->dynsection) {
-		//get section info
-		$section = get_record("course_sections", "course", $attendance->course, "section", $attendance->section);
-		
-		//remove module from the current section
-		if (! delete_mod_from_section($attendance->coursemodule, $mod->section)) {
-	       notify("Could not delete module from existing section");
-	    }
-	    
-	    //update course with new module location
-	    if(! set_field("course_modules", "section", $section->id, "id", $attendance->coursemodule)){
-	    	 notify("Could not update course module list");
-	    }
-	    
-	    //add module to the new section
-	    if (! add_mod_to_section($attendance, NULL)) {
-	        notify("Could not add module to new section");
-	    }
-	
-		rebuild_course_cache($section->course);
-	}
-	return true;
+    if(!update_record("attendance", $attendance)){
+        error("Couldn't update record");
+    }
+    
+    if ($attendance->dynsection) {
+        //get section info
+        $section = get_record("course_sections", "course", $attendance->course, "section", $attendance->section);
+        
+        //remove module from the current section
+        if (! delete_mod_from_section($attendance->coursemodule, $mod->section)) {
+           notify("Could not delete module from existing section");
+        }
+        
+        //update course with new module location
+        if(! set_field("course_modules", "section", $section->id, "id", $attendance->coursemodule)){
+             notify("Could not update course module list");
+        }
+        
+        //add module to the new section
+        if (! add_mod_to_section($attendance, NULL)) {
+            notify("Could not add module to new section");
+        }
+    
+        rebuild_course_cache($section->course);
+    }
+    return true;
 }
 
 function attendance_delete_instance($id) {
@@ -174,46 +174,46 @@ function attendance_user_outline($course, $user, $mod, $attendance) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
 /// for attendance, this would be a list present and tardy for every hour of the day
-	$tardies=count_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "status", 1);
-	$absences=count_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "status", 2);
-	
+    $tardies=count_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "status", 1);
+    $absences=count_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "status", 2);
+    
     // build longer string for tardies
-	if ($tardies > 0) {
-		$tardyrecs=attendance_get_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "status", 1, "hour ASC");
-		if ($tardies == 1) {
-			$tardystring = "Tardy in hour " . $tardyrecs[0]->hour . ". ";
-		} elseif ($tardies == $attendance->hours) { 
-			$tardystring = "Tardy in all hours. (" . $attendance->hours . ") ";
-		} else { 
-			// build array of all tardies
-			$tarr = array();
- 			if ($tardyrecs) foreach ($tardyrecs as $tardyrec) {
-  			array_push($tarr, $tardyrec->hour);
-	  		$tardystring = $tardystring . ", " . $tardyrec->hour;
-		  }
-			$end=array_pop($tarr);
-			$tardystring = "Tardy in hours " . implode(", ", $tarr) . " and ". $end . ". ";
-		}
-	} else { $tardystring = "";}
+    if ($tardies > 0) {
+        $tardyrecs=attendance_get_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "status", 1, "hour ASC");
+        if ($tardies == 1) {
+            $tardystring = "Tardy in hour " . $tardyrecs[0]->hour . ". ";
+        } elseif ($tardies == $attendance->hours) { 
+            $tardystring = "Tardy in all hours. (" . $attendance->hours . ") ";
+        } else { 
+            // build array of all tardies
+            $tarr = array();
+            if ($tardyrecs) foreach ($tardyrecs as $tardyrec) {
+            array_push($tarr, $tardyrec->hour);
+            $tardystring = $tardystring . ", " . $tardyrec->hour;
+          }
+            $end=array_pop($tarr);
+            $tardystring = "Tardy in hours " . implode(", ", $tarr) . " and ". $end . ". ";
+        }
+    } else { $tardystring = "";}
     // build longer string for absences
-	if ($absences > 0) {
-		$absrecs=attendance_get_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "status", 2, "hour ASC");
-		if ($absences == 1) {
-			$absstring = "Absent in hour " . $absrecs[0]->hour . ".";
-		} elseif ($absences == $attendance->hours) { 
-			$absstring = "Absent in all hours. (" . $attendance->hours . ")";
-		} else { 
-			// build array of all absences
-			$aarr = array();
- 			if ($absrecs) foreach ($absrecs as $absrec) {
- 				array_push($aarr, $absrec->hour);
- 			}
- 			$end=array_pop($aarr);
- 			$absstring = "Absent in hours " . implode(", ", $aarr) . " and ". $end . ".";
-		}
-	} else { $absstring = "";}
-		$return->info=$tardystring . $absstring;
-    	if ($return->info == "") $return->info = "No Tardies or Absences";
+    if ($absences > 0) {
+        $absrecs=attendance_get_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "status", 2, "hour ASC");
+        if ($absences == 1) {
+            $absstring = "Absent in hour " . $absrecs[0]->hour . ".";
+        } elseif ($absences == $attendance->hours) { 
+            $absstring = "Absent in all hours. (" . $attendance->hours . ")";
+        } else { 
+            // build array of all absences
+            $aarr = array();
+            if ($absrecs) foreach ($absrecs as $absrec) {
+                array_push($aarr, $absrec->hour);
+            }
+            $end=array_pop($aarr);
+            $absstring = "Absent in hours " . implode(", ", $aarr) . " and ". $end . ".";
+        }
+    } else { $absstring = "";}
+        $return->info=$tardystring . $absstring;
+        if ($return->info == "") $return->info = "No Tardies or Absences";
     return $return;
 }
 
@@ -232,17 +232,17 @@ function attendance_user_complete($course, $user, $mod, $attendance) {
     if ($attrecs) { foreach ($attrecs as $attrec) { $grid[$attrec->hour]=$attrec->status; } }
     echo "<table><tr><th>Hour:</th>\n";
     // echo out the table header
-  	for($j=1;$j<=$attendance->hours;$j++) {
-	  	echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$j."</th>\n";
-	  }
-	  echo "</tr><tr><th>Status:</th>";
-	for($j=1;$j<=$attendance->hours;$j++) {
+    for($j=1;$j<=$attendance->hours;$j++) {
+        echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$j."</th>\n";
+      }
+      echo "</tr><tr><th>Status:</th>";
+    for($j=1;$j<=$attendance->hours;$j++) {
       // set the attendance defaults for each student
-  	      if (isset($grid[$j])) {
-	        $status = (($grid[$j] == 1) ? $T : $A);
-  	      } else {$status=$P;}
+          if (isset($grid[$j])) {
+            $status = (($grid[$j] == 1) ? $T : $A);
+          } else {$status=$P;}
       echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$status."</td>\n";
-	} /// for loop
+    } /// for loop
     echo "</tr></table>\n";
 
 
@@ -266,42 +266,42 @@ function attendance_cron () {
     global $CFG;
    echo "Attendance: Performing automatic attendance logging\n";
 // look for all attendance instances set to autoattend
-	if (!$attendances = get_records("attendance", "autoattend", 1, "course ASC")) {
+    if (!$attendances = get_records("attendance", "autoattend", 1, "course ASC")) {
         return true;
   }
-	$td = attendance_find_today(time());
-	$tm = attendance_find_tomorrow(time());
-	if ($attendances) foreach($attendances as $attendance) {
+    $td = attendance_find_today(time());
+    $tm = attendance_find_tomorrow(time());
+    if ($attendances) foreach($attendances as $attendance) {
     if (($attendance->day >=$td ) && ($attendance->day < $tm)) {
     echo "Attendance: Taking attendance for $attendance->name\n";
 
-			if(!isset($courses[$attendance->course]->students)) {
-			  $courses[$attendance->course]->students = 
-			    attendance_get_course_students($attendance->course, "u.lastname ASC");
-			}
+            if(!isset($courses[$attendance->course]->students)) {
+              $courses[$attendance->course]->students = 
+                attendance_get_course_students($attendance->course, "u.lastname ASC");
+            }
       if ($courses[$attendance->course]->students) {
-				foreach ($courses[$attendance->course]->students as $student) {
-					// first, clear out the records that may be there already
-	     	  delete_records("attendance_roll", 
-	          "dayid",$attendance->id,
-	          "userid",$student->id);
-					$wc = "userid = " . $student->id . " AND course = " . $attendance->course . 
-					  " AND time >= " . $td . " AND time < " . $tm;
-				  $count = get_record_select("log",$wc,"COUNT(*) as c");
-					if ($count->c == "0") { // then the student hasn't done anything today, so mark him absent
-						$attrec->dayid = $attendance->id;
-						$attrec->userid = $student->id;
-						$attrec->status = 2; // status 2 is absent
-						// mark ALL hours as absent for first version
-						for ($i=1;$i<=$attendance->hours;$i++) { 
-	  					$attrec->hour = $i;
-						  insert_record("attendance_roll",$attrec, false);
-						} // for loop to mark all hours absent
-					} // if student has no activity
-				} // foreach student in the list
-	    } // if students exist
+                foreach ($courses[$attendance->course]->students as $student) {
+                    // first, clear out the records that may be there already
+              delete_records("attendance_roll", 
+              "dayid",$attendance->id,
+              "userid",$student->id);
+                    $wc = "userid = " . $student->id . " AND course = " . $attendance->course . 
+                      " AND time >= " . $td . " AND time < " . $tm;
+                  $count = get_record_select("log",$wc,"COUNT(*) as c");
+                    if ($count->c == "0") { // then the student hasn't done anything today, so mark him absent
+                        $attrec->dayid = $attendance->id;
+                        $attrec->userid = $student->id;
+                        $attrec->status = 2; // status 2 is absent
+                        // mark ALL hours as absent for first version
+                        for ($i=1;$i<=$attendance->hours;$i++) { 
+                        $attrec->hour = $i;
+                          insert_record("attendance_roll",$attrec, false);
+                        } // for loop to mark all hours absent
+                    } // if student has no activity
+                } // foreach student in the list
+        } // if students exist
     } // if the attendance roll is for today 
-	} // for each attendance in the system
+    } // for each attendance in the system
   return true;
 } // function cron
 
@@ -313,21 +313,21 @@ function attendance_grades($attendanceid) {
     if ($attendance->grade == "1") {
       $students = get_course_students($attendance->course);
       if ($students) {
-	      foreach ($students as $student) {
-	      	$rolls = attendance_get_records("attendance_roll", 
-	          "dayid",$attendance->id,
-	          "userid",$student->id);
-	        $abs=$tar=0;
-	        if ($rolls) {
-	          foreach ($rolls as $roll) { 
-	            if ($roll->status == 1) {$tar++;}
-		        elseif ($roll->status == 2) {$abs++;}
-				  } // if rolls
-					  $total = $attendance->hours - attendance_tally_overall_absences_decimal($abs, $tar);
-					  $percent = ($total != 0)?$total/$attendance->hours:0;
-					  $return->grades[$student->id] = ($percent == 0)?0.0:$attendance->maxgrade * $percent;
-					} else  { $return->grades[$student->id] = $attendance->maxgrade; }
-	      } // foreach student
+          foreach ($students as $student) {
+            $rolls = attendance_get_records("attendance_roll", 
+              "dayid",$attendance->id,
+              "userid",$student->id);
+            $abs=$tar=0;
+            if ($rolls) {
+              foreach ($rolls as $roll) { 
+                if ($roll->status == 1) {$tar++;}
+                elseif ($roll->status == 2) {$abs++;}
+                  } // if rolls
+                      $total = $attendance->hours - attendance_tally_overall_absences_decimal($abs, $tar);
+                      $percent = ($total != 0)?$total/$attendance->hours:0;
+                      $return->grades[$student->id] = ($percent == 0)?0.0:$attendance->maxgrade * $percent;
+                    } else  { $return->grades[$student->id] = $attendance->maxgrade; }
+          } // foreach student
     } // if students
       $return->maxgrade = $attendance->maxgrade;
     } else {  // if attendance->grade == "1"
@@ -376,20 +376,26 @@ function attendance_get_participants($attendanceid) {
 *     STUDENT ID INTO THE RECORDSET
 * if courseid = 0 then return ALL students in all courses
 *
-* @param	int	$courseid	the id of the course
-* @param	string	$sort	a field name and ASC or DESC for a SQL 'ORDER BY' clause (optional)
-* @return	array(recorset)	a list of all students in the specified course
+* @param    int $courseid   the id of the course
+* @param    string  $sort   a field name and ASC or DESC for a SQL 'ORDER BY' clause (optional)
+* @return   array(recorset) a list of all students in the specified course
  Returns 
 */
 function attendance_get_course_students($courseid, $sort="u.lastaccess DESC") {
 
     global $CFG;
 
+    // make sure it works on the site course
+    $select = "s.course = '$courseid' AND";
+    $site = get_site();
+    if ($courseid == $site->id) {
+        $select = '';
+    }
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                             u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.idnumber
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_students s
-                            WHERE s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0'
+                            WHERE $select s.userid = u.id AND u.deleted = '0'
                             ORDER BY $sort");
 }
 
@@ -400,15 +406,15 @@ function attendance_get_course_students($courseid, $sort="u.lastaccess DESC") {
 * Given a number of tardies and absences, determine the total
 * number of equivalent absences it adds up to.
 *
-* @param	int	$absences	the total number of absences for a span of time
-* @param	int	$tardies	the total number of tardies for a span of time
-* @return	float	the number of absences it adds up to - may be a decimal!
+* @param    int $absences   the total number of absences for a span of time
+* @param    int $tardies    the total number of tardies for a span of time
+* @return   float   the number of absences it adds up to - may be a decimal!
 */
 function attendance_tally_overall_absences_decimal($absences, $tardies) {
     global $CFG;
-	if (isset($CFG->attendance_tardies_per_absence) && ($CFG->attendance_tardies_per_absence>0)) {
-	  return $absences + ($tardies/$CFG->attendance_tardies_per_absence);
-	} else { return $absences; }
+    if (isset($CFG->attendance_tardies_per_absence) && ($CFG->attendance_tardies_per_absence>0)) {
+      return $absences + ($tardies/$CFG->attendance_tardies_per_absence);
+    } else { return $absences; }
 }
 
 /**
@@ -418,23 +424,23 @@ function attendance_tally_overall_absences_decimal($absences, $tardies) {
 * number of equivalent absences it adds up to and express it as a string with
 * a possible fractional remainder
 *
-* @param	int	$absences	the total number of absences for a span of time
-* @param	int	$tardies	the total number of tardies for a span of time
-* @return	string	the number of absences it adds up to - may have a fractional component!
+* @param    int $absences   the total number of absences for a span of time
+* @param    int $tardies    the total number of tardies for a span of time
+* @return   string  the number of absences it adds up to - may have a fractional component!
 */
 function attendance_tally_overall_absences_fraction($absences, $tardies) {
     global $CFG;
-	if (isset($CFG->attendance_tardies_per_absence) && ($CFG->attendance_tardies_per_absence>0)) {
-	  $whole = floor($tardies/$CFG->attendance_tardies_per_absence);
-	  $fractional=$tardies-($whole * $CFG->attendance_tardies_per_absence);
-	  if ($absences + $whole > 0) {
-	    return ($absences + $whole) . (($fractional > 0) ? " ". $fractional. "/". $CFG->attendance_tardies_per_absence : "");
-	  } else  { 
-	    return (($fractional > 0) ? $fractional. "/". $CFG->attendance_tardies_per_absence : "0");
-	  }	  	 
-	} else { 
-	  return $absences.""; 
-	}
+    if (isset($CFG->attendance_tardies_per_absence) && ($CFG->attendance_tardies_per_absence>0)) {
+      $whole = floor($tardies/$CFG->attendance_tardies_per_absence);
+      $fractional=$tardies-($whole * $CFG->attendance_tardies_per_absence);
+      if ($absences + $whole > 0) {
+        return ($absences + $whole) . (($fractional > 0) ? " ". $fractional. "/". $CFG->attendance_tardies_per_absence : "");
+      } else  { 
+        return (($fractional > 0) ? $fractional. "/". $CFG->attendance_tardies_per_absence : "0");
+      }      
+    } else { 
+      return $absences.""; 
+    }
 }
 
 /**
@@ -490,9 +496,9 @@ function attendance_get_records($table, $field1="", $value1="", $field2="", $val
 * first what section the specified attendance instance in the course is in, then all the
 * attendance records that are in the same section, regardless of the format of the course
 *
-* @param	int	$instance	id of the attendance instance in course_modules
-* @param	int	$courseid	the id of the course for which we're getting records
-* @return	(object)recordset	associative array of records containing the attendance records we wanted 
+* @param    int $instance   id of the attendance instance in course_modules
+* @param    int $courseid   the id of the course for which we're getting records
+* @return   (object)recordset   associative array of records containing the attendance records we wanted 
 */
 function get_attendance_for_section($instance, $courseid) {
     global $CFG;
@@ -548,9 +554,9 @@ AND md.name = 'attendance' AND md.id = cm.module AND m.id = cm.instance;
 * function will work with non-weekly formatted courses, though the results won't easily 
 * correlate with the course view.  But it will work regardless.
 *
-* @param	int	$id	the id of the attendance record we're using as a basis for the query
-* @param	int	$courseid	the id of the course for which we're getting records
-* @return	(object)recordset	associative array of records containing the attendance records we wanted 
+* @param    int $id the id of the attendance record we're using as a basis for the query
+* @param    int $courseid   the id of the course for which we're getting records
+* @return   (object)recordset   associative array of records containing the attendance records we wanted 
 */
 function get_attendance_for_week($id, $courseid) {
     global $CFG;
@@ -576,8 +582,8 @@ function get_attendance_for_week($id, $courseid) {
 * 
 * This function returns the timestamp for midnight of the day specified in the timestamp
 *
-* @param	timestamp $d	The time to find the beginning of the day for
-* @return	timestamp	midnight for that day
+* @param    timestamp $d    The time to find the beginning of the day for
+* @return   timestamp   midnight for that day
 */
 function attendance_find_today($d) {
 //  $da = getdate($d);
@@ -594,8 +600,8 @@ function attendance_find_today($d) {
 * 
 * This function returns the timestamp for midnight of the day after the timestamp specified
 *
-* @param	timestamp $d	The time to find the next day of
-* @return	timestamp	midnight of the next day
+* @param    timestamp $d    The time to find the next day of
+* @return   timestamp   midnight of the next day
 */
 function attendance_find_tomorrow($d) {
   // add 24 hours to the current time - to solve end of month date issues

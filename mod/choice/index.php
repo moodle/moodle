@@ -9,7 +9,7 @@
         error("Course ID is incorrect");
     }
 
-    require_login($course->id);
+    require_course_login($course);
 
     add_to_log($course->id, "choice", "view all", "index?id=$course->id", "");
 
@@ -24,7 +24,7 @@
         notice("There are no choices", "../../course/view.php?id=$course->id");
     }
 
-    if ( $allanswers = get_records("choice_answers", "userid", $USER->id)) {
+    if ( isset($USER->id) and $allanswers = get_records("choice_answers", "userid", $USER->id)) {
         foreach ($allanswers as $aa) {
             $answers[$aa->choice] = $aa;
         }

@@ -38,9 +38,8 @@
     $strentries = get_string("entries", "journal");
     $strjournals = get_string("modulenameplural", "journal");
 
-    print_header("$course->shortname: $strjournals", "$course->fullname",
-                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                  <a href=\"index.php?id=$course->id\">$strjournals</a> ->
+    print_header_simple("$strjournals", "",
+                 "<a href=\"index.php?id=$course->id\">$strjournals</a> ->
                   <a href=\"view.php?id=$cm->id\">$journal->name</a> -> $strentries", "", "", true);
 
 

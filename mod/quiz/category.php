@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Allows a teacher to create, edit and delete categories
 
-	require_once("../../config.php");
-	require_once("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     require_variable($id);   // course
 
@@ -39,9 +39,8 @@
                                  "quiz");
     $streditcategories = get_string("editcategories", "quiz");
 
-    print_header("$course->shortname: $streditcategories", "$course->shortname: $streditcategories",
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                   -> <A HREF=\"edit.php\">$streditingquiz</A> -> $streditcategories");
+    print_header_simple("$streditcategories", " $streditcategories",
+                 "<A HREF=\"edit.php\">$streditingquiz</A> -> $streditcategories");
 
 
 /// Delete category if the user wants to delete it
@@ -120,7 +119,7 @@
                 }
             }
         }
-	}
+    }
 
 
 /// Get the existing categories

@@ -58,9 +58,8 @@
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
     $streditingquestion = get_string("editingquestion", "quiz");
 
-    print_header("$course->shortname: $streditingquestion", "$course->shortname: $streditingquestion",
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
-                 "-> <a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
+    print_header_simple("$streditingquestion", "$streditingquestion",
+                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
                   " -> <a href=\"edit.php\">$streditingquiz</a> -> $streditingquestion");
 
     if (isset($delete)) {

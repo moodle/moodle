@@ -17,9 +17,8 @@
         $streditingasurvey = get_string("editingasurvey", "survey");
         $strsurveys = get_string("modulenameplural", "survey");
 
-        print_header("$course->shortname: $streditingasurvey", "$course->fullname",
-                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>".
-                      " -> <a href=\"index.php?id=$course->id\">$strsurveys</a>".
+        print_header_simple("$streditingasurvey", "",
+                      "<a href=\"index.php?id=$course->id\">$strsurveys</a>".
                       " -> $form->name ($streditingasurvey)");
 
         if (!$form->name or !$form->template) {

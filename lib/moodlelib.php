@@ -430,6 +430,19 @@ function require_login($courseid=0, $autologinguest=true) {
     }
 }
 
+function require_course_login($course, $autologinguest=true) {
+// This is a weaker version of require_login which only requires login
+// when called from within a course rather than the site page, unless
+// the forcelogin option is turned on.
+    global $CFG;
+    if ($CFG->forcelogin) {
+      require_login();
+    }
+    if ($course->category) {
+      require_login($course->id, $autologinguest);
+    }
+}
+
 function update_user_login_times() {
     global $USER;
 
@@ -583,8 +596,8 @@ function isstudent($courseid, $userid=0) {
         if (isguest($userid)) {
             return false;
         }
-        return record_exists('user', 'id', $userid, 'confirmed', 1, 'deleted', 0);
-    }
+        return record_exists('user_students', 'userid', $userid);
+    }  
 
     if (!$userid) {
         return !empty($USER->student[$courseid]);
@@ -952,6 +965,15 @@ function add_admin($userid) {
     if (!record_exists("user_admins", "userid", $userid)) {
         if (record_exists("user", "id", $userid)) {
             $admin->userid = $userid;
+            
+            // any admin is also a teacher on the site course
+            $site = get_site();
+            if (!record_exists('user_teachers', 'course', $site->id, 'userid', $userid)) {
+                if (!add_teacher($userid, $site->id)) {
+                    return false;
+                }
+            }
+            
             return insert_record("user_admins", $admin);
         }
         return false;
@@ -962,6 +984,10 @@ function add_admin($userid) {
 function remove_admin($userid) {
 /// Removes an admin from a site
     global $db;
+
+    // remove also from the list of site teachers
+    $site = get_site();
+    remove_teacher($userid, $site->id);
 
     return delete_records("user_admins", "userid", $userid);
 }

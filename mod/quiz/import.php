@@ -27,9 +27,8 @@
     $strquizzes = get_string('modulenameplural', 'quiz');
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
 
-    print_header("$course->shortname: $strimportquestions", "$course->shortname: $strimportquestions",
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
-                 "-> <a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
+    print_header_simple("$strimportquestions", "$strimportquestions",
+                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
                   " -> <a href=\"edit.php\">$streditingquiz</a> -> $strimportquestions");
 
     if ($form = data_submitted()) {   /// Filename

@@ -247,11 +247,17 @@ function workshop_count_self_assessments($workshop, $user) {
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_count_student_submissions($workshop) {
     global $CFG;
-    
-     return count_records_sql("SELECT count(*) FROM {$CFG->prefix}workshop_submissions s, 
+
+    // make sure it works on the site course
+    $select = "s.course = '$workshop->course' AND";
+    $site = get_site();
+    if ($workshop->course == $site->id) {
+        $select = '';
+    }
+
+    return count_records_sql("SELECT count(*) FROM {$CFG->prefix}workshop_submissions s, 
                             {$CFG->prefix}user_students u
-                            WHERE u.course = $workshop->course
-                              AND s.userid = u.userid
+                            WHERE $select s.userid = u.userid
                               AND s.workshopid = $workshop->id
                               AND timecreated > 0");
     }
@@ -506,12 +512,18 @@ function workshop_get_comments($assessment) {
 function workshop_get_student_assessments($workshop, $user) {
 // Return all assessments on the student submissions by a user, order by youngest first, oldest last
     global $CFG;
-    
+
+    // make sure it works on the site course
+    $select = "u.course = '$workshop->course' AND";
+    $site = get_site();
+    if ($workshop->course == $site->id) {
+        $select = '';
+    }
+
     return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, 
                             {$CFG->prefix}user_students u,
                             {$CFG->prefix}workshop_assessments a
-                            WHERE u.course = $workshop->course
-                              AND s.userid = u.userid
+                            WHERE $select s.userid = u.userid
                               AND s.workshopid = $workshop->id
                               AND a.submissionid = s.id
                               AND a.userid = $user->id
@@ -523,11 +535,17 @@ function workshop_get_student_assessments($workshop, $user) {
 function workshop_get_student_submission_assessments($workshop) {
 // Return all assessments on the student submissions, order by youngest first, oldest last
     global $CFG;
-    
+
+    // make sure it works on the site course
+    $select = "u.course = '$workshop->course' AND";
+    $site = get_site();
+    if ($workshop->course == $site->id) {
+        $select = '';
+    }
+
     return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, 
                             {$CFG->prefix}user_students u, {$CFG->prefix}workshop_assessments a
-                            WHERE u.course = $workshop->course
-                              AND s.userid = u.userid
+                            WHERE $select s.userid = u.userid
                               AND s.workshopid = $workshop->id
                               AND a.submissionid = s.id
                               ORDER BY a.timecreated DESC");
@@ -587,12 +605,18 @@ function workshop_get_ungraded_assessments($workshop) {
 function workshop_get_ungraded_assessments_student($workshop) {
     global $CFG;
     // Return all assessments which have not been graded or just graded of student's submissions
-    
+
+    // make sure it works on the site course
+    $select = "u.course = '$workshop->course' AND";
+    $site = get_site();
+    if ($workshop->course == $site->id) {
+        $select = '';
+    }
+
     $cutofftime = time() - $CFG->maxeditingtime;
     return get_records_sql("SELECT a.* FROM {$CFG->prefix}workshop_submissions s, 
                             {$CFG->prefix}user_students u, {$CFG->prefix}workshop_assessments a
-                            WHERE u.course = $workshop->course
-                              AND s.userid = u.userid
+                            WHERE $select s.userid = u.userid
                               AND s.workshopid = $workshop->id
                               AND a.submissionid = s.id
                               AND (a.timegraded = 0 OR a.timegraded > $cutofftime)
@@ -641,10 +665,18 @@ function workshop_get_user_assessments_done($workshop, $user) {
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_users_done($workshop) {
     global $CFG;
+
+    // make sure it works on the site course
+    $select = "s.course = '$workshop->course' AND";
+    $site = get_site();
+    if ($workshop->course == $site->id) {
+        $select = '';
+    }
+
     return get_records_sql("SELECT u.* 
                     FROM {$CFG->prefix}user u, {$CFG->prefix}user_students s, 
                          {$CFG->prefix}workshop_submissions a
-                    WHERE s.course = '$workshop->course' AND s.user = u.id
+                    WHERE $select s.user = u.id
                     AND u.id = a.user AND a.workshop = '$workshop->id'
                     ORDER BY a.timemodified DESC");
 }

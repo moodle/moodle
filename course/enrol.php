@@ -42,6 +42,12 @@
 
         redirect($destination);
     }
+    
+/// Users can't enroll to site course
+    if (!$course->category) {
+        print_header_simple();
+        notice(get_string('enrollfirst'), $CFG->wwwroot);
+    }
 
 /// Double check just in case they are enrolled to start in the future 
 

@@ -1202,10 +1202,17 @@ function workshop_get_student_submissions($workshop, $order = "title") {
     if ($order == "grade") {
         $order = "$workshop->teacherweight * s.teachergrade + $workshop->peerweight * s.peergrade DESC";
         }
+
+    // make sure it works on the site course
+    $select = "u.course = '$workshop->course' AND";
+    $site = get_site();
+    if ($workshop->course == $site->id) {
+        $select = '';
+    }
+
     return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, 
                             {$CFG->prefix}user_students u, {$CFG->prefix}user a 
-                            WHERE u.course = $workshop->course
-                              AND s.userid = u.userid
+                            WHERE $select s.userid = u.userid
                               AND a.id = u.userid
                               AND s.workshopid = $workshop->id
                               AND s.timecreated > 0

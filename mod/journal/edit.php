@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-	require_once("../../config.php");
+    require_once("../../config.php");
 
     require_variable($id);    // Course Module ID
 
@@ -29,34 +29,34 @@
 
     if ($form = data_submitted()) {
 
-		$timenow = time();
+        $timenow = time();
 
         $form->text = clean_text($form->text, $form->format);
 
-		if ($entry) {
+        if ($entry) {
             $newentry->id = $entry->id;
             $newentry->text = $form->text;
             $newentry->format = $form->format;
             $newentry->modified = $timenow;
-			if (! update_record("journal_entries", $newentry)) {
-				error("Could not update your journal");
-			}
+            if (! update_record("journal_entries", $newentry)) {
+                error("Could not update your journal");
+            }
             add_to_log($course->id, "journal", "update entry", "view.php?id=$cm->id", "$newentry->id", $cm->id);
-		} else {
+        } else {
             $newentry->userid = $USER->id;
             $newentry->journal = $journal->id;
             $newentry->text = $form->text;
             $newentry->format = $form->format;
             $newentry->modified = $timenow;
-			if (! $newentry->id = insert_record("journal_entries", $newentry)) {
-				error("Could not insert a new journal entry");
-			}
+            if (! $newentry->id = insert_record("journal_entries", $newentry)) {
+                error("Could not insert a new journal entry");
+            }
             add_to_log($course->id, "journal", "add entry", "view.php?id=$cm->id", "$newentry->id", $cm->id);
-		} 
-		
-		redirect("view.php?id=$cm->id");
-		die;
-	}
+        } 
+        
+        redirect("view.php?id=$cm->id");
+        die;
+    }
 
 /// Otherwise fill and print the form.
 
@@ -75,9 +75,8 @@
         $entry->format = $defaultformat;
     }
 
-    print_header("$course->shortname: $journal->name", "$course->fullname",
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-                  <A HREF=\"index.php?id=$course->id\">$strjournals</A> -> 
+    print_header_simple("$journal->name", "",
+                 "<A HREF=\"index.php?id=$course->id\">$strjournals</A> -> 
                   <A HREF=\"view.php?id=$cm->id\">$journal->name</A> -> $stredit", "",
                   "", true, "", navmenu($course, $cm));
 
@@ -87,7 +86,7 @@
 
     echo "<br />";
 
-	include("edit.html");
+    include("edit.html");
 
     if ($usehtmleditor) {
         use_html_editor("text");

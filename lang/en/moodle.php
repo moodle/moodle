@@ -378,6 +378,7 @@ $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
 $string['enrolledincourse'] = 'Enrolled in course \"$a\"';
 $string['enrolledincoursenot'] = 'Not enrolled in course \"$a\"';
+$string['enrollfirst'] = 'You have to enroll in one of the courses before you can use the site activities';
 $string['enrolmentconfirmation'] = 'You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?';
 $string['enrolmentkey'] = 'Enrolment key';
 $string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one-time<BR>

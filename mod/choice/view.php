@@ -13,7 +13,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id);
+    require_course_login($course);
 
     if (!$choice = choice_get_choice($cm->instance)) {
         error("Course module is incorrect");
@@ -22,8 +22,10 @@
     for ($i=1; $i <= $CHOICE_MAX_NUMBER; $i++) {
         $answerchecked[$i] = '';
     }
-    if ($current = get_record("choice_answers", "choice", $choice->id, "userid", $USER->id)) {
+    if (isset($USER->id) and $current = get_record("choice_answers", "choice", $choice->id, "userid", $USER->id)) {
         $answerchecked[$current->answer] = 'CHECKED';
+    } else {
+        $current = false;
     }
 
     if ($form = data_submitted()) {
@@ -113,6 +115,8 @@
         echo "<INPUT type=hidden name=id value=\"$cm->id\">";
         if (isstudent($course->id) or isteacher($course->id, 0, false)) {
             echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\">";
+        } else {
+            print_string('havetologin', 'choice');
         }
         echo "</P></FORM></CENTER>";
 

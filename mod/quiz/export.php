@@ -27,16 +27,15 @@
     $strquizzes = get_string('modulenameplural', 'quiz');
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
 
-    print_header("$course->shortname: $strexportquestions", "$course->shortname: $strexportquestions",
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
-                 "-> <a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
+    print_header_simple("$strexportquestions", "$strexportquestions",
+                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
                   " -> <a href=\"edit.php\">$streditingquiz</a> -> $strexportquestions");
 
     if ($form = data_submitted()) {   /// Filename
 
 
     if (! is_readable("format/$form->format/format.php")) {
-	error("Format not known ($form->format)");
+    error("Format not known ($form->format)");
     }
 
     require("format.php");  // Parent class
@@ -45,18 +44,18 @@
     $format = new quiz_file_format();
 
     if (! $format->exportpreprocess($category, $course)) {             // Do anything before that we need to
-	error("Error occurred during pre-processing!", 
-	      "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
+    error("Error occurred during pre-processing!", 
+          "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
     }
 
     if (! $format->exportprocess($exportfilename)) {     // Process the export data
-	error("Error occurred during processing!", 
-	      "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
+    error("Error occurred during processing!", 
+          "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
     }
 
     if (! $format->exportpostprocess()) {                     // In case anything needs to be done after
-	error("Error occurred during post-processing!", 
-	      "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
+    error("Error occurred during post-processing!", 
+          "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
     }
 
     echo "<hr>";

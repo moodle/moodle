@@ -9,6 +9,7 @@ $string['choiceclose'] = 'Until';
 $string['choicename'] = 'Choice name';
 $string['choiceopen'] = 'Open';
 $string['choicetext'] = 'Choice text';
+$string['havetologin'] = 'You have to log in before you can submit your choice';
 $string['modulename'] = 'Choice';
 $string['modulenameplural'] = 'Choices';
 $string['mustchooseone'] = 'You must choose an answer before saving.  Nothing was saved.';

@@ -821,6 +821,14 @@ function main_upgrade($oldversion=0) {
             execute_sql("UPDATE {$CFG->prefix}user SET auth = '$CFG->auth' WHERE id NOT IN ($adminlist)");
         }
     }
+    
+    if ($oldversion < 2004082200) { // Making admins teachers on site course
+        $site = get_site();
+        $admins = get_admins();
+        foreach ($admins as $admin) {
+            add_teacher($admin->id, $site->id);
+        }
+    }
 
     return $result;
 

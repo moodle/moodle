@@ -15,10 +15,10 @@
 /// printpivot indicate if the pivot should be printed or not
     switch ($CFG->dbtype) {
     case 'postgres7':
- 		$as = 'as';
+        $as = 'as';
     break;
     case 'mysql':
- 		$as = '';
+        $as = '';
     break;
     }    
 
@@ -36,7 +36,7 @@
     $fullpivot = 1;
 
     $userid = '';
-    if ( $USER->id ) {
+    if ( isset($USER->id) ) {
         $userid = "OR ge.userid = $USER->id";
     }
     switch ($tab) {
@@ -218,12 +218,12 @@
     $sqllimit = '';
     
     if ( $offset >= 0 ) {
- 	    switch ($CFG->dbtype) {
+        switch ($CFG->dbtype) {
         case 'postgres7':
-     		$sqllimit = " LIMIT $entriesbypage OFFSET $offset";
+            $sqllimit = " LIMIT $entriesbypage OFFSET $offset";
         break;
         case 'mysql':
-     		$sqllimit = " LIMIT $offset, $entriesbypage";
+            $sqllimit = " LIMIT $offset, $entriesbypage";
         break;
         }    
     }

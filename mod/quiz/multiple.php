@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // A quick way to add lots of questions to a category (and a quiz)
 
-	require_once("../../config.php");
-	require_once("lib.php");
+    require_once("../../config.php");
+    require_once("lib.php");
 
     require_variable($category);
 
@@ -100,9 +100,8 @@
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
     $strcreatemultiple = get_string("createmultiple", "quiz");
 
-    print_header("$course->shortname: $strcreatemultiple", "$course->shortname: $strcreatemultiple",
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
-                 " -> <a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
+    print_header_simple("$strcreatemultiple", "$strcreatemultiple",
+                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
                  " -> <a href=\"edit.php\">$streditingquiz</a> -> $strcreatemultiple");
 
 

@@ -947,8 +947,8 @@ function get_user_info_from_db($field, $value) {
         $user->admin = true;
     }
 
-    if ($site = get_site()) { // Everyone is always a member of the top course
-        $user->student[$site->id] = true;
+    if ($site = get_site()) {
+        $user->student[$site->id] = isstudent($site->id, $user->id);
     }
 
 /// Determine enrolments based on current enrolment module
@@ -1152,15 +1152,6 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
 
     global $CFG;
 
-    $site = get_site();
-    if (!$courseid or $courseid == $site->id) { 
-        $sort = str_replace('s.timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
-        if ($sort) {
-            $sort = "$sort $dir";
-        }
-        return get_site_users($sort, '', $exceptions);
-    }
-
     switch ($CFG->dbtype) {
         case "mysql":
              $fullname = " CONCAT(firstname,\" \",lastname) ";
@@ -1179,7 +1170,15 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
     }
 
     $groupmembers = '';
-    $select = "s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0' ";
+
+    // make sure it works on the site course
+    $select = "s.course = '$courseid' AND ";
+    $site = get_site();
+    if ($courseid == $site->id) {
+        $select = '';
+    }
+
+    $select .= "s.userid = u.id AND u.deleted = '0' ";
 
     if (!$fields) {
         $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
@@ -1306,18 +1305,10 @@ function get_course_teachers($courseid, $sort="t.authority ASC", $exceptions='')
 
 /**
 * Returns all the users of a course: students and teachers
-* 
-* If the "course" is actually the site, then return all site users.
 *
 * @param    type description
 */
 function get_course_users($courseid, $sort="timeaccess DESC", $exceptions='') {
-
-    $site = get_site();
-
-    if ($courseid == $site->id) {
-        return get_site_users($sort, '', $exceptions);
-    }
 
     /// Using this method because the single SQL is too inefficient
     // Note that this has the effect that teachers and students are

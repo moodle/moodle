@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
-	require_once('../../config.php');
-	require_once('lib.php');
+    require_once('../../config.php');
+    require_once('lib.php');
 
 
 // Make sure this is a legitimate posting
@@ -89,9 +89,8 @@
     $strsurveys = get_string("modulenameplural", "survey");
     $strsurveysaved = get_string("surveysaved", "survey");
 
-	print_header("$course->shortname: $strsurveysaved", "$course->fullname", 
-        "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-         <a href=\"index.php?id=$course->id\">$strsurveys</a> -> $survey->name -> $strsurveysaved", "");
+    print_header_simple("$strsurveysaved", "", 
+        "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> $survey->name -> $strsurveysaved", "");
 
 
     notice(get_string("thanksforanswers","survey", $USER->firstname), "$CFG->wwwroot/course/view.php?id=$course->id");

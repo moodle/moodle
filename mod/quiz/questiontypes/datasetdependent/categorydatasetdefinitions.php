@@ -31,9 +31,8 @@
     $strdefinedataset = get_string("datasetdefinitions", "quiz", $category->name);
     $strquestions = get_string("questions", "quiz");
 
-    print_header("$course->shortname: $strdefinedataset", "$course->shortname: $strdefinedataset",
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                  -> <A HREF=\"../../edit.php\">$streditingquiz</A> -> $strdefinedataset");
+    print_header_simple("$strdefinedataset", "$strdefinedataset",
+                 "<A HREF=\"../../edit.php\">$streditingquiz</A> -> $strdefinedataset");
 
     if ($form = data_submitted()) {   /// Filename
 

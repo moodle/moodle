@@ -12,7 +12,7 @@
         error("Course ID is incorrect");
     }
 
-    require_login($course->id);
+    require_course_login($course);
 
     add_to_log($course->id, "wiki", "view all", "index.php?id=$course->id", "");
 

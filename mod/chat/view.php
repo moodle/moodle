@@ -37,7 +37,7 @@
         }
     }
 
-    require_login($course->id);
+    require_course_login($course);
 
     add_to_log($course->id, "chat", "view", "view.php?id=$cm->id", $chat->id, $cm->id);
 

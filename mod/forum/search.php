@@ -38,9 +38,8 @@
     $searchform = forum_print_search_form($course, $search, true, "plain");
 
     if (!$search) {
-        print_header("$course->shortname: $strsearch", "$course->fullname",
-                 "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> -> 
-                  <A HREF=\"index.php?id=$course->id\">$strforums</A> -> $strsearch", "search.search",
+        print_header_simple("$strsearch", "",
+                 "<A HREF=\"index.php?id=$course->id\">$strforums</A> -> $strsearch", "search.search",
                   "", "", "&nbsp;", navmenu($course));
 
         print_simple_box_start("center");
@@ -59,9 +58,8 @@
         if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
 
 
-            print_header("$course->shortname: $strsearchresults", "$course->fullname",
-                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> 
-                      <a href=\"index.php?id=$course->id\">$strforums</a> -> 
+            print_header_simple("$strsearchresults", "",
+                     "<a href=\"index.php?id=$course->id\">$strforums</a> -> 
                       <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search", 
                       "", "", "&nbsp;", navmenu($course));
             print_heading(get_string("nopostscontaining", "forum", $search));
@@ -79,9 +77,8 @@
             exit;
         }
 
-        print_header("$course->shortname: $strsearchresults", "$course->fullname",
-                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> 
-                  <a href=\"index.php?id=$course->id\">$strforums</a> -> 
+        print_header_simple("$strsearchresults", "",
+                 "<a href=\"index.php?id=$course->id\">$strforums</a> -> 
                   <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search", 
                   "", "",  $searchform, navmenu($course));
 

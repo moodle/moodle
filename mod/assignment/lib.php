@@ -423,14 +423,18 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
                                       AND a.timemodified > 0
                                       AND g.groupid = '$groupid' 
                                       AND a.userid = g.userid ");
-    } else {                                  
+    } else {
+        $select = "s.course = '$assignment->course' AND";
+        $site = get_site();
+        if ($assignment->course == $site->id) {
+            $select = '';
+        }     
         return count_records_sql("SELECT COUNT(*)
                                   FROM {$CFG->prefix}assignment_submissions a, 
                                        {$CFG->prefix}user_students s
                                  WHERE a.assignment = '$assignment->id' 
                                    AND a.timemodified > 0
-                                   AND s.course = '$assignment->course'
-                                   AND a.userid = s.userid ");
+                                   AND $select a.userid = s.userid ");
     }
 }
 
@@ -445,26 +449,36 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
     } else {
         $sort = "a.$sort $dir";
     }
+    
+    $select = "s.course = '$assignment->course' AND";
+    $site = get_site();
+    if ($assignment->course == $site->id) {
+        $select = '';
+    }
     return get_records_sql("SELECT a.* 
                               FROM {$CFG->prefix}assignment_submissions a, 
                                    {$CFG->prefix}user_students s,
                                    {$CFG->prefix}user u
                              WHERE a.userid = s.userid
                                AND u.id = a.userid
-                               AND s.course = '$assignment->course'
-                               AND a.assignment = '$assignment->id' 
+                               AND $select a.assignment = '$assignment->id' 
                           ORDER BY $sort");
 }
 
 function assignment_get_users_done($assignment) {
 /// Return list of users who have done an assignment
     global $CFG;
+    
+    $select = "s.course = '$assignment->course' AND";
+    $site = get_site();
+    if ($assignment->course == $site->id) {
+        $select = '';
+    }
     return get_records_sql("SELECT u.* 
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}user_students s, 
                                    {$CFG->prefix}assignment_submissions a
-                             WHERE s.course = '$assignment->course' 
-                               AND s.userid = u.id
+                             WHERE $select s.userid = u.id
                                AND u.id = a.userid 
                                AND a.assignment = '$assignment->id'
                           ORDER BY a.timemodified DESC");
@@ -473,7 +487,7 @@ function assignment_get_users_done($assignment) {
 function assignment_get_unmailed_submissions($cutofftime) {
 /// Return list of marked submissions that have not been mailed out for currently enrolled students
     global $CFG;
-    return get_records_sql("SELECT s.*, a.course, a.name
+    $records = get_records_sql("SELECT s.*, a.course, a.name
                               FROM {$CFG->prefix}assignment_submissions s, 
                                    {$CFG->prefix}assignment a,
                                    {$CFG->prefix}user_students us
@@ -483,6 +497,19 @@ function assignment_get_unmailed_submissions($cutofftime) {
                                AND s.assignment = a.id
                                AND s.userid = us.userid
                                AND a.course = us.course");
+    $site = get_site();
+    if (record_exists('assignment', 'course', $site->id)) {
+        $records += get_records_sql("SELECT s.*, a.course, a.name
+                              FROM {$CFG->prefix}assignment_submissions s, 
+                                   {$CFG->prefix}assignment a,
+                                   {$CFG->prefix}user_students us
+                             WHERE s.mailed = 0 
+                               AND s.timemarked < $cutofftime 
+                               AND s.timemarked > 0
+                               AND s.assignment = a.id
+                               AND s.userid = us.userid
+                               AND a.course = $site->id");
+    }
 }
 
 
