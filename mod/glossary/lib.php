@@ -652,10 +652,12 @@ for ($row = 0; $row < $numrows; $row++) {
                     }
                     if ($tabproccessed == $currenttab) {
                          $currentcolor = $currenttabcolor;
+                         $currentstyle = 'generaltabselected';
                     } else {
                          $currentcolor = $tabcolor;
+                         $currentstyle = 'generaltab';
                     }
-                    echo "<td width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
+                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
