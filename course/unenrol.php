@@ -31,7 +31,7 @@
         }
 
         // remove some other things
-        delete_records("discuss_subscriptions", "user", $user->id);
+        delete_records("forum_subscriptions", "user", $user->id);
 
         add_to_log($course->id, "course", "unenrol", "view.php?id=$course->id", "$user->id");
 

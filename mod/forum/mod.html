@@ -1,0 +1,54 @@
+<form name="form" method="post" action="<?=$ME ?>">
+<table cellpadding=5>
+<tr>
+<tr valign=top>
+    <td align=right><P><B>Forum Name:</B></P></TD>
+    <td>
+        <input type="text" name="name" size=30 value="<? p($form->name) ?>">
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B>Type of Forum:</B></P></TD>
+    <td>
+    <?
+       $student = strtolower($course->student);
+       require("$CFG->dirroot/mod/forum/lib.php");
+       asort($FORUM_TYPE);
+       choose_from_menu($FORUM_TYPE, "type", $form->type);
+    ?>
+
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B>Forum Introduction:</B></P></TD>
+    <td>
+        <textarea name="intro" rows=4 cols=50 wrap="virtual"><? p($form->intro) ?></textarea>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B>Can <?=$course->student?>s start new discussions?:</B></P></TD>
+    <td>
+        <input type=radio name=open value=1 <? if ($form->open == 1) echo "CHECKED"; ?> >Yes
+        <input type=radio name=open value=0 <? if ($form->open == 0) echo "CHECKED"; ?> >No
+    </td>
+</tr>
+<tr>
+    <td align=right><P><B>Will this forum contain assessments?:</B></P></TD>
+    <td>
+        <input type=radio name=assessed value=1 <? if ($form->assessed == 1) echo "CHECKED"; ?> >Yes
+        <input type=radio name=assessed value=0 <? if ($form->assessed == 0) echo "CHECKED"; ?> >No
+    </td>
+</tr>
+</table>
+<CENTER>
+<input type="hidden" name=course     value="<? p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
+<input type="hidden" name=week       value="<? p($form->week) ?>">
+<input type="hidden" name=module     value="<? p($form->module) ?>">
+<input type="hidden" name=modulename value="<? p($form->modulename) ?>">
+<input type="hidden" name=instance   value="<? p($form->instance) ?>">
+<input type="hidden" name=mode       value="<? p($form->mode) ?>">
+<input type="submit" value="Save these settings">
+</CENTER>
+</FORM>

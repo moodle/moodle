@@ -2,7 +2,7 @@
       // Display the whole course as "weeks" made of of modules
       // Included from "view.php"
 
-    include("../mod/discuss/lib.php");
+    include("../mod/forum/lib.php");
 
     if (! $rawweeks = get_records("course_weeks", "course", $course->id) ) {
         $week->course = $course->id;   // Create a default week.

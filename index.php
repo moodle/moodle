@@ -4,7 +4,7 @@
     require("config.php");
     include("course/lib.php");
     include("mod/reading/lib.php"); 
-    include("mod/discuss/lib.php");
+    include("mod/forum/lib.php");
 
     if (! $site = get_record("course", "category", 0)) {
         redirect("$CFG->wwwroot/admin/");

@@ -2,7 +2,7 @@
     // social.php - course format featuring social forum
     //              included from view.php
     
-    include("../mod/discuss/lib.php");
+    include("../mod/forum/lib.php");
     include("../mod/reading/lib.php"); 
 ?>
 

@@ -702,6 +702,16 @@ function update_record($table, $dataobject) {
 }
 
 
+function print_object($object) {
+// Mostly just for debugging
+
+    $array = (array)$object;
+    foreach ($array as $key => $item) {
+        echo "$key -> $item <BR>";
+    }
+}
+
+
 
 /// USER DATABASE ////////////////////////////////////////////////
 
