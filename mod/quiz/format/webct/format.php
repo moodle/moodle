@@ -523,17 +523,17 @@ class quiz_file_format extends quiz_default_format {
                 continue;
             }
 
-            if (eregi("^:ANSWER([0-9]+):([0-9\.]+)",$line,$webct_options)) {
-                $answertext="";                 // Start gathering next lines
-                $currentchoice=$webct_options[1];
-                $question->fraction[$currentchoice]=($webct_options[2]/100);
-                continue;
-            }
-
             if (eregi("^:ANSWER([0-9]+):([^:]+):([0-9\.]+):(.*)",$line,$webct_options)) {      /// SHORTANSWER
                 $currentchoice=$webct_options[1];
                 $answertext=$webct_options[2];            // Start gathering next lines
                 $question->fraction[$currentchoice]=($webct_options[3]/100);
+                continue;
+            }
+
+            if (eregi("^:ANSWER([0-9]+):([0-9\.]+)",$line,$webct_options)) {
+                $answertext="";                 // Start gathering next lines
+                $currentchoice=$webct_options[1];
+                $question->fraction[$currentchoice]=($webct_options[2]/100);
                 continue;
             }
 
