@@ -35,7 +35,7 @@ function execute_sql($command, $feedback=true) {
 /**
 * Run an arbitrary sequence of semicolon-delimited SQL commands
 * 
-* Assumes that the input text (file or string consists of 
+* Assumes that the input text (file or string) consists of 
 * a number of SQL statements ENDING WITH SEMICOLONS.  The 
 * semicolons MUST be the last character in a line.
 * Lines that are blank or that start with "#" are ignored.
@@ -48,7 +48,7 @@ function modify_database($sqlfile="", $sqlstring="") {
 
     global $CFG;
 
-    $success = true;  // Let's be optimistic :-)
+    $success = true;  // Let's be optimistic 
 
     if (!empty($sqlfile)) {
         if (!is_readable($sqlfile)) {
@@ -1156,6 +1156,27 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
                              $firstinitial="", $lastinitial="", $group=NULL, $search="", $fields='', $exceptions='') {
 
     global $CFG;
+    
+    if ($courseid == SITEID and $CFG->allusersaresitestudents) { 
+        // return users with confirmed, undeleted accounts who are not site teachers
+        // the following is a mess because of different conventions in the different user functions
+        $sort = str_replace('s.timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
+        $sort = str_replace('timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
+        $sort = str_replace('u.', '', $sort); // the get_user function doesn't use the u. prefix to fields
+        $fields = str_replace('u.', '', $fields); 
+        if ($sort) {
+            $sort = "$sort $dir";
+        }
+        // Now we have to make sure site teachers are excluded
+        if ($teachers = get_records('user_teachers', 'course', SITEID)) {
+            foreach ($teachers as $teacher) {
+                $exceptions .= ",$teacher->userid";
+            }
+            $exceptions = ltrim($exceptions, ',');
+        }
+        return get_users(true, $search, true, $exceptions, $sort, $firstinitial, $lastinitial, 
+                          $page, $recordsperpage, $fields ? $fields : '*');
+    }
 
     switch ($CFG->dbtype) {
         case "mysql":
@@ -1178,8 +1199,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
 
     // make sure it works on the site course
     $select = "s.course = '$courseid' AND ";
-    $site = get_site();
-    if ($courseid == $site->id) {
+    if ($courseid == SITEID) {
         $select = '';
     }
 
@@ -1231,8 +1251,14 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
     }
     
     // We are here because we need the students for the site.
-    // These also include teachers on real courses
-    $select .= "AND s.course <> '".SITEID."'";
+    // These also include teachers on real courses minus those on the site
+    if ($teachers = get_records('user_teachers', 'course', SITEID)) {
+        foreach ($teachers as $teacher) {
+            $exceptions .= ",$teacher->userid";
+        }
+        $exceptions = ltrim($exceptions, ',');
+        $select .= " AND u.id NOT IN ($exceptions)";
+    }
     if (!$teachers = get_records_sql("SELECT $fields
                             FROM {$CFG->prefix}user u,
                                  {$CFG->prefix}user_teachers s
@@ -1253,52 +1279,10 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
 */
 function count_course_students($course, $search="", $firstinitial="", $lastinitial="", $group=NULL, $exceptions='') {
 
-    global $CFG;
-
-    if (!$course->category) {
-        return count(get_site_users($sort, '', $exceptions));
+    if ($students = get_course_students($course->id, '', '', 0, 999999, $firstinitial, $lastinitial, $group, $search, '', $exceptions)) {
+        return count($students);
     }
-
-    switch ($CFG->dbtype) {
-        case "mysql":
-             $fullname = " CONCAT(firstname,\" \",lastname) ";
-             $LIKE = "LIKE";
-             break;
-        default: 
-             $fullname = " firstname||\' \'||lastname ";
-             $LIKE = "ILIKE";
-    }
-    
-    $groupmembers = "";
-        
-    $select = "s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'";
-
-    if ($search) {
-        $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
-    } 
-    if ($firstinitial) {
-        $select .= " AND u.firstname $LIKE '$firstinitial%'";
-    } 
-    if ($lastinitial) {
-        $select .= " AND u.lastname $LIKE '$lastinitial%'";
-    } 
-
-    if ($group === 0) {   /// Need something here to get all students not in a group
-        return 0;
-
-    } else if ($group !== NULL) {
-        $groupmembers = ", {$CFG->prefix}groups_members gm ";
-        $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
-    }
-    
-    if (!empty($exceptions)) {
-        $select .= " AND u.id NOT IN ($exceptions)";
-    }
-
-    return count_records_sql("SELECT COUNT(*) 
-                              FROM {$CFG->prefix}user u,
-                                   {$CFG->prefix}user_students s $groupmembers
-                              WHERE $select");
+    return 0;
 }
 
 
@@ -1323,7 +1307,8 @@ function get_course_teachers($courseid, $sort="t.authority ASC", $exceptions='')
                                    u.emailstop, t.authority,t.role,t.editall,t.timeaccess as lastaccess
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_teachers t
-                            WHERE t.course = '$courseid' AND t.userid = u.id AND u.deleted = '0' $except
+                            WHERE t.course = '$courseid' AND t.userid = u.id 
+                              AND u.deleted = '0' AND u.confirmed = '1' $except
                             ORDER BY $sort");
 }
 
@@ -1347,18 +1332,12 @@ function get_course_users($courseid, $sort="timeaccess DESC", $exceptions='') {
 
     return $teachers + $students;
 
-//   This is too inefficient on large sites. 
-//    return get_records_sql("SELECT DISTINCT u.*
-//                              FROM mdl_user u
-//                              LEFT JOIN mdl_user_students s ON s.course = '$courseid'
-//                              LEFT JOIN mdl_user_teachers t ON t.course = '$courseid'
-//                              WHERE (u.id = t.userid OR u.id = s.userid)
-//                              ORDER BY $sort");
 }
 
 
 /**
 * Search through course users
+* If used for the site course searches through all undeleted, confirmed users
 *
 * @param    type description
 */
@@ -1384,55 +1363,35 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
     } else {
         $except = '';
     }
-    
+
     if (!empty($sort)) {
         $order = " ORDER by $sort";
     } else {
         $order = '';
     }
     
-    $site = get_site();
-    if (!$courseid or $courseid == $site->id) {
-        if (!$admins = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                      FROM {$CFG->prefix}user u, 
-                           {$CFG->prefix}user_admins s
-                      WHERE s.userid = u.id AND u.deleted = '0'
+    $select = "u.deleted = '0' AND u.confirmed = '1'";
+
+    if (!$courseid or $courseid == SITEID) {
+        return $admins = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
+                      FROM {$CFG->prefix}user u
+                      WHERE $select
                           AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
-                          $except $order")) {
-            $admins = array();
-        }
-        if (!$teachers = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                      FROM {$CFG->prefix}user u, 
-                           {$CFG->prefix}user_teachers s
-                      WHERE s.userid = u.id AND u.deleted = '0'
-                          AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
-                          $except $order")) {
-            $teachers = array();
-        }
-        if (!$students = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                      FROM {$CFG->prefix}user u, 
-                           {$CFG->prefix}user_students s
-                      WHERE s.userid = u.id AND u.deleted = '0'
-                          AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
-                          $except $order")) {
-            $students = array();
-        }
-        return $admins + $teachers + $students;
-        
+                          $except $order");
     } else { 
-    
+
         if ($groupid) {
             return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
                           FROM {$CFG->prefix}user u, 
                                {$CFG->prefix}groups_members g
-                          WHERE g.groupid = '$groupid' AND g.userid = u.id AND u.deleted = '0'
+                          WHERE $select AND g.groupid = '$groupid' AND g.userid = u.id
                               AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
                               $except $order");
         } else {
             if (!$teachers = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
                           FROM {$CFG->prefix}user u, 
                                {$CFG->prefix}user_teachers s
-                          WHERE s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0'
+                          WHERE $select AND s.course = '$courseid' AND s.userid = u.id
                               AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
                               $except $order")) {
                 $teachers = array();
@@ -1440,7 +1399,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
             if (!$students = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
                           FROM {$CFG->prefix}user u, 
                                {$CFG->prefix}user_students s
-                          WHERE s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0'
+                          WHERE $select AND s.course = '$courseid' AND s.userid = u.id
                               AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
                               $except $order")) {
                 $students = array();
@@ -1450,46 +1409,16 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
     }
 }
 
+
 /**
-* Returns a list of all active users who are enrolled 
-* 
-* or teaching in courses on this server
+* Returns a list of all site users
+* Obsolete, just calls get_course_users(SITEID)
 *
 * @param    type description
 */
 function get_site_users($sort="u.lastaccess DESC", $select="", $exceptions='') {
 
-    global $CFG;
-
-    if (!empty($exceptions)) {
-        $except = " AND u.id NOT IN ($exceptions) ";
-    } else {
-        $except = '';
-    }
-
-    if ($select) {
-        $selectinfo = $select;
-    } else {
-        $selectinfo = "u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,".
-                      "u.email, u.emailstop, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.lang, u.timezone";
-    }
-
-    if (!$students = get_records_sql("SELECT DISTINCT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_students s
-                                    WHERE s.userid = u.id $except ORDER BY $sort")) {
-        $students = array();
-    }
-
-    if (!$teachers = get_records_sql("SELECT DISTINCT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_teachers t
-                                      WHERE t.userid = u.id $except ORDER BY $sort")) {
-        $teachers = array();
-    }
-
-    if (!$admins = get_records_sql("SELECT DISTINCT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_admins a
-                                      WHERE a.userid = u.id $except ORDER BY $sort")) {
-        $admins = array();
-    }
-
-    return $admins + $teachers + $students;
+    return get_course_users(SITEID, $sort, '', 0, 999999, '', '', NULL, '', $select, $exceptions);
 }
 
 

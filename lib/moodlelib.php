@@ -584,21 +584,24 @@ function isstudent($courseid, $userid=0) {
 /// If course is site, is the user a confirmed user on the site?
     global $USER;
 
-    if (empty($USER->id)) {
+    if (empty($USER->id) and !$userid) {
         return false;
     }
 
-    $site = get_site();
-    if ($courseid == $site->id) {
+    if ($courseid == SITEID) {
         if (!$userid) {
             $userid = $USER->id;
         }
         if (isguest($userid)) {
             return false;
         }
-        return (record_exists('user_students', 'userid', $userid)
-                  or (record_exists('user_teachers', 'userid', $userid)
+        if ($CFG->allusersaresitestudents) {
+            return record_exists('user', 'id', $userid);
+        } else {
+            return (record_exists('user_students', 'userid', $userid)
+                     or (record_exists('user_teachers', 'userid', $userid)
                        and !record_exists('user_teachers', 'userid', $userid, 'course', SITEID)));
+        }
     }  
 
     if (!$userid) {
