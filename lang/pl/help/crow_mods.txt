@@ -1,0 +1,16 @@
+UWAGI
+
+ISTOTNE ZMIANY (lokacja - oryginal - tlumaczenie gotowe - tlumaczenie moje): 
+
+1) naglowek - "Activity modules" - "modu³y dzia³añ" - "elementy kursu" (pisa³em ju¿ : to t³umaczenie z interface'u. myœlê, ¿e jest doœæ dobre)
+2) Forum - "Forums" - "Fora" - "Forum" (byæ mo¿e forma fora jest poprawna gramatycznie, ale chyba lepiej bêdzie pozostawiæ ten wyraz w bezokoliczniku)
+3) dzienniki - "It's usually a good idea to have about one Journal activity per week.
+" - "Zazwyczaj zalecane jest aby w ramach tego modu³u mia³o miejsce co najmniej jedno dzia³anie tygodniowo." - "Zazwyczaj zalecane jest aby tworzyæ przynajmniej jeden element typu dziennik tygodniowo"
+
+
+NIEISTOTNE ZMIANY (lokacja - oryginal - tlumaczenie gotowe - tlumaczenie moje):
+
+1) dzienniki- "who can offer feedback" - "mo¿e udzieliæ informacji zwrotnych" - "mo¿e skomentowaæ"
+
+2) zadania - "Assignments allow the teacher to specify a task " - "Zadania umo¿liwiaj¹ prowadz¹cemu okreœlenie treœci," - "Zadania umo¿liwiaj¹ prowadz¹cemu okreœlenie pracy(...)do
+ wykonania "
