@@ -64,6 +64,9 @@ global $CFG;
     if ( !isadmin() ) {
         unset($glossary->globalglossary);
     }
+    if (empty($glossary->globalglossary)) {
+        $glossary->globalglossary = 0;
+    }
 
     $glossary->timemodified = time();
     $glossary->id = $glossary->instance;
