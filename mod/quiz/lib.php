@@ -1019,6 +1019,7 @@ function quiz_get_default_category($courseid) {
     $category->info = get_string("defaultinfo", "quiz");
     $category->course = $courseid;
     $category->publish = 0;
+    $category->stamp = make_unique_id_code();
 
     if (!$category->id = insert_record("quiz_categories", $category)) {
         notify("Error creating a default category!");
