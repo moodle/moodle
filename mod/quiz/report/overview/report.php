@@ -130,9 +130,9 @@ class quiz_report extends quiz_default_report {
             $button = "<input type=checkbox name=\"box$attempt->id\" value=\"$attempt->id\">";
             $revurl = "review.php?q=$quiz->id&attempt=$attempt->id";
             if ($attemptgrade == $bestgrade) {
-                $userattempts[] = "$button&nbsp;<span class=highlight><a href=\"$revurl\">$attemptgrade</a></span>&nbsp;$attemptdate&nbsp;($attemptlapse)";
+                $userattempts[] = "$button&nbsp;<span class=\"highlight\">$attemptgrade</span>&nbsp;<a href=\"$revurl\">$attemptdate</a>&nbsp;($attemptlapse)";
             } else {
-                $userattempts[] = "$button&nbsp;<a href=\"$revurl\">$attemptgrade</a>&nbsp;$attemptdate&nbsp;($attemptlapse)";
+                $userattempts[] = "$button&nbsp;$attemptgrade&nbsp;<a href=\"$revurl\">$attemptdate</a>&nbsp;($attemptlapse)";
             }
         }
         return implode("<br />\n", $userattempts);
