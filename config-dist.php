@@ -60,8 +60,8 @@ $CFG->dataroot  = "/home/moodledata";
 
 
 // Choose a theme from the "themes" folder.  Current choices include 
-// "standard" and "standardblue", but feel free to copy one and 
-// make new themes!
+// "standard", "standardblue", "standardgreen" and "standardred", 
+// but feel free to copy one and make new themes!
 
 $CFG->theme     = "standard";
 
