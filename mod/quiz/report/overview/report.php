@@ -18,7 +18,7 @@ class quiz_report extends quiz_default_report {
 
         $table->head = array("&nbsp;", $strname, $strattempts, "$strbestgrade /$quiz->grade");
         $table->align = array("center", "left", "left", "center");
-        $table->width = array(10, "*", "*", 20);
+        $table->size = array(10, "*", "*", 20);
 
         foreach ($grades as $grade) {
             $picture = print_user_picture($grade->userid, $course->id, $grade->picture, false, true);

@@ -104,11 +104,11 @@
         if ($quiz->grade) {
             $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strgrade / $quiz->grade");
             $table->align = array("center", "center", "left", "right");
-            $table->width = array("", "", "", "");
+            $table->size = array("", "", "", "");
         } else {  // No grades are being used
             $table->head = array($strattempt, $strtimetaken, $strtimecompleted);
             $table->align = array("center", "center", "left");
-            $table->width = array("", "", "");
+            $table->size = array("", "", "");
         }
         foreach ($attempts as $attempt) {
             if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
