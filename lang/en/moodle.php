@@ -210,16 +210,12 @@ GNU General Public License for more details:
 http://www.gnu.org/copyleft/gpl.html
 
 Redistribution of modified copies of Moodle must be distributed 
-as pristine base sources plus patches, so that 'unofficial' changes
-can be readily distinguished from the base source.
+as clean base sources plus patches, so that 'unofficial' changes
+can be readily distinguished from the original Moodle code.
 
-There is one additional clause:
-
-All installed copies of Moodle on Internet web sites must retain the 
-\"Made with Moodle\" logo (or a visible equivalent) on the home page 
-as a link to moodle.com. If you wish to remove the logo or re-brand 
-this software as part of a commercial enterprise then please contact 
-martin@dougiamas.com to negotiate terms and pricing.";
+If you wish to redistribute modified copies of this software
+WITHOUT including or mentioning the original Moodle software
+then please contact martin@dougiamas.com to request a commercial license.";
 
 $string['grade'] = "Grade";
 $string['grades'] = "Grades";
