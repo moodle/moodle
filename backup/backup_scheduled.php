@@ -139,9 +139,17 @@ function schedule_backup_launch_backup($course,$starttime = 0) {
     schedule_backup_log($starttime,$course->id,"Start backup course $course->fullname");
     schedule_backup_log($starttime,$course->id,"  Phase 1: Checking and counting:");
     $preferences = schedule_backup_course_configure($course,$starttime);
+
     if ($preferences) {
         schedule_backup_log($starttime,$course->id,"  Phase 2: Executing and copying:");
         $status = schedule_backup_course_execute($preferences,$starttime);
+    }
+    if ($status && $preferences) {
+        //Only if the backup_sche_keep is set
+        if ($preferences->backup_keep) {
+            schedule_backup_log($starttime,$course->id,"  Phase 3: Deleting old backup files:");
+            $status = schedule_backup_course_delete_old_files($preferences,$starttime);
+        }
     }
     if ($status && $preferences) {
         echo "            End backup OK\n";
@@ -258,6 +266,9 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         if (!isset($backup_config->backup_sche_destination)) {
             $backup_config->backup_sche_destination = "";
         }
+        if (!isset($backup_config->backup_sche_keep)) {
+            $backup_config->backup_sche_keep = 0;
+        }
     }
 
     if ($status) {
@@ -308,26 +319,52 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         $preferences->backup_course_files = $backup_config->backup_sche_coursefiles;
         $preferences->backup_course = $course->id;
         $preferences->backup_destination = $backup_config->backup_sche_destination;
+        $preferences->backup_keep = $backup_config->backup_sche_keep;
     }
     
     //Calculate the backup string
     if ($status) {
         schedule_backup_log($starttime,$course->id,"    calculating backup name");
+
+        //Calculate the backup word
         //Take off some characters in the filename !!
         $takeoff = array(" ", ":", "/", "\\", "|");
-        $backup_name = str_replace($takeoff,"_",strtolower(get_string("backupfilename")));
+        $backup_word = str_replace($takeoff,"_",strtolower(get_string("backupfilename")));
         //If non-translated, use "backup"
-        if (substr($backup_name,0,1) == "[") {
-            $backup_name = "backup";
+        if (substr($backup_word,0,1) == "[") {
+            $backup_word= "backup";
         }
-        //Calculate the format string
-        $backup_name_format = str_replace(" ","_",get_string("backupnameformat"));
+
+        //Calculate the date format string
+        $backup_date_format = str_replace(" ","_",get_string("backupnameformat"));
         //If non-translated, use "%Y%m%d-%H%M"
-        if (substr($backup_name_format,0,1) == "[") {
-            $backup_name_format = "%%Y%%m%%d-%%H%%M";
+        if (substr($backup_date_format,0,1) == "[") {
+            $backup_date_format = "%%Y%%m%%d-%%H%%M";
         }
-        $backup_name .= str_replace($takeoff,"_","-".strtolower($course->shortname)."-".userdate(time(),$backup_name_format,99,false).".zip");
+
+        //Calculate the shortname
+        $backup_shortname = clean_filename($course->shortname);
+        if (empty($backup_shortname) or $backup_shortname == '_' ) {
+            $backup_shortname = $course->id;
+        }
+
+        //Calculate the final backup filename
+        //The backup word
+        $backup_name = $backup_word."-";
+        //The shortname
+        $backup_name .= strtolower($backup_shortname)."-";
+        //The date format
+        $backup_name .= userdate(time(),$backup_date_format,99,false);
+        //The extension
+        $backup_name .= ".zip";
+
+        //Calculate the string to match the keep preference
+        $keep_name = $backup_word."-";
+        //The shortname
+        $keep_name .= strtolower($backup_shortname)."-";
+ 
         $preferences->backup_name = $backup_name;
+        $preferences->keep_name = $keep_name;
     }
 
     //Calculate the backup unique code to allow simultaneus backups (to define
@@ -552,6 +589,62 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
         $status = clean_temp_data ($preferences);
     }
 
+    return $status;
+}
+
+//This function deletes old backup files when the "keep" limit has been reached
+//in the destination directory.
+function schedule_backup_course_delete_old_files($preferences,$starttime=0) {
+
+    global $CFG;
+
+    $status = true;
+
+    //Calculate the directory to check
+    $dirtocheck = "";
+    //if $preferences->backup_destination isn't empty, then check that directory
+    if (!empty($preferences->backup_destination)) {
+        $dirtocheck = $preferences->backup_destination;
+    //else calculate standard backup directory location
+    } else {
+        $dirtocheck = $CFG->dataroot."/".$preferences->backup_course."/backupdata";
+    }
+    schedule_backup_log($starttime,$preferences->backup_course,"    checking $dirtocheck");
+    echo "            Keeping backup files in $dirtocheck\n";
+
+    //Get all the files in $dirtocheck
+    $files = get_directory_list($dirtocheck,"",false);
+    //Get all matching files ($preferences->keep_name) from $files
+    $matchingfiles = array();
+    foreach ($files as $file) {
+        if (substr($file, 0, strlen($preferences->keep_name)) == $preferences->keep_name) {
+            $modifieddate = filemtime($dirtocheck."/".$file);
+            $matchingfiles[$modifieddate] = $file;
+        }
+    }
+    //Sort by key (modified date) to get the oldest first (instead of doing that by name
+    //because it could give us problems in some languages with different format names).
+    ksort($matchingfiles);
+
+    //Count matching files
+    $countmatching = count($matchingfiles);
+    schedule_backup_log($starttime,$preferences->backup_course,"        found $countmatching backup files");
+    echo "                found $countmatching backup files\n";
+    if ($preferences->backup_keep < $countmatching) {
+        schedule_backup_log($starttime,$preferences->backup_course,"        keep limit ($preferences->backup_keep) reached. Deleting old files");
+        echo "                keep limit ($preferences->backup_keep) reached. Deleting old files\n";
+        $filestodelete = $countmatching - $preferences->backup_keep;
+        $filesdeleted = 0;
+        foreach ($matchingfiles as $matchfile) {
+            if ($filesdeleted < $filestodelete) {
+                schedule_backup_log($starttime,$preferences->backup_course,"        $matchfile deleted");
+                echo "                $matchfile deleted\n";
+                $filetodelete = $dirtocheck."/".$matchfile;
+                unlink($filetodelete);
+                $filesdeleted++;
+            }
+        }
+    }
     return $status;
 }
 

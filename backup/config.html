@@ -47,6 +47,9 @@
     if (!isset($backup_config->backup_sche_destination)) {
         $backup_config->backup_sche_destination = "";
     }
+    if (!isset($backup_config->backup_sche_keep)) {
+        $backup_config->backup_sche_keep = 0;
+    }
 
     //print_object($backup_config);                       //Debug
 
@@ -61,6 +64,22 @@
     //Course/alla array for use in course/all menu
     $courseall_array[0] = $all;
     $courseall_array[1] = $course;
+
+    //Keep array for use in keep menu
+    $keep_array[0] = $all;
+    $keep_array[1] = "1";
+    $keep_array[2] = "2";
+    $keep_array[5] = "5";
+    $keep_array[10] = "10";
+    $keep_array[20] = "20";
+    $keep_array[30] = "30";
+    $keep_array[40] = "40";
+    $keep_array[50] = "50";
+    $keep_array[100] = "100";
+    $keep_array[200] = "200";
+    $keep_array[300] = "300";
+    $keep_array[400] = "400";
+    $keep_array[500] = "500";
 ?>
 <form method="post" action="backup.php" name="form">
 
@@ -112,6 +131,18 @@
     </td>
     <td>
     <?php print_string("backupcoursefileshelp") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><?php print_string("keep") ?>:</td>
+    <td>
+    <?php
+        choose_from_menu($keep_array, "backup_sche_keep", $backup_config->backup_sche_keep, "");
+        print_string("files");
+     ?>
+    </td>
+    <td>
+    <?php print_string("backupkeephelp") ?>
     </td>
 </tr>
 <tr valign=top>
