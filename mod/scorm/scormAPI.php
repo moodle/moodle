@@ -191,7 +191,7 @@ function SCOInitialize() {
 
 function SCOFinish(){
     if (typeof API != "undefined") {
-	SaveTotalTime();
+	API.SaveTotalTime();
     }
 }
 
