@@ -51,7 +51,7 @@ class block_base {
      * The type of content that this block creates. Currently support options - BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT, BLOCK_TYPE_NUKE
      * @var int $content_type
      */
-    var $content_type  = NULL;
+    var $content_type  = BLOCK_TYPE_TEXT;
 
     /**
      * An object to contain the information to be displayed in the block.
@@ -171,6 +171,16 @@ class block_base {
     }
 
     /**
+     * Returns true or false, depending on whether this block has any content to display
+     *
+     * @return boolean
+     */
+    function is_empty() {
+        $this->get_content();
+        return(empty($this->content->text) && empty($this->content->footer));
+    }
+
+    /**
      * First sets the current value of $this->content to NULL
      * then calls the block's {@link get_content()} function
      * to set its value back.
@@ -194,51 +204,23 @@ class block_base {
             $title .= $this->edit_controls;
         }
 
-        $this->get_content();
-        if (!isset($this->content->footer)) {
-            $this->content->footer = '';
-        }
-
-        switch($this->content_type) {
-            case BLOCK_TYPE_NUKE:
-            case BLOCK_TYPE_TEXT:
-                if (empty($this->content->text) && empty($this->content->footer)) {
-                    if (empty($this->edit_controls)) {
-                        // No content, no edit controls, so just shut up
-                        break;
-                    } else {
-                        // No content but editing, so show something at least
-                        $this->_print_shadow();
-                    }
-                } else {
-                    if ($this->hide_header() && empty($this->edit_controls)) {
-                        // Header wants to hide, no edit controls to show, so no header it is
-                        print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
-                    } else {
-                        // The full treatment, please
-                        print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
-                    }
-                }
-            break;
-            case BLOCK_TYPE_LIST:
-                if (empty($this->content->items) && empty($this->content->footer)) {
-                    if (empty($this->edit_controls)) {
-                        // No content, no edit controls, so just shut up
-                        break;
-                    } else {
-                        // No content but editing, so show something at least
-                        $this->_print_shadow();
-                    }
-                } else {
-                    if ($this->hide_header() && empty($this->edit_controls)) {
-                        // Header wants to hide, no edit controls to show, so no header it is
-                        print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
-                    } else {
-                        // The full treatment, please
-                        print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
-                    }
-                }
-            break;
+        // is_empty() includes a call to get_content()
+        if ($this->is_empty()) {
+            if (empty($this->edit_controls)) {
+                // No content, no edit controls, so just shut up
+                break;
+            } else {
+                // No content but editing, so show something at least
+                $this->_print_shadow();
+            }
+        } else {
+            if ($this->hide_header() && empty($this->edit_controls)) {
+                // Header wants to hide, no edit controls to show, so no header it is
+                print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
+            } else {
+                // The full treatment, please
+                print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
+            }
         }
     }
 
@@ -555,12 +537,60 @@ class block_base {
 }
 
 /**
- * Class for supporting a postnuke style block as a moodle block
+ * Specialized class for displaying a block with a list of icons/text labels
+ *
+ * @author Jon Papaioannou
+ * @package blocks
+ */
+
+class block_list extends block_base {
+    var $content_type  = BLOCK_TYPE_LIST;
+
+    function is_empty() {
+        $this->get_content();
+        return (empty($this->content->items) && empty($this->content->footer));
+    }
+
+    function _print_block() {
+        // Wrap the title in a floating DIV, in case we have edit controls to display
+        // These controls will always be wrapped on a right-floating DIV
+        $title = '<div style="float: left;">'.$this->title.'</div>';
+        if ($this->edit_controls !== NULL) {
+            $title .= $this->edit_controls;
+        }
+
+        // is_empty() includes a call to get_content()
+        if ($this->is_empty()) {
+            if (empty($this->edit_controls)) {
+                // No content, no edit controls, so just shut up
+                break;
+            } else {
+                // No content but editing, so show something at least
+                $this->_print_shadow();
+            }
+        } else {
+            if ($this->hide_header() && empty($this->edit_controls)) {
+                // Header wants to hide, no edit controls to show, so no header it is
+                print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
+            } else {
+                // The full treatment, please
+                print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
+            }
+        }
+    }
+
+}
+
+/**
+ * Class for supporting a phpnuke style block as a moodle block
  *
  * @author Jon Papaioannou
  * @package blocks
  */
 class block_nuke extends block_base {
+
+    var $content_type  = BLOCK_TYPE_NUKE;
+
     function get_content() {
 
         if ($this->content !== NULL) {

@@ -1,9 +1,8 @@
 <?php //$Id$
 
-class block_admin extends block_base {
+class block_admin extends block_list {
     function init() {
         $this->title = get_string('administration');
-        $this->content_type = BLOCK_TYPE_LIST;
         $this->version = 2004081200;
     }
 

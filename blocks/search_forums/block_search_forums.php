@@ -3,7 +3,6 @@
 class block_search_forums extends block_base {
     function init() {
         $this->title = get_string('search', 'forum');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004041000;
     }
 

@@ -3,7 +3,6 @@
 class block_course_summary extends block_base {
     function init() {
         $this->title = get_string('pagedescription', 'block_course_summary');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004052600;
     }
 

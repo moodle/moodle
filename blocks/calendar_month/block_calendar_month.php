@@ -3,7 +3,6 @@
 class block_calendar_month extends block_base {
     function init() {
         $this->title = get_string('calendar', 'calendar');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004081200;
     }
 

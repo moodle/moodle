@@ -1,9 +1,8 @@
 <?PHP //$Id$
 
-class block_activity_modules extends block_base {
+class block_activity_modules extends block_list {
     function init() {
         $this->title = get_string('activities');
-        $this->content_type = BLOCK_TYPE_LIST;
         $this->version = 2004041000;
     }
 

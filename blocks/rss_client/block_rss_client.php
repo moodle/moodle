@@ -8,7 +8,6 @@ class block_rss_client extends block_base {
 
     function init() {
         $this->title = get_string('block_rss_feeds_title', 'block_rss_client');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004112000;
     }
 

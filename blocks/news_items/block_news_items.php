@@ -3,7 +3,6 @@
 class block_news_items extends block_base {
     function init() {
         $this->title = get_string('latestnews');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004052600;
     }
 

@@ -4,7 +4,6 @@ class block_html extends block_base {
 
     function init() {
         $this->title = get_string('html', 'block_html');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004123000;
     }
 

@@ -4,7 +4,6 @@ class block_section_links extends block_base {
 
     function init() {
         $this->title = get_string('blockname', 'block_section_links');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004052800;
     }
 

@@ -3,7 +3,6 @@
 class block_messages extends block_base {
     function init() {
         $this->title = get_string('messages','message');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004122800;
     }
 

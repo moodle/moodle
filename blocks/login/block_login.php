@@ -3,7 +3,6 @@
 class block_login extends block_base {
     function init() {
         $this->title = get_string('login');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004081600;
     }
 

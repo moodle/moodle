@@ -7,7 +7,6 @@ define('GRADE_FORMAT_ABS', 3);
 class block_quiz_results extends block_base {
     function init() {
         $this->title = get_string('formaltitle', 'block_quiz_results');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2005012600;
     }
 

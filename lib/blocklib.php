@@ -171,29 +171,17 @@ function blocks_delete_instance($instance) {
 // by reference for speed; the array is actually not modified.
 function blocks_have_content(&$pageblocks, $position) {
     foreach($pageblocks[$position] as $instance) {
-        if (!$instance->visible) {
+        if(!$instance->visible) {
             continue;
         }
-        if (!$record = blocks_get_record($instance->blockid)) {
+        if(!$record = blocks_get_record($instance->blockid)) {
             continue;
         }
-        if (!$obj = block_instance($record->name, $instance)) {
+        if(!$obj = block_instance($record->name, $instance)) {
             continue;
         }
-        $content = $obj->get_content();
-        $type = $obj->get_content_type();
-        switch($type) {
-            case BLOCK_TYPE_LIST:
-                if(!empty($content->items) || !empty($content->footer)) {
-                    return true;
-                }
-            break;
-            case BLOCK_TYPE_TEXT:
-            case BLOCK_TYPE_NUKE:
-                if(!empty($content->text) || !empty($content->footer)) {
-                    return true;
-                }
-            break;
+        if(!$obj->is_empty()) {
+            return true;
         }
     }
 

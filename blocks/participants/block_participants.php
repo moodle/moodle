@@ -1,9 +1,8 @@
 <?PHP //$Id$
 
-class block_participants extends block_base {
+class block_participants extends block_list {
     function init() {
         $this->title = get_string('people');
-        $this->content_type = BLOCK_TYPE_LIST;
         $this->version = 2004052600;
     }
 

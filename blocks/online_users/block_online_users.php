@@ -3,7 +3,6 @@
 class block_online_users extends block_base {
     function init() {
         $this->title = get_string('blockname','block_online_users');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004111600;
     }
 
