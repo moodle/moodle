@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // ass2.php - created with Moodle 1.0.5 dev (2002092300)
+      // assignment.php - created with Moodle 1.0.5 dev (2002092300)
 
 
 $string['assignmentdetails'] = "Assignment details";
