@@ -1,6 +1,6 @@
 <?php // $Id$
 
-/***
+/**
 This script enables Moodle translators to edit /docs and /help language
 files directly via WWW interface.
 
@@ -11,11 +11,12 @@ Based on:   lang.php in 1.4.3+ release
     //
     // Some local configuration
     //
-    $fileeditorrows = 12;       // number of textareas' rows
-    $fileeditorcols = 100;      // dtto cols
-    $fileeditorinline = 1;      // shall be textareas put in one row?
-    $filemissingmark = ' (!)';  // a mark to be added to non-existing filenames in selection form
-                                // or to filenames with filesize() == 0
+    $fileeditorrows = 12;           // number of textareas' rows
+    $fileeditorcols = 100;          // dtto cols
+    $fileeditorinline = 1;          // shall be textareas put in one row?
+    $filemissingmark = ' (***)';    // mark to add to non-existing filenames in selection form
+                                    // or to filenames with filesize() == 0
+    $filetemplate = '';             // template for new files, i.e. '$Id$';
 
     require_once("../config.php");
 
@@ -48,6 +49,18 @@ Based on:   lang.php in 1.4.3+ release
     $langdir = "$CFG->dirroot/lang/$currentlang";
     $enlangdir = "$CFG->dirroot/lang/en";
 
+    // Shall I save POSTed data?
+
+    if (isset($_POST['currentfile'])) {
+        if (confirm_sesskey()) {
+            if (langdoc_save_file($langdir, $currentfile, $_POST['filedata'])) {
+                notify(get_string("changessaved")." ($langdir/$currentfile)", "green");
+            } else {
+                error("Could not save the file '$currentfile'!", "langdoc.php?currentfile=$currentfile&sesskey=$USER->sesskey");
+            }
+        }
+    }
+
     error_reporting(0); // Error reporting turned off due to non-existing files
 
     // Generate selection for all help and documentation files
@@ -62,7 +75,7 @@ Based on:   lang.php in 1.4.3+ release
 
     foreach ($files as $filekey => $file) {    // check all the docs files.
         $options["docs/$file"] = "docs/$file";
-        // add (!) if file doesn't exists or is empty
+        // add mark if file doesn't exist or is empty
         if (( !file_exists("$langdir/docs/$file")) || (filesize("$langdir/docs/$file") == 0)) {
             $options["docs/$file"] .= "$filemissingmark";
         }        
@@ -76,45 +89,51 @@ Based on:   lang.php in 1.4.3+ release
 
     foreach ($files as $filekey => $file) {    // check all the help files.
         $options["help/$file"] = "help/$file";
-        if (!file_exists("$langdir/help/$file")) {
+        if (( !file_exists("$langdir/help/$file")) || (filesize("$langdir/help/$file") == 0)) {
             $options["help/$file"] .= "$filemissingmark";
         }
     }
 
     echo "<table align=\"center\"><tr><td align=\"center\">";
-    echo $prevfile;
     echo popup_form ("$CFG->wwwroot/$CFG->admin/langdoc.php?sesskey=$USER->sesskey&amp;currentfile=", $options, "choosefile", $currentfile, "", "", "", true);
-    echo $nextfile;
     echo "</td></tr></table>";
-
-    // Shall I save POSTed data?
-
-    if (isset($_POST['currentfile'])) {
-        if (confirm_sesskey()) {
-            if (langdoc_save_file($langdir, $currentfile, $_POST['filedata'])) {
-                notify(get_string("changessaved")." ($langdir/$currentfile)", "green");
-            } else {
-                error("Could not save the file '$currentfile'!", "langdoc.php?currentfile=$currentfile&sesskey=$USER->sesskey");
-            }
-        }
-    }
 
     // Generate textareas
 
     if (!empty($currentfile)) {
 
         if (!file_exists("$langdir/$currentfile")) {
+            //
+            // file doesn't exist - let's check webserver's permission to create it
+            //
             if (!touch("$langdir/$currentfile")) {
-                echo "<p align=\"center\"><font color=red>".get_string("filemissing", "", "$langdir/$currentfile")."</font></p>";
+                //
+                // webserver is unable to create new file
+                //
+                echo "<p align=\"center\"><font color=red>".get_string("filemissing", "", "
+$langdir/$currentfile")."</font></p>";
+                $editable = false;
+            } else {
+                //
+                // webserver can create new file - we can delete it now and let
+                // the langdoc_save_file() create it again if its filesize() > 0
+                //
+                $editable = true;
+                unlink("$langdir/$currentfile");
             }
-        }
-
-        if ($f = fopen("$langdir/$currentfile","r+")) {
+        } elseif ($f = fopen("$langdir/$currentfile","r+")) {
+            //
+            // file exists and is writeable - good for you, translator ;-)
+            //
             $editable = true;
             fclose($f);
         } else {
+            //
+            // file exists but it is not writeable by web server process :-(
+            //
             $editable = false;
-            echo "<p><font size=1>".get_string("makeeditable", "", "$langdir/$currentfile")."</font></p>";
+            echo "<p><font size=1>".get_string("makeeditable", "", "$langdir/$currentfile")
+."</font></p>";
         }
 
         echo "<table align=\"center\"><tr valign=\"center\"><td align=\"center\">\n";
@@ -135,7 +154,13 @@ Based on:   lang.php in 1.4.3+ release
         }
 
         echo "<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"filedata\">\n";
-        include("$langdir/$currentfile");
+
+        if (file_exists("$langdir/$currentfile")) {
+            include("$langdir/$currentfile");
+        } else {
+            echo ($filetemplate);
+        }
+
         echo "</textarea>\n";
         link_to_popup_window("/lang/$currentlang/$currentfile", "popup", get_string("preview"));
         echo "</td>\n</tr>\n</table>";
@@ -150,9 +175,6 @@ Based on:   lang.php in 1.4.3+ release
 
     print_footer();
 
-
-
-
 //////////////////////////////////////////////////////////////////////
 
 function langdoc_save_file($path, $file, $content) {
@@ -164,16 +186,19 @@ function langdoc_save_file($path, $file, $content) {
     global $CFG, $USER;
 
     error_reporting(0);
+    
     if (!$f = fopen("$path/$file","w")) {
+        error_reporting($CFG->debug);
         return false;
     }
-    error_reporting(7);
+    
+    error_reporting($CFG->debug);
 
     $content = str_replace("\r", "",$content);              // Remove linefeed characters
     $content = preg_replace("/\n{3,}/", "\n\n", $content);  // Collapse runs of blank lines
-    $content = trim($content, "\n");                        // Delete leading/trailing lines
     $content = str_replace("\\","",$content);               // Delete all slashes
     $content = str_replace("%%","%",$content);
+    $content = trim($content);                              // Delete leading/trailing whitespace
 
     fwrite($f, $content);
 
