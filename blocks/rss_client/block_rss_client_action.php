@@ -20,6 +20,7 @@
     optional_variable($rssid, 'none');
     optional_variable($courseid, 'none');
     optional_variable($url);
+    optional_variable($preferredtitle);
     optional_variable($item);
     
     $straddedit = get_string('block_rss_feeds_add_edit', 'block_rss_client');
@@ -53,7 +54,7 @@
 
     if ($act == 'none') {
         rss_display_feeds();
-        rss_get_form($act, $url, $rssid);
+        rss_get_form($act, $url, $rssid, $preferredtitle);
 
     } else if ($act == 'updfeed') {
         require_variable($url);
@@ -70,9 +71,11 @@
         if ($rss === false) {
             $dataobject->description = '';
             $dataobject->title = '';
+            $dataobject->preferredtitle = '';
         } else {
             $dataobject->description = addslashes(rss_unhtmlentities($rss->channel['description']));
             $dataobject->title = addslashes(rss_unhtmlentities($rss->channel['title']));
+            $dataobject->preferredtitle = addslashes($preferredtitle);
         }
         $dataobject->url = addslashes($url);
 
@@ -82,8 +85,8 @@
 
         rss_display_feeds($rssid);
         print '<strong>'. get_string('block_rss_feed_updated', 'block_rss_client') .'</strong>';                
-        rss_get_form($act, $url, $rssid);
-            
+        rss_get_form($act, $dataobject->url, $rssid, $dataobject->preferredtitle);
+
     } else if ($act == 'addfeed' ) {
 
         require_variable($url);            
@@ -91,6 +94,7 @@
         $dataobject->description = '';
         $dataobject->title = '';
         $dataobject->url = addslashes($url);
+        $dataobject->preferredtitle = addslashes($preferredtitle);
 
         $rssid = insert_record('block_rss_client', $dataobject);
         if (!$rssid){
@@ -122,15 +126,16 @@
             print '<strong>'. get_string('block_rss_feed_added', 'block_rss_client') .'</strong>';
         }
         rss_display_feeds();
-        rss_get_form($act, $url, $rssid);
-            
+        rss_get_form($act, $dataobject->url, $dataobject->id, $dataobject->preferredtitle);
+
     } else if ( $act == 'rss_edit') {
         
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         $fname = stripslashes_safe($rss_record->title);
         $url = stripslashes_safe($rss_record->url);
-        rss_get_form($act, $url, $rssid);
-        
+        $preferredtitle = stripslashes_safe($rss_record->preferredtitle);
+        rss_get_form($act, $url, $rssid, $preferredtitle);
+
     } else if ($act == 'delfeed') {
         
         $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';
@@ -145,7 +150,7 @@
 
         rss_display_feeds();
         print '<strong>'. get_string('block_rss_feed_deleted', 'block_rss_client') .'</strong>';
-        rss_get_form($act, $url, $rssid);
+        rss_get_form($act, $url, $rssid, $preferredtitle);
 
     } else if ($act == 'view') {
         //              echo $sql; //debug
@@ -162,25 +167,30 @@
             $rsserror = ob_get_contents();
             ob_end_clean();
             
-            $rss->channel['title'] - rss_unhtmlentities($rss->channel['title']);
+            if (empty($rss_record->preferredtitle)) {
+                $feedtitle = stripslashes_safe($rss_record->preferredtitle);
+            } else {
+               $feedtitle =  stripslashes_safe(rss_unhtmlentities($rss->channel['title']));
+            }
             print '<table align="center" width="50%" cellspacing="1">'."\n";
-            print '<tr><td colspan="2"><strong>'. $rss->channel['title'] .'</strong></td></tr>'."\n";
+            print '<tr><td colspan="2"><strong>'. $feedtitle .'</strong></td></tr>'."\n";
             for($y=0; $y < count($rss->items); $y++) {
-                $rss->items[$y]['title'] = rss_unhtmlentities($rss->items[$y]['title']);
-                $rss->items[$y]['description'] = rss_unhtmlentities($rss->items[$y]['description']);
+                $rss->items[$y]['title'] = stripslashes_safe(rss_unhtmlentities($rss->items[$y]['title']));
+                $rss->items[$y]['description'] = stripslashes_safe(rss_unhtmlentities($rss->items[$y]['description']));
                 if ($rss->items[$y]['link'] == '') {
                     $rss->items[$y]['link'] = $rss->items[$y]['guid'];
                 }
-                
+
                 if ($rss->items[$y]['title'] == '') {
                     $rss->items[$y]['title'] = '&gt;&gt;';
                 }
-                
+
                 print '<tr><td valign="middle">'."\n";
                 print '<a href="'. $rss->items[$y]['link'] .'" target=_new><strong>'. $rss->items[$y]['title'];
                 print '</strong></a>'."\n";
                 print '</td>'."\n";
                 if (file_exists($CFG->dirroot .'/blog/lib.php')) {
+                    //Blog module is installed - provide "blog this" link
                     print '<td align="right">'."\n";
                     print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blog_blog_this', 'blog').'" title="'. get_string('blog_blog_this', 'blog') .'" border="0" align="middle" />'."\n";
                     print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?blogid='. $blogid .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blog_blog_this', 'blog') .'</strong></small></a>'."\n";
@@ -195,8 +205,70 @@
         }
     } else {
         rss_display_feeds();
-        rss_get_form($act, $url, $rssid);
+        rss_get_form($act, $url, $rssid, $preferredtitle);
     }
 
     print_footer();
+
+/**
+ * @param string $act .
+ * @param string $url .
+ * @param int $rssid .
+ * @param bool $printnow True if the generated form should be printed out, false if the string should be returned from this function quietly
+ */
+function rss_get_form($act, $url, $rssid, $preferredtitle, $printnow=true) {
+    global $USER, $CFG, $_SERVER, $blockid, $blockaction;
+    global $blogid; //hackish, but if there is a blogid it would be good to preserve it
+    $stredit = get_string('edit');
+    $stradd = get_string('add');
+    $strupdatefeed = get_string('block_rss_update_feed', 'block_rss_client');
+    $straddfeed = get_string('block_rss_add_feed', 'block_rss_client');
+    
+    $returnstring = '<table align="center"><tbody><tr><td>'."\n";
+    
+    $returnstring .= '<form action="'. $_SERVER['PHP_SELF'] .'" method="POST" name="block_rss">'."\n";
+    if ($act == 'rss_edit') {
+        $returnstring .= $strupdatefeed; 
+    } else { 
+        $returnstring .= $straddfeed; 
+    }
+    $returnstring .= '<br /><input type="text" size="60" maxlength="256" name="url" value="';
+    if ($act == 'rss_edit') { 
+        $returnstring .= $url; 
+    }
+    $returnstring .= '" />'."\n";
+    $returnstring .= '<br />'. get_string('block_rss_custom_title_label', 'block_rss_client');
+    $returnstring .= '<br /><input type="text" size="60" maxlength="64" name="preferredtitle" value="';
+    if ($act == 'rss_edit') { 
+        $returnstring .= $preferredtitle; 
+    }
+    $returnstring .= '" />'."\n";
+
+    $returnstring .= '<input type="hidden" name="act" value="';
+    if ($act == 'rss_edit') {
+        $returnstring .= 'updfeed';
+    } else {
+        $returnstring .= 'addfeed';
+    }
+    $returnstring .= '" />'."\n";
+    if ($act == 'rss_edit') { 
+        $returnstring .= '<input type="hidden" name="rssid" value="'. $rssid .'" />'. "\n"; 
+    }
+    $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />'."\n";
+    $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
+    $returnstring .= '<br /><input type="submit" value="';
+    $validatestring = "<a href=\"#\" onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validate_feed', 'block_rss_client')."</a>";
+    if ($act == 'rss_edit') {
+        $returnstring .= $stredit;
+    } else {
+        $returnstring .= $stradd;
+    }
+    $returnstring .= '" />&nbsp;'. $validatestring .'</form>'."\n";
+    $returnstring .= '</td></tr></tbody></table>'."\n";
+
+    if ($printnow){
+        print $returnstring;
+    }
+    return $returnstring;
+}
 ?>

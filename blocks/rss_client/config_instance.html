@@ -1,7 +1,7 @@
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">
     <td align="right">
-        <?php print_string('block_rss_display_description', 'block_rss_client') ?>
+        <?php print_string('block_rss_display_description_label', 'block_rss_client') ?>
     </td>
     <td>
             <?php 
@@ -20,7 +20,7 @@
 </tr>
 <tr valign="top">
     <td align="right">
-        <?php print_string('block_rss_shownumentries', 'block_rss_client') ?>
+        <?php print_string('block_rss_shownumentries_label', 'block_rss_client') ?>
     </td>
     <td>
         <input name="shownumentries" type="text" size="5" value="<?php
@@ -37,8 +37,8 @@
     </td>
 </tr>
 <tr valign="top">
-    <td>
-        <?php print_string('block_rss_choose_feed', 'block_rss_client') ?>
+    <td align="right">
+        <?php print_string('block_rss_choose_feed_label', 'block_rss_client') ?>
     </td>
     <td>
         <?php 
@@ -93,6 +93,22 @@
         }
     ?>
     <td><input type="text" name="title" size="30" value="<?php echo $title; ?>" />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><?php print_string('block_rss_client_show_channel_link_label', 'block_rss_client'); ?></td>
+    <td>
+        <?php if (isset($CFG->block_rss_client_show_channel_link)) {
+                        $selected = $CFG->block_rss_client_show_channel_link;
+                } else {
+                       $selected = '0';
+                       $CFG->block_rss_client_show_channel_link = 0;
+                }
+                $options = array ( '0'  => get_string('no'),
+                                   '1' => get_string('yes') );
+
+                choose_from_menu ($options, 'block_rss_client_show_channel_link', $selected);
+        ?>
     </td>
 </tr>
 <tr>

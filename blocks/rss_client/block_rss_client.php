@@ -152,16 +152,20 @@ class block_rss_client extends block_base {
             }
             
             if ($showtitle) {
-                $returnstring .= '<div class="rssclienttitle">'. $rss_record->title .'</div>';
+                $returnstring .= '<div class="rssclienttitle">'. $rss_record->title .'</div><br /><br />';
             }
             if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
                 $rss->items = array_slice($rss->items, 0, $shownumentries);
             }
 
-            $rss->channel['title'] = rss_unhtmlentities($rss->channel['title']);
+            if (empty($rss_record->preferredtitle)) {
+                $feedtitle = stripslashes_safe($rss_record->preferredtitle);
+            } else {
+                $feedtitle =  stripslashes_safe(rss_unhtmlentities($rss->channel['title']));
+            }            
             foreach ($rss->items as $item) {
-                $item['title'] = rss_unhtmlentities($item['title']);
-                $item['description'] = rss_unhtmlentities($item['description']);
+                $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
+                $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
                 if ($item['title'] == '') {
                     $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
                 }
@@ -179,8 +183,13 @@ class block_rss_client extends block_base {
                 }
             }
 
-            if (!empty($rss->channel['link']) && !empty($rss->channel['title']) ) {
-                $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $rss->channel['title'] .'</a>';
+            if (!empty($rss->channel['link'])) {
+                if (!empty($this->config) && isset($this->config->block_rss_client_show_channel_link) && $this->config->block_rss_client_show_channel_link) {
+                    $returnstring .=  '<div class="rssclientchannellink"><br /><a href="'. $rss->channel['link'] .'">'. get_string('block_rss_client_channel_link', 'block_rss_client') .'</a></div>';
+                } 
+                if (!empty($feedtitle) ) {
+                    $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $feedtitle .'</a>';
+                }
             }
         }
 
