@@ -59,7 +59,7 @@
         } else {
             $answercount = 0;
         }
-        echo "<p align=right><a href=\"report.php?id=$cm->id\">".get_string("viewallanswers","quiz",$answercount)."</a></p>";
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">".get_string("viewallreports","quiz",$answercount)."</a></p>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }

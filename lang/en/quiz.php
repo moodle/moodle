@@ -146,5 +146,6 @@ $string['true'] = "True";
 $string['truefalse'] = "True/False";
 $string['type'] = "Type";
 $string['viewallanswers'] = "View \$a completed quizzes";
+$string['viewallreports'] = "View reports for \$a attempts";
 $string['webct'] = "WebCT format";
 $string['yourfinalgradeis'] = "Your final grade for this quiz is \$a";
