@@ -27,6 +27,15 @@ class quiz_report extends quiz_default_report {
                 continue;
             }
 
+            if($quiz->timelimit > 0) {
+                $timelimit = ($quiz->timelimit * 60) + 60;
+                $timetaken = $attempt->timefinish - $attempt->timestart;
+                if($timetaken > $timelimit) {
+                    // Skip overdued attempts
+                    continue;
+                }
+            }
+
             $count->attempt++;
 
             if (! $questions = quiz_get_attempt_questions($quiz, $attempt)) {
@@ -55,7 +64,7 @@ class quiz_report extends quiz_default_report {
                     notify("Could not save best grade for user $userid!");
                 }
             }
-        }   
+        }
 
         print_heading(get_string("regradecomplete", "quiz"));
         print_heading(get_string("regradecount", "quiz", $count));
