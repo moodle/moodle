@@ -169,39 +169,44 @@
 
     // Print basic page layout.
 
-    echo "<TABLE BORDER=0 WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=0>";
-    echo "<TR><TD WIDTH=50% VALIGN=TOP>";
-        if (isset($modform->instance)) {
-            print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);        
-            print_heading($modform->name);
-            quiz_print_question_list($modform->questions, $modform->grades); 
-            ?>
-            <CENTER>
-            <P>&nbsp;</P>
-            <FORM  NAME=theform METHOD=post ACTION=<?php echo $modform->destination ?>>
-            <INPUT TYPE="hidden" NAME=course  VALUE="<?php  p($modform->course) ?>">
-            <INPUT TYPE="submit" VALUE="<?php  print_string("savequiz", "quiz") ?>">
-            <INPUT type="submit" name=cancel value="<?php  print_string("cancel") ?>">
-            </FORM>
-            </CENTER>
-            <?php
-            print_simple_box_end();
-            echo "</TD><TD VALIGN=top WIDTH=50%>";
-        }
-        print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);
-        quiz_print_category_form($course, $modform->category);
-        print_simple_box_end();
-        
-        print_spacer(5,1);
+    if (empty($modform->instance)) {
+        echo '<table align="center" border="0" cellpadding="2" cellspacing="0">';
+        echo '<tr><td valign="top">';
 
-        print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);
-        quiz_print_cat_question_list($modform->category,
-                                     isset($modform->instance));
+    } else {
+        echo '<table border="0" width="100%" cellpadding="2" cellspacing="0">';
+        echo '<tr><td width="50%" valign="top">';
+        print_simple_box_start("center", "100%", $THEME->cellcontent2);        
+        print_heading($modform->name);
+        quiz_print_question_list($modform->questions, $modform->grades); 
+        ?>
+        <center>
+        <p>&nbsp;</p>
+        <form  name="theform" method="post" action=<?php echo $modform->destination ?>>
+        <input type="hidden" name="course"  value="<?php  p($modform->course) ?>">
+        <input type="submit" value="<?php  print_string("savequiz", "quiz") ?>">
+        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+        </form>
+        </center>
+        <?php
         print_simple_box_end();
-    echo "</TD></TR>";
-    echo "</TABLE>";
+        echo '</td><td valign="top" width="50%">';
+    }
+    print_simple_box_start("center", "100%", $THEME->cellcontent2);
+    quiz_print_category_form($course, $modform->category);
+    print_simple_box_end();
+    
+    print_spacer(5,1);
 
-    if (false == isset($modform->instance)) {
+    print_simple_box_start("center", "100%", $THEME->cellcontent2);
+    quiz_print_cat_question_list($modform->category,
+                                 isset($modform->instance));
+    print_simple_box_end();
+
+    echo '</td></tr>';
+    echo '</table>';
+
+    if (empty($modform->instance)) {
         print_continue("index.php?id=$modform->course");
     }
 
