@@ -59,7 +59,7 @@ calendar_session_vars();
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
     global $CFG, $USER;
 
-    $display = &New object;
+    $display = &New stdClass;
     $display->minwday = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
     $display->maxwday = $display->minwday + 6;
 
@@ -166,7 +166,12 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             // OverLib popup
             $popupcontent = '';
             foreach($eventsbyday[$day] as $eventid) {
-                $popupcontent .= '<div><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
+                if(!empty($events[$eventid]->modulename)) {
+                    $popupcontent .= '<div><img src=\\\''.$CFG->modpixpath.'/'.$events[$eventid]->modulename.'/icon.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\''.$events[$eventid]->modulename.'\\\' /><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
+                }
+                else {
+                    $popupcontent .= '<div style=\\\'padding-left: 20px;\\\'><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
+                }
             }
 
             $popupcaption = get_string('eventsfor', 'calendar', userdate($events[$eventid]->timestart, get_string('strftimedayshort')));
