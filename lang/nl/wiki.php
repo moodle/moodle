@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // wiki.php - created with Moodle 1.5 development (2004082600)
 
 
 $string['action'] = '- - Acties - -';
@@ -8,7 +8,7 @@ $string['allowremovepages'] = 'Sta \'Pagina\'s verwijderen\' toe';
 $string['allowrevertchanges'] = 'Sta \'Terug naar vorige versie\' toe';
 $string['allowsetpage'] = 'Sta \'Set pagina vlaggen\' toe';
 $string['allowstrippages'] = 'Sta \'Pagina\'s opruimen\' toe';
-$string['attachments'] = 'Bijlage';
+$string['attachments'] = 'Deze pagina heeft bijlagen';
 $string['author'] = 'Auteur';
 $string['authorfieldpattern'] = 'Veldpatroon auteur';
 $string['authorfieldpatternerror'] = 'Vul een auteursnaam in';
@@ -84,7 +84,7 @@ $string['html'] = 'HTML-opmaak';
 $string['htmlmode'] = 'HTML modus';
 $string['htmlonly'] = 'Uitsluitend HTML';
 $string['index'] = 'Index';
-$string['infoaboutpage'] = 'Informatie over de pagina';
+$string['infoaboutpage'] = 'Geschiedenis van:';
 $string['initialcontent'] = 'Wiki inhoud bij start';
 $string['invalidroot'] = 'Je hebt het recht niet om de huidige startpagina te bekijken en daarom kan er geen kaart van de site gemaakt worden.';
 $string['lastchanged'] = 'Laatst gewijzigd op $a';
@@ -153,7 +153,7 @@ $string['studentadminoptions'] = 'Beheeropties van de leerling';
 $string['submit'] = 'Stuur in';
 $string['tabattachments'] = 'Bijlagen';
 $string['tabedit'] = 'Bewerk';
-$string['tabinfo'] = 'Info';
+$string['tabinfo'] = 'Geschiedenis';
 $string['tablinks'] = 'Links';
 $string['tabview'] = 'Toon';
 $string['thanksforcontribution'] = 'Dank je  voor je bijdrage.';
