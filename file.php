@@ -36,6 +36,8 @@
 
     if ($course->category) {
         require_login($courseid);
+    } else if ($CFG->forcelogin) {
+        require_login();
     }
 
     // it's OK to get here if no course was specified
