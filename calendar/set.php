@@ -56,13 +56,23 @@
             $id = intval($_GET['id']);
             if($id == 0) {
                 $SESSION->cal_courses_shown = array();
+                calendar_set_referring_course(0);
             }
             else if($id == 1) {
                 $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+                calendar_set_referring_course(0);
             }
             else {
                 // We don't check for membership anymore: if(isstudent($id, $USER->id) || isteacher($id, $USER->id)) {
-                $SESSION->cal_courses_shown = $id;
+                if(get_record('course', 'id', $id) === false) {
+                    // There is no such course
+                    $SESSION->cal_courses_shown = array();
+                    calendar_set_referring_course(0);
+                }
+                else {
+                    calendar_set_referring_course($id);
+                    $SESSION->cal_courses_shown = $id;
+                }
             }
         break;
         case 'showgroups':
