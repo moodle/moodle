@@ -142,8 +142,8 @@ $string['configallowunenroll'] = 'ถ้าเลือก \"ใช่\" นักเรียนสามารถออกจากการวิชาที
 $string['configcachetext'] = 'ค่าที่ตั้งนี้จะมีประโยชน์สำหรับเว็บไซต์ขนาดใหญ่หรือเว็บที่ใช้ฟิลเตอร์เพราะว่าสำเนาของข้อความจะถูกเก็บเอาไว้ในช่วงเวลาที่ระบุเอาไว้  หากระบุค่านี้ไว้ต่ำอาจจะทำให้เว็บช้าลงเล็กน้อยแต่ถ้าตั้งค่าไว้สูงเกินไปจะทำให้ใช้เวลานานในการรีเฟรช';
 $string['configcountry'] = 'ถ้าหากคุณเซ็ทประเทศในส่วนนี้ ประเทศดังกล่าวจะเป็น default สำหรับ สมาชิกใหม่ ถ้าต้องการให้สามาชิกเลือกประเทศ ให้ทิ้งว่างไว้';
 $string['configdebug'] = 'ถ้าหากคุณเปิดใช้ส่วนนี้ เมื่อมีข้อผิดพลาดของ โค้ด PHP  จะมีการแสดงผลข้อผิดพลาดให้ทราบ มีประโยชน์สำหรับนักพัฒนาโปรแกรม';
-$string['configdeleteunconfirmed'] = 'หากเลือกใช้การอนุมัติผ่านอีเมล์ นี่เป็นการระบุระยะเวลาในการตอบรับการเป็นสมาชิกจากผู้สมัคร หลังจากระยะเวลาที่ระบุไว้นี้ accounts ที่ไม่มีการยืนยันจะถูกลบทิ้งไป';
-$string['configdigestmailtime'] = 'สมาชิกที่เลือกให้มีการส่งอีเมล์ในรูปแบบ ไดเจสท์ นั่นคือจะมีส่งอีเมล์ไปยังสมาชิกทุกวันในเวลาที่กำหนดไว้ (เช่นถ้าคุณตั้ง cron script ไว้ทุกหนึ่งชั่วโมง ก็จะมีการส่งอีเมล์ในชั่วโมงต่อไป)';
+$string['configdeleteunconfirmed'] = 'หากเลือกใช้การอนุมัติผ่านอีเมล นี่เป็นการระบุระยะเวลาในการตอบรับการเป็นสมาชิกจากผู้สมัคร หลังจากระยะเวลาที่ระบุไว้นี้ accounts ที่ไม่มีการยืนยันจะถูกลบทิ้งไป';
+$string['configdigestmailtime'] = 'สมาชิกที่เลือกให้มีการส่งอีเมลในรูปแบบ ไดเจสท์ นั่นคือจะมีส่งอีเมลไปยังสมาชิกทุกวันในเวลาที่กำหนดไว้ (เช่นถ้าคุณตั้ง cron script ไว้ทุกหนึ่งชั่วโมง ก็จะมีการส่งอีเมลในชั่วโมงต่อไป)';
 $string['configenablerssfeeds'] = 'การอนุญาตให้ใช้งาน RSS  ข้ามเว็บไซต์ หากท่านต้องการเห็นข้อแตกต่างให้ทำการอนุญาตการใช้ RSS ในแต่ละโมดูลด้วย  สามารถทำได้โดยการไปที่ การตั้งค่าโมดูล ในหน้าการจัดการระบบ';
 $string['configenablerssfeedsdisabled'] = 'ไม่สามารถใช้งานได้เพราะว่าไม่มีการอนุญาตให้ใช้งาน RSS  สำหรับทั้งเว็บไซต์  หากต้องการใช้งานให้ไปที่ การตั้งค่าตัวแปร ในหน้าการจัดการระบบ';
 $string['configerrorlevel'] = 'เลือกจำนวนการเตือนของ PHP ที่ต้องการให้แสดง ควรเลือก ปกติ ( Normal)';
@@ -293,36 +293,36 @@ $string['editsummary'] = 'แก้ไขบทคัดย่อ';
 $string['editthisactivity'] = 'แก้ไขกิจกรรมนี้';
 $string['editthiscategory'] = 'แก้ไขประเภท';
 $string['edituser'] = 'แก้ไข accounts ของสมาชิก';
-$string['email'] = 'อีเมล์';
-$string['emailagain'] = 'ใส่อีเมล์อีกครั้ง';
+$string['email'] = 'อีเมล';
+$string['emailagain'] = 'ใส่อีเมลอีกครั้ง';
 $string['emailconfirm'] = 'ยืนยัน account ของคุณ ';
 $string['emailconfirmation'] = 'สวัสดีค่ะ คุณ $a->firstname,
 
 account ใหม่ของคุณได้รับการติดตั้งที่ \'$a->sitename\'
-กรุณาใช้ อีเมล์ของคุณยืนยัน account นี้โดยการ คลิกที่ ลิงก์ข้างล่าง
+กรุณาใช้ อีเมลของคุณยืนยัน account นี้โดยการ คลิกที่ ลิงก์ข้างล่าง
 
   $a->link
 
-ในโปรแกรมรับส่งอีเมล์ทั่วไป คุณควรจะเห็น ลิงก์ข้างบน ปรากฎเป็นสีน้ำเงิน ซึ่งคุณสามารถคลิกเข้าไปได้ แต่ในกรณีที่ มันไม่ทำงาน ให้ คุณก้อปปี้ ลิงก์ดังกล่าว แล้ว นำไป วางไว้ ใน web brower ของคุณ
+ในโปรแกรมรับส่งอีเมลทั่วไป คุณควรจะเห็น ลิงก์ข้างบน ปรากฎเป็นสีน้ำเงิน ซึ่งคุณสามารถคลิกเข้าไปได้ แต่ในกรณีที่ มันไม่ทำงาน ให้ คุณก้อปปี้ ลิงก์ดังกล่าว แล้ว นำไป วางไว้ ใน web brower ของคุณ
 
 จาก  ผู้ดูแล \'$a->sitename\' ,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: การยืนยัน account ';
-$string['emailconfirmsent'] = '   <P>อีเมล์ส่งไปให้คุณที่ <B>$a</B>
+$string['emailconfirmsent'] = '   <P>อีเมลส่งไปให้คุณที่ <B>$a</B>
    <P>ประกอบไปด้วยวิธีการลงทะเบียนขั้นสุดท้าย <P>ถ้าหากคุณมีปัญหาในการลงทะเบียน กรุณาติดต่อผู้ดุแลระบบ';
-$string['emaildigest'] = 'ประเภทอีเมล์ไดเจสท์';
-$string['emaildigestcomplete'] = 'แบบสมบูรณ์ (อีเมล์เนื้อหาโพสต์ทั้งหมดทุกวัน)';
-$string['emaildigestoff'] = 'แบบไม่ไดเจสท์ (อีเมล์เดียวต่อกระดานเสวนา)';
-$string['emaildigestsubjects'] = 'แบบหัวข้อ( อีเมล์เฉพาะหัวข้อทุกวัน)';
-$string['emaildisable'] = 'ไม่สามารถใช้อีเมล์นี้ได้';
-$string['emaildisplay'] = 'แสดงอีเมล์';
-$string['emaildisplaycourse'] = 'สมาชิกในวิชาที่เรียนเท่านั้นที่จะเห็นอีเมล์';
-$string['emaildisplayno'] = 'ซ่อนอีเมล์';
-$string['emaildisplayyes'] = 'แสดงอีเมล์';
-$string['emailenable'] = 'อีเมล์นี้ใช้งานได้';
-$string['emailexists'] = 'มีการลงทะเบียนโดยใช้อีเมล์นี้แล้วค่ะ';
-$string['emailformat'] = 'รูปแบบอีเมล์';
-$string['emailmustbereal'] = 'หมายเหตุ:  อีเมล์ของคุณต้องเป็นอีเมล์จริง';
+$string['emaildigest'] = 'ประเภทอีเมลไดเจสท์';
+$string['emaildigestcomplete'] = 'แบบสมบูรณ์ (อีเมลเนื้อหาโพสต์ทั้งหมดทุกวัน)';
+$string['emaildigestoff'] = 'แบบไม่ไดเจสท์ (อีเมลเดียวต่อกระดานเสวนา)';
+$string['emaildigestsubjects'] = 'แบบหัวข้อ( อีเมลเฉพาะหัวข้อทุกวัน)';
+$string['emaildisable'] = 'ไม่สามารถใช้อีเมลนี้ได้';
+$string['emaildisplay'] = 'แสดงอีเมล';
+$string['emaildisplaycourse'] = 'สมาชิกในวิชาที่เรียนเท่านั้นที่จะเห็นอีเมล';
+$string['emaildisplayno'] = 'ซ่อนอีเมล';
+$string['emaildisplayyes'] = 'แสดงอีเมล';
+$string['emailenable'] = 'อีเมลนี้ใช้งานได้';
+$string['emailexists'] = 'มีการลงทะเบียนโดยใช้อีเมลนี้แล้วค่ะ';
+$string['emailformat'] = 'รูปแบบอีเมล';
+$string['emailmustbereal'] = 'หมายเหตุ:  อีเมลของคุณต้องเป็นอีเมลจริง';
 $string['emailpasswordconfirmation'] = 'สวัสดีค่ะ คุณ $a->firstname,
 
 ยินดีต้อนรับเข้าสู่ระบบการเรียนรู้ออนไลน์:
@@ -335,7 +335,7 @@ $a->link
 ทั้งนี้ถ้าเกิดปัญหา หรือมีข้อสงสัยใด ๆ กรุณาติดต่อ
 ผู้ดูแลระบบ,  $a->admin';
 $string['emailpasswordconfirmationsubject'] = 'ยืนยันการเปลี่ยนรหัสผ่าน';
-$string['emailpasswordconfirmsent'] = 'ระบบจะส่งอีเมล์ยืนยันการเปลี่ยนแปลงไปยังที่อยู่ของท่านที่ 
+$string['emailpasswordconfirmsent'] = 'ระบบจะส่งอีเมลยืนยันการเปลี่ยนแปลงไปยังที่อยู่ของท่านที่ 
 <b>$a</b>
 
 หากพบปัญหาในการใช้งานใด ๆ 
@@ -353,10 +353,10 @@ $string['enrolmentkeyfrom'] = 'รายวิชานี้ ต้องการ \'รหัสผ่าน\' <BR>
 $string['enrolmentkeyhint'] = 'รหัสไม่ถูกต้องกรุณาตรวจสอบ<BR>
 (ใบ้ ขึ้นต้นด้วย \'$a\')';
 $string['entercourse'] = 'คลิกที่นี่เพื่อเข้าสู่บทเรียน';
-$string['enteremailaddress'] = 'ใส่อีเมล์ของคุณเพื่อทำการ reset รหัส และระบบจะส่งรหัสใหม่ให้คุณ ';
+$string['enteremailaddress'] = 'ใส่อีเมลของคุณเพื่อทำการ reset รหัส และระบบจะส่งรหัสใหม่ให้คุณ ';
 $string['error'] = 'มีข้อผิดพลาด';
 $string['errortoomanylogins'] = 'ขออภัยค่ะ คุณล็อกอินเกินจำนวนครั้งที่ระบบตั้งไว้ กรุณาปิด browser แล้วเปิดใหม่';
-$string['errorwhenconfirming'] = 'มีข้อผิดพลาด ถ้าคุณมาที่นี่โดยการคลิ๊กที่อีเมล์กรุณาตรวจสอบว่า ชื่ออีเมล์นั้นถูกต้องไม่ติดเครื่องหมายแปลกปลอมอื่นอยู่  คุณสามารถก๊อปปี้ชื่ออีเมล์นั้นมาแปะได้เพื่อความถูกต้อง';
+$string['errorwhenconfirming'] = 'มีข้อผิดพลาด ถ้าคุณมาที่นี่โดยการคลิ๊กที่อีเมลกรุณาตรวจสอบว่า ชื่ออีเมลนั้นถูกต้องไม่ติดเครื่องหมายแปลกปลอมอื่นอยู่  คุณสามารถก๊อปปี้ชื่ออีเมลนั้นมาแปะได้เพื่อความถูกต้อง';
 $string['executeat'] = 'ดำเนินการเมื่อ';
 $string['existing'] = 'มีอยู่';
 $string['existingadmins'] = 'ผู้ดูแลที่มีอยู่';
@@ -392,11 +392,11 @@ $string['formattopics'] = 'แบบหัวข้อ';
 $string['formatweeks'] = 'แบบรายสัปดาห์';
 $string['formatwiki'] = 'รูปแบบ Wiki';
 $string['from'] = 'จาก';
-$string['frontpagecategorynames'] = 'แสดงรายชื่อประเภท';
-$string['frontpagecourselist'] = 'แสดงรายชื่อรายวิชา';
+$string['frontpagecategorynames'] = 'แสดงประเภท';
+$string['frontpagecourselist'] = 'แสดงรายวิชา';
 $string['frontpagedescription'] = 'รายละเอียดหน้าแรก';
 $string['frontpageformat'] = 'รูปแบบหน้าแรกของเว็บ';
-$string['frontpagenews'] = 'จำนวนข่าวที่ต้องการแสดง';
+$string['frontpagenews'] = 'แสดงข่าว';
 $string['fulllistofcourses'] = 'รายวิชาทั้งหมด';
 $string['fullname'] = 'ชื่อเต็ม';
 $string['fullnamedisplay'] = '$a->firstname $a->lastname';
@@ -493,13 +493,13 @@ $string['includeneededusers'] = 'รวมสมาชิกที่จำเป็น';
 $string['includenoneusers'] = 'ไม่บันทึกสมาชิก';
 $string['includeuserfiles'] = 'รวมไฟล์สมาชิก';
 $string['institution'] = 'สถาบัน';
-$string['invalidemail'] = 'อีเมล์ไม่ถูกต้อง';
+$string['invalidemail'] = 'อีเมลไม่ถูกต้อง';
 $string['invalidlogin'] = 'ล็อกอินไม่ถูกต้องกรุณาตรวจสอบ';
 $string['jumpto'] = 'ไปยัง...';
 $string['keep'] = 'เก็บ';
 $string['langltr'] = 'ภาษาจากซ้ายไปขวา';
 $string['langrtl'] = 'ภาษาจากขวาไปซ้าย';
-$string['language'] = 'ภาษา';
+$string['language'] = 'ภาษาที่ใช้ในเว็บ';
 $string['languagegood'] = 'ภาษาใช้เวอร์ชั่นล่าสุดแล้ว';
 $string['lastaccess'] = 'เข้ามาครั้งสุดท้ายเมื่อ';
 $string['lastedited'] = 'แก้ไขครั้งสุดท้าย';
@@ -514,7 +514,7 @@ $string['list'] = 'รายชื่อ';
 $string['listfiles'] = 'รายชื่อของไฟล์ทั้งหมดใน $a';
 $string['listofallpeople'] = 'รายชื่อสมาชิก';
 $string['livelogs'] = 'บันทึกการใช้งานเว็บไซต์เริ่มจากชั่วโมงที่ผ่านมา';
-$string['locale'] = 'th_TH';
+$string['locale'] = 'th';
 $string['location'] = 'ที่ตั้ง';
 $string['loggedinas'] = 'คุณ login ในชื่อ $a ';
 $string['loggedinnot'] = 'คุณไม่ได้ login';
@@ -526,7 +526,7 @@ $string['loginsteps'] = 'สวัสดี <p> กรุณาสมัครสมาชิกใหม่เพื่อที่คุณจะสามารถ เข้า
 
 <OL size=2>
    <LI>กรอกแบบฟอร์ม<A HREF=$a>สมัครสมาชิกใหม่</A> 
-   <LI>ระบบจะทำการส่งอีเมล์ไปยังอีเมล์ที่คุณให้ไว้<LI>อ่านอีเมล์ จากนั้นคลิกที่ ลิงก์ในอีเมล์นั้น .
+   <LI>ระบบจะทำการส่งอีเมลไปยังอีเมลที่คุณให้ไว้<LI>อ่านอีเมล จากนั้นคลิกที่ ลิงก์ในอีเมลนั้น .
    <LI>account ของคุณจะได้รับการยืนยัน และคุจะสามารถล็อกอินได้ทันที
    <LI> เลือกรายวิชาที่ต้องการเข้าไปเรียน 
    <LI>ถ้าหากคุณถูกถามให้ใส่รหัสในการเข้าเรียนให้ใส่ รหัสที่อาจารย์ของคุณให้ไว้ 
@@ -539,16 +539,16 @@ $string['logs'] = 'บันทึกการใช้งานเว็บไซต์';
 $string['mainmenu'] = 'หน้าหลัก';
 $string['makeafolder'] = 'สร้างแฟ้ม';
 $string['makeeditable'] = 'หากต้องการแก้ไข  \'$a\'  ผ่านเว็บได้ ควรทำการ chmode ของไฟล์เป็น 777 ก่อน';
-$string['manageblocks'] = 'บล็อค';
+$string['manageblocks'] = 'จัดการบล็อค';
 $string['managedatabase'] = 'จัดการฐานข้อมูล';
-$string['managefilters'] = 'กรอง';
-$string['managemodules'] = 'จัดการโมดุล';
+$string['managefilters'] = 'จัดการฟิลเตอร์';
+$string['managemodules'] = 'จัดการโมดูล';
 $string['markedthistopic'] = 'หัวข้อนี้คือหัวข้อปัจจุบัน';
 $string['markthistopic'] = 'เลือกหัวข้อนี้ให้เป็นหัวข้อปัจจุบัน';
 $string['maximumchars'] = 'จำนวนมากที่สุด $a ตัวอักษร';
 $string['maximumgrade'] = 'คะแนนเต็ม';
 $string['maximumshort'] = 'เต็ม';
-$string['maximumupload'] = 'ขนาดใหญ่สุดที่สามารถอัพโหลดได้';
+$string['maximumupload'] = 'ขนาดไฟล์สูงสุด';
 $string['maxsize'] = 'ขนาดสูงสุด: $a';
 $string['min'] = 'นาที';
 $string['mins'] = 'นาที';
@@ -557,7 +557,7 @@ $string['missingcategory'] = 'กรุณาเลือกประเภท';
 $string['missingcity'] = 'ขาด เมือง/จังหวัด';
 $string['missingcountry'] = 'ขาดประเทศ';
 $string['missingdescription'] = 'ขาด ข้อมูลส่วนตัว';
-$string['missingemail'] = 'ขาดอีเมล์';
+$string['missingemail'] = 'ขาดอีเมล';
 $string['missingfirstname'] = 'ขาดชื่อ';
 $string['missingfullname'] = 'ขาดชื่อเต็ม';
 $string['missinglastname'] = 'ขาดนามสกุล';
@@ -575,7 +575,7 @@ $string['missingteacher'] = 'ต้องเลือก';
 $string['missingurl'] = 'URL ผิดพลาด';
 $string['missingusername'] = 'ขาด username';
 $string['modified'] = 'แก้ไขแล้ว';
-$string['moduledeleteconfirm'] = 'คุณกำลังจะลบโมดุล \'$a\' ทั้งหมด ซึ่งเป็นการลบข้อมูลกิจกรรม และข้อมูลออกจากฐานข้อมูลด้วย ยืนยันทำต่อไป?';
+$string['moduledeleteconfirm'] = 'คุณกำลังจะลบโมดูล \'$a\' ทั้งหมด ซึ่งเป็นการลบข้อมูลกิจกรรม และข้อมูลออกจากฐานข้อมูลด้วย ยืนยันทำต่อไป?';
 $string['moduledeletefiles'] = 'ข้อมูลทั้งหมดและกิจกรรมที่เกี่ยวข้องกับ \'$a->module\' ได้ถูกลบออกจากฐานข้อมูลเรียบร้อยแล้ว คุณควรไปลบไดเร็กทอรี่: $a->directory ในเซิร์ฟเวอร์ด้วย';
 $string['modulesetup'] = 'ติดตั้งตาราง module ';
 $string['modulesuccess'] = 'ตาราง $a  ได้รับการติดตั้งแล้ว';
@@ -618,7 +618,7 @@ $string['newpasswordtext'] = 'สวัสดีค่ะ $a->firstname,
 คลิกที่นี่เพื่อแก้ไขรหัส:
    $a->link
 
-ในโปรแกรมรับส่งอีเมล์ทั่วไป คุณควรจะเห็น ลิงก์ข้างบน ปรากฎเป็นสีน้ำเงิน ซึ่งคุณสามารถคลิกเข้าไปได้ แต่ในกรณีที่ มันไม่ทำงาน ให้ คุณก้อปปี้ ลิงก์ดังกล่าว แล้ว นำไป วางไว้ ใน web brower ของคุณ
+ในโปรแกรมรับส่งอีเมลทั่วไป คุณควรจะเห็น ลิงก์ข้างบน ปรากฎเป็นสีน้ำเงิน ซึ่งคุณสามารถคลิกเข้าไปได้ แต่ในกรณีที่ มันไม่ทำงาน ให้ คุณก้อปปี้ ลิงก์ดังกล่าว แล้ว นำไป วางไว้ ใน web brower ของคุณ
 
 จาก ผู้ดูแล  \'$a->sitename\' ,
 $a->signoff
@@ -626,7 +626,7 @@ $a->signoff
 $string['newpicture'] = 'ภาพใหม่';
 $string['newsitem'] = 'ข่าว';
 $string['newsitems'] = 'ข่าว';
-$string['newsitemsnumber'] = 'จำนวนข่าวที่ต้องการแสดง';
+$string['newsitemsnumber'] = 'แสดงข่าว';
 $string['newuser'] = 'สมาชิกใหม่';
 $string['newusers'] = 'สมาชิกใหม่ทั้งหมด';
 $string['next'] = 'ต่อไป';
@@ -651,7 +651,7 @@ $string['normal'] = 'ปกติ';
 $string['normalfilter'] = 'ค้นหาธรรมดา';
 $string['nostudentsfound'] = 'ไม่พบ$a';
 $string['nostudentsyet'] = 'ยังไม่มีนักเรียนในรายวิชานี้';
-$string['nosuchemail'] = 'อีเมล์ไม่ถูกต้อง';
+$string['nosuchemail'] = 'อีเมลไม่ถูกต้อง';
 $string['notavailable'] = 'ไม่พบ';
 $string['noteachersyet'] = 'ยังไม่มีอาจารย์ในรายวิชานี้';
 $string['notenrolled'] = '$a ไม่ได้สมัครเข้าศึกษารายวิชานี้';
@@ -673,7 +673,7 @@ $string['numwords'] = '$a คำ';
 $string['numyears'] = '$a ปี';
 $string['ok'] = 'ตกลง';
 $string['opentoguests'] = 'ให้บุคคลทั่วไปเข้าชม';
-$string['optional'] = 'ทางเลือก';
+$string['optional'] = 'ใส่หรือไม่ก็ได้';
 $string['order'] = 'ตามลำดับ';
 $string['other'] = 'อื่น ๆ ';
 $string['outline'] = 'โครงสร้าง';
@@ -686,7 +686,7 @@ $string['passwordconfirmchange'] = 'ยืนยันการเปลี่ยนรหัสผ่าน';
 $string['passwordrecovery'] = 'ใช่ ,ช่วยในการเข้าสู่ระบบด้วย';
 $string['passwordsdiffer'] = 'รหัสไม่ถูกต้อง';
 $string['passwordsent'] = 'ส่งรหัสเรียบร้อยแล้ว';
-$string['passwordsenttext'] = '   <P>อีเมลส่งไปให้คุณแล้วที่    $a->email. <P><B>กรุณาเช็คอีเมล์เพื่อเช็ครหัสใหม่</B>
+$string['passwordsenttext'] = '   <P>อีเมลส่งไปให้คุณแล้วที่    $a->email. <P><B>กรุณาเช็คอีเมลเพื่อเช็ครหัสใหม่</B>
    <P>หาต้องการเปลี่ยนรหัส <A HREF=$a->link>ให้คลิกที่ลิงก์นี้<</A>.';
 $string['people'] = 'สมาชิก';
 $string['personalprofile'] = 'ประวัติสมาชิก';
@@ -695,7 +695,7 @@ $string['phpinfo'] = 'PHP info';
 $string['popupwindow'] = 'เปิดไฟล์ในหน้าต่างใหม่';
 $string['potentialadmins'] = 'คนที่สามารถเป็นผู้ดูแลระบบได้';
 $string['potentialcreators'] = 'คนที่สามารถเป็นผู้สร้างรายวิชาได้';
-$string['potentialstudents'] = 'นักเรียนที่จะช่วยตรวจ';
+$string['potentialstudents'] = 'คนที่สามารถเป็นนักเรียนได้';
 $string['potentialteachers'] = 'คนที่สามารถเป็นอาจารย์ผู้สอนได้';
 $string['preferredlanguage'] = 'ภาษาที่ต้องการ';
 $string['preview'] = 'แสดงตัวอย่าง';
@@ -713,7 +713,7 @@ $string['recentactivity'] = 'กิจกรรมล่าสุด';
 $string['recentactivityreport'] = 'รายงานฉบับสมบูรณ์ของกิจกรรมล่าสุด';
 $string['refreshingevents'] = 'รีเฟรชกิจกรรม';
 $string['registration'] = 'การลงทะเบียน Moodle';
-$string['registrationemail'] = 'แสดงอีเมล์';
+$string['registrationemail'] = 'แสดงอีเมล';
 $string['registrationinfo'] = '<p>This page allows you to register your Moodle site with moodle.org. Registration is free.
 The main benefit of registering is that you will be added to a low-volume mailing list 
 for important notifications such as security alerts and new releases of Moodle.
@@ -722,7 +722,7 @@ reason for collecting this information is for support purposes, and to help buil
 picture of the Moodle community as a whole.
 <p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
 <p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.';
-$string['registrationno'] = 'ไม่ต้องการรับอีเมล์';
+$string['registrationno'] = 'ไม่ต้องการรับอีเมล';
 $string['registrationsend'] = 'ส่งข้อมูลการลงทะเบียนไปยัง moodle.org';
 $string['registrationyes'] = 'ใช่ โปรดแจ้งข้อมูลสำคัญด้วย';
 $string['removeadmin'] = 'ปลดผู้ดูแลระบบออก';
@@ -768,7 +768,7 @@ $string['sections'] = 'ส่วน';
 $string['select'] = 'เลือก';
 $string['selectacountry'] = 'เลือกประเทศ';
 $string['selectednowmove'] = 'ทำการย้าย $a   ไฟล์ ต่อไปให้ไปที่ปลายทางและกด  \"ย้ายไฟล์มาที่นี่\"';
-$string['senddetails'] = 'ส่งรายละเอียดผ่านอีเมล์';
+$string['senddetails'] = 'ส่งรายละเอียดผ่านอีเมล';
 $string['separateandconnected'] = 'วิธีเรียนรู้แบบแยกส่วนและเชื่อมโยง';
 $string['serverlocaltime'] = 'เวลาของเซิร์ฟเวอร์';
 $string['settings'] = 'การตั้งค่า';
