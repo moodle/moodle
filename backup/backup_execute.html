@@ -6,7 +6,13 @@
 
     if (!empty($course->id)) {
         if (!isteacheredit($course->id)) {
-            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            if (empty($to)) {
+                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            } else {
+                if (!isteacheredit($to)) {
+                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+                }
+            }
         }
     } else {
         if (!isadmin()) {
@@ -106,24 +112,26 @@
         notice("No backupable modules are installed!");
     }
 
-    //Start the main table
-    echo "<table cellpadding=5>";
 
-    //Now print the Backup Name tr
-    echo "<tr>";
-    echo "<td align=\"right\"><p><b>";
-    echo get_string("name").":";
-    echo "</b></td><td>";
-    echo $preferences->backup_name;
-    echo "</td></tr>";
-    
-    //Start the main tr, where all the backup progress is done
-    echo "<tr>";
-    echo "<td colspan=\"2\">";
-    
-    //Start the main ul
-    echo "<ul>";
-
+    if (empty($to)) {
+        //Start the main table
+        echo "<table cellpadding=5>";
+        
+        //Now print the Backup Name tr
+        echo "<tr>";
+        echo "<td align=\"right\"><p><b>";
+        echo get_string("name").":";
+        echo "</b></td><td>";
+        echo $preferences->backup_name;
+        echo "</td></tr>";
+        
+        //Start the main tr, where all the backup progress is done
+        echo "<tr>";
+        echo "<td colspan=\"2\">";
+        
+        //Start the main ul
+        echo "<ul>";
+    }
     //Check for temp and backup and backup_unique_code directory
     //Create them as needed
     echo "<li>".get_string("creatingtemporarystructures");
@@ -185,9 +193,9 @@
         //End course contents (close ul)
         echo "</ul>";
 
-        echo "<li>".get_string("writinguserinfo");
         //User info
-        if ($status) {
+        if ($status && $preferences->backup_users) {
+            echo "<li>".get_string("writinguserinfo");
             if (!$status = backup_user_info($backup_file,$preferences)) {
                 notify("An error occurred while backing up user info");
             }
@@ -346,8 +354,19 @@
                "$CFG->wwwroot/course/view.php?id=$course->id");
     }
 
-    //Print final message
-    print_simple_box(get_string("backupfinished"),"center");
-    print_continue("$CFG->wwwroot/files/index.php?id=".$preferences->backup_course."&wdir=/backupdata");    
-
+    if (empty($to)) {
+        //Print final message
+        print_simple_box(get_string("backupfinished"),"center");
+        print_continue("$CFG->wwwroot/files/index.php?id=".$preferences->backup_course."&wdir=/backupdata");    
+    } else {
+        print_simple_box(get_string('importdataexported'),"CENTER");
+        if (!empty($preferences->backup_destination)) {
+            $filename = $preferences->backup_destination."/".$preferences->backup_name;
+        } else {
+            $filename = $preferences->backup_course."/backupdata/".$preferences->backup_name;
+        }
+        error_log($filename);
+        $SESSION->import_preferences = $preferences;
+        print_continue($CFG->wwwroot.'/course/import.php?id='.$to.'&fromcourse='.$id.'&filename='.$filename);
+    }
 ?>

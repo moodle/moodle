@@ -9,6 +9,7 @@
     require_once ("$CFG->libdir/blocklib.php");
 
     optional_variable($id);       // course id
+    optional_variable($to); // id of course to import into afterwards.
     optional_variable($cancel);
     optional_variable($launch);
 
@@ -16,7 +17,13 @@
 
     if (!empty($id)) {
         if (!isteacheredit($id)) {
-            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            if (empty($to)) {
+                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            } else {
+                if (!isteacheredit($to)) {
+                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+                }
+            }
         }
     } else {
         if (!isadmin()) {
@@ -34,14 +41,19 @@
     
     //Check backup_version
     if ($id) {
-        $linkto = "backup.php?id=".$id;
+        $linkto = "backup.php?id=".$id.((!empty($to)) ? '&to='.$to : '');
     } else {
         $linkto = "backup.php";
     }
     upgrade_backup_db($linkto);
 
     //Get strings
-    $strcoursebackup = get_string("coursebackup");
+    if (empty($to)) {
+        $strcoursebackup = get_string("coursebackup");
+    }
+    else {
+        $strcoursebackup = get_string('importdata');
+    }
     $stradministration = get_string("administration");
 
     //If no course has been selected or cancel button pressed

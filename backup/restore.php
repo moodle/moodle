@@ -16,13 +16,24 @@
     optional_variable($file);
     optional_variable($cancel);
     optional_variable($launch);
+    optional_variable($to);
 
     //Check login       
     require_login();
 
+    if (!$to && isset($SESSION->restore->restoreto) && isset($SESSION->restore->importing) && isset($SESSION->restore->course_id)) {
+        $to = $SESSION->restore->course_id;
+    }
+
     if (!empty($id)) {
         if (!isteacheredit($id)) {
-            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            if (empty($to)) {
+                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+            } else {
+                if (!isteacheredit($to)) {
+                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+                }
+            }
         }
     } else {
         if (!isadmin()) {
@@ -47,7 +58,11 @@
     upgrade_backup_db($linkto);
 
     //Get strings
-    $strcourserestore = get_string("courserestore");
+    if (empty($to)) {
+        $strcourserestore = get_string("courserestore");
+    } else {
+        $strcourserestore = get_string("importdata");
+    }
     $stradministration = get_string("administration");
 
     //If no file has been selected from the FileManager, inform and end
@@ -90,7 +105,7 @@
                      $strcourserestore");
     }
     //Print form
-    print_heading("$strcourserestore: ".basename($file));
+    print_heading("$strcourserestore".((empty($to) ? ': '.basename($file) : '')));
     print_simple_box_start("center", "", "$THEME->cellheading");
     
     //Adjust some php variables to the execution of this script
@@ -98,10 +113,18 @@
     raise_memory_limit("memory_limit","128M");
 
     //Call the form, depending the step we are
+
+
     if (!$launch) {
         include_once("restore_precheck.html");
     } else if ($launch == "form") {
-        include_once("restore_form.html");
+        if ($SESSION->restore->importing) {
+            // set up all the config stuff and skip asking the user about it.
+            restore_setup_for_check($SESSION->restore,$backup_unique_code);
+            include_once("restore_execute.html");
+        } else {
+            include_once("restore_form.html");
+        }
     } else if ($launch == "check") {
         include_once("restore_check.html");
     } else if ($launch == "execute") {

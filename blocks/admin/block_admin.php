@@ -117,6 +117,10 @@ class block_admin extends block_base {
 
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'&amp;wdir=/backupdata">'.get_string('restore').'...</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" height="16" width="16" alt="" />';
+
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$this->instance->pageid.'">'.get_string('importdata').'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" height="16" width="16" alt="" />';
+
                 $this->content->items[]='<a href="scales.php?id='.$this->instance->pageid.'">'.get_string('scales').'...</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" height="16" width="16" alt="" />';
             }
