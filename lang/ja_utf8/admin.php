@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021601)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -91,7 +91,7 @@ $string['dstisforcedto'] = 'ユーザに次のプリセットの使用を強制�
 $string['dstpresets'] = 'DST ( 夏時間 ) プリセット';
 $string['edithelpdocs'] = 'ヘルプ文書の編集';
 $string['editingdstpreset'] = 'DST ( 夏時間 ) プリセットの編集';
-$string['editstrings'] = '文字列の編集';
+$string['editstrings'] = '翻訳ストリングの編集';
 $string['emptydstlist'] = '現在、DST ( 夏時間 ) は設定されていません。追加するには追加ボタンをクリックしてください。';
 $string['errordstpresetactivateearlier'] = '適用開始月は適用終了月より早い時期を指定してください。';
 $string['errordstpresetnameempty'] = 'プリセット名は空白にしないでください。';
@@ -109,6 +109,7 @@ $string['helpweekenddays'] = '何曜日を「週末」として別の色で表�
 $string['managedstpresets'] = 'DST ( 夏時間 ) プリセットの編集';
 $string['nodstpresetsexist'] = 'DST ( 夏時間 ) プリセットが設定されていないため、DST ( 夏時間 ) サポートは使用できません。下記のボタンをクリックしてプリセットを設定することができます。';
 $string['optionalmaintenancemessage'] = 'オプション・メンテナンスメッセージ';
+$string['returntocalendaroptions'] = 'カレンダーオプションに戻る';
 $string['sitemaintenance'] = 'このサイトはメンテナンス中です。現在ご利用いただけません。';
 $string['sitemaintenancemode'] = 'メンテナンスモード';
 $string['sitemaintenanceoff'] = 'メンテナンスモードが解除されました。サイトは正常に動作しています。';
