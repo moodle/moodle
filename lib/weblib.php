@@ -931,13 +931,13 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     // Add a stylesheet for the HTML editor
     $meta = "<style type=\"text/css\">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>\n$meta\n";
 
-    // Character set could be optimised by carrying the charset variable around in $USER
     if (!empty($CFG->unicode)) {
         $encoding = "utf-8";
     } else if (!empty($SESSION->encoding)) {
         $encoding = $SESSION->encoding;
     } else {
         $encoding = get_string("thischarset");
+        $SESSION->encoding = $encoding;
     }
     $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=$encoding\" />\n$meta\n";
 
