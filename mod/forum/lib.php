@@ -1169,21 +1169,26 @@ function forum_get_user_grades($forumid) {
 }
 
 
-function forum_count_discussion_replies($forum="0") {
-// Returns an array of counts of replies to each discussion (optionally in one forum)
+function forum_count_discussion_replies($forum='0', $course='0', $user='0') {
+// Returns an array of counts of replies to each discussion (optionally in one forum or course and/or user)
     global $CFG;
+
+    $forumselect = $courseselect = $userselect = '';
 
     if ($forum) {
         $forumselect = " AND d.forum = '$forum'";
-    } else {
-        $forumselect = '';
+    }
+    if ($course) {
+        $courseselect = " AND d.course = '$course'";
+    }
+    if ($user) {
+        $userselect = " AND d.userid = '$user'";
     }
     return get_records_sql("SELECT p.discussion, (count(*)) as replies, max(p.id) as lastpostid
                               FROM {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}forum_discussions d
-                             WHERE p.parent > 0
-                               AND p.discussion = d.id
-                               {$forumselect}
+                             WHERE p.parent > 0 $forumselect $courseselect $userselect
+                               AND p.discussion = d.id 
                           GROUP BY p.discussion");
 }
 
@@ -2379,7 +2384,7 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
         $user    = get_record("user", "id", $userid);
         $fullname = fullname($user, isteacher($courseid));
 
-        $replies = forum_count_discussion_replies();
+        $replies = forum_count_discussion_replies(0,$courseid,$userid);
 
         echo "<hr />";
 
