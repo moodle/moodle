@@ -32,12 +32,13 @@ optional_variable($chat_pretext, '');
 
 scroll_active = true;
 function empty_field_and_submit() {
-    cf = document.getElementById('chatform');
+    var cf   = document.getElementById('sendform');
+    var inpf = document.getElementById('inputform');
     cf.chat_msgidnr.value = parseInt(cf.chat_msgidnr.value) + 1;
-    cf.chat_message.value = document.f.chat_message.value;
+    cf.chat_message.value = inpf.chat_message.value;
     cf.submit();
-    document.f.chat_message.value='';
-    document.f.chat_message.focus();
+    inpf.chat_message.value='';
+    inpf.chat_message.focus();
     return false;
 }
 function prepareusers() {
@@ -45,13 +46,14 @@ function prepareusers() {
     for(i = 0; i < frm.length; ++i) {
         if(frm(i).name == "users") {
             window.userFrame = frm(i);
+            window.userHREF  = frm(i).location.href;
             window.setTimeout("reloadusers();", <?php echo $CFG->chat_refresh_userlist; ?> * 1000);
         }
     }
 }
 function reloadusers() {
     if(window.userFrame) {
-        window.userFrame.location.reload();
+        window.userFrame.location.href = window.userFrame.location.href;
         window.setTimeout("reloadusers();", <?php echo $CFG->chat_refresh_userlist; ?> * 1000);
     }
 }
@@ -59,17 +61,17 @@ function reloadusers() {
 </script>
 </head>
 
-<body bgcolor="<?php echo $THEME->body ?>" onload="document.f.chat_message.focus();document.f.chat_message.select(); prepareusers();">
+<body bgcolor="<?php echo $THEME->body ?>" onload="document.getElementById('inputform').chat_message.focus();document.getElementById('inputform').chat_message.select(); prepareusers();">
 
 <!--
 <form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport"; ?>" method="GET" target="empty" name="f" onsubmit="return empty_field_and_submit()">
 -->
-<form action="../insert.php" method="get" target="empty" name="f" onsubmit="return empty_field_and_submit()">
+<form action="../insert.php" method="get" target="empty" id="inputform" onsubmit="return empty_field_and_submit();">
 &gt;&gt; <input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>">
 <?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
 </form>
 
-<form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="chatform">
+<form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="sendform">
     <input type="hidden" name="win" value="message" />
     <input type="hidden" name="chat_version" value="sockets" />
     <input type="hidden" name="chat_message" value="" />

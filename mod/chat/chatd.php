@@ -99,8 +99,10 @@ class ChatDaemon {
     }
 
     function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
-        echo $errno;
-        $this->trace($errmsg.' on line '.$linenum, $errno);
+        // Checks if an error needs to be suppressed due to @
+        if(error_reporting() != 0) {
+            $this->trace($errmsg.' on line '.$linenum, $errno);
+        }
         return true;
     }
 
@@ -758,7 +760,7 @@ class ChatDaemon {
         if(false === ($this->listen_socket = socket_create(AF_INET, SOCK_STREAM, 0))) {
             // Failed to create socket
             $lasterr = socket_last_error();
-            $this->fatal('Error: socket_create() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
+            $this->fatal('socket_create() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
         }
 
         //socket_close($DAEMON->listen_socket);
@@ -767,13 +769,13 @@ class ChatDaemon {
         if(!socket_bind($this->listen_socket, $CFG->chat_serverip, $CFG->chat_serverport)) {
             // Failed to bind socket
             $lasterr = socket_last_error();
-            $this->fatal('Error: socket_bind() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
+            $this->fatal('socket_bind() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
         }
 
         if(!socket_listen($this->listen_socket, $CFG->chat_servermax)) {
             // Failed to get socket to listen
             $lasterr = socket_last_error();
-            $this->fatal('Error: socket_listen() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
+            $this->fatal('socket_listen() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
         }
 
         // Socket has been initialized and is ready
