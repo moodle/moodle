@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // scorm.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['autocontinue'] = 'Ga automatisch verder';
@@ -16,7 +16,7 @@ $string['failed'] = 'Mislukt';
 $string['incomplete'] = 'Onvolledig';
 $string['mode'] = 'Modus';
 $string['modulename'] = 'Scorm';
-$string['modulenameplural'] = 'Scoms';
+$string['modulenameplural'] = 'Scorms';
 $string['next'] = 'Ga verder';
 $string['nomanifest'] = 'Manifest niet gevonden';
 $string['noreports'] = 'Er is geen rapport om te tonen';
