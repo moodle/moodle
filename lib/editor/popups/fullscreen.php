@@ -44,15 +44,17 @@ var editor         = null;      // to be initialized later [ function init() ]
 \* ---------------------------------------------------------------------- */
 
 function _CloseOnEsc(ev) {
-  if (document.all) {
-    // IE
-    ev = window.event;
-  }
-  if (ev.keyCode == 27) {
-    // update_parent();
-    window.close();
-    return;
-  }
+    try {
+        if (document.all) {
+            // IE
+            ev || (ev = editor._iframe.contentWindow.event);
+        }
+        if (ev.keyCode == 27) {
+            // update_parent();
+            window.close();
+            return;
+        }
+    } catch(e) {}
 }
 
 /* ---------------------------------------------------------------------- *\
