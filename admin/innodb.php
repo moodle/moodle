@@ -4,7 +4,7 @@
 
    require_login();
 
-   if (!isadmin) {
+   if (!isadmin()) {
        error('Admin only');
    }
 
@@ -12,7 +12,7 @@
                 "Convert all tables from MYISAM to InnoDB");
 
 
-   if ($confirm) {
+   if (!empty($confirm) and confirm_sesskey()) {
 
        print_heading("Please be patient and wait for this to complete...");
 
@@ -23,7 +23,8 @@
            }
        }
    } else {
-       notice("Are you sure you want convert all your tables to the InnoDB format?", "innodb.php?confirm=yes", "index.php");
+       notice_yesno("Are you sure you want convert all your tables to the InnoDB format?", 
+                    "innodb.php?confirm=yes&sesskey=".sesskey(), "index.php");
    }
 
 ?>
