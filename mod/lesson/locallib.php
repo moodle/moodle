@@ -908,7 +908,7 @@ function lesson_print_tree_link_menu($page, $id) {
 	$title=$page->title;  //CDC Chris Berri took out parsing of title in left menu on 6/11
 	$link="id=$id&action=navigation&pageid=".$page->id;
 	
-	if($_SERVER['QUERY_STRING']==$link) { 
+	if($page->id == $_REQUEST['pageid']) { 
 		$close=true; 
 		$output.="<div class='active'><em>"; 
 	} 
