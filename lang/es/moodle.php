@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004060400)
+      // moodle.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = 'Acción';
@@ -40,6 +40,7 @@ $string['adminhelpconfiguration'] = 'Configurar la apariencia y el funcionamient
 $string['adminhelpconfigvariables'] = 'Configurar variables que inciden en la operación general del sitio';
 $string['adminhelpcourses'] = 'Definir cursos y categorías y asignarles personas';
 $string['adminhelpedituser'] = 'Navegar por la lista de usuarios y editar cualquiera de ellos';
+$string['adminhelpenrolments'] = 'Elegir formas internas o externas para controlar matriculaciones';
 $string['adminhelplanguage'] = 'Para revisar y editar el presente idioma';
 $string['adminhelplogs'] = 'Navegar por los registros de toda la actividad del sitio';
 $string['adminhelpmanageblocks'] = 'Manejar bloques instalados y sus ajustes';
@@ -168,6 +169,7 @@ $string['configloglifetime'] = 'Especifica el tiempo que desea mantener los regi
 $string['configlongtimenosee'] = 'Si los estudiantes no han participado durante este tiempo serán dados de baja de los cursos.';
 $string['configmaxbytes'] = 'Especifica el tamaño máximo de los archivos que los usuarios pueden cargar en todo el sitio. Esta variable está limitada por las variables PHP upload_max_filesize y Apache LimitRequestBody.';
 $string['configmaxeditingtime'] = 'Especifica el tiempo que los participantes tienen para editar sus mensajes. Normalmente 30 minutos es suficiente.';
+$string['confignoreplyaddress'] = 'En ocasiones los correos electrónicos son enviados en nombre de un usuario (e.g., los mensajes a un foro). La dirección de correo electrónico aquí especificada se usará como la dirección \"De\" en aquellos casos en que los destinatarios no puedan replicar directamente al usuario (e.g., cuando el usuario elige mantener en privado su dirección).';
 $string['configopentogoogle'] = 'Si habilita esta opción Google podrá entrar en su sitio como invitado. Adicionalmente, la gente que entre a su sitio por una búsqueda de Google ingresará automáticamente como invitado. Observe que esto provee acceso solamente  a los cursos que ya tienen acceso permitido a invitados.';
 $string['configproxyhost'] = 'Si este <B>servidor</B> necesita proxy (por ejemplo, un firewall) para acceder a Internet, proporcione el nombre del proxy y el puerto.';
 $string['configsecureforms'] = 'Moodle puede utilizar un nivel adicional de seguridad para aceptar datos de formularios web. 
@@ -191,12 +193,14 @@ $string['confirm'] = 'Confirmar';
 $string['confirmed'] = 'Registro confirmado';
 $string['confirmednot'] = 'Su registro no se ha confirmado aún.';
 $string['continue'] = 'Continuar';
+$string['continuetocourse'] = 'Haga clic aquí para entrar a su curso';
 $string['cookiesenabled'] = 'Las Cookies deben estar habilitadas en su navegador';
 $string['copy'] = 'copiar';
 $string['copyingcoursefiles'] = 'Copiando los archivos del curso';
 $string['copyinguserfiles'] = 'Copiando los archivos de los usuarios';
 $string['copyingzipfile'] = 'Copiando archivo zip';
 $string['copyrightnotice'] = 'Copyright';
+$string['cost'] = 'Coste';
 $string['country'] = 'País';
 $string['course'] = 'Curso';
 $string['courseavailable'] = 'Este curso está disponible para los estudiantes';
@@ -356,6 +360,9 @@ $string['enrolmentkeyfrom'] = 'Este curso requiere el uso de una \'contraseña de
 $string['enrolmentkeyhint'] = 'Esta \'contraseña de acceso\' es incorrecta, por favor inténtelo de nuevo<BR>
 
 (Una pista: comienza con \'$a\')';
+$string['enrolmentnew'] = 'Nueva matriculación en $a';
+$string['enrolmentnointernal'] = 'Las matriculaciones manuales no están actualmente habilitadas';
+$string['enrolments'] = 'Matriculaciones';
 $string['entercourse'] = 'Haga clic aquí para entrar al curso';
 $string['enteremailaddress'] = 'Escriba su dirección de correo. Una nueva contraseña le será enviada.';
 $string['error'] = 'Error';
@@ -490,7 +497,7 @@ $string['includecoursefiles'] = 'Incluir los archivos del curso';
 $string['includecourseusers'] = 'Incluir los usuarios del curso';
 $string['included'] = 'Incluido';
 $string['includelogentries'] = 'Incluir las entradas de registro';
-$string['includemodules'] = 'Incluir Módulos';
+$string['includemodules'] = 'Incluir Módulos';
 $string['includeneededusers'] = 'Incluir usuarios necesarios';
 $string['includenoneusers'] = 'No incluir usuarios';
 $string['includeuserfiles'] = 'Incluir los archivos de los usuarios';
@@ -702,6 +709,10 @@ $string['passwordsenttext'] = '   <P>El sistema ha enviado un correo electrónico
    <P>La nueva contraseña se genera automáticamente, por lo que tal vez usted desee
 
    <A HREF=$a->link>cambiarla</A> por una que le sea más fácil recordar.';
+$string['paymentinstant'] = '¡Utilice el botón de abajo para pagar y poder matricularse en minutos!';
+$string['paymentrequired'] = 'Para entrar a este curso es necesario pagar.';
+$string['paymentsorry'] = '¡Gracias por su pago! Por desgracia, su pago aún no ha sido procesado por completo, y usted todavía no está registrado para entrar al curso \"$a->fullname\". Por favor, intente continuar el curso dentro de unos segundos. Si continúa teniendo problemas, avise al $a->teacher o al administrador del sitio';
+$string['paymentthanks'] = '¡Gracias por su pago! Ya está matriculado en el curso:<br />\"$a\"';
 $string['people'] = 'Personas';
 $string['personalprofile'] = 'Información personal';
 $string['phone'] = 'Teléfono';
@@ -744,6 +755,7 @@ $string['rename'] = 'Renombrar';
 $string['renamefileto'] = ' Renombrar <b>$a</b> a ';
 $string['required'] = 'Requerido';
 $string['requireskey'] = 'Este curso requiere una contraseña de acceso';
+$string['requirespayment'] = 'Para acceder a este curso es preciso pagar';
 $string['resortcoursesbyname'] = 'Reorganizar los cursos por nombre';
 $string['resources'] = 'Recursos';
 $string['restore'] = 'Restaurar';
