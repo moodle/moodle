@@ -303,7 +303,7 @@ function auth_sync_users () {
     }    
     
     //find nonexisting users from moodles userdb
-    $sql = "SELECT * FROM ".$CFG->prefix."user WHERE auth='ldap' AND guid  NOT IN ('".implode('\' , \'',$usedguids)."');" ;
+    $sql = "SELECT * FROM ".$CFG->prefix."user WHERE deleted = '0' AND auth = 'ldap' AND guid  NOT IN ('".implode('\' , \'',$usedguids)."');" ;
     $result = get_records_sql($sql);
 
     if (!empty($result)){
