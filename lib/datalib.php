@@ -1341,20 +1341,23 @@ function get_site_users($sort="u.lastaccess DESC", $select="") {
 * @param    string  $sort   a SQL snippet for the sorting criteria to use
 */
 function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sort="firstname ASC",
-                   $firstinitial="", $lastinitial="") {
+                   $firstinitial="", $lastinitial="", $page=0, $recordsperpage=99999) {
 
     global $CFG;
 
     switch ($CFG->dbtype) {
         case "mysql":
+             $limit = "LIMIT $page,$recordsperpage";
              $fullname = " CONCAT(firstname,\" \",lastname) ";
              $LIKE = "LIKE";
              break;
         case "postgres7":
+             $limit = "LIMIT $recordsperpage OFFSET ".($page);
              $fullname = " firstname||' '||lastname ";
              $LIKE = "ILIKE";
              break;
         default: 
+             $limit = "LIMIT $recordsperpage,$page";
              $fullname = " firstname||\" \"||lastname ";
              $LIKE = "ILIKE";
     }
@@ -1387,9 +1390,9 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
     }
 
     if ($get) {
-        return get_records_select("user", "$select $sort");
+        return get_records_select("user", "$select $sort $limit");
     } else {
-        return count_records_select("user", "$select $sort");
+        return count_records_select("user", "$select $sort $limit");
     }
 }
 

@@ -503,6 +503,15 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2004053000) {     /// set defaults for site course
+        $site = get_site();
+        set_field('course', 'groupmodeforce', 1, 'id', $site->id);
+        set_field('course', 'teacher', get_string('administrator'), 'id', $site->id);
+        set_field('course', 'teachers', get_string('administrators'), 'id', $site->id);
+        set_field('course', 'student', get_string('user'), 'id', $site->id);
+        set_field('course', 'students', get_string('users'), 'id', $site->id);
+    }
+
     return $result;
 
 }
