@@ -82,15 +82,15 @@
         if ($timenow < $timefinish) {
             if ($entry->modified) {
                 echo "<P><FONT SIZE=-2><B>Last edited:</B> ";
-                echo journaldate($entry->modified)."</FONT></P>";
+                echo userdate($entry->modified)."</FONT></P>";
             }
             if ($journal->days) {
                 echo "<P><FONT SIZE=-2><B>Editing period ends:</B> ";
-                echo journaldate($timefinish)."</FONT></P>";
+                echo userdate($timefinish)."</FONT></P>";
             }
         } else {
             echo "<P><FONT SIZE=-2><B>Editing period has ended:</B> ";
-            echo journaldate($timefinish)."</P>";
+            echo userdate($timefinish)."</P>";
         }
 
         if ($entry->comment || $entry->rating) {
@@ -101,7 +101,7 @@
 
     } else {
         echo "<P><B>This journal won't be open until: ";
-        echo journaldate($timestart)."</B></P>";
+        echo userdate($timestart)."</B></P>";
     }
 
     print_footer($course);
@@ -122,7 +122,7 @@ function print_feedback($course, $entry) {
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo "</TD>";
     echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$teacher->firstname $teacher->lastname";
-    echo "&nbsp;&nbsp;<FONT SIZE=2><I>".journaldate($entry->timemarked)."</I>";
+    echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($entry->timemarked)."</I>";
     echo "</TR>";
 
     echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";

@@ -76,7 +76,7 @@ function print_user($user, $course, $teacherlinks) {
 
     echo "<FONT SIZE=1>";
     if ($teacherlinks) {
-        $tt = getdate(time());
+        $tt = usergetdate(time());
         $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
         echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">Contributions</A><BR>";
         echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id&date=$today\">Today's logs</A><BR>";

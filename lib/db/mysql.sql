@@ -23,6 +23,7 @@ CREATE TABLE course (
   summary text NOT NULL,
   format tinyint(4) NOT NULL default '1',
   teacher varchar(100) NOT NULL default 'Teacher',
+  student varchar(100) NOT NULL default 'Student',
   startdate int(10) unsigned NOT NULL default '0',
   enddate int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',

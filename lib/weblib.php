@@ -163,14 +163,18 @@ function close_window_button() {
 }
 
 
-function choose_from_menu ($options, $name, $selected="", $nothing="Choose...", $script="") {
+function choose_from_menu ($options, $name, $selected="", $nothing="Choose...", $script="", $nothingvalue="0") {
 // $options["value"]["label"]
     
     if ($script) {
         $javascript = "onChange=\"$script\"";
     }
     echo "<SELECT NAME=$name $javascript>\n";
-    echo "   <OPTION VALUE=0>$nothing</OPTION>\n";
+    echo "   <OPTION VALUE=\"$nothingvalue\"\n";
+    if ($nothingvalue == $selected) {
+        echo " SELECTED";
+    }
+    echo ">$nothing</OPTION>\n";
     foreach ($options as $value => $label) {
         echo "   <OPTION VALUE=\"$value\"";
         if ($value == $selected) {

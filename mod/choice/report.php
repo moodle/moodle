@@ -65,7 +65,7 @@
         echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">$user->firstname $user->lastname</TD>";
         echo "<TD><P>&nbsp;";
         if ($answer->timemodified) {
-            echo moodledate($answer->timemodified);
+            echo userdate($answer->timemodified);
         } 
         
         echo "</P> </TD>";

@@ -142,7 +142,7 @@
             $myxls->InsertText($u->lastname);
             $myxls->InsertText($u->email);
             $myxls->InsertText($u->idnumber);
-            $myxls->InsertText( date("d-M-Y h:i:s A", $results["$user"]["time"]) );
+            $myxls->InsertText( userdate($results["$user"]["time"], "d-M-Y h:i:s A") );
             $myxls->InsertText($notes);
     
             foreach ($order as $key => $qid) {
@@ -194,7 +194,7 @@
         echo $u->lastname."    ";
         echo $u->email."    ";
         echo $u->idnumber."    ";
-        echo date("d-M-Y h:i:s A", $results["$user"]["time"])."    ";
+        echo userdate($results["$user"]["time"], "d-M-Y h:i:s A")."    ";
 
         foreach ($order as $key => $qid) {
             $question = $questions["$qid"];

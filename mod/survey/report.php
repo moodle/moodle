@@ -190,7 +190,7 @@
             print_user_picture($a->user, $course->id, $a->picture, false);
             echo "</TD>";
             echo "<TD><P><A HREF=\"report.php?id=$id&action=student&student=$a->user\">$a->firstname $a->lastname</A></TD>";
-            echo "<TD><P>".date("j M Y h:i A",$a->time)."</TD>";
+            echo "<TD><P>".userdate($a->time, "j M Y h:i A")."</TD>";
             echo "<TD BGCOLOR=\"$THEME->cellcontent\"><P>";
             if ($a->answer1) {
                 echo "$a->answer1 - ".$answers[$a->answer1 - 1];
@@ -330,7 +330,7 @@ function print_all_responses($survey, $results) {
                  
         echo "<TR>";
         echo "<TD><A HREF=\"report.php?action=student&student=$a->id&id=$survey\">$a->firstname $a->lastname</A></TD>";
-        echo "<TD>".date("j M Y, h:i A",$a->time)."</TD>";
+        echo "<TD>".userdate($a->time, "j M Y, h:i A")."</TD>";
         echo "<TD align=right>$a->numanswers</TD>";
         echo "</TR>";
     }

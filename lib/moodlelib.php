@@ -178,8 +178,22 @@ function print_editing_switch($courseid) {
 }
 
 
-function moodledate($date) {
-    return date("l, j F Y, g:i A T", $date);
+function userdate($date, $format="l, j F Y, g:i A") {
+    global $USER;
+
+    if (abs($USER->timezone) > 12) {
+        return date("$format T", $date);
+    }
+    return gmdate($format, $date + (int)($USER->timezone * 3600));
+}
+
+function usergetdate($date) {
+    global $USER;
+
+    if (abs($USER->timezone) > 12) {
+        return getdate($date);
+    }
+    return getdate($date + (int)($USER->timezone * 3600));
 }
 
 

@@ -20,7 +20,7 @@
                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> What's new");
 
     print_heading("Recent activity since your last login"); 
-    print_heading(logdate($USER->lastlogin)); 
+    print_heading(userdate($USER->lastlogin)); 
     
     print_simple_box_start("center");
     $modules = array ("users");

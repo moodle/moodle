@@ -45,7 +45,7 @@
             echo "<TD BGCOLOR=\"$THEME->cellcontent\">";
             echo "<P><A HREF=\"$CFG->wwwroot/mod/journal/view.php?id=$journal->coursemodule\">$journal->name</A></P>";
             if ($entry->modified) {
-                echo "<P><FONT SIZE=1>Last edited: ".moodledate($entry->modified)."</FONT></P>";
+                echo "<P><FONT SIZE=1>Last edited: ".userdate($entry->modified)."</FONT></P>";
             }
             echo text_to_html($entry->text);
             if ($entry->teacher) {
@@ -54,7 +54,7 @@
                 print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
                 echo "<TD BGCOLOR=\"$THEME->cellheading\">".$RATING[$entry->rating];
                 if ($entry->timemarked) {
-                    echo "&nbsp;&nbsp;<FONT SIZE=1>".moodledate($entry->timemarked)."</FONT>";
+                    echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
                 }
                 echo "<BR><FONT COLOR=#000055>";
                 echo text_to_html($entry->comment);

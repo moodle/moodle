@@ -106,7 +106,7 @@
         echo "</TD>";
         echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$student->firstname $student->lastname";
         if ($entry) {
-            echo "&nbsp;&nbsp;<FONT SIZE=1>Last edited: ".journaldate($entry->modified)."</FONT>";
+            echo "&nbsp;&nbsp;<FONT SIZE=1>Last edited: ".userdate($entry->modified)."</FONT>";
         }
         echo "</TR>";
 
@@ -128,7 +128,7 @@
             echo "<TD BGCOLOR=\"$THEME->cellheading\">Teacher Feedback:";
             choose_from_menu($RATING, "r$entry->id", $entry->rating, "Rate...");
             if ($entry->timemarked) {
-                echo "&nbsp;&nbsp;<FONT SIZE=1>".journaldate($entry->timemarked)."</FONT>";
+                echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
             }
             echo "<BR><TEXTAREA NAME=\"c$entry->id\" ROWS=4 COLS=60 WRAP=virtual>";
             p($entry->comment);

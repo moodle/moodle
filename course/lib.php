@@ -8,10 +8,6 @@ $FORMATS = array (
            );
 
 
-function logdate($date) {
-    return date("l, j F Y, g:i A", $date);
-}
-
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today") {
 
     // Get all the possible users
@@ -36,11 +32,11 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     // Get all the possible dates
     $tt = getdate(time());
     $timemidnight = $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
-    $dates = array("$today" => "Today, ".date("j F Y", $today) );
+    $dates = array("$today" => "Today, ".userdate($today, "j F Y") );
 
     while ($timemidnight > $course->startdate) {
         $timemidnight = $timemidnight - 86400;
-        $dates["$timemidnight"] = date("l, j F Y", $timemidnight);
+        $dates["$timemidnight"] = userdate($timemidnight, "l, j F Y");
     }
 
     if ($selecteddate == "today") {
@@ -106,8 +102,8 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         }
 
         echo "<TR>";
-        echo "<TD ALIGN=right><FONT SIZE=2>".date("l", $log->time)."</TD>";
-        echo "<TD><FONT SIZE=2>".date("j M Y, h:i A", $log->time)."</TD>";
+        echo "<TD ALIGN=right><FONT SIZE=2>".userdate($log->time, "l")."</TD>";
+        echo "<TD><FONT SIZE=2>".userdate($log->time, "j M Y, h:i A")."</TD>";
         echo "<TD><FONT SIZE=2><B>$log->firstname $log->lastname</B></TD>";
         echo "<TD><FONT SIZE=2>";
         link_to_popup_window( make_log_url($log->module,$log->url), "fromloglive","$log->module $log->action", 400, 600);

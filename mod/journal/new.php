@@ -16,7 +16,7 @@
                 echo "<P><B>Journal feedback: $journal->name</B></P>";
                 echo "<FONT SIZE=2><UL>";
                 echo "<LI><A HREF=\"/mod/journal/view.php?id=$journal->coursemodule\">Your journal entry</A> has some feedback!";
-                echo ", ".moodledate($entry->timemarked);
+                echo ", ".userdate($entry->timemarked);
                 echo "</UL></FONT>";
             }
 
@@ -29,7 +29,7 @@
                 echo "<FONT SIZE=2><UL>";
                 foreach ($entries as $entry) {
                     echo "<LI>$entry->firstname $entry->lastname edited their journal";
-                    echo ", ".moodledate($entry->modified);
+                    echo ", ".userdate($entry->modified);
                 }
                 echo "</UL></FONT>";
             }

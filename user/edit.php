@@ -99,8 +99,16 @@
     
             $usernew->timemodified = time();
 
+
+
             if (update_record("user", $usernew)) {
                 add_to_log($course->id, "user", "update", "view.php?user=$user->id&course=$course->id", "");
+
+                // Copy data into $USER session variable
+                $usernew = (array)$usernew;
+                foreach ($usernew as $variable => $value) {
+                    $USER->$variable = $value;
+                }
 		        redirect("view.php?id=$user->id&course=$course->id", "Changes saved");
             } else {
                 error("Could not update the user record ($user->id)");
