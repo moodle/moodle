@@ -72,6 +72,11 @@
     }
     echo "</TABLE>";
 
+    echo "<BR><DIV align=center>";
+    $options["frame"] = "developer.html";
+    $options["sub"] = "themes";
+    print_single_button("$CFG->wwwroot/doc/index.php", $options, get_string("howtomakethemes"));
+    echo "</DIV>";
     print_footer();
 
 ?>

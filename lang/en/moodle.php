@@ -230,6 +230,7 @@ $string['hitsoncoursetoday'] = "Today's hits on \$a->coursename by \$a->username
 $string['home'] = "Home";
 $string['hour'] = "hour";
 $string['hours'] = "hours";
+$string['howtomakethemes'] = "How to make new themes";
 $string['htmleditor'] = "Use Richtext HTML editor (IE only, 5.5 or later)";
 $string['htmleditoravailable'] = "The Richtext editor is available";
 $string['htmleditordisabled'] = "You have disabled the Richtext editor in your user profile";
