@@ -16,16 +16,13 @@
 <body bgcolor="#FFFFFF">
 <h1>Latest Release notes</h1>
 
-<h3> New in Moodle 1.3 <font color="#FF9933">Beta</font> (10th May, 2004)</h3>
-<p align="center"><font size="-1">Please note that Beta versions are not  fully tested yet <br>
-  and may contain more bugs than a final release. <br>
-  Please help us test this version and report bugs to <a href="http://moodle.org/bugs" target="_top">http://moodle.org/bugs</a></font></p>
+<h3> New in Moodle 1.3  (21st May, 2004)</h3>
 <ul>
   <dl>
     <dt>Major new features</dt>
     <dd> 
       <ul>
-        <li>New <strong>Calendar</strong> feature (thanks to Jon Papaioannou and Greek School Network!)</li>
+        <li>New <strong>Calendar</strong> feature (thanks to Jon Papaioannou and the Greek School Network!)</li>
         <li>New <strong>Blocks </strong>feature, allowing blocks to be added and moved around on course pages (thanks to Jon Papaioannou, Eloy Lafuente and others!)</li>
         <li>New <strong>RSS System</strong> allows Forums and Glossaries (and later other modules) to publish RSS feeds (Thanks, Eloy!)</li>
         <li><strong>Mediaplugin</strong> filter now supports auto-embedding of Quicktime, Flash, and Windows Media files.</li>
@@ -34,39 +31,48 @@
     <dt>Other new features</dt>
     <dd> 
       <ul>
-        <li>New resource type &quot;Directory&quot; will display a whole directory of uploaded files</li>
+        <li>New resource type &quot;Directory&quot; will display a whole directory of uploaded files (including subdirectories)</li>
         <li>Resources that are files (uploaded, or webpages) now show the relevant icon on the course page</li>
+        <li>A new Resource filter will automatically add hyperlinks to resources throughout Moodle.</li>
         <li>Most internal HTML links within forums and resources are now preserved during backup/restores</li>
-        <li>It is now possible to pass arguments to files in the Files section. This allows some fancier HTML and Flash in resources.</li>
+        <li>It is now possible to pass normal http arguments to files in the Files section. This allows some fancier HTML and Flash in resources.</li>
         <li>$CFG-&gt;forceloginforprofiles can be set to prevent guests from seeing site-level user profiles (including Google).</li>
+        <li>When Google access is enabled, then Google web page translations now work too.</li>
         <li>Sessions are now stored privately in the Moodle data directory - this makes Moodle work better on clusters, and solves some session timeout problems when using Moodle on shared web hosts</li>
         <li>User pictures can now be easily deleted from the profile editing page</li>
         <li>Talking in Chat now appears in the main logs.</li>
         <li>Hidden sections in courses can now be completely hidden from students (course setting)</li>
-        <li>Improvements to text inside graphs for some non-English languages by using Unicode. Try adding a <a href="ftp://ftp.netscape.com/pub/communicator/extras/fonts/windows/Cyberb">Unicode font</a> to your Moodle named lib/default.ttf.</li>
+        <li>Improvements to text inside graphs for some non-English languages,  using Unicode fonts.</li>
+        <li>Improved interface for managing Scales, as well as better handling in mulitlingual sites</li>
         <li>All students can now be unenrolled with one button (on the Students page)</li>
         <li>Subscribers to forums can now be manually subscribed or unsubscribed in groups</li>
         <li>Better handling of some European characters in filenames and usernames</li>
         <li>Feedback notices for a hidden assignment aren't mailed out until it's unhidden</li>
         <li>Expanded support for importing Blackboard quizzes</li>
-        <li><b>New languages</b>: Latvian, Norwegian Primary School, Unicode version of Traditional Chinese.</li>
+        <li>The cron script can now be run using a PHP binary from any directory</li>
+        <li>The HTML editor has been further improved and streamlined.</li>
+        <li>The default recent activity display is now calculated from the last access to that course (or two days, whichever is more recent). Previously it was from the last login to the site.</li>
+        <li>Confirmation emails are now in HTML and Text, to help prevent breaking of confirmation link.</li>
+        <li><b>New languages</b>: Farsi, Latvian, Norwegian Primary School, Unicode version of Traditional Chinese.</li>
       </ul>
     </dd>
     <dt>Bug fixes</dt>
     <dd> 
       <ul>
-        <li>Too many to list here! <br>
-          Lots of small things were fixed in all areas, generally improving appearance and robustness.</li>
+        <li>Hundreds of small bugs were fixed in all areas, generally improving appearance and robustness.</li>
+        <li>As always, if you find bugs in Moodle, please <a href="http://moodle.org/bugs/">report them to our Bug Tracker</a>!</li>
       </ul>
       <p>&nbsp;</p>
     </dd>
-    <dt>Don't forget to look at some of the <a href="http://moodle.org/download/modules/" target="_blank">many new modules under development</a>!</dt>
+    <dt><font size="+1">Finally, don't forget to look at some of the <a href="http://moodle.org/download/modules/" target="_blank">many optional modules under development</a>, including support for SCORM, Wikis, Hot Potato Quizzes and many others.</font></dt>
   </dl>
 </ul>
 
-<br />
+<p>&nbsp;</p>
+<p><br />
 
 
+</p>
 <h3> New in Moodle 1.2.1 (25th March, 2004)</h3>
 <ul>
   <dl>
