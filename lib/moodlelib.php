@@ -2197,7 +2197,7 @@ function authenticate_user_login($username, $password) {
 
     } else {
         add_to_log(0, 'login', 'error', $_SERVER['HTTP_REFERER'], $username);
-        error_log('[client '.$_SERVER['REMOTE_ADDR']."]	$CFG->wwwroot	Failed Login:	$username	".$_SERVER['HTTP_USER_AGENT']);
+        error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
         return false;
     }
 }
@@ -5540,6 +5540,27 @@ if(!function_exists('html_entity_decode')) {
         $trans_tbl = array_flip($trans_tbl);
         return strtr($string, $trans_tbl);
     }
+}
+
+/**
+ * The clone keyword is only supported from PHP 5 onwards.
+ * The behaviour of $obj2 = $obj1 differs fundamentally
+ * between PHP 4 and PHP 5. In PHP 4 a copy of $obj1 was
+ * created, in PHP 5 $obj1 is referenced. To create a copy
+ * in PHP 5 the clone keyword was introduced. This function
+ * simulates this behaviour for PHP < 5.0.0.
+ * See also: http://mjtsai.com/blog/2004/07/15/php-5-object-references/
+ *
+ * @param object $obj
+ * @return object
+ */
+if(!check_php_version('5.0.0')) {
+// the eval is needed to prevent PHP 5 from getting a parse error!
+eval('
+    function clone($obj) {
+        return $obj;
+    }
+');
 }
 
 /**
