@@ -25,7 +25,7 @@
 // htmlArea v3.0 - Copyright (c) 2002, 2003 interactivetools.com, inc.
 // This copyright notice MUST stay intact for use (see license.txt).
 //
-// Portions (c) dynarch.com, 2003
+// Portions (c) dynarch.com, 2003-2004
 //
 // A free WYSIWYG editor replacement for <textarea> fields.
 // For full source code and docs, visit http://www.interactivetools.com/
@@ -37,7 +37,7 @@
 
 if (typeof _editor_url == "string") {
     // Leave exactly one backslash at the end of _editor_url
-    _editor_url = _editor_url.replace(/\/*$/, '/');
+    _editor_url = _editor_url.replace(/\x2f*$/, '/');
 } else {
     //alert("WARNING: _editor_url is not set!  You should set this variable to the editor files path; it should preferably be an absolute path, like in '/htmlarea', but it can be relative if you prefer.  Further we will try to load the editor files correctly but we'll probably fail.");
     _editor_url = '<?php print ($CFG->wwwroot); ?>/lib/editor/';
@@ -371,7 +371,7 @@ HTMLArea.replaceAll = function(config) {
 
 /** Helper function: replaces the TEXTAREA with the given ID with HTMLArea. */
 HTMLArea.replace = function(id, config) {
-    var ta = document.getElementById(id);
+    var ta = HTMLArea.getElementById("textarea", id);
     return ta ? (new HTMLArea(ta, config)).generate() : null;
 };
 
@@ -576,7 +576,11 @@ HTMLArea.prototype._createToolbar = function () {
                     _stopEvent(is_ie ? window.event : ev);
                 }
             });
-            el.innerHTML = '<img src="'+ btn[1] +'" width="18" height="18">';
+            var img = document.createElement("img");
+            img.src = btn[1];
+            img.style.width = "18px";
+            img.style.height = "18px";
+            el.appendChild(img);
         } else if (!el) {
             el = createSelect(txt);
         }
@@ -645,7 +649,7 @@ HTMLArea.prototype.generate = function () {
     var textarea = this._textArea;
     if (typeof textarea == "string") {
         // it's not element but ID
-        this._textArea = textarea = document.getElementById(textarea);
+        this._textArea = textarea = HTMLArea.getElementById("textarea", textarea);
     }
     this._ta_size = {
         w: textarea.offsetWidth,
@@ -848,7 +852,7 @@ HTMLArea.prototype.setMode = function(mode) {
             // we need to refresh that info for Moz-1.3a
             try {
             this._doc.designMode = "on";
-            this._doc.focus();
+            //this._doc.focus();
             } catch(e) {};
         }
         if (this.config.statusBar) {
@@ -1683,6 +1687,8 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         break;
         case "unlink": this._removelink(); break;
         case "popupeditor":
+        // this object will be passed to the newly opened window
+        HTMLArea._object = this;
         if (HTMLArea.is_ie) {
             //if (confirm(HTMLArea.I18N.msg["IE-sucks-full-screen"]))
             {
@@ -1695,8 +1701,6 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
                     "toolbar=no,menubar=no,personalbar=no,width=800,height=600," +
                     "scrollbars=no,resizable=yes");
         }
-        // pass this object to the newly opened window
-        HTMLArea._object = this;
         break;
         case "undo":
         case "redo":
@@ -1756,6 +1760,12 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
 HTMLArea.prototype._editorEvent = function(ev) {
     var editor = this;
     var keyEvent = (HTMLArea.is_ie && ev.type == "keydown") || (ev.type == "keypress");
+    if (keyEvent) {
+        for (var i in editor.plugins) {
+            var plugin = editor.plugins[i].instance;
+            if (typeof plugin.onKeyPress == "function") plugin.onKeyPress(ev);
+        }
+    }
     if (keyEvent && ev.ctrlKey && ! ev.altKey) {
         var sel = null;
         var range = null;
@@ -2097,7 +2107,7 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
                     continue;
                 }
                 var name = a.nodeName.toLowerCase();
-                if (/_moz|contenteditable/.test(name)) {
+                if (/_moz|contenteditable|_msh/.test(name)) {
                     // avoid certain attributes
                     continue;
                 }
@@ -2145,7 +2155,10 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
         }
         break;
         case 3: // Node.TEXT_NODE
-        html = HTMLArea.htmlEncode(root.data);
+        // If a text node is alone in an element and all spaces, replace it with an non breaking one
+        // This partially undoes the damage done by moz, which translates '&nbsp;'s into spaces in the data element
+        if ( !root.previousSibling && !root.nextSibling && root.data.match(/^\s*$/i) ) html = '&nbsp;';
+        else html = HTMLArea.htmlEncode(root.data);
         break;
         case 8: // Node.COMMENT_NODE
         html = "<!--" + root.data + "-->";
@@ -2258,6 +2271,22 @@ HTMLArea.prototype.popupURL = function(file) {
         url = _editor_url + this.config.popupURL + file;
     return url;
 };
+
+/**
+ * FIX: Internet Explorer returns an item having the _name_ equal to the given
+ * id, even if it's not having any id.  This way it can return a different form
+ * field even if it's not a textarea.  This workarounds the problem by
+ * specifically looking to search only elements having a certain tag name.
+ */
+HTMLArea.getElementById = function(tag, id) {
+    var el, i, objs = document.getElementsByTagName(tag);
+    for (i = objs.length; --i >= 0 && (el = objs[i]);)
+        if (el.id == id)
+            return el;
+    return null;
+};
+
+
 
 // EOF
 // Local variables: //
