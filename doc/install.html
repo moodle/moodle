@@ -20,19 +20,21 @@
   <LI><A HREF="#course">Create a new course</A></LI>
 </OL>
 <H3><A NAME="requirements"></A>Requirements</H3>
-<P>Moodle is primarily developed in Linux and MacOSX environments using PHP, Apache 
-  and MySQL. However, it has been designed to run on as many platforms as possible.</P>
+<P>Moodle is primarily developed in Linux using PHP, Apache and MySQL, and regularly 
+  tested under Windows XP and Mac OS X environments.</P>
 <P>All you should need are:</P>
 <UL>
   <LI>a working installation of <A HREF="http://www.php.net/">PHP</A> (version 
     4.1.0 or better), including the <A HREF="http://www.boutell.com/gd/">GD</A> 
     library for manipulating images.</LI>
-  <LI>a working database server (<A HREF="http://www.mysql.com/">MySQL</A>, PostgreSQL, 
-    MSSQL, Oracle, Interbase, Foxpro, Access, ADO, Sybase, DB2 or ODBC).</LI>
+  <LI>a working database server (<A HREF="http://www.mysql.com/">MySQL</A> for 
+    now, but soon it will support PostgreSQL, MSSQL, Oracle, Interbase, Foxpro, 
+    Access, ADO, Sybase, DB2 or ODBC).</LI>
 </UL>
 <P>The quickest way to satisfy these requirements on Windows platforms is to download 
   <A HREF="http://www.phpgeek.com/">PHPTriad</A> or <A HREF="http://www.foxserv.net/">FoxServ</A>, 
-  which will install Apache, PHP, and MySQL for you.</P>
+  which will install Apache, PHP, and MySQL for you. On Mac OS X I highly recommend 
+  the <a href="http://fink.sourceforge.net/">fink</a> project.</P>
 <P>&nbsp;</P>
 <H3><A NAME="downloading"></A>Download</H3>
 <P>There are two ways to get Moodle, as a compressed package and via CVS. These 
@@ -49,7 +51,8 @@
 <P>Here is a quick summary of the contents of the Moodle folder, to help get you 
   oriented:</P>
 <BLOCKQUOTE> 
-  <P>config.php - the only file you need to edit to get started <BR>
+  <P>config.php - the only file you need to edit to get started<br>
+    version.php - defines the current version of Moodle code<BR>
     index.php - the front page of the site</P>
   <UL>
     <LI>admin/ - code to administrate the whole server </LI>
@@ -70,16 +73,16 @@
 <P>Moodle will also need some space on your hard disk to store uploaded files, 
   such as course documents and user pictures.</P>
 <P>Create a directory for this purpose somewhere <B>away</B> from the web server 
-  documents directory (we don't want these files to be accessible from the web), 
-  and ensure that the web server software has permission to write to this directory. 
-  On Unix machines, this means setting the owner of the directory to be something 
-  like &quot;nobody&quot; or &quot;apache&quot;.</P>
+  documents directory (we don't want these files to be directly accessible from 
+  the web), and ensure that the web server software has permission to write to 
+  this directory. On Unix machines, this means setting the owner of the directory 
+  to be something like &quot;nobody&quot; or &quot;apache&quot;.</P>
 <P>&nbsp;</P>
 <H3><A NAME="database"></A>Create a database</H3>
 <P>You need to create an empty database (eg "moodle") in your database system 
   along with a special user (eg "moodleuser") that has access to that database 
   (and that database only. For example, don't use the "root" user for the moodle 
-  database - it's a security hazard). </P>
+  database in a production system - it's a security hazard). </P>
 <P>eg for MySQL: </P>
 <PRE>
    # mysql -u root -p
@@ -90,13 +93,14 @@
    # mysqladmin -p reload
 </PRE>
 
-<P>&nbsp;</P>
+<P>(For MySQL I highly recommend the use of <a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a> 
+  to manage your databases).</P>
 <H3><A NAME="config"></A>Edit config.php</H3>
-<P>Now you can edit the configuration file, config.php. This file is used by all 
-  other files in Moodle.</P>
-<P>To start with, make a copy of config-dist.php and call it config.php.  We do
-   this so that your config.php isn't overwritten in case you upgrade Moodle 
-   later on.
+<P>Now you can edit the configuration file, <strong>config.php</strong>. This 
+  file is used by all other files in Moodle.</P>
+<P>To start with, make a copy of config-dist.php and call it config.php. We do 
+  this so that your config.php won't be overwritten in case you upgrade Moodle 
+  later on. 
 <P>Edit config.php to specify the database details that you just defined, as well as the 
   site address, file system directory, data directory and so on. The config file 
   has detailed directions.</P>
@@ -105,47 +109,54 @@
 <P>&nbsp;</P>
 <H3><A NAME="admin"></A>Go to the admin page</H3>
 <P>The admin page should now be working at: http://example.com/moodle/admin</P>
-<P>Go to this page using your favourite web browser.</P>
+<P>If you try and access the front page of your site you'll be taken there automatically 
+  anyway. </P>
 <P>The first time you access this page, Moodle will set up your database and prompt 
   you for more information.</P>
-<P>Firstly, the main database tables are created. You should see a number of statements 
-  like this (in green):</P>
+<P>Firstly, the main database tables are created. You should see a number of SQL 
+  statements followed by status messages (in green or red) that look like this:</P>
 <BLOCKQUOTE> 
-  <P><FONT COLOR="#006600">SUCCESS: CREATE TABLE course ( id int(10) unsigned 
-    NOT NULL auto_increment, category int(10) unsigned NOT NULL default '0', password 
-    varchar(50) NOT NULL default '', fullname varchar(254) NOT NULL default '', 
-    shortname varchar(15) NOT NULL default '', summary text NOT NULL, format tinyint(4) 
-    NOT NULL default '1', teacher varchar(100) NOT NULL default 'Teacher', startdate 
-    int(10) unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
-    '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
-    TYPE=MyISAM</FONT></P>
+  <P>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
+    int(10) unsigned NOT NULL default '0', password varchar(50) NOT NULL default 
+    '', fullname varchar(254) NOT NULL default '', shortname varchar(15) NOT NULL 
+    default '', summary text NOT NULL, format tinyint(4) NOT NULL default '1', 
+    teacher varchar(100) NOT NULL default 'Teacher', startdate int(10) unsigned 
+    NOT NULL default '0', enddate int(10) unsigned NOT NULL default '0', timemodified 
+    int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) TYPE=MyISAM</P>
+  <P><FONT COLOR="#006600">SUCCESS</FONT></P>
   <P>...and so on, followed by: <FONT COLOR="#FF0000">Main databases set up successfully</FONT>. 
   </P>
 </BLOCKQUOTE>
-<P>If you don't see this, then there must have been some problem with the database 
-  or the configuration settings you defined in config.php.  Check that PHP isn't 
-  in a restricted "safe mode" (commercial web hosts often have safe mode turned on).
-  You can check PHP variables by creating a little file containing
-  &lt? phpinfo ?&gt and looking at it through a browser.  Check all these and try this page again.</P>
-<P>Press the &quot;Continue&quot; link at the bottom of the page.</P>
+<P>If you don't see these, then there must have been some problem with the database 
+  or the configuration settings you defined in config.php. Check that PHP isn't 
+  in a restricted "safe mode" (commercial web hosts often have safe mode turned 
+  on). You can check PHP variables by creating a little file containing &lt? phpinfo 
+  ?&gt and looking at it through a browser. Check all these and try this page 
+  again.</P>
+<P>Scroll down the very bottom of the page and press the &quot;Continue&quot; 
+  link.</P>
 <P>Next you will see a similar page that sets up all the tables required by each 
   Moodle module. As before, they should all be green, otherwise you may be a problem 
   in the module code.</P>
-<P>Press the &quot;Continue&quot; link at the bottom of the page.</P>
+<P>Scroll down the very bottom of the page and press the &quot;Continue&quot; 
+  link.</P>
 <P>You should now see a form where you can define more parameters for your Moodle 
   site, such as the name, the description shown on the front page, and so on. 
   Fill this out (you can always go back and change these later) and then press 
   &quot;Update the site&quot;.</P>
-<P>Finally, you will then be asked to create an administration user for future 
-  access to the admin pages. Fill out the details with your own name, email etc 
-  and then click &quot;Update this user&quot;. You will be returned to the main 
-  admin page, which contain a number of links arranged in a menu.</P>
-<P>Make sure you remember the username and password you chose for the administration 
-  user, as they will be necessary to access the administration page in future.</P>
-<P>All your further configuration of Moodle can now be done using the administration 
-  page menu, which includes tasks such as:</P>
+<P>Finally, you will then be asked to create a top-level administration user for 
+  future access to the admin pages. Fill out the details with your own name, email 
+  etc and then click &quot;Update this user&quot;. You will be returned to the 
+  main admin page, which contain a number of links arranged in a menu (these items 
+  also appear on the home page when you are logged in as the admin user).</P>
+<P><strong>Make sure you remember the username and password you chose for the 
+  administration user, as they will be necessary to access the administration 
+  page in future.</strong></P>
+<P>All your further administration of Moodle can now be done using the administration 
+  menu, which includes tasks such as:</P>
 <UL>
   <LI>creating and deleting courses</LI>
+  <LI>creating and editing user accounts</LI>
   <LI>administering teacher accounts</LI>
   <LI>changing site-wide settings</LI>
 </UL>
@@ -159,71 +170,69 @@
   where this script is run regularly (eg every five minutes). This provides a 
   &quot;heartbeat&quot; so that the script can perform functions at periods defined 
   by each module.</P>
-<P>For security reasons, this script defines a required password. Edit cron.php 
-  with a text editor and change the password to something unique. eg </P>
-<BLOCKQUOTE> 
-  <PRE>$PASSWORD = &quot;pword&quot;;
-</PRE>
-</BLOCKQUOTE>
 <P>Test that the script works by running it directly from your browser:</P>
 <BLOCKQUOTE> 
-  <PRE>http://example.com/moodle/admin/cron.php?p=pword</PRE>
+  <PRE>http://example.com/moodle/admin/cron.php</PRE>
 </BLOCKQUOTE>
-<P>Now, you need to set up some of way of running the script automatically. There 
-  are two main ways of doing this, 'externally' and 'internally'. </P>
+<P>Now, you need to set up some of way of running the script automatically and 
+  regularly. </P>
 <BLOCKQUOTE> 
-  <H4>External cron</H4>
-  <P>You can set up a program to call the page just as you did in the example 
-    above. For example, you can use a Unix utility like 'wget':<BR>
-  </P>
+  <H4>Running the script from a command line</H4>
+  <P>You can call the page from the command line just as you did in the example 
+    above. For example, you can use a Unix utility like 'wget':</P>
   <BLOCKQUOTE> 
-    <PRE>wget -q -O /dev/null 'http://example.com/moodle/admin/cron.php?p=pword'</PRE>
+    <PRE>wget -q -O /dev/null http://example.com/moodle/admin/cron.php</PRE>
   </BLOCKQUOTE>
   <P>Note in this example that the output is thrown away (to /dev/null).</P>
-  <P>To automate the running of this script every 5 minutes you can use Unix <B>cron</B>. 
-    Edit your cron settings from the commandline using &quot;crontab -e&quot; 
-    and add a line like:</P>
-  <BLOCKQUOTE> 
-    <PRE>*/5 * * * * wget -q -O /dev/null 'http://example.com/moodle/admin/cron.php?p=pword'
+  <P>The same thing using lynx:</P>
+  <blockquote> 
+    <pre>lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null</pre>
+  </blockquote>
+  <P>Alternatively you could use a standalone version of PHP, compiled to be run 
+    on the command line. The advantage with doing this is that your web server 
+    logs aren't filled with constant requests to cron.php. The disadvantage is 
+    that you need to have access to a command-line version of php.</P>
+  <blockquote> 
+    <PRE>/opt/bin/php /web/moodle/admin/cron.php
+
+
+(Windows) C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php
+
 </PRE>
-  </BLOCKQUOTE>
-  <P>On non-Unix platforms you will need to find another way to do this (and let 
-    me know so I can update this documentation!)</P>
-  <H4>Internal cron</H4>
-  <P>To run the cron.php script internally, you need a version of PHP compiled 
-    to be run from the command-line, also called a &quot;cgi&quot; version. On 
-    a Unix machine, you can now run the script with your password as the first 
-    parameter, something like this:</P>
-  <BLOCKQUOTE>
-    <PRE>/opt/bin/php /web/moodle/admin/cron.php pword</PRE>
-  </BLOCKQUOTE>
-  <P>As before you can automate this using Unix cron (or the equivalent on your 
-    OS):</P>
+  </blockquote>
+  <h4>Automatically running the script every 5 minutes</h4>
+  <P>On Unix systems: Use <B>cron</B>. Edit your cron settings from the commandline 
+    using &quot;crontab -e&quot; and add a line like:</P>
   <BLOCKQUOTE> 
-    <PRE>*/5 * * * * (/opt/bin/php /web/moodle/admin/cron.php pword) &amp;&gt; /dev/null
-</PRE>
+    <PRE>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</PRE>
   </BLOCKQUOTE>
+  <P>On WIndows systems: Use my little Windows Moodle-cron package. (coming soon)</P>
+  <P>Other platforms: you will need to find another way to do this (please let 
+    me know so I can update this documentation).<br>
+  </P>
 </BLOCKQUOTE>
-<P>The advantage with running the script internally is that your web server logs 
-  aren't filled with constant requests to cron.php. The disadvantage is that you 
-  need to have access to a command-line version of php.</P>
-<P>&nbsp;</P>
 <H3><A NAME="course"></A>Create a new course</H3>
 <P>Now that Moodle is running properly, you can create a course. </P>
 <P>Start on the admin page ( http://example.com/moodle/admin ) and select &quot;Create 
   a new course&quot;.</P>
-<P>Fill out the form, paying special attention to the course format. </P>
-<P>If you choose a &quot;weekly&quot; format, then course modules will be arranged 
-  by &quot;weeks&quot;. The weeks in your course are defined by the start and 
-  end dates you choose on this form. The idea is that the next time you run this 
-  course, you can just change the dates and keep the essential course format.</P>
-<P>The &quot;non-weekly&quot; format is for courses that don't have a start or 
-  finish, and so any start/end dates you choose will be ignored.</P>
+<P>Fill out the form, paying special attention to the course format.</P>
+<P>If you choose a &quot;<strong>weekly</strong>&quot; format, then course modules 
+  will be arranged in sections called &quot;weeks&quot;. The weeks in your course 
+  are defined by the start date and the number of weeks you choose on this form. 
+  The idea is that the next time you run this course, you can just change the 
+  dates and keep the essential course format.</P>
+<P>The &quot;<strong>topics</strong>&quot; format is pretty much the same, except 
+  it doesn't use &quot;weeks&quot;. Useful when you arrange a course into different-sized 
+  chunks of time. The start date will not be used on the main course display.</P>
+<P>The &quot;<strong>social</strong>&quot; format is for courses that don't have 
+  a start or finish. It is basically arranged around one big forum and works a 
+  nice replacement to standard mailing lists. Again the start date will not affect 
+  the operation of the course - it will only affect the display of logs.</P>
 <P>Press &quot;Update this course&quot;, and you will be taken to a new form where 
-  you can add teachers to the course. You can only add existing user accounts 
+  you can assign teachers to the course. You can only add existing user accounts 
   from this form - if you want to create a new teacher account then either ask 
   the teacher to create one for themselves (see the login page), or create one 
-  for them using the &quot;Create a user account&quot; on the Admin page.</P>
+  for them using the &quot;Add a new user&quot; on the Admin page.</P>
 <P>Once done, your course is ready to customise, and is accessible via the &quot;Courses&quot; 
   link on the home page.</P>
 <P>See the &quot;<A HREF="teacher.html">Teacher Manual</A>&quot; for more details 
