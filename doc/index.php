@@ -2,12 +2,19 @@
 
     require("../config.php");
 
-    optional_variable($file, "intro.html");    // file in this directory to view
+    optional_variable($file, "");    // docs file to view
 
-    $file = clean_filename($file);
+    if (empty($file)) {
+        $include = false;
+        $file = "intro.html";
+    } else {
+        $include = true;
+    }
 
-    if (!file_exists($file)) {
-        error("404 - File not found");
+    $info = document_file($file, $include);
+
+    if ($include) {
+        exit;
     }
 
 ?>
@@ -20,6 +27,6 @@
     <FRAME NAME="top" SRC="top.php">
     <FRAMESET COLS="200,*">
         <FRAME NAME="contents" SRC="contents.php">
-        <FRAME NAME="main" SRC="<?PHP echo "$file"; ?>">
+        <FRAME NAME="main" SRC="<?PHP echo "$info->urlpath"; ?>">
     </FRAMESET>
 </FRAMESET>

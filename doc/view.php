@@ -7,11 +7,6 @@
 
     $file = clean_filename($file);
 
-    if (!file_exists($file)) {
-        error("404 - File not found");
-    }
-
-
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {
             error("Course is misconfigured");
@@ -28,9 +23,11 @@
                      "<A HREF=\"view.php?file=contents.html\">$strdocumentation</A>");
         
     }
-    
+
     echo "<BLOCKQUOTE>";
-    include($file);
+
+    document_file($file, true);
+
     echo "</BLOCKQUOTE>";
 
 ?>
