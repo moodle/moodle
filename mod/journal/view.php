@@ -28,8 +28,8 @@
     $strjournal = get_string("modulename", "journal");
     $strjournals = get_string("modulenameplural", "journal");
 
-    print_header_simple("$journal->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strjournals</a> -> $journal->name", "", "", true,
+    print_header_simple("$journal->name", '',
+                 "<a href=\"index.php?id=$course->id\">$strjournals</a> -> $journal->name", '', '', true,
                   update_module_button($cm->id, $course->id, $strjournal), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
@@ -42,14 +42,12 @@
         }
         $entrycount = journal_count_entries($journal, $currentgroup);
 
-        echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".
-              get_string('viewallentries','journal', $entrycount)."</a>$groupname</p>";
+        echo '<div class="info"><a href="report.php?id='.$cm->id.'">'.
+              get_string('viewallentries','journal', $entrycount)."</a>$groupname</div>";
 
     } else if (!$cm->visible) {
         notice(get_string('activityiscurrentlyhidden'));
     }
-
-    echo '<center>';
 
     $journal->intro = trim($journal->intro);
 
@@ -131,7 +129,6 @@
         echo userdate($timestart).'</div>';
     }
 
-    echo '</center>';
 
     print_footer($course);
 

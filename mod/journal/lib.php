@@ -520,15 +520,13 @@ function journal_print_feedback($course, $entry, $grades) {
         error('Weird journal error');
     }
 
-//    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" valign=\"top\">";
-    echo '<table cellspacing="0" class="feedbackbox"';
+    echo '<table cellspacing="0" align="center" class="feedbackbox">';
 
     echo '<tr>';
     echo '<td class="left picture">';
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo '</td>';
     echo '<td class="entryheader">';
-//    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$THEME->cellheading\">";
     echo '<span class="author">'.fullname($teacher).'</span>';
     echo '&nbsp;&nbsp;<span class="time">'.userdate($entry->timemarked).'</span>';
     echo '</tr>';
