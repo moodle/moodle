@@ -31,6 +31,7 @@
         // Generate edit form
 
         $fontlist = editor_convert_to_array($CFG->editorfontlist);
+        $dicts    = editor_get_dictionaries();
 
         $stradmin = get_string("administration");
         $strconfiguration = get_string("configuration");
@@ -106,15 +107,15 @@ function editor_update_config ($data) {
     $updatedata['editorkillword'] = !empty($data->killword) ? $data->killword : "true";
     $updatedata['editorspelling'] = !empty($data->spelling) ? $data->spelling : 0;
     $updatedata['editorfontlist'] = $fontlist;
+    $updatedata['editordictionary'] = !empty($data->dictionary) ? $data->dictionary : '';
 
     $hidebuttons = '';
     if (!empty($data->buttons) && is_array($data->buttons)) {
         foreach ($data->buttons as $key => $value) {
             $hidebuttons .= $key . " ";
         }
-
-        $updatedata['editorhidebuttons'] = trim($hidebuttons);
     }
+    $updatedata['editorhidebuttons'] = trim($hidebuttons);
 
     foreach ($updatedata as $name => $value) {
         if (!(set_config($name, $value))) {
@@ -140,6 +141,7 @@ function reset_to_defaults () {
     $updatedata['editorspelling'] = $defaults['editorspelling'];
     $updatedata['editorfontlist'] = $defaults['editorfontlist'];
     $updatedata['editorhidebuttons'] = $defaults['editorhidebuttons'];
+    $updatedata['editordictionary'] = '';
 
     foreach ($updatedata as $name => $value) {
         if (!(set_config($name, $value))) {
@@ -148,4 +150,58 @@ function reset_to_defaults () {
     }
     return true;
 }
+
+function editor_get_dictionaries () {
+/// Get all installed dictionaries in the system
+
+    error_reporting(E_ALL); // for debug, final version shouldn't have this...
+    clearstatcache();
+
+    $strerror     = '';
+
+    if (!function_exists('popen')) {
+        return $strerror = "Popen function disabled!";
+        exit;
+    }
+
+    global $CFG;
+
+    $cmd          = $CFG->aspellpath;
+    $output       = '';
+    $dictionaries = array();
+    $dicts        = array();
+
+    if(!($handle = @popen($cmd .' dump dicts', 'r'))) {
+        return $strerror = "Couldn't create handle!";
+        exit;
+    }
+
+    while(!feof($handle)) {
+        $output .= fread($handle, 1024);
+    }
+    @pclose($handle);
+
+    $dictionaries = explode(chr(10), $output);
+
+    // Get rid of possible empty values
+    if (is_array($dictionaries)) {
+
+        $cnt = count($dictionaries);
+
+        for ($i = 0; $i < $cnt; $i++) {
+            if (!empty($dictionaries[$i])) {
+                $dicts[] = $dictionaries[$i];
+            }
+        }
+    }
+
+    if (count($dicts) >= 1) {
+        return $dicts;
+    }
+
+    $strerror = "Error! Check your aspell installation!";
+    return $strerror;
+
+}
+
 ?>

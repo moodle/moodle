@@ -40,7 +40,7 @@
 </tr>
 <tr>
     <td align="right" valign="top">editorspelling:</td>
-    <td valign="top"><select name="spelling"<?php
+    <td valign="top"><select onchange="change_state()" id="spelling" name="spelling"<?php
     if (empty($CFG->aspellpath)) {
         echo " disabled=\"disabled\"";
         $CFG->editorspelling = false;
@@ -48,7 +48,28 @@
     ?>>
     <option value="1"<?php print(!$CFG->editorspelling)?"":" selected=\"selected\"";?>><?php print_string("yes");?></option>
     <option value="0"<?php print(!$CFG->editorspelling)?" selected=\"selected\"":"";?>><?php print_string("no");?></option>
-    </select></td>
+    </select>
+    <select id="dictionary" name="dictionary"<?php
+    if (empty($CFG->aspellpath)) {
+        echo " disabled=\"disabled\"";
+        $CFG->editordictionary = false;
+    }
+    ?>>
+    <?php
+    if (is_array($dicts)) {
+        foreach ($dicts as $dict) {
+            echo "<option value=\"$dict\"";
+            if (!empty($CFG->editordictionary)) {
+                print ($CFG->editordictionary != $dict) ? "" : " selected=\"selected\"";
+            }
+            echo ">$dict</option>\n";
+        }
+    } else if (is_string($dicts)) {
+        echo '<option value="">'. $dicts .'</option>' . "\n";
+    }
+    ?>
+    </select>
+    </td>
     <td valign="top"><?php print_string("edhelpenablespelling");?></td>
 </tr>
 <tr><td colspan="3"><br /><?php print_string("edhelpfontlist");?></td></tr>
@@ -74,7 +95,10 @@
     <td valign="top" align="right">editorhidebuttons:</td>
     <td colspan="2">
     <?php
-    $buttons = explode(chr(32), $CFG->editorhidebuttons);
+    $buttons = array();
+    if (!empty($CFG->editorhidebuttons)) {
+        $buttons = explode(chr(32), $CFG->editorhidebuttons);
+    }
     ?>
     <table border="0" cellpadding="2" cellspacing="1">
     <tr>
@@ -176,3 +200,21 @@
 <input type="submit" name="resettodefaults" value="<?php print_string('editorresettodefaults') ?>" />
 </center>
 </form>
+<script language="javascript" type="text/javascript">
+<!--
+
+function change_state () {
+
+    var choice = document.forms[0].spelling;
+    var speller = choice.options[choice.selectedIndex].value;
+
+    if (speller != 1) {
+        document.forms[0].dictionary.disabled = true;
+    } else {
+        document.forms[0].dictionary.disabled = false;
+    }
+}
+
+document.onload = change_state();
+-->
+</script>

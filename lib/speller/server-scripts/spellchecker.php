@@ -19,9 +19,9 @@ if(!($lang = check_language($aspell_prog))) {
     exit;
 }
 
-$aspell_opts = "-a -H --lang=$lang --encoding=utf-8";
-$tempfiledir = "./";
-$input_separator = "A";
+$aspell_opts = '-a -H --lang='. $lang .' --encoding=utf-8';
+$tempfiledir = './';
+$input_separator = 'A';
 
 function check_language($cmd) {
 /// return users current language if its
@@ -29,6 +29,8 @@ function check_language($cmd) {
 /// and always return english if user's own
 /// language is not in the list. If english dictionary
 /// isn't found, then false is returned.
+
+    global $CFG;
 
     error_reporting(E_ALL); // for debug, final version shouldn't have this...
     clearstatcache();
@@ -51,12 +53,14 @@ function check_language($cmd) {
         if(in_array($current_lang,$dicts)) {
             return $current_lang;
         }
-
-        if(in_array("en", $dicts)) {
-            return "en";
-        }
     }
+
+    if (!empty($CFG->editordictionary)) {
+        return $CFG->editordictionary;
+    }
+
     return false;
+
 }
 
 // set the JavaScript variable to the submitted text.
