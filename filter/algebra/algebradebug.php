@@ -107,6 +107,7 @@ function refineTeX($texexp) {
   $texexp = str_replace('\mbox{asech}','\mbox{sech}^{-1}',$texexp);
   $texexp = str_replace('\mbox{acsch}','\mbox{csch}^{-1}',$texexp);
   $texexp = str_replace('\mbox{acoth}','\mbox{coth}^{-1}',$texexp);
+  $texexp = preg_replace('/\\\frac{(.+?)}{\\\left\((.+?)\\\right\)}/s','\frac{'."\$1}{\$2}",$texexp);
   $texexp = preg_replace('/\\\sqrt{(.+?),(.+?)}/s','\sqrt['. "\$2]{\$1}",$texexp);
   $texexp = preg_replace('/\\\mbox{abs}\\\left\((.+?)\\\right\)/s',"|\$1|",$texexp);
   $texexp = preg_replace('/\\\log\\\left\((.+?),(.+?)\\\right\)/s','\log_{'. "\$2}\\left(\$1\\right)",$texexp);
