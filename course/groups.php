@@ -20,10 +20,12 @@
     }
 
     if (isteacheredit($course->id)) {
-        if (isset($_GET['edit']) && $edit == "on") {
-            $USER->groupsediting = true;
-        } else {
-            $USER->groupsediting = false;
+        if (isset($_GET['edit'])) {
+            if($edit == "on") {
+                $USER->groupsediting = true;
+            } else {
+                $USER->groupsediting = false;
+            }
         }
     } else {
         $USER->groupsediting = false;
