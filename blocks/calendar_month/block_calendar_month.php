@@ -32,12 +32,22 @@ class CourseBlock_calendar_month extends MoodleBlock {
 
             $courseshown = $this->course->id;
 
-            if($this->course->id == SITEID) {
-                // Being displayed at site level. This will cause the filter to fall back to auto-detecting
-                // the list of courses it will be grabbing events from.
-                $filtercourse = NULL;
-            }
-            else {
+            if ($this->course->id == SITEID) {         // Site-level calendar
+                if (!empty($USER) and !isadmin()) {   /// Normal users just see their own courses
+                    if (!empty($USER->student)) {
+                        foreach ($USER->student as $courseid => $info) {
+                            $filtercourse[$courseid] = 1;
+                        }
+                    }
+                    if (!empty($USER->teacher)) {
+                        foreach ($USER->teacher as $courseid => $info) {
+                            $filtercourse[$courseid] = 1;
+                        }
+                    }
+                } else {                              /// Let the filter sort it out for admins and guests
+                    $filtercourse = NULL;            
+                }
+            } else {
                 // Forcibly filter events to include only those from the particular course we are in.
                 $filtercourse = array($courseshown => 1);
             }
