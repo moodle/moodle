@@ -31,6 +31,11 @@ none  - no authentication at all .. very insecure!!
     - when user tries to access a course they 
       are forced to set up their account details
 
+manual - internal authentication only
+
+    - user logs in using username and password
+    - no way for user to make their own account
+
 
 ldap  - Uses an external LDAP server
 
