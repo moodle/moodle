@@ -77,6 +77,7 @@
 /// Start main column
     echo "</TD><TD WIDTH=\"*\">";
     print_heading_block(get_string("weeklyoutline"), "100%", "outlineheadingblock");
+    print_spacer(8, 1, true);
 
     echo "<table class=\"weeklyoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
 
