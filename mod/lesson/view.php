@@ -34,8 +34,8 @@
     $strlesson  = get_string("modulename", "lesson");
 
     print_header("$course->shortname: $lesson->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", 
-                  "", "", true, update_module_button($cm->id, $course->id, $strlesson), 
+                 "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>",
+                  "", "", true, update_module_button($cm->id, $course->id, $strlesson),
                   navmenu($course, $cm));
 
     // set up some general variables
@@ -60,7 +60,7 @@
         // display individual pages and their sets of answers
         // if pageid is EOL then the end of the lesson has been reached
         print_heading($lesson->name);
-    	if (empty($pageid)) {
+        if (empty($pageid)) {
             add_to_log($course->id, "lesson", "start", "view.php?id=$cm->id", "$lesson->id", $cm->id);
             // if no pageid given see if the lesson has been started
             if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND userid = $USER->id",
@@ -73,8 +73,8 @@
                 print_heading(get_string("attempt", "lesson", $retries + 1));
             }
             // if there are any questions have been answered correctly in this attempt
-            if ($attempts = get_records_select("lesson_attempts", 
-                        "lessonid = $lesson->id AND userid = $USER->id AND retry = $retries AND 
+            if ($attempts = get_records_select("lesson_attempts",
+                        "lessonid = $lesson->id AND userid = $USER->id AND retry = $retries AND
                         correct = 1", "timeseen DESC")) {
                 // get the first page
                 if (!$firstpageid = get_field("lesson_pages", "id", "lessonid", $lesson->id,
@@ -87,7 +87,7 @@
                     if ($jumpto == 0) { // unlikely value!
                         $lastpageseen = $attempt->pageid;
                     } elseif ($jumpto == LESSON_NEXTPAGE) {
-                        if (!$lastpageseen = get_field("lesson_pages", "nextpageid", "id", 
+                        if (!$lastpageseen = get_field("lesson_pages", "nextpageid", "id",
                                     $attempt->pageid)) {
                             // no nextpage go to end of lesson
                             $lastpageseen = LESSON_EOL;
@@ -95,7 +95,7 @@
                     } else {
                         $lastpageseen = $jumpto;
                     }
-                    break; // only look at the latest correct attempt 
+                    break; // only look at the latest correct attempt
                 }
                 if ($lastpageseen != $firstpageid) {
                     echo "<form name=\"queryform\" method =\"post\" action=\"view.php\">\n";
@@ -118,10 +118,10 @@
                     break;
                 }
                 if (!$lesson->retake) {
-          		    redirect("../../course/view.php?id=$course->id", get_string("alreadytaken", "lesson"));
+                    redirect("../../course/view.php?id=$course->id", get_string("alreadytaken", "lesson"));
                 // allow student to retake course even if they have the maximum grade
                 // } elseif ($bestgrade == 100) {
-          		//     redirect("../../course/view.php?id=$course->id", get_string("maximumgradeachieved",
+                //     redirect("../../course/view.php?id=$course->id", get_string("maximumgradeachieved",
                 //                 "lesson"));
                 }
             }
@@ -135,7 +135,7 @@
             if (!$page = get_record("lesson_pages", "id", $pageid)) {
                 error("Navigation: the page record not found");
             }
-            // before we output everything check to see if the page is a EOB, if so jump directly 
+            // before we output everything check to see if the page is a EOB, if so jump directly
             // to it's associated branch table
             if ($page->qtype == LESSON_ENDOFBRANCH) {
                 if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
@@ -158,7 +158,7 @@
                 if ($lesson->minquestions and isstudent($course->id)) {
                     // tell student how many questions they have seen, how many are required and their grade
                     $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
-                    $nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
+                    $nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid",
                             $USER->id, "retry", $ntries);
                     if ($nviewed) {
                         echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $nviewed).
@@ -178,7 +178,7 @@
                         }
                         echo get_string("numberofcorrectanswers", "lesson", $ncorrect)."<br />\n";
                         $thegrade = intval(100 * $ncorrect / $nviewed);
-                        echo get_string("yourcurrentgradeis", "lesson", 
+                        echo get_string("yourcurrentgradeis", "lesson",
                                 number_format($thegrade * $lesson->grade / 100, 1)).
                             " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
                     }
@@ -212,7 +212,7 @@
                             echo "<input type=\"radio\" name=\"answerid\" value=\"{$answer->id}\">";
                             echo "</td><td>";
                             $options->para = false; // no <p></p>
-                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $options); 
+                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $options);
                             echo "</td></tr>";
                         }
                         echo '</table>';
@@ -226,7 +226,7 @@
                         foreach ($answers as $answer) {
                             echo "<tr><td>";
                             if ($page->qoption) {
-                                // more than one answer allowed 
+                                // more than one answer allowed
                                 echo "<input type=\"checkbox\" name=\"answer[$i]\" value=\"{$answer->id}\">";
                             } else {
                                 // only one answer allowed
@@ -234,7 +234,7 @@
                             }
                             echo "</td><td>";
                             $options->para = false; // no <p></p>
-                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $options); 
+                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $options);
                             echo "</td></tr>";
                             $i++;
                         }
@@ -248,7 +248,7 @@
                                 get_string("pleasecheckoneanswer", "lesson")."\"></p>\n";
                         }
                         break;
-                        
+
                     case LESSON_MATCHING :
                         echo "<tr><td><table width=\"100%\">";
                         // don't suffle answers (could be an option??)
@@ -298,14 +298,14 @@
                 if ($lesson->nextpagedefault) {
                     // in Flash Card mode...
                     // ...first get number of retakes
-                    $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
+                    $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
                     // ...then get the page ids (lessonid the 5th param is needed to make get_records play)
                     $allpages = get_records("lesson_pages", "lessonid", $lesson->id, "id", "id,lessonid");
                     shuffle ($allpages);
                     $found = false;
                     if ($lesson->nextpagedefault == LESSON_UNSEENPAGE) {
                         foreach ($allpages as $thispage) {
-                            if (!count_records("lesson_attempts", "pageid", $thispage->id, "userid", 
+                            if (!count_records("lesson_attempts", "pageid", $thispage->id, "userid",
                                         $USER->id, "retry", $nretakes)) {
                                 $found = true;
                                 break;
@@ -352,10 +352,10 @@
             print_simple_box_start("center");
             $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
             if (isstudent($course->id)) {
-                if ($nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
+                if ($nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid",
                         $USER->id, "retry", $ntries)) {
                     // count the number of distinct correct pages
-                    if ($correctpages = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
+                    if ($correctpages = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND
                             userid = $USER->id AND retry = $ntries AND correct = 1")) {
                         foreach ($correctpages as $correctpage) {
                             $temp[$correctpage->pageid] = 1;
@@ -369,7 +369,7 @@
                     if ($lesson->minquestions) {
                         if ($nviewed < $lesson->minquestions) {
                             // print a warning and set nviewed to minquestions
-                            echo "<p align=\"center\">".get_string("youshouldview", "lesson", 
+                            echo "<p align=\"center\">".get_string("youshouldview", "lesson",
                                     $lesson->minquestions)." ".get_string("pages", "lesson")."</p>\n";
                             $nviewed = $lesson->minquestions;
                         }
@@ -377,7 +377,7 @@
                     echo "<p align=\"center\">".get_string("numberofcorrectanswers", "lesson", $ncorrect).
                         "</p>\n";
                     $thegrade = intval(100 * $ncorrect / $nviewed);
-                    echo "<p align=\"center\">".get_string("gradeis", "lesson", 
+                    echo "<p align=\"center\">".get_string("gradeis", "lesson",
                             number_format($thegrade * $lesson->grade / 100, 1)).
                         " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
                     $grade->lessonid = $lesson->id;
@@ -390,21 +390,21 @@
                 } else {
                     print_string("noattemptrecordsfound", "lesson");
                     $thegrade = 0;
-                }   
-            } else { 
+                }
+            } else {
                 // display for teacher
                 echo "<p align=\"center\">".get_string("displayofgrade", "lesson")."</p>\n";
             }
             print_simple_box_end();
-		    print_continue("../../course/view.php?id=$course->id");
+            print_continue("../../course/view.php?id=$course->id");
         }
-            
+
     }
 
 
     /*******************teacher view **************************************/
     elseif ($action == 'teacherview') {
-		print_heading_with_help($lesson->name, "overview", "lesson");
+        print_heading_with_help($lesson->name, "overview", "lesson");
         // get number of pages
         if ($page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
             $npages = 1;
@@ -437,7 +437,6 @@
             echo "<tr><td><b>";
             echo get_string("pagecontents", "lesson").":</b><br />\n";
             print_textarea($usehtmleditor, 25, 70, 630, 400, "contents");
-            use_html_editor("contents");
             echo "</td></tr>\n";
             echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
             choose_from_menu($LESSON_QUESTION_TYPE, "qtype", LESSON_MULTICHOICE, "");
@@ -470,6 +469,7 @@
             </center>
             </form>
             <?PHP
+            use_html_editor("contents"); // Lets give IE more time load the page before replacing textarea.
             // show import link
             print_heading("<a href=\"import.php?id=$cm->id&pageid=0\">".get_string("importquestions",
                     "lesson")."</a>\n");
@@ -502,7 +502,7 @@
                         "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&action=confirmdelete&pageid=$page->id\">\n".
                         "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 border=0></a>\n";
                     }
-                    echo "</td></tr>\n";             
+                    echo "</td></tr>\n";
                 echo "<tr><td colspan=\"2\">\n";
                 print_simple_box(format_text($page->contents), "center");
                 echo "</td></tr>\n";
@@ -532,7 +532,7 @@
                         case LESSON_NUMERICAL :
                             echo $LESSON_QUESTION_TYPE[$page->qtype];
                             break;
-                        case LESSON_BRANCHTABLE :    
+                        case LESSON_BRANCHTABLE :
                             echo get_string("branchtable", "lesson");
                             break;
                         case LESSON_ENDOFBRANCH :
@@ -560,7 +560,7 @@
                                 echo "</td></tr>\n";
                                echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("response", "lesson")." $i:</b> \n";
                                 echo "</td><td>\n";
-                                echo format_text($answer->response); 
+                                echo format_text($answer->response);
                                 echo "</td></tr>\n";
                                 break;
                             case LESSON_BRANCHTABLE:
@@ -634,7 +634,7 @@
                     }
                 }
                 $prevpageid = $page->id;
-                // move to next page        
+                // move to next page
                 if ($page->nextpageid) {
                     if (!$page = get_record("lesson_pages", "id", $page->nextpageid)) {
                         error("Teacher view: Next page not found!");
@@ -652,9 +652,9 @@
 
 
     /*************** no man's land **************************************/
-	else {
-		error("Fatal Error: Unknown Action: ".$action."\n");
-	}
+    else {
+        error("Fatal Error: Unknown Action: ".$action."\n");
+    }
 
 /// Finish the page
     print_footer($course);
