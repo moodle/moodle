@@ -27,7 +27,7 @@ CREATE TABLE prefix_scorm_scoes (
   launch varchar(255) NOT NULL default '',
   type varchar(5) NOT NULL default '',
   title varchar(255) NOT NULL default '',
-  datafromlms text NOT NULL default ''
+  datafromlms text NOT NULL default '',
   next integer NOT NULL default '0',
   previous integer NOT NULL default '0'
 );
