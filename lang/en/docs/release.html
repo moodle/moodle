@@ -17,12 +17,11 @@
 <DD> 
     <LI>Various optimisations and significant performance enhancements
     <LI>Moodle is now well-behaved when enclosed within a frame
-    <LI>New role: Course creator - just like teacher but can also create new courses
-    <LI>New authentication plug-in "manual", prevents users from creating their own accounts
     <LI>Richtext editor can now be used in more text-editing fields
     <LI>New format "Plain text format", useful when posting code or HTML.
+    <LI>New format "Wiki format", allows Wiki-style tagging in most places
     <LI>Ability to specify permissions of new folders and files created on the server
-    <LI>Some fixes for servers running in Safe Mode.
+    <LI>Some fixes for servers running in Safe Mode (some file problems remain)
     <LI>Various fixes for cleaning some external text of quotes, etc
     <LI>Various fixes for PostgreSQL 7.3 compatibility
 </DD>
@@ -49,6 +48,13 @@
     <LI>Admin directory can be moved from /admin to something else (see config-dist.php)
     <LI>User listing is now paged, and can now be searched for strings
     <LI>Improvements to the language editing page
+</DD>
+
+<DT> User management</DT>
+<DD> 
+    <LI>New role: Course creator - just like teacher but can also create new courses
+    <LI>New authentication plug-in named "manual", prevents users from creating their own accounts
+    <LI>"Forgot Password" routine now uses an email confirmation before resetting password
 </DD>
 
 
@@ -81,8 +87,8 @@
 
 <DT> Workshop Assignment module</DT>
 <DD> 
-    <LI>A very interesting new module contributed by Ray Kingdon.
-    <LI>It is a flexible tool to implement a variety of peer-grading and 
+    <LI>A very interesting new module contributed by Ray Kingdon,
+    <LI>A flexible tool that implements a variety of peer-grading and 
         example-setting schemes that involve a whole group in examining 
         and grading peices of work.
 </DD>
@@ -93,7 +99,7 @@
     <LI>New question type, Matching Question (student must match answers to questions)
     <LI>New question type, Random Matching Short-Answers (randomly creates Matching Questions 
         from the available Short Answer questions in the same category)
-    <LI>Quiz question import from text files (modular design allows expansion to new formats)
+    <LI>Quiz question import from text files (modular design allows expansion to new formats - a beta Blackboard module is included)
     <LI>'Create multiple questions' wizard to quickly create a random quiz
     <LI>Quiz questions may be randomly shuffled
     <LI>Quiz answers (multiple choice, etc) may be randomly shuffled
@@ -107,7 +113,7 @@
 <DD> 
     <LI>Better performance when editing large text or HTML resources
     <LI>Plain images are now display centered within a proper web page (not raw).
-    <LI>Resource pages can now be edited using Wiki format
+    <LI>Wiki format added as a new option for Resource pages
 </DD>
 
 <DT> Custom Themes</DT>
