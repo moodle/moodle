@@ -14,8 +14,6 @@
             $user->confirmed = 0;
             $user->firstaccess = time();
             $user->secret = random_string(15);
-            echo $user->secret;
-            $db->debug = true;
 
 			if (! ($user->id = insert_record("user", $user)) ) {
                 error("Could not add your record to the database!");
