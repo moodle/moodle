@@ -1308,6 +1308,7 @@ function forum_add_discussion($discussion) {
     $post->attachment  = "";
     $post->forum       = $discussion->forum;
     $post->course      = $discussion->course;
+    $post->format      = $discussion->format;
 
     if (! $post->id = insert_record("forum_posts", $post) ) {
         return 0;
