@@ -1242,9 +1242,6 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
             $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
                        " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
         }
-    } else {         // Print default user pictures (use theme version if available)
-        $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/g/$file.png\"".
-                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
     }
     if ($link) {
         $output .= "</a>";
