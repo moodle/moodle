@@ -28,7 +28,7 @@
             print_header();
             foreach ($config as $name => $value) {
                 if ($name == "sessioncookie") {
-                    $value = clean_filename($value);
+                    $value = eregi_replace("[^a-zA-Z]", "", $value);
                 }
                 unset($conf);
                 $conf->name  = $name;
