@@ -38,23 +38,6 @@ var parent_object  = null;
 var editor         = null;      // to be initialized later [ function init() ]
 
 /* ---------------------------------------------------------------------- *\
-  Function    : 
-  Description : 
-\* ---------------------------------------------------------------------- */
-
-function _CloseOnEsc(ev) {
-  if (document.all) {
-    // IE
-    ev = window.event;
-  }
-  if (ev.keyCode == 27) {
-    // update_parent();
-    window.close();
-    return;
-  }
-}
-
-/* ---------------------------------------------------------------------- *\
   Function    : cloneObject
   Description : copy an object by value instead of by reference
   Usage       : var newObj = cloneObject(oldObj);
@@ -135,9 +118,6 @@ function init() {
     setInterval(update_parent, 500);
 
     // setup event handlers
-    document.body.onkeypress = _CloseOnEsc;
-    editor._doc.body.onkeypress = _CloseOnEsc;
-    editor._textArea.onkeypress = _CloseOnEsc;
     window.onresize = resize_editor;
   }, 333);                      // give it some time to meet the new frame
 }
