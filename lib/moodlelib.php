@@ -2017,7 +2017,7 @@ function authenticate_user_login($username, $password) {
     require_once($CFG->dirroot .'/auth/'. $auth .'/lib.php');
 
     if (auth_user_login($username, $password)) {  // Successful authentication
-        if ($user) {                              // User already exists in database
+        if ($user->id) {                          // User already exists in database
             if (empty($user->auth)) {             // For some reason auth isn't set yet
                 set_field('user', 'auth', $auth, 'username', $username);
             }
@@ -2050,7 +2050,9 @@ function authenticate_user_login($username, $password) {
                 }
             }
         }
-        $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
+        if ($user) {
+            $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
+        }
         return $user;
 
     } else {
