@@ -100,7 +100,7 @@
  
         /// Build the ewsiki script constant
         /// ewbase will also be needed by EWIKI_SCRIPT_BINARY
-        $ewbase = $ME.'?id='.$moodleID;
+        $ewbase = 'view.php?id='.$moodleID;
         if (isset($userid)) $ewbase .= '&userid='.$userid;
         if (isset($groupid)) $ewbase .= '&groupid='.$groupid;
         $ewscript = $ewbase.'&wikipage=';
