@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004042600)
+      // calendar.php - created with Moodle 1.3 development (2004050300)
 
 
 $string['april'] = 'April';
@@ -35,10 +35,10 @@ $string['eventstarttime'] = 'Start uur';
 $string['eventtime'] = 'Uur';
 $string['eventview'] = 'Details';
 $string['expired'] = 'Verloopt';
-$string['explain_lookahead'] = 'Met deze instelling stel in hoeveel dagen vooruit je activiteiten op de kalender worden weergegeven. Activiteiten die later gebeuren, worden niet getoond. Merk op dat <strong> er geen garantie is </strong> dat alle activiteiten in dit tijdskader getoond zullen worden; als er teveel zijn (meer dan de \"maximum aantal getoonde activiteiten \" instelling) dan zullen de activiteiten het verst in de toekomst niet getoond worden.';
-$string['explain_maxevents'] = 'Deze instelling stelt het maximum aantal getoonde activiteiten in. Als je hier een groot getal ingeeft, dan is het mogelijk dat het tonen van de komende activiteiten een groot deel van je scherm innemen.';
-$string['explain_startwday'] = 'Deze instelling configureert de manier waarop de maandkalenders getoond worden. Gebruik ze om die te tonen zoals je gewoon bent ze te zien.';
-$string['explain_timeformat'] = 'Met deze instelling kun je bepalen hoe de tijd getoond wordt in de kalender. Je kunt kiezen tussen 12 of 24 uur opmaak. Als je voor de standaardinstelling kiest, dan zal de opmaak automatisch gekozen worden volgens de taal die je gebruikt op je site.';
+$string['explain_lookahead'] = 'Met deze instelling stel het (maximum) aantal dagen in de toekomst in dat een activiteit moet starten om weergegeven te worden als een komende activiteit. Activiteiten die later dan dat aantal dagen zullen gebeuren, worden niet getoond als komende activiteit. Merk op dat <strong> er geen garantie is </strong> dat alle activiteiten in dit tijdskader getoond zullen worden; als er teveel zijn (meer dan de \"maximum aantal getoonde activiteiten \" instelling) dan zullen de activiteiten doe het verst in de toekomst liggen niet getoond worden.';
+$string['explain_maxevents'] = 'Deze instelling stelt het maximum aantal komende activiteiten in dat getoond kan worden. Als je hier een groot getal ingeeft, dan is het mogelijk dat het tonen van de komende activiteiten een groot deel van je scherm zal innemen.';
+$string['explain_startwday'] = 'Een kalenderweek zal starten op de dag die je hier kiest.';
+$string['explain_timeformat'] = 'Je kunt kiezen of de tijd in 12 of 24 uur formaat wordt weergegeven. Als je voor de standaardinstelling kiest, dan zal het formaat automatisch gekozen worden volgens de taal die je gebruikt op je site.';
 $string['february'] = 'Februari';
 $string['fri'] = 'Vr';
 $string['friday'] = 'Vrijdag';
