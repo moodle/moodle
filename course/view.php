@@ -25,7 +25,7 @@
 
     require_login($course->id);
 
-    require_once('../calendar/lib.php');    /// This is after login because it needs $USER
+    require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 
