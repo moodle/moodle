@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.1 Beta + (2003082300)
+      // workshop.php - created with Moodle 1.2 development (2003092900)
 
 
+$string['absent'] = "Afwezig";
 $string['accumulative'] = "Cumulatief";
 $string['action'] = "Actie";
 $string['addacomment'] = "Voeg commentaar toe";
@@ -36,6 +37,7 @@ $string['closeassignment'] = "Sluit de beoordeling";
 $string['comment'] = "Commentaar";
 $string['commentby'] = "Commentaar door";
 $string['confirmdeletionofthisitem'] = "Bevestig het verwijderen van deze \$a";
+$string['correct'] = "Juist";
 $string['criterion'] = "Criterium";
 $string['deadline'] = "Deadline";
 $string['deadlineis'] = "Deadline is \$a";
@@ -54,6 +56,7 @@ $string['elementweight'] = "Gewicht van het onderdeel";
 $string['errorbanded'] = "Als fout aangeduid";
 $string['feedbackgoeshere'] = "Zet hier feedback";
 $string['generalcomment'] = "Algemene commentaar";
+$string['good'] = "Goed";
 $string['grade'] = "Cijfer";
 $string['gradeassessment'] = "Cijferbeoordeling";
 $string['graded'] = "Beoordeeld";
@@ -65,7 +68,9 @@ $string['gradeforstudentsassessment'] = "Cijfer voor de beoordeling van de leerl
 $string['gradeofsubmission'] = "Beoordeling van bijdrage :\$a";
 $string['gradingstrategy'] = "Beoordelingsstrategie";
 $string['hidegradesbeforeagreement'] = "Verberg de cijfers tot na de bevestiging";
+$string['hidenamesfromstudents'] = "Verberg de namen van \$a";
 $string['includeteachersgrade'] = "Hou rekening met het cijfer van de leraar";
+$string['incorrect'] = "Fout";
 $string['leaguetable'] = "Overzichtstabel van ingestuurd werk";
 $string['listassessments'] = "Lijst van evaluaties";
 $string['listofallsubmissions'] = "Lijst van alle inzendingen";
@@ -75,6 +80,7 @@ $string['maximumsize'] = "Maximum grootte";
 $string['modulename'] = "Workshop";
 $string['modulenameplural'] = "Workshops";
 $string['movingtophase'] = "Doorgaan naar fase \$a";
+$string['namesnotshowntostudents'] = "Namen niet getoond aan \$a";
 $string['newassessments'] = "Nieuwe evaluaties";
 $string['newgradings'] = "Nieuwe beoordelingen";
 $string['newsubmissions'] = "Nieuwe inzendingen";
