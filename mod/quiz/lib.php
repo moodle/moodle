@@ -965,6 +965,10 @@ function quiz_print_possible_question_image($quizid, $question) {
 
     global $CFG;
 
+    if ($quizid == '') {
+        $quizid = '0';
+    }
+
     if ($question->image) {
         echo '<img border="0" src="';
 

@@ -79,7 +79,7 @@ function mimeinfo($element, $filename) {
     );
 
     if (eregi("\.([a-z0-9]+)$", $filename, $match)) {
-        if(isset($mimeinfo[strtolower($match[1])][$element])) {
+        if (isset($mimeinfo[strtolower($match[1])][$element])) {
             return $mimeinfo[strtolower($match[1])][$element];
         } else {
             return $mimeinfo["xxx"][$element];   // By default
@@ -87,6 +87,70 @@ function mimeinfo($element, $filename) {
     } else {
         return $mimeinfo["xxx"][$element];   // By default
     }
+}
+
+function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false) {
+
+    $mimetype     = mimeinfo('type', $filename);
+    $lastmodified = $pathisstring ? time() : filemtime($path);
+    $filesize     = $pathisstring ? strlen($path) : filesize($path);
+
+    @header('Last-Modified: '. gmdate("D, d M Y H:i:s", $lastmodified) .' GMT');
+    if ($lifetime > 0) {
+        @header('Cache-control: max-age='.$lifetime);
+        @header('Expires: '. gmdate("D, d M Y H:i:s", time() + $lifetime) .'GMT');
+        @header('Pragma: ');
+    } else {
+        // this part is tricky, displaying of MS Office documents in IE needs
+        // to store the file on disk, but no-cache may prevent it
+        @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=10');
+        @header('Expires: '. gmdate("D, d M Y H:i:s", 0) .'GMT');
+        @header('Pragma: no-cache');
+    }
+    @header('Accept-Ranges: none'); // PDF compatibility
+    @header('Content-disposition: inline; filename='.$filename);
+
+    if (!$filter) {
+        @header('Content-length: '.$filesize);
+        if ($mimetype == 'text/plain') {
+            @header('Content-type: text/plain; charset='.get_string('thischarset')); //add encoding
+        } else {
+            @header('Content-type: '.$mimetype);
+        }
+        if ($pathisstring) {
+            echo $path;
+        }else {
+            readfile($path);
+        }
+    } else {     // Try to put the file through filters
+        if ($mimetype == 'text/html') {
+            $options->noclean = true;
+            $text = $pathisstring ? $path : implode('', file($path));
+            $output = format_text($text, FORMAT_HTML, $options, $course->id);
+
+            @header('Content-length: '.strlen($output));
+            @header('Content-type: text/html');
+            echo $output;
+        } else if ($mimetype == 'text/plain') {
+            $options->newlines = false;
+            $options->noclean = true;
+            $text = htmlentities($pathisstring ? $path : implode('', file($path)));
+            $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $course->id) .'</pre>';
+
+            @header('Content-length: '.strlen($output));
+            @header('Content-type: text/html; charset='. get_string('thischarset')); //add encoding
+            echo $output;
+        } else {    // Just send it out raw
+            @header('Content-length: '.$filesize);
+            @header('Content-type: '.$mimetype);
+            if ($pathisstring) {
+                echo $path;
+            }else {
+                readfile($path);
+            }
+        }
+    }
+    die; //no more chars to output!!!
 }
 
 ?>

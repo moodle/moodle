@@ -5,45 +5,26 @@
 
     $nomoodlecookie = true;     // Because it interferes with caching
 
-    require_once("../config.php");
+    require_once('../config.php');
+    require_once('../files/mimetypes.php');
 
-    $lifetime = 86400;
+    $relativepath = get_file_argument('pixgroup.php');
 
-    if (isset($file)) {     // workaround for situations where / syntax doesn't work
-        $pathinfo = $file;
+    $args = explode('/', trim($relativepath, '/'));
 
+    if (count($args) == 2) {
+        $groupid  = (integer)$args[0];
+        $image    = $args[1];
+        $pathname = $CFG->dataroot.'/groups/'.$groupid.'/'.$image;
     } else {
-        $pathinfo = get_slash_arguments("pixgroup.php");
+        $image    = 'f1.png';
+        $pathname = $CFG->dirroot.'/pix/g/f1.png';
     }
 
-    if (! $args = parse_slash_arguments($pathinfo)) {
-        error("No valid arguments supplied");
-    }
-
-    $numargs = count($args);
-
-    if ($numargs == 2) {
-        $groupid = (integer)$args[0];
-        $image  = $args[1];
-        $pathname = "$CFG->dataroot/groups/$groupid/$image";
-        $filetype = "image/jpeg";
+    if (file_exists($pathname) and !is_dir($pathname)) {
+        send_file($pathname, $image);
     } else {
-        $image = "f1.png";
-        $pathname = "$CFG->dirroot/pix/g/f1.png";
-        $filetype = "image/png";
+        header('HTTP/1.0 404 not found');
+        error(get_string('filenotfound', 'error')); //this is not displayed on IIS??
     }
-
-    if (file_exists($pathname)) {
-        $lastmodified = filemtime($pathname);
-        header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
-        header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-        header("Cache-control: max_age = $lifetime"); // a day
-        header("Pragma: ");
-        header("Content-disposition: inline; filename=$image");
-        header("Content-length: ".filesize($pathname));
-        header("Content-type: $filetype");
-        readfile("$pathname");
-    }
-
-    exit;
 ?>
