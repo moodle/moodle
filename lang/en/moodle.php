@@ -130,6 +130,7 @@ $string['configsessiontimeout'] = "If people logged in to this site are idle for
 $string['configslasharguments'] = "Files (images, uploads etc) are provided via a script using 'slash arguments' (the second option here). This method allows files to be more easily cached in web browsers, proxy servers etc.  Unfortunately, some PHP servers don't allow this method, so if you have trouble viewing uploaded files or images (eg user pictures), set this variable to the first option";
 $string['configsmtphosts'] = "Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg 'mail.a.com' or 'mail.a.com;mail.b.com'). If you leave it blank, Moodle will use the PHP default method of sending mail.";
 $string['configsmtpuser'] = "If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.";
+$string['configteacherassignteachers'] = "Should ordinary teachers be allowed to assign other teachers within courses they teach?  If 'No', then only course creators and admins can assign teachers.";
 $string['configunzip'] = "Indicate the location of your unzip program (Unix only, optional).  If specified, this will be used to unpack zip archives on the server.  If you leave this blank, then Moodle will use internal routines.";
 $string['configuration'] = "Configuration";
 $string['configvariables'] = "Variables";

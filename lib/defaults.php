@@ -30,6 +30,7 @@
        "smtphosts"        => "",
        "smtppass"         => "",
        "smtpuser"         => "",
+       "teacherassignteachers"  => true,
        "theme"            => "standard",
        "unzip"            => "",
        "zip"              => ""
