@@ -72,7 +72,12 @@
                       // do not have to be shown as users as well. Only relevant on site course.
     if ($showteachers) {
         if ($teachers = get_course_teachers($course->id)) {
-            echo "<h2 align=\"center\">$course->teachers</h2>";
+            echo "<h2 align=\"center\">$course->teachers";
+            if (isadmin() or ($course->category and (iscreator() or ($isteacheredit and !empty($CFG->teacherassignteachers))))) {
+                echo ' <a href="../course/teacher.php?id='.$course->id.'">';
+                echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt=""></a>';
+            }
+            echo '</h2>';
             if($compactmode) {
                 $exceptions .= implode(',', array_keys($teachers));
                 print_user_table($teachers, $isteacher);
@@ -119,7 +124,12 @@
         }
     }
 
-    echo "<h2 align=center>$totalcount $course->students</h2>";
+    echo "<h2 align=center>$totalcount $course->students";
+    if (isteacheredit($course->id)) {
+        echo ' <a href="../course/student.php?id='.$course->id.'">';
+        echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt=""></a>';
+    }
+    echo '</h2>';
 
     if (($CFG->longtimenosee < 500) and (!$page) and ($sort == "lastaccess")) {
         echo "<center><p><font size=1>(";
