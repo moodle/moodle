@@ -217,6 +217,20 @@ CREATE TABLE `prefix_quiz_shortanswer` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `quiz_numerical`
+#
+
+CREATE TABLE `prefix_quiz_numerical` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `answer` int(10) unsigned NOT NULL default '0',
+  `min` varchar(255) NOT NULL default '',
+  `max` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `answer` (`answer`)
+) TYPE=MyISAM COMMENT='Options for numerical questions';
+# --------------------------------------------------------
+
+#
 # Table structure for table `quiz_truefalse`
 #
 

@@ -20,14 +20,17 @@ define("RANDOM",        "4");
 define("MATCH",         "5");
 define("RANDOMSAMATCH", "6");
 define("DESCRIPTION",   "7");
+define("NUMERICAL",     "8");
 
 $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
                               TRUEFALSE     => get_string("truefalse", "quiz"),
                               SHORTANSWER   => get_string("shortanswer", "quiz"),
+                              NUMERICAL     => get_string("numerical", "quiz"),
                               MATCH         => get_string("match", "quiz"),
+                              DESCRIPTION   => get_string("description", "quiz"),
                               RANDOM        => get_string("random", "quiz"),
-                              RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
-                              DESCRIPTION   => get_string("description", "quiz") );
+                              RANDOMSAMATCH => get_string("randomsamatch", "quiz")
+                              );
 
 $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
                             "missingword" => get_string("missingword", "quiz"),
@@ -293,6 +296,15 @@ function quiz_get_answers($question) {
                                        AND q.id = a.question ");
             break;
 
+        case NUMERICAL:         // Logical support for multiple answers
+            return get_records_sql("SELECT a.*, n.min, n.max
+                                      FROM {$CFG->prefix}quiz_numerical n,
+                                           {$CFG->prefix}quiz_answers a
+                                     WHERE a.question = '$question->id'
+                                       AND n.answer = a.id ");
+            break;
+
+
         default:
             return false;
     }
@@ -342,13 +354,13 @@ function quiz_get_attempt_responses($attempt, $quiz) {
 function quiz_print_comment($text) {
     global $THEME;
 
-    echo "<SPAN CLASS=feedbacktext>".text_to_html($text, true, false)."</SPAN>";
+    echo "<span class=feedbacktext>".text_to_html($text, true, false)."</span>";
 }
 
 function quiz_print_correctanswer($text) {
     global $THEME;
 
-    echo "<P ALIGN=RIGHT><SPAN CLASS=highlight>$text</SPAN></P>";
+    echo "<p align=right><span class=highlight>$text</span></p>";
 }
 
 function quiz_print_question_icon($question, $editlink=true) {
@@ -357,33 +369,36 @@ function quiz_print_question_icon($question, $editlink=true) {
     global $QUIZ_QUESTION_TYPE;
 
     if ($editlink) {
-        echo "<A HREF=\"question.php?id=$question->id\" TITLE=\"".$QUIZ_QUESTION_TYPE[$question->qtype]."\">";
+        echo "<a href=\"question.php?id=$question->id\" title=\"".$QUIZ_QUESTION_TYPE[$question->qtype]."\">";
     }
     switch ($question->qtype) {
         case SHORTANSWER:
-            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/sa.gif\">";
+            echo '<img border=0 height=16 width=16 src="pix/sa.gif">';
             break;
         case TRUEFALSE:
-            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/tf.gif\">";
+            echo '<img border=0 height=16 width=16 src="pix/tf.gif">';
             break;
         case MULTICHOICE:
-            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/mc.gif\">";
+            echo '<img border=0 height=16 width=16 src="pix/mc.gif">';
             break;
         case RANDOM:
-            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/rs.gif\">";
+            echo '<img border=0 height=16 width=16 src="pix/rs.gif">';
             break;
         case MATCH:
-            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/ma.gif\">";
+            echo '<img border=0 height=16 width=16 src="pix/ma.gif">';
             break;
         case RANDOMSAMATCH:
-            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/rm.gif\">";
+            echo '<img border=0 height=16 width=16 src="pix/rm.gif">';
             break;
         case DESCRIPTION:
-            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/de.gif\">";
+            echo '<img border=0 height=16 width=16 src="pix/de.gif">';
+            break;
+        case NUMERICAL:
+            echo '<img border=0 height=16 width=16 src="pix/nu.gif">';
             break;
     }
     if ($editlink) {
-        echo "</A>\n";
+        echo "</a>\n";
     }
 }
 
@@ -413,15 +428,15 @@ function quiz_print_question($number, $question, $grade, $courseid,
     $stranswer = get_string("answer", "quiz");
     $strmarks  = get_string("marks", "quiz");
 
-    echo "<TABLE WIDTH=100% CELLSPACING=10><TR><TD NOWRAP WIDTH=100 VALIGN=top>";
-    echo "<P ALIGN=CENTER><B>$number</B></P>";
+    echo "<table width=100% cellspacing=10><tr><td nowrap width=100 valign=top>";
+    echo "<p align=center><b>$number</b></p>";
     if ($feedback or $response) {
-        echo "<P ALIGN=CENTER><FONT SIZE=1>$strmarks: $actualgrade/$grade</FONT></P>";
+        echo "<p align=center><font size=1>$strmarks: $actualgrade/$grade</font></p>";
     } else {
-        echo "<P ALIGN=CENTER><FONT SIZE=1>$grade $strmarks</FONT></P>";
+        echo "<p align=center><font size=1>$grade $strmarks</font></p>";
     }
     print_spacer(1,100);
-    echo "</TD><TD VALIGN=TOP>";
+    echo "</td><td valign=top>";
 
     if (empty($realquestion)) { 
         $realquestion->id = $question->id;
@@ -432,9 +447,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
     switch ($question->qtype) {
 
        case SHORTANSWER: 
-           if (!$options = get_record("quiz_shortanswer", "question", $question->id)) {
-               notify("Error: Missing question options!");
-           }
+       case NUMERICAL:
            echo text_to_html($question->questiontext);
            if ($question->image) {
                print_file_picture($question->image, $courseid);
@@ -1423,7 +1436,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
                 }
                 $response[0] = $question->answer;
                 $bestshortanswer = 0;
-                foreach($answers as $answer) {  // There might be multiple right answers
+                foreach ($answers as $answer) {  // There might be multiple right answers
                     if ($answer->fraction > $bestshortanswer) {
                         $correct[$answer->id] = $answer->answer;
                         $bestshortanswer = $answer->fraction;
@@ -1439,6 +1452,26 @@ function quiz_grade_attempt_results($quiz, $questions) {
                 }
                 break;
 
+            case NUMERICAL:
+                if ($question->answer) {
+                    $question->answer = trim(stripslashes($question->answer[0]));
+                } else {
+                    $question->answer = "";
+                }
+                $response[0] = $question->answer;
+                $bestshortanswer = 0;
+                foreach ($answers as $answer) {  // There might be multiple right answers
+                    if ($answer->fraction > $bestshortanswer) {
+                        $correct[$answer->id] = $answer->answer;
+                        $bestshortanswer = $answer->fraction;
+                    }
+                    if ( ((float)$question->answer >= (float)$answer->min) and 
+                         ((float)$question->answer <= (float)$answer->max) ) {
+                        $feedback[0] = $answer->feedback;
+                        $grade = (float)$answer->fraction * $question->grade;
+                    }
+                }
+                break;
 
             case TRUEFALSE:
                 if ($question->answer) {
@@ -1641,6 +1674,70 @@ function quiz_save_question_options($question) {
             }
         break;
 
+        case NUMERICAL:   // Note similarities to SHORTANSWER
+
+            if (!$oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC")) {
+                $oldanswers = array();
+            }
+
+            $answers = array();
+            $maxfraction = -1;
+
+            // Insert all the new answers
+            foreach ($question->answer as $key => $dataanswer) {
+                if ($dataanswer != "") {
+                    if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                        $answer = $oldanswer;
+                        $answer->answer   = $dataanswer;
+                        $answer->fraction = $question->fraction[$key];
+                        $answer->feedback = $question->feedback[$key];
+                        if (!update_record("quiz_answers", $answer)) {
+                            $result->error = "Could not update quiz answer! (id=$answer->id)";
+                            return $result;
+                        }
+                    } else {    // This is a completely new answer
+                        unset($answer);
+                        $answer->answer   = $dataanswer;
+                        $answer->question = $question->id;
+                        $answer->fraction = $question->fraction[$key];
+                        $answer->feedback = $question->feedback[$key];
+                        if (!$answer->id = insert_record("quiz_answers", $answer)) {
+                            $result->error = "Could not insert quiz answer!";
+                            return $result;
+                        }
+                    }
+                    $answers[] = $answer->id;
+                    if ($question->fraction[$key] > $maxfraction) {
+                        $maxfraction = $question->fraction[$key];
+                    }
+
+                    if ($options = get_record("quiz_numerical", "answer", $answer->id)) {
+                        $options->min= $question->min[$key];
+                        $options->max= $question->max[$key];
+                        if (!update_record("quiz_numerical", $options)) {
+                            $result->error = "Could not update quiz numerical options! (id=$options->id)";
+                            return $result;
+                        }
+                    } else { // completely new answer
+                        unset($options);
+                        $options->min= $question->min[$key];
+                        $options->max= $question->max[$key];
+                        $options->answer= $answer->id;
+                        if (!insert_record("quiz_numerical", $options)) {
+                            $result->error = "Could not insert quiz numerical options!";
+                            return $result;
+                        }
+                    }
+                }
+            }
+
+            /// Perform sanity checks on fractional grades
+            if ($maxfraction != 1) {
+                $maxfraction = $maxfraction * 100;
+                $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                return $result;
+            }
+        break;
 
 
         case TRUEFALSE:

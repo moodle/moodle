@@ -92,6 +92,18 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "", "shuffleanswers", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "shufflequestions");
     }
 
+	if ($oldversion < 2003071000) {
+
+        modify_database ("", " CREATE TABLE `prefix_quiz_numerical` (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                               `answer` int(10) unsigned NOT NULL default '0',
+                               `min` varchar(255) NOT NULL default '',
+                               `max` varchar(255) NOT NULL default '',
+                               PRIMARY KEY  (`id`),
+                               KEY `answer` (`answer`)
+                             ) TYPE=MyISAM COMMENT='Options for numerical questions'; ");
+    }
+
     return true;
 }
 
