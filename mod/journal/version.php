@@ -5,7 +5,7 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2002080500;
+$module->version  = 2002082000;
 $module->cron     = 60;
 
 function journal_upgrade($oldversion) {
