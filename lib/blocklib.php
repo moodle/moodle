@@ -333,8 +333,9 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             }
             else {
                 // We need to show the config screen, so we highjack the display logic and then die
-                $page->print_header(get_string('pageheaderconfigablock', 'moodle'));
-                print_heading(get_string('blockconfiga', 'moodle', $block->name));
+                $strheading = get_string('blockconfiga', 'moodle', $block->name);
+                $page->print_header(get_string('pageheaderconfigablock', 'moodle'), array($strheading => ''));
+                print_heading($strheading);
                 echo '<form method="post" action="'. $page->url_get_path() .'">';
                 echo '<p>';
                 foreach($hiddendata as $name => $val) {

@@ -113,7 +113,7 @@ class page_base {
     // HTML OUTPUT SECTION
 
     // We have absolutely no idea what derived pages are all about
-    function print_header($title) {
+    function print_header($title, $morebreadcrumbs) {
         trigger_error('Page class does not implement method <strong>print_header()</strong>', E_USER_WARNING);
         return;
     }
@@ -268,8 +268,9 @@ class page_course extends page_base {
 
     // This function prints out the common part of the page's header.
     // You should NEVER print the header "by hand" in other code.
-    function print_header($title) {
-        global $USER;
+    function print_header($title, $morebreadcrumbs = NULL) {
+        global $USER, $CFG;
+
         $this->init_full();
         $replacements = array(
             '%fullname%' => $this->courserecord->fullname
@@ -278,9 +279,26 @@ class page_course extends page_base {
             $title = str_replace($search, $replace, $title);
         }
 
+        $breadcrumbs = array($this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id);
+        if(!empty($morebreadcrumbs)) {
+            $breadcrumbs = array_merge($breadcrumbs, $morebreadcrumbs);
+        }
+
+        $total     = count($breadcrumbs);
+        $current   = 1;
+        $crumbtext = '';
+        foreach($breadcrumbs as $text => $href) {
+            if($current++ == $total) {
+                $crumbtext .= ' '.$text;
+            }
+            else {
+                $crumbtext .= ' <a href="'.$href.'">'.$text.'</a> ->';
+            }
+        }
+
         $loggedinas = '<p class="logininfo">'. user_login_string($this->courserecord, $USER) .'</p>';
-        print_header($title, $this->courserecord->fullname, $this->courserecord->shortname,
-                     '', '', true, update_course_icon($this->courserecord->id), $loggedinas);
+        print_header($title, $this->courserecord->fullname, $crumbtext,
+                     '', '', true, '&nbsp;', $loggedinas);
     }
 
     // SELF-REPORTING SECTION
