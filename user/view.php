@@ -19,7 +19,7 @@
         error("No such course id");
     }
 
-    if ($course->category) {
+    if ($course->category or $CFG->forcelogin or !empty($CFG->forceloginforprofiles)) { 
         require_login($course->id);
     }
 
