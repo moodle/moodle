@@ -21,6 +21,7 @@ $string['jumpto'] = "Jump to";
 $string['maximumnumberofanswers'] = "Maximum number of answers";
 $string['modulename'] = "Lesson";
 $string['modulenameplural'] = "Lessons";
+$string['movepagehere'] = "Move Page Here";
 $string['moving'] = "Moving page: \$a";
 $string['nextpage'] = "Next page";
 $string['noanswer'] = "No answer given";
