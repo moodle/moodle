@@ -143,9 +143,6 @@
                 $exists_count = 0;
                 $student_count = 0;
                 $teacher_count = 0;
-                $coursecreator_count = 0;
-                $admin_count = 0;
-                $other_count = 0;
                 $counter = 0;
                 //Iterate, filling counters
                 foreach ($recs as $rec) {
@@ -157,16 +154,10 @@
                     if (strpos($record->info,"exists") !== false) {
                         $exists_count++;
                     }
-                    if (strpos($record->info,"student")) {
+                    if (strpos($record->info,"student") !== false) {
                         $student_count++;
-                    } else if (strpos($record->info,"teacher")) {
+                    } else if (strpos($record->info,"teacher") !== false) {
                         $teacher_count++;
-                    } else if (strpos($record->info,"admin")) {
-                        $admin_count++;
-                    } else if (strpos($record->info,"coursecreator")) {
-                        $coursecreator_count++;
-                    } else if ($record->info == "new" or $record->info == "exists") {
-                        $other_count++;
                     }
                     //Do some output
                     $counter++;
@@ -183,9 +174,6 @@
                 echo "<ul>";
                 echo "<li>".get_string("students").": ".$student_count;
                 echo "<li>".get_string("teachers").": ".$teacher_count;
-                echo "<li>".get_string("coursecreators").": ".$coursecreator_count;
-                echo "<li>".get_string("administrators").": ".$admin_count;
-                echo "<li>".get_string("other").": ".$other_count;
                 echo "</ul>";
             } else {
                 notify("Something is wrong - no users were found!");

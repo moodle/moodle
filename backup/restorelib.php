@@ -481,9 +481,12 @@
                 $is_teacher = !empty($user->roles['teacher']);
                 $is_student = !empty($user->roles['student']);
 
+                //Check if it's needed
+                $is_needed = !empty($user->roles['needed']);
+
                 //Calculate if it is a course user
-                //Has role teacher or student or admin or coursecreator
-                $is_course_user = ($is_teacher or $is_student);
+                //Has role teacher or student or needed
+                $is_course_user = ($is_teacher or $is_student or $is_needed);
 
                 //To store new ids created
                 $newid=null;
@@ -535,7 +538,7 @@
 
                 //Here, if create_roles, do it as necessary
                 if ($create_roles) {
-                    //Get the newid and currecnt info from backup_ids
+                    //Get the newid and current info from backup_ids
                     $data = backup_getid($restore->backup_unique_code,"user",$userid);
                     $newid = $data->new_id;
                     $currinfo = $data->info.",";
@@ -559,6 +562,11 @@
                             $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
                         }
                     } 
+                    if ($is_needed) {
+                        //Only put status in backup_ids
+                        $currinfo = $currinfo."needed,";
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                    }
                     if ($is_teacher) {
                         //If the record (teacher) doesn't exists
                         if (!record_exists("user_teachers","userid",$newid,"course", $restore->course_id)) {

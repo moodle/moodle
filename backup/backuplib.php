@@ -32,61 +32,75 @@
     //Return an array of info (name,value)
     function user_check_backup($course,$backup_unique_code,$backup_users) {
         //$backup_users=0-->all
-        //              1-->course
-        //              2-->needed-->NOT IMPLEMEMTED
+        //              1-->course (needed + enrolled)
 
         global $CFG;
         global $db;
 
         $count_users = 0;
         
-        //Select all users from user (only id)
-        //If there are a lot of users and we retrieve all the info->memory shortage !!
-        $users = get_records ("user","","","","id,id");
-        //If we have users
-        if ($users) {
+        //Calculate needed users (calling every xxxx_get_participants function)
+        $needed_users = backup_get_needed_users($course);
+
+        //Calculate enrolled users (students + teachers)
+        $enrolled_users = backup_get_enrolled_users($course);
+
+        //Calculate all users (every record in users table)
+        $all_users = backup_get_all_users();
+
+        //Calculate course users (needed + enrolled)
+        //First, needed
+        $course_users = $needed_users;
+        
+        //Now, enrolled
+        if ($enrolled_users) {
+            foreach ($enrolled_users as $enrolled_user) {
+                $course_users[$enrolled_user->id]->id = $enrolled_user->id; 
+            }
+        }
+       
+        //Now, depending of parameters, create $backupable_users
+        if ($backup_users == 0) {
+            $backupable_users = $all_users;
+        } else {
+            $backupable_users = $course_users;
+        }
+
+        //If we have backupable users
+        if ($backupable_users) {
             //Iterate over users putting their roles
-            foreach ($users as $user) {
-                $user->info = "";
+            foreach ($backupable_users as $backupable_user) {
+                $backupable_user->info = "";
                 //Is Admin in tables (not is_admin()) !!
-                if (record_exists("user_admins","userid",$user->id)) {
-                    $user->info .= "admin";
-                    $user->role_admin = true;
+                if (record_exists("user_admins","userid",$backupable_user->id)) {
+                    $backupable_user->info .= "admin";
                 }
                 //Is Course Creator in tables (not is_coursecreator()) !!
-                if (record_exists("user_coursecreators","userid",$user->id)) {
-                    $user->info .= "coursecreator";
-                    $user->role_coursecreator = true;
+                if (record_exists("user_coursecreators","userid",$backupable_user->id)) {
+                    $backupable_user->info .= "coursecreator";
                 }
                 //Is Teacher in tables (not is_teacher()) !!
-                if (record_exists("user_teachers","course",$course,"userid",$user->id)) {
-                    $user->info .= "teacher";
-                    $user->role_teacher = true;
+                if (record_exists("user_teachers","course",$course,"userid",$backupable_user->id)) {
+                    $backupable_user->info .= "teacher";
                 }
                 //Is Student in tables (not is_student()) !!
-                if (record_exists("user_students","course",$course,"userid",$user->id)) {
-                    $user->info .= "student";
-                    $user->role_student = true;
+                if (record_exists("user_students","course",$course,"userid",$backupable_user->id)) {
+                    $backupable_user->info .= "student";
+                }
+                //Is needed user (exists in needed_users) 
+                if ($needed_users[$backupable_user->id]) {
+                    $backupable_user->info .= "needed";
                 }
                 //Now create the backup_id record
                 $backupids_rec->backup_code = $backup_unique_code;
                 $backupids_rec->table_name = "user";
-                $backupids_rec->old_id = $user->id;
-                $backupids_rec->info = $user->info;
+                $backupids_rec->old_id = $backupable_user->id;
+                $backupids_rec->info = $backupable_user->info;
     
                 //Insert the record id. backup_users decide it.
                 //When all users
-                if ($backup_users == 0) { 
-                    $status = insert_record("backup_ids",$backupids_rec,false);
-                    $count_users++;
-                //When course users
-                } else if ($backup_users == 1) {
-                     //Only if user has any role
-                    if ($backupids_rec->info) {
-                        $status = insert_record("backup_ids",$backupids_rec,false);
-                        $count_users++;
-                    }
-                }
+                $status = insert_record("backup_ids",$backupids_rec,false);
+                $count_users++;
             }
             //Do some output     
             backup_flush(30);
@@ -98,6 +112,101 @@
         $info[0][1] = $count_users;
 
         return $info;
+    }
+
+    //Returns every needed user (participant) in a course
+    //It uses the xxxx_get_participants() function.
+    //WARNING: It returns only NEEDED users, not every 
+    //   every student and teacher in the course, so it
+    //must be merged with backup_get_enrrolled_users !!
+
+    function backup_get_needed_users ($courseid) {
+        
+        global $CFG;
+
+        $result = false;
+
+        $course_modules = get_records_sql ("SELECT cm.id, m.name, cm.instance
+                                            FROM {$CFG->prefix}modules m,
+                                                 {$CFG->prefix}course_modules cm
+                                            WHERE m.id = cm.module and
+                                                  cm.course = '$courseid'");
+
+        if ($course_modules) {
+            //Iterate over each module
+            foreach ($course_modules as $course_module) {
+                $modlib = "$CFG->dirroot/mod/$course_module->name/lib.php";
+                $modgetparticipants = $course_module->name."_get_participants";
+                if (file_exists($modlib)) {
+                    include_once($modlib);
+                    if (function_exists($modgetparticipants)) {
+                        $module_participants = $modgetparticipants($course_module->instance);
+                        //Add them to result
+                        if ($module_participants) {
+                            foreach ($module_participants as $module_participant) {
+                                $result[$module_participant->id]->id = $module_participant->id; 
+                            }
+                        }
+                    }
+                 }            
+            }
+        }
+    
+        return $result;
+
+    }
+
+    //Returns every enrolled user (student and teacher) in a course
+
+    function backup_get_enrolled_users ($courseid) {
+
+        global $CFG;
+
+        $result = false;
+        
+        //Get teachers
+        $teachers = get_records_sql("SELECT DISTINCT userid,userid
+                     FROM {$CFG->prefix}user_teachers
+                     WHERE course = '$courseid'");
+        //Get students
+        $students = get_records_sql("SELECT DISTINCT userid,userid
+                     FROM {$CFG->prefix}user_students
+                     WHERE course = '$courseid'");
+        //Add teachers
+        if ($teachers) {
+            foreach ($teachers as $teacher) {
+                $result[$teacher->userid]->id = $teacher->userid;
+            }
+        }
+        //Add students
+        if ($students) {
+            foreach ($students as $student) {
+                $result[$student->userid]->id = $student->userid;
+            }
+        }
+
+        return $result;
+    }
+
+    //Returns all users (every record in users table)
+
+    function backup_get_all_users() {
+
+        global $CFG;
+
+        $result = false;
+
+        //Get users
+        $users = get_records_sql("SELECT DISTINCT id,id
+                                  FROM {$CFG->prefix}user");
+        //Add users
+        if ($users) {
+            foreach ($users as $user) {
+                $result[$user->id]->id = $user->id;
+            }
+        }
+
+        return $result;
     }
 
     //Calculate the number of log entries to backup
@@ -611,10 +720,12 @@
                 $user->iscoursecreator = strpos($user->info,"coursecreator");
                 $user->isteacher = strpos($user->info,"teacher");
                 $user->isstudent = strpos($user->info,"student");
+                $user->isneeded = strpos($user->info,"needed");
                 if ($user->isadmin!==false or 
                     $user->iscoursecreator!==false or 
                     $user->isteacher!==false or 
-                    $user->isstudent!==false) {
+                    $user->isstudent!==false or
+                    $user->isneeded!==false) {
                     //Begin ROLES tag
                     fwrite ($bf,start_tag("ROLES",4,true));
                     //PRINT ROLE INFO
@@ -665,7 +776,15 @@
                         //Print ROLE end
                         fwrite ($bf,end_tag("ROLE",5,true));   
                     }
-
+                    //Needed
+                    if ($user->isneeded!==false) {
+                        //Print ROLE start
+                        fwrite ($bf,start_tag("ROLE",5,true));
+                        //Print Role info
+                        fwrite ($bf,full_tag("TYPE",6,false,"needed"));
+                        //Print ROLE end
+                        fwrite ($bf,end_tag("ROLE",5,true));
+                    }
 
                     //End ROLES tag
                     fwrite ($bf,end_tag("ROLES",4,true));
