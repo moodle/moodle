@@ -41,7 +41,7 @@
                 // now remove the ones that are already used in this quiz
                 if ($questionids = explode(',', $modform->questions)) {
                     foreach ($questionids as $questionid) {
-                        unset($existingquestions[$key]);
+                        unset($existingquestions[$questionid]);
                     }
                 }
                 // now take as many of these as needed
