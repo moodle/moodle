@@ -1011,7 +1011,7 @@ function get_course_students($courseid, $sort="u.lastaccess DESC") {
 
     global $CFG;
 
-    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay,
+    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                             u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_students s
@@ -1025,7 +1025,9 @@ function get_course_teachers($courseid, $sort="t.authority ASC") {
 
     global $CFG;
 
-    return get_records_sql("SELECT u.*,t.authority,t.role FROM {$CFG->prefix}user u, {$CFG->prefix}user_teachers t
+    return get_records_sql("SELECT u.*,t.authority,t.role 
+                            FROM {$CFG->prefix}user u, 
+                                 {$CFG->prefix}user_teachers t
                             WHERE t.course = '$courseid' AND t.userid = u.id AND u.deleted = '0'
                             ORDER BY $sort");
 }
@@ -1068,7 +1070,7 @@ function get_site_users($sort="u.lastaccess DESC") {
 
     //$db->debug = true;
 
-    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay,
+    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                                    u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}user_students s, 
