@@ -61,8 +61,6 @@
     print_header();
     print_heading(get_string("previewquestion","quiz"));
 
-    echo "<p align='center'><input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\"></p>";
-
     if (empty($question->id)) {
         $question->id = "";
     }
@@ -88,47 +86,38 @@
       $answers = array();
       $feedbacks = array();
       $qids = array();
+      $fraction = 0;
 
       foreach ($rawanswers as $key => $value) { // Parse input for question->response
         $postedId = quiz_extract_posted_id($key);
-        if ($id == $postedId) {
-          $question->response[$key] = trim($value);
-          $questionType = $QUIZ_QTYPES[$question->qtype]->name();
-          $rezult = get_exp_answers($id); //answers from the database
-
-          if($rezult) {
-            foreach ($rezult as $qid => $answer) {
-              if($qid == $value || $answer->answer == $value) {
-                $feedbacks[$qid] = "&nbsp;-&nbsp;<span class=\"feedbacktext\">".format_text($answer->feedback, true, false)."</span>";
-                if($answer->fraction > 0)
-                  $answers[$qid] = "<span class=\"highlight\">" . $answer->answer . "</span>";
-                else
-                  $answers[$qid] = $answer->answer;
-              } else {
-                if(!isset($answers[$qid])) {
-                  if($answer->fraction > 0)
-                    $answers[$qid] = "<span class=\"highlight\">" . $answer->answer . "</span>";
-                  else
-                    $answers[$qid] = $answer->answer;
-                  $feedbacks[$qid] = '';
-                }
-              }
-              $qids[] = $qid;
-            }
-          }//end if rezult
-        }//end if pId==id
+        if ($id == $postedId) $question->response[$key] = trim($value);
       }//end for each rowanswers
 
       print_simple_box_start("center", "90%");
-      $QUIZ_QTYPES[$question->qtype]->print_question
-            (1, 0, $question, true, $resultdetails);
 
-      $qids = array_unique($qids); //erease duplicates
-      for($i = 0; $i < count($qids); $i++) {
-        global $THEME;
-        echo "<p align=\"left\">" . $answers[$qids[$i]] . format_text($feedbacks[$qids[$i]], true, false)."</p>";
-      }
+      //simulate quiz only for quiestion previews
+      class FakeQuiz {
+        var $correctanswers;
+        var $feedback;
+        var $grade;
+        function FakeQuiz()
+        {
+          $this->correctanswers = 1;
+          $this->feedback = 1;
+          $this->grade = 1;
+        }
+      };
+
+      $question->maxgrade = 1; //this shouldn't be like that
+      $resultdetails = $QUIZ_QTYPES[$question->qtype]->grade_response($question, quiz_qtype_nameprefix($question));
+      $quiz = new FakeQuiz();
+
+      $QUIZ_QTYPES[$question->qtype]->print_question
+                                      (1, $quiz, $question, true, $resultdetails);
+
       print_simple_box_end();
+      echo "<p align=\"center\"><input name=\"backbtn\" type=\"button\" onclick=\"history.back()\" value=\"".get_string("back", "quiz")."\"/>\n";
+      echo "<input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\"></p>\n";
 
     } else {//show question list
       echo "<form method=\"post\" action=\"preview.php\" $onsubmit>\n";
@@ -142,6 +131,7 @@
       echo "<br />";
       echo "<center>";
       echo "<input name=\"submit\" type=\"submit\" value=\"".get_string("checkanswer", "quiz")."\"/>\n";
+      echo "<input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\">";
       echo "</center>";
       echo "</form>";
     }
