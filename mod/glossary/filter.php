@@ -18,7 +18,17 @@
                 break;
         }
 
-        $glossarieslist = get_records_select("glossary", "usedynalink != 0 and (course = $courseid or globalglossary != 0)","globalglossary, id");
+        $glossarieslist = get_records_sql ("SELECT g.* 
+                                            FROM {$CFG->prefix}glossary g,
+                                                 {$CFG->prefix}course_modules cm,
+                                                 {$CFG->prefix}modules m
+                                            WHERE m.name = 'glossary' AND
+                                                  cm.module = m.id AND
+                                                  cm.visible = 1 AND
+                                                  g.id = cm.instance AND                                         
+                                                  g.usedynalink != 0 AND
+                                                  (g.course = '$courseid' OR g.globalglossary = 1)
+                                            ORDER BY g.globalglossary, g.id");
         if ( $glossarieslist ) {
             $glossaries = "";
             foreach ( $glossarieslist as $glossary ) {
