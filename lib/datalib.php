@@ -2384,6 +2384,9 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
     }
     set_field('course_categories', 'coursecount', $count, 'id', $categoryid);
 
+    // $n could need updating 
+    $n = get_field_sql("SELECT MAX(sortorder) from {$CFG->prefix}course WHERE category=$categoryid");
+
     if ($categories = get_categories($categoryid)) {
         foreach ($categories as $category) {
             $n = fix_course_sortorder($category->id, $n);
