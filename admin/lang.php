@@ -15,6 +15,7 @@
     }
 
     $stradministration = get_string("administration");
+    $strconfiguration = get_string("configuration");
     $strlanguage = get_string("language");
     $strcurrentlanguage = get_string("currentlanguage");
     $strmissingstrings = get_string("missingstrings");
@@ -39,7 +40,8 @@
     $currentlang = current_language();
 
     print_header("$site->shortname: $title", "$site->fullname",
-                 "<a href=\"index.php\">$stradministration</a> -> $navigation");
+                 "<a href=\"index.php\">$stradministration</a> -> ".
+                 "<a href=\"configure.php\">$strconfiguration</a> -> $navigation");
 
     if (!$mode) {
         print_heading("$strcurrentlanguage: $currentlang - ".get_string("thislanguage"));

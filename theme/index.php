@@ -31,6 +31,7 @@
     }
 
     $stradministration = get_string("administration");
+    $strconfiguration = get_string("configuration");
     $strthemes = get_string("themes");
     $strpreview = get_string("preview");
     $strsavechanges = get_string("savechanges");
@@ -38,7 +39,8 @@
     $strthemesaved = get_string("themesaved");
 
     print_header("$site->shortname: $strthemes", $site->fullname, 
-                 "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strthemes");
+                 "<a href=\"$CFG->wwwroot/admin/index.php\">$stradministration</a> -> ".
+                 "<a href=\"$CFG->wwwroot/admin/configure.php\">$strconfiguration</a> -> $strthemes");
 
     if ($choose) {
         if (set_config("theme", $choose)) {

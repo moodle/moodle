@@ -683,38 +683,36 @@ function print_admin_links ($siteid, $width=180) {
     global $CFG, $THEME;
     
     if (empty($THEME->custompix)) {
-        $icon = "<img src=\"$CFG->wwwroot/pix/i/admin.gif\" height=16 width=16 alt=\"\">";
+        $pixpath = "$CFG->wwwroot/pix";
     } else {
-        $icon = "<img src=\"$CFG->wwwroot/theme/$CFG->theme/pix/i/admin.gif\" height=16 width=16 alt=\"\">";
+        $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
     }
 
     if (isadmin()) {
-	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/config.php\">".get_string("configvariables")."</a>";
-		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/site.php\">".get_string("sitesettings")."</a>";
-		$modicon[]=$icon;
+	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">".get_string("configuration")."</a>...";
+		$modicon[]="<img src=\"$pixpath/i/admin.gif\" height=16 width=16 alt=\"\" />";
+
+	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">".get_string("users")."</a>...";
+		$modicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\" />";
     }
+
     if (iscreator()) {
 	    $moddata[]="<a href=\"$CFG->wwwroot/course/index.php?edit=on\">".get_string("courses")."</a>";
-		$modicon[]=$icon;
+		$modicon[]="<img src=\"$pixpath/i/course.gif\" height=16 width=16 alt=\"\" />";
         $fulladmin = "";
     }
+
     if (isadmin()) {
-	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">".get_string("users")."</a>";
-		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/theme/index.php\">".get_string("themes")."</a>";
-		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/lang.php\">".get_string("language")."</a>";
-		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/modules.php\">".get_string("managemodules")."</a>";
-		$modicon[]=$icon;
 		$moddata[]="<a href=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("logs")."</a>";
-		$modicon[]=$icon;
+		$modicon[]="<img src=\"$pixpath/i/log.gif\" height=16 width=16 alt=\"\" />";
+
 		$moddata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$siteid\">".get_string("sitefiles")."</a>";
-		$modicon[]=$icon;
+		$modicon[]="<img src=\"$pixpath/i/files.gif\" height=16 width=16 alt=\"\" />";
+
 		if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
-            $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a>";
-			$modicon[]=$icon;
+            $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".
+                        get_string("managedatabase")."</a>";
+		    $modicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\" />";
 		}
         $fulladmin = "<p><a href=\"$CFG->wwwroot/$CFG->admin/\">".get_string("admin")."</a>...";
     }

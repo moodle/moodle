@@ -1073,6 +1073,114 @@ function print_table($table) {
     return true;
 }
 
+function make_table($table) {
+// Creates  a nicely formatted table and returns it
+// $table is an object with several properties.
+//     $table->head      is an array of heading names.
+//     $table->align     is an array of column alignments
+//     $table->size      is an array of column sizes
+//     $table->wrap      is an array of "nowrap"s or nothing
+//     $table->data[]    is an array of arrays containing the data.
+//     $table->width     is an percentage of the page
+//     $table->class     is a class
+//     $table->fontsize  is the size of all the text
+//     $table->tablealign     align the whole table
+//     $table->cellpadding    padding on each cell
+//     $table->cellspacing    spacing between cells
+
+    if (isset($table->align)) {
+        foreach ($table->align as $key => $aa) {
+            if ($aa) {
+                $align[$key] = " align=\"$aa\"";
+            } else {
+                $align[$key] = "";
+            }
+        }
+    }
+    if (isset($table->size)) {
+        foreach ($table->size as $key => $ss) {
+            if ($ss) {
+                $size[$key] = " width=\"$ss\"";
+            } else {
+                $size[$key] = "";
+            }
+        }
+    }
+    if (isset($table->wrap)) {
+        foreach ($table->wrap as $key => $ww) {
+            if ($ww) {
+                $wrap[$key] = " nowrap ";
+            } else {
+                $wrap[$key] = "";
+            }
+        }
+    }
+
+    if (empty($table->width)) {
+        $table->width = "80%";
+    }
+
+    if (empty($table->tablealign)) {
+        $table->tablealign = "center";
+    }
+
+    if (empty($table->cellpadding)) {
+        $table->cellpadding = "5";
+    }
+
+    if (empty($table->cellspacing)) {
+        $table->cellspacing = "1";
+    }
+
+    if (empty($table->class)) {
+        $table->class = "generaltable";
+    }
+
+    if (empty($table->fontsize)) {
+        $fontsize = "";
+    } else {
+        $fontsize = "<font size=\"$table->fontsize\">";
+    }
+
+    $output =  "<table width=\"$table->width\" valign=top align=\"$table->tablealign\" ";
+    $output .= " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class\">\n";
+
+    if (!empty($table->head)) {
+        $output .= "<tr>";
+        foreach ($table->head as $key => $heading) {
+            if (!isset($size[$key])) {
+                $size[$key] = "";
+            } 
+            if (!isset($align[$key])) {
+                $align[$key] = "";
+            } 
+            $output .= "<th valign=top ".$align[$key].$size[$key]." nowrap class=\"{$table->class}header\">$fontsize$heading</th>";
+        }
+        $output .= "</tr>\n";
+    }
+
+    foreach ($table->data as $row) {
+        $output .= "<tr valign=top>";
+        foreach ($row as $key => $item) {
+            if (!isset($size[$key])) {
+                $size[$key] = "";
+            } 
+            if (!isset($align[$key])) {
+                $align[$key] = "";
+            } 
+            if (!isset($wrap[$key])) {
+                $wrap[$key] = "";
+            } 
+            $output .= "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"{$table->class}cell\">$fontsize$item</td>";
+        }
+        $output .= "</tr>\n";
+    }
+    $output .= "</table>\n";
+
+    return $output;
+}
+
+
 function print_editing_switch($courseid) {
     global $CFG, $USER;
 

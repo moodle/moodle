@@ -21,6 +21,7 @@
 /// Print headings
 
     $stradministration = get_string("administration");
+    $strconfiguration = get_string("configuration");
     $strmanagemodules = get_string("managemodules");
     $strdelete = get_string("delete");
     $strhide = get_string("hide");
@@ -29,7 +30,8 @@
     $stractivitymodule = get_string("activitymodule");
 
     print_header("$site->shortname: $strmanagemodules", "$site->fullname", 
-                 "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strmanagemodules");
+                 "<a href=\"index.php\">$stradministration</a> -> ".
+                 "<a href=\"configure.php\">$strconfiguration</a> -> $strmanagemodules");
 
     print_heading($strmanagemodules);
    

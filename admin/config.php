@@ -62,11 +62,13 @@
     }
 
     $stradmin = get_string("administration");
+    $strconfiguration = get_string("configuration");
     $strconfigvariables = get_string("configvariables");
 
     if ($site) {
         print_header("$site->shortname: $strconfigvariables", $site->fullname,
-                      "<A HREF=\"index.php\">$stradmin</A> -> $strconfigvariables", $focus);
+                      "<a href=\"index.php\">$stradmin</a> -> ".
+                      "<a href=\"configure.php\">$strconfiguration</a> -> $strconfigvariables", $focus);
         print_heading($strconfigvariables);
     } else {
         print_header();

@@ -85,6 +85,7 @@
     }
 
     $stradmin = get_string("administration");
+    $strconfiguration = get_string("configuration");
     $strsitesettings = get_string("sitesettings");
 
     if ($firsttime) {
@@ -94,7 +95,8 @@
         echo "<br />";
     } else {
         print_header("$site->shortname: $strsitesettings", "$site->fullname",
-                      "<A HREF=\"index.php\">$stradmin</A> -> $strsitesettings", "$focus");
+                      "<a href=\"index.php\">$stradmin</a> -> ".
+                      "<a href=\"configure.php\">$strconfiguration</a> -> $strsitesettings", "$focus");
         print_heading($strsitesettings);
     }
 
