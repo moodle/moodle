@@ -51,7 +51,7 @@ CREATE TABLE prefix_forum_posts (
   userid int(10) unsigned NOT NULL default '0',
   created int(10) unsigned NOT NULL default '0',
   modified int(10) unsigned NOT NULL default '0',
-  mailed tinyint(1) unsigned NOT NULL default '0',
+  mailed tinyint(2) unsigned NOT NULL default '0',
   subject varchar(255) NOT NULL default '',
   message text NOT NULL,
   format tinyint(2) NOT NULL default '0',
@@ -103,4 +103,3 @@ INSERT INTO prefix_log_display VALUES ('forum', 'view discussion', 'forum_discus
 INSERT INTO prefix_log_display VALUES ('forum', 'view forum', 'forum', 'name');
 INSERT INTO prefix_log_display VALUES ('forum', 'subscribe', 'forum', 'name');
 INSERT INTO prefix_log_display VALUES ('forum', 'unsubscribe', 'forum', 'name');
-

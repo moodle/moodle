@@ -633,10 +633,6 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004012900) {
         table_column("config", "value", "value", "text", "", "", "");
     }
-    
-    if ($oldversion < 2004013000) {
-        table_column("forum_posts", "mailed", "mailed", "tinyint", "2");
-    }
 
     return $result;
 

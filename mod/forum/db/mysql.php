@@ -100,6 +100,10 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2004012200) {
       table_column("forum_discussions", "", "groupid", "integer", "10", "unsigned", "0", "", "userid");
   }
+
+  if ($oldversion < 2004013000) {
+      table_column("forum_posts", "mailed", "mailed", "tinyint", "2");
+  }
   
   return true;
 
