@@ -221,7 +221,18 @@
         $form->fullmodulename  = $fullmodulename;
         $form->instancename = $instance->name;
 
+        $strdeletecheck = get_string("deletecheck", "", "$form->fullmodulename");
+        $strdeletecheckfull = get_string("deletecheckfull", "", "$form->fullmodulename '$form->instancename'");
+
+        print_header("$course->shortname: $strdeletecheck", "$course->fullname",
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
+                      $strdeletecheck");
+
+        print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
+        print_heading($strdeletecheckfull);
         include_once("mod_delete.html");
+        print_simple_box_end();
+        print_footer($course);
 
         exit;
 

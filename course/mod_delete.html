@@ -1,17 +1,13 @@
-<table align=center cellpadding=20> <tr> <td colspan=2 bgcolor=#ffaaaa>
+<form name="form" method="post" action="<?php echo "$CFG->wwwroot/course/mod.php" ?>">
 
-<CENTER>
-<FORM name="form" method="post" action="<?=$ME ?>">
-<? print_heading(get_string("deletecheckfull", "", "$form->fullmodulename '$form->instancename'")); ?>
 <input type="hidden" name=mode         value="delete">
-<input type="hidden" name=section      value="<? echo $form->section; ?>">
-<input type="hidden" name=course       value="<? p($form->course) ?>">
-<input type="hidden" name=coursemodule value="<? p($form->coursemodule) ?>">
-<input type="hidden" name=modulename   value="<? p($form->modulename) ?>">
-<input type="hidden" name=instance     value="<? p($form->instance) ?>">
-  <input type="submit" value=" <? print_string("yes")?> "> 
-  <input type=button value=" <? print_string("no")?> " onclick="javascript:history.go(-1);">
-</FORM>
+<input type="hidden" name=section      value="<?php p($form->section) ?>">
+<input type="hidden" name=course       value="<?php p($form->course) ?>">
+<input type="hidden" name=coursemodule value="<?php p($form->coursemodule) ?>">
+<input type="hidden" name=modulename   value="<?php p($form->modulename) ?>">
+<input type="hidden" name=instance     value="<?php p($form->instance) ?>">
 
-</td></tr></table>
+<input type="submit" value=" <?php print_string("yes")?> "> 
+<input type=button value=" <?php print_string("no")?> " onclick="javascript:history.go(-1);">
 
+</form>
