@@ -1138,8 +1138,9 @@
 
     //This function encode things to make backup multi-site fully functional
     //It does this conversions:
-    //    - $CFG->wwwroot/file.php/courseid ----------------------> $@FILEPHP@$
-    //    - Links to forums everywhere (DB) are encoded.
+    // - $CFG->wwwroot/file.php/courseid ------------------> $@FILEPHP@$ (slasharguments links)
+    // - $CFG->wwwroot/file.php?file=/courseid ------------> $@FILEPHP@$ (non-slasharguments links)
+    // - Every module xxxx_encode_content_links() is executed too
     //
     function backup_encode_absolute_links($content) {
 
@@ -1156,9 +1157,10 @@
         }
 
         //First, we check for every call to file.php inside the course
-        $search = array($CFG->wwwroot."/file.php/".$mypreferences->backup_course);
+        $search = array($CFG->wwwroot.'/file.php/'.$mypreferences->backup_course,
+                        $CFG->wwwroot.'/file.php?file=/'.$mypreferences->backup_course);
 
-        $replace = array("$@FILEPHP@$");
+        $replace = array('$@FILEPHP@$','$@FILEPHP@$');
 
         $result = str_replace($search,$replace,$content);
 
