@@ -200,7 +200,7 @@ if ($form->hours >1) {
 <INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>">
 <BR />
 <?php
-  echo "<a href=\"../mod/attendance/add.php?id=".$form->course . "&section=".$form->section ."\">Add multiple rolls</a><br /><br />";
+  echo "<a href=\"../mod/attendance/add.php?id=".$form->course . "&section=".$form->section ."\">" . get_string("addmultiple","attendance") . "</a><br /><br />";
 ?>
 <INPUT type="submit" value="<?php print_string("savechanges") ?>">
 <INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>">
