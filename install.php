@@ -306,7 +306,7 @@ if ($nextstage == 5) {
     $str .= '$CFG->admin     = \''.$INSTALL['admindirname']."';\r\n";
     $str .= "\r\n";
 
-    $str .= '$CFG->directorypermissions = 00777;'."\r\n";
+    $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
     $str .= "\r\n";
 
     $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n";
