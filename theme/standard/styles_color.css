@@ -61,6 +61,7 @@ th {
 /* entry-page index.php */ 
 .sitetopic {
     border-color:#DDDDDD; /* borders */
+    background-color:#FFFFFF; /* cellheading */
 }
 
 /* summary of a user in a nice little box - weblib.php */
