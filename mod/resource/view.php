@@ -88,111 +88,100 @@
             break;
 
         case UPLOADEDFILE:
+            /// Possible display modes are:
+            /// File displayed in a frame in a normal window
+            /// File displayed embedded in a normal page
+            /// File displayed in a popup window
+            /// File displayed emebedded in a popup window
+           
+
+            /// First, find out what sort of file we are dealing with.
             require_once("../../files/mimetypes.php");
+
+            $resourcetype = "";
+            $embedded = false;
+
+            $imagetypes = array('image/gif','image/jpg','image/png');
+            if (in_array(mimeinfo("type", $fullurl), $imagetypes)) {  // It's an image
+                $embedded = true;
+                $resourcetype = "image";
+
+            } else if (mimeinfo("icon", $fullurl) == "html.gif") {    // It's a web page
+                $resourcetype = "html";
+            }
+
+
+            /// Set up some variables
+
             $inpopup = !empty($_GET["inpopup"]);
 
-            if ($CFG->resource_filterexternalpages) {
-                if ($inpopup) {
-                    $fetchingprefix = "$CFG->wwwroot/mod/resouce/fetch.php?id=$cm->id&url=";
-                } else {
-                    $fetchingprefix = "fetch.php?id=$cm->id&url=";
-                }
-                // until we found a way to show uploaded files properly throught the 
-                // fetch_remote_file function
-                $fetchingprefix = "";
-            } else {
-                $fetchingprefix = "";
-            }
             if ($CFG->slasharguments) {
                 $fullurl = "$CFG->wwwroot/file.php/$course->id/$resource->reference";
             } else {
                 $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
             }
 
-            $embedded = false;
+            if ($CFG->resource_filterexternalpages and $resourcetype == "html") {
+                $fullurl = "$CFG->wwwroot/mod/resource/fetch.php?id=$cm->id&url=$fullurl";
+            }
 
-            $inlinetypes = array('image/gif','image/jpg','image/png');
 
-            if (in_array(mimeinfo("type", $fullurl), $inlinetypes)) {  // It's an image
-                $embedded = true;
-                $resourceimage = true;
-            } else {
-                $resourceimage = false;
-            } // Later, look for more things to embed
+            /// Now check whether we need to display a frameset
 
-            if (mimeinfo("icon", $fullurl) == "html.gif" or 
-                mimeinfo("icon", $fullurl) == "html.gif") {  //  It's a web page
-                $resourcehtml = true;
-            } else {
-                $resourcehtml = false;
-            } 
+            if (empty($frameset) and !$embedded and !$inpopup) { 
+                echo "<head><title>$course->shortname: $resource->name</title></head>\n";
+                echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
+                echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
+                echo "<frame src=\"$fullurl\">";
+                echo "</frameset>";
+                exit;
+            }
 
-            if ($inpopup) {
-                add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-                if ($embedded) {
+
+            /// We can only get here once per resource, so add an entry to the log
+
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+
+
+            /// If we are in a frameset, just print the top of it
+
+            if ($frameset == "top") { 
+                print_header($pagetitle, "$course->fullname", 
+                             "$navigation <a target=\"$CFG->framename\" href=\"$fullurl\">$resource->name</a>",
+                             "", "", true, update_module_button($cm->id, $course->id, $strresource), 
+                             navmenu($course, $cm, "parent"));
+                echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
+                echo "</body></html>";
+                exit;
+            }
+
+
+            /// Display the actual resource
+
+            if ($embedded) {       // Display resource embedded in page
+                if ($inpopup) {
                     print_header($pagetitle);
                     echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
                 } else {
-                    if ( $resourcehtml ) {
-                        redirect("$fetchingprefix$fullurl");
-                    } else {
-                        redirect($fullurl);
-                    }
-                    break;
+                    print_header($pagetitle, "$course->fullname", 
+                                 "$navigation <a target=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
+                                 "", "", true, update_module_button($cm->id, $course->id, $strresource), 
+                                 navmenu($course, $cm, "self"));
+                    echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
                 }
-
-            } else if ($frameset == "top" or $embedded) {
-
-                if ($frameset == "top") {
-                    $targetwindow = "parent";
-                } else {
-                    $targetwindow = "self";
-                }
-
-                print_header($pagetitle, "$course->fullname", 
-                             "$navigation <a target=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
-                             "", "", true, update_module_button($cm->id, $course->id, $strresource), 
-                             navmenu($course, $cm, $targetwindow));
-                echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
-                add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-            }
-            
-            if ($embedded) {       // Display resource embedded in page
-                if ($resourceimage) {  
+                if ($resourcetype == "image") {  
                     echo "<br />";
                     echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
-                    echo "<br />";
-                } else if ($resourcehtml and $fetchingprefix) {
-                    echo "<br />";
-                    
-                    $content = resource_fetch_remote_file("$fetchingprefix$fullurl");
-                    echo $content->results;
-                    
                     echo "<br />";
                 }
                 if (!$inpopup) {
                     print_footer($course);
                 }
-                
-            } else {               // Display resource in a frame of it's own.
-                echo "<head><title>$course->shortname: $resource->name</title></head>\n";
-                echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
-                echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
-
-                if ($CFG->slasharguments) {
-                    $fullurl = "$CFG->wwwroot/file.php/$course->id/$resource->reference";
-                } else {
-                    $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
-                }
-
-                if ( $resourcehtml  and $fetchingprefix ) {
-                    echo "<frame src=\"fetch.php?id=$cm->id&url=$fetchingprefix$fullurl\">";
-                } else {
-                    echo "<frame src=\"$fullurl\">";
-                }
-                echo "</frameset>";
+            } else {              // Display the resource on it's own
+                redirect($fullurl);
             }
             break;
+
 
         case PLAINTEXT:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
