@@ -18,6 +18,8 @@
     unset($admin);
     unset($teacher);
 
+    $search = trim($search);
+
     if (! record_exists("user_admins")) {   // No admin user yet
 
         $user->firstname = get_string("admin");
