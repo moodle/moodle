@@ -6,7 +6,7 @@ CREATE TABLE prefix_workshop (
   id SERIAL PRIMARY KEY,
   course INT8  NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  description text NOT NULL,
+  description text NOT NULL default '',
   nelements INT  NOT NULL default '10',
   phase INT2  NOT NULL default '0',
   format INT2  NOT NULL default '0',
@@ -70,8 +70,8 @@ CREATE TABLE prefix_workshop_assessments (
   gradinggrade INT NOT NULL default '0',
   mailed INT2  NOT NULL default '0',
   resubmission INT2  NOT NULL default '0',
-  generalcomment text NOT NULL,
-  teachercomment text NOT NULL
+  generalcomment text NOT NULL default '',
+  teachercomment text NOT NULL default ''
   );
 # --------------------------------------------------------
 
@@ -83,7 +83,7 @@ CREATE TABLE prefix_workshop_elements (
   id SERIAL PRIMARY KEY,
   workshopid INT8  NOT NULL default '0',
   elementno INT  NOT NULL default '0',
-  description text NOT NULL,
+  description text NOT NULL default '',
   scale INT  NOT NULL default '0',
   maxscore INT  NOT NULL default '1',
   weight float NOT NULL default '1.0'
@@ -110,7 +110,7 @@ CREATE TABLE prefix_workshop_comments (
   userid int8 NOT NULL default '0',
   timecreated int8  NOT NULL default '0',
   mailed int2  NOT NULL default '0',
-  comments text NOT NULL
+  comments text NOT NULL default ''
 );
 
 
