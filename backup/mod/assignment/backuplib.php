@@ -55,8 +55,10 @@
             }
         }
         //if we've selected to backup users info, then backup files too
-        if ($preferences->mods["assignment"]->userinfo) {
-            $status = backup_assignment_files($bf,$preferences);
+        if ($status) {
+            if ($preferences->mods["assignment"]->userinfo) {
+                $status = backup_assignment_files($bf,$preferences);
+            }
         }
         return $status;  
     }
