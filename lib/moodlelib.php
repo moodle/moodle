@@ -51,7 +51,7 @@ function print_footer ($course=NULL) {
     global $USER, $CFG, $THEME;
 
     if ($course) {
-        if ($course == "home") {   // special case for site home page
+        if ($course == "home") {   // special case for site home page - please do not remove
             if (!$dversion = get_field("config", "value", "name", "version")) {
                 $dversion = "unknown!";
             }
