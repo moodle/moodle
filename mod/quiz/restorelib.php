@@ -271,10 +271,10 @@
 
             //Do some output
             if ($status) {
-                echo "<li>".get_string("category")." \"".$quiz_cat->name."\"<br />";
+                echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\"<br />";
             } else {
                 //We must never arrive here !!
-                echo "<li>".get_string("category")." \"".$quiz_cat->name."\" Error!<br />";
+                echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\" Error!<br />";
             }
             backup_flush(300);
 
