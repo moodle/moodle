@@ -201,7 +201,7 @@
         }
 
         foreach ($students as $key => $student) {
-            $students[$key]->country = $countries[$student->country];
+            $students[$key]->country = ($student->country) ? $countries[$student->country] : '';
         }
         if ($sort == "country") {  // Need to re-sort by full country name, not code
             foreach ($students as $student) {
