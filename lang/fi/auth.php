@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 unstable development (2004092000)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['auth_common_settings'] = 'Yleiset asetukset';
@@ -22,7 +22,10 @@ $string['auth_emaildescription'] = 'S‰hkˆpostivarmistus on oletusarvoinen tunnis
 Kun k‰ytt‰j‰ luo itselleen tunnuksen, l‰hetet‰‰n varmistusviesti
 k‰ytt‰j‰lle. Viesti sis‰lt‰‰ linkin, mink‰ avulla k‰ytt‰j‰ voi aktivoida tunnuksensa.';
 $string['auth_emailtitle'] = 'K‰yt‰ s‰hkˆpostivarmistusta';
-$string['auth_fccreators'] = 'T‰m‰n ryhm‰n(ryhmien) j‰senet saavat luoda uusia kursseja. Eroittelu useat ryhm‰nimet \';\'-merkill‰. Nimet on oltava t‰ysin samoin kuin FirstClass palvelimella.';
+$string['auth_fccreators'] = 'T‰m‰n ryhm‰n(ryhmien) j‰senet saavat luoda uusia kursseja. Erottele useat ryhm‰nimet \';\'-merkill‰. Nimet on oltava t‰ysin samoin kuin FirstClass palvelimella.';
+$string['auth_fcdescription'] = 'T‰m‰ menetelm‰ k‰ytt‰‰ FirstClass palvelinta tarkistaakseen ovatko annetttu k‰ytt‰j‰nimi ja salasana voimassa olevia.';
+$string['auth_fcpasswd'] = 'Salasana yll‰ olevalle tilille';
+$string['auth_fctitle'] = 'K‰yt‰ FirstClass palvelinta';
 $string['auth_imapdescription'] = 'T‰m‰ tapa k‰ytt‰‰ IMAP-palvelinta k‰ytt‰j‰tunnuksen ja salasanan tarkistamiseen.';
 $string['auth_imaphost'] = 'IMAP-palvelimen osoite. K‰yt‰ IP-numeroa, ‰l‰ domainnime‰.';
 $string['auth_imapport'] = 'IMAP-palvelimen portti, yleens‰ 143 tai 993.';
@@ -35,6 +38,7 @@ $string['auth_ldap_contexts'] = 'Lista konteksteista, miss‰ k‰ytt‰j‰t sijaitseva
 $string['auth_ldap_create_context'] = 'Jos luodaan s‰hkˆpostiviestill‰ tunnuksensa varmentaneet k‰ytt‰j‰t automaattisesti ldap-hakemistoon, m‰‰rit‰ t‰ss‰ konteksti, minne k‰ytt‰j‰t luodaan. On hyv‰ k‰ytt‰‰ jotain erityst‰ kontekstia, jotta v‰ltyt tietoturvariskeilt‰. T‰t‰ kontekstia ei tarvitse erikseen lis‰t‰ yll‰ olevaan muuttujaan.';
 $string['auth_ldap_creators'] = 'Lista ryhmist‰, mink‰ j‰senet voivat luoda uusia kursseja Moodleen. Erota useat ryhm‰t toisistaan \';\'-merkill‰. Esimerkiksi \'cn=teachers,ou=staff,o=myorg;\'';
 $string['auth_ldap_expiration_desc'] = 'Valitse \"Ei\" poistaaksesi vanhentuneiden salasanojen seurannan. Tai \"LDAP\" jos haluat n‰ytt‰‰ k‰ytt‰jille viestin kun heid‰n salasanansa on vanhenemassa.';
+$string['auth_ldap_expiration_warning_desc'] = 'p‰ivien m‰‰r‰ ennen salasanan voimassaolon loppumista on asetettu.';
 $string['auth_ldap_expireattr_desc'] = 'Valinnainen: ylim‰‰rit‰ haluamasi ';
 $string['auth_ldap_graceattr_desc'] = 'Valinnainen: ylim‰‰rit‰ graceLogin atribuutti';
 $string['auth_ldap_gracelogins_desc'] = 'K‰yt‰ graceLogin ominaisuutta. Esim Edirectory voidaan konfiguroida kirjaamaan k‰ytt‰j‰sis‰‰n  muutaman viel‰ kerran salasanan vanhenemisen j‰lkeen, jotta salana voidaan vaihtaa. JOs haluat antaa ilmoituksen kun k‰ytt‰j‰ k‰ytt‰‰ grace-logineja valise \"Kyll‰\".';
@@ -48,6 +52,7 @@ $string['auth_ldap_server_settings'] = 'LDAP palvelimen asetukset';
 $string['auth_ldap_update_userinfo'] = 'P‰ivit‰ k‰ytt‰j‰tiedot LDAP:ista Moodleen (etunimi, sukunimi, osoite..). Katso <a href=\"/auth/ldap/attr_mappings.php\">/auth/ldap/attr_mappings.php</a> tarkempia m‰‰rittelytietoja.';
 $string['auth_ldap_user_attribute'] = 'Valinnainen: ylim‰‰rit‰ attribuutti k‰ytt‰j‰nimille. Yleens‰ \'cn\'.';
 $string['auth_ldap_user_settings'] = 'K‰ytt‰jien etsint‰';
+$string['auth_ldap_user_type'] = 'Valitse kuinka k‰ytt‰j‰t tallennetaan LDAP:iin. T‰m‰ asetus myˆs m‰‰ritt‰‰ kuinka sis‰‰nkirjautumisen voimassaolo, vapaat sis‰‰nkirjautumiset ja k‰ytt‰jien luominen toimii';
 $string['auth_ldap_version'] = 'Palvelimella k‰ytett‰v‰ LDAP protokolla versio';
 $string['auth_ldapdescription'] = 'T‰m‰ tapa tarjoaa k‰ytt‰j‰tunnistuksen LDAP-palvelimelta. Jos salasana ja tunnus t‰sm‰‰v‰t, Moodle luo uuden k‰ytt‰j‰n  tietokantaansa. 
 
@@ -65,12 +70,17 @@ $string['auth_nntptitle'] = 'K‰yt‰ NNTP-palvelinta';
 $string['auth_nonedescription'] = 'K‰ytt‰j‰t voivat luoda vapaasti uuden tunnuksen ilman s‰hkˆpostivarmistusta. 
 Jos k‰yt‰t t‰t‰ tapaa, mieti, mit‰ tietoturva- tai yll‰pito-ongelmia t‰m‰ voi aiheuttaa.';
 $string['auth_nonetitle'] = 'Ei tunnistusta';
+$string['auth_pamdescription'] = 'T‰m‰ menetelm‰ k‰ytt‰‰ PAM:ia p‰‰st‰kseen k‰siksi t‰m‰n palvelimen alkuper‰isiin k‰ytt‰j‰nimiin. Sinun t‰ytyy asentaa <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a> p‰‰st‰ksesi k‰ytt‰m‰‰n t‰t‰ moduulia.';
+$string['auth_passwordisexpired'] = 'Salasanasi on vanhentunut. Haluatko vaihtaa salasanasi nyt?';
+$string['auth_passwordwillexpire'] = 'Salasanasi vanhentuu $a p‰iv‰ss‰. Haluatko vaihtaa salasanasi nyt?';
 $string['auth_pop3description'] = 'T‰m‰ tapa k‰ytt‰‰ POP3-palvelinta k‰ytt‰j‰n tunnistukseen.';
 $string['auth_pop3host'] = 'POP3-palvelimen osoite. K‰yt‰ IP-numeroa, ‰l‰ domainnime‰.';
+$string['auth_pop3mailbox'] = 'Postilaatikon nimi jonka kanssa yritet‰‰n yhteytt‰. (yleens‰ INBOX)';
 $string['auth_pop3port'] = 'POP3-palvelimen portti (yleens‰ 110 )';
 $string['auth_pop3title'] = 'K‰yt‰ POP3-palvelinta';
 $string['auth_pop3type'] = 'Palvelimen tyyppi. Jos k‰yt‰tte salattua yhteytt‰, valitse pop3cert.';
 $string['auth_updatelocal'] = 'P‰ivit‰ sis‰inen arvo';
+$string['auth_updatelocal_expl'] = '<p><b>P‰ivit‰ sis‰inen arvo:</b> Jos ei onnistu, kentt‰ p‰ivittyy joka kerta k‰ytt‰j‰n kirjautuessa tai k‰ytt‰j‰synkronoinnin yhteydess‰. Kent‰t jotka on asetettu p‰ivittym‰‰n paikallisesti tulisi lukita.</p> ';
 $string['auth_updateremote'] = 'P‰ivit‰ ulkoinen arvo';
 $string['auth_user_create'] = 'K‰ytt‰j‰n luonti';
 $string['auth_user_creation'] = 'K‰ytt‰j‰t voivat itse luoda tunnuksensa. K‰ytt‰j‰tiedot tarkistetaan s‰hkˆpostin avulla. Jos aktivoit t‰m‰n vaihtoehdon, muista myˆs m‰‰ritell‰ autentikointi-modulin muut t‰h‰n liittyv‰t asetukset.';
@@ -81,10 +91,16 @@ $string['changepassword'] = 'Salasananvaihto-URL';
 $string['changepasswordhelp'] = 'T‰ss‰ osoitteessa k‰ytt‰j‰t voivat vaihtaa unohtamansa salasanan. K‰ytt‰jille t‰m‰ n‰kyy painikkeena kirjautumissivulla ja heid‰n k‰ytt‰j‰tietosivullaan.';
 $string['chooseauthmethod'] = 'Valitse k‰ytt‰j‰ntunnistusmetodi: ';
 $string['forcechangepassword'] = 'Pakoita salasanan vaihto';
+$string['forcechangepassword_help'] = 'Pakota k‰ytt‰j‰t vaihtamaan salasanaa heid‰n seuraavalla Moodleen kirjautumiskerrallaan.';
+$string['forcechangepasswordfirst_help'] = 'Pakota k‰ytt‰j‰t vaihtamaan salasanaa heid‰n ensimm‰isell‰ Moodleen kirjautumiskerrallaan.';
 $string['guestloginbutton'] = 'Kirjaudu vieraana-painike';
 $string['instructions'] = 'Ohjeet';
 $string['md5'] = 'MD5-salaus';
+$string['parentlanguage'] = 'KƒƒNTƒJƒT: Jos kielell‰si on kantakieli jota Moodlen pit‰isi k‰ytt‰‰ merkkijonon ollessa kateissa, t‰smenn‰ sit‰ varten koodi t‰h‰n. Jos j‰t‰t t‰m‰n alueen tyhj‰ksi, k‰ytet‰‰n englantia. Esimerkki: nl';
 $string['plaintext'] = 'Selv‰kielinen teksti';
 $string['showguestlogin'] = 'Voit n‰ytt‰‰ tai piilottaa Kirjaudu vieraana-painikkeen kirjautumissivulla.';
+$string['stdchangepassword'] = 'K‰yt‰ norminmukaista Vaihda salasana Sivua';
+$string['thischarset'] = 'KƒƒNTƒJƒT: T‰smenn‰ kielen merkistˆ t‰h‰n. Huomaa, ett‰ kaikki teksti joka luodaan t‰m‰n kielen ollessa aktiivinen taltioidaan t‰t‰ merkistˆ‰ k‰ytt‰en, joten ‰l‰ muuta sit‰, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
+$string['thisdirection'] = 'KƒƒNTƒJƒT: T‰m‰ merkkijono t‰sment‰‰ tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syˆt‰ joko îltrî tai îrtlî.';
 
 ?>

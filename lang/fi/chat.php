@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['beep'] = 'kutsu';
@@ -41,6 +41,7 @@ $string['neverdeletemessages'] = 'Älä koskaan poista viestejä';
 $string['nextsession'] = 'Seuraava istunto';
 $string['noguests'] = 'Tämä chat ei ole avoinna vieraille';
 $string['nomessages'] = 'Ei viestejä';
+$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
 $string['repeatdaily'] = 'Joka päivä samaan aikaan';
 $string['repeatnone'] = 'Ei toistoja - julkaise vain määritellyt ajat';
 $string['repeattimes'] = 'Toista istunnot';
@@ -50,6 +51,8 @@ $string['seesession'] = 'Vilkaise tätä istuntoa';
 $string['sessions'] = 'Chat-istunnot';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'Vanhat istunnot näytetään kaikille';
+$string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
+$string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
 $string['viewreport'] = 'Näytä vanhat chat-istunnot';
 
 ?>

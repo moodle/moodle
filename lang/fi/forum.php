@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Tämä mahdollistaa RSS syötteet eri  keskustel
 $string['configlongpost'] = 'Tätä pitemmät keskustelut ovat pitkiä (HTML koodia ei lasketa mukaan).';
 $string['configmanydiscussions'] = 'Samalla sivulla näytettävien keskustelujen suurin määrä';
 $string['configmaxbytes'] = 'Oletusasetus liitetiedoston maksimikoolle koko sivustolla.';
+$string['configreplytouser'] = 'Kun foorumiposti on lähetetty, pitäisikö sen sisältää käyttäjien sähköpostiosoite, jotta vastaanottajat voisivat vastata henkilökohtaisesti ennemmin kuin foorumin kautta? Vaikka asetukseksi valittaisiin kyllä, käyttäjät voivat valita profiilissaan pitävänsä sähköpostiosoitteensa salaisena.';
 $string['configshortpost'] = 'Tätä lyhyemmät keskustelut ovat lyhyitä (HTML koodia ei lasketa mukaan).';
 $string['couldnotadd'] = 'Viestiäsi ei voida lisätä tuntemattoman virheen takia.';
 $string['couldnotdeleteratings'] = 'Valitettavasti viestiä ei voida poistaa, koska se on jo arvioitu';
@@ -89,6 +90,7 @@ $string['openmode0'] = 'Ei keskusteja, ei vastauksia';
 $string['openmode1'] = 'Ei keskusteluja, mutta vastaaminen sallitaan';
 $string['openmode2'] = 'Keskustelut ja vastaukset sallitaan';
 $string['parent'] = 'Naytä aiempi';
+$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
 $string['parentofthispost'] = 'Tämän viestin alku';
 $string['postadded'] = 'Viestisi on lisätty.<P>Sinulla $a aikaa muokata viestiä jos haluat muuttaa sitä.';
 $string['postincontext'] = 'Katso tätä viestiä asiayhteydessään';
@@ -145,6 +147,9 @@ $string['subscribestart'] = 'Lähetä kopiot viesteistä tälle keskustelualueelle s
 $string['subscribestop'] = 'En halua kopioita viesteistä tälle keskustelualueelle';
 $string['subscription'] = 'Tilaus';
 $string['subscriptions'] = 'Tilaukset';
+$string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
+$string['thisdirection'] = '
+KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
 $string['unsubscribe'] = 'Peru tämän keskustelualueen tilaus';
 $string['unsubscribed'] = 'Tilaamaton';
 $string['unsubscribeshort'] = 'Peru tilaus';

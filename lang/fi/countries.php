@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.3 development (2004050200)
+      // countries.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['AD'] = 'Andorra';
@@ -15,7 +15,7 @@ $string['AQ'] = 'Antarktis';
 $string['AR'] = 'Argentiina';
 $string['AS'] = 'Amerikan Samoa';
 $string['AT'] = 'Itävalta';
-$string['AU'] = 'Austraalia';
+$string['AU'] = 'Australia';
 $string['AW'] = 'Aruba';
 $string['AZ'] = 'Azerbaidzan';
 $string['BA'] = 'Bosnia-Herzegovina';
@@ -224,5 +224,10 @@ $string['ZA'] = 'Etelä-Afrikka';
 $string['ZM'] = 'Zambia';
 $string['ZR'] = 'Zaire';
 $string['ZW'] = 'Zimbabwe';
+$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
+$string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1
+
+';
+$string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
 
 ?>

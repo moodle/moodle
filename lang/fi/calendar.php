@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4 alpha (2004081500)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['calendar'] = 'Kalenteri';
@@ -53,6 +53,7 @@ $string['monthlyview'] = 'Kuukausinäkymä';
 $string['newevent'] = 'Uusi tapahtuma';
 $string['noupcomingevents'] = 'Ei tulevia tapahtumia';
 $string['oneevent'] = '1 tapahtuma';
+$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
 $string['pref_lookahead'] = 'Tulevien tapahtumien tarkastelu';
 $string['pref_maxevents'] = 'Tulevien tapahtumien listan maksimikoko';
 $string['pref_startwday'] = 'Viikon ensimmäinen päivä';
@@ -68,6 +69,8 @@ $string['shown'] = 'näkyvissä';
 $string['spanningevents'] = 'Tapahtumia käynnissä parhaillaan';
 $string['sun'] = 'Su';
 $string['sunday'] = 'Sunnuntai';
+$string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
+$string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
 $string['thu'] = 'To';
 $string['thursday'] = 'Torstai';
 $string['timeformat_12'] = '12-tuntinen (AP/IP)';

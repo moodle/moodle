@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['addcomment'] = 'Lisää kommentti';
@@ -129,6 +129,7 @@ $string['noentry'] = 'Hakusanoja ei löytynyt.';
 $string['notcategorised'] = 'Kategorisoimaton';
 $string['numberofentries'] = 'Hakusanojen lukumäärä';
 $string['onebyline'] = '(yksi riviä kohden)';
+$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
 $string['printerfriendly'] = 'Tulostukseen soveltuva versio';
 $string['question'] = 'Kysymys';
 $string['rate'] = 'Arvo';
@@ -156,6 +157,8 @@ $string['sortchronogically'] = 'Lajittele kronologisesti';
 $string['special'] = 'Erikoiset';
 $string['standardview'] = 'Selaa aakkosjärjestyksessä';
 $string['studentcanpost'] = 'Opiskelijat voivat lisätä tietueita';
+$string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
+$string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
 $string['totalentries'] = 'Hakusanojen kokonaismäärä';
 $string['usedynalink'] = 'Linkitä sanaston tietueet automaattisesti';
 $string['waitingapproval'] = 'Odotetaan hyväksyntää';

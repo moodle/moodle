@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['absentlong'] = 'Puuttuva';
@@ -47,6 +47,7 @@ $string['notesfor'] = 'Poikkeavat tiedot :';
 $string['noviews'] = 'Valitettavasti tunnuksellesi ei ole tietoja.';
 $string['of'] = ' / ';
 $string['pages'] = 'Sivut';
+$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
 $string['presentlong'] = 'Nykyinen';
 $string['presentshort'] = 'N';
 $string['saturday'] = 'La';
@@ -58,6 +59,8 @@ $string['tardiesperabsence'] = 'Kuinka monta myöhästymistä lasketaan poissaoloks
 $string['tardylong'] = 'Myöhästyminen';
 $string['tardyshort'] = 'M';
 $string['teacheredit'] = 'Osallistu';
+$string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
+$string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
 $string['thursday'] = 'To';
 $string['tuesday'] = 'Ti';
 $string['viewall'] = 'Katsele kaikkia läsnäololistoja';
