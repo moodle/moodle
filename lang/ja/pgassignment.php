@@ -10,8 +10,8 @@ $string['addamendassessmentelements'] = "評価要素の追加/修正";
 $string['afterdeadline'] = "提出日より \$a 日経過";
 $string['allgradeshaveamaximumof'] = "全ての評価の最大値は \$a です";
 $string['allocatedon'] = "割り当て";
-$string['allocatesubmissions'] = "学生に課題を割り当てる";
-$string['allocationsincludegoodandbad'] = "Allocations to each student will include at least one good and one poor assignment";
+$string['allocatesubmissions'] = "学生に課題を割当てる";
+$string['allocationsincludegoodandbad'] = "学生への割当ては、少なくとも1つの良い課題と1つの悪い課題を含みます";
 $string['allowsubmissions'] = "学生に提出を許可する";
 $string['allthecommentsfor'] = "全てのコメント";
 $string['amendassessmentelements'] = "評価要素を修正";
@@ -38,12 +38,12 @@ $string['displaygradefromteacher'] = "教師の評価を表示する";
 $string['displaygrading'] = "評価を表示する";
 $string['displayoffinalgrades'] = "最終評価の表示";
 $string['displayofgrades'] = "評価の表示タイミング";
-$string['doallocation'] = "Do you want to continue with the allocation of assignments to students?";
+$string['doallocation'] = "学生に対する課題の割当てを続けますか？";
 $string['dontshowgrades'] = "コメントが承認された時のみ評価を表示する";
 $string['editingassessmentelements'] = "評価要素の編集";
 $string['element'] = "評価要素";
 $string['elementweight'] = "要素比重";
-$string['feedbackgoeshere'] = "Feedback goes here";
+$string['feedbackgoeshere'] = "ここにフィードバックが表示されます";
 $string['finalgrade'] = "最終評価";
 $string['first'] = "最初";
 $string['generalcomment'] = "一般コメント";
@@ -58,12 +58,14 @@ $string['gradedon'] = "\$a に対する評価";
 $string['gradethissubmission'] = "この提出物を評価する";
 $string['gradethiswork'] = "この課題を評価する";
 $string['grading'] = "評価";
-$string['gradingaccepted'] = "Grading accepted after \$a interations";
-$string['gradingacceptedon'] = "Grading accepted on";
+$string['gradingaccepted'] = "\$a 回の反復後に受入れられた課題";
+$string['gradingacceptedon'] = "受入れられた評価";
 $string['gradingby'] = "\$a による評価";
 $string['gradingdetails'] = "評価詳細";
-$string['gradinggiventothissubmission'] = "Grading given to this submission";
-$string['gradingrepliedtoon'] = "Grading replied to on";
+$string['gradinggiventothissubmission'] = "この提出物に対する評価";
+$string['gradingperformance'] = "評価作業";
+$string['gradingrepliedtoon'] = "返答された評価";
+$string['gradingsdone'] = "評価済み(相互)";
 $string['includeself'] = "自分自身を評価者に加える";
 $string['includeteachersgrade'] = "教師の評価を相互評価に含める";
 $string['last'] = "最後";
@@ -74,45 +76,61 @@ $string['modulename'] = "相互評価課題";
 $string['modulenameplural'] = "相互評価課題";
 $string['newsubmission'] = "新しい提出物";
 $string['next'] = "次";
+$string['noactiontakeninwrongphase'] = "未処理(悪い意味で)";
+$string['nopeergrades'] = "この提出物には評価はありません";
 $string['nosubmissionfrom'] = "\$a による提出物はありません";
 $string['nosubmissions'] = "受付済みの提出物はありません";
+$string['nosubmissionsgraded'] = "現在、評価済み提出物又は再評価済み提出物はありません";
+$string['nosubmissionstograde'] = "評価すべき提出物又は返答すべきコメントはありません";
 $string['nosubmissionstoremove'] = "削除する提出物はありません";
-$string['notavailable'] = "This assignment is in preparation, it is not yet available.";
-$string['notenoughmarked'] = "There are not enough marked assignments to ensure that allocations include at least one
-good and one poor assignment";
-$string['noteonassessmentelements'] = "Note that in a peer graded assignment grading is broken down into a number of 'Assessment Elements'.<BR>
-	This makes the grading easier and more consistent. As teacher you must add these Elements before making<BR>
-	the assignment available to students. This is done by clicking on the peer graded assignment and choosing the<BR>
-	first option in the &quot;Managing a Peer Graded Assignment&quot menu.";
+$string['notavailable'] = "この課題は準備中ですので利用できません。";
+$string['notenoughmarked'] = "割当てによって少なくとも1つの良い課題と1つの悪い課題を含むことを確実に出来る、十分明白な課題がありません";
+$string['noteonassessmentelements'] = "相互評価課題は数多くの「評価要素」により成立ちます。このことで評価を、
+<BR>
+簡単且つ首尾一貫したものにすることが出来ます。
+課題を学生に利用出来る
+<BR>
+ようにする前に、教師としてこれらの要素を追加しなければなりません。相互
+<BR>
+評価課題をクリックして最初のオプション&quot;相互評価課題を管理する&quotメニュー
+<BR>
+を選択して追加してください。
+";
 $string['notgraded'] = "他の学生によるフィードバックのみ、評価無し";
 $string['notyetassessedby'] = "\$a によってまだ評価されていません";
 $string['notyetgraded'] = "未評価";
 $string['notyetsubmitted'] = "未提出";
-$string['numbermarked'] = "Number of assignments graded by the Teacher: \$a";
-$string['numberofallocations'] = "Number of assignments to be assessed by each student: \$a";
-$string['numberofallocationsreduced'] = "Number of assignments to be assessed by each student reduced to: \$a";
+$string['noworksubmittedforotherstograde'] = "他の人に評価してもらう課題は提出されていません";
+$string['numbermarked'] = "教師によって評価された課題数: \$a";
+$string['numberofallocations'] = "それぞれの学生によって評価された課題数: \$a";
+$string['numberofallocationsreduced'] = "それぞれの学生によって評価を下げられた課題数: \$a";
 $string['numberofassessmentelements'] = "評価要素数";
 $string['numberofassessors'] = "各課題に対する評価者(学生)の人数";
-$string['numberofstudents'] = "Number of students enrolled on this course: \$a";
-$string['numberofsubmissions'] = "Number of assignments submitted: \$a";
+$string['numberofpeerallocationstoolow'] = "高低課題を使うためには、相互割当て数は4つ又はそれ以上でなければなりません";
+$string['numberofstudents'] = "このコースに参加している学生数: \$a";
+$string['numberofsubmissions'] = "提出済み提出物の数: \$a";
+$string['overallpeergrade'] = "相互評価総計: \$a";
 $string['peerassessmentsalreadydisabled'] = "相互評価は既に停止されています";
 $string['peerassessmentsdisabled'] = "相互評価は停止されました";
 $string['peergrade'] = "相互評価";
 $string['peergrades'] = "相互評価";
-$string['phase'] = "Phase";
-$string['present'] = "Present";
+$string['phase'] = "段階";
+$string['present'] = "現在";
 $string['previous'] = "前の";
 $string['qualityofcomments'] = "コメントの質";
-$string['regradethissubmission'] = "Reassess this submission";
+$string['regradethissubmission'] = "この提出物を再評価する";
+$string['reliabilitygrade'] = "信頼度評価";
+$string['removeallocationsquestion'] = "学生に割当てられた提出物を本当に削除してもよろしいですか？";
+$string['removepeersubmissions'] = "相互提出物を学生から削除する";
 $string['reply'] = "返答";
 $string['returntopeergrading'] = "相互評価に戻る";
 $string['returntosubmissionpage'] = "提出ページに戻る";
 $string['savecommentgrades'] = "評価コメントを保存";
 $string['savemyassessment'] = "提出物を保存";
 $string['savemyreply'] = "返答を保存";
-$string['scale10'] = "Score out of 10";
-$string['scale100'] = "Score out of 100";
-$string['scale20'] = "Score out of 20";
+$string['scale10'] = "10点中の得点";
+$string['scale100'] = "100点中の得点";
+$string['scale20'] = "20点中の得点";
 $string['scalecorrect'] = "2点 正解/不正解 評価";
 $string['scaleexcellent4'] = "4点 優秀/特に悪い 評価";
 $string['scaleexcellent5'] = "5点 優秀/特に悪い 評価";
@@ -127,9 +145,10 @@ $string['showgrading'] = "評価を表示する";
 $string['showstatus'] = "相互評価状況を表示";
 $string['skipback'] = "\$a 戻る";
 $string['skipforward'] = "\$a 進む";
-$string['specimengradingform'] = "Specimen Grading Form";
+$string['specimengradingform'] = "サンプル評価フォーム";
 $string['stopsubmissions'] = "提出を中止する";
 $string['submissiondate'] = "提出期限";
+$string['submissionfrom'] = "#\$a 提出物";
 $string['submissionsalreadyallowed'] = "提出は既に許可されています";
 $string['submissionsalreadystopped'] = "提出は既に中止されました";
 $string['submissionsawaitinggrading'] = "評価待ち提出物 (\$a)";
@@ -145,8 +164,7 @@ $string['thegradeis'] = "評価は";
 $string['therearegradedpeersubmissions'] = "学生に割り当てられた評価済み課題は \$a あります";
 $string['therearepeersubmissions'] = "学生に割り当てられた課題は \$a あります";
 $string['typeofscale'] = "評価基準";
-$string['warningonamendingelements'] = "WARNING: There are submitted assessments. <BR>Do NOT change the number
- of elements, the scale types or the element weights.";
+$string['warningonamendingelements'] = "警告: 提出された評価があります。<BR>要素数やスケールタイプ、要素比重を変更しないでください。";
 $string['weightingofgrading'] = "評価作業の比重";
 $string['weightingofpeer'] = "相互評価の比重";
 $string['weightingofteacher'] = "教師による評価の比重";
