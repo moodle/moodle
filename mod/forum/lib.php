@@ -950,14 +950,6 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 // returns the HTML in a string.  This is designed for sending via HTML email.
 
     global $THEME, $CFG;
-    static $stredit, $strdelete, $strreply, $strparent;
-
-    if (empty($stredit)) {
-        $stredit = get_string("edit", "forum");
-        $strdelete = get_string("delete", "forum");
-        $strreply = get_string("reply", "forum");
-        $strparent = get_string("parent", "forum");
-    }
 
     $output = "";
 
@@ -1002,18 +994,19 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= "<p align=right><font size=-1>";
 
     if ($post->parent) {
-        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">$strparent</a> | ";
+        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">".get_string("parent", "forum")."</a> | ";
     }
+
     $age = time() - $post->created;
     if ($ownpost) {
-        $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
+        $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
         if ($reply) {
-            $output .= " | <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>";
+            $output .= " | <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>";
         }
         $output .= "&nbsp;&nbsp;";
     } else {
         if ($reply) {
-            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>&nbsp;&nbsp;";
+            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>&nbsp;&nbsp;";
         }
     }
 
