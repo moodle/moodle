@@ -6,6 +6,10 @@
     ?>
 <script language="javascript" type="text/javascript">
 <!--
+function send_data() {
+    document.forms[0].submit();
+    return true;
+}
 
 var timesup = "<?php print_string("timesup","quiz");?>";
 var quizclose = <?php echo ($quiz->timeclose - time()) - $timerstartvalue; ?>; // in seconds

@@ -1187,7 +1187,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         // -->
         </script>
         <noscript>
-        <center><p><strong>Javascript must be enabled!</strong></p></center>
+        <center><p><strong><?php print_string("noscript","quiz"); ?></strong></p></center>
         </noscript>
         <?php
     } else {
@@ -1256,7 +1256,18 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
             $shuffleorder = implode(',', $questionorder);
             echo "<input type=\"hidden\" name=\"shuffleorder\" value=\"$shuffleorder\" />\n";
         }
+        if($quiz->timelimit > 0) {
+            echo "<script language=\"javascript\" type=\"text/javascript\">\n";
+            echo "<!--\n";
+            echo "document.write('<center><input type=\"button\" value=\"".get_string("savemyanswers", "quiz")."\" onclick=\"return send_data();\" /></center>');\n";
+            echo "// -->\n";
+            echo "</script>\n";
+            echo "<noscript>\n";
+            echo "<center><strong>".get_string("noscript","quiz")."</strong></center>\n";
+            echo "</noscript>\n";
+        } else {
         echo "<center>\n<input type=\"submit\" value=\"".get_string("savemyanswers", "quiz")."\" />\n</center>";
+    }
     }
     echo "</form>";
 

@@ -143,6 +143,12 @@
             error("Could not grade your quiz attempt!");
         }
 
+        if($timelimit > 0) {
+            if(($timelimit + 60) <= $timesincestart) {
+                $result->sumgrades = 0;
+            }
+        }
+
         if ($attempt = quiz_save_attempt($quiz, $questions, $result, $attemptnumber)) {
             add_to_log($course->id, "quiz", "submit", 
                        "review.php?id=$cm->id&attempt=$attempt->id", "$quiz->id", $cm->id);
