@@ -42,7 +42,7 @@ function main_upgrade($oldversion=0) {
     
     //support user based course creating
     if ($oldversion < 2003032400) {
-        execute_sql("CREATE TABLE $CFG->prefix_user_coursecreators (
+        execute_sql("CREATE TABLE {$CFG->prefix}user_coursecreators (
                                   id int8 SERIAL PRIMARY KEY,
                                   userid int8  NOT NULL default '0'
                                   )");
