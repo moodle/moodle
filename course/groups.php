@@ -49,7 +49,7 @@
 
     $groups = get_groups($course->id);
 
-    if (!$USER->groupsediting) {         /// Display an overview of all groups
+    if (empty($USER->groupsediting)) {         /// Display an overview of all groups
         if (!$groups) {
             print_heading(get_string('groupsnone'));
 
