@@ -34,7 +34,7 @@
 </tr>
 <tr valign=top>
 	<td><P><?php  print_string("availability") ?>:</td>
-	<td><?
+	<td><?php
     unset($choices);
     $choices["0"] = get_string("courseavailablenot");
     $choices["1"] = get_string("courseavailable");
@@ -51,7 +51,7 @@
 </tr>
 <tr valign=top>
 	<td><P><?php  print_string("opentoguests") ?>:</td>
-	<td><?
+	<td><?php
     unset($choices);
     $choices["0"] = get_string("guestsno");
     $choices["1"] = get_string("guestsyes");
@@ -92,14 +92,14 @@
 </tr>
 <tr valign=top>
 	<td><P><?php  print_string("startdate") ?>:</td>
-	<td><?
+	<td><?php
            print_date_selector("startday", "startmonth", "startyear", $form->startdate);
            helpbutton("coursestartdate", get_string("startdate"));
 	?></td>
 </tr>
 <tr valign=top>
 	<td><P><?php  print_string("numberweeks") ?>:</td>
-	<td><?
+	<td><?php
            for ($i=1; $i<=52; $i++) {
               $sectionmenu[$i] = "$i";
            }
@@ -109,7 +109,7 @@
 </tr>
 <tr valign=top>
 	<td><P><?php  print_string("showrecent") ?>:</td>
-	<td><?
+	<td><?php
     unset($choices);
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
@@ -119,7 +119,7 @@
 </tr>
 <tr valign=top>
 	<td><P><?php  print_string("showgrades") ?>:</td>
-	<td><?
+	<td><?php
     unset($choices);
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
