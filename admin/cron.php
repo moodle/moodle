@@ -95,6 +95,10 @@
         }
     }
 
+    if (file_exists("$CFG->dataroot/cronextra.php")) {
+        include("$CFG->dataroot/cronextra.php");
+    }
+
     echo "Cron script completed correctly\n";
 
     $difftime = microtime_diff($starttime, microtime());
