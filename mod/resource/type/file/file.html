@@ -154,7 +154,7 @@ for ($i=0; $i < $this->maxparameters; $i++) {
     echo "<tr>\n";
     echo "<td valign=\"top\">\n";
     echo "<select name=\"parameter$i\">\n";
-    echo "<option value=\"-\">-- Choose Parameter --</option>\n";
+    echo "<option value=\"-\">-- ".get_string('chooseparameter', 'resource')." --</option>\n";
     foreach ($this->parameters as $field=>$fieldarr) {
         if ($fieldarr['value'] === "optgroup") {
             echo "<optgroup label=\"{$fieldarr['langstr']}\">\n";
