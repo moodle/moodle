@@ -908,6 +908,7 @@ function get_recent_enrolments($courseid, $timestart) {
                               AND l.action = 'enrol'
                               AND l.info = u.id
                               AND u.id = s.userid
+                              AND s.course = '$courseid'
                               GROUP BY l.info
                               ORDER BY l.time ASC");
 }
