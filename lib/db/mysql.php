@@ -263,6 +263,13 @@ function main_upgrade($oldversion=0) {
                              UNIQUE KEY `id` (`id`)
                              ) TYPE=MyISAM COMMENT='One record per course creator';");
 	}
+	if ($oldversion < 2003032602) {
+        // Redoing it because of no prefix last time
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log_display` CHANGE `module` `module` VARCHAR( 20 ) NOT NULL ");
+        // Add some indexes for speed
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(course) ");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(userid) ");
+    }
 
     return true;
 }

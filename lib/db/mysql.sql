@@ -110,7 +110,9 @@ CREATE TABLE `prefix_log` (
   `action` varchar(15) NOT NULL default '',
   `url` varchar(100) NOT NULL default '',
   `info` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `course` (`course`),
+  KEY `userid` (`userid`)
 ) TYPE=MyISAM COMMENT='Every action is logged as far as possible.';
 # --------------------------------------------------------
 
