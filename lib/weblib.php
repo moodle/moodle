@@ -1165,6 +1165,8 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $direction = " dir=\"ltr\"";
     }
 
+    $cache = false; //// FIXME:  This is a temporary hack until caching is solved better
+
     if ($cache) {
         @session_cache_limiter('private');
         @header('Cache-Control: private');
