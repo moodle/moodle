@@ -29,6 +29,7 @@
 
     $content = resource_fetch_remote_file($cm, $url);
 
-    echo format_text($content->results, FORMAT_HTML);
+    $formatoptions->noclean = true;
+    echo format_text($content->results, FORMAT_HTML, $formatoptions, $course->id);
 
 ?>
