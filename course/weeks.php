@@ -32,11 +32,16 @@
 
     // Links to people
 
-    print_simple_box("People", $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    $moddata[]="<A HREF=\"../user/index.php?id=$course->id\">List of all people</A>";
-    $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"List of everyone\">";
-    $moddata[]="<A HREF=\"../user/view.php?id=$USER->id&course=$course->id\">Edit my profile</A>";
-    $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"Me\">";
+    print_simple_box(get_string("people"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    $moddata[]="<A HREF=\"../user/index.php?id=$course->id\">".get_string("listofallpeople")."</A>";
+    $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    $editmyprofile = "<A HREF=\"../user/view.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</A>";
+    if ($USER->description) {
+        $moddata[]= $editmyprofile;
+    } else {
+        $moddata[]= $editmyprofile.$blinker;
+    }
+    $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     print_side_block("", $moddata, "", $modicon);
 
 
@@ -47,10 +52,10 @@
     if ($modnamesused) {
         foreach ($modnamesused as $modname => $modfullname) {
             $moddata[] = "<A HREF=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</A>";
-            $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$modfullname\">";
+            $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
         }
     }
-    print_simple_box("Activities", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_simple_box(get_string("activities"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     print_side_block("", $moddata, "", $modicon);
 
     // Print a form to search forums
@@ -62,25 +67,27 @@
     // Admin links and controls
 
     if (isteacher($course->id)) {
-        $adminicon[]="<IMG SRC=\"../pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"Edit\">";
-        if (isediting($course->id)) {
-            $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">Turn editing off</A>";
-        } else {
-            $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">Turn editing on</A>";
-        }
+        echo "<BR>";
+        $admindata[]="<A HREF=\"edit.php?id=$course->id\">".get_string("settings")."...</A>";
+        $adminicon[]="<IMG SRC=\"../pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+        $admindata[]="<A HREF=\"log.php?id=$course->id\">".get_string("logs")."...</A>";
+        $adminicon[]="<IMG SRC=\"../pix/i/log.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+        $admindata[]="<A HREF=\"../files/index.php?id=$course->id\">".get_string("files")."...</A>";
+        $adminicon[]="<IMG SRC=\"../files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
 
         if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {
-            $admindata[]="<A HREF=\"../mod/forum/view.php?f=$teacherforum->id\">Teacher Forum...</A>";
-            $adminicon[]="<IMG SRC=\"../mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"Teacher Forum\">";
+            $admindata[]="<A HREF=\"../mod/forum/view.php?f=$teacherforum->id\">".get_string("teacherforum")."</A>";
+            $adminicon[]="<IMG SRC=\"../mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
         }
-        $admindata[]="<A HREF=\"edit.php?id=$course->id\">Course settings...</A>";
-        $adminicon[]="<IMG SRC=\"../pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"Course\">";
-        $admindata[]="<A HREF=\"log.php?id=$course->id\">Logs...</A>";
-        $adminicon[]="<IMG SRC=\"../pix/i/log.gif\" HEIGHT=16 WIDTH=16 ALT=\"Log\">";
-        $admindata[]="<A HREF=\"../files/index.php?id=$course->id\">Files...</A>";
-        $adminicon[]="<IMG SRC=\"../files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"Files\">";
+        $adminicon[]="<IMG SRC=\"../pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+        if (isediting($course->id)) {
+            $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</A>";
+        } else {
+            $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">".get_string("turneditingon")."</A>";
+        }
 
-        print_simple_box("Administration", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+
+        print_simple_box(get_string("administration"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
         print_side_block("", $admindata, "", $adminicon);
     }
 
@@ -88,7 +95,7 @@
     // Start main column
     echo "</TD><TD WIDTH=\"*\">";
 
-    print_simple_box("Weekly Outline", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_simple_box(get_string("weeklyoutline"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     
     // Now all the weekly modules
     $timenow = time();
@@ -96,6 +103,9 @@
     $week = 1;
     $weekofseconds = 604800;
     $course->enddate = $course->startdate + ($weekofseconds * $course->numsections);
+
+    $streditsummary = get_string("editsummary");
+    $stradd         = get_string("add");
 
     echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
     while ($weekdate < $course->enddate) {
@@ -137,7 +147,7 @@
         }
 
         if (isediting($course->id)) {
-            $thisweek->summary .= "&nbsp;<A HREF=\"editsection.php?id=$thisweek->id\"><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"Edit summary\"></A></P>";
+            $thisweek->summary .= "&nbsp;<A TITLE=\"$streditsummary\" HREF=\"editsection.php?id=$thisweek->id\"><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"$streditsummary\"></A></P>";
         }
 
         echo text_to_html($thisweek->summary);
@@ -147,7 +157,7 @@
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$week&add=", 
-                        $modnames, "section$week", "", "Add...");
+                        $modnames, "section$week", "", "$stradd...");
             echo "</DIV>";
         }
 
@@ -155,9 +165,11 @@
         echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top ALIGN=CENTER WIDTH=10>";
         echo "<FONT SIZE=1>";
         if (isset($USER->section)) {
-            echo "<A HREF=\"view.php?id=$course->id&week=all\" TITLE=\"Show all weeks\"><IMG SRC=../pix/i/all.gif BORDER=0></A></FONT>";
+            $strshowallweeks = get_string("showallweeks");
+            echo "<A HREF=\"view.php?id=$course->id&week=all\" TITLE=\"$strshowallweeks\"><IMG SRC=../pix/i/all.gif BORDER=0></A></FONT>";
         } else {
-            echo "<A HREF=\"view.php?id=$course->id&week=$week\" TITLE=\"Show only week $week\"><IMG SRC=../pix/i/one.gif BORDER=0></A></FONT>";
+            $strshowonlyweek = get_string("showonlyweek", "", $week);
+            echo "<A HREF=\"view.php?id=$course->id&week=$week\" TITLE=\"$strshowonlyweek\"><IMG SRC=../pix/i/one.gif BORDER=0></A></FONT>";
         }
         echo "</TD>";
         echo "</TR>";
@@ -169,12 +181,12 @@
     echo "</TABLE>";
     
 
-    echo "</TD><TD WIDTH=180>";
+    echo "</TD><TD WIDTH=210>";
 
     // Print all the news items.
 
     if ($news = forum_get_course_forum($course->id, "news")) {
-        print_simple_box("Latest News", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+        print_simple_box(get_string("latestnews"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
         print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
         echo "<FONT SIZE=1>";
         forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
@@ -184,7 +196,7 @@
     echo "<BR>";
     
     // Print all the recent activity
-    print_simple_box("Recent Activity", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_simple_box(get_string("sinceyourlastlogin"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
     print_recent_activity($course);
     print_simple_box_end();

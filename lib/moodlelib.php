@@ -199,10 +199,12 @@ function update_course_icon($courseid) {
 
     if (isteacher($courseid)) {
         if ($USER->editing) {
-            return "<A TITLE=\"Turn editing OFF\" HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\"
+            return "<A TITLE=\"".get_string("turneditingoff")."\" 
+                    HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\"
                     TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
         } else {
-            return "<A TITLE=\"Turn editing ON\" HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\"
+            return "<A TITLE=\"".get_string("turneditingon")."\" 
+                    HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\"
                     TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
         }
     }
@@ -212,7 +214,7 @@ function update_module_icon($moduleid, $courseid) {
     global $CFG;
 
     if (isteacher($courseid)) {
-        return "<A TITLE=\"Edit this activity\" HREF=\"$CFG->wwwroot/course/mod.php?update=$moduleid&return=true\" TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
+        return "<A TITLE=\"".get_string("editthisactivity")."\" HREF=\"$CFG->wwwroot/course/mod.php?update=$moduleid&return=true\" TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
     }
 }
 

@@ -368,7 +368,8 @@ function print_recent_activity($course) {
                     $heading = true;
                     $content = true;
                 }
-                echo "<P><FONT SIZE=1 $teacherpost>$post->firstname $post->lastname:<BR>";
+                $date = userdate($post->modified, "%e %b, %H:%M");
+                echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
                 echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
                 if ($log->action == "add") {
                     echo "<B>$post->subject</B>";

@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
 
 $string[activity] = "Activity";
+$string[activities] = "Activities";
 $string[activityreport] = "Activity report";
+$string[add] = "Add";
 $string[addnewcourse] = "Add a new course";
 $string[addnewuser] = "Add a new user";
 $string[address] = "Address";
@@ -47,6 +49,7 @@ $string[description] = "Description";
 $string[edit] = "Edit \$a";
 $string[editcoursesettings] = "Edit course settings";
 $string[editmyprofile] = "Edit profile";
+$string[editthisactivity] = "Edit this activity";
 $string[edituser] = "Edit user accounts";
 $string[email] = "Email address";
 $string[emailformat] = "Email format";
@@ -81,6 +84,7 @@ password that you should have got from \$a";
 $string[entercourse] = "Click to enter this course";
 $string[enteremailaddress] = "Enter in your email address to reset your 
    password and have the new password sent to you via email.";
+$string[files] = "Files";
 $string[firstname] = "First name";
 $string[firsttime] = "Is this your first time here?";
 $string[forgotten] = "Forgotten your username or password?";
@@ -104,6 +108,8 @@ $string[invalidemail] = "Invalid email address";
 $string[lastaccess] = "Last access";
 $string[lastmodified] = "Last modified";
 $string[lastname] = "Last name";
+$string[latestnews] = "Latest news";
+$string[listofallpeople] = "List of all people";
 $string[location] = "Location";
 $string[loggedinas] = "You are logged in as \$a.";
 $string[loggedinnot] = "You are not logged in.";
@@ -132,7 +138,9 @@ $string[loginsteps] = "Hi! For full access to courses you'll need to take
    to log in and access any course you have enrolled in.
    </OL>";
 $string[logout] = "Logout";
+$string[logs] = "Logs";
 $string[mainmenu] = "Main menu";
+$string[markthistopic] = "Mark this topic as the current topic";
 $string[maximumchars] = "Maximum of \$a characters";
 $string[maximumgrade] = "Maximum grade";
 $string[missingcategory] = "You need to choose a category";
@@ -202,6 +210,7 @@ $string[passwordsenttext] = "
    <P><B>Please check your email for your new password</B>
    <P>The new password was automatically generated, so you might like to
    <A HREF=\$a->link>change it to something easier to remember</A>.";
+$string[people] = "People";
 $string[personalprofile] = "Personal profile";
 $string[phone] = "Phone";
 $string[returningtosite] = "Returning to this web site?";
@@ -211,7 +220,13 @@ $string[section] = "Section";
 $string[selectacountry] = "Select a country";
 $string[senddetails] = "Send my details via email";
 $string[serverlocaltime] = "Server's local time";
+$string[settings] = "Settings";
 $string[shortname] = "Short name";
+$string[showalltopics] = "Show all topics";
+$string[showallweeks] = "Show all weeks";
+$string[showonlytopic] = "Show only topic \$a";
+$string[showonlyweek] = "Show only week \$a";
+$string[sinceyourlastlogin] = "Since your last login";
 $string[site] = "Site";
 $string[sites] = "Sites";
 $string[sitelogs] = "Site logs";
@@ -223,12 +238,16 @@ $string[startsignup] = "Start now by creating a new account!";
 $string[summary] = "Summary";
 $string[summaryof] = "Summary of \$a";
 $string[supplyinfo] = "Please supply some information about yourself";
+$string[teacherforum] = "Teacher forum";
 $string[teacheronly] = "for the \$a only";
 $string[textformat] = "Plain text format";
 $string[timezone] = "Timezone";
 $string[thanks] = "Thanks";
 $string[todaylogs] = "Today's logs";
 $string[topic] = "Topic";
+$string[topicoutline] = "Topic outline";
+$string[turneditingoff] = "Turn editing off";
+$string[turneditingon] = "Turn editing on";
 $string[unenrol] = "Unenrol";
 $string[unenrolme] = "Unenrol me from \$a";
 $string[update] = "Update";
@@ -243,6 +262,7 @@ $string[userprofilefor] = "User profile for \$a";
 $string[users] = "Users";
 $string[webpage] = "Web page";
 $string[week] = "Week";
+$string[weeklyoutline] = "Weekly outline";
 $string[welcometocourse] = "Welcome to \$a";
 $string[welcometocoursetext] = "Welcome to \$a->coursename!
 

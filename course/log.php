@@ -26,6 +26,8 @@
         $user = "";
     }
 
+    $strlogs = get_string("logs");
+
 
     if ($user || $date) {
 
@@ -42,9 +44,9 @@
             $dateinfo = userdate($date, "%A, %e %B %Y");
         }
 
-        print_header("$course->shortname: Logs", "$course->fullname", 
+        print_header("$course->shortname: $strlogs", "$course->fullname", 
                      "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> ->
-                      <A HREF=\"log.php?id=$course->id\">Logs</A> -> Logs for $userinfo, $dateinfo", "");
+                      <A HREF=\"log.php?id=$course->id\">$strlogs</A> -> $userinfo, $dateinfo", "");
         
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
@@ -54,8 +56,8 @@
 
 
     } else {
-        print_header("$course->shortname: Logs", "$course->fullname", 
-                 "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> -> Logs", "");
+        print_header("$course->shortname: $strlogs", "$course->fullname", 
+                 "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> -> $strlogs", "");
 
         print_heading("Choose which logs you want to look at");
 
