@@ -93,72 +93,74 @@
                 if (isset($sections[$i])) {   // should always be true
 
                     $section = $sections[$i];
-        
-                    if ($section->sequence) {
-                        echo "<HR>";
-                        echo "<H2>";
-                        switch ($course->format) {
-                            case "weeks": print_string("week"); break;
-                            case "topics": print_string("topic"); break;
-                            default: print_string("section"); break;
-                        }
-                        echo " $i</H2>";
+                    $showsection = (isteacher($course->id) or $section->visible or !$course->hiddensections);
 
-                        echo "<UL>";
+                    if ($showsection) { // prevent hidden sections in user activity. Thanks to Geoff Wilbert!
 
-                        if ($mode == "outline") {
-                            echo "<TABLE CELLPADDING=4 CELLSPACING=0>";
-                        }
-
-                        $sectionmods = explode(",", $section->sequence);
-                        foreach ($sectionmods as $sectionmod) {
-                            if (empty($mods[$sectionmod])) {
-                                continue;
+                        if ($section->sequence) {
+                            echo "<HR>";
+                            echo "<H2>";
+                            switch ($course->format) {
+                                case "weeks": print_string("week"); break;
+                                case "topics": print_string("topic"); break;
+                                default: print_string("section"); break;
                             }
-                            $mod = $mods[$sectionmod];
+                            echo " $i</H2>";
+    
+                            echo "<UL>";
 
-                            if (empty($mod->visible)) {
-                                continue;
+                            if ($mode == "outline") {
+                                echo "<TABLE CELLPADDING=4 CELLSPACING=0>";
                             }
 
-                            $instance = get_record("$mod->modname", "id", "$mod->instance");
-                            $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
-
-                            if (file_exists($libfile)) {
-                                require_once($libfile);
-
-                                switch ($mode) {
-                                    case "outline":
-                                        $user_outline = $mod->modname."_user_outline";
-                                        if (function_exists($user_outline)) {
-                                            $output = $user_outline($course, $user, $mod, $instance);
-                                            print_outline_row($mod, $instance, $output);
-                                        }
-                                        break;
-                                    case "complete":
-                                        $user_complete = $mod->modname."_user_complete";
-                                        if (function_exists($user_complete)) {
-                                            $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" ".
-                                                     "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
-                                            echo "<H4>$image $mod->modfullname: ".
-                                                 "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                 "$instance->name</A></H4>";
-                                            echo "<UL>";
-                                            $user_complete($course, $user, $mod, $instance);
-                                            echo "</UL>";
-                                        }
-                                        break;
+                            $sectionmods = explode(",", $section->sequence);
+                            foreach ($sectionmods as $sectionmod) {
+                                if (empty($mods[$sectionmod])) {
+                                    continue;
                                 }
+                                $mod = $mods[$sectionmod];
+    
+                                if (empty($mod->visible)) {
+                                    continue;
+                                }
+
+                                $instance = get_record("$mod->modname", "id", "$mod->instance");
+                                $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
+
+                                if (file_exists($libfile)) {
+                                    require_once($libfile);
+
+                                    switch ($mode) {
+                                        case "outline":
+                                            $user_outline = $mod->modname."_user_outline";
+                                            if (function_exists($user_outline)) {
+                                                $output = $user_outline($course, $user, $mod, $instance);
+                                                print_outline_row($mod, $instance, $output);
+                                            }
+                                            break;
+                                        case "complete":
+                                            $user_complete = $mod->modname."_user_complete";
+                                            if (function_exists($user_complete)) {
+                                                $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" ".
+                                                         "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+                                                echo "<H4>$image $mod->modfullname: ".
+                                                     "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                                     "$instance->name</A></H4>";
+                                                echo "<UL>";
+                                                $user_complete($course, $user, $mod, $instance);
+                                                echo "</UL>";
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+    
+                            if ($mode == "outline") {
+                                echo "</TABLE>";
+                                print_simple_box_end();
                             }
+                            echo "</UL>";
                         }
-
-                        if ($mode == "outline") {
-                            echo "</TABLE>";
-                            print_simple_box_end();
-                        }
-                        echo "</UL>";
-
-                    
                     }
                 }
             }
