@@ -1,0 +1,91 @@
+<HEAD>
+<TITLE>Moodle Docs: How to use CVS</TITLE>
+<LINK href="docstyles.css" type=TEXT/CSS rel=stylesheet>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+</HEAD>
+<BODY bgColor=#ffffff>
+<H1>Uso di cvs per accedere e aggiornare i sorgenti di moodle</H1>
+<BLOCKQUOTE>
+  <P>CVS significa Concurrent Versioning System, sistema concorrente di versione; &egrave; un modo molto comune di raggruppare codici sorgenti perch&eacute; mantiene versioni di ogni file in modo da non perdere mai nulla, l'utilizzo viene monitorato persona per persona e tutto il codice di ogni versione viene immagazzinato su un server centrale (nel caso di moodle su <A 
+  href="http://www.sf.net/" target=_top>Sourceforge</A>). </P>
+  <P>Se intendete accedere alla versione corrente di moodle solamente in lettura non avete bisogno di leggere questa pagina, seguite semplicemente le istruzioni di cvs sulla <A href="http://moodle.org/download" target=_top>pagina
+  download di Moodle</A>.</P>
+  <P>Per usare <A 
+  href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/" 
+  target=_top>l'archivio cvs di moodle</A> (come<A 
+  href="http://sourceforge.net/project/memberlist.php?group_id=30935" 
+  target=_top> sviluppatori con permessi di scrittura</A>), dovete prima di tutto avere un <A 
+  href="http://sourceforge.net/account/register.php">account su sourceforge</A>. 
+  Nell'esempio di questa pagina si assume che il vostro nome utente sia <STRONG><FONT 
+  color=#990000>myusername</FONT></STRONG> e la vostra password <STRONG><FONT 
+  color=#990000>mypassword</FONT></STRONG>. Seguite attentamente le istruzioni di sourceforge per  <A 
+  href="http://sourceforge.net/docman/display_doc.php?docid=768&amp;group_id=1#develhomedir" 
+  target=_top>creare la vostra directory per cvs</A>, cosa necessaria per abilitare ogni nuovo account per cvs. 
+  In linea di massima dovete usare ssh per connettervi a cvs.sourceforge.net.</P>
+  <P>Una volta creato un account funzionante su sourceforge contattate <A 
+  href="http://moodle.org/user/view.php?id=1&amp;course=1" target=_top>Martin 
+  Dougiamas</A> per avere i permessi di scrittura su determinate directory di moodle.</P>
+  <P>Per evitare la richiesta di password ogni volta che si esegue un comando cvs  
+  seguite  le <A href="http://sourceforge.net/account/editsshkeys.php" 
+  target=_top>indicazioni di sourceforge per usare chiavi autorizzate</A>. Questo &egrave; del tutto opzionale, 
+  ma vi render&agrave; sicuramente la vita molto pi&ugrave; facile nel vostro rapporto con cvs.</P>
+  <P>Fatto questo dovreste avere tutti i permessi necessari quindi, impostata la vostra macchina, potete 
+  scaricare la versione corrente dei sorgenti e iniziare a lavorarci sopra.<br>
+  Qui sotto trovate le istruzioni per usare cvs con sistemi unix e windows.</P>
+  <H2>01. Uso di cvs sotto unix</H2>
+  <BLOCKQUOTE>
+    <P>Il cvs di sourceforge usa un livello di trasporto ssh per sicurezza, dovrete quindi impostare questa variabile d'ambiente CVS_RHS sulla vostra shell unix:</P>
+    <BLOCKQUOTE><PRE><STRONG>setenv CVS_RSH ssh</STRONG> (for csh, tcsh etc)</PRE><PRE><STRONG>export CVS_RSH=ssh</STRONG> (for sh, bash etc)</PRE></BLOCKQUOTE>
+    <P>La cosa miglore &egrave; inserire queste righe nel file .bashrc o .cshrc per non doverle riscrive tutte le volte; dopodich&eacute; collegatevi a moodle usando questo comando (tutto in una riga, ovviamente):</P>
+    <BLOCKQUOTE><PRE><STRONG>cvs -z3 -d:ext:myusername@cvs.moodle.sourceforge.net:/cvsroot/moodle co moodle</STRONG></PRE></BLOCKQUOTE>
+    <P>Non provate a eseguire questo primo comando cvs in una directory di moodle preesistente, iniziate con una nuova.</P>
+    <P>Nota: vi verr&agrave; chiesta la password ad ogni comando se non avete impostato una <A href="http://sourceforge.net/account/editsshkeys.php" 
+    target=_top>chiave autorizzata</A></P>
+    <P>Ora dovreste avere una nuova directory 'moodle'. Potete rinominarla o spostarla a piacimento, entrate nella cartella:</P>
+    <BLOCKQUOTE><PRE><STRONG>cd moodle </STRONG></PRE></BLOCKQUOTE>
+    <P>Tutti i files di moodle pi&ugrave; recenti dovrebbero essere qui dentro. Ora potete sostituirli con i vostri files e confrontarli con la copia principale de server cvs. Per fare questo usate il comando diff, ad es.</P>
+    <BLOCKQUOTE><PRE><STRONG>cvs diff -c config-dist.php
+cvs diff -c lang</STRONG></PRE></BLOCKQUOTE>
+    <P>Per ottenere gli aggiornamenti dal server usate</P>
+    <BLOCKQUOTE><PRE><STRONG>cvs update -dP</STRONG> </PRE></BLOCKQUOTE>
+    <P>Per copiare i vostri nuovi files sul server dovrete fare una cosa del genere:</P>
+    <BLOCKQUOTE><PRE><STRONG>cd lang/ca 
+cvs commit</STRONG> </PRE></BLOCKQUOTE>
+    <P>Vi verr&agrave; richiesto di aggiungere alcuni commenti (dipende dal vostro editor testuale predefinito)... scrivete un commento sensato e chiudete l'editor, i files verranno inviati a sourceforge e l&igrave; immagazzinati. ecco fatto!</P>
+    <P>Per risparmiare tempo potete impostare gli argomenti di default dei comandi in un file chiamato .cvsrc nella vostra home directory. 
+    un esempio potrebbe essere:</P>
+    <BLOCKQUOTE><PRE><STRONG>diff -c 
+update -dP</STRONG> </PRE></BLOCKQUOTE>
+    <P>Usate 'cvs help' per ulteriori dettagli...</P>
+  <P>&nbsp;</P></BLOCKQUOTE>
+  <H2>02. Uso di cvs sotto windows</H2>
+  <BLOCKQUOTE>
+    <P>Prima di tutto scaricate la copia pi&ugrave; recente di moodle usando il vostro account da sviluppatore</P>
+    <BLOCKQUOTE>
+      <P>01. Procuratevi TortoiseCVS da <A href="http://www.tortoisecvs.org/" 
+      target=_top>tortoisecvs.org</A> , installatelo sulla vostra macchina e riavviatela.</P>
+      <P>02. Cercate o create una cartella da qualche parte dove volete che venga scaricato moodle</P>
+      <P>03. Click col tasto destro sulla cartella scelta e scegliete '<STRONG>CVS Checkout</STRONG>' dal menu, dovrebbe comparire una finestra</P>
+      <P>04. Copiate questo testo nel campo CVSROOT (usando il vostro nome utente!):</P>
+      <BLOCKQUOTE><PRE> :ext:<FONT color=#990000>myusername</FONT>@cvs.moodle.sourceforge.net:/cvsroot/moodle</PRE></BLOCKQUOTE>
+      <P>05. Premete il pulsante '<STRONG>Fetch list...</STRONG>'.</P>
+      <P>06. Alla destra del pulsante dovreste vedere una serie di moduli, scegliete '<STRONG>moodle</STRONG>' dalla lista.</P>
+      <P>07. Premete il pulsante '<strong>OK</strong>' e dovrebbe venire scaricato il tutto..<BR>
+      </P>
+    </BLOCKQUOTE>
+    <P>Una finestra di dialogo dovrebbe mostrarvi ora tutti i files che vengono scaricati, pazientate un poco e avrete una copia completa di moodle.<br>
+    Dopo questo primo controllo sul server di moodle potrete controllare un eventuale aggiornamento dei files sul server cvs:</P>
+    <BLOCKQUOTE>
+      <P>01. Click col tasto destro sulla vostra cartella di moodle (o un qualsiasi file) e selezionate '<strong>CVS Update</strong>'.</P>
+    </BLOCKQUOTE>
+    <P>Dopo aver modificato un file (noterete che ha cambiato colore, da verde a rosso) potrete sottometterli al server cvs in questo modo:</P>
+    <BLOCKQUOTE>
+      <P>01. Click col tasto destro sulla vostra cartella di moodle (o un qualsiasi file) e selezionate '<strong>CVS Commit...</strong>'.</P>
+      <P>02. Nella finestra inserite una chiara descrizione dei cambiamenti che avete apportato. </P>
+      <P>03. Click su 'OK'. i vostri files verranno salvati sul server.</P>
+    </BLOCKQUOTE></BLOCKQUOTE>
+  <P align=center>Buona fortuna!</P>
+<P>&nbsp;</P></BLOCKQUOTE>
+<P align=center><FONT size=1><A href="http://moodle.org/doc/" target=_top>Documentazione Moodle</A></FONT></P>
+<P align=center><FONT size=1>Version: $Id$</FONT></P>
+</BODY>
