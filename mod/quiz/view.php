@@ -71,7 +71,7 @@
 
     $PAGE->print_header($course->shortname.': %fullname%');
 
-    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id=\"layout-table\">';
+    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
     echo '<tr valign="top">';
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $PAGE->user_is_editing()) {
