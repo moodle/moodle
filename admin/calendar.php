@@ -29,13 +29,8 @@
 /// If data submitted, process and store
 
     if(($form = data_submitted()) && confirm_sesskey()) {
-        if(isset($form->mode_dst_update)) {
+        if(isset($form->mode_timezone_update)) {
             redirect('dst_update.php');
-            die();
-        }
-        if(isset($form->mode_timezones)) {
-            // Move to DST presets configuration
-            redirect('timezones.php');
             die();
         }
         // Normal configuration, just save the variables
