@@ -72,13 +72,13 @@
 <form name="form" method="post" action="mod.php">
 <table cellpadding="5">
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("title", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("title", "workshop") ?>:</b></td>
     <td>
-        <input type="text" name="name" size="60" value="<?php  p($form->name) ?>" />
+        <input type="text" name="name" size="60" value="<?php  p($form->name) ?>" alt="<?php  print_string("title", "workshop") ?>" />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("description", "workshop") ?>:</b></p>
+    <td align="right"><b><?php  print_string("description", "workshop") ?>:</b><br />
     <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
@@ -94,6 +94,7 @@
       ?>
       <br />
     </font>
+    </td>
     <td>
     <?php
        print_textarea($usehtmleditor, 20, 60, 595, 400, "description", $form->description);
@@ -116,7 +117,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("gradeforassessments", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("gradeforassessments", "workshop") ?>:</b></td>
     <td>
         <?php
         for ($i=100; $i>=0; $i--) {
@@ -129,7 +130,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("gradeforsubmission", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("gradeforsubmission", "workshop") ?>:</b></td>
     <td>
         <?php
         choose_from_menu($grades, "grade", "$form->grade", "");
@@ -139,7 +140,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("gradingstrategy", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("gradingstrategy", "workshop") ?>:</b></td>
     <td>
     <?php
 	   choose_from_menu($WORKSHOP_TYPE, "gradingstrategy", $form->gradingstrategy, "");
@@ -149,7 +150,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("numberofassessmentelements", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("numberofassessmentelements", "workshop") ?>:</b></td>
     <td valign="middle">
         <?php
         for ($i=20; $i>=0; $i--) {
@@ -162,7 +163,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("numberofattachments", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("numberofattachments", "workshop") ?>:</b></td>
     <td valign="middle">
         <?php
         unset($numbers);
@@ -176,7 +177,7 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><?php  print_string("allowresubmit", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("allowresubmit", "workshop") ?>:</b></td>
     <td>
     <?php
         $options[0] = get_string("no"); $options[1] = get_string("yes");
@@ -187,7 +188,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("numberofassessmentsofteachersexamples", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("numberofassessmentsofteachersexamples", "workshop") ?>:</b></td>
     <td>
 		<?php
         unset($numbers);
@@ -201,7 +202,7 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><?php print_string("comparisonofassessments", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("comparisonofassessments", "workshop") ?>:</b></td>
     <td>
         <?php
 		// set up comparison names
@@ -215,7 +216,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("numberofassessmentsofstudentsubmissions", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("numberofassessmentsofstudentsubmissions", "workshop") ?>:</b></td>
     <td>
 		<?php
         unset($numbers);
@@ -229,7 +230,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("weightforteacherassessments", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("weightforteacherassessments", "workshop") ?>:</b></td>
     <td>
 		<?php
         unset($numbers);
@@ -243,7 +244,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("overallocation", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("overallocation", "workshop") ?>:</b></td>
     <td>
         <?php
         unset($numbers);
@@ -257,7 +258,7 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><?php  print_string("selfassessment", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("selfassessment", "workshop") ?>:</b></td>
     <td>
     <?php
         $options[0] = get_string("no"); $options[1] = get_string("yes");
@@ -268,7 +269,7 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><?php  print_string("assessmentsmustbeagreed", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("assessmentsmustbeagreed", "workshop") ?>:</b></td>
     <td>
     <?php
         choose_from_menu($options, "agreeassessments", $form->agreeassessments, "");
@@ -278,7 +279,7 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><?php  print_string("hidegradesbeforeagreement", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("hidegradesbeforeagreement", "workshop") ?>:</b></td>
     <td>
     <?php
         choose_from_menu($options, "hidegrades", $form->hidegrades, "");
@@ -288,7 +289,7 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><?php print_string("leaguetable", "workshop"); ?>:</b></p></td>
+    <td align="right"><b><?php print_string("leaguetable", "workshop"); ?>:</b></td>
     <td>
     <?php
         unset($numbers);
@@ -304,7 +305,7 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><?php print_string("hidenamesfromstudents", "workshop", $course->students) ?>:</b></p></td>
+    <td align="right"><b><?php print_string("hidenamesfromstudents", "workshop", $course->students) ?>:</b></td>
     <td>
     <?php
         choose_from_menu($options, "anonymous", $form->anonymous, "");
@@ -314,7 +315,7 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><?php  print_string("usepassword", "workshop"); ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("usepassword", "workshop"); ?>:</b></td>
     <td>
     <?php 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
@@ -325,15 +326,15 @@
 </tr>
 
 <tr>
-    <td align="right"><p><b><?php  print_string("password"); ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("password"); ?>:</b></td>
     <td>
-        <input type="text" name="password" size="10" value="" /> <?php echo " (".get_string("leavetokeep").")"; ?>
+        <input type="text" name="password" size="10" value="" alt="<?php  print_string("password"); ?>" /> <?php echo " (".get_string("leavetokeep").")"; ?>
 		<?php helpbutton("password", get_string("password"), "workshop"); ?>
     </td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("maximumsize", "workshop") ?>:</b></p></td>
+    <td align="right"><b><?php  print_string("maximumsize", "workshop") ?>:</b></td>
     <td>
         <?php
         $sizelist = array("10Kb", "50Kb", "100Kb", "500Kb", "1Mb", "2Mb", "5Mb", "10Mb", "20Mb", "50Mb");
@@ -359,7 +360,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("deadline", "workshop") ?>:</b></td>
+    <td align="right"><b><?php  print_string("deadline", "workshop") ?>:</b></td>
     <td><?php
            print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
            echo "&nbsp;-&nbsp;";
@@ -368,7 +369,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><p><b><?php  print_string("releaseteachergrades", "workshop") ?>:</b></td>
+    <td align="right"><b><?php  print_string("releaseteachergrades", "workshop") ?>:</b></td>
     <td><?php
             print_date_selector("releaseday", "releasemonth", "releaseyear", $form->releasegrades);
             echo "&nbsp;-&nbsp;";
@@ -389,7 +390,7 @@
 <input type="hidden" name="mode"       value="<?php  p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-<p>
+
 
 </center>
 </form>

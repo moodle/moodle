@@ -1086,7 +1086,7 @@ function ewiki_page_search($id, &$data, $action) {
 
    if (! ($q = @$_REQUEST["q"])) {
 
-      $o .= '<form action="' . ewiki_script("", $id) . '" method="POST">';
+      $o .= '<form action="' . ewiki_script("", $id) . '" method="post">';
       $o .= '<input name="q" size="30" /><br /><br />';
       $o .= '<input type="submit" value="'.$id.'" />';
       $o .= '</form>';
@@ -1523,7 +1523,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
 
    #-- edit textarea/form
    $o .= ewiki_t("EDIT_FORM_1")
-       . '<form method="POST" enctype="multipart/form-data" action="'
+       . '<form method="post" enctype="multipart/form-data" action="'
        . ewiki_script("edit", $id) . '" name="ewiki"'
        . ' accept-charset="'.EWIKI_CHARSET.'">' . "\n";
 
@@ -1590,10 +1590,10 @@ function ewiki_page_edit_form_final_imgupload(&$o, &$id, &$data, &$action) {
       $o .= "\n<br />\n". '<div class="image-upload">'
       . '<form action='
       . '"'. ewiki_script_binary("", EWIKI_IDF_INTERNAL, "", "_UPLOAD=1") .'"'
-      . ' method="POST" enctype="multipart/form-data" target="_upload">'
+      . ' method="post" enctype="multipart/form-data" target="_upload">'
       . '<input type="hidden" name="MAX_FILE_SIZE" value="'.EWIKI_IMAGE_MAXSIZE.'" />'
       . '<input type="file" name="'.EWIKI_UP_UPLOAD.'"'
-      . (defined("EWIKI_IMAGE_ACCEPT") ? ' accept="'.EWIKI_IMAGE_ACCEPT.'" />' : "")
+      . (defined("EWIKI_IMAGE_ACCEPT") ? ' accept="'.EWIKI_IMAGE_ACCEPT.'" />' : " />")
       . '<input type="hidden" name="'.EWIKI_UP_BINARY.'" value="'.EWIKI_IDF_INTERNAL.'" />'
       . '&nbsp;&nbsp;&nbsp;'
       . '<input type="submit" value="'.ewiki_t("UPLOAD_PICTURE_BUTTON").'" />'
@@ -1634,7 +1634,7 @@ function ewiki_control_links($id, &$data, $action) {
 
    if (@$data["forced_version"]) {
 
-      $o .= '<form action="' . ewiki_script("edit", $id) . '" method="POST">' .
+      $o .= '<form action="' . ewiki_script("edit", $id) . '" method="post">' .
             '<input type="hidden" name="edit" value="old" />' .
             '<input type="hidden" name="version" value="'.$data["forced_version"].'" />' .
             '<input type="submit" value="' . ewiki_t("OLDVERCOMEBACK") . '" /></form> ';

@@ -104,7 +104,7 @@ function workshop_choose_from_menu ($options, $name, $selected="", $nothing="cho
         $javascript = "";
     }
 
-    $output = "<select name=$name $javascript>\n";
+    $output = "<select name=\"$name\" $javascript>\n";
     if ($nothing) {
         $output .= "   <option value=\"$nothingvalue\"\n";
         if ($nothingvalue == $selected) {
@@ -780,7 +780,7 @@ function workshop_list_all_submissions($workshop, $user) {
     unset($table);
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
                         get_string("comment", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -839,7 +839,7 @@ function workshop_list_all_ungraded_assessments($workshop) {
     }
     
     $table->head = array (get_string("title", "workshop"), get_string("timeassessed", "workshop"), get_string("action", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -882,7 +882,7 @@ function workshop_list_assessed_submissions($workshop, $user) {
         }
     $table->head = array (get_string("title","workshop"), get_string("action","workshop"), 
                     get_string("comment","workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -971,7 +971,7 @@ function workshop_list_peer_assessments($workshop, $user) {
         }
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
                     get_string("comment", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -1047,7 +1047,7 @@ function workshop_list_self_assessments($workshop, $user) {
         }
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
                        get_string("comment", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -1103,7 +1103,7 @@ function workshop_list_student_submissions($workshop, $user) {
     }
     
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), get_string("comment", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -1469,7 +1469,7 @@ function workshop_list_teacher_assessments_by_user($workshop, $user) {
     }
 
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), get_string("comment", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -1520,7 +1520,7 @@ function workshop_list_teacher_submissions($workshop, $user) {
         error("Course is misconfigured");
     }
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), get_string("comment", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -1691,7 +1691,7 @@ function workshop_list_unassessed_teacher_submissions($workshop, $user) {
 
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
             get_string("comment", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left");
     $table->size = array ("*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -1734,7 +1734,7 @@ function workshop_list_ungraded_assessments($workshop, $stype) {
 
     $table->head = array (get_string("title", "workshop"), get_string("submittedby", "workshop"),
     get_string("assessor", "workshop"), get_string("timeassessed", "workshop"), get_string("action", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left", "left");
     $table->size = array ("*", "*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -1784,7 +1784,7 @@ function workshop_list_user_submissions($workshop, $user) {
     $timenow = time();
     $table->head = array (get_string("title", "workshop"),  get_string("action", "workshop"),
         get_string("submitted", "assignment"),  get_string("assessments", "workshop"));
-    $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
+    $table->align = array ("left", "left", "left", "left");
     $table->size = array ("*", "*", "*", "*");
     $table->cellpadding = 2;
     $table->cellspacing = 0;
@@ -2586,7 +2586,7 @@ function workshop_print_feedback($course, $submission) {
     }
 
     echo "\n<table border=\"0\" cellpadding=\"1\" cellspacing=\"1\" align=\"center\"><tr><td bgcolor=#888888>";
-    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" valign=\"top\">";
+    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\">";
 
     echo "\n<tr>";
     echo "\n<td rowspan=\"3\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
@@ -2875,7 +2875,7 @@ function workshop_print_tabbed_heading($tabs) {
     }
 
     // print_simple_box_start("center", "$table->width", "#ffffff", 0);
-    echo "<table width=\"$tabs-width\" border=\"0\" valign=\"top\" align=\"center\" ";
+    echo "<table width=\"$tabs-width\" border=\"0\" align=\"center\" ";
     echo " cellpadding=\"$tabs->cellpadding\" cellspacing=\"0\" class=\"generaltable\">\n";
 
     if (!empty($tabs->names)) {

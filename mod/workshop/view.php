@@ -425,17 +425,17 @@
             case 0:
             case 1: // set up assignment
                 if ($workshop->nelements) {
-                    echo "<p><b><a href=\"assessments.php?id=$cm->id&amp;action=editelements\">".
+                    echo "<br /><b><a href=\"assessments.php?id=$cm->id&amp;action=editelements\">".
                         get_string("amendassessmentelements", "workshop")."</a></b> \n";
                     helpbutton("elements", get_string("amendassessmentelements", "workshop"), "workshop");
                 }
                 if ($workshop->ntassessments) { 
                     // if teacher examples show submission and assessment links
-                    echo "<p><b><a href=\"view.php?id=$cm->id&amp;action=submitexample\">".
+                    echo "<br /><b><a href=\"view.php?id=$cm->id&amp;action=submitexample\">".
                         get_string("submitexampleassignment", "workshop")."</a></b> \n";
                     helpbutton("submissionofexamples", get_string("submitexampleassignment", "workshop"),
                             "workshop");
-                    echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentteacher\">".
+                    echo "<br /><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentteacher\">".
                         get_string("teachersubmissionsforassessment", "workshop", 
                                 workshop_count_teacher_submissions_for_assessment($workshop, $USER)).
                         "</a></b> \n";
@@ -449,7 +449,7 @@
             case 4: // assessments
                 if ($workshop->ntassessments) { // if teacher examples show assessment link
                     if ($n = workshop_count_teacher_submissions_for_assessment($workshop, $USER)) {
-                        echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentteacher\">".
+                        echo "<br /><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentteacher\">".
                             get_string("teachersubmissionsforassessment", "workshop", $n)."</a></b> \n";
                         helpbutton("assessmentofexamples", get_string("teachersubmissionsforassessment", 
                                     "workshop"), "workshop");
@@ -457,7 +457,7 @@
                 }
                 // only show grading assessments if there are grading grades involved
                 if ($workshop->wtype) {
-                    echo "<p><b><a href=\"assessments.php?id=$cm->id&amp;action=gradeallassessments\">".
+                    echo "<br /><b><a href=\"assessments.php?id=$cm->id&amp;action=gradeallassessments\">".
                         get_string("ungradedassessments", "workshop", 
                         workshop_count_ungraded_assessments($workshop))."</a></b> \n";
                     helpbutton("ungradedassessments", 
@@ -465,7 +465,7 @@
                 }
                 // don't show the assessment of student submissions in phase 2 if it's a 5 phase workshop
                 if (!(($workshop->phase == 2) and ($workshop->wtype > 1))) {
-                    echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
+                    echo "<br /><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
                         get_string("studentsubmissionsforassessment", "workshop", 
                         workshop_count_student_submissions_for_assessment($workshop, $USER))."</a></b> \n";
                     helpbutton("gradingsubmissions", 
@@ -478,19 +478,19 @@
             case 5: // Show "Final" Grades
                 if ($workshop->ntassessments) { // if teacher examples show assessment link
                     if ($n = workshop_count_teacher_submissions_for_assessment($workshop, $USER)) {
-                        echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentteacher\">".
+                        echo "<br /><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentteacher\">".
                             get_string("teachersubmissionsforassessment", "workshop", $n)."</a></b> \n";
                         helpbutton("assessmentofexamples", get_string("teachersubmissionsforassessment", 
                                     "workshop"), "workshop");
                     }
                 }
                 if ($workshop->wtype) {
-                    echo "<p><b><a href=\"assessments.php?id=$cm->id&amp;action=gradeallassessments\">".
+                    echo "<br /><b><a href=\"assessments.php?id=$cm->id&amp;action=gradeallassessments\">".
                         get_string("ungradedassessments", "workshop", 
                         workshop_count_ungraded_assessments($workshop))."</a></b> \n";
                     helpbutton("ungradedassessments", get_string("ungradedassessments", "workshop"), "workshop");
                 }
-                echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
+                echo "<br /><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
                     get_string("studentsubmissionsforassessment", "workshop", 
                             workshop_count_student_submissions_for_assessment($workshop, $USER))."</a></b> \n";
                 helpbutton("gradingsubmissions", 
@@ -498,6 +498,7 @@
                 print_heading("<a href=\"submissions.php?id=$cm->id&amp;action=displayfinalgrades\">".
                         get_string("displayoffinalgrades", "workshop")."</a>");
         }
+        echo '</center>';
         print_heading("<a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".
             get_string("administration")."</a>");
     }

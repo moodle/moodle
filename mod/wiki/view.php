@@ -226,7 +226,7 @@
     $strwiki  = get_string("modulename", "wiki");
 
     print_header_simple(($ewiki_title?$ewiki_title:$wiki->name), "",
-                "<A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$moodleID\">$wiki->name</a>".($ewiki_title?" -> $ewiki_title":""),
+                "<a href=\"index.php?id=$course->id\">$strwikis</a> -> <a href=\"view.php?id=$moodleID\">$wiki->name</a>".($ewiki_title?" -> $ewiki_title":""),
                 "", "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
 
@@ -339,7 +339,7 @@
     }
     print $content2;
     print_simple_box_end();
-    echo "<br clear=all />";
+    echo "<br clear=\"all\" />";
 
 /// Finish the page
     print_footer($course);
