@@ -10,7 +10,7 @@
         redirect("$CFG->wwwroot/admin/");
     }
 
-    if ($USER) {
+    if (isset($USER->id)) {
         $headerbutton = update_course_icon($site->id);
     } else {
         $headerbutton = "<FONT SIZE=2><A HREF=\"login/\">Log in</A></FONT>";
@@ -70,7 +70,7 @@
                  error("Could not find or create a main forum for the site");
              }
 
-             if ($USER) {
+             if (isset($USER->id)) {
                  $SESSION->fromdiscuss = "$CFG->wwwroot";
                  if (is_subscribed($USER->id, $newsforum->id)) {
                      $subtext = "Unsubscribe from news";
