@@ -35,14 +35,8 @@
                   <a href=\"view.php?id=$cm->id\">$choice->name</a> -> $strresponses", "");
 
 
-    if ($course->category) {
-        if (! $users = get_course_users($course->id, "u.firstname ASC")) {
-            error("No users found (very strange)");
-        }
-    } else {
-        if (! $users = get_site_users("u.firstname ASC")) {
-            error("No users found (very strange)");
-        }
+    if (! $users = get_course_users($course->id, "u.firstname ASC")) {
+        error("No users found (very strange)");
     }
 
     if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {

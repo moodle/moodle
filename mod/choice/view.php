@@ -101,14 +101,8 @@
 
         print_heading(get_string("responses", "choice"));
 
-        if ($course->category) {
-            if (! $users = get_course_users($course->id, "u.firstname ASC")) {
-                error("No users found (very strange)");
-            }
-        } else {
-            if (! $users = get_site_users("u.firstname ASC")) {
-                error("No users found (very strange)");
-            }
+        if (! $users = get_course_users($course->id, "u.firstname ASC")) {
+            error("No users found (very strange)");
         }
 
         if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {

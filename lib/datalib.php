@@ -895,7 +895,16 @@ function get_course_teachers($courseid, $sort="t.authority ASC") {
 }
 
 function get_course_users($courseid, $sort="u.lastaccess DESC") {
-/// Using this method because the direct SQL just would not always work!
+/// Returns all the users of a course: students and teachers
+/// If the "course" is actually the site, then return all site users.
+
+    $site = get_site();
+
+    if ($courseid == $site->id) {
+        return get_site_users($sort);
+    }
+
+    /// Using this method because the single SQL just would not always work!
 
     $teachers = get_course_teachers($courseid, $sort);
     $students = get_course_students($courseid, $sort);
@@ -908,26 +917,34 @@ function get_course_users($courseid, $sort="u.lastaccess DESC") {
         return $students;
     }
 
-///    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
-///                            WHERE (s.course = '$courseid' AND s.userid = u.id) OR 
-///                                  (t.course = '$courseid' AND t.userid = u.id)
-///                            ORDER BY $sort");
+    /// Why wouldn't this work?
+    ///    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
+    ///                            WHERE (s.course = '$courseid' AND s.userid = u.id) OR 
+    ///                                  (t.course = '$courseid' AND t.userid = u.id)
+    ///                            ORDER BY $sort");
 }
 
 function get_site_users($sort="u.lastaccess DESC") {
 /// Returns a list of all active users who are enrolled 
 /// or teaching in courses on this server
 
-    global $CFG;
+    global $CFG, $db;
+
+    //$db->debug = true;
 
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay,
                                    u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}user_students s, 
-                                   {$CFG->prefix}user_teachers t
+                                   {$CFG->prefix}user_teachers t,
+                                   {$CFG->prefix}user_coursecreators c,
+                                   {$CFG->prefix}user_admins a
                              WHERE s.userid = u.id 
                                 OR t.userid = u.id
-                             GROUP BY u.id ORDER BY $sort");
+                                OR a.userid = u.id
+                                OR c.userid = u.id
+                             GROUP BY u.id 
+                             ORDER BY $sort ");
 }
 
 
