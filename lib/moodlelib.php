@@ -1993,6 +1993,12 @@ function check_browser_version($brand="MSIE", $version=5.5) {
     return false;
 }
 
+function is_windows() {
+/// Detects whether the server is Windows
+    global $CFG;
+     
+    return strpos($CFG->dirroot, ':');
+}
 
 function ini_get_bool($ini_get_arg) {
 /// This function makes the return value of ini_get consistent if you are
