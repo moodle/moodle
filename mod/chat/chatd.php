@@ -112,7 +112,7 @@ class ChatDaemon {
         ob_start();
         echo '<html><head>';
         echo '<script language="JavaScript">';
-        echo '<!-- //hide';
+        echo "<!-- //hide\n";
 
         echo 'function openpopup(url,name,options,fullscreen) {';
         echo 'fullurl = "'.$CFG->wwwroot.'" + url;';
@@ -123,8 +123,7 @@ class ChatDaemon {
         echo '}';
         echo 'windowobj.focus();';
         echo 'return false;';
-        echo '}'."\n";
-        echo '-->'."\n";
+        echo "}\n-->\n";
         echo '</script></head><body style="font-face: serif;" bgcolor="'.$THEME->body.'">';
 
         echo '<table style="width: 100%;"><tbody>';
@@ -152,7 +151,7 @@ class ChatDaemon {
         echo '</tbody></table>';
 
         // About 2K of HTML comments to force browsers to render the HTML
-        echo $GLOBALS['CHAT_DUMMY_DATA'];
+        // echo $GLOBALS['CHAT_DUMMY_DATA'];
 
         echo "</body>\n</html>\n";
 
@@ -553,6 +552,9 @@ class ChatDaemon {
                 if($output->beep) {
                     chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], '<embed src="'.$this->beepsoundsrc.'" autostart="true" hidden="true" />');
                 }
+
+                // Testing for Safari
+                $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
 
                 if(!chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $output->html)) {
 
