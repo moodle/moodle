@@ -171,7 +171,10 @@
                         delete_records('message', 'id', $messageid);
                     }
                 }
-                echo "parent.messages.scroll(1,5000000);\n";
+                if (get_user_preferences('message_beepnewmessage', 0)) {
+                    echo 'parent.messages.document.write("<embed src=\"bell.wav\" height=\"0\" width=\"0\" autostart=\"true\" hidden=\"true\" name=\"bell\" />");';
+                }
+                echo 'parent.messages.scroll(1,5000000);';
             }
 
             // Update the info pane, but only if the data there is getting too old
