@@ -137,6 +137,7 @@ $string['subscription'] = 'Abonnement';
 $string['subscriptions'] = 'Abonnements';
 $string['unsubscribe'] = 'Ne pas recevoir de copie des messages';
 $string['unsubscribed'] = 'Désabonné';
+$string['unsubscribeshort'] = "Se désabonner";
 $string['youratedthis'] = 'Vous l\'avez évalué';
 $string['yournewtopic'] = 'Nouveau sujet de discussion';
 $string['yourreply'] = 'Votre réponse';
