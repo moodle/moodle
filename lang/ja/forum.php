@@ -22,6 +22,7 @@ $string['discussion'] = "ディスカッション";
 $string['discussionmoved'] = "ディスカッションは '\$a' に移動されました。";
 $string['discussions'] = "ディスカッション";
 $string['discussionsstartedby'] = "\$a さんより開始されたディスカッション";
+$string['discussionsstartedbyrecent'] = "\$a さんより最近開始されたディスカッション";
 $string['discussthistopic'] = "投稿";
 $string['eachuserforum'] = "ディスカッションを1件投稿";
 $string['edit'] = "編集";
