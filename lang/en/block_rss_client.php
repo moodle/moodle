@@ -5,10 +5,13 @@ $string['block_rss_feeds_add_edit'] = 'Add/Edit Feeds';
 $string['block_rss_remote_news_feed'] = 'Remote News Feed';
 $string['block_rss_feed_updated'] = 'News feed updated';
 $string['block_rss_feed_added'] = 'News feed added';
+$string['block_rss_update_feed'] = 'Update a news feed URL: ';
+$string['block_rss_add_feed'] = 'Add a news feed URL: ';
+
 $string['block_rss_feed_deleted'] = 'News feed deleted';
 
-$string['block_rss_client_num_entries'] = 'Number of rss links to show per block.';
-$string['block_rss_submitters'] = 'Who can define new rss feeds? Feeds are made available for any member of your site to add to their own pages.';
+$string['block_rss_client_num_entries'] = 'The default number of entries to show per feed.';
+$string['block_rss_submitters'] = 'Who will be allowed to define new rss feeds? Defined feeds are available for any page on your site.';
 $string['block_rss_choose_feed'] = 'Choose the feeds which you would like to make available in this block:';
 $string['block_rss_no_feeds'] = 'There are no RSS feeds defined for this site.';
 $string['block_rss_edit_news_feeds'] = 'Edit news feeds';
@@ -31,5 +34,4 @@ $string['block_rss_see_all_feeds'] = 'See all feeds';
 $string['block_rss_edit_rss_block'] = 'Edit RSS Headline Block';
 
 $string['block_rss_add_new'] = 'Add New';
-
 ?>
