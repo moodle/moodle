@@ -2169,10 +2169,17 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
 };
 
 HTMLArea.prototype.stripBaseURL = function(string) {
+
+    // IE adds the path to an anchor, converting #anchor
+    // to path/#anchor which of course needs to be fixed
+    var index = string.indexOf("/#")+1;
+    if (index > 0) {
+        return string.substr(index);   
+    }
+    return string; // Moodle doesn't use the code below because
+                   // Moodle likes to keep absolute links
+    
     var baseurl = this.config.baseURL;
-
-    return string;    // Moodle addition to skip this whole routine
-
     // strip to last directory in case baseurl points to a file
     baseurl = baseurl.replace(/[^\/]+$/, '');
     var basere = new RegExp(baseurl);
