@@ -1,11 +1,11 @@
 MOODLE JAPANESE TRANSLATION
 -------------------------------------------------------
-Started      : November 21, 2002
-Last modified: October 10, 2004
+STARTED      : November 21, 2002
+LAST MODIFIED: October 11, 2004
 
 Thanks to everyone who have supported our translation project!
 
-[Translators]
+[TRANSLATORS]
 Mitsuhiro Yoshida(http://mitstek.com/)
  Translating whole ja files and translation management.
 
@@ -23,7 +23,7 @@ Masataka Nakaue(http://ldt.stanford.edu/~mnakauye/)
  /lang/ja/help/book
 
 
-[Contributors]
+[CONTRIBUTORS]
 Timothy Takemoto(http://eigodaigaku.com)
  Facilitator of Japanese moodle
  Translation brushup
@@ -49,5 +49,5 @@ Any suggestion for Japanese language packs, please do not hesitate
 to post your comments on moodle.org Japanese:
 http://moodle.org/course/view.php?id=14
 
-You can download newest Japanese language pack from:
+You can download newest Japanese language packs from:
 http://moodle.org/download/lang/

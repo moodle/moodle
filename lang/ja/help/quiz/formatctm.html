@@ -19,35 +19,32 @@ ExamView¤È¸Æ¤Ð¤ì¤ë¿·¤·¤¤¥Æ¥¹¥È¥Þ¥Í¡¼¥¸¥ã¡¼¤¬¡¢Course Test Manager¤Î¸å¤ò·Ñ¤¤¤Ç¤¤¤
 
 <p>½èÍýÊýË¡¤Ï¡¢<b>Windows¥Ù¡¼¥¹</b>¤Îmoodle¥·¥¹¥Æ¥à¤ÎÊý¤¬´öÊ¬´ÊÃ±¤Ç¤¹¡£CTM¥¤¥ó¥Ý¡¼¥È¥¯¥é¥¹¤ò»ÈÍÑ¤¹¤ë¤¿¤á¤ËÉ¬Í×¤Ê¤³¤È¤Ï:</p>
 
-<ol><li>upload the system.mda system database to moodle using the file manager.  It doesn't matter what course you
-upload the system.mda file to.  Moodle will find it regardless.</li>
-<li>Crete your quiz and go into the "import questions from file" process.  Upload your chosen ctm.mdb 
-database as the file to import.  If you did this correctly, you will see another screen that allows you 
-to choose the sub-category of questions to import from the database. The reason this step is here is that 
-CTM test banks often contain a large number of categorized questions, based on the chapters of the book or 
-sections of the course.</li>
-</ol>
+<ol><li>¥Õ¥¡¥¤¥ë¥Þ¥Í¡¼¥¸¥ã¡¼¤ò»È¤Ã¤Æ¡¢system.mda¥·¥¹¥Æ¥à¥Ç¡¼¥¿¥Ù¡¼¥¹¤òmoodle¤Ë¥¢¥Ã¥×¥í¡¼¥É¤·¤Æ¤¯¤À¤µ¤¤¡£
+¤É¤Î¥³¡¼¥¹¤Ë¡¢system.mda¤ò¥¢¥Ã¥×¥í¡¼¥É¤·¤Æ¤â¤«¤Þ¤¤¤Þ¤»¤ó¡£Moodle¤¬¼«Æ°Åª¤Ë¥¤¥ó¥Ý¡¼¥ÈÀè¤òÈ½ÃÇ¤·¤Þ¤¹¡£</li>
+<li>¾®¥Æ¥¹¥È¤òºîÀ®¤·¤Æ¡¢¡Ö¥Õ¥¡¥¤¥ë¤«¤é¾®¥Æ¥¹¥È¤ò¥¤¥ó¥Ý¡¼¥È¤¹¤ë¡×¤Î²èÌÌ¤Ë¿Ê¤ó¤Ç¤¯¤À¤µ¤¤¡£ÁªÂò¤·¤¿ctm.mdb
+¥Ç¡¼¥¿¥Ù¡¼¥¹¤ò¥¤¥ó¥Ý¡¼¥È¥Õ¥¡¥¤¥ë¤È¤·¤Æ¥¢¥Ã¥×¥í¡¼¥É¤·¤Æ¤¯¤À¤µ¤¤¡£¥¢¥Ã¥×¥í¡¼¥É¤¬Àµ¾ï¤Ë¤Ç¤­¤Ê¤¤¾ì¹ç¡¢¼¡¤Î²èÌÌ¤Ç
+¥Ç¡¼¥¿¥Ù¡¼¥¹¤«¤é¥¤¥ó¥Ý¡¼¥È¤¹¤ë¤¿¤á¤Î¡¢ÌäÂê¤Î¥µ¥Ö¥«¥Æ¥´¥ê¤òÁªÂò¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£ ¤³¤Î¥¹¥Æ¥Ã¥×¤¬¤¢¤ëÍýÍ³¤Ï¡¢
+CTM¥Æ¥¹¥È¥Ð¥ó¥¯¤¬¤·¤Ð¤·¤Ð¡¢ËÜ¤Î¾Ï¤Þ¤¿¤Ï¥³¡¼¥¹¤Î¥»¥¯¥·¥ç¥ó¤Î¤è¤¦¤Ë¥«¥Æ¥´¥êÊ¬¤±¤µ¤ì¤¿ÂçÎÌ¤ÎÌäÂê¤ò´Þ¤ó¤Ç¤¤¤ë¤³¤È¤¬
+¤¢¤ë¤«¤é¤Ç¤¹¡£</li></ol>
 
-<p>The process on a <b>Linux-based</b> moodle system includes a third-party software component called the
-<a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>.  In order to import CTM databases on Linux, you must first download and install
-this small network program on the Windows system that hosts your CTM databases.  <b>Do not</b> follow the installation
-steps outlined in the ODBC Socket Server Installation.  They're more complicated than they need to be! 
-Instead, follow these steps to install this program on your Windows system:</p>
+<p><b>Linux¥Ù¡¼¥¹</b>¤Îmoodle¥·¥¹¥Æ¥à¤Ç¤Ï¡¢<a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC¥½¥±¥Ã¥È¥µ¡¼¥Ð</b></a>
+¤È¸Æ¤Ð¤ì¤ë¥µ¡¼¥É¥Ñ¡¼¥Æ¥£¤Î¥½¥Õ¥È¥¦¥§¥¢¥³¥ó¥Ý¡¼¥Í¥ó¥È¤¬É¬Í×¤Ç¤¹¡£Linux¤ËCTM¥Ç¡¼¥¿¥Ù¡¼¥¹¤ò¥¤¥ó¥Ý¡¼¥È¤¹¤ë¤Ë¤Ï¡¢ºÇ½é¤Ë¤³¤Î¾®¤µ¤Ê
+¥Í¥Ã¥È¥ï¡¼¥¯¥×¥í¥°¥é¥à¤ò¡¢CTM¥Ç¡¼¥¿¥Ù¡¼¥¹¤òÆþ¤ì¤Æ¤¤¤ëWindows¥·¥¹¥Æ¥à¤Ë¥À¥¦¥ó¥í¡¼¥É¤·¤Æ¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£
+ODBC¥½¥±¥Ã¥È¥µ¡¼¥Ð¤Î¥¤¥ó¥¹¥È¡¼¥ë¼ê½ç¤Ë<b>½¾¤ï¤Ê¤¤¤Ç</b>¤¯¤À¤µ¤¤¡£¤½¤ì¤é¤Ï¡¢É¬Í×°Ê¾å¤Ë¹¹¤ËÊ£»¨¤Ë¤Ê¤Ã¤Æ¤¤¤Þ¤¹! 
+Âå¤ï¤ê¤Ë¡¢²¼µ­¤Î¼ê½ç¤Ë½¾¤Ã¤Æ¡¢¤¢¤Ê¤¿¤ÎWindows¥·¥¹¥Æ¥à¤Ë¤³¤Î¥×¥í¥°¥é¥à¤ò¥¤¥ó¥¹¥È¡¼¥ë¤·¤Æ¤¯¤À¤µ¤¤:</p>
 
-<ol><li>Go to the windows system and unzip the install file you downloaded from 
-<a href="http://odbcsock.sourceforge.net/" target="_new">this site</a> on the system.</li>
-<li>Copy the binary ODBCSocketServer.exe to a permanent location, such as your system directory 
-(probably C:\WINNT\ or C:\Windows) or your Program Files directory. </li> 
+<ol><li>Windows¥·¥¹¥Æ¥à¤Ë°Ü¤Ã¤Æ¡¢<a href="http://odbcsock.sourceforge.net/" target="_new">
+¤³¤Î¥µ¥¤¥È</a>¤è¤ê¥À¥¦¥ó¥í¡¼¥É¤·¤¿¥Õ¥¡¥¤¥ë¤òunzip¤·¤Æ¤¯¤À¤µ¤¤¡£</li>
+<li>Copy the binary ODBCSocketServer.exe¥Ð¥¤¥Ê¥ê¤ò¡¢¥·¥¹¥Æ¥à¥Ç¥£¥ì¥¯¥È¥ê(¶²¤é¤¯ C:\WINNT\ ¤Þ¤¿¤Ï C:\Windows)
+¤Þ¤¿¤Ï¡¢Program Files¥Ç¥£¥ì¥¯¥È¥êÅù¤Î¡¢ºï½ü¤¹¤ë¤³¤È¤ÎÌµ¤¤¾ì½ê¤Ë¥³¥Ô¡¼¤·¤Æ¤¯¤À¤µ¤¤¡£</li> 
 
-<li>Install the ODBC Socket Server as a Service on the system with this command:<br />
+<li>¼¡¤Î¥³¥Þ¥ó¥É¤ò»È¤Ã¤Æ¡¢ODBC¥½¥±¥Ã¥È¥µ¡¼¥Ð¤ò¥µ¡¼¥Ó¥¹¤È¤·¤Æ¥¤¥ó¥¹¥È¡¼¥ë¤·¤Æ¤¯¤À¤µ¤¤:<br />
 <b>&lt;path you copied the file to in the step above&gt;ODBCSocketServer.exe /Service</b><br />
-You may do this by typing this command from Start-&gt;Run... dialog, or from a command prompt.</li>
+¤³¤Î¥³¥Þ¥ó¥É¤Ï¡¢¥¹¥¿¡¼¥È-&gt;¥Õ¥¡¥¤¥ëÌ¾¤ò... ²èÌÌ¡¢¤Þ¤¿¤Ï¥³¥Þ¥ó¥É¥×¥í¥ó¥×¥È¤«¤é¼Â¹Ô¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£</li>
 
-<li>Open the Service Manager by either going to 
-Start-&gt;Settings-&gt;Control Panels-&gt;Administrative Tools-&gt;Services or by right-clicking on
-<b>My Computer</b>, choosing <b>Manage</b>, then choosing <b>Services and Applications-&gt;Services</b> from 
-the right panel.  You may also access the Service manager by typing <b>services.msc</b> in the Start-&gt;Run... 
-dialog</li>
+<li>¥¹¥¿¡¼¥È-&gt;ÀßÄê-&gt;¥³¥ó¥È¥í¡¼¥ë¥Ñ¥Í¥ë-&gt;´ÉÍý¥Ä¡¼¥ë-&gt;¥µ¡¼¥Ó¥¹¤òÁªÂò¤¹¤ë¤«¡¢<b>¥Þ¥¤ ¥³¥ó¥Ô¥å¡¼¥¿</b>¤ò±¦¥¯¥ê¥Ã¥¯¤·¤Æ¡¢
+<b>´ÉÍý</b>¤òÁªÂò¡¢¼¡¤Ë<b>¥µ¡¼¥Ó¥¹¤È¥¢¥×¥ê¥±¡¼¥·¥ç¥ó-&gt;¥µ¡¼¥Ó¥¹</b>¤òÁªÂò¤·¤Æ±¦Â¦¤Î¥Ñ¥Í¥ë¤Ë¤Æ¥µ¡¼¥Ó¥¹¥Þ¥Í¡¼¥¸¥ã¡¼¤ò³«¤¤¤Æ¤¯¤À¤µ¤¤¡£
+¤Þ¤¿¤Ï¡¢¥¹¥¿¡¼¥È-&gt;¥Õ¥¡¥¤¥ëÌ¾¤ò... ²èÌÌ¤Ç<b>services.msc</b>¤ÈÆþÎÏ¤¹¤ë¤³¤È¤Ç¡¢¥µ¡¼¥Ó¥¹¥Þ¥Í¡¼¥¸¥ã¡¼¤ò³«¤¯¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£</li>
 
 <li>In the Service manager, right-click the ODBC Socket Server item and choose the <b>Start</b> item.  It's status 
 should change to "started" when you do this. Note that you may stop and/or disable this service completely after
