@@ -760,7 +760,7 @@ class phpmailer
             $header[] = sprintf("Subject: %s\r\n", trim($this->Subject));
 
         $header[] = sprintf("X-Priority: %d\r\n", $this->Priority);
-        $header[] = sprintf("X-Mailer: phpmailer [version %s]\r\n", $this->Version);
+        $header[] = sprintf("X-Mailer: Moodle phpmailer [version %s]\r\n", $this->Version);
         $header[] = sprintf("Return-Path: %s\r\n", trim($this->From));
 
         // Add custom headers
