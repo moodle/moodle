@@ -418,19 +418,27 @@ function isediting($courseid, $user=NULL) {
 
 function set_moodle_cookie($thing) {
 /// Sets a moodle cookie with an encrypted string
+    global $CFG;
+
+    $cookiename = "MOODLEID{$CFG->prefix}";
 
     $days = 60;
     $seconds = 60*60*24*$days;
 
-    setCookie ('MOODLEID', "", time() - 3600, "/");
-    setCookie ('MOODLEID', rc4encrypt($thing), time()+$seconds, "/");
+    setCookie($cookiename, "", time() - 3600, "/");
+    setCookie($cookiename, rc4encrypt($thing), time()+$seconds, "/");
 }
 
 
 function get_moodle_cookie() {
 /// Gets a moodle cookie with an encrypted string
-    global $MOODLEID;
-    return rc4decrypt($MOODLEID);
+    global $CFG;
+
+    $cookiename = "MOODLEID{$CFG->prefix}";
+
+    global $$cookiename;
+
+    return rc4decrypt($$cookiename);
 }
 
 
