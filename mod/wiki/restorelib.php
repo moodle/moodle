@@ -55,7 +55,7 @@
             $newid = insert_record ("wiki",$wiki);
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","wiki")." \"".$wiki->name."\"<br />";
+            echo "<li>".get_string("modulename","wiki")." \"".$wiki->name."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -67,10 +67,6 @@
             } else {
                 $status = false;
             }
-
-            //Finalize ul
-            echo "</ul>";
-
         } else {
             $status = false;
         }

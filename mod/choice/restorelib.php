@@ -78,7 +78,7 @@
             $newid = insert_record ("choice",$choice);
 
             //Do some output     
-            echo "<ul><li>".get_string("modulename","choice")." \"".$choice->name."\"<br />";
+            echo "<li>".get_string("modulename","choice")." \"".$choice->name."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -93,10 +93,6 @@
             } else {
                 $status = false;
             }
-
-            //Finalize ul        
-            echo "</ul>";
-
         } else {
             $status = false;
         }

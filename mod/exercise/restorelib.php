@@ -75,7 +75,7 @@
             $newid = insert_record ("exercise",$exercise);
 
             //Do some output     
-            echo "<ul><li>".get_string("modulename","exercise")." \"".$exercise->name."\"<br />";
+            echo "<li>".get_string("modulename","exercise")." \"".$exercise->name."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -89,10 +89,6 @@
             } else {
                 $status = false;
             }
-
-            //Finalize ul        
-            echo "</ul>";
-        
         } else {
             $status = false;
         }

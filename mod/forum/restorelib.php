@@ -90,7 +90,7 @@
             }
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","forum")." \"".$forum->name."\"<br />";
+            echo "<li>".get_string("modulename","forum")." \"".$forum->name."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -109,10 +109,6 @@
             } else {
                 $status = false;
             }
-
-            //Finalize ul
-            echo "</ul>";
-
         } else {
             $status = false;
         }
@@ -846,7 +842,7 @@
 
         //Check we are restoring forums
         if ($restore->mods['forum']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum").'</li>';
             //Get all course posts
             if ($posts = get_records_sql ("SELECT p.id, p.message
                                        FROM {$CFG->prefix}forum_posts p,
@@ -919,7 +915,7 @@
 
         //Check we are restoring resources
         if ($restore->mods['resource']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource").'</li>';
             //Get all course resources
             if ($resources = get_records_sql ("SELECT r.id, r.alltext
                                        FROM {$CFG->prefix}resource r

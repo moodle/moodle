@@ -89,7 +89,7 @@
             $newid = insert_record ("workshop",$workshop);
 
             //Do some output     
-            echo "<ul><li>".get_string("modulename","workshop")." \"".$workshop->name."\"<br />";
+            echo "<li>".get_string("modulename","workshop")." \"".$workshop->name."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -106,10 +106,6 @@
             } else {
                 $status = false;
             }
-
-            //Finalize ul        
-            echo "</ul>";
-        
         } else {
             $status = false;
         }

@@ -113,7 +113,7 @@
             $newid = insert_record ("glossary",$glossary);
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","glossary")." \"".$glossary->name."\"<br />";
+            echo "<li>".get_string("modulename","glossary")." \"".$glossary->name."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -127,10 +127,6 @@
             } else {
                 $status = false;
             }
-
-            //Finalize ul
-            echo "</ul>";
-
         } else {
             $status = false;
         }

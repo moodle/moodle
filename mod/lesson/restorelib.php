@@ -87,7 +87,7 @@
             $newid = insert_record("lesson", $lesson);
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","lesson")." \"".$lesson->name."\"<br>";
+            echo "<li>".get_string("modulename","lesson")." \"".$lesson->name."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -119,10 +119,6 @@
             } else {
                 $status = false;
             }
-
-            //Finalize ul
-            echo "</ul>";
-
         } else {
             $status = false;
         }

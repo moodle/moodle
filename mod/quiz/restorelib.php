@@ -269,10 +269,10 @@
 
             //Do some output
             if ($status) {
-                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\"<br />";
+                echo "<li>".get_string("category")." \"".$quiz_cat->name."\"</li>";
             } else {
                 //We must never arrive here !!
-                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\" Error!<br />";
+                echo "<li>".get_string("category")." \"".$quiz_cat->name."\" Error!</li>";
             }
             backup_flush(300);
 
@@ -286,10 +286,6 @@
             } else {
                 $status = false;
             }
-            
-
-            //Finalize ul
-            echo "</ul>";
         }
 
         return $status;
@@ -1350,7 +1346,7 @@
             $newid = insert_record ("quiz",$quiz);
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","quiz")." \"".$quiz->name."\"<br />";
+            echo "<li>".get_string("modulename","quiz")." \"".$quiz->name."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -1371,10 +1367,6 @@
             } else {
                 $status = false;
             }
-
-            //Finalize ul
-            echo "</ul>";
-
         } else {
             $status = false;
         }

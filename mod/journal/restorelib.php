@@ -59,7 +59,7 @@
             $newid = insert_record ("journal",$journal);
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","journal")." \"".$journal->name."\"<br />";
+            echo "<li>".get_string("modulename","journal")." \"".$journal->name."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -74,10 +74,6 @@
             } else {
                 $status = false;
             }
-
-            //Finalize ul
-            echo "</ul>";
-
         } else {
             $status = false;
         }
