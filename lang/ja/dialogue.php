@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 Beta (2004022400)
+      // dialogue.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['addmynewentries'] = '新しいエントリーを追加';
 $string['addmynewentry'] = '新しいエントリーを追加';
 $string['addsubject'] = 'テーマの追加';
-$string['allowmultiple'] = '1人で1つ以上のダイアログの作成を許可する';
+$string['allowmultiple'] = '同一人物による複数ダイアログ作成を許可する';
 $string['allowstudentdialogues'] = '学生 - 学生のダイアログを許可する';
 $string['close'] = '閉じる';
 $string['closed'] = '閉鎖中';
@@ -43,7 +43,7 @@ $string['numberofentriesadded'] = '追加されたエントリー: $a';
 $string['of'] = '中';
 $string['onwrote'] = '$a への書込み日時';
 $string['onyouwrote'] = '$a へのあなたの書込み日時';
-$string['open'] = '開く';
+$string['open'] = '開催中';
 $string['openadialoguewith'] = 'ダイアログを開く';
 $string['opendialogue'] = 'ダイアログを開く';
 $string['opendialogueentries'] = 'ダイアログエントリーを開く';
