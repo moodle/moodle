@@ -112,7 +112,7 @@ function setup(&$form) {
     }
     $nohtmleditorneeded = true;
 
-    print_heading_with_help(get_string("resourcetype$form->type", 'resource'), $form->type, 'resource');
+    print_heading_with_help(get_string("resourcetype$form->type", 'resource'), $form->type, 'resource/type');
 
     include("$CFG->dirroot/mod/resource/type/common.html");
 }
@@ -477,4 +477,25 @@ function resource_is_url($path) {
     return false;
 }
 
+function resource_get_resource_types() {
+/// Returns a menu of current resource types, in standard order
+    global $resource_standard_order;
+
+    $resources = array();
+
+    /// Standard resource types
+    $standardresources = array('text','html','file','directory','reference');
+    foreach ($standardresources as $resourcetype) {
+        $resources[$resourcetype] = get_string("resourcetype$resourcetype", 'resource');
+    }
+
+    /// Drop-in extra resource types
+    $resourcetypes = get_list_of_plugins('mod/resource/type');
+    foreach ($resourcetypes as $resourcetype) {
+        if (!in_array($resourcetype, $resources)) {
+            $resources[$resourcetype] = get_string("resourcetype$resourcetype", 'resource');
+        }
+    }
+    return $resources;
+}
 ?>

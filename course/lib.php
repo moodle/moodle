@@ -968,16 +968,19 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
 // Prints the menus to add activities and resources
 
     global $CFG;
-    static $straddactivity, $straddresource, $resources;
+    static $straddactivity, $stractivities, $straddresource, $resources;
 
     if (!isset($straddactivity)) {
         $straddactivity = get_string('addactivity');
         $straddresource = get_string('addresource');
-        $resourcetypes = get_list_of_plugins('mod/resource/type');
-        foreach ($resourcetypes as $resourcetype) {
-            $resources["resource&type=$resourcetype"] = get_string("resourcetype$resourcetype", 'resource');
+
+        /// Standard resource types
+        require_once("$CFG->dirroot/mod/resource/lib.php");
+        $resourceraw = resource_get_resource_types();
+
+        foreach ($resourceraw as $type => $name) {
+            $resources["resource&type=$type"] = $name;
         }
-        asort($resources);
         $resources['label'] = get_string('resourcetypelabel', 'resource');
     }
 
@@ -985,7 +988,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
 
     $output .= '<div align="right"><table align="right"><tr><td>';
     $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
-                $resources, "ressection$section", "", $straddresource, '', '', true);
+                $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
     $output .= '</td>';
 
     if ($vertical) {
@@ -994,7 +997,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
 
     $output .= '<td>';
     $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
-                $modnames, "section$section", "", $straddactivity, '', '', true);
+                $modnames, "section$section", "", $straddactivity, 'mods', $straddactivity, true);
     $output .= '</td></tr></table>';
     $output .= '</div>';
 

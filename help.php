@@ -36,7 +36,7 @@
                 $helpfound = true;
                 include("$filepath");   // The actual helpfile
 
-                if ($module == "moodle" && ($file == "index.html" || $file == "mods.html")) {
+                if ($module == "moodle" and ($file == "index.html" or $file == "mods.html")) {
                     // include file for each module
 
                     if (!$modules = get_records("modules", "visible", 1)) {
@@ -57,6 +57,27 @@
                             $filepath = "$CFG->dirroot/lang/$lang/help/$mod->name/$file";
 
                             if (file_exists("$filepath")) {
+                                echo '<hr size="1" />';
+                                include("$filepath");   // The actual helpfile
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if ($module == "moodle" and ($file == "resource/types.html")) {  // RESOURCES
+                    require_once("$CFG->dirroot/mod/resource/lib.php");
+                    $typelist = resource_get_resource_types();
+                    $typelist['label'] = get_string('resourcetypelabel', 'resource');
+
+                    foreach ($typelist as $type => $name) {
+                        foreach ($langs as $lang) {
+                            if (empty($lang)) {
+                                continue;
+                            }
+                            $filepath = "$CFG->dirroot/lang/$lang/help/resource/type/$type.html";
+                            if (file_exists("$filepath")) {
+                                echo '<hr size="1" />';
                                 include("$filepath");   // The actual helpfile
                                 break;
                             }
