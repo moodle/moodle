@@ -468,7 +468,8 @@ function quiz_print_question($number, $question, $grade, $courseid,
     $stranswer = get_string("answer", "quiz");
     $strmarks  = get_string("marks", "quiz");
 
-    echo "<table width=100% cellspacing=10><tr><td nowrap width=100 valign=top>";
+    echo "<table width=100% cellspacing=10>";
+    echo "<tr><td nowrap width=100 valign=top>";
     echo "<p align=center><b>$number</b></p>";
     if ($feedback or $response) {
         echo "<p align=center><font size=1>$strmarks: $actualgrade/$grade</font></p>";
@@ -476,7 +477,19 @@ function quiz_print_question($number, $question, $grade, $courseid,
         echo "<p align=center><font size=1>$grade $strmarks</font></p>";
     }
     print_spacer(1,100);
-    echo "</td><td valign=top>";
+    
+    if ($question->recentlyadded) {
+        echo "</td><td valign=top align=right>";
+        // Notify the user of this recently added question
+        echo '<font color="red">';
+        echo get_string('recentlyaddedquestion', 'quiz');
+        echo '</font>';
+        echo '</td></tr><tr><td></td><td valign=top>';
+
+    } else { // The normal case
+        echo "</td><td valign=top>";
+    }
+
 
     if (empty($realquestion)) { 
         $realquestion->id = $question->id;
@@ -829,7 +842,9 @@ function quiz_print_question($number, $question, $grade, $courseid,
             break;
 
        case RANDOM:
-           echo "<P>Random questions should not be printed this way!</P>";
+           // This can only happen if it is a recently added question
+
+           echo '<P>' . get_string('random', 'quiz') . '</P>';
            break;
 
        default: 
@@ -869,8 +884,16 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
     if ($shuffleorder) {                             // Order has been defined, so reorder questions
         $oldquestions = $questions;
         $questions = array();
-        foreach ($shuffleorder as $key) {     
-            $questions[] = $oldquestions[$key];      // This loses the index key, but doesn't matter
+        foreach ($shuffleorder as $key) {
+            if (empty($oldquestions[$key])) { // Check for recently added questions
+                if ($recentlyaddedquestion =
+                        get_record("quiz_questions", "id", $key)) {
+                    $recentlyaddedquestion->recentlyadded = true;
+                    $questions[] = $recentlyaddedquestion;
+                }
+            } else {
+                $questions[] = $oldquestions[$key];      // This loses the index key, but doesn't matter
+            }
         }
     }
 
