@@ -910,7 +910,7 @@ function auth_user_update_password($username, $newpassword) {
     switch ($CFG->ldap_user_type) {
         case 'edir':
             //Change password
-    $result = ldap_modify($ldapconnection, $user_dn, array('userPassword' => $newpassword));
+            $result = ldap_modify($ldapconnection, $user_dn, array('userPassword' => $newpassword));
             if(!$result){
                 error_log('LDAP Error in auth_user_update_password(). Error code: '
                           . ldap_errno($ldapconnection) . '; Error string : '
@@ -1160,7 +1160,7 @@ function auth_ldap_unix2expirationtime ($time) {
     $result = false;
     switch ($CFG->ldap_user_type) {
         case 'edir':
-            $result=date('YmdHis').'Z';  
+            $result=date('YmdHis', $time).'Z';  
             break;
         case 'posix':
             $result = $time ; //Already in correct format
