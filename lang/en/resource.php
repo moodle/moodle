@@ -20,6 +20,7 @@ $string['configpopupwidth'] = 'What width should be the default width for new po
 $string['configwebsearch'] = 'When adding a URL as a webpage or weblink, this location is offered as a site to help the user search for the URL they want.';
 $string['directlink'] = 'Direct link to this file';
 $string['directoryinfo'] = 'All the files in the chosen directory will be displayed.';
+$string['display'] = 'Display';
 $string['editingaresource'] = 'Editing a resource';
 $string['encryptedcode'] = 'Encrypted code';
 $string['example'] = 'Example';

@@ -1,5 +1,19 @@
+<script language="javascript">
+    function showhide (id) {
+        divobj = document.getElementById(id);
+        butobj = document.getElementById(id+'button');
+        if (divobj.style.display != 'none') {
+            divobj.style.display = 'none';
+            butobj.value = '<?php print_string("showsettings") ?>';
+        } else {
+            divobj.style.display = 'block';
+            butobj.value = '<?php print_string("hidesettings") ?>';
+        }
+    }
+</script>
 
-<tr><td colspan="2"><hr /></td></tr>
+
+
 
 <tr valign="top">
     <td align="right" nowrap>
@@ -17,12 +31,22 @@
 
 <tr><td colspan="2"><hr /></td></tr>
 
-<tr valign="top">
-    <td align="right" nowrap>
-        <p><b><?php print_string("pagewindow", "resource") ?>:</b></p>
-    </td>
-
+<tr>
+    <td align="right"><p><b><?php print_string("display", "resource") ?>:</b></p></td>
     <td>
+        <input type="button" value="hide settings" id="windowsettingsbutton" onClick="javascript: return showhide('windowsettings');" />
+    </td>
+</tr>
+<tr><td colspan="2">
+
+    <div id="windowsettings">
+
+<table align="center">
+
+
+<tr valign="top">
+
+    <td colspan="2">
         <script>
             var popupitems = [<?php echo $popupoptions; ?>];
             var frameitem = [<?php echo $frameoption; ?>];
@@ -31,7 +55,7 @@
         <input type="radio" name="windowpopup" value=0 <?php echo ($windowtype != "popup") ? "checked" : "" ?> 
         onClick="lockoptions('form', 'windowpopup[0]', frameitem); 
         return lockoptions('form', 'windowpopup[1]', popupitems);">
-        <?php print_string("pagedisplay", "resource") ?>
+        <b title="<?php print_string("pagedisplay", "resource") ?>"><?php print_string("pagewindow", "resource") ?></b>
         <ul>
             <input type="hidden" name="hframepage" value=0>
             <input type="checkbox" name="framepage" value=1 <?php echo ($form->options == "frame") ? "checked" : "" ?> >
@@ -41,15 +65,12 @@
 </tr>
 
 <tr valign="top">
-    <td align="right" nowrap>
-        <p><b><?php p($strnewwindow) ?>:</b></p>
-    </td>
     
-    <td>
+    <td colspan="2">
         <input name="windowpopup" type=radio value=1 <?php echo ($windowtype == "popup") ? "checked" : "" ?>
         onclick="lockoptions('form', 'windowpopup[0]', frameitem); 
         return lockoptions('form', 'windowpopup[1]', popupitems);">
-        <?php p($strnewwindowopen) ?>
+        <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
         <ul>
         <?php
             foreach ($window as $name => $value) {
@@ -85,18 +106,24 @@
     </td>
 </tr>
 
-<tr><td colspan="2"><hr /></td></tr>
+</table>
+
+</td></tr>
+
 
 <tr>
-    <td valign="top" align="right">
-        <p><b><?php print_string("parameters", "resource") ?>:</b></p>
-     <?php helpbutton("parameters", get_string("parameters", "resource"), "resource", true) ?>
-
+    <td align="right"><p><b><?php print_string("parameters", "resource") ?>:</b></p></td>
+    <td>
+        <input type="button" value="hide settings" id="parametersettingsbutton" onClick="javascript: return showhide('parametersettings');" />
+        <?php helpbutton("parameters", get_string("parameters", "resource"), "resource", true) ?>
     </td>
-    <td valign="top" align="left">
-    
-        <table>
-        
+</tr>
+<tr><td colspan="2">
+
+    <div id="parametersettings">
+
+<table align="center">
+
         <tr>
             <td align="center"><p><?php print_string("parameter", "resource") ?></p></td>
             <td align="center"><p><?php print_string("variablename", "resource") ?></p></td>
@@ -131,10 +158,16 @@ for ($i=0; $i < $this->maxparameters; $i++) {
 
 ?>
 
-        </table>
-    </td>
-</tr>
 
-<tr><td colspan="2"><hr /></td></tr>
+</table>
+    
+    </div>
+    
+</td></tr>
 
 
+
+<script language="javascript">
+    showhide('parametersettings');
+    showhide('windowsettings');
+</script>
