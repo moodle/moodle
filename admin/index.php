@@ -123,6 +123,91 @@
     }
 
 
+/// Check version of Moodle code on disk compared with database
+/// and upgrade if possible.
+
+    include_once("$CFG->dirroot/version.php");              # defines $version 
+    include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines upgrades
+
+    $stradministration = get_string("administration");
+
+    if ($CFG->version) { 
+        if ($version > $CFG->version) {  // upgrade
+
+            $a->oldversion = "$CFG->release ($CFG->version)";
+            $a->newversion = "$release ($version)";
+            $strdatabasechecking = get_string("databasechecking", "", $a);
+
+            if (empty($_GET['confirmupgrade'])) {
+                print_header($strdatabasechecking, $stradministration, $strdatabasechecking, 
+                        "", "", false, "&nbsp;", "&nbsp;");
+                notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=yes', 'index.php');
+                exit;
+                
+            } else {
+                $strdatabasesuccess  = get_string("databasesuccess");
+                print_header($strdatabasechecking, $stradministration, $strdatabasechecking, 
+                        "", "", false, "&nbsp;", "&nbsp;");
+                print_heading($strdatabasechecking);
+                $db->debug=true;
+                if (main_upgrade($CFG->version)) {
+                    $db->debug=false;
+                    if (set_config("version", $version)) {
+                        notify($strdatabasesuccess, "green");
+                        print_continue("index.php");
+                        exit;
+                    } else {
+                        notify("Upgrade failed!  (Could not update version in config table)");
+                    }
+                } else {
+                    $db->debug=false;
+                    notify("Upgrade failed!  See /version.php");
+                }
+            }
+        } else if ($version < $CFG->version) {
+            notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+        }
+       
+    } else {
+        $strcurrentversion = get_string("currentversion");
+        print_header($strcurrentversion, $stradministration, $strcurrentversion, 
+                     "", "", false, "&nbsp;", "&nbsp;");
+
+        if (set_config("version", $version)) {
+            print_heading("Moodle $release ($version)");
+            print_continue("index.php");
+            die;
+        } else {
+            $db->debug=true;
+            if (main_upgrade(0)) {
+                print_continue("index.php");
+            } else {
+                error("A problem occurred inserting current version into databases");
+            }
+            $db->debug=false;
+        }
+    }
+
+
+/// Updated human-readable release version if necessary
+
+    if ($release <> $CFG->release) {  // Update the release version
+        $strcurrentrelease = get_string("currentrelease");
+        print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
+        print_heading("Moodle $release");
+        if (!set_config("release", $release)) {
+            notify("ERROR: Could not update release version in database!!");
+        }
+        print_continue("index.php");
+        print_simple_box_start("CENTER");
+        include("$CFG->dirroot/lang/en/docs/release.html");
+        print_simple_box_end();
+        print_continue("index.php");
+        exit;
+    }
+
+
+
 /// Insert default values for any important configuration variables
 
     include_once("$CFG->dirroot/lib/defaults.php");
@@ -141,76 +226,6 @@
         redirect("config.php");
     }
 
-
-/// Check version of Moodle code on disk compared with database
-/// and upgrade if possible.
-
-    include_once("$CFG->dirroot/version.php");              # defines $version 
-    include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines upgrades
-
-    if ($CFG->version) { 
-        if ($version > $CFG->version) {  // upgrade
-            $a->oldversion = $CFG->version;
-            $a->newversion = $version;
-            $strdatabasechecking = get_string("databasechecking", "", $a);
-            $strdatabasesuccess  = get_string("databasesuccess");
-            print_header($strdatabasechecking, $strdatabasechecking, $strdatabasechecking, 
-                         "", "", false, "&nbsp;", "&nbsp;");
-            print_heading($strdatabasechecking);
-            $db->debug=true;
-            if (main_upgrade($CFG->version)) {
-                $db->debug=false;
-                if (set_config("version", $version)) {
-                    notify($strdatabasesuccess, "green");
-                    print_continue("index.php");
-                    die;
-                } else {
-                    notify("Upgrade failed!  (Could not update version in config table)");
-                }
-            } else {
-                $db->debug=false;
-                notify("Upgrade failed!  See /version.php");
-            }
-        } else if ($version < $CFG->version) {
-            notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
-        }
-       
-    } else {
-        $strcurrentversion = get_string("currentversion");
-        print_header($strcurrentversion, $strcurrentversion, $strcurrentversion, 
-                     "", "", false, "&nbsp;", "&nbsp;");
-
-        if (set_config("version", $version)) {
-            print_heading("You are currently using Moodle version $version (Release $release)");
-            print_continue("index.php");
-            die;
-        } else {
-            $db->debug=true;
-            if (main_upgrade(0)) {
-                print_continue("index.php");
-            } else {
-                error("A problem occurred inserting current version into databases");
-            }
-            $db->debug=false;
-        }
-    }
-
-/// Updated human-readable release version if necessary
-
-    if ($release <> $CFG->release) {  // Update the release version
-        $strcurrentrelease = get_string("currentrelease");
-        print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
-        print_heading("Moodle $release");
-        if (!set_config("release", $release)) {
-            notify("ERROR: Could not update release version in database!!");
-        }
-        print_continue("index.php");
-        print_simple_box_start("CENTER");
-        include("$CFG->dirroot/lang/en/docs/release.html");
-        print_simple_box_end();
-        print_continue("index.php");
-        exit;
-    }
 
 
 /// Upgrade backup/restore system if necessary
