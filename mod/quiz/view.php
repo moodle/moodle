@@ -6,8 +6,8 @@
     require_once("locallib.php");
     require_once($CFG->dirroot.'/lib/blocklib.php');
 
-    $id          = optional_param('id', PARAM_INT); // Course Module ID, or
-    $q           = optional_param('q', PARAM_INT);  // quiz ID
+    $id          = optional_param('id', 0, PARAM_INT); // Course Module ID, or
+    $q           = optional_param('q',  0, PARAM_INT);  // quiz ID
     $edit        = optional_param('edit', '');
     $blockaction = optional_param('blockaction');
 
