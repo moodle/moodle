@@ -15,6 +15,7 @@ Based on:   lang.php in 1.4.3+ release
     $fileeditorcols = 100;          // dtto cols
     $fileeditorinline = 1;          // shall be textareas put in one row?
     $filemissingmark = ' (***)';    // mark to add to non-existing filenames in selection form
+    $fileoldmark = ' (old?)';       // mark to add to filenames in selection form id english version is newer
                                     // or to filenames with filesize() == 0
     $filetemplate = '';             // template for new files, i.e. '$Id$';
 
@@ -78,7 +79,11 @@ Based on:   lang.php in 1.4.3+ release
         // add mark if file doesn't exist or is empty
         if (( !file_exists("$langdir/docs/$file")) || (filesize("$langdir/docs/$file") == 0)) {
             $options["docs/$file"] .= "$filemissingmark";
-        }        
+        } else {       
+            if (filemtime("$langdir/docs/$file") < filemtime("$CFG->dirroot/lang/en/docs/$file")) {
+                $options["docs/$file"] .= "$fileoldmark";
+            }
+        }    
     }
 
     // Get all files from /help directory
@@ -89,9 +94,13 @@ Based on:   lang.php in 1.4.3+ release
 
     foreach ($files as $filekey => $file) {    // check all the help files.
         $options["help/$file"] = "help/$file";
-        if (( !file_exists("$langdir/help/$file")) || (filesize("$langdir/help/$file") == 0)) {
+        if (( !file_exists("$langdir/help/$file")) || (filesize("$CFG->dirroot/lang/en/help/$file") == 0)) {
             $options["help/$file"] .= "$filemissingmark";
-        }
+        } else {
+            if (filemtime("$langdir/help/$file") < filemtime("$langdir/help/$file")) {
+                $options["help/$file"] .= "$fileoldmark";
+            }
+        }    
     }
 
     echo "<table align=\"center\"><tr><td align=\"center\">";
