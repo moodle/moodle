@@ -94,7 +94,9 @@
                  break;
                default:
                  echo format_text($CFG->auth_instructions);
-                 require_once("../auth/$CFG->auth/lib.php");
+                 if (!function_exists('auth_user_login')) {
+                    require_once("../auth/$CFG->auth/lib.php");
+                 }
                  if (!empty($CFG->auth_user_create) and function_exists('auth_user_create') ){
 ?>
                  <div align="center">
