@@ -32,6 +32,7 @@
     print_heading("$user->firstname $user->lastname");
 
     echo "<TABLE CELLPADDING=10 ALIGN=CENTER><TR>";
+    echo "<TD>Reports: </TD>";
     if ($mode != "summary") {
         echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=summary>Summary</A></TD>";
     } else {
