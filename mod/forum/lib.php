@@ -4,19 +4,19 @@
 
 $FORUM_DEFAULT_DISPLAY_MODE = 3; 
 
-$FORUM_LAYOUT_MODES = array ( "1"  => "Display replies flat, with oldest first",
-                              "-1" => "Display replies flat, wth newest first",
-                              "2"  => "Display replies in threaded form",
-                              "3"  => "Display replies in nested form");
+$FORUM_LAYOUT_MODES = array ( "1"  => get_string("modeflatoldestfirst", "forum"),
+                              "-1" => get_string("modeflatnewestfirst", "forum"),
+                              "2"  => get_string("modethreaded", "forum"),
+                              "3"  => get_string("modenested", "forum") );
 
 // These are course content forums that can be added to the course manually
-$FORUM_TYPES   = array ("general"    => "General forum",
-                        "eachuser"   => "Each person posts one discussion",
-                        "single"     => "A single simple discussion");
+$FORUM_TYPES   = array ("general"    => get_string("generalforum", "forum"),
+                        "eachuser"   => get_string("eachuserforum", "forum"),
+                        "single"     => get_string("singleforum", "forum") );
 
-$FORUM_POST_RATINGS = array ("3" => "Shows a more connected approach", 
-                             "2" => "Shows a more separate approach", 
-                             "1" => "I can't decide between these two");
+$FORUM_POST_RATINGS = array ("3" => get_string("postrating3", "forum"),
+                             "2" => get_string("postrating2", "forum"),
+                             "1" => get_string("postrating1", "forum") );
 
 $FORUM_LONG_POST = 600;
 
@@ -28,29 +28,30 @@ function forum_get_course_forum($courseid, $type) {
 // How to set up special 1-per-course forums
     if ($forum = get_record_sql("SELECT * from forum WHERE course = '$courseid' AND type = '$type'")) {
         return $forum;
+
     } else {
         // Doesn't exist, so create one now.
         $forum->course = $courseid;
         $forum->type = "$type";
         switch ($forum->type) {
             case "news":
-                $forum->name = "News";
-                $forum->intro= "General news about this course";
-                $forum->open = 0;
+                $forum->name  = get_string("namenews", "forum");
+                $forum->intro = get_string("intronews", "forum");
+                $forum->open  = 0;
                 $forum->assessed = 0;
                 $forum->forcesubscribe = 1;
                 break;
             case "social":
-                $forum->name = "Social";
-                $forum->intro= "A forum for general socialising. Talk about anything you like!";
-                $forum->open = 1;
+                $forum->name  = get_string("namesocial", "forum");
+                $forum->intro = get_string("introsocial", "forum");
+                $forum->open  = 1;
                 $forum->assessed = 0;
                 $forum->forcesubscribe = 0;
                 break;
             case "teacher":
-                $forum->name = "Teacher Forum";
-                $forum->intro= "For teacher-only notes and discussion";
-                $forum->open = 0;
+                $forum->name  = get_string("nameteacher", "forum");
+                $forum->intro = get_string("introteacher", "forum");
+                $forum->open  = 0;
                 $forum->assessed = 0;
                 $forum->forcesubscribe = 0;
                 break;
@@ -95,8 +96,10 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
     $output .= "<P>";
     $output .= "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
-    $output .= "<FONT SIZE=2>by <A HREF=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A>";
-    $output .= " on ".userdate($post->created, "", $touser->timezone);
+    $output .= "<FONT SIZE=2>";
+    $by->name = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A>";
+    $by->date = userdate($post->created, "", $touser->timezone);
+    $output .= get_string("bynameondate", "forum", $by);
     $output .= "</FONT></P></TD></TR>";
     $output .= "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=10>";
     $output .= "&nbsp;";
@@ -108,14 +111,14 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $age = time() - $post->created;
     if ($ownpost) {
-        $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">Delete</A>";
+        $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</A>";
         if ($reply) {
-            $output .= "| <A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">Reply</A>";
+            $output .= "| <A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
         }
         $output .= "&nbsp;&nbsp;";
     } else {
         if ($reply) {
-            $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">Reply</A>&nbsp;&nbsp;";
+            $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>&nbsp;&nbsp;";
         }
     }
 
@@ -123,11 +126,11 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     
     if ($link) {
         if ($post->replies == 1) {
-            $replystring = "reply";
+            $replystring = get_string("repliesone", "forum", $post->replies);
         } else {
-            $replystring = "replies";
+            $replystring = get_string("repliesmany", "forum", $post->replies);
         }
-        $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>Discuss this topic</B></A> ($post->replies $replystring so far)&nbsp;&nbsp;";
+        $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>".get_string("discussthistopic", "forum")."</B></A> ($replystring)&nbsp;&nbsp;";
     }
     $output .= "</P></DIV>";
     if ($footer) {
@@ -162,8 +165,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
     echo "<P>";
     echo "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
-    echo "<FONT SIZE=2>by <A HREF=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</A>";
-    echo " on ".userdate($post->created);
+    echo "<FONT SIZE=2>";
+    $by->name = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</A>";
+    $by->date = userdate($post->created);
+    print_string("bynameondate", "forum", $by);
     echo "</FONT></P></TD></TR>";
     echo "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=10>";
     echo "&nbsp;";
@@ -174,7 +179,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo text_to_html(forum_shorten_post($post->message));
         $numwords = count_words($post->message);
         echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
-        echo "Read the rest of this topic</A> ($numwords words)...";
+        echo get_string("readtherest", "forum");
+        echo "</A> (".get_string("numwords", "forum", $numwords).")...";
     } else {
         // Print whole message
         echo text_to_html($post->message);
@@ -185,16 +191,16 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     $age = time() - $post->created;
     if ($ownpost) {
         if ($age < $CFG->maxeditingtime) {
-            echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">Edit</A> | ";
+            echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">".get_string("edit", "forum")."</A> | ";
         }
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">Delete</A>";
+        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</A>";
         if ($reply) {
-            echo "| <A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">Reply</A>";
+            echo "| <A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
         }
         echo "&nbsp;&nbsp;";
     } else {
         if ($reply) {
-            echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">Reply</A>&nbsp;&nbsp;";
+            echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>&nbsp;&nbsp;";
         }
     }
 
@@ -210,11 +216,11 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     
     if ($link) {
         if ($post->replies == 1) {
-            $replystring = "reply";
+            $replystring = get_string("repliesone", "forum", $post->replies);
         } else {
-            $replystring = "replies";
+            $replystring = get_string("repliesmany", "forum", $post->replies);
         }
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>Discuss this topic</B></A> ($post->replies $replystring so far)&nbsp;&nbsp;";
+        echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>".get_string("discussthistopic", "forum")."</B></A> ($replystring)&nbsp;&nbsp;";
     }
     echo "</P>";
     if ($footer) {
@@ -229,12 +235,12 @@ function forum_shorten_post($message) {
     global $FORUM_LONG_POST;
 
     if (strlen($message) > $FORUM_LONG_POST) {
-        // Look for the first return between 50 and $FORUM_LONG_POST
-        $shortmessage = substr($message, 50, $FORUM_LONG_POST);
+        // Look for the first return between 100 and $FORUM_LONG_POST
+        $shortmessage = substr($message, 100, $FORUM_LONG_POST);
         if ($pos = strpos($shortmessage, "\n")) {
-            return substr($message, 0, 50 + $pos). " ...";
+            return substr($message, 0, 100 + $pos);
         } else {
-            return substr($message, 0, $FORUM_LONG_POST). "...";
+            return substr($message, 0, $FORUM_LONG_POST)."...";
         }
     } else {
         return $message;
@@ -243,27 +249,17 @@ function forum_shorten_post($message) {
 
 
 function forum_print_ratings($post) {
-
-    global $CFG, $PHPSESSID;
-
-    $notsatisfactory = 0;
-    $satisfactory = 0;
-    $outstanding = 0;
     if ($ratings = get_records_sql("SELECT * from forum_ratings WHERE post='$post'")) {
+        $sumrating[1] = 0;
+        $sumrating[2] = 0;
+        $sumrating[3] = 0;
         foreach ($ratings as $rating) {
-            switch ($rating->rating) {
-                case 1: $notsatisfactory++; break;
-                case 2: $satisfactory++; break;
-                case 3: $outstanding++; break;
-            }
+            $sumrating[$rating->rating]++;
         }
-        $summary = "$outstanding/$satisfactory/$notsatisfactory";
+        $summary = $sumrating[1]."s/".$sumrating[2]."/".$sumrating[3]."c";
 
-        echo "Ratings: ";
+        echo get_string("ratings", "forum").": ";
         link_to_popup_window ("/mod/forum/report.php?id=$post", "ratings", $summary, 400, 550);
-
-    } else {
-        echo "";
     }
 }
 
@@ -271,17 +267,14 @@ function forum_print_rating($post, $user) {
     global $FORUM_POST_RATINGS;
 
     if ($rs = get_record_sql("SELECT rating from forum_ratings WHERE user='$user' AND post='$post'")) {
-        echo "<FONT SIZE=-1>You rated this: <FONT COLOR=green>";
         if ($FORUM_POST_RATINGS[$rs->rating]) {
+            echo "<FONT SIZE=-1>".get_string("youratedthis", "forum").": <FONT COLOR=green>";
             echo $FORUM_POST_RATINGS[$rs->rating];
-        } else {
-            echo "Error";
+            echo "</FONT></FONT>";
+            return;
         }
-        echo "</FONT></FONT>";
-
-    } else {
-        choose_from_menu($FORUM_POST_RATINGS, $post, "", "Rate...");
     }
+    choose_from_menu($FORUM_POST_RATINGS, $post, "", get_string("rate", "forum")."...");
 }
 
 function forum_print_mode_form($discussion, $mode) {
@@ -347,23 +340,17 @@ function forum_get_post_full($postid) {
 
 function forum_add_new_post($post) {
 
-    $timenow = time();
-    $post->created = $timenow;
-    $post->modified = $timenow;
+    $post->created = $post->modified = time();
     $post->mailed = "0";
 
     return insert_record("forum_posts", $post);
 }
 
 function forum_update_post($post) {
-    global $db;
 
-    $timenow = time();
+    $post->modified = time();
 
-    $rs = $db->Execute("UPDATE forum_posts 
-                        SET message='$post->message', subject='$post->subject', modified='$timenow' 
-                        WHERE id = '$post->id'");
-    return $rs;
+    return update_record("forum_posts", $post);
 }
 
 function forum_add_discussion($discussion) {
@@ -448,7 +435,7 @@ function forum_print_user_discussions($courseid, $userid) {
     if ($discussions) {
         $user = get_record("user", "id", $userid);
         echo "<HR>";
-        print_heading("Discussions started by $user->firstname $user->lastname");
+        print_heading( get_string("discussionsstartedby", "forum", "$user->firstname $user->lastname") );
         $replies = forum_count_discussion_replies();
         foreach ($discussions as $discussion) {
             if (($discussion->forumtype == "teacher") and !isteacher($courseid)) {
@@ -459,7 +446,8 @@ function forum_print_user_discussions($courseid, $userid) {
             } else {
                 $discussion->replies = 0;
             }
-            $discussion->subject .= " (in <A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$discussion->forumid\">$discussion->forumname</A>)";
+            $inforum = get_string("inforum", "forum", "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$discussion->forumid\">$discussion->forumname</A>");
+            $discussion->subject .= " ($inforum)";
             $ownpost = ($discussion->userid == $USER->id);
             forum_print_post($discussion, $course->id, $ownpost, $reply=0, $link=1, $assessed=false);
             echo "<BR>\n";
@@ -468,21 +456,15 @@ function forum_print_user_discussions($courseid, $userid) {
 }
 
 
-function forum_user_summary($course, $user, $mod, $forum) {
-    global $CFG;
-}
-
-
 function forum_user_outline($course, $user, $mod, $forum) {
 
-    global $CFG;
     if ($posts = get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
                                   FROM forum f, forum_discussions d, forum_posts p, user u 
                                   WHERE f.id = '$forum->id' AND d.forum = f.id AND p.discussion = d.id
                                   AND p.user = '$user->id' AND p.user = u.id
                                   ORDER BY p.modified ASC")) {
 
-        $result->info = count($posts)." posts";
+        $result->info = get_string("numposts", "forum", count($posts));
 
         $lastpost = array_pop($posts);
         $result->time = $lastpost->modified;
@@ -503,16 +485,17 @@ function forum_user_complete($course, $user, $mod, $forum) {
 
         foreach ($posts as $post) {
             if ($post->parent) {
-                $footer = "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">Parent of this post</A>";
+                $footer = "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">".
+                           get_string("parentofthispost", "forum")."</A>";
             } else {
                 $footer = "";
             }
 
-            pirint_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false, $footer);
+            print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false, $footer);
         }
 
     } else {
-        echo "<P>No posts</P>";
+        echo "<P>".get_string("noposts", "forum")."</P>";
     }
 
 }
@@ -523,8 +506,6 @@ function forum_cron () {
 
     global $CFG;
 
-    echo "Processing posts...\n";
-
     $cutofftime = time() - $CFG->maxeditingtime;
 
     if ($posts = get_records_sql("SELECT p.*, d.course FROM forum_posts p, forum_discussions d
@@ -534,15 +515,11 @@ function forum_cron () {
 
         foreach ($posts as $post) {
 
-            echo "Processing post $post->id\n";
+            print_string("processingpost", "forum", $post->id);
+            echo " ... ";
 
             if (! $userfrom = get_record("user", "id", "$post->user")) {
                 echo "Could not find user $post->user\n";
-                continue;
-            }
-
-            if (! $course = get_record("course", "id", "$post->course")) {
-                echo "Could not find course $post->course\n";
                 continue;
             }
 
@@ -556,44 +533,67 @@ function forum_cron () {
                 continue;
             }
 
+            if (! $course = get_record("course", "id", "$forum->course")) {
+                echo "Could not find course $forum->course\n";
+                continue;
+            }
 
-            if ($users = get_records_sql("SELECT u.* FROM user u, forum_subscriptions s
-                                          WHERE s.user = u.id AND s.forum = '$discussion->forum'")) {
+            if ($users = get_course_users($course->id)) {
+                $strforums = get_string("forums", "forum");
 
+                $mailcount=0;
                 foreach ($users as $userto) {
-                    $postsubject = "$course->shortname: $post->subject";
-                    $posttext  = "$course->shortname -> Forums -> $forum->name -> $discussion->name\n";
-                    $posttext .= "---------------------------------------------------------------------\n";
-                    $posttext .= "$post->subject\n";
-                    $posttext .= "by $userfrom->firstname $userfrom->lastname, on ".userdate($post->created, "", $userto->timezone)."\n";
-                    $posttext .= "---------------------------------------------------------------------\n";
-                    $posttext .= strip_tags($post->message);
-                    $posttext .= "\n\n";
-                    $posttext .= "---------------------------------------------------------------------\n";
-                    $posttext .= "This is a copy of a message posted on the $course->shortname website.\n";
-                    $posttext .= "To add your reply via the website, click on this link:\n";
-                    $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id";
+                    $by->name = "$userfrom->firstname $userfrom->lastname";
+                    $by->date = userdate($post->created, "", $userto->timezone);
+                    $strbynameondate = get_string("bynameondate", "forum", $by);
 
-                    if ($userto->mailformat == 1) {  // HTML
-                        $posthtml = "<P><FONT FACE=sans-serif>".
-                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-                      "<A HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">Forums</A> ->".
-                      "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A> ->".
-                      "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
-                      $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
-                    } else {
-                      $posthtml = "";
-                    }
-
-                    if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
-                        echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email)\n";
+                    if (forum_is_subscribed($userto->id, $forum->id)) {
+                        $postsubject = "$course->shortname: $post->subject";
+                        $posttext  = "$course->shortname -> $strforums -> $forum->name";
+                        if ($discussion->name == $forum->name) {
+                            $posttext  .= "\n";
+                        } else {
+                            $posttext  .= " -> $discussion->name\n";
+                        }
+                        $posttext .= "---------------------------------------------------------------------\n";
+                        $posttext .= "$post->subject\n";
+                        $posttext .= $strbynameondate."\n";
+                        $posttext .= "---------------------------------------------------------------------\n";
+                        $posttext .= strip_tags($post->message);
+                        $posttext .= "\n\n";
+                        $posttext .= "---------------------------------------------------------------------\n";
+                        $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
+                        $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id";
+    
+                        if ($userto->mailformat == 1) {  // HTML
+                            $posthtml = "<P><FONT FACE=sans-serif>".
+                            "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ".
+                            "<A HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</A> -> ".
+                            "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A>";
+                            if ($discussion->name == $forum->name) {
+                                $posthtml .= "</FONT></P>";
+                            } else {
+                                $posthtml .= " -> <A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
+                            }
+                            $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
+                        } else {
+                          $posthtml = "";
+                        }
+    
+                        if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
+                            echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email)\n";
+                        } else {
+                            $mailcount++;
+                        }
                     }
                 }
+                echo "mailed to $mailcount users ...";
             }
 
             if (! set_field("forum_posts", "mailed", "1", "id", "$post->id")) {
                 echo "Could not update the mailed field for id $post->id\n";
             }
+            echo "\n";
         }
     }
 
@@ -694,12 +694,13 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
 
     if (forum_user_can_post_discussion($forum)) {
         echo "<P ALIGN=CENTER>";
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">Add a new discussion topic...</A>";
+        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">";
+        echo get_string("addanewdiscussion", "forum")."</A>...";
         echo "</P>\n";
     }
 
     if (! $discussions = forum_get_discussions($forum->id, $forum_sort) ) {
-        echo "<P ALIGN=CENTER><B>There are no discussion topics yet in this forum.</B></P>";
+        echo "<P ALIGN=CENTER><B>(".get_string("nodiscussions", "forum").")</B></P>";
 
     } else {
 
@@ -711,7 +712,8 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
             $discussioncount++;
 
             if ($forum_numdiscussions && ($discussioncount > $forum_numdiscussions)) {
-                echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">Older discussions</A> ...</P>";
+                echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">";
+                echo get_string("olderdiscussions", "forum")."</A> ...</P>";
                 break;
             }
             if ($replies[$discussion->discussion]) {
@@ -724,7 +726,8 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
                 case "minimal":
                     echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, "%e %b, %H:%M")." - $discussion->firstname</FONT>";
                     echo "<BR>$discussion->subject ";
-                    echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">more...</A>";
+                    echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
+                    echo get_string("more", "forum")."...</A>";
                     echo "</P>\n";
                 break;
                 default:
