@@ -364,7 +364,7 @@ global $THEME;
     }
 
     if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation
-        if (empty($_SESSION['USER'])) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
+        if (empty($_SESSION['USER']->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
             if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
                 (strpos($_SERVER['HTTP_USER_AGENT'], 'Cynthia') !== false )) {
                 if ($USER = get_user_info_from_db("username", "w3cvalidator")) {
