@@ -2383,15 +2383,15 @@ function notify_login_failures() {
     }
     
     // we need to deal with the threshold stuff first. 
-    if (empty($CFG->notifythreshold)) {
-        $CFG->notifythreshold = 10; // default to something sensible.
+    if (empty($CFG->notifyloginthreshold)) {
+        $CFG->notifyloginthreshold = 10; // default to something sensible.
     }
 
     $notifyipsrs = $db->Execute("SELECT ip FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure} 
-                          AND module='login' AND action='error' GROUP BY ip HAVING count(*) > $CFG->notifythreshold");
+                          AND module='login' AND action='error' GROUP BY ip HAVING count(*) > $CFG->notifyloginthreshold");
 
     $notifyusersrs = $db->Execute("SELECT info FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure} 
-                          AND module='login' AND action='error' GROUP BY info HAVING count(*) > $CFG->notifythreshold");
+                          AND module='login' AND action='error' GROUP BY info HAVING count(*) > $CFG->notifyloginthreshold");
     
     if ($notifyipsrs) {
         while ($row = $notifyipsrs->FetchRow()) {
