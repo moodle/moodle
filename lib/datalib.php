@@ -2831,5 +2831,20 @@ function sql_fullname($firstname='firstname',$lastname='lastname') {
     }
 }
 
+/**
+ * Returns the proper SQL to do IS NULL
+ *
+ */
+function sql_isnull($fieldname) {
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case 'mysql':
+             return $fieldname.' IS NULL';
+        default:
+             return $fieldname.' IS NULL';
+    }
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
