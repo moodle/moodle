@@ -79,8 +79,10 @@
     {
         error("Question category is not valid");
     }
-    // For the moment - questions can reference datafiles through image only
-    if (! ($question->image == $relativefilepath)) {
+
+    // Have the question check whether it uses this file or not
+    if (!$QUIZ_QTYPES[$question->qtype]->uses_quizfile($question,
+                                                       $relativefilepath)) {
         error("The specified file path is not on the specified question");
     }
 

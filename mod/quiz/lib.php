@@ -53,6 +53,11 @@ class quiz_default_questiontype {
         return 'default';
     }
 
+    function uses_quizfile($question, $relativefilepath) {
+        // The default does only check whether the file is used as image:
+        return $question->image == $relativefilepath;
+    }
+
     function save_question_options($question) {
     /// Given some question info and some data about the the answers
     /// this function parses, organises and saves the question

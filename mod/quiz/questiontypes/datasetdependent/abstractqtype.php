@@ -4,6 +4,8 @@
 /// ABSTRACT SUPERCLASS FOR QUSTION TYPES THAT USE DATASETS ///
 ///////////////////////////////////////////////////////////////
 
+require_once($CFG->dirroot . '/files/mimetypes.php');
+
 define("LITERAL", "1");
 define("FILE", "2");
 define("LINK", "3");
@@ -18,6 +20,26 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
 
     function name() {
         return 'datasetdependent';
+    }
+
+    function uses_quizfile($question, $relativefilepath) {
+        // Check whether the specified file is available by any
+        // dataset item on this question...
+        global $CFG;
+        if (get_record_sql(" SELECT *
+                 FROM {$CFG->prefix}quiz_dataset_items i,
+                      {$CFG->prefix}quiz_dataset_definitions d,
+                      {$CFG->prefix}quiz_question_datasets q
+                WHERE i.value = '$relativefilepath'
+                  AND d.id = i.definition AND d.type = 2
+                  AND d.id = q.datasetdefinition
+                  AND q.question = $question->id ")) {
+
+            return true;
+        } else {
+            // Make the check of the parent:
+            return parent::uses_quizfile($question, $relativefilepath);
+        }
     }
     
     function create_virtual_qtype() {
@@ -339,8 +361,9 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                 $value = $item->value;
 
             } else {
-                $icon = '<IMG SRC="../../files/pix/'
-                        . mimeinfo('icon', $item->value) . '" />';
+                $icon = "<IMG SRC=\"$CFG->wwwroot/pix/f/"
+                        . mimeinfo('icon', $item->value)
+                        . '" HEIGHT="16" WIDTH="16" BORDER="0" ALT="File" />';
                 if (substr(strtolower($item->value), 0, 7)=='http://') {
                     $link = $item->value;
                         
@@ -348,16 +371,21 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                     global $quiz; // Try to reach this info globally
                     if ($CFG->slasharguments) {
                         // Use this method if possible for better caching
-                        $link = "$CFG->wwwroot/mod/quiz/quizfile.php/"
-                                . "$quiz->id/$question->id/$item->value";
+                        $link = "quizfile.php/$quiz->id/$question->id/$item->value";
 
                     } else {
-                        $link = "$CFG->wwwroot/mod/quiz/quizfile.php?file=/"
-                                . "$quiz->id/$question->id/$item->value";
+                        $link = "quizfile.php?file=/$quiz->id/$question->id/$item->value";
                     }
                 }
+
+                if ($datasetdef->type == FILE
+                        and ereg('/([^/]+)$', $item->value, $regs)) {
+                    $linktext = $regs[1];
+                } else {
+                    $linktext = $item->value;
+                }
                 $value = '<a target="_blank" href="' . $link
-                . "\" title=\"$datasetdef->name\">$icon$item->value</a>";
+                        . "\" title=\"$datasetdef->name\">$icon$linktext</a>";
             }
 
             $datasetinput .= ';' . base64_encode($datasetdef->name)
