@@ -2,7 +2,6 @@
        // config.php - allows admin to edit all configuration variables
 
     include("../config.php");
-    require_once("$CFG->dirroot/auth/$CFG->auth/lib.php"); //just to make sure that authentication functions are loaded
     require_login();
 
     if (!$site = get_site()) {
@@ -54,7 +53,7 @@
 	} else {
         $auth = $config->auth;
 	} 
-
+    require_once("$CFG->dirroot/auth/$auth/lib.php"); //just to make sure that current authentication functions are loaded
     if (! isset($config->guestloginbutton)) {
         $config->guestloginbutton = 1;
     }
