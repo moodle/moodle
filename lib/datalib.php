@@ -2263,19 +2263,20 @@ function instance_is_visible($moduletype, $module) {
 
     global $CFG;
 
-    if ($records = get_records_sql("SELECT cm.instance, cm.visible
-                                    FROM {$CFG->prefix}course_modules cm,
-                                         {$CFG->prefix}modules m
-                                   WHERE cm.course = '$module->course' AND
-                                         cm.module = m.id AND
-                                         m.name = '$moduletype' AND
-                                         cm.instance = '$module->id'")) {
-
-        foreach ($records as $record) { // there should only be one - use the first one
-            return $record->visible;
+    if (!empty($module->id)) {
+        if ($records = get_records_sql("SELECT cm.instance, cm.visible
+                                        FROM {$CFG->prefix}course_modules cm,
+                                             {$CFG->prefix}modules m
+                                       WHERE cm.course = '$module->course' AND
+                                             cm.module = m.id AND
+                                             m.name = '$moduletype' AND
+                                             cm.instance = '$module->id'")) {
+    
+            foreach ($records as $record) { // there should only be one - use the first one
+                return $record->visible;
+            }
         }
     }
-
     return true;  // visible by default!
 }
 
