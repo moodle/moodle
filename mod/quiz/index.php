@@ -25,7 +25,8 @@
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
 
-    print_header("$course->shortname: $strquizzes", "$course->fullname", "$navigation $strquizzes");
+    print_header("$course->shortname: $strquizzes", "$course->fullname", "$navigation $strquizzes", 
+                 "", "", true, "", navmenu($course));
 
 // Get all the appropriate data
 

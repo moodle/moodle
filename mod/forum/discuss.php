@@ -22,6 +22,10 @@
         notify("Bad forum ID stored in this discussion");
     }
 
+    if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+        notify("Bad coursemodule for this discussion");
+    }
+
     if ($course->category) {
         require_login($course->id);
     }
@@ -57,7 +61,7 @@
     if ($course->category) {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
-                  $navmiddle -> $navtail", "", "", true);
+                  $navmiddle -> $navtail", "", "", true, "", navmenu($course, $cm));
     } else {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "$navmiddle -> $navtail", "", "", true);

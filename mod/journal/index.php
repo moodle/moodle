@@ -25,7 +25,8 @@
     $strquestion = get_string("question");
     $stranswer = get_string("answer");
 
-    print_header("$course->shortname: $strjournals", "$course->fullname", "$navigation $strjournals", "");
+    print_header("$course->shortname: $strjournals", "$course->fullname", "$navigation $strjournals", 
+                 "", "", true, "", navmenu($course));
 
 
     if (! $journals = get_all_instances_in_course("journal", $course->id, "cw.section ASC")) {

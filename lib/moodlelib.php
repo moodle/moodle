@@ -387,7 +387,7 @@ function update_module_button($moduleid, $courseid, $string) {
 }
 
 
-function navmenu($course, $cm) {
+function navmenu($course, $cm=NULL) {
 // Given a course and a (current) coursemodule
 // This function returns a small popup menu with all the 
 // course activity modules in it, as a navigation menu
@@ -395,6 +395,10 @@ function navmenu($course, $cm) {
 // the course record
 
     global $CFG;
+
+    if ($cm) {
+       $cm = $cm->id;
+    }
 
     if ($course->format == 'weeks') {
         $strsection = get_string("week");
@@ -413,7 +417,7 @@ function navmenu($course, $cm) {
         }
         $section = $mod->section;
         $url = "$mod->mod/view.php?id=$mod->cm";
-        if ($cm->id == $mod->cm) {
+        if ($cm == $mod->cm) {
             $selected = $url;
         }
         $mod->name = urldecode($mod->name);

@@ -23,7 +23,8 @@
     $strsummary = get_string("summary");
     $strlastmodified = get_string("lastmodified");
 
-    print_header("$course->shortname: $strresources", "$course->fullname", "$navigation $strresources");
+    print_header("$course->shortname: $strresources", "$course->fullname", "$navigation $strresources", 
+                 "", "", true, "", navmenu($course));
 
     if ($course->format == "weeks" or $course->format == "topics") {
         $sortorder = "cw.section ASC";

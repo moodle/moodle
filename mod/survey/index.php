@@ -25,7 +25,8 @@
     $strdone  = get_string("done", "survey");
     $strnotdone  = get_string("notdone", "survey");
 
-    print_header("$course->shortname: $strsurveys", "$course->fullname", "$navigation $strsurveys", "");
+    print_header("$course->shortname: $strsurveys", "$course->fullname", "$navigation $strsurveys", 
+                 "", "", true, "", navmenu($course));
 
     if (! $surveys = get_all_instances_in_course("survey", $course->id, "cw.section ASC")) {
         notice("There are no surveys.", "../../course/view.php?id=$course->id");

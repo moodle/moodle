@@ -250,6 +250,7 @@
 
     require_login($course->id);
 
+
     if ($post->discussion) {
         if (! $toppost = get_record_sql("SELECT * FROM forum_posts 
                                          WHERE discussion='$post->discussion' 
@@ -277,10 +278,12 @@
 
     $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">$strforums</A> -> <A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
 
+    $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+
     if ($course->category) {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
-                  $navmiddle -> $navtail", "$forumstart");
+                  $navmiddle -> $navtail", "$forumstart", "", true, "", navmenu($course, $cm));
     } else {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
                  "$navmiddle -> $navtail", "");

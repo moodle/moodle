@@ -21,7 +21,7 @@
     $strchoices = get_string("modulenameplural", "choice");
 
     print_header("$course->shortname: $strchoices", "$course->fullname",
-                 "$navigation $strchoices", "");
+                 "$navigation $strchoices", "", "", true, "", navmenu($course));
 
 
     if (! $choices = get_all_instances_in_course("choice", $course->id, "cw.section ASC")) {

@@ -25,7 +25,7 @@
     $strsubmitted = get_string("submitted", "assignment");
 
 
-    print_header("$course->shortname: $strassignments", "$course->fullname", "$navigation $strassignments", "");
+    print_header("$course->shortname: $strassignments", "$course->fullname", "$navigation $strassignments", "", "", true, "", navmenu($course));
 
     if (! $assignments = get_all_instances_in_course("assignment", $course->id, "cw.section ASC")) {
         notice("There are no assignments", "../../course/view.php?id=$course->id");
