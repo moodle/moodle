@@ -76,7 +76,7 @@ class quiz_report extends quiz_default_report {
 
     /// Get all teachers and students
         if ($currentgroup) {
-            $users = get_users_in_group($currentgroup);
+            $users = get_group_users($currentgroup);
         }
 
 

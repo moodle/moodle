@@ -19,7 +19,7 @@ class quiz_report extends quiz_default_report {
         }
 
         if ($currentgroup) {
-            $users = get_users_in_group($currentgroup, "u.lastname ASC");
+            $users = get_group_students($currentgroup, "u.lastname ASC");
         } else {
             $users = get_course_students($course->id, "u.lastname ASC");
         }
