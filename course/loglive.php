@@ -25,7 +25,8 @@
     $user=0;
     $date=time() - 3600;
 
-    print_log($course, $user, $date, "ORDER BY l.time DESC");
+    print_log($course, $user, $date, "l.time DESC", 0, 500, 
+              "loglive.php?id=$course->id&user=$user&date=$date");
 
     exit;
 
