@@ -1,0 +1,130 @@
+<h2>Cómo escribir Wiki</h2>
+<p>
+El wiki de Moodle se basa en
+<a href="http://erfurtwiki.sourceforge.net/?id=ErfurtWiki" target="_blank">ErfurtWiki</a>,
+que es una implementación del sistema de hipertexto 
+<a href="http://c2.com/cgi/wiki?WikiWikiWeb" target="_blank">WikiWikiWeb</a>.
+Permite una forma sencilla de edición y creación de páginas web en grupo.</p>
+<p>
+<ul>
+<li>aprenda cómo <a href="#createpages">CrearPáginas</a></li>
+<li>simplemente haga clic en <img src="pix/t/edit.gif"> o seleccione "Editar esta página" en el menú emergente para cambiar el contenido de una página</li>
+<li>puede formatear sus páginas con <a href="#wikimarkup">Wiki Markup</a>, o con HTML (en el caso de que se haya habilitado esa opción al wiki)</li>
+<li>BuscarPáginas o ir a la lista de PáginasNuevas</li>
+<li>también hay listas de las PáginasMásVistas, PáginasMásCambiadas y PáginasActualizadas recientemente</li>
+</ul>
+</p>
+<p>
+<a name="createpages"></a><b>Crear Páginas</b>:<br />
+Es posible crear una página dándole un nombre en el texto de una página ya existente. Una página wiki se nombra utilizando
+<a href="#camelcase">CamelCase</a> o bien poniendo el nombre entre corchetes ( [] ).</p>
+<p>
+Por ejemplo:
+<ul>
+<li>MyWikiPage (Camel Case)</li>
+<li>[My Wiki Page] (entre corchetes)</li>
+</ul></p>
+<p>
+El nombre que se ha dado a una página wiki deberá tener un '?' después de él. Al hacer clic en '?', se
+entrará en el modo de edición de esa página. Escriba el texto, guárdelo y tendrá una nueva página wiki.</p>
+<p><a name="wikimarkup"></a><b>Marcas Wiki</b>:<br />
+Cada página dentro de un Wiki puede editarse con facilidad utilizando las marcas wiki.
+</p>
+<h4> Párrafos</h4>
+  <ul type="circle">
+  <li> párrafos separados dentro del texto mediante líneas vacías</li>
+  <li> usar tres tantos por ciento %%<em></em>% para forzar un salto de línea</li>
+  <li> pulsar espacios o tabuladores antes del texto para hacer sangrías  </li>
+  </ul>
+
+<h4> !! Cabeceras</h4>
+  <ul type="circle">
+  <li> usar un signo de exclamación ! al principio de una línea para crear una cabecera pequeña</li>
+  <li> !! para cabeceras de tamaño medio</li>
+  <li> !!! para cabeceras de tamaño grande  </li>
+  </ul>
+
+<h4> Estilo de texto</h4>
+  <ul type="circle">
+  <li> si desea <em>enfatizar texto</em> enciérrelo entre dos comillas simples '' (así se convierte en cursiva)</li>
+  <li> <strong>el texto en negrita</strong> se consigue con dos signos de subrayado __ (o bien se encierra entre dos asteriscos **)</li>
+  <li> para <big>agrandar el texto</big> se encierra entre dos almohadillas ##</li>
+  <li> para <small> hacer el texto más pequeño </small> utilizar "µµ"</li>
+  <li> un texto <tt>con tipografía de máquina de escribir</tt> se consigue encerrándolo entre dos signos igual ==  </li>
+  </ul>
+
+<h4> Listas</h4>
+
+  <ul type="circle">
+  <li> para comenzar una lista, escribir un asterisco * al principio de la lista</li>
+  <li> utilice # para listas numeradas
+    <ol>
+    <li> puede crear sublistas</li>
+    <li> los subsiguientes puntos de la lista deberían comenzar con los mismos signos * y #    </li>
+    </ol>
+  </li>
+  </ul>
+
+<h4> Hiperenlaces</h4>
+
+  <ul type="circle">
+  <li> introducir en CamelCase una PalabraWiki ('WikiWord') en cualquier lugar del texto para crear un nuevo hiperenlace</li>
+  <li> o bien encerrar algunas <b>palabras entre corchetes</b> para crear un hiperenlace</li>
+  <li> cualquier dirección de internet válida (i.e.e, que comience por <a href="http://">http://</a>) como http://www.example.com/ entro del texto podrá seleccionarse automáticamente</li>
+  <li> encerrar una dirección www o un EnlaceWiki entre corchetes [<a href="http://www.moodle.org/">Moodle</a>] y asignarle un título claro utilizando comillas o el carácter |
+    <ul type="circle">
+    <li> [title | http://example.com]</li>
+    <li> [PalabraWiki "título"] or ["título para" EnlaceWiki]    </li>
+    </ul>
+  </li>
+  <li> si no desea que una PalabraWiki o una dirección http://www-address (o [cualquier cosa] dentro de corchetes) se convierta en un hiperenlace, simplemente escriba un signo de exclamación o el signo ~
+    <ul type="circle">
+    <li> !NoHiperEnlace, ~NoHiperEnlace</li>
+    <li> ![no hiperenlace], !http://nolink.org/    </li>
+    </ul>
+  </li>
+  </ul>
+
+<h4> Tablas con |</h4>
+<table cellpadding="2" border="1" cellspacing="0">
+<tr>
+<td> simplemente encierre </td>
+<td> texto separado por el </td>
+<td> carácter | </td>
+</tr><tr>
+<td> para construir </td>
+<td> una estructura tabular  </td>
+</tr><tr>
+<td> normalmente los navegadores </td>
+<td> pasan por alto las celdas </td>
+<td> vacías </td>
+</tr>
+</table>
+
+
+<p>
+Por favor, deje siempre una línea vacía antes y después de una tabla, de modo que haya una separación entre ella y el resto del texto del párrafo.
+</p>
+
+<h4> Imágenes</h4>
+
+  <ul type="circle">
+  <li> para insertar una imagen en una página, encierre su dirección www entre corchetes, e.g.,  [http://www.example.com/pics/image.png] </li>
+  <li> otra posibilidad es utilizar la función de subir una imagen.</li>
+  </ul>
+
+<h4>Lecturas adicionales</h4>
+Existen más posibilidades de formatear mediante Wiki. Por favor, consulte la <a href="http://erfurtwiki.sourceforge.net" target=_new>Página de Inicio de Erfurt Wiki</a> para más información.
+
+<p>
+<a name="camelcase"></a><b>Camel Case</b>:<br />
+El término CamelCase describe la apariencia de las PalabrasWiki ('WikiWords'). Varias palabras unidas sin espacios
+entre sí, mezclando mayúsculas y minúsculas. Las letras mayúsculas y
+minúsculas se asemejan a las jorobas de un camello.</p>
+<p>
+A este modo de establecer enlaces se denomina a menudo 'BumpyText'.</p>
+<p>
+En tanto que los puristas del lenguaje odian a Wiki por utilizar estos atentados idiomáticos, lo cierto es que son muy comunes en el mundo informático,
+y bien conocidos por la mayoría de los programadores.</p>
+
+
