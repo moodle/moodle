@@ -623,7 +623,7 @@ function forum_subscribed_users($course, $forum) {
         if ($course->category) {
             return get_course_users($course->id);
         } else {
-            return get_course_users(0);   // ALL SITE USERS
+            return get_site_users();
         }
     }
     return get_records_sql("SELECT u.* 
