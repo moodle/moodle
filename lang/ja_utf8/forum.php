@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 unstable development (2004092000)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -36,7 +36,7 @@ $string['discussionname'] = 'ディスカッション名';
 $string['discussions'] = 'ディスカッション';
 $string['discussionsstartedby'] = '$a さんより開始されたディスカッション';
 $string['discussionsstartedbyrecent'] = '$a さんより最近開始されたディスカッション';
-$string['discussthistopic'] = 'このトピックの議論に参加';
+$string['discussthistopic'] = 'このトピックに参加';
 $string['eachuserforum'] = 'トピック一人1件のフォーラム';
 $string['edit'] = '編集';
 $string['editing'] = '編集';
