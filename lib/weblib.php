@@ -1350,7 +1350,17 @@ function print_user($user, $course) {
         echo "$string->email: <a href=\"mailto:$user->email\">$user->email</a><br />";
     }
     if ($user->city or $user->country) {
-        echo "$string->location: $user->city, ".$countries["$user->country"]."<br />";
+        echo "$string->location: ";
+        if ($user->city) {
+            echo $user->city;
+        }
+        if (!empty($countries[$user->country])) {
+            if ($user->city) {
+                echo ', ';
+            }
+            echo $countries[$user->country];
+        }
+        echo "<br />";
     }
     if ($user->lastaccess) {
         echo "$string->lastaccess: ".userdate($user->lastaccess);

@@ -804,15 +804,17 @@ function authenticate_user_login($username, $password) {
     }
 }
 
-function enrol_student($userid, $courseid) {
+function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
 /// Enrols a student in a given course
+
+    $course = get_record("course", "id", $courseid);
 
     if (!record_exists("user_students", "userid", $userid, "course", $courseid)) {
         if (record_exists("user", "id", $userid)) {
             $student->userid = $userid;
             $student->course = $courseid;
-            $student->start = 0;
-            $student->end = 0;
+            $student->timestart = $timestart;
+            $student->timeend = $timeend;
             $student->time = time();
             return insert_record("user_students", $student);
         }
@@ -845,16 +847,23 @@ function unenrol_student($userid, $courseid=0) {
     }
 }
 
-function add_teacher($userid, $courseid, $editall=1, $role="") {
+function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $timeend=0) {
 /// Add a teacher to a given course
 
     if ($teacher = get_record('user_teachers', 'userid', $userid, 'course', $courseid)) {
-        if ($teacher->editall == $editall) {     // Already exists
-            return true;
-        } else {                                 // Just change field
-            set_field('user_teachers', 'editall', $editall, 'id', $teacher->id);
-            return true;
+        $newteacher = NULL;
+        $newteacher->id = $teacher->id;
+        $newteacher->editall = $editall;
+        if ($role) {
+            $newteacher->role = $role;
         }
+        if ($timestart) {
+            $newteacher->timestart = $timestart;
+        }
+        if ($timeend) {
+            $newteacher->timeend = $timeend;
+        }
+        return update_record('user_teachers', $newteacher);
     }
 
     if (!record_exists("user", "id", $userid)) {
@@ -2366,7 +2375,7 @@ function moodle_needs_upgrading() {
 /// MISCELLANEOUS ////////////////////////////////////////////////////////////////////
 
 function notify_login_failures() {
-    global $CFG;
+    global $CFG, $db;
 
     // notify admin users or admin user of any failed logins (since last notification).
     switch ($CFG->notifyloginfailures) {
@@ -2394,12 +2403,14 @@ function notify_login_failures() {
                           AND module='login' AND action='error' GROUP BY info HAVING count(*) > $CFG->notifyloginthreshold");
     
     if ($notifyipsrs) {
+        $ipstr = '';
         while ($row = $notifyipsrs->FetchRow()) {
             $ipstr .= "'".$row['ip']."',";
         }
         $ipstr = substr($ipstr,0,strlen($ipstr)-1);
     }
     if ($notifyusersrs) {
+        $userstr = '';
         while ($row = $notifyusersrs->FetchRow()) {
             $userstr .= "'".$row['info']."',";
         }
@@ -2413,9 +2424,10 @@ function notify_login_failures() {
                  : ((strlen($ipstr) != 0) ? " AND ip IN ($ipstr) " : " AND info IN ($userstr) ")),"l.time DESC","","",$count);
         
         // if we haven't run in the last hour and we have something useful to report and we are actually supposed to be reporting to somebody
-        if (is_array($recip) and count($recip) > 0 and (($timenow - (60 * 60)) > $CFG->lastnotifyfailure) 
+        if (is_array($recip) and count($recip) > 0 and ((time() - (60 * 60)) > $CFG->lastnotifyfailure) 
             and is_array($logs) and count($logs) > 0) {
-        
+       
+            $message = '';
             $site = get_site();
             $subject = get_string('notifyloginfailuressubject','',$site->fullname);
             $message .= get_string('notifyloginfailuresmessagestart','',$CFG->wwwroot)
