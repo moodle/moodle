@@ -126,14 +126,13 @@ function survey_user_outline($course, $user, $mod, $survey) {
         $result->info = "Done";
         $result->time = $lastanswer->time;
         return $result;
-
     }
     return NULL;
 }
 
 
 function survey_user_complete($course, $user, $mod, $survey) {
-    global $CFG, $THEME;
+    global $CFG;
 
     if (survey_already_done($survey->id, $user->id)) {
         echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$mod->id&sid=$user->id&type=student.png\">";
@@ -143,4 +142,3 @@ function survey_user_complete($course, $user, $mod, $survey) {
 }
 
 ?>
-
