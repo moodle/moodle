@@ -27,6 +27,13 @@ function copyrichtext(textname) {
   return true;
 }
 
+function checkall() {
+  void(d=document);
+  void(el=d.getElementsByTagName('INPUT'));
+  for(i=0;i<el.length;i++)
+    void(el[i].checked=1) 
+}
+
 <? if ($focus) { echo "function setfocus() { document.$focus.focus() }\n"; } ?>
 
 // done hiding -->
