@@ -2,6 +2,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    require_once("$CFG->dirroot/course/lib.php");
     global $CFG, $USER;
 
     require_variable($id);           // Course Module ID
@@ -77,7 +78,7 @@
 
     $form = data_submitted();
     $file = $_FILES["file"];
-//    if ($xml = glossary_read_imported_file("C:\\download\\moodle\\moodle\\cursos\\10\\glossary\\Testing_Glossary\\glossary.xml") ) {
+
     if ($xml = glossary_read_imported_file($file['tmp_name']) ) {
 
         $importedentries = 0;
@@ -90,42 +91,51 @@
     
             if ( $xmlglossary['NAME'][0]['#'] ) {
                 unset($glossary);
-                $glossary->name                   = addslashes(utf8_decode($xmlglossary['NAME'][0]['#']));
-        		$glossary->course                 = $course->id;
-                $glossary->globalglossary         = $xmlglossary['GLOBALGLOSSARY'][0]['#'];
-                $glossary->entbypage              = $xmlglossary['ENTBYPAGE'][0]['#'];
-        		$glossary->intro                  = addslashes(utf8_decode($xmlglossary['INTRO'][0]['#']));
-                $glossary->showspecial            = $xmlglossary['SHOWSPECIAL'][0]['#'];
-                $glossary->showalphabet           = $xmlglossary['SHOWALPHABET'][0]['#'];
-                $glossary->showall                = $xmlglossary['SHOWALL'][0]['#'];
-                $glossary->timecreated            = time();
-                $glossary->timemodified           = time();
+                $glossary->name = addslashes(utf8_decode($xmlglossary['NAME'][0]['#']));
+                $glossary->course = $course->id;
+                $glossary->globalglossary = $xmlglossary['GLOBALGLOSSARY'][0]['#'];
+                $glossary->intro = addslashes(utf8_decode($xmlglossary['INTRO'][0]['#']));
+                $glossary->showspecial = $xmlglossary['SHOWSPECIAL'][0]['#'];
+                $glossary->showalphabet = $xmlglossary['SHOWALPHABET'][0]['#'];
+                $glossary->showall = $xmlglossary['SHOWALL'][0]['#'];
+                $glossary->timecreated = time();
+                $glossary->timemodified = time();
 
                 // Setting the default values if no values were passed
                 if ( isset($xmlglossary['STUDENTCANPOST'][0]['#']) ) {
-                    $glossary->studentcanpost         = $xmlglossary['STUDENTCANPOST'][0]['#'];
+                    $glossary->studentcanpost = $xmlglossary['STUDENTCANPOST'][0]['#'];
                 } else {
-                    $glossary->studentcanpost         = $CFG->cnfstudentcanpost;
+                    $glossary->studentcanpost = $CFG->glossary_studentspost;
+                }
+                if ( isset($xmlglossary['ENTBYPAGE'][0]['#']) ) {
+                    $glossary->entbypage = $xmlglossary['ENTBYPAGE'][0]['#'];
+                } else {
+                    $glossary->entbypage = $CFG->glossary_entbypage;
                 }
                 if ( isset($xmlglossary['ALLOWDUPLICATEDENTRIES'][0]['#']) ) {
                     $glossary->allowduplicatedentries = $xmlglossary['ALLOWDUPLICATEDENTRIES'][0]['#'];
                 } else {
-                    $glossary->allowduplicatedentries         = $CFG->cnfallowdupentries;
+                    $glossary->allowduplicatedentries = $CFG->glossary_dupentries;
+                }
+                if ( isset($xmlglossary['DISPLAYFORMAT'][0]['#']) ) {
+                    $glossary->displayformat = $xmlglossary['DISPLAYFORMAT'][0]['#'];
+                } else {
+                    $glossary->displayformat = 2;
                 }
                 if ( isset($xmlglossary['ALLOWCOMMENTS'][0]['#']) ) {
-                    $glossary->allowcomments          = $xmlglossary['ALLOWCOMMENTS'][0]['#'];
+                    $glossary->allowcomments = $xmlglossary['ALLOWCOMMENTS'][0]['#'];
                 } else {
-                    $glossary->allowcomments          = $CFG->cnfallowcomments;
+                    $glossary->allowcomments = $CFG->glossary_allowcomments;
                 }
                 if ( isset($xmlglossary['USEDYNALINK'][0]['#']) ) {
-                    $glossary->usedynalink            = $xmlglossary['USEDYNALINK'][0]['#'];
+                    $glossary->usedynalink = $xmlglossary['USEDYNALINK'][0]['#'];
                 } else {
-                    $glossary->usedynalink            = $CFG->cnflinkglossaries;
+                    $glossary->usedynalink = $CFG->glossary_linkentries;
                 }
                 if ( isset($xmlglossary['DEFAULTAPPROVAL'][0]['#']) ) {
-                    $glossary->defaultapproval        = $xmlglossary['DEFAULTAPPROVAL'][0]['#'];
+                    $glossary->defaultapproval = $xmlglossary['DEFAULTAPPROVAL'][0]['#'];
                 } else {
-                    $glossary->defaultapproval         = $CFG->cnfapprovalstatus;
+                    $glossary->defaultapproval = $CFG->glossary_defaultapproval;
                 }
 
                 // Include new glossary and return the new ID
@@ -135,6 +145,47 @@
                     print_footer($course);
                     exit;
                 } else {
+                    //The instance has been created, so lets do course_modules
+                    //and course_sections
+                    $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
+
+                    $mod->instance = $glossary->id;
+                    // course_modules and course_sections each contain a reference
+                    // to each other, so we have to update one of them twice.
+
+                    if (! $currmodule = get_record("modules", "name", 'glossary')) {
+                        error("Glossary module doesn't exist");
+                    }
+                    $mod->module = $currmodule->id;
+                    $mod->course = $course->id;
+                    $mod->modulename = 'glossary';
+
+                    if (! $mod->coursemodule = add_course_module($mod) ) {
+                        error("Could not add a new course module");
+                    }
+
+                    if (! $sectionid = add_mod_to_section($mod) ) {
+                        error("Could not add the new course module to that section");
+                    }
+                    //We get the section's visible field status
+                    $visible = get_field("course_sections","visible","id",$sectionid);
+
+                    if (! set_field("course_modules", "visible", $visible, "id", $mod->coursemodule)) {
+                        error("Could not update the course module with the correct visibility");
+                    }
+
+                    if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+                        error("Could not update the course module with the correct section");
+                    }
+                    add_to_log($course->id, "course", "add mod",
+                               "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
+                               "$mod->modulename $mod->instance");
+                    add_to_log($course->id, $mod->modulename, "add",
+                               "view.php?id=$mod->coursemodule",
+                               "$mod->instance", $mod->coursemodule);
+
+                    rebuild_course_cache($course->id);
+
                     print_simple_box(get_string("newglossarycreated","glossary"),"center","70%");
                     echo '<p>';
                 }
@@ -150,16 +201,20 @@
         for($i = 0; $i < sizeof($xmlentries); $i++) {
             // Inserting the entries
             $xmlentry = $xmlentries[$i];
-
             unset($newentry);
-            $newentry->concept          = addslashes(trim(utf8_decode($xmlentry['#']['CONCEPT'][0]['#'])));
-            $newentry->definition       = addslashes(utf8_decode($xmlentry['#']['DEFINITION'][0]['#']));
+            $newentry->concept = addslashes(trim(utf8_decode($xmlentry['#']['CONCEPT'][0]['#'])));
+            $newentry->definition = addslashes(utf8_decode($xmlentry['#']['DEFINITION'][0]['#']));
+            if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {
+                $newentry->casesensitive    = $xmlentry['#']['CASESENSITIVE'][0]['#'];
+            } else {
+                $newentry->casesensitive      = $CFG->glossary_casesensitive;
+            }
 
             $permissiongranted = 1;
             if ( $newentry->concept and $newentry->definition ) {
                 if ( !$glossary->allowduplicatedentries ) {
                     // checking if the entry is valid (checking if it is duplicated when should not be) 
-                    if ( $glossary->casesensitive ) {
+                    if ( $newentry->casesensitive ) {
                         $dupentry = get_record("glossary_entries","concept",$newentry->concept,"glossaryid",$glossary->id);
                     } else {
                         $dupentry = get_record("glossary_entries","ucase(concept)",strtoupper($newentry->concept),"glossaryid",$glossary->id);
@@ -170,32 +225,27 @@
                 }
             } else {
                 $permissiongranted = 0;
-			}
+}
             if ($permissiongranted) {
                 $newentry->glossaryid       = $glossary->id;
                 $newentry->sourceglossaryid = 0;
                 $newentry->approved         = 1;
                 $newentry->userid           = $USER->id;
+                $newentry->teacherentry     = 1;
                 $newentry->format           = $xmlentry['#']['FORMAT'][0]['#'];
                 $newentry->timecreated      = time();
                 $newentry->timemodified     = time();
-                $newentry->teacherentry     = $xmlentry['#']['TEACHERENTRY'][0]['#'];
-
+                
                 // Setting the default values if no values were passed
                 if ( isset($xmlentry['#']['USEDYNALINK'][0]['#']) ) {
                     $newentry->usedynalink      = $xmlentry['#']['USEDYNALINK'][0]['#'];
                 } else {
-                    $newentry->usedynalink      = $CFG->cnfusedynalink;
-                }
-                if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {
-                    $newentry->casesensitive    = $xmlentry['#']['CASESENSITIVE'][0]['#'];
-                } else {
-                    $newentry->casesensitive      = $CFG->cnfcasesensitive;
+                    $newentry->usedynalink      = $CFG->glossary_linkentries;
                 }
                 if ( isset($xmlentry['#']['FULLMATCH'][0]['#']) ) {
                     $newentry->fullmatch        = $xmlentry['#']['FULLMATCH'][0]['#'];
                 } else {
-                    $newentry->fullmatch      = $CFG->cnffullmatch;
+                    $newentry->fullmatch      = $CFG->glossary_fullmatch;
                 }
 
                 if ( $newentry->id = insert_record("glossary_entries",$newentry) )  {
@@ -271,42 +321,42 @@
         }
         // processed entries
         echo '<table border=0 width=100%>';
+        echo '<tr>';
+        echo '<td width=50% align=right>';
+        echo get_string("totalentries","glossary");
+        echo ':</td>';
+        echo '<td width=50%>';
+        echo $importedentries + $entriesrejected;
+        echo '</td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td width=50% align=right>';
+        echo get_string("importedentries","glossary");
+        echo ':</td>';
+        echo '<td width=50%>';
+        echo $importedentries;
+        if ( $entriesrejected ) {
+            echo ' <small>(' . get_string("rejectedentries","glossary") . ": $entriesrejected)</small>";
+        }
+        echo '</td>';
+        echo '</tr>';
+        if ( $catsincl ) {
             echo '<tr>';
-                echo '<td width=50% align=right>';
-                echo get_string("totalentries","glossary");
-                echo ':</td>';
-                echo '<td width=50%>';
-                echo $importedentries + $entriesrejected;
-                echo '</td>';
+            echo '<td width=50% align=right>';
+            echo get_string("importedcategories","glossary");
+            echo ':</td>';
+            echo '<td width=50%>';
+            echo $importedcats;
+            echo '</td>';
             echo '</tr>';
-            echo '<tr>';
-                echo '<td width=50% align=right>';
-                echo get_string("importedentries","glossary");
-                echo ':</td>';
-                echo '<td width=50%>';
-                echo $importedentries;
-                if ( $entriesrejected ) {
-                    echo ' <small>(' . get_string("rejectedentries","glossary") . ": $entriesrejected)</small>";
-                }
-                echo '</td>';
-            echo '</tr>';
-            if ( $catsincl ) {
-                echo '<tr>';
-                    echo '<td width=50% align=right>';
-                    echo get_string("importedcategories","glossary");
-                    echo ':</td>';
-                    echo '<td width=50%>';
-                        echo $importedcats;
-                    echo '</td>';
-                echo '</tr>';
-            }
+        }
         echo '</table><hr width=75%>';
 
         // rejected entries 
         if ($rejections) {
             echo '<center><table border=0 width=70%>';
             echo '<tr><td align=center colspan=2 width=100%><strong>' . get_string("rejectionrpt","glossary") . '</strong></tr>';
-                echo $rejections;
+            echo $rejections;
             echo '</table></center><p><hr width=75%>';
         }
     } else {
