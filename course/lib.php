@@ -455,11 +455,11 @@ function get_all_sections($courseid) {
                             ORDER BY section");
 }
 
-function print_section($courseid, $section, $mods, $modnamesused, $absolute=false) {
+function print_section($courseid, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
     global $CFG;
 
 
-    echo "<TABLE WIDTH=100%><TR><TD>\n";
+    echo "<TABLE WIDTH=\"$width\"><TR><TD>\n";
     if ($section->sequence) {
 
         $sectionmods = explode(",", $section->sequence);
@@ -479,9 +479,9 @@ function print_section($courseid, $section, $mods, $modnamesused, $absolute=fals
     echo "</TD></TR></TABLE><BR>\n\n";
 }
 
-function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {
+function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL, $width=190) {
     
-    echo "<TABLE WIDTH=100%>\n";
+    echo "<TABLE WIDTH=\"$width\">\n";
     echo "<TR><TD COLSPAN=2><P><B><FONT SIZE=2>$heading</TD></TR>\n";
     if ($list) {
         foreach($list as $key => $string) {
@@ -502,10 +502,10 @@ function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {
     echo "</TABLE><BR>\n\n";
 }
 
-function print_admin_links ($siteid) {
+function print_admin_links ($siteid, $width=190) {
     global $THEME, $CFG;
     
-    print_simple_box(get_string("administration"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_simple_box(get_string("administration"), $align="CENTER", $width, $color="$THEME->cellheading");
     $icon = "<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("sitelogs")."</A>";
     $modicon[]=$icon;
@@ -524,11 +524,11 @@ function print_admin_links ($siteid) {
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/user.php\">".get_string("edituser")."</A>";
     $modicon[]=$icon;
     $fulladmin = "<P><A HREF=\"$CFG->wwwroot/admin/\">".get_string("admin")."</A>...";
-    print_side_block("", $moddata, "$fulladmin", $modicon);
-    echo "<IMG SRC=\"$CFG->wwwroot/pix/spacer.gif\" WIDTH=200 HEIGHT=0><BR>";
+    print_side_block("", $moddata, "$fulladmin", $modicon, $width);
+    echo "<IMG SRC=\"$CFG->wwwroot/pix/spacer.gif\" WIDTH=\"$width\" HEIGHT=1><BR>";
 }
 
-function print_course_admin_links($courseid) {
+function print_course_admin_links($courseid, $width=190) {
     global $THEME, $CFG;
 
     echo "<BR>";
@@ -553,8 +553,8 @@ function print_course_admin_links($courseid) {
         $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     }
 
-    print_simple_box(get_string("administration"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    print_side_block("", $admindata, "", $adminicon);
+    print_simple_box(get_string("administration"), $align="CENTER", $width, $color="$THEME->cellheading");
+    print_side_block("", $admindata, "", $adminicon, $width);
 }
 
 

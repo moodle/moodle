@@ -182,6 +182,8 @@
     print_recent_activity($course);
     print_simple_box_end();
 
+    echo "<BR><IMG SRC=\"../pix/spacer.gif\" WIDTH=210 HEIGHT=1>";
+
     echo "</TD></TR></TABLE>\n";
 
 ?>

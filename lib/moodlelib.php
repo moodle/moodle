@@ -141,6 +141,14 @@ function print_single_button($link, $options, $label="OK") {
     echo "<INPUT TYPE=submit VALUE=\"$label\"></FORM>";
 }
 
+function print_spacer($height=1, $width=1, $br=true) {
+    global $CFG;
+    echo "<IMG HEIGHT=\"$height\" WIDTH=\"$width\" SRC=\"$CFG->wwwroot/pix/spacer.gif\" ALT=\"\">";
+    if ($br) {
+        echo "<BR>\n";
+    }
+}
+
 function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false) {
     global $CFG;
 

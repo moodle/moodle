@@ -162,9 +162,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "</TD>";
 
     if ($post->parent) {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" WIDTH=\"100%\">";
     } else {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\">";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\" WIDTH=\"100%*\">";
     }
     echo "<P>";
     echo "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";

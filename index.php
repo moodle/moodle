@@ -27,12 +27,15 @@
                  true, $headerbutton);
 
 
+    $side = 190;
+
+
 ?>
 
 
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
   <TR>
-    <TD VALIGN="TOP" NOWRAP>
+    <TD WIDTH=<?=$side?> VALIGN="TOP" NOWRAP>
       <? 
 
          $sections = get_all_sections($site->id);
@@ -41,11 +44,11 @@
       
              if ($sections[0]->sequence or isediting($site->id)) {
                  get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
-                 print_simple_box(get_string("mainmenu"), "CENTER", "100%", "$THEME->cellheading");
+                 print_simple_box(get_string("mainmenu"), "CENTER", $side, "$THEME->cellheading");
              }   
 
              if ($sections[0]->sequence) {
-                 print_section($site->id, $sections[0], $mods, $modnamesused, true);
+                 print_section($site->id, $sections[0], $mods, $modnamesused, true, $side);
              }
 
              if (isediting($site->id)) {
@@ -59,7 +62,7 @@
                  print_simple_box(get_string("courses"), "CENTER", "100%", "$THEME->cellheading");
                  print_all_courses($cat=1, "minimal", 10);
              } 
-             echo "<IMG SRC=\"pix/spacer.gif\" WIDTH=200 HEIGHT=0><BR>";
+             print_spacer(1,$side);
          }
      
          if (isadmin()) {
@@ -72,7 +75,7 @@
     <TD WIDTH="70%" VALIGN="TOP">
       <? if ($site->newsitems == 0 ) {
              print_simple_box(get_string("availablecourses"), "CENTER", "100%", "$THEME->cellheading");
-             echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
+             print_spacer(8,1);
              print_all_courses();
 
          } else {
@@ -97,7 +100,7 @@
                  $headertext = get_string("sitenews");
              }
              print_simple_box($headertext, "CENTER", "100%", $THEME->cellheading);
-             echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
+             print_spacer(8,1);
              forum_print_latest_discussions($newsforum->id, $site->newsitems);
          }
       ?>
@@ -109,6 +112,7 @@
              $site->summary .= "<BR><CENTER><A HREF=\"admin/site.php\"><IMG SRC=\"pix/i/edit.gif\" BORDER=0></A>";
          }
          print_simple_box($site->summary, "", "100%", $THEME->cellheading);
+         print_spacer(1,$side);
       ?>
     </TD>
   </TR>
