@@ -9,6 +9,7 @@ $string['afterdeadline'] = "提出期限後： \$a";
 $string['agreetothisassessment'] = "この評価に同意する";
 $string['allgradeshaveamaximumof'] = "全ての評点の最大は \$a です";
 $string['allowresubmit'] = "再提出を許可する";
+$string['alreadyinphase'] = "既に段階 \$a　に達しています";
 $string['amendassessmentelements'] = "評価要素を更新する";
 $string['assess'] = "評価する";
 $string['assessment'] = "評価";
@@ -17,14 +18,16 @@ $string['assessmentgrade'] = "評価点： \$a";
 $string['assessmentnotyetagreed'] = "評価はまだ同意されていません";
 $string['assessmentofthissubmission'] = "この提出物の評価";
 $string['assessments'] = "評価";
-$string['assessmentsareok'] = "評価はOK";
+$string['assessmentsareok'] = "評価は正常です";
 $string['assessmentsby'] = "\$a による評価";
 $string['assessmentsdone'] = "評価が完了しました";
 $string['assessmentsmustbeagreed'] = "評価は同意される必要がある";
 $string['assessmentwasagreedon'] = "評価が \$a に同意されました";
 $string['assessor'] = "評価者";
 $string['assessthissubmission'] = "この提出物を評価する";
+$string['assignmentnotinthecorrectphase'] = "提出物が正しい段階にありません";
 $string['authorofsubmission'] = "提出物の作成者";
+$string['awaitinggradingbyteacher'] = "\$a により待たれている評価";
 $string['beforedeadline'] = "提出期限前： \$a";
 $string['calculationoffinalgrades'] = "最終評価を計算";
 $string['closeassignment'] = "課題を閉じる";
@@ -44,9 +47,11 @@ $string['editacomment'] = "コメントの編集";
 $string['editingassessmentelements'] = "評価要素を編集";
 $string['element'] = "要素";
 $string['elementweight'] = "要素比重";
+$string['feedbackgoeshere'] = "フィードバックはここに表示されます";
 $string['generalcomment'] = "一般的なコメント";
 $string['grade'] = "成績";
 $string['gradeassessment'] = "評価成績";
+$string['graded'] = "評価";
 $string['gradedbyteacher'] = "\$a による評価";
 $string['gradeforassessments'] = "評価に対する評価";
 $string['gradeforbias'] = "バイアスに対する評価";
@@ -63,6 +68,26 @@ $string['maximumsize'] = "最大サイズ";
 $string['modulename'] = "ワークショップ";
 $string['modulenameplural'] = "ワークショップ";
 $string['movedtophase'] = "段階 \$a に移動";
+$string['noassessmentsdone'] = "評価されていません";
+$string['nosubmissionsavailableforassessment'] = "評価すべき提出物はありません";
+$string['notavailable'] = "利用できません";
+$string['noteonassessmentelements'] = "評価は数多くの「評価要素」により成立ちます。このことで評価を、
+<BR>
+簡単且つ首尾一貫したものにすることが出来ます。
+課題を学生に利用出来る
+<BR>
+ようにする前に、教師としてこれらの要素を追加しなければなりません。コース課題
+<BR>
+をクリックして要素が存在しない場合、追加するかどうかを尋ねられます。
+<BR>
+「課題の編集」画面で要素数を変更することが出来ます。
+<BR>
+要素自体は「評価の管理」画面で変更できます。 
+";
+$string['numberofassessmentelements'] = "コメント数、評価要素数、評価の幅、基準数";
+$string['numberofassessments'] = "評価数";
+$string['numberofassessmentsofstudentsubmissions'] = "学生の提出物に対する評価数";
+$string['numberofassessmentsofteachersexamples'] = "教師の例に対する評価数";
 $string['openassignment'] = "課題を開く";
 $string['optionforpeergrade'] = "相互評価オプション";
 $string['phase'] = "段階";
@@ -70,6 +95,7 @@ $string['phase3'] = "最終評価の計算";
 $string['phase4'] = "最終評価を表示";
 $string['reassess'] = "再評価";
 $string['reply'] = "返事";
+$string['savedok'] = "正常に保存されました";
 $string['savemyassessment'] = "評価を保存";
 $string['savemycomment'] = "コメントを保存";
 $string['savemygrading'] = "評価を保存";
@@ -90,11 +116,16 @@ $string['studentsubmissions'] = "\$a の提出物";
 $string['submissions'] = "提出";
 $string['teachersassessment'] = "教師の評価";
 $string['teacherscomment'] = "教師のコメント";
+$string['teachersgrade'] = "教師の評価";
 $string['title'] = "題名";
 $string['typeofscale'] = "評価基準";
 $string['view'] = "表示";
 $string['viewassessmentofteacher'] = "\$a の評価を表示する";
 $string['viewotherassessments'] = "他の評価を表示する";
+$string['weightforbias'] = "バイアスに対する比重";
+$string['weightforpeerassessments'] = "相互評価に対する比重";
+$string['weightforreliability'] = "信頼性に対する比重";
+$string['weightforteachersassessment'] = "教師の評価に対する比重";
 $string['weights'] = "比重";
 $string['weightsusedforfinalgrade'] = "最終評価に使用する比重";
 $string['weightsusedforsubmissions'] = "提出物に使用する比重";
