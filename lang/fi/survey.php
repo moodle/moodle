@@ -6,9 +6,9 @@ $string[modulenameplural] = "Palautekyselyt";
 #------------------------------------------------------------
 
 $string[actual] = "Varsinainen";
-$string[allquestions] = "Kaikki kysymykset järjetyksessä, kaikki opiskelijat";
-$string[allscales] = "Kaikki asteikot, kaikki oppiskelijat";
-$string[alreadysubmitted] = "Olat jo palauttanut tämän kyselyn";
+$string[allquestions] = "Kaikki kysymykset järjestyksessä, kaikki opiskelijat";
+$string[allscales] = "Kaikki asteikot, kaikki opiskelijat";
+$string[alreadysubmitted] = "Olet jo palauttanut tämän kyselyn";
 $string[analysisof] = "Analyysi \$a";
 $string[ipreferthat] = "Pidän parempana että";
 $string[ifoundthat] = "Huomasin että";
@@ -29,17 +29,17 @@ $string[preferred] = "Suositettu";
 $string[questions] = "Kysymykset";
 $string[question] = "Kysymys";
 $string[report] = "Palaute raportti";
-$string[scales] = "Skaala";
+$string[scales] = "Skaalat";
 $string[savednotes] = "Muistiinpanosi tallennettiin";
-$string[seemoredetail] = "Klikka tästä nähdäksesi lisätietoja ";
+$string[seemoredetail] = "Klikkaa tästä nähdäksesi lisätietoja ";
 $string[selectedquestions] = "Valitut kysymykset, kaikki opiskelijat";
-$string[summary] = "Summary";
+$string[summary] = "Yhteenveto";
 $string[surveycompleted] = "Olet suorittanut tämän kyselyn. Alla olevasta kuvasta näet suorituksesi verrattuna kurssin  keskiarvoon.";
 $string[surveyname] = "Kyselyn nimi";
 $string[surveysaved] = "Kesely tallennettu";
 $string[surveytype] = "Kyselyn tyyppi";
 $string[thanksforanswers] = "Kiitos vastauksestasi kyselyyn, \$a";
-$string['time'] = "Time";
+$string['time'] = "Aika";
 $string[viewsurveyresponses] = "Katso \$a kyselyn vastaukset";
 
 ?>

@@ -1,11 +1,11 @@
 <?PHP 
 $string[modulename]="Foorumi";
 $string[modulenameplural]="Foorumit";
-$string[addanewdiscussion]="Lis‰‰ uusi keskustelun aihe";
+$string[addanewdiscussion]="Lis‰‰ uusi keskustelu";
 $string[allowchoice]="Anna kaikkien valita";
 $string[allowdiscussions]="Voiko \$a avata uusia keskusteluja?";
 $string[allowratings]="Voidaanko viestej‰ arvioida?";
-$string[allowsdiscussions]="T‰m‰ foorumi antaa jokaisen aloittaa yhden uuden keskustelunaiheen.";
+$string[allowsdiscussions]="T‰m‰ foorumi antaa jokaisen aloittaa yhden uuden keskustelun.";
 $string[anyfile]="Mik‰ tahansa tiedosto";
 $string[attachment]="Liite";
 $string[bynameondate]=" \$a->name - \$a->date";
@@ -39,7 +39,7 @@ $string[generalforum]="Yleisfoorumi";
 $string[generalforums]="Yleisfoorumit";
 $string[inforum]=" \$a :ssa";
 $string[intronews]="Yleiset uutiset ja tiedotteet";
-$string[introsocial]="Avoin foorumi keskustelulle vapaista aiheista";
+$string[introsocial]="Avoin foorumi vapaalle keskustelulle";
 $string[introteacher]="Opettajien oma keskustelufoorumi";
 $string[learningforums]="Opiskelufoorumi";
 $string[maxtimehaspassed]="Pahus, maksimi muokkausaika on ylittynyt t‰m‰n (\$a) viestin osalta!";
@@ -52,12 +52,12 @@ $string[more]="lis‰‰";
 $string[namenews]="Uutiset foorumi";
 $string[namesocial]="Keskustelu foorumi";
 $string[nameteacher]="Opettajain foorumi";
-$string[nodiscussions]="T‰ss‰ foorumissa ei ole viel‰ keskustelun aiheita";
+$string[nodiscussions]="T‰ss‰ foorumissa ei ole viel‰ keskusteluja";
 $string[noguestpost]="Pahus, vieraa eiv‰t saa kirjoitaa foorumiin";
 $string[noposts]="Ei viestej‰";
 $string[nosubscribers]="T‰ll‰ foorumilla ei ole tilaajia";
 $string[nownotsubscribed]="\$a->name EI saa kopioita viesteist‰\\'\$a->forum\\' s‰hkˆpostiinsa.";
-$string[nowsubscribed]="\$a->name SAAkopiot viesteist‰ \\'\$a->forum\\' s‰hkˆpostiinsa.";
+$string[nowsubscribed]="\$a->name SAA kopiot viesteist‰ \\'\$a->forum\\' s‰hkˆpostiinsa.";
 $string[numposts]="\$a viesti‰";
 $string[olderdiscussions]="Vanhemmat keskustelut";
 $string[parentofthispost]="T‰m‰n viestin alku";
@@ -77,8 +77,8 @@ Kun kirjoitat:
 <LI>selit‰ ajatuksesi selke‰sti
 <LI>mieti kysymyksi‰ jota voisit esitt‰‰
 </UL>";
-$string[postrating1]="Sis‰lt‰‰ enimm‰kseen irtonaista tietoa";
-$string[postrating2]="Yht‰l‰isesti irtonaista ja aiheeseen liittyv‰‰ tietoa";
+$string[postrating1]="Sis‰lt‰‰ enimm‰kseen irrallista tietoa";
+$string[postrating2]="Yht‰l‰isesti irrallista ja aiheeseen liittyv‰‰ tietoa";
 $string[postrating3]="Sis‰lt‰‰ enimm‰kseen aiheeseen liittyv‰‰ tietoa";
 $string[postupdated]="Viestisi on p‰ivitetty";
 $string[processingpost]="Prosessoidaan viesti‰ \$a";
