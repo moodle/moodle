@@ -29,6 +29,7 @@ $string['prev'] = 'Précédent';
 $string['regular'] = 'Descriptif normal';
 $string['report'] = 'Rapport';
 $string['review'] = 'Relecture';
+$string['score'] = 'Résultat';
 $string['trackingloose'] = 'Attention ! Les données du suivi de ce paquet SCORM seront perdues !';
 $string['validation'] = 'Résultat de la validation';
 $string['validateascorm'] = 'Valider un paquet SCORM';
