@@ -403,21 +403,14 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
     $ismainglossary = $glossary->mainglossary;
 	
     $return = "<font size=1>";
-
     if (!$entry->approved) {
         $return .= get_string("entryishidden","glossary");
     }
-    $count = count_records("glossary_comments","entryid",$entry->id);
-    if ($count) {
-        $return .= " <a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count ";
-        if ($count == 1) {
-            $return .= get_string("comment", "glossary");
-        } else {
-            $return .= get_string("comments", "glossary");
-        }
-        $return .= "</a>";
-    }
-    $return .= "</font>";
+    $return .= "</font> ";
+
+    $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook);
+
+    
     if ( $glossary->allowcomments and !isguest()) {
         $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=16 width=16 border=0></a> ";
     }
@@ -451,6 +444,29 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         }
     }
     $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
+    if ($type == 'print') {
+        echo $return;
+    } else {
+        return $return;
+    }
+}
+
+function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook, $type = 'print') {
+    $return = '';
+
+    $count = count_records("glossary_comments","entryid",$entry->id);
+    if ($count) {
+        $return = "<font size=1>";
+        $return .= "<a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count ";
+        if ($count == 1) {
+            $return .= get_string("comment", "glossary");
+        } else {
+            $return .= get_string("comments", "glossary");
+        }
+        $return .= "</a>";
+        $return .= "</font>";
+    }
+
     if ($type == 'print') {
         echo $return;
     } else {
