@@ -5,18 +5,34 @@
 $string['action'] = "Tapahtuma";
 $string['activities'] = "Aktiviteetit";
 $string['activity'] = "Aktiviteetti";
+$string['activitymodule'] = "Tapahtumamoduuli";
 $string['activityreport'] = "Tapahtumaraportti";
 $string['add'] = "Lisää";
 $string['addadmin'] = "Lisää ylläpitäjä";
 $string['addcreator'] = "Lisää kurssin ylläpitäjä";
 $string['added'] = "Lisätty \$a";
 $string['addinganew'] = "Lisätään uusi \$a";
+$string['addnewcategory'] = "Lisää uusi kategoria";
 $string['addinganewto'] = "Lisätään uusi \$a->what ( \$a->to ) ";
 $string['addnewcourse'] = "Lisää uusi kurssi";
 $string['addnewuser'] = "Lisää uusi käyttäjä";
 $string['address'] = "Osoite";
 $string['addteacher'] = "Lisää opettaja";
 $string['admin'] = "Ylläpitäjä";
+$string['adminhelpaddnewuser'] = "Käyttäjien lisäys manuaalisesti";
+$string['adminhelpassignadmins'] = "Ylläpitäjällä on pääsy kaikkialle tällä sivustolla ja kaikki oikeudet lisäyksiin ja poistoihin";
+$string['adminhelpassigncreators'] = "Ylläpitäjät voivat luoda uusia kursseja ja opettaa niissä";
+$string['adminhelpassignteachers'] = "Valitse kurssi ja käytä ikonia opettajien lisäämiseen";
+$string['adminhelpauthentication'] = "Voit käyttää Moodlen omia käyttäjätilejä tai ulkoista tietokantaa";
+$string['adminhelpconfigvariables'] = "Määritä sivuston yleiseen toimintaan vaikuttavat muuttujat";
+$string['adminhelpcourses'] = "Määritä kurssit ja kategoriat sekä niille käyttäjät";
+$string['adminhelpedituser'] = "Selaa käyttäjälistaa ja muokkaa niitä";
+$string['adminhelplogs'] = "Selaa sivuston kaikkia tapahtumia";
+$string['adminhelplanguage'] = "Käytössä olevan kielipaketin tarkistus ja editointi";
+$string['adminhelpmanagemodules'] = "Valvo asennettuja moduleita ja niiden asetuksia";
+$string['adminhelpthemes'] = "Valitse miltä sivusto näyttää (värit fontit jne.)";
+$string['adminhelpsitefiles'] = "Tiedostojen julkaisu tai varmuuskopioiden siirto serverille";
+$string['adminhelpsitesettings'] = "Määritä miltä sivuston etusivu näyttää";
 $string['administration'] = "Ylläpito";
 $string['again'] = "taas";
 $string['all'] = "Kaikki";
@@ -82,6 +98,7 @@ Voit määritellä useita palvelimia muodossa 'posti.domain.org;
 posti2.domain.org'";
 $string['configsmtpuser'] = "Jos SMTP-palvelin vaatiin autentikoinnin, anna käyttäjätunnus ja salasana näihin kenttiin.";
 $string['configunzip'] = "Anna unzip-ohjelman sijainti. (vain UNIX)";
+$string['configuration'] = "Konfigurointi";
 $string['configvariables'] = "Määrittele muuttujat";
 $string['configzip'] = "Anna zip-ohjelman sijainti. (vain UNIX)";
 $string['confirmed'] = "Rekisteröitymisesi on vahvistettu";
@@ -171,7 +188,7 @@ $string['emailpasswordconfirmation'] = "Hei \$a->firstname,
 
 Joku (luultavasti sinä) on pyytänyt uutta salasanaa tunnukselle sivustolla '\$a->sitename'.
 
-Vahvistaaksesi uuden salasanan klikaa alla olevaa linkkiä:
+Vahvistaaksesi uuden salasanan klikkaa alla olevaa linkkiä:
 
 \$a->link
 
@@ -309,15 +326,15 @@ $string['loginas'] = "Kirjaudu toisena";
 $string['loginguest'] = "Kirjaudu vieraana";
 $string['loginsite'] = "Kirjaudu sivustoon";
 $string['loginsteps'] = "Hei! Käytä hetki aikaa luodaksesi itsellesi käyttäjätunnus ja salasana sivustoon. Tämä mahdollistaa sivuston vapaan käytön.
-   Jotkut kurssit saattavat myös vaatia kertakäyttöisen &quot;avaimen&quot; jonka saat myöhemmin. Luodaksesi tunnuksen itsellesi sinum pitää:
+   Jotkut kurssit saattavat myös vaatia kertakäyttöisen &quot;avaimen&quot; jonka saat myöhemmin. Luodaksesi tunnuksen itsellesi sinun pitää:
    <OL size=2>
    <LI>Täyttää  <A HREF=\$a>uusi tunnus</A> lomake henkilötiedoillasi.
    <LI>Sähköposti löhetetään antamaasi osoitteeseen.
-   <LI>Lue postisi ja klikaa linkkiä viestissä
+   <LI>Lue postisi ja klikkaa linkkiä viestissä
    <LI>Tunnuksesi vahvistetaan ja sinut kirjataan sisään.
-   <LI>Valise kurssit, mihin haluat.
+   <LI>Valitse kurssit, mihin haluat.
    <LI>Jos kurssi vaatii  &quot;avaimen&quot;, käytä sitä jonka sait opettajaltasi.
-   <LI>Nyt voit käyttää järjestelmää vapaasti. Vastaisuudessa kirjannut vain antamalla käyttäjätunnuksen ja salasanan vieressä oleviin kentiin. .
+   <LI>Nyt voit käyttää järjestelmää vapaasti. Vastaisuudessa kirjaudut vain antamalla käyttäjätunnuksen ja salasanan vieressä oleviin kenttiin.
    </OL>";
 $string['loginstepsnone'] = "Hei! 
 <p>Jotta voisit käyttää kursseja, sinun pitää luoda itsellesi
@@ -330,6 +347,7 @@ $string['mainmenu'] = "Päävalikko";
 $string['makeafolder'] = "Luo kansio";
 $string['makeeditable'] = "Jos annat WWW-palveimelle kirjoitusoikeudet kansioon '\$a', voit muokata tätä tiedostoa suoraan tältä sivulta.";
 $string['managedatabase'] = "Tunkkaa tietokantaa";
+$string['managemodules'] = "Modulien valvonta";
 $string['markthistopic'] = "Merkitse tämä aihe aktiiviseksi.";
 $string['maximumchars'] = "Maksimimäärä \$a merkkiä";
 $string['maximumgrade'] = "Arviointimaksimi";
@@ -361,6 +379,8 @@ $string['modified'] = "Muokattu";
 $string['modulesetup'] = "Asetetaan moduli-taulut";
 $string['modulesuccess'] = "\$a taulut asetettu";
 $string['mostrecently'] = "viimeisimmät";
+$string['registration'] = "Rekisteröi Moodle";
+$string['movecategoryto'] = "Siirrä kategoria kohtaan:";
 $string['movedown'] = "Siirrä alas";
 $string['movefilestohere'] = "Siirrä tiedostot tänne";
 $string['movetoanotherfolder'] = "Siirrä toiseen kansioon";
@@ -455,6 +475,7 @@ $string['potentialteachers'] = "Mahdolliset opettajat";
 $string['preferredlanguage'] = "Haluttu kieli";
 $string['preview'] = "Esikatsele";
 $string['previeworchoose'] = "Esikatsele tai valitse teema";
+$string['publicsitefileswarning'] = "Huom: kaikki pääsevät käsiksi tänne laitettuihin tiedostoihin";
 $string['question'] = "Kysymys";
 $string['readme'] = "README";
 $string['recentactivity'] = "Viimeisimmät tapahtumat";
@@ -470,6 +491,7 @@ $string['role'] = "Rooli";
 $string['savechanges'] = "Talleta muutokset";
 $string['search'] = "Hae";
 $string['searchagain'] = "Hae uudelleen";
+$string['searchcourses'] = "Etsi kursseja";
 $string['searchresults'] = "Hakutulokset";
 $string['sec'] = "sekunti";
 $string['secs'] = "sekuntia";
@@ -495,6 +517,7 @@ $string['showrecent'] = "Näytä viimeiset tapahtumat";
 $string['showtheselogs'] = "Näytä nämä tapahtumat";
 $string['site'] = "Sivusto";
 $string['sitelogs'] = "Sivuston tapahtumat";
+$string['sitefiles'] = "Sivuston tiedostot";
 $string['sitenews'] = "Sivuston uutiset";
 $string['sites'] = "Sivustot";
 $string['sitesettings'] = "Sivuston asetukset";
@@ -514,7 +537,8 @@ $string['strftimerecent'] = "%%d %%b, %%H:%%M";
 $string['strftimerecentfull'] = "%%a, %%d %%b %%Y, %%H:%%M";
 $string['strftimetime'] = "%%H:%%M";
 $string['stringsnotset'] = "Seuraavat merkkijonot eivät ole määriteltynä tiedostossa \$a";
-$string['studentnotallowed'] = "Pahus, et voi liittyä kursille tunnuksella '\$a'";
+$string['studentnotallowed'] = "Pahus, et voi liittyä kurssille tunnuksella '\$a'";
+$string['subcategories'] = "Alakategoriat";
 $string['success'] = "Valmis!";
 $string['summary'] = "Yhteenveto";
 $string['summaryof'] = "\$a Yhteenveto";
@@ -525,6 +549,7 @@ $string['texteditor'] = "Käytä vakio web lomakkeita";
 $string['textformat'] = "Teksti";
 $string['thanks'] = "Kiitokset";
 $string['theme'] = "Teema";
+$string['themes'] = "Teemat";
 $string['themesaved'] = "Uusi teema tallennettu";
 $string['thischarset'] = "iso-8859-1";
 $string['thislanguage'] = "Suomi";
@@ -533,7 +558,7 @@ $string['today'] = "Tänään";
 $string['todaylogs'] = "Päivän tapahtumat";
 $string['toomanytoshow'] = "Liian paljon käyttäjiä näytettäväksi";
 $string['topic'] = "Aihe";
-$string['topichide'] = "Piiloita tämä aihe";
+$string['topichide'] = "Piilota tämä aihe";
 $string['topicoutline'] = "Aiheen kuvaus";
 $string['topicshow'] = "Näytä tämä aihe";
 $string['total'] = "Yhteensä";
@@ -570,7 +595,7 @@ $string['userprofilefor'] = "Käyttäjän henkilötiedot \$a";
 $string['users'] = "Käyttäjät";
 $string['webpage'] = "WWW-sivu";
 $string['week'] = "Viikko";
-$string['weekhide'] = "Piiloita tämä viikko";
+$string['weekhide'] = "Piilota tämä viikko";
 $string['weeklyoutline'] = "Viikkonäkymä";
 $string['weekshow'] = "Näytä tämä viikko";
 $string['welcometocourse'] = "Tervetuloa \$a";
