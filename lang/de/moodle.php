@@ -24,6 +24,36 @@ $string['addnewuser'] = "Neuen Benutzer anlegen";
 $string['address'] = "Adresse";
 $string['addteacher'] = "Lehrer anlegen";
 $string['admin'] = "Admin";
+$string['adminhelpaddnewuser'] = "Neue Nutzerzugänge manuell anlegen";
+$string['adminhelpassignadmins'] = "Administratoren haben vollen Zugriff auf die Site";
+$string['adminhelpassigncreators'] = "Ersteller können neue Kurse anlegen und dort unterrichten";
+$string['adminhelpassignteachers'] = "Wählen Sie einen Kurs und verwenden Sie das Icon, um Lehrer hinzuzufügen";
+$string['adminhelpauthentication'] = "Sie können interne Nutzerzugänge oder externe Datenbanken verwenden";
+$string['adminhelpconfiguration'] = "Generelle Variablen für die gesamte Site festlegen";
+$string['adminhelpcourses'] = "Kurse und Kategorien definieren und Ihnen Personen zuordnen";
+$string['adminhelpedituser'] = "Liste der Nutzerzugänge durchsuchen und bearbeiten";
+$string['adminhelplanguage'] = "Überprüfen und Bearbeiten des aktuellen Sprachpakets";
+$string['adminhelplogs'] = "Logfiles der Aktivitäten der Site durchsuchen";
+$string['adminhelpmanagemodules'] = "Installierte Module und deren Einstellungen verwalten";
+$string['adminhelpmanagedatabase'] = "Direkt auf die Datenbank zugreifen (Vorsicht!)";
+$string['adminhelpsitesettings'] = "Festlegen der Aufmachung für die Begrüßungsseite ";
+$string['adminhelpsitefiles'] = "Allgemenine Dateien veröffentlichen oder externe Backups hochladen";
+$string['adminhelpthemes'] = "Optik der Seite auswählen";
+$string['adminhelpusers'] = "Nutzer anlegen und Authentifizierung festlegen";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 $string['administration'] = "Administration";
 $string['administrator'] = "Administrator";
 $string['administrators'] = "Administratoren";
