@@ -1,0 +1,72 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.3.1 + (2004052501)
+
+
+$string['absentlong'] = 'Отсутствие';
+$string['absentshort'] = 'О';
+$string['addingmultiple'] = 'Добавление множественных ведомостей по посещениям';
+$string['addmultiple'] = 'Добавить множественных ведомостей по посещениям';
+$string['allmodulename'] = 'Все ведомости посещений';
+$string['auto'] = 'авто';
+$string['autoattend'] = 'Автоматическое регистрация посещений на основе анализа активности пользователей (user activity logs)';
+$string['autoattendmulti'] = 'Автоматическое регистрация посещений для всех ведомостей на основе анализа активности пользователей (user activity logs)';
+$string['autoattendshort'] = 'Автоматически из системной информации (logs) ';
+$string['choosedays'] = 'Дни на каждой неделе для определения посещений';
+$string['dayofroll'] = 'Дата в ведомости для';
+$string['defaultautoattend'] = 'Взять ли посещения основанные на анализе пользовательской активности (user activity logs) по умолчанию';
+$string['defaultdynamicsection'] = 'Переместить ли ведомость посещений на правильную неделю по умолчанию';
+$string['defaultgrade'] = 'Делать ли оценивание по ведомости посещений по умолчанию';
+$string['defaulthoursinclass'] = 'Сколько часов должно быть по умолчанию в ведомости посещений';
+$string['defaultmaxgrade'] = 'Какое по умолчанию максимальное значение оценки для полного посещения должно быть';
+$string['defaultstudentstatus'] = 'Статус посещения студента по умолчанию для новой ведомости посещений';
+$string['downloadexcelfull'] = 'Загрузка полных электронных таблиц в формате  Excel';
+$string['downloadexceltotals'] = 'Загрузка итоговых электронных таблиц в формате  Excel';
+$string['downloadtextfull'] = 'Загрузка полного текстового отчета ';
+$string['downloadtexttotals'] = 'Загрузка итогового текстового отчета';
+$string['dynamicsection'] = 'Определите неделю для посещений, основанных на этой дате';
+$string['dynamicsectionmulti'] = 'Автоматическое место ведомости в их недельном разделе';
+$string['dynsectionshort'] = 'Динамическое перемещение в разделе';
+$string['endbeforestart'] = 'Конечная дата перед начальной датой';
+$string['endmulti'] = 'Дата для последней ведомости посещений';
+$string['for'] = 'для';
+$string['friday'] = 'Птн';
+$string['gradeshort'] = 'Ранжирование';
+$string['gradevalue'] = 'Сделать эту ведомость оценочной';
+$string['gradevaluemulti'] = 'Сделать эти ведомости оценочными';
+$string['hoursinclass'] = 'Количество часов в классе';
+$string['hoursineachclass'] = 'Количество часов в каждом классе';
+$string['hoursinfullreport'] = 'Максимальное количество  часов посещений, которые будут показаны на одной странице отчета';
+$string['maxgradeshort'] = 'Максимальная оценка';
+$string['maxgradevalue'] = 'Максимальное значение оценки при полном посещении';
+$string['modulename'] = 'Посещение';
+$string['modulenameplural'] = 'Ведомость посещений';
+$string['monday'] = 'Пон';
+$string['norolls'] = 'Нет ведомости посещений в этом курсе';
+$string['notes'] = 'Исключительная информация';
+$string['notesfor'] = 'Исключительная информация для';
+$string['noviews'] = 'Извините, но это не является данными для Вашего аккаунта здесь';
+$string['of'] = 'для';
+$string['pages'] = 'страницы';
+$string['presentlong'] = 'Присутствие ';
+$string['presentshort'] = 'П';
+$string['saturday'] = 'Суб';
+$string['startafterend'] = 'Начальная дата после завершения курса';
+$string['startmulti'] = 'Дата для первой ведомости посещений';
+$string['sunday'] = 'Вск';
+$string['takeroll'] = 'Учтем в ведомости этот день?';
+$string['tardiesperabsence'] = 'Сколько задержек будем считать как одно отсутствие?';
+$string['tardylong'] = 'Задержка ';
+$string['tardyshort'] = 'З';
+$string['teacheredit'] = 'Получить  посещаемость';
+$string['thursday'] = 'Чтв';
+$string['tuesday'] = 'Вт';
+$string['viewall'] = 'Просмотр всех ведомостей посещений';
+$string['viewmulti'] = 'Просмотр многостраничных отчетов';
+$string['viewone'] = 'Просмотр всех страниц отчета';
+$string['viewsection'] = 'Просмотр всех ведомостей посещений в данном разделе';
+$string['viewtable'] = 'Просмотр отчета как одной таблицы';
+$string['viewweek'] = 'Просмотр всех ведомостей посещений по календарной неделе';
+$string['wednesday'] = 'Ср';
+$string['weekmodulename'] = 'Все ведомости посещений за последнюю неделю';
+
+?>
