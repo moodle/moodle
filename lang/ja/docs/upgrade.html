@@ -1,0 +1,152 @@
+<HEAD>
+
+    <TITLE>Moodle Docs: Upgrading</TITLE>
+
+	<LINK REL="stylesheet" HREF="../theme/standard/styles.php" TYPE="TEXT/CSS">
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=euc-jp">
+
+</HEAD>
+
+
+<BODY BGCOLOR="#FFFFFF">
+
+<H2>Moodleのアップグレード</H2>
+
+<p>Moodleは、どの旧バージョンからも新しいバージョンに正常なアップグレードが出来るよう設計されています。</p>
+
+<p>Moodleをアップグレードする場合、下記の手順に沿って作業を行ってください:</p>
+
+<h2>1. 重要なデータのバックアップを行う</h2>
+
+<blockquote> 
+
+<p>この作業は厳密に必要なものではありません。しかし、何らかの理由で旧バージョンに戻る必要がある場合があるかもしれませんので、システムのメジャーアップグレードを行う前にバックアップを行うことは適切な考え方です。実際は、この作業を省略するために、あなたのサーバで毎日Moodleの自動的バックアップを取ればよいでしょう。</p>
+
+<p>バックアップを取る必要のある部分は3箇所あります:</p>
+
+<blockquote> 
+
+<p><strong>1. Moodleソフトウェアディレクトリ</strong></p>
+
+    <blockquote> 
+
+<p>config.phpやテーマ、言語等のあなたが追加したモジュールを回復出来るように、事前にこのディレクトリを別の場所にコピーしてください。</p>
+
+    </blockquote>
+
+<p><strong>2. データディレクトリ</strong></p>
+
+    <blockquote> 
+
+<p>アップロードしたコンテンツ(コース資料や学生の課題)が入っていますので、このディレクトリのバックアップは非常に重要です。アップグレードにより、時々データディレクトリ内のディレクトリが、リネームされたり移動される場合があります。</p>
+
+    </blockquote>
+
+    <p><strong>3. データベース</strong></p>
+
+    <blockquote> 
+
+<p>ほとんどの場合Moodleのアップグレードでは、フィールドの追加または変更によりデータベーステーブルの更新が行われます。それぞれのデータベースシステムでは異なる方法でバックアップを行います。MySQLデータベースでバックアップを取る1つの方法は単一のSQLファイルに「dump」することです。 次の例はUnixコマンドで&quot;moodle&quot;という名称のデータベースをdumpしています:</p>
+
+      <blockquote>
+
+        <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
+
+      </blockquote>
+
+ <p>また、Moodleの&quot;データベース管理&quot;ウェブインターフェースで&quot;エクスポート&quot;を利用することにより、全てのプラットフォーム上で同じようにバックアップを行うことが出来ます。</p>
+
+    </blockquote>
+
+  </blockquote>
+
+</blockquote>
+
+<h2>&nbsp;</h2>
+
+<h2>2. 新しいMoodleソフトウェアをインストールする</h2>
+
+<blockquote> 
+
+  <p><strong>ダウンロードアーカイブを使用する</strong></p>
+
+  <blockquote> 
+
+<p>自分が何をやっているのか分からない場合は、古いバージョンに上書きしないでください ... 時々古いファイルが新しいバージョンに問題を生じさせる場合があります。一番良い方法は、現在のMoodleディレクトリを他の名前にリネームして、新しいMoodleアーカイブを元の場所に解凍する方法です。</p>
+    <blockquote> 
+
+<p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br>
+
+        tar xvzf moodle-1.0.6.tgz</font></p>
+
+   </blockquote>
+
+<p>次に、あなたのconfig.phpやオリジナルテーマ等のプラグインをコピーします:</p>
+
+    <blockquote>
+
+      <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br>
+
+        cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
+
+    </blockquote>
+
+  </blockquote>
+
+<p><strong>CVSを使用する</strong></p>
+
+  <blockquote> 
+
+<p>あなたがCVSを使用しているのでしたら、Moodleのルートディレクトリにアクセスして新しいファイルを取り込んでください:</p>
+
+  <blockquote> 
+
+<p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
+
+    </blockquote>
+
+<p>新しいディレクトリを作成する必要がある場合は、&quot;d&quot;パラメータを、空のディレクトリを除く場合は、&quot;P&quot;パラメータを使用してください。</p>
+
+<p>もし、あなたがMoodleのファイルを編集しているのでしたら、起こりうるコンフリクト(衝突)に関するメッセージを良く見ておいてください。あなたがカスタマイズしたテーマや、標準的ではないプラグインは変更されません。</p>
+
+  </blockquote>
+
+  <p>&nbsp;</p>
+
+</blockquote>
+
+<h2>3. アップグレードを終了する</h2>
+
+<blockquote> 
+
+<p>最後にMoodleのアップグレードプロセスを実行します。</p>
+
+<p>これを行うには<a target=_top href="../admin/index.php">インストールの管理者ページにアクセスします</a>。</p>
+
+  <blockquote> 
+
+<p><font face="Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
+
+  </blockquote>
+
+<p>adminでログインしているかどうかは関係ありません。</p>
+
+<p>Moodleは新バージョンを検出して、必要なデータベースまたはファイルシステムのアップグレードを行います。もし、アップグレードが正常に行われない場合(非常に稀)は、何をする必要があるのか知らせてくれるメッセージが表示されます。</p>
+
+</blockquote>
+
+<p>&nbsp; </p>
+
+<p>全てが正常(エラー無しに)に終了した場合、新しいMoodleを使うことが出来ます。新しい機能をお楽しみください!</p>
+
+<p>もし、アップグレードに問題がある場合は、<a target=_top href="http://moodle.com/">moodle.com</a>の<a target=_top href="http://moodle.com/mod/forum/view.php?id=28">Installation Support Forum</a>に投稿してください。</p>
+
+<p>&nbsp;</p>
+
+<P>&nbsp;</P>
+
+<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="." TARGET="_top">Moodle Documentation</A></FONT></P>
+
+<P ALIGN="CENTER"><FONT SIZE="1">Version: $Id$</FONT></P>
+
+</BODY>
