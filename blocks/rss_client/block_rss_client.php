@@ -75,16 +75,16 @@ class block_rss_client extends block_base {
             //if the user is an admin or course teacher then allow the user to
             //assign categories to other uses than personal
             if ( isadmin() || $submitters == 0 || ($submitters == 2 && $isteacher) ) {
-                $output .= '<center><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></center><br /><br />';
+                $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br /><br />';
             }
         }
 
         // Daryl Hawes note: if count of rssidarray is greater than 1 
         // we should possibly display a drop down menu of selected feed titles
         // so user can select a single feed to view (similar to RSSFeed)
-        $numids = count($rssidarray);
-        $count = 0;
         if (!empty($rssidarray)) {
+            $numids = count($rssidarray);
+            $count = 0;
             foreach ($rssidarray as $rssid) {
                 $output .=  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
                 if ($numids > 1 && $count != $numids -1) {
@@ -109,13 +109,23 @@ class block_rss_client extends block_base {
     function instance_allow_config() {
         return true;
     }
-
+    
     /**
      *
      */
     function get_rss_by_id($rssid, $display_description, $shownumentries, $showtitle=false) {
         global $CFG;
-        $returnstring = '';
+        $returnstring = '';        
+        
+        // use rsslib.php function to verify that the cache feed file
+        // exists and has not timed out.
+        if (rss_cache_valid_by_id($rssid) && isset($this->config->{$rssid})) {
+            // If cache has not timed out and we have cached the display string 
+            // in block config return that rather than opening and reading
+            // from file and reparsing the cached xml
+            return stripslashes_safe($this->config->{'rssid'.$rssid});
+        }
+
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (isset($rss_record) && isset($rss_record->id)) {
             $rss = rss_get_feed($rss_record->id, $rss_record->url, $rss_record->type);
@@ -162,8 +172,11 @@ class block_rss_client extends block_base {
             $this->title = $feedtitle;
         }
         $returnstring .= '<br />';
+        
+        // store config setting for this rssid so we do not need to read from file each time
+        $this->config->{'rssid'.$rssid} = addslashes($returnstring);
+        $this->instance_config_save($this->config);
         return $returnstring;
     }
-
 }
 ?>
