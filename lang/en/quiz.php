@@ -52,6 +52,7 @@ $string['defaultgrade'] = "Default question grade";
 $string['defaultinfo'] = "The default category for questions.";
 $string['deletequestioncheck'] = "Are you absolutely sure you want to delete '\$a'?";
 $string['description'] = "Description";
+$string['eachattemptbuildsonthelast'] = "Each attempt builds on the last";
 $string['editcategories'] = "Edit categories";
 $string['editingdescription'] = "Editing a Description";
 $string['editingmultianswer'] = "Editing Embedded Answers (Cloze)";
