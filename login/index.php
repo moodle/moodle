@@ -113,7 +113,10 @@
             set_moodle_cookie($USER->username);
 
             unset($SESSION->lang);
+            unset($SESSION->encoding);
+
             $SESSION->justloggedin = true;
+            $SESSION->encoding = get_string('thischarset');
 
             // Restore the calendar filters, if saved
             if(intval(get_user_preferences('calendar_persistflt', 0))) {
