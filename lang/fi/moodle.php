@@ -790,7 +790,6 @@ $string['order'] = 'Tila';
 $string['other'] = 'Toinen';
 $string['outline'] = 'Rakenne';
 $string['page'] = 'Sivu';
-$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
 $string['participants'] = 'Osallistujat';
 $string['password'] = 'Salasana';
 $string['passwordchanged'] = 'Salasana on vaihdettu';

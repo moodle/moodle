@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['absent'] = 'Poissa';
@@ -210,6 +210,9 @@ $string['teachersgrade'] = 'Opettajan arvosana';
 $string['teachersubmissionsforassessment'] = '$a opettajan esitystä arviointia varten';
 $string['thegradeis'] = 'Arvosana on $a';
 $string['theseasessmentsaregradedbytheteacher'] = 'Arvioinnit on tehnyt $a';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['timeassessed'] = 'Arvioitu aika';
 $string['title'] = 'Otsikko';
 $string['typeofscale'] = 'Asteikkotyyppi';

@@ -5,7 +5,7 @@
 $string['admindirerror'] = 'Ylläpito hakemisto on määritetty väärin';
 $string['admindirname'] = 'Ylläpito hakemisto';
 $string['admindirsetting'] = 'Jotkut web-isännät käyttävät /ylläpitävät erityistä URL-yhteyttä päästäksesi kytkentätauluun tms. Valitettavasti tämä on ristiriidassa Moodlen ylläpitosivujen normaalin paikan kanssa. Voit korjata tämän nimeämällä asennuksesi ylläpitohakemiston uudelleen, ja laittamalla uuden nimen tähän. Esimerkiksi: 
-<br/> <br /><b>moodleadmin</b><br /> <br />
+<br/> <br /><b>moodleadmin</b><br /> <br />
 Tämä korjaa ylläpito linkit Moodlessa.';
 $string['caution'] = 'Varoitus';
 $string['chooselanguage'] = 'Valitse kieli';
@@ -15,7 +15,7 @@ $string['configfilewritten'] = 'config.php on luotu.';
 $string['configurationcomplete'] = 'kokoonpano suoritettu';
 $string['database'] = 'Tietokanta';
 $string['databasesettings'] = 'Nyt sinun täytyy valita tietokannasta, missä suurin osa Moodlen tietoja säilytetään. Tämän tietokannan täytyy jo valmiiksi olla luotu, kuten myös käyttäjänimen ja salasanan, joilla siihen päästään. .<br/>
-<br /> <br />
+<br /> <br />
 <b>Tyyppi:</b> mysql or postgres7<br />
 <b>Isäntä:</b> eg paikallinen isäntä or db.isp.com<br />
 <b>Nimi:</b> tietokannan nimi, eg moodle<br />
@@ -44,6 +44,7 @@ Tarvitset paikan, jossa Moodle voi tallentaa ladatut tiedostot. Tämän hakemiston
 $string['dirroot'] = 'Moodle hakemisto';
 $string['dirrooterror'] = '\"Moodle hakemisto\" asetus näyttäisi olevan väärä-emme voi löytää Moodle asennusta sieltä. Arvo alapuolella on nollattu.';
 $string['download'] = 'Lataus';
+$string['fail'] = 'Virhe';
 $string['fileuploads'] = 'tiedostojen palvelimeen kopioinnit';
 $string['fileuploadserror'] = 'Tämän pitäisi olla päällä';
 $string['fileuploadshelp'] = '<p>Tiedostojen lataus näyttää olevan tehty toimimattomaksi palvelimellasi.</p>
@@ -88,8 +89,7 @@ Tämä sallii Moodlen asettaa muistirajan itse.
 <p>Kuitenkin, joillain palvelimilla tämä estää  <b>all</b> PHP sivuja toimimasta (näet virheet, kun katsot sivuja), joten sinun täytyy poistaa .htaccess tiedosto.
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP:tä ei ole kunnolla valittu asetukseksi MySQL laajennuksen kanssa, jotta se voisi kommunikoida MySQL:n kanssa. Tarkista php.ini tiedostosi tai käännä PHP uudelleen.';
-$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
-$string['pass'] = 'Ohita';
+$string['pass'] = 'Tarkastettu';
 $string['phpversion'] = 'PHP versio';
 $string['phpversionerror'] = 'PHP version täytyy olla vähintään 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle vaatii vähintään PHP version 4.1.0.</p>
@@ -105,12 +105,10 @@ $string['sessionautostart'] = 'istunnon automaattinen aloitus';
 $string['sessionautostarterror'] = 'Tämän pitäisi olla pois päältä';
 $string['sessionautostarthelp'] = '<p>Moodle vaatii istuntotukea, eikä toimi ilman sitä.</p>
 
-<p>istunto voidaan mahdollistaa php.ini tiedostossa... Etsi istuntoa varten.auto_start parameter.</p>
-
-';
-$string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
-$string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko ”ltr” tai ”rtl”.';
-$string['thislanguage'] = 'KÄÄNTÄJÄT: Määrittele kielesi nimi tähän. Jos mahdollista, käytä yksikoodista numeerista viittausta.';
+<p>istunto voidaan mahdollistaa php.ini tiedostossa... Etsi istuntoa varten.auto_start parameter.</p>';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['wwwroot'] = 'Web -osoite';
 $string['wwwrooterror'] = 'Web- soite ei näyttäisi olevan voimassa- tämä Moodle asennus ei näyttäisi olevan siellä.';
 

@@ -7,10 +7,9 @@ $string['blockmultiple'] = 'monenkertainen';
 $string['cachetext'] = 'Tekstivälimuistin kesto';
 $string['change'] = 'muutos';
 $string['filteruploadedfiles'] = 'Suodata lähetettyjä tiedostoja';
-$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
-$string['thischarset'] = 'KÄÄNTÄJÄT: Täsmennä kielen merkistö tähän. Huomaa, että kaikki teksti joka luodaan tämän kielen ollessa aktiivinen taltioidaan tätä merkistöä käyttäen, joten älä muuta sitä, kun olet tehnyt asetukset. Esimerkki: iso-8859-1';
-$string['thisdirection'] = 'KÄÄNTÄJÄT: Tämä merkkijono täsmentää tekstisi suunnan, joko vasemmalta oikealle tai oikealta vasemmalle. Syötä joko \'ltr\' tai rtl\'.';
-$string['thislanguage'] = 'KÄÄNTÄJÄT: Määrittele kielesi nimi tähän. Jos mahdollista, käytä yksikoodista numeerista viittausta.';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['upgradelogs'] = 'Tapahtumalokien sisällöt pitää päivittää uuteen muotoon. <a href=\"$a\">Lisätietoja</a>';
 $string['upgradelogsinfo'] = 'Tapahtumalokien tallennuksessa on tapahtunut muutoksia. Jotta voisit tarkastella lokeja uudella tavalla, vanhat lokimerkinnät pitää päivittää uuteen muotoon. Tämä tapahtuu automaattisesti eikä häiritse sivustosi muuta käyttöä. Riippuen sivustosi koosta tähän saattaa kuitenkin mennä aikaa jopa useita tunteja. Kun aloitat päivityksen, pitää se antaan mennä loppuun asti keskeyttämättä.
 <br /><br />

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['acceptederror'] = 'Hyväksyttävä virhe';
@@ -87,6 +87,9 @@ $string['editingshortanswer'] = 'Muokataan lyhyttehtävää';
 $string['editingtruefalse'] = 'Muokataan tosi/epätosi-tehtävää';
 $string['editquestions'] = 'Muokkaa kysymyksiä';
 $string['errorsdetected'] = '$a virhe(ttä) huomattu';
+$string['existingcategory1'] = 'Vakiomerkintä jo olemassa olevasta vakiomerkintä sarjasta, jota käyttää myös muut tämän luokan kysymykset.';
+$string['existingcategory2'] = 'Tiedosto jo olemassa olevasta vakiomerkintä sarjasta, jota käyttää myös muut tämän luokan kysymykset.';
+$string['existingcategory3'] = 'Linkki jo olemassa olevasta vakiomerkintä sarjasta, jota käyttää myös muut tämän luokan kysymykset.';
 $string['exportfilename'] = 'tentti';
 $string['exportname'] = 'Tiedostonimi';
 $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
@@ -122,6 +125,10 @@ $string['importquestions'] = 'Tuo kysymykset tiedostosta';
 $string['indivresp'] = 'Yksittäiset vastaukset jokaiselle kohteelle';
 $string['introduction'] = 'Johdanto';
 $string['itemanal'] = 'Kysymyskohtainen vastausten tilastointi';
+$string['itemdefinition'] = 'Määrittely';
+$string['keptcategory1'] = 'Vakiomerkintä samasta luokasta uudelleen käytettävien vakiomerkintöjen sarjaa kuin aiemminkin';
+$string['keptcategory2'] = 'Tiedosto samasta luokasta uudelleen käytettävien tiedostojen sarjaa kuin aiemminkin';
+$string['keptcategory3'] = 'Linkki samasta luokasta uudelleen käytettävien linkkien sarjaa kuin aiemminkin';
 $string['link'] = 'Linkki';
 $string['listitems'] = 'Tentin kysymykset';
 $string['marks'] = 'Pistettä';
@@ -222,6 +229,9 @@ $string['shufflequestions'] = 'Sekoita kysymykset';
 $string['significantfigures'] = '$a:n kanssa';
 $string['subneterror'] = 'Tämä tentti on saatavilla vain tietystä osoitteista. Tietokoneesi osoiteei ole sallitujn osoitteiden joukossa.';
 $string['substitutedby'] = 'korvataan';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['time'] = 'Aika';
 $string['timecompleted'] = 'Suoritettu';
 $string['timeleft'] = 'Aikaa jäljellä';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['attr_error'] = 'Virheelinen arvo atribuutille ($a->attr) merkinn‰ss‰  $a->tag';
@@ -65,6 +65,9 @@ $string['scoes'] = 'Sis‰ltˆ objektit';
 $string['score'] = 'Tulos';
 $string['syntax'] = 'Muoto virhe';
 $string['tag_error'] = 'Tuntematon merkint‰ ($a->tag) sis‰llˆss‰: $a->value';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['too_many_attributes'] = 'Merkin‰ll‰ $a->tag on liikaa atribuutteja';
 $string['too_many_children'] = 'Merkinn‰ll‰ $a->tag on liikaa lapsia';
 $string['trackingloose'] = 'VAROITUS: T‰m‰n SCORM-paketin seurantatiedot menetet‰‰n!';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['actual'] = 'Toteutunut';
@@ -199,6 +199,9 @@ $string['surveyname'] = 'Kyselyn nimi';
 $string['surveysaved'] = 'Kysely tallennettu';
 $string['surveytype'] = 'Kyselyn tyyppi';
 $string['thanksforanswers'] = 'Kiitos vastauksestasi tähän kyselyyn, $a';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['time'] = 'Aika';
 $string['viewsurveyresponses'] = 'Katso $a kyselyn vastausta';
 
