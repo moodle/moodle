@@ -437,16 +437,18 @@ function forum_delete_discussion($discussion) {
 function forum_print_user_discussions($courseid, $userid) {
     global $USER;
 
-    $discussions = get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, u.id as userid, f.type as forumtype
+    $discussions = get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, 
+                                           u.id as userid, f.type as forumtype
                                     FROM forum_discussions d, forum_posts p, user u, forum f
                                     WHERE d.course = '$courseid' AND p.discussion = d.id AND 
                                           p.parent = 0 AND p.user = u.id AND u.id = '$userid' AND
                                           d.forum = f.id
-                                    ORDER BY p.created DESC");
+                                    ORDER BY p.created ASC");
     
     if ($discussions) {
+        $user = get_record("user", "id", $userid);
         echo "<HR>";
-        print_heading("Discussion topics");
+        print_heading("Discussions started by $user->firstname $user->lastname");
         $replies = forum_count_discussion_replies();
         foreach ($discussions as $discussion) {
             if (($discussion->forumtype == "teacher") and !isteacher($courseid)) {
