@@ -1358,6 +1358,10 @@
                                 $this->info->temprole->authority;
                             $this->info->tempuser->roles[$this->info->temprole->type]->tea_role =
                                 $this->info->temprole->tea_role;
+                            $this->info->tempuser->roles[$this->info->temprole->type]->editall =
+                                $this->info->temprole->editall;
+                            $this->info->tempuser->roles[$this->info->temprole->type]->timemodified =
+                                $this->info->temprole->timemodified;
                             $this->info->tempuser->roles[$this->info->temprole->type]->timestart =
                                 $this->info->temprole->timestart;
                             $this->info->tempuser->roles[$this->info->temprole->type]->timeend =
@@ -1378,6 +1382,12 @@
                             break;
                         case "TEA_ROLE":
                             $this->info->temprole->tea_role = $this->getContents();
+                            break;
+                        case "EDITALL":
+                            $this->info->temprole->editall = $this->getContents();
+                            break;
+                        case "TIMEMODIFIED":
+                            $this->info->temprole->timemodified = $this->getContents();
                             break;
                         case "TIMESTART":
                             $this->info->temprole->timestart = $this->getContents();

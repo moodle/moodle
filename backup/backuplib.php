@@ -644,6 +644,8 @@
                         $tea = get_record("user_teachers","userid",$user->old_id,"course",$preferences->backup_course);
                         fwrite ($bf,full_tag("AUTHORITY",6,false,$tea->authority));
                         fwrite ($bf,full_tag("TEA_ROLE",6,false,$tea->role));
+                        fwrite ($bf,full_tag("EDITALL",6,false,$tea->editall));
+                        fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$tea->timemodified));
                         //Print ROLE end
                         fwrite ($bf,end_tag("ROLE",5,true));   
                     }
