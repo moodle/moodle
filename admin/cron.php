@@ -102,7 +102,7 @@
         include("$CFG->dataroot/cronextra.php");
     }
 
-    if (!isset($CFG->preventscheduledbackups)) {   // Defined in config.php
+    if (!isset($CFG->disablescheduledbackups)) {   // Defined in config.php
         //Execute backup's cron
         //Perhaps a long time and memory could help in large sites
         set_time_limit(0);
