@@ -63,6 +63,78 @@ function modify_database($sqlfile) {
     return $success;
 }
 
+/// FUNCTIONS TO MODIFY TABLES ////////////////////////////////////////////
+
+function table_column($table, $oldfield, $field, $type="INTEGER", 
+                      $signed="UNSIGNED", $default="0", $null="NOT NULL", $after="") {
+/// Add a new field to a table, or modify an existing one (if oldfield is defined).
+    global $CFG;
+
+    switch (strtolower($CFG->dbtype)) {
+
+        case "mysql":
+        case "mysqlt":
+
+            switch (strtolower($type)) {
+                case "smallint":
+                    $type = "SMALLINT(6)";
+                    break;
+                case "integer":
+                    $type = "INT(10)";
+                    break;
+                case "bigint":
+                    $type = "INT(10)";
+                    break;
+            }
+
+            if (!empty($oldfield)) {
+                $operation = "CHANGE $oldfield $field";
+            } else {
+                $operation = "ADD $field";
+            }
+
+            $default = "DEFAULT '$default'";
+
+            if (!empty($after)) {
+                $after = "AFTER '$after'";
+            }
+
+            execute_sql("ALTER TABLE {$CFG->prefix}$table $operation $type $signed $default $null $after");
+            break;
+
+
+
+        default:
+            switch (strtolower($type)) {
+                case "tinyint":
+                case "integer":
+                case "bigint":
+                    $type = "INTEGER";
+                    break;
+            }
+
+            $default = "DEFAULT '$default'";
+
+            if (!empty($after)) {
+                $after = "AFTER '$after'";
+            }
+
+            if (!empty($oldfield)) {
+                execute_sql("ALTER TABLE {$CFG->prefix}$table RENAME COLUMN $oldfield $field");
+            } else {
+                execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
+            }
+
+            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $null");
+            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $default");
+            break;
+
+    }
+}
+
+
+
+/// GENERIC FUNCTIONS TO CHECK AND COUNT RECORDS ////////////////////////////////////////
 
 function record_exists($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
 /// Returns true or false depending on whether the specified record exists
@@ -146,6 +218,11 @@ function count_records_sql($sql) {
 
     return $rs->fields[0];
 }
+
+
+
+
+/// GENERIC FUNCTIONS TO GET, INSERT, OR UPDATE DATA  ///////////////////////////////////
 
 function get_record($table, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
 /// Get a single record as an object
@@ -518,16 +595,6 @@ function update_record($table, $dataobject) {
 }
 
 
-function print_object($object) {
-/// Mostly just for debugging
-
-    $array = (array)$object;
-    foreach ($array as $key => $item) {
-        echo "$key -> $item <BR>";
-    }
-}
-
-
 
 
 /// USER DATABASE ////////////////////////////////////////////////
@@ -843,6 +910,9 @@ function get_all_instances_in_course($modulename, $courseid, $sort="cw.section")
 }
 
 
+
+
+
 /// LOG FUNCTIONS /////////////////////////////////////////////////////
 
 
@@ -921,6 +991,18 @@ function get_logs_userday($userid, $courseid, $daystart) {
                              AND `time` > '$daystart'
                         GROUP BY hour ");
 }
+
+/// GENERAL HELPFUL THINGS  ///////////////////////////////////
+
+function print_object($object) {
+/// Mostly just for debugging
+
+    $array = (array)$object;
+    foreach ($array as $key => $item) {
+        echo "$key -> $item <BR>";
+    }
+}
+
 
 
 ?>
