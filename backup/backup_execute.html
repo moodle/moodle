@@ -136,7 +136,7 @@
     echo "<li>".get_string("deletingolddata");
     $status = backup_delete_old_data();
     if (!$status) {
-        error ("An error has ocurred");
+        error ("An error occurred deleting old backup data");
     }
 
     //Create the moodle.xml file
@@ -150,7 +150,9 @@
         echo "<li>".get_string("writinggeneralinfo");;
         //Prints general info about backup to file
         if ($backup_file) {
-            $status = backup_general_info($backup_file,$preferences);
+            if (!$status = backup_general_info($backup_file,$preferences)) {
+                notify("An error occurred while backing up general info");
+            }
         }
         echo "<li>".get_string("writingcoursedata");
 
@@ -160,12 +162,16 @@
         echo "<li>".get_string("courseinfo");
         //Prints course start (tag and general info)
         if ($status) {
-            $status = backup_course_start($backup_file,$preferences);
+            if (!$status = backup_course_start($backup_file,$preferences)) {
+                notify("An error occurred while backing up course start");
+            }
         }
         echo "<li>".get_string("sections");
         //Section info
         if ($status) {
-            $status = backup_course_sections($backup_file,$preferences);
+            if (!$status = backup_course_sections($backup_file,$preferences)) {
+                notify("An error occurred while backing up course sections");
+            }
         }
 
         //End course contents (close ul)
@@ -174,28 +180,36 @@
         echo "<li>".get_string("writinguserinfo");
         //User info
         if ($status) {
-            $status = backup_user_info($backup_file,$preferences);
+            if (!$status = backup_user_info($backup_file,$preferences)) {
+                notify("An error occurred while backing up user info");
+            }
         }
 
         //If we have selected to backup quizzes, backup categories and
         //questions structure (step 1). See notes on mod/quiz/backuplib.php
         if ($status and $preferences->mods['quiz']->backup) {
             echo "<li>".get_string("writingcategoriesandquestions");
-            $status = quiz_backup_question_categories($backup_file,$preferences);
+            if (!$status = quiz_backup_question_categories($backup_file,$preferences)) {
+                notify("An error occurred while backing up quiz categories");
+            }
         }
         
         //Print logs if selected
         if ($status) {
             if ($preferences->backup_logs) {  
                 echo "<li>".get_string("writingloginfo");
-                $status = backup_log_info($backup_file,$preferences);
+                if (!$status = backup_log_info($backup_file,$preferences)) {
+                    notify("An error occurred while backing up log info");
+                }
             }
         }
 
         //Print scales info
         if ($status) {
             echo "<li>".get_string("writingscalesinfo");
-            $status = backup_scales_info($backup_file,$preferences);
+            if (!$status = backup_scales_info($backup_file,$preferences)) {
+                notify("An error occurred while backing up scales");
+            }
         }
 
         //Module info, this unique function makes all the work!!
@@ -212,26 +226,34 @@
             if ($mods_to_backup) {
                 echo "<li>".get_string("writingmoduleinfo");
                 //Start modules tag
-                $status = backup_modules_start ($backup_file,$preferences);
+                if (!$status = backup_modules_start ($backup_file,$preferences)) {
+                    notify("An error occurred while backing up module info");
+                }
                 //Open ul for module list
                 echo "<ul>";
                 //Iterate over modules and call backup
                 foreach ($preferences->mods as $module) {
                     if ($module->backup and $status) {
                         echo "<li>".get_string("modulenameplural",$module->name);
-                        $status = backup_module($backup_file,$preferences,$module->name);
+                        if (!$status = backup_module($backup_file,$preferences,$module->name)) {
+                            notify("An error occurred while backing up '$module->name'");
+                        }
                     }
                 }
                 //Close ul for module list
                 echo "</ul>";
                 //Close modules tag
-                $status = backup_modules_end ($backup_file,$preferences);
+                if (!$status = backup_modules_end ($backup_file,$preferences)) {
+                    notify("An error occurred while finishing the module backups");
+                }
             }
         }
 
         //Prints course end 
         if ($status) {
-            $status = backup_course_end($backup_file,$preferences);
+            if (!$status = backup_course_end($backup_file,$preferences)) {
+                notify("An error occurred while closing the course backup");
+            }
         }
         //Close the xml file and xml data
         if ($backup_file) {
@@ -246,7 +268,9 @@
     if ($status) {
         if ($preferences->backup_user_files) {
             echo "<li>".get_string("copyinguserfiles");
-            $status = backup_copy_user_files ($preferences);
+            if (!$status = backup_copy_user_files ($preferences)) {
+                notify("An error occurred while copying user files");
+            }
         }
     }
 
@@ -254,26 +278,34 @@
     if ($status) {
         if ($preferences->backup_course_files) {
             echo "<li>".get_string("copyingcoursefiles");
-            $status = backup_copy_course_files ($preferences);
+            if (!$status = backup_copy_course_files ($preferences)) {
+                notify("An error occurred while copying course files");
+            }
         }
     }
 
     //Now, zip all the backup directory contents
     if ($status) {
         echo "<li>".get_string("zippingbackup");
-        $status = backup_zip ($preferences);
+        if (!$status = backup_zip ($preferences)) {
+            notify("An error occurred while zipping the backup");
+        }
     }
 
     //Now, copy the zip file to course directory
     if ($status) {
         echo "<li>".get_string("copyingzipfile");
-        $status = copy_zip_to_course_dir ($preferences);
+        if (!$status = copy_zip_to_course_dir ($preferences)) {
+            notify("An error occurred while copying the zip file to the course directory");
+        }
     }
 
     //Now, clean temporary data (db and filesystem)
     if ($status) {
         echo "<li>".get_string("cleaningtempdata");
-        $status = clean_temp_data ($preferences); 
+        if (!$status = clean_temp_data ($preferences)) {
+            notify("An error occurred while cleaning up temporary data");
+        }
     }
 
     //Ends th main ul
@@ -286,7 +318,8 @@
     echo "</table>";
     
     if (!$status) {
-        error ("An error has ocurred");
+        error ("The backup did not complete successfully", 
+               "$CFG->wwwroot/course/view.php?id=$course->id");
     }
 
     //Print final message
