@@ -44,27 +44,27 @@
                     $ORDER_BY = "concept ASC";
                 }
 
-		        $ownentries = get_records("glossary_entries", "glossaryid", $glossary->id,$ORDER_BY);
-		        $importedentries = get_records("glossary_entries", "sourceglossaryid", $glossary->id,$ORDER_BY);
-		
-		        if ( $ownentries and $importedentries ) {
-		            $entries = array_merge($ownentries, $importedentries);
-		            usort($entries, glossary_sort_entries_by_lenght);		
-		        } elseif ( $importedentries ) {
-		            $entries = $importedentries;
-		        } elseif ( $ownentries ) {
-		            $entries = $ownentries;
-		        }
+                $ownentries = get_records("glossary_entries", "glossaryid", $glossary->id,$ORDER_BY);
+                $importedentries = get_records("glossary_entries", "sourceglossaryid", $glossary->id,$ORDER_BY);
+
+                if ( $ownentries and $importedentries ) {
+                    $entries = array_merge($ownentries, $importedentries);
+                    usort($entries, glossary_sort_entries_by_lenght);		
+                } elseif ( $importedentries ) {
+                    $entries = $importedentries;
+                } elseif ( $ownentries ) {
+                    $entries = $ownentries;
+                }
             }
             if ( $entries ) {
                 foreach ( $entries as $entry ) {
                     $title = strip_tags("$glossary->name: $entry->concept");
-                    $href_tag_begin = "<acronym title=\"$title\"><a style=\"color:black\" target=\"entry\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$entry->concept\" ".
-                         "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid&concept=$entry->concept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
+                    $href_tag_begin = "<a target=\"entry\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$entry->concept\" ".
+                         "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$entry->concept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
 
                     $concept = trim(strip_tags($entry->concept));
 
-                    $text = glossary_link_concepts($text,$concept,$href_tag_begin, "</a></acronym>");
+                    $text = glossary_link_concepts($text,$concept,$href_tag_begin, "</a>");
                 }
             }
         }
@@ -73,16 +73,26 @@
     }
     
     function glossary_link_concepts($text,$concept,$href_tag_begin,$href_tag_end = "</a>") {
-        $list_of_words = $concept;
-        $list_of_words_cp = $list_of_words;
+        $list_of_words_cp = $concept;
 
+        // getting ride of "A" tags
+        $final = array();
+
+        preg_match_all('/<A (.+?)>(.+?)<\/A>/is',$text,$list_of_links);
+
+        foreach (array_unique($list_of_links[0]) as $key=>$value) {
+            $links['<|*'.$key.'*|>'] = $value;
+        }
+        $text = str_replace($links,array_keys($links),$text);
+
+        // getting ride of all other tahs
         $final = array();
         preg_match_all('/<(.+?)>/is',$text,$list_of_words);
 
         foreach (array_unique($list_of_words[0]) as $key=>$value) {
             $final['<|'.$key.'|>'] = $value;
         }
-        
+
         $text = str_replace($final,array_keys($final),$text);
 
         if ($list_of_words_cp{0}=="|") {
@@ -95,6 +105,7 @@
 
         $text = eregi_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
         $text = str_replace(array_keys($final),$final,$text);
+        $text = str_replace(array_keys($links),$links,$text);
 
         return stripslashes($text);
     }
