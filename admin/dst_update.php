@@ -22,6 +22,19 @@
         error('Site isn\'t defined!');
     }
 
+/*
+function olson_todst ($filename) {
+
+    $zones = olson_simple_zone_parser($filename);
+    $rules = olson_simple_rule_parser($filename);
+*/
+
+$zones = olson_simple_zone_parser($CFG->dataroot.'/temp/olson.txt');
+$rules = olson_simple_rule_parser($CFG->dataroot.'/temp/olson.txt');
+$ddd = olson_todst($CFG->dataroot.'/temp/olson.txt');
+print_object($ddd);
+die();
+
     // These control what kind of operations import_dst_records will be allowed
     $insert = true;
     $update = true;
