@@ -185,6 +185,7 @@ $string['createuserandpass'] = 'Create a new username and password to log in wit
 $string['createziparchive'] = 'Create zip archive';
 $string['creatingcategoriesandquestions'] = 'Creating categories and questions';
 $string['creatingcoursemodules'] = 'Creating course modules';
+$string['creatinggroups'] = 'Creating groups';
 $string['creatinglogentries'] = 'Creating log entries';
 $string['creatingnewcourse'] = 'Creating new course';
 $string['creatingscales'] = 'Creating scales';
