@@ -6,7 +6,7 @@
     }
 
     if(!empty($CFG->aspellpath)) {      // Enable global access to spelling feature.
-        echo '<script src="'.$CFG->wwwroot.'/lib/speller/spellChecker.js"></script>\n';
+        echo '<script src="'.$CFG->wwwroot.'/lib/speller/spellChecker.js"></script>'."\n";
     }
 ?>
 <script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/overlib.js"></script>
