@@ -58,6 +58,7 @@
         $USER = $user;
         $USER->loggedin = true;
         $USER->sesskey  = random_string(10); // for added security, used to check script parameters
+        $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
         $USER->site = $CFG->wwwroot;
         $USER->admin = true;
         $USER->teacher["$site->id"] = true;
