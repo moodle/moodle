@@ -967,7 +967,7 @@ while(true) {
             if($changed > 0) {
                 // Let's see what it has to say
 
-                $data = socket_read($handle, 512);
+                $data = socket_read($handle, 2048); // should be more than 512 to prevent empty pages and repeated messages!!
                 if(empty($data)) {
                     continue;
                 }
