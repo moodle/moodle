@@ -42,18 +42,14 @@
     if ($forums = get_records("forum", "course", $id, "name ASC")) {
         foreach ($forums as $forum) {
             switch ($forum->type) {
-                case "single":
-                case "general":
-                case "eachuser":
-                    $contentforums[] = $forum;
+                case "news":
+                case "social":
+                    $generalforums[] = $forum;
                     break;
                 case "teacher": 
                     if (isteacher($course->id)) {
                         $generalforums[] = $forum;
                     }
-                    break;
-                default:
-                    $generalforums[] = $forum;
                     break;
             }
         }
@@ -86,8 +82,15 @@
         unset($table->data);
     } 
 
-    if ($contentforums) {
-        foreach ($contentforums as $forum) {
+    if ($can_subscribe) {
+        $table->head = array ("", "Forum", "Description", "Topics", "Subscribed");
+    } else {
+        $table->head = array ("", "Forum", "Description", "Topics");
+    }
+    $table->align = array ("CENTER", "LEFT", "LEFT", "CENTER", "CENTER");
+
+    if ($moduleforums = get_all_instances_in_course("forum", $course->id)) {
+        foreach ($moduleforums as $forum) {
             $count = count_records("forum_discussions", "forum", "$forum->id");
 
             $forum->intro = forum_shorten_post($forum->intro);
@@ -103,10 +106,10 @@
                     }
                     $sublink = "<A TITLE=\"Change your subscription\" HREF=\"subscribe.php?id=$forum->id\">$subscribed</A>";
                 }
-                $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
+                $table->data[] = array ("$forum->section", "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
                                         "$forum->intro", "$count", "$sublink");
             } else {
-                $table->data[] = array ("<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
+                $table->data[] = array ("$forum->section", "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>", 
                                         "$forum->intro", "$count");
             }
         }
