@@ -705,6 +705,11 @@ function upgrade_blocks_plugins($continueto) {
         }
     }
 
+    if (!empty($CFG->siteblocksadded)) {     /// This is a once-off hack to make a proper upgrade
+        blocks_get_default_blocks(SITEID, BLOCKS_DEFAULT_SITE);  // Add blockinfo to the site course
+        delete_records('config', 'name', 'siteblocksadded');
+    }
+
     if (!empty($updated_blocks)) {
         print_continue($continueto);
         die;

@@ -39,13 +39,6 @@ global $CFG;
 
     }
 
-    if (!empty($CFG->siteblocksadded)) {   /// Set by main Moodle upgrade
-        // Add blockinfo to the site course
-        require_once($CFG->dirroot.'/lib/blocklib.php');
-        $site = get_site();
-        blocks_get_default_blocks($site->id, BLOCKS_DEFAULT_SITE);
-        delete_records('config', 'name', 'siteblocksadded');
-    }
 
     //Finally, return result
     return $result;
