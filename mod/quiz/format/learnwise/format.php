@@ -32,6 +32,15 @@ class quiz_file_format extends quiz_default_format {
 		return $questions;
 	}
 
+        function unhtmlentities($string)
+        // puts all the &gt; etc stuff back to 'normal' 
+        // good for PHP 4.1.0 on
+        {
+          $trans_tbl = get_html_translation_table(HTML_ENTITIES);
+          $trans_tbl = array_flip($trans_tbl);
+          return strtr($string, $trans_tbl);
+        }
+
     function readquestion($lines) {
 		$text = '';
 		foreach ($lines as $line) $text .= $line;
@@ -71,9 +80,9 @@ class quiz_file_format extends quiz_default_format {
 				}
 				
 				$question->qtype = MULTICHOICE;
-				$question->name = substr($questiontext,0,30);
+				$question->name = substr($this->unhtmlentities($questiontext),0,30);
 				if(strlen($questionlen)<30) $question->name .= '...';
-				$question->questiontext = $questiontext;
+				$question->questiontext = $this->unhtmlentities($questiontext);
 				$question->single = 1;
 				$question->feedback[] = '';
 				$question->usecase = 0;
@@ -86,7 +95,7 @@ class quiz_file_format extends quiz_default_format {
 					{
 						if($options_correct[$n]=='yes') $fraction = (int) $questionaward; else $fraction = 0;
 						$question->fraction[] = $fraction;
-						$question->answer[] = $options_text[$n];
+						$question->answer[] = $this->unhtmlentities($options_text[$n]);
 						//echo "hello: $options_text[$n], $fraction<br>";
 					}
 				}
