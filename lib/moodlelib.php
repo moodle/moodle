@@ -818,27 +818,41 @@ function unenrol_student($userid, $courseid=0) {
     }
 }
 
-function add_teacher($userid, $courseid) {
+function add_teacher($userid, $courseid, $editall=1, $role="") {
 /// Add a teacher to a given course
 
-    if (!record_exists("user_teachers", "userid", $userid, "course", $courseid)) {
-        if (record_exists("user", "id", $userid)) {
-            $teacher->userid = $userid;
-            $teacher->course = $courseid;
-            $teacher->editall = 1;
-            $teacher->role = "";
-            if (record_exists("user_teachers", "course", $courseid)) {
-                $teacher->authority = 2;
-            } else {
-                $teacher->authority = 1;
-            }
-            delete_records("user_students", "userid", $userid, "course", $courseid); // Unenrol as student
-
-            return insert_record("user_teachers", $teacher);
+    if ($teacher = get_record('user_teachers', 'userid', $userid, 'course', $courseid)) {
+        if ($teacher->editall == $editall) {     // Already exists
+            return true;  
+        } else {                                 // Just change field
+            set_field('user_teachers', 'editall', $editall, 'id', $teacher->id);
+            return true;  
         }
-        return false;
     }
-    return true;
+
+    if (!record_exists("user", "id", $userid)) {
+        return false;   // no such user
+    }
+
+    if (!record_exists("course", "id", $courseid)) {
+        return false;   // no such course
+    }
+
+    $teacher = NULL;
+    $teacher->userid  = $userid;
+    $teacher->course  = $courseid;
+    $teacher->editall = $editall;
+    $teacher->role    = $role;
+
+    if (record_exists("user_teachers", "course", $courseid)) {
+        $teacher->authority = 2;
+    } else {
+        $teacher->authority = 1;
+    }
+    delete_records("user_students", "userid", $userid, "course", $courseid); // Unenrol as student
+
+    return insert_record("user_teachers", $teacher);
+
 }
 
 function remove_teacher($userid, $courseid=0) {
