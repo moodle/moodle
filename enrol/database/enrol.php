@@ -17,45 +17,66 @@ class enrolment_plugin extends enrolment_base {
 function get_student_courses(&$user) {
     global $CFG;
 
-    parent::get_student_courses($user);
-
+    parent::get_student_courses($user);  /// Start with the list of known enrolments
+                                         /// If the database fails we can at least use this
 
     // This is a hack to workaround what seems to be a bug in ADOdb with accessing 
     // two databases of the same kind ... it seems to get confused when trying to access
     // the first database again, after having accessed the second.
     // The following hack will make the database explicit which keeps it happy
+
     if (strpos($CFG->prefix, $CFG->dbname) === false) {
         $CFG->prefix = "$CFG->dbname.$CFG->prefix";
     }
-        
 
-    // Connect to the external database
+    // Try to connect to the external database
+
     $enroldb = &ADONewConnection($CFG->enrol_dbtype);
+
     if ($enroldb->PConnect($CFG->enrol_dbhost,$CFG->enrol_dbuser,$CFG->enrol_dbpass,$CFG->enrol_dbname)) {
 
-        foreach ($user->student as $courseid=>$value) {
-        
-            /// Get the value of the local course field
-            $localcoursevalue = get_field("course", $CFG->enrol_localcoursefield, "id", $courseid);
-            
-            /// Find a record in the external database that matches the local course field and local user field
-            /// to the respective remote fields
-            $rs = $enroldb->Execute("SELECT * FROM $CFG->enrol_dbtable 
-                                     WHERE $CFG->enrol_remotecoursefield = '$localcoursevalue' 
-                                     AND $CFG->enrol_remoteuserfield = '{$user->$CFG->enrol_localuserfield}' ");
+        $courselist = array();      /// Initialise new array
+        $newstudent = array();
 
-            /// If no records existed then student has been unenrolled externally.
-            /// Unenrol locally and remove entry from the $user->student array
-            if (! ($rs->RecordCount()) ) {
-                unenrol_student($user->id, $courseid);
-                unset ($user->student[$courseid]);
+        /// Get the authoritative list of enrolments from the database
+
+        $useridnumber = $user->{$CFG->enrol_localuserfield};   
+
+
+        if ($rs = $enroldb->Execute("SELECT $CFG->enrol_remotecoursefield 
+                                       FROM $CFG->enrol_dbtable 
+                                      WHERE $CFG->enrol_remoteuserfield = '$useridnumber' ")) {
+
+            if ($rs->RecordCount() > 0) {
+                while (!$rs->EOF) {
+                    $courselist[] = $rs->fields[0];
+                    $rs->MoveNext();
+                }
+
+                foreach ($courselist as $coursefield) {
+                    if ($course = get_record('course', $CFG->enrol_localcoursefield, $coursefield)) {
+                        $newstudent[$course->id] = true;             /// Add it to new list
+                        if (isset($user->student[$course->id])) {   /// We have it already
+                            unset($user->student[$course->id]);       /// Remove from old list
+                        } else {
+                            enrol_student($user->id, $course->id);   /// Enrol the student
+                        }
+                    }
+                }
             }
+
+            if (!empty($user->student)) {    /// We have some courses left that we need to unenrol from
+                foreach ($user->student as $courseid => $value) {
+                    unenrol_student($user->id, $courseid);       /// Unenrol the student
+                    unset($user->student[$course->id]);           /// Remove from old list
+                }
+            }
+
+            $user->student = $newstudent;    /// Overwrite the array with the new one
         }
-
+        
         $enroldb->Close();
-
     }
-
 }
 
 
@@ -87,7 +108,7 @@ function get_access_icons($course) {
 }
 
 
-/// Overrise the base config_form() function
+/// Overide the base config_form() function
 function config_form($frm) {
     global $CFG;
     include("$CFG->dirroot/enrol/database/config.html");
