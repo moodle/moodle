@@ -136,6 +136,7 @@ $string['submitassignment'] = "Stuur de taak door";
 $string['submitexampleassignment'] = "Stuur de voorbeeldtaak door";
 $string['submitted'] = "Ingezonden";
 $string['submittedby'] = "Ingezonden door";
+$string['suggestedgrade'] = "Voorgesteld cijfer";
 $string['teacherassessments'] = "\$a beoordelingen";
 $string['teacherscomment'] = "Opmerkingen van de leraar";
 $string['teachersgrade'] = "Beoordeling van de leraar";
