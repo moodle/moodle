@@ -16,15 +16,15 @@
     //              |                                                                            workshop_submissions
     //              |                                                                        (UL,pk->id,fk->workshopid,files)
     //              |                                                                                    |
-    //              |        |---------------------------|      |--------------------------------|       |
-    //              |        |                           |      |                                |       |
-    //        workshop_elements                      workshop_grades                            workshop_assessments
-    //    (CL,pk->id,fk->workshopid)           (UL,pk->id,fk->assessmentid)                 (UL,pk->id,fk->submissionid)
-    //              |                          (          fk->elementno   )                              |
-    //              |                                                                                    |
-    //              |                                                                                    |
-    //          workshop_rubrics                                                                 workshop_comments
-    //    (CL,pk->id,fk->elementno)                                                        (UL,pk->id,fk->assessmentid)
+    //              |        |-------------------------------------|      |----------------------|       |
+    //              |        |                                     |      |                      |       |
+    //             workshop_elements                           workshop_grades                  workshop_assessments
+    //         (CL,pk->id,fk->workshopid)                (UL,pk->id,fk->assessmentid)       (UL,pk->id,fk->submissionid)
+    //              |                  |                 (          fk->elementno   )                    |
+    //              |                  |                                                                 |
+    //              |                  |                                                                 |
+    //      workshop_rubrics          workshop_stockcomments                                        workshop_comments
+    // (CL,pk->id,fk->elementno)   (CL, pk->id, fk->elementno)                             (UL,pk->id,fk->assessmentid)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -181,18 +181,18 @@
         //If there is workshop_stockcomments
         if ($workshop_stockcomments) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("STOCKCOMMENTS",8,true));
+            $status =fwrite ($bf,start_tag("STOCKCOMMENTS",6,true));
             //Iterate over each comment
             foreach ($workshop_stockcomments as $wor_com) {
                 //Start comment
-                $status =fwrite ($bf,start_tag("STOCKCOMMENT",9,true));
+                $status =fwrite ($bf,start_tag("STOCKCOMMENT",7,true));
                 //Print comment contents
-                fwrite ($bf,full_tag("COMMENT_TEXT",10,false,$wor_com->comments));
+                fwrite ($bf,full_tag("COMMENT_TEXT",8,false,$wor_com->comments));
                 //End comment
-                $status =fwrite ($bf,end_tag("STOCKCOMMENT",9,true));
+                $status =fwrite ($bf,end_tag("STOCKCOMMENT",7,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("STOCKCOMMENTS",8,true));
+            $status =fwrite ($bf,end_tag("STOCKCOMMENTS",6,true));
         }
         return $status;
     }
