@@ -87,7 +87,7 @@ function survey_print_recent_activity(&$logs, $isteacher=false) {
         if ($log->module == "survey" and $log->action == "submit") {
             $surveys[$log->id] = get_record_sql("SELECT s.name, u.firstname, u.lastname
                                                  FROM survey s, user u
-                                                 WHERE s.id = '$log->info' AND e.user = u.id");
+                                                 WHERE s.id = '$log->info' AND u.id = '$log->user'");
             $surveys[$log->info]->time = $log->time;
             $surveys[$log->info]->url = $log->url;
         }
