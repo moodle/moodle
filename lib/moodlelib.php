@@ -571,6 +571,10 @@ function isstudent($courseid, $userid=0) {
 /// If course is site, is the user a confirmed user on the site?
     global $USER;
 
+    if (empty($USER->id)) {
+        return false;
+    }
+
     $site = get_site();
     if ($courseid == $site->id) {
         if (!$userid) {
