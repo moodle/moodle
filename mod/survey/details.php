@@ -35,7 +35,10 @@
         <TR VALIGN=top>
             <TD ALIGN=right NOWRAP>
                 <P><B><? print_string("introtext", "survey") ?>:</B></P><BR>
-                <? helpbutton("text", get_string("helptext")) ?>
+                <font SIZE="1">
+                <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+                <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?><br \>
+                </font>
             </TD>
             <TD>
                 <TEXTAREA NAME="intro" ROWS=20 COLS=50 WRAP="virtual"><? 

@@ -10,7 +10,7 @@
     <td align=right><P><B><? print_string("surveytype", "survey") ?>:</B></P></TD>
     <td>
     <?
-        if ($options = get_records_sql_menu("SELECT id, name FROM survey WHERE template='0'")) {
+        if ($options = get_records_menu("survey", "template", 0, "name", "id, name")) {
             foreach ($options as $id => $name) {
                 $options[$id] = get_string($name, "survey");
             }

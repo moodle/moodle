@@ -30,7 +30,7 @@
 
 // Get all the questions and their proper order
 
-    $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions)");
+    $questions = get_records_list("survey_questions", "id", $survey->questions);
     $order = explode(",", $survey->questions);
 
     foreach ($order as $key => $qid) {  // Do we have virtual scales?
@@ -63,7 +63,7 @@
         }
     }
 
-    $fullquestions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($fullorderlist)");
+    $fullquestions = get_records_list("survey_questions", "id", $fullorderlist);
 
 //  Question type of multi-questions overrides the type of single questions
     foreach ($order as $key => $qid) {
@@ -136,7 +136,7 @@
             if (! $u = get_record("user", "id", $user)) {
                 error("Error finding student # $user");
             }
-            if ($n = get_record_sql("SELECT * FROM survey_analysis WHERE survey='$survey->id' AND user='$user'")) {
+            if ($n = get_record("survey_analysis", "survey", $survey->id, "user", $user)) {
                 $notes = $n->notes;
             } else {
                 $notes = "No notes made";
@@ -190,7 +190,7 @@
 // Print all the lines of data.
 
     foreach ($results as $user => $rest) {
-        if (! $u = get_record_sql("SELECT firstname,lastname,email,idnumber FROM user WHERE id = '$user'")) {
+        if (! $u = get_record("user", "id", $user)) {
             error("Error finding student # $user");
         }
         echo $survey->id."\t";

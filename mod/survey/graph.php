@@ -51,16 +51,15 @@
            $buckets2[$key] = 0;
        }
 
-       $aa = $db->Execute("SELECT * FROM survey_answers WHERE survey = $cm->instance AND question = $qid");
-
-       while (!$aa->EOF) {
-           if ($a1 = $aa->fields["answer1"]) {
-               $buckets1[$a1 - 1]++;
+       if ($aaa = get_records_select("survey_answers", "survey = '$cm->instance' AND question = '$qid'")) {
+           foreach ($aaa as $aa) {
+               if ($a1 = $aa->answer1) {
+                   $buckets1[$a1 - 1]++;
+               }
+               if ($a2 = $aa->answer2) {
+                   $buckets2[$a2 - 1]++;
+               }
            }
-           if ($a2 = $aa->fields["answer2"]) {
-               $buckets2[$a2 - 1]++;
-           }
-           $aa->MoveNext();
        }
 
        
@@ -111,7 +110,7 @@
        $options = explode(",",$question->options);
        $questionorder = explode( ",", $question->multi);
 
-       $qqq = get_records_sql("SELECT * FROM survey_questions WHERE id in ($question->multi)");
+       $qqq = get_records_list("survey_questions", "id", $question->multi);
 
        foreach ($questionorder as $i => $val) {
            $names[$i] = get_string($qqq["$val"]->shorttext, "survey");
@@ -122,17 +121,19 @@
            $indexof[$val] = $i;
        }
 
-       $aaa = get_records_sql("SELECT * FROM survey_answers WHERE ((survey = $cm->instance) AND (question in ($question->multi)))");
+       $aaa = get_records_select("survey_answers", "((survey = $cm->instance) AND (question in ($question->multi)))");
 
-       foreach ($aaa as $a) {
-           $index = $indexof[$a->question];
-           if ($a->answer1) {
-               $buckets1[$index] += $a->answer1;
-               $count1[$index]++;
-           }
-           if ($a->answer2) {
-               $buckets2[$index] += $a->answer2;
-               $count2[$index]++;
+       if ($aaa) {
+           foreach ($aaa as $a) {
+               $index = $indexof[$a->question];
+               if ($a->answer1) {
+                   $buckets1[$index] += $a->answer1;
+                   $count1[$index]++;
+               }
+               if ($a->answer2) {
+                   $buckets2[$index] += $a->answer2;
+                   $count2[$index]++;
+               }
            }
        }
 
@@ -145,15 +146,17 @@
            }
        }
 
-       foreach ($aaa as $a) {
-           $index = $indexof[$a->question];
-           if ($a->answer1) {
-               $difference = (float) ($a->answer1 - $buckets1[$index]);
-               $stdev1[$index] += ($difference * $difference);
-           }
-           if ($a->answer2) {
-               $difference = (float) ($a->answer2 - $buckets2[$index]);
-               $stdev2[$index] += ($difference * $difference);
+       if ($aaa) {
+           foreach ($aaa as $a) {
+               $index = $indexof[$a->question];
+               if ($a->answer1) {
+                   $difference = (float) ($a->answer1 - $buckets1[$index]);
+                   $stdev1[$index] += ($difference * $difference);
+               }
+               if ($a->answer2) {
+                   $difference = (float) ($a->answer2 - $buckets2[$index]);
+                   $stdev2[$index] += ($difference * $difference);
+               }
            }
        }
 
@@ -223,20 +226,24 @@
     
      case "overall.png":
 
-       $qqq = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions) AND multi <> ''");
+       $qqq = get_records_list("survey_questions", "id", $survey->questions);
 
        foreach ($qqq as $key => $qq) {
-           $qqq[$key]->text = get_string($qq->text, "survey");
-           $qqq[$key]->options = get_string($qq->options, "survey");
-           if ($qq->type < 0) {
-               $virtualscales = true;
+           if ($qq->multi) {
+               $qqq[$key]->text = get_string($qq->text, "survey");
+               $qqq[$key]->options = get_string($qq->options, "survey");
+               if ($qq->type < 0) {
+                   $virtualscales = true;
+               }
            }
        }
        foreach ($qqq as $qq) {         // if any virtual, then use JUST virtual, else use JUST nonvirtual
-           if ($virtualscales && $qq->type < 0) {
-               $question[] = $qq;
-           } else if (!$virtualscales && $qq->type > 0) {
-               $question[] = $qq;
+           if ($qq->multi) {
+               if ($virtualscales && $qq->type < 0) {
+                   $question[] = $qq;
+               } else if (!$virtualscales && $qq->type > 0) {
+                   $question[] = $qq;
+               }
            }
        }
        $numquestions = count($question);
@@ -253,16 +260,18 @@
            $count1[$i] = 0;
            $count2[$i] = 0;
            $subquestions = $question[$i]->multi;   // otherwise next line doesn't work
-           $aaa = get_records_sql("SELECT * FROM survey_answers WHERE ((survey = $cm->instance) AND (question in ($subquestions)))");
+           $aaa = get_records_select("survey_answers", "((survey = $cm->instance) AND (question in ($subquestions)))");
 
-           foreach ($aaa as $a) {
-               if ($a->answer1) {
-                   $buckets1[$i] += $a->answer1;
-                   $count1[$i]++;
-               }
-               if ($a->answer2) {
-                   $buckets2[$i] += $a->answer2;
-                   $count2[$i]++;
+           if ($aaa) {
+               foreach ($aaa as $a) {
+                   if ($a->answer1) {
+                       $buckets1[$i] += $a->answer1;
+                       $count1[$i]++;
+                   }
+                   if ($a->answer2) {
+                       $buckets2[$i] += $a->answer2;
+                       $count2[$i]++;
+                   }
                }
            }
 
@@ -274,14 +283,16 @@
            }
 
            // Calculate the standard devaiations
-           foreach ($aaa as $a) {
-               if ($a->answer1) {
-                   $difference = (float) ($a->answer1 - $buckets1[$i]);
-                   $stdev1[$i] += ($difference * $difference);
-               }
-               if ($a->answer2) {
-                   $difference = (float) ($a->answer2 - $buckets2[$i]);
-                   $stdev2[$i] += ($difference * $difference);
+           if ($aaa) {
+               foreach ($aaa as $a) {
+                   if ($a->answer1) {
+                       $difference = (float) ($a->answer1 - $buckets1[$i]);
+                       $stdev1[$i] += ($difference * $difference);
+                   }
+                   if ($a->answer2) {
+                       $difference = (float) ($a->answer2 - $buckets2[$i]);
+                       $stdev2[$i] += ($difference * $difference);
+                   }
                }
            }
 
@@ -350,20 +361,24 @@
 
      case "student.png":
 
-       $qqq = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions) AND multi <> ''");
+       $qqq = get_records_list("survey_questions", "id", $survey->questions);
 
        foreach ($qqq as $key => $qq) {
-           $qqq[$key]->text = get_string($qq->text, "survey");
-           $qqq[$key]->options = get_string($qq->options, "survey");
-           if ($qq->type < 0) {
-               $virtualscales = true;
+           if ($qq->multi) {
+               $qqq[$key]->text = get_string($qq->text, "survey");
+               $qqq[$key]->options = get_string($qq->options, "survey");
+               if ($qq->type < 0) {
+                   $virtualscales = true;
+               }
            }
        }
        foreach ($qqq as $qq) {         // if any virtual, then use JUST virtual, else use JUST nonvirtual
-           if ($virtualscales && $qq->type < 0) {
-               $question[] = $qq;
-           } else if (!$virtualscales && $qq->type > 0) {
-               $question[] = $qq;
+           if ($qq->multi) {
+               if ($virtualscales && $qq->type < 0) {
+                   $question[] = $qq;
+               } else if (!$virtualscales && $qq->type > 0) {
+                   $question[] = $qq;
+               }
            }
        }
        $numquestions= count($question);
@@ -381,27 +396,30 @@
            $studbuckets2[$i] = 0.0;
            $studcount1[$i] = 0;
            $studcount2[$i] = 0;
-           $subquestions = $question[$i]->multi;   // otherwise next line doesn't work
-           $aaa = get_records_sql("SELECT * FROM survey_answers WHERE ((survey = $cm->instance) AND (question in ($subquestions)))");
 
-           foreach ($aaa as $a) {
-               if ($a->user == $sid) {
+           $subquestions = $question[$i]->multi;   // otherwise next line doesn't work
+           $aaa = get_records_select("survey_answers","((survey = $cm->instance) AND (question in ($subquestions)))");
+
+           if ($aaa) {
+               foreach ($aaa as $a) {
+                   if ($a->user == $sid) {
+                       if ($a->answer1) {
+                           $studbuckets1[$i] += $a->answer1;
+                           $studcount1[$i]++;
+                       }
+                       if ($a->answer2) {
+                           $studbuckets2[$i] += $a->answer2;
+                           $studcount2[$i]++;
+                       }
+                   }
                    if ($a->answer1) {
-                       $studbuckets1[$i] += $a->answer1;
-                       $studcount1[$i]++;
+                       $buckets1[$i] += $a->answer1;
+                       $count1[$i]++;
                    }
                    if ($a->answer2) {
-                       $studbuckets2[$i] += $a->answer2;
-                       $studcount2[$i]++;
+                       $buckets2[$i] += $a->answer2;
+                       $count2[$i]++;
                    }
-               }
-               if ($a->answer1) {
-                   $buckets1[$i] += $a->answer1;
-                   $count1[$i]++;
-               }
-               if ($a->answer2) {
-                   $buckets2[$i] += $a->answer2;
-                   $count2[$i]++;
                }
            }
 
@@ -510,7 +528,7 @@
        $options = explode(",",$question->options);
        $questionorder = explode( ",", $question->multi);
 
-       $qqq = get_records_sql("SELECT * FROM survey_questions WHERE id in ($question->multi)");
+       $qqq = get_records_list("survey_questions", "id", $question->multi);
 
        foreach ($questionorder as $i => $val) {
            $names[$i] = get_string($qqq[$val]->shorttext, "survey");
@@ -525,27 +543,29 @@
            $studcount2[$i] = 0;
        }
 
-       $aaa = get_records_sql("SELECT * FROM survey_answers WHERE ((survey = $cm->instance) AND (question in ($question->multi)))");
+       $aaa = get_records_select("survey_answers", "((survey = $cm->instance) AND (question in ($question->multi)))");
 
-       foreach ($aaa as $a) {
-           $index = $indexof[$a->question];
-               if ($a->user == $sid) {
-                   if ($a->answer1) {
-                       $studbuckets1[$index] += $a->answer1;
-                       $studcount1[$index]++;
+       if ($aaa) {
+           foreach ($aaa as $a) {
+               $index = $indexof[$a->question];
+                   if ($a->user == $sid) {
+                       if ($a->answer1) {
+                           $studbuckets1[$index] += $a->answer1;
+                           $studcount1[$index]++;
+                       }
+                       if ($a->answer2) {
+                           $studbuckets2[$index] += $a->answer2;
+                           $studcount2[$index]++;
+                       }
                    }
-                   if ($a->answer2) {
-                       $studbuckets2[$index] += $a->answer2;
-                       $studcount2[$index]++;
-                   }
+               if ($a->answer1) {
+                   $buckets1[$index] += $a->answer1;
+                   $count1[$index]++;
                }
-           if ($a->answer1) {
-               $buckets1[$index] += $a->answer1;
-               $count1[$index]++;
-           }
-           if ($a->answer2) {
-               $buckets2[$index] += $a->answer2;
-               $count2[$index]++;
+               if ($a->answer2) {
+                   $buckets2[$index] += $a->answer2;
+                   $count2[$index]++;
+               }
            }
        }
 

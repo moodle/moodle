@@ -45,7 +45,7 @@
         $numusers = survey_count_responses($survey->id);
         print_heading(get_string("peoplecompleted", "survey", $numusers));
         echo "<CENTER>";
-        echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$cm->id&sid=$USER->id&type=student.png\">";
+        echo "<IMG HEIGHT=\"$SURVEY_GHEIGHT\" WIDTH=\"$SURVEY_GWIDTH\" SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$cm->id&sid=$USER->id&type=student.png\">";
         echo "</CENTER>";
         print_footer($course);
         exit;
@@ -60,7 +60,7 @@
     print_simple_box(text_to_html($survey->intro), "center", "80%");
 
 // Get all the major questions and their proper order
-    if (! $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions)")) {
+    if (! $questions = get_records_list("survey_questions", "id", $survey->questions)) {
         error("Couldn't find any questions in this survey!!");
     }
     $questionorder = explode( ",", $survey->questions);

@@ -63,10 +63,15 @@
 
     $timenow = time();
     foreach ($answers as $key => $val) {
-        $val1 = $val[0]; $val2 = $val[1];
-        if (! $result = $db->Execute("INSERT INTO survey_answers 
-                         (time, user, survey, question, answer1, answer2) 
-                         VALUES ('$timenow', '$USER->id', '$survey->id', '$key', '$val1', '$val2')") ) {
+
+        $newdata->time = $timenow;
+        $newdata->user = $USER->id;
+        $newdata->survey = $survey->id;
+        $newdata->question = $key;
+        $newdata->answer1 = $val[0];
+        $newdata->answer2 = $val[1];
+
+        if (! insert_record("survey_answers", $newdata)) {
             error("Encountered a problem trying to store your results. Sorry.");
         }
     }

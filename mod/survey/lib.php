@@ -78,7 +78,7 @@ function survey_delete_instance($id) {
 }
 
 function survey_user_outline($course, $user, $mod, $survey) {
-    if ($answers = get_records_sql("SELECT * FROM survey_answers WHERE survey='$survey->id' AND user='$user->id'")) {
+    if ($answers = get_records_select("survey_answers", "survey='$survey->id' AND user='$user->id'")) {
 
         $lastanswer = array_pop($answers);
 
@@ -108,9 +108,7 @@ function survey_print_recent_activity(&$logs, $isteacher=false) {
 
     foreach ($logs as $log) {
         if ($log->module == "survey" and $log->action == "submit") {
-            $surveys[$log->id] = get_record_sql("SELECT s.name, u.firstname, u.lastname
-                                                 FROM survey s, user u
-                                                 WHERE s.id = '$log->info' AND u.id = '$log->user'");
+            $surveys[$log->id] = survey_log_info($log);
             $surveys[$log->id]->time = $log->time;
             $surveys[$log->id]->url = $log->url;
         }
@@ -132,20 +130,74 @@ function survey_print_recent_activity(&$logs, $isteacher=false) {
 }
 
 
-// MODULE FUNCTIONS ////////////////////////////////////////////////////////
+// SQL FUNCTIONS ////////////////////////////////////////////////////////
 
-function survey_already_done($survey, $user) {
-   return record_exists_sql("SELECT * FROM survey_answers WHERE survey='$survey' AND user='$user'");
+
+function survey_log_info($log) {
+    global $CFG;
+    return get_record_sql("SELECT s.name, u.firstname, u.lastname
+                             FROM {$CFG->prefix}survey s, 
+                                  {$CFG->prefix}user u
+                            WHERE s.id = '$log->info' 
+                              AND u.id = '$log->user'");
+}
+
+function survey_get_responses($survey) {
+    global $CFG;
+    return get_records_sql("SELECT a.time as time, count(*) as numanswers, u.*
+                              FROM {$CFG->prefix}survey_answers AS a, 
+                                   {$CFG->prefix}user AS u
+                             WHERE a.answer1 <> '0' AND a.answer2 <> '0'
+                                   AND a.survey = $survey 
+                                   AND a.user = u.id
+                          GROUP BY a.user 
+                          ORDER BY a.time ASC");
+}
+
+function survey_get_analysis($survey, $user) {
+    global $db, $CFG;
+
+    return get_record_sql("SELECT notes 
+                             FROM {$CFG->prefix}survey_analysis 
+                            WHERE survey='$survey' 
+                              AND user='$user'");
+}
+
+function survey_update_analysis($survey, $user, $notes) {
+    global $db, $CFG;
+
+    return $db->Execute("UPDATE {$CFG->prefix}survey_analysis 
+                            SET notes='$notes' 
+                          WHERE survey='$survey' 
+                            AND user='$user'");
 }
 
 
-function survey_get_responses($survey) {
-    return get_records_sql("SELECT a.time as time, count(*) as numanswers, u.*
-                            FROM survey_answers AS a, user AS u
-                            WHERE a.answer1 <> '0' AND a.answer2 <> '0'
-                                  AND a.survey = $survey 
-                                  AND a.user = u.id
-                            GROUP BY a.user ORDER BY a.time ASC");
+function survey_add_analysis($survey, $user, $notes) {
+    global $db, $CFG;
+
+    return $db->Execute("INSERT INTO {$CFG->prefix}survey_analysis 
+                                 SET notes='$notes', 
+                                     survey='$survey', 
+                                     user='$user'");
+}
+
+function survey_get_user_answers($surveyid, $questionid) {
+    global $CFG;
+
+    return get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture 
+                              FROM survey_answers sa, 
+                                   user u 
+                             WHERE sa.survey = '$surveyid' 
+                               AND sa.question = $questionid 
+                               AND u.id = sa.user 
+                          ORDER BY sa.answer1,sa.answer2 ASC");
+}
+
+// MODULE FUNCTIONS ////////////////////////////////////////////////////////
+
+function survey_already_done($survey, $user) {
+   return record_exists("survey_answers", "survey", $survey, "user", $user);
 }
 
 function survey_count_responses($survey) {
@@ -179,8 +231,8 @@ function survey_get_template_name($templateid) {
     global $db;
 
     if ($templateid) {
-        if ($ss = $db->Execute("SELECT name FROM surveys WHERE id = $templateid")) {
-            return $ss->fields["name"];
+        if ($ss = get_record("surveys", "id", $templateid)) {
+            return $ss->name;
         }
     } else {
         return "";
@@ -188,24 +240,6 @@ function survey_get_template_name($templateid) {
 }
 
 
-function survey_get_analysis($survey, $user) {
-    global $db;
-
-    return get_record_sql("SELECT notes from survey_analysis WHERE survey='$survey' and user='$user'");
-}
-
-function survey_update_analysis($survey, $user, $notes) {
-    global $db;
-
-    return $db->Execute("UPDATE survey_analysis SET notes='$notes' WHERE survey='$survey' and user='$user'");
-}
-
-
-function survey_add_analysis($survey, $user, $notes) {
-    global $db;
-
-    return $db->Execute("INSERT INTO survey_analysis SET notes='$notes', survey='$survey', user='$user'");
-}
 
 function survey_shorten_name ($name, $numwords) {
     $words = explode(" ", $name);
@@ -249,7 +283,7 @@ function survey_print_multi($question) {
     }
     echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">&nbsp</TD></TR>\n";
 
-    $subquestions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($question->multi) ");
+    $subquestions = get_records_list("survey_questions", "id", $question->multi);
 
     foreach ($subquestions as $q) {
         $qnum++;

@@ -102,7 +102,7 @@
       case "scales":
         print_header("$survey->name: $strscales", "$strallscales");
 
-        $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions)");
+        $questions = get_records_list("survey_questions", "id", $survey->questions);
         $questionorder = explode(",", $survey->questions);
 
         foreach ($questionorder as $key => $val) {
@@ -132,7 +132,7 @@
       case "questions":
 
         if ($qid) {     // just get one multi-question
-            $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($qid)");
+            $questions = get_records_list("survey_questions", "id", $qid);
             $questionorder = explode(",", $qid);
 
             if ($scale = get_records("survey_questions", "multi", "$qid")) {
@@ -143,7 +143,7 @@
             }
 
         } else {        // get all top-level questions
-            $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions)");
+            $questions = get_records_list("survey_questions", "id", $survey->questions);
             $questionorder = explode(",", $survey->questions);
 
             print_header("$survey->name: $strquestions", "$strallquestions");
@@ -167,7 +167,7 @@
             if ($question->multi) {
                 echo "<H3>$question->text :</H3>";
 
-                $subquestions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($question->multi)");
+                $subquestions = get_records_list("survey_questions", "id", $question->multi);
                 $subquestionorder = explode(",", $question->multi);
                 foreach ($subquestionorder as $key => $val) {
                     $subquestion = $subquestions[$val];
@@ -183,7 +183,7 @@
                            BORDER=1 SRC=\"graph.php?id=$id&qid=$question->id&type=question.png\"></A></P>";
             } else {
                 echo "<H3>$question->text</H3>";
-                if ($aaa = get_records_sql("SELECT sa.*, u.firstname,u.lastname FROM survey_answers sa, user u WHERE survey = '$survey->id' AND question = $question->id and sa.user = u.id")) {
+                if ($aaa = survey_get_user_answers($survey->id, $question->id)) {
                     echo "<UL>";
                     foreach ($aaa as $a) {
                         echo "<LI>$a->firstname $a->lastname: $a->answer1";
@@ -205,7 +205,6 @@
 
         print_header("$survey->name: $strquestion", "$strquestion: $question->text");
 
-        $aaa = get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture FROM survey_answers sa, user u WHERE sa.survey = '$survey->id' AND sa.question = $question->id AND u.id = sa.user ORDER by sa.answer1,sa.answer2 ASC");
 
         $strname = get_string("name", "survey");
         $strtime = get_string("time", "survey");
@@ -213,30 +212,33 @@
         $strpreferred = get_string("preferred", "survey");
 
         echo "<TABLE ALIGN=center CELLPADDING=0 CELLSPACING=10><TR><TD>&nbsp;<TH align=left>$strname<TH align=left>$strtime<TH align=left>$stractual<TH align=left>$strpreferred</TR>";
-        foreach ($aaa as $a) {
-            echo "<TR>";
-            echo "<TD WIDTH=35>";
-            print_user_picture($a->user, $course->id, $a->picture, false);
-            echo "</TD>";
-            echo "<TD><P><A HREF=\"report.php?id=$id&action=student&student=$a->user\">$a->firstname $a->lastname</A></TD>";
-            echo "<TD><P>".userdate($a->time, "%d %B %Y, %I:%M %p")."</TD>";
-            echo "<TD BGCOLOR=\"$THEME->cellcontent\"><P>";
-            if ($a->answer1) {
-                echo "$a->answer1 - ".$answers[$a->answer1 - 1];
-            } else {
-                echo "&nbsp;";
-            }
-            echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\"><P>";
-            if ($a->answer2) {
-                echo "$a->answer2 - ".$answers[$a->answer2 - 1];
-            } else {
-                echo "&nbsp;";
-            }
-            echo "</TD></TR>";
 
+        if ($aaa = survey_get_user_answers($survey->id, $question->id)) {
+            foreach ($aaa as $a) {
+                echo "<TR>";
+                echo "<TD WIDTH=35>";
+                print_user_picture($a->user, $course->id, $a->picture, false);
+                echo "</TD>";
+                echo "<TD><P><A HREF=\"report.php?id=$id&action=student&student=$a->user\">$a->firstname $a->lastname</A></TD>";
+                echo "<TD><P>".userdate($a->time, "%d %B %Y, %I:%M %p")."</TD>";
+                echo "<TD BGCOLOR=\"$THEME->cellcontent\"><P>";
+                if ($a->answer1) {
+                    echo "$a->answer1 - ".$answers[$a->answer1 - 1];
+                } else {
+                    echo "&nbsp;";
+                }
+                echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\"><P>";
+                if ($a->answer2) {
+                    echo "$a->answer2 - ".$answers[$a->answer2 - 1];
+                } else {
+                    echo "&nbsp;";
+                }
+                echo "</TD></TR>";
+    
+            }
         }
-        echo "</TABLE>";
 
+        echo "</TABLE>";
 
         print_footer($course);
         break;
@@ -288,7 +290,7 @@
          echo "<P ALIGN=CENTER><IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH ALIGN=CENTER SRC=\"graph.php?id=$id&sid=$student&type=student.png\"></P>";
          
          // Print scales
-         $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions)");
+         $questions = get_records_list("survey_questions", "id", $survey->questions);
          $questionorder = explode(",", $survey->questions);
  
          foreach ($questionorder as $key => $val) {
