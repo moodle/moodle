@@ -984,6 +984,7 @@ function print_courses_sideblock($category=0, $width="100%") {
             $modicon[]=$icon;
         }
     } else {                          // Just print course names of single category
+        $category = array_shift($categories);
         $courses = get_courses($category);
         if ($courses) {
             foreach ($courses as $course) {
@@ -1010,8 +1011,14 @@ function print_courses($category, $width="100%") {
     global $CFG, $THEME;
 
     if (empty($category)) {
-        $categories = NULL;
-        $courses    = get_courses(0);
+        $categories = get_categories(0);  // Parent = 0   ie top-level categories only
+        if (count($categories) == 1) {
+            $category   = array_shift($categories);
+            $courses    = get_courses($category);
+        } else {
+            $courses    = get_courses(0);
+        }
+        unset($categories);
     } else {
         $categories = get_categories($category->id);  // sub categories
         $courses    = get_courses($category);
