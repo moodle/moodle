@@ -4,10 +4,11 @@
 <FONT SIZE=1>
 <P>
 <? if ($USER->id) {
-       echo "You are logged in as $USER->firstname $USER->lastname.";
-	   echo "(<A HREF=\"$CFG->wwwroot/login/logout.php\">Logout</A>)";
+       echo get_string("loggedinas", "moodle", "$USER->firstname $USER->lastname");
+	   echo " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
    } else { 
-       echo "You are not logged in.  <A HREF=\"$CFG->wwwroot/login/\">Log in here</A>.";
+       echo get_string("loggedinnot", "moodle");
+       echo " (<A HREF=\"$CFG->wwwroot/login/\">".get_string("login")."</A>)";
    } 
 ?>
 </P>

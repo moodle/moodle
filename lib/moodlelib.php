@@ -1090,6 +1090,97 @@ function get_directory_list( $rootdir ) {
     return $dirs;
 }
 
+/// STRING TRANSLATION  ////////////////////////////////////////
+
+function get_string($identifier, $module="", $a="", $b="", $c="") {
+// Return the translated string specified by $identifier as 
+// for $module.  Uses the same format files as STphp.
+// $a, $b and $c are optional variables that may be used 
+// within translation strings
+
+    global $CFG, $USER;
+
+    if (isset($USER->lang)) {    // User language can override site language
+        $lang = $USER->lang;
+    } else {
+        $lang = $CFG->lang;
+    }
+
+    if ($module == "" or $module == "moodle") {
+        $langpath = "$CFG->dirroot/lang";
+    } else {
+        $langpath = "$CFG->dirroot/mod/$module/lang";
+    }
+
+    $langfile = "$langpath/$lang/strings.php";
+
+    if (!file_exists($langfile)) {                // try English instead
+        $langfile = "$langpath/en/strings.php";
+        if (!file_exists($langfile)) {
+            return "ERROR: No translation file found";
+        }
+    }
+
+    if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+
+        eval($result);
+        return $resultstring;
+
+    } else {
+        if ($lang == "en") {
+            return "ERROR: Translation string '$identifier' is missing!";
+
+        } else {   // Try looking in the english file.
+            $langfile = "$langpath/en/strings.php";
+            if (!file_exists($langfile)) {
+                return "ERROR: No translation file found";
+            }
+            if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+                eval($result);
+                return $resultstring;
+            } else {
+                return "ERROR: Translation string '$identifier' is missing!";
+            }
+        }
+    }
+}
+
+
+function get_string_variable_list($string) {
+// This function is only used from get_string_from_file().
+    if (empty ($string))
+        return;
+
+    // Match on all variables in $string
+    $count = preg_match_all("/\\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/",
+                            $string, $matches);
+
+    // Return array of matches ($matches[0] is most useful)
+    return $matches;
+}
+
+
+function get_string_from_file($identifier, $langfile, $destination) {
+// This function is only used from get_string().
+    include ($langfile);
+
+    if (!isset ($string[$identifier])) {
+        return false;
+    }
+
+    $value = "sprintf(\"".$string[$identifier]."\");";
+    $variables = get_string_variable_list($value);
+    if (empty($variables[0]))
+        return "$destination = $value";
+    else {
+        foreach ($variables[0] as $variable) {
+            $variablecheck .= "if (!isset ($variable))\n" .
+                "die (\"Variable specified in translation " .
+                "not set.\");\n";
+        }
+        return "$variablecheck $destination = $value";
+    }
+}
 
 
 /// ENCRYPTION  ////////////////////////////////////////////////
