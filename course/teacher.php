@@ -67,7 +67,8 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted()) {
+    if ($form = data_submitted() and confirm_sesskey()) {
+        unset ($form->sesskey);
         $rank = array();
 
         // Peel out all the data from variable names.
@@ -165,6 +166,7 @@
 
         print_table($table);
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo "<center><input type=\"submit\" value=\"".get_string("savechanges")."\" /> ";
         echo "</center>";
         echo "</form>";
