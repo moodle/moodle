@@ -21,11 +21,24 @@
         error("Course ID is incorrect - discussion is faulty");
     }
 
-    if (! $cm = get_coursemodule_from_instance("forum", $discussion->forum, $course->id)) {
-        error("Course Module ID was incorrect");
+    if (! $forum = get_record("forum", "id", $discussion->forum)) {
+        notify("Bad forum ID stored in this discussion");
     }
 
-    require_course_login($course, false, $cm);
+    if ($forum->type == "teacher") {
+        require_login($course->id);
+
+        if (!isteacher($course->id)) {
+            error("You must be a $course->teacher to view this forum");
+        }
+
+    } else {
+        if (! $cm = get_coursemodule_from_instance("forum", $discussion->forum, $course->id)) {
+            error("Course Module ID was incorrect");
+        }
+        require_course_login($course, false, $cm);
+    }
+
 
     if (!empty($move)) {
         if (!isteacher($course->id)) {
@@ -49,17 +62,6 @@
         }
     }
 
-    if (empty($forum)) {
-        if (! $forum = get_record("forum", "id", $discussion->forum)) {
-            notify("Bad forum ID stored in this discussion");
-        }
-    }
-
-    if ($forum->type == "teacher") {
-        if (!isteacher($course->id)) {
-            error("You must be a $course->teacher to view this forum");
-        }
-    }
 
     $logparameters = "d=$discussion->id";
     if ($parent) {
