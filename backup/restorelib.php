@@ -536,7 +536,7 @@
             $course->password = addslashes($course_header->course_password);
             $course->fullname = addslashes($course_header->course_fullname);
             $course->shortname = addslashes($course_header->course_shortname);
-            $course->summary = addslashes($course_header->course_summary);
+            $course->summary = restore_decode_absolute_links(addslashes($course_header->course_summary));
             $course->format = addslashes($course_header->course_format);
             $course->showgrades = addslashes($course_header->course_showgrades);
             $course->blockinfo = addslashes($course_header->blockinfo);
@@ -614,7 +614,7 @@
                 $sequence = "";
                 $section->course = $restore->course_id;
                 $section->section = $sect->number;
-                $section->summary = addslashes($sect->summary);
+                $section->summary = restore_decode_absolute_links(addslashes($sect->summary));
                 $section->visible = $sect->visible;
                 $section->sequence = "";
                 //Now calculate the section's newid
@@ -804,7 +804,7 @@
                     $user->address = addslashes($user->address);
                     $user->city = addslashes($user->city);
                     $user->url = addslashes($user->url);
-                    $user->description = addslashes($user->description);
+                    $user->description = restore_decode_absolute_links(addslashes($user->description));
                     //We are going to create the user
                     //The structure is exactly as we need
                     $newid = insert_record ("user",$user);
