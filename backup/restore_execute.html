@@ -117,7 +117,7 @@
             if (empty($info->backup_block_format)) {     // This is a backup from Moodle < 1.5
                 if (empty($course_header->blockinfo)) {
                     // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
-                    $newpage = MoodlePage::create_object(MOODLE_PAGE_COURSE, $course_header->course_id);
+                    $newpage = page_create_object(MOODLE_PAGE_COURSE, $course_header->course_id);
                     blocks_repopulate_page($newpage);
 
                 } else {

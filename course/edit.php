@@ -52,7 +52,7 @@
 
             if (!empty($course)) {
                 // Test for and remove blocks which aren't appropriate anymore
-                $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, $course->id);
+                $page = page_create_object(MOODLE_PAGE_COURSE, $course->id);
                 blocks_remove_inappropriate($page);
 
                 // Update with the new data
@@ -69,7 +69,7 @@
                 if ($newcourseid = insert_record('course', $form)) {  // Set up new course
                     
                     // Setup the blocks
-                    $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, $newcourseid);
+                    $page = page_create_object(MOODLE_PAGE_COURSE, $newcourseid);
                     blocks_repopulate_page($page); // Return value not checked because you can always edit later
 
                     $section = NULL;

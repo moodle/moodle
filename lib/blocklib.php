@@ -845,14 +845,14 @@ function upgrade_blocks_plugins($continueto) {
         //Iterate over each course
         if ($courses = get_records('course')) {
             foreach ($courses as $course) {
-                $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, $course->id);
+                $page = page_create_object(MOODLE_PAGE_COURSE, $course->id);
                 blocks_repopulate_page($page);
             }
         }
     }
 
     if (!empty($CFG->siteblocksadded)) {     /// This is a once-off hack to make a proper upgrade
-        $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, SITEID);
+        $page = page_create_object(MOODLE_PAGE_COURSE, SITEID);
         blocks_repopulate_page($page);
         delete_records('config', 'name', 'siteblocksadded');
     }

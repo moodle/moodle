@@ -2,12 +2,7 @@
 
     // All of this is standard Moodle fixtures
 
-    if (!file_exists('./config.php')) {
-        header('Location: install.php');
-        die;
-    }
-
-    require_once('config.php');
+    require_once('../config.php');
     require_once($CFG->dirroot .'/course/lib.php');
     require_once($CFG->dirroot .'/lib/blocklib.php');
     require_once($CFG->dirroot .'/mod/resource/lib.php');
@@ -111,11 +106,11 @@
 
     // Before creating our page object, we need to map our page identifier to the actual name
     // of the class which will be handling its operations. Pretty simple, but essential.
-    MoodlePage::map_page_type(MOODLE_PAGE_TEST, 'MoodlePage_Test');
+    page_map_class(MOODLE_PAGE_TEST, 'page_test');
 
     // Now, create our page object. The identifier "1" is passed arbitrarily because we don't
     // have multiple "testpages"; if we did, that would be the "testpageid" from the database.
-    $PAGE = MoodlePage::create_object(MOODLE_PAGE_TEST, 1);
+    $PAGE = page_create_object(MOODLE_PAGE_TEST, 1);
 
     $PAGE->print_header(NULL);
     $editing = $PAGE->user_is_editing();

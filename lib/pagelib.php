@@ -20,11 +20,59 @@
 define('MOODLE_PAGE_COURSE',    'course');
 
 /**
+ * Factory function page_create_object(). Called with a pagetype identifier and possibly with
+ * its numeric ID. Returns a fully constructed page_base subclass you can work with.
+ */
+
+function page_create_object($type, $id = NULL) {
+    $data = new stdClass;
+    $data->pagetype = $type;
+    $data->pageid   = $id;
+
+    $classname = page_map_class($type);
+
+    $object = &new $classname;
+    // TODO: subclassing check here
+
+    if($object->get_type() !== $type) {
+        // Somehow somewhere someone made a mistake
+        error('Page object\'s type ('. $object->get_type() .') does not match requested type ('. $type .')');
+    }
+
+    $object->init_quick($data);
+    return $object;
+}
+
+/**
+ * Function page_map_type() is the way for your code to define its own page subclasses and let Moodle recognize them.
+ * Use it to associate the textual identifier of your Page with the actual class name that has to be instantiated.
+ */
+
+function page_map_class($type, $classname = NULL) {
+    static $mappings = array(
+        MOODLE_PAGE_COURSE => 'page_course'
+    );
+
+    if(!empty($type) && !empty($classname)) {
+        $mappings[$type] = $classname;
+    }
+    if(!isset($mappings[$type])) {
+        error('Page class mapping requested for unknown type: '.$type);
+    }
+
+    if(!class_exists($mappings[$type])) {
+        error('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
+    }
+
+    return $mappings[$type];
+}
+
+/**
  * Parent class from which all Moodle page classes derive
  *
  * @author Jon Papaioannou
  * @package pages
- * @todo This parent class is very messy still. Please for the moment ignore it [except maybe create_object()] and move on to the derived class page_course to see the comments there.
+ * @todo This parent class is very messy still. Please for the moment ignore it and move on to the derived class page_course to see the comments there.
  */
 
 class page_base {
@@ -161,52 +209,6 @@ class page_base {
     function init_full() {
         $this->full_init_done = true;
     }
-
-    // DO NOT TOUCH! NEVER! SECTION
-
-    // Factory method page_base::create_object(). Called with a pagetype identifier and possibly with
-    // its numeric ID. Returns a fully constructed page_base subclass you can work with.
-    function create_object($type, $id = NULL) {
-
-        $data = new stdClass;
-        $data->pagetype = $type;
-        $data->pageid   = $id;
-
-        $classname = page_base::map_page_type($type);
-
-        $object = &new $classname;
-        // TODO: subclassing check here
-
-        if($object->get_type() !== $type) {
-            // Somehow somewhere someone made a mistake
-            error('Page object\'s type ('. $object->get_type() .') does not match requested type ('. $type .')');
-        }
-
-        $object->init_quick($data);
-        return $object;
-    }
-
-    // Method map_page_type() is the way for your code to define its own Page subclasses and let Moodle recognize them.
-    // Use it to associate the textual identifier of your Page with the actual class name that has to be instantiated.
-    function map_page_type($type, $classname = NULL) {
-        static $mappings = array(
-            MOODLE_PAGE_COURSE => 'page_course'
-        );
-
-        if(!empty($type) && !empty($classname)) {
-            $mappings[$type] = $classname;
-        }
-        if(!isset($mappings[$type])) {
-            error('Page class mapping requested for unknown type: '.$type);
-        }
-
-        if(!class_exists($mappings[$type])) {
-            error('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
-        }
-
-        return $mappings[$type];
-    }
-
 }
 
 
@@ -283,7 +285,7 @@ class page_course extends page_base {
 
     // SELF-REPORTING SECTION
 
-    // This is hardwired here so the factory method create_object() can be sure there was no mistake.
+    // This is hardwired here so the factory function page_create_object() can be sure there was no mistake.
     // Also, it doubles as a way to let others inquire about our type.
     function get_type() {
         return MOODLE_PAGE_COURSE;
