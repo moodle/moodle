@@ -145,10 +145,10 @@ HTMLArea.Config = function () {
           "insertorderedlist", "insertunorderedlist", "outdent", "indent", "separator",
           "forecolor", "hilitecolor", "separator",
           "inserthorizontalrule", "createanchor", "createlink", "unlink", "insertimage", "inserttable",
-          "insertsmile", "insertchar", 
-          <?php if (!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) { 
+          "insertsmile", "insertchar",
+          <?php if (!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) {
               echo '"separator","spellcheck",';
-            } ?> 
+            } ?>
           "separator", "htmlmode", "separator", "popupeditor"]
     ];
 
@@ -597,7 +597,25 @@ HTMLArea.prototype.generate = function () {
             var a = this.__msh_prevOnSubmit;
             // call previous submit methods if they were there.
             if (typeof a != "undefined") {
-                for (var i in a) {
+                for (var i = a.length; --i >= 0;) {
+                    a[i]();
+                }
+            }
+        };
+        if (typeof f.onreset == "function") {
+            var funcref = f.onreset;
+            if (typeof f.__msh_prevOnReset == "undefined") {
+                f.__msh_prevOnReset = [];
+            }
+            f.__msh_prevOnReset.push(funcref);
+        }
+        f.onreset = function() {
+            editor.setHTML(editor._textArea.value);
+            editor.updateToolbar();
+            var a = this.__msh_prevOnReset;
+            // call previous reset methods if they were there.
+            if (typeof a != "undefined") {
+                for (var i = a.length; --i >= 0;) {
                     a[i]();
                 }
             }
@@ -606,9 +624,11 @@ HTMLArea.prototype.generate = function () {
 
     // add a handler for the "back/forward" case -- on body.unload we save
     // the HTML content into the original textarea.
+    try {
     window.onunload = function() {
         editor._textArea.value = editor.getHTML();
     };
+    } catch(e) {};
 
     // creates & appends the toolbar
     this._createToolbar();
@@ -619,12 +639,81 @@ HTMLArea.prototype.generate = function () {
     if (HTMLArea.is_ie) {  // http://moodle.org/mod/forum/discuss.php?d=8555
         // tricky! set src to local url to turn off SSL security alert
         iframe.src = _editor_url + this.config.popupURL+"blank.html";
+    } else {
+        iframe.src = "about:blank";
     }
+
+    iframe.className = "iframe";
 
     htmlarea.appendChild(iframe);
 
-    this._iframe = iframe;
+    var editor = this
+    editor._iframe = iframe;
+    var doc = editor._iframe.contentWindow.document;
+    editor._doc = doc;
 
+    // Generate iframe content
+    var html = ""
+    if (!editor.config.fullPage) {
+        html = "<html>\n";
+        html += "<head>\n";
+        if (editor.config.baseURL)
+            html += '<base href="' + editor.config.baseURL + '" />';
+        html += '<style type="text/css">\n' + editor.config.pageStyle + "td { border: 1px dotted gray; }</style>\n";
+        html += "</head>\n";
+        html += '<body>\n';
+        html += editor._textArea.value;
+        html += "</body>\n";
+        html += "</html>";
+    } else {
+        html = editor._textArea.value;
+        if (html.match(HTMLArea.RE_doctype)) {
+            editor.setDoctype(RegExp.$1);
+            html = html.replace(HTMLArea.RE_doctype, "");
+        }
+    }
+
+    // Write content to iframe
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    // The magic: onClick the designMode is set to 'on'
+    // This one is for click on HTMLarea toolbar and else
+    if(HTMLArea.is_gecko) {
+        HTMLArea._addEvents(
+          this._htmlArea,
+          ["mousedown"],
+          function(event) {
+            if(editor.designModeIsOn != true)
+            {
+                editor.designModeIsOn = true;
+                try {
+                  doc.designMode = "on";
+                } catch (e) {
+                  alert(e)
+                };
+            }
+          }
+        );
+
+        // This one is for click in iframe
+        HTMLArea._addEvents(
+          editor._iframe.contentWindow,
+          ["mousedown"],
+          function(event) {
+            if(editor.designModeIsOn != true)
+            {
+                editor.designModeIsOn = true;
+                try {
+                  doc.designMode = "on";
+                } catch (e) {
+                  alert(e)
+                };
+            }
+          }
+        );
+    }
     // creates & appends the status bar, if the case
     this._createStatusBar();
 
@@ -638,7 +727,7 @@ HTMLArea.prototype.generate = function () {
     // size the IFRAME according to user's prefs or initial textarea
     var height = (this.config.height == "auto" ? (this._ta_size.h + "px") : this.config.height);
     height = parseInt(height);
-    var width = (this.config.width == "auto" ? (this._ta_size.w + 50 + "px") : this.config.width);
+    var width = (this.config.width == "auto" ? (this._ta_size.w + 52 + "px") : this.config.width);
     width = parseInt(width);
 
     if (!HTMLArea.is_ie) {
@@ -662,56 +751,10 @@ HTMLArea.prototype.generate = function () {
     textarea.style.width = iframe.style.width;
     textarea.style.height = iframe.style.height;
 
-    // IMPORTANT: we have to allow Mozilla a short time to recognize the
-    // new frame.  Otherwise we get a stupid exception.
-    function initIframe() {
-        var doc = editor._iframe.contentWindow.document;
-        if (!doc) {
-            // Try again..
-            // FIXME: don't know what else to do here.  Normally
-            // we'll never reach this point.
-            if (HTMLArea.is_gecko) {
-                setTimeout(initIframe, 100);
-                return false;
-            } else {
-                alert("ERROR: IFRAME can't be initialized.");
-            }
-        }
-        if (HTMLArea.is_gecko) {
-            // enable editable mode for Mozilla
-            doc.designMode = "on";
-        }
-        editor._doc = doc;
-        if (!editor.config.fullPage) {
-            doc.open();
-            var html = "<html>\n";
-            html += "<head>\n";
-            if (editor.config.baseURL)
-                html += '<base href="' + editor.config.baseURL + '" />';
-            html += "<style>" + editor.config.pageStyle + " td { border: 1px dotted gray; }</style>\n";
-            html += "</head>\n";
-            html += "<body>\n";
-            html += editor._textArea.value;
-            html += "</body>\n";
-            html += "</html>";
-            doc.write(html);
-            doc.close();
-        } else {
-            var html = editor._textArea.value;
-            if (html.match(HTMLArea.RE_doctype)) {
-                editor.setDoctype(RegExp.$1);
-                html = html.replace(HTMLArea.RE_doctype, "");
-            }
-            doc.open();
-            doc.write(html);
-            doc.close();
-        }
-
         if (HTMLArea.is_ie) {
             doc.body.contentEditable = true;
         }
 
-        editor.focusEditor();
         // intercept some events; for updating the toolbar & keyboard handlers
         HTMLArea._addEvents
             (doc, ["keydown", "keypress", "mousedown", "mouseup", "drag"],
@@ -724,6 +767,10 @@ HTMLArea.prototype.generate = function () {
             var plugin = editor.plugins[i].instance;
             if (typeof plugin.onGenerate == "function")
                 plugin.onGenerate();
+        if (typeof plugin.onGenerateOnce == "function") {
+            plugin.onGenerateOnce();
+            plugin.onGenerateOnce = null;
+        }
         }
 
         setTimeout(function() {
@@ -732,9 +779,9 @@ HTMLArea.prototype.generate = function () {
 
         if (typeof editor.onGenerate == "function")
             editor.onGenerate();
-    };
-    setTimeout(initIframe, 100);
+
 };
+
 
 // Switches editor mode; parameter can be "textmode" or "wysiwyg".  If no
 // parameter was passed this function toggles between modes.
@@ -1987,10 +2034,14 @@ HTMLArea._hasClass = function(el, className) {
 };
 
 HTMLArea.isBlockElement = function(el) {
+
     var blockTags = " body form textarea fieldset ul ol dl li div " +
         "p h1 h2 h3 h4 h5 h6 quote pre table thead " +
         "tbody tfoot tr td iframe address ";
+    try {
     return (blockTags.indexOf(" " + el.tagName.toLowerCase() + " ") != -1);
+    } catch (e) {}
+
 };
 
 HTMLArea.needsClosingTag = function(el) {
