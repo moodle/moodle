@@ -205,7 +205,7 @@ function message_count_messages($messagearray, $field='', $value='') {
 
 
 function message_print_search() {
-    global $ME, $USER;
+    global $USER;
     
     if ($frm = data_submitted()) {
     
@@ -227,7 +227,7 @@ function message_print_search() {
 }
 
 function message_print_settings() {
-    global $ME, $USER;
+    global $USER;
     
     if ($frm = data_submitted()) {
         $pref = array();
@@ -242,7 +242,7 @@ function message_print_settings() {
 
         set_user_preferences($pref);
         
-        redirect($ME, get_string('settingssaved', 'message'), 1);
+        redirect('index.php', get_string('settingssaved', 'message'), 1);
     }
 
     $cbshowmessagewindow = (get_user_preferences('message_showmessagewindow', 1) == '1') ? 'checked="checked"' : '';
@@ -314,7 +314,7 @@ function message_get_contact($contactid) {
 
 
 function message_print_search_results($frm) {
-    global $ME, $USER, $CFG;
+    global $USER, $CFG;
 
     echo '<div align="center">';
 
@@ -502,7 +502,7 @@ function message_print_search_results($frm) {
     }
 
     echo '<br />';
-    print_single_button($ME, array( 'tab' => 'search'), get_string('newsearch', 'message') );
+    print_single_button('index.php', array( 'tab' => 'search'), get_string('newsearch', 'message') );
 
     echo '</div>';
 }

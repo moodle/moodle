@@ -55,13 +55,13 @@ if ($tab == 'contacts') {
 <table cellspacing="2" cellpadding="2" border="0" align="center" width="95%">
 <tr>
     <th class="<?php echo ($tab == 'contacts') ? 'generaltabselected' : 'generaltab' ?>">
-        <a href="<?php echo $ME ?>?tab=contacts">contacts</a>
+        <a href="<?php echo $CFG->wwwroot.'/message/index.php' ?>?tab=contacts">contacts</a>
     </th>
     <th class="<?php echo ($tab == 'search') ? 'generaltabselected' : 'generaltab' ?>">
-        <a href="<?php echo $ME ?>?tab=search">search</a>
+        <a href="<?php echo $CFG->wwwroot.'/message/index.php' ?>?tab=search">search</a>
     </th>
     <th class="<?php echo ($tab == 'settings') ? 'generaltabselected' : 'generaltab' ?>">
-        <a href="<?php echo $ME ?>?tab=settings">settings</a>
+        <a href="<?php echo $CFG->wwwroot.'/message/index.php' ?>?tab=settings">settings</a>
     </th>
 </tr>
 <tr>
