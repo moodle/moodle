@@ -1119,13 +1119,15 @@ function get_courses($categoryid="all", $sort="sortorder ASC", $fields="c.*",
         $categoryselect = "c.category = '$categoryid'";
     }
 
-    $teachersonly = "";
     $teachertable = "";
+    $visiblecourses = "";
     if (!empty($USER)) {  // May need to check they are a teacher
         if (!isadmin()) {
-            $teachersonly = "AND ((c.visible = '1') OR (t.userid = '$USER->id' AND t.course = c.id))";
+            $visiblecourses = "AND ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
             $teachertable = ", {$CFG->prefix}user_teachers t";
         }
+    } else {
+        $visiblecourses = "AND c.visible > 0";
     }
 
     if ($limitfrom !== "") {
@@ -1143,7 +1145,7 @@ function get_courses($categoryid="all", $sort="sortorder ASC", $fields="c.*",
         $limit = "";
     }
 
-    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $teachersonly ";
+    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses ";
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
