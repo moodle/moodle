@@ -5,7 +5,7 @@
     require_once("../auth/$CFG->auth/lib.php");
 
 	if ($user = data_submitted()) {
-
+        $user->username= strtolower($user->username);
 		validate_form($user, $err);
 
 		if (count((array)$err) == 0) {
@@ -74,7 +74,7 @@
  *****************************************************************************/
 
 function validate_form($user, &$err) {
-  global $CFG;
+    global $CFG;
 	if (empty($user->username))
 		$err->username = get_string("missingusername");
 

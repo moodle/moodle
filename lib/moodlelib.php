@@ -483,7 +483,9 @@ function get_moodle_cookie() {
 function create_user_record($username, $password) {
 /// Creates a bare-bones user record 
     global $REMOTE_ADDR, $CFG;
-
+    
+    $username = strtolower($username);
+    
     if (function_exists(auth_get_userinfo)) {
         if ($newinfo = auth_get_userinfo($username)) {
             foreach ($newinfo as $key => $value){
