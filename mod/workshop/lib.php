@@ -2568,8 +2568,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 				echo "<TR valign=top>\n";
 				echo "	<TD align=right><P><B>". get_string("element","workshop")." $iplus1:</B></P></TD>\n";
 				echo "	<TD>".text_to_html($elements[$i]->description);
-				echo "<P align=right><FONT size=1>Weight: "
-					.number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</FONT>\n";
+				echo "<P align=right><FONT size=1>".get_string("weight", "workshop").": ".
+					number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</FONT>\n";
 				echo "</TD></TR>\n";
 				if ($showgrades) {
 					echo "<TR valign=top>\n";
@@ -2650,8 +2650,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 				echo "<TR valign=top>\n";
 				echo "	<TD align=right><P><B>". get_string("element","workshop")." $iplus1:</B></P></TD>\n";
 				echo "	<TD>".text_to_html($elements[$i]->description);
-				echo "<P align=right><FONT size=1>Weight: "
-					.number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</FONT>\n";
+				echo "<P align=right><FONT size=1>".get_string("weight", "workshop").": ".
+					number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</FONT>\n";
 				echo "</TD></TR>\n";
 				echo "<TR valign=top>\n";
 				echo "	<TD align=right><P><B>". get_string("grade"). ":</B></P></TD>\n";
@@ -2808,8 +2808,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 				echo "<TR valign=\"top\">\n";
 				echo "<TD align=\"right\"><b>".get_string("element", "workshop")." $iplus1:</b></TD>\n";
 				echo "<TD>".text_to_html($elements[$i]->description).
-					 "<P align=\"right\"><font size=\"1\">Weight: "
-					.number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font></TD></tr>\n";
+					 "<P align=\"right\"><font size=\"1\">".get_string("weight", "workshop").": ".
+					number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font></TD></tr>\n";
 				echo "<TR valign=\"top\">\n";
 				echo "	<TD BGCOLOR=\"$THEME->cellheading2\" align=\"center\"><B>".get_string("select", "workshop")."</B></TD>\n";
 				echo "	<TD BGCOLOR=\"$THEME->cellheading2\"><B>". get_string("criterion","workshop")."</B></TD></tr>\n";
