@@ -391,6 +391,78 @@ class problem_000009 extends problem_base {
     }
 }
 
+class problem_000010 extends problem_base {
+    function title() {
+        return 'Uploaded files: slasharguments disabled or not working';
+    }
+    function exists() {
+        if (!$this->is_enabled()) {
+            return true;   
+        }
+        if ($this->status() == 0) {
+            return true;
+        }
+        return false;
+    }
+    function severity() {
+        if ($this->is_enabled() and $this->status() == 0) {
+            return SEVERITY_SIGNIFICANT;
+        } else { 
+            return SEVERITY_ANNOYANCE;
+        }
+    }
+    function description() {
+        $desc = 'Slasharguments are needed for relative linking in uploaded resources:<ul>';
+        if (!$this->is_enabled()) {
+            $desc .= '<li>slasharguments are <strong>disabled</strong> in Moodle configuration</li>';   
+        } else {
+            $desc .= '<li>slasharguments are enabled in Moodle configuration</li>';   
+        }
+        if ($this->status() == 0) {
+            $desc .= '<li>slashargument test <strong>failed</strong>, please check server configuration</li>';
+        } else {
+            $desc .= '<li>slashargument test passed</li>';
+        }
+        $desc .= '</ul>';
+        return $desc;
+    }
+    function solution() {
+        $enabled = $this->is_enabled();
+        $status = $this->status();
+        $solution = '';
+        if ($enabled and ($status == 0)) {
+            $solution .= 'Slasharguments are enabled, but the test failed. Please disable slasharguments in Moodle configuration or fix the server configuration.<hr />';
+        } else if ((!$enabled) and ($status == 0)) {
+            $solution .= 'Slasharguments are disabled and the test failed. You may try to fix the server configuration.<hr />';
+        } else if ((!$enabled) and ($status > 0)) {
+            $solution .= 'Slasharguments are disabled though the iternal test is OK. You should enable slasharguments in Moodle configuration.';
+        } else if ($enabled and ($status > 0)) {
+            $solution .= 'Congratulations - everything seems OK now :-D';
+        }
+        if ($status ==0) {
+            $solution .= '<p>IIS:<ul><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li><li>do NOT enable AllowPathInfoForScriptMappings !!!</li><li>slasharguments may not work when using ISAPI and PHP 4.3.10 and older</li></ul></p>'; 
+            $solution .= '<p>Apache 1:<ul><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li></ul></p>'; 
+            $solution .= '<p>Apache 2:<ul><li>you must add <code>AcceptPathInfo on</code> to php.ini or .htaccess</li><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li></ul></p>'; 
+        }
+        return $solution;
+    }
+    function is_enabled() {
+        global $CFG;
+        return !empty($CFG->slasharguments);
+    }
+    function status() {
+        global $CFG;
+        $handle = @fopen($CFG->wwwroot.'/file.php/test', "r");
+        $contents = trim(@fread($handle, 10));
+        @fclose($handle);
+        switch ($contents) {
+            case '1': return 1;
+            case '2': return 2;
+            default:  return 0;
+        }           
+    }
+}
+
 
 class problem_00000x extends problem_base {
     function title() {

@@ -810,9 +810,7 @@ function get_file_argument($scriptname) {
         if (!strpos($path_info, $scriptname)) {
             $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
             if ($relativepath === '/test') {
-                print_header();
-                notice ('Slasharguments work - using PATH_INFO parameter :-D');
-                print_footer();
+                echo '1'; //indicate ok for health center
                 die;
             }
         }
@@ -826,9 +824,7 @@ function get_file_argument($scriptname) {
             $path_info = strip_querystring($arr[1]);
             $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
             if ($relativepath === '/test') {
-                print_header();
-                notice ('Slasharguments work - using compatibility hack :-|');
-                print_footer();
+                echo '2'; //indicate ok for health center
                 die;
             }
         }
