@@ -8,7 +8,7 @@
     optional_variable($mode);          // Display mode (for single forum)
     optional_variable($search, "");    // search string
     optional_variable($showall, "");   // show all discussions on one page
-    optional_variable($group, "");     // choose the current group
+    optional_variable($group, -1);     // choose the current group
 
     $strforums = get_string("modulenameplural", "forum");
     $strforum = get_string("modulename", "forum");
@@ -78,12 +78,13 @@
 /// Check to see if groups are being used in this forum
 /// and if so, set $currentgroup to reflect the current group
 
+    $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
     $groupmode = groupmode($course, $cm);   // Groups are being used
-    $currentgroup = get_and_set_current_group($course, $groupmode, $_GET['group']);
+    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
 
-    if (!isteacheredit($course->id) and $groupmode and !$currentgroup) {
-        print_heading("Sorry, but you need to be part of a group to see this forum.");
-        print_footer();
+    if ($groupmode and ($currentgroup === false) and !isteacheredit($course->id)) {
+        print_heading(get_string("notingroup", "forum"));
+        print_footer($course);
         exit;
     }
 
@@ -95,18 +96,7 @@
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td>';
-
-            echo '<table><tr><td>';
-            if ($groupmode == VISIBLEGROUPS) {
-                print_string('groupsvisible');
-            } else {
-                print_string('groupsseparate');
-            }
-            echo ':';
-            echo '</td><td nowrap="nowrap" align="left" width="50%">';
-            popup_form("view.php?id=$cm->id&group=", $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
-            echo '</tr></table>';
-
+            print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id&group=");
             echo '</td>';
         }
     }

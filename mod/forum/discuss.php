@@ -133,20 +133,7 @@
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
-
-            echo '<table><tr><td>';
-            if ($groupmode == VISIBLEGROUPS) {
-                print_string('groupsvisible');
-            } else {
-                print_string('groupsseparate');
-            }
-            echo ':';
-            echo '</td><td nowrap="nowrap" align="left" width="50%">';
-            popup_form("view.php?id=$cm->id&group=", $groups, 'selectgroup', 
-                       $discussion->groupid, "", "", "", false, "self");
-            echo '</tr></table>';
-
-            echo '</td>';
+            print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&group=");
         }
     }
 
