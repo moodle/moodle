@@ -258,15 +258,15 @@ function main_upgrade($oldversion=0) {
         // Commented out - see below where it's done properly
     }
 
-	if ($oldversion < 2003032500) {
-	    modify_database("", "CREATE TABLE `prefix_user_coursecreators` (
+    if ($oldversion < 2003032500) {
+        modify_database("", "CREATE TABLE `prefix_user_coursecreators` (
                              `id` int(10) unsigned NOT NULL auto_increment,
                              `userid` int(10) unsigned NOT NULL default '0',
                              PRIMARY KEY  (`id`),
                              UNIQUE KEY `id` (`id`)
                              ) TYPE=MyISAM COMMENT='One record per course creator';");
-	}
-	if ($oldversion < 2003032602) {
+    }
+    if ($oldversion < 2003032602) {
         // Redoing it because of no prefix last time
         execute_sql(" ALTER TABLE `{$CFG->prefix}log_display` CHANGE `module` `module` VARCHAR( 20 ) NOT NULL ");
         // Add some indexes for speed
@@ -274,11 +274,11 @@ function main_upgrade($oldversion=0) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(userid) ");
     }
 
-	if ($oldversion < 2003041400) {
+    if ($oldversion < 2003041400) {
         table_column("course_modules", "", "visible", "integer", "1", "unsigned", "1", "not null", "score");
     }
 
-	if ($oldversion < 2003042104) {  // Try to update permissions of all files
+    if ($oldversion < 2003042104) {  // Try to update permissions of all files
         if ($files = get_directory_list($CFG->dataroot)) {
             echo "Attempting to update permissions for all files... ignore any errors.";
             foreach ($files as $file) {
@@ -750,6 +750,19 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2004043001) {     /// Change hiddentopics to hiddensections
         table_column("course", "hiddentopics", "hiddensections", "integer", "2", "unsigned", "0", "not null");
+    }
+
+    if ($oldversion < 2004050400) {     /// add a visible field for events
+        table_column("event", "", "visible", "tinyint", "1", "", "1", "not null", "timeduration");
+        if ($events = get_records('event')) {
+            foreach($events as $event) {
+                if ($moduleid = get_field('modules', 'id', 'name', $event->modulename)) {
+                    if (get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $event->instance) == 0) {
+                        set_field('event', 'visible', 0, 'id', $event->id);
+                    }
+                }
+            }
+        }
     }
 
     return $result;

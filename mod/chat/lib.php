@@ -235,6 +235,7 @@ function chat_refresh_events($courseid = 0) {
             return true;
         }
     }
+    $moduleid = get_field('modules', 'id', 'name', 'chat');
 
     foreach ($chats as $chat) {
         $event = NULL;
@@ -253,7 +254,8 @@ function chat_refresh_events($courseid = 0) {
             $event->instance    = $chat->id;
             $event->eventtype   = $chat->schedule;
             $event->timeduration = 0;
-
+            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $chat->id);
+            
             add_event($event);
         }
     }

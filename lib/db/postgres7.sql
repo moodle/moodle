@@ -95,6 +95,7 @@ CREATE TABLE prefix_event (
    eventtype varchar(20) NOT NULL default '',
    timestart integer NOT NULL default '0',
    timeduration integer NOT NULL default '0',
+   visible integer NOT NULL default '1',
    timemodified integer NOT NULL default '0'
 );
 

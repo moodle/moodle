@@ -493,6 +493,19 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004043001) {     /// Add hiddentopics field to control hidden topics behaviour
         table_column("course", "", "hiddensections", "integer", "2", "unsigned", "0", "not null", "visible");
     }
+    
+    if ($oldversion < 2004050400) {     /// add a visible field for events
+        table_column("event", "", "visible", "tinyint", "1", "", "1", "not null", "timeduration");
+        if ($events = get_records('event')) {
+            foreach($events as $event) {
+                if ($moduleid = get_field('modules', 'id', 'name', $event->modulename)) {
+                    if (get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $event->instance) == 0) {
+                        set_field('event', 'visible', 0, 'id', $event->id);
+                    }
+                }
+            }
+        }
+    }
 
     return $result;
 

@@ -151,6 +151,7 @@ CREATE TABLE `prefix_event` (
   `eventtype` varchar(20) NOT NULL default '',
   `timestart` int(10) unsigned NOT NULL default '0',
   `timeduration` int(10) unsigned NOT NULL default '0',
+  `visible` tinyint(4) NOT NULL default '1',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),

@@ -112,6 +112,7 @@ function assignment_refresh_events($courseid = 0) {
             return true;
         }
     }
+    $moduleid = get_field('modules', 'id', 'name', 'assignment');
 
     foreach ($assignments as $assignment) {
         $event = NULL;
@@ -130,9 +131,10 @@ function assignment_refresh_events($courseid = 0) {
             $event->instance    = $assignment->id;
             $event->eventtype   = 'due';
             $event->timeduration = 0;
-
+            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $assignment->id);
             add_event($event);
         }
+
     }
     return true;
 }

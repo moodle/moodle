@@ -1036,7 +1036,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 /**
 * Returns a boolean: is the user a member of the given group?
 *
-* @param	type description
+* @param    type description
 */
 function ismember($groupid, $userid=0) {
     global $USER;
@@ -1063,7 +1063,7 @@ function ismember($groupid, $userid=0) {
 /**
 * Returns the group ID of the current user in the given course
 *
-* @param	type description
+* @param    type description
 */
 function mygroupid($courseid) {
     global $USER;
@@ -1080,7 +1080,7 @@ function mygroupid($courseid) {
 * what the current default groupmode is:
 * NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
 *
-* @param	type description
+* @param    type description
 */
 function groupmode($course, $cm=null) {
 
@@ -1094,7 +1094,7 @@ function groupmode($course, $cm=null) {
 /**
 * Sets the current group in the session variable
 *
-* @param	type description
+* @param    type description
 */
 function set_current_group($courseid, $groupid) {
     global $SESSION;
@@ -1106,7 +1106,7 @@ function set_current_group($courseid, $groupid) {
 /**
 * Gets the current group for the current user as an id or an object
 *
-* @param	type description
+* @param    type description
 */
 function get_current_group($courseid, $full=false) {
     global $SESSION, $USER;
@@ -1133,7 +1133,7 @@ function get_current_group($courseid, $full=false) {
 * It will use a given "groupid" parameter and try to use
 * that to reset the current group for the user.
 *
-* @param	type description
+* @param    type description
 */
 function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
@@ -1177,7 +1177,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 * Otherwise returns the current group if there is one
 * Otherwise returns false if groups aren't relevant
 *
-* @param	type description
+* @param    type description
 */
 function setup_and_print_groups($course, $groupmode, $urlroot) {
 
@@ -1999,6 +1999,42 @@ function delete_event($id) {
 }
 
 
+function hide_event($event) {
+/// call this function to hide an event in the calendar table
+/// the event will be identified by the id field of the $event object
+
+    global $CFG;
+
+    if (!empty($CFG->calendar)) { // call the update_event function of the selected calendar
+        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
+            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+            $calendar_hide_event = $CFG->calendar.'_hide_event';
+            if (function_exists($calendar_hide_event)) {
+                $calendar_hide_event($event);
+            }
+        }
+    }
+    return set_field('event', 'visible', 0, 'id', $event->id);
+}
+
+
+function show_event($event) {
+/// call this function to unhide an event in the calendar table
+/// the event will be identified by the id field of the $event object
+
+    global $CFG;
+
+    if (!empty($CFG->calendar)) { // call the update_event function of the selected calendar
+        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
+            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+            $calendar_show_event = $CFG->calendar.'_show_event';
+            if (function_exists($calendar_show_event)) {
+                $calendar_show_event($event);
+            }
+        }
+    }
+    return set_field('event', 'visible', 1, 'id', $event->id);
+}
 
 
 /// ENVIRONMENT CHECKING  ////////////////////////////////////////////////////////////

@@ -754,7 +754,11 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
         if (!empty($section->sequence)) {
             $modules = explode(",", $section->sequence);
             foreach ($modules as $moduleid) {
-                set_field("course_modules", "visible", "$visibility", "id", $moduleid);
+                if ($visibility) {
+                    show_course_module($moduleid);
+                } else {
+                    hide_course_module($moduleid);
+                }
             }
         }
         rebuild_course_cache($courseid);
@@ -1639,10 +1643,24 @@ function set_groupmode_for_module($id, $groupmode) {
 }
 
 function hide_course_module($mod) {
+    $cm = get_record('course_modules', 'id', $mod);
+    $modulename = get_field('modules', 'name', 'id', $cm->module);
+    if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
+        foreach($events as $event) {
+            hide_event($event);
+        }
+    }
     return set_field("course_modules", "visible", 0, "id", $mod);
 }
 
 function show_course_module($mod) {
+    $cm = get_record('course_modules', 'id', $mod);
+    $modulename = get_field('modules', 'name', 'id', $cm->module);
+    if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
+        foreach($events as $event) {
+            show_event($event);
+        }
+    }
     return set_field("course_modules", "visible", 1, "id", $mod);
 }
 

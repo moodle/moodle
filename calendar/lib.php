@@ -474,7 +474,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         // Just basic time filtering
         $whereclause = $timeclause;
     }
-    return $whereclause;
+    return $whereclause.' AND visible = 1';
 }
 
 function calendar_top_controls($type, $data) {

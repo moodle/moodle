@@ -305,7 +305,8 @@ function quiz_refresh_events($courseid = 0) {
             return true;
         }
     }
-
+    $moduleid = get_field('modules', 'id', 'name', 'quiz');
+    
     foreach ($quizzes as $quiz) {
         $event = NULL;
         $event->name        = addslashes($quiz->name);
@@ -326,6 +327,7 @@ function quiz_refresh_events($courseid = 0) {
             $event->modulename  = 'quiz';
             $event->instance    = $quiz->id;
             $event->eventtype   = 'start';
+            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $quiz->id);
 
             add_event($event);
         }
