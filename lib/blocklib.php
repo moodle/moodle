@@ -178,7 +178,7 @@ function blocks_preferred_width($blockarray, $blockinfos) {
     foreach($blockarray as $blockid) {
         if($blockid < 0) {
             // Invisible block
-            return NULL;
+            continue;
         }
         if(isset($blockinfos[$blockid])) {
             $blockname = $blockinfos[$blockid]->name;
