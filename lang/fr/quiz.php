@@ -178,6 +178,7 @@ $string['overdue'] = 'En retard';
 $string['paragraphquestion'] = 'Question paragraphe non supportée à la ligne $a. La question sera ignorée.';
 $string['passworderror'] = 'La clef n\'est pas correcte';
 $string['percentcorrect'] = 'Pourcentage de réponses correctes';
+$string['popup'] = 'Afficher le test dans une fenêtre «&nbsp;sécurisée&nbsp;»';
 $string['preview'] = 'Prévisualisation';
 $string['previewquestion'] = 'Prévisualiser la question';
 $string['publish'] = 'Publier';
