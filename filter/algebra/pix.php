@@ -46,20 +46,20 @@
                 $texexp = str_replace('"','\"',$texexp);
                 $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
                 $cmd = str_replace(' ','^ ',$cmd);
-                $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
+                $cmd .= " ++ -e  \"$pathname\" -- \"$texexp\"";
             } else if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
 
-                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
+                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname -- ". escapeshellarg($texexp);
 
             } else {                                                           /// Auto-detect the right TeX binary
                 switch (PHP_OS) {
 
                     case "Linux":
-                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
+                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" -- ". escapeshellarg($texexp);
                     break;
 
                     case "Darwin":
-                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
+                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" -- ". escapeshellarg($texexp);
                     break;
 
                     default:      /// Nothing was found, so tell them how to fix it.

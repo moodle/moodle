@@ -46,7 +46,7 @@
       $CFG->algebrafilterdirwin = "filter\\algebra";
     }
 
-function string_file_picture_algebra($imagefile, $tex= "", $height="", $width="") {
+function string_file_picture_algebra($imagefile, $tex= "", $height="", $width="", $align="middle") {
   // Given the path to a picture file in a course, or a URL,
   // this function includes the picture in the page.
   global $CFG;
@@ -72,7 +72,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
     } else {
       $output .= "<a target=\"popup\" title=\"TeX\" href=";
       $output .= "\"$CFG->wwwroot/$CFG->texfilterdir/displaytex.php?";
-      $output .= urlencode($tex) . "\" onClick=\"return openpopup('/$CFG->texfilterdir/displaytex.php?";
+      $output .= urlencode($tex) . "\" onclick=\"return openpopup('/$CFG->texfilterdir/displaytex.php?";
       $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
       $output .= "resizable,width=300,height=240', 0);\">";
     }
@@ -82,7 +82,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
     } else {
       $output .= "$CFG->wwwroot/$CFG->algebrafilterdir/pix.php?file=$imagefile";
     }
-    $output .= "\" />";
+    $output .= "\" style=\"vertical-align:$align\" />";
     $output .= "</a>";
   } else {
     $output .= "Error: must pass URL or course";
@@ -136,6 +136,14 @@ function algebra_filter ($courseid, $text) {
         $algebra = $matches[1][$i] . $matches[2][$i];
         $algebra = str_replace('<nolink>','',$algebra);
         $algebra = str_replace('</nolink>','',$algebra);
+        $align = "middle";
+        if (preg_match('/^align=bottom /',$algebra)) {
+          $align = "text-bottom";
+          $algebra = preg_replace('/^align=bottom /','',$algebra);
+        } else if (preg_match('/^align=top /',$algebra)) {
+          $align = "text-top";
+          $algebra = preg_replace('/^align=top /','',$algebra);
+        }
         $md5 =  md5($algebra);
         $filename =  $md5  . ".gif";
         if (! $texcache = get_record("cache_filters","filter","algebra", "md5key", $md5)) {
@@ -221,7 +229,7 @@ function algebra_filter ($courseid, $text) {
 	     $texcache->rawtext = addslashes($texexp);
 	     $texcache->timemodified = time();
 	     insert_record("cache_filters",$texcache);
-             $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texexp), $text);
+             $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texexp, '', '', $align), $text);
 	   } else {
 	     $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> ",$text);
            }
