@@ -76,7 +76,7 @@
 /// Add a teacher if one is specified
 
     if (!empty($add)) {
-	    if (!isteacher($course->id, $USER->id)){
+	    if (!isteacher($course->id)){
 		    error("You must be an administrator or teacher to modify this course.");
         }
 
@@ -110,7 +110,7 @@
 
     if (!empty($remove)) {
 
-        if (!isteacher($course->id, $USER->id)){
+        if (!isteacher($course->id)){
         	error("You must be an administrator or teacher to modify this course.");
 		}
         if (! $user = get_record("user", "id", $remove)) {
