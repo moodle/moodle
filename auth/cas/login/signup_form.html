@@ -1,0 +1,96 @@
+<?php
+   if (empty($user->username)) {
+       $user->username = "";
+   }
+   if (empty($user->password)) {
+       $user->password = "";
+   }
+   if (empty($user->email)) {
+       $user->email = "";
+   }
+   if (empty($user->email2)) {
+       $user->email2 = "";
+   }
+   if (empty($user->firstname)) {
+       $user->firstname = "";
+   }
+   if (empty($user->lastname)) {
+       $user->lastname = "";
+   }
+   if (empty($user->city)) {
+       $user->city = "";
+   }
+   if (empty($user->country)) {
+       $user->country = "";
+   }
+
+?>
+<table cellpadding="20" align="center"> <tr> <td bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox">
+
+<form action="signup.php" method="post" name="form" id="form">
+<table>
+<tr valign="top">
+	<td colspan="2"><p><b><?php print_string("createuserandpass") ?>:</b></p></td>
+</tr>
+<tr valign="top">
+	<td align=right><p><?php print_string("username") ?>:</p></td>
+	<td><input type="text" name="username" size="12" value="<?php p($user->username) ?>" />
+	<?php if (!empty($err->username)) { formerr($err->username); } ?>
+	</td>
+</tr>
+<tr valign="top">
+	<td align=right><p><?php print_string("password") ?>:</p></td>
+	<td><input type="password" name="password" size="12" value="<?php p($user->password) ?>" />
+	<?php if (!empty($err->password)) { formerr($err->password); } ?>
+	</td>
+</tr>
+<tr valign="top">
+	<td colspan="2"><p><br />
+                  <b><?php print_string("supplyinfo") ?>:</b><br />
+                  (<?php print_string("emailmustbereal") ?>)</p>
+              </td>
+            </tr>
+<tr valign="top">
+	<td align=right><p><?php print_string("email") ?>:</p></td>
+	<td><input type="text" name="email" size="25" value="<?php p($user->email) ?>" />
+	<?php if (!empty($err->email)) { formerr($err->email); } ?>
+	</td>
+</tr>
+<tr valign="top">
+	<td align=right><p><?php print_string("emailagain") ?>:</p></td>
+	<td><input type="text" name="email2" size="25" value="<?php p($user->email2) ?>" />
+	<?php if (!empty($err->email2)) { formerr($err->email2); } ?>
+	</td>
+</tr>
+<tr valign="top">
+	<td align=right><p><?php print_string("firstname") ?>:</p></td>
+	<td><input type="text" name="firstname" size="25" value="<?php p($user->firstname) ?>" />
+	<?php if (!empty($err->firstname)) { formerr($err->firstname);} ?>
+	</td>
+</tr>
+<tr valign="top">
+	<td align=right><p><?php print_string("lastname") ?>:</p></td>
+	<td><input type="text" name="lastname" size="25" value="<?php p($user->lastname) ?>" />
+	<?php if (!empty($err->lastname)) { formerr($err->lastname);} ?>
+	</td>
+</tr>
+<tr valign="top">
+	<td align=right><p><?php print_string("city") ?>:</p></td>
+	<td><input type="text" name="city" size="25" value="<?php p($user->city) ?>" />
+	<?php if (!empty($err->city)) { formerr($err->city);} ?>
+	</td>
+</tr>
+<tr valign="top">
+	<td align=right><p><?php print_string("country") ?>:</p></td>
+	<td><?php choose_from_menu (get_list_of_countries(), "country", $user->country, get_string("selectacountry"), "", "") ?>
+	<?php if (!empty($err->country)) { formerr($err->country);} ?>
+	</td>
+</tr>
+<tr>
+	<td></td>
+	<td><input type="submit" value="<?php print_string("createaccount") ?>" /></td>
+</tr>
+</table>
+</form>
+
+</td></tr></table>

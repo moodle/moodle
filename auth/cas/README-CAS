@@ -1,6 +1,7 @@
 CAS-module README
 
-Please read comments from lib.php for auth/CAS module
+Please read comments from lib.php for auth/cas module
+The auth/cas/CAS is the PHPCAS project from http://esup-phpcas.sourceforge.net version 0.4.16-2
 
 Other changes made:
 
@@ -13,4 +14,3 @@ Other changes made:
 /lang/fr/auth.php -> new lines
 /lang/fr/moodle.php -> new lines
 
-All modifications are commented by //Modif SG - RL pour CAS.
