@@ -57,13 +57,18 @@
         /// Resort the category if requested
 
         if (!empty($_GET['resort']) and confirm_sesskey()) {
-            if ($courses = get_courses($category->id, "fullname ASC")) {
-                $count = 0;
+            if ($courses = get_courses($category->id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
+                // move it off the range
+                $count = get_record_sql('SELECT MAX(sortorder) AS max, 1
+                                         FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
+                $count = $count->max + 100;
+                begin_sql();
                 foreach ($courses as $course) {
                     set_field('course', 'sortorder', $count, 'id', $course->id);
                     $count++;
                 }
-                fix_course_sortorder();
+                commit_sql();
+                fix_course_sortorder($category->id);
             }
         }
     }
@@ -168,51 +173,39 @@
             $movecourse = NULL;
             $swapcourse = NULL;
 
-            $courses = get_courses($category->id,'c.sortorder ASC', 'c.id,c.sortorder');
-
+            // ensure the course order has no gaps
+            // and isn't at 0
+            fix_course_sortorder($category->id);
+            
+            // we are going to need to know the range
+            $max = get_record_sql('SELECT MAX(sortorder) AS max, 1
+                                         FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
+            $max = $max->max + 100;
+            
             if (isset($moveup)) {
-                if ($movecourse = get_record("course", "id", $moveup)) {
-                    foreach ($courses as $course) {
-                        if ($course->id == $movecourse->id) {
-                            break;
-                        }
-                        $swapcourse = $course;
-                    }
-                }
+                $movecourse = get_record('course', 'id', $moveup);
+                $swapcourse = get_record('course', 
+                                         'category',  $category->id, 
+                                         'sortorder', $movecourse->sortorder - 1);
+            } else {
+                $movecourse = get_record('course', 'id', $movedown);
+                $swapcourse = get_record('course', 
+                                         'category',  $category->id, 
+                                         'sortorder', $movecourse->sortorder + 1);
             }
-            if (isset($movedown)) {
-                if ($movecourse = get_record("course", "id", $movedown)) {
-                    $choosenext = false;
-                    foreach ($courses as $course) {
-                        if ($choosenext) {
-                            $swapcourse = $course;
-                            break;
-                        }
-                        if ($course->id == $movecourse->id) {
-                            $choosenext = true;
-                        }
-                    }
-                }
-            }
+            
             if ($swapcourse and $movecourse) {        // Renumber everything for robustness
-                $count=0;
                 begin_sql();
-                foreach ($courses as $course) {
-                    $count++;
-                    if ($course->id == $swapcourse->id) {
-                        $course = $movecourse;
-                    } else if ($course->id == $movecourse->id) {
-                        $course = $swapcourse;
-                    }
-                    if (! set_field("course", "sortorder", $count, "id", $course->id)) {
-                        notify("Could not update that course!");
-                    }
+                if (!(    set_field("course", "sortorder", $max, "id", $swapcourse->id)
+                       && set_field("course", "sortorder", $swapcourse->sortorder, "id", $movecourse->id)
+                       && set_field("course", "sortorder", $movecourse->sortorder, "id", $swapcourse->id)
+                    )) {
+                    notify("Could not update that course!");
                 }
                 commit_sql();
             }
-        }
 
-        fix_course_sortorder();
+        }
 
     } // End of editing stuff
 
@@ -317,11 +310,11 @@
                     echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
                          '<img src="'.$pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="" /></a> ';
                     if (!empty($acourse->visible)) {
-                        echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.
+                        echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
-                        echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.
+                        echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$pixpath.'/t/show.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
@@ -334,7 +327,7 @@
                              '<img src="'.$pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
             
                     if ($up) {
-                        echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.
+                        echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$pixpath.'/t/up.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
@@ -342,7 +335,7 @@
                     }
         
                     if ($down) {
-                        echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.
+                        echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$pixpath.'/t/down.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
