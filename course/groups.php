@@ -60,7 +60,7 @@
                 $t = $group;
                 $t->description = format_text($group->description);
                 $t->picture = print_group_picture($group, $course->id, true, true, true);
-                if ($t->users = get_users_in_group($group->id, 'u.lastname ASC')) {
+                if ($t->users = get_group_users($group->id, 'u.lastname ASC')) {
                     foreach ($t->users as $key => $user) {
                         $t->users[$key]->fullname = fullname($user, $isteacher);
                     }
@@ -198,7 +198,7 @@
         foreach ($groups as $group) {
             $countusers = 0;
             $listmembers[$group->id] = array();
-            if ($groupusers = get_users_in_group($group->id)) {
+            if ($groupusers = get_group_users($group->id)) {
                 foreach ($groupusers as $groupuser) {
                     $listmembers[$group->id][$groupuser->id] = $nonmembers[$groupuser->id];
                     unset($nonmembers[$groupuser->id]);

@@ -114,7 +114,7 @@
 
     echo '<br />';
 
-    if ($users = get_users_in_group($group->id)) {
+    if ($users = get_group_users($group->id)) {
         foreach ($users as $user) {
             print_user($user, $course);
         }

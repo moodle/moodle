@@ -115,7 +115,7 @@
         print_heading(get_string("responses", "choice"));
 
         if ($currentgroup) {
-            $users = get_users_in_group($currentgroup, "u.firstname ASC");
+            $users = get_group_users($currentgroup, "u.firstname ASC");
         } else {
             $users = get_course_users($course->id, "u.firstname ASC");
         }

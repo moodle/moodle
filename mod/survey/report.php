@@ -73,7 +73,7 @@
     }
 
     if ($currentgroup) {
-        $users = get_users_in_group($currentgroup);
+        $users = get_group_users($currentgroup);
     } else {
         $users = get_course_users($course->id);
     }

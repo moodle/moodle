@@ -33,7 +33,7 @@
     $groupmode = groupmode($course, $cm);   // Groups are being used
 
     if ($groupmode and $group) {
-        $users = get_users_in_group($group);
+        $users = get_group_users($group);
     } else {
         $users = get_course_users($course->id);
         $group = false;

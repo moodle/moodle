@@ -35,7 +35,7 @@
 
 /// Check to see if groups are being used in this survey
     if ($groupmode and $group) {
-        $users = get_users_in_group($group);
+        $users = get_group_users($group);
     } else {
         $users = get_course_users($course->id);
         $group = false;
