@@ -5,6 +5,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
+<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <title><?php print_string("searchandreplace","editor");?></title>
 <script language="javascript" type="text/javascript" src="popup.js"></script>
 <script language="javascript" type="text/javascript">
