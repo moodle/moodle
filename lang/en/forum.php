@@ -80,6 +80,7 @@ $string['olderdiscussions'] = "Older discussions";
 $string['openmode0'] = "No discussions, no replies";
 $string['openmode1'] = "No discussions, but replies are allowed";
 $string['openmode2'] = "Discussions and replies are allowed";
+$string['parent'] = "Show parent";
 $string['parentofthispost'] = "Parent of this post";
 $string['postadded'] = "Your post was successfully added.<P>You have \$a to edit it if you want to make any changes.";
 $string['postincontext'] = "See this post in context";

@@ -4,10 +4,15 @@ require_once("$CFG->dirroot/files/mimetypes.php");
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
-$FORUM_LAYOUT_MODES = array ( "1"  => get_string("modeflatoldestfirst", "forum"),
-                              "-1" => get_string("modeflatnewestfirst", "forum"),
-                              "2"  => get_string("modethreaded", "forum"),
-                              "3"  => get_string("modenested", "forum") );
+define("FORUM_MODE_FLATOLDEST", 1);
+define("FORUM_MODE_FLATNEWEST", -1);
+define("FORUM_MODE_THREADED", 2);
+define("FORUM_MODE_NESTED", 3);
+
+$FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string("modeflatoldestfirst", "forum"),
+                              FORUM_MODE_FLATNEWEST => get_string("modeflatnewestfirst", "forum"),
+                              FORUM_MODE_THREADED   => get_string("modethreaded", "forum"),
+                              FORUM_MODE_NESTED     => get_string("modenested", "forum") );
 
 // These are course content forums that can be added to the course manually
 $FORUM_TYPES   = array ("general"    => get_string("generalforum", "forum"),
@@ -19,7 +24,7 @@ $FORUM_OPEN_MODES   = array ("2" => get_string("openmode2", "forum"),
                              "0" => get_string("openmode0", "forum") );
 
 if (!isset($CFG->forum_displaymode)) {
-    set_config("forum_displaymode", 3);
+    set_config("forum_displaymode", FORUM_MODE_NESTED);
 } 
 
 if (!isset($CFG->forum_shortpost)) {
@@ -945,6 +950,14 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 // returns the HTML in a string.  This is designed for sending via HTML email.
 
     global $THEME, $CFG;
+    static $stredit, $strdelete, $strreply, $strparent;
+
+    if (empty($stredit)) {
+        $stredit = get_string("edit", "forum");
+        $strdelete = get_string("delete", "forum");
+        $strreply = get_string("reply", "forum");
+        $strparent = get_string("parent", "forum");
+    }
 
     $output = "";
 
@@ -988,16 +1001,19 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output .= "<p align=right><font size=-1>";
 
+    if ($post->parent) {
+        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">$strparent</a> | ";
+    }
     $age = time() - $post->created;
     if ($ownpost) {
-        $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
+        $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
         if ($reply) {
-            $output .= " | <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>";
+            $output .= " | <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>";
         }
         $output .= "&nbsp;&nbsp;";
     } else {
         if ($reply) {
-            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>&nbsp;&nbsp;";
+            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>&nbsp;&nbsp;";
         }
     }
 
@@ -1026,6 +1042,16 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, 
                           $ratings=NULL, $footer="", $highlight="") {
     global $THEME, $USER, $CFG;
+
+    static $stredit, $strdelete, $strreply, $strparent, $threadedmode;
+
+    if (empty($stredit)) {
+        $stredit = get_string("edit", "forum");
+        $strdelete = get_string("delete", "forum");
+        $strreply = get_string("reply", "forum");
+        $strparent = get_string("parent", "forum");
+        $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
+    }
 
     echo "<a name=\"$post->id\"></a>";
     if ($post->parent) {
@@ -1083,14 +1109,22 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     echo "<p align=right><font size=-1>";
 
+    if ($post->parent) {
+        if ($threadedmode) {
+            echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">$strparent</a> | ";
+        } else {
+            echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#$post->parent\">$strparent</a> | ";
+        }
+    }
+
     $age = time() - $post->created;
     if ($ownpost) {
         if ($age < $CFG->maxeditingtime) {
-            echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">".get_string("edit", "forum")."</a> | ";
+            echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">$stredit</a> | ";
         }
     }
     if ($ownpost or isteacher($courseid)) {
-        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
         if ($reply) {
             echo "| ";
         } else {
@@ -1098,7 +1132,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
     }
     if ($reply) {
-        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>";
         echo "&nbsp;&nbsp;";
     }
     echo "</p>";
@@ -1991,19 +2025,19 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $ratings);
 
     switch ($mode) {
-        case 1 :   // Flat ascending
-        case -1 :  // Flat descending
+        case FORUM_MODE_FLATOLDEST :
+        case FORUM_MODE_FLATNEWEST :
         default:   
             echo "<ul>";
             forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply);
             echo "</ul>";
             break;
 
-        case 2 :   // Threaded 
+        case FORUM_MODE_THREADED :
             forum_print_posts_threaded($post->id, $course->id, 0, $ratings, $reply);
             break;
 
-        case 3 :   // Nested
+        case FORUM_MODE_NESTED :
             forum_print_posts_nested($post->id, $course->id, $ratings, $reply);
             break;
     }
