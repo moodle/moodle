@@ -1,6 +1,4 @@
-<?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
-
+<?php // $Id$
 
 $string['action'] = 'Action';
 $string['active'] = 'Actif';
@@ -962,7 +960,7 @@ $string['thanks'] = 'Merci';
 $string['theme'] = 'Thème';
 $string['themes'] = 'Thèmes';
 $string['themesaved'] = 'Nouveau thème enregistré';
-$string['thischarset'] = 'iso-8859-15';
+$string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Fran&#231;ais';
 $string['time'] = 'Heure';
