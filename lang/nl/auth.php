@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2004011700)
+      // auth.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['auth_dbdescription'] = 'Deze methode gebruikt een externe database om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn. Als de account nieuw is dan kan informatie vanuit andere velden ook naar Moodle worden gekopieerd.';
@@ -35,6 +35,7 @@ $string['auth_ldap_memberattribute'] = 'Geef gebruiker lid attribuut, voor als g
 $string['auth_ldap_search_sub'] = 'Zet waarde &lt;&gt; 0 als je gebruikers wilt kunnen zoeken in subcontexten.';
 $string['auth_ldap_update_userinfo'] = 'Werk de gebruikersinformatie bij (voornaam, achternaam, adres, ..) van LDAP naar Moodle. Bekijk /auth/ldap/attr_mappings.php om informatie te vinden over de \'mapping\'.';
 $string['auth_ldap_user_attribute'] = 'Het attribuut dat wordt gebruikt om gebruikers te benoemen of zoeken. Meestal \'cn\'.';
+$string['auth_ldap_version'] = 'De versie van het LDAP protocol die jouw server gebruikt.';
 $string['auth_ldapdescription'] = 'Deze methode levert authenticatie door middel van een externe LDAP server.  
 Als de gebruikersnaam en wachtwoord geldig zijn maakt Moodle een nieuwe gebruiker aan in zijn database. Deze module kan gebruikerseigenschappen vanuit LDAP lezen en bepaalde velden in Moodle alvast invullen. Bij latere logins worden alleen de gebruikersnaam en het wachtwoord gecontroleerd.';
 $string['auth_ldapextrafields'] = 'Deze velden zijn niet verplicht. Je kunt ervoor kiezen om sommige Moodle gebruikersvelden van te voren in te vullen met informatie uit de <B>LDAP velden</B> die je hier aan kunt geven. <P>Als je deze velden leeg laat zal er niets vanuit LDAP worden overgebracht en worden de standaardwaarden van Moodle gebruikt.<P> In beide gevallen kan de gebruiker al deze velden wijzigingen zodra hij/zij ingelogd is.';

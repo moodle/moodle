@@ -54,6 +54,7 @@ $string['mon'] = 'Ma';
 $string['monday'] = 'Maandag';
 $string['monthlyview'] = 'Per maand';
 $string['newevent'] = 'Nieuwe activiteit';
+$string['noupcomingevents'] = 'Er zijn geen activiteiten op komst';
 $string['november'] = 'November';
 $string['october'] = 'Oktober';
 $string['oneevent'] = '1 activiteit';
