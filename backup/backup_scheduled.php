@@ -238,7 +238,7 @@ function schedule_backup_log($starttime,$courseid,$message) {
         $log->courseid = $courseid;
         $log->time = time();
         $log->laststarttime = $starttime;
-        $log->info = $message;
+        $log->info = addslashes($message);
     
         insert_record ("backup_log",$log);
     }
