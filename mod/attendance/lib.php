@@ -330,8 +330,7 @@ function attendance_grades($attendanceid) {
     } // if students
       $return->maxgrade = $attendance->maxgrade;
     } else {  // if attendance->grade == "1"
-      $return->grades = NULL;
-      $return->maxgrade = NULL;
+      $return = NULL;
     }// else for if attendance->grade == "1"
     return $return;
 }

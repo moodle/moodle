@@ -15,7 +15,7 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "attendance", "view all", "index.php?id=$course->id", "");
+    add_to_log($course->id, "attendance", "viewall", "index.php?id=$course->id", "");
 
 
 /// Get all required strings
