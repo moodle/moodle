@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
+      // quiz.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['addingquestions'] = "この部分ではデータベース内の質問を管理します。質問は整理しやすいようにカテゴリー毎に保存されます。質問はコース内の全てのクイズに利用出来ます。「公開」を選んだ場合は他のコースでも利用出来ます。<br /><br />質問のカテゴリーを選択又は作成した後に質問を作成・編集してください。このページの反対側にあるクイズにどの質問でも追加することが出来ます。
@@ -101,8 +101,9 @@ $string['questioninuse'] = "質問  '\$a' は現在使用中です：";
 $string['questionname'] = "質問名";
 $string['questions'] = "質問";
 $string['quizavailable'] = "クイズは \$a まで利用できます";
-$string['quizclose'] = "クイズ終了日";
+$string['quizclose'] = "クイズを閉じる";
 $string['quizclosed'] = "このクイズは \$a に閉じられます";
+$string['quizcloses'] = "クイズ終了日";
 $string['quiznotavailable'] = "クイズは  \$a まで利用できません";
 $string['quizopen'] = "クイズ公開日";
 $string['random'] = "ランダム方式";

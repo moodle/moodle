@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 (2003052900)
+      // moodle.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['action'] = "操作";
@@ -47,6 +47,7 @@ $string['backup'] = "バックアップ";
 $string['backupdate'] = "バックアップデータ";
 $string['backupdetails'] = "バックアップ詳細";
 $string['backupdir'] = "バックアップデータ";
+$string['backupfilename'] = "バックアップ";
 $string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
 $string['backuporiginalname'] = "バックアップ名";
 $string['backupversion'] = "バックアップバージョン";
