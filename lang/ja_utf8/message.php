@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['addcontact'] = 'コンタクトの追加';
@@ -29,7 +29,7 @@ $string['messages'] = 'メッセージ';
 $string['messaging'] = 'メッセージ';
 $string['mycontacts'] = 'マイ コンタクト';
 $string['newsearch'] = '新しい検索';
-$string['nomessages'] = '待ちメッセージはありません。';
+$string['nomessages'] = '未読メッセージはありません。';
 $string['nomessagesfound'] = 'メッセージが見つかりませんでした。';
 $string['nosearchresults'] = '該当データが見つかりませんでした。';
 $string['offline'] = 'オフライン';
