@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 development (2004021700)
+      // exercise.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['absent'] = '欠席';
@@ -40,6 +40,10 @@ $string['gradeforstudentsassessment'] = '学生の評価に対する評価';
 $string['gradeforsubmission'] = '提出物に対する評価';
 $string['gradetable'] = '評価テーブル';
 $string['gradingstrategy'] = '評価方法';
+$string['managingassignment'] = 'エクササイズの管理';
+$string['maximumsize'] = '最大サイズ';
+$string['modulename'] = 'エクササイズ';
+$string['modulenameplural'] = 'エクササイズ';
 $string['notgraded'] = '採点無し';
 $string['numberofentries'] = 'エントリー数';
 $string['overallgrade'] = '総合評価';
@@ -67,8 +71,11 @@ $string['submission'] = '提出';
 $string['submissions'] = '提出';
 $string['submitted'] = '提出';
 $string['teacherscomment'] = '教師のコメント';
+$string['theexercise'] = 'エクササイズ';
 $string['title'] = '題名';
 $string['typeofscale'] = '評価基準';
+$string['usemaximum'] = '最大値を使用';
+$string['usemean'] = '平均値を使用';
 $string['verypoor'] = '非常に悪い';
 $string['view'] = '表示';
 $string['viewassessment'] = '評価を表示する';

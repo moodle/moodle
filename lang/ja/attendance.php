@@ -1,16 +1,23 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.3 development (2004032800)
+      // attendance.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['absentlong'] = '欠席';
 $string['absentshort'] = '欠';
 $string['allmodulename'] = '全出席簿';
 $string['auto'] = '自動';
+$string['defaultautoattend'] = 'デフォルトで活動ログを出席のベースにする';
+$string['defaultdynamicsection'] = 'デフォルトで出席簿を正しい週に移動する';
+$string['defaultgrade'] = 'デフォルトで出席簿を評価する';
+$string['defaulthoursinclass'] = 'デフォルトの出席簿では何時間出席する必要があるか';
+$string['defaultmaxgrade'] = '皆勤の場合のデフォルト最大評価';
+$string['defaultstudentstatus'] = '出席簿のデフォルト学生出席状態';
 $string['downloadexcelfull'] = 'フル・エクセルシートをダウンロードする';
 $string['downloadexceltotals'] = 'サマリー・エクセルシートをダウンロードする';
 $string['downloadtextfull'] = 'フル・テキストレポートをダウンロードする';
 $string['downloadtexttotals'] = 'サマリー・テキストレポートをダウンロードする';
 $string['friday'] = '金';
+$string['hoursinfullreport'] = 'レポートの1ページ当たりに最大表示する出席時間数';
 $string['modulename'] = '出席';
 $string['modulenameplural'] = '出席簿';
 $string['monday'] = '月';

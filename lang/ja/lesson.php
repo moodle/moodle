@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 development (2004032800)
+      // lesson.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['actionaftercorrectanswer'] = '正解後の動作';
@@ -63,9 +63,12 @@ $string['sanitycheckfailed'] = '正当性チェックが失敗しました: この挑戦は削除され
 $string['savepage'] = 'ページの保存';
 $string['showanunansweredpage'] = '未解答のページを表示';
 $string['showanunseenpage'] = '未閲覧のページを表示';
+$string['thatsthecorrectanswer'] = '正しい答えです';
+$string['thatsthewronganswer'] = '間違った答えです';
 $string['thispage'] = 'このページ';
-$string['usemaximum'] = '最大値';
-$string['usemean'] = '平均値';
+$string['useeditor'] = 'エディタを使用';
+$string['usemaximum'] = '最大値を使用';
+$string['usemean'] = '平均値を使用';
 $string['youhaveseen'] = 'あなたは既にこのレッスンを1ページ以上閲覧しました。<br />あなたが見た最後のページから始めますか?';
 $string['youranswer'] = 'あなたの解答';
 $string['yourcurrentgradeis'] = '現在の成績は $a です';
