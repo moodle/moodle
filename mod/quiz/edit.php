@@ -194,7 +194,8 @@
     }
 
     if (empty($modform->category)) {
-        $modform->category = quiz_get_default_category($course->id);
+        $category = quiz_get_default_category($course->id);
+        $modform->category = $category->id;
     }
     if (!isset($modform->recurse)) {
         $modform->recurse = 1;
