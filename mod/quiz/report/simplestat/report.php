@@ -27,6 +27,12 @@ class quiz_report extends quiz_default_report {
         $data = array();
         $questionorder = explode(',', $quiz->questions);
 
+        $count = 0;
+        foreach ($questionorder as $questionid) {
+            $count++;
+            $question[$count] = get_record("quiz_questions", "id", $questionid);
+        }
+
     /// For each person in the class, get their best attempt
     /// and create a table listing results for each person
         if ($users) {
@@ -55,7 +61,6 @@ class quiz_report extends quiz_default_report {
                 foreach ($questionorder as $questionid) {
                     $count++;
                     $data[$user->id]->grades[$count] = $results->grades[$questionid];
-                    $question[$count] = $questions[$questionid];
                 }
             }
         }
@@ -198,12 +203,15 @@ class quiz_report extends quiz_default_report {
 
     /// Otherwise, display the table as HTML
 
-   
         echo "<table border=1 align=\"center\">";
         echo "<tr>";
         echo "<td>&nbsp;</td>";
         for ($i=1; $i<=$count; $i++) {
-            echo "<th title=\"".strip_tags($question[$i]->questiontext)."\">$i</th>";
+            $title = '';
+            if (!empty($question[$i]->questiontext)) {
+                $title = strip_tags($question[$i]->questiontext);
+            }
+            echo "<th title=\"$title\">$i</th>";
         }
         echo "</tr>";
 
