@@ -758,6 +758,11 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
         return true;
     }
 
+    if (empty($courseid)) {
+        notify('isteacher() should not be used without a valid course id as argument');
+        return isteacherinanycourse($userid, $includeadmin);
+    }
+
     if (!$userid) {
         if ($courseid) {
             return !empty($USER->teacher[$courseid]);
@@ -768,11 +773,24 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
         $userid = $USER->id;
     }
 
-    if (!$courseid) {
-        return record_exists("user_teachers","userid",$userid);
+    return record_exists("user_teachers", "userid", $userid, "course", $courseid);
+}
+
+function isteacherinanycourse($userid = 0, $includeadmin = true) {
+    global $USER;
+
+    if(empty($userid)) {
+        if(empty($USER) || empty($USER->id)) {
+            return false;
+        }
+        $userid = $USER->id;
     }
 
-    return record_exists("user_teachers", "userid", $userid, "course", $courseid);
+    if (isadmin($userid) && $includeadmin) {  // admins can do anything
+        return true;
+    }
+
+    return record_exists('user_teachers', 'userid', $userid);
 }
 
 function isteacheredit($courseid, $userid=0) {
