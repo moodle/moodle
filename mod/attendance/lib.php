@@ -264,7 +264,9 @@ function attendance_cron () {
     global $CFG;
    echo "Attendance: Performing automatic attendance logging\n";
 // look for all attendance instances set to autoattend
-	$attendances = get_records("attendance", "autoattend", 1, "course ASC");
+	if (!$attendances = get_records("attendance", "autoattend", 1, "course ASC")) {
+        return true;
+    }
 	$td = attendance_find_today(time());
 	$tm = attendance_find_tomorrow(time());
 	foreach($attendances as $attendance) {
