@@ -1,22 +1,52 @@
 <?php //$Id$
 
+/**
+ * This file contains the parent class for moodle pages, MoodlePage, 
+ * as well as the MoodlePage_Course subclass.
+ * A page is defined by its page type (ie. course, blog, activity) and its page id
+ * (courseid, blogid, activity id, etc).
+ *
+ * @author Jon Papaioannou
+ * @version  $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package pages
+ */
+
+/// Constants
+
+/**
+ * Definition of course page type.
+ */
 define('MOODLE_PAGE_COURSE',    'course');
 
 /**
  * Parent class from which all Moodle page classes derive
  *
- * @version  $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @author Jon Papaioannou
  * @package pages
+ * @todo This parent class is very messy still. Please for the moment ignore it [except maybe create_object()] and move on to the derived class MoodlePage_Course to see the comments there.
  */
 
-// This is very messy still. Please for the moment ignore it [except maybe create_object()]
-// and move on to the derived class MoodlePage_Course to see the comments there.
 class MoodlePage {
+    /**
+     * The string identifier for the type of page being described.
+     * @var string $type
+     */
     var $type           = NULL;
+
+    /**
+     * The numeric identifier of the page being described.
+     * @var int $id
+     */
     var $id             = NULL;
+
+    /**
+     * Class bool to determine if the instance's full initialization has been completed.
+     * @var boolean $full_init_done
+     */
     var $full_init_done = false;
+
+/// Class Functions
 
     function blocks_get_positions() {
         return array();
@@ -44,7 +74,7 @@ class MoodlePage {
 
         foreach($params as $var => $value) {
             $path .= $first? '?' : '&amp;';
-            $path .= $var.'='.urlencode($value);
+            $path .= $var .'='. urlencode($value);
             $first = false;
         }
 
@@ -84,14 +114,14 @@ class MoodlePage {
         );
 
         if(!isset($typeids[$type])) {
-            error('Unrecognized type passed to MoodlePage::create_object: '.$type);
+            error('Unrecognized type passed to MoodlePage::create_object: '. $type);
         }
 
         $object = &new $typeids[$type];
 
         if($object->get_type() !== $type) {
             // Somehow somewhere someone made a mistake
-            error("Page object's type (".$object->get_type().") does not match requested type ($type)");
+            error('Page object\'s type ('. $object->get_type() .') does not match requested type ('. $type .')');
         }
 
         $object->init_quick($data);
@@ -103,8 +133,6 @@ class MoodlePage {
 /**
  * Class that models the behavior of a moodle course
  *
- * @version  $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @author Jon Papaioannou
  * @package pages
  */
@@ -125,7 +153,7 @@ class MoodlePage_Course extends MoodlePage {
         parent::init_quick($data);
     }
 
-    // Here you should load up all heavy-duty data for your course. Basically everything that
+    // Here you should load up all heavy-duty data for your page. Basically everything that
     // does not NEED to be loaded for the class to make basic decisions should NOT be loaded
     // in init_quick() and instead deferred here. Of course this function had better recognize
     // $this->full_init_done to prevent wasteful multiple-time data retrieval.
@@ -135,7 +163,7 @@ class MoodlePage_Course extends MoodlePage {
         }
         $this->courserecord = get_record('course', 'id', $this->id);
         if(empty($this->courserecord)) {
-            error('Cannot fully initialize page: invalid course id '.$this->id);
+            error('Cannot fully initialize page: invalid course id '. $this->id);
         }
         $this->full_init_done = true;
     }
@@ -187,10 +215,10 @@ class MoodlePage_Course extends MoodlePage {
     function url_get_path() {
         global $CFG;
         if($this->id == SITEID) {
-            return $CFG->wwwroot.'/index.php';
+            return $CFG->wwwroot .'/index.php';
         }
         else {
-            return $CFG->wwwroot.'/course/view.php';
+            return $CFG->wwwroot .'/course/view.php';
         }
     }
 
@@ -276,8 +304,7 @@ class MoodlePage_Course extends MoodlePage {
     function blocks_move_position(&$instance, $move) {
         if($instance->position == BLOCK_POS_LEFT && $move == BLOCK_MOVE_RIGHT) {
             return BLOCK_POS_RIGHT;
-        }
-        else if ($instance->position == BLOCK_POS_RIGHT && $move == BLOCK_MOVE_LEFT) {
+        } else if ($instance->position == BLOCK_POS_RIGHT && $move == BLOCK_MOVE_LEFT) {
             return BLOCK_POS_LEFT;
         }
         return $instance->position;

@@ -1,7 +1,8 @@
 <?php  // $Id$
 
 /**
- * Parent class for moodle blocks
+ * This file contains the parent class for moodle blocks, MoodleBlock,
+ * as well as the MoodleBlock_Nuke subclass.
  *
  * @author Jon Papaioannou
  * @version  $Id$
@@ -27,7 +28,7 @@ define('BLOCK_TYPE_TEXT',    2);
 define('BLOCK_TYPE_NUKE',    3);
 
 /**
- * Class for describing a moodle block
+ * Class for describing a moodle block, all Moodle blocks derive from this class
  *
  * @author Jon Papaioannou
  * @package blocks
@@ -89,7 +90,7 @@ class MoodleBlock {
     var $config        = NULL;
 
 
-/// Functions
+/// Class Functions
 
     /**
      * The class constructor
