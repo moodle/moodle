@@ -426,8 +426,8 @@ function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
         $calculated->answer = $calculated->min = $calculated->max = '';
         return $calculated;
         
-    } else if (ereg('^(.*([^- 0-9+*./()eE])).*$', $formula, $regs)) {
-        $calculated->answer = get_string('syntaxerror', 'quiz', $regs[1]);
+    } else if ($error = quiz_qtype_calculated_find_formula_errors($formula)) {
+        $calculated->answer = $error;
         $calculated->min = $calculated->max = '';
         return $calculated;
     }
@@ -526,6 +526,7 @@ function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
     return $calculated;
 }
 
+
 function quiz_qtype_calculated_find_formula_errors($formula) {
 /// Validates the formula submitted from the question edit page.
 /// Returns false if everything is alright.
@@ -536,14 +537,84 @@ function quiz_qtype_calculated_find_formula_errors($formula) {
         $formula = str_replace($regs[0], '1', $formula);
     }
 
+    // Strip away empty space
+    $formula = str_replace(' ', '', $formula);
 
-    if (!ereg('[^- 0-9+*/:.(>?)!e=|<E&]+', $formula, $regs)) {
-        // Need to work more on this check -
-        // It is too strict and still not very effetive...
-        return false; // Need to work more on this one
-        
-    } else {
+    $safeoperatorchar = '-+/*%>:^~<?=&|!';
+    $operatorornumber = "[$safeoperatorchar.0-9eE]";
+
+    while (ereg("(^|[$safeoperatorchar,(])([a-z0-9_]*)\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)",
+            $formula, $regs)) {
+
+        switch ($regs[2]) {
+            // Simple parenthesis
+            case '':
+                if ($regs[4] || empty($regs[3])) {
+                    return get_string('illegalformulasyntax', 'quiz', $regs[0]);
+                }
+                break;
+                
+            // Zero argument functions
+            case 'pi':
+                if ($regs[3]) {
+                    return get_string('functiontakesnoargs', 'quiz', $regs[2]);
+                }
+                break;
+
+            // Single argument functions (the most common case)
+            case 'abs': case 'acos': case 'acosh': case 'asin': case 'asinh':
+            case 'atan': case 'atanh': case 'bindec': case 'ceil': case 'cos':
+            case 'cosh': case 'decbin': case 'decoct': case 'deg2rad':
+            case 'exp': case 'expm1': case 'floor': case 'is_finite':
+            case 'is_infinite': case 'is_nan': case 'log10': case 'log1p':
+            case 'octdec': case 'rad2deg': case 'sin': case 'sinh': case 'sqrt':
+            case 'tan': case 'tanh':
+                if ($regs[4] || empty($regs[3])) {
+                    return get_string('functiontakesonearg','quiz',$regs[2]);
+                }
+                break;
+
+            // Functions that take one or two arguments
+            case 'log': case 'round':
+                if ($regs[5] || empty($regs[3])) {
+                    return get_string('functiontakesoneortwoargs','quiz',$regs[2]);
+                }
+                break;
+                
+            // Functions that must have two arguments
+            case 'atan2': case 'fmod': case 'pow':
+                if ($regs[5] || empty($regs[4])) {
+                    return get_string('functiontakestwoargs', 'quiz', $regs[2]);
+                }
+                break;
+
+            // Functions that take two or more arguments
+            case 'min': case 'max':
+                if (empty($regs[4])) {
+                    return get_string('functiontakesatleasttwo','quiz',$regs[2]);
+                }
+                break;
+
+            default:
+                return get_string('unsupportedformulafunction','quiz',$regs[2]);
+        }
+
+        // Exchange the function call with '1' and then chack for
+        // another function call...
+        if ($regs[1]) {
+            // The function call is proceeded by an operator
+            $formula = str_replace($regs[0], $regs[1] . '1', $formula);
+        } else {
+            // The function call starts the formula
+            $formula = ereg_replace("^$regs[2]\\([^)]*\\)", '1', $formula);
+        }
+    }
+    
+    if (ereg("[^$safeoperatorchar.0-9eE]+", $formula, $regs)) {
         return get_string('illegalformulasyntax', 'quiz', $regs[0]);
+    } else {
+        // Formula just might be valid
+        return false;
     }
 }
 
