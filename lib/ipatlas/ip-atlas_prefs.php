@@ -83,7 +83,7 @@ print t("Your settings have been saved. You can now try"); ?> <a href="plot.php<
 
 ?>
 
-<form action="<?php  echo $HTTP_SERVER_VARS['PHP_SELF']; ?><?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?lastquery=$HTTP_GET_VARS[lastquery]"; } ?>" method="POST">
+<form action="ip-atlas_prefs.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?lastquery=$HTTP_GET_VARS[lastquery]"; } ?>" method="POST">
 
 <?php  if(istheregd()) {
 echo t("Draw mode (defaults guessed for your browser):"); 
