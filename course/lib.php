@@ -397,4 +397,31 @@ function enrol_student_in_course($user, $course) {
 	}
 }
 
+function get_all_mods($courseid, &$mods, &$modtype) {
+
+    $mods = NULL;
+    $modtype = NULL;
+
+    if ( $rawmods = get_records_sql("SELECT cm.*, m.name as modname, m.fullname as modfullname
+                                   FROM modules m, course_modules cm
+                                   WHERE cm.course = '$courseid' 
+                                     AND cm.deleted = '0'
+                                     AND cm.module = m.id") ) {
+        foreach($rawmods as $mod) {    // Index the mods
+            $mods[$mod->id] = $mod;
+            $modtype[$mod->modname] = $mod->modfullname;
+        }
+        ksort($modtype);
+    }
+
+}
+
+function get_all_sections($courseid) {
+    
+    return get_records_sql("SELECT section, id, course, summary, sequence
+                            FROM course_sections 
+                            WHERE course = '$courseid' 
+                            ORDER BY section");
+}
+
 ?>

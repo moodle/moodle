@@ -1,9 +1,11 @@
 <?PHP // $Id$
 
     require("../config.php");
+    require("lib.php");
 
     require_variable($id);       // course id
     require_variable($user);     // user id
+    optional_variable($mode, "complete");
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
@@ -27,44 +29,80 @@
                   <A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> -> 
                   Full Report", "");
 
-    if ( $rawmods = get_records_sql("SELECT cm.*, m.name as modname, m.fullname as modfullname
-                                   FROM modules m, course_modules cm
-                                   WHERE cm.course = '$course->id' 
-                                     AND cm.deleted = '0'
-                                     AND cm.module = m.id") ) {
+    get_all_mods($course->id, $mods, $modtype);
 
-        foreach($rawmods as $mod) {    // Index the mods
-            $mods[$mod->id] = $mod;
-            $modtype[$mod->modname] = $mod->modfullname;
-        }
-    }
+    switch ($mode) {
+        case "summary" :
+            echo "<P>Not supported yet</P>";
+            break;
 
+        case "outline" :
+        case "complete" :
+        default:
+            $sections = get_all_sections($course->id);
 
-    // Replace all the following with a better log-based method.
-    if ($course->format == "weeks") {
-        if ($sections = get_records_sql("SELECT * FROM course_sections WHERE course = '$course->id' ORDER BY section")) {
-            foreach ($sections as $www) {
-                $section = (object)$www;
-                echo "<H2>Week $section->section</H2>";
-                if ($section->sequence) {
-                    $sectionmods = explode(",", $section->sequence);
-                    foreach ($sectionmods as $sectionmod) {
-                        $mod = $mods[$sectionmod];
-                        $instance = get_record("$mod->modname", "id", "$mod->instance");
-                        $userfile = "$CFG->dirroot/mod/$mod->name/user.php";
-                        include($userfile);
-                    }
+            for ($i=0; $i<=$course->numsections; $i++) {
+
+                if (isset($sections[$i])) {   // should always be true
+
+                    $section = $sections[$i];
+        
+                    if ($section->sequence) {
+                        echo "<HR>";
+                        echo "<H2>";
+                        switch ($course->format) {
+                            case "weeks": print_string("week"); break;
+                            case "topics": print_string("topic"); break;
+                            default: print_string("section"); break;
+                        }
+                        echo " $i</H2>";
+
+                        echo "<UL>";
+
+                        if ($mode == "outline") {
+                            echo "<TABLE CELLPADDING=4 CELLSPACING=0>";
+                        }
+
+                        $sectionmods = explode(",", $section->sequence);
+                        foreach ($sectionmods as $sectionmod) {
+                            $mod = $mods[$sectionmod];
+                            $instance = get_record("$mod->modname", "id", "$mod->instance");
+                            $userfile = "$CFG->dirroot/mod/$mod->modname/user.php";
+                            if (file_exists($userfile)) {
+                                if ($mode == "outline") {
+                                    $output = include($userfile);
+                                    print_outline_row($mod, $instance, $output);
+                                } else {
+                                    include($userfile);
+                                }
+                            }
+                        }
+
+                        if ($mode == "outline") {
+                            echo "</TABLE>";
+                            print_simple_box_end();
+                        }
+                        echo "</UL>";
                     
-                } else {
-                    echo "<P>No modules</P>";
+                    }
                 }
             }
-        }
-    } else { 
-        echo "<P>Not implemented yet</P>";
+            break;
     }
 
+
     print_footer($course);
+
+
+function print_outline_row($mod, $instance, $info) {
+    $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+    echo "<TR><TD ALIGN=right>$image</TD>";
+    echo "<TD align=left width=200>";
+    echo "<A TITLE=\"$mod->modfullname\"";
+    echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instance->name</A></TD>";
+    echo "<TD>&nbsp;&nbsp;&nbsp;</TD>";
+    echo "<TD BGCOLOR=white>$info</TD></TR>";
+}
 
 ?>
 

@@ -4,17 +4,13 @@
 
     include("../mod/forum/lib.php");
 
-    if (! $rawsections = get_records("course_sections", "course", $course->id) ) {
+    if (! $sections = get_all_sections($course->id, $course->numsections) ) {
         $section->course = $course->id;   // Create a default section.
         $section->section = 0;
         $section->id = insert_record("course_sections", $section);
-        if (! $rawsections = get_records("course_sections", "course", $course->id) ) {
+        if (! $sections = get_all_sections($course->id, $course->numsections) ) {
             error("Error finding or creating section structures for this course");
         }
-    }
-    
-    foreach($rawsections as $cw) {  //Index the sections
-        $sections[$cw->section] = $cw;
     }
 
     if (isset($week)) {
@@ -24,7 +20,6 @@
             $USER->section = $week;
         }
     }
-
 
 
     // Layout the whole page as three big columns.
