@@ -68,7 +68,7 @@ function auth_get_userinfo($username){
             if ($rs = $authdb->Execute("SELECT ".$config["auth_user_$field"]." FROM $CFG->auth_dbtable
                                         WHERE $CFG->auth_dbfielduser = '$username'")) {
                 if ( $rs->RecordCount() == 1 ) {
-                    $result["$field"] = $rs->fields[$config["auth_user_$field"]];
+                    $result["$field"] = $rs->fields[0];
                 }
             }
         }
