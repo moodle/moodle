@@ -122,19 +122,19 @@
 /// If you have problems with slashes everywhere then you might want to 
 /// uncomment this code.  It will not be necessary on 99.9% of PHP servers.
 /// Got this from http://www.php.net/manual/en/configuration.php
-//    if (ini_get("magic_quotes_gpc") ) {
+//    if (ini_get_bool("magic_quotes_gpc") ) {
 //        foreach ($GLOBALS["HTTP_".$GLOBALS["REQUEST_METHOD"]."_VARS"] as $key => $value) {
 //            if (!is_array($value)) { // Simple value
 //                $newval = stripslashes($value);
 //                $GLOBALS["HTTP_".$GLOBALS["REQUEST_METHOD"]."_VARS"][$key] = $newval;
-//                if (ini_get("register_globals")) {
+//                if (ini_get_bool("register_globals")) {
 //                    $GLOBALS[$key] = $newval;
 //                }
 //            } else {  // Array
 //                foreach ($value as $k => $v) {
 //                    $newval = stripslashes($v);
 //                    $GLOBALS["HTTP_".$GLOBALS["REQUEST_METHOD"]."_VARS"][$key][$k] = $newval;
-//                    if (ini_get("register_globals")) {
+//                    if (ini_get_bool("register_globals")) {
 //                        $GLOBALS[$key][$k] = $newval;
 //                    }
 //                }

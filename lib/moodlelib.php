@@ -1226,6 +1226,21 @@ function check_browser_version($brand="MSIE", $version=5.5) {
     return false;
 }
 
+function ini_get_bool($ini_get_arg) {
+/// This function makes the return value of ini_get consistent if you are
+/// setting server directives through the .htaccess file in apache.
+/// Current behavior for value set from php.ini On = 1, Off = [blank]
+/// Current behavior for value set from .htaccess On = On, Off = Off
+/// Contributed by jdell@unr.edu
+
+    $temp = ini_get($ini_get_arg);
+
+    if ($temp == "1" or strtolower($temp) == "on") {
+        return true;
+    }
+    return false;
+}
+
 function can_use_richtext_editor() {
 /// Is the richedit editor enabled?
     global $USER, $CFG;
