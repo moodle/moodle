@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4 beta (2004082300)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['admindirerror'] = 'La directory di amministrazione specificata non è corretta';
@@ -71,6 +71,7 @@ Questo permetterà a Moodle di impostare il limite di memoria da solo.</li>
 <li>Su alcuni server PHP è possibile creare un file .htaccess nella Directory di Moodle che contenga questa linea:
 <blockquote>php_value memory_limit 16M</blockquote>
 <p>Tuttavia, su alcuni server questo impedirà a <b>tutte</b> le pagine PHP di funzionare (vedrete degli errori quando visualizzerete le pagine) cosi dovrete rimuovere il file .htaccess.</li></ol>';
+$string['mysqlextensionisnotpresentinphp'] = 'Il PHP non è stato correttamente configurato con l\'estensione di MySQL. Controllate il vostro php.ini o ricompilate il PHP.';
 $string['pass'] = 'Passato';
 $string['phpversion'] = 'Versione PHP';
 $string['phpversionerror'] = 'La versione del PHP deve essere come minimo la 4.1.0';
