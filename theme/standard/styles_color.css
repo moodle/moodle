@@ -549,3 +549,15 @@ table.minicalendar {
 .sideblockmain hr {
     border-top-color:#999999;
 }
+
+/* Messaging */
+.message .author {
+    color: #999999;
+}
+
+.message .time {
+    color: #999999;
+}
+
+.message .content {
+}

@@ -448,3 +448,17 @@ table.calendar-controls .next {
 body#user-index #longtimenosee {
     text-align:center;
 }
+
+
+/* Messaging */
+
+.message .author {
+    font-weight: bold;
+}
+
+.message .time {
+    font-weight: italic;
+}
+
+.message .content {
+}
