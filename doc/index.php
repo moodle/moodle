@@ -28,7 +28,9 @@
         $include = true;
     }
 
-    document_file($file, $include);
+    if (! document_file($file, $include)) {
+        error("Error 404 - File Not Found");
+    }
 
     if ($include) {
         exit;
@@ -36,14 +38,14 @@
 
 ?>
 
-<HEAD>
-    <TITLE>Moodle Documentation</TITLE>
-</HEAD>
+<head>
+    <title><?php print_string("documentation")?></title>
+</head>
 
-<FRAMESET ROWS="70,*">
-    <FRAME NAME="top" SRC="top.php">
-    <FRAMESET COLS="200,*">
-        <FRAME NAME="contents" SRC="contents.php">
-        <FRAME NAME="main" SRC="index.php?file=<?PHP echo "$file$sub"; ?>">
-    </FRAMESET>
-</FRAMESET>
+<frameset rows="70,*">
+    <frame name="top" src="top.php">
+    <frameset cols="200,*">
+        <frame name="contents" src="contents.php">
+        <frame name="main" src="index.php?file=<?php echo "$file$sub"; ?>">
+    </frameset>
+</frameset>

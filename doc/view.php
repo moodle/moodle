@@ -13,22 +13,24 @@
         }
         $strhelp = get_string("help");
         print_header("$course->shortname: $strhelp", "$course->fullname", 
-                     "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> -> $strhelp");
+                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> $strhelp");
     } else {
         if (! $site = get_site()) {
             error("Site is misconfigured");
         }
         $strdocumentation = get_string("documentation");
         print_header("$site->shortname: $strhelp", "$site->fullname", 
-                     "<A HREF=\"view.php?file=contents.html\">$strdocumentation</A>");
+                     "<a href=\"view.php?file=contents.html\">$strdocumentation</a>");
         
     }
 
-    echo "<BLOCKQUOTE>";
+    echo "<blockquote>";
 
-    document_file($file, true);
+    if (! document_file($file, true)) {
+        notify("404 - File Not Found");
+    }
 
-    echo "</BLOCKQUOTE>";
+    echo "</blockquote>";
 
 ?>
 

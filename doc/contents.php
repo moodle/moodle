@@ -2,16 +2,18 @@
 
     require("../config.php");
 
-    $info = document_file("files.php", false);
+    if (! $info = document_file("files.php", false)) {
+        error("404 - File Not Found");
+    }
 
     include($info->filepath);
 
     print_header();
 
-    echo "<FONT SIZE=2 FACE=\"san-serif\">";
+    echo "<font size=2 face=\"san-serif\">";
     foreach ($string as $file => $filename) {
-        echo "<LI><A TARGET=\"main\" HREF=\"$CFG->wwwroot/doc/?file=$file\">$filename</A></LI>";
+        echo "<li><a target=\"main\" href=\"$CFG->wwwroot/doc/?file=$file\">$filename</a></li>";
     }
-    echo "</FONT>";
+    echo "</font>";
     
 ?>
