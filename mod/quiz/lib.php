@@ -38,7 +38,7 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
 define("QUIZ_PICTURE_MAX_HEIGHT", "600");   // Not currently implemented
 define("QUIZ_PICTURE_MAX_WIDTH",  "600");   // Not currently implemented
 
-define("QUIZ_MAX_NUMBER_ANSWERS", "8");
+define("QUIZ_MAX_NUMBER_ANSWERS", "10");
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 

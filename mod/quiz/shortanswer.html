@@ -59,20 +59,24 @@
     </TD>
 
 
+<?PHP 
+    for ($i=1; $i<=QUIZ_MAX_NUMBER_ANSWERS; $i++) {
+?>
+
 <TR valign=top>
-    <TD align=right><P><B><?php  print_string("answer", "quiz") ?> 1:</B></P></TD>
+    <TD align=right><P><B><?php  echo get_string("answer", "quiz")." $i";  ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="answer[]" size=50 value="<?php  p($answers[0]->answer) ?>">&nbsp;&nbsp;
+        <INPUT type="text" name="answer[]" size=50 value="<?php  p($answers[$i-1]->answer) ?>">&nbsp;&nbsp;
         <?php  print_string("grade");
            echo ":&nbsp;";
-           choose_from_menu($gradeoptions, "fraction[]", $answers[0]->fraction,""); ?>
+           choose_from_menu($gradeoptions, "fraction[]", $answers[$i-1]->fraction,""); ?>
         <BR>
     </TD>
 </TR>
 <TR valign=top>
     <TD align=right><P><B><?php  print_string("feedback", "quiz") ?>:</B></P></TD>
     <TD>
-        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[0]->feedback) ?></textarea>
+        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[$i-1]->feedback) ?></textarea>
     </TD>
 </TR>
 
@@ -80,85 +84,9 @@
     <TD colspan=2>&nbsp;</TD>
 </TR>
 
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("answer", "quiz") ?> 2:</B></P></TD>
-    <TD>
-        <INPUT type="text" name="answer[]" size=50 value="<?php  p($answers[1]->answer) ?>">&nbsp;&nbsp;
-        <?php  print_string("grade");
-           echo ":&nbsp;";
-           choose_from_menu($gradeoptions, "fraction[]", $answers[1]->fraction,""); ?>
-        <BR>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("feedback", "quiz") ?>:</B></P></TD>
-    <TD>
-        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[1]->feedback) ?></textarea>
-    </TD>
-</TR>
-
-<TR valign=top>
-    <TD colspan=2>&nbsp;</TD>
-</TR>
-
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("answer", "quiz") ?> 3:</B></P></TD>
-    <TD>
-        <INPUT type="text" name="answer[]" size=50 value="<?php  p($answers[2]->answer) ?>">&nbsp;&nbsp;
-        <?php  print_string("grade");
-           echo ":&nbsp;";
-           choose_from_menu($gradeoptions, "fraction[]", $answers[2]->fraction,""); ?>
-        <BR>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("feedback", "quiz") ?>:</B></P></TD>
-    <TD>
-        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[2]->feedback) ?></textarea>
-    </TD>
-</TR>
-
-<TR valign=top>
-    <TD colspan=2>&nbsp;</TD>
-</TR>
-
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("answer", "quiz") ?> 4:</B></P></TD>
-    <TD>
-        <INPUT type="text" name="answer[]" size=50 value="<?php  p($answers[3]->answer) ?>">&nbsp;&nbsp;
-        <?php  print_string("grade");
-           echo ":&nbsp;";
-           choose_from_menu($gradeoptions, "fraction[]", $answers[3]->fraction,""); ?>
-        <BR>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("feedback", "quiz") ?>:</B></P></TD>
-    <TD>
-        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[3]->feedback) ?></textarea>
-    </TD>
-</TR>
-
-<TR valign=top>
-    <TD colspan=2>&nbsp;</TD>
-</TR>
-
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("answer", "quiz") ?> 5:</B></P></TD>
-    <TD>
-        <INPUT type="text" name="answer[]" size=50 value="<?php  p($answers[4]->answer) ?>">&nbsp;&nbsp;
-        <?php  print_string("grade");
-           echo ":&nbsp;";
-           choose_from_menu($gradeoptions, "fraction[]", $answers[4]->fraction,""); ?>
-        <BR>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("feedback", "quiz") ?>:</B></P></TD>
-    <TD>
-        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[4]->feedback) ?></textarea>
-    </TD>
-</TR>
+<?PHP
+    }
+?>
 
 </TABLE>
 
