@@ -140,6 +140,11 @@ function quiz_upgrade($oldversion) {
         table_column("quiz_questions", "", "questiontextformat", "integer", "2", "", "0", "not null", "questiontext");
     }
 
+    if ($oldversion < 2004021900) {
+        modify_database("","INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');");
+        modify_database("","INSERT INTO prefix_log_display VALUES ('quiz', 'update', 'quiz', 'name');");
+    }
+
     return true;
 }
 

@@ -266,6 +266,8 @@ CREATE TABLE `prefix_quiz_multianswers` (
 ) TYPE=MyISAM COMMENT='Options for multianswer questions';
 # --------------------------------------------------------
 
+INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'update', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'report', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
