@@ -38,11 +38,11 @@
 
     if ($course->category) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                       <a href=\"index.php?id=$course->id\">$strforums</a> -> 
-                       <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
+	   <a href=\"index.php?id=$course->id\">$strforums</a> -> 
+	   <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
     } else {
         $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> -> 
-                       <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
+	   <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
     }
 
     print_header("$course->shortname: $strsubscribers", "$course->fullname", "$navigation");
@@ -56,7 +56,9 @@
     }
 
     if ($subscribe == 'all') {
-        if ($currentgroup) {
+        if ($forum->type == 'teacher') {
+            $users = get_course_teachers($course->id);
+        } elseif ($currentgroup) {
             $users = get_group_users($currentgroup);
         } else {
             $users = get_course_users($course->id);
@@ -70,7 +72,7 @@
         if ($currentgroup) {
             if ($users = get_group_users($currentgroup)) {
                 foreach ($users as $user) {
-                    forum_unsubscribe($user->id, $forum->id);
+	forum_unsubscribe($user->id, $forum->id);
                 }
             }
         } else {
