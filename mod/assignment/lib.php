@@ -314,9 +314,9 @@ function assignment_file_area($assignment, $user) {
 }
 
 function assignment_get_submission($assignment, $user) {
-    $record = get_record("assignment_submissions", "assignment", $assignment->id, "userid", $user->id);
-    if (!empty($record->timemodified)) {
-        return $record;
+    $submission = get_record("assignment_submissions", "assignment", $assignment->id, "userid", $user->id);
+    if (!empty($submission->timemodified)) {
+        return $submission;
     }
     return NULL;
 }
