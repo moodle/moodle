@@ -4,7 +4,8 @@
 
 // error_reporting(E_ALL);
 
-function attendance_add_instance(&$attendance) {
+function attendance_add_instance($attendance) {
+	global $mod;
      $attendance->timemodified = time();
      $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
      $attendance->day = make_timestamp($attendance->theyear, 
@@ -13,14 +14,30 @@ function attendance_add_instance(&$attendance) {
 	 if ($attendance->notes) { 
 	 	$attendance->name = $attendance->name . " - " . $attendance->notes;
 	 }
+
+if (($attendance->dynsection) && ($course->format =="weeks")) { 
+	if ($mod->course) {
+		if (! $course = get_record("course", "id", $mod->course)) {
+			error("Course is misconfigured");
+		}
+	}
+//	floor($date_relative / 604800) + 1
+	$attendance->section = floor(($attendance->day - $course->startdate)/604800) +1;
+	if($attendance->section > $course->numsections){
+		$attendance->section = 0;
+	}
+	$attendance->section = "$attendance->section";
+	$mod->section = "$attendance->section";
+}
 	 // insert the main record first
 	 return $attendance->id = insert_record("attendance", $attendance);
 }
 
 
-function attendance_update_instance(&$attendance) {
+function attendance_update_instance($attendance) {
+	global $mod;
     $attendance->timemodified = time();
-    $attendance->oldid=$attendance->id;
+//    $attendance->oldid=$attendance->id;
     $attendance->id = $attendance->instance;
     $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
 
@@ -31,29 +48,71 @@ function attendance_update_instance(&$attendance) {
 	 	$attendance->name = $attendance->name . " - " . 
 	 	  $attendance->notes;
 	 }  
+  if (($attendance->dynsection) && ($course->format =="weeks")) { 
+	    //get info about the course
+		if ($mod->course) {
+			if (! $course = get_record("course", "id", $mod->course)) {
+				error("Course is misconfigured");
+			}
+		}
+		
+		//work out which section this should be in
+		$attendance->section = floor(($attendance->day - $course->startdate)/604800) +1;
+		if($attendance->section > $course->numsections){
+			$attendance->section = 0;
+		}
+		$attendance->section = "$attendance->section";
+  }	
 	// get the data from the attendance grid
-    if ($data = data_submitted()) {      
-      // Peel out all the data from variable names.
-      $attrec->dayid = $attendance->id;
-      foreach ($data as $key => $val) {
-        $pieces = explode('_',$key);
-        if ($pieces[0] == 'student') {
-       	  $attrec->userid=$pieces[1];
-          $attrec->hour=$pieces[2];
-          $attrec->status=$val;
-          // clear out any old records for the student
-       	  delete_records("attendance_roll", 
-            "dayid",$attrec->dayid,
-            "hour", $attrec->hour, 
-            "userid",$attrec->userid);
-          if ($attrec->status != 0) { 
-            // student is registered as absent or tardy
-		    insert_record("attendance_roll",$attrec, false);
-          }
-      	} // if we have a piece of the student roll data
-      } // foreach for all form variables
-    } // if	
-    return  update_record("attendance", $attendance);
+  if ($data = data_submitted()) {      
+    // Peel out all the data from variable names.
+    $attrec->dayid = $attendance->id;
+    foreach ($data as $key => $val) {
+      $pieces = explode('_',$key);
+      if ($pieces[0] == 'student') {
+     	  $attrec->userid=$pieces[1];
+        $attrec->hour=$pieces[2];
+        $attrec->status=$val;
+        // clear out any old records for the student
+     	  delete_records("attendance_roll", 
+          "dayid",$attrec->dayid,
+          "hour", $attrec->hour, 
+          "userid",$attrec->userid);
+        if ($attrec->status != 0) { 
+          // student is registered as absent or tardy
+	        insert_record("attendance_roll",$attrec, false);
+        }
+    	} // if we have a piece of the student roll data
+    } // foreach for all form variables
+  } // if	
+
+
+	if(!update_record("attendance", $attendance)){
+		error("Couldn't update record");
+	}
+	
+	if ($attendance->dynsection) {
+		//get section info
+		$section = get_record("course_sections", "course", $attendance->course, "section", $attendance->section);
+		
+		//remove module from the current section
+		if (! delete_mod_from_section($attendance->coursemodule, $mod->section)) {
+	       notify("Could not delete module from existing section");
+	    }
+	    
+	    //update course with new module location
+	    if(! set_field("course_modules", "section", $section->id, "id", $attendance->coursemodule)){
+	    	 notify("Could not update course module list");
+	    }
+	    
+	    //add module to the new section
+	    if (! add_mod_to_section($attendance, NULL)) {
+	        notify("Could not add module to new section");
+	    }
+	
+		rebuild_course_cache($section->course);
+	}
+	return true;
 }
 
 function attendance_delete_instance($id) {
@@ -127,6 +186,10 @@ function attendance_user_complete($course, $user, $mod, $attendance) {
 /// Print a detailed representation of what a  user has done with 
 /// a given particular instance of this module, for user activity reports.
     // get the attendance record for that day and user
+    $A = get_string("absentshort","attendance");
+    $T = get_string("tardyshort","attendance");
+    $P = get_string("presentshort","attendance");
+
     $attrecs=attendance_get_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "", "", "hour ASC");
     // fill an array with the absences and tardies, as those are the only records actually stored
     $grid = array();
@@ -140,8 +203,8 @@ function attendance_user_complete($course, $user, $mod, $attendance) {
 	for($j=1;$j<=$attendance->hours;$j++) {
       // set the attendance defaults for each student
   	      if (isset($grid[$j])) {
-	        $status = (($grid[$j] == 1) ? "T" : "A");
-  	      } else {$status="X";}
+	        $status = (($grid[$j] == 1) ? $T : $A);
+  	      } else {$status=$P;}
       echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$status."</td>\n";
 	} /// for loop
     echo "</tr></table>\n";

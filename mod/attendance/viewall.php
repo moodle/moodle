@@ -1,4 +1,4 @@
-<?php   // $Id$
+<?  // $Id$
 /// This page prints all instances of attendance in a given course
 
     require_once("../../config.php");
@@ -14,7 +14,7 @@
         if (! $course = get_record("course", "id", $id)) {
             error("Course is misconfigured");
         }
-        if (! $attendances = get_records("attendance", "course", $id)) {
+        if (! $attendances = get_records("attendance", "course", $id, "day ASC ")) {
             error("Course module is incorrect");
         }
     } else {
@@ -34,7 +34,7 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "attendance", "viewall", "viewall.php?id=$cm->id", "$attendance->id");
+    add_to_log($course->id, "attendance", "viewall", "viewall.php?id=$course->id");
 
 /// Print the page header
     if ($course->category) {
@@ -93,10 +93,12 @@ if ($attendances) {
      } else { // must be a teacher
     	 $rolls = get_records("attendance_roll", "dayid", $attendance->id);
      }
-     foreach ($rolls as $roll) {
-       $atts[$numatt]->sroll[$roll->userid][$roll->hour]->status=$roll->status;
-       $atts[$numatt]->sroll[$roll->userid][$roll->hour]->notes=$roll->notes;
-	 }
+     if ($rolls) {
+	     foreach ($rolls as $roll) {
+	       $atts[$numatt]->sroll[$roll->userid][$roll->hour]->status=$roll->status;
+	       $atts[$numatt]->sroll[$roll->userid][$roll->hour]->notes=$roll->notes;
+	     }
+     }
    $numatt++;
    }
 
@@ -116,7 +118,7 @@ if ($attendances) {
 // adjust the width for the report for students 
 
    if (($onetable) || ($CFG->attendance_hours_in_full_report == 0)) {
-      $hoursinreport = 10000;   	
+      $hoursinreport = 100+$numhours;
    } else if (isstudent($course->id)) {
       $hoursinreport = $CFG->attendance_hours_in_full_report + 15;
    } else { 
@@ -140,7 +142,7 @@ while (($multipage || $onepage) && (!$endonepage)) {
 //		$startatt=$endatt;
 		$curpage=1;
 		$endatt=0;
-      for($curpage=1;true;$curpage++) { // the for loop is broken from the inside
+  for($curpage=1;true;$curpage++) { // the for loop is broken from the inside
 		$pagehours=$atts[$endatt]->attendance->hours;
 		$startatt=$endatt;
 		while(($pagehours<$hoursinreport)) {
@@ -230,6 +232,9 @@ while (($multipage || $onepage) && (!$endonepage)) {
     $students = attendance_get_course_students($attendance->course, "u.lastname ASC");
   }
   $i=0;
+  $A = get_string("absentshort","attendance");
+  $T = get_string("tardyshort","attendance");
+  $P = get_string("presentshort","attendance");  
   foreach ($students as $student) {
     if (isteacher($course->id)) {
       echo "<tr><td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->lastname."</td>\n";
@@ -240,9 +245,9 @@ while (($multipage || $onepage) && (!$endonepage)) {
     for($k=$minatt;$k<$maxatt;$k++)  {  // for eacj day of attendance for the student
 	  for($j=1;$j<=$atts[$k]->attendance->hours;$j++) {
       // set the attendance defaults for each student
-  	    if ($atts[$k]->sroll[$student->id][$j]->status == 1) {$status="T";}
-	    elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {$status="A";}
- 	    else {$status="X";}
+  	    if ($atts[$k]->sroll[$student->id][$j]->status == 1) {$status=$T;}
+	    elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {$status=$A;}
+ 	    else {$status=$P;}
         echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$status."</td>\n";
 	  } /// for loop
     }

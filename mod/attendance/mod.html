@@ -3,56 +3,58 @@
 
 <!-- RJJ I'm using inline CSS styles for some stuff in this page because I want to centralize -->
 <!-- the logic and styles in a single directory -->
- <?php   @include_once("$CFG->dirroot/mod/attendance/lib.php") 
+  <?php @include_once("$CFG->dirroot/mod/attendance/lib.php")
     //require_once("lib.php")
     ?>
-<FORM name="form" method="post" action="<?php echo $ME ?>">
+<FORM name="form" method="post" action="<?=$ME ?>">
 <CENTER>
-<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
-<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+<INPUT type="submit" value="<? print_string("savechanges") ?>">
+<INPUT type="submit" name="cancel" value="<? print_string("cancel") ?>">
 <TABLE cellpadding=5>
 
-<!-- <?php  $options[0] = get_string("no"); $options[1] = get_string("yes"); ?> -->
+<!-- <? $options[0] = get_string("no"); $options[1] = get_string("yes"); ?> -->
 <!-- <TR valign=top> -->
-<!--     <TD align=right><P><B><?php  print_string("takeroll", "attendance") ?>:</B></P></TD> -->
-<!--     <TD align=left><?php  choose_from_menu($options, "roll", $form->roll, "") ?></td> -->
+<!--     <TD align=right><P><B><? print_string("takeroll", "attendance") ?>:</B></P></TD> -->
+<!--     <TD align=left><? choose_from_menu($options, "roll", $form->roll, "") ?></td> -->
 <!-- </tr> -->
 
 <TR valign=top>
-    <TD align=right><P><B><?php  print_string("dayofroll", "attendance") ?>:</B></P></TD>
-    <TD colspan="3"><?php  print_date_selector("theday", "themonth", "theyear", $form->day) ?></TD>
+    <TD align=right><P><B><?php print_string("dayofroll", "attendance") ?>:</B></P></TD>
+    <TD colspan="3"><?php print_date_selector("theday", "themonth", "theyear", $form->day) ?></TD>
 </TR>
 <tr valign=top>
-    <TD align="right"><P><B><?php  print_string("dynamicsection", "attendance") ?>:</B></P></TD>
+    <TD align="right"><P><B><?php print_string("dynamicsection", "attendance") ?>:</B></P></TD>
     <TD align="left">
-      <input type="checkbox" name="dynsection" <?php  echo !empty($form->dynsection) ? 'checked' : '' ?> >
+      <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> >
     </TD>
 </tr>
-<?php  // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
+<?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
 for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
 <TR valign=top>
-    <TD align=right><P><B><?php  print_string("hoursinclass", "attendance") ?>:</B></P></TD>
-    <TD  colspan="3" align="left"><?php  choose_from_menu($opt, "hours", $form->hours, "1","","1") ?></td>
+    <TD align=right><P><B><?php print_string("hoursinclass", "attendance") ?>:</B></P></TD>
+    <TD  colspan="3" align="left"><?php choose_from_menu($opt, "hours", $form->hours, "1","","1") ?></td>
 </tr>
 <tr valign=top>
-    <td align=right><p><b><?php  print_string("notes", "attendance") ?>:</b></p></td>
+    <td align=right><p><b><?php print_string("notes", "attendance") ?>:</b></p></td>
     <td colspan="3">
-        <input type="text" name="notes" size=60 value="<?php  p($form->notes) ?>">
+        <input type="text" name="notes" size=60 value="<?php p($form->notes) ?>">
     </td>
 </tr>
 </TABLE>
 
 
-<?php   // if we're modifying an existing instance of attendance instead 
+<?php  // if we're modifying an existing instance of attendance instead 
     //   of creating a new one
  if ($form->id) {
    // get the list of attendance records for all hours of the given day and 
    // put it in the array for use in the attendance table
    $rolls = get_records("attendance_roll", "dayid", $form->id);
-   foreach ($rolls as $roll) {
-      $sroll[$roll->userid][$roll->hour]->status=$roll->status;
-      $sroll[$roll->userid][$roll->hour]->notes=$roll->notes;
-	}
+   if ($rolls) {
+     foreach ($rolls as $roll) {
+       $sroll[$roll->userid][$roll->hour]->status=$roll->status;
+       $sroll[$roll->userid][$roll->hour]->notes=$roll->notes;
+	   }
+   }
    // get the list of students along with student ID field
 // get back array of stdclass objects in sorted order, with members:
 // id, username,firstname,lastname,maildisplay,mailformat,email,city,country,
@@ -129,15 +131,15 @@ if ($form->hours >1) {
 } // if ($form->id)
 ?>
 <!-- These hidden variables are always the same -->
-<INPUT type="hidden" name=course        value="<?php  p($form->course) ?>">
-<INPUT type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>">
-<INPUT type="hidden" name=section       value="<?php  p($form->section) ?>">
-<INPUT type="hidden" name=module        value="<?php  p($form->module) ?>">
-<INPUT type="hidden" name=modulename    value="<?php  p($form->modulename) ?>">
-<INPUT type="hidden" name=instance      value="<?php  p($form->instance) ?>">
-<INPUT type="hidden" name=mode          value="<?php  p($form->mode) ?>">
+<INPUT type="hidden" name=course        value="<?php p($form->course) ?>">
+<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<INPUT type="hidden" name=section       value="<?php p($form->section) ?>">
+<INPUT type="hidden" name=module        value="<?php p($form->module) ?>">
+<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
+<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>">
+<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>">
 <BR />
-<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
-<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+<INPUT type="submit" value="<?php print_string("savechanges") ?>">
+<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>">
 </CENTER>
 </FORM>

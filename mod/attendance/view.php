@@ -1,4 +1,4 @@
-<?php   // $Id$
+<?  // $Id$
 /// This page prints a particular instance of attendance
     require_once("../../config.php");
     require_once("lib.php" );
@@ -114,6 +114,10 @@
   	$students[0] = get_user_info_from_db("id", $USER->id);
   }
   $i=0;
+  $A = get_string("absentshort","attendance");
+  $T = get_string("tardyshort","attendance");
+  $P = get_string("presentshort","attendance");  
+  
   foreach ($students as $student) {
     echo "<tr><td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->lastname."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\"  style=\"border-top: 1px solid;\">".$student->firstname."</td>\n";
@@ -122,9 +126,9 @@
 	  $abs=$tar=0;
 	  for($j=1;$j<=$form->hours;$j++) {
       // set the attendance defaults for each student
-  	      if ($sroll[$student->id][$j]->status == 1) {$status="T";$tar++;}
-	      elseif ($sroll[$student->id][$j]->status == 2) {$status="A";$abs++;}
-	    else {$status="X";}
+  	      if ($sroll[$student->id][$j]->status == 1) {$status=$T;$tar++;}
+	      elseif ($sroll[$student->id][$j]->status == 2) {$status=$A;$abs++;}
+	    else {$status=$P;}
       echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$status."</td>\n";
 	  } /// for loop
     if ($form->hours > 1) {
