@@ -160,6 +160,7 @@ $string['returnto'] = 'Keer terug naar';
 $string['returntosubmissionpage'] = 'Keer terug naar de verzendingspagina';
 $string['rubric'] = 'Rubriek';
 $string['savedok'] = 'Goed bewaard';
+$string['saveleaguetableoptions'] = 'Bewaar de instellingen van de overzichtstabel';
 $string['savemyassessment'] = 'Bewaar mijn taak';
 $string['savemycomment'] = 'Bewaar mijn commentaar';
 $string['savemygrading'] = 'Bewaar mijn cijfer';
