@@ -40,9 +40,9 @@
         } else {
             $wwwroot = str_replace('http', 'https', $CFG->wwwroot);
         }
-        $loginstring = "<font size=\"2\"><a href=\"$wwwroot/login/index.php\">".get_string('login').'</a></font>';
+        $loginstring = "<span class=\"logininfo\"><a href=\"$wwwroot/login/index.php\">".get_string('login').'</a></font>';
     } else {
-        $loginstring = '<font size="1">'. user_login_string($SITE) .'</font>';
+        $loginstring = user_login_string($SITE);
         add_to_log(SITEID, 'course', 'view', 'view.php?id='.SITEID, SITEID);
     }
 

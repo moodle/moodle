@@ -20,7 +20,7 @@
 
     $strrecentactivity = get_string("recentactivity");
 
-    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
+    $loggedinas = user_login_string($course, $USER);
 
 
     if (!empty($_GET['chooserecent'])) {

@@ -369,9 +369,8 @@ class page_course extends page_base {
         // (i.e., no breadcrumbs other than the default one added inside this function)
         $button = empty($morebreadcrumbs) ? update_course_icon($this->courserecord->id) : '&nbsp;';
 
-        $loggedinas = '<p class="logininfo">'. user_login_string($this->courserecord, $USER) .'</p>';
         print_header($title, $this->courserecord->fullname, $crumbtext,
-                     '', '', true, $button, $loggedinas);
+                     '', '', true, $button, user_login_string($this->courserecord, $USER));
     }
 
     // SELF-REPORTING SECTION
