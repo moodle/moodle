@@ -1,18 +1,17 @@
-ABOUT THIS DIRECTORY
---------------------
+BU DÝZÝN HAKKINDA
+-----------------
 
-DO NOT CHANGE, RENAME OR MOVE ANY OF THE FILES 
-IN THIS DIRECTORY unless you REALLY know what 
-you are doing.  
+GERÇEKTEN ne yaptýðýnýzý bilmiyorsanýz
+BU DÝZÝNDEKÝ DOSYALARIN YERÝNÝ, ADINI
+DEÐÝÞTÝRMEYÝN VE BAÞKA BÝR YERE TAÞIMAYIN.
 
-Changing these files could mess up your course.
+Bu dosyalarý deðiþtirmeniz kurslara zarar
+verebilir.
 
-This directory contains files uploaded to your 
-course within particular modules (mostly by 
-students), such as assignment submissions and 
-forum attachments.
+Bu dizin çoðu, öðrenciler tarafýndan gönderilen
+ödevler ve forum ekleri gibi dosyalarý
+içermektedir.
 
-The names of the directories and files within 
-this directory are very specific and are 
-automatically maintained by Moodle.
-
+Bu dizindeki klasör adlarý ve dosyalarý
+çok özeldir ve otomatik olarak Moodle
+tarafýndan korunmaktadýr.
