@@ -216,7 +216,7 @@
         }
 
     
-        echo "<form action=category.php method=post>";
+        echo "<form name=\"movecourses\" action=\"category.php\" method=\"post\">";
         echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
         echo "<th>$strcourses</th>";
         if ($creatorediting) {
@@ -288,9 +288,8 @@
             echo "<tr><td colspan=3 align=right>";
             echo "<br />";
             unset($displaylist[$category->id]);
-            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "");
+            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript:document.movecourses.submit()");
             echo "<input type=\"hidden\" name=\"id\" value=\"$category->id\">";
-            echo "<input type=\"submit\" value=\"".get_string("move")."\">";
             echo "</td></tr>";
         }
     
