@@ -76,21 +76,9 @@
     echo '<br />';
 
     if ($users = get_users_in_group($group->id)) {
-        $table->align = array('left', 'left');
-        $table->width = array('100', '*');
         foreach ($users as $user) {
-            if (!$lastaccess = get_field("user_students", "timeaccess", "userid", $user->id, "course", $course->id)) {
-                if (!$lastaccess = get_field("user_teachers", "timeaccess", "userid", $user->id, "course", $course->id)) {
-                    $datestring = get_string("never");
-                }
-            }
-            if ($lastaccess) {
-                $datestring = userdate($lastaccess)."&nbsp (".format_time(time() - $lastaccess).")";
-            }
-            $information = '<p><b>'.fullname($user).'</b></p>'.get_string("lastaccess").": $datestring";
-            $table->data[] = array(print_user_picture($user->id, $course->id, $user->picture, true, true), $information);
+            print_user($user, $course);
         }
-        print_table($table);
     } else {
         print_heading(get_string('nousersyet'));
     }
