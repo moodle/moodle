@@ -12,6 +12,7 @@ CREATE TABLE prefix_glossary (
      id int(10) unsigned NOT NULL auto_increment,
      course int(10) unsigned NOT NULL default '0',
      name varchar(255) NOT NULL default '',
+     intro text NOT NULL,
      studentcanpost tinyint(2) unsigned NOT NULL default '0',
      allowduplicatedentries tinyint(2) unsigned NOT NULL default '0',
      displayformat tinyint(2) unsigned NOT NULL default '0',

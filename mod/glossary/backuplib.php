@@ -37,6 +37,7 @@
                 fwrite ($bf,full_tag("ID",4,false,$glossary->id));
                 fwrite ($bf,full_tag("MODTYPE",4,false,"glossary"));
                 fwrite ($bf,full_tag("NAME",4,false,$glossary->name));
+                fwrite ($bf,full_tag("INTRO",4,false,$glossary->INTRO));
                 fwrite ($bf,full_tag("STUDENTCANPOST",4,false,$glossary->studentcanpost));
                 fwrite ($bf,full_tag("ALLOWDUPLICATEDENTRIES",4,false,$glossary->allowduplicatedentries));
                 fwrite ($bf,full_tag("DISPLAYFORMAT",4,false,$glossary->displayformat));	

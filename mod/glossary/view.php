@@ -3,7 +3,6 @@
 /// This page prints a particular instance of glossary
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("dynalink.php");
     
     require_variable($id);           // Course Module ID
     optional_variable($l);           // letter to look for
@@ -34,7 +33,7 @@
     
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id");
     
-    $search = trim(strip_tags($search));
+	$search = trim(strip_tags($search));
     if ($search and !$entryid) {
         $l = "";
         $searchterms = explode(" ", $search); // Search for words independently
@@ -49,8 +48,9 @@
         $search = "";
     } 
     
+    $alphabet = explode("|", get_string("alphabet","glossary"));
     if ($l == "" and $search == "" and ($eid == "" or $eid == 0)) {
-        $l = "A";
+        $l = $alphabet[0];
     } elseif ($eid) {
         $l = "";
     } 
@@ -90,6 +90,16 @@
     print_heading($glossary->name);
     
     
+/// Info box
+
+    if ( $glossary->intro ) {
+	    print_simple_box_start("center","70%");
+        echo '<p>';
+        echo $glossary->intro;
+        echo '</p>';
+        print_simple_box_end();
+	}
+
 /// Add button
 
     if (isteacher($course->id) or ($glossary->studentcanpost) and !isguest($course->id)) {
@@ -125,12 +135,20 @@
     $data[1]->caption = get_string("categoryview", "glossary");
     
     if ($currentview) {
-        $CurrentTab = 1;
+        $currenttab = GLOSSARY_CATEGORY_VIEW; //1;
     } else {
-        $CurrentTab = 0;
+        $currenttab = GLOSSARY_STANDARD_VIEW; //0;
     } 
+    $glossary_tCFG->TabTableBGColor = $THEME->cellheading;
+    $glossary_tCFG->ActiveTabColor = $THEME->cellheading;
+    $glossary_tCFG->InactiveTabColor = $THEME->cellcontent2;
+    $glossary_tCFG->InactiveFontColor= $THEME->hidden;
+	
+    $glossary_tCFG->TabTableWidth = "70%";
+    $glossary_tCFG->TabsPerRow = 5;
+    $glossary_tCFG->TabSeparation = 4;
 
-    glossary_print_tabbed_table_start($data, $CurrentTab, $tCFG);
+    glossary_print_tabbed_table_start($data, $currenttab, $glossary_tCFG);
     echo "<center>";
     if ($currentview) {
         glossary_print_categories_menu($course, $cm, $glossary, $cat, $category);
@@ -139,7 +157,7 @@
     } else {
         glossary_print_alphabet_menu($cm, $glossary, $l);
         if ($l) {
-            $CurrentLetter = "";
+            $currentletter = "";
         } elseif ($search) {
             echo "<h3>$strsearch: $search</h3>";
         } 
@@ -152,7 +170,7 @@
         $allentries = glossary_search_entries($searchterms, $glossary, $includedefinition);
     } elseif ($eid) { // looking for an entry
         $allentries = get_records("glossary_entries", "id", $eid);
-    } elseif ($currentview and $cat == -1) { // Browsing all categories
+    } elseif ($currentview and $cat == GLOSSARY_SHOW_ALL_CATEGORIES) { // Browsing all categories
         $sql = "SELECT gec.id gecid, gc.name, gc.id CID, ge.*
                     FROM {$CFG->prefix}glossary_entries ge,
                         {$CFG->prefix}glossary_entries_categories gec,
@@ -177,53 +195,53 @@
     } 
     
     if ($allentries) {
-        $DumpedDefinitions = 0;
+        $dumpeddefinitions = 0;
         foreach ($allentries as $entry) {
-            $DumpToScreen = 0;
-            $FirstLetter = strtoupper(substr(ltrim($entry->concept), 0, strlen($l)));
+            $dumptoscreen = 0;
+            $firstletter = strtoupper(substr(ltrim($entry->concept), 0, strlen($l)));
             if ($l) {
-                if ($l == "ALL" or $FirstLetter == $l) {
-                    if ($CurrentLetter != $FirstLetter[0]) {
-                        $CurrentLetter = $FirstLetter[0];
+                if ($l == "ALL" or $firstletter == $l) {
+                    if ($currentletter != $firstletter[0]) {
+                        $currentletter = $firstletter[0];
     
                         if ($glossary->displayformat == 0) {
-                            if ($DumpedDefinitions > 0) {
+                            if ($dumpeddefinitions > 0) {
                                 echo "</table></center><p>";
                             } 
                             echo "\n<center><table border=0 cellspacing=0 width=95% valign=top cellpadding=10><tr><td align=center bgcolor=\"$THEME->cellheading2\">";
                         } 
                         if ($l == "ALL") {
-                            echo "<b>$CurrentLetter</b>";
+                            echo "<b>$currentletter</b>";
                         } 
     
                         if ($glossary->displayformat == 0) {
                             echo "\n</center></td></tr></table></center>";
-                            if ($DumpedDefinitions > 0) {
+                            if ($dumpeddefinitions > 0) {
                                 echo "\n<center><table border=1 cellspacing=0 width=95% valign=top cellpadding=10>";
                             } 
                         } 
                     } 
-                    $DumpToScreen = 1;
-                } elseif ($l == "SPECIAL" and ord($FirstLetter) != ord("Ñ") and 
-                         (ord($FirstLetter) < ord("A") or ord($FirstLetter) > ord("Z"))) {
-                    $DumpToScreen = 1;
+                    $dumptoscreen = 1;
+                } elseif ($l == "SPECIAL" and ord($firstletter) != ord("Ñ") and 
+                         (ord($firstletter) < ord("A") or ord($firstletter) > ord("Z"))) {
+                    $dumptoscreen = 1;
                 } 
             } else {
                 if ($currentview) {
-                    if ($category) {
+                    if ($category) {   // if we are browsing a category
                         if (record_exists("glossary_entries_categories", "entryid", $entry->id, "categoryid", $category->id)) {
-                            $DumpToScreen = 1;
+                            $dumptoscreen = 1;
                         } 
-                    } else {
-                        if ($cat < 0) { // No categorized
+                    } else { 
+                        if ($cat == GLOSSARY_SHOW_NOT_CATEGORISED) { // Not categorized
                             if (! record_exists("glossary_entries_categories", "entryid", $entry->id)) {
-                                $DumpToScreen = 1;
+                                $dumptoscreen = 1;
                             } 
                         } else { // All categories
                             if ($currentcategory != $entry->CID) {
                                 $currentcategory = $entry->CID;
                                 if ($glossary->displayformat == 0) {
-                                    if ($DumpedDefinitions > 0) {
+                                    if ($dumpeddefinitions > 0) {
                                         echo "</table></center><p>";
                                     } 
                                     echo "\n<center><table border=0 cellspacing=0 width=95% valign=top cellpadding=10><tr><td align=center bgcolor=\"$THEME->cellheading2\">";
@@ -233,26 +251,26 @@
     
                             if ($glossary->displayformat == 0) {
                                 echo "\n</center></td></tr></table></center>";
-                                if ($DumpedDefinitions > 0) {
+                                if ($dumpeddefinitions > 0) {
                                     echo "\n<center><table border=1 cellspacing=0 width=95% valign=top cellpadding=10>";
                                 } 
                             } 
     
-                            $DumpToScreen = 1;
+                            $dumptoscreen = 1;
                         } 
                     } 
                 } else {
-                    $DumpToScreen = 1;
+                    $dumptoscreen = 1;
                 } 
             } 
     
-            if ($DumpToScreen) {
-                $DumpedDefinitions++;
+            if ($dumptoscreen) {
+                $dumpeddefinitions++;
     
                 $concept = $entry->concept;
                 $definition = $entry->definition;
     
-                if ($DumpedDefinitions == 1) {
+                if ($dumpeddefinitions == 1) {
                     if ($glossary->displayformat == 0) {
                         echo "\n<center><table border=1 cellspacing=0 width=95% valign=top cellpadding=10>";
                     } 
@@ -260,9 +278,6 @@
                 if ($search) {
                     $entry->concept = highlight($search, $concept);
                     $entry->definition = highlight($search, $definition);
-                } 
-                if (!$glossary->mainglossary) {
-                    $entry->definition = glossary_dynamic_link($course->id, $definition);
                 } 
     
                 glossary_print_entry($course, $cm, $glossary, $entry, $currentview, $cat);
@@ -273,7 +288,7 @@
             } 
         } 
     } 
-    if (! $DumpedDefinitions) {
+    if (! $dumpeddefinitions) {
         print_simple_box_start("center", "70%", "$THEME->cellheading");
         if (!$search) {
             echo "<center>$strnoentries</center>";

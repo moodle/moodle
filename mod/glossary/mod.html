@@ -10,6 +10,23 @@
         <INPUT type="text" name="name" size=30 value="<?php p($form->name) ?>">
     </TD>
 </TR>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("description") ?>:</b></p>
+     <font size="1">
+     <?php
+        helpbutton("description", get_string("description"), "glossary", true, true);
+        echo "<br \>";
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br \>";
+        helpbutton("text", get_string("helptext"), "moodle", true, true);
+     ?>
+     <br />
+     </font>
+    </td>
+    <td>
+        <textarea name="intro" rows=5 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea>
+    </td>
+</tr>
 <!-- More rows go in here... -->
 <?php
 $mainglossary = get_record("glossary","mainglossary",1,"course",$form->course);

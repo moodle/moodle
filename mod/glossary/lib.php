@@ -5,12 +5,10 @@
 
 require_once("$CFG->dirroot/files/mimetypes.php");
 
-$tCFG->TabTableBGColor = $THEME->cellcontent2;
-$tCFG->TabTableWidth = "70%";
-$tCFG->ActiveTabColor = $THEME->cellcontent2;
-$tCFG->InactiveTabColor = $THEME->cellheading2;
-$tCFG->TabsPerRow = 5;
-$tCFG->TabSeparation = 4;
+define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
+define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);
+define("GLOSSARY_STANDARD_VIEW", 0);
+define("GLOSSARY_CATEGORY_VIEW", 1);
 
 function glossary_add_instance($glossary) {
 /// Given an object containing all the necessary data,
@@ -187,7 +185,7 @@ function glossary_get_entries($glossaryid, $entrylist) {
 function glossary_print_entry($course, $cm, $glossary, $entry,$currentview="",$cat="") {
     global $THEME, $USER, $CFG;
     
-    $PermissionGranted = 0;
+    $permissiongranted = 0;
     $formatfile = "$CFG->dirroot/mod/glossary/formats/$glossary->displayformat.php";
     $functionname = "glossary_print_entry_by_format";
 
@@ -195,14 +193,14 @@ function glossary_print_entry($course, $cm, $glossary, $entry,$currentview="",$c
         if ( file_exists($formatfile) ) {
            include_once($formatfile);
            if (function_exists($functionname) ) {
-              $PermissionGranted = 1;
+              $permissiongranted = 1;
            }
         }
     } else {
-       $PermissionGranted = 1;
+       $permissiongranted = 1;
     }
     
-    if ( $glossary->displayformat > 0 and $PermissionGranted ) {
+    if ( $glossary->displayformat > 0 and $permissiongranted ) {
         glossary_print_entry_by_format($course, $cm, $glossary, $entry,$currentview,$cat);
     } else {
         glossary_print_entry_by_default($course, $cm, $glossary, $entry,$currentview,$cat);
@@ -233,14 +231,14 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$curren
 function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview="",$cat="") {
     global $THEME, $USER;
 
-    $ImportedEntry = ($entry->sourceglossaryid == $glossary->id);
-    $IsTeacher = isteacher($course->id);
-    $IsMainGlossary = $glossary->mainglossary;
+    $importedentry = ($entry->sourceglossaryid == $glossary->id);
+    $isteacher = isteacher($course->id);
+    $ismainglossary = $glossary->mainglossary;
     
-	if ($IsTeacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
+	if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
  	  	echo "<p align=right>";
  	  	// only teachers can export entries so check it out
-		if ($IsTeacher and !$IsMainGlossary and !$ImportedEntry) {
+		if ($isteacher and !$ismainglossary and !$importedentry) {
 			$mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
 			if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
 				
@@ -256,13 +254,13 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview
         }
 
 		// Exported entries can be updated/deleted only by teachers in the main glossary
-        if ( !$ImportedEntry and ($IsTeacher or !$IsMainGlossary) ) {
+        if ( !$importedentry and ($isteacher or !$ismainglossary) ) {
             echo "<a href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("delete") . "\"src=\"";
             echo $icon;
             echo "\" height=11 width=11 border=0></a> ";
             
             echo "<a href=\"edit.php?id=$cm->id&e=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
-        } elseif ( $ImportedEntry ) {
+        } elseif ( $importedentry ) {
             echo "<font size=-1>" . get_string("exportedentry","glossary") . "</font>";
         }
 	}
@@ -522,112 +520,129 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
     return $imagereturn;
 }
 
-function glossary_print_tabbed_table_start($data, $CurrentTab, $tTHEME = NULL) {
+function glossary_print_tabbed_table_start($data, $currenttab, $tTHEME = NULL) {
 
 if ( !$tTHEME ) {
      global $THEME;
      $tTHEME = $THEME;
 }
 
-$TableColor           = $tTHEME->TabTableBGColor;
-$TableWidth           = $tTHEME->TabTableWidth;
-$CurrentTabColor      = $tTHEME->ActiveTabColor;
-$TabColor             = $tTHEME->InactiveTabColor;
-$TabsPerRow           = $tTHEME->TabsPerRow;
-$TabSeparation        = $tTHEME->TabSeparation;
+$tablecolor           = $tTHEME->TabTableBGColor;
+$currenttabcolor      = $tTHEME->ActiveTabColor;
+$tabcolor             = $tTHEME->InactiveTabColor;
+$inactivefontcolor    = $tTHEME->InactiveFontColor;
 
-$Tabs                 = count($data);
-$TabWidth             = (int) (100 / $TabsPerRow);
+$tablewidth           = $tTHEME->TabTableWidth;
+$tabsperrow           = $tTHEME->TabsPerRow;
+$tabseparation        = $tTHEME->TabSeparation;
 
-$CurrentRow           = ( $CurrentTab - ( $CurrentTab % $TabsPerRow) ) / $TabsPerRow;
+$tabs                 = count($data);
+$tabwidth             = (int) (100 / $tabsperrow);
 
-$NumRows              = (int) ( $Tabs / $TabsPerRow ) + 1;
+$currentrow           = ( $currenttab - ( $currenttab % $tabsperrow) ) / $tabsperrow;
+
+$numrows              = (int) ( $tabs / $tabsperrow ) + 1;
 
 ?>
   <center>
-  <table border="0" cellpadding="0" cellspacing="0" width="<?php p($TableWidth) ?>">
+  <table border="0" cellpadding="0" cellspacing="0" width="<?php p($tablewidth) ?>">
     <tr>
       <td width="100%">
 
       <table border="0" cellpadding="0" cellspacing="0" width="100%">
 
 <?php
-$TabProccessed = 0;
-for ($row = 0; $row < $NumRows; $row++) {
+$tabproccessed = 0;
+for ($row = 0; $row < $numrows; $row++) {
      echo "<tr>\n";
-     if ( $row != $CurrentRow ) {
-          for ($col = 0; $col < $TabsPerRow; $col++) {
-               if ( $TabProccessed < $Tabs ) {
+     if ( $row != $currentrow ) {
+          for ($col = 0; $col < $tabsperrow; $col++) {
+               if ( $tabproccessed < $tabs ) {
                     if ( $col == 0 ) {
-                        echo "<td width=\"$TabSeparation\" align=\"center\">&nbsp;</td>";
+                        echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
                     }
-                    if ($TabProccessed == $CurrentTab) {
-                         $CurrentColor = $CurrentTabColor;
+                    if ($tabproccessed == $currenttab) {
+                         $currentcolor = $currenttabcolor;
                     } else {
-                         $CurrentColor = $TabColor;
+                         $currentcolor = $tabcolor;
+                    }
+                    echo "<td width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
+                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
+                        echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
 
-                    echo "<td width=\"$TabWidth%\" bgcolor=\"$CurrentColor\" align=\"center\"><b>";
-                    if ($TabProccessed != $CurrentTab) {
-                        echo "<a href=\"" . $data[$TabProccessed]->link . "\">";
-                    }
-                    echo $data[$TabProccessed]->caption;
-                    if ($TabProccessed != $CurrentTab) {
+					if ( !$data[$tabproccessed]->link ) {
+					    echo "<font color=\"$inactivefontcolor\">";
+					}
+                    echo $data[$tabproccessed]->caption;
+					if ( !$data[$tabproccessed]->link ) {
+					    echo "</font>";
+					}
+
+                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "</a>";
                     }
                     echo "</b></td>";
                     
-                    if ( $col < $TabsPerRow ) {
-                        echo "<td width=\"$TabSeparation\" align=\"center\">&nbsp;</td>";
+                    if ( $col < $tabsperrow ) {
+                        echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
                     }
                } else {
-                    $CurrentColor = "";
+                    $currentcolor = "";
                }
-               $TabProccessed++;
+               $tabproccessed++;
           }
      } else {
-          $FirstTabInCurrentRow = $TabProccessed;
-          $TabProccessed += $TabsPerRow;
+          $firsttabincurrentrow = $tabproccessed;
+          $tabproccessed += $tabsperrow;
      }
-     echo "</tr><tr><td colspan=" . (2* $TabsPerRow) . " ></td></tr>\n";
+     echo "</tr><tr><td colspan=" . (2* $tabsperrow) . " ></td></tr>\n";
 }
      echo "<tr>\n";
-          $TabProccessed = $FirstTabInCurrentRow;
-          for ($col = 0; $col < $TabsPerRow; $col++) {
-               if ( $TabProccessed < $Tabs ) {
+          $tabproccessed = $firsttabincurrentrow;
+          for ($col = 0; $col < $tabsperrow; $col++) {
+               if ( $tabproccessed < $tabs ) {
                     if ( $col == 0 ) {
-                        echo "<td width=\"$TabSeparation\" align=\"center\">&nbsp;</td>";
+                        echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
                     }
-                    if ($TabProccessed == $CurrentTab) {
-                         $CurrentColor = $CurrentTabColor;
+                    if ($tabproccessed == $currenttab) {
+                         $currentcolor = $currenttabcolor;
                     } else {
-                         $CurrentColor = $TabColor;
+                         $currentcolor = $tabcolor;
                     }
-                    echo "<td width=\"$TabWidth%\" bgcolor=\"$CurrentColor\" align=\"center\"><b>";
-                    if ($TabProccessed != $CurrentTab) {
-                        echo "<a href=\"" . $data[$TabProccessed]->link . "\">";
+                    echo "<td width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
+                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
+                        echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
-                    echo $data[$TabProccessed]->caption;
-                    if ($TabProccessed != $CurrentTab) {
+
+					if ( !$data[$tabproccessed]->link ) {
+					    echo "<font color=\"$inactivefontcolor\">";
+					}
+                    echo $data[$tabproccessed]->caption;
+					if ( !$data[$tabproccessed]->link ) {
+					    echo "</font>";
+					}
+
+                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "</a>";
                     }
                     echo "</b></td>";
 
-                    if ($col < $TabsPerRow) {
-                         echo "<td width=\"$TabSeparation\" align=\"center\">&nbsp;</td>";
+                    if ($col < $tabsperrow) {
+                         echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
                     }
                } else {
-                    if ($NumRows > 1) {
-                         $CurrentColor = $TabColor;
+                    if ($numrows > 1) {
+                         $currentcolor = $tabcolor;
                     } else {
-                         $CurrentColor = "";
+                         $currentcolor = "";
                     }
-                    echo "<td colspan = " . (2 * ($TabsPerRow - $col)) . " bgcolor=\"$CurrentColor\" align=\"center\">";
+                    echo "<td colspan = " . (2 * ($tabsperrow - $col)) . " bgcolor=\"$currentcolor\" align=\"center\">";
                     echo "</td>";
 
-                    $col = $TabsPerRow;
+                    $col = $tabsperrow;
                }
-               $TabProccessed++;
+               $tabproccessed++;
           }
      echo "</tr>\n";
      ?>
@@ -636,10 +651,10 @@ for ($row = 0; $row < $NumRows; $row++) {
       </td>
     </tr>
     <tr>
-      <td width="100%" bgcolor="<?php p($TableColor) ?>"><hr></td>
+      <td width="100%" bgcolor="<?php p($tablecolor) ?>"><hr></td>
     </tr>
     <tr>
-      <td width="100%" bgcolor="<?php p($TableColor) ?>">
+      <td width="100%" bgcolor="<?php p($tablecolor) ?>">
           <center>
 <?php
 }
@@ -711,8 +726,8 @@ global $CFG, $THEME;
      echo "<td align=center width=60%>";
      echo "<b>";
 
-     $menu["-1"] = get_string("allcategories","glossary");
-     $menu["0"] = get_string("nocategorized","glossary");
+     $menu[GLOSSARY_SHOW_ALL_CATEGORIES] = get_string("allcategories","glossary");
+     $menu[GLOSSARY_SHOW_NOT_CATEGORISED] = get_string("notcategorised","glossary");
 
      $categories = get_records("glossary_categories", "glossaryid", $glossary->id, "name ASC");
      if ( $categories ) {
@@ -727,18 +742,22 @@ global $CFG, $THEME;
           }
      }
      if ( !$selected ) {
-         $selected = "0";
+         $selected = GLOSSARY_SHOW_NOT_CATEGORISED;
      }
 
      if ( $category ) {
         echo $category->name;
      } else {
-        if ( $cat < 0 ) {
-            echo get_string("allcategories","glossary");
-            $selected = "-1";
-        } elseif ( $cat == 0 ) {
+        if ( $cat == GLOSSARY_SHOW_NOT_CATEGORISED ) {
+
             echo get_string("entrieswithoutcategory","glossary");
-            $selected = "0";
+            $selected = GLOSSARY_SHOW_NOT_CATEGORISED;
+
+        } elseif ( $cat == GLOSSARY_SHOW_ALL_CATEGORIES ) {
+
+            echo get_string("allcategories","glossary");
+            $selected = GLOSSARY_SHOW_ALL_CATEGORIES;
+
         }
      }
      echo "</b></td>";

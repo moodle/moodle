@@ -57,20 +57,20 @@ if ($e) {
                 $newentry->timemodified = time();		
                 $newentry->teacherentry = isteacher($course->id,$USER->id);
 
-                $PermissionGranted = 1;
+                $permissiongranted = 1;
                 if ( !$glossary->allowduplicatedentries ) {
           	         $dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept));
           	         if ($dupentries) {          	
                          foreach ($dupentries as $curentry) {
                              if ( $glossary->id == $curentry->glossaryid ) {
                                  if ( $curentry->id != $entry ) {
-                                     $PermissionGranted = 0;
+                                     $permissiongranted = 0;
                                  }
                               }
                          }
     	             }
                 }
-                if ( $PermissionGranted ) {
+                if ( $permissiongranted ) {
                     $newentry->attachment = $_FILES["attachment"];
                     if ($newfilename = glossary_add_attachment($newentry, $newentry->attachment)) {
                          $newentry->attachment = $newfilename;
@@ -97,14 +97,14 @@ if ($e) {
                 $newentry->teacherentry = isteacher($course->id,$USER->id);
                 $newentry->sourceglossaryid = 0;
 
-                $PermissionGranted = 1;
+                $permissiongranted = 1;
                 if ( !$glossary->allowduplicatedentries ) {
                        $dupentries = get_record("glossary_entries","UCASE(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id);
                        if ($dupentries) {
-                              $PermissionGranted = 0;
+                              $permissiongranted = 0;
                        }
                 }
-                if ( $PermissionGranted ) {
+                if ( $permissiongranted ) {
                        if (! $newentry->id = insert_record("glossary_entries", $newentry)) {
                              error("Could not insert this new entry");
                        } else {

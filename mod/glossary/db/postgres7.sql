@@ -12,6 +12,7 @@ CREATE TABLE prefix_glossary (
      id SERIAL,
      course int4 NOT NULL default '0',
      name varchar(255) NOT NULL default '',
+     intro text NOT NULL default '',
      studentcanpost int2 NOT NULL default '0',
      allowduplicatedentries int2 NOT NULL default '0',
      displayformat int2 NOT NULL default '0',

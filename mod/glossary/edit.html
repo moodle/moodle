@@ -1,6 +1,7 @@
 <?php
 	global $CFG, $THEME;
     	require_once("../../config.php");
+    	require_once("lib.php");
 ?>
 <FORM name="theform" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
@@ -16,7 +17,7 @@
 	<?php
 		$categories = get_records("glossary_categories","glossaryid",$glossary->id);
 		echo "<select size=\"6\" name=\"categories[]\" multiple=\"yes\">";
-		echo "<option value=0>" . get_string("nocategorized","glossary") . "</optioon>";
+		echo "<option value=\"0\">" . get_string("nocategorized","glossary") . "</optioon>";
 
 		if ( $categories ) {
             foreach ( $categories as $category ) {

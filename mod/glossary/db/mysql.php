@@ -65,6 +65,12 @@ function glossary_upgrade($oldversion) {
                     "ADD `sourceglossaryid` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `attachment` " );
 
     }
+	
+    if ( $oldversion < 2003101500 ) {
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary` " .
+                    "ADD `intro`  text NOT NULL DEFAULT '' AFTER `name` " );
+
+    }
 
     return true;
 }

@@ -13,6 +13,7 @@ CREATE TABLE prefix_glossary (
   id number(10) primary key,
   course number(10) default '0' not null,
   name varchar2(255) default '' not null,
+  intro varchar2(255) default '' not null,
   studentcanpost number(2) default '0' not null,
   allowduplicatedentries number(2) default '0' not null,
   displayformat number(2) default '0' not null,
@@ -39,10 +40,10 @@ create or replace trigger p_glossary_trig
 .
 /
 
-insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(1,'1',1,1,1,1,1,1,1,1,1);
-insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(2,'2',2,2,2,2,2,2,2,2,2);
-insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(3,'3',3,3,3,3,3,3,3,3,3);
-insert into prefix_glossary(course,name,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(4,'4',4,4,4,4,4,4,4,4,4);
+insert into prefix_glossary(course,name,intro,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(1,'1','1',1,1,1,1,1,1,1,1,1);
+insert into prefix_glossary(course,name,intro,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(2,'2','2',2,2,2,2,2,2,2,2,2);
+insert into prefix_glossary(course,name,intro,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(3,'3','3',3,3,3,3,3,3,3,3,3);
+insert into prefix_glossary(course,name,intro,studentcanpost,allowduplicatedentries,displayformat,mainglossary,showspecial,showall,showalphabet,timecreated,timemodified) values(4,'4','4',4,4,4,4,4,4,4,4,4);
 
 select * from prefix_glossary order by 1,2;
 
