@@ -760,6 +760,9 @@ function print_admin_links ($siteid, $width=180) {
 function print_course_admin_links($course, $width=180) {
     global $USER, $CFG, $THEME;
 
+    if (isguest()) {
+        return true;
+    }
     if (empty($THEME->custompix)) {
         $pixpath = "$CFG->wwwroot/pix";
         $modpixpath = "$CFG->wwwroot/mod";
