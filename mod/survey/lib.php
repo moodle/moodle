@@ -195,7 +195,6 @@ function survey_get_responses($surveyid, $groupid) {
     }
 
     return get_records_sql("SELECT MAX(a.time) as time, 
-                                   count(*) as numanswers, 
                                    u.id, u.firstname, u.lastname, u.picture
                               FROM {$CFG->prefix}survey_answers AS a, 
                                    {$CFG->prefix}user AS u,
@@ -282,14 +281,14 @@ function survey_count_responses($surveyid, $groupid) {
 function survey_print_all_responses($cmid, $results, $courseid) {
     global $THEME;
 
-    $table->head  = array ("", get_string("name"),  get_string("time"), get_string("answers", "survey"));
-    $table->align = array ("", "left", "left", "right");
-    $table->size = array (35, "", "", "");
+    $table->head  = array ("", get_string("name"),  get_string("time"));
+    $table->align = array ("", "left", "left");
+    $table->size = array (35, "", "" );
 
     foreach ($results as $a) {
         $table->data[] = array(print_user_picture($a->id, $courseid, $a->picture, false, true, false),
                "<a href=\"report.php?action=student&student=$a->id&id=$cmid\">".fullname($a)."</a>", 
-               userdate($a->time), $a->numanswers);
+               userdate($a->time));
     }
 
     print_table($table);

@@ -65,8 +65,9 @@
 
 /// Check to see if groups are being used in this survey
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $menuaction = $action == "student" ? "students" : $action;
         $currentgroup = setup_and_print_groups($course, $groupmode, 
-                                       "report.php?id=$cm->id&action=$action&qid=$qid");
+                                       "report.php?id=$cm->id&action=$menuaction&qid=$qid");
     } else {
         $currentgroup = 0;
     }
