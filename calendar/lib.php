@@ -146,7 +146,6 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     $content .= '</tr></thead><tbody><tr>'; // End of day names; prepare for day numbers
 
     // For the table display. $week is the row; $dayweek is the column.
-    $week = 1;
     $dayweek = $startwday;
 
     // Paddding (the first week may have blank days in the beginning)
@@ -154,13 +153,14 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         $content .= '<td>&nbsp;</td>'."\n";
     }
 
+    $strftimetimedayshort = get_string('strftimedayshort');
+
     // Now display all the calendar
     for($day = 1; $day <= $display->maxdays; ++$day, ++$dayweek) {
         if($dayweek > $display->maxwday) {
             // We need to change week (table row)
-            $content .= "</tr>\n<tr>";
+            $content .= '</tr><tr>';
             $dayweek = $display->minwday;
-            ++$week;
         }
 
         // Reset vars
@@ -185,7 +185,6 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     continue;
                 }
                 $event = $events[$eventid];
-
                 if(!empty($event->modulename)) {
                     $popupicon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
                     $popupalt  = $event->modulename;
@@ -195,7 +194,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     $popupalt  = '';
                 } else if ($event->courseid > 1 and empty($event->groupid)) {      // Course event
                     $popupicon = $CFG->pixpath.'/c/course.gif';
-                    $popupalt  = '';
+                   $popupalt  = '';
                 } else if ($event->groupid) {                                      // Group event
                     $popupicon = $CFG->pixpath.'/c/group.gif';
                     $popupalt  = '';
@@ -206,7 +205,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                 $popupcontent .= '<div><img height=16 width=16 src=\\\''.$popupicon.'\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\''.$popupalt.'\\\' /><a href=\\\''.$dayhref.'\\\'>'.addslashes(htmlspecialchars($event->name)).'</a></div>';
             }
 
-            $popupcaption = get_string('eventsfor', 'calendar', userdate($events[$eventid]->timestart, get_string('strftimedayshort')));
+            $popupcaption = get_string('eventsfor', 'calendar', userdate($events[$eventid]->timestart, $strftimetimedayshort));
             $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
 
             // Class and cell content
@@ -221,12 +220,6 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             }
             else if(isset($typesbyday[$day]['startuser'])) {
                 $class .= ' cal_event_user';
-            }
-            if(count($eventsbyday[$day]) == 1) {
-                $title = get_string('oneevent', 'calendar');
-            }
-            else {
-                $title = get_string('manyevents', 'calendar', count($eventsbyday[$day]));
             }
             $cell = '<strong><a href="'.$dayhref.'" '.$popup.'">'.$day.'</a></strong>';
         }
@@ -254,7 +247,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
         // Just display it
         if(!empty($class)) {
-            $class = ' class="'.trim($class).'"';
+            $class = ' class="'.$class.'"';
         }
         $content .= '<td'.$class.'>'.$cell."</td>\n";
     }
