@@ -1161,8 +1161,8 @@ function get_course_students($courseid, $sort="u.lastaccess DESC") {
 }
 
 function get_course_teachers($courseid, $sort="t.authority ASC") {
-    return get_records_sql("SELECT u.* FROM user u, user_teachers t
-                            WHERE t.course = '$courseid' AND t.user = u.id
+    return get_records_sql("SELECT u.*,t.authority FROM user u, user_teachers t
+                            WHERE t.course = '$courseid' AND t.user = u.id 
                             ORDER BY $sort");
 }
 
@@ -1343,6 +1343,23 @@ function make_mod_upload_directory($courseid) {
 }
 
 
+function valid_uploaded_file($newfile) {
+// Returns current name of file on disk if true
+    if (is_uploaded_file($newfile['tmp_name']) and $newfile['size'] > 0) {
+        return $newfile['tmp_name'];
+    } else {
+        return "";
+    }
+}
+
+function get_max_upload_file_size() {
+    if (! $filesize = ini_get("upload_max_filesize")) {
+        $filesize = "5M";
+    }
+    return get_real_size($filesize);
+}
+
+
 function get_directory_list($rootdir, $excludefile="") {
 // Returns an array with all the filenames in 
 // all subdirectories, relative to the given rootdir.
@@ -1350,7 +1367,7 @@ function get_directory_list($rootdir, $excludefile="") {
 
     $dirs = array();
    
-    $dir = opendir( $rootdir );
+    $dir = opendir($rootdir);
 
     while ($file = readdir($dir)) {
         if ($file != "." and $file != ".." and $file != $excludefile) {
@@ -1365,6 +1382,7 @@ function get_directory_list($rootdir, $excludefile="") {
             }
         }
     }
+    closedir($dir);
 
     return $dirs;
 }
@@ -1384,6 +1402,20 @@ function get_real_size($size=0) {
             $size = substr($size, 0, strlen($size) - strlen($key)) * $scan[$key];
             break;
         }
+    }
+    return $size;
+}
+
+function display_size($size) {
+// Converts bytes into display form
+    if ($size >= 1073741824) {
+        $size = round($size / 1073741824 * 10) / 10 . "Gb";
+    } else if ($size >= 1048576) {
+        $size = round($size / 1048576 * 10) / 10 . "Mb";
+    } else if ($size >= 1024) {
+        $size = round($size / 1024 * 10) / 10 . "Kb";
+    } else { 
+        $size = $size . "b";
     }
     return $size;
 }
@@ -1440,7 +1472,7 @@ function get_string($identifier, $module="", $a=NULL) {
 
     } else {
         if ($lang == "en") {
-            return "ERROR: '$identifier' is missing!";
+            return "[['$identifier']]";
 
         } else {   // Try looking in the english file.
             $langfile = "$langpath/en/$module.php";
@@ -1451,7 +1483,7 @@ function get_string($identifier, $module="", $a=NULL) {
                 eval($result);
                 return $resultstring;
             } else {
-                return "ERROR: '$identifier' is missing!";
+                return "[['$identifier']]";
             }
         }
     }
