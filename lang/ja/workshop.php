@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.4 development (2004070800)
+      // workshop.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['absent'] = '╥Гюй';
@@ -123,7 +123,7 @@ $string['noteonassessmentelements'] = 'и╬╡а╓о©Тб©╓╞╓н║жи╬╡амваг║в╓к╓Х╓Йю╝н╘╓а╓ч╓
 <BR>
 ║ж╡щбЙ╓нйт╫╦║в╡Хлл╓гмваг©Т╓Рйя╧╧╓╧╓К╓Ё╓х╓╛╫пмХ╓ч╓╧║ё
 <BR>
-мваг╪╚бн╓о║жи╬╡а╓н╢имЩ║в╡Хлл╓гйя╧╧╓г╓╜╓ч╓╧║ё ';
+мваг╪╚бн╓о║жи╬╡а╓н╢имЩ║в╡Хлл╓гйя╧╧╫пмХ╓ч╓╧║ё ';
 $string['notgraded'] = '╨неюл╣╓╥';
 $string['notitlegiven'] = 'бЙл╬╓╛╓╒╓Й╓ч╓╩╓С';
 $string['numberofassessmentelements'] = '╔Ё╔А╔С╔х©Т║╒и╬╡амваг©Т║╒и╬╡а╓ниЩ║╒╢П╫Ю©Т';
