@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // quiz.php - created with Moodle 1.4 development (2004060100)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -41,6 +41,7 @@ $string['categorymove'] = 'La categoria \'$a->name\' contiene $a->count domande.
 $string['categorymoveto'] = 'Trasferisci a questa categoria';
 $string['choice'] = 'Scelta';
 $string['choices'] = 'Scelte disponibili';
+$string['confirmstartattempt'] = 'Il quiz ha un tempo limite. Sei sicuro di voler iniziare?';
 $string['correctanswer'] = 'Risposta esatta';
 $string['correctanswers'] = 'Risposte esatte';
 $string['corrresp'] = 'Risposta Corretta';
@@ -106,6 +107,7 @@ $string['listitems'] = 'Elenco degli elementi di questo quiz';
 $string['marks'] = 'Punti';
 $string['match'] = 'Corrispondenza';
 $string['matchanswer'] = 'Risposta corrispondenza';
+$string['minutes'] = 'Minuti';
 $string['missinganswer'] = 'Troppo pochi :RISPOSTA, :Sx, :Dx punti per la linea di domanda $a. Devi definire come minimo 2 possibili risposte';
 $string['missingcorrectanswer'] = 'Deve essere specificata la risposta corretta';
 $string['missingname'] = 'Nome domanda mancante';
@@ -124,6 +126,7 @@ $string['noquestions'] = 'Non sono state aggiunte ancora domande';
 $string['noresponse'] = 'Nessuna risposta';
 $string['noreview'] = 'Non hai il permesso di rivedere questo quiz';
 $string['noreviewuntil'] = 'Non hai il permesso di rivedere questo quiz fino a $a';
+$string['noscript'] = 'I JavaScript devono essere abilitati per poter continuare!';
 $string['notenoughanswers'] = 'Questo tipo di domanda richiede come minimo $a risposte';
 $string['notenoughsubquestions'] = 'Non sono state definite abbastanza sottodomande!<br>Vuoi tornare indietro e correggere questa domanda?';
 $string['numerical'] = 'Numerica';
@@ -143,6 +146,8 @@ $string['quizcloses'] = 'Quiz chiuso';
 $string['quiznotavailable'] = 'Il quiz non sarà disponibile fino al: $a';
 $string['quizopen'] = 'Apri il quiz';
 $string['quizopens'] = 'Quiz aperti';
+$string['quiztimelimit'] = 'Limite di tempo: ';
+$string['quiztimer'] = 'Tempo quiz';
 $string['random'] = 'Insieme casuale';
 $string['randomcreate'] = 'Crea Domande Casuali';
 $string['randomsamatch'] = 'Corrispondenze a risposte brevi casuali';
@@ -180,6 +185,10 @@ $string['shuffleanswers'] = 'Risposte mischiate';
 $string['shufflequestions'] = 'Domande mischiate';
 $string['time'] = 'Ora';
 $string['timecompleted'] = 'Completato';
+$string['timeleft'] = 'Tempo rimasto';
+$string['timelimit'] = 'Tempo limite';
+$string['timelimitexeeded'] = 'Spiacente! Il tempo per il quiz è esaurito!';
+$string['timesup'] = 'Tempo scaduto!';
 $string['timetaken'] = 'Tempo impiegato';
 $string['toomanyrandom'] = 'Il numero di domande casuali richieste é maggiore di quello  delle domande contenute in questa categoria! ($a)';
 $string['true'] = 'Vero';

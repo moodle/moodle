@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 (2004052500)
+      // moodle.php - created with Moodle 1.4 development (2004060100)
 
 
 $string['action'] = 'Azione';
@@ -143,6 +143,7 @@ $string['configcachetext'] = 'Per i siti grandi o i siti che usa filtri di testo
 $string['configcountry'] = 'Se scegli uno stato qui, questo verrà proposto di default. Per obbligare un utente a scegliere il proprio stato, lascialo vuoto.';
 $string['configdebug'] = 'Se si attiva questa opzione, Si incrementerà il livello di rapporto di errore e saranno stampati più avvertimenti. Questo è utile solo per sviluppatori.';
 $string['configdeleteunconfirmed'] = 'Se viene utilizzata l\'autenticazione via mail, questo è il periodo nel quale una risposta dell\'utente viene accettata. Dopo questo periodo, le registrazioni non confermate sono cancellate.';
+$string['configdigestmailtime'] = 'Le persone che scelgono di ricevere le mail spedite a loro in versione di raccolta, riceveranno le raccolte giornalmente. Questa impostazione definisce a quale ora del giorno la mail giornaliera sarà spedita (il cron successivo a quest\'ora le spedirà).';
 $string['configenablerssfeeds'] = 'Questa opzione abilita l\'utilizzo degli RSS nel sito. Per vedere i cambiamenti devi abilitare l\'RSS anche nei singoli moduli - gestione moduli nella pagina di configurazione.';
 $string['configenablerssfeedsdisabled'] = 'Questo non è disponibile perché gli RSS sono disabilitati in tutto il Sito. Per abilitali, vai a Configura variabili sotto Amministrazione Configurazione.';
 $string['configerrorlevel'] = 'Scegli il numero di messaggi di avvertimento PHP che vuoi siano mostrati. Questa <i>Normale</i> è, di solito la scelta migliore.';
@@ -284,6 +285,9 @@ $string['down'] = 'In basso';
 $string['downloadexcel'] = 'Download in formato Excel';
 $string['downloadtext'] = 'Download in formato testo';
 $string['doyouagree'] = 'Hai letto queste condizioni e le hai accettate?';
+$string['duplicate'] = 'Duplicare';
+$string['duplicatinga'] = 'Duplicazione: $a';
+$string['duplicatingain'] = 'Duplicazione di $a->what in $a->in';
 $string['edit'] = 'Modifica $a';
 $string['editcoursesettings'] = 'Modifica impostazioni del corso';
 $string['editfiles'] = 'Modifica i file';
@@ -314,6 +318,10 @@ $string['emailconfirmsent'] = '<P>Una email è stata inviata al tuo indirizzo <B>
 <P>Esso contiene delle semplici istruzioni per completare la tua registrazione.
 
 <P>Se incontri delle difficoltà, contatta l\'amministratore del sito.';
+$string['emaildigest'] = 'Tipo di raccolta email';
+$string['emaildigestcomplete'] = 'Completa (giornalmente invia i messaggi completi)';
+$string['emaildigestoff'] = 'Nessuna raccolta (ogni messaggio viene spedito via mail)';
+$string['emaildigestsubjects'] = 'Soggetti (giornalmente invia solo i soggetti dei messaggi)';
 $string['emaildisable'] = 'Questo indirizzo di posta è disabilitato.';
 $string['emaildisplay'] = 'Mostra Email';
 $string['emaildisplaycourse'] = 'Permetti solo agli altri iscritti al corso di vedere il mio email';
