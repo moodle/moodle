@@ -1,15 +1,41 @@
-<form name="form" method="post" action="<?=$ME ?>">
+<?
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $defaultformat = FORMAT_HTML;
+        $onsubmit = "onsubmit=\"copyrichtext(document.form.description);\"";
+    } else {
+        $defaultformat = FORMAT_MOODLE;
+        $onsubmit = "";
+    }
+?>
+
+<form name="form" method="post" <?=$onsubmit ?> action="<?=$ME ?>">
 <table cellpadding=5>
 <tr valign=top>
     <td align=right><P><B><? print_string("assignmentname", "assignment") ?>:</B></P></TD>
     <td>
-        <input type="text" name="name" size=30 value="<? p($form->name) ?>">
+        <input type="text" name="name" size=60 value="<? p($form->name) ?>">
     </td>
 </tr>
 <tr valign=top>
     <td align=right><P><B><? print_string("description", "assignment") ?>:</B></P></TD>
     <td>
-        <textarea name="description" rows=15 cols=30 wrap="virtual"><? p($form->description) ?></textarea>
+    <? 
+       print_textarea($usehtmleditor, 20, 60, 595, 400, "description", $form->description);
+    
+       if ($usehtmleditor) { 
+           helpbutton("richtext", get_string("helprichtext"));
+       } else { 
+           helpbutton("text", get_string("helptext"));
+       }
+       echo "<P>";
+       print_string("formattexttype");
+       echo ":&nbsp;";
+       if (!$form->format) {
+           $form->format = $defaultformat;
+       }
+       choose_from_menu(format_text_menu(), "format", $form->format, ""); 
+       echo "</P>";
+    ?>
     </td>
 </tr>
 <tr valign=top>
@@ -57,6 +83,7 @@
     ?></td>
 </tr>
 </table>
+<BR>
 <CENTER>
 <input type="hidden" name=course     value="<? p($form->course) ?>">
 <input type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
@@ -69,3 +96,10 @@
 <input type="submit" name=cancel value="<? print_string("cancel") ?>">
 </CENTER>
 </FORM>
+
+<? 
+   if ($usehtmleditor) { 
+       print_richedit_javascript("form", "description", "no");
+   }
+?>
+

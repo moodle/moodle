@@ -66,7 +66,7 @@
     echo "<B>".get_string("maximumgrade")."</B>: $assignment->grade<BR>";
     print_simple_box_end();
     echo "<BR>";
-    echo text_to_html($assignment->description);
+    echo format_text($assignment->description, $assignment->format);
     print_simple_box_end();
     echo "<BR>";
 
