@@ -150,6 +150,7 @@ $string['databasechecking'] = "Upgrading Moodle database from version \$a->oldve
 $string['databasesetup'] = "Setting up database";
 $string['databasesuccess'] = "Database was successfully upgraded";
 $string['databaseupgrades'] = "Upgrading database";
+$string['databaseupgradebackups'] = "Backup version is now \$a";
 $string['day'] = "day";
 $string['days'] = "days";
 $string['defaultcoursefullname'] = "Course Fullname 101";
