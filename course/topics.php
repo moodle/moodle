@@ -9,10 +9,12 @@
     require_once("$CFG->dirroot/mod/forum/lib.php");
 
     if (isset($topic)) {
-        if ($topic == "all") {
-            unset($USER->topic);
+        $displaysection = course_set_display($course->id, $topic);
+    } else {
+        if (isset($USER->display[$course->id])) {       // for admins, mostly
+            $displaysection = $USER->display[$course->id];
         } else {
-            $USER->topic = $topic;
+            $displaysection = course_set_display($course->id, 0);
         }
     }
 
@@ -122,11 +124,9 @@
 
     while ($section <= $course->numsections) {
 
-        if (isset($USER->topic)) {         // Just display a single topic
-            if ($USER->topic != $section) { 
-                $section++;
-                continue;
-            }
+        if (!empty($displaysection) and $displaysection != $section) {
+            $section++;
+            continue;
         }
 
         $currenttopic = ($course->marker == $section);
@@ -177,7 +177,7 @@
         echo "</td>";
         echo "<td nowrap $colorsides valign=top align=center width=10>";
         echo "<font size=1>";
-        if (isset($USER->topic)) {
+        if ($displaysection == $section) {
             $strshowalltopics = get_string("showalltopics");
             echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br><br>";
         } else {

@@ -507,6 +507,45 @@ function get_all_sections($courseid) {
                        "section, id, course, summary, sequence");
 }
 
+function course_set_display($courseid, $display=0) {
+    global $USER;
+
+    if (empty($USER)) {
+        return false;
+    }
+
+    if ($display == "all" or empty($display)) {
+        $display = 0;
+    }
+
+    if (record_exists("course_display", "userid", $USER->id, "course", $courseid)) {
+        set_field("course_display", "display", $display, "userid", $USER->id, "course", $courseid);
+    } else {
+        $record->userid = $USER->id;
+        $record->course = $courseid;
+        $record->display = $display;
+        if (!insert_record("course_display", $record)) {
+            notify("Could not save your course display!");
+        }
+    }
+
+    return $USER->display[$courseid] = $display;  // Note: = not ==
+}
+
+function course_section_visible($courseid, $section) { 
+/// Returns true/false depending on section visibility
+/// Can be expanded in the future to handle more complex 
+/// course displays
+
+    global $USER;
+
+    if (empty($USER->display[$courseid])) {
+        return true;
+    }
+
+    return $USER->display[$courseid] == $section;
+}
+
 
 function print_section_block($heading, $course, $section, $mods, $modnames, $modnamesused, 
                              $absolute=true, $width="100%", $isediting=false) {

@@ -363,6 +363,18 @@ function main_upgrade($oldversion=0) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX courseuserid (course,userid) ");
     }
 
+    if ($oldversion < 2003042801) {
+        execute_sql("CREATE TABLE `{$CFG->prefix}course_display` (
+                        `id` int(10) unsigned NOT NULL auto_increment,
+                        `course` int(10) unsigned NOT NULL default '0',
+                        `userid` int(10) unsigned NOT NULL default '0',
+                        `display` int(10) NOT NULL default '0',
+                        PRIMARY KEY  (`id`),
+                        UNIQUE KEY `id` (`id`),
+                        KEY `courseuserid` (course,userid)
+                     ) TYPE=MyISAM COMMENT='Stores info about how to display the course'");
+    }
+
     return $result;
 
 }

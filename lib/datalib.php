@@ -721,6 +721,7 @@ function get_user_info_from_db($field, $value) {
     if ($students = get_records("user_students", "userid", $user->id)) {
         foreach ($students as $student) {
             $user->student[$student->course] = true;
+            $user->zoom[$student->course] = $student->zoom;
         }
     }
 
@@ -734,6 +735,12 @@ function get_user_info_from_db($field, $value) {
         foreach ($admins as $admin) {
             $user->admin = true;
             break;
+        }
+    }
+
+    if ($displays = get_records("course_display", "userid", $user->id)) {
+        foreach ($displays as $display) {
+            $user->display[$display->course] = $display->display;
         }
     }
 

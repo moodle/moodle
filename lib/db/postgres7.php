@@ -126,6 +126,17 @@ function main_upgrade($oldversion=0) {
         execute_sql(" CREATE INDEX coursemoduleaction ON {$CFG->prefix}log (course,module,action) ");
         execute_sql(" CREATE INDEX courseuserid ON {$CFG->prefix}log (course,userid) ");
     }
+
+    if ($oldversion < 2003042801) {
+        execute_sql("CREATE TABLE {$CFG->prefix}course_display (
+                         id SERIAL PRIMARY KEY,
+                         course integer NOT NULL default '0',
+                         userid integer NOT NULL default '0',
+                         display integer NOT NULL default '0'
+                      )");
+
+        execute_sql("CREATE INDEX courseuserid ON {$CFG->prefix}course_display (course,userid)");
+    }
                                                             
     return $result;
 }

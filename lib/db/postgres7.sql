@@ -32,6 +32,15 @@ CREATE TABLE prefix_course_categories (
    name varchar(255) NOT NULL default ''
 );
 
+CREATE TABLE prefix_course_display (
+   id SERIAL PRIMARY KEY,
+   course integer NOT NULL default '0',
+   userid integer NOT NULL default '0',
+   display integer NOT NULL default '0'
+);
+
+CREATE INDEX courseuserid ON prefix_course_display (course,userid);
+
 CREATE TABLE prefix_course_modules (
    id SERIAL PRIMARY KEY,
    course integer NOT NULL default '0',

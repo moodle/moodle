@@ -64,6 +64,23 @@ CREATE TABLE `prefix_course_categories` (
 ) TYPE=MyISAM COMMENT='Course categories';
 # --------------------------------------------------------
 
+
+#
+# Table structure for table `course_display`
+#
+
+CREATE TABLE `prefix_course_display` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `course` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
+  `display` int(10) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `id` (`id`),
+  KEY `courseuserid` (course,userid)
+) TYPE=MyISAM COMMENT='Stores info about how to display the course';
+# --------------------------------------------------------
+
+
 #
 # Table structure for table `course_modules`
 #
@@ -240,7 +257,6 @@ CREATE TABLE `prefix_user_coursecreators` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM COMMENT='One record per course creator';
-# --------------------------------------------------------
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');

@@ -6,10 +6,12 @@
 
 
     if (isset($week)) {
-        if ($week == "all") {
-            unset($USER->section);
+        $displaysection = course_set_display($course->id, $week);
+    } else {
+        if (isset($USER->display[$course->id])) {
+            $displaysection = $USER->display[$course->id];
         } else {
-            $USER->section = $week;
+            $displaysection = course_set_display($course->id, 0);
         }
     }
 
@@ -55,7 +57,7 @@
 
 /// Print a form to search forums
     $searchform = forum_print_search_form($course, "", true);
-    $searchform = "<DIV ALIGN=\"CENTER\">$searchform</DIV>";
+    $searchform = "<div align=\"center\">$searchform</div>";
     print_side_block(get_string("search","forum"), $searchform);
     
 
@@ -64,7 +66,7 @@
 
 
 /// Start main column
-    echo "</TD><TD WIDTH=\"*\">";
+    echo "</td><td width=\"*\">";
     print_heading_block(get_string("weeklyoutline"), "100%", "outlineheadingblock");
     print_spacer(8, 1, true);
 
@@ -97,11 +99,11 @@
             echo "</div>";
         }
 
-        echo "</TD>";
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" class=\"weeklyoutlineside\" VALIGN=top ALIGN=CENTER WIDTH=10>";
-        echo "&nbsp;</TD>";
-        echo "</TR>";
-        echo "<TR><TD COLSPAN=3><IMG SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
+        echo "</td>";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=top align=center width=10>";
+        echo "&nbsp;</td>";
+        echo "</tr>";
+        echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
     }
 
 
@@ -118,12 +120,10 @@
 
         $nextweekdate = $weekdate + ($weekofseconds);
 
-        if (isset($USER->section)) {         // Just display a single week
-            if ($USER->section != $week) { 
-                $week++;
-                $weekdate = $nextweekdate;
-                continue;
-            }
+        if (!empty($displaysection) and $displaysection != $week) {  // Check this week is visible
+            $week++;
+            $weekdate = $nextweekdate;
+            continue;
         }
 
         $thisweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
@@ -177,7 +177,7 @@
         echo "</td>";
         echo "<td nowrap $colorsides valign=top align=center width=10>";
         echo "<font size=1>";
-        if (isset($USER->section)) {
+        if ($displaysection == $week) { 
             $strshowallweeks = get_string("showallweeks");
             echo "<a href=\"view.php?id=$course->id&week=all\" title=\"$strshowallweeks\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a></font>";
         } else {
