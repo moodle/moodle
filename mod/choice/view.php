@@ -137,6 +137,8 @@
         switch ($choice->publish) {
           case CHOICE_PUBLISH_NAMES:
 
+            $isteacher = isteacher($course->id);
+
             $tablewidth = (int) (100.0 / count($useranswer));
 
             echo "<table cellpadding=5 cellspacing=10 align=center>";
@@ -164,7 +166,7 @@
                     echo "<tr><td width=10 nowrap>";
                     print_user_picture($user->id, $course->id, $user->picture);
                     echo "</td><td width=100% nowrap>";
-                    echo "<p>$user->firstname $user->lastname</p>";
+                    echo "<p>".fullname($user, $isteacher)."</p>";
                     echo "</td></tr>";
                 }
                 echo "</table>";

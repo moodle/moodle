@@ -94,7 +94,7 @@
             echo "<tr><td width=\"10\" nowrap>";
             print_user_picture($user->id, $course->id, $user->picture);
             echo "</td><td width=\"100%\" nowrap>";
-            echo "<p>$user->firstname $user->lastname</p>";
+            echo "<p>".fullname($user, true)."</p>";
             echo "</td></tr>";
         }
         echo "</table>";
