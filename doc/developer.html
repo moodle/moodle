@@ -1,30 +1,30 @@
-<HEAD>
-    <TITLE>Moodle Docs: Developers Manual</TITLE>
-	<LINK REL="stylesheet" HREF="../theme/standard/styles.css" TYPE="TEXT/CSS">
-</HEAD>
+<head>
+    <title>Moodle Docs: Developers Manual</title>
+	<link rel="stylesheet" href="../theme/standard/styles.css" type="TEXT/CSS">
+</head>
 
-<BODY BGCOLOR="#FFFFFF">
-<H2>Developers Manual</H2>
-<P>This document describes some of Moodle's design and how you can contribute.</P>
-<P>Sections in this document:</P>
-<OL>
-  <LI><A HREF="#architecture">Moodle architecture</A></LI>
-  <LI><A HREF="#contribute">How you can contribute</A> 
+<body bgcolor="#FFFFFF">
+<h2>Developers Manual</h2>
+<p>This document describes some of Moodle's design and how you can contribute.</p>
+<p>Sections in this document:</p>
+<ol>
+  <li><a href="#architecture">Moodle architecture</a></li>
+  <li><a href="#contribute">How you can contribute</a> 
     <ul>
-      <li><A HREF="#activities">Learning activities</A></li>
-      <li><A HREF="#themes">Themes</A></li>
-      <li><A HREF="#languages">Languages</A></li>
-      <li><A HREF="#database">Database Schemas</A></li>
+      <li><a href="#activities">Learning activities</a></li>
+      <li><a href="#themes">Themes</a></li>
+      <li><a href="#languages">Languages</a></li>
+      <li><a href="#database">Database Schemas</a></li>
       <li><a href="#courseformats">Course formats</a></li>
       <li><a href="#doc">Documentation and articles</a></li>
       <li><a href="#bugs">Participating in the bug tracker</a></li>
     </ul>
-  </LI>
-</OL>
-<P>&nbsp;</P>
-<H3><a name="architecture"></a>1. Moodle architecture</H3>
-<P>From a system administrator's perspective, Moodle has been designed according 
-  to the following criteria:</P>
+  </li>
+</ol>
+<p>&nbsp;</p>
+<h3><a name="architecture"></a>1. Moodle architecture</h3>
+<p>From a system administrator's perspective, Moodle has been designed according 
+  to the following criteria:</p>
 <ol>
   <li><strong>Moodle should run on the widest variety of platforms</strong><br>
     <br>
@@ -79,15 +79,15 @@
     interface formatting (so that it can be integrated visually into other web sites).</li>
 </ol>
 <p>&nbsp;</p>
-<H3><a name="contribute" id="contribute"></a>2. How you can contribute</H3>
-<P>As mentioned above, Moodle has a number of features that are modular. Even 
-  if you are not a programmer there are things you can change or help with.</P>
-<P><strong><a name="activities" id="activities"></a>Learning Activities</strong></P>
+<h3><a name="contribute" id="contribute"></a>2. How you can contribute</h3>
+<p>As mentioned above, Moodle has a number of features that are modular. Even 
+  if you are not a programmer there are things you can change or help with.</p>
+<p><strong><a name="activities" id="activities"></a>Learning Activities</strong></p>
 <blockquote> 
   <p>These are by far the most important modules, and reside in the 'mod' directory. 
-    There are seven default modules: assignment, choice, forum, journal, quiz, resource, 
-    and survey. Each module is in a separate subdirectory and consists of the 
-    following mandatory elements (plus extra scripts unique to each module):</p>
+    There are seven default modules: assignment, choice, forum, journal, quiz, 
+    resource, and survey. Each module is in a separate subdirectory and consists 
+    of the following mandatory elements (plus extra scripts unique to each module):</p>
   <ul>
     <li>mod.html: a form to set up or update an instance of this module</li>
     <li>version.php: defines some meta-info and provides upgrading code</li>
@@ -113,18 +113,42 @@
       </ul>
     </li>
     <li>Lastly, each module will have some language files that contain strings 
-      for that module. See below.<br>
-    </li>
+      for that module. See below.</li>
   </ul>
+  <p>The easiest way to start a new learning activity module is to use the template 
+    in <strong><a href="http://moodle.com/mod/newmodule_template.zip">mod/newmodule_template.zip</a>.</strong> 
+    Unzip it and follow the README inside. </p>
+  <p>You might also like to post first in the <a href="http://moodle.com/mod/forum/view.php?id=44" target="_top">Activities 
+    modules forum on Using Moodle</a>.</p>
+  <p>&nbsp;</p>
 </blockquote>
 <p> <strong><a name="themes" id="themes"></a>Themes</strong></p>
 <blockquote> 
   <p>Themes (or skins) define the look of a site. A number of simple themes are 
     provided in the main distribution, but you may want to copy one of these and 
     customise it to suit your own needs (eg local logo, colours, styles, graphics 
-    etc)</p>
-  <p>Each theme is in a subdirectory of the &quot;theme&quot; directory. You can 
-    copy the &quot;standard&quot; theme as a template.<br>
+    etc). Each theme is in a subdirectory of the &quot;theme&quot; directory. 
+    You can copy the &quot;standard&quot; theme or any other theme as a template 
+    for your own.</p>
+  <p>Here is what each of the files does:</p>
+  <ul>
+    <li><strong>config.php</strong>: defines your theme colours used throughout 
+      the site</li>
+    <li><strong>styles.php</strong>: the style sheet, containing CSS definitions 
+      for standard HTML elements as well as many Moodle elements.</li>
+    <li><strong>header.html</strong>: Included at the top of each page. This is 
+      what you need to edit to add a logo at the top of pages, for example.</li>
+    <li><strong>footer.html</strong>: Included at the bottom of each page.</li>
+  </ul>
+  <p>Note that Moodle upgrades <em>may</em> break themes slightly, so check the 
+    release notes carefully if you are using a custom theme.</p>
+  <p>In particular, Moodle 2.0 will have a completely new display system, based 
+    on a XSL transformations of XML output from Moodle. It is likely that the 
+    themes for this will be a completely different format, but the advantage will 
+    be a much higher possible degree of customisation (including moving elements 
+    around the page).</p>
+  <p>More discussion about this in the <a href="http://moodle.com/mod/forum/view.php?id=46">Themes 
+    forum on Using Moodle</a>.<br>
   </p>
 </blockquote>
 <p><strong><a name="languages" id="languages"></a>Languages</strong></p>
@@ -167,6 +191,15 @@
     <p>and for modules:</p>
     <p>helpbutton(&quot;forumtypes&quot;, &quot;Forum types&quot;, &quot;forum&quot;);</p>
   </blockquote>
+  <p>Note that you can edit languages online, using the administration web tools 
+    under &quot;Check this language&quot;. This makes it easy to not to only create 
+    new languages but to refine existing ones. If you are starting a new language, 
+    please contact me, <a href="http://dougiamas.com/">Martin Dougiamas</a>. </p>
+  <p>You might also like to post in the <a href="http://moodle.com/mod/forum/view.php?id=43" target="_top">Languages 
+    forum on Using Moodle</a>. </p>
+  <p>If you are maintaining a language an ongoing basis, I can give you <a href="cvs.html">CVS 
+    write access to the Moodle source code</a> so that you can directly maintain 
+    the files.</p>
 </blockquote>
 <p><br>
   <strong><a name="database" id="database"></a>Database Schemas</strong></p>
@@ -182,12 +215,13 @@
     and inside the <strong>db</strong> subdirectory of each module.</p>
   <p>Currently, only MySQL is supported because that's what I know. If you are 
     familiar with another database (especially open source databases) and are 
-    willing to help port the MySQL schema, please get in contact with me (<a href="mailto:martin@moodle.com">martin@moodle.com</a>).</p>
+    willing to help port the MySQL schema, please get in contact with me (<a href="http://dougiamas.com/">Martin 
+    Dougiamas</a>).</p>
 </blockquote>
 <p>&nbsp;</p>
 <p><strong><a name="courseformats" id="courseformats"></a>Course Formats</strong></p>
 <blockquote> 
-  <p>Moodle 1.0 supports three different course formats: weekly, topics and social. 
+  <p>Moodle 1.x supports three different course formats: weekly, topics and social. 
   </p>
   <p>These are a little more connected to the rest of the code (and hence, less 
     &quot;pluggable&quot;) but it is still quite easy to add new ones.</p>
@@ -199,8 +233,8 @@
 <p><strong><a name="doc" id="doc"></a>Documentation and articles</strong></p>
 <blockquote> 
   <p>If you feel like writing a tutorial, an article, an academic paper or anything 
-    else about Moodle, please do! Put it on the web and make sure you include 
-    links to <a href="http://moodle.com/">http://moodle.com/</a></p>
+    else about Moodle, please do! </p>
+  <p>Put it on the web and make sure you include links to <a href="http://moodle.com/">http://moodle.com/</a></p>
   </blockquote>
 <p>&nbsp;</p>
 <p><strong><a name="bugs" id="bugs"></a>Participating in the bug tracker</strong></p>
@@ -230,8 +264,8 @@
 <blockquote> 
   <p>&nbsp;</p>
 </blockquote>
-<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="." TARGET="_top">Moodle Documentation</A></FONT></P>
-<P ALIGN="CENTER"><FONT SIZE="1">Version: $Id: developer.html,v 1.2 2001/12/09 
-  10:34:19 martin Exp $</FONT></P>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id: developer.html,v 1.2 2001/12/09 
+  10:34:19 martin Exp $</font></p>
 
-</BODY>
+</body>
