@@ -638,13 +638,18 @@ function calendar_filter_controls($type) {
 
 function calendar_day_representation($tstamp, $now = false, $usecommonwords = true) {
 
+    static $shortformat;
+    if(empty($shortformat)) {
+        $shortformat = strtolower(get_string('strftimedateshort'));
+    }
+
     $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
     if($now === false) {
         $now = time();
     }
 
     // To have it in one place, if a change is needed
-    $formal = get_string($days[userdate($tstamp, '%w')], 'calendar') . userdate($tstamp,' %d %b');
+    $formal = get_string($days[userdate($tstamp, '%w')], 'calendar') . userdate($tstamp, $shortformat);
 
     // Reverse TZ compensation: make GMT stamps correspond to user's TZ
     $tzfix = calendar_get_tz_offset();
