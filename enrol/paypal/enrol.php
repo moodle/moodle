@@ -51,13 +51,6 @@ function print_entry($course) {
 
 
 
-/// Override the base check_entry() function
-/// This should never be called for this type of enrolment anyway
-function check_entry($form, $course) {
-}       
-
-
-
 /// Override the get_access_icons() function
 function get_access_icons($course) {
     global $CFG;
