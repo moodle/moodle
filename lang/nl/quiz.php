@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004060100)
+      // quiz.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -77,6 +77,10 @@ $string['editingshortanswer'] = 'Een vraag met kort antwoord bewerken';
 $string['editingtruefalse'] = 'Een waar/onwaar vraag bewerken';
 $string['editquestions'] = 'Bewerk vragen';
 $string['errorsdetected'] = '$a fout(en) ontdekt';
+$string['exportfilename'] = 'test';
+$string['exportname'] = 'Bestandsnaam';
+$string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
+$string['exportquestions'] = 'Exporteer de vragen naar een bestand';
 $string['false'] = 'Onwaar';
 $string['feedback'] = 'Feedback';
 $string['fileformat'] = 'Bestandsformaat';
@@ -130,6 +134,7 @@ $string['numerical'] = 'Numeriek';
 $string['paragraphquestion'] = 'Vraagparagraaf niet ondersteund op lijn $a. De vraag wordt genegeerd';
 $string['percentcorrect'] = 'Percentage juist';
 $string['publish'] = 'Publiceer  ';
+$string['publishedit'] = 'Je moet rechten hebben in het vak dat deze vragen publiceert om in deze categorie vragen te kunnen toevoegen of bewerken.';
 $string['qti'] = 'IMS QTI opmaak';
 $string['question'] = 'Vraag';
 $string['questioninuse'] = 'De vraag \'$a\' is op dit moment al in gebruik:';
