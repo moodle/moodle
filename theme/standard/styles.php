@@ -659,10 +659,6 @@ TD.cal_event_description {
 
 .cal_popup_fg {
     background-color: <?php echo $THEME->cellcontent?>;
-    font-size: 75%;
-    font-family: Courier;
-    padding: 0px;
-    margin: 0px;
 }
 
 .cal_popup_bg {
@@ -679,7 +675,6 @@ TD.cal_event_description {
     font-size: 75%;
     font-weight: bold;
     font-family: sans-serif;
-    margin: 5px;
 }
 
 .cal_popup_close {

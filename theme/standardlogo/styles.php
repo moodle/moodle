@@ -459,11 +459,8 @@ a.autolink:hover {
 .headingblockcontent {
 }
 
-
-
-
 TABLE.calendarmini {
-	width: 100%;
+    width: 100%;
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
@@ -474,7 +471,7 @@ TABLE.calendarmini {
 }
 
 TABLE.calendarmonth {
-	width: 100%;
+    width: 100%;
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
@@ -486,7 +483,6 @@ TABLE.calendarmonth {
 TABLE.calendarmini TBODY TD {
     text-align: center;
     vertical-align: center;
-    width: 14%;
     border-width: 2px;
     border-color: <?PHP echo $THEME->cellcontent2?>;
     border-style: solid;
@@ -502,8 +498,8 @@ TABLE.calendarmonth TBODY TD {
 }
 
 .cal_event_global {
-	background-color: #99cc99;
-	border: 2px #99cc99 solid !important;
+	background-color: #2EBA0E;
+	border: 2px #2EBA0E solid !important;
 }
 
 .cal_event_course {
@@ -512,18 +508,18 @@ TABLE.calendarmonth TBODY TD {
 }
 
 .cal_event_group {
-	background-color: orange;
-	border: 2px orange solid !important;
+	background-color: #FBBB23;
+	border: 2px #FBBB23 solid !important;
 }
 
 .cal_event_user {
-	background-color: #ffcc99;
-	border: 2px #ffcc99 solid !important;
+	background-color: #A1BECB;
+	border: 2px #A1BECB solid !important;
 }
 
 .cal_duration_global {
-	border-top: 2px #99cc99 solid !important;
-	border-bottom: 2px #99cc99 solid !important;
+	border-top: 2px #2EBA0E solid !important;
+	border-bottom: 2px #2EBA0E solid !important;
 }
 
 .cal_duration_course {
@@ -532,13 +528,13 @@ TABLE.calendarmonth TBODY TD {
 }
 
 .cal_duration_user {
-	border-top: 2px #ffcc99 solid !important;
-	border-bottom: 2px #ffcc99 solid !important;
+	border-top: 2px #A1BECB solid !important;
+	border-bottom: 2px #A1BECB solid !important;
 }
 
 .cal_duration_group {
-	border-top: 2px orange solid !important;
-	border-bottom: 2px orange solid !important;
+	border-top: 2px #FBBB23 solid !important;
+	border-bottom: 2px #FBBB23 solid !important;
 }
 
 .cal_weekend {
@@ -574,22 +570,23 @@ TABLE.calendarmini THEAD TD {
 }
 
 TABLE.calendarmonth THEAD TD {
-	text-align: center;
+    text-align: center;
     vertical-align: center;
     padding-bottom: 3px;
     border-bottom: 2px <?PHP echo $THEME->borders?> solid;
 }
 
 .sideblockmain .cal_event {
-	font-size: 0.8em;
-	font-weight: bold;
+    font-size: 0.8em;
+    font-weight: bold;
 }
+
 .sideblockmain .cal_event_date {
 	font-size: 0.6em;
 }
 
 .mycalendar {
-	-moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomleft: 20px;
     -moz-border-radius-bottomright: 20px;
 }
 
@@ -601,7 +598,7 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .mycalendar TABLE.cal_filters {
-	width: 100%;
+    width: 100%;
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
@@ -611,14 +608,14 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .mycalendar .cal_filters THEAD TD {
-	border-bottom: 2px <?PHP echo $THEME->borders?> solid;
+    border-bottom: 2px <?PHP echo $THEME->borders?> solid;
     margin: 0px;
     padding: 2px;
 }
 
 
 .mycalendar .cal_event_table {
-	width: 100%;
+    width: 100%;
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
@@ -649,11 +646,6 @@ TABLE.calendarmonth THEAD TD {
 	margin-bottom: 4px;
 }
 
-.calendarexpired {
-	color: red;
-	font-weight: bold;
-}
-
 .calendarreferer {
 	font-weight: bold;
 }
@@ -666,28 +658,23 @@ TD.cal_event_description {
 }
 
 .cal_popup_fg {
-	background-color: <?php echo $THEME->cellcontent?>;
-	font-size: 75%;
-	font-family: Courier;
-	padding: 0px;
-	margin: 0px;
+    background-color: <?php echo $THEME->cellcontent?>;
 }
 
 .cal_popup_bg {
-	border-top: 2px #ffcc66 solid;
-	border-left: 2px #ffcc66 solid;
-	border-right: 2px #663300 solid;
-border-bottom: 2px #663300 solid;
-	background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
-	padding: 0px;
-	margin: 0px;
+    border-top: 2px #ffcc66 solid;
+    border-left: 2px #ffcc66 solid;
+    border-right: 2px #663300 solid;
+    border-bottom: 2px #663300 solid;
+    background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
+    padding: 0px;
+    margin: 0px;
 }
 
 .cal_popup_caption {
-	font-size: 75%;
-	font-weight: bold;
-	font-family: sans-serif;
-	margin: 5px;
+    font-size: 75%;
+    font-weight: bold;
+    font-family: sans-serif;
 }
 
 .cal_popup_close {
