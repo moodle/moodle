@@ -102,6 +102,7 @@
             $quiz_cat->name = backup_todb($info['QUESTION_CATEGORY']['#']['NAME']['0']['#']);
             $quiz_cat->info = backup_todb($info['QUESTION_CATEGORY']['#']['INFO']['0']['#']);
             $quiz_cat->publish = backup_todb($info['QUESTION_CATEGORY']['#']['PUBLISH']['0']['#']);
+            $quiz_cat->stamp = backup_todb($info['QUESTION_CATEGORY']['#']['STAMP']['0']['#']);
 
             //Now, we are going to do some calculations to decide when to create the category or no.
             //Based in the next logic:
@@ -117,70 +118,156 @@
             //Eloy's NOTE: I could be done code below more compact, but I've preffered do this to allow
             //easy future modifications.
 
-            //Check for categories and their properties, storing in temporary variables
-            //Count categories with the same name
+            //If backup contains category_stamps then everythig is done by stamp (current approach from 1.1 final)
+            //else, everything is done by name (old approach). This mantains backward compatibility.
 
-            $count_cat = count_records("quiz_categories","name",$quiz_cat->name);
-            //Count categories with the same name in the same course
-            $count_cat_same_course = count_records("quiz_categories","course",$restore->course_id,"name",$quiz_cat->name);
-            //Count categories with the same name in other course
-            $count_cat_other_course = $count_cat - $count_cat_same_course;
+            if ($quiz_cat->stamp) {
+                $restored_by = "(STAMP)";                          //Debug
+                //STAMP exists, do things using it (1.1)
 
-            //Get categories with the same name in the same course
-            //The last record will be the oldest category
-            if ($count_cat_same_course > 0) {
-                $cats_same_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c
-                                                     WHERE c.course = '$restore->course_id' AND 
-                                                           c.name = '$quiz_cat->name'
-                                                     ORDER BY c.id DESC");
-            } else {
-                $cats_same_course = false;
-            }
-            //Get categories with the same name in other course
-            //The last record will be the oldest category with publish=1
-            if ($count_cat_other_course > 0) {
-                $cats_other_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c                           
-                                                      WHERE c.course != '$restore->course_id' AND 
-                                                            c.name = '$quiz_cat->name'
-                                                      ORDER BY c.publish ASC, c.id DESC");
-            } else {
-                $cats_other_course = false;
-            }
-
-            if ($count_cat == 0) {
-                //The category doesn't exist, create it.
-                //The structure is equal to the db, so insert the quiz_categories
-                $newid = insert_record ("quiz_categories",$quiz_cat);
-            } else {
-                //The category exist, check if it belongs to the same course
+                //Check for categories and their properties, storing in temporary variables
+                //Count categories with the same stamp
+   
+                $count_cat = count_records("quiz_categories","stamp",$quiz_cat->stamp);
+                //Count categories with the same stamp in the same course
+                $count_cat_same_course = count_records("quiz_categories","course",$restore->course_id,"stamp",$quiz_cat->stamp);
+                //Count categories with the same stamp in other course
+                $count_cat_other_course = $count_cat - $count_cat_same_course;
+   
+                //Get categories with the same stamp in the same course 
                 if ($count_cat_same_course > 0) {
-                    //The category belongs to the same course, get the last record (oldest)
-                    foreach ($cats_same_course as $cat) {
-                        $newid = $cat->id;
-                    }
-                } else if ($count_cat_other_course > 0) {
-                    //The category belongs to other course, get the last record (oldest)
-                    foreach ($cats_other_course as $cat) {
-                        $other_course_cat = $cat;
-                    }
-                    //Now check th publish field
-                    if ($other_course_cat->publish == 0) {
-                        //The category has its publish to No (0). Create a new local one.
-                        $newid = insert_record ("quiz_categories",$quiz_cat);
-                    } else {
-                        //The category has its publish to Yes(1). Use it.
-                        $newid = $other_course_cat->id;
-                    }
+                    //Eloy's NOTE: Due to this select *must* be retrive only one record, we could have used get_record(), but
+                    //             mantain this to be as simmilar as possible with old code (comparing by name) to be
+                    //             able to modify both in the same manner.
+                    $cats_same_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c
+                                                         WHERE c.course = '$restore->course_id' AND
+                                                               c.stamp = '$quiz_cat->stamp'
+                                                         ORDER BY c.id DESC");
+
                 } else {
-                    //We must never arrive here !!
-                    $status = false;
+                    $cats_same_course = false;
+                }
+                //Get category with the same stamp in other course
+                //The last record will be the oldest category with publish=1
+                if ($count_cat_other_course > 0) {
+                    $cats_other_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c
+                                                          WHERE c.course != '$restore->course_id' AND
+                                                                c.stamp = '$quiz_cat->stamp'
+                                                          ORDER BY c.publish ASC, c.id DESC");
+                } else {
+                    $cats_other_course = false;
+                }
+   
+                if ($count_cat == 0) {
+                    //The category doesn't exist, create it.
+                    //The structure is equal to the db, so insert the quiz_categories
+                    $newid = insert_record ("quiz_categories",$quiz_cat);
+                } else {
+                    //The category exist, check if it belongs to the same course
+                    if ($count_cat_same_course > 0) {
+                        //The category belongs to the same course, get the last record (oldest)
+                        foreach ($cats_same_course as $cat) {
+                            $newid = $cat->id;
+                        }
+                    } else if ($count_cat_other_course > 0) {
+                        //The category belongs to other course, get the last record (oldest)
+                        foreach ($cats_other_course as $cat) {
+                            $other_course_cat = $cat;
+                        }
+                        //Now check the publish field
+                        if ($other_course_cat->publish == 0) {
+                            //The category has its publish to No (0). Create a new local one.
+                            $newid = insert_record ("quiz_categories",$quiz_cat);
+                        } else {
+                            //The category has its publish to Yes(1). Use it.
+                            $newid = $other_course_cat->id;
+                        }
+                    } else {
+                        //We must never arrive here !!
+                        $status = false;
+                    }
+                }
+            } else {
+                $restored_by = "(NAME)";                          //Debug
+                //STAMP doesn't exists, do things by name (pre 1.1)
+                //and calculate and insert STAMP too !!
+    
+                //Check for categories and their properties, storing in temporary variables
+                //Count categories with the same name
+    
+                $count_cat = count_records("quiz_categories","name",$quiz_cat->name);
+                //Count categories with the same name in the same course
+                $count_cat_same_course = count_records("quiz_categories","course",$restore->course_id,"name",$quiz_cat->name);
+                //Count categories with the same name in other course
+                $count_cat_other_course = $count_cat - $count_cat_same_course;
+    
+                //Get categories with the same name in the same course
+                //The last record will be the oldest category
+                if ($count_cat_same_course > 0) {
+                    $cats_same_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c
+                                                         WHERE c.course = '$restore->course_id' AND 
+                                                               c.name = '$quiz_cat->name'
+                                                         ORDER BY c.id DESC");
+                } else {
+                    $cats_same_course = false;
+                }
+                //Get categories with the same name in other course
+                //The last record will be the oldest category with publish=1
+                if ($count_cat_other_course > 0) {
+                    $cats_other_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c                           
+                                                          WHERE c.course != '$restore->course_id' AND 
+                                                                c.name = '$quiz_cat->name'
+                                                          ORDER BY c.publish ASC, c.id DESC");
+                } else {
+                    $cats_other_course = false;
+                }
+    
+                if ($count_cat == 0) {
+                    //The category doesn't exist, create it.
+                    //First, calculate the STAMP field
+                    $quiz_cat->stamp = make_unique_id_code();
+                    //The structure is equal to the db, so insert the quiz_categories
+                    $newid = insert_record ("quiz_categories",$quiz_cat);
+                } else {
+                    //The category exist, check if it belongs to the same course
+                    if ($count_cat_same_course > 0) {
+                        //The category belongs to the same course, get the last record (oldest)
+                        foreach ($cats_same_course as $cat) {
+                            $newid = $cat->id;
+                        }
+                    } else if ($count_cat_other_course > 0) {
+                        //The category belongs to other course, get the last record (oldest)
+                        foreach ($cats_other_course as $cat) {
+                            $other_course_cat = $cat;
+                        }
+                        //Now check the publish field
+                        if ($other_course_cat->publish == 0) {
+                            //The category has its publish to No (0). Create a new local one.
+                            //First, calculate the STAMP field
+                            $quiz_cat->stamp = make_unique_id_code();
+                            //The structure is equal to the db, so insert the quiz_categories
+                            $newid = insert_record ("quiz_categories",$quiz_cat);
+                        } else {
+                            //The category has its publish to Yes(1). Use it.
+                            $newid = $other_course_cat->id;
+                        }
+                    } else {
+                        //We must never arrive here !!
+                        $status = false;
+                    }
                 }
             }
 
             //Do some output
-            echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\"<br>";
+            if ($status) {
+                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\"".$restored_by."<br>";
+            } else {
+                //We must never arrive here !!
+                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\" Error!<br>";
+            }
             backup_flush(300);
 
+            //Here category has been created or selected, so save results in backup_ids and start with questions
             if ($newid and $status) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_categories",
