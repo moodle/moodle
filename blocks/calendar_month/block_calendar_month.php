@@ -24,11 +24,23 @@ class CourseBlock_calendar_month extends MoodleBlock {
         $this->content->footer = '';
 
         if (empty($this->course)) { // Overrides: use no course at all
+
             $courseshown = false;
             $filtercourse = array();
+
         } else {
+
             $courseshown = $this->course->id;
-            $filtercourse = array($courseshown => 1);
+
+            if($this->course->id == SITEID) {
+                // Being displayed at site level. This will cause the filter to fall back to auto-detecting
+                // the list of courses it will be grabbing events from.
+                $filtercourse = NULL;
+            }
+            else {
+                // Forcibly filter events to include only those from the particular course we are in.
+                $filtercourse = array($courseshown => 1);
+            }
         }
 
         // We 'll need this later

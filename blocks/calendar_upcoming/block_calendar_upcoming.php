@@ -22,19 +22,31 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
         $this->content = New object;
         $this->content->text = '';
 
-        if (empty($this->course)) {  // Overrides: use no course at all
+        if (empty($this->course)) { // Overrides: use no course at all
+        
             $courseshown = false;
             $filtercourse = array();
             $this->content->footer = '';
+
         } else {
+
             $courseshown = $this->course->id;
-            $filtercourse = array($courseshown => 1);
             $this->content->footer = '<br /><a href="'.$CFG->wwwroot.
                                      '/calendar/view.php?view=upcoming&amp;course='.$this->course->id.'">'.
                                       get_string('gotocalendar', 'calendar').'</a>...';
             $this->content->footer .= '<br /><a href="'.$CFG->wwwroot.
                                       '/calendar/event.php?action=new&amp;course='.$this->course->id.'">'.
                                        get_string('newevent', 'calendar').'</a>...';
+            
+            if($this->course->id == SITEID) {
+                // Being displayed at site level. This will cause the filter to fall back to auto-detecting
+                // the list of courses it will be grabbing events from.
+                $filtercourse = NULL;
+            }
+            else {
+                // Forcibly filter events to include only those from the particular course we are in.
+                $filtercourse = array($courseshown => 1);
+            }
         }
 
         // We 'll need this later
