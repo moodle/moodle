@@ -15,6 +15,9 @@ CREATE TABLE prefix_assignment (
   grade integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_assignment_course_idx ON prefix_assignment (course);
+
 # --------------------------------------------------------
 
 #
@@ -34,6 +37,13 @@ CREATE TABLE prefix_assignment_submissions (
   timemarked integer NOT NULL default '0',
   mailed integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_assignment_submissions_assignment_idx ON prefix_assignment_submissions (assignment);
+CREATE INDEX prefix_assignment_submissions_userid_idx ON prefix_assignment_submissions (userid);
+CREATE INDEX prefix_assignment_submissions_mailed_idx ON prefix_assignment_submissions (mailed);
+CREATE INDEX prefix_assignment_submissions_timemarked_idx ON prefix_assignment_submissions (timemarked);
+
+
 # --------------------------------------------------------
 
 
