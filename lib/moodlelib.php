@@ -1829,7 +1829,7 @@ function authenticate_user_login($username, $password) {
  * @return boolean
  * @todo Finish documenting this function
  */
-function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='manual') {
+function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='') {
 
     global $CFG;
 
@@ -1844,6 +1844,10 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
         foreach ($parents as $parent) {
             enrol_student($userid, $parent->parent_course,$timestart,$timeend,$enrol);
         }
+    }
+
+    if (empty($enrol)) {
+        $enrol = $CFG->enrol;   // Default current method
     }
     if ($student = get_record('user_students', 'userid', $userid, 'course', $courseid)) {
         $student->timestart = $timestart;
