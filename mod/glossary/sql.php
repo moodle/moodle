@@ -13,6 +13,16 @@
 
 /// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
 /// printpivot indicate if the pivot should be printed or not
+    switch ( $sortkey ) {    
+    case "CREATION": 
+        $sqlsortkey = "timecreated";
+    break;
+    
+    case "UPDATE": 
+        $sqlsortkey = "timemodified";
+    break;
+    }
+
     $fullpivot = 1;
 
     $userid = '';
@@ -68,7 +78,7 @@
         switch ($CFG->dbtype) {
         case 'postgres7':
             $usernametoshow = "u.firstname || ' ' || u.lastname";
-            if ( $sortkey == 'FIRSTNAME' ) {
+            if ( $sqlsortkey == 'FIRSTNAME' ) {
                 $usernamefield = "u.firstname || ' ' || u.lastname";
             } else {
                 $usernamefield = "u.lastname || ' ' || u.firstname";
@@ -76,7 +86,7 @@
             $where = "AND substr(ucase($usernamefield),1," .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
         break;
         case 'mysql':
-            if ( $sortkey == 'FIRSTNAME' ) {
+            if ( $sqlsortkey == 'FIRSTNAME' ) {
                 $usernamefield = "CONCAT(CONCAT(u.firstname,' '), u.lastname)";
             } else {
                 $usernamefield = "CONCAT(CONCAT(u.lastname,' '), u.firstname)";
@@ -94,7 +104,7 @@
                              (ge.approved != 0 $userid)
                              $where AND 
                              (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id)";
-        $sqlorderby = "ORDER BY $usernamefield $sortorder, ge.concept";
+        $sqlorderby = "ORDER BY $usernamefield $sqlsortorder, ge.concept";
     break;
     case GLOSSARY_APPROVAL_VIEW:
         $fullpivot = 0;
@@ -117,8 +127,8 @@
         $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
                              ge.approved = 0 $where";
                              
-        if ( $sortkey ) {
-            $sqlorderby = "ORDER BY $sortkey $sortorder";
+        if ( $sqlsortkey ) {
+            $sqlorderby = "ORDER BY $sqlsortkey $sqlsortorder";
         } else {
             $sqlorderby = "ORDER BY ge.concept";
         }
@@ -180,7 +190,7 @@
                               $where";
         switch ( $tab ) {
         case GLOSSARY_DATE_VIEW: 
-            $sqlorderby = "ORDER BY $sortkey $sortorder";
+            $sqlorderby = "ORDER BY $sqlsortkey $sqlsortorder";
         break;
         
         case GLOSSARY_STANDARD_VIEW: 

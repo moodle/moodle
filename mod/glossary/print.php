@@ -105,17 +105,6 @@
     break;
     }  
 
-    switch ( $sortkey ) {    
-    case "CREATION": 
-        $sortkey = "timecreated";
-    break;
-    
-    case "UPDATE": 
-        $sortkey = "timemodified";
-    default:
-    break;
-    }
-
     include_once("sql.php");
     
     $entriesshown = 0;

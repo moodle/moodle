@@ -235,17 +235,6 @@
 
     include("tabs.html");
 
-    switch ( $sortkey ) {    
-    case "CREATION": 
-        $sortkey = "timecreated";
-    break;
-    
-    case "UPDATE": 
-        $sortkey = "timemodified";
-    default:
-    break;
-    }
-    
     include_once("sql.php");
 
 /// printing the entries
@@ -256,13 +245,14 @@
     }
     if ($allentries) {
         /// printing the paging links
+
         $paging = get_string("allentries","glossary");
         if ( $offset < 0 ) {
             $paging = '<strong>' . $paging . '</strong>';
         } else {
-            $paging = "<a href=\"view.php?id=$id&mode=$mode&hook=$hook&offset=-1\">" . $paging . '</a>';
+            $paging = "<a href=\"view.php?id=$id&mode=$mode&hook=$hook&offset=-1&sortkey=$sortkey&sortorder=$sortorder\">" . $paging . '</a>';
         }
-        if ($count > $entriesbypage ) {
+        if ($count > $entriesbypage ) {            
             for ($i = 0; ($i*$entriesbypage) < $count  ; $i++   ) {
                 if ( $paging != '' ) {
                     if ($i % 20 == 0 and $i) {
@@ -275,7 +265,7 @@
                 if ($offset / $entriesbypage == $i) {
                     $paging .= '<strong>' . $pagenumber . '</strong>';
                 } else {
-                    $paging .= "<a href=\"view.php?id=$id&mode=$mode&hook=$hook&offset=" . ($i*$entriesbypage) . "\">" . $pagenumber . '</a>';
+                    $paging .= "<a href=\"view.php?id=$id&mode=$mode&hook=$hook&offset=" . ($i*$entriesbypage) . "&sortkey=$sortkey&sortorder=$sortorder\">" . $pagenumber . '</a>';
                 }
             }
             $paging  = "<font size=1><center>" . get_string ("jumpto") . " $paging</center></font>";
@@ -417,15 +407,13 @@
     if ( $debug and isadmin() ) {
         echo '<p>';
         print_simple_box("$sqlselect<br> $sqlfrom<br> $sqlwhere<br> $sqlorderby<br> $sqllimit","center","85%");
-    }
 
-/// Finish the page
-    print_footer($course);
-
-    if (isadmin()) {
         echo "<p align=right><font size=-3>";
         echo microtime_diff($CFG->startpagetime, microtime());
         echo "</font></p>";
     }
+
+/// Finish the page
+    print_footer($course);
 
 ?>

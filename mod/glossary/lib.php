@@ -988,7 +988,7 @@ function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = ''
 
     glossary_print_all_links($cm, $glossary, $mode, $hook);
 	 
-    glossary_print_sorting_links($cm, $mode, $sortkey, $sortorder);
+    glossary_print_sorting_links($cm, $mode, 'CREATION', 'asc');
 }
 
 function glossary_print_addentry_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
