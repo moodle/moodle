@@ -770,6 +770,7 @@
                 fwrite ($bf,full_tag("AUTH",4,false,$user_data->auth));
                 fwrite ($bf,full_tag("GUID",4,false,$user_data->guid));
                 fwrite ($bf,full_tag("CONFIRMED",4,false,$user_data->confirmed));
+                fwrite ($bf,full_tag("POLICYAGREED",4,false,$user_data->policyagreed));
                 fwrite ($bf,full_tag("DELETED",4,false,$user_data->deleted));
                 fwrite ($bf,full_tag("USERNAME",4,false,$user_data->username));
                 fwrite ($bf,full_tag("PASSWORD",4,false,$user_data->password));
@@ -851,6 +852,7 @@
                         fwrite ($bf,full_tag("TIMEEND",6,false,$tea->timeend));
                         fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$tea->timemodified));
                         fwrite ($bf,full_tag("TIMEACCESS",6,false,$tea->timeaccess));
+                        fwrite ($bf,full_tag("ENROL",6,false,$tea->enrol));
                         //Print ROLE end
                         fwrite ($bf,end_tag("ROLE",5,true));   
                     }
@@ -866,6 +868,7 @@
                         fwrite ($bf,full_tag("TIMEEND",6,false,$stu->timeend));
                         fwrite ($bf,full_tag("TIME",6,false,$stu->time));
                         fwrite ($bf,full_tag("TIMEACCESS",6,false,$stu->timeaccess));
+                        fwrite ($bf,full_tag("ENROL",6,false,$stu->enrol));
                         //Print ROLE end
                         fwrite ($bf,end_tag("ROLE",5,true));   
                     }

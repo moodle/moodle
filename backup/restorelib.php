@@ -935,6 +935,16 @@
                         $user->auth = $CFG->auth;
                     }
 
+                    //We need to process the POLICYAGREED field to recalculate it:
+                    //    - if the destination site is different (by wwwroot) reset it.
+                    //    - if the destination site is the same (by wwwroot), leave it unmodified
+
+                    if ($restore->original_wwwroot != $CFG->wwwroot) {
+                        $user->policyagreed = 0;
+                    } else {
+                        //Nothing to do, we are in the same server
+                    }
+
                     //We are going to create the user
                     //The structure is exactly as we need
                     $newid = insert_record ("user",$user);
@@ -982,6 +992,19 @@
                             //Set course and user
                             $user->roles['teacher']->course = $restore->course_id;
                             $user->roles['teacher']->userid = $newid;
+
+                            //Need to analyse the enrol field
+                            //    - if it isn't set, set it to $CFG->enrol
+                            //    - if we are in a different server (by wwwroot), set it to $CFG->enrol
+                            //    - if we are in the same server (by wwwroot), maintain it unmodified.
+                            if (empty($user->roles['teacher']->enrol)) {
+                                $user->roles['teacher']->enrol = $CFG->enrol;
+                            } else if ($restore->original_wwwroot != $CFG->wwwroot) {
+                                $user->roles['teacher']->enrol = $CFG->enrol;
+                            } else {
+                                //Nothing to do. Leave it unmodified
+                            }    
+
                             //Insert data in user_teachers
                             //The structure is exactly as we need
                             $status = insert_record("user_teachers",$user->roles['teacher']);
@@ -996,6 +1019,19 @@
                             //Set course and user
                             $user->roles['student']->course = $restore->course_id;
                             $user->roles['student']->userid = $newid;
+
+                            //Need to analyse the enrol field
+                            //    - if it isn't set, set it to $CFG->enrol
+                            //    - if we are in a different server (by wwwroot), set it to $CFG->enrol
+                            //    - if we are in the same server (by wwwroot), maintain it unmodified.
+                            if (empty($user->roles['student']->enrol)) {
+                                $user->roles['student']->enrol = $CFG->enrol;
+                            } else if ($restore->original_wwwroot != $CFG->wwwroot) {
+                                $user->roles['student']->enrol = $CFG->enrol;
+                            } else {
+                                //Nothing to do. Leave it unmodified
+                            }    
+
                             //Insert data in user_students
                             //The structure is exactly as we need
                             $status = insert_record("user_students",$user->roles['student']);
@@ -2642,6 +2678,9 @@
                         case "CONFIRMED": 
                             $this->info->tempuser->confirmed = $this->getContents();
                             break;
+                        case "POLICYAGREED": 
+                            $this->info->tempuser->policyagreed = $this->getContents();
+                            break;
                         case "DELETED": 
                             $this->info->tempuser->deleted = $this->getContents();
                             break;
@@ -2791,6 +2830,9 @@
                             break;
                         case "TIMEACCESS":
                             $this->info->temprole->timeaccess = $this->getContents();
+                            break;
+                        case "ENROL":
+                            $this->info->temprole->enrol = $this->getContents();
                             break;
                         case "NAME":
                             $this->info->tempuserpreference->name = $this->getContents();
