@@ -8,6 +8,7 @@ Styles are organised into the following sections:
     core
     header
     footer
+
     admin
     blocks
     calendar
@@ -17,6 +18,7 @@ Styles are organised into the following sections:
     message
     tabs
     user
+
     modules
         assignment
         chat
@@ -69,7 +71,6 @@ h4.main,
 h5.main,
 h6.main {
     font-weight:normal;
-    text-align: center;
 }
 
 h1 {
@@ -88,12 +89,6 @@ h4 {
 
 .bold {
     font-weight:bold;
-}
-
-.sideblock .content h3,
-.sideblock .content h2 {
-    text-align: left;
-    font-size:1.0em;
 }
 
 .errorbox .title {
@@ -195,17 +190,16 @@ table.formtable tbody th {
 *** Blocks
 *******************************************************************/
 
-.sideblock .header {
-    text-align: left;
+.sideblock .content h3,
+.sideblock .content h2 {
+    font-size:1.0em;
 }
-
 .sideblock .header .commands {
     font-size: 0.75em;
 }
 
 .sideblock .footer {
     font-size:0.75em;
-    text-align:center;
 }
 
 .sideblock .head,
@@ -222,35 +216,23 @@ table.formtable tbody th {
 .rssclientlink {
     font-size:x-small;
 }
-
 .rssclientdescription {
     font-size:x-small;
 }
-
 .sideblock.block_quiz_results h1 {
     font-weight: normal;
     font-size: 1.2em;
 }
-
 .sideblock.block_quiz_results table.grades caption {
     font-weight: normal;
 }
-
-.sideblock.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
-    text-align: right;
-}
-
-.sideblock.block_quiz_results {
-    text-align: center;
-}
-
-.sideblock.block_quiz_results table.grades {
-    text-align: left;
-}
-
 .sideblock.block_calendar_upcoming .event .date {
     font-size:0.8em;
-    text-align:right;
+}
+.sideblock.block_calendar_month .cal_popup_caption,
+.sideblock.block_calendar_month .cal_popup_fg div
+{
+    font-size: 0.85em !important;
 }
 
 
@@ -272,7 +254,6 @@ table.formtable tbody th {
 
 #calendar .maincalendar table.calendarmonth td {
     font-size:0.8em;
-    line-height:1.2em;
 }
 
 #calendar div.header
@@ -298,16 +279,6 @@ table.minicalendar {
     font-size:0.85em;
 }
 
-table.minicalendar td {
-    text-align: center;
-}
-
-.sideblock.block_calendar_month .cal_popup_caption,
-.sideblock.block_calendar_month .cal_popup_fg div
-{
-    font-size: 0.85em !important;
-}
-
 .cal_popup_caption {
     font-family:sans-serif;
     font-size:0.8em;
@@ -318,16 +289,6 @@ table.minicalendar td {
     font-family:sans-serif;
     font-size:0.8em;
     font-weight:normal;
-}
-
-table.calendar-controls .previous {
-    text-align: left;
-}
-table.calendar-controls .current {
-    text-align: center;
-}
-table.calendar-controls .next {
-    text-align: right;
 }
 #calendar .maincalendar .calendar-controls .current {
     font-weight: normal;
@@ -340,7 +301,6 @@ table.calendar-controls .next {
 
 .activitydate, .activityhead {
     font-size:x-small;
-    text-align:center;
 }
 
 .weeklydatetext {
@@ -360,6 +320,9 @@ table.calendar-controls .next {
 .courseboxsummary {
     font-size:small;
 }
+#course-view .section .left {
+    font-weight:normal;
+}
 
 
 
@@ -367,6 +330,13 @@ table.calendar-controls .next {
 /*******************************************************************
 *** Doc
 *******************************************************************/
+body#doc-contents h1 {
+    font-size: 1em;
+}
+body#doc-contents ul {
+    font-size: 0.8em;
+}
+
 
 
 /*******************************************************************
@@ -380,7 +350,6 @@ table.calendar-controls .next {
 
 .message_summary_link {
     font-size:small;
-    text-align:right;
 }
 
 .message_link {
@@ -394,7 +363,6 @@ table.calendar-controls .next {
 .message_heading {
     font-size:medium;
     font-weight:normal;
-    text-align:center;
 }
 
 .message_date,
@@ -423,6 +391,9 @@ table.calendar-controls .next {
 /*******************************************************************
 *** Tabs
 *******************************************************************/
+.tablink a:hover {
+    text-decoration: none;
+}
 
 
 /*******************************************************************
@@ -435,10 +406,6 @@ table.calendar-controls .next {
 
 .userinfobox .links {
     font-size: 0.7em;
-}
-
-body#user-index #longtimenosee {
-    text-align:center;
 }
 
 
@@ -458,33 +425,22 @@ body#user-index #longtimenosee {
 *** Modules: Forum
 *******************************************************************/
 
-.forumolddiscuss {
-    text-align:right;
-}
-
-.forumaddnew,
-.forumnodiscuss,
-.noticeboxcontent {
-    text-align:center;
-}
-
 .forumnodiscuss{
     font-weight:normal;
 }
-
-
-
 .forumpost .topic .subject {
     font-weight: normal;
 }
-
 .forumpost .topic .author {
     font-size: 0.8em;
 }
-
 .forumheaderlist .discussion .lastpost {
     font-size: 0.7em;
 }
+body#mod-forum-search .introcontent {
+    font-weight:normal;
+}
+
 
 
 /*******************************************************************
@@ -505,6 +461,13 @@ body#user-index #longtimenosee {
     font-size: 0.7em;
     font-style: italic;
 }
+.entrylowersection .aliases {
+    font-size: 0.8em;
+}
+.entrylowersection .icons,
+.entrylowersection .ratings {
+    font-size: 0.8em;
+}
 
 
 
@@ -524,22 +487,8 @@ body#user-index #longtimenosee {
 *** Modules: Quiz
 *******************************************************************/
 
-.feedbacktext {
-    text-align:right;
-}
-
 .editorhelptext {
     font-size:x-small;
-}
-
-body#mod-quiz-report table#attempts .header {
-    text-align: left;
-}
-body#mod-quiz-report table#attempts .picture {
-    text-align: center !important;
-}
-body#mod-quiz-report .controls {
-    text-align: center;
 }
 
 

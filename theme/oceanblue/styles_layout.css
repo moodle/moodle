@@ -8,6 +8,7 @@ Styles are organised into the following sections:
     core
     header
     footer
+
     admin
     blocks
     calendar
@@ -17,6 +18,7 @@ Styles are organised into the following sections:
     message
     tabs
     user
+
     modules
         assignment
         chat
@@ -39,6 +41,15 @@ Styles are organised into the following sections:
 /*******************************************************************
 *** Core
 *******************************************************************/
+
+h1.main,
+h2.main,
+h3.main,
+h4.main,
+h5.main,
+h6.main {
+    text-align: center;
+}
 
 #layout-table {
     width:100%;
@@ -78,6 +89,15 @@ table {
 a img {
     border:none;
 }
+.notifyproblem {
+    text-align: center;
+    padding: 10px;
+}
+    
+.notifysuccess {
+    text-align:center;
+    padding: 10px;
+}   
 
 .generalbox {
     border-width:1px;
@@ -150,7 +170,6 @@ table.formtable {
 }
 
 table.formtable tbody th {
-    background: none;
     vertical-align: top;
 }
 
@@ -230,7 +249,6 @@ table.formtable tbody th
 
 body#admin-index .c0 {
     vertical-align: top;
-    background: #FAFAFA;
 } 
 
 body#admin-modules table.generaltable td.cell,
@@ -278,6 +296,11 @@ body#admin-config .confighelp {
 
 
 /* sideblock */
+.sideblock .content h3,
+.sideblock .content h2 {
+    text-align: left;
+}
+
 .sideblock {
     width: 100%;
     margin-bottom:1em;
@@ -288,6 +311,7 @@ body#admin-config .confighelp {
 
 .sideblock .header {
     background-image:url(gradient.jpg);
+    text-align: left;
     padding:4px;
 }
 
@@ -325,15 +349,6 @@ body#admin-config .confighelp {
     border:none;
     border-top:1px solid;
 }
-
-.sideblock .header .hide-show img.hide-show-image {
-    background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
-}
-
-.sideblock.hidden .header .hide-show img.hide-show-image {
-    background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
-}
-
 .sideblock.hidden .content {
     display: none;
 }
@@ -348,12 +363,29 @@ body#admin-config .confighelp {
 
 .sideblock .footer {
     margin-top:4px;
+    text-align:center;
 }
-
 .sideblock .header .icon.hide,
 .sideblock .header .icon.edit {
     margin-right: 6px;
 }
+.sideblock.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
+    text-align: right;
+}
+
+.sideblock.block_quiz_results {
+    text-align: center;
+}
+
+.sideblock.block_quiz_results table.grades {
+    text-align: left;
+}
+
+.sideblock.block_calendar_upcoming .event .date {
+    text-align:right;
+}
+
+
 
 /* sideblock weblib.php */
 .block_course_summary .content {
@@ -422,6 +454,7 @@ body#admin-config .confighelp {
     height: 5em;
     padding-left: 4px;
     padding-top: 4px;
+    line-height:1.2em;
 }
 
 #calendar .maincalendar table.calendarmonth td,
@@ -430,7 +463,9 @@ table.minicalendar th {
     width:14%;
     vertical-align:top;
 }
-
+table.minicalendar td {
+    text-align: center;
+}
 #calendar .maincalendar table.calendarmonth td table td {
     height: auto;
 }
@@ -450,7 +485,6 @@ table.minicalendar th {
 {
     border-collapse:separate;
     border-spacing: 2px;
-    background-color: #EEEEEE;
     padding: 2px;
     width: 100%;
 }
@@ -609,6 +643,15 @@ table.calendar-controls .next
 {
     width: 12%;
 }
+table.calendar-controls .previous {
+    text-align: left;
+}
+table.calendar-controls .current {
+    text-align: center;
+}
+table.calendar-controls .next {
+    text-align: right;
+}
 
 #calendar .maincalendar .calendar-controls .previous,
 #calendar .maincalendar .calendar-controls .next
@@ -620,6 +663,9 @@ table.calendar-controls .next
 /*******************************************************************
 *** Course
 *******************************************************************/
+.activitydate, .activityhead {
+    text-align:center;
+}
 
 #course-view .section td {
     vertical-align:top;
@@ -642,7 +688,6 @@ table.calendar-controls .next
 #course-view .section .left {
     border-right:0px;
     text-align:center;
-    font-weight:bold;
     width: 1.5em;
 }
 
@@ -711,13 +756,13 @@ body#course-user .section {
     border-width:1px;
     border-style:solid;
     padding:10px;
-    border-color:#AAAAAA;
     margin-bottom: 20px;
 }
 
 body#course-user .section h2 {
     margin-top: 0px;
 }
+
 
 .headingblock {
     background-image:url(gradient.jpg);
@@ -739,7 +784,6 @@ body#course-user .section h2 {
 *******************************************************************/
 
 body#doc-contents h1 {
-    font-size: 1em;
     margin: 1em 0px 0px 0px;
 }
 
@@ -747,7 +791,6 @@ body#doc-contents ul {
     list-style-type: none;
     margin: 0px;
     padding: 0px;
-    font-size: 0.8em;
     width: 90%; /* try it on IE without this and see what happens */
 }
 
@@ -784,6 +827,12 @@ table.message_search_results td {
     border-width:1px;
     border-style:solid;
 }
+.message_summary_link {
+    text-align:right;
+}
+.message_heading {
+    text-align:center;
+}
 
 
 /*******************************************************************
@@ -797,7 +846,6 @@ table.message_search_results td {
 .tabs .side {
     border-style: solid;
     border-width: 0px 0px 1px 0px;
-    border-color: #AAAAAA;
     width: 50%;
 }
 
@@ -809,7 +857,6 @@ table.message_search_results td {
 .tabrow td {
     height:34px;
     padding:0 0 0 14px;
-    background:url(pix/tab/left.gif) top left no-repeat;
 }
 .tabrow th {
     display:none;
@@ -819,36 +866,12 @@ table.message_search_results td {
     height:34px;
     line-height:38px;
     padding:0 14px 0 0;
-    background:url(pix/tab/right.gif) top right no-repeat;
     text-align:center;
     white-space:nowrap;
     text-decoration:none;
 }
-.tabrow td:hover {
-    background-image:url(pix/tab/left_hover.gif);
-}
-.tabrow td:hover .tablink {
-    line-height:32px;
-    background-image:url(pix/tab/right_hover.gif);
-}
-
-.tabrow .last span {
-    display:block;
-    padding:0px 1px 0px 0px;
-    background:url(pix/tab/right_end.gif) top right no-repeat;
-}
-.tabrow .selected {
-    background:url(pix/tab/left_active.gif) top left no-repeat;
-}
 .tabrow .selected .tablink {
-    background:url(pix/tab/right_active.gif) top right no-repeat;
     line-height:38px;
-}
-.tabrow td.selected:hover {
-    background-image:url(pix/tab/left_active_hover.gif);
-}
-.tabrow td.selected:hover .tablink {
-    background-image:url(pix/tab/right_active_hover.gif);
 }
 
 
@@ -909,6 +932,9 @@ table.groupinfobox {
     width: 100px;
     vertical-align: top;
 }
+body#user-index #longtimenosee {
+    text-align:center;
+}
 
 
 /*******************************************************************
@@ -940,6 +966,9 @@ table.groupinfobox {
 
 .forumpost .topic {
     padding: 4px;
+    border-style:solid; /* borders */
+    border-width: 0px;
+    border-bottom-width: 1px;
 }
 
 .forumpost .commands {
@@ -988,7 +1017,6 @@ body#mod-forum-search .c0 {
 
 body#mod-forum-search .introcontent {
     padding: 15px;
-    font-weight:bold;
 }
 
 .forumolddiscuss {
@@ -1023,6 +1051,23 @@ body#mod-forum-search .introcontent {
 .forumheaderlist .discussion .author {
     white-space: nowrap;
 }
+.forumolddiscuss {
+    text-align:right;
+}
+.forumaddnew,
+.forumnodiscuss,
+.noticeboxcontent {
+    text-align:center;
+}
+#mod-forum-view .unread {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+#mod-forum-discuss .unread .forumpostmessage {
+    border-style: solid;
+    border-width: 2px;
+}
+
 
 /*******************************************************************
 *** Modules: Glossary
@@ -1065,12 +1110,10 @@ body#mod-forum-search .introcontent {
 }
 .entrylowersection .aliases {
     text-align:center;
-    font-size: 0.8em;
 }
 .entrylowersection .icons,
 .entrylowersection .ratings {
     text-align:right;
-    font-size: 0.8em;
     padding-right: 5px;
 }
 .entrylowersection .ratings {
@@ -1194,6 +1237,19 @@ body#mod-quiz-report table#attempts td {
     border-left-style: solid;
     border-right-style: solid;
 }
+.feedbacktext {
+    text-align:right;
+}
+body#mod-quiz-report table#attempts .header {
+    text-align: left;
+}
+body#mod-quiz-report table#attempts .picture {
+    text-align: center !important;
+}
+body#mod-quiz-report .controls {
+    text-align: center;
+}
+
 
 
 /*******************************************************************
