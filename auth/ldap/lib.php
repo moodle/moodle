@@ -573,7 +573,7 @@ function auth_ldap_init () {
             }else {
                 //use defaut value if user_type not set
                 if(!empty($default[$key]['default'])){
-                    $CFG->$key = $default[$key][$value]['default'];
+                    $CFG->$key = $default[$key]['default'];
                 }else {
                     unset($CFG->$key);
                 }    
