@@ -1054,13 +1054,14 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             $wwwroot = str_replace('http','https', $CFG->wwwroot);
             redirect($wwwroot .'/login/index.php'. $loginguest);
         }
-        die;
+        exit;
     }
 
     // check whether the user should be changing password
     // reload_user_preferences();    // Why is this necessary?  Seems wasteful.  - MD
     if (!empty($USER->preference['auth_forcepasswordchange'])){
         if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+            $SESSION->wantsurl = $FULLME;
             redirect($CFG->wwwroot .'/login/change_password.php');
         } elseif($CFG->changepassword) {
             redirect($CFG->changepassword);
@@ -1072,8 +1073,8 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     }
     // Check that the user account is properly set up
     if (user_not_fully_set_up($USER)) {
+        $SESSION->wantsurl = $FULLME;
         redirect($CFG->wwwroot .'/user/edit.php?id='. $USER->id .'&amp;course='. SITEID);
-        die;
     }
 
     // Make sure current IP matches the one for this session (if required)
@@ -1091,7 +1092,6 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         if (!$USER->policyagreed) {
             $SESSION->wantsurl = $FULLME;
             redirect($CFG->wwwroot .'/user/policy.php');
-            die;
         }
     }
 
@@ -1099,7 +1099,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     if (!isadmin()) {
         if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
             print_maintenance_message();
-            die;
+            exit;
         }
     }
 

@@ -10,6 +10,12 @@
     optional_variable($enable, "");
     optional_variable($disable, "");
 
+    if (!empty($SESSION->wantsurl)) {
+        $wantsurl = $SESSION->wantsurl;
+        unset($SESSION->wantsurl);
+        redirect($wantsurl);
+    }
+
     if (empty($id)) {         // See your own profile by default
         require_login();
         $id = $USER->id;

@@ -143,6 +143,7 @@
             add_to_log(SITEID, "user", "login", "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
             
             if (user_not_fully_set_up($USER)) {
+                $SESSION->wantsurl = $wantsurl;    /// Postpone this redirect a while longer!
                 $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
 
             } else if (strpos($wantsurl, $CFG->wwwroot) === 0) {   /// Matches site address
