@@ -7,7 +7,7 @@ $string['modulenameplural'] = "Surveys";
 
 $string['actual'] = "Actual";
 $string['actualclass'] = "Class actual";
-$string['actualstudent'] = "Student actual";
+$string['actualstudent'] = "\$a actual";
 $string['allquestions'] = "All questions in order, all students";
 $string['allscales'] = "All scales, all students";
 $string['alreadysubmitted'] = "You have already submitted this survey";
@@ -185,7 +185,7 @@ $string['othercomments'] = "Do you have any other comments?";
 $string['peoplecompleted'] = "\$a people have completed this survey so far";
 $string['preferred'] = "Preferred";
 $string['preferredclass'] = "Class preferred";
-$string['preferredstudent'] = "Student preferred";
+$string['preferredstudent'] = "\$a preferred";
 $string['question'] = "Question";
 $string['questions'] = "Questions";
 $string['questionsnotanswered'] = "Some of the multiple choice questions have not been answered.";

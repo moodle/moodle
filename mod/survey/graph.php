@@ -30,11 +30,11 @@
 
     $stractual = get_string("actual", "survey");
     $stractualclass = get_string("actualclass", "survey");
-    $stractualstudent = get_string("actualstudent", "survey");
+    $stractualstudent = get_string("actualstudent", "survey", $course->student);
 
     $strpreferred = get_string("preferred", "survey");
     $strpreferredclass = get_string("preferredclass", "survey");
-    $strpreferredstudent = get_string("preferredstudent", "survey");
+    $strpreferredstudent = get_string("preferredstudent", "survey", $course->student);
 
     switch ($type) {
 
