@@ -1679,7 +1679,7 @@ function get_list_of_countries() {
         }
     }
 
-    include_once("$CFG->dirroot/lang/$lang/countries.php"); 
+    include("$CFG->dirroot/lang/$lang/countries.php"); 
 
     if (!empty($string)) {
         asort($string);
