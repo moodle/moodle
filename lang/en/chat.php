@@ -15,6 +15,7 @@ $string['currentusers'] = "Current users";
 $string['donotusechattime'] = "Don't publish any chat times";
 $string['enterchat'] = "Click here to enter the chat now";
 $string['errornousers'] = "Could not find any users!";
+$string['helpchatting'] = "Help with chatting";
 $string['idle'] = "Idle";
 $string['messagebeepseveryone'] = "\$a beeps everyone!";
 $string['messagebeepsyou'] = "\$a has just beeped you!";
