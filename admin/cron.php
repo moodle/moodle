@@ -18,6 +18,10 @@
     require_once("../config.php");
 
     if (!$alreadyadmin = isadmin()) {
+        unset($_SESSION['USER']);
+        unset($USER);
+        unset($_SESSION['SESSION']);
+        unset($SESSION);
         $USER = get_admin();      /// Temporarily, to provide environment for this script
     }
 
@@ -134,11 +138,6 @@
     }
 
     echo "Cron script completed correctly\n";
-
-    if (!$alreadyadmin) {
-        $SESSION = NULL;
-        $USER = NULL;
-    }
 
     $difftime = microtime_diff($starttime, microtime());
     echo "Execution took ".$difftime." seconds\n"; 
