@@ -1092,7 +1092,8 @@ function print_navigation ($navigation) {
        if (! $site = get_site()) {
            $site->shortname = get_string("home");;
        }
-       echo "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">$site->shortname</a> -> $navigation";
+       $navigation = str_replace('->', '&raquo;', $navigation);
+       echo "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">$site->shortname</a> &raquo; $navigation";
    }
 }
 
