@@ -13,7 +13,7 @@ function schedule_backup_cron() {
 
     //Check for required functions...
     if(!function_exists('utf8_encode')) {
-        echo "        ERROR: You need to add XML support to your PHP installation!\n";
+        mtrace("        ERROR: You need to add XML support to your PHP installation!");
         return true;
     }
 
@@ -22,13 +22,13 @@ function schedule_backup_cron() {
 
     //First of all, we have to see if the scheduled is active and detect
     //that there isn't another cron running
-    echo "    Checking backup status";
+    mtrace("    Checking backup status",'...');
     $backup_config = backup_get_config();
     if(!isset($backup_config->backup_sche_active) || !$backup_config->backup_sche_active) {
-        echo "...INACTIVE\n";
+        mtrace("INACTIVE");
         return true;
     } else if (isset($backup_config->backup_sche_running) && $backup_config->backup_sche_running) {
-        echo "...RUNNING\n";
+        mtrace("RUNNING");
         //Now check if it's a really running task or something very old looking 
         //for info in backup_logs to unlock status as necessary
         $timetosee = 1800;   //Half an hour looking for activity
@@ -36,19 +36,19 @@ function schedule_backup_cron() {
         $numofrec = count_records_select ("backup_log","time > $timeafter");
         if (!$numofrec) {
             $timetoseemin = $timetosee/60;
-            echo "    No activity in last ".$timetoseemin." minutes. Unlocking status\n";
+            mtrace("    No activity in last ".$timetoseemin." minutes. Unlocking status");
         } else {
-            echo "    Scheduled backup seems to be running. Execution delayed\n";
+            mtrace("    Scheduled backup seems to be running. Execution delayed");
             return true;
         }
     } else {
-        echo "...OK\n";
+        mtrace("OK");
         //Mark backup_sche_running
         backup_set_config("backup_sche_running","1");
     }
 
     //Now we get the main admin user (we'll use his timezone, mail...)
-    echo "    Getting admin info\n";
+    mtrace("    Getting admin info");
     $admin = get_admin();
     if (!$admin) {
         $status = false;
@@ -56,13 +56,13 @@ function schedule_backup_cron() {
 
     //Now we get a list of courses in the server
     if ($status) {
-        echo "    Checking courses\n";
+        mtrace("    Checking courses");
         $courses = get_records("course");
         //For each course, we check (insert, update) the backup_course table
         //with needed data
         foreach ($courses as $course) {
             if ($status) {
-                echo "        $course->fullname\n";
+                mtrace("        $course->fullname");
                 //We check if the course exists in backup_course
                 $backup_course = get_record("backup_courses","courseid",$course->id);
                 //If it doesn't exist, create
@@ -74,7 +74,7 @@ function schedule_backup_cron() {
                 }
                 //If it doesn't exist now, error
                 if (!$backup_course) {
-                    echo "            ERROR (in backup_courses detection)\n";
+                    mtrace("            ERROR (in backup_courses detection)");
                     $status = false;
                 }
                 //Now we backup every course with nextstarttime < now
@@ -105,21 +105,21 @@ function schedule_backup_cron() {
                 if ($nextstarttime > 0) {
                     $showtime = userdate($nextstarttime,"",$admin->timezone);
                 }
-                echo "            Next execution: $showtime\n";
+                mtrace("            Next execution: $showtime");
             }
         }
     }
 
     //Delete old logs
     if (!empty($CFG->loglifetime)) {
-        echo "    Deleting old logs\n";
+        mtrace("    Deleting old logs");
         $loglifetime = $now - ($CFG->loglifetime * 86400);
         delete_records_select("backup_log", "laststarttime < '$loglifetime'");
     }
 
     //Send email to admin
     if ($emailpending) {
-        echo "    Sending email to admin\n";
+        mtrace("    Sending email to admin");
         $message = "";
         //Build the message text (future versions should handle html messages too!!)
         $logs = get_records_select ("backup_log","laststarttime >= '$now'","id");
@@ -152,7 +152,7 @@ function schedule_backup_launch_backup($course,$starttime = 0) {
     $preferences = false;
     $status = false;
 
-    echo "            Executing backup\n";
+    mtrace("            Executing backup");
     schedule_backup_log($starttime,$course->id,"Start backup course $course->fullname");
     schedule_backup_log($starttime,$course->id,"  Phase 1: Checking and counting:");
     $preferences = schedule_backup_course_configure($course,$starttime);
@@ -169,10 +169,10 @@ function schedule_backup_launch_backup($course,$starttime = 0) {
         }
     }
     if ($status && $preferences) {
-        echo "            End backup OK\n";
+        mtrace("            End backup OK");
         schedule_backup_log($starttime,$course->id,"End backup course $course->fullname - OK");
     } else {
-        echo "            End backup with ERROR\n";
+        mtrace("            End backup with ERROR");
         schedule_backup_log($starttime,$course->id,"End backup course $course->fullname - ERROR!!");
     }
 
@@ -650,7 +650,7 @@ function schedule_backup_course_delete_old_files($preferences,$starttime=0) {
         $dirtocheck = $CFG->dataroot."/".$preferences->backup_course."/backupdata";
     }
     schedule_backup_log($starttime,$preferences->backup_course,"    checking $dirtocheck");
-    echo "            Keeping backup files in $dirtocheck\n";
+    mtrace("            Keeping backup files in $dirtocheck");
 
     //Get all the files in $dirtocheck
     $files = get_directory_list($dirtocheck,"",false);
@@ -669,16 +669,16 @@ function schedule_backup_course_delete_old_files($preferences,$starttime=0) {
     //Count matching files
     $countmatching = count($matchingfiles);
     schedule_backup_log($starttime,$preferences->backup_course,"        found $countmatching backup files");
-    echo "                found $countmatching backup files\n";
+    mtrace("                found $countmatching backup files");
     if ($preferences->backup_keep < $countmatching) {
         schedule_backup_log($starttime,$preferences->backup_course,"        keep limit ($preferences->backup_keep) reached. Deleting old files");
-        echo "                keep limit ($preferences->backup_keep) reached. Deleting old files\n";
+        mtrace("                keep limit ($preferences->backup_keep) reached. Deleting old files");
         $filestodelete = $countmatching - $preferences->backup_keep;
         $filesdeleted = 0;
         foreach ($matchingfiles as $matchfile) {
             if ($filesdeleted < $filestodelete) {
                 schedule_backup_log($starttime,$preferences->backup_course,"        $matchfile deleted");
-                echo "                $matchfile deleted\n";
+                mtrace("                $matchfile deleted");
                 $filetodelete = $dirtocheck."/".$matchfile;
                 unlink($filetodelete);
                 $filesdeleted++;
