@@ -255,6 +255,21 @@ function glossary_upgrade($oldversion) {
       table_column("glossary","","rssarticles","tinyint","2", "unsigned", "0", "", "rsstype");
       set_config("glossary_enablerssfeeds",0);
   }
+
+  
+  if ( $oldversion < 2004051400 ) {
+        print_simple_box("This update might take several seconds.<p>The more glossaries, entries and aliases you have created, the more it will take so please be patient.","center", "50%", "$THEME->cellheading", "20", "noticebox");
+        if ( $entries = get_records("glossary_entries")) {
+            foreach($entries as $entry) {
+                set_field("glossary_entries","concept",addslashes(trim($entry->concept)),"id",$entry->id);
+            }
+        }
+        if ( $aliases = get_records("glossary_alias")) {
+            foreach($aliases as $alias) {
+                set_field("glossary_alias","alias",addslashes(trim($alias->alias)),"id",$alias->id);
+            }
+        }
+  }
     
   return true;
 }

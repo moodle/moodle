@@ -121,7 +121,6 @@ if ( $confirm ) {
         }
     } else {
 
-echo "Creating!!!!!";
         $newentry->userid = $USER->id;
         $newentry->timecreated = $timenow;
         $newentry->sourceglossaryid = 0;
