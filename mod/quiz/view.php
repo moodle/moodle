@@ -163,13 +163,10 @@
                 echo "<br />";
                 echo "</p>";
                 echo "<div align=\"center\">";
-                if ($quiz->timelimit) {
-                    include("view_js.php");
-                } else {
-                    print_single_button("attempt.php", $options, get_string("attemptquiznow","quiz"));
-                }
+
+                include("view_js.php");
+
                 echo "</div>\n";
-                //echo "</p>";
             }
         } else {
             print_heading(get_string("nomoreattempts", "quiz"));

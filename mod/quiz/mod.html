@@ -55,6 +55,9 @@
     if (!isset($form->timelimit)) {
         $form->timelimit = 0;
     }
+    if (!isset($form->popup)) {
+        $form->popup = 0;
+    }
 ?>
 
 
@@ -117,7 +120,6 @@
      ?>
     </td>
 </tr>
-<!-- BEGIN EDIT -->
 <tr valign="top">
     <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
     <td>
@@ -127,7 +129,6 @@
     ?>
     </td>
 </tr>
-<!-- END EDIT -->
 <tr valign="top">
     <td align="right"><b><?php print_string("shufflequestions", "quiz") ?>:</b></td>
     <td>
@@ -243,6 +244,18 @@
 
         choose_from_menu($grades, "grade", "$form->grade", "");
         helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
+     ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><b><?php print_string("popup", "quiz") ?>:</b></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "popup", "$form->popup", "");
+        helpbutton("popup", get_string("popup","quiz"), "quiz");
      ?>
     </td>
 </tr>

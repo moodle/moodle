@@ -54,13 +54,17 @@
 
 // Print the page header
 
-    $strquizzes = get_string("modulenameplural", "quiz");
-    $strquiz  = get_string("modulename", "quiz");
-
-    print_header_simple("$quiz->name", "",
+    if (!empty($quiz->popup)) {
+        print_header("$course->shortname: $quiz->name", '', '', '', '', false, '', '', false, '');
+        
+    } else {
+        $strquizzes = get_string("modulenameplural", "quiz");
+        $strquiz  = get_string("modulename", "quiz");
+        print_header_simple("$quiz->name", "",
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a> ->
                   <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strattemptnum",
                   "", "", true);
+    }
 
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
@@ -99,7 +103,9 @@
             print_simple_box_end();
             echo "</form>\n";
             
-            print_footer();
+            if (empty($quiz->popup)) {
+                print_footer();
+            }
             exit;
 
         } else {
@@ -187,7 +193,9 @@
                        "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", $cm->id);
         } else {
             notice(get_string("alreadysubmitted", "quiz"), "view.php?id=$cm->id");
-            print_footer($course);
+            if (empty($quiz->popup)) {
+                print_footer($course);
+            }
             exit;
         }
 
@@ -203,15 +211,19 @@
             print_heading("$strgrade: $result->grade/$quiz->grade");
         }
 
-        print_continue("view.php?id=$cm->id");
+        /// continue button - use javascript to close down child window if in popup
+        include('attempt_close_js.php');
 
         if ($quiz->feedback) {
             $quiz->shuffleanswers = false;       // Never shuffle answers in feedback
             quiz_print_quiz_questions($quiz, $questions, $result, $shuffleorder);
-            print_continue("view.php?id=$cm->id");
+            /// continue button - use javascript to close down child window if in popup
+            include('attempt_close_js.php');
         }
 
-        print_footer($course);
+        if (empty($quiz->popup)) {
+            print_footer($course);
+        }
 
         exit;
     }
@@ -221,7 +233,9 @@
 
     if (isguest()) {
         print_heading(get_string("guestsno", "quiz"));
-        print_footer($course);
+        if (empty($quiz->popup)) {
+            print_footer($course);
+        }
         exit;
     }
 
@@ -258,6 +272,11 @@
         include("jsclock.php");
     }
 
+/// Include Javascript protection for this page if required
+
+    if (!empty($quiz->popup)) {
+        include("protect_js.php");
+    }
 
 /// Print all the questions
 
@@ -289,6 +308,8 @@
         require('jstimer.php');
     }
 
-    print_footer($course);
+    if (empty($quiz->popup)) {
+        print_footer($course);
+    }
 
 ?>
