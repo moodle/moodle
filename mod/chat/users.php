@@ -37,7 +37,23 @@ if (isset($chat_enter)) {
 
 $timeold = time() - CHAT_OLD_PING;
 
-delete_records_select("chat_users", "lastping < '$timeold'");
+if ($oldusers = get_records_select("chat_users", "lastping < '$timeold'") ) {
+    delete_records_select("chat_users", "lastping < '$timeold'");
+    foreach ($oldusers as $olduser) {
+        $message->chatid = $olduser->chatid;
+        $message->userid = $olduser->userid;
+        $message->message = "exit";
+        $message->system = 1;
+        $message->timestamp = time();
+     
+        if (!insert_record("chat_messages", $message)) {
+            error("Could not insert a chat message!");
+        }
+    }
+
+
+}
+
 
  
 /// Get list of users
