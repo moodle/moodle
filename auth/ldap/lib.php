@@ -66,7 +66,11 @@ function auth_get_userinfo($username){
   }
 			
   $user_dn = auth_ldap_find_userdn($ldap_connection, $username);
-  $user_info_result = ldap_read($ldap_connection,$user_dn,"objectClass=*", $search_attribs);	
+  if (! isset($CFG->ldap_objectclass)) {
+	$CFG->ldap_objectclass="objectClass=*";
+  }
+
+  $user_info_result = ldap_read($ldap_connection,$user_dn,$objectclass, $search_attribs);	
   if ($user_info_result) {		
     $user_entry = ldap_get_entries($ldap_connection, $user_info_result);
       foreach ($moodleattributes as $key=>$value){
@@ -86,6 +90,35 @@ function auth_get_userinfo($username){
   return $result;
 }
 
+function auth_get_userlist() {
+  //returns all users from ldap servers
+  global $CFG;
+  $fresult = array();
+  $ldap_connection = auth_ldap_connect();
+  auth_ldap_bind($ldap_connection);
+  if (! isset($CFG->ldap_objectclass)) {
+        $CFG->ldap_objectclass="objectClass=*";
+  }
+  $contexts=explode(";",$CFG->ldap_contexts);
+  foreach ($contexts as $context) {
+	
+      if($CFG->ldap_search_sub){
+      	  //use ldap_search to find first user from subtree
+          $ldap_result = ldap_search($ldap_connection, $context, "(".$CFG->ldap_objectclass.")", array($CFG->ldap_user_attribute));
+      } else {
+          //search only in this context
+          $ldap_result = ldap_list($ldap_connection, $context, "(".$CFG->ldap_objectclass.")", array($CFG->ldap_user_attribute));
+      }
+
+     $users = ldap_get_entries($ldap_connection,$ldap_result);
+     //add found users to list
+     for ($i=0;$i<$users['count'];$i++) {
+	array_push($fresult,($users[$i][$CFG->ldap_user_attribute][0]));	
+     }
+  }
+  return $fresult;	
+		    
+}
 function auth_ldap_connect(){
   //connects to ldap-server
   global $CFG;
@@ -96,8 +129,8 @@ function auth_ldap_connect(){
     error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
     return false;
   }
-    
 }
+
 function auth_ldap_bind($ldap_connection){
   //makes bind to ldap for searching users
   //uses ldap_bind_dn or anonymous bind

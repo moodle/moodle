@@ -27,6 +27,8 @@ $CFG->ldap_search_sub   	"Put value <> 0 if  you like to
 $CFG->ldap_user_attribute 	"What attribute is used to name/search
 				users. Usually 'cn' when using 
 				Novell e-directory
+$CFG->ldap_objectclass		When filtering objects from ldap this filter is used
+				defaults to "objectClass=*"
 
 And if you like to _very_ experimental:
 Edit /auth/ldap/lib.php function auth_get_userinfo() attribute-mappings and
