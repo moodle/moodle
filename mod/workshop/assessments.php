@@ -716,16 +716,11 @@
 
     /*************** grade (student's) assessment (by teacher) ***************************/
     elseif ($action == 'gradeassessment') {
-        
+
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
 
-        // set up coment scale
-        for ($i=COMMENTSCALE; $i>=0; $i--) {
-            $num[$i] = $i;
-        }
-        
         print_heading_with_help(get_string("gradeassessment", "workshop"), "gradingassessments", "workshop");
         // get assessment record
         if (!$assessmentid = $_GET['aid']) {
@@ -745,32 +740,8 @@
         echo "<center><b>".get_string("assessmentby", "workshop", $user->firstname." ".$user->lastname)."</b></center>\n";
         workshop_print_assessment($workshop, $assessment);
         
-        ?>
-        <form name="gradingform" action="assessments.php" method="post">
-        <input type="hidden" name="action" value="updategrading" />
-        <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-        <input type="hidden" name="stype" value="<?php echo $_GET['stype'] ?>" />
-        <input type="hidden" name="aid" value="<?php echo $_GET['aid'] ?>" />
-        <center>
-        <table cellpadding="5" border="1">
-        <?php
-
-        // now get the teacher's comment
-        echo "<tr valign=\"top\">\n";
-        echo "  <td align=\"right\"><b>". get_string("teacherscomment", "workshop").":</b></td>\n";
-        echo "  <td>\n";
-        echo "      <textarea name=\"teachercomment\" rows=\"5\" cols=\"75\">\n";
-        if (isset($assessment->teachercomment)) {
-            echo $assessment->teachercomment;
-        }
-        echo "</textarea>\n";
-        echo "  </td>\n";
-        echo "</tr>\n";
-        echo "<tr><td align=\"right\"><b>".get_string("gradeforstudentsassessment", "workshop")."</td><td>\n";
-        choose_from_menu($num, "gradinggrade", $assessment->gradinggrade, "");
-        echo "</td></tr></table>\n";
-        echo "<input type=\"submit\" value=\"".get_string("savemygrading", "workshop")."\" />\n";
-        echo "</center></form>\n";
+        include('assessment_grading_form.html');
+        die;
     }
 
 
@@ -1442,6 +1413,7 @@
             set_field("workshop_assessments", "gradinggrade", $form->gradinggrade, "id", $assessment->id);
             set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
             set_field("workshop_assessments", "mailed", 0, "id", $assessment->id);
+            set_field("workshop_assessments", "teachergraded", 1, "id", $assessment->id);
             echo "<centre><b>".get_string("savedok", "workshop")."</b></centre><br />\n";
             
             add_to_log($course->id, "workshop", "grade", 
@@ -1521,6 +1493,11 @@
 
         // show assessment but don't allow changes
         workshop_print_assessment($workshop, $assessment, false, $allowcomments);
+        
+        if (isteacher($course->id) and !isteacher($course->id, $assessment->userid)) {
+            print_heading('<a href="assessments.php?action=gradeassessment&amp;id='.$cm->id.'&amp;stype=student&amp;aid='.$assessment->id.'">'.
+                get_string('assessthisassessment', 'workshop').'</a>');
+        }
         
         print_continue("view.php?id=$cm->id");
     }

@@ -189,6 +189,10 @@ function workshop_upgrade($oldversion) {
         
         execute_sql("UPDATE {$CFG->prefix}event SET eventtype = 'submissionend' WHERE eventtype = 'deadline' AND modulename = 'workshop'", false);
     }
+    
+    if ($oldversion < 2004120900) {
+        table_column('workshop_assessments', '', 'teachergraded', 'INTEGER', '4', 'UNSIGNED', '0', 'NOT NULL', 'gradinggrade');
+    }
 
     return true;
 

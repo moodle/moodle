@@ -234,108 +234,32 @@
         }
     
 
-    /*************** display final grades (by teacher) ***************************/
-    elseif ($action == 'displayfinalgrades') {
+    /*************** display grades (by teacher) ***************************/
+    elseif ($action == 'displaygrades' or $action == 'displayfinalgrades' or $action == 'displaycurrentgrades') {
 
         if (groupmode($course, $cm) == SEPARATEGROUPS) {
             $groupid = get_current_group($course->id);
         } else {
             $groupid = 0;
         }
-        // Get all the students
-        if (!$users = get_course_students($course->id, "u.lastname, u.firstname")) {
-            print_heading(get_string("nostudentsyet"));
-            print_footer($course);
-            exit;
-        }
         
-        // show the final grades as stored in the tables...
-        print_heading_with_help(get_string("displayoffinalgrades", "workshop"), "finalgrades", "workshop");
-        echo "<center><table border=\"1\" width=\"90%\"><tr>
-            <td bgcolor=\"$THEME->cellheading2\"><b>".$course->student."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submission", "workshop")."</b></td>";
-        if ($workshop->wtype) {
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsdone", "workshop").
-                "</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessments", 
-                "workshop")."</b></td>";
-        }
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
-                $course->teachers)."</b></td>";
-        if ($workshop->wtype) {
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
-                $course->students)."</b></td>";
-        }
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", 
-                "workshop")."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "workshop").
-                "</b></td></tr>\n";
+        print_heading_with_help(get_string("displayofgrades", "workshop"), "finalgrades", "workshop");
 
-        foreach ($users as $user) {
-            // skip if student not in group
-            if ($groupid) {
-                if (!ismember($groupid, $user->id)) {
-                    continue;
-                }
-            }
-            if ($submissions = workshop_get_user_submissions($workshop, $user)) {
-                $gradinggrade = workshop_gradinggrade($workshop, $user);
-                foreach ($submissions as $submission) {
-                    $grade = workshop_submission_grade($workshop, $submission);
-                    echo "<tr><td>$user->firstname $user->lastname</td>";
-                    echo "<td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
-                    if ($workshop->wtype) {
-                        echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $user)."</td>";
-                        echo "<td align=\"center\">$gradinggrade</td>";
-                    }
-                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
-                            "teacher")."</td>";
-                    if ($workshop->wtype) {
-                        echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
-                            "student")."</td>";
-                    }
-                    echo "<td align=\"center\">$grade</td>";
-                    echo "<td align=\"center\">".number_format($gradinggrade + $grade, 1)."</td></tr>\n";
-                }
-            }
-        }
-        echo "</table><br clear=\"all\" />\n";
-        workshop_print_key($workshop);
-        if ($workshop->showleaguetable) {
-            workshop_print_league_table($workshop);
-            if ($workshop->anonymous) {
-                echo "<p>".get_string("namesnotshowntostudents", "workshop", $course->students)."</p>\n";
-            }
-        }
-        print_continue("view.php?id=$cm->id");
-    }
-
-
-    /*************** display current grades (by teacher) ***************************/
-    elseif ($action == 'displaycurrentgrades') {
-
-        if (groupmode($course, $cm) == SEPARATEGROUPS) {
-            $groupid = get_current_group($course->id);
-        } else {
-            $groupid = 0;
-        }
-        print_heading_with_help(get_string("displayofcurrentgrades", "workshop"), "finalgrades", "workshop");
-        
         if ($workshop->ntassessments) {
             // display the teacher's submissions
             echo "<center><table border=\"1\" width=\"90%\"><tr>\n";
             echo "<td bgcolor=\"$THEME->cellheading2\"><b>$course->teacher ".get_string("submission", "workshop").
                 "</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
+            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop",
                     $course->teachers)."</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
+            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop",
                    $course->students)."</b></td></tr>";
             if ($submissions = workshop_get_teacher_submissions($workshop)) {
                 foreach ($submissions as $submission) {
                     echo "<tr><td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
-                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
+                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission,
                                 "teacher")."</td>";
-                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
+                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission,
                                 "student")."</td></tr>";
                 }
             }
@@ -350,16 +274,16 @@
             exit;
         }
         
-        // show the current grades as stored in the tables...
+        // show the grades as stored in the tables...     
         echo "<center><table border=\"1\" width=\"90%\"><tr>
-            <td bgcolor=\"$THEME->cellheading2\"><b>".$course->student."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submission", "workshop")."</b></td>";
+            <td bgcolor=\"$THEME->cellheading2\" width=\"120\"><b>".$course->student."</b></td>";
         if ($workshop->wtype) {
             echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsdone", "workshop").
                 "</b></td>";
             echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessments", 
                 "workshop")."</b></td>";
         }
+        echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submission", "workshop")."</b></td>";
         echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
                 $course->teachers)."</b></td>";
         if ($workshop->wtype) {
@@ -382,14 +306,19 @@
                 $gradinggrade = workshop_gradinggrade($workshop, $user);
                 foreach ($submissions as $submission) {
                     $grade = workshop_submission_grade($workshop, $submission);
-                    echo "<tr><td>$user->firstname $user->lastname</td>";
-                    echo "<td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
+                    echo "<tr><td><a href=\"{$CFG->wwwroot}/user/view.php?id=$user->id&amp;course=$course->id\">".
+                        fullname($user).'</a></td>';
                     if ($workshop->wtype) {
                         echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $user)."</td>";
                         echo "<td align=\"center\">$gradinggrade</td>";
                     }
-                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
-                            "teacher")."</td>";
+                    echo "<td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
+                    $strteachergrades = workshop_print_submission_assessments($workshop, $submission, "teacher");
+                    if ($strteachergrades == '&nbsp;') {
+                        $strteachergrades = '<a href="assessments.php?action=assesssubmission&id='.
+                            $cm->id.'&sid='.$submission->id.'">'.get_string('assess', 'workshop').'</a>';
+                    }
+                    echo "<td align=\"center\">$strteachergrades</td>";
                     if ($workshop->wtype) {
                         echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
                             "student")."</td>";
@@ -401,6 +330,12 @@
         }
         echo "</table><br clear=\"all\" />\n";
         workshop_print_key($workshop);
+        if ($workshop->showleaguetable and time() > $workshop->assessmentend) {
+            workshop_print_league_table($workshop);
+            if ($workshop->anonymous) {
+                echo "<p>".get_string("namesnotshowntostudents", "workshop", $course->students)."</p>\n";
+            }
+        }
         print_continue("view.php?id=$cm->id");
     }
 

@@ -1731,6 +1731,10 @@ function workshop_grade_assessments($workshop) {
                         }
                         echo "Best assessment is $bestassessmentid;\n";
                         foreach ($assessments as $assessment) {
+                            // don't overwrite teacher's grade
+                            if ($assessment->teachergraded) {
+                                continue;
+                            }
                             if ($assessment->id == $bestassessmentid) { 
                                 // it's the best one, set the grading grade to the maximum 
                                 set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
@@ -1748,7 +1752,7 @@ function workshop_grade_assessments($workshop) {
                     // there are less than 3 assessments for this submission
                     if ($assessments = workshop_get_assessments($submission)) {
                         foreach ($assessments as $assessment) {
-                            if (!$assessment->timegraded) {
+                            if (!$assessment->timegraded and !$assessment->teachergraded) {
                                 // set the grading grade to the maximum and say it's been graded 
                                 set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
                                 set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);

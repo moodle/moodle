@@ -16,6 +16,8 @@
     require("locallib.php");
     
     require_variable($id);    // Course Module ID
+    
+    $timenow = time();
 
     // get some useful stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -59,9 +61,9 @@
         if (!$cm->visible) {
             notice(get_string("activityiscurrentlyhidden"));
         }
-        if (time() < $workshop->submissionstart) { 
+        if ($timenow < $workshop->submissionstart) { 
             $action = 'notavailable'; 
-        } else if (time() < $workshop->assessmentend) {
+        } else if ($timenow < $workshop->assessmentend) {
             $action = 'studentsview';
         } else {
             $action = 'displayfinalgrade';
@@ -76,7 +78,7 @@
     if ($action == 'displayfinalgrade' ) {
 
         // show the final grades as stored in the tables...
-        print_heading_with_help(get_string("displayoffinalgrades", "workshop"), "finalgrades", "workshop");
+        print_heading(get_string("displayoffinalgrades", "workshop"));
         if ($submissions = workshop_get_user_submissions($workshop, $USER)) { // any submissions from user?
             echo "<center><table border=\"1\" width=\"90%\"><tr>";
             echo "<td><b>".get_string("submissions", "workshop")."</b></td>";
@@ -180,7 +182,7 @@
             }
             // has user submitted anything yet? 
             if (!workshop_get_user_submissions($workshop, $USER)) {
-                if (time() < $workshop->submissionend) {
+                if ($timenow < $workshop->submissionend) {
                     // print upload form
                     print_heading(get_string("submitassignmentusingform", "workshop").":");
                     workshop_print_upload_form($workshop);
@@ -196,7 +198,7 @@
                     workshop_list_self_assessments($workshop, $USER);
                 }
                 // if peer assessments are being done then show some  to assess...
-                if ($workshop->nsassessments and ($workshop->assessmentstart > time() and $workshop->assessmentend < time())) {  
+                if ($workshop->nsassessments and ($workshop->assessmentstart < $timenow and $workshop->assessmentend > $timenow)) {  
                     workshop_list_student_submissions($workshop, $USER);
                 }
                 // ..and any they have already done (and have gone cold)...
@@ -205,7 +207,6 @@
                     workshop_list_assessed_submissions($workshop, $USER);
                 }
                 // list any assessments by teachers
-                $timenow = time();
                 if (workshop_count_teacher_assessments_by_user($workshop, $USER) and ($timenow > $workshop->releasegrades)) {
                     print_heading(get_string("assessmentsby", "workshop", $course->teachers));
                     workshop_list_teacher_assessments_by_user($workshop, $USER);
@@ -216,10 +217,10 @@
                     workshop_list_peer_assessments($workshop, $USER);
                 }
                 // list previous submissions
-                print_heading(get_string("submissions", "workshop"));
+                print_heading(get_string("yoursubmissions", "workshop"));
                 workshop_list_user_submissions($workshop, $USER);
                 // are resubmissions allowed and the workshop is in submission/assessment phase?
-                if ($workshop->resubmit and (time() > $workshop->assessmentstart and time() < $workshop->submissionend)) {
+                if ($workshop->resubmit and ($timenow > $workshop->assessmentstart and $timenow < $workshop->submissionend)) {
                     // see if there are any cold assessments of the last submission
                     // if there are then print upload form
                     if ($submissions = workshop_get_user_submissions($workshop, $USER)) {
@@ -329,7 +330,7 @@
         }
 
         // Show link to student submissions for assessment only if assessment has started
-        if (time() > $workshop->assessmentstart) {
+        if ($timenow > $workshop->assessmentstart) {
             if ($numberofsubmissions = workshop_count_student_submissions_for_assessment($workshop, $USER)) {
                 echo "<br /><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
                     get_string("studentsubmissionsforassessment", "workshop", 
@@ -340,8 +341,8 @@
         }
         
         // Show link to current grades
-        if (time() > $workshop->assessmentstart) {
-            if (time() < $workshop->assessmentend) {
+        if ($timenow > $workshop->assessmentstart) {
+            if ($timenow < $workshop->assessmentend) {
                 echo "<br /><b><a href=\"submissions.php?id=$cm->id&amp;action=displaycurrentgrades\">".
                         get_string("displayofcurrentgrades", "workshop")."</a></b> \n";
             } else {

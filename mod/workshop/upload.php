@@ -19,13 +19,13 @@
 
     require_login($course->id);
 
-    $strworkshops = get_string("modulenameplural", "workshop");
-    $strworkshop = get_string("modulename", "workshop");
-    $strupload = get_string("upload");
+    $strworkshops = get_string('modulenameplural', 'workshop');
+    $strworkshop = get_string('modulename', 'workshop');
+    $strsubmission = get_string('submission', 'workshop');
 
-    print_header_simple("$workshop->name : $strupload", "",
+    print_header_simple("$workshop->name : $strsubmission", "",
                  "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> 
-                  <a href=\"view.php?a=$workshop->id\">$workshop->name</a> -> $strupload", 
+                  <a href=\"view.php?a=$workshop->id\">$workshop->name</a> -> $strsubmission", 
                   "", "", true);
     $timenow = time();
 
@@ -64,7 +64,7 @@
         $newsubmission->late = 1;
     }
     if (!$newsubmission->id = insert_record("workshop_submissions", $newsubmission)) {
-        error("Workshop upload: Failure to create new submission record!");
+        error("Workshop submission: Failure to create new submission record!");
     }
     // see if this is a resubmission by looking at the previous submissions...
     if ($submissions and ($workshop->submissionstart > time())) { // ...but not teacher submissions
