@@ -20,8 +20,8 @@
 
     require_login($course->id);
 
-    if (! isteacher($course->id) ) {
-        error("Only teachers can edit files");
+    if (! isteacheredit($course->id) ) {
+        error("You need to be a teacher with editing privileges");
     }
 
     function html_footer() {

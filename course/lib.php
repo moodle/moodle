@@ -861,8 +861,12 @@ function print_course_admin_links($course, $width=180) {
     if (isguest()) {
         return true;
     }
+
     if (isteacher($course->id)) {
-        if (isteacheredit($course->id)) {
+
+        $isteacheredit = isteacheredit($course->id);
+
+        if ($isteacheredit) {
             $adminicon[]="<img src=\"$CFG->pixpath/i/edit.gif\" height=16 width=16 alt=\"\">";
             if (isediting($course->id)) {
                 $admindata[]="<a href=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</a>";
@@ -887,7 +891,7 @@ function print_course_admin_links($course, $width=180) {
         $admindata[]="<a href=\"student.php?id=$course->id\">$course->students...</a>";
         $adminicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
 
-        if (isteacheredit($course->id)) {
+        if ($isteacheredit) {
             $admindata[]="<a href=\"$CFG->wwwroot/backup/backup.php?id=$course->id\">".get_string("backup")."...</a>";
             $adminicon[]="<img src=\"$CFG->pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
         
@@ -903,8 +907,10 @@ function print_course_admin_links($course, $width=180) {
         $admindata[]="<a href=\"log.php?id=$course->id\">".get_string("logs")."...</a>";
         $adminicon[]="<img src=\"$CFG->pixpath/i/log.gif\" height=16 width=16 alt=\"\">";
 
-        $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</a>";
-        $adminicon[]="<img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\">";
+        if ($isteacheredit) {
+            $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</a>";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\">";
+        }
 
         $admindata[]="<a href=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</a>";
         $adminicon[]="<img src=\"$CFG->modpixpath/resource/icon.gif\" height=16 width=16 alt=\"\">";
