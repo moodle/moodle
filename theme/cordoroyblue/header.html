@@ -1,11 +1,10 @@
-<!-- No doctype yet - we are slowly migrating towards XHTML transitional 1.0 -->
 <html<?php echo $direction ?>>
-<?php echo $meta ?>
 <head>
+<?php echo $meta ?>
 <title><?php echo $title ?></title>
-<meta name="keywords" content="moodle, <?php echo $title ?> ">
-<link rel="stylesheet" type="text/css" href="<?php echo $styles ?>">
-<link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico">
+<meta name="keywords" content="moodle, <?php echo $title ?> " />
+<link rel="stylesheet" type="text/css" href="<?php echo $styles ?>" />
+<link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico" />
 <?php include("$CFG->javascript"); ?>
 </head>
 
@@ -49,11 +48,11 @@
       ?></td>
     </tr>
   </table>
-  <img src="<?php echo $CFG->wwwroot?>/pix/spacer.gif" alt="" height=5 width=1><br>
+  <img src="<?php echo $CFG->wwwroot?>/pix/spacer.gif" alt="" height="5" width="1" /><br />
 
 <?php } else if ($heading) { // If no navigation, but a heading, then print a line  ?>
 
-  <hr size="1" noshade />
+  <hr size="1" noshade="noshade" />
 
 <?php } ?>
 
