@@ -51,7 +51,7 @@ header("Refresh: 4; URL=jsupdate.php?chat_sid=".$chat_sid."&chat_lasttime=".$cha
                  if ($formatmessage->beep) {
                      $beep = $formatmessage->beep;
                  }
-                 echo "parent.msg.document.write('".$formatmessage->html."\\n');";
+                 echo "parent.msg.document.write('".addslashes($formatmessage->html)."\\n');";
              }
          }
      }
