@@ -2809,4 +2809,23 @@ function forum_change_discussionid($postid, $discussionid) {
     return true;
 }
 
+function forum_update_subscriptions_button($courseid, $forumid) {
+// Prints the editing button on subscribers page
+    global $CFG, $USER;
+
+    if (isteacheredit($courseid)) {
+        if (!empty($USER->subscriptionsediting)) {
+            $string = get_string("turneditingoff");
+            $edit = "off";
+        } else {
+            $string = get_string("turneditingon");
+            $edit = "on";
+        }
+        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">".
+               "<input type=\"hidden\" name=\"id\" value=\"$forumid\" />".
+               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+               "<input type=\"submit\" value=\"$string\" /></form>";
+    }
+}
+
 ?>
