@@ -67,7 +67,7 @@
                 fwrite ($bf,full_tag("GRADE",4,false,$workshop->grade));
                 fwrite ($bf,full_tag("NTASSESSMENTS",4,false,$workshop->ntassessments));
                 fwrite ($bf,full_tag("NSASSESSMENTS",4,false,$workshop->nsassessments));
-                fwrite ($bf,full_tag("OVERALLOCATION",4,false,$workshop->nsassessments));
+                fwrite ($bf,full_tag("OVERALLOCATION",4,false,$workshop->overallocation));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$workshop->timemodified));
                 fwrite ($bf,full_tag("MERGEGRADES",4,false,$workshop->mergegrades));
                 fwrite ($bf,full_tag("TEACHERWEIGHT",4,false,$workshop->teacherweight));
