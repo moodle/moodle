@@ -1167,7 +1167,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
         $select .= " AND s.course = '$courseid' AND s.userid = u.id";
         $userstudentcolumns = ", s.timeaccess as lastaccess";
     } else {
-        $userstudentcolumns = ", u.lastlogin as lastaccess";
+        $userstudentcolumns = ", u.lastaccess as lastaccess";
     }
 
 
