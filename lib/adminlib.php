@@ -2,7 +2,7 @@
        // Contains functions that only administrators will ever need to use
 
 function upgrade_enrol_plugins($return) {
-    global $CFG;
+    global $CFG, $db;
 
     if (!$mods = get_list_of_plugins("enrol") ) {
         error("No modules installed!");
@@ -87,7 +87,7 @@ function upgrade_enrol_plugins($return) {
 function upgrade_activity_modules($return) {
 /// Find and check all modules and load them up or upgrade them if necessary
 
-    global $CFG;
+    global $CFG, $db;
 
     if (!$mods = get_list_of_plugins("mod") ) {
         error("No modules installed!");
