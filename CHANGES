@@ -1,3 +1,128 @@
+2002-09-26 Thursday 15:25  martin
+
+	* version.php: 
+	
+	Update the version
+
+2002-09-26 Thursday 15:13  martin
+
+	* lang/en/moodle.php, login/index_form.html: 
+	
+	The login page now shows different instructions depending on the
+	authentication mechanism.
+
+2002-09-26 Thursday 15:03  martin
+
+	* admin/config.html, auth/README, auth/email/lib.php,
+	auth/none/lib.php, error/index.php, lang/en/moodle.php,
+	lib/defaults.php, lib/moodlelib.php, login/change_password.php,
+	login/index.php, user/edit.php: 
+	
+	First implementation of new authentication system, which can now
+	use pluggable modules in the 'auth' directory.
+	
+	Everything is done through authentication_user_login in
+	lib/moodlelib.php
+	
+	As well as the old default "email" confirmation, I added a new type
+	of confirmation "none", which basically does no confirmation at
+	all.
+
+2002-09-26 Thursday 11:51  martin
+
+	* lib/moodlelib.php: 
+	
+	Check for USER->email in require_login.  With external
+	authentication schemes it's possible that the email field could be
+	empty, so this will force users to update it (and the rest of their
+	profile) any time they log into a course.
+
+2002-09-26 Thursday 11:36  martin
+
+	* admin/lang.php: 
+	
+	Make $a bold so it's easier to see
+
+2002-09-26 Thursday 11:20  martin
+
+	* lang/en/help/langedit.html: 
+	
+	New help file for language editing
+
+2002-09-26 Thursday 11:16  martin
+
+	* admin/lang.php: 
+	
+	Much better.  No slashes needed AT ALL now, not even for $a
+	variables.  Also provided a help button at the top.
+
+2002-09-26 Thursday 10:19  martin
+
+	* lang/fi/: assignment.php, forum.php, journal.php, moodle.php,
+	survey.php, testupdate.php: 
+	
+	Patches from Petri
+
+2002-09-26 Thursday 00:38  martin
+
+	* doc/install.html: 
+	
+	Info about lib/htaccess
+
+2002-09-26 Thursday 00:33  martin
+
+	* lib/htaccess: 
+	
+	Added DirectoryIndex stuff
+
+2002-09-25 Wednesday 23:16  martin
+
+	* lib/db/: README, postgres7.sql: 
+	
+	Added new postgres7 schema, developed by Felipe Rodrigues da Silva
+	<felipe@pontoexe.com>.	Thanks Felipe!
+	
+	I've personally not tested this yet so PostgrSQL user feedback is
+	encouraged!
+
+2002-09-25 Wednesday 22:40  martin
+
+	* course/view.php: 
+	
+	Don't redirect too early
+
+2002-09-25 Wednesday 21:37  martin
+
+	* admin/lang.php: 
+	
+	Add some comments
+
+2002-09-25 Wednesday 20:33  martin
+
+	* lib/htaccess: 
+	
+	Improved explanations for how to use this file
+
+2002-09-25 Wednesday 19:06  martin
+
+	* admin/lang.php: 
+	
+	It's possible $USER->lang may not be defined.  If so, use
+	$CFG->lang.
+
+2002-09-25 Wednesday 16:17  martin
+
+	* course/: social.php, view.php: 
+	
+	Set fromdiscussion here just in case it's not set elsewhere
+
+2002-09-25 Wednesday 15:42  martin
+
+	* CHANGES: 
+	
+	
+	ALL CHANGES UP TO MOODLE 1.0.5 BETA 1
+
 2002-09-25 Wednesday 15:41  martin
 
 	* lang/pt_br/help/: choice/options.html,
