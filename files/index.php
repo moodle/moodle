@@ -37,7 +37,7 @@
         echo "<td colspan=\"2\">";
     }
 
-    if (! $basedir = make_upload_directory("$course->id") {
+    if (! $basedir = make_upload_directory("$course->id")) {
         error("The site administrator needs to fix the file permissions");
     }
 
@@ -72,24 +72,31 @@
         case "upload":
             html_header();
             if ($save) {
-                if ($userfile == "none" || $userfile_size==0) {
+                if (!is_uploaded_file($userfile['tmp_name']) and $userfile['size'] > 0) {
                     echo "<P>Error: That was not a valid file.";
                 } else {
-                    $userfile_name = clean_filename($userfile_name);
-                    if ($userfile_name != "") {
+                    $userfile_name = clean_filename($userfile['name']);
+                    if ($userfile_name) {
                         $newfile = "$basedir$wdir/$userfile_name";
-                        copy ($userfile, $newfile); 
-                        chmod ($newfile, 0750);
-                        echo "Uploaded $userfile_name ($userfile_type) to $wdir";
+                        if (move_uploaded_file($userfile['tmp_name'], $newfile)) {
+                            echo "Uploaded $userfile_name (".$userfile['type'].") to $wdir";
+                        } else {
+                            echo "A problem occurred while uploading $userfile_name to $wdir";
+                        }
                     }
                 }
                 displaydir($wdir);
                     
             } else {
+                //if ($upload_max_filesize = ini_get("upload_max_filesize")) {
+                    //str_replace("M", "000000", $upload_max_filesize);
+                //} else {
+                    $upload_max_filesize = 5000000;
+                //}
                 echo "<P>Upload a file into <B>$wdir</B>:";
                 echo "<TABLE><TR><TD COLSPAN=2>";
                 echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"post\" ACTION=index.php>";
-                echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=5000000>";
+                echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$upload_max_filesize\">";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
