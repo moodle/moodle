@@ -1321,14 +1321,17 @@ HTMLArea.prototype._createLink = function(link) {
     if (typeof link == "undefined") {
         link = this.getParentElement();
         if (link && !/^a$/i.test(link.tagName)) {
-            link = null;
-            var sel = this._getSelection();
-            var rng = this._createRange(sel);
-            var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
-            if(len < 1) {
-                alert("You must select text first!");
-                return false;
+            if(link.tagName.toLowerCase() != 'img') {
+                link = null;
+                var sel = this._getSelection();
+                var rng = this._createRange(sel);
+                var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
+                if(len < 1) {
+                    alert("You must select text first!");
+                    return false;
+                }
             }
+            link = null;
         }
     }
     if (link) {
