@@ -37,7 +37,7 @@ function display() {
     }
 
     if ($subdir) {
-        if (detect_munged_arguments($subdir)) {
+        if (detect_munged_arguments($subdir, 0)) {
             error("The value for 'subdir' contains illegal characters!");
         }
         $relativepath = "$relativepath$subdir";
