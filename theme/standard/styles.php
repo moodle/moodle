@@ -141,7 +141,6 @@ form {
 
 .weeklyoutlinesidehidden {
     background-color: <?PHP echo $THEME->hidden?>;
-    border-style: dashed;
 }
 
 .weeklyoutlinecontent {
@@ -170,7 +169,6 @@ form {
 
 .topicsoutlinesidehidden {
     background-color: <?PHP echo $THEME->hidden?>;
-    border-style: dashed;
 }
 
 .topicsoutlinecontent {
