@@ -1,0 +1,75 @@
+<?PHP // $Id$ 
+      // glossary.php - created with Moodle 1.2 Beta (2004022400)
+
+
+$string['addcomment'] = 'Adicionar comentário';
+$string['addentry'] = 'Adicionar nova entrada';
+$string['addingcomment'] = 'Escrever um comentário';
+$string['aliases'] = 'Palavra(s) clave';
+$string['allcategories'] = 'Todas as categorias';
+$string['allentries'] = 'TODAS';
+$string['allowcomments'] = 'Permitir comentários nas entradas';
+$string['allowduplicatedentries'] = 'Entradas duplicadas são permitidas';
+$string['answer'] = 'Resposta';
+$string['areyousuredelete'] = 'Tem a certeza que deseja apagar esta entrada?';
+$string['areyousuredeletecomment'] = 'Tem a certeza que deseja apagar este comentário?';
+$string['ascending'] = '(ascendente)';
+$string['attachment'] = 'Anexo';
+$string['authorview'] = 'Ver por autor';
+$string['back'] = 'Voltar';
+$string['categories'] = 'Categorias';
+$string['category'] = 'Categoria';
+$string['categorydeleted'] = 'Categoria apagada';
+$string['categoryview'] = 'Ver por categorias';
+$string['cnfsortkey'] = 'Seleccione a chave de ordenação por omissão';
+$string['cnfsortorder'] = 'Seleccione o sentido de ordenação por omissão';
+$string['comment'] = 'Comentário';
+$string['commentdeleted'] = 'O comentário foi apagado';
+$string['comments'] = 'Cometntários';
+$string['commentupdated'] = 'O comentário foi actualizado';
+$string['concept'] = 'Conceito';
+$string['concepts'] = 'Conceitos';
+$string['currentglossary'] = 'Glossário actual';
+$string['dateview'] = 'Ver por datas';
+$string['definition'] = 'Definição';
+$string['definitions'] = 'Definições';
+$string['deletingcomment'] = 'Apagando comentário';
+$string['descending'] = '(descendente)';
+$string['destination'] = 'Destino';
+$string['displayformat'] = 'Formato de visualização';
+$string['displayformat2'] = 'Completo com autor';
+$string['displayformat3'] = 'Enciclopedia';
+$string['displayformat4'] = 'FAQ';
+$string['displayformat5'] = 'Completo sem autor';
+$string['displayformat6'] = 'Listagem de entradas';
+$string['duplicateentry'] = 'Entrada duplicada';
+$string['editcategories'] = 'Editar categorias';
+$string['editentry'] = 'Editar entrada';
+$string['editingcomment'] = 'Editando comentário';
+$string['entbypage'] = 'Entradas mostradas em cada página';
+$string['entries'] = 'Entradas';
+$string['entrieswithoutcategory'] = 'Entradas sem categoria';
+$string['entry'] = 'Entrada';
+$string['entrydeleted'] = 'Entrada apagada';
+$string['entryexported'] = 'Entrada exportada com sucesso';
+$string['explainalphabet'] = 'Consulte o glossário usando este índice';
+$string['exportentries'] = 'Exportar entradas';
+$string['exportglossary'] = 'Exportar glossário';
+$string['filetoimport'] = 'Ficheiro a importar';
+$string['glossarytype'] = 'Tipo de glossário';
+$string['glosssaryexported'] = 'Glossário exportado.';
+$string['importentries'] = 'Importar entradas';
+$string['mainglossary'] = 'Glossário principal';
+$string['modulename'] = 'Glossário';
+$string['modulenameplural'] = 'Glossários';
+$string['showalphabet'] = 'Mostrar alfabeto';
+$string['sortby'] = 'Ordenar por';
+$string['sortbycreation'] = 'Por data de criação';
+$string['sortbylastupdate'] = 'Por data de actualização';
+$string['sortchronogically'] = 'Classificar por ordem cronológica';
+$string['special'] = 'Especial';
+$string['standardview'] = 'Ver por alfabeto';
+$string['totalentries'] = 'Total de entradas';
+$string['writtenby'] = 'por';
+
+?>
