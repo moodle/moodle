@@ -3,7 +3,7 @@
 
 
 $string['action'] = "Akcja";
-$string['activities'] = "Aktywno¶ci";
+$string['activities'] = "Elementy kursu";
 $string['activity'] = "Aktywno¶æ";
 $string['activityreport'] = "Raport aktywno¶ci";
 $string['add'] = "Dodaj";
@@ -32,7 +32,7 @@ $string['answer'] = "Odpowied¼";
 $string['assessment'] = "Ocena";
 $string['assignadmins'] = "Przypisz administratorów";
 $string['assignteachers'] = "Przypisz prowadz±cych";
-$string['authentication'] = "Autentykacja";
+$string['authentication'] = "Autentyfikacja";
 $string['availablecourses'] = "Dostêpne kursy";
 $string['cancel'] = "Porzuæ";
 $string['categories'] = "Kategorie kursów";
@@ -204,12 +204,12 @@ $string['htmleditoravailable'] = "Edytor Richtext jest dostêpny";
 $string['htmleditordisabled'] = "Masz wy³±czony edytor Richtext w swoim profilu u¿ytkownika";
 $string['htmleditordisabledadmin'] = "Administrator wy³±czy³ edytor Richtekst w tym serwisie";
 $string['htmleditordisabledbrowser'] = "Edytor Richtext jest niedostêpny poniewa¿ nie u¿ywasz Internet Explorera 5.5 lub lepszego.";
-$string['htmlformat'] = "£adny format HTML";
+$string['htmlformat'] = "Pe³ny  format HTML";
 $string['icqnumber'] = "Numer ICQ";
 $string['idnumber'] = "Numer ID";
 $string['invalidemail'] = "Niew³a¶ciwy adres e-mail";
 $string['invalidlogin'] = "b³±d logowania, spróbuj jeszcze raz";
-$string['jumpto'] = "Skocz do...";
+$string['jumpto'] = "Przejd¼ do...";
 $string['langltr'] = "Kierunek jêzyka z lewej-do-prawej";
 $string['langrtl'] = "Kierunek jêzyka z prawej-do-lewej";
 $string['language'] = "Jêzyk";
