@@ -37,15 +37,23 @@ a.dimmed:visited {
 }
 
 a.autolink:link,
-a.autolink:visited {
-    background-color:#DDDDDD; /* autolink */
+a.autolink:visited,
+a.glossary-autolink:link,
+a.glossary-autolink:visited,
+a.activity-autolink:link,
+a.activity-autolink:visited,
+a.resource-autolink:link,
+a.resource-autolink:visited {
+    background-color:#DDDDDD; 
     color:#555555;
 }
 
-a.autolink:hover,
-a:hover,
-a.dimmed:hover {
+a:hover {
     color:#FF0000;
+}
+
+a.glossary-autolink:hover {
+    cursor: help;
 }
 
 
@@ -316,18 +324,6 @@ th {
 
 
 /* glossary, wiki */
-.generaltab, .generaltabinactive {
-    background-color:#BBBBBB; /* cellheading */
-}
-
-.generaltabselected {
-    background-color:#DDDDDD; /* cellheading2 */
-}
-
-.generaltabinactive {
-    color:#CCCCCC;
-}
-
 .entryboxheader {
     border-color: #BBBBBB;
 }
@@ -344,6 +340,7 @@ th {
 }
 
 .glossarypost .entryheader,
+.glossarypost .entryapproval,
 .glossarypost .picture,
 .glossarypost .entryattachment,
 .glossarypost .left {
@@ -360,6 +357,33 @@ th {
     background-color: #F0F0F0;
 
 }
+
+/* the glossary tabs */
+.glossarydisplay .tabs .general,
+.glossarydisplay .tabs .inactive {
+    background-color:#BBBBBB;
+}
+.glossarydisplay .tabs .selected {
+    background-color:#DDDDDD; /* cellheading2 */
+}
+.glossarydisplay .tabs .inactive {
+    color:#CCCCCC;
+}
+
+
+
+.generaltab, .generaltabinactive {
+    background-color:#BBBBBB; /* cellheading */
+}
+
+.generaltabselected {
+    background-color:#DDDDDD; /* cellheading2 */
+}
+
+.generaltabinactive {
+    color:#CCCCCC;
+}
+
 
 
 #mod-glossary-report .generalbox .teacher {
