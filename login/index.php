@@ -38,7 +38,7 @@
             $USER = $user;
             $USER->loggedin = true;
             $USER->site = $CFG->wwwroot;   // for added security
-            if ($USER->username = "guest") {
+            if ($USER->username == "guest") {
                 $USER->lang = $CFG->lang;  // Guest language always same as site
             }
             save_session("USER");
