@@ -1471,6 +1471,28 @@
                         }
                     }
                 }
+
+                //Now we have to recode the parent field of each restored category
+                $categories = get_records_sql("SELECT old_id, new_id 
+                                               FROM {$CFG->prefix}backup_ids
+                                               WHERE backup_code = $restore->backup_unique_code AND
+                                                     table_name = 'quiz_categories'");
+                if ($categories) {
+                    foreach ($categories as $category) {
+                        $restoredcategory = get_record('quiz_categories','id',$category->new_id);
+                        if ($restoredcategory->parent != 0) {
+                            //echo 'Parent '.$restoredcategory->parent.' is ';           //Debug
+                            $idcat = backup_getid($restore->backup_unique_code,'quiz_categories',$restoredcategory->parent);
+                            if ($idcat->new_id) {
+                                $restoredcategory->parent = $idcat->new_id;
+                            } else {
+                                $restoredcategory->parent = 0;
+                            }
+                            //echo $restoredcategory->parent.' now<br />';  //Debug
+                            update_record('quiz_categories', $restoredcategory);
+                        }
+                    }
+                }
             }
         } else {
             $status = false;
