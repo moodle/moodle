@@ -290,6 +290,7 @@
             $course->numsections = addslashes($course_header->course_numsections);
             $course->showrecent = addslashes($course_header->course_showrecent);
             $course->marker = addslashes($course_header->course_marker);
+            $course->visible = addslashes($course_header->course_visible);
             $course->timecreated = addslashes($course_header->course_timecreated);
             $course->timemodified = addslashes($course_header->course_timemodified);
             //Now insert the record
@@ -1084,6 +1085,9 @@
                             break;
                         case "MARKER":
                             $this->info->course_marker = $this->getContents();
+                            break;
+                        case "VISIBLE":
+                            $this->info->course_visible = $this->getContents();
                             break;
                         case "TIMECREATED":
                             $this->info->course_timecreated = $this->getContents();
