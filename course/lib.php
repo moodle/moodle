@@ -1112,10 +1112,10 @@ function make_editing_buttons($moduleid, $absolute=false, $visible=true, $str=NU
 
     if ($visible) {
         $hideshow = " <a title=\"$str->hide\" href=\"$path/mod.php?hide=$moduleid\"><img 
-                        src=\"$pixpath/t/hide.gif\" height=11 width=11 border=0></a>";
+                        src=\"$pixpath/t/hide.gif\" hspace=2 height=11 width=11 border=0></a>";
     } else {
         $hideshow = " <a title=\"$str->show\" href=\"$path/mod.php?show=$moduleid\"><img 
-                        src=\"$pixpath/t/show.gif\" height=11 width=11 border=0></a>";
+                        src=\"$pixpath/t/show.gif\" hspace=2 height=11 width=11 border=0></a>";
     }
 
     return "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$moduleid\"><img 

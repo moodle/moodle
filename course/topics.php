@@ -211,18 +211,18 @@
             if (isediting($course->id)) {
                 if ($course->marker == $section) {  // Show the "light globe" on/off
                     echo "<a href=\"view.php?id=$course->id&marker=0\" title=\"$strmarkedthistopic\">".
-                         "<img src=\"$pixpath/i/marked.gif\" height=16 width=16 border=0></a><br />";
+                         "<img src=\"$pixpath/i/marked.gif\" vspace=3 height=16 width=16 border=0></a><br />";
                 } else {
                     echo "<a href=\"view.php?id=$course->id&marker=$section\" title=\"$strmarkthistopic\">".
-                         "<img src=\"$pixpath/i/marker.gif\" height=16 width=16 border=0></a><br />";
+                         "<img src=\"$pixpath/i/marker.gif\" vspace=3 height=16 width=16 border=0></a><br />";
                 }
 
                 if ($thissection->visible) {        // Show the hide/show eye
                     echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strtopichide\">".
-                         "<img src=\"$pixpath/i/hide.gif\" height=16 width=16 border=0></a><br />";
+                         "<img src=\"$pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
                 } else {
                     echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strtopicshow\">".
-                         "<img src=\"$pixpath/i/show.gif\" height=16 width=16 border=0></a><br />";
+                         "<img src=\"$pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
                 }
 
             }
