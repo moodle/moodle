@@ -1204,7 +1204,7 @@ foreach ($data as $tab) {
     <tr>
       <td width="100%">
 
-<?php echo print_tabs($tabrows, $currenttab, $inactive);
+<?php print_tabs($tabrows, $currenttab, $inactive);
 
 ?>
       </td>
