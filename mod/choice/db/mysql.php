@@ -43,6 +43,15 @@ function choice_upgrade($oldversion) {
         modify_database("", "UPDATE prefix_choice SET publish = publish - 1 WHERE publish > 0;");
     }
 
+    if ($oldversion < 2004111200){  // drop first to avoid conflicts when upgrading from 1.4+
+        execute_sql('ALTER TABLE prefix_choice DROP INDEX course;',false);
+        execute_sql('ALTER TABLE prefix_choice_answers DROP INDEX choice;',false);
+        execute_sql('ALTER TABLE prefix_choice_answers DROP INDEX userid;',false);
+
+        modify_database('','ALTER TABLE prefix_choice ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_choice_answers ADD INDEX choice (choice);');
+        modify_database('','ALTER TABLE prefix_choice_answers ADD INDEX userid (userid);');
+    }
 
     return true;
 }
