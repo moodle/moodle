@@ -1416,17 +1416,18 @@ function update_categories_button() {
     }
 }
 
+
 function navmenu($course, $cm=NULL, $targetwindow="self") {
 // Given a course and a (current) coursemodule
-// This function returns a small popup menu with all the 
+// This function returns a small popup menu with all the
 // course activity modules in it, as a navigation menu
-// The data is taken from the serialised array stored in 
+// The data is taken from the serialised array stored in
 // the course record
 
     global $CFG;
 
     if ($cm) {
-       $cm = $cm->id;
+        $cm = $cm->id;
     }
 
     if ($course->format == 'weeks') {
@@ -1438,8 +1439,15 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     if (!$modinfo = unserialize($course->modinfo)) {
         return "";
     }
+    $isteacher = isteacher($course->id);
     $section = -1;
     $selected = "";
+    $url = "";
+    $previousmod = NULL;
+    $backmod = NULL;
+    $nextmod = NULL;
+    $flag = false;
+
     foreach ($modinfo as $mod) {
         if ($mod->mod == "label") {
             continue;
@@ -1449,10 +1457,16 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
         }
         $section = $mod->section;
         //Only add visible or teacher mods to jumpmenu
-        if ($mod->visible or isteacher($course->id)) {
+        if ($mod->visible or $isteacher) {
             $url = "$mod->mod/view.php?id=$mod->cm";
+            if ($flag) { // the current mod is the "next" mod
+                $nextmod = $mod;
+                $flag = false;
+            }
             if ($cm == $mod->cm) {
                 $selected = $url;
+                $backmod = $previousmod;
+                $flag = true; // set flag so we know to use next mod for "next"
             }
             $mod->name = urldecode($mod->name);
             if (strlen($mod->name) > 55) {
@@ -1461,14 +1475,25 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
             if (!$mod->visible) {
                 $mod->name = "(".$mod->name.")";
             }
-            $menu[$url] = $mod->name; 
+            $menu[$url] = $mod->name;
         }
+        $previousmod = $mod;
     }
-
-    return popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"), 
-                      "", "", true, $targetwindow);
-}   
-
+    if ($backmod) {
+        $backmod = "<form action=\"$CFG->wwwroot/mod/$backmod->mod/view.php\" target=\"$CFG->framename\">".
+                   "<input type=\"hidden\" name=\"id\" value=\"$backmod->cm\">".
+                   "<input type=\"submit\" value=\"&lt;\"></form>";
+    }
+    if ($nextmod) {
+        $nextmod = "<form action=\"$CFG->wwwroot/mod/$nextmod->mod/view.php\" target=\"$CFG->framename\">".
+                   "<input type=\"hidden\" name=\"id\" value=\"$nextmod->cm\">".
+                   "<input type=\"submit\" value=\"&gt;\"></form>";
+    }
+    return "<table><tr><td>$backmod</td><td>" .
+            popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"),
+                       "", "", true, $targetwindow).
+            "</td><td>$nextmod</td></tr></table>";
+}
 
 
 function print_date_selector($day, $month, $year, $currenttime=0) {
