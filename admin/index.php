@@ -122,6 +122,26 @@
         die;
     }
 
+
+/// Insert default values for any important configuration variables
+
+    include_once("$CFG->dirroot/lib/defaults.php");
+
+    foreach ($defaults as $name => $value) {
+        if (!isset($CFG->$name)) {
+            $CFG->$name = $value;
+            set_config($name, $value);
+            $configchange = true;
+        }
+    }
+
+/// If any new configurations were found then send to the config page to check
+
+    if (!empty($configchange)) {
+        redirect("config.php");
+    }
+
+
 /// Check version of Moodle code on disk compared with database
 /// and upgrade if possible.
 
@@ -190,25 +210,6 @@
         print_simple_box_end();
         print_continue("index.php");
         exit;
-    }
-
-
-/// Insert default values for any important configuration variables
-
-    include_once("$CFG->dirroot/lib/defaults.php");
-
-    foreach ($defaults as $name => $value) {
-        if (!isset($CFG->$name)) {
-            $CFG->$name = $value;
-            set_config($name, $value);
-            $configchange = true;
-        }
-    }
-
-/// If any new configurations were found then send to the config page to check
-
-    if (!empty($configchange)) {
-        redirect("config.php");
     }
 
 
