@@ -1165,24 +1165,23 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $direction = " dir=\"ltr\"";
     }
 
-    $cache = false; //// FIXME:  This is a temporary hack until caching is solved better
+    $cache = false; //// FIXME:  This is a temporary hack while following code is being tested
 
-    if ($cache) {
-        @session_cache_limiter('private');
-        @header('Cache-Control: private');
-        @header('Pragma: ');
-        @header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-        @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-    } else {   // Do everything we can to prevent clients and proxies caching
-        @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
-        @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+    if ($cache) {  // Allow caching on "back" (but not on normal clicks)
+        @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
+        @header('Pragma: no-cache');
+        @header('Expires: ');          
+    } else {       // Do everything we can to always prevent clients and proxies caching
         @header('Cache-Control: no-store, no-cache, must-revalidate');
         @header('Cache-Control: post-check=0, pre-check=0', false);
         @header('Pragma: no-cache');
+        @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
+        @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
         $meta .= "\n<meta http-equiv=\"pragma\" content=\"no-cache\" />";
         $meta .= "\n<meta http-equiv=\"expires\" content=\"0\" />";
     }
+    @header('Accept-Ranges: none');
 
     if ($usexml) {       // Added by Gustav Delius / Mad Alex for MathML output
         $currentlanguage = current_language();
