@@ -1058,13 +1058,13 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "</td>";
 
     if ($post->parent) {
-        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
+        echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
     } else {
-        echo "<td nowrap bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
+        echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
     }
     echo "<p>";
-    echo "<font size=3><b>$post->subject</b></font><br>";
-    echo "<font size=1>";
+    echo "<font size=3><b>$post->subject</b></font><br \>";
+    echo "<font size=2>";
     $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</a>";
     $by->date = userdate($post->modified);
     print_string("bynameondate", "forum", $by);
