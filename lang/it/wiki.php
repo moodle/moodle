@@ -1,9 +1,13 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004062600)
+      // wiki.php - created with Moodle 1.4 beta (2004082300)
 
 
 $string['action'] = '-- Azione --';
 $string['administration'] = 'Amministrazione';
+$string['allowremovepages'] = 'Permetti \'Rimuovi pagine\'';
+$string['allowrevertchanges'] = 'Permetti \'Ripristina tutte le modifiche \'';
+$string['allowsetpage'] = 'Permetti \'Imposta bandiere pagina\'';
+$string['allowstrippages'] = 'Permetti \'Ripulisci pagine\'';
 $string['attachments'] = 'Allegati alla pagina';
 $string['author'] = 'Autore';
 $string['authorfieldpattern'] = 'Schema campo autore';
@@ -33,6 +37,7 @@ $string['deleteversions'] = 'Cancella quante ultime versioni';
 $string['deleteversionserror'] = 'Prego inserire un valore corretto di versioni';
 $string['diff'] = 'Differenze';
 $string['differences'] = 'Differenze tra la versione $a->new_ver e la $a->old_ver di $a->pagename.';
+$string['disablecamel'] = 'Disabilita collegamento CamelCase';
 $string['disabledpage'] = 'Questa pagina non è attualmente disponibile';
 $string['doesnotexist'] = 'Questa pagina no esiste ancora, clicca sul pulsante di modifica se vuoi crearla.';
 $string['downloadaszip'] = 'Archivio compresso scaricabile';
@@ -107,6 +112,7 @@ $string['nothingtostrip'] = 'Non ci sono pagine con più di una versione.';
 $string['nowikicreated'] = 'Nulla è stato creato ancora per questo Wiki.';
 $string['of'] = 'di';
 $string['offline'] = 'OFFLINE';
+$string['optional'] = 'Opzionale';
 $string['orphanedpage'] = 'Pagina orfana';
 $string['orphanedpages'] = 'Pagine orfane';
 $string['otherwikis'] = 'Altri Wiki';
@@ -145,6 +151,11 @@ $string['strippagecheck'] = 'Sei sicuro di voler ripulire le versioni vecchie di
 $string['strippages'] = 'Ripulisci pagine';
 $string['studentadminoptions'] = 'Opzioni di amministrazione dello studente';
 $string['submit'] = 'Sottometti';
+$string['tabattachments'] = 'Allegati';
+$string['tabedit'] = 'Modifica';
+$string['tabinfo'] = 'Storico';
+$string['tablinks'] = 'Collegamenti';
+$string['tabview'] = 'Visualizza';
 $string['thanksforcontribution'] = 'Grazie per il tuo contributo.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Questa pagina non è collegata da nessuna parte.';
 $string['updatedpages'] = 'Pagine aggiornate';
