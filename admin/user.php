@@ -1,7 +1,6 @@
 <?PHP // $Id$
 
     require_once("../config.php");
-    require_once("../user/lib.php");
 
     $recordsperpage = 30;
 
