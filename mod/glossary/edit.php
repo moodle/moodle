@@ -176,7 +176,7 @@ if ( $confirm ) {
         foreach ($form->categories as $category) {
             if ( $category > 0 ) {
                 $newcategory->categoryid = $category;
-                insert_record("glossary_entries_categories",$newcategory);
+                insert_record("glossary_entries_categories",$newcategory, false);
             } else {
                 break;
             }
@@ -190,7 +190,7 @@ if ( $confirm ) {
                     unset($newalias);
                     $newalias->entryid = $e;
                     $newalias->alias = $alias;
-                    insert_record("glossary_alias",$newalias);
+                    insert_record("glossary_alias",$newalias, false);
                 }
             }
         }

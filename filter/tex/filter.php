@@ -132,7 +132,7 @@ function tex_filter ($courseid, $text) {
             $texcache->md5key = $md5;
             $texcache->rawtext = addslashes($texexp);
             $texcache->timemodified = time();
-            insert_record("cache_filters",$texcache);
+            insert_record("cache_filters",$texcache, false);
         }
         $filename = $md5 . ".gif";
         $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp), $text);
