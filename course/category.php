@@ -213,7 +213,7 @@
 
 /// Print out all the courses
 
-    if (!$courses = get_courses($category->id, "sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage)) {
+    if (!$courses = get_courses($category->id, "c.sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage)) {
         print_heading(get_string("nocoursesyet"));
 
     } else {
@@ -315,7 +315,7 @@
                     echo "<input type=\"checkbox\" name=\"c$course->id\">";
                     $abletomovecourses = true;
 
-                } else if (isteacher($course->id)) {
+                } else if (isteacheredit($course->id)) {
                     echo "<td>";
                     echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$course->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
