@@ -97,10 +97,10 @@ function print_single_button($link, $options, $label="OK") {
     echo "<INPUT TYPE=submit VALUE=\"$label\"></FORM>";
 }
 
-function print_user_picture($userid, $courseid, $picture, $large=false) {
+function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false) {
     global $CFG;
 
-    echo "<A HREF=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">";
+    $output = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">";
     if ($large) {
         $file = "f1.jpg";
         $size = 100;
@@ -109,11 +109,17 @@ function print_user_picture($userid, $courseid, $picture, $large=false) {
         $size = 35;
     }
     if ($picture) {
-        echo "<IMG SRC=\"$CFG->wwwroot/user/pix.php/$userid/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+        $output .= "<IMG SRC=\"$CFG->wwwroot/user/pix.php/$userid/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
     } else {
-        echo "<IMG SRC=\"$CFG->wwwroot/user/default/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
+        $output .= "<IMG SRC=\"$CFG->wwwroot/user/default/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
     }
-    echo "</A>";
+    $output .= "</A>";
+
+    if ($returnstring) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 function print_table($table) {
@@ -856,163 +862,72 @@ function print_update_module_icon($moduleid) {
 
 /// CORRESPONDENCE  ////////////////////////////////////////////////
 
-
-function email_to_user($user, $from, $subject, $message) {
-    global $CFG;
-
-    include_once("$CFG->libdir/class.smtp.php");
-    include_once("$CFG->libdir/class.phpmailer.php");
-
-    $subject = strip_tags(stripslashes($subject));
-    $message = strip_tags(stripslashes($message));
-
-    $mail = new phpmailer;
-
-    $mail->IsSMTP();                                   // set mailer to use SMTP
-    $mail->From = "$from->email";
-    $mail->FromName = "$from->firstname $from->lastname";
-    $mail->Host = "$CFG->smtphost;localhost";          // specify main and backup server
-    $mail->AddReplyTo("$from->email","$from->firstname $from->lastname");
-    $mail->AddAddress("$user->email","$user->firstname $user->lastname"); 
-    $mail->WordWrap = 70;                               // set word wrap
-    $mail->IsHTML(false);                               // set email format to HTML
-    $mail->Subject =  "$subject";
-
-    $mail->Body    =  "\n\n$message";
-
-    if (!$mail->Send()) {
-        return false;
-    }
-
-    return true;
-}
-
-
-function email_to_users(&$users, $from, $subject, $message, $link, $footer="") {
-//  users is an array of user records as returned by get_records_sql
+function email_to_users(&$users, $from, $subject, $messagetext, $messagehtml="", $attachment="", $attachname="") {
+//  users       - an array of user records as returned by get_records_sql
+//  messagetext - plain text version of the message
+//  messagehtml - complete html version of the message (optional)
+//  attachment  - a file on the filesystem, relative to $CFG->dataroot
+//  attachname  - the name of the file (extension indicates MIME)
 
     global $CFG;
 
-    include_once("$CFG->libdir/class.smtp.php");
-    include_once("$CFG->libdir/class.phpmailer.php");
+    include_once("$CFG->libdir/phpmailer/class.phpmailer.php");
 
     if (!$users) {
         return false;
     }
     
-    $subject = strip_tags(stripslashes($subject));
-    $message = strip_tags(stripslashes($message));
-
     $mail = new phpmailer;
 
+    $mail->Version = "Moodle";                         // mailer version 
+    $mail->PluginDir = "$CFG->libdir/phpmailer/";      // plugin directory (eg smtp plugin)
     $mail->IsSMTP();                                   // set mailer to use SMTP
-    $mail->From = "$from->email";
+    $mail->Host = "$CFG->smtphosts";                   // specify main and backup servers
+
+    $mail->From     = "$from->email";
     $mail->FromName = "$from->firstname $from->lastname";
-    $mail->Host = "$CFG->smtphost;localhost";          // specify main and backup server
-    $mail->AddAddress("","Subscribers"); 
+    $mail->Subject  =  stripslashes($subject);
+    $mail->AddReplyTo("$from->email","$from->firstname $from->lastname");
+
+    $mail->AddAddress("$from->email","$from->firstname $from->lastname"); 
 
     foreach ($users as $user) {
-        $mail->AddBCC("$user->email","$user->firstname $user->lastname"); 
-    }
-
-    $mail->AddReplyTo("$from->email","$from->firstname $from->lastname");
-    $mail->WordWrap = 70;                               // set word wrap
-    $mail->IsHTML(false);                               // set email format to HTML
-    $mail->Subject =  "$subject";
-
-    $message .= "\n\n--\n$from->firstname $from->lastname";
-
-    if ($footer) {
-        $message .= "\n\n$footer\n";
-    }
-
-    if ($link) {
-        $message .= "Link: $link\n";
-    }
-
-    $mail->Body    =  "\n\n$message";
-
-    if (!$mail->Send()) {
-        //echo "Message was not sent <p>";
-        //echo "Mailer Error: " . $mail->ErrorInfo;
-        return false;
-    }
-
-    return true;
-}
-
-
-
-function email_to_course($from, $course, $emailall, $subject, $message, $link, $footer="") {
-    global $CFG;
-
-    include_once("$CFG->libdir/class.smtp.php");
-    include_once("$CFG->libdir/class.phpmailer.php");
-
-
-    if (!$students = get_records_sql("SELECT u.* FROM user u, user_students s
-                                       WHERE s.course = '$course->id' 
-                                       AND s.user = u.id")) {
-        notice("Could not find any students to mail to!");
-    }
-
-    if (!$teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t
-                                       WHERE t.course = '$course->id' 
-                                       AND t.user = u.id")) {
-        notice("Could not find any teachers to mail to!");
-    }
-
-    if (!$teachers && !$students) {
-        return false;
-    }
-    
-    $subject = stripslashes($subject);
-    $message = stripslashes($message);
-
-    $mail = new phpmailer;
-
-    $mail->IsSMTP();                                   // set mailer to use SMTP
-    $mail->From = "$from->email";
-    $mail->FromName = "$from->firstname $from->lastname";
-    $mail->Host = "$CFG->smtphost;localhost";          // specify main and backup server
-
-    foreach ($students as $student) {
-        if ($emailall || $student->forwardmail) {
-            $mail->AddAddress("$student->email","$student->firstname $student->lastname"); 
-        }
-    }
-    foreach ($teachers as $teacher) {
-        if ($emailall || $teacher->forwardmail) {
-            $mail->AddAddress("$teacher->email","$teacher->firstname $teacher->lastname"); 
+        if ($user->email <> $from->email) {
+            $mail->AddBCC("$user->email","$user->firstname $user->lastname"); 
         }
     }
 
-    $mail->AddReplyTo("$from->email","$from->firstname $from->lastname");
     $mail->WordWrap = 70;                               // set word wrap
-    $mail->IsHTML(false);                               // set email format to HTML
-    $mail->Subject =  "$course->shortname: $subject";
 
-    $message .= "\n\n--\n$from->firstname $from->lastname";
-
-    if ($footer) {
-        $message .= "\n\n$footer";
+    if ($messagehtml) {
+        $mail->IsHTML(true);
+        $mail->Body    =  $messagehtml;
+        $mail->AltBody =  "\n\n$messagetext\n";
+    } else {
+        $mail->IsHTML(false);
+        $mail->Body =  "\n\n$messagetext\n";
     }
 
-    if ($link) {
-        $message .= "\nLink: $link";
+    if ($attachment && $attachname) {
+        if (ereg( "\\.\\." ,$attachment )) {    // Security check for ".." in dir path
+            add_to_log ("Mailer error: attachment contained '..'");
+            $mail->AddStringAttachment("Error in attachment", "error.txt", "8bit", "text/plain");
+        } else {
+            include_once("$CFG->dirroot/files/mimetypes.php");
+            $mimetype = mimeinfo("type", $attachname);
+            $mail->AddAttachment("$CFG->dataroot/$attachment", "$attachname", "base64", "$mimetype");
+        }
     }
 
-    $mail->Body    =  "\n\n$message";
-
-    if (!$mail->Send()) {
-        //echo "Message was not sent <p>";
-        //echo "Mailer Error: " . $mail->ErrorInfo;
+    if ($mail->Send()) {
+        return true;
+    } else {
+        echo "ERROR: $mail->ErrorInfo";
+        add_to_log ("Mailer error: ".$mail->ErrorInfo);
         return false;
     }
-
-    return true;
-
 }
+
 
 /// FILE HANDLING  /////////////////////////////////////////////
 
