@@ -27,7 +27,7 @@
 
       print_simple_box("Resources", $align="CENTER", $width="100%", $color="$THEME->cellheading");
 
-      if ($readings = list_all_readings($course->id, "timemodified DESC", 0, true)) {
+      if ($readings = reading_list_all_readings($course->id, "timemodified DESC", 0, true)) {
           foreach ($readings as $reading) {
               $readingdata[] = $reading;
               $readingicon[] = "<IMG SRC=\"../mod/reading/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"Reading\">";

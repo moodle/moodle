@@ -26,7 +26,7 @@
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
   <TR>
     <TD VALIGN="TOP" NOWRAP>
-      <? $readings = list_all_readings();
+      <? $readings = reading_list_all_readings();
       
          if ($site->newsitems > 0 or $readings or isediting($site->id)) {
       
@@ -77,7 +77,7 @@
 
              if (isset($USER->id)) {
                  $SESSION->fromdiscussion = "$CFG->wwwroot";
-                 if (is_subscribed($USER->id, $newsforum->id)) {
+                 if (forum_is_subscribed($USER->id, $newsforum->id)) {
                      $subtext = get_string("unsubscribe", "forum");
                  } else {
                      $subtext = get_string("subscribe", "forum");
