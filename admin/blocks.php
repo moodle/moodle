@@ -141,8 +141,8 @@
 /// Print the table of all blocks
 
     $table->head  = array ($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strmultiple, $strdelete, $strsettings);
-    $table->align = array ('LEFT', 'RIGHT', 'LEFT', 'CENTER', 'CENTER', 'CENTER', 'CENTER');
-    $table->wrap = array ('NOWRAP', '', '', '', '', '', '');
+    $table->align = array ('left', 'right', 'left', 'center', 'center', 'center', 'center');
+    $table->wrap = array ('nowrap', '', '', '', '', '', '');
     $table->size = array ('100%', '10', '10', '10', '10','12');
     $table->width = '100';
 
@@ -162,10 +162,10 @@
 
         if ($blocks[$blockid]->visible) {
             $visible = '<a href="blocks.php?hide='.$blockid.'&sesskey='.$USER->sesskey.'" title="'.$strhide.'">'.
-                       '<img src="'.$CFG->pixpath.'/i/hide.gif" style="height: 16px; width: 16px;" alt=\"\" /></a>';
+                       '<img src="'.$CFG->pixpath.'/i/hide.gif" height="16" width="16" alt="" /></a>';
         } else {
             $visible = '<a href="blocks.php?show='.$blockid.'&sesskey='.$USER->sesskey.'" title="'.$strshow.'">'.
-                       '<img src="'.$CFG->pixpath.'/i/show.gif" style="height: 16px; width: 16px;" alt=\"\" /></a>';
+                       '<img src="'.$CFG->pixpath.'/i/show.gif" height="16" width="16" alt="" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
         if ($blockobject->instance_allow_multiple()) {
@@ -181,7 +181,7 @@
         }
 
         $table->data[] = array(
-            '<p'.$class.'>'.$blockobject->get_title().'</p>',
+            '<span'.$class.'>'.$blockobject->get_title().'</span>',
             $count,
             $blockobject->get_version(),
             $visible,
@@ -190,9 +190,9 @@
             $settings
         );
     }
-    echo '<p>';
+
     print_table($table);
-    echo '</p>';
+
     print_footer();
 
 ?>
