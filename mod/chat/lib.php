@@ -91,15 +91,38 @@ function chat_user_complete($course, $user, $mod, $chat) {
     return true;
 }
 
-function chat_print_recent_activity(&$logs, $isteacher=false) {
-/// Given a list of logs, assumed to be those since the last login 
-/// this function prints a short list of changes related to this module
-/// If isteacher is true then perhaps additional information is printed.
+function chat_print_recent_activity($course, $isteacher, $timestart) {
+/// Given a course and a date, prints a summary of all chat rooms
+/// that currently have people in them.
 /// This function is called from course/lib.php: print_recent_activity()
 
-    global $CFG, $COURSE_TEACHER_COLOR;
+    global $CFG;
 
-    return $content;  // True if anything was printed, otherwise false
+    if (!$chatusers = get_records_sql("SELECT cu.chatid, u.firstname, u.lastname
+                                        FROM {$CFG->prefix}chat_users as cu,
+                                             {$CFG->prefix}user as u
+                                       WHERE cu.userid = u.id 
+                                       ORDER BY cu.chatid ASC") ) {
+        return false;
+    }
+
+    print_headline(get_string("currentchats", "chat").":");
+
+    $current = 0;
+    foreach ($chatusers as $chatuser) {
+        if ($current != $chatuser->chatid) {
+            if ($current) {
+                echo "</p>";
+            }
+            if ($chat = get_record("chat", "id", $chatuser->chatid)) {
+                echo "<p><font size=1><a href=\"$CFG->wwwroot/mod/chat/view.php?c=$chat->id\">$chat->name</a></font><br />";
+            }
+            $current = $chatuser->chatid;
+        }
+        echo "&nbsp;&nbsp;&nbsp;<font size=1>- $chatuser->firstname $chatuser->lastname</font><br />";
+    }
+
+    return true;
 }
 
 function chat_cron () {

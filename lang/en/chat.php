@@ -8,6 +8,7 @@ $string['modulenameplural'] = "Chats";
 $string['beep'] = "beep";
 $string['chatintro'] = "Introduction text";
 $string['chatname'] = "Name of this chat room";
+$string['currentchats'] = "Currently active chats";
 $string['enterchat'] = "Click here to enter the chat";
 $string['idle'] = "Idle";
 $string['messagebeepseveryone'] = "\$a beeps everyone!";
