@@ -49,7 +49,7 @@
                           <A HREF=\"log.php?id=$course->id\">$strlogs</A> -> $userinfo, $dateinfo", "");
         } else {
             print_header("$course->shortname: $strlogs", "$course->fullname", 
-                         "<A HREF=\"$CFG->wwwadmin/index.php\">$stradministration</A> ->
+                         "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> ->
                           <A HREF=\"log.php?id=$course->id\">$strlogs</A> -> $userinfo, $dateinfo", "");
         }
         
@@ -65,7 +65,7 @@
                      "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> -> $strlogs", "");
         } else {
             print_header("$course->shortname: $strlogs", "$course->fullname", 
-                     "<A HREF=\"$CFG->wwwadmin/index.php\">$stradministration</A> -> $strlogs", "");
+                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> $strlogs", "");
         }
 
         print_heading(get_string("chooselogs").":");
