@@ -207,12 +207,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details:
 
-http://www.gnu.org/copyleft/gpl.html
-
-If you wish to sell modified copies of this software
-but are unable to conform to the GPL requirements for providing
-downloadable copies of the Moodle source code to all your clients 
-then contact martin@dougiamas.com to discuss a commercial license. ";
+http://www.gnu.org/copyleft/gpl.html";
 
 $string['grade'] = "Grade";
 $string['grades'] = "Grades";
