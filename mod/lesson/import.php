@@ -122,7 +122,8 @@
     echo "<tr><td align=right>";
     print_string("upload");
     echo ":</td><td>";
-    echo " <input name=\"newfile\" type=\"file\" size=\"50\">";
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    upload_print_form_fragment(1,array('newfile'),null,false,null,$course->maxbytes,0,false);
     echo "</tr><tr><td>&nbsp;</td><td>";
     echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\">";
     echo "</td></tr>";
