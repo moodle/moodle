@@ -898,6 +898,7 @@ $string['uploadnotallowed'] = 'Uploads are not allowed';
 $string['uploadproblem'] = 'An unknown problem occurred while uploading the file \'$a\' (perhaps it was too large?)';
 $string['uploadthisfile'] = 'Upload this file';
 $string['uploadusers'] = 'Upload users';
+$string['usedinnplaces'] = 'Used in $a places';
 $string['user'] = 'User';
 $string['userconfirmed'] = 'Confirmed $a';
 $string['userdata'] = 'User Data';
