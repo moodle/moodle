@@ -899,7 +899,12 @@ function print_category_info($category, $depth) {
     for ($i=0; $i<$depth;$i++) {
         echo "<ul style=\"margin-bottom:0;margin-top:0\">";
     }
-    echo "<font size=+1><a $catlinkcss ".
+
+    $catimage = "";
+    if ($CFG->frontpage == FRONTPAGECOURSELIST) {
+        $catimage = "<img src=\"$pixpath/i/course.gif\ width=16 height=16 border=0>";
+    }
+    echo "<font size=+1>$catimage <a $catlinkcss ".
          "href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a></font>";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {

@@ -6,8 +6,8 @@
     require_once("lib.php");
 
     optional_variable($search, "");    // search words
-    optional_variable($page, "0");   // which page to show
-    optional_variable($perpage, "10");   // which page to show
+    optional_variable($page, "0");     // which page to show
+    optional_variable($perpage, "10"); // how many per page
 
     $search = trim(strip_tags($search));
 

@@ -7,6 +7,8 @@
 	require_once("lib.php");
 
     require_variable($id);    // Category id
+    optional_variable($page, "0");     // which page to show
+    optional_variable($perpage, "20"); // how many per page
 
 
     if (!$site = get_site()) {
@@ -211,10 +213,14 @@
 
 /// Print out all the courses
 
-    if (!$courses = get_courses($category->id)) {
+    if (!$courses = get_courses($category->id, "sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage)) {
         print_heading(get_string("nocoursesyet"));
 
     } else {
+
+        echo "<center>";
+        print_paging_bar($totalcount, $page, $perpage, "category.php?id=$category->id&perpage=$perpage&");
+        echo "</center>";
 
         $strcourses  = get_string("courses");
         $strselect   = get_string("select");

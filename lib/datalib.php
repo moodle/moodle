@@ -1108,25 +1108,46 @@ function get_site () {
 }
 
 
-function get_courses($categoryid="all", $sort="sortorder ASC", $fields="*") {
+function get_courses($categoryid="all", $sort="sortorder ASC", $fields="c.*", 
+                     &$totalcount, $limitfrom="", $limitnum="") {
 /// Returns list of courses, for whole site, or category
 
-    if ($categoryid == "all") {
-        $courses = get_records("course", "", "", $sort, $fields);
-    } else {
-        $courses = get_records("course", "category", "$categoryid", $sort, $fields);
+    global $USER, $CFG;
+
+    $categoryselect = "";
+    if ($categoryid != "all") {
+        $categoryselect = "c.category = '$categoryid'";
     }
 
-    if ($courses) {  /// Remove unavailable courses from the list
-        foreach ($courses as $key => $course) {
-            if (!$course->visible) {
-                if (!isteacher($course->id)) {
-                    unset($courses[$key]);
-                }
-            }
+    $teachersonly = "";
+    $teachertable = "";
+    if (!empty($USER)) {  // May need to check they are a teacher
+        if (!isadmin()) {
+            $teachersonly = "AND ((c.visible = '1') OR (t.userid = '$USER->id' AND t.course = c.id))";
+            $teachertable = ", {$CFG->prefix}user_teachers t";
         }
     }
-    return $courses;
+
+    if ($limitfrom !== "") {
+        switch ($CFG->dbtype) {
+            case "mysql":
+                 $limit = "LIMIT $limitfrom,$limitnum";
+                 break;
+            case "postgres7":
+                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
+                 break;
+            default: 
+                 $limit = "LIMIT $limitnum,$limitfrom";
+        }
+    } else {
+        $limit = "";
+    }
+
+    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $teachersonly ";
+
+    $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
+
+    return get_records_sql("SELECT $fields FROM $selectsql ORDER BY $sort $limit");
 }
 
 

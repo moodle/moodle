@@ -1618,6 +1618,8 @@ function obfuscate_mailto($email, $label="") {
 function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
 /// Prints a single paging bar to provide access to other pages  (usually in a search)
 
+    $maxdisplay = 30;
+
     if ($totalcount > $perpage) {
         echo "<p>".get_string("page").":";
         $count = 0;
@@ -1630,7 +1632,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
             }
             $totalcount -= $perpage;
             $count++;
-            if ($count > 30) {
+            if ($count > $maxdisplay) {
                 echo "&nbsp;...";
                 break;
             }
