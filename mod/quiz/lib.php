@@ -1830,7 +1830,7 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 
     }
 
-    if (isteacher($USER)) {
+    if (isteacher($course)) {
         $grades = "(" .  $activity->content->sumgrades . " / " . $activity->content->maxgrade . ") ";
         echo "<a href=\"$CFG->wwwroot/mod/quiz/review.php?q="
              . $activity->instance . "&attempt="
