@@ -5,7 +5,9 @@
     require_once("config.php");
     require_once("files/mimetypes.php");
 
-    $lifetime = 86400;
+    if (empty($CFG->filelifetime)) {
+        $CFG->filelifetime = 86400;     /// Seconds for files to remain in caches
+    }
 
     if (isset($file)) {     // workaround for situations where / syntax doesn't work
         $pathinfo = $file;
@@ -46,8 +48,8 @@
         $mimetype = mimeinfo("type", $filename);
 
         header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
-        header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-        header("Cache-control: max_age = $lifetime"); // a day
+        header("Expires: " . gmdate("D, d M Y H:i:s", time() + $CFG->filelifetime) . " GMT");
+        header("Cache-control: max_age = $CFG->filelifetime");
         header("Pragma: ");
         header("Content-disposition: inline; filename=$filename");
         header("Content-length: ".filesize($pathname));
