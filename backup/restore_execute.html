@@ -213,7 +213,7 @@
     //Cleanup temps (files and db)
     if ($status) {
         echo "<li>".get_string("cleaningtempdata");
-        //$status = clean_temp_data ($restore);
+        $status = clean_temp_data ($restore);
     }
 
     //End the main ul
