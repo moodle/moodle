@@ -46,10 +46,14 @@ $string['feedback'] = "Comentari";
 $string['filloutoneanswer'] = "Has d'emplenar almenys una possible resposta. Les respostes en blanc no compten.";
 $string['fillouttwochoices'] = "Has d'emplenar almenys dues opcions. Les opcions en blanc no compten.";
 $string['fractionsaddwrong'] = "Les qualificacions que has donat no sumen 100%%
+
 (sumen \$a%%).
+
 <BR>Vols tornar enrere i corregir-ho?";
 $string['fractionsnomax'] = "Una de les respostes ha de valer 100%%, per tal que siga
+
 <BR>possible obtenir la qualificació màxima en aquesta pregunta.
+
 <BR>Vols tornar enrere i corregir-ho?";
 $string['gradeaverage'] = "Nota mitjana";
 $string['gradehighest'] = "Nota més alta";
@@ -99,6 +103,51 @@ $string['true'] = "Vertader";
 $string['truefalse'] = "Vertader/Fals";
 $string['type'] = "Tipus";
 $string['viewallanswers'] = "Veure \$a qüestionaris completats";
-$string['yourfinalgradeis'] = "La teva qualificació final en aquest qüestionari és \$a";
+$string['yourfinalgradeis'] = "La teua qualificació final en aquest qüestionari és \$a";
+
+$string[allowreview] = "Permetre de revisar";
+$string[missingname] = "Falta el títol de la pregunta";
+$string[missingquestiontext] = "Falta el text de la pregunta";
+$string[noreview] = "No es permet revisar aquest qüestionari";
+$string[noreviewuntil] = "No es permet revisar aquest qüestionari fins: \$a";
+$string[readytosend] = "Estàs a punt d'enviar aquest qüestionari perquè siga qualificat. Segur que vols continuar?";
+
+$string['addingquestions'] = "Des d'aquesta part de la pàgina pots gestionar la teua base de dades de preguntes. Les preguntes es guarden en categories per tal de tenir-les organitzades i es poden utilitzar en qualsevol qüestionari d'aquest curs o fins i tot en altres cursos si tries de 'publicar-les' . <br /><br />Després de seleccionar o crear una categoria de preguntes, podràs crear o editar preguntes. Pots seleccionar qualsevol d'aquestes preguntes per afegir-la al qüestionari en l'altra part de la pàgina.";
+$string['addquestions'] = "Afegir preguntes";
+$string['addquestionstoquiz'] = "Afegir preguntes a aquest qüestionari";
+$string['allowreview'] = "Permetre la revisió";
+$string['blackboard'] = "Pissarra";
+$string['createmultiple'] = "Crear diferents preguntes";
+$string['custom'] = "Format personal";
+$string['editingmatch'] = "Editar una pregunta de relacionar";
+$string['defaultgrade'] = "Nota per defecte de la pregunta";
+$string['editingrandom'] = "Editar una pregunta aleatòria";
+$string['editingrandomsamatch'] = "Editar una pregunta aleatòria de relacionar respostes breus";
+$string['fileformat'] = "Format de fitxer";
+$string['filloutthreequestions'] = "Has d'emplenar almenys tres preguntes. Les que deixes en blanc no es tindran en compte.";
+$string['grades'] = "Notes";
+$string['importquestions'] = "Importar preguntes des d'un fitxer";
+$string['match'] = "Aparellar";
+$string['matchanswer'] = "Resposta correcta";
+$string['missingname'] = "Falta el nom de la pregunta";
+$string['missingquestiontext'] = "Falta el text de la pregunta";
+$string['missingword'] = "Falta el format del mot";
+$string['noreview'] = "No tens permís per revisar aquest qüestionari";
+$string['noreviewuntil'] = "No tens permís per revisar aquest qüestionari fins el \$a";
+$string['notenoughsubquestions'] = "No has definit prou subpreguntes!<br>
+Vols tornar enrere i solucionar-ho?";
+$string['qti'] = "Format IMS QTI";
+$string['randomcreate'] = "Crear preguntes aleatòries";
+$string['randomsamatch'] = "Aparellaments aleatoris de resposta curta";
+$string['randomsamatchcreate'] = "Crear preguntes d'aparellaments aleatoris de resposta breu";
+$string['randomsamatchintro'] = "Seleccion del menú la resposta que forma parella amb cadascuna de les preguntes següents.";
+$string['randomsamatchnumber'] = "Nombre de preguntes a seleccionar";
+$string['readytosend'] = "Estàs a punt d'enviar tot el qüestionari perquè siga avaluat. Segur que vols continuar?";
+$string['selectall'] = "Seleccionar tot";
+$string['shuffleanswers'] = "Barrejar respostes";
+$string['shufflequestions'] = "Barrejar preguntes";
+$string['toomanyrandom'] = "El nombre de preguntes aleatòries necessari és més gran que el contingut d'aquesta categoria (\$a)";
+$string['webct'] = "Format WebCT";
+
 
 ?>

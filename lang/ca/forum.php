@@ -72,6 +72,8 @@ $string['postadded'] = "S'ha afegit el teu missatge.<P>Tens \$a per a editar-lo 
 $string['postincontext'] = "Veure aquest missatge en el seu context";
 $string['postmailinfo'] = "Açò és una còpia d'un missatge enviat al lloc web \$a.
 
+
+
 Per a afegir la teua resposta via web, fes clic en aquest enllaç:";
 $string['postrating1'] = "Mostra sobretot coneixements SEPARATS";
 $string['postrating2'] = "Tant separats com connectats";
@@ -100,5 +102,21 @@ $string['unsubscribe'] = "Cancel·lar la subscripció a aquest fòrum";
 $string['youratedthis'] = "La teua valoració";
 $string['yournewtopic'] = "Nou tema de debat";
 $string['yourreply'] = "La teua resposta";
+
+$string['ratingssaved'] = "Qualificacions guardades";
+
+$string['discussionmoved'] = "Aquest debat s'ha traslladat a '\$a'.";
+$string['lastpost'] = "Darrer missatge";
+$string['movethisdiscussionto'] = "Trasllador aquest debat a... ";
+$string['posts'] = "Missatges";
+$string['replies'] = "Respostes";
+$string['startedby'] = "Iniciat per";
+$string['subscribestart'] = "Envia'm còpia dels missatges d'aquest fòrum";
+$string['subscribestop'] = "No vull rebre còpies per correu dels missatges d'aquest fòrum";
+$string['subscription'] = "Subscripció";
+$string['subscriptions'] = "Subscripcions";
+$string['unsubscribed'] = "Subscripció cancel·lada";
+
+
 
 ?>

@@ -14,7 +14,7 @@ $string['modulename'] = "Recurs";
 $string['modulenameplural'] = "Recursos";
 $string['neverseen'] = "Mai vist";
 $string['note'] = "Nota";
-$string['notefile'] = "Per a pujar més fitxers al curs (de manea que apareguen en esta llista) fes servir l'<A HREF=\$a >Administrador de Fitxers</A>.";
+$string['notefile'] = "Per a pujar més fitxers al curs (de manera que apareguen en esta llista) fes servir l'<A HREF=\$a >Administrador de Fitxers</A>.";
 $string['notypechosen'] = "Has de triar un tipus. Fes servir el botó Enrere/Back per tornar enrere i torna a intentar-ho.";
 $string['resourcetype'] = "Tipus de recurs";
 $string['resourcetype1'] = "Referència";
@@ -23,6 +23,9 @@ $string['resourcetype3'] = "Fitxer";
 $string['resourcetype4'] = "Només text";
 $string['resourcetype5'] = "Enllaç web";
 $string['resourcetype6'] = "Text HTML";
-$string['resourcetype7'] = "";
+
+$string['resourcetype7'] = "Programa";
+
+$string['resourcetype8'] = "Text wiki";
 
 ?>

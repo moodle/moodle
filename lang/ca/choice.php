@@ -14,4 +14,9 @@ $string['responsesto'] = "Respostes per a \$a";
 $string['savemychoice'] = "Guardar la resposta";
 $string['viewallresponses'] = "Veure \$a respostes";
 
+$string['publish'] = "Publicar els resultats";
+$string['publishanonymous'] = "Publicar els resultats anònimament, sense mostrar els noms dels estudiants";
+$string['publishnames'] = "Publicar els resultats, amb els noms dels estudiants inclosos";
+$string['publishnot'] = "No fer públics els resultats";
+
 ?>

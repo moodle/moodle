@@ -37,4 +37,15 @@ $string['viewfeedback'] = "Veure les qualificacions de les tasques i els comenta
 $string['viewsubmissions'] = "Veure \$a tasques enviades";
 $string['yoursubmission'] = "El teu enviament";
 
+$string['feedback'] = "Comentaris";
+$string['saveallfeedback'] = "Guardar els meus comentaris";
+
+$string['assignmentmail'] = "\$a->teacher ha posat alguns comentaris sobre la teua tasca '\$a->assignment'
+
+Pots veure la teua tasca i els comentaris en aquesta adreça:
+
+    \$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher ha posat alguns comentaris sobre la teua tasca '<i>\$a->assignment</i>'<br /><br />
+Els comentaris s'han adjuntat a la teua <a href=\\\"\$a->url\\\">tasca</a>.";
+
 ?>

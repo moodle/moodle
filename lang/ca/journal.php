@@ -7,6 +7,7 @@ $string['blankentry'] = "Entrada en blanc";
 $string['daysavailable'] = "Dies disponible";
 $string['editingended'] = "El període d'edició ha acabat";
 $string['editingends'] = "El període d'edició acaba";
+$string['entries'] = "Entrades";
 $string['journalname'] = "Nom del diari";
 $string['journalquestion'] = "Pregunta del diari";
 $string['journalrating1'] = "Insatisfactori";
@@ -23,5 +24,19 @@ $string['overallrating'] = "Valoració global";
 $string['rate'] = "Valoració";
 $string['startoredit'] = "Començar o editar l'entrada del diari";
 $string['viewallentries'] = "Veure totes les entrades del diari";
+
+$string['feedbackupdated'] = "Comentaris actualitzats per a \$a entrades";
+$string['saveallfeedback'] = "Guardar tots els meus comentaris";
+
+$string['entries'] = "Entrades";
+$string['journalmail'] = "\$a->teacher ha posat alguns comentaris 
+sobre l'entrada del teu diari '\$a->journal'
+
+Pots veure la teua entrada i els comentaris en aquesta adreça:
+
+    \$a->url";
+$string['journalmailhtml'] = "\$a->teacher ha posat alguns comentaris 
+sobre l'entrada del teu diari'<i>\$a->journal</i>'<br /><br />
+Pots veure els comentaris enganxats a la teua <a href=\\\"\$a->url\\\">entrada</a>.";
 
 ?>
