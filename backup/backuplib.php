@@ -661,6 +661,7 @@
                fwrite ($bf,full_tag("SCORE",6,false,$course_module[$tok]->score));
                fwrite ($bf,full_tag("INDENT",6,false,$course_module[$tok]->indent));
                fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
+               fwrite ($bf,full_tag("GROUPMODE",6,false,$course_module[$tok]->groupmode));
                fwrite ($bf,end_tag("MOD",5,true));
             }
            //check for next

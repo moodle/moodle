@@ -424,6 +424,7 @@
                                     $course_module->score = $mod->score;
                                     $course_module->indent = $mod->indent;
                                     $course_module->visible = $mod->visible;
+                                    $course_module->groupmode = $mod->groupmode;
                                     $course_module->instance = null;
                                     //NOTE: The instance (new) is calculated and updated in db in the
                                     //      final step of the restore. We don't know it yet.
@@ -1366,6 +1367,8 @@
                                 $this->info->tempmod->indent;
                             $this->info->tempsection->mods[$this->info->tempmod->id]->visible = 
                                 $this->info->tempmod->visible;
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->groupmode = 
+                                $this->info->tempmod->groupmode;
                             unset($this->info->tempmod);
                     }
                 }
@@ -1394,6 +1397,9 @@
                             break;
                         case "VISIBLE":
                             $this->info->tempmod->visible = $this->getContents();
+                            break;
+                        case "GROUPMODE":
+                            $this->info->tempmod->groupmode = $this->getContents();
                             break;
                     }
                 }
