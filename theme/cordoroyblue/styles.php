@@ -197,6 +197,7 @@ form {
 }
 
 .topicsoutlinecontenthighlight {
+    background: #FDFBF1;
     border-width: 0px;
     border-top: 1px;
     border-bottom: 1px;

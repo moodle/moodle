@@ -144,17 +144,19 @@
         $currenttopic = ($course->marker == $section);
 
         if ($currenttopic) {
-            $highlightcolor = "bgcolor=\"$THEME->cellheading2\" class=\"topicsoutlinesidehighlight\"";
+            $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"topicsoutlinesidehighlight\"";
+            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontenthighlight\"";
         } else {
-            $highlightcolor = "bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\"";
+            $colorsides = "bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\"";
+            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\"";
         }
 
         echo "<TR>";
-        echo "<TD NOWRAP $highlightcolor VALIGN=top WIDTH=20>";
+        echo "<TD NOWRAP $colorsides VALIGN=top WIDTH=20>";
         echo "<P ALIGN=CENTER><FONT SIZE=3><B>$section</B></FONT></P>";
         echo "</TD>";
 
-        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" WIDTH=\"100%\">";
+        echo "<TD VALIGN=top $colormain WIDTH=\"100%\">";
 
         if (! $thissection = $sections[$section]) {
             $thissection->course = $course->id;   // Create a new section structure
@@ -166,7 +168,7 @@
         }
 
         if (isediting($course->id)) {
-            $thissection->summary .= "&nbsp;<A HREF=editsection.php?id=$thissection->id><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"$streditsummary\"></A></P>";
+            $thissection->summary .= "&nbsp;<A HREF=editsection.php?id=$thissection->id><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"$streditsummary\"></A>";
         }
 
         echo text_to_html($thissection->summary);
@@ -181,7 +183,7 @@
         }
 
         echo "</TD>";
-        echo "<TD NOWRAP $highlightcolor VALIGN=top ALIGN=CENTER WIDTH=10>";
+        echo "<TD NOWRAP $colorsides VALIGN=top ALIGN=CENTER WIDTH=10>";
         echo "<FONT SIZE=1>";
         if (isset($USER->topic)) {
             $strshowalltopics = get_string("showalltopics");
