@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004041800)
+      // moodle.php - created with Moodle 1.3 development (2004042703)
 
 
 $string['action'] = 'Acció';
@@ -101,6 +101,7 @@ $string['backupsavetohelp'] = 'Camí complet del directori on voleu desar els fit
 $string['backupuserfileshelp'] = 'Trieu si voleu que els fitxers dels usuaris (p. e. la imatge del perfil) s\'incloguin a les còpies de seguretat automàtiques';
 $string['backupusershelp'] = 'Trieu si voleu incloure tots els usuaris del servidor o només els necessaris per a cada curs.';
 $string['backupversion'] = 'Versió de la còpia';
+$string['blocks'] = 'Blocs';
 $string['blocksetup'] = 'S\'estan configurant les taules de blocs';
 $string['blocksuccess'] = 'S\'han configurat correctament $a taules';
 $string['bycourseorder'] = 'Curs';
@@ -450,6 +451,9 @@ $string['helpsummaries'] = 'Referent a aquests resums';
 $string['helptext'] = 'Com escriure text';
 $string['helpwiki'] = 'Com escriure text Wiki';
 $string['helpwriting'] = 'Escriviu amb cura';
+$string['hiddentopics'] = 'Temes ocults';
+$string['hiddentopicscollapsed'] = 'Els temes ocults es mostren en forma reduïda';
+$string['hiddentopicsinvisible'] = 'Els temes ocults són completament invisibles';
 $string['hide'] = 'Oculta';
 $string['hidepicture'] = 'Oculta imatge ';
 $string['hits'] = 'Peticions';
@@ -665,7 +669,7 @@ $string['order'] = 'Ordre';
 $string['other'] = 'Altre';
 $string['outline'] = 'Esquema';
 $string['page'] = 'Pàgina';
-$string['parentlanguage'] = 'Idioma pare';
+$string['parentlanguage'] = 'es';
 $string['participants'] = 'Participants';
 $string['password'] = 'Contrasenya';
 $string['passwordchanged'] = 'S\'ha canviat la contrasenya';
@@ -836,6 +840,8 @@ $string['turneditingoff'] = 'Desactiva edició';
 $string['turneditingon'] = 'Activa edició';
 $string['undecided'] = 'No decidit';
 $string['unenrol'] = 'Cancel·la la inscripció en aquest curs';
+$string['unenrolallstudents'] = 'Cancel·la la inscripció de tots els estudiants';
+$string['unenrolallstudentssure'] = 'Esteu segur que voleu cancel·lar la inscripció en aquest curs de tots els estudiants?';
 $string['unenrolme'] = 'Cancel·la la meva inscripció en $a';
 $string['unenrolsure'] = 'Esteu segur que voleu cancel·lar la inscripció de: $a en aquest curs?';
 $string['unknowncategory'] = 'Categoria desconeguda';
