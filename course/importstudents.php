@@ -81,8 +81,9 @@
             $frm->previoussearch = 0;
         }
     }
+    
 
-    $previoussearch = (!empty($frm->search) or ($frm->previoussearch == 1)) ;
+    $previoussearch = (is_object($frm) && ((!empty($frm->search) or ($frm->previoussearch == 1)))) ;
 
     /// Get all existing students and teachers for this course.
     if(! $alreadycourses = get_courses_in_metacourse($course->id)) {
