@@ -18,7 +18,7 @@
 		CVS est un acronyme pour d&eacute;signer le &laquo; <strong>Concurrent Versioning System</strong>&nbsp;&raquo;, une fa&ccedil;on pratique et tr&egrave;s r&eacute;pandue de stoquer le code source de projets informatiques. Un CVS conserve toutes les versions de tous les fichiers, de sorte qu'aucune donn&eacute;e n'est jamais perdue, et que les traces de l'utilisation par les diff&eacute;rentes personnes sont conserv&eacute;es. Le syst&egrave;me offre en outre la possibilit&eacute; de fusionner le code si plusieurs personnes travaillent sur un m&ecirc;me fichier. Tout le code et toutes les versions sont enregistr&eacute;es sur un serveur central (dans le cas de Moodle, sur <a target="_top" href="http://www.sf.net/">Sourceforge</a>). 
 	</p>
 	<p>
-		Si vous d&eacute;sirez simplement t&eacute;l&eacute;charger par CVS la version actuelle de Moodle pour lancer un site, vous n'avez pas besoin de cette page. Il vous suffit de suivre les instructions (plus simples) pour t&eacute;l&eacute;charger Moodel par CVS sur la page <a target="_top" href="http://moodle.org/download">T&eacute;l&eacute;chargement de Moodle</a>. 
+		Si vous d&eacute;sirez simplement t&eacute;l&eacute;charger par CVS la version actuelle de Moodle pour lancer un site, vous n'avez pas besoin de cette page. Il vous suffit de suivre les instructions (plus simples) pour t&eacute;l&eacute;charger Moodle par CVS sur la page <a target="_top" href="http://moodle.org/download">T&eacute;l&eacute;chargement de Moodle</a>. 
 	</p>
 
 	<h2><a name="1"></a>Th&egrave;mes de ce document</h2>
@@ -159,7 +159,7 @@ cvs commit</div>
 	<ol>
 		<ol>
 		<li>Cliquez avec le bouton droit de la souris sur votre dossier Moodle (ou sur n'importe quel fichier) et s&eacute;lectionnez &laquo;&nbsp;<strong>CVS Update</strong>&nbsp;&raquo;.</li>
-		<li>Attendez et voyez d&eacute;filer les fichiers de jounalisation. Prenez note des conflits pouvant survenir si votre code local a des modifications en contradiction avec les versions t&eacute;l&eacute;charg&eacute;es. Vous aurez &agrave; r&eacute;soudre manuellement ces fichiers en les modifiant.
+		<li>Attendez et voyez d&eacute;filer les historiques (logs). Prenez note des conflits pouvant survenir si votre code local a des modifications en contradiction avec les versions t&eacute;l&eacute;charg&eacute;es. Vous aurez &agrave; r&eacute;soudre manuellement ces fichiers en les modifiant.
 		</ol>
 	</ol>
 	<blockquote>
@@ -184,7 +184,7 @@ cvs commit</div>
 	<div class="commandline">cvs status -v index.php</div>
 	<p>Quelques recommandations au sujet des balises&nbsp;:</p>
 	<ul>	
-		<li>Les balises et les noms des branches doivent toujours &ecirc;tre en lettre capitales.</li>	
+		<li>Les balises et les noms des branches doivent toujours &ecirc;tre en lettres capitales.</li>	
 		<li>Les balises et les noms des branches doivent TOUJOURS &ecirc;tre appliqu&eacute;s sur <strong>l'int&eacute;gralit&eacute; du module</strong> (la totalit&eacute; de Moodle). N'appliquez pas de balises &agrave; des fichiers individuels ou &agrave; des dossiers.</li>	
 		<li>Il n'est pas autoris&eacute; de changer le nom des balises, car des d&eacute;veloppeurs comptent dessus&nbsp;! Tapez-les donc correctement du premier coup.</li>	
 	</ul>	
@@ -194,7 +194,7 @@ cvs commit</div>
 	<p>Dans le jargon CVS, le <strong>tronc</strong> (trunk) est la version principale en d&eacute;veloppement de Moodle. Elle est aussi appel&eacute;e <span class="style4">HEAD</span>, ou encore branche par d&eacute;faut.</p>
 	<p>Les d&eacute;veloppeurs de Moodle font en sorte que le tronc reste aussi stable que possible, mais il contient d'habitude du nouveau code, avec des bogues et de petites instabilit&eacute;s.</p>
 	<p>De temps &agrave; autre, nous d&eacute;cidons que le produit poss&egrave;de suffisamment de fonctionnalit&eacute;s pour sortir une version. Le tronc re&ccedil;oit alors une balise  MOODLE_XX_BETA (pour le cas o&ugrave; l'on devrait revenir &agrave; ce point) et une nouvelle branche du nom de <span class="style1">MOODLE_XX_STABLE</span> est cr&eacute;&eacute;e pour la nouvelle version.</p>
-	<p>Une version b&ecirc;ta est aussi publi&eacute;e &agrave; ce point. Elle est destin&eacute;e aux testeurs qui n'utilisient pas CVS mais d&eacute;sirent essayer les derni&egrave;res fonctionnalit&eacute;s et en rapporter les bogues.</p>
+	<p>Une version b&ecirc;ta est aussi publi&eacute;e &agrave; ce point. Elle est destin&eacute;e aux testeurs qui n'utilisent pas CVS mais d&eacute;sirent essayer les derni&egrave;res fonctionnalit&eacute;s et en rapporter les bogues.</p>
  </blockquote>
   	     
   	     
@@ -202,13 +202,13 @@ cvs commit</div>
 	<h3><a name="4.2" id="4.2"></a>4.2 Branches stables pour chaque version</h3>
 	<blockquote>
 	<p>D&egrave;s que la branche stable <span class="style3">MOODLE_XX_STABLE</span> est cr&eacute;&eacute;e, les efforts de d&eacute;veloppement se divisent temporairement en deux. Certains d&eacute;veloppeurs continuent &agrave; travailler sur de nouvelles fonctionnalit&eacute;s du tronc pour les prochaines versions, mais la plupart d'entre eux se concentrent sur la branche <span class="style1"><strong>STABLE</strong></span> actuelle et corrigent les bogues qui y sont d&eacute;couverts.</p>
-	<p>Vous pouvez faire en sorte que votre copie locale de Moodle soit en synchronisation avec la version STABLE en tapant la commande unix suivante depuis le dossier principale de Moodle&nbsp;:</p>
+	<p>Vous pouvez faire en sorte que votre copie locale de Moodle soit en synchronisation avec la version STABLE en tapant la commande unix suivante depuis le dossier principal de Moodle&nbsp;:</p>
 	<div class="commandline">cvs update -dP -r <span class="style1">MOODLE_XX_STABLE</span></div>
 	<p>&Agrave; la suite de cela, toutes les commandes d&eacute;crites ci-dessus s'appliqueront &agrave; la version stable. Pour revenir au tronc, tapez simplement&nbsp;:</p>
 	<div class="commandline">cvs update -dPA</div>
 	<p>Sous Windows, un menu devrait &ecirc;tre disponible o&ugrave; vous pouvez choisir la branche.</p>
 	<p>Lorsque la nouvelle branche STABLE se stabilise v&eacute;ritablement, une version est publi&eacute;e. Les fichiers compress&eacute;s sont cr&eacute;&eacute;s pour la distribution et la branche re&ccedil;oit de Martin une balise du nom de <strong>MOODLE_XXX</strong>.</p>
-	<p>P&eacute;riodiquement, les corrections de bogues de la branche STABLE doivent &ecirc;tre incorpor&eacute;s dans le tronc afin qu'elles soient aussi disponibles dans les futures versions de Moodle. Une balise mobile appel&eacute;e MOODLE_XX_MERGED sera maintenue pour garder une trace de la derni&egrave;re incorporation. La proc&eacute;dure pour une telle incorporation se passe ainsi&nbsp;:</p>
+	<p>P&eacute;riodiquement, les corrections de bogues de la branche STABLE doivent &ecirc;tre incorpor&eacute;es dans le tronc afin qu'elles soient aussi disponibles dans les futures versions de Moodle. Une balise mobile appel&eacute;e MOODLE_XX_MERGED sera maintenue pour garder une trace de la derni&egrave;re incorporation. La proc&eacute;dure pour une telle incorporation se passe ainsi&nbsp;:</p>
 	<ol>
 		<li>T&eacute;l&eacute;charger la toute derni&egrave;re version du tronc&nbsp;:<br /><br />
 		<div class="commandline">cvs update -dPA<span>&nbsp;</span></div>
@@ -216,35 +216,35 @@ cvs commit</div>
 		<li>Incorporer dans le tronc toutes les modifications de la branche effectu&eacute;es depuis la derni&egrave;re incorporation&nbsp;:<br /><br />
 		<div class="commandline">cvs update -kk -j MOODLE_XX_MERGED -j MOODLE_XX_STABLE<span>&nbsp;</span></div>
 		</li>
-		<li>Lire attentivement les journaux d'activit&eacute; (logs) &agrave; la recherche d'&eacute;ventuels conflits et corriger tous les fichiers avec ces conflits&nbsp;;
+		<li>Lire attentivement les historiques (logs) &agrave; la recherche d'&eacute;ventuels conflits et corriger tous les fichiers concern&eacute;s par ces conflits&nbsp;;
 		</li>
 		<li>Appliquer la copie modifi&eacute;e dans le tronc du CVS&nbsp;:<br /><br />
 		<div class="commandline">cvs commit<span>&nbsp;</span></div>
 		</li>
-		 <li>Revenir &agrave; la branche stable<br /><br />
+		 <li>Revenir &agrave; la branche stable&nbsp;;<br /><br />
 		<div class="commandline">cvs update -dPr MOODLE_XX_STABLE<span>&nbsp;</span></div>
 		</li>
-		<li>Mettre &agrave; jour la balise mobile d'incorporation fin que la proc&eacute;dure puisse &ecirc;tre r&eacute;p&eacute;t&eacute;e la prochaine fois&nbsp;:<br /><br />
+		<li>Mettre &agrave; jour la balise mobile d'incorporation afin que la proc&eacute;dure puisse &ecirc;tre r&eacute;p&eacute;t&eacute;e la prochaine fois&nbsp;:<br /><br />
 		<div class="commandline">cvs tag -RF MOODLE_XX_MERGED<span>&nbsp;</span></div>
 		</li>
-	</ol><br />
-	<p>Enfin, les valeurs des variables <strong>$version</strong> de tous les fichiers &laquo;&nbsp;version.php&nbsp;&raquo; de Moodle de la branche stable ne doivent pas &ecirc;tre mis &agrave; jour si possible (&agrave; part le dernier chiffre si n&eacute;cessaire). La raison en est que si quelqu'un faut une mise &agrave; jour d'une version tr&egrave;s stable &agrave; la version tr&egrave;s stable suivante, il pourrait sans cela manquer une mise &agrave; jour arriv&eacute;e sur le tronc.</p>
+	</ol>
+	<p>Enfin, les valeurs des variables <strong>$version</strong> de tous les fichiers &laquo;&nbsp;version.php&nbsp;&raquo; de Moodle de la branche stable ne doivent pas &ecirc;tre mis &agrave; jour si possible (&agrave; part le dernier chiffre si n&eacute;cessaire). La raison en est que si quelqu'un fait une mise &agrave; jour d'une version tr&egrave;s stable &agrave; la version tr&egrave;s stable suivante, il pourrait sans cela manquer une mise &agrave; jour arriv&eacute;e sur le tronc.</p>
 	</blockquote>
 	<p>&nbsp;</p>
 	<h3><a name="4.3" id="4.3"></a>4.3 Branches particuli&egrave;res pour tout changement important</h3>
 	<blockquote>
-	<p>Occasionnellement, il est n&eacute;cessaire d'incorporer une nouvelle fonctionnalit&eacute; afin que plusieurs d&eacute;veloppeurs puissent y travailler ensemble, m&ecirc;me si elle est encore instable pour &ecirc;tre incorpor&eacute;e dans le tronc.</p>
-	<p>Dans ces cas, une branche temporaire est cr&eacute;&eacute;e pour travailler sur la focntionnalit&eacute;, puis incorpor&eacute;e au tronc principal d&egrave;s que possible. Un exemple de branche appel&eacute;e <span class="style1"><strong>MOODLE_14_WIDGET</strong></span> peut &ecirc;tre vu sur le diagramme ci-dessus.</p>
-	<p>si vous avez besoin de cela pour votre fonctionnalit&eacute; WIDGET, suivez ces instructions&nbsp;:</p>
+	<p>Occasionnellement, il est n&eacute;cessaire d'incorporer une nouvelle fonctionnalit&eacute; afin que plusieurs d&eacute;veloppeurs puissent y travailler ensemble, m&ecirc;me si elle est encore trop instable pour &ecirc;tre incorpor&eacute;e dans le tronc.</p>
+	<p>Dans ces cas, une branche temporaire est cr&eacute;&eacute;e pour travailler sur la fonctionnalit&eacute;, puis incorpor&eacute;e au tronc principal d&egrave;s que possible. Un exemple de branche appel&eacute;e <span class="style1"><strong>MOODLE_14_WIDGET</strong></span> peut &ecirc;tre vu sur le diagramme ci-dessus.</p>
+	<p>Si vous avez besoin de cela pour votre fonctionnalit&eacute; WIDGET, suivez ces instructions&nbsp;:</p>
 	<ol>
 		<li>Discutez avec les autres d&eacute;veloppeurs pour vous assurer que c'est vraiment n&eacute;cessaire&nbsp;!</li>
 		<li>Cr&eacute;ez une nouvelle balise sur le <strong>tronc</strong> (pour la totalit&eacute; de moodle) avec le nom <strong>MOODLE_XX_WIDGET_PRE</strong><br /><br />
 		<div class="commandline">cvs tag -R MOODLE_XX_WIDGET_PRE<span>&nbsp;</span></div></li>
-		<li>Crr&eacute;ez votre nouvelle branche avec le nom <span class="style1"><strong>MOODLE_XX_WIDGET</strong></span><br /><br />
+		<li>Cr&eacute;ez votre nouvelle branche avec le nom <span class="style1"><strong>MOODLE_XX_WIDGET</strong></span><br /><br />
 		<div class="commandline">cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></strong></div></li>
-		<li>Travaillez dans cette branche jusqu'&agrave; ce que la fonctionnalit&eacute; soit raisonnablement stable. Copier vos fichiers dans le CVS suivant vos besoins.<br /><br />
+		<li>Travaillez dans cette branche jusqu'&agrave; ce que la fonctionnalit&eacute; soit raisonnablement stable. Copiez vos fichiers dans le CVS suivant vos besoins.<br /><br />
 		<div class="commandline">cvs commit<span>&nbsp;</span></div></li>
-		<li>Lorsque vous &ecirc;tes pr&ecirc;t, incorporez toute la branche dans le tronc, copier tous ses fichiers dans le tronc et abandonnez la branche.<br /><br />
+		<li>Lorsque vous &ecirc;tes pr&ecirc;t, incorporez toute la branche dans le tronc&nbsp;: copiez tous ses fichiers dans le tronc et abandonnez la branche.<br /><br />
 		<div class="commandline">cvs update -dPA<br />
 		cvs update -kk -j <span class="style1">MOODLE_XX_WIDGET</span><br />
 		cvs commit</div>
@@ -255,7 +255,7 @@ cvs commit</div>
 	</blockquote>
 
 	<p align="center">
-		Bonne chance, soyez prudent et amusez-vous&nbsp;! 
+		Bonne chance, soyez prudent et amusez-vous bien&nbsp;! 
 	</p>
 	<p>&nbsp;</p>
 </blockquote>
