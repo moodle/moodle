@@ -1,36 +1,46 @@
-<FORM name="theform" method="post" action="comment.php">
+<FORM name="form" method="post" action="comment.php">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <tr valign=top>
-    <td align=right><p><b><?php echo get_string("comment","glossary") ?>:</b></p>
-    <font size="1">
+    <td align=right><p><b>
+      <?php echo get_string("comment","glossary") ?>:
+      </b></p></td>
+    <td align="left" rowspan="2">
+    <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "text", $form->text); ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right" valign="center" nowrap>
+    
+    <font SIZE="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
         if ($usehtmleditor) {
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
-           emoticonhelpbutton("form", "comment");
-        } 
+           emoticonhelpbutton("form", "text");
+        }
       ?>
-      <br />
-    </font>
+     <br />
+     </font>
+
     </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("formattexttype"); ?>:</b></p></td>
     <td>
     <?php
-       print_textarea($usehtmleditor, 20, 60, 680, 400, "text", $form->text);
-    
-       echo "<p align=right>";
-   	   helpbutton("textformat", get_string("helpformatting"));
-       print_string("formattexttype");
-       echo ":&nbsp;";
-       if (!isset($form->format)) {
-           if (!$form->format) {
-               $form->format = $defaultformat;
-           }
-       }
-       choose_from_menu(format_text_menu(), "format", $form->format, ""); 
-       echo "</p>";
-    ?>
+        if ($usehtmleditor) {   /// Trying this out for a while
+            print_string('formathtml');
+            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'">';
+        } else {
+            if (!isset($form->format)) {
+                $form->format = $defaultformat;
+            }
+            choose_from_menu(format_text_menu(), "format", $form->format, "");
+        }
+        helpbutton("textformat", get_string("helpformatting"));
+     ?>
     </td>
 </tr>
 <tr>
