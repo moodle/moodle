@@ -114,6 +114,33 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
+    if (empty($CFG->filter_mediaplugin_ignore_mpg)) {
+        $search = '/<a(.*?)href=\"([^<]+)\.(mpe?g)\"([^>]*)>(.*?)<\/a>/i';
+
+        $replace = '\\0<p class="mediaplugin"><object width="240" height="180">';
+        $replace .= '<param name="src" value="\\2.\\3">';
+        $replace .= '<param name="controller" value="true">';
+        $replace .= '<param name="autoplay" value="false">';
+        $replace .= '<embed src="\\2.\\3" width="240" height="180" controller="true" autoplay="false"> </embed>';
+        $replace .= '</object></p>';
+        
+        $text = preg_replace($search, $replace, $text);
+    }
+
+    if (empty($CFG->filter_mediaplugin_ignore_avi)) {
+        $search = '/<a(.*?)href=\"([^<]+)\.avi\"([^>]*)>(.*?)<\/a>/i';
+
+        $replace = '\\0<p class="mediaplugin"><object width="240" height="180">';
+        $replace .= '<param name="src" value="\\2.avi">';
+        $replace .= '<param name="controller" value="true">';
+        $replace .= '<param name="autoplay" value="false">';
+        $replace .= '<embed src="\\2.avi" width="240" height="180" controller="true" autoplay="false"> </embed>';
+        $replace .= '</object></p>';
+    
+        $text = preg_replace($search, $replace, $text);
+    }
+
+
     return $text;
 }
 
