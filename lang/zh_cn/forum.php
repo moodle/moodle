@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
+      // forum.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
 
 
 $string['addanewdiscussion'] = "添加一个新的讨论话题";
@@ -53,7 +53,7 @@ $string['modethreaded'] = "树状显示回贴标题";
 $string['modulename'] = "讨论区";
 $string['modulenameplural'] = "讨论区";
 $string['more'] = "更多";
-$string['movethisdiscussionto'] = "将此讨论移至…";
+$string['movethisdiscussionto'] = "将此论题移至…";
 $string['namenews'] = "新闻讨论区";
 $string['namesocial'] = "公众讨论区";
 $string['nameteacher'] = "教师讨论区";
@@ -74,13 +74,6 @@ $string['parentofthispost'] = "该贴的父贴";
 $string['postadded'] = "你的贴子已经发表了。<P>如果你想修改，在 \$a 时间内是允许的。";
 $string['postincontext'] = "在上下文中看此贴";
 $string['postmailinfo'] = "这是一份来自 \$a 网站的贴子。
-
-
-
-
-
-
-
 要在网站上回贴，请点击这个链接：";
 $string['postrating1'] = "极端独立型";
 $string['postrating2'] = "独立型与情景型兼备";
@@ -109,6 +102,8 @@ $string['subscribe'] = "订阅该讨论区";
 $string['subscribed'] = "订阅";
 $string['subscribers'] = "订阅者";
 $string['subscribersto'] = "订阅‘ \$a ’者";
+$string['subscribestart'] = "此论坛有新帖就发email给我";
+$string['subscribestop'] = "此论坛有新帖不要发email给我";
 $string['subscription'] = "订阅";
 $string['subscriptions'] = "订阅";
 $string['unsubscribe'] = "不再订阅该讨论区";
