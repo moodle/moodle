@@ -36,18 +36,16 @@
         if (isset($form->filename)) {                 // file already on server
             $newfile['tmp_name'] = $form->filename; 
             $newfile['size'] = filesize($form->filename);
-
+            
         } else if (!empty($_FILES['newfile'])) {      // file was just uploaded
-            $newfile = $_FILES['newfile'];
+            require_once($CFG->dirroot.'/lib/uploadlib.php');
+            $um = new upload_manager('newfile',false,false,$course,false,0,false);
+            if ($um->preprocess_files()) { // validate and virus check! 
+                $newfile = $_FILES['newfile'];
+            }
         }
 
-        if (empty($newfile)) {
-            notify(get_string("uploadproblem") );
-
-        } else if (!isset($filename) and (!is_uploaded_file($newfile['tmp_name']) or $newfile['size'] == 0)) {
-            notify(get_string("uploadnofilefound") );
-
-        } else {  // Valid file is found
+        if (is_array($newfile)) { // either for file already on server or just uploaded file.
 
             if (! is_readable("format/$form->format/format.php")) {
                 error("Format not known ($form->format)");
@@ -121,7 +119,8 @@
     echo "<tr><td align=\"right\">";
     print_string("upload");
     echo ":</td><td>";
-    echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    upload_print_form_fragment(1,array('newfile'),null,false,null,$course->maxbytes,0,false);
     echo "</tr><tr><td>&nbsp;</td><td>";
     echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     echo " <input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
