@@ -449,14 +449,6 @@ body#mod-forum-search .introcontent {
 } 
 
 
-/* calendar, course, weblib,php, attandance
-dialouge, exercise, forum, lesson, quiz */
-table.generaltable td.header,
-table.generaltable th.header,
-.generaltableheader {
-}
-
-
 /* glossary, wiki */
 .glossarypost .commands {
     width: 200px;
@@ -741,13 +733,12 @@ table.minicalendar th {
     height: auto;
 }
 
-#calendar .maincalendar .heading,
-#calendar .sidecalendar .heading
+#calendar div.header
 {
     padding: 5px;
 }
 
-#calendar .maincalendar .heading .buttons {
+#calendar .maincalendar .buttons {
     float: right;
 }
 
@@ -805,6 +796,14 @@ table.minicalendar th {
 
 #calendar .maincalendar .eventlist {
     padding: 10px;
+}
+
+#calendar .maincalendar .eventlist .topic {
+    padding: 5px;
+    border-style:solid; /* borders */
+    border-width: 0px;
+    border-bottom-color: #EEEEEE;
+    border-bottom-width: 1px;
 }
 
 #calendar .maincalendar .eventlist .event {

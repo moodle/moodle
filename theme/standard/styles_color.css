@@ -70,7 +70,8 @@ body {
     background-color:#FAFAFA;
 }
 
-th.header {
+th.header,
+td.header {
     background-color:#DDDDDD;
 }
 
@@ -470,7 +471,7 @@ table.minicalendar {
     border-color:#DDDDDD;
 }
 
-#calendar .maincalendar .eventlist .event .header,
+#calendar .maincalendar .eventlist .event .topic,
 #calendar .maincalendar .eventlist .event .picture,
 #calendar .maincalendar .eventlist .event .side
 {
@@ -573,8 +574,8 @@ table.minicalendar {
 .sideblock {
     border-color:#DDDDDD; /* borders */
 }
+
 .sideblock .header {
-    background-color: #EEEEEE;
 }
 
 .sideblock .content {

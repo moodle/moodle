@@ -325,8 +325,7 @@ body#mod-quiz-report .controls {
     line-height:1.2em;
 }
 
-#calendar .maincalendar .heading,
-#calendar .sidecalendar .heading
+#calendar div.header
 {
     font-weight:bold;
 }
