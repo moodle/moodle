@@ -589,14 +589,14 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook=''
 function glossary_print_entry_default ($entry) {
     echo '<b>'. strip_tags($entry->concept) . ': </b>';
     $options->para = false;
-    $definition = format_text('<nolink>' . strip_tags($entry->definition) . '</nolink>', $entry->format,$options);
+    $definition = format_text('<span class="nolink">' . strip_tags($entry->definition) . '</span>', $entry->format,$options);
     echo ($definition);
     echo '<br /><br />';
 }
 
 function  glossary_print_entry_concept($entry) {
     $options->para = false;
-    $text = format_text('<nolink>' . $entry->concept . '</nolink>', FORMAT_MOODLE, $options);
+    $text = format_text('<span class="nolink">' . $entry->concept . '</span>', FORMAT_MOODLE, $options);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
@@ -665,8 +665,8 @@ function glossary_print_entry_definition($entry) {
     }
 
     //Put doNolinks (concept + aliases) enclosed by <nolink> tag
-    $definition= preg_replace($doNolinks,'<nolink>$1</nolink>',$definition);
-        
+    $definition= preg_replace($doNolinks,'<span class="nolink">$1</span>',$definition);
+
     //Restore addrs
     if ( $addrs ) {
         $definition = str_replace(array_keys($addrs),$addrs,$definition);

@@ -51,7 +51,7 @@ function glossary_print_entry_fullwithoutauthor($course, $cm, $glossary, $entry,
     //The print view for this format is exactly the normal view, so we use it
 
     //Take out autolinking in definitions un print view
-    $entry->definition = '<nolink>'.$entry->definition.'</nolink>';
+    $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
 
     //Call to view function (without icons, ratings and aliases) and return its result
     return glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);

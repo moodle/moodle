@@ -75,6 +75,7 @@ function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mod
     $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
 
     //Call to view function (without icons, ratings and aliases) and return its result
+    
     return glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
 
 }
