@@ -33,10 +33,12 @@ class CourseBlock_section_links extends MoodleBlock {
         if ($this->course->format == 'weeks') {
             $highlight = ceil((time()-$this->course->startdate)/604800);
             $linktext = get_string('jumptocurrentweek', 'block_section_links');
+            $sectionname = 'week';
         }
         else if ($this->course->format == 'topics') {
             $highlight = $this->course->marker;
             $linktext = get_string('jumptocurrenttopic', 'block_section_links');
+            $sectionname = 'topic';
         }
         $inc = 1;
         if ($this->course->numsections > 22) {
@@ -47,20 +49,20 @@ class CourseBlock_section_links extends MoodleBlock {
         }
         $courseid = $this->course->id;
         if ($display = get_field('course_display', 'display', 'course', $courseid, 'userid', $USER->id)) {
-            $link = "$CFG->wwwroot/course/view.php?id=$courseid&amp;topic=all";
+            $link = "$CFG->wwwroot/course/view.php?id=$courseid&amp;$sectionname=";
         } else {
-            $link = '';
+            $link = '#';
         }
         $text = '<font size=-1>';
         for ($i = $inc; $i <= $this->course->numsections; $i += $inc) {
             if ($i == $highlight) {
-                $text .= "<a href=\"$link#$i\"><b>$i</b></a> ";
+                $text .= "<a href=\"$link$i\"><b>$i</b></a> ";
             } else {
-                $text .= "<a href=\"$link#$i\">$i</a> ";
+                $text .= "<a href=\"$link$i\">$i</a> ";
             }
         }
         if ($highlight) {
-            $text .= "<br><a href=\"$link#$highlight\">$linktext</a>";
+            $text .= "<br><a href=\"$link$highlight\">$linktext</a>";
         }
 
         $this->content = New stdClass;
