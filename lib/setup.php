@@ -65,14 +65,6 @@
     require("$CFG->dirroot/theme/$CFG->theme/config.php");
 
 
-/// Set language/locale of printed times etc (must be supported by OS)
-
-    if (!$CFG->locale) {
-        $CFG->locale = $CFG->lang; // Might work
-    }
-    setlocale (LC_TIME, $CFG->locale);
-    setlocale (LC_CTYPE, $CFG->locale);
-    setlocale (LC_COLLATE, $CFG->locale);
 
 /// Reference code to remove magic quotes from everything ... just in case.
 /// If you have problems with slashes everywhere then you might want to 
@@ -122,5 +114,21 @@
     $FULLME = qualified_me();
     $ME     = strip_querystring($FULLME);
 
+
+/// Set language/locale of printed times.  If user has chosen a language that 
+/// that is different from the site language, then use the locale specified 
+/// in the language file.  Otherwise, if the admin hasn't specified a locale
+/// then use the one from the default language.  Otherwise (and this is the 
+/// majority of cases), use the stored locale specified by admin.
+
+    if ($USER->lang and ($USER->lang != $CFG->lang) ) {
+        $CFG->locale = get_string("locale");
+    } else if (!$CFG->locale) {
+        $CFG->locale = get_string("locale");
+        set_config("locale", $CFG->locale);   // cache it to save lookups in future
+    }
+    setlocale (LC_TIME, $CFG->locale);
+    setlocale (LC_CTYPE, $CFG->locale);
+    setlocale (LC_COLLATE, $CFG->locale);
 
 ?>
