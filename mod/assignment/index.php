@@ -53,8 +53,7 @@
                 $submitted =  "<a href=\"submissions.php?id=$assignment->id\">" .
                                 get_string("viewfeedback", "assignment") . "</a>";
             } else {
-                $count = count_records_select("assignment_submissions",
-                                              "assignment = '$assignment->id' AND timemodified > 0");
+                $count = count(assignment_get_all_submissions($assignment));
                 $submitted = "<a href=\"submissions.php?id=$assignment->id\">" .
                              get_string("viewsubmissions", "assignment", $count) . "</A>";
             }

@@ -47,15 +47,16 @@
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
+        echo '<p align="right">';
         if ($assignment->type == OFFLINE) {
-            echo "<P align=right><A HREF=\"submissions.php?id=$assignment->id\">".
-                  get_string("viewfeedback", "assignment")."</A></P>";
+            echo "<a href=\"submissions.php?id=$assignment->id\">".
+                  get_string("viewfeedback", "assignment")."</a>";
         } else {
-            $count = count_records_select("assignment_submissions", 
-                                          "assignment = '$assignment->id' AND timemodified > 0");
-            echo "<P align=right><A HREF=\"submissions.php?id=$assignment->id\">".
-                  get_string("viewsubmissions", "assignment", $count)."</A></P>";
+            $count = count(assignment_get_all_submissions($assignment));
+            echo "<a href=\"submissions.php?id=$assignment->id\">".
+                  get_string("viewsubmissions", "assignment", $count)."</a>";
         }
+        echo '</p>';
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
