@@ -251,8 +251,9 @@ class quiz_default_questiontype {
                  isset($question->recentlyadded) ? $question->recentlyadded : false);
         
         $this->print_question_formulation_and_controls(
-                $question, $quiz, $readonly, $resultdetails->answers,
-                $resultdetails->correctanswers,
+                $question, $quiz, $readonly,
+                empty($resultdetails) ? false : $resultdetails->answers,
+                empty($resultdetails) ? false : $resultdetails->correctanswers,
                 quiz_qtype_nameprefix($question));
 
         echo "</td></tr></table>";
