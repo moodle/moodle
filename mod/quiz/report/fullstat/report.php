@@ -40,10 +40,11 @@ class quiz_report extends quiz_default_report {
     foreach ($qs_in_order as $qid){
         $table_colcount++;
         //Get the question type and text and append to object
-        $question_data = get_records_select("quiz_questions",$select="id='$qid'","","qtype,questiontext");
-        foreach($question_data as $thiskey => $thisq){
-            $quests[$qid]["qtype"] =  $thiskey;
-            $quests[$qid]["qtext"] =  $question_data[$thiskey]->questiontext;
+        if ($question_data = get_records_select("quiz_questions",$select="id='$qid'","","qtype,questiontext")) {
+            foreach($question_data as $thiskey => $thisq){
+                $quests[$qid]["qtype"] =  $thiskey;
+                $quests[$qid]["qtext"] =  $question_data[$thiskey]->questiontext;
+            }
         }
         if($quests[$qid]['qtype'] == 3 or $quests[$qid]['qtype'] == 2){ $containsMCTF = 1;}
         if($quests[$qid]['qtype'] == 5){
