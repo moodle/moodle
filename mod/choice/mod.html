@@ -32,7 +32,7 @@
 
     if ($usehtmleditor = can_use_richtext_editor()) {
         $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(document.form.description);\"";
+        $onsubmit = "onsubmit=\"copyrichtext(document.form.text);\"";
     } else {
         $defaultformat = FORMAT_MOODLE;
         $onsubmit = "";
