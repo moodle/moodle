@@ -13,15 +13,22 @@
 
 		if (!count((array)$err)) {
 			$username = $frm->username;
-			$password = $frm->newpassword1;
+			$password = md5($frm->newpassword1);
+
+			$user = get_user_info_from_db("username", $username);
+
+            if (isguest($user->id)) {
+                error("Can't change guest password!");
+            }
 			
-			if (! set_field("user", "password", md5($frm->newpassword1), "username", $frm->username)) {
+			if (set_field("user", "password", $password, "username", $username)) {
+                $user->password = $password;
+            } else {
 				error("Could not set the new password");
             }
 
 			unset($USER);
-
-			$USER = get_user_info_from_db("username", $username);
+			$USER = $user;
 			$USER->loggedin = true;
 
 			set_moodle_cookie($USER->username);
