@@ -114,6 +114,11 @@ function forum_upgrade($oldversion) {
       table_column("forum","","rssarticles","tinyint","2", "unsigned", "0", "", "rsstype");
       set_config("forum_enablerssfeeds",0);
   }
+
+  if ($oldversion < 2004050301) {  
+      table_column("forum_discussions", "groupid", "groupid", "integer", "10", "", "0", "");
+  }
+
   
   return true;
 

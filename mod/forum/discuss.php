@@ -129,6 +129,8 @@
 
             if (mygroupid($course->id) == $discussion->groupid) {
                 $canreply = true;
+            } elseif ($discussion->groupid == -1) {
+                $canreply = false;
             } else {
                 print_heading("Sorry, you can't see this discussion because you are not in this group");
                 print_footer();

@@ -242,7 +242,7 @@ function forum_cron () {
 
             $groupmode = false;
             if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-                if ($groupmode = groupmode($course, $cm)) {                  // Groups are being used
+                if ($groupmode = groupmode($course, $cm) and $discussion->groupid > 0) {   // Groups are being used
                     if (!$group = get_record("groups", "id", $discussion->groupid)) {   // Can't find group
                         continue;                                            // Be safe and don't send it to anyone
                     }
@@ -260,8 +260,10 @@ function forum_cron () {
                 foreach ($users as $userto) {
                     if ($groupmode) {    // Look for a reason not to send this email
                         if (!isteacheredit($course->id, $userto->id)) {
-                            if (!ismember($group->id, $userto->id)) {
-                                continue;
+                            if (!empty($group->id)) {
+                                if (!ismember($group->id, $userto->id)) {
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -867,7 +869,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
 }
 
 function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
-                               $user=0, $fullpost=true, $currentgroup=0) {
+                               $user=0, $fullpost=true, $visiblegroups=-1) {
 /// Get all discussions in a forum
     global $CFG;
 
@@ -876,11 +878,14 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     } else {
         $userselect = "";
     }
-    if ($currentgroup) {
-        $groupselect = " AND d.groupid = '$currentgroup' ";
-    } else  {
+
+    
+    if ($visiblegroups == -1) {
         $groupselect = "";
+    } else  {
+        $groupselect = " AND (d.groupid = '$visiblegroups' OR d.groupid = '-1') ";
     }
+
     if (empty($forumsort)) {
         $forumsort = "d.timemodified DESC";
     }
@@ -2045,7 +2050,7 @@ function forum_user_can_post($forum, $user=NULL) {
 
 function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                                         $forum_style="plain", $forum_sort="",
-                                        $currentgroup=0) {
+                                        $currentgroup=0, $groupmode=-1) {
     global $CFG, $USER;
 
     if ($forum_id) {
@@ -2068,6 +2073,15 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
             error("Could not find or create a main forum in this course (id $course->id)");
         }
     }
+
+    if ($groupmode == -1) {    /// We need to reconstruct groupmode because none was given
+        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            $groupmode = groupmode($course, $cm);
+        } else {
+            $groupmode = SEPARATEGROUPS;
+        }
+    }
+    
 
     if (forum_user_can_post_discussion($forum, $currentgroup)) {
         echo "<p align=center>";
@@ -2093,7 +2107,18 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         $fullpost = true;
     }
 
-    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $currentgroup) ) {
+
+/// Decides if current user is allowed to see ALL the current discussions or not
+
+    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or isteacheredit($forum->course)) ) {
+        $visiblegroups = -1;
+    } else {
+        $visiblegroups = $currentgroup;
+    }
+
+/// Get all the recent discussions we're allowed to see
+
+    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $visiblegroups) ) {
         if ($forum->type == "news") {
             echo "<p align=center><b>(".get_string("nonews", "forum").")</b></p>";
         } else {
