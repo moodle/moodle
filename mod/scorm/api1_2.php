@@ -145,7 +145,7 @@ function SCORMapi() {
 		        var parsedtime = value.match(/^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$/);
 		        if (parsedtime != null) {
 		            //top.alert(parsedtime);
-		            if (((parsedtime.length == 4) || (parsedtime.length == 5)) && (parsedtime[2]>=0) && (parsedtime[2]<=59) && (parsedtime[3]>=0) && (parsedtime[3]<=59)) {
+		            if (((parsedtime.length == 4) || (parsedtime.length == 5)) && (parsedtime[3]>=0) && (parsedtime[3]<=59)) {
 		                eval(param+'="'+value+'";');
 		        	errorCode = "0";
 		        	return "true";
@@ -291,15 +291,7 @@ function SCORMapi() {
 	} else {
 	    Initialized = false;
 	    errorCode = "0";
-	    cmi.core.total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
-	    //top.alert(cmi.core.total_time);
-	    if (<?php echo $navObj ?>cmi.document.theform) {
-		cmiform = <?php echo $navObj ?>cmi.document.forms[0];
-		cmiform.scoid.value = "<?php echo $sco->id; ?>";
-		cmiform.cmi_core_total_time.value = cmi.core.total_time;
-		cmiform.submit();
-		
-	    }
+	   
             if (nav.event != "") {
             <?php
 		if ($sco != $last) {
@@ -344,19 +336,13 @@ function SCORMapi() {
 	var change = 0;
 	
 	var secs = (Math.round((parseFloat(sFirst[2],10)+parseFloat(sSecond[2],10))*100))/100; 	//Seconds
-	if (secs > 60) {
-	    secs = secs - 60;
-	    change = 1;
-	} else {
-	    change = 0;
-	}
+	change = Math.floor(secs / 60);
+	secs = secs - (change * 60);
 	if (Math.floor(secs) < 10) secs = "0" + secs.toString();
 	
 	mins = parseInt(sFirst[1],10)+parseInt(sSecond[1],10)+change; 	//Minutes
-	if (mins > 60) 
-	    change = 1;
-	else
-	    change = 0;
+	change = Math.floor(mins / 60);
+	mins = mins - (change * 60);
 	if (mins < 10) mins = "0" + mins.toString();
 	    
 	hours = parseInt(sFirst[0],10)+parseInt(sSecond[0],10)+change; 	//Hours
@@ -364,6 +350,21 @@ function SCORMapi() {
 	
 	return hours + ":" + mins + ":" + secs;
     }
+    
+    function SaveTotalTime() {
+    	cmi.core.total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
+    	//top.alert(cmi.core.total_time);
+    	if (<?php echo $navObj ?>cmi.document.forms[0]) {
+	    cmiform = <?php echo $navObj ?>cmi.document.forms[0];
+	    cmiform.reset();
+	    cmiform.scoid.value = "<?php echo $sco->id; ?>";
+	    cmiform.cmi_core_total_time.value = cmi.core.total_time;
+	    cmiform.submit();
+	    //top.alert(cmi.core.total_time);
+    	}
+    }
+    
+    this.SaveTotalTime = SaveTotalTime;
     
     this.LMSInitialize = LMSInitialize;
     this.LMSGetValue = LMSGetValue;

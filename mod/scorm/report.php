@@ -79,8 +79,12 @@
 
         	foreach ($sco_users as $sco_user) {
         		$user_data=scorm_get_scoes_records($sco_user);
-            	$picture = print_user_picture($sco_user->userid, $course->id, $user_data->picture, false, true);
-            	$row="";
+        		$userpict = "";
+        		if (isset($user_data->picture)) {
+        		    $userpict = $user_data->picture;
+        		}
+            		$picture = print_user_picture($sco_user->userid, $course->id, $userpict, false, true);
+            		$row="";
     			$row[] = $picture;
     			if (is_array($user_data)) {
     				$data = current($user_data);
@@ -98,7 +102,7 @@
     						   .$data->cmi_core_total_time.$scoreview;
         			}
         		}
-            	$table->data[] = $row; 
+            		$table->data[] = $row; 
         	}
     
         	print_table($table);

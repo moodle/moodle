@@ -2,17 +2,36 @@
 
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
-	<td align=right><p>scorm_framesize:</td>
-	<td>
-    <input name=scorm_framesize type=text size=5 value="<?php p($CFG->scorm_framesize) ?>">
+    <td align=right><p>scorm_validate:</td>
+    <td>
+    <?php
+        unset($choices);
+        $choices[""] = get_string("none");
+        if (extension_loaded('domxml')) {
+            $choices["domxml"] = get_string("domxml","scorm");
+        }
+        if (version_compare(phpversion(),"5.0.0",">=")) {
+            $choices["php5"] = get_string("php5","scorm");
+        }
+        choose_from_menu ($choices, "scorm_validate", $CFG->scorm_validate, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("validationtype", "scorm") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>scorm_framesize:</td>
+    <td>
+    	<input name=scorm_framesize type=text size=5 value="<?php p($CFG->scorm_framesize) ?>">
     </td>
     <td>
     <?php print_string("configframesize", "scorm") ?>
     </td>
 </tr>
 <tr valign=top>
-	<td align=right><p>scorm_popup:</td>
-	<td>
+    <td align=right><p>scorm_popup:</td>
+    <td>
     <?php
         unset($choices);
         $choices[""] = get_string("no");
@@ -43,7 +62,8 @@
 ?>
 <tr>
     <td colspan=3 align=center>
-	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
+	<input type="submit" value="<?php print_string("savechanges") ?>">
+    </td>
 </tr>
 </table>
 

@@ -68,9 +68,13 @@
 	//
 	// Print the page header
 	//
+	$bodyscripts = "";
+	if ($scorm->popup != "") {
+	    $bodyscripts = "onLoad='SCOInitialize();' onUnload='API.SaveTotalTime(); closeMain();' onbeforeUnload='API.SaveTotalTime();'";
+	}
     	print_header($pagetitle, "$course->fullname",
 		"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\" title=\"$scorm->summary\">$scorm->name</a>",
-		"", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm, '_top'));
+		"", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm, '_top'),"",$bodyscripts);
     	
     	echo "<table width=\"100%\">\n    <tr><td align=\"center\">".text_to_html($scorm->summary, true, false)."</td>\n";
     	if ($mode == "browse")
@@ -241,15 +245,6 @@
 		</td>\n";
 	
     	echo "</tr>\n</table>\n";
-    	
-    	if ($scorm->popup != "") {
-    	?>
-    	    <script language="Javascript">
-		SCOInitialize();
-            </script>
-        <?php
-        }
-        
 	echo "</body>\n</html>\n";
     } else {
         if ($scorm->popup == "") {
@@ -259,7 +254,7 @@
     	    echo "<html>\n";
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
             echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
-	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\">\n";
+	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"API.SaveTotalTime();\" onbeforeUnload=\"API.SaveTotalTime();\">\n";
             echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&mode=".$mode."&frameset=top\">\n";
             echo "\t    <frame name=\"main\" src=\"\">\n";
             echo "</frameset>\n";

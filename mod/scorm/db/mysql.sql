@@ -7,6 +7,8 @@ CREATE TABLE prefix_scorm (
   course int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   reference varchar(255) NOT NULL default '',
+  maxgrade float(3) NOT NULL default '0',
+  grademethod tinyint(2) NOT NULL default '0',
   datadir varchar(255) NOT NULL default '',
   launch int(10) unsigned NOT NULL default 0,
   summary text NOT NULL,
@@ -20,6 +22,8 @@ CREATE TABLE prefix_scorm (
 CREATE TABLE prefix_scorm_scoes (
   id int(10) unsigned NOT NULL auto_increment,
   scorm int(10) unsigned NOT NULL default '0',
+  manifest varchar(255) NOT NULL default '',
+  organization varchar(255) NOT NULL default '',
   parent varchar(255) NOT NULL default '',
   identifier varchar(255) NOT NULL default '',
   launch varchar(255) NOT NULL default '',

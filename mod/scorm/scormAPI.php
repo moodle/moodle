@@ -177,17 +177,30 @@ function SCOInitialize() {
 	echo "\t    top.main.location=\"$result\";\n";
 	echo "\t    hilightcurrent(".$navObj."document.navform.courseStructure);\n";
     } else {
-   	echo "\t    top.main = window.open('$result','main','$scorm->popup');\n";
+        $popuplocation = '';
+        if (isset($_COOKIE["SCORMpopup"])) {
+            $popuplocation = $_COOKIE["SCORMpopup"];
+        }
+   	echo "\t    top.main = window.open('$result','main','$scorm->popup$popuplocation');\n";
     }
 ?>
 } 
 
 function changeSco(direction) {
-	if (direction == "previous")
-	    <?php echo $navObj ?>document.navform.scoid.value="<?php echo $prevsco; ?>";
-	else
-	    <?php echo $navObj ?>document.navform.scoid.value="<?php echo $nextsco; ?>";
+    if (direction == "previous")
+	<?php echo $navObj ?>document.navform.scoid.value="<?php echo $prevsco; ?>";
+    else
+	<?php echo $navObj ?>document.navform.scoid.value="<?php echo $nextsco; ?>";
 	    
-	//alert ("Prev: <?php echo $prevsco; ?>\nNext: <?php echo $nextsco; ?>\nNew SCO: "+<?php echo $navObj ?>document.navform.scoid.value);
-	<?php echo $navObj ?>document.navform.submit();
-}   
+    //alert ("Prev: <?php echo $prevsco; ?>\nNext: <?php echo $nextsco; ?>\nNew SCO: "+<?php echo $navObj ?>document.navform.scoid.value);
+    <?php echo $navObj ?>document.navform.submit();
+}
+
+function closeMain() {
+    if (document.all) {
+    	document.cookie = "SCORMpopup=" + escape(",top="+top.main.screenTop+",left="+top.main.screenLeft);
+    } else {
+    	document.cookie = "SCORMpopup=" + escape(",top="+top.main.screenY+",left="+top.main.screenX);
+    }
+    top.main.close();
+}

@@ -43,6 +43,8 @@
                 fwrite ($bf,full_tag("MODTYPE",4,false,"scorm"));
                 fwrite ($bf,full_tag("NAME",4,false,$scorm->name));
                 fwrite ($bf,full_tag("REFERENCE",4,false,$scorm->reference));
+                fwrite ($bf,full_tag("MAXGRADE",4,false,$scorm->reference));
+                fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->reference));
                 fwrite ($bf,full_tag("DATADIR",4,false,$scorm->datadir));
                 fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
                 fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
@@ -87,11 +89,14 @@
                 $status =fwrite ($bf,start_tag("SCO",5,true));
                 //Print submission contents
                 fwrite ($bf,full_tag("ID",6,false,$sco->id));
+                fwrite ($bf,full_tag("MANIFEST",6,false,$sco->manifest));
+                fwrite ($bf,full_tag("ORGANIZATION",6,false,$sco->organization));
                 fwrite ($bf,full_tag("PARENT",6,false,$sco->parent));
                 fwrite ($bf,full_tag("IDENTIFIER",6,false,$sco->identifier));
                 fwrite ($bf,full_tag("LAUNCH",6,false,$sco->launch));
                 fwrite ($bf,full_tag("TYPE",6,false,$sco->type));
                 fwrite ($bf,full_tag("TITLE",6,false,$sco->title));
+                fwrite ($bf,full_tag("DATAFROMLMS",6,false,$sco->datafromlms));
                 fwrite ($bf,full_tag("NEXT",6,false,$sco->next));
                 fwrite ($bf,full_tag("PREVIOUS",6,false,$sco->previous));
                 //End sco
@@ -130,7 +135,6 @@
                 fwrite ($bf,full_tag("CMI_CORE_SESSION_TIME",6,false,$sco_user->cmi_core_session_time));
                 fwrite ($bf,full_tag("CMI_CORE_SCORE_RAW",6,false,$sco_user->cmi_core_score_raw));
                 fwrite ($bf,full_tag("CMI_SUSPEND_DATA",6,false,$sco_user->cmi_suspend_data));
-                fwrite ($bf,full_tag("CMI_LAUNCH_DATA",6,false,$sco_user->cmi_launch_data));
                 //End sco
                 $status =fwrite ($bf,end_tag("SCO_USER",5,true));
             }

@@ -53,10 +53,12 @@
 	    $result = "datadir";
 	}
 	$errorlogs = '';
-	if ($result != "regular") {
-	    /*foreach ($error_array as $errormsg) {
-	    	$errorlogs .= get_string($errormsg->type,"scorm",$errormsg->data) . "\n";
-	    }*/
+	if (($result != "regular") && ($result != "found")) {
+	    if ($CFG->scorm_validate == 'domxml') {
+	        foreach ($errors as $error) {
+	    	    $errorlogs .= get_string($error->type,"scorm",$error->data) . ".\n";
+	    	}
+	    }
 	    //
 	    // Delete files and temporary directory
 	    //
@@ -83,15 +85,24 @@
     	echo "    <tr><td align=\"right\" nowrap><p><b>$strname:</b></p></td><td><p>$form->name</p></a></td></tr>\n";
     	echo "    <tr><td align=\"right\" nowrap><p><b>".get_string("validation","scorm").":</b></p></td><td><p>".get_string($result,"scorm")."</p></a></td></tr>\n";
     	if ($errorlogs != '') {
-    	    //$lines = round(count($error_array)/4);
-    	    //echo "    <tr><td align=\"right\" nowrap><p><b>".get_string("errorlogs","scorm").":</b></p></td><td><textarea rows=\"".$lines."\" readonly>".$errorlogs."</textarea></a></td></tr>\n";
+    	    $lines = round(count($errors)/4);
+    	    if ($lines < 5) {
+    	        $lines = 5;
+    	    }
+    	    echo "    <tr><td align=\"right\" nowrap><p><b>".get_string("errorlogs","scorm").":</b></p></td><td><textarea rows=\"".$lines."\" cols=\"30\" readonly>".$errorlogs."</textarea></a></td></tr>\n";
     	}
     	if (($form->mode == "update") && ($form->launch == 0) && (get_records("scorm_sco_users","scormid",$form->instance)))
 	    echo "    <tr><td align=\"center\" colspan=\"2\" nowrap><p><b>".get_string("trackingloose","scorm")."</b></p></td></tr>\n";
     	echo "</table>\n";
-    	if ($result == "regular") {
+    	if (($result == "regular") || ($result == "found")){
     	    if (empty($form->auto)) {
 		$form->auto = "";
+    	    }
+    	    if (empty($form->maxgrade)) {
+		$form->maxgrade = "";
+    	    }
+    	    if (empty($form->grademethod)) {
+		$form->grademethod = "0";
     	    }
 	    echo "<form name=\"theform\" method=\"post\" action=\"$form->destination\">\n";
 	    
@@ -140,11 +151,38 @@
 ?>
 	<table cellpadding="5" align="center">
 	  <tr valign=top>
+    	    <td align=right><p><b><?php print_string("grademethod", "scorm") ?>:</b></p></td>
+    	    <td>
+    	      <?php
+        	$options = array();
+        	$options[0] = get_string("gradescoes", "scorm");
+        	$options[1] = get_string("gradehighest", "scorm");
+        	$options[2] = get_string("gradeaverage", "scorm");
+        	choose_from_menu($SCORM_GRADE_METHOD, "grademethod", "$form->grademethod", "");
+        	helpbutton("grademethod", get_string("grademethod","scorm"), "scorm");
+     	      ?>
+    	    </td>
+	  </tr>
+	  <tr valign=top>
+    	    <td align=right><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
+    	    <td>
+    	      <?php
+        	for ($i=100; $i>=1; $i--) {
+            	    $grades[$i] = $i;
+        	}
+
+        	choose_from_menu($grades, "maxgrade", "$form->maxgrade", "");
+        	helpbutton("maxgrade", get_string("maximumgrade"), "scorm");
+     	      ?>
+    	    </td>
+	  </tr>
+	  <tr valign=top>
 	    <td align=right><p><b><?php print_string("autocontinue","scorm") ?>:</b></p></td>
 	    <td>
 	    <?php
-	    	$options[]=get_string("no");
-	    	$options[]=get_string("yes");
+	    	$options = array();
+	    	$options[0]=get_string("no");
+	    	$options[1]=get_string("yes");
 	        choose_from_menu ($options, "auto", $form->auto);
 	    ?>
 	    </td>

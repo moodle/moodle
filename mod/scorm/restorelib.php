@@ -47,6 +47,8 @@
             $scorm->course = $restore->course_id;
             $scorm->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $scorm->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
+            $scorm->reference = backup_todb($info['MOD']['#']['MAXGRADE']['0']['#']);
+            $scorm->reference = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
             $scorm->datadir = backup_todb($info['MOD']['#']['DATADIR']['0']['#']);
             $scorm->launch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
@@ -110,11 +112,14 @@
             
             //Now, build the scorm_scoes record structure
             $sco->scorm = $scorm_id;
+            $sco->manifest = backup_todb($sub_info['#']['MANIFEST']['0']['#']);
+            $sco->organization = backup_todb($sub_info['#']['ORGANIZATION']['0']['#']);
             $sco->parent = backup_todb($sub_info['#']['PARENT']['0']['#']);
             $sco->identifier = backup_todb($sub_info['#']['IDENTIFIER']['0']['#']);
             $sco->launch = backup_todb($sub_info['#']['LAUNCH']['0']['#']);
             $sco->type = backup_todb($sub_info['#']['TYPE']['0']['#']);
             $sco->title = backup_todb($sub_info['#']['TITLE']['0']['#']);
+            $sco->datafromlms = backup_todb($sub_info['#']['DATAFROMLMS']['0']['#']);
             $sco->next = backup_todb($sub_info['#']['NEXT']['0']['#']);
             $sco->previous = backup_todb($sub_info['#']['PREVIOUS']['0']['#']);
 
@@ -173,7 +178,6 @@
             $sco_user->cmi_core_session_time = backup_todb($sub_info['#']['CMI_CORE_SESSION_TIME']['0']['#']);
             $sco_user->cmi_core_score_raw = backup_todb($sub_info['#']['CMI_CORE_SCORE_RAW']['0']['#']);
             $sco_user->cmi_suspend_data = backup_todb($sub_info['#']['CMI_SUSPEND_DATA']['0']['#']);
-            $sco_user->cmi_launch_data = backup_todb($sub_info['#']['CMI_LAUNCH_DATA']['0']['#']);
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$sco_user->userid);
