@@ -17,7 +17,7 @@
          <TD ALIGN=LEFT VALIGN=TOP>
              <IMG BORDER=0 SRC="<?=$CFG->wwwroot?>/theme/standardlogo/logo.jpg">
          </TD>
-         <TD ALIGN=RIGHT VALIGN=TOP><?=$button ?></TD>
+         <TD ALIGN=RIGHT VALIGN=TOP><?=$menu ?></TD>
        </TR>
      </TABLE>
 
@@ -27,7 +27,7 @@
      <TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
        <TR>
          <TD ALIGN=LEFT VALIGN=TOP><FONT SIZE=4><B><?=$heading?></B></FONT></TD>
-         <TD ALIGN=RIGHT VALIGN=TOP><?=$button ?></TD>
+         <TD ALIGN=RIGHT VALIGN=TOP><?=$menu ?></TD>
        </TR>
      </TABLE>
 
@@ -41,6 +41,7 @@
          <TD BGCOLOR="<?=$THEME->cellheading?>">
            <FONT SIZE=2><B><? print_navigation("$navigation"); ?></B></FONT>
          </TD>
+         <TD BGCOLOR="<?=$THEME->cellheading?>" ALIGN=RIGHT WIDTH=20 VALIGN=TOP><?=$button ?></TD>
        </TR>
      </TABLE>
      <IMG SRC="<?=$CFG->wwwroot?>/pix/spacer.gif" ALT="" HEIGHT=5 WIDTH=1><BR>
