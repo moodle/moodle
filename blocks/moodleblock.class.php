@@ -290,6 +290,11 @@ class MoodleBlock {
         $this->specialization();
     }
 
+    /**
+     * This function is called on your subclass right after an instance is loaded
+     * Use this function to act on instance data just after it's loaded and before anything else is done
+     * For instance: if your block will have different title's dependant on location (site, course, blog, etc)
+     */
     function specialization() {
         // Just to make sure that this method exists.
         return;
