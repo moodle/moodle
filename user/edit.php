@@ -160,6 +160,12 @@ function find_form_errors(&$user, &$usernew, &$err) {
     if (empty($usernew->city))
         $err["city"] = get_string("missingcity");
 
+    if (empty($usernew->firstname))
+        $err["firstname"] = get_string("missingfirstname");
+
+    if (empty($usernew->lastname))
+        $err["lastname"] = get_string("missinglastname");
+
     if (empty($usernew->country))
         $err["country"] = get_string("missingcountry");
 

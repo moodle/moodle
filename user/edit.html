@@ -9,6 +9,18 @@
 	</td>
 </tr>
 <tr valign=top>
+	<td><P><? print_string("firstname") ?>:</td>
+	<td><input type="text" name="firstname" size=30 value="<? p($user->firstname) ?>">
+	<? formerr($err["firstname"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("lastname") ?>:</td>
+	<td><input type="text" name="lastname" size=30 value="<? p($user->lastname) ?>">
+	<? formerr($err["lastname"]) ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("userdescription") ?>:</td>
 	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><? p($user->description) ?></TEXTAREA> 
     <? helpbutton("text", get_string("helptext")) ?>
@@ -104,7 +116,7 @@
 </tr>
 <tr>
 	<td></td>
-	<td><input type="submit" value="<? print_string("updatemyprofile") ?>"></td>
+	<td align=right><input type="submit" value="<? print_string("updatemyprofile") ?>"></td>
 </TABLE>
 <INPUT type="hidden" name="course" value="<? p($course->id) ?>">
 <INPUT type="hidden" name="id" value="<? p($user->id) ?>"> 
