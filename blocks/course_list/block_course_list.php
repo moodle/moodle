@@ -41,7 +41,7 @@ class block_course_list extends block_base {
         if (isset($USER->id) and !(isadmin() and $adminseesall)) {    // Just print My Courses
             if ($courses = get_my_courses($USER->id)) {
                 foreach ($courses as $course) {
-                    if (!$course->category) {
+                    if ($course->id == SITEID) {
                         continue;
                     }
                     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
