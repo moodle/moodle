@@ -42,7 +42,7 @@
 
             if ($course) {
                 if (update_record("course", $form)) {
-                    add_to_log("Updated course settings", $course->id);
+                    add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
 		            redirect("view.php?id=$course->id", "Changes saved");
                 } else {
                     error("Serious Error! Could not update the course record! (id = $form->id)");
@@ -54,7 +54,7 @@
                     $week->timemodified = time();
                     $week->id = insert_record("course_weeks", $week);
 
-                    add_to_log("Inserted a new course # $newid", $newid);
+                    add_to_log($newid, "course", "new", "view.php?id=$newid", "");
 		            redirect("$CFG->wwwroot/admin/teacher.php?id=$newid", "Changes saved");
                 } else {
                     error("Serious Error! Could not create the new course!");
