@@ -56,7 +56,7 @@
             $answer = "";
         }
         if (!empty($answer->answer)) {
-            $aa = choice_get_answer($choice, $answer->answer);
+            $aa = format_string(choice_get_answer($choice, $answer->answer));
         } else {
             $aa = "";
         }
@@ -74,10 +74,10 @@
         //Calculate the href
         if (!$choice->visible) {
             //Show dimmed if the mod is hidden
-            $tt_href = "<a class=\"dimmed\" href=\"view.php?id=$choice->coursemodule\">$choice->name</a>";
+            $tt_href = "<a class=\"dimmed\" href=\"view.php?id=$choice->coursemodule\">".format_string($choice->name,true)."</a>";
         } else {
             //Show normal if the mod is visible
-            $tt_href = "<a href=\"view.php?id=$choice->coursemodule\">$choice->name</a>";
+            $tt_href = "<a href=\"view.php?id=$choice->coursemodule\">".format_string($choice->name,true)."</a>";
         }
         if ($course->format == "weeks" || $course->format == "topics") {
             $table->data[] = array ($printsection, $tt_href, $aa);

@@ -29,9 +29,9 @@
 
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id");
 
-    print_header_simple("$choice->name: $strresponses", "",
+    print_header_simple(format_string($choice->name).": $strresponses", "",
                  "<a href=\"index.php?id=$course->id\">$strchoices</a> ->
-                  <a href=\"view.php?id=$cm->id\">$choice->name</a> -> $strresponses", "");
+                  <a href=\"view.php?id=$cm->id\">".format_string($choice->name,true)."</a> -> $strresponses", "");
 
 /// Check to see if groups are being used in this choice
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
@@ -86,7 +86,7 @@
     echo "<tr>";
     foreach ($useranswer as $key => $answer) {
         echo "<th class=\"col$key\" width=\"$tablewidth%\">";
-        echo choice_get_answer($choice, $key);
+        echo format_string(choice_get_answer($choice, $key));
         echo "</th>";
     }
     echo "</tr><tr>";

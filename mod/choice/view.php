@@ -63,8 +63,8 @@
 
     add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", $choice->id, $cm->id);
 
-    print_header_simple("$choice->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strchoices</a> -> $choice->name", "", "", true,
+    print_header_simple(format_string($choice->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strchoices</a> -> ".format_string($choice->name), "", "", true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this choice
@@ -108,7 +108,7 @@
             if ($answer) {
                 echo "<td align=\"center\">";
                 echo "<input type=\"radio\" name=\"answer\" value=\"$key\" ".$answerchecked[$key]." alt=\"".s(strip_tags($answer))."\" />";
-                echo format_text($answer);
+                echo format_string($answer);
                 echo "</td>";
             }
         }
@@ -193,7 +193,7 @@
                 } else {
                     continue;
                 }
-                echo choice_get_answer($choice, $key);
+                echo format_string(choice_get_answer($choice, $key));
                 echo "</th>";
             }
             echo "</tr><tr>";
