@@ -8,9 +8,14 @@
         redirect("$CFG->wwwroot/admin/");
     }
 
+    if ($USER) {
+        $headerbutton = update_course_icon($site->id);
+    } else {
+        $headerbutton = "<FONT SIZE=2><A HREF=\"login/\">Log in</A></FONT>";
+    }
     print_header("$site->fullname", "$site->fullname", "", "",
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
-                 true, update_course_icon($site->id));
+                 true, $headerbutton);
 
 
 ?>
