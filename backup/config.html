@@ -196,7 +196,7 @@
 </tr>
 <tr valign=top>
     <td colspan = 3 align=center>
-        <?php print_string("saveto") ?>: <input name="backup_sche_destination" type="text" size="40" value="<?php p($backup_config->backup_sche_destination) ?>"><?php helpbutton("directorypath", strip_tags(get_string("directorypath"))) ?><br><?php if (!empty($sche_destination_error)) { formerr($sche_destination_error); echo "<br>"; } ?><?php print_string("backupsavetohelp") ?>
+        <?php print_string("saveto") ?>: <input name="backup_sche_destination" type="text" size="40" value="<?php p($backup_config->backup_sche_destination) ?>"><?php helpbutton("directorypaths", strip_tags(get_string("directorypaths"))) ?><br><?php if (!empty($sche_destination_error)) { formerr($sche_destination_error); echo "<br>"; } ?><?php print_string("backupsavetohelp") ?>
     </td>
 </tr>
 <tr>
