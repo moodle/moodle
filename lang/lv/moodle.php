@@ -505,7 +505,7 @@ $string['loginas'] = 'Lietotàjs';
 $string['loginguest'] = 'Ieiet kà viesim';
 $string['loginsite'] = 'Ieiet lapà';
 $string['loginsteps'] = 'Lai iegþtu pilnu pieeju kursiem, Jums vajadzºs izveidot jaunu kontu ¹ajà lapà.
-<br>©eit ir instrukcijas:
+<br>©ïs ir instrukcijas:
    <OL size=2>
    <LI>Aizpildiet <A HREF=$a>Jauna lietotàja anketu</A> (formu, kas satur Jþsu datus).
    <LI>Jums tiks nosþtïta e-pasta vºstule.
@@ -684,7 +684,7 @@ $string['publicdirectory'] = 'Publiskà mape';
 $string['publicdirectory0'] = 'Neizvietot informàciju par lapu';
 $string['publicdirectory1'] = 'Izvietot tikai lapas nosaukumu';
 $string['publicdirectory2'] = 'Izvietot lapas nosaukumu ar saiti';
-$string['publicsitefileswarning'] = 'Piezïme: ¹eit novietotajiem failiem visi var piek¶þt';
+$string['publicsitefileswarning'] = 'Piezïme: ¹eit novietotajiem failiem var piek¶þt visi';
 $string['question'] = 'Jautàjums';
 $string['readinginfofrombackup'] = 'Lasa informàciju no rezerves kopijas';
 $string['readme'] = 'Izlasat';
