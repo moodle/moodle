@@ -60,7 +60,8 @@
     if ($forums = get_records("forum", "course", $id, "name ASC")) {  // All known forums
 
         if ($learningforums) {           // Copy "full" data into this complete array
-            foreach ($learningforums as $learningforum) {
+            foreach ($learningforums as $key => $learningforum) {
+                $learningforum->keyreference = $key;
                 $forums[$learningforum->id] = $learningforum;
             }
         }
@@ -73,8 +74,8 @@
                 case "news":
                 case "social":
                     $generalforums[] = $forum;
-                    if (isset($forum->coursemodule)) {   // Should always be
-                        unset($learningforums[$forum->coursemodule]);
+                    if (isset($forum->keyreference)) {   // Should always be
+                        unset($learningforums[$forum->keyreference]);
                     }
                     break;
                 case "teacher": 
@@ -86,8 +87,8 @@
                 default:
                     if (!$course->category or empty($forum->section)) {   // Site level or section 0
                         $generalforums[] = $forum;
-                        if (isset($forum->coursemodule)) {
-                            unset($learningforums[$forum->coursemodule]);
+                        if (isset($forum->keyreference)) {
+                            unset($learningforums[$forum->keyreference]);
                         }
                     } 
                     break;
@@ -146,7 +147,7 @@
         }
     } 
 
-    /// Now let's process the other forums and build up a display
+    /// Now let's process the learning forums
 
     if ($course->category) {    // Only real courses have learning forums
         // Add extra field for section number, at the front
@@ -170,12 +171,6 @@
                 replace_smilies($forum->intro);
                 $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";
     
-                if (!$forum->section) {     // forums in the "0" section => generaltable
-                    $generalforums[] = $forum;
-                    unset($learningforums[$key]);
-                    continue;
-                }
-
                 if ($forum->section != $currentsection) {
                     $printsection = $forum->section;
                     if ($currentsection) {
@@ -198,7 +193,9 @@
                     } else {
                         if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
                             $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
-                            $forumlink = $forum->name;
+                            if ($groupmode == SEPARATEGROUPS) {
+                                $forumlink = $forum->name;
+                            }
                         } else {
                             if (forum_is_subscribed($USER->id, $forum->id)) {
                                 $subscribed = get_string("yes");
