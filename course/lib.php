@@ -532,20 +532,6 @@ function course_set_display($courseid, $display=0) {
     return $USER->display[$courseid] = $display;  // Note: = not ==
 }
 
-function course_section_visible($courseid, $section) { 
-/// Returns true/false depending on section visibility
-/// Can be expanded in the future to handle more complex 
-/// course displays
-
-    global $USER;
-
-    if (empty($USER->display[$courseid])) {
-        return true;
-    }
-
-    return $USER->display[$courseid] == $section;
-}
-
 function set_section_visible($courseid, $sectionnumber, $visibility) {
 /// For a given course section, markes it visible or hidden,
 /// and does the same for every activity in that section
