@@ -1443,6 +1443,9 @@ function authenticate_user_login($username, $password) {
     }
 
     // If this is the admin, then just use internal methods
+    // Doing this first (even though it's less efficient) because 
+    // the chosen authentication method might hang and lock the 
+    // admin out.
     if ($user = get_record_sql("SELECT u.id FROM user u, user_admins a 
                                 WHERE u.id = a.user 
                                   AND u.username = '$username' 
@@ -1450,12 +1453,13 @@ function authenticate_user_login($username, $password) {
         return get_user_info_from_db("username", $username);
     }
 
+    // OK, the user is a normal user, so try and authenticate them
     require_once("$CFG->dirroot/auth/$CFG->auth/lib.php");
 
     if (auth_user_login($username, $password)) {  // Successful authentication
 
         if ($user = get_user_info_from_db("username", $username)) {
-            if ($md5password <> $user->password) {
+            if ($md5password <> $user->password) {   // Update local copy of password for reference
                 set_field("user", "password", $md5password, "username", $username);
             }
             return $user;
