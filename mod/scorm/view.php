@@ -67,7 +67,7 @@
                      update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     } else {
-    	print_header($pagetitle, "$course->fullname","$navigation <a target=\"{$CFG->framename}\" href=\"$ME?id=$cm->id\" title=\"$scorm->summary\">$scorm->name</a>",
+    	print_header($pagetitle, "$course->fullname","$navigation <a target=\"{$CFG->framename}\" href=\"$ME?id=$cm->id\">$scorm->name</a>",
        	         "", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         
     	if (isteacher($course->id)) {

@@ -78,7 +78,7 @@
 	    $bodyscripts = "onLoad='SCOInitialize();' onUnload='SCOFinish(); closeMain();' ";
 	}
     	print_header($pagetitle, "$course->fullname",
-		"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\" title=\"$scorm->summary\">$scorm->name</a>",
+		"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">$scorm->name</a>",
 		"", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm, '_top'),"",$bodyscripts);
     	
     	echo "<table width=\"100%\">\n    <tr><td align=\"center\">".text_to_html($scorm->summary, true, false)."</td>\n";
