@@ -17,7 +17,7 @@
         if ($password == $course->password) {
 
             if (isguest()) {
-                add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$USER->id");
+                add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$REMOTE_ADDR, $REMOTE_HOST");
             } else {
                 if (! enrol_student_in_course($USER->id, $course->id)) {
                     error("An error occurred while trying to enrol you.");
