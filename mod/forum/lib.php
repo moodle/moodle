@@ -1985,16 +1985,12 @@ function forum_print_attachments($post, $return=NULL) {
     return $imagereturn;
 }
 
-function forum_add_attachment($post, $newfile) {
+function forum_add_attachment($post, $inputname) {
 // $post is a full post record, including course and forum
 // $newfile is a full upload array from $_FILES
 // If successful, this function returns the name of the file
 
     global $CFG;
-
-    if (empty($newfile['name'])) {
-        return "";
-    }
 
     if (!$forum = get_record("forum", "id", $post->forum)) {
         return "";
@@ -2004,35 +2000,13 @@ function forum_add_attachment($post, $newfile) {
         return "";
     }
 
-    $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $forum->maxbytes);
-
-    $newfile_name = clean_filename($newfile['name']);
-
-    if (valid_uploaded_file($newfile)) {
-        if ($maxbytes and $newfile['size'] > $maxbytes) {
-            return "";
-        }
-        if (! $newfile_name) {
-            notify("This file had a wierd filename and couldn't be uploaded");
-
-        } else if (! $dir = forum_file_area($post)) {
-            notify("Attachment could not be stored");
-            $newfile_name = "";
-
-        } else {
-            if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
-                chmod("$dir/$newfile_name", $CFG->directorypermissions);
-                forum_delete_old_attachments($post, $newfile_name);
-            } else {
-                notify("An error happened while saving the file on the server");
-                $newfile_name = "";
-            }
-        }
-    } else {
-        $newfile_name = "";
+    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    $um = new upload_manager($inputname,true,false,$course,false,$forum->maxbytes);
+    $dir = forum_file_area_name($post);
+    if ($um->process_file_uploads($dir)) {
+        return $um->get_new_filename();
     }
-
-    return $newfile_name;
+    // upload manager will print any errors.
 }
 
 function forum_add_new_post($post) {
@@ -2665,7 +2639,6 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
             echo "<ul><li>";
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
-                echo "";
                 if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
                     $ratingsmenuused = true;
                 }
