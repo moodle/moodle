@@ -81,7 +81,7 @@ $str->secs  = get_string("secs");
 /// Get list of users
 
 if (!$chatusers = chat_get_users($chatuser->chatid)) {
-    print_string("errornousers");
+    print_string("errornousers", "chat");
     exit;
 }
 
