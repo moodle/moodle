@@ -13,7 +13,7 @@ $THEME->sheets = array('gradients');
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->standardsheets = true;  
+$THEME->standardsheets = array('styles_layout','styles_fonts','styles_color','styles_moz');  
 
 /// This variable can be set to an array containing
 /// filenames from the *STANDARD* theme.  If the 
@@ -24,8 +24,7 @@ $THEME->standardsheets = true;
 /// This parameter can be used, for example, to prevent 
 /// having to override too many classes.
 /// Note that the trailing .css should not be included
-/// eg $THEME->standardsheets = array('styles_layout', 'styles_fonts', 
-///                                   'styles_color', 'styles_moz');
+/// eg $THEME->standardsheets = array('styles_layout','styles_fonts','styles_color');
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -51,8 +50,7 @@ $THEME->parentsheets = false;
 /// This parameter can be used, for example, to prevent 
 /// having to override too many classes.
 /// Note that the trailing .css should not be included
-/// eg $THEME->standardsheets = array('styles_layout', 'styles_fonts', 
-///                                   'styles_color', 'styles_moz');
+/// eg $THEME->parentsheets = array('styles_layout','styles_fonts','styles_color');
 ////////////////////////////////////////////////////////////////////////////////
 
 
