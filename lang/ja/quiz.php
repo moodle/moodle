@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004060400)
+      // quiz.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -118,7 +118,7 @@ $string['missingword'] = '穴埋め形式';
 $string['modulename'] = '小テスト';
 $string['modulenameplural'] = '小テスト';
 $string['multianswer'] = '隠し解答方式(Cloze)';
-$string['multichoice'] = '複数選択方式';
+$string['multichoice'] = '多肢選択方式';
 $string['name'] = '名称';
 $string['noanswers'] = '解答が選択されていません!';
 $string['noattempts'] = 'この小テストは解答されていません';
@@ -188,6 +188,7 @@ $string['timecompleted'] = '解答日時';
 $string['timeleft'] = '残り時間';
 $string['timelimit'] = '制限時間';
 $string['timelimitexeeded'] = '申し訳ございません! クイズの制限時間を経過しました!';
+$string['timesup'] = '時間終了!';
 $string['timetaken'] = '所要時間';
 $string['toomanyrandom'] = '要求されたランダム方式の質問数は、このカテゴリに含まれている数($a)より多くなっています！';
 $string['true'] = '○';
