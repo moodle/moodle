@@ -1791,8 +1791,9 @@ function workshop_list_user_submissions($workshop, $user) {
 
     if ($submissions = workshop_get_user_submissions($workshop, $user)) {
         foreach ($submissions as $submission) {
-            // allow user to delete a submission if it's warm
-            if ($submission->timecreated > ($timenow - $CFG->maxeditingtime)) {
+            // allow user to edit or delete a submission if it's warm OR if the workshop is still in 
+            // the submission phase 
+            if (($submission->timecreated > ($timenow - $CFG->maxeditingtime)) or ($workshop->phase == 2)) {
                 $action = "<a href=\"submissions.php?action=editsubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                     get_string("edit", "workshop")."</a> | ".
                     "<a href=\"submissions.php?action=userconfirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
