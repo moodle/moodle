@@ -920,14 +920,17 @@ function user_login_string($course, $user=NULL) {
 
     if (isset($user->realuser)) {
         if ($realuser = get_record("user", "id", $user->realuser)) {
-            $realuserinfo = " [<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=$realuser->id\">$realuser->firstname $realuser->lastname</a>] ";
+            $fullname = fullname($realuser, true);
+            $realuserinfo = " [<a target=\"{$CFG->framename}\"
+            href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=$realuser->id\">$fullname</a>] ";
         }
     } else {
         $realuserinfo = "";
     }
 
     if (isset($user->id) and $user->id) {
-        $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$user->firstname $user->lastname</a>";
+        $fullname = fullname($user, true);
+        $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
         $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
                       " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a>)";
     } else {
