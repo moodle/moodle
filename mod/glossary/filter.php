@@ -61,7 +61,7 @@
                         if ( $lastcategory != $concept->id ) {
                             $category = get_record("glossary_categories","id",$concept->id);
                             $lastcategory = $concept->id;
-                            if ( $cm->instance != $category->glossaryid  ) {
+                            if ( empty($cm->instance) || $cm->instance != $category->glossaryid ) {
                                 $gcat = get_record("glossary","id",$category->glossaryid);
                                 if ( !$cm = get_coursemodule_from_instance("glossary", $category->glossaryid, $gcat->course) ) {
                                     $cm->id = 1;
