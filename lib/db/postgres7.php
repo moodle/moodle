@@ -532,6 +532,10 @@ function main_upgrade($oldversion=0) {
         table_column('course', '', 'cost', 'varchar', '10', '', '', 'not null', 'lang');
     }
 
+    if ($oldversion < 2004072900) {
+        table_column('course', '', 'enrolperiod', 'int', '10', 'unsigned', '0', 'not null', 'startdate');
+    }
+
     return $result;
 
 }

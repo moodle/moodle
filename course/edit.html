@@ -12,6 +12,9 @@
     if (!isset($form->lang)) {
         $form->lang = '';
     }
+    if (!isset($form->enrolperiod)) {
+        $form->enrolperiod = 0;
+    }
 ?>
 <FORM METHOD="post" action="edit.php" NAME="form">
 <table cellpadding=9 cellspacing=0 >
@@ -70,6 +73,20 @@
            print_date_selector("startday", "startmonth", "startyear", $form->startdate);
            helpbutton("coursestartdate", get_string("startdate"));
     ?></td>
+</tr>
+<tr valign=top>
+    <td align="right"><P><?php  print_string("enrolperiod") ?>:</td>
+    <td>
+        <?php
+            $periodmenu[0] = get_string('unlimited');
+            for ($i=1; $i<=365; $i++) {
+                $seconds = $i * 86400;
+                $periodmenu[$seconds] = get_string('numdays', '', $i);
+            }
+            choose_from_menu ($periodmenu, "enrolperiod", "$form->enrolperiod", "");
+            helpbutton("enrolperiod", get_string("enrolperiod"));
+        ?>
+    </td>
 </tr>
 <tr valign=top>
     <td align="right"><P><?php  print_string("numberweeks") ?>:</td>

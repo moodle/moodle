@@ -47,6 +47,7 @@ CREATE TABLE `prefix_course` (
   `students` varchar(100) NOT NULL default 'Students',
   `guest` tinyint(2) unsigned NOT NULL default '0',
   `startdate` int(10) unsigned NOT NULL default '0',
+  `enrolperiod` int(10) unsigned NOT NULL default '0',
   `numsections` smallint(5) unsigned NOT NULL default '1',
   `marker` int(10) unsigned NOT NULL default '0',
   `maxbytes` int(10) unsigned NOT NULL default '0',

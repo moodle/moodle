@@ -25,6 +25,7 @@ CREATE TABLE prefix_course (
    students varchar(100) NOT NULL default 'Students',
    guest integer NOT NULL default '0',
    startdate integer NOT NULL default '0',
+   enrolperiod integer NOT NULL default '0',
    numsections integer NOT NULL default '1',
    marker integer NOT NULL default '0',
    maxbytes integer NOT NULL default '0',
