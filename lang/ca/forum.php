@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 unstable development (2004083000)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
@@ -11,13 +11,17 @@ $string['allowsdiscussions'] = 'Aquest fòrum permet iniciar a tothom un tema de 
 $string['anyfile'] = 'Qualsevol fitxer';
 $string['attachment'] = 'Fitxer adjunt';
 $string['bynameondate'] = 'per $a->name - $a->date';
+$string['configcleanreadtime'] = 'L\'hora del dia per a netejar missatges vells de la taula de lectures.';
 $string['configdisplaymode'] = 'El mode de visualització per defecte dels debats si no se n\'especifica un.';
 $string['configenablerssfeeds'] = 'Aquest commutador habilitarà la possibilitat de tenir RSS en tots els fòrums. Haureu d\'activar l\'RSS en els paràmetres de cada fòrum.';
 $string['configlongpost'] = 'Qualsevol missatge per damunt d\'aquesta mida (exclòs l\'HTML) es considera massa llarg.';
 $string['configmanydiscussions'] = 'Nombre màxim de debats per pàgina';
 $string['configmaxbytes'] = 'Mida màxima per defecte per a tots els fitxers adjuntats als fòrums d\'aquest lloc (subjecte als límits de cada curs i altres paràmetres locals)';
+$string['configoldpostdays'] = 'Nombre de dies per a considerar ja llegit qualsevol missatge.';
 $string['configreplytouser'] = 'Quan s\'envia per correu un missatge d\'un fòrum, ha de portar l\'adreça de l\'usuari com a remitent de manera que els destinataris puguin contestar-li privadament per correu? Encara que s\'especifiqui així, els usuaris poden triar en el seu perfil de mantenir oculta l\'adreça de correu.';
 $string['configshortpost'] = 'Qualsevol missatge per sota d\'aquesta mida (exclòs l\'HTML) es considera massa breu.';
+$string['configtrackreadposts'] = 'Poseu \'sí\' per fer el seguiment dels missatges llegits/no llegits per cada usuari.';
+$string['configusermarksread'] = '\'Sí\' vol dir que l\'usuari ha de marcar el missatge com a llegit. \'No\' vol dir que en llegir un missatge es marca automàticament com a llegit.';
 $string['couldnotadd'] = 'Un error desconegut ha impedit afegir el vostre missatge';
 $string['couldnotdeleteratings'] = 'No es pot suprimir perquè ja l\'han valorat altres persones';
 $string['couldnotdeletereplies'] = 'No es pot suprimir perquè ja l\'han contestat altres persones';
@@ -59,9 +63,12 @@ $string['introsocial'] = 'Un fòrum obert per xerrar sobre qualsevol cosa que es 
 $string['introteacher'] = 'Un fòrum per a notes i debats només del professorat';
 $string['lastpost'] = 'Darrer missatge';
 $string['learningforums'] = 'Fòrums d\'aprenentatge';
+$string['markread'] = 'Marca com a llegit';
+$string['markunread'] = 'Marca com a no llegit';
 $string['maxattachmentsize'] = 'Mida màxima dels fitxers adjunts';
 $string['maxtimehaspassed'] = 'Ha passat el temps màxim per editar aquest missatge! ($a)';
 $string['message'] = 'Missatge';
+$string['missingsearchterms'] = 'Els termes de cerca següents només apareixen en les etiquetes HTML del missatge:';
 $string['modeflatnewestfirst'] = 'Visualitza les respostes, començant per la més recent';
 $string['modeflatoldestfirst'] = 'Visualitza les respostes, començant per la més antiga';
 $string['modenested'] = 'Visualitza les respostes escalonades';
@@ -146,6 +153,10 @@ $string['subscribestart'] = 'Envia\'m còpia dels missatges d\'aquest fòrum per c
 $string['subscribestop'] = 'No vull rebre còpies per correu dels missatges d\'aquest fòrum';
 $string['subscription'] = 'Subscripció';
 $string['subscriptions'] = 'Subscripcions';
+$string['unread'] = 'No llegit';
+$string['unreadposts'] = 'Missatges no llegits';
+$string['unreadpostsnumber'] = '$a missatges no llegits';
+$string['unreadpostsone'] = '1 missatge no llegit';
 $string['unsubscribe'] = 'Cancel·la la meva subscripció a aquest fòrum';
 $string['unsubscribed'] = 'La vostra subscripció ha estat cancel·lada';
 $string['unsubscribeshort'] = 'Cancel·la subscripció';

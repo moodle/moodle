@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 unstable development (2004083000)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
 
 
 $string['about'] = 'Referent a aquest editor';
 $string['absbottom'] = 'Absbottom';
-$string['middle'] = 'middle';
 $string['address'] = 'Adreça';
+$string['alertnoselectedtext'] = 'Abans heu de seleccionar el text';
 $string['alignment'] = 'Alineació';
 $string['alternatetext'] = 'Text alternatiu';
 $string['anchorhelp'] = 'Només crea l\'àncora. Heu de crear l\'enllaç a mà.';
@@ -30,7 +30,10 @@ $string['createlink'] = 'Insereix un enllaç web';
 $string['cut'] = 'Talla la selecció';
 $string['delete'] = 'Suprimeix';
 $string['filebrowser'] = 'Explorador de fitxers';
+$string['fontname'] = 'Nom de la font';
+$string['fontsize'] = 'Mida de la lletra';
 $string['forecolor'] = 'Color de la lletra';
+$string['formatblock'] = 'Format';
 $string['fullscreen'] = 'Editor a pantalla completa';
 $string['heading'] = 'Encapçalament';
 $string['height'] = 'Alçada';
@@ -65,6 +68,7 @@ $string['linkurl'] = 'URL';
 $string['middle'] = 'Centre';
 $string['minimize'] = 'Minimitza l\'editor';
 $string['move'] = 'Mou';
+$string['nolink'] = 'Impedir enllaços automàtics';
 $string['normal'] = 'Normal';
 $string['notimage'] = 'El fitxer seleccionat no és una imatge. Si us plau trieu-ne un altre!';
 $string['notset'] = 'No seleccionat';
