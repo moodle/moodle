@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -12,6 +12,7 @@ $string['change'] = 'wijzig';
 $string['confirmation'] = 'Bevestiging';
 $string['confirmdeletedst'] = 'Het verwijderen van de voorkeuze voor zomertijd  <strong>$a</strong> genoemd, zal onmiddellijk de zomertijdinstellingen voor alle gebruikers van die voorkeuze uitschakelen. Ben je er zeker van dat je verder wil gaan?';
 $string['confirmdeletedstdefault'] = '<strong>De voorkeuze $a genoemd, wordt gebruikt voor alle gebruikers van deze site!</strong> Door deze te verwijderen zal hun instellingen voor de tijd wijzigen zonder waarschuwing. Ben je er zeker van dat je wil doorgaan?';
+$string['cronwarning'] = 'Het onderhoudsscript cron.php heeft de laatste 24 uur niet gelopen. <br />Als je dit nog niet geconfigureerd hebt, lees dan het onderdeel <em>Cron configureren</em> bij de installatie-instructies.';
 $string['dstisapreference'] = 'Elke gebruiker kan kiezen welke voorkeuze voor zomertijd te gebruiken';
 $string['dstisforcedto'] = 'Dwing alle gebruikers om het volgende te gebruiken';
 $string['dstpresets'] = 'Instellingsmogelijkheden zomertijd';
