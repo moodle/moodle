@@ -128,6 +128,10 @@ a img {
     text-align: center;
 }
 
+#help .indent {
+    margin-left:3em;
+}
+
 /* weblib.php table */
 .tabledivider {
     border-width:1px;
@@ -798,6 +802,11 @@ table.message_search_results td {
     white-space:nowrap;
     text-decoration:none;
 }
+.tabrow .last span {
+    display:block;
+    padding:0px 1px 0px 0px;
+}
+            
 .tabrow .selected .tablink {
     line-height:38px;
 }
