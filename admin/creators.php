@@ -94,8 +94,7 @@
         $creatorarray = array();
         foreach ($creators as $creator) {
             $creatorarray[] = $creator->id;
-            echo "<p align=right>$creator->firstname $creator->lastname,
-            $creator->email &nbsp;&nbsp; ";
+            echo "<p align=right>".fullname($creator, true).", $creator->email &nbsp;&nbsp; ";
                 echo "<a href=\"{$_SERVER['PHP_SELF']}?remove=$creator->id\"
                 title=\"$strremovecreator\"><img src=\"../pix/t/right.gif\"
                 border=0></a>";

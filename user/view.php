@@ -30,7 +30,7 @@
         $user->lastaccess = $teacher->timeaccess;
     }
 
-    $fullname = "$user->firstname $user->lastname";
+    $fullname = fullname($user, isteacher($course->id));
     $personalprofile = get_string("personalprofile");
     $participants = get_string("participants");
 

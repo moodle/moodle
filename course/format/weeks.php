@@ -43,7 +43,8 @@
 /// Links to people
     $moddata[]="<a title=\"".get_string("listofallpeople")."\" href=\"../user/index.php?id=$course->id\">".get_string("participants")."</a>";
     $modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
-    $editmyprofile = "<a title=\"$USER->firstname $USER->lastname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</a>";
+    $fullname = fullname($USER, true);
+    $editmyprofile = "<a title=\"$fullname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</a>";
     if ($USER->description) {
         $moddata[]= $editmyprofile;
     } else {

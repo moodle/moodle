@@ -119,7 +119,8 @@
             }
 
             if ($confirm != md5($delete)) {
-                notice_yesno(get_string("deletecheckfull", "", "'$user->firstname $user->lastname'"),
+                $fullname = fullname($user, true);
+                notice_yesno(get_string("deletecheckfull", "", "'$fullname'"),
                      "user.php?delete=$delete&confirm=".md5($delete), "user.php");
 
                 exit;

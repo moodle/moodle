@@ -97,7 +97,7 @@
 
         foreach ($admins as $admin) {
             $adminarray[] = $admin->id;
-            echo "<p align=right>$admin->firstname $admin->lastname,
+            echo "<p align=right>".fullname($admin, true).",
                      $admin->email &nbsp;&nbsp; ";
             if ($primaryadmin->id == $admin->id){
                 print_spacer(10, 9, false);
@@ -138,7 +138,7 @@
         foreach ($users as $user) {
             echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?add=$user->id\"".
                    "title=\"$straddadmin\"><img src=\"../pix/t/left.gif\"".
-                   "border=0></a>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
+                   "border=0></a>&nbsp;&nbsp;".fullname($user).", $user->email";
         }
     }
 

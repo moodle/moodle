@@ -180,7 +180,7 @@ function print_user($user, $course, $string, $countries) {
     echo "</a>";
     echo "</td><td width=100% bgcolor=#ffffff valign=top class=\"userinfoboxsummary\">";
     echo "<font size=-1>";
-    echo "<font size=3><b>$user->firstname $user->lastname</b></font>";
+    echo "<font size=3><b>".fullname($user, isteacher($course->id))."</b></font>";
     echo "<p>";
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
         echo "$string->role: $user->role<br />";

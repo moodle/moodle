@@ -116,7 +116,7 @@
         if ($newaccount) {
             $userfullname = $strnewuser;
         } else {
-            $userfullname = "$user->firstname $user->lastname";
+            $userfullname = fullname($user, isteacher($course->id));
         }
         if ($course->category) {
             print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",

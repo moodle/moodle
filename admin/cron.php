@@ -70,7 +70,7 @@
         if ($users = get_users_unconfirmed($oneweek)) {
             foreach ($users as $user) {
                 if (delete_records("user", "id", $user->id)) {
-                    echo "Deleted unconfirmed user for $user->firstname $user->lastname ($user->id)\n";
+                    echo "Deleted unconfirmed user for ".fullname($user, true)." ($user->id)\n";
                 }
             }
         }
