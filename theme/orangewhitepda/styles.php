@@ -27,9 +27,11 @@
 /// Work out the last modified date for this theme
 
     foreach ($THEME->sheets as $sheet) {
-        $sheetmodified = filemtime($sheet.'.css');
-        if ($sheetmodified > $lastmodified) {
-            $lastmodified = $sheetmodified;
+        if (file_exists($sheet.'.css')) {
+            $sheetmodified = filemtime($sheet.'.css');
+            if ($sheetmodified > $lastmodified) {
+                $lastmodified = $sheetmodified;
+            }
         }
     }
 
