@@ -494,7 +494,26 @@
             html_footer();
             break;
 
-
+        case "restore":
+            html_header($course, $wdir);
+            if (!empty($file)) {
+                echo "<P ALIGN=CENTER>".get_string("youaregoingtorestorefrom")."</P>";
+                print_simple_box_start("center");
+                echo $file;
+                print_simple_box_end();
+                echo "<BR>";
+                //MODIFY RELATIVE PATH TO restore.php
+                $restore_path = "../contrib/stronk7/backup/restore.php";
+                //END MODIFY
+                notice_yesno (get_string("areyousuretorestorethis"),
+                                $restore_path."?file=".$id.$wdir."/".$file,
+                                "index.php?id=$id&wdir=$wdir&action=cancel");
+            } else {
+                displaydir($wdir);
+            }
+            html_footer();
+            break;
+          
         case "cancel";
             clearfilelist();
 
@@ -634,6 +653,7 @@ function displaydir ($wdir) {
     $stredit   = get_string("edit");
     $strunzip  = get_string("unzip");
     $strlist   = get_string("list");
+    $strrestore= get_string("restore");
 
 
     echo "<FORM ACTION=\"index.php\" METHOD=post NAME=dirform>";
@@ -716,6 +736,9 @@ function displaydir ($wdir) {
             } else if ($icon == "zip.gif") {
                 $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</A>&nbsp;";
                 $edittext .= "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</A> ";
+                if ($CFG->backup_version && isadmin()) {
+                    $edittext .= "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=restore\">$strrestore</A> ";
+                }
             } else {
                 $edittext = "";
             }
