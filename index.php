@@ -18,30 +18,31 @@
 
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
   <TR>
-    <TD WIDTH="15%" VALIGN="TOP" NOWRAP>
-      <? print_simple_box("Main Menu", $align="CENTER", $width="100%", $color="$THEME->cellheading"); ?>
+    <TD WIDTH="10%" VALIGN="TOP" NOWRAP>
+      <? $readings = list_all_readings();
+      
+         if ($site->format > 0 or $readings or $USER->editing) {
+      
+             print_simple_box("Main Menu", $align="CENTER", $width="100%", $color="$THEME->cellheading");
 
-	  <LI>Home</LI>
-      <LI><A TITLE="Available courses on this server" HREF="course/"><B>Courses</B></A><BR></LI>
-      <? if ($site->format > 0 ) { ?>
-      <LI><A TITLE="Site-level Forums" HREF="mod/discuss/index.php?id=<?=$site->id?>">Forums</A></LI>
-      <? } ?>
+             if ($site->format > 0 ) {
+                 echo "<LI><A TITLE=\"Available courses on this server\" HREF=\"course/\"><B>Courses</B></A><BR></LI>";
+                 echo "<LI><A TITLE=\"Site-level Forums\" 
+                       HREF=\"mod/discuss/index.php?id=<?=$site->id?>\">Forums</A></LI>";
+             } 
 
-      <? 
-         if ($readings = list_all_readings()) {
-             foreach ($readings as $reading) {
-	         echo "<LI>$reading";
+             if ($readings) {
+                 foreach ($readings as $reading) {
+	             echo "<LI>$reading";
+                 }
              }
          }
      
          if ($USER->editing) {
              echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$site->id&week=0&add=reading\">Add Reading</A>...</P>";
+             echo "<BR><BR>";
          }
-      ?>
 
-        <BR><BR>
-
-      <?
          if (isadmin()) {
              print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
              echo "<LI><A HREF=\"$CFG->wwwroot/admin/\">Admin Page...</A></LI>";
