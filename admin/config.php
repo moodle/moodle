@@ -56,6 +56,9 @@
 
     if (empty($config)) {
         $config = $CFG;
+        if (!$config->locale = get_field("config", "value", "name", "locale")) {
+            $config->locale = $CFG->lang;
+        }
     }
     if (empty($focus)) {
         $focus = "";
