@@ -46,7 +46,7 @@
     }
 
 /// Make some easy ways to reference submissions
-    if ($submissions = assignment_get_all_submissions($assignment)) {
+    if ($submissions = assignment_get_all_submissions($assignment, $sort)) {
         foreach ($submissions as $submission) {
             $submissionbyuser[$submission->userid] = $submission;
         }
@@ -65,7 +65,7 @@
     }
 
     if (isset($newsubmission)) {   // Get them all out again to be sure
-        $submissions = assignment_get_all_submissions($assignment);
+        $submissions = assignment_get_all_submissions($assignment, $sort);
     }
 
 
@@ -106,7 +106,7 @@
                 }
             }
         }
-        $submissions = assignment_get_all_submissions($assignment);
+        $submissions = assignment_get_all_submissions($assignment,$sort);
         add_to_log($course->id, "assignment", "update grades", "submissions.php?id=$assignment->id", "$count users");
         notify(get_string("feedbackupdated", "assignment", $count));
     } else {
@@ -117,8 +117,19 @@
         $grades[$i] = $i;
     }
 
-    echo "<FORM ACTION=submissions.php METHOD=post>\n";
+    // Submission sorting
+    print_simple_box_start("CENTER", "50%");
+    echo "<P align=\"CENTER\">";
+    print_string("order");
+    echo ": <A HREF=\"$ME?id=$assignment->id&sort=lastname&dir=ASC\">".get_string("name")."</a> - ";
+    echo "<A HREF=\"$ME?id=$assignment->id\">".get_string("lastmodified")."</a> - ";
+    echo "<A HREF=\"$ME?id=$assignment->id&sort=grade\">".get_string("feedback")."</a>";
+    echo "</P>";
+    print_simple_box_end();
+    print_spacer(8,1);
 
+    echo "<FORM ACTION=submissions.php METHOD=post>\n";
+    
     foreach ($submissions as $submission) {
         $user = $users[$submission->userid];
         assignment_print_submission($assignment, $user, $submission, $teachers, $grades);

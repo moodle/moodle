@@ -233,16 +233,26 @@ function assignment_log_info($log) {
                               AND u.id = '$log->userid'");
 }
 
-function assignment_get_all_submissions($assignment) {
+function assignment_get_all_submissions($assignment, $sort="timemodified", $dir="DESC") {
 /// Return all assignment submissions by ENROLLED students
     global $CFG;
+
+    if ($sort == "lastname" or $sort == "firstname") {
+        $sort = "u.$sort $dir";
+    } else if (empty($sort)) {
+        $sort = "a.timemodified DESC";
+    } else {
+        $sort = "a.$sort $dir";
+    }
     return get_records_sql("SELECT a.* 
                               FROM {$CFG->prefix}assignment_submissions a, 
-                                   {$CFG->prefix}user_students s
+                                   {$CFG->prefix}user_students s,
+                                   {$CFG->prefix}user u
                              WHERE a.userid = s.userid
+			                   AND u.id = a.userid
                                AND s.course = '$assignment->course'
                                AND a.assignment = '$assignment->id' 
-                          ORDER BY a.timemodified DESC");
+                          ORDER BY $sort");
 }
 
 function assignment_get_users_done($assignment) {
