@@ -132,7 +132,7 @@
 
     <TD>
 
-    <?php   quiz_category_select_menu($course->id, true, true ); ?>
+    <?php   quiz_category_select_menu($course->id, true, true, $question->category ); ?>
 
     </TD>
 
