@@ -3,7 +3,7 @@
 
 
 $string['about'] = 'Über diesen Editor';
-$string['absbottom'] = 'Positionierung am unteren Rand';
+$string['absbottom'] = 'Unten ausrichten';
 $string['absmiddle'] = 'Position in der Mitte';
 $string['address'] = 'Anschrift';
 $string['alignment'] = 'Anordnung';
