@@ -1291,7 +1291,15 @@ function get_list_of_countries() {
     $lang = current_language();
 
     if (!file_exists("$CFG->dirroot/lang/$lang/countries.php")) {
-        $lang = "en";  // countries.php must exist in this pack
+        if ($parentlang = get_string("parentlanguage")) {
+            if (file_exists("$CFG->dirroot/lang/$parentlang/countries.php")) {
+                $lang = $parentlang;
+            } else {
+                $lang = "en";  // countries.php must exist in this pack
+            }
+        } else {
+            $lang = "en";  // countries.php must exist in this pack
+        }
     }
 
     include("$CFG->dirroot/lang/$lang/countries.php"); 
