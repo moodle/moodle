@@ -5,7 +5,7 @@
 $string['addcomment'] = 'コメントの追加';
 $string['addentry'] = 'エントリーの追加';
 $string['addingcomment'] = 'コメントの追加';
-$string['aliases'] = '別名';
+$string['aliases'] = 'キーワード';
 $string['allcategories'] = '全てのカテゴリ';
 $string['allentries'] = '全て';
 $string['allowcomments'] = 'エントリーへのコメントを許可する';
