@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004010900)
+      // moodle.php - created with Moodle 1.2 development (2004013101)
 
 
 $string['action'] = '操作';
@@ -51,6 +51,7 @@ $string['administrator'] = '管理者';
 $string['administrators'] = '管理者';
 $string['again'] = 'もう一度';
 $string['all'] = '全て';
+$string['allactivities'] = '全ての活動';
 $string['alldays'] = '全ての日';
 $string['allfieldsrequired'] = '全ての項目に入力してください';
 $string['alllogs'] = '全てのログ';
@@ -114,6 +115,7 @@ $string['choosetheme'] = 'テーマの選択';
 $string['chooseuser'] = 'ユーザを選択する';
 $string['city'] = '都道府県';
 $string['cleaningtempdata'] = '一時データのクリーニング';
+$string['clicktochange'] = '変更';
 $string['closewindow'] = 'ウィンドウを閉じる';
 $string['comparelanguage'] = '言語の比較・編集';
 $string['complete'] = '完全な';
@@ -122,6 +124,7 @@ $string['configcountry'] = 'ここで国を設定した場合、新規アカウントのユーザに初期
 ';
 $string['configdebug'] = 'この設定を Yes にした場合、PHPのエラーレポートが増加して、より多くの警告が表示されるようになります。開発者向けの設定です。';
 $string['configerrorlevel'] = '表示したいPHPの警告数を選択してください。通常はNormalが最適です。';
+$string['configforcelogin'] = '通常、サイトとコース一覧(コースでは無い)のフロントページはサイトにログインせずに閲覧することが出来ます。全ての動作を行う前にログインを強制したい場合は、この設定を行ってください。';
 $string['configframename'] = 'Moodleをフレーム内で使用する場合、フレーム名を指定してください。フレームを使用しない場合は「_top」のままにしてください。';
 $string['configfullnamedisplay'] = 'ここではどのように名前が表示されるのかを設定します。殆どの単一言語を使用したサイトでは「名前+名字」を使用した方が良いでしょう。しかし、名字を隠したり、言語設定に添った形(いくつかの言語では異なる並び)の並びにすることも可能です。';
 $string['configgdversion'] = 'サーバにGDがインストールされている場合、そのバージョンを選択してください。初期値として表示されているバージョンは自動的に検知されたものです。分からない場合はそのままにしてください。';
@@ -188,6 +191,7 @@ $string['createuserandpass'] = 'ユーザ名(英数字)とパスワードを入力してください';
 $string['createziparchive'] = 'zip書庫を作成';
 $string['creatingcategoriesandquestions'] = 'カテゴリと質問の作成';
 $string['creatingcoursemodules'] = 'コースモジュールの作成';
+$string['creatinggroups'] = 'グループの作成';
 $string['creatinglogentries'] = 'ログエントリーの作成';
 $string['creatingnewcourse'] = '新しいコースの作成';
 $string['creatingscales'] = 'スケールの作成';
@@ -369,6 +373,18 @@ $string['grades'] = '評価';
 $string['group'] = 'グループ';
 $string['groupadd'] = '新しいグループを追加する';
 $string['groupaddusers'] = '選択したものをグループに追加する';
+$string['groupinfo'] = '選択したグループの情報';
+$string['groupinfomembers'] = '選択したメンバーの情報';
+$string['groupinfopeople'] = '選択した人の情報';
+$string['groupmembersselected'] = '選択したグループのメンバー';
+$string['groupmode'] = 'グループモード';
+$string['groupmy'] = 'マイグループ';
+$string['groupnonmembers'] = 'グループに属しない人';
+$string['grouprandomassign'] = '全グループをランダムに割当てる';
+$string['groupremove'] = '選択したグループを削除する';
+$string['groupremovemembers'] = '選択したメンバーを削除する';
+$string['groups'] = 'グループ';
+$string['groupsnone'] = 'グループ無し';
 $string['guestskey'] = 'キーを持っているゲストを許可する';
 $string['guestsno'] = 'ゲストを許可しない';
 $string['guestsnotallowed'] = '\'$a\' さん申し訳ございません。ゲストでの入室は許可されていません。';
@@ -616,6 +632,7 @@ $string['potentialteachers'] = '潜在的な教師';
 $string['preferredlanguage'] = '表示言語';
 $string['preview'] = 'プレビュー';
 $string['previeworchoose'] = 'テーマを選択してください';
+$string['previous'] = '前へ';
 $string['publicdirectory'] = 'パブリックディレクトリ';
 $string['publicdirectory0'] = 'このサイトを公開しません';
 $string['publicdirectory1'] = 'サイト名のみ公開します';
@@ -821,6 +838,7 @@ $string['wordforteacherseg'] = '例 教師、先生、チューター';
 $string['writingcategoriesandquestions'] = 'カテゴリと質問の書き出し';
 $string['writingcoursedata'] = 'コースデータの書き出し';
 $string['writinggeneralinfo'] = '一般情報の書き出し';
+$string['writinggroupsinfo'] = 'グループ情報の書き出し';
 $string['writingheader'] = 'ヘッダの書き出し';
 $string['writingloginfo'] = 'ログ情報の書き出し';
 $string['writingmoduleinfo'] = 'モジュール情報の書き出し';
