@@ -9,6 +9,8 @@ CREATE TABLE `prefix_chat` (
   `intro` text NOT NULL,
   `keepdays` int(11) NOT NULL default '0',
   `studentlogs` int(4) NOT NULL default '0',
+  `chattime` int(10) unsigned NOT NULL default '0',
+  `schedule` int(4) NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Each of these is a chat room';
@@ -24,7 +26,7 @@ CREATE TABLE `prefix_chat_messages` (
   `userid` int(10) NOT NULL default '0',
   `system` int(1) unsigned NOT NULL default '0',
   `message` text NOT NULL,
-  `timestamp` int(10) NOT NULL default '0',
+  `timestamp` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `timemodifiedchat` (`timestamp`,`chatid`)
 ) TYPE=MyISAM COMMENT='Stores all the actual chat messages';

@@ -39,6 +39,25 @@
     </td>
 </tr>
 <tr valign=top>
+    <td align=right><p><b><?php print_string("chattime", "chat") ?>:</b></td>
+    <td><?php
+           print_date_selector("chatday", "chatmonth", "chatyear", $form->chattime);
+           echo "&nbsp;-&nbsp;";
+           print_time_selector("chathour", "chatminute", $form->chattime);
+    ?></td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("repeattimes", "chat") ?>:</b></td>
+    <td><?php
+       unset($options);
+       $options[0]  = get_string("donotusechattime", "chat");
+       $options[1]  = get_string("repeatnone", "chat");
+       $options[2]  = get_string("repeatdaily", "chat");
+       $options[3]  = get_string("repeatweekly", "chat");
+       choose_from_menu ($options, "schedule", $form->schedule, "", "", "");
+    ?></td>
+</tr>
+<tr valign=top>
 	<td align=right><p><b><?php print_string("savemessages", "chat")?>:</b></p>
 	<td>
     <?php 

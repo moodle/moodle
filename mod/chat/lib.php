@@ -34,7 +34,8 @@ function chat_add_instance($chat) {
 
     $chat->timemodified = time();
 
-    # May have to add extra stuff in here #
+    $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday, 
+                                     $chat->chathour, $chat->chatminute);
     
     return insert_record("chat", $chat);
 }
@@ -48,7 +49,8 @@ function chat_update_instance($chat) {
     $chat->timemodified = time();
     $chat->id = $chat->instance;
 
-    # May have to add extra stuff in here #
+    $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday, 
+                                     $chat->chathour, $chat->chatminute);
 
     return update_record("chat", $chat);
 }
@@ -136,6 +138,8 @@ function chat_cron () {
 
     global $CFG;
 
+    chat_update_chat_times();
+
     chat_delete_old_users();
 
     /// Delete old messages
@@ -185,7 +189,7 @@ function chat_get_latest_message($chatid) {
     return get_record_sql("SELECT * 
                              FROM {$CFG->prefix}chat_messages 
                             WHERE chatid = '$chatid' 
-                         ORDER BY timestamp DESC");
+                         ORDER BY timestamp DESC LIMIT 1");
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -225,6 +229,38 @@ function chat_delete_old_users() {
                 error("Could not insert a chat message!");
             }
         }
+    }
+}
+
+
+function chat_update_chat_times($chatid=0) {
+/// Updates chat records so that the next chat time is correct
+
+    $timenow = time();
+    if ($chatid) {
+        if (!$chats[] = get_record_select("chat", "id = '$chatid' AND chattime <= '$timenow' AND schedule > '0'")) {
+            return;
+        }
+    } else {
+        if (!$chats = get_records_select("chat", "chattime <= '$timenow' AND schedule > '0'")) {
+            return;
+        }
+    }
+
+    foreach ($chats as $chat) {
+        switch ($chat->schedule) {
+            case 1: // Single event - turn off schedule and disable
+                    $chat->chattime = 0;
+                    $chat->schedule = 0;
+                    break;
+            case 2: // Repeat daily
+                    $chat->chattime += 24 * 3600;
+                    break;
+            case 3: // Repeat weekly
+                    $chat->chattime += 7 * 24 * 3600;
+                    break;
+        }
+        update_record("chat", $chat);
     }
 }
 

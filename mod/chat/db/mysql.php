@@ -18,6 +18,11 @@ function chat_upgrade($oldversion) {
         table_column("chat", "", "studentlogs", "integer", "4", "unsigned", "0", "not null", "keepdays");
     }
 
+    if ($oldversion < 2003072500) {
+        table_column("chat", "", "chattime", "integer", "10", "unsigned", "0", "not null", "studentlogs");
+        table_column("chat", "", "schedule", "integer", "4", "", "0", "not null", "studentlogs");
+    }
+
     return true;
 }
 

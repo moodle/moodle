@@ -16,12 +16,16 @@
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
+
+        chat_update_chat_times($cm->instance);
     
         if (! $chat = get_record("chat", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
 
     } else {
+        chat_update_chat_times($c);
+
         if (! $chat = get_record("chat", "id", $c)) {
             error("Course module is incorrect");
         }
@@ -48,6 +52,7 @@
     $strenterchat  = get_string("enterchat", "chat");
     $stridle  = get_string("idle", "chat");
     $strcurrentusers  = get_string("currentusers", "chat");
+    $strnextsession  = get_string("nextsession", "chat");
 
     print_header("$course->shortname: $chat->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strchats</A> -> $chat->name", 
@@ -86,9 +91,19 @@
                           "chat$course->id$chat->id", "$strenterchat", 500, 700, $strchat);
     print_simple_box_end();
 
-    echo "<br />";
-    print_simple_box( text_to_html($chat->intro) , "center");
-    echo "<br />";
+
+    if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
+        echo "<p align=center>$strnextsession: ".userdate($chat->chattime)."</p>";
+    } else {
+        echo "<br />";
+    }
+
+    if ($chat->intro) {
+        print_simple_box( text_to_html($chat->intro) , "center");
+        echo "<br />";
+    }
+
+    chat_delete_old_users();
 
     if ($chatusers = chat_get_users($chat->id)) {
         $timenow = time();

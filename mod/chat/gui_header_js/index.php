@@ -30,8 +30,8 @@ $strchat = get_string("modulename", "chat");
    <?php echo "$strchat: $course->shortname: $chat->name" ?>
   </title>
  </head>
- <frameset cols="*,200" border="4" framespacing="no" frameborder="yes" marginwidth="2" marginheight="1">
-  <frameset rows="1,1,*,40" border="0" framespacing="no" frameborder="no" marginwidth="2" marginheight="1">
+ <frameset cols="*,200" border="5" framespacing="no" frameborder="yes" marginwidth="2" marginheight="1">
+  <frameset rows="0,0,*,40" border="0" framespacing="no" frameborder="no" marginwidth="2" marginheight="1">
    <frame src="../empty.php" NAME="empty" scrolling="no" marginwidth="0" marginheight="0">
    <frame src="jsupdate.php?chat_sid=<?php echo $chat_sid; ?>&chat_enter=true" scrolling="no" marginwidth="0" marginheight="0">
    <frame src="chatmsg.php" NAME="msg" scrolling="auto" marginwidth="2" marginheight="1">
