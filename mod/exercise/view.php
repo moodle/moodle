@@ -352,9 +352,16 @@
         $tabs->names = array("1. ".get_string("phase1", "exercise"), 
             "2. ".get_string("phase2", "exercise", $course->student), 
             "3. ".get_string("phase3", "exercise", $course->student)); 
-        $tabs->urls = array("view.php?id=$cm->id&amp;action=setupassignment", 
-            "view.php?id=$cm->id&amp;action=openexercise",
-            "view.php?id=$cm->id&amp;action=makeleaguetableavailable");
+        if (isteacheredit($course->id)) {
+            $tabs->urls = array("view.php?id=$cm->id&amp;action=setupassignment", 
+                "view.php?id=$cm->id&amp;action=openexercise",
+                "view.php?id=$cm->id&amp;action=makeleaguetableavailable");
+        } else {
+            // don't allow non-editing teacher to change phase
+            $tabs->urls = array("view.php?id=$cm->id", 
+                "view.php?id=$cm->id",
+                "view.php?id=$cm->id");
+        }
         if ($exercise->phase) { // phase 1 or more
             $tabs->highlight = $exercise->phase - 1;
             } else {

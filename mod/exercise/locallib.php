@@ -772,8 +772,10 @@ function exercise_list_submissions_for_admin($exercise) {
             foreach ($submissions as $submission) {
                 $action = "<a href=\"submissions.php?action=adminamendtitle&amp;id=$cm->id&amp;sid=$submission->id\">".
                     get_string("amendtitle", "exercise")."</a>";
-                $action .= " | <a href=\"submissions.php?action=adminconfirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
-                    get_string("delete", "exercise")."</a>";
+                if (isteacheredit($course->id)) {
+                    $action .= " | <a href=\"submissions.php?action=adminconfirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
+                        get_string("delete", "exercise")."</a>";
+                }
                 $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
                         userdate($submission->timecreated), $action);
             }
