@@ -8,7 +8,10 @@
     optional_variable($displayformat,-1);
 
     if (!empty($courseid)) {
-        require_login($courseid);
+        $site = get_site();
+        if ($courseid != $site->id) {
+            require_login($courseid);
+        }
         $course = get_record("course", "id", $courseid);
 
         $strglossaries = get_string("modulenameplural", "glossary");
