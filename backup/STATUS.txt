@@ -147,9 +147,9 @@ Restore Details:
                  - None.........................................DONE
                  - Course.......................................DONE
                  - All..........................................DONE
-           - Categories and Questions.(STEP 1)..................NO EXISTS
-              + categories......................................NO EXISTS
-              + questions structure.............................NO EXISTS
+           - Categories and Questions.(STEP 1)..................DONE
+              + categories......................................DONE
+              + questions structure.............................DONE
            - Mods Info Prepare..................................DONE
               x read modules zone...............................DONE
               x separate every mod..............................DONE

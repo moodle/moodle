@@ -145,6 +145,12 @@
         }
     }
 
+    //Now create categories and questions as needed (STEP1)
+    if ($status and ($restore->mods[quiz]->restore)) {
+         echo "<li>Creating Categories and Questions<br>";
+         $status = restore_create_questions($restore,$xml_file);
+    }
+
     //Now create user_files as needed
     if ($status and ($restore->user_files)) {
         echo "<li>Copying User Files<br>";
