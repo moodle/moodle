@@ -424,7 +424,7 @@ function upgrade_blocks_plugins($continueto) {
 
     foreach ($blocks as $blockname) {
 
-        if ($blockname == "NEWBLOCK" || $blockname == 'db') {   // Someone has unzipped the template, ignore it
+        if ($blockname == "NEWBLOCK") {   // Someone has unzipped the template, ignore it
             continue;
         }
 
