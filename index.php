@@ -80,7 +80,7 @@
                  $headertext = "<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0><TR>
                                 <TD>Site News</TD>
                                 <TD ALIGN=RIGHT><FONT SIZE=1>
-                                <A HREF=\"mod/discuss/subscribe.php?id=$newsforum->id\">$subtext</A>
+                                <A HREF=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</A>
                                 </TD></TR></TABLE>";
              } else {
                  $headertext = "Site News";
