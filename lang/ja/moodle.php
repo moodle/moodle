@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003032500)
+      // moodle.php - created with Moodle 1.0.9 development (2003032601)
 
 
 $string['action'] = "操作";
@@ -60,6 +60,7 @@ $string['configcountry'] = "ここで国を設定した場合、新規アカウントのユーザに初期
 ";
 $string['configdebug'] = "この設定を Yes にした場合、PHPのエラーレポートが増加して、より多くの警告が表示されるようになります。開発者向けの設定です。";
 $string['configerrorlevel'] = "表示したいPHPの警告数を選択してください。通常はNormalが最適です。";
+$string['configframename'] = "Moodleをフレーム内で使用する場合、フレーム名を指定してください。フレームを使用しない場合は「_top」のままにしてください。";
 $string['configgdversion'] = "サーバにGDがインストールされている場合、そのバージョンを選択してください。初期値として表示されているバージョンは自動的に検知されたものです。分からない場合はそのままにしてください。";
 $string['confightmleditor'] = "HTMLテキストエディタ使用を許可するか否か選択してください。「許可する」を選択した場合でも適切なブラウザ(IE5.5又はそれ以上)を使用していない場合、エディタは動作しません。";
 $string['configintro'] = "このページではサーバでMoodleが最適に動くための設定値を入力できます。設定値を心配しないでください。通常初期値で最適に動作するように設定されています。いつでもこのページに戻って再度設定を行うことができます。";
@@ -221,6 +222,7 @@ $string['helppicture'] = "写真のアップロード方法";
 $string['helpquestions'] = "適切な質問をする";
 $string['helpreading'] = "十分に読む";
 $string['helprichtext'] = "リッチテキストHTMLエディタに関して";
+$string['helpsummaries'] = "概要に関して";
 $string['helptext'] = "テキストの書き方";
 $string['helpwriting'] = "慎重に書く";
 $string['hide'] = "非表示";
