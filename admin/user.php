@@ -145,6 +145,17 @@
         if ($users = get_records_sql("SELECT * from user WHERE username <> 'guest' 
                                       AND deleted <> '1' ORDER BY $sort $dir")) {
 
+            foreach ($users as $user) {
+                $user->country = $COUNTRIES[$user->country];
+            }
+            if ($sort == "country") {  // Need to resort by full country name, not code
+                foreach ($users as $user) {
+                    $susers[$user->country] = $user;
+                }
+                $users = $susers;
+                asort($users);
+            }
+
             print_heading(get_string("chooseuser"));
 
             $table->head = array ($name, $email, $city, $country, $lastaccess, "", "");
@@ -164,7 +175,7 @@
                 $table->data[] = array ("<A HREF=\"../user/view.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</A>",
                                  "$user->email",
                                  "$user->city",
-                                 $COUNTRIES[$user->country],
+                                 "$user->country",
                                  $strlastaccess,
                                  "<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</A>",
                                  $deletebutton);
