@@ -612,9 +612,8 @@ function filter_text($text, $courseid=NULL) {
     if (!empty($CFG->textfilters)) {
         $textfilters = explode(',', $CFG->textfilters);
         foreach ($textfilters as $textfilter) {
-            $textfilter = trim($textfilter);
-            if (is_readable($CFG->dirroot.'/'.$textfilter)) {
-                include($CFG->dirroot.'/'.$textfilter);
+            if (is_readable("$CFG->dirroot/$textfilter/filter.php")) {
+                include("$CFG->dirroot/$textfilter/filter.php");
                 $text = $textfilter_function($courseid, $text);
             }
         }

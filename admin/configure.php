@@ -32,6 +32,8 @@
                            get_string("adminhelplanguage"));
     $table->data[] = array("<b><a href=\"modules.php\">".get_string("managemodules")."</a></b>",
                            get_string("adminhelpmanagemodules"));
+    $table->data[] = array("<b><a href=\"filters.php\">".get_string("managefilters")."</a></b>",
+                           get_string("adminhelpmanagefilters"));
     $table->data[] = array("<b><a href=\"backup.php\">".get_string("backup")."</a></b>",
                            get_string("adminhelpbackup"));
 

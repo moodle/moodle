@@ -695,12 +695,24 @@ function main_upgrade($oldversion=0) {
             $CFG->textfilters = str_replace("censor.php", "filter.php", $CFG->textfilters);
             $CFG->textfilters = str_replace("mediaplugin.php", "filter.php", $CFG->textfilters);
             $CFG->textfilters = str_replace("algebra_filter.php", "filter.php", $CFG->textfilters);
+            $CFG->textfilters = str_replace("dynalink.php", "filter.php", $CFG->textfilters);
             set_config("textfilters", $CFG->textfilters);
         }
     }
 
     if ($oldversion < 2004022000) {
         table_column("user", "", "emailstop", "integer", "1", "unsigned", "0", "not null", "email");
+    }
+
+    if ($oldversion < 2004022200) {     /// Final renaming I hope.  :-)
+        if (!empty($CFG->textfilters)) {
+            $CFG->textfilters = str_replace("/filter.php", "", $CFG->textfilters);
+            $textfilters = explode(',', $CFG->textfilters);
+            foreach ($textfilters as $key => $textfilter) {
+                $textfilters[$key] = trim($textfilter);
+            }
+            set_config("textfilters", implode(',',$textfilters));
+        }
     }
 
     return $result;

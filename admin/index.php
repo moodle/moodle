@@ -381,6 +381,8 @@
                     get_string("adminhelplanguage")."</font><br />";
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=1>".
                     get_string("adminhelpmanagemodules")."</font><br />";
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"filters.php\">".get_string("managefilters")."</a> - <font size=1>".
+                    get_string("adminhelpmanagefilters")."</font><br />";
     if (!isset($CFG->disablescheduledbackups)) {
         $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php\">".get_string("backup")."</a> - <font size=1>".
                         get_string("adminhelpbackup")."</font><br />";
