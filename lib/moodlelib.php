@@ -631,7 +631,7 @@ function notice ($message, $link="") {
     echo "<BR>";
     print_simple_box($message, "center", "", "$THEME->cellheading");
     print_heading("<A HREF=\"$link\">".get_string("continue")."</A>");
-    print_footer();
+    print_footer(get_site());
     die;
 }
 
@@ -1141,7 +1141,7 @@ function require_login($courseid=0) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
                     print_header();
-                    notice(get_string("studentnotallowed", "", "$USER->firstname $USER->lastname"));
+                    notice(get_string("studentnotallowed", "", "$USER->firstname $USER->lastname"), $CFG->wwwroot);
                 }
 
             } else {  // just update their last login time
