@@ -149,34 +149,32 @@
     echo get_string("modulename","glossary") . ': <strong>' . $glossary->name . '</strong><p>';
     if ( $allentries ) {
         foreach ($allentries as $entry) {
-        /// Setting the pivot for the current entry
+
+            // Setting the pivot for the current entry
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
                 $pivot = $pivot[0];
             }            
             
+            // If there's  group break
             if ( $currentpivot != strtoupper($pivot) ) {  
+
                 // print the group break if apply
                 if ( $printpivot )  {
                     $currentpivot = strtoupper($pivot);
 
                     $pivottoshow = $currentpivot;
                     if ( isset($entry->uid) ) {
+                        // printing the user icon if defined (only when browsing authors)
                         $user = get_record("user","id",$entry->uid);
                         $pivottoshow = fullname($user, isteacher($course->id));
                     }
 
-                    echo "<p align=\"center\"><strong><i>$pivottoshow</i></strong></p>" ;
+                    echo "<p align=\"center\"><strong><i>".clean_text($pivottoshow)."</i></strong></p>" ;
                 }
             }
 
-            echo '<b>'. strip_tags($entry->concept) . ': </b>';
-            $options->para = false;
-            $definition = format_text('<nolink>' . strip_tags($entry->definition) . '</nolink>', $entry->format,$options);
-    
-            echo ($definition);
-        
-            echo '<br /><br />';
+            glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat,false,true);
         }
     }
 

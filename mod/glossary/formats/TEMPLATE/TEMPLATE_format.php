@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {
+function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
 
     global $THEME, $CFG, $USER;
 
@@ -69,17 +69,18 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="",
         //Line separator to show this template fine. :-)
         echo "<br />\n";
 
-        //Use this function to show aliases, editing icons and ratings
+        //Use this function to show aliases, editing icons and ratings (all know as the 'lower section')
         //Comments: You can configure this parameters:
         //----Define when to show the aliases popup
-        $aliases = true; //Values: true, false (Default: true)
+        //    use it only if you are really sure!
+        //$aliases = true; //Values: true, false (Default: true)
         //----Uncoment this line to avoid ratings being showed
         //    use it only if you are really sure! You can define this in the glossary conf. page.
         //$ratings = NULL;
         //----Uncoment this line to avoid editing icons being showed
         //    use it only if you are really sure!
         //$printicons = false;
-        $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings,$aliases);
+        $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
     } else {    
         echo "<center>";
         print_string("noentry", "glossary");
@@ -90,6 +91,19 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="",
     echo "</table>\n";
 
     return $return;
+}
+
+function glossary_print_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
+
+    //The print view for this format is exactly the normal view, so we use it
+    //Anyway, you can modify this to use your own print format!!
+
+    //Take out autolinking in definitions in print view
+    $entry->definition = '<nolink>'.$entry->definition.'</nolink>';
+
+    //Call to view function (without icons, ratings and aliases) and return its result
+    return glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
+
 }
 
 ?>

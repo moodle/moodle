@@ -528,7 +528,7 @@ global $CFG;
                                              (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) $where $orderby");
 }
 
-function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1, $ratings = NULL) {
+function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1, $ratings = NULL, $printview = false) {
     global $THEME, $USER, $CFG;
     $return = false;
     if ( $displayformat < 0 ) {
@@ -536,16 +536,31 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
     }
     if ($entry->approved or ($USER->id == $entry->userid) or ($mode == 'approval' and !$entry->approved) ) {
         $formatfile = $CFG->dirroot.'/mod/glossary/formats/'.$displayformat.'/'.$displayformat.'_format.php';
-        $functionname = 'glossary_show_entry_'.$displayformat;
+        if ($printview) {
+            $functionname = 'glossary_print_entry_'.$displayformat;
+        } else {
+            $functionname = 'glossary_show_entry_'.$displayformat;
+        }
 
         if (file_exists($formatfile)) {
             include_once($formatfile);
             if (function_exists($functionname)) {
                 $return = $functionname($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+            } else if ($printview) {
+                //If the glossary_print_entry_XXXX function doesn't exist, print default (old) print format
+                $return = glossary_print_entry_default($entry);
             }
         }
     }
     return $return;
+}
+ //Default (old) print format used if custom function doesn't exist in format
+function glossary_print_entry_default ($entry) {
+    echo '<b>'. strip_tags($entry->concept) . ': </b>';
+    $options->para = false;
+    $definition = format_text('<nolink>' . strip_tags($entry->definition) . '</nolink>', $entry->format,$options);
+    echo ($definition);
+    echo '<br /><br />';
 }
 
 function  glossary_print_entry_concept($entry) {
@@ -1351,7 +1366,7 @@ global $CFG, $THEME;
                          $selected = $url;
                      }
                  }
-                 $menu[$url] = $currentcategory->name;
+                 $menu[$url] = clean_text($currentcategory->name); //Only clean, not filters
           }
      }
      if ( !$selected ) {
@@ -1359,7 +1374,7 @@ global $CFG, $THEME;
      }
 
      if ( $category ) {
-        echo $category->name;
+        echo format_text($category->name);
      } else {
         if ( $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
 

@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {
+function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=false) {
 
     global $THEME, $USER;
 
@@ -16,12 +16,24 @@ function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode="
     echo ":</b> ";
     glossary_print_entry_definition($entry);
     $entry->alias = "";
-    $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings,false);
+    $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
     echo "</td>\n";
     echo "</tr>\n";
     echo "</table>\n";
 
     return $return;
+}
+
+function glossary_print_entry_continuous($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
+
+    //The print view for this format is exactly the normal view, so we use it
+
+    //Take out autolinking in definitions un print view
+    $entry->definition = '<nolink>'.$entry->definition.'</nolink>';
+
+    //Call to view function (without icons, ratings and aliases) and return its result
+    return glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
+    
 }
 
 ?>
