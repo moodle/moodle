@@ -10,11 +10,7 @@ $GRADEPREFS = array('use_advanced',                // Only add new preferences t
                     'display_weighted',
                     'display_points',
                     'display_percent',
-                    'display_letter_grade',
-                    'display_weighted_student',
-                    'display_points_student',
-                    'display_percent_student',
-                    'display_letter_grade_student',
+                    'display_letters',
                     'reprint_headers',
                     'show_hidden',
                     );
@@ -23,13 +19,9 @@ $GRADEPREFS = array('use_advanced',                // Only add new preferences t
 $GRADEPREFSDEFAULTS = array('use_advanced'                => 0,
                             'use_weighted_for_letter'     => 0,
                             'display_weighted'            => 0,
-                            'display_points'              => 1,
+                            'display_points'              => 2,
                             'display_percent'             => 1,
-                            'display_letter_grade'        => 0,
-                            'display_weighted_student'    => 0,
-                            'display_points_student'      => 1,
-                            'display_percent_student'     => 0,
-                            'display_letter_grade_student'=> 0,
+                            'display_letters'             => 0,
                             'reprint_headers'             => 0,
                             'show_hidden'                 => 1
                             );
@@ -919,21 +911,21 @@ function grade_get_preferences($courseid) {
         }
     }
 
-    // Construct some other ones
+    // Construct some other ones about which fields are shown
 
     $isteacher = isteacher($courseid);
 
-    $preferences->show_weighted     = (($preferences->display_weighted == 1 && $isteacher) || 
-                                       ($preferences->display_weighted_student == 1 && !$isteacher));
+    $preferences->show_weighted = (($preferences->display_weighted > 0  && $isteacher) || 
+                                   ($preferences->display_weighted > 1 && !$isteacher));
     
-    $preferences->show_points       = (($preferences->display_points == 1 && $isteacher) || 
-                                       ($preferences->display_points_student == 1 && !$isteacher));
+    $preferences->show_points   = (($preferences->display_points > 0  && $isteacher) || 
+                                   ($preferences->display_points > 1 && !$isteacher));
     
-    $preferences->show_percent      = (($preferences->display_percent == 1 && $isteacher) || 
-                                       ($preferences->display_percent_student == 1 && !$isteacher));
+    $preferences->show_percent  = (($preferences->display_percent > 0  && $isteacher) || 
+                                   ($preferences->display_percent > 1 && !$isteacher));
 
-    $preferences->show_letter_grade = (($preferences->display_letter_grade == 1 && $isteacher) || 
-                                       ($preferences->display_letter_grade_student == 1 && !$isteacher));
+    $preferences->show_letters  = (($preferences->display_letters > 0  && $isteacher) || 
+                                   ($preferences->display_letters > 1 && !$isteacher));
 
     return $preferences;
 }
@@ -954,13 +946,9 @@ function grade_set_preferences($course, $newprefs) {
     grade_set_preference($course->id, 'use_advanced', 0);
     grade_set_preference($course->id, 'use_weighted_for_letter', 0);
     grade_set_preference($course->id, 'display_weighted', 0);
-    grade_set_preference($course->id, 'display_points', 1);
+    grade_set_preference($course->id, 'display_points', 2);
     grade_set_preference($course->id, 'display_percent', 0);
-    grade_set_preference($course->id, 'display_letter_grade', 0);
-    grade_set_preference($course->id, 'display_weighted_student', 0);
-    grade_set_preference($course->id, 'display_points_student', 1);
-    grade_set_preference($course->id, 'display_percent_student', 0);
-    grade_set_preference($course->id, 'display_letter_grade_student', 0);
+    grade_set_preference($course->id, 'display_letters', 0);
     
 /// Lose all exceptions
     delete_records('grade_exceptions', 'courseid', $course->id);
@@ -1558,12 +1546,7 @@ function grade_view_category_grades($view_by_student) {
                 }
             }
 
-            if (isteacher($course->id)) {
-                $grade_columns = $preferences->display_weighted + $preferences->display_points + $preferences->display_percent;
-            }
-            else {
-                $grade_columns = $preferences->display_weighted_student + $preferences->display_points_student + $preferences->display_percent_student;
-            }
+            $grade_columns = $preferences->show_weighted + $preferences->show_points + $preferences->show_percent;
 
             $first = 0;
             //$maxpoints = 0;
@@ -1667,11 +1650,11 @@ function grade_view_category_grades($view_by_student) {
                                     }
                                     $header .='</th>';
                                     if ($preferences->show_points) {
-                                        $header1 .= '<th>'.get_string('points','grades').'('. $all_categories[$category][$assignment]['maxgrade'];
+                                        $header1 .= '<th>'. $all_categories[$category][$assignment]['maxgrade'];
                                         if ($all_categories[$category][$assignment]['grade_against'] != $all_categories[$category][$assignment]['maxgrade']) {
-                                            $header1 .= ')('. $all_categories[$category][$assignment]['grade_against'];
+                                            $header1 .= '('. $all_categories[$category][$assignment]['grade_against'].')';
                                         }
-                                        $header1 .= ')</th>';
+                                        $header1 .= '</th>';
                                     }
                                                                         
                                     if($preferences->show_percent)    {
@@ -1728,7 +1711,7 @@ function grade_view_category_grades($view_by_student) {
                     }
                     
                     if ($preferences->show_points) {
-                        $header1 .= '<th>'.get_string('points','grades').'('.$all_categories[$cview]['stats']['totalpoints'].')';
+                        $header1 .= '<th>'.$all_categories[$cview]['stats']['totalpoints'];
                         if ($all_categories[$cview]['stats']['bonus_points'] != 0) {
                             $header1 .='(+'.$all_categories[$cview]['stats']['bonus_points'].')';
                         }
@@ -1815,7 +1798,6 @@ function grade_view_all_grades($view_by_student) {
     global $course;
     global $preferences;
     global $USER;
-    global $group;
     
     if (!isteacher($course->id)) {
         $view_by_student = $USER->id;
@@ -1835,12 +1817,7 @@ function grade_view_all_grades($view_by_student) {
                 }
             }
         }
-        if (isteacher($course->id)) {
-            $grade_columns = $preferences->display_weighted + $preferences->display_points + $preferences->display_percent;
-        }
-        else {
-            $grade_columns = $preferences->display_weighted_student + $preferences->display_points_student + $preferences->display_percent_student;
-        }
+        $grade_columns = $preferences->show_weighted + $preferences->show_points + $preferences->show_percent;
         
         $first = 0;
         $total_course_points = 0;
@@ -1851,11 +1828,11 @@ function grade_view_all_grades($view_by_student) {
         if (isteacher($course->id) ) {
             $student_heading_link = get_string('student','grades');
             if ($view_by_student == -1) {
-                $student_heading_link .='<a href="?id='.$course->id.'&amp;action=grades&amp;group='.$group.'&amp;sort=lastname"><br /><font size="-2">'.get_string('sortbylastname','grades').'</font></a>';
-                $student_heading_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;group='.$group.'&amp;sort=firstname"><br /><font size="-2">'.get_string('sortbyfirstname','grades').'</font></a>';
+                $student_heading_link .='<a href="?id='.$course->id.'&amp;action=grades&amp;sort=lastname"><br /><font size="-2">'.get_string('sortbylastname','grades').'</font></a>';
+                $student_heading_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=firstname"><br /><font size="-2">'.get_string('sortbyfirstname','grades').'</font></a>';
             }
             else {
-                $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=grades"><font size="-2">'.get_string('showallstudents','grades').'</font></a>';
+                $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;&amp;action=grades"><font size="-2">'.get_string('showallstudents','grades').'</font></a>';
             }
             $header = '<tr><th rowspan="2">'.$student_heading_link.'</th>';
         }
@@ -1888,10 +1865,10 @@ function grade_view_all_grades($view_by_student) {
             // set the links to student information based on multiview or individual... if individual go to student info... if many go to individual grades view.
             if (isteacher($course->id)) {
                 if ($view_by_student != -1) {
-                    $studentviewlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$student.'&amp;group='.$group.'&amp;course='.$course->id.'">'.$grades_by_student[$student]['student_data']['lastname'].', '.$grades_by_student[$student]['student_data']['firstname'].'</a>';
+                    $studentviewlink = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$student.'&amp;course='.$course->id.'">'.$grades_by_student[$student]['student_data']['lastname'].', '.$grades_by_student[$student]['student_data']['firstname'].'</a>';
                 }
                 else {
-                    $studentviewlink = '<a href="?id='.$course->id.'&amp;action=view_student_grades&amp;group='.$group.'&amp;user='.$student.'">'.$grades_by_student[$student]['student_data']['lastname'].', '.$grades_by_student[$student]['student_data']['firstname'].'</a>';
+                    $studentviewlink = '<a href="?id='.$course->id.'&amp;action=view_student_grades&amp;user='.$student.'">'.$grades_by_student[$student]['student_data']['lastname'].', '.$grades_by_student[$student]['student_data']['firstname'].'</a>';
                 }
                 $row .= '<td>'. $studentviewlink .'</td>';
             }
@@ -1907,8 +1884,8 @@ function grade_view_all_grades($view_by_student) {
                         }
                         // only print the category headers if something is displayed for them
                         if ($preferences->show_weighted || $preferences->show_percent || $preferences->show_points) {
-                            $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;group='.$group.'&amp;category='.$category.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
-                            $header .= '<th colspan="'.$grade_columns.'"><a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$category;
+                            $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category='.$category.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
+                            $header .= '<th colspan="'.$grade_columns.'"><a href="?id='.$course->id.'&amp;action=vcats&amp;cview='.$category;
                             if ($view_by_student != -1) {
                                 $header .= '&amp;user='.$view_by_student;
                             }
@@ -1951,7 +1928,7 @@ function grade_view_all_grades($view_by_student) {
                 } 
             }
             if ($first == 0) {
-                if ($preferences->show_letter_grade) {
+                if ($preferences->show_letters) {
                     $total_columns = $grade_columns + 1;
                 }
                 else {
@@ -1959,16 +1936,16 @@ function grade_view_all_grades($view_by_student) {
                 }
                 
                 if (isteacher($course->id) && $view_by_student == -1) {
-                    $grade_sort_link = '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=grades&amp;sort=highgrade"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
-                    $grade_sort_link .= '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=grades&amp;sort=highgrade_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
-                    $points_sort_link = '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=grades&amp;sort=points"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('pointsdescending','grades').'" /></a>';
-                    $points_sort_link .= '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=grades&amp;sort=points_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('pointsascending','grades').'" /></a>';
-                    $weighted_sort_link = '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=grades&amp;sort=weighted"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('weighteddescending','grades').'" /></a>';
-                    $weighted_sort_link .= '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=grades&amp;sort=weighted_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('weightedascending','grades').'" /></a>';
-                    $percent_sort_link = '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=grades&amp;sort=percent"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('percentdescending','grades').'" /></a>';
-                    $percent_sort_link .= '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=grades&amp;sort=percent_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('percentascending','grades').'" /></a>';
+                    $grade_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
+                    $grade_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
+                    $points_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('pointsdescending','grades').'" /></a>';
+                    $points_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('pointsascending','grades').'" /></a>';
+                    $weighted_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('weighteddescending','grades').'" /></a>';
+                    $weighted_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('weightedascending','grades').'" /></a>';
+                    $percent_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('percentdescending','grades').'" /></a>';
+                    $percent_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('percentascending','grades').'" /></a>';
                 }
-                $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;group='.$group.'&amp;action=stats&amp;category=all\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
+                $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category=all\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
                 $header .= '<th colspan="'.$total_columns.'">'.get_string('total','grades').'&nbsp;'.$stats_link.'</th>';
                 if (isteacher($course->id) && $view_by_student == -1) {
                     if ($preferences->show_points) {
@@ -1985,7 +1962,7 @@ function grade_view_all_grades($view_by_student) {
                     if ($preferences->show_weighted) {
                         $header1 .= '<th>'.get_string('weightedpct','grades').'('.$all_categories['stats']['weight'].')'.'<br />'.$weighted_sort_link.' '.'</th>';
                     }
-                    if ($preferences->show_letter_grade) {
+                    if ($preferences->show_letters) {
                         $header1 .= '<th>'.get_string('lettergrade','grades').'<br />'.$grade_sort_link.' '.'</th>';
                     }
                     $header1 .= '</tr>';
@@ -2004,7 +1981,7 @@ function grade_view_all_grades($view_by_student) {
                     if ($preferences->show_weighted) {
                         $header1 .= '<th>'.get_string('weightedpct','grades').'('.$all_categories['stats']['weight'].')</th>';
                     }
-                    if ($preferences->show_letter_grade) {
+                    if ($preferences->show_letters) {
                         $header1 .= '<th>'.get_string('lettergrade','grades').'</th>';
                     }
                     $header1 .= '</tr>';
@@ -2038,7 +2015,7 @@ function grade_view_all_grades($view_by_student) {
             if ($preferences->show_weighted) {
                 $row .= '<td align=right>'.$grades_by_student[$student]['student_data']['weighted'].'%</td>';
             }
-            if ($preferences->show_letter_grade) {
+            if ($preferences->show_letters) {
                 if ($preferences->use_weighted_for_letter == 1) {
                     $grade = $grades_by_student[$student]['student_data']['weighted'];
                 }
@@ -2463,115 +2440,66 @@ function grade_category_select($id_selected) {
     }
 }
 
-function grade_display_grade_preferences() {
+function grade_display_grade_preferences($course, $preferences) {
     global $CFG;
-    global $course;
     global $USER;
 
-    $preferences = grade_get_preferences($course->id);
-    
-    $stryes = get_string('yes','grades');
-    $strno = get_string('no','grades');
-        
-    echo  '<table align="center"><tr><th colspan="3">'.get_string('setpreferences','grades');
-    helpbutton('coursegradepreferences', get_string('gradepreferenceshelp','grades'), 'gradebook');
-    echo  '</th></tr><tr><th>'.get_string('item','grades').'</th><th>'.get_string('setting','grades').'</th>';
-    if ($preferences->use_advanced != 0) {
-        echo  '<th>'.get_string('forstudents','grades').'</th>';
-    }
-    echo  '</tr>';
+    print_heading_with_help(get_string('setpreferences','grades'), 'coursegradepreferences', 'grades');
+
+    echo  '<table align="center" class="gradeprefs">';
     echo  '<form name="set_grade_preferences" method="post" action="./index.php">';
     echo  '<input type="hidden" name="action" value="set_grade_preferences" />';
     echo  '<input type="hidden" name="id" value='.$course->id.' />';
-    echo  '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     
-    echo  '<tr><td>'.get_string('useadvanced','grades').'</td><td><select name="use_advanced">';
-    if ($preferences->use_advanced ==0) {
-        echo  '<option value="0" selected="selected">'.$strno.'</option><option value=1>'.$stryes.'</option>';
-    }
-    else {
-        echo  '<option value="0">'.$strno.'</option><option value=1 selected="selected">'.$stryes.'</option>';
-    }
-    
-    if ($preferences->use_advanced != 0) {
-        // display grade weights
-        echo  '<tr><td>'.get_string('displayweighted','grades').'</td><td><select name="display_weighted">';
-        if ($preferences->display_weighted == 0) {
-            echo  '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
-        }
-        else {
-            echo  '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
-        }
-        echo  '</select></td>';
+    $optionsyesno = NULL;
+    $optionsyesno[0] = get_string('no');
+    $optionsyesno[1] = get_string('yes');
         
-        // add user view checkbox
-        echo  '<td><input type="checkbox" name="display_weighted_student"';
-        if ($preferences->display_weighted_student == 1) {
-            echo  ' checked="checked"';
-        }
-        echo  ' />';
+    echo  '<tr><td class="c0">'.get_string('useadvanced','grades').'</td>';
+    echo  '<td class="c1">';
+    choose_from_menu($optionsyesno, 'use_advanced', $preferences->use_advanced, '');
+    echo  '</td></tr>';
+    
+    if ($preferences->use_advanced) {
+        $options = NULL;
+        $options[0] = get_string('no');
+        $options[1] = get_string('toonly', 'moodle', $course->teachers);
+        $options[2] = get_string('toeveryone', 'moodle');
+
+        // display grade weights
+        echo  '<tr><td class="c0">'.get_string('displayweighted','grades').':</td>';
+        echo  '<td class="c1">';
+        choose_from_menu($options, 'display_weighted', $preferences->display_weighted, '');
+        echo  '</td></tr>';
         
         // display points    
-        echo  '<tr><td>'.get_string('displaypoints','grades').'</td><td><select name="display_points">';
-        if ($preferences->display_points == 0) {
-            echo  '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
-        }
-        else {
-            echo  '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
-        }
-        echo  '</select></td>';
-    
-        // add user view checkbox
-        echo  '<td><input type=checkbox name="display_points_student"';
-        if ($preferences->display_points_student == 1) {
-            echo  ' checked="checked"';
-        }
-        echo  ' />';
-    
+        echo  '<tr><td class="c0">'.get_string('displaypoints','grades').':</td>';
+        echo  '<td class="c1">';
+        choose_from_menu($options, 'display_points', $preferences->display_points, '');
+        echo  '</td></tr>';
+
         // display percent
-        echo  '<tr><td>Display Percent</td><td><select name="display_percent">';
-        if ($preferences->display_percent == 0) {
-            echo  '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
-        }
-        else {
-            echo  '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
-        }
-        echo  '</select></td>';
-        
-        // add user view checkbox
-        echo  '<td><input type="checkbox" name="display_percent_student"';
-        if ($preferences->display_percent_student == 1) {
-            echo  ' checked="checked"';
-        }
-        echo  ' />';
+        echo  '<tr><td class="c0">'.get_string('displaypercent','grades').':</td>';
+        echo  '<td class="c1">';
+        choose_from_menu($options, 'display_percent', $preferences->display_percent, '');
+        echo  '</td></tr>';
         
         // display letter grade
-        echo  '<tr><td>'.get_string('displaylettergrade','grades').'</td><td><select name="display_letter_grade">';
-        if ($preferences->display_letter_grade == 0) {
-            echo  '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
-        }
-        else {
-            echo  '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
-        }
-        echo  '</select></td>';
-        
-        echo  '<td><input type="checkbox" name="display_letter_grade_student"';
-        if ($preferences->display_letter_grade_student == 1) {
-            echo  ' checked="checked"';
-        }
-        echo  ' />';
-        
+        echo  '<tr><td class="c0">'.get_string('displaylettergrade','grades').':</td>';
+        echo  '<td class="c1">';
+        choose_from_menu($options, 'display_letters', $preferences->display_letters, '');
+        echo  '</td></tr>';
+
         // letter grade uses weighted percent
-        $strusepercent = get_string('usepercent','grades');
-        $struseweighted = get_string('useweighted','grades');
-        echo  '<tr><td>'.get_string('lettergrade','grades').':</td><td><select name="use_weighted_for_letter">';
-        if ($preferences->use_weighted_for_letter == 0) {
-            echo  '<option value="0" selected="selected">'.$strusepercent.'</option><option value="1">'.$struseweighted.'</option>';
-        }
-        else {
-            echo  '<option value="0">'.$strusepercent.'</option><option value="1" selected="selected">'.$struseweighted.'</option>';
-        }
-        echo  '</select></td></tr>';
+        $options = NULL;
+        $options[0] = get_string('usepercent','grades');
+        $options[1] = get_string('useweighted','grades');
+
+        echo  '<tr><td class="c0">'.get_string('lettergrade','grades').':</td>';
+        echo  '<td class="c1">';
+        choose_from_menu($options, 'use_weighted_for_letter', $preferences->use_weighted_for_letter, '');
+        echo  '</td></tr>';
     }
 
     $headerlist[0] = get_string('none');
@@ -2580,18 +2508,15 @@ function grade_display_grade_preferences() {
     }
     
     // reprint headers every n lines default n=0
-    echo '<tr><td>'.get_string('reprintheaders','grades').':</td><td>';
+    echo '<tr><td class="c0">'.get_string('reprintheaders','grades').':</td>';
+    echo '<td class="c1">';
     choose_from_menu($headerlist, 'reprint_headers', $preferences->reprint_headers, '');
     echo '</td></tr>';
     
     // show hidden grade items to teacher
-    echo  '<tr><td>'.get_string('showhiddenitems','grades').'</td><td><select name="show_hidden">';
-    if ($preferences->show_hidden ==0) {
-        echo  '<option value="0" selected="selected">'.$strno.'</option><option value=1>'.$stryes.'</option>';
-    }
-    else {
-        echo  '<option value="0">'.$strno.'</option><option value=1 selected="selected">'.$stryes.'</option>';
-    }
+    echo  '<tr><td class="c0">'.get_string('showhiddenitems','grades').'</td>';
+    echo  '<td class="c1">';
+    choose_from_menu($optionsyesno, 'show_hidden', $preferences->show_hidden, '');
     echo  '</td></tr>';
     
     echo  '<tr><td colspan="3" align="center"><input type="submit" value="'.get_string('savepreferences','grades').'" /></td></tr></form></table>';
@@ -2756,48 +2681,6 @@ function grade_set_letter_grades() {
     }
 }
 
-function grade_show_group_select() {
-    global $course;
-    global $USER;
-    global $group;
-
-    if (!isset($group)) {
-        if (isset($_REQUEST['group'])) {
-            $group = clean_param($_REQUEST['group'], PARAM_INT);
-        }
-        else {
-            $group = 0;
-        }
-    }
-
-    if ($groups = get_groups($course->id)) {
-        // the course uses groups so let them choose one
-        echo '<td>'.get_string('viewbygroup', 'grades').':</td><td>';
-        echo '<form id="groupselect">';
-        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-
-        if (isset($_REQUEST['action'])) {
-            echo '<input type="hidden" name="action" value="'.clean_param($_REQUEST['action'], PARAM_CLEAN).'" />';
-        }
-        
-        if (isset($_REQUEST['cview'])) {
-            echo '<input type="hidden" name="cview" value="'.clean_param($_REQUEST['cview'], PARAM_CLEAN).'" />';
-        }
-        echo '<select name="group" onchange="submit();">';
-        echo '<option value="0">'.get_string('allstudents','grades').'</option>';
-
-        foreach ($groups as $id => $groupname) {
-            echo '<option value="'.$id.'" ';
-            if ($group == $id) {
-                echo ' selected="selected" ';
-            }
-            echo '>'.$groupname->name.'</option>';
-        }
-        echo '</select>';
-        echo '</form></td>';
-    }
-}
-
 function grade_download_form($type='both') {
     global $course;
     if ($type != 'both' || $type != 'excel' || $type != 'text') {
@@ -2820,7 +2703,10 @@ function grade_download_form($type='both') {
             print_single_button("index.php", $options, get_string("downloadtext"));
             echo '</td>';
         }
-        grade_show_group_select();
+        echo '<td>';
+        setup_and_print_groups($course, $course->groupmode, 'index.php?id='.$course->id);
+        echo '</td>';
+
         echo '</tr></table>';
     }
 }

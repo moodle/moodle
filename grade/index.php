@@ -83,10 +83,8 @@
                 grade_view_category_grades($user);
                 break;
             case "prefs":
-                grade_display_grade_preferences();
-                break;
             case "set_grade_preferences":
-                grade_display_grade_preferences();
+                grade_display_grade_preferences($course, $preferences);
                 break;
             case "letters":
                 grade_display_letter_grades();
