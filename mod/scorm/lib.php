@@ -372,8 +372,8 @@ function scorm_delete_files($directory)
 {
     if (is_dir($directory))
     {
-        $handle=opendir($directory);
-        while (($file = readdir($handle)) != '')
+        $files=scandir($directory);
+        foreach($files as $file)
         {
             if ($file != '.' && $file != '..')
             {
