@@ -5,6 +5,7 @@
     require("../config.php");
     require("lib.php");
 
+
     if (isset($cancel)) {  
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
@@ -115,7 +116,12 @@
             error("Could not cache module information!");
         }
 
-        redirect($_SERVER["HTTP_REFERER"]);
+        $site = get_site();
+        if ($site->id == $cm->course) {
+            redirect($CFG->wwwroot);
+        } else {
+            redirect("view.php?id=$cm->course");
+        }
         exit;
 
     } else if (isset($hide)) {
@@ -131,7 +137,12 @@
             error("Could not cache module information!");
         }
 
-        redirect($_SERVER["HTTP_REFERER"]);
+        $site = get_site();
+        if ($site->id == $cm->course) {
+            redirect($CFG->wwwroot);
+        } else {
+            redirect("view.php?id=$cm->course");
+        }
         exit;
 
     } else if (isset($show)) {
@@ -139,15 +150,22 @@
         if (! $cm = get_record("course_modules", "id", $show)) {
             error("This course module doesn't exist");
         }
-   
-        show_course_module($show);
 
-        $modinfo = serialize(get_array_of_activities($cm->course));
-        if (!set_field("course", "modinfo", $modinfo, "id", $cm->course)) {
-            error("Could not cache module information!");
+        $site = get_site();
+
+        if ($cm->visible or $site->id == $cm->course) {
+            show_course_module($show);
+            $modinfo = serialize(get_array_of_activities($cm->course));
+            if (!set_field("course", "modinfo", $modinfo, "id", $cm->course)) {
+                error("Could not cache module information!");
+            }
         }
 
-        redirect($_SERVER["HTTP_REFERER"]);
+        if ($site->id == $cm->course) {
+            redirect($CFG->wwwroot);
+        } else {
+            redirect("view.php?id=$cm->course");
+        }
         exit;
 
     } else if (isset($delete)) {   // value = course module

@@ -544,6 +544,10 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
                 set_field("course_modules", "visible", "$visibility", "id", $moduleid);
             }
         }
+        $modinfo = serialize(get_array_of_activities($courseid));
+        if (!set_field("course", "modinfo", $modinfo, "id", $courseid)) {
+            error("Could not cache module information!");
+        }
     }
 }
 
