@@ -795,3 +795,17 @@ TABLE.formtable TD {
     -moz-border-radius: 15px;
 }
 
+.rssclientitem {
+}
+
+.rssclientlink {
+	font-size: x-small;
+    border-top: 1px <?php echo $THEME->cellheading2 ?> solid;
+    padding-bottom: 5px;
+}
+
+.rssclientdescription {
+	font-size: x-small;
+    color: #555555;
+    padding-left: 10px;
+}
