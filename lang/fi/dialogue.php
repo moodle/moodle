@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['addmynewentries'] = 'Lisää viestini';
@@ -35,9 +35,9 @@ $string['namehascloseddialogue'] = '$a on sulkenut dialogin';
 $string['newdialogueentries'] = 'Uudet viestit';
 $string['newentry'] = 'Uusi viesti';
 $string['noavailablepeople'] = 'Ei henkilöitä, joiden kanssa dialogi voidaan aloittaa';
-$string['nopersonchosen'] = 'Henkilöä ei ole valittu!';
-$string['nosubject'] = 'Aihe puuttuu!';
-$string['notextentered'] = 'Teksti puttuu!';
+$string['nopersonchosen'] = 'Henkilöä ei ole valittu';
+$string['nosubject'] = 'Aihe puuttuu';
+$string['notextentered'] = 'Teksti puttuu';
 $string['notstarted'] = 'Et ole aloittanut tätä dialogia vielä';
 $string['notyetseen'] = 'Avaamatta';
 $string['numberofentries'] = 'Viestien määrä';
@@ -46,7 +46,7 @@ $string['of'] = '/';
 $string['onwrote'] = '$a kirjoitti';
 $string['onyouwrote'] = '$a kirjoitit';
 $string['open'] = 'Avaa';
-$string['openadialoguewith'] = 'Avaa dialogi';
+$string['openadialoguewith'] = 'Avaa dialogi ';
 $string['opendialogue'] = 'Avaa dialogi';
 $string['opendialogueentries'] = 'Avaa dialogin viestit';
 $string['pane0'] = 'Avaa dialogi';

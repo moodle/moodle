@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005022400)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['action'] = 'Tapahtuma';
@@ -8,7 +8,7 @@ $string['activities'] = 'Aktiviteetit';
 $string['activity'] = 'Aktiviteetti';
 $string['activityclipboard'] = 'Siirretään tätä aktiviteettia: <b>$a</b>';
 $string['activityiscurrentlyhidden'] = 'Valitettavasti tämä aktiviteetti on piilotettuna';
-$string['activitymodule'] = 'Tapahtumamoduuli';
+$string['activitymodule'] = 'Aktiviteettimoduuli';
 $string['activityreport'] = 'Tapahtumaraportti';
 $string['activityselect'] = 'Valitse tämä aktiviteetti siirrettäväksi';
 $string['activitysince'] = 'Tapahtumat $a lähtien';
@@ -527,7 +527,7 @@ $string['htmleditordisabledadmin'] = 'Pääkäyttäjä on estänyt Richtext HTML-edito
 $string['htmleditordisabledbrowser'] = 'Richtext HTML-Editori ei ole saatavilla, koska selaimesi ei ole IE 5.5 tai uudempi.';
 $string['htmlformat'] = 'HTML-muotoilu';
 $string['icqnumber'] = 'ICQ-numero';
-$string['idnumber'] = 'ID-numero';
+$string['idnumber'] = 'Tunnistenumero';
 $string['importdata'] = 'Tuo kurssit tiedot';
 $string['inactive'] = 'Ei käytössä';
 $string['include'] = 'Ota mukaan';
@@ -626,7 +626,7 @@ $string['missinglastname'] = 'Puuttuva sukunimi';
 $string['missingname'] = 'Puuttuva nimi';
 $string['missingnewpassword'] = 'Puuttuva uusi salasana';
 $string['missingpassword'] = 'Puuttuva salasana';
-$string['missingshortname'] = 'Puuttuva lyhyt nimi';
+$string['missingshortname'] = 'Puuttuva lyhenne';
 $string['missingshortsitename'] = 'Puuttuva sivuston lyhyt nimi ';
 $string['missingsitedescription'] = 'Puuttuva sivuston kuvaus';
 $string['missingsitename'] = 'Puuttuva sivuston nimi';
@@ -854,7 +854,7 @@ $string['senddetails'] = 'Lähetä tiedot sähköpostilla';
 $string['separateandconnected'] = 'Eristyvä ja sosiaalinen oppiminen';
 $string['serverlocaltime'] = 'Palvelimen aika';
 $string['settings'] = 'Asetukset';
-$string['shortname'] = 'Lyhyt nimi';
+$string['shortname'] = 'Lyhenne';
 $string['shortnametaken'] = 'Annettu kurssin lyhyt nimi on jo käytössä toisella kursilla.';
 $string['shortsitename'] = 'Lyhyt nimi sivustolle (esim. yksi sana)';
 $string['show'] = 'Näytä';

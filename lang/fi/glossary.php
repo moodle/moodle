@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['addcomment'] = 'Lisää kommentti';
@@ -102,7 +102,7 @@ $string['exporttomainglossary'] = 'Vie pääsanastoon';
 $string['filetoimport'] = 'Tuontitiedosto';
 $string['fillfields'] = 'Käsite ja määritelmä ovat pakollisia kenttiä.';
 $string['filtername'] = 'Sanaston automaattinen linkitys';
-$string['fullmatch'] = 'Hae vain kokonaisia sanoja';
+$string['fullmatch'] = 'Vain täydet sanat ';
 $string['globalglossary'] = 'Yleinen sanasto';
 $string['glossaryleveldefaultsettings'] = 'Sanastojen oletusasetukset';
 $string['glossarytype'] = 'Sanaston tyyppi';
@@ -130,6 +130,7 @@ $string['notcategorised'] = 'Kategorisoimaton';
 $string['numberofentries'] = 'Hakusanojen lukumäärä';
 $string['onebyline'] = '(yksi riviä kohden)';
 $string['printerfriendly'] = 'Tulostukseen soveltuva versio';
+$string['printviewnotallowed'] = 'Tulostusnäkymä ei ole sallittu';
 $string['question'] = 'Kysymys';
 $string['rate'] = 'Arvo';
 $string['rating'] = 'Arvio';

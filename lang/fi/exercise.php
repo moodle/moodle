@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['absent'] = 'Puuttuva';
@@ -14,7 +14,7 @@ $string['assess'] = 'Arvioi';
 $string['assessed'] = 'Arvioitu';
 $string['assessment'] = 'Arviointi';
 $string['assessmentby'] = 'Arvioinut $a';
-$string['assessmentform'] = 'Arvioinnin muoto';
+$string['assessmentform'] = 'Arviointilomake';
 $string['assessmentmadebythe'] = 'Arvioinnin tehnyt $a';
 $string['assessmentofthissubmission'] = 'Tämän palautuksen arviointi';
 $string['assessments'] = 'Arvioinnit';
@@ -30,18 +30,18 @@ $string['criterion'] = 'Peruste';
 $string['deadline'] = 'Määräaika';
 $string['deadlineis'] = 'Määräaika on $a';
 $string['delete'] = 'Poista';
-$string['deletesubmissionwarning'] = 'Varoitus: löytyy $a:n arvioon liittyviä tässä palautuksessa.<br /> Suosittelemme vahvasti, että tätä palautusta EI poisteta.';
-$string['deleting'] = 'Poistaa';
+$string['deletesubmissionwarning'] = 'Varoitus: $a:n arviontia liittliitettynä tähän palautukseen.<br /> Suosittelemme vahvasti, että tätä palautusta EI poisteta.';
+$string['deleting'] = 'Poistetaan';
 $string['description'] = 'Kuvaus';
 $string['descriptionofexercise'] = 'Oppimistehtävän tehtäväkuvaus on Word-asiakirjassa tai HTML-tiedostossa. Tämä tiedosto ladataan oppimistehtävään ennen kuin tehtävä avautuu. On myös mahdollista tehdä joukko muunnelmia samasta tehtävästä lataamalla useampia Word- tai HTML-tiedostoja ennen tehtävän avautumista.';
 $string['detailsofassessment'] = 'Arvioinnin yksityiskohdat';
-$string['displayoffinalgrades'] = 'Lopullisten arvosanojen asettelu';
+$string['displayoffinalgrades'] = 'Lopullisten arvosanojen näyttö';
 $string['doubleupload'] = 'Varoitus: tämä palautus on todennäköisesti lähetetty  kahdesti. Mene ylläpidon sivulle, etsi kahta palautusta tältä käyttäjältä lyhyen ajan sisällä. Poista ylimääräiset palautukset ennen jatkamista.';
 $string['duedate'] = 'Eräpäivä';
 $string['edit'] = 'Muokkaa';
-$string['editingassessmentelements'] = 'Muokkaa arvosteluperusteita';
-$string['element'] = 'Arvosteluperuste';
-$string['elementweight'] = 'Arvosteluperusteen painoarvo';
+$string['editingassessmentelements'] = 'Muokkataan arviointiperusteita';
+$string['element'] = 'Arviointiperuste';
+$string['elementweight'] = 'Arviointiperusteen painoarvo';
 $string['enterpassword'] = 'Anna salasana';
 $string['entriessaved'] = 'Tietueet tallennettu';
 $string['errorbanded'] = 'Virheistä vähentävä';
