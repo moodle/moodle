@@ -22,7 +22,7 @@
             $headerbutton = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A></FONT>";
         }
     }
-    print_header("$site->fullname", "$site->fullname", "", "",
+    print_header("$site->fullname", "$site->fullname", "home", "",
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
                  true, $headerbutton);
 
