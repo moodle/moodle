@@ -29,7 +29,7 @@ $string['fetchclienterror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»þ¡¢¥¦¥§¥Ö¥¯¥é¥¤¥¢¥ó¥È¤
 $string['fetcherror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»þ¡¢¥¨¥é¡¼¤¬È¯À¸¤·¤Þ¤·¤¿¡£';
 $string['fetchservererror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»þ¡¢¥ê¥â¡¼¥È¥µ¡¼¥Ð¤Ë¥¨¥é¡¼¤¬È¯À¸¤·¤Þ¤·¤¿¡£¥×¥í¥°¥é¥à¥¨¥é¡¼¤À¤È»×¤ï¤ì¤Þ¤¹¡£';
 $string['filename'] = '¥Õ¥¡¥¤¥ëÌ¾';
-$string['filtername'] = '¥ê¥½¡¼¥¹¡¡¥ª¡¼¥È¥ê¥ó¥¯';
+$string['filtername'] = '¥ê¥½¡¼¥¹¥ª¡¼¥È¥ê¥ó¥¯';
 $string['fulltext'] = '¥Õ¥ë¥Æ¥­¥¹¥È';
 $string['htmlfragment'] = 'HTML¥Õ¥é¥°¥á¥ó¥È';
 $string['maindirectory'] = '¥á¥¤¥ó¥Õ¥¡¥¤¥ë¥Ç¥£¥ì¥¯¥È¥ê';
@@ -58,10 +58,11 @@ $string['parameters'] = '¥Ñ¥é¥á¡¼¥¿';
 $string['popupresource'] = '¤³¤Î¥ê¥½¡¼¥¹¤ò¥Ý¥Ã¥×¥¢¥Ã¥×¥¦¥¤¥ó¥É¥¦¤ËÉ½¼¨¤µ¤»¤ë¡£';
 $string['popupresourcelink'] = '¥¦¥¤¥ó¥É¥¦¤¬É½¼¨¤µ¤ì¤Ê¤¤¾ì¹ç¤Ï¤³¤³¤ò¥¯¥ê¥Ã¥¯¡§ $a';
 $string['resourcetype'] = '¥ê¥½¡¼¥¹¤Î¥¿¥¤¥×';
-$string['resourcetypedirectory'] = '¥Ç¥£¥ì¥¯¥È¥ê¤òÉ½¼¨';
+$string['resourcetypedirectory'] = '¥Ç¥£¥ì¥¯¥È¥ê¤ÎÉ½¼¨';
 $string['resourcetypefile'] = '¥Õ¥¡¥¤¥ëËô¤Ï¥¦¥§¥Ö¤Ë¥ê¥ó¥¯';
-$string['resourcetypehtml'] = '¿·¤·¤¤¥¦¥§¥Ö¥Ú¡¼¥¸¤òºîÀ®';
-$string['resourcetypelabel'] = '¥é¥Ù¥ë¤òÁÞÆþ';
-$string['resourcetypetext'] = '¿·¤·¤¤¥Æ¥­¥¹¥È¥Ú¡¼¥¸¤òºîÀ®';
+$string['resourcetypehtml'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ÎºîÀ®';
+$string['resourcetypelabel'] = '¥é¥Ù¥ë¤ÎÁÞÆþ';
+$string['resourcetypereference'] = '»²¾È¤ÎÅê¹Æ';
+$string['resourcetypetext'] = '¥Æ¥­¥¹¥È¥Ú¡¼¥¸¤ÎºîÀ®';
 
 ?>
