@@ -374,6 +374,10 @@ table.minicalendar {
     background-color:#EEEEEE;
 }
 
+#calendar .maincalendar table.calendarmonth ul.events-underway {
+    color:#999999;
+}
+
 #calendar .event_global,
 .minicalendar .event_global,
 .block_calendar_month .event_global {

@@ -436,16 +436,18 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         echo '<td'.$class.'>'.$cell;
 
         if(isset($eventsbyday[$day])) {
-            echo '<ul>';
+            echo '<ul class="events-new">';
             foreach($eventsbyday[$day] as $eventindex) {
                 echo '<li><a href="'.$dayhref.'">'.$events[$eventindex]->name.'</a></li>';
             }
             echo '</ul>';
         }
         if(isset($durationbyday[$day])) {
+            echo '<ul class="events-underway">';
             foreach($durationbyday[$day] as $eventindex) {
-                echo '<div class="dimmed_text">('.$events[$eventindex]->name.')</div>';
+                echo '<li>['.$events[$eventindex]->name.']</li>';
             }
+            echo '</ul>';
         }
         echo "</td>\n";
     }

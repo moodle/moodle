@@ -213,14 +213,6 @@ table.formtable td {
 
 
 /* course */
-.headingblock.outline {
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
-    border-width:1px;
-    border-style:solid;
-}
-
 .weeklyoutlinecontent,
 .topicsoutlinecontent {
     border-width:1px;
@@ -403,13 +395,15 @@ table.minicalendar thead th {
     padding:10px;
 }
 
-#calendar .maincalendar ul {
+#calendar .maincalendar table.calendarmonth ul.events-new,
+#calendar .maincalendar table.calendarmonth ul.events-underway
+{
     padding:0px;
     margin:0px;
     list-style-type:none;
 }
 
-#calendar .maincalendar ul li {
+#calendar .maincalendar table.calendarmonth ul li {
     margin-top: 4px;
 }
 
