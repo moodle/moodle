@@ -1,0 +1,72 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.3 (2004052500)
+
+
+$string['absentlong'] = 'Одсутан';
+$string['absentshort'] = 'О';
+$string['addingmultiple'] = 'Додавања више похађања наставе';
+$string['addmultiple'] = 'Додајте више похађања наставе';
+$string['allmodulename'] = 'Сва похађања';
+$string['auto'] = 'само';
+$string['autoattend'] = 'Аутоматски преузмите похађања наставе заснована на активности посјетитеља';
+$string['autoattendmulti'] = 'Аутоматски преузмите похађања комплетне наставе засноване на активности посјетитеља';
+$string['autoattendshort'] = 'Аутоматски од посјетитеља';
+$string['choosedays'] = 'Дана од сваке седмице за похађање наставе';
+$string['dayofroll'] = 'Датум преузимања похађања наставе за';
+$string['defaultautoattend'] = 'Похађање наставе засновано према записима активности корисника (као подразумијевана опција)';
+$string['defaultdynamicsection'] = 'Пребацивање похађања наставе у исправну седмицу (као подразумијевана опција)';
+$string['defaultgrade'] = 'Похађања наставе се могу оцјењивати (као подразумијевана опција)';
+$string['defaulthoursinclass'] = 'Колико часова треба бити у похађању наставе (као подразумијевана опција)';
+$string['defaultmaxgrade'] = 'Највиша оцјена за комплетно похађање наставе (као подразумијевана опција)';
+$string['defaultstudentstatus'] = 'Статус студента који похађа наставу на новом похађању наставе (као подразумијевана опција)';
+$string['downloadexcelfull'] = 'Преузмите цијели Excel документ';
+$string['downloadexceltotals'] = 'Преузмите збирни Excel документ';
+$string['downloadtextfull'] = 'Преузмите цијели текстуални извјештај';
+$string['downloadtexttotals'] = 'Преузмите збирни текстуални извјештај';
+$string['dynamicsection'] = 'Одредите седмицу за похађање са овим датумом';
+$string['dynamicsectionmulti'] = 'Аутоматско постављање наставе у седмичну секцију';
+$string['dynsectionshort'] = 'Динамички премјештено на секцију';
+$string['endbeforestart'] = 'Крајњи датум је прије почетног датума';
+$string['endmulti'] = 'Датум задњег похађања наставе';
+$string['for'] = 'до - за';
+$string['friday'] = 'Пет';
+$string['gradeshort'] = 'Оцијењено';
+$string['gradevalue'] = 'Оцијенити наставу';
+$string['gradevaluemulti'] = 'Оцијенити све наставе';
+$string['hoursinclass'] = 'Број сати трајања часа';
+$string['hoursineachclass'] = 'Број сати трајања сваког часа';
+$string['hoursinfullreport'] = 'Максималан број сати похађања наставе који ће бити приказан на једној страници извјештаја';
+$string['maxgradeshort'] = 'Максимална оцјена';
+$string['maxgradevalue'] = 'Максимална оцјена за сва похађања наставе';
+$string['modulename'] = 'Похађање наставе';
+$string['modulenameplural'] = 'Похађања наставе';
+$string['monday'] = 'Пон';
+$string['norolls'] = 'Нема похађања наставе на овом курсу';
+$string['notes'] = 'Изостављене информације информације';
+$string['notesfor'] = 'Изостављене информације од';
+$string['noviews'] = 'Нажалост, овдје нема података за ваш налог';
+$string['of'] = 'од';
+$string['pages'] = 'Страница';
+$string['presentlong'] = 'Представља';
+$string['presentshort'] = 'P';
+$string['saturday'] = 'Суб';
+$string['startafterend'] = 'Почетни датум је послије завршетка курса';
+$string['startmulti'] = 'Датум првог похађања наставе';
+$string['sunday'] = 'Нед';
+$string['takeroll'] = 'Преузмите  наставу од овог дана?';
+$string['tardiesperabsence'] = 'Колико се закашњења третира као једно одсуство?';
+$string['tardylong'] = 'Касни';
+$string['tardyshort'] = 'К';
+$string['teacheredit'] = 'Похађајте наставу';
+$string['thursday'] = 'Чет';
+$string['tuesday'] = 'Уто';
+$string['viewall'] = 'Преглед свих похађања наставе';
+$string['viewmulti'] = 'Преглед извјештаја на више страница';
+$string['viewone'] = 'Преглед свих страница извјештаја';
+$string['viewsection'] = 'Преглед свих похађања наставе из ове секције';
+$string['viewtable'] = 'Преглед извјештаја као једне табеле';
+$string['viewweek'] = 'Преглед свих похађања наставе по седмицама';
+$string['wednesday'] = 'Сри';
+$string['weekmodulename'] = 'Сва похађања наставе у претходној седмици';
+
+?>
