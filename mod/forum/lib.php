@@ -415,7 +415,10 @@ function forum_cron () {
                     }
                     $posthtml .= '<p>';
 
-                    foreach($discussionposts[$discussionid] as $postid) {
+                    $postsarray = $discussionposts[$discussionid];
+                    sort($postsarray);
+
+                    foreach($postsarray as $postid) {
                         if (! $post = get_record("forum_posts", "id", "$postid")) {
                             echo "Could not find post $postid\n";
                             continue;
