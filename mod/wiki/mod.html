@@ -49,6 +49,9 @@
     if (!isset($form->pagename)) {
         $form->pagename = '';
     }
+    if (!isset($form->disablecamelcase)) {
+        $form->disablecamelcase = 0;
+    }
 
     # Set other variables
     if (!isset($id)) {
@@ -131,7 +134,7 @@
     <b> <?php print_string('wikilinkoptions', 'wiki') ?>:</b></td>
     <td>
         <input type="checkbox" name="disablecamelcase" value="1" <?php echo $form->disablecamelcase?"CHECKED":""; ?> />
-            Disable CamelCase linking.<br />
+        <?php print_string('disablecamel', 'wiki') ?><br />
     </td>
 </tr>
 
@@ -143,22 +146,22 @@
         <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
         <td width="50%">
         <input type="checkbox" name="setpageflags" value="1" <?php echo $form->setpageflags?"CHECKED":""; ?> />
-            Allow 'set page flags'<br />
+        <?php print_string('allowsetpage', 'wiki') ?><br />
         <input type="checkbox" name="strippages" value="1" <?php echo $form->strippages?"CHECKED":""; ?> />
-            Allow 'strip pages'<br />
+        <?php print_string('allowstrippages', 'wiki') ?><br />
         </td>
         <td width="50%">
         <input type="checkbox" name="removepages" value="1" <?php echo $form->removepages?"CHECKED":""; ?> />
-            Allow 'remove pages'<br />
+        <?php print_string('allowremovepages', 'wiki') ?><br />
         <input type="checkbox" name="revertchanges" value="1" <?php echo $form->revertchanges?"CHECKED":""; ?> />
-            Allow 'revert mass changes'<br />
+        <?php print_string('allowrevertchanges', 'wiki') ?><br />
         </td>
         </tr></table>
     </td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><b> Optional: </b></td>
+    <td align="right"><b><?php print_string('optional', 'wiki') ?>:</b></td>
     <td></td>
 </tr>
 
