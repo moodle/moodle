@@ -1,0 +1,54 @@
+	.text{
+		font-family : Arial, Helvetica, sans-serif;
+		font-size : x-small;
+		color : black;
+	}
+	.red{
+	font-family : Arial, Helvetica, sans-serif;
+	color : red;
+}
+	.acomment{
+	background-color : #E7E7E7;
+	color : Gray;
+	font-family : Arial, Helvetica, sans-serif;
+	font-size : x-small;
+}
+	DIV.red{
+	font-family : Arial, Helvetica, sans-serif;
+	color : red;
+	font-size : x-small;
+}
+	LI.red{
+	font-family : Arial, Helvetica, sans-serif;
+	color : red;
+	font-size : x-small;
+}
+	H1{
+		font-family : "Lucida Console";
+		font-variant : small-caps;
+		font-size : larger;
+		color : ButtonHighlight;
+		font-style : italic;
+		font-weight : 300;
+		letter-spacing : 3px;
+	}
+	address{
+		font-family : "Lucida Console";
+		font-variant : small-caps;
+		font-size : smaller;
+		color : Gray;
+		font-style : normal;
+		font-weight : bolder;
+		letter-spacing : normal;
+		text-align : center;
+	}
+	H1.purple{
+		font-family : "Lucida Console";
+		font-variant : small-caps;
+		font-size : larger;
+		color : Violet;
+		font-style : italic;
+		font-weight : 300;
+		letter-spacing : 3px;
+		border : #9966FF;
+	}

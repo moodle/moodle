@@ -1,0 +1,150 @@
+<!--
+################################################################################
+##
+## HTML Text Editing Component for hosting in Web Pages
+## Copyright (C) 2001  Ramesys (Contracting Services) Limited
+##
+## This library is free software; you can redistribute it and/or
+## modify it under the terms of the GNU Lesser General Public
+## License as published by the Free Software Foundation; either
+## version 2.1 of the License, or (at your option) any later version.
+##
+## This library is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## Lesser General Public License for more details.
+##
+## You should have received a copy of the GNU LesserGeneral Public License
+## along with this program; if not a copy can be obtained from
+##
+##    http://www.gnu.org/copyleft/lesser.html
+##
+## or by writing to:
+##
+##    Free Software Foundation, Inc.
+##    59 Temple Place - Suite 330,
+##    Boston,
+##    MA  02111-1307,
+##    USA.
+##
+## Original Developer:
+##
+##	Austin David France
+##	Ramesys (Contracting Services) Limited
+##	Mentor House
+##	Ainsworth Street
+##	Blackburn
+##	Lancashire
+##	BB1 6AY
+##	United Kingdom
+##  email: Austin.France@Ramesys.com
+##
+## Home Page:    http://richtext.sourceforge.net/
+## Support:      http://richtext.sourceforge.net/
+##
+################################################################################
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<style type="text/css">
+	BODY {
+		background-color: buttonface;
+	}
+	TD, INPUT {
+		font-family: "Sans Serif";
+		font-size: x-small;
+		vertical-align: middle;
+		cursor: hand;
+	}
+	TD.HOVER{
+		background-color : Fuchsia;
+	}
+
+
+	.dlg TD {
+		align: left;
+		height: 20;
+
+	}
+
+	.dlg INPUT {
+		border-top: 1px solid white;
+		border-left: 1px solid white;
+		border-bottom: 1px solid black;
+		border-right: 1px solid black;
+		font-size: x-small;
+		width: 60; }
+</style>
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<!--
+var chars = ["!","&quot;","#","$","%","&","'","(",")","*","+","-",".","/","0","1","2","3","4","5","6","7","8","9",":",";","&lt;","=","&gt;","?","@","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","[","]","^","_","`","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","{","|","}","~","&euro;","ƒ","„","…","†","‡","ˆ","\‰","Š","‹","Œ","&lsquo;","&rsquo;","&rsquo;","&ldquo;","&rdquo;","•","&ndash;","&mdash;","˜","™","š","›","œ","Ÿ","&iexcl;","&cent;","&pound;","&pound;","&curren;","&yen;","&brvbar;","&sect;","&uml;","&copy;","&ordf;","&laquo;","&not;","­","&reg;","&macr;","&deg;","&plusmn;","&sup2;","&sup3;","&acute;","&micro;","&para;","&middot;","&cedil;","&sup1;","&ordm;","&raquo;","&frac14;","&frac12;","&frac34;","&iquest;","&Agrave;","&Aacute;","&Acirc;","&Atilde;","&Auml;","&Aring;","&AElig;","&Ccedil;","&Egrave;","&Eacute;","&Ecirc;","&Euml;","&Igrave;","&Iacute;","&Icirc;","&Iuml;","&ETH;","&Ntilde;","&Ograve;","&Oacute;","&Ocirc;","&Otilde;","&Ouml;","&times;","&Oslash;","&Ugrave;","&Uacute;","&Ucirc;","&Uuml;","&Yacute;","&THORN;","&szlig;","&agrave;","&aacute;","&acirc;","&atilde;","&auml;","&aring;","&aelig;","&ccedil;","&egrave;","&eacute;","&ecirc;","&euml;","&igrave;","&iacute;","&icirc;","&iuml;","&eth;","&ntilde;","&ograve;","&oacute;","&ocirc;","&otilde;","&ouml;","&divide;","&oslash;","&ugrave;","&uacute;","&ucirc;","&uuml;","&uuml;","&yacute;","&thorn;","&yuml;"]
+
+function tab(w,h) {
+	var strtab = ["<TABLE border='1' cellspacing='0' cellpadding='0' align='center' bordercolor='#dcdcdc' bgcolor='#C0C0C0'>"]
+	var k = 0;
+	for(var i = 0; i < w; i++) {
+		strtab[strtab.length] = "<TR>";
+		for(var j = 0; j < h; j++) {
+			strtab[strtab.length] = "<TD width='14' align='center' onClick='getchar(this)' onMouseOver='hover(this,true)' onMouseOut='hover(this,false)'>"+(chars[k]||'')+"</TD>";
+			k++;
+		}
+		strtab[strtab.length]="</TR>";
+	}
+	strtab[strtab.length] = "</TABLE>";
+	return strtab.join("\n");
+}
+
+function hover(obj,val) {
+	if (!obj.innerHTML) {
+		obj.style.cursor = "default";
+		return;
+	}
+	obj.style.border = val ? "1px solid black" : "1px solid #dcdcdc";
+	//obj.style.backgroundColor = val ? "black" : "#C0C0C0"
+	//obj.style.color = val ? "white" : "black";
+}
+function getchar(obj) {
+	if(!obj.innerHTML) return;
+	window.returnValue = obj.innerHTML || "";
+	window.close();
+}
+function cancel() {
+	window.returnValue = null;
+	window.close();
+}
+//-->
+</SCRIPT>
+<title>Insert Character</title>
+</head>
+
+<body>
+<table class="dlg" cellpadding="0" cellspacing="2" width="100%" height="100%">
+<tr><td><table width="100%"><tr><td nowrap>Choose Character</td><td valign="middle" width="100%"><hr width="100%"></td></tr></table></td></tr>
+<tr>
+<td>
+    <table border="0" align="center" cellpadding="5">
+      <tr valign="top">
+        <td>
+
+       <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+       <!--
+       document.write(tab(7,32))
+       //-->
+       </SCRIPT>
+
+        </td>
+      </tr>
+    </table>
+
+    </td>
+  </tr>
+<tr><td><table width="100%"><tr><td valign="middle" width="90%"><hr width="100%"></td></tr></table></td></tr>
+<tr><td align="right">
+	<input type="button" value="Close" onclick="cancel()"></td></tr>
+</table>
+
+
+</body>
+</html>

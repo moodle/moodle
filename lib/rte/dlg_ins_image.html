@@ -1,0 +1,196 @@
+<!--
+#################################################################################
+##
+## HTML Text Editing Component for hosting in Web Pages
+## Copyright (C) 2001  Ramesys (Contracting Services) Limited
+##
+## This library is free software; you can redistribute it and/or
+## modify it under the terms of the GNU Lesser General Public
+## License as published by the Free Software Foundation; either
+## version 2.1 of the License, or (at your option) any later version.
+##
+## This library is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## Lesser General Public License for more details.
+##
+## You should have received a copy of the GNU LesserGeneral Public License
+## along with this program; if not a copy can be obtained from
+##
+##    http://www.gnu.org/copyleft/lesser.html
+##
+## or by writing to:
+##
+##    Free Software Foundation, Inc.
+##    59 Temple Place - Suite 330,
+##    Boston,
+##    MA  02111-1307,
+##    USA.
+##
+## Original Developer:
+##
+##	Austin David France
+##	Ramesys (Contracting Services) Limited
+##	Mentor House
+##	Ainsworth Street
+##	Blackburn
+##	Lancashire
+##	BB1 6AY
+##	United Kingdom
+##  email: Austin.France@Ramesys.com
+##
+## Home Page:    http://richtext.sourceforge.net/
+## Support:      http://richtext.sourceforge.net/
+##
+#################################################################################
+## Authors & Contributers:
+##
+##	 BC		Bill Chalmers		[bill_paula@btinternet.com]
+##			 Font Selection
+##
+## History:
+##
+##   BC      24-07-2002
+##         Billy fixed the bug relating to picking up the current image
+##         I fixed a small bug as a result of the above fix, nothing wrong
+##         with billys code, if statment evaluated to true even though it shouldn't
+##         also fixed the border attribute not being applied on insert of image
+##         and picking up all the properties of an image being edited.
+#################################################################################
+-->
+<html>
+<head>
+<meta name=vs_targetSchema content="HTML 4.0">
+<meta name="GENERATOR" content="Microsoft Visual Studio 7.0">
+<LINK rel="stylesheet" type="text/css" href="dialog.css">
+<script language="JavaScript">
+function attr(name, value) {
+	if (!value || value == "") return "";
+	return ' ' + name + '="' + value + '"';
+}
+function insertImage() {
+	window.returnValue = '<IMG' + attr("alt", alt.value) + attr("src", url.value)
+							+ attr("align", align[align.selectedIndex].value)
+							+ ((width.value)?attr("width", width.value):"")
+							+ ((height.value)?attr("height", height.value):"")
+							+ ((vspace.value)?attr("vspace", vspace.value):"")
+							+ ((hspace.value)?attr("hspace", hspace.value):"")
+							+ ((border.value)?attr("border", border.value):attr("border",0))
+							+ '/>';
+	window.close();
+}
+function cancel() {
+	window.returnValue = null;
+	window.close();
+}
+
+
+function setDefaults() {
+   if (dialogArguments.RichEditor.selectedImage != null) {
+      image = dialogArguments.RichEditor.selectedImage;
+      editmode = true;
+      fm = document.forms[0];
+      if (image.src)
+	  	 url.value = image.src
+	  if  (image.alt)
+	  	 alt.value = image.alt
+	  if (image.width)
+         width.value = image.width
+      if (image.height)
+         height.value = image.height
+      if (image.vspace)
+         vspace.value = image.vspace
+      if (image.hspace)
+         hspace.value = image.hspace
+      if (image.border)
+         border.value = image.border
+      if (image.align) {
+         for (var i = 0; i < align.options.length; i++) {
+            if (align.options[i].value == image.align) {
+               align.options[i].selected = true;
+               break;
+            }
+         }        
+      }
+   }
+}
+
+function updateImage() {
+   image.width = width.value;
+   image.height = height.value;
+   image.vspace = vspace.value;
+   image.hspace = hspace.value;
+   image.border = border.value;
+   image.align = align.options[ align.selectedIndex ].value;
+   window.returnValue = null
+   window.close();
+}
+
+var image = null     // selected image if there is one
+
+// we need to set 
+var editmode = false // are we editing an image?
+if (dialogArguments.RichEditor.selectedImage != null) {
+   editmode = true;
+   document.write("<title>Edit Image</title>");
+} else {
+   document.write("<title>Insert Image</title>");
+
+}
+
+</script>
+
+</head>
+
+<body topmargin="0" leftmargin="0" style="border: 0; margin: 0;" scroll="no" onLoad="setDefaults()">
+<table class="dlg" cellpadding="0" cellspacing="2" width="100%" height="100%">
+<tr><td colspan="5"><table width="100%"><tr><td nowrap>Picture Info&nbsp;</td><td valign="middle" width="100%"><hr width="100%"></td></tr></table></td></tr>
+<tr>
+ <td width="10">&nbsp;</td>
+ <td width="70">Url:</td><td valign="middle" colspan="3"><input type="text" name="url" value="images/em.icon.smile.gif" size="60"></td>
+</tr>
+<tr>
+ <td height="10">&nbsp;</td>
+ <td width="70">Alt Text:</td><td valign="middle"><input type="text" name="alt" value="" size="25"></td>
+ <td width="70">Align:</td><td valign="middle">
+	<select name="align">
+		<option value="left">Left</option>
+		<option value="absBottom">Abs Bottom</option>
+		<option value="absMiddle">Abs Middle</option>
+		<option value="baseline">Baseline</option>
+		<option value="bottom">Bottom</option>
+		<option value="middle">Middle</option>
+		<option value="right">Right</option>
+		<option value="textTop">Text Top</option>
+		<option value="top">Top</option>
+	</select></td>
+</tr>
+ <td>&nbsp;</td>
+ <td colspan="4" align="center" valign="top">
+ <table width="300" border="0" align="left"><tr>
+ <td width="70">Border:</td><td> <input type="text" name="border" value="0" size="2"></td>
+ <td width="70">Width:</td><td valign="middle"><input type="text" name="width" value="" size="3"></td>
+ <td width="70">Height:</td><td valign="middle"><input type="text" name="height" value="" size="3"></td>
+ <td width="70">Vspace:</td><td valign="middle"><input type="text" name="vspace" value="0" size="2"></td>
+ <td width="70">Hspace:</td><td valign="middle"><input type="text" name="hspace" value="0" size="2"></td>
+ </tr></table>
+ </td>
+
+
+</tr>
+<tr><td colspan="5"><table width="100%"><tr><td valign="middle" width="100%" colspan="2"><hr width="100%"></td></tr></table></td></tr>
+<tr>
+ <td>&nbsp;</td>
+ <td><td colspan="4" align="right">
+<script language="JavaScript">
+if (editmode) {
+   document.write("<input class=\"button\" type=\"button\" value=\"Update\" title=\"Update Image\" onclick=\"updateImage()\">");
+} else {
+   document.write("<input class=\"button\" type=\"button\" value=\"Insert\" title=\"Insert Image\" onclick=\"insertImage()\">");
+}
+</script>
+<input class="button" type="button" value="Cancel" title="Cancel Dialog" onclick="cancel()"></td>
+</tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,90 @@
+Version DEV
+
+- Added multi-lingual support.  The editor detects the userLanguage
+  of the browser and uses this select the relevent language from the
+  new rte_lang.js module which is then applied to the main editor
+  window.  This is a work in progress, dialog need translation also.
+
+- Re-implemented Undo/Redo (history) option this time using the
+  document.execCommand('Undo'/'Redo') options which although 
+  documented as not implemented do work in IE 6.0.
+
+Version 0.2.3
+
+- Improved option handling to maintain an array of options that are
+  not "features" and added a getOption() private method to obtain
+  the current option value.
+
+- The saveHistory() function is now a no-op if the history option is
+  not enabled.  Previously it was still doing all the buffer saving
+  behind the scenes.  This should improve the performance of the
+  editor.
+
+- Corrected version and company information in the about dialog.
+
+- Remove showHistory() status (debug) messages
+
+- After set editor options, apply them.  In most circumstances the
+  options property is set after the editor has initialised and so
+  the options need to be processed as the options are set not
+  when the editor is initialised.
+
+- Added numerous options:
+    styleBar=yes|no      default yes
+    style=yes|no         default yes
+    font=yes|no          default yes
+    fontSize=yes|no      default yes
+    colour=yes|no        default yes
+    dragdrop=yes|no      default no
+
+- Added code to disable drag and drop in the editor.  Previously
+  it was possible to drag a toolbar button and drop a copy of it
+  into the editor window.  Now, nothing can be dragged from the
+  toolbar and nothing can be dropped into the editor window.
+  This does not disable any functionality because the editor
+  window did not act as a drop target for objects from outside
+  of the IE control.  It was however possible to drag elements
+  from one page and drop them into the editor, this is now not
+  possible unless dragdrop=yes is specified.  However, the 
+  dragdrop handling is weak (non-existent) and so is disabled
+  by default.
+
+- Some minor cosmetic changes to the toolbar.
+
+- Added debug window functionality to aid development and support
+  of the editor.  Over time, diagnostic debugs will be added to
+  the editor code.
+
+- Default edit area to not editable (effectivly disabled) until
+  inisialisation of the editor is complete.
+
+- Added Full Justify Option
+
+- Re-worked font color/back color resetting (color none) so that
+  a) it worked and b) it only removes the fore/background color
+  and preserves the other formatting that bit of text may have.
+
+- Disable post button when in view source mode.  The post button
+  is greyed out whilst disabled.
+
+Version 0.2.2
+=============
+- Disabled buggy history and view source options by default in preparation 
+  for official 0.2 release (to be officially released in a later release).
+
+- Added editor.options property to allow optional functionality to be 
+  enabled/disabled. 
+ 
+Version 0.2.1
+=============
+- Corrected a bug in test_embedded.asp (JavaScript error).
+ 
+Version 0.2.0
+=============
+- Added support for Custom Fields
+- Beta versions of undo-history and view source options added
+ 
+Version 0.1
+===========
+- Original release of The Richtext Editor  
+

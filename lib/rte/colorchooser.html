@@ -1,0 +1,178 @@
+<!--
+#################################################################################
+##
+## HTML Text Editing Component for hosting in Web Pages
+## Copyright (C) 2001  Ramesys (Contracting Services) Limited
+## 
+## This library is free software; you can redistribute it and/or
+## modify it under the terms of the GNU Lesser General Public
+## License as published by the Free Software Foundation; either
+## version 2.1 of the License, or (at your option) any later version.
+##
+## This library is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## Lesser General Public License for more details.
+##
+## You should have received a copy of the GNU LesserGeneral Public License
+## along with this program; if not a copy can be obtained from 
+##
+##    http://www.gnu.org/copyleft/lesser.html
+##
+## or by writing to:
+##
+##    Free Software Foundation, Inc.
+##    59 Temple Place - Suite 330,
+##    Boston,
+##    MA  02111-1307,
+##    USA.
+## 
+## Original Developer:
+##
+##	Austin David France
+##	Ramesys (Contracting Services) Limited
+##	Mentor House
+##	Ainsworth Street
+##	Blackburn
+##	Lancashire
+##	BB1 6AY
+##	United Kingdom
+##  email: Austin.France@Ramesys.com
+##
+## Home Page:    http://richtext.sourceforge.net/
+## Support:      http://richtext.sourceforge.net/
+## 
+## BC	Bill Chalmers	bill_paula@btinternet.com
+##
+## History:
+##
+##	 BC		15-07-2002	
+##			Changed the font selection to web-safe palette 
+##			and removed the style on hover
+##
+##	BC		24-07-2002
+##			Small Enhancement to the look and feel
+#################################################################################
+-->
+<html>
+<head>
+<meta name=vs_targetSchema content="HTML 4.0">
+<meta name="GENERATOR" content="Microsoft Visual Studio 7.0">
+<style type="text/css">
+TABLE.colorChooser { background-color: buttonface; border:0}
+.colorChooser TD { border: 1px inset buttonface; cursor: hand; }
+.colorChooserLabel TD { width: 100%; border: 0;
+	font-family: "MS Sans Serif"; font-size: xx-small; vertical-align: middle;
+}
+TD.colorNone { font-family: "MS Sans Serif"; font-size: xx-small; vertical-align: middle; 
+				text-align: center; border: 1px outset buttonface!important; }
+</style>
+</head>
+
+<body topmargin="0" leftmargin="0" style="border: 0; margin: 0;" onload="initialise()">
+<script language="JavaScript">
+var public_description = new ColorMenu();
+
+function ColorMenu() {
+}
+
+function initialise(){
+c=main.insertCell(); //insert cell & set porperties
+c.id ="display"; 
+c.rowSpan="3"; 
+c.colSpan="6";
+}
+
+function hover(on) {
+	var el = window.event.srcElement;
+	var disp = document.getElementById("display"); //get display cell
+	if (el && el.nodeName == "IMG") {
+		if (on) {
+			disp.bgColor=el.parentElement.title; //set display cell bgcolor to hovered
+			// removed the style on hover as too slow
+				} 
+									}
+}
+function choose(on) {
+	var el = window.event.srcElement;
+	if (el && el.nodeName == "IMG") {
+		window.external.raiseEvent("onselect", el.parentElement.title);
+			}
+	if (el && el.nodeName == "TD") {
+		window.external.raiseEvent("onselect", null);
+	}
+}
+
+</script>
+<table class="colorChooser" cellpadding="0" cellspacing="0" onmouseover="hover(true)" onmouseout="hover(false)" onclick="choose()">
+<tr id="main" class="colorChooserLabel"> 
+    <td colspan="12">Standard Colors</td>
+  </tr>
+<tr>
+    <td bgcolor="#000000" title="#000000"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#333333" title="#333333"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#666666" title="#666666"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#999999" title="#999999"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#CCCCCC" title="#CCCCCC"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#FFFFFF" title="#FFFFFF"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#FF0000" title="#FF0000"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#00FF00" title="#00FF00"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#0000FF" title="#0000FF"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#FFFF00" title="#FFFF00"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#00FFFF" title="#00FFFF"><img src="spacer.gif" width="12" height="12"></td>
+    <td bgcolor="#FF00FF" title="#FF00FF"><img src="spacer.gif" width="12" height="12"></td>
+</tr>
+<tr class="colorChooserLabel"><td colspan="12">Web Safe</td></tr>
+<tr>
+<script language=JavaScript>
+
+				d = new Array();
+				d[1] = "00";
+				d[2] = "33";
+				d[3] = "66";
+				d[4] = "99";
+				d[5] = "CC";
+				d[6] = "FF";				
+				
+								
+				for (c=1;c<=6;c++){
+										
+					for (a=1;a<=3;a++){					
+							
+						for (b=1;b<=6;b++){							
+							
+							colour = d[a] + d[b] + d[c];
+							
+							 document.write("<td bgcolor=\"#"+colour+"\" title=\"#"+colour+"\"><img src=\"images\\spacer.gif\" width=12 height=12></td>\n");
+						    if (a==3 && b==6){
+							document.write("</tr>\n<tr>\n");
+							}
+					
+						}
+					}
+				}				
+					for (c=1;c<=6;c++){
+										
+					for (a=4;a<=6;a++){					
+							
+						for (b=1;b<=6;b++){							
+							
+							colour = d[a] + d[b] + d[c];
+							
+							 document.write("<td bgcolor=\"#"+colour+"\" title=\"#"+colour+"\"><img src=\"images\\spacer.gif\" width=12 height=12></td>\n");
+						    if (a==6 && b==6){
+							document.write("</tr>\n<tr>\n");
+							}
+					
+						}
+					}
+				}
+					
+				</script>
+			
+				
+</tr>
+<tr><td colspan="18" class="colorNone" title="None" align="right">None</td></tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,97 @@
+/*******************************************************************************
+**
+** HTML Text Editing Component for hosting in Web Pages
+** Copyright (C) 2001  Ramesys (Contracting Services) Limited
+** 
+** This library is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
+**
+** This library is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+** Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU LesserGeneral Public License
+** along with this program; if not a copy can be obtained from 
+**
+**    http://www.gnu.org/copyleft/lesser.html
+**
+** or by writing to:
+**
+**    Free Software Foundation, Inc.
+**    59 Temple Place - Suite 330,
+**    Boston,
+**    MA  02111-1307,
+**    USA.
+** 
+** Original Developer:
+**
+**	Austin David France
+**	Ramesys (Contracting Services) Limited
+**	Mentor House
+**	Ainsworth Street
+**	Blackburn
+**	Lancashire
+**	BB1 6AY
+**	United Kingdom
+**  email: Austin.France@Ramesys.com
+**
+** Home Page:    http://richtext.sourceforge.net/
+** Support:      http://richtext.sourceforge.net/
+** 
+*******************************************************************************/
+
+.ccp_paramvalue {
+	color : #0000FF ;
+	font-family : "Courier New";
+	font-size : 13px;
+}
+.ccp_htmlcomment {
+	color : #808080 ;
+	font-family : "Courier New";
+	font-size : 12px;
+	font-style : italic;
+}
+.ccp_tag {
+	color : #000080;
+	font-family : "Courier New";
+	font-size : 12px;
+}
+.ccp_img {
+	color : #800080;
+	font-family : "Courier New";
+	font-size : 12px;
+}
+.ccp_A {
+	color : #008000;
+	font-family : "Courier New";
+	font-size : 12px;
+}
+.ccp_form {
+	color : #FF8000;
+	font-family : "Courier New";
+	font-size : 12px;
+}
+.ccp_table {
+	color : #008080;
+	font-family : "Courier New";
+	font-size : 12px;
+}
+.ccp_entity {
+	color : #000000;
+	font-family : "Courier New";
+	font-size : 12px;
+	font-weight : bold;
+}
+.ccp_styletag {
+	color : #800080;
+	font-family : "Courier New";
+	font-size : 12px;
+}
+.ccp_styleitem {
+	color : #800080;
+	font-family : "Courier New";
+	font-size : 12px;
+}

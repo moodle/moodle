@@ -1,0 +1,92 @@
+<!--
+#################################################################################
+##
+## HTML Text Editing Component for hosting in Web Pages
+## Copyright (C) 2001  Ramesys (Contracting Services) Limited
+## 
+## This library is free software; you can redistribute it and/or
+## modify it under the terms of the GNU Lesser General Public
+## License as published by the Free Software Foundation; either
+## version 2.1 of the License, or (at your option) any later version.
+##
+## This library is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## Lesser General Public License for more details.
+##
+## You should have received a copy of the GNU LesserGeneral Public License
+## along with this program; if not a copy can be obtained from 
+##
+##    http://www.gnu.org/copyleft/lesser.html
+##
+## or by writing to:
+##
+##    Free Software Foundation, Inc.
+##    59 Temple Place - Suite 330,
+##    Boston,
+##    MA  02111-1307,
+##    USA.
+## 
+## Original Developer:
+##
+##	Austin David France
+##	Ramesys (Contracting Services) Limited
+##	Mentor House
+##	Ainsworth Street
+##	Blackburn
+##	Lancashire
+##	BB1 6AY
+##	United Kingdom
+##  email: Austin.France@Ramesys.com
+##
+## Home Page:    http://richtext.sourceforge.net/
+## Support:      http://richtext.sourceforge.net/
+## 
+#################################################################################
+-->
+<html>
+<head>
+<link rel="STYLESHEET" type="text/css" href="rte.css">
+
+
+</head>
+
+<body>
+<input type="button" value="Edit" onClick="edit()">
+<hr>
+<div id="data" height="200">
+
+<FORM name=exampleform>
+<P><INPUT size=33 value=22 name=text> <INPUT type=button value=22 name=text> </P></FORM>
+<TABLE cellSpacing=0 cellPadding=0 align=left border=2>
+<TBODY>
+<TR>
+<TH>
+<TD>header </TD></TH>
+<TR vAlign=center align=middle>
+<TD>td 1 </TD></TR></TBODY></TABLE>
+<UL>
+<LI>&nbsp; </LI></UL>
+<P>&nbsp;</P>
+<UL>
+<LI>These are some formatting examples</LI>
+<LI><A target=_new href="#">These are some formatting examples</A></LI></UL>
+
+<!--          html  comment       ---------    -->
+  
+  
+  
+  
+  
+</div>
+
+<script language="JavaScript">
+	function edit() {
+		var edit={}
+		edit.src = data.innerHTML;
+		edit.styledata=document.styleSheets
+		window.showModalDialog("popup_editor.html", edit,"dialogWidth:800px;dialogHeight:600px;help:no;status:no;scroll:no;resizable:yes;")
+	}
+</script>
+</body>
+</html>

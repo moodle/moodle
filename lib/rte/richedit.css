@@ -1,0 +1,219 @@
+/*******************************************************************************
+**
+** HTML Text Editing Component for hosting in Web Pages
+** Copyright (C) 2001  Ramesys (Contracting Services) Limited
+** 
+** This library is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
+**
+** This library is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+** Lesser General Public License for more details.
+**
+** You should have received a copy of the GNU LesserGeneral Public License
+** along with this program; if not a copy can be obtained from 
+**
+**    http://www.gnu.org/copyleft/lesser.html
+**
+** or by writing to:
+**
+**    Free Software Foundation, Inc.
+**    59 Temple Place - Suite 330,
+**    Boston,
+**    MA  02111-1307,
+**    USA.
+** 
+** Original Developer:
+**
+**	Austin David France
+**	Ramesys (Contracting Services) Limited
+**	Mentor House
+**	Ainsworth Street
+**	Blackburn
+**	Lancashire
+**	BB1 6AY
+**	United Kingdom
+**  email: Austin.France@Ramesys.com
+**
+** Home Page:    http://richtext.sourceforge.net/
+** Support:      http://richtext.sourceforge.net/
+** 
+*******************************************************************************/
+
+body { width: 100%; border: 1px inset buttonface; border-left: 0px; background-color: buttonface }
+
+table#editor { width: 100%; height: 100%; border: 0px; visibility: hidden; }
+
+td.textedit { }
+
+.textedit div.document {
+	height: 150;
+	font-family: "Times New Roman";
+	background-color: window;
+	border: 2px inset buttonface; padding:5;
+}
+
+/* rebar styles ***************************************************************/
+td.rebar { padding:0; padding-bottom:2; padding-top:2;
+	font-family: "MS Sans Serif"; font-size: xx-small; vertical-align: middle;
+}
+
+td.spacer {
+	border-top: 1px solid buttonhighlight;
+	padding: 0; margin: 0; height: 4;
+}
+
+.rebar span.toolbar {
+	border-top: 1px solid buttonhighlight;
+	border-left: 1px solid buttonhighlight;
+	border-bottom: 1px solid buttonshadow;
+	border-right: 1px solid buttonshadow;
+	padding: 0; margin: 0; padding-bottom:1; padding-top:1;
+}
+
+.rebar span.spacer { width: 2px; }
+
+.rebar span.start {
+	margin:0;
+	background-color: buttonface;
+	border-top: 1px solid buttonhighlight;
+	border-left: 1px solid buttonhighlight;
+	border-bottom: 1px solid buttonshadow;
+	border-right: 1px solid buttonshadow;
+	width: 3px;
+	height: 18px;
+}
+
+.rebar span.label { border:0; position:relative; top: -2; margin-left: 3; }
+
+.rebar span.sep {
+	margin:0;
+	background-color: buttonface;
+	border-top: 1px solid buttonshadow;
+	border-left: 1px solid buttonshadow;
+	border-bottom: 1px solid buttonhighlight;
+	border-right: 1px solid buttonhighlight;
+	width: 2px;
+	height: 18px;
+}
+
+.rebar select {
+	font-size: 11px;
+	margin-top: 1; margin-bottom: 1;
+	width : 100px;
+}
+
+.rebar .fontselect  {
+	font-size: 11px;
+	margin-top: 1; margin-bottom: 1;
+	width : 200px;
+}
+
+.rebar option { border: 5px solid red; }
+
+.rebar span.field {
+	border-top: 1px solid buttonhighlight;
+	border-left: 1px solid buttonhighlight;
+	border-bottom: 1px solid buttonshadow;
+	border-right: 1px solid buttonshadow;
+	padding: 0; margin: 0; padding-bottom:1; padding-top:1;
+}
+
+.rebar .field span.label {
+	margin-left: 0;
+	padding-left: 8; width: 60;
+}
+
+.rebar .field span.start {
+	position: relative; top: 1;
+
+}
+
+.rebar .field input.field {
+	border-top: 1px solid buttonshadow;
+	border-left: 1px solid buttonshadow;
+	border-bottom: 1px solid buttonhighlight;
+	border-right: 1px solid buttonhighlight;
+	height: 20px; margin: 0px; 
+	margin-bottom: -1px;
+}
+
+.rebar img {
+	border: 1px solid buttonface; margin:0; padding:1;
+	cursor: hand;
+}
+
+.rebar img.hover {
+	border-top: 1px solid buttonhighlight;
+	border-left: 1px solid buttonhighlight;
+	border-bottom: 1px solid buttonshadow;
+	border-right: 1px solid buttonshadow;
+}
+
+.rebar img.down {
+	border-bottom: 1px solid buttonhighlight;
+	border-right: 1px solid buttonhighlight;
+	border-top: 1px solid buttonshadow;
+	border-left: 1px solid buttonshadow;
+}
+
+.rebar img.disabled {
+	border: 1px solid buttonface; margin:0; padding:0;
+	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=30);
+	cursor: normal;
+}
+
+.rebar img.spacer {
+	cursor: normal;
+}
+
+/* table control styles ***************************************************************/
+td.tbl { padding:0; padding-bottom:0; padding-top:0;
+	font-family: "MS Sans Serif"; font-size: xx-small; vertical-align: middle;
+}
+
+td.spacer {
+	border-top: 1px solid buttonhighlight;
+	padding: 0; margin: 0; height: 4;
+}
+
+.tbl img {
+	border: 1px solid buttonface; margin:0; padding:1;
+	cursor: hand;
+}
+
+.tbl img.hover {
+	border-top: 1px solid buttonhighlight;
+	border-left: 1px solid buttonhighlight;
+	border-bottom: 1px solid buttonshadow;
+	border-right: 1px solid buttonshadow;
+}
+
+.tbl img.down {
+	border-bottom: 1px solid buttonhighlight;
+	border-right: 1px solid buttonhighlight;
+	border-top: 1px solid buttonshadow;
+	border-left: 1px solid buttonshadow;
+}
+
+.tbl img.disabled {
+	border: 1px solid buttonface; margin:0; padding:0;
+	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=30);
+	cursor: normal;
+}
+
+.tbl img.spacer {
+	cursor: normal;
+}
+
+
+/* control styles ***************************************************************/
+object#color {
+	position: absolute;
+	width:252; height: 225;
+	display: none;
+	background-color: white; border: 1px outset buttonface
+}
