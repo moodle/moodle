@@ -145,15 +145,15 @@
         if ($users = get_records_sql("SELECT * from user WHERE username <> 'guest' 
                                       AND deleted <> '1' ORDER BY $sort $dir")) {
 
-            foreach ($users as $user) {
-                $user->country = $COUNTRIES[$user->country];
+            foreach ($users as $key => $user) {
+                $users[$key]->country = $COUNTRIES[$user->country];
             }
             if ($sort == "country") {  // Need to resort by full country name, not code
                 foreach ($users as $user) {
                     $susers[$user->country] = $user;
                 }
                 $users = $susers;
-                asort($users);
+                ksort($users);
             }
 
             print_heading(get_string("chooseuser"));
