@@ -48,11 +48,13 @@ function s10_rfc_1918_ip($in) {
 
 function stuffanalyze($stuff) {
 
-$stuff2[0] = array_values(preg_grep ("/CITY:/", $stuff)) or die("Could not find element CITY");
-$stuff2[1] = array_values(preg_grep ("/STATE:/", $stuff)) or die("Could not find element STATE");
-$stuff2[2] = array_values(preg_grep ("/COUNTRY:/", $stuff)) or die("Could not find element COUNTRY");
-$stuff2[3] = array_values(preg_grep ("/LAT:/", $stuff)) or die("Could not find element LAT");
-$stuff2[4] = array_values(preg_grep ("/LONG:/", $stuff)) or die("Could not find element LONG");
+$badstuff = array("bad", "bad", "bad", "bad", "bad");
+
+$stuff2[0] = array_values(preg_grep ("/CITY:/", $stuff)) or return $badstuff;
+$stuff2[1] = array_values(preg_grep ("/STATE:/", $stuff)) or return $badstuff;
+$stuff2[2] = array_values(preg_grep ("/COUNTRY:/", $stuff)) or return $badstuff;
+$stuff2[3] = array_values(preg_grep ("/LAT:/", $stuff)) or return $badstuff;
+$stuff2[4] = array_values(preg_grep ("/LONG:/", $stuff)) or return $badstuff;
 
 // all the stuff2 values are actually arrays, making the following code look like crap
 
@@ -68,13 +70,9 @@ for ($count = 0; $count < count($stuff2); $count++) {
  } else {
 
    // if no data was found 
-   $stuff2 = array("bad", "bad", "bad", "bad", "bad");
+   return $badstuff;
 
  }
-
-$count = 0;
-
- return $stuff2;
 
 }
 
