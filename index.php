@@ -12,11 +12,11 @@
     define('BLOCK_R_MIN_WIDTH', 160);
     define('BLOCK_R_MAX_WIDTH', 210);
 
-    require_once("config.php");
-    require_once("course/lib.php");
-    require_once('lib/blocklib.php');
-    require_once("mod/resource/lib.php");
-    require_once("mod/forum/lib.php");
+    require_once('config.php');
+    require_once($CFG->dirroot.'course/lib.php');
+    require_once($CFG->dirroot.'lib/blocklib.php');
+    require_once($CFG->dirroot.'mod/resource/lib.php');
+    require_once($CFG->dirroot.'mod/forum/lib.php');
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
