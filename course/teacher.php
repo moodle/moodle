@@ -95,7 +95,7 @@
 
 /// Add a teacher if one is specified
 
-    if (!empty($_GET['add'])) {
+    if (!empty($_GET['add']) and confirm_sesskey()) {
         if (! add_teacher($add, $course->id)) {
             error("Could not add that teacher to this course!");
         }
@@ -103,9 +103,9 @@
 
 /// Remove a teacher if one is specified.
 
-    if (!empty($_GET['remove'])) {
+    if (!empty($_GET['remove']) and confirm_sesskey()) {
         if (! remove_teacher($remove, $course->id)) {
-            error("Could not add that teacher to this course!");
+            error("Could not remove that teacher from this course!");
         }
     }
 
@@ -150,7 +150,7 @@
                 $editall = choose_from_menu ($editmenu, "e$teacher->id", $teacher->editall, "", "", "", true);
             }
     
-            $removelink = "<a href=\"teacher.php?id=$course->id&amp;remove=$teacher->id\">$strremoveteacher</a>";
+            $removelink = "<a href=\"teacher.php?id=$course->id&amp;remove=$teacher->id&amp;sesskey=$USER->sesskey\">$strremoveteacher</a>";
 
             if (!$teacher->role) {
                 $teacher->role = $course->teacher;
@@ -201,7 +201,7 @@
 
 
         foreach ($users as $user) {
-            $addlink = "<a href=\"teacher.php?id=$course->id&amp;add=$user->id\">$straddteacher</a>";
+            $addlink = "<a href=\"teacher.php?id=$course->id&amp;add=$user->id&amp;sesskey=$USER->sesskey\">$straddteacher</a>";
             $picture = print_user_picture($user->id, $course->id, $user->picture, false, true);
             $table->data[] = array ($picture, fullname($user, true), $user->email, $addlink);
         }

@@ -115,8 +115,6 @@ define('PARAM_INTEGER', 0x02);
  * @return mixed
  */
 function required_param($varname, $options=PARAM_CLEAN) {
-/// This function will replace require_variable over time
-/// It returns a value for a given variable name.
 
     if (isset($_POST[$varname])) {       // POST has precedence
         $param = $_POST[$varname];
@@ -144,8 +142,6 @@ function required_param($varname, $options=PARAM_CLEAN) {
  * @return mixed
  */
 function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
-/// This function will replace both of the above two functions over time.
-/// It returns a value for a given variable name.
 
     if (isset($_POST[$varname])) {       // POST has precedence
         $param = $_POST[$varname];
@@ -168,10 +164,8 @@ function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
  * @return mixed
  */
 function clean_param($param, $options) {
-/// Given a parameter and a bitfield of options, this function
-/// will clean it up and give it the required type, etc.
 
-    if ($param == (int)$param) {         // It's just an integer
+    if ((string)$param == (string)(int)$param) {  // It's just an integer
         return (int)$param;
     }
 
@@ -187,15 +181,38 @@ function clean_param($param, $options) {
 }
 
 /**
- * Ensure that a variable is set or display error
+ * For security purposes, this function will check that the currently
+ * given sesskey (passed as a parameter to the script or this function)
+ * matches that of the current user.
  *
- * If $var is undefined display an error message using the {@link error()} function.
- * This function will soon be made obsolete by {@link parameter()}
+ * @param string $sesskey optionally provided sesskey
+ * @return boolean
+ */
+function confirm_sesskey($sesskey=NULL) {
+    global $USER;
+
+    if (empty($sesskey)) {
+        $sesskey = required_param('sesskey');  // Check script parameters
+    }
+
+    if (!isset($USER->sesskey)) {
+        return false;
+    }
+
+    return ($USER->sesskey === $sesskey);
+}
+
+
+/**
+ * Ensure that a variable is set
  *
- * @param mixed $var the variable which may not be set
+ * If $var is undefined throw an error, otherwise return $var.
+ * This function will soon be made obsolete by {@link required_param()}
+ *
+ * @param mixed $var the variable which may be unset
+ * @param mixed $default the value to return if $var is unset
  */
 function require_variable($var) {
-/// Variable must be present
     if (! isset($var)) {
         error('A required parameter was missing');
     }
@@ -206,19 +223,16 @@ function require_variable($var) {
  * Ensure that a variable is set
  *
  * If $var is undefined set it (by reference), otherwise return $var.
- * This function is very similar to {@link nvl()}
- * This function will soon be made obsolete by {@link parameter()}
+ * This function will soon be made obsolete by {@link optional_param()}
  *
  * @param mixed $var the variable which may be unset
  * @param mixed $default the value to return if $var is unset
  */
 function optional_variable(&$var, $default=0) {
-/// Variable may be present, if not then set a default
     if (! isset($var)) {
         $var = $default;
     }
 }
-
 
 /**
  * Set a key in global configuration
