@@ -314,6 +314,25 @@ function print_editing_switch($courseid) {
     }
 }
 
+function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value="") {
+    global $CFG, $THEME;
+
+    if ($richedit) {
+        echo "<object id=richedit style=\"BACKGROUND-COLOR: buttonface\"";
+        echo " data=\"$CFG->wwwroot/lib/rte/richedit.html\"";
+        echo " width=\"$width\" height=\"$height\" ";
+        echo " type=\"text/x-scriptlet\" VIEWASTEXT></object>";
+        echo "<TEXTAREA style=\"display:none\" NAME=\"$name\" ROWS=1 COLS=1>";
+        p($value);
+        echo "</TEXTAREA>";
+    } else {
+        echo "<TEXTAREA name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=virtual>";
+        p($value);
+        echo "</TEXTAREA>";
+    }
+}
+
+
 function update_course_icon($courseid) {
     global $CFG, $USER;
 

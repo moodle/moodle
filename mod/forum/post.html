@@ -18,15 +18,7 @@
      <? } ?>
     </TD>
     <td>
-    <? if ($usehtmleditor) { ?>
-        <object id="richedit" style="BACKGROUND-COLOR: buttonface" data="../../lib/rte/richedit.html"
-            width="595" height="400" type="text/x-scriptlet" VIEWASTEXT>
-        </object>
-        <TEXTAREA style="display:none" NAME="message" ROWS=1 COLS=50><? p($post->message) ?></TEXTAREA>
-     <? } else { ?>
-        <TEXTAREA name=message rows=15 cols=50 wrap="virtual"><? p($post->message) ?></TEXTAREA>
-     <? } ?>
-
+    <? print_textarea($usehtmleditor, 15, 50, 595, 400, "message", $post->message); ?>
     </td>
     <td rowspan=2>
     <FONT SIZE=1>
@@ -38,9 +30,7 @@
 <tr valign=top>
     <td align=right><P><B><? print_string("formattexttype"); ?>:</B></P></TD>
     <td>
-    <?PHP
-        $POST_FORMATS = format_text_menu();
-        choose_from_menu($POST_FORMATS, "format", $post->format, ""); ?>
+    <? choose_from_menu(format_text_menu(), "format", $post->format, ""); ?>
     </td>
     <td>
     &nbsp;

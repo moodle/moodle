@@ -1,12 +1,5 @@
 <FORM name="theform" method="post" <?=$onsubmit ?> action="edit.php">
-    <? if ($usehtmleditor) { ?>
-        <object id="richedit" style="BACKGROUND-COLOR: buttonface" data="../../lib/rte/richedit.html"
-            width="595" height="400" type="text/x-scriptlet" VIEWASTEXT>
-        </object>
-        <TEXTAREA style="display:none" NAME="text" ROWS=1 COLS=50><? p($entry->text) ?></TEXTAREA>
-     <? } else { ?>
-        <TEXTAREA NAME=text COLS=60 ROWS=20 WRAP="virtual"><? p($entry->text) ?></TEXTAREA>
-     <? } ?>
+    <? print_textarea($usehtmleditor, 20, 60, 595, 400, "text", $entry->text); ?>
 
 <? if ($usehtmleditor) { 
        helpbutton("richtext", get_string("helprichtext"));
