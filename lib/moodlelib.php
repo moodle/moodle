@@ -488,6 +488,23 @@ function get_user_timezone($tz = 99) {
 
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
 
+// Makes sure that $USER->sesskey exists, if $USER itself exists. It sets a new sesskey
+// if one does not already exist, but does not overwrite existing sesskeys. Returns the
+// sesskey string if $USER exists, or boolean false if not.
+function set_user_sesskey() {
+    global $USER;
+
+    if(!isset($USER)) {
+        return false;
+    }
+
+    if (empty($USER->sesskey)) {
+        $USER->sesskey = random_string(10);
+    }
+
+    return $USER->sesskey;
+}
+
 function require_login($courseid=0, $autologinguest=true) {
 /// This function checks that the current user is logged in, and optionally
 /// whether they are "logged in" or allowed to be in a particular course.
@@ -526,9 +543,7 @@ function require_login($courseid=0, $autologinguest=true) {
     }
 
     // Make sure the USER has a sesskey set up.  Used for checking script parameters.
-    if (empty($USER->sesskey)) {
-        $USER->sesskey = random_string(10);
-    }
+    set_user_sesskey();
 
     // Next, check if the user can be in a particular course
     if ($courseid) {

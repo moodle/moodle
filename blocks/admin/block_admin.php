@@ -49,7 +49,7 @@ class CourseBlock_admin extends MoodleBlock {
         }
 
         if (iscreator()) {
-            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/index.php?edit=on&sesskey='.$USER->sesskey.'">'.get_string('courses').'</a>';
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/index.php?edit=on&sesskey='.set_user_sesskey().'">'.get_string('courses').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/course.gif" height="16" width="16" alt="" />';
         }
 
