@@ -907,6 +907,10 @@ table.calendar-controls .next
 
 /* contents.php */
 
+.c0 {
+    vertical-align: top;
+}
+
 body#doc-contents h1 {
     font-size: 1em;
     margin: 1em 0px 0px 0px;
