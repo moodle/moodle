@@ -213,7 +213,7 @@
 
 /// Print out all the courses
 
-    if (!$courses = get_course_pages($category->id, "c.sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage)) {
+    if (!$courses = get_courses_page($category->id, "c.sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage)) {
         print_heading(get_string("nocoursesyet"));
 
     } else {
