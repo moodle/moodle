@@ -661,7 +661,7 @@
     elseif ($action == 'updateassessment') {
 
         $timenow = time();
-        $form = (object)$HTTP_POST_VARS;
+        $form = data_submitted();
 
         require_variable($aid);
         if (! $assessment = get_record("exercise_assessments", "id", $aid)) {
@@ -877,7 +877,7 @@
         }
 
         $timenow = time();
-        $form = (object)$HTTP_POST_VARS;
+        $form = data_submitted();
 
 
         // first do the (teacher's) assessment of the student's submission
