@@ -52,6 +52,7 @@
        "secureforms"              =>  false,
        "sessioncookie"            => "",
        "sessiontimeout"           =>  7200,
+       "showsiteparticipantslist" => 0,
        "slasharguments"           =>  1,
        "smtphosts"                => "",
        "smtppass"                 => "",

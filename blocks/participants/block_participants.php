@@ -27,8 +27,10 @@ class CourseBlock_participants extends MoodleBlock {
         $strgroups   = get_string('groups');
         $strgroupmy  = get_string('groupmy');
 
-        $this->content->items[]='<a title="'.get_string('listofallpeople').'" href="'.$CFG->wwwroot.'/user/index.php?id='.$this->course->id.'">'.get_string('participants').'</a>';
-        $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="">';
+        if ($this->course->category or $CFG->showsiteparticipantslist > 1 or ($CFG->showsiteparticipantslist == 1 and isteacher()) or isteacher(SITEID)) {
+            $this->content->items[]='<a title="'.get_string('listofallpeople').'" href="'.$CFG->wwwroot.'/user/index.php?id='.$this->course->id.'">'.get_string('participants').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="">';
+        }
 
         if ($this->course->groupmode or !$this->course->groupmodeforce) {
             if ($this->course->groupmode == VISIBLEGROUPS or isteacheredit($this->course->id)) {

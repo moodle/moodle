@@ -21,6 +21,15 @@
     }
 
     require_login($course->id);
+    
+    if (!$course->category) {
+        if (!$CFG->showsiteparticipantslist and !isteacher(SITEID)) {
+            notice(get_string('sitepartlist0'));
+        }
+        if ($CFG->showsiteparticipantslist < 2 and !isteacher()) {
+            notice(get_string('sitepartlist1'));
+        }
+    }
 
     add_to_log($course->id, "user", "view all", "index.php?id=$course->id", "");
 
