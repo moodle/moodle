@@ -472,7 +472,7 @@
         }
         $head = $strscale.",".$stractivities.",".$strtype.",".$stroptions;
         $table->head = explode(",",$head);
-        $size = "50%,20$,20%,10%";
+        $size = "50%,20%,20%,10%";
         $table->size = explode(",",$size);
         $align = "left,center,center,center";
         $table->align = explode(",",$align);
