@@ -3151,13 +3151,19 @@ function reset_password_and_mail($user) {
 
     $data->firstname = fullname($user);
     $data->sitename = $site->fullname;
-    $data->link = $CFG->wwwroot .'/login/confirm.php?p='. $user->secret .'&amp;s='. $user->username;
     $data->admin = fullname($from) .' ('. $from->email .')';
 
-    $message = get_string('emailconfirmation', '', $data);
     $subject = get_string('emailconfirmationsubject', '', $site->fullname);
 
-    $messagehtml = text_to_html($message, false, false, true);
+    /// Make the text version a normal link for normal people
+    $data->link = $CFG->wwwroot .'/login/confirm.php?p='. $user->secret .'&s='. $user->username;
+    $message = get_string('emailconfirmation', '', $data);
+
+    /// Make the HTML version more XHTML happy  (&amp;)
+    $data->link = $CFG->wwwroot .'/login/confirm.php?p='. $user->secret .'&amp;s='. $user->username;
+    $messagehtml = text_to_html(get_string('emailconfirmation', '', $data), false, false, true);
+
+    $user->mailformat = 1;  // Always send HTML version as well
 
     return email_to_user($user, $from, $subject, $message, $messagehtml);
 
