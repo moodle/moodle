@@ -437,7 +437,7 @@
             $strsize = get_string("size");
             $strmodified = get_string("modified");
 
-            echo '<table cellpadding="4">';
+            echo '<table cellpadding="4" cellspacing="1">';
             echo "<tr><th colspan=\"2\">$strname</th>". 
                      "<th align=\"right\" colspan=\"2\">$strsize</th>".
                      "<th align=\"right\">$strmodified</th>".
