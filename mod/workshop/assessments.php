@@ -214,7 +214,8 @@
 			}
 		
 		// there can be an assessment record (for teacher submissions), if there isn't...
-		if (!get_record("workshop_assessments", "submissionid", $submission->id, "userid", $USER->id)) {
+		if (!$assessment = get_record("workshop_assessments", "submissionid", $submission->id, "userid", 
+                    $USER->id)) {
 			$yearfromnow = time() + 365 * 86400;
 			// ...create one and set timecreated way in the future, this is reset when record is updated
 			$assessment->workshopid = $workshop->id;
