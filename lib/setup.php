@@ -26,6 +26,10 @@
     $db = &ADONewConnection();         
     $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname); 
 
+/// Set error reporting back to normal
+    error_reporting(7);   
+
+
 /// Load up any configuration from the config table
     
     if ($configs = get_records_sql("SELECT * FROM config")) {
@@ -38,13 +42,6 @@
         unset($config);
     }
 
-/// Set error reporting to whatever the admin has said they want
-
-    if (isset($CFG->errorlevel)) {
-        error_reporting((int)$CFG->errorlevel);   
-    } else {
-        error_reporting(7);   
-    }
 
 /// Location of standard files
 
@@ -55,6 +52,7 @@
     $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
     $CFG->moddata     = "moddata";
 
+
 /// Load up theme variables (colours etc)
 
     if (!isset($CFG->theme)) {
@@ -62,11 +60,13 @@
     }
     require("$CFG->dirroot/theme/$CFG->theme/config.php");
 
+
 /// Set language/locale of printed times (must be supported by OS)
 
     if (! setlocale ("LC_TIME", $CFG->locale)) {
         setlocale ("LC_TIME", $CFG->lang);        // Might work
     }
+
 
 /// The following is a hack to get around the problem of PHP installations
 /// that have "register_globals" turned off (default since PHP 4.1.0).
@@ -78,6 +78,7 @@
     if (isset($_SERVER)) { 
         extract($_SERVER);
     }
+
     
 /// Load up global environment variables
 

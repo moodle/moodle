@@ -50,21 +50,6 @@
     </TD>
 </TR>
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P>errorlevel:</TD>
-	<TD>
-    <? $options[15] = get_string("all");
-       $options[7] = get_string("normal");
-       $options[0] = get_string("none");
-
-       choose_from_menu ($options, "errorlevel", $config->errorlevel, "", "", "");
-       unset($options);
-    ?>
-    </TD>
-    <TD>
-    <? print_string("configerrorlevel") ?>
-    </TD>
-</TR>
-<TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>maxeditingtime:</TD>
 	<TD>
     <? $options[3600] = get_string("numminutes", "", 60);

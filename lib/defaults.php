@@ -15,8 +15,7 @@
        "slasharguments" =>  true,
        "proxyhost"      => "",
        "proxyport"      => "",
-       "maxeditingtime" =>  1800,
-       "errorlevel"     =>  7
+       "maxeditingtime" =>  1800
     );
 
 ?>
