@@ -598,7 +598,7 @@ function close_window_button($name='closewindow') {
     echo '<!--' . "\n";
     echo "document.write('<form>');\n";
     echo "document.write('<input type=\"button\" onclick=\"self.close();\" value=\"".get_string("closewindow")."\" />');\n";
-    echo "document.write('</form>');\n";
+    echo "document.write('<\/form>');\n";
     echo '-->' . "\n";
     echo '</script>' . "\n";
     echo '<noscript>' . "\n";
