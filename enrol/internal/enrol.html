@@ -14,26 +14,25 @@
 
 
       <form name="form" method="post" action="enrol.php">
-        <table align="center">
+        <table align="center" width="100%">
           <tr>
-            <td align="right"><p><?php print_string("enrolmentkey") ?>:</p></td>
+            <td align="right"><?php print_string("enrolmentkey") ?>:</td>
             <td>
-              <input type="password" name="password" size="20" value="<?php p($password) ?>" >
-              <input type="hidden" name="id" value="<?php p($course->id) ?>" >
+              <input type="password" name="password" size="20" value="<?php p($password) ?>"  />
+              <input type="hidden" name="id" value="<?php p($course->id) ?>"  />
+              <input type="submit" value="<?php print_string("enrolme") ?>" />
             </td>
-          <tr>
-            <td>&nbsp;</td>
-            <td>
-              <table cellpadding="1" cellspacing="0" align="center">
-                <tr>
-                    <td><input type="submit" value="<?php print_string("enrolme") ?>">&nbsp;&nbsp;</form></td>
-                    <td><form action="<?php p($CFG->wwwroot)?>/index.php" method="post">
-                        <input type="submit" value="<?php print_string("cancel") ?>"></form></td>
-                </tr>
-              </table>
-            </td>
+          </tr>
         </table>
       </form>
+      <br />
+
+      <div align="center">
+      <form action="<?php p($CFG->wwwroot)?>/index.php" method="post">
+      <input type="submit" value="<?php print_string("cancel") ?>" />
+      </form>
+      </div>
+
 <?php 
     print_simple_box_end();
 
