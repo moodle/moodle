@@ -204,12 +204,23 @@ global $USER;
     if (! $course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
         }
+    if (! $cm = get_coursemodule_from_instance("dialogue", $dialogue->id, $course->id)) {
+        error("Course Module ID was incorrect");
+    }
+
+    $groupid = get_current_group($course->id);
     // get the teachers on this course (default sort order)...
     if ($users = get_course_teachers($course->id)) {
         // $names[0] = "-----------------------";
         foreach ($users as $otheruser) {
             // ...exclude self and ...
             if ($USER->id != $otheruser->id) {
+                // ...if groupmode is SEPARATEGROUPS then exclude teachers not in student's group
+                if ($groupid and (groupmode($course, $cm) == SEPARATEGROUPS)) {
+                    if (!ismember($groupid, $otheruser->id)) {
+                        continue;
+                    }
+                }
                 // ...any already in open conversations unless multiple conversations allowed 
                 if ($dialogue->multipleconversations or count_records_select("dialogue_conversations", 
                         "dialogueid = $dialogue->id AND ((userid = $USER->id AND 
