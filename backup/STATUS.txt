@@ -3,7 +3,8 @@ STATUS $Id$
 
 This documment shows the current status of the backup/restore option.
 
-Backup:  WORKING. COMPLETED but only assignments and resources.
+Backup:  WORKING. COMPLETED but only assignments, resources and
+                  choices.
 
 Restore: NOT WORKING. No comments.
 
@@ -52,10 +53,10 @@ Backup Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files........................................DONE
-              x choices.........................................IN PROGRESS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
+              x choices.........................................DONE
+                 + course data..................................DONE
+                 + user data....................................DONE
+                 + files.....(NOT EXISTS).......................DONE
               x forums..........................................IN PROGRESS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
