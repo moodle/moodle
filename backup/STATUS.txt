@@ -117,28 +117,31 @@ Restore Details:
         - Load info from file...................................DONE
         - Load Backup Info......................................DONE
         - Load Course Header....................................DONE
-        - Restore into feature..................................NO EXISTS
-           - New course (restore)...............................NO EXISTS
-           - Existing course (import)...........................NO EXISTS
-        - Select Info to Restore (depending from backup)........NO EXISTS
-        - Make decisions........................................NO EXISTS
-           - About existing users...............................NO EXISTS
+        - Restore into feature..................................DONE
+           - New course (restore)...............................DONE
+           - Existing course (import)...........................DONE
+        - Select Info to Restore (depending from backup)........DONE
+        - Make decisions........................................DONE
+           - About existing users...............................DONE
         - Launch Restore........................................NO EXISTS
         - Show progress.........................................NO EXISTS
    - Restore Items:.............................................NO EXISTS
         - Course................................................NO EXISTS
            - Course Summary Data................................NO EXISTS
+              - Course Table....................................NO EXISTS
+              - Sections Table..................................NO EXISTS
+              - Modules Table...................................NO EXISTS
            - User Accounts Info.................................NO EXISTS
               x teacheras. .....................................NO EXISTS
-                 - Needed.......................................NO EXISTS
+                 - None  .......................................NO EXISTS
                  - Course.......................................NO EXISTS
                  - All..........................................NO EXISTS 
               x creators........................................NO EXISTS
-                 - Needed.......................................NO EXISTS
+                 - None.........................................NO EXISTS
                  - Course.......................................NO EXISTS
                  - All..........................................NO EXISTS 
               x students........................................NO EXISTS
-                 - Needed.......................................NO EXISTS
+                 - None.........................................NO EXISTS
                  - Course.......................................NO EXISTS
                  - All..........................................NO EXISTS 
            - Mods Info..........................................NO EXISTS
