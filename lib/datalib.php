@@ -200,7 +200,7 @@ function modify_database($sqlfile='', $sqlstring='') {
  * @param string $table ?
  * @param string $oldfield ?
  * @param string $field ?
-  * @param string $type ?
+ * @param string $type ?
  * @param string $size ?
  * @param string $signed ?
  * @param string $default ?
@@ -283,7 +283,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
             //Use transactions
             execute_sql('BEGIN');
 
-            //Allways use temporaly column
+            //Always use temporary column
             execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ADD COLUMN '. $field .' '. $type);
             //Add default values
             execute_sql('UPDATE '. $CFG->prefix . $table .' SET '. $field .'='. $default);
@@ -303,7 +303,25 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
             execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET DEFAULT '. $default);
 
             if ( $oldfield != '""' ) {
-                execute_sql('UPDATE '. $CFG->prefix . $table .' SET '. $field .' = '. $oldfield);
+
+                // We are changing the type of a column. This may require doing some casts...
+                $casting = '';
+                $oldtype = column_type($table, $oldfield);
+                $newtype = column_type($table, $field);
+
+                // Do we need a cast?
+                if($newtype == 'N' && $oldtype == 'C') {
+                    $casting = 'CAST(CAST('.$oldfield.' AS TEXT) AS REAL)';
+                }
+                else if($newtype == 'I' && oldtype == 'C') {
+                    $casting = 'CAST(CAST('.$oldfield.' AS TEXT) AS INTEGER)';
+                }
+                else {
+                    $casting = $oldfield;
+                }
+
+                // Run the update query, casting as necessary
+                execute_sql('UPDATE '. $CFG->prefix . $table .' SET '. $field .' = '. $casting);
                 execute_sql('ALTER TABLE  '. $CFG->prefix . $table .' DROP COLUMN '. $oldfield);
             }
 
@@ -341,6 +359,26 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
     }
 }
 
+/**
+ * Get the data type of a table column, using an ADOdb MetaType() call.
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $table ?
+ * @param string $column ?
+ * @todo Finish documenting this function
+ */
+
+function column_type($table, $column) {
+    global $CFG, $db;
+
+    if(!$rs = $db->Execute('SELECT '.$column.' FROM '.$CFG->prefix.$table.' WHERE 0')) {
+        return false;
+    }
+    
+    $field = $rs->FetchField(0);
+    return $rs->MetaType($field->type);
+}
 
 
 /// GENERIC FUNCTIONS TO CHECK AND COUNT RECORDS ////////////////////////////////////////
