@@ -500,4 +500,6 @@ $string[texteditor] = "Utilitzar formularis web normals";
 $string[total] = "Total";
 $string[updatethis] = "Actualitzar aquest \$a";
 
+$string[showrecent] = "Mostrar activitat recent";
+
 ?>
