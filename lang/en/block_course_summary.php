@@ -1,6 +1,6 @@
 <?php // $Id$ 
 
-$string['coursesummary'] = 'Course Summary';
+$string['blockname'] = 'Course Summary';
 $string['pagedescription'] = 'Course/Site Description';
 
 ?>
