@@ -775,7 +775,7 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
 
     /// Editing teacher's and admins can edit all wikis, non-editing teachers can edit wikis in their groups, 
     /// or all wikis if group mode is 'no groups' or they don't belong to a group.
-    if (isadmin() or isteacheredit($course->id, $user->id) or
+    if (isadmin($user->id) or isteacheredit($course->id, $user->id) or
         ((!$groupmode or $mygroupid == 0) and isteacher($course->id, $user->id))) {
         $can_edit = true;
     }
