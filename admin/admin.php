@@ -7,6 +7,7 @@
 
     optional_variable($add, "");
     optional_variable($remove, "");
+    optional_variable($search, "");
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");

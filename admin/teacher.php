@@ -5,7 +5,10 @@
 
     define("MAX_USERS_PER_PAGE", 30);
 
-    optional_variable($id);       // course id
+    optional_variable($id);         // course id
+    optional_variable($add, "");
+    optional_variable($remove, "");
+    optional_variable($search, ""); // search string
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
@@ -29,6 +32,13 @@
     $strsearchresults  = get_string("searchresults");
     $strsearchagain   = get_string("searchagain");
     $strtoomanytoshow   = get_string("toomanytoshow");
+
+    if ($search) {
+        $searchstring = $strsearchagain;
+    } else {
+        $searchstring = $strsearch;
+    }
+
 
     if (!$id) {
 	    print_header("$site->shortname: $strassignteachers", "$site->fullname", 
@@ -181,6 +191,7 @@
 
     if ($search or $usercount > MAX_USERS_PER_PAGE) {
         echo "<form action={$_SERVER['PHP_SELF']} method=post>";
+        echo "<input type=hidden name=id value=\"$course->id\">";
         echo "<input type=text name=search size=20>";
         echo "<input type=submit value=\"$searchstring\">";
         echo "</form>";
