@@ -37,18 +37,14 @@
         $dbconnected = $db->Connect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname);
     }
     if (! $dbconnected) {
-        echo "<font color=\"#990000\">";
-        echo "<p>Error: Moodle could not connect to the database.</p>";
-        echo "<p>It's possible the database itself is just not working at the moment.</p>";
-        echo "<p>The admin should 
-                 also check that the database details have been correctly specified in config.php</p>";
-        echo "<p>Database host: $CFG->dbhost<br />";
-        echo "Database name: $CFG->dbname<br />";
-        echo "Database user: $CFG->dbuser<br />";
-        if (!isset($CFG->dbpersist)) {
-            echo "<p>The admin should also try setting this in config.php:  $"."CFG->dbpersist = false; </p>";
-        }
-        echo "</font>";
+        echo '<table align="center"><tr>';
+        echo '<td style="color:#990000; text-align:center; font-size:large; border-width:1px; '.
+             '    border-color:#000000; border-style:solid; border-radius: 20px; border-collapse: collapse; '.
+             '    -moz-border-radius: 20px; padding: 15px">';
+        echo '<p>Error: Database connection failed.</p>';
+        echo '<p>It is possible that the database is overloaded or otherwise not running properly.</p>';
+        echo '<p>The site administrator should also check that the database details have been correctly specified in config.php</p>';
+        echo '</td></tr></table>';
         die;
     }
 
