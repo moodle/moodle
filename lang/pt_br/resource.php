@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 Stable (001) (2004052500)
+      // resource.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['addresource'] = 'Adicionar material';
@@ -54,13 +54,13 @@ $string['popupresource'] = 'Este material deve ser mostrado em uma janela popup'
 $string['popupresourcelink'] = 'Em caso contrário, clicar aqui: $a';
 $string['resourcetype'] = 'Tipo de material';
 $string['resourcetype1'] = 'Referência';
-$string['resourcetype2'] = 'Página  Web';
-$string['resourcetype3'] = 'Material arquivado no site';
-$string['resourcetype4'] = 'Texto simples';
-$string['resourcetype5'] = 'Endereço Web (link)';
+$string['resourcetype2'] = 'Página Web';
+$string['resourcetype3'] = 'Arquivo transferido ao site';
+$string['resourcetype4'] = 'Texto Simples';
+$string['resourcetype5'] = 'Link Web';
 $string['resourcetype6'] = 'Texto HTML';
 $string['resourcetype7'] = 'Programa';
-$string['resourcetype8'] = 'Texto Wiki';
+$string['resourcetype8'] = 'Texto WIKI';
 $string['resourcetype9'] = 'Diretório';
 
 ?>

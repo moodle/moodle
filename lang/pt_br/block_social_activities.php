@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // block_social_activities.php - created with Moodle 1.2.1 (2004032500)
+      // block_social_activities.php - created with Moodle 1.3.3 (2004052503)
 
 
-$string['blockname'] = 'Atividades Sociais';
+$string['blockname'] = 'Atividades e Materiais';
 
 ?>

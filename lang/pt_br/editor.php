@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 Stable (001) (2004052500)
+      // editor.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['about'] = 'Informações sobre este editor';
@@ -8,14 +8,14 @@ $string['absmiddle'] = 'No meio';
 $string['address'] = 'Endereço';
 $string['alignment'] = 'Alinhamento';
 $string['alternatetext'] = 'Texto alternativo';
-$string['baseline'] = 'Linha da base';
+$string['baseline'] = 'Linha-base';
 $string['bold'] = 'Negrito';
 $string['borderthickness'] = 'Espessura das bordas';
 $string['bottom'] = 'Fundo';
 $string['browse'] = 'Procurar';
 $string['cancel'] = 'Cancelar';
-$string['cellpadding'] = 'Distáncia entre o texto e as bordas';
-$string['cellspacing'] = 'distância entre células ';
+$string['cellpadding'] = 'Distância entre o texto e as bordas';
+$string['cellspacing'] = 'Distância entre células ';
 $string['choosechar'] = 'Escolher caractere';
 $string['chooseicon'] = 'Escolher imagem para inserir';
 $string['close'] = 'Fechar';
@@ -27,28 +27,28 @@ $string['cut'] = 'Cortar elemento selecionado';
 $string['delete'] = 'Cancelar';
 $string['filebrowser'] = 'Navegador de arquivos';
 $string['forecolor'] = 'Cor das letras';
-$string['fullscreen'] = 'Editor fullscreen (tela inteira)';
-$string['heading'] = 'Titolo';
+$string['fullscreen'] = 'Editor tela inteira';
+$string['heading'] = 'Título';
 $string['height'] = 'Altura';
 $string['hilitecolor'] = 'Cor do fundo';
 $string['horizontal'] = 'Horizontal';
 $string['horizontalrule'] = 'Linha Horizontal';
-$string['htmlmode'] = 'Passar ao codigo html';
-$string['imageurl'] = 'Url da imagem';
+$string['htmlmode'] = 'Passar ao código html';
+$string['imageurl'] = 'URL da imagem';
 $string['indent'] = 'Aumentar distância da margem';
 $string['insertchar'] = 'Inserir caractere especial';
 $string['insertimage'] = 'Inserir imagem';
 $string['insertlink'] = 'Inserir link';
 $string['insertsmile'] = 'Inserir carinha';
 $string['inserttable'] = 'Inserir tabela';
-$string['italic'] = 'itálico';
-$string['justifycenter'] = 'justificar ao centro';
-$string['justifyfull'] = 'justificar completamente';
-$string['justifyleft'] = 'justificar à esquerda';
-$string['justifyright'] = 'justificar à direita';
+$string['italic'] = 'Itálico';
+$string['justifycenter'] = 'Centralizar';
+$string['justifyfull'] = 'Justificar';
+$string['justifyleft'] = 'Alinhar à esquerda';
+$string['justifyright'] = 'Alinhar à direita';
 $string['layout'] = 'Layout';
 $string['left'] = 'Esquerda';
-$string['lefttoright'] = 'da esquerda para a direita';
+$string['lefttoright'] = 'Da esquerda para a direita';
 $string['linkproperties'] = 'Propriedades do link';
 $string['linktarget'] = 'Target';
 $string['linktargetblank'] = 'Nova janela';
@@ -90,17 +90,17 @@ $string['strikethrough'] = 'Riscado';
 $string['subscript'] = 'Índice';
 $string['superscript'] = 'Expoente';
 $string['textindicator'] = 'Estilo atual';
-$string['textmode'] = 'Você está usando a modalidae TEXT. Use o botão [<>] para retornar à modalidade WYSIWYG.';
+$string['textmode'] = 'Você está usando a modalidae TEXTO. Use o botão [<>] para retornar à modalidade WYSIWYG.';
 $string['texttop'] = 'Topo do texto';
 $string['top'] = 'Topo';
 $string['type'] = 'Tipo';
 $string['underline'] = 'Sublinhar';
 $string['undo'] = 'Cancelar a última ação';
-$string['unorderedlist'] = 'Lista con marcadores (bullet)';
+$string['unorderedlist'] = 'Lista com marcadores';
 $string['upload'] = 'Enviar';
 $string['vertical'] = 'Vertical';
 $string['width'] = 'Largura';
-$string['wordclean'] = 'Limpar html de word';
+$string['wordclean'] = 'Limpar o html do word';
 $string['zip'] = 'Zip';
 
 ?>

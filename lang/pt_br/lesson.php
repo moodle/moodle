@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 Stable (001) (2004052500)
+      // lesson.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['actionaftercorrectanswer'] = 'Ação depois da resposta correta';
@@ -75,7 +75,7 @@ $string['showanunansweredpage'] = 'Mostrar uma página que ainda não foi respondi
 $string['showanunseenpage'] = 'Mostrar uma página que ainda não foi visitada';
 $string['singleanswer'] = 'Resposta única';
 $string['thatsthecorrectanswer'] = 'Esta é a resposta correta';
-$string['thatsthewronganswer'] = 'Esta è a resposta errada';
+$string['thatsthewronganswer'] = 'Esta é a resposta errada';
 $string['thefollowingpagesjumptothispage'] = 'As seguintes páginas levam a esta página';
 $string['thispage'] = 'Esta página';
 $string['useeditor'] = 'Usar editor';

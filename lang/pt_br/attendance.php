@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.3 Stable (001) (2004052500)
+      // attendance.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['absentlong'] = 'Ausente';
@@ -16,7 +16,7 @@ $string['dayofroll'] = 'Data de referência da lista';
 $string['defaultautoattend'] = 'Se a configuração predefinida registra as presenças com base nos relatórios de atividade (logs)';
 $string['defaultdynamicsection'] = 'Se a configuração predefinida move a lista de presenças para a semana justa';
 $string['defaultgrade'] = 'Se a configuração predefinida permite a avaliação das listas';
-$string['defaulthoursinclass'] = 'O número de oras predefinido em uma lista de presnça';
+$string['defaulthoursinclass'] = 'O número de oras predefinido em uma lista de presença';
 $string['defaultmaxgrade'] = 'O valor máximo da avaliação da presença total predefinido';
 $string['defaultstudentstatus'] = 'Status predefinido do estudante nas novas listas de presença';
 $string['downloadexcelfull'] = 'Baixar planilha excel completa';
@@ -50,12 +50,12 @@ $string['pages'] = 'Páginas';
 $string['presentlong'] = 'Presente';
 $string['presentshort'] = 'P';
 $string['saturday'] = 'sab';
-$string['startafterend'] = 'A data inicial é posterio à data final do curso';
+$string['startafterend'] = 'A data inicial é posterior à data final do curso';
 $string['startmulti'] = 'Data da primeira lista de presença';
-$string['sunday'] = 'dom';
+$string['sunday'] = 'Dom';
 $string['takeroll'] = 'Listar neste dia?';
-$string['tardiesperabsence'] = 'Quantos atrazos contam como uma ausência?';
-$string['tardylong'] = 'Atrazo';
+$string['tardiesperabsence'] = 'Quantos atrasos contam como uma ausência?';
+$string['tardylong'] = 'Atraso';
 $string['tardyshort'] = 'At';
 $string['teacheredit'] = 'Registrar presenças';
 $string['thursday'] = '5a';
@@ -63,9 +63,9 @@ $string['tuesday'] = '3a';
 $string['viewall'] = 'Ver todas as listas de presença';
 $string['viewmulti'] = 'Ver relatório em páginas múltiplas';
 $string['viewone'] = 'Ver todas as páginas do relatório';
-$string['viewsection'] = 'Ver todas as listas de presença desta sessão';
+$string['viewsection'] = 'Ver todas as listas de presença desta seção';
 $string['viewtable'] = 'Ver relatório como tabela';
-$string['viewweek'] = 'Ver todas as listas de presnça da semana (do calendário)';
+$string['viewweek'] = 'Ver todas as listas de presença da semana (do calendário)';
 $string['wednesday'] = '4a';
 $string['weekmodulename'] = 'Todas as listas de presença da última semana';
 
