@@ -296,7 +296,12 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2004121400) {  // New field to determine popup window behaviour
         table_column("quiz", "", "popup", "integer", "4", "", "0", "not null", "subnet");
     }
-    
+
+    if ($oldversion < 2005010201) {
+        table_column('quiz_categories', '', 'parent');
+        table_column('quiz_categories', '', 'sortorder', '', '', '', '999');
+    }
+
     return true;
 }
 

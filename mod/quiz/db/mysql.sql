@@ -119,6 +119,8 @@ CREATE TABLE `prefix_quiz_categories` (
   `info` text NOT NULL,
   `publish` tinyint(4) NOT NULL default '0',
   `stamp` varchar(255) NOT NULL default '',
+  `parent` int(10) unsigned NOT NULL default '0',
+  `sortorder` int(10) unsigned NOT NULL default '999',
   PRIMARY KEY  (`id`),
   KEY `course` (`course`)
 ) TYPE=MyISAM COMMENT='Categories are for grouping questions';

@@ -42,6 +42,7 @@ define("QUIZ_PICTURE_MAX_WIDTH",  "600");   // Not currently implemented
 define("QUIZ_MAX_NUMBER_ANSWERS", "10");
 
 define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
+define("QUIZ_CATEGORIES_SORTORDER", "999");
 
 define('QUIZ_REVIEW_AFTER', 1);
 define('QUIZ_REVIEW_BEFORE', 2);
@@ -1105,6 +1106,8 @@ function quiz_get_default_category($courseid) {
     $category->name = get_string("default", "quiz");
     $category->info = get_string("defaultinfo", "quiz");
     $category->course = $courseid;
+    $category->parent = 0;
+    $category->sortorder = QUIZ_CATEGORIES_SORTORDER;
     $category->publish = 0;
     $category->stamp = make_unique_id_code();
 
@@ -1121,7 +1124,26 @@ function quiz_get_category_menu($courseid, $published=false) {
     if ($published) {
         $publish = "OR publish = '1'";
     }
-    return get_records_select_menu("quiz_categories", "course='$courseid' $publish", "name ASC", "id,name");
+    
+    if (!isadmin()) {
+        $categories = get_records_select("quiz_categories", "course = '$courseid' $publish", 'parent, sortorder, name ASC');
+    } else {
+        $categories = get_records_select("quiz_categories", '', 'parent, sortorder, name ASC');
+    }
+    if (!$categories) {
+        return false;
+    }
+    $categories = add_indented_names($categories);
+
+    foreach ($categories as $category) {
+       if ($catcourse = get_record("course", "id", $category->course)) {
+           if ($category->publish && ($category->course != $courseid)) {
+               $category->indentedname .= " ($catcourse->shortname)";
+           }
+           $catmenu[$category->id] = $category->indentedname;
+       }
+    }
+    return $catmenu;
 }
 
 function quiz_print_category_form($course, $current) {
@@ -1135,16 +1157,17 @@ function quiz_print_category_form($course, $current) {
     }
 
 /// Get all the existing categories now
-    if (!$categories = get_records_select("quiz_categories", "course = '$course->id' OR publish = '1'", "name ASC")) {
+    if (!$categories = get_records_select("quiz_categories", "course = '{$course->id}' OR publish = '1'", "parent, sortorder, name ASC")) {
         notify("Could not find any question categories!");
         return false;    // Something is really wrong
     }
+    $categories = add_indented_names($categories);
     foreach ($categories as $key => $category) {
        if ($catcourse = get_record("course", "id", $category->course)) {
-           if ($category->publish) {
-               $category->name .= " ($catcourse->shortname)";
+           if ($category->publish && $category->course != $course->id) {
+               $category->indentedname .= " ($catcourse->shortname)";
            }
-           $catmenu[$category->id] = $category->name;
+           $catmenu[$category->id] = $category->indentedname;
        }
     }
     $strcategory = get_string("category", "quiz");
@@ -1163,6 +1186,26 @@ function quiz_print_category_form($course, $current) {
     echo "</td></tr></table>";
 }
 
+
+function add_indented_names(&$categories, $id = 0, $indent = 0) {
+// returns the categories with their names indented to show parent-child relationships
+    $fillstr = '&nbsp;&nbsp;&nbsp;';
+ $fill = str_repeat($fillstr, $indent);
+    $children = array();
+    $keys = array_keys($categories);
+
+    foreach ($keys as $key) {
+        if (!isset($categories[$key]->processed) && $categories[$key]->parent == $id) {
+            $children[$key] = $categories[$key];
+            $children[$key]->indentedname = $fill . $children[$key]->name;
+            $categories[$key]->processed = true;
+            $children = $children + add_indented_names($categories, $children[$key]->id, $indent + 1); 
+        }
+    }
+    return $children;
+}
+
+
 function quiz_category_select_menu($courseid,$published=false,$only_editable=false,$selected="") {
 /// displays a select menu of categories with appended coursenames
 /// optionaly non editable categories may be excluded
@@ -1172,11 +1215,19 @@ function quiz_category_select_menu($courseid,$published=false,$only_editable=fal
     if ($published) {
         $publishsql = "or publish=1";
     }
-    $categories = get_records_select("quiz_categories","course=$courseid $publishsql");
+    
+    if (!isadmin()) {
+        $categories = get_records_select("quiz_categories","course=$courseid $publishsql", 'parent, sortorder, name ASC');
+    } else {
+        $categories = get_records_select("quiz_categories", '', 'parent, sortorder, name ASC');
+    }
+    
+    $categories = add_indented_names($categories);
+
     echo "<select name=\"category\">\n";
     foreach ($categories as $category) {
         $cid = $category->id;
-        $cname = quiz_get_category_coursename( $category );
+        $cname = quiz_get_category_coursename($category, $courseid);
         $seltxt = "";
         if ($cid==$selected) {
             $seltxt = "selected=\"selected\"";
@@ -1188,12 +1239,12 @@ function quiz_category_select_menu($courseid,$published=false,$only_editable=fal
     echo "</select>\n";
 }
 
-function quiz_get_category_coursename($category) {
-/// if the category is published, adds on the course
+function quiz_get_category_coursename($category, $courseid = 0) {
+/// if the category is not from this course and is published , adds on the course
 /// name
-    $cname=$category->name;
-    if ($category->publish) {
-        if ($catcourse=get_record("course","id",$category->id)) {
+    $cname = (isset($category->indentedname)) ? $category->indentedname : $category->name;
+    if ($category->course != $courseid && $category->publish) {
+        if ($catcourse=get_record("course","id",$category->course)) {
             $cname .= " ($catcourse->shortname) ";
         }
     }

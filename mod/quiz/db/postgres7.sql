@@ -89,7 +89,9 @@ CREATE TABLE prefix_quiz_categories (
   name varchar(255) NOT NULL default '',
   info text NOT NULL default '',
   publish integer NOT NULL default '0',
-  stamp varchar(255) NOT NULL default ''
+  stamp varchar(255) NOT NULL default '',
+  parent integer NOT NULL default '0',
+  sortorder integer NOT NULL default '999',
 );
 
 CREATE INDEX prefix_quiz_categories_course_idx ON prefix_quiz_categories (course);
@@ -344,4 +346,3 @@ INSERT INTO prefix_log_display VALUES ('quiz', 'report', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'submit', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'review', 'quiz', 'name');
-
