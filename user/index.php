@@ -28,7 +28,7 @@
         if (!$CFG->showsiteparticipantslist and !isteacher(SITEID)) {
             notice(get_string('sitepartlist0'));
         }
-        if ($CFG->showsiteparticipantslist < 2 and !isteacher()) {
+        if ($CFG->showsiteparticipantslist < 2 and !isteacherinanycourse()) {
             notice(get_string('sitepartlist1'));
         }
     }

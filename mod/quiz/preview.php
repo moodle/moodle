@@ -47,7 +47,7 @@ $qtype = $question->qtype;
 
 require_login();
 
-if (!isteacher()) {
+if (!isteacherinanycourse()) {
     error('This page is for teachers only');
 }
 

@@ -1079,18 +1079,23 @@ function isadmin($userid=0) {
 /**
  * Determines if a user is a teacher or an admin
  *
-  * @uses $USER
+ * @uses $USER
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
  * @param boolean $includeadmin If true this function will return true when it encounters an admin user.
  * @return boolean
  * @todo Finish documenting this function
  */
-function isteacher($courseid=0, $userid=0, $includeadmin=true) {
+function isteacher($courseid, $userid=0, $includeadmin=true) {
     global $USER;
 
     if ($includeadmin and isadmin($userid)) {  // admins can do anything the teacher can
         return true;
+    }
+
+    if (empty($courseid)) {
+        notify('isteacher() should not be used without a valid course id as argument');
+        return isteacherinanycourse($userid, $includeadmin);
     }
 
     if (!$userid) {
@@ -1103,11 +1108,27 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
         $userid = $USER->id;
     }
 
-    if (!$courseid) {
-        return record_exists('user_teachers', 'userid', $userid);
+    return record_exists('user_teachers', 'userid', $userid, 'course', $courseid);
+}
+
+/**
+ * Determines if a user is a teacher in any course, or an admin
+ *
+ * @uses $USER
+ * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
+ * @param boolean $includeadmin If true this function will return true when it encounters an admin user.
+ * @return boolean
+ * @todo Finish documenting this function
+ */
+function isteacherinanycourse($userid = 0, $includeadmin = true) {
+    if(empty($userid)) {
+        if(empty($USER) || empty($USER->id)) {
+            return false;
+        }
+        $userid = $USER->id;
     }
 
-    return record_exists('user_teachers', 'userid', $userid, 'course', $courseid);
+    return record_exists('user_teachers', 'userid', $userid);
 }
 
 /**

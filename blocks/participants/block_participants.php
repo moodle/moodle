@@ -28,7 +28,7 @@ class block_participants extends block_base {
 
         $course = get_record('course', 'id', $this->instance->pageid);
 
-        if ($this->instance->pageid != SITEID || $CFG->showsiteparticipantslist > 1 || ($CFG->showsiteparticipantslist == 1 && isteacher()) || isteacher(SITEID)) {
+        if ($this->instance->pageid != SITEID || $CFG->showsiteparticipantslist > 1 || ($CFG->showsiteparticipantslist == 1 && isteacherinanycourse()) || isteacher(SITEID)) {
             $this->content->items[]='<a title="'.get_string('listofallpeople').'" href="'.$CFG->wwwroot.'/user/index.php?id='.$this->instance->pageid.'">'.get_string('participants').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
         }

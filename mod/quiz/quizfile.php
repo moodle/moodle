@@ -40,10 +40,10 @@
     /////////////////////////////////////
     // Check access
     /////////////////////////////////////
-    if ($quizid == 0) { // teache doing preview during quiz creation
+    if ($quizid == 0) { // teacher doing preview during quiz creation
         if ($questioncategory->publish) {
             require_login();
-            if (!isteacher()) {
+            if (!isteacherinanycourse()) {
               error('No valid arguments supplied');
             }
         } else {

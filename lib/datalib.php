@@ -2765,7 +2765,7 @@ function count_login_failures($mode, $username, $lastlogin) {
             $count->accounts = count_records_select('log', $select, 'COUNT(DISTINCT info)');
             return $count;
         }
-    } else if ($mode == 'everybody' or ($mode == 'teacher' and isteacher())) {
+    } else if ($mode == 'everybody' or ($mode == 'teacher' and isteacherinanycourse())) {
         if ($count->attempts = count_records_select('log', $select .' AND info = \''. $username .'\'')) {
             return $count;
         }
