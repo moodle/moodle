@@ -6,6 +6,9 @@
     require_variable($id);    // Assignment
     optional_variable($sort, ""); 
 
+    $timewas = $_POST['timenow'];
+    $timenow = time();
+
     if (! $assignment = get_record("assignment", "id", $id)) {
         error("Course module is incorrect");
     }
@@ -21,7 +24,6 @@
     if (!isteacher($course->id)) {
         error("Only teachers can look at this page");
     }
-
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
@@ -74,17 +76,15 @@
     if ($data = data_submitted()) {
        
         $feedback = array();
-
         // Peel out all the data from variable names.
         foreach ($data as $key => $val) {
-            if ($key <> "id") {
+            if (!in_array($key, array("id", "timenow"))) {
                 $type = substr($key,0,1);
                 $num  = substr($key,1); 
                 $feedback[$num][$type] = $val;
             }
         }
 
-        $timenow = time();
         $count = 0;
         foreach ($feedback as $num => $vals) {
             $submission = $submissions[$num];
@@ -97,13 +97,25 @@
                 $newsubmission->timemarked = $timenow;
                 $newsubmission->mailed     = 0;           // Make sure mail goes out (again, even)
                 $newsubmission->id         = $num;
-                if (empty($submission->timemodified)) {   // eg for offline assignments
-                    $newsubmission->timemodified = $timenow;
-                }
-                if (! update_record("assignment_submissions", $newsubmission)) {
-                    notify(get_string("failedupdatefeedback", "assignment", $submission->userid));
-                } else {
-                    $count++;
+
+                // Make sure that we aren't overwriting any recent feedback from other teachers. (see bug #324)
+                if ($timewas < $submission->timemarked && (!empty($submission->grade)) && (!empty($submission->comment))) {
+                    $u = $users[$submission->userid];
+                    $uname = $u->firstname . " " . $u->lastname;
+                    notify(get_string("failedupdatefeedback", "assignment", $uname)
+                    . "<br>" . get_string("grade") . ": $newsubmission->grade" 
+                    . "<br>" . get_string("feedback", "assignment") . ": $newsubmission->comment\n");
+                    unset($u);
+                    unset($uname);
+                } else { //print out old feedback and grade
+                    if (empty($submission->timemodified)) {   // eg for offline assignments
+                        $newsubmission->timemodified = $timenow;
+                    }
+                    if (! update_record("assignment_submissions", $newsubmission)) {
+                        notify(get_string("failedupdatefeedback", "assignment", $submission->userid));
+                    } else {
+                        $count++;
+                    }
                 }
             }
         }
@@ -137,6 +149,7 @@
     }
 
     echo "<CENTER>";
+    echo "<INPUT TYPE=hidden NAME=timenow VALUE=\"$timenow\">";
     echo "<INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\">";
     echo "<INPUT TYPE=submit VALUE=\"$strsaveallfeedback\">";
     echo "</CENTER>";
@@ -145,4 +158,3 @@
     print_footer($course);
  
 ?>
-
