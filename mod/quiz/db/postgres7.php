@@ -48,10 +48,17 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2003040901) {
-        table_column("quiz", "", "shufflequestions", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "review");
+        table_column("quiz", "", "shufflequestions", "INTEGER", "5", "UNSIGNED", "0", "NOT NULL", "review");
         table_column("quiz", "", "shuffleanswers", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "shufflequestions");
     }
-
+    if ($oldversion < 2003042702) {
+        modify_database ("", "CREATE TABLE prefix_quiz_match (
+                                 id SERIAL PRIMARY KEY,
+                                 question integer NOT NULL default '0',
+                                 subquestions varchar(255) NOT NULL default ''
+                               );");
+        modify_database ("", "CREATE INDEX question ON prefix_quiz_match (question);");
+    }
     return true;
 }
 
