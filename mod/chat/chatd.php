@@ -34,28 +34,22 @@ function chat_empty_connection() {
 }
 
 class ChatConnection {
-    var $sid = NULL;
+    // Chat-related info
+    var $sid    = NULL;
+    var $type   = NULL;
+    //var $groupid        = NULL;
+
+    // PHP-level info
     var $handle = NULL;
-    var $ip = NULL;
-    var $port = NULL;
-    var $groupid = NULL;
-    var $lastmessages = array();
-    var $lastmsgindex = 0;
-    var $type = NULL;
-}
 
-class ChatMessage {
-    var $chatid     = NULL;
-    var $userid     = NULL;
-    var $groupid    = NULL;
-    var $system     = NULL;
-    var $message    = NULL;
-    var $timestamp  = NULL;
+    // TCP/IP
+    var $ip     = NULL;
+    var $port   = NULL;
 
-    var $text_ = '';
-    var $html_ = '';
-    var $beep_ = false;
-
+    function ChatConnection($resource) {
+        $this->handle = $resource;
+        socket_getpeername($this->handle, &$this->ip, &$this->port);
+    }
 }
 
 class ChatDaemon {
@@ -150,8 +144,9 @@ class ChatDaemon {
                 echo "</a></td><td valign=center>";
                 echo "<p><font size=1>";
                 echo fullname($userinfo['user'])."<br />";
-                echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font>";
-                //echo " <a href=\"users.php?chat_sid=$chat_sid&beep=$chatuser->id&groupid=$groupid\">$str->beep</a>";
+                echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font> ";
+                echo '<a target="empty" href="http://'.$CFG->chat_serverhost.':'.$CFG->chat_serverport.'/?win=beep&beep='.$userinfo['user']->id.
+                     '&chat_sid='.$sessionid.'&groupid='.$this->sets_info[$sessionid]['groupid'].'">'.$str->beep."</a>\n";
                 echo "</font></p>";
                 echo "<td></tr>";
             }
@@ -178,6 +173,7 @@ class ChatDaemon {
             return true;
         }
         foreach($this->conn_side[$sessionid] as $sideid => $sidekick) {
+            // TODO: is this late-dispatch working correctly?
             $this->dispatch_sidekick($sidekick['handle'], $sidekick['type'], $sessionid, $sidekick['customdata']);
             unset($this->conn_side[$sessionid][$sideid]);
         }
@@ -188,6 +184,44 @@ class ChatDaemon {
         global $CFG;
 
         switch($type) {
+            case CHAT_SIDEKICK_BEEP:
+                // Incoming beep
+                $msg = &New stdClass;
+                $msg->chatid    = $this->sets_info[$sessionid]['chatid'];
+                $msg->userid    = $this->sets_info[$sessionid]['userid'];
+                $msg->groupid   = $this->sets_info[$sessionid]['groupid'];
+                $msg->system    = 0;
+                $msg->message   = 'beep '.$customdata['beep'];
+                $msg->timestamp = time();
+
+                // Commit to DB
+                insert_record('chat_messages', $msg);
+
+                // OK, now push it out to all users
+                $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
+
+                // Update that user's lastmessageping
+                $this->update_lastmessageping($sessionid, $msg->timestamp);
+
+                // We did our work, but before slamming the door on the poor browser
+                // show the courtesy of responding to the HTTP request. Otherwise, some
+                // browsers decide to get vengeance by flooding us with repeat requests.
+
+                $header  = "HTTP/1.1 200 OK\n";
+                $header .= "Connection: close\n";
+                $header .= "Date: ".date('r')."\n";
+                $header .= "Server: Moodle\n";
+                $header .= "Content-Type: text/html\n";
+                $header .= "Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT\n";
+                $header .= "Cache-Control: no-cache, must-revalidate\n";
+                $header .= "Expires: Wed, 4 Oct 1978 09:32:45 GMT\n";
+                $header .= "\n";
+
+                // That's enough headers for one lousy dummy response
+                chat_socket_write($handle, $header);
+                // All done
+            break;
+
             case CHAT_SIDEKICK_USERS:
             /*
                 //$x = pusers($this->sets_info[$sessionid]['chatid'], $this->sets_info[$sessionid]['groupid']);
@@ -250,7 +284,7 @@ class ChatDaemon {
             break;
             case CHAT_SIDEKICK_MESSAGE:
                 // Incoming message
-                $msg = &New ChatMessage;
+                $msg = &New stdClass;
                 $msg->chatid    = $this->sets_info[$sessionid]['chatid'];
                 $msg->userid    = $this->sets_info[$sessionid]['userid'];
                 $msg->groupid   = $this->sets_info[$sessionid]['groupid'];
@@ -356,11 +390,11 @@ class ChatDaemon {
 
         $this->dismiss_half($sessionid, false);
         chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
-        trace('Finalized client: sid: '.$sessionid.' uid: '.$chatuser->userid.' gid: '.intval($groupid));
+        trace('Connection accepted: '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL].', SID: '.$sessionid.' UID: '.$chatuser->userid.' GID: '.intval($groupid));
 
         // Finally, broadcast the "entered the chat" message
 
-        $msg = &New ChatMessage;
+        $msg = &New stdClass;
         $msg->chatid = $chatuser->chatid;
         $msg->userid = $chatuser->userid;
         $msg->groupid = 0;
@@ -379,7 +413,7 @@ class ChatDaemon {
             return false;
         }
         foreach($this->conn_ufo as $id => $ufo) {
-            if($ufo == $handle) {
+            if($ufo->handle == $handle) {
                 // OK, got the id of the UFO, but what is it?
 
                 if($type & CHAT_SIDEKICK) {
@@ -402,11 +436,12 @@ class ChatDaemon {
 
                 if($type & CHAT_CONNECTION) {
                     // This forces a new connection right now...
+                    trace('Incoming connection from '.$ufo->ip.':'.$ufo->port);
 
                     // Do we have such a connection active?
                     if(isset($this->conn_sets[$sessionid])) {
                         // Yes, so regrettably we cannot promote you
-                        trace('UFO #'.$id.' with '.$ufo.' cannot be promoted: session '.$sessionid.' is already final');
+                        trace('Connection rejected: session '.$sessionid.' is already final');
                         $this->dismiss_ufo($handle);
                         return false;
                     }
@@ -425,14 +460,6 @@ class ChatDaemon {
 
                     return true;
                 }
-
-                /*
-                // It's the first one for that sessionid, so it will start an incomplete connection
-                $this->conn_half[$sessionid] = array($type => $handle);
-                unset($this->conn_ufo[$id]);
-                trace('UFO #'.$id.': identified session '.$sessionid.' wintype '.$type);
-                return true;
-                */
             }
         }
         return false;
@@ -444,8 +471,8 @@ class ChatDaemon {
         }
         if($disconnect) {
             foreach($this->conn_half[$sessionid] as $handle) {
-                socket_shutdown($handle);
-                socket_close($handle);
+                @socket_shutdown($handle);
+                @socket_close($handle);
             }
         }
         unset($this->conn_half[$sessionid]);
@@ -453,13 +480,12 @@ class ChatDaemon {
     }
 
     function dismiss_set($sessionid) {
-        if(!isset($this->conn_sets[$sessionid])) {
-            return false;
-        }
-        foreach($this->conn_sets[$sessionid] as $handle) {
-            // Since we want to dismiss this, don't generate any errors if it's dead already
-            @socket_shutdown($handle);
-            @socket_close($handle);
+        if(!empty($this->conn_sets[$sessionid])) {
+            foreach($this->conn_sets[$sessionid] as $handle) {
+                // Since we want to dismiss this, don't generate any errors if it's dead already
+                @socket_shutdown($handle);
+                @socket_close($handle);
+            }
         }
         unset($this->conn_sets[$sessionid]);
         unset($this->sets_info[$sessionid]);
@@ -472,7 +498,7 @@ class ChatDaemon {
             return false;
         }
         foreach($this->conn_ufo as $id => $ufo) {
-            if($ufo == $handle) {
+            if($ufo->handle == $handle) {
                 unset($this->conn_ufo[$id]);
                 if($disconnect) {
                     chat_socket_write($handle, "You don't seem to be a valid client.\n");
@@ -491,21 +517,18 @@ class ChatDaemon {
             return false;
         }
 
-        $newconn = &New ChatConnection;
-        $newconn->handle = $handle;
-        socket_getpeername($newconn->handle, &$newconn->ip, &$newconn->port);
-
+        $newconn = &New ChatConnection($handle);
         $id = $this->new_ufo_id();
-        //trace('UFO #'.$id.': connection from '.$newconn->ip.' on port '.$newconn->port.', '.$newconn->handle);
+        $this->conn_ufo[$id] = $newconn;
 
-        $this->conn_ufo[$id] = $newconn->handle;
+        //trace('UFO #'.$id.': connection from '.$newconn->ip.' on port '.$newconn->port.', '.$newconn->handle);
     }
 
     function conn_activity_ufo (&$handles) {
         $monitor = array();
         if(!empty($this->conn_ufo)) {
             foreach($this->conn_ufo as $ufoid => $ufo) {
-                $monitor[$ufoid] = $ufo;
+                $monitor[$ufoid] = $ufo->handle;
             }
         }
 
@@ -545,7 +568,7 @@ class ChatDaemon {
                     // and THEN broadcast a message to all others... otherwise, infinite recursion.
 
                     delete_records('chat_users', 'sid', $sessionid);
-                    $msg = &New ChatMessage;
+                    $msg = &New stdClass;
                     $msg->chatid = $info['chatid'];
                     $msg->userid = $info['userid'];
                     $msg->groupid = 0;
@@ -585,12 +608,13 @@ define('CHAT_SIDEKICK',             0x20);
 // Sidekicks: Incrementing sequence, 0x21 to 0x2f
 define('CHAT_SIDEKICK_USERS',       0x21);
 define('CHAT_SIDEKICK_MESSAGE',     0x22);
+define('CHAT_SIDEKICK_BEEP',        0x23);
 
 
 $DAEMON = New ChatDaemon;
 $DAEMON->socket_active = false;
 $DAEMON->trace_level = E_ALL;
-$DAEMON->socketserver_refresh = 10;
+$DAEMON->socketserver_refresh = 20;
 $DAEMON->can_daemonize = function_exists('pcntl_fork');
 $DAEMON->beepsoundsrc = $CFG->wwwroot.'/mod/chat/beep.wav';
 $DAEMON->live_data_update_threshold = 30;
@@ -649,13 +673,10 @@ if(!socket_bind($DAEMON->listen_socket, $CFG->chat_serverip, $CFG->chat_serverpo
     $DAEMON->last_error = socket_last_error();
     echo "Error: socket_bind() failed: ". socket_strerror(socket_last_error($DAEMON->last_error)).' ['.$DAEMON->last_error."]\n";
 
-    // If $DAEMON->last_error == 98 (Success), maybe we need to try cleaning up a bit before dying
-    // This is EXPERIMENTAL code!
-    if($DAEMON->last_error == 98) {
-        trace('experimental fix kicks in');
-        socket_close($DAEMON->listen_socket);
+    if($DAEMON->last_error != 98) {
+        die();
     }
-    die();
+
 }
 if(!socket_listen($DAEMON->listen_socket, $CFG->chat_servermax)) {
     // Failed to get socket to listen
@@ -743,7 +764,7 @@ while(true) {
                     continue;
                 }
 
-                if(!ereg('win=(chat|users|message).*&chat_sid=([a-zA-Z0-9]*)&groupid=([0-9]*) HTTP', $data, $info)) {
+                if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*)&groupid=([0-9]*) HTTP', $data, $info)) {
                     // Malformed data
                     trace('UFO with '.$handle.': Request with malformed data; connection closed', E_USER_WARNING);
                     $DAEMON->dismiss_ufo($handle);
@@ -762,6 +783,17 @@ while(true) {
                     break;
                     case 'users':
                         $type = CHAT_SIDEKICK_USERS;
+                    break;
+                    case 'beep':
+                        $type = CHAT_SIDEKICK_BEEP;
+                        if(!ereg('beep=([^&]*)[& ]', $data, $info)) {
+                            trace('Beep sidekick did not contain a valid userid', E_USER_WARNING);
+                            $DAEMON->dismiss_ufo($handle);
+                            continue;
+                        }
+                        else {
+                            $customdata = array('beep' => intval($info[1]));
+                        }
                     break;
                     case 'message':
                         $type = CHAT_SIDEKICK_MESSAGE;
