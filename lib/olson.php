@@ -14,16 +14,14 @@ function olson_todst ($filename) {
     $zones = olson_simple_zone_parser($filename);
     $rules = olson_simple_rule_parser($filename);
     
-    if (function_exists('memory_get_usage')) {
-        trigger_error("We are consuming memory: " . get_memory_usage());
-    }
+    $mdl_zones = array();
 
     /**
      *** To translate the combined Zone & Rule changes
      *** in the Olson files to the Moodle single ruleset
-     *** format, wwe need to trasverse every year and see
+     *** format, we need to trasverse every year and see
      *** if either the Zone or the relevant Rule has a 
-     *** change. It's yuck but it yealds a rationalized
+     *** change. It's yuck but it yields a rationalized
      *** set of data, which is arguably simpler.
      ***
      *** Also note that I am starting at the epoch (1970)
@@ -35,47 +33,129 @@ function olson_todst ($filename) {
     $maxyear = $maxyear['tm_year'] + 1900 + 10;
 
     foreach ($zones as $zname=>$zbyyear) { // loop over zones
-        // loop over years
-        $lastyear = NULL;
-        $lastzone = NULL;
-        $lastrule = NULL;
-        $lastzonerule = NULL;
+        /**
+         *** Loop over years, only adding a rule when zone or rule
+         *** have changed. All loops preserver the last seen vars
+         *** until there's an explicit decision to delete them
+         *** 
+         **/ 
 
-        // find the last pre 1970 zone entry
-        for ($y = 1970 ; $y >0 ; $y--) {
+        // clean the slate for a new zone
+        $zone = NULL;
+        $rule = NULL;
+        
+        //
+        // Find the pre 1970 zone rule entries
+        //
+        for ($y = 1970 ; $y > 0 ; $y--) {
             if (array_key_exists((string)$y, $zbyyear )) { // we have a zone entry for the year
-                $lastyear = $y;
-                $zentry = $zbyyear[$y];
-                $lastzone = $zentry;
-                print "$zname pre1970 is $y\n"; 
+                $zone = $zbyyear[$y];
+                // print "Zone $zname pre1970 is in  $y\n"; 
                 break; // Perl's last -- get outta here
             }
         }
-
-        for ($y = 1970 ; $y < $maxyear ; $y++) {
-            /// force it to string to avoid PHP
-            /// thinking of a positional array
-            if (array_key_exists((string)$y, $zbyyear )) { // we have a zone entry for the year
-                $lastyear = $y;
-                $zentry = $zbyyear[$y];
-                $lastzone = $zentry;
-
-                print "$zname $y $zentry[rule]\n";
+        if (!empty($zone['rule'])) {
+            $rule = NULL;
+            for ($y = 1970 ; $y > 0 ; $y--) {
+                if (array_key_exists((string)$y, $rules[$zone['rule']] )) { // we have a rule entry for the year                    
+                    $rule  =  $rules[$zone['rule']][$y];
+                    // print "Rule $rule[name] pre1970 is $y\n"; 
+                    break; // Perl's last -- get outta here
+                }
+                
+            }  
+            if (empty($rule)) {
+                // Colombia and a few others refer to rules before they exist 
+                // Perhaps we should comment out this warning... 
+                // trigger_error("Cannot find rule in $zone[rule] <= 1970");
+                $rule  = array();
             }
-            // has a tz entry
-            // has a rule entry
+        } else {
+            // no DST this year!
+            $rule  = array();
         }
         
-    }
-    /*
-      $zones = getzones
-      foreach $zones as $zone
-          foreach $year
-              offset & rule(rulename/yearstart) ... is it the same as last?
-              
+        // Prepare to insert the base 1970 zone+rule        
+        if (!empty($rule)) {
+            // merge the two arrays into the moodle rule
+            unset($rule['name']); // warning: $rule must NOT be a reference! 
+            unset($rule['year']);
+            $mdl_tz = array_merge($zone, $rule);
 
+            //fix (de)activate_time (AT) field to be GMT
+            $mdl_tz['activate_time']   = olson_parse_at($mdl_tz['activate_time'],   'set',   $mdl_tz['gmtoff']);
+            $mdl_tz['deactivate_time'] = olson_parse_at($mdl_tz['deactivate_time'], 'reset', $mdl_tz['gmtoff']);
+        } else {
+            // just a simple zone
+            $mdl_tz = $zone;
+        }        
+
+        // Fix the from year to 1970
+        $mdl_tz['from'] = 1970;
+        $mdl_tz['from_timestamp'] = 0;
+
+        // add to the array
+        $mdl_zones[] = $mdl_tz;
+
+        ///
+        /// 1970 onwards
+        /// 
+        for ($y = 1970 ; $y < $maxyear ; $y++) {
+            $changed = false;
+            ///
+            /// We create a "zonerule" entry if either zone or rule change...
+            ///
+            /// force $y to string to avoid PHP
+            /// thinking of a positional array
+            ///
+            if (array_key_exists((string)$y, $zbyyear)) { // we have a zone entry for the year
+                $changed = true;
+                $zone    = $zbyyear[(string)$y];
+            }
+            if (!empty($zone['rule'])){                
+                if (array_key_exists((string)$y, $rules[$zone['rule']])) {
+                    $changed = true;
+                    $rule    = $rules[$zone['rule']][(string)$y];
+                }
+            } else {
+                $rule = array();
+            }
+
+            if ($changed) {
+                // print "CHANGE YEAR $y Zone $zone[name] Rule $zone[rule]\n";
+                if (!empty($rule)) {
+                    // merge the two arrays into the moodle rule
+                    unset($rule['name']); 
+                    unset($rule['year']);
+                    $mdl_tz = array_merge($zone, $rule);
+
+                    //fix (de)activate_time (AT) field to be GMT
+                    $mdl_tz['activate_time']   = olson_parse_at($mdl_tz['activate_time'],   'set',   $mdl_tz['gmtoff']);
+                    $mdl_tz['deactivate_time'] = olson_parse_at($mdl_tz['deactivate_time'], 'reset', $mdl_tz['gmtoff']);
+                } else {
+                    // just a simple zone
+                    $mdl_tz = $zone;
+                } 
+                
+                // start-of-year timestamp
+                // TODO: perhaps should consider the current DST rule
+                $mdl_tz['from_timestamp'] = gmmktime(0, 0, 0, 1, 1, $mdl_tz['from'], 0) + $mdl_tz['gmtoff'] * 60 ;
+                if ($mdl_tz['from_timestamp'] < 0) {
+                    $mdl_tz['from_timestamp'] = 0;
+                }
+                $mdl_zones[] = $mdl_tz;
+            }
+        } 
+        
+    }
+
+    /* 
+    if (function_exists('memory_get_usage')) {
+        trigger_error("We are consuming this much memory: " . get_memory_usage());
+    }
     */
 
+    return $mdl_zones;
 }
 
 
@@ -139,7 +219,7 @@ function olson_simple_rule_parser ($filename) {
 
     // now reformat it a bit to match Moodle's DST table
     $moodle_rules = array();
-    foreach ($rules as $family => $rulesbyyear) {
+    foreach ($rules as $rule => $rulesbyyear) {
         foreach ($rulesbyyear as $year => $rulesthisyear) {
 
             if(!isset($rulesthisyear['reset'])) {
@@ -182,7 +262,7 @@ function olson_simple_rule_parser ($filename) {
                 trigger_error('Unknown month: '.$in);
             }
     
-            $moodle_rule['family'] = $name;
+            $moodle_rule['name'] = $name;
             $moodle_rule['year'] = $year;
             $moodle_rule['apply_offset']   = $save; // time offset
 
@@ -222,7 +302,7 @@ function olson_simple_rule_parser ($filename) {
             $moodle_rule['deactivate_index'] = $on['index'];
             $moodle_rule['deactivate_day']   = $on['day'];
                 
-            $moodle_rules[$moodle_rule['family']][$moodle_rule['year']] = $moodle_rule;
+            $moodle_rules[$moodle_rule['name']][$moodle_rule['year']] = $moodle_rule;
             //print_object($moodle_rule);
         }
 
@@ -271,8 +351,12 @@ function olson_simple_zone_parser ($filename) {
          *** continuation lines, we shift the "until" from the previous field
          *** into this line's "from".
          ***
+         *** If a RULES field contains a time instead of a rule we discard it
+         *** I have no idea of how to create a DST rule out of that
+         *** (what are the start/end times?)
+         ***
          *** We remove "until" from the data we keep, but preserve 
-         *** it in $lastzone
+         *** it in $lastzone.
          */
         if (preg_match('/^Zone/', $line)) { // a new zone
             $line = trim($line);
@@ -325,6 +409,11 @@ function olson_simple_zone_parser ($filename) {
         unset($zone['until']);
         $zone['gmtoff'] = olson_parse_offset($zone['gmtoff']);
         if ($zone['rule'] === '-') { // cleanup empty rules
+            $zone['rule'] = '';
+        }
+        if (preg_match('/:/',$zone['rule'])) { 
+            // we are not handling direct SAVE rules here
+            // discard it
             $zone['rule'] = '';
         }
         
@@ -380,7 +469,10 @@ function olson_parse_offset ($offset) {
 function olson_parse_on ($on) {
     
     $rule = array();
-    $days = array('sun' => 0, 'mon' => 1, 'tue' => 2, 'wed' => 3, 'thu' => 4, 'fri' => 5, 'sat' => 6);
+    $days = array('sun' => 0, 'mon' => 1, 
+                  'tue' => 2, 'wed' => 3, 
+                  'thu' => 4, 'fri' => 5, 
+                  'sat' => 6);
 
     if(is_numeric($on)) {
         $rule['index'] = $on;
@@ -417,7 +509,7 @@ function olson_parse_on ($on) {
 
 
 /***
- *** olson_parse_at($at)
+ *** olson_parse_at($at, $set, $gmtoffset)
  ***
  *** see `man zic`. This function translates
  ***
@@ -438,20 +530,36 @@ function olson_parse_on ($on) {
  */
 function olson_parse_at ($at, $set = 'set', $gmtoffset) {
 
-    list($hours, $mins) = explode(':', $at);
-
-    if ( !empty($matches[0]) && (   $matches[0] === 'u'
-                                 || $matches[0] === 'g'
-                                 || $matches[0] === 'z'    )) {
-        return sprintf('%02d:%02d', $hours, $mins);
+    // find the time "signature";
+    $sig = '';
+    if (preg_match('/\w$/', $at, $matches)) {
+        $sig = $matches[0];
+        $at  = substr($at, 0, strlen($at)-1); // chop
     }
 
-    // try and fetch the trailing alpha char if present
-    if (empty($matches[0]) || $matches[0] === 'w') { 
-        // wall clock
+    list($hours, $mins) = explode(':', $at);
+
+    // GMT -- return as is!
+    if ( !empty($sig) && ( $sig === 'u'
+                           || $sig === 'g'
+                           || $sig === 'z'    )) {
+        return $at;
+    }
+
+    // Wall clock
+    if (empty($sig) || $sig === 'w') { 
         if ($set !== 'set'){ // wall clock is on DST, assume by 1hr
             $hours = $hours-1;
         } 
+        $sig = 's';
+    }
+
+    // Standard time
+    if (!empty($sig) && $sig === 's') {
+        $mins = $mins + $hours*60 + $gmtoffset;
+        $hours = $mins / 60;
+        $hours = (int)$hours;
+        $mins  = abs($mins % 60);
         return sprintf('%02d:%02d', $hours, $mins);
     }
 
