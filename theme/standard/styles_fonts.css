@@ -270,6 +270,26 @@ h4 {
     font-size:x-small;
 }
 
+.block_quiz_results h1 {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.block_quiz_results table.grades caption {
+    font-weight: bold;
+}
+
+.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
+    text-align: right;
+}
+
+.block_quiz_results {
+    text-align: center;
+}
+
+.block_quiz_results table.grades {
+    text-align: left;
+}
 
 /*****************************
 ***

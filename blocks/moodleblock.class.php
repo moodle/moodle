@@ -448,7 +448,7 @@ class block_base {
      */
     function html_attributes() {
         // Default case: just an id for the block, with our name in it
-        return array('id' => 'block_'. $this->name());
+        return array('id' => 'inst'.$this->instance->id, 'class' => 'block_'. $this->name());
     }
     
     /**
