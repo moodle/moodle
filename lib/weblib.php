@@ -1655,7 +1655,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
     include ($CFG->dirroot .'/theme/'. $CFG->theme .'/header.html');
 
-    echo message_popup_window();
+    if (!empty($CFG->messaging)) {
+        echo message_popup_window();
+    }
 }
 
 /**

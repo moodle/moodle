@@ -45,6 +45,7 @@
        'longtimenosee'            =>  100,
        'maxbytes'                 =>  0,
        'maxeditingtime'           =>  1800,
+       'messaging'                =>  true,
        'noreplyaddress'           => 'noreply@'.$_SERVER['HTTP_HOST'],
        'notifyloginfailures'      => '',
        'notifyloginthreshold'     =>  10,

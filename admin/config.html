@@ -665,6 +665,22 @@
     </td>
 </tr>
 
+<tr valign="top">
+    <td align="right">messaging:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "messaging", $config->messaging, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configmessaging") ?>
+    </td>
+</tr>
+
 <tr>
     <td colspan="3" align="center">
     <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />

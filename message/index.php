@@ -6,6 +6,10 @@
 
     require_login(0, false);
 
+    if (empty($CFG->messaging)) {
+        error("Messaging is disabled on this site");
+    }
+
 /// Optional variables that may be passed in
     $tab            = optional_param('tab', 'contacts'); // current tab - default to contacts
     $addcontact     = optional_param('addcontact',     0, PARAM_INT); // adding a contact

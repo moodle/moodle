@@ -5,6 +5,10 @@
 
     require_login();
 
+    if (empty($CFG->messaging)) {
+        error("Messaging is disabled on this site");
+    }
+
 /// Script parameters
     $userid = required_param('id', PARAM_INT);
     $frame  = optional_param('frame', '', PARAM_ALPHA);

@@ -6,6 +6,10 @@
 
     require_login();
 
+    if (empty($CFG->messaging)) {
+        error("Messaging is disabled on this site");
+    }
+
 /// Script parameters
     $userid1 = required_param('user1', PARAM_INT);
     if (! $user1 = get_record("user", "id", $userid1)) {  // Check it's correct
