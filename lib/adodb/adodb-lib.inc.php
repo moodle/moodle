@@ -63,7 +63,7 @@ function _adodb_replace(&$zthis, $table, $fieldArray, $keyCol, $autoQuote, $has_
 		if ($uSet && $where) {
 			$update = "UPDATE $table SET $uSet WHERE $where";
 			
-			$rs = $zthis->Execute($update);
+			$rs = $zthis->_Execute($update);
 			if ($rs) {
 				if ($zthis->poorAffectedRows) {
 				/*
@@ -77,8 +77,10 @@ function _adodb_replace(&$zthis, $table, $fieldArray, $keyCol, $autoQuote, $has_
 			
 					$cnt = $zthis->GetOne("select count(*) from $table where $where");
 					if ($cnt > 0) return 1; // record already exists
-				} else
-					 if (($zthis->Affected_Rows()>0)) return 1;
+				} else {
+				
+					if (($zthis->Affected_Rows()>0)) return 1;
+				}
 			}
 		}
 	//	print "<p>Error=".$this->ErrorNo().'<p>';
@@ -96,7 +98,7 @@ function _adodb_replace(&$zthis, $table, $fieldArray, $keyCol, $autoQuote, $has_
 			}				
 		}
 		$insert = "INSERT INTO $table ($iCols) VALUES ($iVals)"; 
-		$rs = $zthis->Execute($insert);
+		$rs = $zthis->_Execute($insert);
 		return ($rs) ? 2 : 0;
 }
 
@@ -216,7 +218,7 @@ function _adodb_getcount(&$zthis, $sql,$inputarr=false,$secs2cache=0)
 	if (preg_match('/\s*UNION\s*/is', $sql)) $rewritesql = $sql;
 	else $rewritesql = preg_replace('/(\sORDER\s+BY\s.*)/is','',$sql); 
 	
-	$rstest = &$zthis->Execute($rewritesql,$inputarr);
+	$rstest = &$zthis->_Execute($rewritesql,$inputarr);
 	if ($rstest) {
 	  		$qryRecs = $rstest->RecordCount();
 		if ($qryRecs == -1) { 
@@ -266,11 +268,7 @@ function &_adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page,
 	$lastpageno = (int) ceil($qryRecs / $nrows);
 	$zthis->_maxRecordCount = $qryRecs;
 	
-	// If page number <= 1, then we are at the first page
-	if (!isset($page) || $page <= 1) {	
-		$page = 1;
-		$atfirstpage = true;
-	}
+
 
 	// ***** Here we check whether $page is the last page or 
 	// whether we are trying to retrieve 
@@ -278,6 +276,12 @@ function &_adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page,
 	if ($page >= $lastpageno) {
 		$page = $lastpageno;
 		$atlastpage = true;
+	}
+	
+	// If page number <= 1, then we are at the first page
+	if (empty($page) || $page <= 1) {	
+		$page = 1;
+		$atfirstpage = true;
 	}
 	
 	// We get the data we want
@@ -372,7 +376,7 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 			// If the recordset field is one
 			// of the fields passed in then process.
 			$upperfname = strtoupper($field->name);
-			if (adodb_key_exists($upperfname,$arrFields)) {
+			if (adodb_key_exists($upperfname,$arrFields,$forcenulls)) {
 
 				// If the existing field value in the recordset
 				// is different from the value passed in then
@@ -392,31 +396,32 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 
 					// Based on the datatype of the field
 					// Format the value properly for the database
-				$type = $rs->MetaType($field->type);
-					
-					// is_null requires php 4.0.4
-				if (($forcenulls && is_null($arrFields[$upperfname])) || 
-					$arrFields[$upperfname] === 'null') {
-					$setFields .= $field->name . " = null, ";
-				} else {
-					if ($type == 'null') {
-						$type = 'C';
+					$type = $rs->MetaType($field->type);
+						
+						// is_null requires php 4.0.4
+					if (($forcenulls && is_null($arrFields[$upperfname])) || 
+						$arrFields[$upperfname] === 'null') {
+						$setFields .= $field->name . " = null, ";
+					} else {
+						if ($type == 'null') {
+							$type = 'C';
+						}
+						
+						if (strpos($upperfname,' ') !== false)
+							$fnameq = $zthis->nameQuote.$upperfname.$zthis->nameQuote;
+						else
+							$fnameq = $upperfname;
+							
+						//we do this so each driver can customize the sql for
+						//DB specific column types. 
+						//Oracle needs BLOB types to be handled with a returning clause
+						//postgres has special needs as well
+						$setFields .= _adodb_column_sql($zthis, 'U', $type, $upperfname, $fnameq,
+														  $arrFields, $magicq);
 					}
-					
-					if (strpos($upperfname,' ') !== false)
-						$fnameq = $zthis->nameQuote.$upperfname.$zthis->nameQuote;
-					else
-						$fnameq = $upperfname;
-					//we do this so each driver can customize the sql for
-					//DB specific column types. 
-					//Oracle needs BLOB types to be handled with a returning clause
-					//postgres has special needs as well
-					$setFields .= _adodb_column_sql($zthis, 'U', $type, $upperfname, $fnameq,
-													  $arrFields, $magicq);
 				}
 			}
 		}
-	}
 
 		// If there were any modified fields then build the rest of the update query.
 		if ($fieldUpdatedCount > 0 || $forceUpdate) {
@@ -429,9 +434,10 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 			
 			$discard = false;
 			// not a good hack, improvements?
-			if ($whereClause)
-				preg_match('/\s(LIMIT\s.*)/is', $whereClause[1], $discard);
-			else
+			if ($whereClause) {
+				if (preg_match('/\s(ORDER\s.*)/is', $whereClause[1], $discard));
+				else preg_match('/\s(LIMIT\s.*)/is', $whereClause[1], $discard);
+			} else
 				$whereClause = array(false,false);
 				
 			if ($discard)
@@ -503,7 +509,7 @@ function _adodb_getinsertsql(&$zthis,&$rs,$arrFields,$magicq=false,$forcenulls=f
 	// Loop through all of the fields in the recordset
 	foreach( $columns as $field ) { 
 		$upperfname = strtoupper($field->name);
-		if (adodb_key_exists($upperfname,$arrFields)) {
+		if (adodb_key_exists($upperfname,$arrFields,$forcenulls)) {
 
 			// Set the counter for the number of fields that will be inserted.
 			$fieldInsertedCount++;
@@ -539,8 +545,10 @@ function _adodb_getinsertsql(&$zthis,&$rs,$arrFields,$magicq=false,$forcenulls=f
 	
 	// Get the table name from the existing query.
 	if (!$tableName) {
-		preg_match("/FROM\s+".ADODB_TABLE_REGEX."/is", $rs->sql, $tableName);
+		if (preg_match("/FROM\s+".ADODB_TABLE_REGEX."/is", $rs->sql, $tableName))
 			$tableName = $tableName[1];
+		else 
+			return false;
 	}		
 
 	// Strip off the comma and space on the end of both the fields
@@ -693,4 +701,105 @@ function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields,
 
 	return $sql;
 }
+
+
+
+function _adodb_debug_execute(&$zthis, $sql, $inputarr)
+{
+global $HTTP_SERVER_VARS;
+
+	$ss = '';
+	if ($inputarr) {
+		foreach($inputarr as $kk=>$vv) {
+			if (is_string($vv) && strlen($vv)>64) $vv = substr($vv,0,64).'...';
+			$ss .= "($kk=>'$vv') ";
+		}
+		$ss = "[ $ss ]";
+	}
+	$sqlTxt = str_replace(',',', ',is_array($sql) ? $sql[0] : $sql);
+
+	// check if running from browser or command-line
+	$inBrowser = isset($HTTP_SERVER_VARS['HTTP_USER_AGENT']);
+	
+	if ($inBrowser) {
+		$ss = htmlspecialchars($ss);
+		if ($zthis->debug === -1)
+			ADOConnection::outp( "<br>\n($zthis->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<br>\n",false);
+		else 
+			ADOConnection::outp( "<hr>\n($zthis->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<hr>\n",false);
+	} else {
+		ADOConnection::outp("-----\n($zthis->databaseType): ".$sqlTxt."\n-----\n",false);
+	}
+	
+	$qID = $zthis->_query($sql,$inputarr);
+	
+	/* 
+		Alexios Fakios notes that ErrorMsg() must be called before ErrorNo() for mssql
+		because ErrorNo() calls Execute('SELECT @ERROR'), causing recursion
+	*/
+	if ($zthis->databaseType == 'mssql') { 
+	// ErrorNo is a slow function call in mssql, and not reliable in PHP 4.0.6
+		if($emsg = $zthis->ErrorMsg()) {
+			if ($err = $zthis->ErrorNo()) ADOConnection::outp($err.': '.$emsg);
+		}
+	} else if (!$qID) {
+		ADOConnection::outp($zthis->ErrorNo() .': '. $zthis->ErrorMsg());
+	}
+	
+	return $qID;
+}
+
+
+function _adodb_backtrace($printOrArr=true,$levels=9999)
+{
+	if (PHPVERSION() < 4.3) return '';
+	 
+	$html =  (isset($_SERVER['HTTP_USER_AGENT']));
+	$fmt =  ($html) ? "</font><font color=#808080 size=-1> %% line %4d, file: <a href=\"file:/%s\">%s</a></font>" : "%% line %4d, file: %s";
+
+	$MAXSTRLEN = 64;
+
+	$s = ($html) ? '<pre align=left>' : '';
+	
+	if (is_array($printOrArr)) $traceArr = $printOrArr;
+	else $traceArr = debug_backtrace();
+	array_shift($traceArr);
+	array_shift($traceArr);
+	$tabs = sizeof($traceArr)-2;
+	
+	foreach ($traceArr as $arr) {
+		$levels -= 1;
+		if ($levels < 0) break;
+		
+		$args = array();
+		for ($i=0; $i < $tabs; $i++) $s .=  ($html) ? ' &nbsp; ' : "\t";
+		$tabs -= 1;
+		if ($html) $s .= '<font face="Courier New,Courier">';
+		if (isset($arr['class'])) $s .= $arr['class'].'.';
+		if (isset($arr['args']))
+		 foreach($arr['args'] as $v) {
+			if (is_null($v)) $args[] = 'null';
+			else if (is_array($v)) $args[] = 'Array['.sizeof($v).']';
+			else if (is_object($v)) $args[] = 'Object:'.get_class($v);
+			else if (is_bool($v)) $args[] = $v ? 'true' : 'false';
+			else {
+				$v = (string) @$v;
+				$str = htmlspecialchars(substr($v,0,$MAXSTRLEN));
+				if (strlen($v) > $MAXSTRLEN) $str .= '...';
+				$args[] = $str;
+			}
+		}
+		$s .= $arr['function'].'('.implode(', ',$args).')';
+		
+		
+		$s .= @sprintf($fmt, $arr['line'],$arr['file'],basename($arr['file']));
+			
+		$s .= "\n";
+	}	
+	if ($html) $s .= '</pre>';
+	if ($printOrArr) print $s;
+	
+	return $s;
+}
+
 ?>

@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -18,11 +18,11 @@ include("$path/../adodb.inc.php");
 echo "<h3>PHP ".PHP_VERSION."</h3>\n";
 try {
 
-$dbt = 'mysqli';
+$dbt = 'oci8po';
 
 switch($dbt) {
-case 'oci8':
-	$db = NewADOConnection("oci8");
+case 'oci8po':
+	$db = NewADOConnection("oci8po");
 	$db->Connect('','scott','natsoft');
 	break;
 default:
@@ -32,22 +32,25 @@ case 'mysql':
 	break;
 	
 case 'mysqli':
-	$db = NewADOConnection("mysqli");
-	$db->Connect('localhost','root','','test');
+	$db = NewADOConnection("mysqli://root:@localhost/test");
+	//$db->Connect('localhost','root','','test');
 	break;
 }
 
 $db->debug=1;
 
-$cnt = $db->GetOne("select count(*) from adoxyz");
-$rs = $db->Execute("select * from adoxyz order by id");
+$cnt = $db->GetOne("select count(*) from adoxyz where ?<id and id<?",array(10,20));
+$stmt = $db->Prepare("select * from adoxyz where ?<id and id<?");
+if (!$stmt) echo $db->ErrorMsg(),"\n";
+$rs = $db->Execute($stmt,array(10,20));
 
 $i = 0;
 foreach($rs as  $v) {
 	$i += 1;
-	echo "$i: "; adodb_pr($v); adodb_pr($rs->fields);
+	echo "rec $i: "; adodb_pr($v); adodb_pr($rs->fields);
 	flush();
 }
+
 
 if ($i != $cnt) die("actual cnt is $i, cnt should be $cnt\n");
 
@@ -60,4 +63,6 @@ $rs = $db->Execute("select bad from badder");
 	$e = adodb_backtrace($e->gettrace());
 }
 
+$rs = $db->Execute("select distinct id, firstname,lastname from adoxyz order by id");
+echo "Result=\n",$rs;
 ?>

@@ -1,6 +1,6 @@
 <?php
 /*
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.  
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.  
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -57,6 +57,45 @@ class ADODB_ibase extends ADOConnection {
 	{
 		 if (defined('IBASE_DEFAULT')) $this->ibasetrans = IBASE_DEFAULT;
   	}
+	
+	
+	   // returns true or false
+	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename,$persist=false)
+	{  
+		if (!function_exists('ibase_pconnect')) return null;
+		if ($argDatabasename) $argHostname .= ':'.$argDatabasename;
+		$fn = ($persist) ? 'ibase_pconnect':'ibase_connect';
+		$this->_connectionID = $fn($argHostname,$argUsername,$argPassword,
+					$this->charSet,$this->buffers,$this->dialect);
+		
+		if ($this->dialect != 1) { // http://www.ibphoenix.com/ibp_60_del_id_ds.html
+			$this->replaceQuote = "''";
+		}
+		if ($this->_connectionID === false) {
+			$this->_handleerror();
+			return false;
+		}
+		
+		// PHP5 change.
+		if (function_exists('ibase_timefmt')) {
+			ibase_timefmt($this->ibase_datefmt,IBASE_DATE );
+			if ($this->dialect == 1) ibase_timefmt($this->ibase_datefmt,IBASE_TIMESTAMP );
+			else ibase_timefmt($this->ibase_timestampfmt,IBASE_TIMESTAMP );
+			ibase_timefmt($this->ibase_timefmt,IBASE_TIME );
+			
+		} else {
+			ini_set("ibase.timestampformat", $this->ibase_timestampfmt);
+			ini_set("ibase.dateformat", $this->ibase_datefmt);
+			ini_set("ibase.timeformat", $this->ibase_timefmt);
+		}
+		return true;
+	}
+	   // returns true or false
+	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
+	{
+		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename,true);
+	}	
+	
 	
 	function MetaPrimaryKeys($table,$owner_notused=false,$internalKey=false)
 	{	
@@ -257,48 +296,6 @@ class ADODB_ibase extends ADOConnection {
 			return $this->_errorMsg;
 	}
 
-	   // returns true or false
-	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename,$persist=false)
-	{  
-		if (!function_exists('ibase_pconnect')) return null;
-		if ($argDatabasename) $argHostname .= ':'.$argDatabasename;
-		$fn = ($persist) ? 'ibase_pconnect':'ibase_connect';
-		$this->_connectionID = $fn($argHostname,$argUsername,$argPassword,
-					$this->charSet,$this->buffers,$this->dialect);
-		
-		if ($this->dialect != 1) { // http://www.ibphoenix.com/ibp_60_del_id_ds.html
-			$this->replaceQuote = "''";
-		}
-		if ($this->_connectionID === false) {
-			$this->_handleerror();
-			return false;
-		}
-		
-		// PHP5 change.
-		if (function_exists('ibase_timefmt')) {
-			ibase_timefmt($this->ibase_datefmt,IBASE_DATE );
-			if ($this->dialect == 1) ibase_timefmt($this->ibase_datefmt,IBASE_TIMESTAMP );
-			else ibase_timefmt($this->ibase_timestampfmt,IBASE_TIMESTAMP );
-			ibase_timefmt($this->ibase_timefmt,IBASE_TIME );
-		} else {
-			ini_set("ibase.timestampformat", $this->base_timestampfmt);
-			ini_set("ibase.dateformat", $this->ibase_datefmt);
-			ini_set("ibase.timeformat", $this->ibase_timefmt);
-		}
-		//you can use
-		/*
-		ini_set("ibase.timestampformat", $this->ibase_timestampfmt);
-		ini_set("ibase.dateformat", $this->ibase_datefmt);
-		ini_set("ibase.timeformat", $this->ibase_timefmt);
-		*/
-		return true;
-	}
-	   // returns true or false
-	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
-	{
-		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename,true);
-	}	
-	
 	function Prepare($sql)
 	{
 		$stmt = ibase_prepare($this->_connectionID,$sql);

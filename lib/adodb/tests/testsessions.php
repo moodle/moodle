@@ -1,7 +1,7 @@
 <?php
 
 /* 
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -19,12 +19,19 @@ function NotifyExpire($ref,$key)
 	
 	
 #### CONNECTION
+if (1) {
 	$ADODB_SESSION_DRIVER='oci8';
 	$ADODB_SESSION_CONNECT='';
 	$ADODB_SESSION_USER ='scott';
 	$ADODB_SESSION_PWD ='natsoft';
 	$ADODB_SESSION_DB ='';
-	
+} else {
+	$ADODB_SESSION_DRIVER='mysql';
+	$ADODB_SESSION_CONNECT='localhost';
+	$ADODB_SESSION_USER ='root';
+	$ADODB_SESSION_PWD ='';
+	$ADODB_SESSION_DB ='xphplens_2';
+}
 	
 ### TURN DEBUGGING ON
 	$ADODB_SESS_DEBUG = true;

@@ -1,7 +1,7 @@
 <?php
 
 /*
-  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -58,14 +58,7 @@
 	{
 		return call_user_func_array(array($this->rs, $func), $params);
 	}
-	
-	function __toString()
-	{
-		if (isset($rs->databaseType)) $s = ' for '.$rs->databaseType;
-		else $s = '';
-		
-		return 'ADODB Iterator'.$s;
-	}
+
 	
 	function hasMore()
 	{
@@ -79,6 +72,12 @@ class ADODB_BASE_RS implements IteratorAggregate {
     function getIterator() {
         return new ADODB_Iterator($this);
     }
+	
+	function __toString()
+	{
+		include_once(ADODB_DIR.'/toexport.inc.php');
+		return _adodb_export($this,',',',',false,true);
+	}
 } 
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 
 /*
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -24,6 +24,11 @@ class ADODB_mysqlt extends ADODB_mysql {
 	var $ansiOuter = true; // for Version 3.23.17 or later
 	var $hasTransactions = true;
 	var $autoRollback = true; // apparently mysql does not autorollback properly 
+	
+	function ADODB_mysqlt() 
+	{			
+	global $ADODB_EXTENSION; if ($ADODB_EXTENSION) $this->rsPrefix .= 'ext_';
+	}
 	
 	function BeginTrans()
 	{	  
@@ -59,21 +64,62 @@ class ADODB_mysqlt extends ADODB_mysql {
 class ADORecordSet_mysqlt extends ADORecordSet_mysql{	
 	var $databaseType = "mysqlt";
 	
-	function ADORecordSet_mysqlt($queryID,$mode=false) {
-		return $this->ADORecordSet_mysql($queryID,$mode);
+	function ADORecordSet_mysqlt($queryID,$mode=false) 
+	{
+		if ($mode === false) { 
+			global $ADODB_FETCH_MODE;
+			$mode = $ADODB_FETCH_MODE;
+		}
+		switch ($mode)
+		{
+		case ADODB_FETCH_NUM: $this->fetchMode = MYSQL_NUM; break;
+		case ADODB_FETCH_ASSOC:$this->fetchMode = MYSQL_ASSOC; break;
+		default:
+		case ADODB_FETCH_DEFAULT:
+		case ADODB_FETCH_BOTH:$this->fetchMode = MYSQL_BOTH; break;
+		}
+	
+		$this->ADORecordSet($queryID);	
 	}
 	
-	function MoveNext() 
-	{	
-		if ($this->EOF) return false;
-
-		$this->_currentRow++;
-		// using & below slows things down by 20%!
-		$this->fields =  @mysql_fetch_array($this->_queryID,$this->fetchMode);
-		if ($this->fields) return true;
-		$this->EOF = true;
-		
+	function MoveNext()
+	{
+		if (@$this->fields =& mysql_fetch_array($this->_queryID,$this->fetchMode)) {
+			$this->_currentRow += 1;
+			return true;
+		}
+		if (!$this->EOF) {
+			$this->_currentRow += 1;
+			$this->EOF = true;
+		}
 		return false;
-	}	
+	}
 }
+
+class ADORecordSet_ext_mysqlt extends ADORecordSet_mysqlt {	
+
+	function ADORecordSet_ext_mysqli($queryID,$mode=false) 
+	{
+		if ($mode === false) { 
+			global $ADODB_FETCH_MODE;
+			$mode = $ADODB_FETCH_MODE;
+		}
+		switch ($mode)
+		{
+		case ADODB_FETCH_NUM: $this->fetchMode = MYSQL_NUM; break;
+		case ADODB_FETCH_ASSOC:$this->fetchMode = MYSQL_ASSOC; break;
+		default:
+		case ADODB_FETCH_DEFAULT:
+		case ADODB_FETCH_BOTH:$this->fetchMode = MYSQL_BOTH; break;
+		}
+	
+		$this->ADORecordSet($queryID);	
+	}
+	
+	function MoveNext()
+	{
+		return adodb_movenext($this);
+	}
+}
+
 ?>

@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.50 6 July 2004  (c) 2000-2004 John Lim. All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -155,7 +155,7 @@ class ADODB_sybase extends ADOConnection {
 		if ($offset > 0 && $cnt) $cnt += $offset;
 		
 		$this->Execute("set rowcount $cnt"); 
-		$rs =& ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+		$rs =& ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,0);
 		$this->Execute("set rowcount 0"); 
 		
 		return $rs;

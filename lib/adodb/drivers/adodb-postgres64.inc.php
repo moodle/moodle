@@ -1,6 +1,6 @@
 <?php
 /*
- V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -390,14 +390,14 @@ select viewname,'V' from pg_views where viewname like $mask";
 
 	// for schema support, pass in the $table param "$schema.$tabname".
 	// converts field names to lowercase, $upper is ignored
-	function &MetaColumns($table,$upper=true) 
+	function &MetaColumns($table,$normalize=true) 
 	{
 	global $ADODB_FETCH_MODE;
 	
 		$schema = false;
 		$this->_findschema($table,$schema);
 		
-		$table = strtolower($table);
+		if ($normalize) $table = strtolower($table);
 
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
@@ -486,7 +486,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 			}
 			
 			if ($ADODB_FETCH_MODE == ADODB_FETCH_NUM) $retarr[] = $fld;	
-			else $retarr[($upper) ? strtoupper($fld->name) : $fld->name] = $fld;
+			else $retarr[($normalize) ? strtoupper($fld->name) : $fld->name] = $fld;
 			
 			$rs->MoveNext();
 		}
@@ -803,9 +803,9 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		// cache types for blob decode check
 		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) {  
 			if (pg_fieldtype($qid,$i) == 'bytea') {
-				$this->_blobArr[$i] = pg_fieldname($qid,$off);
+				$this->_blobArr[$i] = pg_fieldname($qid,$i);
 			}
-		}		
+		}
 	}
 
 		/* Use associative array to get fields array */
@@ -867,7 +867,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
 				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
 				if (is_array($this->fields) && $this->fields) {
-					if ($this->fields && isset($this->_blobArr)) $this->_fixblobs();
+					if (isset($this->_blobArr)) $this->_fixblobs();
 					return true;
 				}
 			}

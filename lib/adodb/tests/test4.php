@@ -63,7 +63,7 @@ if ($insertSQL != $insertSQL2) echo "<p><b>Walt's new stuff failed</b>: $insertS
 
 $sql = "
 SELECT * 
-FROM ADOXYZ WHERE lastname=".$conn->qstr($record['lastname']); 
+FROM ADOXYZ WHERE lastname=".$conn->qstr($record['lastname']). " ORDER BY 1"; 
 // Select a record to update 
 
 $rs = $conn->Execute($sql); // Execute the query and get the existing record to update

@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -138,7 +138,7 @@ FROM `nuke_stories` `t1`, `nuke_authors` `t2`, `nuke_stories_cat` `t3`, `nuke_to
 	print "<br><i>ts4</i> =".($db->UnixTimeStamp("19700101000101")+8*3600);
 	print "<br><i>ts5</i> =".$db->DBTimeStamp($db->UnixTimeStamp("20040110092123"));
 	print "<br><i>ts6</i> =".$db->UserTimeStamp("20040110092123");
-	print "<br><i>ts6</i> =".$db->DBTimeStamp("20040110092123");
+	print "<br><i>ts7</i> =".$db->DBTimeStamp("20040110092123");
 	flush();
 	// mssql too slow in failing bad connection
 	if (false && $db->databaseType != 'mssql') {
@@ -151,7 +151,7 @@ FROM `nuke_stories` `t1`, `nuke_authors` `t2`, `nuke_stories_cat` `t3`, `nuke_to
 	}
 	error_reporting($e);
 	flush();
-	
+
 	//$ADODB_COUNTRECS=false;
 	$rs=$db->Execute('select * from adoxyz order by id');
 
@@ -410,6 +410,43 @@ GO
 		$saved = $db->debug;
 		$db->debug=true;
 		
+
+		/*
+		CREATE TABLE PHOTOS
+		(
+		  ID           NUMBER(16),
+		  PHOTO        BLOB,
+		  DESCRIPTION  VARCHAR2(4000 BYTE),
+		  DESCCLOB     CLOB
+		);
+		
+		INSERT INTO PHOTOS (ID) VALUES(1);
+		*/
+		$s = '';
+		for ($i = 0; $i <= 500; $i++) {
+			$s .= '1234567890';
+		}
+		
+		
+		print "<h4>Testing Blob: size=".strlen($s)."</h4>";
+		$ok = $db->Updateblob('photos','photo',$s,'id=1');
+		if (!$ok) Err("Blob failed 1");
+		else {
+			$s2= $db->GetOne("select photo from photos where id=1");
+			if ($s !== $s2) Err("updateblob does not match");
+		}
+		
+		print "<h4>Testing Clob: size=".strlen($s)."</h4>";
+		$ok = $db->UpdateClob('photos','descclob',$s,'id=1');
+		if (!$ok) Err("Clob failed 1");
+		else {
+			$s2= $db->GetOne("select descclob from photos where id=1");
+			if ($s !== $s2) Err("updateclob does not match");
+		}
+		
+		
+		$s = '';
+		$s2 = '';
 		print "<h4>Testing Foreign Keys</h4>";
 		$arr = $db->MetaForeignKeys('emp');
 		print_r($arr);
@@ -417,30 +454,50 @@ GO
 		print "<h4>Testing Cursor Variables</h4>";
 /*
 -- TEST PACKAGE
-CREATE OR REPLACE PACKAGE adodb AS
-TYPE TabType IS REF CURSOR RETURN tab%ROWTYPE;
-PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames in varchar);
-PROCEDURE data_out(input IN varchar, output OUT varchar); 
-END adodb;
+
+CREATE OR REPLACE PACKAGE Adodb AS
+TYPE TabType IS REF CURSOR RETURN TAB%ROWTYPE;
+PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames IN VARCHAR);
+PROCEDURE open_tab2 (tabcursor IN OUT TabType,tablenames IN OUT VARCHAR) ;
+PROCEDURE data_out(input IN VARCHAR, output OUT VARCHAR);
+
+PROCEDURE myproc (p1 IN NUMBER, p2 OUT NUMBER);
+END Adodb;
 /
 
-CREATE OR REPLACE PACKAGE BODY adodb AS
-PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames in varchar) IS
+
+CREATE OR REPLACE PACKAGE BODY Adodb AS
+PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames IN VARCHAR) IS
 	BEGIN
-		OPEN tabcursor FOR SELECT * FROM tab where tname like tablenames;
+		OPEN tabcursor FOR SELECT * FROM TAB WHERE tname LIKE tablenames;
 	END open_tab;
+
+	PROCEDURE open_tab2 (tabcursor IN OUT TabType,tablenames IN OUT VARCHAR) IS
+	BEGIN
+		OPEN tabcursor FOR SELECT * FROM TAB WHERE tname LIKE tablenames;
+		tablenames := 'TEST';
+	END open_tab2;
 	
-PROCEDURE data_out(input IN varchar, output OUT varchar) IS
+PROCEDURE data_out(input IN VARCHAR, output OUT VARCHAR) IS
 	BEGIN
 		output := 'Cinta Hati '||input;
 	END;
-END adodb;
+
+PROCEDURE myproc (p1 IN NUMBER, p2 OUT NUMBER) AS
+BEGIN
+p2 := p1;
+END;
+END Adodb;
 /
+
+
 */
-		$rs = $db->ExecuteCursor("BEGIN adodb.open_tab(:RS,'A%'); END;");
+		$rs = $db->ExecuteCursor("BEGIN adodb.open_tab(:zz,'A%'); END;",'zz');
 	
 		if ($rs && !$rs->EOF) {
-			print "Test 1 RowCount: ".$rs->RecordCount()."<p>";
+			$v = $db->GetOne("SELECT count(*) FROM tab where tname like 'A%'");
+			if ($v == $rs->RecordCount()) print "Test 1 RowCount: OK<p>";
+			else Err("Test 1 RowCount ".$rs->RecordCount().", actual = $v");
 		} else {
 			print "<b>Error in using Cursor Variables 1</b><p>";
 		}
@@ -488,6 +545,7 @@ END adodb;
 	$db->CompleteTrans();
 	$rs = $db->Execute('select * from ADOXYZ order by id');
 	if ($rs->RecordCount() != 3) Err("Bad bulk insert");
+	
 	rs2html($rs);
 	
 	$db->Execute('delete from ADOXYZ');
@@ -749,8 +807,20 @@ END adodb;
 	$db->debug = true;
 	print "<p>SelectLimit Distinct Test 1: Should see Caroline, John and Mary</p>";
 	$rs = &$db->SelectLimit('select distinct * from ADOXYZ order by id',3);
+	
+	echo "<p>Date Update Test</p>";
+	$zdate = date('Y-m-d',time()+3600*24);
+	$zdate = $db->DBDate($zdate);
+	$db->Execute("update ADOXYZ set created=$zdate where id=1");
+	$row = $db->GetRow("select created,firstname from ADOXYZ where id=1");
+	print_r($row); echo "<br>";
+	
+	//$zdate = date('Y-m-d',time()+3600*24);
+	//$db->Execute("update ADOXYZ set created=? where id=2",$zdate);
+	//$zdate = $db->GetOne("select created from ADOXYZ where id=2");
+	//echo "tomorrow=",$zdate,"<br>";
 	$db->debug=false;
-
+	
 	if ($rs && !$rs->EOF) {
 		if (trim($rs->fields[1]) != 'Caroline') Err("Error 1");
 		$rs->MoveNext();
@@ -854,10 +924,10 @@ END adodb;
 	$save = $ADODB_FETCH_MODE;
 	$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 	if ($db->dataProvider == 'postgres') {
-		$sql = "select ".$db->Concat('cast(firstname as varchar)',$db->qstr(' '),'lastname')." as fullname,id from ADOXYZ";
+		$sql = "select ".$db->Concat('cast(firstname as varchar)',$db->qstr(' '),'lastname')." as fullname,id,".$db->sysTimeStamp." as d from ADOXYZ";
 		$rs = &$db->Execute($sql);
 	} else {
-		$sql = "select distinct ".$db->Concat('firstname',$db->qstr(' '),'lastname')." as fullname,id from ADOXYZ";
+		$sql = "select distinct ".$db->Concat('firstname',$db->qstr(' '),'lastname')." as fullname,id,".$db->sysTimeStamp." as d from ADOXYZ";
 		$rs = &$db->Execute($sql);
 	}
 	if ($rs) {
@@ -904,12 +974,12 @@ END adodb;
 	//$arr = $db->GetArray("select  lastname,firstname from ADOXYZ");
 	//print_r($arr);
 	print "<hr>";
-	$rs =& $db->Execute("select distinct lastname,firstname from ADOXYZ");
+	$rs =& $db->Execute("select distinct lastname,firstname,created from ADOXYZ");
 	
 	if ($rs) {
 		$arr = $rs->GetAssoc();
 		//print_r($arr);
-		if (empty($arr['See']) || trim($arr['See']) != 'Wai Hun') print $arr['See']." &nbsp; <b>ERROR</b><br>";
+		if (empty($arr['See']) || trim(reset($arr['See'])) != 'Wai Hun') print $arr['See']." &nbsp; <b>ERROR</b><br>";
 		else print " OK 1";
 	}
 	
@@ -1433,7 +1503,7 @@ if (isset($_SERVER['argv'][1])) {
 	$HTTP_GET_VARS[$_SERVER['argv'][1]] = 1;
 }
 
-if ( @$HTTP_SERVER_VARS['COMPUTERNAME'] == 'TIGRESS') {
+if (@$HTTP_SERVER_VARS['COMPUTERNAME'] == 'TIGRESS') {
 	CheckWS('mysqlt');
 	CheckWS('postgres');
 	CheckWS('oci8po');
@@ -1478,7 +1548,7 @@ if (strpos(PHP_VERSION,'5') === 0) {
 
 This script tests the following databases: Interbase, Oracle, Visual FoxPro, Microsoft Access (ODBC and ADO), MySQL, MSSQL (ODBC, native, ADO). 
 There is also support for Sybase, PostgreSQL.</p>
-For the latest version of ADODB, visit <a href=http://php.weblogs.com/ADODB>php.weblogs.com</a>.</p>
+For the latest version of ADODB, visit <a href=http://adodb.sourceforge.net/>adodb.sourceforge.net</a>.</p>
 
 Test <a href=test4.php>GetInsertSQL/GetUpdateSQL</a> &nbsp; 
 	<a href=testsessions.php>Sessions</a> &nbsp;
@@ -1489,8 +1559,9 @@ include('./testdatabases.inc.php');
 
 echo "<br>vers=",ADOConnection::Version();
 
+
 include_once('../adodb-time.inc.php');
-adodb_date_test();
+if (!isset($_GET['nd'])) adodb_date_test();
 ?>
 <p><i>ADODB Database Library  (c) 2000-2004 John Lim. All rights reserved. Released under BSD and LGPL.</i></p>
 </body>

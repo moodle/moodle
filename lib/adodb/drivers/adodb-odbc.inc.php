@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -37,6 +37,7 @@ class ADODB_odbc extends ADOConnection {
 	var $_haserrorfunctions = true;
 	var $_has_stupid_odbc_fetch_api_change = true;
 	var $_lastAffectedRows = 0;
+	var $uCaseTables = true; // for meta* functions, uppercase table names
 	
 	function ADODB_odbc() 
 	{ 	
@@ -56,7 +57,7 @@ class ADODB_odbc extends ADOConnection {
 			
 			while(true) {
 				
-				$rez = odbc_data_source($this->_connectionID,
+				$rez = @odbc_data_source($this->_connectionID,
 					$first ? SQL_FETCH_FIRST : SQL_FETCH_NEXT);
 				$first = false;
 				if (!is_array($rez)) break;
@@ -232,9 +233,13 @@ class ADODB_odbc extends ADOConnection {
 	{
 	global $ADODB_FETCH_MODE;
 	
+		if ($this->uCaseTables) $table = strtoupper($table);
+		$schema = '';
+		$this->_findschema($table,$schema);
+
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		$qid = @odbc_primarykeys($this->_connectionID,'','',$table);
+		$qid = @odbc_primarykeys($this->_connectionID,'',$schema,$table);
 		
 		if (!$qid) {
 			$ADODB_FETCH_MODE = $savem;
@@ -361,14 +366,14 @@ class ADODB_odbc extends ADOConnection {
 	{
 	global $ADODB_FETCH_MODE;
 	
-		$table = strtoupper($table);
-		$schema = false;
+		if ($this->uCaseTables) $table = strtoupper($table);
+		$schema = '';
 		$this->_findschema($table,$schema);
 		
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 	
-		if (false) { // after testing, confirmed that the following does not work becoz of a bug
+		/*if (false) { // after testing, confirmed that the following does not work becoz of a bug
 			$qid2 = odbc_tables($this->_connectionID);
 			$rs = new ADORecordSet_odbc($qid2);		
 			$ADODB_FETCH_MODE = $savem;
@@ -387,12 +392,19 @@ class ADODB_odbc extends ADOConnection {
 			$rs->Close();
 			
 			$qid = odbc_columns($this->_connectionID,$q,$o,strtoupper($table),'%');
-		} else switch ($this->databaseType) {
+		} */
+		
+		switch ($this->databaseType) {
 		case 'access':
 		case 'vfp':
-		case 'db2':
-			$qid = odbc_columns($this->_connectionID);
+			$qid = odbc_columns($this->_connectionID);#,'%','',strtoupper($table),'%');
 			break;
+		
+		
+		case 'db2':
+            $colname = "%";
+            $qid = odbc_columns($this->_connectionID, "", $schema, $table, $colname);
+            break;
 			
 		default:
 			$qid = @odbc_columns($this->_connectionID,'%','%',strtoupper($table),'%');

@@ -2,7 +2,7 @@
 <body>
 <?php
 /* 
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -14,7 +14,7 @@ error_reporting(63);
 include("../adodb.inc.php");
 include("../tohtml.inc.php");
 
-if (1) {
+if (0) {
 	$db = ADONewConnection('oci8po');
 	
 	$db->PConnect('','scott','natsoft');
@@ -44,7 +44,7 @@ if (1) {
 }
 if (1) {
 	$db = ADONewConnection('oci8');
-	$db->PConnect('','scott','tiger');
+	$db->PConnect('','scott','natsoft');
 	$db->debug = true;
 	$db->Execute("delete from emp where ename='John'");
 	print $db->Affected_Rows().'<BR>';
@@ -53,6 +53,20 @@ if (1) {
 	// prepare not quite ready for prime time
 	//$rs = $db->Execute($stmt,array('empno'=>3775,'ename'=>'John'));
 	if (!$rs) die("Empty RS");
+	
+	$db->setfetchmode(ADODB_FETCH_NUM);
+	
+	$vv = 'A%';
+	$stmt = $db->PrepareSP("BEGIN adodb.open_tab2(:rs,:tt); END;",true);
+	$db->OutParameter($stmt, $cur, 'rs', -1, OCI_B_CURSOR);
+	$db->OutParameter($stmt, $vv, 'tt');
+	$rs = $db->Execute($stmt);
+	while (!$rs->EOF) {
+		adodb_pr($rs->fields);
+		$rs->MoveNext();
+	}
+	echo " val = $vv";
+
 }
 
 if (0) {

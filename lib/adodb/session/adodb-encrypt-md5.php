@@ -1,7 +1,5 @@
 <?php
 
-// $CVSHeader$
-
 /*
 V4.01 23 Oct 2003  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
          Contributed by Ross Smith (adodb@netebb.com). 

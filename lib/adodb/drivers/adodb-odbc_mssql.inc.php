@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -32,7 +32,6 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 	var $sysTimeStamp = 'GetDate()';
 	var $leftOuter = '*=';
 	var $rightOuter = '=*';
-	var $upperCase = 'upper';
 	var $substr = 'substring';
 	var $length = 'len';
 	var $ansiOuter = true; // for mssql7 or later
@@ -146,12 +145,23 @@ order by constraint_name, referenced_table_name, keyno";
 	// tested with MSSQL 2000
 	function &MetaPrimaryKeys($table)
 	{
-		$sql = "select k.column_name from information_schema.key_column_usage k,
+	global $ADODB_FETCH_MODE;
+	
+		$schema = '';
+		$this->_findschema($table,$schema);
+		//if (!$schema) $schema = $this->database;
+		if ($schema) $schema = "and k.table_catalog like '$schema%'"; 
+	
+		$sql = "select distinct k.column_name,ordinal_position from information_schema.key_column_usage k,
 		information_schema.table_constraints tc 
 		where tc.constraint_name = k.constraint_name and tc.constraint_type =
-		'PRIMARY KEY' and k.table_name = '$table'";
+		'PRIMARY KEY' and k.table_name = '$table' $schema order by ordinal_position ";
 		
+		$savem = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 		$a = $this->GetCol($sql);
+		$ADODB_FETCH_MODE = $savem;
+		
 		if ($a && sizeof($a)>0) return $a;
 		return false;	  
 	}

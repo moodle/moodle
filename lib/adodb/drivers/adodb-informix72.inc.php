@@ -1,6 +1,6 @@
 <?php
 /*
-V4.50 6 July 2004  (c) 2000-2004 John Lim. All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -27,7 +27,6 @@ class ADODB_informix72 extends ADOConnection {
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
 	var $hasInsertID = true;
 	var $hasAffectedRows = true;
-	var $upperCase = 'upper';
     var $substr = 'substr';
 	var $metaTablesSQL="select tabname from systables where tabtype!=' ' and owner!='informix'"; //Don't get informix tables and pseudo-tables
 

@@ -91,6 +91,7 @@ class ADODB_oci8 extends ADOConnection {
 	function ADODB_oci8() 
 	{
 		$this->_hasOCIFetchStatement = ADODB_PHPVER >= 0x4200;
+		if (defined('ADODB_EXTENSION')) $this->rsPrefix .= 'ext_';
 	}
 	
 	/*  Function &MetaColumns($table) added by smondino@users.sourceforge.net*/
@@ -233,8 +234,6 @@ NATSOFT.DOMAIN =
 	{
 		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename,1);
 	}
-	
-	
 	
 	// returns true or false
 	function _nconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
@@ -576,7 +575,7 @@ NATSOFT.DOMAIN =
 		if ($this->session_sharing_force_blob) $this->Execute('ALTER SESSION SET CURSOR_SHARING=EXACT');
 		$commit = $this->autoCommit;
 		if ($commit) $this->BeginTrans();
-		$rs = ADODB_oci8::Execute($sql,$arr);
+		$rs = $this->_Execute($sql,$arr);
 		if ($rez = !empty($rs)) $desc->save($val);
 		$desc->free();
 		if ($commit) $this->CommitTrans();
@@ -748,7 +747,7 @@ NATSOFT.DOMAIN =
 		return $rez;
 	}
 	
-	function Param($name)
+	function Param($name,$type=false)
 	{
 		return ':'.$name;
 	}
@@ -898,6 +897,8 @@ NATSOFT.DOMAIN =
 	// returns true or false
 	function _close()
 	{
+		if (!$this->_connectionID) return;
+		
 		if (!$this->autoCommit) OCIRollback($this->_connectionID);
 		if (count($this -> _refLOBs) > 0) {
 			foreach ($this -> _refLOBs as $key => $value) {
@@ -906,6 +907,7 @@ NATSOFT.DOMAIN =
 			}
 		}
 		OCILogoff($this->_connectionID);
+		
 		$this->_stmt = false;
 		$this->_connectionID = false;
 	}
@@ -1126,8 +1128,9 @@ class ADORecordset_oci8 extends ADORecordSet {
 	}
 	
 	
+	/*
 	// 10% speedup to move MoveNext to child class
-	function MoveNext() 
+	function _MoveNext() 
 	{
 	//global $ADODB_EXTENSION;if ($ADODB_EXTENSION) return @adodb_movenext($this);
 		
@@ -1139,7 +1142,22 @@ class ADORecordset_oci8 extends ADORecordSet {
 		$this->EOF = true;
 		
 		return false;
-	}	
+	}	*/
+	
+	
+	function MoveNext()
+	{
+		if (@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) {
+			$this->_currentRow += 1;
+			return true;
+		}
+		if (!$this->EOF) {
+			$this->_currentRow += 1;
+			$this->EOF = true;
+		}
+		return false;
+	}
+	
 	
 	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
 	function &GetArrayLimit($nrows,$offset=-1) 
@@ -1242,6 +1260,31 @@ class ADORecordset_oci8 extends ADORecordSet {
 			
 		default: return 'N';
 		}
+	}
+}
+
+class ADORecordSet_ext_oci8 extends ADORecordSet_oci8 {	
+	function ADORecordSet_ext_oci8($queryID,$mode=false) 
+	{
+		if ($mode === false) { 
+			global $ADODB_FETCH_MODE;
+			$mode = $ADODB_FETCH_MODE;
+		}
+		switch ($mode)
+		{
+		default:
+		case ADODB_FETCH_NUM: $this->fetchMode = OCI_NUM+OCI_RETURN_NULLS+OCI_RETURN_LOBS; break;
+		case ADODB_FETCH_ASSOC:$this->fetchMode = OCI_ASSOC+OCI_RETURN_NULLS+OCI_RETURN_LOBS; break;
+		case ADODB_FETCH_DEFAULT:
+		case ADODB_FETCH_BOTH:$this->fetchMode = OCI_NUM+OCI_ASSOC+OCI_RETURN_NULLS+OCI_RETURN_LOBS; break;
+		}
+
+		$this->_queryID = $queryID;
+	}
+	
+	function MoveNext()
+	{
+		return adodb_movenext($this);
 	}
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 /*
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence. See License.txt.
@@ -174,7 +174,6 @@ class ADODB_odbtp extends ADOConnection{
 				$this->_canSelectDb = true;
 				$this->substr = "substring";
 				$this->length = 'len';
-				$this->upperCase = 'upper';
 				$this->identitySQL = 'select @@IDENTITY';
 				$this->metaDatabasesSQL = "select name from master..sysdatabases where name <> 'master'";
 				break;
@@ -202,7 +201,6 @@ class ADODB_odbtp extends ADOConnection{
 				$this->replaceQuote = "'+chr(39)+'";
 				$this->true = '.T.';
 				$this->false = '.F.';
-				$this->upperCase = 'upper';
 				break;
 			case ODB_DRIVER_ORACLE:
 				$this->fmtDate = "'Y-m-d 00:00:00'";
@@ -222,7 +220,6 @@ class ADODB_odbtp extends ADOConnection{
 				$this->rightOuter = '=*';
 				$this->hasInsertID = true;
 				$this->hasTransactions = true;
-				$this->upperCase = 'upper';
 				$this->identitySQL = 'select @@IDENTITY';
 				break;
 			default:
@@ -629,5 +626,3 @@ class ADORecordSet_odbtp extends ADORecordSet {
 }
 
 ?>
-
-

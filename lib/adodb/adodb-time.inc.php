@@ -141,13 +141,13 @@ current timestamp is used. Unlike the function date(), it supports dates
 outside the 1901 to 2038 range.
 
 
-FUNCTION adodb_mktime($hr, $min, $sec, $month, $day, $year)
+FUNCTION adodb_mktime($hr, $min, $sec [, $month, $day, $year])
 
 Converts a local date to a unix timestamp.  Unlike the function mktime(), it supports
 dates outside the 1901 to 2038 range. Differs from mktime() in that all parameters
 are currently compulsory.
 
-FUNCTION adodb_gmmktime($hr, $min, $sec, $month, $day, $year)
+FUNCTION adodb_gmmktime($hr, $min, $sec [, $month, $day, $year])
 
 Converts a gmt date to a unix timestamp.  Unlike the function gmmktime(), it supports
 dates outside the 1901 to 2038 range. Differs from gmmktime() in that all parameters
@@ -174,6 +174,10 @@ c. Implement daylight savings, which looks awfully complicated, see
 
 
 CHANGELOG
+- 18 July 2004 0.15
+All params in adodb_mktime were formerly compulsory. Now only the hour, min, secs is compulsory. This
+brings it more in line with mktime (still not identical).
+
 - 23 June 2004 0.14
 
 Allow you to define your own daylights savings function, adodb_daylight_sv.
@@ -271,7 +275,7 @@ First implementation.
 /*
 	Version Number
 */
-define('ADODB_DATE_VERSION',0.14);
+define('ADODB_DATE_VERSION',0.15);
 
 /*
 	We check for Windows as only +ve ints are accepted as dates on Windows.
@@ -312,6 +316,9 @@ function adodb_date_test()
 	
 	// This flag disables calling of PHP native functions, so we can properly test the code
 	if (!defined('ADODB_TEST_DATES')) define('ADODB_TEST_DATES',1);
+	
+	$t = adodb_mktime(0,0,0);
+	if (!(adodb_date('Y-m-d') == date('Y-m-d'))) print 'Error in '.adodb_mktime(0,0,0).'<br>';
 	
 	$t = adodb_mktime(0,0,0,6,1,2102);
 	if (!(adodb_date('Y-m-d',$t) == '2102-06-01')) print 'Error in '.adodb_date('Y-m-d',$t).'<br>';
@@ -428,7 +435,7 @@ function adodb_date_test()
 	// we generate a timestamp, convert it to a date, and convert it back to a timestamp
 	// and check if the roundtrip broke the original timestamp value.
 	print "Testing $start to ".($start+$yrs).", or $max seconds, offset=$offset: ";
-	
+	$cnt = 0;
 	for ($max += $i; $i < $max; $i += $offset) {
 		$ret = adodb_date('m,d,Y,H,i,s',$i);
 		$arr = explode(',',$ret);
@@ -443,8 +450,9 @@ function adodb_date_test()
 			$fail = true;
 			break;
 		}
+		$cnt += 1;
 	}
-	
+	echo "Tested $cnt dates<br>";
 	if (!$fail) print "<p>Passed !</p>";
 	else print "<p><b>Failed</b> :-(</p>";
 }
@@ -717,6 +725,8 @@ function adodb_date2($fmt, $d=false, $is_gmt=false)
 */
 function adodb_date($fmt,$d=false,$is_gmt=false)
 {
+static $daylight;
+
 	if ($d === false) return ($is_gmt)? @gmdate($fmt): @date($fmt);
 	if (!defined('ADODB_TEST_DATES')) {
 		if ((abs($d) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
@@ -728,7 +738,8 @@ function adodb_date($fmt,$d=false,$is_gmt=false)
 	$_day_power = 86400;
 	
 	$arr = _adodb_getdate($d,true,$is_gmt);
-	if (function_exists('adodb_daylight_sv')) adodb_daylight_sv($arr, $is_gmt);
+	if (!isset($daylight)) $daylight = function_exists('adodb_daylight_sv');
+	if ($daylight) adodb_daylight_sv($arr, $is_gmt);
 	
 	$year = $arr['year'];
 	$month = $arr['mon'];
@@ -852,7 +863,7 @@ function adodb_date($fmt,$d=false,$is_gmt=false)
 	Returns a timestamp given a GMT/UTC time. 
 	Note that $is_dst is not implemented and is ignored.
 */
-function adodb_gmmktime($hr,$min,$sec,$mon,$day,$year,$is_dst=false)
+function adodb_gmmktime($hr,$min,$sec,$mon=false,$day=false,$year=false,$is_dst=false)
 {
 	return adodb_mktime($hr,$min,$sec,$mon,$day,$year,$is_dst,true);
 }
@@ -863,13 +874,15 @@ function adodb_gmmktime($hr,$min,$sec,$mon,$day,$year,$is_dst=false)
 	
 	Not a very fast algorithm - O(n) operation. Could be optimized to O(1).
 */
-function adodb_mktime($hr,$min,$sec,$mon,$day,$year,$is_dst=false,$is_gmt=false) 
+function adodb_mktime($hr,$min,$sec,$mon=false,$day=false,$year=false,$is_dst=false,$is_gmt=false) 
 {
 	if (!defined('ADODB_TEST_DATES')) {
 		// for windows, we don't check 1970 because with timezone differences, 
 		// 1 Jan 1970 could generate negative timestamp, which is illegal
-		if (!defined('ADODB_NO_NEGATIVE_TS') || ($year >= 1971)) 
-			if (1901 < $year && $year < 2038)
+		if (1971 < $year && $year < 2038
+			|| $mon === false
+			|| !defined('ADODB_NO_NEGATIVE_TS') && (1901 < $year && $year < 2038)
+			)
 				return $is_gmt?
 					@gmmktime($hr,$min,$sec,$mon,$day,$year):
 					@mktime($hr,$min,$sec,$mon,$day,$year);

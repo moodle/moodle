@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
  
   First cut at the Netezza Driver by Josh Eldridge joshuae74#hotmail.com
  Based on the previous postgres drivers.
@@ -26,7 +26,6 @@ class ADODB_netezza extends ADODB_postgres64 {
 	var $_resultid = false;
   	var $concat_operator='||';
   	var $random = 'random';
-  	var $upperCase = 'upper';
 	var $metaDatabasesSQL = "select objname from _v_object_data where objtype='database' order by 1";
     var $metaTablesSQL = "select objname from _v_object_data where objtype='table' order by 1";
 	var $isoDates = true; // accepts dates in ISO format

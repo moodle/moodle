@@ -1,7 +1,7 @@
 <?php
 
 /*
-	V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+	V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
 	  Released under both BSD license and Lesser GPL library license. 
 	  Whenever there is any discrepancy between the two licenses, 
 	  the BSD license will take precedence. 
@@ -230,6 +230,7 @@ class ADODB_Pager {
 		if (!$this->db->pageExecuteCountRows) return '';
 		$lastPage = $this->rs->LastPageNo();
 		if ($lastPage == -1) $lastPage = 1; // check for empty rs.
+		if ($this->curr_page > $lastPage) $this->curr_page = 1;
 		return "<font size=-1>$this->page ".$this->curr_page."/".$lastPage."</font>";
 	}
 	

@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -152,12 +152,10 @@ AND    b.name = 'sorts (memory)'",
 having count(*) > 100)",'These are sql statements that should be using bind variables'),*/
 		'index cache cost' => array('COST',
 			"select value from v\$parameter where name = 'optimizer_index_caching'",
-			'% of indexed data blocks expected in the cache.
-			Recommended is 20-80. Default is 0. See <a href=http://www.dba-oracle.com/oracle_tips_cbo_part1.htm>optimizer_index_caching</a>.'),
-		
+			'=WarnIndexCost'),
 		'random page cost' => array('COST',
 			"select value from v\$parameter where name = 'optimizer_index_cost_adj'",
-			'Recommended is 10-50 for TP, and 50 for data warehouses. Default is 100. See <a href=http://www.dba-oracle.com/oracle_tips_cost_adj.htm>optimizer_index_cost_adj</a>. '),		
+			'=WarnPageCost'),
 		
 		false
 		
@@ -172,6 +170,23 @@ having count(*) > 100)",'These are sql statements that should be using bind vari
 		$this->conn =& $conn;
 	}
 	
+	function WarnPageCost($val)
+	{
+		if ($val == 100) $s = '<font color=red><b>Too High</b>. </font>';
+		else $s = '';
+		
+		return $s.'Recommended is 20-50 for TP, and 50 for data warehouses. Default is 100. See <a href=http://www.dba-oracle.com/oracle_tips_cost_adj.htm>optimizer_index_cost_adj</a>. ';
+	}
+	
+	function WarnIndexCost($val)
+	{
+		if ($val == 0) $s = '<font color=red><b>Too Low</b>. </font>';
+		else $s = '';
+		
+		return $s.'Percentage of indexed data blocks expected in the cache.
+			Recommended is 20 (fast disk array) to 50 (slower hard disks). Default is 0.
+			 See <a href=http://www.dba-oracle.com/oracle_tips_cbo_part1.htm>optimizer_index_caching</a>.';
+		}
 	
 	function PGA()
 	{

@@ -1,6 +1,6 @@
 <?php
 /*
-V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -30,7 +30,6 @@ class ADODB_mysqli extends ADOConnection {
 	var $hasLimit = true;
 	var $hasMoveFirst = true;
 	var $hasGenID = true;
-	var $upperCase = 'upper';
 	var $isoDates = true; // accepts dates in ISO format
 	var $sysDate = 'CURDATE()';
 	var $sysTimeStamp = 'NOW()';
@@ -39,17 +38,74 @@ class ADODB_mysqli extends ADOConnection {
 	var $poorAffectedRows = true;
 	var $clientFlags = 0;
 	var $substr = "substring";
-	//var $poorAffectedRows = true;
+	var $port = false;
+	var $socket = false;
+	var $_bindInputArray = false;
 	var $nameQuote = '`';		/// string to use to quote identifiers and names
-	//var $_bindInputArray = true;
 	
 	function ADODB_mysqli() 
 	{			
 	  if(!extension_loaded("mysqli"))
-	    {
 	      trigger_error("You must have the MySQLi extension.", E_USER_ERROR);
-	    }
+	    
 	}
+	
+
+	// returns true or false
+	// To add: parameter int $port,
+	//         parameter string $socket
+	function _connect($argHostname = NULL, 
+			  $argUsername = NULL, 
+			  $argPassword = NULL, 
+			  $argDatabasename = NULL, $persist=false)
+	  {
+	    $this->_connectionID = @mysqli_init();
+	    
+	    if (is_null($this->_connectionID)) {
+	      // mysqli_init only fails if insufficient memory
+	      if ($this->debug) 
+				ADOConnection::outp("mysqli_init() failed : "  . $this->ErrorMsg());
+	      return false;
+	    }
+	    // Set connection options
+	    // Not implemented now
+	    // mysqli_options($this->_connection,,);
+ 	    if (mysqli_real_connect($this->_connectionID,
+ 				    $argHostname,
+ 				    $argUsername,
+ 				    $argPassword,
+ 				    $argDatabasename,
+					$this->port,
+					$this->socket,
+					$this->clientFlags))
+ 	      {
+ 		if ($argDatabasename)  return $this->SelectDB($argDatabasename);
+		  
+		
+ 		return true;
+ 	   }
+ 	    else {
+			if ($this->debug) 
+		  		ADOConnection::outp("Could't connect : "  . $this->ErrorMsg());
+			return false;
+	      }
+	  }
+	
+	// returns true or false
+	// How to force a persistent connection
+	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
+	{
+		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename, true);
+
+	}
+	
+	// When is this used? Close old connection first?
+	// In _connect(), check $this->forceNewConnect? 
+	function _nconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
+	  {
+	    $this->forceNewConnect = true;
+	    $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename);
+	  }
 	
 	function IfNull( $field, $ifNull ) 
 	{
@@ -329,70 +385,6 @@ class ADODB_mysqli extends ADOConnection {
 		return "from_unixtime(unix_timestamp($date)+($dayFraction)*24*3600)";
 	}
 	
-	// returns true or false
-	// To add: parameter int $port,
-	//         parameter string $socket
-	function _connect($argHostname = NULL, 
-			  $argUsername = NULL, 
-			  $argPassword = NULL, 
-			  $argDatabasename = NULL)
-	  {
-	    // @ means: error surpression on
-	    $this->_connectionID = @mysqli_init();
-	    
-	    if (is_null($this->_connectionID))
-	    {
-	      // mysqli_init only fails if insufficient memory
-	      if ($this->debug) 
-		ADOConnection::outp("mysqli_init() failed : "  . $this->ErrorMsg());
-	      return false;
-	    }
-	    // Set connection options
-	    // Not implemented now
-	    // mysqli_options($this->_connection,,);
- 	    if (mysqli_real_connect($this->_connectionID,
- 				    $argHostname,
- 				    $argUsername,
- 				    $argPassword,
- 				    $argDatabasename))
- 	      {
- 		if ($argDatabasename) 
-		  {
-		    return $this->SelectDB($argDatabasename);
-		  }
-		
- 		return true;
- 	      }
- 	    else
-	      {
-		if ($this->debug) 
-		  ADOConnection::outp("Could't connect : "  . $this->ErrorMsg());
-		return false;
-	      }
-	  }
-	
-	// returns true or false
-	// How to force a persistent connection
-	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
-	  {
-	    // not implemented in mysqli (yet)?
-	    $this->_connectionID = mysqli_connect($argHostname,
-						  $argUsername,
-						  $argPassword,
-						  $argDatabasename);
-	    if ($this->_connectionID === false) return false;
-	    //	    if ($this->autoRollback) $this->RollbackTrans();
-	    if ($argDatabasename) return $this->SelectDB($argDatabasename);
-	    return true;	
-	  }
-	
-	// When is this used? Close old connection first?
-	// In _connect(), check $this->forceNewConnect? 
-	function _nconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
-	  {
-	    $this->forceNewConnect = true;
-	    $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename);
-	  }
 	
  	function &MetaColumns($table) 
 	{
@@ -539,8 +531,11 @@ class ADODB_mysqli extends ADOConnection {
 	{
 		return $sql;
 		
-		$stmt = mysqli_prepare($this->_connectionID,$sql);
-		if (!$stmt) return false;
+		$stmt = $this->_connectionID->prepare($sql);
+		if (!$stmt) {
+			echo $this->ErrorMsg();
+			return $sql;
+		}
 		return array($sql,$stmt);
 	}
 	
@@ -549,18 +544,20 @@ class ADODB_mysqli extends ADOConnection {
 	function _query($sql, $inputarr)
 	{
 	global $ADODB_COUNTRECS;
-	
+		
 		if (is_array($sql)) {
 			$stmt = $sql[1];
+			$a = '';
 			foreach($inputarr as $k => $v) {
-				if (is_string($v)) $a[] = MYSQLI_BIND_STRING;
-				else if (is_integer($v)) $a[] = MYSQLI_BIND_INT; 
-				else $a[] = MYSQLI_BIND_DOUBLE;
-				
-				$fnarr =& array_merge( array($stmt,$a) , $inputarr);
-				$ret = call_user_func_array('mysqli_bind_param',$fnarr);
+				if (is_string($v)) $a .= 's';
+				else if (is_integer($v)) $a .= 'i'; 
+				else $a .= 'd';
 			}
-			$ret = mysqli_execute($stmt);
+			
+			$fnarr =& array_merge( array($stmt,$a) , $inputarr);
+			$ret = call_user_func_array('mysqli_stmt_bind_param',$fnarr);
+
+			$ret = mysqli_stmt_execute($stmt);
 			return $ret;
 		}
 		if (!$mysql_res =  mysqli_query($this->_connectionID, $sql, ($ADODB_COUNTRECS) ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT)) {
