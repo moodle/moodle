@@ -1591,6 +1591,7 @@ function ewiki_page_edit_form_final_imgupload(&$o, &$id, &$data, &$action) {
       . '<form action='
       . '"'. ewiki_script_binary("", EWIKI_IDF_INTERNAL, "", "_UPLOAD=1") .'"'
       . ' method="POST" enctype="multipart/form-data" target="_upload">'
+      . '<input type="hidden" name="MAX_FILE_SIZE" value="'.EWIKI_IMAGE_MAXSIZE.'" />'
       . '<input type="file" name="'.EWIKI_UP_UPLOAD.'"'
       . (defined("EWIKI_IMAGE_ACCEPT") ? ' accept="'.EWIKI_IMAGE_ACCEPT.'" />' : "")
       . '<input type="hidden" name="'.EWIKI_UP_BINARY.'" value="'.EWIKI_IDF_INTERNAL.'" />'

@@ -92,7 +92,7 @@ $ewiki_t["de"]["DWNL_ENTRY_FORMAT"] =
 
 function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
 
-   global $ewiki_upload_sections, $ewiki_plugins;
+   global $CFG, $ewiki_upload_sections, $ewiki_plugins;
 
    $o = ewiki_make_title($id, $id, 2);
 
@@ -104,12 +104,12 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
       $o .= '<div class="upload">'.
             '<form action="' .
             ewiki_script( ($action!="view" ? $action : ""), $id).
-            '" method="POST" enctype="multipart/form-data">' .
-            '<b>'.ewiki_t("file").'</b><br /><input type="file" name="'.EWIKI_UP_UPLOAD.'" /><br /><br />' .
-            '<input type="submit" value="' . EWIKI_PAGE_UPLOAD . '" /><br /><br />';
-
-      $o .= '<b>' . ewiki_t("comment") . '</b><br /><textarea name="comment" cols="35" rows="3"></textarea><br /><br />';
-
+          '" method="POST" enctype="multipart/form-data">' ;
+      require_once($CFG->dirroot.'/lib/uploadlib.php');
+      $o .= upload_print_form_fragment(1,array(EWIKI_UP_UPLOAD),array(ewiki_t("file")),false,null,0,0,true);
+      $o .= '<input type="submit" value="' . EWIKI_PAGE_UPLOAD . '"><br /><br />'
+          .'<b>' . ewiki_t("comment") . '</b><br /><textarea name="comment" cols="35" rows="3"></textarea><br /><br />';
+      
       if (empty($ewiki_upload_sections[$def_sec])) {
          $ewiki_upload_sections[$def_sec] = $def_sec;
       }
