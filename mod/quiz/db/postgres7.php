@@ -157,6 +157,73 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "", "password", "varchar", "255", "", "", "not null", "");
         table_column("quiz", "", "subnet", "varchar", "255", "", "", "not null", "");
     }
+
+    if ($oldversion < 2004073001) {
+        // Six new tables:
+
+
+        modify_database ( "", "BEGIN;");
+
+        // One table for handling units for numerical questions
+        modify_database ("", " CREATE TABLE prefix_quiz_numerical_units (
+                               id SERIAL8 PRIMARY KEY,
+                               question INT8  NOT NULL default '0',
+                               multiplier decimal(40,20) NOT NULL default '1.00000000000000000000',
+                               unit varchar(50) NOT NULL default ''
+                );" );
+
+
+        // Four tables for handling distribution and storage of
+        // individual data for dataset dependent question types
+        modify_database ("", " CREATE TABLE prefix_quiz_attemptonlast_datasets (
+                               id SERIAL8 PRIMARY KEY,
+                               category INT8  NOT NULL default '0',
+                               userid INT8  NOT NULL default '0',
+                               datasetnumber INT8  NOT NULL default '0',
+                               CONSTRAINT  category UNIQUE (category,userid)
+            ) ;");
+
+        modify_database ("", " CREATE TABLE prefix_quiz_dataset_definitions (
+                               id SERIAL8 PRIMARY KEY,
+                               category INT8  NOT NULL default '0',
+                               name varchar(255) NOT NULL default '',
+                               type INT8 NOT NULL default '0',
+                               options varchar(255) NOT NULL default '',
+                               itemcount INT8  NOT NULL default '0'
+            ) ; ");
+
+        modify_database ("", " CREATE TABLE prefix_quiz_dataset_items (
+                               id SERIAL8 PRIMARY KEY,
+                               definition INT8  NOT NULL default '0',
+                               number INT8  NOT NULL default '0',
+                               value varchar(255) NOT NULL default ''
+                             ) ; ");
+
+        modify_database ("", "CREATE INDEX prefix_quiz_dataset_items_definition_idx ON prefix_quiz_dataset_items (definition);");
+
+        modify_database ("", " CREATE TABLE prefix_quiz_question_datasets (
+                               id SERIAL8 PRIMARY KEY,
+                               question INT8  NOT NULL default '0',
+                               datasetdefinition INT8  NOT NULL default '0'
+            ) ; ");
+
+        modify_database ("", "CREATE INDEX prefix_quiz_question_datasets_question_datasetdefinition_idx ON prefix_quiz_question_datasets (question,datasetdefinition);");
+
+        // One table for new question type calculated
+        //  - the first dataset dependent question type
+        modify_database ("", " CREATE TABLE prefix_quiz_calculated (
+                               id SERIAL8 PRIMARY KEY,
+                               question INT8  NOT NULL default '0',
+                               answer INT8  NOT NULL default '0',
+                               tolerance varchar(20) NOT NULL default '0.0',
+                               tolerancetype INT8 NOT NULL default '1',
+                               correctanswerlength INT8 NOT NULL default '2'
+                ) ; ");
+
+        modify_database ("", "CREATE INDEX prefix_quiz_calculated_question_idx ON  prefix_quiz_calculated (question);");
+
+        modify_database ( "", "COMMIT;");
+    }
     
     return true;
 }

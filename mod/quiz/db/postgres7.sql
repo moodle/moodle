@@ -242,6 +242,65 @@ CREATE TABLE prefix_quiz_truefalse (
 CREATE INDEX prefix_quiz_truefalse_question_idx ON prefix_quiz_truefalse (question);
 
 
+
+CREATE TABLE prefix_quiz_numerical_units (
+    id SERIAL8 PRIMARY KEY,
+    question INT8  NOT NULL default '0',
+    multiplier decimal(40,20) NOT NULL default '1.00000000000000000000',
+    unit varchar(50) NOT NULL default ''
+);
+
+
+CREATE TABLE prefix_quiz_attemptonlast_datasets (
+    id SERIAL8 PRIMARY KEY,
+    category INT8  NOT NULL default '0',
+    userid INT8  NOT NULL default '0',
+    datasetnumber INT8  NOT NULL default '0',
+    CONSTRAINT  category UNIQUE (category,userid)
+);
+
+CREATE TABLE prefix_quiz_dataset_definitions (
+    id SERIAL8 PRIMARY KEY,
+    category INT8  NOT NULL default '0',
+    name varchar(255) NOT NULL default '',
+    type INT8 NOT NULL default '0',
+    options varchar(255) NOT NULL default '',
+    itemcount INT8  NOT NULL default '0'
+);
+
+CREATE TABLE prefix_quiz_dataset_items (
+    id SERIAL8 PRIMARY KEY,
+    definition INT8  NOT NULL default '0',
+    number INT8  NOT NULL default '0',
+    value varchar(255) NOT NULL default ''
+);
+
+CREATE INDEX prefix_quiz_dataset_items_definition_idx 
+    ON prefix_quiz_dataset_items (definition);
+
+CREATE TABLE prefix_quiz_question_datasets (
+    id SERIAL8 PRIMARY KEY,
+    question INT8  NOT NULL default '0',
+    datasetdefinition INT8  NOT NULL default '0'
+);
+
+CREATE INDEX prefix_quiz_question_datasets_question_datasetdefinition_idx 
+    ON prefix_quiz_question_datasets (question,datasetdefinition);
+
+CREATE TABLE prefix_quiz_calculated (
+    id SERIAL8 PRIMARY KEY,
+    question INT8  NOT NULL default '0',
+    answer INT8  NOT NULL default '0',
+    tolerance varchar(20) NOT NULL default '0.0',
+    tolerancetype INT8 NOT NULL default '1',
+    correctanswerlength INT8 NOT NULL default '2'
+);
+
+CREATE INDEX prefix_quiz_calculated_question_idx 
+    ON  prefix_quiz_calculated (question);
+
+
+
 INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'update', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
