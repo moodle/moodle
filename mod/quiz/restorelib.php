@@ -2,7 +2,7 @@
     //This php script contains all the stuff to backup/restore
     //quiz mods
 
-   //To see, put your terminal to 132cc
+    //To see, put your terminal to 132cc
 
     //This is the "graphical" structure of the quiz mod:
     //
@@ -18,27 +18,61 @@
     //             |                                              |                              |
     //             |                                              |                              |
     //             |                                              |                              |
-    //       quiz_responses                                       |                        quiz_questions     
+    //       quiz_responses                                       |                        quiz_questions
     //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)
     //                                                                                           |
     //                                                                                           |
     //                                                                                           |
-    //             ------------------------------------------------------------------------------------------------------
-    //             |                         |                        |                |    
-    //             |                         |                        |                |
-    //             |                         |                        |                |           quiz_randomsamatch
-    //       quiz_truefalse           quiz_shortanswer         quiz_multichoice        |---------(CL,pl->id,fk->question)
-    //  (CL,pl->id,fk->question)  (CL,pl->id,fk->question)  (CL,pl->id,fk->question)   |
-    //             .                         .                        .                |
-    //             .                         .                        .                |
-    //             .                         .                        .                |               quiz_match
-    //             ....................................................                |---------(CL,pl->id,fk->question)
-    //                                       .                                         |                    .
-    //                                       .                                         |                    .
-    //                                       .                                         |                    .
-    //                                    quiz_answers                                 |              quiz_match_sub
-    //                             (CL,pk->id,fk->question)----------------------------|---------(CL,pl->id,fk->question) 
-    // 
+    //             --------------------------------------------------------------------------------------                
+    //             |                         |                        |                                 |
+    //             |                         |                        |                                 |
+    //             |                         |                        |                                 |    quiz_randomsamatch
+    //      quiz_truefalse         quiz_shortanswer       quiz_multichoice         quiz_numerical       |--(CL,pl->id,fk->question)
+    // (CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question) |
+    //             .                         .                        .                 .               |
+    //             .                         .                        .                 .               |
+    //             .                         .                        .                 .               |         quiz_match
+    //             ......................................................................               |--(CL,pl->id,fk->question)
+    //                                                   .                                              |             .
+    //                                                   .                                              |             .
+    //                                                   .                                              |             .
+    //                                                quiz_answers                                      |      quiz_match_sub
+    //                                         (CL,pk->id,fk->question)---------------------------------|--(CL,pl->id,fk->question)
+    //    //This is the "graphical" structure of the quiz mod:
+    //
+    //                           quiz                                                      quiz_categories
+    //                        (CL,pk->id)                                                   (CL,pk->id)
+    //                            |                                                              |
+    //             -----------------------------------------------                               |
+    //             |                        |                    |                               |
+    //             |                        |                    |                               |
+    //             |                        |                    |                               |
+    //        quiz_attempts          quiz_grades         quiz_question_grades                    |
+    //   (UL,pk->id, fk->quiz)   (UL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)                    |
+    //             |                                              |                              |
+    //             |                                              |                              |
+    //             |                                              |                              |
+    //       quiz_responses                                       |                        quiz_questions
+    //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)
+    //                                                                                           |
+    //                                                                                           |
+    //                                                                                           |
+    //             --------------------------------------------------------------------------------------                
+    //             |                         |                        |                                 |
+    //             |                         |                        |                                 |
+    //             |                         |                        |                                 |    quiz_randomsamatch
+    //      quiz_truefalse         quiz_shortanswer       quiz_multichoice         quiz_numerical       |--(CL,pl->id,fk->question)
+    // (CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question) |
+    //             .                         .                        .                 .               |
+    //             .                         .                        .                 .               |
+    //             .                         .                        .                 .               |         quiz_match
+    //             ......................................................................               |--(CL,pl->id,fk->question)
+    //                                                   .                                              |             .
+    //                                                   .                                              |             .
+    //                                                   .                                              |             .
+    //                                                quiz_answers                                      |      quiz_match_sub
+    //                                         (CL,pk->id,fk->question)---------------------------------|--(CL,pl->id,fk->question)
+    //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
     //          nt->nested field (recursive data)
@@ -55,6 +89,7 @@
     //     - quiz_truefalse
     //     - quiz_shortanswer
     //     - quiz_multichoice
+    //     - quiz_numerical
     //     - quiz_randomsamatch
     //     - quiz_match
     //     - quiz_match_sub
@@ -188,6 +223,8 @@
                     $status = quiz_restore_randomsamatch($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "7") {
                     //Description question. Nothing to do.
+                } else if ($question->qtype == "8") {
+                    $status = quiz_restore_numerical($oldid,$newid,$que_info,$restore);
                 }
             } else {
                 $status = false;
@@ -536,7 +573,53 @@
         return $status;
     }
 
+    function quiz_restore_numerical ($old_question_id,$new_question_id,$info,$restore) {
 
+        global $CFG;
+
+        $status = true;
+
+        //Get the numerical array
+        $numericals = $info['#']['NUMERICAL'];
+
+        //Iterate over numericals
+        for($i = 0; $i < sizeof($numericals); $i++) {
+            $num_info = $numericals[$i];
+            //traverse_xmlize($num_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the QUIZ_NUMERICAL record structure
+            $numerical->question = $new_question_id;
+            $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
+            $numerical->min = backup_todb($num_info['#']['MIN']['0']['#']);
+            $numerical->max = backup_todb($num_info['#']['MAX']['0']['#']);
+
+            ////We have to recode the answer field
+            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$numerical->answer);
+            if ($answer) {
+                $numerical->answer = $answer->new_id;
+            }
+
+            //The structure is equal to the db, so insert the quiz_numerical
+            $newid = insert_record ("quiz_numerical",$numerical);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
 
 
     //STEP 2. Restore quizzes and associated structures
@@ -885,6 +968,9 @@
                     case 7:    //DESCRIPTION QTYPE
                         //Nothing to do (there is no awser to this qtype)
                         //But this case must exist !!
+                        break;
+                    case 8:    //NUMERICAL QTYPE
+                        //Nothing to do. The response is a text.
                         break;
                     default:   //UNMATCHED QTYPE.
                         //This is an error (unimplemented qtype)

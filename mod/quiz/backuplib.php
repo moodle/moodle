@@ -2,7 +2,7 @@
     //This php script contains all the stuff to backup/restore
     //quiz mods
 
-   //To see, put your terminal to 132cc
+    //To see, put your terminal to 132cc
 
     //This is the "graphical" structure of the quiz mod:
     //
@@ -23,21 +23,21 @@
     //                                                                                           |
     //                                                                                           |
     //                                                                                           |
-    //             ------------------------------------------------------------------------------------------------------
-    //             |                         |                        |                |    
-    //             |                         |                        |                |
-    //             |                         |                        |                |           quiz_randomsamatch
-    //       quiz_truefalse           quiz_shortanswer         quiz_multichoice        |---------(CL,pl->id,fk->question)
-    //  (CL,pl->id,fk->question)  (CL,pl->id,fk->question)  (CL,pl->id,fk->question)   |
-    //             .                         .                        .                |
-    //             .                         .                        .                |
-    //             .                         .                        .                |               quiz_match
-    //             ....................................................                |---------(CL,pl->id,fk->question)
-    //                                       .                                         |                    .
-    //                                       .                                         |                    .
-    //                                       .                                         |                    .
-    //                                    quiz_answers                                 |              quiz_match_sub
-    //                             (CL,pk->id,fk->question)----------------------------|---------(CL,pl->id,fk->question) 
+    //             --------------------------------------------------------------------------------------
+    //             |                         |                        |                                 |    
+    //             |                         |                        |                                 |
+    //             |                         |                        |                                 |    quiz_randomsamatch
+    //      quiz_truefalse         quiz_shortanswer       quiz_multichoice         quiz_numerical       |--(CL,pl->id,fk->question)
+    // (CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question) |
+    //             .                         .                        .                 .               |
+    //             .                         .                        .                 .               |
+    //             .                         .                        .                 .               |         quiz_match
+    //             ......................................................................               |--(CL,pl->id,fk->question)
+    //                                                   .                                              |             .
+    //                                                   .                                              |             .
+    //                                                   .                                              |             .
+    //                                                quiz_answers                                      |      quiz_match_sub
+    //                                         (CL,pk->id,fk->question)---------------------------------|--(CL,pl->id,fk->question) 
     // 
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -57,6 +57,7 @@
     //     - quiz_truefalse
     //     - quiz_shortanswer
     //     - quiz_multichoice
+    //     - quiz_numerical
     //     - quiz_randomsamatch
     //     - quiz_match
     //     - quiz_match_sub
@@ -151,6 +152,8 @@
                     $status = quiz_backup_randomsamatch($bf,$preferences,$question->id);
                 } else if ($question->qtype == "7") {
                     //Description question. Nothing to write.
+                } else if ($question->qtype == "8") {
+                    $status = quiz_backup_numerical($bf,$preferences,$question->id);
                 }
                 //End question
                 $status =fwrite ($bf,end_tag("QUESTION",5,true));
@@ -294,8 +297,34 @@
         return $status;
     }
 
+    //This function backups the data in a numerical question (qtype=8) and its
+    //asociated data
+    function quiz_backup_numerical($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $numericals = get_records("quiz_numerical","question",$question,"id");
+        //If there are numericals
+        if ($numericals) {
+            //Iterate over each numerical
+            foreach ($numericals as $numerical) {
+                $status =fwrite ($bf,start_tag("NUMERICAL",6,true));
+                //Print numerical contents
+                fwrite ($bf,full_tag("ANSWER",7,false,$numerical->answer));
+                fwrite ($bf,full_tag("MIN",7,false,$numerical->min));
+                fwrite ($bf,full_tag("MAX",7,false,$numerical->max));
+                $status =fwrite ($bf,end_tag("NUMERICAL",6,true));
+            }
+            //Now print quiz_answers
+            $status = quiz_backup_answers($bf,$preferences,$question);
+        }
+        return $status;
+    }
+
     //This function backups the answers data in some question types
-    //(truefalse, shortanswer,multichoice)
+    //(truefalse, shortanswer,multichoice,numerical)
     function quiz_backup_answers($bf,$preferences,$question) {
 
         global $CFG;
