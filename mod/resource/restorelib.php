@@ -64,23 +64,6 @@
                 $oldtype = $resource->type;
                 $resource->type = $types[$oldtype];
                 $resource->options = $options[$oldtype];
-
-                //Finally, check some specific mimetypes to decide when to set the frame option
-                //making the restore smoother...:-)
-                require_once("$CFG->dirroot/files/mimetypes.php");
-                $embedded = false;
-                if ($resource->type == 'file' and !$resource->options and !$resource->popup) {
-                    $mimetype = mimeinfo("type", $resource->reference);
-                    if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))
-                        or (substr($mimetype, 0, 10) == "video/x-ms")
-                        or ($mimetype == "audio/mp3")
-                        or ($mimetype == "video/quicktime")) {
-                        $embedded = true;
-                    }
-                    if (!$embedded) { 
-                        $resource->options = 'frame';
-                    }
-                }
             }
  
             //The structure is equal to the db, so insert the resource
