@@ -693,7 +693,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
     }
 
     if (forum_user_can_post_discussion($forum)) {
-        echo "<P ALIGN=right>";
+        echo "<P ALIGN=CENTER>";
         echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">Add a new discussion topic...</A>";
         echo "</P>\n";
     }
