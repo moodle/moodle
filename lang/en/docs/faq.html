@@ -32,14 +32,15 @@ a .htaccess file in your local directory (see the
 <A HREF="./?file=install.html#webserver">Install documentation</A> for more details): 
 
 <blockquote>
-<pre>&lt;IfDefine APACHE2>
+<pre>
      <b>AcceptPathInfo</b> on
-&lt;/IfDefine>
 </pre>
 </blockquote>
 
-<p>If you are not using Apache and you still have this problem then you can switch 
-   Moodle to use an alternative method.  The disadvantages are a slight loss of 
+<p>Note, this will only work for Apache versions 2.x.
+
+<p>If you are not using Apache 2 and you still have this problem (unlikely) then you 
+   can switch Moodle to use an alternative method.  The disadvantages are a slight loss of 
    performance for your users and you won't be able to use relative links 
    within HTML resources.
 <p>To use this alternative method: login as Admin, go into the "Configure Variables" page 
