@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['action'] = 'Tapahtuma';
@@ -752,7 +752,6 @@ $string['page'] = 'Sivu';
 $string['parentcoursenotfound'] = 'Isäntäkurssia ei löytynyt!';
 $string['parentcoursenotmetacourse'] = 'Isäntäkurssia ei ole metakurssi!';
 $string['parentfolder'] = 'Yläkansio';
-$string['parentlanguage'] = 'KÄÄNTÄJÄT: Jos kielelläsi on kantakieli jota Moodlen pitäisi käyttää merkkijonon ollessa kateissa, täsmennä sitä varten koodi tähän. Jos jätät tämän alueen tyhjäksi, käytetään englantia. Esimerkki: nl';
 $string['participants'] = 'Osallistujat';
 $string['password'] = 'Salasana';
 $string['passwordchanged'] = 'Salasana on vaihdettu';
