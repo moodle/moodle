@@ -104,80 +104,9 @@
 	    	$orgidentifier = $org->organization;
 	    }
 	}
-    	echo "  <tr><td nowrap=\"nowrap\">\n<ul $liststyle>\n";
-    	$incomplete = false;
-    	if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$orgidentifier' order by id ASC")){
-	    $level=0;
-    	    $sublist=0;
-    	    $parents[$level]="/";
-    	    foreach ($scoes as $sco) {
-    		if ($parents[$level]!=$sco->parent) {
-    		    if ($level>0 && $parents[$level-1]==$sco->parent) {
-    			echo "  </ul></li>\n";
-    			$level--;
-    		    } else {
-    			$i = $level;
-    			$closelist = "";
-    			while (($i > 0) && ($parents[$level] != $sco->parent)) {
-	    	 	    $closelist .= "  </ul></li>\n";
-	    	 	    $i--;
-	    	 	}
-	    	 	if (($i == 0) && ($sco->parent != $orgidentifier)) {
-	    	 	    echo "  <li><ul id='s".$sublist."' $liststyle>\n";
-    			    $level++;
-    			} else {
-    			    echo $closelist;
-    			    $level = $i;
-    			}
-    			$parents[$level]=$sco->parent;
-    		    }
-    		} 
-    		
-    		echo "    <li>\n";
-    		$nextsco = next($scoes);
-    		if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
-    		    $sublist++;
-    		    echo "      <img src=\"pix/minus.gif\" onclick='expandCollide(this,\"s".$sublist."\");' alt=\"-\" title=\"".get_string('collide','scorm')."\" />\n";
-    		} else {
-    		    echo "      <img src=\"pix/spacer.gif\" alt=\" \" />\n";
-    		}
-    		//print_r ($sco->title);
-    		if ($sco->title == "") {
-    		    $sco->title = get_string('notitle','scorm');
-    		    //echo '-'.$sco->title.'-';
-    		}
-    		if ($sco->launch) {
-    		    $score = "";
-    		    if ($user_tracks=scorm_get_tracks($sco->id,$USER->id)) {
-    		    	if ( $user_tracks->status == "") {
-    		    	    $user_tracks->status = "notattempted";
-    		    	}
-    		    	$strstatus = get_string($user_tracks->status,'scorm');
-    			echo "<img src='pix/".$user_tracks->status.".gif' alt='$strstatus' title='$strstatus' />";
-    			if (($user_tracks->status == "notattempted") || ($user_tracks->status == "incomplete")) {
- 			    $incomplete = true;
- 			}
- 			if ($user_tracks->score_raw != "") {
-    			    $score = "(".get_string("score","scorm").":&nbsp;".$user_tracks->score_raw.")";
-    		    	}
-    		    } else {
-    			if ($sco->scormtype == 'sco') {
-    			    echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" title=\"".get_string("notattempted","scorm")."\" />";
-    			    $incomplete = true;
-    			} else {
-    			    echo "      <img src=\"pix/asset.gif\" alt=\"".get_string("asset","scorm")."\" title=\"".get_string("asset","scorm")."\" />";
-    			}
-    		    }
-    		    echo "      &nbsp;<a href=\"javascript:playSCO(".$sco->id.")\">$sco->title</a> $score\n    </li>\n";
-    		} else {
-		    echo "      &nbsp;$sco->title\n    </li>\n";
-		}
-	    }
-	    for ($i=0;$i<$level;$i++){
-	    	 echo "  </ul></li>\n";
-	    }
-	}
-	echo "</ul></td></tr>\n";
+    	echo "  <tr><td nowrap=\"nowrap\">\n";
+    	$incomplete = scorm_display_structure($scorm,'scormlist',$orgidentifier);
+	echo "</td></tr>\n";
     	echo "</table>\n";
     	print_simple_box_end();
     	echo "<form name=\"theform\" method=\"post\" action=\"playscorm.php?id=$cm->id\">\n";
@@ -195,6 +124,11 @@
 	<input type="submit" value="'.get_string("entercourse","scorm").'" />';
         echo "\n</td>\n</tr>\n</table>\n</form><br />";
 ?>
+<style type="text/css">
+        .scormlist { 
+            list-style-type:none; 
+        } 
+</style>
 <script language="javascript" type="text/javascript">
 <!--
     function playSCO(scoid) {
@@ -205,21 +139,16 @@
     function expandCollide(which,list) {
     	var nn=document.ids?true:false
 	var w3c=document.getElementById?true:false
-	var beg=nn?"document.ids.":w3c?"document.getElementById('":"document.all.";
-	var mid=w3c?"').style":".style";
-	
+	var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
+	var mid=w3c?").style":".style";
+    	
     	if (eval(beg+list+mid+".display") != "none") {
     	    which.src = "pix/plus.gif";
-    	    which.alt = "+";
-    	    which.title = "<?php echo get_string('expand','scorm') ?>";
     	    eval(beg+list+mid+".display='none';");
     	} else {
     	    which.src = "pix/minus.gif";
-    	    which.alt = "-";
-    	    which.title = "<?php echo get_string('collide','scorm') ?>";
     	    eval(beg+list+mid+".display='block';");
-    	}
-    	
+    	}	
     }
 -->
 </script>

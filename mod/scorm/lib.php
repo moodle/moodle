@@ -585,6 +585,8 @@ function scorm_get_tracks($scoid,$userid) {
     if ($tracks = get_records_select("scorm_scoes_track","userid=$userid AND scoid=$scoid")) {
     	$user_tracks->userid = $userid;
     	$user_tracks->scoid = $scoid;
+    	$user_tracks->score_raw = '';
+    	$user_tracks->status = '';
 	foreach ($tracks as $track) {
 	    $element = str_replace('.','_',$track->element);
 	    switch ($element) {
@@ -653,5 +655,119 @@ function scorm_external_link($link) {
     else if (substr($link,0,4) == 'www.')
         $result = true;
     return $result;
-}    
+}
+
+function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$play=false) {
+    global $USER;
+    
+    $strexpand = get_string('expcoll','scorm');
+	
+    echo "<ul id='0' class='$liststyle'>";
+    $incomplete = false;
+    $organizationSQL = '';
+    if (empty($currentorg)) {
+    	//
+    } else {
+    	$organizationSQL = "AND organization='$currentorg'";
+    }
+    if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationSQL order by id ASC")){
+    	$level=0;
+    	$sublist=1;
+    	$previd = 0;
+    	$nextid = 0; 
+    	$parents[$level]="/";
+    	foreach ($scoes as $sco) {
+    	    if ($parents[$level]!=$sco->parent) {
+    		if ($level>0 && $parents[$level-1]==$sco->parent) {
+    		    echo "\t\t</ul></li>\n";
+    		    $level--;
+    		} else {
+    		    $i = $level;
+    		    $closelist = '';
+    		    while (($i > 0) && ($parents[$level] != $sco->parent)) {
+	 	    	$closelist .= "\t\t</ul></li>\n";
+	 	    	$i--;
+	 	    }
+	 	    if (($i == 0) && ($sco->parent != $currentorg)) {
+	 	    	echo "\t\t<li><ul id='".$sublist."' class='$liststyle'>\n";
+    		    	$level++;
+    		    } else {
+    		    	echo $closelist;
+    		    	$level = $i;
+    		    }
+    		    $parents[$level]=$sco->parent;
+    		}
+    	    }
+    	    echo "\t\t<li>";
+    	    $nextsco = next($scoes);
+    	    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
+    		$sublist++;
+    		echo "<a href='#' onClick='expandCollide(img".$sublist.",".$sublist.");'><img id='img".$sublist."' src='pix/minus.gif' alt='$strexpand' title='$strexpand'/></a>";
+    	    } else {
+    		echo "<img src='pix/spacer.gif' />";
+    	    }
+    	    
+    	    if ($sco->launch) {
+    	        $startbold = '';
+    	        $endbold = '';
+    	        $score = '';
+    		if ($user_tracks=scorm_get_tracks($sco->id,$USER->id)) {
+    		    if ( $user_tracks->status == '') {
+    	    		$user_tracks->status = 'notattempted';
+    	    	    }
+    	    	    $strstatus = get_string($user_tracks->status,'scorm');
+    		    echo "<img src='pix/".$user_tracks->status.".gif' alt='$strstatus' title='$strstatus' />";
+ 		    if (($user_tracks->status == 'notattempted') || ($user_tracks->status == 'incomplete')) {
+ 			$incomplete = true;
+ 			if ($play && empty($scoid)) {
+ 			    $scoid = $sco->id;
+    			}
+ 		    }
+ 		    if ($user_tracks->score_raw != "") {
+    			$score = '('.get_string('score','scorm').':&nbsp;'.$user_tracks->score_raw.')';
+		    }
+    		} else {
+    		    if ($play && ($mode != 'normal') && empty($scoid)) {
+    	    		$scoid = $sco->id;
+    	    	    }
+    		    if ($sco->scormtype == 'sco') {
+    			echo "<img src='pix/notattempted.gif' alt='".get_string('notattempted','scorm')."' />";
+    			$incomplete = true;
+    		    } else {
+    			echo "<img src='pix/asset.gif' alt='".get_string('asset','scorm')."' />";
+    		    }
+    		}
+
+    		if ($sco->id == $scoid) {
+    		    $startbold = '&gt; <b>';
+    		    $endbold = '</b> &lt;';
+    		    if ($nextsco !== false) {
+    			$nextid = $nextsco->id;
+    		    } else {
+    			$nextid = 0;
+    		    }
+    	    	}
+    		if ($nextid == 0) {
+    	    	    $previd = $sco->id;
+    	    	}
+    	    	
+    		echo "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>$sco->title</a> $score$endbold</li>\n";
+    	    } else {
+		echo "&nbsp;$sco->title</li>\n";
+	    }
+	}
+	for ($i=0;$i<$level;$i++) {
+	    echo "\t\t</ul></li>\n";
+	}
+    }
+    echo "\t</ul>\n";
+    if ($play) {
+        $result->id = $scoid;
+        $result->prev = $previd;
+        $result->next = $nextid;
+	return $result;
+    } else {
+    	return $incomplete;
+    }
+}
 ?>
