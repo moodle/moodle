@@ -11,11 +11,11 @@
     //                        |                                       |
     //                  glossary_entries -------------- glossary_entries_categories
     //         (UL,pk->id, fk->glossaryid, files)      (UL, [pk->categoryid,entryid]
-    //                        |
-    //                        |
-    //                        |
-    //                  glossary_comments
-    //              (UL,pk->id, fk->entryid)
+    //                        |               \
+    //                        |                \
+    //                        |                 \
+    //                  glossary_comments        ------ glossary_alias
+    //              (UL,pk->id, fk->entryid)            (UL, pk->id, pk->entryid)
     //
     //
     // Meaning: pk->primary key field of the table
@@ -153,7 +153,9 @@
                 }
                 if ($newid) {
       	            //We have the newid, update backup_ids
-	            backup_putid($restore->backup_unique_code,"glossary_entries",$oldid,$newid);
+                    backup_putid($restore->backup_unique_code,"glossary_entries",$oldid,$newid);
+                    //Restore glossary_alias
+                    $status = glossary_alias_restore_mods($oldid,$newid,$ent_info,$restore);
                     //Now restore glossary_comments
                     $status = glossary_comments_restore_mods($oldid,$newid,$ent_info,$restore);
                     //Now copy moddata associated files if needed
@@ -202,6 +204,44 @@
 
             //The structure is equal to the db, so insert the glossary_comments
             $newid = insert_record ("glossary_comments",$comment);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    //This function restores the glossary_alias table
+    function glossary_alias_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;    
+
+        //Get the comments array
+        $aliases = $info['#']['ALIASES']['0']['#']['ALIAS'];
+
+        //Iterate over comments
+        for($i = 0; $i < sizeof($aliases); $i++) {
+            $alias_info = $aliases[$i];
+
+            //Now, build the GLOSSARY_ALIAS record structure
+            $alias->entryid = $new_entry_id;
+            $alias->name = backup_todb($alias_info['#']['NAME']['0']['#']);
+
+            //The structure is equal to the db, so insert the glossary_comments
+            $newid = insert_record ("glossary_alias",$alias);
 
             //Do some output
             if (($i+1) % 50 == 0) {

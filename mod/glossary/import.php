@@ -199,6 +199,18 @@
 
                 if ( $newentry->id = insert_record("glossary_entries",$newentry) )  {
                     $importedentries++;
+
+                    $xmlaliases = $xmlentry['#']['ALIASES'][0]['#']['ALIAS'];
+                    for($k = 0; $k < sizeof($xmlaliases); $k++) {
+                    /// Importing aliases
+                        $xmlalias = $xmlaliases[$k];
+                        unset($newalias);
+        
+                        $newalias->entryid = $newentry->id;
+                        $newalias->alias = $xmlalias['#']['NAME'][0]['#'];
+                        $newalias->id = insert_record("glossary_alias",$newalias));
+                    }
+
                     if ( $catsincl ) {
                         // If the categories must be imported...
                         $xmlcats = $xmlentry['#']['CATEGORIES'][0]['#']['CATEGORY'];

@@ -1191,6 +1191,15 @@ global $CFG;
                     fwrite($h,glossary_full_tag("FULLMATCH",4,false,$entry->fullmatch));
                     fwrite($h,glossary_full_tag("TEACHERENTRY",4,false,$entry->teacherentry));
 
+                    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
+                        $status = fwrite ($h,glossary_start_tag("ALIASES",4,true));
+                        foreach ($aliases as $alias) {
+                            $status = fwrite ($h,glossary_start_tag("ALIAS",5,true));
+                                fwrite($h,glossary_full_tag("NAME",6,false,$alias->alias));
+                            $status = fwrite($h,glossary_end_tag("ALIAS",5,true));
+                        }
+                        $status = fwrite($h,glossary_end_tag("CATEGORIES",4,true));
+                    }
                     if ( $catentries = get_records("glossary_entries_categories","entryid",$entry->id) ) {
                         $status = fwrite ($h,glossary_start_tag("CATEGORIES",4,true));
                         foreach ($catentries as $catentry) {

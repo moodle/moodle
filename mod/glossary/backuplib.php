@@ -10,12 +10,12 @@
     //                        |                                       |
     //                        |                                       |
     //                  glossary_entries -------------- glossary_entries_categories
-    //         (UL,pk->id, fk->glossaryid, files)      (UL, [pk->categoryid,entryid]
-    //                        |                                       
-    //                        |                                       
-    //                        |                                       
-    //                  glossary_comments
-    //              (UL,pk->id, fk->entryid)
+    //         (UL,pk->id, fk->glossaryid, files)      (UL, pk->categoryid,entryid]
+    //                        |             \                          
+    //                        |              \                         
+    //                        |               \                        
+    //                  glossary_comments      --------- glossary_alias 
+    //              (UL,pk->id, fk->entryid)            (UL, pk->id, pk->entryid)
     //
     //
     // Meaning: pk->primary key field of the table
@@ -161,6 +161,8 @@
                     fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$glo_ent->timemodified));
                     fwrite ($bf,full_tag("TEACHERENTRY",6,false,$glo_ent->teacherentry));
 
+                    $status = backup_glossary_aliases ($bf,$preferences,$glo_ent->id);
+
                     if ( $userinfo ) {
                         $status = backup_glossary_comments ($bf,$preferences,$glo_ent->id);
                     }
@@ -207,6 +209,28 @@
         return $status;
     }
    
+    //Backup glossary_alias contents (executed from backup_glossary_entries)
+    function backup_glossary_aliases ($bf,$preferences,$entryid) {
+
+        global $CFG;
+
+        $status = true;
+
+        $aliases = get_records("glossary_alias","entryid",$entryid);
+        if ($aliases) {
+            $status =fwrite ($bf,start_tag("ALIASES",6,true));
+            foreach ($aliases as $alias) {
+                $status =fwrite ($bf,start_tag("ALIAS",7,true));
+
+                fwrite ($bf,full_tag("NAME",8,false,$comment->id));
+
+                $status =fwrite ($bf,end_tag("ALIAS",7,true));        
+            }
+            $status =fwrite ($bf,end_tag("ALIASES",6,true));
+        }
+        return $status;
+    }
+
     //Backup glossary files because we've selected to backup user info
     //or current entry is a teacher entry
     function backup_glossary_files($bf,$preferences,$glossary,$entry) {
