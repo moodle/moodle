@@ -23,7 +23,7 @@
 /// Print the header
 
     if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
     print_header("$course->shortname: $strchats", "$course->fullname", "$navigation $strchats");
@@ -44,20 +44,24 @@
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname);
-        $table->align = array ("CENTER", "LEFT");
+        $table->align = array ("center", "left");
     } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname);
-        $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
+        $table->align = array ("center", "left", "left", "left");
     } else {
         $table->head  = array ($strname);
-        $table->align = array ("LEFT", "LEFT", "LEFT");
+        $table->align = array ("left", "left", "left");
     }
 
     foreach ($chats as $chat) {
-        $link = "<A HREF=\"view.php?id=$chat->coursemodule\">$chat->name</A>";
+        $link = "<a href=\"view.php?id=$chat->coursemodule\">$chat->name</a>";
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($chat->section, $link);
+            if ($chat->section) {
+                $table->data[] = array ($chat->section, $link);
+            } else {
+                $table->data[] = array ("", $link);
+            }
         } else {
             $table->data[] = array ($link);
         }
