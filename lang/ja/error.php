@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+<?php // $Id$ 
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['coursegroupunknown'] = 'コースに関連するグループ $a が指定されていません。';

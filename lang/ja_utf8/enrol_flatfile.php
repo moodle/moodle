@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.5 unstable development (2004092000)
+<?php // $Id$ 
+      // enrol_flatfile.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['description'] = 'この方法は、あなたが指定した場所にある特別にフォーマットされたテキストファイルを繰り返しチェックします。ファイルのフォーマットは下記のようになります:

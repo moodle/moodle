@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 unstable development (2004091700)
+<?php // $Id$ 
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';

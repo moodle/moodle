@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 unstable development (2004092000)
+<?php // $Id$ 
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['cachetext'] = 'テキストキャッシュ保存時間';

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 unstable development (2004092000)
+<?php // $Id$ 
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -54,7 +54,7 @@ $string['newwidth'] = 'デフォルトウンドウ幅(ピクセル)';
 $string['newwindow'] = '新しいウインドウ';
 $string['newwindowopen'] = 'ポップアップウインドウにリソースを表示';
 $string['note'] = '注意';
-$string['notefile'] = '更にファイルをアップロード(このリストに表示されます)する場合、<A HREF=$a >File Manager</A> を利用してください。';
+$string['notefile'] = '更にファイルをアップロード(このリストに表示されます)する場合、<a href=$a >File Manager</a> を利用してください。';
 $string['notypechosen'] = 'タイプを選択してください。「戻る」ボタンを押して再度入力してください。';
 $string['pagedisplay'] = 'リソースを現在のウインドウに表示';
 $string['pagewindow'] = '同一ウインドウ';

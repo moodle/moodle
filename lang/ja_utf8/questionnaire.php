@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // questionnaire.php - created with Moodle 1.5 unstable development (2004092000)
+<?php // $Id$ 
+      // questionnaire.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['alreadyfilled'] = 'あなたは既にこのアンケートに回答しています。ありがとうございます。';

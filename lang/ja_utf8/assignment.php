@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 unstable development (2004092000)
+<?php // $Id$ 
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['allowresubmit'] = '再提出を許可する';
@@ -48,8 +48,8 @@ $string['uploaderror'] = 'サーバにファイルを保存中にエラーが発
 $string['uploadfailnoupdate'] = 'ファイルはアップロードされましたが提出物の更新はできませんでした!';
 $string['uploadfiletoobig'] = '申し訳ございません、ファイルサイズが制限を越えています($a バイト以内)';
 $string['uploadnofilefound'] = 'ファイルが見つかりませんでした - 実際に存在するファイルですか?';
-$string['uploadnotregistered'] = '\'$a\' は正常にアップロードされましたが登録されませんでした!';
-$string['uploadsuccess'] = '\'$a\' のアップロードが完了しました';
+$string['uploadnotregistered'] = '「 $a 」は正常にアップロードされましたが登録されませんでした!';
+$string['uploadsuccess'] = '「 $a 」のアップロードが完了しました';
 $string['viewfeedback'] = '課題の評価とフィードバックを確認する';
 $string['viewsubmissions'] = '$a 件の提出課題を確認する';
 $string['yoursubmission'] = 'あなたの提出物';

@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 

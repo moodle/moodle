@@ -1,11 +1,11 @@
-<?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+<?php // $Id$ 
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['auth_common_settings'] = '一般設定';
 $string['auth_data_mapping'] = 'データマッピング';
 $string['auth_dbdescription'] = 'ユーザ名とパスワードを確認するために外部のデータベースを使用します。新しいアカウントを作成する場合、他のフィールドの情報がMoodleへ複製されます。';
-$string['auth_dbextrafields'] = 'これらのフィールドは任意項目です。<B>外部データベースフィールド</B>より事前に入力されたMoodleユーザフィールドを選択することも可能です。<P>空白の場合は初期値が使用されます。<P>どちらの場合でも、ユーザはログイン後に全てのフィールドを編集可能です。';
+$string['auth_dbextrafields'] = 'これらのフィールドは任意項目です。<b>外部データベースフィールド</b>より事前に入力されたMoodleユーザフィールドを選択することも可能です。<p>空白の場合は初期値が使用されます。<p>どちらの場合でも、ユーザはログイン後に全てのフィールドを編集可能です。';
 $string['auth_dbfieldpass'] = 'パスワードを含んだフィールド名';
 $string['auth_dbfielduser'] = 'ユーザ名を含んだフィールド名';
 $string['auth_dbhost'] = 'データベースサーバが稼動しているコンピュータ';
@@ -14,7 +14,7 @@ $string['auth_dbpass'] = '上記ユーザ名に合致するパスワード';
 $string['auth_dbpasstype'] = 'パスワードフィールドで使用するフォーマットを特定してください。MD5暗号化はPostNukeのような他の一般的なウェブアプリケーションへの接続に便利です。';
 $string['auth_dbtable'] = 'データベースのテーブル名';
 $string['auth_dbtitle'] = '外部データベースを使用';
-$string['auth_dbtype'] = 'データベースタイプ(詳細は<A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A>をご覧ください';
+$string['auth_dbtype'] = 'データベースタイプ(詳細は<a href=../lib/adodb/readme.htm#drivers>ADOdb documentation</a>をご覧ください';
 $string['auth_dbuser'] = 'データベースアクセス用のユーザ名';
 $string['auth_editlock'] = 'ロック値';
 $string['auth_editlock_expl'] = '<p><b>ロック値:</b> この設定を「Yes」にした場合、Moodleユーザ及び管理者がフィールドを直接編集できないようにします。外部認証システムにあるこの値をメンテナンスする時に使用してください。</p>';
@@ -58,7 +58,7 @@ $string['auth_ldap_user_settings'] = 'ユーザlookup設定';
 $string['auth_ldap_user_type'] = 'ユーザがどのようにLDAPに保存されるか選択してください。この設定では、有効期限、猶予ログイン、ユーザ作成がどのようになされるのかも指定します。';
 $string['auth_ldap_version'] = 'サーバで使用しているLDAPプロトコルのバージョン';
 $string['auth_ldapdescription'] = '外部のLDAPサーバに対して認証を行います。ユーザ名とパスワードが正しい場合、Moodleは新しいユーザをデータベースに作成します。このモジュールはユーザ属性をLDAPから取得してMoodleのフィールドに入力します。認証後のログインではユーザ名とパスワードのみが確認されます。';
-$string['auth_ldapextrafields'] = 'これらのフィールドは任意項目です。<B>LDAPフィールド</B>より事前に入力されたMoodleユーザフィールドを選択することも可能です。<P>空白の場合はLDAPよりデータの転送は行われずにMoodleの初期値が使用されます<P>どちらの場合でも、ユーザはログイン後に全てのフィールドを編集可能です。';
+$string['auth_ldapextrafields'] = 'これらのフィールドは任意項目です。<b>LDAPフィールド</b>より事前に入力されたMoodleユーザフィールドを選択することも可能です。<p>空白の場合はLDAPよりデータの転送は行われずにMoodleの初期値が使用されます<p>どちらの場合でも、ユーザはログイン後に全てのフィールドを編集可能です。';
 $string['auth_ldaptitle'] = 'LDAPサーバを使用';
 $string['auth_manualdescription'] = 'この方法ではユーザによるユーザアカウント作成機能を停止します。全てのアカウント作成は管理者により手動で行う必要があります。';
 $string['auth_manualtitle'] = '手動アカウント作成のみ';

@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 

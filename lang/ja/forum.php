@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+<?php // $Id$ 
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -91,7 +91,7 @@ $string['openmode1'] = '新しいトピック不可、返信可';
 $string['openmode2'] = '新しいトピック可、返信可';
 $string['parent'] = '親記事を表示する';
 $string['parentofthispost'] = 'この投稿の親記事';
-$string['postadded'] = '投稿が追加されました。<P>更新したい場合は $a 編集できます。';
+$string['postadded'] = '投稿が追加されました。<p>更新したい場合は $a 編集できます。';
 $string['postincontext'] = '関連した投稿を表示する';
 $string['postmailinfo'] = 'これは $a ウェブサイトに投稿された投稿のコピーです。返信をウェブサイト経由で追加する場合は、このリンクをクリックしてください:';
 $string['postrating1'] = '主に分離認識の傾向がある';

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 $string['modulename'] = 'ブック';
 $string['modulenameplural'] = 'ブック';

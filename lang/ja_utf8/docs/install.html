@@ -33,7 +33,7 @@
   <p>Moodleのシステム必要条件は下記の通りです:</p>
   <ol>
     <li>ウェブサーバソフトウェア。ほとんどのユーザは、<a href="http://www.apache.org/" target="_blank">Apache</a>を使用していますが、MoodleはWindowsプラットフォームにおけるIISのように、PHPをサポートするあらゆるウェブサーバで動作します。</li>
-    <li>下記の設定を行った<A HREF="http://www.php.net/">PHP</A>(バージョン4.1.0 以上):
+    <li>下記の設定を行った<a href="http://www.php.net/">PHP</a>(バージョン4.1.0 以上):
       <ul>
         <li><a href="http://www.boutell.com/gd/" target="_blank">GDライブラリ</a> 使用可、JPG及びPNGフォーマットをサポート</li>
         <li>zlibライブラリ 使用可 (Windowsでバックアップ/リストア機能を使用する場合)</li>
@@ -141,7 +141,7 @@
   <blockquote>
     <pre><strong>AcceptPathInfo</strong> on </pre>
   </blockquote>
-  <p>3番目に、Moodleが動作するために、多くのPHPの設定をアクティブにする必要があります。<B>多くのサーバでは下記の設定は既にデフォルトセッティングとなっています。</B>しかし、いくつかのPHPサーバ(そして、最新のPHPバージョン)では設定内容が異なっているでしょう。これらの設定はPHPの設定ファイル(通常はphp.iniと呼ばれます)に定義されています:</p>
+  <p>3番目に、Moodleが動作するために、多くのPHPの設定をアクティブにする必要があります。<b>多くのサーバでは下記の設定は既にデフォルトセッティングとなっています。</b>しかし、いくつかのPHPサーバ(そして、最新のPHPバージョン)では設定内容が異なっているでしょう。これらの設定はPHPの設定ファイル(通常はphp.iniと呼ばれます)に定義されています:</p>
   <blockquote>
 
     <pre>magic_quotes_gpc = 1    (preferred but not necessary)
@@ -152,7 +152,7 @@ session.bug_compat_warn = 0
 </pre>
   </blockquote>
   <p>あなたがサーバ内のhttpd.confやphp.iniにアクセスできない場合や、他のアプリケーションで異なる設定をする必要がある場合は、全てのデフォルトセッティングを上書きすることができます。
-  <p>これを行うには、下記の設定を定義した<B>.htaccess</B>という名称のファイルをMoodleのメインディレクトリに置く必要があります。これは、設定の上書きが許可されたApacheサーバのみで動作します。
+  <p>これを行うには、下記の設定を定義した<b>.htaccess</b>という名称のファイルをMoodleのメインディレクトリに置く必要があります。これは、設定の上書きが許可されたApacheサーバのみで動作します。
      
   <blockquote>
     <pre>
@@ -194,7 +194,7 @@ php_value post_max_size 2M
 <h3 class="sectionheading"><a name="admin"></a>8. 管理ページに進む</h3>
 <blockquote> 
   <p>管理ページは<u>http://example.com/moodle/admin</u>で動作していることでしょう。あなたのサイトの表紙にアクセスすれば自動的に管理ページが表示されます。あなたが最初に管理ページにアクセスした時は、セットアップを続けるために同意する必要があるGPL同意書が表示されます。 </p>
-  <P>(同時にMoodleからあなたのブラウザにいくつかのcookieが設定されます。もし、ブラウザの設定でcookieを受け入れるか否か設定できるようでしたらMoodleのcookieを受け入れるようにする<B>必要があります</B>。そのようにしない場合、Moodleは正常に動作しません。)
+  <p>(同時にMoodleからあなたのブラウザにいくつかのcookieが設定されます。もし、ブラウザの設定でcookieを受け入れるか否か設定できるようでしたらMoodleのcookieを受け入れるようにする<b>必要があります</b>。そのようにしない場合、Moodleは正常に動作しません。)
   <p>Moodleはデータベースのセッティングを開始して、データを保存するためのテーブルを作成します。最初にメインのデータベーステーブルが作成されます。下記のようなSQL文の次にステータスメッセージ(緑色または赤色)が表示されます:</p>
   <blockquote> 
     <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
@@ -242,7 +242,7 @@ php_value post_max_size 2M
 <blockquote> 
   <p>いくつかのMoodleモジュールはタスクを動作させるための継続的なチェックを必要とします。例えば、Moodleは投稿者に投稿のコピーをメール送信するために、ディスカッションフォーラムのチェックを必要とします。</p>
   <p>これらの作業を行うスクリプトはcron.phpと呼ばれ、adminディレクトリに置かれます。しかし、これ自体では動作しませんので、定期的(例えば5分毎または10分毎)に動作するように設定を行う必要があります。これは各モジュールで定義された機能が動作できるように「心臓の鼓動」を提供します。</p>
-  <p>Cronを動作させるマシンは<B>Moodleが動作しているマシンと同じマシンである必要はありません</B>。例えば、あなたがcronを使えないウェブホスティングサービスを利用している場合、cronを他のサーバや自宅のパソコンで動かすことができるでしょう。大切なことはcron.phpを定期的に動かすことです。 </p>
+  <p>Cronを動作させるマシンは<b>Moodleが動作しているマシンと同じマシンである必要はありません</b>。例えば、あなたがcronを使えないウェブホスティングサービスを利用している場合、cronを他のサーバや自宅のパソコンで動かすことができるでしょう。大切なことはcron.phpを定期的に動かすことです。 </p>
   <p>スクリプトのロードはそれほど高くありませんので、通常は5分毎の設定が妥当でしょう。間隔を短くすることが心配な場合は、15または30分に設定してください。メールの遅延によりコースの活動が阻害されますので、Cronの動作間隔を長くし過ぎないことが大切です。</p>
   <p>最初に下記のスクリプトが直接ブラウザで動くか確認してください:</p>
   <blockquote> 
@@ -269,12 +269,12 @@ php_value post_max_size 2M
 </pre>
   </blockquote>
   <h4>自動的に5分毎にスクリプトを実行する</h4>
-  <p><b>Unixシステムの場合</b>: <B>cron</B>を使ってください。 cron設定の編集を行うため、コマンドラインから&quot;crontab -e&quot;と入力して、次のように1行を追加します:</p>
+  <p><b>Unixシステムの場合</b>: <b>cron</b>を使ってください。 cron設定の編集を行うため、コマンドラインから&quot;crontab -e&quot;と入力して、次のように1行を追加します:</p>
   <blockquote>
     <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
   <p>通常、「crontab」コマンドはviエディタで入力することができます。キーボードの「i」を押して「挿入モード」にして上記の行を入力します。その後、ESCキーを押して「挿入モード」から抜けます。「:wq」を押して保存・終了するか、「:q!」を押して保存せずに終了します。</p>
-  <p><b>Windowsシステムの場合</b>: 一番簡単な方法は全ての作業を簡単に行う、私のパッケージ<A TITLE="Click to download this package (150k)" HREF="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</A>を利用することです。Windows組込みの「タスク」を試してみても良いでしょう。</p>
+  <p><b>Windowsシステムの場合</b>: 一番簡単な方法は全ての作業を簡単に行う、私のパッケージ<a href="http://moodle.org/download/modules/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank"><strong>moodle-cron-for-windows.zip</strong>を利用することです。Windows組込みの「タスク」を試してみても良いでしょう。</p>
   <p>ウェブホストの場合: ウェブベースのコントロールパネルに、このcronジョブを設定できるようになっていることでしょう。詳細は管理者にお尋ねください。</p>
   <p></p>
 </blockquote>
@@ -285,9 +285,9 @@ php_value post_max_size 2M
   <p>コースフォーマットに、十分注意しながら必要項目を入力してください。この段階では、細かな点を必要以上に心配する必要はありません。全ての設定は後で教師によって変更することができます。</p>
   <p>「設定を保存する」をクリックすると、新たな教師の割当てを行うページが表示されます。実際に存在しているアカウントのみをここで追加できます - もし、新たに教師アカウントを作成したい場合は、教師自身でアカウントを作成するように依頼するか(ログインページを見てください)、管理ページで&quot;ユーザの追加&quot;を使ってアカウントを作成してください。</p>
   <p>この作業が完了するとコースはカスタマイズ可能になり、ホームページの「コース」リンクよりアクセスできます。</p>
-  <p>コース作成に関する詳細は「<A HREF="./?file=teacher.html">教師マニュアル</A>」をご覧ください。</p>
+  <p>コース作成に関する詳細は「<a href="./?file=teacher.html">教師マニュアル</a>」をご覧ください。</p>
 </blockquote>
 <p>&nbsp;</p>
-<p align="CENTER"><font size="1"><a href="." target="_top">Moodle文書</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id$</font></p>
+<p align="center"><font size="1"><a href="." target="_top">Moodle文書</a></font></p>
+<p align="center"><font size="1">Version: $Id$</font></p>
 </body>

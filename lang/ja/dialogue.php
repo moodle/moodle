@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 unstable development (2004092000)
+<?php // $Id$ 
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addmynewentries'] = '新しいエントリを追加';

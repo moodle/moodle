@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 unstable development (2004091700)
+<?php // $Id$ 
+      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['alwaysopen'] = '常に利用可能';
