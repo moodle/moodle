@@ -13,18 +13,22 @@
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(15);   // use 0=none 7=normal 15=all 
 
+/// Connect to the database using adodb
+
+    require("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
+    ADOLoadCode($CFG->dbtype);          
+    $db = &ADONewConnection();         
+    if (! $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname)) {
+        echo "<P><FONT COLOR=RED>The database details specified in config.php are not correct, or the database is down.</P>";
+        die;
+    }
+
+
 /// Load up standard libraries 
 
     require("$CFG->libdir/weblib.php");          // Standard web page functions
-    require("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
-    require("$CFG->libdir/adodb/tohtml.inc.php");// Database display functions
     require("$CFG->libdir/moodlelib.php");       // Various Moodle functions
 
-/// Connect to the database using adodb
-
-    ADOLoadCode($CFG->dbtype);          
-    $db = &ADONewConnection();         
-    $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname); 
 
 /// Set error reporting back to normal
     error_reporting(7);   
