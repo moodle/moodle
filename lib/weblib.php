@@ -541,7 +541,7 @@ function button_to_popup_window ($url, $name='popup', $linkname='click here',
     $fullscreen = 0;
 
     echo '<input type="button" name="popupwindow" title="'. $title .'" value="'. $linkname .' ..." '.
-         "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
+         "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
 }
 
 
@@ -554,7 +554,7 @@ function close_window_button() {
     echo '<script type="text/javascript">' . "\n";
     echo '<!--' . "\n";
     echo "document.write('<form>');\n";
-    echo "document.write('<input type=\"button\" onClick=\"self.close();\" value=\"".get_string("closewindow")."\" />');\n";
+    echo "document.write('<input type=\"button\" onclick=\"self.close();\" value=\"".get_string("closewindow")."\" />');\n";
     echo "document.write('</form>');\n";
     echo '-->' . "\n";
     echo '</script>' . "\n";

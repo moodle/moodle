@@ -212,7 +212,7 @@ function journal_print_recent_activity($course, $isteacher, $timestart) {
             if (!isset($journals[$log->info])) {
                 $journals[$log->info] = $j_log_info;
                 $journals[$log->info]->time = $log->time;
-                $journals[$log->info]->url = $log->url;
+                $journals[$log->info]->url = str_replace('&', '&amp;', $log->url);
             }
         }
     }

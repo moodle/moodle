@@ -248,7 +248,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
         if ($modvisible and $entry->approved) {
             $entries[$log->info] = glossary_log_info($log);
             $entries[$log->info]->time = $log->time;
-            $entries[$log->info]->url  = $log->url;
+            $entries[$log->info]->url  = str_replace('&', '&amp;', $log->url);
         }
     }
 

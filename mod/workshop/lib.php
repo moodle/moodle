@@ -716,7 +716,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                         else { // don't break anonymous rule
                             echo "<p><font size=\"1\">$date - A $course->student<br />";
                             }
-                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
                         }
@@ -757,7 +757,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                         else { // don't break anonymous rule
                             echo "<p><font size=\"1\">$date - A $course->student<br />";
                             }
-                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
                         }
@@ -793,7 +793,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     if (instance_is_visible("workshop",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
                         echo "<p><font size=\"1\">$date - A $course->student<br />";
-                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
                         }
@@ -828,7 +828,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 if (instance_is_visible("workshop",$tempmod)) {
                     $date = userdate($log->time, $strftimerecent);
                     echo "<p><font size=\"1\">$date - $course->teacher<br />";
-                    echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                    echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
                     }
@@ -863,7 +863,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     if (instance_is_visible("workshop",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
                         echo "<p><font size=\"1\">$date - ".fullname($log)."<br />";
-                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/".str_replace('&', '&amp;', $log->url)."\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
                         }

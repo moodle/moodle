@@ -342,7 +342,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                     if (instance_is_visible("exercise",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
                         echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
-                        echo "\"<a href=\"$CFG->wwwroot/mod/exercise/$log->url\">";
+                        echo "\"<a href=\"$CFG->wwwroot/mod/exercise/".str_replace('&', '&amp;', $log->url)."\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
                         }
@@ -377,7 +377,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                 if (instance_is_visible("exercise",$tempmod)) {
                     $date = userdate($log->time, $strftimerecent);
                     echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
-                    echo "\"<a href=\"$CFG->wwwroot/mod/exercise/$log->url\">";
+                    echo "\"<a href=\"$CFG->wwwroot/mod/exercise/".str_replace('&', '&amp;', $log->url)."\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
                     }
@@ -412,7 +412,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                     if (instance_is_visible("exercise",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
                         echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
-                        echo "\"<a href=\"$CFG->wwwroot/mod/exercise/$log->url\">";
+                        echo "\"<a href=\"$CFG->wwwroot/mod/exercise/".str_replace('&', '&amp;', $log->url)."\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
                         }

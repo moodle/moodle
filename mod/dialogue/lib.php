@@ -171,7 +171,7 @@ function dialogue_print_recent_activity($course, $isteacher, $timestart) {
                 if (instance_is_visible("dialogue",$tempmod)) {
                     $date = userdate($log->time, $strftimerecent);
                     echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
-                    echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
+                    echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/".str_replace('&', '&amp;', $log->url)."\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
                 }
@@ -205,7 +205,7 @@ function dialogue_print_recent_activity($course, $isteacher, $timestart) {
                 if (instance_is_visible("dialogue",$tempmod)) {
                     $date = userdate($log->time, $strftimerecent);
                     echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
-                    echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
+                    echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/".str_replace('&', '&amp;', $log->url)."\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
                 }
@@ -240,7 +240,7 @@ function dialogue_print_recent_activity($course, $isteacher, $timestart) {
                     $date = userdate($log->time, $strftimerecent);
                     echo "<p><font size=1>$date - ".get_string("namehascloseddialogue", "dialogue",
                         fullname($log))."<br />";
-                    echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
+                    echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/".str_replace('&', '&amp;', $log->url)."\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
                 }
