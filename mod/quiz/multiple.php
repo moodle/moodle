@@ -42,7 +42,7 @@
 
                 $question->qtype = RANDOM;
                 $question->category = $category->id;
-                $question->name = get_string("random", "quiz");
+                $question->name = get_string("random", "quiz")." (".$category->name.")";
                 $question->questiontext = "---";
                 $question->image = "";
                 $question->defaultgrade = $form->randomgrade;
