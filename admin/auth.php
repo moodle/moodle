@@ -59,6 +59,11 @@
     if (! isset($config->guestloginbutton)) {
         $config->guestloginbutton = 1;
     }
+
+    if (empty($focus)) {
+        $focus = "";
+    }
+
     $guestoptions[0] = get_string("hide");
     $guestoptions[1] = get_string("show");
 

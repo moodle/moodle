@@ -69,9 +69,10 @@
         $onsubmit = "onsubmit=\"copyrichtext(theform.text);\"";
     } else {
         $defaultformat = FORMAT_MOODLE;
+        $onsubmit = "";
     }
 
-    if (! $entry ) {
+    if (empty($entry)) {
         $entry->text = "";
         $entry->format = $defaultformat;
     }

@@ -34,6 +34,8 @@
 
         if ($usehtmleditor and $form->type == HTML) {
             $onsubmit = "onsubmit=\"copyrichtext(theform.alltext);\"";
+        } else {
+            $onsubmit = "";
         }
         echo "<FORM NAME=theform METHOD=post $onsubmit ACTION=\"$form->destination\">";
         echo "<TABLE CELLPADDING=5 ALIGN=CENTER>";

@@ -36,8 +36,8 @@
             if (! $teacher = get_record("user_teachers", "course", "$course->id", "userid", "$num")) {
                 error("No such teacher in course $course->shortname with user id $num");
             }
-            $teacher->role = $vals[r];
-            $teacher->authority = $vals[a];
+            $teacher->role = $vals['r'];
+            $teacher->authority = $vals['a'];
             if (!update_record("user_teachers", $teacher)) {
                 error("Could not update teacher entry id = $teacher->id");
             }
