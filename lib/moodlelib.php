@@ -189,13 +189,19 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_FILE) {         // Strip all suspicious characters from filename
-        $param = eregi_replace('\.\.+', '', $param);
-        // TO BE EXPANDED WITH MORE CHECKS
+        $param = str_replace('\\', '/', $param);
+        $param = basename($param);
+        $param = ereg_replace('\.\.+', '', $param);
+        $param = ereg_replace('[[:cntrl:]]|[<>"\`\|\']', '', $param);
+        if ($param === '.' or $param === ' ') {
+            $param = '';
+        }
     }
 
     if ($options & PARAM_PATH) {         // Strip all suspicious characters from file path
-        $param = eregi_replace('\.\.+', '', $param);
-        // TO BE EXPANDED WITH MORE CHECKS
+        $param = str_replace('\\', '/', $param);
+        $param = ereg_replace('\.\.+', '', $param);
+        $param = ereg_replace('[[:cntrl:]]|[<>"\`\|\']', '', $param);
     }
 
     return $param;
@@ -4209,7 +4215,7 @@ function mtrace($string, $eol="\n") {
     flush();
 }
 
-//Replace 2 or more slashes to one
+//Replace 1 or more slashes or backslashes to 1 slash
 function cleardoubleslashes ($path) {
     return preg_replace('/(\/|\\\){1,}/','/',$path);
 }
@@ -4432,7 +4438,7 @@ function unzip_show_status ($list,$removepath) {
         print_simple_box_start("center");
         echo "<PRE>";
         foreach ($list as $item) {
-            echo $item.'<br />';
+            echo str_replace(cleardoubleslashes($removepath.'/'), '', $item).'<br />';
         }
         echo "</PRE>";
         print_simple_box_end();
