@@ -754,6 +754,7 @@ function quiz_save_best_grade($quiz, $user) {
 /// and then saves that grade in the quiz_grades table.
 
     if (!$attempts = quiz_get_user_attempts($quiz->id, $user->id)) {
+        notify("Could not find any user attempts");
         return false;
     }
 
@@ -764,6 +765,7 @@ function quiz_save_best_grade($quiz, $user) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!update_record("quiz_grades", $grade)) {
+            notify("Could not update best grade");
             return false;
         }
     } else {
@@ -772,6 +774,7 @@ function quiz_save_best_grade($quiz, $user) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!insert_record("quiz_grades", $grade)) {
+            notify("Could not insert new best grade");
             return false;
         }
     }
