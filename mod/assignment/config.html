@@ -1,0 +1,22 @@
+<form method="post" action="module.php" name="form">
+
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+	<td align=right><p>assignment_maxbytes:</td>
+    <td><?php
+    $choices = get_max_upload_sizes($CFG->maxbytes);
+    choose_from_menu ($choices, "assignment_maxbytes", $CFG->assignment_maxbytes, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configmaxbytes", "assignment") ?>
+    </td>
+</tr>
+
+<tr>
+    <td colspan=3 align=center>
+	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
+</tr>
+</table>
+
+</form>

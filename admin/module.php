@@ -37,7 +37,7 @@
     $strmanagemodules = get_string("managemodules");
     $strmodulename = get_string("modulename", $module);
 
-    print_header("$site->shortname: $strconfigvariables", $site->fullname,
+    print_header("$site->shortname: $strmodulename: $strconfiguration", $site->fullname,
                   "<a href=\"index.php\">$stradmin</a> -> ".
                   "<a href=\"configure.php\">$strconfiguration</a> -> ".
                   "<a href=\"modules.php\">$strmanagemodules</a> -> $strmodulename", $focus);

@@ -13,6 +13,7 @@ CREATE TABLE prefix_forum (
   assesstimestart int(10) unsigned NOT NULL default '0',
   assesstimefinish int(10) unsigned NOT NULL default '0',
   scale int(10) NOT NULL default '0',
+  maxbytes int(10) unsigned NOT NULL default '0',
   forcesubscribe tinyint(1) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),

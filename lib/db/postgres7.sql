@@ -26,6 +26,7 @@ CREATE TABLE prefix_course (
    numsections integer NOT NULL default '1',
    showrecent integer NOT NULL default '1',
    marker integer NOT NULL default '0',
+   maxbytes integer NOT NULL default '0',
    visible integer NOT NULL default '1',
    timecreated integer NOT NULL default '0',
    timemodified integer NOT NULL default '0'

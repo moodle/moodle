@@ -505,6 +505,10 @@ function main_upgrade($oldversion=0) {
         table_column("course_modules", "", "indent", "integer", "5", "unsigned", "0", "", "score");
     }
 
+    if ($oldversion < 2003092900) {
+        table_column("course", "", "maxbytes", "integer", "10", "unsigned", "0", "", "marker");
+    }
+
     return $result;
 
 }

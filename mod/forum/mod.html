@@ -17,6 +17,9 @@
     if (!isset($form->forcesubscribe)) {
         $form->forcesubscribe = "";
     }
+    if (!isset($form->maxbytes)) {
+        $form->maxbytes = $CFG->forum_maxbytes;
+    }
 ?>
 <form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
 <table cellpadding=5>
@@ -90,6 +93,17 @@
             helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum");
         ?>
     </td>
+</tr>
+<tr valign=top>
+	<td align=right><p><b><?php  print_string("maxattachmentsize", "forum") ?>:</b></p></td>
+	<td>
+        <?php
+            $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
+            $choices[0] = get_string("courseuploadlimit") . " (".display_size($course->maxbytes).")";
+            choose_from_menu ($choices, "maxbytes", $form->maxbytes, "");
+            helpbutton("maxattachmentsize", get_string("maxattachmentsize", "forum"), "forum");
+        ?>
+	</td>
 </tr>
 
 <tr>

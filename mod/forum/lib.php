@@ -39,6 +39,11 @@ if (!isset($CFG->forum_manydiscussions)) {
     set_config("forum_manydiscussions", 100);  // Number of discussions on a page
 } 
 
+if (!isset($CFG->forum_maxbytes)) {
+    set_config("forum_maxbytes", 512000);  // Default maximum size for all forums
+} 
+
+
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
@@ -1608,9 +1613,22 @@ function forum_add_attachment($post, $newfile) {
         return "";
     }
 
+    if (!$forum = get_record("forum", "id", $post->forum)) {
+        return "";
+    }
+
+    if (!$course = get_record("course", "id", $forum->course)) {
+        return "";
+    }
+
+    $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $forum->maxbytes);
+
     $newfile_name = clean_filename($newfile['name']);
 
     if (valid_uploaded_file($newfile)) {
+        if ($maxbytes and $newfile['size'] > $maxbytes) {
+            return "";
+        }
         if (! $newfile_name) {
             notify("This file had a wierd filename and couldn't be uploaded");
 

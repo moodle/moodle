@@ -300,6 +300,18 @@
     <?php print_string("configteacherassignteachers") ?>
     </td>
 </tr>
+<tr valign=top>
+	<td align=right><p>maxbytes:</td>
+	<td>
+    <?php 
+       $options = get_max_upload_sizes();
+       choose_from_menu ($options, "maxbytes", $config->maxbytes, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configmaxbytes") ?>
+    </td>
+</tr>
 
 <tr>
     <td colspan=3 align=center>

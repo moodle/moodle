@@ -52,6 +52,13 @@
 
         if ($scales = get_records("scale", "courseid", "$course->id", "name ASC")) {
             print_heading($strcustomscales);
+
+            if (isteacheredit($course->id)) {
+                echo "<p align=\"center\">(";
+                print_string("scalestip");
+                echo ")</p>";
+            }
+
             foreach ($scales as $scale) {
                 $scalemenu = make_menu_from_list($scale->scale);
 
@@ -63,6 +70,13 @@
                 echo text_to_html($scale->description);
                 print_simple_box_end();
                 echo "<hr />";
+            }
+
+        } else {
+            if (isteacheredit($course->id)) {
+                echo "<p align=\"center\">(";
+                print_string("scalestip");
+                echo ")</p>";
             }
         }
 

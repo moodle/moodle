@@ -175,14 +175,17 @@ if (isadmin()) {
 </tr>
 
 
-<?php if (!empty($CFG->gdversion)) {  ?>
+<?php 
+    $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
+    if (!empty($CFG->gdversion) and $maxbytes) {  
+?>
 <tr valign=top>
     <td><p><?php print_string("newpicture") ?>:</td>
     <td>
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size() ?>">
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>">
     <input type="file" name="imagefile" size=40>
     <?php helpbutton("picture", get_string("helppicture"));
-       print_string("maxsize", "", display_size(get_max_upload_file_size())); 
+       print_string("maxsize", "", display_size($maxbytes)); 
        if (isset($err["imagefile"])) formerr($err["imagefile"]);
     ?>
     </td>

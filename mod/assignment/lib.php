@@ -8,6 +8,10 @@ define("UPLOADSINGLE", "1");
 $ASSIGNMENT_TYPE = array (OFFLINE       => get_string("typeoffline",      "assignment"),
                           UPLOADSINGLE  => get_string("typeuploadsingle", "assignment") );
 
+if (!isset($CFG->assignment_maxbytes)) {
+    set_config("assignment_maxbytes", 1024000);  // Default maximum size for all assignments
+} 
+
 
 function assignment_add_instance($assignment) {
 // Given an object containing all the necessary data, 

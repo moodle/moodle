@@ -1059,12 +1059,64 @@ function valid_uploaded_file($newfile) {
     }
 }
 
-function get_max_upload_file_size() {
+function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 /// Returns the maximum size for uploading files
+/// There are six possible upload limits:
+///
+/// 1) in Apache using LimitRequestBody (no way of checking or changing this)
+/// 2) in php.ini for 'upload_max_filesize' (can not be changed inside PHP)
+/// 3) in .htaccess for 'upload_max_filesize' (can not be changed inside PHP)
+/// 4) by the Moodle admin in $CFG->maxbytes
+/// 5) by the teacher in the current course $course->maxbytes
+/// 6) by the teacher for the current module, eg $assignment->maxbytes
+///
+/// These last two are passed to this function as arguments (in bytes).
+/// Anything defined as 0 is ignored.
+/// The smallest of all the non-zero numbers is returned.
+
     if (! $filesize = ini_get("upload_max_filesize")) {
         $filesize = "5M";
     }
-    return get_real_size($filesize);
+    $minimumsize = get_real_size($filesize);
+
+    if ($sitebytes and $sitebytes < $minimumsize) {
+        $minimumsize = $sitebytes;
+    }
+
+    if ($coursebytes and $coursebytes < $minimumsize) {
+        $minimumsize = $coursebytes;
+    }
+
+    if ($modulebytes and $modulebytes < $minimumsize) {
+        $minimumsize = $modulebytes;
+    }
+
+    return $minimumsize;
+}
+
+function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
+/// Related to the above function - this function returns an 
+/// array of possible sizes in an array, translated to the 
+/// local language.
+
+    if (!$maxsize = get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes)) {
+        return array();
+    }
+
+    $filesize[$maxsize] = display_size($maxsize);
+
+    $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152, 
+                      5242880, 10485760, 20971520, 52428800, 104857600);
+
+    foreach ($sizelist as $sizebytes) {
+       if ($sizebytes < $maxsize) {
+           $filesize[$sizebytes] = display_size($sizebytes);
+       }
+    }
+
+    krsort($filesize, SORT_NUMERIC);
+
+    return $filesize;
 }
 
 function get_directory_list($rootdir, $excludefile="", $descend=true) {
@@ -1127,14 +1179,24 @@ function get_real_size($size=0) {
 
 function display_size($size) {
 /// Converts bytes into display form
+
+    static $gb,$mb,$kb,$b;
+
+    if (empty($gb)) {
+        $gb = get_string('sizegb');
+        $mb = get_string('sizemb');
+        $kb = get_string('sizekb');
+        $b  = get_string('sizeb');
+    }
+
     if ($size >= 1073741824) {
-        $size = round($size / 1073741824 * 10) / 10 . "Gb";
+        $size = round($size / 1073741824 * 10) / 10 . $gb;
     } else if ($size >= 1048576) {
-        $size = round($size / 1048576 * 10) / 10 . "Mb";
+        $size = round($size / 1048576 * 10) / 10 . $mb;
     } else if ($size >= 1024) {
-        $size = round($size / 1024 * 10) / 10 . "Kb";
+        $size = round($size / 1024 * 10) / 10 . $kb;
     } else { 
-        $size = $size . "b";
+        $size = $size ." $b";
     }
     return $size;
 }

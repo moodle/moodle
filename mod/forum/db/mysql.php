@@ -75,6 +75,10 @@ function forum_upgrade($oldversion) {
       table_column("forum", "scale", "scale", "integer", "10", "", "0");
       execute_sql("UPDATE {$CFG->prefix}forum SET scale = (- scale)");
   }
+
+  if ($oldversion < 2003100600) {
+      table_column("forum", "", "maxbytes", "integer", "10", "unsigned", "0", "", "scale");
+  }
   
   return true;
 
