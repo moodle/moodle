@@ -16,7 +16,7 @@
             foreach ($resources as $resource) {
                 $currentname = trim($resource->name);
                 $links[] = new filterobject($currentname,
-                        '<a class="autolink" title="'.strip_tags($currentname).'" href="'.
+                        '<a class="resource autolink" title="'.strip_tags($currentname).'" href="'.
                          $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'">', 
                          '</a>', false, true);
             }

@@ -39,7 +39,7 @@
                         $wikientries = array();
                         foreach ($wiki_pages as $wiki_page) {
                             if (!in_array($wiki_page->pagename, $wikientries)) {
-                                $startlink = '<a class="autolink" title="Wiki" href="'
+                                $startlink = '<a class="wiki autolink" title="Wiki" href="'
                                         .$CFG->wwwroot.'/mod/wiki/view.php?wid='.$wiki->id
                                         .'&amp;userid='.$wiki_entry->userid
                                         .'&amp;groupid='.$wiki_entry->groupid
