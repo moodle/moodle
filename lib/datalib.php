@@ -2308,7 +2308,7 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
     if ($count && (    $safe 
                     || ($max-$min+1!=$count)
                     || $min < 10 ) ) {
-        if ($courses = get_courses($categoryid, 'c.sortorder ASC', 'c.id,c.sortorder')) {
+        if ($courses = get_records_sql("SELECT c.id, c.sortorder FROM {$CFG->prefix}course c WHERE category=$categoryid ORDER BY c.sortorder ASC")) {
             begin_sql();
 
             // find the ideal starting point
