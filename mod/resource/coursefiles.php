@@ -330,6 +330,7 @@
                     $usehtmleditor = false;
                     $onsubmit = "";
                 }
+                $usehtmleditor = false;    // Always keep it off for now
 
                 print_heading("$streditfile");
 
