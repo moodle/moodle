@@ -2961,7 +2961,7 @@
         
         $status = true;
 
-        $xml_parser = xml_parser_create();
+        $xml_parser = xml_parser_create('UTF-8');
         $moodle_parser = new MoodleParser();
         $moodle_parser->todo = $todo;
         $moodle_parser->preferences = $preferences;

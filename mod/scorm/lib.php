@@ -481,7 +481,7 @@ function scorm_parse($basedir,$file,$scorm_id) {
     $level = 0;
     $parent[$level] = '/';
 
-    $xml_parser = xml_parser_create();
+    $xml_parser = xml_parser_create('UTF-8');
     // use case-folding so we are sure to find the tag in $map_array
     xml_parser_set_option($xml_parser, XML_OPTION_CASE_FOLDING, true);
     xml_set_element_handler($xml_parser, 'scorm_startElement', 'scorm_endElement');
