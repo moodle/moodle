@@ -198,22 +198,6 @@ table.formtable tbody th {
 }
 
 
-.sideblock.block_quiz_results h1 {
-    font-weight: bold;
-    font-size: 1.2em;
-}
-.sideblock.block_quiz_results table.grades caption {
-    font-weight: bold;
-}
-.sideblock.block_calendar_upcoming .event .date {
-    font-size:0.8em;
-}
-.sideblock.block_calendar_month .cal_popup_caption,
-.sideblock.block_calendar_month .cal_popup_fg div
-{
-    font-size: 0.85em !important;
-}
-
 
 /***
  *** Calendar
@@ -240,9 +224,7 @@ table.formtable tbody th {
     font-weight:bold;
 }
 
-#calendar .sidecalendar .filters,
-.sideblock.block_calendar_month .filters
-{
+#calendar .sidecalendar .filters {
     font-size:0.75em;
 }
 

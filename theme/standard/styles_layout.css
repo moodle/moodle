@@ -259,17 +259,6 @@ body#admin-config .confighelp {
  *** Blocks
  ***/
 
-/* block_search_forums.php */
-
-.block_search_forums.sideblock .searchform {
-    text-align: center;
-}
-
-.block_search_forums.sideblock .searchform img {
-    vertical-align: middle;
-}
-
-
 .sideblock .content h3,
 .sideblock .content h2 {
     text-align: left;
@@ -342,53 +331,9 @@ body#admin-config .confighelp {
 .sideblock .header .icon.edit {
     margin-right: 6px;
 }
-.sideblock.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
-    text-align: right;
-}
-
-.sideblock.block_quiz_results {
-    text-align: center;
-}
-
-.sideblock.block_quiz_results table.grades {
-    text-align: left;
-}
-
-.sideblock.block_calendar_upcoming .event .date {
-    text-align:right;
-}
 
 
 
-/* sideblock weblib.php */
-.block_course_summary .content {
-    padding:10px;
-}
-
-/* blocklib.php */
-
-.block_adminblock .content {
-    text-align: center;
-    padding: 10px;
-}
-
-/* block_quiz_results.php */
-.block_quiz_results table.grades {
-    width: 100%;
-}
-
-.block_quiz_results table.grades caption {
-    margin: 1em 0px 0px 0px;
-    border-bottom: 1px solid;
-}
-
-.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
-    width: 10%;
-}
-
-.block_quiz_results h1 {
-    margin: 4px;
-}
 
 
 /***
@@ -453,8 +398,7 @@ table.minicalendar td {
 }
 
 #calendar .maincalendar .filters table,
-#calendar .sidecalendar .filters table,
-.sideblock.block_calendar_month .filters table
+#calendar .sidecalendar .filters table
 {
     border-collapse:separate;
     border-spacing: 2px;
@@ -466,9 +410,7 @@ table.minicalendar td {
     padding: 0px 10px;
 }
 
-#calendar .sidecalendar .filters,
-.sideblock.block_calendar_month .filters
-{
+#calendar .sidecalendar .filters {
     padding: 5px;
 }
 
@@ -564,12 +506,7 @@ table.minicalendar th {
 .minicalendar .event_global,
 .minicalendar .event_course,
 .minicalendar .event_group,
-.minicalendar .event_user,
-.block_calendar_month .event_global,
-.block_calendar_month .event_course,
-.block_calendar_month .event_group,
-.block_calendar_month .event_user
-{
+.minicalendar .event_user {
     border:2px solid !important;
 }
 
@@ -1032,7 +969,7 @@ body#mod-forum-search .introcontent {
     padding-left: 3px;
     padding-right: 3px;
 }
-#mod-forum-discuss .unread .forumpostmessage {
+#mod-forum-discuss .unread .forumpost .message {
     border-style: solid;
     border-width: 2px;
 }

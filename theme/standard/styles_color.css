@@ -222,8 +222,7 @@ body#admin-index .c0 {
  ***/
 
 #calendar .maincalendar,
-#calendar .sidecalendar
-{
+#calendar .sidecalendar {
     border-color: #DDDDDD;
 }
 
@@ -241,8 +240,7 @@ table.minicalendar {
 
 #calendar .maincalendar .eventlist .event .topic,
 #calendar .maincalendar .eventlist .event .picture,
-#calendar .maincalendar .eventlist .event .side
-{
+#calendar .maincalendar .eventlist .event .side {
     background-color:#EEEEEE;
 }
 
@@ -320,10 +318,10 @@ table.minicalendar {
     border-color:#000000;
     background-color:#FFFFFF;
 }
+
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar .filters table,
-.sideblock.block_calendar_month .filters table
-{
+.block_calendar_month .filters table {
     background-color: #EEEEEE;
 }
 
@@ -556,7 +554,7 @@ table.message_search_results td {
     background: none;
 }
 
-#mod-forum-discuss .unread .forumpostmessage {
+#mod-forum-discuss .unread .forumpost .message {
     border-color: #FFD991; 
 } 
 #mod-forum-discuss .forumthread .unread {
