@@ -7,23 +7,23 @@
     }
 
     $nomoodlecookie = true;
-    require_once("../../config.php"); 
+    require_once("../../config.php");
     $themeurl = style_sheet_setup(filemtime("styles.php"), 300, $themename);
 
-/// From here on it's nearly a normal stylesheet. 
-/// First are some CSS definitions for normal tags, 
+/// From here on it's nearly a normal stylesheet.
+/// First are some CSS definitions for normal tags,
 /// then custom tags follow.
 ///
 /// New classes always get added to the end of the file.
-/// 
+///
 /// Note that a group of standard colours are all
 /// defined in config.php in this directory.  The
 /// reason for this is because Moodle uses the same
 /// colours to provide oldstyle formatting for
 /// browsers without CSS.
-/// 
+///
 /// You can hardcode colours in this file if you
-/// don't care about this. 
+/// don't care about this.
 
 ?>
 
@@ -39,7 +39,7 @@ td, th {
 	font-size : 13px;}
 
 th {
-    font-weight: bold; 
+    font-weight: bold;
     background-color: <?PHP echo $THEME->cellheading?>;
 }
 
@@ -49,27 +49,27 @@ ul {
 }
 
 a:link {
-    text-decoration: none; 
+    text-decoration: none;
     color: #0033CC;
 }
 
 a:visited {
-    text-decoration: none; 
+    text-decoration: none;
     color:#0033CC;
 }
 
 a:hover {
-    text-decoration: underline; 
+    text-decoration: underline;
     color: #990000;
 }
 
-form { 
+form {
     margin-bottom: 0;
 }
 
 input {
 	background : transparent;
-	
+
 }
 
 h2 {
@@ -236,7 +236,7 @@ h4 {
 }
 
 .weeklydatetext {
-	font-weight: bold; 
+	font-weight: bold;
 }
 
 .topicsoutline {
@@ -336,7 +336,7 @@ h4 {
 }
 
 a.dimmed:link {
-    text-decoration: none; 
+    text-decoration: none;
     color: #AAAAAA;
 }
 
@@ -559,11 +559,7 @@ TABLE.calendarmonth {
     -moz-border-radius: 10px;
 }
 
-.calendarweekend {
-    color: red;
-}
-
-.cal_day_mini {
+TABLE.calendarmini TBODY TD {
     text-align: center;
     vertical-align: center;
     width: 14%;
@@ -573,43 +569,48 @@ TABLE.calendarmonth {
     -moz-border-radius: 4px;
 }
 
-.calendardaymonth {
+TABLE.calendarmonth TBODY TD {
     width: 14%;
     border-width: 1px;
     border-color: <?PHP echo $THEME->cellcontent2?>;
     border-style: solid;
     vertical-align: top;
-	background-color: <?PHP echo $THEME->body?>;
+    background-color: <?PHP echo $THEME->body?>;
 }
 
-.calendardaymonth TABLE {
+TABLE.calendarmonth TBODY TD TABLE {
 	margin-top: 0px;
 	margin-left: 0px;
 	font-size : 10px;
 	line-height: 1.2em;
 }
 
-.calendardaymonth DIV {
+TABLE.calendarmonth TBODY TD TABLE TD {
+    border: none;
+    background: none;
+}
+
+TABLE.calendarmonth TBODY TD DIV {
 	margin-top: 0px;
 	margin-left: 0px;
 	font-size: 10px;
 	line-height: 1.2em;
 }
 
-.calendarmini .calendarheader {
+TABLE.calendarmini THEAD TD {
     font-size: 10px;
 	font-weight: bold;
     text-align: center;
     vertical-align: center;
 }
 
-.calendarmonth .calendarheader {
+TABLE.calendarmonth THEAD TD {
 	text-align: center;
     vertical-align: center;
 	font-weight: bold;
     padding-bottom: 3px;
     border-bottom: 2px <?PHP echo $THEME->borders?> solid;
-	background-color: <?PHP echo $THEME->body?>;
+    background-color: <?PHP echo $THEME->body?>;
 }
 
 .sideblockmain .cal_event {
@@ -620,43 +621,51 @@ TABLE.calendarmonth {
 }
 
 .cal_event_global {
-	background-color: #99cc99;
-	border: 2px #99cc99 solid;
+	background-color: #99cc99 !important;
+	border: 2px #99cc99 solid !important;
 }
 
 .cal_event_course {
-	background-color: #ff9966;
-	border: 2px #ff9966 solid;
+	background-color: #ff9966 !important;
+	border: 2px #ff9966 solid !important;
 }
 
 .cal_event_group {
-	background-color: orange;
-	border: 2px orange solid;
+	background-color: orange !important;
+	border: 2px orange solid !important;
 }
 
 .cal_event_user {
-	background-color: #ffcc99;
-	border: 2px #ffcc99 solid;
+	background-color: #ffcc99 !important;
+	border: 2px #ffcc99 solid !important;
 }
 
 .cal_duration_global {
-	border-top: 2px #99cc99 solid;
-	border-bottom: 2px #99cc99 solid;
+	border-top: 2px #99cc99 solid !important;
+	border-bottom: 2px #99cc99 solid !important;
 }
 
 .cal_duration_course {
-	border-top: 2px #ff9966 solid;
-	border-bottom: 2px #ff9966 solid;
+	border-top: 2px #ff9966 solid !important;
+	border-bottom: 2px #ff9966 solid !important;
 }
 
 .cal_duration_user {
-	border-top: 2px #ffcc99 solid;
-	border-bottom: 2px #ffcc99 solid;
+	border-top: 2px #ffcc99 solid !important;
+	border-bottom: 2px #ffcc99 solid !important;
 }
 
 .cal_duration_group {
-	border-top: 2px orange solid;
-	border-bottom: 2px orange solid;
+	border-top: 2px orange solid !important;
+	border-bottom: 2px orange solid !important;
+}
+
+.cal_weekend {
+    color: red;
+}
+
+.cal_today {
+	border: 2px black solid !important;
 }
 
 .mycalendar {
@@ -719,10 +728,6 @@ TABLE.calendarmonth {
 	border-top: 1px #999 solid;
 	margin-top: 4px;
 	margin-bottom: 4px;
-}
-
-.cal_today {
-	border: 2px black solid;
 }
 
 .calendarexpired {
