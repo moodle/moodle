@@ -424,6 +424,9 @@ function isguest($userid=0) {
     global $USER;
 
     if (!$userid) {
+        if (empty($USER->username)) {
+            return false;
+        }
         return ($USER->username == "guest");
     }
 
@@ -832,16 +835,18 @@ function get_directory_list($rootdir, $excludefile="", $descend=true) {
     }
 
     while ($file = readdir($dir)) {
-        if ($file != "." and $file != ".." and $file != "CVS" and $file != $excludefile) {
-            $fullfile = $rootdir."/".$file;
-            if ($descend and filetype($fullfile) == "dir") {
-                $subdirs = get_directory_list($fullfile, $excludefile, $descend);
-                foreach ($subdirs as $subdir) {
-                    $dirs[] = $file."/".$subdir;
-                }
-            } else {
-                $dirs[] = $file;
+        $firstchar = substr($file, 0, 1);
+        if ($firstchar == "." or $file == "CVS" or $file == $excludefile) {
+            continue;
+        }
+        $fullfile = $rootdir."/".$file;
+        if ($descend and filetype($fullfile) == "dir") {
+            $subdirs = get_directory_list($fullfile, $excludefile, $descend);
+            foreach ($subdirs as $subdir) {
+                $dirs[] = $file."/".$subdir;
             }
+        } else {
+            $dirs[] = $file;
         }
     }
     closedir($dir);
@@ -1111,7 +1116,8 @@ function get_list_of_plugins($plugin="mod") {
 
     $basedir = opendir("$CFG->dirroot/$plugin");
     while ($dir = readdir($basedir)) {
-        if ($dir == "." || $dir == ".." || $dir == "CVS") {
+        $firstchar = substr($dir, 0, 1);
+        if ($firstchar == "." or $dir == "CVS") {
             continue;
         }
         if (filetype("$CFG->dirroot/$plugin/$dir") != "dir") {
