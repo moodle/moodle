@@ -113,19 +113,23 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_FILE) {         // Strip all suspicious characters from filename
-        $param = str_replace('\\', '/', $param);
-        $param = basename($param);
-        $param = ereg_replace('\.\.+', '', $param);
-        $param = ereg_replace('[[:cntrl:]]|[<>"\`\|\']', '', $param);
+        $param = clean_param($param, PARAM_PATH);
+        $pos = strrpos($param,'/');
+        if ($pos !== FALSE) {
+            $param = substr($param, $pos+1);
+        }
         if ($param === '.' or $param === ' ') {
             $param = '';
-        }
+        }        
     }
 
     if ($options & PARAM_PATH) {         // Strip all suspicious characters from file path
+        $param = str_replace('\\\'', '\'', $param);
+        $param = str_replace('\\"', '"', $param);
         $param = str_replace('\\', '/', $param);
+        $param = ereg_replace('[[:cntrl:]]|[<>"`\|\']', '', $param);
         $param = ereg_replace('\.\.+', '', $param);
-        $param = ereg_replace('[[:cntrl:]]|[<>"\`\|\']', '', $param);
+        $param = ereg_replace('//+', '/', $param);
     }
 
     return $param;
