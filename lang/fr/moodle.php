@@ -685,6 +685,7 @@ $string['readinginfofrombackup'] = 'Lecture des informations de la sauvegarde';
 $string['readme'] = 'LISEZMOI';
 $string['recentactivity'] = 'Activité récente';
 $string['recentactivityreport'] = 'Rapport complet des activités récentes...';
+$string['refreshingevents'] = 'Rafraichissement des événements';
 $string['registration'] = 'Enregistrement de Moodle';
 $string['registrationemail'] = 'Notifications par courriel';
 $string['registrationinfo'] = '<p>Cette page vous permet d\'enregistrer votre site Moodle sur moodle.org. L\'enregistrement est gratuit. Le principal avantage de l\'enregistrement est l\'inscription à une liste de distribution courriel utilisée pour d\'importantes informations telles que des alertes de sécurité et des mises à jour de Moodle.</p>
