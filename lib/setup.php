@@ -21,6 +21,7 @@
 
     $db = &ADONewConnection($CFG->dbtype);         
 
+    error_reporting(0);  // Hide errors 
     // Try a persistent connection first, but if it fails, fall back to ordinary connection
     if (! $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname)) {
         if (! $db->Connect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname)) {
@@ -36,10 +37,11 @@
         }
     }
 
+    error_reporting(E_ALL);       // Show errors from now on.
+
     if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
         $CFG->prefix = "";
     }
-    //$CFG->prefix = "$CFG->dbname.$CFG->prefix";
 
 
 /// Define admin directory
