@@ -114,16 +114,15 @@
         //If we are deleting and bringing into a course or making a new course, same situation
         if($restore->restoreto == 0 || $restore->restoreto == 2) {
             delete_records('block_instance', 'pageid', $course_header->course_id, 'pagetype', MOODLE_PAGE_COURSE);
-            if(empty($info->backup_block_format)) {
-                This is a backup from Moodle < 1.5
-                if(empty($course_header->blockinfo)) {
+            if (empty($info->backup_block_format)) {     // This is a backup from Moodle < 1.5
+                if (empty($course_header->blockinfo)) {
                     // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
                     $newpage = new stdClass;
                     $newpage->type = MOODLE_PAGE_COURSE;
                     $newpage->id   = $course_header->course_id;
                     blocks_repopulate_page($newpage);
-                }
-                else {
+
+                } else {
                     // We just have a blockinfo field, this is a legacy 1.4 or 1.3 backup
                     $blockrecords = get_records_select('block', '', '', 'name, id');
                     $temp_blocks_l = array();
