@@ -148,6 +148,11 @@ $CFG->admin = 'admin';
 //
 // Setting this to true will enable admins to edit any post at any time
 //      $CFG->admineditalways = true;
+//
+// This setting will put Moodle in Unicode mode.  It's very new and 
+// most likely doesn't work yet.   THIS IS FOR DEVELOPERS ONLY, IT IS
+// NOT RECOMMENDED FOR PRODUCTION SITES
+//      $CFG->unicode = true;
 
 
 

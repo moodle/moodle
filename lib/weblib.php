@@ -375,7 +375,7 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
     $output = "<select name=\"$name\" $javascript>\n";
     if ($nothing) {
         $output .= "   <option value=\"$nothingvalue\"\n";
-        if ($nothingvalue == $selected) {
+        if ($nothingvalue === $selected) {
             $output .= " selected=\"true\"";
         }
         $output .= ">$nothing</option>\n";
@@ -931,13 +931,15 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     // Add a stylesheet for the HTML editor
     $meta = "<style type=\"text/css\">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>\n$meta\n";
 
-    // Specify character set ... default is iso-8859-1 but some languages might need something else
-    // Could be optimised by carrying the charset variable around in $USER
-    if (current_language() == "en") {
-        $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\" />\n$meta\n";
+    // Character set could be optimised by carrying the charset variable around in $USER
+    if (!empty($CFG->unicode)) {
+        $encoding = "utf-8";
+    } else if (!empty($SESSION->encoding)) {
+        $encoding = $SESSION->encoding;
     } else {
-        $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=".get_string("thischarset")."\" />\n$meta\n";
+        $encoding = get_string("thischarset");
     }
+    $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=$encoding\" />\n$meta\n";
 
     if ( get_string("thisdirection") == "rtl" ) {
         $direction = " dir=\"rtl\"";

@@ -219,6 +219,7 @@
 
     if (isset($_GET['lang'])) {
         $SESSION->lang = $lang;
+        $SESSION->encoding = get_string('thischarset');
     }
     if (empty($CFG->lang)) {
         $CFG->lang = "en";
