@@ -43,16 +43,20 @@
 
         } else if ($post->edit) {           // Updating a post
             $post->id = $post->edit;
-            if (forum_update_post($post)) {
-
+            $message = '';
+            if (forum_update_post($post,$message)) {
+                
                 add_to_log($post->course, "forum", "update post", 
                           "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
-                $message = get_string("postupdated", "forum");
-                $timemessage = 1;
-
+                $timemessage = 2;
+                if (!empty($message)) { // if we're printing stuff about the file upload
+                    $timemessage = 4;
+                }
+                $message .= '<br />'.get_string("postupdated", "forum");
+                
                 if ($subscribemessage = forum_post_subscription($post)) {
-                    $timemessage = 2;
+                    $timemessage = 4;
                 }
                 redirect(forum_go_back_to("discuss.php?d=$post->discussion#$post->id"), $message.$subscribemessage, $timemessage);
 
@@ -62,13 +66,17 @@
             exit;
 
         } else if ($post->discussion) { // Adding a new post to an existing discussion
-            if ($post->id = forum_add_new_post($post)) {
+            $message = '';
+            if ($post->id = forum_add_new_post($post,$message)) {
 
                 add_to_log($post->course, "forum", "add post", 
                           "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
-                $message = get_string("postadded", "forum", format_time($CFG->maxeditingtime));
                 $timemessage = 2;
+                if (!empty($message)) { // if we're printing stuff about the file upload
+                    $timemessage = 4;
+                }
+                $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
 
                 if ($subscribemessage = forum_post_subscription($post)) {
                     $timemessage = 4;
@@ -85,14 +93,18 @@
             $discussion = $post;
             $discussion->name  = $post->subject;
             $discussion->intro = $post->message;
-            if ($discussion->id = forum_add_discussion($discussion)) {
+            $message = '';
+            if ($discussion->id = forum_add_discussion($discussion,$message)) {
 
                 add_to_log($post->course, "forum", "add discussion", 
                            "discuss.php?d=$discussion->id", "$discussion->id", $cm->id);
 
-                $message = get_string("postadded", "forum", format_time($CFG->maxeditingtime));
                 $timemessage = 2;
-
+                if (!empty($message)) { // if we're printing stuff about the file upload
+                    $timemessage = 4;
+                }
+                $message .= '<br />'.get_string("postadded", "forum", format_time($CFG->maxeditingtime));
+                
                 if ($subscribemessage = forum_post_subscription($discussion)) {
                     $timemessage = 4;
                 }

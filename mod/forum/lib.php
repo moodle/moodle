@@ -1984,11 +1984,14 @@ function forum_print_attachments($post, $return=NULL) {
 
     return $imagereturn;
 }
+/**
+ * If successful, this function returns the name of the file 
+ * @param $post is a full post record, including course and forum
+ * @param $newfile is a full upload array from $_FILES
+ * @param $message is a string to hold the messages.
+ */ 
 
-function forum_add_attachment($post, $inputname) {
-// $post is a full post record, including course and forum
-// $newfile is a full upload array from $_FILES
-// If successful, this function returns the name of the file
+function forum_add_attachment($post, $inputname,&$message) {
 
     global $CFG;
 
@@ -2001,15 +2004,16 @@ function forum_add_attachment($post, $inputname) {
     }
 
     require_once($CFG->dirroot.'/lib/uploadlib.php');
-    $um = new upload_manager($inputname,true,false,$course,false,$forum->maxbytes);
+    $um = new upload_manager($inputname,true,false,$course,false,$forum->maxbytes,true,true);
     $dir = forum_file_area_name($post);
     if ($um->process_file_uploads($dir)) {
+        $message .= $um->get_errors();
         return $um->get_new_filename();
     }
-    // upload manager will print any errors.
+    $message .= $um->get_errors();
 }
 
-function forum_add_new_post($post) {
+function forum_add_new_post($post,&$message) {
 
     $post->created = $post->modified = time();
     $post->mailed = "0";
@@ -2020,7 +2024,7 @@ function forum_add_new_post($post) {
         return false;
     }
 
-    if ($post->attachment = forum_add_attachment($post, 'attachment')) {
+    if ($post->attachment = forum_add_attachment($post, 'attachment',$message)) {
         set_field("forum_posts", "attachment", $post->attachment, "id", $post->id);
     }
 
@@ -2031,7 +2035,7 @@ function forum_add_new_post($post) {
     return $post->id;
 }
 
-function forum_update_post($post) {
+function forum_update_post($post,&$message) {
 
     $post->modified = time();
 
@@ -2039,7 +2043,7 @@ function forum_update_post($post) {
         set_field("forum_discussions", "name", $post->subject, "id", $post->discussion);
     }
 
-    if ($newfilename = forum_add_attachment($post, 'attachment')) {
+    if ($newfilename = forum_add_attachment($post, 'attachment',$message)) {
         $post->attachment = $newfilename;
     } else {
         unset($post->attachment);
@@ -2052,7 +2056,7 @@ function forum_update_post($post) {
     return update_record("forum_posts", $post);
 }
 
-function forum_add_discussion($discussion) {
+function forum_add_discussion($discussion,&$message) {
 // Given an object containing all the necessary data,
 // create a new discussion and return the id
 
@@ -2080,7 +2084,7 @@ function forum_add_discussion($discussion) {
         return 0;
     }
 
-    if ($post->attachment = forum_add_attachment($post, 'attachment')) {
+    if ($post->attachment = forum_add_attachment($post, 'attachment',$message)) {
         set_field("forum_posts", "attachment", $post->attachment, "id", $post->id); //ignore errors
     }
 
