@@ -105,6 +105,7 @@
                     if ($userfile_name) {
                         $newfile = "$basedir$wdir/$userfile_name";
                         if (move_uploaded_file($userfile['tmp_name'], $newfile)) {
+                            chmod($newfile, 0666);
                             $a = NULL;
                             $a->file = "$userfile_name (".$userfile['type'].")";
                             $a->directory = $wdir;
@@ -249,7 +250,7 @@
                 $name = clean_filename($name);
                 if (file_exists($basedir.$wdir."/".$name)) {
                     echo "Error: $name already exists!";
-                } else if (!mkdir($basedir.$wdir."/".$name, 0750)) {
+                } else if (!mkdir($basedir.$wdir."/".$name, $CFG->directorypermissions)) {
                     echo "Error: could not create $name";
                 }
                 displaydir($wdir);
