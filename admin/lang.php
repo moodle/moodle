@@ -3,6 +3,7 @@
     require_once("../config.php");
 
     optional_variable($mode, "");
+    optional_variable($currentfile, "moodle.php");
 
     require_login();
 
@@ -65,7 +66,7 @@
     }
 
     foreach ($stringfiles as $key => $file) {
-        if ($file == "README" or $file == "help" or $file == "docs" or $file == "fonts") {
+        if (substr($file, -4) != ".php") {
             unset($stringfiles[$key]);
         }
     }
@@ -135,114 +136,118 @@
 
     } else if ($mode == "compare") {
 
-        if (isset($_POST['file'])){   // Save a file
+        if (isset($_POST['currentfile'])){   // Save a file
             $newstrings = $_POST;
-            $file = $newstrings['file'];
-            unset($newstrings['file']);
-            if (lang_save_file($langdir, $file, $newstrings)) {
-                notify(get_string("changessaved")." ($langdir/$file)");
+            unset($newstrings['currentfile']);
+            if (lang_save_file($langdir, $currentfile, $newstrings)) {
+                notify(get_string("changessaved")." ($langdir/$currentfile)", "green");
             } else {
-                error("Could not save the file '$file'!", "lang.php?mode=compare");
+                error("Could not save the file '$currentfile'!", "lang.php?mode=compare&currentfile=$currentfile");
             }
         }
 
-        print_heading($strcomparelanguage);
-        echo "<center>";
-        helpbutton("langedit",$strcomparelanguage);
-        echo "</center>";
+        print_heading_with_help($strcomparelanguage, "langedit");
 
+        print_simple_box_start("center", "80%");
+        echo '<center><font size="2">';
         foreach ($stringfiles as $file) {
-        
-            print_heading("$file", "LEFT", 4);
-
-            if (!file_exists("$langdir/$file")) {
-                if (!touch("$langdir/$file")) {
-                    echo "<p><font color=red>".get_string("filemissing", "", "$langdir/$file")."</font></p>";
-                    continue;
-                }
-            }
-    
-            error_reporting(0);
-            if ($f = fopen("$langdir/$file","r+")) {
-                $editable = true;
-                fclose($f);
+            if ($file == $currentfile) {
+                echo "<b>$file</b> &nbsp; ";
             } else {
-                $editable = false;
-                echo "<p><font size=1>".get_string("makeeditable", "", "$langdir/$file")."</font></p>";
+                echo "<a href=\"lang.php?mode=compare&currentfile=$file\">$file</a> &nbsp; ";
             }
-            error_reporting(7);
+        }
+        echo '</font></center>';
+        print_simple_box_end();
 
+        
+        print_heading("$currentfile", "LEFT", 4);
 
-            unset($string);
-            include("$enlangdir/$file");
-            $enstring = $string;  
-            ksort($enstring);
-    
-            unset($string);
-            include("$langdir/$file");
-
-            if ($editable) {
-                echo "<form name=\"$file\" action=\"lang.php\" method=\"post\">";
+        if (!file_exists("$langdir/$currentfile")) {
+            if (!touch("$langdir/$currentfile")) {
+                echo "<p><font color=red>".get_string("filemissing", "", "$langdir/$currentfile")."</font></p>";
+                continue;
             }
-            echo "<table width=\"100%\" cellpadding=2 cellspacing=3 border=0>";
-            foreach ($enstring as $key => $envalue) {
-                $envalue = nl2br(htmlspecialchars($envalue));
-                $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
-                $envalue = str_replace("%%","%",$envalue);
-
-                echo "<tr>";
-                echo "<td width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>";
-                echo "<td width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>";
-
-                $value = $string[$key];
-                $value = str_replace("\r","",$value);              // Bad character caused by Windows
-                $value = str_replace("\n\n\n\n\n\n","\n",$value);  // Collapse runs of blank lines
-                $value = str_replace("\n\n\n\n\n","\n",$value);
-                $value = str_replace("\n\n\n\n","\n",$value);
-                $value = str_replace("\n\n\n","\n",$value);
-                $value = str_replace("\n\n\n","\n",$value);
-                $value = str_replace("\\","",$value);              // Delete all slashes
-                $value = str_replace("%%","%",$value);
-                $value = htmlspecialchars($value);
-
-                $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
-
-                if ($editable) {
-                    echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>";
-                    if (isset($string[$key])) {
-                        $valuelen = strlen($value);
-                    } else {
-                        $valuelen = strlen($envalue);
-                    }
-                    $cols=50;
-                    if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
-                        $rows = ceil($valuelen / $cols);
-                        echo "<textarea name=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</textarea>";
-                    } else {
-                        if ($valuelen) {
-                            $cols = $valuelen + 2;
-                        }
-                        echo "<input type=\"text\" name=\"string-$key\" value=\"$value\" size=\"$cols\"></td>";
-                    }
-                    echo "</TD>";
-
-                } else {
-                    echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>$value</td>";
-                }
-            }
-            if ($editable) {
-                echo "<tr><td colspan=2>&nbsp;<td>";
-                echo "    <input type=\"hidden\" name=\"file\" value=\"$file\">";
-                echo "    <input type=\"hidden\" name=\"mode\" value=\"compare\">";
-                echo "    <input type=\"submit\" name=\"update\" value=\"".get_string("savechanges").": $file\">";
-                echo "</td></tr>";
-            }
-            echo "</table>";
-            echo "</form>";
         }
 
-        print_continue("lang.php");
-    
+        error_reporting(0);
+        if ($f = fopen("$langdir/$currentfile","r+")) {
+            $editable = true;
+            fclose($f);
+        } else {
+            $editable = false;
+            echo "<p><font size=1>".get_string("makeeditable", "", "$langdir/$currentfile")."</font></p>";
+        }
+        error_reporting(7);
+
+
+        unset($string);
+        include("$enlangdir/$currentfile");
+        $enstring = $string;  
+        ksort($enstring);
+
+        unset($string);
+        include("$langdir/$currentfile");
+
+        if ($editable) {
+            echo "<form name=\"$currentfile\" action=\"lang.php\" method=\"post\">";
+        }
+        echo "<table width=\"100%\" cellpadding=2 cellspacing=3 border=0>";
+        foreach ($enstring as $key => $envalue) {
+            $envalue = nl2br(htmlspecialchars($envalue));
+            $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
+            $envalue = str_replace("%%","%",$envalue);
+
+            echo "<tr>";
+            echo "<td width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>";
+            echo "<td width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>";
+
+            $value = $string[$key];
+            $value = str_replace("\r","",$value);              // Bad character caused by Windows
+            $value = str_replace("\n\n\n\n\n\n","\n",$value);  // Collapse runs of blank lines
+            $value = str_replace("\n\n\n\n\n","\n",$value);
+            $value = str_replace("\n\n\n\n","\n",$value);
+            $value = str_replace("\n\n\n","\n",$value);
+            $value = str_replace("\n\n\n","\n",$value);
+            $value = str_replace("\\","",$value);              // Delete all slashes
+            $value = str_replace("%%","%",$value);
+            $value = htmlspecialchars($value);
+
+            $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
+
+            if ($editable) {
+                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>";
+                if (isset($string[$key])) {
+                    $valuelen = strlen($value);
+                } else {
+                    $valuelen = strlen($envalue);
+                }
+                $cols=50;
+                if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
+                    $rows = ceil($valuelen / $cols);
+                    echo "<textarea name=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</textarea>";
+                } else {
+                    if ($valuelen) {
+                        $cols = $valuelen + 2;
+                    }
+                    echo "<input type=\"text\" name=\"string-$key\" value=\"$value\" size=\"$cols\"></td>";
+                }
+                echo "</TD>";
+
+            } else {
+                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>$value</td>";
+            }
+        }
+        if ($editable) {
+            echo "<tr><td colspan=2>&nbsp;<td><br />";
+            echo "    <input type=\"hidden\" name=\"currentfile\" value=\"$currentfile\">";
+            echo "    <input type=\"hidden\" name=\"mode\" value=\"compare\">";
+            echo "    <input type=\"submit\" name=\"update\" value=\"".get_string("savechanges").": $currentfile\">";
+            echo "</td></tr>";
+        }
+        echo "</table>";
+        echo "</form>";
+
     }
 
     print_footer();
