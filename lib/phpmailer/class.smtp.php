@@ -101,9 +101,9 @@
 
             # sometimes the SMTP server takes a little longer to respond
             # so we will give it a longer timeout for the first read
-            // Commented b/c of win32 warning messages
-            //if(function_exists("socket_set_timeout"))
-            //   socket_set_timeout($this->smtp_conn, 1, 0);
+            // Windows still does not have support for this timeout function
+            if(substr(PHP_OS, 0, 3) != "WIN")
+               socket_set_timeout($this->smtp_conn, 1, 0);
 
             # get any announcement stuff
             $announce = $this->get_lines();
@@ -329,8 +329,11 @@
 
                 # now send the lines to the server
                 while(list(,$line_out) = @each($lines_out)) {
-                    if($line_out[0] == ".") {
-                        $line_out = "." . $line_out;
+                    if(strlen($line_out) > 0)
+                    {
+                        if(substr($line_out, 0, 1) == ".") {
+                            $line_out = "." . $line_out;
+                        }
                     }
                     fputs($this->smtp_conn,$line_out . $this->CRLF);
                 }

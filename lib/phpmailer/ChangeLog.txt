@@ -1,5 +1,21 @@
 ChangeLog
 
+Version 1.60 (Sat, Mar 30 2002)
+* Sendmail pipe and address patch (Christian Holtje)
+* Added embedded image and read confirmation support (A. Ognio)
+* Added unit tests
+* Added SMTP timeout support (*nix only)
+* Added possibly temporary PluginDir variable for SMTP class
+* Added LE message line ending variable
+* Refactored boundary and attachment code
+* Eliminated SMTP class warnings
+* Added SendToQueue method for future queuing support
+
+Version 1.54 (Wed, Dec 19 2001)
+* Add some queuing support code
+* Fixed a pesky multi/alt bug
+* Messages are no longer forced to have "To" addresses
+
 Version 1.50 (Thu, Nov 08 2001)
 * Fix extra lines when not using SMTP mailer
 * Set WordWrap variable to int with a zero default
