@@ -178,6 +178,7 @@
                     $playbeep = true;
                 }
                 echo 'parent.messages.scroll(1,5000000);'."\n";
+                echo 'parent.focus();'."\n";
             }
 
             // Update the info pane, but only if the data there is getting too old
