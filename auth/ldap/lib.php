@@ -192,7 +192,7 @@ function auth_user_create ($userobject,$plainpass) {
  * @param mixed $filter substring of username
  * @returns array of userobjects 
  */
-function auth_get_users($filter='*') {
+function auth_get_users($filter='*', $dontlistcreated=false) {
     global $CFG;
 
     $ldapconnection = auth_ldap_connect();
@@ -204,7 +204,7 @@ function auth_get_users($filter='*') {
 
     $contexts = explode(";",$CFG->ldap_contexts);
  
-    if (!empty($CFG->ldap_create_context)){
+    if (!empty($CFG->ldap_create_context) and empty($dontlistcreated)){
           array_push($contexts, $CFG->ldap_create_context);
     }
 
@@ -320,21 +320,107 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
 
     global $CFG ;
     auth_ldap_init();
-    $ldapusers     = auth_get_users();
-    $usedidnumbers = Array();
+    $ldapusers     = auth_get_users('*', true); //list all but created users from ldap
+    if (!$unsafe_optimizations) { 
+        //NORMAL SYNRONIZATION ROUTINE STARTS
+        
+        if ($firstsync) {
+            //fill idnumbers (firstsync)
+            $users = get_records(user, 'auth', 'ldap', '', 'id, username', '');
+            //to be continued later....... 
+        } 
 
-    // these are only populated if we managed to find added/removed users
-    $add_users    = false;
-    $remove_users = false;
+        //Build existing userinformation
+        $users = get_records(user, 'auth', 'ldap'); //get all user objects from db
+        //Create array whre idnumbers are keys
+        $moodleldapusers = array(); //all users in moodle db
+
+        //make information available with idnumber
+        foreach ($useris as $key=>$value){
+            $moodleldapusers[$value->idnumber]= $value;
+        }    
+        unset($users); //not needed anymore
+        
+        //get attributemappings
+        $attrmap = auth_ldap_attributes();
+        $updatelocals = array();
+        $updateremotes = array();
+        foreach ($attrmap as $key=>$value) {
+            if (isset($CFG->{'auth_user_'.$key.'_updatelocal'}) && $CFG->{'auth_user_'.$key.'_updatelocal'}  ) {
+                $updatelocals[$key]=$value;
+            }
+
+            if (isset($CFG->{'auth_user_'.$key.'_updateremote'}) && $CFG->{'auth_user_'.$key.'_updateremote'}  ) {
+                $updateremotes[$key]=$value;
+            }
+        }    
+
+        $idattribute=$attrmap['idnumber'];
+        $updateusers     = array(); //users what should be updated
+        $newusers        = array(); //new users to create
+        
+        //put userinformation in $updateusers and $newusers
+        foreach ($ldapusers as $user) {
+            if (isset($user[$idattribute][0])) {
+                $useridnumber = $user[$idattribute][0];
+                if (isset($moodleldapusers[$useridnumber])) {
+                    $arraytoupdate = &$updateusers;
+                    $userinfo = $moodleldapusers[$useridnumber];
+                    unset($moodleldapusers[$useridnumber]); 
+                } else {
+                    $arraytoupdate = &$newusers;
+                    $userinfo = new object();
+                    $userinfo->idnumber = $useridnumber;
+                }
+
+                //update local userinformation
+                foreach ($updatelocals as $local => $remote) {
+                    if (isset($user[$remote][0])) {
+                        $userinfo->$local = utf8_decode($user[$remote][0]);
+                    }    
+                }
+                //Force values for some fields
+                $userinfo->timemodified = time();
+                $userinfo->confirmed = 1;
+
+                $arraytoupdate[$useridnumber] = $userinfo;
+
+            } else {
+               //cannot sync remoteuser  without idumber
+               echo 'Cannot sync remote user to moodle '.$user->dn.' without idnumber field';
+            }   
+        }            
+        
+        //update local users
+        foreach ($updateusers as $user) {
+            update_record('user', $user);
+        }    
+
+        //add new users
+        foreach ($updateusers as $user) {
+            insert_user_record();
+        }    
+
+        //remove old users
+        foreach ($moodleldapusers as $remove) {
+            
+        }    
+        //NORMAL SYNRONIZATION ROUTINE ENDS
+    } else {
+        //UNSAFE OPTIMIZATIONS STARTS
+        $usedidnumbers = Array();
+
+        // these are only populated if we managed to find added/removed users
+        $add_users    = false;
+        $remove_users = false;
      
-    if($unsafe_optimizations){
         // create a temp table
         if(strtolower($CFG->dbtype) === 'mysql'){
-            // help old mysql versions cope with large temp tables
-            execute_sql('SET SQL_BIG_TABLES=1'); 
-            execute_sql('CREATE TEMPORARY TABLE ' . $CFG->prefix .'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber)) TYPE=MyISAM'); 
+                // help old mysql versions cope with large temp tables
+                execute_sql('SET SQL_BIG_TABLES=1'); 
+                execute_sql('CREATE TEMPORARY TABLE ' . $CFG->prefix .'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber)) TYPE=MyISAM'); 
         } elseif (strtolower($CFG->dbtype) === 'postgres7'){
-            execute_sql('CREATE TEMPORARY TABLE '.$CFG->prefix.'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber))'); 
+                execute_sql('CREATE TEMPORARY TABLE '.$CFG->prefix.'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber))'); 
         }
         
         $userids = array_keys($ldapusers);
@@ -368,80 +454,74 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
                 WHERE  u.id IS NULL';
         $add_users = array_keys(get_records_sql($sql)) || array(); // get rid of the fat        
         print "User entries to add: ". count($add_users). "\n";
-    }
     
-    foreach ($ldapusers as $user) {
+        foreach ($ldapusers as $user) {
     
-        $usedidnumbers[] = $user->idnumber; //we will need all used idnumbers later
-        //update modified time
-        $user->modified = time();
-        //All users are confirmed
-        $user->confirmed = 1;
-        // if user does not exist create it
-        if ( ($unsafe_optimizations && is_array($add_users) && in_array($user->idnumber, $add_users) )
-              || (!$unsafe_optimizations  &&!record_exists('user','auth', 'ldap', 'idnumber', $user->idnumber)) ) {
-            if (insert_record ('user',$user)) {
-                echo "inserted user $user->username with idnumber $user->idnumber \n";
-            } else {
-                echo "error inserting user $user->username with idnumber $user->idnumber \n";
-            }
+            $usedidnumbers[] = $user->idnumber; //we will need all used idnumbers later
+            //update modified time
+            $user->modified = time();
+            //All users are confirmed
+            $user->confirmed = 1;
+            // if user does not exist create it
+            if ( is_array($add_users) && in_array($user->idnumber, $add_users) ) {
+                if (insert_record ('user',$user)) {
+                    echo "inserted user $user->username with idnumber $user->idnumber \n";
+                } else {
+                    echo "error inserting user $user->username with idnumber $user->idnumber \n";
+                }
             update_user_record($user->username);
             continue ;
-        } else {
-           //update username
-           set_field('user', 'username', $user->username , 'auth', 'ldap', 'idnumber', $user->idnumber);
-           //no id-information in ldap so get now
-           update_user_record($user->username);
-           $userid = get_field('user', 'id', 'auth', 'ldap', 'idnumber', $user->idnumber);
+            } else {
+                //update username
+                set_field('user', 'username', $user->username , 'auth', 'ldap', 'idnumber', $user->idnumber);
+                //no id-information in ldap so get now
+                update_user_record($user->username);
+                $userid = get_field('user', 'id', 'auth', 'ldap', 'idnumber', $user->idnumber);
            
-           if (auth_iscreator($user->username)) {
-                 if (! record_exists("user_coursecreators", "userid", $userid)) {
-                      $cdata['userid']=$userid;
-                      $creator = insert_record("user_coursecreators",$cdata);
-                      if (! $creator) {
-                          error("Cannot add user to course creators.");
-                      }
-                  }
-            } else {
-                 if ( record_exists("user_coursecreators", "userid", $userid)) {
-                      $creator = delete_records("user_coursecreators", "userid", $userid);
-                      if (! $creator) {
-                          error("Cannot remove user from course creators.");
-                      }
-                 }
+                if (auth_iscreator($user->username)) {
+                    if (! record_exists("user_coursecreators", "userid", $userid)) {
+                        $cdata['userid']=$userid;
+                        $creator = insert_record("user_coursecreators",$cdata);
+                        if (! $creator) {
+                            error("Cannot add user to course creators.");
+                        }
+                    }
+                } else {
+                    if ( record_exists("user_coursecreators", "userid", $userid)) {
+                        $creator = delete_records("user_coursecreators", "userid", $userid);
+                        if (! $creator) {
+                            error("Cannot remove user from course creators.");
+                        }
+                    }
+                }
             }
-        }
-    }    
+        }    
     
-    if($unsafe_optimizations){
+    
         $result=(is_array($remove_users) ? $remove_users : array());
-    } else{
-        //find nonexisting users from moodles userdb
-        $sql = "SELECT * FROM ".$CFG->prefix."user WHERE deleted = '0' AND auth = 'ldap' AND idnumber  NOT IN ('".implode('\' , \'',$usedidnumbers)."');" ;
-        $result = get_records_sql($sql);
-    }
-
-    if (!empty($result)){
-        foreach ($result as $user) {
-            //following is copy pasted from admin/user.php
-            //maybe this should moved to function in lib/datalib.php
-            unset($updateuser);
-            $updateuser->id = $user->id;
-            $updateuser->deleted = "1";
-            $updateuser->username = "$user->email.".time();  // Remember it just in case
-            $updateuser->email = "";               // Clear this field to free it up
-            $updateuser->timemodified = time();
-            if (update_record("user", $updateuser)) {
-                unenrol_student($user->id);  // From all courses
-                remove_teacher($user->id);   // From all courses
-                remove_admin($user->id);
-                notify(get_string("deletedactivity", "", fullname($user, true)) );
-            } else {
-                notify(get_string("deletednot", "", fullname($user, true)));
-            }
-            //copy pasted part ends
-        }     
-    }    
+    
+        if (!empty($result)){
+            foreach ($result as $user) {
+                //following is copy pasted from admin/user.php
+                //maybe this should moved to function in lib/datalib.php
+                unset($updateuser);
+                $updateuser->id = $user->id;
+                $updateuser->deleted = "1";
+                $updateuser->username = "$user->email.".time();  // Remember it just in case
+                $updateuser->email = "";               // Clear this field to free it up
+                $updateuser->timemodified = time();
+                if (update_record("user", $updateuser)) {
+                    unenrol_student($user->id);  // From all courses
+                    remove_teacher($user->id);   // From all courses
+                    remove_admin($user->id);
+                    notify(get_string("deletedactivity", "", fullname($user, true)) );
+                } else {
+                    notify(get_string("deletednot", "", fullname($user, true)));
+                }
+                //copy pasted part ends
+            }     
+        }
+    } //UNSAFEOPTIMIZATIONS ENDS     
 }
 
 /*
