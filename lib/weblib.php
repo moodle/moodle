@@ -351,7 +351,7 @@ function clean_text($text, $format) {
 
     switch ($format) {
         case FORMAT_MOODLE:
-            return strip_tags($text, '<b><i><u><font><ol><ul><dl><li><dt><dd><h1><h2><h3><hr>');
+            return strip_tags($text, '<b><i><u><font><ol><ul><dl><li><dt><dd><h1><h2><h3><hr><img>');
             break;
 
         case FORMAT_HTML:

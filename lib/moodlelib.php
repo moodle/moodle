@@ -116,7 +116,7 @@ function print_navigation ($navigation) {
 }
 
 function print_heading($text, $align="CENTER", $size=3) {
-    echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>$text</B></FONT></P>";
+    echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>".stripslashes($text)."</B></FONT></P>";
 }
 
 function print_continue($link) {

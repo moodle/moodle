@@ -115,6 +115,7 @@ $LANGUAGES = array (
 "pl" => "Polish",
 "ps" => "Pushto",
 "pt" => "Portuguese",
+"pt_br" => "Portuguese (Brazil)",
 "qu" => "Quechua",
 "rm" => "Raeto-Romance",
 "rn" => "Rundi",
