@@ -119,7 +119,7 @@
 
         $workbook = new Workbook("-");
         // Creating the first worksheet
-        $myxls =& $workbook->add_worksheet($survey->name);
+        $myxls =& $workbook->add_worksheet(substr($survey->name, 0, 31));
 
         $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
         $col=0;
