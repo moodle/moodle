@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // moodle.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['action'] = 'Actie';
@@ -384,6 +384,7 @@ $string['enable'] = 'Schakel in';
 $string['encryptedcode'] = 'Geëncrypteerde code';
 $string['enrolledincourse'] = 'Aangemeld in vak ';
 $string['enrolledincoursenot'] = 'Niet aangemeld in vak ';
+$string['enrollfirst'] = 'Je moet aangemeld zijn bij één van de vakken voor je de site-activiteiten kunt gebruiken.';
 $string['enrolmentconfirmation'] = 'Je staat op het punt jezelf aan te melden als lid van dit vak.<br />Weet je zeker dat je dit wilt doen?';
 $string['enrolmentkey'] = 'Vaksleutel';
 $string['enrolmentkeyfrom'] = 'Dit vak vereist een \'Vaksleutel\', een eenmalig<BR>

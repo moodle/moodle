@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 development (2004062600)
+      // choice.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['allowupdate'] = 'Laat toe de keuze aan te passen';
@@ -9,6 +9,7 @@ $string['choiceclose'] = 'Tot';
 $string['choicename'] = 'Naam keuze ';
 $string['choiceopen'] = 'Open';
 $string['choicetext'] = 'Keuzetekst';
+$string['havetologin'] = 'Je moet aangemeld zijn voor je je keuze kunt insturen';
 $string['modulename'] = 'Keuze';
 $string['modulenameplural'] = 'Keuzes';
 $string['mustchooseone'] = 'Je moet een antwoord kiezen voor je kunt bewaren. er is niets bewaard.';
