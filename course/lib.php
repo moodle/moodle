@@ -1026,8 +1026,9 @@ function move_module($cm, $move) {
     if ($move < 0) {    // Moving the module up
 
         if ($first) {
-            if ($thissection->section == 1) {  // First section, do nothing
+            if ($thissection->section == 0) {  // First section, do nothing
                 return true;
+
             } else {               // Push onto end of previous section
                 $prevsectionnumber = $thissection->section - 1;
                 if (! $prevsection = get_record("course_sections", "course", "$thissection->course", 
