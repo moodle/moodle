@@ -1,15 +1,15 @@
-<?php 
+<?php
     include("../../config.php");
 
     $lastmodified = filemtime("htmlarea.php");
     $lifetime = 1800;
-    
+
     header("Content-type: application/x-javascript");  // Correct MIME type
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-    header("Cache-control: max_age = $lifetime"); 
+    header("Cache-control: max_age = $lifetime");
     header("Pragma: ");
-    
+
     $lang = current_language();
 
     if (empty($lang)) {
@@ -45,7 +45,7 @@ if (typeof _editor_url == "string") {
 
 // make sure we have a language
 if (typeof _editor_lang == "string") {
-    _editor_lang = _editor_lang.toLowerCase();
+    _editor_lang = "en"; // should always be english in moodle.
 } else {
     _editor_lang = "en";
 }
@@ -67,14 +67,10 @@ function HTMLArea(textarea, config) {
         this._timerUndo = null;
         this._undoQueue = new Array(this.config.undoSteps);
         this._undoPos = -1;
-        this._customUndo = false;
+        this._customUndo = true;
         this._mdoc = document; // cache the document, we need it in plugins
         this.doctype = '';
     }
-    // Hide cut copy paste from gecko browsers.
-    //if (HTMLArea.is_gecko) {
-    //  this.config.hideSomeButtons(" cut copy paste ");
-    //}
 };
 
 // load some scripts
@@ -580,11 +576,7 @@ HTMLArea.prototype._createToolbar = function () {
                     _stopEvent(is_ie ? window.event : ev);
                 }
             });
-            var img = document.createElement("img");
-            img.src = btn[1];
-            img.style.width = "18px";
-            img.style.height = "18px";
-            el.appendChild(img);
+            el.innerHTML = '<img src="'+ btn[1] +'" width="18" height="18">';
         } else if (!el) {
             el = createSelect(txt);
         }
@@ -1515,19 +1507,19 @@ HTMLArea.prototype._insertImage = function(image) {
                 case "f_align"  : img.align  = value; break;
                 case "f_vert"   : img.vspace = parseInt(value || "0"); break;
                 case "f_horiz"  : img.hspace = parseInt(value || "0"); break;
-                case "f_width"  : 
+                case "f_width"  :
                     if(value != 0) {
-                        img.width = parseInt(value); 
+                        img.width = parseInt(value);
                     } else {
                         break;
                     }
                     break;
-                case "f_height"  : 
+                case "f_height"  :
                     if(value != 0) {
                         img.height = parseInt(value);
                     } else {
                         break;
-                    } 
+                    }
                     break;
             }
         }
@@ -1572,7 +1564,7 @@ HTMLArea.prototype._insertTable = function() {
                     tdwidth = Math.round(table.width / param["f_cols"]);
                 } else {
                     tdwidth = Math.round(100 / param["f_cols"]);
-                }   
+                }
                 td.setAttribute("width",tdwidth + param["f_unit"]);
                 td.setAttribute("valign","top");
                 /// Moodle hack -ends
@@ -1635,7 +1627,7 @@ HTMLArea.prototype._removelink = function() {
     var editor = this;
     link = this.getParentElement();
     editor.selectNodeContents(link);
-    
+
     this._doc.execCommand("unlink", false, null);
     this.focusEditor();
 };
@@ -2172,7 +2164,7 @@ HTMLArea.prototype.stripBaseURL = function(string) {
 
     // strip host-part of URL which is added by MSIE to links relative to server root
     // commented out for moodle
-    //baseurl = baseurl.replace(/^(https?:\/\/[^\/]+)(.*)$/, '$1'); 
+    //baseurl = baseurl.replace(/^(https?:\/\/[^\/]+)(.*)$/, '$1');
     basere = new RegExp(baseurl);
     return string.replace(basere, "");
 };
