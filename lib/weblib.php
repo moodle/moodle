@@ -3497,17 +3497,17 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     if ($content) {
         echo $content;
         if ($footer) {
-            echo '<center><font size="-2">'. $footer .'</font></center>';
+            echo '<div class="footer">'. $footer .'</div>';
         }
     } else {
-        echo '<table width="100%" border="0" cellspacing="0" cellpadding="2">';
+        echo '<table class="sideblocklinks">';
         if ($list) {
             foreach ($list as $key => $string) {
                 echo '<tr>';
                 if ($icons) {
-                    echo '<td class="sideblocklinks" valign="top" width="16">'. $icons[$key] .'</td>';
+                    echo '<td valign="top" width="16">'. $icons[$key] .'</td>';
                 }
-                echo '<td class="sideblocklinks" valign="top" width="*"><font size="-1">'. $string .'</font></td>';
+                echo '<td valign="top">'. $string .'</td>';
                 echo '</tr>';
             }
         }
@@ -3518,7 +3518,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
                 echo ' colspan="2" ';
             }
             echo '>';
-            echo '<center><font size="-2">'. $footer .'</font></center>';
+            echo '<div class="footer">'. $footer .'</div>';
             echo '</td></tr>';
         }
         echo '</table>';
