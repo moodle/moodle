@@ -1482,8 +1482,6 @@ function exercise_list_submissions_for_admin($exercise) {
 			print_table($table);
 			echo "<p align=\"center\">".get_string("noteonstudentassessments", "exercise")."</p>\n";
 		}
-    $elapsed = time() - $timenow;
-	echo "<p>Elapsed time: $elapsed\n";
     }
 
 	// now the sudent submissions
@@ -1496,6 +1494,7 @@ function exercise_list_submissions_for_admin($exercise) {
         $table->cellpadding = 2;
         $table->cellspacing = 0;
 
+        $nsubmissions = 0;
         foreach ($users as $user) {
             if ($submissions = exercise_get_user_submissions($exercise, $user)) {
                 foreach ($submissions as $submission) {
@@ -1531,17 +1530,16 @@ function exercise_list_submissions_for_admin($exercise) {
                     $table->data[] = array("$user->firstname $user->lastname", $title.
                             " ".exercise_print_submission_assessments($exercise, $submission), 
                             userdate($submission->timecreated), $action);
+                    $nsubmissions++;
                 }
             }
         }
-        print_heading(get_string("studentsubmissions", "exercise", $course->student)." [".
-                  count($submissions)."]", "center");
+        print_heading(get_string("studentsubmissions", "exercise", $course->student)." [$nsubmissions]",
+                "center");
         print_table($table);
         echo "<center><p>".get_string("resubmitnote", "exercise", $course->student)."</p>\n";
         echo "<p>".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."</p></center>\n";
     }
-	$elapsed = time() - $timenow;
-	echo "<p>Elapsed time: $elapsed\n";
 }
 
 
