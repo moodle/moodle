@@ -106,7 +106,7 @@
                 if (isset($scalegrades)) {
                     $submission->grade = $scalegrades[$submission->grade];
                 }
-                assignment_print_feedback($course, $submission);
+                assignment_print_feedback($course, $submission, $assignment);
             }
         } else {
             if ($submission and $submission->timemodified) {
@@ -127,7 +127,7 @@
                 if (isset($scalegrades)) {
                     $submission->grade = $scalegrades[$submission->grade];
                 }
-                assignment_print_feedback($course, $submission);
+                assignment_print_feedback($course, $submission, $assignment);
             }
             if (!$submission->timemarked or $assignment->resubmit) {
                 if ($submission and $submission->timemodified) {

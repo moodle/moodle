@@ -181,7 +181,7 @@ function assignment_user_complete($course, $user, $mod, $assignment) {
         if (empty($submission->timemarked)) {
             print_string("notgradedyet", "assignment");
         } else {
-            assignment_print_feedback($course, $submission);
+            assignment_print_feedback($course, $submission, $assignment);
         }
 
         print_simple_box_end();
@@ -576,7 +576,7 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     echo "</TABLE><BR CLEAR=ALL>\n";
 }
 
-function assignment_print_feedback($course, $submission) {
+function assignment_print_feedback($course, $submission, $assignment) {
     global $CFG, $THEME, $RATING;
 
     if (! $teacher = get_record("user", "id", $submission->teacher)) {
@@ -597,10 +597,12 @@ function assignment_print_feedback($course, $submission) {
     echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
 
     echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
-    if ($submission->grade or $submission->timemarked) {
-        echo get_string("grade").": $submission->grade";
-    } else {
-        echo get_string("nograde");
+    if ($assignment->grade) {
+        if ($submission->grade or $submission->timemarked) {
+            echo get_string("grade").": $submission->grade";
+        } else {
+            echo get_string("nograde");
+        }
     }
     echo "</I></FONT></P>";
 
