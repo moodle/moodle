@@ -49,9 +49,7 @@
 
         if (iscreator()) {       // Print link to create a new course
             echo "<center><p>";
-            unset($options);
-            $option["category"] = $category->id;
-            print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
+            print_single_button("edit.php", NULL, get_string("addnewcourse"), "get");
             echo "</p></center>";
         }
             
