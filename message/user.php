@@ -1,6 +1,7 @@
 <?php // $Id$
       
     require('../config.php');
+    require('lib.php');
 
     require_login();
 
@@ -52,10 +53,8 @@
             }
             echo get_string("lastaccess").":", $datestring;
             echo '</font>';
-            echo '<br /><font size="2">';
-            echo '<a target="message_history'.$user->id.'" '.
-            link_to_popup_window("/message/history.php?user1=$user->id", "message_history_$user->id", 
-                    get_string('messagehistory', 'message'), 500, 500, '');
+            echo '<br />';
+            message_history_link($user->id);
             echo '</td>';
             echo '</tr></table>';
             echo '</table></table></body>'; // Close possible theme tables off
