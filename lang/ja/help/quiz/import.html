@@ -1,8 +1,8 @@
 <p align="center"><b>新しい問題のインポート</b></p>
 
-<p>ここでは、フォームを通してアップロードされた外部テキストファイルより問題をインポートすることができます。</p>
+<p>フォームを通してアップロードされた外部テキストファイルより問題をインポートすることができます。</p>
 
-<p>多くのファイルフォーマットをサポートします:
+<p>下記のように多くのファイルフォーマットをサポートします:
 
 <p><b>GIFTフォーマット</b></p>
 <ul>
@@ -12,29 +12,29 @@ GIFTは、教師が問題をテキストファイルで簡単に書くことができるように設計されていま
 様々なタイプの問題及びコメント、問題名、フィードバック、評点の比重割合を一つのテキストファイルに記述することができます。
 下記に例を挙げます:</p>
 <pre>
-Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
+グラントの墓には誰が埋められていますか?{~グラント ~ジェファーソン =誰も埋められていない}
 
-Grant is {~buried =entombed ~living} in Grant's tomb.
+グラントはグラントの墓に {~埋められている =埋葬されている ~生きている} 。
 
-Grant is buried in Grant's tomb.{FALSE}
+グラントはグラントの墓に埋められている。{FALSE}
 
-Who's buried in Grant's tomb?{=no one =nobody}
+グラントの墓には誰が埋められていますか?{=誰も埋められていない =1人も埋められていない}
 
-When was Ulysses S. Grant born?{#1822}
+ユリシーズ S. グラントは、いつ生まれましたか?{#1822}
 </pre>
 
 <p align="right"><a href="help.php?file=formatgift.html&module=quiz">「GIFT」フォーマットの詳細情報</a></p>
 </ul>
 
-<p><b>Aiken format</b></p>
+<p><b>Aikenフォーマット</b></p>
 <ul>
-<p>The Aiken format is a very simple way of creating multiple choice questions using a very clear human-readable format. Here is an example of the format:</p>
+<p>Aikenフォーマットは、人間が理解できるフォーマットで多肢選択問題を作成する非常にシンプルな方法です。次にフォーマットの例を挙げます:</p>
 <pre>
-What is the purpose of first aid?
-A. To save life, prevent further injury, preserve good health
-B. To provide medical treatment to any injured or wounded person
-C. To prevent further injury
-D. To aid victims who may be seeking help
+応急手当の目的は?
+A. 命を救う、より深刻な怪我を防ぐ、健康を維持する
+B. 怪我をした人に治療を提供する
+C. より深刻な怪我を防ぐ
+D. 助けを求めている被害者を支援する
 ANSWER: A
 </pre>
 
@@ -42,15 +42,13 @@ ANSWER: A
 </ul>
 
 
-<p><b>Missing Word</b></p>
+<p><b>穴埋め問題</b></p>
 <ul>
-<p>This format only supports multiple choice questions.
-Each answer is separated with a tilde (~), and the correct answer is 
-prefixed with an equals sign (=).  Here is an example:
+<p>このフォーマットは、多肢選択問題のみをサポートします。
+それぞれの答えはチルド(~)で分離され、正解の前には等号(=)を付けます。次に例を挙げます:
 
-<blockquote>As soon as we begin to explore our body parts as infants
-we become students of {=anatomy and physiology ~reflexology 
-~science ~experiment}, and in a sense we remain students for life.
+<blockquote>私たちは、幼児の時に身体の部分を探索し始めると直ぐに、{=解剖学と生理学 ~反射学 
+~科学 ~実験}の生徒となります。ある意味、私たちは生涯生徒であり続けます。
 </blockquote>
 
 <p align="right"><a href="help.php?file=formatmissingword.html&module=quiz">「Missing Word」フォーマットの詳細情報</a></p>
@@ -59,20 +57,15 @@ we become students of {=anatomy and physiology ~reflexology
 
 <p><b>AON</b></p>
 <ul>
-<p>This is the same as Missing Word Format, except that after importing 
-   the questions all Short-Answer questions are converted four at a time
-   into Matching Questions.</p>
-<p>Additionally, the answers of multiple-choice questions are randomly 
-   shuffled during the import.
-<p>It's named after an organisation that sponsored the development of many 
-   quiz features</p>
+<p>これは穴埋め問題フォーマットと同じですが、問題がインポートされた後に、全ての記述式問題が組み合わせ問題に変換されます。</p>
+<p>また、インポート時に多肢選択問題の答えがランダムに混ぜられます。</p>
+<p>多くの小テスト機能の開発を後援している機関にちなんで、フォーマットの名称が付けられました。</p>
 </ul>
 
 
 <p><b>Blackboard</b></p>
 <ul>
-<p>This module can import questions saved in Blackboard's export 
-format.  It relies on XML functions being compiled into your PHP.</p>
+<p>このモジュールは、Blackboardのエクスポート機能によって保存された問題をインポートすることができます。あなたのPHPに組み込まれたXML機能を利用します。</p>
 
 <p align="right"><a href="help.php?file=formatblackboard.html&module=quiz">「Blackboard」フォーマットの詳細情報</a></p>
 </ul>
@@ -80,7 +73,7 @@ format.  It relies on XML functions being compiled into your PHP.</p>
 
 <p><b>WebCT</b></p>
 <ul>
-<p>This module can import questions saved in WebCT's text-based format.</p>
+<p>このモジュールは、テキストベースフォーマットで保存されたWebCTの問題をインポートすることができます。</p>
 
 <p align="right"><a href="help.php?file=formatwebct.html&module=quiz">「WebCT」フォーマットの詳細情報</a></p>
 </ul>
@@ -88,14 +81,12 @@ format.  It relies on XML functions being compiled into your PHP.</p>
 
 <p><b>Course Test Manager</b></p>
 <ul>
-<p>This module can import questions saved in a Course Test Manager test bank.
-It relies on different ways of accessing the test bank, which is in a Microsoft Access 
-database, depending on whether Moodle is running on a Windows or Linux web server.</p>
-<p>On Windows it lets you upload the access database just like any other data import file.</p>
-<p>On Linux, you must set up a windows machine on the same network with the Course Test
-Manager database and a piece of software called the ODBC Socket Server, which uses XML
-to transfer data to moodle on the Linux server.</p>  <p>Please read the full help file below before
-using this import class.</p>
+<p>このモジュールは、Course Test Manager test bankに保存された問題をインポートすることができます。
+MoodleがWindowsで動作しているか、Linuxウェブサーバで動作しているかによって、Microsoft Accessデータベース
+に保存されているtest bankへのアクセス方法が異なります。</p>
+<p>Windows環境では、他のデータインポートファイルと同じようにサーバにアップロードしてください。</p>
+<p>Linux環境では、LinuxサーバのmoodleにXMLデータを転送するODBCソケットとCourse Test Manager test bankを入れたWindowsマシンを同じネットワークに設置する必要があります。</p>
+<p>このインポートクラスを使用する前に、下記の詳細ヘルプをお読みください。</p>
 
 
 <p align="right"><a href="help.php?file=formatctm.html&module=quiz">「CTM」フォーマットの詳細情報</a></p>
@@ -103,10 +94,9 @@ using this import class.</p>
 
 
 
-<p><b>Embedded answers (Cloze)</b></p>
+<p><b>穴埋め問題 (Cloze)</b></p>
 <ul>
-<p>This special purpose format imports just one type of question, the 
-Embedded Answers (also known as Cloze) format.
+<p>この特殊目的のフォーマットでは、穴埋め問題(Clozeとして知られています)フォーマット問題のみをインポートすることができます。
 </p>
 
 <p align="right"><a href="help.php?file=multianswer.html&module=quiz">「Cloze」フォーマットの詳細情報</a></p>
@@ -114,17 +104,14 @@ Embedded Answers (also known as Cloze) format.
 
 
 
-<p><b>Custom</b></p>
+<p><b>カスタム</b></p>
 <ul>
-<p>If you have your own format that you need to import, you can 
-   implement it yourself by editing mod/quiz/format/custom.php
+<p>インポートしたいフォーマットがある場合は、/mod/quiz/format/custom.phpを編集することで独自にインプリメントすることができます。</p>
 
-<p>The amount of new code needed is quite small - just enough
-   to parse a single question from given text.
+<p>新たに記述する必要のあるコードの量は非常に小さいものです - 与えられたテキストから1つの問題のみを解析できるコードです。</p>
 
 <p align="right"><a href="help.php?file=formatcustom.html&module=quiz">「Custom」フォーマットの詳細情報</a></p>
 </ul>
 
 
-<p>More formats are yet to come, including WebCT, IMS QTI and whatever else
-   Moodle users can contribute! </p>
+<p>WebCT、IMS、QTIを含んだ新たなフォーマットが更に追加されます。どのようなフォーマットでも、Moodleユーザが貢献することができます! </p>

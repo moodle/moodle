@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 unstable development (2004092000)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['action'] = '-- アクション --';
@@ -38,7 +38,7 @@ $string['deleteversionserror'] = '正しいバージョンのカウントを入力してください。
 $string['diff'] = 'Diff';
 $string['disablecamel'] = 'キャメルケースリンクを無効にする';
 $string['disabledpage'] = 'このページは現在利用できません。';
-$string['downloadaszip'] = 'zip書庫をダウンロードする';
+$string['downloadaszip'] = 'ダウンロード可能なzip書庫';
 $string['downloadtimes'] = 'ダウンロード回数: $a 回';
 $string['dwnlnofiles'] = 'アップロードされたファイルはありません。';
 $string['dwnlsection'] = 'ダウンロードセクション';
@@ -46,6 +46,8 @@ $string['editform1'] = 'フォーマットのことを心配せずに書き込んでください。フォー
 $string['editform2'] = '慎重に書き込んでください。全ての編集は記録されます。';
 $string['editthispage'] = '編集';
 $string['emptypage'] = '空のページ';
+$string['errornotype'] = 'フラグエラー: BIN、TXTではありません。';
+$string['errororreason'] = '備考';
 $string['errorsize'] = 'ページサイズが64Kを超えています';
 $string['errversionsave'] = '申し訳ございません、このページを編集している間に他の人が更新したバージョンを保存しました。前のページに戻って、内容をクリップボードにコピーしてください。ページのリロード後、コピーした内容をページに挿入してください。';
 $string['ewikiacceptbinary'] = 'バイナリファイルを許可する';
@@ -53,6 +55,7 @@ $string['ewikiprinttitle'] = 'wiki名を全てのページに表示する。';
 $string['export'] = 'エクスポート';
 $string['exportformats'] = 'エクスポートフォーマット';
 $string['exportsuccessful'] = 'エクスポートが完了しました。';
+$string['exportto'] = 'エクスポート先';
 $string['file'] = 'ファイル';
 $string['filedownload'] = 'ファイルダウンロード';
 $string['filtername'] = 'Wikiページ自動リンク';
@@ -81,6 +84,7 @@ $string['lastmodified'] = '最終更新';
 $string['linkdead'] = 'DEAD';
 $string['linkok'] = 'OK';
 $string['linkschecked'] = 'チェック済みリンク';
+$string['listall'] = '全てを表示';
 $string['meta'] = 'メタデータ';
 $string['moduledirectory'] = 'モジュールディクショナリ';
 $string['modulename'] = 'Wiki';
@@ -156,6 +160,7 @@ $string['viewsmfor'] = 'サイトマップを表示';
 $string['wantedpages'] = '執筆が望まれているページ';
 $string['wikidefaultpagename'] = 'Wikiインデックス';
 $string['wikiexport'] = 'ページのエクスポート';
+$string['wikiexportcomment'] = 'エクスポートに関する設定を行ってください。';
 $string['wikilinkoptions'] = 'Wiki自動リンクオプション';
 $string['wikilinks'] = 'Wikiリンク';
 $string['wikiname'] = 'ページ名';
