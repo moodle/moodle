@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // moodle.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['action'] = 'Azione';
@@ -98,6 +98,7 @@ $string['backuplogdetailed'] = 'Log dettagliato';
 $string['backuploglaststatus'] = 'Ultimo log';
 $string['backuplogshelp'] = 'Se abilitato, i log del corso saranno inclusi nelle copie di sicurezza automatiche';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
+$string['backupnoneusersinfo'] = 'Avvertimento: Hai selezionato di \"non\" effettuare la copia di sicurezza degli utenti, cosi le impostazioni tutte le copie di sicurezza dei moduli sono state cambiate nella modalità \"senza i dati utente\". Nota che i moduli esercizio e workshop non sono compatibili con questo tipo di copia di sicurezza e sono stati disabilitatti completamente.';
 $string['backuporiginalname'] = 'Nome copia di sicurezza';
 $string['backupsavetohelp'] = 'Percorso completo della directory dove vuoi salvare i file di sicurezza<br />(lascia vuoto per salvarli nella directory standard)';
 $string['backupuserfileshelp'] = 'Scegli quali file utente (es immagini profilo) devono essere incluse nelle copie di sicurezza automatiche';
@@ -491,6 +492,7 @@ $string['included'] = 'Incluso';
 $string['includelogentries'] = 'Includi i log';
 $string['includemodules'] = 'Includi Moduli';
 $string['includeneededusers'] = 'Includi gli utenti necessari';
+$string['includenoneusers'] = 'Non includere utenti';
 $string['includeuserfiles'] = 'Includi i file degli utenti';
 $string['institution'] = 'Istituzione';
 $string['invalidemail'] = 'Indirizzo email non valido';
