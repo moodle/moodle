@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004060100)
+      // moodle.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = 'Acção';
@@ -40,6 +40,7 @@ $string['adminhelpconfiguration'] = 'Configure o design e funcionalidade do site
 $string['adminhelpconfigvariables'] = 'Configure as variáveis as operações gerais do site';
 $string['adminhelpcourses'] = 'Determine as disciplinas e categorias e atribua-lhes pessoas';
 $string['adminhelpedituser'] = 'Visualize e/ou edite a lista de contas de utilizadores';
+$string['adminhelpenrolments'] = 'Seleccione entre métodos internos ou internos para controlar inscrições';
 $string['adminhelplanguage'] = 'Verificar e editar o pacote linguístico actualmente em uso';
 $string['adminhelplogs'] = 'Ver todos os registos de actividade do sítio';
 $string['adminhelpmanageblocks'] = 'Gerir blocos instalados e as suas configurações';
@@ -139,6 +140,7 @@ $string['closewindow'] = 'Fechar esta janela';
 $string['comparelanguage'] = 'Comparar e editar o pacote linguístico em uso';
 $string['complete'] = 'Completo';
 $string['configallowunenroll'] = 'Se contiver \"Sim\", será permitido aos alunos cancelar a sua inscrição nas disciplinas sempre que quiserem. Caso contrário, unicamente os docentes e administradores poderão eliminar uma inscrição.';
+$string['configautologinguests'] = 'Os utilizadores que entrarem como visitantes deverão entrar directamente na página de uma disciplina sem passar pela página de \"login\"?';
 $string['configcachetext'] = 'Para sítios com muito conteúdo ou que usarem filtros de texto, esta configuração pode acelerar o sítio significativamente. Serão mantidas cópias do texto processado por um período que aqui se especifique. Se for usado um valor muito pequeno, o sítio pode ficar mais lento, mas se se escolher um valor muito elevado, o texto demorará mais tempo a ser actualizado (por exemplo no caso de novos apontadores). ';
 $string['configcountry'] = 'Se escolher um país aqui, este aparecerá por omissão no formulário para novos utilizadores. Se quiser forçar os novos utilizadores a indicar o seu país, não seleccione nenhum país.';
 $string['configdebug'] = 'Se seleccionar esta opção, o PHP mostrará mais mensagens de erro. Isto só é útil para quem estiver a desenvolver o Moodle.';
@@ -171,6 +173,7 @@ $string['configloglifetime'] = 'Indica o tempo durante o qual serão mantidos os 
 $string['configlongtimenosee'] = 'Se um aluno não entrar durante muito tempo na página de uma disciplina, será excluído automaticamente da disciplina. Este parâmetro especifica esse limite de tempo.';
 $string['configmaxbytes'] = 'Especifica um tamanho máximo para os ficheiros a transferir para o sítio. Esta configuração é limitada pela definição de PHP upload_max_filesize e pela definição do Apache LimitRequestBody. Por outro lado, maxbytes limita o âmbito de tamanhos que podem ser escolhidos ao nível de disciplina ou de módulo.';
 $string['configmaxeditingtime'] = 'Este é o limite de tempo que um utilizador tem para re-editar um comentário enviado para um forum. Geralmente 30 minutos é um valor apropriado.';
+$string['confignoreplyaddress'] = 'Em algumas ocasiões será enviado correio electrónico em nome de algum utilizador (por exemplo nos foruns). O endereço que indicar aqui será usado no campo do remetente nos casos em que os destinatários naõ possam responder directamente ao utilizador (por exemplo, quando o utilizador pede para não divulgar o seu endereço).';
 $string['configopentogoogle'] = 'Se activar esta definição, o Google poderá entrar no seu sítio como Visitante. Adicionalmente, as pessoas que cheguem ao seu sítio através de uma pesquisa no Google acederão automaticamente como Visitante. Note que isto só fornece acesso transparente aos cursos que já permitem acesso de visitantes.';
 $string['configproxyhost'] = 'Se este <b>servidor</b> precisar de usar um proxy (por exemplo um firewall) para aceder à  Internet, indique aqui o hostname e o endereço do proxy. Se não, deixe este campo em branco.';
 $string['configsecureforms'] = 'O Moodle pode usar níveis adicionais de segurança quando recebe dados de formulários web. Activando esta variável aumentará a seguranga, podendo no entanto haver problemas de acesso caso o utilizador esteja por detrás de um firewall (ex: Zonealarm). ';
@@ -190,12 +193,14 @@ $string['confirm'] = 'Confirme';
 $string['confirmed'] = 'O seu registo foi confirmado com sucesso';
 $string['confirmednot'] = 'O seu registo ainda não foi confirmado!';
 $string['continue'] = 'Continue';
+$string['continuetocourse'] = 'Carregue aqui para entrar na sua disciplina';
 $string['cookiesenabled'] = 'Tem que activar o suporte para Cookies no seu navegador';
 $string['copy'] = 'cópia';
 $string['copyingcoursefiles'] = 'Copiando os ficheiros da disciplina';
 $string['copyinguserfiles'] = 'Copiando os ficheiros de utilizador';
 $string['copyingzipfile'] = 'Copiando os ficheiros .zip';
 $string['copyrightnotice'] = 'Nota de direitos de autor';
+$string['cost'] = 'Custo';
 $string['country'] = 'País';
 $string['course'] = 'Disciplina';
 $string['courseavailable'] = 'Esta disciplina está disponível para estudantes';
@@ -358,6 +363,9 @@ $string['enrolmentkey'] = 'Chave de inscrição';
 $string['enrolmentkeyfrom'] = 'Esta disciplina requer uma \'chave de inscrição\'.<br>Chave essa que deverá ser pedida a $a<br>
 (Pode também \'Sair\' e a seguir entrar na disciplina como visitante)';
 $string['enrolmentkeyhint'] = 'A chave que usou é incorrecta; por favor tente novamente<br>(Dica - a chave começa com \'$a\')';
+$string['enrolmentnew'] = 'Nova inscrição em $a';
+$string['enrolmentnointernal'] = 'Actualmente não se aceitam inscrições manuais';
+$string['enrolments'] = 'Inscrições';
 $string['entercourse'] = 'Carregue para entrar na disciplina';
 $string['enteremailaddress'] = 'Introduza o seu endereço de correio electrónico
 para criar uma nova palavra chave que lhe será enviada para esse endereço.';
@@ -403,7 +411,7 @@ $string['frontpagecategorynames'] = 'Mostrar uma lista de categorias';
 $string['frontpagecourselist'] = 'Mostrar uma lista de disciplinas';
 $string['frontpagedescription'] = 'Descrição na página principal';
 $string['frontpageformat'] = 'Formato da página principal';
-$string['frontpagenews'] = 'Mostrar novos elementos';
+$string['frontpagenews'] = 'Mostre últimas notícias';
 $string['fulllistofcourses'] = 'Todas as disciplinas';
 $string['fullname'] = 'Nome completo';
 $string['fullnamedisplay'] = '$a->nome $a->apelido';
@@ -711,6 +719,10 @@ $string['passwordsent'] = 'Palavra chave enviada com sucesso';
 $string['passwordsenttext'] = '<p>Foi enviada uma mensagem foi para o seu endereço $a->email.</p>
 <p><b>Por favor procure a sua nova palavra chave no correio</b>.</p>
 <p>A nova palavra chave foi gerada automaticamente, sendo assim conveniente <a href=$a->link>mudá-la para outra mais fácil de lembrar</a>.</p>';
+$string['paymentinstant'] = 'Use o botão em baixo para pagar e completar a inscrição!';
+$string['paymentrequired'] = 'Este curso exige uma taxa de inscrição.';
+$string['paymentsorry'] = 'Obrigado pelo seu pagamento! Desafortunadamente, a sua inscrição não tem sido processada completamente e, por tanto, ainda não pode aceder à disciplina \"$a->fullname\". Por favor intente novamente dentro de alguns segundos, mas se continuar sem acesso, contacte o $a->teacher ou o administrador do sítio. ';
+$string['paymentthanks'] = 'Obrigado pelo seu pagamento. Já está inscrito na disciplina:<br />\"$a\"';
 $string['people'] = 'Pessoas';
 $string['personalprofile'] = 'Perfil pessoal';
 $string['phone'] = 'Telefone';
@@ -753,6 +765,7 @@ $string['rename'] = 'Renomear';
 $string['renamefileto'] = 'Renomear <b>$a</b> para';
 $string['required'] = 'Requerido';
 $string['requireskey'] = 'Esta disciplina exige uma chave de inscrição';
+$string['requirespayment'] = 'Esta disciplina exige uma taxa de acesso';
 $string['resortcoursesbyname'] = 'Ordenar disciplinas por nome';
 $string['resources'] = 'Documentos';
 $string['restore'] = 'Restaurar';
