@@ -487,7 +487,7 @@ function calendar_top_controls($type, $data) {
         $data['d'] = 1;
     }
     $time = calendar_gmmktime_check($data['m'], $data['d'], $data['y']);
-    $date = getdate(usertime($time));
+    $date = getdate($time);
     $data['m'] = $date['mon'];
     $data['y'] = $date['year'];
 
