@@ -815,6 +815,7 @@ $string['restoreto'] = 'Restore to';
 $string['returningtosite'] = 'Returning to this web site?';
 $string['revert'] = 'Revert';
 $string['role'] = 'Role';
+$string['rss'] = 'RSS';
 $string['rsstype'] = "RSS feed for this activity";
 $string['rssarticles'] = "Number of RSS recent articles";
 $string['savechanges'] = 'Save changes';
