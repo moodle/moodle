@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 development (2004070800)
+      // editor.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['about'] = 'เกี่ยวกับเครื่องมือแก้ไข';
@@ -27,6 +27,7 @@ $string['cut'] = 'ตัด';
 $string['delete'] = 'ลบ';
 $string['filebrowser'] = 'ไฟล์ Browser';
 $string['forecolor'] = 'สีตัวหนังสือ';
+$string['fullscreen'] = 'โปรแกรมแก้ไขเต็มหน้าจอ';
 $string['heading'] = 'หัว';
 $string['height'] = 'สูง';
 $string['hilitecolor'] = 'สีพื้น';

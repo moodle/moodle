@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.3 (2004052500)
+      // chat.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['beep'] = 'เรียก';
@@ -7,9 +7,14 @@ $string['chatintro'] = 'คำนำ';
 $string['chatname'] = 'ชื่อห้อง';
 $string['chatreport'] = 'กำหนดการเสวนา';
 $string['chattime'] = 'เวลาเสวนาครั้งต่อไป';
+$string['configmethod'] = 'โดยปกติแล้วในการดำเนินการสนทนา คอมพิวเตอร์ของผู้ใช้จะทำการติดต่อกับเซิร์ฟเวอร์ทุกครั้งที่มีการอัพเดท ไม่จำเป็นต้องตั้งค่าใด ๆ และจะทำงานในทุก ๆ ที่ แต่ทั้งนี้อาจจะเป็นการเพิ่มโหลดให้กับเซิร์ฟเวอร์ได้ในกรณีที่มีผู้สนทนาจำนวนมาก  การใช้แชทเซิร์ฟเวอร์อาศัยการใช้ shell access ไปยังระบบยูนิกซ์ แต่จะทำให้อัตราเร็วของการสนทนาเพิ่มขึ้น';
 $string['configoldping'] = 'สมาชิกหายไปกี่นาทีถึงจะถือว่าออกจากห้องสนทนาแล้ว';
 $string['configrefreshroom'] = 'ควรรีเฟรชแชทรูมบ่อยขนาดไหน ถ้าตั้งค่าช้าจะทำให้ห้องสนทนาดูเร็วขึ้นแต่ว่าจะทำให้เว็บเซิร์ฟเวอร์ทำงานหนัก ถ้ามีคนสนทนาจำนวนมาก';
 $string['configrefreshuserlist'] = 'ควรทำการรีเฟรชรายชื่อผู้ร่วมสนทนาบ่อยแค่ไหน (เป็นวินาที)';
+$string['configserverhost'] = 'ชื่อของโฮสท์ของคอมพิวเตอร์ที่เป็นที่อยู่ของแชทเซิร์ฟเวอร์';
+$string['configserverip'] = 'หมายเลขไอพีของเครื่องที่ระบุข้างบน';
+$string['configservermax'] = 'จำนวนคนสนทนาสูงสุด';
+$string['configserverport'] = 'พอร์ทที่ใช้บนเซิร์ฟเวอร์';
 $string['currentchats'] = 'การเสวนาที่มีอยู่ตอนนี้';
 $string['currentusers'] = 'ผู้ที่กำลังสนทนา';
 $string['deletesession'] = 'ลบการเสวนานี้';
@@ -24,6 +29,8 @@ $string['messagebeepsyou'] = '$a เรียกคุณ';
 $string['messageenter'] = '$a  เข้าห้องสนทนา';
 $string['messageexit'] = '$a ออกห้องสนทนา';
 $string['messages'] = 'ข้อความ';
+$string['methoddaemon'] = 'แชทเซิร์ฟเวอร์';
+$string['methodnormal'] = 'วิธีปกติ';
 $string['modulename'] = 'ห้องสนทนา';
 $string['modulenameplural'] = 'ห้องสนทนา';
 $string['neverdeletemessages'] = 'ไม่มีการลบข้อความ';

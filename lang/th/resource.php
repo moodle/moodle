@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004060400)
+      // resource.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['addresource'] = 'เพิ่มแหล่งข้อมูล';
@@ -21,6 +21,7 @@ $string['configwebsearch'] = 'ในการที่จะเพิ่ม URL ให้เป็นเว็บลิงก์หรือเว็บเพจ  จ
 $string['directlink'] = 'ลิงก์ไปยังไฟล์นี้';
 $string['directoryinfo'] = 'แสดงไฟล์ที่เลือกทั้งหมดในไดเรคทอรี่นี้';
 $string['editingaresource'] = 'แก้ไขแหล่งข้อมูล';
+$string['encryptedcode'] = 'รหัสที่ผ่านการฝังโค้ดแล้ว';
 $string['example'] = 'ตัวอย่าง';
 $string['examplereference'] = 'ประเสริฐ วิทยารัฐ และคณะ.หนังสือเรียน ส503 สังคมศึกษา.กรุงเทพมหานคร:สำนักพิมพ์วัฒนาพานิช จำกัด, 2535';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
@@ -29,6 +30,7 @@ $string['fetcherror'] = 'พบข้อผิดพลาดในการเรียกดูเว็บเพจ';
 $string['fetchservererror'] = 'พบข้อผิดพลาดในเซิร์ฟเวอร์ในระหว่างการเรียกดูเว็บเพจ (อาจเกิดจากความผิดพลาดของโปรแกรม)</p>';
 $string['filename'] = 'ชื่อไฟล์';
 $string['filtername'] = 'ลิงก์ไปยังแหล่งข้อมูลอัตโนมัติ';
+$string['frameifpossible'] = 'ใส่แหล่งข้อมูลไว้ในเฟรมเพื่อให้มองเห็น site navigation';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
 $string['maindirectory'] = 'ไดเรคทอรี่หลัก';
@@ -51,17 +53,20 @@ $string['note'] = 'หมายเหตุ';
 $string['notefile'] = 'หากต้องการอัพโหลดไฟล์ สำหรับรายวิชานี้กรุณาใช้
 <A HREF=$a >File Manager</A>.';
 $string['notypechosen'] = 'คุณต้องเลือกประเภท  กรุณาใช้ปุ่ม  back เพื่อกลับไปเลือก';
+$string['pagedisplay'] = 'แสดงแหล่งข้อมูลในหน้าต่างปัจจุบัน';
+$string['pagewindow'] = 'หน้าต่างเดิม';
+$string['parameter'] = 'พารามิเตอร์';
+$string['parameters'] = 'พารามิเตอร์';
 $string['popupresource'] = 'แหล่งข้อมูลนี้ควรจะปรากฎในหน้าต่างถัดไป';
 $string['popupresourcelink'] = 'ถ้าไม่ปรากฏ  คลิกที่นี่ค่ะ: $a';
 $string['resourcetype'] = 'ประเภทของแหล่งข้อมูล';
-$string['resourcetype1'] = 'อ้างอิง';
-$string['resourcetype2'] = 'เว็บเพจ';
-$string['resourcetype3'] = 'อัพโหลดไฟล์';
-$string['resourcetype4'] = 'บทความธรรมดา';
-$string['resourcetype5'] = 'เว็บลิงก์';
-$string['resourcetype6'] = 'บทความใช้ โค้ด html';
-$string['resourcetype7'] = 'โปรแกรม';
-$string['resourcetype8'] = 'รูปแบบ Wiki';
-$string['resourcetype9'] = 'ไดเรคทอรี่';
+$string['resourcetypedirectory'] = 'แสดงไดเรคทอรี่';
+$string['resourcetypefile'] = 'ลิงก์ไปยังไฟล์หรือเว็บไซต์';
+$string['resourcetypehtml'] = 'สร้างหน้าเว็บเพจใหม่';
+$string['resourcetypelabel'] = 'แทรก Label';
+$string['resourcetypereference'] = 'เพิ่มอ้างอิง';
+$string['resourcetypetext'] = 'สร้างหน้าตัวหนังสือธรรมดา';
+$string['searchweb'] = 'ค้นหาเว็บเพจ';
+$string['variablename'] = 'ชื่อตัวแปร';
 
 ?>

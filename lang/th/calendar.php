@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4 development (2004070800)
+      // calendar.php - created with Moodle 1.4 development (2004070801)
 
 
 $string['calendar'] = 'ปฏิทิน';
@@ -31,7 +31,7 @@ $string['eventinstanttime'] = 'เวลา';
 $string['eventkind'] = 'ประเภทของกิจกรรม';
 $string['eventname'] = 'ชื่อของกิจกรรม';
 $string['eventrepeat'] = 'จัดซ้ำ';
-$string['eventsfor'] = '$a กิจกรรม';
+$string['eventsfor'] = 'กิจกรรมของวัน$a ';
 $string['eventstarttime'] = 'เริ่มเวลา';
 $string['eventtime'] = 'เวลา';
 $string['eventview'] = 'รายละเอียดกิจกรรม';
@@ -49,7 +49,7 @@ $string['hidden'] = 'ถูกซ่อน';
 $string['manyevents'] = '$a กิจกรรม';
 $string['mon'] = 'จ.';
 $string['monday'] = 'จันทร์';
-$string['monthlyview'] = 'ดูรายเดือน';
+$string['monthlyview'] = 'มุมมองรายเดือน';
 $string['newevent'] = 'กิจกรรมใหม่';
 $string['noupcomingevents'] = 'ไม่มีกิจกรรมที่กำลังจะเริ่ม';
 $string['oneevent'] = '1 กิจกรรม';
@@ -94,6 +94,6 @@ $string['upcomingevents'] = 'กิจกรรมที่กำลังจะมีขึ้น';
 $string['userevents'] = 'กิจกรรมของสมาชิก';
 $string['wed'] = 'พ.';
 $string['wednesday'] = 'พุธ';
-$string['yesterday'] = 'เมื่อวาน';
+$string['yesterday'] = 'เมื่อวานนี้';
 
 ?>

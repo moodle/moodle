@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004060400)
+      // glossary.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['addcomment'] = 'เพิ่มเติมความคิดเห็น';
@@ -61,13 +61,13 @@ $string['deletingnoneemptycategory'] = 'การลบประเภทคำศัพท์ไม่ได้ลบรายการคำศัพท์ท
 $string['descending'] = 'เรียงจากมากไปน้อย';
 $string['destination'] = 'ที่หมาย';
 $string['displayformat'] = 'รูปแบบการนำเสนอ';
-$string['displayformat2'] = 'เต็มรูปแบบพร้อมชื่อผู้เขียน';
-$string['displayformat3'] = 'สารานุกรม';
-$string['displayformat4'] = 'คำถามที่ถามบ่อย';
-$string['displayformat5'] = 'เต็มรูปแบบไม่มีชื่อผู้เขียน';
-$string['displayformat6'] = 'รายการคำศัพท์';
 $string['displayformatcontinuous'] = 'ต่อเนื่องพร้อมชื่อผู้เขียน';
-$string['displayformatdefault'] = 'อย่างง่าย รูปแบบพจนานุกรม';
+$string['displayformatdictionary'] = 'อย่างง่ายรูปแบบพจนานุกรม';
+$string['displayformatencyclopedia'] = 'สารานุกรม';
+$string['displayformatentrylist'] = 'รายการคำศัพท์มาใหม่';
+$string['displayformatfaq'] = 'คำถามถามบ่อย';
+$string['displayformatfullwithauthor'] = 'เต็มรูปแบบพร้อมชื่อผู้เขียน';
+$string['displayformatfullwithoutauthor'] = 'เต็มรูปแบบไม่รวมชื่อผู้เขียน';
 $string['displayformats'] = 'รูปแบบนำเสนอ';
 $string['displayformatssetup'] = 'การตั้งค่ารูปแบบนำเสนอ';
 $string['duplicateentry'] = 'มีศัพท์คำนี้แล้ว';
@@ -100,6 +100,7 @@ $string['filetoimport'] = 'ไฟล์ที่ต้องการส่งออก';
 $string['fillfields'] = 'ต้องเติมคอนเซปต์และคำจำกัดความของคำนะคะ';
 $string['filtername'] = 'ลิงก์อภิธานศัพท์อัตโนมัติ';
 $string['fullmatch'] = 'เลือกมาเฉพาะศัพท์ที่ตรงตัวค้นหา';
+$string['globalglossary'] = 'อภิธานศัพท์กลาง';
 $string['glossaryleveldefaultsettings'] = 'ค่าที่ตั้งไว้ของระดับอภิธานศัพท์';
 $string['glossarytype'] = 'ประเภทอภิธานศัพท์';
 $string['glosssaryexported'] = 'ส่งออกอภิธานศัพท์เรียบร้อยแล้ว';

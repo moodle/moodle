@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004070800)
+      // scorm.php - created with Moodle 1.4 development (2004072901)
 
 
+$string['attr_error'] = 'ค่าไม่ถูกต้องสำหรับแอทริบิวต์ ($a->attr) ในแท็ก $a->tag';
 $string['autocontinue'] = 'เดินหน้าอัตโนมัติ';
+$string['badmanifest'] = 'มีข้อผิลพลาด : ดูบันทึกข้อผิดพลาด';
 $string['browse'] = 'Browse';
 $string['browsed'] = 'Browsed';
 $string['browsemode'] = 'Browse Mode';
@@ -18,9 +20,20 @@ $string['configpopupwidth'] = 'ความกว้างของหน้าต่างป้อปอัพ';
 $string['coursepacket'] = 'แพ็คเกจของรายวิชา';
 $string['coursestruct'] = 'โครงสร้างรายวิชา';
 $string['datadir'] = 'มีข้อผิดพลาด : ไม่สามารถสร้างไดเรคทอรี่ข้อมูลได้';
+$string['domxml'] = 'DOMXML ใช้ไลบรารี่นอก';
 $string['entercourse'] = 'ใส่บทเรียน SCORM';
+$string['errorlogs'] = 'บันทึกข้อผิดพลาด';
 $string['failed'] = 'ไม่สำเร็จ';
+$string['found'] = 'Manifest found';
+$string['gradeaverage'] = 'คะแนนเฉลี่ย';
+$string['gradehighest'] = 'คะแนนสูงสุด';
+$string['grademethod'] = 'วิธีการให้คะแนน';
+$string['gradescoes'] = 'Scoes situation';
+$string['gradesum'] = 'รวมคะแนน';
+$string['guestsno'] = 'บุคคลทั่วไปไม่สามารถเข้าศึกษา SCORM';
 $string['incomplete'] = 'ไม่สมบูรณ์';
+$string['missing_attribute'] = 'แอทริบิวตืหายไป $a->attr ใน$a->tag';
+$string['missing_tag'] = 'แท็กหายไป $a->tag';
 $string['mode'] = 'โหมด';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
@@ -32,21 +45,32 @@ $string['newwidth'] = 'ความกว้างที่ตั้งไว้ (พิกเซล)';
 $string['newwindow'] = 'หน้าต่างใหม่';
 $string['newwindowopen'] = 'แสดงแพกเกจ scorm ในหน้าต่างป้อปอัพ';
 $string['next'] = 'ต่อไป';
+$string['no_attributes'] = '$a->tag ต้องมีแอทริบิวต์';
+$string['no_children'] = '$a->tag ต้องมี children';
 $string['nomanifest'] = 'ไม่พบสิ่งที่ต้องการแสดง';
 $string['noreports'] = 'ไม่มีรายงานแสดง';
 $string['normal'] = 'ปกติ';
+$string['not_corr_type'] = '$a->tag ผิดประเภท';
 $string['notattempted'] = 'ยังไม่ได้ทำ';
 $string['packagedir'] = 'มีข้อผิดพลาด ไม่สามารถสร้างแพกเกจไดเรคทอรี่';
 $string['passed'] = 'ผ่าน';
+$string['php5'] = 'PHP 5 (DOMXML native library)';
+$string['position_error'] = 'แท็ก$a->tag ไม่ใช่ลูกของ $a->parent tag';
 $string['prev'] = 'หน้าก่อน';
 $string['regular'] = 'Regular Manifest';
 $string['report'] = 'รายงาน';
 $string['review'] = 'รีวิว';
 $string['scoes'] = 'คะแนน';
 $string['score'] = 'คะแนน';
+$string['syntax'] = 'Syntax error';
+$string['tag_error'] = 'ไม่ทราบค่าแท็ก ($a->tag) ในเนื้อหา: $a->value';
+$string['too_many_attributes'] = 'แท็ก  $a->tag มีแอทริบิวต์มากเกินไป';
+$string['too_many_children'] = 'แท้ก  $a->tag มีลูกมากเกินไป';
 $string['trackingloose'] = 'คำเตือน  ข้อมูลของแพคเกจ SCORM อาจจะอาจได้';
 $string['validateascorm'] = 'Validate a SCORM package';
 $string['validation'] = 'Validation result';
+$string['validationtype'] = 'การตั้งค่าของ DOMXML library ใช้ในการ validate SCORM Manifest.หากไม่ทราบให้ทิ้งค่านี้ไว้';
+$string['versionwarning'] = 'The manifest version is older than 1.3, warning at $a->tag tag';
 $string['viewallreports'] = 'ดูรายงานของ $a  ครั้ง';
 
 ?>
