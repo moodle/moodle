@@ -164,8 +164,9 @@ var tEdit = null;
 		<img class="spacer" src="images/spacer.gif" width="2"><span class="sep"></span>
 		<img id="btnOutdent"  onmousedown="doStyle('Outdent')" alt="@{DecreaseIndent}" src="images/icon_outdent.gif" align="absMiddle" width="20" height="20">
 		<img id="btnIndent"   onmousedown="doStyle('Indent')" alt="@{IncreaseIndent}" src="images/icon_indent.gif" align="absMiddle" width="20" height="20">
+		<img id="btnSelect" onclick="doStyle('SelectAll')" alt="@{SelectAll}" src="images/icon_select_all.gif" align="absMiddle" width="20" height="20">
 		<span id="featureHistory">
-		<img class="spacer" src="images/spacer.gif" width="2"><span class="sep"></span>
+		<img class="spacer" src="images/spacer.gif" width="10"><span class="sep"></span>
 		<img id="btnPrev" onmousedown="document.execCommand('Undo')" alt="@{HistoryBack}"    src="images/icon_undo.gif" align="absMiddle" width="20" height="20">
 		<img id="btnNext" onmousedown="document.execCommand('Redo')"  alt="@{HistoryForward}" src="images/icon_redo.gif" align="absMiddle" width="20" height="20">
 	</span></nobr></td>
@@ -181,8 +182,6 @@ var tEdit = null;
 		<img id="btnRule"   onclick="doStyle('InsertHorizontalRule')" alt="@{InsertLine}" src="images/icon_rule.gif" align="absMiddle" width="20" height="20">
 		<img id="btnSmile"  onclick="insert('smile')" alt="@{InsertSmily}" src="images/em.icon.smile.gif" align="absMiddle" width="15" height="15">
 		<img id="btnChar"	onclick="insert('char')" alt="@{InsertCharacter}" src="images/icon_ins_char.gif" align="absMiddle" width="20" height="20" border="0">
-		<img class="spacer" src="images/spacer.gif" width="2"><span class="sep"></span>
-		<img id="btnAbout"  onclick="insert('about')" alt="@{About}" src="images/icon_about.gif" align="absMiddle" width="16" height="16">
     </span></nobr></td></tr>
 	<tr id="featureStyleBar" ondragstart="handleDrag(0)" onmouseup="press(false)" onmousedown="press(true)" onmouseover="hover(true)" onmouseout="hover(false)">
     <td colspan=2 class="rebar"><nobr><span class="toolbar">
