@@ -21,6 +21,7 @@
 
     $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
 
+
     if (!empty($_GET['chooserecent'])) {
 
         $userinfo = get_string("allparticipants");
@@ -46,7 +47,8 @@
         }
 
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
-        print_recent_selector_form($course, $user, $date, $modname, $modid, $modaction, $selectedgroup, $sortby);
+$advancedfilter = 1;
+        print_recent_selector_form($course, $advancedfilter, $user, $date, $modname, $modid, $modaction, $selectedgroup, $sortby);
 
     } else {
 
@@ -64,7 +66,7 @@
 
         print_heading(get_string("choosereportfilter").":");
 
-        print_recent_selector_form($course);
+        print_recent_selector_form($course, $advancedfilter);
 
     }
 
@@ -88,6 +90,12 @@
     $activities = array();
     $sections = array();
 
+    switch ($course->format) {
+        case "weeks": $sectiontitle = get_string("week"); break;
+        case "topics": $sectiontitle = get_string("topic"); break;
+        default: $sectiontitle = get_string("section"); break;
+    }
+
     $index = 0;
 
     if (is_numeric($modid)) { // you chose a single activity
@@ -96,22 +104,40 @@
 
     } else { // you chose a group of activities
 
-        $sections = get_records_sql("SELECT cs.id, cs.section, cs.sequence
+        $sections = get_records_sql("SELECT cs.id, cs.section, cs.sequence, cs.summary
                                        FROM {$CFG->prefix}course_sections cs
                                        WHERE course = '$course->id'
                                         AND cs.visible = '1'
-                                        AND sequence != '' 
                                       ORDER by section");
     }
+
+    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
     if (!empty($sections)) {
 
         echo "<hr>";
+        $i = 0;
 
         foreach ($sections as $section) {
+
+            if ($i < $course->numsections) {
+                $activity->type = "section";
+                $activity->name = $sectiontitle . " $i";
+                $activities[$index] = $activity;
+            }
+            $index++;
+            $i++;
+
             $sectionmods = explode(",", $section->sequence);
 
             foreach ($sectionmods as $sectionmod) {
+
+                if (empty($mods[$sectionmod])) {
+                    continue;
+                }
+                $mod = $mods[$sectionmod];
+                $instance = get_record("$mod->modname", "id", "$mod->instance");
+
                 $coursemod = get_record_sql("SELECT m.id, m.name, cm.groupmode
                                                FROM {$CFG->prefix}course_modules cm,
                                                     {$CFG->prefix}modules m
@@ -140,6 +166,14 @@
                     $get_recent_mod_activity = $coursemod->name."_get_recent_mod_activity";
 
                     if (function_exists($get_recent_mod_activity)) {
+                        $activity->type = "activity";
+                        $activity->name = $instance->name;
+                        $activity->content->fullname = $mod->modfullname;
+                        $activity->content->modname = $mod->modname;
+                        $activity->content->modid =$mod->id;
+                        $activities[$index] = $activity;
+                        $index++;
+
                         $get_recent_mod_activity($activities, $index, $date, $course->id, $sectionmod, $user, $groupid);
                     }
                 }
@@ -165,51 +199,41 @@
         $newinstance = true;
         $lastinstance = "";
 
-        switch ($course->format) {
-            case "weeks": $sectiontitle = get_string("week"); break;
-            case "topics": $sectiontitle = get_string("topic"); break;
-            default: $sectiontitle = get_string("section"); break;
-        }
-
+        $section = 0;
         foreach ($activities as $activity) {
-             
-            if ($sortby == "default") {
-                if ($lastsection != $activity->section) {
-                    $lastsection = $activity->section;
-                    $newsection = true;
+            
+            if (($activity->type == "section") && ($sortby == "default")) {
+                echo "<h1>$activity->name</h1>";
+            } else if ($activity->type == "activity") {
+
+               if ($sortby == "default") {
+                   $image = "<img src=\"$CFG->modpixpath/" . $activity->content->modname . "/icon.gif\"" .
+                            "height=16 width=16 alt=\"" . $activity->content->modfullname . "\">";
+                   echo "<ul><h4>$image " . $activity->content->modfullname . 
+                        "<a href=\"$CFG->wwwroot/mod/" . $activity->content->activity->modname . "/view.php?" . 
+                        "id=" . $activity->content->modid . "\">" .
+                        $activity->name . "</a></h4></ul>";
+               }
+
+            } else {
+    
+                $print_recent_mod_activity = $activity->type."_print_recent_mod_activity";
+    
+                if (function_exists($print_recent_mod_activity)) {
+                    echo "<ul><ul>";
+                    $print_recent_mod_activity($activity, $course->id, $detail);
+                    echo "</ul></ul>";
                 }
-                if ($newsection) {
-//                    echo "<h2>$sectiontitle: $activity->section</h2>";
-                    $newsection = false;
-                }
-
-                if ($lastinstance != $activity->instance) {
-                    $lastinstance = $activity->instance;
-                    $newinstance = true;
-                }
-                if ($newinstance) {
-                    $image = "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-                             "height=16 width=16 alt=\"$activity->type\">";
-                    echo "<h4>$image " . $activity->name . "</h4>";
-  
-                    $newinstance = false;
-                } 
-
-            }
-
-            $print_recent_mod_activity = $activity->type."_print_recent_mod_activity";
-
-            if (function_exists($print_recent_mod_activity)) {
-                echo "<ul>";
-                $print_recent_mod_activity($activity, $course->id, $detail);
-                echo "</ul>";
             }
         }
-        echo "</ul>";
-    } else {
-        echo "<h4><center>" . get_string("norecentactivity") . "</center></h2>";
-    }
 
+        echo "</ul>";
+
+    } else {
+
+        echo "<h4><center>" . get_string("norecentactivity") . "</center></h2>";
+
+    }
 // fix modid for selection form
     $modid =$tmpmodid;
 
