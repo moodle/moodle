@@ -544,10 +544,10 @@ function replace_smilies($text) {
         '}-]'  => 'evil.gif',
         );
 
-    if($runonce == false){
+    if ($runonce == false){
         foreach ($emoticons as $emoticon => $image){
             $e[] = $emoticon;
-            $img[] = "<IMG ALT=\"$emoticon\" WIDTH=15 HEIGHT=15 SRC=\"{$CFG->wwwroot}/pix/s/{$image}\">";
+            $img[] = "<img alt=\"$emoticon\" width=15 height=15 src=\"$CFG->wwwroot/pix/s/$image\">";
         }
         $runonce = true;
     }
@@ -567,12 +567,12 @@ function text_to_html($text, $smiley=true, $para=true) {
     $text = eregi_replace(">([\n\r])", "> ", $text);
 
 /// Make lone URLs into links.   eg http://moodle.com/
-    $text = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
-                          "\\1<A HREF=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</A>", $text);
+    $text = eregi_replace("([[:space:]]|^|\(|\[|\<)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
+                          "\\1<a href=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</a>", $text);
 
 /// eg www.moodle.com
-    $text = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
-                          "\\1<A HREF=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</A>", $text);
+    $text = eregi_replace("([[:space:]]|^|\(|\[|\<)www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
+                          "\\1<a href=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</a>", $text);
 
 /// Make returns into HTML newlines.
     $text = nl2br($text);
@@ -584,20 +584,19 @@ function text_to_html($text, $smiley=true, $para=true) {
 
 /// Wrap the whole thing in a paragraph tag if required
     if ($para) {
-        return "<P>".$text."</P>";
+        return "<p>".$text."</p>";
     } else {
         return $text;
     }
 }
 
 function wiki_to_html($text) {
-/// given Wiki formatted text, make it into XHTML
+/// Given Wiki formatted text, make it into XHTML using external function
 
-  require('wiki.php');
+    require_once('wiki.php');
 
-  // get Tiki object and do the deed
-  $wiki = new Wiki;
-  return $wiki->format($text);
+    $wiki = new Wiki;
+    return $wiki->format($text);
 }
 
 function highlight($needle, $haystack) {
@@ -1187,7 +1186,7 @@ function notice ($message, $link="") {
         }
     }
 
-    echo "<br>";
+    echo "<br />";
     print_simple_box($message, "center", "50%", "$THEME->cellheading", "20", "noticebox");
     print_heading("<a href=\"$link\">".get_string("continue")."</a>");
     print_footer(get_site());
