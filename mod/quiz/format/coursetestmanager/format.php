@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 // Based on format.php, included by ../../import.php
-
+require_once($CFG->dirroot.'/lib/uploadlib.php');
 
 class quiz_file_format {
     function importpreprocess($category) {
@@ -41,6 +41,7 @@ class quiz_file_format {
 	            $newfile = "$basedir/$cleanfilename";
 	            if (move_uploaded_file($filename, $newfile)) {
 	                chmod($newfile, 0666);
+                    clam_log_upload($newfile,$course);
 	            } else {
 	                notify(get_string("uploadproblem", "", $filename));
 	            }
@@ -95,6 +96,7 @@ class quiz_file_format {
 	            $newfile = "$basedir/$cleanfilename";
 	            if (move_uploaded_file($filename, $newfile)) {
 	                chmod($newfile, 0666);
+                    clam_log_upload($newfile,$course);
 	            } else {
 	                notify(get_string("uploadproblem", "", $filename));
 	            }
