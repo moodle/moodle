@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2004010900)
+      // dialogue.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['addmynewentries'] = 'Agregar mis nuevas entradas';
@@ -9,7 +9,7 @@ $string['allowmultiple'] = 'Permitir más de una charla con la misma persona';
 $string['allowstudentdialogues'] = 'Permitir charlas entre estudiantes';
 $string['close'] = 'Cerrar';
 $string['closed'] = 'Cerrada';
-$string['confirmclosure'] = 'Está a punto de cerrar su charla con $a. Las charlas ya cerradas no se pueden reabierir. Si cierra esta charla podrá consultarla pero ya no podrá intervenir en ella, y deberá iniciar una nueva charla con la misma persona para continuar la conversación. ¿Está seguro de querer cerrarla?';
+$string['confirmclosure'] = 'Está a punto de cerrar su charla con $a. Las charlas ya cerradas no se pueden volver a abrir. Si cierra esta charla podrá consultarla pero ya no podrá intervenir en ella, y deberá iniciar una nueva charla con la misma persona para continuar la conversación. ¿Está seguro de que desea cerrarla?';
 $string['deleteafter'] = 'Borrar charlas cerradas después de (Días)';
 $string['dialogueclosed'] = 'Charla cerrada';
 $string['dialogueintro'] = 'Introducción a la charla';
@@ -46,14 +46,14 @@ $string['openadialoguewith'] = 'Charla abierta con';
 $string['opendialogue'] = 'Iniciar charla';
 $string['opendialogueentries'] = 'Abrir entradas de la charla';
 $string['pane0'] = 'Iniciar una charla';
-$string['pane1'] = '$a charlas esperan tu respuesta';
-$string['pane1one'] = 'Una charla espera tu respuesta';
-$string['pane2'] = '$a  charlas de esperando respuestas de otra persona';
+$string['pane1'] = '$a charlas esperan su respuesta';
+$string['pane1one'] = 'Una charla espera su respuesta';
+$string['pane2'] = '$a charlas esperando respuestas de la otra persona';
 $string['pane2one'] = '1 charla esperando una respuesta de la otra persona';
 $string['pane3'] = '$a charlas cerradas';
 $string['pane3one'] = '1 charla cerrada';
 $string['seen'] = 'Visto hace $a';
-$string['sendmailmessages'] = ' Enviar correo electrónico con mis nuevas entradas';
+$string['sendmailmessages'] = ' Enviar correos electrónicos con mis nuevas entradas';
 $string['status'] = 'Estatus';
 $string['studenttostudent'] = 'Estudiante a Estudiante';
 $string['subject'] = 'Tema';

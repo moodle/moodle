@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.2 development (2003120700)
+      // survey.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['actual'] = 'Actual';
 $string['actualclass'] = 'Clase actual';
 $string['actualstudent'] = '$a actual';
-$string['allquestions'] = 'Todos los temas en orden, todos los estudiantes';
+$string['allquestions'] = 'Todas las preguntas en orden, todos los estudiantes';
 $string['allscales'] = 'Todas las escalas, todos los estudiantes';
 $string['alreadysubmitted'] = 'Ya envió esta información';
 $string['analysisof'] = 'Análisis de $a';

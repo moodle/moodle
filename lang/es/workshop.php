@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.3 development (2004040500)
+      // workshop.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['absent'] = 'Ausente';
@@ -88,9 +88,9 @@ $string['listassessments'] = 'Listar las Evaluaciones';
 $string['listofallsubmissions'] = 'Listar todos los Envíos';
 $string['liststudentsassessments'] = 'Listar las Evaluaciones del Estudiante';
 $string['loadingforteacherassessments'] = 'Peso de las Evaluaciones del $a';
-$string['mail1'] = 'Su tarea \'$a\' ha sido evaluada por';
+$string['mail1'] = 'Su tarea \'$a\' ha sido evaluada por ';
 $string['mail10'] = 'Puede evaluarla en su tarea de Taller ';
-$string['mail2'] = 'Los comentarios y la calificación pueden verse en la Tarea de Taller\'$a\'';
+$string['mail2'] = 'Los comentarios y la calificación pueden verse en la Tarea de Taller \'$a\'';
 $string['mail3'] = 'Puede verlo en su Tarea de Taller';
 $string['mail4'] = '\'$a\' ha agregado un comentario a su tarea';
 $string['mail5'] = 'El nuevo comentario puede verse en la Tarea de Taller \'$a\'';

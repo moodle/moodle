@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.3 development (2004040500)
+      // error.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['coursegroupunknown'] = 'No se ha especificado el curso correspondiente al grupo $a';

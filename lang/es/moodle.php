@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004041800)
+      // moodle.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['action'] = 'Acción';
@@ -850,6 +850,8 @@ $string['turneditingoff'] = 'Desactivar edición';
 $string['turneditingon'] = 'Activar edición';
 $string['undecided'] = 'No decidido';
 $string['unenrol'] = 'Destituir';
+$string['unenrolallstudents'] = 'Dar de baja a todos los estudiantes';
+$string['unenrolallstudentssure'] = '¿Está seguro de que desea dar de baja a todos los estudiantes de este curso?';
 $string['unenrolme'] = 'Quitar de $a';
 $string['unenrolsure'] = '¿Está seguro de que desea destituir a $a de este curso?';
 $string['unknowncategory'] = 'Categoría desconocida';

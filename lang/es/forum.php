@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2004010900)
+      // forum.php - created with Moodle 1.3 development (2004042600)
 
 
-$string['addanewdiscussion'] = 'Colocar un mensaje aquí';
+$string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
 $string['addanewtopic'] = 'Agregar un nuevo tema';
 $string['allowchoice'] = 'Permitir a todos escoger';
 $string['allowdiscussions'] = 'Permitir que cualquier $a abra nuevos temas';
@@ -12,7 +12,7 @@ $string['anyfile'] = 'Cualquier archivo';
 $string['attachment'] = 'Archivo adjunto';
 $string['bynameondate'] = 'de $a->name - $a->date';
 $string['configdisplaymode'] = 'La forma de visualización por defecto, si no se ha configurado ninguna.';
-$string['configlongpost'] = 'Cualquier mensaje que exceda este largo (sin incluir código HTML) se considera largo.';
+$string['configlongpost'] = 'Cualquier mensaje que exceda esta extensión (sin incluir código HTML) se considera largo.';
 $string['configmanydiscussions'] = 'Máximo número de temas mostrados en una página de foro.';
 $string['configmaxbytes'] = 'Tamaño máximo por defecto para los archivos adjuntos a los mensajes de los foros en este sitio (sujeto a los límites del curso y otras configuraciones del servidor)';
 $string['configshortpost'] = 'Cualquier mensaje menor que este largo (sin incluir código HTML) se considera corto.';
@@ -117,20 +117,23 @@ $string['searchforums'] = 'Buscar foro';
 $string['searcholderposts'] = 'Buscar mensajes antiguos...';
 $string['searchresults'] = 'Resultado';
 $string['sendinratings'] = 'Guardar calificaciones';
-$string['showsubscribers'] = 'Mostrar participantes';
+$string['showsubscribers'] = 'Mostrar/editar suscriptores actuales';
 $string['singleforum'] = 'Debate sencillo';
 $string['startedby'] = 'Comenzado por';
 $string['subject'] = 'Asunto';
-$string['subscribe'] = 'Inscribirse en este foro';
-$string['subscribed'] = 'Inscrito';
+$string['subscribe'] = 'Suscribirse en este foro';
+$string['subscribeall'] = 'Suscribir a todos a este foro';
+$string['subscribed'] = 'Suscrito';
+$string['subscribenone'] = 'Dar de baja a todos en este foro';
 $string['subscribers'] = 'Suscriptores';
 $string['subscribersto'] = 'Suscriptores de \'$a\'';
 $string['subscribestart'] = 'Deseo recibir copias de este foro por correo';
 $string['subscribestop'] = 'No deseo recibir copias de este foro por correo';
 $string['subscription'] = 'Suscripción';
 $string['subscriptions'] = 'Suscripciones';
-$string['unsubscribe'] = ' (Borrarse de este foro)';
-$string['unsubscribed'] = 'No inscrito';
+$string['unsubscribe'] = 'Darse de baja de este foro';
+$string['unsubscribed'] = 'No suscrito';
+$string['unsubscribeshort'] = 'Dar de baja';
 $string['youratedthis'] = 'Usted calificó este mensaje';
 $string['yournewtopic'] = 'Su nuevo tema ';
 $string['yourreply'] = 'Su respuesta';
