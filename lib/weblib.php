@@ -524,8 +524,8 @@ function validate_email ($address) {
                   $address));
 }
 
-function detect_munged_arguments($string) {
-    if (substr_count($string, '..') > 1) {   // We allow one '..' in a URL
+function detect_munged_arguments($string, $allowdots=1) {
+    if (substr_count($string, '..') > $allowdots) {   // Sometimes we allow dots in references
         return true;
     }
     if (ereg('[\|\`]', $string)) {  // check for other bad characters
