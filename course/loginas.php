@@ -32,6 +32,10 @@
         error("This student is not in this course!");
     }
 
+    if (iscreator($user)) {
+        error("You can not login as this person!");
+    }
+
     // Login as this student and return to course home page.
 
     $teacher_name = "$USER->firstname $USER->lastname";

@@ -203,7 +203,7 @@ function print_user($user, $course, $string, $countries) {
     if (isteacher($course->id)) {
         $timemidnight = usergetmidnight(time());
         echo "<a href=\"../course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
-        if (isstudent($course->id, $user->id)) {
+        if (isstudent($course->id, $user->id) and !iscreator($user->id)) {  // Includes admins
             echo "<a href=\"../course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
             echo "<a href=\"../course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</a><br />";
         }
