@@ -1,11 +1,11 @@
 <?PHP  // $Id$
-       // Authentication by looking up an IMAP, POP or NNTP server
+       // Authentication by looking up an NNTP server
 
 // This code is completely untested so far  -  IT NEEDS TESTERS!
 // Looks like it should work though ...
 
 $CFG->auth_nntphost   = "127.0.0.1";  // Should be IP number
-$CFG->auth_nntpport   = "119";      
+$CFG->auth_nntpport   = "119";        // 119 is most common
 
 
 function auth_user_login ($username, $password) {

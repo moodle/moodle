@@ -6,7 +6,7 @@
 
 $CFG->auth_pop3host   = "127.0.0.1";  // Should be IP number
 $CFG->auth_pop3type   = "pop3";       // pop3, pop3cert
-$CFG->auth_pop3port   = "100";        // 143, 993, 100, 119
+$CFG->auth_pop3port   = "110";        // 110 is most common
 
 
 function auth_user_login ($username, $password) {
