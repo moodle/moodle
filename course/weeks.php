@@ -17,11 +17,11 @@
         $sections[$cw->section] = $cw;
     }
 
-    if (isset($section)) {
-        if ($section == "all") {
+    if (isset($week)) {
+        if ($week == "all") {
             unset($USER->section);
         } else {
-            $USER->section = $section;
+            $USER->section = $week;
         }
     }
 
@@ -106,8 +106,8 @@
 
         $nextweekdate = $weekdate + ($weekofseconds);
 
-        if (isset($USER->week)) {         // Just display a single week
-            if ($USER->week != $week) { 
+        if (isset($USER->section)) {         // Just display a single week
+            if ($USER->section != $week) { 
                 $week++;
                 $weekdate = $nextweekdate;
                 continue;
@@ -175,7 +175,7 @@
         echo "</TD>";
         echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top ALIGN=CENTER WIDTH=10>";
         echo "<FONT SIZE=1>";
-        if (isset($USER->week)) {
+        if (isset($USER->section)) {
             echo "<A HREF=\"view.php?id=$course->id&week=all\" TITLE=\"Show all weeks\"><IMG SRC=../pix/i/all.gif BORDER=0></A></FONT>";
         } else {
             echo "<A HREF=\"view.php?id=$course->id&week=$week\" TITLE=\"Show only week $week\"><IMG SRC=../pix/i/one.gif BORDER=0></A></FONT>";
