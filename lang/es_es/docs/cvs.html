@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<!-- Traducci&oacute;n al espa&ntilde;ol: Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org) y Claudio Tavares (claudio@enlaceacademico.com-->
+</head>
+<body>
+<h2>C&oacute;mo usar el <abbr title="Concurrent Versions System"
+ lang="en">CVS</abbr> para acceder y actualizar el c&oacute;digo fuente
+de Moodle</h2>
+<div style="padding-left: 3em;">
+<p><abbr title="Concurrent Versions System" lang="en">CVS</abbr> es un
+Sistema Concurrente de Versiones. Normalmente se usa como un forma de
+almacenar el c&oacute;digo fuente, ya que mantiene las versiones de
+todos los archivos de manera que no se pierda nada, y se registra el
+uso que hacen diferentes personas. Tambi&eacute;n proporciona maneras
+de combinar c&oacute;digo si hay dos o m&aacute;s personas trabajando
+en el mismo archivo. Todo el c&oacute;digo y todas las versiones se
+almacenan en un servidor central (en este caso, en <a
+ href="http://www.sf.net/">Sourceforge</a>).</p>
+<p>Para usar el <a
+ href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/"><span
+ lang="en">Moodle's  CVS archive</span></a> (como <a
+ href="http://sourceforge.net/project/memberlist.php?group_id=30935">desarrollador
+con acceso de escritura</a>), necesitar&aacute; tener antes una <a
+ href="http://sourceforge.net/account/register.php">cuenta en
+Sourceforge</a>. Para los ejemplos que presentamos en esta
+p&aacute;gina vamos a asumir que su nombre de usuario (<span lang="en">username</span>)
+es <strong
+ style="color: rgb(153, 0, 0); background-color: transparent;">myusername</strong>
+y que su contrase&ntilde;a (<span lang="en">password</span>) es <strong
+ style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>.
+Una vez que tenga su cuenta de Sourceforge, contacte conmigo (<a
+ href="http://dougiamas.com/">Martin Dougiamas</a>) para que pueda
+darle su acceso con permiso de escritura a determinados directorios.</p>
+<p>Para evitar ser advertido por usar <strong
+ style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>
+cada vez que ejecute el comando de CVS, siga las <a
+ href="http://sourceforge.net/account/editsshkeys.php">Instrucciones
+para usar claves autorizadas en Sourceforge</a>. Este paso es opcional,
+pero puede hacer que su experiencia del uso de CVS sea m&aacute;s
+agradable.</p>
+<p>Una vez hecho esto debe tener todos los permisos que necesita, de
+manera que s&oacute;lo necesitar&aacute; arrancar su m&aacute;quina y
+descargar los actuales c&oacute;digos fuente para poder empezar a
+trabajar en ellos. A continuaci&oacute;n hay instrucciones para los
+sistemas Unix y Windows.</p>
+<h3>1. Usar el CVS en Unix</h3>
+<p>El CVS de Sourceforge usa por seguridad <span>ssh</span> como <span
+ lang="en">transport layer</span>, de manera que usted tendr&aacute;
+que establecer esta variable del entorno CVS_RSH en Unix:</p>
+<blockquote>
+  <pre><strong>setenv CVS_RSH ssh</strong> (para csh, tcsh etc.)</pre>
+  <pre><strong>export CVS_RSH=ssh</strong> (para sh, bash etc.)</pre>
+</blockquote>
+<p>Lo mejor es poner esto en su .bashrc o .cshrc de manera que no tenga
+que escribirlo todas las veces. Entonces, revise Moodle usando lo
+siguiente (todo en una l&iacute;nea): </p>
+<blockquote>
+  <pre><strong>cvs -z3 -d:ext:myusername@cvs.moodle.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
+</blockquote>
+<p>No intente ejecutar este primer comando CVS dentro de un directorio
+de moodle que ya exista. Comience con un directorio nuevo.</p>
+<p>Advierta que usted es avisado de <strong
+ style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>
+para cada comando a menos que establezca una <a
+ href="http://sourceforge.net/account/editsshkeys.php">contrase&ntilde;a
+autorizada</a></p>
+<p>Ahora tiene un nuevo directorio llamado "Moodle". Puede renombrarlo
+y moverlo si lo desea. Vaya a:</p>
+<blockquote>
+  <pre><strong>cd moodle </strong></pre>
+</blockquote>
+<p>Aparecer&aacute;n todos los &uacute;ltimos archivos de Moodle. Ahora
+usted puede cambiar archivos en su copia. Para comparar sus archivos
+con la copia del servidor CVS principal use <span>cvs diff</span>, por
+ejemplo: </p>
+<blockquote>
+  <pre><strong>cvs diff -c config-dist.php<br>cvs diff -c lang</strong></pre>
+</blockquote>
+<p>Para localizar las &uacute;ltimas actualizaciones en el servidor,
+use:</p>
+<blockquote>
+  <pre><strong>cvs update -dP</strong> </pre>
+</blockquote>
+<p>Para copiar sus nuevos archivos de vuelta en el servidor
+podr&iacute;a hacer algo como:</p>
+<blockquote>
+  <pre><strong>cd lang/ca <br>cvs commit</strong> </pre>
+</blockquote>
+<p>Se le pedir&aacute; que a&ntilde;ada algunos comentarios (esto
+depende de su editor de texto) ... a&ntilde;ada un comentario
+significativo y cierre el editor ... los archivos se enviar&aacute;n a
+Sourceforge y ser&aacute;n almacenados. &iexcl;Hecho! </p>
+<p>Para ahorrar tiempo puede poner argumentos por omisi&oacute;n en el
+archivo llamado <span>.cvsrc </span> en su directorio principal. Por
+ejemplo, el m&iacute;o contiene:</p>
+<blockquote>
+  <pre><strong>diff -c <br>update -dP</strong> </pre>
+</blockquote>
+<p>Intente "cvs help" para obtener m&aacute;s detalles ... </p>
+<p>&nbsp;</p>
+<h3>2. Usar CVS en Windows</h3>
+<blockquote>
+  <p>Estas instrucciones est&aacute;n basadas en notas proporcionadas
+por Mitsuhiro Yoshida &lt;mits@mitstek.com&gt;.</p>
+  <p>En primer lugar, descargue e instale WinCVS.</p>
+  <blockquote>
+    <p><a
+ href="https://sourceforge.net/project/showfiles.php?group_id=10072">https://sourceforge.net/project/showfiles.php?group_id=10072</a></p>
+  </blockquote>
+  <p>Segundo, descargue <span>sfsetup</span> para tener acceso a
+SourceForge ssh, inst&aacute;lelo y reinicie Windows.</p>
+  <blockquote>
+    <p><a href="http://sourceforge.net/projects/sfsetup/">http://sourceforge.net/projects/sfsetup/</a></p>
+  </blockquote>
+  <p>A continuaci&oacute;n, configure WinCVS. Arr&aacute;nquelo, y vaya
+al men&uacute; "Admin" -&gt; "Preferences".       Luego
+modif&iacute;quelas como sigue:</p>
+  <blockquote>
+    <p> [General]<br>
+    <strong lang="en">CVSROOT data</strong>:<br>
+    <strong lang="en">Authentication</strong>: ssh<br>
+    <strong lang="en">Path</strong>: /cvsroot/moodle<br>
+    <strong lang="en">Host address</strong>: cvs.moodle.sourceforge.net<br>
+    <strong lang="en">User name</strong>: <strong
+ style="color: rgb(153, 0, 0); background-color: transparent;">myusername</strong><br>
+    <strong>CVSROOT</strong>: <strong
+ style="color: rgb(153, 0, 0); background-color: transparent;">myusername</strong>@cvs.moodle.sourceforge.net:/cvsroot/moodle</p>
+    <p>[Globals]<br>
+    <strong lang="en">Checkout read-only</strong>: deseleccionado<br>
+    <strong lang="en">Supply control when adding files</strong>:
+seleccionado<br>
+    <strong lang="en">Quiet mode</strong>: deseleccionado<br>
+    <strong lang="en">TCP/IP compression</strong>: seleccionado y elija
+9<br>
+    <strong lang="en">Dirty files support</strong>: seleccionado<br>
+    <strong lang="en">Prune(remove) empty directories</strong>:
+seleccionado<br>
+    <strong lang="en">Disable splash screen</strong>: deseleccionado</p>
+  </blockquote>
+  <p>Enhorabuena, WinCVS est&aacute; configurado. Ahora, ahora debe
+descargarse una copia completa del c&oacute;digo de Moodle:</p>
+  <ol>
+    <li>Seleccione 'Create -&gt; checkout'</li>
+    <li>Para la configuraci&oacute;n de &quot;<span lang="en">Module name and path on the server</span>&quot;, escriba &quot;moodle&quot;, luego haga
+clic en OK.</li>
+    <li>Escriba ah&iacute; <strong
+ style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>
+y presione la tecla "Enter" del cuadro de di&aacute;logo.</li>
+  </ol>
+  <p>Tras este primer registro, pude localizar los archivos
+actualizados desde el servidor CVS de la siguiente manera:</p>
+  <ol>
+    <li>Seleccione las carpetas o archivos que quiere actualizar</li>
+    <li>Presione el bot&oacute;n derecho del rat&oacute;n y seleccione 
+"<strong lang="en">Update selection</strong>"</li>
+    <li>Presione el bot&oacute;n OK</li>
+    <li>Escriba <strong
+ style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>
+y presione la tecla Enter del cuadro de di&aacute;logo.</li>
+  </ol>
+  <p>Tras modificar los archivos, puede volver a llevarlos al servidor
+CVS de la siguiente manera:</p>
+  <ol>
+    <li>Seleccione las carpetas o archivos que quiere actualizar</li>
+    <li>Presione el bot&oacute;n derecho del rat&oacute;n y seleccione &quot;<strong
+ lang="en">Commit selection</strong>&quot;</li>
+    <li>Presione el bot&oacute;n OK</li>
+    <li>Escriba un comentario significativo y presione el bot&oacute;n
+OK.</li>
+    <li>Escriba <strong
+ style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>
+y presione "Enter" en el cuadro de di&aacute;logo.</li>
+  </ol>
+</blockquote>
+<p>&nbsp;</p>
+<p style="text-align: center;">&iexcl;Buena suerte!</p>
+<p>&nbsp;</p>
+</div>
+<p style="text-align: center; font-size: 0.7em;"><a href="."
+ target="_top">Documentaci&oacute;n de Moodle</a></p>
+<p style="text-align: center; font-size: 0.7em;">Version: $Id:
+features.html,v 1.2 2001/12/09   10:34:19 martin Exp $+</p>
+</body>
+</html>

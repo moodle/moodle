@@ -1,12 +1,18 @@
-<?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8.1 (2003011200)
+<?PHP // $Id$
+	  // Revisi&oacute;n de la traducci&oacute;n al espa&ntilde;ol y
+	  // traducci&oacute;n de nuevas cadenas:
+	  // Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org)
 
+#------------------------------------------------------------
+$string['modulename'] = "Foro";
+$string['modulenameplural'] = "Foros";
+#------------------------------------------------------------
 
 $string['addanewdiscussion'] = "Añadir un nuevo tema de debate";
 $string['allowchoice'] = "Permitir a todos escoger";
 $string['allowdiscussions'] = "¿Puede un \$a poner mensages en este foro?";
 $string['allowratings'] = "¿Permitir la calificación de los mensajes?";
-$string['allowsdiscussions'] = "Este foro está abierto a todos";
+$string['allowsdiscussions'] = "En este foro cualquiera puede iniciar un tema de debate.";
 $string['anyfile'] = "Cualquier archivo";
 $string['attachment'] = "Archivo adjunto";
 $string['bynameondate'] = "de \$a->name - \$a->date";
@@ -25,7 +31,7 @@ $string['discussthistopic'] = "Debatir este tema";
 $string['eachuserforum'] = "Cada persona plantea un debate";
 $string['edit'] = "Editar";
 $string['editing'] = "Editando";
-$string['emptymessage'] = "Algo falló en su mensaje. Quizá lo dejó en blanco o el archivo adjunto era demasiado grande. Sus cambios no se han guardado.";
+$string['emptymessage'] = "Algo falló en su mensaje. Quizá lo dejó en blanco o el archivo adjunto era demasiado grande. Sus cambios NO se han guardado.";
 $string['everyonecanchoose'] = "Todos pueden suscribirse";
 $string['everyoneissubscribed'] = "Todos están suscritos a este foro";
 $string['forcesubscribe'] = "Inscribir a todos obligatoriamente";
@@ -36,13 +42,13 @@ $string['forumname'] = "Nombre del foro";
 $string['forums'] = "Foros";
 $string['forumtype'] = "Tipo de foro";
 $string['generalforum'] = "Foro para uso general";
-$string['generalforums'] = "Foro general";
+$string['generalforums'] = "Foros generales";
 $string['inforum'] = "en \$a";
 $string['intronews'] = "Novedades y anuncios";
 $string['introsocial'] = "Un foro abierto a todos los temas que quiera";
 $string['introteacher'] = "Un foro exclusivo para profesores";
 $string['learningforums'] = "Foros de aprendizaje";
-$string['maxtimehaspassed'] = "Lo sentimos, pero el tiempo máximo para editar (\$a) ha acabado.";
+$string['maxtimehaspassed'] = "Lo sentimos, pero el tiempo máximo para editar (\$a) ha concluido.";
 $string['message'] = "Mensaje";
 $string['modeflatnewestfirst'] = "Ordenar desde el más reciente";
 $string['modeflatoldestfirst'] = "Ordenar desde el más antiguo";
@@ -52,8 +58,8 @@ $string['modulename'] = "Foro";
 $string['modulenameplural'] = "Foros";
 $string['more'] = "más";
 $string['namenews'] = "Foro de Noticias";
-$string['namesocial'] = "Foro de debate";
-$string['nameteacher'] = "Foro de profesores";
+$string['namesocial'] = "Foro de Debate";
+$string['nameteacher'] = "Foro de Profesores";
 $string['newforumposts'] = "Nuevos mensajes";
 $string['nodiscussions'] = "No hay temas de debate aún en este foro";
 $string['noguestpost'] = "Lo sentimos, los invitados no pueden poner mensages aquí";
@@ -63,15 +69,17 @@ $string['nosubscribers'] = "Nadie se ha inscrito aún en este foro";
 $string['nownotsubscribed'] = "\$a->name no recibirá copias de '\$a->forum' por email.";
 $string['nowsubscribed'] = "\$a->name recibirá copias de '\$a->forum' por email.";
 $string['numposts'] = "\$a mensajes";
-$string['olderdiscussions'] = "Debates anteriores";
+$string['olderdiscussions'] = "Anuncios anteriores";
 $string['openmode0'] = "No permitir debates ni respuestas";
 $string['openmode1'] = "No permitir debates, pero sí respuestas";
 $string['openmode2'] = "Permitir debates y respuestas";
 $string['parentofthispost'] = "Anterior a este mensaje";
-$string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para editarlo si quiere hacer cualquier cambio.";
+$string['postadded'] = "Su mensaje se ha colocado con éxito.<p>Tiene \$a para editarlo si quiere hacer cualquier cambio.</p>";
 $string['postincontext'] = "Mira este mensaje en su contexto";
-$string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
-
+$string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
+
+
+
 Para responder a este mensaje, haga clic en este enlace:";
 $string['postrating1'] = "Muestra un aprendizaje principalmente individualista";
 $string['postrating2'] = "Ambos";
@@ -97,7 +105,9 @@ $string['subscribe'] = "Inscribirse en este foro";
 $string['subscribed'] = "Inscrito";
 $string['subscribers'] = "Suscriptores";
 $string['subscribersto'] = "Suscriptores de '\$a'";
+$string['subscription'] = "Suscripci&oacute;n";
 $string['unsubscribe'] = "Borrarse de este foro";
+$string['unsubscribed'] = "Borrado";
 $string['youratedthis'] = "Usted calificó esto";
 $string['yournewtopic'] = "Su nuevo tema de debate";
 $string['yourreply'] = "Su respuesta";

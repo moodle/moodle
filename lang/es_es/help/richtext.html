@@ -1,7 +1,9 @@
-<P ALIGN=CENTER><B>Sobre el editor Richtext HTML</B></P>
+<!-- Traducci&oacute;n al espa&ntilde;ol: Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org) -->
 
-<P>Disponibilidad: <B>
-<? if (!$CFG->htmleditor) {
+<p style="text-align: center;"><strong>Sobre el editor Richtext HTML</strong></p>
+
+<p>Disponibilidad: <strong>
+<? if (!$cfg->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");
@@ -10,148 +12,151 @@
    } else {
        print_string("htmleditoravailable");
    }
-?>
-</B></P>
+?></strong>
+</p>
 
-<P>El editor HTML Richtext ofrece una interfaz semejante a un procesador de textos que permite generar el código HTML aunque Ud. no conozca el lenguaje.
+<p>El editor HTML Richtext ofrece una interfaz semejante a un procesador de textos que permite generar el c&oacute;digo HTML aunque Ud. no conozca el lenguaje.</p>
 
-<P>Además de formatear el texto, este editor ofrece algunas características más que también son de utilidad.
+<p>Adem&aacute;s de formatear el texto, este editor ofrece algunas caracter&iacute;sticas m&aacute;s que tambi&eacute;n son de utilidad.</p>
 
-<P><B>Pegar texto de otras aplicaciones de Windows</B></P>
-<UL>
-<P>Es posible pegar texto escrito o editado en otra aplicación, como MS Word, conservando su formato. Utilice los comandos normales de copiar y pegar del menú (o CTRL+C y CTRL+V).
-</UL>
+<p><strong>Pegar texto de otras aplicaciones de Windows</strong></p>
 
-<P><B>Instertar imágenes <img border="0" hspace="10" src="lib/rte/images/icon_ins_image.gif"></B></P>
-<UL>
-<P>Puede colocar imágenes que se encuentren en internet y que se puedan acceder a través de una dirección, incluya esas imágenes con el botón “Insertar imagen”.
-</UL>
-
-<P><B>Insertar tablas <img border="0" hspace="10" src="lib/rte/images/icon_ins_table.gif"></B></P>
-<UL>
-<P>Para organizar el diseño de su mensaje puede crear tablas con el botón “Insertar tabla”.
-</UL>
-
-<P><B>Insertar Enlaces<img border="0" hspace="10" src="lib/rte/images/icon_ins_link.gif"></B></P>
-<UL>
-<P>Para colocar un enlace primero escriba el texto que quiere que sea el enlace. Luego seleccione el botón “enlace” y escriba la dirección URL a la que quiere enlazar. Eso es todo.
-</UL>
+<p style="padding-left: 3em;">Es posible pegar texto escrito o editado en otra aplicaci&oacute;n, como <abbr title="Microsoft">MS</abbr> Word, conservando su formato. Utilice los comandos normales de copiar y pegar del men&uacute; (o CTRL+C y CTRL+V).</p>
 
 
-<P><B>Caritas felices (emoticons) <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
-<UL>
-<P>Para colocar estos pequeños iconos en el texto oprima el botón de caritas en la barra de iconos y elija la que desee. (También puede colocar el código correspondiente, y la carita aparecerá cuando se lea el mensaje.)
+<p><strong>Instertar im&aacute;genes</strong>&nbsp;&nbsp;<img src="lib/rte/images/icon_ins_image.gif" alt="Icono para insertar im&aacute;genes."></p>
+
+<p style="padding-left: 3em;">Puede colocar im&aacute;genes que se encuentren en internet, a las que se pueda acceder a trav&eacute;s de una URL (direcci&oacute;n en Internet); incluya esas im&aacute;genes con el bot&oacute;n &laquo;Insertar imagen&raquo;.</p>
 
 
-    <table border="1">
+<p><strong>Insertar tablas</strong>&nbsp;&nbsp;<img src="lib/rte/images/icon_ins_table.gif" alt="Icono para insertar tabla."></p>
+
+<p style="padding-left: 3em;">Para organizar el dise&ntilde;o de su mensaje puede crear tablas con el bot&oacute;n &laquo;Insertar tabla&raquo;.</p>
+
+
+<p><strong>Insertar Enlaces</strong>&nbsp;&nbsp;<img src="lib/rte/images/icon_ins_link.gif" alt="Icono para insertar enlace."></p>
+
+<p style="padding-left: 3em;">Para colocar un enlace primero escriba el texto que quiere que sea el enlace. Luego seleccione el bot&oacute;n &laquo;enlace&raquo; y escriba la direcci&oacute;n URL a la que quiere enlazar. Eso es todo.</p>
+
+
+
+<p><strong>Caritas expresivas</strong> (emoticonos)&nbsp;&nbsp;<img src="pix/s/smiley.gif" alt="Emoticon." width="15" height="15" border="0"></p>
+
+<p style="padding-left: 3em;">Para colocar estos peque&ntilde;os iconos en el texto, oprima el bot&oacute;n de caritas en la barra de iconos y elija la que desee. (Tambi&eacute;n puede colocar el c&oacute;digo correspondiente, y la carita aparecer&aacute; cuando se lea el mensaje.)</p>
+
+
+    <table border="1" align="center" title="Tabla de emoticonos que pueden usarse." summary="Contiene dos tablas de emoticonos con su significado y c&oacute;digo asociado.">
+<caption align="top"><strong><em>Tabla de correspondencia y significado de los c&oacute;digos de emoticonos</em></strong></caption>
       <tr valign="top">
         <td>
         <table border="0" align="center" cellpadding="10">
           <tr>
-            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
+            <td><img src="pix/s/smiley.gif" alt="sonrisa" width="15" height="15" border="0"></td>
             <td>sonrisa</td>
-            <td NOWRAP><FONT FACE=Courier>:-)</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">:-)</span></td>
           </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
+            <td><img src="pix/s/biggrin.gif" alt="risa" width="15" height="15" border="0"></td>
             <td>gran sonrisa</td>
-            <td NOWRAP><FONT FACE=Courier>:-D</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">:-D</span></td>
           </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
-            <td>guiño</td>
-            <td NOWRAP><FONT FACE=Courier>;-)</td>
+            <td><img src="pix/s/wink.gif" alt="gui&ntilde;o" width="15" height="15" border="0"></td>
+            <td>gui&ntilde;o</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">;-)</span></td>
           </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
+            <td><img src="pix/s/mixed.gif" alt="confuso" width="15" height="15" border="0"></td>
             <td>confuso</td>
-            <td NOWRAP><FONT FACE=Courier>:-/</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">:-/</span></td>
           </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
-              <td>atento</td>
-              <td NOWRAP><FONT FACE=Courier>V-.</FONT></td>
+              <td><img src="pix/s/thoughtful.gif" alt="pensativo" width="15" height="15" border="0"></td>
+              <td>pensativo</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">V-.</span></td>
             </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
+            <td><img src="pix/s/tongueout.gif" alt="sacar la lengua." width="15" height="15" border="0"></td>
             <td>sacar la lengua</td>
-            <td NOWRAP><FONT FACE=Courier>:-P</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">:-P</span></td>
          </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
-            <td>astuto</td>
-            <td NOWRAP><FONT FACE=Courier>B-)</td>
+            <td><img src="pix/s/cool.gif" alt="astuto - guay." width="15" height="15"></td>
+            <td>astuto - guay</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">B-)</span></td>
           </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
-              <td>aprobación</td>
-              <td NOWRAP><FONT FACE=Courier>^-)</td>
+              <td><img src="pix/s/approve.gif" alt="aprobaci&oacute;n." width="15" height="15" border="0"></td>
+              <td>aprobaci&oacute;n</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">^-)</span></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
-              <td>ojos grandes</td>
-              <td NOWRAP><FONT FACE=Courier>8-)</td>
+              <td><img src="pix/s/wideeyes.gif" alt="ojos abiertos" width="15" height="15" border="0"></td>
+              <td>ojos abiertos</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">8-)</span></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
+              <td><img src="pix/s/surprise.gif" alt="sorprendido." width="15" height="15" border="0"></td>
               <td>sorprendido</td>
-              <td NOWRAP><FONT FACE=Courier>8-o</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">8-o</span></td>
             </tr>
         </table>
         </td>
         <td>
         <table border="0" align="center" cellpadding="10">
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
+              <td><img src="pix/s/sad.gif" alt="triste." width="15" height="15" border="0"></td>
               <td>triste</td>
-              <td NOWRAP><FONT FACE=Courier>:-(</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">:-(</span></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
-              <td>tímido</td>
-              <td NOWRAP><FONT FACE=Courier>8-.</td>
+              <td><img src="pix/s/shy.gif" alt="t&iacute;mido." width="15" height="15"></td>
+              <td>t&iacute;mido</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">8-.</span></td>
             </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
+            <td><img src="pix/s/blush.gif" alt="sonrojado." width="15" height="15"></td>
             <td>sonrojado</td>
-            <td NOWRAP><FONT FACE=Courier>:-I</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">:-I</span></td>
           </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
+              <td><img src="pix/s/kiss.gif" alt="besos." width="15" height="15"></td>
               <td>besos</td>
-              <td NOWRAP><FONT FACE=Courier>:-X</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">:-X</span></td>
             </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
+            <td><img src="pix/s/clown.gif" alt="Payaso." width="15" height="15"></td>
             <td>payaso</td>
-            <td NOWRAP><FONT FACE=Courier>:o)</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">:o)</span></td>
           </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
+            <td><img src="pix/s/blackeye.gif" alt="ojo morado" width="15" height="15"></td>
             <td>ojo morado</td>
-            <td NOWRAP><FONT FACE=Courier>P-|</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">P-|</span></td>
           </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
-              <td>enojado</td>
-              <td NOWRAP><FONT FACE=Courier>8-[</td>
+              <td><img src="pix/s/angry.gif" alt="Enojado - enfadado." width="15" height="15"></td>
+              <td>enojado, enfadado</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">8-[</span></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
+              <td><img src="pix/s/dead.gif" alt="muerto." width="15" height="15"></td>
               <td>muerto</td>
-              <td NOWRAP><FONT FACE=Courier>xx-P</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">xx-P</span></td>
             </tr>
             <tr>
-              <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
+              <td><img src="pix/s/sleepy.gif" alt="somnoliento." width="15" height="15"></td>
               <td>somnoliento</td>
-              <td NOWRAP><FONT FACE=Courier>|-.</td>
+              <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">|-.</span></td>
             </tr>
           <tr>
-            <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
-            <td>demoniaco</td>
-            <td NOWRAP><FONT FACE=Courier>}-]</td>
+            <td><img src="pix/s/evil.gif" alt="diab&oacute;lico." width="15" height="15"></td>
+            <td>diab&oacute;lico</td>
+            <td nowrap><span style="font-family: 'Courier New', Courier, monospace;">}-]</span></td>
           </tr>
         </table>
+		</td>
+		</tr>
     </table>
 
-</UL>
+
