@@ -487,7 +487,7 @@ function writequestion( $question ) {
             }
             $expout .= "\t".$answertext.$this->repchar( $answer->answer );
             if ($answer->feedback!="") {
-                $expout .= "#".$this->$this->repchar( $answer->feedback );
+                $expout .= "#".$this->repchar( $answer->feedback );
             }
             $expout .= "\n";
         }
