@@ -1675,7 +1675,7 @@ function make_grades_menu($gradingtype) {
         }
     } else if ($gradingtype > 0) {
         for ($i=$gradingtype; $i>=0; $i--) {
-            $grades[$i] = $i;
+            $grades[$i] = "$i / $gradingtype";
         }
         return $grades;
     }

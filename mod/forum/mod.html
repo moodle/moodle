@@ -92,12 +92,8 @@
 
             choose_from_menu($options, "assessed", $form->assessed, "");
             helpbutton("ratings", get_string("allowratings", "forum"), "forum");
-            echo "<p><b>";
-            print_string("scale");
-            echo ":</b> ";
+            echo "<br />";
             print_scale_menu($course->id, "scale", $form->scale);
-            echo "</p>";
-
         ?>
     </td>
 </tr>

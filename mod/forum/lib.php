@@ -16,9 +16,6 @@ $FORUM_TYPES   = array ("general"    => get_string("generalforum", "forum"),
                         "eachuser"   => get_string("eachuserforum", "forum"),
                         "single"     => get_string("singleforum", "forum") );
 
-$FORUM_POST_RATINGS = array ("3" => get_string("postrating3", "forum"),
-                             "2" => get_string("postrating2", "forum"),
-                             "1" => get_string("postrating1", "forum") );
 
 $FORUM_OPEN_MODES   = array ("2" => get_string("openmode2", "forum"),
                              "1" => get_string("openmode1", "forum"),

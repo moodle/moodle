@@ -98,16 +98,7 @@
     <td align=right><p><b><?php print_string("grade") ?>:</b></p></td>
     <td>
         <?php
-        $scales = get_scales_menu($course->id);
-        $strscale = get_string("scale");
-        foreach ($scales as $i => $scalename) {
-            $grades[-$i] = "$strscale: $scalename";
-        }
-        $grades[0] = get_string("nograde");
-        for ($i=100; $i>=1; $i--) {
-            $grades[$i] = $i;
-        }
-        choose_from_menu($grades, "grade", "$form->grade", "");
+        print_grade_menu($course->id, "grade", "$form->grade");
         ?>
     </td>
 </tr>
