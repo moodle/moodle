@@ -465,7 +465,7 @@ function dialogue_list_conversations_self($dialogue) {
 			}
 			echo "</td></tr>\n";
 			echo "<tr><td valign=\"top\" align=\"right\">\n";
-			helpbutton("writing", get_string("helpwriting"), "dialogue", true, true);
+			helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
 			echo "<br />";
 			echo "</td><td>\n";
 			// use a cumbersome name on the textarea is just historical :-) 
@@ -555,7 +555,7 @@ function dialogue_print_conversation($dialogue, $conversation) {
     echo "<tr><td colspan=\"2\" align=\"center\" valign=\"top\"><i>".
         get_string("typefollowup", "dialogue")."</i></td></tr>\n";
     echo "<tr><td valign=\"top\" align=\"right\">\n";
-    helpbutton("writing", get_string("helpwriting"), "dialogue", true, true);
+    helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
     echo "<br />";
     echo "</td><td>\n";
     // use a cumbersome name on the textarea for historical reasons :-) 

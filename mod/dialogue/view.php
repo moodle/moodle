@@ -157,7 +157,7 @@
         			echo "<tr><td colspan=\"2\" align=\"center\" valign=\"top\"><i>".
                         get_string("typefirstentry", "dialogue")."</i></td></tr>\n";
         			echo "<tr><td valign=\"top\" align=\"right\">\n";
-		        	helpbutton("writing", get_string("helpwriting"), "dialogue", true, true);
+		        	helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         			echo "<br />";
 			        echo "</td><td>\n";
                     print_textarea($usehtmleditor, 20, 75, 630, 300, "firstentry");
