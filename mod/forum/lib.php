@@ -2413,7 +2413,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         } else {
             echo "(".get_string("nodiscussions", "forum").")";
         }
-        echo '</div>\n';
+        echo "</div>\n";
         return;
     }
 
