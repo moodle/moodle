@@ -2023,7 +2023,7 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon='') {
 
 
 function print_heading_block($heading, $class='') {
-    echo '<div class="headingblock '.$class.'">'.stripslashes($heading).'</div>';
+    echo '<div class="headingblock header '.$class.'">'.stripslashes($heading).'</div>';
 }
 
 
