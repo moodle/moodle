@@ -946,7 +946,9 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     }
 
     if ($ratingform) {
-        echo "<CENTER><P ALIGN=center><INPUT TYPE=submit VALUE=\"".get_string("sendinratings", "forum")."\"></P></CENTER>";
+        echo "<CENTER><P ALIGN=center><INPUT TYPE=submit VALUE=\"".get_string("sendinratings", "forum")."\">";
+        helpbutton("waysofknowing", get_string("separateandconnected"));
+        echo "</P></CENTER>";
         echo "</FORM>";
     }
 }

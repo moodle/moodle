@@ -2,13 +2,13 @@
 <table cellpadding=5>
 <tr>
 <tr valign=top>
-    <td align=right><P><B>Forum Name:</B></P></TD>
+    <td align=right><P><B><? print_string("forumname", "forum")?>:</B></P></TD>
     <td>
         <input type="text" name="name" size=30 value="<? p($form->name) ?>">
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B>Type of Forum:</B></P></TD>
+    <td align=right><P><B><? print_string("forumtype", "forum")?>:</B></P></TD>
     <td>
     <?
        $student = strtolower($course->student);
@@ -20,31 +20,34 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B>Forum Introduction:</B></P></TD>
+    <td align=right><P><B><? print_string("forumintro", "forum")?>:</B></P></TD>
     <td>
         <textarea name="intro" rows=4 cols=50 wrap="virtual"><? p($form->intro) ?></textarea>
     </td>
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B>Can <?=$course->student?>s start new discussions?:</B></P></TD>
+    <td align=right><P><B><? print_string("allowdiscussions", "forum", "$course->student") ?>:</B></P></TD>
     <td>
-        <input type=radio name=open value=1 <? if ($form->open == 1) echo "CHECKED"; ?> >Yes
-        <input type=radio name=open value=0 <? if ($form->open == 0) echo "CHECKED"; ?> >No
+        <? $stryes = get_string("yes"); $strno = get_string("no"); ?>
+        <input type=radio name=open value=1 <? if ($form->open == 1) echo "CHECKED"; ?> ><?=$stryes ?>
+        <input type=radio name=open value=0 <? if ($form->open == 0) echo "CHECKED"; ?> ><?=$strno ?>
     </td>
 </tr>
 <tr>
-    <td align=right><P><B>Will this forum contain assessments?:</B></P></TD>
+    <td align=right><P><B><? print_string("allowratings", "forum") ?>
+        <? helpbutton("waysofknowing", get_string("separateandconnected")) ?>
+    :</B></P></TD>
     <td>
-        <input type=radio name=assessed value=1 <? if ($form->assessed == 1) echo "CHECKED"; ?> >Yes
-        <input type=radio name=assessed value=0 <? if ($form->assessed == 0) echo "CHECKED"; ?> >No
+        <input type=radio name=assessed value=1 <? if ($form->assessed == 1) echo "CHECKED"; ?> ><?=$stryes ?>
+        <input type=radio name=assessed value=0 <? if ($form->assessed == 0) echo "CHECKED"; ?> ><?=$strno ?>
     </td>
 </tr>
 <tr>
-    <td align=right><P><B>Force everyone to be subscribed to this forum?:</B></P></TD>
+    <td align=right><P><B><? print_string("forcesubscribeq", "forum") ?>:</B></P></TD>
     <td>
-        <input type=radio name=forcesubscribe value=1 <? if ($form->forcesubscribe == 1) echo "CHECKED"; ?> >Yes
-        <input type=radio name=forcesubscribe value=0 <? if ($form->forcesubscribe == 0) echo "CHECKED"; ?> >No
+        <input type=radio name=forcesubscribe value=1 <? if ($form->forcesubscribe == 1) echo "CHECKED"; ?> ><?=$stryes ?>
+        <input type=radio name=forcesubscribe value=0 <? if ($form->forcesubscribe == 0) echo "CHECKED"; ?> ><?=$strno ?>
     </td>
 </tr>
 </table>
@@ -56,6 +59,6 @@
 <input type="hidden" name=modulename value="<? p($form->modulename) ?>">
 <input type="hidden" name=instance   value="<? p($form->instance) ?>">
 <input type="hidden" name=mode       value="<? p($form->mode) ?>">
-<input type="submit" value="Save these settings">
+<input type="submit" value="<? print_string("savechanges") ?>">
 </CENTER>
 </FORM>

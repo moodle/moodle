@@ -37,12 +37,14 @@
         error("Must specify a course module or a forum ID");
     }
 
+    $strforums = get_string("modulenameplural", "forum");
+
     if ($course->category) {
         require_login($course->id);
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->
-                       <A HREF=\"index.php?id=$course->id\">Forums</A> ->";
+                       <A HREF=\"index.php?id=$course->id\">$strforums</A> ->";
     } else {
-        $navigation = "<A HREF=\"index.php?id=$course->id\">Forums</A> ->";
+        $navigation = "<A HREF=\"index.php?id=$course->id\">$strforums</A> ->";
     }
 
     if ($forum->type == "teacher") {
@@ -60,32 +62,35 @@
         $SESSION->fromdiscussion = "$FULLME";
         save_session("SESSION");
         if (forum_is_forcesubscribed($forum->id)) {
-            $subtext = "Everyone is subscribed to this forum";
+            $streveryoneissubscribed = get_string("everyoneissubscribed", "forum");
+            $strallowchoice = get_string("allowchoice", "forum");
             if (isteacher($course->id)) {
                 echo "<DIV ALIGN=RIGHT><FONT SIZE=1>";
-                echo "<A TITLE=\"Allow people to choose\" HREF=\"subscribe.php?id=$forum->id&force=no\">$subtext</A>";
+                echo "<A TITLE=\"$strallowchoice\" HREF=\"subscribe.php?id=$forum->id&force=no\">$streveryoneissubscribed</A>";
                 echo "</FONT></DIV>";
             } else {
-                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
+                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$streveryoneissubscribed</FONT></DIV>";
             }
 
         } else {
-            $subtext = "Everyone can choose to be subscribed";
+            $streveryonecanchoose = get_string("everyonecanchoose", "forum");
+            $strforcesubscribe = get_string("forcesubscribe", "forum");
+            $strshowsubscribers = get_string("showsubscribers", "forum");
             if (isteacher($course->id)) {
                 echo "<DIV ALIGN=RIGHT><FONT SIZE=1>";
-                echo "<A TITLE=\"Force everyone to subscribe\" HREF=\"subscribe.php?id=$forum->id&force=yes\">$subtext</A>";
+                echo "<A TITLE=\"$strforcesubscribe\" HREF=\"subscribe.php?id=$forum->id&force=yes\">$streveryonecanchoose</A>";
                 echo "</FONT></DIV>";
-                $subtext = "<A HREF=\"subscribers.php?id=$forum->id\">Show subscribers</A>";
+                $subtext = "<A HREF=\"subscribers.php?id=$forum->id\">$strshowsubscribers</A>";
                 echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
             } else {
-                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
+                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$streveryonecanchoose</FONT></DIV>";
             }
             if (forum_is_subscribed($USER->id, $forum->id)) {
-                $subtext = "Unsubscribe me";
+                $subtext = get_string("unsubscribe", "forum");
             } else {
-                $subtext = "Subscribe me";
+                $subtext = get_string("subscribe", "forum");
             }
-            $subtext = "<A TITLE=\"...this forum only\" HREF=\"subscribe.php?id=$forum->id\">$subtext</A>";
+            $subtext = "<A HREF=\"subscribe.php?id=$forum->id\">$subtext</A>";
             echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
         }
     }
@@ -112,7 +117,7 @@
             print_simple_box(text_to_html($forum->intro), "CENTER");
             echo "<P ALIGN=CENTER>";
             if (forum_user_can_post_discussion($forum)) {
-                echo "This forum allows each person to start one discussion topic.";
+                print_string("allowsdiscussions", "forum");
             } else {
                 echo "&nbsp";
             }
