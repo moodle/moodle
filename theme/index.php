@@ -2,8 +2,8 @@
 
     require_once("../config.php");
 
-    optional_variable($preview);   // which theme to show
-    optional_variable($choose);    // set this theme as default
+    $preview = optional_param("preview",'',PARAM_FILE); // which theme to show
+    $choose = optional_param("choose",'',PARAM_FILE);   // set this theme as default
 
     if (! $site = get_site()) {
         error("Site doesn't exist!");
@@ -22,7 +22,7 @@
         $preview = $choose;
     }
 
-    if ($preview) {
+    if ($preview and confirm_sesskey()) {
         $CFG->theme = $preview;
         $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.php?themename=$preview";
         $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
@@ -42,7 +42,7 @@
                  "<a href=\"$CFG->wwwroot/admin/index.php\">$stradministration</a> -> ".
                  "<a href=\"$CFG->wwwroot/admin/configure.php\">$strconfiguration</a> -> $strthemes");
 
-    if ($choose) {
+    if ($choose and confirm_sesskey()) {
         if (set_config("theme", $choose)) {
             print_heading(get_string("themesaved"));
             print_continue("$CFG->wwwroot/");
@@ -68,6 +68,7 @@
     print_heading(get_string("previeworchoose"));
 
     $themes = get_list_of_plugins("theme");
+    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     echo "<TABLE ALIGN=CENTER cellpadding=7 cellspacing=5>";
     echo "<TR><TH class=\"generaltableheader\">$strtheme<TH class=\"generaltableheader\">&nbsp;</TR>";
@@ -81,10 +82,10 @@
         echo "<TR>";
         if ($CFG->theme == $theme) {
             echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">$theme</TD>";
-            echo "<TD ALIGN=CENTER><A HREF=\"index.php?choose=$theme\">$strsavechanges</A></TD>";
+            echo "<TD ALIGN=CENTER><A HREF=\"index.php?choose=$theme&amp;sesskey=$sesskey\">$strsavechanges</A></TD>";
         } else {
             echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">";
-            echo "<A TITLE=\"$strpreview\" HREF=\"index.php?preview=$theme\">$theme</A>";
+            echo "<A TITLE=\"$strpreview\" HREF=\"index.php?preview=$theme&amp;sesskey=$sesskey\">$theme</A>";
             echo "</TD>";
             echo "<TD>&nbsp;</TD>";
         }
