@@ -1143,7 +1143,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     $mail->FromName = "$from->firstname $from->lastname";
     $mail->Subject  =  stripslashes($subject);
 
-    $mail->AddBCC("$user->email","$user->firstname $user->lastname"); 
+    $mail->AddAddress("$user->email","$user->firstname $user->lastname"); 
 
     $mail->WordWrap = 70;                               // set word wrap
 
