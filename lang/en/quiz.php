@@ -142,6 +142,7 @@ $string['keptcategory3'] = 'a link from the same category reusable set of links 
 $string['keptlocal1'] = 'a literal from the same question private set of literals as before';
 $string['keptlocal2'] = 'a file from the same question private set of files as before';
 $string['keptlocal3'] = 'a link from the same question private set of links as before';
+$string['learnwise'] = 'Learnwise format';
 $string['link'] = 'Link';
 $string['listitems'] = 'Listing of Items in Quiz';
 $string['literal'] = 'Literal';
