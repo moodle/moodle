@@ -97,8 +97,6 @@
 
             //We'll need this later!!
             $oldid = backup_todb($ent_info['#']['ID']['0']['#']);
-            $olduserid = backup_todb($ent_info['#']['USERID']['0']['#']);
-            $oldgroupid = backup_todb($ent_info['#']['GROUPID']['0']['#']);
 
             //Now, build the wiki_ENTRIES record structure
             $entry->wikiid = $new_wiki_id;
@@ -183,6 +181,12 @@
             $page->refs = backup_todb($pag_info['#']['REFS']['0']['#']);
             $page->meta = backup_todb($pag_info['#']['META']['0']['#']);
             $page->hits = backup_todb($pag_info['#']['HITS']['0']['#']);
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$page->userid);
+            if ($user) {
+                $page->userid = $user->new_id;
+            }
             //The structure is equal to the db, so insert the wiki_comments
             insert_record ("wiki_pages",$page, false,"pagename");
 #print "<pre>"; print_r($page); print "</pre>";            
