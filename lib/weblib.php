@@ -1214,11 +1214,13 @@ function print_heading_with_help($text, $helppage, $module="moodle", $icon="") {
 
 function print_continue($link) {
 
+    global $CFG;
+
     if (!$link) {
         $link = $_SERVER["HTTP_REFERER"];
     }
 
-    print_heading("<a href=\"$link\">".get_string("continue")."</a>");
+    print_heading("<a target=\"{$CFG->framename}\" href=\"$link\">".get_string("continue")."</a>");
 }
 
 
