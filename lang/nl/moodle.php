@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
+      // moodle.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['action'] = "Actie";
@@ -47,6 +47,7 @@ $string['backup'] = "Reservekopie";
 $string['backupdate'] = "Datum reservekopie";
 $string['backupdetails'] = "Details van de reservekopie";
 $string['backupdir'] = "Gegevens van de reservekopie";
+$string['backupfilename'] = "reservekopie";
 $string['backupnameformat'] = "%%d%%m%%Y-%%H%%M";
 $string['backuporiginalname'] = "Naam reservekopie";
 $string['backupversion'] = "Versie reservekopie";
@@ -268,6 +269,7 @@ $string['help'] = "Help";
 $string['helpemoticons'] = "Gebruik emoticons";
 $string['helpformatting'] = "Over tekstopmaak";
 $string['helphtml'] = "Hoe je HTML kunt schrijven";
+$string['helpindex'] = "Index  helpbestanden";
 $string['helppicture'] = "Hoe je een plaatje kunt uploaden";
 $string['helpquestions'] = "Hoe je vragen kunt stellen";
 $string['helpreading'] = "Lees zorgvuldig";
@@ -312,6 +314,7 @@ $string['lastaccess'] = "Voor het laatst bezocht";
 $string['lastedited'] = "Voor het laatst bewerkt";
 $string['lastmodified'] = "Voor het laatst gewijzigd";
 $string['lastname'] = "Achternaam";
+$string['latestlanguagepack'] = "Haal het meest recente taalpakket van moodle.org";
 $string['latestnews'] = "Laatste nieuws";
 $string['leavetokeep'] = "Laat leeg om je huidige wachtwoord te behouden";
 $string['license'] = "GPL licentie";
@@ -464,6 +467,7 @@ $string['opentoguests'] = "Toegang voor gasten";
 $string['optional'] = "niet verplicht";
 $string['order'] = "Volgorde";
 $string['outline'] = "Overzicht";
+$string['parentlanguage'] = "Tweede taal";
 $string['participants'] = "Deelnemers";
 $string['password'] = "Wachtwoord";
 $string['passwordchanged'] = "Het wachtwoord is veranderd";
