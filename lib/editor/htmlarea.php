@@ -1815,6 +1815,7 @@ HTMLArea.is_mac    = (HTMLArea.agt.indexOf("mac") != -1);
 HTMLArea.is_mac_ie = (HTMLArea.is_ie && HTMLArea.is_mac);
 HTMLArea.is_win_ie = (HTMLArea.is_ie && !HTMLArea.is_mac);
 HTMLArea.is_gecko  = (navigator.product == "Gecko");
+HTMLArea.is_safari = (HTMLArea.agt.indexOf("safari") != -1);
 
 // variable used to pass the object to the popup editor window.
 HTMLArea._object = null;
@@ -1852,6 +1853,9 @@ HTMLArea.checkSupportedBrowser = function() {
             alert("Mozilla < 1.3 Beta is not supported!\n" +
                   "I'll try, though, but it might not work.");
         }
+    }
+    if(HTMLArea.is_safari) {
+        return false;
     }
     return HTMLArea.is_gecko || HTMLArea.is_ie;
 };
