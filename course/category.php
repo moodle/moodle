@@ -23,7 +23,7 @@
     }
 
     if (iscreator()) {
-        if (isset($_GET['edit'])) {
+        if (isset($_GET['edit']) and confirm_sesskey()) {
             if ($edit == "on") {
                 $USER->categoryediting = true;
             } else if ($edit == "off") {
@@ -47,7 +47,7 @@
 
     if (isadmin()) {
         /// Rename the category if requested
-        if (!empty($_POST['rename'])) {
+        if (!empty($_POST['rename']) and confirm_sesskey()) {
             $category->name = $_POST['rename'];
             if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
                 notify("An error occurred while renaming the category");
@@ -56,7 +56,7 @@
 
         /// Resort the category if requested
 
-        if (!empty($_GET['resort'])) {
+        if (!empty($_GET['resort']) and confirm_sesskey()) {
             if ($courses = get_courses($category->id, "fullname ASC")) {
                 $count = 0;
                 foreach ($courses as $course) {
@@ -114,7 +114,7 @@
 
     /// Move a specified course to a new category 
 
-        if (isset($moveto) and $data = data_submitted()) {   // Some courses are being moved
+        if (isset($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
 
             if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
                 error("Error finding the category");
@@ -122,9 +122,11 @@
 
             unset($data->moveto);
             unset($data->id);
+            unset($data->sesskey);
 
             if ($data) {
                 foreach ($data as $code => $junk) {
+ 
                     $courseid = substr($code, 1);
 
                     if (! $course  = get_record("course", "id", $courseid)) {
@@ -143,7 +145,7 @@
 
     /// Hide or show a course 
     
-        if (isset($hide) or isset($show)) {
+        if ((isset($hide) or isset($show)) and confirm_sesskey()) {
             if (isset($hide)) {
                 $course = get_record("course", "id", $hide);
                 $visible = 0;
@@ -161,7 +163,7 @@
 
     /// Move a course up or down
 
-        if (isset($moveup) or isset($movedown)) {
+        if ((isset($moveup) or isset($movedown)) and confirm_sesskey()) {
 
             $movecourse = NULL;
             $swapcourse = NULL;
@@ -274,6 +276,7 @@
         }
 
         echo '<form name="movecourses" action="category.php" method="post">';
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
         echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox"><tr>';
         echo "<th>$strcourses</th>";
         if ($creatorediting) {
@@ -311,11 +314,11 @@
                          '<img src="'.$pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="" /></a> ';
                     if (!empty($acourse->visible)) {
                         echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.
-                             '&amp;hide='.$acourse->id.'">'.
+                             '&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
                         echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.
-                             '&amp;show='.$acourse->id.'">'.
+                             '&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$pixpath.'/t/show.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
     
@@ -328,7 +331,7 @@
             
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.
-                             '&amp;moveup='.$acourse->id.'">'.
+                             '&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$pixpath.'/t/up.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /></a> ';
@@ -336,7 +339,7 @@
         
                     if ($down) {
                         echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.
-                             '&amp;movedown='.$acourse->id.'">'.
+                             '&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$pixpath.'/t/down.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /></a> ';
@@ -397,6 +400,7 @@
         unset($options);
         $options["id"] = $category->id;
         $options["resort"] = "name";
+        $options["sesskey"] = $USER->sesskey;
         print_single_button("category.php", $options, get_string("resortcoursesbyname"), "get");
     }
 
@@ -411,6 +415,7 @@
         $strrename= get_string("rename");
         echo '<form name="renameform" action="category.php" method="post">';
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';
+        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
         echo '<input type="text" size="30" name="rename" value="'.s($category->name).'" alt="'.$strrename.'" />';
         echo '<input type="submit" value="'.$strrename.'" />';
         echo "</form>";

@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -2476,6 +2476,7 @@ function update_category_button($categoryid) {
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$categoryid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+               "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
     }
 }
