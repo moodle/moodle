@@ -130,6 +130,8 @@ if ($e) {
                     if ( $category > 0 ) {
                         $newcategory->categoryid =$category;
                         insert_record("glossary_entries_categories",$newcategory);
+                    } else {
+                        break;
                     }
                 }
            }
