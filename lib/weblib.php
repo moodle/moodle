@@ -3676,7 +3676,7 @@ function print_side_block_start($heading='', $attributes = array()) {
 
     echo '<table'.$attrtext.'>';
     if ($heading) {
-        echo '<tr><th class="heading">'.$heading;
+        echo '<tr><th class="header">'.$heading;
         if (!empty($CFG->allowuserblockhiding)) {
             echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="hide-show-image" /></a></div>';
         }

@@ -62,7 +62,7 @@ body {
     background-color:#FAFAFA;
 }
 
-th {
+th.header {
     background-color:#DDDDDD;
 }
 
@@ -574,7 +574,7 @@ table.minicalendar {
 .sideblock {
     border-color:#DDDDDD; /* borders */
 }
-.sideblock .heading {
+.sideblock .header {
     background-color: #EEEEEE;
 }
 

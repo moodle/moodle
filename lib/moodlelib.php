@@ -2616,14 +2616,52 @@ function remove_course_contents($courseid, $showfeedback=true) {
         $result = false;
     }
 
+    // Delete gradebook stuff
+
+    if (delete_records("course_grade_category", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade categories");
+        } else {
+            $result = false;
+        }
+    }
+    if (delete_records("course_grade_exceptions", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade exceptions");
+        } else {
+            $result = false;
+        }
+    }
+    if (delete_records("course_grade_item", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade items");
+        } else {
+            $result = false;
+        }
+    }       
+    if (delete_records("course_grade_letter", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade letters");
+        } else {
+            $result = false;
+        }
+    }
+    if (delete_records("course_grade_preferences", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade preferences");
+        } else {
+            $result = false;
+        }
+    }
+
+
     if ($course->metacourse) {
         delete_records("course_meta","parent_course",$course->id);
         sync_metacourse($course->id); // have to do it here so the enrolments get nuked. sync_metacourses won't find it without the id.
         if ($showfeedback) {
             notify("$strdeleted course_meta");
         }
-    }
-    else {
+    } else {
         if ($parents = get_records("course_meta","child_course",$course->id)) {
             foreach ($parents as $parent) {
                 remove_from_metacourse($parent->parent_course,$parent->child_course); // this will do the unenrolments as well.
@@ -5439,11 +5477,11 @@ function unzip_show_status ($list,$removepath) {
         $strsize = get_string("size");
         $strmodified = get_string("modified");
         $strstatus = get_string("status");
-        echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=640>";
-        echo "<tr><th align=left>$strname</th>";
-        echo "<th align=right>$strsize</th>";
-        echo "<th align=right>$strmodified</th>";
-        echo "<th align=right>$strstatus</th></tr>";
+        echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=\"640\">";
+        echo "<tr><th class=\"header\" align=\"left\">$strname</th>";
+        echo "<th class=\"header\" align=\"right\">$strsize</th>";
+        echo "<th class=\"header\" align=\"right\">$strmodified</th>";
+        echo "<th class=\"header\" align=\"right\">$strstatus</th></tr>";
         foreach ($list as $item) {
             echo "<tr>";
             $item['filename'] = str_replace(cleardoubleslashes($removepath).'/', "", $item['filename']);
@@ -5462,11 +5500,11 @@ function unzip_show_status ($list,$removepath) {
 
     } else {                   // Use external zip program
         print_simple_box_start("center");
-        echo "<PRE>";
+        echo "<pre>";
         foreach ($list as $item) {
             echo str_replace(cleardoubleslashes($removepath.'/'), '', $item).'<br />';
         }
-        echo "</PRE>";
+        echo "</pre>";
         print_simple_box_end();
     }
 }

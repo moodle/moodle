@@ -401,11 +401,11 @@ table.calendar-controls .next {
 ***
 ******************************/
 
-.sideblock .heading {
+.sideblock .header {
     text-align: left;
 }
 
-.sideblock .heading .commands {
+.sideblock .header .commands {
     font-size: 0.75em;
 }
 

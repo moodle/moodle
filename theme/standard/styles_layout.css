@@ -42,7 +42,7 @@
 
 
 /* general styles */
-th {
+th.header {
     background-image:url(gradient.jpg);
     background-position:top;
     background-repeat:repeat-x;
@@ -949,33 +949,33 @@ table.calendar-controls .next
     border-style:solid;
 }
 
-.sideblock .heading {
+.sideblock .header {
     background-image:url(gradient.jpg);
     background-position:top;
     background-repeat:repeat-x;
     padding:4px;
 }
 
-.sideblock .heading .hide-show {
+.sideblock .header .hide-show {
     float:right;
 }
 
-.sideblock .heading .hide-show img.hide-show-image {
+.sideblock .header .hide-show img.hide-show-image {
     height:11px;
     width:11px;
     margin-top:0.25em;
 }
 
-.sideblock .heading .commands {
+.sideblock .header .commands {
     float: right;
     margin-top: 0.3em;
 }
 
-.sideblock .heading .title {
+.sideblock .header .title {
     float: left;
 }
 
-.sideblock .heading .commands a {
+.sideblock .header .commands a {
     margin: 0px 2px;
 }
 
@@ -991,11 +991,11 @@ table.calendar-controls .next
     border-top:1px solid;
 }
 
-.sideblock .heading .hide-show img.hide-show-image {
+.sideblock .header .hide-show img.hide-show-image {
     background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
-.sideblock.hidden .heading .hide-show img.hide-show-image {
+.sideblock.hidden .header .hide-show img.hide-show-image {
     background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
@@ -1015,8 +1015,8 @@ table.calendar-controls .next
     margin-top:4px;
 }
 
-.sideblock .heading .icon.hide,
-.sideblock .heading .icon.edit {
+.sideblock .header .icon.hide,
+.sideblock .header .icon.edit {
     margin-right: 6px;
 }
 

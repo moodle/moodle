@@ -2637,18 +2637,18 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         echo '<table class="forumheaderlist">';
         echo '<thead>';
         echo '<tr>';
-        echo '<th class="topic">'.get_string('discussion', 'forum').'</th>';
-        echo '<th class="author" colspan="2">'.get_string('startedby', 'forum').'</th>';
+        echo '<th class="header topic">'.get_string('discussion', 'forum').'</th>';
+        echo '<th class="header author" colspan="2">'.get_string('startedby', 'forum').'</th>';
         if ($groupmode > 0) {
-            echo '<th class="group">'.get_string('group').'</th>';
+            echo '<th class="header group">'.get_string('group').'</th>';
         }
         if ($forum->open or $forum->type == 'teacher') {
-            echo '<th class="replies">'.get_string('replies', 'forum').'</th>';
+            echo '<th class="header replies">'.get_string('replies', 'forum').'</th>';
         }
         if ($CFG->forum_trackreadposts) {
-            echo '<th class="replies">'.get_string('unread', 'forum').'</th>';
+            echo '<th class="header replies">'.get_string('unread', 'forum').'</th>';
         }
-        echo '<th class="lastpost">'.get_string('lastpost', 'forum').'</th>';
+        echo '<th class="header lastpost">'.get_string('lastpost', 'forum').'</th>';
         echo '</tr>';
         echo '</thead>';
         echo '<tbody>';
