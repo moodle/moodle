@@ -16,6 +16,10 @@ define('COURSE_MAX_RECENT_PERIOD', 172800);  // Two days, in seconds
 
 define('COURSE_MAX_SUMMARIES_PER_PAGE', 10); // courses
 
+define('COURSE_MAX_COURSES_PER_DROPDOWN',5000); //  max courses in log dropdown before switching to optional
+
+define('COURSE_MAX_USERS_PER_DROPDOWN',5000); //  max users in log dropdown before switching to optional
+
 define("FRONTPAGENEWS",           0);
 define("FRONTPAGECOURSELIST",     1);
 define("FRONTPAGECATEGORYNAMES",  2);
@@ -228,9 +232,47 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 }
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
-                                 $modname="", $modid=0, $modaction="", $selectedgroup=-1) {
+                                 $modname="", $modid=0, $modaction="", $selectedgroup=-1,$showcourses=0,$showusers=0) {
 
     global $USER, $CFG;
+
+    // first check to see if we can override showcourses and showusers
+    $numcourses =  count_records_select("course", "", "COUNT(id)");
+    if ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN && !$showcourses) {
+        $showcourses = 1;
+    }
+   
+    if ($course->category && $selectedgroup) {
+        $sql = 'SELECT COUNT(ut.id) '.
+               'FROM '.$CFG->prefix.'groups_members gm '.
+               ' JOIN '.$CFG->prefix.'user_teachers  ut ON gm.userid=ut.userid '.
+               'WHERE ut.course='.$course->id.' AND gm.groupid='.$selectedgroup;
+        $numteachers = count_records_sql($sql); 
+        // students
+        $sql = 'SELECT COUNT(us.id) '.
+               'FROM '.$CFG->prefix.'groups_members gm '.
+               ' JOIN '.$CFG->prefix.'user_students us ON gm.userid=us.userid '.
+               'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup;
+        $numstudents = count_records_sql($sql); 
+        // add
+        $numusers = $numstudents + $numteachers;
+    }
+    else if ($course->category || !$CFG->allusersaresitestudents) {
+        $sql = "SELECT COUNT(t.id) FROM {$CFG->prefix}user_teachers t
+                            WHERE t.course = '$course->id'";
+        $numusers = count_records_sql($sql);
+        $sql = "SELECT count(s.id) FROM {$CFG->prefix}user_students s 
+                            WHERE s.course = '$course->id'";
+        $numusers = $numusers + count_records_sql($sql);
+    }
+    else if (!$course->category && $CFG->allusersaresitestudents) {
+        $numusers = get_users(false, '', true,'','','','',0,9999,'id');
+    }
+
+    if ($numusers < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
+        $showusers = 1;
+    }
+    
 
     /// Setup for group handling.
     $isteacher = isteacher($course->id);
@@ -251,32 +293,42 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     // Get all the possible users
     $users = array();
 
-    if ($course->category) {
-        /// If using a group, only get users in that group.
-        if ($selectedgroup) {
-            $sql = 'SELECT u.id as id, u.firstname, u.lastname, u.lastaccess '.
-                   'FROM '.$CFG->prefix.'user u,'.$CFG->prefix.'user_students us,'.$CFG->prefix.'groups_members gm, '.
-                        $CFG->prefix.'user_teachers ut '.
-                   'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup.
-                   ' AND (gm.userid=us.userid OR gm.userid=ut.userid) AND gm.userid=u.id';
-            $courseusers = get_records_sql($sql);
+    if ($showusers) {
+        if ($course->category) {
+            /// If using a group, only get users in that group.
+            if ($selectedgroup) {
+                // teachers
+                $sql = 'SELECT u.id as id, u.firstname, u.lastname, u.lastaccess '.
+                    'FROM '.$CFG->prefix.'user u '.
+                    ' JOIN '.$CFG->prefix.'groups_members gm ON gm.userid=u.id '.
+                    ' JOIN '.$CFG->prefix.'user_teachers  ut ON gm.userid=ut.userid '.
+                    'WHERE ut.course='.$course->id.' AND gm.groupid='.$selectedgroup;
+                $courseusers = get_records_sql($sql); 
+                // students
+                $sql = 'SELECT u.id as id, u.firstname, u.lastname, u.lastaccess '.
+                    'FROM '.$CFG->prefix.'user u '.
+                    ' JOIN '.$CFG->prefix.'groups_members gm ON gm.userid=u.id '.
+                    ' JOIN '.$CFG->prefix.'user_students  us ON gm.userid=us.userid '.
+                    'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup;
+                $courseusers = array_merge($couseusers, get_records_sql($sql)); 
+            } else {
+                $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname');
+            }
         } else {
-            $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname');
+            $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
         }
-    } else {
-        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
+
+        if ($courseusers) {
+            foreach ($courseusers as $courseuser) {
+                $users[$courseuser->id] = fullname($courseuser, $isteacher);
+            }
+        }
+        if ($guest = get_guest()) {
+            $users[$guest->id] = fullname($guest);
+        }
     }
 
-    if ($courseusers) {
-        foreach ($courseusers as $courseuser) {
-            $users[$courseuser->id] = fullname($courseuser, $isteacher);
-        }
-    }
-    if ($guest = get_guest()) {
-        $users[$guest->id] = fullname($guest);
-    }
-
-    if (isadmin()) {
+    if (isadmin() && $showcourses) {
         if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
@@ -365,10 +417,20 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     echo '<center>';
     echo '<form action="log.php" method="get">';
     echo '<input type="hidden" name="chooselog" value="1" />';
-    if (isadmin()) {
+    echo '<input type="hidden" name="showusers" value="'.$showusers.'" />';
+    echo '<input type="hidden" name="showcourses" value="'.$showcourses.'" />';
+    if (isadmin() && $showcourses) { 
         choose_from_menu ($courses, "id", $course->id, "");
     } else {
-        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+        //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+        $courses = array();
+        $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' (Site) ' : '');
+        choose_from_menu($courses,"id",$course->id,false);
+        if (isadmin()) {
+            $a->url = "log.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
+                ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
+            print_string('logtoomanycourses','moodle',$a);
+        }
     }
 
     if ($showgroups) {
@@ -379,7 +441,23 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         choose_from_menu ($groups, "group", $selectedgroup, get_string("allgroups") );
     }
 
-    choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
+    if ($showusers) {
+        choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
+    }
+    else {
+        $users = array();
+        if (!empty($selecteduser)) {
+            $user = get_record('user','id',$selecteduser);
+            $users[$selecteduser] = fullname($user);
+        }
+        else {
+            $users[0] = get_string('allparticipants');
+        }
+        choose_from_menu($users,'user',$selecteduser,false);
+        $a->url = "log.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
+            ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
+        print_string('logtoomanyusers','moodle',$a);
+    }
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
     choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
     echo '<input type="submit" value="'.get_string('showtheselogs').'" />';

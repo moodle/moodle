@@ -12,7 +12,9 @@
     optional_variable($modid, ''); // course_module->id
     optional_variable($modaction, ''); // an action as recorded in the logs
     optional_variable($page, '0');     // which page to show
-    optional_variable($perpage, '100'); // how many per page
+    optional_variable($perpage, '100'); // how many per page 
+    optional_variable($showcourses,0); // whether to show courses if we're over our limit.
+    optional_variable($showusers,0); // whether to show users if we're over our limit.
 
     require_login();
 
@@ -60,7 +62,7 @@
         
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
-        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group);
+        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers);
 
         print_log($course, $user, $date, 'l.time DESC', $page, $perpage, 
                   "log.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 
@@ -77,7 +79,7 @@
 
         print_heading(get_string('chooselogs') .':');
 
-        print_log_selector_form($course);
+        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers);
 
         echo '<br />';
         print_heading(get_string('chooselivelogs') .':');
