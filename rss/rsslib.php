@@ -335,24 +335,14 @@ if (empty($CFG->block_rss_timeout) ) {
 }
 
 /**
- *   Determines whether or not to get a news feed remotely or from cache and reads it into a string
- * @param int rssid - id of feed in blog_rss table
- * @param string url - url of remote feed
- * @param string type - either 'A' or 'R' where A is an atom feed and R is either rss or rdf
- * @return Atom|MagpieRSS|null This function returns an Atom object in the case of an Atom feed, a MagpieRSS object in the case of an RDF/RSS feed or null if there was an error loading the remote feed.
- * NOTE that this function requires allow_url_fopen be On in your php.ini file 
- * (it may be off for security by your web host)
+ * Determine by rss id if the raw xml is cached on the file system
+ * @param int $rssid The id of this feed in the rss table
+ * @return bool False if cache file is missing or expired
  */
-function rss_get_feed($rssid, $url, $type) {
-    
+function rss_cache_valid_by_id($rssid) {
     global $CFG;
-    $writetofile = false;
-    $errorstring = '';
-
-    $urlfailurestring = '<p>Failed to open remote news feed at: ' . $url .'</p><ul>Troubleshooting suggestions:<li> Ensure that the setting <strong>allow_url_fopen</strong> is <strong>On</strong> in the php.ini. For more details on why this setting is needed for this file wrapper call to work please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a></li><li>Ensure that you do not have a proxy enabled between your server and the remote site. If it is possible for you to launch a web browser on your server then you can test this by load the remote URL on the server itself.</li></ul>';
-    $filefailurestring = 'Could not open the file located at: ';
     $secs = $CFG->block_rss_timeout * 60;
-
+    
     // If moodle dataroot cache folder is missing create it
     if (!file_exists($CFG->dataroot .'/cache/')) {
         mkdir($CFG->dataroot .'/cache');
@@ -364,96 +354,103 @@ function rss_get_feed($rssid, $url, $type) {
 
     $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';
 //    echo "file = ". $file; //debug
-    
-    //if feed in cache
+
     if (file_exists($file)) {
-        //check age of cache file
+        //check age of cached xml file
     //      echo "file exists $file"; //debug
-    
-        //get file information capturing any error information
-        ob_start();
-        $data = stat($file);
-        $errorstring .= ob_get_contents();
-        ob_end_clean();
+
+        //get file information ignoring error information
+        $data = @stat($file);
 
         $now = time();
         //Note: there would be a problem here reading data[10] if the above stat() call failed
-        if (($now - $data[10]) > $secs) {
-            // The cached file has expired. Attempt to read fresh from source
-            $xml = load_feed_from_url($url);
-            if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
-                //success
-                $writetofile = true;
-            } else {
-                // Failed to load remote feed. Since the file exists attempt to read from cache
-                if ($CFG->debug) {
-                    if (isset($xml) && isset($xml->ERROR)) {
-                       $errorstring = $xml->ERROR . $errorstring .'<br />';
-                    }
-                    $errorstring = $urlfailurestring .'<br /><br />'. $errorstring .'<br />';
-                }
-                $xml = load_feed_from_file($file);
-                if (!empty($xml) && empty($xml->xml) && !empty($xml->ERROR)) {
-                    // Failed to load from cache as well!
-                    if ($CFG->debug) {
-                        if (!empty($xml) && !empty($xml->ERROR)) {
-                           $errorstring = $xml->ERROR . $errorstring;
-                        }
-                        $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
-                        $err->ERROR = $errorstring .'<br />';
-                        return $err;
-                    }
-                }
-            }
-        } else {
-            // Cached file has not expired. Attempt to read from cached file.
-            $xml = load_feed_from_file($file);
-            if (!empty($xml) && empty($xml->xml) && !empty($xml->ERROR)) {
-                // Failed to load from cache, attempt to read from source
-                if ($CFG->debug) {
-                    if (!empty($xml) && !empty($xml->ERROR)) {
-                       $errorstring = $xml->ERROR . $errorstring .'<br />';
-                    }
-                    $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
-                }
-                $xml = load_feed_from_url($url);
-                if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
-                    // success
-                    $writetofile = true;
-                } else {
-                    // Failed to read from source as well!
-                    if ($CFG->debug) {
-                        if (!empty($xml) && !empty($xml->ERROR)) {
-                           $errorstring = $xml->ERROR . $errorstring;
-                        }
-                        $errorstring = $urlfailurestring .'<br /><br />'. $errorstring .'<br />';
-                        $err->ERROR = $errorstring .'<br />';
-                        return $err;
-                    }
-                    return;
-                }
-            }
+        if (empty($data)) {
+            // error getting stat on file, return
+            return false;
         }
-    } else { 
-        // No cached file at all, read from source
+        if ( ($now - $data[10]) > $secs) {
+            // The cached file has expired.
+            return false;
+        }
+        // no error, cache file is valid
+        return true;
+    }
+}
+
+/**
+ *   Determines whether or not to get a news feed remotely or from cache and reads it into a string
+ * @param int rssid - id of feed in blog_rss table
+ * @param string url - url of remote feed
+ * @param string type - either 'A' or 'R' where A is an atom feed and R is either rss or rdf
+ * @return Atom|MagpieRSS|null This function returns an Atom object in the case of an Atom feed, a MagpieRSS object in the case of an RDF/RSS feed or null if there was an error loading the remote feed.
+ * NOTE that this function requires allow_url_fopen be On in your php.ini file 
+ * (it may be off for security by your web host)
+ */
+function rss_get_feed($rssid, $url, $type) {
+    global $CFG;
+    $errorstring = '';
+    $urlfailurestring = '<p>Failed to open remote news feed at: ' . $url .'</p><ul>Troubleshooting suggestions:<li> Ensure that the setting <strong>allow_url_fopen</strong> is <strong>On</strong> in the php.ini. For more details on why this setting is needed for this file wrapper call to work please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a></li><li>Ensure that you do not have a proxy enabled between your server and the remote site. If it is possible for you to launch a web browser on your server then you can test this by load the remote URL on the server itself.</li></ul>';
+    $filefailurestring = 'Could not open the file located at: ';
+    $file = $CFG->dataroot .'/cache/rsscache/'. $rssid .'.xml';
+
+    // some flags to be used in managing where the rss data is read from
+    $writetofile = false;
+    $readfromfile = false;
+    $readfromurl = false;
+    $cachefilevalid = false;
+
+    if (rss_cache_valid_by_id($rssid)) {
+        //valid xml feed info in cache, read from file
+        $readfromfile = true;
+        $cachefilevalid = true;
+    } else {
+        // xml feed missing or expired, read from source url
+        $readfromurl = true;
+    }
+    
+    if ($readfromfile) {
+        // Cached file has not expired. Attempt to read from cached file.
+        $xml = load_feed_from_file($file);
+        if (!empty($xml) && empty($xml->xml) && !empty($xml->ERROR)) {
+            // Failed to load from cache, attempt to read from source
+            if ($CFG->debug) {
+                if (!empty($xml) && !empty($xml->ERROR)) {
+                    $errorstring = $xml->ERROR . $errorstring .'<br />';
+                }
+                $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
+            }
+            $readfromurl = true; // read from file failed, try to get from source next
+        }
+    }
+    
+    if ($readfromurl) {
         $xml = load_feed_from_url($url);
         if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
             //success
             $writetofile = true;
         } else {
-            // Failed to read from source url!
+            // Failed to load remote feed. Since the file exists attempt to read from cache
             if ($CFG->debug) {
-                if (!empty($xml) && !empty($xml->ERROR)) {
-                   $errorstring = $xml->ERROR . $errorstring .'<br />';
+                if (isset($xml) && isset($xml->ERROR)) {
+                    $errorstring = $xml->ERROR . $errorstring .'<br />';
                 }
                 $errorstring = $urlfailurestring .'<br /><br />'. $errorstring .'<br />';
-                $err->ERROR = $errorstring .'<br />';
-                return $err;
             }
-            return;
+            $xml = load_feed_from_file($file);
+            if (!empty($xml) && empty($xml->xml) && !empty($xml->ERROR)) {
+                // Failed to load from cache as well!
+                if ($CFG->debug) {
+                    if (!empty($xml) && !empty($xml->ERROR)) {
+                        $errorstring = $xml->ERROR . $errorstring;
+                    }
+                    $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
+                    $err->ERROR = $errorstring .'<br />';
+                    return $err;
+                }
+            }
         }
     }
-    
+
     // echo 'DEBUG: raw xml was loaded successfully:<br />';//debug
     //print_object($xml); //debug
     
