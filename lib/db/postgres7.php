@@ -598,6 +598,9 @@ function main_upgrade($oldversion=0) {
         execute_sql("CREATE INDEX {$CFG->prefix}user_auth_idx ON {$CFG->prefix}user (auth)"); 
     }
 
+    if ($oldversion < 2004092000) { //redoing this just to be sure that column type is text (postgres type changes didnt work when this was done first time)
+        table_column("config", "value", "value", "text", "", "", "");
+    }
     
     return $result;
 
