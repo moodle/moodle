@@ -138,7 +138,11 @@ class quiz_report extends quiz_default_report {
         $bestgrade = format_float($bestgrade);
     
         foreach ($attempts as $attempt) {
-            $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
+            if ($quiz->sumgrades) {   // Prevent divide-by-zero
+                $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
+            } else {
+                $attemptgrade = 0;
+            }
             $attemptdate = userdate($attempt->timestart, $timeformat);
             if ($attempt->timefinish) {
                 $attemptlapse = format_time($attempt->timefinish - $attempt->timestart);
