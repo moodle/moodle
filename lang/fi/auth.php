@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.8 dev (2002123000)
+      // auth.php - created with Moodle 1.0.8 beta test (2003010400)
 
 
 $string['auth_dbdescription'] = "Tämä moduli tarkistaa ulkoisen tietokannan taulusta onko käyttäjätunnuksen ja salasanan.";
@@ -9,6 +9,7 @@ $string['auth_dbfielduser'] = "Käyttätunnus sarakkeen nimi";
 $string['auth_dbhost'] = "Tietokanta palvelin";
 $string['auth_dbname'] = "Tietokannan nimi";
 $string['auth_dbpass'] = "Salasana käyttäjätunnukselle";
+$string['auth_dbpasstype'] = "Määritä salasanakentän käyttämä muoto. MD5-salaus on hyödyllinen jos haluat käyttää muita web-sovelluksia, kuten PostNukea.";
 $string['auth_dbtable'] = "Taulun nimi";
 $string['auth_dbtitle'] = "Käytä ulkoista tietokantaa";
 $string['auth_dbtype'] = "Tietokannan tyyppi (Katso <A HREF=../lib/adodb/readme.htm#drivers>ADOdb dokumentoinnista</A> yksityiskohdat)";
@@ -53,6 +54,8 @@ $string['changepasswordhelp'] = "Tässä osoitteessa käyttäjät voivat vaihtaa unoh
 $string['chooseauthmethod'] = "Valitse käyttäjäntunnistus tapa: ";
 $string['guestloginbutton'] = "Kirjaudu vieraana painike";
 $string['instructions'] = "Ohjeeet";
+$string['md5'] = "MD5-salaus";
+$string['plaintext'] = "Paljas teksti";
 $string['showguestlogin'] = "Voit näyttää tai piiloittaa vieraskäyttäjä painikkeen kirjaantumissivulla.";
 
 ?>

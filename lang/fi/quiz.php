@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.8 dev (2002123000)
+      // quiz.php - created with Moodle 1.0.8 beta test (2003010400)
 
 
 $string['addselectedtoquiz'] = "Lisää valittu tenttiin";
+$string['allowreview'] = "Salli tarkastelu";
 $string['alreadysubmitted'] = "Näyttäisi siltä että olet jo lähettänyt tämän vastauksen.";
 $string['alwaysavailable'] = "Aina esillä";
 $string['answer'] = "Vastaus";
@@ -65,6 +66,8 @@ $string['noanswers'] = "Vastausta ei ole valittu!";
 $string['noattempts'] = "Kukaan ei ole yrittänyt tätä tenttiä.";
 $string['nomoreattempts'] = "Enempää erityksiä ei sallita";
 $string['noquestions'] = "Kysymyksiä ei ole vielä lisätty.";
+$string['noreview'] = "Et voi tarkastella tätä tenttiä";
+$string['noreviewuntil'] = "Et voi tarkastella tätä tenttiä ennen \$a";
 $string['publish'] = "Julkaise";
 $string['question'] = "Kysymys";
 $string['questioninuse'] = "Kysymys '\$a' on jo käytössä:";

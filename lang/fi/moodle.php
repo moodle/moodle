@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.8 dev (2002123000)
+      // moodle.php - created with Moodle 1.0.8 beta test (2003010400)
 
 
 $string['action'] = "Toiminta";
@@ -280,7 +280,7 @@ $string['makeafolder'] = "Luo kansio";
 $string['makeeditable'] = "Jos annat web-palveimelle kirjoitusoikeudet kansioon '\$a' . Voit muokata tätä tiedostoa suoraan tältä sivulta.";
 $string['managedatabase'] = "Huolla tietokantaa";
 $string['markthistopic'] = "Merkitse tämä aihe aktiiviseksi.";
-$string['maximumchars'] = "Maksimi määrä \$a merkkejä";
+$string['maximumchars'] = "Maksimi määrä \$a merkkiä";
 $string['maximumgrade'] = "Maksimi luokka";
 $string['maximumshort'] = "Maksimi";
 $string['maxsize'] = "Maksimi koko: \$a";
