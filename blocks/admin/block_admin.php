@@ -42,10 +42,10 @@ class CourseBlock_admin extends MoodleBlock {
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
 
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.SITEID.'">'.get_string('backup').'...</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" height="16" width="16" alt="">';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" height="16" width="16" alt="" />';
 
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata">'.get_string('restore').'...</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" height="16" width="16" alt="">';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" height="16" width="16" alt="" />';
         }
 
         if (iscreator()) {
