@@ -1698,7 +1698,7 @@ function make_unique_id_code($version=1) {
         $hostname = $_ENV["SERVER_NAME"];
     }
 
-    $date = date("ymdHis");
+    $date = gmdate("ymdHis");
 
     $random =  random_string(6);
 
