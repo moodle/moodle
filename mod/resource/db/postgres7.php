@@ -49,6 +49,29 @@ function resource_upgrade($oldversion) {
         modify_database("", "UPDATE prefix_resource SET type='file' WHERE type='program';");
     }
     
+    if ($oldversion < 2004073000) {
+        /// Make sure the "frame" flag is turned on for things that can support it (for a smooth upgrade)
+        require_once("$CFG->dirroot/files/mimetypes.php");
+        if ($resources = get_records_select('resource', "type = 'file' AND options = '' AND popup = ''")) {
+            foreach ($resources as $resource) {
+                $mimetype = mimeinfo("type", $resource->reference);
+                $embedded = false;
+                if (in_array($mimetype, array('image/gif','image/jpeg','image/png')) 
+                    or (substr($mimetype, 0, 10) == "video/x-ms")
+                    or ($mimetype == "audio/mp3")
+                    or ($mimetype == "video/quicktime")) {
+                    $embedded = true;
+                }
+                if (!$embedded) {   /// Make sure it's in a frame
+                    $newresource->id = $resource->id;
+                    $newresource->options = 'frame';
+                    update_record('resource', $newresource);
+                }
+            }
+        }
+        rebuild_course_cache();
+    }
+
     return true;
 }
 
