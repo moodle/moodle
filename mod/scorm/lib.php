@@ -112,7 +112,7 @@ function scorm_delete_instance($id) {
 /// this function will permanently delete the instance 
 /// and any data that depends on it.  
     
-    require('../config.php');
+    global $CFG;
 
     if (! $scorm = get_record('scorm', 'id', $id)) {
         return false;
