@@ -139,7 +139,7 @@ function auth_get_userinfo($username){
         $user_entry = ldap_get_entries($ldapconnection, $user_info_result);
         foreach ($attrmap as $key=>$value){
             if(isset($user_entry[0][strtolower($value)][0])){
-                $result[$key]=$user_entry[0][strtolower($value)][0];
+                $result[$key]=utf8_decode($user_entry[0][strtolower($value)][0]);
             }
         }
     }
