@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
       // forum.php - created with Moodle 1.0.6 (2002102600)
-// Traducido por Claudio Tavares Mastrangelo
-// enlaceacademico.com
+
+
 $string['addanewdiscussion'] = "Colocar un mensaje aquí";
 $string['allowchoice'] = "Permitir a todos escoger";
 $string['allowdiscussions'] = "Permitir que cualquier \$a abra nuevos temas";
@@ -68,33 +68,20 @@ $string['openmode1'] = "No permitir debates, permitir respuestas";
 $string['openmode2'] = "Permitir debates y respuestas";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para hacer cualquier cambio.";
-$string['postingtip'] = "<B>Recomendaciones</B><BR>
-
-Cuando responde:
-
-<UL>
-
-<LI>lea el mensaje con cuidado y atención
-
-<LI>haga comentarios precisos y pertinentes
-
-</UL>
-
-
-
-Cuando escribe:
-
-<UL>
-
-<LI>mantenga sus mensajes cortos y sobre el tema
-
-<LI>piense antes de escribir, para que se exprese con claridad
-
-<LI>Tipo de preguntas
-
+$string['postingtip'] = "<B>Recomendaciones</B><BR>
+Cuando responde:
+<UL>
+<LI>lea el mensaje con cuidado y atención
+<LI>haga comentarios precisos y pertinentes
+</UL>
+
+Cuando escribe:
+<UL>
+<LI>mantenga sus mensajes cortos y sobre el tema
+<LI>piense antes de escribir, para que se exprese con claridad
+<LI>Tipo de preguntas
 </UL>";
-$string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
-
+$string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
 Para responder a este mensaje diríjase a:";
 $string['postrating1'] = "Pertinete";
 $string['postrating2'] = "Ambos";

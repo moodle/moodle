@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.6 beta 1 (2002102200)
-// Traducido por Claudio Tavares Mastrangelo
-// enlaceacademico.com
+      // quiz.php - created with Moodle 1.0.6 (2002102600)
+
+
 $string['addselectedtoquiz'] = "Agregar al cuestionario";
 $string['alreadysubmitted'] = "Parece que usted ya soemtió este cuestionario";
 $string['alwaysavailable'] = "Siempre disponible";
@@ -45,6 +45,8 @@ $string['false'] = "Falso";
 $string['feedback'] = "Respuesta";
 $string['filloutoneanswer'] = "Debes llenar al menos una respuesta posible. Las respuestas en blanco no cuentan.";
 $string['fillouttwochoices'] = "Debes elegir al menos dos opciones. Las opciones en blanco no cuentan.";
+$string['fractionsaddwrong'] = "La calificación colocada no suma 100%% sino \$a%%<BR>¿Desea regresar y corregir esto?";
+$string['fractionsnomax'] = "Una de las preguntas debe ser 100%% para que sea<BR>posible alcanzar la calificación máxima<BR>¿Desea regresar y corregir esto?";
 $string['gradeaverage'] = "Promedio de calificaciones";
 $string['gradehighest'] = "Calificación más alta";
 $string['grademethod'] = "Método de calificación";

@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
       // assignment.php - created with Moodle 1.0.6 (2002102600)
-// Traducido por Claudio Tavares Mastrangelo
-// enlaceacademico.com
+
+
 $string['assignmentdetails'] = "Detalles de la tarea";
 $string['assignmentname'] = "Título";
 $string['assignmenttype'] = "Tipo de tarea";
@@ -23,7 +23,14 @@ $string['submissions'] = "Envíos";
 $string['submitassignment'] = "Enviar su tarea";
 $string['submitted'] = "Enviada";
 $string['typeuploadsingle'] = "Subir un solo archivo, valor entre 0 - 100 puntos";
+$string['uploadbadname'] = "El nombre contiene caracteres incompatibles y no se pudo cargar al sistema.";
 $string['uploadedfiles'] = "Archivos enviados";
+$string['uploaderror'] = "Ha ocurrido un error cuando se guardaba el archivo en el servidor.";
+$string['uploadfailnoupdate'] = "El archivo se guardó con éxito, pero su tarea no.";
+$string['uploadfiletoobig'] = "Lo sentimos, su archivo es demasiado grande.";
+$string['uploadnofilefound'] = "No seleccionó ningún archivo.";
+$string['uploadnotregistered'] = "'\$a' se cargó correctamente en el sistema pero no se registró la tarea.";
+$string['uploadsuccess'] = "Envío confirmado.";
 $string['viewsubmissions'] = "Ver \$a tareas enviadas";
 $string['yoursubmission'] = "Ud. envió";
 

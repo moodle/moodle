@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
       // choice.php - created with Moodle 1.0.6 (2002102600)
-// Traducido por Claudio Tavares Mastrangelo
-// enlaceacademico.com
+
+
 $string['answered'] = "Contestado";
 $string['choice'] = "Opción \$a";
 $string['choicename'] = "Título de la consulta";
