@@ -75,6 +75,13 @@ define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireba
 $ALLOWED_TAGS =
 '<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>';
 
+/**
+ * Allowed protocols - array of protocols that are safe to use in links and so on
+ * @global string $ALLOWED_PROTOCOLS
+ */
+$ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'color');
+
+
 /// Functions
 
 /**
@@ -622,46 +629,35 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
  * @param string $targetwindow The name of the target page to open the linked page in. 
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
- *    Make sure it's W3C conformant (<form name=""> has to go for example)<br>
- *    Code it in a way that doesn't require JS to be on. Example code:<br>
- *<code>
- *        $selector .= '<form method="get" action="" style="display: inline;"><span>';
- *        $selector .= '<input type="hidden" name="var" value="value" />';
- *        if(!empty($morevars)) {
- *            $getarray = explode('&amp;', $morevars);
- *            foreach($getarray as $thisvar) {
- *                $selector .= '<input type="hidden" name="'.strtok($thisvar, '=').'" value="'.strtok('=').'" />';
- *            }
- *        }
- *        $selector .= '<select name="" onchange="form.submit();">';
- *        foreach($options as $id => $text) {
- *            $selector .= "\n<option value='$id'";
- *            if($option->id == $selected) {
- *                $selector .= ' selected';
- *            }
- *            $selector .= '>'.$text."</option>\n";
- *        }
- *        $selector .= '</select>';
- *        $selector .= '<noscript id="unique_id" style="display: inline;"> <input type="submit" value="'.get_string('somestring').'" /></noscript>';
- *        $selector .= '<script type="text/javascript">'."\n<!--\n".'document.getElementById("unique_id").style.display = "none";'."\n<!--\n".'</script>';
- *        $selector .= '</span></form>';
- * </code>
  */
 function popup_form($common, $options, $formname, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self') {
 
-
-    global $CFG;
+    global $CFG; 
+    static $jump, $choose;   /// Locally cached, in case there's lots on a page
 
     if (empty($options)) {
         return '';
     }
 
-    if ($nothing == 'choose') {
-        $nothing = get_string('choose') .'...';
+    if (!isset($jump)) {
+        $jump = get_string('jump');
     }
 
-    $startoutput = '<form action="" method="get" target="'.$CFG->framename.'" name="'.$formname.'">';
-    $output = "<select name=\"popup\" onchange=\"$targetwindow.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value;\">\n";
+    if ($nothing == 'choose') {
+        if (!isset($choose)) {
+            $choose = get_string('choose');
+        }
+        $nothing = $choose.'...';
+    }
+
+    $startoutput = '<form action="'.$CFG->wwwroot.'/course/jumpto.php"'.
+                        ' method="get"'.
+                        ' target="'.$CFG->framename.'"'.
+                        ' name="'.$formname.'"'.
+                        ' style="display: inline;">';
+
+    $output = '<select name="jump" onchange="'.$targetwindow.'.location=document.'.$formname.
+                       '.jump.options[document.'.$formname.'.jump.selectedIndex].value;\">'."\n";
 
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
@@ -675,7 +671,7 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
             } else {
                 $inoptgroup = true;
             }
-            $output .= '   <optgroup label="'. $label .'">';   // Plain labels
+            $output .= '   <optgroup label="'. substr($label,2) .'">';   // Plain labels
             continue;
         } else {
             $output .= '   <option value="'. $common . $value .'"';
@@ -693,6 +689,12 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
         $output .= '    </optgroup>';
     }
     $output .= '</select>';
+    $output .= '<noscript id="noscript'.$formname.'" style="display: inline;">';
+    $output .= '<input type="submit" value="'.$jump.'" /></noscript>';
+    $output .= '<script type="text/javascript">'.
+               "\n<!--\n".
+               'document.getElementById("noscript'.$formname.'").style.display = "none";'.
+               "\n-->\n".'</script>';
     $output .= '</form>' . "\n";
 
     if ($help) {
@@ -1063,30 +1065,28 @@ function cleanAttributes($str){
  */
 function cleanAttributes2($htmlTag){
 
-    global $CFG;
+    global $CFG, $ALLOWED_PROTOCOLS;
     require_once($CFG->libdir .'/kses.php');
 
     $htmlTag = kses_stripslashes($htmlTag);
-    if (substr($htmlTag, 0, 1) != '<'){
+    if (substr($htmlTag, 0, 1) != '<') {
         return '&gt;';  //a single character ">" detected
     }
-    if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9]+)([^>]*)>?$%', $htmlTag, $matches)){
+    if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9]+)([^>]*)>?$%', $htmlTag, $matches)) {
         return ''; // It's seriously malformed
     }
     $slash = trim($matches[1]); //trailing xhtml slash
     $elem = $matches[2];    //the element name
     $attrlist = $matches[3]; // the list of attributes as a string
 
-    $allowed_protocols = array('http', 'https', 'ftp', 'news', 'mailto', 'teamspeak', 'gopher', 'color');
-    $attrArray =  kses_hair($attrlist, $allowed_protocols) ;
+    $attrArray = kses_hair($attrlist, $ALLOWED_PROTOCOLS);
 
     $attStr = '';
-    foreach ($attrArray as $arreach)
-    {
+    foreach ($attrArray as $arreach) {
         $attStr .=  ' '.strtolower($arreach['name']).'="'.$arreach['value'].'" ';
     }
     $xhtml_slash = '';
-    if (preg_match('%/\s*$%', $attrlist)){
+    if (preg_match('%/\s*$%', $attrlist)) {
         $xhtml_slash = ' /';
     }
     return '<'. $slash . $elem . $attStr . $xhtml_slash .'>';
