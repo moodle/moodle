@@ -17,17 +17,17 @@ $string['auth_ldapdescription'] = "This method provides authentication against a
                                   entry in its database. This module can read user attributes from LDAP and prefill 
                                   wanted fields in Moodle.  For following logins only the username and 
                                   password are checked.";
-$string['auth_ldap_bind_dn'] = "If you like to use bind-user to search users, specify it here. Someting like 'cn=ldapuser,ou=public,o=org'";
+$string['auth_ldap_bind_dn'] = "If you want to use bind-user to search users, specify it here. Someting like 'cn=ldapuser,ou=public,o=org'";
 $string['auth_ldap_bind_pw'] = "Password for bind-user.";
-$string['auth_ldap_contexts'] = "List of contexts where users are located. Separate different contexts with ';'. Something like 'ou=users,o=org; ou=others,o=org'";
-$string['auth_ldap_host_url'] = "Specify LDAP host in URL-form like 'ldap://ldap.myorg.com/' or 'ldaps//ldap.myorg.com/' ";
+$string['auth_ldap_contexts'] = "List of contexts where users are located. Separate different contexts with ';'. For example: 'ou=users,o=org; ou=others,o=org'";
+$string['auth_ldap_host_url'] = "Specify LDAP host in URL-form like 'ldap://ldap.myorg.com/' or 'ldaps://ldap.myorg.com/' ";
 $string['auth_ldap_search_sub'] = "Put value &lt;&gt; 0 if  you like to search users from subcontexts.";
-$string['auth_ldap_update_userinfo'] = "Update user information (firstname, lastname, address..) from ldap to Moodle. Look /auth/ldap/attr_mappings.php for mapping information";
+$string['auth_ldap_update_userinfo'] = "Update user information (firstname, lastname, address..) from LDAP to Moodle. Look at /auth/ldap/attr_mappings.php for mapping information";
 $string['auth_ldap_user_attribute'] = "The attribute used to name/search users. Usually 'cn'.";
 
 $string['auth_imaptitle'] = "Use an IMAP server";
 $string['auth_imapdescription'] = "This method uses an IMAP server to check whether a given username and password is valid.";
-$string['auth_imaphost'] = "The IMAP server address. Use an IP number, not DNS name.";
+$string['auth_imaphost'] = "The IMAP server address. Use the IP number, not DNS name.";
 $string['auth_imaptype'] = "The IMAP server type.  See the help page (above) for more details.";
 $string['auth_imapport'] = "IMAP server port number. Usually this is 143 or 993.";
 
@@ -44,12 +44,12 @@ $string['auth_dbfieldpass'] = "Name of the field containing passwords";
 
 $string['auth_nntptitle'] = "Use an NNTP server";
 $string['auth_nntpdescription'] = "This method uses an NNTP server to check whether a given username and password is valid.";
-$string['auth_nntphost']   = "The NNTP server address. Use an IP number, not DNS name.";
-$string['auth_nntpport']   = "119 is the most common port used";
+$string['auth_nntphost']   = "The NNTP server address. Use the IP number, not DNS name.";
+$string['auth_nntpport']   = "Server port (119 is the most common)";
 
 $string['auth_pop3title'] = "Use a POP3 server";
 $string['auth_pop3description'] = "This method uses a POP3 server to check whether a given username and password is valid.";
-$string['auth_pop3host']   = "The POP3 server address. Use an IP number, not DNS name.";
+$string['auth_pop3host']   = "The POP3 server address. Use the IP number, not DNS name.";
 $string['auth_pop3type']  = "Server type. If your server uses certificate security, choose pop3cert.";
 $string['auth_pop3port']   = "Server port (110 is the most common)";
 
