@@ -262,7 +262,7 @@ if ($INSTALL['stage'] == 3) {
 /// If we can open a file then we know that the admin name is correct.
 
 if ($nextstage == 4 or $INSTALL['stage'] == 4) {
-    if (($fh = @fopen($INSTALL['wwwroot'].'/'.$INSTALL['admindirname'].'/site.html', 'r')) !== false) {
+    if (($fh = @fopen($INSTALL['dirroot'].'/'.$INSTALL['admindirname'].'/site.html', 'r')) !== false) {
         $nextstage = ($goforward) ? 5 : 3;
         fclose($fh);
     } else {
