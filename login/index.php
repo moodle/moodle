@@ -43,6 +43,7 @@
             }
 
             $USER = $user;
+            $USER->description = "";       // No need to cart this around
             $USER->loggedin = true;
             $USER->site = $CFG->wwwroot;   // for added security
             
