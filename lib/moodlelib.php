@@ -412,7 +412,7 @@ function usertimezone($timezone=99) {
 function error ($message, $link="") {
     global $CFG, $SESSION;
 
-    print_header("Error");
+    print_header(get_string("error"));
     echo "<BR>";
     print_simple_box($message, "center", "", "#FFBBBB");
    
@@ -463,7 +463,7 @@ function notice ($message, $link="") {
 
     echo "<BR>";
     print_simple_box($message, "center", "", "$THEME->cellheading");
-    print_heading("<A HREF=\"$link\">Continue</A>");
+    print_heading("<A HREF=\"$link\">".get_string("continue")."</A>");
     print_footer();
     die;
 }
@@ -474,9 +474,9 @@ function notice_yesno ($message, $linkyes, $linkno) {
     print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<P ALIGN=CENTER><FONT SIZE=3>$message</FONT></P>";
     echo "<P ALIGN=CENTER><FONT SIZE=3><B>";
-    echo "<A HREF=\"$linkyes\">Yes</A>";
+    echo "<A HREF=\"$linkyes\">".get_string("yes")."</A>";
     echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-    echo "<A HREF=\"$linkno\">No</A>";
+    echo "<A HREF=\"$linkno\">".get_string("no")."</A>";
     echo "</B></FONT></P>";
     print_simple_box_end();
 }
@@ -490,7 +490,7 @@ function redirect($url, $message="", $delay=0) {
         print_header();
         echo "<CENTER>";
         echo "<P>$message</P>";
-        echo "<P>( <A HREF=\"$url\">Continue</A> )</P>";
+        echo "<P>( <A HREF=\"$url\">".get_string("continue")."</A> )</P>";
         echo "</CENTER>";
     }
     die; 
@@ -529,10 +529,10 @@ function execute_sql($command) {
     $result = $db->Execute("$command");
 
     if ($result) {
-        echo "<P><FONT COLOR=green>SUCCESS</FONT></P>";
+        echo "<P><FONT COLOR=green><B>".get_string("success")."</B></FONT></P>";
         return true;
     } else {
-        echo "<P><FONT COLOR=red>ERROR</FONT></P>";
+        echo "<P><FONT COLOR=red><B>".get_string("error")."</B></FONT></P>";
         return false;
     }
 }
@@ -1576,8 +1576,6 @@ function moodle_needs_upgrading() {
         return true;
     }
     return false;
-
-
 }
 
 

@@ -97,6 +97,7 @@ $string[enrolmentkeyhint] = "That enrolment key was incorrect, please try again<
 $string[entercourse] = "Click to enter this course";
 $string[enteremailaddress] = "Enter in your email address to reset your 
    password and have the new password sent to you via email.";
+$string[error] = "Error";
 $string[files] = "Files";
 $string[firstname] = "First name";
 $string[firsttime] = "Is this your first time here?";
@@ -263,6 +264,7 @@ $string[sitesettings] = "Site settings";
 $string[someallowguest] = "Some courses may allow guest access";
 $string[startdate] = "Course start date";
 $string[startsignup] = "Start now by creating a new account!";
+$string[success] = "Success";
 $string[summary] = "Summary";
 $string[summaryof] = "Summary of \$a";
 $string[supplyinfo] = "Please supply some information about yourself";
