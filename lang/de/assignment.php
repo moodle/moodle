@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.6 dev (2002101001)
+      // assignment.php - created with Moodle 1.0.6 dev 3 (2002102101)
 
 
 $string['assignmentdetails'] = "Aufgabendetails";
@@ -23,7 +23,14 @@ $string['submissions'] = "Einträge";
 $string['submitassignment'] = "Tragen Sie Ihre Aufgabe ein unter Verwendung dieses Formulars";
 $string['submitted'] = "Eingetragen";
 $string['typeuploadsingle'] = "Laden Sie einzige Datei hoch, Wert zwischen 0 - 100 Punkten";
+$string['uploadbadname'] = "Dieser Dateiname enthält unzulässige Zeichen und kann nicht hochgeladen erden.";
 $string['uploadedfiles'] = "hochgeladene Dateien";
+$string['uploaderror'] = "Beim Hochladen der Datei trat ein Fehler auf";
+$string['uploadfailnoupdate'] = "Die Datei wurde korrekt hochgeladen, aber Ihr Eintrag kann nicht aktualisiert werden!";
+$string['uploadfiletoobig'] = "Entschuldigung, aber diese Datei ist zu groß (Die Begrenzung ist \$a Bytes)";
+$string['uploadnofilefound'] = "Es wurke keine Datei gefunden . Sind Sie sicher, dass Sie eine für das Hochladen ausgewählt haben?";
+$string['uploadnotregistered'] = "'\$a' wurde korrekt hochgeladen, aber der Eintrag nicht registriert'";
+$string['uploadsuccess'] = "'\$a' wurde erfolgreich hochgeladen";
 $string['viewsubmissions'] = "Zeige \$a eingetragen Aufgaben ";
 $string['yoursubmission'] = "Ihre Eintrag";
 
