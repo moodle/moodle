@@ -303,6 +303,7 @@ if ($nextstage == 5) {
     $str .= '$CFG->wwwroot   = \''.$INSTALL['wwwroot']."';\r\n";
     $str .= '$CFG->dirroot   = \''.$INSTALL['dirroot']."';\r\n";
     $str .= '$CFG->dataroot  = \''.$INSTALL['dataroot']."';\r\n";
+    $str .= '$CFG->admin     = \''.$INSTALL['admindirname']."';\r\n";
     $str .= "\r\n";
 
     $str .= '$CFG->directorypermissions = 0777;'."\r\n";
