@@ -122,6 +122,8 @@ function tex_filter ($courseid, $text) {
     preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$/is', $text, $matches);  
     for ($i=0; $i<count($matches[0]); $i++) {
         $texexp = $matches[1][$i] . $matches[2][$i];
+        $texexp = str_replace('<nolink>','',$texexp);
+        $texexp = str_replace('</nolink>','',$texexp);
         $md5 = md5($texexp);
         if (! $texcache = get_record("cache_filters","filter","tex", "md5key", $md5)) {
             $texcache->filter = 'tex';

@@ -130,6 +130,8 @@ function algebra_filter ($courseid, $text) {
     preg_match_all('/<algebra>(.+?)<\/algebra>|@@(.+?)@@/is', $text, $matches);  
     for ($i=0; $i<count($matches[0]); $i++) {
         $algebra = $matches[1][$i] . $matches[2][$i];
+        $algebra = str_replace('<nolink>','',$algebra);
+        $algebra = str_replace('</nolink>','',$algebra);
         $md5 =  md5($algebra);
         $filename =  $md5  . ".gif";
         if (! $texcache = get_record("cache_filters","filter","algebra", "md5key", $md5)) {
