@@ -38,7 +38,8 @@
             $USER->site = $CFG->wwwroot;   // for added security
             
             if ($USER->username == "guest") {
-                $USER->lang = $CFG->lang;  // Guest language always same as site
+                $USER->lang       = $CFG->lang;               // Guest language always same as site
+                $USER->firstname  = get_string("guestuser");  // Name always in current language
             }
     
             if (!update_user_in_db()) {
