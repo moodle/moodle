@@ -120,12 +120,12 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
     // arguments to this function.
 
-    $courses = array_diff($courses, array(1));
-    if(count($courses) == 1) {
-        $morehref = '&amp;course='.reset($courses);
-    }
-    else {
-        $morehref = '';
+    $morehref = '';
+    if(!empty($courses)) {
+        $courses = array_diff($courses, array(1));
+        if(count($courses) == 1) {
+            $morehref = '&amp;course='.reset($courses);
+        }
     }
 
     // We want to have easy access by day, since the display is on a per-day basis.
@@ -305,12 +305,12 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
     // arguments to this function.
 
-    $courses = array_diff($courses, array(1));
-    if(count($courses) == 1) {
-        $morehref = '&amp;course='.reset($courses);
-    }
-    else {
-        $morehref = '';
+    $morehref = '';
+    if(!empty($courses)) {
+        $courses = array_diff($courses, array(1));
+        if(count($courses) == 1) {
+            $morehref = '&amp;course='.reset($courses);
+        }
     }
 
     if($events !== false) {
