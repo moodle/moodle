@@ -115,6 +115,42 @@ function forum_upgrade($oldversion) {
       modify_database('','CREATE INDEX prefix_forum_user_forum_idx ON prefix_forum_read (userid, forumid);');
       modify_database('','CREATE INDEX prefix_forum_user_discussion_idx ON prefix_forum_read (userid, discussionid);');
       modify_database('','CREATE INDEX prefix_forum_user_post_idx ON prefix_forum_read (userid, postid);');
+
+    /// Enter initial read records for all posts older than 1 day.
+
+    require $CFG->dirroot.'/mod/forum/lib.php';
+    /// Timestamp for old posts (and therefore considered read).
+    $dateafter = time() - ($CFG->forum_oldpostdays*24*60*60);
+    /// Timestamp for one day ago.
+    $onedayago = time() - (24*60*60);
+
+    /// Get all discussions that have had posts since the old post date.
+    if ($discrecords = get_records_select('forum_discussions', 'timemodified > '.$dateafter,
+                                          'course', 'id,course,forum,groupid')) {
+        $currcourse = 0;
+        $users = 0;
+        foreach ($discrecords as $discrecord) {
+            if ($discrecord->course != $currcourse) {
+            /// Discussions are ordered by course, so we only need to get any course's users once.
+                $currcourse = $discrecord->course;
+                $users = get_course_users($currcourse);
+            }
+            /// If this course has users, and posts more than a day old, mark them for each user.
+            if (is_array($users) &&
+                ($posts = get_records_select('forum_posts', 'discussion = '.$discrecord->id.
+                                             ' AND modified < '.$onedayago, '', 'id,discussion,modified'))) {
+                foreach($posts as $post) {
+                    foreach ($users as $user) {
+                        /// If its a group discussion, make sure the user is in the group.
+                        if (!$discrecord->groupid || ismember($discrecord->groupid, $user->id)) {
+                            forum_tp_mark_post_read($user->id, $post, $discrecord->forum);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
   }
 
   return true;
