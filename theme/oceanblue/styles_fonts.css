@@ -105,12 +105,12 @@ h4 {
     font-size:0.8em;
 }
 
-.headingblock .title {
+.headingblock {
     font-weight: normal;
 }
+
 .headingblock .link {
     font-size: 0.9em;
-    font-weight: normal;
 }
 
 .files .file {
@@ -142,7 +142,7 @@ h4 {
     font-size:1.3em;
 }
 
-#breadcrumb {
+.breadcrumb {
     font-size:0.9em;
     font-weight:normal;
 }

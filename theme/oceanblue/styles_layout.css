@@ -39,8 +39,8 @@ h6.main {
 
 #layout-table {
     width:100%;
-    border-spacing:5px;
     border-collapse:separate;
+    margin-top: 8px;
 }
 
 #layout-table #left-column,
@@ -48,6 +48,11 @@ h6.main {
 #layout-table #right-column
 {
     vertical-align:top;
+}
+
+#layout-table #middle-column {
+    padding-left:12px;
+    padding-right:12px;
 }
 
 .clearer {
@@ -205,18 +210,25 @@ table.formtable tbody th
     text-align:right;
 }
 
-#nav-bar {
+.navbar {
     padding:3px 0.5em;
     height:1.3em;
+    border-width:1px;
+    border-style:solid;
 }
 
-#breadcrumb {
+.navbar .breadcrumb {
     float:left;
     margin:0.2em 0em;
 }
 
-#navbutton {
+.navbar .navbutton,
+.navbar .menu {
     float:right;
+}
+
+#footer .navbar {
+    margin-top: 4em;
 }
 
 
