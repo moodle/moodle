@@ -4,49 +4,48 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
     global $CFG, $USER;
 
 
-    $user = get_record("user", "id", $entry->userid);
-    $strby = get_string("writtenby", "glossary");
+    $user = get_record('user', 'id', $entry->userid);
+    $strby = get_string('writtenby', 'glossary');
 
-    echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
+    echo '<table class="glossarypost fullwithauthor">';
 
-    echo "\n<tr valign=\"top\">";
-    echo "\n<td width=\"35\" valign=\"top\" class=\"forumpostpicture\">";
+    echo '<tr valign="top">';
     $return = false;
     if ($entry) {
+        echo '<td class="picture">';
         print_user_picture($user->id, $course->id, $user->picture);
+        echo '</td>';
+        
+        echo '<td class="entryheader">';
 
-        echo "</td>";
-        echo "<td valign=\"top\" width=\"100%\" class=\"forumpostheader\">";
-
-        echo "<b>";
+        echo '<strong>';
         glossary_print_entry_concept($entry);
-		echo "</b><br />";
+		echo '</strong><br />';
 
-        echo "<font size=\"2\">$strby " . fullname($user, isteacher($course->id)) . "</font>";
-        echo "&nbsp;&nbsp;<font size=\"1\">(".get_string("lastedited").": ".
-             userdate($entry->timemodified).")</font>";
-        echo "</td>";
-        echo "\n<td width=\"35\" valign=\"top\" class=\"forumpostheader\">";
+        echo '<span class="author">'.$strby.' '.fullname($user, isteacher($course->id));
+        echo '&nbsp;&nbsp;('.get_string('lastedited').': '.
+             userdate($entry->timemodified).')</span>';
+        echo '</td>';
+        echo '<td class="entryattachment">';
 
         glossary_print_entry_approval($cm, $entry, $mode);
-        glossary_print_entry_attachment($entry,"html","right");
-        echo "</td>";
+        glossary_print_entry_attachment($entry,'html','right');
+        echo '</td>';
 
-        echo "</tr>";
+        echo '</tr>';
 
-        echo "\n<tr valign=\"top\">";
-        echo "\n<td width=\"35\" valign=\"top\" class=\"forumpostside\">&nbsp;</td>";
-        echo "\n<td width=\"100%\" colspan=\"2\" class=\"forumpostmessage\">";
+        echo '<tr valign="top">';
+        echo '<td class="left">&nbsp;</td>';
+        echo '<td colspan="2" class="entry">';
 
         glossary_print_entry_definition($entry);
         $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
         echo ' ';
     } else {
-        echo "<center>";
-        print_string("noentry", "glossary");
-        echo "</center>";
+        echo '<td align="center">';
+        print_string('noentry', 'glossary');
     }
-    echo "</td></tr>";
+    echo '</td></tr>';
 
     echo "</table>\n";
     return $return;
