@@ -5,6 +5,7 @@
     optional_variable($concept);
     optional_variable($courseid,0);
     optional_variable($eid,0);
+    optional_variable($displayformat,-1);
 
     print_header();
     if ( $eid ) {
@@ -19,7 +20,7 @@
                                       " e.usedynalink != 0 and g.usedynalink != 0");
     } 
     if ( $entries ) {
-        glossary_print_dynaentry($courseid, $entries);
+        glossary_print_dynaentry($courseid, $entries, $displayformat);
     }    
     
     close_window_button();

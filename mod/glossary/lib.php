@@ -317,16 +317,18 @@ global $CFG;
                                              (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) $where $orderby");
 }
 
-function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1) {
+function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1) {
     global $THEME, $USER, $CFG;
-
+    if ( $displayformat < 0 ) {
+        $displayformat = $glossary->displayformat;
+    }
     if ($entry->approved or ($USER->id == $entry->userid and !isteacher($course->id)) or $mode == 'approval') {
         $permissiongranted = 0;
-        $formatfile = "$CFG->dirroot/mod/glossary/formats/$glossary->displayformat.php";
+        $formatfile = "$CFG->dirroot/mod/glossary/formats/$displayformat.php";
         $functionname = "glossary_print_entry_by_format";
 
-        $basicformat = ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE or
-                        $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS);
+        $basicformat = ($displayformat == GLOSSARY_FORMAT_SIMPLE or
+                        $displayformat == GLOSSARY_FORMAT_CONTINUOUS);
         if ( !$basicformat ) {
             if ( file_exists($formatfile) ) {
                include_once($formatfile);
@@ -338,10 +340,10 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
            $permissiongranted = 1;
         }
     
-        if ( !$basicformat and $permissiongranted ) {
+        if ( !$basicformat and $permissiongranted or $displayformat >= 2) {
             glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
         } else {
-            switch ( $glossary->displayformat ) {
+            switch ( $displayformat ) {
             case GLOSSARY_FORMAT_SIMPLE:
                 glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
             break;
@@ -1206,7 +1208,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo "</td></tr></table>";
 }
 
-function glossary_print_dynaentry($courseid, $entries) {
+function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
     global $THEME, $USER;
 
     $colour = $THEME->cellheading2;
@@ -1224,7 +1226,7 @@ function glossary_print_dynaentry($courseid, $entries) {
             if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $glossary->course) ) {
                 error("Glossary is misconfigured - don't know what course module it is ");
             }
-            glossary_print_entry($course, $cm, $glossary, $entry);
+            glossary_print_entry($course, $cm, $glossary, $entry, "","",0,$displayformat);
         }
     }
     echo "</td>";

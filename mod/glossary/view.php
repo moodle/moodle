@@ -3,7 +3,8 @@
     require_once("../../config.php");
     require_once("lib.php");
     $debug = 0;
-        
+//    $CFG->startpagetime = microtime();            
+    
     require_variable($id);           // Course Module ID
     optional_variable($tab,GLOSSARY_NO_VIEW); // browsing entries by categories?
 
@@ -18,9 +19,10 @@
                                        //      concept | timecreated | ... ]
     optional_variable($sortorder,"");  // it defines the order of the sorting (ASC or DESC)
 
-    optional_variable($offset,0);    // entries to bypass (for paging purpouses)
+    optional_variable($offset,0);      // entries to bypass (for paging purpouses)
 
-    optional_variable($show,"");     // [ concept | alias ] => mode=term hook=$show
+    optional_variable($show,"");       // [ concept | alias ] => mode=term hook=$show
+    optional_variable($displayformat,-1);  // override of the glossary display format
 
     if ( $show ) {
         $mode = 'term';
@@ -229,7 +231,10 @@
 
 //    global $db;
 //    $db->debug = true;
-
+    $userid = '';
+    if ( $USER->id ) {
+        $userid = "OR ge.userid = $USER->id";
+    }
     switch ($tab) {
     case GLOSSARY_CATEGORY_VIEW:
         if ($hook == GLOSSARY_SHOW_ALL_CATEGORIES  ) { 
@@ -240,7 +245,7 @@
                          {$CFG->prefix}glossary_categories gc";
             $sqlwhere  = "WHERE (ge.glossaryid = '$glossary->id' OR ge.sourceglossaryid = '$glossary->id') AND
                           ge.id = gec.entryid AND gc.id = gec.categoryid AND
-                          (ge.approved != 0 OR ge.userid = $USER->id)";
+                          (ge.approved != 0 $userid)";
 
             if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
                 $sqlorderby = ' ORDER BY gc.name, ge.timecreated';
@@ -254,7 +259,7 @@
             $sqlselect = "SELECT concept pivot, ge.*";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge";
             $sqlwhere  = "WHERE (glossaryid = '$glossary->id' OR sourceglossaryid = '$glossary->id') AND
-                          (ge.approved != 0 OR ge.userid = $USER->id)";
+                          (ge.approved != 0 $userid)";
 
 
             $sqlorderby = ' ORDER BY concept';
@@ -267,7 +272,7 @@
             $sqlwhere   = "WHERE ge.id = ce.entryid AND ce.categoryid = $hook AND
                                  ce.categoryid = c.id AND ge.approved != 0 AND
                                  (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
-                          (ge.approved != 0 OR ge.userid = $USER->id)";
+                          (ge.approved != 0 $userid)";
 
             $sqlorderby = ' ORDER BY c.name, ge.concept';
 
@@ -306,7 +311,7 @@
         $sqlselect  = "SELECT ge.id, $usernamefield pivot, $usernametoshow uname, u.id uid, ge.*";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
         $sqlwhere   = "WHERE ge.userid = u.id  AND
-                             ge.approved != 0
+                             (ge.approved != 0 $userid)
                              $where AND 
                              (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id)";
         $sqlorderby = "ORDER BY $usernamefield $sortorder, ge.concept";
@@ -403,7 +408,7 @@
         }
         
         $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) AND
-                             (ge.approved != 0 OR ge.userid = $USER->id)
+                             (ge.approved != 0 $userid)
                               $where";
         switch ( $tab ) {
         case GLOSSARY_DATE_VIEW: 
@@ -422,15 +427,8 @@
 
     break;
     } 
-/*    
-    print_simple_box_start("center","85%");
-    print_object($allentries);
-    print_simple_box_end();
-    $db->debug=false;
-*/
 
 /// printing the entries
-
     $entriesshown = 0;
     $currentpivot = '';
     if ( $hook == 'SPECIAL' ) {
@@ -457,8 +455,6 @@
             $paging  = "<font size=1><center>" . get_string ("jumpto") . " $paging</center></font>";
         }
         echo "$paging";
-        glossary_debug($debug,'<div align=right><font size=1>SELECT normal:' . count($allentries) . '</font></div>',0);
-        glossary_debug($debug,'<div align=right><font size=1>SELECT count(*):' . $count . '</font></div>',0);
 
         if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
             $printpivot = 0;
@@ -572,11 +568,12 @@
                 } 
 
                 /// and finally print the entry.
-                glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook);
+                glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat);
+
                 $entriesshown++;
-//                echo '<p>';
             }
         }
+        echo '<p>';
         if ( $tableisopen ) {
             if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
                 $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE ) {
@@ -598,4 +595,11 @@
 
 /// Finish the page
     print_footer($course);
+/*
+    if (isadmin()) {
+        echo "<p align=right><font size=-3>";
+        echo microtime_diff($CFG->startpagetime, microtime());
+        echo "</font></p>";
+    }
+*/
 ?>
