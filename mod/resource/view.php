@@ -141,6 +141,10 @@
                 $resourcetype = "mp3";
                 $embedded = true;
 
+            } else if ($mimetype == "video/x-ms-wmv") {   // It's a Media Player file
+                $resourcetype = "wmv";
+                $embedded = true;
+
             } else if ($mimetype == "text/html") {    // It's a web page
                 $resourcetype = "html";
             }
@@ -225,11 +229,14 @@
             /// Display the actual resource
 
             if ($embedded) {       // Display resource embedded in page
+                $strdirectlink = get_string("directlink", "resource");
+
                 if ($inpopup) {
                     print_header($pagetitle);
                 } else {
                     print_header($pagetitle, "$course->fullname", 
-                                 "$navigation <a target=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
+                                 "$navigation <a title=\"$strdirectlink\" target=\"$CFG->framename\" ".
+                                 "href=\"$fullurl\">$resource->name</a>",
                                  "", "", true, update_module_button($cm->id, $course->id, $strresource), 
                                  navmenu($course, $cm, "self"));
                 }
@@ -254,11 +261,39 @@
                     echo '</embed>';
                     echo '</object>';
                     echo "</p></center>";
+
+                } else if ($resourcetype == "wmv") {  
+                    echo "<center><p>";
+                    echo '<object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
+                    echo '        codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
+                    echo '        standby="Loading Microsoft® Windows® Media Player components..." ';
+                    echo '        id="wmvplayer" align="" type="application/x-oleobject">';
+                    echo "<param name=\"Filename\" value=\"$fullurl\">";
+                    echo '<param name="ShowControls" value=true>';
+                    echo '<param name="AutoRewind" value=true>';
+                    echo '<param name="AutoStart" value=true>';
+                    echo '<param name="Autosize" value=true>';
+                    echo '<param name="EnableContextMenu" value=true>';
+                    echo '<param name="TransparentAtStart" value=false>';
+                    echo '<param name="AnimationAtStart" value=false>';
+                    echo '<param name="ShowGotoBar" value=false>';
+                    echo '<param name="EnableFullScreenControls" value=true>';
+                    echo "\n<embed src=\"$fullurl\" name=\"wmvplayer\" type=\"application/x-mplayer2\" ";
+                    echo ' ShowControls="1" AutoRewind="1" AutoStart="1" Autosize="1" EnableContextMenu="1"';
+                    echo ' TransparentAtStart="0" AnimationAtStart="0" ShowGotoBar="0" EnableFullScreenControls="1"';
+                    echo ' pluginspage="http://www.microsoft.com/Windows/Downloads/Contents/Products/MediaPlayer/">';
+                    echo '</embed>';
+                    echo '</object>';
+                    echo "</p></center>";
                 }
+
                 if ($resource->summary) {
                     print_simple_box(format_text($resource->summary), 'center');
                 }
-                if (!$inpopup) {
+
+                if ($inpopup) {
+                    echo "<center><p>(<a href=\"$fullurl\">$strdirectlink</a>)</p></center>";
+                } else {
                     print_spacer(20,20);
                     print_footer($course);
                 }
