@@ -45,7 +45,7 @@ function check_language($cmd) {
     }
     @pclose($handle);
 
-    $dicts = explode(chr(10), $output);
+    $dicts = explode(chr(10), strtolower($output));
 
     if(is_array($dicts)) {
         if(in_array($current_lang,$dicts)) {
