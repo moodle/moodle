@@ -192,8 +192,8 @@ php_value post_max_size 2M
   <P>(Moodle will also try to set some cookies in your browser.  If you have 
      your browser set up to let you choose to accept cookies, then you <B>must</B>
      accept the Moodle cookies, or Moodle won't work properly.)
-  <p>Now Moodle will start setting set up your database. Firstly, the main database 
-    tables are created. You should see a number of SQL statements followed by 
+  <p>Now Moodle will start setting up your database and creating tables to store data. 
+    Firstly, the main database tables are created. You should see a number of SQL statements followed by 
     status messages (in green or red) that look like this:</p>
   <blockquote> 
     <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
@@ -217,8 +217,7 @@ php_value post_max_size 2M
   <p>Scroll down the very bottom of the page and press the &quot;Continue&quot; 
     link.</p>
   <p>Next you will see a similar page that sets up all the tables required by 
-    each Moodle module. As before, they should all be green, otherwise you may 
-    be a problem in the module code.</p>
+    each Moodle module. As before, they should all be green.</p>
 
   <p>Scroll down the very bottom of the page and press the &quot;Continue&quot; 
     link.</p>
@@ -312,8 +311,6 @@ php_value post_max_size 2M
   </blockquote>
   <p>On Windows systems: The simplest way is to use my package <A TITLE="Click to download this package (150k)" HREF="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</A> 
     which makes this whole thing very easy.</p>
-  <p>Other platforms: you will need to find another way to do this (please let 
-    me know so I can update this documentation).<br>
   </p>
 </blockquote>
 <H3><A NAME="course"></A>10. Create a new course</H3>
