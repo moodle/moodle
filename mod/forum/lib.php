@@ -126,7 +126,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output .= format_text($post->message, $post->format);
 
-    $output .= "<P ALIGN=right><FONT SIZE=-1>";
+    $output .= "<BR CLEAR=ALL><P ALIGN=right><FONT SIZE=-1>";
 
     $age = time() - $post->created;
     if ($ownpost) {
@@ -141,6 +141,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         }
     }
 
+    $output .= "</P>";
     $output .= "<DIV ALIGN=right><P ALIGN=right>";
     
     if ($link) {
@@ -213,7 +214,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo format_text($post->message, $post->format);
     }
 
-    echo "<P ALIGN=right><FONT SIZE=-1>";
+    echo "<BR CLEAR=ALL><P ALIGN=right><FONT SIZE=-1>";
 
     $age = time() - $post->created;
     if ($ownpost) {
@@ -233,7 +234,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
         echo "&nbsp;&nbsp;";
     }
-
+    echo "</P>";
 
     echo "<DIV ALIGN=right><P ALIGN=right>";
     if ($rate && $USER->id) {
