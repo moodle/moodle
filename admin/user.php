@@ -280,6 +280,8 @@
             $matchstring = implode(", ", $match);
             print_heading(get_string("nousersmatching", "", $matchstring));
 
+            $table = NULL;
+
         } else {
 
             $countries = get_list_of_countries();
@@ -329,27 +331,27 @@
                                         $deletebutton,
                                         $confirmbutton);
             }
+        }
 
-            echo "<table align=\"center\" cellpadding=\"10\"><tr><td>";
-            echo "<form action=\"user.php\" method=\"post\">";
-            echo "<input type=\"text\" name=\"search\" value=\"$search\" size=\"20\">";
-            echo "<input type=\"submit\" value=\"$strsearch\">";
-            if ($search) {
-                echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\">";
-            }
-            echo "</form>";
-            echo "</td></tr></table>";
-            print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
+        echo "<table class=\"searchbox\" align=\"center\" cellpadding=\"10\"><tr><td>";
+        echo "<form action=\"user.php\" method=\"get\">";
+        echo "<input type=\"text\" name=\"search\" value=\"$search\" size=\"20\">";
+        echo "<input type=\"submit\" value=\"$strsearch\">";
+        if ($search) {
+            echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\">";
+        }
+        echo "</form>";
+        echo "</td></tr></table>";
+        print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
 
+        if (!empty($table)) {
             print_table($table);
-
             print_paging_bar($usercount, $page, $perpage,
                              "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
                              "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&amp;");
-
+            print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
         }
 
-        print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
 
         print_footer();
     }
