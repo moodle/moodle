@@ -631,7 +631,8 @@ function forum_subscribed_users($course, $forum) {
                                    {$CFG->prefix}forum_subscriptions s
                              WHERE s.forum = '$forum->id'
                                AND s.userid = u.id 
-                               AND u.deleted <> 1");
+                               AND u.deleted <> 1
+                          ORDER BY u.email ASC");
 }
 
 
