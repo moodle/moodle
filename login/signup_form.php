@@ -1,3 +1,33 @@
+<?PHP
+   if (empty($user->username)) {
+       $user->username = "";
+   }
+   if (empty($user->password)) {
+       $user->password = "";
+   }
+   if (empty($user->email)) {
+       $user->email = "";
+   }
+   if (empty($user->firstname)) {
+       $user->firstname = "";
+   }
+   if (empty($user->lastname)) {
+       $user->lastname = "";
+   }
+   if (empty($user->idnumber)) {
+       $user->idnumber = "";
+   }
+   if (empty($user->phone)) {
+       $user->phone = "";
+   }
+   if (empty($user->city)) {
+       $user->city = "";
+   }
+   if (empty($user->country)) {
+       $user->country = "";
+   }
+
+?>
 <CENTER>
 <table cellpadding=20> <tr> <td bgcolor="<?=$THEME->cellcontent2 ?>" class="generalbox">
 
