@@ -38,17 +38,17 @@ function cron_rss_feeds () {
 
     $status = true;
    
-    echo "    Generating rssfeeds...\n";
+    mtrace("    Generating rssfeeds...");
 
     //Check for required functions...
     if(!function_exists('utf8_encode')) {
-        echo "        ERROR: You need to add XML support to your PHP installation!\n";
+        mtrace("        ERROR: You need to add XML support to your PHP installation!");
         return true;
     }
 
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
-            echo '        '.$mod->name.': ';
+            mtrace('        '.$mod->name.': ', '');
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/rsslib.php";
             //If file exists and we have selected to restore that type of module
@@ -57,29 +57,29 @@ function cron_rss_feeds () {
                 $generaterssfeeds = $modname.'_rss_feeds';
                 if (function_exists($generaterssfeeds)) {
                     if ($status) {
-                        echo 'generating ';
+                        mtrace('generating ', '');;
                         $status = $generaterssfeeds();
                         if (!empty($status)) {
-                            echo "...OK\n";
+                            mtrace("...OK");
                         } else {
-                            echo "...FAILED\n";
+                            mtrace("...FAILED");
                         }
                     } else {
-                        echo "...SKIPPED (failed above)\n";
+                        mtrace("...SKIPPED (failed above)");
                     }
                 } else {
-                    echo "...NOT SUPPORTED (function)\n";
+                    mtrace("...NOT SUPPORTED (function)");
                 }
             } else {
-                echo "...NOT SUPPORTED (file)\n";
+                mtrace("...NOT SUPPORTED (file)");
             }
         }
     }
-    echo "    Ending  rssfeeds...";
+    mtrace("    Ending  rssfeeds...", '');
     if (!empty($status)) {
-        echo "...OK\n";
+        mtrace("...OK");
     } else {
-        echo "...FAILED\n";
+        mtrace("...FAILED");
     }
 
     return $status;
