@@ -15,26 +15,26 @@
 ?>
 
 <form method="post" name="form" enctype="multipart/form-data" action="edit.php">
-<table cellpadding="9" cellspacing="0" >
+<table class="formtable">
 <?php
 if (isadmin()) {
     $theadmin = get_admin();
     $adminself = (($theadmin->id == $USER->id) and ($USER->id == $user->id));
-    echo "<tr valign=\"top\">";
-    echo "<td align=\"right\"> ".get_string("username").": </td>";
+    echo '<tr>';
+    echo '<th>'.get_string('username').':</th>';
     if ($adminself || is_internal_auth($user->auth) ){
-        echo "<td> <input type=\"text\" name=\"username\" size=\"20\" alt=\"".get_string("username")."\" value=\"";
+        echo "<td><input type=\"text\" name=\"username\" size=\"20\" alt=\"".get_string("username")."\" value=\"";
         p($user->username);
         echo "\" />";
         if (isset($err["username"])) formerr($err["username"]);
     } else {
-        echo "<td> ";
+        echo "<td>";
         p($user->username);
         echo "<input type=\"hidden\" name=\"username\" value=\"";
         p($user->username);
         echo "\" />";
     }
-    echo " </td>";
+    echo "</td>";
     echo "</tr>\n";
 
     $modules = get_list_of_plugins("auth");
@@ -42,16 +42,16 @@ if (isadmin()) {
         $auth_options[$module] = get_string("auth_$module"."title", "auth");
     } 
     if (!$adminself) {    /// Main admin is ALWAYS default manual
-        echo '<tr valign="top">';
-        echo '<td align="right">'.get_string("chooseauthmethod","auth").'</td>' . "\n<td>";
+        echo '<tr>';
+        echo '<th>'.get_string("chooseauthmethod","auth").'</th>' . "\n<td>";
         choose_from_menu ($auth_options, "auth", $user->auth);
         echo "</td></tr>\n";
     }
 
     if ($adminself || is_internal_auth($user->auth) || (!empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}))) {
-        echo "<tr valign=\"top\">";
-        echo "<td align=\"right\"> ".get_string("newpassword").": </td>";
-        echo "<td> <input type=\"text\" name=\"newpassword\" size=\"20\" alt=\"".get_string("newpassword")."\" value=\"";
+        echo '<tr>';
+        echo '<th>'.get_string('newpassword').':</th>';
+        echo "<td><input type=\"text\" name=\"newpassword\" size=\"20\" alt=\"".get_string("newpassword")."\" value=\"";
         if (isset($user->newpassword)) {
             p($user->newpassword);
         }
@@ -61,7 +61,7 @@ if (isadmin()) {
         } else if (empty($user->newpassword)) {
             echo " (".get_string("leavetokeep").")";
         }
-        echo " </td>";
+        echo "</td>";
         echo "</tr>\n";
         if (!$adminself && (!empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) || $CFG->changepassword)){
              if (get_user_preferences('auth_forcepasswordchange', NULL, $user->id)) {
@@ -69,40 +69,40 @@ if (isadmin()) {
              } else {
                  $checked = '';
              }
-             echo "<tr>";
-             echo '<td align="right">'.get_string('forcepasswordchange').':</td>';
+             echo '<tr>';
+             echo '<th>'.get_string('forcepasswordchange').':</th>';
              echo '<td><input type="checkbox" name="forcepasswordchange" alt="'.get_string('forcepasswordchange').'" '.$checked.' /> '.get_string('forcepasswordchangehelp').'</td>';            
-             echo "</tr>";
+             echo '</tr>';
         }
                  
-        echo "<tr><td colspan=\"2\"><hr /></td></tr>";
+        echo '<tr><td colspan="2"><hr /></td></tr>';
     }
 }
 
 ?>
-<tr valign="top">
-    <td align="right"><?php print_string("firstname") ?>:</td>
+<tr>
+    <th><?php print_string("firstname") ?>:</th>
     <td>
     <input type="text" name="firstname" size="30" alt="<?php print_string("firstname") ?>" maxlength="20" value="<?php p($user->firstname) ?>" />
     <?php if (isset($err["firstname"])) formerr($err["firstname"]); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("lastname") ?>:</td>
+<tr>
+    <th><?php print_string("lastname") ?>:</th>
     <td>
     <input type="text" name="lastname" size="30" alt="<?php print_string("lastname") ?>" maxlength="20" value="<?php p($user->lastname) ?>" />
     <?php if (isset($err["lastname"])) formerr($err["lastname"]); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("email") ?>:</td>
+<tr>
+    <th><?php print_string("email") ?>:</th>
     <td>
     <input type="text" name="email" size="30" alt="<?php print_string("email") ?>" maxlength="100" value="<?php p($user->email) ?>" />
     <?php if (isset($err["email"])) formerr($err["email"]); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("emaildisplay") ?>:</td>
+<tr>
+    <th><?php print_string("emaildisplay") ?>:</th>
     <td><?php
     unset($choices);
     $choices["0"] = get_string("emaildisplayno");
@@ -111,8 +111,8 @@ if (isadmin()) {
     choose_from_menu ($choices, "maildisplay", $user->maildisplay, "") ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("emailactive") ?>:</td>
+<tr>
+    <th><?php print_string("emailactive") ?>:</th>
     <td><?php
     unset($choices);
     $choices["0"] = get_string("emailenable");
@@ -120,18 +120,18 @@ if (isadmin()) {
     choose_from_menu ($choices, "emailstop", $user->emailstop, "") ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("emailformat") ?>: </td>
-    <td> <?php
+<tr>
+    <th><?php print_string("emailformat") ?>:</th>
+    <td><?php
     unset($choices);
     $choices["0"] = get_string("textformat");
     $choices["1"] = get_string("htmlformat");
     choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
      </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string('emaildigest') ?>: </td>
-    <td> <?php
+<tr>
+    <th><?php print_string('emaildigest') ?>:</th>
+    <td><?php
     unset($choices);
     $choices['0'] = get_string('emaildigestoff');
     $choices['1'] = get_string('emaildigestcomplete');
@@ -139,9 +139,9 @@ if (isadmin()) {
     choose_from_menu ($choices, 'maildigest', $user->maildigest, "") ?>
      </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("autosubscribe") ?>: </td>
-    <td> <?php
+<tr>
+    <th><?php print_string("autosubscribe") ?>:</th>
+    <td><?php
     unset($choices);
     $choices["1"] = get_string("autosubscribeyes");
     $choices["0"] = get_string("autosubscribeno");
@@ -149,9 +149,9 @@ if (isadmin()) {
      </td>
 </tr>
 <?php if ($CFG->htmleditor) { ?>
-<tr valign="top">
-    <td align="right"> <?php print_string("textediting") ?>: </td>
-    <td> <?php
+<tr>
+    <th><?php print_string("textediting") ?>:</th>
+    <td><?php
     unset($choices);
     $choices["0"] = get_string("texteditor");
     $choices["1"] = get_string("htmleditor");
@@ -159,15 +159,15 @@ if (isadmin()) {
      </td>
 </tr>
 <?php } ?>
-<tr valign="top">
-    <td align="right"><?php print_string("city") ?>:</td>
+<tr>
+    <th><?php print_string("city") ?>:</th>
     <td>
     <input type="text" name="city" size="25" alt="<?php print_string("city") ?>" maxlength="20" value="<?php p($user->city) ?>" />
     <?php if (isset($err["city"])) formerr($err["city"]); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("country") ?>: </td>
+<tr>
+    <th><?php print_string("country") ?>:</th>
     <td>
     <?php 
 
@@ -180,9 +180,9 @@ if (isadmin()) {
     <?php if (isset($err["country"])) formerr($err["country"]); ?>
      </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("preferredlanguage") ?>: </td>
-    <td> <?php if ($languages = get_list_of_languages()) {
+<tr>
+    <th><?php print_string("preferredlanguage") ?>:</th>
+    <td><?php if ($languages = get_list_of_languages()) {
                if (!$user->lang) {
                    $user->lang = $CFG->lang;
                }
@@ -190,12 +190,12 @@ if (isadmin()) {
            }
            if (isset($err["lang"])) formerr($err["lang"]);
         ?>
-     </td>
+    </td>
 </tr>
 <?php if (!empty($CFG->allowuserthemes)) { ?>
-<tr valign="top">
-    <td align="right"> <?php print_string("preferredtheme") ?>: </td>
-    <td> <?php 
+<tr>
+    <th><?php print_string("preferredtheme") ?>:</th>
+    <td><?php 
          $themes[''] = get_string('default');
          $themes += get_list_of_themes();
          choose_from_menu($themes, 'theme', $user->theme, "", "", "");
@@ -204,9 +204,9 @@ if (isadmin()) {
     </td>
 </tr>
 <?php } ?>
-<tr valign="top">
-    <td align="right"> <?php print_string("timezone") ?>: </td>
-    <td> <?php
+<tr>
+    <th><?php print_string("timezone") ?>:</th>
+    <td><?php
        if (abs($user->timezone) > 13) {
            $user->timezone = 99;
        }
@@ -229,10 +229,10 @@ if (isadmin()) {
 
        echo "(".get_string("currentlocaltime").")";
     ?>
-     </td>
+    </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("userdescription") ?>: </td>
+<tr>
+    <th><?php print_string("userdescription") ?>:</th>
     <td><?php 
         if (isset($err["description"])) {
             formerr($err["description"]);
@@ -244,7 +244,7 @@ if (isadmin()) {
     </td>
 </tr>
 <tr>
-    <td colspan="2" align="center"> <br /><b><?php print_string("followingoptional") ?>:</b> </td>
+    <td colspan="2" align="center"> <br /><b><?php print_string("followingoptional") ?>:</b></td>
 </tr>
 
 
@@ -252,20 +252,20 @@ if (isadmin()) {
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
     if (!empty($CFG->gdversion) and $maxbytes and empty($CFG->disableuserimages)) {
 ?>
-<tr valign="top">
-    <td align="right"> <?php print_string("currentpicture") ?>: </td>
-    <td> 
+<tr>
+    <th><?php print_string("currentpicture") ?>:</th>
+    <td>
        <?php print_user_picture($user->id, $course->id, $user->picture, false, false, false);
              if ($user->picture) {
                  echo '&nbsp;&nbsp;<input type="checkbox" name="deletepicture" alt="'.get_string("delete").'" value="1" />';
                  print_string("delete");
              }
        ?>
-     </td>
+    </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("newpicture") ?>: </td>
-    <td> 
+<tr>
+    <th><?php print_string("newpicture") ?>:</th>
+    <td>
     <?php 
        require_once($CFG->dirroot.'/lib/uploadlib.php');
        upload_print_form_fragment(1,array('imagefile'),null,false,null,0,0,false);
@@ -273,77 +273,76 @@ if (isadmin()) {
        print_string("maxsize", "", display_size($maxbytes));
        if (isset($err["imagefile"])) formerr($err["imagefile"]);
     ?>
-     </td>
+    </td>
 </tr>
 <?php } else if (empty($CFG->gdversion) and isadmin()) {  ?>
-<tr valign="top">
-    <td align="right"> <?php print_string("newpicture") ?>: </td>
-    <td> 
+<tr>
+    <th><?php print_string("newpicture") ?>:</th>
+    <td>
     <?php 
         echo "<a href=\"$CFG->wwwroot/$CFG->admin/config.php\">";
         print_string('gdnot');
         echo "</a>";
     ?>
-     </td>
+    </td>
 </tr>
 <?php } ?>
 
-<tr valign="top">
-    <td align="right"> <?php print_string("webpage") ?>: </td>
-    <td> <input type="text" name="url" size="50" alt="<?php print_string("webpage") ?>" maxlength="255" value="<?php p($user->url) ?>" />
+<tr>
+    <th><?php print_string("webpage") ?>:</th>
+    <td><input type="text" name="url" size="50" alt="<?php print_string("webpage") ?>" maxlength="255" value="<?php p($user->url) ?>" />
     <?php if (isset($err["url"])) formerr($err["url"]); ?>
-     </td>
+    </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("icqnumber") ?>: </td>
-    <td> <input type="text" name="icq" size="25" alt="<?php print_string("icqnumber") ?>" maxlength="15" value="<?php p($user->icq) ?>" />
+<tr>
+    <th><?php print_string("icqnumber") ?>:</th>
+    <td><input type="text" name="icq" size="25" alt="<?php print_string("icqnumber") ?>" maxlength="15" value="<?php p($user->icq) ?>" />
     <?php if (isset($err["icq"])) formerr($err["icq"]); ?>
-     </td>
+    </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("idnumber") ?>: </td>
+<tr>
+    <th><?php print_string("idnumber") ?>:</th>
     <td>
     <input type="text" name="idnumber" size="25" alt="<?php print_string("idnumber") ?>" maxlength="12" value="<?php p($user->idnumber) ?>" /> <?php p($teacheronly) ?>
     <?php if (isset($err["idnumber"])) formerr($err["idnumber"]); ?>
-     </td>
+    </td>
 </tr>
 <?php if (isadmin()) {  ?>
-<tr valign="top">
-    <td align="right"> <?php print_string("institution") ?>:</td>
+<tr>
+    <th><?php print_string("institution") ?>:</th>
     <td><input type="text" name="institution" size="25" alt="<?php print_string("institution") ?>" maxlength="40" value="<?php p($user->institution) ?>" /> <?php p($teacheronly) ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("department") ?>: </td>
+<tr>
+    <th><?php print_string("department") ?>:</th>
     <td>
     <input type="text" name="department" size="25" alt="<?php print_string("department") ?>" maxlength="30" value="<?php p($user->department) ?>" /> <?php p($teacheronly) ?>
     </td>
 </tr>
 <?php } ?>
-<tr valign="top">
-    <td align="right"> <?php print_string("phone") ?> 1: </td>
+<tr>
+    <th><?php print_string("phone") ?> 1:</th>
     <td>
     <input type="text" name="phone1" size="25" alt="<?php print_string("phone") ?>" maxlength="20" value="<?php p($user->phone1) ?>" /> <?php p($teacheronly) ?>
     <?php if (isset($err["phone1"])) formerr($err["phone1"]); ?>
-     </td>
+    </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("phone") ?> 2: </td>
+<tr>
+    <th><?php print_string("phone") ?> 2:</th>
     <td>
     <input type="text" name="phone2" size="25" alt="<?php print_string("phone") ?>" maxlength="20" value="<?php p($user->phone2) ?>" /> <?php p($teacheronly) ?>
     <?php if (isset($err["phone2"])) formerr($err["phone2"]); ?>
-     </td>
+    </td>
 </tr>
-<tr valign="top">
-    <td align="right"> <?php print_string("address") ?>: </td>
+<tr>
+    <th><?php print_string("address") ?>:</th>
     <td>
     <input type="text" name="address" size="25" alt="<?php print_string("address") ?>" maxlength="70" value="<?php p($user->address) ?>" /> <?php p($teacheronly) ?>
     <?php if (isset($err["address"])) formerr($err["address"]); ?>
-     </td>
+    </td>
 </tr>
 <tr>
-    <td></td>
-    <td align="right"> <input type="submit" value="<?php print_string("updatemyprofile") ?>" /> </td>
+    <td colspan="2" style="text-align: center;"><input type="submit" value="<?php print_string("updatemyprofile") ?>" /></td>
 </tr>
 </table>
 <input type="hidden" name="course" value="<?php p($course->id) ?>" />
