@@ -1,10 +1,9 @@
 <?PHP //$Id$
 
 class CourseBlock_activity_modules extends MoodleBlock {
-    function CourseBlock_activity_modules($course) {
+    function init() {
         $this->title = get_string('activities');
         $this->content_type = BLOCK_TYPE_LIST;
-        $this->course = $course;
         $this->version = 2004041000;
     }
 
@@ -18,7 +17,7 @@ class CourseBlock_activity_modules extends MoodleBlock {
             return $this->content;
         }
 
-        $this->content = New object;
+        $this->content = new stdClass;
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
@@ -26,7 +25,7 @@ class CourseBlock_activity_modules extends MoodleBlock {
         if ($modnamesused) {
             foreach ($modnamesused as $modname => $modfullname) {
                 if ($modname != 'label') {
-                    $this->content->items[] = '<a href="'.$CFG->wwwroot.'/mod/'.$modname.'/index.php?id='.$this->course->id.'">'.$modnamesplural[$modname].'</a>';
+                    $this->content->items[] = '<a href="'.$CFG->wwwroot.'/mod/'.$modname.'/index.php?id='.$this->instance->pageid.'">'.$modnamesplural[$modname].'</a>';
                     $this->content->icons[] = '<img src="'.$CFG->modpixpath.'/'.$modname.'/icon.gif" height="16" width="16" alt="" />';
                 }
             }

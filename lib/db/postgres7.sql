@@ -17,7 +17,6 @@ CREATE TABLE prefix_course (
    format varchar(10) NOT NULL default 'topics',
    showgrades integer NOT NULL default '1',
    modinfo text NOT NULL default '',
-   blockinfo varchar(255) NOT NULL default '',
    newsitems integer NOT NULL default '1',
    teacher varchar(100) NOT NULL default 'Teacher',
    teachers varchar(100) NOT NULL default 'Teachers',

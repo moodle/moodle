@@ -20,12 +20,12 @@
 
     require_variable($_REQUEST['block']);
     $blockid = intval($_REQUEST['block']);
-
-    if(($blockrecord = get_record('blocks', 'id', $blockid)) === false) {
+   
+    if(($blockrecord = blocks_get_record($blockid)) === false) {
         error('This block does not exist');
     }
 
-    $block = block_instance($blockrecord->name, NULL);
+    $block = block_instance($blockrecord->name);
     if($block === false) {
         error('Problem in instantiating block object');
     }

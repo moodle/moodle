@@ -1,10 +1,9 @@
 <?PHP //$Id$
 
 class CourseBlock_calendar_month extends MoodleBlock {
-    function CourseBlock_calendar_month($course) {
+    function init() {
         $this->title = get_string('calendar', 'calendar');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->course = $course;
         $this->version = 2004081200;
     }
 
@@ -19,20 +18,20 @@ class CourseBlock_calendar_month extends MoodleBlock {
             return $this->content;
         }
 
-        $this->content = New object;
+        $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
 
-        if (empty($this->course)) { // Overrides: use no course at all
+        if (empty($this->instance)) { // Overrides: use no course at all
 
             $courseshown = false;
             $filtercourse = array();
 
         } else {
 
-            $courseshown = $this->course->id;
+            $courseshown = $this->instance->pageid;
 
-            if($this->course->id == SITEID) {
+            if($courseshown == SITEID) {
                 // Being displayed at site level. This will cause the filter to fall back to auto-detecting
                 // the list of courses it will be grabbing events from.
                 $filtercourse = NULL;

@@ -1,10 +1,9 @@
 <?php   //$Id$
 
 class CourseBlock_site_main_menu extends MoodleBlock {
-    function CourseBlock_site_main_menu ($course) {
+    function init() {
         $this->title = get_string('mainmenu');
         $this->content_type = BLOCK_TYPE_LIST;
-        $this->course = $course;
         $this->version = 2004052700;
     }
 
@@ -19,28 +18,30 @@ class CourseBlock_site_main_menu extends MoodleBlock {
             return $this->content;
         }
 
-        if (empty($this->course)) {
-            return '';
-        }
-
         $this->content = New stdClass;
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
 
-        $isteacher = isteacher($this->course->id);
-        $isediting = isediting($this->course->id);
-        $ismoving = ismoving($this->course->id);
+        if (empty($this->instance)) {
+            return $this->content;
+        }
 
-        $sections = get_all_sections($this->course->id);
+        $course = get_record('course', 'id', $this->instance->pageid);
+
+        $isteacher = isteacher($this->instance->pageid);
+        $isediting = isediting($this->instance->pageid);
+        $ismoving  = ismoving($this->instance->pageid);
+
+        $sections = get_all_sections($this->instance->pageid);
         $section = $sections[0];
 
         if($section->sequence || $isediting) {
-            get_all_mods($this->course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+            get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
         }
 
-        $groupbuttons = $this->course->groupmode;
-        $groupbuttonslink = (!$this->course->groupmodeforce);
+        $groupbuttons = $course->groupmode;
+        $groupbuttonslink = (!$course->groupmodeforce);
 
         if ($ismoving) {
             $strmovehere = get_string('movehere');
@@ -49,7 +50,7 @@ class CourseBlock_site_main_menu extends MoodleBlock {
             $stractivityclipboard = $USER->activitycopyname;
         }
 
-        $modinfo = unserialize($this->course->modinfo);
+        $modinfo = unserialize($course->modinfo);
         $editbuttons = '';
 
         if ($ismoving) {
@@ -67,7 +68,7 @@ class CourseBlock_site_main_menu extends MoodleBlock {
                 if ($isediting && !$ismoving) {
                     if ($groupbuttons) {
                         if (! $mod->groupmodelink = $groupbuttonslink) {
-                            $mod->groupmode = $this->course->groupmode;
+                            $mod->groupmode = $course->groupmode;
                         }
 
                     } else {
@@ -88,7 +89,7 @@ class CourseBlock_site_main_menu extends MoodleBlock {
                    }
                     $instancename = urldecode($modinfo[$modnumber]->name);
                     if (!empty($CFG->filterall)) {
-                        $instancename = filter_text('<nolink>'.$instancename.'</nolink>', $this->course->id);
+                        $instancename = filter_text('<nolink>'.$instancename.'</nolink>', $this->instance->pageid);
                     }
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
                     if (!empty($modinfo[$modnumber]->extra)) {
@@ -122,7 +123,7 @@ class CourseBlock_site_main_menu extends MoodleBlock {
 
         if ($isediting && $modnames) {
             $this->content->footer = '<div style="text-align: right;">'.
-                print_section_add_menus($this->course, 0, $modnames, true, true).'</div>';
+                print_section_add_menus($course, 0, $modnames, true, true).'</div>';
         } else {
             $this->content->footer = '';
         }

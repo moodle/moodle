@@ -1,15 +1,16 @@
 <?PHP //$Id$
 
 class CourseBlock_course_summary extends MoodleBlock {
-    function CourseBlock_course_summary ($course) {
-        if(!empty($course) && $course->id == SITEID) {   // Site level
-            $this->title = get_string('frontpagedescription');
-        } else {
-            $this->title = get_string('blockname','block_course_summary');
-        }
+    function init() {
+        $this->title = get_string('pagedescription', 'block_course_summary');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->course = $course;
         $this->version = 2004052600;
+    }
+
+    function specialization() {
+        if($this->instance->pagetype == MOODLE_PAGE_COURSE && $this->instance->pageid != SITEID) {
+            $this->title = get_string('coursesummary', 'block_course_summary');
+        }
     }
 
     function get_content() {
@@ -19,18 +20,20 @@ class CourseBlock_course_summary extends MoodleBlock {
             return $this->content;
         }
 
-        if (empty($this->course)) {
+        if (empty($this->instance)) {
             return '';
         }
 
+        $course  = get_record('course', 'id', $this->instance->pageid);
+        
         $this->content = New stdClass;
         $options->noclean = true;    // Don't clean Javascripts etc
-        $this->content->text = format_text($this->course->summary, FORMAT_HTML, $options);
-        if(isediting($this->course->id)) {
-            if($this->course->id == SITEID) {
+        $this->content->text = format_text($course->summary, FORMAT_HTML, $options);
+        if(isediting($this->instance->pageid)) {
+            if($this->instance->pageid == SITEID) {
                 $editpage = $CFG->wwwroot.'/admin/site.php';
             } else {
-                $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->course->id;
+                $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->instance->pageid;
             }
             $this->content->text .= "<div align=\"right\"><a href=\"$editpage\"><img src=\"$CFG->pixpath/t/edit.gif\" alt=\"\" /></a></div>";
         }

@@ -54,8 +54,11 @@
 
             if (!empty($course)) {
                 // Test for and remove blocks which aren't appropriate anymore
-                $form->blockinfo = $course->blockinfo;
-                block_remove_inappropriate_from_course($form);
+                $page = new stdClass;
+                $page->id   = $course->id;
+                $page->type = MOODLE_PAGE_COURSE;
+
+                blocks_remove_inappropriate($page);
 
                 // Update with the new data
                 if (update_record("course", $form)) {
@@ -68,10 +71,14 @@
             } else {
                 $form->timecreated = time();
 
-                //Create blockinfo default content
-                $form->blockinfo = blocks_get_default_blocks(null, blocks_get_config_default($form->format));
-
                 if ($newcourseid = insert_record("course", $form)) {  // Set up new course
+                    
+                    // Setup the blocks
+                    $page = new stdClass;
+                    $page->type = MOODLE_PAGE_COURSE;
+                    $page->id   = $newcourseid;
+                    blocks_repopulate_page($page); // Return value not checked because you can always edit later
+
                     $section = NULL;
                     $section->course = $newcourseid;   // Create a default section.
                     $section->section = 0;

@@ -10,8 +10,8 @@
     define('BLOCK_R_MIN_WIDTH', 100);
     define('BLOCK_R_MAX_WIDTH', 210);
 
-    optional_variable($preferred_width_left, 0);
-    optional_variable($preferred_width_right, 0);
+    optional_variable($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
+    optional_variable($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
     $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
     $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
     $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
@@ -54,14 +54,14 @@
 
 /// The left column ...
 
-    if(block_have_active($leftblocks) || $editing) {
+    if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;">';
-        print_course_blocks($course, $leftblocks, BLOCK_LEFT);
+        blocks_print_group($page, $pageblocks[BLOCK_POS_LEFT]);
         echo '</td>';
     }
 
 /// Start main column
-    echo "</td><td width=\"*\">";
+    echo '<td valign="top">';
     print_heading_block(get_string("weeklyoutline"), "100%", "outlineheadingblock");
     print_spacer(8, 1, true);
 
@@ -256,14 +256,13 @@
     echo "</td>";
 
     // The right column
-    if(block_have_active($rightblocks) || $editing) {
+    if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
-        print_course_blocks($course, $rightblocks, BLOCK_RIGHT);
+        blocks_print_group($page, $pageblocks[BLOCK_POS_RIGHT]);
         if ($editing && !empty($missingblocks)) {
-            block_print_blocks_admin($course, $missingblocks);
+            blocks_print_adminblock($page, $missingblocks);
         }
-        print_spacer(1, 120, true);
-       echo '</td>';
+        echo '</td>';
     }
 
     echo "</tr>\n";

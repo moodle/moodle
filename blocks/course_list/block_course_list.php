@@ -1,10 +1,9 @@
 <?PHP //$Id$
 
 class CourseBlock_course_list extends MoodleBlock {
-    function CourseBlock_course_list ($course) {
+    function init() {
         $this->title = get_string('courses');
         $this->content_type = BLOCK_TYPE_LIST;
-        $this->course = $course;
         $this->version = 2004081200;
     }
     
@@ -20,13 +19,6 @@ class CourseBlock_course_list extends MoodleBlock {
         return true;
     }
 
-    function handle_config($config) {
-        foreach ($config as $name => $value) {
-            set_config($name, $value);
-        }
-        return true;
-    }
-
     function get_content() {
         global $THEME, $CFG, $USER;
 
@@ -34,7 +26,7 @@ class CourseBlock_course_list extends MoodleBlock {
             return $this->content;
         }
 
-        $this->content = New object;
+        $this->content = new stdClass;
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';

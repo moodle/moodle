@@ -1,10 +1,9 @@
 <?PHP //$Id$
 
 class CourseBlock_calendar_upcoming extends MoodleBlock {
-    function CourseBlock_calendar_upcoming ($course) {
+    function init() {
         $this->title = get_string('upcomingevents', 'calendar');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->course = $course;
         $this->version = 2004052600;
     }
 
@@ -19,10 +18,10 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
             return $this->content;
         }
 
-        $this->content = New object;
+        $this->content = new stdClass;
         $this->content->text = '';
 
-        if (empty($this->course)) { // Overrides: use no course at all
+        if (empty($this->instance)) { // Overrides: use no course at all
         
             $courseshown = false;
             $filtercourse = array();
@@ -30,15 +29,15 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
 
         } else {
 
-            $courseshown = $this->course->id;
+            $courseshown = $this->instance->pageid;
             $this->content->footer = '<br /><a href="'.$CFG->wwwroot.
-                                     '/calendar/view.php?view=upcoming&amp;course='.$this->course->id.'">'.
+                                     '/calendar/view.php?view=upcoming&amp;course='.$courseshown.'">'.
                                       get_string('gotocalendar', 'calendar').'</a>...';
             $this->content->footer .= '<br /><a href="'.$CFG->wwwroot.
-                                      '/calendar/event.php?action=new&amp;course='.$this->course->id.'">'.
+                                      '/calendar/event.php?action=new&amp;course='.$courseshown.'">'.
                                        get_string('newevent', 'calendar').'</a>...';
             
-            if ($this->course->id == SITEID) {
+            if ($courseshown == SITEID) {
                 // Being displayed at site level. This will cause the filter to fall back to auto-detecting
                 // the list of courses it will be grabbing events from.
                 $filtercourse = NULL;
@@ -59,9 +58,9 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
                                         get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), 
                                         get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
 
-        if (!empty($this->course)) { 
+        if (!empty($this->instance)) { 
             $this->content->text = calendar_get_sideblock_upcoming($events, 
-                                   'view.php?view=day&amp;course='.$this->course->id.'&amp;');
+                                   'view.php?view=day&amp;course='.$courseshown.'&amp;');
         }
 
         if (empty($this->content->text)) {

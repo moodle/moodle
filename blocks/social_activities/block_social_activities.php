@@ -1,10 +1,9 @@
 <?php //$Id$
 
 class CourseBlock_social_activities extends MoodleBlock {
-    function CourseBlock_social_activities ($course) {
+    function init(){
         $this->title = get_string('blockname','block_social_activities');
         $this->content_type = BLOCK_TYPE_LIST;
-        $this->course = $course;
         $this->version = 2004041800;
     }
 
@@ -18,14 +17,17 @@ class CourseBlock_social_activities extends MoodleBlock {
         if ($this->content !== NULL) {
             return $this->content;
         }
-        if (empty($this->course)) {
-            return '';
-        }
 
-        $this->content = New object;
+        $this->content = new stdClass;
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
+
+        if (empty($this->instance)) {
+            return $this->content;
+        }
+
+        $course = get_record('course', 'id', $this->instance->pageid);
 
         // To make our day, we start with an ugly hack
         global $sections, $mods, $modnames;
@@ -33,11 +35,11 @@ class CourseBlock_social_activities extends MoodleBlock {
         $section = $sections[0];
         // That wasn't so bad, was it?
 
-        $groupbuttons = $this->course->groupmode;
-        $groupbuttonslink = (!$this->course->groupmodeforce);
-        $isteacher = isteacher($this->course->id);
-        $isediting = isediting($this->course->id);
-        $ismoving = ismoving($this->course->id);
+        $groupbuttons = $course->groupmode;
+        $groupbuttonslink = (!$course->groupmodeforce);
+        $isteacher = isteacher($this->instance->pageid);
+        $isediting = isediting($this->instance->pageid);
+        $ismoving = ismoving($this->instance->pageid);
         if ($ismoving) {
             $strmovehere = get_string('movehere');
             $strmovefull = strip_tags(get_string('movefull', '', "'$USER->activitycopyname'"));
@@ -45,7 +47,7 @@ class CourseBlock_social_activities extends MoodleBlock {
             $stractivityclipboard = $USER->activitycopyname;
         }
 
-        $modinfo = unserialize($this->course->modinfo);
+        $modinfo = unserialize($course->modinfo);
         $editbuttons = '';
 
         if ($ismoving) {
@@ -63,7 +65,7 @@ class CourseBlock_social_activities extends MoodleBlock {
                 if ($isediting && !$ismoving) {
                     if ($groupbuttons) {
                         if (! $mod->groupmodelink = $groupbuttonslink) {
-                            $mod->groupmode = $this->course->groupmode;
+                            $mod->groupmode = $course->groupmode;
                         }
 
                     } else {
@@ -84,7 +86,7 @@ class CourseBlock_social_activities extends MoodleBlock {
                     }
                     $instancename = urldecode($modinfo[$modnumber]->name);
                     if (!empty($CFG->filterall)) {
-                        $instancename = filter_text('<nolink>'.$instancename.'</nolink>', $this->course->id);
+                        $instancename = filter_text('<nolink>'.$instancename.'</nolink>', $this->instance->pageid);
                     }
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
                     if (!empty($modinfo[$modnumber]->extra)) {
@@ -118,7 +120,7 @@ class CourseBlock_social_activities extends MoodleBlock {
 
         if ($isediting && $modnames) {
             $this->content->footer = '<div style="text-align: right;">'.
-                print_section_add_menus($this->course, 0, $modnames, true, true).'</div>';
+                print_section_add_menus($course, 0, $modnames, true, true).'</div>';
         } else {
             $this->content->footer = '';
         }

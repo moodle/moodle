@@ -318,6 +318,35 @@ function stripslashes_safe($string) {
 }
 
 /**
+ * Recursive implementation of stripslashes()
+ *
+ * This function will allow you to strip the slashes from a variable.
+ * If the variable is an array or object, slashes will be stripped
+ * from the items (or properties) it contains, even if they are arrays
+ * or objects themselves.
+ *
+ * @param mixed the variable to remove slashes from
+ * @return mixed
+ */
+function stripslashes_recursive($var) {
+    if(is_object($var)) {
+        $properties = get_object_vars($var);
+        foreach($properties as $property => $value) {
+            $var->$property = stripslashes_recursive($value);
+        }
+    }
+    else if(is_array($var)) {
+        foreach($var as $property => $value) {
+            $var[$property] = stripslashes_recursive($value);
+        }
+    }
+    else if(is_string($var)) {
+        $var = stripslashes($var);
+    }
+    return $var;
+}
+
+/**
  * Given some normal text this function will break up any
  * long words to a given size by inserting the given character
  *
@@ -3423,5 +3452,16 @@ function print_speller_code ($usehtmleditor=false) {
 function print_speller_button () {
     echo '<input type="button" value="Check spelling" onclick="openSpellChecker();" />'."\n";
 }
+
+function page_source_script($page) {
+    global $CFG;
+
+    switch($page->type) {
+        case MOODLE_PAGE_COURSE:
+            return $CFG->wwwroot.'/course/view.php?id='.$page->id;
+        break;
+    }
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

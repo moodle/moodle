@@ -5,11 +5,11 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/blocklib.php');
 
-    optional_variable($_GET['hide']);
-    optional_variable($_GET['show']);
-    optional_variable($_GET['delete']);
     optional_variable($_GET['confirm'], 0);
-    $delete = $_GET['delete']; // Dependency remover
+    $hide     = optional_param('hide', 0, PARAM_INT);
+    $show     = optional_param('show', 0, PARAM_INT);
+    $delete   = optional_param('delete', 0, PARAM_INT);
+    $multiple = optional_param('multiple', 0, PARAM_INT);
 
     require_login();
 
@@ -32,8 +32,9 @@
     $strhide = get_string('hide');
     $strshow = get_string('show');
     $strsettings = get_string('settings');
-    $strcourses = get_string('courses');
+    $strcourses = get_string('blockinstances', 'admin');
     $strname = get_string('name');
+    $strmultiple = get_string('blockmultiple', 'admin');
 
     print_header("$site->shortname: $strmanageblocks", "$site->fullname",
                  "<a href=\"index.php\">$stradministration</a> -> ".
@@ -44,27 +45,35 @@
 
 /// If data submitted, then process and store.
 
-    if (!empty($_GET['hide']) and confirm_sesskey()) {
-        if (!$block = get_record('blocks', 'id', $_GET['hide'])) {
+    if (!empty($hide) && confirm_sesskey()) {
+        if (!$block = get_record('block', 'id', $hide)) {
             error("Block doesn't exist!");
         }
-        set_field('blocks', 'visible', '0', 'id', $block->id);      // Hide block
+        set_field('block', 'visible', '0', 'id', $block->id);      // Hide block
     }
 
-    if (!empty($_GET['show']) and confirm_sesskey() ) {
-        if (!$block = get_record('blocks', 'id', $_GET['show'])) {
+    if (!empty($show) && confirm_sesskey() ) {
+        if (!$block = get_record('block', 'id', $show)) {
             error("Block doesn't exist!");
         }
-        set_field('blocks', 'visible', '1', 'id', $block->id);      // Show block
+        set_field('block', 'visible', '1', 'id', $block->id);      // Show block
     }
 
-    if (!empty($delete) and confirm_sesskey()) {
+    if (!empty($multiple) && confirm_sesskey()) {
+        if (!$block = blocks_get_record($multiple)) {
+            error("Block doesn't exist!");
+        }
+        $block->multiple = !$block->multiple;
+        update_record('block', $block);
+    }
 
-        if (!$block = get_record('blocks', 'id', $delete)) {
+    if (!empty($delete) && confirm_sesskey()) {
+
+        if (!$block = blocks_get_record($delete)) {
             error("Block doesn't exist!");
         }
 
-        $blockobject = block_instance($block->name, $site);
+        $blockobject = block_instance($block->name);
         $strblockname = $blockobject->get_title();
 
         if (!$_GET['confirm']) {
@@ -76,11 +85,16 @@
 
         } else {
             // Delete block
-            if (!delete_records('blocks', 'id', $block->id)) {
+            if (!delete_records('block', 'id', $block->id)) {
                 notify("Error occurred while deleting the $strblockname record from blocks table");
             }
 
-            blocks_update_every_block_by_id($block->id, 'delete');                        // Delete blocks in all courses by id
+            $instances = get_records('block_instance', 'blockid', $block->id);
+            if(!empty($instances)) {
+                foreach($instances as $instance) {
+                    blocks_delete_instance($instance);
+                }
+            }
 
             // Then the tables themselves
 
@@ -105,12 +119,12 @@
 
 /// Get and sort the existing blocks
 
-    if (false === ($blocks = get_records('blocks'))) {
+    if (false === ($blocks = get_records('block'))) {
         error('No blocks found!');  // Should never happen
     }
 
     foreach ($blocks as $block) {
-        if(($blockobject = block_instance($block->name, NULL)) === false) {
+        if(($blockobject = block_instance($block->name)) === false) {
             // Failed to load
             continue;
         }
@@ -136,11 +150,11 @@
         //$modpixpath = '../theme/'.$CFG->theme.'/pix/mod';
     }
 
-    $table->head  = array ($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strdelete, $strsettings);
-    $table->align = array ('LEFT', 'RIGHT', 'LEFT', 'CENTER', 'CENTER', 'CENTER');
-    $table->wrap = array ("NOWRAP", "", "", "", "","");
-    $table->size = array ("100%", "10", "10", "10", "10","12");
-    $table->width = "100";
+    $table->head  = array ($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strmultiple, $strdelete, $strsettings);
+    $table->align = array ('LEFT', 'RIGHT', 'LEFT', 'CENTER', 'CENTER', 'CENTER', 'CENTER');
+    $table->wrap = array ('NOWRAP', '', '', '', '', '', '');
+    $table->size = array ('100%', '10', '10', '10', '10','12');
+    $table->width = '100';
 
     foreach ($blockbyname as $blockname => $blockid) {
 
@@ -155,7 +169,7 @@
             $settings = '<a href="block.php?block='.$blockid.'&sesskey='.$USER->sesskey.'">'.$strsettings.'</a>';
         }
 
-        $count = blocks_get_courses_using_block_by_id($blockid);
+        $count = count_records('block_instance', 'blockid', $blockid);
         $class = ''; // Nothing fancy, by default
 
         if ($blocks[$blockid]->visible) {
@@ -166,8 +180,27 @@
                        '<img src="'.$pixpath.'/i/show.gif" style="height: 16px; width: 16px;" alt=\"\" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
+        if ($blockobject->instance_allow_multiple()) {
+            if($blocks[$blockid]->multiple) {
+                $multiple = '<nobr>'.get_string('yes').' (<a href="blocks.php?multiple='.$blockid.'&sesskey='.$USER->sesskey.'">'.get_string('change', 'admin').'</a>)</nobr>';
+            }
+            else {
+                $multiple = '<nobr>'.get_string('no').' (<a href="blocks.php?multiple='.$blockid.'&sesskey='.$USER->sesskey.'">'.get_string('change', 'admin').'</a>)</nobr>';
+            }
+        }
+        else {
+            $multiple = '';
+        }
 
-        $table->data[] = array ('<p'.$class.'>'.$blockobject->get_title().'</p>', $count, $blockobject->get_version(), $visible, $delete, $settings);
+        $table->data[] = array(
+            '<p'.$class.'>'.$blockobject->get_title().'</p>',
+            $count,
+            $blockobject->get_version(),
+            $visible,
+            $multiple,
+            $delete,
+            $settings
+        );
     }
     echo '<p>';
     print_table($table);

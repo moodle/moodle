@@ -1,10 +1,9 @@
 <?PHP //$Id$
 
 class CourseBlock_search_forums extends MoodleBlock {
-    function CourseBlock_search_forums ($course) {
+    function init() {
         $this->title = get_string('search', 'forum');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->course = $course;
         $this->version = 2004041000;
     }
 
@@ -17,16 +16,18 @@ class CourseBlock_search_forums extends MoodleBlock {
             return $this->content;
         }
 
-        if (empty($this->course)) {
+        if (empty($this->instance)) {
             $this->content = '';
             return $this->content;
         }
 
-        $this->content = New object;
+        $course = get_record('course', 'id', $this->instance->pageid);
+
+        $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
 
-        $form = forum_print_search_form($this->course, '', true);
+        $form = forum_print_search_form($course, '', true);
         $this->content->text = '<div align="center">'.$form.'</div>';
 
         return $this->content;

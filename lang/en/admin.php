@@ -2,6 +2,9 @@
       // admin.php - created with Moodle 1.2 development (2003111400)
 
 
+$string['blockinstances'] = 'Instances';
+$string['blockmultiple'] = 'Multiple';
+$string['change'] = 'change';
 $string['cachetext'] = 'Text cache lifetime';
 $string['filteruploadedfiles'] = 'Filter uploaded files';
 $string['upgradelogs'] = 'For full functionality, your old logs need to be upgraded.  <a href=\"$a\">More information</a>';

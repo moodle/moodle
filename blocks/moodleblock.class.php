@@ -6,12 +6,18 @@ define('BLOCK_TYPE_NUKE',    3);
 
 class MoodleBlock {
     var $str;
-    var $title = NULL;
-    var $course = NULL;
-    var $content_type = NULL;
-    var $content = NULL;
+    var $title         = NULL;
+    var $course        = NULL;
+    var $content_type  = NULL;
+    var $content       = NULL;
     var $edit_controls = NULL;
-    var $version = NULL;
+    var $version       = NULL;
+    var $instance      = NULL;
+    var $config        = NULL;
+
+    function MoodleBlock() {
+        $this->init();
+    }
 
     function name() {
         // Returns the block name, as present in the class name,
@@ -118,13 +124,8 @@ class MoodleBlock {
         print_side_block($title, '&nbsp;', NULL, NULL, '');
     }
 
-    function add_edit_controls($options, $blockid) {
+    function add_edit_controls($options) {
         global $CFG, $THEME, $USER;
-
-        // The block may be disabled
-        $blockid = intval($blockid);
-        $enabled = $blockid > 0;
-        $blockid = abs($blockid);
 
         if (!isset($this->str)) {
             $this->str->delete    = get_string('delete');
@@ -134,6 +135,7 @@ class MoodleBlock {
             $this->str->moveleft  = get_string('moveleft');
             $this->str->hide      = get_string('hide');
             $this->str->show      = get_string('show');
+            $this->str->configure = get_string('configuration');
         }
 
         $path = $CFG->wwwroot.'/course';
@@ -148,7 +150,7 @@ class MoodleBlock {
 
         $movebuttons = '<div style="float: right;">';
 
-        if($enabled) {
+        if($this->instance->visible) {
             $icon = '/t/hide.gif';
             $title = $this->str->hide;
         }
@@ -157,27 +159,37 @@ class MoodleBlock {
             $title = $this->str->show;
         }
 
-        $movebuttons .= '<a style="margin-right: 6px; margin-left: 3px;" title="'.$title.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=toggle&amp;blockid='.$blockid.$sesskeystr.'">' .
-                        '<img src="'.$pixpath.$icon.'" alt="" /></a>';
+        $page = new stdClass;
+        $page->id   = $this->instance->pageid;
+        $page->type = $this->instance->pagetype;
+        $script = page_source_script($page);
+     
+        $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'.$title.'" href="'.$script.'&amp;blockaction=toggle&amp;instanceid='.$this->instance->id.$sesskeystr.'">' .
+                        '<img src="'.$pixpath.$icon.'" alt=\"\" /></a>';
 
-        $movebuttons .= '<a title="'.$this->str->delete.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=delete&amp;blockid='.$blockid.$sesskeystr.'">' .
-                        '<img src="'.$pixpath.'/t/delete.gif" alt="" /></a> ';
+        if($options & BLOCK_CONFIGURE) {
+            $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'.$this->str->configure.'" href="'.$script.'&amp;blockaction=config&amp;instanceid='.$this->instance->id.$sesskeystr.'">' .
+                            '<img src="'.$pixpath.'/t/edit.gif" alt=\"\" /></a>';
+        }
+
+        $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->delete.'" href="'.$script.'&amp;blockaction=delete&amp;instanceid='.$this->instance->id.$sesskeystr.'">' .
+                        '<img src="'.$pixpath.'/t/delete.gif" alt=\"\" /></a> ';
 
         if ($options & BLOCK_MOVE_LEFT) {
-            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->moveleft.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=moveside&amp;blockid='.$blockid.$sesskeystr.'">' .
-                            '<img src="'.$pixpath.'/t/left.gif" alt="" /></a>';
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->moveleft.'" href="'.$script.'&amp;blockaction=moveleft&amp;instanceid='.$this->instance->id.$sesskeystr.'">' .
+                            '<img src="'.$pixpath.'/t/left.gif" alt=\"\" /></a>';
         }
         if ($options & BLOCK_MOVE_UP) {
-            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->moveup.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=moveup&amp;blockid='.$blockid.$sesskeystr.'">' .
-                            '<img src="'.$pixpath.'/t/up.gif" alt="" /></a>';
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->moveup.'" href="'.$script.'&amp;blockaction=moveup&amp;instanceid='.$this->instance->id.$sesskeystr.'">' .
+                            '<img src="'.$pixpath.'/t/up.gif" alt=\"\" /></a>';
         }
         if ($options & BLOCK_MOVE_DOWN) {
-            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->movedown.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=movedown&amp;blockid='.$blockid.$sesskeystr.'">' .
-                            '<img src="'.$pixpath.'/t/down.gif" alt="" /></a>';
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->movedown.'" href="'.$script.'&amp;blockaction=movedown&amp;instanceid='.$this->instance->id.$sesskeystr.'">' .
+                            '<img src="'.$pixpath.'/t/down.gif" alt=\"\" /></a>';
         }
         if ($options & BLOCK_MOVE_RIGHT) {
-            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->moveright.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=moveside&amp;blockid='.$blockid.$sesskeystr.'">' .
-                            '<img src="'.$pixpath.'/t/right.gif" alt="" /></a>';
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->moveright.'" href="'.$script.'&amp;blockaction=moveright&amp;instanceid='.$this->instance->id.$sesskeystr.'">' .
+                            '<img src="'.$pixpath.'/t/right.gif" alt=\"\" /></a>';
         }
 
         $movebuttons .= '</div>';
@@ -225,12 +237,27 @@ class MoodleBlock {
         return false;
     }
     function print_config() {
-        // This does nothing, it's here to prevent errors from
-        // derived classes if they implement has_config() but not print_config()
+        // Default behavior: print the config_global.html file
+        // You don't need to override this if you 're satisfied with the above
+        if(!$this->has_config()) {
+            return false;
+        }
+        global $CFG, $USER, $THEME;
+        print_simple_box_start('center', '', $THEME->cellheading);
+        include($CFG->dirroot.'/blocks/'.$this->name().'/config_global.html');
+        print_simple_box_end();
+        return true;
     }
-    function handle_config() {
-        // This does nothing, it's here to prevent errors from
-        // derived classes if they implement has_config() but not handle_config()
+    function handle_config($config) {
+        // Default behavior: save all variables as $CFG properties
+        // You don't need to override this if you 're satisfied with the above
+        if(!$this->has_config()) {
+            return false;
+        }
+        foreach ($config as $name => $value) {
+            set_config($name, $value);
+        }
+        return true;
     }
     function applicable_formats() {
         // Default case: the block can be used in all course types
@@ -248,6 +275,49 @@ class MoodleBlock {
         // Default case: just an id for the block, with our name in it
         return array('id' => 'block_'.$this->name());
     }
+    function load_instance($instance) {
+        if(!empty($instance->configdata)) {
+            $this->config = unserialize(base64_decode($instance->configdata));
+        }
+        unset($instance->configdata);
+        $this->instance = $instance;
+        $this->specialization();
+    }
+    function specialization() {
+        // Just to make sure that this method exists.
+        return;
+    }
+
+    function instance_allow_multiple() {
+        // Are you going to allow multiple instances of each block?
+        // If yes, then it is assumed that the block WILL USE per-instance configuration
+        return false;
+    }
+    function instance_config_print() {
+        // Default behavior: print the config_instance.html file
+        // You don't need to override this if you 're satisfied with the above
+        if(!$this->instance_allow_multiple()) {
+            return false;
+        }
+        global $CFG, $USER, $THEME;
+
+        if(is_file($CFG->dirroot.'/blocks/'.$this->name().'/config_instance.html')) {
+            print_simple_box_start('center', '', $THEME->cellheading);
+            include($CFG->dirroot.'/blocks/'.$this->name().'/config_instance.html');
+            print_simple_box_end();
+        }
+        else {
+            notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
+        }
+        
+        return true;
+    }
+    function instance_config_save($data) {
+        $data = stripslashes_recursive($data);
+        $this->config = $data;
+        return set_field('block_instance', 'configdata', base64_encode(serialize($data)), 'id', $this->instance->id);
+    }
+
 }
 
 class MoodleBlock_Nuke extends MoodleBlock {

@@ -1,10 +1,9 @@
 <?PHP //$Id$
 
 class CourseBlock_online_users extends MoodleBlock {
-    function CourseBlock_online_users ($course) {
+    function init() {
         $this->title = get_string('blockname','block_online_users');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->course = $course;
         $this->version = 2004052700;
     }
 
@@ -31,14 +30,16 @@ class CourseBlock_online_users extends MoodleBlock {
             return $this->content;
         }
 
-        $this->content = New stdClass;
+        $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
         
-        if (empty($this->course)) {
+        if (empty($this->instance)) {
             return $this->content;
         }
     
+        $course = get_record('course', 'id', $this->instance->pageid);
+
         $timetoshowusers = 300; //Seconds default
         if (isset($CFG->block_online_users_timetosee)) {
             $timetoshowusers = $CFG->block_online_users_timetosee * 60;
@@ -46,11 +47,10 @@ class CourseBlock_online_users extends MoodleBlock {
         $timefrom = time()-$timetoshowusers;
 
         //Calculate if we are in separate groups
-        $isseparategroups = ($this->course->groupmode == SEPARATEGROUPS and $this->course->groupmodeforce and
-                             !isteacheredit($this->course->id));
+        $isseparategroups = ($course->groupmode == SEPARATEGROUPS && $course->groupmodeforce && !isteacheredit($this->instance->pageid));
 
         //Get the user current group
-        $currentgroup = $isseparategroups ? get_current_group($this->course->id) : NULL;
+        $currentgroup = $isseparategroups ? get_current_group($this->instance->pageid) : NULL;
 
         $groupmembers = "";
         $groupselect = "";
@@ -61,11 +61,11 @@ class CourseBlock_online_users extends MoodleBlock {
             $groupselect .= " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
         }
 
-        if (empty($this->course->category)) {  // Site-level
+        if ($this->instance->pageid == SITEID) {  // Site-level
             $courseselect = '';
             $timeselect = "AND (s.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
         } else {
-            $courseselect = "AND s.course = '".$this->course->id."'";
+            $courseselect = "AND s.course = '".$this->instance->pageid."'";
             $timeselect = "AND s.timeaccess > $timefrom";
         }
 
@@ -83,7 +83,7 @@ class CourseBlock_online_users extends MoodleBlock {
             }
         }
 
-        if (!$this->course->category and $CFG->allusersaresitestudents) {
+        if ($this->instance->pageid == SITEID && $CFG->allusersaresitestudents) {
             if ($siteusers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
                                      FROM {$CFG->prefix}user u
                                      WHERE u.lastaccess > $timefrom AND u.username <> 'guest'
@@ -130,7 +130,7 @@ class CourseBlock_online_users extends MoodleBlock {
                     }
                     $this->content->text .= $imgtag;
                 }
-                $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'" title="'.$timeago.'">'.$user->fullname.'</a></div>';
+                $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->instance->pageid.'" title="'.$timeago.'">'.$user->fullname.'</a></div>';
             }
 /*
                 $table->align = array("right","left");

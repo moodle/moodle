@@ -1,10 +1,9 @@
 <?PHP //$Id$
 
 class CourseBlock_login extends MoodleBlock {
-    function CourseBlock_login ($course) {
+    function init() {
         $this->title = get_string('login');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->course = $course;
         $this->version = 2004081600;
     }
 
