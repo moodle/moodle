@@ -4486,7 +4486,7 @@ function get_list_of_plugins($plugin='mod', $exclude='') {
     global $CFG;
 
     $basedir = opendir($CFG->dirroot .'/'. $plugin);
-    while ($dir = readdir($basedir)) {
+    while (false !== ($dir = readdir($basedir))) {
         $firstchar = substr($dir, 0, 1);
         if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == $exclude) {
             continue;
