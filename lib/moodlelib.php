@@ -11,12 +11,14 @@
 
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
-function print_header ($title="", $heading="", $navigation="", $focus="", $meta="",$cache=true) {
+function print_header ($title="", $heading="", $navigation="", $focus="", $meta="", $cache=true, $button="") {
 // $title - appears top of window
 // $heading - appears top of page
 // $navigation - premade navigation string
 // $focus - indicates form element eg  inputform.password
 // $meta - meta tags in the header
+// $cache - should this page be cacheable?
+// $button - code for a button in the top-right
     global $USER, $CFG, $THEME;
 
     if (file_exists("$CFG->dirroot/theme/$CFG->theme/styles.css")) {
@@ -168,12 +170,35 @@ function print_table($table) {
 function print_editing_switch($courseid) {
     global $CFG, $USER;
 
-    if (isadmin() || isteacher($courseid)) {
+    if (isteacher($courseid)) {
         if ($USER->editing) {
             echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\">Turn editing off</A>";
         } else {
             echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\">Turn editing on</A>";
         }
+    }
+}
+
+function update_course_icon($courseid) {
+    global $CFG, $USER;
+
+    if (isteacher($courseid)) {
+        if ($USER->editing) {
+            return "<A TITLE=\"Turn editing OFF\" HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\"
+                    TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
+        } else {
+            return "<A TITLE=\"Turn editing ON\" HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\"
+                    TARGET=_top><IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
+        }
+    }
+}
+
+function update_module_icon($moduleid) {
+    global $CFG;
+
+    if (isteacher($courseid)) {
+        return "<A TITLE=\"Edit this activity\" HREF=\"$CFG->wwwroot/course/mod.php?update=$moduleid\" TARGET=_top><IMG 
+                SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
     }
 }
 
@@ -875,13 +900,6 @@ function get_all_instances_in_course($modulename, $course, $sort="cw.week") {
 
 }
 
-function print_update_module_icon($moduleid) {
-    global $CFG;
-
-    echo "&nbsp; &nbsp; 
-          <A HREF=\"$CFG->wwwroot/course/mod.php?update=$moduleid\" TARGET=_top><IMG 
-             SRC=\"$CFG->wwwroot/pix/t/edit.gif\" ALIGN=right BORDER=0 ALT=\"Update this module\"></A>";
-}
 
 
 
