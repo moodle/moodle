@@ -18,7 +18,7 @@ $hostname = 'localhost';
 $databasename = 'xphplens';
 $driver = 'mysql';
 
-$dsn = "$driver:/* $username:$password@$hostname/$databasename"; */
+$dsn = "$driver://$username:$password@$hostname/$databasename";
 
 $db = DB::Connect($dsn);
 $db->setFetchMode(ADODB_FETCH_ASSOC);

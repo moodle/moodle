@@ -21,9 +21,9 @@ class ADODB_firebird extends ADODB_ibase {
 		$this->ADODB_ibase();
 	}
 	
-	/*  Note that Interbase 6.5 uses this ROWS instead - don't you love forking wars! */
-	/*  		SELECT col1, col2 FROM table ROWS 5 -- get 5 rows  */
-	/* 		SELECT col1, col2 FROM TABLE ORDER BY col1 ROWS 3 TO 7 -- first 5 skip 2 */
+	// Note that Interbase 6.5 uses this ROWS instead - don't you love forking wars!
+	// 		SELECT col1, col2 FROM table ROWS 5 -- get 5 rows 
+	//		SELECT col1, col2 FROM TABLE ORDER BY col1 ROWS 3 TO 7 -- first 5 skip 2
 	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false, $arg3=false,$secs=0)
 	{
 		$str = 'SELECT ';

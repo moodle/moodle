@@ -10,7 +10,7 @@
  * set tabs to 8
  */
  
- /*  documentation on usage is at http://php.weblogs.com/adodb_csv */
+ // documentation on usage is at http://php.weblogs.com/adodb_csv
  
 include('../adodb.inc.php');
 include('../tohtml.inc.php');
@@ -30,7 +30,7 @@ include('../tohtml.inc.php');
  }
 
 
-$serverURL = 'http:/* localhost/php/phplens/adodb/server.php'; */
+$serverURL = 'http://localhost/php/phplens/adodb/server.php';
 $testhttp = false;
 
 $sql1 = "insertz into products (productname) values ('testprod 1')";

@@ -13,14 +13,14 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
   
 */
 
-/*  select table_name from cat -- MetaTables */
-/*   */
+// select table_name from cat -- MetaTables
+// 
 class ADODB_oracle extends ADOConnection {
     var $databaseType = "oracle";
-    var $replaceQuote = "\'"; /*  string to use to replace quotes */
+    var $replaceQuote = "\'"; // string to use to replace quotes
     var $concat_operator='||';
 	var $_curs;
-	var $_initdate = true; /*  init date to YYYY-MM-DD */
+	var $_initdate = true; // init date to YYYY-MM-DD
 	var $metaTablesSQL = 'select table_name from cat';	
 	var $metaColumnsSQL = "select cname,coltype,width from col where tname='%s' order by colno";
 	var $sysDate = "TO_DATE(TO_CHAR(SYSDATE,'YYYY-MM-DD'),'YYYY-MM-DD')";
@@ -30,14 +30,14 @@ class ADODB_oracle extends ADOConnection {
 	{
 	}
 
-	/*  format and return date string in database date format */
+	// format and return date string in database date format
 	function DBDate($d)
 	{
 		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
 		return 'TO_DATE('.date($this->fmtDate,$d).",'YYYY-MM-DD')";
 	}
 	
-	/*  format and return date string in database timestamp format */
+	// format and return date string in database timestamp format
 	function DBTimeStamp($ts)
 	{
 		if (is_string($ts)) $d = ADORecordSet::UnixTimeStamp($ts);
@@ -81,12 +81,12 @@ class ADODB_oracle extends ADOConnection {
     }
 	
 
-        /*  returns true or false */
+        // returns true or false
         function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
         {
 			if ($argHostname) putenv("ORACLE_HOME=$argHostname");
 			if ($argDatabasename) $argUsername .= "@$argDatabasename";
-		/* if ($argHostname) print "<p>Connect: 1st argument should be left blank for $this->databaseType</p>"; */
+		//if ($argHostname) print "<p>Connect: 1st argument should be left blank for $this->databaseType</p>";
             $this->_connectionID = ora_logon($argUsername,$argPassword);
             if ($this->_connectionID === false) return false;
             if ($this->autoCommit) ora_commiton($this->_connectionID);
@@ -94,12 +94,12 @@ class ADODB_oracle extends ADOConnection {
 
             return true;
         }
-        /*  returns true or false */
+        // returns true or false
         function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
         {
 			if ($argHostname) putenv("ORACLE_HOME=$argHostname");
 			if ($argDatabasename) $argUsername .= "@$argDatabasename";
-		/* if ($argHostname) print "<p>PConnect: 1st argument should be left blank for $this->databaseType</p>"; */
+		//if ($argHostname) print "<p>PConnect: 1st argument should be left blank for $this->databaseType</p>";
             $this->_connectionID = ora_plogon($argUsername,$argPassword);
             if ($this->_connectionID === false) return false;
             if ($this->autoCommit) ora_commiton($this->_connectionID);
@@ -108,7 +108,7 @@ class ADODB_oracle extends ADOConnection {
             return true;
         }
 
-        /*  returns query ID if successful, otherwise false */
+        // returns query ID if successful, otherwise false
         function _query($sql,$inputarr)
         {
                  $curs = ora_open($this->_connectionID);
@@ -122,7 +122,7 @@ class ADODB_oracle extends ADOConnection {
                  return false;
         }
 
-        /*  returns true or false */
+        // returns true or false
         function _close()
         {
 		if (!$this->autoCommit) ora_rollback($this->_connectionID);
@@ -207,7 +207,7 @@ class ADORecordset_oracle extends ADORecordSet {
    }
 
    function _fetch($ignore_fields=false) {
-/*  should remove call by reference, but ora_fetch_into requires it in 4.0.3pl1 */
+// should remove call by reference, but ora_fetch_into requires it in 4.0.3pl1
 		if ($this->fetchMode & ADODB_FETCH_ASSOC)
 			return @ora_fetch_into($this->_queryID,&$this->fields,ORA_FETCHINTO_NULLS|ORA_FETCHINTO_ASSOC);
    		else 
@@ -242,7 +242,7 @@ class ADORecordset_oracle extends ADORecordSet {
 		
 		case 'DATE': return 'D';
 		
-		/* case 'T': return 'T'; */
+		//case 'T': return 'T';
 		
 		case 'BIT': return 'L';
 		case 'INT': 

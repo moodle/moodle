@@ -140,7 +140,7 @@ class DB
 
         if (is_array($options) && isset($options["debug"]) &&
             $options["debug"] >= 2) {
-            /*  expose php errors with sufficient debug level */
+            // expose php errors with sufficient debug level
              @include_once("adodb-$type.inc.php");
         } else {
              @include_once("adodb-$type.inc.php");
@@ -251,8 +251,8 @@ class DB
             'password' => false
         );
 
-        /*  Find phptype and dbsyntax */
-        if (($pos = strpos($dsn, ':/* ')) !== false) { */
+        // Find phptype and dbsyntax
+        if (($pos = strpos($dsn, '://')) !== false) {
             $str = substr($dsn, 0, $pos);
             $dsn = substr($dsn, $pos + 3);
         } else {
@@ -260,8 +260,8 @@ class DB
             $dsn = NULL;
         }
 
-        /*  Get phptype and dbsyntax */
-        /*  $str => phptype(dbsyntax) */
+        // Get phptype and dbsyntax
+        // $str => phptype(dbsyntax)
         if (preg_match('|^(.+?)\((.*?)\)$|', $str, $arr)) {
             $parsed['phptype'] = $arr[1];
             $parsed['dbsyntax'] = (empty($arr[2])) ? $arr[1] : $arr[2];
@@ -274,8 +274,8 @@ class DB
             return $parsed;
         }
 
-        /*  Get (if found): username and password */
-        /*  $dsn => username:password@protocol+hostspec/database */
+        // Get (if found): username and password
+        // $dsn => username:password@protocol+hostspec/database
         if (($at = strpos($dsn,'@')) !== false) {
             $str = substr($dsn, 0, $at);
             $dsn = substr($dsn, $at + 1);
@@ -287,8 +287,8 @@ class DB
             }
         }
 
-        /*  Find protocol and hostspec */
-        /*  $dsn => protocol+hostspec/database */
+        // Find protocol and hostspec
+        // $dsn => protocol+hostspec/database
         if (($pos=strpos($dsn, '/')) !== false) {
             $str = substr($dsn, 0, $pos);
             $dsn = substr($dsn, $pos + 1);
@@ -297,8 +297,8 @@ class DB
             $dsn = NULL;
         }
 
-        /*  Get protocol + hostspec */
-        /*  $str => protocol+hostspec */
+        // Get protocol + hostspec
+        // $str => protocol+hostspec
         if (($pos=strpos($str, '+')) !== false) {
             $parsed['protocol'] = substr($str, 0, $pos);
             $parsed['hostspec'] = urldecode(substr($str, $pos + 1));
@@ -306,8 +306,8 @@ class DB
             $parsed['hostspec'] = urldecode($str);
         }
 
-        /*  Get dabase if any */
-        /*  $dsn => database */
+        // Get dabase if any
+        // $dsn => database
         if (!empty($dsn)) {
             $parsed['database'] = $dsn;
         }

@@ -23,9 +23,9 @@ class ADODB_vfp extends ADODB_odbc {
 	var $replaceQuote = "'+chr(39)+'" ;
 	var $true = '.T.';
 	var $false = '.F.';
-	var $hasTop = 'top';		/*  support mssql SELECT TOP 10 * FROM TABLE */
+	var $hasTop = 'top';		// support mssql SELECT TOP 10 * FROM TABLE
 	var $upperCase = 'upper';
-	var $_bindInputArray = false; /*  strangely enough, setting to true does not work reliably */
+	var $_bindInputArray = false; // strangely enough, setting to true does not work reliably
 	var $sysTimeStamp = 'datetime()';
 	var $sysDate = 'date()';
 	
@@ -36,7 +36,7 @@ class ADODB_vfp extends ADODB_odbc {
 	
 	function BeginTrans() { return false;}
 
-	/*  quote string to be sent back to database */
+	// quote string to be sent back to database
 	function qstr($s,$nofixquotes=false)
 	{
 		if (!$nofixquotes) return  "'".str_replace("\r\n","'+chr(13)+'",str_replace("'",$this->replaceQuote,$s))."'";
@@ -44,7 +44,7 @@ class ADODB_vfp extends ADODB_odbc {
 	}
 
 	
-	/*  TOP requires ORDER BY for VFP */
+	// TOP requires ORDER BY for VFP
 	function &SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$arg3=false,$secs2cache=0)
 	{
 		if (!preg_match('/ORDER[ \t\r\n]+BY/i',$sql)) $sql .= ' ORDER BY 1';
@@ -86,5 +86,5 @@ class  ADORecordSet_vfp extends ADORecordSet_odbc {
 	}
 }
 
-} /* define */
+} //define
 ?>

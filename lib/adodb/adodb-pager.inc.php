@@ -23,16 +23,16 @@
 	delete records. 
 */
 class ADODB_Pager {
-	var $id; 	/*  unique id for pager (defaults to 'adodb') */
-	var $db; 	/*  ADODB connection object */
-	var $sql; 	/*  sql used */
-	var $rs;	/*  recordset generated */
-	var $curr_page;	/*  current page number before Render() called, calculated in constructor */
-	var $rows;		/*  number of rows per page */
+	var $id; 	// unique id for pager (defaults to 'adodb')
+	var $db; 	// ADODB connection object
+	var $sql; 	// sql used
+	var $rs;	// recordset generated
+	var $curr_page;	// current page number before Render() called, calculated in constructor
+	var $rows;		// number of rows per page
 	
 	var $gridAttributes = 'width=100% border=1 bgcolor=white';
 	
-	/*  Localize text strings here */
+	// Localize text strings here
 	var $first = '<code>|&lt;</code>';
 	var $prev = '<code>&lt;&lt;</code>';
 	var $next = '<code>>></code>';
@@ -40,15 +40,15 @@ class ADODB_Pager {
 	var $page = 'Page';
 	var $cache = 0;  #secs to cache with CachePageExecute()
 	
-	/* ---------------------------------------------- */
-	/*  constructor */
-	/*  */
-	/*  $db	adodb connection object */
-	/*  $sql	sql statement */
-	/*  $id	optional id to identify which pager,  */
-	/* 		if you have multiple on 1 page.  */
-	/* 		$id should be only be [a-z0-9]* */
-	/*  */
+	//----------------------------------------------
+	// constructor
+	//
+	// $db	adodb connection object
+	// $sql	sql statement
+	// $id	optional id to identify which pager, 
+	//		if you have multiple on 1 page. 
+	//		$id should be only be [a-z0-9]*
+	//
 	function ADODB_Pager(&$db,$sql,$id = 'adodb')
 	{
 	global $HTTP_SERVER_VARS,$PHP_SELF,$HTTP_SESSION_VARS,$HTTP_GET_VARS;
@@ -71,8 +71,8 @@ class ADODB_Pager {
 		
 	}
 	
-	/* --------------------------- */
-	/*  Display link to first page */
+	//---------------------------
+	// Display link to first page
 	function Render_First($anchor=true)
 	{
 	global $PHP_SELF;
@@ -85,8 +85,8 @@ class ADODB_Pager {
 		}
 	}
 	
-	/* -------------------------- */
-	/*  Display link to next page */
+	//--------------------------
+	// Display link to next page
 	function render_next($anchor=true)
 	{
 	global $PHP_SELF;
@@ -100,12 +100,12 @@ class ADODB_Pager {
 		}
 	}
 	
-	/* ------------------ */
-	/*  Link to last page */
-	/*   */
-	/*  for better performance with large recordsets, you can set */
-	/*  $this->db->pageExecuteCountRows = false, which disables */
-	/*  last page counting. */
+	//------------------
+	// Link to last page
+	// 
+	// for better performance with large recordsets, you can set
+	// $this->db->pageExecuteCountRows = false, which disables
+	// last page counting.
 	function render_last($anchor=true)
 	{
 	global $PHP_SELF;
@@ -121,8 +121,8 @@ class ADODB_Pager {
 		}
 	}
 	
-	/* ---------------------- */
-	/*  Link to previous page */
+	//----------------------
+	// Link to previous page
 	function render_prev($anchor=true)
 	{
 	global $PHP_SELF;
@@ -135,14 +135,14 @@ class ADODB_Pager {
 		}
 	}
 	
-	/* -------------------------------------------------------- */
-	/*  Simply rendering of grid. You should override this for */
-	/*  better control over the format of the grid */
-	/*  */
-	/*  We use output buffering to keep code clean and readable. */
+	//--------------------------------------------------------
+	// Simply rendering of grid. You should override this for
+	// better control over the format of the grid
+	//
+	// We use output buffering to keep code clean and readable.
 	function RenderGrid()
 	{
-	global $gSQLBlockRows; /*  used by rs2html to indicate how many rows to display */
+	global $gSQLBlockRows; // used by rs2html to indicate how many rows to display
 		include_once(ADODB_DIR.'/tohtml.inc.php');
 		ob_start();
 		$gSQLBlockRows = $this->rows;
@@ -152,10 +152,10 @@ class ADODB_Pager {
 		return $s;
 	}
 	
-	/* ------------------------------------------------------- */
-	/*  Navigation bar */
-	/*  */
-	/*  we use output buffering to keep the code easy to read. */
+	//-------------------------------------------------------
+	// Navigation bar
+	//
+	// we use output buffering to keep the code easy to read.
 	function RenderNav()
 	{
 		ob_start();
@@ -178,16 +178,16 @@ class ADODB_Pager {
 		return $s;
 	}
 	
-	/* ------------------- */
-	/*  This is the footer */
+	//-------------------
+	// This is the footer
 	function RenderPageCount()
 	{
 		if (!$this->db->pageExecuteCountRows) return '';
 		return "<font size=-1>$this->page ".$this->curr_page."/".$this->rs->LastPageNo()."</font>";
 	}
 	
-	/* ----------------------------------- */
-	/*  Call this class to draw everything. */
+	//-----------------------------------
+	// Call this class to draw everything.
 	function Render($rows=10)
 	{
 	global $ADODB_COUNTRECS;
@@ -221,8 +221,8 @@ class ADODB_Pager {
 		$this->RenderLayout($header,$grid,$footer);
 	}
 	
-	/* ------------------------------------------------------ */
-	/*  override this to control overall layout and formating */
+	//------------------------------------------------------
+	// override this to control overall layout and formating
 	function RenderLayout($header,$grid,$footer)
 	{
 		echo "<table border=1 bgcolor=beige><tr><td>",

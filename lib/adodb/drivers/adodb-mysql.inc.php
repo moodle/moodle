@@ -26,7 +26,7 @@ class ADODB_mysql extends ADOConnection {
 	var $hasMoveFirst = true;
 	var $hasGenID = true;
 	var $upperCase = 'upper';
-	var $isoDates = true; /*  accepts dates in ISO format */
+	var $isoDates = true; // accepts dates in ISO format
 	var $sysDate = 'CURDATE()';
 	var $sysTimeStamp = 'NOW()';
 	var $forceNewConnect = false;
@@ -45,15 +45,15 @@ class ADODB_mysql extends ADOConnection {
             return mysql_affected_rows($this->_connectionID);
     }
   
- 	/*  See http://www.mysql.com/doc/M/i/Miscellaneous_functions.html */
-	/*  Reference on Last_Insert_ID on the recommended way to simulate sequences */
+ 	// See http://www.mysql.com/doc/M/i/Miscellaneous_functions.html
+	// Reference on Last_Insert_ID on the recommended way to simulate sequences
  	var $_genIDSQL = "update %s set id=LAST_INSERT_ID(id+1);";
 	var $_genSeqSQL = "create table %s (id int not null)";
 	var $_genSeq2SQL = "insert into %s values (%s)";
 	
 	function GenID($seqname='adodbseq',$startID=1)
 	{
-		/* if (!$this->hasGenID) return false; */
+		//if (!$this->hasGenID) return false;
 		$getnext = sprintf($this->_genIDSQL,$seqname);
 		$rs = @$this->Execute($getnext);
 		if (!$rs) {
@@ -82,7 +82,7 @@ class ADODB_mysql extends ADOConnection {
 		return $arr;
 	}
 
-	/*  returns concatenated string */
+	// returns concatenated string
 	function Concat()
 	{
 		$s = "";
@@ -96,13 +96,13 @@ class ADODB_mysql extends ADOConnection {
 			} else $s .= ','.$a;
 		}*/
 		
-		/*  suggestion by andrew005@mnogo.ru */
+		// suggestion by andrew005@mnogo.ru
 	        $s = implode(',',$arr); 
 		if (strlen($s) > 0) return "CONCAT($s)";
 		else return '';
 	}
 	
-	/*  returns true or false */
+	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		if ($this->forceNewConnect && (strnatcmp(PHP_VERSION,'4.2.0')>=0))
@@ -114,7 +114,7 @@ class ADODB_mysql extends ADOConnection {
 		return true;	
 	}
 	
-	/*  returns true or false */
+	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		$this->_connectionID = mysql_pconnect($argHostname,$argUsername,$argPassword);
@@ -144,7 +144,7 @@ class ADODB_mysql extends ADOConnection {
 				$fld->name = $rs->fields[0];
 				$fld->type = $rs->fields[1];
 					
-				/*  split type into type(length): */
+				// split type into type(length):
 				if (preg_match("/^(.+)\((\d+)\)$/", $fld->type, $query_array)) {
 					$fld->type = $query_array[1];
 					$fld->max_length = $query_array[2];
@@ -174,7 +174,7 @@ class ADODB_mysql extends ADOConnection {
 		return false;
 	}
 		
-	/*  returns true or false */
+	// returns true or false
 	function SelectDB($dbName) 
 	{
 		$this->databaseName = $dbName;
@@ -184,7 +184,7 @@ class ADODB_mysql extends ADOConnection {
 		else return false;	
 	}
 	
-	/*  parameters use PostgreSQL convention, not MySQL */
+	// parameters use PostgreSQL convention, not MySQL
 	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false, $arg3=false,$secs=0)
 	{
 		$offsetStr =($offset>=0) ? "$offset," : '';
@@ -194,12 +194,12 @@ class ADODB_mysql extends ADOConnection {
 		
 	}
 	
-	/*  returns queryID or false */
+	// returns queryID or false
 	function _query($sql,$inputarr)
 	{
 	global $ADODB_COUNTRECS;
 		if($ADODB_COUNTRECS) return mysql_query($sql,$this->_connectionID);
-		else return mysql_unbuffered_query($sql,$this->_connectionID); /*  requires PHP >= 4.0.6 */
+		else return mysql_unbuffered_query($sql,$this->_connectionID); // requires PHP >= 4.0.6
 	}
 
 	/*	Returns: the last error message from previous database operation	*/	
@@ -219,7 +219,7 @@ class ADODB_mysql extends ADOConnection {
 	
 
 	
-	/*  returns true or false */
+	// returns true or false
 	function _close()
 	{
 		@mysql_close($this->_connectionID);
@@ -241,7 +241,7 @@ class ADODB_mysql extends ADOConnection {
 		case 'T': return 'DATETIME';
 		case 'L': return 'TINYINT';
 		case 'R': return 'INTEGER NOT NULL AUTO_INCREMENT';
-		case 'I': return 'INTEGER';  /*  enough for 9 petabytes! */
+		case 'I': return 'INTEGER';  // enough for 9 petabytes!
 		
 		case 'F': return 'DOUBLE';
 		case 'N': return 'NUMERIC';
@@ -305,14 +305,14 @@ class ADORecordSet_mysql extends ADORecordSet{
 		if ($fieldOffset != -1) {
 			$o =  mysql_fetch_field($this->_queryID, $fieldOffset);
 			$f = @mysql_field_flags($this->_queryID,$fieldOffset);
-			$o->max_length = @mysql_field_len($this->_queryID,$fieldOffset); /*  suggested by: Jim Nicholson (jnich@att.com) */
-			/* $o->max_length = -1; // mysql returns the max length less spaces -- so it is unrealiable */
+			$o->max_length = @mysql_field_len($this->_queryID,$fieldOffset); // suggested by: Jim Nicholson (jnich@att.com)
+			//$o->max_length = -1; // mysql returns the max length less spaces -- so it is unrealiable
 			$o->binary = (strpos($f,'binary')!== false);
 		}
 		else if ($fieldOffset == -1) {	/*	The $fieldOffset argument is not provided thus its -1 	*/
 			$o = @mysql_fetch_field($this->_queryID);
-			$o->max_length = @mysql_field_len($this->_queryID); /*  suggested by: Jim Nicholson (jnich@att.com) */
-			/* $o->max_length = -1; // mysql returns the max length less spaces -- so it is unrealiable */
+			$o->max_length = @mysql_field_len($this->_queryID); // suggested by: Jim Nicholson (jnich@att.com)
+			//$o->max_length = -1; // mysql returns the max length less spaces -- so it is unrealiable
 		}
 			
 		return $o;
@@ -327,7 +327,7 @@ class ADORecordSet_mysql extends ADORecordSet{
 	/* Use associative array to get fields array */
 	function Fields($colname)
 	{	
-		/*  added @ by "Michael William Miller" <mille562@pilot.msu.edu> */
+		// added @ by "Michael William Miller" <mille562@pilot.msu.edu>
 		if ($this->fetchMode != MYSQL_NUM) return @$this->fields[$colname];
 		
 		if (!$this->bind) {
@@ -359,12 +359,12 @@ class ADORecordSet_mysql extends ADORecordSet{
 		return false;
 	} */
 	
-	/*  10% speedup to move MoveNext to child class */
+	// 10% speedup to move MoveNext to child class
 	function MoveNext() 
 	{
 		if (!$this->EOF) {		
 			$this->_currentRow++;
-			/*  using & below slows things down by 20%! */
+			// using & below slows things down by 20%!
 			$this->fields = @mysql_fetch_array($this->_queryID,$this->fetchMode);
 			
 			if (is_array($this->fields)) return true;
@@ -393,7 +393,7 @@ class ADORecordSet_mysql extends ADORecordSet{
 	
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
-		$len = -1; /*  mysql max_length is not accurate */
+		$len = -1; // mysql max_length is not accurate
 		switch (strtoupper($t)) {
 		case 'STRING': 
 		case 'CHAR':
@@ -409,8 +409,8 @@ class ADORecordSet_mysql extends ADORecordSet{
 		case 'MEDIUMTEXT':
 			return 'X';
 			
-		/*  php_mysql extension always returns 'blob' even if 'text' */
-		/*  so we have to check whether binary... */
+		// php_mysql extension always returns 'blob' even if 'text'
+		// so we have to check whether binary...
 		case 'IMAGE':
 		case 'LONGBLOB': 
 		case 'BLOB':

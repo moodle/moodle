@@ -22,11 +22,11 @@ class ADODB_borland_ibase extends ADODB_ibase {
 		$this->ADODB_ibase();
 	}
 	
-	/*  Note that Interbase 6.5 uses ROWS instead - don't you love forking wars! */
-	/*  		SELECT col1, col2 FROM table ROWS 5 -- get 5 rows  */
-	/* 		SELECT col1, col2 FROM TABLE ORDER BY col1 ROWS 3 TO 7 -- first 5 skip 2 */
-	/*  Firebird uses */
-	/* 		SELECT FIRST 5 SKIP 2 col1, col2 FROM TABLE */
+	// Note that Interbase 6.5 uses ROWS instead - don't you love forking wars!
+	// 		SELECT col1, col2 FROM table ROWS 5 -- get 5 rows 
+	//		SELECT col1, col2 FROM TABLE ORDER BY col1 ROWS 3 TO 7 -- first 5 skip 2
+	// Firebird uses
+	//		SELECT FIRST 5 SKIP 2 col1, col2 FROM TABLE
 	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false, $arg3=false,$secs=0)
 	{
 		if ($nrows > 0) {
@@ -37,9 +37,9 @@ class ADODB_borland_ibase extends ADODB_ibase {
 				$str = " ROWS $a TO $b";
 			}
 		} else {
-			/*  ok, skip  */
+			// ok, skip 
 			$a = $offset + 1;
-			$str = " ROWS $a TO 999999999"; /*  999 million */
+			$str = " ROWS $a TO 999999999"; // 999 million
 		}
 		$sql .= $str;
 		

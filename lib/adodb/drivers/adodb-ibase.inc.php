@@ -25,7 +25,7 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 
 class ADODB_ibase extends ADOConnection {
     var $databaseType = "ibase";
-    var $replaceQuote = "\'"; /*  string to use to replace quotes */
+    var $replaceQuote = "\'"; // string to use to replace quotes
     var $fmtDate = "'Y-m-d'";
     var $fmtTimeStamp = "'Y-m-d, H:i:s'";
     var $concat_operator='||';
@@ -49,7 +49,7 @@ class ADODB_ibase extends ADOConnection {
     function BeginTrans()
 	{     
         $this->autoCommit = false;
-     	$this->_transactionID = $this->_connectionID;/* ibase_trans($this->ibasetrans, $this->_connectionID); */
+     	$this->_transactionID = $this->_connectionID;//ibase_trans($this->ibasetrans, $this->_connectionID);
 	    return $this->_transactionID;
 	}
 	
@@ -59,7 +59,7 @@ class ADODB_ibase extends ADOConnection {
 		$ret = false;
 		$this->autoCommit = true;
 		if ($this->_transactionID) {
-               		/* print ' commit '; */
+               		//print ' commit ';
 			$ret = ibase_commit($this->_transactionID);
 		}
 		$this->_transactionID = false;
@@ -77,11 +77,11 @@ class ADODB_ibase extends ADOConnection {
 		return $ret;
 	}
 	
-	/*  See http://community.borland.com/article/0,1410,25844,00.html */
+	// See http://community.borland.com/article/0,1410,25844,00.html
 	function RowLock($tables,$where,$col)
 	{
 		if ($this->autoCommit) $this->BeginTrans();
-		$this->Execute("UPDATE $table SET $col=$col WHERE $where "); /*  is this correct - jlim? */
+		$this->Execute("UPDATE $table SET $col=$col WHERE $where "); // is this correct - jlim?
 		return 1;
 	}
 	
@@ -102,7 +102,7 @@ class ADODB_ibase extends ADOConnection {
 			$rs = $this->Execute($getnext);
 		}
 		if ($rs && !$rs->EOF) $this->genID = (integer) reset($rs->fields);
-		else $this->genID = 0; /*  false */
+		else $this->genID = 0; // false
 		
 		if ($rs) $rs->Close();
 		
@@ -127,13 +127,13 @@ class ADODB_ibase extends ADOConnection {
             return $this->_errorMsg;
     }
 
-       /*  returns true or false */
+       // returns true or false
     function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
     {  
-		/* if ($this->charSet !== false) */
+		//if ($this->charSet !== false)
 			$this->_connectionID = ibase_connect($argHostname,$argUsername,$argPassword,$this->charSet,$this->buffers,$this->dialect);
-	  /*   else         */
-		/* 	$this->_connectionID = ibase_connect($argHostname,$argUsername,$argPassword); */
+	  //  else        
+		//	$this->_connectionID = ibase_connect($argHostname,$argUsername,$argPassword);
 	             	
 		if ($this->_connectionID === false) {
 			$this->_handleerror();
@@ -142,13 +142,13 @@ class ADODB_ibase extends ADOConnection {
 	
         return true;
     }
-       /*  returns true or false */
+       // returns true or false
     function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
     {
-		/* if ($this->charSet !== false) */
+		//if ($this->charSet !== false)
 			$this->_connectionID = ibase_pconnect($argHostname,$argUsername,$argPassword,$this->charSet,$this->buffers,$this->dialect);
-	  /*   else         */
-		/* 	$this->_connectionID = ibase_pconnect($argHostname,$argUsername,$argPassword); */
+	  //  else        
+		//	$this->_connectionID = ibase_pconnect($argHostname,$argUsername,$argPassword);
 	        	     
 	    if ($this->_connectionID === false) {
 			$this->_handleerror();
@@ -166,8 +166,8 @@ class ADODB_ibase extends ADOConnection {
 		return array($sql,$stmt);
 	}
 
-       /*  returns query ID if successful, otherwise false */
-	   /*  there have been reports of problems with nested queries - the code is probably not re-entrant? */
+       // returns query ID if successful, otherwise false
+	   // there have been reports of problems with nested queries - the code is probably not re-entrant?
     function _query($sql,$iarr=false)
     { 
 		if (is_array($sql)) {
@@ -203,14 +203,14 @@ class ADODB_ibase extends ADOConnection {
     	return $ret;
     }
 
-     /*  returns true or false */
+     // returns true or false
      function _close()
      {       
         if (!$this->autoCommit) @ibase_rollback($this->_connectionID);
         return @ibase_close($this->_connectionID);
      }
 	
-        /*  returns array of ADOFieldObjects for current table */
+        // returns array of ADOFieldObjects for current table
 	function &MetaColumns($table) 
 	{
 	global $ADODB_FETCH_MODE;
@@ -226,7 +226,7 @@ class ADODB_ibase extends ADOConnection {
 			if ($rs === false) return false;
 
 			$retarr = array();
-			while (!$rs->EOF) { /* print_r($rs->fields); */
+			while (!$rs->EOF) { //print_r($rs->fields);
 				$fld = new ADOFieldObject();
 				$fld->name = $rs->fields[0];
 				$tt = $rs->fields[1];
@@ -259,7 +259,7 @@ class ADODB_ibase extends ADOConnection {
 		return false;
 	}
 	
-	/*  no longer needed in php 4.1.0, but still backward compatible */
+	// no longer needed in php 4.1.0, but still backward compatible
 	function &BlobEncode( $blob ) 
 	{
 		$blobid = ibase_blob_create( $this->_connectionID);
@@ -267,11 +267,11 @@ class ADODB_ibase extends ADOConnection {
 		return ibase_blob_close( $blobid );
 	}
 	
-	/*  no longer needed in php 4.1.0, but still backward compatible */
+	// no longer needed in php 4.1.0, but still backward compatible
 	function &BlobDecode( $blob ) 
 	{
 		$blobid = ibase_blob_open( $blob );
-		$realblob = ibase_blob_get( $blobid,MAX_BLOB_SIZE); /*  2nd param is max size of blob -- Kevin Boillet <kevinboillet@yahoo.fr> */
+		$realblob = ibase_blob_get( $blobid,MAX_BLOB_SIZE); // 2nd param is max size of blob -- Kevin Boillet <kevinboillet@yahoo.fr>
 		ibase_blob_close( $blobid );
 
 		return( $realblob );
@@ -393,9 +393,9 @@ class ADORecordset_ibase extends ADORecordSet
 	        case 'TIMESTAMP':
 	        case 'DATE': return 'D';
 	                
-	                /* case 'T': return 'T'; */
+	                //case 'T': return 'T';
 	
-	                /* case 'L': return 'L'; */
+	                //case 'L': return 'L';
 			case 'INT': 
 			case 'SHORT':
 			case 'INTEGER': return 'I';

@@ -33,7 +33,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 		return ADODB_oci8::Prepare($sql);
 	}
 	
-	/*  emulate handling of parameters ? ?, replacing with :bind0 :bind1 */
+	// emulate handling of parameters ? ?, replacing with :bind0 :bind1
 	function _query($sql,$inputarr)
 	{
 		if (is_array($inputarr)) {
@@ -82,7 +82,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 			 return $this->fields[$this->bind[strtoupper($colname)]];
 		}
 	
-		/*  lowercase field names... */
+		// lowercase field names...
  		function &_FetchField($fieldOffset = -1)
         {
                  $fld = new ADOFieldObject;
@@ -91,14 +91,14 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
                  $fld->type = OCIcolumntype($this->_queryID, $fieldOffset);
                  $fld->max_length = OCIcolumnsize($this->_queryID, $fieldOffset);
 				 if ($fld->type == 'NUMBER') {
-				 	/* $p = OCIColumnPrecision($this->_queryID, $fieldOffset); */
+				 	//$p = OCIColumnPrecision($this->_queryID, $fieldOffset);
 					$sc = OCIColumnScale($this->_queryID, $fieldOffset);
 					if ($sc == 0) $fld->type = 'INT';
 				 }
                  return $fld;
         }
 
-	/*  10% speedup to move MoveNext to child class */
+	// 10% speedup to move MoveNext to child class
 	function MoveNext() 
 	{
 		if (!$this->EOF) {		
@@ -132,7 +132,7 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 		return $results;
 	}
 
-	/*  Uggh - a useless slowdown */
+	// Uggh - a useless slowdown
 	function _updatefields()
 	{
 		$arr = array();

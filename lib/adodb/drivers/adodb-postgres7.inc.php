@@ -15,15 +15,15 @@ include_once(ADODB_DIR."/drivers/adodb-postgres64.inc.php");
 
 class ADODB_postgres7 extends ADODB_postgres64 {
 	var $databaseType = 'postgres7';	
-	var $hasLimit = true;	/*  set to true for pgsql 6.5+ only. support pgsql/mysql SELECT * FROM TABLE LIMIT 10 */
+	var $hasLimit = true;	// set to true for pgsql 6.5+ only. support pgsql/mysql SELECT * FROM TABLE LIMIT 10
 
 	function ADODB_postgres7() 
 	{
 		
 	}
 
-	/*  the following should be compat with postgresql 7.2,  */
-	/*  which makes obsolete the LIMIT limit,offset syntax */
+	// the following should be compat with postgresql 7.2, 
+	// which makes obsolete the LIMIT limit,offset syntax
 	 function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$arg3=false,$secs2cache=0) 
 	 {
 	  $offsetStr = ($offset >= 0) ? " OFFSET $offset" : '';
@@ -34,7 +34,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	   $this->Execute($sql."$limitStr$offsetStr",$inputarr,$arg3);
 	 }
  
- 	/*  10% speedup to move MoveNext to child class */
+ 	// 10% speedup to move MoveNext to child class
 	function MoveNext() 
 	{
 		if (!$this->EOF) {		

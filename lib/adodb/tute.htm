@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-/* W3C//DTD HTML 4.0 Transitional//EN"> */
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 
 <html>
 <head>
@@ -41,7 +41,7 @@
 <p>ADODB stands for Active Data Objects DataBase (sorry computer guys are sometimes 
   not very original). ADODB currently supports MySQL, PostgreSQL, Oracle, Interbase, 
   Microsoft SQL Server, Access, FoxPro, Sybase, ODBC and ADO. You can download 
-  ADODB from <a href=http:/* php.weblogs.com/adodb><a href="http://php.weblogs.com/adodb">http://php.weblogs.com/adodb</a></a>. */
+  ADODB from <a href=http://php.weblogs.com/adodb><a href="http://php.weblogs.com/adodb">http://php.weblogs.com/adodb</a></a>.
 <h3>MySQL Example</h3>
 <p>The most common database used with PHP is MySQL, so I guess you should be familiar 
   with the following code. It connects to a MySQL server at <i>localhost</i>, 
@@ -133,8 +133,8 @@ $db-&gt;<b>Connect</b>(&quot;localhost&quot;, &quot;root&quot;, &quot;password&q
 	$rs1 = $db->Execute('select * from table');
 	$<b>ADODB_FETCH_MODE</b> = ADODB_FETCH_ASSOC;
 	$rs2 = $db->Execute('select * from table');
-	print_r($rs1->fields); /*  shows <i>array([0]=>'v0',[1] =>'v1')</i> */
-	print_r($rs2->fields); /*  shows <i>array(['col1']=>'v0',['col2'] =>'v1')</i> */
+	print_r($rs1->fields); // shows <i>array([0]=>'v0',[1] =>'v1')</i>
+	print_r($rs2->fields); // shows <i>array(['col1']=>'v0',['col2'] =>'v1')</i>
 </pre>
 <p>
 As you can see in the above example, both recordsets store and use different fetch modes
@@ -160,7 +160,7 @@ based on the $ADODB_FETCH_MODE setting when the recordset was created by Execute
    $conn-&gt;PConnect('localhost','userid','password','database');
    $rs = $conn-&gt;Execute('select * from table');
   <b> rs2html($rs)</b>; /* recordset to html table */ </pre>
-<p>There are many other helper functions that are listed in the documentation available at <a href="http:/* php.weblogs.com/adodb_manual"><a href="http://php.weblogs.com/adodb_manual">http://php.weblogs.com/adodb_manual</a></a>.  */
+<p>There are many other helper functions that are listed in the documentation available at <a href="http://php.weblogs.com/adodb_manual"><a href="http://php.weblogs.com/adodb_manual">http://php.weblogs.com/adodb_manual</a></a>. 
 <h2>Advanced Material</h2>
 <h3>Inserts and Updates </h3>
 <p>Let's say you want to insert the following data into a database. 
@@ -228,7 +228,7 @@ $connection->CacheSelectLimit($secs2cache,$sql,$nrows,$offset).
 <p><b>PHP4 Session Handler Support</b> 
 <p>ADODB also supports PHP4 session handlers. You can store your session variables 
   in a database for true scalability using ADODB. For further information, visit 
-  <a href="http:/* php.weblogs.com/adodb-sessions"><a href="http://php.weblogs.com/adodb-sessions">http://php.weblogs.com/adodb-sessions</a></a> */
+  <a href="http://php.weblogs.com/adodb-sessions"><a href="http://php.weblogs.com/adodb-sessions">http://php.weblogs.com/adodb-sessions</a></a>
 <h3>Commercial Use Encouraged</h3>
 <p>If you plan to write commercial PHP applications that you want to resell, you should consider ADODB. It has been released using the lesser GPL, which means you can legally include it in commercial applications, while keeping your code proprietary. Commercial use of ADODB is strongly encouraged! We are using it internally for this reason.<p>
 

@@ -75,7 +75,7 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESS_DEBUG,
 	$ADODB_SESS_INSERT; 
 
-	/* $ADODB_SESS_DEBUG = true; */
+	//$ADODB_SESS_DEBUG = true;
 	
 	/* SET THE FOLLOWING PARAMETERS */
 if (empty($ADODB_SESSION_DRIVER)) {
@@ -101,8 +101,8 @@ $ADODB_CRYPT_KEY = 'CRYPTED ADODB SESSIONS ROCK!';
 
 $ADODB_SESS_LIFE = get_cfg_var('session.gc_maxlifetime');
 if ($ADODB_SESS_LIFE <= 1) {
-	/*  bug in PHP 4.0.3 pl 1  -- how about other versions? */
-	/* print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>"; */
+	// bug in PHP 4.0.3 pl 1  -- how about other versions?
+	//print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>";
 	$ADODB_SESS_LIFE=1440;
 }
 
@@ -148,7 +148,7 @@ global $ADODB_SESS_CONN,$ADODB_SESS_INSERT,$ADODB_SESSION_TBL;
 			$ADODB_SESS_INSERT = true;
 			$v = '';
 		} else {
-			/*  Decrypt session data */
+			// Decrypt session data
 			$v = rawurldecode($Crypt->Decrypt(reset($rs->fields), ADODB_Session_Key()));
 		}
 		$rs->Close();
@@ -166,7 +166,7 @@ $Crypt = new MD5Crypt;
 
 	$expiry = time() + $ADODB_SESS_LIFE;
 
-	/*  encrypt session data..	 */
+	// encrypt session data..	
 	$val = $Crypt->Encrypt(rawurlencode($val), ADODB_Session_Key());
 	$qry = "UPDATE $ADODB_SESSION_TBL SET expiry=$expiry,data='$val' WHERE sesskey='$key'";
 	$rs = $ADODB_SESS_CONN->Execute($qry);
@@ -179,8 +179,8 @@ $Crypt = new MD5Crypt;
 		if ($rs) $rs->Close();
 		else print '<p>Session Insert: '.$ADODB_SESS_CONN->ErrorMsg().'</p>';
 	}
-	/*  bug in access driver (could be odbc?) means that info is not commited */
-	/*  properly unless select statement executed in Win2000 */
+	// bug in access driver (could be odbc?) means that info is not commited
+	// properly unless select statement executed in Win2000
 	if ($ADODB_SESS_CONN->databaseType == 'access') $rs = $ADODB_SESS_CONN->Execute("select sesskey from $ADODB_SESSION_TBL WHERE sesskey='$key'");
 
 	return isset($rs);
@@ -203,7 +203,7 @@ function adodb_sess_gc($maxlifetime) {
 	$rs = $ADODB_SESS_CONN->Execute($qry);
 	if ($rs) $rs->Close();
 	
-	/*  suggested by Cameron, "GaM3R" <gamr@outworld.cx> */
+	// suggested by Cameron, "GaM3R" <gamr@outworld.cx>
 	if (defined('ADODB_SESSION_OPTIMIZE'))
 	{
 		switch( $ADODB_SESSION_DRIVER ) {

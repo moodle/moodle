@@ -14,7 +14,7 @@ function testdb(&$db,$createtab="create table ADOXYZ (id int, firstname char(24)
 	$table = 'adodbseq';
 	
 	$db->Execute("drop table $table");
-	/* $db->debug=true; */
+	//$db->debug=true;
 	
 	$ctr = 5000;
 	$lastnum = 0;

@@ -73,16 +73,16 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	
 	$ADODB_SESS_LIFE = get_cfg_var('session.gc_maxlifetime');
 	if ($ADODB_SESS_LIFE <= 1) {
-	 /*  bug in PHP 4.0.3 pl 1  -- how about other versions? */
-	 /* print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>"; */
+	 // bug in PHP 4.0.3 pl 1  -- how about other versions?
+	 //print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>";
 	 	$ADODB_SESS_LIFE=1440;
 	}
 	$ADODB_SESSION_CRC = false;
-	/* $ADODB_SESS_DEBUG = true; */
+	//$ADODB_SESS_DEBUG = true;
 	
-	/* //////////////////////////////// */
+	//////////////////////////////////
 	/* SET THE FOLLOWING PARAMETERS */
-	/* //////////////////////////////// */
+	//////////////////////////////////
 	
 	if (empty($ADODB_SESSION_DRIVER)) {
 		$ADODB_SESSION_DRIVER='mysql';
@@ -92,7 +92,7 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 		$ADODB_SESSION_DB ='xphplens_2';
 	}
 	
-	/*   Made table name configurable - by David Johnson djohnson@inpro.net */
+	//  Made table name configurable - by David Johnson djohnson@inpro.net
 	if (empty($ADODB_SESSION_TBL)){
 		$ADODB_SESSION_TBL = 'sessions';
 	}
@@ -105,7 +105,7 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 function adodb_sess_open($save_path, $session_name,$persist=true) 
 {
 GLOBAL $ADODB_SESS_CONN;
-	/* if( $persist) print "PERSIST "; */
+	//if( $persist) print "PERSIST ";
 	if (isset($ADODB_SESS_CONN)) return true;
 	
 GLOBAL 	$ADODB_SESSION_CONNECT, 
@@ -115,7 +115,7 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESSION_DB,
 	$ADODB_SESS_DEBUG;
 	
-	/*  cannot use & below - do not know why... */
+	// cannot use & below - do not know why...
 	$ADODB_SESS_CONN = ADONewConnection($ADODB_SESSION_DRIVER);
 	if (!empty($ADODB_SESS_DEBUG)) {
 		$ADODB_SESS_CONN->debug = true;
@@ -158,14 +158,14 @@ global $ADODB_SESS_CONN,$ADODB_SESS_INSERT,$ADODB_SESSION_TBL,$ADODB_SESSION_CRC
 			
 		$rs->Close();
 		
-		/*  new optimization adodb 2.1 */
+		// new optimization adodb 2.1
 		$ADODB_SESSION_CRC = crc32($v);
 		
 		return $v;
 	}
 	else $ADODB_SESS_INSERT = true;
 	
-	return ''; /*  thx to Jorma Tuomainen, webmaster#wizactive.com */
+	return ''; // thx to Jorma Tuomainen, webmaster#wizactive.com
 }
 
 /****************************************************************************************\
@@ -184,7 +184,7 @@ function adodb_sess_write($key, $val)
 
 	$expiry = time() + $ADODB_SESS_LIFE;
 	
-	/*  new optimization adodb 2.1 */
+	// new optimization adodb 2.1
 	if ($ADODB_SESSION_CRC !== false && $ADODB_SESSION_CRC == crc32($val)) {
 		if ($ADODB_SESS_DEBUG) echo "<p>Session: No need to update - crc32 not changed</p>";
 		return true;
@@ -201,8 +201,8 @@ function adodb_sess_write($key, $val)
 		if ($rs) $rs->Close();
 		else print '<p>Session Insert: '.$ADODB_SESS_CONN->ErrorMsg().'</p>';
 	}
-	/*  bug in access driver (could be odbc?) means that info is not commited */
-	/*  properly unless select statement executed in Win2000 */
+	// bug in access driver (could be odbc?) means that info is not commited
+	// properly unless select statement executed in Win2000
 	if ($ADODB_SESS_CONN->databaseType == 'access') $rs = $ADODB_SESS_CONN->Execute("select sesskey from $ADODB_SESSION_TBL WHERE sesskey='$key'");
 
 	return isset($rs);
@@ -225,7 +225,7 @@ function adodb_sess_gc($maxlifetime)
 	$rs = $ADODB_SESS_CONN->Execute($qry);
 	if ($rs) $rs->Close();
 	
-	/*  suggested by Cameron, "GaM3R" <gamr@outworld.cx> */
+	// suggested by Cameron, "GaM3R" <gamr@outworld.cx>
 	if (defined('ADODB_SESSION_OPTIMIZE'))
 	{
 		switch( $ADODB_SESSION_DRIVER ) {

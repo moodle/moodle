@@ -47,11 +47,11 @@ if (empty($driver) or $driver == 'mysql') {
 	$db->Connect('localhost','root','','xphplens');
 }
 
-/* $db->pageExecuteCountRows = false; */
+//$db->pageExecuteCountRows = false;
 
 $db->debug = true;
 
 $pager = new ADODB_Pager($db,$sql);
-/* $pager->cache = 60; */
+//$pager->cache = 60;
 $pager->Render($rows=7);
 ?>
