@@ -166,11 +166,7 @@
             if ($attempts = get_records_select('lesson_attempts', 
                         "lessonid = $lesson->id AND userid = $USER->id AND retry = $retries AND 
                         correct = 1", 'timeseen DESC')) {
-                // get the first page
-                if (!$firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id,
-                            'prevpageid', 0)) {
-                    error('Navigation: first page not found');
-                }
+                
                 foreach ($attempts as $attempt) {
                     $jumpto = get_field('lesson_answers', 'jumpto', 'id', $attempt->answerid);
                     // convert the jumpto to a proper page id
@@ -187,46 +183,72 @@
                     }
                     break; // only look at the latest correct attempt 
                 }
-                //if ($lastpageseen != $firstpageid) {
-                if (count_records('lesson_attempts', 'lessonid', $lesson->id, 'userid', $USER->id, 'retry', $retries) > 0) {
-                    /// CDC-FLAG ///
-                    if ($lesson->timed) {
-                        if ($lesson->retake) {
-                            echo '<form name="queryform" method ="post" action="view.php">' . "\n";
-                            echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
-                            echo '<input type="hidden" name="action" value="navigation" />' . "\n";
-                            echo '<input type="hidden" name="pageid" />' . "\n";
-                            echo '<input type="hidden" name="startlastseen" />' . "\n";  /// CDC-FLAG added this line
-                            print_simple_box('<p align="center">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
-                            echo '<p align="center"><input type="button" value="'. get_string('continue', 'lesson').
-                                "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\" /></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
-                            echo '</form>' . "\n"; 
-                            echo '</div></div>';///CDC Chris Berri added close div tag
-                        } else {
-                            print_simple_box_start('center');
-                            echo '<div align="center">';
-                            echo get_string('leftduringtimednoretake', 'lesson');
-                            echo '<br /><br /><a href="../../course/view.php?id='. $course->id .'">'. get_string('returntocourse', 'lesson') .'</a>';
-                            echo '</div>';
-                            print_simple_box_end();
-                        }
-                        
-                    } else {
-                        echo "<form name=\"queryform\" method =\"post\" action=\"view.php\">\n";
-                        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
-                        echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
-                        echo "<input type=\"hidden\" name=\"pageid\" />\n";
-                        echo "<input type=\"hidden\" name=\"startlastseen\" />\n";  /// CDC-FLAG added this line
-                        print_simple_box("<p align=\"center\">".get_string('youhaveseen','lesson').'</p>',
-                                "center");
-                        echo "<p align=\"center\"><input type=\"button\" value=\"".get_string('yes').
-                            "\" onclick=\"document.queryform.pageid.value='$lastpageseen';document.queryform.startlastseen.value='yes';document.queryform.submit();\" />&nbsp;&nbsp;&nbsp;<input type=\"button\" value=\"".get_string("no").  /// CDC-FLAG 6/11/04 ///
-                            "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\" /></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
-                        echo "</form>\n"; echo "</div></div>";///CDC Chris Berri added close div tag
-                    }
-                    print_footer($course);
-                    exit();
+			} else {
+				$attempts = NULL;
+			}
+
+			if ($branchtables = get_records_select('lesson_branch', 
+								"lessonid = $lesson->id AND userid = $USER->id AND retry = $retries", 'timeseen DESC')) {
+				// in here, user has viewed a branch table
+				$lastbranchtable = current($branchtables);
+				if ($attempts != NULL) {
+					foreach($attempts as $attempt) {
+						if ($lastbranchtable->timeseen > $attempt->timeseen) {
+							// branch table was viewed later than the last attempt
+							$lastpageseen = $lastbranchtable->pageid;
+						}
+						break;
+					}
+				} else {
+					// hasnt answered any questions but has viewed a branch table
+					$lastpageseen = $lastbranchtable->pageid;
+				}
+				
+			}
+            //if ($lastpageseen != $firstpageid) {
+            if (isset($lastpageseen) and count_records('lesson_attempts', 'lessonid', $lesson->id, 'userid', $USER->id, 'retry', $retries) > 0) {
+				// get the first page
+                if (!$firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id,
+                            'prevpageid', 0)) {
+                    error('Navigation: first page not found');
                 }
+                /// CDC-FLAG ///
+                if ($lesson->timed) {
+                    if ($lesson->retake) {
+                        echo '<form name="queryform" method ="post" action="view.php">' . "\n";
+                        echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
+                        echo '<input type="hidden" name="action" value="navigation" />' . "\n";
+                        echo '<input type="hidden" name="pageid" />' . "\n";
+                        echo '<input type="hidden" name="startlastseen" />' . "\n";  /// CDC-FLAG added this line
+                        print_simple_box('<p align="center">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
+                        echo '<p align="center"><input type="button" value="'. get_string('continue', 'lesson').
+                            "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\" /></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
+                        echo '</form>' . "\n"; 
+						echo '</div></div>';///CDC Chris Berri added close div tag
+                    } else {
+                        print_simple_box_start('center');
+                        echo '<div align="center">';
+                        echo get_string('leftduringtimednoretake', 'lesson');
+                        echo '<br /><br /><a href="../../course/view.php?id='. $course->id .'">'. get_string('returntocourse', 'lesson') .'</a>';
+                        echo '</div>';
+                        print_simple_box_end();
+                    }
+                    
+                } else {
+                    echo "<form name=\"queryform\" method =\"post\" action=\"view.php\">\n";
+                    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+                    echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
+                    echo "<input type=\"hidden\" name=\"pageid\" />\n";
+                    echo "<input type=\"hidden\" name=\"startlastseen\" />\n";  /// CDC-FLAG added this line
+                    print_simple_box("<p align=\"center\">".get_string('youhaveseen','lesson').'</p>',
+                            "center");
+                    echo "<p align=\"center\"><input type=\"button\" value=\"".get_string('yes').
+                        "\" onclick=\"document.queryform.pageid.value='$lastpageseen';document.queryform.startlastseen.value='yes';document.queryform.submit();\" />&nbsp;&nbsp;&nbsp;<input type=\"button\" value=\"".get_string("no").  /// CDC-FLAG 6/11/04 ///
+                        "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\" /></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
+                    echo "</form>\n"; echo "</div></div>";///CDC Chris Berri added close div tag
+                }
+                print_footer($course);
+				exit();
             }
             
             if ($grades) {
@@ -1039,6 +1061,13 @@
                 echo "<p align=\"center\">".get_string("displayofgrade", "lesson")."</p>\n";
             }
             print_simple_box_end(); //End of Lesson button to Continue.
+
+            // after all the grade processing, check to see if "Show Grades" is off for the course
+            // if yes, redirect to the course page
+            if (!$course->showgrades) {
+            	redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
+            }
+
             ///CDC-FLAG /// high scores code
             if ($lesson->highscores && !isteacher($course->id)) {
                 echo "<div align=\"center\"><br>";
