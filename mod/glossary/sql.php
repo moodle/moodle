@@ -57,9 +57,10 @@
 
             $printpivot = 0;
             $sqlselect = "SELECT ge.*, concept $as pivot";
-            $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge";
+            $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge LEFT JOIN {$CFG->prefix}glossary_entries_categories gec
+                          ON ge.id = gec.entryid";
             $sqlwhere  = "WHERE (glossaryid = '$glossary->id' OR sourceglossaryid = '$glossary->id') AND
-                          (ge.approved != 0 $userid)";
+                          (ge.approved != 0 $userid) AND gec.entryid IS NULL";
 
 
             $sqlorderby = ' ORDER BY concept';
@@ -195,6 +196,25 @@
                 break;
                 }
             }
+            if ($hook == 'SPECIAL') {
+                //Create appropiate IN contents
+                $alphabet = explode(",", get_string("alphabet"));
+                $sqlalphabet = '';
+                for ($i = 0; $i < count($alphabet); $i++) {
+                    if ($i != 0) {
+                        $sqlalphabet .= ',';
+                    }
+                    $sqlalphabet .= '\''.$alphabet[$i].'\'';
+                }
+                switch ($CFG->dbtype) {
+                case 'postgres7':
+                    $where = 'AND substr(ucase(concept),1,1) NOT IN (' . strtoupper($sqlalphabet) . ')';
+                break;
+                case 'mysql':
+                    $where = 'AND left(ucase(concept),1) NOT IN (' . strtoupper($sqlalphabet) . ')';
+                break;
+                }
+            }
         break;
         }
         
@@ -229,4 +249,5 @@
     }
 
     $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+
 ?>

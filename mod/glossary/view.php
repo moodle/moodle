@@ -288,10 +288,9 @@
     $currentpivot = '';
     $ratingsmenuused = NULL;
     $paging = NULL;
-    if ( $hook == 'SPECIAL' ) {
-        $alphabet = explode(",", get_string("alphabet"));
-    }
+
     if ($allentries) {
+
         /// printing the paging links
 
         $paging = get_string("allentries","glossary");
@@ -300,7 +299,7 @@
         } else {
             $paging = "<a href=\"view.php?id=$id&mode=$mode&hook=$hook&offset=-1&sortkey=$sortkey&sortorder=$sortorder&fullsearch=$fullsearch\">" . $paging . '</a>';
         }
-        if ($count > $entriesbypage ) {            
+        if ($count > $entriesbypage ) {
             for ($i = 0; ($i*$entriesbypage) < $count  ; $i++   ) {
                 if ( $paging != '' ) {
                     if ($i % 20 == 0 and $i) {
@@ -340,103 +339,57 @@
         }
 
         foreach ($allentries as $entry) {
-        /// Setting the pivot for the current entry
+
+            /// Setting the pivot for the current entry
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
                 $pivot = $pivot[0];
             }            
             
-        /// 
-        /// Validating special cases not covered by the SQL statement
-        /// 
+            /// if there's a group break
+            if ( $currentpivot != strtoupper($pivot) ) {  
 
-        /// if we're browsing by alphabet and the current concept does not begin with
-        ///     the letter we are look for.
-            $showentry = 1;
-            $num = 0;
-            if ( $mode == 'letter' and $hook != 'SPECIAL' and $hook != 'ALL' ) {
-                if ( strtoupper(substr($entry->concept, 0, strlen($hook))) != strtoupper($hook) ) {
-                    $showentry = 0;
-                }
-            } 
-            
-        /// if we're browsing for letter, looking for special characters not covered
-        ///     in the alphabet 
-            if ( $showentry and $hook == 'SPECIAL' ) {
-                $initial = $entry->concept[0];
-                for ($i = 0; $i < count($alphabet); $i++) {
-                    $curletter = $alphabet[$i];
-                    if ( $curletter == $initial ) {
+                // print the group break if apply
+                if ( $printpivot )  {
+                    $currentpivot = strtoupper($pivot);
 
-                        $showentry = 0;
-                        break;
+                    echo '<p>';
+                    echo '<table width="95%" border="0" class="generaltabselected" bgcolor="' . $THEME->cellheading2 . '">';
+
+                    echo '<tr>';
+                    $pivottoshow = $currentpivot;
+                    if ( isset($entry->uid) ) {
+                    // printing the user icon if defined (only when browsing authors)
+                        echo '<td align="left">';
+                        
+                        $user = get_record("user","id",$entry->uid);
+                        print_user_picture($user->id, $course->id, $user->picture);
+                        $pivottoshow = fullname($user, isteacher($course->id));;
+                    } else {
+                        echo '<td align="center">';
                     }
+
+                    echo "<strong> $pivottoshow</strong>" ;
+                    echo '</td></tr></table>';
+
                 }
+            }
+            
+            $concept = $entry->concept;
+            $definition = $entry->definition;
+
+            /// highlight the term if necessary
+            if ($mode == 'search') {
+                $entry->highlight = $hook;
             } 
 
-        /// if we're browsing categories, looking for entries not categorised.
-            if ( $showentry and $mode == 'cat' and $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
-                if ( record_exists("glossary_entries_categories", "entryid", $entry->id)) {
-                    $showentry = 0;
-                } 
-            }
-
-        /// if the entry is not approved, deal with it based on the current view and
-        ///     user.
-            if ( $showentry and $mode != 'approval' ) {
-                if ( !$entry->approved and $USER->id != $entry->userid ) {
-                    $showentry = 0;
-                }            
-            }
-
-            /// ok, if it's a valid entry.. Print it.
-            if ( $showentry ) {
+            /// and finally print the entry.
             
-                /// if there's a group break
-                if ( $currentpivot != strtoupper($pivot) ) {  
-
-                    // print the group break if apply
-                    if ( $printpivot )  {
-                        $currentpivot = strtoupper($pivot);
-
-                        echo '<p>';
-                        echo '<table width="95%" border="0" class="generaltabselected" bgcolor="' . $THEME->cellheading2 . '">';
-
-                        echo '<tr>';
-                        $pivottoshow = $currentpivot;
-                        if ( isset($entry->uid) ) {
-                        // printing the user icon if defined (only when browsing authors)
-                            echo '<td align="left">';
-                            
-                            $user = get_record("user","id",$entry->uid);
-                            print_user_picture($user->id, $course->id, $user->picture);
-                            $pivottoshow = fullname($user, isteacher($course->id));;
-                        } else {
-                            echo '<td align="center">';
-                        }
-
-                        echo "<strong> $pivottoshow</strong>" ;
-                        echo '</td></tr></table>';
-
-                    }
-                }
-                
-                $concept = $entry->concept;
-                $definition = $entry->definition;
-    
-                /// highlight the term if necessary
-                if ($mode == 'search') {
-                    $entry->highlight = $hook;
-                } 
-
-                /// and finally print the entry.
-                
-                if ( glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat,$ratings) ) {
-                    $ratingsmenuused = true;
-                }
-
-                $entriesshown++;
+            if ( glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat,$ratings) ) {
+                $ratingsmenuused = true;
             }
+
+            $entriesshown++;
         }
     }
     if ( !$entriesshown ) {
