@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // chat.php - created with Moodle 1.2 development (2003111400)
 
 
@@ -8,7 +8,7 @@ $string['chatname'] = 'Name of this chat room';
 $string['chatreport'] = 'Chat sessions';
 $string['chattime'] = 'Next chat time';
 $string['configmethod'] = 'The normal chat method involves the clients regularly contacting the server for updates. It requires no configuration and works everywhere, but it can create a large load on the server with many chatters.  Using a server daemon requires shell access to Unix, but it results in a fast scalable chat environment.';
-$string['configoldping'] = 'After how long of not hearing from a user should we consider them gone?';
+$string['configoldping'] = 'What is the maximum time that may pass before we detect that a user has disconnected (in seconds)? This is just an upper limit, as usually disconnects are detected very quickly. Lower values will be more demanding on your server. If you are using the normal method, <strong>never</strong> set this lower than 2 * chat_refresh_room.';
 $string['configrefreshroom'] = 'How often should the chat room itself be refreshed? (in seconds).  Setting this low will make the chat room seem quicker, but it may place a higher load on your web server when many people are chatting';
 $string['configrefreshuserlist'] = 'How often should the list of users be refreshed? (in seconds)';
 $string['configserverhost'] = 'The hostname of the computer where the server daemon is';
@@ -22,6 +22,10 @@ $string['deletesessionsure'] = 'Are you sure you want to delete this session?';
 $string['donotusechattime'] = 'Don\'t publish any chat times';
 $string['enterchat'] = 'Click here to enter the chat now';
 $string['errornousers'] = 'Could not find any users!';
+$string['explaingeneralconfig'] = 'These settings are <strong>always</strong> into effect';
+$string['explainmethoddaemon'] = 'These settings matter <strong>only</strong> if you have selected \"Chat server daemon\" for chat_method';
+$string['explainmethodnormal'] = 'These settings matter <strong>only</strong> if you have selected \"Normal method\" for chat_method';
+$string['generalconfig'] = 'General configuration';
 $string['helpchatting'] = 'Help with chatting';
 $string['idle'] = 'Idle';
 $string['messagebeepseveryone'] = '$a beeps everyone!';

@@ -73,8 +73,8 @@ class ChatDaemon {
         $this->_pcntl_exists        = function_exists('pcntl_fork');
         $this->_time_rest_socket    = 20;
         $this->_beepsoundsrc        = $GLOBALS['CFG']->wwwroot.'/mod/chat/beep.wav';
-        $this->_freq_update_records = 15;
-        $this->_freq_poll_idle_chat = 35;
+        $this->_freq_update_records = 20;
+        $this->_freq_poll_idle_chat = $GLOBALS['CFG']->chat_old_ping;
         $this->_stdout = fopen('php://stdout', 'w');
         if($this->_stdout) {
             // Avoid double traces for everything
