@@ -2,9 +2,8 @@
 
 function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
 
-    global $THEME, $CFG, $USER;
+    global $CFG, $USER;
 
-    $colour = $THEME->cellheading2;
 
     $user = get_record("user", "id", $entry->userid);
     $strby = get_string("writtenby", "glossary");

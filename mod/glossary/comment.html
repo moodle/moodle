@@ -1,17 +1,15 @@
 <form name="form" method="post" action="comment.php">
-<table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
-<tr valign=top>
-    <td align=right><p><b>
+<table  class="generalbox">
+<tr valign="top">
+    <td align="right"><b>
       <?php echo get_string("comment","glossary") ?>:
-      </b></p></td>
-    <td align="left" rowspan="2">
+      </b></td>
+    <td rowspan="2">
     <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "text", $form->text); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" valign="middle" nowrap="nowrap">
-    
-    <font size="1">
+    <td align="right" nowrap="nowrap">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -20,14 +18,12 @@
         } else {
            emoticonhelpbutton("form", "text");
         }
+        echo "<br />";
       ?>
-     <br />
-     </font>
-
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("formattexttype"); ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><b><?php print_string("formattexttype"); ?>:</b></td>
     <td>
     <?php
         if ($usehtmleditor) {   /// Trying this out for a while
@@ -44,24 +40,23 @@
     </td>
 </tr>
 <tr>
-<td colspan=2>
-	<p align=center>
+<td colspan="2">
+	<center>
 	<?php 
 	    if (isset($comment->id)) {
-		    echo "<input type=\"hidden\" name=cid value=\"$comment->id\" />";
+		    echo "<input type=\"hidden\" name=\"cid\" value=\"$comment->id\" />";
    	    }
 	?>
-	<input type="hidden" name=id value="<?php p($cm->id) ?>" />
-	<input type="hidden" name=eid value="<?php p($entry->id) ?>" />
-	<input type="hidden" name=action value="<?php p($action) ?>" />
-	<input type="hidden" name=confirm value="1">
+	<input type="hidden" name="id" value="<?php p($cm->id) ?>" />
+	<input type="hidden" name="eid" value="<?php p($entry->id) ?>" />
+	<input type="hidden" name="action" value="<?php p($action) ?>" />
+	<input type="hidden" name="confirm" value="1" />
 
 	<input type="submit" value="<?php print_string("savechanges") ?>" />
 	<input type="reset" value="<?php print_string("revert") ?>" />
-	</p>
+	</center>
 </td>
 </tr>
 </table>
-</p>
 
 </form>

@@ -1,9 +1,9 @@
 <?php // $Id$
 
-require_once("../../config.php");
-require_once("lib.php");
+require_once('../../config.php');
+require_once('lib.php');
 
-global $CFG, $USER, $THEME;
+global $CFG, $USER;
 
 require_variable($id);    // Course Module ID
 optional_variable($e);    // EntryID

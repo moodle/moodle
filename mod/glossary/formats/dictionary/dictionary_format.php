@@ -1,29 +1,27 @@
 <?php  // $Id$
 
-function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
+function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
 
-    global $THEME, $CFG, $USER;
+    global $CFG, $USER;
 
-    $colour = $THEME->cellheading2;
-
-    echo "\n<table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">\n";
-    echo "<tr valign=\"top\">\n";
-    echo "<td width=\"100%\" valign=\"top\" bgcolor=\"#FFFFFF\">\n";
+    echo '<table border="0" width="95%" cellspacing="0" cellpadding="3" class="forumpost" align="center">';
+    echo '<tr valign="top">';
+    echo '<td width="100%" valign="top" bgcolor="#FFFFFF">';
     glossary_print_entry_approval($cm, $entry, $mode);
-    glossary_print_entry_attachment($entry,"html","right");
-    echo "<b>";
+    glossary_print_entry_attachment($entry,'html','right');
+    echo '<b>';
     glossary_print_entry_concept($entry);
-    echo ":</b> ";
+    echo ':</b> ';
     glossary_print_entry_definition($entry);
     $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
-    echo "</td>\n";
-    echo "</tr>\n";
+    echo '</td>';
+    echo '</tr>';
     echo "</table>\n";
 
     return $return;
 }
 
-function glossary_print_entry_dictionary($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
+function glossary_print_entry_dictionary($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL) {
 
     //The print view for this format is exactly the normal view, so we use it
 

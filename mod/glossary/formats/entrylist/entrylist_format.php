@@ -1,15 +1,14 @@
 <?php  // $Id$
 
 function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
-    global $THEME, $USER;
+    global $USER;
 
-    $colour = "#FFFFFF";
     $return = false;
 
     echo "\n<table border=\"0\" cellspacing=\"0\" width=\"95%\" cellpadding=\"10\">";
 
     echo "\n<tr valign=\"top\">";
-    echo "<td width=\"100%\" bgcolor=\"$colour\">";
+    echo "<td width=\"100%\">";
     if ($entry) {
         glossary_print_entry_approval($cm, $entry, $mode);
         echo "<b><a href=\"showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary\" target=\"_blank\" onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
@@ -35,9 +34,8 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=""
 function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
 
     //The print view for this format is different from the normal view, so we implement it here completely
-    global $THEME, $CFG, $USER;
+    global $CFG, $USER;
 
-    $colour = $THEME->cellheading2;
 
     //Take out autolinking in definitions un print view
     $entry->definition = '<nolink>'.$entry->definition.'</nolink>';

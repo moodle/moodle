@@ -2,9 +2,7 @@
 
 function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=false) {
 
-    global $THEME, $USER;
-
-    $colour = $THEME->cellheading2;
+    global $USER;
 
     echo "\n<table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\n";
     echo "<tr valign=\"top\">\n";

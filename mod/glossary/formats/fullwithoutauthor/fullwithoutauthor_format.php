@@ -1,9 +1,8 @@
 <?php  // $Id$
 
 function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
-    global $THEME, $CFG, $USER;
+    global $CFG, $USER;
 
-    $colour = $THEME->cellheading2;
 
     echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
 
@@ -11,7 +10,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
     $return = false;
     if ($entry) {
 
-        echo "<td valign=\"top\" width=\"100%\" bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+        echo "<td valign=\"top\" width=\"100%\" class=\"forumpostheader\">";
 
         echo "<b>";
         glossary_print_entry_concept($entry);
@@ -20,7 +19,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo "<font size=\"1\">(".get_string("lastedited").": ".
              userdate($entry->timemodified).")</font>";
         echo "</td>";
-        echo "\n<td bgcolor=\"$THEME->cellheading\" width=\"35\" valign=\"top\" class=\"forumpostheader\">";
+        echo "\n<td width=\"35\" valign=\"top\" class=\"forumpostheader\">";
 
         glossary_print_entry_approval($cm, $entry, $mode);
         glossary_print_entry_attachment($entry,"html","right");
@@ -29,7 +28,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo "</tr>";
 
         echo "\n<tr valign=\"top\">";
-        echo "\n<td width=\"100%\" colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
+        echo "\n<td width=\"100%\" colspan=\"2\" class=\"forumpostmessage\">";
 
         glossary_print_entry_definition($entry);
         $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);

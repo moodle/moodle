@@ -9,7 +9,7 @@
     $hook = optional_param('hook');
     $mode = optional_param('mode');
         
-    global $THEME, $USER, $CFG;
+    global $USER, $CFG;
 
     $PermissionGranted = 1;
 
@@ -76,7 +76,7 @@
                 if (! update_record("glossary_entries", $entry)) {
                     error("Could not export the entry to the main glossary");
                 } else {
-                    print_simple_box_start("center", "60%", "$THEME->cellheading");
+                    print_simple_box_start("center", "60%");
                     echo "<p align=\"center\"><font size=\"3\">$entryexported</font></p></font>";
 
                     print_continue("view.php?id=$cm->id&amp;mode=entry&amp;hook=".$entry->id);

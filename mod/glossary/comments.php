@@ -1,13 +1,13 @@
 <?php // $Id$
 
 /// This page prints a particular instance of glossary
-    require_once("../../config.php");
-    require_once("lib.php");
+    require_once('../../config.php');
+    require_once('lib.php');
 
     require_variable($id);           // Course Module ID
     require_variable($eid);         // Entry ID
 
-    global $THEME, $USER, $CFG;
+    global $USER, $CFG;
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

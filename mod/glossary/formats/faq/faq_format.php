@@ -1,15 +1,14 @@
 <?php  // $Id$
 
 function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
-    global $THEME, $USER;
+    global $USER;
     $return = false;
     if ( $entry ) {
-        $colour = $THEME->cellheading2;
 
         echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
 
         echo '<tr valign=\"top\">';
-        echo "<td valign=\"top\" width=\"100%\" bgcolor=\"$colour\">";
+        echo "<td valign=\"top\" width=\"100%\">";
         $entry->course = $course->id;
 
         echo '<b>' . get_string("question","glossary") . ':</b> ';
@@ -19,7 +18,7 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
         echo "<font size=\"1\">(".get_string("lastedited").": ".
              userdate($entry->timemodified).")</font>";
         echo "</td>";
-        echo "\n<td bgcolor=\"$colour\" width=\"35\" valign=\"top\" class=\"forumpostheader\">";
+        echo "\n<td width=\"35\" valign=\"top\" class=\"forumpostheader\">";
 
         glossary_print_entry_approval($cm, $entry, $mode);
         glossary_print_entry_attachment($entry,"html","right");
@@ -28,7 +27,7 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
         echo "</tr>";
 
         echo "\n<tr>";
-        echo "\n<td width=\"100%\" colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
+        echo "\n<td width=\"100%\" colspan=\"2\" class=\"forumpostmessage\">";
         echo '<b>' . get_string("answer","glossary") . ':</b> ';
 
         glossary_print_entry_definition($entry);

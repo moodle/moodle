@@ -3,7 +3,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    global $CFG, $THEME;
+    global $CFG;
 
     require_variable($id);
 
@@ -69,7 +69,7 @@
     $no  = get_string("no");
 
     echo '<form method="post" action="formats.php" name="form">';
-    echo '<table width="90%" align="center" bgcolor="' . $THEME->cellheading . '" class="generalbox">';
+    echo '<table width="90%" align="center" class="generalbox">';
     ?>
     <tr>
         <td colspan="3" align="center"><strong>

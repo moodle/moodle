@@ -234,7 +234,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
 /// that has occurred in glossary activities and print it out.
 /// Return true if there was output, or false is there was none.
 
-    global $CFG, $THEME;
+    global $CFG;
 
     if (!$logs = get_records_select("log", "time > '$timestart' AND ".
                                            "course = '$course->id' AND ".
@@ -538,8 +538,8 @@ global $CFG;
                                              (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) $where $orderby");
 }
 
-function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1, $ratings = NULL, $printview = false) {
-    global $THEME, $USER, $CFG;
+function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons = 1, $displayformat  = -1, $ratings = NULL, $printview = false) {
+    global $USER, $CFG;
     $return = false;
     if ( $displayformat < 0 ) {
         $displayformat = $glossary->displayformat;
@@ -564,6 +564,7 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
     }
     return $return;
 }
+
  //Default (old) print format used if custom function doesn't exist in format
 function glossary_print_entry_default ($entry) {
     echo '<b>'. strip_tags($entry->concept) . ': </b>';
@@ -592,13 +593,13 @@ function glossary_print_entry_definition($entry) {
 
     //Calculate all the strings to be no-linked
     //First, the concept
-    $term = preg_quote(trim($entry->concept),"/");
+    $term = preg_quote(trim($entry->concept),'/');
     $pat = '/('.$term.')/is';
     $doNolinks[] = $pat;
     //Now the aliases
-    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
+    if ( $aliases = get_records('glossary_alias','entryid',$entry->id) ) {
         foreach ($aliases as $alias) {
-            $term = preg_quote(trim($alias->alias),"/");
+            $term = preg_quote(trim($alias->alias),'/');
             $pat = '/('.$term.')/is';
             $doNolinks[] = $pat;
         }
@@ -672,9 +673,9 @@ function glossary_print_entry_definition($entry) {
     echo $text;
 }
 
-function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",$hook="", $type = 'print') {
+function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',$hook='', $type = 'print') {
     $return = '';
-    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
+    if ( $aliases = get_records('glossary_alias','entryid',$entry->id) ) {
         foreach ($aliases as $alias) {
             if (trim($alias->alias)) {
                 if ($return == '') {
@@ -694,36 +695,38 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",
     }
 }
 
-function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$hook="", $type = 'print') {
-    global $THEME, $USER, $CFG;
+function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$hook='', $type = 'print') {
+    global $USER, $CFG;
 
     $output = false;   //To decide if we must really return text in "return". Activate when needed only!
     $importedentry = ($entry->sourceglossaryid == $glossary->id);
     $isteacher = isteacher($course->id);
     $ismainglossary = $glossary->mainglossary;
-	
-    $return = "<font size=\"1\">";
+
+
+    $return = '<div class="commands">';
     if (!$entry->approved) {
         $output = true;
-        $return .= get_string("entryishidden","glossary");
+        $return .= get_string('entryishidden','glossary');
     }
     $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook,'html');
-
-    $return .= "</font> ";
-
     
     if ( (!empty($USER->id) && $glossary->allowcomments && !isguest()) || $isteacher) {
         $output = true;
-        $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&amp;eid=$entry->id\"><img src=\"comment.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+        $return .= '<a title="' . get_string('addcomment','glossary') . '" href="comment.php?id='.$cm->id.'&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
     }
+
+    $return .= '</div>';
+
+
 
     if ($isteacher or (!empty($USER->id) and $glossary->studentcanpost and $entry->userid == $USER->id)) {
         // only teachers can export entries so check it out
         if ($isteacher and !$ismainglossary and !$importedentry) {
-            $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
+            $mainglossary = get_record('glossary','mainglossary',1,'course',$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
-                $return .= " <a title=\"" . get_string("exporttomainglossary","glossary") . "\" href=\"exportentry.php?id=$cm->id&amp;entry=$entry->id&amp;mode=$mode&amp;hook=$hook\"><img src=\"export.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                $return .= '<a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" height="11" width="11" border="0" alt="'.get_string('exporttomainglossary','glossary').'" /></a>';
             }
         }
 
@@ -765,17 +768,16 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
 function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook, $type = 'print') {
     $return = '';
 
-    $count = count_records("glossary_comments","entryid",$entry->id);
+    $count = count_records('glossary_comments','entryid',$entry->id);
     if ($count) {
-        $return = "<font size=\"1\">";
+        $return = '';
         $return .= "<a href=\"comments.php?id=$cm->id&amp;eid=$entry->id\">$count ";
         if ($count == 1) {
-            $return .= get_string("comment", "glossary");
+            $return .= get_string('comment', 'glossary');
         } else {
-            $return .= get_string("comments", "glossary");
+            $return .= get_string('comments', 'glossary');
         }
-        $return .= "</a>";
-        $return .= "</font>";
+        $return .= '</a>';
     }
 
     if ($type == 'print') {
@@ -1158,8 +1160,6 @@ if ( !$tTHEME ) {
      $tTHEME = $THEME;
 }
 
-$tablecolor           = $tTHEME->TabTableBGColor;
-$currenttabcolor      = $tTHEME->ActiveTabColor;
 $tabcolor             = $tTHEME->InactiveTabColor;
 $inactivefontcolor    = $tTHEME->InactiveFontColor;
 
@@ -1192,24 +1192,19 @@ for ($row = 0; $row < $numrows; $row++) {
                         echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
                     }
                     if ($tabproccessed == $currenttab) {
-                         $currentcolor = $currenttabcolor;
                          $currentstyle = 'generaltabselected';
+                    } elseif ( !$data[$tabproccessed]->link ) {
+                         $currentstyle = 'generaltabinactive';
                     } else {
-                         $currentcolor = $tabcolor;
                          $currentstyle = 'generaltab';
                     }
-                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
+                    
+                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" align=\"center\"><b>";
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
 
-                    if ( !$data[$tabproccessed]->link ) {
-                        echo "<font color=\"$inactivefontcolor\">";
-                    }
                     echo $data[$tabproccessed]->caption;
-                    if ( !$data[$tabproccessed]->link ) {
-                        echo "</font>";
-                    }
 
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "</a>";
@@ -1220,7 +1215,6 @@ for ($row = 0; $row < $numrows; $row++) {
                         echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
                     }
                } else {
-                    $currentcolor = "";
                     echo "<td colspan=\"".(2* $tabsperrow)."\"></td>\n";
                }
                $tabproccessed++;
@@ -1239,29 +1233,25 @@ for ($row = 0; $row < $numrows; $row++) {
                     if ( $col == 0 ) {
                         echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
                     }
+                    
                     if ($tabproccessed == $currenttab) {
-                         $currentcolor = $currenttabcolor;
                          $currentstyle = 'generaltabselected';
+                         
+                    } elseif ( !$data[$tabproccessed]->link ) {
+                         $data[$tabproccessed]->link = NULL;
+                         $currentstyle = 'generaltabinactive';
+                         
                     } else {
-                         $currentcolor = $tabcolor;
                          $currentstyle = 'generaltab';
                     }
 
-                    if (!isset($data[$tabproccessed]->link)) {
-                        $data[$tabproccessed]->link = NULL;
-                    }
-                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
+
+                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" align=\"center\"><b>";
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
 
-                    if ( !$data[$tabproccessed]->link ) {
-                        echo "<font color=\"$inactivefontcolor\">";
-                    }
                     echo $data[$tabproccessed]->caption;
-                    if ( !$data[$tabproccessed]->link ) {
-                        echo "</font>";
-                    }
 
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "</a>";
@@ -1272,12 +1262,7 @@ for ($row = 0; $row < $numrows; $row++) {
                          echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
                     }
                } else {
-                    if ($numrows > 1) {
-                         $currentcolor = $tabcolor;
-                    } else {
-                         $currentcolor = "";
-                    }
-                    echo "<td colspan = " . (2 * ($tabsperrow - $col)) . " bgcolor=\"$currentcolor\" align=\"center\">";
+                    echo "<td colspan = " . (2 * ($tabsperrow - $col)) . " align=\"center\">";
                     echo "</td>";
 
                     $col = $tabsperrow;
@@ -1291,10 +1276,10 @@ for ($row = 0; $row < $numrows; $row++) {
       </td>
     </tr>
     <tr>
-      <td width="100%" bgcolor="<?php p($tablecolor) ?>"><hr /></td>
+      <td width="100%" class="glossaryentryheader"><hr /></td>
     </tr>
     <tr>
-      <td width="100%" bgcolor="<?php p($tablecolor) ?>">
+      <td width="100%" class="glossaryentry">
           <center>
 <?php
 }

@@ -178,14 +178,14 @@
 <div align="center">
 
 <form name="theform" method="post" action="editcategories.php">
-<table width="40%" class="generalbox" cellpadding="5" bgcolor="<?php p($THEME->cellheading)?>">
+<table width="40%" class="generalbox" cellpadding="5">
         <tr>
           <td width="90%" align="center"><b>
           <?php p(get_string("categories","glossary")) ?></b></td>
           <td width="10%" align="center"><b>
           <?php p(get_string("action")) ?></b></td>
         </tr>
-        <tr><td width="100%" colspan="2"  bgcolor="<?php p($THEME->cellheading2)?>">
+        <tr><td width="100%" colspan="2">
 
         <table width="100%">
 
@@ -197,7 +197,7 @@
             $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
 ?>
 
-             <tr bgcolor="<?php p($THEME->cellheading2)?>">
+             <tr>
                <td width="90%" align="left">
                <?php
                     echo "<b>".format_text($category->name)."</b> <font size=-1>($num_entries " . get_string("entries","glossary") . ")</font>";
@@ -219,7 +219,7 @@
 
         </td>
         <tr>
-        <td width="100%" colspan="2"  align="center" bgcolor="<?php p($THEME->cellheading2)?>">
+        <td width="100%" colspan="2"  align="center">
             <?php
 
              $options['id'] = $cm->id;
