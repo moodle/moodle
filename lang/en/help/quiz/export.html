@@ -4,21 +4,23 @@
    a text file.  
 
 <p>Please note that in many file formats some information is lost
-   when the questions are exported. This is because many formats are
+   when the questions are exported. This is because many formats do
    not possess all the features that exist in Moodle questions. You should 
    not expect to export and import questions and for them to be
-   identical. You are advised to check exported data before using
+   identical. Also some question types may not export at all.
+   You are advised to check exported data before using
    it in a production environment.</p>
 
 <P>The format(s) currently supported are:</p>
 
 <P><B>GIFT format</B></P>
 <ul>
-<p>GIFT is the most comprehensive import format available for importing 
-   Moodle quiz questions from a text file.  It was designed to be an easy 
+<p>GIFT is the most comprehensive import/export format available for exporting 
+   Moodle quiz questions to a text file.  It was designed to be an easy 
    method for teachers writing questions as a text file. It supports Multiple-Choice, 
    True-False, Short Answer, Matching and Numerical questions, as well as insertion 
-   of a _____ for the "missing word" format.  Various question-types can be 
+   of a _____ for the "missing word" format.  Note that Cloze questions are not
+   currently supported. Various question-types can be 
    mixed in a single text file, and the format also supports line comments, question names, 
    feedback and percentage-weight grades.  Below are some examples:</p>
 <pre>
