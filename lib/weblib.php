@@ -126,7 +126,7 @@ function get_referer() {
 
 function me() {
 /// returns the name of the current script, WITH the querystring portion.
-/// this function is necessary because PHP_SELF and REQUEST_URI and PATH_INFO
+/// this function is necessary because PHP_SELF and REQUEST_URI and SCRIPT_NAME
 /// return different things depending on a lot of things like your OS, Web
 /// server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.) 
 
@@ -419,17 +419,10 @@ function validate_email ($address) {
 function get_slash_arguments($file="file.php") {
 /// Searches the current environment variables for some slash arguments
 
-    if (isset($_SERVER['PATH_INFO'])) {
-        return $_SERVER['PATH_INFO'];
-    }
-
-    if (isset($_SERVER['PHP_SELF'])) {
-        $string = $_SERVER['PHP_SELF'];
-    } else if (isset($_SERVER['REQUEST_URI'])) {
-        $string = $_SERVER['REQUEST_URI'];
-    } else {
+    if (!$string = me()) {
         return false;
     }
+
     $pathinfo = explode($file, $string);
     
     if (!empty($path_info[1])) {
