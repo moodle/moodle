@@ -177,6 +177,53 @@ function print_editing_switch($courseid) {
     }
 }
 
+function print_date_selector($day, $month, $year, $currenttime=0) {
+// Currenttime is a default timestamp in GMT
+// Prints form items with the names $day, $month and $year
+
+    if (!$currenttime) {
+        $currenttime = time();
+    }
+    $currentdate = usergetdate($currenttime);
+
+    for ($i=1; $i<=31; $i++) {
+        $days[$i] = "$i";
+    }
+    for ($i=1; $i<=12; $i++) {
+        $months[$i] = date("F", mktime(0,0,0,$i,1,2000));
+    }
+    for ($i=2000; $i<=2010; $i++) {
+        $years[$i] = $i;
+    }
+    choose_from_menu($days,   $day,   $currentdate[mday], "");
+    choose_from_menu($months, $month, $currentdate[mon],  "");
+    choose_from_menu($years,  $year,  $currentdate[year], "");
+}
+
+function print_time_selector($hour, $minute, $currenttime=0) {
+// Currenttime is a default timestamp in GMT
+// Prints form items with the names $hour and $minute
+
+    if (!$currenttime) {
+        $currenttime = time();
+    }
+    $currentdate = usergetdate($currenttime);
+    for ($i=0; $i<=23; $i++) {
+        $hours[$i] = sprintf("%02d",$i);
+    }
+    for ($i=0; $i<=59; $i++) {
+        $minutes[$i] = sprintf("%02d",$i);
+    }
+    choose_from_menu($hours,   $hour,   $currentdate[hours],   "");
+    choose_from_menu($minutes, $minute, $currentdate[minutes], "");
+}
+
+function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0) {
+// Given date parts in user time, produce a GMT timestamp
+
+   return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
+}
+
 function update_course_icon($courseid) {
     global $CFG, $USER;
 
@@ -1255,6 +1302,11 @@ function endecrypt ($pwd, $data, $case) {
 
 
 /// MISCELLANEOUS ////////////////////////////////////////////////////////////////////
+
+function count_words($string) {
+    $string = strip_tags($string);
+    return count(preg_split("/\w\b/", $string)) - 1;
+}
 
 function getweek ($startdate, $thedate) {
 // Given dates in seconds, how many weeks is the date from startdate
