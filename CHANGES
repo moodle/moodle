@@ -1,3 +1,42 @@
+2002-09-05 Thursday 20:24  martin
+
+	* version.php: 
+	
+	Updated version
+
+2002-09-05 Thursday 19:56  martin
+
+	* file.php, user/pix.php: 
+	
+	Better error message when invalid arguments are supplied.
+
+2002-09-05 Thursday 19:53  martin
+
+	* lib/weblib.php: 
+	
+	BUG FIX! - fixes error that could allow ANY file on the system to
+	be read!
+
+2002-09-05 Thursday 19:28  martin
+
+	* course/loginas.php: 
+	
+	Whoops ... little bug that stopped loginas from working ... need to
+	create $USER->site ...
+
+2002-09-05 Thursday 10:29  martin
+
+	* version.php: 
+	
+	Updated version number
+
+2002-09-05 Thursday 10:28  martin
+
+	* CHANGES: 
+	
+	
+	CHANGES UP TO MOODLE 1.0.3
+
 2002-09-05 Thursday 10:17  martin
 
 	* lang/en/moodle.php, user/edit.php: 
