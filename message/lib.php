@@ -581,6 +581,8 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
 function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords='', $position='', $linktext='') {
     global $USER, $CFG;
 
+    $str->messagehistory = get_string('messagehistory', 'message');
+
     if (!$userid2) {
         $userid2 = $USER->id;
     }
@@ -594,11 +596,11 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
     if ($linktext == 'icon') {
         $linktext = '<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">';
     } else if ($linktext == '') {
-        $linktext = get_string('messagehistory', 'message');
+        $linktext = $str->messagehistory;
     }
 
     $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2$keywords$position", 
-                    "message_history_$userid1", $linktext, 500, 500, '', 
+                    "message_history_$userid1", $linktext, 500, 500, $str->messagehistory, 
                     'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500', true);
 
     if ($returnstr) {
