@@ -68,7 +68,7 @@
                     $t->linkeditprofile->url = "group.php?id=$course->id&group=$group->id&edit=on";
                     $t->linkeditprofile->text = $streditgroupprofile;
                 }
-                $t->linkfullprofile->url = "group.php?id=$course->id&group=$group->id&edit=off";
+                $t->linkfullprofile->url = "group.php?id=$course->id&group=$group->id";
                 $t->linkfullprofile->text = $strgroupmemberssee;
 
                 include('groups-summary.html');
