@@ -212,6 +212,14 @@
             }
         }
 
+        //Print groups info
+        if ($status) {
+            echo "<li>".get_string("writinggroupsinfo");
+            if (!$status = backup_groups_info($backup_file,$preferences)) {
+                notify("An error occurred while backing up groups");
+            }
+        }
+
         //Module info, this unique function makes all the work!!
         //db export and module fileis copy
         if ($status) {

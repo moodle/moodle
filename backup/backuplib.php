@@ -942,6 +942,75 @@
         return $status;
     }
 
+    //Backup groups info
+    function backup_groups_info($bf,$preferences) {
+    
+        global $CFG;
+        
+        $status = true;
+
+        //Get groups 
+        $groups = get_records("groups","courseid",$preferences->backup_course);
+
+        //Pring groups header
+        if ($groups) {
+            //Pring groups header
+            fwrite ($bf,start_tag("GROUPS",2,true));
+            //Iterate
+            foreach ($groups as $group) {
+                //Begin group tag
+                fwrite ($bf,start_tag("GROUP",3,true));
+                //Output group contents
+                fwrite ($bf,full_tag("ID",4,false,$group->id));
+                fwrite ($bf,full_tag("COURSEID",4,false,$group->courseid));
+                fwrite ($bf,full_tag("NAME",4,false,$group->name));
+                fwrite ($bf,full_tag("DESCRIPTION",4,false,$group->description));
+                fwrite ($bf,full_tag("LANG",4,false,$group->lang));
+                fwrite ($bf,full_tag("PICTURE",4,false,$group->picture));
+                fwrite ($bf,full_tag("TIMECREATED",4,false,$group->timecreated));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$group->timemodified));
+                
+                //Now, backup groups_members
+                $status2 = backup_groups_members_info($bf,$preferences,$group->id);
+
+                //End group tag
+                fwrite ($bf,end_tag("GROUP",3,true));
+            }
+            //End groups tag
+            $status = fwrite ($bf,end_tag("GROUPS",2,true));
+        }
+        return ($status && $status2);
+    }
+
+    //Backup groups_members info
+    function backup_groups_members_info($bf,$preferences,$groupid) {
+  
+        global $CFG;
+        
+        $status = true;
+
+        //Get groups_members
+        $groups_members = get_records("groups_members","groupid",$groupid);
+        
+        //Pring groups_members header
+        if ($groups_members) {
+            //Pring groups_members header
+            fwrite ($bf,start_tag("MEMBERS",4,true));
+            //Iterate
+            foreach ($groups_members as $group_member) {
+                //Begin group_member tag
+                fwrite ($bf,start_tag("MEMBER",5,true));
+                //Output group_member contents
+                fwrite ($bf,full_tag("USERID",6,false,$group_member->userid));
+                fwrite ($bf,full_tag("TIMEADDED",6,false,$group_member->timeadded));
+                //End group_member tag
+                fwrite ($bf,end_tag("MEMBER",5,true));
+            }
+            //End groups_members tag
+            $status = fwrite ($bf,end_tag("MEMBERS",4,true));
+        }
+        return $status;
+    }
 
     //Start the modules tag
     function backup_modules_start ($bf,$preferences) {
