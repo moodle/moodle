@@ -482,7 +482,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
 function blocks_execute_url_action(&$PAGE, &$pageblocks) {
     $blockaction = optional_param('blockaction');
 
-    if (empty($blockaction) || !confirm_sesskey()) {
+    if (empty($blockaction) || !$PAGE->user_allowed_editing() || !confirm_sesskey()) {
         return;
     }
 
