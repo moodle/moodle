@@ -27,7 +27,7 @@
        } else { 
            helpbutton("text", get_string("helptext"));
        }
-       echo "<P>";
+       echo "<P align=right>";
        print_string("formattexttype");
        echo ":&nbsp;";
        if (!$form->format) {
@@ -42,8 +42,12 @@
 <tr valign=top>
     <td align=right><P><B><? print_string("assignmenttype", "assignment") ?>:</B></P></TD>
     <td>
-        <input type="hidden" name=type value="<? p($form->type) ?>">
-        <? print_string("typeuploadsingle", "assignment") ?>
+    <?PHP
+       require("$CFG->dirroot/mod/assignment/lib.php");
+       asort($ASSIGNMENT_TYPE);
+       choose_from_menu($ASSIGNMENT_TYPE, "type", $form->type, "");
+       helpbutton("assignmenttype", get_string("assignmenttype", "assignment"), "assignment");
+    ?>
     </td>
 </tr>
 <tr valign=top>
@@ -53,7 +57,7 @@
         for ($i=100; $i>=0; $i--) {
             $grades[$i] = $i;
         }
-        choose_from_menu($grades, "grade", "$form->grade");
+        choose_from_menu($grades, "grade", "$form->grade", "");
         ?>
     </td>
 </tr>

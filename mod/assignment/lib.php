@@ -2,6 +2,11 @@
 
 include_once("$CFG->dirroot/files/mimetypes.php");
 
+define("OFFLINE",      "0");
+define("UPLOADSINGLE", "1");
+
+$ASSIGNMENT_TYPE = array (OFFLINE       => get_string("typeoffline",      "assignment"),
+                          UPLOADSINGLE  => get_string("typeuploadsingle", "assignment") );
 
 
 function assignment_add_instance($assignment) {
@@ -267,14 +272,25 @@ function assignment_print_difference($time) {
 function assignment_print_submission($assignment, $user, $submission, $teachers, $grades) {
     global $THEME;
 
-    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
+    switch ($assignment->type) {
+        case OFFLINE:
+            break;
+        case UPLOADSINGLE:
+            break;
+    }
+
+    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10 align=center>";
 
     echo "\n<TR>";
-    echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    if ($assignment->type == OFFLINE) {
+        echo "\n<TD BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    } else {
+        echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    }
     print_user_picture($user->id, $assignment->course, $user->picture);
     echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$user->firstname $user->lastname";
-    if ($submission) {
+    echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">$user->firstname $user->lastname";
+    if ($submission->timemodified) {
         echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastmodified").": ";
         echo userdate($submission->timemodified);
         echo assignment_print_difference($assignment->timedue - $submission->timemodified);
@@ -282,31 +298,37 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     }
     echo "</TR>";
 
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
-    if ($submission) {
-        assignment_print_user_files($assignment, $user);
-    } else {
-        print_string("notsubmittedyet", "assignment");
-    }
-    echo "</TD></TR>";
-
-    if ($submission) {
-        echo "\n<TR>";
-        echo "<TD WIDTH=35 VALIGN=TOP>";
-        if (!$submission->teacher) {
-            $submission->teacher = $USER->id;
+    if ($assignment->type != OFFLINE) {
+        echo "\n<TR><TD BGCOLOR=\"$THEME->cellcontent\">";
+        if ($submission->numfiles) {
+            assignment_print_user_files($assignment, $user);
+        } else {
+            print_string("notsubmittedyet", "assignment");
         }
-        print_user_picture($submission->teacher, $assignment->course, $teachers[$submission->teacher]->picture);
-        echo "<TD BGCOLOR=\"$THEME->cellheading\">Teacher Feedback:";
-        choose_from_menu($grades, "g$submission->id", $submission->grade, get_string("grade")."...");
-        if ($submission->timemarked) {
-            echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($submission->timemarked)."</FONT>";
-        }
-        echo "<BR><TEXTAREA NAME=\"c$submission->id\" ROWS=6 COLS=60 WRAP=virtual>";
-        p($submission->comment);
-        echo "</TEXTAREA><BR>";
         echo "</TD></TR>";
     }
+
+    echo "\n<TR>";
+    echo "<TD WIDTH=35 VALIGN=TOP>";
+    if (!$submission->teacher) {
+        $submission->teacher = $USER->id;
+    }
+    print_user_picture($submission->teacher, $assignment->course, $teachers[$submission->teacher]->picture);
+    if ($submission->timemodified > $submission->timemarked) {
+        echo "<TD BGCOLOR=\"$THEME->cellheading2\">";
+    } else {
+        echo "<TD BGCOLOR=\"$THEME->cellheading\">";
+    }
+    echo "Teacher Feedback:";
+    choose_from_menu($grades, "g$submission->id", $submission->grade, get_string("grade")."...");
+    if ($submission->timemarked) {
+        echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($submission->timemarked)."</FONT>";
+    }
+    echo "<BR><TEXTAREA NAME=\"c$submission->id\" ROWS=6 COLS=60 WRAP=virtual>";
+    p($submission->comment);
+    echo "</TEXTAREA><BR>";
+    echo "</TD></TR>";
+   
     echo "</TABLE><BR CLEAR=ALL>\n";
 }
 

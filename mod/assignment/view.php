@@ -47,13 +47,16 @@
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment));
 
     if (isteacher($course->id)) {
-        if ($submissions = assignment_get_all_submissions($assignment)) {
-            $count = count($submissions);
+        if ($assignment->type == OFFLINE) {
+            echo "<P align=right><A HREF=\"submissions.php?id=$assignment->id\">".
+                  get_string("viewfeedback", "assignment")."</A></P>";
         } else {
-            $count = 0;
+            $count = count_records_sql("SELECT * FROM assignment_submissions 
+                                        WHERE assignment = '$assignment->id' 
+                                          AND timemodified > 0");
+            echo "<P align=right><A HREF=\"submissions.php?id=$assignment->id\">".
+                  get_string("viewsubmissions", "assignment", $count)."</A></P>";
         }
-        echo "<P align=right><A HREF=\"submissions.php?id=$assignment->id\">".
-              get_string("viewsubmissions", "assignment", $count)."</A></P>";
     }
 
     $strdifference = format_time($assignment->timedue - time());
@@ -74,28 +77,36 @@
     echo "<BR>";
 
     if (!isteacher($course->id) and !isguest()) {
-        if ($submission = assignment_get_submission($assignment, $USER)) {
-            print_simple_box_start("center");
-            echo "<CENTER>";
-            print_heading(get_string("yoursubmission","assignment").":", "CENTER");
-            echo "<P><FONT SIZE=-1><B>".get_string("lastmodified")."</B>: ".userdate($submission->timemodified)."</FONT></P>";
-            assignment_print_user_files($assignment, $USER);
-            print_simple_box_end();
-        } else {
-            print_heading(get_string("notsubmittedyet","assignment"));
-        }
-    
-        echo "<HR SIZE=1 NOSHADE>";
-    
-        if ($submission->grade) {
-            print_heading(get_string("submissionfeedback", "assignment").":", "CENTER");
-            assignment_print_feedback($course, $submission);
-        } else {
-            if ($submission) {
-                echo "<P ALIGN=CENTER>".get_string("overwritewarning", "assignment")."</P>";
+        $submission = assignment_get_submission($assignment, $USER);
+
+        if ($assignment->type == OFFLINE) {
+            if ($submission->timemarked) {
+                assignment_print_feedback($course, $submission);
             }
-            print_heading(get_string("submitassignment", "assignment").":", "CENTER");
-            assignment_print_upload_form($assignment);
+        } else {
+            if ($submission and $submission->timemodified) {
+                print_simple_box_start("center");
+                echo "<CENTER>";
+                print_heading(get_string("yoursubmission","assignment").":", "CENTER");
+                echo "<P><FONT SIZE=-1><B>".get_string("lastmodified")."</B>: ".userdate($submission->timemodified)."</FONT></P>";
+                assignment_print_user_files($assignment, $USER);
+                print_simple_box_end();
+            } else {
+                print_heading(get_string("notsubmittedyet","assignment"));
+            }
+        
+            echo "<HR SIZE=1 NOSHADE>";
+        
+            if ($submission and $submission->timemarked) {
+                print_heading(get_string("submissionfeedback", "assignment").":", "CENTER");
+                assignment_print_feedback($course, $submission);
+            } else {
+                if ($submission and $submission->timemodified) {
+                    echo "<P ALIGN=CENTER>".get_string("overwritewarning", "assignment")."</P>";
+                }
+                print_heading(get_string("submitassignment", "assignment").":", "CENTER");
+                assignment_print_upload_form($assignment);
+            }
         }
     }
     

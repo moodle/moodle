@@ -35,7 +35,16 @@
                   <A HREF=\"view.php?a=$assignment->id\">$assignment->name</A> -> $strsubmissions", 
                   "", "", true);
 
-    // Some easy ways to reference submissions
+/// Get all teachers and students
+    $teachers = get_course_teachers($course->id);
+
+    if (!$users = get_course_students($course->id)) {
+        print_heading(get_string("nostudentsyet"));
+        print_footer($course);
+        exit;
+    }
+
+/// Make some easy ways to reference submissions
     if ($submissions = assignment_get_all_submissions($assignment)) {
         foreach ($submissions as $submission) {
             $submissionbyuser[$submission->user] = $submission;
@@ -43,7 +52,30 @@
         }
     }
 
-    if (match_referer() && isset($HTTP_POST_VARS)) { // Feedback submitted
+/// Get all existing submissions and check for missing ones
+    foreach($users as $user) {
+        if (!isset($submissionbyuser[$user->id])) {  // Need to create empty entry
+            $newsubmission->assignment = $assignment->id;
+            $newsubmission->user = $user->id;
+            $newsubmission->timecreated = time();
+            if (!insert_record("assignment_submissions", $newsubmission)) {
+                error("Could not insert a new empty submission");
+            }
+        }
+    }
+
+    if (isset($newsubmission)) {   // Get them all out again to be sure
+        if ($submissions = assignment_get_all_submissions($assignment)) {
+            foreach ($submissions as $submission) {
+                $submissionbyuser[$submission->user] = $submission;
+                $submissionbyid[$submission->id]  = $submission;
+            }
+        }
+    }
+
+
+/// If data is being submitted, then process it
+    if (match_referer() && isset($HTTP_POST_VARS)) { 
        
         $feedback = array();
 
@@ -89,32 +121,18 @@
         $grades[$i] = $i;
     }
 
-    $teachers = get_course_teachers($course->id);
-    if (! $users = get_course_students($course->id)) {
-        print_heading(get_string("nostudentsyet"));
+    echo "<FORM ACTION=submissions.php METHOD=post>\n";
 
-    } else {
-        echo "<FORM ACTION=submissions.php METHOD=post>\n";
-
-        if ($usersdone = assignment_get_users_done($assignment)) {
-            foreach ($usersdone as $user) {
-                $submission = $submissionbyuser[$user->id];
-                assignment_print_submission($assignment, $user, $submission, $teachers, $grades);
-            }
-        }
-
-        $submission = NULL;
-        foreach ($users as $user) {
-            if (! $usersdone[$user->id]) {
-                assignment_print_submission($assignment, $user, $submission, $teachers, $grades);
-            }
-        }
-        echo "<CENTER>";
-        echo "<INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\">";
-        echo "<INPUT TYPE=submit VALUE=\"Save all my feedback\">";
-        echo "</CENTER>";
-        echo "</FORM>";
+    foreach ($users as $user) {
+        $submission = $submissionbyuser[$user->id];
+        assignment_print_submission($assignment, $user, $submission, $teachers, $grades);
     }
+
+    echo "<CENTER>";
+    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\">";
+    echo "<INPUT TYPE=submit VALUE=\"Save all my feedback\">";
+    echo "</CENTER>";
+    echo "</FORM>";
     
     print_footer($course);
  
