@@ -185,13 +185,13 @@
                 echo "<TD WIDTH=40% BGCOLOR=\"$THEME->cellheading\" VALIGN=TOP>$envalue</TD>";
 
                 $value = $string[$key];
- 	        $value = str_replace("\r","",$value);
- 	        $value = str_replace("\n\n\n\n\n\n","\n",$value);
- 	        $value = str_replace("\n\n\n\n\n","\n",$value);
- 	        $value = str_replace("\n\n\n\n","\n",$value);
- 	        $value = str_replace("\n\n\n","\n",$value);
- 	        $value = str_replace("\n\n\n","\n",$value);
- 	        $value = str_replace("\\","",$value);          // Delete all slashes
+                $value = str_replace("\r","",$value);              // Bad character caused by Windows
+                $value = str_replace("\n\n\n\n\n\n","\n",$value);  // Collapse runs of blank lines
+                $value = str_replace("\n\n\n\n\n","\n",$value);
+                $value = str_replace("\n\n\n\n","\n",$value);
+                $value = str_replace("\n\n\n","\n",$value);
+                $value = str_replace("\n\n\n","\n",$value);
+                $value = str_replace("\\","",$value);              // Delete all slashes
                 $value = str_replace("%%","%",$value);
                 $value = htmlspecialchars($value);
 
