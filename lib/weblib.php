@@ -129,19 +129,23 @@ function qualified_me() {
 }
 
 
-function match_referer($good_referer = "") {
-/// returns true if the referer is the same as the good_referer.  If
-/// good_referer is not specified, use qualified_me as the good_referer 
+function match_referer($goodreferer = "") {
+/// returns true if the referer is the same as the goodreferer.  If
+/// goodreferer is not specified, use qualified_me as the goodreferer 
     global $CFG;
 
     if (!empty($CFG->buggy_referer)) {
         return true;
     }
 
-    if (empty($good_referer)) { 
-        $good_referer = qualified_me(); 
+    if ($goodreferer == "nomatch") {
+        return true;
     }
-    return $good_referer == get_referer();
+
+    if (empty($goodreferer)) { 
+        $goodreferer = qualified_me(); 
+    }
+    return $goodreferer == get_referer();
 }
 
 function data_submitted($url="") {
