@@ -56,15 +56,15 @@ atan2, pow
 </b><br/>関数<b>min</b> と <b>max</b> には、2個またはそれ以上の引数を渡すことができます。引数が不要な関数 <b>pi</b> を使用することもできますが、括弧を忘れないでください - 正しい使い方は、<b>pi()</b>です。同じように、他の関数も括弧内に引数を必要とします。使い方の例は、<b>sin({a}) + cos({b}) * 2</b> です。<b>cos(deg2rad({a} + 90))</b>のように関数を入れ子にしても問題はありません。
 <br/>PHPスタイルの関数の使用方法に関しては、<a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">PHPウェブサイトの文書</a>をご覧ください。
 <br/><br/>
-As for numerical questions it is possible to allow a margin within which all responses are accepted as correct. The "Tolerance" field is used for this. However, there are three different types of tolerances. These are <b>Relative, Nominal and Geometric</b>. If we say that the correct answer at quiz time is calculated to 200 and the tolerance is set to 0.5 then the different tolerance types work like this:
-<br/><br/><b>Relative:</b> A tolerance interval is calculated by multiplying the correct answer with 0.5, ie in this case we get 100 so for this tolerance the correct response must be between 100 and 300.  (200 ｱ 100)<br/>
-This is useful if the magnitude of the correct answer can differ greatly between different wildcard values.
-<br/><br/><b>Nominal:</b>  This is the simpliest tolerance type but not very powerful. The correct response must be between 199.5 and 200.5 (200 &plusmn 0.5)<br/>
-This tolerance type can be useful if the differences between different correct answers are small.
-<br/><br/><b>Geometric:</b> The upper limit of the tolerance interval is calculated as 200 + 0.5*200 and is the same as for the relative case. The lower limit is calculated as 200/(1 + 0.5). The correct response must then be between 133.33 and 300.<br/>
-This is useful for complex calculation that must have great tolerances where relative tolerances of 1 or more would be used for the upper limit but clearly not acceptable for the lower limit as it would make zero a correct answer for all cases.
+数値問題として、全ての解答が正しいものとして受け入れられるようにマージンを設定することができます。「許容範囲」のフィールドは、マージンを設定するために使用します。
+許容タイプには、<b>相対分布、正規分布、幾何分布</b>の3つがあります。小テストの答えが200と計算されて許容範囲が0.5の場合、それぞれの許容タイプは次のように動作します:
+<br/><br/><b>相対分布:</b> 許容範囲は正解に0.5を掛けて計算されます。この例の場合、許容範囲は100となり、正しい答えは、100と300の間(200 &plusmn 100)になります。<br/>これは、正解の大きさが、ワイルドカード値の間で非常に異なる場合に有用です。
+<br/><br/><b>正規分布:</b> これは一番シンプルな許容タイプですが、非常に強力というわけではありません。正しい答えは、199.5と200.5の間(200 &plusmn 0.5)になります。<br/>
+この許容タイプは、異なる正解間の差が小さい時に有用です。
+<br/><br/><b>幾何分布:</b> 許容範囲の上限は、200 + 0.5*200と計算され、相対分布と同じ値になります。下限は、200/(1 + 0.5)と計算されます。正しい答えは、133.33と300の間になります。<br/>
+これは、相対分布の許容範囲が1またはそれ以上となるような大きな値を持つ必要がある時に、上限は受け入れることができても、全てのケースで下限ゼロになることは受け入れることができない場合の複雑な計算に有用です。
 <br/><br/>
-The field <b>Significant Figures</b> does only relate to how the correct answer should be presented in the review or the reports. Examples: If it is set to 3 then the correct answer 13.333 would be presented as 13.3; 1236 would be presented as 1240; 23 would be presented as 23.0 etc.
+<b>有効数字</b>フィールドは、正解がレビューやレポートにどのように表示されるかのみに関係します。例: 有効数字3で、正しい答えが13.333の場合、13.3と表示されます。1236は、1240と表示されます。23は、23.0と表示されます。
 <br/><br/>
-The feedback field and the optional unit fields work just like they do for numerical questions.
+フィードバックフィールド及びオプションフィールドは数値問題と同様の動きをします。
 <br/>
