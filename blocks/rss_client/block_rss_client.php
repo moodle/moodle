@@ -178,7 +178,7 @@ class block_rss_client extends block_base {
             }
 
             if ($showtitle) {
-                $returnstring .= '<div class="rssclienttitle">'. $feedtitle .'</div><br /><br />';
+                $returnstring .= '<div class="rssclienttitle">'. $feedtitle .'</div><br />';
             }                        
 
             foreach ($rss->items as $item) {
