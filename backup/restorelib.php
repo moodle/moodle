@@ -923,9 +923,9 @@
             $this->level++;
             $this->tree[$this->level] = $tagName;
 
-            if ($tagName == "MOD" && $this->tree[3] == "MODULES") {                                     //Debug
-                echo "<P>MOD: ".strftime ("%X",time()),"-";                                             //Debug
-            }                                                                                           //Debug
+            //if ($tagName == "MOD" && $this->tree[3] == "MODULES") {                                     //Debug
+            //    echo "<P>MOD: ".strftime ("%X",time()),"-";                                             //Debug
+            //}                                                                                           //Debug
 
             //Output something to avoid browser timeouts...
             backup_flush();
@@ -1463,9 +1463,9 @@
                     //Prepend XML standard header to info gathered
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
                     //Call to xmlize for this portion of xml data (one MOD)
-                    echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                  //Debug
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                  //Debug
                     $data = xmlize($xml_data,0);         
-                    echo strftime ("%X",time())."<p>";                                                            //Debug
+                    //echo strftime ("%X",time())."<p>";                                                            //Debug
                     //traverse_xmlize($data);                                                                     //Debug
                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                     //$GLOBALS['traverse_array']="";                                                              //Debug
