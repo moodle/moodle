@@ -116,16 +116,16 @@ class quiz_file_format extends quiz_default_format {
                     }
                     if (strlen($question->name) > 255) {
                         $question->name = substr($question->name,0,250)."...";
-                        $warnings[] = get_string("questionnametoolong", "importwebcbt", $nQuestionStartLine);
+                        $warnings[] = get_string("questionnametoolong", "quiz", $nQuestionStartLine);
                     }
                     // Perform sanity checks
                     if (strlen($question->questiontext) == 0) {
-                        $errors[] = get_string("missingquestion", "importwebcbt", $nQuestionStartLine);
+                        $errors[] = get_string("missingquestion", "quiz", $nQuestionStartLine);
                         $QuestionOK = FALSE;
                     }
 
                     if (sizeof($question->answer) <= 1) {
-                        $errors[] = get_string("missinganswer", "importwebcbt", $nQuestionStartLine);
+                        $errors[] = get_string("missinganswer", "quiz", $nQuestionStartLine);
                         $QuestionOK = FALSE;
                     }
                     else {
@@ -133,7 +133,7 @@ class quiz_file_format extends quiz_default_format {
                         foreach ($question->answer as $key => $dataanswer) {
                             if (strlen($dataanswer) > 255) {
                                 $question->answer[$key] = substr($dataanswer,0,250)."...";
-                                $warnings[] = get_string("answertoolong", "importwebcbt", $nQuestionStartLine);
+                                $warnings[] = get_string("answertoolong", "quiz", $nQuestionStartLine);
                             }
                         }
                         $maxfraction = -1;
@@ -150,7 +150,7 @@ class quiz_file_format extends quiz_default_format {
                             case SHORTANSWER:
                                 if ($maxfraction != 1) {
                                     $maxfraction = $maxfraction * 100;
-                                    $errors[] = get_string("wronggrade", "importwebcbt", $nLine).get_string("fractionsnomax", "quiz", $maxfraction);
+                                    $errors[] = get_string("wronggrade", "quiz", $nLine).get_string("fractionsnomax", "quiz", $maxfraction);
                                     $QuestionOK = FALSE;
                                 }
                                 break;
@@ -159,7 +159,7 @@ class quiz_file_format extends quiz_default_format {
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
                                         $maxfraction = $maxfraction * 100;
-                                        $errors[] = get_string("wronggrade", "importwebcbt", $nLine).get_string("fractionsnomax", "quiz", $maxfraction);
+                                        $errors[] = get_string("wronggrade", "quiz", $nLine).get_string("fractionsnomax", "quiz", $maxfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 }
@@ -167,7 +167,7 @@ class quiz_file_format extends quiz_default_format {
                                     $totalfraction = round($totalfraction,2);
                                     if ($totalfraction != 1) {
                                         $totalfraction = $totalfraction * 100;
-                                        $errors[] = get_string("wronggrade", "importwebcbt", $nLine).get_string("fractionsaddwrong", "quiz", $totalfraction);
+                                        $errors[] = get_string("wronggrade", "quiz", $nLine).get_string("fractionsaddwrong", "quiz", $totalfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 }
@@ -227,21 +227,21 @@ class quiz_file_format extends quiz_default_format {
 
             if (eregi("^:TYPE:P",$line)) {
                 // Paragraph Question
-                $warnings[] = get_string("paragraphquestion", "importwebcbt", $nLine);
+                $warnings[] = get_string("paragraphquestion", "quiz", $nLine);
                 $ignore_lines = TRUE;         // do not process lines until next question
                 continue;
             }
 
             if (eregi("^:TYPE:C",$line)) {
                 // Calculated Question
-                $warnings[] = get_string("calculatedquestion", "importwebcbt", $nLine);
+                $warnings[] = get_string("calculatedquestion", "quiz", $nLine);
                 $ignore_lines = TRUE;         // do not process lines until next question
                 continue;
             }
 
             if (eregi("^:TYPE:",$line)) {
                 // Unknow Question
-                $warnings[] = get_string("unknowtype", "importwebcbt", $nLine);
+                $warnings[] = get_string("unknowntype", "quiz", $nLine);
                 $ignore_lines = TRUE;         // do not process lines until next question
                 continue;
             }
@@ -259,7 +259,7 @@ class quiz_file_format extends quiz_default_format {
             	$name = trim($webct_options[1]);
                 if (strlen($name) > 255) {
                     $name = substr($name,0,250)."...";
-                    $warnings[] = get_string("questionnametoolong", "importwebcbt", $nLine);
+                    $warnings[] = get_string("questionnametoolong", "quiz", $nLine);
                 }
                 $question->name = $name;
                 continue;
@@ -271,7 +271,7 @@ class quiz_file_format extends quiz_default_format {
 	                $question->image = $filename;
             	}
             	else {
-                    $warnings[] = get_string("imagemissing", "importwebcbt", $nLine);
+                    $warnings[] = get_string("imagemissing", "quiz", $nLine);
             	}
                 continue;
             }
@@ -310,7 +310,7 @@ class quiz_file_format extends quiz_default_format {
         }
 
         if (sizeof($errors) > 0) {
-            echo "<p>".get_string("errorsdetected", "importwebcbt", sizeof($errors))."</p><ul>";
+            echo "<p>".get_string("errorsdetected", "quiz", sizeof($errors))."</p><ul>";
             foreach($errors as $error) {
                 echo "<li>$error</li>";
             }
@@ -318,7 +318,7 @@ class quiz_file_format extends quiz_default_format {
         }
 
         if (sizeof($warnings) > 0) {
-            echo "<p>".get_string("warningsdetected", "importwebcbt", sizeof($warnings))."</p><ul>";
+            echo "<p>".get_string("warningsdetected", "quiz", sizeof($warnings))."</p><ul>";
             foreach($warnings as $warning) {
                 echo "<li>$warning</li>";
             }
