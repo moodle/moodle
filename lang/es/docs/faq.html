@@ -3,109 +3,20 @@
 <head>
 
 <title>Documentación de Moodle: Preguntas frecuentes (FAQ)</title>
-
-<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
-
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-
-<style type="text/css">
-
-<!--
-
-.question {
-
-    font-size: medium;
-
-    font-weight: bold;
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    border: 1px dotted;
-
-    padding: 10px;
-
-    background-color: #EEEEEE;
-
-}
-
-.answer {
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    font-size: medium;
-
-    border: none;
-
-    padding-left: 40px;
-
-}
-
--->
-
-</style>
-
-<style type="text/css">
-
-<!--
-
-.normaltext {
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    font-size: medium;
-
-    border: none;
-
-    padding-left: 10px;
-
-}
-
-.answercode {
-
-    font-family: "Courier New", Courier, mono;
-
-    font-size: small;
-
-    border: none;
-
-    padding-left: 60px;
-
-}
-
-.questionlink {
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    font-size: medium;
-
-    border: none;
-
-    padding-left: 40px;
-
-}
-
--->
-
-</style>
-
 </head>
 
-
-
 <body bgcolor="#FFFFFF">
-
-<h2>Preguntas frecuentes (FAQ)</h2>
-
-<p class="normaltext">Esta página contiene algunas de las preguntas que se hacen
-  con más frecuencia al instalar Moodle junto con sus respuestas. Si ha seguido
-  las <a href="./?file=install.html">instrucciones de instalación</a> y
-  todavía tiene algún problema, lo mejor será que lea esta página.</p>
+<h1>Preguntas Frecuentes (FAQ)</h1>
+<p class="normaltext">Esta página contiene las respuestas a algunas de las preguntas que se hacen
+  con más frecuencia al instalar Moodle. Si ha seguido las <a href="./?file=install.html">instrucciones de instalación</a> y todavía tiene algún problema, lo mejor será que lea esta página.</p>
 
 <p class="normaltext">Si no obtiene su respuesta aquí, pruebe el curso
   <a href="http://moodle.org/mod/forum/index.php?id=5" target="_top">Using
 	Moodle</a> en moodle.org.
   Primero busque en los foros unas pocas palabras, por si su problema ya ha sido
-  debatido. Si no encuentra nada, envíe su pregunta al foro adecuado --alguien
+  debatido. Si no encuentra nada, envíe su pregunta al foro adecuado -alguien
 	podrá ayudarle.</p>
 
 <p class="normaltext"> Si ha intentado varias soluciones sin poder resolver un
@@ -148,14 +59,14 @@
 <p class="questionlink"><a href="#fixdirroot">Cuando voy a la página de administración,
   me indica que ponga un dirroot vacío.</a></p>
 
-<p class="questionlink"><a href="#loginsetting">Entro, pero en enlace de entrada
+<p class="questionlink"><a href="#loginsetting">Entro, pero el enlace de entrada
   no cambia. He entrado y puedo navegar libremente.</a></p>
 
 <p class="questionlink"><a href="#resource1">Cuando trato de añadir un
   recurso recibo mensajes de error.</a></p>
 
 <p class="questionlink"><a href="#noadmin">Durante el proceso de configuración
-  inicial, &iexcl;nunca se me pide que cree una cuenta de administrador!</a></p>
+  inicial, nunca se me pide que cree una cuenta de administrador</a></p>
 
 <p class="questionlink"><a href="#nologin">No hay forma de entrar --me quedo colgado
   en la página de entrada</a></p>
@@ -261,7 +172,7 @@
 <h4 class="question"><a name="headerssent"></a>&iquest;Por qué sigo obteniendo
   mensajes de error sobre &quot;headers already sent&quot;?</h4>
 
-<p class="answer">Si ver errores de este estilo:</p>
+<p class="answer">Si ve errores de este estilo:</p>
 
 <p class="answercode">Warning: Cannot add header information - headers already
 
@@ -305,7 +216,7 @@
 
 <p class="answer">Los problemas causados por los apóstrofes son causados
   por opciones incorrectas de &quot;magic quotes&quot;. Moodle necesita las siguientes
-  opciones (que normalmente están puestas por defecto):</p>
+  opciones (que normalmente están activadas por defecto):</p>
 
 <p class="answercode">magic_quotes_gpc = On<br>
 
