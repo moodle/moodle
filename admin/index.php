@@ -115,7 +115,7 @@
         }
         print_continue("index.php");
         print_simple_box_start("CENTER");
-        include("$CFG->dirroot/RELEASE.html");
+        include("$CFG->dirroot/doc/release.html");
         print_simple_box_end();
         print_continue("index.php");
         exit;
