@@ -1,8 +1,8 @@
 <?PHP // $Id$
       // Edit course settings
 
-	require_once("../config.php");
-	require_once("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
         require_once("$CFG->libdir/blocklib.php");
 
     optional_variable($id, 0);   // course id
@@ -36,7 +36,7 @@
 
 /// If data submitted, then process and store.
 
-	if ($form = data_submitted()) {
+    if ($form = data_submitted()) {
 
         check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
 
@@ -51,8 +51,8 @@
             if (!empty($course)) {
                 if (update_record("course", $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
-                    fix_course_sortorder($form->category);
-		            redirect("view.php?id=$course->id", get_string("changessaved"));
+                    fix_course_sortorder();
+                    redirect("view.php?id=$course->id", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not update the course record! (id = $form->id)");
                 }
@@ -73,7 +73,7 @@
                     $section->section = 0;
                     $section->id = insert_record("course_sections", $section);
 
-                    fix_course_sortorder($form->category);
+                    fix_course_sortorder();
                     add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "");
 
                     if (isadmin()) { // Redirect admin to add teachers
@@ -101,14 +101,14 @@
                     error("Serious Error! Could not create the new course!");
                 }
             }
-		    die;
+            die;
         } else {
             foreach ($err as $key => $value) {
                 $focus = "form.$key";
             }
 
         }
-	}
+    }
 
 /// Otherwise fill and print the form.
 
@@ -167,7 +167,7 @@
     $strcategories = get_string("categories");
 
     if (!empty($course)) {
-	    print_header($streditcoursesettings, "$course->fullname",
+        print_header($streditcoursesettings, "$course->fullname",
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
                       -> $streditcoursesettings", $focus);
     } else {
@@ -178,7 +178,7 @@
 
     print_heading($streditcoursesettings);
     print_simple_box_start("center", "", "$THEME->cellheading");
-	include("edit.html");
+    include("edit.html");
     print_simple_box_end();
 
     print_footer($course);

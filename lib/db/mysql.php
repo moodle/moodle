@@ -429,11 +429,7 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2003080700) {
         notify("Cleaning up categories and course ordering...");
-        if ($categories = get_categories()) {
-            foreach ($categories as $category) {
-                fix_course_sortorder($category->id);
-            }
-        }
+        fix_course_sortorder();
     }
 
     if ($oldversion < 2003081001) {

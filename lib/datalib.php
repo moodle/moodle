@@ -6,7 +6,7 @@
 * 
 * Completely general function - it just runs some SQL and reports success.
 *
-* @param	type description
+* @param    type description
 */
 function execute_sql($command, $feedback=true) {
 /// Completely general function - it just runs some SQL and reports success.
@@ -36,7 +36,7 @@ function execute_sql($command, $feedback=true) {
 * Lines that are blank or that start with "#" are ignored.
 * Only tested with mysql dump files (mysqldump -p -d moodle)
 *
-* @param	type description
+* @param    type description
 */
 
 function modify_database($sqlfile="", $sqlstring="") {
@@ -89,7 +89,7 @@ function modify_database($sqlfile="", $sqlstring="") {
 * 
 * Add a new field to a table, or modify an existing one (if oldfield is defined).
 *
-* @param	type description
+* @param    type description
 */
 
 function table_column($table, $oldfield, $field, $type="integer", $size="10",
@@ -225,7 +225,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
 * 
 * Returns true or false depending on whether the specified record exists
 *
-* @param	type description
+* @param    type description
 */
 function record_exists($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
 
@@ -252,7 +252,7 @@ function record_exists($table, $field1="", $value1="", $field2="", $value2="", $
 * 
 * The sql statement is provided as a string.
 *
-* @param	type description
+* @param    type description
 */
 function record_exists_sql($sql) {
 
@@ -278,7 +278,7 @@ function record_exists_sql($sql) {
 * 
 * Get all the records and count them
 *
-* @param	type description
+* @param    type description
 */
 function count_records($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
 
@@ -304,7 +304,7 @@ function count_records($table, $field1="", $value1="", $field2="", $value2="", $
 * 
 * Get all the records and count them
 *
-* @param	type description
+* @param    type description
 *
 */
 function count_records_select($table, $select="") {
@@ -324,7 +324,7 @@ function count_records_select($table, $select="") {
 * 
 * The sql statement is provided as a string.
 *
-* @param	type description
+* @param    type description
 */
 function count_records_sql($sql) {
 
@@ -351,17 +351,17 @@ function count_records_sql($sql) {
 * 
 * Get a single record as an object
 *
-* @param	string	$table the name of the table to select from
-* @param	string	$field1	the name of the field for the first criteria
-* @param	string	$value1	the value of the field for the first criteria
-* @param	string	$field2	the name of the field for the second criteria
-* @param	string	$value2	the value of the field for the second criteria
-* @param	string	$field3	the name of the field for the third criteria
-* @param	string	$value3	the value of the field for the third criteria
-* @return	object(fieldset)	a fieldset object containing the first record selected
+* @param    string  $table the name of the table to select from
+* @param    string  $field1 the name of the field for the first criteria
+* @param    string  $value1 the value of the field for the first criteria
+* @param    string  $field2 the name of the field for the second criteria
+* @param    string  $value2 the value of the field for the second criteria
+* @param    string  $field3 the name of the field for the third criteria
+* @param    string  $value3 the value of the field for the third criteria
+* @return   object(fieldset)    a fieldset object containing the first record selected
 */
 function get_record($table, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
-	
+    
     global $CFG;
 
     $select = "WHERE $field1 = '$value1'";
@@ -382,7 +382,7 @@ function get_record($table, $field1, $value1, $field2="", $value2="", $field3=""
 * The sql statement is provided as a string.
 * A LIMIT is normally added to only look for 1 record
 *
-* @param	type description
+* @param    type description
 */
 function get_record_sql($sql) {
 
@@ -427,7 +427,7 @@ function get_record_sql($sql) {
 * 
 * "select" is a fragment of SQL to define the selection criteria
 *
-* @param	type description
+* @param    type description
 */
 function get_record_select($table, $select="", $fields="*") {
 
@@ -449,7 +449,7 @@ function get_record_select($table, $select="", $fields="*") {
 * The "key" is the first column returned, eg usually "id"
 * limitfrom and limitnum must both be specified or not at all
 *
-* @param	type description
+* @param    type description
 */
 function get_records($table, $field="", $value="", $sort="", $fields="*", $limitfrom="", $limitnum="") {
 
@@ -491,7 +491,7 @@ function get_records($table, $field="", $value="", $sort="", $fields="*", $limit
 * The "key" is the first column returned, eg usually "id"
 * limitfrom and limitnum must both be specified or not at all
 *
-* @param	type description
+* @param    type description
 */
 function get_records_select($table, $select="", $sort="", $fields="*", $limitfrom="", $limitnum="") {
 
@@ -532,7 +532,7 @@ function get_records_select($table, $select="", $sort="", $fields="*", $limitfro
 * Can optionally be sorted eg "time ASC" or "time DESC"
 * The "key" is the first column returned, eg usually "id"
 *
-* @param	type description
+* @param    type description
 */
 function get_records_list($table, $field="", $values="", $sort="", $fields="*") {
 
@@ -559,7 +559,7 @@ function get_records_list($table, $field="", $values="", $sort="", $fields="*") 
 * The "key" is the first column returned, eg usually "id"
 * The sql statement is provided as a string.
 *
-* @param	type description
+* @param    type description
 */
 function get_records_sql($sql) {
 
@@ -593,7 +593,7 @@ function get_records_sql($sql) {
 * If "fields" is specified, only those fields are returned
 * The "key" is the first column returned, eg usually "id"
 * 
-* @param	type description
+* @param    type description
 */
 function get_records_menu($table, $field="", $value="", $sort="", $fields="*") {
 
@@ -619,7 +619,7 @@ function get_records_menu($table, $field="", $value="", $sort="", $fields="*") {
 * "select" is a fragment of SQL to define the selection criteria
 * Returns associative array of first two fields
 * 
-* @param	type description
+* @param    type description
 */
 function get_records_select_menu($table, $select="", $sort="", $fields="*") {
 
@@ -644,7 +644,7 @@ function get_records_select_menu($table, $select="", $sort="", $fields="*") {
 * combination with the choose_from_menu function to create 
 * a form menu.
 *
-* @param	type description
+* @param    type description
 */
 function get_records_sql_menu($sql) {
 
@@ -674,7 +674,7 @@ function get_records_sql_menu($sql) {
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_field($table, $return, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
 
@@ -709,7 +709,7 @@ function get_field($table, $return, $field1, $value1, $field2="", $value2="", $f
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function set_field($table, $newfield, $newvalue, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
 
@@ -733,7 +733,7 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2="", $
 * 
 * Delete one or more records from a table
 *
-* @param	type description
+* @param    type description
 */
 function delete_records($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
 
@@ -759,7 +759,7 @@ function delete_records($table, $field1="", $value1="", $field2="", $value2="", 
 * 
 * "select" is a fragment of SQL to define the selection criteria
 *
-* @param	type description
+* @param    type description
 */
 function delete_records_select($table, $select="") {
 
@@ -779,7 +779,7 @@ function delete_records_select($table, $select="") {
 * If the return ID isn't required, then this just reports success as true/false.
 * $dataobject is an object containing needed data
 *
-* @param	type description
+* @param    type description
 */
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
                                                                                                                 
@@ -832,7 +832,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 * Relies on $dataobject having a variable "id" to 
 * specify the record to update
 *
-* @param	type description
+* @param    type description
 */
 function update_record($table, $dataobject) {
 
@@ -889,7 +889,7 @@ function update_record($table, $dataobject) {
 * in the user record, as well as membership information
 * Suitable for setting as $USER session cookie.
 *
-* @param	type description
+* @param    type description
 */
 function get_user_info_from_db($field, $value) {
 
@@ -980,7 +980,7 @@ function update_user_in_db() {
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function adminlogin($username, $md5password) {
 
@@ -1000,7 +1000,7 @@ function adminlogin($username, $md5password) {
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_guest() {
     return get_user_info_from_db("username", "guest");
@@ -1012,7 +1012,7 @@ function get_guest() {
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_admin () {
 
@@ -1032,7 +1032,7 @@ function get_admin () {
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_admins() {
 
@@ -1050,7 +1050,7 @@ function get_admins() {
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_creators() {
 
@@ -1068,7 +1068,7 @@ function get_creators() {
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_teacher($courseid) {
 
@@ -1090,7 +1090,7 @@ function get_teacher($courseid) {
 * 
 * used to print recent activity
 *
-* @param	type description
+* @param    type description
 */
 function get_recent_enrolments($courseid, $timestart) {
 
@@ -1113,7 +1113,7 @@ function get_recent_enrolments($courseid, $timestart) {
 /**
 * Returns list of all students in this course
 * 
-* @param	type description
+* @param    type description
 */
 function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, $recordsperpage=99999,
                              $firstinitial="", $lastinitial="", $group=NULL, $search="") {
@@ -1176,7 +1176,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
 /**
 * Counts the students in a given course, or a subset of them
 * 
-* @param	type description
+* @param    type description
 */
 function count_course_students($course, $search="", $firstinitial="", $lastinitial="", $group=NULL) {
 
@@ -1224,7 +1224,7 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
 /**
 * Returns list of all teachers in this course
 * 
-* @param	type description
+* @param    type description
 */
 function get_course_teachers($courseid, $sort="t.authority ASC") {
 
@@ -1244,7 +1244,7 @@ function get_course_teachers($courseid, $sort="t.authority ASC") {
 * 
 * If the "course" is actually the site, then return all site users.
 *
-* @param	type description
+* @param    type description
 */
 function get_course_users($courseid, $sort="timeaccess DESC") {
 
@@ -1292,7 +1292,7 @@ function get_course_users($courseid, $sort="timeaccess DESC") {
 * 
 * or teaching in courses on this server
 *
-* @param	type description
+* @param    type description
 */
 function get_site_users($sort="u.lastaccess DESC", $select="") {
 
@@ -1334,11 +1334,11 @@ function get_site_users($sort="u.lastaccess DESC", $select="") {
 * 
 * longdesc
 *
-* @param	bookean $get	if false then only a count of the records is returned
-* @param	string	$search	a simple string to search for
-* @param	boolean	$confirmed	a switch to allow/disallow unconfirmed users
-* @param	array(int)	$exceptions	a list of IDs to ignore, eg 2,4,5,8,9,10
-* @param	string	$sort	a SQL snippet for the sorting criteria to use
+* @param    bookean $get    if false then only a count of the records is returned
+* @param    string  $search a simple string to search for
+* @param    boolean $confirmed  a switch to allow/disallow unconfirmed users
+* @param    array(int)  $exceptions a list of IDs to ignore, eg 2,4,5,8,9,10
+* @param    string  $sort   a SQL snippet for the sorting criteria to use
 */
 function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sort="firstname ASC",
                    $firstinitial="", $lastinitial="") {
@@ -1399,7 +1399,7 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_users_listing($sort="lastaccess", $dir="ASC", $page=0, $recordsperpage=99999,
                            $search="", $firstinitial="", $lastinitial="") {
@@ -1454,7 +1454,7 @@ function get_users_listing($sort="lastaccess", $dir="ASC", $page=0, $recordsperp
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_users_confirmed() {
     global $CFG;
@@ -1472,7 +1472,7 @@ function get_users_confirmed() {
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_users_unconfirmed($cutofftime=2000000000) {
     global $CFG;
@@ -1489,7 +1489,7 @@ function get_users_unconfirmed($cutofftime=2000000000) {
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
 function get_users_longtimenosee($cutofftime) {
     global $CFG;
@@ -1504,7 +1504,7 @@ function get_users_longtimenosee($cutofftime) {
 * in the given course.  If userid isn't specified, then return a 
 * list of all groups in the course.
 * 
-* @param	type description
+* @param    type description
 */
 function get_groups($courseid, $userid=0) {
     global $CFG;
@@ -1526,7 +1526,7 @@ function get_groups($courseid, $userid=0) {
 /**
 * Returns an array of user objects
 * 
-* @param	type description
+* @param    type description
 */
 function get_group_users($groupid, $sort="u.lastaccess DESC") {
     global $CFG;
@@ -1541,7 +1541,7 @@ function get_group_users($groupid, $sort="u.lastaccess DESC") {
 /**
 * An efficient way of finding all the users who aren't in groups yet
 * 
-* @param	type description
+* @param    type description
 */
 function get_users_not_in_group($courseid) {
     global $CFG;
@@ -1553,7 +1553,7 @@ function get_users_not_in_group($courseid) {
 /**
 * Returns an array of user objects
 * 
-* @param	type description
+* @param    type description
 */
 function get_group_students($groupid, $sort="u.lastaccess DESC") {
     global $CFG;
@@ -1574,7 +1574,7 @@ function get_group_students($groupid, $sort="u.lastaccess DESC") {
 /**
 * Returns the user's group in a particular course
 * 
-* @param	type description
+* @param    type description
 */
 function user_group($courseid, $userid) {
     global $CFG;
@@ -1598,7 +1598,7 @@ function user_group($courseid, $userid) {
 * 
 * Returns $course object of the top-level site.
 *
-* @param	type description
+* @param    type description
 */
 function get_site () {
 
@@ -1615,7 +1615,7 @@ function get_site () {
 * 
 * Returns list of courses, for whole site, or category
 *
-* @param	type description
+* @param    type description
 */
 function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
 
@@ -1657,7 +1657,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 * 
 * Similar to get_courses, but allows paging
 *
-* @param	type description
+* @param    type description
 */
 function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c.*", 
                           &$totalcount, $limitfrom="", $limitnum="") {
@@ -1712,9 +1712,9 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 * 
 * longdesc
 *
-* @param	type description
+* @param    type description
 */
-function get_my_courses($userid, $sort="visible DESC,fullname ASC") {
+function get_my_courses($userid, $sort="visible DESC,sortorder ASC") {
 
     global $CFG;
 
@@ -1756,7 +1756,7 @@ function get_my_courses($userid, $sort="visible DESC,fullname ASC") {
 * 
 * Returns a list of courses that match a search
 *
-* @param	type description
+* @param    type description
 */
 function get_courses_search($searchterms, $sort="fullname ASC", $page=0, $recordsperpage=50, &$totalcount) {
 
@@ -1838,7 +1838,7 @@ function get_courses_search($searchterms, $sort="fullname ASC", $page=0, $record
 * 
 * Returns a sorted list of categories
 *
-* @param	type description
+* @param    type description
 */
 function get_categories($parent="none", $sort="sortorder ASC") {
 
@@ -1862,37 +1862,29 @@ function get_categories($parent="none", $sort="sortorder ASC") {
 
 
 /**
-* reconcile $courseorder with a category object
-* 
-* Given a category object, this function makes sure the courseorder 
-* variable reflects the real world.
+* This recursive function makes sure that the courseorder is consecutive
 *
-* @param	type description
+* @param    type description
 */
-function fix_course_sortorder($categoryid, $sort="sortorder ASC") {
-
-    if (!$courses = get_records("course", "category", "$categoryid", "$sort", "id, sortorder")) {
-        set_field("course_categories", "coursecount", 0, "id", $categoryid);
-        return true;
-    }
-
+function fix_course_sortorder($categoryid=0, $n=0) {
+    
     $count = 0;
-    $modified = false;
-
-    foreach ($courses as $course) {
-        if ($course->sortorder != $count) {
-            set_field("course", "sortorder", $count, "id", $course->id);
-            $modified = true;
+    if ($courses = get_courses($categoryid)) {
+        foreach ($courses as $course) {
+            set_field('course', 'sortorder', $n, 'id', $course->id);
+            $n++;
+            $count++;
         }
-        $count++;
-    }
-
-    if ($modified) {
-        set_field("course_categories", "timemodified", time(), "id", $categoryid);
     }
     set_field("course_categories", "coursecount", $count, "id", $categoryid);
-
-    return true;
+    
+    if ($categories = get_categories($categoryid)) {
+        foreach ($categories as $category) {
+            $n = fix_course_sortorder($category->id, $n);
+        }
+    }
+    
+    return $n;
 }
 
 /**
@@ -1904,7 +1896,7 @@ function fix_course_sortorder($categoryid, $sort="sortorder ASC") {
 * need to maintain backward compatibility with many different
 * existing language translations and older sites.
 *
-* @param	type description
+* @param    type description
 */
 function make_default_scale() {
 
@@ -1944,7 +1936,7 @@ function make_default_scale() {
 * 
 * Returns a menu of all available scales from the site as well as the given course
 *
-* @param	type description
+* @param    type description
 */
 function get_scales_menu($courseid=0) {
 
@@ -1970,7 +1962,7 @@ function get_scales_menu($courseid=0) {
 * 
 * Just gets a raw list of all modules in a course
 *
-* @param	type description
+* @param    type description
 */
 function get_course_mods($courseid) {
     global $CFG;
@@ -1988,7 +1980,7 @@ function get_course_mods($courseid) {
 * 
 * Given an instance of a module, finds the coursemodule description
 *
-* @param	type description
+* @param    type description
 */
 function get_coursemodule_from_instance($modulename, $instance, $courseid) {
 
@@ -2014,8 +2006,8 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid) {
 * module in a given course, sorted in the order they are defined
 * in the course.   Returns false on any errors.
 *
-* @param	string	$modulename	the name of the module to get instances for
-* @param		object(course)	$course	this depends on an accurate $course->modinfo
+* @param    string  $modulename the name of the module to get instances for
+* @param        object(course)  $course this depends on an accurate $course->modinfo
 */
 function get_all_instances_in_course($modulename, $course) {
 
@@ -2068,7 +2060,7 @@ function get_all_instances_in_course($modulename, $course) {
 * and the module's type (eg "forum") returns whether the object 
 * is visible or not
 *
-* @param	type description
+* @param    type description
 */
 function instance_is_visible($moduletype, $module) {
 
@@ -2103,13 +2095,13 @@ function instance_is_visible($moduletype, $module) {
 * than web server hits, and provide a way to easily reconstruct what 
 * any particular student has been doing.
 *
-* @param	int	    $course  the course id
-* @param	string	$module	 the module name - e.g. forum, journal, resource, course, user etc
-* @param	string	$action	 view, edit, post (often but not always the same as the file.php)
-* @param	string	$url	 the file and parameters used to see the results of the action
-* @param	string	$info	 additional description information 
-* @param	string	$cm	     the course_module->id if there is one
-* @param	string	$user	 if log regards $user other than $USER
+* @param    int     $course  the course id
+* @param    string  $module  the module name - e.g. forum, journal, resource, course, user etc
+* @param    string  $action  view, edit, post (often but not always the same as the file.php)
+* @param    string  $url     the file and parameters used to see the results of the action
+* @param    string  $info    additional description information 
+* @param    string  $cm      the course_module->id if there is one
+* @param    string  $user    if log regards $user other than $USER
 */
 function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user=0) {
 
@@ -2152,8 +2144,8 @@ function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user
 * 
 * select all log records based on SQL criteria
 * 
-* @param	string	$select	SQL select criteria
-* @param	string	$order	SQL order by clause to sort the records returned
+* @param    string  $select SQL select criteria
+* @param    string  $order  SQL order by clause to sort the records returned
 */
 function get_logs($select, $order="l.time DESC", $limitfrom="", $limitnum="", &$totalcount) {
     global $CFG;
@@ -2191,7 +2183,7 @@ function get_logs($select, $order="l.time DESC", $limitfrom="", $limitnum="", &$
 * 
 * select all log records for a given course and user
 *
-* @param	type description
+* @param    type description
 */
 function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $CFG;
@@ -2212,7 +2204,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 * 
 * select all log records for a given course, user, and day
 *
-* @param	type description
+* @param    type description
 */
 function get_logs_userday($userid, $courseid, $daystart) {
     global $CFG;
@@ -2236,7 +2228,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
 * dump a given object's information in a PRE block
 * Mostly just for debugging
 *
-* @param	type description
+* @param    type description
 */
 function print_object($object) {
 

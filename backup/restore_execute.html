@@ -296,7 +296,7 @@
         rebuild_course_cache($restore->course_id);
         //categories table
         $course = get_record("course","id",$restore->course_id); 
-        fix_course_sortorder($course->category);
+        fix_course_sortorder();
     }
 
     //Cleanup temps (files and db)

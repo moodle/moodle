@@ -57,7 +57,14 @@
         /// Resort the category if requested
 
         if (!empty($_GET['resort'])) {
-            fix_course_sortorder($category->id, "fullname ASC");
+            if ($courses = get_courses($category->id, "fullname ASC")) {
+                $count = 0;
+                foreach ($courses as $course) {
+                    set_field('course', 'sortorder', $count, 'id', $course->id);
+                    $count++;
+                }
+                fix_course_sortorder();
+            }
         }
     }
 
@@ -73,16 +80,16 @@
 
     if ($creatorediting) {
         if ($adminediting) {
-	        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
+            print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
                          "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
                          "<a href=\"index.php\">$strcategories</a> -> $category->name",
                          "", "", true, $navbaritem);
         } else {
-	        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
+            print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
                          "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
         }
     } else {
-	    print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
+        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
                      "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
     }
 
@@ -126,8 +133,7 @@
                         if (!set_field("course", "category", $destcategory->id, "id", $course->id)) {
                             notify("An error occurred - course not moved!");
                         }
-                        fix_course_sortorder($destcategory->id);
-                        fix_course_sortorder($category->id);
+                        fix_course_sortorder();
                         $category = get_record("course_categories", "id", $category->id);
                     }
                 }
@@ -202,7 +208,7 @@
             }
         }
 
-        fix_course_sortorder($category->id);
+        fix_course_sortorder();
 
     } // End of editing stuff
 

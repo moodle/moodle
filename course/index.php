@@ -2,8 +2,8 @@
       // For most people, just lists the course categories
       // Allows the admin to create, delete and rename course categories
 
-	require_once("../config.php");
-	require_once("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -76,7 +76,7 @@
     $straction = get_string("action");
     $straddnewcategory = get_string("addnewcategory");
 
-	print_header("$site->shortname: $strcategories", "$site->fullname", 
+    print_header("$site->shortname: $strcategories", "$site->fullname", 
                  "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strcategories",
                  "addform.addcategory", "", true, update_categories_button());
 
@@ -231,7 +231,6 @@
     $categories = get_categories();
     $default = 99999;
     foreach ($categories as $category) {
-        fix_course_sortorder($category->id);
         if ($category->id < $default) {
             $default = $category->id;
         }
@@ -239,17 +238,14 @@
 
 /// Find any orphan courses that don't yet have a valid category and set to default
     if ($courses = get_courses()) {
-        $foundorphans = false;
         foreach ($courses as $course) {
             if ($course->category and !isset($categories[$course->category])) {
                 set_field("course", "category", $default, "id", $course->id);
-                $foundorphans = true;
             }
         }
-        if ($foundorphans) {
-            fix_course_sortorder($default);
-        }
     }
+    
+    fix_course_sortorder();
 
 /// Print form for creating new categories
 
