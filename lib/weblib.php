@@ -441,7 +441,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
 //
 
     global $CFG;
-    
+
     if (empty($options)) {
         return '';
     }
@@ -1083,12 +1083,13 @@ function user_login_string($course, $user=NULL) {
         $realuserinfo = "";
     }
 
+    if (empty($CFG->loginhttps)) {
+        $wwwroot = $CFG->wwwroot;
+    } else {
+        $wwwroot = str_replace('http','https',$CFG->wwwroot);
+    }
+
     if (isset($user->id) and $user->id) {
-        if (empty($CFG->loginhttps)) {
-            $wwwroot = $CFG->wwwroot;
-        } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
-        }
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
         if (isguest($user->id)) {
