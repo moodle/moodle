@@ -1,14 +1,18 @@
-<?PHP // $Id$ 
-
+<?php // $Id$ 
 
 $string['beep'] = 'bip';
 $string['chatintro'] = 'Texte d\'introduction';
 $string['chatname'] = 'Nom de ce salon';
 $string['chatreport'] = 'Sessions de chat';
 $string['chattime'] = 'Prochaine session';
+$string['configmethod'] = 'Avec la mŽthode normale du chat, le navigateur contacte régulièrement le serveur pour rafraîchir l\'affichage. Aucune configuration n\'est nécessaire et a fonctionne partout. En revanche, cela induit une charge importante du serveur, notamment s\'il y a de nombreux participants au chat. L\'utilisation d\'un « démon » sur le serveur nécessite l\'accès à l\'environnement de commande Unix, mais offre en contrepartie un chat rapide et extensible.';
 $string['configoldping'] = 'Combien de temps après sa dernière intervention un utilisateur doit-il être considéré comme parti ?';
 $string['configrefreshroom'] = 'Fréquence de rafraichissement du salon (en secondes) ? Une valeur basse donnera une impression de rapidité, mais surchargera votre serveur web lorsque beaucoup de monde utilisera le chat.';
 $string['configrefreshuserlist'] = 'Fréquence de rafraichissement de la liste des utilisateurs (en secondes)';
+$string['configserverhost'] = 'Le nom de l\'ordinateur (hostname) sur lequel tourne le démon';
+$string['configserverip'] = 'L\'adresse IP numérique correspondant au nom de l\'ordinateur (hostname) ci-dessus';
+$string['configservermax'] = 'Nombre maximal de clients autorisés';
+$string['configserverport'] = 'Port à utiliser par le démon sur le serveur';
 $string['currentchats'] = 'Sessions actives';
 $string['currentusers'] = 'Utilisateurs en ligne';
 $string['deletesession'] = 'Supprimer cette session';
@@ -23,6 +27,8 @@ $string['messagebeepsyou'] = '$a vient de vous appeler!';
 $string['messageenter'] = '$a vient d\'arriver dans ce chat';
 $string['messageexit'] = '$a a quitté ce chat';
 $string['messages'] = 'Messages';
+$string['methodnormal'] = 'Méthode normale';
+$string['methoddaemon'] = 'Utilisation d\'un démon';
 $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chats';
 $string['neverdeletemessages'] = 'Ne pas effacer les messages';
