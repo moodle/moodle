@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 unstable development (2004083000)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['admindirerror'] = 'El directori d\'administració especificat és incorrecte';
@@ -83,6 +83,7 @@ $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servidor
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Tanmateix, en alguns servidors això farà que no funcioni <b>cap</b> pàgina PHP (es visualitzaran errors) en el qual cas hauríeu de suprimir el fitxer .htaccess.
 </ol>';
+$string['mysqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió MySQL per tal que es pugui comunicar amb MySQL. Comproveu el fitxer php.ini o recompileu el PHP.';
 $string['pass'] = 'Correcte';
 $string['phpversion'] = 'Versió PHP';
 $string['phpversionerror'] = 'La versió del PHP ha de ser com a mínim la 4.1.0';

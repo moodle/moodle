@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 unstable development (2004083000)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['coursegroupunknown'] = 'No s\'ha especificat el curs corresponent al grup $a';
@@ -13,6 +13,7 @@ $string['missingfield'] = 'Falta el camp \"$a\"';
 $string['modulerequirementsnotmet'] = 'El mòdul \"$a->modulename\" ($a->moduleversion) no s\'ha pogut instal·lar. Requereix una versió més nova de Moodle (esteu utilitzant la $a->currentmoodle i necessiteu la  $a->requiremoodle).';
 $string['notavailable'] = 'Això no està disponible actualment';
 $string['restricteduser'] = 'Al vostre compte \"$a\" no li és permès de fer això.';
+$string['sessionipnomatch'] = 'Sembla que el vostre número IP ha canviat des que heu entrat. Aquesta característica de seguretat impedeix que un <i>cracker</i> suplanti la vostra identitat després que heu entrat en Moodle. Els usuaris normals no haurien de veure aquest missatge: demaneu ajuda a l\'administrador del lloc.';
 $string['unknowncourse'] = 'El curs \"$a\" és desconegut';
 $string['usernotaddederror'] = 'No s\'ha afegit l\'usuari \"$a\" - error desconegut';
 $string['usernotaddedregistered'] = 'No s\'ha afegit l\'usuari \"$a\" - ja està registrat';
