@@ -186,38 +186,31 @@ input {
 
 /* entry page */
 #site-index #left-column,
-#site-index #left-column .sideblock
-{
+#site-index #left-column .sideblock {
     width:250px !important;
 }
 
-#site-index #middle-column
-{
+#site-index #middle-column {
     width:auto;
     padding:0em 2.5em;
 }
 
-#site-index #right-column{
+#site-index #right-column {
     width:30%;
 }
 
-#site-index #middle-column .forumpost,
-#course-view #middle-column .forumpost {
+#site-index #middle-column .forumpost {
     border-width:0px;
     border-style:none;
 }
 
 #site-index #middle-column .forumpostpicture,
-#site-index #middle-column .forumpostside,
-#course-view #middle-column .forumpostpicture,
-#course-view #middle-column .forumpostside {
+#site-index #middle-column .forumpostside {
     display:none;
 }
 
 #site-index #middle-column .headingblock,
-#site-index #middle-column .forumpostheadertopic, 
-#course-view #middle-column .headingblock,
-#course-view #middle-column .forumpostheadertopic {
+#site-index #middle-column .forumpostheadertopic {
     padding:1em;
     border-width:0px 0px 0px 25px;
     border-style:solid;
@@ -265,19 +258,21 @@ table.formtable td {
 ***
 ******************************/
 /* course, entry-page, login */
-.headingblock {
-    background-image:none;
-    border-style:none;
-}
-
 .generaltableheader {
     background-image:none;
 }
 
 
 /* course */
-#layout-table tr {
-  vertical-align:top;
+#layout-table {
+    width:100%;
+    border-spacing:5px;
+    border-collapse:separate;
+}
+
+#layout-table tr,
+#layout-table td {
+    vertical-align:top;
 }
 
 #left-column,
@@ -291,73 +286,57 @@ table.formtable td {
     padding:0px 15px;
 }
 
-.outlineheadingblock {
+#course-view .headingblock {
     background-image:none;
-    display:none;
+    border-style:none;
+    margin-left:2px;
+    padding-left:1.5em;
+    border-left:1.5em solid;
 }
 
-.topicsoutlineside,
-.topicsoutlinesidehighlight,
-.topicsoutlinesidehidden {
-    border-width:0px;
+#course-view .activity {
+    border:0px none;
 }
 
-.topicsoutlineside p b,
-.topicsoutlinesidehighlight p b,
-.topicsoutlinesidehidden p b {
-    display:none;
+#course-view .section td {
+    vertical-align:top;
 }
 
-.topicsoutlinecontent,
-.topicsoutlinecontenthighlight,
-.topicsoutlinecontenthidden {
-    margin:0.5em 0em;
-    padding:0.5em 1em;
-    border-width:0px 0px 0px 22px;
-    border-style:solid;
+#course-view .section .content {
+    padding:0px 1em;
 }
 
-.topicsoutlinecontent span.unread,
-.topicsoutlinecontenthighlight span.unread,
-.topicsoutlinecontenthidden span.unread {
+#course-view .section .side {
+}
+
+#course-view .section .left {
+    width:0em;
     padding:0em;
-    margin-left:0.8em;
+    border-left:1.5em solid;
 }
 
-.weeklyoutlineside {
-    border-width:1px;
-    border-style:solid;
+#course-view .section .right {
+    width:2em;
+    padding:0.5em;
+    text-align:center;
 }
 
-.weeklyoutlinesidehighlight {
-    border-width:1px;
-    border-style:solid;
+#course-view .current .side {
 }
 
-.weeklyoutlinesidehidden {
-    border-width:1px;
-    border-style:dashed;
+#course-view .topics {
+    margin-top:9px;
 }
 
-.weeklyoutlinecontent {
-    border-width:0px;
-    border-top:1px;
-    border-bottom:1px;
-    border-style:solid;
+#course-view .weeks {
+    margin-top:9px;
 }
 
-.weeklyoutlinecontenthighlight {
-    border-width:0px;
-    border-top:1px;
-    border-bottom:1px;
-    border-style:solid;
+#course-view .section .spacer {
+    height:0.5em;
 }
 
-.weeklyoutlinecontenthidden {
-    border-width:0px;
-    border-top:1px;
-    border-bottom:1px;
-    border-style:dashed;
+#course-view .section .weekdates {
 }
 
 .categorybox {
@@ -399,6 +378,7 @@ table.formtable td {
 }
 
 .unread {
+    margin-left:1em;
     border-width:0px 0px 1px 3px;
     border-style:solid;
 }
@@ -497,7 +477,24 @@ table.quiz input {
 *** Calendar
 ***
 ******************************/
-TABLE.calendarmini {
+body.calendar #calendar tr,
+body.calendar #calendar td {
+    vertical-align:top;
+}
+
+body.calendar #calendar td.maincalendar {
+    padding:0px 2em;
+}
+
+body.calendar #calendar td.maincalendar .buttons {
+    float:right;
+}
+
+body.calendar #calendar table.calendarmonth {
+    padding:1em 0px;
+}
+
+TABLE.minicalendar {
 	width:100%;
     margin:0px;
     padding:0px;
@@ -513,7 +510,7 @@ TABLE.calendarmonth {
     border-style:solid;
 }
 
-TABLE.calendarmini TBODY TD {
+TABLE.minicalendar TBODY TD {
     width:14%;
     border-width:1px 0px;
     border-style:none;
@@ -542,7 +539,7 @@ TABLE.calendarmonth TBODY TD DIV {
 	margin-left:0px;
 }
 
-TABLE.calendarmini THEAD TD {
+TABLE.minicalendar THEAD TD {
     vertical-align:center;
 }
 
@@ -552,19 +549,19 @@ TABLE.calendarmonth THEAD TD {
     vertical-align:center;
 }
 
-.cal_event_global {
+.event_global {
 	border:2px solid !important;
 }
 
-.cal_event_course {
+.event_course {
 	border:2px solid !important;
 }
 
-.cal_event_group {
+.event_group {
 	border:2px solid !important;
 }
 
-.cal_event_user {
+.event_user {
 	border:2px solid !important;
 }
 
@@ -606,7 +603,7 @@ TABLE.calendarmonth THEAD TD {
 	border-bottom:2px solid;
 }
 
-.mycalendar .cal_event_table {
+.mycalendar .event_table {
     margin:0px;
     padding:2px;
 	width:100%;
@@ -622,7 +619,7 @@ TABLE.calendarmonth THEAD TD {
 	margin-bottom:4px;
 }
 
-TD.cal_event_description {
+TD.event_description {
 	width:80%;
 	border-left:2px solid;
 	vertical-align:top;

@@ -207,9 +207,6 @@ body {
 
 
 /* course, entry-page, login */
-.headingblock {
-	background-color:#FFFFFF;
-}
 
 
 /* course */
@@ -231,82 +228,25 @@ body {
     background-color:#FFB63B;
 }
 
-.outlineheadingblock {
+#course-view  .headingblock {
 	background-color:#FFFFFF;
+    border-left-color:#FFC86C;
 }
 
-.topicsoutlinecontent,
-.topicsoutlinecontenthighlight {
-    background-color:#FFFFFF;
-    border-color:#FFC86C;
+#course-view .activity {
+    background-color:transparent;
 }
 
-.course-2 .topicsoutlinecontent,
-.course-2 .topicsoutlinecontenthighlight {
-    background-color:#FFFFFF;
-    border-color:#F1F3C2;
+#course-view .section .left {
+    border-left-color:#FFC86C;
 }
 
-.course-3 .topicsoutlinecontent,
-.course-3 .topicsoutlinecontenthighlight {
-    background-color:#FFFFFF;
-    border-color:#C2F3C7;
+#course-view .hidden .left {
+    border-left-color:#EEF0F2;
 }
 
-.course-4 .topicsoutlinecontent,
-.course-4 .topicsoutlinecontenthighlight {
-    background-color:#FFFFFF;
-    border-color:#C2D3F3;
-}
-
-.course-5 .topicsoutlinecontent,
-.course-5 .topicsoutlinecontenthighlight {
-    background-color:#FFFFFF;
-    border-color:#F3C6C2;
-}
-
-.topicsoutlinecontenthidden {
-    background-color:#FFFFFF;
-    border-color:#EEF0F2;
-}
-
-.topicsoutlineside,
-.topicsoutlinesidehighlight,
-.topicsoutlinesidehidden {
-    background-color:#FFFFFF;
-    border-color:#FFFFFF;
-}
-
-.topicsoutlinecontent span.unread,
-.topicsoutlinecontenthighlight span.unread,
-.topicsoutlinecontenthidden span.unread {
-    border-bottom-color:#FFB63B;
-}
-
-.weeklyoutlineside {
-    border-color:#D1D7DC;
-}
-
-.weeklyoutlinesidehighlight {
-    border-color:#D1D7DC;
-}
-
-.weeklyoutlinesidehidden {
-    border-color:#D1D7DC;
-}
-
-.weeklyoutlinecontent {
-    border-color:#D1D7DC;
-}
-
-.weeklyoutlinecontenthighlight {
-    background-color:#FFFFFF;
-    border-color:#D1D7DC;
-}
-
-.weeklyoutlinecontenthidden {
-    background-color:#F7F6F1;
-    border-color:#D1D7DC;
+#course-view .section .left a {
+    color:#FFFFFF;
 }
 
 .categorybox {
@@ -460,7 +400,15 @@ body {
 *** Calendar
 ***
 ******************************/
-TABLE.calendarmini {
+body.calendar #calendar {
+    background-color:#FFFFFF;
+}
+
+body.calendar #calendar .sidecalendar {
+    background-color:#F9FAFA;
+}
+
+TABLE.minicalendar {
     border-color:#C0CAD4;
 }
 
@@ -468,43 +416,43 @@ TABLE.calendarmonth {
     border-color:#C0CAD4;
 }
 
-TABLE.calendarmini TBODY TD {
+TABLE.minicalendar TBODY TD {
     border-color:#C0CAD4;
 }
 
 TABLE.calendarmonth TBODY TD {
-    background-color:#EEF0F2;
+    /*background-color:#EEF0F2;*/
     border-color:#C0CAD4;
 }
 
 TABLE.calendarmonth THEAD TD {
-    background-color:#EEF0F2;
+    /*background-color:#EEF0F2;*/
     border-bottom-color:#666666;
 }
 
-.cal_event_global {
-	background-color:#009999 !important;
-	border-color:#009999 !important;
+.event_global {
+	background-color:#2FCD0D !important;
+	border-color:#2FCD0D !important;
 }
 
-.cal_event_course {
+.event_course {
 	background-color:#ff3333 !important;
 	border-color:#ff3333 !important;
 }
 
-.cal_event_group {
+.event_group {
 	background-color:#ffcc33 !important;
 	border-color:#ffcc33 !important;
 }
 
-.cal_event_user {
+.event_user {
 	background-color:#99ccff !important;
 	border-color:#99ccff !important;
 }
 
 .cal_duration_global {
-	border-top-color:#009999 !important;
-	border-bottom-color:#009999 !important;
+	border-top-color:#2FCD0D !important;
+	border-bottom-color:#2FCD0D !important;
 }
 
 .cal_duration_course {
@@ -542,11 +490,11 @@ TABLE.calendarmonth THEAD TD {
 	border-bottom-color:#666666;
 }
 
-.mycalendar .cal_event_table {
+.mycalendar .event_table {
     border-color:#C0CAD4;
 }
 
-.mycalendar .cal_event_table THEAD {
+.mycalendar .event_table THEAD {
 	background-color:#EEF0F2;
 }
 
@@ -558,7 +506,7 @@ TABLE.calendarmonth THEAD TD {
 	color:red;
 }
 
-TD.cal_event_description {
+TD.event_description {
 	border-left-color:#C6BDA8;
 }
 
@@ -636,4 +584,3 @@ TD.cal_event_description {
 #block_glossary_random .sideblockmain {
     /*background-color:#FFDA9D;*/
 }
-

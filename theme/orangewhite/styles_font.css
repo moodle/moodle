@@ -299,11 +299,16 @@ h4 {
 *** Calendar
 ***
 ******************************/
-TABLE.calendarmini {
+TABLE.minicalendar {
     letter-spacing:0.1em;
 }
 
-TABLE.calendarmini TBODY TD {
+TABLE.minicalendar .day {
+    text-align:center;
+    letter-spacing:0em;
+}
+
+TABLE.minicalendar TBODY TD {
     text-align:center;
     letter-spacing:0em;
 }
@@ -316,7 +321,7 @@ TABLE.calendarmonth TBODY TD DIV {
 	line-height:1.2em;
 }
 
-TABLE.calendarmini THEAD TD,
+TABLE.minicalendar THEAD TD,
 TABLE.calendarmonth THEAD TD {
 	font-weight:bold;
     text-align:center;
@@ -326,13 +331,13 @@ TABLE.cal_controls td {
 	line-height:1.2em;
 }
 
-.mycalendar .cal_event {
+.mycalendar .event {
 	font-weight:bold;
 }
 
-.mycalendar .cal_event_date { }
+.mycalendar .event_date { }
 
-.mycalendar .cal_event_table THEAD {
+.mycalendar .event_table THEAD {
 	text-align:center;
 	font-weight:bold;
 }
