@@ -549,7 +549,12 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     }
     echo 'style="width: 8px;"></td><td><strong>'.get_string('courseevents', 'calendar').':</strong> ';
 
-    $coursesdata = get_my_courses($USER->id);
+    if(isadmin($USER->id)) {
+        $coursesdata = get_courses('all', 'c.shortname');
+    }
+    else {
+        $coursesdata = get_my_courses($USER->id);
+    }
     $coursesdata = array_diff_assoc($coursesdata, array(1 => 1));
 
     echo '<select name="course" onchange="document.location.href=\''.CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=\' + this.value;">';

@@ -1,5 +1,5 @@
 <table class="formtable">
-  <form method="post" action="event.php" name="edit">
+  <form method="post" action="event.php">
   <p>
   <input type="hidden" name="action" value="new" />
   <input type="hidden" name="timestart" value="<?php echo $form->timestart; ?>" />
@@ -26,7 +26,7 @@
       <select name='courseid'>
         <option value=''></option>
       <?php foreach($allowed->courses as $course) {?>
-        <option value='<?php echo $course->id?>' <?php if($course->id == $courseid) echo 'selected="selected"';?>><?php echo $course->fullname?></option>
+        <option value='<?php echo $course->id?>' <?php if($course->id == $courseid) echo 'selected="selected"';?>><?php echo $course->shortname.' - '.$course->fullname?></option>
       <?php }?>
       </select>
       </div>
