@@ -18,6 +18,7 @@ function mimeinfo($element, $filename) {
         "swf"  => array ("type"=>"application/x-shockwave-flash", "icon"=>"image.gif"),
         "pdf"  => array ("type"=>"application/pdf", "icon"=>"pdf.gif"),
         "doc"  => array ("type"=>"application/msword", "icon"=>"word.gif"),
+        "ppt"  => array ("type"=>"application/vnd.ms-powerpoint", "icon"=>"powerpoint.gif"),
         "xls"  => array ("type"=>"application/vnd.ms-excel", "icon"=>"excel.gif")
     );
 
