@@ -120,3 +120,23 @@ follows...</p>
   <li>A line starting with at least four dashes is converted into a horizontal line
 </ul>  
 
+<h3>Spelling Checker (Experimental)</h3>
+
+<p>The wiki formatter can be switched into a spell checking mode. Place the following on
+a line by itself in the text. Everything after this will be checked...
+
+<pre>
+!SPELL:language_code:language_variant
+
+Examples:
+!SPELL:en:british
+!SPELL:sp
+</pre>
+
+<p>"language_code" should be replaced by the appropriate code (e.g., EN, FR etc), "language_variant" (along with the colon) is optional and can be one of "american", "british", or "canadian" if the language code is EN.</p>
+
+<p>When displayed any unknown words are highlighted and you can see suggestions by holding the mouse over
+the word</p>
+
+<p><em>NOTE: spelling uses the <strong>pspell</strong> libraries. These and the required dictionaries must be present on your server for the spell checker to work. In particular the Windows platform is not supported.
+</em></p>
