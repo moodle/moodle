@@ -184,6 +184,7 @@ $string['copyingzipfile'] = 'Copying zip file';
 $string['copyrightnotice'] = 'Copyright notice';
 $string['cost'] = 'Cost';
 $string['costdefault'] = 'Default cost';
+$string['counteditems'] = '$a->count $a->items';
 $string['country'] = 'Country';
 $string['course'] = 'Course';
 $string['courseavailable'] = 'This course is available to students';

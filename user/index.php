@@ -127,7 +127,9 @@
         }
     }
 
-    echo "<h2 align=\"center\">$totalcount $course->students";
+    $a->count = $totalcount;
+    $a->items = $course->students;
+    echo '<h2 align="center">'.get_string('counteditems', '', $a);
     if (isteacheredit($course->id)) {
         echo ' <a href="../course/student.php?id='.$course->id.'">';
         echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
