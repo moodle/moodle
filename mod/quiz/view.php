@@ -48,19 +48,15 @@
 
 // Initialize $PAGE, compute blocks
 
-    $PAGE = page_create_object(PAGE_QUIZ_VIEW, $quiz->id);
+    $PAGE = page_create_instance($quiz->id);
+    $pageblocks = blocks_get_by_page($PAGE);
 
     if (!empty($blockaction)) {
-        $pageblocks = blocks_get_by_page($PAGE);
         blocks_execute_url_action($PAGE, $pageblocks);
+        $pageblocks = blocks_get_by_page($PAGE);
     }
-
-    $pageblocks = blocks_get_by_page($PAGE);
-    $missingblocks = blocks_get_missing($PAGE, $pageblocks);
-
-    $blocks_preferred_width = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
-    $blocks_preferred_width = max($blocks_preferred_width, 180);
-    $blocks_preferred_width = min($blocks_preferred_width, 210);
+    
+    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
 // Print the page header
 
@@ -99,8 +95,8 @@
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $PAGE->user_is_editing()) {
         echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
-        if (isediting($course->id) && !empty($missingblocks)) {
-            blocks_print_adminblock($PAGE, $missingblocks);
+        if ($PAGE->user_is_editing()) {
+            blocks_print_adminblock($PAGE, $pageblocks);
         }
         echo '</td>';
     }
