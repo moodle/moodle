@@ -528,7 +528,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
 
     if ('site_errors' === $modid) {
-        $joins[] = "l.action='error' OR l.action='infected'";
+        $joins[] = "( l.action='error' OR l.action='infected' )";
     } else if ($modid) {
         $joins[] = "l.cmid = '$modid'";
     }
