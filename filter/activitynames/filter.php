@@ -63,11 +63,13 @@
         $regexp = '/'.$invalidprefixs.'('.$list_of_words_cp.')|('.$list_of_words_cp.')'.$invalidsufixs.'/is';
         preg_match_all($regexp,$text,$list_of_words);
 
-        foreach (array_unique($list_of_words[0]) as $key=>$value) {
-            $words['<*'.$key.'*>'] = $value;
-        }
-        if (!empty($words)) {
-            $text = str_replace($words,array_keys($words),$text);
+        if ($list_of_words) {
+            foreach (array_unique($list_of_words[0]) as $key=>$value) {
+                $words['<*'.$key.'*>'] = $value;
+            }
+            if (!empty($words)) {
+                $text = str_replace($words,array_keys($words),$text);
+            }
         }
 
         //Now avoid searching inside the <nolink>tag
