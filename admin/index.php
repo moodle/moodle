@@ -9,10 +9,24 @@
 
     // Check databases and modules and install as needed.
     if (! $db->Metatables() ) { 
+
+        if (!$agreelicence) {
+            $strlicense = get_string("license");
+            print_header($strlicense, $strlicense, $strlicense);
+            print_heading("<A HREF=\"http://moodle.com\">Moodle</A> - Modular Object-Oriented Dynamic Learning Environment");
+            print_heading(get_string("copyrightnotice"));
+            print_simple_box_start("CENTER");
+            echo text_to_html(get_string("gpl"));
+            print_simple_box_end();
+            echo "<BR>";
+            notice_yesno(get_string("doyouagree"), "index.php?agreelicence=true", 
+                                                   "http://www.gnu.org/copyleft/gpl.html");
+            exit;
+        }
+
         $strdatabasesetup    = get_string("databasesetup");
         $strdatabasesuccess  = get_string("databasesuccess");
         print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup);
-
         if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
             $db->debug = true;
             if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
