@@ -290,16 +290,16 @@ function text_to_html($text, $smiley=true, $para=true) {
     // Turn smileys into images.
 
     if ($smiley) {
-        $text = ereg_replace(":)",  "<IMG ALT=\"{smile}\" SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">", $text);
-        $text = ereg_replace(":-)", "<IMG ALT=\"{smile}\" SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">", $text);
-        $text = ereg_replace(":-D", "<IMG ALT=\"{grin}\" SRC=\"$CFG->wwwroot/pix/s/biggrin.gif\">", $text);
-        $text = ereg_replace(";-)", "<IMG ALT=\"{wink}\" SRC=\"$CFG->wwwroot/pix/s/wink.gif\">", $text);
-        $text = ereg_replace("8-)", "<IMG ALT=\"{wide-eyed}\" SRC=\"$CFG->wwwroot/pix/s/wideeyes.gif\">", $text);
-        $text = ereg_replace(":-\(","<IMG ALT=\"{sad}\" SRC=\"$CFG->wwwroot/pix/s/sad.gif\">", $text);
-        $text = ereg_replace(":-P", "<IMG ALT=\"{tongue-out}\" SRC=\"$CFG->wwwroot/pix/s/tongueout.gif\">", $text);
-        $text = ereg_replace(":-/", "<IMG ALT=\"{mixed}\" SRC=\"$CFG->wwwroot/pix/s/mixed.gif\">", $text);
-        $text = ereg_replace(":-o", "<IMG ALT=\"{surprised}\" SRC=\"$CFG->wwwroot/pix/s/surprise.gif\">", $text);
-        $text = ereg_replace("B-)", "<IMG ALT=\"{cool}\" SRC=\"$CFG->wwwroot/pix/s/cool.gif\">", $text);
+        $text = ereg_replace(":)",  "<IMG ALT=\"{smile}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">", $text);
+        $text = ereg_replace(":-)", "<IMG ALT=\"{smile}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/smiley.gif\">", $text);
+        $text = ereg_replace(":-D", "<IMG ALT=\"{grin}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/biggrin.gif\">", $text);
+        $text = ereg_replace(";-)", "<IMG ALT=\"{wink}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/wink.gif\">", $text);
+        $text = ereg_replace("8-)", "<IMG ALT=\"{wide-eyed}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/wideeyes.gif\">", $text);
+        $text = ereg_replace(":-\(","<IMG ALT=\"{sad}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/sad.gif\">", $text);
+        $text = ereg_replace(":-P", "<IMG ALT=\"{tongue-out}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/tongueout.gif\">", $text);
+        $text = ereg_replace(":-/", "<IMG ALT=\"{mixed}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/mixed.gif\">", $text);
+        $text = ereg_replace(":-o", "<IMG ALT=\"{surprised}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/surprise.gif\">", $text);
+        $text = ereg_replace("B-)", "<IMG ALT=\"{cool}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/cool.gif\">", $text);
     }
 
     if ($para) {
