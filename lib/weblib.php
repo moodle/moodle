@@ -3632,7 +3632,7 @@ function print_side_block_start($heading='', $attributes = array()) {
     if ($heading) {
         echo '<tr><th class="sideblockheading">'.$heading;
         if (!empty($CFG->allowuserblockhiding)) {
-            echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" height="11" width="11" class="hide-show-image" /></a></div>';
+            echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="hide-show-image" /></a></div>';
         }
         echo '</th></tr>';
     }

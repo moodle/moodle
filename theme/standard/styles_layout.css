@@ -732,6 +732,8 @@ table.calendar-controls .next
 }
 
 .sideblockheading .hide-show img.hide-show-image {
+    height:11px;
+    width:11px;
     margin-top:0.25em;
 }
 
