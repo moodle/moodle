@@ -5,20 +5,21 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);      // Chat Module ID, or
+    require_variable($id);          // Course module ID
+    optional_variable($group, "");  // Start of period
     optional_variable($start, "");  // Start of period
     optional_variable($end, "");    // End of period
     optional_variable($deletesession, "");    // Delete a session
     optional_variable($confirmdelete, "");    // End of period
 
-    if (! $chat = get_record("chat", "id", $id)) {
+    if (! $cm = get_record("course_modules", "id", $id)) {
+        error("Course Module ID was incorrect");
+    }
+    if (! $chat = get_record("chat", "id", $cm->instance)) {
         error("Course module is incorrect");
     }
     if (! $course = get_record("course", "id", $chat->course)) {
         error("Course is misconfigured");
-    }
-    if (! $cm = get_coursemodule_from_instance("chat", $chat->id, $course->id)) {
-        error("Course Module ID was incorrect");
     }
 
     require_login($course->id);
@@ -30,7 +31,7 @@
         error("You can not view these chat reports");
     }
 
-    add_to_log($course->id, "chat", "view", "view.php?id=$cm->id", "$chat->id", "$cm->id");
+    add_to_log($course->id, "chat", "report", "report.php?id=$cm->id", "$chat->id", "$cm->id");
 
 /// Print the page header
 
@@ -52,13 +53,13 @@
         print_header("$course->shortname: $chat->name: $strchatreport", "$course->fullname",
                      "$navigation <a href=\"index.php?id=$course->id\">$strchats</a> -> 
                      <a href=\"view.php?id=$cm->id\">$chat->name</a> -> 
-                     <a href=\"report.php?id=$chat->id\">$strchatreport</a>", 
+                     <a href=\"report.php?id=$cm->id\">$strchatreport</a>", 
                       "", "", true, "", navmenu($course, $cm));
 
         if ($deletesession and $isteacheredit) {
             notice_yesno(get_string("deletesessionsure", "chat"), 
-                         "report.php?id=$chat->id&deletesession=1&confirmdelete=1&start=$start&end=$end", 
-                         "report.php?id=$chat->id");
+                         "report.php?id=$cm->id&deletesession=1&confirmdelete=1&start=$start&end=$end", 
+                         "report.php?id=$cm->id");
         }
 
         if (!$messages = get_records_select("chat_messages", "chatid = $chat->id AND 
@@ -78,7 +79,7 @@
         }
 
         if (!$deletesession or !$isteacheredit) {
-            print_continue("report.php?id=$chat->id");
+            print_continue("report.php?id=$cm->id");
         }
 
         print_footer($course);
@@ -94,15 +95,29 @@
                   "", "", true, "", navmenu($course, $cm));
 
 
-    print_heading($chat->name.": ".get_string("sessions", "chat"));
+/// Check to see if groups are being used here
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
+    } else {
+        $currentgroup = false;
+    }
 
+    if ($currentgroup) {
+        $groupselect = " AND groupid = '$currentgroup'";
+        $groupparam = "&group=$currentgroup";
+    } else {
+        $groupselect = "";
+        $groupparam = "";
+    }
+
+    print_heading($chat->name.": ".get_string("sessions", "chat"));
 
 /// Delete a session if one has been specified
 
     if ($deletesession and $isteacheredit and $confirmdelete and $start and $end) {
         delete_records_select("chat_messages", "chatid = $chat->id AND 
                                             timestamp >= '$start' AND 
-                                            timestamp <= '$end'");
+                                            timestamp <= '$end' $groupselect");
         $strdeleted  = get_string("deleted");
         notify("$strdeleted: ".userdate($start)." --> ". userdate($end));
         unset($deletesession);
@@ -112,7 +127,7 @@
 /// Get the messages
 
     if (empty($messages)) {   /// May have already got them above
-        if (!$messages = get_records("chat_messages", "chatid", $chat->id, "timestamp DESC")) {
+        if (!$messages = get_records_select("chat_messages", "chatid = '$chat->id' $groupselect", "timestamp DESC")) {
             print_heading(get_string("nomessages", "chat"));
             print_footer($course);
             exit;
@@ -161,9 +176,9 @@
                 }
 
                 echo "<p align=\"right\">";
-                echo "<a href=\"report.php?id=$chat->id&start=$sessionstart&end=$sessionend\">$strseesession</a>";
+                echo "<a href=\"report.php?id=$cm->id&start=$sessionstart&end=$sessionend$groupparam\">$strseesession</a>";
                 if ($isteacheredit) {
-                    echo "<br /><a href=\"report.php?id=$chat->id&start=$sessionstart&end=$sessionend&deletesession=1\">$strdeletesession</a>";
+                    echo "<br /><a href=\"report.php?id=$cm->id&start=$sessionstart&end=$sessionend&deletesession=1$groupparam\">$strdeletesession</a>";
                 }
                 echo "</p>";
                 print_simple_box_end();

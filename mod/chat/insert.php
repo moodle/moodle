@@ -6,6 +6,7 @@
     require_variable($chat_sid);
     require_variable($chat_version);
     require_variable($chat_message);
+    optional_variable($groupid);
 
     if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
         echo "Not logged in!";
@@ -17,6 +18,12 @@
     }
     
     require_login($chat->course);
+
+    if ($groupid) {
+        if (!isteacheredit($course->id) and !ismember($groupid)) {
+            error("You can't chat here!");
+        }
+    }
     
 /// Clean up the message
 
@@ -28,6 +35,7 @@
     
         $message->chatid = $chatuser->chatid;
         $message->userid = $chatuser->userid;
+        $message->groupid = $groupid;
         $message->message = $chat_message;
         $message->timestamp = time();
      
@@ -42,10 +50,10 @@
 /// Go back to the other page
 
     if ($chat_version == "header" OR $chat_version == "box") {
-        redirect("../gui_$chat_version/chatinput.php?chat_sid=$chat_sid");
+        redirect("../gui_$chat_version/chatinput.php?chat_sid=$chat_sid&groupid=$groupid");
     
     } else if ($chat_version == "text") {
-        redirect("../gui_$chat_version/index.php?chat_sid=$chat_sid&chat_lastid=$chat_lastid");
+        redirect("../gui_$chat_version/index.php?chat_sid=$chat_sid&chat_lastid=$chat_lastid&groupid=$groupid");
     
     } else {
         redirect("empty.php");

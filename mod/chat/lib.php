@@ -165,18 +165,24 @@ function chat_cron () {
     return true;
 }
 
-function chat_get_participants($chatid) {
+function chat_get_participants($chatid, $groupid=0) {
 //Returns the users with data in one chat
 //(users with records in chat_messages, students)
 
     global $CFG;
 
+    if ($groupid) {
+        $groupselect = " AND (c.groupid='$groupid' OR c.groupid='0')";
+    } else {
+        $groupselect = "";
+    }
+
     //Get students
     $students = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}chat_messages c
-                                 WHERE c.chatid = '$chatid' and
-                                       u.id = c.userid");
+                                 WHERE c.chatid = '$chatid' $groupselect
+                                   AND u.id = c.userid");
 
     //Return students array (it contains an array of unique users)
     return ($students);
@@ -185,20 +191,26 @@ function chat_get_participants($chatid) {
 //////////////////////////////////////////////////////////////////////
 /// Functions that require some SQL
 
-function chat_get_users($chatid) {
+function chat_get_users($chatid, $groupid=0) {
 
     global $CFG;
+
+    if ($groupid) {
+        $groupselect = " AND (c.groupid='$groupid' OR c.groupid='0')";
+    } else {
+        $groupselect = "";
+    }
    
     return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping
                               FROM {$CFG->prefix}chat_users c,
                                    {$CFG->prefix}user u
                              WHERE c.chatid = '$chatid'
-                               AND u.id = c.userid
+                               AND u.id = c.userid $groupselect
                              GROUP BY u.id
                              ORDER BY c.firstping ASC");
 }
 
-function chat_get_latest_message($chatid) {
+function chat_get_latest_message($chatid, $groupid=0) {
 /// Efficient way to extract just the latest message
 /// Uses ADOdb directly instead of get_record_sql()
 /// because the LIMIT command causes problems with 
@@ -206,9 +218,15 @@ function chat_get_latest_message($chatid) {
 
     global $db, $CFG;
 
+    if ($groupid) {
+        $groupselect = " AND (groupid='$groupid' OR groupid='0')";
+    } else {
+        $groupselect = "";
+    }
+
     if (!$rs = $db->Execute("SELECT *
                                FROM {$CFG->prefix}chat_messages 
-                              WHERE chatid = '$chatid' 
+                              WHERE chatid = '$chatid' $groupselect
                            ORDER BY timestamp DESC LIMIT 1")) {
         return false;
     }
@@ -251,6 +269,7 @@ function chat_delete_old_users() {
         foreach ($oldusers as $olduser) {
             $message->chatid = $olduser->chatid;
             $message->userid = $olduser->userid;
+            $message->groupid = $olduser->groupid;
             $message->message = "exit";
             $message->system = 1;
             $message->timestamp = time();

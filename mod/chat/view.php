@@ -60,8 +60,24 @@
                   navmenu($course, $cm));
 
     if (($chat->studentlogs or isteacher($course->id)) and !isguest()) {
-        echo "<p align=right><a href=\"report.php?id=$chat->id\">".
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">".
               get_string("viewreport", "chat")."</a></p>";
+    }
+
+
+/// Check to see if groups are being used here
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
+    } else {
+        $currentgroup = false;
+    }
+
+    if ($currentgroup) {
+        $groupselect = " AND groupid = '$currentgroup'";
+        $groupparam = "&group=$currentgroup";
+    } else {
+        $groupselect = "";
+        $groupparam = "";
     }
 
 /// Print the main part of the page
@@ -88,8 +104,8 @@
 
     if (!isguest()) {
         print_simple_box_start("center");
-        link_to_popup_window ("/mod/chat/gui_$chatversion/index.php?id=$chat->id", 
-                              "chat$course->id$chat->id", "$strenterchat", 500, 700, $strchat);
+        link_to_popup_window ("/mod/chat/gui_$chatversion/index.php?id=$chat->id$groupparam", 
+                              "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, $strchat);
         print_simple_box_end();
     }
 

@@ -4,6 +4,7 @@ include("../../config.php");
 include("lib.php");
 
 require_variable($chat_sid);
+optional_variable($groupid, 0);
 
 if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
     echo "Not logged in!";
@@ -24,6 +25,7 @@ if (!$chat = get_record("chat", "id", $chatuser->chatid)) {
 if (isset($_GET['chat_enter'])) {
     $message->chatid = $chatuser->chatid;
     $message->userid = $chatuser->userid;
+    $message->groupid = $groupid;
     $message->message = "enter";
     $message->system = 1;
     $message->timestamp = time();
@@ -36,6 +38,7 @@ if (isset($_GET['chat_enter'])) {
 if (isset($_GET['beep'])) {
     $message->chatid = $chatuser->chatid;
     $message->userid = $chatuser->userid;
+    $message->groupid = $groupid;
     $message->message = "beep $beep";
     $message->system = 0;
     $message->timestamp = time();
@@ -80,7 +83,7 @@ $str->secs  = get_string("secs");
 
 /// Get list of users
 
-if (!$chatusers = chat_get_users($chatuser->chatid)) {
+if (!$chatusers = chat_get_users($chatuser->chatid, $groupid)) {
     print_string("errornousers", "chat");
     exit;
 }
@@ -96,7 +99,7 @@ foreach ($chatusers as $chatuser) {
     echo "<p><font size=1>";
     echo fullname($chatuser)."<br />";
     echo "<font color=\"#888888\">$stridle: ".format_time($lastping, $str)."</font>";
-    echo " <a href=\"users.php?chat_sid=$chat_sid&beep=$chatuser->id\">$strbeep</a>";
+    echo " <a href=\"users.php?chat_sid=$chat_sid&beep=$chatuser->id&groupid=$groupid\">$strbeep</a>";
     echo "</font></p>";
     echo "<td></tr>";
 }

@@ -4,6 +4,7 @@ require("../../../config.php");
 require("../lib.php");
 
 require_variable($chat_sid);
+optional_variable($groupid);
 
 if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
     echo "Not logged in!";
@@ -51,7 +52,8 @@ function empty_field_and_submit() {
 
 <form action="../insert.php" method="GET" target="empty" name="fdummy" 
       OnSubmit="return empty_field_and_submit()">
-    <input type="hidden" name="chat_sid" value="<?php echo $chat_sid; ?>">
+    <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>">
+    <input type="hidden" name="groupid" value="<?php echo $groupid ?>">
     <input type="hidden" name="chat_version" value="header_js">
     <input type="hidden" name="chat_message">
 </form>
