@@ -569,32 +569,38 @@ function calendar_top_controls($type, $data) {
     return $content;
 }
 
-function calendar_filter_controls($type) {
+function calendar_filter_controls($type, $vars = NULL) {
     global $CFG, $SESSION;
 
     $groupevents = true;
-    switch($type) {
-        case 'upcoming':
-            $getvars = '';
-        break;
-        case 'prefs':
-            $getvars = '&amp;from=prefs&amp;pref='.$_GET['edit'];
-        break;
-        case 'event':
-            global $day, $mon, $yr;
-            $getvars = '&amp;from=event&amp;id='.$_GET['id'];
-        break;
-        case 'day':
-            global $day, $mon, $yr;
-            $getvars = '&amp;from=day&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr;
-        break;
-        case 'course':
-            global $course;
-            $getvars = '&amp;from=course&amp;id='.$course->id;
-            if($course->groupmode == NOGROUPS && $course->groupmodeforce) {
-                $groupevents = false;
-            }
-        break;
+
+    if($vars === NULL) {
+        switch($type) {
+            case 'upcoming':
+                $getvars = '';
+            break;
+            case 'prefs':
+                $getvars = '&amp;from=prefs&amp;pref='.$_GET['edit'];
+            break;
+            case 'event':
+                global $day, $mon, $yr;
+                $getvars = '&amp;from=event&amp;id='.$_GET['id'];
+            break;
+            case 'day':
+                global $day, $mon, $yr;
+                $getvars = '&amp;from=day&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr;
+            break;
+            case 'course':
+                global $course;
+                $getvars = '&amp;from=course&amp;id='.$course->id;
+                if($course->groupmode == NOGROUPS && $course->groupmodeforce) {
+                    $groupevents = false;
+                }
+            break;
+        }
+    }
+    else {
+        $getvars = '&amp;'.$vars;
     }
 
     $content = '<table class="cal_controls" style="width: 98%;">';
