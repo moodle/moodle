@@ -28,7 +28,6 @@
         }
 
         $post->subject = strip_tags($post->subject, '<lang>');        // Strip all tags except lang
-        $post->subject = break_up_long_words($post->subject);
 
         //$post->message = clean_text($post->message, $post->format);   // Clean up any bad tags
 

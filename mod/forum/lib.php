@@ -712,6 +712,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 $fullname = fullname($post, $isteacher);
                 echo "<p $teacheronly><font size=1>$date - $fullname<br>";
                 echo "\"<a href=\"$CFG->wwwroot/mod/forum/$log->url\">";
+                $post->subject = break_up_long_words($post->subject);
                 if (!empty($CFG->filterall)) {
                     $post->subject = filter_text("<nolink>$post->subject</nolink>", $course->id);
                 }
