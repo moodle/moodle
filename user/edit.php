@@ -21,6 +21,10 @@
         // so that users can set up their accounts
         $newaccount  = true;
 
+        if (empty($USER) {
+            error("Sessions don't seem to be working on this server!");
+        }
+
     } else {
         $newaccount  = false;
         require_login($course->id);
