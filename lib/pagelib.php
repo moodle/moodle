@@ -21,7 +21,15 @@ if(record_exists('block_instance', 'pagetype', 'course')) {
 
 function page_import_types($path) {
     global $CFG;
+
+    static $types = array();
+
     $path = clean_param($path, PARAM_PATH);
+
+    if(isset($types[$path])) {
+        return $types[$path];
+    }
+
     $file = $CFG->dirroot.'/'.$path.'pagelib.php';
 
     if(is_file($file)) {
@@ -29,8 +37,9 @@ function page_import_types($path) {
         if(!isset($DEFINEDPAGES)) {
             error('Imported '.$file.' but found no page classes');
         }
-        return $DEFINEDPAGES;
+        return $types[$path] = $DEFINEDPAGES;
     }
+
     return false;
 }
 
