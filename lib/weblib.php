@@ -1479,8 +1479,8 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
                 $mod->name = "(".$mod->name.")";
             }
             $menu[$url] = $mod->name;
+            $previousmod = $mod;
         }
-        $previousmod = $mod;
     }
     if ($backmod) {
         $backmod = "<form action=\"$CFG->wwwroot/mod/$backmod->mod/view.php\" target=\"$CFG->framename\">".
