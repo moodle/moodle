@@ -1,0 +1,44 @@
+<P ALIGN=CENTER><B>Exportar preguntas de una categoría</B></P>
+
+<P>Esta función permite exportar una categoría completa de preguntas a un
+   archivo de texto.  
+
+<p>Por favor, advierta que en muchos formatos de archivo se pierde alguna
+   información cuando se exportan las preguntas. Esto se debe a que muchos
+   formatos no poseen todas las características existentes en las preguntas
+   de Moodle. No puede esperarse exportar preguntas y luego importarlas de
+   modo que ambas sean idénticas. Asimismo, algunos tipos de preguntas no
+   pueden exportarse en absoluto. Compruebe los datos exportados antes de
+   usarlos en un contexto de producción.</p>
+
+<P>Los formatos posibles actualmente son:</p>
+
+<P><B>Formato GIFT</B></P>
+<ul>
+<p>GIFT es el formato de importación/exportación más comprensivo de que se
+   dispone para exportar preguntas Moodle a un archivo de texto. Fue diseñado
+   para que los profesores escribieran fácilmente preguntas en un archivo de
+   texto. Soporta los formatos de elección múltiple, verdadero-falso, respuesta
+   corta, emparejamiento, preguntas numéricas, así como la inserción de _______
+   en el formato de "palabra perdida". Advierta que las preguntas incrustadas
+   ("cloze") no se incluyen por el momento. En un archivo de texto pueden
+   mezclarse preguntas de distinto tipo, y el formato soporta asimismo comentarios,
+   nombres de las preguntas, retroalimentación y calificaciones ponderadas (en
+   porcentajes). He aquí algunos ejemplos:</p>
+<pre>
+¿En qué mes de 1492 Colón descubrió América?{~Noviembre ~Septiembre =Octubre}
+
+Colón descubrió América el 12 de {~noviembre =octubre ~septiembre} de 1492.
+
+Colón descubrió América el 12 de noviembre de 1492.{FALSE}
+
+¿Quién descubrió América el 12 de octubre de 1492?{=Colón =Cristóbal Colón}
+
+¿En qué año llegó Colón a América?{#1492}
+</pre>
+
+<p align=right><a href="help.php?file=formatgift.html&module=quiz">Más sobre el formato "GIFT"</a></p>
+</ul>
+
+<P>¡Pronto se dispondrá de más formatos, incluyendo WebCT, IMS QTI y cualesquiera otros
+   que los usuarios de Moodle quieran incorporar! </p>
