@@ -6,7 +6,7 @@
       // Test:        file.php/testslasharguments
 
     require_once('config.php');
-    require_once('files/mimetypes.php');
+    require_once('lib/filelib.php');
 
     if (empty($CFG->filelifetime)) {
         $lifetime = 86400;     // Seconds for files to remain in caches
