@@ -29,18 +29,14 @@
     $teacherlinks = isteacher($course->id);
 
 
-    if ( $teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
-                                       WHERE t.course = '$course->id' AND t.user = u.id
-                                       ORDER BY t.authority")) {
+    if ( $teachers = get_course_teachers($course->id)) {
         echo "<H2 align=center>".$course->teacher."s</H2>";
         foreach ($teachers as $teacher) {
             print_user($teacher, $course, $teacherlinks);
         }
     }
 
-    if ($students = get_records_sql("SELECT u.* FROM user u, user_students s 
-                                       WHERE s.course = '$course->id' AND s.user = u.id
-                                       ORDER BY u.lastaccess DESC")) {
+    if ($students = get_course_students($course->id)) {
         echo "<H2 align=center>".$course->student."s</H2>";
         foreach ($students as $student) {
             print_user($student, $course, $teacherlinks);
