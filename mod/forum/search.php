@@ -64,7 +64,7 @@
                 $post->message = highlight("$search", $post->message);
 
                 $fulllink = "<P ALIGN=right><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">See this post in context</A></P>";
-                print_post($post, $course->id, false, false, false, false, $fulllink);
+                forum_print_post($post, $course->id, false, false, false, false, $fulllink);
 
                 echo "<BR>";
             }

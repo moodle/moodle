@@ -100,29 +100,29 @@
                     error("Could not find the discussion in this forum");
                 }
             }
-            if (! $post = get_forum_post_full($discussion->firstpost)) {
+            if (! $post = forum_get_post_full($discussion->firstpost)) {
                 error("Could not find the first post in this forum");
             }
             forum_set_display_mode($mode);
-            print_discussion($course, $discussion, $post, $USER->mode);
+            forum_print_discussion($course, $discussion, $post, $USER->mode);
             break;
 
         case "eachuser":
             print_simple_box(text_to_html($forum->intro), "CENTER");
             echo "<P ALIGN=CENTER>";
-            if (user_can_post_discussion($forum)) {
+            if (forum_user_can_post_discussion($forum)) {
                 echo "This forum allows one discussion topic to be posted per person.";
             } else {
                 echo "&nbsp";
             }
             echo "</P>";
-            print_forum_latest_topics($forum->id, 0);
+            forum_print_latest_discussions($forum->id, 0);
             break;
 
         default:
             print_simple_box(text_to_html($forum->intro), "CENTER");
             echo "<P>&nbsp;</P>";
-            print_forum_latest_topics($forum->id, 0);
+            forum_print_latest_discussions($forum->id, 0);
             break;
     }
 

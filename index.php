@@ -71,8 +71,8 @@
              print_all_courses();
 
          } else {
-             if (! $newsforum = get_course_news_forum($site->id)) {
-                 error("Could not find or create a main forum for the site");
+             if (! $newsforum = forum_get_course_forum($site->id, "news")) {
+                 error("Could not find or create a main news forum for the site");
              }
 
              if (isset($USER->id)) {
@@ -92,7 +92,7 @@
              }
              print_simple_box($headertext, "CENTER", "100%", $THEME->cellheading);
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
-             print_forum_latest_topics($newsforum->id, $site->newsitems);
+             forum_print_latest_discussions($newsforum->id, $site->newsitems);
          }
       ?>
 

@@ -32,7 +32,7 @@
         }
     }
 
-    $returnto = go_back_to("index.php?id=$course->id");
+    $returnto = forum_go_back_to("index.php?id=$course->id");
 
     if ($force and isteacher($course->id)) {
         if (forum_is_forcesubscribed($forum->id)) {

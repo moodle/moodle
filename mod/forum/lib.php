@@ -9,8 +9,9 @@ $FORUM_DISCUSS_MODES = array ( "1"  => "Display replies flat, with oldest first"
                                "2"  => "Display replies in threaded form",
                                "3"  => "Display replies in nested form");
 
+// These are course content forums that can be added to the course manually
 $FORUM_TYPE   = array ("general"    => "General forum",
-                       "eachuser"   => "Each $student posts a topic",
+                       "eachuser"   => "Each $student posts one discussion",
                        "single"     => "A single simple discussion");
 
 $FORUM_POST_RATINGS = array ("3" => "Outstanding", 
@@ -22,20 +23,43 @@ $FORUM_LONG_POST = 600;
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////
 
+
+function forum_get_course_forum($courseid, $type) {
 // How to set up special 1-per-course forums
-
-function get_course_news_forum($courseid) {
-    if ($forum = get_record_sql("SELECT * from forum WHERE course = '$courseid' AND type = 'news'")) {
+    if ($forum = get_record_sql("SELECT * from forum WHERE course = '$courseid' AND type = '$type'")) {
         return $forum;
     } else {
         // Doesn't exist, so create one now.
         $forum->course = $courseid;
-        $forum->type = "news";
-        $forum->name = "News";
-        $forum->intro= "General news about this course";
-        $forum->open = 0;
-        $forum->assessed = 0;
-        $forum->forcesubscribe = 1;
+        $forum->type = "$type";
+        switch ($forum->type) {
+            case "news":
+                $forum->name = "News";
+                $forum->intro= "General news about this course";
+                $forum->open = 0;
+                $forum->assessed = 0;
+                $forum->forcesubscribe = 1;
+                break;
+            case "social":
+                $forum->name = "Social";
+                $forum->intro= "A forum for general socialising. Talk about anything you like!";
+                $forum->open = 1;
+                $forum->assessed = 0;
+                $forum->forcesubscribe = 0;
+                break;
+            case "teacher":
+                $forum->name = "Teacher Forum";
+                $forum->intro= "For teacher-only notes and discussion";
+                $forum->open = 0;
+                $forum->assessed = 0;
+                $forum->forcesubscribe = 0;
+                break;
+            default:
+                notify("That forum type doesn't exist!");
+                return false;
+                break;
+
+        }
         $forum->timemodified = time();
         $forum->id = insert_record("forum", $forum);
         return get_record_sql("SELECT * from forum WHERE id = '$forum->id'");
@@ -43,45 +67,8 @@ function get_course_news_forum($courseid) {
 }
 
 
-function get_course_social_forum($courseid) {
-    if ($forum = get_record_sql("SELECT * from forum WHERE course = '$courseid' AND type = 'social'")) {
-        return $forum;
-    } else {
-        // Doesn't exist, so create one now.
-        $forum->course = $courseid;
-        $forum->type = "social";
-        $forum->name = "Social";
-        $forum->intro= "A forum for general socialising. Talk about anything you like!";
-        $forum->open = 1;
-        $forum->assessed = 0;
-        $forum->forcesubscribe = 0;
-        $forum->timemodified = time();
-        $forum->id = insert_record("forum", $forum);
-        return get_record_sql("SELECT * from forum WHERE id = '$forum->id'");
-    }
-}
-
-
-function get_course_teacher_forum($courseid) {
-    if ($forum = get_record_sql("SELECT * from forum WHERE course = '$courseid' AND type = 'teacher'")) {
-        return $forum;
-    } else {
-        // Doesn't exist, so create one now.
-        $forum->course = $courseid;
-        $forum->type = "teacher";
-        $forum->name = "Teacher Forum";
-        $forum->intro= "For teacher-only notes and discussion";
-        $forum->open = 0;
-        $forum->assessed = 0;
-        $forum->forcesubscribe = 0;
-        $forum->timemodified = time();
-        $forum->id = insert_record("forum", $forum);
-        return get_record_sql("SELECT * from forum WHERE id = '$forum->id'");
-    }
-}
-
-
-function make_mail_post(&$post, $user, $touser, $course, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
+function forum_make_mail_post(&$post, $user, $touser, $course, 
+                              $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
 // Given the data about a posting, builds up the HTML to display it and 
 // returns the HTML in a string.  This is designed for sending via HTML email.
 
@@ -153,7 +140,7 @@ function make_mail_post(&$post, $user, $touser, $course, $ownpost=false, $reply=
 }
 
 
-function print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
+function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
     global $THEME, $USER, $CFG, $FORUM_LONG_POST;
 
     if ($post->parent) {
@@ -215,9 +202,9 @@ function print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false
     echo "<DIV ALIGN=right><P ALIGN=right>";
     if ($rate && $USER->id) {
         if ($USER->id == $post->userid) {
-            print_ratings($post->id);
+            print_forum_ratings($post->id);
         } else {
-            print_rating($post->id, $USER->id);
+            print_forum_rating($post->id, $USER->id);
         }
     }
     
@@ -255,7 +242,7 @@ function forum_shorten_post($message) {
 }
 
 
-function print_ratings($post) {
+function print_forum_ratings($post) {
 
     global $CFG, $PHPSESSID;
 
@@ -280,7 +267,7 @@ function print_ratings($post) {
     }
 }
 
-function print_rating($post, $user) {
+function print_forum_rating($post, $user) {
     global $FORUM_POST_RATINGS;
 
     if ($rs = get_record_sql("SELECT rating from forum_ratings WHERE user='$user' AND post='$post'")) {
@@ -297,7 +284,7 @@ function print_rating($post, $user) {
     }
 }
 
-function print_mode_form($discussion, $mode) {
+function print_forum_mode_form($discussion, $mode) {
     GLOBAL $FORUM_DISCUSS_MODES;
 
     echo "<CENTER><P>";
@@ -318,7 +305,7 @@ function print_forum_search_form($course, $search="") {
 }
 
 
-function count_discussion_replies($forum="0") {
+function forum_count_discussion_replies($forum="0") {
     if ($forum) {
         $forumselect = " AND d.forum = '$forum'";
     }
@@ -329,7 +316,7 @@ function count_discussion_replies($forum="0") {
 }
 
 
-function set_fromdiscussion() {
+function forum_set_return() {
     global $SESSION, $HTTP_REFERER;
 
     if (! $SESSION->fromdiscussion) {
@@ -338,7 +325,7 @@ function set_fromdiscussion() {
 }
 
 
-function go_back_to($default) {
+function forum_go_back_to($default) {
     global $SESSION;
 
     if ($SESSION->fromdiscussion) {
@@ -350,7 +337,7 @@ function go_back_to($default) {
     }
 }
 
-function get_forum_post_full($postid) {
+function forum_get_post_full($postid) {
     return get_record_sql("SELECT p.*, u.firstname, u.lastname, 
                                   u.email, u.picture, u.id as userid
                            FROM forum_posts p, user u 
@@ -358,7 +345,7 @@ function get_forum_post_full($postid) {
 }
 
 
-function add_new_post_to_database($post) {
+function forum_add_new_post($post) {
 
     $timenow = time();
     $post->created = $timenow;
@@ -368,7 +355,7 @@ function add_new_post_to_database($post) {
     return insert_record("forum_posts", $post);
 }
 
-function update_post_in_database($post) {
+function forum_update_post($post) {
     global $db;
 
     $timenow = time();
@@ -447,28 +434,27 @@ function forum_delete_discussion($discussion) {
 
 
 
-function print_user_discussions($course, $user) {
-    global $CFG;
+function forum_print_user_discussions($courseid, $userid) {
+    global $USER;
 
-    $topics = get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, u.id as userid
-                            FROM forum_discussions d, forum_posts p, user u, forum f
-                            WHERE d.course = '$course->id' AND p.discussion = d.id AND 
-                                  p.parent = 0 AND p.user = u.id AND u.id = '$user->id'
-                                  AND d.forum = f.id AND f.type = 'eachuser'
-                            ORDER BY p.created DESC");
+    $discussions = get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, u.id as userid
+                                    FROM forum_discussions d, forum_posts p, user u
+                                    WHERE d.course = '$courseid' AND p.discussion = d.id AND 
+                                          p.parent = 0 AND p.user = u.id AND u.id = '$userid'
+                                    ORDER BY p.created DESC");
     
-    if ($topics) {
+    if ($discussions) {
         echo "<HR>";
         print_heading("Discussion topics");
-        $replies = count_discussion_replies();
-        foreach ($topics as $topic) {
-            if ($replies[$topic->discussion]) {
-                $topic->replies = $replies[$topic->discussion]->replies;
+        $replies = forum_count_discussion_replies();
+        foreach ($discussions as $discussion) {
+            if ($replies[$discussion->discussion]) {
+                $discussion->replies = $replies[$discussion->discussion]->replies;
             } else {
-                $topic->replies = 0;
+                $discussion->replies = 0;
             }
-            $ownpost = ($topic->userid == $USER->id);
-            print_post($topic, $course->id, $ownpost, $reply=0, $link=1, $assessed=false);
+            $ownpost = ($discussion->userid == $USER->id);
+            forum_print_post($discussion, $course->id, $ownpost, $reply=0, $link=1, $assessed=false);
             echo "<BR>\n";
         }
     }
@@ -515,7 +501,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
                 $footer = "";
             }
 
-            print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false, $footer);
+            pirint_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false, $footer);
         }
 
     } else {
@@ -587,7 +573,7 @@ function forum_cron () {
                       "<A HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">Forums</A> ->".
                       "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A> ->".
                       "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
-                      $posthtml .= make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
+                      $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
                     } else {
                       $posthtml = "";
                     }
@@ -636,20 +622,20 @@ function forum_unsubscribe($userid, $forumid) {
 }
 
 
-function user_has_posted_discussion($forumid, $userid) {
-    if ($topics = get_all_topics($forumid, "DESC", $userid)) {
+function forum_user_has_posted_discussion($forumid, $userid) {
+    if ($discussions = forum_get_discussions($forumid, "DESC", $userid)) {
         return true;
     } else {
         return false;
     }
 }
 
-function user_can_post_discussion($forum) {
+function forum_user_can_post_discussion($forum) {
 // $forum is an object
     global $USER;
 
     if ($forum->type == "eachuser") {
-        return (! user_has_posted_discussion($forum->id, $USER->id));
+        return (! forum_user_has_posted_discussion($forum->id, $USER->id));
     } else if ($forum->type == "teacher") {
         return isteacher($forum->course);
     } else if (isteacher($forum->course)) {
@@ -660,7 +646,7 @@ function user_can_post_discussion($forum) {
 }
 
 
-function get_all_topics($forum="0", $forum_sort="DESC", $user=0) {
+function forum_get_discussions($forum="0", $forum_sort="DESC", $user=0) {
     if ($user) {
         $userselect = " AND u.id = '$user' ";
     } else {
@@ -675,7 +661,7 @@ function get_all_topics($forum="0", $forum_sort="DESC", $user=0) {
 
 
 
-function print_forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style="plain", $forum_sort="DESC") {
+function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $forum_style="plain", $forum_sort="DESC") {
     global $CFG, $USER;
     
     if ($forum_id) {
@@ -694,48 +680,48 @@ function print_forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style
         if (! $course = get_record("course", "category", 0)) {
             error("Could not find a top-level course!");
         }
-        if (! $forum = get_course_news_forum($course->id)) {
+        if (! $forum = forum_get_course_news_forum($course->id)) {
             error("Could not find or create a main forum in this course (id $course->id)");
         }
     }
 
-    if (user_can_post_discussion($forum)) {
+    if (forum_user_can_post_discussion($forum)) {
         echo "<P ALIGN=right>";
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">Add a new topic...</A>";
+        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">Add a new discussion topic...</A>";
         echo "</P>\n";
     }
 
-    if (! $topics = get_all_topics($forum->id, $forum_sort) ) {
+    if (! $discussions = forum_get_discussions($forum->id, $forum_sort) ) {
         echo "<P ALIGN=CENTER><B>There are no discussion topics yet in this forum.</B></P>";
 
     } else {
 
-        $replies = count_discussion_replies($forum->id);
+        $replies = forum_count_discussion_replies($forum->id);
 
-        $topiccount = 0;
+        $discussioncount = 0;
 
-        foreach ($topics as $topic) {
-            $topiccount++;
+        foreach ($discussions as $discussion) {
+            $discussioncount++;
 
-            if ($forum_numtopics && ($topiccount > $forum_numtopics)) {
-                echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">Older topics</A> ...</P>";
+            if ($forum_numdiscussions && ($discussioncount > $forum_numdiscussions)) {
+                echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">Older discussions</A> ...</P>";
                 break;
             }
-            if ($replies[$topic->discussion]) {
-                $topic->replies = $replies[$topic->discussion]->replies;
+            if ($replies[$discussion->discussion]) {
+                $discussion->replies = $replies[$discussion->discussion]->replies;
             } else {
-                $topic->replies = 0;
+                $discussion->replies = 0;
             }
-            $ownpost = ($topic->userid == $USER->id);
+            $ownpost = ($discussion->userid == $USER->id);
             switch ($forum_style) {
                 case "minimal":
-                    echo "<P><FONT COLOR=#555555>".userdate($topic->modified, "%e %B, %H:%M")."</FONT>";
-                    echo "<BR>$topic->subject ";
-                    echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$topic->discussion\">more...</A>";
+                    echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, "%e %b, %H:%M")." - $discussion->firstname</FONT>";
+                    echo "<BR>$discussion->subject ";
+                    echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">more...</A>";
                     echo "</P>\n";
                 break;
                 default:
-                    print_post($topic, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
+                    forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
                     echo "<BR>\n";
                 break;
             }
@@ -743,15 +729,15 @@ function print_forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style
     }
 }
 
-function print_discussion($course, $discussion, $post, $mode) {
+function forum_print_discussion($course, $discussion, $post, $mode) {
 
     global $USER;
 
     $ownpost = ($USER->id == $post->user);
 
-    print_post($post, $course->id, $ownpost, $reply=true, $link=false, $rate=false);
+    forum_print_post($post, $course->id, $ownpost, $reply=true, $link=false, $rate=false);
 
-    print_mode_form($discussion->id, $mode);
+    print_forum_mode_form($discussion->id, $mode);
 
     if ($discussion->assessed && $USER->id) {
         echo "<FORM NAME=form METHOD=POST ACTION=rate.php>";
@@ -763,16 +749,16 @@ function print_discussion($course, $discussion, $post, $mode) {
         case -1 :  // Flat descending
         default:   
             echo "<UL>";
-            print_posts_flat($post->discussion, $course->id, $mode, $discussion->assessed);
+            forum_print_posts_flat($post->discussion, $course->id, $mode, $discussion->assessed);
             echo "</UL>";
             break;
 
         case 2 :   // Threaded 
-            print_posts_threaded($post->id, $course->id, 0, $discussion->assessed);
+            forum_print_posts_threaded($post->id, $course->id, 0, $discussion->assessed);
             break;
 
         case 3 :   // Nested
-            print_posts_nested($post->id, $course->id, $discussion->assessed);
+            forum_print_posts_nested($post->id, $course->id, $discussion->assessed);
             break;
     }
 
@@ -782,7 +768,7 @@ function print_discussion($course, $discussion, $post, $mode) {
     }
 }
 
-function print_posts_flat($discussion, $course, $direction, $assessed) { 
+function forum_print_posts_flat($discussion, $course, $direction, $assessed) { 
     global $USER;
 
     $reply = true;
@@ -800,14 +786,14 @@ function print_posts_flat($discussion, $course, $direction, $assessed) {
 
         foreach ($posts as $post) {
             $ownpost = ($USER->id == $post->user);
-            print_post($post, $course, $ownpost, $reply, $link, $assessed);
+            forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);
         }
     } else {
         return;
     }
 }
 
-function print_posts_threaded($parent, $course, $depth, $assessed) { 
+function forum_print_posts_threaded($parent, $course, $depth, $assessed) { 
     global $USER;
 
     $reply = true;
@@ -822,13 +808,13 @@ function print_posts_threaded($parent, $course, $depth, $assessed) {
             echo "<UL>";
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->user);
-                print_post($post, $course, $ownpost, $reply, $link, $assessed);  // link=true?
+                forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);  // link=true?
                 echo "<BR>";
             } else {
                 echo "<LI><P><B><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</A></B> by $post->firstname $post->lastname, ".userdate($post->created)."</P>";
             }
 
-            print_posts_threaded($post->id, $course, $depth-1, $assessed);
+            forum_print_posts_threaded($post->id, $course, $depth-1, $assessed);
             echo "</UL>\n";
         }
     } else {
@@ -836,7 +822,7 @@ function print_posts_threaded($parent, $course, $depth, $assessed) {
     }
 }
 
-function print_posts_nested($parent, $course, $assessed) { 
+function forum_print_posts_nested($parent, $course, $assessed) { 
     global $USER;
 
     $reply = true;
@@ -852,9 +838,9 @@ function print_posts_nested($parent, $course, $assessed) {
             $ownpost = ($USER->id == $post->user);
 
             echo "<UL>";
-            print_post($post, $course, $ownpost, $reply, $link, $assessed);
+            forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);
             echo "<BR>";
-            print_posts_nested($post->id, $course, $assessed);
+            forum_print_posts_nested($post->id, $course, $assessed);
             echo "</UL>\n";
         }
     } else {

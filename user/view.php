@@ -138,7 +138,7 @@
     }
     echo "</TR></TABLE></CENTER>\n";
 
-    print_user_discussions($course, $user);
+    forum_print_user_discussions($course->id, $user->id);
 
     print_footer($course);
 

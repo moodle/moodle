@@ -41,7 +41,7 @@
         $navtail = "$discussion->name";
     }
 
-    if (! $post = get_forum_post_full($parent)) {
+    if (! $post = forum_get_post_full($parent)) {
         error("Discussion no longer exists", "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
     }
 
@@ -66,7 +66,7 @@
                  "$navmiddle -> $navtail", "", "", true, $updatebutton);
     }
 
-    print_discussion($course, $discussion, $post, $USER->mode);
+    forum_print_discussion($course, $discussion, $post, $USER->mode);
 
     print_footer($course);
 

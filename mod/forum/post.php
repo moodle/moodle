@@ -20,20 +20,20 @@
 
         if ($post->edit) {           // Updating a post
             $post->id = $post->edit;
-            if (update_post_in_database($post) ) {
+            if (forum_update_post($post) ) {
                 add_to_log($post->course, "forum", "update post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
-                redirect(go_back_to("discuss.php?d=$post->discussion"), "Your post was updated", 1);
+                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), "Your post was updated", 1);
             } else {
                 error("Could not update your post due to an unknown error"); 
             }
         } else if ($post->discussion) { // Adding a new post to an existing discussion
-            if ($post->id = add_new_post_to_database($post)) {
+            if ($post->id = forum_add_new_post($post)) {
                 if ( ! forum_is_subscribed($USER->id, $post->forum) ) {
                     forum_subscribe($USER->id, $post->forum);
                 }
 
                 add_to_log($post->course, "forum", "add post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
-                redirect(go_back_to("discuss.php?d=$post->discussion"), 
+                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
                          "Your post was successfully added.<P>You have ".format_time($CFG->maxeditingtime)." to edit it if you want to make any changes.", 3);
             } else {
                 error("Could not add the post due to an unknown error"); 
@@ -47,7 +47,7 @@
                     forum_subscribe($USER->id, $post->forum);
                 }
                 add_to_log($post->course, "forum", "add discussion", "discuss.php?d=$discussion->id", "$discussion->id");
-                redirect(go_back_to("view.php?f=$post->forum"), 
+                redirect(forum_go_back_to("view.php?f=$post->forum"), 
                          "Your post was successfully added.<P>You have ".format_time($CFG->maxeditingtime)." to edit it if you want to make any changes.", 5);
             } else {
                 error("Could not insert the new discussion.");
@@ -69,7 +69,7 @@
             error("The course number was incorrect ($forum)");
         }
 
-        if (! user_can_post_discussion($forum)) {
+        if (! forum_user_can_post_discussion($forum)) {
             error("Sorry, but you can not post a new discussion in this forum.");
         }
 
@@ -83,11 +83,11 @@
         $post->user = $USER->id;
         $post->message = "";
 
-        set_fromdiscussion();
-    
+        forum_set_return();
+
     } else if (isset($reply)) {      // User is writing a new reply
 
-        if (! $parent = get_forum_post_full($reply)) {
+        if (! $parent = forum_get_post_full($reply)) {
             error("Parent post ID was incorrect ($reply)");
         }
         if (! $discussion = get_record("forum_discussions", "id", $parent->discussion)) {
@@ -113,11 +113,11 @@
             $post->subject = "Re: ".$post->subject;
         }
 
-        set_fromdiscussion();
+        forum_set_return();
 
     } else if (isset($edit)) {  // User is editing their own post
 
-        if (! $post = get_forum_post_full($edit)) {
+        if (! $post = forum_get_post_full($edit)) {
             error("Post ID was incorrect");
         }
         if ($post->user <> $USER->id) {
@@ -127,7 +127,7 @@
             error("Sorry, but the maximum time for editing this post (".format_time($CFG->maxeditingtime).") has passed!");
         }
         if ($post->parent) {
-            if (! $parent = get_forum_post_full($post->parent)) {
+            if (! $parent = forum_get_post_full($post->parent)) {
                 error("Parent post ID was incorrect ($post->parent)");
             }
         }
@@ -148,12 +148,12 @@
         $post->course  = $course->id;
         $post->forum  = $forum->id;
 
-        set_fromdiscussion();
+        forum_set_return();
 
 
     } else if (isset($delete)) {  // User is deleting a post
 
-        if (! $post = get_forum_post_full($delete)) {
+        if (! $post = forum_get_post_full($delete)) {
             error("Post ID was incorrect");
         }
         if ($post->user <> $USER->id) {
@@ -167,12 +167,12 @@
 
             if ($post->totalscore) {
                 notice("Sorry, that cannot be deleted as people have already rated it", 
-                        go_back_to("discuss.php?d=$post->discussion"));
+                        forum_go_back_to("discuss.php?d=$post->discussion"));
 
             } else if (record_exists("forum_posts", "parent", $delete)) {
                 error("Sorry, that cannot be deleted as people have 
                         already responded to it", 
-                        go_back_to("discuss.php?id=$post->discussion"));
+                        forum_go_back_to("discuss.php?id=$post->discussion"));
 
             } else {
                 if (! $post->parent) {  // post is a discussion topic as well, so delete discussion
@@ -185,7 +185,7 @@
                 } else if (delete_records("forum_posts", "id", $post->id)) {
 
                     add_to_log($discussion->course, "forum", "delete post", "discuss.php?d=$post->discussion", "$post->id");
-                    redirect(go_back_to("discuss.php?d=$post->discussion"), 
+                    redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
                              "Your post was deleted", 1);
                 } else {
                     error("An error occurred while deleting record $post->id");
@@ -195,7 +195,7 @@
 
         } else { // User just asked to delete something
 
-            set_fromdiscussion();
+            forum_set_return();
 
             print_header();
             notice_yesno("Are you sure you want to delete this post?", 
@@ -203,7 +203,7 @@
                          $HTTP_REFERER);
                          
             echo "<CENTER><HR>";
-            print_post($post, 0, $ownpost=false, $reply=false, $link=false);
+            forum_print_post($post, 0, $ownpost=false, $reply=false, $link=false);
 
         }
 
@@ -260,7 +260,7 @@
 
     echo "<CENTER>";
     if (isset($parent)) {
-        print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
+        forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
         echo "<H2>Your reply:</H2>";
     } else {
         echo "<H2>Your new discussion topic:</H2>";

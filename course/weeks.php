@@ -68,7 +68,7 @@
             $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">Turn editing on</A>";
         }
 
-        if ($teacherforum = get_course_teacher_forum($course->id)) {
+        if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {
             $admindata[]="<A HREF=\"../mod/forum/view.php?f=$teacherforum->id\">Teacher Forum...</A>";
             $adminicon[]="<IMG SRC=\"../mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"Teacher Forum\">";
         }
@@ -189,11 +189,11 @@
 
     // Print all the news items.
 
-    if ($news = get_course_news_forum($course->id)) {
+    if ($news = forum_get_course_forum($course->id, "news")) {
         print_simple_box("Latest News", $align="CENTER", $width="100%", $color="$THEME->cellheading");
         print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
         echo "<FONT SIZE=1>";
-        print_forum_latest_topics($news->id, $course->newsitems, "minimal", "DESC", false);
+        forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
         echo "</FONT>";
         print_simple_box_end();
     }
