@@ -197,6 +197,7 @@
             $envalue = nl2br(htmlspecialchars($envalue));
             $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
             $envalue = str_replace("%%","%",$envalue);
+            $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
             echo "<tr>";
             echo "<td width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>";
@@ -262,7 +263,7 @@ function lang_save_file($path, $file, $strings) {
 // $file is the file to overwrite.
 // $strings is an array of strings to write
 
-    global $CFG;
+    global $CFG, $USER;
 
     error_reporting(0);
     if (!$f = fopen("$path/$file","w")) {
@@ -281,11 +282,10 @@ function lang_save_file($path, $file, $strings) {
         if ($CFG->lang != "zh_hk" and $CFG->lang != "zh_tw") {  // Some MB languages include backslash bytes
             $value = str_replace("\\","",$value);           // Delete all slashes
         }
-        $value = str_replace("$"."a", "\\$"."a", $value);   // Add slashes for $a
-        $value = str_replace("\"", "\\\\\\\"", $value);     // Add slashes for "
+        $value = str_replace("'", "\\'", $value);           // Add slashes for '
         $value = str_replace("%","%%",$value);              // Escape % characters
         if ($id == "string" and $value != ""){
-            fwrite($f,"\$string['$stringname'] = \"$value\";\n");
+            fwrite($f,"\$string['$stringname'] = '$value';\n");
         }
     }
     fwrite($f,"\n?>\n");
