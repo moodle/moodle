@@ -185,14 +185,14 @@
 	$ewiki_config["idf"]["obj"] = array(".swf", ".svg");
 
 	#-- entitle actions
-	$ewiki_config["action_links"]["view"] = array_merge(array(
+	$ewiki_config["action_links"]["view"] = @array_merge(array(
 		"edit" => "EDITTHISPAGE",	# ewiki_t() is called on these
 		"links" => "BACKLINKS",
 		"info" => "PAGEHISTORY",
 		"like" => "LIKEPAGES",
 	), @$ewiki_config["action_links"]["view"]
         );
-	$ewiki_config["action_links"]["info"] = array_merge(array(
+	$ewiki_config["action_links"]["info"] = @array_merge(array(
 		"view" => "browse",
 		"edit" => "fetchback",
 	), @$ewiki_config["action_links"]["info"]
@@ -308,12 +308,12 @@
 
 	#-- text  (never remove the "C" or "en" sections!)
         #
-	$ewiki_t["C"] = array_merge(@$ewiki_t["C"], array(
+	$ewiki_t["C"] = @array_merge(@$ewiki_t["C"], array(
            "DATE" => "%a, %d %b %G %T %Z",
 	   "EDIT_TEXTAREA_RESIZE_JS" => '<a href="javascript:ewiki_enlarge()" style="text-decoration:none">+</a><script type="text/javascript"><!--'."\n".'function ewiki_enlarge() {var ta=document.getElementById("ewiki_content");ta.style.width=((ta.cols*=1.1)*10).toString()+"px";ta.style.height=((ta.rows*=1.1)*30).toString()+"px";}'."\n".'//--></script>',
         ));
         #
-	$ewiki_t["en"] = array_merge(@$ewiki_t["en"], array(
+	$ewiki_t["en"] = @array_merge(@$ewiki_t["en"], array(
 	   "EDITTHISPAGE" => "EditThisPage",
            "APPENDTOPAGE" => "Add to",
 	   "BACKLINKS" => "BackLinks",
@@ -351,7 +351,7 @@
 	   "FORBIDDEN" => "You are not authorized to access this page.",
 	));
         #
-        $ewiki_t["es"] = array_merge(@$ewiki_t["es"], array(
+        $ewiki_t["es"] = @array_merge(@$ewiki_t["es"], array(
            "EDITTHISPAGE" => "EditarEstaPágina",
            "BACKLINKS" => "EnlacesInversos",
            "PAGESLINKINGTO" => "Páginas enlazando \$title",
@@ -389,7 +389,7 @@
            "FORBIDDEN" => "No está autorizado para acceder a esta página.",
         ));
         #
-	$ewiki_t["de"] = array_merge(@$ewiki_t["de"], array(
+	$ewiki_t["de"] = @array_merge(@$ewiki_t["de"], array(
 	   "EDITTHISPAGE" => "DieseSeiteÄndern",
            "APPENDTOPAGE" => "Ergänze",
 	   "BACKLINKS" => "ZurückLinks",
@@ -430,7 +430,7 @@
 	));
 
 	#-- InterWiki:Links
-	$ewiki_config["interwiki"] = array_merge(
+	$ewiki_config["interwiki"] = @array_merge(
 	@$ewiki_config["interwiki"],
 	array(
            "javascript" => "",  # this actually protects from javascript: links
@@ -479,7 +479,7 @@ function ewiki_page($id=false) {
 
    #-- selected page
    if (!isset($_REQUEST)) {
-      $_REQUEST = array_merge($HTTP_GET_VARS, $HTTP_POST_VARS);
+      $_REQUEST = @array_merge($HTTP_GET_VARS, $HTTP_POST_VARS);
    }
    if (!strlen($id)) {
       $id = ewiki_id();
@@ -505,7 +505,7 @@ function ewiki_page($id=false) {
    if (!isset($_REQUEST["content"]) && ($dquery["version"] = @$_REQUEST["version"])) {
       $dquery["forced_version"] = $dquery["version"];
    }
-   $data = array_merge($dquery, ewiki_database("GET", $dquery));
+   $data = @array_merge($dquery, ewiki_database("GET", $dquery));
 
    #-- stop here if page is not marked as _TEXT,
    #   perform authentication then, and let only administrators proceed
@@ -1506,8 +1506,11 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    $ewiki_editor_content=1;
    if($ewiki_use_editor) {
      ob_start();
-     print_textarea(1, $rows, $cols, 680, 400, "content", ewiki_format($data["content"]));
-     use_html_editor("content");
+     $usehtmleditor = can_use_html_editor();
+     print_textarea($usehtmleditor, $rows, $cols, 680, 400, "content", ewiki_format($data["content"]));
+     if ($usehtmleditor) {
+         use_html_editor("content");
+     }
      $o .= ob_get_contents();
      ob_end_clean();
    } else {
@@ -1656,7 +1659,7 @@ function ewiki_format (
    global $ewiki_links, $ewiki_plugins, $ewiki_config;
 
    #-- state vars
-   $params = array_merge($ewiki_config["format_params"], $params);
+   $params = @array_merge($ewiki_config["format_params"], $params);
    $s = array(
       "in" => 0,         # current input $iii[] block array index
       "para" => "",
@@ -2126,7 +2129,7 @@ function ewiki_scan_wikiwords(&$wiki_source, &$ewiki_links, $se=0) {
 
    #-- find matches
    preg_match_all($ewiki_config["wiki_pre_scan_regex"], $wiki_source, $uu);
-   $uu = array_merge($uu[1], $uu[2], $uu[3], $uu[4], (array)@$uu[5]);
+   $uu = @array_merge($uu[1], $uu[2], $uu[3], $uu[4], (array)@$uu[5]);
 
    #-- clean up list, trim() spaces (allows more unclean regex) - page id unification
    foreach ($uu as $i=>$id) {
@@ -3175,7 +3178,7 @@ function ewiki_database($action, $args, $sw1=0, $sw2=0, $pf=false) {
    switch ($action) {
 
       case "GETALL":
-         $args = array_unique(array_merge($args, array("flags", "version")));
+         $args = array_unique(@array_merge($args, array("flags", "version")));
          $args = array_diff($args, array("id"));
          break;
 
@@ -3232,7 +3235,7 @@ class ewiki_dbquery_result {
    var $size = 0;
 
    function ewiki_dbquery_result($keys) {
-      $keys = array_merge($keys, array(-50=>"id", "version", "flags"));
+      $keys = @array_merge($keys, array(-50=>"id", "version", "flags"));
       $this->keys = array_unique($keys);
    }
 
