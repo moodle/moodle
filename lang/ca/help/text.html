@@ -1,41 +1,180 @@
-<P ALIGN=CENTER><B>Ajuda per a escriure text</B></P>
 
-Escriure text en Moodle funciona m&eacute;s o menys com &eacute;s d'esperar, per&ograve; tamb&eacute; tens la possibilitat d'incloure emoticones, adreces URL i algunes etiquetas HTML.
+<P ALIGN=CENTER><B>Ajuda en l'escriptura de text</B></P>
 
+Escriure text a Moodle funciona de la manera que espereu, per&ograve; teniu, a 
+m&eacute;s, la possibilitat d'escriure emoticones, adreces URL i algunes etiquetes 
+HTML. 
 <P><B>Emoticones</B></P>
 <UL>
-<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=5>
-<TR><TH>Nom       <TH>Imatge                                                 <TH>Tecleges</TR>
-<TR><TD>somriure      <TD ALIGN=CENTER><img ALT=smile SRC="<?=$CFG->wwwroot?>/pix/s/smiley.gif"><TD ALIGN=CENTER> :-) </TD></TR>
-<TR><TD>trist        <TD ALIGN=CENTER><img ALT=sad SRC="<?=$CFG->wwwroot?>/pix/s/sad.gif"><TD ALIGN=CENTER> :-( </TD></TR>
-<TR><TD>somriure obert       <TD ALIGN=CENTER><img ALT=grin SRC="<?=$CFG->wwwroot?>/pix/s/biggrin.gif"><TD ALIGN=CENTER> :-D </TD></TR>
-<TR><TD>fer l'ullet       <TD ALIGN=CENTER><img ALT=wink SRC="<?=$CFG->wwwroot?>/pix/s/wink.gif"><TD ALIGN=CENTER> ;-) </TD></TR>
-<TR><TD>mig mig      <TD ALIGN=CENTER><img ALT=mixed SRC="<?=$CFG->wwwroot?>/pix/s/mixed.gif"><TD ALIGN=CENTER> :-/ </TD></TR>
-<TR><TD>ulls oberts  <TD ALIGN=CENTER><img ALT=wide-eyed SRC="<?=$CFG->wwwroot?>/pix/s/wideeyes.gif"><TD ALIGN=CENTER> 8-) </TD></TR>
-<TR><TD>traure la llengua <TD ALIGN=CENTER><img ALT=tongue-out SRC="<?=$CFG->wwwroot?>/pix/s/tongueout.gif"><TD ALIGN=CENTER> :-P </TD></TR>
-<TR><TD>sorpresa   <TD ALIGN=CENTER><img ALT=surprised SRC="<?=$CFG->wwwroot?>/pix/s/surprise.gif"><TD ALIGN=CENTER> :-o </TD></TR>
-<TR><TD>guai       <TD ALIGN=CENTER><img ALT=cool SRC="<?=$CFG->wwwroot?>/pix/s/cool.gif"><TD ALIGN=CENTER> B-) </TD></TR>
-</TABLE>
+  <P>Per incloure aquestes petites icones al text nom&eacute;s cal que escriviu 
+    el codi associat. Els propis codis s&oacute;n com dibuixets si els mireu girant 
+    el cap a l'esquerra. </P>
+  <table border="1" align="center">
+    <tr valign="top"> 
+      <td> 
+        <table border="0" align="center" cellpadding="5">
+          <tr> 
+            <td><a href="javascript:inserttext(':-)')"><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></a></td>
+            <td>somriure</td>
+            <td><font face="courier">:-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-D')"><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></a></td>
+            <td>riallada</td>
+            <td><font face="courier">:-D</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(';-)')"><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></a></td>
+            <td>fer l'ullet</td>
+            <td><font face="courier">;-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-/')"><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></a></td>
+            <td>indec&iacute;s</td>
+            <td><font face="courier">:-/</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('V-.')"><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></a></td>
+            <td>pensar&oacute;s</td>
+            <td><font face="courier">V-.</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-P')"><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></a></td>
+            <td>treure la llengua</td>
+            <td><font face="courier">:-P</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('B-)')"><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></a></td>
+            <td>guai</td>
+            <td><font face="courier">B-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('^-)')"><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></a></td>
+            <td>d'acord</td>
+            <td><font face="courier">^-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('8-)')"><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></a></td>
+            <td>ulls oberts</td>
+            <td><font face="courier">8-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('8-o')"><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></a></td>
+            <td>sorpr&egrave;s</td>
+            <td><font face="courier">8-o</font></td>
+          </tr>
+        </table>
+      </td>
+      <td> 
+        <table border="0" align="center" cellpadding="5">
+          <tr> 
+            <td><a href="javascript:inserttext(':-(')"><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></a></td>
+            <td>trist</td>
+            <td><font face="courier">:-(</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('8-.')"><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></a></td>
+            <td>t&iacute;mid</td>
+            <td><font face="courier">8-.</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-I')"><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></a></td>
+            <td>avergonyit</td>
+            <td><font face="courier">:-I</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-X')"><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></a></td>
+            <td>petons</td>
+            <td><font face="courier">:-X</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':o)')"><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></a></td>
+            <td>pallasso</td>
+            <td><font face="courier">:o)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('P-|')"><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></a></td>
+            <td>ull tapat</td>
+            <td><font face="courier">P-|</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('8-[')"><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></a></td>
+            <td>enfadat</td>
+            <td><font face="courier">8-[</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('xx-P')"><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></a></td>
+            <td>mort</td>
+            <td><font face="courier">xx-P</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('|-.')"><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></a></td>
+            <td>adormit</td>
+            <td><font face="courier">|-.</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('}-]')"><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></a></td>
+            <td>dolent</td>
+            <td><font face="courier">}-]</font></td>
+          </tr>
+        </table>
+  </table>
 </UL>
 
-<P><B>Adreces</B></P>
+<P><B>Enlla&ccedil;os</B></P>
 <UL>
-<P>Qualsevol "paraula" que comence per <B>www.</B> or <B>http://</B> es convertir&agrave; autom&agrave;ticament en un enlla&ccedil;. 
-<P>For example:  <A HREF="http://www.google.com">www.google.com</A> or <A HREF="http://cent.uji.es">http://cent.uji.es</A>
+  <P>Qualsevol text que comenci per <B>www.</B> o per <B>http://</B> autom&agrave;ticament 
+    es convertir&agrave; en un enlla&ccedil; on poder clicar. 
+  <P>Per exemple: <A HREF="http://www.yahoo.com">www.yahoo.com</A> o <A HREF="http://curtin.edu">http://www.xtec.es/~jqueralt</A> 
 </UL>
 
 <P><B>Etiquetes HTML</B></P>
 <UL>
-<P>Pots fer servir un subconjunt limitat d'etiquetes HTML per afegir &egrave;mfasi als textos.
-<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=5>
-<TR><TH>Etiqueta HTML<TH>Produeix</TR>
-<TR><TD>&lt;B> negreta &lt;/B> <TD> <B>lletra negreta</B> </TR>
-<TR><TD>&lt;I> cursiva &lt;/I> <TD> <I>lletra cursiva</I> </TR>
-<TR><TD>&lt;U> subratllat &lt;/U> <TD> <U>text subratllat</U> </TR>
-<TR><TD>&lt;FONT SIZE=1> petit &lt;/FONT> <TD> <FONT SIZE=1>petit</FONT> </TR>
-<TR><TD>&lt;FONT SIZE=4> gran &lt;/FONT> <TD> <FONT SIZE=4>gran</FONT> </TR>
-<TR><TD>&lt;FONT COLOR=green> exemple &lt;/FONT> <TD> <FONT color=green>exemple</FONT> </TR>
-</TABLE>
+  <P>Podeu usar un redu&iuml;t joc d'etiquetes HTML per donar &egrave;mfasi als 
+    textos: 
+  <TABLE BORDER=0 CELLPADDING=5 CELLSPACING=5>
+    <TR> 
+      <TH>Etiquetes HTML 
+      <TH>Produeixen 
+    </TR>
+    <TR> 
+      <TD>&lt;B> text en negreta&lt;/B> 
+      <TD> <B> text en negreta</B> 
+    </TR>
+    <TR> 
+      <TD>&lt;I> text en cursiva&lt;/I> 
+      <TD> <I>text en cursiva</I> 
+    </TR>
+    <TR> 
+      <TD>&lt;U> text subratllat&lt;/U> 
+      <TD> <U>text subratllat</U> 
+    </TR>
+    <TR> 
+      <TD>&lt;FONT SIZE=1> text petit&lt;/FONT> 
+      <TD> <FONT SIZE=1>text petit</FONT> 
+    </TR>
+    <TR> 
+      <TD>&lt;FONT SIZE=4> text gran&lt;/FONT> 
+      <TD> <FONT SIZE=4>text gran</FONT> 
+    </TR>
+    <TR> 
+      <TD>&lt;FONT COLOR=green> exemple en verd&lt;/FONT> 
+      <TD> <FONT color=green>exemple en verd</FONT> 
+    </TR>
+    <TR> 
+      <TD valign=top>&lt;UL>&lt;LI>un&lt;LI>dos&lt;/UL> 
+      <TD valign=top> 
+        <UL>
+          <LI>un
+          <LI>dos 
+        </UL>
+    </TR>
+    <TR> 
+      <TD>&lt;HR> 
+      <TD> 
+        <HR>
+    </TR>
+  </TABLE>
 </UL>
 
 
