@@ -780,6 +780,24 @@ function print_footer ($course=NULL) {
     include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
 }
 
+function style_sheet_setup($lastmodified, $lifetime, $themename="") {
+
+    global $CFG;
+
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
+    header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
+    header("Cache-control: max_age = $lifetime"); 
+    header("Pragma: ");
+    header("Content-type: text/css");  // Correct MIME type
+
+    if (!empty($themename)) {
+        $CFG->theme = $themename;
+    }
+
+    return "$CFG->wwwroot/theme/$CFG->theme";
+
+}
+
 
 function user_login_string($course, $user=NULL) {
     global $USER, $CFG;

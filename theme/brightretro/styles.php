@@ -2,15 +2,9 @@
 
 /// We use PHP so we can do value substitutions into the styles
 
+    $nomoodlecookie = true;
     require_once("../../config.php"); 
-
-    header("Content-type: text/css");  /// Correct MIME type
-
-    if (isset($themename)) {
-        $CFG->theme = $themename;
-    }
-
-    $themeurl = "$CFG->wwwroot/theme/$CFG->theme";
+    $themeurl = style_sheet_setup(filemtime("styles.php"), 300, $themename);
 
 
 /// From here on it's nearly a normal stylesheet. 
