@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <title>Gu&iacute;a de Traducci&oacute;n de Moodle</title>
+  <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body style="background-color: rgb(255, 255, 255);">
+
+<h1>Gu&iacute;a de Traducci&oacute;n de Moodle</h1>
+
+<p>Traducir Moodle no es muy dif&iacute;cil, pero es bueno que conozcas unas cuantas
+  cosas antes de empezar.</p>
+
+<p>&nbsp;</p>
+
+<h2>Estructura de un paquete de lenguaje de Moodle</h2>
+
+<p style="margin-left: 40px;">Todos los paquetes de lenguaje de Moodle est&aacute;n
+  ubicados en el directorio lang, con cada lenguaje en un &uacute;nico directorio nombrado
+con la abreviatura del lenguaje (en, fr, nl, es ...). </p>
+
+
+<p style="margin-left: 40px;">Todos los ficheros princiaples est&aacute;n es este directorio,
+  con la extensi&oacute;n .php (p.ej. moodle.php, resource.php etc).&nbsp;
+Estos ficheros contienen frases cortas, denominadas "<span style="font-style: italic;">cadenas</span>". 
+</p>
+
+
+<p style="margin-left: 40px;">Tambi&eacute;n deber&iacute;a haber algunas carpetas conteniendo
+p&aacute;ginas .html:</p>
+
+
+<ul style="margin-left: 40px;">
+
+
+<li><strong>help</strong>: conteniendo los archivos de ayuda de contexto, que
+  son mostradas cuando seleccionas los iconos de ayuda de Moodle.</li>
+<li><strong>docs</strong>: Conteniendo las p&aacute;ginas de documentaci&oacute;n b&aacute;sica (como
+  &eacute;sta misma!).<br>
+</li>
+</ul>
+
+
+
+<p>&nbsp;</p>
+
+
+
+<h2>Creando un paquete de lenguaje completamente nuevo</h2>
+
+
+
+
+<p style="margin-left: 40px;">Si tu lenguaje no est&aacute; todav&iacute;a soportado por Moodle,
+  o si simplemente quieres hacer alguna personalizaci&oacute;n de los textos de tu sitio,
+es posible que quieras comenzar una nueva traducci&oacute;n.</p>
+
+
+
+<p style="margin-left: 40px;">Todo lo que necesitas hacer es crear una nueva
+  carpeta en el directorio lang utilizando el c&oacute;digo de dos letras de
+  tu lenguaje. Puedes encontrar estos c&oacute;digos est&aacute;ndar en el archivo
+  lib/languages.php. Si est&aacute;s haciendo una localizaci&oacute;n de otro
+  lenguaje existente usa el c&oacute;digo de
+  ese lenguaje con un gui&oacute;n bajo y otras dos letras con significado para
+  esa localizaci&oacute;n (p.ej. <span style="font-style: italic;">pt </span>para
+Portugu&eacute;s y <span style="font-style: italic;">pt_br</span> para la variaci&oacute;n
+Brasile&ntilde;a del paquete de lenguaje Portugu&eacute;s).&nbsp; Si est&aacute;s
+haciendo
+una versi&oacute;n codificada en Unicode, a&ntilde;ade <span style="font-weight: bold;">_utf8</span> al
+final
+(p.ej. <span style="font-style: italic;">sr_utf8</span>).<br>
+</p>
+
+
+
+<p style="margin-left: 40px;">Despu&eacute;s, copia el fichero  moodle.php
+  desde otro lenguaje a tu nuevo directorio.&nbsp; El que existe en el directorio
+  &quot;en&quot; es normalmente el mejor, aunque no tiene demasiada importancia
+  ya que lo que vas a hacer es modificarlo completamente.<br>
+</p>
+
+
+
+
+<p style="margin-left: 40px;">Ahora est&aacute;s preparado para empezar a insertar nuevas
+  cadenas editando tu lenguaje... mira m&aacute;s adelante para obtener detalles sobre
+  &eacute;sto.</p>
+
+
+
+<p style="margin-left: 40px;">Para un paquete de lenguaje nuevo, lo primero que
+  necesitas hacer es editar la cadena "thischarset" en moodle.php.
+Debe contener un juego de caracteres v&aacute;lido para tu lenguaje. Despu&eacute;s de haber
+  modificado esa cadena, guarda el fichero moodle.php, y <span style="font-weight: bold;">recarga
+la p&aacute;gina</span>. Entonces podr&aacute;s continuar con el resto de las cadenas.</p>
+
+
+
+<p>&nbsp;</p>
+
+
+
+<h2>Editando un paquete de lenguaje existente</h2>
+
+
+
+
+<h3 style="margin-left: 40px;">Haciendo peque&ntilde;as personalizaciones<br>
+</h3>
+
+
+
+<p style="margin-left: 80px;">Si solo quieres modificar unas pocas cadenas para
+  modificar tu sitio a tu gusto, <span style="font-weight: bold;">&iexcl;no edites
+  uno de los paquetes de lenguaje est&aacute;ndar!</span>.&nbsp; Si haces &eacute;sto,
+  tus cambios ser&aacute;n borados la pr&oacute;xima vez que actualices tu servidor con una
+  nueva versi&oacute;n de Moodle.<br>
+</p>
+<p style="margin-left: 80px;">En lugar de eso, usa las intrucciones que ya hemos
+  comentado sobre c&oacute;mo crear un nuevo paquete de lenguaje, y configura el lenguaje
+  &quot;padre&quot; (en
+moodle.php) a aquel que sea m&aacute;s parecido al tuyo.&nbsp;Por ejempo, un
+buen nombre para una versi&oacute;n local del lenguaje espa&ntilde;ol podr&iacute;a ser "<span style="font-style: italic;">es_local</span>",
+y el lenguaje padre podr&iacute;a ser "<span style="font-style: italic;">es</span>".</p>
+<p style="margin-left: 80px;">Para que todos los usuarios de tu sitio vean este
+  nuevo paquete, recuerda que tienes que seleccionarlo como el lenguaje del sitio
+  y, si quieres, restringir la lista de lenguajes disponibes en <span style="font-weight: bold;">Administraci&oacute;n &gt;&gt; Configuraci&oacute;n&gt;&gt; Variables</span>.<br>
+<br>
+</p>
+
+
+
+
+<h3 style="margin-left: 40px;">Traduciendo los ficheros del entorno de Moodle (los
+  archivos de "cadenas")<br>
+</h3>
+
+
+
+
+<ol>
+
+
+  
+  <ol>
+    <li>Accede a tu servidor Moodle como administrador.</li>
+    <li>Navega a <span style="font-weight: bold;">Administraci&oacute;n &gt;&gt; Configuraci&oacute;n &gt;&gt; Lenguajes</span>,
+      que es la p&aacute;gina de administraci&oacute;n de los lenguajes.</li>
+    <li>En esta p&aacute;gina puedes elegir tu lenguaje del men&uacute;, entonces selecciona "Comparar
+      y Editar Lenguaje".</li>
+    <li>Deber&iacute;as ver unos formularios que puedes editar para cada fichero. Si
+      no puedes, tienes que comprobar que esos ficheros son accesible en modo
+      escritura, a lo mejor tendr&aacute;s que cambiar sus permisos.</li>
+    <li>Los formularios consisten en tres columnas. La primera es el nombre de
+      la cadena, la segunda es la cadena en Ingl&eacute;s y la &uacute;ltima es la traducci&oacute;n
+    en el lenguaje actual.</li>
+    <li>Edita las cadenas sin traducci&oacute;n de cada fichero (aparecen resaltadas
+      en color),
+sin olvidar seleccionar el bot&oacute;n de &quot;Guardar Cambios&quot;, al final
+de cada formulario.</li>
+    <li>Est&aacute; bien dejar cadenas en blanco - Moodle simplemente utilizar&aacute; las
+      cadenas definidas en el lenguaje &quot;padre&quot;. Puedes definir el lenguaje &quot;padre&quot;
+    en el fichero  moodle.php, en  caso contrario la traducci&oacute;n en Ingl&eacute;s
+      siempre es utilizada por defecto. </li>
+    <li>Una forma r&aacute;pida de detectar todas las cadenas sin traducci&oacute;n es utilizar
+      el bot&oacute;n &quot;Comprobar cadenas perdidas&quot;.<br>
+      <br>
+    </li>
+
+    
+    
+    
+    
+    
+    
+    
+  </ol>
+</ol>
+
+
+<h3 style="margin-left: 40px;">Traduciendo la ayuda y los ficheros de documentaci&oacute;n</h3>
+
+
+
+<p style="margin-left: 80px;">Todav&iacute;a no existe ning&uacute;n editor en
+  Moolde para traducir los archivos de ayuda, pero realmente, no es nada dif&iacute;cil
+  hacerlo. Es importante utilizar el paquete de lenguaje <span style="font-weight: bold;">en</span> como
+  paquete de referencia. Copia un fichero de ayuda desde el lenguaje en y p&eacute;galo
+  en la misma situaci&oacute;n (y nombre) en tu propio paquete de lenguaje. Entonces
+  emplea un editor de textos plano para traducir el fichero (normalmente no
+  hay c&oacute;digos complicados, solo unas pocas etiquetas HTML). (NO UTILICES
+  UN PROCESADOR DE TEXTOS para escribir los ficheros de ayuda porque estos programas
+  a&ntilde;aden
+un mont&oacute;n de &quot;basura&quot; a los ficheros).</p>
+
+ 
+<p style="margin-left: 80px;">Seleccionando el bot&oacute;n &quot;Comprobar cadenas
+  perdidas&quot;
+  en la p&aacute;gina de administraci&oacute;n de lenguajes tambi&eacute;n te
+  aparecer&aacute;n los ficheros te faltan. Si no tienes algunos ficheros, Moodle utilizar&aacute; los
+  definidos en el lenguaje &quot;padre&quot; en su lugar, as&iacute; que no hay
+  raz&oacute;n para dejar copias de
+  ficheros de ayuda <strong>sin traducir</strong> en tu paquete de lenguaje.</p>
+
+
+<p>&nbsp;</p>
+
+
+<h2>Enviando tu paquete de lenguaje al proyecto Moodle</h2>
+
+
+<p style="margin-left: 40px;">Compartir tu traducci&oacute;n en Moodle ayudar&aacute; (&iexcl;seguro!)
+  a otras personas que hablan tu lenguaje.&nbsp;Tu trabajo ser&aacute; incluido en versiones
+  posteriores de Moodle.<br>
+</p>
+
+
+<p style="margin-left: 40px;">Simplemente comprime todo tu nuevo directorio como
+  un fichero <span style="font-weight: bold;">zip</span> y env&iacute;alo por correo
+  electr&oacute;nico a translation@moodle.org.<br>
+</p>
+<p style="margin-left: 40px;">Te responderemos con m&aacute;s detalles.<br>
+</p>
+
+
+<p>&nbsp;</p>
+
+
+<h2>Mantenimiento de un paquete de lenguaje est&aacute;ndar<br>
+</h2>
+
+
+
+<p style="margin-left: 40px;">Si realizas este trabajo de forma habitual en Moodle
+  (eres el responsable o colaborador oficial del lenguaje), lo mejor es utilizar
+  el <a href="?file=cvs.html">CVS
+  de Moodle</a> para que puedas tener siempre la &uacute;ltima versi&oacute;n
+  actualizada de Moodle y puedas guardar tu trabajo directamente en el proyecto
+  Moodle.<br>
+</p>
+<p style="margin-left: 40px;">Para estar informado de los cambios en el proyecto
+  es tambi&eacute;n una buena idea suscribirse a la <a href="http://sourceforge.net/mail/?group_id=30935" target="_top">lista
+  de correo del CVS</a> (moodle-cvs).&nbsp;Te ayudar&aacute; a mantener
+  tu traducci&oacute;n
+  actualizada con la versi&oacute;n en Ingl&eacute;s lo m&aacute;ximo posible.<br>
+</p>
+<p style="margin-left: 40px;"><br>
+</p>
+
+
+
+</body></html>
