@@ -54,6 +54,7 @@ $string['all'] = 'All';
 $string['allactivities'] = 'All activities';
 $string['alldays'] = 'All days';
 $string['allfieldsrequired'] = 'All fields are required';
+$string['allgroups'] = 'All groups';
 $string['alllogs'] = 'All logs';
 $string['allow'] = 'Allow';
 $string['allowguests'] = 'This course allows guest users to enter';
