@@ -60,7 +60,7 @@
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
                            "$mod->modulename $mod->instance"); 
                 add_to_log($mod->course, $mod->modulename, "update", 
-                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
+                           "view.php?id=$mod->coursemodule", 
                            "$mod->instance"); 
                 break;
 
@@ -100,6 +100,9 @@
                 add_to_log($mod->course, "course", "add mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
                            "$mod->modulename $mod->instance"); 
+                add_to_log($mod->course, $mod->modulename, "add", 
+                           "view.php?id=$mod->coursemodule", 
+                           "$mod->instance"); 
                 break;
             case "delete":
                 if (! $deleteinstancefunction($mod->instance)) {
