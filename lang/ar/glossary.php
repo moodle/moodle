@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004062401)
+      // glossary.php - created with Moodle 1.4 development (2004081200)
 
 
 $string['addcomment'] = 'ÃÖİ ÊÚáíŞ';
@@ -60,16 +60,17 @@ $string['deletingnoneemptycategory'] = 'ÍĞİ åĞå ÇáİÆÉ áä íÎĞİ ÇáãÕØáÇÍÇÊ ÇáãÊÚáŞ
 $string['descending'] = 'ÊäÇÒáí';
 $string['destination'] = 'ÛÇíÉ';
 $string['displayformat'] = 'ÚÑÖ ÇáÊäÓíŞ';
-$string['displayformat2'] = 'ßÇãá ãÚ ÇáßÇÊÈ';
-$string['displayformat3'] = 'ÏÇÆÑÉ ãÚÇÑİ';
-$string['displayformat4'] = 'ÇáÇÓÆáÉ ÇáãÊßÑÑÉ';
-$string['displayformat5'] = 'ßÇãá ÈÏæä ßÇÊÈ';
-$string['displayformat6'] = 'ŞÇÆãÉ ãÕØáÇÍÇÊ';
 $string['displayformatcontinuous'] = 'ãÓÊãÑ ÈÏæä ßÇÊÈ';
-$string['displayformatdefault'] = 'ÓÑÏ ãÚÌãí ãÈÓØ';
+$string['displayformatdictionary'] = 'äãØ ŞÇãæÓí ÈÓíØ';
+$string['displayformatencyclopedia'] = 'ÏÇÆÑÉ ãÚÇÑİ';
+$string['displayformatentrylist'] = 'ŞÇÆãÉ ãÕØáÇÍÇÊ';
+$string['displayformatfaq'] = 'ÇÓÆáå ãÊßÑÑÉ';
+$string['displayformatfullwithauthor'] = 'ßÇãá ãÚ ÇáßÇÊÈ';
+$string['displayformatfullwithoutauthor'] = 'ßÇãá ÈÏæä ßÇÊÈ';
 $string['displayformats'] = 'ÚÑÖ ÊäÓíŞÇÊ';
 $string['displayformatssetup'] = 'ÃÚÑÖ ÅÚÏÇÏ ÇáÕíÛÇÊ';
 $string['duplicateentry'] = 'ÊßÑÇÑ ÇáãÕØáÍ';
+$string['editalways'] = 'ÊÍÑíÑ ÏÇÆã';
 $string['editcategories'] = 'ÊÍÑíÑ ÇáÇÕäÇİ';
 $string['editentry'] = 'ÊÍÑíÑ ÇáãÕØáÍ';
 $string['editingcomment'] = 'ÊÍÑíÑ ÇáÊÚáíŞ';
@@ -84,10 +85,10 @@ $string['entryexported'] = 'Êã ÊÕÏíÑ ÇáãÕØáÍ ÈäÌÇÍ';
 $string['entryishidden'] = '(åĞÇ ÇáãÕØáÍ ãÎİíÉ ÍÇáíÇğ)';
 $string['entryleveldefaultsettings'] = 'ÇÅÚÏÇÏ ÇáÅİÊÑÇÖí ááãÕØáÍ';
 $string['entryusedynalink'] = 'íÌÈ ÑÈØ åĞÇ ÇáãÕØáÍ ÂáíÇ';
-$string['explainaddentry'] = 'ÃÖİ ãÕØáÍ ÌÏíÏÉ Åáì ÇáãÓÑÏ ÇáÍÇáí.<br /> ÊÚÈÆÉ ÍŞáí Çáãİåæã æ ÇáÊÚÑíİ ÅÌÈÇÑí';
+$string['explainaddentry'] = 'ÃÖİ ãÕØáÍ ÌÏíÏÉ Åáì ÇáãÓÑÏ ÇáÍÇáí.<br> ÊÚÈÆÉ ÍŞáí Çáãİåæã æ ÇáÊÚÑíİ ÅÌÈÇÑí';
 $string['explainall'] = 'ÃÚÑÖ ÌãíÚ ÇáãÕØáÇÍÇÊ İí ÕİÍÉ æÇÍÏÉ';
 $string['explainalphabet'] = 'ÇÓÊÚÑÖ ÇáãÓÑÏ ÈÇÓÊÎÏÇã ÇáİåÑÓÊ';
-$string['explainexport'] = 'áŞÏ Êã ÅäÔÇÁ ãáİ.<br /> Şã ÈÊäÒíáÉ æÇÍÊİÙ Èå İí ãßÇä Ããä. ÊÓØíÚ ÇÓÊíÑÇÏå Åáì åĞÇ ÇáãäåÌ ÇáÏÑÇÓí Ãæ ÛíÑå ãÊì ÔÆÊ ';
+$string['explainexport'] = 'áŞÏ Êã ÅäÔÇÁ ãáİ.<br> Şã ÈÊäÒíáÉ æÇÍÊİÙ Èå İí ãßÇä Ããä. ÊÓØíÚ ÇÓÊíÑÇÏå Åáì åĞÇ ÇáãäåÌ ÇáÏÑÇÓí Ãæ ÛíÑå ãÊì ÔÆÊ ';
 $string['explainimport'] = 'íÌÈ Úáíß ÊÍÏíÏÇáãáİ ÇáãÓÊæÑÏ æÊÚÑíİ ãÚÇííÑ ÚãáíÉ ÇáÅÓÊíÑÇÏ.<p> Óáã ØáÈß æŞã ÈãÑÇÌÚÉ ÇáäÊÇÆÌ.';
 $string['explainspecial'] = 'ÇÚÑÖ ÇáãÕØáÇÍÇÊ ÇáÊì áÇ ÊäÊã Åáì ÍÑİ';
 $string['exportedentry'] = 'Êã ÊÕÏíÑ ÇáãÕØáÍ';
@@ -99,6 +100,7 @@ $string['filetoimport'] = 'Çáãáİ ÇáãÑÇÏ ÇÓÊíÑÇÏå';
 $string['fillfields'] = 'ÍŞæá Çáãİåæã æÇáÊÚÑíİ ÇÌÈÇÑíÉ';
 $string['filtername'] = 'ÇáÑÈØ ÇáÂáí ááãÓÑÏ';
 $string['fullmatch'] = 'ŞÇÑä ßá ÇáßáãÇÊ İŞØ';
+$string['globalglossary'] = 'ãÓÑÏ ÔÇãá';
 $string['glossaryleveldefaultsettings'] = 'ÇáÅÚÏÇÏ ÇáÅİÊÑÇÖí ááãÓÑÏ';
 $string['glossarytype'] = 'äæÚ ÇáãÓÑÏ';
 $string['glosssaryexported'] = 'Êã ÊÕÏíÑ ÇáãÓÑÏ';

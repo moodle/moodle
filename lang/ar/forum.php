@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004062401)
+      // forum.php - created with Moodle 1.4 development (2004081200)
 
 
 $string['addanewdiscussion'] = 'ÃÖÝ ãæÖæÚÇ ÌÏíÏÇ ááäÞÇÔ';
@@ -24,7 +24,7 @@ $string['delete'] = 'ÍÐÝ';
 $string['deleteddiscussion'] = 'Êã ÍÐÝ ãæÖæÚ ÇáäÞÇÔ';
 $string['deletedpost'] = 'Êã ÍÐÝ åÐå ÇáãÞÇáÉ';
 $string['deletesure'] = 'åá ÃäÊ ãÊÃßÏ Ãäß ÊÑíÏ ÅáÛÇÁ ÍÐÝ åÐå ÇáãÔÇÑßÉ¿';
-$string['digestmailprefs'] = 'áãÍÊß ÇáÔÎÕíÉ';
+$string['digestmailprefs'] = 'ÓíÑÊß ÇáÐÇÊíÉ';
 $string['digestmailsubject'] = '$a ãáÎÕ ãäÊÏì';
 $string['digestsentusers'] = 'ÇáãáÎÕÇÊ ÇÑÓáÊ ÈäÌÇÍ ÈÇáÈÑíÏ ÇáÅáßÊÑæäí Åáì $a ÇáãÓÊÎÏãíä';
 $string['discussion'] = 'äÞÇÔ';
@@ -99,6 +99,7 @@ $string['postupdated'] = 'Êã ÊÍÏíË ãÞÇáß ÇáãÑÓá';
 $string['processingdigest'] = 'ÅÚÏÇÏ ÇáãáÕ ÇáÈÑíÏí ááãÓÊÎÏã  $a';
 $string['processingpost'] = 'ãÚÇáÌÉ ÇáÑÓÇáÉ $a';
 $string['prune'] = 'ÌÒÇÁ';
+$string['prunedpost'] = 'ÃäÔÆ äÞÇÔ ÌÏíÏ áåÐå ÇáãÔÇÑßÉ';
 $string['pruneheading'] = 'ÌÒÇÁ ÇáãÔÇÑßÉ æÇäÞáåÇ Åáì äÞÇÔ ÌÏíÏ';
 $string['rate'] = 'ÕäÝ';
 $string['rating'] = 'ÊÕäíÝ';
