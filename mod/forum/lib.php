@@ -216,6 +216,8 @@ function forum_cron () {
                 continue;
             }
 
+            $userfrom->precedence = "bulk";   // This gets added to the email header
+
             if (! $discussion = get_record("forum_discussions", "id", "$post->discussion")) {
                 echo "Could not find discussion $post->discussion\n";
                 continue;
