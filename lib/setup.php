@@ -218,8 +218,10 @@
 /// majority of cases), use the stored locale specified by admin.
 
     if (isset($_GET['lang'])) {
-        $SESSION->lang = $lang;
-        $SESSION->encoding = get_string('thischarset');
+        if (!detect_munged_arguments($lang) and file_exists("$CFG->dirroot/lang/$lang")) {
+            $SESSION->lang = $lang;
+            $SESSION->encoding = get_string('thischarset');
+        }
     }
     if (empty($CFG->lang)) {
         $CFG->lang = "en";
