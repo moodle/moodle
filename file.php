@@ -63,7 +63,7 @@
         header("Cache-control: max_age = $CFG->filelifetime");
         header("Pragma: ");
         header("Content-disposition: inline; filename=$filename");
-        header('Accept-Ranges: none');
+        //header('Accept-Ranges: none');
 
 
         if (empty($CFG->filteruploadedfiles)) {
