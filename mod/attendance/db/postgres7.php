@@ -18,6 +18,18 @@ function attendance_upgrade($oldversion) {
         table_column("attendance", "", "autoattend", "integer", 2, "unsigned", "0", "not null");
     }
 
+    if ($oldversion < 2004050301) {
+
+        modify_database("", "INSERT INTO {$CFG->prefix}log_display VALUES ('attendance', 'view', 'attendance', 'name');");
+
+        modify_database("", "INSERT INTO {$CFG->prefix}log_display VALUES ('attendance', 'viewall', 'attendance', 'name');");
+
+        modify_database("", "INSERT INTO {$CFG->prefix}log_display VALUES ('attendance', 'viewweek', 'attendance', 'name');");
+
+    }
+
+
+
     return true;
 }
 

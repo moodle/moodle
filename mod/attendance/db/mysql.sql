@@ -30,3 +30,7 @@ CREATE TABLE prefix_attendance_roll (
   notes varchar(64) NOT NULL default '',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
+INSERT INTO prefix_log_display VALUES ('attendance', 'view', 'attendance', 'name');
+INSERT INTO prefix_log_display VALUES ('attendance', 'view', 'attendance', 'name');
+INSERT INTO prefix_log_display VALUES ('attendance', 'viewall', 'attendance', 'name');
+
