@@ -1,21 +1,21 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // journal.php - created with Moodle 1.2 development (2003091800)
 
 
 $string['alwaysopen'] = "Sempre aperto";
 $string['blankentry'] = "Lasciato vuoto";
 $string['daysavailable'] = "Giorni disponibili";
-$string['editingended'] = "L'intervallo per le modifiche è terminato";
-$string['editingends'] = "Scadenza dell'intervallo di tempo per le modifiche";
-$string['entries'] = "Inserzioni";
-$string['feedbackupdated'] = "Valutazione aggiornata per \$a inserzioni";
-$string['journalmail'] = "\$a->teacher ha valutato la tua inserzione per '\$a->assignment'.
+$string['editingended'] = "Il tempo a disposizione per le modifiche è terminato";
+$string['editingends'] = "Il tempo a sisposizione per le modifiche termina";
+$string['entries'] = "Annotazioni";
+$string['feedbackupdated'] = "Valutazione aggiornata per \$a annotazioni";
+$string['journalmail'] = "\$a->teacher ha valutato la tua annotazione per '\$a->journal'.
 
-Puoi vedere la valutazione allegata alla tua inserzione:
+Puoi vedere la valutazione allegata alla tua annotazione:
 
 \$a->url ";
-$string['journalmailhtml'] = "\$a->teacher ha valutato la tua inserzione per  '<i>\$a->assignment'</i>.<br /><br />
-Puoi vedere la valutazione allegata  alla tua <a href=\\\"\$a->url\\\">inserzione</a>";
+$string['journalmailhtml'] = "\$a->teacher ha valutato la tua annotazione per  '<i>\$a->journal'</i>.<br /><br />
+Puoi vedere la valutazione allegata  alla tua <a href=\\\"\$a->url\\\">annotazione</a>";
 $string['journalname'] = "Nome del diario";
 $string['journalquestion'] = "Domanda del diario";
 $string['journalrating1'] = "Non soddisfacente";
@@ -31,7 +31,7 @@ $string['notstarted'] = "Non hai ancora iniziato questo diario";
 $string['overallrating'] = "Valutazione generale";
 $string['rate'] = "Valutazione";
 $string['saveallfeedback'] = "Salva le mie risposte";
-$string['startoredit'] = "Inizia o edita la mia scrittura sul diario";
-$string['viewallentries'] = "Vedi \$a scritture sul diario";
+$string['startoredit'] = "Inizia o modifica la mia annotazione sul diario";
+$string['viewallentries'] = "Vedi \$a annotazioni sul diario";
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // survey.php - created with Moodle 1.2 development (2003091800)
 
 
 $string['actual'] = "Attuale";
@@ -172,8 +172,8 @@ $string['howlongoptions'] = "meno di 1 min, 1-2 min,2-3 min,3-4 min,4-5-min,5-10
 $string['ifoundthat'] = "Ho trovato quello";
 $string['introtext'] = "Testo di introduzione";
 $string['ipreferthat'] = "Preferisco quello";
-$string['modulename'] = "Domande Feedback";
-$string['modulenameplural'] = "Prove di valutazione";
+$string['modulename'] = "Sondaggio";
+$string['modulenameplural'] = "Sondaggi";
 $string['name'] = "Nome";
 $string['newsurveyresponses'] = "Nuove risposte all'indagine";
 $string['nobodyyet'] = "Nessuno ha ancora completato questa prova";

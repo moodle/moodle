@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.1 development (2003081700)
+      // assignment.php - created with Moodle 1.2 development (2003091800)
 
 
 $string['allowresubmit'] = "Permettere di sottomettere più volte";
@@ -31,11 +31,10 @@ $string['overwritewarning'] = "Attenzione: trasferendo ulteriori allegati essi S
 $string['saveallfeedback'] = "Salva tutte le mie risposte";
 $string['submissionfeedback'] = "Risposte alla consegna";
 $string['submissions'] = "Consegne";
-$string['submitassignment'] = "Presenta il tuo compito usando questo form";
+$string['submitassignment'] = "Consegna il tuo compito usando questo form";
 $string['submitted'] = "Consegnato";
-$string['typeoffline'] = "Attività non in rete";
-$string['typeuploadsingle'] = "Trasferire un singolo file
-attibuibile per un valore compreso fra 0 e 100 punti";
+$string['typeoffline'] = "Attività in aula";
+$string['typeuploadsingle'] = "Trasferire un file";
 $string['uploadbadname'] = "Questo file contiene caratteri non conformi e non può essere trasferito.";
 $string['uploadedfiles'] = "files trasferiti";
 $string['uploaderror'] = "Si è verificato un errore durante il salvataggio del file sul server.";
@@ -44,7 +43,7 @@ $string['uploadfiletoobig'] = "Spiacenti, ma il file è troppo grande (il limite 
 $string['uploadnofilefound'] = "Nessun file risulta disponibile - sei sicuro che ne hai selezionato uno per effettuare il trasferimento sul server?";
 $string['uploadnotregistered'] = "'\$a' è stato trasferito ma la registrazione non è avvenuta!";
 $string['uploadsuccess'] = "Trasferimento di '\$a' avvenuto con successo";
-$string['viewfeedback'] = "Vedi valutazione dei compiti e risposte";
+$string['viewfeedback'] = "Vedi valutazioni del compito e commento";
 $string['viewsubmissions'] = "Vedi \$a compiti consegnati";
 $string['yoursubmission'] = "La tua consegna";
 
