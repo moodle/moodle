@@ -140,6 +140,12 @@
                         // figure out a sortorder that we can use in the destination category
                         $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
                                                     FROM ' . $CFG->prefix . 'course WHERE category=' . $destcategory->id);
+                        if ($sortorder < 1) { 
+                            // rather than let the db default to 0
+                            // set it to > 100 and avoid extra work in fix_coursesortorder()
+                            $sortorder = 200;
+                        }
+
                         $course->category  = $destcategory->id;
                         $course->sortorder = $sortorder;
  
