@@ -162,6 +162,17 @@ function init() {
   } else {
       $this->parameter['lang_decode'] = "";
   }
+
+  $this->parameter['lang_transcode'] = '';   /// by default
+
+  if (function_exists('iconv')) {
+      $charset = strtolower(get_string('thischarset'));
+
+      if ($charset != 'iso-8859-1' and $charset != 'utf-8') {
+          $this->parameter['lang_transcode'] = $charset;
+      }
+  }
+
   /// End Moodle mods
 
 
@@ -1224,6 +1235,9 @@ function print_TTF($message) {
   if ($this->parameter['lang_decode']) {               // Moodle addition
       include_once($this->parameter['lang_decode']);
       $text = lang_decode($text);
+
+  } else if ($this->parameter['lang_transcode']) {
+      $text = iconv($this->parameter['lang_transcode'], 'UTF-8', $text);
   }
   ImageTTFText($this->image, $points, $angle, $x, $y, $colour, $font, $text);
 }
@@ -1330,6 +1344,9 @@ function get_boundaryBox($message) {
     if ($this->parameter['lang_decode']) {               // Moodle addition
         include_once($this->parameter['lang_decode']);
         $text = lang_decode($text);
+
+    } else if ($this->parameter['lang_transcode']) {
+        $text = iconv($this->parameter['lang_transcode'], 'UTF-8', $text);
     }
 	$bounds = ImageTTFBBox($points, $angle, $font, $text);
 
