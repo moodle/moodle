@@ -34,7 +34,7 @@
                      "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> -> 
                       <A HREF=\"index.php?id=$course->id\">$participants</A> -> $fullname", "");
     } else {
-        print_header("$personalprofile: $fullname", "$personalprofile: $fullname", "$fullname", "");
+        print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname", "$fullname", "");
     }
 
     if ($course->category and ! isguest() ) {

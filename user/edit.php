@@ -12,7 +12,7 @@
     }
 
     if (! $course = get_record("course", "id", $course)) {
-        error("User ID was incorrect");
+        error("Course ID was incorrect");
     }
 
 	require_login($course->id);
@@ -150,13 +150,13 @@
     $participants = get_string("participants");
 
     if ($course->category) {
-	    print_header($editmyprofile, $editmyprofile, 
+	    print_header("$course->fullname: $editmyprofile", "$course->fullname: $editmyprofile",
                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                     -> <A HREF=\"index.php?id=$course->id\">$participants</A>
                     -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> 
                     -> $editmyprofile", "");
     } else {
-	    print_header($editmyprofile, $editmyprofile,
+	    print_header("$course->fullname: $editmyprofile", "$course->fullname",
                      "<A HREF=\"view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> 
                       -> $editmyprofile", "");
     }
