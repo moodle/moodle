@@ -330,12 +330,13 @@ function format_text($text, $format, $options=NULL) {
                 $options->smiley=true;
             }
             if (!isset($options->para)) {
-                $options->smiley=true;
+                $options->para=true;
             }
             return text_to_html($text, $options->smiley, $options->para);
             break;
 
         case FORMAT_HTML:
+            $text = replace_smilies($text);
             return $text;   // Is re-cleaning needed?
             break;
     }
@@ -357,12 +358,14 @@ function clean_text($text, $format) {
     }
 }
 
+function replace_smilies($text) {
+    global $CFG, $SMILEY_TEXT, $SMILEY_IMAGE;
 
+    return str_replace($SMILEY_TEXT, $SMILEY_IMAGE, $text);
+}
 
 function text_to_html($text, $smiley=true, $para=true) {
 // Given plain text, makes it into HTML as nicely as possible.
-
-    global $CFG, $SMILEY_TEXT, $SMILEY_IMAGE;
 
     // Remove any whitespace that may be between HTML tags
     $text = eregi_replace(">([[:space:]]+)<", "><", $text);
@@ -384,7 +387,7 @@ function text_to_html($text, $smiley=true, $para=true) {
 
     // Turn smileys into images.
     if ($smiley) {
-        $text = str_replace($SMILEY_TEXT, $SMILEY_IMAGE, $text);
+        $text = replace_smilies($text);
     }
 
     if ($para) {
