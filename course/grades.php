@@ -1,9 +1,8 @@
 <?PHP // $Id$
       // Displays all grades for a course
 
-	require_once("../config.php");
-	require_once("lib.php");
-    require_once("../lib/psxlsgen.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     require_variable($id);              // course id
     optional_variable($download, "");   // to download data 
@@ -27,7 +26,7 @@
 /// Get a list of all students
 
     if (!$students = get_course_students($course->id, "u.lastname ASC")) {
-	    print_header("$course->shortname: $strgrades", "$course->fullname", 
+        print_header("$course->shortname: $strgrades", "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $strgrades");
         print_heading(get_string("nostudentsyet"));
@@ -125,22 +124,31 @@
 
 
 /// OK, we have all the data, now present it to the user
-
     if ($download == "xls") {
+        require_once("../lib/excel/Worksheet.php");
+        require_once("../lib/excel/Workbook.php");
 
-        $myxls = new PhpSimpleXlsGen();
-        $myxls->totalcol = count($columns) + 5;
+// HTTP headers
+        header("Content-type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=".$course->shortname."_$strgrades.xls");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: public");
 
+/// Creating a workbook
+        $workbook = new Workbook("-");
+        $myxls =& $workbook->add_worksheet('$strgrades');
+    
 /// Print names of all the fields
 
-        $myxls->ChangePos(0,0);
-        $myxls->InsertText(get_string("firstname"));
-        $myxls->InsertText(get_string("lastname"));
+        $myxls->write_string(0,0,get_string("firstname"));
+        $myxls->write_string(0,1,get_string("lastname"));
+        $pos=2;
         foreach ($columns as $column) {
-            $myxls->InsertText(strip_tags($column));
+            $myxls->write_string(0,$pos++,strip_tags($column));
         }
-        $myxls->InsertText(get_string("total"));
-
+        $myxls->write_string(0,$pos,get_string("total"));
+    
     
 /// Print all the lines of data.
 
@@ -148,21 +156,19 @@
         foreach ($grades as $studentid => $studentgrades) {
             $i++;
             $student = $students[$studentid];
-
-            $myxls->ChangePos($i,0);
-            $myxls->InsertText($student->firstname);
-            $myxls->InsertText($student->lastname);
-
+    
+            $myxls->write_string($i,0,$student->firstname);
+            $myxls->write_string($i,1,$student->lastname);
+            $j=2;
             foreach ($studentgrades as $grade) {
-                $myxls->InsertText(strip_tags($grade));
+                $myxls->write_string($i,$j++,strip_tags($grade));
             }
-            $myxls->InsertNumber($totals[$student->id]);
+            $myxls->write_number($i,$j,$totals[$student->id]);
         }
-
-        $myxls->SendFileName("$course->shortname $strgrades");
-
+        
+        $workbook->close();
+    
         exit;
-
 
     } else if ($download == "txt") {
 
@@ -198,11 +204,22 @@
     
     } else {  // Just print the web page
 
-	    print_header("$course->shortname: $strgrades", "$course->fullname", 
+        print_header("$course->shortname: $strgrades", "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $strgrades");
     
         print_heading($strgrades);
+
+        echo "<TABLE BORDER=0 ALIGN=CENTER><TR>";
+        echo "<TD>";
+        $options["id"] = "$course->id";
+        $options["download"] = "xls";
+        print_single_button("grades.php", $options, get_string("downloadexcel"));
+        echo "<TD>";
+        $options["download"] = "txt";
+        print_single_button("grades.php", $options, get_string("downloadtext"));
+        echo "</TABLE>";
+    
 
         $table->head  = array_merge(array ("", get_string("firstname"), get_string("lastname")), $columnhtml, get_string("total"));
         $table->width = array(35, "");
@@ -225,16 +242,6 @@
     
         print_table($table);
 
-        echo "<TABLE BORDER=0 ALIGN=CENTER><TR>";
-        echo "<TD>";
-        $options["id"] = "$course->id";
-        $options["download"] = "xls";
-        print_single_button("grades.php", $options, get_string("downloadexcel"));
-        echo "<TD>";
-        $options["download"] = "txt";
-        print_single_button("grades.php", $options, get_string("downloadtext"));
-        echo "</TABLE>";
-    
         print_footer($course);
     }
     
