@@ -1413,6 +1413,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $stredit = get_string("edit", "forum");
         $strdelete = get_string("delete", "forum");
         $strreply = get_string("reply", "forum");
+        $strparent = get_string("parent", "forum");
         $strprune = get_string("prune", "forum");
         $strpruneheading = get_string("pruneheading", "forum");
         $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
