@@ -23,8 +23,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$current
 
     echo "\n<tr><td width=100% bgcolor=\"$THEME->cellcontent\">";
     if ($entry) {
-        echo format_text($entry->definition, $entry->format);
-
+        glossary_print_entry_definition($entry);
         glossary_print_entry_icons($course, $cm, $glossary, $entry, $currentview, $cat);
 
     } else {

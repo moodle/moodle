@@ -15,11 +15,11 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="
         glossary_print_entry_attachment($entry,"html","right");
 
         echo '<b>' . get_string("question","glossary") . ':</b> ';
-        echo  glossary_print_entry_concept($entry) . '<br>';
+        glossary_print_entry_concept($entry) . '<br>';
         echo '&nbsp;&nbsp;<font size=1>' . get_string("lastedited").': '.userdate($entry->timemodified) . '</font></tr>';
         echo "<tr><td width=100% bgcolor=\"$THEME->cellcontent\">";		
         echo '<b>' . get_string("answer","glossary") . ':</b> ';
-        echo glossary_print_entry_definition($entry);
+        glossary_print_entry_definition($entry);
 
 
         glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons);

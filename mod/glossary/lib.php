@@ -459,7 +459,11 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
         return $return;
 }
 function  glossary_print_entry_concept($entry) {
-    echo $entry->concept;
+    $text = format_text($entry->concept, $entry->format);
+    if (!empty($entry->highlight)) {
+        $text = highlight($entry->highlight, $text);
+    }
+    echo $text;
 }
 
 function glossary_print_entry_definition($entry) {
@@ -508,7 +512,12 @@ function glossary_print_entry_definition($entry) {
         }
     }
 */
-    echo format_text($definition, $entry->format);
+
+    $text = format_text($definition, $entry->format);
+    if (!empty($entry->highlight)) {
+        $text = highlight($entry->highlight, $text);
+    }
+    echo $text;
 }
 
 function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",$hook="", $type = 'print') {

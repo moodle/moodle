@@ -403,10 +403,9 @@
                 $concept = $entry->concept;
                 $definition = $entry->definition;
     
-                /// highligh the term if necessary
+                /// highlight the term if necessary
                 if ($mode == 'search') {
-                    $entry->concept = highlight($hook, $concept);
-                    $entry->definition = highlight($hook, $definition);
+                    $entry->highlight = $hook;
                 } 
 
                 /// and finally print the entry.
