@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004060400)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
@@ -37,7 +37,7 @@ $string['discussions'] = 'Debats';
 $string['discussionsstartedby'] = 'Debats iniciats per $a';
 $string['discussionsstartedbyrecent'] = 'Debats iniciats recentment per $a';
 $string['discussthistopic'] = 'Debat aquest tema';
-$string['eachuserforum'] = 'Cada persona envia un debat';
+$string['eachuserforum'] = 'Cada persona inicia un debat';
 $string['edit'] = 'Edita';
 $string['editing'] = 'S\'està editant';
 $string['emptymessage'] = 'El vostre missatge presentava algun problema. Potser l\'havíeu deixat en blanc, o el fitxer adjunt era massa gran. Els canvis NO s\'han desat.';
@@ -79,7 +79,6 @@ $string['nomorepostscontaining'] = 'No s\'han trobat més missatges que contingui
 $string['nonews'] = 'Encara no s\'han enviat notícies';
 $string['noposts'] = 'No hi ha missatges';
 $string['nopostscontaining'] = 'No s\'ha trobat cap missatge que contingui \'$a\'';
-$string['noreply'] = 'Sense resposta';
 $string['nosubscribers'] = 'Encara no hi ha subscriptors d\'aquest fòrum';
 $string['notingroup'] = 'Heu de ser part d\'un grup per veure aquest fòrum.';
 $string['nownotsubscribed'] = '$a->name NO rebrà còpies de \'$a->forum\' per correu electrònic.';
@@ -104,6 +103,7 @@ $string['postupdated'] = 'S\'ha actualitzat el vostre missatge';
 $string['processingdigest'] = 'S\'està processant el resum de correu de l\'usuari $a';
 $string['processingpost'] = 'S\'està processant el missatge $a';
 $string['prune'] = 'Separa';
+$string['prunedpost'] = 'S\'ha creat un nou debat amb aquest missatge';
 $string['pruneheading'] = 'Separa el missatge i mou-lo a un altre debat';
 $string['rate'] = 'Valora';
 $string['rating'] = 'Valoració';
