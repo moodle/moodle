@@ -713,12 +713,12 @@ function print_recent_activity($course) {
                 switch ($log->action) {
                     case 'add mod':
                         $stradded = get_string('added', 'moodle', get_string('modulename', $info[0]));
-                        $changelist[$log->info] = array ('operation' => 'add', 'text' => "$stradded:<br /><a href=\"$CFG->wwwroot/course/$log->url\">$modname</a>");
+                        $changelist[$log->info] = array ('operation' => 'add', 'text' => "$stradded:<br /><a href=\"$CFG->wwwroot/course/$log->url\">".format_string($modname,true)."</a>");
                     break;
                     case 'update mod':
                        $strupdated = get_string('updated', 'moodle', get_string('modulename', $info[0]));
                        if (empty($changelist[$log->info])) {
-                           $changelist[$log->info] = array ('operation' => 'update', 'text' => "$strupdated:<br /><a href=\"$CFG->wwwroot/course/$log->url\">$modname</a>");
+                           $changelist[$log->info] = array ('operation' => 'update', 'text' => "$strupdated:<br /><a href=\"$CFG->wwwroot/course/$log->url\">".format_string($modname,true)."</a>");
                        }
                     break;
                     case 'delete mod':
