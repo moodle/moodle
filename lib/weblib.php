@@ -610,6 +610,9 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         case FORMAT_HTML:
             replace_smilies($text);
             $text = filter_text($text, $courseid);
+            if (!isset($options->noclean)) {
+                $text = clean_text($text, $format);
+            }
             break;
 
         case FORMAT_PLAIN:
@@ -623,11 +626,17 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             $text = wiki_to_html($text);
             $text = rebuildnolinktag($text);
             $text = filter_text($text, $courseid);
+            if (!isset($options->noclean)) {
+                $text = clean_text($text, $format);
+            }
             break;
 
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
             $text = filter_text($text, $courseid);
+            if (!isset($options->noclean)) {
+                $text = clean_text($text, $format);
+            }
             break;
 
         default:  // FORMAT_MOODLE or anything else
@@ -642,6 +651,9 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             }
             $text = text_to_html($text, $options->smiley, $options->para, $options->newlines);
             $text = filter_text($text, $courseid);
+            if (!isset($options->noclean)) {
+                $text = clean_text($text, $format);
+            }
             break;
     }
 
@@ -649,7 +661,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         $newrecord->md5key = $md5key;
         $newrecord->formattedtext = addslashes($text);
         $newrecord->timemodified = time();
-        insert_record('cache_text', $newrecord);
+        @insert_record('cache_text', $newrecord);
     }
 
     return $text;
