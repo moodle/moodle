@@ -406,6 +406,7 @@
 <p class="answer">After performing any of these fixes it might be a good idea to drop all the tables in your database and re-install again from scratch.</p>
 
 
+
 <h4 class="question"><a name="nologin"></a>I can't log in - I just stay stuck on the login screen.</h4>
 
 <p class="answer">The most common cause for this is that your own computer (not your Moodle server) 
@@ -418,23 +419,20 @@
                   properly on the server.  You can test this by calling the script 
                   http://yourserver/moodle/lib/session-test.php.</p>
 
-<h4 class="question"><a name="backup"></a>How do I backup my Moodle site?</h4>
 
-<p class="answer">The Unix commands are as follows:
-<br>
-cd /backup/moodle.org (substitute your appropriate directory)
-<br>
-mv moodle-database.sql.gz moodle-database-old.sql.gz (keep an old copy)
-<br>
-mysqldump -h moodle.org -u username --password=moodlepass -C -Q -e -a moodle > moodle-database.sql
-<br>
-gzip moodle-database.sql (to compress the new one)
-<br><br>
-For the files:
-<br>
-rsync -auvtz --delete -e ssh username@moodle.org:/home/moodle/ /backup/moodle.org/moodle/
-<br>
-You're done.</p>
+
+<h4 class="question"><a name="backup"></a>How do I backup my whole Moodle site?</h4>
+
+<p class="answer">There are two main things you need to make a copy of: the database and the uploaded files.  The Moodle scripts themselves are less important, since you can always download a fresh copy if you have to.</p>
+
+<p class="answer">There are many ways to do such backups.  Here is an outline of a little script you can run on Unix to backup the database (it works well to have such a script run daily via a cron task</p>
+<p class="answercode">cd /my/backup/directory</p>
+<p class="answercode">mv moodle-database.sql.gz moodle-database-old.sql.gz</p>
+<p class="answercode">mysqldump -h example.com -u myusername --password=mypassword -C -Q -e -a mydatabasename > moodle-database.sql</p>
+<p class="answercode">gzip moodle-database.sql</p>
+<p class="answer">For the files, you can use rsync regularly to copy only the changed files to another host:</p>
+<p class="answercode">rsync -auvtz --delete -e ssh mysshusername@example.com:/my/server/directory /my/backup/directory/</p>
+
 
 <h2>&nbsp;</h2>
 
