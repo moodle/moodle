@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // forum.php - created with Moodle 1.0.8 dev (2002122301)
 
 
@@ -64,8 +64,8 @@ $string['noguestpost'] = "Gäste dürfen hier nicht eintragen";
 $string['noposts'] = "Keine Beiträge";
 $string['nopostscontaining'] = "Es wurden keine in '\$a' enthaltenen Beiträge gefunden";
 $string['nosubscribers'] = "Momentan gibt es keine Teilnehmer in diesem Forum";
-$string['nownotsubscribed'] = "\$a->name wird KEINE Kopien von '\$a->forum' per Email erhalten";
-$string['nowsubscribed'] = "\$a->name wird Kopien von '\$a->forum'  per Email erhalten";
+$string['nownotsubscribed'] = "\$a->name wird KEINE Kopien von '\$a->forum' per E-Mail erhalten";
+$string['nowsubscribed'] = "\$a->name wird Kopien von '\$a->forum'  per E-Mail erhalten";
 $string['numposts'] = "\$a Beiträge";
 $string['olderdiscussions'] = "Ältere Diskussionen";
 $string['openmode0'] = "Keine Diskussionen, keine Antworten";
@@ -75,6 +75,7 @@ $string['parentofthispost'] = "Verfasser dieses Beitrags";
 $string['postadded'] = "Ihr Eintrag wurde erfolgreich hinzugefügt. <P>Sie haben \$a zu bearbeiten, sofern Sie Änderungen machen möchten.";
 $string['postincontext'] = "Diesen Beitrag im Zusammenhang einsehen";
 $string['postmailinfo'] = "Hiermit erhalten Sie die Kopie einer Mitteilung, die auf der internet-Seite \$a eingetragen wurde.
+
 Um auf diese zu antworten, folgen Sie bitte diesem Link:";
 $string['postrating1'] = "Durchaus differenziertes Wissen";
 $string['postrating2'] = "Durchaus differenziert und fundiert";
@@ -103,8 +104,8 @@ $string['subscribe'] = "In diesem Forum anmelden";
 $string['subscribed'] = "Angemeldet";
 $string['subscribers'] = "Teilnehmer";
 $string['subscribersto'] = "Teilnehmer für '\$a'";
-$string['subscribestart'] = "Senden sie mir Kopien via Email von den Beiträgen zu diesem Forum";
-$string['subscribestop'] = "Ich möchte keine Kopien via Email von den Beiträgen zu diesem Forum";
+$string['subscribestart'] = "Senden sie mir Kopien via E-Mail von den Beiträgen zu diesem Forum";
+$string['subscribestop'] = "Ich möchte keine Kopien via E-Mail von den Beiträgen zu diesem Forum";
 $string['subscription'] = "Anmeldung";
 $string['subscriptions'] = "Anmeldungen";
 $string['unsubscribe'] = "Von diesem Forum abmelden";

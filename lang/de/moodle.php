@@ -10,7 +10,7 @@ $string['activityiscurrentlyhidden'] = "Entschuldigung, diese Aktivität ist mome
 $string['activitymodule'] = "Aktive Module";
 $string['activityreport'] = "Übersicht der Aktivitäten";
 $string['activityselect'] = "Wählen Sie diese Aktivität aus, um diese irgendwohin zu verschieben";
-$string['activitysince'] = "Aktivität drit \$a";
+$string['activitysince'] = "Aktivität seit \$a";
 $string['add'] = "Hinzufügen";
 $string['addadmin'] = "Verwalter hinzufügen";
 $string['addcreator'] = "Kursersteller hinzufügen";
@@ -84,7 +84,7 @@ $string['configgdversion'] = "Zeigt Ihnen die Version von GD an, die installiert
 $string['confightmleditor'] = "Wählen Sie aus, ob Sie die Verwendung der HTML Text-Eingabe zulassen möchten. Selbst, wenn Sie es zulassen, erscheint diese Text-Eingabe nur, wenn der Benutzer einen geeigneten Browser (wie z.B. den IE 5.5 oder höher) benutzt.
 Die Benutzer können ebenso auswählen, diesen nicht zu benutzen.";
 $string['configintro'] = "Auf dieser Seite können Sie eine Anzahl von Konfigurations-Variablen spezifizieren, die Ihnen helfen, dass Moodle auf Ihrem Server vernünftig läuft. Sorgen Sie sich nicht grossartig - Die Standard-Einstellungen funktionieren normalerweise sehr gut und Sie können jederzeit auf diese Seite zurückkommen und diese ändern.";
-$string['configintroadmin'] = "Auf dieser Seite sollten Sie den Zugang des Hauptverwalters eintichten, der die vollständige Kontrolle über siw Seite hat. Achten Sie datauf, dass Sie hier einen sicheren Benutzernamen samt Kennwort, sowie eine gültige Email-Adresse angeben. Sie können sppäter auch noch mehr Verwalter einrichten.";
+$string['configintroadmin'] = "Auf dieser Seite sollten Sie den Zugang des Hauptverwalters eintichten, der die vollständige Kontrolle über siw Seite hat. Achten Sie datauf, dass Sie hier einen sicheren Benutzernamen samt Kennwort, sowie eine gültige E-Mail-Adresse angeben. Sie können sppäter auch noch mehr Verwalter einrichten.";
 $string['configintrosite'] = "Diese Seite erlaubt es Ihnen, die Startseite und den Namen der neuen Seite einzurichten. Sie können später hierher zurückkehren und diese Einstellungen jederzeit ändern, indem Sie die Verknüpfung 'Seiteneinstellungen' auf der Startseite benutzen.";
 $string['configlang'] = "Wählen Sie die Standard-Sprache für die gesamte Seite. Die Benutzer können diese später überschreiben.";
 $string['configlangdir'] = "In den meisten Sprachen schreibt man von links nach rechts, aber in einigen anderen, wie Arabisch oder Hebräisch, schreibt man von rechts nach links";
@@ -103,7 +103,7 @@ Sofern Nutzer Probleme mit der Zugangsseite haben (zum Beispiel) sollten Sie die
 $string['configsessiontimeout'] = "Wenn angemeldete Benutzer eine lange Zeit fern bleiben (ohne Seiten zu laden), dann werden diese automatisch abgemeldet (Ihre Session/Sitzung wird beendet). Diese Variable gibt an, wie lange diese Zeit sein soll.";
 $string['configslasharguments'] = "Dateien (Bilder, Dokumente, usw.) werden über ein Skript, das 'Slash-Argumente' benutz (hier die zweite Option). Diese Methode erlaubt es Dateien einfacher im Internet-Browsern, Proxy-Servern, usw., zwischengespeichert zu werden.
 Leider erlauben nicht alle PHP-Server diese Methode, so dass Sie, sofern Sie Probleme bei der Anzeige von Dateien oder Bildern (beispielsweise den Benutzer-Fotos) haben, diese Variable auf die erste Option stellen müssen. ";
-$string['configsmtphosts'] = "Geben Sie hier den vollen Namen von einem oder mehreren lokalen SMTP-Servern an, die Moodle für den Email-Versnad benutzen soll (beispielsweise 'email.a.de' oder 'email.a.de;email.b.de'). Wenn Sie dieses frei lassen, wird Moodle die Standard-Methode von PHP zum Senden von Emails verwenden.";
+$string['configsmtphosts'] = "Geben Sie hier den vollen Namen von einem oder mehreren lokalen SMTP-Servern an, die Moodle für den E-Mail-Versnad benutzen soll (beispielsweise 'email.a.de' oder 'email.a.de;email.b.de'). Wenn Sie dieses frei lassen, wird Moodle die Standard-Methode von PHP zum Senden von E-Mails verwenden.";
 $string['configsmtpuser'] = "Sofern Sie einen SMTP-Server angegeben haben und der Server erfordert Zugangsdaten, dann geben Sie hier den Benutzernamen und das Kennwort an.";
 $string['configunzip'] = "Geben Sie hier den Pfad zum Programm unzip an (Nur Unix). Dieser wird für das Entpacken von ZIP-Archiven auf dem Server benötigt.";
 $string['configvariables'] = "Variablen konfigurieren";
@@ -174,40 +174,40 @@ $string['editmyprofile'] = "Profil bearbeiten";
 $string['editsummary'] = "Zusammenfassung bearbeiten";
 $string['editthisactivity'] = "Diese Aktivität bearbeiten";
 $string['edituser'] = "Nutzer-Zugang bearbeiten";
-$string['email'] = "Email-Adresse";
+$string['email'] = "E-Mail-Adresse";
 $string['emailconfirm'] = "Bestätigen Sie Ihren Zugang";
 $string['emailconfirmation'] = "Hallo \$a->firstname,
 
 ein neuer Zugang wurde auf '\$a->sitename'
-unter Verwendung Ihrer Email-Adresse beantragt.
+unter Verwendung Ihrer E-Mail-Adresse beantragt.
 
 Um Ihren neuen Zugang zu bestätigen,
 gehen Sie bitte auf folgende Internet-Adresse:
 
   \$a->link
 
-In den meisten Email-Programmen erscheint dieser Link blau, so dass Sie diesen anklicken können.
+In den meisten E-Mail-Programmen erscheint dieser Link blau, so dass Sie diesen anklicken können.
 Sofern dies nicht funktioniert,
 kopieren Sie bitte diese Adresse in die obere Zeile des
 Browsers-Fensters.
 Grüße von der '\$a->sitename'-Verwaltung, \$a->admin";
 $string['emailconfirmationsubject'] = "\$a: Zugangsinformation";
-$string['emailconfirmsent'] = "   <P>Eine Email sollte an Ihre Adresse <B>\$a</B>
+$string['emailconfirmsent'] = "   <P>Eine E-Mail sollte an Ihre Adresse <B>\$a</B>
 gesendet worden sein.
    <P>Sie enthält einfache Anweisungen, um Ihre Registrierung zu vervollständigen.
    <P>Bei weiteren Problemen kontaktieren Sie den Verwalter dieser Seite.";
-$string['emaildisplay'] = "Email-Anzeige";
-$string['emaildisplaycourse'] = "Nur Kurs-Mitgliedern meine Email-Adresse sichtbar machen";
-$string['emaildisplayno'] = "Meine Email-Adresse vor jedem verbergen";
-$string['emaildisplayyes'] = "Jeder darf meine Emailadresse sehen";
-$string['emailexists'] = "Diese Email-Adresse ist bereits registriert.";
-$string['emailformat'] = "Email-Format";
-$string['emailmustbereal'] = "Anmerkung: Ihre Email-Adresse <b>muss</b> existieren";
+$string['emaildisplay'] = "E-Mail-Anzeige";
+$string['emaildisplaycourse'] = "Nur Kurs-Mitgliedern meine E-Mail-Adresse sichtbar machen";
+$string['emaildisplayno'] = "Meine E-Mail-Adresse vor jedem verbergen";
+$string['emaildisplayyes'] = "Jeder darf meine E-Mail-Adresse sehen";
+$string['emailexists'] = "Diese E-Mail-Adresse ist bereits registriert.";
+$string['emailformat'] = "E-Mail-Format";
+$string['emailmustbereal'] = "Anmerkung: Ihre E-Mail-Adresse <b>muss</b> existieren";
 $string['emailpasswordconfirmation'] = "Hallo \$a->firstname,
 
 Jemand (wahrscheinlich Sie) hat ein neues Kennwort für Ihren Zugang auf '\$a->sitename' angefordert.
 
-Um dieses zu bestätigen und ein neues Kennwort per Email zugestellt zu bekommen, gehen Sie bitte auf folgende Internet-Seite:
+Um dieses zu bestätigen und ein neues Kennwort per E-Mail zugestellt zu bekommen, gehen Sie bitte auf folgende Internet-Seite:
 
 \$a->link
 
@@ -217,7 +217,7 @@ Sofern das nicht funktioniert, kopieren Sie die Adresse bitte in die Adresszeile
 Sofern Sie Hilfe benötigen, wenden Sie sich bitte an den Verwalter der Seite,
 \$a->admin";
 $string['emailpasswordconfirmationsubject'] = "\$a: Kennwort-Bestätigung ändern";
-$string['emailpasswordconfirmsent'] = "Eine Email sollte an Ihre Adresse <b>\$a</b> versendet worden sein.
+$string['emailpasswordconfirmsent'] = "Eine E-Mail sollte an Ihre Adresse <b>\$a</b> versendet worden sein.
 <p>Sie enthält einfache Anweisungen zur Bestätigung und der Kennwort-Änderung.
 Sofern Sie weiter Schwierigkeiten haben, kontaktieren Sie bitte den Verwalter.";
 $string['emailpasswordsent'] = "Danke für Ihre Bestätigung des neuen Kennworts.
@@ -229,7 +229,7 @@ $string['enrolmentkeyfrom'] = "Für diesen Kurs benötigen Sie einen 'Zugangs-Schl
 $string['enrolmentkeyhint'] = "Der Zugangs-Schlüssel war falsch, bitte versuchen Sie es erneut<BR>
 (Hier ist ein Hinweis - Er startet mit '\$a'";
 $string['entercourse'] = "Hier klicken, um den Kurs zu betreten";
-$string['enteremailaddress'] = "Geben Sie hier Ihre Email-Adresse ein, um Ihr Kennwort zurückzusetzen. Ein neues Kennwort wird Ihnen via Email zugesendet.";
+$string['enteremailaddress'] = "Geben Sie hier Ihre E-Mail-Adresse ein, um Ihr Kennwort zurückzusetzen. Ein neues Kennwort wird Ihnen via E-Mail zugesendet.";
 $string['error'] = "Fehler";
 $string['errortoomanylogins'] = "Entschuldigung, aber Sie haben die Anzahl erlaubter Zugangs-Versuche erreicht. Starten Sie Ihren Browser neu.";
 $string['existingadmins'] = "Vorhandene Verwalter";
@@ -310,7 +310,7 @@ $string['included'] = "Einbezogen";
 $string['includelogentries'] = "Statistik-Einträge einbeziehen";
 $string['includeneededusers'] = "Notwendige Nutzer einbeziehen";
 $string['includeuserfiles'] = "Nutzer-Dateien einbeziehen";
-$string['invalidemail'] = "Ungültige Email-Adresse";
+$string['invalidemail'] = "Ungültige E-Mail-Adresse";
 $string['invalidlogin'] = "Ungültiger Zugang, bitte versuchen Sie es erneut";
 $string['jumpto'] = "Springen zu...";
 $string['langltr'] = "Sprach-Richtung von links nach rechts";
@@ -347,8 +347,8 @@ Schritte:
 <OL size=2>
 <LI> Füllen Sie das Formular <HREF=\$a>Neuer Zugang </A>
 mit Ihren Angaben.
-<LI> Umgehend geht eine Email an Ihre Adresse raus.
-<LI> Lesen Sie die Email und klicken Sie den darin enthaltenen Internetverweis an. <LI> Ihr Zugang wird bestätigt, und Sie werden angemeldet sein. <LI> Jetzt wählen Sie den Kurs aus, an dem Sie teilnehmen möchten. <LI>Sollten Sie nach einen  \\\"Zugangsschlüssel\\\" gefragt werden, benutzen Sie diesen, den Ihnen Ihr Lehrer gegeben hat. Dieser schaltet Sie für diesen Kurs frei. <LI>Nun können Sie auf den vollen Kurs zugreifen. Zukünftig brauchen Sie nur Ihren eigenen Benutzernamen und das Kennwort im Formular auf dieser Seite einzugeben, um sich anzumelden und Zugang zu jedem Kurs, bei dem Sie sich angemeldet haben, zu bekommen. </OL>";
+<LI> Umgehend geht eine E-Mail an Ihre Adresse raus.
+<LI> Lesen Sie die E-Mail und klicken Sie den darin enthaltenen Internetverweis an. <LI> Ihr Zugang wird bestätigt, und Sie werden angemeldet sein. <LI> Jetzt wählen Sie den Kurs aus, an dem Sie teilnehmen möchten. <LI>Sollten Sie nach einen  \\\"Zugangsschlüssel\\\" gefragt werden, benutzen Sie diesen, den Ihnen Ihr Lehrer gegeben hat. Dieser schaltet Sie für diesen Kurs frei. <LI>Nun können Sie auf den vollen Kurs zugreifen. Zukünftig brauchen Sie nur Ihren eigenen Benutzernamen und das Kennwort im Formular auf dieser Seite einzugeben, um sich anzumelden und Zugang zu jedem Kurs, bei dem Sie sich angemeldet haben, zu bekommen. </OL>";
 $string['loginstepsnone'] = "Hallo!<P>Für vollen Zugang zu den Kursen müssen Sie sich einen Zugang anlegen. <P> Alles, was Sie tun müssen, ist einen Benutzernamen und ein  Kennwort zu wählen, das Sie im Formular auf dieser Seite eintragen! <P>Sofern jemand anderes bereits Ihren Benutzernamen gewählt hat, müssen Sie einen anderen Benutzernamen verwenden.";
 $string['loginto'] = "Angemeldet bei \$a";
 $string['loginusing'] = "Melden Sie sich hier mit Benutzernamen und Kennwort an";
@@ -372,7 +372,7 @@ $string['missingcategory'] = "Sie müssen einen Rubrik auswählen";
 $string['missingcity'] = "Stadt fehlt";
 $string['missingcountry'] = "Land fehlt";
 $string['missingdescription'] = "Beschreibung fehlt";
-$string['missingemail'] = "Email-Adresse fehlt";
+$string['missingemail'] = "E-Mail-Adresse fehlt";
 $string['missingfirstname'] = "Vorname fehlt";
 $string['missingfullname'] = "Voller Name fehlt";
 $string['missinglastname'] = "Nachname fehlt";
@@ -427,7 +427,7 @@ Bitte gehen Sie auf diese Seite und ändern Ihr Kennwort:
    \$a->link
 
 
-In den meisten Email-Programmen erscheint dieser Link blau, so dass Sie diesen anklicken können. Sofern dies nicht funktioniert, kopieren Sie bitte diese Adresse in die obere Zeile des Browser-Fensters.
+In den meisten E-Mail-Programmen erscheint dieser Link blau, so dass Sie diesen anklicken können. Sofern dies nicht funktioniert, kopieren Sie bitte diese Adresse in die obere Zeile des Browser-Fensters.
 
 Grüße von der '\$a->sitename'-Verwaltung, \$a->signoff";
 $string['newpicture'] = "Neues Foto";
@@ -451,7 +451,7 @@ $string['nopotentialcreators'] = "Keinen potenziellen Kursersteller";
 $string['nopotentialteachers'] = "Keine potenziellen Lehrer";
 $string['normal'] = "Normal";
 $string['nostudentsyet'] = "Kein Schüler nimmt bislang an diesem Kurs teil";
-$string['nosuchemail'] = "Keine solche Email-Adresse";
+$string['nosuchemail'] = "Keine solche E-Mail-Adresse";
 $string['notavailable'] = "Nicht verfügbar";
 $string['noteachersyet'] = "Kein Lehrer nimmt bislang in diesem Kurs teil";
 $string['notenrolled'] = "\$a nimmt nicht an diesem Kurs teil.";
@@ -482,8 +482,8 @@ $string['passwordrecovery'] = "Ja, hilf mir bei der Anmeldung";
 $string['passwordsdiffer'] = "Dieses Kennwort ist falsch";
 $string['passwordsent'] = "Kennwort wurde gesendet";
 $string['passwordsenttext'] = "
-<P>Eine Email wurde an Ihre Adresse \$a->email gesendet.
-<P><B>Schauen Sie bitte in Ihrer Email nach Ihrem neuen Kennwort
+<P>Eine E-Mail wurde an Ihre Adresse \$a->email gesendet.
+<P><B>Schauen Sie bitte in Ihrer E-Mail nach Ihrem neuen Kennwort
 
 <P>Das Kennwort wurde automatisch erzeugt.
 Sicherlich möchten Sie es <A HREF=\$a->link>ändern</a>, um es sich leichter zu merken.";
@@ -505,7 +505,7 @@ $string['question'] = "Frage";
 $string['readme'] = "LIESMICH";
 $string['recentactivity'] = "Neueste Aktivitäten";
 $string['registration'] = "Moodle Anmeldung";
-$string['registrationemail'] = "Email Benachrichtigung";
+$string['registrationemail'] = "E-Mail Benachrichtigung";
 $string['registrationinfo'] = "<p>Diese Seite ermöglicht es Ihnen, Ihre Moodle Seite auf moodle.org zu registrieren.
 Die Registrierung ist kostenlos.
 Der Haupt-Vorteil besteht darin, dass Sie in einer kleinen Mailing Liste aufgenommen werden,
@@ -513,7 +513,7 @@ um wichtige sicherheitsrelevante und Nachrichten über neu Versionen zu bekommen.
 <p>Standardmäßig werden Ihre Informationen nicht veröffentlicht oder an dritte Personen weiterverkauft. Der einzige Grund, diese Informationen zu sammeln, besteht aus Gründen des Supports dazu beizutragen, ein statistisches Bild von der Moodle-Gemeinschaft als Ganzheit aufzubauen.
 <p>Wenn Sie es auswählen, können Sie den Seitennamen, das Land und die URL zur öffenlichen Liste der Moodle Seiten hinzufügen.
 <p>Jede neue Registrierung wird manuell geprüft, bevor diese der Liste hinzugefügt wird, aber sofern Sie hinzugefügt wurden, können Sie Ihre Registrierung (und Ihren Eintrag in der öffentlichen Liste)jederzeit aktualisieren, indem Sie dieses Formular erneut absenden.";
-$string['registrationno'] = "Nein, ich möchte keine Email erhalten";
+$string['registrationno'] = "Nein, ich möchte keine E-Mail erhalten";
 $string['registrationsend'] = "Sende Registrierungsinformation an moodle.org";
 $string['registrationyes'] = "Ja, benachrichtigen Sie mich über wichtige Hinweise";
 $string['removeadmin'] = "Verwalter löschen";
@@ -536,7 +536,7 @@ $string['sec'] = "Sekunde";
 $string['secs'] = "Sekunden";
 $string['section'] = "Abschnitt";
 $string['selectacountry'] = "Land auswählen";
-$string['senddetails'] = "Senden Sie meine Details per Email zu";
+$string['senddetails'] = "Senden Sie meine Details per E-Mail zu";
 $string['separateandconnected'] = "Getrennte und gemeinsame Art des Wissens";
 $string['serverlocaltime'] = "Die Lokalzeit des Servers";
 $string['settings'] = "Einstellungen";
