@@ -60,7 +60,8 @@ class block_calendar_month extends block_base {
             $this->content->text .= calendar_overlib_html();
             $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
             $this->content->text .= calendar_get_mini($courses, $group, $user, $_GET['cal_m'], $_GET['cal_y']);
-            $this->content->text .= calendar_filter_controls('course', '', $this->course);
+            $course = get_record('course', 'id', $this->instance->pageid);
+            $this->content->text .= calendar_filter_controls('course', '', $course);
         }
 
         return $this->content;
