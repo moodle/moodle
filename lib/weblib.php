@@ -1659,7 +1659,7 @@ function update_groups_button($courseid) {
 function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
 /// Prints an appropriate group selection menu
 
-    echo '<table><tr><td>';
+    echo '<table align="center"><tr><td>';
     if ($groupmode == VISIBLEGROUPS) {
         print_string('groupsvisible');
     } else {
