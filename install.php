@@ -68,7 +68,7 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 $SESSION->lang = (!empty($_POST['language'])) ? $_POST['language'] : $INSTALL['language'];
 $CFG->dirroot = $INSTALL['dirroot'];
 $CFG->dataroot = $INSTALL['dataroot'];
-$CFG->directorypermissions = 02777;
+$CFG->directorypermissions = 00777;
 
 
 /// Include some moodle libraries
@@ -306,7 +306,7 @@ if ($nextstage == 5) {
     $str .= '$CFG->admin     = \''.$INSTALL['admindirname']."';\r\n";
     $str .= "\r\n";
 
-    $str .= '$CFG->directorypermissions = 02777;'."\r\n";
+    $str .= '$CFG->directorypermissions = 00777;'."\r\n";
     $str .= "\r\n";
 
     $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n";
