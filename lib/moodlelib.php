@@ -1011,7 +1011,7 @@ function require_login($courseid=0, $autologinguest=true) {
             switch ($course->guest) {
                 case 0: // Guests not allowed
                     print_header();
-                    notice(get_string('guestsnotallowed', '', $course->fullname));
+                    notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
                     break;
                 case 1: // Guests allowed
                     return;
