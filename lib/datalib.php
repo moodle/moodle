@@ -2402,7 +2402,7 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
             $n = $n + $catgap;             
             // if the new sequence overlaps the current sequence, lack of transactions
             // will stop us -- shift things aside for a moment...
-            if ($n >= $min && $n+$count+1 < $min && $CFG->dbtype==='mysql') {
+            if ($safe || ($n >= $min && $n+$count+1 < $min && $CFG->dbtype==='mysql')) {
                 $shift = $n + $count + 100;
                 execute_sql("UPDATE {$CFG->prefix}course 
                          SET sortorder=sortorder+$shift 
@@ -2427,7 +2427,7 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
 
     if ($categories = get_categories($categoryid)) {
         foreach ($categories as $category) {
-            $n = fix_course_sortorder($category->id, $n);
+            $n = fix_course_sortorder($category->id, $n, $safe);
         }
     }
 
