@@ -91,16 +91,14 @@ $ALLOWED_TAGS = "<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul>
 
 function s($var) {
 /// returns $var with HTML characters (like "<", ">", etc.) properly quoted,
-/// or if $var is empty, will return an empty string. 
 
-	return empty($var) ? "" : htmlSpecialChars(stripslashes($var));
+    return htmlSpecialChars(stripslashes($var));
 }
 
 function p($var) {
 /// prints $var with HTML characters (like "<", ">", etc.) properly quoted,
-/// or if $var is empty, will print an empty string. 
 
-	echo empty($var) ? "" : htmlSpecialChars(stripslashes($var));
+    echo htmlSpecialChars(stripslashes($var));
 }
 
 function nvl(&$var, $default="") {
@@ -112,11 +110,11 @@ function nvl(&$var, $default="") {
 function strip_querystring($url) {
 /// takes a URL and returns it without the querystring portion 
 
-	if ($commapos = strpos($url, '?')) {
-		return substr($url, 0, $commapos);
-	} else {
-		return $url;
-	}
+    if ($commapos = strpos($url, '?')) {
+        return substr($url, 0, $commapos);
+    } else {
+        return $url;
+    }
 }
 
 function get_referer() {
@@ -136,16 +134,16 @@ function me() {
 
     global $REQUEST_URI, $PATH_INFO, $PHP_SELF;
 
-	if ($REQUEST_URI) {
-		return $REQUEST_URI;
+    if ($REQUEST_URI) {
+        return $REQUEST_URI;
 
-	} else if ($PATH_INFO) {
-		return $PATH_INFO;
+    } else if ($PATH_INFO) {
+        return $PATH_INFO;
 
-	} else if ($PHP_SELF) {
-		return $PHP_SELF;
+    } else if ($PHP_SELF) {
+        return $PHP_SELF;
 
-	} else {
+    } else {
         notify("Error: Could not find any of these web server variables: \$REQUEST_URI, \$PATH_INFO or \$PHP_SELF");
     }
 }
@@ -160,9 +158,9 @@ function qualified_me() {
         notify("Error: could not find web server variable: \$HTTP_HOST");
     }
 
-	$protocol = (isset($HTTPS) && $HTTPS == "on") ? "https://" : "http://";
-	$url_prefix = "$protocol$HTTP_HOST";
-	return $url_prefix . me();
+    $protocol = (isset($HTTPS) && $HTTPS == "on") ? "https://" : "http://";
+    $url_prefix = "$protocol$HTTP_HOST";
+    return $url_prefix . me();
 }
 
 
@@ -175,10 +173,10 @@ function match_referer($good_referer = "") {
         return true;
     }
 
-	if ($good_referer == "") { 
+    if ($good_referer == "") { 
         $good_referer = qualified_me(); 
     }
-	return $good_referer == get_referer();
+    return $good_referer == get_referer();
 }
 
 
@@ -206,10 +204,10 @@ function read_template($filename, &$var) {
 ///
 /// WARNING: do not use this on big files!! 
 
-	$temp = str_replace("\\", "\\\\", implode(file($filename), ""));
-	$temp = str_replace('"', '\"', $temp);
-	eval("\$template = \"$temp\";");
-	return $template;
+    $temp = str_replace("\\", "\\\\", implode(file($filename), ""));
+    $temp = str_replace('"', '\"', $temp);
+    eval("\$template = \"$temp\";");
+    return $template;
 }
 
 function checked(&$var, $set_value = 1, $unset_value = 0) {
@@ -217,22 +215,22 @@ function checked(&$var, $set_value = 1, $unset_value = 0) {
 /// unset_value.  used to handle checkboxes when you are expecting them from
 /// a form 
 
-	if (empty($var)) {
-		$var = $unset_value;
-	} else {
-		$var = $set_value;
-	}
+    if (empty($var)) {
+        $var = $unset_value;
+    } else {
+        $var = $set_value;
+    }
 }
 
 function frmchecked(&$var, $true_value = "checked", $false_value = "") {
 /// prints the word "checked" if a variable is true, otherwise prints nothing,
 /// used for printing the word "checked" in a checkbox form input 
 
-	if ($var) {
-		echo $true_value;
-	} else {
-		echo $false_value;
-	}
+    if ($var) {
+        echo $true_value;
+    } else {
+        echo $false_value;
+    }
 }
 
 
@@ -244,12 +242,12 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here", $hei
 
     global $CFG;
 
-	echo "\n<SCRIPT language=\"Javascript\">";
+    echo "\n<SCRIPT language=\"Javascript\">";
     echo "\n<!--";
-	echo "\ndocument.write('<A TITLE=\"$title\" HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >$linkname</A>');";
+    echo "\ndocument.write('<A TITLE=\"$title\" HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >$linkname</A>');";
     echo "\n//-->";
-   	echo "\n</SCRIPT>";
-   	echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" TITLE=\"$title\" HREF=\"$CFG->wwwroot/$url\">$linkname</A>\n</NOSCRIPT>\n";
+    echo "\n</SCRIPT>";
+    echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" TITLE=\"$title\" HREF=\"$CFG->wwwroot/$url\">$linkname</A>\n</NOSCRIPT>\n";
 
 }
 
