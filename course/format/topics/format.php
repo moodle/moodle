@@ -171,17 +171,15 @@
             }
 
             echo '<tr id="section-'.$section.'" class="section'.$sectionstyle.'">';
+
             echo '<td class="left side">';
             echo '<a name="'.$section.'">'.$section.'</a>';
             echo '</td>';
 
+            echo '<td class="content">';
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
-                echo '<td class="content">';
                 echo get_string('notavailable');
-                echo '</td>';
             } else {
-                echo '<td class="content">';
-
                 $summaryformatoptions->noclean = true;
                 echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
@@ -195,11 +193,10 @@
                 if (isediting($course->id)) {
                     print_section_add_menus($course, $section, $modnames);
                 }
-
-                echo '</td>';
             }
-            echo '<td class="right side">';
+            echo '</td>';
 
+            echo '<td class="right side">';
             if ($displaysection == $section) {      // Show the zoom boxes
                 echo '<a href="view.php?id='.$course->id.'&amp;topic=all#'.$section.'" title="'.$strshowalltopics.'">'.
                      '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" /></a><br />';
