@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004062600)
+      // wiki.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['action'] = '- - Acties - -';
@@ -145,6 +145,11 @@ $string['strippagecheck'] = 'Ben je er zeker van dat je de oude versies van deze
 $string['strippages'] = 'Pagina\'s opruimen';
 $string['studentadminoptions'] = 'Beheeropties van de leerling';
 $string['submit'] = 'Stuur in';
+$string['tabattachments'] = 'Bijlagen';
+$string['tabedit'] = 'Bewerk';
+$string['tabinfo'] = 'Info';
+$string['tablinks'] = 'Links';
+$string['tabview'] = 'Toon';
 $string['thanksforcontribution'] = 'Dank je  voor je bijdrage.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Er is geen link naar deze pagina.';
 $string['updatedpages'] = 'Gewijzigde pagina\'s';

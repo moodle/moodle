@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004072901)
+      // resource.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['addresource'] = 'Voeg bron toe';
@@ -23,7 +23,6 @@ $string['directoryinfo'] = 'Alle bestanden in de gekozen map zullen getoond word
 $string['editingaresource'] = 'Bewerk een bron';
 $string['encryptedcode'] = 'Geëncrypteerde code';
 $string['example'] = 'Voorbeeld';
-$string['examplereference'] = 'Koers, Diane (1999) <I>Visuele leermethode Office 2000</I>, A.W. Bruna multimedia, ISBN 9022943046.';
 $string['exampleurl'] = 'http://www.voorbeeld.nl/eenmap/eenbestand.html';
 $string['fetchclienterror'] = 'Er is een fout opgetreden bij je webclient, wanneer je de webpagina probeerde te openen (waarschijnlijk een verkeerde URL).';
 $string['fetcherror'] = 'Er is een fout gevonden tijdens het ophalen van de webpagina.';
@@ -59,11 +58,19 @@ $string['parameters'] = 'Parameters';
 $string['popupresource'] = 'Deze bron zou moeten in een popup venster verschijnen';
 $string['popupresourcelink'] = 'Als ze dat niet deed, klik hier: $a';
 $string['resourcetype'] = 'Soort bron';
+$string['resourcetype1'] = 'Verwijzing';
+$string['resourcetype2'] = 'Web pagina';
+$string['resourcetype3'] = 'Geüpload bestand';
+$string['resourcetype4'] = 'Platte tekst';
+$string['resourcetype5'] = 'Web link';
+$string['resourcetype6'] = 'HTML-tekst';
+$string['resourcetype7'] = 'Programma';
+$string['resourcetype8'] = 'Wiki-achtige tekst';
+$string['resourcetype9'] = 'Map';
 $string['resourcetypedirectory'] = 'Toon een map';
 $string['resourcetypefile'] = 'Link aan een bestand of website';
 $string['resourcetypehtml'] = 'Maak een webpagina';
 $string['resourcetypelabel'] = 'Voeg een label toe';
-$string['resourcetypereference'] = 'Plaats een referentie';
 $string['resourcetypetext'] = 'Maak een tekstpagina';
 $string['searchweb'] = 'Zoek webpagina\'s';
 $string['variablename'] = 'Variable naam';

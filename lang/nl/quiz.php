@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004081200)
+      // quiz.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -43,9 +43,11 @@ $string['category'] = 'Categorie';
 $string['categoryinfo'] = 'Info over de categorie';
 $string['categorymove'] = 'De categorie \'$a->name\' bevat $a->count vragen. Kies alsjeblieft een categorie om deze vragen naar te verplaatsen';
 $string['categorymoveto'] = 'Verplaats ze naar deze categorie';
+$string['checkanswer'] = 'Controleer';
 $string['choice'] = 'Keuzemogelijkheid';
 $string['choices'] = 'Mogelijke keuzes';
 $string['choosedatasetproperties'] = 'Kies de eigenschappen van de gegevensset';
+$string['close'] = 'Sluit weergavetest';
 $string['confirmstartattempt'] = 'Deze test heeft een tijdsduurbeperking. Ben je klaar om te beginnen?';
 $string['correctanswer'] = 'Het goede antwoord';
 $string['correctanswerformula'] = 'Juist antwoordformule';
@@ -165,6 +167,8 @@ $string['overdue'] = 'Te laat';
 $string['paragraphquestion'] = 'Vraagparagraaf niet ondersteund op lijn $a. De vraag wordt genegeerd';
 $string['passworderror'] = 'Het wachtwoord was niet juist';
 $string['percentcorrect'] = 'Percentage juist';
+$string['preview'] = 'Weergavetest';
+$string['previewquestion'] = 'Weergave van een vraag testen';
 $string['publish'] = 'Publiceer  ';
 $string['publishedit'] = 'Je moet rechten hebben in het vak dat deze vragen publiceert om in deze categorie vragen te kunnen toevoegen of bewerken.';
 $string['qti'] = 'IMS QTI opmaak';
