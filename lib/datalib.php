@@ -1977,14 +1977,14 @@ function get_groups($courseid, $userid=0) {
  * @return array
  * @todo Finish documenting this function
  */
-function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='') {
+function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $fields='u.*') {
     global $CFG;
     if (!empty($exceptions)) {
         $except = ' AND u.id NOT IN ('. $exceptions .') ';
     } else {
         $except = '';
     }
-    return get_records_sql("SELECT DISTINCT u.*
+    return get_records_sql("SELECT DISTINCT $fields
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}groups_members m
                              WHERE m.groupid = '$groupid'
