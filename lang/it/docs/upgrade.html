@@ -1,0 +1,83 @@
+<head>
+    <title>Documentazione di Moodle Docs: Aggiornamento</title>
+	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Aggiornamento di Moodle</h1>
+
+<blockquote>
+  <p>Moodle è progettato in modo da poter essere aggiornato facilmente da una precedente ad ogni nuova versione. </p>
+  <p>Per aggiornare un'installazione di Moodle, dovranno essere effettuati i seguenti passi:</p>
+  <h3 class="sectionheading">1. Backup dei dati importanti</h3>
+  <blockquote>
+    <p>Anche se non strettamente necessario, è sempre una buona idea fare un backup di ogni sistema in produzione prima di un aggiornamento significativo del software, nel caso si dovesse, per qualche ragione, ritornare alla versione precedente. Di fatto, è buona norma configurare il server in modo da automatizzare il backup quotidiano dell'installazione di Moodle. In tal caso questo step può essere saltato.</p>
+    <p>Ci sono tre componenti che richiedono il backup:</p>
+    <blockquote>
+      <p><strong>1. La cartella del software di Moodle</strong></p>
+      <blockquote>
+        <p>Fare una copia separata di tutti questi files prima dell'aggiornamento, in modo da ritrovare il config.php e ogni modulo eventualmente aggiunto come temi, lingue, ecc.<br></p>
+      </blockquote>
+      <p><strong>2. La cartella dati.</strong></p>
+      <blockquote>
+        <p>Questa è la cartella dove vengono caricati i contenuti (come le risorse di un corso o i compiti di uno studente) per cui è molto importante avere in ogni caso una copia di backup di questi files. A volte gli aggiornamenti potrebbero spostare o rinominare le cartelle all'interno della cartella dati.<br></p>
+      </blockquote>
+      <p><strong>3. Il database</strong></p>
+      <blockquote>
+        <p>La maggior parte degli aggiornamenti di Moodle modificano le tabelle del databese, aggiungendo o cambiando campi delle stesse. Ogni database ha un modo diverso di fare il backup. Un modo per fare un backup di un database MySQL è quello di 'copiarli' su un unico file SQL. L'esempio seguente mostra il comando Unix per salvare il database di nome "moodle":</p>
+        <blockquote>
+          <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
+        </blockquote>
+        <p>Se si utilizza phpMyAdmin (come add-on di Moodle) o come servizio del provider, si può fare la stessa cosa con la medesima interfaccia web su tutte le piattaforme, usando l'apposito comando che permette di salvare struttura e dati di tutte le tabelle in un unico file.</p>
+        <p>&nbsp;</p>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+  <h3 class="sectionheading">2. Installazione della nuova versione software di Moodle</h3>
+  <blockquote>
+    <p><strong>Uso di un archivio (zip) scaricato</strong></p>
+    <blockquote>
+      <p>Non sovrapporsi a una vecchia installazione (a meno di sapere cosa si sta facendo) ... a volte vecchi files possono causare problemi in nuove installazioni. Il modo migliore è quello di dare un altro nome alla cartella corrente di Moodle, e quindi unzippare il nuovo archive di Moodle in una nuova cartella "moodle".</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br>
+        tar xvzf moodle-1.1.tgz</font></p>
+      </blockquote>
+      <p>Quindi, copiare, dalla vecchia alla nuova cartella, il file config.php o ogni altro plugin, come ad esempio i temi personalizzati:</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br>
+        cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
+      </blockquote> 
+    </blockquote>
+    <p><strong>Uso del CVS</strong></p>
+    <blockquote>
+      <p>Se si usa il CVS, basta andare nella root directory di Moodle e aggiornare i vecchi ai nuovi files:</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
+      </blockquote>
+      <p>Assicurarsi di usare il parametro "d" per creare, se necessario, nuove directory, e il parametro "P" per cancellare directory eventualmente vuote.</p>
+      <p>Se sono stati modificati files di Moodle, controllare attentamente i messaggi per evitare possibili conflitti. Tutti i temi personalizzati e i plugin non standard non saranno toccati.</p>
+    </blockquote>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading">3. Completamento dell'aggiornamento</h3>
+  <blockquote>
+    <p>L'ultimo passo è quello di attivare il processo di aggiornamento nell'ambito di Moodle.</p>
+    <p>Per fare questo andare alla <a target=_top href="../admin/index.php">pagina di amministrazione dell'installazione</a>.</p>
+    <blockquote>
+      <p><font face="Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
+    </blockquote>
+    <p>Non importa se si è loggati come admin oppure no.</p>
+    <p>Moodle automaticamente rileverà la nuova versione e provvederà a tutti gli aggiornamenti di database e di filesystem necessari. Se c'è qualche cosa che non riesce a fare da solo (molto difficile), allora appositi messaggi spiegheranno cosa è necessario fare.</p>
+  </blockquote>
+  <p>&nbsp; </p>
+  <p>Se è andato tutto bene (nessun messaggio di errore) si può ora cominciare a usare la nuova versione di Moodle e godere delle nuove funzioni!</p>
+  <p>Se invece ci sono stati problemi, visitare il sito <a target=_top href="http://moodle.org/">moodle.org</a> e chiedere aiuto nel Forum <a target=_top href="http://moodle.org/mod/forum/view.php?id=28">Installation problems</a> del corso Using Moodle.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentazione di Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>
