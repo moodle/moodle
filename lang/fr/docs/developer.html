@@ -29,35 +29,38 @@
 <p>&nbsp;</p>
 <h2><a name="architecture"></a>1. Architecture de Moodle</h2>
 <blockquote>
-  <p>From a system administrator's perspective, Moodle has been designed according 
-    to the following criteria:</p>
+  <p>Du point de vue d'un administrateur de système, Moodle a été conçu selon les
+  critères suivants :</p>
   <ol>
-    <li><strong>Moodle should run on the widest variety of platforms</strong><br />
-      <br />
-      The web application platform that runs on most platforms is PHP combined 
-      with MySQL, and this is the environment that Moodle has been developed in 
-      (on Linux, Windows, and Mac OS X). Moodle also uses the ADOdb library for 
-      database abstraction, which means Moodle can use <a href="http://php.weblogs.com/ADOdb_manual#drivers">more 
-      than ten different brands of database</a> (unfortunately, though, it can 
-      not yet <em><strong>set up tables</strong></em> in all these databases - 
-      more on this later). <br />
-      <br />
+    <li><strong>Moodle devrait fonctionner sur le plus possible de
+    plateformes diff&eacute;rentes</strong><br /><br />
+    L'application web qui tourne sur le plupart des plateformes est PHP, en
+    combinaison avec MySQL, et c'est l'environnement dans lequel Moodle a
+    &eacute;t&eacute; d&eacute;velopp&eacute; (sur Linux, Windows et Mac OS X).
+    Moodle utilise aussi la librairie ADOdb pour l'abstraction de la base de
+    donn&eacute;es, ce qui implique que Moodle peut utiliser
+    <a href="http://php.weblogs.com/ADOdb_manual#drivers">plus de 10 marques
+    de bases de donn&eacute;es diff&eacute;rentes</a> (toutefois, il ne peut
+    malheureusement pas encore <em><strong>mettre en place les tables</strong></em>
+    de toutes ces bases de donn&eacute;es. Voir ci-dessous pour plus d'informations).<br /><br />
     </li>
-    <li><strong>Moodle should be easy to install, learn and modify</strong><br />
-      <br />
-      Early prototypes of Moodle (1999) were built using <a target="_top" href="http://www.zope.org/">Zope</a> 
-      - an advanced object-oriented web application server. Unfortunately I found 
-      that although the technology was pretty cool, it had a very steep learning 
-      curve and was not very flexible in terms of system administration. The PHP 
-      scripting language, on the other hand, is very easy to get into (especially 
-      if you've done any programming using any other scripting language). Early 
-      on I made the decision to avoid using a class-oriented design - again, to 
-      keep it simple to understand for novices. Code reuse is instead achieved 
-      by libraries of clearly-named functions and consistent layout of script 
-      files. PHP is also easy to install (binaries are available for every platform) 
-      and is widely available to the point that most web hosting services provide 
-      it as standard.<br />
-      <br />
+    <li><strong>Moodle devrait &ecirc;tre facile &agrave; installer, &agrave; apprendre et
+    &agrave; modifier</strong><br /><br />
+    Les premiers prototypees de Moodle (1999) &eacute;taient bas&eacute;s sur
+    <a target="_top" href="http://www.zope.org/">Zope</a>, un serveur d'application
+    web orient&eacute; objet de technologie avanc&eacute;e. Malheureusement, bien que cette
+    technologie soit plut&ocirc;t cool, elle avait une courbe d'apprentissage
+    tr&egrave;s raide et n'&eacute;tait pas tr&egrave;s souple en termes d'administration de
+    syst&egrave;mes. D'un autre c&ocirc;t&eacute;, le langage de scripts PHP est tr&egrave;s facile
+    d'acc&egrave;s, notamment si vous avez d&eacute;j&agrave; programm&eacute; avec un autre
+    langage de scripts. J'ai pris assez t&ocirc;t la d&eacute;cision de ne pas utiliser
+    un concept orient&eacute; objet, l&agrave; encore, pour conserver la simplicit&eacute;
+    par &eacute;gard pour les novices. En lieu et place, la r&eacute;utilisation du
+    code est accomplie gr&acirc;ce &agrave; des librairies de fonctions clairement
+    d&eacute;nomm&eacute;es et par une mise en page coh&eacute;rente des fichiers de scripts.
+    En outre, PHP est facile &agrave; installer (des ex&eacute;cutables sont disponibles
+    pour toutes les plateformes) et si largement r&eacute;pandu que la plupart
+    des services d'h&eacute;bergement web l'offrent en standard.<br /><br />
     </li>
     <li><strong>It should be easy to upgrade from one version to the next</strong><br />
       <br />
