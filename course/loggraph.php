@@ -95,14 +95,19 @@
 
        $graph->y_data['logs']   = $logs;
        $graph->y_order = array('logs');
-       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','bar_size' => 0.6);
+
+       if (!empty($CFG->preferlinegraphs)) {
+           $graph->y_format['logs'] = array('colour' => 'blue','line' => 'line');
+       } else {
+           $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','bar_size' => 0.6);
+           $graph->parameter['bar_spacing'] = 0;
+       }
 
 
        $graph->parameter['y_label_left']     = get_string("hits");
        $graph->parameter['label_size']       = "12";
        $graph->parameter['x_axis_angle']     = 90;
        $graph->parameter['x_label_angle']    = 0;
-       $graph->parameter['bar_spacing'] = 0;
        $graph->parameter['tick_length'] = 0;
 
        
@@ -152,15 +157,18 @@
 
        $graph->y_data['logs']   = $logs;
        $graph->y_order = array('logs');
-       $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','bar_size' => 0.9);
+
+       if (!empty($CFG->preferlinegraphs)) {
+           $graph->y_format['logs'] = array('colour' => 'blue','line' => 'line');
+       } else {
+           $graph->y_format['logs'] = array('colour' => 'blue','bar' => 'fill','bar_size' => 0.9);
+       }
 
        $graph->parameter['y_label_left']     = get_string("hits");
        $graph->parameter['label_size']       = "12";
        $graph->parameter['x_axis_angle']     = 0;
        $graph->parameter['x_label_angle']    = 0;
 
-
-       
        $graph->parameter['shadow']          = 'none';
 
        error_reporting(5); // ignore most warnings such as font problems etc
