@@ -220,7 +220,7 @@ function forum_cron () {
                     $posttext .= "$post->subject\n";
                     $posttext .= $strbynameondate."\n";
                     $posttext .= "---------------------------------------------------------------------\n";
-                    $posttext .= strip_tags($post->message);
+                    $posttext .= format_text_email($post->message, $post->format);
                     $posttext .= "\n\n";
                     if ($post->attachment) {
                         $post->course = $course->id;

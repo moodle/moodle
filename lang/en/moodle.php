@@ -224,6 +224,7 @@ $string['formattext'] = "Moodle auto-format";
 $string['formattexttype'] = "Formatting";
 $string['formattopics'] = "Topics format";
 $string['formatweeks'] = "Weekly format";
+$string['formatwiki'] = "Wiki format";
 $string['frontpagedescription'] = "Front page description";
 $string['frontpageformat'] = "Front page format";
 $string['fulllistofcourses'] = "All courses";

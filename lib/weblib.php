@@ -33,8 +33,9 @@
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
 define("FORMAT_MOODLE", "0");   // Does all sorts of transformations and filtering
-define("FORMAT_HTML", "1");     // Plain HTML (with some tags stripped)
-define("FORMAT_PLAIN", "2");    // Plain text (even tags are printed in full)
+define("FORMAT_HTML",   "1");   // Plain HTML (with some tags stripped)
+define("FORMAT_PLAIN",  "2");   // Plain text (even tags are printed in full)
+define("FORMAT_WIKI",   "3");   // Wiki-formatted text
 
 $JAVASCRIPT_TAGS = array("javascript:", "onclick=", "ondblclick=", "onkeydown=", "onkeypress=", "onkeyup=", 
                          "onmouseover=", "onmouseout=", "onmousedown=", "onmouseup=",
@@ -421,7 +422,8 @@ function format_text_menu() {
 /// Just returns an array of formats suitable for a popup menu
     return array (FORMAT_MOODLE => get_string("formattext"), 
                   FORMAT_HTML   => get_string("formathtml"),
-                  FORMAT_PLAIN  => get_string("formatplain"));
+                  FORMAT_PLAIN  => get_string("formatplain"),
+                  FORMAT_WIKI   => get_string("formatwiki"));
 }
 
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
@@ -444,6 +446,13 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
             return $text;
             break;
 
+        case FORMAT_WIKI:
+            $text = wiki_to_html($text);
+            $text = replace_smilies($text);
+            return $text;
+            break;
+
+
         default:  // FORMAT_MOODLE or anything else
             if (!isset($options->smiley)) {
                 $options->smiley=true;
@@ -456,6 +465,30 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
     }
 }
 
+function format_text_email($text, $format) {
+/// Given text in a variety of format codings, this function returns 
+/// the text as plain text suitable for plain email.
+///
+/// $text is raw text (originally from a user)
+/// $format is one of the format constants, defined above
+
+    switch ($format) {
+
+        case FORMAT_PLAIN:
+            return $text;
+            break;
+
+        case FORMAT_WIKI:
+            $text = wiki_to_html($text);
+            return strip_tags($text);
+            break;
+
+        default:  // FORMAT_MOODLE or anything else
+        // Need to add something in here to create a text-friendly way of presenting URLs
+            return strip_tags($text);
+            break;
+    }
+}
 
 function clean_text($text, $format) {
 /// Given raw text (eg typed in by a user), this function cleans it up 
@@ -463,15 +496,10 @@ function clean_text($text, $format) {
 
     global $JAVASCRIPT_TAGS, $ALLOWED_TAGS;
 
-    switch ($format) {   // Does the same thing, currently, but it's nice to have the option
+    switch ($format) { 
         case FORMAT_MOODLE:
-            $text = strip_tags($text, $ALLOWED_TAGS);
-            foreach ($JAVASCRIPT_TAGS as $tag) {
-                $text = stri_replace($tag, "", $text);
-            }
-            return $text;
-
         case FORMAT_HTML:
+        case FORMAT_WIKI:
             $text = strip_tags($text, $ALLOWED_TAGS);
             foreach ($JAVASCRIPT_TAGS as $tag) {
                 $text = stri_replace($tag, "", $text);
