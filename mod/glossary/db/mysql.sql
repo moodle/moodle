@@ -25,6 +25,7 @@ CREATE TABLE prefix_glossary (
      defaultapproval tinyint(2) unsigned NOT NULL default '1',
      globalglossary tinyint(2) unsigned NOT NULL default '0',
      entbypage tinyint(3) unsigned NOT NULL default '10',
+     editalways tinyint(2) unsigned NOT NULL default '0',
      rsstype tinyint(2) unsigned NOT NULL default '0',
      rssarticles tinyint(2) unsigned NOT NULL default '0',
      assessed int(10) unsigned NOT NULL default '0',

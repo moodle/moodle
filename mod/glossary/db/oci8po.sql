@@ -21,6 +21,7 @@ CREATE TABLE prefix_glossary (
   showspecial number(2) default '1' not null,
   showall number(2) default '1' not null,
   showalphabet number(2) default '1' not null,
+  editalways number(2) default '0' NOT NULL,
   rsstype number(2) default '0' NOT NULL,
   rssarticles number(2) default '0' NOT NULL,
   timecreated number(10) default '0' not null,

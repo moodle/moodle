@@ -621,8 +621,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
             $icon = "$CFG->pixpath/t/delete.gif";
         }
 
-        // Exported entries can be updated/deleted only by teachers in the main glossary
-        if ( !$importedentry and ($isteacher or !$ismainglossary) ) {
+        //Decide if an entry is editable:
+        // -It isn't a imported entry (so nobody can edit a imported (from secondary to main) entry)) and
+        // -The user is teacher or he is a student with time permissions (edit period or editalways defined).
+        $ineditperiod = (time() - $entry->timemodified <  $CFG->maxeditingtime);
+        if ( !$importedentry and ($isteacher or ($entry->userid == $USER->id and ($glossary->editalways or $ineditperiod)))) {
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&prevmode=$mode&hook=$hook\"><img src=\"";
             $return .= $icon;
             $return .= "\" height=11 width=11 border=0></a> ";

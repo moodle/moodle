@@ -44,12 +44,15 @@ if (!isset($form->showalphabet)) {
 if (!isset($form->showspecial)) {
     $form->showspecial = 1;
 }
-    if (!isset($form->rsstype)) {
-        $form->rsstype = 0;
-    }
-    if (!isset($form->rssarticles)) {
-        $form->rssarticles = 0;
-    }
+if (!isset($form->editalways)) {
+    $form->editalways = 0;
+}
+if (!isset($form->rsstype)) {
+    $form->rsstype = 0;
+}
+if (!isset($form->rssarticles)) {
+    $form->rssarticles = 0;
+}
 ?>
 <FORM name="form" method="post" action="<?php p($ME) ?>">
 <CENTER>
@@ -316,6 +319,25 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("shows", get_string("showall", "glossary"), "glossary") ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("editalways", "glossary") ?>:</B></P></TD>
+    <TD>
+  <select size="1" name="editalways">
+  <option value="1" <?php
+   if ( $form->editalways ) {
+      echo "selected";
+   }
+   ?>
+   ><?php echo get_string("yes") ?></option>
+  <option value="0" <?php
+   if ( !$form->editalways ) {
+      echo "selected";
+   }
+   ?>><?php echo get_string("no") ?>
+  </option>
+  </select> <?php helpbutton("editalways", get_string("editalways", "glossary"), "glossary") ?>
     </TD>
 </TR>
 <?php

@@ -97,6 +97,10 @@ function glossary_upgrade($oldversion) {
       }
   }
 
+  if ( $oldversion < 2004080800) {
+      table_column("glossary","","editalways","integer","2", "unsigned", "0", "", "entbypage");
+  }
+
   return true;
 }
 
