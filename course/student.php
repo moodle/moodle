@@ -36,6 +36,9 @@
     $strsearchagain   = get_string("searchagain");
     $strtoomanytoshow   = get_string("toomanytoshow");
     $strstudents   = get_string("students");
+    $strunenrolallstudents  = get_string("unenrolallstudents");
+    $strunenrolallstudentssure  = get_string("unenrolallstudentssure");
+
 
     if ($search) {
         $searchstring = $strsearchagain;
@@ -66,6 +69,18 @@
     if (!empty($remove)) {
         if (! unenrol_student($remove, $course->id)) {
             error("Could not remove that student from this course!");
+        }
+    }
+
+/// Remove all students from specified course
+
+    if (!empty($removeall)) {
+        $students = get_course_students($course->id, "u.lastname ASC, u.firstname ASC");
+        foreach ($students as $student) {
+            if (! unenrol_student($student->id, $course->id)) {
+                $fullname = fullname($student, true);
+                notify("Could not remove $fullname from this course!");
+            }
         }
     }
 
@@ -103,6 +118,15 @@
         }
         $studentlist = implode(",",$studentarray);
         unset($studentarray);
+
+        // button to unenrol all students from course
+
+        echo "<p>&nbsp;</p>\n";
+        echo "<p align=\"center\">\n";
+        echo "<input type=\"button\" value=\"$strunenrolallstudents\" ".
+             " OnClick=\"ctemp = window.confirm('".addslashes($strunenrolallstudentssure)."'); ".
+             " if(ctemp) window.location.href='student.php?id=$course->id&removeall=1';\"/>\n";
+        echo "</p>\n";
     }
 
     echo "<td>&nbsp;</td>";
