@@ -373,6 +373,7 @@ $string['enrolments'] = 'Enrolments';
 $string['entercourse'] = 'Click to enter this course';
 $string['enteremailaddress'] = 'Enter in your email address to reset your 
    password and have the new password sent to you via email.';
+$string['entries'] = 'Entries';
 $string['error'] = 'Error';
 $string['errortoomanylogins'] = 'Sorry, you have exceeded the allowed number of login attempts. Restart your browser.';
 $string['errorwhenconfirming'] = 'You are not confirmed yet because an error occurred.  If you clicked on a link in an email to get here, make sure that the line in your email wasn\'t broken or wrapped. You may have to use cut and paste to reconstruct the link properly.';
