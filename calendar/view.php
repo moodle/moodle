@@ -631,46 +631,31 @@ function calendar_print_event_table($event, $starttime, $endtime, &$coursecache,
 function calendar_course_filter_selector($getvars = '') {
     global $USER, $SESSION;
 
+    if(isguest($USER->id)) {
+        return '';
+    }
+
     if(isadmin($USER->id)) {
         $coursesdata = get_courses('all', 'c.shortname');
     }
-    elseif(!isguest($USER->id)) {
+    else {
         $coursesdata = get_my_courses($USER->id, 'shortname');
     }
-    else {
-        $coursesdata = get_record('course', 'id', $SESSION->cal_course_referer);
-    }
+
     $coursesdata = array_diff_assoc($coursesdata, array(1 => 1));
+    $courseoptions = array(1 => get_string('fulllistofcourses'));
 
-    $selector = '';
-
-    if(!isguest($USER->id)) {
-        $selector .= '<form method="get" action="set.php" style="display: inline;"><span>';
-        $selector .= '<input type="hidden" name="var" value="setcourse" />';
-        if(!empty($getvars)) {
-            $getarray = explode('&amp;', $getvars);
-            foreach($getarray as $getvar) {
-                $selector .= '<input type="hidden" name="'.strtok($getvar, '=').'" value="'.strtok('=').'" />';
-            }
-        }
-        $selector .= '<select name="id" onchange="form.submit();">';
-        $selector .= '<option value="1">'.get_string('fulllistofcourses')."</option>\n";
-        if($coursesdata !== false) {
-            foreach($coursesdata as $coursedata) {
-                $selector .= "\n<option value='$coursedata->id'";
-                if(is_numeric($SESSION->cal_courses_shown) && $coursedata->id == $SESSION->cal_courses_shown) {
-                    $selector .= ' selected';
-                }
-                $selector .= '>'.$coursedata->shortname."</option>\n";
-            }
-        }
-        $selector .= '</select>';
-        $selector .= '<noscript id="cal_noscript" style="display: inline;"> <input type="submit" value="'.get_string('show').'" /></noscript>';
-        $selector .= '<script type="text/javascript">'."\n<!--\n".'document.getElementById("cal_noscript").style.display = "none";'."\n<!--\n".'</script>';
-        $selector .= '</span></form>';
+    foreach($coursesdata as $cdata) {
+        $courseoptions[$cdata->id] = $cdata->shortname;
     }
-
-    return $selector;
+    if(is_numeric($SESSION->cal_courses_shown)) {
+        $selected = $SESSION->cal_courses_shown;
+    }
+    else {
+        $selected = '';
+    }
+    $form = popup_form(CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=', $courseoptions, 'cal_course_flt', $selected, '', '', '', true);
+    return str_replace('<form', '<form style="display: inline;"', $form);
 }
 
 ?>
