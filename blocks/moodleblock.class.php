@@ -212,6 +212,10 @@ class MoodleBlock {
         //Default, false--> the header is showed
         return false;
     }
+    function html_attributes() {
+        // Default case: we want no extra attributes
+        return false;
+    }
 }
 
 class MoodleBlock_Nuke extends MoodleBlock {
