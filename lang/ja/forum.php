@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004080300)
+      // forum.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -43,6 +43,7 @@ $string['editing'] = '編集';
 $string['emptymessage'] = '投稿に異常があります。空白のままか添付ファイルのサイズが制限を越えています。変更は保存されませんでした。';
 $string['everyonecanchoose'] = 'ユーザは登録を選択出来ます';
 $string['everyoneissubscribed'] = 'ユーザは強制登録されます';
+$string['existingsubscribers'] = '登録ユーザ';
 $string['forcesubscribe'] = 'ユーザを強制登録する';
 $string['forcesubscribeq'] = 'ユーザを強制登録しますか?';
 $string['forum'] = 'フォーラム';
@@ -99,6 +100,7 @@ $string['postrating3'] = '主に関連認識の傾向がある';
 $string['posts'] = '投稿';
 $string['posttoforum'] = 'フォーラムに投稿';
 $string['postupdated'] = '投稿が更新されました';
+$string['potentialsubscribers'] = '潜在的登録ユーザ';
 $string['processingdigest'] = '$a のメールダイジェストを処理中';
 $string['processingpost'] = '投稿 $a を処理中';
 $string['prune'] = '中断';
