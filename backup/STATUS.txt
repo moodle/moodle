@@ -58,7 +58,7 @@ Backup Details:
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
-              x quizzes.........................................NO EXISTS
+              x quizzes.........................................IN PROGRESS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
