@@ -32,8 +32,6 @@
     }
 
 
-
-
 /// If data submitted, then process and store.
 
     if ($form = data_submitted() and confirm_sesskey()) {
@@ -54,29 +52,24 @@
 
             if (!empty($course)) {
                 // Test for and remove blocks which aren't appropriate anymore
-                $page = new stdClass;
-                $page->id   = $course->id;
-                $page->type = MOODLE_PAGE_COURSE;
-
+                $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, $course->id);
                 blocks_remove_inappropriate($page);
 
                 // Update with the new data
-                if (update_record("course", $form)) {
+                if (update_record('course', $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
                     fix_course_sortorder();
-                    redirect("view.php?id=$course->id", get_string("changessaved"));
+                    redirect($page->url_get_full(), get_string('changessaved'));
                 } else {
                     error("Serious Error! Could not update the course record! (id = $form->id)");
                 }
             } else {
                 $form->timecreated = time();
 
-                if ($newcourseid = insert_record("course", $form)) {  // Set up new course
+                if ($newcourseid = insert_record('course', $form)) {  // Set up new course
                     
                     // Setup the blocks
-                    $page = new stdClass;
-                    $page->type = MOODLE_PAGE_COURSE;
-                    $page->id   = $newcourseid;
+                    $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, $newcourseid);
                     blocks_repopulate_page($page); // Return value not checked because you can always edit later
 
                     $section = NULL;

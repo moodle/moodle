@@ -8,91 +8,10 @@ define('BLOCK_MOVE_UP',     0x04);
 define('BLOCK_MOVE_DOWN',   0x08);
 define('BLOCK_CONFIGURE',   0x10);
 
-define('MOODLE_PAGE_COURSE', 'course');
 define('BLOCK_POS_LEFT',  'l');
 define('BLOCK_POS_RIGHT', 'r');
 
-function page_get_format($page) {
-    switch($page->type) {
-        case MOODLE_PAGE_COURSE:
-            if($page->id == SITEID) {
-                return 'site';
-            }
-            else {
-                $course = get_record('course', 'id', $page->id);
-                return $course->format;
-            }
-        break;
-    }
-    return NULL;
-}
-
-function blocks_get_missing($page, $pageblocks) {
-    $missingblocks = array();
-    $allblocks = blocks_get_record();
-
-    if(!empty($allblocks)) {
-        foreach($allblocks as $block) {
-            if($block->visible && (!blocks_find_block($block->id, $pageblocks) || $block->multiple)) {
-                // And if it's applicable for display in this format...
-                $formats = block_method_result($block->name, 'applicable_formats');
-                $pageformat = page_get_format($page);
-                if(isset($formats[$pageformat]) ? $formats[$pageformat] : !empty($formats['all'])) {
-                    // Add it to the missing blocks
-                    $missingblocks[] = $block->id;
-                }
-            }
-        }
-    }
-    return $missingblocks;
-}
-
-function blocks_remove_inappropriate($page) {
-    $pageblocks = blocks_get_by_page($page);
-
-    if(empty($pageblocks)) {
-        return;
-    }
-
-    switch($page->type) {
-        case MOODLE_PAGE_COURSE:
-            $course = get_record('course', 'id', $page->id);
-            if($page->id == SITEID) {
-                $pageformat = 'site';
-            }
-            else {
-                $pageformat = $course->format;
-            }
-        break;
-        default:
-            return;
-        break;
-    }
-
-    foreach($pageblocks as $position) {
-        foreach($position as $instance) {
-            $block = blocks_get_record($instance->blockid);
-            $formats = block_method_result($block->name, 'applicable_formats');
-            if(! (isset($formats[$pageformat]) ? $formats[$pageformat] : !empty($formats['all']))) {
-                // Translation: if the course format is explicitly accepted/rejected, use
-                // that setting. Otherwise, fallback to the 'all' format. The empty() test
-                // uses the trick that empty() fails if 'all' is either !isset() or false.
-
-                blocks_delete_instance($instance);
-            }
-        }
-    }
-}
-
-function blocks_delete_instance($instance) {
-    global $CFG;
-
-    delete_records('block_instance', 'id', $instance->id);
-    // And now, decrement the weight of all blocks after this one
-    execute_sql('UPDATE '.$CFG->prefix.'block_instance SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
-                '\' AND pageid = '.$instance->pageid.' AND position = \''.$instance->position.
-                '\' AND weight > '.$instance->weight, false);
-}
+require_once($CFG->libdir.'/pagelib.php');
 
 // Returns the case-sensitive name of the class' constructor function. This includes both
 // PHP5- and PHP4-style constructors. If no appropriate constructor can be found, returns NULL.
@@ -151,7 +70,7 @@ function block_instance($blockname, $instance = NULL) {
         return false;
     }
     $classname = 'CourseBlock_'.$blockname;
-    $retval = New $classname;
+    $retval = new $classname;
     if($instance !== NULL) {
         $retval->load_instance($instance);
     }
@@ -169,6 +88,63 @@ function block_load_class($blockname) {
 
     // After all this, return value indicating success or failure
     return class_exists($classname);
+}
+
+function blocks_get_missing($page, $pageblocks) {
+
+    $missingblocks = array();
+    $allblocks = blocks_get_record();
+    $pageformat = $page->get_format_name();
+
+    if(!empty($allblocks)) {
+        foreach($allblocks as $block) {
+            if($block->visible && (!blocks_find_block($block->id, $pageblocks) || $block->multiple)) {
+                // And if it's applicable for display in this format...
+                $formats = block_method_result($block->name, 'applicable_formats');
+                if(isset($formats[$pageformat]) ? $formats[$pageformat] : !empty($formats['all'])) {
+                    // Add it to the missing blocks
+                    $missingblocks[] = $block->id;
+                }
+            }
+        }
+    }
+    return $missingblocks;
+}
+
+function blocks_remove_inappropriate($page) {
+    $pageblocks = blocks_get_by_page($page);
+
+    if(empty($pageblocks)) {
+        return;
+    }
+
+    if(($pageformat = $page->get_format_name()) == NULL) {
+        return;
+    }
+
+    foreach($pageblocks as $position) {
+        foreach($position as $instance) {
+            $block = blocks_get_record($instance->blockid);
+            $formats = block_method_result($block->name, 'applicable_formats');
+            if(! (isset($formats[$pageformat]) ? $formats[$pageformat] : !empty($formats['all']))) {
+                // Translation: if the course format is explicitly accepted/rejected, use
+                // that setting. Otherwise, fallback to the 'all' format. The empty() test
+                // uses the trick that empty() fails if 'all' is either !isset() or false.
+
+                blocks_delete_instance($instance);
+            }
+        }
+    }
+}
+
+function blocks_delete_instance($instance) {
+    global $CFG;
+
+    delete_records('block_instance', 'id', $instance->id);
+    // And now, decrement the weight of all blocks after this one
+    execute_sql('UPDATE '.$CFG->prefix.'block_instance SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
+                '\' AND pageid = '.$instance->pageid.' AND position = \''.$instance->position.
+                '\' AND weight > '.$instance->weight, false);
 }
 
 function blocks_have_content($instances) {
@@ -198,26 +174,14 @@ function blocks_have_content($instances) {
     return false;
 }
 
-//This function print the one side of blocks in course main page
+//This function prints one side of the blocks in the course main page
 function blocks_print_group($page, $instances) {
     
     if(empty($instances)) {
         return;
     }
 
-    switch($page->type) {
-        case MOODLE_PAGE_COURSE:
-            $isediting     = isediting($page->id);
-            $ismoving      = ismoving($page->id);
-            $isteacheredit = isteacheredit($page->id);
-        break;
-    }
-
-    // Include the base class
-    @include_once($CFG->dirroot.'/blocks/moodleblock.class.php');
-    if(!class_exists('moodleblock')) {
-        error('Class MoodleBlock is not defined or file not found for /course/blocks/moodleblock.class.php');
-    }
+    $isediting = $page->user_is_editing();
 
     $maxweight = max(array_keys($instances));
 
@@ -230,14 +194,20 @@ function blocks_print_group($page, $instances) {
 
         $obj = block_instance($block->name, $instance);
 
-        if ($isediting && !$ismoving && $isteacheredit) {
+        if ($isediting) {
             $options = 0;
-            $options |= BLOCK_MOVE_UP * ($instance->weight != 0);
-            $options |= BLOCK_MOVE_DOWN * ($instance->weight != $maxweight);
-            $options |= BLOCK_MOVE_RIGHT * ($instance->position != BLOCK_POS_RIGHT);
-            $options |= BLOCK_MOVE_LEFT * ($instance->position != BLOCK_POS_LEFT);
-            // DH - users can configure this instance if the block class allows multiple instances, not just if the administrator has allowed this block class to display multiple for the given site as would be found in $block->multiple
-            $options |= BLOCK_CONFIGURE * ( $obj->instance_allow_multiple() );
+            // The block can be moved up if it's NOT the first one in its position. If it is, we look at the OR clause:
+            // the first block might still be able to move up if the page says so (i.e., it will change position)
+            $options |= BLOCK_MOVE_UP    * ($instance->weight != 0          || ($page->blocks_move_position($instance, BLOCK_MOVE_UP)   != $instance->position));
+            // Same thing for downward movement
+            $options |= BLOCK_MOVE_DOWN  * ($instance->weight != $maxweight || ($page->blocks_move_position($instance, BLOCK_MOVE_DOWN) != $instance->position));
+            // For left and right movements, it's up to the page to tell us whether they are allowed
+            $options |= BLOCK_MOVE_RIGHT * ($page->blocks_move_position($instance, BLOCK_MOVE_RIGHT) != $instance->position);
+            $options |= BLOCK_MOVE_LEFT  * ($page->blocks_move_position($instance, BLOCK_MOVE_LEFT ) != $instance->position);
+            // Finally, the block can be configured if the block class either allows multiple instances, or if it specifically
+            // allows instance configuration (multiple instances override that one). It doesn't have anything to do with what the
+            // administrator has allowed for this block in the site admin options.
+            $options |= BLOCK_CONFIGURE * ( $obj->instance_allow_multiple() || $obj->instance_allow_config() );
             $obj->add_edit_controls($options);
         }
 
@@ -322,8 +292,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
 
     switch($blockaction) {
         case 'config':
-            // Series of ugly hacks following...
-            global $course, $USER; // First hack; we need $course to print out the headers
+            global $USER;
             $block = blocks_get_record($instance->blockid);
             $blockobject = block_instance($block->name, $instance);
             if ($blockobject === false) {
@@ -335,15 +304,12 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             // so we can strip them from the submitted data BEFORE serializing it.
             $hiddendata = array(
                 'sesskey' => $USER->sesskey,
-                'id' => $course->id,
                 'instanceid' => $instance->id,
                 'blockaction' => 'config'
             );
-            // The 'id' thing is a crude hack in all its glory...
-            // Redirecting the form submission back to ourself with qualified_me() was a good idea since otherwise
-            // we'd need to have an "extra" script that would have to infer where to redirect us back just from
-            // the data in $instance (pagetype and pageid). But, "ourself" is most likely course/view.php and it needs
-            // a course id. Hence the hack.
+
+            // To this data, add anything the page itself needs to display
+            $hiddendata = array_merge($hiddendata, $page->url_get_parameters());
 
             if($data = data_submitted()) {
                 $remove = array_keys($hiddendata);
@@ -356,11 +322,10 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 // And nothing more, continue with displaying the page
             }
             else {
-                $loggedinas = '<p class="logininfo">'. user_login_string($course, $USER) .'</p>';
-                print_header(get_string('blockconfigin', 'moodle', $course->fullname), $course->fullname, $course->shortname,
-                     '', '', true, update_course_icon($course->id), $loggedinas);
+                // We need to show the config screen, so we highjack the display logic and then die
+                $page->print_header(get_string('pageheaderconfigablock', 'moodle'));
                 print_heading(get_string('blockconfiga', 'moodle', $block->name));
-                echo '<form method="post" action="'. strip_querystring(qualified_me()) .'">'; // This I wouldn't call a hack but it sure looks cheeky
+                echo '<form method="post" action="'. $page->url_get_path() .'">';
                 echo '<p>';
                 foreach($hiddendata as $name => $val) {
                     echo '<input type="hidden" name="'. $name .'" value="'. $val .'" />';
@@ -369,7 +334,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 $blockobject->instance_config_print();
                 echo '</form>';
                 print_footer();
-                die(); // Do not go on with the other course-related stuff
+                die(); // Do not go on with the other page-related stuff
             }
         break;
         case 'toggle':
@@ -389,79 +354,81 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             if(empty($instance))  {
                 error('Invalid block instance for '. $blockaction);
             }
-            // This configuration will make sure that even if somehow the weights
-            // become not continuous, block move operations will eventually bring
-            // the situation back to normal without printing any warnings.
-            if(!empty($pageblocks[$instance->position][$instance->weight - 1])) {
-                $other = $pageblocks[$instance->position][$instance->weight - 1];
+
+            if($instance->weight == 0) {
+                // The block is the first one, so a move "up" probably means it changes position
+                // Where is the instance going to be moved?
+                $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_UP);
+                $newweight = max(array_keys($pageblocks[$newpos])) + 1;
+
+                blocks_execute_repositioning($instance, $newpos, $newweight);
             }
-            if(!empty($other)) {
-                ++$other->weight;
-                update_record('block_instance', $other);
+            else {
+                // The block is just moving upwards in the same position.
+                // This configuration will make sure that even if somehow the weights
+                // become not continuous, block move operations will eventually bring
+                // the situation back to normal without printing any warnings.
+                if(!empty($pageblocks[$instance->position][$instance->weight - 1])) {
+                    $other = $pageblocks[$instance->position][$instance->weight - 1];
+                }
+                if(!empty($other)) {
+                    ++$other->weight;
+                    update_record('block_instance', $other);
+                }
+                --$instance->weight;
+                update_record('block_instance', $instance);
             }
-            --$instance->weight;
-            update_record('block_instance', $instance);
         break;
         case 'movedown':
             if(empty($instance))  {
                 error('Invalid block instance for '. $blockaction);
             }
-            // This configuration will make sure that even if somehow the weights
-            // become not continuous, block move operations will eventually bring
-            // the situation back to normal without printing any warnings.
-            if(!empty($pageblocks[$instance->position][$instance->weight + 1])) {
-                $other = $pageblocks[$instance->position][$instance->weight + 1];
+
+            if($instance->weight == max(array_keys($pageblocks[$instance->position]))) {
+                // The block is the last one, so a move "down" probably means it changes position
+                // Where is the instance going to be moved?
+                $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_DOWN);
+                $newweight = max(array_keys($pageblocks[$newpos])) + 1;
+
+                blocks_execute_repositioning($instance, $newpos, $newweight);
             }
-            if(!empty($other)) {
-                --$other->weight;
-                update_record('block_instance', $other);
+            else {
+                // The block is just moving downwards in the same position.
+                // This configuration will make sure that even if somehow the weights
+                // become not continuous, block move operations will eventually bring
+                // the situation back to normal without printing any warnings.
+                if(!empty($pageblocks[$instance->position][$instance->weight + 1])) {
+                    $other = $pageblocks[$instance->position][$instance->weight + 1];
+                }
+                if(!empty($other)) {
+                    --$other->weight;
+                    update_record('block_instance', $other);
+                }
+                ++$instance->weight;
+                update_record('block_instance', $instance);
             }
-            ++$instance->weight;
-            update_record('block_instance', $instance);
         break;
         case 'moveleft':
             if(empty($instance))  {
                 error('Invalid block instance for '. $blockaction);
             }
-            $sql = '';
-            switch($instance->position) {
-                case BLOCK_POS_RIGHT:
-                    // To preserve the continuity of block weights
-                    $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
-                           '\' AND pageid = '. $instance->pageid .' AND position = \'' .$instance->position.
-                           '\' AND weight > '. $instance->weight;
 
-                    $instance->position = BLOCK_POS_LEFT;
-                    $maxweight = max(array_keys($pageblocks[$instance->position]));
-                    $instance->weight = $maxweight + 1;
-                break;
-            }
-            if($sql) {
-                update_record('block_instance', $instance);
-                execute_sql($sql, false);
-            }
+            // Where is the instance going to be moved?
+            $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_LEFT);
+            $newweight = max(array_keys($pageblocks[$newpos])) + 1;
+
+            blocks_execute_repositioning($instance, $newpos, $newweight);
         break;
         case 'moveright':
             if(empty($instance))  {
                 error('Invalid block instance for '. $blockaction);
             }
-            $sql = '';
-            switch($instance->position) {
-                case BLOCK_POS_LEFT:
-                    // To preserve the continuity of block weights
-                    $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
-                           '\' AND pageid = '. $instance->pageid .' AND position = \''. $instance->position.
-                           '\' AND weight > '. $instance->weight;
 
-                    $instance->position = BLOCK_POS_RIGHT;
-                    $maxweight = max(array_keys($pageblocks[$instance->position]));
-                    $instance->weight = $maxweight + 1;
-                break;
-            }
-            if($sql) {
-                update_record('block_instance', $instance);
-                execute_sql($sql, false);
-            }
+            // Where is the instance going to be moved?
+            $newpos    = $page->blocks_move_position($instance, BLOCK_MOVE_RIGHT);
+            $newweight = max(array_keys($pageblocks[$newpos])) + 1;
+
+            blocks_execute_repositioning($instance, $newpos, $newweight);
         break;
         case 'add':
             // Add a new instance of this block, if allowed
@@ -477,25 +444,56 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 return false;
             }
 
-            $weight = get_record_sql('SELECT 1, max(weight) + 1 AS nextfree FROM '. $CFG->prefix .'block_instance WHERE pageid = '. $page->id .' AND pagetype = \''. $page->type .'\' AND position = \''. BLOCK_POS_RIGHT .'\''); 
+            $newpos = $page->blocks_default_position();
+            $weight = get_record_sql('SELECT 1, max(weight) + 1 AS nextfree FROM '. $CFG->prefix .'block_instance WHERE pageid = '. $page->get_id() .' AND pagetype = \''. $page->get_type() .'\' AND position = \''. $newpos .'\''); 
 
             $newinstance = new stdClass;
             $newinstance->blockid    = $blockid;
-            $newinstance->pageid     = $page->id;
-            $newinstance->pagetype   = $page->type;
-            $newinstance->position   = BLOCK_POS_RIGHT;
+            $newinstance->pageid     = $page->get_id();
+            $newinstance->pagetype   = $page->get_type();
+            $newinstance->position   = $newpos;
             $newinstance->weight     = $weight->nextfree;
             $newinstance->visible    = 1;
             $newinstance->configdata = '';
             insert_record('block_instance', $newinstance);
         break;
     }
+
+    // In order to prevent accidental duplicate actions, redirect to a page with a clean url
+    redirect($page->url_get_full());
+}
+
+// This shouldn't be used externally at all, it's here for use by blocks_execute_action()
+// in order to reduce code repetition.
+function blocks_execute_repositioning(&$instance, $newpos, $newweight) {
+    global $CFG;
+
+    // If it's staying where it is, don't do anything
+    if($newpos == $instance->position) {
+        return;
+    }
+
+    // Close the weight gap we 'll leave behind
+    execute_sql('UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
+                      '\' AND pageid = '. $instance->pageid .' AND position = \'' .$instance->position.
+                      '\' AND weight > '. $instance->weight,
+                false);
+
+    $instance->position = $newpos;
+    $instance->weight   = $newweight;
+
+    update_record('block_instance', $instance);
 }
 
 function blocks_get_by_page($page) {
-    $blocks = get_records_select('block_instance', 'pageid = '. $page->id .' AND pagetype = \''. $page->type .'\'', 'position, weight');
+    $blocks = get_records_select('block_instance', 'pageid = '. $page->get_id() .' AND pagetype = \''. $page->get_type() .'\'', 'position, weight');
 
-    $arr = array(BLOCK_POS_LEFT => array(), BLOCK_POS_RIGHT => array());
+    $positions = $page->blocks_get_positions();
+    $arr = array();
+    foreach($positions as $key => $position) {
+        $arr[$position] = array();
+    }
+
     if(empty($blocks)) {
         return $arr;
     }
@@ -516,14 +514,6 @@ function blocks_print_adminblock($page, $missingblocks) {
     if (!empty($missingblocks)) {
         foreach ($missingblocks as $blockid) {
             $block = blocks_get_record($blockid);
-
-            switch($page->type) {
-                case MOODLE_PAGE_COURSE:
-                    $course = get_record('course', 'id', $page->id);
-                break;
-                default: die('unknown pagetype: '. $page->type);
-            }
-
             $blockobject = block_instance($block->name);
             if ($blockobject === false) {
                 continue;
@@ -531,15 +521,9 @@ function blocks_print_adminblock($page, $missingblocks) {
             $menu[$block->id] = $blockobject->get_title();
         }
 
-        if($page->id == SITEID) {
-            $target = 'index.php';
-        }
-        else {
-            $target = 'view.php';
-        }
-        $content = popup_form($target .'?id='. $course->id .'&amp;sesskey='. $USER->sesskey .'&amp;blockaction=add&amp;blockid=',
-                              $menu, 'add_block', '', $stradd .'...', '', '', true);
-        $content = '<div align="center">'. $content .'</div>';
+        $target = $page->url_get_full(array('sesskey' => $USER->sesskey, 'blockaction' => 'add'));
+        $content = popup_form($target.'&amp;blockid=', $menu, 'add_block', '', $stradd .'...', '', '', true);
+        $content = '<div style="text-align: center;">'. $content .'</div>';
         print_side_block($strblocks, $content, NULL, NULL, NULL);
     }
 }
@@ -547,88 +531,55 @@ function blocks_print_adminblock($page, $missingblocks) {
 function blocks_repopulate_page($page) {
     global $CFG;
 
-    /// If the site override has been defined, it is the only valid one.
-    if (!empty($CFG->defaultblocks_override)) {
-        $blocknames = $CFG->defaultblocks_override;
-    }
-    /// Else, try to find out what page this is 
-    else {
-        switch($page->type) {
-            case MOODLE_PAGE_COURSE:
-                // Is it the site?
-                if($page->id == SITEID) {
-                    if (!empty($CFG->defaultblocks_site)) {
-                        $blocknames = $CFG->defaultblocks_site;
-                    }
-                    /// Failsafe - in case nothing was defined.
-                    else {
-                        $blocknames = 'site_main_menu,admin,course_list:course_summary,calendar_month';
-                    }
-                }
-                // It's a normal course, so do it accodring to the course format
-                else {
-                    $course = get_record('course', 'id', $page->id);
-                    if (!empty($CFG->{'defaultblocks_'. $course->format})) {
-                        $blocknames = $CFG->{'defaultblocks_'. $course->format};
-                    }
-                    else {
-                        $format_config = $CFG->dirroot.'/course/format/'.$course->format.'/config.php';
-                        if (@is_file($format_config) && is_readable($format_config)) {
-                            require($format_config);
-                        }
-                        if (!empty($format['defaultblocks'])) {
-                            $blocknames = $format['defaultblocks'];
-                        }
-                        else if (!empty($CFG->defaultblocks)){
-                            $blocknames = $CFG->defaultblocks;
-                        }
-                        /// Failsafe - in case nothing was defined.
-                        else {
-                            $blocknames = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
-                        }
-                    }
-                }
-            break;
-            default:
-                error('Invalid page type: '. $page->type);
-            break;
-        }
-    }
-
     $allblocks = blocks_get_record();
 
     if(empty($allblocks)) {
         error('Could not retrieve blocks from the database');
     }
 
-    // We have the blocks, make up two arrays
-    $left  = '';
-    $right = '';
-    @list($left, $right) = explode(':', $blocknames);
-    $instances = array(BLOCK_POS_LEFT => explode(',', $left), BLOCK_POS_RIGHT => explode(',', $right));
-
-    // Arrays are fine, now we have to correlate block names to ids
+    // Assemble the information to correlate block names to ids
     $idforname = array();
     foreach($allblocks as $block) {
         $idforname[$block->name] = $block->id;
     }
 
-    // Ready to start creating block instances, but first drop any existing ones
-    delete_records('block_instance', 'pageid', $page->id, 'pagetype', $page->type);
+    /// If the site override has been defined, it is the only valid one.
+    if (!empty($CFG->defaultblocks_override)) {
+        $blocknames = $CFG->defaultblocks_override;
+    }
+    else {
+        $blocknames = $page->blocks_get_default();
+    }
+    
+    $positions = $page->blocks_get_positions();
+    $posblocks = explode(':', $blocknames);
 
-    foreach($instances as $position => $blocknames) {
+    // Now one array holds the names of the positions, and the other one holds the blocks
+    // that are going to go in each position. Luckily for us, both arrays are numerically
+    // indexed and the indexes match, so we can work straight away... but CAREFULLY!
+
+    // Ready to start creating block instances, but first drop any existing ones
+    delete_records('block_instance', 'pageid', $page->get_id(), 'pagetype', $page->get_type());
+
+    // Here we slyly count $posblocks and NOT $positions. This can actually make a difference
+    // if the textual representation has undefined slots in the end. So we only work with as many
+    // positions were retrieved, not with all the page says it has available.
+    $numpositions = count($posblocks);
+    for($i = 0; $i < $numpositions; ++$i) {
+        $position = $positions[$i];
+        $blocknames = explode(',', $posblocks[$i]);
         $weight = 0;
         foreach($blocknames as $blockname) {
             $newinstance = new stdClass;
             $newinstance->blockid    = $idforname[$blockname];
-            $newinstance->pageid     = $page->id;
-            $newinstance->pagetype   = $page->type;
+            $newinstance->pageid     = $page->get_id();
+            $newinstance->pagetype   = $page->get_type();
             $newinstance->position   = $position;
             $newinstance->weight     = $weight;
             $newinstance->visible    = 1;
             $newinstance->configdata = '';
             insert_record('block_instance', $newinstance);
-            $weight++;
+            ++$weight;
         }
     }
 
@@ -884,18 +835,14 @@ function upgrade_blocks_plugins($continueto) {
         //Iterate over each course
         if ($courses = get_records('course')) {
             foreach ($courses as $course) {
-                $page = new stdClass;
-                $page->type = MOODLE_PAGE_COURSE;
-                $page->id   = $course->id;
+                $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, $course->id);
                 blocks_repopulate_page($page);
             }
         }
     }
 
     if (!empty($CFG->siteblocksadded)) {     /// This is a once-off hack to make a proper upgrade
-        $page = new stdClass;
-        $page->type = MOODLE_PAGE_COURSE;
-        $page->id   = SITEID;
+        $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, SITEID);
         blocks_repopulate_page($page);
         delete_records('config', 'name', 'siteblocksadded');
     }

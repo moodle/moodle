@@ -3476,15 +3476,5 @@ function print_speller_button () {
     echo '<input type="button" value="Check spelling" onclick="openSpellChecker();" />'."\n";
 }
 
-function page_source_script($page) {
-    global $CFG;
-
-    switch($page->type) {
-        case MOODLE_PAGE_COURSE:
-            return $CFG->wwwroot.'/course/view.php?id='.$page->id;
-        break;
-    }
-}
-
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

@@ -35,19 +35,17 @@
                     error("Serious Error! Could not update the site record! (id = $form->id)");
                 }
             } else {
-                // [pj] We are about to create the site, so let's add some blocks...
-                // calendar_month is included as a Moodle feature advertisement ;-)
+                // We are about to create the site "course"
                 require_once($CFG->dirroot.'/lib/blocklib.php');
 
-                if ($newid = insert_record("course", $form)) {
+                if ($newid = insert_record('course', $form)) {
+
                     // Site created, add blocks for it
-                    $page = new stdClass;
-                    $page->type = MOODLE_PAGE_COURSE;
-                    $page->id   = $newid;
+                    $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, $newid);
                     blocks_repopulate_page($page); // Return value not checked because you can always edit later
 
-                    $cat->name = get_string("miscellaneous");
-                    if (insert_record("course_categories", $cat)) {
+                    $cat->name = get_string('miscellaneous');
+                    if (insert_record('course_categories', $cat)) {
                         redirect("$CFG->wwwroot/$CFG->admin/index.php", get_string("changessaved"), 1);
                     } else {
                         error("Serious Error! Could not set up a default course category!");

@@ -296,8 +296,6 @@ class MoodleBlock {
             $pixpath = $path .'/../theme/'. $CFG->theme .'/pix';
         }
  
-        $sesskeystr = '&amp;sesskey='. $USER->sesskey;
-
         $movebuttons = '<div style="float: right;">';
 
         if ($this->instance->visible) {
@@ -308,36 +306,34 @@ class MoodleBlock {
             $title = $this->str->show;
         }
 
-        $page = new stdClass;
-        $page->id   = $this->instance->pageid;
-        $page->type = $this->instance->pagetype;
-        $script = page_source_script($page);
+        $page   = MoodlePage::create_object($this->instance->pagetype, $this->instance->pageid);
+        $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
-        $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle&amp;instanceid='. $this->instance->id . $sesskeystr .'">' .
+        $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                         '<img src="'. $pixpath.$icon .'" alt=\"\" /></a>';
 
         if ($options & BLOCK_CONFIGURE) {
-            $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $this->str->configure .'" href="'. $script .'&amp;blockaction=config&amp;instanceid='. $this->instance->id.$sesskeystr .'">' .
+            $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
                             '<img src="'. $pixpath .'/t/edit.gif" alt=\"\" /></a>';
         }
 
-        $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->delete .'" href="'. $script .'&amp;blockaction=delete&amp;instanceid='. $this->instance->id.$sesskeystr .'">' .
+        $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
                         '<img src="'. $pixpath .'/t/delete.gif" alt=\"\" /></a> ';
 
         if ($options & BLOCK_MOVE_LEFT) {
-            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveleft .'" href="'. $script .'&amp;blockaction=moveleft&amp;instanceid='. $this->instance->id.$sesskeystr .'">' .
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
                             '<img src="'. $pixpath .'/t/left.gif" alt=\"\" /></a>';
         }
         if ($options & BLOCK_MOVE_UP) {
-            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveup .'" href="'. $script .'&amp;blockaction=moveup&amp;instanceid='. $this->instance->id.$sesskeystr .'">' .
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
                             '<img src="'. $pixpath .'/t/up.gif" alt=\"\" /></a>';
         }
         if ($options & BLOCK_MOVE_DOWN) {
-            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->movedown .'" href="'. $script .'&amp;blockaction=movedown&amp;instanceid='. $this->instance->id.$sesskeystr .'">' .
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->movedown .'" href="'.$script.'&amp;blockaction=movedown">' .
                             '<img src="'. $pixpath .'/t/down.gif" alt=\"\" /></a>';
         }
         if ($options & BLOCK_MOVE_RIGHT) {
-            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveright .'" href="'. $script .'&amp;blockaction=moveright&amp;instanceid='. $this->instance->id.$sesskeystr .'">' .
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .
                             '<img src="'. $pixpath .'/t/right.gif" alt=\"\" /></a>';
         }
 
@@ -404,7 +400,6 @@ class MoodleBlock {
      * You don't need to override this if you're satisfied with the above
      *
      * @uses $CFG
-     * @uses $USER
      * @uses $THEME
      * @return boolean
      */
@@ -414,7 +409,7 @@ class MoodleBlock {
         if (!$this->has_config()) {
             return false;
         }
-        global $CFG, $USER, $THEME;
+        global $CFG, $THEME;
         print_simple_box_start('center', '', $THEME->cellheading);
         include($CFG->dirroot.'/blocks/'. $this->name() .'/config_global.html');
         print_simple_box_end();
@@ -505,7 +500,21 @@ class MoodleBlock {
     }
 
     /**
-     *Are you going to allow multiple instances of each block?
+     * Is each block of this type going to have instance-specific configuration?
+     * Normally, this setting is controlled by {@link instance_allow_multiple}: if multiple
+     * instances are allowed, then each will surely need its own configuration. However, in some
+     * cases it may be necessary to provide instance configuration to blocks that do not want to
+     * allow multiple instances. In that case, make this function return true.
+     * I stress again that this makes a difference ONLY if {@link instance_allow_multiple} returns false.
+     * @return boolean
+     * @todo finish documenting this function by explaining per-instance configuration further
+     */
+    function instance_allow_config() {
+        return false;
+    }
+
+    /**
+     * Are you going to allow multiple instances of each block?
      * If yes, then it is assumed that the block WILL USE per-instance configuration
      * @return boolean
      * @todo finish documenting this function by explaining per-instance configuration further
@@ -522,14 +531,13 @@ class MoodleBlock {
      *
      * @uses $CFG
      * @uses $THEME
-     * @uses $USER
      * @return boolean
      * @todo finish documenting this function
      */
     function instance_config_print() {
         // Default behavior: print the config_instance.html file
         // You don't need to override this if you're satisfied with the above
-        if (!$this->instance_allow_multiple()) {
+        if (!$this->instance_allow_multiple() && !$this->instance_allow_config()) {
             return false;
         }
         global $CFG, $USER, $THEME;

@@ -37,11 +37,8 @@
         $course->format = 'weeks';  // Default format is weeks
     }
 
-    $page = new stdClass;
-    $page->id   = $course->id;
-    $page->type = MOODLE_PAGE_COURSE;
-
-    $pageblocks = blocks_get_by_page($page);
+    $PAGE = MoodlePage::create_object(MOODLE_PAGE_COURSE, $course->id);
+    $pageblocks = blocks_get_by_page($PAGE);
    
     if (!isset($USER->editing)) {
         $USER->editing = false;
@@ -70,19 +67,19 @@
 
         if (!empty($blockaction) && confirm_sesskey()) {
             if (!empty($blockid)) {
-                blocks_execute_action($page, $pageblocks, strtolower($blockaction), intval($blockid));
+                blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), intval($blockid));
                 
             }
             else if (!empty($instanceid)) {
                 $instance = blocks_find_instance($instanceid, $pageblocks);
-                blocks_execute_action($page, $pageblocks, strtolower($blockaction), $instance);
+                blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $instance);
             }
             // This re-query could be eliminated by judicious programming in blocks_execute_action(),
             // but I 'm not sure if it's worth the complexity increase...
-            $pageblocks = blocks_get_by_page($page);
+            $pageblocks = blocks_get_by_page($PAGE);
         }
 
-        $missingblocks = blocks_get_missing($page, $pageblocks);
+        $missingblocks = blocks_get_missing($PAGE, $pageblocks);
 
         if (!empty($section)) {
             if (!empty($move) and confirm_sesskey()) {
@@ -101,12 +98,7 @@
         redirect("$CFG->wwwroot/");
     }
 
-    $strcourse = get_string("course");
-
-    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
-
-    print_header("$strcourse: $course->fullname", "$course->fullname", "$course->shortname",
-                 "", "", true, update_course_icon($course->id), $loggedinas);
+    $PAGE->print_header(get_string('course').': %fullname%');
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 

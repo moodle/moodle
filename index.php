@@ -55,34 +55,32 @@
         $langmenu = popup_form ($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true);
     }
 
+    $PAGE = MoodlePage::create_object(MOODLE_PAGE_COURSE, SITEID);
+
     print_header(strip_tags($site->fullname), $site->fullname, 'home', '',
                  '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',
                  true, '', $loginstring . $langmenu);
 
     $editing = isediting($site->id);
 
-    $page = new stdClass;
-    $page->id   = SITEID;
-    $page->type = MOODLE_PAGE_COURSE;
-
-    $pageblocks = blocks_get_by_page($page);
+    $pageblocks = blocks_get_by_page($PAGE);
 
     if($editing) {
         if (!empty($blockaction) && confirm_sesskey()) {
             if (!empty($blockid)) {
-                blocks_execute_action($page, $pageblocks, strtolower($blockaction), intval($blockid));
+                blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), intval($blockid));
                 
             }
             else if (!empty($instanceid)) {
                 $instance = blocks_find_instance($instanceid, $pageblocks);
-                blocks_execute_action($page, $pageblocks, strtolower($blockaction), $instance);
+                blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $instance);
             }
             // This re-query could be eliminated by judicious programming in blocks_execute_action(),
             // but I'm not sure if it's worth the complexity increase...
-            $pageblocks = blocks_get_by_page($page);
+            $pageblocks = blocks_get_by_page($PAGE);
         }
 
-        $missingblocks = blocks_get_missing($page, $pageblocks);
+        $missingblocks = blocks_get_missing($PAGE, $pageblocks);
     }
 
     optional_variable($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
@@ -101,7 +99,7 @@
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;">';
-        blocks_print_group($page, $pageblocks[BLOCK_POS_LEFT]);
+        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
         echo '</td>';
     }
 
@@ -216,9 +214,9 @@
             echo '<div align="center">'.update_course_icon($site->id).'</div>';
             echo '<br />';
         }
-        blocks_print_group($page, $pageblocks[BLOCK_POS_RIGHT]);
+        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
         if ($editing && !empty($missingblocks)) {
-            blocks_print_adminblock($page, $missingblocks);
+            blocks_print_adminblock($PAGE, $missingblocks);
         }
         echo '</td>';
     }

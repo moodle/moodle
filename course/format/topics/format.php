@@ -65,7 +65,7 @@
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;">';
-        blocks_print_group($page, $pageblocks[BLOCK_POS_LEFT]);
+        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
         echo '</td>';
     }
 
@@ -272,9 +272,9 @@
     // The right column
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
-        blocks_print_group($page, $pageblocks[BLOCK_POS_RIGHT]);
+        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
         if ($editing && !empty($missingblocks)) {
-            blocks_print_adminblock($page, $missingblocks);
+            blocks_print_adminblock($PAGE, $missingblocks);
         }
         echo '</td>';
     }
