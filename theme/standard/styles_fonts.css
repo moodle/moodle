@@ -302,8 +302,16 @@ table.formtable tbody th {
 ***
 ******************************/
 
-#calendar .maincalendar .eventfull .referer {
+#calendar .maincalendar .eventlist .event .referer {
     font-weight:bold;
+}
+
+#calendar .maincalendar .eventlist .event .course {
+    font-size:0.8em;
+}
+
+#calendar .maincalendar .eventlist .event .description .commands {
+    text-align: right;
 }
 
 #calendar .maincalendar table.calendarmonth td {

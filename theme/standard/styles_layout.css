@@ -609,8 +609,8 @@ table.minicalendar th {
     padding: 10px;
 }
 
-#calendar .maincalendar .eventlist .eventfull {
-    width: 100%;
+#calendar .maincalendar .eventlist .event {
+    width:100%;
     margin-bottom:10px;
     border-spacing:0px;
     border-collapse:separate;
@@ -618,12 +618,33 @@ table.minicalendar th {
     border-style:solid;
 }
 
-#calendar .maincalendar .eventlist .eventfullmessage {
-    padding: 5px;
+#calendar .maincalendar .eventlist .event .name {
+    float:left;
 }
 
-#calendar .maincalendar .eventlist .eventfullpicture {
+#calendar .maincalendar .eventlist .event .course {
+    float:left;
+    clear:left;
+}
+
+#calendar .maincalendar .eventlist .event .date {
+    float:right;
+}
+
+#calendar .maincalendar .eventlist .event .description .commands {
+    width:100%;
+}
+
+#calendar .maincalendar .eventlist .event .description {
+    padding:5px;
+}
+
+#calendar .maincalendar .eventlist .event .picture {
     padding:8px;
+}
+
+#calendar .maincalendar .eventlist .event .side {
+    width:32px;
 }
 
 #calendar #selecteventtype table {

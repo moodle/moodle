@@ -80,16 +80,16 @@
     -moz-border-radius-bottomright:10px;
 }
 
-#calendar .eventlist .eventfull {
+#calendar .eventlist .event {
     -moz-border-radius-bottomleft:15px;
     -moz-border-radius-bottomright:15px;
 }
 
-#calendar .eventlist .eventfullside {
+#calendar .eventlist .event .side {
     -moz-border-radius-bottomleft:15px;
 }
 
-#calendar .eventlist .eventfullmessage {
+#calendar .eventlist .event .description {
     -moz-border-radius-bottomright:15px;
 }
 

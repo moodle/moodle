@@ -411,13 +411,14 @@ table.minicalendar {
     border-color:#DDDDDD;
 }
 
-#calendar .maincalendar .eventlist .eventfull {
+#calendar .maincalendar .eventlist .event {
     border-color:#DDDDDD;
 }
 
-#calendar .maincalendar .eventlist .eventfullheader,
-#calendar .maincalendar .eventlist .eventfullpicture,
-#calendar .maincalendar .eventlist .eventfullside {
+#calendar .maincalendar .eventlist .event .header,
+#calendar .maincalendar .eventlist .event .picture,
+#calendar .maincalendar .eventlist .event .side
+{
     background-color:#EEEEEE;
 }
 

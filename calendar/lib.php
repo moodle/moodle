@@ -382,36 +382,36 @@ function calendar_print_event($event) {
     static $strftimetime;
 
     $event = calendar_add_event_metadata($event);
-    echo '<table class="eventfull">';
-    echo '<tr><td class="eventfullpicture">';
+    echo '<table class="event">';
+    echo '<tr><td class="picture">';
     if (!empty($event->icon)) {
         echo $event->icon;
     } else {
         print_spacer(16,16);
     }
     echo '</td>';
-    echo '<td class="eventfullheader">';
+    echo '<td class="header">';
 
     if (!empty($event->referer)) {
         echo '<div class="referer">'.$event->referer.'</div>';
     } else {
-        echo '<div style="float:left;" class="event">'.$event->name."</div>";
+        echo '<div class="name">'.$event->name."</div>";
     }
     if (!empty($event->courselink)) {
-        echo '<div style="float:left; clear: left; font-size: 0.8em;">'.$event->courselink.' </div>';
+        echo '<div class="course">'.$event->courselink.' </div>';
     }
     if (!empty($event->time)) {
-        echo '<span style="float:right;" class="event_date">'.$event->time.'</span>';
+        echo '<span class="date">'.$event->time.'</span>';
     } else {
-        echo '<span style="float:right;" class="event_date">'.calendar_time_representation($event->timestart).'</span>';
+        echo '<span class="date">'.calendar_time_representation($event->timestart).'</span>';
     }
 
-    echo "</td></tr>";
-    echo "<tr><td valign=\"top\" class=\"eventfullside\" width=\"32\">&nbsp;</td>";
-    echo "<td class=\"eventfullmessage\">\n";
+    echo '</td></tr>';
+    echo '<tr><td class="side">&nbsp;</td>';
+    echo '<td class="description">';
     echo format_text($event->description, FORMAT_HTML);
     if (calendar_edit_event_allowed($event)) {
-        echo '<div align="right">';
+        echo '<div class="commands">';
         if (empty($event->cmid)) {
             $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
             $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id;
