@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 Beta ++ (2004031100)
+      // workshop.php - created with Moodle 1.3 development (2004042703)
 
 
 $string['absent'] = 'Afwezig';
@@ -137,15 +137,15 @@ $string['percentageofassessments'] = 'Percentage te negeren beoordelingen';
 $string['phase'] = 'Fase';
 $string['phase1'] = 'Begin taak';
 $string['phase1short'] = 'Begin';
-$string['phase2'] = '$a Bijdragen en evaluaties';
-$string['phase2short'] = 'Bijdragen';
-$string['phase3'] = 'Berekening van de totalen';
+$string['phase2'] = 'Laat $a insturen';
+$string['phase2short'] = 'Insturen';
+$string['phase3'] = 'Laat $ insturen en evalueren';
 $string['phase3short'] = 'Beide';
-$string['phase4'] = 'Laat $a Beoordelingen toe';
-$string['phase4short'] = 'Opdrachten';
-$string['phase5'] = 'Toon de totalen';
+$string['phase4'] = 'Laat $a evalueren';
+$string['phase4short'] = 'Evalueren';
+$string['phase5'] = 'Berekening van de totaalcijfers';
 $string['phase5short'] = 'Berekening';
-$string['phase6'] = 'Toon eindtotalen';
+$string['phase6'] = 'Toon totaalcijfers';
 $string['phase6short'] = 'Toon cijfers';
 $string['pleaseassesstheseexamplesfromtheteacher'] = 'Evalueer a.j.b. deze voorbeelden van de $a';
 $string['pleaseassessthesestudentsubmissions'] = 'Evalueer a.j.b. deze $a bijdragen';
