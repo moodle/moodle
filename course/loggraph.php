@@ -86,7 +86,8 @@
                $logs[$i] = 0;
            }
            $logs[$i] = $logcount->count;
-           $hours[$i] = userdate($timestart, "%I %p");
+           $hh = (int)userdate($timestart, "%I");
+           $hours[$i] = userdate($timestart, "$hh %p");
            $i++;
            $timestart = $timefinish;
        }
