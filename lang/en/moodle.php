@@ -608,6 +608,7 @@ $string['includemodules'] = 'Include Modules';
 $string['includeneededusers'] = 'Include Needed Users';
 $string['includenoneusers'] = 'Include None Users';
 $string['includeuserfiles'] = 'Include User Files';
+$string['info'] = 'Information';
 $string['institution'] = 'Institution';
 $string['invalidemail'] = 'Invalid email address';
 $string['invalidlogin'] = 'Invalid login, please try again';
