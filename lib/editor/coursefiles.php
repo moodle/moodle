@@ -4,7 +4,7 @@
 
 //  This file is a hack to files/index.php that removes
 //  the headers and adds some controls so that images
-//  can be selected within the Richtext editor.  
+//  can be selected within the Richtext editor.
 
 //  All the Moodle-specific stuff is in this top section
 //  Configuration and access control occurs here.
@@ -33,7 +33,7 @@
     function html_footer() {
         echo "</td></tr></table></body></html>";
     }
-    
+
     function html_header($course, $wdir, $formfield=""){
 
         global $CFG;
@@ -41,7 +41,7 @@
         if (! $site = get_site()) {
             error("Invalid site!");
         }
-        
+
         ?>
         <html>
         <head>
@@ -49,28 +49,26 @@
         <script language="javscript" type="text/javascript">
         <!--
         function set_value(params) {
-            /// function's argument is an array containing necessary values
-            /// to export parent window (url,isize,itype,iwidth,iheight)
+            /// function's argument is an object containing necessary values
+            /// to export parent window (url,isize,itype,iwidth,iheight, imodified)
             /// set values when user click's an image name.
             var upper = window.parent;
             var insimg = upper.document.getElementById('f_url');
+
             try {
                 if(insimg != null) {
+                    if(params.itype.indexOf("image/gif") == -1 && params.itype.indexOf("image/jpeg") == -1 && params.itype.indexOf("image/png") == -1) {
+                        alert("<?php print_string("notimage","editor");?>");
+                        return false;
+                    }
                     for(field in params) {
                         var value = params[field];
                         switch(field) {
-                            case "url"   :   upper.document.getElementById('f_url').value = value; 
+                            case "url"   :   upper.document.getElementById('f_url').value = value;
                                      upper.ipreview.location.replace('popups/preview.php?id='+ <?php print($course->id);?> +'&imageurl='+ value);
                                 break;
                             case "isize" :   upper.document.getElementById('isize').value = value; break;
-                            case "itype" :
-                                if(params[field].indexOf("image/gif") == -1 && params[field].indexOf("image/jpeg") == -1 && params[field].indexOf("image/png") == -1) {
-                                alert("<?php print_string("notimage","editor");?>");
-                                return false;
-                            } else {
-                                upper.document.getElementById('itype').value = value;
-                            }
-                                break;
+                            case "itype" :   upper.document.getElementById('itype').value = value; break;
                             case "iwidth":    upper.document.getElementById('f_width').value = value; break;
                             case "iheight":   upper.document.getElementById('f_height').value = value; break;
                         }
@@ -80,7 +78,7 @@
                         var value = params[field];
                         switch(field) {
                             case "url" : upper.document.getElementById('f_href').value = value; break;
-                            case "imodified" : upper.document.getElementById('imodified').value = value; break; 
+                            case "imodified" : upper.document.getElementById('imodified').value = value; break;
                             case "isize" : upper.document.getElementById('isize').value = value; break;
                             case "itype" : upper.document.getElementById('itype').value = value; break;
                         }
@@ -91,7 +89,7 @@
             }
             return false;
         }
-        
+
         function set_dir(strdir) {
             // sets wdir values
             var upper = window.parent.document;
@@ -101,19 +99,19 @@
                     try {
                         f.wdir.value = strdir;
                     } catch (e) {
-                        
+
                     }
                 }
             }
         }
-        
+
         function set_rename(strfile) {
             if(window.parent.document.irename != null) {
                 window.parent.document.irename.file.value = strfile;
             }
             return true;
         }
-        
+
         function reset_value() {
             var upper = window.parent.document;
             for(var i = 0; i < upper.forms.length; i++) {
@@ -128,7 +126,7 @@
                     }
                 }
             }
-            
+
             var ren = upper.getElementById('irename');
             if(ren != null) {
                 upper.irename.file.value = "";
@@ -143,7 +141,7 @@
             }
             set_dir('<?php print($_REQUEST['wdir']);?>');
             return true;
-        }                
+        }
         -->
         </script>
         <style type="text/css">
@@ -158,7 +156,7 @@
             font-family: Tahoma, sans-serif;
             font-size: 11px;
         }
-        select { 
+        select {
         position: absolute;
         top: -20px;
         left: 0px;
@@ -167,7 +165,7 @@
         </style>
         </head>
         <body onload="reset_value();">
-        
+
         <?php
     }
 
@@ -181,11 +179,11 @@
 
 
     $regexp="\\.\\.";
-    if (ereg( $regexp, $file, $regs )| ereg( $regexp, $wdir,$regs )) {           
+    if (ereg( $regexp, $file, $regs )| ereg( $regexp, $wdir,$regs )) {
         $message = "Error: Directories can not contain \"..\"";
         $wdir = "/";
         $action = "";
-    }    
+    }
 
     if (!$wdir) {
         $wdir="/";
@@ -220,7 +218,7 @@
                     }
                 }
                 displaydir($wdir);
-                    
+
             } else {
                 $upload_max_filesize = get_max_upload_file_size();
                 $filesize = display_size($upload_max_filesize);
@@ -274,7 +272,7 @@
                     printfilelist($USER->filelist);
                     print_simple_box_end();
                     echo "<br />";
-                    notice_yesno (get_string("deletecheckfiles"), 
+                    notice_yesno (get_string("deletecheckfiles"),
                                 "".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&action=delete&confirm=1",
                                 "".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&action=cancel");
                 } else {
@@ -324,7 +322,7 @@
                     echo "Error: could not rename $oldname to $name";
                 }
                 displaydir($wdir);
-                    
+
             } else {
                 $strrename = get_string("rename");
                 $strcancel = get_string("cancel");
@@ -362,7 +360,7 @@
                     echo "Error: could not create $name";
                 }
                 displaydir($wdir);
-                    
+
             } else {
                 $strcreate = get_string("create");
                 $strcancel = get_string("cancel");
@@ -396,7 +394,7 @@
                 fputs($fileptr, stripslashes($text));
                 fclose($fileptr);
                 displaydir($wdir);
-                    
+
             } else {
                 $streditfile = get_string("edit", "", "<B>$file</B>");
                 $fileptr  = fopen($basedir.$file, "r");
@@ -435,7 +433,7 @@
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
 
-                if ($usehtmleditor) { 
+                if ($usehtmleditor) {
                     print_richedit_javascript("form", "text", "yes");
                 }
 
@@ -469,7 +467,7 @@
                 }
                 clearfilelist();
                 displaydir($wdir);
-                    
+
             } else {
                 html_header($course, $wdir, "form.name");
 
@@ -545,7 +543,7 @@
                         }
                         echo "</table>";
                     }
-                    
+
                 } else {                     // Use external unzip program
                     print_simple_box_start("center");
                     echo "<PRE>";
@@ -614,7 +612,7 @@
             }
             html_footer();
             break;
-            
+
         case "cancel";
             clearfilelist();
 
@@ -629,13 +627,13 @@
 /// FILE FUNCTIONS ///////////////////////////////////////////////////////////
 
 
-function fulldelete($location) { 
+function fulldelete($location) {
     if (is_dir($location)) {
         $currdir = opendir($location);
-        while ($file = readdir($currdir)) { 
+        while ($file = readdir($currdir)) {
             if ($file <> ".." && $file <> ".") {
                 $fullfile = $location."/".$file;
-                if (is_dir($fullfile)) { 
+                if (is_dir($fullfile)) {
                     if (!fulldelete($fullfile)) {
                         return false;
                     }
@@ -643,9 +641,9 @@ function fulldelete($location) {
                     if (!unlink($fullfile)) {
                         return false;
                     }
-                } 
+                }
             }
-        } 
+        }
         closedir($currdir);
         if (! rmdir($location)) {
             return false;
@@ -693,14 +691,14 @@ function printfilelist($filelist) {
             echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\"> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
-            while ($subfile = readdir($currdir)) { 
+            while ($subfile = readdir($currdir)) {
                 if ($subfile <> ".." && $subfile <> ".") {
                     $subfilelist[] = $file."/".$subfile;
                 }
             }
             printfilelist($subfilelist);
 
-        } else { 
+        } else {
             $icon = mimeinfo("icon", $file);
             echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\"> $file<br />";
         }
@@ -747,7 +745,7 @@ function displaydir ($wdir) {
         if ($file == "." || $file == "..") {
             continue;
         }
-        
+
         if (is_dir($fullpath."/".$file)) {
             $dirlist[] = $file;
         } else {
@@ -776,7 +774,7 @@ function displaydir ($wdir) {
 
 
     echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=post NAME=dirform>";
-    echo "<TABLE BORDER=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"100%\">";    
+    echo "<TABLE BORDER=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"100%\">";
 
     if ($wdir == "/") {
         $wdir = "";
@@ -790,7 +788,7 @@ function displaydir ($wdir) {
         print "<img src=\"$CFG->wwwroot/lib/editor/images/folderup.gif\" height=\"14\" width=\"24\" border=\"0\" ALT=\"Move up\">";
         print "</a></td></tr>\n";
     }
-    
+
     $count = 0;
 
     if (!empty($dirlist)) {
@@ -803,7 +801,7 @@ function displaydir ($wdir) {
             $fileurl  = rawurlencode($wdir."/".$dir);
             $filesafe = rawurlencode($dir);
             $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
-    
+
             echo "<TR>";
 
             if ($usecheckboxes) {
@@ -812,7 +810,7 @@ function displaydir ($wdir) {
             print_cell("left", "<a href=\"".basename($_server['php_self'])."?id=$id&wdir=$fileurl\" onclick=\"return reset_value();\"><img src=\"$CFG->pixpath/f/folder.gif\" height=16 width=16 border=0 alt=\"folder\"></a> <a href=\"".basename($_server['php_self'])."?id=$id&wdir=$fileurl&usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">".htmlspecialchars($dir)."</a>");
             print_cell("right", "&nbsp;");
             print_cell("right", $filedate);
-    
+
             echo "</TR>";
         }
     }
@@ -831,7 +829,7 @@ function displaydir ($wdir) {
             $filesafe    = rawurlencode($file);
             $fileurlsafe = rawurlencode($fileurl);
             $filedate    = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
-            
+
             $dimensions = get_image_size($filename);
             if($dimensions) {
                 $imgwidth = $dimensions[0];
@@ -852,25 +850,14 @@ function displaydir ($wdir) {
             } else {
                 $ffurl = "/file.php?file=/$id$fileurl";
             }
-            link_to_popup_window ($ffurl, "display", 
-                                  "<img src=\"$CFG->pixpath/f/$icon\" height=16 width=16 border=0 align=\"absmiddle\" alt=\"$strfile\">", 
+            link_to_popup_window ($ffurl, "display",
+                                  "<img src=\"$CFG->pixpath/f/$icon\" height=16 width=16 border=0 align=\"absmiddle\" alt=\"$strfile\">",
                                   480, 640);
             $file_size = filesize($filename);
-            ?>
-            <script language="javascript" type="text/javascript">
-            <!--
-                var a<?php echo $count; ?> = new Array();
-                a<?php echo $count; ?>['url'] = "<?php print($CFG->wwwroot.$ffurl);?>";
-                a<?php echo $count; ?>['isize'] = "<?php print(display_size($file_size));?>";
-                a<?php echo $count; ?>['itype'] = "<?php echo $imgtype; ?>";
-                a<?php echo $count; ?>['iwidth'] = "<?php echo $imgwidth; ?>";
-                a<?php echo $count; ?>['iheight'] = "<?php echo $imgheight; ?>";
-                a<?php echo $count; ?>['imodified'] = "<?php echo $filedate; ?>";
-                
-            // -->
-            </script>
-            <?php
-            echo "<a onclick=\"return set_value(a".$count.")\" href=\"#\">$file</a>";
+
+            echo "<a onclick=\"return set_value(info = {url: '".$CFG->wwwroot.$ffurl."',";
+            echo " isize: '".$file_size."', itype: '".$imgtype."', iwidth: '".$imgwidth."',";
+            echo " iheight: '".$imgheight."', imodified: '".$filedate."' })\" href=\"#\">$file</a>";
             echo "<!-- </font> --></td>";
 
             if ($icon == "zip.gif") {
@@ -881,7 +868,7 @@ function displaydir ($wdir) {
             }
             print_cell("right", "$edittext ");
             print_cell("right", $filedate);
-    
+
             echo "</TR>";
         }
     }
@@ -891,7 +878,7 @@ function displaydir ($wdir) {
         $wdir = "/";
     }
 
-    echo "<TABLE BORDER=0 cellspacing=2 cellpadding=2>";    
+    echo "<TABLE BORDER=0 cellspacing=2 cellpadding=2>";
     echo "<TR><TD>";
     echo "<INPUT TYPE=hidden NAME=id VALUE=\"$id\">";
     echo "<INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\"> ";
