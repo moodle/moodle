@@ -43,6 +43,7 @@ $string['discussionsstartedbyrecent'] = '$a さんより最近開始されたデ
 $string['discussthistopic'] = 'このトピックを読む';
 $string['eachuserforum'] = 'トピック一人1件のフォーラム';
 $string['edit'] = '編集';
+$string['editedby'] = '編集 $a->name - $a->date';
 $string['editing'] = '編集';
 $string['emptymessage'] = '投稿に異常があります。空白のままか添付ファイルのサイズが制限を越えています。変更は保存されませんでした。';
 $string['everyonecanchoose'] = 'ユーザはメール通知登録できます';
