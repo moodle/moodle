@@ -539,7 +539,266 @@
 
         $status = true;
 
+        //Get record from backup_ids
+        $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
+
+        if ($data) {
+            //Now get completed xmlized object
+            $info = $data->info;
+            //traverse_xmlize($info);                                                                     //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the QUIZ record structure
+            $quiz->course = $restore->course_id;
+            $quiz->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
+            $quiz->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
+            $quiz->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
+            $quiz->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
+            $quiz->attempts = backup_todb($info['MOD']['#']['ATTEMPTS_NUMBER']['0']['#']);
+            $quiz->feedback = backup_todb($info['MOD']['#']['FEEDBACK']['0']['#']);
+            $quiz->correctanswers = backup_todb($info['MOD']['#']['CORRECTANSWERS']['0']['#']);
+            $quiz->grademethod = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
+            $quiz->review = backup_todb($info['MOD']['#']['REVIEW']['0']['#']);
+            $quiz->shufflequestions = backup_todb($info['MOD']['#']['SHUFFLEQUESTIONS']['0']['#']);
+            $quiz->shuffleanswers = backup_todb($info['MOD']['#']['SHUFFLEANSWERS']['0']['#']);
+            $quiz->questions = backup_todb($info['MOD']['#']['QUESTIONS']['0']['#']);
+            $quiz->sumgrades = backup_todb($info['MOD']['#']['SUMGRADES']['0']['#']);
+            $quiz->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
+            $quiz->timecreated = backup_todb($info['MOD']['#']['TIMECREATED']['0']['#']);
+            $quiz->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
+
+            //We have to recode the questions field (a list of questions id)          
+            //Extracts question id from sequence
+            $questions_field = "";
+            $in_first = true;
+            $tok = strtok($quiz->questions,",");
+            while ($tok) {
+                //Get the question from backup_ids
+                $question = backup_getid($restore->backup_unique_code,"quiz_questions",$tok);  
+                if ($question) {
+                    if ($in_first) {
+                        $questions_field .= $question->new_id;
+                        $in_first = false;
+                    } else {
+                        $questions_field .= ",".$question->new_id;
+                    }
+                }
+                //check for next
+                $tok = strtok(",");
+            }
+            //We have the questions field recoded to its new ids
+            $quiz->questions = $questions_field;
+
+            //The structure is equal to the db, so insert the quiz
+            $newid = insert_record ("quiz",$quiz);
+
+            //Do some output
+            echo "<ul><li>Quiz \"".$quiz->name."\"<br>";
+            backup_flush(300);
+
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,$mod->modtype,
+                             $mod->id, $newid);
+                //We have to restore the question_grades now (course level table)
+                $status = quiz_question_grades_restore_mods($newid,$info,$restore);
+                //Now check if want to restore user data and do it.
+                if ($restore->mods[quiz]->userinfo) {
+                    //Restore quiz_attempts
+                    $status = quiz_attempts_restore_mods ($newid,$info,$restore);
+                    if ($status) {
+                        //Restore quiz_grades   
+                        $status = quiz_grades_restore_mods ($newid,$info,$restore);
+                    }  
+                }
+            } else {
+                $status = false;
+            }
+
+            //Finalize ul
+            echo "</ul>";
+
+        } else {
+            $status = false;
+        }
+
         return $status;
     }
+
+    //This function restores the quiz_question_grades 
+    function quiz_question_grades_restore_mods($quiz_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the quiz_question_grades array
+        $grades = $info['MOD']['#']['QUESTION_GRADES']['0']['#']['QUESTION_GRADE'];
+
+        //Iterate over question_grades
+        for($i = 0; $i < sizeof($grades); $i++) {
+            $gra_info = $grades[$i];
+            //traverse_xmlize($gra_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($gra_info['#']['ID']['0']['#']);
+
+            //Now, build the QUESTION_GRADES record structure
+            $grade->quiz = $quiz_id;
+            $grade->question = backup_todb($gra_info['#']['QUESTION']['0']['#']);
+            $grade->grade = backup_todb($gra_info['#']['GRADE']['0']['#']);
+
+            //We have to recode the question field
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$grade->question);
+            if ($question) {
+                $grade->question = $question->new_id;
+            }
+
+            //The structure is equal to the db, so insert the quiz_question_grades
+            $newid = insert_record ("quiz_question_grades",$grade);
+
+            //Do some output
+            if (($i+1) % 10 == 0) {
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"quiz_question_grades",$oldid,
+                             $newid);
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    //This function restores the quiz_attempts
+    function quiz_attempts_restore_mods($quiz_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the quiz_attempts array
+        $attempts = $info['MOD']['#']['ATTEMPTS']['0']['#']['ATTEMPT'];
+
+        //Iterate over attempts
+        for($i = 0; $i < sizeof($attempts); $i++) {
+            $att_info = $attempts[$i];
+            //traverse_xmlize($att_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($att_info['#']['ID']['0']['#']);
+            $olduserid = backup_todb($att_info['#']['USERID']['0']['#']);
+
+            //Now, build the ATTEMPTS record structure
+            $attempt->quiz = $quiz_id;
+            $attempt->userid = backup_todb($att_info['#']['USERID']['0']['#']);
+            $attempt->attempt = backup_todb($att_info['#']['ATTEMPTNUM']['0']['#']);
+            $attempt->sumgrades = backup_todb($att_info['#']['SUMGRADES']['0']['#']);
+            $attempt->timestart = backup_todb($att_info['#']['TIMESTART']['0']['#']);
+            $attempt->timefinish = backup_todb($att_info['#']['TIMEFINISH']['0']['#']);
+            $attempt->timemodified = backup_todb($att_info['#']['TIMEMODIFIED']['0']['#']);
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$attempt->userid);
+            if ($user) {
+                $attempt->userid = $user->new_id;
+            }
+
+            //The structure is equal to the db, so insert the quiz_attempts
+            $newid = insert_record ("quiz_attempts",$attempt);
+
+            //Do some output
+            if (($i+1) % 10 == 0) {
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"quiz_attempts",$oldid,
+                             $newid);
+                //Now process quiz_responses
+                echo "process responses";
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    //This function restores the quiz_grades
+    function quiz_grades_restore_mods($quiz_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the quiz_grades array
+        $grades = $info['MOD']['#']['GRADES']['0']['#']['GRADE'];
+
+        //Iterate over grades
+        for($i = 0; $i < sizeof($grades); $i++) {
+            $gra_info = $grades[$i];
+            //traverse_xmlize($gra_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($gra_info['#']['ID']['0']['#']);
+            $olduserid = backup_todb($gra_info['#']['USERID']['0']['#']);
+
+            //Now, build the GRADES record structure
+            $grade->quiz = $quiz_id;
+            $grade->userid = backup_todb($gra_info['#']['USERID']['0']['#']);
+            $grade->grade = backup_todb($gra_info['#']['GRADEVAL']['0']['#']);
+            $grade->timemodified = backup_todb($gra_info['#']['TIMEMODIFIED']['0']['#']);
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$grade->userid);
+            if ($user) {
+                $grade->userid = $user->new_id;
+            }
+
+            //The structure is equal to the db, so insert the quiz_grades
+            $newid = insert_record ("quiz_grades",$grade);
+
+            //Do some output
+            if (($i+1) % 10 == 0) {
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"quiz_grades",$oldid,
+                             $newid);
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
 
 ?>
