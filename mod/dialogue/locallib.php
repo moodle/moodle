@@ -133,32 +133,31 @@ global $USER;
     if (! $course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
     }
-    // add groups before list of students if it's the teacher
-    if (isteacher($course->id) and (groupmode($course) != NOGROUPS)) {
-        // get all the groups if the groups are visible
-        if (groupmode($course) == VISIBLEGROUPS) {
-            if (!$groups = get_records("groups", "courseid", $course->id)) {
-                error("Dialogue get available students: no groups found");
+    // add current group before list of students if it's the teacher
+    if (isteacher($course->id) and groupmode($course)) {
+        // show teacher their current group
+        $groupid = get_current_group($course->id);
+        if ($groupid) {
+            if (!$group = get_record("groups", "id", $groupid)) {
+                error("Dialogue get available students: group not found");
             }
-            foreach ($groups as $group) {
-                $gnames["g{$group->id}"] = $group->name;
-            }
-        } else { // show teacher their group(s)
-            if($groups = get_groups($course->id, $USER->id)) {
-                foreach($groups as $group) {
-                    $gnames["g{$group->id}"] = $group->name;
-                }
-            }
+            $gnames["g$groupid"] = $group->name;
+        } else { // all participants
+            $gnames["g0"] = get_string("allparticipants");
         }
-        if ($gnames) {
-            $gnames["spacer"] = "------------";
-        }
+        $gnames["spacer"] = "------------";
     }
     // get the students on this course (default sort order)...
 	if ($users = get_course_students($course->id)) {
 		foreach ($users as $otheruser) {
 			// ...exclude self and...
 			if ($USER->id != $otheruser->id) {
+                // if teacher and groups then exclude students not in the current group
+                if (isteacher($course->id) and groupmode($course) and $groupid) {
+                    if (!ismember($groupid, $otheruser->id)) {
+                        continue;
+                    }
+                }
 				// ...any already in any open conversations unless multiple conversations allowed
 				if ($dialogue->multipleconversations or count_records_select("dialogue_conversations", 
                         "dialogueid = $dialogue->id AND 
@@ -180,7 +179,11 @@ global $USER;
             $list = $names;
         }
     }
-    return $list;
+    if (isset($list)) {
+        return $list;
+    } else {
+        return;
+    }
 }
 
 

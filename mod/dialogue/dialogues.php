@@ -187,11 +187,15 @@
             $recipientid = $_POST['recipientid'];
             if (substr($recipientid, 0, 1) == 'g') { // it's a group
                 $groupid = intval(substr($recipientid, 1));
-                $recipients = get_records_sql("SELECT u.*
+                if ($groupid) { // it's a real group
+                    $recipients = get_records_sql("SELECT u.*
                                 FROM {$CFG->prefix}user u,
                                      {$CFG->prefix}groups_members g
                                 WHERE g.groupid = $groupid and
                                       u.id = g.userid");
+                } else { // it's all participants
+                    $recipients = get_course_students($course->id);
+                }
             } else {
                 $recipients[$recipientid] = get_record("user", "id", $recipientid);
             }
@@ -237,10 +241,15 @@
                 redirect("view.php?id=$cm->id", get_string("noavailablepeople", "dialogue"));
             }
             if (isset($groupid)) {
-                if (!$group = get_record("groups", "id", $groupid)) {
-                    error("Dialogue open conversation: Group not found");
+                if ($groupid) { // a real group
+                    if (!$group = get_record("groups", "id", $groupid)) {
+                        error("Dialogue open conversation: Group not found");
+                    }
+                    redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", $group->name));
+                } else { // all participants
+                    redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", 
+                                get_string("allparticipants")));
                 }
-                redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", $group->name));
             } else {
                 if (!$user =  get_record("user", "id", $conversation->recipientid)) {
                     error("Open dialogue: user record not found");

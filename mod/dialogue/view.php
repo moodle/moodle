@@ -88,7 +88,12 @@
                 $pane =1;
             }
         }
-        
+ 
+        // override pane setting if teacher has changed group
+        if (isset($_GET['group'])) {
+            $pane = 0;
+        }
+         
         // set up tab table
         $tabs->names[0] = get_string("pane0", "dialogue");
         if ($countneedingrepliesself == 1) {
@@ -114,8 +119,25 @@
         $tabs->highlight = $pane;
         dialogue_print_tabbed_heading($tabs);
         echo "<br/><center>\n";
+        
+       
 		switch ($pane) {
-            case 0: 
+            case 0:
+                if (isteacher($course->id)) {
+                    /// Check to see if groups are being used in this dialogue
+                    /// and if so, set $currentgroup to reflect the current group
+                    $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
+                    $groupmode = groupmode($course, $cm);   // Groups are being used?
+                    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+
+                    /// Allow the teacher to change groups (for this session)
+                    if ($groupmode) {
+                        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+                            print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
+                        }
+                    }
+                }
+
                 if ($names = dialogue_get_available_users($dialogue)) {
 		        	print_simple_box_start("center");
         			echo "<center>";
