@@ -124,7 +124,15 @@ function me() {
 function qualified_me() {
 /// like me() but returns a full URL
 
-    if (!empty($_SERVER["HTTP_HOST"])) {
+    global $CFG;
+
+    if (!empty($CFG->wwwroot)) {
+        $url = parse_url($CFG->wwwroot);
+    }
+
+    if (!empty($url['host'])) {
+        $hostname = $url['host'];
+    } else if (!empty($_SERVER["HTTP_HOST"])) {
         $hostname = $_SERVER["HTTP_HOST"];
     } else if (!empty($_ENV["HTTP_HOST"])) {
         $hostname = $_ENV["HTTP_HOST"];
