@@ -1014,6 +1014,10 @@ function workshop_get_student_submissions($workshop, $order = "title") {
 							  ORDER BY $order");
 }
 
+function workshop_get_submission() {
+// Just a stub
+    return NULL; 
+}
 
 function workshop_get_submission_assessment($submission, $user) {
 	// Return the user's assessment for this submission
