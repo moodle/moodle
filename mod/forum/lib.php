@@ -902,7 +902,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     } else {
         // Print whole message
         echo format_text($post->message, $post->format);
-        echo $attachedimages;
+        echo $attachedimages; 
     }
 
     echo "<p align=right><font size=-1>";
