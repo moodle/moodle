@@ -95,9 +95,9 @@ h4 {
   font-weight: normal;
 }
 
-.categoryname,
-.categorynumber {
-  font-size:larger;
+.categorybox .category,
+.categorybox .category {
+  font-size:1.2em;
   font-weight:normal;
 }
 
@@ -261,30 +261,31 @@ table.minicalendar {
  ***/
 
 .activitydate, .activityhead {
-  font-size:x-small;
+  font-size:0.7em;
 }
 
 .weeklydatetext {
-  font-size:medium;
+  font-size:0.9em;
   font-weight:normal;
 }
 
-.courseboxinfo {
-  font-size:medium;
+.coursebox .info {
+  font-size:1em;
 }
 
-.courseboxteachers,
-.courseboxcost {
-  font-size:smaller;
+.coursebox .teachers,
+.coursebox .cost {
+  font-size:0.8em;
 }
 
-.courseboxsummary {
-  font-size:small;
+.coursebox .summary {
+  font-size:0.7em;
 }
+
+
 #course-view .section .left {
   font-weight:normal;
 }
-
 
 
 

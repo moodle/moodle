@@ -667,11 +667,6 @@ table.calendar-controls .next {
   width:80px;
 }
 
-.headingblock .link {
-  text-align:right;
-}
-
-
 body#course-view .unread {
   margin-left: 3em;
 } 
@@ -711,6 +706,15 @@ body#course-user .section h2 {
   border-style:solid;
   padding:5px;
 }
+
+.headingblock .link {
+  text-align:right;
+}
+
+body#site-index .headingblock {
+  margin-bottom: 8px;
+}
+
 
 .categoryboxcontent,
 .courseboxcontent {
