@@ -29,7 +29,13 @@ tegn du bruker for å formattere teksten. </p>
   <tr><td>&gt;</td><td>Sitat (innrykk)</td></tr>
   <tr><td>Mellomrom</td><td>&quot;Monospace&quot; skrift (alle tegn like brede)</td></tr>
   <tr><td>%</td><td>Ignorerer Wikiformat (og forhåndsformat)</td></tr>
-  <tr><td>!#</td><td>Overskrift - der # er 1-6, overskriftsnivå (1 er størst)</td></tr>
+  <tr>
+    <td>!#</td><td>Overskrift - der # er 1-6, overskriftsnivå (1 er størst)</td>
+  </tr>
+  <tr>
+    <td>Q.</td><td>Spørsmål - gir spørsmål en viss stil</td>
+  </tr>
+  <tr><td>A.</td><td>Svar - Som ovenfor</td></tr>
 </table>
 
 <h3>Listeformattering</h3>
@@ -47,6 +53,25 @@ som følger:</p>
   <tr><td>:</td><td>Definisjonsliste, definisjon</td></tr>
   <tr><td>;</td><td>Definisjonsliste, tekst</td></tr>
 </table>  
+
+<p>Nøstede lister, eksempel:</p>
+<pre>  * Første punkt
+  * Andre punkt
+  ## underpunkt rad 1
+  ## underpunkt rad 2
+  * Tredje punkt
+</pre>
+<p>Lager: </p>
+<ul>
+  <li>Første punkt </li>
+  <li>Andre punkt
+  <ol>
+    <li>underpunkt rad 1 </li>
+    <li>underpunkt rad 2</li>
+  </ol>
+  </li>
+  <li>Tredje punkt </li>
+</ul>
 
 <h3>Formattering i linjene</h3>
 
@@ -79,13 +104,15 @@ parantesen. Eksempel:</p>
 [Hvis du nå peker over HTML med musepekeren i et wikiformat vil det stå i en gul 
 informasjonsboks &quot;</acronym>Hypertext Markup Language&quot;].</p>
 
-<h3>Hyperlinker</h3>
+<h3>Lenker</h3>
 
-Linker kan plasseres i teksten og etterfølges (uten mellomrom) av teksten som 
+Lenker kan plasseres i teksten og etterfølges (uten mellomrom) av teksten som 
 skal vises, i parantes. Eksempel: <a href="http://www.google.com/"> </em>http://www.google.com/</a>(Søk 
-nå)</em> blir automatisk endret til <a href="http://www.google.com/">Søk nå</a>.
-
-<h3>Linker til moduler i Moodle</h3>
+nå)</em> blir automatisk endret til <a href="http://www.google.com/">Søk nå</a>. 
+Du kan lage lenker til e-postadresser på samme måte:
+<a href="mailto:ingen@eksempel.com(Nettguru" style="text-decoration: none">
+<font color="#000000">ingen@eksempel.com(Nettguru</font></a>) endres til
+<font color="#0000FF"><u>Nettguru</u></font><h3>Lenker til moduler i Moodle</h3>
 
 <p>Hvis du vet ID-nummeret til et element i Moodle (se etter ?id=nn på slutten 
 av nettadressen i adresselinjen) og modulnavnet kan du linke direkte til 
@@ -93,6 +120,19 @@ ressursen med denne syntaksen:</p>
 
 <p>ModulNavn:nr(Beskrivelsestekst)</p>
 <p>F.eks. <em>resource:36 (Min side)</em>   <em>forum:10(Hopp til forum)</em></p>
+
+<h3>Bildelenker i Moodle</h3>
+<p>Du kan plassere grafikk (bilder) på wiki-sider. Du må først laste opp bildene 
+og deretter skrive inn lenken til området der filen ligger. Slik ser syntaksen 
+ut: </p>
+<p>/<em>..lenke til fil...</em>(alt tekstt)</p>
+<p>f.eks. /MineBilder/graf.jpg(Bilde av personalet)</p>
+<h3>Lenker til filer i Moodle</h3>
+<p>Denne muligheten kan du bruke for å lenke til tidligere opplastede filer på 
+en wiki-side. Fremgangsmåten er nesten den samme som med bildelenker (se 
+ovenfor). Gjør slik:&nbsp; </p>
+<p><b>file:</b><em>..lenke til fil</em>(lenktekst)</p>
+<p>f.eks. file:/pdfs/moodle.pdf(Informasjon om Moodle)</p>
 
 <h3>Automatisk omformattering</h3>
 
@@ -105,3 +145,22 @@ automatisk. De viktigste er følgende: </p>
   riktig symbol
   <li>En linje som starter med minst fire punktum omgjøres til en horisontal 
   linje</ul>
+<h3>Stavekontroll (forsøksvariant)</h3>
+<p>Wiki-formattereren kan også brukes til å kontrollere staving. Plasser 
+følgende på en linje for seg selv i teksten. Alt som kommer etter dette blir 
+kontrollert. </p>
+<pre>!SPELL:språk_kode:variant_av_språk
+Eksempel:
+	!SPELL:en:british
+	!SPELL:sp
+</pre>
+<p>&quot;språk_kode&quot; skal byttes ut med ønsket kode (f.eks. NO, EN, FR, SV etc.), &quot;variant_av_språk&quot; 
+(sammen med kolonet) er et frivillig valg og kan være f.eks. &quot;american&quot;, &quot;british&quot;, 
+eller &quot;canadian&quot; om språkkoden er EN, eller &quot;bokmål&quot; eller &quot;nynorsk&quot; for norsk 
+(NO).</p>
+<p>Når et ukjent ord vises makeres det. Om du holder musen over det får du se 
+forslag til endringer.&nbsp; </p>
+<p><em>OBS: stavekontrollen bruker <strong>'pspell libraries'</strong>. Disse og 
+de nødvendige ordlistene må finnes på serveren din for at stavekontrollen skal 
+virke. Windowsplattformen (for servere) støtter vanligvis ikke dette automatisk.
+</em></p>
