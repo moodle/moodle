@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004083000)
+      // moodle.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['action'] = 'Actie';
@@ -293,6 +293,8 @@ $string['deletingexistingcoursedata'] = 'Bestaande data van een vak verwijderen'
 $string['deletingolddata'] = 'Oude data verwijderen';
 $string['department'] = 'Afdeling';
 $string['description'] = 'Beschrijving';
+$string['detailedless'] = 'Minder gedetailleerd';
+$string['detailedmore'] = 'Meer gedetailleerd';
 $string['disable'] = 'Schakel uit';
 $string['displayingfirst'] = 'Alleen de eerste $a->count $a->things worden getoond.';
 $string['displayingrecords'] = '$a records worden getoond';
@@ -346,7 +348,6 @@ In de meeste e-mailprogramma\'s kun je op de bovenstaande link klikken. Als dat 
 
 Veel succes en met vriendelijke groet,
 
-
 $a->admin
 (Beheerder van \'$a->sitename\')';
 $string['emailconfirmationsubject'] = '$a: Bevestiging van de account';
@@ -368,6 +369,8 @@ $string['emailenableclick'] = 'Klik hier om ervoor te zorgen dat Moodle terug e-
 $string['emailexists'] = 'Dit e-mailadres is al geregistreerd.';
 $string['emailformat'] = 'E-mailopmaak';
 $string['emailmustbereal'] = 'N.B. je e-mailadres moet een bestaand en werkend adres zijn';
+$string['emailnotallowed'] = 'E-mailadressen van deze domeinen zijn niet toegelaten ($a)';
+$string['emailonlyallowed'] = 'Dit e-mailadres behoort tot een domein dat niet toegelaten is ($a)';
 $string['emailpasswordconfirmation'] = 'Beste $a->firstname,
 
 Iemand (waarschijnlijk jijzelf) heeft een nieuw wachtwoord gevraagd voor je account op \'$a->sitename\'.
@@ -962,9 +965,12 @@ $string['updatingain'] = 'Een $a->what wijzigen in $a->in';
 $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload een bestand';
 $string['uploadedfileto'] = '$a->file is geüpload naar $a->directory';
+$string['uploadformlimit'] = 'Het geüploade bestand is groter dan de maximumgrootte ingesteld op het formulier';
 $string['uploadnofilefound'] = 'Er is geen bestand gevonden - weet je zeker dat je een bestand geselecteerd hebt om te uploaden?';
 $string['uploadnotallowed'] = 'Uploads niet toegestaan';
+$string['uploadpartialfile'] = 'Het bestand was slechts gedeeltelijk geüploaded';
 $string['uploadproblem'] = 'Een was een onbekend probleem tijdens het uploaden van bestand \'$a\' (was het misschien te groot?)';
+$string['uploadserverlimit'] = 'Het geüploade bestand is groter dan de maximumgrootte die op deze server ingesteld is.';
 $string['uploadthisfile'] = 'Upload dit bestand';
 $string['uploadusers'] = 'Upload gebruikers';
 $string['usedinnplaces'] = 'Gebruik op $a plaatsen';
@@ -974,6 +980,7 @@ $string['userdata'] = 'Gebruikersgegevens';
 $string['userdeleted'] = 'De account van deze gebruiker is verwijderd';
 $string['userdescription'] = 'Beschrijving';
 $string['userfiles'] = 'Bestanden van de gebruiker';
+$string['userlist'] = 'Gebruikerslijst';
 $string['username'] = 'Gebruikersnaam';
 $string['usernameexists'] = 'Deze gebruikersnaam bestaat al, kies een andere';
 $string['usernotconfirmed'] = 'Kon $a niet bevestigen';

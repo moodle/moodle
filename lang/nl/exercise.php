@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 alpha (2004081900)
+      // exercise.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['absent'] = 'Afwezig';
@@ -43,6 +43,7 @@ $string['edit'] = 'Bewerk';
 $string['editingassessmentelements'] = 'Bewerken van de elementen van de beoordeling';
 $string['element'] = 'Element';
 $string['elementweight'] = 'Weging element';
+$string['enterpassword'] = 'Geef wachtwoord';
 $string['entriessaved'] = 'Inzending bewaard';
 $string['errorbanded'] = 'Als fout aangeduid';
 $string['excellent'] = 'Schitterend';
@@ -103,6 +104,7 @@ $string['numberofnegativeresponses'] = 'Aantal negatieve reacties';
 $string['onesubmission'] = 'Eén inzending';
 $string['optionaladjustment'] = 'Optionele wijziging';
 $string['overallgrade'] = 'Totaalcijfer';
+$string['passwordprotectedexercise'] = 'Oefening door wachtwoord beschermd';
 $string['phase'] = 'Fase';
 $string['phase1'] = 'Opstarten van de oefening';
 $string['phase1short'] = 'Instellingen';
@@ -168,6 +170,7 @@ $string['unassessed'] = '$a onbeoordeeld';
 $string['ungradedstudentassessments'] = '$a evaluatie van een leerling zonder cijfer';
 $string['usemaximum'] = 'Gebruik het beste cijfer';
 $string['usemean'] = 'Gebruik het gemiddelde cijfer';
+$string['usepassword'] = 'Gebruik wachtwoord';
 $string['verylax'] = 'Heel mild';
 $string['verypoor'] = 'Erg zwak';
 $string['verystrict'] = 'Heel streng';
@@ -180,6 +183,7 @@ $string['weightforteacherassessments'] = 'Weging van de evaluatie van $a';
 $string['weights'] = 'Wegingen';
 $string['weightssaved'] = 'Wegingen bewaard';
 $string['weightsusedforoverallgrade'] = 'Wegingen gebruikt voor het totaalcijfer';
+$string['wrongpassword'] = 'Fout wachtwoord voor deze oefening';
 $string['yourassessment'] = 'Jouw evaluatie';
 $string['yourfeedbackgoeshere'] = 'Zet hier je feedback';
 $string['yoursubmission'] = 'Jouw inzending';
