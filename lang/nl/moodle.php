@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003103100)
+      // moodle.php - created with Moodle 1.2 development (2003110400)
 
 
 $string['action'] = "Actie";
@@ -545,6 +545,7 @@ $string['nopotentialcreators'] = "Geen mogelijke vak-aanmakers";
 $string['nopotentialstudents'] = "Geen mogelijke leerlingen";
 $string['nopotentialteachers'] = "Geen mogelijke docenten";
 $string['normal'] = "Normaal";
+$string['nostudentsfound'] = "Geen \$a gevonden";
 $string['nostudentsyet'] = "Er zijn nog geen leerlingen lid van dit vak";
 $string['nosuchemail'] = "Dit is geen e-mail adres";
 $string['notavailable'] = "Niet beschikbaar";
@@ -769,6 +770,7 @@ $string['userprofilefor'] = "Het gebruikersprofiel van \$a";
 $string['users'] = "Gebruikers";
 $string['userzones'] = "Gebruiker zones";
 $string['usingexistingcourse'] = "Gebruik bestaand vak";
+$string['version'] = "Versie";
 $string['view'] = "Zien";
 $string['webpage'] = "Website";
 $string['week'] = "Week";
