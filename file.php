@@ -52,26 +52,30 @@
         header("Cache-control: max_age = $CFG->filelifetime");
         header("Pragma: ");
         header("Content-disposition: inline; filename=$filename");
-        header("Content-length: ".filesize($pathname));
 
 
         if (empty($CFG->filteruploadedfiles)) {
+            header("Content-length: ".filesize($pathname));
             header("Content-type: $mimetype");
             readfile($pathname);
 
         } else {     /// Try and put the file through filters
             if ($mimetype == "text/html") {
+                $output = format_text(implode('', file($pathname)), FORMAT_HTML, NULL, $courseid);
+
+                header("Content-length: ".strlen($output));
                 header("Content-type: text/html");
-                echo format_text(implode('', file($pathname)), FORMAT_HTML, NULL, $courseid);
+                echo $output;
     
             } else if ($mimetype == "text/plain") {
-                header("Content-type: text/html");
                 $options->newlines = false;
-                echo "<pre>";
-                echo format_text(implode('', file($pathname)), FORMAT_MOODLE, $options, $courseid);
-                echo "</pre>";
+                $output = '<pre>'.format_text(implode('', file($pathname)), FORMAT_MOODLE, $options, $courseid).'</pre>';
+                header("Content-length: ".strlen($output));
+                header("Content-type: text/html");
+                echo $output;
     
             } else {    /// Just send it out raw
+                header("Content-length: ".filesize($pathname));
                 header("Content-type: $mimetype");
                 readfile($pathname);
             }
