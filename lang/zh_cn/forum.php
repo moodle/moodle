@@ -9,7 +9,7 @@ $string['allowratings'] = "允许对贴子评分吗？";
 $string['allowsdiscussions'] = "该讨论区允许每个人发起新话题。";
 $string['anyfile'] = "任何文件";
 $string['attachment'] = "附件";
-$string['bynameondate'] = "按 \$a->name - \$a->date";
+$string['bynameondate'] = "由 \$a->name 发表于 \$a->date";
 $string['couldnotadd'] = "由于一个未知的错误，你的贴子无法发表";
 $string['couldnotdeleteratings'] = "抱歉，已经被评分的贴子不能删除";
 $string['couldnotdeletereplies'] = "抱歉，已经有跟贴的贴子不能删除";
@@ -70,32 +70,9 @@ $string['openmode2'] = "发起新论题和回贴均允许";
 $string['parentofthispost'] = "该贴的父贴";
 $string['postadded'] = "你的贴子已经发表了。<P>如果你想修改，在 \$a 时间内是允许的。";
 $string['postincontext'] = "在上下文中看此贴";
-$string['postingtip'] = "<B>发贴提示：</B>
-
-在回贴时：
-
-<UL>
-
-<LI>设身处地，仔细认真地读别人的贴子
-
-<LI>想想你能给予什么回答
-
-</UL>
-
-
-
-在写贴时：
-
-<UL>
-
-<LI>让你的贴子简短，且避免离题
-
-<LI>清楚解释你的观点
-
-<LI>想想你要问的问题
-
-</UL>";
 $string['postmailinfo'] = "这是一份来自 \$a 网站的贴子。
+
+
 
 要在网站上回贴，请点击这个链接：";
 $string['postrating1'] = "极端独立型";
@@ -103,8 +80,8 @@ $string['postrating2'] = "独立型与情景型兼备";
 $string['postrating3'] = "极端情况型";
 $string['postupdated'] = "你的贴子已经更新";
 $string['processingpost'] = "正在处理贴子 \$a";
-$string['rate'] = "评分";
-$string['ratings'] = "评分";
+$string['rate'] = "评价";
+$string['ratings'] = "评价";
 $string['re'] = "回复：";
 $string['readtherest'] = "阅读该主题的其它贴子";
 $string['repliesmany'] = "迄今有 \$a 个回贴";
