@@ -65,6 +65,12 @@
             $err['name'] = get_string("missingname");
 
         } else {
+            if (!empty($_FILES['imagefile'])) {
+                require_once("$CFG->libdir/gdlib.php");
+                if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
+                    $group->picture = save_profile_image($group->id, $filename, 'groups');
+                }
+            }
             $group->name = $form->name;
             $group->description = $form->description;
             if (!update_record("groups", $group)) {
