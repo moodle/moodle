@@ -691,13 +691,19 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  */
 function userdate($date, $format='', $timezone=99, $fixday = true) {
 
+    global $CFG;
+
+    static $strftimedaydatetime;
 
     if ($format == '') {
-        $format = get_string('strftimedaydatetime');
+        if (empty($strftimedaydatetime)) {
+            $strftimedaydatetime = get_string('strftimedaydatetime');
+        }
+        $format = $strftimedaydatetime;
     }
 
     $formatnoday = str_replace('%d', 'DD', $format);
-    if ($fixday) {
+    if ($fixday and empty($CFG->nofixday)) {    // Config.php can force %d not to be fixed.
         $fixday = ($formatnoday != $format);
     }
 

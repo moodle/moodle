@@ -199,6 +199,10 @@ $CFG->admin = 'admin';
 // settings. Use this if you want to control session configuration
 // from php.ini, httpd.conf or .htaccess files. 
 //      $CFG->respectsessionsettings = true;
+//
+// This setting will cause the userdate() function not to fix %d in 
+// date strings, and just let them show with a zero prefix.
+//      $CFG->nofixday = true;
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
