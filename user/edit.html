@@ -236,11 +236,10 @@ if (isadmin()) {
     <td>
     <?php
         if(empty($CFG->forcetimezone)) {
-            $presets = get_records('timezone');
-            $presetarray = array('0' => get_string('notimezone', 'calendar'));
+            $presets = $GLOBALS['db']->GetAll('SELECT DISTINCT name FROM '.$CFG->prefix.'timezone ORDER BY name');
             if(!empty($presets)) {
                 foreach($presets as $preset) {
-                    $presetarray[$preset->name] = $preset->name;
+                    $presetarray[$preset['name']] = $preset['name'];
                 }
                 choose_from_menu ($presetarray, 'timezonename', empty($user->timezonename) ? 0 : $user->timezonename, '');
             }
