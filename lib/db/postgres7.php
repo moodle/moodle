@@ -517,6 +517,11 @@ function main_upgrade($oldversion=0) {
         table_column('user', "", 'maildigest', 'smallint', '1', '', '0', 'not null', 'mailformat');
     }
 
+    if ($oldversion < 2004062400) {
+        table_column('user_teachers', "", 'timeend', 'int', '10', 'unsigned', '0', 'not null', 'editall');
+        table_column('user_teachers', "", 'timestart', 'int', '10', 'unsigned', '0', 'not null', 'editall');
+    }
+
     return $result;
 
 }

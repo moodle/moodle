@@ -404,6 +404,8 @@ CREATE TABLE `prefix_user_teachers` (
   `authority` int(10) NOT NULL default '3',
   `role` varchar(40) NOT NULL default '',
   `editall` int(1) unsigned NOT NULL default '1',
+  `timestart` int(10) unsigned NOT NULL default '0',
+  `timeend` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `timeaccess` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
