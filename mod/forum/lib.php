@@ -318,7 +318,7 @@ function forum_print_recent_activity(&$logs, $isteacher=false) {
             //Only if the mod is visible
             if ($modvisible) {
                 if ($post) {
-                    $teacherpost = "";
+                    $teacheronly = "";
                     if ($forum = get_record("forum", "id", $post->forum) ) {
                         if ($forum->type == "teacher") {
                             if ($isteacher) {
