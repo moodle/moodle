@@ -1,4 +1,4 @@
-<tr valign="top">
+<tr valign="top" BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_pop3host:</TD>
 	<TD>
         <INPUT name=auth_pop3host TYPE=text SIZE=30 VALUE="<?=$config->auth_pop3host?>">
@@ -9,7 +9,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_pop3type:</TD>
 	<TD>
     <? $pop3types = array("pop3","pop3cert");
@@ -22,7 +22,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_pop3port:</TD>
 	<TD>
     <INPUT name=auth_pop3port TYPE=text SIZE=6 VALUE="<?=$config->auth_pop3port?>">
@@ -34,7 +34,7 @@
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P>auth_instructions:</TD>
+	<TD ALIGN=RIGHT><P><? print_string("instructions", "auth") ?>:</TD>
 	<TD>
     <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><? p($config->auth_instructions) ?></TEXTAREA> 
     </TD>

@@ -32,4 +32,35 @@ function auth_user_login ($username, $password) {
 }
 
 
+function auth_get_userinfo($username){
+// Reads any other information for a user from external database,
+// then returns it in an array
+
+    global $CFG;
+    $config = (array) $CFG;
+
+    ADOLoadCode($CFG->auth_dbtype);          
+    $authdb = &ADONewConnection();         
+    $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname); 
+
+    $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
+                    "department", "address", "city", "country", "description", 
+                    "idnumber", "lang");
+
+    $result = array();
+
+    foreach ($fields as $field) {
+        if ($config["auth_user_$field"]) {
+            if ($rs = $authdb->Execute("SELECT ".$config["auth_user_$field"]." FROM $CFG->auth_dbtable
+                                        WHERE $CFG->auth_dbfielduser = '$username'")) {
+                if ( $rs->RecordCount() == 1 ) {
+                    $result["$field"] = $rs->fields[$config["auth_user_$field"]];
+                }
+            }
+        }
+    }
+
+    return $result;
+}
+
 ?>

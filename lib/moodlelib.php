@@ -1403,7 +1403,7 @@ function create_user_record($username, $password) {
 
     if ($CFG->auth_update_userinfo and function_exists(auth_get_userinfo)) {
         if ($newinfo = auth_get_userinfo($username)) {
-            foreach ($newinfo as $key=>$value){
+            foreach ($newinfo as $key => $value){
                 $newuser->$key = $value;
             }
         }

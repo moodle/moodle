@@ -1,4 +1,4 @@
-<tr valign="top">
+<tr valign="top"  BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_dbhost:</TD>
 	<TD>
         <INPUT name=auth_dbhost TYPE=text SIZE=30 VALUE="<?=$config->auth_dbhost?>">
@@ -9,7 +9,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP  BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_dbtype:</TD>
 	<TD>
     <? $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
@@ -22,7 +22,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP  BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_dbname:</TD>
 	<TD>
     <INPUT name=auth_dbname TYPE=text SIZE=30 VALUE="<?=$config->auth_dbname?>">
@@ -33,7 +33,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP  BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_dbuser:</TD>
 	<TD>
     <INPUT name=auth_dbuser TYPE=text SIZE=30 VALUE="<?=$config->auth_dbuser?>">
@@ -44,7 +44,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP  BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_dbpass:</TD>
 	<TD>
     <INPUT name="auth_dbpass" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbpass?>">
@@ -55,7 +55,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP  BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_dbtable:</TD>
 	<TD>
     <INPUT name="auth_dbtable" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbtable?>">
@@ -66,7 +66,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP  BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_dbfielduser:</TD>
 	<TD>
     <INPUT name="auth_dbfielduser" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbfielduser?>">
@@ -77,7 +77,7 @@
     </TD>
 </TR>
 
-<TR VALIGN=TOP>
+<TR VALIGN=TOP  BGCOLOR="<?=$THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>auth_dbfieldpass:</TD>
 	<TD>
     <INPUT name="auth_dbfieldpass" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbfieldpass?>">
@@ -88,8 +88,96 @@
     </TD>
 </TR>
 
+<TR>
+	<TD ALIGN=RIGHT><P><? print_string("firstname") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_firstname" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_firstname?>">
+    </TD>
+    <TD rowspan=12 VALIGN=CENTER>
+    <? print_string("auth_dbextrafields","auth") ?>
+    </TD>
+</TR>
+
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P>auth_instructions:</TD>
+	<TD ALIGN=RIGHT><P><? print_string("lastname") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_lastname" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_lastname?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("email") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_email" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_email?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("phone") ?> 1:</TD>
+	<TD>
+    <INPUT name="auth_user_phone1" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_phone1?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("phone") ?> 2:</TD>
+	<TD>
+    <INPUT name="auth_user_phone2" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_phone2?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("department") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_department" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_department?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("address") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_address" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_address?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("city") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_city" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_city?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("country") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_country" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_country?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("description") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_description" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_description?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("idnumber") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_idnumber" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_idnumber?>">
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("language") ?>:</TD>
+	<TD>
+    <INPUT name="auth_user_lang" TYPE="text" SIZE="30" VALUE="<?=$config->auth_user_lang?>">
+    </TD>
+</TR>
+
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><? print_string("instructions", "auth") ?>:</TD>
 	<TD>
     <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><? p($config->auth_instructions) ?></TEXTAREA> 
     </TD>

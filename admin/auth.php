@@ -104,7 +104,9 @@
     require("$CFG->dirroot/auth/$auth/config.html");
 
     echo "<tr valign=\"top\">";
-	echo "<td align=right><p>guestloginbutton:</p></td>";
+	echo "<td align=right nowrap><p>";
+    print_string("guestloginbutton", "auth");
+    echo ":</p></td>";
 	echo "<td>";
     choose_from_menu($guestoptions, "guestloginbutton", $config->guestloginbutton, "");
     echo "</td>";
