@@ -2772,10 +2772,12 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
             $ratings->assesspublic = $forum->assesspublic;
             $ratings->assesstimestart = $forum->assesstimestart;
             $ratings->assesstimefinish = $forum->assesstimefinish;
-            $ratings->allow = ($forum->assessed != 2 or isteacher($course->id));
+            $ratings->allow = (($forum->assessed != 2 or isteacher($course->id)) && !isguest());
 
-            echo "<form name=\"form\" method=\"post\" action=\"rate.php\">";
-            echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+            if ($ratings->allow) {
+                echo '<form name="form" method="post" action="rate.php">';
+                echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+            }
         }
     }
 
