@@ -14,8 +14,14 @@
     require_login();
 
     //Check admin
-    if (!isadmin()) {
-        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    if (!empty($id)) {
+        if (!isteacher($id)) {
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+        }
+    } else {
+        if (!isadmin()) {
+            error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+        }
     }
 
     //Check site
@@ -52,7 +58,7 @@
     //If we've selected to restore into new course
     //create it (course)
     //Saving conversion id variables into backup_tables
-    if ($restore->restoreto ==1) {
+    if ($restore->restoreto == 2) {
         echo "<li>".get_string("creatingnewcourse");
         $status = restore_create_new_course($restore,$course_header);
         //Print course fullname and shortname and category
@@ -71,18 +77,41 @@
             echo "<ul>";
             echo "<li>".get_string("from").": ".$course_header->course_fullname." (".$course_header->course_shortname.")";
             echo "<li>".get_string("to").": ".$course->fullname." (".$course->shortname.")";
+            if (($restore->deleting)) {
+                echo "<li>".get_string("deletingexistingcoursedata");
+            } else {
+                echo "<li>".get_string("addingdatatoexisting");
+            }
             echo "</ul>";
+            //If we have selected to restore deleting, we do it now.
+            if ($restore->deleting) {
+                echo "<li>".get_string("deletingcoursedata");
+                $status = remove_course_contents($restore->course_id,false) and 
+                          delete_dir_contents($CFG->dataroot."/".$restore->course_id,"backupdata");
+                if ($status) {
+                    //Now , this situation is equivalent to the "restore to new course" one (we
+                    //have a course record and nothing more), so define it as "to new course"
+                    $restore->restoreto = 2;
+                } else {
+                    notify("An error occurred while deleting some of the course contents.");
+                }
+            }
+        } else {
+            $status = false;
         }
     }
 
     //Now create the course_sections and their associated course_modules
     if ($status) {
-        if ($restore->restoreto == 1) {
+        //Into new course
+        if ($restore->restoreto == 2) {
             echo "<li>".get_string("creatingsections");
             $status = restore_create_sections($restore,$xml_file);
-        } else if ($restore->restoreto == 0) {
+        //Into existing course
+        } else if ($restore->restoreto == 0 or $restore->restoreto == 1) {
             echo "<li>".get_string("checkingsections");
             $status = restore_create_sections($restore,$xml_file);
+        //Error
         } else {
             $status = false;
         }

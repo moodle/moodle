@@ -84,7 +84,12 @@
     }
 
     if (!isset($restore_restoreto)) {
-        $restore_restoreto = 1;
+        if (isteacher($id) and !isadmin()) {
+            $restore_restoreto = 1;
+        }
+        if (isadmin()) {
+            $restore_restoreto = 2;
+        }
     }
 
     if ($count == 0) {
@@ -103,8 +108,15 @@
     echo "<td align=\"right\"><P><b>";
     echo get_string("restoreto").":</b>";
     echo "</td><td>";
-    $restore_restoreto_options[0] = get_string("existingcourse");
-    $restore_restoreto_options[1] = get_string("newcourse"); 
+    if (isteacher($id) and !isadmin()) {
+        $restore_restoreto_options[0] = get_string("currentcoursedeleting");
+        $restore_restoreto_options[1] = get_string("currentcourseadding");
+    } 
+    if (isadmin()) {
+        $restore_restoreto_options[0] = get_string("existingcoursedeleting");
+        $restore_restoreto_options[1] = get_string("existingcourseadding");
+        $restore_restoreto_options[2] = get_string("newcourse"); 
+    }
     choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
     echo "</td></tr>";
     //Line
