@@ -236,6 +236,7 @@ $string['datemostrecentfirst'] = 'Date - la plus récente en premier';
 $string['datemostrecentlast'] = 'Date - la plus récente en dernier';
 $string['day'] = 'jour';
 $string['days'] = 'jours';
+$string['decodinginternallinks'] = 'Décodage des liens internes';
 $string['defaultcoursefullname'] = 'Nom du cours';
 $string['defaultcourseshortname'] = 'XXX000';
 $string['defaultcoursestudent'] = 'Étudiant';
