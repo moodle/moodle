@@ -47,6 +47,8 @@
         echo $text;
         echo "</P>";
     }
+
+    close_window_button();
 ?>
 </BODY>
 </HTML>

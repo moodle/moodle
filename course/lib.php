@@ -628,60 +628,35 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
 function add_course_module($mod) {
     GLOBAL $db;
 
-    $timenow = time();
+    $mod->added = time();
 
-    if (!$rs = $db->Execute("INSERT into course_modules 
-                                SET course   = '$mod->course', 
-                                    module   = '$mod->module',
-                                    instance = '$mod->instance',
-                                    section     = '$mod->section',
-                                    added    = '$timenow' ")) {
-        return 0;
-    }
-    
-    // Get it out again - this is the most compatible way to determine the ID
-    if ($rs = $db->Execute("SELECT id FROM course_modules 
-                            WHERE module = $mod->module AND added = $timenow")) {
-        return $rs->fields[0];
-    } else {
-        return 0;
-    }
-
+    return insert_record("course_modules", $mod);
 }
 
 function add_mod_to_section($mod) {
 // Returns the course_sections ID where the mod is inserted
     GLOBAL $db;
 
-    if ($cw = get_record_sql("SELECT * FROM course_sections 
-                              WHERE course = '$mod->course' AND section = '$mod->section'") ) {
+    if ($section = get_record_sql("SELECT * FROM course_sections 
+                                   WHERE course = '$mod->course' AND section = '$mod->section'") ) {
 
-        if ($cw->sequence) {
-            $newsequence = "$cw->sequence,$mod->coursemodule";
+        if ($section->sequence) {
+            $newsequence = "$section->sequence,$mod->coursemodule";
         } else {
             $newsequence = "$mod->coursemodule";
         }
-        if (!$rs = $db->Execute("UPDATE course_sections SET sequence = '$newsequence' WHERE id = '$cw->id'")) {
-            return 0;
+        if (set_field("course_sections", "sequence", $newsequence, "id", $section->id)) {
+            return $section->id;     // Return course_sections ID that was used.
         } else {
-            return $cw->id;     // Return course_sections ID that was used.
+            return 0;
         }
        
     } else {  // Insert a new record
-        if (!$rs = $db->Execute("INSERT into course_sections 
-                                 SET course   = '$mod->course', 
-                                     section     = '$mod->section',
-                                     summary  = '',
-                                     sequence = '$mod->coursemodule' ")) {
-            return 0;
-        }
-        // Get it out again - this is the most compatible way to determine the ID
-        if ($rs = $db->Execute("SELECT id FROM course_sections 
-                                WHERE course = '$mod->course' AND section = '$mod->section'")) {
-            return $rs->fields[0];
-        } else {
-            return 0;
-        }
+        $section->course = $mod->course;
+        $section->section = $mod->section;
+        $section->summary = "";
+        $section->sequence = $mod->coursemodule;
+        return insert_record("course_sections", $section);
     }
 }
 
@@ -692,14 +667,14 @@ function delete_course_module($mod) {
 function delete_mod_from_section($mod, $section) {
     GLOBAL $db;
 
-    if ($cw = get_record("course_sections", "id", "$section") ) {
+    if ($section = get_record("course_sections", "id", "$section") ) {
 
-        $modarray = explode(",", $cw->sequence);
+        $modarray = explode(",", $section->sequence);
 
         if ($key = array_keys ($modarray, $mod)) {
             array_splice($modarray, $key[0], 1);
             $newsequence = implode(",", $modarray);
-            return set_field("course_sections", "sequence", $newsequence, "id", $cw->id);
+            return set_field("course_sections", "sequence", $newsequence, "id", $section->id);
         } else {
             return false;
         }

@@ -229,7 +229,7 @@ function close_window_button() {
 /// Prints a simple button to close a window
 
     echo "<FORM><CENTER>";
-    echo "<INPUT TYPE=button onClick=\"self.close();\" VALUE=\"Close this window\">";
+    echo "<INPUT TYPE=button onClick=\"self.close();\" VALUE=\"".get_string("closewindow")."\">";
     echo "</CENTER></FORM>";
 }
 
@@ -273,13 +273,15 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
     }
 }   
 
-function popup_form ($common, $options, $formname, $selected="", $nothing="choose") {
+function popup_form ($common, $options, $formname, $selected="", $nothing="choose", $help="", $helptext="") {
 ///  Implements a complete little popup form
 ///  $common   = the URL up to the point of the variable that changes
 ///  $options  = A list of value-label pairs for the popup list
 ///  $formname = name must be unique on the page
 ///  $selected = the option that is already selected
 ///  $nothing  = The label for the "no choice" option
+///  $help     = The name of a help page if help is required
+///  $helptext  = The name of the label for the help button
 
     if ($nothing == "choose") {
         $nothing = get_string("choose")."...";
@@ -303,7 +305,11 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
             echo ">$value</OPTION>\n";
         }
     }
-    echo "</SELECT></FORM>\n";
+    echo "</SELECT>";
+    if ($help) {
+        helpbutton($help, $helptext);
+    }
+    echo "</FORM>\n";
 }
 
 

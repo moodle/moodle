@@ -32,7 +32,7 @@
       if (isediting($site->id)) {
           echo "<DIV ALIGN=right>";
           popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=0&add=",
-                      $modnames, "section0", "", get_string("add")."...");
+                      $modnames, "section0", "", get_string("add")."...", "mods", get_string("activities"));
           echo "</DIV>";
       }      
 

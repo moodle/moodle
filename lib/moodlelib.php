@@ -602,7 +602,7 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $text="") 
         $module = "moodle";
     }
     if ($image) {
-        $linkobject = "<IMG BORDER=0 ALT=\"$title\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
+        $linkobject = "<IMG BORDER=0 HEIGHT=17 WIDTH=22 ALT=\"$title\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
     } else {
         $linkobject = $title;
     }

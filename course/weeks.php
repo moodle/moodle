@@ -136,7 +136,7 @@
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$week&add=", 
-                        $modnames, "section$week", "", "$stradd...");
+                        $modnames, "section$week", "", "$stradd...", "mods", get_string("activities"));
             echo "</DIV>";
         }
 

@@ -48,6 +48,7 @@ $string['chooselogs'] = "Choose which logs you want to see";
 $string['choosetheme'] = "Choose theme";
 $string['chooseuser'] = "Choose a user";
 $string['city'] = "City/town";
+$string['closewindow'] = "Close this window";
 $string['comparelanguage'] = "Compare and edit current language";
 $string['configauth'] = "Choose the authentication module you want to use.  The default is 'email' and has the best security.  The method 'none' has no checking whatsoever - be careful using it unless you really know what you are doing.";
 $string['configgdversion'] = "Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don't change this unless you really know what you're doing.";
