@@ -680,10 +680,21 @@
         //If found, then we are going to look for its new id (in backup tables)
         if ($foundset[0]) {
             //print_object($foundset);                                     //Debug
-            //We get the needed variables here
-            $courseid = $restore->course_id;
-            //Now replace it
-            $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/index.php?id='.$courseid,$result);
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (course id)
+                $rec = backup_getid($restore->backup_unique_code,"course",$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(FORUMINDEX)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
+                if($rec->new_id) {
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/index.php?id='.$rec->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/index.php?id='.$old_id,$result);
+                }
+            }
         }
 
         //Link to forum view by moduleid
@@ -698,11 +709,15 @@
             foreach($foundset[2] as $old_id) {
                 //We get the needed variables here (course_modules id)
                 $rec = backup_getid($restore->backup_unique_code,"course_modules",$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(FORUMVIEWBYID)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
                 if($rec->new_id) {
-                    //Personalize the searchstring
-                    $searchstring='/\$@(FORUMVIEWBYID)\*('.$old_id.')@\$/';
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/view.php?id='.$rec->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/view.php?id='.$old_id,$result);
                 }
             }
         }
@@ -719,11 +734,15 @@
             foreach($foundset[2] as $old_id) {
                 //We get the needed variables here (forum id)
                 $rec = backup_getid($restore->backup_unique_code,"forum",$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(FORUMVIEWBYF)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
                 if($rec->new_id) {
-                    //Personalize the searchstring
-                    $searchstring='/\$@(FORUMVIEWBYF)\*('.$old_id.')@\$/';
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/view.php?f='.$rec->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/view.php?f='.$old_id,$result);
                 }
             }
         }
@@ -740,11 +759,15 @@
             foreach($foundset[2] as $old_id) {
                 //We get the needed variables here (discussion id)
                 $rec = backup_getid($restore->backup_unique_code,"forum_discussions",$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(FORUMDISCUSSIONVIEW)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
                 if($rec->new_id) {
-                    //Personalize the searchstring
-                    $searchstring='/\$@(FORUMDISCUSSIONVIEW)\*('.$old_id.')@\$/';
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/discuss.php?d='.$old_id,$result);
                 }
             }
         }
@@ -763,11 +786,15 @@
                 //We get the needed variables here (discussion id and post id)
                 $rec = backup_getid($restore->backup_unique_code,"forum_discussions",$old_id);
                 $rec2 = backup_getid($restore->backup_unique_code,"forum_posts",$old_id2);
+                //Personalize the searchstring
+                $searchstring='/\$@(FORUMDISCUSSIONVIEWPARENT)\*('.$old_id.')\*('.$old_id2.')@\$/';
+                //If it is a link to this course, update the link to its new location
                 if($rec->new_id && $rec2->new_id) {
-                    //Personalize the searchstring
-                    $searchstring='/\$@(FORUMDISCUSSIONVIEWPARENT)\*('.$old_id.')\*('.$old_id2.')@\$/';
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id.'&parent='.$rec2->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/discuss.php?d='.$old_id.'&parent='.$old_id2,$result);
                 }
             }
         }
@@ -786,11 +813,15 @@
                 //We get the needed variables here (discussion id and post id)
                 $rec = backup_getid($restore->backup_unique_code,"forum_discussions",$old_id);
                 $rec2 = backup_getid($restore->backup_unique_code,"forum_posts",$old_id2);
+                //Personalize the searchstring
+                $searchstring='/\$@(FORUMDISCUSSIONVIEWINSIDE)\*('.$old_id.')\*('.$old_id2.')@\$/';
+                //If it is a link to this course, update the link to its new location
                 if($rec->new_id && $rec2->new_id) {
-                    //Personalize the searchstring
-                    $searchstring='/\$@(FORUMDISCUSSIONVIEWINSIDE)\*('.$old_id.')\*('.$old_id2.')@\$/';
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id.'#'.$rec2->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/discuss.php?d='.$old_id.'#'.$old_id2,$result);
                 }
             }
         }

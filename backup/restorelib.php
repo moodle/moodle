@@ -94,7 +94,7 @@
                 //Check if the xxxx_decode_content_links_caller exists
                 $function_name = $name."_decode_content_links_caller";
                 if (function_exists($function_name)) {
-                    echo "<li>".get_string("modulenameplural",$name);
+                    echo "<li>".get_string ("to")." ".get_string("modulenameplural",$name);
                     $status = $function_name($restore);
                 }
             }
