@@ -171,8 +171,8 @@
                 $switchclick = get_string('emaildisableclick');
                 $switchpix   = 'email.gif';
             }
-            $emailswitch = "&nbsp<a title=\"$switchclick\" ".
-                           "href=\"view.php?id=$user->id&amp;course=$course->id&$switchparam=$user->id\">".
+            $emailswitch = "&nbsp;<a title=\"$switchclick\" ".
+                           "href=\"view.php?id=$user->id&amp;course=$course->id&amp;$switchparam=$user->id\">".
                            "<img border=\"0\" width=\"11\" height=\"11\" src=\"$CFG->pixpath/t/$switchpix\" alt=\"\" /></a>";
         } else {
             $emailswitch = '';
@@ -226,38 +226,38 @@
     echo "<center><table align=\"center\"><tr>";
     if ($currentuser and !isguest()) {
         if ($internalpassword) {
-            echo "<td nowrap=\"nowrap\"><p><form action=\"$internalpassword\" method=\"get\">";
+            echo "<td nowrap=\"nowrap\"><form action=\"$internalpassword\" method=\"get\">";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
-            echo "</form></p></td>";
+            echo "</form></td>";
         } else if (strlen($CFG->changepassword) > 1) {
-            echo "<td nowrap=\"nowrap\"><p><form action=\"$CFG->changepassword\" method=\"get\">";
+            echo "<td nowrap=\"nowrap\"><form action=\"$CFG->changepassword\" method=\"get\">";
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
-            echo "</form></p></td>";
+            echo "</form></td>";
         }
     }
     if ($course->category and
         ((isstudent($course->id) and ($user->id == $USER->id) and !isguest() and $CFG->allowunenroll) or
         (isteacheredit($course->id) and isstudent($course->id, $user->id))) ) {
-        echo "<td nowrap=\"nowrap\"><p><form action=\"../course/unenrol.php\" method=\"get\" />";
+        echo "<td nowrap=\"nowrap\"><form action=\"../course/unenrol.php\" method=\"get\" />";
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
         echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
         echo "<input type=\"submit\" value=\"".get_string("unenrolme", "", $course->shortname)."\">";
-        echo "</form></p></td>";
+        echo "</form></td>";
     }
     if (isteacher($course->id) or ($course->showreports and $USER->id == $user->id)) {
-        echo "<td nowrap=\"nowrap\"><p><form action=\"../course/user.php\" method=\"get\">";
+        echo "<td nowrap=\"nowrap\"><form action=\"../course/user.php\" method=\"get\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
         echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
         echo "<input type=\"submit\" value=\"".get_string("activityreport")."\" />";
-        echo "</form></p></td>";
+        echo "</form></td>";
     }
     if ((isadmin() and !isadmin($user->id)) or (isteacher($course->id) and ($USER->id != $user->id) and !iscreator($user->id))) {
-        echo "<td nowrap=\"nowrap\"><p><form action=\"../course/loginas.php\" method=\"get\">";
+        echo "<td nowrap=\"nowrap\"><form action=\"../course/loginas.php\" method=\"get\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
         echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
         echo "<input type=\"submit\" value=\"".get_string("loginas")."\" />";
-        echo "</form></p></td>";
+        echo "</form></td>";
     }
     echo "<td></td>";
     echo "</tr></table></center>\n";

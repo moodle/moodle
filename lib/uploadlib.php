@@ -383,10 +383,11 @@ function upload_print_form_fragment($numfiles=1,$names=null,$descriptions=null,$
         if (is_array($descriptions) && !empty($descriptions[$i])) {
             $str .= '<b>'.$descriptions[$i].'</b><br />';
         }
-        $str .= '<input type="file" size="50" name="'.((is_array($names) && !empty($names[$i])) ? $names[$i] : 'FILE_'.$i).'" /><br />'."\n";
+        $name = ((is_array($names) && !empty($names[$i])) ? $names[$i] : 'FILE_'.$i);
+        $str .= '<input type="file" size="50" name="'.$name.'" alt="'.$name.'" /><br />'."\n";
         if ($uselabels) {
-            $str .= get_string('uploadlabel').' <input type="text" size="50" name="'
-                .((is_array($labelnames) && !empty($labelnames[$i])) ? $labelnames[$i] : 'LABEL_'.$i)
+            $lname = ((is_array($labelnames) && !empty($labelnames[$i])) ? $labelnames[$i] : 'LABEL_'.$i);
+            $str .= get_string('uploadlabel').' <input type="text" size="50" name="'.$lname.'" alt="'.$lname
                 .'" /><br /><br />'."\n";
         }
     }

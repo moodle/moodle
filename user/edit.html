@@ -20,7 +20,7 @@ if (isadmin()) {
     echo "<tr valign=\"top\">";
     echo "<td align=\"right\"> ".get_string("username").": </td>";
     if ($adminself || is_internal_auth($user->auth) ){
-        echo "<td> <input type=\"text\" name=\"username\" size=\"20\" value=\"";
+        echo "<td> <input type=\"text\" name=\"username\" size=\"20\" alt=\"".get_string("username")."\" value=\"";
         p($user->username);
         echo "\" />";
         if (isset($err["username"])) formerr($err["username"]);
@@ -46,7 +46,7 @@ if (isadmin()) {
     if ($adminself || is_internal_auth($user->auth) || (!empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}))) {
         echo "<tr valign=\"top\">";
         echo "<td align=\"right\"> ".get_string("newpassword").": </td>";
-        echo "<td> <input type=\"text\" name=\"newpassword\" size=\"20\" value=\"";
+        echo "<td> <input type=\"text\" name=\"newpassword\" size=\"20\" alt=\"".get_string("newpassword")."\" value=\"";
         if (isset($user->newpassword)) {
             p($user->newpassword);
         }
@@ -65,8 +65,8 @@ if (isadmin()) {
                  $checked = '';
              }
              echo "<tr>";
-             echo '<td align=right><p>'.get_string('forcepasswordchange').':</td>';
-             echo '<td><input type="checkbox" name="forcepasswordchange" '.$checked.' /> '.get_string('forcepasswordchangehelp').'</td>';            
+             echo '<td align="right">'.get_string('forcepasswordchange').':</td>';
+             echo '<td><input type="checkbox" name="forcepasswordchange" alt="'.get_string('forcepasswordchange').'" '.$checked.' /> '.get_string('forcepasswordchangehelp').'</td>';            
              echo "</tr>";
         }
                  
@@ -78,21 +78,21 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"><?php print_string("firstname") ?>:</td>
     <td>
-    <input type="text" name="firstname" size="30" maxlength="20" value="<?php p($user->firstname) ?>" />
+    <input type="text" name="firstname" size="30" alt="<?php print_string("firstname") ?>" maxlength="20" value="<?php p($user->firstname) ?>" />
     <?php if (isset($err["firstname"])) formerr($err["firstname"]); ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><?php print_string("lastname") ?>:</td>
     <td>
-    <input type="text" name="lastname" size="30" maxlength="20" value="<?php p($user->lastname) ?>" />
+    <input type="text" name="lastname" size="30" alt="<?php print_string("lastname") ?>" maxlength="20" value="<?php p($user->lastname) ?>" />
     <?php if (isset($err["lastname"])) formerr($err["lastname"]); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string("email") ?>:</td>
+    <td align="right"><?php print_string("email") ?>:</td>
     <td>
-    <input type="text" name="email" size="30" maxlength="100" value="<?php p($user->email) ?>" />
+    <input type="text" name="email" size="30" alt="<?php print_string("email") ?>" maxlength="100" value="<?php p($user->email) ?>" />
     <?php if (isset($err["email"])) formerr($err["email"]); ?>
     </td>
 </tr>
@@ -155,9 +155,9 @@ if (isadmin()) {
 </tr>
 <?php } ?>
 <tr valign="top">
-    <td align="right"> <?php print_string("city") ?>:</td>
+    <td align="right"><?php print_string("city") ?>:</td>
     <td>
-    <input type="text" name="city" size="25" maxlength="20" value="<?php p($user->city) ?>" />
+    <input type="text" name="city" size="25" alt="<?php print_string("city") ?>" maxlength="20" value="<?php p($user->city) ?>" />
     <?php if (isset($err["city"])) formerr($err["city"]); ?>
     </td>
 </tr>
@@ -240,7 +240,7 @@ if (isadmin()) {
     <td> 
        <?php print_user_picture($user->id, $course->id, $user->picture, false, false, false);
              if ($user->picture) {
-                 echo '&nbsp;&nbsp;<input type="checkbox" name="deletepicture" value="1">';
+                 echo '&nbsp;&nbsp;<input type="checkbox" name="deletepicture" alt="'.get_string("delete").'" value="1" />';
                  print_string("delete");
              }
        ?>
@@ -273,54 +273,54 @@ if (isadmin()) {
 
 <tr valign="top">
     <td align="right"> <?php print_string("webpage") ?>: </td>
-    <td> <input type="text" name="url" size="50" maxlength="255" value="<?php p($user->url) ?>" />
+    <td> <input type="text" name="url" size="50" alt="<?php print_string("webpage") ?>" maxlength="255" value="<?php p($user->url) ?>" />
     <?php if (isset($err["url"])) formerr($err["url"]); ?>
      </td>
 </tr>
 <tr valign="top">
     <td align="right"> <?php print_string("icqnumber") ?>: </td>
-    <td> <input type="text" name="icq" size="25" maxlength="15" value="<?php p($user->icq) ?>" />
+    <td> <input type="text" name="icq" size="25" alt="<?php print_string("icqnumber") ?>" maxlength="15" value="<?php p($user->icq) ?>" />
     <?php if (isset($err["icq"])) formerr($err["icq"]); ?>
      </td>
 </tr>
 <tr valign="top">
     <td align="right"> <?php print_string("idnumber") ?>: </td>
     <td>
-    <input type="text" name="idnumber" size="25" maxlength="12" value="<?php p($user->idnumber) ?>" /> <?php p($teacheronly) ?>
+    <input type="text" name="idnumber" size="25" alt="<?php print_string("idnumber") ?>" maxlength="12" value="<?php p($user->idnumber) ?>" /> <?php p($teacheronly) ?>
     <?php if (isset($err["idnumber"])) formerr($err["idnumber"]); ?>
      </td>
 </tr>
 <?php if (isadmin()) {  ?>
 <tr valign="top">
     <td align="right"> <?php print_string("institution") ?>:</td>
-    <td><input type="text" name="institution" size="25" maxlength="40" value="<?php p($user->institution) ?>" /> <?php p($teacheronly) ?>
+    <td><input type="text" name="institution" size="25" alt="<?php print_string("institution") ?>" maxlength="40" value="<?php p($user->institution) ?>" /> <?php p($teacheronly) ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"> <?php print_string("department") ?>: </td>
     <td>
-    <input type="text" name="department" size="25" maxlength="30" value="<?php p($user->department) ?>" /> <?php p($teacheronly) ?>
+    <input type="text" name="department" size="25" alt="<?php print_string("department") ?>" maxlength="30" value="<?php p($user->department) ?>" /> <?php p($teacheronly) ?>
     </td>
 </tr>
 <?php } ?>
 <tr valign="top">
     <td align="right"> <?php print_string("phone") ?> 1: </td>
     <td>
-    <input type="text" name="phone1" size="25" maxlength="20" value="<?php p($user->phone1) ?>" /> <?php p($teacheronly) ?>
+    <input type="text" name="phone1" size="25" alt="<?php print_string("phone") ?>" maxlength="20" value="<?php p($user->phone1) ?>" /> <?php p($teacheronly) ?>
     <?php if (isset($err["phone1"])) formerr($err["phone1"]); ?>
      </td>
 </tr>
 <tr valign="top">
     <td align="right"> <?php print_string("phone") ?> 2: </td>
     <td>
-    <input type="text" name="phone2" size="25" maxlength="20" value="<?php p($user->phone2) ?>" /> <?php p($teacheronly) ?>
+    <input type="text" name="phone2" size="25" alt="<?php print_string("phone") ?>" maxlength="20" value="<?php p($user->phone2) ?>" /> <?php p($teacheronly) ?>
     <?php if (isset($err["phone2"])) formerr($err["phone2"]); ?>
      </td>
 </tr>
 <tr valign="top">
     <td align="right"> <?php print_string("address") ?>: </td>
     <td>
-    <input type="text" name="address" size="25" maxlength="70" value="<?php p($user->address) ?>" /> <?php p($teacheronly) ?>
+    <input type="text" name="address" size="25" alt="<?php print_string("address") ?>" maxlength="70" value="<?php p($user->address) ?>" /> <?php p($teacheronly) ?>
     <?php if (isset($err["address"])) formerr($err["address"]); ?>
      </td>
 </tr>
