@@ -100,7 +100,7 @@
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
     
         if (isediting($course->id)) {
-            $thissection->summary .= "&nbsp;<a title=\"$streditsummary\" ".
+            $thissection->summary .= " <a title=\"$streditsummary\" ".
                                      "href=\"editsection.php?id=$thissection->id\"><img src=\"$pixpath/t/edit.gif\" ".
                                      "height=11 width=11 border=0 alt=\"$streditsummary\"></a></p>";
         }
@@ -177,7 +177,7 @@
             echo "<td valign=top $colormain width=\"100%\">";
 
             if (isediting($course->id)) {
-                $thissection->summary .= "&nbsp;<a title=\"$streditsummary\" href=editsection.php?id=$thissection->id>".
+                $thissection->summary .= " <a title=\"$streditsummary\" href=editsection.php?id=$thissection->id>".
                      "<img src=\"$pixpath/t/edit.gif\" border=0 height=11 width=11></a>";
             }
     

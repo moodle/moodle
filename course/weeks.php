@@ -89,7 +89,7 @@
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" width=\"100%\">";
 
         if (isediting($course->id)) {
-            $thissection->summary .= "&nbsp;<a title=\"$streditsummary\" ".
+            $thissection->summary .= " <a title=\"$streditsummary\" ".
                                   "href=\"editsection.php?id=$thissection->id\"><img height=11 width=11 src=\"$pixpath/t/edit.gif\" ".
                                   "border=0 alt=\"$streditsummary\"></a></p>";
         }
@@ -178,7 +178,7 @@
             echo "<p class=\"weeklydatetext\">$weekday - $endweekday</p>";
 
             if (isediting($course->id)) {
-                $thissection->summary .= "&nbsp;<a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
+                $thissection->summary .= " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
                       "<img src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a></p>";
             }
 
