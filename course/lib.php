@@ -722,17 +722,13 @@ function delete_mod_from_section($mod, $section) {
 }
 
 
-function move_module($id, $move) {
+function move_module($cm, $move) {
     GLOBAL $db;
 
     if (!$move) {
         return true;
     }
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
-        error("This course module doesn't exist");
-    }
-    
     if (! $thissection = get_record("course_sections", "id", $cm->section)) {
         error("This course section doesn't exist");
     }

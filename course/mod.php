@@ -87,7 +87,6 @@
         }
 
         $modinfo = serialize(get_array_of_activities($mod->course));
-
         if (!set_field("course", "modinfo", $modinfo, "id", $mod->course)) {
             error("Could not cache module information!");
         }
@@ -108,7 +107,16 @@
 
         require_variable($id);   
 
-        move_module($id, $move);
+        if (! $cm = get_record("course_modules", "id", $id)) {
+            error("This course module doesn't exist");
+        }
+    
+        move_module($cm, $move);
+
+        $modinfo = serialize(get_array_of_activities($cm->course));
+        if (!set_field("course", "modinfo", $modinfo, "id", $cm->course)) {
+            error("Could not cache module information!");
+        }
 
         redirect($HTTP_REFERER);
         exit;
