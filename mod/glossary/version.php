@@ -8,7 +8,7 @@
 $module->version  = 2004080932;  // YYYYMMDD   = current module version
                                  //         X  = point release version 1,2,3 etc
                                  //          Y = increments between point releases
-$module->requires = 2004082300;  // Requires this Moodle version
+$module->requires = 2004083129;  // Requires this Moodle version
 $module->cron     = 0;           // Period for cron to check this module (secs)
 
 $release = "1.4.3";   // User-friendly version number
