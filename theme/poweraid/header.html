@@ -1,0 +1,104 @@
+<?php
+/*
+  Filename: header.html
+  Purpose of file: Printing out the Moodle theme header
+
+  Author of file: Bjarne Varoystrand aka Black Skorpio
+  E-mail: webmaster@postnuke-sweden.com
+  Web: www.postnuke-sweden.com
+  ICQ: 1194177
+
+ ---------------------------------------------------------------------
+ LICENSE
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License (GPL)
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ To read the license please visit http://www.gnu.org/copyleft/gpl.html
+*/
+?>
+<HTML<?=$direction?>>
+<HEAD>
+<TITLE><?=$title ?></TITLE>
+<META NAME="keywords" CONTENT="Moodle, <?=$title ?> " />
+<?=$meta ?>
+<meta name="ROBOTS" content="INDEX,FOLLOW" />
+<meta name="resource-type" content="document" />
+<meta http-equiv="expires" content="0" />
+<meta name="author" content="<?=$title ?>" />
+<meta name="copyright" content="Copyright (c) 2003 by <?=$title ?>" />
+<meta name="revisit-after" content="1 days" />
+<meta name="distribution" content="Global" />
+<meta name="generator" content="Moodle - http://moodle.com" />
+<meta name="rating" content="General" />
+
+<LINK REL="stylesheet" HREF="<?=$styles ?>" />
+<LINK REL="SHORTCUT ICON" HREF="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/favicon.ico" />
+</script>
+<? include("$CFG->javascript"); ?>
+</HEAD>
+
+<BODY <? if ($focus) { echo "onLoad=setfocus()"; } echo " bgcolor=\"$THEME->body\" topmargin=\"$THEME->topmargin\" leftmargin=\"$THEME->leftmargin\" marginheight=\"$THEME->marginheight\" marginwidth=\"$THEME->marginwidth\" />"; ?>
+
+<div align="center">
+
+<table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="263" height="76"><a href="index.php" title="Moodle, <?=$title ?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/logo.jpg" width="263" height="76" border="0" /></a></td>
+<td height="76" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_middle.gif" align="center" valign="middle">&nbsp;</td>
+<td align="right" width="229" height="76" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_right.gif" valign="middle"><?=$menu ?>&nbsp;<BR><?=$button ?>&nbsp;</td>
+</tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="1" bgcolor="<? echo $THEME->themeborder?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
+<td align="center" valign="middle">
+<? if ($home) {  // This is what gets printed on the home page only  ?>
+<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
+<TR>
+<TD ALIGN=LEFT VALIGN=middle>&nbsp;<FONT SIZE=4><B><?=$heading?></B></FONT></TD>
+<TD ALIGN=RIGHT VALIGN=middle><?=$menu ?>&nbsp;</TD>
+</TR>
+</TABLE>
+<? } else if ($heading) {  // This is what gets printed on any other page with a heading ?>
+<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
+<TR>
+<TD ALIGN=LEFT VALIGN=middle>&nbsp;<FONT SIZE=4><B><?=$heading?></B></FONT></TD>
+</TR>
+</TABLE>
+<? } else {  // This is what gets printed on any other page (no heading, not home page) ?>
+<? } ?>
+<? if ($navigation) { // This is the navigation table with breadcrumbs  ?>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
+<TR>
+<TD BGCOLOR="<?=$THEME->cellheading?>" VALIGN=middle>&nbsp;<FONT SIZE=2><B><? print_navigation("$navigation"); ?></B></FONT></TD>
+</TR>
+</TABLE>
+<? } else if ($heading) { // If no navigation, but a heading, then print a line  ?>
+<? } ?>
+</td>
+<td width="1" bgcolor="<? echo $THEME->themeborder?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_right.gif" width="2" height="100%" /></td>
+</tr>
+</table><table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="1" bgcolor="<? echo $THEME->themeborder?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
+<td align="center" valign="top"><table border="0" width="100%">
+<tr>
+<td>&nbsp;</td>
+</tr>
+</table><table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="6"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_corner_top.jpg" width="6" height="9" /></td>
+<td valign="bottom" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg" width="1" height="9" /></td>
+<td width="6"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/left_corner_top.jpg" width="6" height="9" /></td>
+</tr><tr>
+<td width="6" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_sidebar.jpg"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_sidebar.jpg" width="6" height="100" /></td>
+<td align="left" valign="top">
