@@ -9,6 +9,7 @@ define("TOKEN_META","1");
 define("TOKEN_EXACT","2");
 define("TOKEN_NEGATE","3");
 define("TOKEN_STRING","4");
+define("TOKEN_USERID","5");
 
 // Class to hold token/value pairs after they're parsed.
 
@@ -50,6 +51,17 @@ class search_lexer extends Lexer{
 
     //Set up the state machine and pattern matches for transitions.
 
+    // Patterns to handle strings  of the form userid:foo
+
+    // If we see the string user: while in the base accept state, start
+    // parsing a username and go to the inuserid state.
+    $this->addEntryPattern("userid:\S+","accept","inuserid");
+
+    // Snarf everything into the username until we see whitespace, then exit
+    // back to the base accept state.
+    $this->addExitPattern("\s","inuserid");
+
+
     // Patterns to handle strings  of the form user:foo
 
     // If we see the string user: while in the base accept state, start
@@ -59,6 +71,7 @@ class search_lexer extends Lexer{
     // Snarf everything into the username until we see whitespace, then exit
     // back to the base accept state.
     $this->addExitPattern("\s","inusername");
+
 
     // Patterns to handle strings  of the form meta:foo
  
@@ -135,6 +148,17 @@ class search_parser {
 
     // Base state. No output emitted.
     function accept() {
+        return true;
+    }
+
+    // State for handling userid:foo constructs. Potentially emits a token.
+    function inuserid($content){
+        if (strlen($content) < 8) { // State exit or missing parameter.
+            return true;
+        }
+        // Strip off the userid: part and add the reminder to the parsed token array
+        $param = trim(substr($content,7));
+        $this->tokens[] = new search_token(TOKEN_USERID,$param);
         return true;
     }
 
@@ -261,6 +285,9 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
                 break;
             case TOKEN_USER: 
                 $SQLString .= "(($mainidfield = $useridfield) AND (($userfirstnamefield $LIKE '%$value%') OR ($userlastnamefield $LIKE '%$value%')))";
+                break; 
+            case TOKEN_USERID: 
+                $SQLString .= "($useridfield = $value)";
                 break; 
             case TOKEN_NEGATE: 
                 $SQLString .= "(NOT (($datafield  $LIKE '%$value%') OR ($metafield  $LIKE '%$value%')))";

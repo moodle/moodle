@@ -3,21 +3,49 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);           // course id
-    optional_variable($search, "");  // search string
-    optional_variable($page, "0");   // which page to show
-    optional_variable($perpage, "20");   // which page to show
+    $id = required_param('id', PARAM_INT);                  // course id
+    $search = trim(optional_param('search', '', PARAM_NOTAGS));  // search string
+    $page = optional_param('page', 0, PARAM_INT);   // which page to show
+    $perpage = optional_param('perpage', 20, PARAM_INT);   // which page to show
 
-    $search = trim(strip_tags($search));
+    $user    = trim(optional_param('user', '', PARAM_NOTAGS));    // Names to search for
+    $userid  = trim(optional_param('userid', 0, PARAM_INT));      // UserID to search for
+    $subject = trim(optional_param('subject', '', PARAM_NOTAGS)); // Subject
+    $phrase  = trim(optional_param('phrase', '', PARAM_NOTAGS));  // Phrase
+    $words   = trim(optional_param('words', '', PARAM_NOTAGS));   // Words
+    $fullwords = trim(optional_param('fullwords', '', PARAM_NOTAGS)); // Whole words
+    $notwords = trim(optional_param('notwords', '', PARAM_NOTAGS));   // Words we don't want
+
+
+    if (empty($search)) {   // Check the other parameters instead
+        if (!empty($words)) {
+            $search .= ' '.$words;
+        }
+        if (!empty($userid)) {
+            $search .= ' userid:'.$userid;
+        }
+        if (!empty($user)) {
+            $search .= ' '.forum_clean_search_terms($user, 'user:');
+        }
+        if (!empty($subject)) {
+            $search .= ' '.forum_clean_search_terms($subject, 'subject:');
+        }
+        if (!empty($fullwords)) {
+            $search .= ' '.forum_clean_search_terms($fullwords, '+');
+        }
+        if (!empty($notwords)) {
+            $search .= ' '.forum_clean_search_terms($notwords, '-');
+        }
+        if (!empty($phrase)) {
+            $search .= ' "'.$phrase.'"';
+        }
+        $individualparams = true;
+    } else {
+        $individualparams = false;
+    }
 
     if ($search) {
-        $searchterms = explode(" ", $search);    // Search for words independently
-        foreach ($searchterms as $key => $searchterm) {
-            if (strlen($searchterm) < 2) {
-                unset($searchterms[$key]);
-            }
-        }
-        $search = s(trim(implode(" ", $searchterms)));
+        $search = forum_clean_search_terms($search);
     }
 
     if (! $course = get_record("course", "id", $id)) {
@@ -32,135 +60,189 @@
     $strsearch = get_string("search", "forum");
     $strsearchresults = get_string("searchresults", "forum");
     $strpage = get_string("page");
-    $strmissingsearchterms = get_string('missingsearchterms','forum');
-
-    $searchform = forum_print_search_form($course, $search, true, "navbar");
 
     if (!$search) {
         print_header_simple("$strsearch", "",
-                 "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", "search.search",
+                 "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", 'search.words',
                   "", "", "&nbsp;", navmenu($course));
 
-        print_simple_box_start("center");
-        echo "<center>";
-        echo "<br />";
-        echo $searchform;
-        echo "<br /><p>";
-        print_string("searchhelp");
-        echo "</p>";
-        echo "</center>";
-        print_simple_box_end();
+        forum_print_big_search_form($course);
+        print_footer($course);
+        exit;
     }
 
-    if ($search) {
-        $strippedsearch = str_replace("user:","",$search);
-        $strippedsearch = str_replace("subject:","",$strippedsearch);
-        $strippedsearch = str_replace("&quot;","",$strippedsearch);
-        if ($group = user_group($id, $USER->id)) {
-            $groupid = $group->id;
-        } else {
-            $groupid = 0;
-        }
-        if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount, $groupid)) {
+/// We need to do a search now and print results
 
-            print_header_simple("$strsearchresults", "",
-                     "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-                      <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
-                      "", "", "&nbsp;", navmenu($course));
-            print_heading(get_string("nopostscontaining", "forum", $search));
+    $searchterms = explode(' ', $search);
 
-            print_simple_box_start("center");
-            echo "<center>";
-            echo "<br />";
-            echo $searchform;
-            echo "<br /><p>";
-            print_string("searchhelp");
-            echo "</p>";
-            echo "</center>";
-            print_simple_box_end();
-            print_footer($course);
-            exit;
-        }
+    $searchform = forum_print_search_form($course, "", true, "navbar");
+
+    if ($group = user_group($course->id, $USER->id)) {
+        $groupid = $group->id;
+    } else {
+        $groupid = 0;
+    }
+    if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount, $groupid)) {
 
         print_header_simple("$strsearchresults", "",
-                 "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-                  <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
-                  "", "",  $searchform, navmenu($course));
+                "<a href=\"index.php?id=$course->id\">$strforums</a> ->
+                <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".stripslashes($search), 'search.words',
+                "", "", "&nbsp;", navmenu($course));
+        print_heading(get_string("nopostscontaining", "forum", $search));
 
-        print_heading("$strsearchresults: $totalcount");
-
-        echo "<center>";
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;id=$course->id&amp;perpage=$perpage&amp;");
-        echo "</center>";
-
-        //added to implement highlighting of search terms found only in HTML markup
-        //fiedorow - 9/2/2005
-        $searchterms = explode(" ", $strippedsearch);    // Search for words independently
-        foreach ($searchterms as $key => $searchterm) {
-            if (preg_match('/^\-/',$searchterm)) {
-                unset($searchterms[$key]);
-            } else {
-                $searchterms[$key] = preg_replace('/^\+/','',$searchterm);
-            }
+        if (!$individualparams) {
+            $words = $search;
         }
 
-        foreach ($posts as $post) {
-
-            if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
-                error("Discussion ID was incorrect");
-            }
-            if (! $forum = get_record("forum", "id", "$discussion->forum")) {
-                error("Could not find forum $discussion->forum");
-            }
-
-            $post->subject = highlight("$strippedsearch", $post->subject);
-            $discussion->name = highlight("$strippedsearch", $discussion->name);
-
-            $fullsubject = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
-            if ($forum->type != "single") {
-                $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">$discussion->name</a>";
-                if ($post->parent != 0) {
-                    $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">$post->subject</a>";
-                }
-            }
-
-            $post->subject = $fullsubject;
-
-            /// Add the forum id to the post object - used by read tracking.
-            $post->forum = $forum->id;
-
-            //Indicate search terms only found in HTML markup
-            //Use highlight() with nonsense tags to spot search terms in the
-            //actual text content first.
-            //fiedorow - 9/2/2005
-            $missing_terms = "";
-            $message = highlight($strippedsearch,format_text($post->message, $post->format, NULL, $course->id),
-                                 0,'<fgw9sdpq4>','</fgw9sdpq4>');
-            foreach ($searchterms as $searchterm) {
-               if (preg_match("/$searchterm/i",$message) && !preg_match('/<fgw9sdpq4>'.$searchterm.'<\/fgw9sdpq4>/i',$message)) {
-                  $missing_terms .= " $searchterm";
-               }
-            }
-            $message = str_replace('<fgw9sdpq4>','<span class="highlight">',$message);
-            $message = str_replace('</fgw9sdpq4>','</span>',$message);
-
-            if ($missing_terms) {
-                $post->message = '<p class="highlight2">'.$strmissingsearchterms.' '.$missing_terms.'</p>'.$message;
-            }
-
-            $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
-            //search terms already highlighted - fiedorow - 9/2/2005
-            forum_print_post($post, $course->id, false, false, false, false, $fulllink);
-
-            echo "<br />";
-        }
-
-        echo "<center>";
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
-        echo "</center>";
+        forum_print_big_search_form($course);
+        exit;
     }
 
+    print_header_simple("$strsearchresults", "",
+            "<a href=\"index.php?id=$course->id\">$strforums</a> ->
+            <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".stripslashes($search), 'search.words',
+            "", "",  $searchform, navmenu($course));
+
+    print_heading("$strsearchresults: $totalcount");
+
+    print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;id=$course->id&amp;perpage=$perpage&amp;");
+
+    //added to implement highlighting of search terms found only in HTML markup
+    //fiedorow - 9/2/2005
+    $strippedsearch = str_replace('user:','',$search);
+    $strippedsearch = str_replace('subject:','',$strippedsearch);
+    $strippedsearch = str_replace('&quot;','',$strippedsearch);
+    $searchterms = explode(" ", $strippedsearch);    // Search for words independently
+    foreach ($searchterms as $key => $searchterm) {
+        if (preg_match('/^\-/',$searchterm)) {
+            unset($searchterms[$key]);
+        } else {
+            $searchterms[$key] = preg_replace('/^\+/','',$searchterm);
+        }
+    }
+
+    foreach ($posts as $post) {
+
+        if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
+            error("Discussion ID was incorrect");
+        }
+        if (! $forum = get_record("forum", "id", "$discussion->forum")) {
+            error("Could not find forum $discussion->forum");
+        }
+
+        $post->subject = highlight("$strippedsearch", $post->subject);
+        $discussion->name = highlight("$strippedsearch", $discussion->name);
+
+        $fullsubject = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
+        if ($forum->type != "single") {
+            $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">$discussion->name</a>";
+            if ($post->parent != 0) {
+                $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">$post->subject</a>";
+            }
+        }
+
+        $post->subject = $fullsubject;
+
+        /// Add the forum id to the post object - used by read tracking.
+        $post->forum = $forum->id;
+
+        //Indicate search terms only found in HTML markup
+        //Use highlight() with nonsense tags to spot search terms in the
+        //actual text content first.          fiedorow - 9/2/2005
+        $missing_terms = "";
+        $message = highlight($strippedsearch,format_text($post->message, $post->format, NULL, $course->id),
+                0,'<fgw9sdpq4>','</fgw9sdpq4>');
+
+        foreach ($searchterms as $searchterm) {
+            if (preg_match("/$searchterm/i",$message) && !preg_match('/<fgw9sdpq4>'.$searchterm.'<\/fgw9sdpq4>/i',$message)) {
+                $missing_terms .= " $searchterm";
+            }
+        }
+
+        $message = str_replace('<fgw9sdpq4>','<span class="highlight">',$message);
+        $message = str_replace('</fgw9sdpq4>','</span>',$message);
+
+        if ($missing_terms) {
+            $strmissingsearchterms = get_string('missingsearchterms','forum');
+            $post->message = '<p class="highlight2">'.$strmissingsearchterms.' '.$missing_terms.'</p>'.$message;
+        }
+
+        $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
+        //search terms already highlighted - fiedorow - 9/2/2005
+        forum_print_post($post, $course->id, false, false, false, false, $fulllink);
+
+        echo "<br />";
+    }
+
+    print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
+
     print_footer($course);
+
+
+
+function forum_print_big_search_form($course) {
+    global $words, $subject, $phrase, $user, $userid, $fullwords, $notwords;
+
+    print_simple_box(get_string('searchforumintro', 'forum'), 'center', '', '', 'searchbox', 'intro');
+
+    print_simple_box_start("center");
+    echo '<form name="search" action="search.php" method="get">';
+    echo '<input type="hidden" value="'.$course->id.'" name="id" alt="">';
+    echo '<table cellpadding="10" class="searchbox" id="form">';
+
+    echo '<tr>';
+    echo '<td class="c0">'.get_string('searchwords', 'forum').':</td>';
+    echo '<td class="c1"><input type="text" size="35" name="words" value="'.s($words).'" alt=""></td>';
+    echo '</tr>';
+
+    echo '<tr>';
+    echo '<td class="c0">'.get_string('searchfullwords', 'forum').':</td>';
+    echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords).'" alt=""></td>';
+    echo '</tr>';
+
+    echo '<tr>';
+    echo '<td class="c0">'.get_string('searchnotwords', 'forum').':</td>';
+    echo '<td class="c1"><input type="text" size="35" name="notwords" value="'.s($notwords).'" alt=""></td>';
+    echo '</tr>';
+
+    echo '<tr>';
+    echo '<td class="c0">'.get_string('searchphrase', 'forum').':</td>';
+    echo '<td class="c1"><input type="text" size="35" name="phrase" value="'.s($phrase).'" alt=""></td>';
+    echo '</tr>';
+
+    echo '<tr>';
+    echo '<td class="c0">'.get_string('searchsubject', 'forum').':</td>';
+    echo '<td class="c1"><input type="text" size="35" name="subject" value="'.s($subject).'" alt=""></td>';
+    echo '</tr>';
+
+    echo '<tr>';
+    echo '<td class="c0">'.get_string('searchuser', 'forum').':</td>';
+    echo '<td class="c1"><input type="text" size="35" name="user" value="'.s($user).'" alt=""></td>';
+    echo '</tr>';
+
+    echo '<tr>';
+    echo '<td class="submit" colspan="2" align="center">';
+    echo helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
+    echo '&nbsp;<input type="submit" value="'.get_string('searchforums', 'forum').'" alt=""></td>';
+    echo '</tr>';
+
+    echo '</table>';
+    echo '</form>';
+    print_simple_box_end();
+}
+
+
+function forum_clean_search_terms($words, $prefix='') {
+    $searchterms = explode(' ', $words);
+    foreach ($searchterms as $key => $searchterm) {
+        if (strlen($searchterm) < 2) {
+            unset($searchterms[$key]);
+        } else if ($prefix) {
+            $searchterms[$key] = $prefix.$searchterm;
+        }
+    }
+    return trim(implode(' ', $searchterms));
+}
 
 ?>
 

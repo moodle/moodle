@@ -1002,16 +1002,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         $onlyvisibletable = "";
     }
 
-    switch ($CFG->dbtype) {
-        case "mysql":
-             $limit = "LIMIT $page,$recordsperpage";
-             break;
-        case "postgres7":
-             $limit = "LIMIT $recordsperpage OFFSET ".($page * $recordsperpage);
-             break;
-        default:
-             $limit = "LIMIT $recordsperpage,$page";
-    }
+    $limit = sql_paging_limit($page, $recordsperpage);
 
     /// Some differences in syntax for PostgreSQL
     if ($CFG->dbtype == "postgres7") {
@@ -1041,6 +1032,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     $searchstring = str_replace("\\\"","\"",$searchstring);
     $parser = new search_parser();
     $lexer = new search_lexer(&$parser);
+
     if ($lexer->parse($searchstring)) {
         $parsearray = $parser->get_parsed_array();
         $messagesearch = search_generate_SQL($parsearray,"p.message","p.subject","p.userid","u.id","u.firstname","u.lastname");
@@ -3326,12 +3318,12 @@ function forum_tp_clean_read_records() {
     $sql = 'SELECT fr.id, fr.userid, fr.postid '.
            'FROM '.$CFG->prefix.'forum_posts fp, '.$CFG->prefix.'forum_read fr '.
            'WHERE fp.modified < '.$cutoffdate.' AND fp.id = fr.postid';
-echo $sql.'<br />';
     if (($oldreadposts = get_records_sql($sql))) {
-echo 'Deleting records: ';print_object($oldreadposts);
         foreach($oldreadposts as $oldreadpost) {
             delete_records('forum_read', 'userid', $oldreadpost->userid, 'postid', $oldreadpost->postid);
         }
     }
-}
+
+}    
+         
 ?>
