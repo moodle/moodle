@@ -873,6 +873,7 @@ $string['uploadnotallowed'] = 'Il n\'est pas permis d\'envoyer des fichiers';
 $string['uploadproblem'] = 'Un problème inconnu est survenu durant l\'envoi du fichier « $a » (peut-être est-il trop gros ?)';
 $string['uploadthisfile'] = 'Envoyer ce fichier';
 $string['uploadusers'] = 'Importer des utilisateurs';
+$string['usedinnplaces'] = 'Utilisé à $a endroits';
 $string['user'] = 'Utilisateur';
 $string['userconfirmed'] = 'L\'utilisateur $a a été confirmé';
 $string['userdata'] = 'Données de l\'utilisateur';
