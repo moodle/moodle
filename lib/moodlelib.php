@@ -1033,6 +1033,47 @@ function update_login_count() {
     }
 }
 
+function remove_admin($user) {
+    global $db;
+
+    return $db->Execute("DELETE FROM user_admins WHERE user = '$user'");
+}
+
+function remove_teacher($user, $course=0) {
+    global $db;
+
+    if ($course) {
+        return $db->Execute("DELETE FROM user_teachers WHERE user = '$user' AND course = '$course'");
+    } else {
+        return $db->Execute("DELETE FROM user_teachers WHERE user = '$user'");
+    }
+}
+
+
+function enrol_student($user, $course) {
+    global $db;
+
+	$timenow = time();
+
+	$rs = $db->Execute("INSERT INTO user_students (user, course, start, end, time) 
+                        VALUES ($user, $course, 0, 0, $timenow)");
+	if ($rs) {
+		return true;
+	} else {
+	    return false;
+	}
+}
+
+function unenrol_student($user, $course=0) {
+    global $db;
+
+    if ($course) {
+        return $db->Execute("DELETE FROM user_students WHERE user = '$user' AND course = '$course'");
+    } else {
+        return $db->Execute("DELETE FROM user_students WHERE user = '$user'");
+    }
+}
+
 
 function isadmin($userid=0) {
     global $USER;

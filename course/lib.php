@@ -308,7 +308,9 @@ function print_recent_activity($course) {
                 $content = true;
             }
             $user = get_record("user", "id", $log->info);
-            echo "<P><FONT SIZE=1><A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A></FONT></P>";
+            if (isstudent($course->id, $user->id)) {
+                echo "<P><FONT SIZE=1><A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A></FONT></P>";
+            }
         }
     }
 
@@ -382,27 +384,6 @@ function print_recent_activity($course) {
 }
 
 
-function unenrol_student_in_course($user, $course) {
-    global $db;
-
-    return $db->Execute("DELETE FROM user_students WHERE user = '$user' AND course = '$course'");
-}
-
-
-
-function enrol_student_in_course($user, $course) {
-    global $db;
-
-	$timenow = time();
-
-	$rs = $db->Execute("INSERT INTO user_students (user, course, start, end, time) 
-                        VALUES ($user, $course, 0, 0, $timenow)");
-	if ($rs) {
-		return true;
-	} else {
-	    return false;
-	}
-}
 
 function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modnamesused) {
 // Returns a number of useful structures for course displays

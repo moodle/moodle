@@ -26,7 +26,7 @@
 
     if (isset($confirm)) {
 
-        if (! unenrol_student_in_course($user->id, $course->id)) {
+        if (! unenrol_student($user->id, $course->id)) {
             error("An error occurred while trying to unenrol you.");
         }
 

@@ -38,16 +38,37 @@ if (isadmin()) {
 	</td>
 </tr>
 <tr valign=top>
+	<td><P><? print_string("email") ?>:</td>
+	<td><input type="text" name="email" size=30 value="<? p($user->email) ?>">
+	<? formerr($err["email"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("city") ?>:</td>
+	<td><input type="text" name="city" size=25 value="<? p($user->city) ?>">
+	<? formerr($err["city"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("country") ?>:</td>
+	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry")."...", "", "") ?>
+	<? formerr($err["country"]) ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("userdescription") ?>:</td>
 	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><? p($user->description) ?></TEXTAREA> 
     <? helpbutton("text", get_string("helptext")) ?>
 	<? formerr($err["description"]) ?>
 	</td>
 </tr>
+<tr>
+    <td colspan=2><BR><? print_string("followingoptional") ?>:</td>
+</tr>
 <tr valign=top>
 	<td><P><? print_string("newpicture") ?>:</td>
 	<td>
-    <INPUT type="hidden" name="MAX_FILE_SIZE" value="4000000">
+    <INPUT type="hidden" name="MAX_FILE_SIZE" value="<? echo get_max_upload_file_size() ?>">
     <input type="file" name="imagefile" size=40>
     <? helpbutton("picture", get_string("helppicture"));
        print_string("maxsize", "", display_size(get_max_upload_file_size())); 
@@ -56,10 +77,42 @@ if (isadmin()) {
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><? print_string("email") ?>:</td>
-	<td><input type="text" name="email" size=30 value="<? p($user->email) ?>">
-	<? formerr($err["email"]) ?>
+	<td><P><? print_string("preferredlanguage") ?>:</td>
+	<td><? if ($languages = get_list_of_languages()) {
+               if (!$user->lang) {
+                   $user->lang = "en";
+               }
+               choose_from_menu ($languages, "lang", $user->lang, "", "", "");
+           }
+	       formerr($err["lang"]);
+        ?>
 	</td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("timezone") ?>:</td>
+	<td><?
+       if (abs($user->timezone) > 12) {
+           $user->timezone = 99;
+       }
+       $timenow = time();
+
+       for ($tz = -23; $tz <= 24; $tz++) {
+           $zone = (float)$tz/2.0;
+           $usertime = $timenow + ($tz * 1800);
+           if ($tz == 0) {
+               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT)";
+           } else if ($tz < 0) {
+               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT$zone)";
+           } else {
+               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT+$zone)";
+           }
+       }
+
+       choose_from_menu ($timezones, "timezone", $user->timezone, get_string("serverlocaltime"), "", "99");
+
+       echo "(".get_string(currentlocaltime).")";
+	?>
+    </td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("emailformat") ?>:</td>
@@ -113,56 +166,6 @@ if (isadmin()) {
 	<td><input type="text" name="address" size=25 value="<? p($user->address) ?>"> <? p($teacheronly) ?>
 	<? formerr($err["address"]) ?>
 	</td>
-</tr>
-<tr valign=top>
-	<td><P><? print_string("city") ?>:</td>
-	<td><input type="text" name="city" size=25 value="<? p($user->city) ?>">
-	<? formerr($err["city"]) ?>
-	</td>
-</tr>
-<tr valign=top>
-	<td><P><? print_string("country") ?>:</td>
-	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry")."...", "", "") ?>
-	<? formerr($err["country"]) ?>
-	</td>
-</tr>
-<tr valign=top>
-	<td><P><? print_string("preferredlanguage") ?>:</td>
-	<td><? if ($languages = get_list_of_languages()) {
-               if (!$user->lang) {
-                   $user->lang = "en";
-               }
-               choose_from_menu ($languages, "lang", $user->lang, "", "", "");
-           }
-	       formerr($err["lang"]);
-        ?>
-	</td>
-</tr>
-<tr valign=top>
-	<td><P><? print_string("timezone") ?>:</td>
-	<td><?
-       if (abs($user->timezone) > 12) {
-           $user->timezone = 99;
-       }
-       $timenow = time();
-
-       for ($tz = -23; $tz <= 24; $tz++) {
-           $zone = (float)$tz/2.0;
-           $usertime = $timenow + ($tz * 1800);
-           if ($tz == 0) {
-               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT)";
-           } else if ($tz < 0) {
-               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT$zone)";
-           } else {
-               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT+$zone)";
-           }
-       }
-
-       choose_from_menu ($timezones, "timezone", $user->timezone, get_string("serverlocaltime"), "", "99");
-
-       echo "(".get_string(currentlocaltime).")";
-	?>
-    </td>
 </tr>
 <tr>
 	<td></td>

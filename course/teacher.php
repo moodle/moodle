@@ -62,10 +62,7 @@
 
 
 /// Get all existing teachers for this course.
-    $teachers = get_records_sql("SELECT u.*,t.authority,t.id as teachid FROM user u, user_teachers t 
-                                 WHERE t.course = '$course->id' 
-                                   AND t.user = u.id 
-                                   ORDER BY t.authority ASC");
+    $teachers = get_course_teachers($course->id);
 
 /// Add a teacher if one is specified
 
@@ -93,7 +90,6 @@
         if (! $teacher->id) {
             error("Could not add that teacher to this course!");
         }
-        $user->authority = $teacher->authority;
         $teachers[] = $user;
     }
 
@@ -104,16 +100,13 @@
             error("That teacher (id = $remove) doesn't exist", "teacher.php?id=$course->id");
         }
         if ($teachers) {
-            foreach ($teachers as $tt) {
+            foreach ($teachers as $key => $tt) {
                 if ($tt->id == $user->id) {
-                    delete_records("user_teachers", "id", "$tt->teachid");
+                    remove_teacher($user->id, $course->id);
+                    unset($teachers[$key]);
                 }
             }
         }
-        $teachers = get_records_sql("SELECT u.*,t.authority,t.id as teachid FROM user u, user_teachers t 
-                                 WHERE t.course = '$course->id' 
-                                   AND t.user = u.id 
-                                   ORDER BY t.authority ASC");
     }
 
 
@@ -139,13 +132,13 @@
 /// Print list of potential teachers
 
     if ($search) {
-        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 
+        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 AND deleted = 0
                                   AND (firstname LIKE '%$search%' OR 
                                        lastname LIKE '%$search%' OR 
                                        email LIKE '%$search%')
                                   AND username <> 'guest' AND username <> 'changeme'");
     } else {
-        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 
+        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 AND deleted = 0
                                   AND username <> 'guest' AND username <> 'changeme'");
     }
 

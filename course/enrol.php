@@ -19,7 +19,7 @@
                 add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$REMOTE_ADDR, $REMOTE_HOST");
 
             } else {
-                if (! enrol_student_in_course($USER->id, $course->id)) {
+                if (! enrol_student($USER->id, $course->id)) {
                     error("An error occurred while trying to enrol you.");
                 }
 
@@ -65,7 +65,7 @@
         if (isguest()) {
             add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$USER->id");
         } else {
-            if (! enrol_student_in_course($USER->id, $course->id)) {
+            if (! enrol_student($USER->id, $course->id)) {
                 error("An error occurred while trying to enrol you.");
             }
             add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");

@@ -7,7 +7,7 @@
     require("lib.php");
 
     require_variable($id);   //course
-    optional_variable($sort, "u.lastaccess");  //how to sort students
+    optional_variable($sort, "lastaccess");  //how to sort students
     optional_variable($dir,"DESC");   //how to sort students
 
     if (! $course = get_record("course", "id", $id)) {
@@ -47,35 +47,44 @@
         }
     }
 
-    if ($students = get_course_students($course->id, "$sort $dir")) {
+    if ($sort == "name") {
+        $dsort = "u.firstname";
+    } else {
+        $dsort = "u.$sort";
+    }
+
+    if ($students = get_course_students($course->id, "$dsort $dir")) {
         $numstudents = count($students);
         echo "<H2 align=center>$numstudents $course->students</H2>";
-        if ($numstudents < $USER_SMALL_CLASS) {
+        if ($numstudents > $USER_SMALL_CLASS) {
             foreach ($students as $student) {
                 print_user($student, $course, $string);
             }
         } else {  // Print one big table with abbreviated info
-            if ($sort == "u.firstname") {
-                $name       = "$string->name";
-                $location   = "<A HREF=\"index.php?id=$course->id&sort=u.country&dir=ASC\">$string->location</A>";
-                $lastaccess = "<A HREF=\"index.php?id=$course->id&sort=u.lastaccess&dir=DESC\">$string->lastaccess</A>";
-            } else if ($sort == "u.country") {
-                $name       = "<A HREF=\"index.php?id=$course->id&sort=u.firstname&dir=ASC\">$string->name</A>";
-                $location   = "$string->location";
-                $lastaccess = "<A HREF=\"index.php?id=$course->id&sort=u.lastaccess&dir=DESC\">$string->lastaccess</A>";
-            } else {
-                $name       = "<A HREF=\"index.php?id=$course->id&sort=u.firstname&dir=ASC\">$string->name</A>";
-                $location   = "<A HREF=\"index.php?id=$course->id&sort=u.country&dir=ASC\">$string->location</A>";
-                $lastaccess = "$string->lastaccess";
+            $columns = array("name", "city", "country", "lastaccess");
+
+            foreach ($columns as $column) {
+                $colname[$column] = get_string($column);
+                $columnsort = $column;
+                if ($column == "lastaccess") {
+                    $columndir = "DESC";
+                } else {
+                    $columndir = "ASC";
+                }
+                if ($columnsort == $sort) {
+                   $$column = $colname["$column"];
+                } else {
+                   $$column = "<A HREF=\"index.php?id=$course->id&sort=$columnsort&dir=$columndir\">".$colname["$column"]."</A>";
+                }
             }
-            $table->head = array ("&nbsp;", $name, $location, $lastaccess);
-            $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
-            $table->size = array ("10", "*", "*", "*");
+
+            $table->head = array ("&nbsp;", $name, $city, $country, $lastaccess);
+            $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT");
+            $table->size = array ("10", "*", "*", "*", "*");
             
             foreach ($students as $student) {
                 if ($student->lastaccess) {
-                    $lastaccess = userdate($student->lastaccess);
-                    $lastaccess .= "&nbsp (".format_time(time() - $student->lastaccess).")";
+                    $lastaccess = format_time(time() - $student->lastaccess);
                 } else {
                     $lastaccess = $string->never;
                 }
@@ -88,8 +97,9 @@
 
                 $table->data[] = array ($picture,
                     "<B><A HREF=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</A></B>",
-                    "<FONT SIZE=1>$student->city, ".$COUNTRIES["$student->country"]."</FONT>",
-                    "<FONT SIZE=1>$lastaccess</FONT>");
+                    "<FONT SIZE=2>$student->city</FONT>", 
+                    "<FONT SIZE=2>".$COUNTRIES["$student->country"]."</FONT>",
+                    "<FONT SIZE=2>$lastaccess</FONT>");
             }
             print_table($table, 2, 0);
         }

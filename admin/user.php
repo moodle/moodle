@@ -4,6 +4,12 @@
 	require("../user/lib.php");
     require("../lib/countries.php");
 
+    optional_variable($newuser, "");
+    optional_variable($delete, "");
+    optional_variable($confirm, "");
+    optional_variable($sort, "name");
+    optional_variable($dir, "ASC");
+
     if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
         $user->firstname = "Admin";
         $user->lastname  = "User";
@@ -61,7 +67,6 @@
     }
 
     if ($newuser) {                 // Create a new user
-
         $user->firstname = "";
         $user->lastname  = "";
         $user->username  = "changeme";
@@ -89,28 +94,79 @@
         print_header("$site->fullname : $stredituser", $site->fullname, 
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $stredituser");
 
-        if ($delete) {
-            if ($deleteuser = get_record("user", "id", "$delete")) {
-                if (set_field("user", "deleted", "1", "id", "$delete")) {
-                    set_field("user", "timemodified", time(), "id", "$delete");
-                    notify(get_string("deletedactivity", "", "$deleteuser->firstname $deleteuser->lastname"));
+        if ($delete) {              // Delete a selected user, after confirmation
+            if (!$user = get_record("user", "id", "$delete")) {
+                error("No such user!");
+            }
+            if ($confirm != md5($delete)) {
+                notice_yesno(get_string("deletecheckfull", "", "'$user->firstname $user->lastname'"),
+                     "user.php?delete=$delete&confirm=".md5($delete), "user.php");
+
+                exit;
+            } else {
+                $user->deleted = "1";
+                $user->username = $user->email;  // Remember it just in case
+                $user->email = "";               // Clear this field to free it up
+                $user->timemodified = time();
+                if (update_record("user", $user)) {
+                    unenrol_student($user->id);  // From all courses
+                    remove_teacher($user->id);   // From all courses
+                    remove_admin($user->id);
+                    notify(get_string("deletedactivity", "", "$user->firstname $user->lastname"));
+                } else {
+                    notify(get_string("deletednot", "", "$user->firstname $user->lastname"));
                 }
             }
         }
 
-        if ($users = get_records_sql("SELECT * from user WHERE username <> 'guest' AND deleted <> '1' ORDER BY firstname")) {
+        // Carry on with the user listing
+
+        $columns = array("name", "email", "city", "country", "lastaccess");
+
+        foreach ($columns as $column) {
+            $string[$column] = get_string("$column");
+            $columnsort = "$column";
+            if ($column == "lastaccess") {
+                $columndir = "DESC";
+            } else {
+                $columndir = "ASC";
+            }
+            if ($columnsort == $sort) {
+               $$column = $string[$column];
+            } else {
+               $$column = "<A HREF=\"user.php?sort=$columnsort&dir=$columndir\">".$string[$column]."</A>";
+            }
+        }
+
+        if ($sort == "name") {
+            $sort = "firstname";
+        }
+
+        if ($users = get_records_sql("SELECT * from user WHERE username <> 'guest' 
+                                      AND deleted <> '1' ORDER BY $sort $dir")) {
+
             print_heading(get_string("chooseuser"));
 
-            $table->head  = array (get_string("fullname"), get_string("email"), get_string("city"), 
-                                   get_string("country"), " ", " ");
-            $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER", "CENTER", "CENTER", "CENTER");
+            $table->head = array ($name, $email, $city, $country, $lastaccess, "", "");
+            $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER");
             foreach ($users as $user) {
+                if ($user->id == $USER->id or $user->username == "changeme") {
+                    $deletebutton = "";
+                } else {
+                    $deletebutton = "<A HREF=\"user.php?delete=$user->id\" TARGET=\"$strdeletecheck\">$strdelete</A>";
+                }
+                if ($user->lastaccess) {
+                    $strlastaccess = format_time(time() - $user->lastaccess);
+                } else {
+                    $strlastaccess = get_string("never");
+                }
                 $table->data[] = array ("<A HREF=\"../user/view.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</A>",
                                  "$user->email",
                                  "$user->city",
                                  $COUNTRIES[$user->country],
+                                 $strlastaccess,
                                  "<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</A>",
-                                 "<A HREF=\"user.php?delete=$user->id\" TARGET=\"$strdeletecheck\">$strdelete</A>");
+                                 $deletebutton);
             }
             print_table($table);
 
