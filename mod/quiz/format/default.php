@@ -47,6 +47,8 @@ class quiz_default_format {
             echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
 
             $question->category = $this->category->id;
+            $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
+            $question->version = 1;                    // Original version of this question
 
             if (!$question->id = insert_record("quiz_questions", $question)) {
                 error("Could not insert new question!");
