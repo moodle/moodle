@@ -80,6 +80,8 @@
             $workshop->reliabilityweight = backup_todb($info['MOD']['#']['RELIABILITYWEIGHT']['0']['#']);
             $workshop->gradingweight = backup_todb($info['MOD']['#']['GRADINGWEIGHT']['0']['#']);
             $workshop->showleaguetable = backup_todb($info['MOD']['#']['SHOWLEAGUETABLE']['0']['#']);
+            $workshop->teacherloading = backup_todb($info['MOD']['#']['TEACHERLOADING']['0']['#']);
+            $workshop->assessmentstodrop = backup_todb($info['MOD']['#']['ASSESSMENTSTODROP']['0']['#']);
 
             //The structure is equal to the db, so insert the workshop
             $newid = insert_record ("workshop",$workshop);
@@ -309,8 +311,9 @@
                 $assessment->timeagreed = backup_todb($ass_info['#']['TIMEAGREED']['0']['#']);
                 $assessment->grade = backup_todb($ass_info['#']['GRADE']['0']['#']);
                 $assessment->gradinggrade = backup_todb($ass_info['#']['GRADINGGRADE']['0']['#']);
-                $assessment->resubmission = backup_todb($ass_info['#']['RESUBMISSION']['0']['#']);
                 $assessment->mailed = backup_todb($ass_info['#']['MAILED']['0']['#']);
+                $assessment->resubmission = backup_todb($ass_info['#']['RESUBMISSION']['0']['#']);
+                $assessment->donotuse = backup_todb($ass_info['#']['DONOTUSE']['0']['#']);
                 $assessment->generalcomment = backup_todb($ass_info['#']['GENERALCOMMENT']['0']['#']);
                 $assessment->teachercomment = backup_todb($ass_info['#']['TEACHERCOMMENT']['0']['#']);
 
