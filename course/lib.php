@@ -1139,16 +1139,16 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 
     if ($category) {
         if ($path) {
-            $path = "$path / $category->name";
+            $path = $path.' / '.$category->name;
         } else {
-            $path = "$category->name";
+            $path = $category->name;
         }
         $list[$category->id] = $path;
     } else {
         $category->id = 0;
     }
 
-    if ($categories = get_categories("$category->id")) {   // Print all the children recursively
+    if ($categories = get_categories($category->id)) {   // Print all the children recursively
         foreach ($categories as $cat) {
             if (!empty($category->id)) {
                 if (isset($parents[$category->id])) {
@@ -1166,8 +1166,9 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 /// Recursive function to print out all the categories in a nice format
 /// with or without courses included
     global $CFG;
-    if (isset($CFG->max_category_depth)&&($depth >= $CFG->max_category_depth)) {
-      return;
+
+    if (isset($CFG->max_category_depth) && ($depth >= $CFG->max_category_depth)) {
+        return;
     }
 
     if (!$displaylist) {
@@ -1213,12 +1214,12 @@ function print_category_info($category, $depth) {
     static $strallowguests, $strrequireskey, $strsummary;
 
     if (empty($strsummary)) {
-        $strallowguests = get_string("allowguests");
-        $strrequireskey = get_string("requireskey");
-        $strsummary = get_string("summary");
+        $strallowguests = get_string('allowguests');
+        $strrequireskey = get_string('requireskey');
+        $strsummary = get_string('summary');
     }
 
-    $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
+    $catlinkcss = $category->visible ? '' : ' class="dimmed" ';
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" alt="" />';
@@ -1238,60 +1239,64 @@ function print_category_info($category, $depth) {
             $rows = count($courses) + 1;
             echo '<td rowspan="'.$rows.'" valign="top" width="'.$indent.'">';
             print_spacer(10, $indent);
-            echo "</td>";
+            echo '</td>';
         }
 
-        echo "<td valign=\"top\">$catimage</td>";
-        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\">";
-        echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
-        echo "</td>";
-        echo "<td class=\"categoryname\">&nbsp;</td>";
-        echo "</tr>\n";
+        echo '<td valign="top">'.$catimage.'</td>';
+        echo '<td valign="top" width="100%" class="categoryname">';
+        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
+        echo '</td>';
+        echo '<td class="categoryname">&nbsp;</td>';
+        echo '</tr>';
 
         if ($courses && !(isset($CFG->max_category_depth)&&($depth>=$CFG->max_category_depth-1))) {
             foreach ($courses as $course) {
-                $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                echo "<tr><td valign=\"top\" width=\"30\">&nbsp;";
-                echo "</td>\n<td valign=\"top\" width=\"100%\" class=\"coursename\">";
-                echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
-                echo "</td>\n<td align=\"right\" valign=\"top\" nowrap=\"nowrap\" class=\"coursename\">";
+                $linkcss = $course->visible ? '' : ' class="dimmed" ';
+                echo '<tr><td valign="top" width="30">&nbsp;';
+                echo '</td><td valign="top" width="100%" class="coursename">';
+                echo '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>';
+                echo '</td><td align="right" valign="top" nowrap="nowrap" class="coursename">';
                 if ($course->guest ) {
-                    echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=\"1\" alt=\"$strallowguests\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/guest.gif\" /></a>";
+                    echo '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
+                    echo '<img hspace="1" alt="'.$strallowguests.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/guest.gif" /></a>';
                 } else {
-                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\" />";
+                    echo '<img alt="" height="16" width="18" border="0" src="'.$CFG->pixpath.'/spacer.gif" />';
                 }
                 if ($course->password) {
-                    echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=\"1\" alt=\"$strrequireskey\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/key.gif\" /></a>";
+                    echo '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
+                    echo '<img hspace="1" alt="'.$strrequireskey.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
                 } else {
-                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\" />";
+                    echo '<img alt="" height="16" width="18" border="0" src="'.$CFG->pixpath.'/spacer.gif" />';
                 }
                 if ($course->summary) {
-                    link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo",
-                                          "<img hspace=\"1\" alt=\"$strsummary\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/info.gif\" />",
+                    link_to_popup_window ('/course/info.php?id='.$course->id, 'courseinfo',
+                                          '<img hspace="1" alt="'.$strsummary.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/info.gif" />',
                                            400, 500, $strsummary);
                 } else {
-                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\" />";
+                    echo '<img alt="" height="16" width="18" border="0" src="'.$CFG->pixpath.'/spacer.gif" />';
                 }
-                echo "</td></tr>\n";
+                echo '</td></tr>';
             }
         }
     } else {
 
         if ($depth) {
             $indent = $depth*20;
-            echo "<td valign=\"top\" width=\"$indent\">";
+            echo '<td valign="top" width="'.$indent.'">';
             print_spacer(10, $indent);
-            echo "</td>";
+            echo '</td>';
         }
 
-        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\">";
-        echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
-        echo "</td>";
-        echo "<td valign=\"top\" class=\"categorynumber\">$category->coursecount</td></tr>";
+        echo '<td valign="top" width="100%" class="categoryname">';
+        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
+        echo '</td>';
+        echo '<td valign="top" class="categorynumber">';
+        if ($category->coursecount) {
+            echo $category->coursecount;
+        }
+        echo '</td></tr>';
     }
-    echo "\n</table>\n";
+    echo '</table>';
 }
 
 
@@ -1306,7 +1311,7 @@ function print_courses($category, $width="100%") {
             $category   = array_shift($categories);
             $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher');
         } else {
-            $courses    = get_courses("all", 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher');
+            $courses    = get_courses('all', 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher');
         }
         unset($categories);
     } else {
