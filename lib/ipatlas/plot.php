@@ -5,7 +5,8 @@ include("plot.inc");
 
 if (isset($user)) {
     $user = get_record("user", "id", $user);
-    $username = "<B>$user->firstname $user->lastname</B> [$user->city, $user->country] : ";
+    $fullname = fullname($user, true);
+    $username = "<b>$fullname</b> [$user->city, $user->country] : ";
 } else {
     $username = "";
 }
