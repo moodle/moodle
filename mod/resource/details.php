@@ -140,6 +140,7 @@
                         <font size="1">
                         <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
                         <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br />
+                        <? emoticonhelpbutton("theform", "alltext") ?> <br />
                         </font>
                     </td>
                     <td>
@@ -176,10 +177,10 @@
                         <font size="1">
                         <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
                         <? if ($usehtmleditor) {
-                            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+                              helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
                            } else {   
-                            helpbutton("html", get_string("helphtml"), "moodle", true, true);
-                           } ?><br />
+                              helpbutton("html", get_string("helphtml"), "moodle", true, true);
+                           } ?> <br />
                         </font>
                     </td>
                     <td>

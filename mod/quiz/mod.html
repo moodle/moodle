@@ -1,7 +1,7 @@
 <!-- This page defines the form to create or edit an instance of this module -->
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 
-<?PHP 
+<?php 
     require_once("$CFG->dirroot/mod/quiz/lib.php");
 
     if (!isset($form->name)) {
@@ -47,26 +47,28 @@
 
 
 
-<FORM name="form" method="post" action="<?=$CFG->wwwroot?>/mod/quiz/edit.php">
-<CENTER>
-<TABLE cellpadding=5>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("name") ?>:</B></P></TD>
-    <TD>
-        <INPUT type="text" name="name" size=40 value="<? p($form->name) ?>">
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("introduction", "quiz") ?>:</B></P></TD>
-    <TD>
-        <textarea name="intro" rows=4 cols=50 wrap="virtual"><? p($form->intro) ?></textarea>
-        <? helpbutton("text", get_string("helptext")); ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("quizopen", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
+<form name="form" method="post" action="<?php echo $CFG->wwwroot ?>/mod/quiz/edit.php">
+<center>
+<table cellpadding=5>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("name") ?>:</b></p></td>
+    <td>
+        <input type="text" name="name" size=40 value="<?php p($form->name) ?>">
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("introduction", "quiz") ?>:</b></p></td>
+    <td>
+        <textarea name="intro" rows=4 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea>
+        <?php 
+           helpbutton("text", get_string("helptext")); 
+        ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("quizopen", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
         if (!$form->timeopen and $course->format == "weeks") {
             $form->timeopen  = $course->startdate + (($form->section - 1) * 608400);
         }
@@ -74,12 +76,12 @@
         print_time_selector("openhour", "openminute", $form->timeopen);
         helpbutton("timeopen", get_string("quizopen","quiz"), "quiz");
      ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("quizclose", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("quizclose", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
         if (!$form->timeclose and $course->format == "weeks") {
             $form->timeclose  = $course->startdate + (($form->section) * 608400);
         }
@@ -87,36 +89,36 @@
         print_time_selector("closehour", "closeminute", $form->timeclose);
         helpbutton("timeopen", get_string("quizclose","quiz"), "quiz");
      ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("shufflequestions", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("shufflequestions", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
         $options = array();
         $options[0] = get_string("no");
         $options[1] = get_string("yes");
         choose_from_menu($options, "shufflequestions", "$form->shufflequestions", "");
         helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
      ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("shuffleanswers", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("shuffleanswers", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
         $options = array();
         $options[0] = get_string("no");
         $options[1] = get_string("yes");
         choose_from_menu($options, "shuffleanswers", "$form->shuffleanswers", "");
         helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
      ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("attemptsallowed", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("attemptsallowed", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
         $options = array();
         $options[0] = get_string("attemptsunlimited", "quiz");
         $options[1] = "1 ".strtolower(get_string("attempt", "quiz"));
@@ -126,12 +128,12 @@
         choose_from_menu($options, "attempts", "$form->attempts", "");
         helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
      ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("grademethod", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("grademethod", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
         $options = array();
         $options[1] = get_string("gradehighest", "quiz");
         $options[2] = get_string("gradeaverage", "quiz");
@@ -140,67 +142,67 @@
         choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
         helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
      ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("showfeedback", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("showfeedback", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
         $options = array();
         $options[0] = get_string("no");
         $options[1] = get_string("yes");
         choose_from_menu($options, "feedback", "$form->feedback", "");
         helpbutton("feedback", get_string("showfeedback","quiz"), "quiz");
      ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("showcorrectanswer", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("showcorrectanswer", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
         $options = array();
         $options[0] = get_string("no");
         $options[1] = get_string("yes");
         choose_from_menu($options, "correctanswers", "$form->correctanswers", "");
         helpbutton("correctanswers", get_string("showcorrectanswer","quiz"), "quiz");
      ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("allowreview", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("allowreview", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
         $options = array();
         $options[0] = get_string("no");
         $options[1] = get_string("yes");
         choose_from_menu($options, "review", "$form->review", "");
         helpbutton("review", get_string("allowreview","quiz"), "quiz");
      ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("maximumgrade") ?>:</B></P></TD>
-    <TD>
-    <?
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
+    <td>
+    <?php
         for ($i=100; $i>=1; $i--) {
             $grades[$i] = $i;
         }
         choose_from_menu($grades, "grade", "$form->grade", "");
         helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
      ?>
-    </TD>
-</TR>
-</TABLE>
-<INPUT type="hidden" name=questions     value="<? p($form->questions) ?>">
-<!-- These hidden variables are always the same -->
-<INPUT type="hidden" name=course        value="<? p($form->course) ?>">
-<INPUT type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
-<INPUT type="hidden" name=section       value="<? p($form->section) ?>">
-<INPUT type="hidden" name=module        value="<? p($form->module) ?>">
-<INPUT type="hidden" name=modulename    value="<? p($form->modulename) ?>">
-<INPUT type="hidden" name=instance      value="<? p($form->instance) ?>">
-<INPUT type="hidden" name=mode          value="<? p($form->mode) ?>">
-<input type="hidden" name=destination   value="<?=$ME ?>">
-<INPUT type="submit" value="<? print_string("continue") ?>">
-</CENTER>
-</FORM>
+    </td>
+</tr>
+</table>
+<input type="hidden" name=questions     value="<?php p($form->questions) ?>">
+<!-- these hidden variables are always the same -->
+<input type="hidden" name=course        value="<?php p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<input type="hidden" name=section       value="<?php p($form->section) ?>">
+<input type="hidden" name=module        value="<?php p($form->module) ?>">
+<input type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
+<input type="hidden" name=instance      value="<?php p($form->instance) ?>">
+<input type="hidden" name=mode          value="<?php p($form->mode) ?>">
+<input type="hidden" name=destination   value="<?php echo $ME ?>">
+<INPUT type="submit" value="<?php print_string("continue") ?>">
+</center>
+</form>

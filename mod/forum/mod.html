@@ -1,4 +1,4 @@
-<?PHP
+<?php
     if (empty($form->name)) {
         $form->name = "";
     }
@@ -18,19 +18,19 @@
         $form->forcesubscribe = "";
     }
 ?>
-<form name="form" method="post" action="<?=$ME ?>">
+<form name="form" method="post" action="<?php echo $ME ?>">
 <table cellpadding=5>
 <tr>
 <tr valign=top>
-    <td align=right><P><B><? print_string("forumname", "forum")?>:</B></P></TD>
+    <td align=right><p><b><?php print_string("forumname", "forum")?>:</b></p></td>
     <td>
-        <input type="text" name="name" size=30 value="<? p($form->name) ?>">
+        <input type="text" name="name" size=30 value="<?php p($form->name) ?>">
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B><? print_string("forumtype", "forum")?>:</B></P></TD>
+    <td align=right><p><b><?php print_string("forumtype", "forum")?>:</b></p></td>
     <td>
-    <?
+    <?php
        $student = strtolower($course->student);
        require("$CFG->dirroot/mod/forum/lib.php");
        asort($FORUM_TYPES);
@@ -52,43 +52,56 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B><? print_string("forumintro", "forum")?>:</B></P>
-    <font SIZE="1">
-     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
-     <? helpbutton("questions", get_string("helpquestions"), "moodle", true, true) ?><br \>
-     <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?><br \>
-     </font>
+    <td align=right><p><b><?php print_string("forumintro", "forum")?>:</b></p>
+    <font size="1">
+     <?php
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br />";
+        helpbutton("questions", get_string("helpquestions"), "moodle", true, true);
+        echo "<br />";
+        emoticonhelpbutton("form", "intro");
+        echo " <br />";
+      ?>
+    </font>
     </td>
     <td>
-        <textarea name="intro" rows=4 cols=50 wrap="virtual"><? p($form->intro) ?></textarea>
+        <textarea name="intro" rows=4 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea>
     </td>
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><? print_string("allowdiscussions", "forum", strtolower("$course->student")) ?>:</B></P></TD>
+    <td align=right><p><b><?php print_string("allowdiscussions", "forum", strtolower("$course->student")) ?>:</b></p></td>
     <td>
-        <? choose_from_menu($FORUM_OPEN_MODES, "open", $form->open, ""); ?>
-        <? helpbutton("allowdiscussions", get_string("allowdiscussions", "forum", strtolower("$course->student")), "forum") ?>
+        <?php 
+            choose_from_menu($FORUM_OPEN_MODES, "open", $form->open, "");
+            helpbutton("allowdiscussions", get_string("allowdiscussions", 
+                       "forum", strtolower("$course->student")), "forum");
+        ?>
     </td>
 </tr>
 
 <tr>
-    <td align=right><P><B><? print_string("allowratings", "forum") ?>:</B></P></TD>
+    <td align=right><p><b><?php print_string("allowratings", "forum") ?>:</b></p></td>
     <td>
-        <? $options[0] = get_string("no"); $options[1] = get_string("yes"); ?>
-        <? choose_from_menu($options, "assessed", $form->assessed, ""); ?>
-        <? helpbutton("ratings", get_string("allowratings", "forum"), "forum") ?>
+        <?php 
+            $options[0] = get_string("no"); 
+            $options[1] = get_string("yes");
+            choose_from_menu($options, "assessed", $form->assessed, "");
+            helpbutton("ratings", get_string("allowratings", "forum"), "forum");
+        ?>
     </td>
 </tr>
 <tr>
-    <td align=right><P><B><? print_string("forcesubscribeq", "forum") ?>:</B></P></TD>
+    <td align=right><p><b><?php print_string("forcesubscribeq", "forum") ?>:</b></p></td>
     <td>
-        <? choose_from_menu($options, "forcesubscribe", $form->forcesubscribe, ""); ?>
-        <? helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum") ?>
+        <?php 
+            choose_from_menu($options, "forcesubscribe", $form->forcesubscribe, "");
+            helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum");
+        ?>
     </td>
 </tr>
 </table>
-<CENTER>
+<center>
 <input type="hidden" name=course     value="<? p($form->course) ?>">
 <input type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
 <input type="hidden" name=section       value="<? p($form->section) ?>">
@@ -98,5 +111,5 @@
 <input type="hidden" name=mode       value="<? p($form->mode) ?>">
 <input type="submit" value="<? print_string("savechanges") ?>">
 <input type="submit" name=cancel value="<? print_string("cancel") ?>">
-</CENTER>
-</FORM>
+</center>
+</form>

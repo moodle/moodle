@@ -1,4 +1,4 @@
-<?PHP
+<?php
     if (!isset($form->name)) {
         $form->name = "";
     }
@@ -10,30 +10,36 @@
     }
 ?>
 
-<form name="form" method="post" action="<?=$ME ?>">
+<form name="form" method="post" action="<?php echo $ME ?>">
 <table cellpadding=5>
 <tr valign=top>
-    <td align=right><P><B><? print_string("journalname", "journal") ?>:</B></P></TD>
+    <td align=right><p><b><?php print_string("journalname", "journal") ?>:</b></p></td>
     <td>
-        <input type="text" name="name" size=30 value="<? p($form->name) ?>">
+        <input type="text" name="name" size=30 value="<?php p($form->name) ?>">
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B><? print_string("journalquestion", "journal") ?>:</B></P>
+    <td align=right><p><b><?php print_string("journalquestion", "journal") ?>:</b></p>
     <font SIZE="1">
-     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
-     <? helpbutton("questions", get_string("helpquestions"), "moodle", true, true) ?><br \>
-     </font>
+     <?php
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br />";
+        helpbutton("questions", get_string("helpquestions"), "moodle", true, true);
+        echo "<br />";
+        emoticonhelpbutton("form", "intro");
+      ?>
+      <br />
+    </font>
     
     </TD>
     <td>
-        <textarea name="intro" rows=15 cols=30 wrap="virtual"><? p($form->intro) ?></textarea>
+        <textarea name="intro" rows=15 cols=30 wrap="virtual"><?php p($form->intro) ?></textarea>
     </td>
 </tr>
 <tr valign=top>
-    <TD align=right><P><B><? print_string("daysavailable", "journal") ?>:</B></P></TD>
-    <TD>
-    <?
+    <td align=right><p><b><?php print_string("daysavailable", "journal") ?>:</b></p></td>
+    <td>
+    <?php
         $options = array();
         $options[0] = get_string("alwaysopen", "journal");
         for ($i=1;$i<=13;$i++) {
@@ -46,19 +52,19 @@
         $options[365] = get_string("numweeks", "", 52);
         choose_from_menu($options, "days", "$form->days");
      ?>
-    </TD>
+    </td>
 </tr>
 
 </table>
-<CENTER>
-<input type="hidden" name=course     value="<? p($form->course) ?>">
-<input type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
-<input type="hidden" name=section       value="<? p($form->section) ?>">
-<input type="hidden" name=module     value="<? p($form->module) ?>">
-<input type="hidden" name=modulename value="<? p($form->modulename) ?>">
-<input type="hidden" name=instance   value="<? p($form->instance) ?>">
-<input type="hidden" name=mode       value="<? p($form->mode) ?>">
-<input type="submit" value="<? print_string("savechanges") ?>">
-<input type="submit" name=cancel value="<? print_string("cancel") ?>">
-</FORM>
-</CENTER>
+<center>
+<input type="hidden" name=course     value="<?php p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<input type="hidden" name=section       value="<?php p($form->section) ?>">
+<input type="hidden" name=module     value="<?php p($form->module) ?>">
+<input type="hidden" name=modulename value="<?php p($form->modulename) ?>">
+<input type="hidden" name=instance   value="<?php p($form->instance) ?>">
+<input type="hidden" name=mode       value="<?php p($form->mode) ?>">
+<input type="submit" value="<?php print_string("savechanges") ?>">
+<input type="submit" name=cancel value="<?php print_string("cancel") ?>">
+</form>
+</center>
