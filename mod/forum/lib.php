@@ -643,79 +643,91 @@ function forum_get_course_forum($courseid, $type) {
     global $CFG;
 
     if ($forum = get_record("forum", "course", $courseid, "type", $type)) {
+        // Already exists - return it
         return $forum;
 
-    } else {
-        // Doesn't exist, so create one now.
-        $forum->course = $courseid;
-        $forum->type = "$type";
-        switch ($forum->type) {
-            case "news":
-                $forum->name  = get_string("namenews", "forum");
-                $forum->forcesubscribe = 1;
-                $forum->intro = get_string("intronews", "forum");
-                $forum->open = 1;   // 0 - no, 1 - posts only, 2 - discuss and post
-                $forum->assessed = 0;
-                if ($site = get_site()) {
-                    if ($courseid == $site->id) {
-                        $forum->name  = get_string("sitenews");
-                        $forum->forcesubscribe = 0;
-                    }
-                }
-                break;
-            case "social":
-                $forum->name  = get_string("namesocial", "forum");
-                $forum->intro = get_string("introsocial", "forum");
-                $forum->open = 2;   // 0 - no, 1 - posts only, 2 - discuss and post
-                $forum->assessed = 0;
-                $forum->forcesubscribe = 0;
-                break;
-            case "teacher":
-                $forum->name  = get_string("nameteacher", "forum");
-                $forum->intro = get_string("introteacher", "forum");
-                $forum->open = 0;   // 0 - no, 1 - posts only, 2 - discuss and post
-                $forum->assessed = 0;
-                $forum->forcesubscribe = 0;
-                break;
-            default:
-                notify("That forum type doesn't exist!");
-                return false;
-                break;
-
-        }
-        $forum->timemodified = time();
-        $forum->id = insert_record("forum", $forum);
-
-        if ($forum->type != "teacher") {
-            if (! $module = get_record("modules", "name", "forum")) {
-                notify("Could not find forum module!!");
-                return false;
-            }
-            $mod->course = $courseid;
-            $mod->module = $module->id;
-            $mod->instance = $forum->id;
-            $mod->section = 0;
-            if (! $mod->coursemodule = add_course_module($mod) ) {   // assumes course/lib.php is loaded
-                notify("Could not add a new course module to the course '$course->fullname'");
-                return false;
-            }
-            if (! $sectionid = add_mod_to_section($mod) ) {   // assumes course/lib.php is loaded
-                notify("Could not add the new course module to that section");
-                return false;
-            }
-            if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
-                notify("Could not update the course module with the correct section");
-                return false;
-            }
-            include_once("$CFG->dirroot/course/lib.php");
-            $modinfo = serialize(get_array_of_activities($courseid));
-            if (!set_field("course", "modinfo", $modinfo, "id", $courseid)) {
-                error("Could not cache module information!");
+    } else if (count_records("forum", "course", $courseid, "type", $type) > 1) {
+        // It MIGHT have failed because there is more than one - freaky but has happened
+        // In this case, just return the oldest one (lowest ID).
+        if ($forums = get_records_sql("SELECT * FROM {$CFG->prefix}forum 
+                                           WHERE course = '$courseid'
+                                             AND type   = '$type'
+                                        ORDER BY id ASC")) {
+            foreach ($forums as $forum) {
+                return $forum;   // ie the first one
             }
         }
-            
-        return get_record("forum", "id", "$forum->id");
     }
+
+    // Doesn't exist, so create one now.
+    $forum->course = $courseid;
+    $forum->type = "$type";
+    switch ($forum->type) {
+        case "news":
+            $forum->name  = get_string("namenews", "forum");
+            $forum->forcesubscribe = 1;
+            $forum->intro = get_string("intronews", "forum");
+            $forum->open = 1;   // 0 - no, 1 - posts only, 2 - discuss and post
+            $forum->assessed = 0;
+            if ($site = get_site()) {
+                if ($courseid == $site->id) {
+                    $forum->name  = get_string("sitenews");
+                    $forum->forcesubscribe = 0;
+                }
+            }
+            break;
+        case "social":
+            $forum->name  = get_string("namesocial", "forum");
+            $forum->intro = get_string("introsocial", "forum");
+            $forum->open = 2;   // 0 - no, 1 - posts only, 2 - discuss and post
+            $forum->assessed = 0;
+            $forum->forcesubscribe = 0;
+            break;
+        case "teacher":
+            $forum->name  = get_string("nameteacher", "forum");
+            $forum->intro = get_string("introteacher", "forum");
+            $forum->open = 0;   // 0 - no, 1 - posts only, 2 - discuss and post
+            $forum->assessed = 0;
+            $forum->forcesubscribe = 0;
+            break;
+        default:
+            notify("That forum type doesn't exist!");
+            return false;
+            break;
+    }
+
+    $forum->timemodified = time();
+    $forum->id = insert_record("forum", $forum);
+
+    if ($forum->type != "teacher") {
+        if (! $module = get_record("modules", "name", "forum")) {
+            notify("Could not find forum module!!");
+            return false;
+        }
+        $mod->course = $courseid;
+        $mod->module = $module->id;
+        $mod->instance = $forum->id;
+        $mod->section = 0;
+        if (! $mod->coursemodule = add_course_module($mod) ) {   // assumes course/lib.php is loaded
+            notify("Could not add a new course module to the course '$course->fullname'");
+            return false;
+        }
+        if (! $sectionid = add_mod_to_section($mod) ) {   // assumes course/lib.php is loaded
+            notify("Could not add the new course module to that section");
+            return false;
+        }
+        if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+            notify("Could not update the course module with the correct section");
+            return false;
+        }
+        include_once("$CFG->dirroot/course/lib.php");
+        $modinfo = serialize(get_array_of_activities($courseid));
+        if (!set_field("course", "modinfo", $modinfo, "id", $courseid)) {
+            error("Could not cache module information!");
+        }
+    }
+        
+    return get_record("forum", "id", "$forum->id");
 }
 
 
