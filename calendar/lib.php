@@ -275,16 +275,8 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
         foreach($events as $event) {
             if($processed >= $display->maxevents) break;
 
-            // Important note: these timestamps will receive an offset before being converted
-            // to human-readable form in the calendar_get_XXX_representation() functions.
             $startdate = usergetdate($event->timestart);
             $enddate = usergetdate($event->timestart + $event->timeduration);
-
-            // It is equally important that we offset them manually to get the correct dates
-            // for the link URL parameters before creating the links!
-            $tzfix = calendar_get_tz_offset();
-            $linkstartdate = usergetdate($event->timestart + $tzfix);
-            $linkenddate = usergetdate($event->timestart + $event->timeduration + $tzfix);
 
             $starttimesecs = $event->timestart % SECS_IN_DAY; // Seconds after that day's midnight
             $starttimedays = $event->timestart - $starttimesecs; // Timestamp of midnight of that day
@@ -310,7 +302,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
                 // This var always has the printable time representation
                 $eventtime = '<span class="calendarexpired">'.get_string('expired', 'calendar').' '.
-                    calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $linkenddate['mday'], $linkenddate['mon'], $linkenddate['year']).'</span> ('.$time.')';
+                    calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'</span> ('.$time.')';
             }
             else if($event->timeduration) {
                 // It has a duration
@@ -321,7 +313,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                     $timeend = calendar_time_representation($event->timestart + $event->timeduration);
 
                     // Set printable representation
-                    $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $linkenddate['mday'], $linkenddate['mon'], $linkenddate['year']).
+                    $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
                         ' ('.$timestart.' - '.$timeend.')';
                 }
                 else {
@@ -332,8 +324,8 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                     $timeend = calendar_time_representation($event->timestart + $event->timeduration);
 
                     // Set printable representation
-                    $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day&amp;', $linkstartdate['mday'], $linkstartdate['mon'], $linkstartdate['year']).
-                        ' ('.$timestart.') - '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day&amp;', $linkenddate['mday'], $linkenddate['mon'], $linkenddate['year']).
+                    $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
+                        ' ('.$timestart.') - '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
                         ' ('.$timeend.')';
                 }
             }
@@ -343,7 +335,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 $time = calendar_time_representation($event->timestart);
 
                 // Set printable representation
-                $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $linkstartdate['mday'], $linkstartdate['mon'], $linkstartdate['year']).' ('.$time.')';
+                $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).' ('.$time.')';
             }
 
             $outkey = count($output);
