@@ -16,6 +16,14 @@ function quiz_upgrade($oldversion) {
         table_column("quiz_questions", "type", "qtype", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
     }
 
+    if ($oldversion < 2003022303) {
+        modify_database ("", "CREATE TABLE prefix_quiz_randommatch (
+                                  id SERIAL PRIMARY KEY,
+                                  question integer NOT NULL default '0',
+                                  choose integer NOT NULL default '4',
+                              );");
+    }
+
     return true;
 }
 

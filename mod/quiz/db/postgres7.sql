@@ -129,6 +129,16 @@ CREATE TABLE prefix_quiz_questions (
 # --------------------------------------------------------
 
 #
+# Table structure for table quiz_randommatch
+#
+
+CREATE TABLE prefix_quiz_randommatch (
+  id SERIAL PRIMARY KEY,
+  question integer NOT NULL default '0',
+  choose integer NOT NULL default '4',
+);
+
+#
 # Table structure for table quiz_responses
 #
 
