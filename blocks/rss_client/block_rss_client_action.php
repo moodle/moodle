@@ -71,32 +71,32 @@
             $dataobject->description = '';
             $dataobject->title = '';
         } else {
-            $dataobject->description = addslashes($rss->channel['description']);
-            $dataobject->title = addslashes($rss->channel['title']);
+            $dataobject->description = addslashes(rss_unhtmlentities($rss->channel['description']));
+            $dataobject->title = addslashes(rss_unhtmlentities($rss->channel['title']));
         }
         $dataobject->url = addslashes($url);
-            
+
         if (!update_record('block_rss_client', $dataobject)) {
             error('There was an error trying to update rss feed with id:'. $rssid);
         }
-                    
+
         rss_display_feeds($rssid);
         print '<strong>'. get_string('block_rss_feed_updated', 'block_rss_client') .'</strong>';                
         rss_get_form($act, $url, $rssid);
             
     } else if ($act == 'addfeed' ) {
-    
+
         require_variable($url);            
         $dataobject->userid = $USER->id;
         $dataobject->description = '';
         $dataobject->title = '';
         $dataobject->url = addslashes($url);
-            
+
         $rssid = insert_record('block_rss_client', $dataobject);
         if (!$rssid){
             error('There was an error trying to add a new rss feed:'. $url);
         }
-            
+
         // By capturing the output from fetch_rss this way
         // error messages do not display and clutter up the moodle interface
         // however, we do lose out on seeing helpful messages like "cache hit", etc.
@@ -111,10 +111,10 @@
 
             $dataobject->id = $rssid;
             if (!empty($rss->channel['description'])) {
-                $dataobject->description = addslashes($rss->channel['description']);
+                $dataobject->description = addslashes(rss_unhtmlentities($rss->channel['description']));
             }
             if (!empty($rss->channel['title'])) {
-                $dataobject->title = addslashes($rss->channel['title']);
+                $dataobject->title = addslashes(unhtmlentities($rss->channel['title']));
             } 
             if (!update_record('block_rss_client', $dataobject)) {
                 error('There was an error trying to update rss feed with id:'. $rssid);
@@ -162,10 +162,12 @@
             $rsserror = ob_get_contents();
             ob_end_clean();
             
+            $rss->channel['title'] - rss_unhtmlentities($rss->channel['title']);
             print '<table align="center" width="50%" cellspacing="1">'."\n";
             print '<tr><td colspan="2"><strong>'. $rss->channel['title'] .'</strong></td></tr>'."\n";
             for($y=0; $y < count($rss->items); $y++) {
-//                $rss->items[$y]['title'] = blog_unhtmlentities($rss->items[$y]['title']);
+                $rss->items[$y]['title'] = rss_unhtmlentities($rss->items[$y]['title']);
+                $rss->items[$y]['description'] = rss_unhtmlentities($rss->items[$y]['description']);
                 if ($rss->items[$y]['link'] == '') {
                     $rss->items[$y]['link'] = $rss->items[$y]['guid'];
                 }
@@ -186,7 +188,6 @@
                     print '<td>&nbsp;';
                 }
                 print '</td></tr>'."\n";
-//                $rss->items[$y]['description'] = blog_unhtmlentities($rss->items[$y]['description']);
                 print '<tr><td colspan=2><small>';
                 print $rss->items[$y]['description'] .'</small></td></tr>'."\n";
             }
