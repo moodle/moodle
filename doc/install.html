@@ -245,7 +245,13 @@ php_value post_max_size 2M
      come back and edit these later on using the admin interface.  Scroll down 
      to the bottom and click &quot;Save changes&quot;.</p>
 
-  <p>Next is a form where you can define parameters for your Moodle site and the 
+  <p>If (and only if) you find yourself getting stuck on this page or the next 
+     page, unable to continue, then your server  probably has what I call the 
+     "buggy referrer" problem.  This is easy to fix: just edit
+     your config.php and set the variable buggy_referrer to <i>true</i>, then 
+     try the page again.</p>
+
+  <p>The next page is a form where you can define parameters for your Moodle site and the 
      front page, such as the name, format, description and so on. 
 
     Fill this out (you can always go back and change these later) and then press 
