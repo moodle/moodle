@@ -4,8 +4,6 @@ require_once("$CFG->dirroot/files/mimetypes.php");
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
-$FORUM_DEFAULT_DISPLAY_MODE = 3; 
-
 $FORUM_LAYOUT_MODES = array ( "1"  => get_string("modeflatoldestfirst", "forum"),
                               "-1" => get_string("modeflatnewestfirst", "forum"),
                               "2"  => get_string("modethreaded", "forum"),
@@ -16,17 +14,25 @@ $FORUM_TYPES   = array ("general"    => get_string("generalforum", "forum"),
                         "eachuser"   => get_string("eachuserforum", "forum"),
                         "single"     => get_string("singleforum", "forum") );
 
-
 $FORUM_OPEN_MODES   = array ("2" => get_string("openmode2", "forum"),
                              "1" => get_string("openmode1", "forum"),
                              "0" => get_string("openmode0", "forum") );
 
+if (!isset($CFG->forum_displaymode)) {
+    set_config("forum_display_mode", 3);
+} 
 
-define("FORUM_SHORT_POST", 300);  // Less non-HTML characters than this is short
+if (!isset($CFG->forum_shortpost)) {
+    set_config("forum_shortpost", 300);  // Less non-HTML characters than this is short
+} 
 
-define("FORUM_LONG_POST", 600);   // More non-HTML characters than this is long
+if (!isset($CFG->forum_longpost)) {
+    set_config("forum_longpost", 600);  // More non-HTML characters than this is long
+} 
 
-define("FORUM_MANY_DISCUSSIONS", 100);
+if (!isset($CFG->forum_manydiscussions)) {
+    set_config("forum_manydiscussions", 100);  // Number of discussions on a page
+} 
 
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
@@ -996,7 +1002,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $attachedimages = "";
     }
 
-    if ($link and (strlen(strip_tags($post->message)) > FORUM_LONG_POST)) {
+    if ($link and (strlen(strip_tags($post->message)) > $CFG->forum_longpost)) {
         // Print shortened version
         echo format_text(forum_shorten_post($post->message), $post->format);
         $numwords = count_words(strip_tags($post->message));
@@ -1107,7 +1113,9 @@ function forum_print_discussion_header(&$post, $courseid, $datestring="") {
 function forum_shorten_post($message) {
 // Given a post object that we already know has a long message
 // this function truncates the message nicely to the first 
-// sane place between FORUM_LONG_POST and FORUM_SHORT_POST
+// sane place between $CFG->forum_longpost and $CFG->forum_shortpost
+
+   global $CFG;
 
    $i = 0;
    $tag = false;
@@ -1139,7 +1147,7 @@ function forum_shorten_post($message) {
                break;
        }
        if (!$stopzone) {
-           if ($count > FORUM_SHORT_POST) {
+           if ($count > $CFG->forum_shortpost) {
                $stopzone = true;
            }
        }
@@ -2002,12 +2010,12 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
 }
 
 function forum_set_display_mode($mode=0) {
-    global $USER, $FORUM_DEFAULT_DISPLAY_MODE;
+    global $USER, $CFG;
 
     if ($mode) {
         $USER->mode = $mode;
     } else if (empty($USER->mode)) {
-        $USER->mode = $FORUM_DEFAULT_DISPLAY_MODE;
+        $USER->mode = $CFG->forum_displaymode;
     }
 }
 

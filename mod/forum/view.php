@@ -146,7 +146,7 @@
             if (!empty($showall)) {
                 forum_print_latest_discussions($forum->id, 0, "header");
             } else {
-                forum_print_latest_discussions($forum->id, FORUM_MANY_DISCUSSIONS, "header");
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, "header");
             }
             break;
 
@@ -154,7 +154,7 @@
             if (!empty($showall)) {
                 forum_print_latest_discussions($forum->id, 0, "header");
             } else {
-                forum_print_latest_discussions($forum->id, FORUM_MANY_DISCUSSIONS, "header");
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, "header");
             }
             break;
 
@@ -166,7 +166,7 @@
             if (!empty($showall)) {
                 forum_print_latest_discussions($forum->id, 0, "header");
             } else {
-                forum_print_latest_discussions($forum->id, FORUM_MANY_DISCUSSIONS, "header");
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, "header");
             }
             break;
     }
