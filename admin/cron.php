@@ -33,9 +33,11 @@
         $USER = get_admin();      /// Temporarily, to provide environment for this script
     }
 
-    echo "<pre>\n";
+/// Start output log
 
     $timenow  = time();
+
+    mtrace("<pre>");
     mtrace("Server Time: ".date('r',$timenow)."\n\n");
 
 /// Run all cron jobs for each module
@@ -91,7 +93,7 @@
         if ($users = get_users_unconfirmed($oneweek)) {
             foreach ($users as $user) {
                 if (delete_records("user", "id", $user->id)) {
-                    echo "Deleted unconfirmed user for ".fullname($user, true)." ($user->id)\n";
+                    mtrace("Deleted unconfirmed user for ".fullname($user, true)." ($user->id)");
                 }
             }
         }
