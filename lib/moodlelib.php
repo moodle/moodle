@@ -906,8 +906,8 @@ function calculate_user_dst_table() {
         }
     }
 
-    print_object($presetrecords);
-    print_object($USER->dstoffsets);
+    //print_object($presetrecords);
+    //print_object($USER->dstoffsets);
     
     return true;
 }
