@@ -23,16 +23,14 @@ function html2text( $badStr ) {
     $is_open_dq = false;
     $is_open_sq = false;
 
-    //remove PHP if it exists
-
-  // while ( substr_count( $badStr, '<'.'?' ) && substr_count( $badStr, '?'.'>' ) && strpos( $badStr, '?'.'>', strpos( $badStr, '<'.'?' ) ) > strpos( $badStr, '<'.'?' ) ) {
-  //     $badStr = substr( $badStr, 0, strpos( $badStr, '<'.'?' ) ) . substr( $badStr, strpos( $badStr, '?'.'>', strpos( $badStr, '<'.'?' ) ) + 2 );
-  // }     // Moodle
-
     //remove comments
 
-    while ( substr_count( $badStr, '<!--' ) && substr_count( $badStr, '-->' ) && strpos( $badStr, '-->', strpos( $badStr, '<!--' ) ) > strpos( $badStr, '<!--' ) ) {
-        $badStr = substr( $badStr, 0, strpos( $badStr, '<!--' ) ) . substr( $badStr, strpos( $badStr, '-->', strpos( $badStr, '<!--' ) ) + 3 );
+    while (substr_count($badStr, '<!--') && 
+           substr_count($badStr, '-->') && 
+           strpos($badStr, '-->', strpos($badStr, '<!--' ) ) > strpos( $badStr, '<!--' ) ) {
+           $badStr = substr( $badStr, 0, strpos( $badStr, '<!--' ) ) . 
+                     substr( $badStr, strpos( $badStr, '-->', 
+                     strpos( $badStr, '<!--' ) ) + 3 );
     }
 
     //now make sure all HTML tags are correctly written (> not in between quotes)
@@ -41,31 +39,50 @@ function html2text( $badStr ) {
     $chr = $badStr{0}; // Moodle
     $goodStr = ''; // Moodle
 
-    if($len > 0) { // Moodle
-        for ( $x = 0, $is_open_tb = false, $is_open_sq = false, $is_open_dq = false; $x < $len - 1; $chr = $badStr{++$x} ) { // Moodle
-            //take each letter in turn and check if that character is permitted there
+    if ($len > 0) { // Moodle
+        for ($x=0; $x < $len; $x++ ) { // Moodle
+            $chr = $badStr{$x}; //take each letter in turn and check if that character is permitted there
             switch ( $chr ) {
                 case '<':
                     if ( !$is_open_tb && strtolower( substr( $badStr, $x + 1, 5 ) ) == 'style' ) {
-                        $badStr = substr( $badStr, 0, $x ) . substr( $badStr, strpos( strtolower( $badStr ), '</style>', $x ) + 7 ); $chr = '';
-                    } elseif( !$is_open_tb && strtolower( substr( $badStr, $x + 1, 6 ) ) == 'script' ) {
-                        $badStr = substr( $badStr, 0, $x ) . substr( $badStr, strpos( strtolower( $badStr ), '</script>', $x ) + 8 ); $chr = '';
-                    } elseif( !$is_open_tb ) { $is_open_tb = true; } else { $chr = '&lt;'; }
+                        $badStr = substr( $badStr, 0, $x ) . 
+                                  substr( $badStr, strpos( strtolower( $badStr ), '</style>', $x ) + 7 ); 
+                        $chr = '';
+                    } else if ( !$is_open_tb && strtolower( substr( $badStr, $x + 1, 6 ) ) == 'script' ) {
+                        $badStr = substr( $badStr, 0, $x ) . 
+                                  substr( $badStr, strpos( strtolower( $badStr ), '</script>', $x ) + 8 ); 
+                        $chr = '';
+                    } else if (!$is_open_tb) { 
+                        $is_open_tb = true; 
+                    } else { 
+                        $chr = '&lt;'; 
+                    }
                     break;
 
                 case '>':
-                    if ( !$is_open_tb || $is_open_dq || $is_open_sq ) { $chr = '&gt;'; } else { $is_open_tb = false; }
+                    if ( !$is_open_tb || $is_open_dq || $is_open_sq ) { 
+                        $chr = '&gt;'; 
+                    } else { 
+                        $is_open_tb = false; 
+                    }
                     break;
 
                 case '"':
-                    if ( $is_open_tb && !$is_open_dq && !$is_open_sq ) { $is_open_dq = true; }
-                    elseif( $is_open_tb && $is_open_dq && !$is_open_sq ) { $is_open_dq = false; }
-                    else { $chr = '&quot;'; }
+                    if ( $is_open_tb && !$is_open_dq && !$is_open_sq ) { 
+                        $is_open_dq = true; 
+                    } else if ( $is_open_tb && $is_open_dq && !$is_open_sq ) { 
+                        $is_open_dq = false; 
+                    } else { 
+                        $chr = '&quot;'; 
+                    }
                     break;
 
                 case "'":
-                    if( $is_open_tb && !$is_open_dq && !$is_open_sq ) { $is_open_sq = true; }
-                    elseif( $is_open_tb && !$is_open_dq && $is_open_sq ) { $is_open_sq = false; }
+                    if ( $is_open_tb && !$is_open_dq && !$is_open_sq ) { 
+                        $is_open_sq = true; 
+                    } else if ( $is_open_tb && !$is_open_dq && $is_open_sq ) { 
+                        $is_open_sq = false; 
+                    }
                     break;
             }
             $goodStr .= $chr;
@@ -74,29 +91,21 @@ function html2text( $badStr ) {
 
     //now that the page is valid (I hope) for strip_tags, strip all unwanted tags
 
-    $goodStr = strip_tags( $goodStr, '<title><hr><h1><h2><h3><h4><h5><h6><div><p><pre><sup><ul><ol><br><dl><dt><table><caption><tr><li><dd><th><td><a><area><img><form><input><textarea><button><select><option>' );
+    $goodStr = strip_tags( $goodStr, '<title><hr /><h1><h2><h3><h4><h5><h6><div><p><pre><sup><ul><ol><br /><dl><dt><table><caption><tr><li><dd><th><td><a><area><img><form><input><textarea><button><select><option>' );
 
     //strip extra whitespace except between <pre> and <textarea> tags
 
     $badStr = preg_split( "/<\/?pre[^>]*>/i", $goodStr );
 
     for ( $x = 0; isset($badStr[$x]) && is_string( $badStr[$x] ); $x++ ) { // Moodle: added isset() test
-
         if ( $x % 2 ) { $badStr[$x] = '<pre>'.$badStr[$x].'</pre>'; } else {
-
             $goodStr = preg_split( "/<\/?textarea[^>]*>/i", $badStr[$x] );
-
             for ( $z = 0; isset($goodStr[$z]) && is_string( $goodStr[$z] ); $z++ ) { // Moodle: added isset() test
-
                 if ( $z % 2 ) { $goodStr[$z] = '<textarea>'.$goodStr[$z].'</textarea>'; } else {
-
                     $goodStr[$z] = preg_replace( "/\s+/", ' ', $goodStr[$z] );
-
                 }
             }
-
             $badStr[$x] = implode('',$goodStr);
-
         }
     }
 
@@ -122,8 +131,8 @@ function html2text( $badStr ) {
 
     $goodStr = preg_replace( "/<(th|td)[^>]*>/i", "\t", $goodStr );
 
-    // $goodStr = preg_replace( "/<a[^>]* href=(\"((?!\"|#|javascript:)[^\"#]*)(\"|#)|'((?!'|#|javascript:)[^'#]*)('|#)|((?!'|\"|>|#|javascript:)[^#\"'> ]*))[^>]*>/i", "[LINK: $2$4$6] ", $goodStr );   // Moodle
-    $goodStr = preg_replace( "/<a[^>]* href=(\"((?!\"|#|javascript:)[^\"#]*)(\"|#)|'((?!'|#|javascript:)[^'#]*)('|#)|((?!'|\"|>|#|javascript:)[^#\"'> ]*))[^>]*>/i", "[$2$4$6] ", $goodStr );
+ // $goodStr = preg_replace( "/<a[^>]* href=(\"((?!\"|#|javascript:)[^\"#]*)(\"|#)|'((?!'|#|javascript:)[^'#]*)('|#)|((?!'|\"|>|#|javascript:)[^#\"'> ]*))[^>]*>/i", "[LINK: $2$4$6] ", $goodStr );   // Moodle
+    $goodStr = preg_replace( "/<a[^>]* href=(\"((?!\"|#|javascript:)[^\"#]*)(\"|#)|'((?!'|#|javascript:)[^'#]*)('|#)|((?!'|\"|>|#|javascript:)[^#\"'> ]*))[^>]*>([^<]*)<\/a>/i", "$7 [$2$4$6]", $goodStr );
 
     // $goodStr = preg_replace( "/<img[^>]* alt=(\"([^\"]+)\"|'([^']+)'|([^\"'> ]+))[^>]*>/i", "[IMAGE: $2$3$4] ", $goodStr );   // Moodle
     $goodStr = preg_replace( "/<img[^>]* alt=(\"([^\"]+)\"|'([^']+)'|([^\"'> ]+))[^>]*>/i", "[$2$3$4] ", $goodStr );
