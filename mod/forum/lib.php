@@ -1081,7 +1081,7 @@ function forum_mark_old_posts_as_mailed($endtime) {
     global $CFG;
     return execute_sql("UPDATE {$CFG->prefix}forum_posts
                            SET mailed = '1'
-                         WHERE created < '$endtime'");
+                         WHERE created < '$endtime' AND mailed ='0'");
 }
 
 function forum_get_user_posts($forumid, $userid) {
