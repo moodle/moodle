@@ -248,6 +248,16 @@ function quiz_get_best_grade($quizid, $userid) {
     return $grade->grade;
 }
 
+function quiz_get_grade_records($quiz) {
+/// Gets all info required to display the table of quiz results
+/// for report.php
+
+    return get_records_sql("SELECT qg.*, u.firstname, u.lastname, u.picture 
+                            FROM quiz_grades qg, user u
+                            WHERE qg.quiz = '$quiz->id'
+                              AND qg.user = u.id");
+}
+
 function quiz_save_best_grade($quiz, $user) {
 /// Calculates the best grade out of all attempts at a quiz for a user,
 /// and then saves that grade in the quiz_grades table.

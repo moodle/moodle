@@ -57,7 +57,16 @@
 
     print_header("$course->shortname: $quiz->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> -> $quiz->name", 
-                  "", "", true, update_module_icon($cm->id, $course->id));
+                 "", "", true, update_module_icon($cm->id, $course->id));
+
+    if (isteacher($course->id)) {
+        if ($allanswers = get_records("quiz_grades", "quiz", $quiz->id)) {
+            $answercount = count($allanswers);
+        } else {
+            $answercount = 0;
+        }
+        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallanswers","quiz",$answercount)."</A></P>";
+    }
 
 // Print the main part of the page
 
@@ -80,7 +89,10 @@
         $numattempts = 0;
     }
 
-    echo "<P ALIGN=CENTER>You have attempted this quiz $numattempts times, out of $quiz->attempts allowed attempts.</P>";
+    if ($quiz->attempts > 1) {
+        echo "<P ALIGN=CENTER>".get_string("attemptsallowed", "quiz").": $quiz->attempts</P>";
+        echo "<P ALIGN=CENTER>".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</P>";
+    }
     if ($numattempts) { 
         $table->head = array("Attempt", "Time", "Grade");
         $table->align = array("CENTER", "LEFT", "RIGHT");
@@ -95,15 +107,18 @@
     $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
 
     if ($numattempts < $quiz->attempts) { 
-        $options["id"] = $quiz->id;
-        if ($numattempts) {
-            print_heading("Your best grade so far is $mygrade / $quiz->grade.");
+        if ($available) {
+            $options["id"] = $quiz->id;
+            if ($numattempts) {
+                print_heading("Your best grade so far is $mygrade / $quiz->grade.");
+            }
+            echo "<DIV align=CENTER>";
+            print_single_button("attempt.php", $options, $label="Attempt quiz now");
+            echo "</P>";
         }
-        echo "<DIV align=CENTER>";
-        print_single_button("attempt.php", $options, $label="Attempt quiz now");
-        echo "</P>";
     } else {
-        print_heading("You have no attempts left.  Your final grade is $mygrade / $quiz->grade.");
+        print_heading(get_string("nomoreattempts", "quiz"));
+        print_heading(get_string("yourfinalgradeis", "quiz", "$mygrade / $quiz->grade"));
     }
 
 
