@@ -246,6 +246,18 @@ class configvarrss extends configvar {
     $interface['framename'] = new configvar (get_string('configframename', 'admin'),
         '<input name="framename" type="text" size="15" value="'.s($config->framename).'" alt="framename" />' );
 
+/// language list
+    $interface['themelist'] = new configvar ( get_string('configthemelist', 'admin'),
+        '<input name="themelist" type="text" size="60" value="'.s($config->themelist).'" alt="themelist" />' );
+
+/// user themes
+    $interface['allowuserthemes'] = new configvar (get_string('configallowuserthemes', 'admin'),
+        choose_from_menu ($noyesoptions, 'allowuserthemes', $config->allowuserthemes, '', '', '', true) );
+
+/// course themes
+    $interface['allowcoursethemes'] = new configvar (get_string('configallowcoursethemes', 'admin'),
+        choose_from_menu ($noyesoptions, 'allowcoursethemes', $config->allowcoursethemes, '', '', '', true) );
+
 
 
 

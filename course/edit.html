@@ -12,6 +12,9 @@
     if (!isset($form->lang)) {
         $form->lang = '';
     }
+    if (!isset($form->theme)) {
+        $form->theme = '';
+    }
     if (!isset($form->enrolperiod)) {
         $form->enrolperiod = 0;
     }
@@ -258,6 +261,18 @@
     ?>
     </td>
 </tr>
+<?php if (!empty($CFG->allowcoursethemes)) { ?>
+<tr valign="top">
+    <td align="right"> <?php print_string("forcetheme") ?>: </td>
+    <td> 
+      <?php 
+         $themes[''] = get_string("forceno");
+         $themes += get_list_of_themes();
+         choose_from_menu($themes, 'theme', $form->theme, "", "", "");
+      ?>
+    </td>
+</tr>
+<?php } ?>
 <tr valign="top">
   <td align="right"><?php print_string("managemeta") ?>:</td>
     <td>
@@ -269,7 +284,7 @@
       } else {
           echo ((empty($form->metacourse)) ? get_string("no") : get_string("yes"));
           echo " - $disable_meta ";
-      } ?>&nbsp;<?php print_string("managemetaexplan"); ?>
+      } ?>
     </td>
 </tr>
 <tr>

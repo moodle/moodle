@@ -1501,6 +1501,12 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     if (!empty($course->lang)) {
         $CFG->courselang = $course->lang;
     }
+    if (!empty($course->theme)) {
+        if (!empty($CFG->allowcoursethemes)) {
+            $CFG->coursetheme = $course->theme;
+            theme_setup();
+        }
+    }
 
 /// Add the required stylesheets
     $stylesheetshtml = '';
@@ -1737,17 +1743,17 @@ function print_footer($course=NULL, $usercourse=NULL) {
  * @return string
  */
 function current_theme() {
-    global $CFG, $USER, $SESSION;
+    global $CFG, $USER, $SESSION, $course;
 
 /// Logic for this will probably change to accomodate local theme rules.
 
-    if (!empty($CFG->coursetheme)) {    // Course theme can override all other settings for this page
+    if (!empty($CFG->coursetheme) and !empty($CFG->allowcoursethemes)) {  // Course theme can override all others
         return $CFG->coursetheme;
 
     } else if (!empty($SESSION->theme)) {    // Session theme can override other settings
         return $SESSION->theme;
 
-    } else if (!empty($USER->theme)) {    // User theme can override site theme
+    } else if (!empty($USER->theme) and !empty($CFG->allowuserthemes)) {    // User theme can override site theme
         return $USER->theme;
 
     } else {

@@ -2764,6 +2764,9 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     if (!empty($course->lang)) {   // Course language is defined
         $CFG->courselang = $course->lang;
     }
+    if (!empty($course->theme)) {   // Course language is defined
+        $CFG->coursetheme = $course->theme;
+    }
 
     include_once($CFG->libdir .'/phpmailer/class.phpmailer.php');
 
@@ -3736,6 +3739,41 @@ function get_list_of_countries() {
 
     return $string;
 }
+
+/**
+ * Returns a list of valid and compatible themes
+ *
+ * @uses $CFG
+ * @return array
+ */
+function get_list_of_themes() {
+
+    global $CFG;
+
+    $themes = array();
+
+    if (!empty($CFG->themelist)) {       // use admin's list of themes
+        $themelist = explode(',', $CFG->themelist);
+    } else {
+        $themelist = get_list_of_plugins("theme");
+    }
+
+    foreach ($themelist as $key => $theme) {
+        if (!file_exists("$CFG->dirroot/theme/$theme/config.php")) {   // bad folder
+            continue;
+        }
+        unset($THEME);    // Note this is not the global one!!  :-)
+        include_once("$CFG->dirroot/theme/$theme/config.php");
+        if (!isset($THEME->sheets)) {   // Not a valid 1.5 theme
+            continue;
+        }
+        $themes[$theme] = $theme;
+    }
+    asort($themes);
+
+    return $themes;
+}
+
 
 /**
  * Returns a list of picture names in the current language

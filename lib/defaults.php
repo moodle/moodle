@@ -5,6 +5,8 @@
 
    $defaults = array (
        'allowunenroll'            =>  true,
+       'allowcoursethemes'        =>  false,
+       'allowuserthemes'          =>  false,
        'allusersaresitestudents'  =>  true,
        'auth'                     => 'email',
        'auth_pop3mailbox'         => 'INBOX',
@@ -66,6 +68,7 @@
        'teacherassignteachers'    =>  true,
        'template'                 => 'default',
        'textfilters'              => 'mod/glossary/dynalink.php',
+       'themelist'                => '',
        'timezone'                 =>  99,
        'theme'                    => 'standard',
        'unzip'                    => '',

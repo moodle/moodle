@@ -305,7 +305,7 @@ global $THEME;
 
 /// Load up theme variables (colours etc)
     if (isset($_GET['theme'])) {
-        if (confirm_sesskey()) {
+        if ($CFG->allowthemechangeonurl || confirm_sesskey()) {
             if (!detect_munged_arguments($_GET['theme'], 0) and file_exists($CFG->dirroot .'/theme/'. $_GET['theme'])) {
                 $SESSION->theme = $_GET['theme'];
             }

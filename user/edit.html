@@ -8,6 +8,9 @@
    if (empty($user->lang)) {
        $user->lang = $CFG->lang;
    }
+   if (!isset($user->theme)) {
+       $user->theme = '';
+   }
 
 ?>
 
@@ -189,6 +192,18 @@ if (isadmin()) {
         ?>
      </td>
 </tr>
+<?php if (!empty($CFG->allowuserthemes)) { ?>
+<tr valign="top">
+    <td align="right"> <?php print_string("preferredtheme") ?>: </td>
+    <td> <?php 
+         $themes[''] = get_string('default');
+         $themes += get_list_of_themes();
+         choose_from_menu($themes, 'theme', $user->theme, "", "", "");
+         if (isset($err["theme"])) formerr($err["theme"]);
+        ?>
+    </td>
+</tr>
+<?php } ?>
 <tr valign="top">
     <td align="right"> <?php print_string("timezone") ?>: </td>
     <td> <?php
