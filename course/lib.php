@@ -250,7 +250,7 @@ function print_course($course) {
         }
         echo "</FONT></P>";
     }
-    if ($course->guest or ($course->password == "")) {
+    if ($course->guest) {
         echo "<A TITLE=\"".get_string("allowguests")."\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
         echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/user/user.gif\"></A>&nbsp;&nbsp;";
     }
