@@ -22,7 +22,9 @@
         error('Site isn\'t defined!');
     }
 
-    $imported = false;
+    // These control what kind of operations import_dst_records will be allowed
+    $insert = true;
+    $update = true;
 
     // Actions in REVERSE ORDER of execution
     $actions = array(STEP_IMPORT_CSV_LIB, STEP_DOWNLOAD_CSV, STEP_IMPORT_CSV_TEMP, STEP_OLSON_TO_CSV);
@@ -50,7 +52,7 @@
                 if(is_writable($CFG->dataroot.'/temp/dst.txt')) {
                     $records = get_records_csv($CFG->dataroot.'/temp/dst.txt', 'dst_preset');
                     // Import and go to summary page
-                    $results = import_dst_records($records);
+                    $results = import_dst_records($records, $insert, $update);
                     unlink($CFG->dataroot.'/temp/dst.txt');
                     array_push($actions, STEP_COMPLETED);
                 }
@@ -81,7 +83,7 @@
             case STEP_IMPORT_CSV_LIB:
                 if(file_exists($CFG->dirroot.'/lib/dst.txt')) {
                     $records = get_records_csv($CFG->dirroot.'/lib/dst.txt', 'dst_preset');
-                    $results = import_dst_records($records);
+                    $results = import_dst_records($records, $insert, $update);
                     array_push($actions, STEP_COMPLETED);
                 }
             break;
@@ -93,7 +95,7 @@
         }
     }
 
-function import_dst_records(&$records) {
+function import_dst_records(&$records, $allowinsert = true, $allowupdate = true) {
     $results = array();
     $proto   = array('insert' => 0, 'update' => 0, 'errors' => 0);
 
@@ -106,7 +108,10 @@ function import_dst_records(&$records) {
         $dbpreset = get_record('dst_preset', 'family', $record->family, 'year', $record->year);
 
         if(empty($dbpreset)) {
-            // This preset doesn't exist, so add it
+
+            if(!$allowinsert) {
+                continue;
+            }
 
             if(!isset($results[$record->family])) {
                 $results[$record->family] = $proto;
@@ -124,6 +129,10 @@ function import_dst_records(&$records) {
 
         else {
             // Already exists
+
+            if(!$allowupdate) {
+                continue;
+            }
 
             if(hash_dst_preset($record) != hash_dst_preset($dbpreset)) {
 
