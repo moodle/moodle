@@ -48,14 +48,14 @@ if (!defined("LESSON_SHORTANSWER")) {
 if (!defined("LESSON_TRUEFALSE")) {
     define("LESSON_TRUEFALSE",     "2");
 }
-if (!defined("LESSON_MULTICHOICE")) {
+if (!defined("LESSON_MULTICHOICE")) { // if you change the value of this (WHICH YOU SHOULDNT) then you need to change it in restorelib.php as well
     define("LESSON_MULTICHOICE",   "3");
 }
 if (!defined("LESSON_RANDOM")) {
     define("LESSON_RANDOM",        "4");
 }
-if (!defined("LESSON_MATCHING")) {
-    define("LESSON_MATCHING",         "5");
+if (!defined("LESSON_MATCHING")) { // if you change the value of this (WHICH YOU SHOULDNT) then you need to change it in restorelib.php as well
+    define("LESSON_MATCHING",      "5");
 }
 if (!defined("LESSON_RANDOMSAMATCH")) {
     define("LESSON_RANDOMSAMATCH", "6");
@@ -882,25 +882,33 @@ function lesson_is_page_in_cluster($pages, $pageid) {
 }
 
 /*******************************************************************/
-function lesson_print_tree_menu($lessonid, $pageid, $id) {
+function lesson_print_tree_menu($lessonid, $pageid, $id, $showpages=false) {
 // prints the contents of the left menu
 
 	if(!$pages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
 		error("Error: could not find lesson pages");
 	}
 	while ($pageid != 0) {
-		lesson_print_tree_link_menu($pages[$pageid], $id);			
+		lesson_print_tree_link_menu($pages[$pageid], $id, true);			
 		$pageid = $pages[$pageid]->nextpageid;
 	}
 }
 
 /*******************************************************************/
-function lesson_print_tree_link_menu($page, $id) { 
+function lesson_print_tree_link_menu($page, $id, $showpages=false) { 
 // prints the actual link for the left menu
 
 	if ($page->qtype == LESSON_BRANCHTABLE && !$page->display) {
 		return false;
+	} elseif ($page->qtype != LESSON_BRANCHTABLE) {
+		return false;
 	}
+	
+	/*elseif ($page->qtype != LESSON_BRANCHTABLE && !$showpages) {
+		return false;
+	} elseif (!in_array($page->qtype, $LESSON_QUESTION_TYPE)) {
+		return false;
+	}*/
 	
 	// set up some variables  NoticeFix  changed whole function
 	$output = "";
@@ -910,15 +918,13 @@ function lesson_print_tree_link_menu($page, $id) {
 	
 	if($page->id == $_REQUEST['pageid']) { 
 		$close=true; 
-		$output.="<div class='active'><em>"; 
+		$output.="<strong>"; 
 	} 
-	if (($page->qtype!=LESSON_BRANCHTABLE)||($page->qtype==LESSON_ENDOFBRANCH)||($page->qtype==21)) {
-		$output .= "";
-	} else {
-		$output .= "<li><a href=\"view.php?id=$id&action=navigation&pageid=$page->id\">".$title."</a></li>\n"; 
-	}
+	
+	$output .= "<li><a href=\"view.php?id=$id&action=navigation&pageid=$page->id\">".$title."</a></li>\n"; 
+	
 	if($close) {
-		$output.="</em></div>";
+		$output.="</strong>";
 	}
 	echo $output;
 
@@ -986,18 +992,12 @@ function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
 }
 
 /*******************************************************************/
-function lesson_calculate_ongoing_score($lesson, $USER) {
-// this calculates and prints the ongoing score for students
-
-	// get the number of retries
-    if (!$retries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id)) {
-		$retries = 0;
-	}
-
+function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=false) {
+// this calculates and prints the ongoing score for students	
 	if (!$lesson->custom) {
 		$ncorrect = 0;						
 		if ($pagesanswered = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
-				userid = $USER->id AND retry = $retries order by timeseen")) {
+				userid = $userid AND retry = $retries order by timeseen")) {
 
 			foreach ($pagesanswered as $pageanswered) {
 				if (@!array_key_exists($pageanswered->pageid, $temp)) {
@@ -1025,7 +1025,7 @@ function lesson_calculate_ongoing_score($lesson, $USER) {
 		$score = 0;
 		$currenthigh = 0;
 		if ($useranswers = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
-				userid = $USER->id AND retry = $retries", "timeseen")) {
+				userid = $userid AND retry = $retries", "timeseen")) {
 
 			foreach ($useranswers as $useranswer) {
 				if (@!array_key_exists($useranswer->pageid, $temp)) {
@@ -1081,11 +1081,14 @@ function lesson_calculate_ongoing_score($lesson, $USER) {
 		} elseif ($score < 0) {
 			$score = 0;
 		}
-		
-		$ongoingoutput->grade = $lesson->grade;
-		$ongoingoutput->score = $score;
-		$ongoingoutput->currenthigh = $currenthigh;
-		print_simple_box(get_string("ongoingcustom", "lesson", $ongoingoutput), "center");
+		if ($return) {
+			return $score;
+		} else {
+			$ongoingoutput->grade = $lesson->grade;
+			$ongoingoutput->score = $score;
+			$ongoingoutput->currenthigh = $currenthigh;
+			print_simple_box(get_string("ongoingcustom", "lesson", $ongoingoutput), "center");
+		}
 	}
 }
 
