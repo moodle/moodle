@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004043001)
+      // moodle.php - created with Moodle 1.3 development (2004050300)
 
 
 $string['action'] = 'Azione';
@@ -94,6 +94,8 @@ $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'Copia di sicurezza completata';
 $string['backupincludemoduleshelp'] = 'Scegli se includere i moduli dei corsi, con o senza i dati utente, nelle copie di sicurezza automatiche';
 $string['backupkeephelp'] = 'Quante copie di sicurezza recenti vuoi mantenere per ogni corso? (il più vecchio verrà cancellato automaticamente)';
+$string['backuplogdetailed'] = 'Log dettagliato';
+$string['backuploglaststatus'] = 'Ultimo log';
 $string['backuplogshelp'] = 'Se abilitato, i log del corso saranno inclusi nelle copie di sicurezza automatiche';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = 'Nome copia di sicurezza';
@@ -137,6 +139,7 @@ $string['configcachetext'] = 'Per i siti grandi o i siti che usa filtri di testo
 $string['configcountry'] = 'Se scegli uno stato qui, questo verrà proposto di default. Per obbligare un utente a scegliere il proprio stato, lascialo vuoto.';
 $string['configdebug'] = 'Se si attiva questa opzione, Si incrementerà il livello di rapporto di errore e saranno stampati più avvertimenti. Questo è utile solo per sviluppatori.';
 $string['configdeleteunconfirmed'] = 'Se viene utilizzata l\'autenticazione via mail, questo è il periodo nel quale una risposta dell\'utente viene accettata. Dopo questo periodo, le registrazioni non confermate sono cancellate.';
+$string['configenablerssfeeds'] = 'Questa opzione abilita l\'utilizzo degli RSS nel sito. Per vedere i cambiamenti devi abilitare l\'RSS anche nei singoli moduli - gestione moduli nella pagina di configurazione.';
 $string['configerrorlevel'] = 'Scegli il numero di messaggi di avvertimento PHP che vuoi siano mostrati. Questa <i>Normale</i> è, di solito la scelta migliore.';
 $string['configfilteruploadedfiles'] = 'Abilitando questa impostazione farà elaborare da Moodle con i filtri tutti i file HTML e di testo prima di visualizzarli.';
 $string['configforcelogin'] = 'Normalmente, la pagina principale del sito e la lista dei corsi (ma non i corsi) possono essere visualizzate senza registrarsi al sito. Se vuoi forzare le persone a registrarsi prima di poter fare QUALUNQUE COSA sul sito, allore devi abilitare questa impostazione.';
@@ -223,6 +226,7 @@ $string['currentcourseadding'] = 'Corso attuale, aggiunta dati';
 $string['currentcoursedeleting'] = 'Corso attuale, cancellazione';
 $string['currentlanguage'] = 'Lingua corrente';
 $string['currentlocaltime'] = 'La tua ora locale';
+$string['currentpicture'] = 'Immagine attuale';
 $string['currentrelease'] = 'Informazioni sulla versione attuale';
 $string['currentversion'] = 'Versione attuale';
 $string['databasechecking'] = 'Aggiornamento del database di Moodle dalla versione $a->oldversion to $a->newversion...';
@@ -824,6 +828,7 @@ $string['strftimedateshort'] = '%%d %%B';
 $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
+$string['strftimedayshort'] = '%%A %%B %%d';
 $string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M';

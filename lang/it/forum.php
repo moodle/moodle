@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004043001)
+      // forum.php - created with Moodle 1.3 development (2004050300)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -12,6 +12,7 @@ $string['anyfile'] = 'Qualunque file';
 $string['attachment'] = 'Allegato';
 $string['bynameondate'] = 'di $a->name - $a->date';
 $string['configdisplaymode'] = 'La modalità di visualizzazione di default per le discussioni se nessuna é impostata.';
+$string['configenablerssfeeds'] = 'Questa opzione abilita di utilizzare gli RSS per tutti i forum. Devi comunque abilitarli manualmente nelle impostazioni di ogni forum.';
 $string['configlongpost'] = 'Ogni messaggio oltre questa lunghezza (escludendo l\'HTML) é considerato lungo.';
 $string['configmanydiscussions'] = 'Numero massimo di discussioni mostrate in una pagina del forum';
 $string['configmaxbytes'] = 'Dimensione massima del allegato per tutti gli allegati dei forum del sito (modificabile da limiti del corso e altre impostazioni locali)';
@@ -111,6 +112,10 @@ $string['repliesmany'] = '$a risposte al momento';
 $string['repliesone'] = '$a risposta al momento';
 $string['reply'] = 'Rispondi';
 $string['replyforum'] = 'Replica al forum';
+$string['rssarticles'] = 'Numero di articoli RSS recenti';
+$string['rsssubscriberssdiscussions'] = 'Mostra l\'RSS per \'$a\' discussioni';
+$string['rsssubscriberssposts'] = 'Mostra l\'RSS per \'$a\' messaggi';
+$string['rsstype'] = 'RSS per questo forum';
 $string['search'] = 'Cerca';
 $string['searchforums'] = 'Cerca nei forum';
 $string['searcholderposts'] = 'Cerca vecchi messaggi...';

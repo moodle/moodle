@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2004011700)
+      // resource.php - created with Moodle 1.3 development (2004050300)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Le finestre di popup possono mostrare la barra 
 $string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup';
 $string['configwebsearch'] = 'Quando aggiungi un URL come una Pagina web o un Collegamento web, questo collegamento è offerto come un sito per aiutare gli utenti a cercare l\'URL che vogliono';
 $string['directlink'] = 'Collegamento diretto a questo file';
+$string['directoryinfo'] = 'Tutti i file nella cartella scelta verranno mostrati.';
 $string['editingaresource'] = 'Edita una risorsa';
 $string['example'] = 'Esempio';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993)
@@ -34,7 +35,8 @@ $string['fetcherror'] = 'E\' stato rilevato un errore mentre provavo a recuperar
 $string['fetchservererror'] = 'E\' stato rilevato un errore con il server mentre provavo a recuperare la pagina web (potrebbe esserci un errore nel codice).<br />';
 $string['filename'] = 'Nome del file';
 $string['fulltext'] = 'Testo integrale';
-$string['htmlfragment'] = 'Codice html';
+$string['htmlfragment'] = 'Codice HTML';
+$string['maindirectory'] = 'Cartella principale';
 $string['modulename'] = 'Risorsa';
 $string['modulenameplural'] = 'Risorse';
 $string['neverseen'] = 'Mai visto';
@@ -68,5 +70,6 @@ $string['resourcetype5'] = 'Collegamento web';
 $string['resourcetype6'] = 'Testo HTML';
 $string['resourcetype7'] = 'Programma';
 $string['resourcetype8'] = 'Testo Wiki';
+$string['resourcetype9'] = 'Cartella';
 
 ?>
