@@ -42,7 +42,7 @@
       echo "<BR>";
 
       // Print a form to search forums
-      print_simple_box("Search Discussions", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+      print_simple_box(get_string("search","forum"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
       echo "<DIV ALIGN=CENTER>";
       forum_print_search_form($course);
       echo "</DIV>";

@@ -297,7 +297,7 @@ function forum_print_search_form($course, $search="") {
     echo "<TABLE BORDER=0 CELLPADDING=10 CELLSPACING=0><TR><TD ALIGN=CENTER>";
     echo "<FORM NAME=search ACTION=\"$CFG->wwwroot/mod/forum/search.php\">";
     echo "<INPUT NAME=search TYPE=text SIZE=15 VALUE=\"$search\"><BR>";
-    echo "<INPUT VALUE=\"".get_string("search", "forum")."\" TYPE=submit>";
+    echo "<INPUT VALUE=\"".get_string("searchforums", "forum")."\" TYPE=submit>";
     echo "<INPUT NAME=id TYPE=hidden VALUE=\"$course->id\">";
     echo "</FORM>";
     echo "</TD></TR></TABLE>";

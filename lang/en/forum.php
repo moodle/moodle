@@ -66,6 +66,7 @@ $string[repliesmany] = "\$a replies so far";
 $string[repliesone] = "\$a reply so far";
 $string[reply] = "Reply";
 $string[search] = "Search";
+$string[searchforums] = "Search forums";
 $string[sendinratings] = "Send in my latest ratings";
 $string[singleforum] = "A single simple discussion";
 $string[subject] = "Subject";
