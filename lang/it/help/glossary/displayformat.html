@@ -1,0 +1,28 @@
+<P ALIGN=CENTER><B>Formato di visualizzazione</B></P>
+
+<P>Questa impostazione specifica il modo in cui ogni termine del Glossario sarà visualizzato. I formati default sono:</p>
+<blockquote>
+<dl>
+<dt><b>Dizionario semplice</b>:</dt>
+<dd>appare come un dizionario convenzionale con i termini separati l'uno dall'altro. Non sono mostrati gli autori e gli eventuali allegati sono mostrati come link.</dd>
+<dt><b>Continuo</b>:</dt>
+<dd>i termini vengono mostrati uno dopo l'altro, senza alcun genere di separazione se non le icone di editing.</dd>
+<dt><b>Completo con Autore</b>:</dt>
+<dd>E' una visualizzazione tipo forum che mostra anche i dati dell'autore. Gli allegati sono mostrati come link.</dd>
+<dt><b>Completo senza autore</b>:</dt>
+<dd>E' una visualizzazione tipo forum che non mostra i dati dell'autore. Gli allegati sono mostrati come link.</dd>
+<dt><b>Enciclopedia</b>:</dt>
+<dd>Come 'Completo con Autore' solo che sono visualizzate anche le eventuali immagini allegate.</dd>
+<dt><b>FAQ</b>:</dt>
+<dd>Utile per mostrare liste di FAQ (Frequently Asked Questions). Automaticamente aggiunge le parole DOMANDA e RISPOSTA nei campi 'concetto' e 'definizione' rispettivamente.</dd>
+</dl>
+</blockquote>
+
+<hr>
+<p>Gli Amministratori di Moodle possono creare nuovi formati, nel seguente modo:
+<ol>
+<li> Cercare in mod/glossary/formats ... si dovrebbe vedere un file numerato per ogni formato esistente.
+<li> Copiare uno di questi file e rinominarlo con un nuovo numero N (notare che 0 e 1 sono riservati).
+<li> Editare questo file per creare il proprio formato (è richiesta un pò di conoscenza di PHP).
+<li> Infine, inserire una nuova entry in ogni lingua che si usa (language pack) chiamata <b>displayformatN</b>, e darle un nome corto ma significativo.
+</ol>

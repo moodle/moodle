@@ -1,0 +1,24 @@
+<p align="center"><b>Caratteristiche di una Lezione</b></p>
+
+<ol>
+<li>Una lezione è composta da più <b>pagine</b>.
+<li>Una pagina contiene del <b>contenuto</b> e normalmente termina con una <b>domanda</b>.
+<li>Ogni pagina normalmente ha un insieme di <b>risposte</b>. 
+<li>Ogni risposta può essere accompagnata da un breve testo che viene visualizzato quando la risposta è scelta. Questo breve testo si chiama <b>messaggio di verifica</b>.
+<li>Associato con ogni risposta c'è un <b>salto</b>. Il salto può essere relativo - questa pagina, la prossima pagina - o assoluto - specificando una delle pagine nella lezione o la fine della lezione.
+<li>Per default, la prima risposta salta alla <b>prossima pagina</b> nella lezione. 
+    Le risposte successive saltano alla stessa pagina. Cioè, allo studente è mostrata ancora la stessa pagina della lezione, se non sceglie la prima risposta.
+<li>La prossima pagina è determinata dall'<b>ordine logico</b> della lezione. Questo è l'ordine delle pagine come sono viste dall'insegnante. Questo ordine può essere modificato spostando le pagine all'interno della lezione.
+<li>La lezione ha anche un <b>ordine di navigazione</b>. Questo è l'ordine delle pagine come sono viste dagli studenti. Questo è determinato dai salti specificati per le singole risposte è può essere molto diverso dall'ordine logico. (Se i salti <i>non</i> sono cambiati dai loro valori di default, i due tipi di ordine sono strettamente correlati.)
+     L'insegnante ha la possibilità di controllare l'ordine di navigazione.
+<li>Quando vengono mostrate agli studenti, le risposte sono sempre mescolate. Cioè la prima risposta dal punto di vista dell'insegnante, non necessariamente sarà la prima rispoata nella lista mostrata agli studenti. (Inoltre, ogni volta che lo stesso set di risposte è visualizzato, queste appariranno probabilmente in un ordine diverso.)
+<li>Il numero di risposte può variare da pagina a pagina. Per esempio, è possibile che alcune pagine terminano con una domanda del tipo Vero/Falso, mentre altre hanno domande con una risposta corretta e, per esempio, tre sbagliate. 
+<li>E' possibile impostare una pagina senza alcuna risposta. Agli studenti sarà mostrato un link <b>Continua</b> invece del set di risposte mescolate.
+<li>Per assegnare un voto alle lezioni, le risposte <b>corrette</b> sono quelle che saltano alla pagina <i>successiva</i> rispetto a quella corrente, secondo l'ordine logico. Le risposte <b>errate</b> sono quelle che o saltano alla stessa pagina o saltano alla pagina <i>precedente</i> rispetto a quella corrente, secondo l'ordine logico. Così, se i salti <i>not</i> sono cambiati, la prima risposta è una risposta corretta, mentre le altre sono risposte errate.
+<li>Le domande possono avere più di una risposta corretta. Per esempio, se due risposte saltano alla stessa pagina, allora ogni risposta è da considerare corretta. (Anche se la pagina di destinazione mostrata agli studenti è la stessa, i messaggi di verifica mostrati per arrivare a quella pagina possono anche essere differenti per le due risposte.)
+<li>Nella visualizzazione della lezione per l'insegnante, le risposte corrette hanno delle etichette risposta sottolineate.
+<li>La <b>fine della lezione</b> è raggiunta sia saltando esplicitamente alla sua pagina finale sia saltando alla pagina successiva dalla ultima pagina (logica) della lezione.
+Quando la fine della lezione è stata raggiunta, lo studente riceve un messaggio di congratulazioni e il voto ottenuto. Il voto è pari a (il numero di risposte considerate corrette / il numero di pagine visitate) * il voto massimo della lezione.
+<li>Se la fine della lezione <i>non</i> è stato raggiunto, quando lo studente ritorna a quella lezione gli viene data la scelta di ricominciare dall'inizio o di riprendere la lezione dal punto in cui aveva dato l'ultima risposta corretta.
+<li> Per le lezioni per le quali è ammessa la ripetizione, gli studenti possono ripetere la lezione fino a quando sono in grado di raggiungere il massimo dei voti.
+</ol>
