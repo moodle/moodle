@@ -97,6 +97,7 @@ $string['configunzip'] = "Indicate the location of your unzip program (Unix only
 $string['configvariables'] = "Configure variables";
 $string['configzip'] = "Indicate the location of your zip program (Unix only, optional).  If specified, this will be used to create zip archives on the server.  If you leave this blank, then Moodle will use internal routines.";
 $string['confirmed'] = "Your registration has been confirmed";
+$string['confirmednot'] = "Your registration has not yet been confirmed!";
 $string['courseupdates'] = "Course updates";
 $string['cookiesenabled'] = "Cookies must be enabled in your browser";
 $string['complete'] = "Complete";
