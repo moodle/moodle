@@ -1,3 +1,128 @@
+2002-09-05 Thursday 10:17  martin
+
+	* lang/en/moodle.php, user/edit.php: 
+	
+	New error when the admin user is (still) set to the default
+	"admin".
+
+2002-09-05 Thursday 10:04  martin
+
+	* admin/user.php: 
+	
+	BUG FIX:  In the last version I introduced a new security feature
+	(keeping the site URL stored in the USER session object) but forgot
+	to add this to the brand new admin user - causing it to fail.
+	
+	Fixed.
+
+2002-09-04 Wednesday 21:38  martin
+
+	* lang/en/README: 
+	
+	Updated README .. pages dir no longer exists - now "help" and
+	"docs"
+
+2002-09-04 Wednesday 17:39  martin
+
+	* lib/moodlelib.php: 
+	
+	Using different logo file to avoid caching problems on changeover
+
+2002-09-04 Wednesday 17:38  martin
+
+	* pix/: madewithmoodle.gif, madewithmoodle1.gif,
+	madewithmoodle2.gif, madewithmoodle3.gif: 
+	
+	Sorted out moodle logos
+
+2002-09-04 Wednesday 14:32  martin
+
+	* lib/moodlelib.php, pix/madewithmoodle.gif: 
+	
+	Tweaked the new icon
+
+2002-09-04 Wednesday 13:07  martin
+
+	* user/: edit.html, edit.php: 
+	
+	Better handling of user-entered URLs (add http:// if missing)
+
+2002-09-04 Wednesday 00:58  martin
+
+	* lib/moodlelib.php, pix/madewithmoodle.gif: 
+	
+	New logo that should work on more themes
+
+2002-09-03 Tuesday 23:16  martin
+
+	* pix/: madewithmoodle.gif, madewithmoodle2.gif: 
+	
+	Switched these around and edited a little
+
+2002-09-03 Tuesday 22:29  martin
+
+	* admin/index.php, admin/lang.php, course/lib.php,
+	lang/en/moodle.php, lib/moodlelib.php: 
+	
+	
+	Added a new administration page that can check the current language
+	pack against the English language pack.  It prints any missing
+	strings or files.  This should help language pack developers.
+
+2002-09-03 Tuesday 21:11  martin
+
+	* index.php, admin/site.php, course/lib.php, course/teacher.php,
+	lang/en/forum.php, lang/en/moodle.php,
+	login/forgot_password_form.html, login/index.php,
+	mod/forum/lib.php, mod/forum/post.php, mod/reading/details.php: 
+	
+	Language fixes, added english strings etc
+
+2002-09-03 Tuesday 00:35  martin
+
+	* course/loggraph.php: 
+	
+	More efficient use of database in userday as well, plus the day
+	graph now always shows the whole current day
+
+2002-09-03 Tuesday 00:03  martin
+
+	* course/loggraph.php: 
+	
+	usercourse bar --> line graph for better display when lots of data
+
+2002-09-02 Monday 23:53  martin
+
+	* course/loggraph.php: 
+	
+	Alternate method of calculating usercourse logs .... is it faster?
+
+2002-09-02 Monday 17:06  martin
+
+	* file.php, user/pix.php: 
+	
+	Added Content-disposition header to help some browsers suggest the
+	right filename when saving pictures and files.
+
+2002-09-02 Monday 15:41  martin
+
+	* lib/weblib.php: 
+	
+	Fixed over-zealous removal of returns from text ...
+
+2002-09-02 Monday 15:18  martin
+
+	* lib/ipatlas/plot.php: 
+	
+	Print the user's stated city/country as well
+
+2002-09-02 Monday 14:51  martin
+
+	* CHANGES: 
+	
+	
+	CHANGES UP TO MOODLE 1.0.2
+
 2002-09-02 Monday 14:34  martin
 
 	* config-dist.php: 
