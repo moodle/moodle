@@ -39,6 +39,14 @@ function print_entry($course) {
         print_course($course, "80%");
         print_simple_box_start("center");
 
+        //Sanitise some fields before building the PayPal form
+        $coursefullname  = $this->sanitise_for_paypal($course->fullname);
+        $courseshortname = $this->sanitise_for_paypal($course->shortname);
+        $userfullname    = $this->sanitise_for_paypal(fullname($USER));
+        $userfirstname   = $this->sanitise_for_paypal($USER->firstname);
+        $userlastname    = $this->sanitise_for_paypal($USER->lastname);
+        $useraddress     = $this->sanitise_for_paypal($USER->address);
+        $usercity        = $this->sanitise_for_paypal($USER->city);
 
         include("$CFG->dirroot/enrol/paypal/enrol.html");
 
@@ -140,6 +148,37 @@ function process_config($config) {
     set_config('enrol_mailadmins', $config->enrol_mailadmins);
     
     return true;
+
+}
+
+//To avoid wrong (for PayPal) characters in sent data
+function sanitise_for_paypal($text) {
+    global $CFG;
+
+    if (!empty($CFG->sanitise_for_paypal)) {
+        //Array of characters to replace (not allowed by PayPal)
+        //Can be expanded as necessary to add other diacritics
+        $replace = array('á' => 'a',        //Spanish characters
+                         'é' => 'e',
+                         'í' => 'i',
+                         'ó' => 'o',
+                         'ú' => 'u',
+                         'Á' => 'A',
+                         'É' => 'E',
+                         'Í' => 'I',
+                         'Ó' => 'O',
+                         'Ú' => 'U',
+                         'ñ' => 'n',
+                         'Ñ' => 'N',
+                         'ü' => 'u',
+                         'Ü' => 'U');
+        $text = strtr($text, $replace);
+    
+        //Make here other sanities if necessary
+
+    }
+
+    return $text;
 
 }
 
