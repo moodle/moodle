@@ -642,6 +642,10 @@ function fullname($user, $override=false) {
 
     global $CFG, $SESSION;
 
+    if (!isset($user->firstname) and !isset($user->lastname)) {
+        return '';
+    }
+
     if (!empty($SESSION->fullnamedisplay)) {
         $CFG->fullnamedisplay = $SESSION->fullnamedisplay;
     }
