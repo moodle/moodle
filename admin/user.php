@@ -15,8 +15,8 @@
     optional_variable($search, "");
 
     if (! record_exists("user_admins")) {   // No admin user yet
-        $user->firstname = "Admin";
-        $user->lastname  = "User";
+        $user->firstname = get_string("admin");
+        $user->lastname  = get_string("user");
         $user->username  = "admin";
         $user->password  = md5("admin");
         $user->email     = "root@localhost";
@@ -55,8 +55,10 @@
         $USER->site = $CFG->wwwroot;
         $USER->admin = true;
         $USER->teacher["$site->id"] = true;
+        $USER->newadminuser = true;
 
         redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$site->id");
+        exit;
 
     } else {
         if (! $site = get_site()) {

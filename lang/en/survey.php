@@ -178,6 +178,7 @@ $string['downloadexcel'] = "Download data as Excel spreadsheet";
 $string['downloadinfo'] = "You can download the complete raw data for this survey in a form suitable for analysis in Excel, SPSS or other package.";
 $string['downloadtext'] = "Download data as a plain text file";
 $string['editingasurvey'] = "Editing a survey";
+$string['guestsnotallowed'] = "Guests are not allowed to submit surveys";
 $string['helpsurveys'] = "Help on the different types of surveys";
 $string['howlong'] = "How long did this survey take you to complete?";
 $string['howlongoptions'] = "under 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,more than 10";

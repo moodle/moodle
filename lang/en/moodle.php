@@ -65,6 +65,8 @@ $string['configgdversion'] = "Indicate the version of GD that is installed.  The
 $string['configerrorlevel'] = "Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.";
 $string['confightmleditor'] = "Choose whether or not to allow use of the embedded HTML text editor. Even if you choose allow, this editor will only appear when the user is using a compatible browser (IE 5.5 or later).  Users can also choose not to use it.";
 $string['configintro'] = "On this page you can specify a number of configuration variables that help make Moodle work properly on your server.  Don't worry too much about it - the defaults will usually work fine and you can always come back to this page later and change these settings.";
+$string['configintroadmin'] = "On this page you should configure your main administrator account which will have complete control over the site. Make sure you give it a secure username and password as well as a valid email address.  You can create more admin accounts later on.";
+$string['configintrosite'] = "This page allows you to configure the front page and name of this new site.  You can come back here later to change these settings any time using the 'Site Settings' link on the home page.";
 $string['configlang'] = "Choose a default language for the whole site.  Users can override this setting later.";
 $string['configlangdir'] = "Most languages are printed left-to-right, but some, like Arabic and Hebrew, are printed right-to-left.";
 $string['configlangmenu'] = "Choose whether or not you want to display the general-purpose language menu on the home page, login page etc.  This does not affect the user's ability to set the preferred language in their own profile.";
@@ -99,6 +101,8 @@ $string['createuserandpass'] = "Create a new username and password to log in wit
 $string['createziparchive'] = "Create zip archive";
 $string['currentlanguage'] = "Current language";
 $string['currentlocaltime'] = "your current local time";
+$string['currentrelease'] = "Current release information";
+$string['currentversion'] = "Current version";
 $string['databasechecking'] = "Upgrading Moodle database from version \$a->oldversion to \$a->newversion...";
 $string['databasesetup'] = "Setting up database";
 $string['databasesuccess'] = "Database was successfully upgraded";
@@ -235,7 +239,7 @@ $string['gd1'] = "GD 1.x is installed";
 $string['gd2'] = "GD 2.x is installed";
 $string['gdneed'] = "GD must be installed to see this graph";
 $string['gdnot'] = "GD is not installed";
-$string['gpl'] = "Copyright (C) 2001-on  Martin Dougiamas  (http://dougiamas.com)
+$string['gpl'] = "Copyright (C) 2001-2003  Martin Dougiamas  (http://dougiamas.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -586,6 +590,7 @@ $string['userfiles'] = "User Files";
 $string['username'] = "Username";
 $string['usernameexists'] = "This username already exists, choose another";
 $string['userprofilefor'] = "User profile for \$a";
+$string['user'] = "User";
 $string['users'] = "Users";
 $string['webpage'] = "Web page";
 $string['week'] = "Week";

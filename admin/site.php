@@ -6,8 +6,8 @@
         if (!isadmin()) {
             error("You need to be admin to edit this page");
         }
+        $site->format = "social";   // override
     }
-    $site->format = "social";   // override
 
 /// If data submitted, then process and store.
 
@@ -21,7 +21,7 @@
 
             if ($form->id) {
                 if (update_record("course", $form)) {
-                    redirect("index.php", get_string("changessaved"));
+                    redirect("$CFG->wwwroot/admin/index.php", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not update the site record! (id = $form->id)");
                 }
@@ -29,7 +29,7 @@
                 if ($newid = insert_record("course", $form)) {
                     $cat->name = get_string("miscellaneous");
                     if (insert_record("course_categories", $cat)) {
-                        redirect("index.php", get_string("changessaved"), "1");
+                        redirect("$CFG->wwwroot/admin/index.php", get_string("changessaved"));
                     } else {
                         error("Serious Error! Could not set up a default course category!");
                     }
@@ -50,10 +50,12 @@
 
     if ($site and empty($form)) {
         $form = $site;
+        $firsttime = false;
     } else {
         $form->category = 0;
         $form->format = "social";
         $form->newsitems = 0;
+        $firsttime = true;
     }
 
     if (empty($focus)) {
@@ -63,14 +65,24 @@
     $stradmin = get_string("administration");
     $strsitesettings = get_string("sitesettings");
 
-    print_header("$site->shortname: $strsitesettings", "$site->fullname",
-                  "<A HREF=\"index.php\">$stradmin</A> -> $strsitesettings", "$focus");
+    if ($firsttime) {
+        print_header();
+        print_heading($strsitesettings);
+        print_simple_box(get_string("configintrosite"), "center");
+        echo "<br />";
+    } else {
+        print_header("$site->shortname: $strsitesettings", "$site->fullname",
+                      "<A HREF=\"index.php\">$stradmin</A> -> $strsitesettings", "$focus");
+        print_heading($strsitesettings);
+    }
 
-    print_heading($strsitesettings);
     print_simple_box_start("center", "", "$THEME->cellheading");
     include("site.html");
     print_simple_box_end();
-    print_footer();
+
+    if (!$firsttime) {
+        print_footer();
+    }
 
     exit;
 

@@ -93,9 +93,13 @@
                     foreach ($usernew as $variable => $value) {
                         $USER->$variable = $value;
                     }
-                    redirect("view.php?id=$user->id&course=$course->id", get_string("changessaved"));
+                    if (isset($USER->newadminuser)) {
+                        unset($USER->newadminuser);
+                        redirect("$CFG->wwwroot", get_string("changessaved"));
+                    }
+                    redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", get_string("changessaved"));
                 } else {
-                    redirect("../admin/user.php", get_string("changessaved"));
+                    redirect("$CFG->wwwroot/admin/user.php", get_string("changessaved"));
                 }
             } else {
                 error("Could not update the user record ($user->id)");
@@ -122,9 +126,13 @@
                         -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
                         -> $streditmyprofile", "");
         } else {
-            print_header("$course->shortname: $streditmyprofile", "$course->fullname",
-                         "<A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
-                          -> $streditmyprofile", "");
+            if (isset($USER->newadminuser)) {
+                print_header();
+            } else {
+                print_header("$course->shortname: $streditmyprofile", "$course->fullname",
+                             "<A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
+                              -> $streditmyprofile", "");
+            }
         }
     } else {
         $userfullname = $strnewuser;
@@ -144,6 +152,12 @@
     }
 
     print_heading( get_string("userprofilefor", "", "$userfullname") );
+
+    if (isset($USER->newadminuser)) {
+        print_simple_box(get_string("configintroadmin"), "center");
+        echo "<br />";
+    }
+
     print_simple_box_start("center", "", "$THEME->cellheading");
     if (!empty($err)) {
        echo "<CENTER>";
@@ -152,8 +166,12 @@
     }
     include("edit.html");
     print_simple_box_end();
-    print_footer($course);
 
+    if (!isset($USER->newadminuser)) {
+        print_footer($course);
+    }
+
+    exit;
 
 
 

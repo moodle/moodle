@@ -86,13 +86,16 @@
         print_header();
         print_heading($strconfigvariables);
         print_simple_box(get_string("configintro"), "center");
-        echo "<BR>";
+        echo "<br />";
     }
 
     print_simple_box_start("center", "", "$THEME->cellheading");
 	include("config.html");
     print_simple_box_end();
-    print_footer();
+
+    if ($site) {
+        print_footer();
+    }
 
     exit;
 

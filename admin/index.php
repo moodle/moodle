@@ -92,9 +92,9 @@
         if (!$agreelicence) {
             $strlicense = get_string("license");
             print_header($strlicense, $strlicense, $strlicense);
-            print_heading("<A HREF=\"http://moodle.com\">Moodle</A> - Modular Object-Oriented Dynamic Learning Environment");
+            print_heading("<A HREF=\"http://moodle.org\">Moodle</A> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string("copyrightnotice"));
-            print_simple_box_start("CENTER");
+            print_simple_box_start("center");
             echo text_to_html(get_string("gpl"));
             print_simple_box_end();
             echo "<BR>";
@@ -156,8 +156,8 @@
         }
        
     } else {
-        $strdatabaseupgrades = get_string("databaseupgrades");
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
+        $strcurrentversion = get_string("currentversion");
+        print_header($strcurrentversion, $strcurrentversion, $strcurrentversion);
 
         if (set_config("version", $version)) {
             print_heading("You are currently using Moodle version $version (Release $release)");
@@ -177,8 +177,8 @@
 /// Updated human-readable release version if necessary
 
     if ($release <> $CFG->release) {  // Update the release version
-        $strdatabaseupgrades = get_string("databaseupgrades");
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
+        $strcurrentrelease = get_string("currentrelease");
+        print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease);
         print_heading($release);
         if (!set_config("release", $release)) {
             notify("ERROR: Could not update release version in database!!");
