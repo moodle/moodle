@@ -152,7 +152,7 @@
                 }
                 else {
                     $other = get_record('dst_preset', 'name', $preset->name);
-                    if($preset->id != $other->id) {
+                    if($other !== false && $preset->id != $other->id) {
                         $errors[] = get_string('errordstpresetnameexists', 'admin');
                     }
                 }
@@ -163,18 +163,15 @@
                 // Are we error-free?
                 if(empty($errors)) {
                     // Calculate the last/next/current_offset variables
-                    // WARNING: TODO: BUG: To calculate the timestamps, we are taking into account
-                    // the admin's own DST setting. That means that if the admin changes his own DST
-                    // setting and with this change his effective DST status changes, the timestamps
-                    // will NOT be calculated correctly. Thus, the whole DST setting will be wrong
-                    // for ALL USERS!
+                    $preset->activate_time   = sprintf('%02d:%02d', $preset->activate_hour, $preset->activate_minute);
+                    $preset->deactivate_time = sprintf('%02d:%02d', $preset->deactivate_hour, $preset->deactivate_minute);
                     $preset = calendar_dst_update_preset($preset);
                     print_object("record is:");
                     print_object($preset);
-                    print_object('The last change time (DST)  was: '.strftime('%A,  %d %B %Y %H:%M', $preset->last_change));
-                    print_object('The last change time (user) was: '.userdate($preset->last_change));
-                    print_object('The next change time (DST)  is : '.strftime('%A,  %d %B %Y %H:%M', $preset->next_change));
-                    print_object('The next change time (user) is : '.userdate($preset->next_change));
+                    print_object('The last change time was: ');
+                    print_object(gmdate('M d Y H:i', $preset->last_change));
+                    print_object('The next change time is: ');
+                    print_object(gmdate('M d Y H:i', $preset->next_change));
 
                     // Write it!
                     if($preset->id) {
@@ -189,14 +186,14 @@
                     die();
                 }
                 else {
-                    print_simple_box_start('center', '70%', '#cc0000');
-                    echo '<div style="color: #fff;"><div style="font-weight: bold; text-align: center;">'.get_string('therewereerrors', 'admin').':</div>';
+                    echo '<div class="errorbox">';
+                    echo '<h1>'.get_string('therewereerrors', 'admin').':</h1>';
                     echo '<ul>';
                     foreach($errors as $error) {
                         echo '<li>'.$error.'</li>';
                     }
-                    echo '</ul></div>';
-                    print_simple_box_end();
+                    echo '</ul>';
+                    echo '</div>';
                 }
             }
 

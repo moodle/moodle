@@ -25,7 +25,7 @@
         <?php choose_from_menu(array('1' => get_string('first', 'calendar'), '-1' => get_string('last', 'calendar')), 'activate_index', $preset->activate_index, ''); ?>
         <?php choose_from_menu($weekdays, 'activate_day', $preset->activate_day, ''); ?>
         <?php print_string('dstof', 'calendar'); echo ' '; calendar_print_month_selector('activate_month', $preset->activate_month); ?>
-        <?php print_string('dstat', 'calendar'); echo ' '; print_time_selector('activate_hour', 'activate_minute', make_timestamp(2000, 1, 1, $preset->activate_hour, $preset->activate_minute), 30); ?>
+        <?php print_string('dstat', 'calendar'); echo ' '; print_time_selector('activate_hour', 'activate_minute', make_timestamp(2000, 1, 1, $preset->activate_hour, $preset->activate_minute), 99, false); ?>
         <?php $preset->activate_hour; ?>
       </td>
     </tr>
@@ -50,7 +50,7 @@
         <?php choose_from_menu(array('1' => get_string('first', 'calendar'), '-1' => get_string('last', 'calendar')), 'deactivate_index', $preset->deactivate_index, ''); ?>
         <?php choose_from_menu($weekdays, 'deactivate_day', $preset->deactivate_day, ''); ?>
         <?php print_string('dstof', 'calendar'); echo ' '; calendar_print_month_selector('deactivate_month', $preset->deactivate_month); ?>
-        <?php print_string('dstat', 'calendar'); echo ' '; print_time_selector('deactivate_hour', 'deactivate_minute', make_timestamp(2000, 1, 1, $preset->deactivate_hour, $preset->deactivate_minute), 30); ?>
+        <?php print_string('dstat', 'calendar'); echo ' '; print_time_selector('deactivate_hour', 'deactivate_minute', make_timestamp(2000, 1, 1, $preset->deactivate_hour, $preset->deactivate_minute), 99, false); ?>
       </td>
     </tr>
   </tbody>

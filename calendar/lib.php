@@ -1304,11 +1304,24 @@ function calendar_dst_update_preset($dstpreset) {
 }
 
 function calendar_dst_changes_for_year($year, $dstpreset) {
+
     $monthdayactivate   = calendar_find_day_in_month($dstpreset->activate_index,   $dstpreset->activate_day,   $dstpreset->activate_month,   $year);
     $monthdaydeactivate = calendar_find_day_in_month($dstpreset->deactivate_index, $dstpreset->deactivate_day, $dstpreset->deactivate_month, $year);
 
-    list($activate_hour, $activate_minute)     = explode(':', $dstpreset->activate_time);
-    list($deactivate_hour, $deactivate_minute) = explode(':', $dstpreset->deactivate_time);
+    if(isset($dstpreset->activate_time)) {
+        list($activate_hour, $activate_minute)     = explode(':', $dstpreset->activate_time);
+    }
+    else {
+        $activate_hour   = $dstpreset->activate_hour;
+        $activate_minute = $dstpreset->activate_minute;
+    }
+    if(isset($dstpreset->deactivate_time)) {
+        list($deactivate_hour, $deactivate_minute) = explode(':', $dstpreset->deactivate_time);
+    }
+    else {
+        $deactivate_hour   = $dstpreset->deactivate_hour;
+        $deactivate_minute = $dstpreset->deactivate_minute;
+    }
     
     $timezone       = get_user_timezone(99);
     $timeactivate   = make_timestamp($year, $dstpreset->activate_month,   $monthdayactivate,   $activate_hour,   $activate_minute,   0, $timezone, false);

@@ -592,51 +592,30 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
         $time = mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
     } else {
         $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
-        $time = usertime($time, $timezone);  // This is GMT
+        $time = usertime($time, $timezone);
     }
 
     if(!$applydst) {
         return $time;
     }
 
-    return $time;
-
-    /*
-    // WARNING: BUG: TODO: This is buggy, but it will do for testing purposes
     if(($dstid = get_user_preferences('calendar_dstpreset')) !== NULL) {
         $preset = get_record('dst_preset', 'id', $dstid);
-        if($time > $preset->last_change && $time < $preset->next_change) {
+
+        if($time >= $preset->last_change && $time < $preset->next_change) {
+            $time -= $preset->current_offset * 60;
             return $time;
         }
 
-        // We need to find out what's going on...
-        $nowuserdate = usergetdate($time);
-
+        // It's in some other time period, we need to recalculate
         $changes = calendar_dst_changes_for_year($year, $preset);
-        if($time < $changes['activate'] || $time > $changes['deactivate']) {
-            // DST will be off at that time
-            if($preset->current_offset != 0) {
-                print_object('Uncompensated time was:');
-                print_object(usergetdate($time));
-                $time += $preset->apply_offset * 60;
-                print_object('Compensated time is:');
-                print_object(usergetdate($time));
-            }
+
+        if($time >= $changes['activate'] && $time < $changes['deactivate']) {
+            // Compensation required
+            $time -= $preset->apply_offset * $preset->apply_offset_sign;
         }
-        else {
-            // DST will be on at that time
-            if($preset->current_offset == 0) {
-                print_object('Uncompensated time was:');
-                print_object(usergetdate($time));
-                $time -= $preset->apply_offset * 60;
-                print_object('Compensated time is:');
-                print_object(usergetdate($time));
-            }
-        }
-        
-        return $time;
     }
-    */
+    return $time;
 }
 
 /**
@@ -751,24 +730,24 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
 }
 
 /**
- * Given a $date timestamp in GMT (seconds since epoch),
+ * Given a $time timestamp in GMT (seconds since epoch),
  * returns an array that represents the date in user time
  *
  * @uses HOURSECS
- * @param  int $date Timestamp in GMT
+ * @param int $time Timestamp in GMT
  * @param int $timezone ?
  * @return array An array that represents the date in user time
  * @todo Finish documenting this function
  */
-function usergetdate($date, $timezone=99) {
+function usergetdate($time, $timezone=99) {
 
     $timezone = get_user_timezone($timezone);
 
     if (abs($timezone) > 13) {
-        return getdate($date);
+        return getdate($time);
     }
     //There is no gmgetdate so I have to fake it...
-    $date = $date + (int)($timezone * HOURSECS);
+    $time += (int)($timezone * HOURSECS);
 
     // This is independent of the server's TZ settings,
     // unlike gmstrftime. It's also a bit faster this way.
@@ -783,7 +762,7 @@ function usergetdate($date, $timezone=99) {
         $getdate['yday'],
         $getdate['weekday'],
         $getdate['month']
-    ) = explode(' ', gmdate('s i H d m Y w z l F', $date));
+    ) = explode(' ', gmdate('s i H d m Y w z l F', $time));
 
     return $getdate;
 }
