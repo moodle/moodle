@@ -623,7 +623,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         }
         echo '<span class="cal_event_date">'.$events[$i]->time.'</span>';
         echo '<br />'.$events[$i]->description.'<br />';
-        if($i < $lines - 1) {
+        if($i < $numevents - 1) {
             echo '<hr />';
         }
         echo '</p>';
