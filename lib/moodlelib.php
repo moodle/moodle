@@ -662,6 +662,105 @@ function remove_admin($user) {
 }
 
 
+function remove_course_contents($courseid, $showfeedback=true) {
+/// Clear a course out completely, deleting all content
+/// but don't delete the course itself
+
+    global $CFG;
+
+    $result = true;
+
+    if (! $course = get_record("course", "id", $courseid)) {
+        error("Course ID was incorrect (can't find it)");
+    }
+
+    $strdeleted = get_string("deleted");
+
+    // First delete every instance of every module
+    
+    if ($allmods = get_records("modules") ) {
+        foreach ($allmods as $mod) {
+            $modname = $mod->name;
+            $modfile = "$CFG->dirroot/mod/$modname/lib.php";
+            $moddelete = $modname."_delete_instance";
+            $count=0;
+            if (file_exists($modfile)) {
+                include_once($modfile);
+                if (function_exists($moddelete)) {
+                    if ($instances = get_records($modname, "course", $course->id)) {
+                        foreach ($instances as $instance) {
+                            if ($moddelete($instance->id)) {
+                                $count++;
+                            } else {
+                                notify("Could not delete $modname instance $instance->id ($instance->name)");
+                                $result = false;
+                            }
+                        }
+                    }
+                } else {
+                    notify("Function $moddelete() doesn't exist!");
+                    $result = false;
+                }
+
+            }
+            if ($showfeedback) {
+                notify("$strdeleted $count x $modname");
+            }
+        }
+    } else {
+        error("No modules are installed!");
+    }
+
+    // Delete any user stuff
+
+    if (delete_records("user_students", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted user_students");
+        }
+    } else {
+        $result = false;
+    }
+
+    if (delete_records("user_teachers", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted user_teachers");
+        }
+    } else {
+        $result = false;
+    }
+
+    // Delete logs
+
+    if (delete_records("log", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted log");
+        }
+    } else {
+        $result = false;
+    }
+
+    // Delete any course stuff
+
+    if (delete_records("course_sections", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted course_sections");
+        }
+    } else {
+        $result = false;
+    }
+
+    if (delete_records("course_modules", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted course_modules");
+        }
+    } else {
+        $result = false;
+    }
+
+    return $result;
+
+}
+
 
 /// CORRESPONDENCE  ////////////////////////////////////////////////
 

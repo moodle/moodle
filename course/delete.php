@@ -68,64 +68,12 @@
 
     print_heading($strdeletingcourse);
 
-    $strdeleted = get_string("deleted");
-    // First delete every instance of every module
-
-    if ($allmods = get_records("modules") ) {
-        foreach ($allmods as $mod) {
-            $modname = $mod->name;
-            $modfile = "../mod/$modname/lib.php";
-            $moddelete = $modname."_delete_instance";
-            $count=0;
-            if (file_exists($modfile)) {
-                include_once($modfile);
-                if (function_exists($moddelete)) {
-                    if ($instances = get_records($modname, "course", $course->id)) {
-                        foreach ($instances as $instance) {
-                            if ($moddelete($instance->id)) {
-                                $count++;
-                            } else {
-                                notify("Could not delete $modname instance $instance->id ($instance->name)");
-                            }
-                        }
-                    }
-                } else {
-                    notify("Function $moddelete() doesn't exist!");
-                }
-
-            }
-            notify("$strdeleted $count instances of $modname");
-        } 
-    } else {
-        error("No modules are installed!");
-    } 
-
-    // Delete any user stuff
-
-    if (delete_records("user_students", "course", $course->id)) {
-        notify("$strdeleted student enrolments");
+    if (!remove_course_contents($course->id)) {
+        notify("An error occurred while deleting some of the course contents.");
     }
 
-    if (delete_records("user_teachers", "course", $course->id)) {
-        notify("$strdeleted teachers");
-    }
-
-    // Delete logs
-
-    if (delete_records("log", "course", $course->id)) {
-        notify("$strdeleted logs");
-    }
-
-    // Delete any course stuff
-
-    if (delete_records("course_sections", "course", $course->id)) {
-        notify("$strdeleted course sections");
-    }
-    if (delete_records("course_modules", "course", $course->id)) {
-        notify("$strdeleted course modules");
-    }
-    if (delete_records("course", "id", $course->id)) {
-        notify("$strdeleted the main course record");
+    if (!delete_records("course", "id", $course->id)) {
+        notify("An error occurred while deleting the main course record.");
     }
 
     print_heading( get_string("deletedcourse", "", $course->shortname) );
