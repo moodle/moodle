@@ -310,10 +310,10 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
             if ($value == $selected) {
                 $output .= " selected";
             }
-            if ($label) {
-                $output .= ">$label</option>\n";
-            } else {
+            if ($label === "") {
                 $output .= ">$value</option>\n";
+            } else {
+                $output .= ">$label</option>\n";
             }
         }
     }
