@@ -889,4 +889,22 @@ function blocks_get_block_ids ($blockinfo) {
     //Just call this with the appropiate parammeters.
     return blocks_get_default_blocks(NULL,$blockinfo);
 }
+
+// This is used to register the blocks that are displayed in the course page.
+// Set in course/view.php, and read from any other place.
+function blocks_used($blocks = NULL, $records = NULL) {
+    static $used = NULL;
+
+    if(!empty($blocks) && !empty($records)) {
+        $used = array();
+        foreach($blocks as $val) {
+            if($val > 0 && isset($records[$val])) {
+                $used[] = $records[$val]->name;
+            }
+        }
+    }
+
+    return $used;
+}
+
 ?>

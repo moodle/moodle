@@ -109,6 +109,9 @@
         $missingblocks = array();
         $recblocks = get_records('blocks','visible','1');
 
+        // Note down which blocks are going to get displayed
+        blocks_used($allblocks, $recblocks);
+
         if($editing && $recblocks) {
             foreach($recblocks as $recblock) {
                 // If it's not hidden or displayed right now...
@@ -131,6 +134,11 @@
         }
     } else {
         $USER->editing = false;
+
+        // Note down which blocks are going to get displayed
+        $allblocks = array_merge($leftblocks, $rightblocks);
+        $recblocks = get_records('blocks','visible','1');
+        blocks_used($allblocks, $recblocks);
     }
 
     $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
