@@ -39,7 +39,7 @@ function strip_querystring($url) {
 function get_referer() {
 // returns the URL of the HTTP_REFERER, less the querystring portion 
 
-    $HTTP_REFERER = getenv("HTTP_REFERER");
+    global $HTTP_REFERER;
     return strip_querystring(nvl($HTTP_REFERER));
 }
 
@@ -49,17 +49,17 @@ function me() {
 // return different things depending on a lot of things like your OS, Web
 // server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.) 
 
-	if (getenv("REQUEST_URI")) {
-		$me = getenv("REQUEST_URI");
+    global $REQUEST_URI, $PATH_INFO, $PHP_SELF;
 
-	} elseif (getenv("PATH_INFO")) {
-		$me = getenv("PATH_INFO");
-
-	} elseif ($GLOBALS["PHP_SELF"]) {
-		$me = $GLOBALS["PHP_SELF"];
-	}
-
-	return $me;
+	if ($REQUEST_URI) {
+		return $REQUEST_URI;
+	} else if ($PATH_INFO) {
+		return $PATH_INFO;
+	} else if ($PHP_SELF) {
+		return $PHP_SELF;
+	} else {
+        return "";
+    }
 }
 
 
@@ -67,9 +67,7 @@ function me() {
 function qualified_me() {
 // like me() but returns a full URL 
 
-	$HTTPS = getenv("HTTPS");
-	$SERVER_PROTOCOL = getenv("SERVER_PROTOCOL");
-	$HTTP_HOST = getenv("HTTP_HOST");
+    global $HTTPS, $SERVER_PROTOCOL, $HTTP_HOST;
 
 	$protocol = (isset($HTTPS) && $HTTPS == "on") ? "https://" : "http://";
 	$url_prefix = "$protocol$HTTP_HOST";
