@@ -348,7 +348,7 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
                     }    
                 }    
             }    
-           echo 'Firstsync complete!';
+           echo "Firstsync complete!\n";
            return;
         } 
 
@@ -359,8 +359,8 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
         //make information available with idnumber
         $moodleldapusers = array(); //all users in moodle db
 
-        foreach ($users as $key=>$value){
-            $moodleldapusers[$value->idnumber]= $value;
+        foreach ($users as $user){
+            $moodleldapusers[$user->idnumber]= $user;
         }    
 
         unset($users); //not needed anymore
@@ -392,26 +392,28 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
                 } 
                 $idnumber = $user->idnumber;
 
-                if (isset($moodleldapusers[$useridnumber])) {
+                if (isset($moodleldapusers[$idnumber])) {
                     $arraytoupdate = &$updateusers;
-                    $userinfo = $moodleldapusers[$useridnumber];
-                    unset($moodleldapusers[$useridnumber]); 
+                    $userinfo = $moodleldapusers[$idnumber];
+                    unset($moodleldapusers[$idnumber]); 
                 } else {
                     $arraytoupdate = &$newusers;
                     $userinfo = new object();
-                    $userinfo->idnumber = $useridnumber;
+                    $userinfo->idnumber = $idnumber;
                 }
 
                 //update local userinformation
                 foreach ($updatelocals as $local => $remote) {
-                    if (isset($user[$remote][0])) {
-                        $userinfo->$local = utf8_decode($user[$remote][0]);
+                    if (isset($user->$local)) {
+                        $userinfo->$local = utf8_decode($user->$local);
                     }    
                 }
                 //Force values for some fields
                 $userinfo->timemodified = time();
                 $userinfo->confirmed = 1;
-
+                $userinfo->deleted = 0;
+                
+                //store userinfo to selected array
                 $arraytoupdate[$useridnumber] = $userinfo;
 
             } else {
@@ -971,7 +973,7 @@ function auth_ldap_isgroupmember ($username='', $groupdns='') {
         $search = @ldap_read($ldapconnection, $group,  '('.$CFG->ldap_memberattribute.'='.$username.')', array($CFG->ldap_memberattribute));
         if ($search) {$info = auth_ldap_get_entries($ldapconnection, $search);
         
-            if ($info['count'] > 0 ) {
+            if (count($info) > 0 ) {
                 // user is member of group
                 $result = true;
                 break;
@@ -1140,7 +1142,7 @@ function auth_ldap_get_userlist($filter="*") {
         $users = auth_ldap_get_entries($ldapconnection, $ldap_result);
 
         //add found users to list
-        for ($i=0;$i<$users['count'];$i++) {
+        for ($i=0;$i<count($users);$i++) {
             array_push($fresult, ($users[$i][$CFG->ldap_user_attribute][0]) );
         }
     }
@@ -1163,7 +1165,6 @@ function auth_ldap_get_entries($conn, $searchresult){
     $i=0;
     $fresult=array();
     $entry = ldap_first_entry($conn, $searchresult);
-    $count=0;
     do {
         $attributes = ldap_get_attributes($conn, $entry);
         for($j=0; $j<$attributes['count']; $j++) {
@@ -1175,11 +1176,9 @@ function auth_ldap_get_entries($conn, $searchresult){
             }
         }         
         $i++;               
-        $count++;
     }
     while ($entry = ldap_next_entry($conn, $entry));
     //were done
-    $fresult['count']=$count;
     return ($fresult);
 }
 
