@@ -14,7 +14,7 @@ $SURVEY_QTYPE = array (
          "3" => "Actual and Preferred",
         );
 
-// FUNCTIONS ////////////////////////////////////////////////////////
+// STANDARD FUNCTIONS ////////////////////////////////////////////////////////
 
 function survey_add_instance($survey) {
 // Given an object containing all the necessary data, 
@@ -77,6 +77,29 @@ function survey_delete_instance($id) {
     return $result;
 }
 
+function survey_user_outline($course, $user, $mod, $survey) {
+    if ($answers = get_records_sql("SELECT * FROM survey_answers WHERE survey='$survey->id' AND user='$user->id'")) {
+
+        $lastanswer = array_pop($answers);
+
+        $result->info = get_string("done", "survey");
+        $result->time = $lastanswer->time;
+        return $result;
+    }
+    return NULL;
+}
+
+
+function survey_user_complete($course, $user, $mod, $survey) {
+    global $CFG;
+
+    if (survey_already_done($survey->id, $user->id)) {
+        echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$mod->id&sid=$user->id&type=student.png\">";
+    } else {
+        print_string("notdone", "survey");
+    }
+}
+
 function survey_print_recent_activity(&$logs, $isteacher=false) {
     global $CFG, $COURSE_TEACHER_COLOR;
 
@@ -107,6 +130,9 @@ function survey_print_recent_activity(&$logs, $isteacher=false) {
  
     return $content;
 }
+
+
+// MODULE FUNCTIONS ////////////////////////////////////////////////////////
 
 function survey_already_done($survey, $user) {
    return record_exists_sql("SELECT * FROM survey_answers WHERE survey='$survey' AND user='$user'");
@@ -189,33 +215,6 @@ function survey_shorten_name ($name, $numwords) {
     return $output;
 }
 
-function survey_user_summary($course, $user, $mod, $survey) {
-    global $CFG;
-}
-
-
-function survey_user_outline($course, $user, $mod, $survey) {
-    if ($answers = get_records_sql("SELECT * FROM survey_answers WHERE survey='$survey->id' AND user='$user->id'")) {
-
-        $lastanswer = array_pop($answers);
-
-        $result->info = get_string("done", "survey");
-        $result->time = $lastanswer->time;
-        return $result;
-    }
-    return NULL;
-}
-
-
-function survey_user_complete($course, $user, $mod, $survey) {
-    global $CFG;
-
-    if (survey_already_done($survey->id, $user->id)) {
-        echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$mod->id&sid=$user->id&type=student.png\">";
-    } else {
-        print_string("notdone", "survey");
-    }
-}
 
 
 function survey_print_multi($question) {
