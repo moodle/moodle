@@ -18,24 +18,28 @@
     }
 
     require_login($course->id);
+    if (!$cm->visible and !isteacher($course->id)) {
+        print_header();
+        notice(get_string('activityiscurrentlyhidden'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
+    }
 
     $strworkshops = get_string('modulenameplural', 'workshop');
     $strworkshop = get_string('modulename', 'workshop');
     $strsubmission = get_string('submission', 'workshop');
 
     print_header_simple("$workshop->name : $strsubmission", "",
-                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> 
-                  <a href=\"view.php?a=$workshop->id\">$workshop->name</a> -> $strsubmission", 
+                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
+                  <a href=\"view.php?a=$workshop->id\">$workshop->name</a> -> $strsubmission",
                   "", "", true);
     $timenow = time();
 
     $form = data_submitted("nomatch"); // POST may come from two forms
-    
+
     // don't be picky about not having a title
     if (!$title = $form->title) {
         $title = get_string("notitle", "workshop");
     }
- 
+
     // check that this is not a "rapid" second submission, caused by using the back button
     // only check if a student, teachers may want to submit a set of workshop examples rapidly
     if (isstudent($course->id)) {
@@ -51,7 +55,7 @@
             }
         }
     }
-        
+
     // get the current set of submissions
     $submissions = workshop_get_user_submissions($workshop, $USER);
     // add new submission record
@@ -85,7 +89,7 @@
                         // only copy other students assessment not the self assessment (if present)
                         // copy it with feedback..
                         $newassessment = workshop_copy_assessment($assessment, $newsubmission, true);
-                        // set the resubmission flag so student can be emailed/told about 
+                        // set the resubmission flag so student can be emailed/told about
                         // this assessment
                         set_field("workshop_assessments", "resubmission", 1, "id", $newassessment->id);
                     }

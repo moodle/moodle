@@ -1,13 +1,13 @@
 <?php  // $Id: viewassessment.php
 
     require("../../config.php");
-    require("lib.php"); 
+    require("lib.php");
     require("locallib.php");
 
     require_variable($aid);   // Assessment ID
     optional_variable($allowcomments, false);
     optional_variable($redirect, '');
-    
+
     if (! $assessment = get_record("workshop_assessments", "id", $aid)) {
         error("Assessment id is incorrect");
     }
@@ -29,11 +29,15 @@
     }
 
     require_login($course->id);
+    if (!$cm->visible and !isteacher($course->id)) {
+        print_header();
+        notice(get_string('activityiscurrentlyhidden'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
+    }
 
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");
     $strassess = get_string("viewassessment", "workshop");
-    
+
     /// Now check whether we need to display a frameset
 
     if (empty($_GET['frameset'])) {
@@ -46,17 +50,17 @@
     }
 
     /// top frame with the navigation bar and the assessment form
-    
+
     if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
-    
+
         print_header_simple("$workshop->name", "",
-                     "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> 
-                      <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strassess", 
+                     "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
+                      <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strassess",
                       "", '<base target="_parent" />', true);
-    
+
         // show assessment but don't allow changes
         workshop_print_assessment($workshop, $assessment, false, $allowcomments);
-        
+
         if (isteacher($course->id) and !isteacher($course->id, $assessment->userid)) {
             print_heading_with_help(get_string("gradeassessment", "workshop"), "gradingassessments", "workshop");
             include('assessment_grading_form.html');
@@ -65,9 +69,9 @@
         print_footer($course);
         exit;
     }
-    
+
     /// print bottom frame with the submission
-    
+
     print_header('', '', '', '', '<base target="_parent" />');
     $title = '"'.$submission->title.'" ';
     if (isteacher($course->id)) {
@@ -76,6 +80,6 @@
     print_heading($title);
     workshop_print_submission($workshop, $submission);
     print_footer('none');
- 
+
 ?>
 

@@ -6,17 +6,17 @@
     displayfinalgrade (for students)
     notavailable (for students)
     studentsview
-    submitexample 
+    submitexample
     teachersview
     showdescription
     showallsubmissions
-    
+
 ************************************************/
 
     require("../../config.php");
     require("lib.php");
     require("locallib.php");
-    
+
     require_variable($id);    // Course Module ID
     optional_variable($action, '');
     optional_variable($sort, "lastname");
@@ -37,21 +37,18 @@
 
     require_login($course->id);
 
-    // ...log activity...
-    add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", $workshop->id, $cm->id);
-
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");
     $straction = ($action) ? '-> '.get_string($action, 'workshop') : '';
 
     // ...display header...
     print_header_simple("$workshop->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> 
-                  <a href=\"view.php?id=$cm->id\">$workshop->name</a> $straction", 
+                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
+                  <a href=\"view.php?id=$cm->id\">$workshop->name</a> $straction",
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
 
-    // ...and if necessary set default action 
-    
+    // ...and if necessary set default action
+
     if (isteacher($course->id)) {
         if (empty($action)) { // no action specified, either go straight to elements page else the admin page
             // has the assignment any elements
@@ -67,8 +64,8 @@
         if (!$cm->visible) {
             notice(get_string("activityiscurrentlyhidden"));
         }
-        if ($timenow < $workshop->submissionstart) { 
-            $action = 'notavailable'; 
+        if ($timenow < $workshop->submissionstart) {
+            $action = 'notavailable';
         } else if (!$action) {
             if ($timenow < $workshop->assessmentend) {
                 $action = 'studentsview';
@@ -81,6 +78,8 @@
         $action = 'notavailable';
     }
 
+    // ...log activity...
+    add_to_log($course->id, "workshop", "view", "view.php?id=$cm->id", $workshop->id, $cm->id);
 
     /****************** display final grade (for students) ************************************/
     if ($action == 'displayfinalgrade' ) {
@@ -96,10 +95,10 @@
                 echo "<td align=\"center\"><b>".get_string("assessmentsdone", "workshop")."</b></td>";
                 echo "<td align=\"center\"><b>".get_string("gradeforassessments", "workshop")."</b></td>";
             }
-            echo "<td align=\"center\"><b>".get_string("teacherassessments", "workshop", 
+            echo "<td align=\"center\"><b>".get_string("teacherassessments", "workshop",
                         $course->teacher)."</b></td>";
             if ($workshop->wtype) {
-                echo "<td align=\"center\"><b>".get_string("studentassessments", "workshop", 
+                echo "<td align=\"center\"><b>".get_string("studentassessments", "workshop",
                         $course->student)."</b></td>";
             }
             echo "<td align=\"center\"><b>".get_string("gradeforsubmission", "workshop")."</b></td>";
@@ -111,10 +110,10 @@
                     echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $USER, $gradinggrade)."</td>";
                     echo "<td align=\"center\">$gradinggrade</td>";
                 }
-                echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, 
+                echo "<td align=\"center\">".workshop_print_submission_assessments($workshop,
                             $submission, "teacher")."</td>";
                 if ($workshop->wtype) {
-                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, 
+                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop,
                             $submission, "student")."</td>";
                 }
                 echo "<td align=\"center\">$grade</td>";
@@ -128,9 +127,9 @@
         if ($workshop->showleaguetable) {
             workshop_print_league_table($workshop);
         }
-    }   
+    }
 
-    
+
     /****************** assignment not available (for students)***********************/
     elseif ($action == 'notavailable') {
         print_heading(get_string("notavailable", "workshop"));
@@ -164,7 +163,7 @@
                     "</td></tr>";
                 echo "<tr align=\"center\"><td>".get_string("enterpassword", "workshop").
                     " <input type=\"password\" name=\"userpassword\" /></td></tr>";
-                        
+
                 echo "<tr align=\"center\"><td>";
                 echo "<input type=\"button\" value=\"".get_string("cancel").
                     "\" onclick=\"parent.location='../../course/view.php?id=$course->id';\">  ";
@@ -176,7 +175,7 @@
             }
         }
         workshop_print_assignment_info($workshop);
-        
+
         // if the student has not yet submitted show the full description
         if (!record_exists('workshop_submissions', 'workshopid', $workshop->id, 'userid', $USER->id)) {
             print_simple_box(format_text($workshop->description, $workshop->format), 'center');
@@ -184,23 +183,23 @@
             print_heading("<b><a href=\"view.php?id=$cm->id&amp;action=showdescription\">".
                 get_string("showdescription", 'workshop')."</a></b>");
         }
-        
+
         // in Stage 1? - are there any teacher's submissions? and...
-        // ...has student assessed the required number of the teacher's submissions 
+        // ...has student assessed the required number of the teacher's submissions
         if ($workshop->ntassessments and (!workshop_test_user_assessments($workshop, $USER))) {
-            print_heading(get_string("pleaseassesstheseexamplesfromtheteacher", "workshop", 
+            print_heading(get_string("pleaseassesstheseexamplesfromtheteacher", "workshop",
                         $course->teacher));
             workshop_list_teacher_submissions($workshop, $USER);
         }
         // in stage 2? - submit own first attempt
         else {
-            if ($workshop->ntassessments) { 
+            if ($workshop->ntassessments) {
                 // show assessment of the teacher's examples, there may be feedback from teacher
-                print_heading(get_string("yourassessmentsofexamplesfromtheteacher", "workshop", 
+                print_heading(get_string("yourassessmentsofexamplesfromtheteacher", "workshop",
                             $course->teacher));
                 workshop_list_teacher_submissions($workshop, $USER);
             }
-            // has user submitted anything yet? 
+            // has user submitted anything yet?
             if (!workshop_get_user_submissions($workshop, $USER)) {
                 if ($timenow < $workshop->submissionend) {
                     // print upload form
@@ -209,7 +208,7 @@
                 } else {
                     print_heading(get_string("submissionsnolongerallowed", "workshop"));
                 }
-            }   
+            }
             // in stage 3? - grade other student's submissions, resubmit and list all submissions
             else {
                 // is self assessment used in this workshop?
@@ -218,7 +217,7 @@
                     workshop_list_self_assessments($workshop, $USER);
                 }
                 // if peer assessments are being done then show some  to assess...
-                if ($workshop->nsassessments and ($workshop->assessmentstart < $timenow and $workshop->assessmentend > $timenow)) {  
+                if ($workshop->nsassessments and ($workshop->assessmentstart < $timenow and $workshop->assessmentend > $timenow)) {
                     workshop_list_student_submissions($workshop, $USER);
                 }
                 // ..and any they have already done (and have gone cold)...
@@ -239,7 +238,7 @@
                 // list previous submissions
                 print_heading(get_string("yoursubmissions", "workshop"));
                 workshop_list_user_submissions($workshop, $USER);
-                
+
                 // are resubmissions allowed and the workshop is in submission/assessment phase?
                 if ($workshop->resubmit and ($timenow > $workshop->assessmentstart and $timenow < $workshop->submissionend)) {
                     // see if there are any cold assessments of the last submission
@@ -272,20 +271,20 @@
 
     /****************** submission of example by teacher only***********************/
     elseif ($action == 'submitexample') {
-    
+
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
-        
-        // list previous submissions from teacher 
+
+        // list previous submissions from teacher
         workshop_list_user_submissions($workshop, $USER);
-    
+
         echo "<hr size=\"1\" noshade=\"noshade\" />";
-    
+
         // print upload form
         print_heading(get_string("submitexampleassignment", "workshop").":");
         workshop_print_upload_form($workshop);
-        
+
         print_heading("<a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">".get_string("cancel")."</a>");
     }
 
@@ -296,7 +295,7 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
-        
+
         // automatically grade assessments if workshop has examples and/or peer assessments
         if ($workshop->gradingstrategy and ($workshop->ntassessments or $workshop->nsassessments)) {
             workshop_grade_assessments($workshop);
@@ -307,10 +306,10 @@
         $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
         $groupmode = groupmode($course, $cm);   // Groups are being used?
         $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-        
+
         /// Print settings and things in a table across the top
         echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
-        
+
         /// Allow the teacher to change groups (for this session)
         if ($groupmode and isteacheredit($course->id)) {
             if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
@@ -322,18 +321,18 @@
         /// Print admin links
         echo "<td align=\"right\"><b><a href=\"view.php?id=$cm->id&amp;action=showdescription\">".
             get_string("showdescription", 'workshop')."</a></b> \n";
- 
+
         echo "<br /><b><a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".
             get_string("administration")."</a></b> \n";
-        
+
         echo '</td></tr>';
-        
+
         echo '<tr><td>';
         workshop_print_assignment_info($workshop);
         echo '</td></tr>';
-        
+
         /// Print grade tables /////////////////////////////////////////////////
-        
+
         // display the teacher's submissions
         if ($workshop->ntassessments) {
             $table->head = array(get_string("examplesubmissions", "workshop"),
@@ -362,19 +361,19 @@
             // Put in a submission link
             $table->data[] = array("<b><a href=\"view.php?id=$cm->id&amp;action=submitexample\">".
                 get_string("submitexampleassignment", "workshop")."</a></b>".
-                helpbutton("submissionofexamples", get_string("submitexampleassignment", "workshop"), "workshop", true, false, '', true), 
+                helpbutton("submissionofexamples", get_string("submitexampleassignment", "workshop"), "workshop", true, false, '', true),
                 '&nbsp;', '&nbsp;');
             print_table($table);
             workshop_print_key($workshop);
         }
-    
+
         // Get all the students
         if (!$users = get_course_students($course->id, "u.lastname, u.firstname")) {
             print_heading(get_string("nostudentsyet"));
             print_footer($course);
             exit;
         }
-        
+
         /// Now prepare table with student assessments and submissions
         $tablesort->data = array();
         $tablesort->sortdata = array();
@@ -389,19 +388,19 @@
                 foreach ($submissions as $submission) {
                     $data = array();
                     $sortdata = array();
-                    
+
                     $data[] = "<a name=\"userid$user->id\" href=\"{$CFG->wwwroot}/user/view.php?id=$user->id&amp;course=$course->id\">".
                         fullname($user).'</a>';
                     $sortdata['firstname'] = $user->firstname;
                     $sortdata['lastname'] = $user->lastname;
-                    
+
                     if ($workshop->wtype) {
                         $data[] = workshop_print_user_assessments($workshop, $user, $gradinggrade);
-                        
+
                         $data[] = $gradinggrade;
                         $sortdata['agrade'] = $gradinggrade;
                     }
-                    
+
                     $data[] = workshop_print_submission_title($workshop, $submission).
                         " <a href=\"submissions.php?action=adminamendtitle&amp;id=$cm->id&amp;sid=$submission->id\">".
                         "<img src=\"$CFG->pixpath/t/edit.gif\" ".
@@ -410,10 +409,10 @@
                         "<img src=\"$CFG->pixpath/t/delete.gif\" ".
                         'height="11" width="11" border="0" alt="'.get_string('delete', 'workshop').'" /></a>';
                     $sortdata['title'] = $submission->title;
-                    
+
                     $data[] = userdate($submission->timecreated, get_string('datestr', 'workshop'));
                     $sortdata['date'] = $submission->timecreated;
-                    
+
                     if (($tmp = workshop_print_submission_assessments($workshop, $submission, "teacher")) == '&nbsp;') {
                         $data[] = '<a href="assess.php?id='.
                             $cm->id.'&amp;sid='.$submission->id.'">'.get_string('assess', 'workshop').'</a>';
@@ -422,11 +421,11 @@
                         $data[] = $tmp;
                         $sortdata['tassmnt'] = 1; // GWD still have to fix this
                     }
-                    
+
                     if ($workshop->wtype) {
                         $data[] = workshop_print_submission_assessments($workshop, $submission, "student");
                     }
-                    
+
                     $grade = workshop_submission_grade($workshop, $submission);
                     $data[] = $grade;
                     $sortdata['sgrade'] = $grade;
@@ -441,7 +440,7 @@
                 }
             }
         }
-        
+
         function workshop_sortfunction($a, $b) {
            global $sort, $dir;
            if ($dir == 'ASC') {
@@ -455,7 +454,7 @@
         foreach($tablesort->sortdata as $key => $row) {
             $table->data[] = $tablesort->data[$key];
         }
-        
+
         if ($workshop->wtype) {
             $table->align = array ('left', 'center', 'center', 'left', 'center', 'center', 'center', 'center', 'center', 'center');
             $columns = array('firstname', 'lastname', 'agrade', 'title', 'date', 'tassmnt', 'sgrade', 'ograde');
@@ -463,8 +462,8 @@
             $table->align = array ('left', 'left', 'center', 'center', 'center', 'center');
             $columns = array('firstname', 'lastname', 'title', 'date', 'tassmnt', 'ograde');
         }
-        $table->width = "95%";  
-    
+        $table->width = "95%";
+
         foreach ($columns as $column) {
             $string[$column] = get_string("$column", 'workshop');
             if ($sort != $column) {
@@ -478,61 +477,61 @@
                     $columnicon = $dir == 'ASC' ? 'down':'up';
                 }
                 $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"$columnicon\" />";
-    
+
             }
             $$column = "<a href=\"view.php?id=$id&amp;sort=$column&amp;dir=$columndir\">".$string[$column]."</a>$columnicon";
         }
-    
+
         if ($workshop->wtype) {
             $table->head = array ("$firstname / $lastname", get_string("assmnts", "workshop"), $agrade,
                 $title, $date, $tassmnt, get_string('passmnts', 'workshop'), $sgrade, $ograde);
         } else {
             $table->head = array ("$firstname / $lastname", $title, $date, $tassmnt, $ograde);
         }
-        
+
         echo '<tr><td>';
         print_table($table);
         echo '</td></tr>';
         echo '<tr><td>';
         workshop_print_key($workshop);
         echo '</td></tr>';
-        
+
         // grading grade analysis
         unset($table);
         $table->head = array (get_string("count", "workshop"), get_string("mean", "workshop"),
-            get_string("standarddeviation", "workshop"), get_string("maximum", "workshop"), 
+            get_string("standarddeviation", "workshop"), get_string("maximum", "workshop"),
             get_string("minimum", "workshop"));
         $table->align = array ("center", "center", "center", "center", "center");
         $table->size = array ("*", "*", "*", "*", "*");
         $table->cellpadding = 2;
         $table->cellspacing = 0;
         if ($currentgroup) {
-            $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean, 
-                    STDDEV(gradinggrade) AS stddev, MIN(gradinggrade) AS min, MAX(gradinggrade) AS max 
-                    FROM {$CFG->prefix}groups_members g, {$CFG->prefix}workshop_assessments a 
-                    WHERE g.groupid = $currentgroup AND a.userid = g.userid AND a.timegraded > 0 
+            $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean,
+                    STDDEV(gradinggrade) AS stddev, MIN(gradinggrade) AS min, MAX(gradinggrade) AS max
+                    FROM {$CFG->prefix}groups_members g, {$CFG->prefix}workshop_assessments a
+                    WHERE g.groupid = $currentgroup AND a.userid = g.userid AND a.timegraded > 0
                     AND a.workshopid = $workshop->id");
         } else { // no group/all participants
-            $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean, 
-                    STDDEV(gradinggrade) AS stddev, MIN(gradinggrade) AS min, MAX(gradinggrade) AS max 
-                    FROM {$CFG->prefix}workshop_assessments a 
+            $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean,
+                    STDDEV(gradinggrade) AS stddev, MIN(gradinggrade) AS min, MAX(gradinggrade) AS max
+                    FROM {$CFG->prefix}workshop_assessments a
                     WHERE a.timegraded > 0 AND a.workshopid = $workshop->id");
-        }   
-        $table->data[] = array($stats->count, number_format($stats->mean * $workshop->gradinggrade / 100, 1), 
-                number_format($stats->stddev * $workshop->gradinggrade /100, 1), 
-                number_format($stats->max * $workshop->gradinggrade / 100, 1), 
+        }
+        $table->data[] = array($stats->count, number_format($stats->mean * $workshop->gradinggrade / 100, 1),
+                number_format($stats->stddev * $workshop->gradinggrade /100, 1),
+                number_format($stats->max * $workshop->gradinggrade / 100, 1),
                 number_format($stats->min* $workshop->gradinggrade / 100, 1));
         echo '<tr><td>';
         print_heading(get_string("gradinggrade", "workshop")." ".get_string("analysis", "workshop"));
         print_table($table);
         echo '</td></tr>';
-        
+
         if ($workshop->showleaguetable and time() > $workshop->assessmentend) {
             workshop_print_league_table($workshop);
             if ($workshop->anonymous) {
                 echo "<p>".get_string("namesnotshowntostudents", "workshop", $course->students)."</p>\n";
             }
-        } 
+        }
         echo '</table>';
     }
 
@@ -566,5 +565,5 @@
 
 
     print_footer($course);
-    
+
 ?>

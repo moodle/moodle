@@ -1,7 +1,7 @@
 <?php  // $Id: assess.php
 
     require("../../config.php");
-    require("lib.php"); 
+    require("lib.php");
     require("locallib.php");
 
     require_variable($sid);   // Submission ID
@@ -20,17 +20,21 @@
     if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
         error("No coursemodule found");
     }
-    
+
     if (!$redirect) {
         $redirect = urlencode($_SERVER["HTTP_REFERER"].'#sid='.$submission->id);
     }
-    
+
     require_login($course->id);
+    if (!$cm->visible and !isteacher($course->id)) {
+        print_header();
+        notice(get_string('activityiscurrentlyhidden'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
+    }
 
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");
     $strassess = get_string("assess", "workshop");
-    
+
     /// Now check whether we need to display a frameset
 
     if (empty($_GET['frameset'])) {
@@ -43,19 +47,19 @@
     }
 
     /// top frame with the navigation bar and the assessment form
-    
+
     if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
-    
+
         print_header_simple("$workshop->name", "",
-                     "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> 
-                      <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strassess", 
+                     "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
+                      <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strassess",
                       "", '<base target="_parent" />', true);
-    
+
         // there can be an assessment record (for teacher submissions), if there isn't...
-        if (!$assessment = get_record("workshop_assessments", "submissionid", $submission->id, "userid", 
+        if (!$assessment = get_record("workshop_assessments", "submissionid", $submission->id, "userid",
                     $USER->id)) {
             // if it's the teacher see if the user has done a self assessment if so copy it
-            if (isteacher($course->id) and  ($assessment = get_record("workshop_assessments", "submissionid", 
+            if (isteacher($course->id) and  ($assessment = get_record("workshop_assessments", "submissionid",
                             $submission->id, "userid", $submission->userid))) {
                 $assessment = workshop_copy_assessment($assessment, $submission, true);
                 // need to set owner of assessment
@@ -103,19 +107,19 @@
                 }
             }
         }
-        
+
         print_heading_with_help(get_string("assessthissubmission", "workshop"), "grading", "workshop");
-        
+
         // show assessment and allow changes
         workshop_print_assessment($workshop, $assessment, true, $allowcomments, $redirect);
-        
+
         print_heading("<a target=\"{$CFG->framename}\" href=\"$redirect\">".get_string("cancel")."</a>");
         print_footer($course);
         exit;
     }
-    
+
     /// print bottom frame with the submission
-    
+
     print_header('', '', '', '', '<base target="_parent" />');
     $title = '"'.$submission->title.'" ';
     if (isteacher($course->id)) {
@@ -123,15 +127,15 @@
     }
     print_heading($title);
     workshop_print_submission($workshop, $submission);
-    
+
     if (isteacher($course->id)) {
         echo '<br /><center><b>'.get_string('assessments', 'workshop').': </b><br />';
         echo workshop_print_submission_assessments($workshop, $submission, "all");
         echo '</center>';
     }
-            
-    
+
+
     print_footer('none');
- 
+
 ?>
 
