@@ -324,6 +324,12 @@ function forum_cron () {
 
     unset($CFG->courselang);
 
+    if (!empty($realuser)) {   // Restore real USER timezone if necessary
+        $sitetimezone = $realuser->timezone;
+    } else {
+        $sitetimezone = $CFG->timezone;
+    }
+
     /// Now see if there are any digest mails waiting to be sent, and if we should send them
 
     if (!isset($CFG->digestmailtimelast)) {    // To catch the first time 
@@ -331,7 +337,7 @@ function forum_cron () {
     }
 
     $timenow = time();
-    $digesttime = usergetmidnight($timenow) + ($CFG->digestmailtime * 3600);
+    $digesttime = usergetmidnight($timenow, $sitetimezone) + ($CFG->digestmailtime * 3600);
 
     if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
         set_config('digestmailtimelast', $timenow);
