@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003121500)
+      // moodle.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['action'] = 'Actie';
@@ -83,6 +83,7 @@ $string['backupdetails'] = 'Details van de backup';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'De backup is succesvol afgerond';
 $string['backupincludemoduleshelp'] = 'Selecteer als je vakmodules met of zonder gebruikersgegevens in de backup wil';
+$string['backupkeephelp'] = 'Hoeveel recente backups wil je houden voor elk vak? (oudere zullen automatisch verwijderd worden)';
 $string['backuplogshelp'] = 'Selecteer als je de logbestanden van het vak mee in de backup wil';
 $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
 $string['backuporiginalname'] = 'Naam backup';
@@ -326,6 +327,7 @@ $string['firstname'] = 'Voornaam';
 $string['firsttime'] = 'Is dit de eerste keer dat je hier bent?';
 $string['followingoptional'] = 'De volgende velden zijn niet verplicht';
 $string['followingrequired'] = 'De volgende velden zijn verplicht';
+$string['force'] = 'Verplicht';
 $string['forgotten'] = 'Ben je je gebruikersnaam of wachtwoord vergeten?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML opmaak';
@@ -361,6 +363,24 @@ Dit programma is gedistribueerd met de hoop dat het bruikbaar is, maar ZONDER EN
 http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Cijfer';
 $string['grades'] = 'Cijfers';
+$string['group'] = 'Groep';
+$string['groupadd'] = 'Nieuwe groep';
+$string['groupaddusers'] = 'Voeg selectie toe aan groep';
+$string['groupinfo'] = 'Info over geselecteerde groep';
+$string['groupinfomembers'] = 'Info over geselecteerde leden';
+$string['groupinfopeople'] = 'Info over geselecteerde personen';
+$string['groupmembersselected'] = 'Leden van geselecteerde groep';
+$string['groupmode'] = 'Groepsmodus';
+$string['groupmodeforce'] = 'Verplicht groepsmodus';
+$string['groupmy'] = 'Mijn groep';
+$string['groupnonmembers'] = 'Personen niet in een groep';
+$string['grouprandomassign'] = 'Wijs willekeurig aan een groep toe';
+$string['groupremove'] = 'Verwijder geselecteerde groep';
+$string['groupremovemembers'] = 'Verwijder geselecteerde leden';
+$string['groups'] = 'Groepen';
+$string['groupsnone'] = 'Geen groepen';
+$string['groupsseparate'] = 'Gescheiden groepen';
+$string['groupsvisible'] = 'Zichtbare groepen';
 $string['guestskey'] = 'Sta gasten die de sleutel hebben toe';
 $string['guestsno'] = 'Sta geen gasten toe';
 $string['guestsnotallowed'] = 'Sorry, gasten zijn in \'$a\' niet toegestaan';
@@ -408,6 +428,7 @@ $string['includeuserfiles'] = 'Voeg gebruikersbestanden toe';
 $string['invalidemail'] = 'Ongeldig e-mail adres';
 $string['invalidlogin'] = 'Ongeldige login, probeer het nog eens';
 $string['jumpto'] = 'Ga naar...';
+$string['keep'] = 'Houden';
 $string['langltr'] = 'Taalrichting van links naar rechts';
 $string['langrtl'] = 'Taalrichting van rechts naar links';
 $string['language'] = 'Taal';
