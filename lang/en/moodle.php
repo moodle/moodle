@@ -441,6 +441,7 @@ $string['includelogentries'] = 'Include Log Entries';
 $string['includemodules'] = 'Include&nbsp;Modules';
 $string['includeneededusers'] = 'Include Needed Users';
 $string['includeuserfiles'] = 'Include User Files';
+$string['institution'] = 'Institution';
 $string['invalidemail'] = 'Invalid email address';
 $string['invalidlogin'] = 'Invalid login, please try again';
 $string['jumpto'] = 'Jump to...';
@@ -475,23 +476,23 @@ $string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
    Each of the individual courses may also have a one-time
    &quot;enrolment key&quot;, which you won\'t need until later. Here are
    the steps:
-   <OL size=2>
-   <LI>Fill out the <A HREF=$a>New Account</A> form with your details.
-   <LI>An email will be immediately sent to your email address.
-   <LI>Read your email, and click on the web link it contains.
-   <LI>Your account will be confirmed and you will be logged in.
-   <LI>Now, select the course you want to participate in.
-   <LI>If you are prompted for a &quot;enrolment key&quot; - use the one
+   <ol size=\"2\">
+   <li>Fill out the <a href=\"$a\">New Account</a> form with your details.</li>
+   <li>An email will be immediately sent to your email address.</li>
+   <li>Read your email, and click on the web link it contains.</li>
+   <li>Your account will be confirmed and you will be logged in.</li>
+   <li>Now, select the course you want to participate in.</li>
+   <li>If you are prompted for a &quot;enrolment key&quot; - use the one
    that your teacher has given you. This will &quot;enrol&quot; you in the
-   course.
-   <LI>You can now access the full course. From now on you will only need
+   course.</li>
+   <li>You can now access the full course. From now on you will only need
    to enter your personal username and password (in the form on this page)
-   to log in and access any course you have enrolled in.
-   </OL>';
-$string['loginstepsnone'] = 'Hi!<P>For full access to courses you\'ll need to create 
-yourself an account.<P>All you need to do is make up a username and password and use it in
-the form on this page!<P>If someone else has already chosen your username
-then you\'ll have to try again using a different username.';
+   to log in and access any course you have enrolled in.</li>
+   </ol>';
+$string['loginstepsnone'] = '<p>Hi!</p>
+<p>For full access to courses you\'ll need to create yourself an account.</p>
+<p>All you need to do is make up a username and password and use it in the form on this page!</p>
+<p>If someone else has already chosen your username then you\'ll have to try again using a different username.</p>';
 $string['loginto'] = 'Login to $a';
 $string['loginusing'] = 'Login here using your username and password';
 $string['logout'] = 'Logout';
