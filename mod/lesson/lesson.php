@@ -50,7 +50,7 @@
 	// ... print the header and...
     print_header("$course->shortname: $lesson->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$lesson->name</A> -> $action", 
+                  <A HREF=\"view.php?id=$cm->id\">$lesson->name</A>", 
                   "", "", true);
 
 	//...get the action 
@@ -105,8 +105,8 @@
         echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
         choose_from_menu($LESSON_QUESTION_TYPE, "qtype", LESSON_MULTICHOICE, "");
         helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson");
-        echo "<br /><input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
-        echo " <b>".get_string("questionoption", "lesson")."</b>\n";
+        echo "<br /><b>".get_string("questionoption", "lesson").":</b>\n";
+        echo " <input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
         helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
         echo "</td></tr>\n";
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
@@ -641,7 +641,7 @@
                 } else {
                     echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
                 }
-                echo " <b>".get_string("morethanoneanswer", "lesson")."</b>\n";
+                echo " <b>".get_string("multianswer", "lesson")."</b>\n";
                 break;
         }       
         helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
@@ -966,6 +966,7 @@
                     }
                 } else {
                     // it's a new answer
+                    unset($newanswer); // need to clear id if more than one new answer is ben added
                     $newanswer->lessonid = $lesson->id;
                     $newanswer->pageid = $page->id;
                     $newanswer->timecreated = $timenow;

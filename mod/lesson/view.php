@@ -364,6 +364,13 @@
             echo get_string("pagecontents", "lesson").":</b><br />\n";
             print_textarea($usehtmleditor, 25, 70, 630, 400, "contents");
             echo "</td></tr>\n";
+            echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
+            choose_from_menu($LESSON_QUESTION_TYPE, "qtype", LESSON_MULTICHOICE, "");
+            helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson");
+            echo "<br /><b>".get_string("questionoption", "lesson").":</b>\n";
+            echo " <input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
+            helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
+            echo "</td></tr>\n";
             for ($i = 0; $i < $lesson->maxanswers; $i++) {
                 $iplus1 = $i + 1;
                 echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b><br />\n";
@@ -436,7 +443,7 @@
                                     break;
                                 case LESSON_MULTICHOICE :
                                     if ($page->qoption) {
-                                        echo " - ".get_string("morethanoneanswer", "lesson");
+                                        echo " - ".get_string("multianswer", "lesson");
                                     }
                                     break;
                                 case LESSON_MATCHING :
