@@ -232,6 +232,7 @@ $string['confirmednot'] = 'Your registration has not yet been confirmed!';
 $string['continue'] = 'Continue';
 $string['continuetocourse'] = 'Click here to enter your course';
 $string['cookiesenabled'] = 'Cookies must be enabled in your browser';
+$string['cookiesnotenabled'] = 'Unfortunately, cookies are currently not enabled in your browser';
 $string['copy'] = 'copy';
 $string['copyingcoursefiles'] = 'Copying course files';
 $string['copyinguserfiles'] = 'Copying user files';

@@ -51,7 +51,17 @@
         $frm = data_submitted();
     }
 
-    if ($frm) {
+    if ($frm and (get_moodle_cookie() == '')) {    // Login without cookie
+
+        $errormsg = get_string("cookiesnotenabled");
+
+    } else if ($frm) {                            // Login WITH cookies
+
+        if (get_moodle_cookie() == '') {
+            error('Cookies not working!');
+            die;
+        }
+
         $frm->username = trim(moodle_strtolower($frm->username));
 
         if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
@@ -167,9 +177,13 @@
     if (empty($SESSION->wantsurl)) {
         $SESSION->wantsurl = array_key_exists('HTTP_REFERER',$_SERVER) ? $_SERVER["HTTP_REFERER"] : $CFG->wwwroot; 
     }
+
+    if (get_moodle_cookie() == '') {   
+        set_moodle_cookie('nobody');   // To help search for cookies
+    }
     
     if (empty($frm->username)) {
-        $frm->username = get_moodle_cookie();
+        $frm->username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
         $frm->password = "";
     }
     

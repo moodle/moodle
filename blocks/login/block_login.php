@@ -43,7 +43,12 @@ class block_login extends block_base {
                 $signup = '';
         }
 
-        $username = get_moodle_cookie();
+        if (get_moodle_cookie() == '') {   
+            set_moodle_cookie('nobody');   // To help search for cookies
+        }
+    
+        $username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
+
         if (empty($USER->loggedin)) {
             $this->content->text  = "<form name=\"blocklogin\" method=\"post\"";
             $this->content->text .= " action=\"". $wwwroot ."/login/index.php\">\n";
