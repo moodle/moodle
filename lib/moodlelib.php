@@ -204,6 +204,7 @@ function update_module_icon($moduleid) {
 
 
 function userdate($date, $format="", $timezone=99) {
+// Returns a formatted string that represents a date in user time
     global $USER;
 
     if ($format == "") {
@@ -213,12 +214,13 @@ function userdate($date, $format="", $timezone=99) {
         $timezone = (float)$USER->timezone;
     }
     if (abs($timezone) > 12) {
-        return date("$format T", $date);
+        return date("$format", $date);
     }
     return gmdate($format, $date + (int)($timezone * 3600));
 }
 
 function usergetdate($date, $timezone=99) {
+// Returns an array that represents a date in user time
     global $USER;
 
     if ($timezone == 99) {
@@ -227,7 +229,41 @@ function usergetdate($date, $timezone=99) {
     if (abs($timezone) > 12) {
         return getdate($date);
     }
-    return getdate($date + (int)($timezone * 3600));
+    return getdate($date - (int)($timezone * 3600));
+}
+
+function usertime($date, $timezone=99) {
+// Given a GMT timestamp (seconds since epoch), offsets it by 
+// the timezone.  eg 3pm in India is 3pm GMT - 7 * 3600 seconds
+    global $USER;
+
+    if ($timezone == 99) {
+        $timezone = (float)$USER->timezone;
+    }
+    if (abs($timezone) > 12) {
+        return $date;
+    }
+    return $date - (int)($timezone * 3600);
+}
+
+function usertimezone($timezone=99) {
+// returns a string that prints the user's timezone
+    global $USER;
+
+    if ($timezone == 99) {
+        $timezone = (float)$USER->timezone;
+    }
+    if (abs($timezone) > 12) {
+        return "server time";
+    }
+    if (abs($timezone) < 0.5) {
+        return "GMT";
+    }
+    if ($timezone > 0) {
+        return "GMT+$timezone";
+    } else {
+        return "GMT$timezone";
+    }
 }
 
 
