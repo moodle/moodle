@@ -18,8 +18,9 @@ error_reporting(E_ERROR);
 }
 
 // cleanup
-$HTTP_GET_VARS["lastquery"] = clean_param($HTTP_GET_VARS["lastquery"], PARAM_HOST);
-
+if (!empty($HTTP_GET_VARS["lastquery"])) {
+    $HTTP_GET_VARS["lastquery"] = clean_param($HTTP_GET_VARS["lastquery"], PARAM_HOST);
+}
 
 // check if it is the user's ip, or another host
 
