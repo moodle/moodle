@@ -1,0 +1,16 @@
+CAS-module README
+
+Please read comments from lib.php for auth/CAS module
+
+Other changes made:
+
+/login/index.php -> detection of a CAS authentication.
+/login/index_form.html -> anonymous login and CAS login.
+/login/logout.php -> CAS logout.
+
+/lang/en/auth.php -> new lines
+/lang/en/moodle.php -> new lines
+/lang/fr/auth.php -> new lines
+/lang/fr/moodle.php -> new lines
+
+All modifications are commented by //Modif SG - RL pour CAS.
