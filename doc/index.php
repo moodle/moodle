@@ -3,6 +3,12 @@
     require("../config.php");
 
     optional_variable($file, "");    // docs file to view
+    optional_variable($lang, "");    // override current language
+
+    if (!empty($lang)) {
+        $SESSION->doclang = $lang;
+        save_session("SESSION");
+    }
 
     if (empty($file)) {
         $include = false;
