@@ -70,8 +70,12 @@ function set_config($name, $value) {
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99) {
 /// Given date parts in user time, produce a GMT timestamp
 
-    $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
-    return usertime($time, $timezone);  // This is GMT
+    if ($timezone == 99) {
+        return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
+    } else {
+        $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
+        return usertime($time, $timezone);  // This is GMT
+    }
 }
 
 function format_time($totalsecs, $str=NULL) {
