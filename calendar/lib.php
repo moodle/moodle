@@ -170,7 +170,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     $popupcontent .= '<div><img src=\\\''.$CFG->modpixpath.'/'.$events[$eventid]->modulename.'/icon.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\''.$events[$eventid]->modulename.'\\\' /><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
                 }
                 else {
-                    $popupcontent .= '<div><img src=\\\''.$CFG->wwwroot.'/calendar/i/event.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\'\\\' /><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
+                    $popupcontent .= '<div><img src=\\\''.$CFG->pixpath.'/c/event.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\'\\\' /><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
                 }
             }
 
@@ -372,7 +372,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 // Global event
                 global $site;
                 $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'">'.$site->shortname.'</a>';
-                $output[$outkey]->icon = '<img src="'.$CFG->wwwroot.'/calendar/i/event.gif" alt="" style="vertical-align: middle;" />';
+                $output[$outkey]->icon = '<img src="'.$CFG->pixpath.'/c/site.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
@@ -382,21 +382,21 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 calendar_get_course_cached($coursecache, $event->courseid);
 
                 $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$coursecache[$event->courseid]->id.'">'.$coursecache[$event->courseid]->fullname.'</a>';
-                $output[$outkey]->icon = '<img src="'.$CFG->wwwroot.'/calendar/i/event.gif" alt="" style="vertical-align: middle;" />';
+                $output[$outkey]->icon = '<img src="'.$CFG->pixpath.'/c/course.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
             }
             else if($event->groupid) {
                 // Group event
-                $output[$outkey]->icon = '<img src="'.$CFG->wwwroot.'/calendar/i/event.gif" alt="" style="vertical-align: middle;" />';
+                $output[$outkey]->icon = '<img src="'.$CFG->pixpath.'/c/group.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
             }
             else if($event->userid) {
                 // User event
-                $output[$outkey]->icon = '<img src="'.$CFG->wwwroot.'/calendar/i/event.gif" alt="" style="vertical-align: middle;" />';
+                $output[$outkey]->icon = '<img src="'.$CFG->pixpath.'/c/user.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
