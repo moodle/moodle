@@ -52,6 +52,10 @@ form {
     margin-bottom:0px;
 }
 
+table {
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
 
 /* header styles */
 #header-home {
@@ -434,6 +438,7 @@ td.cal_event_description {
 .sideblock {
     width: 100%;
     margin-bottom:1em;
+    border-collapse:separate;
     border-width:1px;
     border-style:solid;
 }
@@ -442,14 +447,19 @@ td.cal_event_description {
     background-image:url(gradient.jpg);
     background-position:top;
     background-repeat:repeat-x;
+    padding:4px;
 }
 
 .sideblockheading .hide-show {
     float:right;
 }
 
-.sideblockheading a img.hide-show-image {
+.sideblockheading .hide-show img.hide-show-image {
     padding-top:0.25em;
+}
+
+.sideblockmain {
+    padding:4px;
 }
 
 .sideblockmain hr {
@@ -460,11 +470,11 @@ td.cal_event_description {
     border-top:1px solid;
 }
 
-.sideblock .sideblockheading .hide-show img {
+.sideblock .sideblockheading .hide-show img.hide-show-image {
     background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
-.sideblock.hidden .sideblockheading .hide-show img {
+.sideblock.hidden .sideblockheading .hide-show img.hide-show-image {
     background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
@@ -490,8 +500,6 @@ td.cal_event_description {
 
 #block_quiz_results table.grades {
     width: 100%;
-    border-spacing: 0px;
-    border-collapse: collapse;
     text-align: left;
 }
 

@@ -16,7 +16,7 @@
     -moz-border-radius-bottomright:20px;
 }
 
-#left-column .hidden, #right-column .hidden {
+.sideblock.hidden {
     -moz-border-radius: 0px;
 }
 
