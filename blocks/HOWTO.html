@@ -215,7 +215,7 @@
 
     <p>This small change is enough to make Moodle display an "Edit..." icon in our block's header when we turn editing mode on in any course. However, if you try to click on that icon you will be presented with a notice that complains about the block's configuration not being implemented correctly. Try it, it's harmless.</p>
 
-    <p>Moodle's complaints do makes sense. We told it that we want to have configuration, but we didn't say <em>what</em> kind of configuration we want, or how it should be displayed. To do that, we need to create one more file: <span class="filename">/blocks/simplehtml/config_instance.html</span> (which has to be named exactly like that). For the moment, copy paste the following into it and save:</p>
+    <p>Moodle's complaints do make sense. We told it that we want to have configuration, but we didn't say <em>what</em> kind of configuration we want, or how it should be displayed. To do that, we need to create one more file: <span class="filename">/blocks/simplehtml/config_instance.html</span> (which has to be named exactly like that). For the moment, copy paste the following into it and save:</p>
 
 <pre class="code">
 &lt;table cellpadding="9" cellspacing="0"&gt;
@@ -286,7 +286,7 @@ $this->content->footer = '';</pre>
 
     <p>We save the edited file, go to a course, edit the title of the block and... nothing happens! The instance configuration is saved correctly, all right (editing it once more proves that) but it's not being displayed. All we get is just the simple "SimpleHTML" title.</p>
 
-    <p>That's not too wierd, if we think back a bit. Do you remember that <a class="function_title" href="#method_init">init</a> method, where we set <a class="variable_title" href="#variable_title">$this->title</a>? We didn't actually change its value from then, and <a class="variable_title" href="#variable_title">$this->title</a> is definitely not the same as $this->config->title (to Moodle, at least). What we need is a way to update <a class="variable_title" href="#variable_title">$this->title</a> with the value in the instance configuration. But as we said a bit earlier, you can use <a class="variable_title" href="#variable_config">$this->config</a> in all methods <em>except</em> <a class="function_title" href="#method_init">init</a>! So what can we do?</p>
+    <p>That's not too wierd, if we think back a bit. Do you remember that <a class="function_title" href="#method_init">init</a> method, where we set <a class="variable_title" href="#variable_title">$this->title</a>? We didn't actually change its value from then, and <a class="variable_title" href="#variable_title">$this->title</a> is definitely not the same as $this->config->title (to Moodle, at least). What we need is a way to update <a class="variable_title" href="#variable_title">$this->title</a> with the value in the instance configuration. But as we said a bit earlier, we can use <a class="variable_title" href="#variable_config">$this->config</a> in all methods <em>except</em> <a class="function_title" href="#method_init">init</a>! So what can we do?</p>
 
     <p>Let's pull out another ace from our sleeve, and add this small method to our block class:</p>
 
@@ -295,23 +295,9 @@ function specialization() {
     $this->title = $this->config->title;
 }</pre>
 
-    <p>Aha, here's what we wanted to do all along! But what's with the <a class="function_title" href="#method_specialization">specialization</a> method?</p>
+    <p>Aha, here's what we wanted to do all along! But what's going on with the <a class="function_title" href="#method_specialization">specialization</a> method?</p>
 
-    <p>This "magic" method has actually a very nice property: it's <em>guaranteed</em> to be automatically called by Moodle as soon as our instance configuration is loaded and available (that is, a bit after <a class="function_title" href="#method_init">init</a> is called). That means before the block's content is computed for the first time, and indeed before <em>anything</em> is else done with the block. Thus, providing a <a class="function_title" href="#method_specialization">specialization</a> method is the natural choice for any configuration data that needs to be acted upon "as soon as possible", as in this case.</p>
-
-    <p>Unrelated to the above discussion, we also remove the footer from our block because it doesn't contribute anything; we could just as easily have decided to make the footer configurable in the above way, too. So for our latest code, the snippet</p>
-
-    <pre class="code">
-$this->content = new stdClass;
-$this->content->text = $this->config->text;
-$this->content->footer = 'Footer here...';</pre>
-
-    <p>becomes</p>
-
-    <pre class="code">
-$this->content = new stdClass;
-$this->content->text = $this->config->text;
-$this->content->footer = '';</pre>
+    <p>This "magic" method has actually a very nice property: it's <em>guaranteed</em> to be automatically called by Moodle as soon as our instance configuration is loaded and available (that is, immediately after <a class="function_title" href="#method_init">init</a> is called). That means before the block's content is computed for the first time, and indeed before <em>anything</em> else is done with the block. Thus, providing a <a class="function_title" href="#method_specialization">specialization</a> method is the natural choice for any configuration data that needs to be acted upon "as soon as possible", as in this case.</p>
 
 </li>
 
@@ -350,7 +336,7 @@ function instance_allow_multiple() {
 
     <p>There are a couple more of interesting points to note here. First of all, even if a block itself allows multiple instances in the same page, the administrator still has the option of disallowing such behavior. This setting can be set separately for each block from the Administration / Configuration / Blocks page.</p>
 
-    <p>And finally, a nice detail is that as soon as we defined an <a class="function_title" href="#method_instance_allow_multiple">instance_allow_multiple</a> method, the method <a class="function_title" href="#method_instance_allow_config">instance_allow_config</a> that was already defined became obsolete. Moodle assumes that if a block allows multiple instances of itself, those instances will want to be configured (what is the point of same multiple instances in the same page if they are identical?) and thus automatically provides an "Edit" icon. So, we can also remove the whole <a class="function_title" href="#method_instance_allow_config">instance_allow_config</a> method now without harm. We had only needed it when multiple instances of the block had not been allowed.</p>
+    <p>And finally, a nice detail is that as soon as we defined an <a class="function_title" href="#method_instance_allow_multiple">instance_allow_multiple</a> method, the method <a class="function_title" href="#method_instance_allow_config">instance_allow_config</a> that was already defined became obsolete. Moodle assumes that if a block allows multiple instances of itself, those instances will want to be configured (what is the point of same multiple instances in the same page if they are identical?) and thus automatically provides an "Edit" icon. So, we can also remove the whole <a class="function_title" href="#method_instance_allow_config">instance_allow_config</a> method now without harm. We had only needed it when multiple instances of the block were not allowed.</p>
 
 </li>
 
@@ -438,7 +424,7 @@ function instance_config_save($data) {
     // Clean the data if we have to
     global $CFG;
     if(!empty($CFG->block_simplehtml_strict)) {
-        $data = strip_tags($data);
+        $data['text'] = strip_tags($data['text']);
     }
     
     // And now forward to the default implementation defined in the parent class
@@ -447,7 +433,7 @@ function instance_config_save($data) {
 
     <p>At last! Now the administrator has absolute power of life and death over what type of content is allowed in our "SimpleHTML" block! Absolute? Well... not exactly. In fact, if we think about it for a while, it will become apparent that if at some point in time HTML is allowed and some blocks have saved their content with HTML included, and afterwards the administrator changes the setting to "off", this will only prevent subsequent content changes from including HTML. Blocks which already had HTML in their content would continue to display it!</p>
 
-    <p>Following that train of thought, the next stop is realizing that we wouldn't have this problem if we had chosen the lazy approach a while back, because in that case we would "sanitize" each block's content just before it was displayed. The only thing we can do with the eager approach is strip all the tags from the content of all SimpleHTML instances as soon as the admin setting is changed to "HTML off"; but even then, turning the setting back to "HTML on" won't bring back the tags we stripped away. On the other hand, the lazy approach might be slower, but it's more versatile; we can choose whether to strip or keep the HTML before displaying the content, and we won't lose them at all if the admin toggles the setting off and on again. Isn't the life of a developer simple and wonderful?</p>
+    <p>Following that train of thought, the next stop is realizing that we wouldn't have this problem if we had chosen the lazy approach a while back, because in that case we would "sanitize" each block's content just before it was displayed. The only thing we can do with the eager approach is strip all the tags from the content of all SimpleHTML instances as soon as the admin setting is changed to "HTML off"; but even then, turning the setting back to "HTML on" won't bring back the tags we stripped away. On the other hand, the lazy approach might be slower, but it's more versatile; we can choose whether to strip or keep the HTML before displaying the content, and we won't lose it at all if the admin toggles the setting off and on again. Isn't the life of a developer simple and wonderful?</p>
 
     <p>We will let this part of the tutorial come to a close with the obligatory excercise for the reader: in order to have the SimpleHTML block work "correctly", find out how to strengthen the eager approach to strip out all tags from the existing configuration of all instances of our block, <strong>or</strong> go back and implement the lazy approach instead. (Hint: do that in the <a class="function_title" href="#method_get_content">get_content</a> method)</p>
 
