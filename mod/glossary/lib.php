@@ -855,11 +855,11 @@ function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$ins
 function  glossary_print_entry_approval($cm, $entry, $mode,$align="right",$insidetable=true) {
     if ( $mode == 'approval' and !$entry->approved ) {
         if ($insidetable) {
-            echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\">\n";
+            echo '<table class="glossaryapproval" align="'.$align.'"><tr><td align="'.$align.'">';
         }
-        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&amp;eid=$entry->id&amp;mode=$mode\"><img align=\"$align\" src=\"check.gif\" border=\"0\" width=\"34\" height=\"34\" alt=\"\" /></a>\n";
+        echo '<a title="'.get_string('approve','glossary').'" href="approve.php?id='.$cm->id.'&amp;eid='.$entry->id.'&amp;mode='.$mode.'"><img align="'.$align.'" src="check.gif" border="0" width="34" height="34" alt="" /></a>';
         if ($insidetable) {
-            echo "</td></tr></table>\n";
+            echo '</td></tr></table>';
         }
     }
 }
@@ -1172,19 +1172,7 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
     return $imagereturn;
 }
 
-function glossary_print_tabbed_table_start($data, $currenttab, $tTHEME = NULL) {
-
-if ( !$tTHEME ) {
-     global $THEME;
-     $tTHEME = $THEME;
-}
-
-$tabcolor             = $tTHEME->InactiveTabColor;
-$inactivefontcolor    = $tTHEME->InactiveFontColor;
-
-$tablewidth           = $tTHEME->TabTableWidth;
-$tabsperrow           = $tTHEME->TabsPerRow;
-$tabseparation        = $tTHEME->TabSeparation;
+function glossary_print_tabbed_table_start($data, $currenttab, $tabsperrow=4) {
 
 $tabs                 = count($data);
 $tabwidth             = (int) (100 / $tabsperrow);
@@ -1194,11 +1182,11 @@ $currentrow           = ( $currenttab - ( $currenttab % $tabsperrow) ) / $tabspe
 $numrows              = (int) ( $tabs / $tabsperrow ) + 1;
 
 ?>
-  <table border="0" cellpadding="0" cellspacing="0" width="<?php p($tablewidth) ?>">
+  <table cellspacing="0" class="glossarydisplay">
     <tr>
       <td width="100%">
 
-      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <table cellspacing="0" class="tabs" width="100%">
 
 <?php
 $tabproccessed = 0;
@@ -1208,14 +1196,14 @@ for ($row = 0; $row < $numrows; $row++) {
           for ($col = 0; $col < $tabsperrow; $col++) {
                if ( $tabproccessed < $tabs ) {
                     if ( $col == 0 ) {
-                        echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
+                        echo '<td class="separator">&nbsp;</td>';
                     }
                     if ($tabproccessed == $currenttab) {
-                         $currentstyle = 'generaltabselected';
+                         $currentstyle = 'selected';
                     } elseif ( !$data[$tabproccessed]->link ) {
-                         $currentstyle = 'generaltabinactive';
+                         $currentstyle = 'inactive';
                     } else {
-                         $currentstyle = 'generaltab';
+                         $currentstyle = 'general';
                     }
                     
                     echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" align=\"center\"><b>";
@@ -1231,7 +1219,7 @@ for ($row = 0; $row < $numrows; $row++) {
                     echo "</b></td>";
                     
                     if ( $col < $tabsperrow ) {
-                        echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
+                        echo '<td class="separator">&nbsp;</td>';
                     }
                } else {
                     echo "<td colspan=\"".(2* $tabsperrow)."\"></td>\n";
@@ -1250,7 +1238,7 @@ for ($row = 0; $row < $numrows; $row++) {
           for ($col = 0; $col < $tabsperrow; $col++) {
                if ( $tabproccessed < $tabs ) {
                     if ( $col == 0 ) {
-                        echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
+                        echo '<td class="separator">&nbsp;</td>';
                     }
                     
                     if ($tabproccessed == $currenttab) {
@@ -1278,8 +1266,7 @@ for ($row = 0; $row < $numrows; $row++) {
                     echo "</b></td>";
 
                     if ($col < $tabsperrow) {
-                         echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
-                    }
+                         echo '<td class="separator">&nbsp;</td>';                    }
                } else {
                     echo "<td colspan = " . (2 * ($tabsperrow - $col)) . " align=\"center\">";
                     echo "</td>";
@@ -1634,22 +1621,21 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
 }
 
 function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
-    global $THEME, $USER,$CFG;
+    global $USER,$CFG;
 
-    $colour = $THEME->cellheading2;
-
-    echo "\n<center><table width=\"95%\" border=\"0\"><tr>";
-    echo "<td width=\"100%\"\">";
+    echo '<center>';
+    echo '<table class="glossarypopup" cellspacing="0"><tr>';
+    echo '<td>';
     if ( $entries ) {
         foreach ( $entries as $entry ) {
-            if (! $glossary = get_record("glossary", "id", $entry->glossaryid)) {
-                error("Glossary ID was incorrect or no longer exists");
+            if (! $glossary = get_record('glossary', 'id', $entry->glossaryid)) {
+                error('Glossary ID was incorrect or no longer exists');
             }
-            if (! $course = get_record("course", "id", $glossary->course)) {
-                error("Glossary is misconfigured - don't know what course it's from");
+            if (! $course = get_record('course', 'id', $glossary->course)) {
+                error('Glossary is misconfigured - don\'t know what course it\'s from');
             }
-            if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $glossary->course) ) {
-                error("Glossary is misconfigured - don't know what course module it is ");
+            if (!$cm = get_coursemodule_from_instance('glossary', $entry->glossaryid, $glossary->course) ) {
+                error('Glossary is misconfigured - don\'t know what course module it is');
             }
 
             //If displayformat is present, override glossary->displayformat
@@ -1679,8 +1665,8 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
             }
         }
     }
-    echo "</td>";
-    echo "</tr></table></center>";
+    echo '</td>';
+    echo '</tr></table></center>';
 }
 
 function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {

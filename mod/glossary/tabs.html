@@ -7,13 +7,6 @@
     }
 
     echo '<center>';
-    $glossary_tCFG->TabTableBGColor = $THEME->cellheading;
-    $glossary_tCFG->ActiveTabColor = $THEME->cellheading;
-    $glossary_tCFG->InactiveTabColor = $THEME->cellcontent2;
-    $glossary_tCFG->InactiveFontColor= $THEME->hidden;
-    $glossary_tCFG->TabTableWidth = "70%";
-    $glossary_tCFG->TabsPerRow = 4;
-    $glossary_tCFG->TabSeparation = 4;
 
     $data[GLOSSARY_STANDARD_VIEW]->caption = get_string("standardview", "glossary");
     $data[GLOSSARY_CATEGORY_VIEW]->caption = get_string("categoryview", "glossary");
@@ -63,7 +56,7 @@
     }
 
 /// printing header of the current tab
-    glossary_print_tabbed_table_start($data, $tab, $glossary_tCFG);
+    glossary_print_tabbed_table_start($data, $tab, 4);
  
     if (!isset($category)) {
         $category = "";
