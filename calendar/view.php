@@ -198,6 +198,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
                 calendar_course_filter_selector($getvars).'</div><div style="float: right;">';
         $text.= '<form style="display: inline;" action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<input type="hidden" name="action" value="new" />';
+        $text.= '<input type="hidden" name="cal_d" value="'.$d.'" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
         $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';
         $text.= '<input type="submit" value="'.get_string('newevent', 'calendar').'" />';
