@@ -939,7 +939,8 @@ function quiz_print_question_icon($question, $editlink=true) {
                 .$QUIZ_QUESTION_TYPE[$question->qtype]."\">";
     }
     echo '<img border="0" height="16" width="16" src="questiontypes/';
-    echo $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif" alt="" />';
+    echo $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif" alt="';
+    echo get_string($QUIZ_QTYPES[$question->qtype]->name(), 'quiz').'" />';
     if ($editlink) {
         echo "</a>\n";
     }
@@ -1285,13 +1286,13 @@ function quiz_print_question_list($questionlist, $grades) {
         echo "<td>";
         if ($count != 1) {
             echo "<a title=\"$strmoveup\" href=\"edit.php?up=$qnum\"><img
-                 src=\"../../pix/t/up.gif\" border=\"0\" alt=\"\" /></a>";
+                 src=\"../../pix/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
         }
         echo "</td>";
         echo "<td>";
         if ($count != $total) {
             echo "<a title=\"$strmovedown\" href=\"edit.php?down=$qnum\"><img
-                 src=\"../../pix/t/down.gif\" border=\"0\" alt=\"\" /></a>";
+                 src=\"../../pix/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
         }
         echo "</td>";
         echo "<td>$question->name</td>";
@@ -1307,13 +1308,13 @@ function quiz_print_question_list($questionlist, $grades) {
         }
         echo "<td>";
             echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum\"><img
-                 src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"\" /></a>&nbsp;";
+                 src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>&nbsp;";
             echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
-                  src=\"../../pix/i/search.gif\" border=\"0\" alt=\"\" /></a>&nbsp;";
+                  src=\"../../pix/i/search.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
 
             if ($canedit) {
                 echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\"><img
-                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"\" /></a>\n";
+                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>\n";
             }
         echo "</td>";
 
@@ -1455,11 +1456,11 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         if ($canedit) {
             echo "<td>\n";
                 echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\">\n<img
-                     src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"\" /></a>&nbsp;";
+                     src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>&nbsp;";
                 echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
-                      src=\"../../pix/i/search.gif\" border=\"0\" alt=\"\" /></a>&nbsp;";
+                      src=\"../../pix/i/search.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
                 echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
-                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"\" /></a>";
+                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
             echo "</td>\n";// deleted </tr> jm
         }
         echo "</tr>\n";
