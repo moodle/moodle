@@ -938,7 +938,12 @@ function forum_cron () {
                     }
                     $posttext .= "---------------------------------------------------------------------\n";
                     $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
-                    $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id";
+                    $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
+                    if ($canunsubscribe) {
+                        $posttext .= "\n---------------------------------------------------------------------\n";
+                        $posttext .= get_string("unsubscribe", "forum");
+                        $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\n";
+                    }
   
                     if ($userto->mailformat == 1) {  // HTML
                         $posthtml = "<P><FONT FACE=sans-serif>".
@@ -953,7 +958,7 @@ function forum_cron () {
                         $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
 
                         if ($canunsubscribe) {
-                            $posthtml .= "\n<BR><HR SIZE=1 NOSHADE><FONT SIZE=1><A HREF=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</A></FONT>";
+                            $posthtml .= "\n<BR><HR SIZE=1 NOSHADE><P ALIGN=RIGHT><FONT SIZE=1><A HREF=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</A></FONT></P>";
                         }
 
                     } else {
