@@ -48,9 +48,9 @@
         }
 
         if (iscreator()) {       // Print link to create a new course
-            echo "<center><p>";
+            echo "<center>";
             print_single_button("edit.php", NULL, get_string("addnewcourse"), "get");
-            echo "</p></center>";
+            echo "</center>";
         }
             
         print_footer();
@@ -251,7 +251,7 @@
 
     echo "<center>";
     echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
-    echo "<input type=\"text\" size=\"30\" name=\"addcategory\" />";
+    echo "<input type=\"text\" size=\"30\" alt=\"$straddnewcategory\" name=\"addcategory\" />";
     echo "<input type=\"submit\" value=\"$straddnewcategory\" />";
     echo "</form>";
     echo "</center>";
@@ -277,6 +277,7 @@
     echo "<th>$strcourses</th>";
     echo "<th>$stredit</th>";
     echo "<th>$strmovecategoryto</th>";
+    echo "</tr>";
 
     print_category_edit(NULL, $displaylist, $parentlist);
 
