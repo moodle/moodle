@@ -40,9 +40,16 @@ define('NOGROUPS', 0);
 define('SEPARATEGROUPS', 1);
 define('VISIBLEGROUPS', 2);
 
+define('PARAM_RAW',     0x00);
 define('PARAM_CLEAN',   0x01);
 define('PARAM_INT',     0x02);
-define('PARAM_INTEGER', 0x02);
+define('PARAM_INTEGER', 0x02);  // Alias for PARAM_INT
+define('PARAM_ALPHA',   0x04);
+define('PARAM_ACTION',  0x04);  // Alias for PARAM_ALPHA
+define('PARAM_FORMAT',  0x04);  // Alias for PARAM_ALPHA
+define('PARAM_NOTAGS',  0x08);
+define('PARAM_FILE',    0x10);
+define('PARAM_PATH',    0x20);
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
@@ -56,7 +63,7 @@ function required_param($varname, $options=PARAM_CLEAN) {
     } else if (isset($_GET[$varname])) {
         $param = $_GET[$varname];
     } else {
-        error('A required parameter ($'.$varname.') was missing');
+        error('A required parameter ('.$varname.') was missing');
     }
 
     return clean_param($param, $options);
@@ -81,6 +88,10 @@ function clean_param($param, $options) {
 /// Given a parameter and a bitfield of options, this function
 /// will clean it up and give it the required type, etc.
 
+    if (!$options) {
+        return $param;                   // Return raw value
+    }
+
     if ((string)$param == (string)(int)$param) {  // It's just an integer
         return $param;
     }
@@ -91,6 +102,24 @@ function clean_param($param, $options) {
 
     if ($options & PARAM_INT) {
         $param = (int)$param;            // Convert to integer
+    }
+
+    if ($options & PARAM_ALPHA) {        // Remove everything not a-z
+        $param = eregi_replace('[^a-z]', '', $param);
+    }
+
+    if ($options & PARAM_NOTAGS) {       // Strip all tags completely
+        $param = strip_tags($param);
+    }
+
+    if ($options & PARAM_FILE) {         // Strip all suspicious characters from filename
+        $param = eregi_replace('\.\.+', '', $param);
+        // TO BE EXPANDED WITH MORE CHECKS
+    }
+
+    if ($options & PARAM_PATH) {         // Strip all suspicious characters from file path
+        $param = eregi_replace('\.\.+', '', $param);
+        // TO BE EXPANDED WITH MORE CHECKS
     }
 
     return $param;
@@ -457,6 +486,11 @@ function require_login($courseid=0, $autologinguest=true) {
         $site = get_site();
         redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
         die;
+    }
+
+    // Make sure the USER has a sesskey set up.  Used for checking script parameters.
+    if (empty($USER->sesskey)) {
+        $USER->sesskey = random_string(10);
     }
 
     // Next, check if the user can be in a particular course
