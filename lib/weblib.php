@@ -1071,7 +1071,6 @@ function error ($message, $link="") {
         if ( !empty($SESSION->fromurl) ) {
             $link = "$SESSION->fromurl";
             unset($SESSION->fromurl);
-            save_session("SESSION");
         } else {
             $link = "$CFG->wwwroot";
         }

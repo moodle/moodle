@@ -134,9 +134,15 @@
     class object {};
     
     @session_start();
-    if (! isset($_SESSION["SESSION"])) { $_SESSION["SESSION"] = new object; }
-    if (! isset($_SESSION["USER"]))    { $_SESSION["USER"]    = new object; }
-    extract($_SESSION);  // Makes $SESSION and $USER available for read-only access
+    if (! isset($_SESSION['SESSION'])) { 
+        $_SESSION['SESSION'] = new object; 
+    }
+    if (! isset($_SESSION['USER']))    { 
+        $_SESSION['USER']    = new object; 
+    }
+
+    $SESSION = &$_SESSION['SESSION'];   // Makes them easier to reference
+    $USER    = &$_SESSION['USER'];
 
     if (isset($FULLME)) {
         $ME = $FULLME;
@@ -159,7 +165,6 @@
 
     if (isset($lang)) {
         $SESSION->lang = $lang;
-        save_session("SESSION");
     }
 
     if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {

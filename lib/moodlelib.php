@@ -271,9 +271,7 @@ function require_login($courseid=0) {
         if (!empty($_SERVER["HTTP_REFERER"])) {
             $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
         }
-        save_session("SESSION");
         $USER = NULL;
-        save_session("USER");
         if ($PHPSESSID) { // Cookies not enabled.
             redirect("$CFG->wwwroot/login/index.php?PHPSESSID=$PHPSESSID");
         } else {
@@ -322,7 +320,6 @@ function require_login($courseid=0) {
 
         // Currently not enrolled in the course, so see if they want to enrol
         $SESSION->wantsurl = $FULLME;
-        save_session("SESSION");
         redirect("$CFG->wwwroot/course/enrol.php?id=$courseid");
         die;
     }
@@ -333,7 +330,6 @@ function update_user_login_times() {
 
     $USER->lastlogin = $user->lastlogin = $USER->currentlogin;
     $USER->currentlogin = $user->currentlogin = time();
-    save_session("USER");
 
     $user->id = $USER->id;
 
@@ -356,11 +352,9 @@ function update_login_count() {
     } else {
         $SESSION->logincount++;
     }
-    save_session("SESSION");
 
     if ($SESSION->logincount > $max_logins) {
         unset($SESSION->wantsurl);
-        save_session("SESSION");
         error(get_string("errortoomanylogins"));
     }
 }
@@ -370,7 +364,6 @@ function reset_login_count() {
     global $SESSION;
 
     $SESSION->logincount = 0;
-    save_session("SESSION");
 }
 
 
@@ -484,14 +477,6 @@ function get_moodle_cookie() {
     } else {
         return rc4decrypt($_COOKIE[$cookiename]);
     }
-}
-
-
-function save_session($VAR) {
-/// Copies temporary session variable to permanent session variable
-/// eg $_SESSION["USER"] = $USER;
-    global $$VAR;
-    $_SESSION[$VAR] = $$VAR;
 }
 
 
