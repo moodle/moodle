@@ -875,6 +875,65 @@ function get_my_courses($userid, $sort="c.fullname ASC") {
                              ORDER BY $sort");
 }
 
+function get_courses_search($search, $sort="fullname ASC", $page=0, $recordsperpage=50) {
+/// Returns a list of courses that match a search
+
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case "mysql":
+             $limit = "LIMIT $page,$recordsperpage";
+             break;
+        case "postgres7":
+             $limit = "LIMIT $recordsperpage OFFSET ".($page * $recordsperpage);
+             break;
+        default: 
+             $limit = "LIMIT $recordsperpage,$page";
+    }
+
+    //to allow caseinsensitive search for postgesql
+    if ($CFG->dbtype == "postgres7") {
+       $LIKE = "ILIKE";
+    } else {
+       $LIKE = "LIKE";
+    }
+
+    $fullnamesearch = "";
+    $summarysearch = "";
+
+    $searchterms = explode(" ", $search);     // Search for words independently
+
+    foreach ($searchterms as $searchterm) {
+        if ($fullnamesearch) {
+            $fullnamesearch .= " AND ";
+        }
+        $fullnamesearch .= " fullname $LIKE '%$searchterm%' ";
+
+        if ($summarysearch) {
+            $summarysearch .= " AND ";
+        }
+        $summarysearch .= " summary $LIKE '%$searchterm%' ";
+    }
+
+
+    $courses = get_records_sql("SELECT * 
+                                  FROM {$CFG->prefix}course
+                                 WHERE ($fullnamesearch OR $summarysearch)
+                              ORDER BY $sort $limit");
+
+    if ($courses) {  /// Remove unavailable courses from the list
+        foreach ($courses as $key => $course) {
+            if (!$course->visible) {
+                if (!isteacher($course->id)) {
+                    unset($courses[$key]);
+                }
+            }
+        }
+    }
+
+    return $courses;
+}
+
 
 function get_categories($parent="none", $sort="sortorder ASC") {
 /// Returns a sorted list of categories
@@ -898,11 +957,11 @@ function get_categories($parent="none", $sort="sortorder ASC") {
 }
 
 
-function fix_course_sortorder($categoryid) {
+function fix_course_sortorder($categoryid, $sort="sortorder ASC") {
 /// Given a category object, this function makes sure the courseorder 
 /// variable reflects the real world.
 
-    if (!$courses = get_records("course", "category", "$categoryid", "sortorder ASC", "id, sortorder")) {
+    if (!$courses = get_records("course", "category", "$categoryid", "$sort", "id, sortorder")) {
         return true;
     }
 
