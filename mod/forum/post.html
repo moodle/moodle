@@ -1,24 +1,24 @@
-<form name="theform" method="post" action="post.php" <?=$onsubmit ?> enctype="multipart/form-data">
+<form name="theform" method="post" action="post.php" <?php echo $onsubmit ?> enctype="multipart/form-data">
 <table border="0" cellpadding="5">
 <tr valign="top">
-    <td align=right><p><b><? print_string("subject", "forum"); ?>:</b></p></td>
+    <td align=right><p><b><?php print_string("subject", "forum"); ?>:</b></p></td>
     <td>
-        <input type="text" name="subject" size=60 value="<? p($post->subject) ?>">
+        <input type="text" name="subject" size=60 value="<?php p($post->subject) ?>">
     </td>
 </tr>
 <tr valign="top">
     <td align=right><p><b>
-     <? print_string("message", "forum"); ?>:
+     <?php print_string("message", "forum"); ?>:
      </b></p></td>
     <td align=left rowspan=2>
-    <? print_textarea($usehtmleditor, 15, 50, 595, 400, "message", $post->message); ?>
+    <?php print_textarea($usehtmleditor, 15, 50, 595, 400, "message", $post->message); ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right" valign="center" nowrap>
 
     <font SIZE="1">
-     <?PHP
+     <?php
         helpbutton("reading", get_string("helpreading"), "moodle", true, true);
         echo "<br />";
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
@@ -36,47 +36,79 @@
 
     </td>
 </tr>
+
+
+
+
 <tr valign=top>
-    <td align=right><p><b><? print_string("formattexttype"); ?>:</b></p></td>
+    <td align=right><p><b><?php print_string("formattexttype"); ?>:</b></p></td>
     <td>
-    <?PHP 
+    <?php 
        choose_from_menu(format_text_menu(), "format", $post->format, "");
      ?>
     <font SIZE="1">
-    <?PHP 
+    <?php 
         helpbutton("textformat", get_string("helpformatting"));
      ?>
     </font>
 
     </td>
 </tr>
+
 <tr valign=top>
-    <td align=right><p><b><? print_string("attachment", "forum") ?>:<br \>(<? print_string("optional") ?>)&nbsp;</b></p></td>
+    <td align=right><p><b><?php print_string("subscription", "forum") ?>:</b></p></td>
     <td>
-    <input type="hidden" name="MAX_FILE_SIZE" value="<? echo get_max_upload_file_size() ?>">
+    <?php 
+       if ($forum->forcesubscribe) {
+           print_string("everyoneissubscribed", "forum");
+       } else {
+           unset($options);
+           if (forum_is_subscribed($USER->id, $post->forum)) {
+               $options[0] = get_string("subscribed", "forum");
+               $options[1] = get_string("unsubscribe", "forum");
+               choose_from_menu($options, "unsubscribe", 0, "");
+           } else {
+               $options[0] = get_string("unsubscribed", "forum");
+               $options[1] = get_string("subscribe", "forum");
+               choose_from_menu($options, "subscribe", 1, "");
+           }
+       }
+       helpbutton("subscription", get_string("subscription", "forum"), "forum"); 
+    ?>
+    </td>
+</tr>
+
+
+<tr valign=top>
+    <td align=right><p><b><?php print_string("attachment", "forum") ?>:<br \>(<?php print_string("optional") ?>)&nbsp;</b></p></td>
+    <td>
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size() ?>">
     <input type="file" name="attachment" size=40> 
-    <? helpbutton("attachment", get_string("attachment", "forum"), "forum"); 
+    <?php 
+       helpbutton("attachment", get_string("attachment", "forum"), "forum"); 
        print_string("maxsize", "", display_size(get_max_upload_file_size())); 
     ?>
     </td>
 
 </tr>
+
+
 <tr>
     <td align=center colspan=2>
-    <input type="hidden" name=course     value="<? p($post->course) ?>">
-    <input type="hidden" name=forum      value="<? p($post->forum) ?>">
-    <input type="hidden" name=discussion value="<? p($post->discussion) ?>">
-    <input type="hidden" name=parent     value="<? p($post->parent) ?>">
-    <input type="hidden" name=userid     value="<? p($post->userid) ?>">
-    <input type="hidden" name=edit       value="<? p($post->edit) ?>">
-    <input type="submit" value="<? print_string("savechanges"); ?>">
+    <input type="hidden" name=course     value="<?php p($post->course) ?>">
+    <input type="hidden" name=forum      value="<?php p($post->forum) ?>">
+    <input type="hidden" name=discussion value="<?php p($post->discussion) ?>">
+    <input type="hidden" name=parent     value="<?php p($post->parent) ?>">
+    <input type="hidden" name=userid     value="<?php p($post->userid) ?>">
+    <input type="hidden" name=edit       value="<?php p($post->edit) ?>">
+    <input type="submit" value="<?php print_string("savechanges"); ?>">
     </td>
 
 </tr>
 </table>
 </form>
 
-<? 
+<?php 
    if ($usehtmleditor) { 
        print_richedit_javascript("theform", "message", "no");
    }

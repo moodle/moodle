@@ -32,7 +32,14 @@
             $post->id = $post->edit;
             if (forum_update_post($post)) {
                 add_to_log($post->course, "forum", "update post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
-                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), get_string("postupdated", "forum"), 1);
+                $message = get_string("postupdated", "forum");
+                $timemessage = 1;
+
+                if ($subscribemessage = forum_post_subscription($post)) {
+                    $timemessage = 2;
+                }
+                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), $message.$subscribemessage, $timemessage);
+
             } else {
                 error(get_string("couldnotupdate", "forum"), $errordestination); 
             }
@@ -40,13 +47,16 @@
 
         } else if ($post->discussion) { // Adding a new post to an existing discussion
             if ($post->id = forum_add_new_post($post)) {
-                if ( ! forum_is_subscribed($USER->id, $post->forum) ) {
-                    forum_subscribe($USER->id, $post->forum);
+                add_to_log($post->course, "forum", "add post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
+                $message = get_string("postadded", "forum", format_time($CFG->maxeditingtime));
+                $timemessage = 2;
+
+                if ($subscribemessage = forum_post_subscription($post)) {
+                    $timemessage = 4;
                 }
 
-                add_to_log($post->course, "forum", "add post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
-                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
-                         get_string("postadded", "forum", format_time($CFG->maxeditingtime)), 2);
+                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), $message.$subscribemessage, $timemessage);
+
             } else {
                 error(get_string("couldnotadd", "forum"), $errordestination); 
             }
@@ -57,12 +67,16 @@
             $discussion->name  = $post->subject;
             $discussion->intro = $post->message;
             if ($discussion->id = forum_add_discussion($discussion)) {
-                if ( ! forum_is_subscribed($USER->id, $post->forum) ) {
-                    forum_subscribe($USER->id, $post->forum);
-                }
                 add_to_log($post->course, "forum", "add discussion", "discuss.php?d=$discussion->id", "$discussion->id");
-                redirect(forum_go_back_to("view.php?f=$post->forum"), 
-                         get_string("postadded", "forum", format_time($CFG->maxeditingtime)), 3);
+                $message = get_string("postadded", "forum", format_time($CFG->maxeditingtime));
+                $timemessage = 2;
+
+                if ($subscribemessage = forum_post_subscription($discussion)) {
+                    $timemessage = 4;
+                }
+
+                redirect(forum_go_back_to("view.php?f=$post->forum"), $message.$subscribemessage, $timemessage);
+
             } else {
                 error(get_string("couldnotadd", "forum"), $errordestination); 
             }

@@ -1445,6 +1445,32 @@ function forum_unsubscribe($userid, $forumid) {
     return delete_records("forum_subscriptions", "userid", $userid, "forum", $forumid);
 }
 
+function forum_post_subscription($post) {
+/// Given a new post, subscribes or unsubscribes as appropriate.
+/// Returns some text which describes what happened.
+
+    global $USER;
+
+    if (empty($post->subscribe) and empty($post->unsubscribe)) {
+        return "";
+    }
+
+    if (!$forum = get_record("forum", "id", $post->forum)) {
+        return "";
+    }
+
+    $info->name  = "$USER->firstname $USER->lastname";
+    $info->forum = $forum->name;
+
+    if (!empty($post->subscribe)) {
+        forum_subscribe($USER->id, $post->forum);
+        return "<p>".get_string("nowsubscribed", "forum", $info)."</p>";
+    }
+
+    forum_unsubscribe($USER->id, $post->forum);
+    return "<p>".get_string("nownotsubscribed", "forum", $info)."</p>";
+}
+
 
 function forum_user_has_posted_discussion($forumid, $userid) {
     if ($discussions = forum_get_discussions($forumid, "", $userid)) {
