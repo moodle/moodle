@@ -892,6 +892,26 @@ function get_teacher($courseid) {
     }
 }
 
+function get_recent_enrolments($courseid, $timestart) {
+/// Searches logs to find all enrolments since a certain date
+/// and returns the data (used to print recent activity)
+
+    global $CFG;
+
+    return get_records_sql("SELECT u.id, u.firstname, u.lastname
+                            FROM {$CFG->prefix}user u,
+                                 {$CFG->prefix}user_students s,
+                                 {$CFG->prefix}log l
+                            WHERE l.time > '$timestart' 
+                              AND l.course = '$courseid'
+                              AND l.module = 'course' 
+                              AND l.action = 'enrol'
+                              AND l.info = u.id
+                              AND u.id = s.userid
+                              GROUP BY l.info
+                              ORDER BY l.time ASC");
+}
+
 function get_course_students($courseid, $sort="u.lastaccess DESC") {
 /// Returns list of all students in this course
 /// if courseid = 0 then return ALL students in all courses
