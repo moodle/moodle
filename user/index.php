@@ -20,6 +20,8 @@
 
     require_login($course->id);
 
+    $isteacher = isteacher($course->id);
+
     add_to_log($course->id, "user", "view all", "index.php?id=$course->id", "");
 
     $string->email       = get_string("email");
@@ -216,8 +218,10 @@
                 $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
             }
 
+            $fullname = fullname($student, $isteacher);
+
             $table->data[] = array ($picture,
-                "<b><a href=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</a></b>",
+                "<b><a href=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$fullname</a></b>",
                 "<font size=2>$student->city</font>", 
                 "<font size=2>$student->country</font>",
                 "<font size=2>$lastaccess</font>");
