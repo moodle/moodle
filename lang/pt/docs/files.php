@@ -14,7 +14,7 @@ $string['credits.html'] = "Autoria";
 
 $string['-installation'] = "Administração";
 $string['install.html'] = "Instalação";
-$string['faq.html'] = "FAQ da Instalção";
+$string['faq.html'] = "FAQ da Instalação";
 $string['installamp.html'] = "Apache, MySQL, PHP";
 $string['upgrade.html'] = "Actualizações";
 
