@@ -88,19 +88,6 @@ function assignment_upgrade($oldversion) {
         table_column("assignment", "", "resubmit", "integer", "2", "unsigned", "0", "", "format");
     }
 
-    if ($oldversion < 2004020500) {
-        if ($assignments = get_records("assignment")) {
-            foreach ($assignments as $assignment) {
-                if ($cm = get_coursemodule_from_instance("assignment", $assignment->id, $assignment->course)) {
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
-                                 WHERE module = 'assignment' AND url = 'submissions.php?id=$assignment->id'");
-
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
-                                 WHERE module = 'assignment' AND url = 'view.php?a=$assignment->id'");
-                }
-            }
-        }
-    }
 
     return true;
 }
