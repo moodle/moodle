@@ -1,0 +1,103 @@
+<?PHP // $Id$
+
+#------------------------------------------------------------
+$string['modulename'] = "Quiz";
+$string['modulenameplural'] = "Quizzes";
+#------------------------------------------------------------
+
+$string['addselectedtoquiz'] = "Seçileni sýnava ekle";
+$string['alwaysavailable'] = "Her zaman geçerli";
+$string['alreadysubmitted'] = "Bu uygulamayý daha önce yapmýþ görünüyorsunuz";
+$string['answer'] = "Yanýt";
+$string['answerhowmany'] = "Tek veya çok seçimli yanýtlar?";
+$string['answersingleyes'] = "Sadece tek yanýtlý";
+$string['answersingleno']  = "Çok seçimli yanýtlar izinli";
+$string['attempt'] = "\$a. uygulama";
+$string['attemptfirst'] = "Ýlk uygulama";
+$string['attemptlast'] = "Son uygulama";
+$string['attemptquiznow'] = "Sýnavý uygula";
+$string['attempts'] = "Uygulamalar";
+$string['attemptsallowed'] = "Uygulamalar izinli";
+$string['attemptsunlimited'] = "Sýnýrsýz uygulama";
+$string['backtoquiz'] = "Sýnav düzenlemeye dön";
+$string['bestgrade'] = "En yüksek not";
+$string['casesensitive'] = "Harf duyarlýlýðý";
+$string['caseyes'] = "Evet, aynen uymalý";
+$string['caseno'] = "Hayýr, harf duyarlýlýðý önemli deðil";
+$string['categories'] = "Kategoriler";
+$string['category'] = "Kategori";
+$string['categoryinfo'] = "Kategori bilgisi";
+$string['categorymove'] = "'\$a->name' Kategorisinde \$a->count soru var.  Taþýyacaðýnýz baþka kategori seçiniz.";
+$string['categorymoveto'] = "Bu kategoriye taþý";
+$string['choice'] = "Seçenek";
+$string['choices'] = "Verilen seçenekler";
+$string['correctanswer'] = "Doðru yanýt";
+$string['correctanswers'] = "Doðru yanýtlar";
+$string['createnewquestion'] = "Yeni soru oluþtur";
+$string['daysavailable'] = "Mevcut günler";
+$string['default'] = "Varsayýlan";
+$string['defaultinfo'] = "Sorular için varsayýlan kategori.";
+$string['deletequestioncheck'] = "Silmek istediðinizden emin misiniz '\$a'?";
+$string['editcategories'] = "Kategorileri düzenle";
+$string['editingquiz'] = "Sýnav düzenleme";
+$string['editingquestion'] = "Bir soru düzenleme";
+$string['editingshortanswer'] = "Kýsa yanýtlý soru düzenleme";
+$string['editingtruefalse'] = "Doðru/Yanlýþ sorusu düzenleme";
+$string['editingmultichoice'] = "Çok seçimli soru düzenleme";
+$string['false'] = "Yanlýþ";
+$string['feedback'] = "Geribildirim";
+$string['filloutoneanswer'] = "En az bir muhtemel yanýtý doldurmalýsýnýz.  Boþ yanýtlar deðerlendirilemez.";
+$string['fillouttwochoices'] = "En az iki seçenek doldurmalýsýnýz.  Boþ seçenekler deðerlendirilemez.";
+$string['fractionsaddwrong'] = "The positive grades you have chosen do not add up to 100%%
+<BR>Instead, they add up to \$a%%
+<BR>Do you want to go back and fix this question?";
+$string['fractionsnomax'] = "One of the answers should be 100%%, so that it is
+<BR>possible to get a full grade for this question.
+<BR>Do you want to go back and fix this question?";
+$string['gradeaverage'] = "Not ortalamasý";
+$string['gradehighest'] = "En yüksek not";
+$string['grademethod'] = "Not verme metodu";
+$string['guestsno'] = "Konuklar sýnavlarý göremez ve uygulayamazlar";
+$string['imagedisplay'] = "Gösterilecek resim";
+$string['introduction'] = "Tanýtým";
+$string['marks'] = "Ýþaretler";
+$string['multichoice'] = "Çok seçimli seçenek";
+$string['noanswers'] = "Yanýtlar seçilmedi!";
+$string['noattempts'] = "Bu sýnavda hiçbir uygulama yapýlmadý";
+$string['nomoreattempts'] = "Baþka uygulamaya izin verilmemiþtir";
+$string['noquestions'] = "Henüz bir soru eklenmemiþtir";
+$string['publish'] = "Yayýnla";
+$string['question'] = "Soru";
+$string['questioninuse'] = "Soru '\$a' halihazýrda kullanýlmaktadýr:";
+$string['questions'] = "Sorular";
+$string['questionname'] = "Soru adý";
+$string['quizavailable'] = "Sýnav þu tarihe kadar açýktýr: \$a";
+$string['quizclose'] = "Sýnavý kapat";
+$string['quizclosed'] = "Bu sýnav \$a tarihinde kapandý";
+$string['quizopen'] = "Sýnav aç";
+$string['quiznotavailable'] = "Sýnav þu tarihe kadar açýk deðildir: \$a";
+$string['random'] = "Rasgele set";
+$string['regrade'] = "Tüm uygulamalarý tekrar deðerlendir";
+$string['regradecomplete'] = "Tüm uygulamalarý tekrar deðerlendirildi";
+$string['regradecount'] = "\$a->attempt uygulamadan \$a->changed deðiþiklik deðerlendirildi";
+$string['rename'] = "Ad deðiþtir";
+$string['report'] = "Raporlar";
+$string['save'] = "Kaydet";
+$string['savegrades'] = "Notlarý kaydet";
+$string['savemyanswers'] = "Yanýtlarýmý kaydet";
+$string['savequiz'] = "Tüm sýnavý kaydet";
+$string['score'] = "Notlarý sýrala";
+$string['select'] = "Seç";
+$string['selectcategoryabove'] = "Yukarýdaki bir kategoriyi seçiniz";
+$string['shortanswer'] = "Kýsa Yanýt";
+$string['show'] = "Göster";
+$string['showfeedback'] = "Yanýtladýktan sonra geribildirimi göster?";
+$string['showcorrectanswer'] = "Geribildirimde doðru yanýtlarý göster?";
+$string['time'] = "Süre";
+$string['timetaken'] = "Geçen süre";
+$string['timecompleted'] = "Tamamlandý";
+$string['true'] = "Doðru";
+$string['truefalse'] = "Doðru/Yanlýþ";
+$string['type'] = "Yazýnýz";
+$string['viewallanswers'] = "\$a tamamlanmýþ sýnavlarý göster";
+$string['yourfinalgradeis'] = "Bu sýnav için final notunuz: \$a";
