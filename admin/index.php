@@ -350,57 +350,59 @@
     print_simple_box_start("center", "100%", "$THEME->cellcontent2", 20);
     print_heading($stradministration);
 
+    $table->tablealign = "right";
     $table->align = array ("right", "left");
     $table->wrap = array ("nowrap", "nowrap");
     $table->cellpadding = 4;
     $table->cellspacing = 3;
-    $table->width = "98%";
+    $table->width = "40%";
 
-    $configdata  = "<a href=\"config.php\">".get_string("configvariables")."</a> - <font size=1>".
+    $configdata  = "<font size=+1>&nbsp;</font><a href=\"config.php\">".get_string("configvariables")."</a> - <font size=1>".
                     get_string("adminhelpconfigvariables")."</font><br />";
-    $configdata .= "<a href=\"site.php\">".get_string("sitesettings")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"site.php\">".get_string("sitesettings")."</a> - <font size=1>".
                     get_string("adminhelpsitesettings")."</font><br />";
-    $configdata .= "<a href=\"../theme/index.php\">".get_string("themes")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"../theme/index.php\">".get_string("themes")."</a> - <font size=1>".
                     get_string("adminhelpthemes")."</font><br />";
-    $configdata .= "<a href=\"lang.php\">".get_string("language")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"lang.php\">".get_string("language")."</a> - <font size=1>".
                     get_string("adminhelplanguage")."</font><br />";
-    $configdata .= "<a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=1>".
                     get_string("adminhelpmanagemodules")."</font><br />";
 
-    $table->data[] = array("<b><a href=\"configure.php\">".get_string("configuration")."</a></b>", $configdata);
+    $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>", 
+                            $configdata);
 
 
-    $userdata = "<a href=\"auth.php\">".get_string("authentication")."</a> - <font size=1>".
+    $userdata = "<font size=+1>&nbsp;</font><a href=\"auth.php\">".get_string("authentication")."</a> - <font size=1>".
                  get_string("adminhelpauthentication")."</font><br />";
 
     if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual") {
-        $userdata .= "<a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".
-                                     get_string("addnewuser")."</a> - <font size=1>".
-                                     get_string("adminhelpaddnewuser")."</font><br />";
+        $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".
+                      get_string("addnewuser")."</a> - <font size=1>".
+                      get_string("adminhelpaddnewuser")."</font><br />";
     }
-    $userdata .= "<a href=\"user.php\">".get_string("edituser")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"user.php\">".get_string("edituser")."</a> - <font size=1>".
                  get_string("adminhelpedituser")."</font><br />";
-    $userdata .= "<a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=1>".
                  get_string("adminhelpassignadmins")."</font><br />";
-    $userdata .= "<a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=1>".
                  get_string("adminhelpassigncreators")."</font><br />";
-    $userdata .= "<a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=1>".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=1>".
                  get_string("adminhelpassignteachers").
                  " <img src=\"../pix/t/user.gif\" height=11 width=11></font><br />";
-    $userdata .= "<a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a> - <font size=1>".
-                 get_string("adminhelpassignstudents");
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a> - <font size=1>".
+                 get_string("adminhelpassignstudents")."</font>";
 
-    $table->data[] = array("<b><a href=\"users.php\">".get_string("users")."</a></b>", $userdata);
+    $table->data[] = array("<font size=+1><b><a href=\"users.php\">".get_string("users")."</a></b>", $userdata);
 
-    $table->data[] = array("<b><a href=\"../course/index.php?edit=on\">".get_string("courses")."</a></b>",
-                           get_string("adminhelpcourses"));
-    $table->data[] = array("<b><a href=\"../course/log.php?id=$site->id.php\">".get_string("logs")."</a></b>",
-                           get_string("adminhelplogs"));
-    $table->data[] = array("<b><a href=\"../files/index.php?id=$site->id\">".get_string("sitefiles")."</a></b>",
-                           get_string("adminhelpsitefiles"));
+    $table->data[] = array("<font size=+1><b><a href=\"../course/index.php?edit=on\">".get_string("courses")."</a></b>",
+                           "<font size=+1>&nbsp;</font>".get_string("adminhelpcourses"));
+    $table->data[] = array("<font size=+1><b><a href=\"../course/log.php?id=$site->id.php\">".get_string("logs")."</a></b>",
+                           "<font size=+1>&nbsp;</font>".get_string("adminhelplogs"));
+    $table->data[] = array("<font size=+1><b><a href=\"../files/index.php?id=$site->id\">".get_string("sitefiles")."</a></b>",
+                           "<font size=+1>&nbsp;</font>".get_string("adminhelpsitefiles"));
     if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
-        $table->data[] = array("<b><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></b>",
-                               get_string("adminhelpmanagedatabase"));
+        $table->data[] = array("<font size=+1><b><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></b>",
+                               "<font size=+1>&nbsp;</font>".get_string("adminhelpmanagedatabase"));
     }
 
     print_table($table);
