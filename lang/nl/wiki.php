@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.3 development (2004032800)
+      // wiki.php - created with Moodle 1.3 development (2004040500)
 
 
+$string['00'] = 'leeg';
 $string['FileDownload'] = 'Bestand downloaden';
 $string['MostOftenChangedPages'] = 'Meest gewijzigde pagina\'s';
 $string['MostVisitedPages'] = 'Meest bezochte pagina\'s';
