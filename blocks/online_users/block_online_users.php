@@ -11,7 +11,7 @@ class CourseBlock_online_users extends MoodleBlock {
     function has_config() {return true;}
 
     function print_config() {
-        global $CFG, $THEME;
+        global $CFG, $USER, $THEME;
         print_simple_box_start('center', '', $THEME->cellheading);
         include($CFG->dirroot.'/blocks/'.$this->name().'/config.html');
         print_simple_box_end();

@@ -13,7 +13,7 @@ class CourseBlock_course_list extends MoodleBlock {
     }
 
     function print_config() {
-        global $CFG, $THEME;
+        global $CFG, $USER, $THEME;
         print_simple_box_start('center', '', $THEME->cellheading);
         include($CFG->dirroot.'/blocks/'.$this->name().'/config.html');
         print_simple_box_end();
