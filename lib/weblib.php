@@ -2292,6 +2292,9 @@ function emoticonhelpbutton($form, $field) {
 function notice ($message, $link="") {
     global $CFG, $THEME;
 
+    $message = clean_text($message);
+    $link    = clean_text($link);
+
     if (!$link) {
         if (!empty($_SERVER["HTTP_REFERER"])) {
             $link = $_SERVER["HTTP_REFERER"];
@@ -2310,6 +2313,10 @@ function notice ($message, $link="") {
 function notice_yesno ($message, $linkyes, $linkno) {
     global $THEME;
 
+    $message = clean_text($message);
+    $linkyes = clean_text($linkyes);
+    $linkno = clean_text($linkno);
+
     print_simple_box_start("center", "60%", "$THEME->cellheading");
     echo "<p align=\"center\"><font size=\"3\">$message</font></p>";
     echo "<p align=\"center\"><font size=\"3\"><b>";
@@ -2322,6 +2329,9 @@ function notice_yesno ($message, $linkyes, $linkno) {
 
 function redirect($url, $message="", $delay="0") {
 // Redirects the user to another page, after printing a notice
+
+    $url     = clean_text($url);
+    $message = clean_text($message);
 
     if (empty($message)) {
         echo "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />";
@@ -2343,6 +2353,9 @@ function redirect($url, $message="", $delay="0") {
 }
 
 function notify ($message, $color="red", $align="center") {
+
+    $message = clean_text($message);
+
     echo "<p align=\"$align\"><b><font color=\"$color\">$message</font></b></p>\n";
 }
 
