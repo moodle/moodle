@@ -1,0 +1,103 @@
+<?PHP // $Id$
+
+#------------------------------------------------------------
+$string['modulename'] = "Quiz";
+$string['modulenameplural'] = "Quizzes";
+#------------------------------------------------------------
+
+$string['addselectedtoquiz'] = "Add selected to quiz";
+$string['alwaysavailable'] = "Always available";
+$string['alreadysubmitted'] = "It is likely that you have already submitted this attempt";
+$string['answer'] = "Answer";
+$string['answerhowmany'] = "One or multiple answers?";
+$string['answersingleyes'] = "One answer only";
+$string['answersingleno']  = "Multiple answers allowed";
+$string['attempt'] = "Attempt \$a";
+$string['attemptfirst'] = "First attempt";
+$string['attemptlast'] = "Last attempt";
+$string['attemptquiznow'] = "Attempt quiz now";
+$string['attempts'] = "Attempts";
+$string['attemptsallowed'] = "Attempts allowed";
+$string['attemptsunlimited'] = "Unlimited attempts";
+$string['backtoquiz'] = "Back to quiz editing";
+$string['bestgrade'] = "Best grade";
+$string['casesensitive'] = "Case sensitivity";
+$string['caseyes'] = "Yes, case must match";
+$string['caseno'] = "No, case is unimportant";
+$string['categories'] = "Categories";
+$string['category'] = "Category";
+$string['categoryinfo'] = "Category info";
+$string['categorymove'] = "The category '\$a->name' contains \$a->count questions.  Please choose another category to move them to.";
+$string['categorymoveto'] = "Move them to this category";
+$string['choice'] = "Choice";
+$string['choices'] = "Available choices";
+$string['correctanswer'] = "Correct answer";
+$string['correctanswers'] = "Correct answers";
+$string['createnewquestion'] = "Create new question";
+$string['daysavailable'] = "Days available";
+$string['default'] = "Default";
+$string['defaultinfo'] = "The default category for questions.";
+$string['deletequestioncheck'] = "Are you absolutely sure you want to delete '\$a'?";
+$string['editcategories'] = "Edit categories";
+$string['editingquiz'] = "Editing quiz";
+$string['editingquestion'] = "Editing a question";
+$string['editingshortanswer'] = "Editing a short answer question";
+$string['editingtruefalse'] = "Editing a true/false question";
+$string['editingmultichoice'] = "Editing a multiple choice question";
+$string['false'] = "False";
+$string['feedback'] = "Feedback";
+$string['filloutoneanswer'] = "You must fill out at least one possible answer.  Answers left blank will not be used.";
+$string['fillouttwochoices'] = "You must fill out at least two choices.  Choices left blank will not be used.";
+$string['fractionsaddwrong'] = "The positive grades you have chosen do not add up to 100%%
+<BR>Instead, they add up to \$a%%
+<BR>Do you want to go back and fix this question?";
+$string['fractionsnomax'] = "One of the answers should be 100%%, so that it is
+<BR>possible to get a full grade for this question.
+<BR>Do you want to go back and fix this question?";
+$string['gradeaverage'] = "Average grade";
+$string['gradehighest'] = "Highest grade";
+$string['grademethod'] = "Grading method";
+$string['guestsno'] = "Sorry, guests can not see or attempt quizzes";
+$string['imagedisplay'] = "Image to display";
+$string['introduction'] = "Introduction";
+$string['marks'] = "Marks";
+$string['multichoice'] = "Multiple Choice";
+$string['noanswers'] = "No answers were selected!";
+$string['noattempts'] = "No attempts have been made on this quiz";
+$string['nomoreattempts'] = "No more attempts are allowed";
+$string['noquestions'] = "No questions have been added yet";
+$string['publish'] = "Publish";
+$string['question'] = "Question";
+$string['questioninuse'] = "The question '\$a' is currently being used:";
+$string['questions'] = "Questions";
+$string['questionname'] = "Question name";
+$string['quizavailable'] = "The quiz is available until: \$a";
+$string['quizclose'] = "Close the quiz";
+$string['quizclosed'] = "This quiz closed on \$a";
+$string['quizopen'] = "Open the quiz";
+$string['quiznotavailable'] = "The quiz will not be available until: \$a";
+$string['random'] = "Random set";
+$string['regrade'] = "Regrade all attempts";
+$string['regradecomplete'] = "All attempts have been regraded";
+$string['regradecount'] = "\$a->changed out of \$a->attempt grades were changed";
+$string['rename'] = "Rename";
+$string['report'] = "Reports";
+$string['save'] = "Save";
+$string['savegrades'] = "Save grades";
+$string['savemyanswers'] = "Save my answers";
+$string['savequiz'] = "Save this whole quiz";
+$string['score'] = "Raw score";
+$string['select'] = "Select";
+$string['selectcategoryabove'] = "Select a category above";
+$string['shortanswer'] = "Short Answer";
+$string['show'] = "Show";
+$string['showfeedback'] = "After answering, show feedback?";
+$string['showcorrectanswer'] = "In feedback, show correct answers?";
+$string['time'] = "Time";
+$string['timetaken'] = "Time taken";
+$string['timecompleted'] = "Completed";
+$string['true'] = "True";
+$string['truefalse'] = "True/False";
+$string['type'] = "Type";
+$string['viewallanswers'] = "View \$a completed quizzes";
+$string['yourfinalgradeis'] = "Your final grade for this quiz is \$a";
