@@ -1,5 +1,7 @@
 <?PHP // $Id$ 
 
+$string[thislanguage] = "English";  // Francais, Italiano, etc etc
+
 $string[action] = "Action";
 $string[activity] = "Activity";
 $string[activities] = "Activities";
@@ -38,6 +40,7 @@ $string[chooselogs] = "Choose which logs you want to see";
 $string[choosetheme] = "Choose theme";
 $string[chooseuser] = "Choose a user";
 $string[city] = "City/town";
+$string[comparelanguage] = "Compare language to English";
 $string[confirmed] = "Your registration has been confirmed";
 $string[courseupdates] = "Course updates";
 $string[cookiesenabled] = "Cookies must be enabled in your browser";
@@ -51,6 +54,7 @@ $string[courses] = "Courses";
 $string[createaccount] = "Create my new account";
 $string[createuserandpass] = "Create a new username and password to log in with";
 $string[createziparchive] = "Create zip archive";
+$string[currentlanguage] = "Current language";
 $string[currentlocaltime] = "your current local time";
 $string[databasechecking] = "Upgrading Moodle database from version \$a->oldversion to \$a->newversion...";
 $string[databasesetup] = "Setting up database";
@@ -209,6 +213,7 @@ $string[logout] = "Logout";
 $string[logs] = "Logs";
 $string[makeafolder] = "Make a folder";
 $string[mainmenu] = "Main menu";
+$string[managedatabase] = "Manage database";
 $string[markthistopic] = "Mark this topic as the current topic";
 $string[maximumchars] = "Maximum of \$a characters";
 $string[maximumgrade] = "Maximum grade";
@@ -227,6 +232,7 @@ $string[missingpassword] = "Missing password";
 $string[missingshortsitename] = "Missing short site name";
 $string[missingsitedescription] = "Missing site description";
 $string[missingsitename] = "Missing site name";
+$string[missingstrings] = "Check for missing strings";
 $string[missingstudent] = "Must choose something";
 $string[missingsummary] = "Missing summary";
 $string[missingteacher] = "Must choose something";

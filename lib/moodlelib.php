@@ -1363,7 +1363,7 @@ function get_max_upload_file_size() {
 }
 
 
-function get_directory_list($rootdir, $excludefile="") {
+function get_directory_list($rootdir, $excludefile="", $descend=true) {
 // Returns an array with all the filenames in 
 // all subdirectories, relative to the given rootdir.
 // If excludefile is defined, then that file/directory is ignored
@@ -1373,10 +1373,10 @@ function get_directory_list($rootdir, $excludefile="") {
     $dir = opendir($rootdir);
 
     while ($file = readdir($dir)) {
-        if ($file != "." and $file != ".." and $file != $excludefile) {
+        if ($file != "." and $file != ".." and $file != "CVS" and $file != $excludefile) {
             $fullfile = $rootdir."/".$file;
-            if (filetype($fullfile) == "dir") {
-                $subdirs = get_directory_list($fullfile, $excludefile);
+            if ($descend and filetype($fullfile) == "dir") {
+                $subdirs = get_directory_list($fullfile, $excludefile, $descend);
                 foreach ($subdirs as $subdir) {
                     $dirs[] = $file."/".$subdir;
                 }
@@ -1386,6 +1386,8 @@ function get_directory_list($rootdir, $excludefile="") {
         }
     }
     closedir($dir);
+
+    asort($dirs);
 
     return $dirs;
 }
