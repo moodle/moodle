@@ -22,6 +22,7 @@ $string['messages'] = 'メッセージ';
 $string['messaging'] = 'メッセージ';
 $string['mycontacts'] = 'マイ コンタクト';
 $string['newsearch'] = '新しい検索';
+$string['nomessages'] = '待ちメッセージはありません。';
 $string['nosearchresults'] = '該当データが見つかりませんでした。';
 $string['offlinecontacts'] = 'オフライン中のコンタクト ($a)';
 $string['onlinecontacts'] = 'オンライン中のコンタクト ($a)';
