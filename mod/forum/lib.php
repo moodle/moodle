@@ -443,8 +443,11 @@ function forum_cron () {
                 $posttext = get_string('digestmailheader', 'forum', $headerdata)."\n\n";
                 $headerdata->userprefs = '<a target="_blank" href="'.$headerdata->userprefs.'">'.get_string('digestmailprefs', 'forum').'</a>';
 
-                $posthtml = "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$CFG->stylesheet."\" /></head>\n";
-                $posthtml .= "<body>";
+                $posthtml = "<head>";
+                foreach ($CFG->stylesheets as $stylesheet) {
+                    $posthtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
+                }
+                $posthtml .= "</head>\n<body>\n";
                 $posthtml .= '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
 
                 foreach($thesediscussions as $discussionid) {
@@ -653,8 +656,12 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
 
         $posthtml = '';
-        $posthtml .= "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$CFG->stylesheet."\" /></head>\n";
-        $posthtml .= "<body>\n\n";
+        $posthtml .= '<head>';
+        foreach ($CFG->stylesheets as $stylesheet) {
+            $posthtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
+        }
+        $posthtml .= '</head>';
+        $posthtml .= "\n<body>\n\n";
 
         $posthtml .= "<p><font face=\"sans-serif\">".
         "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> &raquo; ".
