@@ -603,7 +603,7 @@ function print_course_categories($categories, $selected="none", $width=180) {
     if ($selected == "index") {  // Print comprehensive index of categories with courses
         if ($courses = get_records_sql("SELECT * FROM course WHERE category > 0 ORDER BY shortname")) {
             if (isset($USER->id) and !isadmin()) {
-                print_simple_box_start("CENTER", "100%");
+                print_simple_box_start("CENTER", "100%", $THEME->cellheading);
                 print_heading("<A HREF=\"course/index.php?category=my\">".get_string("mycourses")."</A>", "LEFT");
                 $some = false;
                 echo "<UL>";
