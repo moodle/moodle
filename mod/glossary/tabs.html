@@ -38,13 +38,10 @@
 
     $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&mode=date";
 
-    if ( $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
+    $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id&mode=letter";
+    $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&mode=cat";
+    $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&mode=author";
 
-        $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id&mode=letter";
-        $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&mode=cat";
-        $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&mode=author";
-
-    }
 
     if (isteacher($course->id)) {
         $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");

@@ -16,10 +16,8 @@
         error("Site isn't defined!");
     }
     
-    if ( !$displayformat = get_record("glossary_displayformats","fid",$id) ) {
-        unset($displayformat);
-        $displayformat->fid = $id;
-        $displayformat->id = insert_record("glossary_displayformats",$displayformat);
+    if ( !$displayformat = get_record("glossary_formats","id",$id) ) {
+        error ("Invalid Glossary Format");
     }
 
     $form = data_submitted();
@@ -30,20 +28,20 @@
             } else {
                 $displayformat->visible = 1;
             }
-            update_record("glossary_displayformats",$displayformat);
+            update_record("glossary_formats",$displayformat);
         }
-        redirect($_SERVER["HTTP_REFERER"]);
+        redirect("../../admin/module.php?module=glossary#formats");
         die;
     } elseif ( $mode == 'edit' and $form) {
         
-        $displayformat->relatedview = $form->relatedview;
+        $displayformat->popupformatname = $form->popupformatname;
         $displayformat->showgroup   = $form->showgroup;
         $displayformat->defaultmode = $form->defaultmode;
         $displayformat->defaulthook = $form->defaulthook;
         $displayformat->sortkey     = $form->sortkey;
         $displayformat->sortorder   = $form->sortorder;
         
-        update_record("glossary_displayformats",$displayformat);
+        update_record("glossary_formats",$displayformat);
         redirect("../../admin/module.php?module=glossary#formats");
         die;
     }
@@ -74,57 +72,34 @@
     ?>
 	<tr>
 	    <td colspan=3 align=center><strong>
-		<?php 
-        switch ( $id ) {
-        case 0: 
-            echo get_string('displayformatdefault',"glossary");
-        break;
-        
-        case 1: 
-            echo get_string('displayformatcontinuous',"glossary");
-        break;
-        default:
-            echo get_string('displayformat'.$id,"glossary");
-        break;
-        }
-        ?>
+		<?php echo get_string('displayformat'.$displayformat->name,"glossary"); ?>
         </strong></td>
 	</tr>
     <tr valign=top>
-        <td align="right" width="20%">    
-			<p>Related Display Format:</td>
+        <td align="right" width="20%"><?PHP print_string('popupformat','glossary'); ?></td>
         <td>
-        <SELECT size=1 name=relatedview>
-        <OPTION value=0 <?php if ( $displayformat->relatedview == 0 ) {
-                                  echo " SELECTED ";
-                              }
-                        ?>><?php p(get_string("displayformatdefault","glossary"))?></OPTION>
-        <OPTION value=1 <?php if ( $displayformat->relatedview == 1 ) {
-                                  echo " SELECTED ";
-                              }
-                        ?>><?php p(get_string("displayformatcontinuous","glossary"))?></OPTION>
      <?PHP
-        $i = 2;        
-        $dpname = get_string("displayformat".$i,"glossary");
-        $file = "$CFG->dirroot/mod/glossary/formats/$i.php";        
-        while ( file_exists($file) ) {
-            echo '<OPTION value="' . $i . '"';
-            if ( $displayformat->relatedview == $i ) {
-                echo " SELECTED ";
-            }
-            echo '> ' . get_string("displayformat".$i,"glossary") . '</OPTION>';
-            $i++;
-            $file = "$CFG->dirroot/mod/glossary/formats/$i.php";
+        //get and update available formats
+        $recformats = glossary_get_available_formats();
+
+        $formats = array();
+    
+        //Take names
+        foreach ($recformats as $format) {
+           $formats[$format->name] = get_string("displayformat$format->name", "glossary");
         }
+        //Sort it
+        asort($formats);
+        
+        choose_from_menu($formats,'popupformatname',$displayformat->popupformatname);
      ?>
-        </SELECT>
         </td>
         <td width="60%">
         <?php print_string("cnfrelatedview", "glossary") ?><br /><br />
         </td>
     </tr>
     <tr valign=top>
-        <td align="right" width="20%"><p>Default Mode:</td>
+        <td align="right" width="20%"><?PHP print_string('defaultmode','glossary'); ?></td>
         <td>
         <SELECT size=1 name=defaultmode>
     <?php 
@@ -161,7 +136,7 @@
         </td>
     </tr>
     <tr valign=top>
-        <td align="right" width="20%"><p>Default Hook:</td>
+        <td align="right" width="20%"><?PHP print_string('defaulthook','glossary'); ?></td>
         <td>
         <SELECT size=1 name=defaulthook>
     <?php 
@@ -198,7 +173,7 @@
         </td>
     </tr>
     <tr valign=top>
-        <td align="right" width="20%"><p>Default Sort Key:</td>
+        <td align="right" width="20%"><?PHP print_string('defaultsortkey','glossary'); ?></td>
         <td>
         <SELECT size=1 name=sortkey>
     <?php 
@@ -235,7 +210,7 @@
         </td>
     </tr>
     <tr valign=top>
-        <td align="right" width="20%"><p>Default Sort Order:</td>
+        <td align="right" width="20%"><?PHP print_string('defaultsortorder','glossary'); ?></td>
         <td>
         <SELECT size=1 name=sortorder>
     <?php 
@@ -263,7 +238,7 @@
         <td align="right" width="20%"><p>Include Group Breaks:</td>
         <td>
         <SELECT size=1 name=showgroup>
-    <?php 
+    <?php
         $yselected = "";
         $nselected = "";
         if ($displayformat->showgroup) {

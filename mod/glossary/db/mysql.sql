@@ -15,7 +15,7 @@ CREATE TABLE prefix_glossary (
      intro text NOT NULL,
      studentcanpost tinyint(2) unsigned NOT NULL default '0',
      allowduplicatedentries tinyint(2) unsigned NOT NULL default '0',
-     displayformat tinyint(2) unsigned NOT NULL default '0',
+     displayformat varchar(50) NOT NULL default 'dictionary',
      mainglossary tinyint(2) unsigned NOT NULL default '0',
      showspecial tinyint(2) unsigned NOT NULL default '1',
      showalphabet tinyint(2) unsigned NOT NULL default '1',
@@ -104,20 +104,16 @@ CREATE TABLE prefix_glossary_comments (
      PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='comments on glossary entries';
 
-CREATE TABLE prefix_glossary_displayformats (
+CREATE TABLE prefix_glossary_formats (
      id int(10) unsigned NOT NULL auto_increment,
-     fid int(10) unsigned NOT NULL default '0',
+     name varchar(50) NOT NULL,
+     popupformatname varchar(50) NOT NULL,
      visible tinyint(2) unsigned NOT NULL default '1',
-
-     relatedview tinyint(3) NOT NULL default '-1',
      showgroup tinyint(2) unsigned NOT NULL default '1',
-
      defaultmode varchar(50) NOT NULL default '',
      defaulthook varchar(50) NOT NULL default '',
-	 
      sortkey varchar(50) NOT NULL default '',
      sortorder varchar(50) NOT NULL default '',
-	 
      PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='Setting of the display formats';
 

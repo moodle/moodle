@@ -1,5 +1,7 @@
 <?php   // $Id$
 
+    global $CFG;
+
     require_once("../../config.php");
     require_once("lib.php");
     
@@ -9,8 +11,8 @@
     optional_variable($sortkey,"UPDATE");          // Sorting key 
     optional_variable($sortorder,"asc");           // Sorting order 
     optional_variable($offset);                    // number of entries to bypass
+    optional_variable($displayformat,-1); 
 
-    print_header();
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -24,10 +26,11 @@
         error("Course module is incorrect");
     } 
     
-    global $CFG;
     if ( !$entriesbypage = $glossary->entbypage ) {
         $entriesbypage = $CFG->glossary_entbypage;
     }
+
+    print_header(strip_tags("$course->shortname: $glossary->name"));
 
     if ($CFG->forcelogin) {
         require_login();
@@ -38,6 +41,28 @@
         if (isguest()) {
             error("You must be logged to use this page.");
         } 
+    }
+
+/// setting the default values for the display mode of the current glossary
+/// only if the glossary is viewed by the first time
+    if ( $dp = get_record('glossary_formats','name', $glossary->displayformat) ) {
+        $printpivot = $dp->showgroup;
+        if ( $mode == '' and $hook == '' and $show == '') {
+            $mode      = $dp->defaultmode;
+            $hook      = $dp->defaulthook;
+            $sortkey   = $dp->sortkey;
+            $sortorder = $dp->sortorder;
+        }
+    } else {
+        $printpivot = 1;
+        if ( $mode == '' and $hook == '' and $show == '') {
+            $mode = 'letter';
+            $hook = 'ALL';
+        }
+    }
+
+    if ( $displayformat == -1 ) {
+         $displayformat = $glossary->displayformat;
     }
 
 /// stablishing flag variables
@@ -118,12 +143,11 @@
     if ( $hook == 'SPECIAL' ) {
         $alphabet = explode(",", get_string("alphabet"));
     }
-    $tableisopen = 0;
 
     $site = get_record("course","id",1);
     echo '<p align="right"><font size=-1>' . userdate(time()) . '</font></p>';
     echo '<strong>' . $site->fullname . '</strong><br>';
-    echo get_string("course") . ': <strong>' . $course->fullname . '</strong><br />';
+    echo get_string("course") . ': <strong>' . $course->fullname . ' ('. $course->shortname . ')</strong><br />';
     echo get_string("modulename","glossary") . ': <strong>' . $glossary->name . '</strong><p>';
     if ( $allentries ) {
         foreach ($allentries as $entry) {
@@ -178,49 +202,31 @@
             /// ok, if it's a valid entry.. Print it.
             if ( $showentry ) {
     
-                if ( !$tableisopen ) {
-                    echo '<table align="center" width="95%" bgcolor="#FFFFFF" style="border-style: solid; border-width: 1px;">';
-                    $tableisopen = 1;
-                }
                 if ( $currentpivot != strtoupper($pivot) ) {  
                     // print the group break if apply
                     if ( $printpivot )  {
                         $currentpivot = strtoupper($pivot);
     
-                        echo '<tr>';
                         $pivottoshow = $currentpivot;
                         if ( isset($entry->uid) ) {
-                        // printing the user icon if defined (only when browsing authors)
-                            echo '<td colspan="2" align="left" style="border-style: solid; border-width: 1px;">';
                             $user = get_record("user","id",$entry->uid);
                             $pivottoshow = fullname($user, isteacher($course->id));
-                        } else {
-                            echo '<td colspan="2" align="center" style="border-style: solid; border-width: 1px;">';
                         }
     
-                        echo "<strong><i>$pivottoshow</i></strong>" ;
-                        echo '</td>';
-                        echo '</tr>';
+                        echo "<p align=\"center\"><strong><i>$pivottoshow</i></strong></p>" ;
                     }
                 }
     
-                echo '<tr>';
-                echo '<td width="25%" align="right" valign="top"><b>'. $entry->concept . ': </b></td>';
-                echo '<td width="75%" style="border-style: solid; border-width: 1px;">';
+                echo '<b>'. strip_tags($entry->concept) . ': </b>';
+                $options->para = false;
+                $definition = format_text('<nolink>' . strip_tags($entry->definition) . '</nolink>', $entry->format,$options);
         
-                if ( $entry->attachment) {
-                    glossary_print_entry_attachment($entry);
-                }
-                echo strip_tags($entry->definition);
+                echo ($definition);
         
-                echo '<br><br></tr>';
+                echo '<br><br>';
             }
         }
     }
-    if ($tableisopen) {
-        echo '</table>';
-    }
-    echo '<center><font size=-1>' . userdate(time()) . '</font></center>';
 
     echo '</body></html>';
 ?>

@@ -51,11 +51,7 @@
                           ge.id = gec.entryid AND gc.id = gec.categoryid AND
                           (ge.approved != 0 $userid)";
 
-            if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
-                $sqlorderby = ' ORDER BY gc.name, ge.timecreated';
-            } else {
-                $sqlorderby = ' ORDER BY gc.name, ge.concept';
-            }
+            $sqlorderby = ' ORDER BY gc.name, ge.concept';
 
         } elseif ($hook == GLOSSARY_SHOW_NOT_CATEGORISED ) { 
 

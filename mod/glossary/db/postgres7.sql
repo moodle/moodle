@@ -15,7 +15,7 @@ CREATE TABLE prefix_glossary (
      intro text NOT NULL default '',
      studentcanpost int2 NOT NULL default '0',
      allowduplicatedentries int2 NOT NULL default '0',
-     displayformat int2 NOT NULL default '0',
+     displayformat varchar(50) NOT NULL default 'dictionary',
      mainglossary int2 NOT NULL default '0',
      showspecial int2 NOT NULL default '1',
      showalphabet int2 NOT NULL default '1',
@@ -108,29 +108,25 @@ CREATE TABLE prefix_glossary_comments (
 );
 
 #
-# Table structure for table `glossary_displayformats`
+# Table structure for table `glossary_formats`
 #
 
-CREATE TABLE prefix_glossary_displayformats (
+CREATE TABLE prefix_glossary_formats (
      id SERIAL,
-     fid int4 NOT NULL default '0',
+     name varchar(50) NOT NULL,
+     popupformatname varchar(50) NOT NULL,
      visible int2 NOT NULL default '1',
-
-     relatedview int4 NOT NULL default '-1',
      showgroup int2 NOT NULL default '1',
-
      defaultmode varchar(50) NOT NULL default '',
      defaulthook varchar(50) NOT NULL default '',
-	 
      sortkey varchar(50) NOT NULL default '',
      sortorder varchar(50) NOT NULL default '',
-	 
      PRIMARY KEY  (id)
 );
 
 
 #
-# Table structure for table `forum_ratings`
+# Table structure for table `glossary_ratings`
 #
 
 CREATE TABLE prefix_glossary_ratings (

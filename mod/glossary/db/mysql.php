@@ -274,6 +274,67 @@ function glossary_upgrade($oldversion) {
   if ( $oldversion < 2004072300) {
       table_column("glossary_alias", "alias", "alias", "VARCHAR", "255", "", "", "NOT NULL");
   }
+
+  if ( $oldversion < 2004072400) {
+
+      //Create new table glossary_formats to store format info
+      execute_sql("CREATE TABLE `{$CFG->prefix}glossary_formats` (
+                       `id` INT(10) unsigned NOT NULL auto_increment,
+                       `name` VARCHAR(50) NOT NULL,
+                       `popupformatname` VARCHAR(50) NOT NULL, 
+                       `visible` TINYINT(2) UNSIGNED NOT NULL default '1',
+                       `showgroup` TINYINT(2) UNSIGNED NOT NULL default '1',
+                       `defaultmode` VARCHAR(50) NOT NULL default '',
+                       `defaulthook` VARCHAR(50) NOT NULL default '',
+                       `sortkey` VARCHAR(50) NOT NULL default '',
+                       `sortorder` VARCHAR(50) NOT NULL default '',
+                   PRIMARY KEY  (`id`)                    
+                   ) TYPE=MyISAM COMMENT='Setting of the display formats'");
+
+      //Define current 0-6 format names
+      $formatnames = array('dictionary','continuous','fullwithauthor','encyclopedia',
+                           'faq','fullwithoutauthor','entrylist');
+
+      //Fill the new table from the old one (only 'valid', 0-6, formats)
+      if ($formats = get_records('glossary_displayformats')) {
+          foreach ($formats as $format) {
+              //Format names
+              if ($format->fid >= 0 && $format->fid <= 6) {
+                  $format->name = $formatnames[$format->fid];
+              }
+
+              //Format popupformatname
+              $format->popupformatname = 'dictionary';  //Default format
+              if ($format->relatedview >= 0 && $format->relatedview <= 6) {
+                  $format->popupformatname = $formatnames[$format->relatedview];
+              }
+
+              //Insert the new record
+              //Only if $format->name is set (ie. formats 0-6)
+              if ($format->name) {
+                  insert_record('glossary_formats',$format);
+              }
+              
+          }
+      }
+
+      //Drop the old formats table
+      execute_sql("DROP TABLE `{$CFG->prefix}glossary_displayformats`");
+
+      //Modify the glossary->displayformat field
+      table_column('glossary', 'displayformat', 'displayformat', 'VARCHAR', '50', '', 'dictionary', 'NOT NULL');
+
+      //Update glossary->displayformat field
+      if ($glossaries = get_records('glossary')) {
+          foreach($glossaries as $glossary) {
+              $displayformat = 'dictionary';  //Default format
+              if ($glossary->displayformat >= 0 && $glossary->displayformat <= 6) {
+                  $displayformat = $formatnames[$glossary->displayformat];
+              }
+              set_field('glossary','displayformat',$displayformat,'id',$glossary->id);
+          }
+      }
+  }
     
   return true;
 }

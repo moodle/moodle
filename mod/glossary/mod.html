@@ -1,5 +1,7 @@
 <?PHP  // $Id$
 
+include_once($CFG->dirroot.'/mod/glossary/lib.php');
+
 if (!isset($form->studentcanpost)) {
     $form->studentcanpost = $CFG->glossary_studentspost;
 }
@@ -22,7 +24,7 @@ if (!isset($form->mainglossary)) {
     $form->mainglossary = 0;
 }
 if (!isset($form->displayformat)) {
-    $form->displayformat = 0;
+    $form->displayformat = 'dictionary';
 }
 if ( !isset($form->globalglossary) ) {
     $form->globalglossary = 0;
@@ -236,35 +238,21 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
     <TD align=right><P><B><?php echo get_string("displayformat", "glossary") ?>:</B></P></TD>
     <TD>
     <?php
-    $formats = array();
-    $formats[0] = get_string("displayformatdefault", "glossary");
-    $formats[1] = get_string("displayformatcontinuous", "glossary");
-
-    $basedir = opendir("$CFG->dirroot/mod/glossary/formats");
-    while ($dir = readdir($basedir)) {
-        $firstchar = substr($dir, 0, 1);
-        if ($firstchar == "." or $dir == "CVS" or $dir == "_vti_cnf") {
-            continue;
-        }
-        if (filetype("$CFG->dirroot/mod/glossary/formats/$dir") == "dir") {
-            continue;
-        }
-        if ( $pos = strpos($dir, ".") ) {
-            $dir = substr($dir, 0, $pos );
-            if ($dir != 0 and $dir != 1) {  // excluding basic formats
-                $dp = get_record("glossary_displayformats","fid",$dir);
-                if ( !$dp or $dp->visible ) {
-                    $formats[$dir] = get_string("displayformat$dir", "glossary");
-                }
-            }
-        }
-    }
-    asort($formats);
-    choose_from_menu ($formats, "displayformat", $form->displayformat, "");
-
-?>
-
-    </select> <?php helpbutton("displayformat", get_string("displayformat", "glossary"), "glossary") ?>
+        //get and update available formats
+        $recformats = glossary_get_available_formats();
+    
+        $formats = array(); 
+        
+        //Take names
+        foreach ($recformats as $format) {
+           $formats[$format->name] = get_string("displayformat$format->name", "glossary");
+        }       
+        //Sort it
+        asort($formats);
+        
+        choose_from_menu($formats,'displayformat',$form->displayformat,'');
+    ?>
+    <?php helpbutton("displayformat", get_string("displayformat", "glossary"), "glossary") ?>
     </TD>
 </TR>
 <TR valign=top>
@@ -326,7 +314,8 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
 </TR>
 <?php
     //Only show rss parameters if rss is activated at site and glossary levels
-    if ($CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds) {
+    if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
+        $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds) {
         echo "<tr valign=top>";
         echo "<td align=right><p><b>".get_string("rsstype").":</b></p></td>";
         echo "<td>";

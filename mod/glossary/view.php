@@ -70,7 +70,7 @@
 
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
-    if ( $dp = get_record("glossary_displayformats","fid", $glossary->displayformat) ) {
+    if ( $dp = get_record('glossary_formats','name', $glossary->displayformat) ) {
         $printpivot = $dp->showgroup;
         if ( $mode == '' and $hook == '' and $show == '') {
             $mode      = $dp->defaultmode;
@@ -89,9 +89,6 @@
     if ( $displayformat == -1 ) {
          $displayformat = $glossary->displayformat;
     } 
-    if ( $displayformat == GLOSSARY_FORMAT_CONTINUOUS ) { 
-        $mode = 'date';
-    }
 
     if ( $show ) {
         $mode = 'term';
@@ -140,10 +137,8 @@
     
     case 'entry':  /// Looking for a certain entry id
         $tab = GLOSSARY_STANDARD_VIEW;
-        if ( $dp = get_record("glossary_displayformats","fid", $glossary->displayformat) ) {
-            if ( $dp->relatedview >= 0 ) {
-                $displayformat = $dp->relatedview;
-            }
+        if ( $dp = get_record("glossary_formats","name", $glossary->displayformat) ) {
+            $displayformat = $dp->popupformatname;
         }
     break;
     
@@ -225,7 +220,8 @@
         navmenu($course, $cm));
 
     //If rss are activated at site and glossary level and this glossary has rss defined, show link
-        if ($CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype and $glossary->rssarticles) {
+        if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
+            $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype and $glossary->rssarticles) {
             echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top"><td align="right">';
             $tooltiptext = get_string("rsssubscriberss","glossary",$glossary->name);
             rss_print_link($course->id, $USER->id, "glossary", $glossary->id, $tooltiptext);
@@ -235,7 +231,7 @@
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     if ( $isuserframe and $mode != 'search') {
     /// the "Print" icon
-        echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"_blank\" href=\"print.php?id=$cm->id&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder&offset=$offset\">";
+        echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder&offset=$offset\">";
         echo '<img border=0 src="print.gif"/></a>';
     }
     echo '</b></font></p>';
@@ -281,7 +277,6 @@
     $currentpivot = '';
     $ratingsmenuused = NULL;
     $paging = NULL;
-    $tableisopen = 0;
     if ( $hook == 'SPECIAL' ) {
         $alphabet = explode(",", get_string("alphabet"));
     }
@@ -391,10 +386,6 @@
 
                     // print the group break if apply
                     if ( $printpivot )  {
-                        if ( $tableisopen ) {
-                            print_simple_box_end();
-                            $tableisopen = 0;
-                        }
                         $currentpivot = strtoupper($pivot);
 
                         echo '<p>';
@@ -416,22 +407,9 @@
                         echo "<strong> $pivottoshow</strong>" ;
                         echo '</td></tr></table>';
 
-                        if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
-                            $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE ) {
-                            print_simple_box_start("center","95%","#ffffff","5","generalbox");
-                            $tableisopen = 1;
-                        }
                     }
                 }
                 
-                if ( !$tableisopen ) {
-                    if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
-                        $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE ) {
-                        print_simple_box_start("center","95%","#ffffff","5","generalbox");
-                        $tableisopen = 1;
-                    }
-                }
-
                 $concept = $entry->concept;
                 $definition = $entry->definition;
     
@@ -447,13 +425,6 @@
                 }
 
                 $entriesshown++;
-            }
-        }
-        if ( $tableisopen ) {
-            if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
-                $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
-                print_simple_box_end();
-                $tableisopen = 0;
             }
         }
     }

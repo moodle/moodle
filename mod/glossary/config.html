@@ -194,69 +194,35 @@
 <tr>
     <td colspan=3 align=center>
 <?php
-    if ( !$displayformat = get_record("glossary_displayformats","fid",0) ) {
-        unset($displayformat);
-        $displayformat->fid = 0;
-        $displayformat->relatedview = 0;
-        $displayformat->visible = 1;
-        $displayformat->id = insert_record("glossary_displayformats",$displayformat);
-    }
-    if ( !$displayformat = get_record("glossary_displayformats","fid",1) ) {
-        unset($displayformat);
-        $displayformat->fid = 1;
-        $displayformat->relatedview = 1;
-        $displayformat->visible = 1;
-        $displayformat->id = insert_record("glossary_displayformats",$displayformat);
-    }
+
+    //Update and get available formats
+    $recformats = glossary_get_available_formats();
 
     $formats = array();
-    $formats[0] = get_string("displayformatdefault", "glossary");
-    $formats[1] = get_string("displayformatcontinuous", "glossary");
 
-    $basedir = opendir("$CFG->dirroot/mod/glossary/formats");
-    while ($dir = readdir($basedir)) {
-        $firstchar = substr($dir, 0, 1);
-        if ($firstchar == "." or $dir == "CVS" or $dir == "_vti_cnf") {
-            continue;
-        }
-        if (filetype("$CFG->dirroot/mod/glossary/formats/$dir") == "dir") {
-            continue;
-        }
-        if ( $pos = strpos($dir, ".") ) {
-            $dir = substr($dir, 0, $pos );
-            if ($dir != 0 and $dir != 1) {  // excluding basic formats
-                if ( !$displayformat = get_record("glossary_displayformats","fid",$dir) ) {
-                    unset($displayformat);
-                    $displayformat->fid = $dir;
-                    $displayformat->relatedview = $dir;
-                    $displayformat->visible = 1;
-                    $displayformat->id = insert_record("glossary_displayformats",$displayformat);
-                }
-                $formats[$dir] = get_string("displayformat$dir", "glossary");
-            }
-        }
+    //Take names
+    foreach ($recformats as $format) {
+        $formats[$format->id] = get_string("displayformat$format->name", "glossary");
     }
     asort($formats);
 
     echo '<table cellpadding="5" bgcolor="#FFFFFF" class="generaltab" width="40%" align="center">';
-    for ($i = 0; $i < count($formats); $i++) {
-        if ( $formats[$i] ) {
-            $format = get_record("glossary_displayformats","fid",$i);
-            echo '<tr>';
-                echo '<td>' . $formats[$i] . '</td>';
-                $eicon = "<a title=\"" . get_string("edit") . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$i&mode=edit\"><img border=\"0\" src=\"../pix/t/edit.gif\"></a>";
-                if ( $format->visible ) {
-                    $vtitle = get_string("hide");
-                    $vicon = "hide.gif";
-                } else {
-                    $vtitle = get_string("show");
-                    $vicon = "show.gif";
-                }
-                $vicon = "<a title=\"" . $vtitle . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$i&mode=visible\"><img border=\"0\" src=\"../pix/t/" . $vicon . "\"></a>";
-
-                echo '<td align="center"> ' . $eicon . '&nbsp;&nbsp;' . $vicon . '</td>';
-            echo '</tr>';
+    foreach ($formats as $formatid=>$formatname) {
+        $recformat = get_record('glossary_formats','id',$formatid);
+        echo '<tr>';
+        echo '<td>' . $formatname . '</td>';
+        $eicon = "<a title=\"" . get_string("edit") . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&mode=edit\"><img border=\"0\" src=\"../pix/t/edit.gif\"></a>";
+        if ( $recformat->visible ) {
+            $vtitle = get_string("hide");
+            $vicon = "hide.gif";
+        } else {
+            $vtitle = get_string("show");
+            $vicon = "show.gif";
         }
+        $vicon = "<a title=\"" . $vtitle . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&mode=visible\"><img border=\"0\" src=\"../pix/t/" . $vicon . "\"></a>";
+
+        echo '<td align="center" nowrap>' . $eicon . '&nbsp;&nbsp;' . $vicon . '</td>';
+        echo '</tr>';
     }
     echo '</table>';
 
@@ -268,21 +234,26 @@
         <td align=right><p>glossary_enablerssfeeds:</td>
         <td>
     <?php
-        if ($CFG->enablerssfeeds == 0) {
+        if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
             print_string("no");
         } else {
             unset($options);
             $options[0] = get_string("no");
             $options[1] = get_string("yes");
 
-            choose_from_menu ($options, "glossary_enablerssfeeds", $CFG->glossary_enablerssfeeds, "", "", "");
+            $glossary_enablerssfeeds = false;
+            if (isset($CFG->glossary_enablerssfeeds) && $CFG->glossary_enablerssfeeds == 1) {
+                $glossary_enablerssfeeds = true;
+            }
+
+            choose_from_menu ($options, "glossary_enablerssfeeds", $glossary_enablerssfeeds, "", "", "");
         }
     ?>
     </td>
     <td>
     <?php
         print_string("configenablerssfeeds","glossary");
-        if ($CFG->enablerssfeeds == 0) {
+        if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
             print_string("configenablerssfeedsdisabled");
         }
     ?>
