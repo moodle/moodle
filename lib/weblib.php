@@ -457,7 +457,6 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
             $text = htmlentities($text);
             $text = str_replace("  ", "&nbsp; ", $text);
             replace_smilies($text);
-            convert_urls_into_links($text);
             $text = nl2br($text);
             return $text;
             break;
