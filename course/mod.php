@@ -245,6 +245,9 @@
                      "$streditinga", "form.name", "", false);
     }
 
+    unset($SESSION->modform); // Clear any old ones that may be hanging around.
+    save_session("SESSION");
+
     $modform = "../mod/$module->name/mod.html";
 
     if (file_exists($modform)) {
