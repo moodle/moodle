@@ -28,7 +28,7 @@
         require_login($course->id);
     }
 
-    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=".urlencode($search)), $search); 
+    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=".urlencode($search), $search); 
 
     $strforums = get_string("modulenameplural", "forum");
     $strsearch = get_string("search", "forum");
