@@ -53,7 +53,7 @@ $string['showall'] = "Show 'ALL' link";
 $string['special'] = "Special";
 $string['standardview'] = "Browse by alphabet";
 $string['studentcanpost'] = "Students can add entries";
-$string['warningstudentcapost'] = "(This apply only if the glossary is not the main one)";
+$string['warningstudentcapost'] = "(Applies only if the glossary is not the main one)";
 $string['writtenby'] = "by";
 
 ?>
