@@ -55,13 +55,13 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '        height="300" width="400"';
         $replace .= '        id="quicktime" align="" type="application/x-oleobject">';
         $replace .= "<param name=\"src\" value=\"\\2.mov\" />";
-        $replace .= '<param name="autoplay" value=true />';
+        $replace .= '<param name="autoplay" value=false />';
         $replace .= '<param name="loop" value=true />';
         $replace .= '<param name="controller" value=true />';
         $replace .= '<param name="scale" value="aspect" />';
         $replace .= "\n<embed src=\"\\2.mov\" name=\"quicktime\" type=\"video/quicktime\" ";
         $replace .= ' height="300" width="400" scale="aspect" ';
-        $replace .= ' autoplay="true" controller="true" loop="true" ';
+        $replace .= ' autoplay="false" controller="true" loop="true" ';
         $replace .= ' pluginspage="http://quicktime.apple.com/">';
         $replace .= '</embed>';
         $replace .= '</object><br />';
@@ -79,7 +79,7 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= "<param name=\"Filename\" value=\"\\2.wmv\">";
         $replace .= '<param name="ShowControls" value=true />';
         $replace .= '<param name="AutoRewind" value=true />';
-        $replace .= '<param name="AutoStart" value=true />';
+        $replace .= '<param name="AutoStart" value=false />';
         $replace .= '<param name="Autosize" value=true />';
         $replace .= '<param name="EnableContextMenu" value=true />';
         $replace .= '<param name="TransparentAtStart" value=false />';
@@ -87,7 +87,7 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '<param name="ShowGotoBar" value=false />';
         $replace .= '<param name="EnableFullScreenControls" value=true />';
         $replace .= "\n<embed src=\"\\2.wmv\" name=\"msplayer\" type=\"video/x-ms\" ";
-        $replace .= ' ShowControls="1" AutoRewind="1" AutoStart="1" Autosize="0" EnableContextMenu="1"';
+        $replace .= ' ShowControls="1" AutoRewind="1" AutoStart="0" Autosize="0" EnableContextMenu="1"';
         $replace .= ' TransparentAtStart="0" AnimationAtStart="0" ShowGotoBar="0" EnableFullScreenControls="1"';
         $replace .= ' pluginspage="http://www.microsoft.com/Windows/Downloads/Contents/Products/MediaPlayer/">';
         $replace .= '</embed>';
