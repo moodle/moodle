@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.6.4 beta (2002112001)
+      // auth.php - created with Moodle 1.0.9 development (2003032400)
 
 
 $string['auth_dbdescription'] = "This method uses an external database table to check whether a given username and password is valid.  If the account is a new one, then information from other fields may also be copied across into Moodle.";
@@ -21,11 +21,10 @@ $string['auth_imaphost'] = "The IMAP server address. Use the IP number, not DNS 
 $string['auth_imapport'] = "IMAP server port number. Usually this is 143 or 993.";
 $string['auth_imaptitle'] = "Use an IMAP server";
 $string['auth_imaptype'] = "The IMAP server type.  IMAP servers can have different types of authentication and negotiation.";
-$string['instructions'] = "Instructions";
 $string['auth_ldap_bind_dn'] = "If you want to use bind-user to search users, specify it here. Someting like 'cn=ldapuser,ou=public,o=org'";
-$string['auth_ldap_create_context'] = "If you enable user creation with email confirmation, specify context where users are created. This context should be different from other users to prevent security issues. You don't need to add this context to ldap_context-variable, Moodle will search for users from this context automaticly.";
 $string['auth_ldap_bind_pw'] = "Password for bind-user.";
 $string['auth_ldap_contexts'] = "List of contexts where users are located. Separate different contexts with ';'. For example: 'ou=users,o=org; ou=others,o=org'";
+$string['auth_ldap_create_context'] = "If you enable user creation with email confirmation, specify context where users are created. This context should be different from other users to prevent security issues. You don't need to add this context to ldap_context-variable, Moodle will search for users from this context automaticly.";
 $string['auth_ldap_creators'] = "List of groups what member are allowed to create new courses. Separate multiple groups with ';'. Usualy something like 'cn=teachers,ou=staff,o=myorg'";
 $string['auth_ldap_host_url'] = "Specify LDAP host in URL-form like 'ldap://ldap.myorg.com/' or 'ldaps://ldap.myorg.com/' ";
 $string['auth_ldap_memberattribute'] = "Specify users member attribute, when users belogs to group. Usualy member";
@@ -51,7 +50,7 @@ $string['auth_pop3port'] = "Server port (110 is the most common)";
 $string['auth_pop3title'] = "Use a POP3 server";
 $string['auth_pop3type'] = "Server type. If your server uses certificate security, choose pop3cert.";
 $string['auth_user_create'] = "Enable user creation";
-$string['auth_user_creation'] = "New (anonymous) users create user account for her/hiself. Account will be created to selected authentication module  and  confirmed via email. If you enable this , remember to configure also module specific options for user creation.";
+$string['auth_user_creation'] = "New (anonymous) users can create user account for her/hiself. Account will be created to selected authentication module  and  confirmed via email. If you enable this , remember to configure also module specific options for user creation.";
 $string['auth_usernameexists'] = "Selected username already exists. Please choose new one.";
 $string['authenticationoptions'] = "Authentication options";
 $string['authinstructions'] = "Here you can provide instructions for your users, so they know which username and password they should be using.  The text you enter here will appear on the login page.  If you leave this blank then no instructions will be printed.";
@@ -59,6 +58,7 @@ $string['changepassword'] = "Change password URL";
 $string['changepasswordhelp'] = "Here you can specify a location at which your users can recover or change their username/password if they've forgotten it.  This will be provided to users as a button on the login page and their user page.  if you leave this blank the button will not be printed.";
 $string['chooseauthmethod'] = "Choose an authentication method: ";
 $string['guestloginbutton'] = "Guest login button";
+$string['instructions'] = "Instructions";
 $string['md5'] = "MD5 encryption";
 $string['plaintext'] = "Plain text";
 $string['showguestlogin'] = "You can hide or show the guest login button on the login page.";
