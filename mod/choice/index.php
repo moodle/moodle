@@ -69,14 +69,19 @@
         } else {
             $section = "";
         }
-
-        if ($course->format == "weeks" || $course->format == "topics") {
-            $table->data[] = array ($section,
-                                    "<A HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A>",
-                                    $aa);
+        
+        //Calculate the href
+        if (!$choice->visible) {
+            //Show dimmed if the mod is hidden
+            $tt_href = "<A class=\"dimmed\" HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A>";
         } else {
-            $table->data[] = array ("<A HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A>",
-                                    $aa);
+            //Show normal if the mod is visible
+            $tt_href = "<A HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A>";
+        }
+        if ($course->format == "weeks" || $course->format == "topics") {
+            $table->data[] = array ($section, $tt_href, $aa);
+        } else {
+            $table->data[] = array ($tt_href, $aa);
         }
     }
     echo "<BR>";
