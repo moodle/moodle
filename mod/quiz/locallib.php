@@ -1444,7 +1444,7 @@ function quiz_get_best_grade($quizid, $userid) {
         return NULL;
     }
 
-    return (round($grade->grade));
+    return (round($grade->grade, 2));
 }
 
 function quiz_save_best_grade($quiz, $userid) {
@@ -1452,18 +1452,18 @@ function quiz_save_best_grade($quiz, $userid) {
 /// and then saves that grade in the quiz_grades table.
 
     if (!$attempts = quiz_get_user_attempts($quiz->id, $userid)) {
-        notify("Could not find any user attempts");
+        notify('Could not find any user attempts');
         return false;
     }
 
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
     $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
 
-    if ($grade = get_record("quiz_grades", "quiz", $quiz->id, "userid", $userid)) {
+    if ($grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
         $grade->grade = round($bestgrade, 2);
         $grade->timemodified = time();
-        if (!update_record("quiz_grades", $grade)) {
-            notify("Could not update best grade");
+        if (!update_record('quiz_grades', $grade)) {
+            notify('Could not update best grade');
             return false;
         }
     } else {
@@ -1471,8 +1471,8 @@ function quiz_save_best_grade($quiz, $userid) {
         $grade->userid = $userid;
         $grade->grade = round($bestgrade, 2);
         $grade->timemodified = time();
-        if (!insert_record("quiz_grades", $grade)) {
-            notify("Could not insert new best grade");
+        if (!insert_record('quiz_grades', $grade)) {
+            notify('Could not insert new best grade');
             return false;
         }
     }
