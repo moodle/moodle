@@ -31,7 +31,7 @@
 
     //Check site
     if (!$site = get_site()) {
-        error("Site not found!");
+        error("Site noto found!");
     }
     
     //Check backup_version

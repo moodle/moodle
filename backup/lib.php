@@ -108,20 +108,23 @@
         global $CFG;
 
         $rootdir = $CFG->dataroot."/users";
-        $coursedirs = get_directory_list($rootdir);
-        foreach ($coursedirs as $dir) {
-            //Extracts user id from file path
-            $tok = strtok($dir,"/");
-            if ($tok) {
-               $userid = $tok;
-            } else {
-               $tok = "";
+        //Check if directory exists
+        if (is_dir($rootdir)) {
+            $coursedirs = get_directory_list($rootdir);
+            foreach ($coursedirs as $dir) {
+                //Extracts user id from file path
+                $tok = strtok($dir,"/");
+                if ($tok) {
+                   $userid = $tok;
+                } else {
+                   $tok = "";
+                }
+                //Insert them into backup_files
+                $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
+                                           (backup_code, file_type, path, old_id)
+                                       VALUES
+                                           ('$backup_unique_code','user','$dir','$userid')",false);
             }
-            //Insert them into backup_files
-           $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
-                                      (backup_code, file_type, path, old_id)
-                                  VALUES
-                                      ('$backup_unique_code','user','$dir','$userid')",false);
         }
 
         //Now execute the select
@@ -149,13 +152,16 @@
         global $CFG;
 
         $rootdir = $CFG->dataroot."/$course";
-        $coursedirs = get_directory_list($rootdir,$CFG->moddata);
-        foreach ($coursedirs as $dir) {
-            //Insert them into backup_files
-           $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
-                                      (backup_code, file_type, path)
-                                  VALUES
-                                      ('$backup_unique_code','course','$dir')",false);
+        //Check if directory exists
+        if (is_dir($rootdir)) {
+            $coursedirs = get_directory_list($rootdir,$CFG->moddata);
+            foreach ($coursedirs as $dir) {
+                //Insert them into backup_files
+               $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
+                                              (backup_code, file_type, path)
+                                       VALUES
+                                          ('$backup_unique_code','course','$dir')",false);
+            }
         }
 
         //Now execute the select
@@ -352,9 +358,9 @@
         $st = start_tag($tag,$level,$endline);
         $co="";
         if ($to_utf) {
-            $co = $content;
+            $co = utf8_encode(htmlspecialchars($content));
         } else {
-            $co = $content;
+            $co = htmlspecialchars($content);
         }
         $et = end_tag($tag,0,true);
         return $st.$co.$et;
@@ -402,9 +408,9 @@
         }
         //The user in backup
         if ($preferences->backup_users == 1) {
-            fwrite ($bf,full_tag("USERS",3,false,"COURSE"));
+            fwrite ($bf,full_tag("USERS",3,false,"course"));
         } else {
-            fwrite ($bf,full_tag("USERS",3,false,"ALL"));
+            fwrite ($bf,full_tag("USERS",3,false,"all"));
         }
         //The logs in backup
         if ($preferences->backup_logs == 1) {
@@ -428,6 +434,105 @@
         fwrite ($bf,end_tag("DETAILS",2,true));
 
 
-        fwrite ($bf,end_tag("INFO",1,true)); 
+        $status = fwrite ($bf,end_tag("INFO",1,true)); 
+
+        return $status;
+    }
+    
+    //Prints course's general info (table course)
+    function backup_course_start ($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+        
+        //Course open tag
+        fwrite ($bf,start_tag("COURSE",1,true));
+
+        //Get info from course
+        $course=false;
+        if ($courses = get_records("course","id",$preferences->backup_course)) {
+            $course = $courses[$preferences->backup_course];
+        }
+        if ($course) {
+            //Prints course info
+            fwrite ($bf,full_tag("ID",2,false,$course->id));
+            //Obtain the category
+            $category = false;
+            if ($categories = get_records("course_categories","id","$course->category")) {
+                $category = $categories[$course->category];
+            }
+            if ($category) {
+                //Prints category info
+                fwrite ($bf,start_tag("CATEGORY",2,true));
+                fwrite ($bf,full_tag("ID",3,false,$course->category));
+                fwrite ($bf,full_tag("NAME",3,false,$category->name));
+                fwrite ($bf,end_tag("CATEGORY",2,true));
+            }
+            //Continues with the course
+            fwrite ($bf,full_tag("PASSWORD",2,false,$course->password));
+            fwrite ($bf,full_tag("FULLNAME",2,false,$course->fullname));
+            fwrite ($bf,full_tag("SHORTNAME",2,false,$course->shortname));
+            fwrite ($bf,full_tag("SUMMARY",2,false,$course->summary));
+            fwrite ($bf,full_tag("FORMAT",2,false,$course->format));
+            fwrite ($bf,full_tag("NEWSITEMS",2,false,$course->newsitems));
+            fwrite ($bf,full_tag("TEACHER",2,false,$course->teacher));
+            fwrite ($bf,full_tag("TEACHERS",2,false,$course->teachers));
+            fwrite ($bf,full_tag("STUDENT",2,false,$course->student));
+            fwrite ($bf,full_tag("STUDENTS",2,false,$course->students));
+            fwrite ($bf,full_tag("GUEST",2,false,$course->guest));
+            fwrite ($bf,full_tag("STARDATE",2,false,$course->stardate));
+            fwrite ($bf,full_tag("NUMSECTIONS",2,false,$course->numsections));
+            fwrite ($bf,full_tag("SHOWRECENT",2,false,$course->showrecent));
+            fwrite ($bf,full_tag("MARKER",2,false,$course->marker));
+            fwrite ($bf,full_tag("TIMECREATED",2,false,$course->timecreated));
+            $status = fwrite ($bf,full_tag("TIMEMODIFIED",2,false,$course->timemodified));
+        } else { 
+           $status = false;
+        } 
+
+       return $status;
+    }
+
+    //Prints course's end tag
+    function backup_course_end ($bf,$preferences) {
+
+        //Course end tag
+        $status = fwrite ($bf,end_tag("COURSE",1,true)); 
+    
+        return $status;
+
+    }
+
+    //Prints course's sections info (table course_sections)
+    function backup_sections ($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+
+        //Get info from sections
+        $section=false;
+        if ($sections = get_records("course_sections","course",$preferences->backup_course,"section")) {
+            //Section open tag
+            fwrite ($bf,start_tag("SECTIONS",2,true));
+            //Iterate over every section (ordered by section)     
+            foreach ($sections as $section) {
+                //Begin Section
+                fwrite ($bf,start_tag("SECTION",3,true));
+                fwrite ($bf,full_tag("ID",4,false,$section->id));
+                fwrite ($bf,full_tag("NUMBER",4,false,$section->section));
+                fwrite ($bf,full_tag("SUMMARY",4,false,$section->summary));
+                fwrite ($bf,full_tag("VISIBLE",4,false,$section->visible));
+                //End section
+                fwrite ($bf,start_tag("/SECTION",3,true));
+            }
+            //Section close tag
+            $status = fwrite ($bf,end_tag("SECTIONS",2,true));
+        }
+
+        return $status;
+
     }
 ?>

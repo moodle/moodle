@@ -127,17 +127,57 @@
         echo "<li>Writing header";
         //Obtain the xml file (create and open) and print prolog information
         $backup_file = backup_open_xml($backup_unique_code);
-        echo "<li>Writing info";
+        echo "<li>Writing general info";
         //Prints general info about backup to file
         if ($backup_file) {
             $status = backup_general_info($backup_file,$preferences);
         }
+        echo "<li>Writing course data";
 
-    
+        //Start new ul (for course)
+        echo "<ul>";
+
+        echo "<li>Course info";
+        //Prints course start (tag and general info)
+        if ($status) {
+            $status = backup_course_start($backup_file,$preferences);
+        }
+        echo "<li>Sections";
+        //Section info
+        if ($status) {
+            $status = backup_sections($backup_file,$preferences);
+        }
+
+        //Module info
+
+        //User info
+        //if ($status) {
+        //    $status = backup_user_info($backup_file,$preferences);
+        //}
+   
+
+
+
+
+
+
+
+
+
+
+
+ 
+        //Prints course end 
+        if ($status) {
+            $status = backup_course_end($backup_file,$preferences);
+        }
         //Close the xml file and xml data
         if ($backup_file) {
-            $status = backup_close_xml($backup_file);
+            backup_close_xml($backup_file);
         }
+
+        //End course contents (close ul)
+        echo "</ul>";
 
         //End xml contents (close ul)
         echo "</ul>";
