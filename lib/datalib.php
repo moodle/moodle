@@ -135,8 +135,8 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             $dbinfo = $db->ServerInfo();
             $dbver = substr($dbinfo['version'],0,3);
             
-            $field = "$field";
             //to prevent conflicts with reserved words
+            $field = "\"$field\"";
             $oldfield = "\"$oldfield\"";
 
             switch (strtolower($type)) {
