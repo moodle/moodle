@@ -122,7 +122,7 @@
             print_simple_box_start("CENTER");
     	    echo "<table>\n";
     	    echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
-    	    echo "  <tr><td nowrap>\n<ul class=\"scormlist\"'>\n";
+    	    echo "  <tr><td nowrap>\n<ul class=\"scormlist\">\n";
     	    $incomplete = false;
     	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$currentorg' order by id ASC")){
     		$level=0;
