@@ -73,7 +73,7 @@
 	//
 	$bodyscripts = "";
 	if ($scorm->popup != "") {
-	    $bodyscripts = "onLoad='SCOInitialize();' onUnload='SCOFinish(); closeMain();' onbeforeUnload='SCOFinish();'";
+	    $bodyscripts = "onLoad='SCOInitialize();' onUnload='SCOFinish(); closeMain();' ";
 	}
     	print_header($pagetitle, "$course->fullname",
 		"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\" title=\"$scorm->summary\">$scorm->name</a>",
@@ -272,7 +272,7 @@
     	    echo "<html>\n";
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
             echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
-	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"SCOFinish();\" onbeforeUnload=\"SCOFinish();\">\n";
+	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"SCOFinish();\">\n";
             echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&mode=".$mode.'&currentorg='.$currentorg."&frameset=top\">\n";
             echo "\t    <frame name=\"main\" src=\"\">\n";
             echo "</frameset>\n";
