@@ -603,6 +603,9 @@ function glossary_print_entry_definition($entry) {
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
+    if (isset($entry->footer)) {   // Unparsed footer info
+        $text .= $entry->footer;
+    }
     echo $text;
 }
 

@@ -22,7 +22,8 @@
     }
 
     foreach ($entries as $key => $entry) {
-        $entries[$key]->definition .= "<p align=\"right\">&raquo;&nbsp;<a target=\"_blank\" onClick=\"window.opener.location.href='$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid'\" href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">$entry->glossaryname</a></p>";
+        //$entries[$key]->footer = "<p align=\"right\">&raquo;&nbsp;<a onClick=\"if (window.opener) {window.opener.location.href='$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid'; return false;} else {openpopup('/mod/glossary/view.php?g=$entry->glossaryid', 'glossary', 'menubar=1,location=1,toolbar=1,scrollbars=1,directories=1,status=1,resizable=1', 0); return false;}\" href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\" target=\"_blank\">$entry->glossaryname</a></p>";  // Could not get this to work satisfactorily in all cases  - Martin
+        $entries[$key]->footer = "<p align=\"right\">&raquo;&nbsp;<a target=\"_blank\" href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">$entry->glossaryname</a></p>";
     }
 
     if (!empty($courseid)) {
