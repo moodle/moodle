@@ -1,3 +1,1090 @@
+2003-01-10 Friday 21:07  moodler
+
+	* mod/choice/mod.html: 
+	
+	Editing with Richtext wasn't working ... fixed now (typo)
+
+2003-01-10 Friday 15:33  moodler
+
+	* admin/index.php, lang/en/docs/install.html: 
+	
+	Put in a check for the sessions directory
+
+2003-01-10 Friday 15:22  moodler
+
+	* lang/en/docs/install.html: 
+	
+	More details about requirements
+
+2003-01-10 Friday 14:29  moodler
+
+	* lang/ja/docs/: background.html, credits.html, cvs.html,
+	developer.html, features.html, future.html, install.html,
+	intro.html, licence.html, release.html, teacher.html, upgrade.html:
+	
+	
+	PLease read the README.txt in this directory
+
+2003-01-10 Friday 13:50  moodler
+
+	* version.php: 
+	
+	Updated version number
+
+2003-01-10 Friday 13:44  mits
+
+	* lang/ja/: docs/README.txt, docs/background.html,
+	docs/credits.html, docs/cvs.html, docs/developer.html,
+	docs/features.html, docs/files.php, docs/future.html,
+	docs/install.html, docs/intro.html, docs/licence.html,
+	docs/module_files.txt, docs/release.html, docs/teacher.html,
+	docs/upgrade.html, help/quiz/review.html: 
+	
+	no message
+
+2003-01-10 Friday 13:41  moodler
+
+	* lib/moodlelib.php: 
+	
+	Fix when making timestamps from web selector
+
+2003-01-10 Friday 13:40  moodler
+
+	* lib/weblib.php: 
+	
+	Fix for display of date selector, and also for finding server name
+	from environment
+
+2003-01-10 Friday 13:29  mits
+
+	* lang/ja/: auth.php, choice.php, forum.php, journal.php,
+	moodle.php, quiz.php: 
+	
+	Modified
+
+2003-01-08 Wednesday 17:08  moodler
+
+	* files/index.php, files/mimetypes.php, mod/choice/index.php,
+	mod/choice/view.php, mod/quiz/lib.php, theme/standard/styles.php,
+	theme/standardblue/styles.php, theme/standardgreen/styles.php,
+	theme/standardlogo/styles.php, theme/standardred/styles.php,
+	theme/standardwhite/styles.php: 
+	
+	Some small robustness things, and a new style for quiz feedback
+	text
+
+2003-01-08 Wednesday 17:07  moodler
+
+	* admin/index.php, lib/moodlelib.php: 
+	
+	More robust when dealing with a plugin module that isn't readable
+
+2003-01-07 Tuesday 22:52  moodler
+
+	* login/confirm.php: 
+	
+	Missed something
+
+2003-01-07 Tuesday 22:48  moodler
+
+	* login/confirm.php: 
+	
+	Fixed typo
+
+2003-01-07 Tuesday 22:46  moodler
+
+	* login/confirm.php: 
+	
+	Cleaned up, and improved the logic to avoid very rare case when
+	secret keys matched on two users
+
+2003-01-06 Monday 22:17  moodler
+
+	* lang/en/docs/release.html: 
+	
+	Whoops forgot the date
+
+2003-01-06 Monday 22:15  moodler
+
+	* lang/en/docs/release.html: 
+	
+	More touch-ups
+
+2003-01-06 Monday 22:01  moodler
+
+	* mod/survey/save.php: 
+	
+	Robustness fixes
+
+2003-01-06 Monday 21:55  moodler
+
+	* course/weeks.php, lib/datalib.php, lib/moodlelib.php,
+	lib/weblib.php, mod/assignment/lib.php, mod/assignment/mod.html,
+	mod/assignment/submissions.php, mod/choice/index.php,
+	user/edit.html: 
+	
+	Small robustness fixes
+
+2003-01-06 Monday 21:40  moodler
+
+	* lib/db/postgres7.sql: 
+	
+	Slight increase in log field size
+
+2003-01-06 Monday 20:36  moodler
+
+	* lang/pt_br/auth.php: 
+	
+	New file
+
+2003-01-06 Monday 20:36  moodler
+
+	* lang/: pt_br/help/questions.html, tr/help/questions.html,
+	zh_cn/help/questions.html: 
+	
+	Tidying up old files
+
+2003-01-06 Monday 20:31  moodler
+
+	* lang/README: 
+	
+	Update
+
+2003-01-06 Monday 20:29  moodler
+
+	* lang/pt_br/: assignment.php, choice.php, forum.php, journal.php,
+	moodle.php, quiz.php, resource.php, survey.php: 
+	
+	New strings from Fabricio
+
+2003-01-06 Monday 17:29  moodler
+
+	* version.php: 
+	
+	Updating version to get ready for tonight
+
+2003-01-06 Monday 16:47  moodler
+
+	* doc/index.php: 
+	
+	Slightly more rboust
+
+2003-01-06 Monday 16:44  moodler
+
+	* mod/choice/mod.html: 
+	
+	Default values
+
+2003-01-06 Monday 16:42  moodler
+
+	* lang/fr/help/assignment/resubmit.html: 
+	
+	Missing file
+
+2003-01-06 Monday 16:42  moodler
+
+	* lang/en/docs/: credits.html, developer.html: 
+	
+	Updates
+
+2003-01-06 Monday 16:23  moodler
+
+	* doc/index.php: 
+	
+	Framed docs can now select a named anchor in a page
+
+2003-01-06 Monday 16:23  moodler
+
+	* admin/index.php: 
+	
+	Link from admin page to docs
+
+2003-01-06 Monday 16:22  moodler
+
+	* lang/en/moodle.php, theme/index.php: 
+	
+	Link from themes page to themes docs
+
+2003-01-06 Monday 15:39  moodler
+
+	* theme/garden/: README.txt, config.php, favicon.ico, footer.html,
+	gradient.jpg, gradient1.jpg, header.html, leftside.jpg, styles.php,
+	top.jpg: 
+	
+	Garden theme by spiggy:  http://phpgirl.com
+
+2003-01-06 Monday 13:37  moodler
+
+	* auth/db/lib.php: 
+	
+	A little fix to workaround what seems to be an ADOdb bug when using
+	database authentication
+
+2003-01-06 Monday 11:28  moodler
+
+	* lang/fr/: README, TERMS, assignment.php, auth.php, choice.php,
+	forum.php, journal.php, moodle.php, quiz.php, resource.php,
+	survey.php, help/resource/resourcetype.html,
+	help/resource/summary.html: 
+	
+	Latest versions from Sebastien
+
+2003-01-06 Monday 10:57  moodler
+
+	* lang/en/: journal.php, docs/release.html: 
+	
+	String changes
+
+2003-01-06 Monday 10:56  moodler
+
+	* mod/journal/report.php: 
+	
+	More rogue strings
+
+2003-01-06 Monday 10:43  moodler
+
+	* course/mod_delete.html: 
+	
+	Shot down some rebel strings
+
+2003-01-06 Monday 09:44  moodler
+
+	* lib/htaccess: 
+	
+	Added 4.3.0 bug compatibility
+
+2003-01-06 Monday 00:46  moodler
+
+	* theme/oceanblue/config.php: 
+	
+	FIxed a missing quote, and fixed the highlight colour
+
+2003-01-06 Monday 00:34  moodler
+
+	* lang/fi/docs/README.txt: 
+	
+	READ ME  ;-)
+
+2003-01-06 Monday 00:33  moodler
+
+	* lang/fi/docs/: background.html, credits.html, cvs.html,
+	developer.html, features.html, future.html, install.html,
+	intro.html, licence.html, module_files.txt, release.html,
+	teacher.html, upgrade.html: 
+	
+	Removing unnecessary English versions of these files (see README)
+
+2003-01-06 Monday 00:15  moodler
+
+	* mod/newmodule_template.zip: 
+	
+	Updated
+
+2003-01-05 Sunday 22:23  moodler
+
+	* version.php: 
+	
+	Update versions
+
+2003-01-05 Sunday 22:20  moodler
+
+	* mod/forum/discuss.php: 
+	
+	Rmove bad coursemodule error - not important enough to show
+
+2003-01-05 Sunday 22:19  moodler
+
+	* config-dist.php, file.php, help.php, index.php, admin/admin.php,
+	admin/auth.php, admin/config.php, admin/cron.php, admin/delete.php,
+	admin/index.php, admin/lang.php, admin/site.php, admin/user.php,
+	course/categories.php, course/delete.php, course/edit.php,
+	course/editsection.php, course/enrol.php, course/grade.php,
+	course/grades.php, course/index.php, course/lib.php,
+	course/log.php, course/loggraph.php, course/loginas.php,
+	course/loglive.php, course/mod.php, course/social.php,
+	course/teacher.php, course/teachers.php, course/topics.php,
+	course/unenrol.php, course/user.php, course/view.php,
+	course/weeks.php, lib/setup.php, login/change_password.php,
+	login/confirm.php, login/forgot_password.php, login/index.php,
+	login/logout.php, login/signup.php, mod/assignment/index.php,
+	mod/assignment/lib.php, mod/assignment/submissions.php,
+	mod/assignment/upload.php, mod/assignment/view.php,
+	mod/choice/index.php, mod/choice/report.php, mod/choice/view.php,
+	mod/forum/delete.php, mod/forum/discuss.php, mod/forum/index.php,
+	mod/forum/lib.php, mod/forum/post.php, mod/forum/rate.php,
+	mod/forum/report.php, mod/forum/search.php,
+	mod/forum/subscribe.php, mod/forum/subscribers.php,
+	mod/forum/view.php, mod/journal/edit.php, mod/journal/index.php,
+	mod/journal/report.php, mod/journal/view.php, mod/quiz/attempt.php,
+	mod/quiz/category.php, mod/quiz/edit.php, mod/quiz/index.php,
+	mod/quiz/mod.html, mod/quiz/question.php, mod/quiz/report.php,
+	mod/quiz/view.php, mod/resource/details.php,
+	mod/resource/index.php, mod/resource/view.php,
+	mod/survey/details.php, mod/survey/download.php,
+	mod/survey/graph.php, mod/survey/index.php, mod/survey/report.php,
+	mod/survey/save.php, mod/survey/view.php, theme/index.php,
+	user/edit.php, user/index.php, user/pix.php, user/view.php: 
+	
+	Clean sweep through all the important changing all include(),
+	include_once() and require() to require_once()
+
+2003-01-05 Sunday 21:19  moodler
+
+	* lang/en/docs/background.html: 
+	
+	Fixed a link
+
+2003-01-05 Sunday 20:00  moodler
+
+	* admin/index.php, course/lib.php: 
+	
+	Fixes to use new mysql module with frame
+
+2003-01-05 Sunday 19:08  moodler
+
+	* theme/brightretro/header.html: 
+	
+	Fixes dependency on standardlogo
+
+2003-01-05 Sunday 19:02  moodler
+
+	* theme/standardwhite/: config.php, favicon.ico, footer.html,
+	gradient.jpg, header.html, styles.php: 
+	
+	New standard white theme
+
+2003-01-05 Sunday 18:23  moodler
+
+	* theme/poweraid/: header.html, images/gradient.jpg: 
+	
+	Smaller image and links break out of frames
+
+2003-01-05 Sunday 18:10  moodler
+
+	* mod/resource/: lib.php, view.php: 
+	
+	Make frame width a variable
+
+2003-01-05 Sunday 17:53  moodler
+
+	* theme/poweraid/: README.txt, config.php, footer.html,
+	header.html, styles.php, images/client_copyright.gif,
+	images/frontlogo.jpg, images/logo.jpg, images/logo_empty.jpg,
+	images/lp_girl_offline.gif, images/lp_girl_online.gif,
+	images/smalllogo.jpg, images/tepscroll.swf: 
+	
+	Cleaned things up somewhat and made it more generic
+
+2003-01-05 Sunday 15:23  moodler
+
+	* theme/poweraid/: README.txt, config.php, footer.html,
+	header.html, index.php, license.txt, styles.php,
+	images/bott_bar.jpg, images/bott_left.jpg, images/bott_middle.jpg,
+	images/bott_right.jpg, images/client_copyright.gif,
+	images/client_tools_bot_mid.gif, images/dots.gif,
+	images/dots_002.gif, images/favicon.ico, images/gradient.jpg,
+	images/index.php, images/left_corner_bott.jpg,
+	images/left_corner_top.jpg, images/left_sidebar.jpg,
+	images/login_lower_left.gif, images/login_lower_right.gif,
+	images/logo.jpg, images/logo_empty.jpg, images/lp_girl_offline.gif,
+	images/lp_girl_online.gif, images/right_bott.jpg,
+	images/right_corner_bott.jpg, images/right_corner_top.jpg,
+	images/right_sidebar.jpg, images/right_top.jpg,
+	images/side_left.gif, images/side_right.gif,
+	images/sidebar_left.jpg, images/sidebar_right.jpg,
+	images/tepscroll.swf, images/top_bar.jpg, images/top_middle.gif,
+	images/top_right.gif, images/topbar_left.jpg,
+	images/topbar_middle.jpg, images/topbar_right.jpg: 
+	
+	Initial version of "Poweraid" theme from Bjarne Varoystrand aka
+	Black Skorpio with a few half-finished changes ... still needs work
+	which I'm doing right now...
+
+2003-01-05 Sunday 15:04  moodler
+
+	* theme/brightretro/: config.php, styles.php: 
+	
+	Updating to current info
+
+2003-01-05 Sunday 15:02  moodler
+
+	* theme/brightretro/: config.php, favicon.ico, footer.html,
+	gradient.jpg, header.html, logo.jpg, styles.php: 
+	
+	Initial version by Tom Murdock
+
+2003-01-05 Sunday 14:52  moodler
+
+	* lang/en/docs/release.html: 
+	
+	More info
+
+2003-01-05 Sunday 14:46  moodler
+
+	* version.php: 
+	
+	Update the version
+
+2003-01-05 Sunday 14:45  moodler
+
+	* admin/lang.php, course/lib.php, course/loginas.php,
+	course/mod.php, files/index.php, lang/en/forum.php,
+	lang/en/moodle.php, lib/moodlelib.php, lib/weblib.php,
+	login/index.php, mod/forum/lib.php, mod/forum/post.php,
+	mod/forum/rate.php, mod/forum/subscribe.php, mod/journal/edit.php,
+	mod/quiz/edit.php, mod/resource/details.php,
+	mod/survey/details.php, mod/survey/lib.php, mod/survey/report.php,
+	mod/survey/save.php, mod/survey/view.php, user/edit.html,
+	user/edit.php, user/lib.php: 
+	
+	OK a number of small changes here.
+	
+	Firstly, I'm replacing all use of old-style global variables like
+	$HTTY_REFERER with their new-style equivalent
+	$_SERVER["HTTP_REFERER"] Also using $_POST instead $HTTP_POST_VARS 
+	etc
+	
+	Secondly, if gdversion == 0 (ie GD is not installed) then:
+	
+	 - users are not even allowed to upload new images
+	 - graphs now just print a message instead of failing.
+	
+	this allows Moodle to still be used even if GD is not present
+
+2003-01-05 Sunday 12:20  moodler
+
+	* lang/en/moodle.php, files/index.php, mod/assignment/upload.php,
+	mod/forum/lib.php, mod/forum/post.php: 
+	
+	Changes to improve robustness of uploads, and make things
+	compatible with PHP 4.3.0.  Also some translation fixes with upload
+	strings.
+
+2003-01-05 Sunday 12:19  moodler
+
+	* lang/en/docs/credits.html: 
+	
+	Language credits
+
+2003-01-05 Sunday 12:14  moodler
+
+	* lang/nl/: assignment.php, auth.php, choice.php, forum.php,
+	journal.php, moodle.php, quiz.php, resource.php, survey.php: 
+	
+	Updated Dutch strings.
+
+2003-01-05 Sunday 01:20  paca70
+
+	* lang/fi/help/: reading.html, writing.html, quiz/review.html: 
+	
+	checkin for translation
+
+2003-01-05 Sunday 01:16  paca70
+
+	* lang/fi/docs/: background.html, credits.html, cvs.html,
+	developer.html, features.html, files.php, future.html,
+	install.html, intro.html, licence.html, release.html, teacher.html,
+	upgrade.html: 
+	
+	Just checking in for translation.
+
+2003-01-05 Sunday 01:09  paca70
+
+	* lang/fi/: auth.php, choice.php, moodle.php, quiz.php, survey.php:
+	
+	
+	more updates
+
+2003-01-04 Saturday 00:58  moodler
+
+	* lib/moodlelib.php: 
+	
+	Ah!! At last, the dreaded off-by-one date bug, squashed.
+
+2003-01-04 Saturday 00:38  moodler
+
+	* version.php: 
+	
+	Upgrade version for Beta Test version
+
+2003-01-04 Saturday 00:35  moodler
+
+	* admin/index.php: 
+	
+	Fixed display of headers while updating modules
+
+2003-01-04 Saturday 00:05  moodler
+
+	* mod/quiz/lib.php: 
+	
+	Make sure grades are always rounded
+
+2003-01-04 Saturday 00:01  moodler
+
+	* mod/quiz/: lib.php, multichoice.html, question.php,
+	shortanswer.html, truefalse.html, version.php, db/mysql.php,
+	db/mysql.sql, db/postgres7.php, db/postgres7.sql: 
+	
+	Changed three fields to avoid SQL problems with PostgreSQL etc:
+	
+	quiz_truefalse:  true->trueanswer  and false->falseanswer
+	quiz_questions:  type->qtype
+
+2003-01-03 Friday 23:34  moodler
+
+	* lang/es_cb/: assignment.php, choice.php, forum.php, journal.php,
+	moodle.php, quiz.php, resource.php, survey.php: 
+	
+	New dialect of Spanish (Carribean) by Luis J. Quirindongo Rodriguez
+
+2003-01-03 Friday 23:31  moodler
+
+	* lib/datalib.php: 
+	
+	New function table_column() to add or alter a column in any
+	database.
+
+2003-01-03 Friday 22:39  moodler
+
+	* lang/en/docs/features.html: 
+	
+	Mention language count
+
+2003-01-03 Friday 21:05  moodler
+
+	* lang/en/docs/release.html: 
+	
+	More stuff
+
+2003-01-03 Friday 14:44  moodler
+
+	* lib/datalib.php: 
+	
+	More robust checking of returned $rs
+
+2003-01-03 Friday 14:43  moodler
+
+	* lib/weblib.php: 
+	
+	Display months in local language for date_selector
+
+2003-01-03 Friday 13:33  moodler
+
+	* course/: lib.php, topics.php, weeks.php: 
+	
+	Replaced &sect with &amp;sect to avoid some buggy browsers
+
+2003-01-03 Friday 11:25  moodler
+
+	* lang/en/docs/install.html: 
+	
+	Changed a link
+
+2003-01-03 Friday 10:54  moodler
+
+	* lang/nl/: README, assignment.php, auth.php, choice.php,
+	forum.php, journal.php, moodle.php, quiz.php, resource.php,
+	survey.php, docs/module_files.txt: 
+	
+	New Dutch translation from Hans Zwart and Jacob Romeyn!
+
+2003-01-02 Thursday 23:25  moodler
+
+	* admin/auth.php, admin/config.php, course/editsection.php,
+	lib/moodlelib.php, login/change_password.php,
+	login/forgot_password.php, login/signup.php: 
+	
+	Some little fixes
+
+2003-01-02 Thursday 23:12  moodler
+
+	* lib/setup.php: 
+	
+	Hmmm database name causing some problems ...
+
+2003-01-02 Thursday 22:54  moodler
+
+	* lib/weblib.php: 
+	
+	Fixed that damn www linking problem with words like wwwroot  :-)
+
+2003-01-02 Thursday 22:49  moodler
+
+	* admin/auth.php, admin/config.php, admin/site.php,
+	course/categories.php, course/edit.php, course/editsection.php,
+	course/enrol.php, course/teachers.php, files/index.php,
+	lib/weblib.php, login/change_password.php,
+	login/forgot_password.php, login/index.php, login/signup.php,
+	mod/assignment/submissions.php, mod/choice/view.php,
+	mod/forum/post.php, mod/journal/edit.php, mod/journal/report.php,
+	mod/quiz/attempt.php, mod/quiz/category.php, mod/quiz/edit.php,
+	mod/quiz/question.php, mod/resource/details.php,
+	mod/survey/details.php, user/edit.php: 
+	
+	buggy_referer is dead!	 Long live buggy_referer!
+	
+	Should be fixed now.  As a bonus, I've removed all the uses of
+	HTTP_POST_VARS from all scripts.
+	
+	All forms should use the new data_submitted() function to collect
+	form data (it does the match_referer thing internally now).
+	
+	Much nicer.
+
+2003-01-02 Thursday 21:08  moodler
+
+	* files/index.php: 
+	
+	Some robustness fixes.
+
+2003-01-02 Thursday 20:45  paca70
+
+	* lang/fi/: assignment.php, auth.php, moodle.php, quiz.php,
+	resource.php, survey.php: 
+	
+	Some updates, more to come.
+
+2003-01-02 Thursday 19:34  moodler
+
+	* auth/db/lib.php, lib/setup.php: 
+	
+	Slightly more efficient way to open the database connections
+
+2003-01-02 Thursday 19:13  moodler
+
+	* lang/en/docs/release.html: 
+	
+	More details...
+
+2003-01-02 Thursday 19:09  moodler
+
+	* lib/setup.php: 
+	
+	Prepend database name to all table names to avoid ADOdb bug when
+	there is multiple database connections at once.
+
+2003-01-02 Thursday 18:54  moodler
+
+	* mod/forum/lib.php: 
+	
+	Site news forum defaults to the "Site news" string
+
+2003-01-02 Thursday 18:48  moodler
+
+	* index.php: 
+	
+	Use the name of the Site News forum on the front page ... instead
+	of the "Site News" string ...
+
+2003-01-02 Thursday 18:46  moodler
+
+	* mod/forum/mod.html: 
+	
+	Define forum type all the time
+
+2003-01-02 Thursday 18:38  moodler
+
+	* version.php: 
+	
+	Looking like a beta
+
+2003-01-02 Thursday 18:35  moodler
+
+	* lib/datalib.php, mod/forum/discuss.php, mod/forum/lib.php,
+	mod/forum/view.php, user/view.php: 
+	
+	Robustness fixes
+
+2003-01-02 Thursday 18:32  moodler
+
+	* lib/moodlelib.php: 
+	
+	Ignore guest when checking imcomplete users
+
+2003-01-02 Thursday 15:55  moodler
+
+	* lang/th/: README, assignment.php, auth.php, choice.php,
+	forum.php, journal.php, moodle.php, quiz.php, resource.php,
+	survey.php, docs/module_files.txt, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courserecent.html, help/courseshortname.html,
+	help/coursestartdate.html, help/enrolmentkey.html,
+	help/guestaccess.html, help/html.html, help/langedit.html,
+	help/mods.html, help/picture.html, help/questions.html,
+	help/richtext.html, help/surveys.html, help/teachers.html,
+	help/text.html, help/textformat.html,
+	help/assignment/assignmenttype.html, help/assignment/resubmit.html,
+	help/choice/options.html, help/forum/allowdiscussions.html,
+	help/forum/attachment.html, help/forum/forumtype.html,
+	help/forum/ratings.html, help/forum/subscription.html,
+	help/quiz/attempts.html, help/quiz/categories.html,
+	help/quiz/correctanswers.html, help/quiz/feedback.html,
+	help/quiz/grademethod.html, help/quiz/maxgrade.html,
+	help/quiz/multichoice.html, help/quiz/questiontypes.html,
+	help/quiz/random.html, help/quiz/shortanswer.html,
+	help/quiz/timeopen.html, help/quiz/truefalse.html,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	Initial version of Thai translation, by M Minkowski :-)
+
+2003-01-02 Thursday 15:37  moodler
+
+	* admin/config.php: 
+	
+	Allow phpinfo() debugging to occur even if Moodle isn't configured
+	yet (to help with configuration problems!).
+
+2003-01-02 Thursday 14:52  moodler
+
+	* lang/de/docs/: files.php, module_files.txt: 
+	
+	Removing english versions
+
+2003-01-02 Thursday 14:51  moodler
+
+	* lang/de/docs/: background.html, credits.html, cvs.html,
+	developer.html, features.html, future.html, install.html,
+	intro.html, licence.html, release.html, teacher.html, upgrade.html:
+	
+	
+	Removing files
+
+2003-01-02 Thursday 14:44  moodler
+
+	* course/lib.php: 
+	
+	More consistency when printing editing stuff in section
+
+2003-01-02 Thursday 14:36  compuproggy
+
+	* lang/de/: assignment.php, auth.php, choice.php, moodle.php,
+	quiz.php, resource.php, docs/module_files.txt,
+	help/coursecategory.html, help/courseformats.html,
+	help/coursefullname.html, help/coursenewsitems.html,
+	help/coursenumsections.html, help/courserecent.html,
+	help/courseshortname.html, help/coursestartdate.html,
+	help/enrolmentkey.html, help/guestaccess.html, help/html.html,
+	help/langedit.html, help/mods.html, help/picture.html,
+	help/questions.html, help/richtext.html, help/surveys.html,
+	help/assignment/assignmenttype.html, help/choice/options.html,
+	help/teachers.html, help/text.html, help/textformat.html,
+	help/forum/allowdiscussions.html, help/forum/attachment.html,
+	help/forum/forumtype.html, help/forum/ratings.html,
+	help/forum/subscription.html, help/quiz/attempts.html,
+	help/quiz/categories.html, help/quiz/correctanswers.html,
+	help/quiz/feedback.html, help/quiz/grademethod.html,
+	help/quiz/maxgrade.html, help/quiz/multichoice.html,
+	help/quiz/questiontypes.html, help/quiz/random.html,
+	help/quiz/shortanswer.html, help/quiz/timeopen.html,
+	help/quiz/truefalse.html, help/resource/resourcetype.html,
+	help/resource/summary.html, docs/README.txt, docs/background.html,
+	docs/credits.html, docs/cvs.html, docs/developer.html,
+	docs/features.html, docs/files.php, docs/future.html,
+	docs/install.html, docs/intro.html, docs/licence.html,
+	docs/release.html, docs/teacher.html, docs/upgrade.html,
+	help/quiz/review.html: 
+	
+	[no log message]
+
+2003-01-01 Wednesday 23:13  moodler
+
+	* doc/index.php: 
+	
+	New frame mode for dox
+
+2003-01-01 Wednesday 23:13  moodler
+
+	* lib/weblib.php: 
+	
+	Robust fix
+
+2003-01-01 Wednesday 23:12  moodler
+
+	* lang/en/docs/release.html: 
+	
+	Updates.  That's it for features now. :-)
+
+2003-01-01 Wednesday 22:47  moodler
+
+	* lang/en/quiz.php, lang/en/help/quiz/review.html,
+	mod/quiz/lib.php, mod/quiz/mod.html, mod/quiz/report.php,
+	mod/quiz/view.php: 
+	
+	Teachers can choose to allow review of quizzes, which means that
+	students are allowed to see past quizzes.  This only works once the
+	quiz is completely closed (to perhaps prevent easy cheating).
+
+2003-01-01 Wednesday 21:41  coolbit
+
+	* lang/zh_cn/help/choice/options.html: 
+	
+	no message
+
+2003-01-01 Wednesday 21:27  coolbit
+
+	* lang/zh_cn/help/assignment/: assignmenttype.html, resubmit.html: 
+	
+	no message
+
+2003-01-01 Wednesday 21:17  moodler
+
+	* mod/: forum/mod.html, journal/mod.html, quiz/mod.html,
+	quiz/version.php, quiz/db/mysql.php, quiz/db/mysql.sql,
+	quiz/db/postgres7.php, quiz/db/postgres7.sql, resource/mod.html,
+	survey/mod.html: 
+	
+	Robustness fixes
+
+2003-01-01 Wednesday 20:03  moodler
+
+	* lib/moodlelib.php: 
+	
+	Don't try to display docs files if they don't exist.
+
+2003-01-01 Wednesday 19:53  moodler
+
+	* lang/en/docs/release.html: 
+	
+	Updated with more info
+
+2003-01-01 Wednesday 19:26  moodler
+
+	* lang/en/docs/files.php: 
+	
+	Necessary file for documentation to work!
+
+2003-01-01 Wednesday 18:16  coolbit
+
+	* lang/zh_cn/help/quiz/: categories.html, multichoice.html,
+	questiontypes.html, shortanswer.html: 
+	
+	no message
+
+2003-01-01 Wednesday 17:29  moodler
+
+	* lib/setup.php: 
+	
+	If prefix isn't defined in config.php then define it as "" to avoid
+	problems with upgraders who don't edit config.php
+
+2003-01-01 Wednesday 16:48  moodler
+
+	* lib/setup.php: 
+	
+	Default debugging
+
+2003-01-01 Wednesday 16:33  moodler
+
+	* lib/defaults.php: 
+	
+	Add default prefix (for tables) of "" for upgraders
+
+2003-01-01 Wednesday 16:21  moodler
+
+	* admin/lang.php, course/lib.php, course/teacher.php: 
+	
+	More little robustness things
+
+2003-01-01 Wednesday 16:15  moodler
+
+	* version.php, lib/db/mysql.php, lib/db/mysql.sql,
+	lib/db/postgres7.php, lib/db/postgres7.sql: 
+	
+	Better log_display fixes
+
+2003-01-01 Wednesday 16:08  moodler
+
+	* version.php, lib/db/mysql.php, lib/db/mysql.sql: 
+	
+	Updates for log_display stuff
+
+2003-01-01 Wednesday 15:37  moodler
+
+	* course/: lib.php, log.php: 
+	
+	Fixes for Log display
+
+2003-01-01 Wednesday 15:18  moodler
+
+	* mod/journal/index.php, user/lib.php: 
+	
+	Robustness
+
+2003-01-01 Wednesday 15:03  moodler
+
+	* course/: grade.php, lib.php, social.php, topics.php, weeks.php: 
+	
+	Introduce links to personal grade page
+
+2003-01-01 Wednesday 14:53  moodler
+
+	* course/grade.php: 
+	
+	Cleaned up a bit
+
+2003-01-01 Wednesday 14:42  moodler
+
+	* course/grade.php: 
+	
+	Grade display for current user
+
+2003-01-01 Wednesday 14:41  moodler
+
+	* course/mod.php: 
+	
+	Changes for robustness
+
+2003-01-01 Wednesday 14:40  moodler
+
+	* lang/en/choice.php: 
+	
+	New strings for publishing results
+
+2003-01-01 Wednesday 14:40  moodler
+
+	* lib/: moodlelib.php, setup.php: 
+	
+	Tweaks
+
+2003-01-01 Wednesday 14:34  moodler
+
+	* mod/: assignment/mod.html, forum/lib.php: 
+	
+	More robustness fixes
+
+2003-01-01 Wednesday 14:34  moodler
+
+	* mod/choice/: column.png, index.php, lib.php, mod.html,
+	version.php, view.php, db/mysql.php, db/mysql.sql,
+	db/postgres7.php, db/postgres7.sql: 
+	
+	New feature: choices can now be published (like polls) with names
+	or without.
+
+2003-01-01 Wednesday 13:39  moodler
+
+	* mod/choice/view.html: 
+	
+	Old file
+
+2002-12-31 Tuesday 16:50  moodler
+
+	* auth/: imap/lib.php, nntp/lib.php, pop3/lib.php: 
+	
+	More tweaks
+
+2002-12-31 Tuesday 16:45  moodler
+
+	* admin/auth.php, lang/en/auth.php, auth/db/config.html,
+	auth/db/lib.php, auth/imap/config.html, auth/ldap/config.html,
+	auth/nntp/config.html, auth/pop3/config.html: 
+	
+	More robustness, and some little bug fixes.
+	
+	Also, database module now supports md5 passwords
+
+2002-12-31 Tuesday 15:16  moodler
+
+	* lib/datalib.php: 
+	
+	Better checks during membership checks
+
+2002-12-30 Monday 23:47  moodler
+
+	* admin/auth.php, course/teachers.php, mod/journal/edit.php,
+	mod/resource/details.php: 
+	
+	Little robustness fixes
+
+2002-12-30 Monday 23:46  moodler
+
+	* course/grades.php, lib/psxlsgen.php, mod/survey/download.php: 
+	
+	Fixes to XLS routines that were causing some problems
+
+2002-12-30 Monday 23:38  moodler
+
+	* user/edit.php: 
+	
+	Allow "." and "-" in usernames.
+
+2002-12-30 Monday 23:30  moodler
+
+	* lib/moodlelib.php, login/index.php: 
+	
+	If a user has authenticated via external authentication, then FORCE
+	them to fill out the user profile form (is they can't do anything
+	else until this is done)
+
+2002-12-30 Monday 21:02  moodler
+
+	* lib/weblib.php: 
+	
+	Allow STRIKE tag
+
+2002-12-30 Monday 14:07  moodler
+
+	* course/: edit.html, edit.php: 
+	
+	Robustness fixes
+
+2002-12-30 Monday 13:31  moodler
+
+	* course/mod.php: 
+	
+	More debugging
+
+2002-12-30 Monday 13:13  moodler
+
+	* admin/config.html, admin/site.html, admin/site.php,
+	course/lib.php, lang/en/moodle.php, lib/graphlib.php,
+	lib/weblib.php, mod/forum/lib.php, mod/survey/graph.php,
+	mod/survey/report.php, user/edit.html: 
+	
+	More little fixups for robustness
+
+2002-12-30 Monday 13:10  moodler
+
+	* lang/en/quiz.php, mod/quiz/attempt.php, mod/quiz/category.php,
+	mod/quiz/edit.php, mod/quiz/lib.php, mod/quiz/multichoice.html,
+	mod/quiz/question.php, mod/quiz/shortanswer.html,
+	mod/quiz/truefalse.html: 
+	
+	Many little fixes and cleanups for robustness
+
+2002-12-30 Monday 11:39  moodler
+
+	* lib/weblib.php: 
+	
+	Fixed p() and s() to deal with zero better
+
+2002-12-30 Monday 11:38  moodler
+
+	* mod/forum/post.php: 
+	
+	Fix default cursor
+
+2002-12-30 Monday 11:25  moodler
+
+	* lib/datalib.php: 
+	
+	Fixes to insert_record (from Petri) to explicitly use field default
+	values if we know them from ADOdb, to avoid some problems with
+	PostgreSQL 7.2 onwards
+
+2002-12-30 Monday 11:24  moodler
+
+	* version.php, lib/defaults.php, lib/setup.php: 
+	
+	New "debug" variable to turn debugging on and off
+
+2002-12-30 Monday 01:41  moodler
+
+	* CHANGES: 
+	
+	Daily changes
+
 2002-12-30 Monday 01:32  moodler
 
 	* CHANGES, index.php, version.php, admin/config.php,
@@ -45,16 +1132,6 @@
 	* lang/ca/moodle.php: 
 	
 	Cleaned up some strings without quotes
-
-2002-12-29 Sunday 23:33  coolbit
-
-	* lang/zh_cn/docs/: COPYRIGHT.txt, background.html, contents.html,
-	contents.php, module_files.txt, credits.html, cvs.html,
-	developer.html, features.html, future.html, index.html, index.php,
-	install.html, intro.html, licence.html, release.html, teacher.html,
-	top.php, upgrade.html, view.php: 
-	
-	remove them and wait for new translations
 
 2002-12-29 Sunday 23:12  moodler
 
@@ -150,22 +1227,6 @@
 	* lib/db/mysql.php: 
 	
 	Er, unfinished code while upgrading log_display
-
-2002-12-27 Friday 01:01  coolbit
-
-	* lang/zh_cn/docs/: COPYRIGHT.txt, background.html, contents.html,
-	contents.php, credits.html, cvs.html, developer.html,
-	features.html, future.html, index.html, index.php, install.html,
-	intro.html, licence.html, release.html, teacher.html, top.php,
-	upgrade.html, view.php: 
-	
-	new docs
-
-2002-12-27 Friday 00:37  coolbit
-
-	* lang/zh_cn/docs/module_files.txt: 
-	
-	new docs
 
 2002-12-27 Friday 00:27  moodler
 
@@ -1212,26 +2273,21 @@
 
 2002-12-12 Thursday 21:10  moodler
 
-	* lang/zh_cn/: docs/module_files.txt, help/coursecategory.html,
-	help/courseformats.html, help/coursefullname.html,
-	help/coursenewsitems.html, help/coursenumsections.html,
-	help/courserecent.html, help/courseshortname.html,
-	help/coursestartdate.html, help/enrolmentkey.html,
-	help/guestaccess.html, help/html.html, help/langedit.html,
-	help/mods.html, help/picture.html, help/questions.html,
-	help/richtext.html, help/surveys.html, help/teachers.html,
-	help/text.html, help/textformat.html,
-	help/assignment/assignmenttype.html, help/assignment/resubmit.html,
-	help/choice/options.html, help/forum/allowdiscussions.html,
-	help/forum/attachment.html, help/forum/forumtype.html,
-	help/forum/ratings.html, help/forum/subscription.html,
-	help/quiz/attempts.html, help/quiz/categories.html,
-	help/quiz/correctanswers.html, help/quiz/feedback.html,
-	help/quiz/grademethod.html, help/quiz/maxgrade.html,
-	help/quiz/multichoice.html, help/quiz/questiontypes.html,
-	help/quiz/random.html, help/quiz/shortanswer.html,
-	help/quiz/timeopen.html, help/quiz/truefalse.html,
-	help/resource/resourcetype.html, help/resource/summary.html: 
+	* lang/zh_cn/help/: coursecategory.html, courseformats.html,
+	coursefullname.html, coursenewsitems.html, coursenumsections.html,
+	courserecent.html, courseshortname.html, coursestartdate.html,
+	enrolmentkey.html, guestaccess.html, html.html, langedit.html,
+	mods.html, picture.html, questions.html, richtext.html,
+	surveys.html, teachers.html, text.html, textformat.html,
+	assignment/assignmenttype.html, assignment/resubmit.html,
+	choice/options.html, forum/allowdiscussions.html,
+	forum/attachment.html, forum/forumtype.html, forum/ratings.html,
+	forum/subscription.html, quiz/attempts.html, quiz/categories.html,
+	quiz/correctanswers.html, quiz/feedback.html,
+	quiz/grademethod.html, quiz/maxgrade.html, quiz/multichoice.html,
+	quiz/questiontypes.html, quiz/random.html, quiz/shortanswer.html,
+	quiz/timeopen.html, quiz/truefalse.html,
+	resource/resourcetype.html, resource/summary.html: 
 	
 	Added all the missing help files etc
 
