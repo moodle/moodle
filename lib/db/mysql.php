@@ -687,6 +687,17 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004021500) {
         table_column("groups", "", "hidepicture", "integer", "2", "unsigned", "0", "", "picture");
     }
+    
+    if ($oldversion < 2004021700) {
+        if (!empty($CFG->textfilters)) {
+            $CFG->textfilters = str_replace("tex_filter.php", "filter.php", $CFG->textfilters);
+            $CFG->textfilters = str_replace("multilang.php", "filter.php", $CFG->textfilters);
+            $CFG->textfilters = str_replace("censor.php", "filter.php", $CFG->textfilters);
+            $CFG->textfilters = str_replace("mediaplugin.php", "filter.php", $CFG->textfilters);
+            $CFG->textfilters = str_replace("algebra_filter.php", "filter.php", $CFG->textfilters);
+            set_config("textfilters", $CFG->textfilters);
+        }
+    }
 
     return $result;
 
