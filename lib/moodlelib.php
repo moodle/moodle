@@ -1450,6 +1450,16 @@ function authenticate_user_login($username, $password) {
             return create_user_record($username, $password);
         }
     }
+
+    // It's possible that the user is the admin user, defined locally.
+    $password = md5($password);
+    if ($user = get_record_sql("SELECT u.id FROM user u, user_admins a 
+                                WHERE u.id = a.user 
+                                  AND u.username = '$username' 
+                                  AND u.password = '$password'")) {
+        return get_user_info_from_db("username", $username);
+    }
+
     return false;
 }
 
