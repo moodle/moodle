@@ -202,15 +202,19 @@ class Wiki {
     }    	
 
    // typographic conventions
-    $line = eregi_replace( "--", "&#8212;", $line );
-    $line = eregi_replace( " - ", " &#8211; ", $line );
-    $line = eregi_replace( "\.\.\.", " &#8230; ", $line );
-    $line = eregi_replace( "\(R\)", "&#174;", $line );
-    $line = eregi_replace( "\(TM\)", "&#8482;", $line );
-    $line = eregi_replace( "\(C\)", "&#169;", $line );
-    $line = eregi_replace( "1/4", "&#188;", $line );
-    $line = eregi_replace( "1/2", "&#189;", $line );
-    $line = eregi_replace( "3/4", "&#190;", $line );
+    $line = str_replace( "--", "&#8212;", $line );
+    $line = str_replace( " - ", " &#8211; ", $line );
+    $line = str_replace( "...", " &#8230; ", $line );
+    $line = str_replace( "(R)", "&#174;", $line );
+    $line = str_replace( "(r)", "&#174;", $line );
+    $line = str_replace( "(TM)", "&#8482;", $line );
+    $line = str_replace( "(tm)", "&#8482;", $line );
+    $line = str_replace( "(C)", "&#169;", $line );
+    $line = str_replace( "(c)", "&#169;", $line );
+    $line = str_replace( "1/4", "&#188;", $line );
+    $line = str_replace( "1/2", "&#189;", $line );
+    $line = str_replace( "3/4", "&#190;", $line );
+
     $line = eregi_replace( "([[:digit:]]+[[:space:]]*)x([[:space:]]*[[:digit:]]+)", "\\1&#215;\\2", $line ); // (digits) x (digits) - multiply    
 
     // do formatting tags
