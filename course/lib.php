@@ -25,6 +25,8 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
     global $USER, $CFG;
 
+
+    $isteacher = isteacher($course->id);
     // Get all the possible users
     $users = array();
 
@@ -36,7 +38,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
     if ($courseusers) {
         foreach ($courseusers as $courseuser) {
-            $users[$courseuser->id] = "$courseuser->firstname $courseuser->lastname";
+            $users[$courseuser->id] = fullname($courseuser, $isteacher);
         }
     }
     if ($guest = get_guest()) {
@@ -162,6 +164,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
 
     $strftimedatetime = get_string("strftimedatetime");
+    $isteacher = isteacher($course->id);
 
     echo "<p align=center>";
     print_string("displayingrecords", "", $totalcount);
@@ -185,7 +188,8 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "<td nowrap><font size=2>";
         link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", "ipatlas","$log->ip", 400, 700);
         echo "</td>";
-        echo "<td nowrap><font size=2><a href=\"../user/view.php?id=$log->userid&course=$log->course\"><b>$log->firstname $log->lastname</b></td>";
+        $fullname = fullname($log, $isteacher);
+        echo "<td nowrap><font size=2><a href=\"../user/view.php?id=$log->userid&course=$log->course\"><b>$fullname</b></td>";
         echo "<td nowrap><font size=2>";
         link_to_popup_window( make_log_url($log->module,$log->url), "fromloglive","$log->module $log->action", 400, 600);
         echo "</td>";
@@ -215,6 +219,8 @@ function print_recent_activity($course) {
     // anything new since the user's last login
 
     global $CFG, $USER, $THEME, $SESSION;
+
+    $isteacher = isteacher($course->id);
 
     if (! $USER->lastlogin ) {
         echo "<p align=center><font size=1>";
@@ -250,7 +256,8 @@ function print_recent_activity($course) {
                 $heading = true;
                 $content = true;
             }
-            echo "<font size=1><a href=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a></font><br />";
+            $fullname = fullname($user, $isteacher);
+            echo "<font size=1><a href=\"../user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
         }
         echo "</p>";
     }
@@ -333,8 +340,6 @@ function print_recent_activity($course) {
     // Now display new things from each module
 
     $mods = get_list_of_plugins("mod");
-
-    $isteacher = isteacher($course->id);
 
     foreach ($mods as $mod) {      // Each module gets it's own logs and prints them
         include_once("$CFG->dirroot/mod/$mod/lib.php");
@@ -1164,7 +1169,8 @@ function print_course($course, $width="100%") {
                 if (!$teacher->role) {
                     $teacher->role = $course->teacher;
                 }
-                echo "$teacher->role: <a href=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</a><br />";
+                $fullname = fullname($teacher, isteacher($course->id)); // is the USER a teacher of that course
+                echo "$teacher->role: <a href=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$fullname</a><br />";
             }
         }
         echo "</font></p>";
