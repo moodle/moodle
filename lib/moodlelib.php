@@ -68,41 +68,42 @@ function print_footer ($course=NULL) {
 // to the course home page, otherwise the link will go to the site home
     global $USER, $CFG, $THEME;
 
+
+/// Course links
     if ($course) {
         if ($course == "home") {   // special case for site home page - please do not remove
             $homelink  = "<P ALIGN=center><A TITLE=\"Moodle $CFG->release ($CFG->version)\" HREF=\"http://moodle.com/\">";
             $homelink .= "<BR><IMG WIDTH=130 HEIGHT=19 SRC=\"pix/madewithmoodle2.gif\" BORDER=0></A></P>";
+
+            $course = get_site();
         } else {
             $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
         }
     } else {
         $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot\">".get_string("home")."</A>";
+        $course = get_site();
     }
+
+/// User links
     if ($USER->realuser) {
         if ($realuser = get_record("user", "id", $USER->realuser)) {
-            $realuserinfo = " [$realuser->firstname $realuser->lastname] ";
+            $realuserinfo = " [<A HREF=\"$CFG->wwwroot/course/loginas.php?id=$course->id&return=$realuser->id\">$realuser->firstname $realuser->lastname</A>] ";
         }
     }
+
     if ($USER->id) {
-        if ($course) {
-           if ($course == "home") {
-               $site = get_site();
-               $username = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$site->id\">$USER->firstname $USER->lastname</A>";
-           } else {
-               $username = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A>";
-           }
-        } else {
-           $username = "$USER->firstname $USER->lastname";
-        }
+        $username = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A>";
         $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
                       " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
-    } else { 
+    } else {
         $loggedinas = get_string("loggedinnot", "moodle").
                       " (<A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A>)";
-    } 
+    }
 
     include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
 }
+
+
 
 function print_navigation ($navigation) {
    global $CFG;

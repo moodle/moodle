@@ -5,13 +5,25 @@
     require("lib.php");
 
     require_variable($id);     // course id
-    require_variable($user);   // login as this user
+    optional_variable($user);   // login as this user
+    optional_variable($return); // return to being the real user again
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
     }
 
     require_login($course->id);
+
+    if ($return and $USER->realuser) {
+        $USER = get_user_info_from_db("id", $USER->realuser);
+        $USER->loggedin = true;
+        $USER->site = $CFG->wwwroot;
+        save_session("USER");
+        redirect($HTTP_REFERER);
+        exit;
+    }
+
+    // $user must be defined to go on
 
     if (!isteacher($course->id)) {
         error("Only teachers can use this page!");
