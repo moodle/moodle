@@ -76,7 +76,7 @@
 <p class="answer">&nbsp;</p>
 
 <h3><a name="quotes" id="quotes"></a>Telkens ik tekst toevoeg met een weglatingsteken (') of een aanhalingsteken (&quot;) krijg ik fouten of wordt er een schuine streep aan toegevoegd</h3>
-<p class="answer">Problemen veroorzaakt door accenten worden veroorzaakt door een foute instelling van &quot;magic&quotes&quot;. Moodle heeft volgende instelling nodig (zijn gewoonlijk standaardinstellingen):</p>
+<p class="answer">Problemen veroorzaakt door accenten worden veroorzaakt door een foute instelling van &quot;magic quotes&quot;. Moodle heeft volgende instelling nodig (zijn gewoonlijk standaardinstellingen):</p>
 <p class="answercode">magic_quotes_gpc = On<br />
 magic_quotes_runtime = Off</p>
 <p class="answer">Lees ook het deel over <a href="./?file=install.html#webserver">webserverconfiguratie</a> in de installatiedocumentatie voor meer details.</p>
@@ -127,7 +127,7 @@ magic_quotes_runtime = Off</p>
 <p class="answer">&nbsp;</p>
 
 <h3><a name="nologin"></a>Ik kan helemaal niet aanmelden - ik blijf vastzitten op het log in scherm.</h3>
-<p class="answer">De meest voorkomende oorzaak voor dit probleem is dat je computer (niet je Moodleserver) een firewall heeft die referrer informatie voor de browser wegfiltert. Hier zijn instructies om dit beter in te stellen voor  <a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&src=bar_sch_nam">Norton firewall producten</a>.</p>
+<p class="answer">De meest voorkomende oorzaak voor dit probleem is dat je computer (niet je Moodleserver) een firewall heeft die referrer informatie voor de browser wegfiltert. Hier zijn instructies om dit beter in te stellen voor  <a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&amp;src=bar_sch_nam">Norton firewall producten</a>.</p>
 <p class="answer">De serverbeheerder kan dit voor iedereen herstllen door in de Moodleconfiguratiepagina de variable "<b>secureforms</b>" op "Nee" te zetten.</p>
 <p class="answer">Een andere mogelijke oorzaak van dit probleem is dat sessies niet behoorlijk geconfigureerd zijn op je server. Je kunt dit testen door het script http://yourserver/moodle/lib/session-test.php te openen in je browser.</p>
 <p class="answer">&nbsp;</p>
