@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['action'] = '操作';
@@ -202,6 +202,7 @@ $string['configloglifetime'] = 'ここではユーザの活動に関するログの保持期間を設定
 $string['configlongtimenosee'] = 'もし学生が長期間ログインしていない場合は、自動的にコースから削除されます。この値は削除期限を決定します。';
 $string['configmaxbytes'] = 'ここではサイト全体でアップロードできるファイルの最大サイズを設定します。この設定はPHP設定のupload_max_filesize及びApache設定のLimitRequestBodyに制限されます。maxbytesはコースレベルまたはモジュールレベルで選択するサイズ幅を制限します。';
 $string['configmaxeditingtime'] = 'ここではフォーラムの投稿や日誌等を編集可能な時間を設定します。通常30分が適切な値です。';
+$string['configmessaging'] = 'サイトのユーザ間でメッセージシステムを利用できるようにしますか?';
 $string['confignoreplyaddress'] = 'メールがユーザのために送信される場合があります ( 例 フォーラムの投稿 )。ここで設定するメールアドレスは、「From」に使用され、受信者に返信させないようにします(例 ユーザが個人のメールアドレスを隠したい場合)。';
 $string['confignotifyloginfailures'] = 'ログインに失敗した場合、メールによる通知を行うことができます。誰がメール通知を受け取りますか?';
 $string['confignotifyloginthreshold'] = 'ログイン失敗通知が有効の場合、同一ユーザまたはIPアドレスが何回ログインに失敗するとメール通知しますか?';
@@ -253,6 +254,8 @@ $string['coursegrades'] = 'コース評定';
 $string['courseinfo'] = 'コース情報';
 $string['courserestore'] = 'コースリストア';
 $string['courses'] = 'コース';
+$string['coursescategory'] = '同一カテゴリのコース';
+$string['coursestaught'] = '私が担当したコース';
 $string['courseupdates'] = 'コース更新内容';
 $string['courseuploadlimit'] = 'コースアップロード制限';
 $string['create'] = '作成';
@@ -574,6 +577,10 @@ $string['htmleditordisabledbrowser'] = 'あなたのブラウザの互換性が無いため、HTML
 $string['htmlformat'] = 'HTML形式';
 $string['icqnumber'] = 'ICQナンバー';
 $string['idnumber'] = 'IDナンバー';
+$string['importdata'] = 'コースデータのインポート';
+$string['importdataexported'] = 'コースデータのエクスポートが完了しました。<br /> 続けてあなたのコースにインポートします。';
+$string['importdatafinished'] = 'インポートが完了しました! コースへ移動します。';
+$string['importdatafrom'] = 'インポートするコースデータを探す: ';
 $string['importmetacoursenote'] = 'ここであなたのメタコースにコースを追加します ( ユーザ登録情報をインポートします )。';
 $string['inactive'] = '停止';
 $string['include'] = 'バックアップ';
@@ -586,6 +593,7 @@ $string['includemodules'] = 'モジュールを含む';
 $string['includeneededusers'] = '必要なユーザを含む';
 $string['includenoneusers'] = '非ユーザを含む';
 $string['includeuserfiles'] = 'ユーザファイルを含む';
+$string['info'] = '情報';
 $string['institution'] = '所属組織';
 $string['invalidemail'] = '不正なメールアドレスです。';
 $string['invalidlogin'] = '不正なログインです、再度ログインしてください。';
@@ -770,6 +778,7 @@ $string['nopotentialadmins'] = '潜在的な管理者は登録されていません。';
 $string['nopotentialcreators'] = '潜在的なコース作成者は登録されていません。';
 $string['nopotentialstudents'] = '潜在的な学生は登録されていません。';
 $string['nopotentialteachers'] = '潜在的な教師は登録されていません。';
+$string['noresults'] = '該当データがありません。';
 $string['normal'] = '普通';
 $string['normalfilter'] = '通常検索';
 $string['nostudentsfound'] = '$a が見つかりませんでした。';
@@ -1060,6 +1069,7 @@ $string['userprofilefor'] = '$a のプロフィール';
 $string['users'] = 'ユーザ';
 $string['usersnew'] = '新しいユーザ';
 $string['userzones'] = 'ユーザゾーン';
+$string['usethiscourse'] = 'このコースを使用する';
 $string['usingexistingcourse'] = '既存のコースを使用する';
 $string['version'] = 'バージョン';
 $string['view'] = '表示';

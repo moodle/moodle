@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['about'] = 'エディタに関して';
 $string['absbottom'] = 'Absbottom';
 $string['address'] = 'アドレス';
+$string['alertnoselectedtext'] = '最初にテキストを選択してください!';
 $string['alignment'] = '配置';
 $string['alternatetext'] = 'Alternate text';
 $string['anchorhelp'] = 'ここではアンカーのみを作成します。リンクは手動で作成する必要があります。';
@@ -67,6 +68,7 @@ $string['linkurl'] = 'URL';
 $string['middle'] = '中央';
 $string['minimize'] = 'エディタを最小化する';
 $string['move'] = '移動';
+$string['nolink'] = '用語集リンクを抑える';
 $string['normal'] = 'ノーマル';
 $string['notimage'] = '選択したファイルはイメージではありません。イメージを選択してください。';
 $string['notset'] = '未設定';

@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -11,13 +11,17 @@ $string['allowsdiscussions'] = 'このフォーラムでは一人1件のトピ�
 $string['anyfile'] = '全てのファイル';
 $string['attachment'] = '添付ファイル';
 $string['bynameondate'] = '$a->date - $a->name の投稿';
+$string['configcleanreadtime'] = '既読テーブルの古い投稿をクリアする時間';
 $string['configdisplaymode'] = '表示モードが設定されていない場合のデフォルト表示モードです。';
 $string['configenablerssfeeds'] = 'ここでは全フォーラムのRSS使用設定を行います。ここの設定をしても、各フォーラムでRSSフィードの設定を手動で行う必要があります。';
 $string['configlongpost'] = 'この文字長以上の長さ ( HTMLは含まない ) は長いと考えられます。';
 $string['configmanydiscussions'] = 'フォーラムページに表示されるディスカッションの最大数';
 $string['configmaxbytes'] = '全てのフォーラム添付ファイルに関するデフォルトの最大サイズ(コース制限及び他のローカル設定に従います)';
+$string['configoldpostdays'] = '古い投稿を既読とする日数';
 $string['configreplytouser'] = 'フォーラムの投稿がメール送信される場合、受信者がフォーラムを通さずに個人的に返信できるように、メールにユーザメールアドレスを表示した方が良いですか?　「Yes」に設定した場合でも、ユーザはプロフィール内のメールアドレスを隠すことができます。';
 $string['configshortpost'] = 'この文字長以下の長さ ( HTMLは含まない ) は短いと考えられます。';
+$string['configtrackreadposts'] = '各ユーザの既読/未読を追跡する場合は「Yes」を選択してください。';
+$string['configusermarksread'] = '「Yes」に設定した場合、ユーザは手動で投稿を既読にする必要があります。「No」に設定した場合、投稿が閲覧された時点で既読にされます。';
 $string['couldnotadd'] = 'エラーのため投稿できませんでした。';
 $string['couldnotdeleteratings'] = '申し訳ございません、評価済みのため削除できませんでした。';
 $string['couldnotdeletereplies'] = '申し訳ございません、返信済みのため削除できませんでした。';
@@ -59,6 +63,8 @@ $string['introsocial'] = '投稿制限無しフォーラム';
 $string['introteacher'] = '教師専用フォーラム';
 $string['lastpost'] = '最新の投稿';
 $string['learningforums'] = '学習フォーラム';
+$string['markread'] = '既読にする';
+$string['markunread'] = '未読にする';
 $string['maxattachmentsize'] = '最大添付ファイルサイズ';
 $string['maxtimehaspassed'] = '申し訳ございません、この投稿 ( $a ) に対する最大編集回数を超えました!';
 $string['message'] = 'メッセージ';
@@ -145,6 +151,10 @@ $string['subscribestart'] = 'フォーラムの投稿記事をメール送信す
 $string['subscribestop'] = 'フォーラムの投稿記事をメール送信しない';
 $string['subscription'] = 'メール通知登録';
 $string['subscriptions'] = 'メール通知登録';
+$string['unread'] = '未読';
+$string['unreadposts'] = '未読の投稿';
+$string['unreadpostsnumber'] = '未読件数 $a';
+$string['unreadpostsone'] = '未読件数 1';
 $string['unsubscribe'] = 'メール通知解除';
 $string['unsubscribed'] = 'メール通知を解除しました。';
 $string['unsubscribeshort'] = 'メール通知解除';

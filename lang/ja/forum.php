@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['addanewdiscussion'] = 'е╟еге╣еле├е╖ечеєе╚е╘е├епдЄ─╔▓├';
@@ -11,13 +11,17 @@ $string['allowsdiscussions'] = 'д│д╬е╒ейб╝ещерд╟д╧░ь┐═1╖яд╬е╚е╘е├епдЄ│л╗╧д╣дыд│д
 $string['anyfile'] = '┴┤д╞д╬е╒ебедеы';
 $string['attachment'] = '┼║╔╒е╒ебедеы';
 $string['bynameondate'] = '$a->date - $a->name д╬┼ъ╣╞';
+$string['configcleanreadtime'] = '┤√╞╔е╞б╝е╓еыд╬╕┼дд┼ъ╣╞дЄепеъевд╣ды╗■┤╓';
 $string['configdisplaymode'] = '╔╜╝иетб╝е╔дм└▀─ъд╡дьд╞ддд╩дд╛ь╣чд╬е╟е╒ейеые╚╔╜╝иетб╝е╔д╟д╣бг';
 $string['configenablerssfeeds'] = 'д│д│д╟д╧┴┤е╒ейб╝ещерд╬RSS╗╚═╤└▀─ъдЄ╣╘ддд▐д╣бгд│д│д╬└▀─ъдЄд╖д╞дтбв│╞е╒ейб╝ещерд╟RSSе╒егб╝е╔д╬└▀─ъдЄ╝ъ╞░д╟╣╘дж╔м═╫дмдвдъд▐д╣бг';
 $string['configlongpost'] = 'д│д╬╩╕╗·─╣░╩╛хд╬─╣д╡ ( HTMLд╧┤▐д▐д╩дд ) д╧─╣ддд╚╣═дидщдьд▐д╣бг';
 $string['configmanydiscussions'] = 'е╒ейб╝ещере┌б╝е╕д╦╔╜╝ид╡дьдые╟еге╣еле├е╖ечеєд╬║╟┬ч┐Ї';
 $string['configmaxbytes'] = '┴┤д╞д╬е╒ейб╝ещер┼║╔╒е╒ебедеыд╦┤╪д╣дые╟е╒ейеые╚д╬║╟┬че╡еде║(е│б╝е╣└й╕┬╡┌д╙┬╛д╬еэб╝елеы└▀─ъд╦╜╛ддд▐д╣)';
+$string['configoldpostdays'] = '╕┼дд┼ъ╣╞дЄ┤√╞╔д╚д╣ды╞№┐Ї';
 $string['configreplytouser'] = 'е╒ейб╝ещерд╬┼ъ╣╞дмесб╝еы┴ў┐од╡дьды╛ь╣чбв╝ї┐о╝╘дме╒ейб╝ещердЄ─╠д╡д║д╦╕─┐═┼кд╦╩╓┐од╟дндыдшджд╦бвесб╝еыд╦ецб╝е╢есб╝еыеве╔еье╣дЄ╔╜╝ид╖д┐╩¤дм╬╔ддд╟д╣дл?ббб╓Yesб╫д╦└▀─ъд╖д┐╛ь╣чд╟дтбвецб╝е╢д╧е╫еэе╒егб╝еы╞тд╬есб╝еыеве╔еье╣дЄ▒гд╣д│д╚дмд╟днд▐д╣бг';
 $string['configshortpost'] = 'д│д╬╩╕╗·─╣░╩▓╝д╬─╣д╡ ( HTMLд╧┤▐д▐д╩дд ) д╧├╗ддд╚╣═дидщдьд▐д╣бг';
+$string['configtrackreadposts'] = '│╞ецб╝е╢д╬┤√╞╔/╠д╞╔дЄ─╔└╫д╣ды╛ь╣чд╧б╓Yesб╫дЄ┴к┬Єд╖д╞дпд└д╡ддбг';
+$string['configusermarksread'] = 'б╓Yesб╫д╦└▀─ъд╖д┐╛ь╣чбвецб╝е╢д╧╝ъ╞░д╟┼ъ╣╞дЄ┤√╞╔д╦д╣ды╔м═╫дмдвдъд▐д╣бгб╓Noб╫д╦└▀─ъд╖д┐╛ь╣чбв┼ъ╣╞дм▒▄═ўд╡дьд┐╗■┼└д╟┤√╞╔д╦д╡дьд▐д╣бг';
 $string['couldnotadd'] = 'еиещб╝д╬д┐дс┼ъ╣╞д╟днд▐д╗дєд╟д╖д┐бг';
 $string['couldnotdeleteratings'] = '┐╜д╖╠їд┤д╢ддд▐д╗дєбв╔╛▓┴║╤д▀д╬д┐дс║я╜№д╟днд▐д╗дєд╟д╖д┐бг';
 $string['couldnotdeletereplies'] = '┐╜д╖╠їд┤д╢ддд▐д╗дєбв╩╓┐о║╤д▀д╬д┐дс║я╜№д╟днд▐д╗дєд╟д╖д┐бг';
@@ -59,6 +63,8 @@ $string['introsocial'] = '┼ъ╣╞└й╕┬╠╡д╖е╒ейб╝ещер';
 $string['introteacher'] = '╢╡╗╒└ь═╤е╒ейб╝ещер';
 $string['lastpost'] = '║╟┐╖д╬┼ъ╣╞';
 $string['learningforums'] = '│╪╜ме╒ейб╝ещер';
+$string['markread'] = '┤√╞╔д╦д╣ды';
+$string['markunread'] = '╠д╞╔д╦д╣ды';
 $string['maxattachmentsize'] = '║╟┬ч┼║╔╒е╒ебедеые╡еде║';
 $string['maxtimehaspassed'] = '┐╜д╖╠їд┤д╢ддд▐д╗дєбвд│д╬┼ъ╣╞ ( $a ) д╦┬╨д╣ды║╟┬ч╩╘╜╕▓є┐ЇдЄ─╢дид▐д╖д┐!';
 $string['message'] = 'есе├е╗б╝е╕';
@@ -145,6 +151,10 @@ $string['subscribestart'] = 'е╒ейб╝ещерд╬┼ъ╣╞╡н╗ЎдЄесб╝еы┴ў┐од╣ды';
 $string['subscribestop'] = 'е╒ейб╝ещерд╬┼ъ╣╞╡н╗ЎдЄесб╝еы┴ў┐од╖д╩дд';
 $string['subscription'] = 'есб╝еы─╠├╬┼╨╧┐';
 $string['subscriptions'] = 'есб╝еы─╠├╬┼╨╧┐';
+$string['unread'] = '╠д╞╔';
+$string['unreadposts'] = '╠д╞╔д╬┼ъ╣╞';
+$string['unreadpostsnumber'] = '╠д╞╔╖я┐Ї $a';
+$string['unreadpostsone'] = '╠д╞╔╖я┐Ї 1';
 $string['unsubscribe'] = 'есб╝еы─╠├╬▓Є╜№';
 $string['unsubscribed'] = 'есб╝еы─╠├╬дЄ▓Є╜№д╖д▐д╖д┐бг';
 $string['unsubscribeshort'] = 'есб╝еы─╠├╬▓Є╜№';
