@@ -72,5 +72,28 @@ $string['undo'] = '撤销上步操作';
 $string['unorderedlist'] = '项目符号';
 $string['vertical'] = '垂直位置';
 $string['width'] = '宽度';
-
+//  new 1.2
+$string['size'] = "Size";
+$string['height'] = "Height";
+$string['filebrowser'] = "File Browser";
+$string['properties'] = "Properties";
+$string['type'] = "Type";
+$string['selection'] = "Selection";
+$string['delete'] = "Delete";
+$string['move'] = "Move";
+$string['zip'] = "Zip";
+$string['rename'] = "Rename";
+$string['createfolder'] = "Create folder";
+$string['upload'] = "Upload";
+$string['notimage'] = "Selected file is not an image. Please select an image!";
+$string['insertlink'] = "Insert Link";
+$string['linkproperties'] = "Link properties";
+$string['linkurl'] = "URL";
+$string['linktitle'] = "Title";
+$string['linktarget'] = "Target";
+$string['linktargetnone'] = "None";
+$string['linktargetblank'] = "New window";
+$string['linktargetself'] = "Same frame";
+$string['linktargettop'] = "Same window";
+$string['linktargetother'] = "Other (out of order)";
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2003120700)
+      // forum.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['addanewdiscussion'] = '添加一个新的讨论话题';
@@ -73,6 +73,7 @@ $string['nonews'] = '尚无消息发布';
 $string['noposts'] = '没有贴子';
 $string['nopostscontaining'] = '找不到包含‘$a’的贴子';
 $string['nosubscribers'] = '该讨论区尚无订阅';
+$string['notingroup'] = '对不起, 你需要是一个团体的成员才能浏览这个论坛。';
 $string['nownotsubscribed'] = '$a->name 将<B>不</B>会收到 \'$a->forum\' 复件的电子邮件。';
 $string['nowsubscribed'] = '$a->name 将收到 \'$a->forum\' 复件的电子邮件。';
 $string['numposts'] = '$a 个贴子';
@@ -97,6 +98,8 @@ $string['rating'] = '等级';
 $string['ratingeveryone'] = '所有人可以评价';
 $string['ratingno'] = '无评价';
 $string['ratingonlyteachers'] = '只有 $a 可以发表评价';
+$string['ratingpublic'] = '$a 能看见每个人的等级';
+$string['ratingpublicnot'] = '$a 只能看见他们自己的等级';
 $string['ratings'] = '评价';
 $string['ratingssaved'] = '评价已保存';
 $string['ratingsuse'] = '用户等级';
@@ -107,6 +110,7 @@ $string['replies'] = '回贴';
 $string['repliesmany'] = '迄今有 $a 个回贴';
 $string['repliesone'] = '迄今有 $a 个回贴';
 $string['reply'] = '答复';
+$string['replyforum'] = '回复到论坛';
 $string['search'] = '搜索';
 $string['searchforums'] = '搜索讨论区';
 $string['searcholderposts'] = '搜索旧帖子';
@@ -129,8 +133,5 @@ $string['unsubscribed'] = '不订阅';
 $string['youratedthis'] = '你对此评分';
 $string['yournewtopic'] = '你的新讨论话题';
 $string['yourreply'] = '你的答复';
-// new 
-$string['ratingpublic'] = "\$a can see everyone's ratings";
-$string['ratingpublicnot'] = "\$a can only see their own ratings";
-$string['replyforum'] = "Reply to forum";
+
 ?>
