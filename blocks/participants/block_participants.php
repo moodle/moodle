@@ -45,7 +45,7 @@ class block_participants extends block_base {
             }
         }
 
-        if (!empty($USER->id)) {
+        if (!empty($USER->id) and !isguest()) {
             $fullname = fullname($USER, true);
             $editmyprofile = '<a title="'.$fullname.'" href="'.$CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.$this->instance->pageid.'">'.get_string('editmyprofile').'</a>';
             if ($USER->description) {
