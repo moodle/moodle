@@ -1,204 +1,408 @@
 <html>
+
 <head>
+
 <title>Moodle Docs: Frequently Asked Questions (FAQ)</title>
+
 <link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
 <style type="text/css">
+
 <!--
+
 .question {
-	font-size: medium;
-	font-weight: bold;
-	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-	border: 1px dotted;
-	padding: 10px;
-	background-color: #EEEEEE;
+
+    font-size: medium;
+
+    font-weight: bold;
+
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+
+    border: 1px dotted;
+
+    padding: 10px;
+
+    background-color: #EEEEEE;
+
 }
+
 .answer {
-	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-	font-size: medium;
-	border: none;
-	padding-left: 40px;
+
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+
+    font-size: medium;
+
+    border: none;
+
+    padding-left: 40px;
+
 }
+
 -->
+
 </style>
+
 <style type="text/css">
+
 <!--
+
 .normaltext {
-	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-	font-size: medium;
-	border: none;
-	padding-left: 10px;
+
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+
+    font-size: medium;
+
+    border: none;
+
+    padding-left: 10px;
+
 }
+
 .answercode {
-	font-family: "Courier New", Courier, mono;
-	font-size: small;
-	border: none;
-	padding-left: 60px;
+
+    font-family: "Courier New", Courier, mono;
+
+    font-size: small;
+
+    border: none;
+
+    padding-left: 60px;
+
 }
+
 .questionlink {
-	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-	font-size: medium;
-	border: none;
-	padding-left: 40px;
+
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+
+    font-size: medium;
+
+    border: none;
+
+    padding-left: 40px;
+
 }
+
 -->
+
 </style>
+
 </head>
 
+
+
 <body bgcolor="#FFFFFF">
+
 <h2>Frequently Asked Questions (FAQ)</h2>
+
 <p class="normaltext">This page contains answers to some of the most 
+
   frequently asked questions by people installing Moodle. If you have 
+
   followed the <a href="http://moodle.org/doc/?file=install.html">installation instructions</a> but 
+
   you still have a problem, then this page is probably the best place to be. </p>
+
 <p class="normaltext">If you don't find your answer here try the <a href="http://moodle.org/mod/forum/index.php?id=5">Using 
+
   Moodle</a> course on moodle.org. Start by searching the forums using a few keywords 
+
   (one at a time), in case your problem has already been discussed. If you don't find 
+
   anything, then try posting your question into the appropriate forum - somebody will 
+
   usually be be able to help you.</p>
+
 <p class="normaltext">Use this list to jump to the appropriate answer below:</p>
 
+
+
 <p class="questionlink"><a href="#filenotfound">Whenever I try to access or view a file that I uploaded, I get an error &quot;File not Found&quot;</a></p>
+
 <p class="questionlink"><a href="#php">PHP - is it installed and what version do I have?</a></p>
+
 <p class="questionlink"><a href="#blankpages">Why are all my pages blank?</a></p>
+
 <p class="questionlink"><a href="#errorgetstring">My pages show fatal errors such as : call to undefined function: get_string()</a></p>
+
 <p class="questionlink"><a href="#headerssent">Why do I keep getting error messages about &quot;headers already sent&quot;?</a></p>
+
 <p class="questionlink"><a href="#failedopen">I keep getting this error: Failed opening required '/web/moodle/lib/setup.php'</a></p>
+
 <p class="questionlink"><a href="#quotes">Any text I add with an apostrophe (') or a quote (&quot;) causes errors or comes up with a slash added</a></p>
+
 <p class="questionlink"><a href="#sessiontmp">I keep getting error messages about session_start</a></p>
+
 <p class="questionlink"><a href="#fixdirroot">When I go to the admin page, I get told to make dirroot blank!</a></p>
+
 <p class="questionlink">&nbsp;</p>
+
 <h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
+
   a file that I uploaded, I get an error &quot;File not Found&quot;</h3>
+
 <p class="answer">For example: Not Found: The requested URL /moodle/file.php/2/myfile.jpg 
+
   was not found on this server. </p>
+
 <p class="answer">Your web server needs to be configured to allow the part of 
+
   the URL after a script name to be passed directly to the script. This is usually 
+
   enabled in Apache 1, but is usually disabled by default in Apache 2. To turn 
+
   it on, add this line to your httpd.conf, or to a .htaccess file in your local 
+
   directory (see the <a href="./?file=install.html#webserver">Install documentation</a> 
+
   for more details): </p>
+
 <p class="answercode"><b>AcceptPathInfo</b> on</p>
+
 <p class="answer">Note, this will ONLY work for Apache versions 2.x. </p>
+
 <p class="answer">If you are not using Apache 2 and you still have this problem 
+
   (unlikely) then you can switch Moodle to use an alternative method. The disadvantages 
+
   are a slight loss of performance for your users and you won't be able to use 
+
   relative links within HTML resources. </p>
+
 <p class="answer">To use this alternative method: login as Admin, go into the 
+
   "Configure Variables" page and change the setting for "<b>slasharguments</b>". 
+
   You should now be able to access your uploaded files.</p>
+
 <p class="answer">&nbsp;</p>
+
   
+
   <h4 class="question"><a name="php"></a>PHP - is it installed and what version 
+
   do I have?</h4>
+
   <p class="answer">Make a new file on your web site called info.php, containing the following 
+
     text, and call it from your browser:</p>
+
     
+
   <p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
+
 <p class="answer">If nothing happens then you don't have PHP installed. See the 
+
   installation docs for some information about where to download it for your computer.</p>
+
 <p class="answer">&nbsp;</p>
+
 <h4 class="question"><a name="blankpages"></a>Why are all my pages blank? </h4> 
+
 <p class="answer">Check the dirroot variable in config.php. You must use complete, 
+
   absolute pathnames, eg:</p>
+
 <p class="answercode"> $CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
+
 <p>&nbsp; </p>
+
 <h4 class="question"><a name="errorgetstring"></a>My pages show fatal errors such 
+
   as : call to undefined function: get_string()</h4>
+
 <p class="answer">If you see errors like:</p>
+
 <p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program 
+
   files\easyphp\www\moodle\config.php on line 94 <br>
+
   Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php 
+
   on line 11</p>
+
 <p class="answer">then it's likely you have left out a semi-colon or ending quote 
+
   from a line in config.php (previous to line 94).</p>
+
 <p class="answer">Another reason could be that you have opened config.php in a 
+
   program like Word to edit it, and saved it as a HTML web page, instead of a 
+
   proper text file.</p>
+
 <p>&nbsp;</p>
+
 <h4 class="question"><a name="headerssent"></a>Why do I keep getting error messages 
+
   about &quot;headers already sent&quot;?</h4>
+
 <p class="answer">If you see errors like this:</p>
+
 <p class="answercode">Warning: Cannot add header information - headers already 
+
   sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+
   on line 1322 </p>
+
 <p class="answercode"> Warning: Cannot add header information - headers already 
+
   sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+
   on line 1323 </p>
+
 <p class="answercode"> Warning: Cannot add header information - headers already 
+
   sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php 
+
   on line 54 </p>
+
 <p class="answer">You have blank lines or spaces after the final ?> in your config.php 
+
   file. Sometimes text editors add these - for example Notepad on Windows - so 
+
   you may have to try a different text editor to remove these spaces or blank 
+
   lines completely. </p>
+
 <p class="answer">&nbsp;</p>
+
 <h4 class="question"><a name="failedopen"></a>I keep getting this error: Failed 
+
   opening required '/web/moodle/lib/setup.php'</h4>
+
 <p class="answer">In your config.php, the setting that you use for the dirroot 
+
   variable must be the <strong>complete path from the root of your server's hard 
+
   drive</strong>.</p>
+
 <p class="answer">Sometimes people only use the path from their home directory, 
+
   or relative to the root of the web server directory.</p>
+
 <p class="answer">&nbsp;</p>
+
 <h4 class="question"><a name="quotes" id="quotes"></a>Any text I add with an apostrophe 
+
   (') or a quote (&quot;) causes errors or comes up with a slash added</h4>
+
 <p class="answer">Problems caused by apostrophes are caused by incorrect &quot;magic 
+
   quotes&quot; settings. Moodle requires the following settings (which are usually 
+
   the default):</p>
+
 <p class="answercode">magic_quotes_gpc = On<br>
+
   magic_quotes_runtime = Off</p>
+
 <p class="answer">See the section on <a href="http://moodle.org/doc/?file=install.html#webserver">webserver 
+
   configuration</a> in the Installation docs for more details.</p>
 
 
 
+
+
+
+
 <h4 class="question"><a name="sessiontmp"></a>I keep getting error messages about session_start</h4>
+
 <p class="answer">If you see errors like this:</p>
+
 <p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
 <p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
 <p class="answercode">Warning: session_start() [function.session-start]: Cannot send session cache limiter - headers already sent (output started at G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php on line 123</p>
 
+
+
 <p class="answer">... these are all related to the fact that PHP is failing to save 
+
   "session" files on your hard disk (in a directory called /tmp).  Usually the 
+
   reason is that you don't HAVE a directory called /tmp on your computer.  This 
+
   is usually the case with Windows installations.
 
+
+
 <p class="answer">The solution is to fix the PHP setting for this path to point to a real directory.  You can do this in your php.ini file:</p>
+
 <p class="answercode">session.save_path = C:\temp</p>
+
 <p class="answer">or otherwise in a .htaccess file in your main moodle directory:</p>
+
 <p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
 
+
+
 <h4 class="question"><a name="fixdirroot"></a>When I go to the admin page, I get told to make dirroot blank!</h4>
+
 <p class="answer">If you see errors like this in Moodle 1.0.9:</p>
 
+
+
 <table class=generalbox cellSpacing=0 cellPadding=5 align=center border=0>
+
 <tbody>
+
 <tr>
+
 <td bgColor=#ffbbbb>Please fix your settings in config.php: 
+
 <p>You have: 
+
 <p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle"; 
+
 <p>but it should be: 
+
 <p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
 
+
+
 <p class="answer">then you have encountered a small bug that occurs on some servers. The problem is with the error-checking mechanism, not with your actual path.  To fix it, find this line (line 66) in the file admin/index.php: </p>
+
 <p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
+
 <p class="answer">and change it to this:</p>
+
 <p class="answercode">if (!empty($dirroot) and $dirroot != $CFG->dirroot) {</p>
 
 
-<h2>&nbsp;</h2>
+
+
+
 <h2>&nbsp;</h2>
 
+<h2>&nbsp;</h2>
+
+
+
 <hr>
+
 <p align="center" class="normaltext"><a href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g' title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'>Suggest 
+
   a new FAQ</a> (include the answer!)</p>
+
 <hr>
+
 <p align="right"><strong><em>Thanks to John Eyre for helping to maintain this 
+
   FAQ.</em></strong></p>
+
 <p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+
 <p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
+
   moodler Exp $</font></p>
 
+
+
 </body>
+
 </html>
+
