@@ -588,7 +588,7 @@ function close_window_button() {
     echo '-->' . "\n";
     echo '</script>' . "\n";
     echo '<noscript>' . "\n";
-    echo '<a href="'. $_SERVER['HTTP_REFERER'] .'"><---</a>' . "\n";
+    print_string('closewindow');
     echo '</noscript>' . "\n";
     echo '</center>' . "\n";
 }
@@ -694,29 +694,52 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
 
     $inoptgroup = false;
     foreach ($options as $value => $label) {
-        if (substr($label,0,2) == '--') {
-            if ($inoptgroup) {
+    
+        if (substr($label,0,2) == '--') { /// we are starting a new optgroup
+        
+            /// Check to see if we already have a valid open optgroup
+            /// XHTML demands that there be at least 1 option within an optgroup
+            if ($inoptgroup and (count($optgr) > 1) ) {
+                $output .= implode('', $optgr);
                 $output .= '   </optgroup>';
-            } else {
-                $inoptgroup = true;
             }
-            $output .= '   <optgroup label="'. substr($label,2) .'">';   // Plain labels
+
+            unset($optgr);
+            $optgr = array();
+
+            $optgr[]  = '   <optgroup label="'. substr($label,2) .'">';   // Plain labels
+            
+            $inoptgroup = true; /// everything following will be in an optgroup
             continue;
+            
         } else {
-            $output .= '   <option value="'. $common . $value .'"';
+            $optstr = '   <option value="' . $common . $value . '"';
+            
             if ($value == $selected) {
-                $output .= ' selected="selected"';
+                $optstr .= ' selected="selected"';
+            }
+            
+            if ($label) {
+                $optstr .= '>'. $label .'</option>' . "\n";
+            } else {
+                $optstr .= '>'. $value .'</option>' . "\n";
+            }
+            
+            if ($inoptgroup) {
+                $optgr[] = $optstr;
+            } else {
+                $output .= $optstr;
             }
         }
-        if ($label) {
-            $output .= '>'. $label .'</option>' . "\n";
-        } else {
-            $output .= '>'. $value .'</option>' . "\n";
-        }
+        
     }
-    if ($inoptgroup) {
+
+    /// catch the final group if not closed
+    if ($inoptgroup and count($optgr) > 1) {
+        $output .= implode('', $optgr);
         $output .= '    </optgroup>';
     }
+
     $output .= '</select>';
     $output .= '<noscript id="noscript'.$formname.'" style="display: inline;">';
     $output .= '<input type="submit" value="'.$go.'" /></noscript>';
