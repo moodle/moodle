@@ -102,15 +102,16 @@ function display() {
             print_header();
             print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id), 
                              "center", "", "$THEME->cellcontent", "20");
+            print_footer($course);
         } else {                           /// Make a page and a pop-up window
 
             print_header($pagetitle, $course->fullname, "$navigation {$resource->name}", 
                          "", "", true, update_module_button($this->cm->id, $course->id, $strresource), 
                          navmenu($course, $this->cm));
 
-            echo "\n<script language=\"Javascript\">";
+            echo "\n<script language=\"javascript\" type=\"text/javascript\">";
             echo "\n<!--\n";
-            echo "openpopup('/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
+            echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
             echo "\n-->\n";
             echo '</script>';
     
@@ -139,7 +140,7 @@ function display() {
         print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id), 
                          "center", "", "$THEME->cellcontent", "20");
     
-        echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
+        echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</font></p></center>";
     
         print_footer($course);
     }
@@ -191,7 +192,7 @@ function setup($form) {
                 if ($optionname == "height" or $optionname == "width") {
                     $window->$optionname = $optionvalue;
                 } else if ($optionvalue) {
-                    $window->$optionname = "checked";
+                    $window->$optionname = "checked=\"checked\"";
                 }
             }
         }

@@ -119,7 +119,7 @@ function display() {
 
         echo '<tr>';
         echo '<td>';
-        echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" />";
+        echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"\"/>";
         echo '</td>';
         echo '<td nowrap="nowrap"><p>';
         if ($icon == 'folder.gif') {

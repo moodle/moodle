@@ -1,4 +1,9 @@
-<script language="javascript">
+
+<tr valign="top">
+    <td align="right" nowrap="nowrap">
+
+
+<script language="javascript" type="text/javascript">
     function showhide (id, set) {
         divobj = document.getElementById(id);
         butobj = document.getElementById(id+'button');
@@ -27,8 +32,6 @@
 
 
 
-<tr valign="top">
-    <td align="right" nowrap="nowrap">
         <p><b><?php print_string("fulltext", "resource") ?>:</b></p><br />
         <font size="1">
             <?php  helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
@@ -91,7 +94,7 @@
         onclick=" return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
         <?php p($strnewwindowopen) ?>
-        <ul>
+        <blockquote>
         <?php
             foreach ($window as $name => $value) {
                 if ($name == "height" or $name == "width") {
@@ -118,7 +121,7 @@
                 echo "</script>";
             }
         ?>
-        </ul>
+        </blockquote>
     </td>
 </tr>
 
@@ -126,10 +129,13 @@
 
     </div>
 
+
+<script language="javascript" type="text/javascript">
+    showhide('windowsettings', true);
+</script>
+
+
 </td></tr>
 
 
-<script language="javascript">
-    showhide('windowsettings', true);
-</script>
 
