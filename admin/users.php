@@ -28,7 +28,7 @@
     $table->data[] = array("<b><a href=\"user.php\">".get_string("edituser")."</a></b>",
                            get_string("adminhelpedituser"));
     if (is_internal_auth()) {
-        $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a></b>",
+        $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a></b>",
                                get_string("adminhelpaddnewuser"));
         $table->data[] = array("<b><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php?sesskey=$USER->sesskey\">".get_string("uploadusers")."</a></b>",
                                get_string("adminhelpuploadusers"));
@@ -36,9 +36,9 @@
     $table->data[] = array('', '<hr />');
     $table->data[] = array("<b><a href=\"enrol.php?sesskey=$USER->sesskey\">".get_string("enrolments")."</a></b>",
                            get_string("adminhelpenrolments"));
-    $table->data[] = array("<b><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a></b>",
+    $table->data[] = array("<b><a href=\"../course/index.php?edit=off&amp;sesskey=$USER->sesskey\">".get_string("assignstudents")."</a></b>",
                            get_string("adminhelpassignstudents"));
-    $table->data[] = array("<b><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a></b>",
+    $table->data[] = array("<b><a href=\"../course/index.php?edit=on&amp;sesskey=$USER->sesskey\">".get_string("assignteachers")."</a></b>",
                            get_string("adminhelpassignteachers")." <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\" alt=\"\" />");
     $table->data[] = array("<b><a href=\"creators.php?sesskey=$USER->sesskey\">".get_string("assigncreators")."</a></b>",
                            get_string("adminhelpassigncreators"));

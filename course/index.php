@@ -14,7 +14,7 @@
     }
 
     if (isadmin()) {
-        if (isset($_GET['edit'])) {
+        if (isset($_GET['edit']) and confirm_sesskey()) {
             if ($edit == "on") {
                 $USER->categoriesediting = true;
             } else if ($edit == "off") {
@@ -84,7 +84,7 @@
 
 
 /// If data for a new category was submitted, then add it
-    if ($form = data_submitted()) {
+    if ($form = data_submitted() and confirm_sesskey()) {
         if (!empty($form->addcategory)) {
             unset($newcategory);
             $newcategory->name = $form->addcategory;
@@ -100,7 +100,7 @@
 
 /// Delete a category if necessary
 
-    if (isset($delete)) {
+    if (isset($delete) and confirm_sesskey()) {
         if ($deletecat = get_record("course_categories", "id", $delete)) {
 
             /// Send the children categories to live with their grandparent
@@ -145,7 +145,7 @@
 
 /// Move a category to a new parent if required
 
-    if (isset($move) and isset($moveto)) {
+    if (isset($move) and isset($moveto) and confirm_sesskey()) {
         if ($tempcat = get_record("course_categories", "id", $move)) {
             if ($tempcat->parent != $moveto) {
                 if (! set_field("course_categories", "parent", $moveto, "id", $tempcat->id)) {
@@ -157,7 +157,7 @@
 
 
 /// Hide or show a category 
-    if (isset($hide) or isset($show)) {
+    if ((isset($hide) or isset($show)) and confirm_sesskey()) {
         if (isset($hide)) {
             $tempcat = get_record("course_categories", "id", $hide);
             $visible = 0;
@@ -178,7 +178,7 @@
 
 /// Move a category up or down
 
-    if (isset($moveup) or isset($movedown)) {
+    if ((isset($moveup) or isset($movedown)) and confirm_sesskey()) {
         
         $swapcategory = NULL;
         $movecategory = NULL;
@@ -253,6 +253,7 @@
     echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
     echo "<input type=\"text\" size=\"30\" alt=\"$straddnewcategory\" name=\"addcategory\" />";
     echo "<input type=\"submit\" value=\"$straddnewcategory\" />";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
     echo "</form>";
     echo "</center>";
 
@@ -336,23 +337,23 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
         echo "<td nowrap=\"nowrap\">";    /// Print little icons
 
-        echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id\"><img".
+        echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id&amp;sesskey=$USER->sesskey\"><img".
              " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
 
         if (!empty($category->visible)) {
-            echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id\"><img".
+            echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id&amp;sesskey=$USER->sesskey\"><img".
                  " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
         } else {
-            echo "<a title=\"$str->show\" href=\"index.php?show=$category->id\"><img".
+            echo "<a title=\"$str->show\" href=\"index.php?show=$category->id&amp;sesskey=$USER->sesskey\"><img".
                  " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
         }
 
         if ($up) {
-            echo "<a title=\"$str->moveup\" href=\"index.php?moveup=$category->id\"><img".
+            echo "<a title=\"$str->moveup\" href=\"index.php?moveup=$category->id&amp;sesskey=$USER->sesskey\"><img".
                  " src=\"$pixpath/t/up.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
         }
         if ($down) {
-            echo "<a title=\"$str->movedown\" href=\"index.php?movedown=$category->id\"><img".
+            echo "<a title=\"$str->movedown\" href=\"index.php?movedown=$category->id&amp;sesskey=$USER->sesskey\"><img".
                  " src=\"$pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
         }
         echo "</td>";
@@ -365,7 +366,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
                 unset($tempdisplaylist[$key]);
             }
         }
-        popup_form ("index.php?move=$category->id&amp;moveto=", $tempdisplaylist, "moveform$category->id", "$category->parent", "", "", "", false);
+        popup_form ("index.php?move=$category->id&amp;sesskey=$USER->sesskey&amp;moveto=", $tempdisplaylist, "moveform$category->id", "$category->parent", "", "", "", false);
         echo "</td>";
         echo "</tr>";
     } else {
