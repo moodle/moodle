@@ -72,10 +72,14 @@
    // get the list of attendance records for all hours of the given day and 
    // put it in the array for use in the attendance table
 	$strviewall = get_string("viewall", "attendance");
+ 	$strviewweek = get_string("viewweek", "attendance");
 	echo "<table align=\"right\" width=\"50%\"".
          "border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
   echo "<tr><td align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
-  echo "$strviewall</a></td></tr></table><br \>";
+  echo "$strviewall</a></td></tr>";
+  echo "<tr><td align=\"right\"><a href=\"viewweek.php?scope=week&id=".$attendance->id."\">";
+  echo "$strviewweek</a></td></tr></table><br /> <br />";
+
   // this is the wrapper table
   echo "<table align=\"center\" width=\"80\" class=\"generalbox\"".
          "border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";

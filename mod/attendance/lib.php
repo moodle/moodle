@@ -391,6 +391,105 @@ function attendance_get_records($table, $field1="", $value1="", $field2="", $val
     return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort $limit");
 }
 
+/**
+* Return all attendance records that are in the same section as the instance specified
+* 
+* This function uses course_modules, modules, and attendance tables together to determine
+* first what section the specified attendance instance in the course is in, then all the
+* attendance records that are in the same section, regardless of the format of the course
+*
+* @param	int	$instance	id of the attendance instance in course_modules
+* @param	int	$courseid	the id of the course for which we're getting records
+* @return	(object)recordset	associative array of records containing the attendance records we wanted 
+*/
+function get_attendance_for_section($instance, $courseid) {
+    global $CFG;
+    // first, get the section for the instance specified
+    $sql = "SELECT cm.section
+                           FROM {$CFG->prefix}course_modules cm,
+                                {$CFG->prefix}modules md, 
+                                {$CFG->prefix}attendance a 
+                           WHERE cm.course = '$courseid' AND 
+                                 cm.deleted = '0' AND
+                                 cm.instance = a.id AND 
+                                 md.name = 'attendance' AND 
+                                 md.id = cm.module AND
+                                 a.id = '$instance'";
+    $sectarray = get_record_sql($sql);
+//    echo "<pre>$sql \n</pre>";
+    $section = $sectarray->section;
+/*                                 
+select cm.section from 
+mdl_course_modules cm, mdl_modules md, mdl_attendance m
+where cm.course = '7' AND cm.deleted = '0' AND cm.instance = m.id
+AND md.name = 'attendance' AND md.id = cm.module AND m.id =  '119';
+*/
+    // then get all the attendance instances in that section
+    $sql = "SELECT a.*
+                           FROM {$CFG->prefix}course_modules cm, 
+                                {$CFG->prefix}modules md, 
+                                {$CFG->prefix}attendance a 
+                           WHERE cm.course = '$courseid' AND 
+                                 cm.deleted = '0' AND
+                                 cm.section = '$section' AND 
+                                 md.name = 'attendance' AND 
+                                 md.id = cm.module AND
+                                 a.id = cm.instance order by a.day ASC";
+//    echo "<pre>$sql \n</pre>";
+    return get_records_sql($sql);
+/*
+select m.* from mdl_course_modules cm, mdl_modules md, mdl_attendance m
+where cm.course = '7' AND cm.deleted = '0' AND cm.section = '85' 
+AND md.name = 'attendance' AND md.id = cm.module AND m.id = cm.instance;
+*/
+}
+
+/**
+* Return all attendance records that are in the same 7 day span as the instance specified
+* 
+* This function uses the course and attendance tables together to find all the attendance 
+* records that are for days within the same week span as the instance specified.  The week is
+* determined based NOT on calendar week, but instead on the week span as it occurs in a 
+* weekly formatted course - I find this by starting with the startdate of the course and 
+* then skipping ahead by weeks til I find the range that fits the instance, then I use that
+* range as min and max to query the attendance table for all the other records.  Note that this
+* function will work with non-weekly formatted courses, though the results won't easily 
+* correlate with the course view.  But it will work regardless.
+*
+* @param	int	$id	the id of the attendance record we're using as a basis for the query
+* @param	int	$courseid	the id of the course for which we're getting records
+* @return	(object)recordset	associative array of records containing the attendance records we wanted 
+*/
+function get_attendance_for_week($id, $courseid) {
+    global $CFG;
+  if (! $attendance = get_record("attendance", "id", $id)) {
+    error("Course module is incorrect");
+  }
+  if (! $course = get_record("course", "id", $courseid)) {
+    error("Course module is incorrect");
+  }
+  // the offset is for weeks that don't start on Monday
+  $day = $attendance->day;
+  // determine the week range for the select, based on the day
+  for ($maxday=$course->startdate;$day>$maxday;$maxday=$maxday+604800)
+   {;}$minday = $maxday-608400;
+  $sql = "SELECT * FROM {$CFG->prefix}attendance 
+          WHERE course = '$courseid' AND day<$maxday AND day>=$minday order by day ASC;";
+//  echo "<pre>$sql \n</pre>";
+  return get_records_sql($sql);
+}
+
+/**
+* Returns user records for all users who have DATA in a given attendance instance
+* 
+* This function is present only for the backup routines.  It won't return meaningful data
+* for an attendance roll because it only returns records for users who have been counted as 
+* tardy or absent in the rolls for a single attendance instance, since these are the only 
+* records I store in the database - for brevity's sake of course.
+*
+* @param	int	$attendanceid	the id of the attendance record we're looging for student data from
+* @return	(object)recordset	associative array of records containing the student records we wanted 
+*/
 function attendance_get_participants($attendanceid) {
 //Returns the users with data in one attendance
 //(users with records in attendance_roll, students)

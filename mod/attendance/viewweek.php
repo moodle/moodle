@@ -1,5 +1,5 @@
 <?  // $Id$
-/// This page prints all instances of attendance in a given course
+/// This page prints all instances of attendance in a given week
 
     require_once("../../config.php");
     require_once("lib.php" );
@@ -11,14 +11,7 @@
 
 /// populate the appropriate objects
     if ($id) {
-        if (! $course = get_record("course", "id", $id)) {
-            error("Course is misconfigured");
-        }
-        if (! $attendances = get_records("attendance", "course", $id, "day ASC ")) {
-            error("Course module is incorrect");
-        }
-    } else {
-        if (! $attendance = get_record("attendance", "id", $a)) {
+        if (! $attendance = get_record("attendance", "id", $id)) {
             error("Course module is incorrect");
         }
         if (! $course = get_record("course", "id", $attendance->course)) {
@@ -27,14 +20,27 @@
         if (! $cm = get_coursemodule_from_instance("attendance", $attendance->id, $course->id)) {
             error("Course Module ID was incorrect");
         }
-        if (! $attendances = get_records("attendance", "course", $cm->course)) {
+        if ($scope == "section") {
+          if (! $attendances = get_attendance_for_section($attendance->id, $course->id)) {
             error("Course module is incorrect");
+          }
+        } else {
+          if (! $attendances = get_attendance_for_week($attendance->id, $course->id)) {
+            error("Course module is incorrect");
+          }        	
         }
     }
+//    echo "<pre>\n";
+//    foreach ($attendances as $attendance) {
+//    var_dump($attendances);
+//    }
+//    echo "\n</pre>";
+//    print_footer();
+//    exit;
 
     require_login($course->id);
 
-    add_to_log($course->id, "attendance", "viewall", "viewall.php?id=$course->id");
+    add_to_log($course->id, "attendance", "viewweek", "viewweek.php?scope=".$scope."&id=$course->id");
 
 /// Print the page header
     if ($course->category) {
@@ -43,9 +49,9 @@
 
     $strattendances = get_string("modulenameplural", "attendance");
     $strattendance  = get_string("modulename", "attendance");
-    $strallattendance  = get_string("allmodulename", "attendance");
+    $strweekattendance  = get_string("weekmodulename", "attendance");
     print_header("$course->shortname: $strallattendance", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strattendances</A> -> $strallattendance", 
+                 "$navigation <A HREF=index.php?id=$course->id>$strattendances</A> -> $strweekattendance", 
                   "", "", true, "&nbsp;", 
                   navmenu($course, $cm));
  
@@ -55,6 +61,42 @@ if ($attendances) {
      notice(get_string("noviews", "attendance"));
      print_footer($course); exit;
    }
+
+// print other links at top of page
+  	$strviewsection = get_string("viewsection", "attendance");
+  	$strviewweek = get_string("viewweek", "attendance");
+  	$strviewall = get_string("viewall", "attendance");
+  	$strviewone = get_string("viewone", "attendance");
+  	$strviewtable = get_string("viewtable", "attendance");
+  	$strviewmulti = get_string("viewmulti", "attendance");
+
+
+    echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
+    echo "$strviewall</a><br />";
+    if ($onepage) {  // one page for all tables
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
+      echo "$strviewmulti</a><br />";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
+      echo "$strviewtable</a><br />";
+    } else if ($onetable) { // one table for all
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
+      echo "$strviewmulti</a><br />";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
+      echo "$strviewone</a><br />";
+    } else { // multiple pages
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
+      echo "$strviewone</a><br />";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
+      echo "$strviewtable</a><br />";
+    }
+    if ($scope=="week") {  // week view for scope
+      echo "<a href=\"viewweek.php?scope=section&id=".$id."\">";
+      echo "$strviewsection</a></p>";
+    } else { // section view for scope
+      echo "<a href=\"viewweek.php?scope=week&id=".$id."\">";
+      echo "$strviewweek</a></p>";
+    }
+
 
 
 /// create an array of all the attendance objects for the entire course
@@ -81,7 +123,6 @@ if ($attendances) {
    $numatt++;
    }
 
-// A LOOP FOR CREATING SINGLE-USER VERSION OF THE REPORT OR A ONE-PAGE REPORT
    if (isstudent($course->id)) {
      $onepage=true;
      $multipage=false; 
@@ -148,39 +189,12 @@ while (($multipage || $onepage) && (!$endonepage)) {
 //
 //
 
-// print other links at top of page
-  	$strviewone = get_string("viewone", "attendance");
-  	$strviewtable = get_string("viewtable", "attendance");
-  	$strviewmulti = get_string("viewmulti", "attendance");
-  	$strviewweek = get_string("viewweek", "attendance");	
-    if ($onepage) {  // one page for all tables
-      echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
-      echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewall.php?id=".$course->id."&onetable=1\">";
-      echo "$strviewtable</a><br />";
-      echo "<a href=\"viewweek.php?scope=week&id=".$atts[$minatt]->attendance->id."\">";
-      echo "$strviewweek</a></p>";
-    } else if ($onetable) { // one table for all
-      echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
-      echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewall.php?id=".$course->id."&onepage=1\">";
-      echo "$strviewone</a><br />";
-      echo "<a href=\"viewweek.php?scope=week&id=".$atts[$minatt]->attendance->id."\">";
-      echo "$strviewweek</a></p>";
-    } else { // multiple pages
-      echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."&onepage=1\">";
-      echo "$strviewone</a><br />";
-      echo "<a href=\"viewall.php?id=".$course->id."&onetable=1\">";
-      echo "$strviewtable</a><br />";
-      echo "<a href=\"viewweek.php?scope=week&id=".$atts[$minatt]->attendance->id."\">";
-      echo "$strviewweek</a></p>";
-
-    }
-
   if (!$onepage) {
 
   attendance_print_pagenav(); 
   } 
+
+
 
    // build the table for attendance roll
    // this is the wrapper table
@@ -282,13 +296,14 @@ if ($onepage) {$page++; echo "<br /> <br />\n"; }
 }  // while loop for multipage/one page printing
 
   if (!$onepage) { attendance_print_pagenav(); }
-  
+
  } else { error("There are no attendance rolls in this course.");} // for no attendance rolls  
 /// Finish the page
     print_footer($course);
 
+
 function attendance_print_pagenav() {
-    global $pagereport, $minatt, $maxatt, $course, $page, $numatt, $maxpages;
+    global $pagereport, $minatt, $maxatt, $course, $page, $numatt, $maxpages, $attendance,$scope,$id;
 	  if ($pagereport) {
   	$of = get_string('of','attendance');
   	$pg = get_string('page');
@@ -304,15 +319,16 @@ function attendance_print_pagenav() {
     echo "<tr>";
   	if ($minatt!=0) {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-	       "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=".($page-1)."\">$prev $pg</a></th>\n";
+	       "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=".($page-1)."\">$prev $pg</a></th>\n";
   	}
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
 	       "$pg $page $of $maxpages</th>\n";
   	if ($maxatt!=$numatt) {
       echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-      "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=". ($page+1)."\">$next $pg</a></th>";
+      "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=". ($page+1)."\">$next $pg</a></th>";
   	}
 		echo "</tr></table></td></tr></table></center>\n";
   }
 }
+
 ?>
