@@ -1,25 +1,25 @@
 <form method="post" action="block.php">
-<?php echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">"; ?>
+<?php echo '<input type="hidden" name="sesskey" value="'. $USER->sesskey .'">'; ?>
 
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">
-	<td align="right"><p>block_online_users_timetosee:</td>
-	<td>
-	<input name="block" type="hidden" value="<?php echo intval($_REQUEST['block']); ?>" />
-    <input name="block_online_users_timetosee" type="text" size="5" value="<?php if(isset($CFG->block_online_users_timetosee)) {
-                                                                               p($CFG->block_online_users_timetosee);
-                                                                           } else {
-                                                                               p(5);
-                                                                           } ?>" />
+    <td align="right"><p>block_online_users_timetosee:</td>
+    <td>
+    <input name="block" type="hidden" value="<?php echo intval($_REQUEST['block']); ?>" />
+    <input name="block_online_users_timetosee" type="text" size="5" value="<?php 
+    if(isset($CFG->block_online_users_timetosee)) {
+        p($CFG->block_online_users_timetosee);
+    } else {
+        p(5);
+    } ?>" />
     </td>
     <td>
-    <?php print_string("configtimetosee", "block_online_users") ?>
+    <?php print_string('configtimetosee', 'block_online_users') ?>
     </td>
 </tr>
 <tr>
     <td colspan="3" align="center">
-	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
+    <input type="submit" value="<?php print_string('savechanges') ?>" /></td>
 </tr>
 </table>
-
 </form>
