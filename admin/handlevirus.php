@@ -3,6 +3,7 @@
  * clamscan -r --infected --no-summary <files> 2>&1 | php -d error_log=/path/to/log thisfile.php 
  * also it's important that the output of clamscan prints the FULL PATH to each infected file, so use absolute paths for area to scan
  * also it should be run as root, or whatever the webserver runs as so that it has the right permissions in the quarantine dir etc.
+ * php -d error_log=/path/to/log thisfile.php will override the default error log for php cli, which is stderr, so if you want this script to just print stuff out, use php thisfile.php instead.
  */
 
 
@@ -85,6 +86,7 @@ function notify_admins_unknown($file,$a) {
 }
 
 function validate_line($line) {
+    global $CFG;
     if (strpos($line,"FOUND") === false) {
         return false;
     }
@@ -92,7 +94,16 @@ function validate_line($line) {
     $file = substr($line,0,$index);
     $file = preg_replace('/\/\//','/',$file);
     if (!file_exists($file)) {
-        return false;
+        // try and prepend dataroot, that might fix it (maybe) 
+        if ($file{0} == "/") {
+            $file = $CFG->dataroot.$file;
+        }
+        else {
+            $file = $CFG->dataroot."/".$file;
+        }
+        if (!file_exists($file)) {
+            return false;
+        }
     }
     return $file;
 }
