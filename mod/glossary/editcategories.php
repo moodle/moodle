@@ -12,7 +12,9 @@
     optional_variable($usedynalink);  // category ID
     optional_variable($confirm);  // confirm the action
 
-    optional_variable($name);  // confirm the action
+    optional_variable($name);  // confirm the name
+
+    $name = clean_text($name);
 
     $action = strip_tags(urldecode($action));  //XSS
     $hook = strip_tags(urldecode($hook));  //XSS
@@ -100,7 +102,7 @@
                 echo "<p align=\"center\">" . get_string("delete"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
                 print_simple_box_start("center","40%", "#FFBBBB");
-                echo "<center><b>$category->name</b><br />";
+                echo "<center><b>".format_text($category->name)."</b><br>";
                 
                 $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
                 if ( $num_entries ) {
@@ -200,7 +202,7 @@
              <tr bgcolor="<?php p($THEME->cellheading2)?>">
                <td width="90%" align="left">
                <?php
-                    echo "<b>$category->name</b> <font size=-1>($num_entries " . get_string("entries","glossary") . ")</font>";
+                    echo "<b>".format_text($category->name)."</b> <font size=-1>($num_entries " . get_string("entries","glossary") . ")</font>";
                ?>
                </td>
                <td width="10%" align="center"><b>
