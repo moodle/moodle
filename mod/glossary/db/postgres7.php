@@ -106,6 +106,34 @@ function glossary_upgrade($oldversion) {
       set_field('glossary','editalways','1','mainglossary','0');
   }
 
+  if ($oldversion < 2004111200) {
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_course_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_alias_entryid_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_categories_glossaryid_idx;",false); 
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_comments_entryid_idx;",false); 
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_comments_userid_idx;",false); 
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_glossaryid_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_userid_idx;",false); 
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_concept_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_categories_category_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_categories_entryid_idx;",false);
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_ratings_userid_idx;",false); 
+      execute_sql("DROP INDEX {$CFG->prefix}glossary_ratings_entryid_idx;",false);
+
+      modify_database('','CREATE INDEX prefix_glossary_course_idx ON prefix_glossary (course);');
+      modify_database('','CREATE INDEX prefix_glossary_alias_entryid_idx ON prefix_glossary_alias (entryid);');
+      modify_database('','CREATE INDEX prefix_glossary_categories_glossaryid_idx ON prefix_glossary_categories (glossaryid);');
+      modify_database('','CREATE INDEX prefix_glossary_comments_entryid_idx ON prefix_glossary_comments (entryid);');
+      modify_database('','CREATE INDEX prefix_glossary_comments_userid_idx ON prefix_glossary_comments (userid);');
+      modify_database('','CREATE INDEX prefix_glossary_entries_glossaryid_idx ON prefix_glossary_entries (glossaryid);');
+      modify_database('','CREATE INDEX prefix_glossary_entries_userid_idx ON prefix_glossary_entries (userid);');
+      modify_database('','CREATE INDEX prefix_glossary_entries_concept_idx ON prefix_glossary_entries (concept);');
+      modify_database('','CREATE INDEX prefix_glossary_entries_categories_category_idx ON prefix_glossary_entries_categories (categoryid);');
+      modify_database('','CREATE INDEX prefix_glossary_entries_categories_entryid_idx ON prefix_glossary_entries_categories (entryid);');
+      modify_database('','CREATE INDEX prefix_glossary_ratings_userid_idx ON prefix_glossary_ratings (userid);');
+      modify_database('','CREATE INDEX prefix_glossary_ratings_entryid_idx ON prefix_glossary_ratings (entryid);');
+  }
+
   return true;
 }
 
