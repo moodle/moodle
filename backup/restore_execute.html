@@ -53,7 +53,7 @@
     //create it (course)
     //Saving conversion id variables into backup_tables
     if ($restore->restoreto ==1) {
-        echo "<li>Creating new course";
+        echo "<li>".get_string("creatingnewcourse");
         $status = restore_create_new_course($restore,&$course_header);
         //Print course fullname and shortname and category
         if ($status) {
@@ -67,10 +67,10 @@
     } else {
         $course = get_record("course","id",$restore->course_id);
         if ($course) {
-            echo "<li>Using existing course"; 
+            echo "<li>".get_string("usingexistingcourse"); 
             echo "<ul>";
-            echo "<li>From: ".$course_header->course_fullname." (".$course_header->course_shortname.")";
-            echo "<li>To: ".$course->fullname." (".$course->shortname.")";
+            echo "<li>".get_string("from").": ".$course_header->course_fullname." (".$course_header->course_shortname.")";
+            echo "<li>".get_string("to").": ".$course->fullname." (".$course->shortname.")";
             echo "</ul>";
         }
     }
@@ -78,10 +78,10 @@
     //Now create the course_sections and their associated course_modules
     if ($status) {
         if ($restore->restoreto == 1) {
-            echo "<li>Creating sections";
+            echo "<li>".get_string("creatingsections");
             $status = restore_create_sections($restore,$xml_file);
         } else if ($restore->restoreto == 0) {
-            echo "<li>Checking sections";
+            echo "<li>".get_string("checkingsections");
             $status = restore_create_sections($restore,$xml_file);
         } else {
             $status = false;
@@ -91,7 +91,7 @@
 
     //Now create users as needed 
     if ($status and ($restore->users == 0 or $restore->users == 1)) {
-        echo "<li>Creating users<br>";
+        echo "<li>".get_string("creatingusers")."<br>";
         $status = restore_create_users($restore,$xml_file);
         //Now print info about the work done
         if ($status) {
@@ -140,13 +140,13 @@
                     }
                 }
                 //Now print information gathered
-                echo " (new: ".$new_count.", existing: ".$exists_count.")";
+                echo " (".get_string("new").": ".$new_count.", ".get_string("existing").": ".$exists_count.")";
                 echo "<ul>";
-                echo "<li>Students: ".$student_count;
-                echo "<li>Teachers: ".$teacher_count;
-                echo "<li>Course Creators: ".$coursecreator_count;
-                echo "<li>Admins: ".$admin_count;
-                echo "<li>Other: ".$other_count;
+                echo "<li>".get_string("students").": ".$student_count;
+                echo "<li>".get_string("teachers").": ".$teacher_count;
+                echo "<li>".get_string("coursecreators").": ".$coursecreator_count;
+                echo "<li>".get_string("administrators").": ".$admin_count;
+                echo "<li>".get_string("other").": ".$other_count;
                 echo "</ul>";
             } else {
                 //Something is wrong. There is no users !!
@@ -157,78 +157,63 @@
 
     //Now create categories and questions as needed (STEP1)
     if ($status and ($restore->mods[quiz]->restore)) {
-         echo "<li>Creating Categories and Questions<br>";
+         echo "<li>".get_string("creatingcategoriesandquestions")."<br>";
          $status = restore_create_questions($restore,$xml_file);
     }
 
     //Now create user_files as needed
     if ($status and ($restore->user_files)) {
-        echo "<li>Copying User Files<br>";
+        echo "<li>".get_string("copyinguserfiles")."<br>";
         $status = restore_user_files($restore);
         //If all is ok (and we have a counter)
         if ($status and ($status !== true)) {
             //Inform about user dirs created from backup
             echo "<ul>";
-            echo "<li>User Zones: ".$status;
+            echo "<li>".get_string("userzones").": ".$status;
             echo "</ul>";
         }
     }
 
     //Now create course files as needed
     if ($status and ($restore->course_files)) {
-        echo "<li>Copying Course Files<br>";
+        echo "<li>".get_string("copyingcoursefiles")."<br>";
         $status = restore_course_files($restore);
         //If all is ok (and we have a counter)
         if ($status and ($status !== true)) {
             //Inform about user dirs created from backup
             echo "<ul>";
-            echo "<li>Main Files/Folders: ".$status;
+            echo "<li>".get_string("filesfolders").": ".$status;
             echo "</ul>";
         }       
     }
 
     //Now create course modules as needed
     if ($status) {
-        echo "<li>Creating Course Modules";
+        echo "<li>".get_string("creatingcoursemodules");
         $status = restore_create_modules($restore,$xml_file);
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //Now create log entries as needed
     if ($status and ($restore->logs)) {
-        echo "<li>Creating Log Entries <b>(not implemented!!)</b>";
+        echo "<li>".get_string("creatinglogentries")."<b>(not implemented!!)</b>";
     }    
 
     //Now, if all is OK, adjust the instance field in course_modules !!
     if ($status) {
-        echo "<li>Checking Instances";
+        echo "<li>".get_string("checkinginstances");
         $status = restore_check_instances($restore);
     }
 
     //Now if all is OK, update course modinfo field !!
     if ($status) {
-        echo "<li>Checking Course";
+        echo "<li>".get_string("checkingcourse");
         rebuild_course_cache($restore->course_id);
     }
 
     //Cleanup temps (files and db)
     if ($status) {
-        echo "<li>Cleaning up temp data";
-        $status = clean_temp_data ($restore);
+        echo "<li>".get_string("cleaningtempdata");
+        //$status = clean_temp_data ($restore);
     }
 
     //End the main ul
