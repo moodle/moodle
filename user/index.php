@@ -70,7 +70,7 @@
             }
             $table->head = array ("&nbsp;", $name, $location, $lastaccess);
             $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
-            $table->size = array ("35", "*", "*", "*");
+            $table->size = array ("10", "*", "*", "*");
             
             foreach ($students as $student) {
                 if ($student->lastaccess) {
@@ -80,7 +80,13 @@
                     $lastaccess = $string->never;
                 }
 
-                $table->data[] = array (print_user_picture($student->id, $course->id, $student->picture, false, true),
+                if ($numstudents > $USER_LARGE_CLASS) {  // Don't show pictures
+                    $picture = "";
+                } else {
+                    $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
+                }
+
+                $table->data[] = array ($picture,
                     "<B><A HREF=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</A></B>",
                     "<FONT SIZE=1>$student->city, ".$COUNTRIES["$student->country"]."</FONT>",
                     "<FONT SIZE=1>$lastaccess</FONT>");

@@ -1,6 +1,7 @@
 <?PHP  // $Id$
 
-$USER_SMALL_CLASS = 30;   // Affects listing display
+$USER_SMALL_CLASS = 20;   // Below this is considered small
+$USER_LARGE_CLASS = 200;  // Above this is considered large
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////
 
