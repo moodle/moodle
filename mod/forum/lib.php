@@ -32,7 +32,366 @@ $FORUM_LONG_POST  = 600;  // More than this is "long"
 $FORUM_MANY_DISCUSSIONS = 10;
 
 
-/// FUNCTIONS ///////////////////////////////////////////////////////////
+/// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
+
+function forum_add_instance($forum) {
+// Given an object containing all the necessary data, 
+// (defined by the form in mod.html) this function 
+// will create a new instance and return the id number 
+// of the new instance.
+
+    global $CFG;
+
+    $forum->timemodified = time();
+
+    if (! $forum->id = insert_record("forum", $forum)) {
+        return false;
+    }
+
+    if ($forum->type == "single") {  // Create related discussion.
+
+        $discussion->course   = $forum->course;
+        $discussion->forum    = $forum->id;
+        $discussion->name     = $forum->name;
+        $discussion->intro    = $forum->intro;
+        $discussion->assessed = $forum->assessed;
+
+        if (! forum_add_discussion($discussion)) {
+            error("Could not add the discussion for this forum");
+        }
+    }
+    add_to_log($forum->course, "forum", "add", "index.php?f=$forum->id", "$forum->id");
+
+    return $forum->id;
+}
+
+
+function forum_update_instance($forum) {
+// Given an object containing all the necessary data, 
+// (defined by the form in mod.html) this function 
+// will update an existing instance with new data.
+
+    $forum->timemodified = time();
+    $forum->id = $forum->instance;
+
+    if ($forum->type == "single") {  // Update related discussion and post.
+        if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
+            if ($discussions = get_records("forum_discussions", "forum", $forum->id, "timemodified ASC")) {
+                notify("Warning! There is more than one discussion in this forum - using the most recent");
+                $discussion = array_pop($discussions);
+            } else {
+                error("Could not find the discussion in this forum");
+            }
+        }
+        if (! $post = get_record("forum_posts", "id", $discussion->firstpost)) {
+            error("Could not find the first post in this forum discussion");
+        }
+
+        $post->subject  = $forum->name;
+        $post->message  = $forum->intro;
+        $post->modified = $forum->timemodified;
+
+        if (! update_record("forum_posts", $post)) {
+            error("Could not update the first post");
+        }
+
+        $discussion->name = $forum->name;
+
+        if (! update_record("forum_discussions", $discussion)) {
+            error("Could not update the discussion");
+        }
+    }
+
+    if (update_record("forum", $forum)) {
+        add_to_log($forum->course, "forum", "update", "index.php?f=$forum->id", "$forum->id");
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+function forum_delete_instance($id) {
+// Given an ID of an instance of this module, 
+// this function will permanently delete the instance 
+// and any data that depends on it.  
+
+    if (! $forum = get_record("forum", "id", "$id")) {
+        return false;
+    }
+
+    $result = true;
+
+    if ($discussions = get_records("forum_discussions", "forum", $forum->id)) {
+        foreach ($discussions as $discussion) {
+            if (! forum_delete_discussion($discussion)) {
+                $result = false;
+            }
+        }
+    }
+
+    if (! delete_records("forum_subscriptions", "forum", "$forum->id")) {
+        $result = false;
+    }
+
+    if (! delete_records("forum", "id", "$forum->id")) {
+        $result = false;
+    }
+
+    return $result;
+}
+
+
+function forum_cron () {
+// Function to be run periodically according to the moodle cron
+// Finds all posts that have yet to be mailed out, and mails them
+
+    global $CFG, $USER;
+
+    $cutofftime = time() - $CFG->maxeditingtime;
+
+    if ($posts = get_records_sql("SELECT p.*, d.course FROM forum_posts p, forum_discussions d
+                                  WHERE p.mailed = '0' AND p.created < '$cutofftime' AND p.discussion = d.id")) {
+
+        $timenow = time();
+
+        foreach ($posts as $post) {
+
+            print_string("processingpost", "forum", $post->id);
+            echo " ... ";
+
+            if (! $userfrom = get_record("user", "id", "$post->user")) {
+                echo "Could not find user $post->user\n";
+                continue;
+            }
+
+            if (! $discussion = get_record("forum_discussions", "id", "$post->discussion")) {
+                echo "Could not find discussion $post->discussion\n";
+                continue;
+            }
+
+            if (! $forum = get_record("forum", "id", "$discussion->forum")) {
+                echo "Could not find forum $discussion->forum\n";
+                continue;
+            }
+
+            if (! $course = get_record("course", "id", "$forum->course")) {
+                echo "Could not find course $forum->course\n";
+                continue;
+            }
+
+            if ($users = forum_subscribed_users($course, $forum)) {
+                $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
+
+                $mailcount=0;
+                foreach ($users as $userto) {
+                    $USER->lang = $userto->lang;  // Affects the language of get_string
+
+
+                    $by->name = "$userfrom->firstname $userfrom->lastname";
+                    $by->date = userdate($post->created, "", $userto->timezone);
+                    $strbynameondate = get_string("bynameondate", "forum", $by);
+
+                    $strforums = get_string("forums", "forum");
+
+                    $postsubject = "$course->shortname: $post->subject";
+                    $posttext  = "$course->shortname -> $strforums -> $forum->name";
+
+                    if ($discussion->name == $forum->name) {
+                        $posttext  .= "\n";
+                    } else {
+                        $posttext  .= " -> $discussion->name\n";
+                    }
+                    $posttext .= "---------------------------------------------------------------------\n";
+                    $posttext .= "$post->subject\n";
+                    $posttext .= $strbynameondate."\n";
+                    $posttext .= "---------------------------------------------------------------------\n";
+                    $posttext .= strip_tags($post->message);
+                    $posttext .= "\n\n";
+                    if ($post->attachment) {
+                        $post->course = $course->id;
+                        $post->forum = $forum->id;
+                        $posttext .= forum_print_attachments($post, "text");
+                    }
+                    $posttext .= "---------------------------------------------------------------------\n";
+                    $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
+                    $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
+                    if ($canunsubscribe) {
+                        $posttext .= "\n---------------------------------------------------------------------\n";
+                        $posttext .= get_string("unsubscribe", "forum");
+                        $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\n";
+                    }
+  
+                    if ($userto->mailformat == 1) {  // HTML
+                        $posthtml = "<P><FONT FACE=sans-serif>".
+                        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ".
+                        "<A HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</A> -> ".
+                        "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A>";
+                        if ($discussion->name == $forum->name) {
+                            $posthtml .= "</FONT></P>";
+                        } else {
+                            $posthtml .= " -> <A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
+                        }
+                        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
+
+                        if ($canunsubscribe) {
+                            $posthtml .= "\n<BR><HR SIZE=1 NOSHADE><P ALIGN=RIGHT><FONT SIZE=1><A HREF=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</A></FONT></P>";
+                        }
+
+                    } else {
+                      $posthtml = "";
+                    }
+   
+                    if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
+                        echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email)\n";
+                    } else {
+                        $mailcount++;
+                    }
+                }
+                echo "mailed to $mailcount users ...";
+            }
+
+            if (! set_field("forum_posts", "mailed", "1", "id", "$post->id")) {
+                echo "Could not update the mailed field for id $post->id\n";
+            }
+            echo "\n";
+        }
+    }
+
+    return true;
+}
+
+function forum_user_outline($course, $user, $mod, $forum) {
+
+    if ($posts = get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
+                                  FROM forum f, forum_discussions d, forum_posts p, user u 
+                                  WHERE f.id = '$forum->id' AND d.forum = f.id AND p.discussion = d.id
+                                  AND p.user = '$user->id' AND p.user = u.id
+                                  ORDER BY p.modified ASC")) {
+
+        $result->info = get_string("numposts", "forum", count($posts));
+
+        $lastpost = array_pop($posts);
+        $result->time = $lastpost->modified;
+        return $result;
+    }
+    return NULL;
+}
+
+
+function forum_user_complete($course, $user, $mod, $forum) {
+    global $CFG;
+
+    if ($posts = get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
+                                  FROM forum f, forum_discussions d, forum_posts p, user u 
+                                  WHERE f.id = '$forum->id' AND d.forum = f.id AND p.discussion = d.id
+                                  AND p.user = '$user->id' AND p.user = u.id
+                                  ORDER BY p.modified ASC")) {
+
+        foreach ($posts as $post) {
+            if ($post->parent) {
+                $footer = "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">".
+                           get_string("parentofthispost", "forum")."</A>";
+            } else {
+                $footer = "";
+            }
+
+            forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false, $footer);
+        }
+
+    } else {
+        echo "<P>".get_string("noposts", "forum")."</P>";
+    }
+
+}
+
+function forum_print_recent_activity(&$logs, $isteacher=false) {
+    global $CFG, $COURSE_TEACHER_COLOR;
+
+    $heading = false;
+    $content = false;
+
+    foreach ($logs as $log) {
+        if ($log->module == "forum") {
+            $post = NULL;
+
+            if ($log->action == "add post") {
+                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
+                                               u.email, u.picture, u.id as userid
+                                        FROM forum_discussions d, forum_posts p, user u 
+                                        WHERE p.id = '$log->info' AND d.id = p.discussion 
+                                        AND p.user = u.id and u.deleted <> '1'");
+
+            } else if ($log->action == "add discussion") {
+                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
+                                               u.email, u.picture, u.id as userid
+                                        FROM forum_discussions d, forum_posts p, user u 
+                                        WHERE d.id = '$log->info' AND d.firstpost = p.id 
+                                        AND p.user = u.id and u.deleted <> '1'");
+            }
+
+            if ($post) {
+                $teacherpost = "";
+                if ($forum = get_record("forum", "id", $post->forum) ) {
+                    if ($forum->type == "teacher") {
+                        if ($isteacher) {
+                            $teacherpost = "COLOR=$COURSE_TEACHER_COLOR";
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+                if (! $heading) {
+                    print_headline(get_string("newforumposts", "forum").":");
+                    $heading = true;
+                    $content = true;
+                }
+                $date = userdate($post->modified, "%e %b, %H:%M");
+                echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
+                echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
+                if ($log->action == "add") {
+                    echo "<B>$post->subject</B>";
+                } else {
+                    echo "$post->subject";
+                }
+                echo "</A>\"</FONT></P>";
+            }
+        }
+    }
+    return $content;
+}
+
+
+function forum_grades($forumid) {
+/// Must return an array of grades, indexed by user, and a max grade.
+    global $FORUM_POST_RATINGS;
+
+    if ($ratings = get_records_sql_menu("SELECT p.user, r.rating
+                                          FROM forum_discussions d, forum_posts p, forum_ratings r
+                                         WHERE d.forum = '$forumid' 
+                                           AND p.discussion = d.id
+                                           AND r.post = p.id")) {
+        foreach ($ratings as $user => $rating) {
+            if (!isset($sumrating[$user])) {
+                $sumrating[$user][1] = 0;
+                $sumrating[$user][2] = 0;
+                $sumrating[$user][3] = 0;
+            }
+            $sumrating[$user][$rating] += 1;
+        }
+        foreach ($sumrating as $user => $rating) {
+            $return->grades[$user] = $rating[1]."s/".$rating[2]."/".$rating[3]."c";
+        }
+    } else {
+        $return->grades = array();
+    }
+
+    $return->maxgrade = "";
+    return $return;
+}
+
+
+/// OTHER FUNCTIONS ///////////////////////////////////////////////////////////
 
 
 function forum_get_course_forum($courseid, $type) {
@@ -717,280 +1076,6 @@ function forum_print_user_discussions($courseid, $userid) {
     }
 }
 
-
-function forum_user_outline($course, $user, $mod, $forum) {
-
-    if ($posts = get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
-                                  FROM forum f, forum_discussions d, forum_posts p, user u 
-                                  WHERE f.id = '$forum->id' AND d.forum = f.id AND p.discussion = d.id
-                                  AND p.user = '$user->id' AND p.user = u.id
-                                  ORDER BY p.modified ASC")) {
-
-        $result->info = get_string("numposts", "forum", count($posts));
-
-        $lastpost = array_pop($posts);
-        $result->time = $lastpost->modified;
-        return $result;
-    }
-    return NULL;
-}
-
-
-function forum_user_complete($course, $user, $mod, $forum) {
-    global $CFG;
-
-    if ($posts = get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
-                                  FROM forum f, forum_discussions d, forum_posts p, user u 
-                                  WHERE f.id = '$forum->id' AND d.forum = f.id AND p.discussion = d.id
-                                  AND p.user = '$user->id' AND p.user = u.id
-                                  ORDER BY p.modified ASC")) {
-
-        foreach ($posts as $post) {
-            if ($post->parent) {
-                $footer = "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">".
-                           get_string("parentofthispost", "forum")."</A>";
-            } else {
-                $footer = "";
-            }
-
-            forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false, $footer);
-        }
-
-    } else {
-        echo "<P>".get_string("noposts", "forum")."</P>";
-    }
-
-}
-
-
-function forum_add_instance($forum) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
-// will create a new instance and return the id number 
-// of the new instance.
-
-    global $CFG;
-
-    $forum->timemodified = time();
-
-    if (! $forum->id = insert_record("forum", $forum)) {
-        return false;
-    }
-
-    if ($forum->type == "single") {  // Create related discussion.
-
-        $discussion->course   = $forum->course;
-        $discussion->forum    = $forum->id;
-        $discussion->name     = $forum->name;
-        $discussion->intro    = $forum->intro;
-        $discussion->assessed = $forum->assessed;
-
-        if (! forum_add_discussion($discussion)) {
-            error("Could not add the discussion for this forum");
-        }
-    }
-    add_to_log($forum->course, "forum", "add", "index.php?f=$forum->id", "$forum->id");
-
-    return $forum->id;
-}
-
-
-function forum_update_instance($forum) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
-// will update an existing instance with new data.
-
-    $forum->timemodified = time();
-    $forum->id = $forum->instance;
-
-    if ($forum->type == "single") {  // Update related discussion and post.
-        if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
-            if ($discussions = get_records("forum_discussions", "forum", $forum->id, "timemodified ASC")) {
-                notify("Warning! There is more than one discussion in this forum - using the most recent");
-                $discussion = array_pop($discussions);
-            } else {
-                error("Could not find the discussion in this forum");
-            }
-        }
-        if (! $post = get_record("forum_posts", "id", $discussion->firstpost)) {
-            error("Could not find the first post in this forum discussion");
-        }
-
-        $post->subject  = $forum->name;
-        $post->message  = $forum->intro;
-        $post->modified = $forum->timemodified;
-
-        if (! update_record("forum_posts", $post)) {
-            error("Could not update the first post");
-        }
-
-        $discussion->name = $forum->name;
-
-        if (! update_record("forum_discussions", $discussion)) {
-            error("Could not update the discussion");
-        }
-    }
-
-    if (update_record("forum", $forum)) {
-        add_to_log($forum->course, "forum", "update", "index.php?f=$forum->id", "$forum->id");
-        return true;
-    } else {
-        return false;
-    }
-}
-
-
-function forum_delete_instance($id) {
-// Given an ID of an instance of this module, 
-// this function will permanently delete the instance 
-// and any data that depends on it.  
-
-    if (! $forum = get_record("forum", "id", "$id")) {
-        return false;
-    }
-
-    $result = true;
-
-    if ($discussions = get_records("forum_discussions", "forum", $forum->id)) {
-        foreach ($discussions as $discussion) {
-            if (! forum_delete_discussion($discussion)) {
-                $result = false;
-            }
-        }
-    }
-
-    if (! delete_records("forum_subscriptions", "forum", "$forum->id")) {
-        $result = false;
-    }
-
-    if (! delete_records("forum", "id", "$forum->id")) {
-        $result = false;
-    }
-
-    return $result;
-}
-
-
-function forum_cron () {
-// Function to be run periodically according to the moodle cron
-// Finds all posts that have yet to be mailed out, and mails them
-
-    global $CFG, $USER;
-
-    $cutofftime = time() - $CFG->maxeditingtime;
-
-    if ($posts = get_records_sql("SELECT p.*, d.course FROM forum_posts p, forum_discussions d
-                                  WHERE p.mailed = '0' AND p.created < '$cutofftime' AND p.discussion = d.id")) {
-
-        $timenow = time();
-
-        foreach ($posts as $post) {
-
-            print_string("processingpost", "forum", $post->id);
-            echo " ... ";
-
-            if (! $userfrom = get_record("user", "id", "$post->user")) {
-                echo "Could not find user $post->user\n";
-                continue;
-            }
-
-            if (! $discussion = get_record("forum_discussions", "id", "$post->discussion")) {
-                echo "Could not find discussion $post->discussion\n";
-                continue;
-            }
-
-            if (! $forum = get_record("forum", "id", "$discussion->forum")) {
-                echo "Could not find forum $discussion->forum\n";
-                continue;
-            }
-
-            if (! $course = get_record("course", "id", "$forum->course")) {
-                echo "Could not find course $forum->course\n";
-                continue;
-            }
-
-            if ($users = forum_subscribed_users($course, $forum)) {
-                $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
-
-                $mailcount=0;
-                foreach ($users as $userto) {
-                    $USER->lang = $userto->lang;  // Affects the language of get_string
-
-
-                    $by->name = "$userfrom->firstname $userfrom->lastname";
-                    $by->date = userdate($post->created, "", $userto->timezone);
-                    $strbynameondate = get_string("bynameondate", "forum", $by);
-
-                    $strforums = get_string("forums", "forum");
-
-                    $postsubject = "$course->shortname: $post->subject";
-                    $posttext  = "$course->shortname -> $strforums -> $forum->name";
-
-                    if ($discussion->name == $forum->name) {
-                        $posttext  .= "\n";
-                    } else {
-                        $posttext  .= " -> $discussion->name\n";
-                    }
-                    $posttext .= "---------------------------------------------------------------------\n";
-                    $posttext .= "$post->subject\n";
-                    $posttext .= $strbynameondate."\n";
-                    $posttext .= "---------------------------------------------------------------------\n";
-                    $posttext .= strip_tags($post->message);
-                    $posttext .= "\n\n";
-                    if ($post->attachment) {
-                        $post->course = $course->id;
-                        $post->forum = $forum->id;
-                        $posttext .= forum_print_attachments($post, "text");
-                    }
-                    $posttext .= "---------------------------------------------------------------------\n";
-                    $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
-                    $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
-                    if ($canunsubscribe) {
-                        $posttext .= "\n---------------------------------------------------------------------\n";
-                        $posttext .= get_string("unsubscribe", "forum");
-                        $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\n";
-                    }
-  
-                    if ($userto->mailformat == 1) {  // HTML
-                        $posthtml = "<P><FONT FACE=sans-serif>".
-                        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ".
-                        "<A HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</A> -> ".
-                        "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A>";
-                        if ($discussion->name == $forum->name) {
-                            $posthtml .= "</FONT></P>";
-                        } else {
-                            $posthtml .= " -> <A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
-                        }
-                        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
-
-                        if ($canunsubscribe) {
-                            $posthtml .= "\n<BR><HR SIZE=1 NOSHADE><P ALIGN=RIGHT><FONT SIZE=1><A HREF=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</A></FONT></P>";
-                        }
-
-                    } else {
-                      $posthtml = "";
-                    }
-   
-                    if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
-                        echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email)\n";
-                    } else {
-                        $mailcount++;
-                    }
-                }
-                echo "mailed to $mailcount users ...";
-            }
-
-            if (! set_field("forum_posts", "mailed", "1", "id", "$post->id")) {
-                echo "Could not update the mailed field for id $post->id\n";
-            }
-            echo "\n";
-        }
-    }
-
-    return true;
-}
-
-
 function forum_forcesubscribe($forumid, $value=1) {
     return set_field("forum", "forcesubscribe", $value, "id", $forumid);
 }
@@ -1304,60 +1389,5 @@ function forum_set_display_mode($mode=0) {
     }
 }
 
-function forum_print_recent_activity(&$logs, $isteacher=false) {
-    global $CFG, $COURSE_TEACHER_COLOR;
-
-    $heading = false;
-    $content = false;
-
-    foreach ($logs as $log) {
-        if ($log->module == "forum") {
-            $post = NULL;
-
-            if ($log->action == "add post") {
-                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
-                                               u.email, u.picture, u.id as userid
-                                        FROM forum_discussions d, forum_posts p, user u 
-                                        WHERE p.id = '$log->info' AND d.id = p.discussion 
-                                        AND p.user = u.id and u.deleted <> '1'");
-
-            } else if ($log->action == "add discussion") {
-                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
-                                               u.email, u.picture, u.id as userid
-                                        FROM forum_discussions d, forum_posts p, user u 
-                                        WHERE d.id = '$log->info' AND d.firstpost = p.id 
-                                        AND p.user = u.id and u.deleted <> '1'");
-            }
-
-            if ($post) {
-                $teacherpost = "";
-                if ($forum = get_record("forum", "id", $post->forum) ) {
-                    if ($forum->type == "teacher") {
-                        if ($isteacher) {
-                            $teacherpost = "COLOR=$COURSE_TEACHER_COLOR";
-                        } else {
-                            continue;
-                        }
-                    }
-                }
-                if (! $heading) {
-                    print_headline(get_string("newforumposts", "forum").":");
-                    $heading = true;
-                    $content = true;
-                }
-                $date = userdate($post->modified, "%e %b, %H:%M");
-                echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
-                echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
-                if ($log->action == "add") {
-                    echo "<B>$post->subject</B>";
-                } else {
-                    echo "$post->subject";
-                }
-                echo "</A>\"</FONT></P>";
-            }
-        }
-    }
-    return $content;
-}
 
 ?>
