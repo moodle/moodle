@@ -62,21 +62,19 @@ class block_rss_client extends block_base {
             }
         }
 
-        if ($editing) {
-            $submitters = $CFG->block_rss_client_submitters;
+        $submitters = $CFG->block_rss_client_submitters;
 
-            $isteacher = false;
-            $courseid = '';
-            if ($this->instance->pagetype == MOODLE_PAGE_COURSE) {
-                $isteacher = isteacher($this->instance->pageid);
-                $courseid = $this->instance->pageid;
-            }
+        $isteacher = false;
+        $courseid = '';
+        if ($this->instance->pagetype == MOODLE_PAGE_COURSE) {
+            $isteacher = isteacher($this->instance->pageid);
+            $courseid = $this->instance->pageid;
+        }
 
-            //if the user is an admin or course teacher then allow the user to
-            //assign categories to other uses than personal
-            if ( isadmin() || $submitters == 0 || ($submitters == 2 && $isteacher) ) {
-                $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br /><br />';
-            }
+        //if the user is an admin, course teacher, or all user are allowed - 
+        // then allow the user to add rss feeds
+        if ( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) ) {
+            $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br /><br />';
         }
 
         // Daryl Hawes note: if count of rssidarray is greater than 1 
@@ -86,7 +84,8 @@ class block_rss_client extends block_base {
             $numids = count($rssidarray);
             $count = 0;
             foreach ($rssidarray as $rssid) {
-                $output .=  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
+                $rssfeedstring =  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
+                $output .= format_text($rssfeedstring);
                 if ($numids > 1 && $count != $numids -1) {
                     $output .= '<hr width="80%" />';
                 }
@@ -111,55 +110,67 @@ class block_rss_client extends block_base {
     }
     
     /**
-     *
+     * @param int $rssid The feed to be displayed
+     * @param bool $display_description Should the description information from the feed be displayed or simply the title?
+     * @param int $shownumentries The maximum number of feed entries to be displayed.
+     * @param bool $showtitle True if the feed title should be displayed above the feed entries.
+     * @return string|NULL
      */
     function get_rss_by_id($rssid, $display_description, $shownumentries, $showtitle=false) {
         global $CFG;
-        $returnstring = '';        
+        $returnstring = '';
+        $now = time();
+        require_once($CFG->dirroot .'/rss/rsslib.php');
+        require_once(MAGPIE_DIR .'rss_fetch.inc');
         
-        // use rsslib.php function to verify that the cache feed file
-        // exists and has not timed out.
-        if (rss_cache_valid_by_id($rssid) && isset($this->config->{$rssid})) {
-            // If cache has not timed out and we have cached the display string 
-            // in block config return that rather than opening and reading
-            // from file and reparsing the cached xml
-            return stripslashes_safe($this->config->{'rssid'.$rssid});
+        // Check if there is a cached string which has not timed out.
+        if (isset($this->config->{'rssid'. $rssid}) && 
+            isset($this->config->{'rssid'. $rssid .'timestamp'}) && 
+            $this->config->{'rssid'. $rssid .'timestamp'} >= $now - $CFG->block_rss_timeout * 60) {
+            // If the cached string is not too stale 
+            // use it rather than going any further
+            return stripslashes_safe($this->config->{'rssid'. $rssid});
         }
 
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (isset($rss_record) && isset($rss_record->id)) {
-            $rss = rss_get_feed($rss_record->id, $rss_record->url, $rss_record->type);
+                    
+            // By capturing the output from fetch_rss this way
+            // error messages do not display and clutter up the moodle interface
+            // however, we do lose out on seeing helpful messages like "cache hit", etc.
+            ob_start();
+            $rss = fetch_rss($rss_record->url);
+            $rsserror = ob_get_contents();
+            ob_end_clean();
 
-            if ($CFG->debug && (empty($rss) || !empty($rss->ERROR))) {
-                // There was a failure in loading the rss feed, print link to full error text
-                if (!empty($rss) && !empty($rss->ERROR)) {
-                    print '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_error.php?error='. urlencode($rss->ERROR) .'">Error loading a feed.</a><br />';
+            if ($rss === false) {
+                if ($CFG->debug && !empty($rsserror)) {
+                    // There was a failure in loading the rss feed, print link to full error text
+                    print '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_error.php?error='. urlencode($rsserror) .'">Error loading a feed.</a><br />'; //Daryl Hawes note: localize this line
                 }
                 return;
             }
             
             if ($showtitle) {
-                $returnstring .= '<p><div class="rssclienttitle">'. $rss_record->title .'</div></p>';
+                $returnstring .= '<p><div align="center" class="rssclienttitle">'. $rss_record->title .'</div></p>';
             }
             if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
-                $count_to = $shownumentries;
-            } else {
-                $count_to = count($rss->items);
+                $rss->items = array_slice($rss->items, 0, $shownumentries);
             }
 
-            for ($y = 0; $y < $count_to; $y++) {
-                if ($rss->items[$y]['title'] == '') {
-                    $rss->items[$y]['title'] = substr(strip_tags($rss->items[$y]['description']), 0, 20) . '...';
+            foreach ($rss->items as $item) {
+                if ($item['title'] == '') {
+                    $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
                 }
         
-                if ($rss->items[$y]['link'] == '') {
-                    $rss->items[$y]['link'] = $rss->items[$y]['guid'];
+                if ($item['link'] == '') {
+                    $item['link'] = $item['guid'];
                 }
 
-                $returnstring .= '<div class="rssclientlink"><a href="'. $rss->items[$y]['link'] .'" target="_new">'. $rss->items[$y]['title'] . '</a></div>' ."\n";
+                $returnstring .= '<div class="rssclientlink"><a href="'. $item['link'] .'" target="_new">'. $item['title'] . '</a></div>' ."\n";
                 
-                if ($display_description && !empty($rss->items[$y]['description'])){
-                    $returnstring .= '<div class="rssclientdescription">'.clean_text($rss->items[$y]['description']) . '</div>' ."\n";
+                if ($display_description && !empty($item['description'])){
+                    $returnstring .= '<div class="rssclientdescription">'.clean_text($item['description']) . '</div>' ."\n";
                 }
             }
 
@@ -174,7 +185,8 @@ class block_rss_client extends block_base {
         $returnstring .= '<br />';
         
         // store config setting for this rssid so we do not need to read from file each time
-        $this->config->{'rssid'.$rssid} = addslashes($returnstring);
+        $this->config->{'rssid'. $rssid} = addslashes($returnstring);
+        $this->config->{'rssid'. $rssid .'timestamp'} = $now; 
         $this->instance_config_save($this->config);
         return $returnstring;
     }

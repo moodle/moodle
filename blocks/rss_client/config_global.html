@@ -1,3 +1,6 @@
+<?php
+    require_once($CFG->dirroot .'/rss/rsslib.php');
+?>
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">
     <td align="right"><p>block_rss_client_num_entries:</td>
@@ -23,9 +26,9 @@
                        $selected = '0';
                        $CFG->block_rss_client_submitters = 0;
                 }
-                $options = array ( '0' => 'All members',
-                      '1' => 'Admins only',
-                      '2' => 'Admins and teachers');
+                $options = array ( SUBMITTERS_ALL_ACCOUNT_HOLDERS => get_string('everybody'),
+                      SUBMITTERS_ADMIN_ONLY => get_string('administrators'),
+                      SUBMITTERS_ADMIN_AND_TEACHER => get_string('administratorsandteachers') );
 
                 choose_from_menu ($options, 'block_rss_client_submitters', $selected);
         ?>
