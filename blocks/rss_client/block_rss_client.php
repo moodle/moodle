@@ -68,10 +68,10 @@ class block_rss_client extends block_base {
         $submitters = $CFG->block_rss_client_submitters;
 
         $isteacher = false;
-        $courseid = '';
+        $this->courseid = SITEID;
         if ($this->instance->pagetype == PAGE_COURSE_VIEW) {
-            $isteacher = isteacher($this->instance->pageid);
-            $courseid = $this->instance->pageid;
+            $this->courseid = $this->instance->pageid;
+            $isteacher = isteacher($this->courseid);
         }
 
         //if the user is an admin, course teacher, or all users are allowed
@@ -82,7 +82,7 @@ class block_rss_client extends block_base {
             $userisloggedin = true;
         }
         if ( $userisloggedin && (isadmin() ||  $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
-            $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br />';
+            $output .= '<div align="center"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?courseid='. $this->courseid .'">'. get_string('block_rss_feeds_add_edit', 'block_rss_client') .'</a></div><br />';
         }
 
         // Daryl Hawes note: if count of rssidarray is greater than 1 
@@ -92,8 +92,7 @@ class block_rss_client extends block_base {
             $numids = count($rssidarray);
             $count = 0;
             foreach ($rssidarray as $rssid) {
-                $rssfeedstring =  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
-                $output .= format_text($rssfeedstring);
+                $output =  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
                 if ($numids > 1 && $count != $numids -1 && !empty($rssfeedstring)) {
                     $output .= '<hr width="80%" />';
                 }
@@ -178,7 +177,9 @@ class block_rss_client extends block_base {
 
             if ($showtitle) {
                 $returnstring .= '<div class="rssclienttitle">'. $feedtitle .'</div><br />';
-            }                        
+            } 
+
+            $formatoptions->para = false;
 
             foreach ($rss->items as $item) {
                 $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
@@ -195,9 +196,12 @@ class block_rss_client extends block_base {
                 $item['link'] = str_replace('&', '&amp;', $item['link']);
 
                 $returnstring .= '<div class="rssclientlink"><a href="'. $item['link'] .'" target="_new">'. $item['title'] . '</a></div>' ."\n";
+
                 
                 if ($display_description && !empty($item['description'])){
-                    $returnstring .= '<div class="rssclientdescription">'.clean_text($item['description']) . '</div>' ."\n";
+                    $returnstring .= '<div class="rssclientdescription">'.
+                                     format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 
+                                     '</div>' ."\n";
                 }
             }
 
