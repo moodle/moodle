@@ -209,12 +209,12 @@ GNU General Public License for more details:
 
 http://www.gnu.org/copyleft/gpl.html
 
-In addition to the rights under the GPL I am adding one clause:
-all installed and redistributed copies of Moodle must retain the 
-\"Made with Moodle\" logo on the home page (or a visible equivalent)
-that links to moodle.com.  If you wish to remove the logo,
-re-brand Moodle, or redistribute modifed copies of Moodle then
-please contact martin@dougiamas.com to negotiate terms and pricing.";
+There is one additional clause: All installed and redistributed 
+copies of Moodle must retain the \"Made with Moodle\" logo 
+(or a visible equivalent) on the home page that links to moodle.com.
+If you wish to remove the logo, re-brand Moodle, or redistribute 
+modifed copies of Moodle then please contact martin@dougiamas.com 
+to negotiate terms and pricing.";
 
 $string['grade'] = "Grade";
 $string['grades'] = "Grades";
