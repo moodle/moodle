@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------
-// PclZip 2.1 - readme.txt
+// PclZip 2.4-RC1 - readme.txt
 // --------------------------------------------------------------------------------
-// License GNU/LGPL - December 2003
+// License GNU/LGPL - November 2004
 // Vincent Blavet - vincent@phpconcept.net
 // http://www.phpconcept.net
 // --------------------------------------------------------------------------------
@@ -30,6 +30,50 @@
 
 2 - What's new
 ==============
+
+  Version 2.4-RC1 :
+    - Bug correction : PclZip now correctly unzip file in some specific situation,
+      when compressed content has same size as uncompressed content.
+    - Bug correction : When selecting option 'PCLZIP_OPT_REMOVE_ALL_PATH', 
+      directories are not any more created.
+    - Code improvment : correct unclosed opendir(), better handling of . and .. in
+      loops.
+
+
+  Version 2.3 :
+    - Correct a bug with PHP5 : affecting the value 0xFE49FFE0 to a variable does not
+      give the same result in PHP4 and PHP5 ....
+
+  Version 2.2 :
+    - Try development of PCLZIP_OPT_CRYPT .....
+      However this becomes to a stop. To crypt/decrypt I need to multiply 2 long integers,
+      the result (greater than a long) is not supported by PHP. Even the use of bcmath
+      functions does not help. I did not find yet a solution ...;
+    - Add missing '/' at end of directory entries
+    - Check is a file is encrypted or not. Returns status 'unsupported_encryption' and/or
+      error code PCLZIP_ERR_UNSUPPORTED_ENCRYPTION.
+    - Corrected : Bad "version need to extract" field in local file header
+    - Add private method privCheckFileHeaders() in order to check local and central
+      file headers. PclZip is now supporting purpose bit flag bit 3. Purpose bit flag bit 3 gives
+      the ability to have a local file header without size, compressed size and crc filled.
+    - Add a generic status 'error' for file status
+    - Add control of compression type. PclZip only support deflate compression method.
+      Before v2.2, PclZip does not check the compression method used in an archive while
+      extracting. With v2.2 PclZip returns a new error status for a file using an unsupported
+      compression method. New status is "unsupported_compression". New error code is
+      PCLZIP_ERR_UNSUPPORTED_COMPRESSION.
+    - Add optional attribute PCLZIP_OPT_STOP_ON_ERROR. This will stop the extract of files
+      when errors like 'a folder with same name exists' or 'a newer file exists' or
+      'a write protected file' exists, rather than set a status for the concerning file
+      and resume the extract of the zip.
+    - Add optional attribute PCLZIP_OPT_REPLACE_NEWER. This will force, during an extract' the
+      replacement of the file, even if a  newer version of the file exists.
+      Note that today if a file with the same name already exists but is older it will be
+      replaced by the extracted one.
+    - Improve PclZipUtilOption()
+    - Support of zip archive with trailing bytes. Before 2.2, PclZip checks that the central
+      directory structure is the last data in the archive. Crypt encryption/decryption of
+      zip archive put trailing 0 bytes after decryption. PclZip is now supporting this.
 
   Version 2.1 :
     - Add the ability to abort the extraction by using a user callback function.
@@ -207,6 +251,10 @@
 
   Please publish bugs reports in SourceForge :
     http://sourceforge.net/tracker/?group_id=40254&atid=427564
+
+  In Version 2.x :
+    - PclZip does only support file uncompressed or compressed with deflate (compression method 8)
+    - PclZip does not support password protected zip archive
 
   In Version 1.2 :
 
