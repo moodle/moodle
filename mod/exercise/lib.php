@@ -336,6 +336,9 @@ global $EXERCISE_FWEIGHTS;
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
     }
+    if (!$return->maxgrade = $exercise->grade) {
+        return NULL;
+    }
 
     // calculate scaling factor
     $scaling = $exercise->grade / (100.0 * ($EXERCISE_FWEIGHTS[$exercise->gradingweight] +
@@ -374,7 +377,6 @@ global $EXERCISE_FWEIGHTS;
             $return->grades[$userid] = number_format($g, 1);
         }
     }
-    $return->maxgrade = $exercise->grade;
     
     return $return;
 }

@@ -38,7 +38,7 @@ function scorm_delete_instance($id) {
 /// Given an ID of an instance of this module, 
 /// this function will permanently delete the instance 
 /// and any data that depends on it.  
-	
+    
     require('../config.php');
 
     if (! $scorm = get_record("scorm", "id", "$id")) {
@@ -109,43 +109,45 @@ function scorm_grades($scormid) {
 /// Must return an array of grades for a given instance of this module, 
 /// indexed by user.  It also returns a maximum allowed grade.
 
-	global $CFG;
-	
+    global $CFG;
+    
+    if (!$return->maxgrade = count_records_select("scorm_scoes","scorm='$scormid' AND launch<>''")) {
+        return NULL;
+    }
+    
     $return->grades = NULL;
     if ($sco_users=get_records_select("scorm_sco_users", "scormid='$scormid' GROUP BY userid")) {
         foreach ($sco_users as $sco_user) {
-        	$user_data=get_records_select("scorm_sco_users","scormid='$scormid' AND userid='$sco_user->userid'");
-        	$scores->completed=0;
-    		$scores->browsed=0;
-    		$scores->incomplete=0;
-    		$scores->failed=0;
-    		$scores->notattempted=0;
-    		$result="";
-    		$data = current($user_data);
-    		foreach ($user_data as $data) {
-    			if ($data->cmi_core_lesson_status=="passed")
-    				$scores->completed++;
-    			else
-    				$scores->{scorm_remove_spaces($data->cmi_core_lesson_status)}++;
-    			
-        	}
-        	if ($scores->completed)
-        		$result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/completed.gif\" alt=\"".get_string("completed","scorm")."\" title=\"".get_string("completed","scorm")."\"> $scores->completed ";
-        	if ($scores->incomplete)
-        		$result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/incomplete.gif\" alt=\"".get_string("incomplete","scorm")."\" title=\"".get_string("incomplete","scorm")."\"> $scores->incomplete ";
-        	if ($scores->failed)
-        		$result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/failed.gif\" alt=\"".get_string("failed","scorm")."\" title=\"".get_string("failed","scorm")."\"> $scores->failed ";
-        	if ($scores->browsed)
-        		$result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/browsed.gif\" alt=\"".get_string("browsed","scorm")."\" title=\"".get_string("browsed","scorm")."\"> $scores->browsed ";
-   			if ($scores->notattempted)
-        		$result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" title=\"".get_string("notattempted","scorm")."\"> $scores->notattempted ";
-        	
-        	$return->grades[$sco_user->userid]=$result;
+            $user_data=get_records_select("scorm_sco_users","scormid='$scormid' AND userid='$sco_user->userid'");
+            $scores->completed=0;
+            $scores->browsed=0;
+            $scores->incomplete=0;
+            $scores->failed=0;
+            $scores->notattempted=0;
+            $result="";
+            $data = current($user_data);
+            foreach ($user_data as $data) {
+                if ($data->cmi_core_lesson_status=="passed")
+                    $scores->completed++;
+                else
+                    $scores->{scorm_remove_spaces($data->cmi_core_lesson_status)}++;
+                
+            }
+            if ($scores->completed)
+                $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/completed.gif\" alt=\"".get_string("completed","scorm")."\" title=\"".get_string("completed","scorm")."\"> $scores->completed ";
+            if ($scores->incomplete)
+                $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/incomplete.gif\" alt=\"".get_string("incomplete","scorm")."\" title=\"".get_string("incomplete","scorm")."\"> $scores->incomplete ";
+            if ($scores->failed)
+                $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/failed.gif\" alt=\"".get_string("failed","scorm")."\" title=\"".get_string("failed","scorm")."\"> $scores->failed ";
+            if ($scores->browsed)
+                $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/browsed.gif\" alt=\"".get_string("browsed","scorm")."\" title=\"".get_string("browsed","scorm")."\"> $scores->browsed ";
+            if ($scores->notattempted)
+                $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" title=\"".get_string("notattempted","scorm")."\"> $scores->notattempted ";
+            
+            $return->grades[$sco_user->userid]=$result;
         }
         
     }
-    
-    $return->maxgrade = count_records_select("scorm_scoes","scorm='$scormid' AND launch<>''");
 
     return $return;
 }
@@ -176,30 +178,30 @@ function scorm_datadir($strPath, $existingdir="", $prefix = "SCORM")
 {
     global $CFG;
 
-	if (($existingdir!="") && (is_dir($strPath.$existingdir)))
-		return $strPath.$existingdir;
-		
-	if (is_dir($strPath)) {
-		do {
- 			$datadir="/".$prefix.scorm_randstring();
- 	 	} while (file_exists($strPath.$datadir));
- 		mkdir($strPath.$datadir, $CFG->directorypermissions);
+    if (($existingdir!="") && (is_dir($strPath.$existingdir)))
+        return $strPath.$existingdir;
+        
+    if (is_dir($strPath)) {
+        do {
+            $datadir="/".$prefix.scorm_randstring();
+        } while (file_exists($strPath.$datadir));
+        mkdir($strPath.$datadir, $CFG->directorypermissions);
         @chmod($strPath.$datadir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
- 		return $strPath.$datadir;
- 	} else {
- 		return false;
- 	}
+        return $strPath.$datadir;
+    } else {
+        return false;
+    }
 } 
 
 function scorm_validate($manifest)
 {
     if (is_file ($manifest)) {
-	if (file_exists($manifest))
-	{
-		return "regular";
-	}
+    if (file_exists($manifest))
+    {
+        return "regular";
+    }
     } else {
-	    return "nomanifest";
+        return "nomanifest";
     }
 }
 
@@ -211,12 +213,12 @@ function scorm_delete_files($directory)
         while (($file = readdir($handle)) != '')
         {
             if ($file != "." && $file != "..")
-	    {
-	    	if (!is_dir($directory."/".$file))
+        {
+            if (!is_dir($directory."/".$file))
                     unlink($directory."/".$file);
-	    	else
-		    scorm_delete_files($directory."/".$file);
-	    }
+            else
+            scorm_delete_files($directory."/".$file);
+        }
         }
         rmdir($directory);
     }
@@ -225,21 +227,21 @@ function scorm_delete_files($directory)
 function scorm_startElement($parser, $name, $attrs) {
     global $manifest,$i,$resources,$parent,$level;
     if ($name == "ITEM") {
-		$i++;
-		$manifest[$i]["identifier"] = $attrs["IDENTIFIER"];
-		if (empty($attrs["IDENTIFIERREF"]))
-		    $attrs["IDENTIFIERREF"] = "";
-		$manifest[$i]["identifierref"] = $attrs["IDENTIFIERREF"];
-		if (empty($attrs["ISVISIBLE"]))
-		    $attrs["ISVISIBLE"] = "";
-		$manifest[$i]["isvisible"] = $attrs["ISVISIBLE"];
-		$manifest[$i]["parent"] = $parent[$level];
-		$level++;
-		$parent[$level] = $attrs["IDENTIFIER"];
+        $i++;
+        $manifest[$i]["identifier"] = $attrs["IDENTIFIER"];
+        if (empty($attrs["IDENTIFIERREF"]))
+            $attrs["IDENTIFIERREF"] = "";
+        $manifest[$i]["identifierref"] = $attrs["IDENTIFIERREF"];
+        if (empty($attrs["ISVISIBLE"]))
+            $attrs["ISVISIBLE"] = "";
+        $manifest[$i]["isvisible"] = $attrs["ISVISIBLE"];
+        $manifest[$i]["parent"] = $parent[$level];
+        $level++;
+        $parent[$level] = $attrs["IDENTIFIER"];
     }
     if ($name == "RESOURCE") {
-		$resources[$attrs["IDENTIFIER"]]["href"]=$attrs["HREF"];
-		$resources[$attrs["IDENTIFIER"]]["type"]=$attrs["ADLCP:SCORMTYPE"];
+        $resources[$attrs["IDENTIFIER"]]["href"]=$attrs["HREF"];
+        $resources[$attrs["IDENTIFIER"]]["type"]=$attrs["ADLCP:SCORMTYPE"];
     }
 }
 
@@ -249,9 +251,9 @@ function scorm_endElement($parser, $name) {
         $level--;
     }
     if ($name == "TITLE" && $level>0)
-	$manifest[$i]["title"] = $datacontent;
+    $manifest[$i]["title"] = $datacontent;
     if ($name == "ADLCP:HIDERTSUI")
-	$manifest[$i][$datacontent] = 1;
+    $manifest[$i][$datacontent] = 1;
 }
 
 function scorm_characterData($parser, $data) {
@@ -278,7 +280,7 @@ function scorm_parse($basedir,$file,$scorm_id) {
     }
 
     while ($data = fread($fp, 4096)) {
-    	if (!xml_parse($xml_parser, $data, feof($fp))) {
+        if (!xml_parse($xml_parser, $data, feof($fp))) {
             die(sprintf("XML error: %s at line %d",
                     xml_error_string(xml_get_error_code($xml_parser)),
                     xml_get_current_line_number($xml_parser)));
@@ -299,17 +301,17 @@ function scorm_parse($basedir,$file,$scorm_id) {
         $sco->launch = $resources[($manifest[$j]["identifierref"])]["href"];
         if (empty($resources[($manifest[$j]["identifierref"])]["type"]))
             $resources[($manifest[$j]["identifierref"])]["type"] = "";
-	$sco->type = $resources[($manifest[$j]["identifierref"])]["type"];
-	if (empty($manifest[$j]["previous"]))
-	    $manifest[$j]["previous"] = 0;
-	$sco->previous = $manifest[$j]["previous"];
-	if (empty($manifest[$j]["continue"]))
-	    $manifest[$j]["continue"] = 0;
-	$sco->next = $manifest[$j]["continue"];
-	if (scorm_remove_spaces($manifest[$j]["isvisible"]) != "false")
-	    $id = insert_record("scorm_scoes",$sco);
-	if ($launch==0 && $sco->launch)
-	    $launch = $id;	
+    $sco->type = $resources[($manifest[$j]["identifierref"])]["type"];
+    if (empty($manifest[$j]["previous"]))
+        $manifest[$j]["previous"] = 0;
+    $sco->previous = $manifest[$j]["previous"];
+    if (empty($manifest[$j]["continue"]))
+        $manifest[$j]["continue"] = 0;
+    $sco->next = $manifest[$j]["continue"];
+    if (scorm_remove_spaces($manifest[$j]["isvisible"]) != "false")
+        $id = insert_record("scorm_scoes",$sco);
+    if ($launch==0 && $sco->launch)
+        $launch = $id;  
     }
     return $launch;
 }
@@ -331,20 +333,20 @@ function scorm_get_scoes_records($sco_user) {
 function scorm_remove_spaces($sourcestr) {
 // Remove blank space from a string
     $newstr="";
-	for( $i=0; $i<strlen($sourcestr); $i++) {
-		if ($sourcestr[$i]!=' ')
-			$newstr .=$sourcestr[$i];
-	}
-	return $newstr;
+    for( $i=0; $i<strlen($sourcestr); $i++) {
+        if ($sourcestr[$i]!=' ')
+            $newstr .=$sourcestr[$i];
+    }
+    return $newstr;
 }
 
 function scorm_string_round($stringa) {
 // Crop a string to $len character and set an anchor title to the full string
     $len=11;
     if ( strlen($stringa)>$len ) {
-	return "<A name=\"\" title=\"$stringa\">".substr($stringa,0,$len-4)."...".substr($stringa,strlen($stringa)-1,1)."</A>";
+    return "<A name=\"\" title=\"$stringa\">".substr($stringa,0,$len-4)."...".substr($stringa,strlen($stringa)-1,1)."</A>";
     } else
-	return $stringa;
+    return $stringa;
 }
 
 function scorm_external_link($link) {
@@ -352,19 +354,19 @@ function scorm_external_link($link) {
     $result = false;
     $link = strtolower($link);
     if (substr($link,0,7) == "http://")
-    	$result = true;
+        $result = true;
     else if (substr($link,0,8) == "https://")
-    	$result = true;
+        $result = true;
     else if (substr($link,0,4) == "www.")
-    	$result = true;
+        $result = true;
     /*else if (substr($link,0,7) == "rstp://")
-    	$result = true;
+        $result = true;
     else if (substr($link,0,6) == "rtp://")
-    	$result = true;
+        $result = true;
     else if (substr($link,0,6) == "ftp://")
-    	$result = true;
+        $result = true;
     else if (substr($link,0,9) == "gopher://")
-    	$result = true; */
+        $result = true; */
     return $result;
 }    
 ?>

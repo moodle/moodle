@@ -9,7 +9,7 @@ $site = get_site();
 $WIKI_TYPES = array ('teacher' =>   $site->teacher,
                      'group' =>     get_string('groups',"wiki"),
                      'student' =>   $site->student );
-define("EWIKI_ESCAPE_AT", 0);		# For the algebraic filter
+define("EWIKI_ESCAPE_AT", 0);       # For the algebraic filter
 
 function wiki_add_instance($wiki) {
 /// Given an object containing all the necessary data, 
@@ -145,10 +145,7 @@ function wiki_grades($wikiid) {
 /// Must return an array of grades for a given instance of this module, 
 /// indexed by user.  It also returns a maximum allowed grade.
 
-    $return->grades = NULL;
-    $return->maxgrade = NULL;
-
-    return $return;
+    return NULL;
 }
 
 function wiki_get_participants($wikiid) {
@@ -1360,4 +1357,4 @@ function wiki_admin_revert($proceed, $authorfieldpattern, $changesfield, $howtoo
   } #-- while($row)
   return $ret;
 }
-?>
+?> 

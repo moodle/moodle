@@ -5,11 +5,11 @@
 
 
 if (!defined("LESSON_UNSEENPAGE")) {
-	define("LESSON_UNSEENPAGE", 1); // Next page -> any page not seen before
-	}
+    define("LESSON_UNSEENPAGE", 1); // Next page -> any page not seen before
+    }
 if (!defined("LESSON_UNANSWEREDPAGE")) {
-	define("LESSON_UNANSWEREDPAGE", 2); // Next page -> any page not answered correctly
-	}
+    define("LESSON_UNANSWEREDPAGE", 2); // Next page -> any page not answered correctly
+    }
 
 $LESSON_NEXTPAGE_ACTION = array (0 => get_string("normal", "lesson"),
                           LESSON_UNSEENPAGE => get_string("showanunseenpage", "lesson"),
@@ -17,14 +17,14 @@ $LESSON_NEXTPAGE_ACTION = array (0 => get_string("normal", "lesson"),
 
 
 if (!defined("LESSON_NEXTPAGE")) {
-	define("LESSON_NEXTPAGE", -1); // Next page
-	}
+    define("LESSON_NEXTPAGE", -1); // Next page
+    }
 if (!defined("LESSON_EOL")) {
-	define("LESSON_EOL", -9); // End of Lesson
-	}
+    define("LESSON_EOL", -9); // End of Lesson
+    }
 if (!defined("LESSON_UNDEFINED")) {
-	define("LESSON_UNDEFINED", -99); // undefined
-	}
+    define("LESSON_UNDEFINED", -99); // undefined
+    }
 
 if (!defined("LESSON_SHORTANSWER")) {
     define("LESSON_SHORTANSWER",   "1");
@@ -107,13 +107,13 @@ function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choos
             if ($value == $selected) {
                 $output .= " SELECTED";
             }
-			// stop zero label being replaced by array index value
+            // stop zero label being replaced by array index value
             // if ($label) {
             //    $output .= ">$label</OPTION>\n";
             // } else {
             //     $output .= ">$value</OPTION>\n";
-			//  }
-			$output .= ">$label</OPTION>\n";
+            //  }
+            $output .= ">$label</OPTION>\n";
             
         }
     }
@@ -137,12 +137,12 @@ function lesson_add_instance($lesson) {
     $lesson->timemodified = time();
 
     $lesson->available = make_timestamp($lesson->availableyear, 
-			$lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
-			$lesson->availableminute);
+            $lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
+            $lesson->availableminute);
 
     $lesson->deadline = make_timestamp($lesson->deadlineyear, 
-			$lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
-			$lesson->deadlineminute);
+            $lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
+            $lesson->deadlineminute);
 
     return insert_record("lesson", $lesson);
 }
@@ -156,11 +156,11 @@ function lesson_update_instance($lesson) {
 
     $lesson->timemodified = time();
     $lesson->available = make_timestamp($lesson->availableyear, 
-			$lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
-			$lesson->availableminute);
+            $lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
+            $lesson->availableminute);
     $lesson->deadline = make_timestamp($lesson->deadlineyear, 
-			$lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
-			$lesson->deadlineminute);
+            $lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
+            $lesson->deadlineminute);
     $lesson->id = $lesson->instance;
 
     return update_record("lesson", $lesson);
@@ -233,27 +233,27 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
     if ($attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $user->id",
                 "retry, timeseen")) {
         print_simple_box_start();
-		$table->head = array (get_string("attempt", "lesson"),  get_string("numberofpagesviewed", "lesson"),
-			get_string("numberofcorrectanswers", "lesson"), get_string("time"));
-		$table->width = "100%";
-		$table->align = array ("center", "center", "center", "center");
-		$table->size = array ("*", "*", "*", "*");
-		$table->cellpadding = 2;
-		$table->cellspacing = 0;
+        $table->head = array (get_string("attempt", "lesson"),  get_string("numberofpagesviewed", "lesson"),
+            get_string("numberofcorrectanswers", "lesson"), get_string("time"));
+        $table->width = "100%";
+        $table->align = array ("center", "center", "center", "center");
+        $table->size = array ("*", "*", "*", "*");
+        $table->cellpadding = 2;
+        $table->cellspacing = 0;
 
         $retry = 0;
         $npages = 0;
         $ncorrect = 0;
         
-		foreach ($attempts as $attempt) {
-			if ($attempt->retry == $retry) {
-				$npages++;
+        foreach ($attempts as $attempt) {
+            if ($attempt->retry == $retry) {
+                $npages++;
                 if ($attempt->correct) {
                     $ncorrect++;
                 }
                 $timeseen = $attempt->timeseen;
             } else {
-			    $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
+                $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
                 $retry++;
                 $npages = 1;
                 if ($attempt->correct) {
@@ -261,13 +261,13 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
                 } else {
                     $ncorrect = 0;
                 }
-			}
-		}
-        if ($npages) {
-			    $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
+            }
         }
-		print_table($table);
-	    print_simple_box_end();
+        if ($npages) {
+                $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
+        }
+        print_table($table);
+        print_simple_box_end();
         // also print grade summary
         if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND userid = $user->id",
                     "grade DESC")) {
@@ -318,9 +318,12 @@ function lesson_grades($lessonid) {
 /// indexed by user.  It also returns a maximum allowed grade.
     global $CFG;
 
-	if (!$lesson = get_record("lesson", "id", $lessonid)) {
-		error("Lesson record not found");
-	}
+    if (!$lesson = get_record("lesson", "id", $lessonid)) {
+        error("Lesson record not found");
+    }
+    if (!$return->maxgrade = $lesson->grade) {
+        return NULL;
+    }
     if (!empty($lesson->usemaxgrade)) {
         $grades = get_records_sql_menu("SELECT userid,MAX(grade) FROM {$CFG->prefix}lesson_grades WHERE
                 lessonid = $lessonid GROUP BY userid");
@@ -335,7 +338,6 @@ function lesson_grades($lessonid) {
             $return->grades[$userid] = number_format($grade * $lesson->grade / 100.0, 1);
         }
     }
-    $return->maxgrade = $lesson->grade;
 
     return $return;
 }
