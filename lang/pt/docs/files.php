@@ -19,13 +19,13 @@ $string['installamp.html'] = "Apache, MySQL, PHP";
 $string['upgrade.html'] = "Actualizações";
 
 $string['-usage'] = "Uso do Moodle";
-$string['teacher.html'] = "Manual do Professor";
+$string['teacher.html'] = "Manual do Docente";
 $string['other.html'] = "Outros Documentos";
 
 $string['-development'] = "Desenvolvimento";
 $string['developer.html'] = "Manual do programador";
 $string['coding.html'] = "Guia de programação";
 $string['cvs.html'] = "Uso do CVS";
-
+$string['translation.html'] = "Tradução";
 
 ?>
