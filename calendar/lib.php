@@ -240,7 +240,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     return $content;
 }
 
-function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents) {
+function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
     global $CFG;
 
     $display = &New object;
@@ -256,11 +256,12 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     $now = time(); // We 'll need this later
     $nowsecs = $now % SECS_IN_DAY; // this too
     $nowdays = $now - $nowsecs; // and this
-    $date = usergetdate($now); // Nominal datetime
 
-    // Fill in the variables we 're going to use, nice and tidy
-    list($d, $m, $y) = array($date['mday'], $date['mon'], $date['year']);
-    $display->tstart = gmmktime(0, 0, 0, $m, $d, $y);
+    if ($fromtime) {
+        $display->tstart = $fromtime;
+    } else {
+        $display->tstart = usergetmidnight(time());
+    }
 
     // This effectively adds as many days as needed, and the final SECS_IN_DAY - 1
     // serves to cover the duration until the end of the final day. We could
@@ -269,10 +270,9 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
     // Get the events matching our criteria
     $whereclause = calendar_sql_where($display->tstart, $display->tend, $users, $groups, $courses);
-    if($whereclause === false) {
+    if ($whereclause === false) {
         $events = false;
-    }
-    else {
+    } else {
         $whereclause .= ' ORDER BY timestart'; // We want them this way
         $events = get_records_select('event', $whereclause);
     }
@@ -353,9 +353,11 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 // also that it is an automatically-generated event. And of course that the
                 // three fields for get_coursemodule_from_instance are set correctly.
 
+                calendar_get_course_cached($coursecache, $event->courseid);
+
                 $module = calendar_get_module_cached($coursecache, $event->modulename, $event->instance, $event->courseid);
 
-                if($module === false) {
+                if ($module === false) {
                     // This shouldn't have happened. What to do now?
                     // Just ignore it
                     continue;
@@ -364,41 +366,63 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 $modulename = get_string('modulename', $event->modulename);
                 $eventtype = get_string($event->eventtype, $event->modulename);
                 $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
-                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
+
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$icon.'" alt="" title="'.$modulename.'" style="vertical-align: middle;" />';
+                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
-            }
-            else if($event->courseid == 1) {
+                $output[$outkey]->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
+                $output[$outkey]->timestart = $event->timestart;
+                $output[$outkey]->id = $event->id;
+                $output[$outkey]->cmid = $module->id;
+                $output[$outkey]->modulename = $event->modulename;
+
+
+
+            } else if($event->courseid == 1) {
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/site.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
-            }
-            else if($event->courseid > 1) {
+                $output[$outkey]->timestart = $event->timestart;
+                $output[$outkey]->id = $event->id;
+
+
+
+            } else if($event->courseid > 1) {
                 // Course event
                 calendar_get_course_cached($coursecache, $event->courseid);
 
-                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$coursecache[$event->courseid]->id.'">'.$coursecache[$event->courseid]->fullname.'</a>';
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/course.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
-            }
-            else if($event->groupid) {
+                $output[$outkey]->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
+                $output[$outkey]->timestart = $event->timestart;
+                $output[$outkey]->id = $event->id;
+
+
+
+            } else if($event->groupid) {
                 // Group event
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/group.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
-            }
-            else if($event->userid) {
+                $output[$outkey]->timestart = $event->timestart;
+                $output[$outkey]->id = $event->id;
+
+
+
+            } else if($event->userid) {
                 // User event
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/user.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
+                $output[$outkey]->timestart = $event->timestart;
+                $output[$outkey]->id = $event->id;
             }
             ++$processed;
         }

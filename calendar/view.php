@@ -164,10 +164,12 @@
 
     print_footer();
 
-function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
-    global $CFG, $THEME;
 
-    if(!checkdate($m, $d, $y)) {
+
+function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
+    global $CFG, $THEME, $db;
+
+    if (!checkdate($m, $d, $y)) {
         $now = usergetdate(time());
         list($d, $m, $y) = array(intval($now['mday']), intval($now['mon']), intval($now['year']));
     }
@@ -175,22 +177,17 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     $getvars = 'from=day&amp;cal_d='.$d.'&amp;cal_m='.$m.'&amp;cal_y='.$y; // For filtering
 
     $starttime = make_timestamp($y, $m, $d);
-    $endtime = $starttime + SECS_IN_DAY - 1;
-    $whereclause = calendar_sql_where($starttime, $endtime, $users, $groups, $courses);
+    $endtime   = $starttime + SECS_IN_DAY - 1;
 
-    if($whereclause === false) {
-        $events = array();
-    }
-    else {
-        $events = get_records_select('event', $whereclause);
-    }
+    $events = calendar_get_upcoming($courses, $groups, $users, 1, 100, $starttime);
 
     // New event button
-    if(isguest()) {
+    if (isguest()) {
         $text = get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars);
-    }
-    else {
-        $text = '<div style="float: left;">'.get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars).'</div><div style="float: right;">';
+
+    } else {
+        $text = '<div style="float: left;">'.get_string('dayview', 'calendar').': '.
+                calendar_course_filter_selector($getvars).'</div><div style="float: right;">';
         $text.= '<form style="display: inline;" action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<input type="hidden" name="action" value="new" />';
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
@@ -202,40 +199,31 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     print_side_block_start($text, '', 'mycalendar');
     echo '<p>'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</p>';
 
-    if($events === false) {
+    if (empty($events)) {
         // There is nothing to display today.
         echo '<p style="text-align: center;">'.get_string('daywithnoevents', 'calendar').'</p>';
-    }
-    else {
-        $coursecache = array();
-        $summarize = array();
+
+    } else {
+
+        $underway = array();
 
         // First, print details about events that start today
-        foreach($events as $event) {
-            if($event->timestart >= $starttime && $event->timestart <= $endtime) {
-                // Print this
-                calendar_print_event_table($event, $starttime, $endtime, $coursecache);
-            }
-            else {
-                // Save this for later
-                $summarize[] = $event->id;
+        foreach ($events as $event) {
+            if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
+                unset($event->time);
+                calendar_print_event($event);  
+
+            } else {                                                                 // Save this for later
+                $underway[] = $event;
             }
         }
 
         // Then, show a list of all events that just span this day
-        if(!empty($summarize)) {
-            $until = get_string('durationuntil', 'calendar');
+        if (!empty($underway)) {
             echo '<p style="text-align: center;"><strong>'.get_string('spanningevents', 'calendar').':</strong></p>';
-            echo '<p style="text-align: center;"><ul>';
-            foreach($summarize as $index) {
-                $endstamp = $events[$index]->timestart + $events[$index]->timeduration;
-                $startdate = usergetdate($events[$index]->timestart);
-                $enddate = usergetdate($endstamp);
-                echo '<li><a href="'.calendar_get_link_href('view.php?view=day&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).'">'.$events[$index]->name.'</a> ';
-                echo '('.$until.' <a href="'.calendar_get_link_href('view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'">';
-                echo calendar_day_representation($endstamp, false, false).'</a>)</li>';
+            foreach ($underway as $event) {
+                calendar_print_event($event);  
             }
-            echo '</ul></p>';
         }
     }
 
@@ -513,125 +501,73 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
     }
 
     print_side_block_start($text, '', 'mycalendar');
-    foreach ($events as $event) {
-        calendar_print_event($event);
+    if ($events) {
+        foreach ($events as $event) {
+            calendar_print_event($event);
+        }
+    } else {
+        echo '<br />';
+        print_heading(get_string('noupcomingevents', 'calendar'));
     }
     print_side_block_end();
 }
 
 
 function calendar_print_event($event) {
-    global $THEME;
+    global $CFG, $THEME;
 
-    echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost" width="100%">';
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"16\" valign=\"top\">";
+    static $strftimetime;
+
+    echo '<table border="0" cellpadding="3" cellspacing="0" class="eventfull" width="100%">';
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"eventfullpicture\" width=\"32\" valign=\"top\">";
     if (!empty($event->icon)) {
         echo $event->icon;
+    } else {
+        print_spacer(16,16);
     }
     echo '</td>';
-    echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
+    echo "<td bgcolor=\"$THEME->cellheading\" class=\"eventfullheader\" width=\"100%\">";
 
-    if(!empty($event->referer) and empty($event->icon)) {
-        echo '<span class="calendarreferer">'.$event->referer.': </span>';
+    if (!empty($event->referer)) {
+        echo '<span style="float:left;" class="calendarreferer">'.$event->referer.' </span>';
+    } else {
+        echo '<span style="float:left;" class="cal_event">'.$event->name."</span>";
     }
-    echo '<span class="cal_event">'.$event->name."</span>&nbsp;&nbsp;&nbsp;";
-    echo '<span class="cal_event_date">'.$event->time.'</span>';
+    if (!empty($event->courselink)) {
+        echo '<br /><span style="float:left; font-size: 0.8em;">'.$event->courselink.' </span>';
+    }
+    if (!empty($event->time)) {
+        echo '<span style="float:right;" class="cal_event_date">'.$event->time.'</span>';
+    } else {
+        if (!isset($strftimetime)) {
+            $strftimetime = get_string('strftimetime');
+        }
+        echo '<span style="float:right;" class="cal_event_date">'.userdate($event->timestart, $strftimetime).'</span>';
+    }
 
     echo "</td></tr>";
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" valign=\"top\" class=\"forumpostside\" width=\"16\">&nbsp;</td>";
-    echo "<td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" valign=\"top\" class=\"eventfullside\" width=\"32\">&nbsp;</td>";
+    echo "<td bgcolor=\"$THEME->cellcontent\" class=\"eventfullmessage\">\n";
     echo format_text($event->description, FORMAT_HTML);
+    if (calendar_edit_event_allowed($event)) {
+        echo '<div align="right">';
+        if (empty($event->cmid)) {
+            $editlink = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
+            $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id;
+        } else {
+            $editlink   = "$CFG->wwwroot/mod/$event->modulename/view.php?id=$event->cmid";
+            $deletelink = "$CFG->wwwroot/course/mod.php?delete=$event->cmid";
+        }
+        echo ' <a href="'.$editlink.'"><img 
+                  src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'" 
+                  title="'.get_string('tt_editevent', 'calendar').'" /></a>';
+        echo ' <a href="'.$deletelink.'"><img 
+                  src="'.$CFG->pixpath.'/t/delete.gif" alt="'.get_string('tt_deleteevent', 'calendar').'" 
+                  title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
+        echo '</div>';
+    }
     echo "</td></tr>\n</table><br />\n\n";
-}
 
-
-function calendar_print_event_table($event, $starttime, $endtime, &$coursecache, $alldetails = false) {
-    global $CFG;
-
-    echo '<table class="cal_event_table"><thead>';
-
-    if(calendar_edit_event_allowed($event)) {
-        echo '<tr><td colspan="2">'.$event->name;
-        echo ' <a href="'.CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id.'"><img style="vertical-align: middle;" src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'" title="'.get_string('tt_editevent', 'calendar').'" /></a>';
-        echo ' <a href="'.CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id.'"><img style="vertical-align: middle;" src="'.$CFG->pixpath.'/t/delete.gif" alt="'.get_string('tt_deleteevent', 'calendar').'" title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
-        echo '</td></tr>';
-    }
-    else {
-        echo '<tr><td colspan="2">'.$event->name.'</td></tr>';
-    }
-
-    echo "</thead>\n<tbody>\n<tr><td style='vertical-align: top;' width=40%>";
-
-    if(!empty($event->modulename)) {
-        // The module name is set. This handling code should be synchronized with that in calendar_get_upcoming()
-        $module = calendar_get_module_cached($coursecache, $event->modulename, $event->instance, $event->courseid);
-        if($module === false) {
-            // This shouldn't have happened. What to do now? Just ignore it...
-            echo '</td></tr></table>';
-            return;
-        }
-        $modulename = get_string('modulename', $event->modulename);
-        $eventtype = get_string($event->eventtype, $event->modulename);
-        $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
-        $coursereferer = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$coursecache[$module->course]->fullname.'</a>';
-        $instancereferer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$module->name.'</a>';
-
-        echo '<div><strong>'.get_string('course').':</strong></div><div>'.$coursereferer.'</div>';
-        echo '<div><strong><img src="'.$icon.'" title="'.$modulename.'" style="vertical-align: middle;" /> '.$modulename.':</strong></div><div>'.$instancereferer.'</div>';
-    }
-    else if($event->courseid > 1) {
-        $course = calendar_get_course_cached($coursecache, $event->courseid);
-        $coursereferer = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>';
-        echo '<div><strong>'.get_string('course').':</strong></div><div>'.$coursereferer.'</div>';
-    }
-    else if($event->courseid == 1) {
-        echo '<div><strong>'.get_string('typesite', 'calendar').'</strong></div>';
-    }
-
-    if($event->timeduration) {
-        if($event->timestart + $event->timeduration > $endtime || $alldetails) {
-            // It doesn't end today, or full details requested, so we 'll go into a little more trouble
-            $enddate = usergetdate($event->timestart + $event->timeduration);
-            $enddisplay = calendar_get_link_tag(
-            calendar_day_representation($event->timestart + $event->timeduration, $starttime, false),
-            CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']);
-            $enddisplay .= ', '.calendar_time_representation($event->timestart + $event->timeduration);
-        }
-        else {
-            $enddisplay = calendar_time_representation($event->timestart + $event->timeduration);
-        }
-        if($alldetails) {
-            // We want to give a full representation of the event's date
-            $startdate = usergetdate($event->timestart);
-            $startdisplay = calendar_get_link_tag(
-            calendar_day_representation($event->timestart, $starttime, false),
-            CALENDAR_URL.'view.php?view=day&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']);
-            $startdisplay .= ', '.calendar_time_representation($event->timestart);
-        }
-        else {
-            $startdisplay = calendar_time_representation($event->timestart);
-        }
-        echo '<div><strong>'.get_string('eventstarttime', 'calendar').':</strong></div><div>'.$startdisplay.'</div>';
-        echo '<div><strong>'.get_string('eventendtime', 'calendar').':</strong></div><div>'.$enddisplay.'</div>';
-    }
-    else {
-        // Event without duration
-        if($alldetails) {
-            // We want to give a full representation of the event's date
-            $startdate = usergetdate($event->timestart);
-            $startdisplay = calendar_get_link_tag(
-            calendar_day_representation($event->timestart, $starttime, false),
-            CALENDAR_URL.'view.php?view=day&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']);
-            $startdisplay .= ', '.calendar_time_representation($event->timestart);
-        }
-        else {
-            $startdisplay = calendar_time_representation($event->timestart);
-        }
-        echo '<div><strong>'.get_string('eventinstanttime', 'calendar').':</strong></div><div>'.$startdisplay.'</div>';
-    }
-
-    echo '</td><td class="cal_event_description">'.$event->description.'</td></tr>'."\n";
-    echo "</tbody>\n</table>\n";
 }
 
 
