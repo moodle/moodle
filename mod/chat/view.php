@@ -79,7 +79,7 @@
 
     print_simple_box_start("center");
     link_to_popup_window ("/mod/chat/gui_$chatversion/index.php?id=$chat->id", 
-                          "chat$chat->id", "$strenterchat", 500, 700, $strchat);
+                          "chat$course->id$chat->id", "$strenterchat", 500, 700, $strchat);
     print_simple_box_end();
 
     print_spacer(50,50);
