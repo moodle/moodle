@@ -1320,7 +1320,7 @@ function get_course_teachers($courseid, $sort="t.authority ASC", $exceptions='')
 *
 * @param    type description
 */
-function get_course_users($courseid, $sort="timeaccess DESC", $exceptions='', $fields='*') {
+function get_course_users($courseid, $sort="timeaccess DESC", $exceptions='', $fields='') {
 
     /// Using this method because the single SQL is too inefficient
     // Note that this has the effect that teachers and students are
