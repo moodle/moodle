@@ -51,8 +51,8 @@
             </form>
             </center>
     <?php } ?>
-    <?php if ($CFG->changepassword or $CFG->auth == "email" or $CFG->auth == "none") {
-          if ($CFG->auth == "email" or $CFG->auth == "none") {
+    <?php if ($CFG->changepassword or $CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
+          if ($CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
               $changepassword = "forgot_password.php";
               $changebuttonname = get_string("senddetails");
           } else {
