@@ -290,7 +290,10 @@
     //should have its own. They are called automatically from the backup procedure.
     function forum_encode_content_links ($content,$preferences) {
 
-        $base = '\$@WWWROOT@\$';
+        global $CFG;
+
+        $base = preg_quote($CFG->wwwroot,"/");
+
         //Link to the list of forums
         $buscar="/(".$base."\/mod\/forum\/index.php\?id\=)([0-9]+)/";
         $result= preg_replace($buscar,'$@FORUMINDEX*$2@$',$content);
