@@ -3056,14 +3056,14 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
     if ($image) {
         $icon = $CFG->pixpath .'/help.gif';
         if ($linktext) {
-            $linkobject = "<span style=\"cursor:help;\">$title<img align=\"middle\" border=\"0\" ".
+            $linkobject = "<span class=\"formhelplinks\">$title<img align=\"middle\" border=\"0\" ".
                           " height=\"17\" width=\"22\" alt=\"\" src=\"$icon\" /></span>";
         } else {
             $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" ".
                           " alt=\"$title\" style=\"cursor:help;\" src=\"$icon\" />";
         }
     } else {
-        $linkobject = '<span style="cursor:help;">'. $title .'</span>';
+        $linkobject = '<span class="formhelplinks">'. $title .'</span>';
     }
     if ($text) {
         $url = '/help.php?module='. $module .'&amp;text='. htmlentities(urlencode($text));
