@@ -2280,6 +2280,13 @@
     }
     */
 
+    //skodak's hack - store trailing slash for directories - for compatibility with info-zip
+    if(is_dir($p_filename)) {
+      if(strrpos($v_stored_filename, '/') != strlen($v_stored_filename)-1) {
+        $v_stored_filename = $v_stored_filename.'/';
+      }
+    }
+
     // ----- Set the file properties
     clearstatcache();
     $p_header['version'] = 20;
