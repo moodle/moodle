@@ -109,7 +109,7 @@
 
     $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</a> -> <a href=\"../forum/view.php?f=$forum->id\">$forum->name</a>";
 
-    $searchform = forum_print_search_form($course, "", true, "navbar");
+    $searchform = forum_search_form($course);
 
     if ($course->category) {
         print_header("$course->shortname: $discussion->name", "$course->fullname",

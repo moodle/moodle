@@ -53,7 +53,7 @@
     }
 
     if (!$buttontext) {
-        $buttontext = forum_print_search_form($course, $search, true, "navbar");
+        $buttontext = forum_search_form($course, $search);
     }
 
     require_course_login($course, true, $cm);

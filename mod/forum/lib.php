@@ -1981,32 +1981,19 @@ function forum_print_mode_form($discussion, $mode) {
     echo "</div>\n";
 }
 
-function forum_print_search_form($course, $search='', $return=false, $type='navbar') {
+function forum_search_form($course, $search='') {
     global $CFG;
 
-    if ($type == 'block') {
-        $output  = '<div class="searchform">';
-        $output .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
-        $output .= '<input name="search" type="text" size="18" value="'.$search.'" alt="search" /> ';
-        $output .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
-        $output .= helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
-        $output .= '<input name="id" type="hidden" value="'.$course->id.'" />';
-        $output .= '</form></div>';
-    } else {
-        $output  = '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
-        $output .= helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
-        $output .= '&nbsp;<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
-        $output .= '<input name="search" type="text" size="18" value="'.$search.'" alt="search" />';
-        $output .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
-        $output .= '<input name="id" type="hidden" value="'.$course->id.'" />';
-        $output .= '</form>';
-        $output .= '</td></tr></table>';
-    }
+    $output  = '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
+    $output .= helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
+    $output .= '&nbsp;<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
+    $output .= '<input name="search" type="text" size="18" value="'.$search.'" alt="search" />';
+    $output .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
+    $output .= '<input name="id" type="hidden" value="'.$course->id.'" />';
+    $output .= '</form>';
+    $output .= '</td></tr></table>';
 
-    if ($return) {
-        return $output;
-    }
-    echo $output;
+    return $output;
 }
 
 
