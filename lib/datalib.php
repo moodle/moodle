@@ -1867,7 +1867,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     if (!empty($categoryselect)) {
         $sqland = "AND ";
     }
-    if (!empty($USER)) {  // May need to check they are a teacher
+    if (!empty($USER) and !empty($USER->id)) {  // May need to check they are a teacher
         if (!iscreator()) {
             $visiblecourses = "$sqland ((c.visible > 0) OR t.userid = '$USER->id')";
             $teachertable = "LEFT JOIN {$CFG->prefix}user_teachers t ON t.course=c.id";
