@@ -460,7 +460,7 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
 }
 function  glossary_print_entry_concept($entry) {
     $options->para = false;
-    $text = format_text('<nolink>' . $entry->concept . '</nolink>', $entry->format, $options);
+    $text = format_text('<nolink>' . $entry->concept . '</nolink>', FORMAT_MOODLE, $options);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
