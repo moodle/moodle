@@ -1253,6 +1253,19 @@ function moodle_needs_upgrading() {
 
 /// MISCELLANEOUS ////////////////////////////////////////////////////////////////////
 
+function moodle_strtolower ($string, $encoding='') {
+/// Converts string to lowercase using most compatible  function available
+    if (function_exists('mb_strtolower')) {
+        if($encoding===''){
+           return mb_strtolower($string);          //use multibyte support with default encoding
+        } else {
+           return mb_strtolower($string,encoding); //use given encoding
+        }   
+    } else {
+        return strtolower($string);                // use common function what rely on current locale setting
+    }    
+}
+
 function count_words($string) {
 /// Words are defined as things between whitespace
     $string = strip_tags($string);
