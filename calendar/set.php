@@ -39,7 +39,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
     require_once('../config.php');
-    require_once('lib.php');
+    require_once($CFG->dirroot.'/calendar/lib.php');
 
     require_variable($_GET['from']);
     require_variable($_GET['var']);

@@ -41,8 +41,8 @@
 //  Display the calendar page.
 
     require_once('../config.php');
-    require_once('../course/lib.php');
-    require_once('lib.php');
+    require_once($CFG->dirroot.'/course/lib.php');
+    require_once($CFG->dirroot.'/calendar/lib.php');
 
     optional_variable($_GET['view'], 'upcoming');
     optional_variable($_GET['course'], 0);
@@ -117,7 +117,8 @@
     // but NOT for the "main page" course
     if($SESSION->cal_course_referer > 1 &&
       ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
-        // If we know about the referring course, show a return link
+        // If we know about the referring course, show a return link and ALSO require login!
+        require_login();
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
     }
 
