@@ -114,8 +114,9 @@ function clean_param($param, $options) {
         $param = (int)$param;            // Convert to integer
     }
 
-    if ($options & PARAM_ALPHA) {        // Remove everything not a-z
-        $param = eregi_replace('[^a-z]', '', $param);
+    if ($options & PARAM_ALPHA) {        // Remove everything not a-zA-Z, coverts to lowercase
+        $param = eregi_replace('[^a-zA-Z]', '', $param);
+        $param = strtolower($param);
     }
 
     if ($options & PARAM_ALPHANUM) {     // Remove everything not a-zA-Z0-9
