@@ -58,8 +58,12 @@
         $strippedsearch = str_replace("user:","",$search);
         $strippedsearch = str_replace("subject:","",$strippedsearch);
         $strippedsearch = str_replace("&quot;","",$strippedsearch);
-
-        if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
+        if ($group = user_group($id, $USER->id)) {
+            $groupid = $group->id;
+        } else {
+            $groupid = 0;
+        }
+        if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount, $groupid)) {
 
             print_header_simple("$strsearchresults", "",
                      "<a href=\"index.php?id=$course->id\">$strforums</a> ->

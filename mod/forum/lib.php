@@ -976,7 +976,7 @@ function forum_get_child_posts($parent) {
 }
 
 
-function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, &$totalcount) {
+function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, &$totalcount, $groupid=0) {
 /// Returns a list of posts found using an array of search terms
 /// eg   word  +word -word
 ///
@@ -986,13 +986,18 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 
     if (!isteacher($courseid)) {
         $notteacherforum = "AND f.type <> 'teacher'";
-
         $forummodule = get_record("modules", "name", "forum");
         $onlyvisible = " AND f.id = cm.instance AND cm.visible = 1 AND cm.module = $forummodule->id";
         $onlyvisibletable = ", {$CFG->prefix}course_modules cm";
+        if ($groupid) {
+            $separategroups = SEPARATEGROUPS;
+            $selectgroup = " AND (cm.groupmode <> '$separategroups' OR d.groupid = '$groupid')";
+        } else {
+            $selectgroup = '';
+        }
     } else {
         $notteacherforum = "";
-
+        $selectgroup = '';
         $onlyvisible = "";
         $onlyvisibletable = "";
     }
@@ -1049,7 +1054,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
                AND p.userid = u.id
                AND p.discussion = d.id
                AND d.course = '$courseid'
-               AND d.forum = f.id $notteacherforum $onlyvisible";
+               AND d.forum = f.id $notteacherforum $onlyvisible $selectgroup";
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
