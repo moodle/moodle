@@ -52,6 +52,7 @@
            }
            $aa->MoveNext();
        }
+
        
        $maxbuckets1 = max($buckets1);
        $maxbuckets2 = max($buckets2);
@@ -70,11 +71,6 @@
        $graph->parameter['legend']        = 'outside-top';
        $graph->parameter['legend_border'] = 'black';
        $graph->parameter['legend_offset'] = 4;
-
-       $graph->y_tick_labels[0] = "No answer";
-       foreach ($options as $key => $option) {
-         $graph->y_tick_labels[$key+1] = $option;
-       }
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
            $graph->y_order = array('answers1', 'answers2');
@@ -156,6 +152,8 @@
            if ($count2[$i]) {
                $stdev2[$i] = sqrt( (float)$stdev2[$i] / ((float)$count2[$i]));
            }
+           $buckets1[$i] = $buckets1[$i] - 1;
+           $buckets2[$i] = $buckets2[$i] - 1;
        }
 
        
@@ -189,10 +187,7 @@
        $graph->parameter['legend_border'] = 'black';
        $graph->parameter['legend_offset'] = 4;
 
-       $graph->y_tick_labels[0] = "No answer";
-       foreach ($options as $key => $option) {
-         $graph->y_tick_labels[$key+1] = $option;
-       }
+       $graph->y_tick_labels = $options;
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
               $graph->y_order = array('stdev1', 'answers1', 'stdev2', 'answers2');
@@ -202,8 +197,8 @@
            $graph->y_order = array('stdev2', 'answers2');
        }
        
-       $graph->parameter['y_max_left']= count($options);
-       $graph->parameter['y_axis_gridlines']= count($options) + 1;
+       $graph->parameter['y_max_left']= count($options) - 1;
+       $graph->parameter['y_axis_gridlines']= count($options);
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
        $graph->parameter['x_axis_angle']  = 0;
@@ -283,6 +278,8 @@
                $stdev2[$i] = sqrt( (float)$stdev2[$i] / ((float)$count2[$i]));
            }
 
+           $buckets1[$i] = $buckets1[$i] - 1;         // Hack because there should not be ANY 0 values in the data.
+           $buckets2[$i] = $buckets2[$i] - 1;
            
        }
 
@@ -316,10 +313,7 @@
        $graph->parameter['legend_border'] = 'black';
        $graph->parameter['legend_offset'] = 4;
 
-       $graph->y_tick_labels[0] = "No answer";
-       foreach ($options as $key => $option) {
-         $graph->y_tick_labels[$key+1] = $option;
-       }
+       $graph->y_tick_labels = $options;
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
               $graph->y_order = array('stdev1', 'answers1', 'stdev2', 'answers2');
@@ -329,8 +323,8 @@
            $graph->y_order = array('stdev2', 'answers2');
        }
        
-       $graph->parameter['y_max_left']= $numoptions;
-       $graph->parameter['y_axis_gridlines']= $numoptions + 1;
+       $graph->parameter['y_max_left']= $numoptions - 1;
+       $graph->parameter['y_axis_gridlines']= $numoptions;
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
        $graph->parameter['x_axis_angle']  = 0;
@@ -428,6 +422,11 @@
                $stdev2[$i] = sqrt( (float)$stdev2[$i] / ((float)$count2[$i]));
            }
 
+           $buckets1[$i] = $buckets1[$i] - 1;         // Hack because there should not be ANY 0 values in the data.
+           $buckets2[$i] = $buckets2[$i] - 1;
+           $studbuckets1[$i] = $studbuckets1[$i] - 1;
+           $studbuckets2[$i] = $studbuckets2[$i] - 1;
+
        }
 
        $maxbuckets1 = max($buckets1);
@@ -460,10 +459,7 @@
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
 
-       $graph->y_tick_labels[0] = "No answer";
-       foreach ($options as $key => $option) {
-         $graph->y_tick_labels[$key+1] = $option;
-       }
+       $graph->y_tick_labels = $options;
 
        $graph->parameter['bar_size']    = 0.15;
 
@@ -479,8 +475,8 @@
            $graph->y_order = array('stdev2', 'answers2', 'studanswers2');
        }
        
-       $graph->parameter['y_max_left']= $numoptions;
-       $graph->parameter['y_axis_gridlines']= $numoptions + 1;
+       $graph->parameter['y_max_left']= $numoptions - 1;
+       $graph->parameter['y_axis_gridlines']= $numoptions;
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
        $graph->parameter['x_axis_angle']  = 0;
@@ -570,6 +566,10 @@
            if ($count2[$i]) {
                $stdev2[$i] = sqrt( (float)$stdev2[$i] / ((float)$count2[$i]));
            }
+           $buckets1[$i] = $buckets1[$i] - 1;         // Hack because there should not be ANY 0 values in the data.
+           $buckets2[$i] = $buckets2[$i] - 1;
+           $studbuckets1[$i] = $studbuckets1[$i] - 1;
+           $studbuckets2[$i] = $studbuckets2[$i] - 1;
        }
 
        
@@ -609,10 +609,7 @@
        $graph->parameter['legend_border'] = 'black';
        $graph->parameter['legend_offset'] = 4;
 
-       $graph->y_tick_labels[0] = "No answer";
-       foreach ($options as $key => $option) {
-         $graph->y_tick_labels[$key+1] = $option;
-       }
+       $graph->y_tick_labels = $options;
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
               $graph->y_order = array('stdev1', 'stdev2', 'answers1', 'answers2', 'studanswers1', 'studanswers2');
@@ -622,8 +619,8 @@
            $graph->y_order = array('stdev2', 'answers2', 'studanswers2');
        }
        
-       $graph->parameter['y_max_left']= count($options);
-       $graph->parameter['y_axis_gridlines']= count($options) + 1;
+       $graph->parameter['y_max_left']= count($options)-1;
+       $graph->parameter['y_axis_gridlines']= count($options);
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
        $graph->parameter['x_axis_angle']  = 0;
