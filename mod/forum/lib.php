@@ -189,6 +189,10 @@ function forum_cron () {
 
     global $CFG, $USER;
 
+    if (!empty($USER)) { // Remember real USER account if necessary
+        $realuser = $USER;
+    }
+
     $cutofftime = time() - $CFG->maxeditingtime;
 
     if ($posts = forum_get_unmailed_posts($cutofftime)) {
@@ -238,8 +242,11 @@ function forum_cron () {
 
                 $mailcount=0;
                 foreach ($users as $userto) {
-                    /// Override the language of get_string, so that mail is in correct language for the receiver.
-                    $USER->lang = $userto->lang;
+                    /// Override the language and timezone of the "current" user, so that 
+                    /// mail is customised for the receiver.
+                    $USER->lang     = $userto->lang;
+                    $USER->timezone = $userto->timezone;
+
                     $canreply = forum_user_can_post($forum, $userto);
 
                     $by->name = "$userfrom->firstname $userfrom->lastname";
@@ -308,6 +315,10 @@ function forum_cron () {
                 echo ".... mailed to $mailcount users.\n";
             }
         }
+    }
+
+    if (!empty($realuser)) {   // Restore real USER if necessary
+        $USER = $realuser;
     }
 
     return true;
