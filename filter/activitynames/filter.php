@@ -29,6 +29,7 @@
                 //Exclude labels and hidden items
                 if ($activity->mod != "label" && $activity->visible) {
                     $title = strip_tags(urldecode($activity->name));
+                    $title = str_replace('"', "'", $title);
                     $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\">";
                     $currentname = urldecode($activity->name);
                     if ($currentname = trim($currentname)) {
