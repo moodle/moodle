@@ -234,7 +234,8 @@ function journal_print_feedback($course, $entry) {
         error("Weird journal error");
     }
 
-    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
+    echo "\n<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=CENTER><TR><TD BGCOLOR=#888888>";
+    echo "\n<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 VALIGN=TOP>";
 
     echo "\n<TR>";
     echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
@@ -257,7 +258,7 @@ function journal_print_feedback($course, $entry) {
 
     echo text_to_html($entry->comment);
     echo "</TD></TR></TABLE>";
-
+    echo "</TD></TR></TABLE>";
 }
 
 ?>
