@@ -1,0 +1,112 @@
+<head>
+    <title>Moodle Dokumentation: Apache, MySQL und PHP installieren</title>
+        <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Installation von Apache, MySQL und PHP</h1>
+<blockquote>
+  <p>Moodle <br>
+  Moodle ist in einer Scriptsprache namens PHP geschrieben, und speichert die meisten Daten in einer Datenbank. Die favorisierte Datenbank ist MySQL. Bevor Moodle installiert werden kann ist es erforderlich eine PHP-Installation eingerichtet zu haben und eine Datenbank auf einem WebServer einzurichten. Diese Softwarepakete zu installieren kann agnz sch&ouml;n knifflig sein, diese Seite erkl&auml;rt mit einfachen Worten wie dies auf verschiedenen Plattformen m&ouml;glich ist:</p>
+  <ul>
+    <li><a href="#host" class="questionlink">Hosting Service</a></li>
+    <li><a href="#mac" class="questionlink">Mac OS X</a></li>
+    <li><a href="#redhat" class="questionlink">Redhat Linux</a></li>
+    <li><a href="#windows" class="questionlink">Windows</a></li>
+  </ul>
+  <p class="questionlink">&nbsp;</p>
+  <h3 class="sectionheading"><a name="host" id="host"></a>Hosting Service</h3>
+  <blockquote>
+    <p>Leider gibt es gro&szlig;e Unterschiede zwiscehn den verschiedenen Webhostinganbietern. Einige bieten an Moodle f&uuml;r Sie zu installieren.  </p>
+    <p>Die meisten bieten eine Onlineoberfl&auml;che zur Verwaltung der Seite, zum Einrichten von Datenbanken und zur Aktivierung von Cron-Jobs an. Einige bieten einen terminal access via ssh an. Dann k&ouml;nnen Sie die command shell nutzen.</p>
+    <p>Arbeiten Sie die <a href="./?file=install.html">Installationsanweisung
+</a> St&uuml;ck f&uuml;r St&uuml;ck durch. Fragen Sie Ihren Provider wenn Probleme auftauchen.
+ </p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading"><a name="mac" id="mac"></a>Mac OS X</h3>
+  <blockquote>
+    <p>Der einfachste Weg ist die Nutzung des  Apache Servers, der auch Apple unterst&uuml;tzt. Und erg&auml;nzen Sie  PHP und MySQL aus Marc Liyanage's Paket. Beide unten aufgef&uuml;hrten Seiten verf&uuml;gen &uuml;ber eine gute Anleitung, die wir hier nicht wiederholen:</p>
+    <blockquote>
+      <p><strong>PHP</strong>: Download: <a href="http://www.entropy.ch/software/macosx/php/" target="_top">http://www.entropy.ch/software/macosx/php/</a></p>
+      <p><strong>MySQL</strong>: Download: <a href="http://www.entropy.ch/software/macosx/mysql/" target="_top">http://www.entropy.ch/software/macosx/mysql/</a></p>
+    </blockquote>
+    <p>Wenn diese installiert sind, sollte die Standard- <a href="./?file=install.html">Installationsanleitung</a> ausreichen.</p>
+    <p>Eine ausf&uuml;hrliche Anleitung finden Sie hier: <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a></p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading"><a name="redhat"></a>Redhat Linux</h3>
+  <blockquote>
+    <p>Installieren Sie alle verf&uuml;gbaren RPM packages f&uuml;r Apache, PHP und MySQL.
+    Ein Paket, das immer wieder vergessen wird ist das php-mysql Paket. Es wird f&uuml;r die Kommunikation von PHP mit MySQL ben&ouml;tigt.</p>
+    <p>Danach sollte die Standard-<a href="./?file=install.html">Installationsanleitung
+</a> weiterhelfen.</p>
+    <p>Eine ausf&uuml;hrlichere Anleitung hier:: <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a></p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <h3 class="sectionheading"><a name="windows" id="windows"></a>Windows</h3>
+  <blockquote>
+    <p>Der einfachste Weg erfolgt &uuml;ber das  <a href="http://www.easyphp.org/" target="_blank">EasyPHP</a>-Paket. Das Paket b&uuml;ndelt alle erforderlichen Softwareprogramme in einer Windowsanwendung. Hier nun die Schritte von Anfang an:</p>
+    <ol>
+      <li> Zun&auml;chst, wenn Sie bereits fr&uuml;her MySQL installiert haben, deinstallieren Sie alles. L&ouml;sceh sie alle MySQL-Dateien und  auch die Dateien <strong>c:\my.cnf</strong> und <strong>c:\windows\my.ini</strong>. F&uuml;hre Sie eine Dateisuche nach den Dateien: <strong>my.cnf</strong>
+      oder <strong>my.ini</strong> durch und l&ouml;schen Sie sie vollst&auml;ndig.</li>
+      <li> Wenn Sie fr&uuml;her bereits PHP installiert haben, l&ouml;schen Sie auf die gleiche Art alle Dateien mit dem Namen <strong>php4ts.dll</strong>
+      aus dem Windows Verzeichnis, sowie alle Dateien mit dem Namen <strong>php.ini</strong>.</li>
+      <li> Downloaden sie EasyPHP hier: <a href="http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7">http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7</a>
+      (approx 10 Mb)</li>
+      <li> F&uuml;hren Sie die Datei <strong>easyphp1-7_setup.exe</strong> aus. Der Installationsprozess wird auf franz&ouml;sisch ausgef&uuml;hrt. Er verl&auml;uft jedoch auf die gleiche Art und Weise wie bei anderen Windowsprogrammen auch. Akzeptieren Sie alle Hinweise und f&uuml;hren Sie eine vollst&auml;ndige Installation durch.      Anmerkung:
+ &quot;Suivant&quot; bedeutet 'Weiter' und &quot;Oui&quot; bedeutet 'Ja'.</li>
+      <li>Am Ende der Installation lassen Sie die Auswahl der Checkbox auf &quot;Lancer
+      EasyPHP&quot; (Start EasyPHP) stehen und klicken Sie auf den 'Terminer&quot; Button. Sie werden nun zu einer Informationsseite egf&uuml;hrt, die Sie ignorieren k&ouml;nnen. </li>
+      <li>Gratulation, wenn alles geklappt hat! Apache, PHP und MySQL sind komplett installiert und laufen. Sie sollten in der Toolbar ein schwarzes E vorfinden. Klicken Sie mit der rechten Maustaste darauf und Sie erhalten ein Kontrollmenu &uuml;ber die laufenden Programme.</li>
+      <li>Einige Eintr&auml;ge werden auf franz&ouml;sisch sein. Den englischen Sprachfile finden Sie unter: <a href="http://www.easyphp.org/telechargements/dn.php?F=indexUS_1.7">http://www.easyphp.org/telechargements/dn.php?F=indexUS_1.7</a>. Diese k&ouml;nnen &uuml;ber die vorhandenen Dateien kopiert werden.</li>
+      <li> Als n&auml;chstes m&uuml;ssen Sie eine Datenbank f&uuml;r Moodle einrichten.
+      Rechts-klick am schw&auml;zen E in der Toolbar und Administration ausw&auml;hlen, dann auch DB Management klicken (neben PHPMyAdmin).</li>
+      <li>Wenn Sie nach einem username gefragt werden, geben Sie &quot;<strong>root</strong>&quot; mit einem <strong>leeren Passwort</strong> ein. Sie sollten nun die Oberfl&auml;che von phpMyAdmin sehen, wo sie neue Datenbanken und Nutzer einrichten k&ouml;nnen. </li>
+      <li>Erstellen Sie eine neue Datenbank durch Eingabe von &quot;moodle&quot; im Feld und best&auml;tigen unter im &quot;Create&quot; Button. Das war einfach!</li>
+      <li>Sie k&ouml;nne zugleich neue Anwender mit Zugriff auf diese Datenbank einrichten, wenn Sie wollen. Dies ist etwas aufwendiger wenn Sie es zum ersten Mal machen. Benutzen Sie daher zun&auml;chst den vorhandenen Anwender &quot;root&quot; ohne Passwort in Ihrer Konfiguration f&uuml;r Moodle ud nehmen sie sp&auml;ter &Auml;nderungen vor. .</li>
+      <li> Sie haben nun alles f&uuml;r die Installation von Moodle vorbereitet. Downloaden Sie sich nun die aktuellste Version von Moodle von <a href="http://moodle.org/download" target="_blank">http://moodle.org/download</a>,
+      und unzippen Sie das Archiv.</li>
+      <li>Kopieren Sie Ihre Moodle-Dateien nach <strong>C:\Program Files\EasyPHP\www. </strong>Sie k&ouml;nnen entweder das gesamte Moodle-Verzeichnis (z.B. C:\Program Files\EasyPHP\www\moodle)
+      oder den <em>Inhalt</em> des moodle Verzeichnisses kopieren. Wenn Sie die zweite Option w&auml;hlen, erreichen Sie den Zugnag zu Ihrem Moodle mit der Eingabe von http://localhost/ an Stelle von http://localhost/moodle/.</li>
+      <li> Erstellen Sie einen leeren Ordner an anderer Stelle f&uuml;r die Ablage von hochgeladenen Dateien in Moodle, z.B. : <strong>C:\moodledata</strong></li>
+      <li> Gehen Sie in Ihen Moodle-Ordner und erstellen Sie eine Kopie der Datei config-dist.php mit dem Namen config.php</li>
+      <li> Bearbeiten Sie config.php mit einem Texteditor (z.B. mit Notepad oder einem HTML Editor). </li>
+      <li>Geben Sie folgenden Datenbankinformationen ein:<br>
+      $CFG-&gt;dbtype = 'mysql';<br>
+      $CFG-&gt;dbhost = 'localhost';<br>
+      $CFG-&gt;dbname = 'moodle';<br>
+      $CFG-&gt;dbuser = 'root'; <br>
+      $CFG-&gt;dbpass = '';<br>
+      $CFG-&gt;dbpersist = true;<br>
+      $CFG-&gt;prefix = 'mdl_';</li>
+      <li>Und f&uuml;gen Sie die Pfade ein:<br>
+      $CFG-&gt;wwwroot = 'http://localhost/moodle'; // Use an external address
+      if you know it. <br>
+      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br>
+      $CFG-&gt;dataroot = 'C:\moodledata';</li>
+      <li>Speichern  Sie die config.php - alle anderen Einstellungen k&ouml;nnen Sie ignorieren.</li>
+      <li>Sie sind nun fast fertig. Die weiteren Schritte des Setup nehmen Sie mit Ihrem Browser vor. Rufen Sie <a href="http://localhost/moodle/admin/" target="_blank">http://localhost/moodle/admin/</a>
+      mit Ihem Browser auf, um das Setup abzuschlie&szlig;en.</li>
+      <li>Um zip-files mit Moodle zu verwenden (z.B. nutzen die Backups zip-Dateien) sollten Sie &quot;zlib&quot; enablen. Sie k&ouml;nnen dies in Ihrem EasyPHP
+      Verzeichnis (<strong>C:\Program Files\EasyPHP</strong>) durch das Ausf&uuml;hren des Programms       phpini.exe. Markieren Sie die Checkbox neben &quot;zlib.dll&quot;.
+      Schlie&szlig;en Sie das Fenster, gehen Sie zum schwarzen E in Ihrer Toolbar und &ouml;ffnen Sie mit der rechten Maustaste das Menu, w&auml;hlen Sie &quot;Restart&quot; in diesm Menu aus..</li>
+      <li>Zum Schlu&szlig; k&ouml;nnen Sie noch Cron-Jobs einrichten. Beachten Sie auch die  <a href="./?file=install.html">Installationsanleitung
+      guide</a> f&uuml;r weitere Details.</li>
+    </ol>
+    <p>Wenn Sie EasyPHP nicht benutzen k&ouml;nnen oder wollen, habe ich hier einige Hinweise f&uuml;r Sie:</p>
+    <ul>
+      <li>Pr&uuml;fen Sie, ob  das  GD Modul enabled ist, damit Moodle, Bilder verarbeiten kann. Sie k&ouml;nnen die Datei php.ini bearbeiten und den Kommentar (;) von dieser Zeile entfernen: 'extension=php_gd2.dll'.
+    </li>
+      <li>Pr&uuml;fen sie, ob das Zlib Module enabled ist, damit Sie ZIP-Files erstellen u d entpacken k&ouml;nnen in Moodle.</li>
+      <li>Stellen Sie sicher, dass sessions auf der Einstellung  'turned on'. Bearbeiten Sie dazu die Datei edit php.ini und legen sie das Verzeichnis f&uuml;r <strong>session.save_path</strong> fest. &Auml;ndern Sie dazu das als Standard eingestellte Verzeichnis "/tmp" auf folgende Einstellung wie z.B. "c:/temp".</li>
+    </ul>
+    <p>&nbsp;</p>
+  </blockquote>
+</blockquote>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Dokumentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>
