@@ -749,7 +749,7 @@ function forum_get_recent_posts($sincetime, $forum="0") {
         $forumselect = "";
     }
 
-    return get_records_sql("SELECT p.*, d.name, u.id, u.firstname, u.lastname
+    return get_records_sql("SELECT p.*, d.name, u.id, u.firstname, u.lastname, u.picture
                               FROM {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}user u
