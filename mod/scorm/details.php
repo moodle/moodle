@@ -31,7 +31,8 @@
     //
 
     $coursedir = "$CFG->dataroot/$course->id";
-
+    $form->reference = clean_param($form->reference, PARAM_PATH);
+    
     if ($scormdir = make_upload_directory("$course->id/$CFG->moddata/scorm")) {
             if ($tempdir = scorm_datadir($scormdir, $form->datadir)) {
                 copy ("$coursedir/$form->reference", $tempdir."/".basename($form->reference));
