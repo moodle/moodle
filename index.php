@@ -45,6 +45,7 @@
         $loginstring = "<font size=\"2\"><a href=\"$wwwroot/login/index.php\">".get_string('login').'</a></font>';
     } else {
         $loginstring = '<font size="1">'. user_login_string($site) .'</font>';
+        add_to_log(SITEID, "course", "view", "view.php?id=$course->id", SITEID);
     }
 
     if (empty($CFG->langmenu)) {
