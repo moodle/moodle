@@ -382,42 +382,7 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2004013101) {
         table_column("log", "", "cmid", "integer", "10", "unsigned", "0", "", "module");
-
-
-        if ($coursemodules = get_records_sql("SELECT cm.*, m.name 
-                                                FROM {$CFG->prefix}course_modules cm, 
-                                                     {$CFG->prefix}modules m
-                                                WHERE cm.module = m.id")) {
-
-            $cmcount = count($coursemodules);
-
-            if ($cmcount > 10) {   /// Process the logs later
-                print_simple_box_start("center", "", "#ffcccc");
-                echo '<p>Your old logs may need to be upgraded to take advantage of some new features.';
-                echo 'To upgrade your logs, go to this page AFTER Moodle is completely upgraded:</p>';
-                echo "<p>  $CFG->wwwroot/$CFG->admin/upgrade_logs.php</p>";
-                print_simple_box_end();
-
-            } else {               /// Process the logs now (there aren't that many)
-                notify("Upgrading old logs with new data from $cmcount coursemodules.");
-                foreach ($coursemodules as $cm) {
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
-                                 WHERE module = '$cm->name' AND url ILIKE 'view.php?id=$cm->id%'");
-                    if ($cm->name == "forum") {
-                        execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
-                                     WHERE module = 'forum' AND url ILIKE '%?f=$cm->instance%'");
-                        if ($discussions = get_records("forum_discussions", "forum", $cm->instance)) {
-                            notify("Processing ".count($discussions)." discussions");
-                            foreach ($discussions as $discussion) {
-                                execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
-                                             WHERE module = 'forum' AND url ILIKE '%?d=$discussion->id%'");
-                            }
-                        }
-                    }
-                    flush();
-                }
-            }
-        }
+        set_config("upgrade", "logs");
     }
 
     return $result;

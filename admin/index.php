@@ -358,6 +358,12 @@
     print_simple_box_start("center", "100%", "$THEME->cellcontent2", 20);
     print_heading($stradministration);
 
+    if (!empty($CFG->upgrade)) {  // Print notice about extra upgrading that needs to be done
+        print_simple_box(get_string("upgrade$CFG->upgrade", "admin", 
+                                    "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"), "center");
+        print_spacer(10,10);
+    }
+
     $table->tablealign = "right";
     $table->align = array ("right", "left");
     $table->wrap = array ("nowrap", "nowrap");
