@@ -47,7 +47,8 @@ class quiz_file_format extends quiz_default_format {
     function commentparser(&$answer) {
         if (strpos($answer,"#") > 0){
             $hashpos = strpos($answer,"#");
-            $comment = addslashes(substr($answer, $hashpos+1));
+            $comment = substr($answer, $hashpos+1);
+            $comment = addslashes(trim($this->escapedchar_post($comment)));
             $answer  = substr($answer, 0, $hashpos);
         } else {
             $comment = " ";
@@ -55,6 +56,26 @@ class quiz_file_format extends quiz_default_format {
         return $comment;
     }
     
+    function escapedchar_pre($string) {
+        //Replaces escaped control characters with a placeholder BEFORE processing
+        
+        $escapedcharacters = array("\\#",    "\\=",    "\\{",    "\\}",    "\\~"   );
+        $placeholders      = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;");
+
+        $string = str_replace("\\\\", "&&092;", $string);
+        $string = str_replace($escapedcharacters, $placeholders, $string);
+        $string = str_replace("&&092;", "\\", $string);
+        return $string;
+    }
+
+    function escapedchar_post($string) {
+        //Replaces placeholders with corresponding character AFTER processing is done
+        $placeholders = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;");
+        $characters   = array("#",      "=",      "{",      "}",      "~"     );
+        $string = str_replace($placeholders, $characters, $string);
+        return $string;
+    }
+
 
     function readquestion($lines) {
     // Given an array of lines known to define a question in this format, this function
@@ -80,6 +101,9 @@ class quiz_file_format extends quiz_default_format {
             return false;
         }
 
+        // Substitute escaped control characters with placeholders
+        $text = $this->escapedchar_pre($text);
+
         // QUESTION NAME parser
         if (substr($text, 0, 2) == "::") {
             $text = substr($text, 2);
@@ -89,13 +113,13 @@ class quiz_file_format extends quiz_default_format {
                 $question->name = false;
                 // name will be assigned after processing question text below
              } else {
-                $question->name = addslashes(trim(substr($text, 0, $namefinish)));
+                $questionname = substr($text, 0, $namefinish);
+                $question->name = addslashes(trim($this->escapedchar_post($questionname)));
                 $text = trim(substr($text, $namefinish+2)); // Remove name from text
             }
         } else {
             $question->name = false;
         }
-
 
         // FIND ANSWER section
         $answerstart = strpos($text, "{");
@@ -120,11 +144,12 @@ class quiz_file_format extends quiz_default_format {
         // Format QUESTION TEXT without answer, inserting "_____" as necessary
         if (substr($text, -1) == "}") {
             // no blank line if answers follow question, outside of closing punctuation
-            $question->questiontext = addslashes(trim(substr_replace($text, "", $answerstart, $answerlength+1)));
+            $questiontext = substr_replace($text, "", $answerstart, $answerlength+1);
         } else {
             // inserts blank line for missing word format
-            $question->questiontext = addslashes(trim(substr_replace($text, "_____", $answerstart, $answerlength+1)));
+            $questiontext = substr_replace($text, "_____", $answerstart, $answerlength+1);
         }
+        $question->questiontext = addslashes(trim($this->escapedchar_post($questiontext)));
 
         // set question name if not already set
         if ($question->name === false) {
@@ -216,7 +241,7 @@ class quiz_file_format extends quiz_default_format {
                     }
                     $question->fraction[$key] = $answer_weight;
                     $question->feedback[$key] = $this->commentparser($answer); // commentparser also removes comment from $answer
-                    $question->answer[$key]   = addslashes($answer);    
+                    $question->answer[$key]   = addslashes($this->escapedchar_post($answer));    
                 }  // end foreach answer
     
                 $question->defaultgrade = 1;
@@ -256,8 +281,8 @@ class quiz_file_format extends quiz_default_format {
                     }
 
                     $marker = strpos($answer,"->");
-                    $question->subquestions[$key] = addslashes(trim(substr($answer, 0, $marker)));
-                    $question->subanswers[$key]   = addslashes(trim(substr($answer, $marker+2)));
+                    $question->subquestions[$key] = addslashes(trim($this->escapedchar_post(substr($answer, 0, $marker))));
+                    $question->subanswers[$key]   = addslashes(trim($this->escapedchar_post(substr($answer, $marker+2))));
 
                 }  // end foreach answer
     
@@ -312,7 +337,7 @@ class quiz_file_format extends quiz_default_format {
                     }
                     $question->fraction[$key] = $answer_weight;
                     $question->feedback[$key] = $this->commentparser($answer); //commentparser also removes comment from $answer
-                    $question->answer[$key]   = addslashes($answer);
+                    $question->answer[$key]   = addslashes($this->escapedchar_post($answer));
                 }     // end foreach
 
                 $question->usecase = 0;  // Ignore case

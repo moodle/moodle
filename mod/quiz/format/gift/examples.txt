@@ -50,7 +50,7 @@ Grant is buried in Grant's tomb.{F}
 
 The sun rises in the east.{T}
 
-// ===Numerical===
+// ===Matching===
 
 Matching Question. {
     =subquestion1 -> subanswer1
@@ -133,6 +133,27 @@ What two people are entombed in Grant's tomb? {
 	~%50%Grant
 	~%50%Grant's wife
 	~%-50%Grant's father }
+
+// ===Special Characters===
+Which answer equals 5? {
+     ~ \= 2 + 2
+     = \= 2 + 3
+     ~ \= 2 + 4  }
+
+::GIFT Control Characters::
+Which of the following is NOT a control character for the GIFT import format? {
+   ~ \~     # \~ is a control character.
+   ~ \=     # \= is a control character.
+   ~ \#     # \# is a control character.
+   ~ \{     # \{ is a control character.
+   ~ \}     # \} is a control character.
+   = \\     # Correct! \\ (backslash) is not a control character. BUT,
+              it is used to escape the control characters. So, to specify
+              a literal backslash, you must escape it with a backslash
+              (as shown in this example).
+}
+
+
 
 //-----------------------------------------//
 //     EXAMPLES FROM gift/format.php
