@@ -34,8 +34,10 @@
                            get_string("adminhelpmanagemodules"));
     $table->data[] = array("<b><a href=\"filters.php\">".get_string("managefilters")."</a></b>",
                            get_string("adminhelpmanagefilters"));
-    $table->data[] = array("<b><a href=\"backup.php\">".get_string("backup")."</a></b>",
-                           get_string("adminhelpbackup"));
+    if (!isset($CFG->disablescheduledbackups)) {
+        $table->data[] = array("<b><a href=\"backup.php\">".get_string("backup")."</a></b>",
+                               get_string("adminhelpbackup"));
+    }
 
     print_table($table);
     
