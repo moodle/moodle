@@ -2384,12 +2384,12 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         echo '<div class="';
         echo ($forum_style == 'minimal') ? 'forumaddnewminimal' : 'forumaddnew';
         echo '">';
-        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">";
-        if ($forum->type == "news") {
-            echo get_string("addanewtopic", "forum")."</a>...";
-        } else {
-            echo get_string("addanewdiscussion", "forum")."</a>...";
-        }
+        echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
+        echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
+        echo '<input type="submit" value="';
+        echo ($forum->type == "news") ? get_string("addanewtopic", "forum") : get_string("addanewdiscussion", "forum");
+        echo '" />';
+        echo '</form>';
         echo "</div>\n";
     }
 
