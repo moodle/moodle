@@ -155,6 +155,17 @@
             }
         }
 
+        //Avoid searching within the document head
+        $head = array();
+        preg_match_all('/<head>(.+?)<\/head>/is',$text,$list_of_heads);
+        foreach (array_unique($list_of_heads[0]) as $key=>$value) {
+            $head['<~'.$key.'~>'] = $value;
+        }
+        if (!empty($head)) {
+            $text = str_replace($head,array_keys($head),$text);
+        }
+        
+
         //Now avoid searching inside the <nolink>tag
         $excludes = array();
         preg_match_all('/<nolink>(.+?)<\/nolink>/is',$text,$list_of_excludes);
@@ -216,6 +227,9 @@
         }
         if (!empty( $excludes)) {
             $text = str_replace(array_keys($excludes),$excludes,$text);
+        }
+        if (!empty( $head)) {
+            $text = str_replace(array_keys($head),$head,$text);
         }
         if ($fullmatch and !empty($words)) {
             $text = str_replace(array_keys($words),$words,$text);
