@@ -416,6 +416,7 @@ $string['groupmode'] = 'Group mode';
 $string['groupmodeforce'] = 'Force group mode';
 $string['groupmy'] = 'My group';
 $string['groupnonmembers'] = 'People not in a group';
+$string['groupnotamember'] = 'Sorry, you are not a member of that group';
 $string['grouprandomassign'] = 'Randomly assign all to groups';
 $string['groupremove'] = 'Remove selected group';
 $string['groupremovemembers'] = 'Remove selected members';
