@@ -10,6 +10,6 @@
                            //         X  = point release version 1,2,3 etc
                            //          Y = increments between point releases
 
-   $release = '1.4.4';     // Human-friendly version name
+   $release = '1.4.4 +';     // Human-friendly version name
 
 ?>
