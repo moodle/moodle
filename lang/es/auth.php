@@ -48,6 +48,7 @@ $string['auth_ldap_host_url'] = 'Especificar el host LDAP en forma de URL como \
 $string['auth_ldap_login_settings'] = 'Ajustes de entrada';
 $string['auth_ldap_memberattribute'] = 'Especificar el atributo para nombre de usuario, cuando los usuarios se integran en un grupo. Normalmente \'miembro\'';
 $string['auth_ldap_objectclass'] = 'Filtro usado para usuarios name/search. Normalmente deberá ajustarlo a algo parecido a objectClass=posixAccount. Valores por defecto para objectClass=* que devolverán todos los objetos desde LDAP.';
+$string['auth_ldap_opt_deref'] = 'Determina cómo se manejan los alias durante la búsqueda. Seleccione uno de los siguientes valores: \"No\" (LDAP_DEREF_NEVER) o \"Sí\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Ajustes de caducidad de la contraseña LDAP.';
 $string['auth_ldap_search_sub'] = 'Ponga el valor <> 0 si quiere buscar usuarios desde subcontextos.';
 $string['auth_ldap_server_settings'] = 'Ajustes de servidor LDAP';
@@ -98,6 +99,7 @@ $string['forcechangepasswordfirst_help'] = 'Forzar a los usuarios a cambiar la c
 $string['guestloginbutton'] = 'Botón de entrada para invitados';
 $string['instructions'] = 'Instrucciones';
 $string['md5'] = 'Encriptación MD5';
+$string['parentlanguage'] = 'es';
 $string['plaintext'] = 'Texto plano';
 $string['showguestlogin'] = 'Puede ocultar o mostrar el botón de entrada para invitados en la página de acceso.';
 $string['stdchangepassword'] = 'Utilizar Página de cambio de contraseña estándar';

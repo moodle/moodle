@@ -1,11 +1,12 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['absent'] = 'Ausente';
 $string['accumulative'] = 'Acumulativa';
 $string['action'] = 'Acción';
 $string['addacomment'] = 'Añadir un Comentario';
+$string['addcomment'] = 'Añadir Comentario';
 $string['afterdeadline'] = 'Después de Fecha límite: $a';
 $string['ago'] = 'hace $a';
 $string['agreetothisassessment'] = 'Aceptar esta Evaluación';
@@ -46,6 +47,7 @@ $string['calculationoffinalgrades'] = 'Cálculo de la Calificación Final';
 $string['clearlateflag'] = 'Limpiar flag atrasado';
 $string['closeassignment'] = 'Cerrar la Tarea';
 $string['comment'] = 'Comentar';
+$string['commentbank'] = 'Banco de Comentarios';
 $string['commentby'] = 'Comentado por';
 $string['comparisonofassessments'] = 'Comparación de evaluaciones';
 $string['confirmdeletionofthisitem'] = 'Confirmar el borrado de $a';
@@ -59,6 +61,7 @@ $string['deleting'] = 'Borrando';
 $string['description'] = 'Descripción';
 $string['detailsofassessment'] = 'Detalles de la Evaluación';
 $string['disagreewiththisassessment'] = 'Discrepar con esta Evaluación';
+$string['displayofcurrentgrades'] = 'Presentar las Calificaciones Actuales';
 $string['displayoffinalgrades'] = 'Presentar las Calificaciones Finales';
 $string['dontshowgrades'] = 'No mostrar las Calificaciones';
 $string['edit'] = 'Editar';
@@ -162,6 +165,7 @@ $string['overallocation'] = 'Nivel de Asignación por Exceso';
 $string['overallpeergrade'] = 'Calificación Total de los Compañeros: $a';
 $string['overallteachergrade'] = 'Calificación Total del Profesor: $a';
 $string['ownwork'] = 'Trabajo Propio';
+$string['parentlanguage'] = 'es';
 $string['passwordprotectedworkshop'] = 'Taller protegido con contraseña';
 $string['percentageofassessments'] = 'Porcentaje de Evaluaciones a desechar';
 $string['phase'] = 'Fase';
@@ -183,6 +187,7 @@ $string['present'] = 'Presente';
 $string['reasonforadjustment'] = 'Razón para el Ajuste';
 $string['reassess'] = 'Reevaluar';
 $string['regradestudentassessments'] = 'Re-calificar las evaluaciones de los estudiantes';
+$string['releaseteachergrades'] = 'Publicar Calificaciones del Profesor';
 $string['removeallattachments'] = 'Eliminar todos los anexos';
 $string['repeatanalysis'] = 'Repetir el Análisis';
 $string['reply'] = 'Responder';
@@ -237,10 +242,13 @@ $string['thegradeforthisassessmentis'] = 'La calificación para esta evaluación e
 $string['thegradeis'] = 'La Calificación es $a';
 $string['theseasessmentsaregradedbytheteacher'] = 'Estas Evaluaciones están calificadas por el $a';
 $string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
 $string['thisisadroppedassessment'] = 'Esta es una evaluación dejada.';
+$string['thislanguage'] = 'es';
 $string['timeassessed'] = 'Tiempo Evaluado';
 $string['title'] = 'Título';
 $string['typeofscale'] = 'Tipo de Escala';
+$string['unassessed'] = '$a sin calificar';
 $string['ungradedassessments'] = '$a evaluaciones sin calificar';
 $string['ungradedassessmentsofstudentsubmissions'] = '$a Evaluaciones aún por calificar de los Envíos de los Estudiantes';
 $string['ungradedassessmentsofteachersubmissions'] = '$a Evaluaciones aún por calificar de los Envíos del Profesor';

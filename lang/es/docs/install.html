@@ -1,33 +1,28 @@
 <head>
-    <title>Documentación de Moodle: Instalación</title>
-	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	<style type="text/css">
+    
+<title>Documentos de Moodle: Instalación básica</title>
+  
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
 <!--
-.sectionheading {
-	font-size: medium;
-	font-weight: bold;
-	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-	border: 1px dotted;
-	padding: 10px;
-	background-color: #EEEEEE;
-}
+.style3 {color: #660000}
 -->
 </style>
 </head>
 
 <body bgcolor="#FFFFFF">
-<h2>Instalación de Moodle</h2>
+<h1>Instalación de Moodle</h1>
+<h2>¡No tenga miedo! <img src="http://moodle.org/pix/s/smiley.gif"></h2>
 <blockquote>
-<p>Esta guía explica cómo instalar Moodle por primera vez. Profundiza en detalles
-  en algunos de los pasos, con la finalidad de cubrir una amplia variedad de pequeñas
-  diferencias entre las opciones de los diversos servidores web, de manera que
-  este documento puede parecer largo y complicado. No se desanime por esto, &iexcl;una vez que sabe como hacerlo puede instalar Moodle en unos pocos minutos!</p>
-
+<p>Esta guía explica cómo instalar Moodle por primera vez. Profundiza en detalles en algunos de los pasos, con la finalidad de cubrir una amplia variedad de pequeñas diferencias entre las opciones de los diversos servidores
+web, de manera que este documento puede parecer largo y complicado. No se desanime por esto, &iexcl;una vez que sabe como hacerlo puede instalar Moodle en unos pocos minutos!</p>
 <p>Si tiene problemas por favor lea este documento cuidadosamente, la mayoría de los problemas habituales se responden aquí.
 Si aún después de esto continua con problemas, puede buscar ayuda en <a target="_new" href="http://moodle.org/help">Ayuda de Moodle</a></p>
 <p>Otra opción es contactar una <a target="_new" href="http://moodle.com/hosting/">empresa de alojamiento web</a> que pueda mantener Moodle para usted, de forma que pueda despreocuparse de todo esto y centrarse en la formación.
-
+</p>
+  <p>&nbsp;  </p>
 Secciones de este documento:
 <ol>
   <li><a href="#requirements">Requisitos</a></li>
@@ -46,9 +41,7 @@ Secciones de este documento:
   <p>&nbsp;</p>
 </blockquote>
 <h3 class="sectionheading"><a name="requirements"></a>1. Requisitos</h3>
-
-<div style="padding-left: 3em;">
-
+<blockquote> 
   <p>Moodle está desarrollado principalmente en Linux usando Apache, MySQL y PHP
     (la también denominada plataforma LAMP), aunque también es probado regularmente
     con PostgreSQL y en los sistemas operativos Windows XP, Mac OS X y Netware
@@ -216,8 +209,58 @@ php_value upload_max_filesize 2M<br />php_value post_max_size 2M<br />     </pre
   <pre>cp lib/htaccess .htaccess</pre>
 
 </blockquote>
-
 <p>&nbsp;</p>
+<h3 class="sectionheading"><a name="cron"></a>6. Ajustes del cron -- ¡IMPORTANTE! </h3>
+<blockquote> 
+  <p>Some of Moodle's modules require continual checks to perform tasks. For example, 
+    Moodle needs to check the discussion forums so it can mail out copies of posts 
+    to people who have subscribed.</p>
+  <p>The script that does all this is located in the admin directory, and is called 
+    cron.php. However, it can not run itself, so you need to set up a mechanism 
+    where this script is run regularly (eg every five or ten minutes). This provides 
+    a &quot;heartbeat&quot; so that the script can perform functions at periods 
+    defined by each module. This kind of regular mechanism is known as a <strong>cron service</strong>. </p>
+  <p>Note that the machine performing the cron <b>does not need to be the same 
+    machine that is running Moodle</b>. For example, if you have a limited web 
+    hosting service that does not have a cron service, then you can might choose to run 
+    cron on another server or on your home computer. All that matters is that 
+    the cron.php file is called regularly. </p>
+  <p>The load of this script is not very high, so 5 minutes is usually reasonable, 
+    but if you're worried about it you can reduce the time period to something 
+    like 15 minutes or even 30 minutes. It's best not to make the time period 
+    too long, as delaying mail-outs can slow down activity within the course.</p>
+  <p>First, test that the script works by running it directly from your browser:</p>
+  <blockquote> 
+    <pre>http://example.com/moodle/admin/cron.php</pre>
+  </blockquote>
+  <p>Now, you need to set up some of way of running the script automatically and 
+    regularly.</p>
+  <p><b>On Windows systems</b></p>
+  <blockquote>
+    <p>The simplest way is to use this little package <a href="http://moodle.org/download/modules/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank"><strong>moodle-cron-for-windows.zip</strong></a> which makes this whole thing very easy by installing a small Windows service. Run it and forget about it!</p>
+  </blockquote>
+  <p><strong>On web hosting services</strong></p>
+  <blockquote>
+    <p> Your web-based control panel may have a web page that allows you to set up this cron process. For example, on Cpanel system, look for a button called &quot;Cron jobs&quot;. In there you can put the same sort of Unix commands as listed below. </p>
+  </blockquote>
+  <h4> Using the command line on Unix </h4>
+  <blockquote>
+    <p>There are different command line programs you can use to call the page from the command line. Not all of them may be available on a given server.</p>
+    <p>For example, you can use a Unix utility like 'wget':</p>
+    <blockquote>
+      <pre>wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
+    </blockquote>
+    <p>Note in this example that the output is thrown away (to /dev/null).</p>
+    <p>The same thing using lynx:</p>
+    <blockquote>
+      <pre>lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null</pre>
+    </blockquote>
+    <p>Alternatively you could use a standalone version of PHP, compiled to be run 
+      on the command line. The advantage with doing this is that your web server 
+      logs aren't filled with constant requests to cron.php. The disadvantage is 
+      that you need to have access to a command-line version of php.</p>
+    <blockquote>
+      <pre>/opt/bin/php /web/moodle/admin/cron.php
 
 <h3 class="sectionheading"><a name="database"></a>4.2 Crear una base de datos</h3>
   <blockquote>
@@ -450,9 +493,24 @@ personas que están suscritas.</p>
   <p>Primero, pruebe que el script funcione directamente desde su navegador:</p>
 
 <blockquote>
-
-  <pre>http://ejemplo.com/moodle/admin/cron.php</pre>
-
+  <p>Now that Moodle is running properly, you can try creating a new course to play with. </p>
+  <p>Select &quot;Create a new course&quot; from the Admin page (or the admin 
+    links on the home page).</p>
+  <p>Fill out the form, paying special attention to the course format. You don't 
+    have to worry about the details too much at this stage, as everything can 
+    be changed later by the teacher. Note that the yellow help icons are everywhere to provide contextual help on any aspect. </p>
+  <p>Press &quot;Save changes&quot;, and you will be taken to a new form where 
+    you can assign teachers to the course. You can only add existing user accounts 
+    from this form - if you want to create a new teacher account then either ask 
+    the teacher to create one for themselves (see the login page), or create one 
+    for them using the &quot;Add a new user&quot; on the Admin page.</p>
+  <p>Once done, the course is ready to customise, and is accessible via the &quot;Courses&quot; 
+    link on the home page.</p>
+  <p>See the &quot;<a href="./?file=teacher.html">Teacher Manual</a>&quot; for more details 
+    on course-building.</p>
+  <p>&nbsp;</p>
+  <p align="center"><strong>Happy exploring and happy Moodling!</strong></p>
+  <p align="center"><strong>If you like Moodle, please consider <a href="http://moodle.org/donations/" target="_blank">donating</a> to help us cover our costs! </strong></p>
 </blockquote>
 
   <p>Ahora, usted necesita establecer alguna manera de ejecutar el script automáticamente 
