@@ -51,12 +51,12 @@
             $numdirs = count($dirs);
             $link = "";
             $navigation = "";
-            for ($i=1; $i<$numdirs; $i++) {
+            for ($i=1; $i<$numdirs-1; $i++) {
                $navigation .= " -> ";
                $link .= "/".urlencode($dirs[$i]);
                $navigation .= "<a href=\"index.php?id=$course->id&wdir=$link\">".$dirs[$i]."</a>";
             }
-            $fullnav = "<a href=\"index.php?id=$course->id&wdir=/\">$strfiles</a> $navigation";
+            $fullnav = "<a href=\"index.php?id=$course->id&wdir=/\">$strfiles</a> $navigation -> ".$dirs[$numdirs-1];
         }
 
         if ($course->id == $site->id) {
@@ -96,6 +96,12 @@
 
     if (!$wdir) {
         $wdir="/";
+    }
+
+    if ($wdir == "/backupdata") {
+        if (! make_upload_directory("$course->id/backupdata")) {   // Backup folder
+            error("Could not create backupdata folder.  The site administrator needs to fix the file permissions");
+        }
     }
 
 
