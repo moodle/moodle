@@ -23,6 +23,11 @@
         die;
     }
 
+    if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
+        $CFG->prefix = "";
+    }
+
+
 
 /// Load up standard libraries 
 
