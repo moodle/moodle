@@ -123,7 +123,7 @@
             $myxls->InsertText($student->lastname);
 
             foreach ($studentgrades as $grade) {
-                $myxls->InsertNumber($grade);
+                $myxls->InsertText($grade);
             }
             $myxls->InsertNumber($totals[$student->id]);
         }
