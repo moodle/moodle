@@ -556,7 +556,7 @@ function authenticate_user_login($username, $password) {
                   }
             } else {
                  if ( record_exists("user_coursecreators", "userid", $user->id)) {
-                      $creator = delete_record("user_coursecreators", "userid", $user->id);
+                      $creator = delete_records("user_coursecreators", "userid", $user->id);
                       if (! $creator) {
                           error("Cannot remove user from course creators.");
                       }
