@@ -42,29 +42,33 @@
         $table->align = array ("LEFT", "LEFT", "LEFT");
     }
 
+    $currentsection = "";
     foreach ($resources as $resource) {
-
-        $tt = "";
         if ($course->format == "weeks" or $course->format == "topics") {
-            if ($resource->section) {
-                $tt = "$resource->section";
+            if ($resource->section != $currentsection and $resource->section) {
+                $printsection = $resource->section;
+                $currentsection = $resource->section;
+                $table->data[] = 'hr';
+            } else {
+                $printsection = "";
             }
         } else {
-            $tt = "<font size=1>".userdate($resource->timemodified);
+            $printsection = '<span class="smallinfo">'.userdate($resource->timemodified)."</span>";
         }
         if (!empty($resource->extra)) {
             $extra = urldecode($resource->extra);
         } else {
             $extra = "";
         }
-        if (!$resource->visible) {
-           //Show dimmed if the mod is hidden
-           $table->data[] = array ($tt, "<a class=\"dimmed\" $extra href=\"view.php?id=$resource->coursemodule\">$resource->name</a>",
-                                   text_to_html($resource->summary) );
-        } else {
-           //Show normal if the mod is visible
-           $table->data[] = array ($tt, "<a $extra href=\"view.php?id=$resource->coursemodule\">$resource->name</a>",
-                                   text_to_html($resource->summary) );
+        if (!$resource->visible) {      // Show dimmed if the mod is hidden
+           $table->data[] = array ($printsection, 
+                "<a class=\"dimmed\" $extra href=\"view.php?id=$resource->coursemodule\">$resource->name</a>",
+                text_to_html($resource->summary) );
+
+        } else {                        //Show normal if the mod is visible
+           $table->data[] = array ($printsection, 
+                "<a $extra href=\"view.php?id=$resource->coursemodule\">$resource->name</a>",
+                text_to_html($resource->summary) );
         }
     }
 
