@@ -115,10 +115,16 @@
                 email_paypal_error_to_admin("Error while trying to enrol ".fullname($user)." in '$course->fullname'", $data);
                 die;
             } else {
-                if (!empty($CFG->enrol_paypalemail)) {
-                    $teacher = get_teacher();
+                $teacher = get_teacher($course->id);
+
+                if (!empty($CFG->enrol_paypalmailstudents)) {
+                    $a->coursename = "$course->fullname";
+                    $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
+                    email_to_user($user, $teacher, get_string("enrolmentnew"), get_string('welcometocoursetext', '', $a));
+                }
+
+                if (!empty($CFG->enrol_paypalmailteachers)) {
                     email_to_user($teacher, $user, get_string("enrolmentnew"), "I have enrolled in your class via Paypal");
-                    email_to_user($user, $teacher, get_string("enrolmentnew"), get_string('welcometocoursetext'));
                 }
             }
 
