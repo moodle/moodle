@@ -1,7 +1,7 @@
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">
     <td align="right">
-        <p><?php print_string('block_rss_display_description_label', 'block_rss_client') ?></p>
+        <?php print_string('block_rss_display_description_label', 'block_rss_client') ?>
     </td>
     <td>
             <?php 
@@ -20,7 +20,7 @@
 </tr>
 <tr valign="top">
     <td align="right">
-        <p><?php print_string('block_rss_shownumentries_label', 'block_rss_client') ?></p>
+        <?php print_string('block_rss_shownumentries_label', 'block_rss_client') ?>
     </td>
     <td>
         <input name="shownumentries" type="text" size="5" value="<?php
@@ -38,7 +38,7 @@
 </tr>
 <tr valign="top">
     <td align="right">
-        <p><?php print_string('block_rss_choose_feed_label', 'block_rss_client') ?></p>
+        <?php print_string('block_rss_choose_feed_label', 'block_rss_client') ?>
     </td>
     <td>
         <?php 
@@ -90,7 +90,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string('uploadlabel'); ?></p></td>
+    <td align="right"><?php print_string('uploadlabel'); ?></td>
     <?php 
         $title = '';
         if (!empty($this->config) && !empty($this->config->title)) {
@@ -101,7 +101,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string('block_rss_client_show_channel_link_label', 'block_rss_client'); ?></p></td>
+    <td align="right"><?php print_string('block_rss_client_show_channel_link_label', 'block_rss_client'); ?></td>
     <td>
         <?php 
                 if (isset($this->config) && isset($this->config->block_rss_client_show_channel_link)) {
@@ -117,7 +117,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><?php print_string('block_rss_client_show_image_label', 'block_rss_client'); ?></p></td>
+    <td align="right"><?php print_string('block_rss_client_show_image_label', 'block_rss_client'); ?></td>
     <td>
         <?php 
                 if (isset($this->config) && isset($this->config->block_rss_client_show_channel_image)) {
