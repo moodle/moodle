@@ -67,7 +67,25 @@ function exercise_add_instance($exercise) {
 		unset($exercise->password);
 	}
 
-    return insert_record("exercise", $exercise);
+    if ($returnid = insert_record("exercise", $exercise)) {
+
+        $event = NULL;
+        $event->name        = $exercise->name;
+        $event->description = $exercise->description;
+        $event->courseid    = $exercise->course;
+        $event->groupid     = 0;
+        $event->userid      = 0;
+        $event->modulename  = 'exercise';
+        $event->instance    = $returnid;
+        $event->eventtype   = 'deadline';
+        $event->timestart   = $exercise->deadline;
+        $event->timeduration = 0;
+
+        add_event($event);
+    }
+
+
+    return $returnid;
 }
 
 
@@ -490,7 +508,21 @@ function exercise_update_instance($exercise) {
 
     $exercise->id = $exercise->instance;
 
-    return update_record("exercise", $exercise);
+    if ($returnid = update_record("exercise", $exercise)) {
+
+        $event = NULL;
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'exercise', 'instance', $exercise->id)) {
+
+            $event->name        = $exercise->name;
+            $event->description = $exercise->description;
+            $event->timestart   = $exercise->deadline;
+
+            update_event($event);
+        }
+    }
+
+    return $returnid;
 }
 
 
