@@ -38,12 +38,11 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
                                       '/calendar/event.php?action=new&amp;course='.$this->course->id.'">'.
                                        get_string('newevent', 'calendar').'</a>...';
             
-            if($this->course->id == SITEID) {
+            if ($this->course->id == SITEID) {
                 // Being displayed at site level. This will cause the filter to fall back to auto-detecting
                 // the list of courses it will be grabbing events from.
                 $filtercourse = NULL;
-            }
-            else {
+            } else {
                 // Forcibly filter events to include only those from the particular course we are in.
                 $filtercourse = array($courseshown => 1);
             }
@@ -56,12 +55,18 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
 
         calendar_set_filters($courses, $group, $user, $filtercourse, $filtercourse, false);
-        $events = calendar_get_upcoming($courses, $group, $user, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
+        $events = calendar_get_upcoming($courses, $group, $user, 
+                                        get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), 
+                                        get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
 
-        $this->content->text = calendar_get_sideblock_upcoming($events, 'view.php?view=day&amp;course='.$this->course->id.'&amp;');
+        if (!empty($this->course)) { 
+            $this->content->text = calendar_get_sideblock_upcoming($events, 
+                                   'view.php?view=day&amp;course='.$this->course->id.'&amp;');
+        }
 
-        if(empty($this->content->text)) {
-            $this->content->text = '<div style="font-size: 0.8em; text-align: center;">'.get_string('noupcomingevents', 'calendar').'</div>';
+        if (empty($this->content->text)) {
+            $this->content->text = '<div style="font-size: 0.8em; text-align: center;">'.
+                                   get_string('noupcomingevents', 'calendar').'</div>';
         }
 
         return $this->content;
