@@ -103,12 +103,16 @@ Backup Details:
 
 Restore Details:
 ===============
-   - Restore FrontEnd...........................................NO EXISTS
+   - Restore FrontEnd...........................................IN PROGRESS
         - Check Security........................................NO EXISTS
-        - Select Info to Restore (from backup)..................NO EXISTS
+        - Select File to Restore................................NO EXISTS
+        - Check file is a valid one.............................NO EXISTS
         - Restore into feature..................................NO EXISTS
            - New course (restore)...............................NO EXISTS
            - Existing course (import)...........................NO EXISTS
+        - Select Info to Restore (from backup)..................NO EXISTS
+        - Make decisions........................................NO EXISTS
+           - About existing users...............................NO EXISTS
         - Launch Restore........................................NO EXISTS
         - Show progress.........................................NO EXISTS
    - Delete old entries at restore start........................NO EXISTS    
@@ -144,10 +148,6 @@ Restore Details:
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
               x journals........................................NO EXISTS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
-              x peer graded assignments.........................NO EXISTS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS

@@ -17,6 +17,7 @@
     require_once ("backup_version.php");
     require_once ("db/backup_$CFG->dbtype.php");
     require_once ("lib.php");
+    require_once ("backuplib.php");
 
     //Optional variables    
     optional_variable($id);       // course id
