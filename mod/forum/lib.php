@@ -451,7 +451,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 echo "<p $teacheronly><font size=1>$date - $fullname<br>";
                 echo "\"<a href=\"$CFG->wwwroot/mod/forum/$log->url\">";
                 if (!empty($CFG->filterall)) {
-                    $post->subject = filter_text($post->subject, $course->id);
+                    $post->subject = filter_text("<nolink>$post->subject</nolink>", $course->id);
                 }
                 if ($log->action == "add discussion") {
                     echo "<b>$post->subject</b>";
@@ -1156,7 +1156,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     if (!empty($CFG->filterall)) {      /// Put the subject through the filters
-        $post->subject = filter_text($post->subject, $courseid);
+        $post->subject = filter_text("<nolink>$post->subject</nolink>", $courseid);
     }
     echo "<p>";
     echo "<font size=3><b>$post->subject</b></font><br />";
@@ -1285,7 +1285,7 @@ function forum_print_discussion_header(&$post, $courseid, $datestring="") {
     global $THEME, $USER, $CFG;
 
     if (!empty($CFG->filterall)) {
-        $post->subject = filter_text($post->subject, $courseid);
+        $post->subject = filter_text("<nolink>$post->subject</nolink>", $courseid);
     }
 
     echo "<tr class=\"forumpostheader\">";
