@@ -35,7 +35,8 @@
   <li class="spaced">All variables should be initialised or at least tested for 
     existence using isset() or empty() before they are used.</li>
   <li class="spaced">All strings should be translatable - create new texts in 
-    the &quot;lang/en&quot; files and call them using get_string() or print_string().</li>
+    the &quot;lang/en&quot; files with concise English lowercase names and retrieve them 
+    from your code using get_string() or print_string().</li>
   <li class="spaced">All help files should be translatable - create new texts 
     in the &quot;en/help&quot; directory and call them using helpbutton().</li>
   <li class="spaced">Incoming data from the browser (sent via GET or POST) automatically
@@ -73,7 +74,7 @@ GOOD: $assignments (for an array of objects)<br>
       1);</font></p>
   </li>
   <li class="spaced"><strong>Function names</strong> should be simple English 
-    words, and start with the name of the module to avoid conflicts between modules. 
+    lowercase words, and start with the name of the module to avoid conflicts between modules. 
     Words should be separated by underscores. Parameters should always have sensible 
     defaults if possible. Note there is no space between the function name and 
     the following (brackets). <br>
