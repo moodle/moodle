@@ -17,30 +17,48 @@
     //-----------------------------------------------------------
 
     //This function executes all the restore procedure about this mod
-    function resource_restore_mods($bf,$preferences) {
+    function resource_restore_mods($mod,$restore) {
+
         global $CFG;
 
-        $status = true; 
+        $status = true;
 
-        ////Iterate over resource table
-        $resources = get_records ("resource","course",$preferences->backup_course,"id");
-        if ($resources) {
-            foreach ($resources as $resource) {
-                //Start mod
-                fwrite ($bf,start_tag("MOD",3,true));
-                //Print assignment data
-                fwrite ($bf,full_tag("ID",4,false,$resource->id));
-                fwrite ($bf,full_tag("MODTYPE",4,false,"resource"));
-                fwrite ($bf,full_tag("NAME",4,false,$resource->name));
-                fwrite ($bf,full_tag("TYPE",4,false,$resource->type));
-                fwrite ($bf,full_tag("REFERENCE",4,false,$resource->reference));
-                fwrite ($bf,full_tag("SUMMARY",4,false,$resource->summary));
-                fwrite ($bf,full_tag("ALLTEXT",4,false,$resource->alltext));
-                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$resource->timemodified));
-                //End mod
-                $status = fwrite ($bf,end_tag("MOD",3,true));
+        //Get record from backup_ids
+        $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
+
+        if ($data) {
+            //We have info, get and unserialize info
+            //First strip slashes
+            $temp = stripslashes($data->info);
+            //Now get completed xmlized object
+            $info = unserialize($temp);
+            //traverse_xmlize($info);                                                                     //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+           
+            //Now, build the RESOURCE record structure
+            $resource->course = $restore->course_id;
+            $resource->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
+            $resource->type = $info['MOD']['#']['TYPE']['0']['#'];
+            $resource->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
+            $resource->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
+            $resource->alltext = backup_todb($info['MOD']['#']['ALLTEXT']['0']['#']);
+            $resource->timemodified = $info['MOD']['#']['TIMEMODIFIED']['0']['#'];
+ 
+            //The structure is equal to the db, so insert the resource
+            $newid = insert_record ("resource",$resource);
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,$mod->modtype,$mod->id,
+                             $newid,$data->info);
+   
+            } else {
+                $status = false;
             }
+        } else {
+            $status = false;
         }
+
         return $status;
     }
    
