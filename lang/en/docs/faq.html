@@ -1,61 +1,155 @@
-<HEAD>
-    <TITLE>Moodle Docs: Frequently Asked Questions (FAQ)</TITLE>
-	<LINK REL="stylesheet" HREF="../theme/standard/styles.php" TYPE="TEXT/CSS">
-    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
-</HEAD>
+<head>
+<title>Moodle Docs: Frequently Asked Questions (FAQ)</title>
+<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+.question {
+	font-size: medium;
+	font-weight: bold;
+	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	border: 1px dotted;
+	padding: 10px;
+	background-color: #EEEEEE;
+}
+.answer {
+	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	font-size: medium;
+	border: none;
+	padding-left: 40px;
+}
+-->
+</style>
+<style type="text/css">
+<!--
+.normaltext {
+	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	font-size: medium;
+	border: none;
+	padding-left: 10px;
+}
+-->
+</style>
+</head>
 
-<BODY BGCOLOR="#FFFFFF">
+<body bgcolor="#FFFFFF">
 <h2>Frequently Asked Questions (FAQ)</h2>
-<p>This page contains some of the most frequently asked questions with their
-   answers.  If you have a problem it may be quickest to check this page first.</p>
-
+<p class="normaltext">This page contains some of the most frequently asked questions 
+  with their answers. If you have a problem it may be quickest to check this page 
+  first.</p>
+<p class="normaltext">If you don't find the answer here try the <a href="http://moodle.org/mod/forum/index.php?id=5">Using 
+  Moodle</a> course on moodle.org, and search the forums for keywords. You may 
+  have to try a few different search phrases before you find a resolution.</p>
+<p class="normaltext">If you still can't find any answers try posting your question 
+  on the appropriate forum in <a href="http://moodle.org/mod/forum/index.php?id=5">Using 
+  Moodle</a> - someone should be able to help you.</p>
+<h2>Installation problems</h2>
+<p class="normaltext"><a href="#php">PHP - is it installed and what version do 
+  I have?</a></p>
+<p class="normaltext"><a href="#blankpages">Why are all my pages blank?</a> </p>
+<p class="normaltext"><a href="#errorgetstring">My pages show fatal errors such 
+  as : call to undefined function: get_string()</a></p>
+<p class="normaltext"><a href="#headerssent">Why do I keep getting error messages 
+  about &quot;headers already sent&quot;?</a></p>
+<p class="normaltext"><a href="#failedopen">I keep getting this error: Failed 
+  opening required '/web/moodle/lib/setup.php'</a></p>
+<p>&nbsp;</p>
+<h2>General problems</h2>
+<p class="normaltext"><a href="#filenotfound">Whenever I try to access or view 
+  a file that I uploaded, I get an error &quot;File not Found&quot;</a></p>
 <hr>
-<h3>Cannot access uploaded files</h3>
-<blockquote>
-<p><b>Question:</b>  I have a strange problem with my new installation of Moodle. Whenever I try 
-to access or view an uploaded resource, whether in the "Files" menu or on the course page, 
-I get a 404 error like this one:
-<blockquote>
-Not Found<br>
-The requested URL /moodle/file.php/2/myfile.jpg was not found on this server. 
+<h2>Installation problems</h2>
+<p class="normaltext">Most questions people have are related to installation, and most of these are 
+  related to the editing of config.php file. Following the <a href="http://moodle.org/doc/?file=install.html">installation 
+  instructions</a> carefully will usually result in a perfectly working system. 
+  Here are some of the most common problems that are encountered:</p>
+<p>&nbsp;</p>
+<h4 class="question"><a name="php"></a>PHP - is it installed and what version 
+  do I have?</h4>
+<div class="answer"> 
+  <p>Make a new file on your web site called info.php, containing the following 
+    text, and call it from your browser:</p>
+    
+  <pre>      &lt;?PHP phpinfo() ?&gt;</pre>
+</div>
+<p class="answer">If nothing happens then you don't have PHP installed. See the 
+  installation docs for some information about where to download it for your computer.</p>
+<h4 class="question"><a name="blankpages"></a>Why are all my pages blank? </h4> 
+<p class="answer">Check the dirroot and/or dataroot in config.php. You must use 
+  complete, absolute pathnames:</p>
+<p class="answer"> eg &nbsp$CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
+<p class="answer"> eg&nbsp $CFG->dataroot = "d:\inetpub\sites\www.yoursite.com\database\moodle";</p>
+<p>&nbsp; </p>
+<h4 class="question"><a name="errorgetstring"></a>My pages show fatal errors such 
+  as : call to undefined function: get_string()</h4>
+<p class="answer">If you see errors like:</p>
+<p class="answer">Parse error: parse error, unexpected T_VARIABLE in c:\program 
+  files\easyphp\www\moodle\config.php on line 94 <br>
+  Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php 
+  on line 11</p>
+<p class="answer">then it's likely you have left out a semi-colon or ending quote 
+  from a line in config.php (previous to line 94).</p>
+<p class="answer">Another reason could be that you have opened config.php in a 
+  program like Word to edit it, and saved it as a HTML web page, instead of a 
+  proper text file.</p>
+<p>&nbsp;</p>
+<h4 class="question"><a name="headerssent"></a>Why do I keep getting error messages 
+  about &quot;headers already sent&quot;?</h4>
+<p class="answer">If you see errors like this:</p>
+<blockquote> 
+  <p class="answer">Warning: Cannot add header information - headers already sent 
+    by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+    on line 1322 </p>
+  <p class="answer"> Warning: Cannot add header information - headers already 
+    sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+    on line 1323 </p>
+  <p class="answer"> Warning: Cannot add header information - headers already 
+    sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php 
+    on line 54 </p>
 </blockquote>
-</blockquote>
-</p>
-
+<p class="answer">You have blank lines or spaces after the final ?> in your config.php 
+  file. Sometimes text editors add these - for example Notepad on Windows - so 
+  you may have to try a different text editor to remove these spaces or blank 
+  lines completely. </p>
+<h4 class="question"><a name="failedopen"></a>I keep getting this error: Failed 
+  opening required '/web/moodle/lib/setup.php'</h4>
+<p class="answer">In your config.php, the setting that you use for the dirroot 
+  variable must be the <strong>complete path from the root of your server's hard 
+  drive</strong>.</p>
+<p class="answer">Sometimes people only use the path from their home directory, 
+  or relative to the root of the web server directory.</p>
+<p>&nbsp;</p>
+<h2>General problems</h2>
+<h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
+  a file that I uploaded, I get an error &quot;File not Found&quot;</h3>
+<p class="answer">For example: Not Found: The requested URL /moodle/file.php/2/myfile.jpg 
+  was not found on this server. </span></p>
+<p class="answer">Your web server needs to be configured to allow the part of 
+  the URL after a script name to be passed directly to the script. This is usually 
+  enabled in Apache 1, but is usually disabled by default in Apache 2. To turn 
+  it on, add this line to your httpd.conf, or to a .htaccess file in your local 
+  directory (see the <a href="./?file=install.html#webserver">Install documentation</a> 
+  for more details): </p>
 <blockquote>
+  <pre>
+     <span class="answer"><b>AcceptPathInfo</b> on</span></pre>
+</blockquote>
+<p class="answer">Note, this will ONLY work for Apache versions 2.x. </p>
+<p class="answer">If you are not using Apache 2 and you still have this problem 
+  (unlikely) then you can switch Moodle to use an alternative method. The disadvantages 
+  are a slight loss of performance for your users and you won't be able to use 
+  relative links within HTML resources. </p>
+<p class="answer">To use this alternative method: login as Admin, go into the 
+  "Configure Variables" page and change the setting for "<b>slasharguments</b>". 
+  You should now be able to access your uploaded files.</p>
 <hr>
-<p><b>Answer:</b> Your web server needs to be configured to allow the part of the URL 
-after a script name to be passed directly to the script.  This is 
-usually enabled in Apache 1, but is usually disabled by default in 
-Apache 2.  To turn it on, add this line to your httpd.conf, or to 
-a .htaccess file in your local directory (see the 
-<A HREF="./?file=install.html#webserver">Install documentation</A> for more details): 
-
-<blockquote>
-<pre>
-     <b>AcceptPathInfo</b> on
-</pre>
-</blockquote>
-
-<p>Note, this will ONLY work for Apache versions 2.x.
-
-<p>If you are not using Apache 2 and you still have this problem (unlikely) then you 
-   can switch Moodle to use an alternative method.  The disadvantages are a slight loss of 
-   performance for your users and you won't be able to use relative links 
-   within HTML resources.
-<p>To use this alternative method: login as Admin, go into the "Configure Variables" page 
-   and change the setting for "<b>slasharguments</b>".  You should now be able to 
-   access your uploaded files.</p>
-</blockquote>
-
-
-
-
+<p align="center" class="normaltext"><a href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g' title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'>Suggest 
+  a new FAQ</a> (include the answer!)</p>
 <hr>
+<p align="right"><strong><em>Thanks to John Eyre for helping to maintain this 
+  FAQ.</em></strong></p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
+  moodler Exp $</font></p>
 
-
-<P>&nbsp;</P>
-<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="." TARGET="_top">Moodle Documentation</A></FONT></P>
-<P ALIGN="CENTER"><FONT SIZE="1">Version: $Id$</FONT></P>
-
-</BODY>
+</body>
