@@ -1652,8 +1652,7 @@ function redirect($url, $message="", $delay="0") {
 // Redirects the user to another page, after printing a notice
 
     if (empty($message)) {
-        sleep($delay);
-        @header("Location: $url");
+        echo "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />";
         echo "<script>location.replace('$url');</script>";   // To cope with Mozilla bug
     } else {
         if (empty($delay)) {  
