@@ -2859,7 +2859,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         }
     }
 
-    echo '<textarea id="'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
+    echo '<textarea id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
     p($value);
     echo '</textarea>'."\n";
 }
