@@ -112,8 +112,12 @@
         $status = check_and_create_moddata_dir($preferences->backup_unique_code);
         //Now copy the assignment dir
         if ($status) {
-            $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/assignment",
-                                       $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/assignment");
+            //Only if it exists !! Thanks to Daniel Miksik.
+            echo "(Thanks, Daniel !!)";
+            if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/assignment")) {
+                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/assignment",
+                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/assignment");
+            }
         }
 
         return $status;

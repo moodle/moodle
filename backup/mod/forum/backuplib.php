@@ -220,8 +220,12 @@
         $status = check_and_create_moddata_dir($preferences->backup_unique_code);
         //Now copy the forum dir
         if ($status) {
-            $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum",
-                                       $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/forum");
+            //Only if it exists !! Thanks to Daniel Miksik.
+            echo "(Thanks, Daniel !!)";
+            if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum")) {
+                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum",
+                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/forum");
+            }
         }
 
         return $status;
