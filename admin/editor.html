@@ -1,5 +1,6 @@
 <form method="post" action="<?php print($_SERVER['PHP_SELF']);?>">
 <table border="0" cellpadding="4" cellspacing="2">
+<tr><td colspan="3"><input type="checkbox" name="resettodefaults" value="" /> <?php print_string("editorresettodefaults");?>.</td></tr>
 <tr><td colspan="3"><strong><?php print_string("editorcommonsettings");?></strong></td></tr>
 <tr>
     <td align="right" valign="top"><?php print_string("editorbgcolor");?>:</td>
@@ -40,13 +41,15 @@
 <tr><td colspan="2"><strong><?php print_string("editorfontlist");?></strong></td>
     <td valign="top"><?php print_string("edhelpfontlist");?></td></tr>
 <?php
-    foreach($fontlist as $fontkey => $fontvalue) {
+    if(is_array($fontlist)) {
+        foreach($fontlist as $fontkey => $fontvalue) {
         ?>
 <tr>
     <td align="right"><input type="text" name="fontname[]" size="15" value="<?php print($fontkey);?>"></td>
     <td colspan="2"><input type="text" name="fontnamevalue[]" size="30" value="<?php print($fontvalue);?>"></td>
 </tr>
     <?php
+        }
     }
 ?>
 <tr>
