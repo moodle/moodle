@@ -421,11 +421,10 @@ function set_user_preferences($prefarray, $userid=NULL) {
     }
 
     if (empty($userid)){
-        if(!empty($USER) && !empty($USER->id)) {
-            $userid = $USER->id;
-        }
-        else {
-            return false;
+        if (!empty($USER) && !empty($USER->id)) {
+            $userid = NULL;  // Continue with the current user below
+        } else {
+            return false;    // No-one to set!
         }
     }
 
