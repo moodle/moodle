@@ -639,6 +639,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             if (!isset($options->noclean)) {
                 $text = clean_text($text, $format);
             }
+            replace_smilies($text);
             $text = filter_text($text, $courseid);
             break;
 
