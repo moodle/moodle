@@ -158,7 +158,7 @@ class block_rss_client extends block_base {
                 $rss->items = array_slice($rss->items, 0, $shownumentries);
             }
 
-            $rss->channel['title']) = rss_unhtmlentities($rss->channel['title']));
+            $rss->channel['title']) = rss_unhtmlentities($rss->channel['title']);
             foreach ($rss->items as $item) {
                 $item['title'] = rss_unhtmlentities($item['title']);
                 $item['description'] = rss_unhtmlentities($item['description']);
