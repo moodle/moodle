@@ -1165,8 +1165,6 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $direction = " dir=\"ltr\"";
     }
 
-    $cache = false; //// FIXME:  This is a temporary hack while following code is being tested
-
     if ($cache) {  // Allow caching on "back" (but not on normal clicks)
         @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
         @header('Pragma: no-cache');
