@@ -1,10 +1,9 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 unstable development (2004090600)
+      // admin.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['cachetext'] = 'テキストキャッシュ保存時間';
 $string['filteruploadedfiles'] = 'アップロードファイルをフィルタする';
-$string['parentlanguage'] = 'ja';
 $string['thischarset'] = 'EUC-JP';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Japanese';

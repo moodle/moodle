@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 unstable development (2004090600)
+      // scorm.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';
@@ -52,7 +52,6 @@ $string['not_corr_type'] = 'タグ $a->tag のタイプが合致しません';
 $string['notattempted'] = '未実行';
 $string['organizations'] = '組織';
 $string['packagedir'] = 'ファイルシステムエラー: パッケージディレクトリを作成出来ません。';
-$string['parentlanguage'] = 'ja';
 $string['passed'] = 'パス';
 $string['php5'] = 'PHP 5 (DOMXMLネイティブライブラリ)';
 $string['position_error'] = '$a->tag タグは $a->parent タグの子タグになりません';

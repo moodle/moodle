@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 unstable development (2004090600)
+      // quiz.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -156,7 +156,6 @@ $string['notenoughsubquestions'] = '十分な副質問が定義されていません！<br>
 この質問を修正しますか？';
 $string['numerical'] = '数字方式';
 $string['optional'] = 'オプション';
-$string['parentlanguage'] = 'ja';
 $string['passworderror'] = 'パスワードが間違っています。';
 $string['percentcorrect'] = '正答率';
 $string['preview'] = 'プレビュー';

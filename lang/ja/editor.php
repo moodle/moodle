@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 unstable development (2004090600)
+      // editor.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['about'] = 'エディタに関して';
@@ -71,7 +71,6 @@ $string['notset'] = '未設定';
 $string['ok'] = 'OK';
 $string['orderedlist'] = '順序付きリスト';
 $string['outdent'] = 'インデントを減らす';
-$string['parentlanguage'] = 'ja';
 $string['paste'] = 'クリップボードよりコピー';
 $string['path'] = 'パス';
 $string['percent'] = 'パーセント';

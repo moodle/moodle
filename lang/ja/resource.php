@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 unstable development (2004090600)
+      // resource.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -60,7 +60,6 @@ $string['pagedisplay'] = 'リソースを現在のウインドウに表示';
 $string['pagewindow'] = '同一ウインドウ';
 $string['parameter'] = 'パラメータ';
 $string['parameters'] = 'パラメータ';
-$string['parentlanguage'] = 'ja';
 $string['popupresource'] = 'リソースをポップアップウインドウに表示';
 $string['popupresourcelink'] = 'ウインドウが表示されない場合はここをクリック： $a';
 $string['resourcetype'] = 'リソースのタイプ';

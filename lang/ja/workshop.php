@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 unstable development (2004090600)
+      // workshop.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['absent'] = '欠席';
@@ -150,7 +150,6 @@ $string['overallocation'] = 'オーバーアロケーション';
 $string['overallpeergrade'] = '相互の総合評価： $a';
 $string['overallteachergrade'] = '教師の総合評価： $a';
 $string['ownwork'] = '自身の課題';
-$string['parentlanguage'] = 'ja';
 $string['percentageofassessments'] = '下げる評価の割合';
 $string['phase'] = 'フェーズ';
 $string['phase1'] = '課題の設定';

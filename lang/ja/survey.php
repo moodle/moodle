@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 unstable development (2004090600)
+      // survey.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['actual'] = '実体験';
@@ -184,7 +184,6 @@ $string['nobodyyet'] = 'この調査は解答されていません';
 $string['notdone'] = '未回答';
 $string['notes'] = '個人的な分析とメモ';
 $string['othercomments'] = '他にコメントはありますか?';
-$string['parentlanguage'] = 'ja';
 $string['peoplecompleted'] = '現在 $a 人がこの調査に回答しています ';
 $string['preferred'] = '要望';
 $string['preferredclass'] = 'クラスの要望';

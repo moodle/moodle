@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 unstable development (2004090600)
+      // exercise.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['absent'] = '欠席';
@@ -68,7 +68,6 @@ $string['notgraded'] = '評価無し';
 $string['numberofentries'] = 'エントリ数';
 $string['numberofentriesinleaguetable'] = '成績表のエントリ数';
 $string['overallgrade'] = '総合評価';
-$string['parentlanguage'] = 'ja';
 $string['phase'] = 'フェーズ';
 $string['phase1'] = 'エクササイズの設定';
 $string['phase1short'] = '設定';

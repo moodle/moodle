@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 unstable development (2004090600)
+      // install.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
@@ -82,7 +82,6 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $a に設定されて
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>しかし、この設定が<b>全ての</b>PHPページの動作を妨げる場合もあります。ページを閲覧時にエラーが表示される場合は、.htaccessファイルを削除してください。</p>
 </ol>';
-$string['parentlanguage'] = 'ja';
 $string['pass'] = 'パス';
 $string['phpversion'] = 'PHPバージョン';
 $string['phpversionerror'] = 'PHPバージョンは4.1.0以上をお使いください。';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 unstable development (2004090600)
+      // attendance.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['absentlong'] = '欠席';
@@ -45,7 +45,6 @@ $string['notes'] = '備考';
 $string['notesfor'] = '備考';
 $string['noviews'] = '申し訳ございません、あなたのデータはありません';
 $string['pages'] = 'ページ';
-$string['parentlanguage'] = 'ja';
 $string['presentlong'] = '出席';
 $string['presentshort'] = '出';
 $string['saturday'] = '土';

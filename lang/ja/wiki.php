@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 unstable development (2004090600)
+      // wiki.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['action'] = '-- アクション --';
@@ -100,7 +100,6 @@ $string['pageslinkingto'] = 'このページにリンクしているページ';
 $string['pagesremoved'] = 'ページが削除されました。';
 $string['pagesreverted'] = '変更が元に戻されました';
 $string['pagesstripped'] = 'ページがストリップされました。';
-$string['parentlanguage'] = 'ja';
 $string['plaintext'] = 'プレインテキスト';
 $string['preview'] = 'プレビュー';
 $string['readonly'] = '読み取り専用ページ';

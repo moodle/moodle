@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 unstable development (2004090600)
+      // glossary.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -127,7 +127,6 @@ $string['noentry'] = 'エントリが見つかりませんでした。';
 $string['notcategorised'] = 'カテゴリ無し';
 $string['numberofentries'] = 'エントリ数';
 $string['onebyline'] = '(1行あたり1件)';
-$string['parentlanguage'] = 'ja';
 $string['printerfriendly'] = '印刷形式';
 $string['question'] = '質問';
 $string['rate'] = '評価';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 unstable development (2004090600)
+      // auth.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['auth_dbdescription'] = 'ユーザ名とパスワードを確認するために外部のデータベースを使用します。新しいアカウントを作成する場合、他のフィールドの情報がMoodleへ複製されます。';
@@ -71,7 +71,6 @@ $string['chooseauthmethod'] = '認証方法の選択:';
 $string['guestloginbutton'] = 'ゲストログインボタン';
 $string['instructions'] = '説明';
 $string['md5'] = 'MD5暗号化';
-$string['parentlanguage'] = 'ja';
 $string['plaintext'] = 'テキスト';
 $string['showguestlogin'] = 'ログインページのゲストログインボタンを表示／非表示に出来ます。';
 $string['thischarset'] = 'EUC-JP';

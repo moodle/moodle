@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 unstable development (2004090600)
+      // calendar.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['calendar'] = 'カレンダー';
@@ -53,7 +53,6 @@ $string['monthlyview'] = '月毎表示';
 $string['newevent'] = '新しいイベント';
 $string['noupcomingevents'] = '直近のイベントはありません';
 $string['oneevent'] = '1 イベント';
-$string['parentlanguage'] = 'ja';
 $string['pref_lookahead'] = '直近イベントの日数範囲';
 $string['pref_maxevents'] = '直近イベントの最大表示数';
 $string['pref_startwday'] = '週の初め';

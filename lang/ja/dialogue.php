@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 unstable development (2004090600)
+      // dialogue.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['addmynewentries'] = '新しいエントリを追加';
@@ -55,7 +55,6 @@ $string['pane2'] = '他の人の返事を待っているダイアログ $a 件';
 $string['pane2one'] = '他の人の返事を待っているダイアログ １ 件';
 $string['pane3'] = '終了したダイアログ $a 件';
 $string['pane3one'] = '終了したダイアログ 1 件';
-$string['parentlanguage'] = 'ja';
 $string['seen'] = '$a 以前に閲覧';
 $string['sendmailmessages'] = '新しいエントリに関してメールを送信する';
 $string['status'] = 'ステータス';

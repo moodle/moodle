@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.5 unstable development (2004090600)
+      // pix.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['angry'] = '怒り';
@@ -13,7 +13,6 @@ $string['dead'] = 'ヘトヘト';
 $string['evil'] = '意地悪';
 $string['kiss'] = 'キス';
 $string['mixed'] = '複雑な';
-$string['parentlanguage'] = 'ja';
 $string['sad'] = '悲しい';
 $string['shy'] = '恥ずかしい';
 $string['sleepy'] = '眠たい';
