@@ -1729,31 +1729,40 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
     global $USER, $CFG;
 
-    if (!empty($CFG->filterall)) {
-        $post->subject = filter_text("<nolink>$post->subject</nolink>", $forum->course);
+    static $rowcount;
+
+    if (!isset($rowcount)) {
+        $rowcount = 0;
+    } else {
+        $rowcount = ($rowcount + 1) % 2;
     }
 
-    echo "<tr class=\"forumpostheader\">";
+    if (!empty($CFG->filterall)) {
+        $post->subject = filter_text('<span class="nolink">'.$post->subject.'</span>', $forum->course);
+    }
+
+    echo "\n\n";
+    echo '<tr class="discussion r'.$rowcount.'">';
 
     // Topic
-    echo "<td class=\"forumpostheadertopic\" width=\"100%\">";
-    echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->subject</a>";
+    echo '<td class="topic starter">';
+    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">'.$post->subject.'</a>';
     echo "</td>\n";
 
     // Picture
-    echo "<td class=\"forumpostheaderpicture\" width=\"35\">";
+    echo '<td class="picture">';
     print_user_picture($post->userid, $forum->course, $post->picture);
     echo "</td>\n";
 
     // User name
     $fullname = fullname($post, isteacher($forum->course));
-    echo "<td class=\"forumpostheadername\" align=\"left\" nowrap=\"nowrap\">";
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&amp;course=$forum->course\">$fullname</a>";
+    echo '<td class="author">';
+    echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->userid.'&amp;course='.$forum->course.'">'.$fullname.'</a>';
     echo "</td>\n";
 
     // Group picture
     if ($group !== -1) {  // Groups are active - group is a group data object or NULL
-        echo "<td class=\"forumpostheadergroup\" align=\"center\">";
+        echo '<td class="picture group">';
         if (!empty($group->picture)) {
             print_group_picture($group, $forum->course, false, false, true);
         } else if (isset($group->id)) {
@@ -1762,22 +1771,19 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
         echo "</td>\n";
     }
 
-    if ($forum->open or $forum->type == "teacher") {   // Show the column with replies
-        echo "<td class=\"forumpostheaderreplies\" align=\"center\" nowrap=\"nowrap\">";
-        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
-        echo $post->replies."</a>";
+    if ($forum->open or $forum->type == 'teacher') {   // Show the column with replies
+        echo '<td class="replies">';
+        echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">';
+        echo $post->replies.'</a>';
         echo "</td>\n";
 
         if ($CFG->forum_trackreadposts) {
-            echo '<td class="forumpostheaderreplies" align="center" nowrap="nowrap">';
-            echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#unread\">";
+            echo '<td class="replies">';
+            echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
             if ($post->unread > 0) {
-                echo '<span class="unread">';
-            }
-            echo $post->unread;
-
-            if ($post->unread > 0) {
-                echo '</span>';
+                echo '<span class="unread">'.$post->unread.'</span>';
+            } else {
+                echo $post->unread;
             }
             echo '</a>';
             echo "</td>\n";
@@ -1785,18 +1791,18 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
     }
 
-    echo "<td class=\"forumpostheaderdate\" align=\"right\" nowrap=\"nowrap\">";
+    echo '<td class="lastpost">';
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
     $usermodified->firstname = $post->umfirstname;
     $usermodified->lastname  = $post->umlastname;
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->usermodified&amp;course=$forum->course\">".
-         fullname($usermodified)."</a><br />";
+    echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
+         fullname($usermodified).'</a><br />';
     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.$parenturl.'">'.
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
 
-    echo "</tr>\n";
+    echo "</tr>\n\n";
 
 }
 
@@ -2645,29 +2651,32 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
 
     $discussioncount = 0;
     $olddiscussionlink = false;
-    $strdatestring = get_string("strftimerecentfull");
+    $strdatestring = get_string('strftimerecentfull');
 
-    if ($forum_style == "minimal") {
-        $strftimerecent = get_string("strftimerecent");
-        $strmore = get_string("more", "forum");
+    if ($forum_style == 'minimal') {
+        $strftimerecent = get_string('strftimerecent');
+        $strmore = get_string('more', 'forum');
     }
 
-    if ($forum_style == "header") {
-        echo "<table width=\"100%\" border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"forumheaderlist\">";
-        echo "<tr class=\"forumpostheader\">";
-        echo "<th>".get_string("discussion", "forum")."</th>";
-        echo "<th colspan=\"2\">".get_string("startedby", "forum")."</th>";
+    if ($forum_style == 'header') {
+        echo '<table class="forumheaderlist">';
+        echo '<thead>';
+        echo '<tr>';
+        echo '<th class="topic">'.get_string('discussion', 'forum').'</th>';
+        echo '<th class="author" colspan="2">'.get_string('startedby', 'forum').'</th>';
         if ($groupmode > 0) {
-            echo '<th>'.get_string('group').'</th>';
+            echo '<th class="group">'.get_string('group').'</th>';
         }
-        if ($forum->open or $forum->type == "teacher") {
-            echo "<th>".get_string("replies", "forum")."</th>";
+        if ($forum->open or $forum->type == 'teacher') {
+            echo '<th class="replies">'.get_string('replies', 'forum').'</th>';
         }
         if ($CFG->forum_trackreadposts) {
-            echo '<th>'.get_string('unread', 'forum').'</th>';
+            echo '<th class="replies">'.get_string('unread', 'forum').'</th>';
         }
-        echo "<th>".get_string("lastpost", "forum")."</th>";
-        echo "</tr>";
+        echo '<th class="lastpost">'.get_string('lastpost', 'forum').'</th>';
+        echo '</tr>';
+        echo '</thead>';
+        echo '<tbody>';
     }
 
     foreach ($discussions as $discussion) {
@@ -2755,7 +2764,8 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
     }
 
     if ($forum_style == "header") {
-        echo "</table>";
+        echo '</tbody>';
+        echo '</table>';
     }
 
     if ($olddiscussionlink) {

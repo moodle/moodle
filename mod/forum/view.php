@@ -78,8 +78,6 @@
     print_header_simple("$forum->name", "",
                  "$navigation $forum->name", "", "", true, $buttontext, navmenu($course, $cm));
 
-    echo '<div id="forum-view" class="forum">';  // forum-view wrapper start
-
     if (empty($cm->visible) and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -243,8 +241,6 @@
             }
             break;
     }
-
-    echo '</div>';  // forum-view wrapper end
 
     print_footer($course);
 
