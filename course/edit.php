@@ -21,10 +21,10 @@
         if (!isadmin()) {
             error("Only administrators can use this page");
         }
+    }
 
-        if (! $site = get_site()) {
-            redirect("$CFG->wwwroot/admin/");
-        }
+    if (! $site = get_site()) {
+        redirect("$CFG->wwwroot/admin/");
     }
 
 
@@ -95,16 +95,17 @@
     $form->categories = get_records_sql_menu("SELECT id,name FROM course_categories");
 
     $streditcoursesettings = get_string("editcoursesettings");
-    $streditcoursesettings = get_string("editcoursesettings");
+    $straddnewcourse = get_string("addnewcourse");
+    $stradministration = get_string("administration");
 
     if (isset($course)) {
 	    print_header($streditcoursesettings, "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $streditcoursesettings", $focus);
     } else {
-        print_header(get_string("addnewcourse"), get_string("addnewcourse"),
-                     "<A HREF=\"$CFG->wwwroot/admin/\">".get_string("admin")."</A> 
-                      -> ".get_string("addnewcourse"), $focus);
+        print_header("$site->shortname : $straddnewcourse", "$site->fullname",
+                     "<A HREF=\"$CFG->wwwroot/admin/\">$stradministration</A> 
+                      -> $straddnewcourse", $focus);
     }
 
     print_simple_box_start("center", "", "$THEME->cellheading");

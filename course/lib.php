@@ -496,6 +496,31 @@ function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {
     echo "</TABLE><BR>\n\n";
 }
 
+function print_admin_links () {
+    global $THEME, $CFG;
+    
+    print_simple_box(get_string("administration"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    $icon = "<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    $moddata[]="<A HREF=\"$CFG->wwwroot/course/log.php?id=$site->id\">".get_string("sitelogs")."</A>";
+    $modicon[]=$icon;
+    $moddata[]="<A HREF=\"$CFG->wwwroot/admin/site.php\">".get_string("sitesettings")."</A>";
+    $modicon[]=$icon;
+    $moddata[]="<A HREF=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</A>";
+    $modicon[]=$icon;
+    $moddata[]="<A HREF=\"$CFG->wwwroot/course/teacher.php\">".get_string("assignteachers")."</A>";
+    $modicon[]=$icon;
+    $moddata[]="<A HREF=\"$CFG->wwwroot/course/delete.php\">".get_string("deletecourse")."</A>";
+    $modicon[]=$icon;
+    $moddata[]="<A HREF=\"$CFG->wwwroot/admin/user.php?newuser=true\">".get_string("addnewuser")."</A>";
+    $modicon[]=$icon;
+    $moddata[]="<A HREF=\"$CFG->wwwroot/admin/user.php\">".get_string("edituser")."</A>";
+    $modicon[]=$icon;
+    $fulladmin = "<P><A HREF=\"$CFG->wwwroot/admin/\">".get_string("admin")."</A>...";
+    print_side_block("", $moddata, "$fulladmin", $modicon);
+    echo "<IMG SRC=\"$CFG->wwwroot/pix/spacer.gif\" WIDTH=200 HEIGHT=0><BR>";
+}
+
+
 
 function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
     global $CFG;

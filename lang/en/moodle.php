@@ -20,6 +20,7 @@ $string[changepassword] = "Change password";
 $string[changedpassword] = "Changed password";
 $string[changessaved] = "Changes saved";
 $string[choosecourse] = "Choose a course";
+$string[chooseuser] = "Choose a user";
 $string[city] = "City/town";
 $string[confirmed] = "Your registration has been confirmed";
 $string["continue"] = "Continue";

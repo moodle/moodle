@@ -15,8 +15,13 @@
         error("You must be an administrator to use this page.");
     }
 
+    $strassignteachers = get_string("assignteachers");
+    $stradministration = get_string("administration");
+
     if (!$id) {
-	    print_header("Add teachers to a course", "Add teachers to a course", "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Add teachers", "");
+	    print_header("$site->fullname: $strassignteachers", "$site->fullname", 
+                     "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strassignteachers");
+
         if ($courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname")) {
 
             print_heading("Choose a course to add teachers to");
@@ -38,7 +43,11 @@
     }
 
 
-	print_header("Add teachers to $course->shortname", "Add teachers to a course", "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Add teachers to $course->shortname", "");
+	print_header("$site->fullname: $course->shortname: $strassignteachers", 
+                 "$site->fullname", 
+                 "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
+                  <A HREF=\"teacher.php\">$strassignteachers</A> ->
+                  $course->shortname", "");
     print_heading($course->fullname);
 
 

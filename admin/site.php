@@ -58,8 +58,11 @@
         $form->newsitems = 0;
     }
 
-    print_header("Admin: Setting up site", "Administration: Setting up site",
-                  "<A HREF=\"$CFG->wwwroot/admin/\">Admin</A> -> Setting up site", "$focus");
+    $stradmin = get_string("administration");
+    $strsitesettings = get_string("sitesettings");
+
+    print_header("$site->fullname", "$site->fullname",
+                  "<A HREF=\"$CFG->wwwroot/admin/\">$stradmin</A> -> $strsitesettings", "$focus");
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     print_heading("Editing site settings");

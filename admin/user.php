@@ -4,8 +4,6 @@
 	require("../user/lib.php");
     require("../lib/countries.php");
 
-    optional_variable($id);       // user id
-
     if (! record_exists_sql("SELECT * FROM user_admins")) {
         $user->firstname = "Admin";
         $user->lastname  = "User";
@@ -29,12 +27,12 @@
             error("User ID was incorrect (can't find it)");
         }
 
-        if (! $course = get_site()) {
+        if (! $site = get_site()) {
             error("Could not find site-level course");
         }
 
         $teacher->user = $user->id;
-        $teacher->course = $course->id;
+        $teacher->course = $site->id;
         $teacher->authority = 1;
         if (! insert_record("user_teachers", $teacher)) {
             error("Could not make user $id a teacher of site-level course !!!");
@@ -43,13 +41,13 @@
         $USER = $user;
         $USER->loggedin = true;
         $USER->admin = true;
-        $USER->teacher["$course->id"] = true;
+        $USER->teacher["$site->id"] = true;
         save_session("USER");
 
-        $id = $user->id;
+        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$site->id");
 
     } else {
-        if (! $course = get_site()) {
+        if (! $site = get_site()) {
             error("Could not find site-level course");
         }
     }
@@ -62,42 +60,44 @@
 
     if ($newuser) {                 // Create a new user
 
-        $user->firstname = "New";
-        $user->lastname  = "User";
-        $user->username  = "username";
+        $user->firstname = "";
+        $user->lastname  = "";
+        $user->username  = "changeme";
         $user->password  = "";
         $user->email     = "";
         $user->confirmed = 1;
         $user->timemodified = time();
 
         if (! $user->id = insert_record("user", $user)) {
-            error("Could not create new user record !!!");
+            if (!$user = get_record("user", "username", "changeme")) {   // half finished user from another time
+                error("Could not start a new user!");
+            }
         }
 
-        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$course->id");
-        
-
-    } else if ($id) {               // Edit a particular user 
-
-        if (! $user = get_record("user", "id", $id)) {
-            error("User ID was incorrect (can't find it)");
-        }
-    
-        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$course->id");
-
+        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$site->id");
         
     } else {                        // List all users for editing
 
         if ($users = get_records_sql("SELECT * from user WHERE username <> 'guest' ORDER BY firstname")) {
-	        print_header("Edit users", "Edit users", "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Edit users", "");
-            print_heading("Choose a user to edit");
-            $table->head  = array ("Name", "Email", "City/Town", "Country");
-            $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER");
+            $stredituser = get_string("edituser");
+            $stradministration = get_string("administration");
+            $stredit   = get_string("edit");
+            $strdelete = get_string("delete");
+
+	        print_header("$site->fullname : $stredituser", $site->fullname, 
+                         "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $stredituser");
+
+            print_heading(get_string("chooseuser"));
+
+            $table->head  = array (get_string("fullname"), get_string("email"), get_string("city"), 
+                                   get_string("country"), " ");
+            $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER", "CENTER", "CENTER");
             foreach ($users as $user) {
-                $table->data[] = array ("<A HREF=\"user.php?id=$user->id\">$user->firstname $user->lastname</A>",
+                $table->data[] = array ("<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</A>",
                                         "$user->email",
                                         "$user->city",
-                                        $COUNTRIES[$user->country]);
+                                        $COUNTRIES[$user->country],
+                                        "<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</A>");
             }
             print_table($table);
         } else {

@@ -180,8 +180,17 @@
 function find_form_errors(&$user, &$usernew, &$err) {
 
     if (isadmin()) {
-        if (empty($usernew->username))
+        if (empty($usernew->username)) {
             $err["username"] = get_string("missingusername");
+
+        } else if (record_exists("user", "username", $usernew->username) and $user->username == "changeme") {
+                $err["username"] = get_string("usernameexists");
+
+        } else {
+            $string = eregi_replace("[^([:alnum:])]", "", $user->username);
+            if (strcmp($user->username, $string)) 
+                $err["username"] = get_string("alphanumerical");
+        }
 
         if (empty($usernew->newpassword) and empty($user->password))
             $err["newpassword"] = get_string("missingpassword");

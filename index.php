@@ -56,23 +56,7 @@
          }
      
          if (isadmin()) {
-             print_simple_box(get_string("administration"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-             $icon = "<IMG SRC=\"pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-             $moddata[]="<A HREF=\"course/log.php?id=$site->id\">".get_string("sitelogs")."</A>";
-             $modicon[]=$icon;
-             $moddata[]="<A HREF=\"admin/site.php\">".get_string("sitesettings")."</A>";
-             $modicon[]=$icon;
-             $moddata[]="<A HREF=\"course/edit.php\">".get_string("addnewcourse")."</A>";
-             $modicon[]=$icon;
-             $moddata[]="<A HREF=\"course/teacher.php\">".get_string("assignteachers")."</A>";
-             $modicon[]=$icon;
-             $moddata[]="<A HREF=\"course/delete.php\">".get_string("deletecourse")."</A>";
-             $modicon[]=$icon;
-             $moddata[]="<A HREF=\"admin/user.php\">".get_string("edituser")."</A>";
-             $modicon[]=$icon;
-             $fulladmin = "<P><A HREF=\"admin/\">".get_string("admin")."</A>...";
-             print_side_block("", $moddata, "$fulladmin", $modicon);
-             echo "<IMG SRC=\"pix/spacer.gif\" WIDTH=200 HEIGHT=0><BR>";
+             print_admin_links();
          }
       ?>
 

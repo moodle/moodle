@@ -11,11 +11,17 @@
         error("You must be an administrator to use this page.");
     }
 
-    $stradmin = get_string("admin");
+    if (!$site = get_site()) {
+        error("Site not found!");
+    }
+
+    $strdeletecourse = get_string("deletecourse");
+    $stradministration = get_string("administration");
 
     if (!$id) {
-        $strdelete = get_string("deletecourse");
-	    print_header($strdelete, $strdelete, "<A HREF=\"$CFG->wwwroot/admin\">$stradmin</A> -> $strdelete");
+	    print_header("$site->fullname : $strdeletecourse", $site->fullname, 
+                     "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strdeletecourse");
+
         if ($courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname")) {
             print_heading(get_string("choosecourse"));
             print_simple_box_start("CENTER");
@@ -38,8 +44,10 @@
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecheckfull = get_string("deletecheckfull");
-	    print_header($strdeletecheck, $strdeletecheck, 
-                     "<A HREF=\"$CFG->wwwroot/admin\">$stradmin</A> -> $strdeletecheck");
+	    print_header("$site->fullname : $strdeletecheck", $site->fullname, 
+                     "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
+                      <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletecheck");
+
         notice_yesno("$strdeletecheckfull<BR><BR>$course->fullname", 
                      "delete.php?id=$course->id&delete=".md5($course->timemodified), 
                      "delete.php");
@@ -51,10 +59,13 @@
     }
 
     // OK checks done, delete the course now.
-    $strdeletingcheck = get_string("deletingcheck", "", $course->shortname);
-	print_header($strdeletingcheck, $strdeletingcheck, 
-                 "<A HREF=\"$CFG->wwwroot/admin\">$stradmin</A> -> $strdeletingcheck");
-    print_heading($strdeletingcheck);
+    $strdeletingcourse = get_string("deletingcourse", "", $course->shortname);
+
+	print_header("$site->fullname : $strdeletingcourse", $site->fullname, 
+                 "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
+                  <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletingcourse");
+
+    print_heading($strdeletingcourse);
 
     $strdeleted = get_string("deleted");
     // First delete every instance of every module
