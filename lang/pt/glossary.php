@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 development (2004042600)
+      // glossary.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addcomment'] = 'Adicionar comentário';
@@ -68,6 +68,7 @@ $string['displayformat6'] = 'Listagem de entradas';
 $string['displayformatcontinuous'] = 'Contínuo, sem autor';
 $string['displayformatdefault'] = 'Simples, no estilo dicionário';
 $string['displayformats'] = 'Formatos de apresentação';
+$string['displayformatssetup'] = 'Configuração de formatos de apresentação';
 $string['duplicateentry'] = 'Entrada duplicada';
 $string['editcategories'] = 'Editar categorias';
 $string['editentry'] = 'Editar entrada';
@@ -81,6 +82,7 @@ $string['entryapproved'] = 'Esta entrada ha sido aprovada ';
 $string['entrydeleted'] = 'Entrada apagada';
 $string['entryexported'] = 'Entrada exportada com sucesso';
 $string['entryishidden'] = '(esta entrada está actualmente escondida)';
+$string['entryleveldefaultsettings'] = 'Volores por omissão para nivel de entrada';
 $string['entryusedynalink'] = 'Deverão ser feitos automaticamente apontadores para esta entrada';
 $string['explainaddentry'] = 'Adicione um novo termo no glossário.<br>Conceito e definição são campos obrigatórios.';
 $string['explainall'] = 'Mostra TODAS as entradas em uma página';
@@ -97,6 +99,7 @@ $string['filetoimport'] = 'Ficheiro a importar';
 $string['fillfields'] = 'Conceito e definição são campos obrigatórios.';
 $string['filtername'] = 'Glossário com apontadores atuomáticos';
 $string['fullmatch'] = 'Compare unicamente palavras completas';
+$string['glossaryleveldefaultsettings'] = 'Valores por omissão para nivel de glossário';
 $string['glossarytype'] = 'Tipo de glossário';
 $string['glosssaryexported'] = 'Glossário exportado.';
 $string['importcategories'] = 'Importar categorias';
@@ -134,6 +137,7 @@ $string['ratingsuse'] = 'Usar classificações';
 $string['ratingtime'] = 'Restrinja classificações a termos com datas neste intervalo:';
 $string['rejectedentries'] = 'Termos rejeitados';
 $string['rejectionrpt'] = 'Relatório de rejeição';
+$string['rsssubscriberss'] = 'Mostrar a listagem RSS para \'$a\' conceitos';
 $string['searchindefinition'] = 'Pesquisa no texto completo';
 $string['secondaryglossary'] = 'Glossário secundário';
 $string['sendinratings'] = 'Enviar as minhas últimas classificações';
@@ -151,6 +155,8 @@ $string['totalentries'] = 'Total de entradas';
 $string['usedynalink'] = 'Criar apontadores para o glossário automaticamente';
 $string['waitingapproval'] = 'A espera de aprovação';
 $string['warningstudentcapost'] = '(Aplica-se apenas se o glossário não for o principal)';
+$string['withauthor'] = 'Conceitos com autor';
+$string['withoutauthor'] = 'Conceitos sem autor';
 $string['writtenby'] = 'por';
 $string['youarenottheauthor'] = 'Este comentário não é da sua autoria e, por tanto, não o pode editar.';
 

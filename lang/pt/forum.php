@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2.1 (2004032500)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Adicione um novo tópico de discussão';
@@ -12,9 +12,11 @@ $string['anyfile'] = 'Qualquer ficheiro';
 $string['attachment'] = 'Anexo';
 $string['bynameondate'] = 'por $a->name - $a->date';
 $string['configdisplaymode'] = 'Modo de visualização prédefinido para as discussões se nenhum for definido.';
+$string['configenablerssfeeds'] = 'Esta opção activará a posibilidade de usar listagens  RSS para todos os foruns. Será ainda preciso activar a opção manualmente em cada forum.';
 $string['configlongpost'] = 'Qualquer mensagem acima deste tamanho (sem incluir HTML) será considerada longa.';
 $string['configmanydiscussions'] = 'Número máximo de discussões visualizadas num forum por página';
 $string['configmaxbytes'] = 'Tamanho máximo, por omissão, para os anexos enviados em mensagens para os foruns (sujeito a outros limites impostos pela disciplina e pelo servidor)';
+$string['configreplytouser'] = 'Quando uma mensagem de um forum for distribuida pelo correio electrónico, deverá conter o endereço do autor para que os destinatários possam responder directamente em vez de usarem o forum? Embora responda aqui que sim, os utilizadores podem ainda decidir no seu perfil se não quiserem que o seu endereço seja divulgado.';
 $string['configshortpost'] = 'Qualquer mensagem abaixo deste tamanho (sem incluir HTML) será considerada curta.';
 $string['couldnotadd'] = 'Não é possível adicionar o seu tópico devido a um erro desconhecido';
 $string['couldnotdeleteratings'] = 'Desculpe, isso não pode ser apagado pois já alguém deu-lhe uma classificação';
@@ -24,8 +26,13 @@ $string['delete'] = 'Apagar';
 $string['deleteddiscussion'] = 'O tópico de discussão foi apagado';
 $string['deletedpost'] = 'A mensagem foi apagada';
 $string['deletesure'] = 'Tem certeza que quer apagar esta mensagem?';
+$string['digestmailheader'] = 'Este é o seu sumário diário de novas mensagens nos foruns de $a->sitename. Para alterar as suas preferências no forum, visite $a->userprefs. ';
+$string['digestmailprefs'] = 'o seu perfil de utilizador';
+$string['digestmailsubject'] = '$a: sumário do forum';
+$string['digestsentusers'] = 'Sumários de foruns enviados com sucesso para $a utilizadores. ';
 $string['discussion'] = 'Discussão';
 $string['discussionmoved'] = 'Esta discussão foi movida para \'$a\'.';
+$string['discussionname'] = 'Título da discussão';
 $string['discussions'] = 'Discussões';
 $string['discussionsstartedby'] = 'Discussões iniciadas por $a';
 $string['discussionsstartedbyrecent'] = 'Discussões iniciadas recentemente por $a';
@@ -91,8 +98,13 @@ $string['postrating1'] = 'Contribui principalmente para a aprendizagem INDIVIDUA
 $string['postrating2'] = 'Aprendizagem Individual e Colectiva por igual';
 $string['postrating3'] = 'Contribui principalmente para a aprendizagem COLECTIVA';
 $string['posts'] = 'Mensagens';
+$string['posttoforum'] = 'Enviar para o forum';
 $string['postupdated'] = 'A sua mensagem foi actualizada';
+$string['processingdigest'] = 'A processar mensagem de sumário para o utilizador $a';
 $string['processingpost'] = 'A processar a mensagem $a';
+$string['prune'] = 'Dividir';
+$string['prunedpost'] = 'Uma nova discussão foi criada a raiz dessa mensagem';
+$string['pruneheading'] = 'Divida a discussão passando esta mensagem para uma nova discussão';
 $string['rate'] = 'Taxa';
 $string['rating'] = 'Classificação';
 $string['ratingeveryone'] = 'Toda a gente pode classificar mensagens';
@@ -111,6 +123,8 @@ $string['repliesmany'] = '$a respostas, por enquanto';
 $string['repliesone'] = '$a resposta, por enquanto';
 $string['reply'] = 'Responder';
 $string['replyforum'] = 'Responder para o forum';
+$string['rsssubscriberssdiscussions'] = 'Mostrar a listagem RSS para \'$a\' discussões';
+$string['rsssubscriberssposts'] = 'Mostrar a listagem RSS para \'$a\' mensagens';
 $string['search'] = 'Procurar';
 $string['searchforums'] = 'Procurar nos foruns';
 $string['searcholderposts'] = 'Porcurar mensagens antigas...';
