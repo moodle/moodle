@@ -26,10 +26,8 @@
 
 /// Load up standard libraries 
 
-    if (!isset($external_moodle_access)) {           // See lib/makeclass.php
-        require("$CFG->libdir/weblib.php");          // Standard web page functions
-        require("$CFG->libdir/moodlelib.php");       // Various Moodle functions
-    }
+    require("$CFG->libdir/weblib.php");          // Standard web page functions
+    require("$CFG->libdir/moodlelib.php");       // Various Moodle functions
 
 
 /// Set error reporting back to normal
