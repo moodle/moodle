@@ -32,7 +32,7 @@
          }
      
          if ($USER->editing) {
-             echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$course->id&week=0&add=reading\">Add Reading</A>...</P>";
+             echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$site->id&week=0&add=reading\">Add Reading</A>...</P>";
          }
       ?>
 
