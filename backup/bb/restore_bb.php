@@ -62,7 +62,7 @@ function blackboard_convert($dir){
         // The imsmanifest contains all the XML files and their relationships. 
         // The XSL processor will open them as needed.
         $xsltproc = xslt_create();
-        if (!xslt_process($xsltproc, 'imsmanifest.xml', $xslt_file, "$dir/moodle.xml")) {
+        if (!xslt_process($xsltproc, 'imsmanifest.xml', "$dir/$xslt_file", "$dir/moodle.xml")) {
             notify('Failed writing xml file');
             chdir($startdir);
             return false;
