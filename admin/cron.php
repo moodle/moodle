@@ -122,10 +122,12 @@
         ini_set("memory_limit","56M");
         if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
             file_exists("$CFG->dirroot/backup/backuplib.php") and
-            file_exists("$CFG->dirroot/backup/lib.php")) {
+            file_exists("$CFG->dirroot/backup/lib.php") and
+            file_exists("$CFG->libdir/blocklib.php")) {
             include_once("$CFG->dirroot/backup/backup_scheduled.php");
             include_once("$CFG->dirroot/backup/backuplib.php");
             include_once("$CFG->dirroot/backup/lib.php");
+            require_once ("$CFG->libdir/blocklib.php");
             echo "Running backups if required...\n";
             flush();
     
