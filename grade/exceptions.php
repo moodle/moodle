@@ -1,70 +1,23 @@
-<?php
+<?php  // $Id$
 
     require_once("../config.php");
     require_once("lib.php");
     
-    if (isset($_REQUEST['action']) && !$action) {
-        $action = $_REQUEST['action'];    
-    }
+    $id       = required_param('id');              // course id
+    $action   = optional_param('action', '');
 
-    require_variable($id);              // course id
-    optional_variable($download);
-    if (! $course = get_record("course", "id", $id)) {
-        error(get_string('errornocourse','grades'));
+    if (!$course = get_record('course', 'id', $id)) {
+        error('No course ID');
     }
-    
-    require_login($course->id);
-
-    if (! $course = get_record("course", "id", $id)) {
-        error(get_string('incorrectcourseid', 'grades'));
-    }
-    
-    if (!isset($USER->editing)) {
-        $USER->editing = false;
-    }
-
-    $editing = false;
-
-    if (isteacheredit($course->id)) {
-       if (isset($edit)) {
-            if ($edit == "on") {
-                $USER->editing = true;
-            } else if ($edit == "off") {
-                $USER->editing = false;
-            }
-        }
-
-        $editing = $USER->editing;
-    }
-    
-    require_variable($id);              // course id
 
     require_login($course->id);
+    
+    $group = get_current_group($course->id);
+    
+    print_header("$course->shortname: ".get_string('grades'), "$course->fullname", grade_get_grades_menu());
 
-    if (!$course = get_record("course", "id", $id)) {
-        error(get_string('incorrectcourseid', 'grades'));
-    }
-    
-    $preferences = grade_get_preferences();
-    
-    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
-    
-    if (isteacher()) {
-        if (isset($_REQUEST['student'])) {
-            $student = $_REQUEST['student'];
-        }
-        if (!isset($student)) {
-            $student = -1;
-        }
-    }
-    else {
-        $student = $USER->id;
-    }
-    
-    $grade_menu = grade_get_grades_menu();
-    
-    print_header("$course->shortname", "$course->fullname", $grade_menu,"", "", true, grade_preferences_button(), $loggedinas);
-    grade_preferences_menu();
+    grade_preferences_menu($action, $course, $group);
+
     grade_set_uncategorized();
 
 
@@ -111,17 +64,17 @@
 
 /// Calculate data ready to create the editing interface
 
-    $strgrade_itemnonmembers = get_string('grade_itemnonmembers','grades');
-    $strgrade_itemmembersselected = get_string('grade_itemmembersselected','grades');
-    $strgrade_itemremovemembers = get_string('grade_itemremovemembers','grades');
-    $strgrade_iteminfomembers = get_string('grade_iteminfomembers','grades');
-    $strgrade_itemadd = get_string('grade_itemadd','grades');
-    $strgrade_itemremove = get_string('grade_itemremove','grades');
-    $strgrade_iteminfo = get_string('grade_iteminfo','grades');
-    $strgrade_iteminfopeople = get_string('grade_iteminfopeople','grades');
-    $strgrade_itemrandomassign = get_string('grade_itemrandomassign','grades');
-    $strgrade_itemaddusers = get_string('grade_itemaddusers','grades');
-    $strgrade_items = get_string('grade_items','grades');
+    $strgradeitemnonmembers = get_string('gradeitemnonmembers','grades');
+    $strgradeitemmembersselected = get_string('gradeitemmembersselected','grades');
+    $strgradeitemremovemembers = get_string('gradeitemremovemembers','grades');
+    $strgradeiteminfomembers = get_string('gradeiteminfomembers','grades');
+    $strgradeitemadd = get_string('gradeitemadd','grades');
+    $strgradeitemremove = get_string('gradeitemremove','grades');
+    $strgradeiteminfo = get_string('gradeiteminfo','grades');
+    $strgradeiteminfopeople = get_string('gradeiteminfopeople','grades');
+    $strgradeitemrandomassign = get_string('gradeitemrandomassign','grades');
+    $strgradeitemaddusers = get_string('gradeitemaddusers','grades');
+    $strgradeitems = get_string('gradeitems','grades');
     $courseid = $course->id;
     $listgrade_items = array();
     $listmembers = array();

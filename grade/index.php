@@ -2,87 +2,52 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $action = optional_param('action');
-    if (!isset($action)) {
-        $action = 'grades';
+    $id       = required_param('id');              // course id
+    $download = optional_param('download');
+    $student  = optional_param('student', -1);
+    $group    = optional_param('group', -1);
+    $action   = optional_param('action', 'grades');
+
+    if (!$course = get_record('course', 'id', $id)) {
+        error('No course ID');
     }
 
-    require_variable($id);              // course id
-    optional_variable($download);
-    if (! $course = get_record("course", "id", $id)) {
-        error(get_string('errornocourse','grades'));
-    }
-    
-    if (isset($_REQUEST['group'])) {
-        $group = clean_param($_REQUEST['group'], PARAM_INT);
-    }
-    else {
-        $group = NULL;
-    }
-    
     require_login($course->id);
-
-    if (! $course = get_record("course", "id", $id)) {
-        error(get_string('incorrectcourseid', 'grades'));
-    }
     
-    if (!isset($USER->editing)) {
-        $USER->editing = false;
+    if (isteacher($course->id)) {
+        $group = get_and_set_current_group($course, $course->groupmode, $group);
+    } else {
+        $group = get_current_group($course->id);
     }
 
-    $editing = false;
-
-    if (isteacheredit($course->id)) {
-       if (isset($edit)) {
-            if ($edit == "on") {
-                $USER->editing = true;
-            } else if ($edit == "off") {
-                $USER->editing = false;
-            }
-        }
-
-        $editing = $USER->editing;
-    }
-
+    
     // if the user set new prefs make sure they happen now
-    if ($action == 'set_grade_preferences') {
-        grade_set_grade_preferences();
+    if ($action == 'set_grade_preferences' && $prefs = data_submitted()) {
+        if (!confirm_sesskey()) {
+            error(get_string('confirmsesskeybad', 'error'));
+        }
+        grade_set_preferences($course, $prefs);
     }
 
-    $preferences = grade_get_preferences();
+    $preferences = grade_get_preferences($course->id);
+
     
-    // we want this in it's own window
+    // we want this in its own window
     if ($action == 'stats') {
         grade_stats();
         exit();
-    }
-    elseif ($action == 'excel') {
+    } else if ($action == 'excel') {
         grade_download_excel();
         exit();
-    }
-    elseif ($action == 'text') {
+    } else if ($action == 'text') {
         grade_download_text();
         exit();
     }
-    
-    $loggedinas = user_login_string($course, $USER);
-    
-    if (isteacher($course->id)) {
-        if (isset($_REQUEST['student'])) {
-            $student = clean_param($_REQUEST['student'], PARAM_CLEAN);
-        }
-        else if (!isset($student)) {
-            $student = -1;
-        }
-    }
-    else {
-        $student = $USER->id;
-    }
-    
-    $grade_menu = grade_get_grades_menu();
-    
-    print_header($course->shortname, $course->fullname, $grade_menu,"", "", true, grade_preferences_button(), $loggedinas);
-    grade_preferences_menu();
+
+    print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_get_grades_menu());
+
+    grade_preferences_menu($action, $course, $group);
+
     grade_set_uncategorized();
 
     if (isteacher($course->id)) {

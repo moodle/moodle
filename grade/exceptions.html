@@ -98,9 +98,9 @@ function updateMembers(selectgrade_item) {
 		</th>
 	</tr>
     <tr>
-      <td width="33%" align="center" class="generaltableheader"><?php p($strgrade_itemnonmembers) ?></td>
-      <td width="33%" align="center" class="generaltableheader"><?php p($strgrade_items) ?></td>
-      <td width="33%" align="center" class="generaltableheader"><?php p($strgrade_itemmembersselected) ?></td>
+      <td width="33%" align="center" class="generaltableheader"><?php p($strgradeitemnonmembers) ?></td>
+      <td width="33%" align="center" class="generaltableheader"><?php p($strgradeitems) ?></td>
+      <td width="33%" align="center" class="generaltableheader"><?php p($strgradeitemmembersselected) ?></td>
     </tr>
     <tr align="center" valign="top">
       <td class="generalboxcontent">
@@ -119,7 +119,7 @@ function updateMembers(selectgrade_item) {
             ?>
           </select>
           <p>
-            <input type="submit" name="nonmembersadd" value="<?php p($strgrade_itemaddusers) ?>" 
+            <input type="submit" name="nonmembersadd" value="<?php p($strgradeitemaddusers) ?>" 
                    onclick="updategrade_item()" />
           </p>
         </form>
@@ -162,7 +162,7 @@ function updateMembers(selectgrade_item) {
             ?>
           </select>
         <p>
-          <input type="submit" name="membersremove" value="<?php p($strgrade_itemremovemembers) ?>" 
+          <input type="submit" name="membersremove" value="<?php p($strgradeitemremovemembers) ?>" 
                  onclick="updategrade_item()" />
         </p>
         </form>

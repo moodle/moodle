@@ -3,9 +3,37 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
+define('UNCATEGORISED', 'uncategorised');
+
+$GRADEPREFS = array('use_advanced',                // Only add new preferences to the end of this array!
+                    'use_weighted_for_letter',     // as the order counts and will affect backward compatibility
+                    'display_weighted',
+                    'display_points',
+                    'display_percent',
+                    'display_letter_grade',
+                    'display_weighted_student',
+                    'display_points_student',
+                    'display_percent_student',
+                    'display_letter_grade_student',
+                    'reprint_headers',
+                    'show_hidden',
+                    );
 
 
-$UNCATEGORIZED = 'Uncategorized';
+$GRADEPREFSDEFAULTS = array('use_advanced'                => 0,
+                            'use_weighted_for_letter'     => 0,
+                            'display_weighted'            => 0,
+                            'display_points'              => 1,
+                            'display_percent'             => 1,
+                            'display_letter_grade'        => 0,
+                            'display_weighted_student'    => 0,
+                            'display_points_student'      => 1,
+                            'display_percent_student'     => 0,
+                            'display_letter_grade_student'=> 0,
+                            'reprint_headers'             => 0,
+                            'show_hidden'                 => 1
+                            );
+
 
 //******************************************************************
 // SQL FUNCTIONS 
@@ -529,7 +557,7 @@ function grade_get_formatted_grades() {
     }
     else {
         $retval = array(0,0);
-        // print "<center><font color=red>Could not find any graded items for this course.</font></center>";
+        // echo "<center><font color=red>Could not find any graded items for this course.</font></center>";
     }
     return $retval;
 }
@@ -561,7 +589,7 @@ function grade_get_grades() {
     global $CFG;
     global $course;
     $mods = grade_get_grade_items($course->id);
-    $preferences = grade_get_preferences();
+    $preferences = grade_get_preferences($course->id);
     
     if ($mods) {
         foreach ($mods as $mod)    {
@@ -609,14 +637,14 @@ function grade_get_grades() {
                     }                
                 }
                 else {
-                    //print "<center><font color=red>Could not find lib file for $mod->modid</font></center>";
+                    //echo "<center><font color=red>Could not find lib file for $mod->modid</font></center>";
                 }
             }
         }
     }
     else {
         // Do something here for no grades
-        //print "<center><font color=red>No grades returned. It appears that there are no items with grades for this course.</font></center>";
+        //echo "<center><font color=red>No grades returned. It appears that there are no items with grades for this course.</font></center>";
     }
     if (isset($grades)) {
         return $grades;
@@ -630,8 +658,7 @@ function grade_set_uncategorized() {
     // this function checks to see if any mods have not been assigned a category and sets them to uncategorized.
     global $CFG;
     global $course;
-    global $UNCATEGORIZED;
-    $uncat = $UNCATEGORIZED;
+    $uncat = UNCATEGORISED;
 
     $uncat_id = get_record('grade_category', 'courseid', $course->id, 'name', $uncat);
     
@@ -679,7 +706,7 @@ function grade_set_uncategorized() {
                                 if ($modgrades = $gradefunction($mod->instance)) {
                                     $itemcount++;
                                     //modgrades contains student information with associated grade
-                                    //print "<b>modname: $mod->modname id: $mod->id course: $mod->course</b><br>";
+                                    //echo "<b>modname: $mod->modname id: $mod->id course: $mod->course</b><br>";
                                     // get instance name from db.
                                     $instance = get_record($mod->modname, 'id', $mod->instance);
                                     // see if the item is already in the category table and if it is call category select with the id so it is selected
@@ -836,176 +863,184 @@ function grade_sort_by_highgrade_category_asc($x,$y) {
 }
 
 
+function grade_set_preference($courseid, $name, $value) {
+    global $GRADEPREFS;
 
-function grade_get_preferences() {
-    global $course;
+    if (false !== ($key = array_search($name, $GRADEPREFS))) {
+        if ($record = get_record('grade_preferences', 'courseid', $courseid, 'preference', $key)) {
+            $record->value = $value;
+            update_record('grade_preferences', $record);
+        } else {   // Make a new one
+            $record->preference = $key;
+            $record->courseid = $courseid;
+            $record->value = $value;
+            insert_record('grade_preferences', $record);
+        }
+    }
+}
+
+function grade_get_preference($courseid, $name) {
+    global $GRADEPREFS;
+
+    if (false !== ($key = array_search($name, $GRADEPREFS))) {
+        if ($record = get_record('grade_preferences', 'courseid', $courseid, 'preference', $key)) {
+            return $record->value;
+        } else {   // Make a new one
+            $record->preference = $key;
+            $record->courseid = $courseid;
+            $record->value = $value;
+            insert_record('grade_preferences', $record);
+        }
+    }
+    return NULL;
+}
+
+function grade_get_preferences($courseid) {
     global $CFG;
+    global $GRADEPREFS, $GRADEPREFSDEFAULTS;
+
+    $preferences = NULL;
+
     // Get the preferences for the course.
-    $preferences = get_record('grade_preferences', 'courseid', $course->id);
-    if (!$preferences) {
-        // set the default preferences (could proably just insert a record with the course id since the defaults are set in db... maybe cross db issues though? ie. postgress, oracle etc.
-        $new_prefs['use_advanced'] = 0;
-        $new_prefs['display_weighted']=0;
-        $new_prefs['display_points']=1;
-        $new_prefs['display_percent']=1;
-        $new_prefs['display_letter_grade']=0;
-        $new_prefs['use_weighted_for_letter']=0;
-        $new_prefs['reprint_headers']=0;
-        $new_prefs['display_weighted_student']=0;
-        $new_prefs['display_points_student']=1;
-        $new_prefs['display_percent_student']=0;
-        $new_prefs['display_letter_grade_student']=0;
-        $new_prefs['show_hidden']=1;
-        $new_prefs['courseid']=$course->id;
-        insert_record('grade_preferences', $new_prefs);
-        $preferences = get_record('grade_preferences', 'courseid', $course->id);
+    if ($rawprefs = get_records('grade_preferences', 'courseid', $courseid)) {
+        foreach ($rawprefs as $pref) {
+            if (isset($GRADEPREFS[$pref->preference])) {  // Valid pref
+                $name = $GRADEPREFS[$pref->preference];
+                $preferences->$name = $pref->value;
+            }
+        }
     }
-    if (($preferences->display_weighted == 1 && isteacher($course->id)) || ($preferences->display_weighted_student == 1 && !isteacher($course->id))) {
-        $preferences->show_weighted = true;
+
+    // Check for any missing ones and create them from defaults
+    // We don't save them in the database so we save space
+    foreach ($GRADEPREFS as $number => $name) {
+        if (!isset($preferences->$name)) {
+            $preferences->$name = $GRADEPREFSDEFAULTS[$name];
+        }
     }
-    else {
-        $preferences->show_weighted = false;
-    }
+
+    // Construct some other ones
+
+    $isteacher = isteacher($courseid);
+
+    $preferences->show_weighted     = (($preferences->display_weighted == 1 && $isteacher) || 
+                                       ($preferences->display_weighted_student == 1 && !$isteacher));
     
-    if (($preferences->display_points == 1 && isteacher($course->id)) || ($preferences->display_points_student == 1 && !isteacher($course->id))) {
-        $preferences->show_points = true;
-    }
-    else {
-        $preferences->show_points = false;
-    }
+    $preferences->show_points       = (($preferences->display_points == 1 && $isteacher) || 
+                                       ($preferences->display_points_student == 1 && !$isteacher));
     
-    if (($preferences->display_percent == 1 && isteacher($course->id)) || ($preferences->display_percent_student == 1 && !isteacher($course->id))) {
-        $preferences->show_percent = true;
-    }
-    else {
-        $preferences->show_percent = false;
-    }
-    if (($preferences->display_letter_grade == 1 && isteacher($course->id)) || ($preferences->display_letter_grade_student == 1 && !isteacher($course->id))) {
-        $preferences->show_letter_grade = true;
-    }
-    else {
-        $preferences->show_letter_grade = false;
-    }
+    $preferences->show_percent      = (($preferences->display_percent == 1 && $isteacher) || 
+                                       ($preferences->display_percent_student == 1 && !$isteacher));
+
+    $preferences->show_letter_grade = (($preferences->display_letter_grade == 1 && $isteacher) || 
+                                       ($preferences->display_letter_grade_student == 1 && !$isteacher));
+
     return $preferences;
 }
 
-function grade_preferences_menu() {
-    global $course;
-    global $action;
-    global $USER;
-    global $group;
-    
-    if (isteacher($course->id) && $USER->editing) {
-        
-        if (!isset($action)) {
-            $action = $_REQUEST['action'];
-        }
 
-        // remap some actions to simplify later code        
-        switch ($action) {
-            case 'prefs':
-            case 'set_grade_preferences':
-                $curaction = 'prefs';
-                break;
-            case 'cats':
-            case 'vcats':
-            case 'insert_category':
-            case 'assign_categories':
-            case 'delete_category':
-                $curaction = 'cats';
-                break;
-            case 'set_grade_weights':
-            case 'weights':
-                $curaction = 'weights';
-                break;
-            case 'letters':
-            case 'set_letter_grades':
-                $curaction = 'letters';
-                break;
-            case 'view_student_grades':
-            case 'view_student_category_grades':
-            case 'grades':
-                $curaction = 'grades';
-                break;
-
-            default:
-                $curaction = 'prefs';
-        }
+function grade_set_preferences($course, $newprefs) {
     
-        $strsetpreferences = get_string('setpreferences','grades');
-        $strsetcategories = get_string('setcategories','grades');
-        $strsetweights = get_string('setweights','grades');
-        $strsetgradeletters = get_string('setgradeletters','grades');
-        $strviewgrades = get_string('viewgrades','grades');
-        $strgradeexceptions = get_string('gradeexceptions','grades');    
-        
-    
-        print '<table align="center"><tr>';
-        print '<td';
-        if ($curaction == 'prefs') {
-            print ' class="header"';
+    if (!isset($newprefs->use_advanced) or ($newprefs->use_advanced == 1)) {
+        foreach ($newprefs as $name => $value) {        /// Just save them all
+            grade_set_preference($course->id, $name, $value);
         }
-        print "><a href=\"index.php?id=$course->id&amp;action=prefs&amp;group=$group\">$strsetpreferences</a></td>";
-        print '<td';
-        if ($curaction == 'cats') {
-            print ' class="header"';
-        }
-        print "><a href=\"index.php?id=$course->id&amp;action=cats&amp;group=$group\">$strsetcategories</a></td>";
-        print '<td';
-        if ($curaction == 'weights') {
-            print ' class="header"';
-        }
-        print "><a href=\"index.php?id=$course->id&amp;action=weights&amp;group=$group\">$strsetweights</a></td>";
-        print '<td';
-        if ($curaction == 'letters') {
-            print ' class="header"';
-        }
-        print "><a href=\"index.php?id=$course->id&amp;action=letters&amp;group=$group\">$strsetgradeletters</a></td>";
-        print '<td';
-        if ($curaction == 'excepts') {
-            print ' class="header"';
-        }
-        print "><a href=\"exceptions.php?id=$course->id&amp;action=excepts&amp;group=$group\">$strgradeexceptions</a></td>";
-        print '</td></tr></table>';
+        return true;
     }
+
+/// We don't need advanced features, and we need to unset all extra features
+/// So they don't affect grades    (This approach should be revisited because it resets everything!!)
+    
+    grade_set_preference($course->id, 'use_advanced', 0);
+    grade_set_preference($course->id, 'use_weighted_for_letter', 0);
+    grade_set_preference($course->id, 'display_weighted', 0);
+    grade_set_preference($course->id, 'display_points', 1);
+    grade_set_preference($course->id, 'display_percent', 0);
+    grade_set_preference($course->id, 'display_letter_grade', 0);
+    grade_set_preference($course->id, 'display_weighted_student', 0);
+    grade_set_preference($course->id, 'display_points_student', 1);
+    grade_set_preference($course->id, 'display_percent_student', 0);
+    grade_set_preference($course->id, 'display_letter_grade_student', 0);
+    
+/// Lose all exceptions
+    delete_records('grade_exceptions', 'courseid', $course->id);
+        
+    if (!$uncat = get_record('grade_category', 'courseid', $course->id, 'name', UNCATEGORISED)) {
+        /// Make a category for uncategorised stuff
+        $uncat->name=UNCATEGORISED;
+        $uncat->courseid=$course->id;
+        if (!$uncat->id = insert_record('grade_category', $uncat)) {
+            error(get_string('errornocategorizedid','grades'));
+        }
+    }
+    
+    set_field('grade_item', 'category', $uncat->id, 'courseid', $course->id);
+    set_field('grade_item', 'scale_grade', 1.00, 'courseid', $course->id);
+    set_field('grade_item', 'extra_credit', 0, 'courseid', $course->id);
+
+    set_field('grade_category', 'weight', 100.0, 'courseid', $course->id, 'id', $uncat->id);
+    set_field('grade_category', 'bonus_points', '0', 'courseid', $course->id);
 }
 
-function grade_preferences_button() {
-    global $CFG, $USER, $course, $action, $group, $cview;
 
-    if (isteacher($course->id)) {
-        if (!empty($USER->editing)) {
-            $string = get_string("turneditingoff");
-            $edit = "off";
-        } else {
-            $string = get_string("turneditingon");
-            $edit = "on";
-        }
-        
-        if ($action == 'excepts') {
-            $formaction = "$CFG->wwwroot/grade/exceptions.php";
-        }
-        else {
-            $formaction = "$CFG->wwwroot/grade/index.php";
-        }
-        $ret = "<form target=\"$CFG->framename\" method=\"get\" action=\"$formaction\">".
-               "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />".
-               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />";
-               
-        if ($edit == 'off') {
-            $ret .= "<input type=\"hidden\" name=\"action\" value=\"grades\" />";
-        }
-        else {
-            $ret .= "<input type=\"hidden\" name=\"action\" value=\"$action\" />";
-        }
-        $ret .= "<input type=\"hidden\" name=\"group\" value=\"$group\" />";
-        if (isset($cview)) {
-            $ret .= "<input type=\"hidden\" name=\"cview\" value=\"$cview\" />";
-        }
-        $ret .= "<input type=\"submit\" value=\"$string\" /></form>";
-        return $ret;
+function grade_preferences_menu($action, $course, $group=0) {
+
+    if (!isteacher($course->id)) {
+        return;
     }
+
+    // remap some actions to simplify later code        
+    switch ($action) {
+        case 'prefs':
+        case 'set_grade_preferences':
+            $curraction = 'prefs';
+            break;
+        case 'cats':
+        case 'vcats':
+        case 'insert_category':
+        case 'assign_categories':
+        case 'delete_category':
+            $curraction = 'cats';
+            break;
+        case 'set_grade_weights':
+        case 'weights':
+            $curraction = 'weights';
+            break;
+        case 'letters':
+        case 'set_letter_grades':
+            $curraction = 'letters';
+            break;
+        case 'view_student_grades':
+        case 'view_student_category_grades':
+        case 'grades':
+            $curraction = 'grades';
+            break;
+        case 'excepts':
+            $curraction = 'excepts';
+            break;
+
+        default:
+            $curraction = 'grades';
+    }
+
+    $tabs = $row = array();
+    $row[] = new tabobject('grades', 'index.php?id='.$course->id,
+                           get_string('viewgrades', 'grades'));
+    $row[] = new tabobject('prefs', 'index.php?id='.$course->id.'&amp;action=prefs',
+                           get_string('setpreferences', 'grades'));
+    $row[] = new tabobject('cats', 'index.php?id='.$course->id.'&amp;action=cats',
+                           get_string('setcategories', 'grades'));
+    $row[] = new tabobject('weights', 'index.php?id='.$course->id.'&amp;action=weights',
+                           get_string('setweights', 'grades'));
+    $row[] = new tabobject('letters', 'index.php?id='.$course->id.'&amp;action=letters',
+                           get_string('setgradeletters', 'grades'));
+    $row[] = new tabobject('excepts', 'exceptions.php?id='.$course->id.'&amp;action=excepts',
+                           get_string('gradeexceptions', 'grades'));
+    $tabs[] = $row;
+
+    print_tabs($tabs, $curraction);
 }
+
 
 function grade_get_grades_menu() {
     global $course;
@@ -1017,7 +1052,7 @@ function grade_get_grades_menu() {
     $strgrades = get_string('grades', 'grades');
     $strviewgrades = get_string('viewgrades','grades');
     
-    $preferences = grade_get_preferences();
+    $preferences = grade_get_preferences($course->id);
     
     if (!isset($action)) {
         if (isset($_REQUEST['action'])) {
@@ -1197,46 +1232,46 @@ function grade_download_text() {
                 if ($first == 0) {
                     $first++;
                     ksort($categories);
-                    print get_string('firstname')."\t";
-                    print get_string('lastname')."\t";
-                    print get_string('idnumber')."\t";
-                    print get_string('institution')."\t";
-                    print get_string('department')."\t";
-                    print get_string('email')."\t";
+                    print_string('firstname')."\t";
+                    print_string('lastname')."\t";
+                    print_string('idnumber')."\t";
+                    print_string('institution')."\t";
+                    print_string('department')."\t";
+                    print_string('email')."\t";
                     foreach ($categories as $category => $assignments) {
                         if ($category != 'student_data') {
                             foreach ($assignments as $assignment => $info) {
                                 if ($assignment != 'stats') {
-                                    print $assignment."\t";
+                                    echo  $assignment."\t";
                                 }
                             }
                         }
                     }
-                    print "\n";
+                    echo  "\n";
                 }
                 
             }
             foreach($grades_by_student as $student => $categories) {
-                print $grades_by_student["$student"]['student_data']['firstname']."\t";
-                print $grades_by_student["$student"]['student_data']['lastname']."\t";
-                print $grades_by_student["$student"]['student_data']['idnumber']."\t";
+                echo  $grades_by_student["$student"]['student_data']['firstname']."\t";
+                echo  $grades_by_student["$student"]['student_data']['lastname']."\t";
+                echo  $grades_by_student["$student"]['student_data']['idnumber']."\t";
                 if (isset($grades_by_student["$student"]['student_data']['institution'])) {
-                    print $grades_by_student["$student"]['student_data']['institution'];
+                    echo  $grades_by_student["$student"]['student_data']['institution'];
                 }
-                print "\t";
-                print $grades_by_student["$student"]['student_data']['department']."\t";
-                print $grades_by_student["$student"]['student_data']['email']."\t";
+                echo  "\t";
+                echo  $grades_by_student["$student"]['student_data']['department']."\t";
+                echo  $grades_by_student["$student"]['student_data']['email']."\t";
                 foreach($categories as $category => $assignments) {
                     if ($category != 'student_data') {
                         foreach ($assignments as $assignment => $info) {
                             if ($assignment != 'stats') {
                                 // account for excluded and untaken items
-                                print $info['grade']."\t";
+                                echo  $info['grade']."\t";
                             }
                         }
                     }
                 }
-                print "\n";
+                echo  "\n";
             }
         }
         exit;
@@ -1470,47 +1505,47 @@ function grade_stats() {
 
     // output our data    
     print_header();
-    print '<table align="center"><tr><th colspan="3">'.$category.' '.get_string('stats','grades').'</th></tr>';
+    echo  '<table align="center"><tr><th colspan="3">'.$category.' '.get_string('stats','grades').'</th></tr>';
     if ($preferences->show_weighted == 1 && $preferences->use_weighted_for_letter == 1 && $category== 'all') {
-        print '<tr><th>&nbsp;</th><th>'.get_string('points','grades').'<th>'.get_string('weight','grades').'</th></tr>';            
+        echo  '<tr><th>&nbsp;</th><th>'.get_string('points','grades').'<th>'.get_string('weight','grades').'</th></tr>';            
     }
 
-    print '<tr><td align="right">'.get_string('max','grades').':</td><td align="right">'.$stats[$category]['max'].'</td>';
+    echo  '<tr><td align="right">'.get_string('max','grades').':</td><td align="right">'.$stats[$category]['max'].'</td>';
     if ($preferences->show_weighted == 1 && $preferences->use_weighted_for_letter == 1 && $category== 'all') {
-        print '<td align="right">'.$stats[$category]['max_weighted'].'</td>';            
+        echo  '<td align="right">'.$stats[$category]['max_weighted'].'</td>';            
     }
-    print '</tr>';
+    echo  '</tr>';
     
-    print '<tr><td align="right">'.get_string('min','grades').':</td><td align="right">'.$stats[$category]['min'].'</td>';
+    echo  '<tr><td align="right">'.get_string('min','grades').':</td><td align="right">'.$stats[$category]['min'].'</td>';
     if ($preferences->show_weighted == 1 && $preferences->use_weighted_for_letter == 1 && $category== 'all') {
-        print '<td align="right">'.$stats[$category]['min_weighted'].'</td>';            
+        echo  '<td align="right">'.$stats[$category]['min_weighted'].'</td>';            
     }
-    print '</tr>';
+    echo  '</tr>';
     
-    print '<tr><td align="right">'.get_string('average','grades').':</td><td align="right">'.$stats[$category]['average'].'</td>';
+    echo  '<tr><td align="right">'.get_string('average','grades').':</td><td align="right">'.$stats[$category]['average'].'</td>';
     if ($preferences->show_weighted == 1 && $preferences->use_weighted_for_letter == 1 && $category== 'all') {
-        print '<td align="right">'.$stats[$category]['average_weighted'].'</td>';            
+        echo  '<td align="right">'.$stats[$category]['average_weighted'].'</td>';            
     }
-    print '</tr>';
+    echo  '</tr>';
     
-    print '<tr><td align="right">'.get_string('median','grades').':</td><td align="right">'.$stats[$category]['median'].'</td>';
+    echo  '<tr><td align="right">'.get_string('median','grades').':</td><td align="right">'.$stats[$category]['median'].'</td>';
     if ($preferences->show_weighted == 1 && $preferences->use_weighted_for_letter == 1 && $category== 'all') {
-        print '<td align="right">'.$stats[$category]['median_weighted'].'</td>';            
+        echo  '<td align="right">'.$stats[$category]['median_weighted'].'</td>';            
     }
-    print '</tr>';
+    echo  '</tr>';
     
-    print '<tr><td align="right">'.get_string('mode','grades').':</td><td align="right">'.$stats[$category]['mode'].'</td>';
+    echo  '<tr><td align="right">'.get_string('mode','grades').':</td><td align="right">'.$stats[$category]['mode'].'</td>';
     if ($preferences->show_weighted == 1 && $preferences->use_weighted_for_letter == 1 && $category== 'all') {
-        print '<td align="right">'.$stats[$category]['mode_weighted'].'</td>';            
+        echo  '<td align="right">'.$stats[$category]['mode_weighted'].'</td>';            
     }
-    print '</tr>';
+    echo  '</tr>';
     
-    print '<tr><td align="right">'.get_string('standarddeviation','grades').':</td><td align="right">'.$stats[$category]['stddev'].'</td>';
+    echo  '<tr><td align="right">'.get_string('standarddeviation','grades').':</td><td align="right">'.$stats[$category]['stddev'].'</td>';
     if ($preferences->show_weighted == 1 && $preferences->use_weighted_for_letter == 1 && $category== 'all') {
-        print '<td align="right">'.$stats[$category]['stddev_weighted'].'</td>';            
+        echo  '<td align="right">'.$stats[$category]['stddev_weighted'].'</td>';            
     }
-    print '</tr>';
-    print '</table>';
+    echo  '</tr>';
+    echo  '</table>';
     //print_footer();
 }
 
@@ -1520,14 +1555,13 @@ function grade_view_category_grades($view_by_student) {
     global $USER;
     global $preferences;
     global $group;
-    global $UNCATEGORIZED;
     
     if (!isteacher($course->id)) {
         $view_by_student = $USER->id;
     }
 
     if ($preferences->use_advanced == 0) {
-        $cview = $UNCATEGORIZED;
+        $cview = UNCATEGORISED;
     }
     else {
         $cview=clean_param($_REQUEST['cview'], PARAM_CLEAN);
@@ -1571,7 +1605,7 @@ function grade_view_category_grades($view_by_student) {
                     $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$cview.'"><font size="-2">'.get_string('showallstudents','grades').'</font></a>';
                 }
             }
-            print '<table align="center" border="1">';
+            echo  '<table align="center" border="1">';
             if (isteacher($course->id)) {
                 $header = '<tr><th rowspan="2">'.$student_heading_link.'</th>';
             }
@@ -1608,7 +1642,7 @@ function grade_view_category_grades($view_by_student) {
             foreach($grades_by_student as $student => $categories) {
                 
                 if ($preferences->reprint_headers != 0 && $reprint >= $preferences->reprint_headers) {
-                    print $header.$header1;
+                    echo  $header.$header1;
                     $reprint=0;
                 }
                 
@@ -1744,15 +1778,15 @@ function grade_view_category_grades($view_by_student) {
                     //adjust colcount to reflect the actual number of columns output
                     $colcount++; // total column
                     $colcount = $colcount*$grade_columns + 2;
-                    print '<tr><th colspan="'.$colcount.'"><font size="+1">';
+                    echo  '<tr><th colspan="'.$colcount.'"><font size="+1">';
                     if ($preferences->use_advanced != 0) {
-                        print $cview.' '.get_string('grades','grades');
+                        echo  $cview.' '.get_string('grades','grades');
                     }
                     else {
-                        print get_string('grades','grades');
+                        echo  get_string('grades','grades');
                     }
 
-                    print '</font>';
+                    echo  '</font>';
 
                     if (isteacher($course->id)) {
                         helpbutton('coursegradeteacher', get_string('gradehelp','grades'), 'gradebook');
@@ -1760,9 +1794,9 @@ function grade_view_category_grades($view_by_student) {
                     else {
                         helpbutton('coursegradestudent', get_string('gradehelp','grades'), 'gradebook');
                     }
-                    print '</th></tr>';
-                    print $header;
-                    print $header1;
+                    echo  '</th></tr>';
+                    echo  $header;
+                    echo  $header1;
                     $first = 1;
                 }
 
@@ -1786,10 +1820,10 @@ function grade_view_category_grades($view_by_student) {
                     $row .= '<td>'.$student_link.'</td>';
                 }
                 $row .= '</tr>';
-                print $row;
+                echo  $row;
                 $reprint++;
             }
-            print '</table>';
+            echo  '</table>';
         }
         else { // no grades returned
             error(get_string('nogradesreturned','grades'));
@@ -1838,7 +1872,7 @@ function grade_view_all_grades($view_by_student) {
         $maxpercent = 0;
         $reprint=0;
 
-        print '<table align="center" border="1">';
+        echo  '<table align="center" border="1">';
         if (isteacher($course->id) ) {
             $student_heading_link = get_string('student','grades');
             if ($view_by_student == -1) {
@@ -1862,7 +1896,7 @@ function grade_view_all_grades($view_by_student) {
             $totalgrade = 0;
             $total_bonus_points = 0;
             if ($preferences->reprint_headers != 0 && $reprint >= $preferences->reprint_headers) {
-                print $header.$header1;
+                echo  $header.$header1;
                 $reprint=0;
             }
             if ($rowcount < 3) {
@@ -2001,18 +2035,18 @@ function grade_view_all_grades($view_by_student) {
                 // adjust colcount to reflect actual number of columns output
                 $colcount = $colcount * $grade_columns + $total_columns + 2;
                 
-                print '<tr><th colspan="'.$colcount.'"><font size="+1">'.get_string('allgrades','grades').'</font>';
+                echo  '<tr><th colspan="'.$colcount.'"><font size="+1">'.get_string('allgrades','grades').'</font>';
                 if (isteacher($course->id)) {
                     helpbutton('coursegradeteacher', get_string('gradehelp','grades'), 'gradebook');
                 }
                 else {
                     helpbutton('coursegradestudent', get_string('gradehelp','grades'), 'gradebook');
                 }
-                print '</th></tr>';
+                echo  '</th></tr>';
                 
                                 
-                print $header;
-                print $header1;
+                echo  $header;
+                echo  $header1;
                 $first = 1;
             }
             if ($preferences->show_points) {
@@ -2051,10 +2085,10 @@ function grade_view_all_grades($view_by_student) {
             else {
                 $row .= '</tr>';
             }
-            print $row;
+            echo  $row;
             $reprint++;
         }
-        print '</table>';
+        echo  '</table>';
     }
     else { // no grades returned
         error(get_string('nogradesreturned','grades'));
@@ -2147,7 +2181,7 @@ function grade_set_grade_weights() {
                 }
             }
             else {
-                print '<center><font color="red">'.get_string('nonumericweight','grades').$category->name.': "'.$submitted_category.'"</font></center><br />';
+                echo  '<center><font color="red">'.get_string('nonumericweight','grades').$category->name.': "'.$submitted_category.'"</font></center><br />';
             }
         }
     }
@@ -2162,14 +2196,14 @@ function grade_display_grade_weights() {
     
     $categories = get_records('grade_category', 'courseid', $course->id);
     if ($categories) {
-        print '<table align=center><tr><th colspan="5">'.get_string('setweights','grades');
+        echo  '<table align=center><tr><th colspan="5">'.get_string('setweights','grades');
         helpbutton('coursegradeweight', get_string('gradeweighthelp','grades'), 'gradebook');
-        print '</th></tr>';
-        print '<tr><th>'.get_string('category','grades').'</th><th>'.get_string('weight','grades').'</th><th>'.get_string('dropxlowest','grades').'</th><th>'.get_string('bonuspoints','grades').'</th><th>'.get_string('hidecategory','grades').'</th></tr>';
-        print '<form name="grade_weights" action="./index.php" method="post">';
-        print '<input type="hidden" name="id" value="'.$course->id.'" />';
-        print '<input type="hidden" name="action" value="set_grade_weights" />';
-        print '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+        echo  '</th></tr>';
+        echo  '<tr><th>'.get_string('category','grades').'</th><th>'.get_string('weight','grades').'</th><th>'.get_string('dropxlowest','grades').'</th><th>'.get_string('bonuspoints','grades').'</th><th>'.get_string('hidecategory','grades').'</th></tr>';
+        echo  '<form name="grade_weights" action="./index.php" method="post">';
+        echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
+        echo  '<input type="hidden" name="action" value="set_grade_weights" />';
+        echo  '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     
         $sum = 0;
         
@@ -2179,30 +2213,30 @@ function grade_display_grade_weights() {
                         
             // make names form safe
             $form_catname = str_replace(' ', '_', $category->name);
-            print '<tr><td>'.$category->name.'</td>';
-            print '<td align="right"><input type="text" size="5" name="'.$form_catname.'" value="'.$val.'" /></td>';
-            print '<td align="right"><input type="text" size="5" name="drop_x_lowest'.$form_catname.'" value="'.$category->drop_x_lowest.'" /></td>';
-            print '<td align="right"><input type="text" size="5" name="bonus_points'.$form_catname.'" value="'.$category->bonus_points.'" /></td>';
-            print '<td align="right"><input type="checkbox" name="hidden'.$form_catname.'" ';
+            echo  '<tr><td>'.$category->name.'</td>';
+            echo  '<td align="right"><input type="text" size="5" name="'.$form_catname.'" value="'.$val.'" /></td>';
+            echo  '<td align="right"><input type="text" size="5" name="drop_x_lowest'.$form_catname.'" value="'.$category->drop_x_lowest.'" /></td>';
+            echo  '<td align="right"><input type="text" size="5" name="bonus_points'.$form_catname.'" value="'.$category->bonus_points.'" /></td>';
+            echo  '<td align="right"><input type="checkbox" name="hidden'.$form_catname.'" ';
             if ($category->hidden == 1) {
-                print ' checked="checked"';
+                echo  ' checked="checked"';
             }
-            print ' /></td>';
+            echo  ' /></td>';
         }
-        print '<tr><td colspan="5" align="center"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr></form>';
+        echo  '<tr><td colspan="5" align="center"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr></form>';
         if ($sum != 100) {
-            print '<tr><td colspan="5" align="center"><font color="red">'.get_string('totalweightnot100','grades').'</font></td></tr>';
+            echo  '<tr><td colspan="5" align="center"><font color="red">'.get_string('totalweightnot100','grades').'</font></td></tr>';
         }
         else {
-            print '<tr><td colspan="5" align="center"><font color="green">'.get_string('totalweight100','grades').'</font></td></tr>';
+            echo  '<tr><td colspan="5" align="center"><font color="green">'.get_string('totalweight100','grades').'</font></td></tr>';
         }
     }
     else {
         /// maybe this should just do the default population of the categories instead?
-        print '<font color="red">'.get_string('setcategorieserror','grades').'</font>';
+        echo  '<font color="red">'.get_string('setcategorieserror','grades').'</font>';
     }
-    print '</table>';
-    print '<center>'.get_string('dropxlowestwarning','grades').'</center><br />';
+    echo  '</table>';
+    echo  '<center>'.get_string('dropxlowestwarning','grades').'</center><br />';
 }
 
 function grade_set_categories() {
@@ -2214,13 +2248,13 @@ function grade_set_categories() {
     /// Collect modules data
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
     
-    print '<table align="center"><tr><th colspan="5">'.get_string('setcategories','grades');
+    echo  '<table align="center"><tr><th colspan="5">'.get_string('setcategories','grades');
     helpbutton('coursegradecategory', get_string('gradecategoryhelp','grades'), 'gradebook');
-    print '<tr><th>'.get_string('gradeitem','grades').'</th><th>'.get_string('category','grades').'</th><th>'.get_string('maxgrade','grades').'</th><th>'.get_string('curveto','grades').'</th><th>'.get_string('extracredit','grades').'</th></tr>';
-    print '<form name="set_categories" method="post" action="./index.php" >';
-    print '<input type="hidden" name="action" value="assign_categories" />';
-    print '<input type="hidden" name="id" value="'.$course->id.'" />';
-    print '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo  '<tr><th>'.get_string('gradeitem','grades').'</th><th>'.get_string('category','grades').'</th><th>'.get_string('maxgrade','grades').'</th><th>'.get_string('curveto','grades').'</th><th>'.get_string('extracredit','grades').'</th></tr>';
+    echo  '<form name="set_categories" method="post" action="./index.php" >';
+    echo  '<input type="hidden" name="action" value="assign_categories" />';
+    echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
+    echo  '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     
     $itemcount = 0;
     
@@ -2246,16 +2280,16 @@ function grade_set_categories() {
                                 {
                                     $itemcount++;
                                     //modgrades contains student information with associated grade
-                                    //print "<b>modname: $mod->modname id: $mod->id course: $mod->course</b><br />";
-                                    print '<input type="hidden" name="modname'.$itemcount.'" value="'.$mod->modname.'" />';
-                                    print '<input type="hidden" name="mod'.$itemcount.'" value="'.$mod->instance.'" />';
-                                    print '<input type="hidden" name="course'.$itemcount.'" value="'.$mod->course.'" />';
-                                    print '<tr><td>';
+                                    //echo  "<b>modname: $mod->modname id: $mod->id course: $mod->course</b><br />";
+                                    echo  '<input type="hidden" name="modname'.$itemcount.'" value="'.$mod->modname.'" />';
+                                    echo  '<input type="hidden" name="mod'.$itemcount.'" value="'.$mod->instance.'" />';
+                                    echo  '<input type="hidden" name="course'.$itemcount.'" value="'.$mod->course.'" />';
+                                    echo  '<tr><td>';
                                     // get instance name from db.
                                     $instance = get_record($mod->modname, 'id', $mod->instance);
-                                    print "$instance->name</td>";
+                                    echo  "$instance->name</td>";
                                     // see if the item is already in the category table and if it is call category select with the id so it is selected
-                                    print '<td><select name="category'.$itemcount.'">';
+                                    echo  '<td><select name="category'.$itemcount.'">';
                                     $item_cat_id = get_record('grade_item', 'modid', $mod->module, 'courseid', $course->id, 'cminstance', $mod->instance);
                                     //print_object($item_cat_id);
                                     if (isset($item_cat_id)) {
@@ -2264,7 +2298,7 @@ function grade_set_categories() {
                                     else {
                                         grade_category_select(-1);
                                     }
-                                    print '</select></td><td align="right">'.$modgrades->maxgrade.'<input type="hidden" name="maxgrade'.$itemcount.'" value="'.$modgrades->maxgrade.'" /></td>';
+                                    echo  '</select></td><td align="right">'.$modgrades->maxgrade.'<input type="hidden" name="maxgrade'.$itemcount.'" value="'.$modgrades->maxgrade.'" /></td>';
                                         
                                     if (isset($item_cat_id)) {
                                         // the value held in scale_grade is a scaling percent. The next line just formats it so it is easier for the user (they just enter the point value they want to be 100%)
@@ -2272,17 +2306,17 @@ function grade_set_categories() {
                                             $scale_to = $modgrades->maxgrade;
                                         else
                                             $scale_to = round($modgrades->maxgrade/$item_cat_id->scale_grade);
-                                        print '<td><input type="text" size="5" name="scale_grade'.$itemcount.'" value="'.$scale_to.'" /></td>';
+                                        echo  '<td><input type="text" size="5" name="scale_grade'.$itemcount.'" value="'.$scale_to.'" /></td>';
                                     }
                                     else {
-                                        print '<td><input type="text" size="5" name="scale_grade'.$itemcount.'" value="'.$modgrades->maxgrade.'" /></td>';
+                                        echo  '<td><input type="text" size="5" name="scale_grade'.$itemcount.'" value="'.$modgrades->maxgrade.'" /></td>';
                                     }
                                     
-                                    print '<td align="right"><input type="checkbox" name="extra_credit'.$itemcount.'" ';
+                                    echo  '<td align="right"><input type="checkbox" name="extra_credit'.$itemcount.'" ';
                                     if ($item_cat_id->extra_credit == 1) {
-                                        print ' checked="checked"';
+                                        echo  ' checked="checked"';
                                     }
-                                    print ' /></td></tr>';
+                                    echo  ' /></td></tr>';
                                 }
                             }
                         }
@@ -2291,14 +2325,14 @@ function grade_set_categories() {
             }
         }
     }
-    print '<input type="hidden" name="totalitems" value="'.$itemcount.'" />';
-    print '<tr><td colspan="5" align="center"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
-    print '</form>';
-    print '<tr><td colspan="5" align="center">';
+    echo  '<input type="hidden" name="totalitems" value="'.$itemcount.'" />';
+    echo  '<tr><td colspan="5" align="center"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
+    echo  '</form>';
+    echo  '<tr><td colspan="5" align="center">';
     grade_add_category_form();
-    print '</td></tr><tr><td colspan="5" align="center">';
+    echo  '</td></tr><tr><td colspan="5" align="center">';
     grade_delete_category_form();
-    print '</td></tr><tr><td colspan="5">'.get_string('extracreditwarning','grades').'</td></tr></table>';
+    echo  '</td></tr><tr><td colspan="5">'.get_string('extracreditwarning','grades').'</td></tr></table>';
 }
 
 function grade_delete_category() {
@@ -2399,26 +2433,26 @@ function grade_add_category_form() {
     /// just a simple text box with submit
     global $course;
     global $USER;
-    print '<form name="new_category">';
-    print get_string('addcategory','grades').':<input type="text" name="name" size="20" />';
-    print '<input type="hidden" name="id" value="'.$course->id.'" />';
-    print '<input type="hidden" name="action" value="insert_category" />';
-    print '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    print '<input type="submit" value="'.get_string('addcategory','grades').'" />';
-    print '</form>';
+    echo  '<form name="new_category">';
+    echo  get_string('addcategory','grades').':<input type="text" name="name" size="20" />';
+    echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
+    echo  '<input type="hidden" name="action" value="insert_category" />';
+    echo  '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo  '<input type="submit" value="'.get_string('addcategory','grades').'" />';
+    echo  '</form>';
 }
 
 function grade_delete_category_form() {
     // outputs a form to delete a category
     global $course;
     global $USER;
-    print '<form name="delete_category">';
-    print get_string('deletecategory','grades').': <select name="category_id">';
+    echo  '<form name="delete_category">';
+    echo  get_string('deletecategory','grades').': <select name="category_id">';
     grade_category_select();
-    print '</select><input type="hidden" name="id" value="'.$course->id.'" />';
-    print '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    print '<input type="hidden" name="action" value="delete_category" />';
-    print '<input type="submit" value="'.get_string('deletecategory','grades').'" /></form>';
+    echo  '</select><input type="hidden" name="id" value="'.$course->id.'" />';
+    echo  '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo  '<input type="hidden" name="action" value="delete_category" />';
+    echo  '<input type="submit" value="'.get_string('deletecategory','grades').'" /></form>';
 }
 
 function grade_insert_category() {
@@ -2441,7 +2475,7 @@ function grade_insert_category() {
     }
     elseif ($category->name != ''){
         if (!insert_record('grade_category', $category) ) {
-            print '<font color="red">'.get_string('addcategoryerror','grades').'</font>';
+            echo  '<font color="red">'.get_string('addcategoryerror','grades').'</font>';
         }
     }
 }
@@ -2452,7 +2486,7 @@ function grade_category_select($id_selected) {
     global $course;
 
     
-    print '<option value="blank">'.get_string('choosecategory','grades').'</option>';
+    echo  '<option value="blank">'.get_string('choosecategory','grades').'</option>';
     
     $categories = get_records('grade_category', 'courseid', $course->id, 'name');
     
@@ -2461,11 +2495,14 @@ function grade_category_select($id_selected) {
     }
     else {
         foreach($categories as $category) {
+            if ($category->name == UNCATEGORISED) {
+                $category->name = get_string('uncategorised', 'grades');
+            }
             if ($category->id == $id_selected) {
-                print '<option value="'.$category->id.'" selected="selected">'.$category->name.'</option>';
+                echo  '<option value="'.$category->id.'" selected="selected">'.$category->name.'</option>';
             }
             else {
-                print '<option value="'.$category->id.'">'.$category->name.'</option>';
+                echo  '<option value="'.$category->id.'">'.$category->name.'</option>';
             }
         }
     }
@@ -2476,243 +2513,135 @@ function grade_display_grade_preferences() {
     global $course;
     global $USER;
 
-    $preferences = grade_get_preferences();
+    $preferences = grade_get_preferences($course->id);
     
     $stryes = get_string('yes','grades');
     $strno = get_string('no','grades');
         
-    print '<table align="center"><tr><th colspan="3">'.get_string('setpreferences','grades');
+    echo  '<table align="center"><tr><th colspan="3">'.get_string('setpreferences','grades');
     helpbutton('coursegradepreferences', get_string('gradepreferenceshelp','grades'), 'gradebook');
-    print '</th></tr><tr><th>'.get_string('item','grades').'</th><th>'.get_string('setting','grades').'</th>';
+    echo  '</th></tr><tr><th>'.get_string('item','grades').'</th><th>'.get_string('setting','grades').'</th>';
     if ($preferences->use_advanced != 0) {
-        print '<th>'.get_string('forstudents','grades').'</th>';
+        echo  '<th>'.get_string('forstudents','grades').'</th>';
     }
-    print '</tr>';
-    print '<form name="set_grade_preferences" method="post" action="./index.php">';
-    print '<input type="hidden" name="action" value="set_grade_preferences" />';
-    print '<input type="hidden" name="id" value='.$course->id.' />';
-    print '<input type="hidden" name="pref_id" value='.$preferences->id.' />';
-    print '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo  '</tr>';
+    echo  '<form name="set_grade_preferences" method="post" action="./index.php">';
+    echo  '<input type="hidden" name="action" value="set_grade_preferences" />';
+    echo  '<input type="hidden" name="id" value='.$course->id.' />';
+    echo  '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     
-    print '<tr><td>'.get_string('useadvanced','grades').'</td><td><select name="use_advanced">';
+    echo  '<tr><td>'.get_string('useadvanced','grades').'</td><td><select name="use_advanced">';
     if ($preferences->use_advanced ==0) {
-        print '<option value="0" selected="selected">'.$strno.'</option><option value=1>'.$stryes.'</option>';
+        echo  '<option value="0" selected="selected">'.$strno.'</option><option value=1>'.$stryes.'</option>';
     }
     else {
-        print '<option value="0">'.$strno.'</option><option value=1 selected="selected">'.$stryes.'</option>';
+        echo  '<option value="0">'.$strno.'</option><option value=1 selected="selected">'.$stryes.'</option>';
     }
     
     if ($preferences->use_advanced != 0) {
         // display grade weights
-        print '<tr><td>'.get_string('displayweighted','grades').'</td><td><select name="display_weighted">';
+        echo  '<tr><td>'.get_string('displayweighted','grades').'</td><td><select name="display_weighted">';
         if ($preferences->display_weighted == 0) {
-            print '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
+            echo  '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
         }
         else {
-            print '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
+            echo  '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
         }
-        print '</select></td>';
+        echo  '</select></td>';
         
         // add user view checkbox
-        print '<td><input type="checkbox" name="display_weighted_student"';
+        echo  '<td><input type="checkbox" name="display_weighted_student"';
         if ($preferences->display_weighted_student == 1) {
-            print ' checked="checked"';
+            echo  ' checked="checked"';
         }
-        print ' />';
+        echo  ' />';
         
         // display points    
-        print '<tr><td>'.get_string('displaypoints','grades').'</td><td><select name="display_points">';
+        echo  '<tr><td>'.get_string('displaypoints','grades').'</td><td><select name="display_points">';
         if ($preferences->display_points == 0) {
-            print '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
+            echo  '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
         }
         else {
-            print '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
+            echo  '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
         }
-        print '</select></td>';
+        echo  '</select></td>';
     
         // add user view checkbox
-        print '<td><input type=checkbox name="display_points_student"';
+        echo  '<td><input type=checkbox name="display_points_student"';
         if ($preferences->display_points_student == 1) {
-            print ' checked="checked"';
+            echo  ' checked="checked"';
         }
-        print ' />';
+        echo  ' />';
     
         // display percent
-        print '<tr><td>Display Percent</td><td><select name="display_percent">';
+        echo  '<tr><td>Display Percent</td><td><select name="display_percent">';
         if ($preferences->display_percent == 0) {
-            print '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
+            echo  '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
         }
         else {
-            print '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
+            echo  '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
         }
-        print '</select></td>';
+        echo  '</select></td>';
         
         // add user view checkbox
-        print '<td><input type="checkbox" name="display_percent_student"';
+        echo  '<td><input type="checkbox" name="display_percent_student"';
         if ($preferences->display_percent_student == 1) {
-            print ' checked="checked"';
+            echo  ' checked="checked"';
         }
-        print ' />';
+        echo  ' />';
         
         // display letter grade
-        print '<tr><td>'.get_string('displaylettergrade','grades').'</td><td><select name="display_letter_grade">';
+        echo  '<tr><td>'.get_string('displaylettergrade','grades').'</td><td><select name="display_letter_grade">';
         if ($preferences->display_letter_grade == 0) {
-            print '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
+            echo  '<option value="0" selected="selected">'.$strno.'</option><option value="1">'.$stryes.'</option>';
         }
         else {
-            print '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
+            echo  '<option value="0">'.$strno.'</option><option value="1" selected="selected">'.$stryes.'</option>';
         }
-        print '</select></td>';
+        echo  '</select></td>';
         
-        print '<td><input type="checkbox" name="display_letter_grade_student"';
+        echo  '<td><input type="checkbox" name="display_letter_grade_student"';
         if ($preferences->display_letter_grade_student == 1) {
-            print ' checked="checked"';
+            echo  ' checked="checked"';
         }
-        print ' />';
+        echo  ' />';
         
         // letter grade uses weighted percent
         $strusepercent = get_string('usepercent','grades');
         $struseweighted = get_string('useweighted','grades');
-        print '<tr><td>'.get_string('lettergrade','grades').':</td><td><select name="use_weighted_for_letter">';
+        echo  '<tr><td>'.get_string('lettergrade','grades').':</td><td><select name="use_weighted_for_letter">';
         if ($preferences->use_weighted_for_letter == 0) {
-            print '<option value="0" selected="selected">'.$strusepercent.'</option><option value="1">'.$struseweighted.'</option>';
+            echo  '<option value="0" selected="selected">'.$strusepercent.'</option><option value="1">'.$struseweighted.'</option>';
         }
         else {
-            print '<option value="0">'.$strusepercent.'</option><option value="1" selected="selected">'.$struseweighted.'</option>';
+            echo  '<option value="0">'.$strusepercent.'</option><option value="1" selected="selected">'.$struseweighted.'</option>';
         }
-        print '</select></td></tr>';
+        echo  '</select></td></tr>';
+    }
+
+    $headerlist[0] = get_string('none');
+    for ($i=1; $i<=100; $i++) {
+        $headerlist[$i] = $i;
     }
     
     // reprint headers every n lines default n=0
-    print '<tr><td>'.get_string('reprintheaders','grades').':</td><td><input type="text" name="reprint_headers" value="'.$preferences->reprint_headers.'" /></td></tr>';
+    echo '<tr><td>'.get_string('reprintheaders','grades').':</td><td>';
+    choose_from_menu($headerlist, 'reprint_headers', $preferences->reprint_headers, '');
+    echo '</td></tr>';
     
     // show hidden grade items to teacher
-    print '<tr><td>'.get_string('showhiddenitems','grades').'</td><td><select name="show_hidden">';
+    echo  '<tr><td>'.get_string('showhiddenitems','grades').'</td><td><select name="show_hidden">';
     if ($preferences->show_hidden ==0) {
-        print '<option value="0" selected="selected">'.$strno.'</option><option value=1>'.$stryes.'</option>';
+        echo  '<option value="0" selected="selected">'.$strno.'</option><option value=1>'.$stryes.'</option>';
     }
     else {
-        print '<option value="0">'.$strno.'</option><option value=1 selected="selected">'.$stryes.'</option>';
+        echo  '<option value="0">'.$strno.'</option><option value=1 selected="selected">'.$stryes.'</option>';
     }
-    print '</td></tr>';
+    echo  '</td></tr>';
     
-    print '<tr><td colspan="3" align="center"><input type="submit" value="'.get_string('savepreferences','grades').'" /></td></tr></form></table>';
+    echo  '<tr><td colspan="3" align="center"><input type="submit" value="'.get_string('savepreferences','grades').'" /></td></tr></form></table>';
 }
 
-function grade_set_grade_preferences() {
-    global $CFG;
-    global $course;
-    global $UNCATEGORIZED;
-    global $USER;
-    
-    if (!empty($USER->id)) {
-        if (!confirm_sesskey()) {
-            error(get_string('confirmsesskeybad', 'error'));
-        }
-    }
-
-    $new_prefs->display_weighted=optional_param('display_weighted');
-    $new_prefs->display_points=optional_param('display_points');
-    $new_prefs->display_percent=optional_param('display_percent');
-    $new_prefs->display_letter_grade=optional_param('display_letter_grade');
-    $new_prefs->use_weighted_for_letter=optional_param('use_weighted_for_letter');
-    $new_prefs->reprint_headers = optional_param('reprint_headers');
-    $new_prefs->use_advanced = optional_param('use_advanced');
-    
-    if (isset($_REQUEST['display_weighted_student'])) {
-        $new_prefs->display_weighted_student=1;
-    }
-    else {
-        $new_prefs->display_weighted_student = 0;
-    }
-    
-    if (isset($_REQUEST['display_points_student'])) {
-        $new_prefs->display_points_student=1;
-    }
-    else {
-        $new_prefs->display_points_student = 0;
-    }
-    
-    if (isset($_REQUEST['display_percent_student'])) {
-        $new_prefs->display_percent_student=1;
-    }
-    else {
-        $new_prefs->display_percent_student =0;
-    }
-    
-    if (isset($_REQUEST['display_letter_grade_student'])) {
-        $new_prefs->display_letter_grade_student=1;
-    }
-    else {
-        $new_prefs->display_letter_grade_student = 0;
-    }
-        
-    if(!is_numeric($new_prefs->reprint_headers)) {
-        $new_prefs->reprint_headers = 0;
-        print '<font color="red">'.get_string('errorreprintheadersnonnumeric','grades').'</font>';
-    }
-    
-    if (isset($_REQUEST['show_hidden'])) {
-        $new_prefs->show_hidden = $_REQUEST['show_hidden'];
-    }
-    $new_prefs->courseid=$course->id;    
-    
-    $preferences = grade_get_preferences();
-
-    if($preferences->use_advanced == 1) {
-        $new_prefs->id = $preferences->id;
-        update_record('grade_preferences', $new_prefs);
-    }
-    else {
-        set_field('grade_preferences', 'reprint_headers', $new_prefs->reprint_headers, 'courseid', $course->id);
-        set_field('grade_preferences', 'use_advanced', $new_prefs->use_advanced, 'courseid', $course->id);
-        set_field('grade_preferences', 'show_hidden', $new_prefs->show_hidden, 'courseid', $course->id);
-    }
-    
-    if($new_prefs->use_advanced == 0) {
-        // need to set all 'extra' features so they don't affect grades or points
-        // set grade_scale to 1.0 for all grade_items
-        // set bonus_points to 0
-        // set all grade_items to uncategorized
-        // set uncategorized weight to 100%
-        // unset all exceptions
-        $nonadvanced->use_weighted_for_letter=0;
-        $nonadvanced->display_weighted=0;
-        $nonadvanced->display_points=1;
-        $nonadvanced->display_percent=0;
-        $nonadvanced->display_letter_grade=0;
-        $nonadvanced->display_weighted_student=0;
-        $nonadvanced->display_points_student=1;
-        $nonadvanced->display_percent_student=0;
-        $nonadvanced->display_letter_grade_student=0;
-        $nonadvanced->id = $preferences->id;
-        update_record('grade_preferences', $nonadvanced);
-        
-        delete_records('grade_exceptions', 'courseid', $course->id);
-        
-        // this was pulled out of the lang file as it could cause some problems
-        $uncat = $UNCATEGORIZED;
-        $uncat_id = get_record('grade_category', 'courseid', $course->id, 'name', $uncat);
-    
-        if (!$uncat_id) {
-            // insert the uncategorized category 
-            $temp->name=$uncat;
-            $temp->courseid=$course->id;
-            insert_record('grade_category', $temp);
-            $uncat_id = get_record('grade_category', 'courseid', $course->id, 'name', $uncat);
-            if (!$uncat_id) {
-                error(get_string('errornocategorizedid','grades'));
-                exit(0);
-            }
-        }
-        
-        set_field('grade_item', 'category', $uncat_id->id, 'courseid', $course->id);
-        set_field('grade_category', 'bonus_points', '0', 'courseid', $course->id);
-        set_field('grade_item', 'scale_grade', 1.00, 'courseid', $course->id);
-        set_field('grade_item', 'extra_credit', 0, 'courseid', $course->id);
-        set_field('grade_category', 'weight', 100.0, 'courseid', $course->id, 'id', $uncat_id->id);
-    }
-}
 
 
 function grade_display_letter_grades() {
@@ -2790,27 +2719,27 @@ function grade_display_letter_grades() {
         $letters[10]->courseid = $course->id;
     }
     
-    print '<table align="center"><tr><th colspan="3">'.get_string('setgradeletters','grades');
+    echo '<table align="center"><tr><th colspan="3">'.get_string('setgradeletters','grades');
     helpbutton('coursegradeletter', get_string('gradeletterhelp','grades'), 'gradebook');
-    print '</th></tr><tr><th>'.get_string('gradeletter','grades').'</th><th>'.get_string('lowgradeletter','grades').'</th><th>'.get_string('highgradeletter','grades').'</th></tr>';
-    print '<form name="grade_letter"><input type="hidden" name="id" value="'.$course->id.'" />';
-    print '<input type="hidden" name="action" value="set_letter_grades" />';
-    print '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+    echo '</th></tr><tr><th>'.get_string('gradeletter','grades').'</th><th>'.get_string('lowgradeletter','grades').'</th><th>'.get_string('highgradeletter','grades').'</th></tr>';
+    echo '<form name="grade_letter"><input type="hidden" name="id" value="'.$course->id.'" />';
+    echo '<input type="hidden" name="action" value="set_letter_grades" />';
+    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     $i=0;
     foreach ($letters as $id=>$items) {
         if ($id !='' && !$using_defaults) {
             // send the record id so if the user deletes the values we can delete the row.
-            print '<input type="hidden" name="id'.$i.'" value="'.$id.'" />';
+            echo '<input type="hidden" name="id'.$i.'" value="'.$id.'" />';
         }
-        print '<tr><td><input size="8" type="text" name="letter'.$i.'" value="'.$items->letter.'" /></td>'."\n";
-        print '<td><input size="8" type="text" name="grade_low'.$i.'" value="'.$items->grade_low.'" /></td>'."\n";
-        print '<td><input size="8" type="text" name="grade_high'.$i.'" value="'.$items->grade_high.'" /></td></tr>'."\n";
+        echo '<tr><td><input size="8" type="text" name="letter'.$i.'" value="'.$items->letter.'" /></td>'."\n";
+        echo '<td><input size="8" type="text" name="grade_low'.$i.'" value="'.$items->grade_low.'" /></td>'."\n";
+        echo '<td><input size="8" type="text" name="grade_high'.$i.'" value="'.$items->grade_high.'" /></td></tr>'."\n";
         $i++;
     }
-    print '<tr><td><input size="8" type="text" name="letter'.$i.'" value="" /></td><td><input size="8" type="text" name="grade_low'.$i.'" value="" /></td><td><input type="text" size="8" name="grade_high'.$i.'" value="" /></td></tr>';
-    print '<tr><td colspan="3" align="center"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
-    print '<input type="hidden" name="totalitems" value="'.$i.'" />';
-    print '</form><tr><td colspan="3">'.get_string('gradeletternote','grades').'</table>';
+    echo '<tr><td><input size="8" type="text" name="letter'.$i.'" value="" /></td><td><input size="8" type="text" name="grade_low'.$i.'" value="" /></td><td><input type="text" size="8" name="grade_high'.$i.'" value="" /></td></tr>';
+    echo '<tr><td colspan="3" align="center"><input type="submit" value="'.get_string('savechanges','grades').'" /></td></tr>';
+    echo '<input type="hidden" name="totalitems" value="'.$i.'" />';
+    echo '</form><tr><td colspan="3">'.get_string('gradeletternote','grades').'</table>';
 }
 
 function grade_set_letter_grades() {
@@ -2847,7 +2776,7 @@ function grade_set_letter_grades() {
             else {
                 if ($i < $totalitems) {
                     if ($newletter->grade_high != '' or $newletter->grade_low != '') {
-                        print '<center>'.get_string('lettergradenonnumber','grades').' '.$newletter->letter.' item number: '.$i.'<br /></center>';
+                        echo '<center>'.get_string('lettergradenonnumber','grades').' '.$newletter->letter.' item number: '.$i.'<br /></center>';
                     }
                 }
             }
@@ -2865,7 +2794,7 @@ function grade_set_letter_grades() {
                     update_record('grade_letter', $items);
                 }
                 else {
-                    print '<center><font color="red">'.get_string('errorgradevaluenonnumeric','grades').$letter.'</font></center>';
+                    echo '<center><font color="red">'.get_string('errorgradevaluenonnumeric','grades').$letter.'</font></center>';
                 }
             }
         }
@@ -2888,29 +2817,29 @@ function grade_show_group_select() {
 
     if ($groups = get_groups($course->id)) {
         // the course uses groups so let them choose one
-        print '<td>'.get_string('viewbygroup', 'grades').':</td><td>';
-        print '<form id="groupselect">';
-        print '<input type="hidden" name="id" value="'.$course->id.'" />';
+        echo '<td>'.get_string('viewbygroup', 'grades').':</td><td>';
+        echo '<form id="groupselect">';
+        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 
         if (isset($_REQUEST['action'])) {
-            print '<input type="hidden" name="action" value="'.clean_param($_REQUEST['action'], PARAM_CLEAN).'" />';
+            echo '<input type="hidden" name="action" value="'.clean_param($_REQUEST['action'], PARAM_CLEAN).'" />';
         }
         
         if (isset($_REQUEST['cview'])) {
-            print '<input type="hidden" name="cview" value="'.clean_param($_REQUEST['cview'], PARAM_CLEAN).'" />';
+            echo '<input type="hidden" name="cview" value="'.clean_param($_REQUEST['cview'], PARAM_CLEAN).'" />';
         }
-        print '<select name="group" onchange="submit();">';
-        print '<option value="0">'.get_string('allstudents','grades').'</option>';
+        echo '<select name="group" onchange="submit();">';
+        echo '<option value="0">'.get_string('allstudents','grades').'</option>';
 
         foreach ($groups as $id => $groupname) {
-            print '<option value="'.$id.'" ';
+            echo '<option value="'.$id.'" ';
             if ($group == $id) {
-                print ' selected="selected" ';
+                echo ' selected="selected" ';
             }
-            print '>'.$groupname->name.'</option>';
+            echo '>'.$groupname->name.'</option>';
         }
-        print '</select>';
-        print '</form></td>';
+        echo '</select>';
+        echo '</form></td>';
     }
 }
 
@@ -2921,23 +2850,23 @@ function grade_download_form($type='both') {
     }
     
     if (isteacher($course->id)) {
-        print '<table align="center"><tr>';
+        echo '<table align="center"><tr>';
         $options['id'] = $course->id;
         
         if ($type = 'both' || $type == 'excel') {
             $options['action'] = 'excel';
-            print '<td align="center">';
+            echo '<td align="center">';
             print_single_button("index.php", $options, get_string("downloadexcel"));
-            print '</td>';
+            echo '</td>';
         }
         if ($type = 'both' || $type == 'text') {
             $options['action'] = 'text';
-            print '<td align="center">';
+            echo '<td align="center">';
             print_single_button("index.php", $options, get_string("downloadtext"));
-            print '</td>';
+            echo '</td>';
         }
         grade_show_group_select();
-        print '</tr></table>';
+        echo '</tr></table>';
     }
 }
 
