@@ -1527,6 +1527,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $str->moveright = get_string("moveright");
         $str->moveleft  = get_string("moveleft");
         $str->update    = get_string("update");
+        $str->duplicate    = get_string("duplicate");
         $str->hide      = get_string("hide");
         $str->show      = get_string("show");
         $str->clicktochange  = get_string("clicktochange");
@@ -1603,6 +1604,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     return "$leftright$move".
            "<a title=\"$str->update\" href=\"$path/mod.php?update=$mod->id\"><img".
            " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 border=0></a>".
+           "<a title=\"$str->duplicate\" href=\"$path/mod.php?duplicate=$mod->id\"> 2 </a>".
            "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$mod->id\"><img".
            " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 border=0></a>$hideshow$groupmode";
 }

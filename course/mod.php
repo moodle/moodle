@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-//  Moves, adds, updates or deletes modules in a course
+//  Moves, adds, updates, duplicates or deletes modules in a course
 
     require("../config.php");
     require("lib.php");
@@ -68,6 +68,50 @@
                            "$mod->instance", $mod->coursemodule); 
                 break;
 
+            case "add":
+                $return = $addinstancefunction($mod);
+                if (!$return) {
+                    if (file_exists($moderr)) {
+                        $form = $mod;
+                        include_once($moderr);
+                        die;
+                    }
+                    error("Could not add a new instance of $mod->modulename", "view.php?id=$course->id");
+                }
+                if (is_string($return)) {
+                    error($return, "view.php?id=$course->id");
+                }
+
+                $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
+
+                $mod->instance = $return;
+                // course_modules and course_sections each contain a reference 
+                // to each other, so we have to update one of them twice.
+
+                if (! $mod->coursemodule = add_course_module($mod) ) {
+                    error("Could not add a new course module");
+                }
+                if (! $sectionid = add_mod_to_section($mod) ) {
+                    error("Could not add the new course module to that section");
+                }
+                //We get the section's visible field status
+                $visible = get_field("course_sections","visible","id",$sectionid);
+
+                if (! set_field("course_modules", "visible", $visible, "id", $mod->coursemodule)) {
+                    error("Could not update the course module with the correct visibility");
+                }   
+
+                if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+                    error("Could not update the course module with the correct section");
+                }   
+                add_to_log($course->id, "course", "add mod", 
+                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
+                           "$mod->modulename $mod->instance"); 
+                add_to_log($course->id, $mod->modulename, "add", 
+                           "view.php?id=$mod->coursemodule", 
+                           "$mod->instance", $mod->coursemodule); 
+                break;
+                
             case "add":
                 $return = $addinstancefunction($mod);
                 if (!$return) {
@@ -454,6 +498,57 @@
             $pageheading = get_string("updatingain", "moodle", $heading);
         } else {
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
+        }
+
+    } else if (isset($_GET['duplicate'])) {   // value = course module
+
+        if (! $cm = get_record("course_modules", "id", $_GET['duplicate'])) {
+            error("This course module doesn't exist");
+        }
+
+        if (! $course = get_record("course", "id", $cm->course)) {
+            error("This course doesn't exist");
+        }
+
+        if (!isteacheredit($course->id)) {
+            error("You can't modify this course!");
+        }
+
+        if (! $module = get_record("modules", "id", $cm->module)) {
+            error("This module doesn't exist");
+        }
+
+        if (! $form = get_record($module->name, "id", $cm->instance)) {
+            error("The required instance of this module doesn't exist");
+        }
+        
+        if (! $cw = get_record("course_sections", "id", $cm->section)) {
+            error("This course section doesn't exist");
+        }
+
+        if (isset($return)) {  
+            $SESSION->returnpage = "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
+        }
+        
+        $section = get_field('course_sections', 'section', 'id', $cm->section);
+
+        $form->coursemodule = $cm->id;
+        $form->section      = $section;     // The section ID
+        $form->course       = $course->id;
+        $form->module       = $module->id;
+        $form->modulename   = $module->name;
+        $form->instance     = $cm->instance;
+        $form->mode         = "add";
+
+        $sectionname    = get_string("name$course->format");
+        $fullmodulename = strtolower(get_string("modulename", $module->name));
+
+        if ($form->section) {
+            $heading->what = $fullmodulename;
+            $heading->in   = "$sectionname $cw->section";
+            $pageheading = get_string("duplicatingain", "moodle", $heading);
+        } else {
+            $pageheading = get_string("duplicatinga", "moodle", $fullmodulename);
         }
 
         
