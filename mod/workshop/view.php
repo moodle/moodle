@@ -84,11 +84,11 @@
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
 		}
-
-		// move to phase 4
-		set_field("workshop", "phase", 4, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "assessments only", "view.php?id=$cm->id", "$workshop->id", $cm->id);
-		redirect("view.php?id=$cm->id", get_string("movingtophase", "workshop", 4));
+        
+        // move to phase 4
+        set_field("workshop", "phase", 4, "id", "$workshop->id");
+        add_to_log($course->id, "workshop", "assessments only", "view.php?id=$cm->id", "$workshop->id", $cm->id);
+        redirect("view.php?id=$cm->id", get_string("movingtophase", "workshop", 4));
 	}
 	
 
@@ -394,11 +394,20 @@
                             "3. ".get_string("phase3", "workshop", $course->student), 
                             "4. ".get_string("phase4", "workshop", $course->student), 
                             "5. ".get_string("phase5", "workshop"));
-            $tabs->urls = array("view.php?id=$cm->id&amp;action=setupassignment", 
-                "view.php?id=$cm->id&amp;action=allowsubmissions",
-                "view.php?id=$cm->id&amp;action=allowboth",
-                "view.php?id=$cm->id&amp;action=allowassessments",
-                "view.php?id=$cm->id&amp;action=makefinalgradesavailable");
+            if (isteacheredit($course->id)) {
+                $tabs->urls = array("view.php?id=$cm->id&amp;action=setupassignment", 
+                    "view.php?id=$cm->id&amp;action=allowsubmissions",
+                    "view.php?id=$cm->id&amp;action=allowboth",
+                    "view.php?id=$cm->id&amp;action=allowassessments",
+                    "view.php?id=$cm->id&amp;action=makefinalgradesavailable");
+            } else { 
+                // non editing teachers cannot change phase
+                $tabs->urls = array("view.php?id=$cm->id", 
+                    "view.php?id=$cm->id",
+                    "view.php?id=$cm->id",
+                    "view.php?id=$cm->id",
+                    "view.php?id=$cm->id");
+            }
         }
         if ($workshop->phase) { // phase 1 or more
             $tabs->highlight = $workshop->phase - 1;

@@ -1249,8 +1249,10 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                     $action .= " | <a href=\"assessments.php?action=adminlist&amp;id=$cm->id&amp;sid=$submission->id\">".
                         get_string("listassessments", "workshop")."</a>";
                 }
-                $action .= " | <a href=\"submissions.php?action=adminconfirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
-                    get_string("delete", "workshop")."</a>";
+                if (isteacheredit($course->id)) {
+                    $action .= " | <a href=\"submissions.php?action=adminconfirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
+                        get_string("delete", "workshop")."</a>";
+                }
                 $table->data[] = array("<a href=\"submissions.php?action=editsubmission&amp;id=$cm->id&amp;sid=$submission->id\">$submission->title</a>", $course->teacher, $action);
             }
             print_heading(get_string("studentsubmissions", "workshop", $course->teacher), "center");
