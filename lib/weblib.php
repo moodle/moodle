@@ -3485,8 +3485,8 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
     $maxdisplay = 18;
 
     if ($totalcount > $perpage) {
-        echo '<center>';
-        echo '<p>'.get_string('page').':';
+        echo '<div class="paging">';
+        echo get_string('page').':';
         if ($page > 0) {
             $pagenum=$page-1;
             echo '&nbsp;(<a  href="'. $baseurl .'page='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
@@ -3518,8 +3518,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
         if ($pagenum != $displaypage) {
             echo '&nbsp;&nbsp;(<a href="'. $baseurl .'page='. $pagenum .'">'. get_string('next') .'</a>)';
         }
-        echo '</p>';
-        echo '</center>';
+        echo '</div>';
     }
 }
 
