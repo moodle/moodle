@@ -33,6 +33,7 @@ CREATE TABLE `prefix_quiz` (
   `grade` int(10) NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
+  `timelimit` int(2) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Main information about each quiz';
 # --------------------------------------------------------

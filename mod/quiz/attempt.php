@@ -74,6 +74,25 @@
         error("Sorry, you've had $quiz->attempts attempts already.", "view.php?id=$cm->id");
     }
 
+/// BEGIN EDIT Get time limit if any.
+
+    $timelimit = $quiz->timelimit * 60;
+
+    if($timelimit > 0) {
+        $unattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id);
+        $timestart = $unattempt->timestart;
+        if($timestart) {
+            $timesincestart = time() - $timestart;
+            $timerstartvalue = $timelimit - $timesincestart;
+        } else {
+            $timerstartvalue = $timelimit;
+        }
+    }
+
+    if($timelimit and $timerstartvalue <= 0) {
+        $timerstartvalue = 1;
+    }
+/// END EDIT
     $timenow = time();
     $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
 
@@ -85,7 +104,7 @@
         $shuffleorder = NULL;
 
         unset($rawanswers["q"]);  // quiz id
-        if (! count($rawanswers)) {
+        if (! count($rawanswers) and ! $timelimit) {
             print_heading(get_string("noanswers", "quiz"));
             print_continue("attempt.php?q=$quiz->id");
             exit;
@@ -246,7 +265,13 @@
         print_continue("view.php?id=$cm->id");
     }
 
+/// BEGIN EDIT if quiz is available and time limit is set
+/// include floating timer.
 
+    if($available and $timelimit > 0) {
+        require('jstimer.php');
+    }
+/// END EDIT
 /// Finish the page
     print_footer($course);
 

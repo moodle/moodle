@@ -45,9 +45,9 @@ define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 function quiz_add_instance($quiz) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
-/// will create a new instance and return the id number 
+/// Given an object containing all the necessary data,
+/// (defined by the form in mod.html) this function
+/// will create a new instance and return the id number
 /// of the new instance.
 
     global $SESSION;
@@ -56,9 +56,9 @@ function quiz_add_instance($quiz) {
 
     $quiz->created      = time();
     $quiz->timemodified = time();
-    $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday, 
+    $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
                                      $quiz->openhour, $quiz->openminute, 0);
-    $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday, 
+    $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
                                       $quiz->closehour, $quiz->closeminute, 0);
 
     if (!$quiz->id = insert_record("quiz", $quiz)) {
@@ -116,8 +116,8 @@ function quiz_add_instance($quiz) {
 
 
 function quiz_update_instance($quiz) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
+/// Given an object containing all the necessary data,
+/// (defined by the form in mod.html) this function
 /// will update an existing instance with new data.
 
     global $SESSION;
@@ -125,9 +125,9 @@ function quiz_update_instance($quiz) {
     unset($SESSION->modform);
 
     $quiz->timemodified = time();
-    $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday, 
+    $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
                                      $quiz->openhour, $quiz->openminute, 0);
-    $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday, 
+    $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
                                       $quiz->closehour, $quiz->closeminute, 0);
     $quiz->id = $quiz->instance;
 
@@ -200,9 +200,9 @@ function quiz_update_instance($quiz) {
 
 
 function quiz_delete_instance($id) {
-/// Given an ID of an instance of this module, 
-/// this function will permanently delete the instance 
-/// and any data that depends on it.  
+/// Given an ID of an instance of this module,
+/// this function will permanently delete the instance
+/// and any data that depends on it.
 
     if (! $quiz = get_record("quiz", "id", "$id")) {
         return false;
@@ -271,13 +271,13 @@ function quiz_delete_course($course) {
 
 
 function quiz_user_outline($course, $user, $mod, $quiz) {
-/// Return a small object with summary information about what a 
+/// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
     if ($grade = get_record("quiz_grades", "userid", $user->id, "quiz", $quiz->id)) {
-        
+
         if ($grade->grade) {
             $result->info = get_string("grade").": $grade->grade";
         }
@@ -290,7 +290,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 }
 
 function quiz_user_complete($course, $user, $mod, $quiz) {
-/// Print a detailed representation of what a  user has done with 
+/// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
 
     return true;
@@ -298,8 +298,8 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
 
 function quiz_cron () {
 /// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such 
-/// as sending out mail, toggling flags etc ... 
+/// This function searches for things that need to be done, such
+/// as sending out mail, toggling flags etc ...
 
     global $CFG;
 
@@ -328,7 +328,7 @@ function quiz_get_participants($quizid) {
     return get_records_sql("SELECT DISTINCT u.*
                             FROM {$CFG->prefix}user u,
                                  {$CFG->prefix}quiz_attempts a
-                            WHERE a.quiz = '$quizid' and  
+                            WHERE a.quiz = '$quizid' and
                                   u.id = a.userid");
 }
 
@@ -349,7 +349,7 @@ function quiz_refresh_events($courseid = 0) {
         }
     }
     $moduleid = get_field('modules', 'id', 'name', 'quiz');
-    
+
     foreach ($quizzes as $quiz) {
         $event = NULL;
         $event2 = NULL;
@@ -416,32 +416,32 @@ function quiz_refresh_events($courseid = 0) {
 
 function quiz_move_questions($category1, $category2) {
     global $CFG;
-    return execute_sql("UPDATE {$CFG->prefix}quiz_questions 
-                           SET category = '$category2' 
-                         WHERE category = '$category1'", 
+    return execute_sql("UPDATE {$CFG->prefix}quiz_questions
+                           SET category = '$category2'
+                         WHERE category = '$category1'",
                        false);
 }
 
 function quiz_get_question_grades($quizid, $questionlist) {
     global $CFG;
 
-    return get_records_sql("SELECT question,grade 
-                            FROM {$CFG->prefix}quiz_question_grades 
-                            WHERE quiz = '$quizid' 
+    return get_records_sql("SELECT question,grade
+                            FROM {$CFG->prefix}quiz_question_grades
+                            WHERE quiz = '$quizid'
                             AND question IN ($questionlist)");
 }
 
 function quiz_get_random_categories($questionlist) {
 /// Given an array of questions, this function looks for random
-/// questions among them and returns a list of categories with 
+/// questions among them and returns a list of categories with
 /// an associated count of random questions for each.
 
     global $CFG;
 
-    return get_records_sql_menu("SELECT category,count(*) 
-                            FROM {$CFG->prefix}quiz_questions 
-                            WHERE id IN ($questionlist) 
-                              AND qtype = '".RANDOM."' 
+    return get_records_sql_menu("SELECT category,count(*)
+                            FROM {$CFG->prefix}quiz_questions
+                            WHERE id IN ($questionlist)
+                              AND qtype = '".RANDOM."'
                               GROUP BY category ");
 }
 
@@ -450,8 +450,8 @@ function quiz_get_grade_records($quiz) {
 /// for report.php
     global $CFG;
 
-    return get_records_sql("SELECT qg.*, u.firstname, u.lastname, u.picture 
-                            FROM {$CFG->prefix}quiz_grades qg, 
+    return get_records_sql("SELECT qg.*, u.firstname, u.lastname, u.picture
+                            FROM {$CFG->prefix}quiz_grades qg,
                                  {$CFG->prefix}user u
                             WHERE qg.quiz = '$quiz->id'
                               AND qg.userid = u.id");
@@ -470,9 +470,9 @@ function quiz_get_answers($question, $answerids=NULL) {
     switch ($question->qtype) {
         case SHORTANSWER:       // Could be multiple answers
             return get_records_sql("SELECT a.*, sa.usecase
-                                      FROM {$CFG->prefix}quiz_shortanswer sa,  
+                                      FROM {$CFG->prefix}quiz_shortanswer sa,
                                            {$CFG->prefix}quiz_answers a
-                                     WHERE sa.question = '$question->id' 
+                                     WHERE sa.question = '$question->id'
                                        AND sa.question = a.question "
                                   . $answeridconstraint);
 
@@ -481,9 +481,9 @@ function quiz_get_answers($question, $answerids=NULL) {
 
         case MULTICHOICE:       // Should be multiple answers
             return get_records_sql("SELECT a.*, mc.single
-                                      FROM {$CFG->prefix}quiz_multichoice mc, 
+                                      FROM {$CFG->prefix}quiz_multichoice mc,
                                            {$CFG->prefix}quiz_answers a
-                                     WHERE mc.question = '$question->id' 
+                                     WHERE mc.question = '$question->id'
                                        AND mc.question = a.question "
                                   . $answeridconstraint);
 
@@ -492,9 +492,9 @@ function quiz_get_answers($question, $answerids=NULL) {
 
         case RANDOMSAMATCH:       // Could be any of many answers, return them all
             return get_records_sql("SELECT a.*
-                                      FROM {$CFG->prefix}quiz_questions q,  
+                                      FROM {$CFG->prefix}quiz_questions q,
                                            {$CFG->prefix}quiz_answers a
-                                     WHERE q.category = '$question->category' 
+                                     WHERE q.category = '$question->category'
                                        AND q.qtype = ".SHORTANSWER."
                                        AND q.id = a.question ");
 
@@ -515,7 +515,7 @@ function quiz_get_answers($question, $answerids=NULL) {
 
         case MULTIANSWER:       // Includes subanswers
             $answers = array();
-            
+
             $virtualquestion->id = $question->id;
 
             if ($multianswers = get_records('quiz_multianswers', 'question', $question->id)) {
@@ -535,16 +535,16 @@ function quiz_get_answers($question, $answerids=NULL) {
 
 
 function quiz_get_attempt_responses($attempt) {
-// Given an attempt object, this function gets all the 
+// Given an attempt object, this function gets all the
 // stored responses and returns them in a format suitable
 // for regrading using quiz_grade_attempt_results()
     global $CFG;
-   
-    if (!$responses = get_records_sql("SELECT q.id, q.qtype, q.category, q.questiontext, 
-                                              q.defaultgrade, q.image, r.answer 
-                                        FROM {$CFG->prefix}quiz_responses r, 
+
+    if (!$responses = get_records_sql("SELECT q.id, q.qtype, q.category, q.questiontext,
+                                              q.defaultgrade, q.image, r.answer
+                                        FROM {$CFG->prefix}quiz_responses r,
                                              {$CFG->prefix}quiz_questions q
-                                       WHERE r.attempt = '$attempt->id' 
+                                       WHERE r.attempt = '$attempt->id'
                                          AND q.id = r.question")) {
         notify("Could not find any responses for that attempt!");
         return false;
@@ -585,7 +585,7 @@ function get_list_of_questions($questionlist) {
 
     global $CFG;
 
-    return get_records_sql("SELECT q.*,c.course 
+    return get_records_sql("SELECT q.*,c.course
                               FROM {$CFG->prefix}quiz_questions q,
                                    {$CFG->prefix}quiz_categories c
                              WHERE q.id in ($questionlist)
@@ -593,7 +593,7 @@ function get_list_of_questions($questionlist) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-/// Any other quiz functions go here.  Each of them must have a name that 
+/// Any other quiz functions go here.  Each of them must have a name that
 /// starts with quiz_
 
 function quiz_print_comment($text) {
@@ -672,7 +672,7 @@ function quiz_print_possible_question_image($quizid, $question) {
     }
 }
 
-function quiz_print_question($number, $question, $grade, $quizid, 
+function quiz_print_question($number, $question, $grade, $quizid,
                              $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL,
                              $realquestion=NULL, $shuffleanswers=false, $showgrades=true, $courseid=0) {
 
@@ -709,7 +709,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
         }
     }
     print_spacer(1,100);
-    
+
     if (isset($question->recentlyadded) and $question->recentlyadded) {
         echo '</td><td valign="top" align="right">';
         // Notify the user of this recently added question
@@ -723,7 +723,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
     }
 
 
-    if (empty($realquestion)) { 
+    if (empty($realquestion)) {
         $realquestion->id = $question->id;
     } else {    // Add a marker to connect this question to the actual random parent
         echo "<input type=\"hidden\" name=\"q{$realquestion->id}rq$question->id\" value=\"x\" />\n";
@@ -731,7 +731,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
     switch ($question->qtype) {
 
-       case SHORTANSWER: 
+       case SHORTANSWER:
        case NUMERICAL:
            echo format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
@@ -854,7 +854,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            echo "</td></tr></table>";
            break;
 
-       case MATCH: 
+       case MATCH:
            if (!$options = get_record("quiz_match", "question", $question->id)) {
                notify("Error: Missing question options!");
            }
@@ -907,7 +907,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
            break;
 
-       case RANDOMSAMATCH: 
+       case RANDOMSAMATCH:
            if (!$options = get_record("quiz_randomsamatch", "question", $question->id)) {
                notify("Error: Missing question options!");
            }
@@ -916,7 +916,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
            /// First, get all the questions available
 
-           $allquestions = get_records_select("quiz_questions", 
+           $allquestions = get_records_select("quiz_questions",
                                               "category = $question->category AND qtype = ".SHORTANSWER);
            if (count($allquestions) < $options->choose) {
                notify("Error: could not find enough Short Answer questions in the database!");
@@ -937,7 +937,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
                    $responseanswer[$key] = $rrr[1];
                }
            }
-    
+
            /// For each selected, find the best matching answers
 
            foreach ($randomquestions as $randomquestion) {
@@ -999,7 +999,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
            $qtextremaining = format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
 
-           // The regex will recognize text snippets of type {#X} 
+           // The regex will recognize text snippets of type {#X}
            // where the X can be any text not containg } or white-space characters.
 
            $strfeedback = get_string('feedback', 'quiz');
@@ -1024,7 +1024,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
                    } else if ('' != $actualresponse) {
                        // The response must have been totally wrong:
                        $style = 'style="background-color:red"';
-                   } else { 
+                   } else {
                        // There was no response given
                        $style = '';
                    }
@@ -1050,7 +1050,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
                    case MULTICHOICE:
                        $outputoptions = '';
                        $answers = get_records_list("quiz_answers", "id", $multianswer->answers);
-                       $outputoptions .= '<option></option>'; // Default empty option 
+                       $outputoptions .= '<option></option>'; // Default empty option
                        foreach ($answers as $answer) {
                            if ($answer->id == $actualresponse) {
                                $selected = 'selected';
@@ -1087,7 +1087,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            echo '<p>' . get_string('random', 'quiz') . '</p>';
            break;
 
-       default: 
+       default:
            notify("Error: Unknown question type!");
     }
 
@@ -1143,7 +1143,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
     }
 
 
-    /// Examine the set of questions for random questions, and retrieve them 
+    /// Examine the set of questions for random questions, and retrieve them
 
     if (empty($results)) {   // Choose some new random questions
         if ($randomcats = quiz_get_random_categories($quiz->questions)) {
@@ -1178,8 +1178,22 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
     } else {
         $onsubmit = "onsubmit=\"return confirm('$strconfirmattempt');\"";
     }
-
+    // BEGIN EDIT
+    if($quiz->timelimit > 0) {
+        ?>
+        <script language="javascript" type="text/javascript">
+        <!--
+            document.write("<form method=\"post\" action=\"attempt.php\" <?php print(addslashes($onsubmit));?>>\n");
+        // -->
+        </script>
+        <noscript>
+        <center><p><strong>Javascript must be enabled!</strong></p></center>
+        </noscript>
+        <?php
+    } else {
     echo "<form method=\"post\" action=\"attempt.php\" $onsubmit>\n";
+    }
+    // END EDIT
     echo "<input type=\"hidden\" name=\"q\" value=\"$quiz->id\" />\n";
 
     $count = 0;
@@ -1228,8 +1242,8 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         }
 
         print_simple_box_start("center", "90%");
-        quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->id, 
-                            $feedback, $response, $actualgrades, $correct, 
+        quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->id,
+                            $feedback, $response, $actualgrades, $correct,
                             $randomquestion, $quiz->shuffleanswers, $quiz->grade, $quiz->course);
         print_simple_box_end();
         echo "<br />";
@@ -1250,7 +1264,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
 }
 
 
- 
+
 function quiz_get_default_category($courseid) {
 /// Returns the current category
 
@@ -1310,7 +1324,7 @@ function quiz_print_category_form($course, $current) {
     echo "</td><td>";
     popup_form ("edit.php?cat=", $catmenu, "catmenu", $current, "choose", "", "", false, "self");
     echo "</td><td align=\"right\">";
-    echo "<form method=\"get\" action=\"category.php\">"; 
+    echo "<form method=\"get\" action=\"category.php\">";
     echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
     echo "<input type=\"submit\" value=\"$streditcats\" />";
     echo "</form>";
@@ -1323,10 +1337,10 @@ function quiz_choose_random_questions($category, $draws, $excluded=0) {
 /// Given a question category and a number of draws, this function
 /// creates a random subset of that size - returned as an array of questions
 
-    if (!$pool = get_records_select_menu("quiz_questions", 
-                "category = '$category' AND id NOT IN ($excluded) 
-                                        AND qtype <> ".RANDOM." 
-                                        AND qtype <> ".DESCRIPTION, 
+    if (!$pool = get_records_select_menu("quiz_questions",
+                "category = '$category' AND id NOT IN ($excluded)
+                                        AND qtype <> ".RANDOM."
+                                        AND qtype <> ".DESCRIPTION,
                                         "", "id,qtype")) {
         return false;
     }
@@ -1347,7 +1361,7 @@ function quiz_choose_random_questions($category, $draws, $excluded=0) {
 
 
 function quiz_get_all_question_grades($questionlist, $quizid) {
-// Given a list of question IDs, finds grades or invents them to 
+// Given a list of question IDs, finds grades or invents them to
 // create an array of matching grades
 
     if (empty($questionlist)) {
@@ -1441,13 +1455,13 @@ function quiz_print_question_list($questionlist, $grades) {
         echo "<td>$count</td>";
         echo "<td>";
         if ($count != 1) {
-            echo "<a title=\"$strmoveup\" href=\"edit.php?up=$qnum\"><img 
+            echo "<a title=\"$strmoveup\" href=\"edit.php?up=$qnum\"><img
                  src=\"../../pix/t/up.gif\" border=\"0\"></a>";
         }
         echo "</td>";
         echo "<td>";
         if ($count != $total) {
-            echo "<a title=\"$strmovedown\" href=\"edit.php?down=$qnum\"><img 
+            echo "<a title=\"$strmovedown\" href=\"edit.php?down=$qnum\"><img
                  src=\"../../pix/t/down.gif\" border=\"0\"></a>";
         }
         echo "</td>";
@@ -1463,10 +1477,10 @@ function quiz_print_question_list($questionlist, $grades) {
                              "q$qnum", (string)$grades[$qnum], "");
         }
         echo "<td>";
-            echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum\"><img 
+            echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum\"><img
                  src=\"../../pix/t/delete.gif\" border=\"0\"></a>&nbsp;";
             if ($canedit) {
-                echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\"><img 
+                echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\"><img
                      src=\"../../pix/t/edit.gif\" border=\"0\"></a>\n";
             }
         echo "</td>";
@@ -1528,14 +1542,14 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     echo '<table><tr>';
     echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
     echo '<td valign="top" align="right">';
-    popup_form ("question.php?category=$category->id&qtype=", $QUIZ_QUESTION_TYPE, "addquestion", 
+    popup_form ("question.php?category=$category->id&qtype=", $QUIZ_QUESTION_TYPE, "addquestion",
                 "", "choose", "", "", false, "self");
     echo '<td width="10" valign="top" align="right">';
     helpbutton("questiontypes", $strcreatenewquestion, "quiz");
     echo '</td></tr>';
 
     echo '<tr><td colspan="3" align="right">';
-    echo '<form method="get" action="import.php">'; 
+    echo '<form method="get" action="import.php">';
     echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     echo "<input type=\"submit\" value=\"$strimportquestions\" />";
     helpbutton("import", $strimportquestions, "quiz");
@@ -1543,7 +1557,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     echo '</td></tr>';
 
     echo '<tr><td colspan="3" align="right">';
-    echo '<form method="get" action="multiple.php">'; 
+    echo '<form method="get" action="multiple.php">';
     echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     echo "<input type=\"submit\" value=\"$strcreatemultiple\" />";
     helpbutton("createmultiple", $strcreatemultiple, "quiz");
@@ -1587,9 +1601,9 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         echo "</td>\n";
         if ($canedit) {
             echo "<td>\n";
-                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&delete=$question->id\">\n<img 
+                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&delete=$question->id\">\n<img
                      src=\"../../pix/t/delete.gif\" border=0></a>&nbsp;";
-                echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img 
+                echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
                      src=\"../../pix/t/edit.gif\" border=0></a>";
             echo "</td>\n";// deleted </tr> jm
         }
@@ -1612,7 +1626,7 @@ function quiz_start_attempt($quizid, $userid, $numattempt) {
     $attempt->userid = $userid;
     $attempt->attempt = $numattempt;
     $attempt->timestart = time();
-    $attempt->timefinish = 0; 
+    $attempt->timefinish = 0;
     $attempt->timemodified = time();
 
     return insert_record("quiz_attempts", $attempt);
@@ -1625,13 +1639,13 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
 
 function quiz_get_user_attempts($quizid, $userid) {
 // Returns a list of all attempts by a user
-    return get_records_select("quiz_attempts", "quiz = '$quizid' AND userid = '$userid' AND timefinish > 0", 
+    return get_records_select("quiz_attempts", "quiz = '$quizid' AND userid = '$userid' AND timefinish > 0",
                               "attempt ASC");
 }
 
 
 function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
-/// Returns a simple little comma-separated list of all attempts, 
+/// Returns a simple little comma-separated list of all attempts,
 /// with each grade linked to the feedback report and with the best grade highlighted
 
     $bestgrade = format_float($bestgrade);
@@ -1760,7 +1774,7 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
 
 
 function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
-/// Given a quiz, a list of attempted questions and a total grade 
+/// Given a quiz, a list of attempted questions and a total grade
 /// this function saves EVERYTHING so it can be reconstructed later
 /// if necessary.
 
@@ -1888,7 +1902,7 @@ function quiz_grade_attempt_question_result($question,
                     && (float)$answer->fraction > (float)$grade // Do we need to bother?
                     and                      // and has lower procedence than && and ||.
                     strtolower($question->answer) == strtolower($answer->answer)
-                    || '' != trim($answer->min) 
+                    || '' != trim($answer->min)
                     && ((float)$question->answer >= (float)$answer->min)
                     && ((float)$question->answer <= (float)$answer->max))
                 {
@@ -1948,9 +1962,9 @@ function quiz_grade_attempt_question_result($question,
                 $qarr = explode('-', $questionanswer);        // Extract subquestion/answer.
                 $subquestionid = $qarr[0];
                 $subanswerid = $qarr[1];
-                if ($subquestionid and $subanswerid and (($subquestionid == $subanswerid) or 
-                    ($answers[$subquestionid]->answertext == $answers[$subanswerid]->answertext))) {   
-                    // Either the ids match exactly, or the answertexts match exactly 
+                if ($subquestionid and $subanswerid and (($subquestionid == $subanswerid) or
+                    ($answers[$subquestionid]->answertext == $answers[$subanswerid]->answertext))) {
+                    // Either the ids match exactly, or the answertexts match exactly
                     // (in case two subquestions had the same answer)
                     $matchcount++;
                     $correct[$subquestionid] = true;
@@ -1983,7 +1997,7 @@ function quiz_grade_attempt_question_result($question,
                 $ranswer = $rqarr[1];
                 $response[$rquestion] = $questionanswer;
                 if (isset($answers[$ranswer])) {         // If the answer exists in the list
-                    $answer = $answers[$ranswer];         
+                    $answer = $answers[$ranswer];
                     $feedback[$rquestion] = $answer->feedback;
                     if ($answer->question == $rquestion) {    // Check that this answer matches the question
                         $grade += (float)$answer->fraction * $question->grade * $answerfraction;
@@ -1997,7 +2011,7 @@ function quiz_grade_attempt_question_result($question,
             $subquestion->grade = 1.0;
 
             foreach ($question->answer as $questionanswer) {
-                
+
                 // Resetting default values for subresult:
                 $subresult->grade = 0.0;
                 $subresult->correct = array();
@@ -2054,9 +2068,9 @@ function quiz_grade_attempt_question_result($question,
 
 function quiz_grade_attempt_results($quiz, $questions) {
 /// Given a list of questions (including answers for each one)
-/// this function does all the hard work of calculating the 
-/// grades for each question, as well as a total grade for 
-/// for the whole quiz.  It returns everything in a structure 
+/// this function does all the hard work of calculating the
+/// grades for each question, as well as a total grade for
+/// for the whole quiz.  It returns everything in a structure
 /// that looks like:
 /// $result->sumgrades    (sum of all grades for all questions)
 /// $result->percentage   (Percentage of grades that were correct)
@@ -2079,7 +2093,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
     foreach ($questions as $question) {
 
         $question->grade = $grades[$question->id];
-        
+
         if (!$answers = quiz_get_answers($question)) {
             error("No answers defined for question id $question->id!");
         }
@@ -2106,18 +2120,18 @@ function quiz_grade_attempt_results($quiz, $questions) {
 function quiz_save_question_options($question) {
 /// Given some question info and some data about the the answers
 /// this function parses, organises and saves the question
-/// It is used by question.php when saving new data from a 
+/// It is used by question.php when saving new data from a
 /// form, and also by import.php when importing questions
-/// 
+///
 /// If this is an update, and old answers already exist, then
-/// these are overwritten using an update().  To do this, it 
+/// these are overwritten using an update().  To do this, it
 /// it is assumed that the IDs in quiz_answers are in the same
 /// sort order as the new answers being saved.  This should always
 /// be true, but it's something to keep in mind if fiddling with
 /// question.php
 ///
 /// Returns $result->error or $result->noticeyesno or $result->notice
-    
+
     switch ($question->qtype) {
         case SHORTANSWER:
 
@@ -2324,7 +2338,7 @@ function quiz_save_question_options($question) {
             if (!$oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC")) {
                 $oldanswers = array();
             }
-            
+
 
             // following hack to check at least two answers exist
             $answercount = 0;
@@ -2338,8 +2352,8 @@ function quiz_save_question_options($question) {
                 $result->notice = get_string("notenoughanswers", "quiz", "2");
                 return $result;
             }
-            
-            
+
+
 
             // Insert all the new answers
 
@@ -2437,7 +2451,7 @@ function quiz_save_question_options($question) {
             }
 
 
-            
+
             $subquestions = array();
 
             // Insert all the new question+answer pairs
@@ -2653,7 +2667,7 @@ function quiz_save_multianswer_alternatives
     // Removal of obsolete alternatives from answers and quiz_numerical:
     while ($altobsolete = array_shift($oldalternatives)) {
         delete_records("quiz_answers", "id", $altobsolete->id);
-        
+
         // Possibly obsolute numerical options are also to be deleted:
         delete_records("quiz_numerical", 'answer', $altobsolete->id);
     }
@@ -2662,15 +2676,15 @@ function quiz_save_multianswer_alternatives
     switch ($answertype) {
         case NUMERICAL:
             if (!empty($oldalternativeids)) {
-                delete_records('quiz_shortanswer', 'answers', 
+                delete_records('quiz_shortanswer', 'answers',
 $oldalternativeids);
-                delete_records('quiz_multichoice', 'answers', 
+                delete_records('quiz_multichoice', 'answers',
 $oldalternativeids);
             }
             break;
         case SHORTANSWER:
             if (!empty($oldalternativeids)) {
-                delete_records('quiz_multichoice', 'answers', 
+                delete_records('quiz_multichoice', 'answers',
 $oldalternativeids);
                 $options = get_record('quiz_shortanswer',
                                       'answers', $oldalternativeids);
@@ -2695,7 +2709,7 @@ $oldalternativeids);
             break;
         case MULTICHOICE:
             if (!empty($oldalternativeids)) {
-                delete_records('quiz_shortanswer', 'answers', 
+                delete_records('quiz_shortanswer', 'answers',
 $oldalternativeids);
                 $options = get_record('quiz_multichoice',
                                       'answers', $oldalternativeids);
@@ -2722,7 +2736,7 @@ $oldalternativeids);
         default:
             return false;
     }
-    return $answers;       
+    return $answers;
 }
 
 function quiz_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $quiz="0", $user="", $groupid="") {
