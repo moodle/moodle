@@ -988,16 +988,22 @@ function print_category_info($category, $depth) {
                 echo "</td>\n<td align=\"right\" valign=\"top\" nowrap class=\"coursename\">";
                 if ($course->guest ) {
                     echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=2 alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
+                    echo "<img hspace=1 alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
+                } else {
+                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$pixpath/spacer.gif\">";
                 }
                 if ($course->password) {
                     echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=2 alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+                    echo "<img hspace=1 alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+                } else {
+                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$pixpath/spacer.gif\">";
                 }
                 if ($course->summary) {
                     link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo", 
-                                          "<img hspace=2 alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
+                                          "<img hspace=1 alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
                                            400, 500, $strsummary);
+                } else {
+                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$pixpath/spacer.gif\">";
                 }
                 echo "</td></tr>\n";
             }
