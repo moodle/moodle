@@ -41,7 +41,7 @@
 
                 add_to_log($post->course, "forum", "add post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
                 redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
-                         get_string("postadded", "forum", format_time($CFG->maxeditingtime)), 3);
+                         get_string("postadded", "forum", format_time($CFG->maxeditingtime)), 2);
             } else {
                 error(get_string("couldnotadd", "forum")); 
             }
