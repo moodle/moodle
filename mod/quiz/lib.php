@@ -347,7 +347,7 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            }
            echo "<TABLE ALIGN=right>";
            echo "<TR><TD valign=top>$stranswer:&nbsp;&nbsp;</TD><TD>";
-           echo "<TABLE ALIGN=right>";
+           echo "<TABLE>";
            $answerids = explode(",", $options->answers);
 
            foreach ($answerids as $key => $answerid) {
