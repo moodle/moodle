@@ -965,14 +965,19 @@ function document_file($file, $include=true) {
 /// Can include a given document file (depends on second
 /// parameter) or just return info about it
 
-    global $CFG;
+    global $CFG, $SESSION;
 
     if (empty($file)) {
         echo "Error 404";
         return false;
     }
 
-    $lang = current_language();
+    if (!empty($SESSION->doclang)) {
+        $lang = $SESSION->doclang;
+    } else {
+        $lang = current_language();
+    }
+
     $file = clean_filename($file);
 
     $info->filepath = "$CFG->dirroot/lang/$lang/docs/$file";
