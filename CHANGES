@@ -1,3 +1,139 @@
+2002-08-19 Monday 21:25  martin
+
+	* doc/: contents.html, developer.html, licence.html: 
+	
+	
+	Format fixes
+
+2002-08-19 Monday 21:19  martin
+
+	* doc/: background.html, contents.html, credits.html,
+	developer.html, features.html, future.html, intro.html: 
+	
+	Significant improvements to distributed documentation
+
+2002-08-19 Monday 00:39  martin
+
+	* version.php, mod/assignment/version.php, mod/choice/version.php,
+	mod/forum/version.php, mod/journal/version.php,
+	mod/reading/version.php, mod/survey/version.php: 
+	
+	Updated versions in preparation for 1.0 release tomorrow
+
+2002-08-19 Monday 00:33  martin
+
+	* doc/view.php: 
+	
+	Double footer looked funny.
+
+2002-08-19 Monday 00:31  martin
+
+	* course/lib.php, doc/teacher.html, doc/view.php: 
+	
+	Make the Help link in the course look like a seamless part of the
+	course.
+
+2002-08-19 Monday 00:16  martin
+
+	* course/lib.php, course/social.php, course/topics.php,
+	course/weeks.php, lang/en/moodle.php: 
+	
+	Added help link to course pages (for teachers) and tidied up the
+	course admin links in general (new fucntion and reorder)
+
+2002-08-18 Sunday 23:57  martin
+
+	* lang/en/help/reading/: readingtype.html, summary.html: 
+	
+	New help files for readings
+
+2002-08-18 Sunday 23:56  martin
+
+	* lang/en/reading.php, mod/reading/details.php,
+	mod/reading/mod.html, mod/reading/view.php: 
+	
+	Improvements to reading definition - help buttons and language
+	fixes
+
+2002-08-18 Sunday 23:31  martin
+
+	* doc/teacher.html: 
+	
+	SLight edits
+
+2002-08-18 Sunday 23:26  martin
+
+	* config-dist.php, files/index.php: 
+	
+	New CFG->zip and CFG->unzip valiables which specify programs to use
+	when zipping and unzipping files.  Unix only at this stage. (Zip
+	interfaces for Windows are much less standardised)
+
+2002-08-18 Sunday 23:24  martin
+
+	* help.php: 
+	
+	Better error (don't need a link)
+
+2002-08-18 Sunday 23:23  martin
+
+	* doc/pix/: files.jpg, social.jpg, topics.jpg, weekly.jpg: 
+	
+	New pictures for documentation.
+
+2002-08-18 Sunday 23:23  martin
+
+	* doc/teacher.html: 
+	
+	Finally sat down and wrote this page.  SHould do for now as a
+	starter.
+
+2002-08-18 Sunday 22:40  martin
+
+	* lang/en/help/waysofknowing.html,
+	lang/en/help/forum/allowdiscussions.html,
+	lang/en/help/forum/forumtype.html, lang/en/help/forum/ratings.html,
+	lang/en/help/forum/subscription.html, mod/forum/lib.php,
+	mod/forum/mod.html: 
+	
+	Improved help buttons for forums
+
+2002-08-18 Sunday 18:00  martin
+
+	* doc/teacher.html: 
+	
+	Placeholder
+
+2002-08-18 Sunday 17:52  martin
+
+	* lang/en/choice.php, mod/choice/view.php: 
+	
+	Preview how many responses have been made (for teacher)
+
+2002-08-18 Sunday 17:47  martin
+
+	* mod/choice/report.php: 
+	
+	Sort names by firstname, and include even columns with no answers
+
+2002-08-18 Sunday 17:43  martin
+
+	* doc/teacher.html, lang/en/choice.php: 
+	
+	new strings
+
+2002-08-18 Sunday 17:43  martin
+
+	* mod/choice/: lib.php, report.php: 
+	
+	Cleaned up the Choice report - it's easier to make sense of now
+
+2002-08-17 Saturday 23:10  martin
+
+	* CHANGES: 
+	
+	Changes
+
 2002-08-17 Saturday 22:44  martin
 
 	* course/edit.html, lang/en/help/coursecategory.html,
