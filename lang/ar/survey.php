@@ -4,11 +4,11 @@
 
 $string['actual'] = '›⁄·Ì';
 $string['actualclass'] = '«·›’· «·›⁄·Ì';
-$string['actualstudent'] = '$a ›⁄·Ì';
+$string['actualstudent'] = ' $a›⁄·Ì';
 $string['allquestions'] = 'ﬂ· «·√”∆·… ·ﬂ· «·œ«—”Ì‰ ';
 $string['allscales'] = 'ﬂ· «·„Ê«“Ì‰, ﬂ· «·œ«—”Ì‰';
 $string['alreadysubmitted'] = '√‰  »«·›⁄· ”·„  «·«” »Ì«‰';
-$string['analysisof'] = ' Õ·Ì· · $a';
+$string['analysisof'] = ' Õ·Ì· ·‹ $a';
 $string['answers'] = '≈Ã«»« ';
 $string['attls1'] = '⁄‰œ„« √ﬁÊ„ » ﬁÌÌ„ ﬂ·«„ ‘Œ’ „« ›≈‰‰Ì √Â „ »„ﬁ«· Â √ﬂÀ— „‰ –« Â.';
 $string['attls10'] = '√—Ï „‰ «·√Â„Ì… »„ﬂ«‰ √‰ √Õ ›Ÿ »«·„Ê÷Ê⁄Ì… ﬁœ— «·≈„ﬂ«‰ ⁄‰œ„« √ﬁÊ„ » Õ·Ì· ‘Ì¡ „«.';
@@ -149,8 +149,8 @@ $string['collespintro'] = 'Ìﬂ„‰ «·€—÷ „‰ Â–« «·«” »Ì«‰ ›Ì «·„”«⁄œ… ⁄·Ï „⁄—›… „« 
 $string['collespname'] = 'COLLES («·›⁄·Ì)';
 $string['done'] = ' „';
 $string['download'] = ' ‰“Ì·';
-$string['downloadexcel'] = ' ‰“Ì· «·»Ì«‰«  ›Ì ÃœÊ· »’Ì€…  Excel ';
-$string['downloadinfo'] = 'Ì„ﬂ‰ﬂ  ‰“Ì· «·»Ì«‰«  »Õ«· Â« ·Â–« «·«” »Ì«‰ »‘ﬂ· „‰«”» · Õ·Ì·Â« ›Ì  Excel, SPSS √Ê √Ì »—«„Ã √Œ—Ï.';
+$string['downloadexcel'] = ' ‰“Ì· «·»Ì«‰«  ›Ì ÃœÊ· »’Ì€…  ≈ﬂ”·';
+$string['downloadinfo'] = 'Ì„ﬂ‰ﬂ  ‰“Ì· «·»Ì«‰«  »Õ«· Â« ·Â–« «·«” »Ì«‰ »‘ﬂ· „‰«”» · Õ·Ì·Â« ›Ì  ≈ﬂ”·, √” »Ì √”«√” √Ê √Ì »—«„Ã √Œ—Ï.';
 $string['downloadtext'] = ' ‰“Ì· «·»Ì«‰«  ›Ì „Ã—œ „·› ‰’Ê’';
 $string['editingasurvey'] = ' ⁄œÌ· «·«” »Ì«‰';
 $string['guestsnotallowed'] = '·« Ì”„Õ ·“Ê«— · ”·Ì„ «” »Ì«‰';

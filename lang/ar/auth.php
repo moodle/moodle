@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2004011700)
+      // auth.php - created with Moodle 1.2 development (2004012800)
 
 
 $string['auth_dbdescription'] = 'íÓÊÎÏã åÐÇ ÇáÃÓáæÈ ÌÏæá ÈíÇäÇÊ ÎÇÑÌí ááÊÍÞÞ ãä ÕÍÉ ÇÓã ÇáãÓÊÎÏã æßáãÉ ÇáãÑæÑ. æÝí ÍÇáÉ ÇáÍÓÇÈÇÊ ÇáÌÏíÏÉ ÝÞÏ íÊã äÓÎ ÇáãÚáæãÇÊ ãä ÇáÍÞæá ÇáÃÎÑì ÃíÖÇ æäÞáåÇ Åáì äÙÇã Moodle.';

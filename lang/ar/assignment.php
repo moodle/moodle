@@ -4,24 +4,23 @@
 
 $string['allowresubmit'] = 'ÇáÓãÇÍ ÈÅÚÇÏÉ ÇáÊÓáíã';
 $string['assignmentdetails'] = 'ÊİÇÕíá ÇáãåãÉ';
-$string['assignmentmail'] = 'a->ŞÇã ÇáãÏÑÓ ÈÈÚÖ ÇáÊÕÍíÍÇÊ áãåãÊß ÇáãÓáãå\'a$->\'
+$string['assignmentmail'] = '$a->teacher ŞÇã íæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãåãÊß ÇáãÓáãÉ áÜ \'$a->assignment\'
 
-ÓÊáÇÍÙåÇ ãÑæİŞÉ ãÚ ãåãÊß:
-
-$a->url';
-$string['assignmentmailhtml'] = 'a->ŞÇã ÇáãÏÑÓ ÈÈÚÖ ÇáÊÕÍíÍÇÊ áãåãÊß ÇáãÓáãå\'<i>$a->assignment</i>\'<br /><br />
-ÓÊáÇÍÙåÇ ãÑæİŞÉ áß İí <a href=\"$a->url\">assignment submission</a>.';
+ÊÓÊØíÚ ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ ãåãÊß ÇáãÓáãÉ$a->url';
+$string['assignmentmailhtml'] = '$a->teacher ÈÈÚÖ ÇáÊÕÍíÍÇÊ áãåãÊß ÇáãÓáãå\'
+\'<i>$a->assignment</i>\'<br /><br />
+ÊÓÊØíÚ ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ ãåãÊß ÇáãÓáãÉ<a href=\"$a->url\">assignment submission</a>.';
 $string['assignmentname'] = 'ÇÓã ÇáãåãÉ';
 $string['assignmenttype'] = 'äæÚ ÇáãåãÉ';
 $string['configmaxbytes'] = 'ÇáÍÌã ÇáãåãÉ ÇáÇİÊÑÇÖí áÌãíÚ ÇáãåãÇÊ İí ÇáãæŞÚ (ÎÇÖÚ áãÍÏæÏíÉ ÇáãåäÌ ÇáÏÑÇÓí æÈÚÖ ÇáÅÚÏÇÏÇÊ)';
 $string['description'] = 'ÇáæÕİ';
 $string['duedate'] = 'ÊÇÑíÎ ÇáÅäåÇÁ';
 $string['duedateno'] = 'áÇ íæÌÏ ãæÚÏ ááÊÓáíã';
-$string['early'] = 'a$ ãÈßÑ';
-$string['failedupdatefeedback'] = 'ÊÚĞÑ ÊÍÏíË ÊÚáíŞ ÇáãÓÊÎÏã Úáì ÇáÑÓÇáÉ $a';
+$string['early'] = '$a ãÈßÑ';
+$string['failedupdatefeedback'] = 'ÊÚĞÑ ÊÍÏíË ÊÚáíŞ ÇáãÓÊÎÏã Úáì ÇáÑÓÇáÉ $a ';
 $string['feedback'] = 'ÊÕÍíÍ';
-$string['feedbackupdated'] = 'ÊÍÏíË ÇáÊÚáíŞÇÊa$ ÇáäÇÓ';
-$string['late'] = 'a$ ÊÃÎíÑ';
+$string['feedbackupdated'] = 'ÊÍÏíË ÇáÊÚáíŞÇÊ$a  ÇáäÇÓ';
+$string['late'] = '$a ãÊÃÎÑ';
 $string['maximumgrade'] = 'ÇáÏÑÌÉ ÇáŞÕæì';
 $string['maximumsize'] = 'ÍÌã Çáãáİ';
 $string['modulename'] = 'ãåãÉ';
@@ -41,12 +40,12 @@ $string['uploadbadname'] = 'íÍÊæí ÇÓã åĞÇ Çáãáİ Úáì ÍÑæİ ÛÑíÈÉ æáĞÇ ÊÚĞÑ ÊÍãíáå.
 $string['uploadedfiles'] = 'ÇáãáİÇÊ ÇáãÍãáÉ';
 $string['uploaderror'] = 'æŞÚ ÎØÃ ÃËäÇÁ ÍİÙ Çáãáİ Úáì ÇáãÒæÏ';
 $string['uploadfailnoupdate'] = 'Êã ÊÍãíá Çáãáİ ÈÇáİÚá áßä ÊÚĞÑ ÊÍÏíË ãÇ ŞãÊ ÈÊÓáíãå!';
-$string['uploadfiletoobig'] = 'ÚİæÇ! åĞÇ Çáãáİ ÍÌãå ßÈíÑ ÌÏÇ (ÇáÍÏ ÇáãÓãæÍ Èåa$ ÈÇíÊ)';
+$string['uploadfiletoobig'] = 'ÚİæÇ! åĞÇ Çáãáİ ÍÌãå ßÈíÑ ÌÏÇ (ÇáÍÏ ÇáãÓãæÍ Èå$a  ÈÇíÊ)';
 $string['uploadnofilefound'] = 'ÊÚĞÑ ÇáÚËæÑ Úáì ÃíÉ ãáİÇÊ¡ åá ÃäÊ ãÊÃßÏ Ãäß ŞãÊ ÈÇÎÊíÇÑ ãáİ ááÊÍãíá¿';
-$string['uploadnotregistered'] = '\'a$\' Êã ÊÍãíáå ÈÇáİÚá¡ áßä ÊÚĞÑ ÊÓÌíá ãÇ ŞãÊ ÈÊÓáãíå!';
-$string['uploadsuccess'] = 'Êã ÊÍãíá \'a$\' ÈäÌÇÍ';
+$string['uploadnotregistered'] = '\'$a\' Êã ÊÍãíáå ÈÇáİÚá¡ áßä ÊÚĞÑ ÊÓÌíá ãÇ ŞãÊ ÈÊÓáãíå!';
+$string['uploadsuccess'] = 'Êã ÊÍãíá \'$a\' ÈäÌÇÍ';
 $string['viewfeedback'] = 'ÚÑÖ ÏÑÌÇÊ ÇáãåãÉ æÇáÊÚáíŞ';
-$string['viewsubmissions'] = 'ÚÑÖ a$ ÇáãåÇã ÇáãÓáãÉ';
+$string['viewsubmissions'] = 'ÚÑÖ $a ÇáãåÇã ÇáãÓáãÉ';
 $string['yoursubmission'] = 'ÑÓÇáÊß ÇáãÓáãÉ';
 
 ?>
