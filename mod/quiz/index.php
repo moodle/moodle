@@ -107,7 +107,7 @@
                 $gradecol = "";
             }
         } else { 
-            if ($bestgrade === "" or $quiz->grade == 0) {
+            if ($bestgrade === NULL || $quiz->grade == 0) {
                 $gradecol = "";
             } else {
                 $gradecol = "$bestgrade / $quiz->grade";
