@@ -1,30 +1,27 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // quiz.php - created with Moodle 1.0.8.1 (2003011200)
 
-#------------------------------------------------------------
-$string['modulename'] = "Test";
-$string['modulenameplural'] = "Testy";
-#------------------------------------------------------------
 
 $string['addselectedtoquiz'] = "Vybrané prida» do testu";
 $string['allowreview'] = "Povoli» prehµad";
-$string['alwaysavailable'] = "V¾dy dostupné";
 $string['alreadysubmitted'] = "Je pravdepodobné ¾e u¾ ste predlo¾ili tento pokus";
+$string['alwaysavailable'] = "V¾dy dostupné";
 $string['answer'] = "Odpoveï";
-$string['answerhowmany'] = "Jedna  alebo viacero odpoveï?";
+$string['answerhowmany'] = "Jedna alebo viacero odpoveï?";
+$string['answersingleno'] = "Povolené viacero odpovedí";
 $string['answersingleyes'] = "Iba jedna odpoveï";
-$string['answersingleno']  = "Povolené viacero odpovedí";
 $string['attempt'] = "Pokus \$a";
 $string['attemptfirst'] = "Prvý pokus";
 $string['attemptlast'] = "Posledný pokus";
-$string['attemptquiznow'] = "Pokúsi» sa urobi» test teraz";
+$string['attemptquiznow'] = "Urobi» test ";
 $string['attempts'] = "Pokusy";
-$string['attemptsallowed'] = "&#9224;µku&#65535;&#65535; p&#0;&#0;ol&#0;&#0;é";
+$string['attemptsallowed'] = "Povolené pokusy";
 $string['attemptsunlimited'] = "Neobmedzené pokusy";
 $string['backtoquiz'] = "Spä» na zapisovanie testu";
 $string['bestgrade'] = "Najlep¹ia známka";
+$string['caseno'] = "Nie, veµké a malé písmená nie sú dôle¾ité";
 $string['casesensitive'] = "Citlivos» na veµké a malé písmená";
 $string['caseyes'] = "Áno, veµké a malé písmená musia sedie»";
-$string['caseno'] = "Nie, veµké a malé písmená nie sú dôle¾ité";
 $string['categories'] = "Kategórie";
 $string['category'] = "Kategórie";
 $string['categoryinfo'] = "Informácie o kategórii";
@@ -40,30 +37,32 @@ $string['default'] = "Východzie nastavenie";
 $string['defaultinfo'] = "Nastavená kategória pre otázky.";
 $string['deletequestioncheck'] = "Ste si úplne istý, ¾e chcete vymaza» '\$a'?";
 $string['editcategories'] = "Zapísa» kategórie";
-$string['editingquiz'] = "Zapisovanie testu";
-$string['editingquestion'] = "Zapisovanie otázky";
-$string['editingshortanswer'] = "Zapisovanie otázky s krátkou odpoveïou";
-$string['editingtruefalse'] = "Zapisovanie áno/nie otázky";
 $string['editingmultichoice'] = "Zapisovanie otázky s viacerými mo¾nos»ami výberu";
+$string['editingquestion'] = "Zapisovanie otázky";
+$string['editingquiz'] = "Zapisovanie testu";
+$string['editingshortanswer'] = "Zapisovanie otázky s krátkou odpoveïou";
+$string['editingtruefalse'] = "Zapisovanie otázky áno/nie ";
 $string['false'] = "Nesprávne";
 $string['feedback'] = "Spätná väzba";
 $string['filloutoneanswer'] = "Musíte vyplni» aspoò jednu mo¾nú odpoveï. Nevyplnené odpovede nebudú pou¾ité.";
 $string['fillouttwochoices'] = "Musíte uvies» aspoò dve mo¾nosti. Nevyplnené mo¾nosti nebudú pou¾ité.";
 $string['fractionsaddwrong'] = "Kladné známky, ktoré ste uviedli nemajú súèet 100%%
 <BR>ale ich súèet je \$a%%
-<BR>Chcete ís» spä» a upavi» túto otázku?";
-$string['fractionsnomax'] = "Jedna z odpovedí musí by» 100%%, aby bolo
+<BR>Chcete ís» spä» a upravi» túto otázku?";
+$string['fractionsnomax'] = "Jedna z odpovedí musí by» 100%, aby bolo
 <BR>mo¾né získa» plný poèet za túto otázku.
 <BR>Chcete ís» spä» a opravi» túto otázku?";
 $string['gradeaverage'] = "Priemerná známka";
 $string['gradehighest'] = "Najvy¹ia známka";
-$string['grademethod'] = "Známkovacia metóda";
-$string['guestsno'] = "Prepáète, hostia  si nemô¾u prezera» alebo skú¹a» testy";
+$string['grademethod'] = " Metóda známkovania ";
+$string['guestsno'] = "Prepáète, hostia  si nemô¾u prezera» alebo skú¹a» testy.";
 $string['imagedisplay'] = "Obraz na znázornenie";
 $string['introduction'] = "Úvod";
 $string['marks'] = "Známky";
 $string['missingname'] = "Chýba názov otázky";
 $string['missingquestiontext'] = "Chýba text otázky";
+$string['modulename'] = "Test";
+$string['modulenameplural'] = "Testy";
 $string['multichoice'] = "Viaceré mo¾nosti";
 $string['noanswers'] = "Neboli vybraté ¾iadne odpovede!";
 $string['noattempts'] = "Nikto sa nepokúsil urobi» tento test";
@@ -74,15 +73,15 @@ $string['noreviewuntil'] = "Nemáte oprávnenie prehliada» tento test do \$a";
 $string['publish'] = "Publikova»";
 $string['question'] = "Otázka";
 $string['questioninuse'] = "Otázka '\$a' je práve pou¾ívaná:";
-$string['questions'] = "Otázky";
 $string['questionname'] = "Názov otázky";
+$string['questions'] = "Otázky";
 $string['quizavailable'] = "Test je dostupný do: \$a";
 $string['quizclose'] = "Zatvori» test";
 $string['quizclosed'] = "Tento test zatvorený \$a";
-$string['quizopen'] = "Otvori» test";
 $string['quiznotavailable'] = "Test nebude dostupný do: \$a";
+$string['quizopen'] = "Otvori» test";
 $string['random'] = "Náhodná sada";
-$string['readytosend'] = "Pripravujete sa na posielanie celého vá¹ho testu na ohodnotenie. Ste si istý, ¾e chcete pokraèova»?";
+$string['readytosend'] = "Pripravujete sa na odosielanie celého vá¹ho testu na ohodnotenie. Ste si istý, ¾e chcete pokraèova»?";
 $string['regrade'] = "Pretriedi» v¹etky pokusy";
 $string['regradecomplete'] = "V¹etky pokusy boli pretriedené";
 $string['regradecount'] = "\$a->changed z \$a->attempt boli zmenené známky";
@@ -97,13 +96,15 @@ $string['select'] = "Vybra»";
 $string['selectcategoryabove'] = "Vybra» kategóriu z uvedených";
 $string['shortanswer'] = "Krátka odpoveï";
 $string['show'] = "Ukáza»";
+$string['showcorrectanswer'] = "Zobrazi» v spätnej väzbe správne odpovede?";
 $string['showfeedback'] = "Po zodpovedaní uká¾te spätnú väzbu?";
-$string['showcorrectanswer'] = "V spätnej väzbe zobrazi» správne odpovede?";
 $string['time'] = "Èas";
-$string['timetaken'] = "Strávený èas";
 $string['timecompleted'] = "Èas vypr¹al";
+$string['timetaken'] = "Strávený èas";
 $string['true'] = "Správne";
 $string['truefalse'] = "Správne/Nesprávne";
 $string['type'] = "Typ";
 $string['viewallanswers'] = "Zobrazi» \$a celé testy";
 $string['yourfinalgradeis'] = "Va¹a koneèná známka za tento test je \$a";
+
+?>
