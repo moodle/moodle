@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004072500)
+      // wiki.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['action'] = '-- ¥¢¥¯¥·¥ç¥ó --';
@@ -98,6 +98,7 @@ $string['pagenamechoice'] = '- ¤Þ¤¿¤Ï -';
 $string['pageslinkingto'] = '¤³¤Î¥Ú¡¼¥¸¤Ë¥ê¥ó¥¯¤·¤Æ¤¤¤ë¥Ú¡¼¥¸';
 $string['pagesremoved'] = '¥Ú¡¼¥¸¤¬ºï½ü¤µ¤ì¤Þ¤·¤¿¡£';
 $string['pagesreverted'] = 'ÊÑ¹¹¤¬¸µ¤ËÌá¤µ¤ì¤Þ¤·¤¿';
+$string['pagesstripped'] = '¥Ú¡¼¥¸¤¬¥¹¥È¥ê¥Ã¥×¤µ¤ì¤Þ¤·¤¿¡£';
 $string['plaintext'] = '¥×¥ì¥¤¥ó¥Æ¥­¥¹¥È';
 $string['preview'] = '¥×¥ì¥Ó¥å¡¼';
 $string['readonly'] = 'ÆÉ¤ß¼è¤êÀìÍÑ¥Ú¡¼¥¸';
@@ -114,6 +115,7 @@ $string['setpageflags'] = '¥Ú¡¼¥¸¥Õ¥é¥°¤ÎÀßÄê';
 $string['sitemap'] = '¥µ¥¤¥È¥Þ¥Ã¥×';
 $string['smfor'] = '¥µ¥¤¥È¥Þ¥Ã¥×:';
 $string['status'] = '¥¹¥Æ¡¼¥¿¥¹';
+$string['strippagecheck'] = 'ËÜÅö¤Ë¡¢¤³¤ì¤é¤Î¥Ú¡¼¥¸¤«¤é¸Å¤¤¥Ð¡¼¥¸¥ç¥ó¤ò¥¹¥È¥ê¥Ã¥×¤·¤Æ¤âµ¹¤·¤¤¤Ç¤¹¤«:';
 $string['strippages'] = '¥Ú¡¼¥¸¤Î¥¹¥È¥ê¥Ã¥×';
 $string['studentadminoptions'] = '³ØÀ¸¤Î´ÉÍý¸¢¸Â';
 $string['submit'] = '¼Â¹Ô';
@@ -124,11 +126,13 @@ $string['uplerror'] = '¿½¤·Ìõ¤´¤¶¤¤¤Þ¤»¤ó¡¢¥Õ¥¡¥¤¥ë¤Î¥¢¥Ã¥×¥í¡¼¥ÉÃæ¤Ë¥¨¥é¡¼¤¬È¯À
 $string['uplnewnam'] = 'ÊÌÌ¾¤ÇÊÝÂ¸¤¹¤ë';
 $string['upload0'] = 'Ç¤°Õ¤Î¥Ð¥¤¥Ê¥ê¥Õ¥¡¥¤¥ë¤òwiki¤Ë¥¢¥Ã¥×¥í¡¼¥É¤¹¤ë¾ì¹ç¤Ï¡¢¤³¤Î¥Õ¥©¡¼¥à¤ò»ÈÍÑ¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['uploadpicturebutton'] = '¥¢¥Ã¥×¥í¡¼¥É';
+$string['uplok'] = '¥Õ¥¡¥¤¥ë¤¬Àµ¾ï¤Ë¥¢¥Ã¥×¥í¡¼¥É¤µ¤ì¤Þ¤·¤¿¡£';
 $string['version'] = '¥Ð¡¼¥¸¥ç¥ó';
 $string['versionrangetoobig'] = 'Á´¤Æ¤Î¥Ð¡¼¥¸¥ç¥ó¤Î¥Ú¡¼¥¸¤òºï½ü¤¹¤ë¤³¤È¤Ï½ÐÍè¤Þ¤»¤ó!ºÇ¿·¤Î¥Ð¡¼¥¸¥ç¥ó¤ò»Ä¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['versions'] = '¥Ð¡¼¥¸¥ç¥ó';
 $string['versionstodelete'] = 'ºï½ü¤¹¤ë¥Ð¡¼¥¸¥ç¥ó';
 $string['viewpage'] = '¥Ú¡¼¥¸¤ÎÉ½¼¨';
+$string['viewsmfor'] = '¥µ¥¤¥È¥Þ¥Ã¥×¤òÉ½¼¨';
 $string['wantedpages'] = '¼¹É®¤¬Ë¾¤Þ¤ì¤Æ¤¤¤ë¥Ú¡¼¥¸';
 $string['wikidefaultpagename'] = 'Wiki¥¤¥ó¥Ç¥Ã¥¯¥¹';
 $string['wikiexport'] = '¥Ú¡¼¥¸¤Î¥¨¥¯¥¹¥Ý¡¼¥È';

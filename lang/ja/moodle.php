@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004072500)
+      // moodle.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['action'] = '┴р║ю';
@@ -369,7 +369,10 @@ $string['enrolmentkey'] = '┼╨╧┐енб╝';
 $string['enrolmentkeyfrom'] = 'д│д╬е│б╝е╣д╪╗▓▓├д╣дыд┐дсд╦д╧б╓┼╨╧┐енб╝б╫дм╔м═╫д╟д╣бгб╓┼╨╧┐енб╝б╫д╧ $a дшдъ┴ў┐од╡дьд┐еяеєе┐едере╤е╣еяб╝е╔д╟д╣бг';
 $string['enrolmentkeyhint'] = 'б╓┼╨╧┐енб╝б╫дм░уддд▐д╣бг║╞┼┘╞■╬╧д╖д╞дпд└д╡ддбг<br> (е╥еєе╚ - \'$a\' д╟╗╧д▐ды╕└═╒д╟д╣)';
 $string['enrolmentnointernal'] = '╝ъ╞░┼╨╧┐д╧╕╜║▀═°═╤д╟днд▐д╗дє';
+$string['enrolmentnotyet'] = '┐╜д╖╠їд┤д╢ддд▐д╗дєбвд│д╬е│б╝е╣д╦д╧▓╝╡нд╬╞№╔╒д▐д╟евепе╗е╣д╟днд▐д╗дєбг<br  />
+$a';
 $string['enrolments'] = '┼╨╧┐';
+$string['enrolperiod'] = '┼╨╧┐┤№┤╓';
 $string['entercourse'] = 'EnterдЄепеъе├епд╖д╞дпд└д╡ддбг';
 $string['enteremailaddress'] = 'е╤е╣еяб╝е╔дЄеъе╗е├е╚д╖д╞┐╖д╖дде╤е╣еяб╝е╔дЄ╝їд▒╝шдыд┐дсд╦бвесб╝еыеве╔еье╣дЄ╞■╬╧д╖д╞дпд└д╡дд';
 $string['entries'] = 'еиеєе╚еъб╝';
@@ -604,6 +607,7 @@ $string['moduledeletefiles'] = 'All data associated with the module \'$a->module
 $string['modulesetup'] = 'Moodleе╞б╝е╓еы└▀─ъ├ц';
 $string['modulesuccess'] = '$a е╞б╝е╓еыдм└╡╛яд╦└▀─ъд╡дьд▐д╖д┐';
 $string['moodleversion'] = 'Moodleе╨б╝е╕ечеє';
+$string['more'] = 'дтд├д╚';
 $string['mostrecently'] = '─╛╢сд╬';
 $string['move'] = '░▄╞░';
 $string['movecategoryto'] = 'еле╞е┤еъд╬░▄╞░:';
@@ -679,6 +683,7 @@ $string['noteachersyet'] = 'д│д╬е│б╝е╣д╦д╧д▐д└╢╡╗╒дм┼╨╧┐д╡дьд╞ддд▐д╗дє';
 $string['notenrolled'] = '$a д╧д│д╬е│б╝е╣д╦д╧╗▓▓├д╖д╞ддд▐д╗дє';
 $string['noteuserschangednonetocourse'] = '├э░╒:ецб╝е╢е╟б╝е┐дЄеъе╣е╚евд╣ды╛ь╣чбве│б╝е╣ецб╝е╢дЄеъе╣е╚евд╣ды╔м═╫дмдвдъд▐д╣бгдвд╩д┐д╬└▀─ъдм╩╤╣╣д╡дьд▐д╖д┐бг';
 $string['nothingnew'] = '║╟╜кеэе░едеєдшдъ╣╣┐╖д╡дьд┐дтд╬д╧двдъд▐д╗дє';
+$string['noticenewerbackup'] = 'д│д╬е╨е├епеве├е╫е╒ебедеыд╧бв╕╜║▀едеєе╣е╚б╝еыд╡дьд╞дддыMoodle $a->serverrelease ($a->serverversion)дшдъдт┐╖д╖дде╨б╝е╕ечеєMoodle $a->backuprelease ($a->backupversion) д╦дшдъ║ю└од╡дьд▐д╖д┐бг╡ье╨б╝е╕ечеєд╪д╬╕▀┤╣└ндм╩▌╛уд╡дьд╩дд░┘бве╨е├епеве├е╫е╟б╝е┐д╬╠╖╜тдЄ└╕д╕ды╢▓дьдмдвдъд▐д╣бг';
 $string['notifyloginfailuresmessageend'] = 'еэе░д╧бв$a/course/log.php?id=1&chooselog=1&modid=site_errors д╟▒▄═ў╜╨═шд▐д╣бг';
 $string['notincluded'] = '┤▐д▐д╩дд';
 $string['notingroup'] = '┐╜д╖╠їд┤д╢ддд▐д╗дєбгд│д╬│ш╞░дЄ▒▄═ўд╣ды░┘д╦д╧е░еыб╝е╫д╦┬░д╖д╞ддды╔м═╫дмдвдъд▐д╣бг';
@@ -885,6 +890,7 @@ $string['unenrolallstudentssure'] = '╦▄┼Ўд╦┴┤│╪└╕дЄ╗▓▓├╝ш╛├д╖дЄ╣╘д├д╞дт╡╣д╖ддд╟д
 $string['unenrolme'] = '$a длдщ╗▓▓├дЄ╝ш╛├д╣';
 $string['unenrolsure'] = '$a дЄе│б╝е╣длдщ┼╨╧┐╦ї╛├д╖д╞дтдшдэд╖ддд╟д╣дл?';
 $string['unknowncategory'] = '╠╡╠╛д╬еле╞е┤еъ';
+$string['unlimited'] = '╠╡└й╕┬';
 $string['unpacking'] = '$a д╬▓Є┼р';
 $string['unsafepassword'] = '░┬┴┤д╟д╩дде╤е╣еяб╝е╔д╟д╣бг┬╛д╬е╤е╣еяб╝е╔дЄ╞■╬╧д╖д╞дпд└д╡ддбг';
 $string['unusedaccounts'] = '$a ╞№░╩╛х═°═╤д╖д╞ддд╩ддевележеєе╚д╧╝л╞░┼кд╦┼╨╧┐╦ї╛├д╡дьд▐д╣';
