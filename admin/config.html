@@ -71,9 +71,13 @@
 	<TD>
     <? $options[1000] = get_string("numdays", "", 1000);
        $options[365]  = get_string("numdays", "", 365);
-       $options[100]  = get_string("numdays", "", 100);
-       $options[50]   = get_string("numdays", "", 50);
-       $options[10]   = get_string("numdays", "", 10);
+       $options[180]  = get_string("numdays", "", 180);
+       $options[150]  = get_string("numdays", "", 150);
+       $options[120]  = get_string("numdays", "", 120);
+       $options[90]   = get_string("numdays", "", 90);
+       $options[60]   = get_string("numdays", "", 60);
+       $options[30]   = get_string("numdays", "", 30);
+       $options[7]   = get_string("numdays", "", 7);
 
        choose_from_menu ($options, "longtimenosee", $config->longtimenosee, "", "", "");
        unset($options);
