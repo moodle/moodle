@@ -129,6 +129,7 @@ a img {
 }
 
 .generalbox#intro {   /* On most modules */
+    text-align:center;
 }
 
 .noticebox {
