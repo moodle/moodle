@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.1 development (2003062000)
+      // assignment.php - created with Moodle 1.1 development (2003072101)
 
 
 $string['allowresubmit'] = "Permitir novo envio";
@@ -25,6 +25,7 @@ $string['maximumsize'] = "Tamanho máximo";
 $string['modulename'] = "Tarefa";
 $string['modulenameplural'] = "Tarefas";
 $string['newsubmissions'] = "Tarefas apresentadas";
+$string['notgradedyet'] = "Ainda não avaliada";
 $string['notsubmittedyet'] = "Não apresentadas ainda";
 $string['overwritewarning'] = "Atenção: a nova transferência de arquivo vai SUBSTITUIR a tarefa arquivada atualmente";
 $string['saveallfeedback'] = "Gravar  feedback";

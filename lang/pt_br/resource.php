@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1 development (2003062000)
+      // resource.php - created with Moodle 1.1 development (2003072101)
 
 
 $string['addresource'] = "Adicionar material";
@@ -13,6 +13,18 @@ $string['htmlfragment'] = "Fragmento de HTML";
 $string['modulename'] = "Material";
 $string['modulenameplural'] = "Materiais";
 $string['neverseen'] = "Nunca visto";
+$string['newdirectories'] = "Mostrar links do diretório";
+$string['newfullscreen'] = "Preencher toda a tela";
+$string['newheight'] = "Altura predefinida da janela (em pixels)";
+$string['newlocation'] = "Mostrar a brra de endereço";
+$string['newmenubar'] = "Mostrar a barra de menu";
+$string['newresizable'] = "Permitir redimensionamento da janela";
+$string['newscrollbars'] = "Permitir o escorrimento da janela";
+$string['newstatus'] = "Mostrar a barra de status";
+$string['newtoolbar'] = "Mostrar a barra de instrumentos";
+$string['newwidth'] = "Largura predefinida da janela (em pixels)";
+$string['newwindow'] = "Nova janela";
+$string['newwindowopen'] = "Mostre este material em uma janela popup";
 $string['note'] = "Nota";
 $string['notefile'] = "Para transferir mais arquivos ao curso (in modo que aparecerem nesta lista) use o <a href=\$a>Administrador de Arquivos</a>.";
 $string['notypechosen'] = "Você tem que escolher um tipo. Use seu botão de retorno e tente novamente.";

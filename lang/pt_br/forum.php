@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 development (2003062000)
+      // forum.php - created with Moodle 1.1 development (2003072800)
 
 
 $string['addanewdiscussion'] = "Adicionar um novo tópico de discussão";
@@ -24,7 +24,7 @@ $string['discussions'] = "Discussões";
 $string['discussionsstartedby'] = "Discussões iniciadas por \$a";
 $string['discussionsstartedbyrecent'] = "Discussões iniciadas recentemente por \$a";
 $string['discussthistopic'] = "Discutir este tópico";
-$string['eachuserforum'] = "Cada pessoa envia uma discussão";
+$string['eachuserforum'] = "Cada usuário inicia apenas UM NOVO tópico";
 $string['edit'] = "Editar";
 $string['editing'] = "Edição";
 $string['emptymessage'] = "As alterações não foram gravadas. Mensagem em branco ou anexo grande demais. ";
@@ -37,12 +37,12 @@ $string['forumintro'] = "Introdução ao Fórum";
 $string['forumname'] = "Nome do Fórum";
 $string['forums'] = "Fóruns";
 $string['forumtype'] = "Tipo de Fórum";
-$string['generalforum'] = "Fórum genérico para uso geral";
+$string['generalforum'] = "Fórum geral";
 $string['generalforums'] = "Fóruns gerais";
 $string['inforum'] = "em \$a";
 $string['intronews'] = "Notícias e avisos";
 $string['introsocial'] = "Um fórum para conversar sobre tudo o que você quiser";
-$string['introteacher'] = "Um fórum reservado aos professores ";
+$string['introteacher'] = "Um fórum reservado aos tutores";
 $string['lastpost'] = "Última mensagem";
 $string['learningforums'] = "Fóruns para atividades de aprendizagem";
 $string['maxtimehaspassed'] = "Sinto muito, mas o prazo para editar este tópico (\$a)terminou!";
@@ -57,7 +57,7 @@ $string['more'] = "mais";
 $string['movethisdiscussionto'] = "Transfira esta discussão para ...";
 $string['namenews'] = "Fórum de notícias";
 $string['namesocial'] = "Fórum social";
-$string['nameteacher'] = "Fórum dos professores";
+$string['nameteacher'] = "Fórum dos tutores";
 $string['newforumposts'] = "Novas mensagens no fórum";
 $string['nodiscussions'] = "Ainda não há nenhum tópico de discussão neste forum";
 $string['noguestpost'] = "Neste forum os visitantes não podem enviar mensagens ";
@@ -99,16 +99,16 @@ $string['showsubscribers'] = "Mostrar assinantes";
 $string['singleforum'] = "Uma única discussão simples";
 $string['startedby'] = "Iniciada por";
 $string['subject'] = "Assunto";
-$string['subscribe'] = "Seja assinante deste fórum";
+$string['subscribe'] = "Receber as mensagens deste fórum via email";
 $string['subscribed'] = "Assinante";
 $string['subscribers'] = "Assinantes";
 $string['subscribersto'] = "Assinantes de '\$a'";
 $string['subscribestart'] = "Me mande cópias das mensagens deste fórum via Email";
-$string['subscribestop'] = "Não quero receber cópias das mensagens deste fórum via Email";
+$string['subscribestop'] = "Não quero receber cópias das mensagens deste fórum via email";
 $string['subscription'] = "Assinatura";
 $string['subscriptions'] = "Assinaturas";
-$string['unsubscribe'] = "Cancelar a assinantura deste fórum";
-$string['unsubscribed'] = "Assinatura cancelada";
+$string['unsubscribe'] = "Suspender o recebimento de  mensagens deste fórum via email";
+$string['unsubscribed'] = "Recebimento de mensagens via email cancelado";
 $string['youratedthis'] = "Você avaliou este";
 $string['yournewtopic'] = "Novo tópico de discussão";
 $string['yourreply'] = "A sua resposta";
