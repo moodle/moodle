@@ -3,7 +3,7 @@
 
 	require_once("../config.php");
 
-    define("MAX_USERS_PER_PAGE", 30);
+    define("MAX_USERS_PER_PAGE", 50);
 
     optional_variable($search, "");
     optional_variable($add, "");
@@ -121,7 +121,7 @@
         echo "<p align=center>$strnopotentialcreators</p>";
 
     } else if ($usercount > MAX_USERS_PER_PAGE) {
-        echo "<p align=center>$strtoomanytoshow</p>";
+        echo "<p align=center>$strtoomanytoshow ($usercount) </p>";
 
     } else {
 

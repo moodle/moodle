@@ -3,7 +3,7 @@
 
 	require_once("../config.php");
     
-    define("MAX_USERS_PER_PAGE", 30);
+    define("MAX_USERS_PER_PAGE", 50);
 
     optional_variable($add, "");
     optional_variable($remove, "");
@@ -123,7 +123,7 @@
         echo "<p align=center>$strnopotentialadmins</p>";
 
     } else if ($usercount > MAX_USERS_PER_PAGE) { 
-        echo "<p align=center>$strtoomanytoshow</p>";
+        echo "<p align=center>$strtoomanytoshow ($usercount) </p>";
 
     } else {
 
