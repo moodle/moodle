@@ -176,6 +176,10 @@ function blocks_preferred_width($blockarray, $blockinfos) {
         return 0;
     }
     foreach($blockarray as $blockid) {
+        if($blockid < 0) {
+            // Invisible block
+            return NULL;
+        }
         if(isset($blockinfos[$blockid])) {
             $blockname = $blockinfos[$blockid]->name;
             $pref = block_method_result($blockname, 'preferred_width');
@@ -959,7 +963,7 @@ function blocks_get_block_ids ($blockinfo) {
 }
 
 // This is used to register the blocks that are displayed in the course page.
-// Set in course/view.php, and read from any other place.
+// Set in course/view.php or /index.php, and read from any other place.
 function blocks_used($blocks = NULL, $records = NULL) {
     static $used = NULL;
 
