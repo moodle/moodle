@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 development (2003072800)
+      // forum.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['addanewdiscussion'] = 'Adicionar um novo tópico de discussão';
@@ -24,9 +24,9 @@ $string['delete'] = 'Apagar';
 $string['deleteddiscussion'] = 'A discussão foi apagada';
 $string['deletedpost'] = 'A mensagem foi apagada';
 $string['deletesure'] = 'Você tem certeza que quer apagar esta mensagem?';
-$string['discussion'] = 'Discussão';
+$string['discussion'] = 'Tópico';
 $string['discussionmoved'] = 'Esta discussão foi transferida para \'$a\'.';
-$string['discussions'] = 'Discussões';
+$string['discussions'] = 'Tópicos';
 $string['discussionsstartedby'] = 'Discussões iniciadas por $a';
 $string['discussionsstartedbyrecent'] = 'Discussões iniciadas recentemente por $a';
 $string['discussthistopic'] = 'Discutir este tópico';
@@ -85,7 +85,7 @@ $string['parentofthispost'] = 'Mensagem original';
 $string['postadded'] = 'A sua mensagem foi enviada com sucesso.<p>Você tem $a para fazer alterações.</p>';
 $string['postincontext'] = 'Veja esta mensagem no contexto';
 $string['postmailinfo'] = 'Esta é a cópia de uma mensagem enviada ao fórum do website $a. 
-Para adicionar a sua resposta ao fórum clique o link abaixo:';
+Clique o link abaixo para consultar as mensagens no site e participar das discussões:';
 $string['postrating1'] = 'Mostra sobretudo saber DESTACADO';
 $string['postrating2'] = 'Igualmente DESTACADO e CONECTADO';
 $string['postrating3'] = 'Mostra sobretudo saber CONECTADO';
@@ -105,7 +105,7 @@ $string['ratingsuse'] = 'Usar classificações';
 $string['ratingtime'] = 'Restringir as classificações às mensagens compreendidas neste arco de tempo:';
 $string['re'] = 'Re:';
 $string['readtherest'] = 'Leia o resto deste tópico';
-$string['replies'] = 'Respostas';
+$string['replies'] = 'Comentários';
 $string['repliesmany'] = '$a respostas até agora';
 $string['repliesone'] = '$a resposta até agora';
 $string['reply'] = 'Responder';
@@ -117,9 +117,9 @@ $string['searchresults'] = 'Resultados da busca';
 $string['sendinratings'] = 'Enviar as minhas classificações recentes';
 $string['showsubscribers'] = 'Mostrar assinantes';
 $string['singleforum'] = 'Uma única discussão simples';
-$string['startedby'] = 'Iniciada por';
+$string['startedby'] = 'Autor';
 $string['subject'] = 'Assunto';
-$string['subscribe'] = 'Receber as mensagens deste fórum via email';
+$string['subscribe'] = 'Receber as mensagens via email';
 $string['subscribed'] = 'Assinante';
 $string['subscribers'] = 'Assinantes';
 $string['subscribersto'] = 'Assinantes de \'$a\'';
