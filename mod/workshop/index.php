@@ -81,10 +81,16 @@
                     $gradinggrade = workshop_gradinggrade($workshop, $USER);
                     $grade = workshop_submission_grade($workshop, $submission);
                     if ($workshop->wtype) {
-                        $info = get_string("gradeforassessments", "workshop").
-                            ": $gradinggrade/$workshop->gradinggrade; ".get_string("gradeforsubmission", "workshop").
-                            ": $grade/$workshop->grade";
-                    } else { // simple assignemnt, don't show grading grade 
+                        if (workshop_count_assessments($submission)) {
+                            $info = get_string("gradeforassessments", "workshop").
+                                ": $gradinggrade/$workshop->gradinggrade; ".get_string("gradeforsubmission", 
+                                "workshop").": $grade/$workshop->grade";
+                        } else {
+                            $info = get_string("gradeforassessments", "workshop").
+                                ": $gradinggrade/$workshop->gradinggrade; ".get_string("gradeforsubmission", 
+                                "workshop").": ".get_string("noassessments", "workshop");
+                        }
+                     } else { // simple assignemnt, don't show grading grade 
                         $info = get_string("gradeforsubmission", "workshop").": $grade/$workshop->grade";
                     }
                 }
