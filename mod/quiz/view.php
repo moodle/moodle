@@ -135,7 +135,7 @@
                 }
                 echo "<BR>";
                 echo "<DIV align=CENTER>";
-                print_single_button("attempt.php", $options, $label="Attempt quiz now");
+                print_single_button("attempt.php", $options, get_string("attemptquiznow","forum"));
                 echo "</P>";
             }
         } else {

@@ -15,6 +15,7 @@ $string['answersingleno']  = "Multiple answers allowed";
 $string['attempt'] = "Attempt \$a";
 $string['attemptfirst'] = "First attempt";
 $string['attemptlast'] = "Last attempt";
+$string['attemptquiznow'] = "Attempt quiz now";
 $string['attempts'] = "Attempts";
 $string['attemptsallowed'] = "Attempts allowed";
 $string['attemptsunlimited'] = "Unlimited attempts";
