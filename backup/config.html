@@ -32,8 +32,17 @@
     if (!isset($backup_config->backup_sche_coursefiles)) {
         $backup_config->backup_sche_coursefiles = 1;
     }
+    if (!isset($backup_config->backup_sche_active)) {
+        $backup_config->backup_sche_active = 0;
+    }
     if (!isset($backup_config->backup_sche_weekdays)) {
         $backup_config->backup_sche_weekdays = "0000000";
+    }
+    if (!isset($backup_config->backup_sche_hour)) {
+        $backup_config->backup_sche_hour = 00;
+    }
+    if (!isset($backup_config->backup_sche_minute)) {
+        $backup_config->backup_sche_minute = 00;
     }
 
     //print_object($backup_config);                       //Debug
@@ -105,6 +114,11 @@
 <tr valign=top>
     <td colspan = 3 align=center><strong><?php print_string("schedule") ?></strong></td>
 </tr>
+<tr valign=top>
+    <td colspan = 3 align=center>
+        <?php print_string("active") ?>: <?php choose_from_menu($yesno_array, "backup_sche_active", $backup_config->backup_sche_active, "") ?>
+    </td>
+</tr>
 <tr>
     <td colspan=3 align=center>
         <?php 
@@ -122,14 +136,15 @@
             $check_names = "";
             while ($i<7) {
                 $day_names[] = strftime("%A",$onesunday + (($firstdayofweek+$i)*86400));
-                if (substr($backup_config->backup_sche_weekdays,$i,1) == "1") {
+                //Calculate standard day of week (0=Sunday......6=Saturday)
+                //to store info in that exact order in DB
+                $stddayofweek = ($i+$firstdayofweek) % 7;
+                //Calculate the status of the checkbox
+                if (substr($backup_config->backup_sche_weekdays,$stddayofweek,1) == "1") {
                     $strchecked = " checked";
                 } else {
                     $strchecked = "";
                 }
-                //Calculate standard day of week (0=Sunday......6=Saturday)
-                //to store info in that exact order in DB
-                $stddayofweek = ($i+$firstdayofweek) % 7;
                 $check_names[] = "<input type=\"checkbox\" name=\"dayofweek_$stddayofweek\" value=\"1\"$strchecked>";
                 $i++;
             }
@@ -138,6 +153,11 @@
             $table->data[] = $check_names;
             print_table($table);
         ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td colspan = 3 align=center>
+        <?php print_string("executeat") ?>: <?php print_time_selector("backup_sche_hour","backup_sche_minute",make_timestamp(2000,1,1,$backup_config->backup_sche_hour,$backup_config->backup_sche_minute)) ?>
     </td>
 </tr>
 <tr>
