@@ -2,11 +2,17 @@
       // workshop.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
 
 
+$string['accumulative'] = "累積";
+$string['addacomment'] = "コメントを追加";
+$string['allowresubmit'] = "再提出を許可する";
+$string['assess'] = "アクセス";
+$string['criteria'] = "基準";
 $string['delete'] = "削除";
 $string['description'] = "詳細";
 $string['edit'] = "編集";
 $string['editacomment'] = "コメントの編集";
 $string['element'] = "要素";
+$string['gradingstrategy'] = "評価方法";
 $string['maximumsize'] = "最大サイズ";
 $string['modulename'] = "ワークショップ";
 $string['modulenameplural'] = "ワークショップ";
