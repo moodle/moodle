@@ -1,9 +1,9 @@
-<p align="center"><b>&Eacute;diteur HTML</b></p>
+<p align="center"><b>&Eacute;diteur WYSIWYG int&eacute;gr&eacute;</b></p>
 
-<p>availability: <b>
-<?php  if (!$cfg->htmleditor) {
+<p>Disponibilit&eacute;&nbsp;:<b>
+<?php  if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
-   } else if (!$user->htmleditor) {
+   } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");
    } else if (!can_use_richtext_editor()) {
        print_string("htmleditordisabledbrowser");
@@ -13,9 +13,9 @@
 ?>
 </b></p>
 
-<p>L'&eacute;diteur HTML présente une interface semblable &agrave; celle des
-traitements de textes, qui permet de facilement &eacute;diter un texte sans
-utiliser directement les balises HTML.</p>
+<p>L'&eacute;diteur WYSIWYG pr&eacute;sente une interface semblable &agrave; celle des
+traitements de textes. Il permet d'&eacute;diter un texte intuitivement et
+produit du code HTML normal.</p>
 
 <p>En plus du formatage du texte, l'&eacute;diteur a les fonctionnalit&eacute;s
 suivantes&nbsp;:</p>
@@ -29,35 +29,35 @@ Coller du navigateur.</p>
 </ul>
 
 <p><b>Ins&eacute;rer des images <img border="0" hspace="10"
-src="lib/rte/images/icon_ins_image.gif"></b></p>
+src="lib/editor/images/ed_image.gif"></b></p>
 <ul>
-<p>Vous pouvez ins&eacute;rer des images d&eacute;j&agrave; publi&eacute;es dans
-un site Internet en cliquant sur le bouton &laquo;&nbsp;Ins&eacute;rer
+<p>Vous pouvez ins&eacute;rer des images d&eacute;j&agrave; publi&eacute;es sur
+un site web en cliquant sur le bouton &laquo;&nbsp;Ins&eacute;rer
 image&nbsp;&raquo; et en tapant l'URL de l'image.</p>
 </ul>
 
 <p><b>Ins&eacute;rer un tableau <img border="0" hspace="10"
-src="lib/rte/images/icon_ins_table.gif"></b></p>
+src="lib/editor/images/insert_table.gif"></b></p>
 <ul>
 <p>On peut ins&eacute;rer un tableau dans le texte en utilisant le bouton
 correspondant.</p>
 </ul>
 
 <p><b>Ins&eacute;rer un lien hypertexte <img border="0" hspace="10"
-src="lib/rte/images/icon_ins_link.gif"></b></p>
+src="lib/editor/images/ed_link.gif"></b></p>
 <ul>
 <p>Pour ins&eacute;rer un lien hypertexte, tapez tout d'abord le texte qui
-servira de lien. S&eacute;lectionnez ce texte et cliquez sur le bouton pour
-l'insertion du lien. Entrez ensuite l'URL d&eacute;sir&eacute;e.</p>
+servira de lien. S&eacute;lectionnez ce texte et cliquez sur le bouton
+d'insertion de lien. Tapez ensuite l'URL d&eacute;sir&eacute;e.</p>
 </ul>
 
 <p><b>Ins&eacute;rer des binettes (emoticons) <img border="0" hspace="10"
 src="pix/s/smiley.gif" width="15" height="15"></b></p>
 <ul>
-<p>Pour insérer des binettes dans votre texte, cliquez sur l'ic&ocirc;ne
+<p>Pour ins&eacute;rer des binettes dans votre texte, cliquez sur l'ic&ocirc;ne
 sourire dans la barre d'ic&ocirc;nes. Une fen&ecirc;tre s'ouvrira, avec la liste
 des binettes disponibles. Cliquez sur une des binettes ou notez le code
-correspondant, que vous pourrez taper directement dans votre texte. </p>
+correspondant, que vous pourrez taper directement dans votre texte.</p>
 
     <table border="1">
       <tr valign="top">
@@ -70,7 +70,7 @@ correspondant, que vous pourrez taper directement dans votre texte. </p>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
-            <td>gros sourire</td>
+            <td>grand sourire</td>
             <td nowrap><font face="courier">:-d</td>
           </tr>
           <tr>
