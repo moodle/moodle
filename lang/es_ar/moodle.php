@@ -322,6 +322,7 @@ $string['opentoguests'] = "Acceso de invitados";
 $string['optional'] = "opcional";
 $string['order'] = "Ordenar";
 $string['outline'] = "Diagrama";
+$string['parentlanguage'] = "es";
 $string['participants'] = "Participantes";
 $string['password'] = "Contrase&ntilde;a";
 $string['passwordchanged'] = "La contrase&ntilde;a ha sido modificada";
