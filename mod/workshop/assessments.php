@@ -694,12 +694,12 @@
 		}
 
 
-	/*********************** list teacher submissions ***********************/
+	/****************** list teacher submissions ***********************/
 	elseif ($action == 'listteachersubmissions') {
 
 		workshop_list_teacher_submissions($workshop, $USER);
 		print_continue("view.php?a=$workshop->id");
-		}
+	}
 
 
 	/*************** update assessment (by teacher or student) ***************************/
@@ -708,17 +708,17 @@
 		require_variable($aid);
 		if (! $assessment = get_record("workshop_assessments", "id", $aid)) {
 			error("workshop assessment is misconfigured");
-			}
+		}
 
 		// first get the assignment elements for maxscores and weights...
 		if (!$elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC")) {
 			print_string("noteonassignmentelements", "workshop");
-			}
+		}
 		else {
 			foreach ($elementsraw as $element) {
 				$elements[] = $element;   // to renumber index 0,1,2...
-				}
 			}
+		}
 
 		$timenow = time();
         // don't fiddle about, delete all the old and add the new!
@@ -738,8 +738,8 @@
 					$element->feedback   = $thefeedback;
 					if (!$element->id = insert_record("workshop_grades", $element)) {
 						error("Could not insert workshop element!");
-						}
 					}
+				}
 				$grade = 0; // set to satisfy save to db
 				break;
 				
@@ -764,10 +764,10 @@
 					$weight = $WORKSHOP_EWEIGHTS[$elements[$key]->weight];
 					if ($weight > 0) { 
 						$totalweight += $weight;
-						}
+					}
 					$rawgrade += ($grade / $maxscore) * $weight;
 					// echo "\$key, \$maxscore, \$weight, \$totalweight, \$grade, \$rawgrade : $key, $maxscore, $weight, $totalweight, $grade, $rawgrade<BR>";
-					}
+				}
 				$grade = $workshop->grade * ($rawgrade / $totalweight);
 				break;
 
@@ -783,11 +783,11 @@
 					$element->grade = $form->grade[$i];
 					if (!$element->id = insert_record("workshop_grades", $element)) {
 						error("Could not insert workshop element!");
-						}
-					if (empty($form->grade[$i])){
-						$error += $WORKSHOP_EWEIGHTS[$elements[$i]->weight];
-						}
 					}
+	    			if (empty($form->grade[$i])){
+						$error += $WORKSHOP_EWEIGHTS[$elements[$i]->weight];
+					}
+				}
 				// now save the adjustment
 				unset($element);
 				$i = $workshop->nelements;
@@ -797,8 +797,9 @@
 				$element->grade = $form->grade[$i];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
 					error("Could not insert workshop element!");
-					}
-				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * $workshop->grade / 100;
+				}
+				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 
+                    $workshop->grade / 100;
 				echo "<P><B>".get_string("weightederrorcount", "workshop", intval($error + 0.5))."</B>\n";
 				break;
 			
@@ -811,7 +812,7 @@
 				$element->grade = $form->grade[0];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
 					error("Could not insert workshop element!");
-					}
+				}
 				// now save the adjustment in element one
 				unset($element);
 				$element->workshopid = $workshop->id;
@@ -820,7 +821,7 @@
 				$element->grade = $form->grade[1];
 				if (!$element->id = insert_record("workshop_grades", $element)) {
 					error("Could not insert workshop element!");
-					}
+				}
 				$grade = ($elements[$form->grade[0]]->maxscore + $form->grade[1]) * $workshop->grade / 100;
 				break;
 
@@ -835,8 +836,8 @@
 					$element->grade = $thegrade;
 					if (!$element->id = insert_record("workshop_grades", $element)) {
 						error("Could not insert workshop element!");
-						}
 					}
+				}
 				// now work out the grade...
 				$rawgrade=0;
 				$totalweight=0;
@@ -845,55 +846,58 @@
 					$weight = $WORKSHOP_EWEIGHTS[$elements[$key]->weight];
 					if ($weight > 0) { 
 						$totalweight += $weight;
-						}
-					$rawgrade += ($grade / $maxscore) * $weight;
 					}
+					$rawgrade += ($grade / $maxscore) * $weight;
+				}
 				$grade = $workshop->grade * ($rawgrade / $totalweight);
 				break;
 
-			} // end of switch
+		} // end of switch
 			
 		// update the time of the assessment record (may be re-edited)...
 		set_field("workshop_assessments", "timecreated", $timenow, "id", $assessment->id);
 		
 		if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
 			error ("Updateassessment: submission record not found");
-			}
+		}
 		
 		// if the workshop does need peer agreement AND it's self assessment then set timeagreed
 		if ($workshop->agreeassessments and ($submission->userid == $assessment->userid)) {
 			set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
-			}
+		}
 		
 		set_field("workshop_assessments", "grade", $grade, "id", $assessment->id);
-		// ...and clear any grading of this assessment
+		// ...and clear any grading of this assessment...
 		set_field("workshop_assessments", "timegraded", 0, "id", $assessment->id);
 		set_field("workshop_assessments", "gradinggrade", 0, "id", $assessment->id);
+		// ...and the resubmission flag
+        set_field("workshop_assessments", "resubmission", 0, "id", $assessment->id);
 		
-		// any comment?
+        // any comment?
 		if (!empty($form->generalcomment)) {
 			set_field("workshop_assessments", "generalcomment", $form->generalcomment, "id", $assessment->id);
-			}
+		}
 			
-	    add_to_log($course->id, "workshop", "assess", "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
+	    add_to_log($course->id, "workshop", "assess",
+                "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
 		
 		// set up return address
 		if (!$returnto = $form->returnto) {
 			$returnto = "view.php?id=$cm->id";
-			}
+		}
 			
 		// show grade if grading strategy is not zero
 		if ($workshop->gradingstrategy) {
-			redirect($returnto, get_string("thegradeis", "workshop").": ".number_format($grade, 2)."% (".get_string("maximumgrade").
-				" ".number_format($workshop->grade)."%)");
-			}
+			redirect($returnto, get_string("thegradeis", "workshop").": ".number_format($grade, 2).
+                    "% (".get_string("maximumgrade")." ".number_format($workshop->grade)."%)");
+		}
 		else {
 			redirect($returnto);
-			}
 		}
+	}
 
 
-	/*************** update comment (by author, assessor or teacher) ***************************/
+	/****************** update comment (by author, assessor or teacher) ********************/
 	elseif ($action == 'updatecomment') {
 		$timenow = time();
 
@@ -902,10 +906,10 @@
 		// get the comment record...
 		if (!$comment = get_record("workshop_comments", "id", $_POST['cid'])) {
 			error("Update to Comment failed");
-			}
+		}
 		if (!$assessment = get_record("workshop_assessments", "id", $comment->assessmentid)) {
 			error("Update Comment: Assessment not found");
-			}
+		}
 		//save the comment for the assessment...
 		if (isset($form->comments)) {
 			set_field("workshop_comments", "comments", $form->comments, "id", $comment->id);
@@ -914,26 +918,27 @@
 			set_field("workshop_comments", "mailed", 0, "id", $comment->id);
 			echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTER><BR>\n";
 			
-			add_to_log($course->id, "workshop", "comment", "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$comment->id");
-			}
-
-		print_continue("assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id");
+			add_to_log($course->id, "workshop", "comment", 
+                    "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$comment->id");
 		}
 
+		print_continue("assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id");
+	}
 
-	/*************** update grading (by teacher) ***************************/
+
+	/****************** update grading (by teacher) ***************************/
 	elseif ($action == 'updategrading') {
 		$timenow = time();
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		$form = (object)$_POST;
 		
 		if (!$assessment = get_record("workshop_assessments", "id", $_POST['aid'])) {
 			error("Update Grading failed");
-			}
+		}
 		//save the comment and grade for the assessment 
 		if (isset($form->teachercomment)) {
 			set_field("workshop_assessments", "teachercomment", $form->teachercomment, "id", $assessment->id);
@@ -942,8 +947,9 @@
 			set_field("workshop_assessments", "mailed", 0, "id", $assessment->id);
 			echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTRE><BR>\n";
 			
-			add_to_log($course->id, "workshop", "grade", "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
-			}
+			add_to_log($course->id, "workshop", "grade", 
+                 "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
+		}
 		switch ($form->stype) {
 			case "student" : 
 				redirect("assessments.php?action=listungradedstudentsubmissions&id=$cm->id");
@@ -951,28 +957,29 @@
 			case "teacher" : 
 				redirect("assessments.php?action=listungradedteachersubmissions&id=$cm->id");
 				break;
-			}
 		}
+	}
 
 
-	/******************* user confirm delete ************************************/
+	/****************** user confirm delete ************************************/
 	elseif ($action == 'userconfirmdelete' ) {
 
 		if (empty($_GET['aid'])) {
 			error("User confirm delete: assessment id missing");
-			}
-			
-		notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("assessment", "workshop")), 
-			 "assessments.php?action=userdelete&id=$cm->id&aid=$_GET[aid]", "view.php?id=$cm->id");
 		}
+			
+		notice_yesno(get_string("confirmdeletionofthisitem","workshop", 
+                get_string("assessment", "workshop")), 
+                "assessments.php?action=userdelete&id=$cm->id&aid=$_GET[aid]", "view.php?id=$cm->id");
+	}
 	
 
-	/******************* user delete ************************************/
+	/****************** user delete ************************************/
 	elseif ($action == 'userdelete' ) {
 
 		if (empty($_GET['aid'])) {
 			error("User delete: assessment id missing");
-			}
+		}
 			
 		print_string("deleting", "workshop");
 		// first delete all the associated records...
@@ -982,50 +989,50 @@
 		delete_records("workshop_assessments", "id", $_GET['aid']);
 		
 		print_continue("view.php?id=$cm->id");
-		}
+	}
 	
 
-	/*********************** view all assessments ***********************/
+	/****************** view all assessments ***********************/
 	elseif ($action == 'viewallassessments') {
 		
 		if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
 			error("View All Assessments: submission record not found");
-			}		
+		}		
 			
 		if ($assessments = workshop_get_assessments($submission)) {
 			foreach ($assessments as $assessment) {
 				workshop_print_assessment($workshop, $assessment);
-				}
 			}
+		}
 		// only called from list all submissions
 		print_continue("submissions.php?action=listallsubmissions&id=$cm->id");
-		}
+	}
 
 
-	/*********************** view assessment ***********************/
+	/****************** view assessment *****************************/
 	elseif ($action == 'viewassessment') {
 
 		optional_variable($allowcomments);
 		if (!isset($allowcomments)) {
 			$allowcomments = false;
-			}
+		}
 	
 		// get the assessment record
 		if (!$assessment = get_record("workshop_assessments", "id", $_GET['aid'])) {
 			error("Assessment record not found");
-			}		
+		}		
 
 		// show assessment but don't allow changes
 		workshop_print_assessment($workshop, $assessment, false, $allowcomments);
 		
 		print_continue("view.php?a=$workshop->id");
-		}
+	}
 
 
 	/*************** no man's land **************************************/
 	else {
 		error("Fatal Error: Unknown Action: ".$action."\n");
-		}
+	}
 
 	print_footer($course);
  

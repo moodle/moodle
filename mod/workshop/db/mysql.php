@@ -57,6 +57,11 @@ function workshop_upgrade($oldversion) {
 		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop` ADD `overallocation` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER `nsassessments`");
 		
 		}
+		if ($oldversion < 2003100200) {
+	
+		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD `resubmission` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER `mailed`");
+		
+		}
 		
     return true;
 }

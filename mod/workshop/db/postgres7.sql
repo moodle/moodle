@@ -69,6 +69,7 @@ CREATE TABLE prefix_workshop_assessments (
   grade float NOT NULL default '0',
   gradinggrade INT NOT NULL default '0',
   mailed INT2  NOT NULL default '0',
+  resubmission INT2  NOT NULL default '0',
   generalcomment text NOT NULL,
   teachercomment text NOT NULL
   );

@@ -120,6 +120,7 @@ CREATE TABLE prefix_workshop_assessments (
   grade float default '0' not null,
   gradinggrade number(3) default '0' not null,
   mailed number(2)  default '0' not null,
+  resubmission number(2)  default '0' not null,
   generalcomment varchar2(255) NOT NULL,
   teachercomment varchar2(255) NOT NULL
 );

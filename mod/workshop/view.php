@@ -95,7 +95,7 @@
 		}
 	
 	
-	/*********************** alow peer assessments (move to phase 3) (for teachers)**/
+	/************** allow peer assessments (move to phase 3) (for teachers)**/
 	if ($action == 'allowpeerassessments') {
 
 		if (!isteacher($course->id)) {
@@ -108,7 +108,7 @@
 		}
 	
 
-	/******************* close workshop for student assessments and submissions (move to phase 4) (for teachers)**/
+	/****************** close workshop for student assessments/submissions (move to phase 4) (for teachers)**/
 	elseif ($action == 'closeworkshop') {
 
 		if (!isteacher($course->id)) {
@@ -121,7 +121,7 @@
 		}
 	
 
-	/******************* display final grade (for students) ************************************/
+	/****************** display final grade (for students) ************************************/
 	elseif ($action == 'displayfinalgrade' ) {
 
 		// get the final weights from the database
@@ -174,10 +174,12 @@
 			echo "<center><table border=\"1\" width=\"90%\"><tr>";
 			echo "<td><b>".get_string("submissions", "workshop")."</b></td>";
 			if ($useteachersgrades) {
-				echo "<td align=\"center\"><b>".get_string("teacherassessments", "workshop", $course->teacher)."</b></td>";
+				echo "<td align=\"center\"><b>".get_string("teacherassessments", "workshop", 
+                        $course->teacher)."</b></td>";
 				}
 			if ($usepeergrades) {
-				echo "<td align=\"center\"><b>".get_string("studentassessments", "workshop", $course->student)."</b></td>";
+				echo "<td align=\"center\"><b>".get_string("studentassessments", "workshop", 
+                        $course->student)."</b></td>";
 				}
 			echo "<td align=\"center\"><b>".get_string("assessmentsdone", "workshop")."</b></td>";
 			if ($usebiasgrades) {
@@ -212,10 +214,12 @@
 			foreach ($submissions as $submission) {
 				echo "<TR><td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
 				if ($useteachersgrades) {
-					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, "teacher")."</td>";
+					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, 
+                            $submission, "teacher")."</td>";
 					}
 				if ($usepeergrades) {
-					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, "student")."</td>";
+					echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, 
+                            $submission, "student")."</td>";
 					}
 				echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $USER)."</td>";
 				if ($usebiasgrades) {
@@ -238,7 +242,7 @@
 		}
 
 
-	/*********************** make final grades available (for teachers only)**************/
+	/****************** make final grades available (for teachers only)**************/
 	elseif ($action == 'makefinalgradesavailable') {
 
 		if (!isteacher($course->id)) {
@@ -251,13 +255,13 @@
 		}
 	
 	
-	/*********************** assignment not available (for students)***********************/
+	/****************** assignment not available (for students)***********************/
 	elseif ($action == 'notavailable') {
 		print_heading(get_string("notavailable", "workshop"));
 		}
 
 
-	/*********************** open workshop for student assessments and submissions (move to phase 2) (for teachers)**/
+	/****************** open workshop for student assessments (move to phase 2) (for teachers)**/
 	elseif ($action == 'openworkshop') {
 
 		if (!isteacher($course->id)) {
@@ -276,7 +280,7 @@
 		}
 
 
-	/*********************** set up assignment (move back to phase 1) (for teachers)***********************/
+	/****************** set up assignment (move back to phase 1) (for teachers)***********************/
 	elseif ($action == 'setupassignment') {
 
 		if (!isteacher($course->id)) {
@@ -288,24 +292,27 @@
 		}
 	
 	
-	/*********************** student's view could be in 1 of 4 stages ***********************/
+	/****************** student's view could be in 1 of 4 stages ***********************/
 	elseif ($action == 'studentsview') {
 		workshop_print_assignment_info($workshop);
 		// in Stage 1? - are there any teacher's submissions? and...
-		// ...has student assessed the required number of the teacher's submissions ("satisfactory level" dropped 14/8/03)
+		// ...has student assessed the required number of the teacher's submissions 
 		if ($workshop->ntassessments and (!workshop_test_user_assessments($workshop, $USER))) {
-			print_heading(get_string("pleaseassesstheseexamplesfromtheteacher", "workshop", $course->teacher));
+			print_heading(get_string("pleaseassesstheseexamplesfromtheteacher", "workshop", 
+                        $course->teacher));
 			workshop_list_teacher_submissions($workshop, $USER);
 			}
 		// in stage 2? - submit own first attempt
 		else {
-			if ($workshop->ntassessments) { // show assessment the teacher's examples, there may be feedback from teacher
-				print_heading(get_string("yourassessmentsofexamplesfromtheteacher", "workshop", $course->teacher));
+			if ($workshop->ntassessments) { 
+                // show assessment the teacher's examples, there may be feedback from teacher
+				print_heading(get_string("yourassessmentsofexamplesfromtheteacher", "workshop", 
+                            $course->teacher));
 				workshop_list_teacher_submissions($workshop, $USER);
 				}
 			if (!workshop_get_user_submissions($workshop, $USER)) {
 				// print upload form
-				print_heading(get_string("submitassignment", "assignment").":");
+				print_heading(get_string("submitassignmentusingform", "workshop").":");
 				workshop_print_upload_form($workshop);
 				}
 			// in stage 3? - grade other student's submissions, resubmit and list all submissions
@@ -337,22 +344,32 @@
 				// list previous submissions
 				print_heading(get_string("submissions", "workshop"));
 				workshop_list_user_submissions($workshop, $USER);
-				if ($workshop->resubmit) {
-					// if resubmissions allowed print upload form
-					echo "<hr size=\"1\" noshade>";
-					print_heading(get_string("submitassignment", "assignment").":");
-					workshop_print_upload_form($workshop);
-					echo "<hr size=\"1\" noshade>";
-					}
+				// are resubmissions allowed?
+                if ($workshop->resubmit) {
+					// see if there are any cold (warm included as well) assessments of the last submission
+                    // if there are then print upload form
+                    if ($submissions = workshop_get_user_submissions($workshop, $USER)) {
+                        foreach ($submissions as $submission) {
+                            $lastsubmission = $submission;
+                            break;
+                        }
+                        if (workshop_count_assessments($lastsubmission)) {
+        					echo "<hr size=\"1\" noshade>";
+		        			print_heading(get_string("submitrevisedassignment", "workshop").":");
+				        	workshop_print_upload_form($workshop);
+        					echo "<hr size=\"1\" noshade>";
+                        }
+                    }
+				}
 				// allow user to list their submissions and assessments in a general way????
 				// print_heading("<A HREF=\"submissions.php?action=listallsubmissions&id=$cm->id\">".
 				// 	get_string("listofallsubmissions", "workshop"));
-				}
 			}
 		}
+	}
 
 
-	/*********************** submission of assignment by teacher only***********************/
+	/****************** submission of assignment by teacher only***********************/
 	elseif ($action == 'submitassignment') {
 	
 		if (!isteacher($course->id)) {
@@ -378,19 +395,22 @@
 		}
 
 
-	/*********************** teacher's view - display admin page (current phase options) ************/
+	/****************** teacher's view - display admin page (current phase options) ************/
 	elseif ($action == 'teachersview') {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		print_heading_with_help(get_string("managingassignment", "workshop"), "managing", "workshop");
 		
 		workshop_print_assignment_info($workshop);
 		
-		$tabs->names = array("1. ".get_string("phase1", "workshop"), "2. ".get_string("phase2", "workshop", $course->student), 
-			"3. ".get_string("phase3", "workshop"), "4. ".get_string("phase4", "workshop"), "5. ".get_string("phase5", "workshop"));
+		$tabs->names = array("1. ".get_string("phase1", "workshop"), 
+                        "2. ".get_string("phase2", "workshop", $course->student), 
+			            "3. ".get_string("phase3", "workshop"), 
+                        "4. ".get_string("phase4", "workshop"), 
+                        "5. ".get_string("phase5", "workshop"));
 		$tabs->urls = array("view.php?id=$cm->id&action=setupassignment", 
 			"view.php?id=$cm->id&action=openworkshop",
 			"view.php?id=$cm->id&action=allowpeerassessments",
@@ -409,15 +429,18 @@
 					echo "<p><b><a href=\"assessments.php?id=$cm->id&action=editelements\">".
 						  get_string("amendassessmentelements", "workshop")."</a></b> \n";
 					helpbutton("elements", get_string("amendassessmentelements", "workshop"), "workshop");
-					if ($workshop->ntassessments) { // if teacher examples show submission and assessment links
+					if ($workshop->ntassessments) { 
+                        // if teacher examples show submission and assessment links
 						echo "<p><b><a href=\"view.php?id=$cm->id&action=submitassignment\">".
 							get_string("submitexampleassignment", "workshop")."</a></b> \n";
-						helpbutton("submissionofexamples", get_string("submitexampleassignment", "workshop"), "workshop");
+						helpbutton("submissionofexamples", get_string("submitexampleassignment", "workshop"),
+                                "workshop");
 						echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentteacher\">".
 							  get_string("teachersubmissionsforassessment", "workshop", 
 								  workshop_count_teacher_submissions_for_assessment($workshop, $USER)).
 							  "</a></b> \n";
-						helpbutton("assessmentofexamples", get_string("teachersubmissionsforassessment", "workshop"), "workshop");
+						helpbutton("assessmentofexamples", get_string("teachersubmissionsforassessment", 
+                                    "workshop"), "workshop");
 						}
 					break;
 					
@@ -427,16 +450,19 @@
 						echo "<p><b><a href=\"assessments.php?id=$cm->id&action=listungradedteachersubmissions\">".
 						  get_string("ungradedassessmentsofteachersubmissions", "workshop", 
 						  workshop_count_ungraded_assessments_teacher($workshop))."</a></b> \n";
-						helpbutton("ungradedassessments_teacher", get_string("ungradedassessmentsofteachersubmissions", "workshop"), "workshop");
-						}
+						helpbutton("ungradedassessments_teacher", 
+                               get_string("ungradedassessmentsofteachersubmissions", "workshop"), "workshop");
+					}
 					echo "<p><b><a href=\"assessments.php?id=$cm->id&action=listungradedstudentsubmissions\">".
 						  get_string("ungradedassessmentsofstudentsubmissions", "workshop", 
 						  workshop_count_ungraded_assessments_student($workshop))."</a></b> \n";
-					helpbutton("ungradedassessments_student", get_string("ungradedassessmentsofstudentsubmissions", "workshop"), "workshop");
+					helpbutton("ungradedassessments_student", 
+                            get_string("ungradedassessmentsofstudentsubmissions", "workshop"), "workshop");
 					echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentstudent\">".
 						  get_string("studentsubmissionsforassessment", "workshop", 
 						  workshop_count_student_submissions_for_assessment($workshop, $USER))."</a></b> \n";
-					helpbutton("gradingsubmissions", get_string("studentsubmissionsforassessment", "workshop"), "workshop");
+					helpbutton("gradingsubmissions", 
+                            get_string("studentsubmissionsforassessment", "workshop"), "workshop");
 					break;
 					
 				case 4: // calculate final grades
@@ -444,16 +470,19 @@
 						echo "<p><b><a href=\"assessments.php?id=$cm->id&action=listungradedteachersubmissions\">".
 						  get_string("ungradedassessmentsofteachersubmissions", "workshop", 
 						  workshop_count_ungraded_assessments_teacher($workshop))."</a></b> \n";
-						helpbutton("ungradedassessments_teacher", get_string("ungradedassessmentsofteachersubmissions", "workshop"), "workshop");
-						}
+						helpbutton("ungradedassessments_teacher", 
+                               get_string("ungradedassessmentsofteachersubmissions", "workshop"), "workshop");
+					}
 					echo "<p><b><a href=\"assessments.php?id=$cm->id&action=listungradedstudentsubmissions\">".
 						  get_string("ungradedassessmentsofstudentsubmissions", "workshop", 
 						  workshop_count_ungraded_assessments_student($workshop))."</a></b> \n";
-					helpbutton("ungradedassessments_student", get_string("ungradedassessmentsofstudentsubmissions", "workshop"), "workshop");
+					helpbutton("ungradedassessments_student", 
+                            get_string("ungradedassessmentsofstudentsubmissions", "workshop"), "workshop");
 					echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentstudent\">".
 						  get_string("studentsubmissionsforassessment", "workshop", 
 						  workshop_count_student_submissions_for_assessment($workshop, $USER))."</a></b> \n";
-					helpbutton("gradingsubmissions", get_string("studentsubmissionsforassessment", "workshop"), "workshop");
+					helpbutton("gradingsubmissions", 
+                            get_string("studentsubmissionsforassessment", "workshop"), "workshop");
 					print_heading("<a href=\"submissions.php?id=$cm->id&action=displayfinalweights\">".
 						  get_string("calculationoffinalgrades", "workshop")."</a>");
 					break;
@@ -461,7 +490,7 @@
 				case 5: // show final grades
 					print_heading("<A HREF=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
 						  get_string("displayoffinalgrades", "workshop")."</A>");
-			}
+		}
 		print_heading("<A HREF=\"submissions.php?id=$cm->id&action=adminlist\">".
 			get_string("administration")."</A>");
 		}
@@ -470,7 +499,7 @@
 	/*************** no man's land **************************************/
 	else {
 		error("Fatal Error: Unknown Action: ".$action."\n");
-		}
+	}
 
 	print_footer($course);
 	
