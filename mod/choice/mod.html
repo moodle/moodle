@@ -221,9 +221,9 @@ for ($i=1; $i<=$standardblanks; $i++) {
     <td align="right"><strong><?php print_string("allowupdate","choice") ?>:</strong></td>
     <td>
         <?php
-        $options[0] = get_string("no");
-        $options[1] = get_string("yes");
-        choose_from_menu($options, "allowupdate", "$form->allowupdate", "");
+        $menuoptions[0] = get_string("no");
+        $menuoptions[1] = get_string("yes");
+        choose_from_menu($menuoptions, "allowupdate", "$form->allowupdate", "");
         ?>
         <br />
     </td>
@@ -234,9 +234,9 @@ for ($i=1; $i<=$standardblanks; $i++) {
     <td align="right"><strong><?php print_string("showunanswered","choice") ?>:</strong></td>
     <td>
         <?php
-        $options[0] = get_string("no");
-        $options[1] = get_string("yes");
-        choose_from_menu($options, "showunanswered", "$form->showunanswered", "");
+        $menuoptions[0] = get_string("no");
+        $menuoptions[1] = get_string("yes");
+        choose_from_menu($menuoptions, "showunanswered", "$form->showunanswered", "");
         ?>
         <br />
     </td>
