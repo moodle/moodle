@@ -46,13 +46,12 @@ $string['false'] = "Onwaar";
 $string['feedback'] = "Feedback";
 $string['filloutoneanswer'] = "Je moet minstens één mogelijk antwoord invullen. Lege antwoorden zullen niet worden gebruikt.";
 $string['fillouttwochoices'] = "Je moet minstens twee keuzemogelijkheden invullen. Lege keuzemogelijkheden zullen niet worden gebruikt.";
-$string['fractionsaddwrong'] = "De positieve cijfers die je hebt gekozen tellen niet op tot 100%
+$string['fractionsaddwrong'] = "De positieve cijfers die je hebt gekozen tellen niet op tot 100%%
 <BR>In plaats daarvan tellen ze op tot \$a%%
 <BR>Wil je terug gaan en deze vraag verbeteren?";
 $string['fractionsnomax'] = "Eén van de antwoorden moet 100%% zijn, zodat het mogelijk is
 <BR>om een vol punt voor deze vraag te krijgen.
-<BR>Wil je terug gaan en deze vraag verbeteren?
-";
+<BR>Wil je terug gaan en deze vraag verbeteren?";
 $string['gradeaverage'] = "Gemiddelde cijfer";
 $string['gradehighest'] = "Hoogste cijfer";
 $string['grademethod'] = "Beoordelingsmethode";
