@@ -52,7 +52,7 @@ function choice_add_instance($choice) {
 
     $choice->timemodified = time();
 
-    if ($choice->timerestrict) {
+    if (!empty($choice->timerestrict) and $choice->timerestrict) {
         $choice->timeopen = make_timestamp($choice->openyear, $choice->openmonth, $choice->openday,
                                      $choice->openhour, $choice->openminute, 0);
         $choice->timeclose = make_timestamp($choice->closeyear, $choice->closemonth, $choice->closeday,
@@ -75,7 +75,7 @@ function choice_update_instance($choice) {
     $choice->timemodified = time();
 
 
-    if ($choice->timerestrict) {
+    if (!empty($choice->timerestrict) and $choice->timerestrict) {
         $choice->timeopen = make_timestamp($choice->openyear, $choice->openmonth, $choice->openday,
                                      $choice->openhour, $choice->openminute, 0);
         $choice->timeclose = make_timestamp($choice->closeyear, $choice->closemonth, $choice->closeday,
