@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 development (2004011700)
+      // editor.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['about'] = 'Info su questo editor';
@@ -21,10 +21,14 @@ $string['chooseicon'] = 'Scegli una icona da inserire';
 $string['close'] = 'Chiudi';
 $string['cols'] = 'Colonne';
 $string['copy'] = 'Copia selezione';
+$string['createfolder'] = 'Crea cartella';
 $string['createlink'] = 'Inserisci collegamento web';
 $string['cut'] = 'Taglia selezione';
+$string['delete'] = 'Cancella';
+$string['filebrowser'] = 'Gestione file';
 $string['forecolor'] = 'Colore testo';
 $string['heading'] = 'Intestazione';
+$string['height'] = 'Altezza';
 $string['hilitecolor'] = 'Colore sfondo';
 $string['horizontal'] = 'Orizzontale';
 $string['horizontalrule'] = 'Riga orizzontale';
@@ -33,6 +37,7 @@ $string['imageurl'] = 'URL immagine';
 $string['indent'] = 'Aumenta nidificazione';
 $string['insertchar'] = 'Inserisci carattere speciale';
 $string['insertimage'] = 'Inserisci immagine';
+$string['insertlink'] = 'Inserisci collegamento';
 $string['insertsmile'] = 'Inserisci faccina';
 $string['inserttable'] = 'Inserisci tabella';
 $string['italic'] = 'Italico';
@@ -42,8 +47,19 @@ $string['justifyleft'] = 'Sinistra';
 $string['justifyright'] = 'Destra';
 $string['layout'] = 'Schema';
 $string['left'] = 'Sinistra';
+$string['linkproperties'] = 'Prorioetà collegamento';
+$string['linktarget'] = 'destinazione';
+$string['linktargetblank'] = 'Nuova finestra';
+$string['linktargetnone'] = 'Niente';
+$string['linktargetother'] = 'Altro (fuori servizio)';
+$string['linktargetself'] = 'Stesso frame';
+$string['linktargettop'] = 'Stessa finestra';
+$string['linktitle'] = 'Titolo';
+$string['linkurl'] = 'URL';
 $string['middle'] = 'Centro';
+$string['move'] = 'Muovi';
 $string['normal'] = 'Normale';
+$string['notimage'] = 'Il file selezionato non è un immagine. Prego scegliere un immagine!';
 $string['notset'] = 'Non impostato';
 $string['ok'] = 'OK';
 $string['orderedlist'] = 'Lista ordinata';
@@ -55,10 +71,14 @@ $string['pixels'] = 'Punti';
 $string['popupeditor'] = 'Editor in nuova finestra';
 $string['preformatted'] = 'Preformattato';
 $string['preview'] = 'Anteprima';
+$string['properties'] = 'Proprietà';
 $string['redo'] = 'Ripeti ultima azione';
+$string['rename'] = 'Rinomina';
 $string['right'] = 'Destra';
 $string['rows'] = 'Righe';
+$string['selection'] = 'Selezione';
 $string['showhelp'] = 'Aiuto sull\'editor';
+$string['size'] = 'Dimensione';
 $string['spacing'] = 'Spaziatura';
 $string['strikethrough'] = 'Barrato';
 $string['subscript'] = 'Pedice';
@@ -67,10 +87,13 @@ $string['textindicator'] = 'Stile corrente';
 $string['textmode'] = 'Sei nel MODO TESTO. Utilizza il pulsante [<>] per tornare al MODO WYSIWYG.';
 $string['texttop'] = 'Limite superiore testo';
 $string['top'] = 'In alto';
+$string['type'] = 'Tipo';
 $string['underline'] = 'Sottolineato';
 $string['undo'] = 'Annulla ultima azione';
 $string['unorderedlist'] = 'Lista puntata';
+$string['upload'] = 'Trasferisci file';
 $string['vertical'] = 'Verticale';
 $string['width'] = 'Larghezza';
+$string['zip'] = 'Comprimi';
 
 ?>
