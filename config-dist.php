@@ -143,6 +143,9 @@ $CFG->admin = 'admin';
 // texts like forum postings, journals etc).  This is mostly only useful 
 // when using the multilang filter.   This feature may not be complete.
 //      $CFG->filterall = true;
+//
+// Setting this to true will enable admins to edit any post at any time
+//      $CFG->admineditalways = true;
 
 
 
