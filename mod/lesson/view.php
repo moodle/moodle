@@ -7,8 +7,8 @@
     require_once('locallib.php');
     require_once('lib.php');
 
-    require_variable($id);    // Course Module ID
-    optional_variable($pageid);    // Lesson Page ID
+    $id = required_param('id', PARAM_INT);    // Course Module ID
+    $pageid = optional_param('pageid', NULL, PARAM_INT);    // Lesson Page ID
 
     if (! $cm = get_record('course_modules', 'id', $id)) {
         error('Course Module ID was incorrect');
@@ -74,7 +74,7 @@
     if (isteacheredit($course->id)) {
         $button = '<table><tr><td>';
         $button .= '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/course/mod.php">'.
-               '<input type="hidden" name="sesskey" value="'. $USER->sesskey .'" />'.		
+               '<input type="hidden" name="sesskey" value="'. $USER->sesskey .'" />'.
                '<input type="hidden" name="update" value="'. $cm->id .'" />'.
                '<input type="hidden" name="return" value="true" />'.
                '<input type="submit" value="'. get_string('editlessonsettings', 'lesson') .'" /></form>';
@@ -136,7 +136,7 @@
         if ($lesson->usepassword && !isteacher($course->id)) {
             $correctpass = false;
             if (isset($_POST['userpassword'])) {
-                if ($lesson->password == md5(trim($_POST['userpassword']))) {
+                if ($lesson->password == md5(trim(clean_param($_POST['userpassword'], PARAM_CLEAN)))) {
                     $USER->lessonloggedin[$lesson->id] = true;
                     $correctpass = true;
                 }
@@ -588,6 +588,7 @@
                 echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
                 echo "<input type=\"hidden\" name=\"action\" value=\"continue\" />";
                 echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
+				echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />";
                 /// CDC-FLAG ///
                 if (!$lesson->slideshow || $page->qtype != 20) {
                     print_simple_box_start("center");
@@ -1249,13 +1250,14 @@
                 echo "</div>";
             } else {
                 if(isset($_GET['display']) && !isset($_GET['viewAll'])) {
+					$display = clean_param($_GET['display'], PARAM_INT);
                     while(true)
                     {
-                        if($page->id == $_GET['display'] && $page->qtype == LESSON_BRANCHTABLE) {
+                        if($page->id == $display && $page->qtype == LESSON_BRANCHTABLE) {
                             $branch = true;
                             $singlePage = false;
                             break;
-                        } elseif($page->id == $_GET['display']) {
+                        } elseif($page->id == $display) {
                             $branch = false;
                             $singlePage = true;	
                             break;
@@ -1267,17 +1269,17 @@
                             // last page reached
                             break;
                         }
-                     }
+                    }
                     echo "<center><a href=\"view.php?id=$id&amp;viewAll=1\">".get_string("viewallpages", "lesson")."</a><br />\n";
                     echo "<a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br />\n";
                     echo "<table cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
                     if (isteacheredit($course->id)) {
                         /// CDC-FLAG 6/16/04 ///					
-                        echo "<tr><td align=\"right\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->prevpageid\">".
+                        echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->prevpageid\">".
                             get_string("importquestions", "lesson")."</a> | ".
-                            "<a href=\"lesson.php?id=$cm->id&amp;action=addcluster&amp;pageid=$page->prevpageid\">".
+                            "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addcluster&amp;pageid=$page->prevpageid\">".
                             get_string("addcluster", "lesson")."</a> | ".
-                            "<a href=\"lesson.php?id=$cm->id&amp;action=addendofcluster&amp;pageid=$page->prevpageid\">".
+                            "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addendofcluster&amp;pageid=$page->prevpageid\">".
                             get_string("addendofcluster", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=$page->prevpageid\">".
                             get_string("addabranchtable", "lesson")."</a> | ".
@@ -1290,12 +1292,12 @@
                     if($lesson->tree) {
                         echo "<center><a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br /></center>\n";
                     }	
-                    echo "<center><table cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
+                    echo "<table align=\"center\" cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
                     if (isteacheredit($course->id)) {
                         /// CDC-FLAG 6/16/04 ///
                         echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=0\">".
                             get_string("importquestions", "lesson")."</a> | ".
-                            "<a href=\"lesson.php?id=$cm->id&amp;action=addcluster&amp;pageid=0\">".
+                            "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addcluster&amp;pageid=0\">".
                             get_string("addcluster", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=0\">".
                             get_string("addabranchtable", "lesson")."</a> | ".
@@ -1306,8 +1308,8 @@
                     }
                 }
                 /// CDC-FLAG /// end tree code	(note, there is an "}" below for an else above)
-            echo "<tr><td>\n";
             while (true) {
+            	echo "<tr><td>\n";
                 echo "<table width=\"100%\" border=\"1\"><tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\"><b>$page->title</b>&nbsp;&nbsp;\n";
                 if (isteacheredit($course->id)) {
                     if ($npages > 1) {
@@ -1316,7 +1318,7 @@
                     }
                     echo "<a title=\"".get_string("update")."\" href=\"lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id\">\n".
                         "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"edit\" /></a>\n".
-                        "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&amp;action=confirmdelete&amp;pageid=$page->id\">\n".
+                        "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=confirmdelete&amp;pageid=$page->id\">\n".
                         "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"delete\" /></a>\n";
                 }
                 echo "</td></tr>\n";             
@@ -1387,7 +1389,7 @@
                                 echo "</td><td width=\"80%\">\n";
                                 echo format_text($answer->answer);
                                 echo "</td></tr>\n";
-                               echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("response", "lesson")." $i:</b> \n";
+                                echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("response", "lesson")." $i:</b> \n";
                                 echo "</td><td>\n";
                                 echo format_text($answer->response); 
                                 echo "</td></tr>\n";
@@ -1512,9 +1514,9 @@
                     /// CDC-FLAG /// 6/16/04				
                     echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->id\">".
                         get_string("importquestions", "lesson")."</a> | ".    
-                         "<a href=\"lesson.php?id=$cm->id&amp;action=addcluster&amp;pageid=$page->id\">".
+                         "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addcluster&amp;pageid=$page->id\">".
                          get_string("addcluster", "lesson")."</a> | ".
-                         "<a href=\"lesson.php?id=$cm->id&amp;action=addendofcluster&amp;pageid=$page->id\">".
+                         "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addendofcluster&amp;pageid=$page->id\">".
                          get_string("addendofcluster", "lesson")."</a> | ".
                          "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=$page->id\">".
                         get_string("addabranchtable", "lesson")."</a><br />";
@@ -1525,7 +1527,7 @@
                         $nextqtype = get_field("lesson_pages", "qtype", "id", $page->nextpageid);
                     }
                     if (($page->qtype != LESSON_ENDOFBRANCH) and ($nextqtype != LESSON_ENDOFBRANCH)) {
-                        echo "<a href=\"lesson.php?id=$cm->id&amp;action=addendofbranch&amp;pageid=$page->id\">".
+                        echo "<a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=addendofbranch&amp;pageid=$page->id\">".
                         get_string("addanendofbranch", "lesson")."</a> | ";
                     }
                     echo "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=$page->id\">".
@@ -1648,12 +1650,12 @@
 				}
             }
 			// email link for this user
-			$emaillink = "<a href=\"view.php?id=$cm->id&amp;action=emailessay&userid=".$id."\">".get_string("emailgradedessays", "lesson")."</a>";
+			$emaillink = "<a href=\"view.php?id=$cm->id&amp;action=emailessay&amp;userid=".$id."&amp;sesskey=".$USER->sesskey."\">".get_string("emailgradedessays", "lesson")."</a>";
 
 			$table->data[] = array($studentname, implode(", ", $essaylinks), $emaillink);        
 		}
 		// email link for all users
-		$emailalllink = "<a href=\"view.php?id=$cm->id&amp;action=emailessay\">".get_string("emailallgradedessays", "lesson")."</a>";
+		$emailalllink = "<a href=\"view.php?id=$cm->id&amp;action=emailessay&amp;sesskey=".$USER->sesskey."\">".get_string("emailallgradedessays", "lesson")."</a>";
         
 		$table->data[] = array(" ", " ", $emailalllink);
 		
@@ -1664,7 +1666,7 @@
     elseif ($action == 'essaygrade') {
         print_heading_with_help($lesson->name, "overview", "lesson");
 		
-		require_variable($attemptid);
+		$attemptid = require_variable('attemptid');
 
         if (!$essay = get_record("lesson_attempts", "id", $attemptid)) {
             error("Error: could not find essay");
@@ -1684,6 +1686,7 @@
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
         echo "<input type=\"hidden\" name=\"action\" />\n";
         echo "<input type=\"hidden\" name=\"attemptid\" value=\"$attemptid\" />\n";
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />\n";		
 	
 		// all tables will have these
         $table->align = array("left");
@@ -1739,7 +1742,9 @@
     elseif ($action == 'updategrade') {
         print_heading_with_help($lesson->name, "overview", "lesson");
         
-        $form = data_submitted();
+		confirm_sesskey();
+		
+        $form = lesson_clean_data_submitted();
         
         if (!$essay = get_record("lesson_attempts", "id", $form->attemptid)) {
             error("Error: could not find essay");
@@ -1781,9 +1786,12 @@
     elseif ($action == 'emailessay') {
         print_heading_with_help($lesson->name, "overview", "lesson");
    
-        if (isset($_GET['userid'])) {		
-            $queryadd = " AND userid = ".$_GET['userid'];
-			if (! $users = get_records("user", "id", $_GET['userid'])) {
+   		confirm_sesskey();
+	
+        if (isset($_GET['userid'])) {
+			$userid = clean_param($_GET['userid'], PARAM_INT);		
+            $queryadd = " AND userid = ".$userid;
+			if (! $users = get_records("user", "id", $userid)) {
     	        error("Error: could not find users");
 			}
         } else {
@@ -1905,6 +1913,8 @@
     /*******************update high scores **************************************/
     elseif ($action == 'updatehighscores') {
         print_heading_with_help($lesson->name, "overview", "lesson");
+	
+		confirm_sesskey();
 
         if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
             error("Error: could not find grades");
@@ -1969,7 +1979,7 @@
         $newhighscore->userid = $USER->id;
         $newhighscore->gradeid = $newgrade->id;
         if (isset($_GET['name'])) {
-            $newhighscore->nickname = $_GET['name'];
+            $newhighscore->nickname = clean_param($_GET['name'], PARAM_CLEAN);
         }
         if (!insert_record("lesson_high_scores", $newhighscore)) {
             error("Insert of new high score Failed!");
@@ -1983,8 +1993,9 @@
         print_heading_with_help($lesson->name, "overview", "lesson");
         echo "<div align=\"center\">";
         if (isset($_POST['name'])) {
-            if (lesson_check_nickname(trim($_POST['name']))) {
-                redirect("view.php?id=$cm->id&amp;action=updatehighscores&amp;name=".trim($_POST['name']), get_string("nameapproved", "lesson"));
+			$name = trim(param_clean($_POST['name'], PARAM_CLEAN));
+            if (lesson_check_nickname($name)) {
+                redirect("view.php?id=$cm->id&amp;action=updatehighscores&amp;name=$name&amp;sesskey=".$USER->sesskey, get_string("nameapproved", "lesson"));
             } else {
                 echo get_string("namereject", "lesson")."<br><br>";
             }

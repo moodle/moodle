@@ -4,8 +4,9 @@
     require_once("../../config.php");
 	require_once("locallib.php");
 
-    optional_variable($format);
-    require_variable($id);    // Course Module ID
+    $format = optional_param('format');
+    $id = required_param('id', PARAM_INT);    // Course Module ID
+	$pageid = required_param('pageid', PARAM_INT);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -33,8 +34,8 @@
                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ". 
                  "<A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>-> $strimportquestions");
 
-    if ($form = data_submitted()) {   /// Filename
-
+    if ($form = lesson_clean_data_submitted()) {   /// Filename
+		confirm_sesskey();
         $form->format = clean_filename($form->format); // For safety
 
         if (isset($form->filename)) {                 // file already on server
@@ -78,7 +79,7 @@
                 error("Error occurred during pre-processing!");
             }
 
-            if (! $format->importprocess($newfile['tmp_name'], $lesson, $_POST['pageid'])) {    // Process the uploaded file
+            if (! $format->importprocess($newfile['tmp_name'], $lesson, $pageid)) {    // Process the uploaded file
                 error("Error occurred during processing!");
             }
 
@@ -112,7 +113,8 @@
     print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=import.php>";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-    echo "<input type=\"hidden\" name=\"pageid\" value=\"".$_GET['pageid']."\">\n";
+    echo "<input type=\"hidden\" name=\"pageid\" value=\"".$pageid."\">\n";
+	echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">\n";
     echo "<table cellpadding=5>";
 
     echo "<tr><td align=right>";

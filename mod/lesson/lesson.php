@@ -102,6 +102,7 @@
         <input type="hidden" name="action" value="insertpage">
         <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>" />
         <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>" />
+		<input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>" />
         <center><table cellpadding=5 border=1>
         <tr><td align="center">
         <tr valign="top">
@@ -155,6 +156,8 @@
        	if (!isteacher($course->id)) {
 	    	error("Only teachers can look at this page");
 	    }
+
+		confirm_sesskey();
 
         // first get the preceeding page
         $pageid = required_param('pageid', PARAM_INT);
@@ -218,6 +221,8 @@
        	if (!isteacher($course->id)) {
 	    	error("Only teachers can look at this page");
 	    }
+		
+		confirm_sesskey();
 
         // first get the preceeding page
 		// if $pageid = 0, then we are inserting a new page at the beginning of the lesson
@@ -284,6 +289,8 @@
        	if (!isteacher($course->id)) {
 	    	error("Only teachers can look at this page");
 	    }
+
+		confirm_sesskey();
 
         // first get the preceeding page
         $pageid = required_param('pageid', PARAM_INT);
@@ -379,17 +386,19 @@
         <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
         <input type="hidden" name="action" value="insertpage">
         <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>">
+        <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>">
 		<center><table cellpadding=5 border=1>
   		<?php
 		    echo "<tr><td align=\"center\"><b>";
 			echo get_string("questiontype", "lesson").":</b> \n";
 			echo helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson")."<br>";
 			if (isset($_GET['qtype'])) {
-				lesson_qtype_menu($LESSON_QUESTION_TYPE, $_GET['qtype'], 
+				$qtype = clean_param($_GET['qtype'], PARAM_INT);
+				lesson_qtype_menu($LESSON_QUESTION_TYPE, $qtype, 
 								  "lesson.php?id=$cm->id&action=addpage&pageid=".$pageid.$linkadd);
 				// NoticeFix rearraged
-				if ( $_GET['qtype'] == LESSON_SHORTANSWER || $_GET['qtype'] == LESSON_MULTICHOICE || !isset($_GET['qtype']) ) {  // only display this option for Multichoice and shortanswer
-					if ($_GET['qtype'] == LESSON_SHORTANSWER) {
+				if ( $qtype == LESSON_SHORTANSWER || $qtype == LESSON_MULTICHOICE ) {  // only display this option for Multichoice and shortanswer
+					if ($qtype == LESSON_SHORTANSWER) {
 						echo "<br><br><b>".get_string("casesensitive", "lesson").":</b> \n";
 					} else {
 						echo "<br><br><b>".get_string("multianswer", "lesson").":</b> \n";
@@ -576,6 +585,8 @@
        	if (!isteacher($course->id)) {
 	    	error("Only teachers can look at this page");
 	    }
+		
+		confirm_sesskey();
 
         $pageid = required_param('pageid', PARAM_INT);
         if (!$thispage = get_record("lesson_pages", "id", $pageid)) {
@@ -594,13 +605,16 @@
             }
         }
 		notice_yesno(get_string("confirmdeletionofthispage","lesson"), 
-			 "lesson.php?action=delete&amp;id=$cm->id&amp;pageid=$pageid", 
+			 "lesson.php?action=delete&amp;id=$cm->id&amp;pageid=$pageid&amp;sesskey=".$USER->sesskey, 
              "view.php?id=$cm->id");
 		}
 	
 
 	/****************** continue ************************************/
 	elseif ($action == 'continue' ) {
+
+		confirm_sesskey();
+
 		//CDC Chris Berri added this echo call for left menu.  must match that in view.php for styles
 		if ($lesson->displayleft) {
 			echo '<div class="leftmenu1">';	
@@ -1420,6 +1434,8 @@
        	if (!isteacher($course->id)) {
 	    	error("Only teachers can look at this page");
 	    }
+		
+		confirm_sesskey();
 
 		if (empty($_GET['pageid'])) {
 			error("Delete: pageid missing");
@@ -1532,6 +1548,7 @@
         <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
         <input type="hidden" name="action" value="updatepage">
         <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>">
+        <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>">		
         <input type="hidden" name="redisplay" value="0">
         <center><table cellpadding=5 border=1>
    		<?php
@@ -1922,7 +1939,7 @@
 						lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
 						helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
 						if($lesson->custom) {
-							echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"-1\" size=\"5\">";
+							echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
 						}
 						echo "</td></tr>\n";
 						break;
@@ -1954,6 +1971,8 @@
        	if (!isteacher($course->id)) {
 	    	error("Only teachers can look at this page");
 	    }
+
+		confirm_sesskey();
 
         $timenow = time();
 		
@@ -2153,7 +2172,7 @@
         }
 
         echo "<center><table cellpadding=\"5\" border=\"1\">\n";
-        echo "<tr><td><a href=\"lesson.php?id=$cm->id&amp;action=moveit&amp;pageid=$pageid&amp;after=0\"><small>".
+        echo "<tr><td><a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=moveit&amp;pageid=$pageid&amp;after=0\"><small>".
             get_string("movepagehere", "lesson")."</small></a></td></tr>\n";
         while (true) {
             if ($page->id != $pageid) {
@@ -2161,7 +2180,7 @@
                     $title = "<< ".get_string("notitle", "lesson")."  >>";
                 }
                 echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>$title</b></td></tr>\n";
-                echo "<tr><td><a href=\"lesson.php?id=$cm->id&amp;action=moveit&amp;pageid=$pageid&amp;after={$page->id}\"><small>".
+                echo "<tr><td><a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=moveit&amp;pageid=$pageid&amp;after={$page->id}\"><small>".
                     get_string("movepagehere", "lesson")."</small></a></td></tr>\n";
             }
             if ($page->nextpageid) {
@@ -2183,6 +2202,8 @@
        	if (!isteacher($course->id)) {
 	    	error("Only teachers can look at this page");
 	    }
+
+		confirm_sesskey();
 
         $pageid = required_param('pageid', PARAM_INT); //  page to move
         if (!$page = get_record("lesson_pages", "id", $pageid)) {
@@ -2284,6 +2305,8 @@
        	if (!isteacher($course->id)) {
 	    	error("Only teachers can look at this page");
 	    }
+
+		confirm_sesskey();
 
         $timenow = time();
 		$form = lesson_clean_data_submitted();
