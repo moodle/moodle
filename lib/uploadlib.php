@@ -94,6 +94,7 @@ class upload_manager {
      */
     function preprocess_files() {
         global $CFG;
+
         foreach ($_FILES as $name => $file) {
             $this->status = true; // only set it to true here so that we can check if this function has been called.
             if (empty($this->inputname) || $name == $this->inputname) { // if we have input name, only process if it matches.
@@ -119,12 +120,12 @@ class upload_manager {
                         }
                         $this->status = false;
                         return false;
-                    }
-                    else if (count($this->files) == 1) {
-                        if (!$this->config->silent) {
+
+                    } else if (count($this->files) == 1) {
+
+                        if (!$this->config->silent and !$this->config->allownull) {
                             notify($this->files[$name]['uploadlog']);
-                        }
-                        else {
+                        } else {
                             $this->notify .= '<br />'. $this->files[$name]['uploadlog'];
                         }
                         $this->status = false;
