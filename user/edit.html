@@ -14,10 +14,15 @@
 if (isadmin()) {
     echo "<tr valign=top>";
     echo "<td><P>".get_string("username").":</td>";
-    echo "<td><input type=text name=username size=20 value=\"";
-    p($user->username);
-    echo "\">";
-    if (isset($err["username"])) formerr($err["username"]);
+    if($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
+        echo "<td><input type=text name=username size=20 value=\"";
+        p($user->username);
+        echo "\">";
+        if (isset($err["username"])) formerr($err["username"]);
+    }else {
+        echo "<td>";
+        p($user->username);
+    }
     echo "</td>";
     echo "</tr>";
 
