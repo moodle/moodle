@@ -241,7 +241,10 @@
         echo '<tr><td width="50%" valign="top">';
         print_simple_box_start("center", "100%", $THEME->cellcontent2);        
         print_heading($modform->name);
-        quiz_print_question_list($modform->questions, $modform->grades); 
+        $sumgrades = quiz_print_question_list($modform->questions, $modform->grades);
+        if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
+            error('Failed to set sumgrades');
+        }
 
         if ($attemptcount = count_records_select("quiz_attempts", "quiz = '$modform->instance' AND timefinish > 0"))  {
             $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
