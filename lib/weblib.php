@@ -506,7 +506,7 @@ function text_to_html($text, $smiley=true, $para=true) {
                           "\\1<A HREF=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</A>", $text);
 
 /// eg www.moodle.com
-    $text = eregi_replace("([[:space:]])www.([^[:space:]]*)([[:alnum:]#?/&=])", 
+    $text = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
                           "\\1<A HREF=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</A>", $text);
 
 /// Make returns into HTML newlines.
