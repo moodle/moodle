@@ -216,7 +216,7 @@
     $courses = get_courses_page($category->id, "c.sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage);
     $numcourses = count($courses);
 
-    if ($numcourses == 0) {
+    if (!$courses) {
         print_heading(get_string("nocoursesyet"));
 
     } else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$creatorediting) {
