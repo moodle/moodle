@@ -31,7 +31,6 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
                               CALCULATED    => get_string("calculated", "quiz"),
                               MATCH         => get_string("match", "quiz"),
                               DESCRIPTION   => get_string("description", "quiz"),
-                              RANDOM        => get_string("random", "quiz"),
                               RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
                               MULTIANSWER   => get_string("multianswer", "quiz")
                               );
@@ -936,7 +935,7 @@ function quiz_print_question_icon($question, $editlink=true) {
 
     if ($editlink) {
         echo "<a href=\"question.php?id=$question->id\" title=\""
-                .$QUIZ_QUESTION_TYPE[$question->qtype]."\">";
+                .$QUIZ_QTYPES[$question->qtype]->name()."\">";
     }
     echo '<img border="0" height="16" width="16" src="questiontypes/';
     echo $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif" alt="';
@@ -1385,14 +1384,6 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         echo '<td width="10" valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
         echo '</td></tr>';
-
-        echo '<tr><td colspan="3" align="right">';
-        echo '<form method="get" action="import.php">';
-        echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
-        echo "<input type=\"submit\" value=\"$strimportquestions\" />";
-        helpbutton("import", $strimportquestions, "quiz");
-        echo '</form>';
-        echo '</td></tr>';
     }
     else {
         echo '<tr><td>';
@@ -1400,23 +1391,15 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         echo '</td></tr>';
     }
 
-    echo '<tr><td colspan="3" align="right">';
-    echo '<form method="get" action="export.php">';
-    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
-    echo "<input type=\"submit\" value=\"$strexportquestions\" />";
-    helpbutton("export", $strexportquestions, "quiz");
-    echo '</form>';
-    echo '</td></tr>';
-
+    echo '<tr><td colspan="3" align="right"><font size="2">';
     if (isteacheredit($category->course)) {
-        echo '<tr><td colspan="3" align="right">';
-        echo '<form method="get" action="multiple.php">';
-        echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
-        echo "<input type=\"submit\" value=\"$strcreatemultiple\" />";
-        helpbutton("createmultiple", $strcreatemultiple, "quiz");
-        echo '</form>';
-        echo '</td></tr>';
+        echo '<a href="import.php?category='.$category->id.'">'.$strimportquestions.'</a>';
+        helpbutton("import", $strimportquestions, "quiz");
+        echo ' | ';
     }
+    echo '<a href="export.php?category='.$category->id.'">'.$strexportquestions.'</a>';
+    helpbutton("export", $strexportquestions, "quiz");
+    echo '</font></td></tr>';
 
     echo '</table>';
 
@@ -1443,6 +1426,9 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     }
     echo "</tr>\n";
     foreach ($questions as $question) {
+        if ($question->qtype == RANDOM) {
+            continue;
+        }
         echo "<tr bgcolor=\"$THEME->cellcontent\">\n";
         if ($quizselected) {
             echo "<td align=\"center\">";
@@ -1474,6 +1460,22 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     }
     echo "</table>\n";
     echo "</form>\n";
+    if ($quizselected and isteacheredit($category->course)) {
+        for ($i=1;$i<=10; $i++) {
+            $randomcount[$i] = $i;
+        }
+        echo '<form method="post" action="multiple.php">';
+        print_string('addrandom1', 'quiz');
+        choose_from_menu($randomcount, 'randomcreate', '10', '');
+        print_string('addrandom2', 'quiz');
+        // Don't offer the option to change the grade
+        //choose_from_menu($randomcount, 'randomgrade', '1', '');
+        echo '<input type="hidden" name="randomgrade", value="1" />';
+        echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+        echo ' <input type="submit" name="save" value="'. get_string('add') .'" />';
+        helpbutton('random', get_string('random', 'quiz'), 'quiz');
+        echo '</form>';
+    }
 }
 
 

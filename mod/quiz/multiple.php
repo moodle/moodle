@@ -34,11 +34,34 @@
 
     if ($form = data_submitted()) {
         if ($form->randomcreate > 0) {
-            $existing = count_records('quiz_questions', 'qtype', RANDOM, 'category', $category->id);
-            $randomcreate = $form->randomcreate - $existing;
+            $newquestionids = array(); // this will hold the ids of the random questions
+            
+            // find existing random questions in this category
+            $random = RANDOM;
+            if ($existingquestions = get_records_select('quiz_questions', "qtype = '$random' AND category = '$category->id'")) {
+                // now remove the ones that are already used in this quiz, if any
+                if ($questionids = explode(',', $modform->questions)) {
+                    foreach ($questionids as $questionid) {
+                        foreach ($existingquestions as $key => $existingquestion) {
+                            if ($existingquestion->id == $questionid) {
+                                unset($existingquestions[$key]);
+                                break;
+                            }
+                        }
+                    }
+                }
+                // now take as many of these as needed
+                $i = 0;
+                while (($existingquestion = array_pop($existingquestions)) and ($i < $form->randomcreate)) {
+                    $newquestionids[] = $existingquestion->id;
+                    $i++;
+                }
+                $randomcreate = $form->randomcreate - $i; // the number of additional random questions needed.
+            } else {
+                $randomcreate = $form->randomcreate;
+            }
 
             if ($randomcreate > 0) {
-                $newquestionids = array();
 
                 $question->qtype = RANDOM;
                 $question->category = $category->id;
@@ -52,33 +75,23 @@
                         error('Could not insert new random question!');
                     }
                 }
-
-                // Add them to the quiz if necessary
-                if (!empty($form->addquestionstoquiz)) {
-                    if (!empty($modform->questions)) {
-                        $questionids = explode(',', $modform->questions);
-                        foreach ($questionids as $questionid) {
-                            foreach ($newquestionids as $key => $newquestionid) {
-                                if ($newquestionid == $questionid) {
-                                    unset($newquestionids[$key]);
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        $questionids = array();
-                    }
-
-                    foreach ($newquestionids as $newquestionid) {
-                        $modform->grades[$newquestionid] = $form->randomgrade;
-                        $modform->sumgrades += $form->randomgrade;
-                    }
-
-                    $newquestionids = array_merge($questionids, $newquestionids);
-                    $modform->questions = implode(',', $newquestionids);
-                    $SESSION->modform = $modform;
-                }
             }
+
+            // Add them to the quiz
+            if (!empty($modform->questions)) {
+                $questionids = explode(',', $modform->questions);
+            } else {
+                $questionids = array();
+            }
+
+            foreach ($newquestionids as $newquestionid) {
+                $modform->grades[$newquestionid] = $form->randomgrade;
+                $modform->sumgrades += $form->randomgrade;
+            }
+
+            $newquestionids = array_merge($questionids, $newquestionids);
+            $modform->questions = implode(',', $newquestionids);
+            $SESSION->modform = $modform;
         }
         redirect('edit.php');
     }
@@ -143,15 +156,9 @@
     choose_from_menu($gradecount, 'randomgrade', '1', '');
     echo '</tr>';
 
-    echo '<tr><td align="right">';
-    print_string('addquestionstoquiz', 'quiz');
-    echo ':</td><td>';
-    choose_from_menu($options, 'addquestionstoquiz', '1', '');
-    echo '</tr>';
-
     echo '<tr><td>&nbsp;</td><td>';
     echo ' <input type="hidden" name="category" value="'. $category->id .'" />';
-    echo ' <input type="submit" name="save" value="'. $strcreatemultiple .'" />';
+    echo ' <input type="submit" name="save" value="'. get_string('add') .'" />';
     echo '</td></tr>';
     echo '</table>';
     echo '</form>';
