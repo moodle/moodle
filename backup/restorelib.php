@@ -383,8 +383,8 @@
             $course->timecreated = addslashes($course_header->course_timecreated);
             $course->timemodified = addslashes($course_header->course_timemodified);
             //Adjust blockinfo field.
-            //NOTE: For now, it's imposible to find it in backup files because it isn't saved,
-            //      so, we always rebuid it with defaults.
+            //If the info doesn't exist in backup, we create defaults, else we recode it 
+            //to current site blocks.
             if (!$course->blockinfo) {
                 //Create blockinfo default content
                 if ($course->format == "social") {
@@ -393,6 +393,8 @@
                     //For topics and weeks formats (default built in the function)
                     $course->blockinfo = blocks_get_default_blocks();
                 }
+            } else {
+                $course->blockinfo = blocks_get_block_ids($course->blockinfo);
             }
             //Now insert the record
             $newid = insert_record("course",$course);
@@ -1988,6 +1990,9 @@
                             break;
                         case "SHOWGRADES":
                             $this->info->course_showgrades = $this->getContents();
+                            break;
+                        case "BLOCKINFO":
+                            $this->info->blockinfo = $this->getContents();
                             break;
                         case "NEWSITEMS":
                             $this->info->course_newsitems = $this->getContents();

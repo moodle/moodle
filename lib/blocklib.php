@@ -736,11 +736,16 @@ function blocks_get_default_blocks ($courseid = NULL, $blocknames="participants,
     if ($leftblocksn) {
         foreach($leftblocksn as $leftblockn) {
             //Convert blockname to id
-            $leftblock = block_get_id_by_name($leftblockn);
+            $leftblock = block_get_id_by_name(str_replace("-","",$leftblockn));
             if ($leftblock) {
                 //Check it's visible
                 if($block = get_record("blocks","id",$leftblock,"visible","1")) {
-                    $leftblocks[] = $leftblock;
+                    //Check if the module was hidden at course level
+                    if (substr($leftblockn,0,1) == "-") {
+                        $leftblocks[] = -$leftblock;
+                    } else  {
+                        $leftblocks[] = $leftblock;
+                    }
                 }
             }
         }
@@ -749,11 +754,16 @@ function blocks_get_default_blocks ($courseid = NULL, $blocknames="participants,
     if ($rightblocksn) {
         foreach($rightblocksn as $rightblockn) {
             //Convert blockname to id
-            $rightblock = block_get_id_by_name($rightblockn);
+            $rightblock = block_get_id_by_name(str_replace("-","",$rightblockn));
             if ($rightblock) {
                 //Check it's visible
                 if($block = get_record("blocks","id",$rightblock,"visible","1")) {
-                    $rightblocks[] = $rightblock;
+                    //Check if the module was hidden at course level
+                    if (substr($rightblockn,0,1) == "-") {
+                        $rightblocks[] = -$rightblock;
+                    } else {
+                        $rightblocks[] = $rightblock;
+                    }
                 }
             }
         }
@@ -781,4 +791,98 @@ function blocks_get_default_blocks ($courseid = NULL, $blocknames="participants,
     return $blockinfo;
 }
 
+//This function will return the names representation of the blockinfo field.
+//It's used to include that info in backups. To restore we'll use the
+//blocks_get_block_ids() function. It makes the opposite conversion
+//(from names to ids)
+function blocks_get_block_names ($blockinfo) {
+
+    //Calculate left and right blocks
+    $blocksn = $blockinfo;
+    $delimpos = strpos($blocksn, ':');
+
+    if($delimpos === false) {
+        // No ':' found, we have all left blocks
+        $leftblocksn = explode(',', $blocksn);
+        $rightblocksn = array();
+    } else if($delimpos === 0) {
+        // ':' at start of string, we have all right blocks
+        $blocksn = substr($blocksn, 1);
+        $leftblocksn = array();
+        $rightblocksn = explode(',', $blocksn);
+    }
+    else {
+        // Both left and right blocks
+        $leftpartn = substr($blocksn, 0, $delimpos);
+        $rightpartn = substr($blocksn, $delimpos + 1);
+        $leftblocksn = explode(',', $leftpartn);
+        $rightblocksn = explode(',', $rightpartn);
+    }
+
+    //Now I have blocks separated
+
+    $leftblocks = array();
+    $rightblocks = array();
+
+    if ($leftblocksn) {
+        foreach($leftblocksn as $leftblockn) {
+            //Convert id to blockname
+            $leftblock = block_get_name_by_id(abs($leftblockn));
+            if ($leftblock) {
+                //Check it's visible
+                if($block = get_record("blocks","name",$leftblock,"visible","1")) {
+                    //Check if it's hidden oe no in the course
+                    if($leftblockn<0) {
+                        $leftblocks[] = '-'.$leftblock;
+                    } else {
+                        $leftblocks[] = $leftblock;
+                    }
+                }
+            }
+        }
+    }
+
+    if ($rightblocksn) {
+        foreach($rightblocksn as $rightblockn) {
+            //Convert id to blockname
+            $rightblock = block_get_name_by_id(abs($rightblockn));
+            if ($rightblock) {
+                //Check it's visible
+                if($block = get_record("blocks","name",$rightblock,"visible","1")) {
+                    //Check if it's hidden oe no in the course
+                    if($rightblockn<0) {
+                        $rightblocks[] = '-'.$rightblock;
+                    } else {
+                        $rightblocks[] = $rightblock;
+                    }
+                }
+            }
+        }
+    }
+
+    //Calculate the blockinfo field
+    if ($leftblocks || $rightblocks) {
+        $blockinfo = '';
+        if ($leftblocks) {
+            $blockinfo .= implode(",", $leftblocks);
+        }
+        if ($rightblocks) {
+            $blockinfo .= ':'.implode(",",$rightblocks);
+        }
+    } else {
+        $blockinfo = '';
+    }
+
+    //Returns the blockinfo
+    return $blockinfo;
+}
+
+//This function will return the ids representation of the blockinfo field.
+//It's used to load that info from backups.  This function is the opposite
+//to the blocks_get_block_names() used in backup
+function blocks_get_block_ids ($blockinfo) {
+
+    //Just call this with the appropiate parammeters.
+    return blocks_get_default_blocks(NULL,$blockinfo);
+}
 ?>
