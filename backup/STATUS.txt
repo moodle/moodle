@@ -119,8 +119,8 @@ Backup Details:
       - Build a configuration inteface..........................DONE
       - Create the script.......................................DONE
       - Integrate it in cron....................................DONE
-      - View logs...............................................NOT EXISTS
-      - Send email..............................................NOT EXISTS
+      - View logs...............................................IN PROGRESS
+      - Send email..............................................DONE
    - Select manually the desired activities to backup...........NOT EXISTS
       - Modify the backup frontend..............................NOT EXISTS
       - Modify the backup of course_sections and course_modules.NOT EXISTS
