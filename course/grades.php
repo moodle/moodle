@@ -3,8 +3,12 @@
 
 	require("../config.php");
 	require("lib.php");
+    require("$CFG->libdir/psxlsgen.php");
 
-    require_variable($id);   // course id
+
+
+    require_variable($id);              // course id
+    optional_variable($download, "");   // to download data 
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
@@ -22,13 +26,7 @@
     $stractivityreport = get_string("activityreport");
 
 
-/// Otherwise fill and print the form.
-
-	print_header("$course->shortname: $strgrades", "$course->fullname", 
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                  -> $strgrades");
-
-    print_heading($strgrades);
+/// Get a list of all students
 
     if (!$students = get_course_students($course->id)) {
         print_heading(get_string("nostudentsyet"));
@@ -40,11 +38,15 @@
         $grades[$student->id] = array();    // Collect all grades in this array
         $totals[$student->id] = array();    // Collect all totals in this array
     }
-    $columns = array();  // Accumulate column names in this array.
+    $columns = array();     // Accumulate column names in this array.
+    $columnhtml = array();  // Accumulate column html in this array.
 
-    // Collect module data
+
+/// Collect modules data
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused, $modsectioncounts);
 
+
+/// Search through all the modules, pulling out grade data
     $sections = get_all_sections($course->id); // Sort everything the same as the course
     for ($i=0; $i<=$course->numsections; $i++) {
         if (isset($sections[$i])) {   // should always be true
@@ -71,10 +73,11 @@
                                      "   TITLE=\"$mod->modfullname\">".
                                      "<IMG BORDER=0 VALIGN=absmiddle SRC=\"../mod/$mod->modname/icon.gif\" ".
                                      "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\"></A>";
-                            $columns[] = "$image ".
+                            $columnhtml[] = "$image ".
                                          "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                          "$instance->name".
                                          "</A>$maxgrade";
+                            $columns[] = "$mod->modfullname: $instance->name - $modgrades->maxgrade";
 
                             foreach ($students as $student) {
                                 $grades[$student->id][] = $modgrades->grades[$student->id]; // may be empty, that's ok
@@ -89,29 +92,117 @@
         }
     } // a new Moodle nesting record? ;-)
 
-    $table->head  = array ("", get_string("name"));
-    $table->head  = array_merge(array ("", get_string("name")), $columns, get_string("total"));
-    $table->width = array(35, "");
-    $table->align = array("LEFT", "LEFT");
-    foreach ($columns as $column) {
+
+/// OK, we have all the data, now present it to the user
+
+    if ($download == "xls") {
+
+        $myxls = new PhpSimpleXlsGen();
+        $myxls->totalcol = count($columns) + 5;
+
+/// Print names of all the fields
+
+        $myxls->ChangePos(0,0);
+        $myxls->InsertText(get_string("firstname"));
+        $myxls->InsertText(get_string("lastname"));
+        foreach ($columns as $column) {
+            $myxls->InsertText($column);
+        }
+        $myxls->InsertText(get_string("total"));
+
+    
+/// Print all the lines of data.
+
+        $i = 0;
+        foreach ($grades as $studentid => $studentgrades) {
+            $i++;
+            $student = $students[$studentid];
+
+            $myxls->ChangePos($i,0);
+            $myxls->InsertText($student->firstname);
+            $myxls->InsertText($student->lastname);
+
+            foreach ($studentgrades as $grade) {
+                $myxls->InsertNumber($grade);
+            }
+            $myxls->InsertNumber($totals[$student->id]);
+        }
+
+        $myxls->SendFile("$course->shortname $strgrades");
+
+        exit;
+
+
+    } else if ($download == "txt") {
+
+/// Print header to force download
+
+        header("Content-Type: application/download\n"); 
+        header("Content-Disposition: attachment; filename=\"$course->shortname $strgrades.txt\"");
+
+/// Print names of all the fields
+
+        echo get_string("firstname")."\t".get_string("lastname");
+        foreach ($columns as $column) {
+            echo "\t$column";
+        }
+        echo "\t".get_string("total")."\n";
+    
+/// Print all the lines of data.
+
+        foreach ($grades as $studentid => $studentgrades) {
+            $student = $students[$studentid];
+            echo "$student->firstname\t$student->lastname";
+            foreach ($studentgrades as $grade) {
+                echo "\t$grade";
+            }
+            echo "\t".$totals[$student->id];
+            echo "\n";
+        }
+    
+        exit;
+    
+    
+    } else {  // Just print the web page
+
+	    print_header("$course->shortname: $strgrades", "$course->fullname", 
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                      -> $strgrades");
+    
+        print_heading($strgrades);
+
+        $table->head  = array_merge(array ("", get_string("name")), $columnhtml, get_string("total"));
+        $table->width = array(35, "");
+        $table->align = array("LEFT", "LEFT");
+        foreach ($columns as $column) {
+            $table->width[] = "";
+            $table->align[] = "CENTER";
+        }
         $table->width[] = "";
         $table->align[] = "CENTER";
+    
+        foreach ($grades as $studentid => $studentgrades) {
+            $student = $students[$studentid];
+            $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
+            $name = array ("$picture", "<A TITLE=\"$stractivityreport\" HREF=\"user.php?id=$course->id&user=$student->id\">$student->firstname&nbsp;$student->lastname</A>");
+            $total = array ($totals[$student->id]);
+    
+            $table->data[] = array_merge($name, $studentgrades, $total);
+        }
+    
+        print_table($table);
+
+        echo "<TABLE BORDER=0 ALIGN=CENTER><TR>";
+        echo "<TD>";
+        $options["id"] = "$course->id";
+        $options["download"] = "xls";
+        print_single_button("grades.php", $options, get_string("downloadexcel"));
+        echo "<TD>";
+        $options["download"] = "txt";
+        print_single_button("grades.php", $options, get_string("downloadtext"));
+        echo "</TABLE>";
+    
+        print_footer($course);
     }
-    $table->width[] = "";
-    $table->align[] = "CENTER";
-
-    foreach ($grades as $studentid => $gradelist) {
-        $student = $students[$studentid];
-        $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
-        $name = array ("$picture", "<A TITLE=\"$stractivityreport\" HREF=\"user.php?id=$course->id&user=$student->id\">$student->firstname&nbsp;$student->lastname</A>");
-        $total = array ($totals[$student->id]);
-
-        
-        $table->data[] = array_merge($name, $gradelist, $total);
-    }
-
-    print_table($table);
-
-    print_footer($course);
-
+    
 ?>
