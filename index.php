@@ -192,7 +192,7 @@
             $streditsummary = get_string('editsummary');
             echo "<a title=\"$streditsummary\" ".
                  " href=\"course/editsection.php?id=$section->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
-                 " height=\"11\" width=\"11\" border=\"0\" alt=\"$streditsummary\" /></a><br />";
+                 " height=\"11\" width=\"11\" border=\"0\" alt=\"$streditsummary\" /></a><br /><br />";
         }
 
         get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
