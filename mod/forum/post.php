@@ -172,10 +172,10 @@
     } else if (isset($reply)) {      // User is writing a new reply
 
         if (! $parent = forum_get_post_full($reply)) {
-            error("Parent post ID was incorrect ($reply)");
+            error("Parent post ID was incorrect");
         }
         if (! $discussion = get_record("forum_discussions", "id", $parent->discussion)) {
-            error("This post is not part of a discussion! ($reply)");
+            error("This post is not part of a discussion!");
         }
         if (! $forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
