@@ -149,6 +149,11 @@
     		} else {
     		    echo "      <img src=\"pix/spacer.gif\" />\n";
     		}
+    		print_r ($sco->title);
+    		if ($sco->title == "") {
+    		    $sco->title = get_string('notitle','scorm');
+    		    echo '-'.$sco->title.'-';
+    		}
     		if ($sco->launch) {
     		    $score = "";
     		    if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {

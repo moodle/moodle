@@ -8,7 +8,7 @@
     <?php
         unset($choices);
         $choices[""] = get_string("none");
-        if (extension_loaded('domxml')) {
+        if (extension_loaded('domxml') && version_compare(phpversion(),"5.0.0","<")) {
             $choices["domxml"] = get_string("domxml","scorm");
         }
         if (version_compare(phpversion(),"5.0.0",">=")) {
