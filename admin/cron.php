@@ -17,6 +17,8 @@
 
     require_once("../config.php");
 
+    $USER = get_admin();
+
     echo "<pre>\n";
 
     $timenow  = time();
