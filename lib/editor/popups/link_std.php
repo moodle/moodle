@@ -74,8 +74,9 @@ function onOK() {
     var el = document.getElementById(id);
     param[id] = el.value;
   }
-  if (param.f_target == "_other")
+  if (param.f_target == "_other") {
     param.f_target = document.getElementById("f_other_target").value;
+  }
   __dlg_close(param);
   return false;
 };
