@@ -38,6 +38,7 @@
        "langmenu"                 =>  1,
        "langlist"                 => "",
        "locale"                   => "en",
+       "loginhttps"               =>  false,
        "loglifetime"              =>  0,
        "longtimenosee"            =>  100,
        "maxbytes"                 =>  0,

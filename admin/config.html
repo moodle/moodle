@@ -387,6 +387,23 @@
     <?php print_string("configsecureforms") ?>
     </td>
 </tr>
+
+<tr valign=top>
+    <td align=right><p>loginhttps:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "loginhttps", $config->loginhttps, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configloginhttps") ?>
+    </td>
+</tr>
+
 <tr valign=top>
     <td align=right><p>teacherassignteachers:</td>
     <td>

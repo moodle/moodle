@@ -162,12 +162,6 @@ $CFG->admin = 'admin';
 // NOT RECOMMENDED FOR PRODUCTION SITES
 //      $CFG->unicode = true;
 //
-// Turning this on will make Moodle use a https connection just for the
-// login page (providing a secure login), and then afterwards revert
-// back to the normal http URL.  Requires https to be enabled on the
-// web server.
-//      $CFG->loginhttps = true;
-//
 // To use spell-checking (experimental) define a path below to your
 // locally-installed copy of Aspell (0.50.1 or newer)
 //      $CFG->aspellpath = '/usr/bin/aspell'; // *nix
