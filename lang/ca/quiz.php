@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004062600)
+      // quiz.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['acceptederror'] = 'Error acceptat';
@@ -8,7 +8,7 @@ $string['addquestions'] = 'Afegeix preguntes';
 $string['addquestionstoquiz'] = 'Afegeix preguntes al qüestionari actual';
 $string['addselectedtoquiz'] = 'Afegeix la selecció al qüestionari';
 $string['aiken'] = 'Format Aiken';
-$string['allowreview'] = 'Permeteu la revisió';
+$string['allowreview'] = 'Permet la revisió';
 $string['alreadysubmitted'] = 'Sembla que ja heu tramès aquest intent';
 $string['alwaysavailable'] = 'Disponible sempre';
 $string['answer'] = 'Resposta';
@@ -77,6 +77,7 @@ $string['editquestions'] = 'Edita preguntes';
 $string['errorsdetected'] = 'S\'ha(n) detectat $a error(s)';
 $string['exportfilename'] = 'quiz';
 $string['exportname'] = 'Nom del fitxer';
+$string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['exportquestions'] = 'Exporta preguntes en un fitxer';
 $string['false'] = 'Fals';
 $string['feedback'] = 'Retroacció';
@@ -128,6 +129,7 @@ $string['notenoughsubquestions'] = 'No heu definit prou subpreguntes!<br />
 Voleu tornar enrere i arreglar aquesta pregunta?';
 $string['numerical'] = 'Numèrica';
 $string['paragraphquestion'] = 'Tipus de pregunta no compatible: pregunta de paràgraf a la línia $a. Aquesta pregunta s\'ha ignorat.';
+$string['passworderror'] = 'La contrasenya és incorrecta';
 $string['percentcorrect'] = 'El percentatge és correcte';
 $string['publish'] = 'Publica';
 $string['publishedit'] = 'Heu de tenir permisos en el curs per afegir o editar preguntes d\'aquesta categoria';
@@ -166,6 +168,9 @@ $string['reportmulti_resp'] = 'Respostes individuals';
 $string['reportoverview'] = 'Visió de conjunt';
 $string['reportregrade'] = 'S\'han recalculat les qualificacions';
 $string['reportsimplestat'] = 'Estadística simple';
+$string['requirepassword'] = 'Demana contrasenya';
+$string['requirepasswordmessage'] = 'Per realitzar aquest qüestionari heu de saber la contrasenya';
+$string['requiresubnet'] = 'Restringeix adreces';
 $string['review'] = 'Revisió';
 $string['save'] = 'Desa';
 $string['savegrades'] = 'Desa les qualificacions';
@@ -181,6 +186,7 @@ $string['showcorrectanswer'] = 'Voleu incloure la resposta correcta en la retroa
 $string['showfeedback'] = 'Voleu mostrar la retroacció al final?';
 $string['shuffleanswers'] = 'Barreja respostes';
 $string['shufflequestions'] = 'Barreja preguntes';
+$string['subneterror'] = 'Aquest qüestionari ha estat bloquejat i només és accessible des de certes ubicacions. A hores d\'ara el vostre ordinador no és un dels que han estat autoritzats.';
 $string['time'] = 'Temps';
 $string['timecompleted'] = 'Completat';
 $string['timeleft'] = 'Temps restant';

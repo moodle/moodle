@@ -1,0 +1,6 @@
+<?php
+
+$string['enrolname'] = "Intern";
+
+?>
+

@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004062600)
+      // scorm.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['autocontinue'] = 'Continuació automàtica';
 $string['browse'] = 'Explora';
 $string['browsed'] = 'Explorat';
 $string['browsemode'] = 'Mode d\'exploració';
-$string['chooseapacket'] = 'Tria o actualitza un paquet SCORM';
+$string['chooseapacket'] = 'Trieu o actualitzeu un paquet SCORM';
 $string['completed'] = 'Completat';
 $string['coursepacket'] = 'Paquet de curs';
 $string['coursestruct'] = 'Estructura del curs';
