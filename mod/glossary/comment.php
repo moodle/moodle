@@ -41,7 +41,9 @@
     if (!$cm->visible and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     } 
-    
+    if (isguest()) {
+        error("Guests are not allowed to post comments", $_SERVER["HTTP_REFERER"]);
+    }    
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id");
     
 /// Printing the page header
