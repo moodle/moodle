@@ -1740,7 +1740,10 @@ function authenticate_user_login($username, $password) {
 
     // First try to find the user in the database
 
-    $user = get_user_info_from_db('username', $username);
+    if (!$user = get_user_info_from_db('username', $username)) {
+        $user->id = 0;     // Not a user
+        $user->auth = $CFG->auth;
+    }
 
     // Sort out the authentication method we are using.
 
