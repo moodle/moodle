@@ -33,7 +33,7 @@
               $readingicon[] = "<IMG SRC=\"../mod/reading/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"Reading\">";
           }
       }
-      if ($USER->editing) {
+      if (isediting($course->id)) {
           $readingdata[] = "<A HREF=\"mod.php?id=$course->id&section=0&add=reading\">Add reading...</A>";
           $readingicon[] = "&nbsp;";
       }
@@ -56,7 +56,7 @@
       if (isteacher($USER->id) || isadmin()) {
           print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
           $adminicon[]="<IMG SRC=\"../pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"Edit\">";
-          if ($USER->editing) {
+          if (isediting($course->id)) {
               $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">Turn editing off</A>";
           } else {
               $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">Turn editing on</A>";

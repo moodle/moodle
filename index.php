@@ -28,7 +28,7 @@
     <TD VALIGN="TOP" NOWRAP>
       <? $readings = list_all_readings();
       
-         if ($site->newsitems > 0 or $readings or ($USER->editing and isadmin())) {
+         if ($site->newsitems > 0 or $readings or isediting($site->id)) {
       
              print_simple_box(get_string("mainmenu"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
 
@@ -45,7 +45,7 @@
 	             echo "<LI>$reading";
                  }
              }
-             if ($USER->editing and isadmin()) {
+             if (isediting($site->id)) {
                  echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$site->id&section=0&add=reading\">".
                       get_string("addreading", "reading")."</A>...</P>";
              } else {
@@ -99,7 +99,7 @@
     </TD>
     <TD WIDTH="30%" VALIGN="TOP"> 
       <? 
-         if ($USER->editing and isadmin()) {
+         if (isediting($site->id)) {
              $site->summary .= "<BR><CENTER><A HREF=\"admin/site.php\"><IMG SRC=\"pix/i/edit.gif\" BORDER=0></A>";
          }
          print_simple_box($site->summary, "", "100%", $THEME->cellheading);

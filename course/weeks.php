@@ -62,7 +62,7 @@
 
     if (isteacher($course->id)) {
         $adminicon[]="<IMG SRC=\"../pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"Edit\">";
-        if ($USER->editing) {
+        if (isediting($course->id)) {
             $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">Turn editing off</A>";
         } else {
             $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">Turn editing on</A>";
@@ -135,7 +135,7 @@
             $thisweek->id = insert_record("course_sections", $thisweek);
         }
 
-        if ($USER->editing) {
+        if (isediting($course->id)) {
             $thisweek->summary .= "&nbsp;<A HREF=editweek.php?id=$thisweek->id><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"Edit summary\"></A></P>";
         }
 
@@ -152,7 +152,7 @@
                 echo "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
                 echo " <A TITLE=\"$mod->modfullname\"";
                 echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instancename</A>";
-                if ($USER->editing) {
+                if (isediting($course->id)) {
                     echo make_editing_buttons($mod->id);
                 }
                 echo "<BR>\n";
@@ -160,7 +160,7 @@
         }
         echo "</UL></P>\n";
 
-        if ($USER->editing) {
+        if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$week&add=", 
                         $modtypes, "section$week", "", "Add...");

@@ -948,6 +948,14 @@ function isguest($userid=0) {
     return record_exists_sql("SELECT * FROM user WHERE user='$userid' AND username = 'guest' ");
 }
 
+function isediting($courseid, $user=NULL) {
+    global $USER;
+    if (!$user){
+        $user = $USER;
+    }
+    return ($user->editing and isteacher($courseid, $user->id));
+}
+
 function reset_login_count() {
     global $SESSION;
 
