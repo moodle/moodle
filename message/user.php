@@ -41,7 +41,7 @@
         case 'info':      /// Print the top frame with information and links
             print_header();
             echo '<table width="100%" cellpadding="0" cellspacing="0"><tr>';
-            echo '<td>'.print_user_picture($user->id, SITEID, $user->picture, true, true, false).'</td>';
+            echo '<td>'.print_user_picture($user->id, SITEID, $user->picture, true, true, true, 'userwindow').'</td>';
             echo '<td>';
             echo fullname($user);
             echo '<br /><font size="1">';
@@ -52,6 +52,10 @@
             }
             echo get_string("lastaccess").":", $datestring;
             echo '</font>';
+            echo '<br /><font size="2">';
+            echo '<a target="message_history'.$user->id.'" '.
+            link_to_popup_window("/message/history.php?user1=$user->id", "message_history_$user->id", 
+                    get_string('messagehistory', 'message'), 500, 500, '');
             echo '</td>';
             echo '</tr></table>';
             echo '</table></table></body>'; // Close possible theme tables off
@@ -149,7 +153,7 @@
                 $message = str_replace("\n", ' ', $message);
 
             /// Then write it to our own screen immediately
-                $time = userdate(time(), get_string('strftimemessage', 'chat'));
+                $time = userdate(time(), get_string('strftimedaytime'));
                 $message = '<p><font size="-1"><b>'.addslashes($USER->firstname).' ['.$time.']</b>: '.$message.'</font></p>';
 
                 $script  = "<script>\n";

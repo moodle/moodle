@@ -4,6 +4,7 @@
 
 define ('MESSAGE_SHORTLENGTH', 300);
 define ('MESSAGE_WINDOW', true);
+define ('MESSAGE_CONTACTS_REFRESH', 30);
 
 
 function message_print_contacts() {
@@ -62,7 +63,7 @@ function message_print_contacts() {
         /// link to remove from contact list
             $strcontact .= message_contact_link($contact->id, 'remove', true);
             
-            echo '<tr><td class="message_pic">';
+            echo '<tr><td class="message_pix">';
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, false);
             echo '</td>';
             echo '<td class="message_contact">';
@@ -100,7 +101,7 @@ function message_print_contacts() {
         /// link to remove from contact list
             $strcontact .= message_contact_link($contact->id, 'remove', true);
             
-            echo '<tr><td class="message_pic">';
+            echo '<tr><td class="message_pix">';
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, false);
             echo '</td>';
             echo '<td class="message_contact">';
@@ -159,7 +160,7 @@ function message_print_contacts() {
             $strcontact .= message_contact_link($messageuser->useridfrom, 'add', true);
             $strblock   = message_contact_link($messageuser->useridfrom, 'block', true);
             
-            echo '<tr><td class="message_pic">';
+            echo '<tr><td class="message_pix">';
             print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, false);
             echo '</td>';
             echo '<td class="message_contact">';
@@ -174,6 +175,8 @@ function message_print_contacts() {
     }
 
     echo '</table>';
+
+    echo '<p align="center" class="message_small_note">'.get_string('pagerefreshes', 'message', MESSAGE_CONTACTS_REFRESH).'</p>';
 }
 
 
@@ -344,7 +347,7 @@ function message_print_search_results($frm) {
                     $strblock   = message_contact_link($user->id, 'block', true);
                 }
                 
-                echo '<tr><td class="message_pic">';
+                echo '<tr><td class="message_pix">';
                 print_user_picture($user->id, SITEID, $user->picture, 20, false, false);
                 echo '</td>';
                 echo '<td class="message_contact">';
@@ -404,8 +407,8 @@ function message_print_search_results($frm) {
         /// print table headings
             echo '<table class="message_users" cellpadding="5" border="1">';
             echo '<tr>';
-            echo '<td align="center"><strong>'.get_string('to').'</strong></td>';
             echo '<td align="center"><strong>'.get_string('from').'</strong></td>';
+            echo '<td align="center"><strong>'.get_string('to').'</strong></td>';
             echo '<td align="center"><strong>'.get_string('message', 'message').'</strong></td>';
             echo '<td align="center"><strong>'.get_string('timesent', 'message').'</strong></td>';
             echo "</tr>\n";
@@ -452,13 +455,13 @@ function message_print_search_results($frm) {
             /// print out message row
                 echo '<tr valign="top">';
                 echo '<td class="message_contact">';
-                message_print_user($userto, $tocontact, $toblocked);
-                echo '</td>';
-                echo '<td class="message_contact">';
                 message_print_user($userfrom, $fromcontact, $fromblocked);
                 echo '</td>';
-                echo '<td>'.message_shorten_message($message->message, 20).'</td>';
-                echo '<td>'.userdate($message->timecreated, get_string('strftimedatetime')).'</td>';
+                echo '<td class="message_contact">';
+                message_print_user($userto, $tocontact, $toblocked);
+                echo '</td>';
+                echo '<td class="message_summary">'.message_shorten_message($message->message, 20).'</td>';
+                echo '<td class="message_date">'.userdate($message->timecreated, get_string('strftimedatetime')).'</td>';
                 echo "</tr>\n";
             }
             
@@ -777,6 +780,27 @@ function message_shorten_message($message, $minlength=0) {
     return substr($message, 0, $truncate);
 }
 
+function message_get_history($user1, $user2) {
+    $messages = get_records_select('message_read', "(useridto = '$user1->id' AND useridfrom = '$user2->id') OR 
+                                                    (useridto = '$user2->id' AND useridfrom = '$user1->id')", 
+                                                    'timecreated');
+    if ($messages_new =  get_records_select('message', "(useridto = '$user1->id' AND useridfrom = '$user2->id') OR 
+                                                    (useridto = '$user2->id' AND useridfrom = '$user1->id')", 
+                                                    'timecreated')) {
+        foreach ($messages_new as $message) {
+            $messages[] = $message;
+        }
+    }
+    return $messages;
+}
+
+function message_format_message(&$message, &$user, $format='') {
+    if (empty($format)) {
+        $format = get_string('strftimemessage', 'chat');
+    }
+    $time = userdate($message->timecreated, $format);
+    return '<p><font size="-1"><b>'.addslashes($user->firstname).'</b> ['.$time.']: '.$message->message.'</font></p>';
+}
 
 
 ?>

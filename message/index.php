@@ -31,7 +31,12 @@ if ($unblockcontact and confirm_sesskey()) {
 $tabprintfunction = 'message_print_'.$tab;
 
 
-print_header(get_string('messages', 'message').' - '.$SITE->fullname);
+if ($tab == 'contacts') {
+    print_header(get_string('messages', 'message').' - '.$SITE->fullname, '', '', '', 
+                 '<meta http-equiv="refresh" content="'. MESSAGE_CONTACTS_REFRESH .'; url=index.php" />');
+} else {
+    print_header(get_string('messages', 'message').' - '.$SITE->fullname);
+}
 
 ?>
 
