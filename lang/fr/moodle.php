@@ -743,6 +743,7 @@ $string['noresults'] = 'Aucun résultat';
 $string['normal'] = 'Normale';
 $string['normalfilter'] = 'Moins de critères';
 $string['nostudentsfound'] = 'Aucun $a trouvé';
+$string['nostudentsingroup'] = 'Il n\'y a pas encore d\'étudiant dans ce groupe';
 $string['nostudentsyet'] = 'Pas encore d\'étudiant inscrit à ce cours';
 $string['nosuchemail'] = 'Adresse de courriel inconnue';
 $string['notavailable'] = 'Non disponible';
