@@ -88,6 +88,31 @@
         helpbutton("timeopen", get_string("quizclose","quiz"), "quiz");
      ?>
     </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("shufflequestions", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "shufflequestions", "$form->shufflequestions", "");
+        helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("shuffleanswers", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "shuffleanswers", "$form->shuffleanswers", "");
+        helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
+     ?>
+    </TD>
+</TR>
 <TR valign=top>
     <TD align=right><P><B><? print_string("attemptsallowed", "quiz") ?>:</B></P></TD>
     <TD>
@@ -150,30 +175,6 @@
         $options[1] = get_string("yes");
         choose_from_menu($options, "review", "$form->review", "");
         helpbutton("review", get_string("allowreview","quiz"), "quiz");
-     ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("shufflequestions", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
-        $options = array();
-        $options[0] = get_string("no");
-        $options[1] = get_string("yes");
-        choose_from_menu($options, "shufflequestions", "$form->shufflequestions", "");
-        helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
-     ?>
-    </TD>
-</TR>
-<TR valign=top>
-    <TD align=right><P><B><? print_string("shuffleanswers", "quiz") ?>:</B></P></TD>
-    <TD>
-    <?
-        $options = array();
-        $options[0] = get_string("no");
-        $options[1] = get_string("yes");
-        choose_from_menu($options, "shuffleanswers", "$form->shuffleanswers", "");
-        helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
      ?>
     </TD>
 </TR>
