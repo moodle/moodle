@@ -1,6 +1,6 @@
 <?php 
 /*
-  V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -76,17 +76,39 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 			
 			$type = $typearr[$i];
 			switch($type) {
+			case 'D':
+				if (!strpos($v,':')) {
+					$s .= "	<TD>".$rs->UserDate($v,"D d, M Y") ."&nbsp;</TD>\n";
+					break;
+				}
 			case 'T':
 				$s .= "	<TD>".$rs->UserTimeStamp($v,"D d, M Y, h:i:s") ."&nbsp;</TD>\n";
-			break;
-			case 'D':
-				$s .= "	<TD>".$rs->UserDate($v,"D d, M Y") ."&nbsp;</TD>\n";
 			break;
 			case 'I':
 			case 'N':
 				$s .= "	<TD align=right>".stripslashes((trim($v))) ."&nbsp;</TD>\n";
 			   	
 			break;
+			/*
+			case 'B':
+				if (substr($v,8,2)=="BM" ) $v = substr($v,8);
+				$mtime = substr(str_replace(' ','_',microtime()),2);
+				$tmpname = "tmp/".uniqid($mtime).getmypid();
+				$fd = @fopen($tmpname,'a');
+				@ftruncate($fd,0);
+				@fwrite($fd,$v);
+				@fclose($fd);
+				if (!function_exists ("mime_content_type")) {
+				  function mime_content_type ($file) {
+				    return exec("file -bi ".escapeshellarg($file));
+				  }
+				}
+				$t = mime_content_type($tmpname);
+				$s .= (substr($t,0,5)=="image") ? " <td><img src='$tmpname' alt='$t'></td>\\n" : " <td><a
+				href='$tmpname'>$t</a></td>\\n";
+				break;
+			*/
+
 			default:
 				if ($htmlspecialchars) $v = htmlspecialchars(trim($v));
 				$v = trim($v);
@@ -156,4 +178,4 @@ function arr2html(&$arr,$ztabhtml='',$zheaderarray='')
 	print $s;
 }
 
-
+?>

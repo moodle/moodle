@@ -1,11 +1,11 @@
 <?php
 /*
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
 
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   SQLite info: http://www.hwaci.com/sw/sqlite/
     
@@ -14,6 +14,9 @@ V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights rese
   1. Place this in adodb/drivers
   2. Rename the file, remove the .txt prefix.
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 class ADODB_sqlite extends ADOConnection {
 	var $databaseType = "sqlite";
@@ -127,7 +130,7 @@ class ADODB_sqlite extends ADOConnection {
 	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (!function_exists('sqlite_open')) return false;
+		if (!function_exists('sqlite_open')) return null;
 		
 		$this->_connectionID = sqlite_open($argHostname);
 		if ($this->_connectionID === false) return false;
@@ -138,7 +141,7 @@ class ADODB_sqlite extends ADOConnection {
 	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (!function_exists('sqlite_open')) return false;
+		if (!function_exists('sqlite_open')) return null;
 		
 		$this->_connectionID = sqlite_popen($argHostname);
 		if ($this->_connectionID === false) return false;

@@ -1,6 +1,6 @@
 <?php
 /*
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -11,6 +11,9 @@ V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights rese
   
  28 Feb 2001: MetaColumns bug fix - suggested by  Freek Dijkstra (phpeverywhere@macfreek.com)
 */ 
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 if (! defined("_ADODB_MYSQL_LAYER")) {
  define("_ADODB_MYSQL_LAYER", 1 );
@@ -55,16 +58,18 @@ class ADODB_mysql extends ADOConnection {
 	
 	function &MetaTables($ttype=false,$showSchema=false,$mask=false) 
 	{	
+		$save = $this->metaTablesSQL;
+		if ($showSchema && is_string($showSchema)) {
+			$this->metaTablesSQL .= " from $showSchema";
+		}
+		
 		if ($mask) {
-			$save = $this->metaTablesSQL;
 			$mask = $this->qstr($mask);
 			$this->metaTablesSQL .= " like $mask";
 		}
 		$ret =& ADOConnection::MetaTables($ttype,$showSchema);
 		
-		if ($mask) {
-			$this->metaTablesSQL = $save;
-		}
+		$this->metaTablesSQL = $save;
 		return $ret;
 	}
 	
@@ -148,13 +153,16 @@ class ADODB_mysql extends ADOConnection {
 	
 	function GetOne($sql,$inputarr=false)
 	{
-		$rs =& $this->SelectLimit($sql,1,-1,$inputarr);
-		if ($rs) {
-			$rs->Close();
-			if ($rs->EOF) return false;
-			return reset($rs->fields);
+		if (strncasecmp($sql,'sele',4) == 0) {
+			$rs =& $this->SelectLimit($sql,1,-1,$inputarr);
+			if ($rs) {
+				$rs->Close();
+				if ($rs->EOF) return false;
+				return reset($rs->fields);
+			}
+		} else {
+			return ADOConnection::GetOne($sql,$inputarr);
 		}
-		
 		return false;
 	}
 	
@@ -431,6 +439,8 @@ class ADODB_mysql extends ADOConnection {
 	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs=0)
 	{
 		$offsetStr =($offset>=0) ? "$offset," : '';
+		// jason judge, see http://phplens.com/lens/lensforum/msgs.php?id=9220
+		if ($nrows < 0) $nrows = '18446744073709551615'; 
 		
 		if ($secs)
 			$rs =& $this->CacheExecute($secs,$sql." LIMIT $offsetStr$nrows",$inputarr);
@@ -532,7 +542,6 @@ class ADORecordSet_mysql extends ADORecordSet{
 	
 	function &FetchField($fieldOffset = -1) 
 	{	
-	
 		if ($fieldOffset != -1) {
 			$o = @mysql_fetch_field($this->_queryID, $fieldOffset);
 			$f = @mysql_field_flags($this->_queryID,$fieldOffset);

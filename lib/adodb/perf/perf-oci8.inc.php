@@ -1,16 +1,19 @@
 <?php
 /* 
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
   Set tabs to 4 for best viewing.
   
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   Library for basic performance monitoring and tuning 
   
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 class perf_oci8 extends ADODB_perf{
 	
@@ -78,7 +81,7 @@ AND    b.name = 'sorts (memory)'",
 			'db_cache_size' ),
 		'shared pool size' => array('DATAC',
 			"select value from v\$parameter where name = 'shared_pool_size'",
-			'shared_pool_size, which holds shared cursors, stored procedures and similar shared structs' ),
+			'shared_pool_size, which holds shared sql, stored procedures, dict cache and similar shared structs' ),
 		'java pool size' => array('DATAJ',
 			"select value from v\$parameter where name = 'java_pool_size'",
 			'java_pool_size' ),
@@ -104,7 +107,7 @@ AND    b.name = 'sorts (memory)'",
 			"select round((1-bytes/sgasize)*100, 2)
 			from (select sum(bytes) sgasize from sys.v_\$sgastat) s, sys.v_\$sgastat f
 			where name = 'free memory' and pool = 'shared pool'",
-		'Percentage of data cache actually in use - too low is bad, too high is worse'),
+		'Percentage of data cache actually in use - should be over 85%'),
 		
 		'shared pool utilization ratio' => array('RATIOU',
 		'select round((sga.bytes/p.value)*100,2)
@@ -120,7 +123,7 @@ AND    b.name = 'sorts (memory)'",
 		'Percentage of large_pool actually in use - too low is bad, too high is worse'),
 		'sort buffer size' => array('CACHE',
 			"select value from v\$parameter where name='sort_area_size'",
-			'sort_area_size (per query), uses memory in pga' ),
+			'max in-mem sort_area_size (per query), uses memory in pga' ),
 
 		'pga usage at peak' => array('RATIOU',
 		'=PGA','Mb utilization at peak transactions (requires Oracle 9i+)'),
@@ -141,7 +144,12 @@ AND    b.name = 'sorts (memory)'",
 		'cursor sharing' => array('CURSOR',
 			"select value from v\$parameter where name = 'cursor_sharing'",
 			'Cursor reuse strategy. Recommended is FORCE (8i+) or SIMILAR (9i+). See <a href=http://www.praetoriate.com/oracle_tips_cursor_sharing.htm>cursor_sharing</a>.'),
-			
+		/*
+		'cursor reuse' => array('CURSOR',
+			"select count(*) from (select sql_text_wo_constants, count(*)
+  from t1
+ group by sql_text_wo_constants
+having count(*) > 100)",'These are sql statements that should be using bind variables'),*/
 		'index cache cost' => array('COST',
 			"select value from v\$parameter where name = 'optimizer_index_caching'",
 			'% of indexed data blocks expected in the cache.

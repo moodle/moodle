@@ -1,6 +1,6 @@
 <?php
 /*
- V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -42,6 +42,9 @@
 
 */
 
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
+
 function adodb_addslashes($s)
 {
 	$len = strlen($s);
@@ -58,7 +61,10 @@ class ADODB_postgres64 extends ADOConnection{
 	var $_resultid = false;
   	var $concat_operator='||';
 	var $metaDatabasesSQL = "select datname from pg_database where datname not in ('template0','template1') order by 1";
-    var $metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%' union 
+    var $metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
+	and tablename not in ('sql_features', 'sql_implementation_info', 'sql_languages',
+	 'sql_packages', 'sql_sizing', 'sql_sizing_profiles') 
+	union 
         select viewname,'V' from pg_views where viewname not like 'pg\_%'";
 	//"select tablename from pg_tables where tablename not like 'pg_%' order by 1";
 	var $isoDates = true; // accepts dates in ISO format
@@ -434,7 +440,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 				while (!$rsdef->EOF) {
 					$num = $rsdef->fields['num'];
 					$s = $rsdef->fields['def'];
-					if (substr($s, 0, 1) == "'") { /* quoted strings hack... for now... fixme */
+					if (strpos($s,'::')===false && substr($s, 0, 1) == "'") { /* quoted strings hack... for now... fixme */
 						$s = substr($s, 1);
 						$s = substr($s, 0, strlen($s) - 1);
 					}
@@ -495,7 +501,7 @@ select viewname,'V' from pg_views where viewname like $mask";
                 
 				$schema = false;
 				$this->_findschema($table,$schema);
-				
+
 				if ($schema) { // requires pgsql 7.3+ - pg_namespace used.
 					$sql = '
 SELECT c.relname as "Name", i.indisunique as "Unique", i.indkey as "Columns" 
@@ -503,18 +509,18 @@ FROM pg_catalog.pg_class c
 JOIN pg_catalog.pg_index i ON i.indexrelid=c.oid 
 JOIN pg_catalog.pg_class c2 ON c2.oid=i.indrelid
 	,pg_namespace n 
-WHERE c2.relname=\'%s\' and c.relnamespace=c2.relnamespace and c.relnamespace=n.oid and n.nspname=\'%s\' AND i.indisprimary=false';
+WHERE (c2.relname=\'%s\' or c2.relname=lower(\'%s\')) and c.relnamespace=c2.relnamespace and c.relnamespace=n.oid and n.nspname=\'%s\' AND i.indisprimary=false';
 				} else {
 	                $sql = '
 SELECT c.relname as "Name", i.indisunique as "Unique", i.indkey as "Columns"
 FROM pg_catalog.pg_class c
 JOIN pg_catalog.pg_index i ON i.indexrelid=c.oid
 JOIN pg_catalog.pg_class c2 ON c2.oid=i.indrelid
-WHERE c2.relname=\'%s\'';
+WHERE c2.relname=\'%s\' or c2.relname=lower(\'%s\')';
     			}
 				            
                 if ($primary == FALSE) {
-                        $sql .= ' AND i.indisprimary=false;';
+                	$sql .= ' AND i.indisprimary=false;';
                 }
                 
                 $save = $ADODB_FETCH_MODE;
@@ -523,23 +529,20 @@ WHERE c2.relname=\'%s\'';
                         $savem = $this->SetFetchMode(FALSE);
                 }
                 
-                $rs = $this->Execute(sprintf($sql,$table,$schema));
-                
+                $rs = $this->Execute(sprintf($sql,$table,$table,$schema));
                 if (isset($savem)) {
                         $this->SetFetchMode($savem);
                 }
                 $ADODB_FETCH_MODE = $save;
-                
+
                 if (!is_object($rs)) {
-                        return FALSE;
+                	return FALSE;
                 }
-                
-                $col_names = $this->MetaColumnNames($table);
+				
+                $col_names = $this->MetaColumnNames($table,true);
                 $indexes = array();
-                
                 while ($row = $rs->FetchRow()) {
                         $columns = array();
-                        
                         foreach (explode(' ', $row[2]) as $col) {
                                 $columns[] = $col_names[$col - 1];
                         }
@@ -549,7 +552,6 @@ WHERE c2.relname=\'%s\'';
                                 'columns' => $columns
                         );
                 }
-                
                 return $indexes;
         }
 
@@ -561,7 +563,7 @@ WHERE c2.relname=\'%s\'';
 	function _connect($str,$user='',$pwd='',$db='',$ctype=0)
 	{
 		
-		if (!function_exists('pg_pconnect')) return false;
+		if (!function_exists('pg_pconnect')) return null;
 		
 		$this->_errorMsg = false;
 		
@@ -720,7 +722,10 @@ WHERE c2.relname=\'%s\'';
 	function ErrorNo()
 	{
 		$e = $this->ErrorMsg();
-		return strlen($e) ? $e : 0;
+		if (strlen($e)) {
+			return ADOConnection::MetaError($e);
+		 }
+		 return 0;
 	}
 
 	// returns true or false
@@ -791,14 +796,15 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	function _initrs()
 	{
 	global $ADODB_COUNTRECS;
-		$this->_numOfRows = ($ADODB_COUNTRECS)? @pg_numrows($this->_queryID):-1;
-		$this->_numOfFields = @pg_numfields($this->_queryID);
+		$qid = $this->_queryID;
+		$this->_numOfRows = ($ADODB_COUNTRECS)? @pg_numrows($qid):-1;
+		$this->_numOfFields = @pg_numfields($qid);
 		
 		// cache types for blob decode check
-		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) { 
-			$f1 = $this->FetchField($i);
-			//print_r($f1);
-			if ($f1->type == 'bytea') $this->_blobArr[$i] = $f1->name;
+		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) {  
+			if (pg_fieldtype($qid,$i) == 'bytea') {
+				$this->_blobArr[$i] = pg_fieldname($qid,$off);
+			}
 		}		
 	}
 
@@ -817,16 +823,14 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		 return $this->fields[$this->bind[strtoupper($colname)]];
 	}
 
-	function &FetchField($fieldOffset = 0) 
+	function &FetchField($off = 0) 
 	{
-		$off=$fieldOffset; // offsets begin at 0
+		// offsets begin at 0
 		
 		$o= new ADOFieldObject();
 		$o->name = @pg_fieldname($this->_queryID,$off);
 		$o->type = @pg_fieldtype($this->_queryID,$off);
 		$o->max_length = @pg_fieldsize($this->_queryID,$off);
-		//print_r($o);		
-		//print "off=$off name=$o->name type=$o->type len=$o->max_length<br>";
 		return $o;	
 	}
 

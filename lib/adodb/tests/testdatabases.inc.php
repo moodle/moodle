@@ -1,7 +1,7 @@
 <?php
   
 /*
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -47,6 +47,7 @@ if (!strpos(PHP_VERSION,'5') === 0) {
 	ADOLoadCode("borland_ibase");
 	ADOLoadCode("informix");
 	ADOLoadCode("sqlanywhere");
+//	ADOLoadCode('mysqli');
 }
 
 
@@ -76,7 +77,7 @@ if (!empty($testpgodbc)) {
 }
 
 if (!empty($testibase)) {
-	
+	//$_GET['nolog'] = true;
 	$db = &ADONewConnection('firebird');
 	print "<h1>Connecting $db->databaseType...</h1>";
 	if (@$db->PConnect("localhost:d:\\firebird\\10\\examples\\employee.gdb", "sysdba", "masterkey", ""))
@@ -150,6 +151,21 @@ if (!empty($testmysql)) { // MYSQL
 		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date)");
 	} else print "ERROR: MySQL test requires a MySQL server on localhost, userid='admin', password='', database='test'".'<BR>'.$db->ErrorMsg();
 }
+
+// REQUIRES MySQL server at localhost with database 'test'
+if (!empty($testmysqli)) { // MYSQL
+
+	$db = &ADONewConnection('mysqli');
+	print "<h1>Connecting $db->databaseType...</h1>";
+	if (PHP_VERSION >= 5 || $HTTP_SERVER_VARS['HTTP_HOST'] == 'localhost') $server = 'localhost';
+	else $server = "mangrove";
+	if ($db->PConnect($server, "root", "", "northwind")) {
+		//$db->debug=1;$db->Execute('drop table ADOXYZ');
+		testdb($db,
+		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date)");
+	} else print "ERROR: MySQL test requires a MySQL server on localhost, userid='admin', password='', database='test'".'<BR>'.$db->ErrorMsg();
+}
+
 
 // REQUIRES MySQL server at localhost with database 'test'
 if (!empty($testmysqlodbc)) { // MYSQL

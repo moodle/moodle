@@ -1,12 +1,12 @@
 <?php
 /* 
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim. All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
   Set tabs to 4 for best viewing.
   
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   Sybase driver contributed by Toni (toni.tunkkari@finebyte.com)
   
@@ -15,6 +15,9 @@ V4.20 22 Feb 2004  (c) 2000-2004 John Lim. All rights reserved.
   Date patch by Toni 15 Feb 2002
 */
  
+ // security - hide paths
+if (!defined('ADODB_DIR')) die();
+
 class ADODB_sybase extends ADOConnection {
 	var $databaseType = "sybase";	
 	//var $dataProvider = 'sybase';
@@ -112,7 +115,7 @@ class ADODB_sybase extends ADOConnection {
 	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (!function_exists('sybase_connect')) return false;
+		if (!function_exists('sybase_connect')) return null;
 		
 		$this->_connectionID = sybase_connect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
@@ -122,7 +125,7 @@ class ADODB_sybase extends ADOConnection {
 	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (!function_exists('sybase_connect')) return false;
+		if (!function_exists('sybase_connect')) return null;
 		
 		$this->_connectionID = sybase_pconnect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;

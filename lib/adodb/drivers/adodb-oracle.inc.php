@@ -1,17 +1,19 @@
 <?php
 /*
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
 
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   Oracle data driver. Requires Oracle client. Works on Windows and Unix and Oracle 7 and 8.
   
   If you are using Oracle 8, use the oci8 driver which is much better and more reliable.
-  
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 class ADODB_oracle extends ADOConnection {
 	var $databaseType = "oracle";
@@ -72,17 +74,22 @@ class ADODB_oracle extends ADOConnection {
 
 	/* there seems to be a bug in the oracle extension -- always returns ORA-00000 - no error */
 	function ErrorMsg() 
- 	{
-		$this->_errorMsg = @ora_error($this->_curs);
- 		if (!$this->_errorMsg) $this->_errorMsg = @ora_error($this->_connectionID);
+ 	{   
+        if ($this->_errorMsg !== false) return $this->_errorMsg;
+
+        if (is_resource($this->_curs)) $this->_errorMsg = @ora_error($this->_curs);
+ 		if (empty($this->_errorMsg)) $this->_errorMsg = @ora_error($this->_connectionID);
 		return $this->_errorMsg;
 	}
 
  
 	function ErrorNo() 
 	{
-		$err = @ora_errorcode($this->_curs);
-		if (!$err) return @ora_errorcode($this->_connectionID);
+		if ($this->_errorCode !== false) return $this->_errorCode;
+
+		if (is_resource($this->_curs)) $this->_errorCode = @ora_errorcode($this->_curs);
+		if (empty($this->_errorCode)) $this->_errorCode = @ora_errorcode($this->_connectionID);
+        return $this->_errorCode;
 	}
 
 	
@@ -90,6 +97,12 @@ class ADODB_oracle extends ADOConnection {
 		// returns true or false
 		function _connect($argHostname, $argUsername, $argPassword, $argDatabasename, $mode=0)
 		{
+			if (!function_exists('ora_plogon')) return null;
+				
+            // <G. Giunta 2003/03/03/> Reset error messages before connecting
+            $this->_errorMsg = false;
+		    $this->_errorCode = false;
+        
             // G. Giunta 2003/08/13 - This looks danegrously suspicious: why should we want to set
             // the oracle home to the host name of remote DB?
 //			if ($argHostname) putenv("ORACLE_HOME=$argHostname");
@@ -144,13 +157,21 @@ class ADODB_oracle extends ADOConnection {
 		// returns query ID if successful, otherwise false
 		function _query($sql,$inputarr=false)
 		{
+            // <G. Giunta 2003/03/03/> Reset error messages before executing
+            $this->_errorMsg = false;
+		    $this->_errorCode = false;
+
 			$curs = ora_open($this->_connectionID);
 		 
 		 	if ($curs === false) return false;
 			$this->_curs = $curs;
 			if (!ora_parse($curs,$sql)) return false;
 			if (ora_exec($curs)) return $curs;
-		
+            // <G. Giunta 2004/03/03> before we close the cursor, we have to store the error message
+            // that we can obtain ONLY from the cursor (and not from the connection)
+            $this->_errorCode = @ora_errorcode($curs);
+            $this->_errorMsg = @ora_error($curs);
+            // </G. Giunta 2004/03/03>            
 		 	@ora_close($curs);
 			return false;
 		}

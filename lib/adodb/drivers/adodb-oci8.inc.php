@@ -1,18 +1,21 @@
 <?php
 /*
 
-  version V4.20 22 Feb 2004 (c) 2000-2004 John Lim. All rights reserved.
+  version V4.50 6 July 2004 (c) 2000-2004 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
 
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   Code contributed by George Fourlanos <fou@infomap.gr>
   
   13 Nov 2000 jlim - removed all ora_* references.
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 /*
 NLS_Date_Format
@@ -34,6 +37,20 @@ NLS_DATE_FORMAT='RR-MM-DD'
 
 You can also modify the date format using the ALTER SESSION command. 
 */
+
+# define the LOB descriptor type for the given type
+# returns false if no LOB descriptor
+function oci_lob_desc($type) {
+	switch ($type) {
+		case OCI_B_BFILE: $result = OCI_D_FILE; break;
+		case OCI_B_CFILEE: $result = OCI_D_FILE; break;
+		case OCI_B_CLOB: $result = OCI_D_LOB; break;
+		case OCI_B_BLOB: $result = OCI_D_LOB; break;
+		case OCI_B_ROWID: $result = OCI_D_ROWID; break;
+		default: $result = false; break;
+	}
+	return $result;
+}
 
 class ADODB_oci8 extends ADOConnection {
 	var $databaseType = 'oci8';
@@ -67,6 +84,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $NLS_DATE_FORMAT = 'YYYY-MM-DD';  // To include time, use 'RRRR-MM-DD HH24:MI:SS'
  	var $useDBDateFormatForTextInput=false;
 	var $datetime = false; // MetaType('DATE') returns 'D' (datetime==false) or 'T' (datetime == true)
+	var $_refLOBs = array();
 	
 	// var $ansiOuter = true; // if oracle9
     
@@ -111,6 +129,14 @@ class ADODB_oci8 extends ADOConnection {
 		$rs->Close();
 		return $retarr;
 	}
+	
+	function Time()
+	{
+		$rs =& $this->Execute("select TO_CHAR($this->sysTimeStamp,'YYYY-MM-DD HH24:MI:SS') from dual");
+		if ($rs && !$rs->EOF) return $this->UnixTimeStamp(reset($rs->fields));
+		
+		return false;
+	}
  
 /*
 
@@ -148,7 +174,7 @@ NATSOFT.DOMAIN =
 */
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename,$mode=0)
 	{
-		if (!function_exists('OCIPLogon')) return false;
+		if (!function_exists('OCIPLogon')) return null;
 		
 		
         $this->_errorMsg = false;
@@ -588,6 +614,7 @@ NATSOFT.DOMAIN =
 		if ($rez) $rs->Close();
 		return $rez;
 	}
+
 	
 	/*
 		Example of usage:
@@ -671,8 +698,9 @@ NATSOFT.DOMAIN =
 		Note that the order of parameters differs from OCIBindByName,
 		because we default the names to :0, :1, :2
 	*/
-	function Bind(&$stmt,&$var,$size=4000,$type=false,$name=false)
+	function Bind(&$stmt,&$var,$size=4000,$type=false,$name=false,$isOutput=false)
 	{
+		
 		if (!is_array($stmt)) return false;
         
         if (($type == OCI_B_CURSOR) && sizeof($stmt) >= 5) { 
@@ -680,10 +708,39 @@ NATSOFT.DOMAIN =
         }
         
 		if ($name == false) {
-			if ($type !== false) $rez = OCIBindByName($stmt[1],":".$name,$var,$size,$type);
+			if ($type !== false) $rez = OCIBindByName($stmt[1],":".$stmt[2],$var,$size,$type);
 			else $rez = OCIBindByName($stmt[1],":".$stmt[2],$var,$size); // +1 byte for null terminator
 			$stmt[2] += 1;
+		} else if (oci_lob_desc($type)) {
+			if ($this->debug) {
+				ADOConnection::outp("<b>Bind</b>: name = $name");
+			}
+            //we have to create a new Descriptor here
+			$numlob = count($this -> _refLOBs);
+        	$this -> _refLOBs[$numlob]['LOB'] = OCINewDescriptor($this->_connectionID, oci_lob_desc($type));
+			$this -> _refLOBs[$numlob]['TYPE'] = $isOutput;
+			
+			$tmp = &$this -> _refLOBs[$numlob]['LOB'];
+	        $rez = OCIBindByName($stmt[1], ":".$name, $tmp, -1, $type);
+			if ($this->debug) {
+				ADOConnection::outp("<b>Bind</b>: descriptor has been allocated, var binded");
+			}
+			
+			// if type is input then write data to lob now
+			if ($isOutput == false) {
+				$var = $this -> BlobEncode($var);
+				$tmp -> WriteTemporary($var);
+				if ($this->debug) {
+					ADOConnection::outp("<b>Bind</b>: LOB has been written to temp");
+				}
+			} else {
+				$this -> _refLOBs[$numlob]['VAR'] = &$var;
+			}
+			$rez = $tmp;
 		} else {
+			if ($this->debug) 
+				ADOConnection::outp("<b>Bind</b>: name = $name");
+			
 			if ($type !== false) $rez = OCIBindByName($stmt[1],":".$name,$var,$size,$type);
 			else $rez = OCIBindByName($stmt[1],":".$name,$var,$size); // +1 byte for null terminator
 		}
@@ -719,7 +776,7 @@ NATSOFT.DOMAIN =
 				$ztype = (empty($type)) ? 'false' : $type;
 				ADOConnection::outp( "{$prefix}Parameter(\$stmt, \$php_var='$var', \$name='$name', \$maxLen=$maxLen, \$type=$ztype);");
 			}
-			return $this->Bind($stmt,$var,$maxLen,$type,$name);
+			return $this->Bind($stmt,$var,$maxLen,$type,$name,$isOutput);
 	}
 	
 	/*
@@ -793,6 +850,22 @@ NATSOFT.DOMAIN =
         $this->_errorMsg = false;
 		$this->_errorCode = false;
 		if (OCIExecute($stmt,$this->_commit)) {
+//OCIInternalDebug(1);			
+			if (count($this -> _refLOBs) > 0) {
+		
+				foreach ($this -> _refLOBs as $key => $value) {
+					if ($this -> _refLOBs[$key]['TYPE'] == true) {
+						$tmp = $this -> _refLOBs[$key]['LOB'] -> load();
+						if ($this -> debug) {
+							ADOConnection::outp("<b>OUT LOB</b>: LOB has been loaded. <br>");
+						}
+						//$_GLOBALS[$this -> _refLOBs[$key]['VAR']] = $tmp;
+						$this -> _refLOBs[$key]['VAR'] = $tmp;
+					}
+					$this -> _refLOBs[$key]['LOB'] -> free();
+					unset($this -> _refLOBs[$key]);
+				}
+			}
 		
             switch (@OCIStatementType($stmt)) {
                 case "SELECT":
@@ -826,6 +899,12 @@ NATSOFT.DOMAIN =
 	function _close()
 	{
 		if (!$this->autoCommit) OCIRollback($this->_connectionID);
+		if (count($this -> _refLOBs) > 0) {
+			foreach ($this -> _refLOBs as $key => $value) {
+				$this -> _refLOBs[$key] -> free();
+				unset($this -> _refLOBs[$key]);
+			}
+		}
 		OCILogoff($this->_connectionID);
 		$this->_stmt = false;
 		$this->_connectionID = false;
@@ -930,7 +1009,6 @@ SELECT /*+ RULE */ distinct b.column_name
 	{	
 	$nofixquotes=false;
 	
-		if (is_array($s)) adodb_backtrace();
 		if ($this->noNullStrings && strlen($s)==0)$s = ' ';
 		if (!$magic_quotes) {	
 			if ($this->replaceQuote[0] == '\\'){
@@ -942,12 +1020,9 @@ SELECT /*+ RULE */ distinct b.column_name
 		// undo magic quotes for "
 		$s = str_replace('\\"','"',$s);
 		
-		if ($this->replaceQuote == "\\'")  // ' already quoted, no need to change anything
-			return "'$s'";
-		else {// change \' to '' for sybase/mssql
-			$s = str_replace('\\\\','\\',$s);
-			return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
-		}
+		$s = str_replace('\\\\','\\',$s);
+		return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
+		
 	}
 	
 }

@@ -12,6 +12,9 @@ V4.01 23 Oct 2003  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights rese
 
 */
 
+// security - hide paths
+if (!defined('ADODB_SESSION')) die();
+
 include_once ADODB_SESSION . '/crypt.inc.php';
 
 /**
