@@ -2,7 +2,7 @@ CREATE TABLE prefix_config (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default '',
    value text NOT NULL default '',
-   CONSTRAINT config_name_uk UNIQUE (name)
+   CONSTRAINT prefix_config_name_uk UNIQUE (name)
 );
 
 CREATE TABLE prefix_course (
@@ -227,7 +227,7 @@ CREATE TABLE prefix_user (
    htmleditor integer NOT NULL default '1',
    autosubscribe integer NOT NULL default '1',
    timemodified integer NOT NULL default '0',
-   CONSTRAINT user_username_uk UNIQUE (username)
+   CONSTRAINT prefix_user_username_uk UNIQUE (username)
 );
 
 CREATE TABLE prefix_user_admins (
