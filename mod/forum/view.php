@@ -164,7 +164,7 @@
     //If rss are activated at site and forum level and this forum has rss defined, show link
     if (isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
         $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
-        echo '</tr></tr><td align="right">';
+        echo '</tr><tr><td align="right">';
         if ($forum->rsstype == 1) {
             $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
         } else { 
