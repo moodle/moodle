@@ -1,5 +1,6 @@
-<?PHP // $Id$
-      // moodle.php - created with Moodle 1.2 development (2004013101)
+<?PHP // $Id$ 
+      // moodle.php - created with Moodle 1.5 development (2004082300)
+
 
 $string['action'] = 'Action';
 $string['active'] = 'Active';
@@ -29,7 +30,6 @@ $string['addresource'] = 'Add a resource...';
 $string['address'] = 'Address';
 $string['addstudent'] = 'Add student';
 $string['addteacher'] = 'Add teacher';
-$string['advancedfilter'] = 'Advanced search';
 $string['admin'] = 'Admin';
 $string['adminhelpaddnewuser'] = 'To manually create a new user account';
 $string['adminhelpassignadmins'] = 'Admins can do anything and go anywhere in the site';
@@ -41,11 +41,12 @@ $string['adminhelpbackup'] = 'Configure automated backups and their schedule';
 $string['adminhelpconfiguration'] = 'Configure how the site looks and works';
 $string['adminhelpconfigvariables'] = 'Configure variables that affect general operation of the site';
 $string['adminhelpcourses'] = 'Define courses and categories and assign people to them';
+$string['adminhelpeditorsettings'] = 'Define basic settings for HTML editor';
 $string['adminhelpedituser'] = 'Browse the list of user accounts and edit any of them';
 $string['adminhelpenrolments'] = 'Choose internal or external ways to control enrolments';
+$string['adminhelpfailurelogs'] = 'Browse logs of failed logins';
 $string['adminhelplanguage'] = 'For checking and editing the current language pack';
 $string['adminhelplogs'] = 'Browse logs of all activity on this site';
-$string['adminhelpfailurelogs'] = 'Browse logs of failed logins';
 $string['adminhelpmanageblocks'] = 'Manage installed blocks and their settings';
 $string['adminhelpmanagedatabase'] = 'Access the database directly (be careful!)';
 $string['adminhelpmanagefilters'] = 'Choose text filters and related settings';
@@ -60,6 +61,7 @@ $string['administrator'] = 'Administrator';
 $string['administrators'] = 'Administrators';
 $string['administratorsall'] = 'All administrators';
 $string['administratorsandteachers'] = 'Administrators and teachers';
+$string['advancedfilter'] = 'Advanced search';
 $string['again'] = 'again';
 $string['all'] = 'All';
 $string['allactivities'] = 'All activities';
@@ -255,11 +257,11 @@ $string['databasesuccess'] = 'Database was successfully upgraded';
 $string['databaseupgradebackups'] = 'Backup version is now $a';
 $string['databaseupgradeblocks'] = 'Blocks version is now $a';
 $string['databaseupgrades'] = 'Upgrading database';
+$string['date'] = 'Date';
 $string['datemostrecentfirst'] = 'Date - most recent first';
 $string['datemostrecentlast'] = 'Date - most recent last';
 $string['day'] = 'day';
 $string['days'] = 'days';
-$string['date'] = 'Date';
 $string['decodinginternallinks'] = 'Decoding internal links';
 $string['defaultcoursefullname'] = 'Course Fullname 101';
 $string['defaultcourseshortname'] = 'CF101';
@@ -300,12 +302,27 @@ $string['doyouagree'] = 'Have you read these conditions and understood them?';
 $string['duplicate'] = 'Duplicate';
 $string['duplicatinga'] = 'Duplicating: $a';
 $string['duplicatingain'] = 'Duplicating $a->what in $a->in';
+$string['edhelpbgcolor'] = 'Define editarea\'s background-color.<br />Valid values are for example: #ffffff or white';
+$string['edhelpcleanword'] = 'This setting enables or disables Word specific format filtering.';
+$string['edhelpenablespelling'] = 'Enable or disable spellchecking. When enabled, <strong>aspell</strong> must be installed on the server.';
+$string['edhelpfontfamily'] = 'The font-family property is a list of font family names and/or generic family names. Family names must be seperated with comma.';
+$string['edhelpfontlist'] = 'Define the fonts used on editors dropdown menu.';
+$string['edhelpfontsize'] = 'The default font-size sets the size of a font. <br />Valid values are for example: medium, large, smaller, larger, 10pt, 11px.';
 $string['edit'] = 'Edit $a';
 $string['editcoursesettings'] = 'Edit course settings';
 $string['editfiles'] = 'Edit files';
 $string['editgroupprofile'] = 'Edit group profile';
 $string['editinga'] = 'Editing $a';
 $string['editmyprofile'] = 'Edit profile';
+$string['editorbgcolor'] = 'Background-color';
+$string['editorcleanonpaste'] = 'Clean Word HTML on paste';
+$string['editorcommonsettings'] = 'Common settings';
+$string['editordefaultfont'] = 'Default font';
+$string['editorenablespelling'] = 'Enable spellchecking';
+$string['editorfontlist'] = 'Fontlist';
+$string['editorfontsize'] = 'Default font-size';
+$string['editorresettodefaults'] = 'Reset to default values';
+$string['editorsettings'] = 'Editor settings';
 $string['editsummary'] = 'Edit summary';
 $string['editthisactivity'] = 'Edit this activity';
 $string['editthiscategory'] = 'Edit this category';
@@ -335,8 +352,8 @@ $string['emailconfirmsent'] = '   <P>An email should have been sent to your addr
    <P>It contains easy instructions to complete your registration.
    <P>If you continue to have difficulty, contact the site administrator.';
 $string['emaildigest'] = 'Email digest type';
-$string['emaildigestoff'] = 'No digest (single email per forum post)';
 $string['emaildigestcomplete'] = 'Complete (daily email with full posts)';
+$string['emaildigestoff'] = 'No digest (single email per forum post)';
 $string['emaildigestsubjects'] = 'Subjects (daily email with subjects only)';
 $string['emaildisable'] = 'This email address is disabled';
 $string['emaildisableclick'] = 'Click here to disable all email from being sent to this address';
@@ -411,20 +428,20 @@ $string['existingteachers'] = 'Existing teachers';
 $string['failedloginattempts'] = '$a->attempts failed logins since your last login';
 $string['failedloginattemptsall'] = '$a->attempts failed logins for $a->accounts accounts';
 $string['feedback'] = 'Feedback';
-$string['filemissing'] = '$a is missing';
 $string['file'] = 'File';
+$string['filemissing'] = '$a is missing';
 $string['files'] = 'Files';
 $string['filesfolders'] = 'Files/folders';
 $string['filloutallfields'] = 'Please fill out all fields in this form';
 $string['findmorecourses'] = 'Find more courses...';
-$string['firstdayofweek'] = '0'; //0-Sunday, 1-Monday,....6-Saturday
+$string['firstdayofweek'] = '0';
 $string['firstname'] = 'Given name';
 $string['firsttime'] = 'Is this your first time here?';
 $string['followingoptional'] = 'The following items are optional';
 $string['followingrequired'] = 'The following items are required';
 $string['force'] = 'Force';
-$string['forcelanguage'] = 'Force language';
 $string['forcedmode'] = 'forced mode';
+$string['forcelanguage'] = 'Force language';
 $string['forceno'] = 'Do not force';
 $string['forgotten'] = 'Forgotten your username or password?';
 $string['format'] = 'Format';
@@ -470,10 +487,10 @@ $string['grades'] = 'Grades';
 $string['group'] = 'Group';
 $string['groupadd'] = 'Add new group';
 $string['groupaddusers'] = 'Add selected to group';
+$string['groupfor'] = 'for group';
 $string['groupinfo'] = 'Info about selected group';
 $string['groupinfomembers'] = 'Info about selected members';
 $string['groupinfopeople'] = 'Info about selected people';
-$string['groupfor'] = 'for group';
 $string['groupmemberssee'] = 'See group members';
 $string['groupmembersselected'] = 'Members of selected group';
 $string['groupmode'] = 'Group mode';
@@ -507,11 +524,12 @@ $string['helpsummaries'] = 'About these summaries';
 $string['helptext'] = 'How to write text';
 $string['helpwiki'] = 'How to write Wiki-like text';
 $string['helpwriting'] = 'Write carefully';
-$string['hide'] = 'Hide';
 $string['hiddensections'] = 'Hidden sections';
 $string['hiddensectionscollapsed'] = 'Hidden sections are shown in collapsed form';
 $string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
+$string['hide'] = 'Hide';
 $string['hidepicture'] = 'Hide picture';
+$string['hidesettings'] = 'Hide settings';
 $string['hits'] = 'Hits';
 $string['hitsoncourse'] = 'Hits on $a->coursename by $a->username';
 $string['hitsoncoursetoday'] = 'Today\'s hits on $a->coursename by $a->username';
@@ -534,14 +552,14 @@ $string['includecoursefiles'] = 'Include Course Files';
 $string['includecourseusers'] = 'Include Course Users';
 $string['included'] = 'Included';
 $string['includelogentries'] = 'Include Log Entries';
-$string['includemodules'] = 'Include&nbsp;Modules';
-$string['ip_address'] = 'IP Address';
+$string['includemodules'] = 'Include Modules';
 $string['includeneededusers'] = 'Include Needed Users';
 $string['includenoneusers'] = 'Include None Users';
 $string['includeuserfiles'] = 'Include User Files';
 $string['institution'] = 'Institution';
 $string['invalidemail'] = 'Invalid email address';
 $string['invalidlogin'] = 'Invalid login, please try again';
+$string['ip_address'] = 'IP Address';
 $string['jumpto'] = 'Jump to...';
 $string['keep'] = 'Keep';
 $string['langltr'] = 'Language direction left-to-right';
@@ -559,7 +577,6 @@ $string['leavetokeep'] = 'Leave blank to keep current password';
 $string['license'] = 'GPL License';
 $string['list'] = 'List';
 $string['listfiles'] = 'List of files in $a';
-$string['login_failure_logs'] = 'Login failure logs';
 $string['listofallpeople'] = 'List of all people';
 $string['livelogs'] = 'Live logs from the past hour';
 $string['locale'] = 'en';
@@ -567,13 +584,14 @@ $string['location'] = 'Location';
 $string['loggedinas'] = 'You are logged in as $a ';
 $string['loggedinnot'] = 'You are not logged in.';
 $string['login'] = 'Login';
+$string['login_failure_logs'] = 'Login failure logs';
 $string['loginas'] = 'Login as';
 $string['loginguest'] = 'Login as a guest';
 $string['loginsite'] = 'Login to the site';
 $string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
    a minute to create a new account for yourself on this web site.
    Each of the individual courses may also have a one-time
-   &quot;enrolment key&quot;, which you won\'t need until later. Here are
+   \"enrolment key\", which you won\'t need until later. Here are
    the steps:
    <ol size=\"2\">
    <li>Fill out the <a href=\"$a\">New Account</a> form with your details.</li>
@@ -581,8 +599,8 @@ $string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
    <li>Read your email, and click on the web link it contains.</li>
    <li>Your account will be confirmed and you will be logged in.</li>
    <li>Now, select the course you want to participate in.</li>
-   <li>If you are prompted for a &quot;enrolment key&quot; - use the one
-   that your teacher has given you. This will &quot;enrol&quot; you in the
+   <li>If you are prompted for a \"enrolment key\" - use the one
+   that your teacher has given you. This will \"enrol\" you in the
    course.</li>
    <li>You can now access the full course. From now on you will only need
    to enter your personal username and password (in the form on this page)
@@ -596,9 +614,9 @@ $string['loginto'] = 'Login to $a';
 $string['loginusing'] = 'Login here using your username and password';
 $string['logout'] = 'Logout';
 $string['logs'] = 'Logs';
+$string['mailadmins'] = 'Inform admins';
 $string['mailstudents'] = 'Inform students';
 $string['mailteachers'] = 'Inform teachers';
-$string['mailadmins'] = 'Inform admins';
 $string['mainmenu'] = 'Main menu';
 $string['makeafolder'] = 'Make a folder';
 $string['makeeditable'] = 'If you make \'$a\' editable by the web server process (eg apache) then you could edit this file directly from this page';
@@ -637,13 +655,13 @@ $string['missingsummary'] = 'Missing summary';
 $string['missingteacher'] = 'Must choose something';
 $string['missingurl'] = 'Missing URL';
 $string['missingusername'] = 'Missing username';
-$string['more'] = 'more';
 $string['modified'] = 'Modified';
 $string['moduledeleteconfirm'] = 'You are about to completely delete the module \'$a\'.  This will completely delete everything in the database associated with this activity module.  Are you SURE you want to continue?';
 $string['moduledeletefiles'] = 'All data associated with the module \'$a->module\' has been deleted from the database.  To complete the deletion (and prevent the module re-installing itself), you should now delete this directory from your server: $a->directory';
 $string['modulesetup'] = 'Setting up module tables';
 $string['modulesuccess'] = '$a tables have been set up correctly';
 $string['moodleversion'] = 'Moodle Version';
+$string['more'] = 'more';
 $string['mostrecently'] = 'most recently';
 $string['move'] = 'Move';
 $string['movecategoryto'] = 'Move category to:';
@@ -688,8 +706,7 @@ then cut and paste the address into the address
 line at the top of your web browser window.
 
 Cheers from the \'$a->sitename\' administrator,
-$a->signoff
-';
+$a->signoff';
 $string['newpicture'] = 'New picture';
 $string['newsitem'] = 'news item';
 $string['newsitems'] = 'news items';
@@ -724,18 +741,18 @@ $string['notavailable'] = 'Not available';
 $string['noteachersyet'] = 'No teachers in this course yet';
 $string['notenrolled'] = '$a is not enrolled in this course.';
 $string['noteuserschangednonetocourse'] = 'Note: course users need to be restored when restoring user data. This setting has been changed for you.';
-$string['notifyloginfailuressubject'] = '$a :: Failed logins notification';
-$string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at $a since you were last notified ';
-$string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
-$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
-$string['numattempts'] = '$a failed login attempt(s) ';
 $string['nothingnew'] = 'Nothing new since your last login';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
+$string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
+$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
+$string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at $a since you were last notified ';
+$string['notifyloginfailuressubject'] = '$a :: Failed logins notification';
 $string['notincluded'] = 'Not included';
 $string['notingroup'] = 'Sorry, but you need to be part of a group to see this activity.';
 $string['nousersmatching'] = 'No users matching \'$a\' were found';
 $string['nousersyet'] = 'There are no users yet';
 $string['now'] = 'now';
+$string['numattempts'] = '$a failed login attempt(s) ';
 $string['numberweeks'] = 'Number of weeks/topics';
 $string['numdays'] = '$a days';
 $string['numhours'] = '$a hours';
@@ -752,7 +769,6 @@ $string['order'] = 'Order';
 $string['other'] = 'Other';
 $string['outline'] = 'Outline';
 $string['page'] = 'Page';
-$string['parentlanguage'] = '';
 $string['participants'] = 'Participants';
 $string['password'] = 'Password';
 $string['passwordchanged'] = 'Password has been changed';
@@ -825,8 +841,8 @@ $string['returningtosite'] = 'Returning to this web site?';
 $string['revert'] = 'Revert';
 $string['role'] = 'Role';
 $string['rss'] = 'RSS';
-$string['rsstype'] = "RSS feed for this activity";
-$string['rssarticles'] = "Number of RSS recent articles";
+$string['rssarticles'] = 'Number of RSS recent articles';
+$string['rsstype'] = 'RSS feed for this activity';
 $string['savechanges'] = 'Save changes';
 $string['saveto'] = 'Save to';
 $string['scale'] = 'Scale';
@@ -865,13 +881,14 @@ $string['showallusers'] = 'Show all users';
 $string['showallweeks'] = 'Show all weeks';
 $string['showgrades'] = 'Show grades';
 $string['showlistofcourses'] = 'Show list of courses';
-$string['sincelast']= ' since last login';
 $string['showonlytopic'] = 'Show only topic $a';
 $string['showonlyweek'] = 'Show only week $a';
 $string['showrecent'] = 'Show recent activity';
 $string['showreports'] = 'Show activity reports';
+$string['showsettings'] = 'Show settings';
 $string['showtheselogs'] = 'Show these logs';
 $string['since'] = 'Since';
+$string['sincelast'] = ' since last login';
 $string['site'] = 'Site';
 $string['siteerrors'] = 'Site errors';
 $string['sitefiles'] = 'Site files';
@@ -900,11 +917,11 @@ $string['strftimedatetime'] = '%%d %%B %%Y, %%I:%%M %%p';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%I:%%M %%p';
 $string['strftimedayshort'] = '%%A, %%d %%B';
+$string['strftimedaytime'] = '%%a, %%H:%%M';
 $string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%I:%%M %%p';
 $string['strftimetime'] = '%%I:%%M %%p';
-$string['strftimedaytime'] = '%%a, %%H:%%M';
 $string['stringsnotset'] = 'The following strings are not defined in $a';
 $string['studentnotallowed'] = 'Sorry, but you can not enter this course as \'$a\'';
 $string['students'] = 'Students';
@@ -1029,20 +1046,4 @@ $string['yourlastlogin'] = 'Your last login was';
 $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your $a';
 $string['zippingbackup'] = 'Zipping backup';
-$string['editorsettings'] = 'Editor settings';
-$string['adminhelpeditorsettings'] = 'Define basic settings for HTML editor';
-$string['editorcommonsettings'] = 'Common settings';
-$string['editorbgcolor'] = 'Background-color';
-$string['editordefaultfont'] = 'Default font';
-$string['editorfontsize'] = 'Default font-size';
-$string['editorcleanonpaste'] = 'Clean Word HTML on paste';
-$string['editorenablespelling'] = 'Enable spellchecking';
-$string['editorfontlist'] = 'Fontlist';
-$string['edhelpbgcolor'] = 'Define editarea\'s background-color.<br />Valid values are for example: #ffffff or white';
-$string['edhelpfontfamily'] = 'The font-family property is a list of font family names and/or generic family names. Family names must be seperated with comma.';
-$string['edhelpfontsize'] = 'The default font-size sets the size of a font. <br />Valid values are for example: medium, large, smaller, larger, 10pt, 11px.';
-$string['edhelpcleanword'] = 'This setting enables or disables Word specific format filtering.';
-$string['edhelpenablespelling'] = 'Enable or disable spellchecking. When enabled, <strong>aspell</strong> must be installed on the server.';
-$string['edhelpfontlist'] = 'Define the fonts used on editors dropdown menu.';
-$string['editorresettodefaults'] = 'Reset editor settings to default values';
 ?>
