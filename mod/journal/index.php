@@ -18,12 +18,8 @@
 
     $strjournal = get_string("modulename", "journal");
     $strjournals = get_string("modulenameplural", "journal");
-    $stredit = get_string("edit");
-    $strview = get_string("view");
     $strweek = get_string("week");
     $strtopic = get_string("topic");
-    $strquestion = get_string("question");
-    $stranswer = get_string("answer");
 
     print_header("$course->shortname: $strjournals", "$course->fullname", "$navigation $strjournals", 
                  "", "", true, "", navmenu($course));
