@@ -55,10 +55,10 @@ function get_student_courses(&$user) {
 
             if (get_field("course", "visible", "id", $student->course)) {
 
-            /// Is student enrolled for a specific time period?
+            /// Is the student enrolment active right now?
 
-                if ( ( $student->timestart == 0 or ( $currenttime > $student->timestart )) and 
-                     ( $student->timeend   == 0 or ( $currenttime < $student->timeend )) ) {
+                if ( (!$student->timestart and !$student->timeend) or 
+                     ( $student->timestart < $currenttime and $currenttime < $student->timeend) ) {
                     $user->student[$student->course] = true;
                     $user->timeaccess[$student->course] = $student->timeaccess;
                 }
@@ -86,8 +86,8 @@ function get_teacher_courses(&$user) {
 
         /// Is teacher only teaching this course for a specific time period?
 
-            if ( ( $teacher->timestart == 0 or ( $currenttime > $teacher->timestart )) and 
-                 ( $teacher->timeend   == 0 or ( $currenttime < $teacher->timeend )) ) {
+            if ( (!$teacher->timestart and !$teacher->timeend) or 
+                 ( $teacher->timestart < $currenttime and $currenttime < $teacher->timeend) ) {
 
                 $user->teacher[$teacher->course] = true;
 
