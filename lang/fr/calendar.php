@@ -40,6 +40,7 @@ $string['explain_startwday'] = 'Ce réglage définit la façon dont les calendriers
 $string['explain_timeformat'] = 'Ce réglage définit l\'affichage des heures dans le calendrier. Vous pouvez choisir le format 12 heures ou 24 heures. Si vous choisissez « Valeur par dÈfaut », le format sera celui défini par la langue que vous utilisez dans le site.';
 $string['globalevents'] = 'Événements globaux';
 $string['groupevents'] = 'Événements de groupe';
+$string['gotocalendar'] = 'Aller au calendrier';
 $string['hidden'] = 'cachés';
 $string['manyevents'] = '$a événements ';
 $string['monthlyview'] = 'Vue mensuelle';
