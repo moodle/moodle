@@ -1360,7 +1360,8 @@ function workshop_get_unmailed_assessments($cutofftime) {
                               FROM {$CFG->prefix}workshop_assessments a, {$CFG->prefix}workshop g
                              WHERE a.mailed = 0 
                                AND a.timecreated < $cutofftime 
-                               AND g.id = a.workshopid");
+                               AND g.id = a.workshopid
+                               AND g.releasegrades < $cutoffime");
 }
 
 

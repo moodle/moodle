@@ -387,7 +387,7 @@
                             "2. ".get_string("phase2", "workshop", $course->student), 
                             "3. ".get_string("phase5", "workshop"));
             $tabs->urls = array("view.php?id=$cm->id&amp;action=setupassignment", 
-                "view.php?id=$cm->id&amp;action=allowsubmissions",
+                "view.php?id=$cm->id&amp;action=allowboth",
                 "view.php?id=$cm->id&amp;action=makefinalgradesavailable");
         } else {
             $tabs->names = array("1. ".get_string("phase1", "workshop"), 
@@ -411,7 +411,11 @@
             }
         }
         if ($workshop->phase) { // phase 1 or more
-            $tabs->highlight = $workshop->phase - 1;
+            if ($workshop->wtype < 2) {
+                $tabs->highlight = ($workshop->phase - 1) / 2;
+            } else {
+                $tabs->highlight = $workshop->phase - 1;
+            }
         } else {
             $tabs->highlight = 0; // phase is zero
         }

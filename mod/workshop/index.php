@@ -101,6 +101,9 @@
                      } else { // simple assignemnt, don't show grading grade 
                         $info = get_string("gradeforsubmission", "workshop").": $grade/$workshop->grade";
                     }
+                    if ($workshop->releasegrades > $timenow) {
+                        $info = get_string("notavailable", "workshop");
+                    }
                 }
                 if ($course->format == "weeks" or $course->format == "topics") {
                     $table->data[] = array ($workshop->section, $link, $info, $submitted, $due);
