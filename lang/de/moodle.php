@@ -662,7 +662,7 @@ $string['passwordsenttext'] = '<P>Eine E-Mail wurde an Ihre Adresse $a->email ge
 
 <P>Das Kennwort wurde automatisch erzeugt.
 Sicherlich möchten Sie es <A HREF=$a->link>ändern</a>, um es sich leichter zu merken.';
-$string['people'] = 'Trainer/innen und Teilnehmer/innen';
+$string['people'] = 'Personen';
 $string['personalprofile'] = 'Persönliches Profil';
 $string['phone'] = 'Telefon';
 $string['phpinfo'] = 'PHP-Info';
