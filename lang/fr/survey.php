@@ -53,6 +53,8 @@ $string['attlsintro'] = 'Le but de ce questionnaire est de nous aider à évaluer 
 
 Il n\'y a pas de « bonne » ou de « mauvaise » réponse ; seule votre opinion nous intéresse. Soyez assuré que vos réponses seront traitées avec le maximum de confidentialité, et qu\'elles n\'auront aucun effet sur votre note finale.';
 $string['attlsm1'] = 'État d\'esprit envers la pensée et l\'étude';
+$string['attlsm2'] = 'Apprentissage lié';
+$string['attlsm3'] = 'Apprentissage détaché';
 $string['attlsmintro'] = 'En discussion ...';
 $string['attlsname'] = 'ATTLS (version à 20 items)';
 $string['ciq1'] = 'À quel moment du cours avez-vous été le plus impliqué en tant qu\'apprenant ?';
@@ -134,6 +136,8 @@ Nous vous remercions de votre collaboration.';
 $string['collesapname'] = 'COLLES (idéal et réel)';
 $string['collesm1'] = 'Pertinence';
 $string['collesm1short'] = 'Pertinence';
+$string['collesm2'] = 'Pensée réflexive';
+$string['collesm2short'] = 'Pensée réflexive';
 $string['collesm3'] = 'Interactivité';
 $string['collesm3short'] = 'Interactivité';
 $string['collesm4'] = 'Assistance de l\'enseignant';
@@ -185,7 +189,7 @@ $string['report'] = 'Rapport des questionnaires';
 $string['savednotes'] = 'Vos notes ont été enregistrées';
 $string['scaleagree5'] = 'Pas du tout d\'accord,Pas tout à fait d\'accord,Neutre,Assez d\'accord,Tout à fait d\'accord';
 $string['scales'] = 'Barèmes';
-$string['scaletimes5'] = 'Presque jamais,Rarement,Quelquefois,Souvent,Presque toujours';
+$string['scaletimes5'] = 'Presque jamais,Rarement,Parfois,Souvent,Presque toujours';
 $string['seemoredetail'] = 'Cliquer ici pour avoir plus de détail';
 $string['selectedquestions'] = 'Question choisies dans un barème, tous les étudiants';
 $string['summary'] = 'Résumé';
