@@ -1065,7 +1065,9 @@
                     //If thar user exists in backup_ids
                     if ($data) {
                         //Only it user has been created now
-                        if (strpos($data->info,"new") !== false) {
+                        //or if it existed previously, but he hasn't image (see bug 1123)
+                        if ((strpos($data->info,"new") !== false) or 
+                            (!check_dir_exists($dest_dir."/".$data->new_id,false))) {
                             //Copy the old_dir to its new location (and name) !!
                             //Only if destination doesn't exists
                             if (!file_exists($dest_dir."/".$data->new_id)) {
