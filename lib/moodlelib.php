@@ -32,6 +32,10 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $navigation = "";
     }
 
+    if ($button == "") {
+        $button = "&nbsp;";
+    }
+
     if (!$menu and $navigation) {
         if (isset($USER->id)) {
             $menu = "<FONT SIZE=2><A TARGET=_parent HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
@@ -300,7 +304,7 @@ function print_table($table) {
     if ($table->head) {
         echo "<TR>";
         foreach ($table->head as $key => $heading) {
-            echo "<TH VALIGN=top ".$align[$key].$size[$key].">$heading</TH>";
+            echo "<TH VALIGN=top ".$align[$key].$size[$key]." NOWRAP>$heading</TH>";
         }
         echo "</TR>\n";
     }
