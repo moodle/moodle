@@ -470,8 +470,12 @@ function writequestion( $question ) {
             if ($answer->fraction==1) {
                 $answertext = '=';
             }
-            else {
+            elseif ($answer->fraction==0) {
                 $answertext = '~';
+            }
+            else {
+              $export_weight = $answer->fraction*100;
+              $answertext = "~%$export_weight%";
             }
             $expout .= "\t".$answertext.$answer->answer;
             if ($answer->feedback!="") {
