@@ -18,7 +18,7 @@ CREATE TABLE prefix_resource (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  type integer NOT NULL default '0',
+  type varchar(30) NOT NULL default '',
   reference varchar(255) default NULL,
   summary text NOT NULL default '',
   alltext text NOT NULL default '',

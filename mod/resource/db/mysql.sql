@@ -18,7 +18,7 @@ CREATE TABLE prefix_resource (
   id int(10) unsigned NOT NULL auto_increment,
   course int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
-  type tinyint(4) NOT NULL default '0',
+  type varchar(30) NOT NULL default '',
   reference varchar(255) default NULL,
   summary text NOT NULL,
   alltext text NOT NULL,
