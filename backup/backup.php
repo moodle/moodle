@@ -6,8 +6,8 @@
     //MUST CHANGE WITH FINAL BACKUP LOCATION !! WITHOUT TRAILING SLASH !!
     //ALL RELATIVE FROM THE LOCATION OF THE backup.php SCRIPT !!!
 
-    $moodle_home = "../../..";
-    $mods_home = "mod";
+    $moodle_home = "..";
+    $mods_home = "../mod";
 
     //END MUST CHANGE
 
