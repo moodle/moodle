@@ -211,22 +211,6 @@ global $THEME;
     $CFG->moddata     = 'moddata';
 
 
-/// Load up theme variables (colours etc)
-    if (isset($_GET['theme'])) {
-        if (confirm_sesskey()) {
-            if (!detect_munged_arguments($_GET['theme'], 0) and file_exists($CFG->dirroot .'/theme/'. $_GET['theme'])) {
-                $SESSION->theme = $_GET['theme'];
-            }
-        }
-    }
-
-    if (!isset($CFG->theme)) {
-        $CFG->theme = 'standard';
-    }
-
-    theme_setup();  // Sets up theme global variables
-
-
 /// A hack to get around magic_quotes_gpc being turned off
 
     if (!ini_get_bool('magic_quotes_gpc') ) {
@@ -316,6 +300,24 @@ global $THEME;
 /// as a CGI under IIS on Windows) may require that you uncomment the following:
 //  session_register("USER");
 //  session_register("SESSION");
+
+
+
+/// Load up theme variables (colours etc)
+    if (isset($_GET['theme'])) {
+        if (confirm_sesskey()) {
+            if (!detect_munged_arguments($_GET['theme'], 0) and file_exists($CFG->dirroot .'/theme/'. $_GET['theme'])) {
+                $SESSION->theme = $_GET['theme'];
+            }
+        }
+    }
+
+    if (!isset($CFG->theme)) {
+        $CFG->theme = 'standard';
+    }
+
+    theme_setup();  // Sets up theme global variables
+
 
 
 /// Set language/locale of printed times.  If user has chosen a language that 
