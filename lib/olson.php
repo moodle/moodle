@@ -139,10 +139,10 @@ function olson_todst ($filename) {
                 
                 // start-of-year timestamp
                 // TODO: perhaps should consider the current DST rule
-                $mdl_tz['from_timestamp'] = gmmktime(0, 0, 0, 1, 1, $mdl_tz['from'], 0) + $mdl_tz['gmtoff'] * 60 ;
-                if ($mdl_tz['from_timestamp'] < 0) {
-                    $mdl_tz['from_timestamp'] = 0;
+                if($mdl_tz['from'] < 1970) {
+                    $mdl_tz['from'] = 1970;
                 }
+                $mdl_tz['from_timestamp'] = gmmktime(0, 0, 0, 1, 1, $mdl_tz['from'], 0) + $mdl_tz['gmtoff'] * 60 ;
                 $mdl_zones[] = $mdl_tz;
             }
         } 
