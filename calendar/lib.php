@@ -780,6 +780,9 @@ function calendar_get_sideblock_upcoming($events, $linkhref = NULL) {
     }
 
     for ($i = 0; $i < $lines; ++$i) {
+        if (!isset($events[$i]->time)) {   // Just for robustness
+            continue;
+        }
         $events[$i] = calendar_add_event_metadata($events[$i]);
         $content .= '<div class="event">'.$events[$i]->icon.' ';
         if (!empty($events[$i]->referer)) {
