@@ -30,7 +30,7 @@
 
     if (!$id) {
 	    print_header("$site->shortname: $strassignteachers", "$site->fullname", 
-                     "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strassignteachers");
+                     "<A HREF=\"../admin/\">$stradministration</A> -> $strassignteachers");
         
         $isadmin = isadmin(); /// cache value
         $courses = get_courses();
@@ -64,7 +64,7 @@
 
 	print_header("$site->shortname: $course->shortname: $strassignteachers", 
                  "$site->fullname", 
-                 "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
+                 "<A HREF=\"../admin/\">$stradministration</A> -> 
                   <A HREF=\"teacher.php\">$strassignteachers</A> ->
                   $course->shortname", "");
     print_heading("<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>");
