@@ -27,6 +27,8 @@ function auth_user_login ($username, $password) {
     $rs = $authdb->Execute("SELECT * FROM $CFG->auth_dbtable 
                             WHERE $CFG->auth_dbfielduser = '$username' 
                               AND $CFG->auth_dbfieldpass = '$password' ");
+    $authdb->Close();
+
     if (!$rs) {
         notify("Could not connect to the specified authentication database...");
         return false;
