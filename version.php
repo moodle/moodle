@@ -9,3 +9,5 @@ $version = 2003051700;   // The current version is a date (YYYYMMDDXX)
 
 $release = "1.0.9 Beta 1 +";  // User-friendly version number
 
+
+?>
