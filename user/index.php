@@ -26,20 +26,17 @@
     }
 
 
-    $teacherlinks = isteacher($course->id);
-
-
     if ( $teachers = get_course_teachers($course->id)) {
         echo "<H2 align=center>".$course->teacher."s</H2>";
         foreach ($teachers as $teacher) {
-            print_user($teacher, $course, $teacherlinks);
+            print_user($teacher, $course);
         }
     }
 
     if ($students = get_course_students($course->id)) {
         echo "<H2 align=center>".$course->student."s</H2>";
         foreach ($students as $student) {
-            print_user($student, $course, $teacherlinks);
+            print_user($student, $course);
         }
     } 
 
@@ -48,7 +45,7 @@
  
 /// FUNCTIONS //////////////////
 
-function print_user($user, $course, $teacherlinks) {
+function print_user($user, $course) {
 
     global $USER, $COUNTRIES;
     
@@ -73,7 +70,7 @@ function print_user($user, $course, $teacherlinks) {
     echo "</TD><TD VALIGN=bottom BGCOLOR=#FFFFFF NOWRAP>";
 
     echo "<FONT SIZE=1>";
-    if ($teacherlinks) {
+    if (isteacher($course->id)) {
         $timemidnight = usergetmidnight(time());
         echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">".get_string("activity")."</A><BR>";
         echo "<A HREF=\"../course/unenrol.php?id=$course->id&user=$user->id\">".get_string("unenrol")."</A><BR>";
