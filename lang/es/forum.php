@@ -94,6 +94,7 @@ $string['nownotsubscribed'] = '$a->name no recibirá copias de \'$a->forum\' por 
 $string['nowsubscribed'] = '$a->name recibirá copias de \'$a->forum\' por correo.';
 $string['numposts'] = '$a mensajes';
 $string['olderdiscussions'] = 'Mensajes anteriores';
+$string['oldertopics'] = 'Tema anteriores';
 $string['openmode0'] = 'No se pueden colocar temas ni respuestas ';
 $string['openmode1'] = 'No se pueden colocar temas, sólo respuestas';
 $string['openmode2'] = 'Permitir nuevos temas y respuestas';

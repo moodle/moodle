@@ -96,6 +96,7 @@ $string['nownotsubscribed'] = '$a->name will NOT receive copies of \'$a->forum\'
 $string['nowsubscribed'] = '$a->name will receive copies of \'$a->forum\' by email.';
 $string['numposts'] = '$a posts';
 $string['olderdiscussions'] = 'Older discussions';
+$string['oldertopics'] = 'Older topics';
 $string['openmode0'] = 'No discussions, no replies';
 $string['openmode1'] = 'No discussions, but replies are allowed';
 $string['openmode2'] = 'Discussions and replies are allowed';
