@@ -241,42 +241,42 @@
         }
 
         $table->head = array ($name, $email, $city, $country, $lastaccess, "", "");
-        $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER");
+        $table->align = array ("left", "left", "left", "left", "left", "center", "center");
         $table->width = "95%";
         foreach ($users as $user) {
             if ($user->id == $USER->id or $user->username == "changeme") {
                 $deletebutton = "";
             } else {
-                $deletebutton = "<A HREF=\"user.php?delete=$user->id\" TARGET=\"$strdeletecheck\">$strdelete</A>";
+                $deletebutton = "<a href=\"user.php?delete=$user->id\">$strdelete</a>";
             }
             if ($user->lastaccess) {
                 $strlastaccess = format_time(time() - $user->lastaccess);
             } else {
                 $strlastaccess = get_string("never");
             }
-            $table->data[] = array ("<A HREF=\"../user/view.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</A>",
+            $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</a>",
                              "$user->email",
                              "$user->city",
                              "$user->country",
                              $strlastaccess,
-                             "<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</A>",
+                             "<a href=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</a>",
                              $deletebutton);
         }
 
-        echo "<TABLE align=center cellpadding=10><TR><TD>";
-        echo "<FORM ACTION=user.php METHOD=POST>";
-        echo "<INPUT TYPE=text NAME=search VALUE=\"$search\" SIZE=20>";
-        echo "<INPUT TYPE=submit VALUE=\"$strsearch\">";
+        echo "<table align=center cellpadding=10><tr><td>";
+        echo "<form action=user.php method=post>";
+        echo "<input type=text name=search value=\"$search\" size=20>";
+        echo "<input type=submit value=\"$strsearch\">";
         if ($search) {
-            echo "<INPUT type=\"button\" onClick=\"document.location='user.php';\" value=\"$strshowallusers\">";
+            echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\">";
         }
-        echo "</FORM>";    
-        echo "</TD></TR></TABLE>";
+        echo "</form>";    
+        echo "</td></tr></table>";
 
         print_table($table);
 
         if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
-            print_heading("<A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A>");
+            print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
         }
 
         print_footer();
