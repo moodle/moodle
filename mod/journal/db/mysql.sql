@@ -43,3 +43,11 @@ CREATE TABLE journal_entries (
   PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='All the journal entries of all people';
 
+#
+# Dumping data for table `log_display`
+#
+
+INSERT INTO log_display VALUES ('journal', 'view', 'journal', 'name');
+INSERT INTO log_display VALUES ('journal', 'add entry', 'journal', 'name');
+INSERT INTO log_display VALUES ('journal', 'update entry', 'journal', 'name');
+INSERT INTO log_display VALUES ('journal', 'view responses', 'journal', 'name');

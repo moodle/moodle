@@ -47,3 +47,15 @@ CREATE TABLE choice_answers (
   UNIQUE KEY id (id)
 ) TYPE=MyISAM;
 
+#
+# Dumping data for table `log_display`
+#
+
+INSERT INTO log_display VALUES ('choice', 'view', 'choice', 'name');
+INSERT INTO log_display VALUES ('choice', 'update', 'choice', 'name');
+INSERT INTO log_display VALUES ('choice', 'add', 'choice', 'name');
+INSERT INTO log_display VALUES ('choice', 'report', 'choice', 'name');
+
+    
+
+

@@ -165,3 +165,13 @@ INSERT INTO survey_questions VALUES (65, 0, 'Attitudes Towards Thinking and Lear
 INSERT INTO survey_questions VALUES (67, 0, 'Connected Learning', '63,62,59,57,55,49,52,50,48,47', 'Connected knowers...', -1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
 INSERT INTO survey_questions VALUES (68, 0, 'Separate Learning', '46,54,45,51,60,53,56,58,61,64', 'Separate knowers...', -1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
 
+
+#
+# Dumping data for table `log_display`
+#
+
+INSERT INTO log_display VALUES ('survey', 'download', 'survey', 'name');
+INSERT INTO log_display VALUES ('survey', 'view form', 'survey', 'name');
+INSERT INTO log_display VALUES ('survey', 'view graph', 'survey', 'name');
+INSERT INTO log_display VALUES ('survey', 'view report', 'survey', 'name');
+INSERT INTO log_display VALUES ('survey', 'submit', 'survey', 'name');
