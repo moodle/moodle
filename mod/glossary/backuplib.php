@@ -59,9 +59,6 @@
 
                 backup_glossary_categories($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
 
-                if ( $preferences->mods["glossary"]->userinfo ) {
-                    backup_glossary_comments($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
-                }
                 //End mod
                 $status =fwrite ($bf,end_tag("MOD",3,true));
             }
