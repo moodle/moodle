@@ -346,6 +346,8 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
             $outkey = count($output);
 
+            $output[$outkey] = $event;   // Grab the whole raw event by default
+
             // Now we know how to display the time, we have to see how to display the event
             if(!empty($event->modulename)) {
 
@@ -369,24 +371,15 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$icon.'" alt="" title="'.$modulename.'" style="vertical-align: middle;" />';
                 $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
-                $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
-                $output[$outkey]->description = $event->description;
                 $output[$outkey]->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
-                $output[$outkey]->timestart = $event->timestart;
-                $output[$outkey]->id = $event->id;
                 $output[$outkey]->cmid = $module->id;
-                $output[$outkey]->modulename = $event->modulename;
 
 
 
             } else if($event->courseid == 1) {
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/site.gif" alt="" style="vertical-align: middle;" />';
-                $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
-                $output[$outkey]->description = $event->description;
-                $output[$outkey]->timestart = $event->timestart;
-                $output[$outkey]->id = $event->id;
 
 
 
@@ -395,34 +388,23 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 calendar_get_course_cached($coursecache, $event->courseid);
 
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/course.gif" alt="" style="vertical-align: middle;" />';
-                $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
                 $output[$outkey]->description = $event->description;
                 $output[$outkey]->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
-                $output[$outkey]->timestart = $event->timestart;
-                $output[$outkey]->id = $event->id;
 
 
 
             } else if($event->groupid) {
                 // Group event
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/group.gif" alt="" style="vertical-align: middle;" />';
-                $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
-                $output[$outkey]->description = $event->description;
-                $output[$outkey]->timestart = $event->timestart;
-                $output[$outkey]->id = $event->id;
 
 
 
             } else if($event->userid) {
                 // User event
                 $output[$outkey]->icon = '<img height=16 width=16 src="'.$CFG->pixpath.'/c/user.gif" alt="" style="vertical-align: middle;" />';
-                $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
-                $output[$outkey]->description = $event->description;
-                $output[$outkey]->timestart = $event->timestart;
-                $output[$outkey]->id = $event->id;
             }
             ++$processed;
         }
@@ -1016,23 +998,23 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 function calendar_edit_event_allowed($event) {
     global $USER;
 
-    if(isadmin($USER->id)) return true; // Admins are allowed anything
+    if (isadmin($USER->id)) return true; // Admins are allowed anything
 
-    if($event->courseid > 1) {
+    if ($event->courseid > 1) {
         // Course event, only editing teachers may... edit :P
         if(isteacheredit($event->courseid)) {
             return true;
         }
-    }
-    else if($event->courseid == 0 && $event->groupid != 0) {
+
+    } else if($event->courseid == 0 && $event->groupid != 0) {
         // Group event
         $group = get_record('groups', 'id', $event->groupid);
         if($group === false) return false;
         if(isteacheredit($group->courseid)) {
             return true;
         }
-    }
-    else if($event->courseid == 0 && $event->groupid == 0 && $event->userid == $USER->id) {
+
+    } else if($event->courseid == 0 && $event->groupid == 0 && $event->userid == $USER->id) {
         // User event, owned by this user
         return true;
     }
