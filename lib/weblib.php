@@ -3244,7 +3244,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
         $module = 'moodle';
     }
 
-    $linkobject = '<span class="formhelplinks">';
+    $linkobject = '<span class="helplink">';
 
     if ($image) {
         if ($imagetext == '') {
