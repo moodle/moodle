@@ -12,7 +12,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>testaus</title>
+<title><?php print_string("insertlink","editor");?></title>
 <meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>">
 <script type="text/javascript" src="popup.js"></script>
 <script language="JavaScript" type="text/javascript">
