@@ -259,16 +259,16 @@
     </td>
 </tr>
 <tr valign="top">
-  <td align="right"><p><?php print_string("managemeta") ?>:</td>
+  <td align="right"><?php print_string("managemeta") ?>:</td>
     <td>
-      <?php 
+      <?php
       if (empty($disable_meta)) {
           $meta[0] = get_string('no');
           $meta[1] = get_string('yes');
           choose_from_menu($meta,"metacourse",$form->metacourse,"","","");
       } else {
           echo ((empty($form->metacourse)) ? get_string("no") : get_string("yes"));
-	  echo " - $disable_meta ";
+          echo " - $disable_meta ";
       } ?>&nbsp;<?php print_string("managemetaexplan"); ?>
     </td>
 </tr>
