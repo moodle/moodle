@@ -54,7 +54,7 @@
     //Saving conversion id variables into backup_tables
     if ($restore->restoreto ==1) {
         echo "<li>".get_string("creatingnewcourse");
-        $status = restore_create_new_course($restore,&$course_header);
+        $status = restore_create_new_course($restore,$course_header);
         //Print course fullname and shortname and category
         if ($status) {
             echo "<ul>";

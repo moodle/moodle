@@ -1532,7 +1532,7 @@
         $moodle_parser = new MoodleParser();
         $moodle_parser->todo = $todo;
         $moodle_parser->preferences = $preferences;
-        xml_set_object($xml_parser,&$moodle_parser);
+        xml_set_object($xml_parser,$moodle_parser);
         //Depending of the todo we use some element_handler or another
         if ($todo == "INFO") {
             //Define handlers to that zone
