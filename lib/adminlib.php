@@ -213,6 +213,17 @@ function upgrade_activity_modules($return) {
                 error($module->name .' tables could NOT be set up successfully!');
             }
         }
+        
+        if ( is_readable($fullmod .'/defaults.php')) {
+            // Insert default values for any important configuration variables
+            include_once($fullmod .'/defaults.php'); 
+            foreach ($defaults as $name => $value) {
+                if (!isset($CFG->$name)) {
+                    $CFG->$name = $value;
+                    set_config($name, $value);
+                }
+            }
+        }
     }
 
     if (!empty($updated_modules)) {

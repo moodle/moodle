@@ -2880,7 +2880,7 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
  * @param string $unit ?
  * @todo Finish documenting this function
  */
-function print_timer_selector($timelimit = 0, $unit = '') {
+function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit') {
 
     global $CFG;
 
@@ -2894,7 +2894,7 @@ function print_timer_selector($timelimit = 0, $unit = '') {
     for ($i=1; $i<=$maxvalue; $i++) {
         $minutes[$i] = $i.$unit;
     }
-    choose_from_menu($minutes, 'timelimit', $timelimit, get_string('none'));
+    choose_from_menu($minutes, $name, $timelimit, get_string('none'));
 }
 
 /**
