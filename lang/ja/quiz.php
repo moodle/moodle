@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 nearly beta! (2004022400)
+      // quiz.php - created with Moodle 1.2 Beta ++ (2004031100)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -63,16 +63,16 @@ $string['description'] = '説明';
 $string['eachattemptbuildsonthelast'] = 'それぞれの解答を最後に作成する';
 $string['editcategories'] = 'カテゴリーを編集する';
 $string['editingdescription'] = '説明を編集する';
-$string['editingmatch'] = 'マッチング解答方式を編集する';
+$string['editingmatch'] = '組み合わせ問題を編集する';
 $string['editingmultianswer'] = '隠し解答方式を編集する';
-$string['editingmultichoice'] = '複数解答方式を編集する';
-$string['editingnumerical'] = '数字方式を編集する';
+$string['editingmultichoice'] = '多肢選択式問題を編集する';
+$string['editingnumerical'] = '数値問題を編集する';
 $string['editingquestion'] = '質問を編集する';
 $string['editingquiz'] = 'クイズを編集する';
 $string['editingrandom'] = 'ランダム方式を編集する';
 $string['editingrandomsamatch'] = 'ランダム記述マッチング解答方式を編集する';
-$string['editingshortanswer'] = '記述式の質問を編集する';
-$string['editingtruefalse'] = '○/×方式の質問を編集する';
+$string['editingshortanswer'] = '記述式問題を編集する';
+$string['editingtruefalse'] = '多肢選択式問題を編集する';
 $string['editquestions'] = '質問の編集';
 $string['errorsdetected'] = '$a のエラーが見つかりました';
 $string['false'] = '×';
