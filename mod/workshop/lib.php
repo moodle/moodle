@@ -46,7 +46,7 @@ $WORKSHOP_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0
                              14 => 4.0); 
 
 $WORKSHOP_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5 => 1.0,  6 => 1.5, 
-							 7 => 2.0, 8 => 3.0, 9 => 5.0, 10 => 7.5, 11=> 10.0); 
+							 7 => 2.0, 8 => 3.0, 9 => 5.0, 10 => 7.5, 11=> 10.0, 12=>50.0); 
 
 if (!defined("COMMENTSCALE")) {
 	define("COMMENTSCALE", 20);
@@ -3384,38 +3384,57 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
 			case "teacher" : 
 				if ($submission->teachergrade) { // if there's a final teacher's grade...
 					$str = "$submission->teachergrade  ";
-					}
+				}
 				foreach ($assessments as $assessment) {
 					if (isteacher($workshop->course, $assessment->userid)) {
-						$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">[";
+                        
+						$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">";
+                        if ($assessment->donotuse) {
+                            $str .= "&lt;";
+                        } else {
+                            $str .= "[";
+                        }
 						$str .= number_format($assessment->grade, 0);
 						if ($assessment->gradinggrade) { // funny, teacher is grading self!
 							$str .= "/".number_format($assessment->gradinggrade*100/COMMENTSCALE, 0)."%";
-							}
-						$str .= "]</A> ";
 						}
+                        if ($assessment->donotuse) {
+						    $str .= "&gt;</A> ";
+                        } else {
+    						$str .= "]</A> ";
+                        }
 					}
+				}
 				break;
 			case "student" : 
 				if ($submission->peergrade) { // if there's a final peer grade...
 					$str = "$submission->peergrade ";
-					}
+				}
 				foreach ($assessments as $assessment) {
 					if (isstudent($workshop->course, $assessment->userid)) {
-						$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">{";
+						$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">";
+                        if ($assessment->donotuse) {
+                            $str .= "&lt;";
+                        } else {
+                            $str .= "{";
+                        }
 						$str .= number_format($assessment->grade, 0);
 						if ($assessment->gradinggrade) {
 							$str .= "/".number_format($assessment->gradinggrade*100/COMMENTSCALE, 0)."%";
-							}
-						$str .= "}</A> ";
 						}
+                        if ($assessment->donotuse) {
+						    $str .= "&gt;</A> ";
+                        } else {
+						    $str .= "}</A> ";
+                        }
 					}
+				}
 				break;
-			}
 		}
+	}
 	if (!$str) {
 		$str = "&nbsp;";   // be kind to Mozilla browsers!
-		}
+	}
     return $str;
 }
 
@@ -3569,7 +3588,7 @@ function workshop_print_upload_form($workshop) {
 function workshop_print_user_assessments($workshop, $user) {
 	// Returns the number of assessments and a hyperlinked list of grading grades for the assessments made by this user
 
-	if ($assessments = workshop_get_user_assessments($workshop, $user)) {
+	if ($assessments = workshop_get_user_assessments_done($workshop, $user)) {
 		$n = count($assessments);
 		$str = "$n  (";
 		foreach ($assessments as $assessment) {
@@ -3577,19 +3596,23 @@ function workshop_print_user_assessments($workshop, $user) {
 				$gradingscaled = intval($assessment->gradinggrade * $workshop->grade / COMMENTSCALE);
 				$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">";
 				$str .= "$gradingscaled</A> ";
-				}
+			}
 			else {
 				$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">";
-				$str .= "-</A> ";
-				}
+                if ($assessment->donotuse) {
+                    $str .= "&lt;".number_format($assessment->grade, 0)."&gt;</A> ";
+                } else {
+                    $str .= number_format($assessment->grade, 0)."</A> ";
+                }
 			}
-		$str .= ")";
 		}
+		$str .= ")";
+	}
 	else {
 		$str ="0";
-		}
-    return $str;
 	}
+    return $str;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////

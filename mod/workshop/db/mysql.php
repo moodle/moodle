@@ -65,7 +65,17 @@ function workshop_upgrade($oldversion) {
         execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'view', 'workshop', 'name')");
         execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'update', 'workshop', 'name')");
     }
-
+    
+    if ($oldversion < 2003113000) {
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` ADD `teacherloading` tinyint(3) unsigned 
+                NOT NULL default '5'");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` ADD `assessmentstodrop` tinyint(3) unsigned 
+                NOT NULL default '0'");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD `donotuse` tinyint(3) unsigned 
+                NOT NULL default '0' AFTER `resubmission`");
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_grades` ADD INDEX (`assessmentid`)");
+    }
+    
     return true;
 }
 

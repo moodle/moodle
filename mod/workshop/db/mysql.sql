@@ -30,6 +30,8 @@ CREATE TABLE `prefix_workshop` (
   `biasweight` tinyint(3) unsigned NOT NULL default '5',
   `reliabilityweight` tinyint(3) unsigned NOT NULL default '5',
   `gradingweight` tinyint(3) unsigned NOT NULL default '5',
+  `teacherloading` tinyint(3) unsigned NOT NULL default '5',
+  `assessmentstodrop` tinyint(3) unsigned NOT NULL default '0',
   `showleaguetable` tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) COMMENT='Defines workshop';
@@ -73,6 +75,7 @@ CREATE TABLE `prefix_workshop_assessments` (
   `gradinggrade` int(3) NOT NULL default '0',
   `mailed` tinyint(3) unsigned NOT NULL default '0',
   `resubmission` tinyint(3) unsigned NOT NULL default '0',
+  `donotuse` tinyint(3) unsigned NOT NULL default '0',
   `generalcomment` text NOT NULL,
   `teachercomment` text NOT NULL,
   PRIMARY KEY  (`id`)

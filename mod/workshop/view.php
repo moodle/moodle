@@ -514,6 +514,8 @@
                             get_string("studentsubmissionsforassessment", "workshop"), "workshop");
 					print_heading("<a href=\"submissions.php?id=$cm->id&action=displayfinalweights\">".
 						  get_string("calculationoffinalgrades", "workshop")."</a>");
+					print_heading("<a href=\"submissions.php?id=$cm->id&action=analysisofassessments\">".
+						  get_string("analysisofassessments", "workshop")."</a>");
 					break;
 					
 				case 6: // show final grades
