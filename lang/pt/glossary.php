@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2.1 (2004032500)
+      // glossary.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['addcomment'] = 'Adicionar comentário';
@@ -82,36 +82,76 @@ $string['entrydeleted'] = 'Entrada apagada';
 $string['entryexported'] = 'Entrada exportada com sucesso';
 $string['entryishidden'] = '(esta entrada está actualmente escondida)';
 $string['entryusedynalink'] = 'Deverão ser feitos automaticamente apontadores para esta entrada';
+$string['explainaddentry'] = 'Adicione um novo termo no glossário.<br>Conceito e definição são campos obrigatórios.';
 $string['explainall'] = 'Mostra TODAS as entradas em uma página';
 $string['explainalphabet'] = 'Consulte o glossário usando este índice';
+$string['explainexport'] = 'Um ficheiro foi gerado.<br>Descarregue-o e guarde-o num lugar seguro. Poderá importá-lo em qualquer momento nesta disciplina ou em outras.';
+$string['explainimport'] = 'Deverá indicar o ficheiro a importar e definir os critérios do processo.<p>Envie o seu pedido e reveja  os resultados.';
+$string['explainspecial'] = 'Mostra termos que não comecem com uma letra.';
 $string['exportedentry'] = 'Entrada exportada';
 $string['exportedfile'] = 'Ficheiro exportado';
 $string['exportentries'] = 'Exportar entradas';
 $string['exportglossary'] = 'Exportar glossário';
+$string['exporttomainglossary'] = 'Exportar para o glossário principal.';
 $string['filetoimport'] = 'Ficheiro a importar';
+$string['fillfields'] = 'Conceito e definição são campos obrigatórios.';
+$string['filtername'] = 'Glossário com apontadores atuomáticos';
+$string['fullmatch'] = 'Compare unicamente palavras completas';
 $string['glossarytype'] = 'Tipo de glossário';
 $string['glosssaryexported'] = 'Glossário exportado.';
 $string['importcategories'] = 'Importar categorias';
 $string['importedcategories'] = 'Categorias importadas';
 $string['importedentries'] = 'Entradas importadas';
 $string['importentries'] = 'Importar entradas';
+$string['isglobal'] = 'Este glosário é global?';
+$string['linkcategory'] = 'Criar apontadores automáticos para esta categoria.';
 $string['mainglossary'] = 'Glossário principal';
+$string['maxtimehaspassed'] = 'Pedimos desculpas, mas o tempo limite para editar este comentário ($a) já passou.';
 $string['modulename'] = 'Glossário';
 $string['modulenameplural'] = 'Glossários';
+$string['newentries'] = 'Novas entradas no glossário';
+$string['newglossary'] = 'Novo glossário';
 $string['newglossarycreated'] = 'Criado novo glossário';
 $string['newglossaryentries'] = 'Entradas novas no glossário:';
+$string['nocomment'] = 'No foi encontrado nenhum comentário';
+$string['nocomments'] = '(Não foram encontrados comentários neste termo)';
+$string['noconceptfound'] = 'Não foi encontrado o conceito nem a definição.';
+$string['noentries'] = 'Não foi encontrado nenhum termo nesta secção';
+$string['noentry'] = 'Não foi encontrado nenhum termo';
 $string['notcategorised'] = 'Não categorizado';
 $string['numberofentries'] = 'Número de entradas';
+$string['onebyline'] = '(um por linha)';
+$string['printerfriendly'] = 'Versão para impressão';
+$string['question'] = 'Pergunta';
+$string['rate'] = 'Classificar';
+$string['rating'] = 'Classificação';
+$string['ratingeveryone'] = 'Qualquer um pode classificar termos';
+$string['ratingno'] = 'Sem classificações';
+$string['ratingonlyteachers'] = 'Unicamente $a pode(m) classificar termos';
+$string['ratings'] = 'Classificações';
+$string['ratingssaved'] = 'Classificações guardadas';
+$string['ratingsuse'] = 'Usar classificações';
+$string['ratingtime'] = 'Restrinja classificações a termos com datas neste intervalo:';
+$string['rejectedentries'] = 'Termos rejeitados';
+$string['rejectionrpt'] = 'Relatório de rejeição';
+$string['searchindefinition'] = 'Pesquisa no texto completo';
 $string['secondaryglossary'] = 'Glossário secundário';
+$string['sendinratings'] = 'Enviar as minhas últimas classificações';
+$string['showall'] = 'Mostrar o apontador par \'TODOS\'';
 $string['showalphabet'] = 'Mostrar alfabeto';
+$string['showspecial'] = 'Mostrar apontador para \'Especial\'';
 $string['sortby'] = 'Ordenar por';
 $string['sortbycreation'] = 'Por data de criação';
 $string['sortbylastupdate'] = 'Por data de actualização';
 $string['sortchronogically'] = 'Classificar por ordem cronológica';
 $string['special'] = 'Especial';
 $string['standardview'] = 'Ver por alfabeto';
+$string['studentcanpost'] = 'Os alunos podem adicionar termos';
 $string['totalentries'] = 'Total de entradas';
+$string['usedynalink'] = 'Criar apontadores para o glossário automaticamente';
+$string['waitingapproval'] = 'A espera de aprovação';
 $string['warningstudentcapost'] = '(Aplica-se apenas se o glossário não for o principal)';
 $string['writtenby'] = 'por';
+$string['youarenottheauthor'] = 'Este comentário não é da sua autoria e, por tanto, não o pode editar.';
 
 ?>
