@@ -40,11 +40,21 @@
         $addinstancefunction    = $mod->modulename."_add_instance";
         $updateinstancefunction = $mod->modulename."_update_instance";
         $deleteinstancefunction = $mod->modulename."_delete_instance";
+        $moderr = "$CFG->dirroot/mod/$mod->modulename/moderr.html";
 
         switch ($mod->mode) {
             case "update":
-                if (! $updateinstancefunction($mod)) {
-                    error("Could not update the $mod->modulename");
+                $return = $updateinstancefunction($mod);
+                if (!$return) {
+                    if (file_exists($moderr)) {
+                        $form = $mod;
+                        include_once($moderr);
+                        die;
+                    }
+                    error("Could not update the $mod->modulename", "view.php?id=$mod->course");
+                }
+                if (is_string($return)) {
+                    error($return, "view.php?id=$mod->course");
                 }
                 add_to_log($mod->course, "course", "update mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
@@ -52,9 +62,19 @@
                 break;
 
             case "add":
-                if (! $mod->instance = $addinstancefunction($mod)) {
-                    error("Could not add a new instance of $mod->modulename");
+                $return = $addinstancefunction($mod);
+                if (!$return) {
+                    if (file_exists($moderr)) {
+                        $form = $mod;
+                        include_once($moderr);
+                        die;
+                    }
+                    error("Could not add a new instance of $mod->modulename", "view.php?id=$mod->course");
                 }
+                if (is_string($return)) {
+                    error($return, "view.php?id=$mod->course");
+                }
+                $mod->instance = $return;
                 // course_modules and course_sections each contain a reference 
                 // to each other, so we have to update one of them twice.
 
