@@ -126,8 +126,7 @@ function get_qtype( $type_id ) {
         $name = 'cloze';
         break;
     default:
-        $name = '';
-        error( "question type $type_id is not defined in get_qtype" );
+        $name = 'Unknown';
     }
     return $name;
 }
@@ -142,6 +141,17 @@ function writetext( $raw ) {
     return "<text>$raw</text>\n";
 }
 
+function presave_process( $content ) {
+    // override method to allow us to add xml headers and footers
+
+    $content = "<?xml version=\"1.0\"?>\n" .
+               "<quiz>\n" .
+               $content . "\n" .
+               "</quiz>";
+
+    return $content;
+}
+
 function writequestion( $question ) {
     // turns question into string
     // question reflects database fields for general question and specific to type
@@ -150,7 +160,7 @@ function writequestion( $question ) {
     $expout = "";
 
     // add comment
-    $expout .= "\n\n<!-- question: $question->id  name: $question->name -->\n";
+    $expout .= "\n\n<!-- question: $question->id  -->\n";
 
     // add opening tag
     $question_type = $this->get_qtype( $question->qtype );
@@ -199,7 +209,7 @@ function writequestion( $question ) {
     case NUMERICAL:
         $expout .= "<min>$question->min</min>\n";
         $expout .= "<max>$question->max</max>\n";
-        $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+        $expout .= "<feedback>".$this->writetext( $question->answer->feedback )."</feedback>\n";
         break;
     case MATCH:
         foreach($question->subquestions as $subquestion) {
@@ -210,18 +220,21 @@ function writequestion( $question ) {
         }
         break;
     case DESCRIPTION:
-        $expout .= "<!-- DESCRIPTION type is not supported -->\n";
+        // nothing more to do for this type
         break;
     case MULTIANSWER:
         $expout .= "<!-- CLOZE type is not supported -->\n";
         break;
     default:
-        error( "No handler for qtype $question->qtype for GIFT export" );
+        $expout .= "<!-- Question type is unknown or not supported (Type=$question->qtype) -->\n";
     }
     // close the question tag
     $expout .= "</question>\n";
+
     // run through xml tidy function
-    return $this->indent_xhtml( $expout, '  ' ); 
+    $tidy_expout = $this->indent_xhtml( $expout, '    ' ) . "\n\n";
+
+    return $tidy_expout;
 }
 }
 
