@@ -817,11 +817,8 @@ function print_course_admin_links($course, $width=180) {
             $admindata[]="<a href=\"$CFG->wwwroot/backup/backup.php?id=$course->id\">".get_string("backup")."...</a>";
             $adminicon[]="<img src=\"$pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
         
-            //Only showed if "backupdata" dir exists
-            if (is_dir("$CFG->dataroot/$course->id/backupdata")) {
-                $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id&wdir=/backupdata\">".get_string("restore")."...</a>";
-                $adminicon[]="<img src=\"$pixpath/i/restore.gif\" height=16 width=16 alt=\"\">";
-            }
+            $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id&wdir=/backupdata\">".get_string("restore")."...</a>";
+            $adminicon[]="<img src=\"$pixpath/i/restore.gif\" height=16 width=16 alt=\"\">";
             $admindata[]="<a href=\"scales.php?id=$course->id\">".get_string("scales")."...</a>";
             $adminicon[]="<img src=\"$pixpath/i/scales.gif\" height=16 width=16 alt=\"\">";
         }
