@@ -33,7 +33,7 @@ $string['adminhelpaddnewuser'] = 'Handmatig een nieuwe account aan te maken';
 $string['adminhelpassignadmins'] = 'Beheerders kennen geen beperkingen en hebben overal toegang binnen de site';
 $string['adminhelpassigncreators'] = 'Vak-aanmakers kunnen nieuwe vakken aanmaken en binnen deze vakken doceren';
 $string['adminhelpassignstudents'] = 'Ga naar een vak en voeg leerlingen toe door middel van het beheerders menu';
-$string['adminhelpassignteachers'] = 'Kies een vak en gebruik dit icon om docenten toe te voegen';
+$string['adminhelpassignteachers'] = 'Kies een vak en gebruik dit icon om leraren toe te voegen';
 $string['adminhelpauthentication'] = 'Je kunt interne gebruiker accounts of externe databases gebruiken';
 $string['adminhelpbackup'] = 'Configureer hoe de backups werken';
 $string['adminhelpconfiguration'] = 'Stel in hoe de site er uitziet  en werkt';
@@ -168,7 +168,7 @@ $string['configsessiontimeout'] = 'Als mensen die ingelogd zijn op deze site voo
 $string['configslasharguments'] = 'Bestanden (afbeeldingen, uploads en dergelijke) worden via een script aangeleverd dat gebruik maakt van \'slash arguments\' (hier de tweede optie). Deze methode zorgt ervoor dat bestanden makkelijker in web browsers, proxy servers en dergelijke kunnen worden gecached. Helaas staan sommige PHP servers deze methode niet toe. Dus kies de eerste optie als je problemen hebt met het bekijken van geuploade bestanden of afbeeldingen (bijvoorbeeld afbeeldingen van gebruikers).';
 $string['configsmtphosts'] = 'Geef de volledige naam van één of meerdere lokale SMTP servers die Moodle moet gebruiken om mail te versturen (bijvoorbeeld: \'mail.a.com\' of \'mail.a.com;mail.b.com\'). Als je dit leeg laat gebruikt Moodle de standaard PHP methode voor het versturen van mail.';
 $string['configsmtpuser'] = 'Als je hierboven een SMTP server hebt ingevuld en deze server authenticatie nodig heeft, vul hier dan de gebruikersnaam en het wachtwoord in.';
-$string['configteacherassignteachers'] = 'Zouden gewone docenten in staat moeten zijn om andere docenten aan te wijzen binnen de vakken die zij doceren? Als je dit op \'nee\' zet, dan kunnen alleen vak-aanmakers en beheerders docenten aanwijzen.';
+$string['configteacherassignteachers'] = 'Zou een gewone leraar een andere leraar moeten kunnen aanwijzen binnen de vakken waarin zij les geven? Als je dit op \'nee\' zet, dan kunnen alleen vak-aanmakers en beheerders leraren aanwijzen.';
 $string['configtimezone'] = 'Hier kun je de standaard tijdzone instellen. Dit is slechts de STANDAARD tijdzone voor het tonen van datums - elke gebruiker kan deze instelling voor zichzelf wijzigen in zijn profiel. Op deze plaats zal de optie \"Servertijd\" de standaardtijd in Moodle gelijkzetten met de tijd van het besturingssysteem van de server, maar in het profiel van de gebruikers zal de instelling \"Servertijd\" de hier ingestelde tijdzone zijn.';
 $string['configunzip'] = 'Geef de locatie van je UNZIP programma (alleen voor UNIX). Dit is nodig om ZIP archieven op de server uit te pakken.';
 $string['configuration'] = 'Configuratie';
@@ -506,7 +506,7 @@ Elk vak kan ook een eenmalige &quot;Vaksleutel&quot; hebben die je pas later nod
 <LI>Lees de e-mail en klik op de link die erin staat.
 <LI>Je account wordt bevestigd en je bent dan ingelogd.
 <LI>Kies nu het vak dat je wilt volgen.
-<LI>Als je wordt gevraagd om een &quot;Vaksleutel&quot;, gebruik dan de sleutel die je van je docent gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.
+<LI>Als je wordt gevraagd om een &quot;Vaksleutel&quot;, gebruik dan de sleutel die je van je leraar gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.
 <LI>Je hebt nu toegang tot het hele vak. Vanaf nu hoef je alleen nog maar je gebruikersnaam en wachtwoord in het formulier op deze pagina in te vullen om in te loggen en toegang te krijgen tot de vakken waar je lid van bent.
 </OL>
 ';
