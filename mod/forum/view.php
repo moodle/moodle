@@ -118,8 +118,8 @@
         if (forum_is_forcesubscribed($forum->id)) {
             $streveryoneissubscribed = get_string('everyoneissubscribed', 'forum');
             $strallowchoice = get_string('allowchoice', 'forum');
-            helpbutton("subscription", $streveryoneissubscribed, "forum").'&nbsp;';
-            echo '<span class="helplink">';
+            helpbutton("subscription", $streveryoneissubscribed, "forum");
+            echo '&nbsp;<span class="helplink">';
             if (isteacher($course->id)) {
                 echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$streveryoneissubscribed</a>";
             } else {
@@ -132,7 +132,8 @@
             $strforcesubscribe = get_string("forcesubscribe", "forum");
             $strshowsubscribers = get_string("showsubscribers", "forum");
 
-            helpbutton("subscription", $streveryonecanchoose, "forum").'&nbsp;';
+            helpbutton("subscription", $streveryonecanchoose, "forum");
+            echo '&nbsp;';
             if (isteacher($course->id)) {
                 echo "<span class=\"helplink\"><a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes\">$streveryonecanchoose</a></span>";
                 echo "<br />";
