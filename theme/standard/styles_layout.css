@@ -936,3 +936,9 @@ body#admin-config .confighelp {
     display: block;
     padding-bottom: 20px;
 }
+body#course-enrol .generalbox {
+    margin-top: 20px;
+}
+body#course-enrol .coursebox {
+    margin-top: 20px;
+}
