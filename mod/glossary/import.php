@@ -205,11 +205,14 @@
                     for($k = 0; $k < sizeof($xmlaliases); $k++) {
                     /// Importing aliases
                         $xmlalias = $xmlaliases[$k];
-                        unset($newalias);
-        
-                        $newalias->entryid = $newentry->id;
-                        $newalias->alias = addslashes(trim(utf8_decode($xmlalias['#']['NAME'][0]['#'])));
-                        $newalias->id = insert_record("glossary_alias",$newalias);
+                        $aliasname = $xmlalias['#']['NAME'][0]['#'];
+
+                        if (!empty($aliasname)) {
+                            unset($newalias);
+                            $newalias->entryid = $newentry->id;
+                            $newalias->alias = addslashes(trim(utf8_decode($aliasname)));
+                            $newalias->id = insert_record("glossary_alias",$newalias);
+                        }
                     }
 
                     if ( $catsincl ) {
