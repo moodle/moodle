@@ -3,7 +3,7 @@
 $string['thislanguage'] = "Svenska";  // Name of this language in the native language eg Français 
 $string['thischarset'] = "iso-8859-1";  // The best charset to use for this language
 
-$string['action'] = "Action"; // agera?
+$string['action'] = "Aktion"; // agera?
 $string['activity'] = "Aktivitet";
 $string['activities'] = "Aktiviteter";
 $string['activityreport'] = "Aktivitetsrapport";
@@ -90,7 +90,7 @@ $string['databaseupgrades'] = "Uppgraderar databas";
 $string['day'] = "dag";
 $string['days'] = "dagar";
 $string['defaultcoursefullname'] = "Kursens Fulla Namn 101";
-$string['defaultcourseshortname'] = "CFN101";
+$string['defaultcourseshortname'] = "KFN101";
 $string['defaultcoursestudent'] = "Student";
 $string['defaultcoursestudents'] = "Studenter";
 $string['defaultcoursesummary'] = "Skriv ett kortfattad och intressant stycke här som förklarar vad denna kurs handlar om";
