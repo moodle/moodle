@@ -7,6 +7,7 @@
        'allowunenroll'            =>  true,
        'allowcoursethemes'        =>  false,
        'allowuserthemes'          =>  false,
+       'allowuserblockhiding'     =>  true,
        'allusersaresitestudents'  =>  true,
        'auth'                     => 'email',
        'auth_pop3mailbox'         => 'INBOX',
