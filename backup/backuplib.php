@@ -986,6 +986,7 @@
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$group->description));
                 fwrite ($bf,full_tag("LANG",4,false,$group->lang));
                 fwrite ($bf,full_tag("PICTURE",4,false,$group->picture));
+                fwrite ($bf,full_tag("HIDEPICTURE",4,false,$group->hidepicture));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$group->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$group->timemodified));
                 

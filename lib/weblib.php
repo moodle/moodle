@@ -1222,31 +1222,33 @@ function print_user($user, $course) {
 function print_group_picture($group, $courseid, $large=false, $returnstring=false, $link=true) {
     global $CFG;
 
-    $output = '';
+    if ($group->hidepicture) {
+        return '';
+    }
 
-    if ($group->showpicture) {
-        if ($link) {
-            $output = "<a href=\"$CFG->wwwroot/course/groupphp?id=$courseid&amp;group=$group->id\">";
-        }
-        if ($large) {
-            $file = "f1";
-            $size = 100;
+    if ($link) {
+        $output = "<a href=\"$CFG->wwwroot/course/groupphp?id=$courseid&amp;group=$group->id\">";
+    } else {
+        $output = '';
+    }
+    if ($large) {
+        $file = "f1";
+        $size = 100;
+    } else {
+        $file = "f2";
+        $size = 35;
+    }
+    if ($group->picture) {  // Print custom group picture
+        if ($CFG->slasharguments) {        // Use this method if possible for better caching
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php/$group->id/$file.jpg\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
         } else {
-            $file = "f2";
-            $size = 35;
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
         }
-        if ($group->picture) {  // Print custom group picture
-            if ($CFG->slasharguments) {        // Use this method if possible for better caching
-                $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php/$group->id/$file.jpg\"".
-                           " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
-            } else {
-                $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
-                           " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
-            }
-        }
-        if ($link) {
-            $output .= "</a>";
-        }
+    }
+    if ($link) {
+        $output .= "</a>";
     }
 
     if ($returnstring) {

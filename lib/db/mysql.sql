@@ -201,6 +201,7 @@ CREATE TABLE `prefix_groups` (
   `description` text NOT NULL,
   `lang` varchar(10) NOT NULL default 'en',
   `picture` int(10) unsigned NOT NULL default '0',
+  `hidepicture` int(2) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),

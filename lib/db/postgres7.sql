@@ -106,6 +106,7 @@ CREATE TABLE prefix_groups (
    description text,
    lang varchar(10) NOT NULL default '',
    picture integer NOT NULL default '0',
+   hidepicture integer NOT NULL default '0',
    timecreated integer NOT NULL default '0',
    timemodified integer NOT NULL default '0'
 );

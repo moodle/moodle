@@ -684,6 +684,9 @@ function main_upgrade($oldversion=0) {
                               ) TYPE=MyISAM COMMENT='For keeping information about cached data';");
     }
 
+    if ($oldversion < 2004021500) {
+        table_column("groups", "", "hidepicture", "integer", "2", "unsigned", "0", "", "picture");
+    }
 
     return $result;
 

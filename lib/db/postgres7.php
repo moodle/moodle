@@ -429,6 +429,10 @@ function main_upgrade($oldversion=0) {
         modify_database("", "CREATE INDEX prefix_cache_text_md5key_idx ON prefix_cache_text (md5key);");
     }
 
+    if ($oldversion < 2004021500) {
+        table_column("groups", "", "hidepicture", "integer", "2", "unsigned", "0", "", "picture");
+    }
+
     return $result;
 
 }

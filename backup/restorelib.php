@@ -847,6 +847,7 @@
                         $gro->description = backup_todb($info['GROUP']['#']['DESCRIPTION']['0']['#']);
                         $gro->lang = backup_todb($info['GROUP']['#']['LANG']['0']['#']);
                         $gro->picture = backup_todb($info['GROUP']['#']['PICTURE']['0']['#']);
+                        $gro->hidepicture = backup_todb($info['GROUP']['#']['HIDEPICTURE']['0']['#']);
                         $gro->timecreated = backup_todb($info['GROUP']['#']['TIMECREATED']['0']['#']);
                         $gro->timemodified = backup_todb($info['GROUP']['#']['TIMEMODIFIED']['0']['#']);
                 
