@@ -40,6 +40,12 @@
     $personalprofile = get_string("personalprofile");
     $participants = get_string("participants");
 
+    if (empty($USER->id)) {
+       $currentuser = false;
+    } else {
+       $currentuser = ($user->id == $USER->id);
+    }
+
     if (groupmode($course) == SEPARATEGROUPS and !isteacheredit($course->id)) {   // Groups must be kept separate
         require_login();
 
@@ -52,7 +58,7 @@
         }
     }
 
-    if (!$course->category) {  // To reduce possibility of "browsing" userbase at site level
+    if (!$course->category and !$currentuser) {  // To reduce possibility of "browsing" userbase at site level
         if (!isteacher() and !isteacher(0, $user->id) ) {  // Teachers can browse and be browsed at site level
             print_header("$personalprofile: ", "$personalprofile: ",
                           "<a href=\"index.php?id=$course->id\">$participants</a>",
@@ -99,11 +105,6 @@
     echo "<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td nowrap>";
     echo "<h3>$fullname</h3>";
     echo "</td><td align=\"right\">";
-    if (empty($USER->id)) {
-       $currentuser = false;
-    } else {
-       $currentuser = ($user->id == $USER->id);
-    }
     if (($currentuser and !isguest()) or isadmin()) {
         if(empty($CFG->loginhttps)) {
             $wwwroot = $CFG->wwwroot;
