@@ -22,6 +22,7 @@ $string['submissionfeedback'] = "Envío de respuestas";
 $string['submissions'] = "Envíos";
 $string['submitassignment'] = "Envíe su tarea usando este formulario";
 $string['submitted'] = "Enviada";
+$string['typeoffline'] = "Actividad Offline";
 $string['typeuploadsingle'] = "Subir un solo archivo, valor entre 0 - 100 puntos";
 $string['uploadbadname'] = "Este archivo contenía caracteres extraños por lo que no pudo ser subido";
 $string['uploadedfiles'] = "archivos enviados";
@@ -31,6 +32,7 @@ $string['uploadfiletoobig'] = "Lo siento, pero el archivo es demasiado grande (e
 $string['uploadnofilefound'] = "No se encontró ningún archivo ¿está seguro de que seleccionó uno para subirlo?";
 $string['uploadnotregistered'] = "'\$a' fue subido correctamente, pero el envío no se registró.";
 $string['uploadsuccess'] = "Subido '\$a' con éxito";
+$string['viewfeedback'] = "Ver calificación de la tarea y comentarios";
 $string['viewsubmissions'] = "Ver \$a tareas enviadas";
 $string['yoursubmission'] = "Su envío";
 

@@ -58,6 +58,7 @@ $string['newforumposts'] = "Nuevos mensajes";
 $string['nodiscussions'] = "No hay temas de debate aún en este foro";
 $string['noguestpost'] = "Lo sentimos, los invitados no pueden poner mensages aquí";
 $string['noposts'] = "No hay mensajes";
+$string['nopostscontaining'] = "No se encontraron mensajes que contengan '\$a'";
 $string['nosubscribers'] = "Nadie se ha inscrito aún en este foro";
 $string['nownotsubscribed'] = "\$a->name no recibirá copias de '\$a->forum' por email.";
 $string['nowsubscribed'] = "\$a->name recibirá copias de '\$a->forum' por email.";
@@ -68,32 +69,22 @@ $string['openmode1'] = "No permitir debates, pero sí respuestas";
 $string['openmode2'] = "Permitir debates y respuestas";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para editarlo si quiere hacer cualquier cambio.";
+$string['postincontext'] = "Mira este mensaje en su contexto";
 $string['postingtip'] = "<B>Recomendaciones</B><BR>
 
 Cuando responda:
-
 <UL>
-
 <LI>lea el mensaje con cuidado y atención
-
 <LI>busque cosas que pueda comentar
-
 </UL>
 
-
 Cuando escriba:
-
 <UL>
-
 <LI>mantenga sus mensajes cortos y centrados sobre el tema
-
 <LI>explique sus propias ideas con claridad
-
 <LI>piense en cuestiones que pueda preguntar
-
 </UL>";
 $string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
-
 Para responder a este mensaje, haga clic en este enlace:";
 $string['postrating1'] = "Pertinente";
 $string['postrating2'] = "Ambos";
@@ -108,6 +99,7 @@ $string['repliesmany'] = "\$a respuestas";
 $string['repliesone'] = "\$a respuesta";
 $string['reply'] = "Responder";
 $string['search'] = "Buscar";
+$string['searchresults'] = "Resultados de la búsqueda";
 $string['searchforums'] = "Buscar foros";
 $string['sendinratings'] = "Enviar mis últimas calificaciones";
 $string['showsubscribers'] = "Mostrar participantes";
