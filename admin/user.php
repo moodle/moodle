@@ -78,7 +78,7 @@
         error("You must be an administrator to edit users this way.");
     }
 
-    if ($newuser) {                 // Create a new user
+    if ($newuser and confirm_sesskey()) {                 // Create a new user
         $user->auth      = "manual";
         $user->firstname = "";
         $user->lastname  = "";
@@ -135,7 +135,7 @@
                 notify(get_string("usernotconfirmed", "", fullname($user, true)));
             }
 
-        } else if ($delete) {              // Delete a selected user, after confirmation
+        } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation
             if (!$user = get_record("user", "id", "$delete")) {
                 error("No such user!");
             }
@@ -148,7 +148,7 @@
             if ($confirm != md5($delete)) {
                 $fullname = fullname($user, true);
                 notice_yesno(get_string("deletecheckfull", "", "'$fullname'"),
-                     "user.php?delete=$delete&confirm=".md5($delete), "user.php");
+                     "user.php?delete=$delete&confirm=".md5($delete)."&sesskey=$USER->sesskey", "user.php");
 
                 exit;
             } else if (!$user->deleted) {
@@ -301,7 +301,7 @@
                 if ($user->id == $USER->id or $user->username == "changeme") {
                     $deletebutton = "";
                 } else {
-                    $deletebutton = "<a href=\"user.php?delete=$user->id\">$strdelete</a>";
+                    $deletebutton = "<a href=\"user.php?delete=$user->id&sesskey=$USER->sesskey\">$strdelete</a>";
                 }
                 if ($user->lastaccess) {
                     $strlastaccess = format_time(time() - $user->lastaccess);
@@ -334,7 +334,7 @@
             echo "</form>";    
             echo "</td></tr></table>";
             if (is_internal_auth()){
-                print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
+                print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
             }
 
             print_table($table);
@@ -346,7 +346,7 @@
         }
 
         if (is_internal_auth()){
-            print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
+            print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
         }
 
         print_footer();
