@@ -1460,7 +1460,8 @@ function get_users_in_group($groupid) {
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}groups_members m 
                              WHERE m.groupid = '$groupid'
-                               AND m.userid = u.id");
+                               AND m.userid = u.id 
+                          ORDER BY u.id");
 }
 
 /**
