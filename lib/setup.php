@@ -59,7 +59,7 @@
     if (!isset($CFG->theme)) {
         $CFG->theme = "standard";
     }
-    require("$CFG->dirroot/theme/$CFG->theme/config.php");
+    include("$CFG->dirroot/theme/$CFG->theme/config.php");
 
     $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.php";
     $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
