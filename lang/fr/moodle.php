@@ -511,7 +511,6 @@ $string['hiddensectionscollapsed'] = 'Sections cachées affichés sous forme conde
 $string['hiddensectionsinvisible'] = 'Sections cachées invisibles';
 $string['hide'] = 'Cacher';
 $string['hideadvancedsettings'] = 'Cacher les réglages avancés';
-$string['hidefromstudents'] = 'Cacher pour les étudiants';
 $string['hidepicture'] = 'Cacher l\'image';
 $string['hidesettings'] = 'Cacher les réglages';
 $string['hits'] = 'Requêtes';
@@ -1058,6 +1057,7 @@ $a->action';
 $string['virusfoundsubject'] = '$a : Virus détecté !';
 $string['virusfounduser'] = 'Le fichier que vous avez déposé, $a->filename, a été inspecté par un anti-virus et un virus y a été découvert ! Votre fichier n\'a donc pas été déposé.';
 $string['virusplaceholder'] = 'Un virus a été détecté dans ce fichier déposé. Il a été déplacé ou détruit, et l\'utilisateur en a été informé.';
+$string['visibletostudents'] = 'Visible pour les étudiants';
 $string['webpage'] = 'Page Web';
 $string['week'] = 'Semaine';
 $string['weekhide'] = 'Cacher cette semaine pour $a';
