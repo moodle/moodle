@@ -242,11 +242,9 @@ function olson_simple_rule_parser ($filename) {
 
         $srs = ($save === '0') ? 'reset' : 'set';
 
-        if($to == 'only') {
+        if($to == 'only' || $to == 'max') {
+            // In both cases, a single entry for one year will suffice
             $to = $from;
-        }
-        else if($to == 'max') {
-            $to = intval(date('Y'));
         }
 
         for($i = $from; $i <= $to; ++$i) {
