@@ -1,5 +1,8 @@
 <?PHP  // $Id$
 //CHANGELOG:
+//21.09.2004 Added support for multiple ldap-servers.
+//           Theres no nedd to use auth_ldap_bind,
+//           Anymore auth_ldap_connect does this for you
 //19.09.2004 Lot of changes are coming from Martin Langhoff
 //           Current code is working but can change a lot. Be warned...
 //15.08.2004 Added support for user syncronization
@@ -80,25 +83,25 @@ function auth_user_login ($username, $password) {
         return false;
     }
  
-    $ldap_connection = auth_ldap_connect();
+    $ldapconnection  = auth_ldap_connect();
 
-    if ($ldap_connection) {
-        $ldap_user_dn = auth_ldap_find_userdn($ldap_connection, $username);
+    if ($ldapconnection) {
+        $ldap_user_dn = auth_ldap_find_userdn($ldapconnection, $username);
       
         //if ldap_user_dn is empty, user does not exist
         if(!$ldap_user_dn){
-            ldap_close($ldap_connection);
+            ldap_close($ldapconnection);
             return false;
         }
 
         // Try to bind with current username and password
-        $ldap_login = @ldap_bind($ldap_connection, $ldap_user_dn, $password);
-        ldap_close($ldap_connection);
+        $ldap_login = @ldap_bind($ldapconnection, $ldap_user_dn, $password);
+        ldap_close($ldapconnection);
         if ($ldap_login) {
             return true;
         }
     } else {
-        @ldap_close($ldap_connection);
+        @ldap_close($ldapconnection);
         error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
     }
     return false;
@@ -113,7 +116,7 @@ function auth_get_userinfo($username){
     $config = (array)$CFG;
     $attrmap = auth_ldap_attributes();
    
-    $ldap_connection=auth_ldap_connect();
+    $ldapconnection=auth_ldap_connect();
 
     $result = array();
     $search_attribs = array();
@@ -124,16 +127,16 @@ function auth_get_userinfo($username){
         }    
     }
 
-    $user_dn = auth_ldap_find_userdn($ldap_connection, $username);
+    $user_dn = auth_ldap_find_userdn($ldapconnection, $username);
 
     if (empty($CFG->ldap_objectclass)) {        // Can't send empty filter
         $CFG->ldap_objectclass="objectClass=*";
     }
   
-    $user_info_result = ldap_read($ldap_connection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
+    $user_info_result = ldap_read($ldapconnection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
 
     if ($user_info_result) {
-        $user_entry = ldap_get_entries($ldap_connection, $user_info_result);
+        $user_entry = ldap_get_entries($ldapconnection, $user_info_result);
         foreach ($attrmap as $key=>$value){
             if(isset($user_entry[0][strtolower($value)][0])){
                 $result[$key]=$user_entry[0][strtolower($value)][0];
@@ -141,7 +144,7 @@ function auth_get_userinfo($username){
         }
     }
 
-    @ldap_close($ldap_connection);
+    @ldap_close($ldapconnection);
     
     return $result;
 }
@@ -163,8 +166,7 @@ function auth_user_create ($userobject,$plainpass) {
 //return true if user is created, false on error
 	global $CFG;
     $attrmap = auth_ldap_attributes();
-    $ldapconnect = auth_ldap_connect();
-    $ldapbind = auth_ldap_bind($ldapconnect);
+    $ldapconnection = auth_ldap_connect();
     
     $newuser = array();
      
@@ -182,9 +184,9 @@ function auth_user_create ($userobject,$plainpass) {
     $newuser['userpassword']=$plainpass;
     unset($newuser[country]);
         
-    $uadd = ldap_add($ldapconnect, $CFG->ldap_user_attribute."=$userobject->username,".$CFG->ldap_create_context, $newuser);
+    $uadd = ldap_add($ldapconnection, $CFG->ldap_user_attribute."=$userobject->username,".$CFG->ldap_create_context, $newuser);
 
-    ldap_close($ldapconnect);
+    ldap_close($ldapconnection);
     return $uadd;
     
 }
@@ -194,9 +196,7 @@ function auth_get_users($filter='*') {
     global $CFG;
 
     $fresult = array();
-    $ldap_connection = auth_ldap_connect();
-
-    auth_ldap_bind($ldap_connection);
+    $ldapconnection = auth_ldap_connect();
 
     if (empty($CFG->ldap_objectclass)) {
         $CFG->ldap_objectclass="objectClass=*";
@@ -227,17 +227,17 @@ function auth_get_users($filter='*') {
 
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldap_connection, $context,
+            $ldap_result = ldap_search($ldapconnection, $context,
                                        $filter,
                                        $search_attribs);
         } else {
             //search only in this context
-            $ldap_result = ldap_list($ldap_connection, $context,
+            $ldap_result = ldap_list($ldapconnection, $context,
                                      $filter,
                                      $search_attribs);
         }
 
-        $users = auth_ldap_get_entries($ldap_connection, $ldap_result);
+        $users = auth_ldap_get_entries($ldapconnection, $ldap_result);
 
         //add found users to list
         foreach ($users as $ldapuser=>$attribs) {
@@ -399,15 +399,14 @@ function auth_user_activate ($username) {
 //activate new ldap-user after email-address is confirmed
 	global $CFG;
 
-    $ldapconnect = auth_ldap_connect();
-    $ldapbind = auth_ldap_bind($ldapconnect);
+    $ldapconnection = auth_ldap_connect();
 
     $userdn = auth_ldap_find_userdn($ldapconnect, $username);
     
     $newinfo['loginDisabled']="FALSE";
 
-    $result = ldap_modify($ldapconnect, $userdn, $newinfo);
-    ldap_close($ldapconnect);
+    $result = ldap_modify($ldapconnection, $userdn, $newinfo);
+    ldap_close($ldapconnection);
     return $result;
 }
 
@@ -416,13 +415,12 @@ function auth_user_disable ($username) {
 	global $CFG;
 
     $ldapconnect = auth_ldap_connect();
-    $ldapbind = auth_ldap_bind($ldapconnect);
 
-    $userdn = auth_ldap_find_userdn($ldapconnect, $username);
+    $userdn = auth_ldap_find_userdn($ldapconnection, $username);
     $newinfo['loginDisabled']="TRUE";
 
-    $result = ldap_modify($ldapconnect, $userdn, $newinfo);
-    ldap_close($ldapconnect);
+    $result = ldap_modify($ldapconnection, $userdn, $newinfo);
+    ldap_close($ldapconnection);
     return $result;
 }
 
@@ -447,8 +445,7 @@ function auth_user_update($olduser, $newuser) {
 
     global $USER , $CFG;
     
-    $ldap_connection = auth_ldap_connect();
-    $ldapbind = auth_ldap_bind($ldap_connection);
+    $ldapconnection = auth_ldap_connect();
     
     $result = array();
     $search_attribs = array();
@@ -460,24 +457,24 @@ function auth_user_update($olduser, $newuser) {
         }    
     }
 
-    $user_dn = auth_ldap_find_userdn($ldap_connection, $olduser->username);
+    $user_dn = auth_ldap_find_userdn($ldapconnection, $olduser->username);
 
     if (empty($CFG->ldap_objectclass)) {
         $CFG->ldap_objectclass="objectClass=*";
     }
   
-    $user_info_result = ldap_read($ldap_connection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
+    $user_info_result = ldap_read($ldapconnection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
 
     if ($user_info_result){
 
-        $user_entry = ldap_get_entries($ldap_connection, $user_info_result);
+        $user_entry = ldap_get_entries($ldapconnection, $user_info_result);
         //error_log(var_export($user_entry) . 'fpp' );
 
         foreach ($attrmap as $key=>$ldapkey){
             if (isset($CFG->{'auth_user_'. $key.'_updateremote'}) && $CFG->{'auth_user_'. $key.'_updateremote'}){
                 // skip update if the values already match
                 if( !($newuser->$key === $user_entry[0][strtolower($ldapkey)][0]) ){
-                    ldap_modify($ldap_connection, $user_dn, array($ldapkey => utf8_encode($newuser->$key)));
+                    ldap_modify($ldapconnection, $user_dn, array($ldapkey => utf8_encode($newuser->$key)));
                 } else { 
                     error_log("Skip updating field $key for entry $user_dn: it seems to be already same on LDAP. " . 
                               "  old moodle value: '" . $olduser->$key . 
@@ -490,11 +487,11 @@ function auth_user_update($olduser, $newuser) {
 
     } else {
         error_log("ERROR:No user found in LDAP");
-        @ldap_close($ldap_connection);
+        @ldap_close($ldapconnection);
         return false;
     }
 
-    @ldap_close($ldap_connection);
+    @ldap_close($ldapconnection);
         
     return true;
 
@@ -508,27 +505,24 @@ function auth_user_update_password($username, $newpassword) {
     global $CFG;
     $result = false;
      
-    $ldap_connection = auth_ldap_connect();
-    $ldapbind = auth_ldap_bind($ldap_connection);
-    
+    $ldapconnection = auth_ldap_connect();
 
-
-    $user_dn = auth_ldap_find_userdn($ldap_connection, $username);
+    $user_dn = auth_ldap_find_userdn($ldapconnection, $username);
     
     if(!$user_dn){
         error_log('LDAP Error in auth_user_update_password(). No DN for: ' . $username); 
         return false;
     }
     // send ldap the password in cleartext, it will md5 it itself
-    $result = ldap_modify($ldap_connection, $user_dn, array('userPassword' => $newpassword));
+    $result = ldap_modify($ldapconnection, $user_dn, array('userPassword' => $newpassword));
     
     if(!$result){
         error_log('LDAP Error in auth_user_update_password(). Error code: ' 
-                  . ldap_errno($ldap_connection) . '; Error string : '
-                  . ldap_err2str(ldap_errno($ldap_connection)));
+                  . ldap_errno($ldapconnection) . '; Error string : '
+                  . ldap_err2str(ldap_errno($ldapconnection)));
     }
     
-    @ldap_close($ldap_connection);
+    @ldap_close($ldapconnection);
 
     return $result;
 }
@@ -542,8 +536,6 @@ function auth_ldap_isgroupmember ($username='', $groupdns='') {
 
     global $CFG, $USER;
 
-    $ldapconnect = auth_ldap_connect();
-    $ldapbind = auth_ldap_bind($ldapconnect);
    
     if (empty($username) OR empty($groupdns)) {
         return false;
@@ -564,53 +556,43 @@ function auth_ldap_isgroupmember ($username='', $groupdns='') {
 
 }
 function auth_ldap_connect(){
-/// connects to ldap-server
+/// connects  and binds to ldap-server
+/// Returns connection result
+
     global $CFG;
+    $urls = explode(";",$CFG->ldap_host_url);
 
-    $result = ldap_connect($CFG->ldap_host_url);
+    foreach ($urls as $server){
+        $connresult = ldap_connect($server);
+        //ldap_connect returns ALWAYS true
 
-    if ($result) {
         if (!empty($CFG->ldap_version)) {
-            ldap_set_option($result, LDAP_OPT_PROTOCOL_VERSION, $CFG->ldap_version);
+            ldap_set_option($connresult, LDAP_OPT_PROTOCOL_VERSION, $CFG->ldap_version);
         }
 
-        return $result;
+        if ($CFG->ldap_bind_dn){
+            //bind with search-user
+            $bindresult=@ldap_bind($connresult, $CFG->ldap_bind_dn,$CFG->ldap_bind_pw);
+        } else {
+            //bind anonymously
+            $bindresult=@ldap_bind($connresult);
+        }    
 
-    } else {
-        error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
-        return false;
-    }
+        if ($bindresult) {
+            return $connresult;
+        }
+    }    
+    
+    //If any of servers are alive we have already returned connection
+    error("LDAP-module cannot connect any LDAP servers : $CFG->ldap_host_url");
+    return false;
 }
 
 
 
-function auth_ldap_bind($ldap_connection){
-/// makes bind to ldap for searching users
-/// uses ldap_bind_dn or anonymous bind
-
-    global $CFG;
-
-    if ($CFG->ldap_bind_dn){
-        //bind with search-user
-        if (!ldap_bind($ldap_connection, $CFG->ldap_bind_dn,$CFG->ldap_bind_pw)){
-            error("Error: could not bind ldap with ldap_bind_dn/pw");
-            return false;
-        }
-
-    } else {
-        //bind anonymously 
-        if ( !ldap_bind($ldap_connection)){
-            error("Error: could not bind ldap anonymously");
-            return false;
-        }  
-    }
-
-    return true;
-}
 
 
-
-function auth_ldap_find_userdn ($ldap_connection, $username){
+function auth_ldap_find_userdn ($ldapconnection, $username){
 /// return dn of username
 /// like: cn=username,ou=suborg,o=org
 /// or false if username not found
@@ -619,8 +601,6 @@ function auth_ldap_find_userdn ($ldap_connection, $username){
 
     //default return value
     $ldap_user_dn = FALSE;
-
-    auth_ldap_bind($ldap_connection);
 
     //get all contexts and look for first matching user
     $ldap_contexts = explode(";",$CFG->ldap_contexts);
@@ -635,17 +615,17 @@ function auth_ldap_find_userdn ($ldap_connection, $username){
 
         if ($CFG->ldap_search_sub){
             //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldap_connection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
+            $ldap_result = ldap_search($ldapconnection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
 
         } else {
             //search only in this context
-            $ldap_result = ldap_list($ldap_connection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
+            $ldap_result = ldap_list($ldapconnection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
         }
  
-        $entry = ldap_first_entry($ldap_connection,$ldap_result);
+        $entry = ldap_first_entry($ldapconnection,$ldap_result);
 
         if ($entry){
-            $ldap_user_dn = ldap_get_dn($ldap_connection, $entry);
+            $ldap_user_dn = ldap_get_dn($ldapconnection, $entry);
             break ;
         }
     }
@@ -677,9 +657,8 @@ function auth_ldap_get_userlist($filter="*") {
     global $CFG;
 
     $fresult = array();
-    $ldap_connection = auth_ldap_connect();
 
-    auth_ldap_bind($ldap_connection);
+    $ldapconnection = auth_ldap_connect();
 
     if (empty($CFG->ldap_objectclass)) {
         $CFG->ldap_objectclass="objectClass=*";
@@ -699,17 +678,17 @@ function auth_ldap_get_userlist($filter="*") {
 
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldap_connection, $context,
+            $ldap_result = ldap_search($ldapconnection, $context,
                                        $filter,
                                        array($CFG->ldap_user_attribute));
         } else {
             //search only in this context
-            $ldap_result = ldap_list($ldap_connection, $context,
+            $ldap_result = ldap_list($ldapconnection, $context,
                                      $filter,
                                      array($CFG->ldap_user_attribute));
         }
 
-        $users = ldap_get_entries($ldap_connection, $ldap_result);
+        $users = ldap_get_entries($ldapconnection, $ldap_result);
 
         //add found users to list
         for ($i=0;$i<$users['count'];$i++) {
@@ -735,7 +714,7 @@ function auth_ldap_get_entries($conn, $searchresult){
         $i++;               
     }
     while ($entry = ldap_next_entry($conn, $entry));
-    //we're done
+    //were done
     return ($fresult);
 }
 
