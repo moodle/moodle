@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004050300)
+      // moodle.php - created with Moodle 1.3 Beta (2004051100)
 
 
 $string['action'] = 'Actie';
@@ -103,10 +103,13 @@ $string['backupsavetohelp'] = 'Volledig pad naar de map waar je de backupbestand
 $string['backupuserfileshelp'] = 'Selecteer als je gebruikersbestanden in de de backup';
 $string['backupusershelp'] = 'Selecteer als je alle gebruikers op de server of alleen de gebruikers van het vak in de backup wil';
 $string['backupversion'] = 'Versie backup';
+$string['blockdeleteconfirm'] = 'Je gaat het blok \'$a\' volledig verwijderen. Hiermee zal alles in de databank dat met dit blok geassocieerd is verwijderd worden. Ben je ZEKER dat je hiermee verder wil gaan?';
+$string['blockdeletefiles'] = 'Alle gegevens die met het blok \'$a->block\' geassocieerd zijn, zijn verwijderd uit de databank. Om het verwijderen af te ronden (en om te verhinderen dat het blok zich opnieuw zou installeren), moet je de map $a->directory van je server verwijderen';
 $string['blocks'] = 'Blokken';
 $string['blocksetup'] = 'Installeren van de tabellen voor blokken';
 $string['blocksuccess'] = '$a tabellen zijn juist geïnstalleerd';
 $string['bycourseorder'] = 'In volgorde van vak';
+$string['byname'] = 'volgens $a';
 $string['cancel'] = 'Annuleer ';
 $string['categories'] = 'Vak categorieën';
 $string['category'] = 'Categorie  ';
@@ -140,6 +143,7 @@ $string['configcountry'] = 'Als je hier een land invult zal dit land als standaa
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
 $string['configdeleteunconfirmed'] = 'Als je met e-mail authenticatie werkt dan is dit de periode waarbinnen gebruikers moeten reageren op de bevestigingsmail voor de nieuwe account. Na deze periode zullen oude, niet-bevestigde accounts verwijderd worden.';
 $string['configenablerssfeeds'] = 'Met deze instelling maak je RSS feeds mogelijk voor heel de site. Om ze echt te kunnen gebruiken, moet je de RSS feeds nog inschakelen voor elke module afzonderlijk - ga naar \'Beheer van de modules\' onder Beheer, Configuratie.';
+$string['configenablerssfeedsdisabled'] = 'Dit is niet beschikbaar omdat RSS voor heel de site is uitgeschakeld. Om RSS in te schakelen ga je naar Configureer variablen onder Beheer Configuratie.';
 $string['configerrorlevel'] = 'Kies hoeveel PHP waarschuwingen je wilt dat Moodle laat zien. \'Normaal\' is meestal de beste keuze.
 ';
 $string['configfilteruploadedfiles'] = 'Door deze optie in te schakelen gaat Moodle alle geüploade HTML en tekstbestanden door de gekozen filters halen voor ze getoond worden';
@@ -240,6 +244,7 @@ $string['datemostrecentfirst'] = 'Datum - nieuwste eerst';
 $string['datemostrecentlast'] = 'Datum - oudste eerst';
 $string['day'] = 'dag';
 $string['days'] = 'dagen';
+$string['decodinginternallinks'] = 'Interne links decoderen';
 $string['defaultcoursefullname'] = 'Vak Volledige naam 101';
 $string['defaultcourseshortname'] = 'Vak101';
 $string['defaultcoursestudent'] = 'Leerling';
@@ -333,8 +338,8 @@ $string['emailpasswordsent'] = 'Bedankt voor de bevestiging van de wijziging van
 <p>Er is een e-mail met je nieuw wachtwoord naar <b>$a->email</b> gestuurd.
 <p>Het nieuwe wachtwoord werd automatisch gegenereerd. Misschien wil je het <a href=$a->link>wachtwoord veranderen</a> in iets wat je gemakkelijker kunt onthouden.';
 $string['enable'] = 'Schakel in';
-$string['enrolledincourse'] = 'Aangemeld in vak \"$a\"';
-$string['enrolledincoursenot'] = 'Niet aangemeld in vak \"$a\"';
+$string['enrolledincourse'] = 'Aangemeld in vak ';
+$string['enrolledincoursenot'] = 'Niet aangemeld in vak ';
 $string['enrolmentconfirmation'] = 'Je staat op het punt jezelf aan te melden als lid van dit vak.<br />Weet je zeker dat je dit wilt doen?';
 $string['enrolmentkey'] = 'Vaksleutel';
 $string['enrolmentkeyfrom'] = 'Dit vak vereist een \'Vaksleutel\', een eenmalig<BR>
@@ -472,7 +477,7 @@ $string['includecoursefiles'] = 'Voeg de bestanden voor het vak toe';
 $string['includecourseusers'] = 'Voeg de gebruikers van het vak toe';
 $string['included'] = 'Ingevoegd';
 $string['includelogentries'] = 'Voeg het logboek toe';
-$string['includemodules'] = 'Voeg&nbsp;modules&nbsp;toe';
+$string['includemodules'] = 'Voeg modules toe';
 $string['includeneededusers'] = 'Voeg de nodige gebruikers toe';
 $string['includeuserfiles'] = 'Voeg gebruikersbestanden toe';
 $string['institution'] = 'Instituut';
@@ -507,14 +512,14 @@ $string['loginas'] = 'Log in als';
 $string['loginguest'] = 'Inloggen als gast';
 $string['loginsite'] = 'Op de site inloggen';
 $string['loginsteps'] = 'Hallo! Om volledige toegang tot de vakken te krijgen moet je even de tijd nemen om een nieuwe account voor jezelf aan te maken op deze website. 
-Elk vak kan ook een eenmalige &quot;Vaksleutel&quot; hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
+Elk vak kan ook een eenmalige \"Vaksleutel\" hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
 <OL size=2>
 <LI>Vul het <A HREF=$a>Nieuwe account</A> formulier in.
 <LI>Er wordt meteen een e-mail verstuurd naar je e-mail adres.
 <LI>Lees de e-mail en klik op de link die erin staat.
 <LI>Je account wordt bevestigd en je bent dan ingelogd.
 <LI>Kies nu het vak dat je wilt volgen.
-<LI>Als je wordt gevraagd om een &quot;Vaksleutel&quot;, gebruik dan de sleutel die je van je leraar gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.
+<LI>Als je wordt gevraagd om een \"Vaksleutel\", gebruik dan de sleutel die je van je leraar gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.
 <LI>Je hebt nu toegang tot het hele vak. Vanaf nu hoef je alleen nog maar je gebruikersnaam en wachtwoord in het formulier op deze pagina in te vullen om in te loggen en toegang te krijgen tot de vakken waar je lid van bent.
 </OL>
 ';
@@ -667,7 +672,7 @@ $string['order'] = 'Volgorde';
 $string['other'] = 'Andere';
 $string['outline'] = 'Overzicht';
 $string['page'] = 'Pagina';
-$string['parentlanguage'] = '\"\"';
+$string['parentlanguage'] = 'Moedertaal';
 $string['participants'] = 'Deelnemers';
 $string['password'] = 'Wachtwoord';
 $string['passwordchanged'] = 'Het wachtwoord is veranderd';
@@ -731,6 +736,8 @@ $string['restoreto'] = 'Zet de backup terug naar';
 $string['returningtosite'] = 'Al eerder op deze website geweest?';
 $string['revert'] = 'Keer terug';
 $string['role'] = 'Rol';
+$string['rssarticles'] = 'Aantal recente RSS artikels';
+$string['rsstype'] = 'RSS-feed voor deze activiteit';
 $string['savechanges'] = 'Bewaar de wijzigingen';
 $string['saveto'] = 'Bewaar op';
 $string['scale'] = 'Schaal';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004050300)
+      // calendar.php - created with Moodle 1.3 Beta (2004051100)
 
 
 $string['april'] = 'April';
@@ -16,11 +16,14 @@ $string['december'] = 'December';
 $string['default'] = 'Standaard';
 $string['deleteevent'] = 'Wis activiteit';
 $string['detailedmonthview'] = 'Gedetaileerd maandoverzicht';
+$string['durationminutes'] = 'Duur in minuten';
 $string['durationnone'] = 'Geen tijdsduur';
 $string['durationuntil'] = 'Tot';
 $string['editevent'] = 'Bewerk activiteit';
 $string['errorbeforecoursestart'] = 'Je kunt geen activiteit plannen voor de startdatum van het vak';
 $string['errorinvaliddate'] = 'Ongeldige datum';
+$string['errorinvalidminutes'] = 'Geef de duur in minuten met een getal tussen 1 en 999';
+$string['errorinvalidrepeats'] = 'Geef het aantal activiteiten met een getal tussen 1 en 99';
 $string['errornodescription'] = 'Beschrijving verplicht';
 $string['errornoeventname'] = 'Naam verplicht';
 $string['eventdate'] = 'Datum';
@@ -30,6 +33,7 @@ $string['eventendtime'] = 'Eindigt';
 $string['eventinstanttime'] = 'Uur';
 $string['eventkind'] = 'Soort activiteit';
 $string['eventname'] = 'Naam';
+$string['eventrepeat'] = 'Herhalingen';
 $string['eventsfor'] = '$a activiteiten';
 $string['eventstarttime'] = 'Start uur';
 $string['eventtime'] = 'Uur';
@@ -43,6 +47,7 @@ $string['february'] = 'Februari';
 $string['fri'] = 'Vr';
 $string['friday'] = 'Vrijdag';
 $string['globalevents'] = 'Site';
+$string['gotocalendar'] = 'Bekijk de kalender';
 $string['groupevents'] = 'Groep';
 $string['hidden'] = 'verborgen';
 $string['january'] = 'Januari';
@@ -65,6 +70,9 @@ $string['pref_startwday'] = 'Eerste dag van de week';
 $string['pref_timeformat'] = 'Tijdsweergave';
 $string['preferences'] = 'Voorkeuren';
 $string['preferences_available'] = 'Persoonlijke voorkeuren';
+$string['repeatnone'] = 'Geen herhalingen';
+$string['repeatweeksl'] = 'Herhaal wekelijks';
+$string['repeatweeksr'] = 'activiteiten';
 $string['sat'] = 'Za';
 $string['saturday'] = 'Zaterdag';
 $string['september'] = 'September';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 development (2004041800)
+      // glossary.php - created with Moodle 1.3 Beta (2004051100)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -49,6 +49,7 @@ $string['commentson'] = 'Commentaar op';
 $string['commentupdated'] = 'De commentaar is bijgewerkt';
 $string['concept'] = 'Concept';
 $string['concepts'] = 'Concepten';
+$string['configenablerssfeeds'] = 'Met deze instelling kun je de mogelijkheid voor het maken van RSS feeds inschakelen voor alle woordenlijsten. Je zult wel nog voor elke woordenlijst afzonderlijk het maken van de RSS feeds moeten inschakelen.  ';
 $string['currentglossary'] = 'Huidige woordenlijst';
 $string['dateview'] = 'Blader volgens datum';
 $string['defaultapproval'] = 'Standaardinstelling goedkeuring';
@@ -134,6 +135,7 @@ $string['ratingsuse'] = 'Gebruik beoordelingen';
 $string['ratingtime'] = 'Beoordeel alleen nieuwe invoer tussen deze data';
 $string['rejectedentries'] = 'Verworpen items';
 $string['rejectionrpt'] = 'Verwerpingsrapport';
+$string['rsssubscriberss'] = 'Toon de RSS-feed voor \'$a\' items';
 $string['searchindefinition'] = 'Zoek ook in definities';
 $string['secondaryglossary'] = 'Secundaire woordenlijst';
 $string['sendinratings'] = 'Verstuur mijn laatste beoordelingen';
@@ -151,6 +153,8 @@ $string['totalentries'] = 'Totaal aantal items';
 $string['usedynalink'] = 'Link de items uit de woordenlijst automatisch';
 $string['waitingapproval'] = 'Nog goedkeuren';
 $string['warningstudentcapost'] = '(Alleen van toepassing als de woordenlijst niet de hoofdwoordenlijst is)';
+$string['withauthor'] = 'Items met auteur';
+$string['withoutauthor'] = 'Items zonder auteur';
 $string['writtenby'] = 'door';
 $string['youarenottheauthor'] = 'Je bent niet de auteur van deze commentaar, dus mag je hem niet wijzigen.';
 
