@@ -35,12 +35,13 @@
         print_header("Personal profile: $fullname", "Personal profile: $fullname", "$fullname", "");
     }
 
-    if (!isstudent($course->id, $user->id) && !isteacher($course->id, $user->id)) {
-        print_heading("$fullname is not enrolled in this course");
-        print_footer($course);
-        die;
+    if ($course->category) {
+        if (!isstudent($course->id, $user->id) && !isteacher($course->id, $user->id)) {
+            print_heading("$fullname is not enrolled in this course");
+            print_footer($course);
+            die;
+        }
     }
-
 
     echo "<TABLE WIDTH=80% ALIGN=CENTER BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
     echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=3 CELLSPACING=0><TR>";
