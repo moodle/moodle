@@ -14,12 +14,6 @@
    if (empty($user->lastname)) {
        $user->lastname = "";
    }
-   if (empty($user->idnumber)) {
-       $user->idnumber = "";
-   }
-   if (empty($user->phone)) {
-       $user->phone = "";
-   }
    if (empty($user->city)) {
        $user->city = "";
    }
@@ -72,20 +66,6 @@
 	</td>
 </tr>
 <tr valign="top">
-	<td><p><?php print_string("idnumber") ?>:</p></td>
-	<td><input type="text" name="idnumber" size="25" value="<?php p($user->idnumber) ?>" />
-                 (<?php print_string("optional") ?>)
-	<?php if (!empty($err->idnumber)) { formerr($err->idnumber);} ?>
-	</td>
-</tr>
-<tr valign="top">
-	<td><p><?php print_string("phone") ?>:</p></td>
-	<td><input type="text" name="phone" size="25" value="<?php p($user->phone) ?>" />
-                 (<?php print_string("optional") ?>)
-	<?php if (!empty($err->phone)) { formerr($err->phone);} ?>
-	</td>
-</tr>
-<tr valign="top">
 	<td><p><?php print_string("city") ?>:</p></td>
 	<td><input type="text" name="city" size="25" value="<?php p($user->city) ?>" />
 	<?php if (!empty($err->city)) { formerr($err->city);} ?>
@@ -100,8 +80,8 @@
 <tr>
 	<td></td>
 	<td><input type="submit" value="<?php print_string("createaccount") ?>" /></td>
-            </tr>
-          </table>
+</tr>
+</table>
 </form>
 
 </td></tr></table>
