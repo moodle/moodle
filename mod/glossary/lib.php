@@ -418,8 +418,8 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
 
 //    $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
-    return get_records_sql("SELECT e.concept, e.definition, e.userid, e.timemodified, e.id, e.format 
-                            FROM $selectsql ORDER BY e.concept ASC $limit");
+    return get_records_sql("SELECT e.* 
+                            FROM $selectsql ORDER BY e.concept ASC");
 }
 
 function glossary_file_area_name($entry) {

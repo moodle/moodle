@@ -12,7 +12,7 @@
         $GLOSSARY_CONCEPT_IS_ENTRY = 0;
         $GLOSSARY_CONCEPT_IS_CATEGORY = 1;
 
-        $glossarieslist = get_records_select("glossary", "usedynalink = 1 and course = $courseid","id");
+        $glossarieslist = get_records_select("glossary", "usedynalink != 0 and course = $courseid","id");
         if ( $glossarieslist ) {
             $glossaries = "";
             foreach ( $glossarieslist as $glossary ) {
@@ -20,7 +20,7 @@
             }
             $glossaries=substr($glossaries,0,-1);
 
-            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink = 1 and approved != 0","glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
+            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0","glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
             $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
@@ -80,11 +80,13 @@
             $regexp = '/' . $invalidprefixs . "(" . $list_of_words_cp . ")" . "|"  . "(" . $list_of_words_cp . ")". $invalidsufixs .  '/is';
             preg_match_all($regexp,$text,$list_of_words);
 
-            foreach (array_unique($list_of_words[0]) as $key=>$value) {
-                $words['<*'.$key.'*>'] = $value;
-            }
-            if ( $words ) {
-                $text = str_replace($words,array_keys($words),$text);
+            if ($list_of_words) {
+                foreach (array_unique($list_of_words[0]) as $key=>$value) {
+                    $words['<*'.$key.'*>'] = $value;
+                }
+                if ( $words ) {
+                    $text = str_replace($words,array_keys($words),$text);
+                }
             }
         }
 

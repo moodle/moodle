@@ -110,9 +110,9 @@ if ( $confirm ) {
 
     delete_records("glossary_entries_categories","entryid",$e);
 
-    if ( $categories ) {
+    if ( isset($form->categories) ) {
         $newcategory->entryid = $newentry->id;
-        foreach ($categories as $category) {
+        foreach ($form->categories as $category) {
             if ( $category > 0 ) {
                 $newcategory->categoryid =$category;
                 insert_record("glossary_entries_categories",$newcategory);

@@ -296,8 +296,8 @@
                                 } 
                             } 
                         } 
-                        $dumptoscreen = 1;
                     }
+                    $dumptoscreen = 1;
                 } elseif ($l == "SPECIAL" and ord($firstletter) != ord("Ñ") and 
                          (ord($firstletter) < ord("A") or ord($firstletter) > ord("Z"))) {
                     $dumptoscreen = 1;
@@ -328,9 +328,9 @@
                                     if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
                                         echo "</center><p>";
                                     }
-                                    $dumptoscreen = 1;
                                 }
                             } 
+                            $dumptoscreen = 1;
     
                             if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
                                 echo "\n</center></td></tr></table></center>";
