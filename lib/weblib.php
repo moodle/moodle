@@ -726,7 +726,7 @@ function print_footer ($course=NULL) {
 function user_login_string($course, $user=NULL) {
     global $USER, $CFG;
 
-    if (!$user) {
+    if (empty($user)) {
         $user = $USER;
     }
 
