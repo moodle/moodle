@@ -79,7 +79,9 @@ function auth_get_userinfo($username){
     $search_attribs = array();
   
     foreach ($attrmap as $key=>$value) {
-        array_push($search_attribs, $value);
+        if (!in_array($value, $search_attribs) {
+            array_push($search_attribs, $value);
+        }    
     }
 
     $user_dn = auth_ldap_find_userdn($ldap_connection, $username);
