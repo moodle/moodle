@@ -213,24 +213,34 @@ if ($INSTALL['stage'] == 3) {
         }
     }
 
-    $db = &ADONewConnection($INSTALL['dbtype']);
+    if ($INSTALL['dbtype'] == 'mysql') {  /// Check MySQL extension is present
+        if (!extension_loaded('mysql')) {
+            $errormsg = get_string('mysqlextensionisnotpresentinphp', 'install');
+            $nextstage = 3;
+        }
+    }
 
-    error_reporting(0);  // Hide errors 
-    
-    if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
-        /// The following doesn't seem to work but we're working on it
-        /// If you come up with a solution for creating a database in MySQL 
-        /// feel free to put it in and let us know
-        if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
-            switch ($INSTALL['dbtype']) {   /// Try to create a database
-                case 'mysql':
-                    if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']};")) {
-                        $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
-                    } else {
-                        $errormsg = get_string('dbcreationerror', 'install');
-                        $nextstage = 3;
-                    }
-                break;
+    if (empty($errormsg)) {
+
+        $db = &ADONewConnection($INSTALL['dbtype']);
+
+        error_reporting(0);  // Hide errors 
+
+        if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
+            /// The following doesn't seem to work but we're working on it
+            /// If you come up with a solution for creating a database in MySQL 
+            /// feel free to put it in and let us know
+            if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
+                switch ($INSTALL['dbtype']) {   /// Try to create a database
+                    case 'mysql':
+                        if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']};")) {
+                            $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
+                        } else {
+                            $errormsg = get_string('dbcreationerror', 'install');
+                            $nextstage = 3;
+                        }
+                        break;
+                }
             }
         }
     }
