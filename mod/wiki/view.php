@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 /// Extended by Michael Schneider
 /// This page prints a particular instance of wiki
 
@@ -74,8 +74,12 @@
         unset($_POST["id"]);
         unset($_POST["id"]);
         unset($_SERVER["QUERY_STRING"]);
-        unset($HTTP_GET_VARS["id"]);
-        unset($HTTP_POST_VARS["id"]);
+        if (isset($HTTP_GET_VARS)) {
+            unset($HTTP_GET_VARS["id"]);
+        }
+        if (isset($HTTP_POST_VARS)) {
+            unset($HTTP_POST_VARS["id"]);
+        }
         global $ewiki_title;
 
 ///     #-- predefine some of the configuration constants
