@@ -1,0 +1,164 @@
+<P ALIGN=CENTER><B>Om Richtext HTML editor</B></P>
+
+<P>Tillgänglighet: <B>
+<? if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</B></P>
+
+<P>Richtext HTML editor ger ett ordbehandlingsgränssnitt till dina webbsidor
+   för dig att redigera text på ett intuitivt sätt, och producera
+   normal HTML-kod.
+
+<P>Förutom att formattera text, kan editorn ge ett antal extra finesser
+   som du kan finna användbara.
+
+<P><B>Klistra in text från andra tillämpningar</B></P>
+<UL>
+<P>Du kan klippa och klistra stilsatt (rich) text från andra Windowstillämpningar
+   såsom Microsoft Word rakt in i editorn, medan din formattering
+   bibehålles.  Använd bara vanliga klipp- och klistramenyerna i din
+   webbklient (eller kontroll-C, CTRL-C och kontroll-V, CTRL-V).
+</UL>
+
+<P><B>Sätta in bilder <img border="0" hspace="10" src="lib/rte/images/icon_ins_image.gif"></B></P>
+<UL>
+<P>Om du har bilder som readn finns publicerade på en webbsida och tillgängliga via en URL, kan du inkludera dessa bilder i dina texter med hjälp av &quot;Sätt in bild&quot;-knappen (Insert image).
+</UL>
+
+<P><B>Sätta in tabeller <img border="0" hspace="10" src="lib/rte/images/icon_ins_table.gif"></B></P>
+<UL>
+<P>För att lägga till layout till dina texter, kan du använda &quot;Sätt in tabeller&quot;-knappen (Insert Tables) i ikonraden.
+</UL>
+
+<P><B>Sätta in länkar <img border="0" hspace="10" src="lib/rte/images/icon_ins_link.gif"></B></P>
+<UL>
+<P>För att skapa en ny länk, skriv för texten som du vill ha som länk.  Markera sedan texten och klicka på länkknappen i verktygsraden.  Skriv sedan URL:en du vill ha länken till och det är klart!
+</UL>
+
+
+<P><B>Sätta in smilemärken (emotikoner) <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
+<UL>
+<P>För att sätta in dessa små ikoner i din text, klicka på smileyikonen i verktygsraden.  En dialog kommer att dyka upp som låter dig välja från följande ikoner. (Alternativt kan du bara skriva in den motsvarande koden direkt i din text och den kommer att konverteras senare när din text visas).
+
+    <table border="1">
+      <tr valign="top">
+        <td>
+        <table border="0" align="center" cellpadding="10">
+          <tr>
+            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
+            <td>leende</td>
+            <td NOWRAP><FONT FACE=Courier>:-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
+            <td>stort leende</td>
+            <td NOWRAP><FONT FACE=Courier>:-D</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
+            <td>blinka</td>
+            <td NOWRAP><FONT FACE=Courier>;-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
+            <td>blandad</td>
+            <td NOWRAP><FONT FACE=Courier>:-/</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
+              <td>tankfull</td>
+              <td NOWRAP><FONT FACE=Courier>V-.</FONT></td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
+            <td>tungan ut</td>
+            <td NOWRAP><FONT FACE=Courier>:-P</td>
+         </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
+            <td>cool</td>
+            <td NOWRAP><FONT FACE=Courier>B-)</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
+              <td>håller med</td>
+              <td NOWRAP><FONT FACE=Courier>^-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
+              <td>stora ögon</td>
+              <td NOWRAP><FONT FACE=Courier>8-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
+              <td>överraskad</td>
+              <td NOWRAP><FONT FACE=Courier>8-o</td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table border="0" align="center" cellpadding="10">
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
+              <td>ledsen</td>
+              <td NOWRAP><FONT FACE=Courier>:-(</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
+              <td>blyg</td>
+              <td NOWRAP><FONT FACE=Courier>8-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
+            <td>rodnar</td>
+            <td NOWRAP><FONT FACE=Courier>:-I</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
+              <td>kyssar</td>
+              <td NOWRAP><FONT FACE=Courier>:-X</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
+            <td>clown</td>
+            <td NOWRAP><FONT FACE=Courier>:o)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
+            <td>svart öga</td>
+            <td NOWRAP><FONT FACE=Courier>P-|</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
+              <td>arg</td>
+              <td NOWRAP><FONT FACE=Courier>8-[</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
+              <td>död</td>
+              <td NOWRAP><FONT FACE=Courier>xx-P</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
+              <td>sömnig</td>
+              <td NOWRAP><FONT FACE=Courier>|-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
+            <td>ond</td>
+            <td NOWRAP><FONT FACE=Courier>}-]</td>
+          </tr>
+        </table>
+    </table>
+
+</UL>
+
+
