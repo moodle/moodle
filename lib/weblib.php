@@ -804,8 +804,8 @@ function print_simple_box_end() {
     echo "</td></tr></table>";
 }
 
-function print_single_button($link, $options, $label="OK") {
-    echo "<form action=\"$link\" method=get>";
+function print_single_button($link, $options, $label="OK", $method="get") {
+    echo "<form action=\"$link\" method=\"$method\">";
     if ($options) {
         foreach ($options as $name => $value) {
             echo "<input type=hidden name=\"$name\" value=\"$value\">";
