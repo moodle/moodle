@@ -1,35 +1,35 @@
-<BLOCKQUOTE>
-<FORM name="theform" method="post" <?=$onsubmit ?> action="editsection.php">
-<TABLE BORDER=0 cellpadding=0 cellspacing=0>
-<TR>
-<TD align=top>
-<P><B><? print_string("summaryof", "", "$sectionname $form->section") ?></B></P>
-</TD>
-<TD align=top width=100>
+<center>
+<form name="theform" method="post" <?php echo $onsubmit ?> action="editsection.php">
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td align=top>
+<p><b><?php print_string("summaryof", "", "$sectionname $form->section") ?></b></p>
+</td>
+<td align=top width=100>
 &nbsp;
-</TD>
-<TD align=top>
-<FONT SIZE=-1>
-     <? helpbutton("summaries", get_string("helpsummaries"), "moodle", true, true);
+</td>
+<td align=top>
+<font size=-1>
+     <?php helpbutton("summaries", get_string("helpsummaries"), "moodle", true, true);
         if ($usehtmleditor) { 
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {   
            helpbutton("text", get_string("helptext"), "moodle", true, true);   
         } 
      ?>
-</FONT>
-</TD>
-</TR></TABLE>
-<? print_textarea($usehtmleditor, 4, 60, 595, 200, "summary", $form->summary); ?>
-<P>
-<INPUT type="hidden" name=id value="<?=$form->id ?>">
-<INPUT type="submit" value="<? print_string("savechanges") ?>">
-<INPUT type="reset" value="<? print_string("revert") ?>">
-</P>
-</FORM>
-</BLOCKQUOTE>
-<? 
+</font>
+</td>
+</tr></table>
+<?php print_textarea($usehtmleditor, 4, 60, 660, 200, "summary", $form->summary); ?>
+<p>
+<input type="hidden" name=id value="<?php echo $form->id ?>">
+<input type="submit" value="<?php print_string("savechanges") ?>">
+<input type="reset" value="<?php print_string("revert") ?>">
+</p>
+</form>
+</center>
+<?php 
    if ($usehtmleditor) { 
-       print_richedit_javascript("theform", "summary", "no");
+       print_richedit_javascript("theform", "summary", "yes");
    }
 ?>
