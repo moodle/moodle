@@ -4,14 +4,14 @@ account                compte
 activity               activité
 assessment             évaluation
 assignment             devoir
-attachment             annexe                  fichier joint
+attachment             annexe
 authentication         authentification
 category               catégorie
 choice                 sondage
 course category	       discipline
 department             département
-download               télécharger
-email                  (adresse de) courriel
+download               télécharger (vers votre ordinateur)
+email                  courriel, adresse de courriel
 emoticons              binettes
 entry                  contribution
 feedback               feedback                rétroaction
@@ -19,12 +19,12 @@ grade                  note ou niveau
 guest                  visiteur anonyme
 hit                    requête
 journal                journal
-login                  connexion
+login                  connexion, se connecter
 logs                   événements
 offline                hors-ligne
 post                   message
 quiz                   test
-scale                  barème                  échelle
+scale                  barème
 server                 serveur
 social format	       informel
 topic                  thème
@@ -33,8 +33,7 @@ smilies                binettes
 submissions            devoirs rendus
 survey                 questionnaire
 teacher                enseignant
-to login               se connecter
-upload                 envoyer (ou déposer)    téléverser
+upload                 envoyer, déposer, télécharger vers le serveur
 user                   utilisateur
 username               nom d'utilisateur
 workshop               atelier

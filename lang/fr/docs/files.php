@@ -8,7 +8,7 @@ $string['background.html'] = "Contexte";
 $string['philosophy.html'] = "Philosophie";
 $string['licence.html'] = "Licence";
 $string['features.html'] = "Fonctionnalités";
-$string['release.html'] = "Nouveautés";
+$string['release.html'] = "Notes de mise à jour";
 $string['future.html'] = "Futur";
 $string['credits.html'] = "Remerciements";
 
