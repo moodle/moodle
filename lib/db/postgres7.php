@@ -18,6 +18,7 @@
 // This file is tailored to PostgreSQL 7
 
 function main_upgrade($oldversion=0) {
+   global $CFG;
 
     if ($oldversion < 2003010101) {
         delete_records("log_display", "module", "user");
