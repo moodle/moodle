@@ -37,7 +37,7 @@
     	    redirect($destination);
     
         } else {
-            $errormsg = "That entry key was incorrect, please try again".
+            $errormsg = "That enrolment key was incorrect, please try again".
                         "<BR>(Here's a hint - it starts with \"".substr($course->password,0,1)."\")";
         }
     }

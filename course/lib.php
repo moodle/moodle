@@ -175,11 +175,11 @@ function print_course($course) {
         echo "</FONT></P>";
     }
     if ($course->guest or ($course->password == "")) {
-        echo "<A TITLE=\"Guest user allowed\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<A TITLE=\"This course allows guest users\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
         echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/user/user.gif\"></A>&nbsp;&nbsp;";
     }
     if ($course->password) {
-        echo "<A TITLE=\"Requires a Course entry key\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<A TITLE=\"This course requires an enrolment key\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
         echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/pix/i/key.gif\"></A>";
     }
 

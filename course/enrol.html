@@ -3,7 +3,7 @@
 <table cellpadding=20>
   <tr valign=top> 
     <td>
-    <P ALIGN=CENTER>This course requires a "course entry key" - a one-time<BR>
+    <P ALIGN=CENTER>This course requires an "enrolment key" - a one-time<BR>
        password that you should have got from <A HREF="../user/view.php?id=<?=$teacher->id?>&course=<?=$site->id?>"><? p("$teacher->firstname $teacher->lastname") ?></A>.</P>
     </td>
   </tr>
@@ -12,7 +12,7 @@
       <form name="form" method="post" action="enrol.php">
         <table>
           <tr> 
-            <td width=50% align=right><P>Entry Key:</P></td>
+            <td width=50% align=right><P>Enrolment Key:</P></td>
             <td width=50% > 
               <input type="password" name="password" size=20 value="<? p($password) ?>" >
               <input type="hidden" name="id" value="<? p($id) ?>" >
