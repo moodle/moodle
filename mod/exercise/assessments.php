@@ -5,6 +5,7 @@
 
 	adminconfirmdelete
 	admindelete
+    adminedit
 	adminlist
 	adminlistbystudent
 	assessresubmission
@@ -99,6 +100,46 @@
 		
 		print_continue("submissions.php?id=$cm->id&action=adminlist");
 		}
+	
+
+	/******************* admin amend Grading Grade ************************************/
+	if ($action == 'adminamendgradinggrade' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+		if (empty($_GET['aid'])) {
+			error("Admin Amend Grading grade: assessment id missing");
+			}
+			
+		if (!$assessment = get_record("exercise_assessments", "id", $_GET['aid'])) {
+		    error("Amin Amend Grading grade: assessment not found");
+        }
+        print_heading(get_string("amend", "exercise")." ".get_string("gradeforstudentsassessment", 
+                    "exercise", $course->student));
+        echo "<form name=\"amendgrade\" method=\"post\" action=\"assessments.php\">\n";
+        echo "<input type=\"hidden\" name=\"aid\" value=\"$_GET[aid]\">\n";
+        echo "<input type=\"hidden\" name=\"action\" value=\"updategradinggrade\">\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+        echo "<table width=\"50%\" align=\"center\" border=\"1\">\n";
+		echo "<tr><td align=\"right\"><b>".get_string("gradeforstudentsassessment", "exercise", 
+                $course->student)." :</td><td>\n";
+		// set up coment scale
+		for ($i=COMMENTSCALE; $i>=0; $i--) {
+			$num[$i] = $i;
+			}
+		choose_from_menu($num, "gradinggrade", $assessment->gradinggrade, "");
+		echo "</td></tr>\n";
+        echo "<tr><td colspan=\"2\" align=\"center\">"; 
+        echo "<INPUT TYPE=submit VALUE=\"".get_string("amend", "exercise")."\">\n";
+        echo "</td></tr>\n";
+        echo "</table>\n";
+        echo "</CENTER>";
+        echo "</FORM>\n";
+
+
+
+    }
 	
 
 	/*********************** admin list of asssessments (of a submission) (by teachers)**************/
@@ -1003,6 +1044,22 @@
 		else {
 			redirect($returnto);
 		}
+	}
+
+
+	/****************** update grading grade(by teacher) ***************************/
+	elseif ($action == 'updategradinggrade') {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+
+        require_variable($aid);
+		if (!set_field("exercise_assessments", "gradinggrade", $_POST['gradinggrade'], "id", 
+                    $_POST['aid'])) {
+			error("Update grading grade: asseesment not updated");
+		}
+        redirect("submissions.php?id=$cm->id&action=adminlist", get_string("savedok", "exercise"), 1);
 	}
 
 

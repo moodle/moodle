@@ -1534,11 +1534,13 @@ function exercise_list_submissions_for_admin($exercise) {
                 }
             }
         }
-        print_heading(get_string("studentsubmissions", "exercise", $course->student)." [$nsubmissions]",
+		if (isset($table->data)) {
+            print_heading(get_string("studentsubmissions", "exercise", $course->student)." [$nsubmissions]",
                 "center");
-        print_table($table);
-        echo "<center><p>".get_string("resubmitnote", "exercise", $course->student)."</p>\n";
-        echo "<p>".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."</p></center>\n";
+            print_table($table);
+            echo "<p align=\"center\">".get_string("resubmitnote", "exercise", $course->student)."</p>\n";
+        }
+        echo "<p align=\"center\">".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."</p></center>\n";
     }
 }
 
@@ -2556,7 +2558,10 @@ function exercise_print_assessments_by_user_for_admin($exercise, $user) {
 		foreach ($assessments as $assessment) {
 			echo "<p><center><b>".get_string("assessmentby", "exercise", $user->firstname." ".$user->lastname)."</b></center></p>\n";
 			exercise_print_assessment_form($exercise, $assessment);
-			echo "<p align=\"right\"><a href=\"assessments.php?action=adminconfirmdelete&id=$cm->id&aid=$assessment->id\">".
+			echo "<p align=\"right\"><a href=\"assessments.php?action=adminamendgradinggrade&id=$cm->id&aid=$assessment->id\">".
+                get_string("amend", "exercise")." ".get_string("gradeforstudentsassessment","exercise",
+                $course->student)."</a>\n";
+			echo " | <a href=\"assessments.php?action=adminconfirmdelete&id=$cm->id&aid=$assessment->id\">".
 				get_string("delete", "exercise")."</a></p><hr>\n";
 			}
 		}
@@ -3075,10 +3080,11 @@ function exercise_print_dual_assessment_form($exercise, $assessment, $submission
 			}
 		}
 	echo "&nbsp;</td>\n";
-	echo "</tr>\n";
+	echo "</tr></table>\n";
 	
 	// the teacher's comment on the assessment
 	// always allow the teacher to change/add their comment and grade if it's not their assessment!
+	echo "<p><center><table cellpadding=\"5\" border=\"1\">\n";
 	if (isteacher($course->id) and ($assessment->userid != $USER->id)) {  
 		echo "<tr valign=\"top\">\n";
 		echo "	<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".
