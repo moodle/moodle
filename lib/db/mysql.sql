@@ -369,7 +369,15 @@ CREATE TABLE `prefix_user` (
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
-  UNIQUE KEY `username` (`username`)
+  UNIQUE KEY `username` (`username`),
+  KEY `user_deleted` (`deleted`),
+  KEY `user_confirmed` (`confirmed`),
+  KEY `user_firstname` (`firstname`),
+  KEY `user_lastname` (`lastname`),
+  KEY `user_city` (`city`),
+  KEY `user_country` (`country`),
+  KEY `user_lastaccess` (`lastaccess`),
+  KEY `user_email` (`email`)
 ) TYPE=MyISAM COMMENT='One record for each person';
 
 ALTER TABLE `prefix_user` ADD INDEX `auth` (`auth`);
