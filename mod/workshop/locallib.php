@@ -908,9 +908,11 @@ function workshop_list_assessed_submissions($workshop, $user) {
                 }
                 // has assessment been graded?
                 if ($assessment->timegraded and ($timenow - $assessment->timegraded > $CFG->maxeditingtime)) {
-                    $comment .= "; ".get_string("thegradeforthisassessmentis", "workshop", 
+                    if ($workshop->gradingstrategy) { // supress grading grade if not graded
+                        $comment .= "; ".get_string("thegradeforthisassessmentis", "workshop", 
                             number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0)).
                             " / $workshop->gradinggrade";
+                    }
                 }
                 // if peer agreements show whether agreement has been reached
                 if ($workshop->agreeassessments) {
@@ -969,8 +971,10 @@ function workshop_list_peer_assessments($workshop, $user) {
                                 get_string("view", "workshop")."</a>";
                             $comment = get_string("assessedon", "workshop", userdate($assessment->timecreated));
                             $grade = number_format($assessment->grade * $workshop->grade / 100, 1);
-                            $comment .= "; ".get_string("gradeforsubmission", "workshop").
-                                ": $grade / $workshop->grade"; 
+                            if ($workshop->gradingstrategy) { // supress grade if not graded
+                                $comment .= "; ".get_string("gradeforsubmission", "workshop").
+                                    ": $grade / $workshop->grade"; 
+                            }
                             if ($assessment->timegraded) {
                                 if (!$assessment->gradinggrade) {
                                     // it's a bad assessment
@@ -1561,10 +1565,12 @@ function workshop_list_teacher_submissions($workshop, $user) {
                 }
                 // see if the assessment is graded
                 if ($assessment->timegraded) {
-                    // show grading grade
-                    $comment = get_string("thegradeforthisassessmentis", "workshop", 
+                    // show grading grade (supressed if workshop not graded)
+                    if ($workshop->gradingstrategy) {
+                        $comment = get_string("thegradeforthisassessmentis", "workshop", 
                             number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 1))." / ".
                             $workshop->gradinggrade;
+                    }
                 } elseif ($assessment->timecreated < $timenow) {
                     $comment = get_string("awaitinggradingbyteacher", "workshop", $course->teacher);
                 }

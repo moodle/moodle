@@ -612,11 +612,13 @@ function workshop_delete_instance($id) {
 ///////////////////////////////////////////////////////////////////////////////
 function workshop_grades($workshopid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-/// only retruns grades in phase 2 or greater
-global $CFG;
+/// only returns grades in phase 2 or greater
+/// returns nothing if workshop is not graded
+    global $CFG;
 
+    $return = null;
     if ($workshop = get_record("workshop", "id", $workshopid)) {
-        if ($workshop->phase > 1) {
+        if ($workshop->phase > 1 and $workshop->gradingstrategy) {
             if ($students = get_course_students($workshop->course)) {
                 foreach ($students as $student) {
                     if ($workshop->wtype) {
@@ -641,10 +643,13 @@ global $CFG;
                 }
             }
         }
-        if ($workshop->wtype) {
-            $return->maxgrade = $workshop->grade + $workshop->gradinggrade;
-        } else { // ignore grading grades for simple assignemnts
-            $return->maxgrade = $workshop->grade;
+        // set maximum grade if graded
+        if ($workshop->gradingstrategy) {
+            if ($workshop->wtype) {
+                $return->maxgrade = $workshop->grade + $workshop->gradinggrade;
+            } else { // ignore grading grades for simple assignemnts
+                $return->maxgrade = $workshop->grade;
+            }
         }
     }
     return $return;
