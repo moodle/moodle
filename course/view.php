@@ -37,7 +37,7 @@
         $course->format = 'weeks';  // Default format is weeks
     }
 
-    $PAGE = MoodlePage::create_object(MOODLE_PAGE_COURSE, $course->id);
+    $PAGE = page_base::create_object(MOODLE_PAGE_COURSE, $course->id);
     $pageblocks = blocks_get_by_page($PAGE);
    
     if (!isset($USER->editing)) {

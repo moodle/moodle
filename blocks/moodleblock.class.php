@@ -296,7 +296,7 @@ class block_base {
             $title = $this->str->show;
         }
 
-        $page   = MoodlePage::create_object($this->instance->pagetype, $this->instance->pageid);
+        $page   = page_base::create_object($this->instance->pagetype, $this->instance->pageid);
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
         $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
