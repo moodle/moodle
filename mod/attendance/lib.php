@@ -187,9 +187,9 @@ function attendance_user_outline($course, $user, $mod, $attendance) {
 			// build array of all tardies
 			$tarr = array();
  			foreach ($tardyrecs as $tardyrec) {
- 				array_push($tarr, $tardyrec->hour);
-				$tardystring = $tardystring . ", " . $tardyrec->hour;
- 			}
+  			array_push($tarr, $tardyrec->hour);
+	  		$tardystring = $tardystring . ", " . $tardyrec->hour;
+		  }
 			$end=array_pop($tarr);
 			$tardystring = "Tardy in hours " . implode(", ", $tarr) . " and ". $end . ". ";
 		}
@@ -226,14 +226,15 @@ function attendance_user_complete($course, $user, $mod, $attendance) {
 
     $attrecs=attendance_get_records("attendance_roll", "dayid", $attendance->id, "userid", $user->id, "", "", "hour ASC");
     // fill an array with the absences and tardies, as those are the only records actually stored
+    
     $grid = array();
-    foreach ($attrecs as $attrec) { $grid[$attrec->hour]=$attrec->status; }
+    if ($attrecs) { foreach ($attrecs as $attrec) { $grid[$attrec->hour]=$attrec->status; } }
     echo "<table><tr><th>Hour:</th>\n";
     // echo out the table header
-	for($j=1;$j<=$attendance->hours;$j++) {
-		echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$j."</th>\n";
-	}
-	echo "</tr><tr><th>Status:</th>";
+  	for($j=1;$j<=$attendance->hours;$j++) {
+	  	echo "<th valign=\"top\" align=\"center\" nowrap class=\"generaltableheader\">".$j."</th>\n";
+	  }
+	  echo "</tr><tr><th>Status:</th>";
 	for($j=1;$j<=$attendance->hours;$j++) {
       // set the attendance defaults for each student
   	      if (isset($grid[$j])) {
@@ -266,7 +267,7 @@ function attendance_cron () {
 // look for all attendance instances set to autoattend
 	if (!$attendances = get_records("attendance", "autoattend", 1, "course ASC")) {
         return true;
-    }
+  }
 	$td = attendance_find_today(time());
 	$tm = attendance_find_tomorrow(time());
 	foreach($attendances as $attendance) {
@@ -277,25 +278,27 @@ function attendance_cron () {
 			  $courses[$attendance->course]->students = 
 			    attendance_get_course_students($attendance->course, "u.lastname ASC");
 			}
-			foreach ($courses[$attendance->course]->students as $student) {
-				// first, clear out the records that may be there already
-     	  delete_records("attendance_roll", 
-          "dayid",$attendance->id,
-          "userid",$student->id);
-				$wc = "userid = " . $student->id . " AND course = " . $attendance->course . 
-				  " AND time >= " . $td . " AND time < " . $tm;
-			  $count = get_record_select("log",$wc,"COUNT(*) as c");
-				if ($count->c == "0") { // then the student hasn't done anything today, so mark him absent
-					$attrec->dayid = $attendance->id;
-					$attrec->userid = $student->id;
-					$attrec->status = 2; // status 2 is absent
-					// mark ALL hours as absent for first version
-					for ($i=1;$i<=$attendance->hours;$i++) { 
-  					$attrec->hour = $i;
-					  insert_record("attendance_roll",$attrec, false);
-					} // for loop to mark all hours absent
-				} // if student has no activity
-			} // foreach student in the list
+      if ($courses[$attendance->course]->students) {
+				foreach ($courses[$attendance->course]->students as $student) {
+					// first, clear out the records that may be there already
+	     	  delete_records("attendance_roll", 
+	          "dayid",$attendance->id,
+	          "userid",$student->id);
+					$wc = "userid = " . $student->id . " AND course = " . $attendance->course . 
+					  " AND time >= " . $td . " AND time < " . $tm;
+				  $count = get_record_select("log",$wc,"COUNT(*) as c");
+					if ($count->c == "0") { // then the student hasn't done anything today, so mark him absent
+						$attrec->dayid = $attendance->id;
+						$attrec->userid = $student->id;
+						$attrec->status = 2; // status 2 is absent
+						// mark ALL hours as absent for first version
+						for ($i=1;$i<=$attendance->hours;$i++) { 
+	  					$attrec->hour = $i;
+						  insert_record("attendance_roll",$attrec, false);
+						} // for loop to mark all hours absent
+					} // if student has no activity
+				} // foreach student in the list
+	    } // if students exist
     } // if the attendance roll is for today 
 	} // for each attendance in the system
   return true;
@@ -308,21 +311,23 @@ function attendance_grades($attendanceid) {
     $attendance = get_record("attendance", "id", $attendanceid);
     if ($attendance->grade == "1") {
       $students = get_course_students($attendance->course);
-      foreach ($students as $student) {
-      	$rolls = attendance_get_records("attendance_roll", 
-          "dayid",$attendance->id,
-          "userid",$student->id);
-        $abs=$tar=0;
-        if ($rolls) {
-          foreach ($rolls as $roll) { 
-            if ($roll->status == 1) {$tar++;}
-	        elseif ($roll->status == 2) {$abs++;}
-		  }
-		  $total = $attendance->hours - attendance_tally_overall_absences_decimal($abs, $tar);
-		  $percent = ($total != 0)?$total/$attendance->hours:0;
-		  $return->grades[$student->id] = ($percent == 0)?0.0:$attendance->maxgrade * $percent;
-		} else  { $return->grades[$student->id] = $attendance->maxgrade; }
-      } // foreach student
+      if ($students) {
+	      foreach ($students as $student) {
+	      	$rolls = attendance_get_records("attendance_roll", 
+	          "dayid",$attendance->id,
+	          "userid",$student->id);
+	        $abs=$tar=0;
+	        if ($rolls) {
+	          foreach ($rolls as $roll) { 
+	            if ($roll->status == 1) {$tar++;}
+		        elseif ($roll->status == 2) {$abs++;}
+				  } // if rolls
+					  $total = $attendance->hours - attendance_tally_overall_absences_decimal($abs, $tar);
+					  $percent = ($total != 0)?$total/$attendance->hours:0;
+					  $return->grades[$student->id] = ($percent == 0)?0.0:$attendance->maxgrade * $percent;
+					} else  { $return->grades[$student->id] = $attendance->maxgrade; }
+	      } // foreach student
+    } // if students
       $return->maxgrade = $attendance->maxgrade;
     } else {  // if attendance->grade == "1"
       $return->grades = NULL;

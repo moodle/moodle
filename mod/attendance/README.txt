@@ -21,3 +21,10 @@ Quick install instructions
 
 4)  Go to the site configuration page -> modules section -> attendance
       to specify your preferences for the module (optional)
+
+New Feature and fix list:
+
+Automatic attendance loggin based on IP address range
+Attendance logging by email/Imode (via cel phone)
+Specify a range of attendance times for automatic attendance logging.
+Tighter integration with the new calendar features.
