@@ -163,9 +163,10 @@
             if ($question->type < 0) {  // We have some virtual scales.  DON'T show them.
                 continue;
             }
+            $question->text = get_string($question->text, "survey");
 
             if ($question->multi) {
-                echo "<H3>$question->text :</H3>";
+                echo "<H3>$question->text:</H3>";
 
                 $subquestions = get_records_list("survey_questions", "id", $question->multi);
                 $subquestionorder = explode(",", $question->multi);
@@ -173,16 +174,14 @@
                     $subquestion = $subquestions[$val];
                     if ($subquestion->type > 0) {
                         echo "<P ALIGN=CENTER><A TITLE=\"$strseemoredetail\" HREF=\"report.php?action=question&id=$id&qid=$subquestion->id\">
-                              <IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH  
-                                   BORDER=1 SRC=\"graph.php?id=$id&qid=$subquestion->id&type=question.png\"></A></P>";
+                              <IMG HEIGHT=\"$SURVEY_GHEIGHT\" WIDTH=\"$SURVEY_GWIDTH\" BORDER=1 SRC=\"graph.php?id=$id&qid=$subquestion->id&type=question.png\"></A></P>";
                     }
                 }
             } else if ($question->type > 0 ) {
                 echo "<P ALIGN=CENTER><A TITLE=\"$strseemoredetail\" HREF=\"report.php?action=question&id=$id&qid=$question->id\">
-                      <IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH 
-                           BORDER=1 SRC=\"graph.php?id=$id&qid=$question->id&type=question.png\"></A></P>";
+                      <IMG HEIGHT=\"$SURVEY_GHEIGHT\" WIDTH=\"$SURVEY_GWIDTH\" BORDER=1 SRC=\"graph.php?id=$id&qid=$question->id&type=question.png\"></A></P>";
             } else {
-                echo "<H3>$question->text</H3>";
+                echo "<H3>$question->text:</H3>";
                 if ($aaa = survey_get_user_answers($survey->id, $question->id)) {
                     echo "<UL>";
                     foreach ($aaa as $a) {
@@ -200,6 +199,7 @@
         if (!$question = get_record("survey_questions", "id", $qid)) {
             error("Question doesn't exist");
         }
+        $question->text = get_string($question->text, "survey");
 
         $answers =  explode(",", get_string($question->options, "survey"));
 
