@@ -25,7 +25,7 @@ function exercise_upgrade($oldversion) {
         execute_sql("ALTER TABLE `{$CFG->prefix}exercise` DROP COLUMN `gradingweight`");
     }
 
-    if ($oldversion < 2004111200) {
+    if ($oldversion < 2004062301) {
         modify_database('','ALTER TABLE prefix_exercise ADD INDEX course (course);');
         modify_database('','ALTER TABLE prefix_exercise_submissions ADD INDEX exerciseid (exerciseid);');
         modify_database('','ALTER TABLE prefix_exercise_assessments ADD INDEX exerciseid (exerciseid);');
