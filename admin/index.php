@@ -196,7 +196,7 @@
     if ($release <> $CFG->release) {  // Update the release version
         $strcurrentrelease = get_string("currentrelease");
         print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
-        print_heading($release);
+        print_heading("Moodle $release");
         if (!set_config("release", $release)) {
             notify("ERROR: Could not update release version in database!!");
         }
