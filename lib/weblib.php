@@ -1226,19 +1226,16 @@ function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value=
 /// Prints a richtext field or a normal textarea
     global $CFG, $THEME, $course;
 
-    if (!$courseid) {
+    if (empty($courseid)) {
         if (!empty($course->id)) {  // search for it in global context
             $courseid = $course->id;
         }
     }
 
     if ($richedit) {
-        if ($courseid) {
-            if (isteacher($courseid)) {
-                $richediturl = "$CFG->wwwroot/lib/rte/richedit.php?id=$courseid&wwwroot=$CFG->wwwroot";
-            } else {
-                $richediturl = "$CFG->wwwroot/lib/rte/richedit.html";
-            }
+        $richediturl = "$CFG->wwwroot/lib/rte/richedit.html";
+        if (!empty($courseid) and isteacher($courseid)) {
+            $richediturl = "$CFG->wwwroot/lib/rte/richedit.php?id=$courseid&wwwroot=$CFG->wwwroot";
         }
 
         echo "<object id=\"richedit\" style=\"background-color: buttonface\"";
