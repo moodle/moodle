@@ -40,9 +40,9 @@
         } else {
             $onsubmit = "";
         }
-        echo "<FORM NAME=theform METHOD=post $onsubmit ACTION=\"$form->destination\">";
-        echo "<TABLE CELLPADDING=5 ALIGN=CENTER>";
-        echo "<TR><TD ALIGN=right NOWRAP><P><B>$strname:</B></P></TD><TD><P>$form->name</P></A></TD></TR>";
+        echo "<form name=theform method=post $onsubmit action=\"$form->destination\">";
+        echo "<table cellpadding=5 align=center>";
+        echo "<tr><td align=right nowrap><p><b>$strname:</b></p></td><td><p>$form->name</p></a></td></tr>";
 
         $strtypename = $RESOURCE_TYPE["$form->type"];
         $strexample  = get_string("example", "resource");
@@ -51,21 +51,21 @@
             case REFERENCE: 
                 $strexamplereference = get_string("examplereference", "resource");
                 ?>
-                <TR VALIGN=top>
-                    <TD ALIGN=right NOWRAP>
-                        <P><B><?=$strtypename?>:</B></P>
-                    </TD>
-                    <TD>
-                        <TEXTAREA NAME="reference" ROWS=3 COLS=50 WRAP="virtual"><? p($form->reference) ?></TEXTAREA>
-                    </TD>
-                </TR>
-                <TR VALIGN=top>
-                    <TD ALIGN=right NOWRAP>
-                        <P><B>(<?=$strexample?>)</B></P>
-                    </TD>
-                    <TD>
-                    <P><?=$strexamplereference?></P>
-                    </TD>
+                <tr valign=top>
+                    <td align=right nowrap>
+                        <p><b><?=$strtypename?>:</b></p>
+                    </td>
+                    <td>
+                        <textarea name="reference" rows=3 cols=50 wrap="virtual"><? p($form->reference) ?></textarea>
+                    </td>
+                </tr>
+                <tr valign=top>
+                    <td align=right nowrap>
+                        <p><b>(<?=$strexample?>)</b></p>
+                    </td>
+                    <td>
+                    <p><?=$strexamplereference?></p>
+                    </td>
                 </TR>
 
                 <?
@@ -76,23 +76,23 @@
             case PROGRAM:
                 $strexampleurl = get_string("exampleurl", "resource");
                 ?>
-                <TR VALIGN=top>
-                    <TD ALIGN=right NOWRAP>
-                        <P><B><?=$strtypename?>:</B></P>
-                    </TD>
-                    <TD>
-                        <INPUT NAME="reference" SIZE=\"100\" VALUE="<? p($form->reference) ?>">
-                    </TD>
-                </TR>
-                <TR VALIGN=top>
-                    <TD ALIGN=right NOWRAP>
-                        <P><B>(<?=$strexample?>)</B></P>
-                    </TD>
-                    <TD>
-                    <P><?=$strexampleurl?>
-                    </P>
-                    </TD>
-                </TR>
+                <tr valign=top>
+                    <td align=right nowrap>
+                        <p><b><?=$strtypename?>:</b></p>
+                    </td>
+                    <td>
+                        <input name="reference" size=\"100\" value="<? p($form->reference) ?>">
+                    </td>
+                </tr>
+                <tr valign=top>
+                    <td align=right nowrap>
+                        <p><b>(<?=$strexample?>)</b></p>
+                    </td>
+                    <td>
+                    <p><?=$strexampleurl?>
+                    </p>
+                    </td>
+                </tr>
 
                 <?
                 break;
@@ -102,11 +102,11 @@
                 $strnote     = get_string("note", "resource");
                 $strnotefile = get_string("notefile", "resource", "$CFG->wwwroot/files/index.php?id=$course->id");
                 ?>
-                <TR VALIGN=top>
-                    <TD ALIGN=right NOWRAP>
-                        <P><B><?=$strfilename?>:</B></P>
-                    </TD>
-                    <TD>
+                <tr valign=\"top\">
+                    <td align=\"right\" nowrap>
+                        <p><b><?=$strfilename?>:</b></p>
+                    </td>
+                    <td>
                         <?
                           $rootdir = $CFG->dataroot."/".$course->id;
                           $coursedirs = get_directory_list($rootdir, $CFG->moddata);
@@ -115,17 +115,17 @@
                           }
                           choose_from_menu ($options, "reference", $form->reference);
                         ?>
-                    </TD>
-                </TR>
-                <TR VALIGN=top>
-                    <TD ALIGN=right NOWRAP>
-                        <P><B><?=$strnote?>:</B></P>
-                    </TD>
-                    <TD>
-                    <P><?=$strnotefile?>
-                    </P>
-                    </TD>
-                </TR>
+                    </td>
+                </tr>
+                <tr valign=\"top\">
+                    <td align=\"right\" nowrap>
+                        <p><b><?=$strnote?>:</b></p>
+                    </td>
+                    <td>
+                    <p><?=$strnotefile?>
+                    </p>
+                    </td>
+                </tr>
 
                 <?
                 break;
@@ -133,40 +133,40 @@
             case PLAINTEXT: 
                 $strfulltext = get_string("fulltext", "resource");
                 ?>
-                <TR VALIGN=top>
-                    <TD ALIGN=right NOWRAP>
-                        <P><B><?=$strfulltext?>:</B></P><br \>
-                        <font SIZE="1">
-                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
-                        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br \>
+                <tr valign=\"top\">
+                    <td align=\"right\" nowrap>
+                        <p><b><?=$strfulltext?>:</b></p><br />
+                        <font size="1">
+                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
+                        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br />
                         </font>
-                    </TD>
-                    <TD>
-                        <TEXTAREA NAME="alltext" ROWS=20 COLS=50 WRAP="virtual"><? p($form->alltext) ?></TEXTAREA>
-                    </TD>
-                </TR>
+                    </td>
+                    <td>
+                        <textarea name="alltext" rows=20 cols=50 wrap="virtual"><? p($form->alltext) ?></textarea>
+                    </td>
+                </tr>
                 <?
                 break;
 
             case HTML:
                 $strhtmlfragment = get_string("htmlfragment", "resource");
                 ?>
-                <TR VALIGN=top>
-                    <TD ALIGN=right NOWRAP>
-                        <P><B><?=$strhtmlfragment?>:</B></P><br \>
-                        <font SIZE="1">
-                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+                <tr valign=top>
+                    <td align=right nowrap>
+                        <p><b><?=$strhtmlfragment?>:</b></p><br />
+                        <font size="1">
+                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
                         <? if ($usehtmleditor) {
                             helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
                            } else {   
                             helpbutton("html", get_string("helphtml"), "moodle", true, true);
-                           } ?><br \>
+                           } ?><br />
                         </font>
-                    </TD>
-                    <TD>
+                    </td>
+                    <td>
                         <? print_textarea($usehtmleditor, 20, 50, 680, 400, "alltext", $form->alltext); ?>
-                    </TD>
-                </TR>
+                    </td>
+                </tr>
                 <?
                 break;
 
@@ -176,7 +176,7 @@
         }
 
         ?>
-        </TABLE>
+        </table>
         <input type="hidden" name=summary    value="<? p($form->summary) ?>">
         <input type="hidden" name=type       value="<? p($form->type) ?>">
         <input type="hidden" name=name       value="<? p($form->name) ?>">
@@ -188,11 +188,11 @@
         <input type="hidden" name=modulename value="<? p($form->modulename) ?>">
         <input type="hidden" name=instance   value="<? p($form->instance) ?>">
         <input type="hidden" name=mode       value="<? p($form->mode) ?>">
-        <CENTER>
+        <center>
         <input type="submit" value="<? print_string("savechanges") ?>">
         <input type="submit" name=cancel value="<? print_string("cancel") ?>">
-        </CENTER>
-        </FORM>
+        </center>
+        </form>
 <?
         if ($usehtmleditor) {
             print_richedit_javascript("theform", "alltext", "yes");
