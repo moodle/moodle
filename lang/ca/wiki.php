@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004060400)
+      // wiki.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = '-- Acció --';
@@ -165,6 +165,7 @@ $string['wantedpages'] = 'Pàgines desitjades';
 $string['wikidefaultpagename'] = 'WikiIndex';
 $string['wikiexport'] = 'Exporta pàgines';
 $string['wikiexportcomment'] = 'Aquí podeu configurar l\'exportació com desitgeu.';
+$string['wikilinkoptions'] = 'Opcions dels enllaços automàtics';
 $string['wikilinks'] = 'Enllaços Wiki';
 $string['wikiname'] = 'Nom de la pàgina';
 $string['wikistartederror'] = 'No es pot canviar: el Wiki ja té entrades.';

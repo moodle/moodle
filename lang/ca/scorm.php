@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004060400)
+      // scorm.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['autocontinue'] = 'Continuació automàtica';
@@ -19,18 +19,18 @@ $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
 $string['next'] = 'Continua';
 $string['nomanifest'] = 'No s\'ha trobat el manifest';
-$string['noreports'] = 'Cap informe que visualitzar';
+$string['noreports'] = 'Cap informe per visualitzar';
 $string['normal'] = 'Normal';
-$string['notattempted'] = 'No s\'han trobat intents';
-$string['packagedir'] = 'Error al sistema de fitxers: No es pot crear un directori del paquet';
+$string['notattempted'] = 'No intentat';
+$string['packagedir'] = 'Error del sistema de fitxers: no es pot crear el directori del paquet';
 $string['passed'] = 'S\'ha passat';
 $string['prev'] = 'Anterior';
-$string['regular'] = 'Manifest ';
+$string['regular'] = 'Manifest normal';
 $string['report'] = 'Informe';
-$string['review'] = 'Revisió';
-$string['trackingloose'] = 'ATENCIÓ: les dades del seguiment d\'aquest paquet SCORM es perdran!';
+$string['review'] = 'Revisa';
+$string['trackingloose'] = 'ATENCIÓ: les dades de seguiment d\'aquest paquet SCORM es perdran.';
 $string['validateascorm'] = 'Valida un paquet scorm';
 $string['validation'] = 'Resultat de la validació';
-$string['viewallreports'] = 'Visualitza informes de: $a intents';
+$string['viewallreports'] = 'Visualitza informes de $a intents';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004060400)
+      // moodle.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = 'Acció';
@@ -40,6 +40,7 @@ $string['adminhelpconfiguration'] = 'Configureu l\'aparença i el funcionament de
 $string['adminhelpconfigvariables'] = 'Configureu les variables que afecten el funcionament general del lloc';
 $string['adminhelpcourses'] = 'Definiu cursos i categories i assigneu-los persones';
 $string['adminhelpedituser'] = 'Navegueu per la llista de comptes d\'usuari i editeu-los';
+$string['adminhelpenrolments'] = 'Trieu el mètode intern o extern de control d\'inscripció';
 $string['adminhelplanguage'] = 'Comproveu i editeu el paquet de llenguatge actual';
 $string['adminhelplogs'] = 'Navegueu pels registres de tota l\'activitat d\'aquest lloc';
 $string['adminhelpmanageblocks'] = 'Gestioneu els blocs instal·lats i els seus paràmetres';
@@ -189,12 +190,14 @@ $string['confirm'] = 'Confirma';
 $string['confirmed'] = 'S\'ha confirmat el vostre registre';
 $string['confirmednot'] = 'Encara no s\'ha confirmat el vostre registre!';
 $string['continue'] = 'Continua';
+$string['continuetocourse'] = 'Feu clic aquí per entrar al curs';
 $string['cookiesenabled'] = 'Les galetes han d\'estar habilitades en el vostre navegador';
 $string['copy'] = 'copia';
 $string['copyingcoursefiles'] = 'S\'estan copiant els fitxers del curs';
 $string['copyinguserfiles'] = 'S\'estan copiant els fitxers d\'usuari';
 $string['copyingzipfile'] = 'S\'està copiant el fitxer zip';
 $string['copyrightnotice'] = 'Copyright';
+$string['cost'] = 'Cost';
 $string['country'] = 'País';
 $string['course'] = 'Curs';
 $string['courseavailable'] = 'Aquest curs està disponible per als estudiants';
@@ -360,6 +363,9 @@ $string['enrolmentkeyhint'] = 'Aquesta clau d\'inscripció es errònia, si us plau
 (Heus ací una pista: comença per \'$a\'.)
 
 (Una pista: comença per \'$a\'';
+$string['enrolmentnew'] = 'Nova inscripció en $a';
+$string['enrolmentnointernal'] = 'Les inscripcions manuals no estan habilitades';
+$string['enrolments'] = 'Inscripcions';
 $string['entercourse'] = 'Feu clic per entrar en aquest curs';
 $string['enteremailaddress'] = 'Introduïu la vostra adreça de correu per anul·lar la contrasenya anterior i rebre\'n una de nova per correu electrònic.';
 $string['error'] = 'Error';
@@ -702,6 +708,10 @@ $string['passwordsent'] = 'S\'ha enviat la contrasenya';
 $string['passwordsenttext'] = '<P>S\'ha enviat un correu a la vostra adreça electrònica $a->email.
 <P><B>Si us plau, busqueu la contrasenya nova al correu</B>
 <P>Aquesta contrasenya nova s\'ha generat automàticament, de manera que potser voldreu <A HREF=$a->link>canviar-la per una altra més fàcil de recordar</A>.';
+$string['paymentinstant'] = 'Utilitzeu el botó de baix per pagar i inscriure-us.';
+$string['paymentrequired'] = 'Aquest curs requereix pagament.';
+$string['paymentsorry'] = 'Gràcies per pagar. Dissortadament el pagament encara no ha estat completament processat i encara no podeu entrar al curs \"$a->fullname\". Torneu a intentar-ho d\'aquí a uns segons i si no podeu adreceu-vos al $a->teacher o a l\'administrador del lloc';
+$string['paymentthanks'] = 'Gràcies per pagar. Ja esteu inscrit al curs:<br />\"$a\"';
 $string['people'] = 'Persones';
 $string['personalprofile'] = 'Perfil personal';
 $string['phone'] = 'Telèfon';
@@ -744,6 +754,7 @@ $string['rename'] = 'Canvia el nom';
 $string['renamefileto'] = 'Canvia el nom de <b>$a</b> a';
 $string['required'] = 'Necessari';
 $string['requireskey'] = 'Aquest curs requereix una clau d\'inscripció';
+$string['requirespayment'] = 'Aquest curs requereix pagament';
 $string['resortcoursesbyname'] = 'Reordena els cursos pel nom';
 $string['resources'] = 'Recursos';
 $string['restore'] = 'Restaura';

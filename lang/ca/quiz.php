@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3 (2004052500)
+      // quiz.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['acceptederror'] = 'Error acceptat';
@@ -41,11 +41,12 @@ $string['categorymove'] = 'La categoria \'$a->name\' conté $a->count preguntes. 
 $string['categorymoveto'] = 'Mou-les a aquesta categoria';
 $string['choice'] = 'Opció';
 $string['choices'] = 'Opcions disponibles';
+$string['confirmstartattempt'] = 'Aquest qüestionari té un límit de temps. Esteu segur que voleu començar-lo?';
 $string['correctanswer'] = 'Resposta correcta';
 $string['correctanswers'] = 'Respostes correctes';
 $string['corrresp'] = 'Resposta del sistema correcta';
 $string['countdown'] = 'Compte enrere';
-$string['countdownfinished'] = 'El temps s\'està esgotant. Heu de trametre les respostes ja.';
+$string['countdownfinished'] = 'El temps es tancarà aviat. Heu de trametre les respostes ja.';
 $string['countdowntenminutes'] = 'El qüestionari es tancarà en 10 minuts.';
 $string['coursetestmanager'] = 'Format Course Test Manager';
 $string['createmultiple'] = 'Crea diferents preguntes';
@@ -74,6 +75,9 @@ $string['editingshortanswer'] = 'S\'està editant una pregunta de resposta breu';
 $string['editingtruefalse'] = 'S\'està editant una pregunta de vertader/fals';
 $string['editquestions'] = 'Edita preguntes';
 $string['errorsdetected'] = 'S\'ha(n) detectat $a error(s)';
+$string['exportfilename'] = 'quiz';
+$string['exportname'] = 'Nom del fitxer';
+$string['exportquestions'] = 'Exporta preguntes en un fitxer';
 $string['false'] = 'Fals';
 $string['feedback'] = 'Comentari';
 $string['fileformat'] = 'Format de fitxer';
@@ -99,6 +103,7 @@ $string['listitems'] = 'Llista dels elements del qüestionari';
 $string['marks'] = 'Marques';
 $string['match'] = 'Aparellament';
 $string['matchanswer'] = 'Resposta correcta';
+$string['minutes'] = 'minuts';
 $string['missinganswer'] = 'Massa poques declaracions :ANSWER, :Lx, :Rx per a la línia $a de la pregunta. Heu de definir almenys dues respostes possibles.';
 $string['missingcorrectanswer'] = 'S\'ha d\'especificar la resposta correcta ';
 $string['missingname'] = 'Falta l\'enunciat de la pregunta';
@@ -117,6 +122,7 @@ $string['noquestions'] = 'Encara no s\'han afegit preguntes';
 $string['noresponse'] = 'Sense resposta';
 $string['noreview'] = 'No teniu permís per revisar aquest qüestionari';
 $string['noreviewuntil'] = 'No teniu permís per revisar aquest qüestionari fins el $a';
+$string['noscript'] = 'El javascript ha d\'estar habilitat per continuar';
 $string['notenoughanswers'] = 'Aquest tipus de pregunta requereix com a mínim $a respostes';
 $string['notenoughsubquestions'] = 'No heu definit prou subpreguntes!<br />
 Voleu tornar enrere i arreglar aquesta pregunta?';
@@ -124,6 +130,7 @@ $string['numerical'] = 'Numèrica';
 $string['paragraphquestion'] = 'Tipus de pregunta no compatible: pregunta de paràgraf a la línia $a. Aquesta pregunta s\'ha ignorat.';
 $string['percentcorrect'] = 'El percentatge és correcte';
 $string['publish'] = 'Publica';
+$string['publishedit'] = 'Heu de tenir permisos en el curs per afegir o editar preguntes d\'aquesta categoria';
 $string['qti'] = 'Format IMS QTI';
 $string['question'] = 'Pregunta';
 $string['questioninuse'] = 'La pregunta \'$a\' s\'està utilitzant actualment:';
@@ -137,6 +144,8 @@ $string['quizcloses'] = 'El qüestionari es tanca';
 $string['quiznotavailable'] = 'Aquest qüestionari estarà disponible a partir de: $a';
 $string['quizopen'] = 'Obre el qüestionari';
 $string['quizopens'] = 'S\'obre el qüestionari';
+$string['quiztimelimit'] = 'Temps màxim: $a';
+$string['quiztimer'] = 'Comptador';
 $string['random'] = 'Pregunta aleatòria';
 $string['randomcreate'] = 'Crea preguntes aleatòries';
 $string['randomsamatch'] = 'Aparellaments aleatoris de resposta breu';
@@ -174,6 +183,10 @@ $string['shuffleanswers'] = 'Barreja respostes';
 $string['shufflequestions'] = 'Barreja preguntes';
 $string['time'] = 'Temps';
 $string['timecompleted'] = 'Completat';
+$string['timeleft'] = 'Temps restant';
+$string['timelimit'] = 'Temps màxim';
+$string['timelimitexeeded'] = 'Heu esgotat el temps';
+$string['timesup'] = 'Temps esgotat';
 $string['timetaken'] = 'Temps emprat';
 $string['toomanyrandom'] = 'Es necessiten més preguntes aleatòries que les que hi ha aquesta categoria ($a)';
 $string['true'] = 'Vertader';
