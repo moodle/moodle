@@ -781,7 +781,7 @@ $string['numyears'] = '$a vuotta';
 $string['ok'] = 'OK';
 $string['opentoguests'] = 'Avoin vieraille';
 $string['optional'] = 'vapaaehtoinen';
-$string['order'] = 'Tilaa';
+$string['order'] = 'Tila';
 $string['other'] = 'Toinen';
 $string['outline'] = 'Rakenne';
 $string['page'] = 'Sivu';
@@ -923,6 +923,7 @@ $string['socialheadline'] = 'Keskustelu - viimeisimmät aiheet';
 $string['someallowguest'] = 'Jotkut kurssit saattavat sallia vierastunnukset.';
 $string['someerrorswerefound'] = 'Joitain tietoja puuttui tai ne olivat vääränlaisia. Katso tarkemmat tiedot alta.';
 $string['sortby'] = 'Lajittele';
+$string['specifyname'] = 'Määrittele nimi';
 $string['startdate'] = 'Kurssin aloituspäivämäärä';
 $string['startsignup'] = 'Aloita nyt luomalla uusi käyttäjätunnus!';
 $string['state'] = 'Maakunta';
@@ -1047,9 +1048,7 @@ $a->action
 Käyttäjälle on ilmoitettu tapahtuneesta.';
 $string['virusfoundlateradminnolog'] = 'Ylläpitäjä huomio! Lähettetystä tiedostosta $a->filename on löytynyt virus. Moodle ei voinut selvittää tiedoston lähettäjää Tiedostolle on tapahtunut seuraavaa:
 
-$a->action
-
-';
+$a->action';
 $string['virusfoundsubject'] = '$a : Viruksen saastuttama!';
 $string['virusfounduser'] = 'Tiedostosta $a jonka lähetit on viruksen saastuttama. Tiedoston lähetys ei onnistunut.';
 $string['virusplaceholder'] = 'Lähetetty tiedoto oli viruksen saastuttama ja tiedosto on eritetty tai tuhottu. Käyttäjälle on ilmoitettu asiasta.';

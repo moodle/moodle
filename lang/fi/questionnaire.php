@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // questionnaire.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // questionnaire.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['alreadyfilled'] = 'Olet jo täyytänyt tämän kyselyn. Kiitos.';
@@ -10,5 +10,6 @@ $string['notavail'] = 'Kysely ei ole vielä saatavilla. Kokeile myöhemmin uudelle
 $string['qmanage'] = 'Hallitse kyselyitä';
 $string['qtype'] = 'Tyyppi';
 $string['questionnaireid'] = 'Kysely';
+$string['respondenttype'] = 'Vastaajan tyyppi';
 
 ?>
