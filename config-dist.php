@@ -152,10 +152,21 @@ $CFG->admin = 'admin';
 // Setting this to true will enable admins to edit any post at any time
 //      $CFG->admineditalways = true;
 //
-// This variable will override the default block configuration on newly
-// created courses, or on upgraded courses from Moodle 1.2.1 and earlier.
-// The names here should all be existing blocks in the "blocks" directory.
-//      $CFG->defaultblocks = "participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity";
+// These variables define default block variables.
+// **WARNING** -- If it is set it is the only one that is used.
+//      $CFG->defaultblocks_override = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
+//
+// These variables define the specific settings for defined course formats.
+// **WARNING ** -- They override any settings defined in the format's own config 
+//                 file.
+$CFG->defaultblocks_site = 'site_main_menu,admin,course_list:course_summary,calendar_month';
+//      $CFG->defaultblocks_social = 'participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list';
+//      $CFG->defaultblocks_topics = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
+//      $CFG->defaultblocks_weeks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
+//
+// This variable is used when no other default setting is found.
+$CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
+//
 //
 // This setting will put Moodle in Unicode mode.  It's very new and
 // most likely doesn't work yet.   THIS IS FOR DEVELOPERS ONLY, IT IS
