@@ -89,16 +89,20 @@
         echo "<BR>";
     }
 
-    $strattempt = get_string("attempt", "quiz");
-    $strtime = get_string("time", "quiz");
-    $strgrade = get_string("grade");
+    $strattempt       = get_string("attempt", "quiz");
+    $strtimetaken     = get_string("timetaken", "quiz");
+    $strtimecompleted = get_string("timecompleted", "quiz");
+    $strgrade         = get_string("grade");
+    $strbestgrade     = get_string("bestgrade", "quiz");
 
     if ($numattempts) { 
-        $table->head = array($strattempt, $strtime, "$strgrade / $quiz->grade");
-        $table->align = array("CENTER", "LEFT", "RIGHT");
+        $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strgrade / $quiz->grade");
+        $table->align = array("CENTER", "CENTER", "LEFT", "RIGHT");
+        $table->width = array("", "", "", "");
         foreach ($attempts as $attempt) {
             $table->data[] = array( $attempt->attempt, 
-                                    userdate($attempt->timemodified), 
+                                    format_time($attempt->timefinish - $attempt->timestart),
+                                    userdate($attempt->timefinish), 
                                     format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade) );
         }
         print_table($table);
@@ -113,7 +117,7 @@
             if ($available) {
                 $options["id"] = $cm->id;
                 if ($numattempts) {
-                    print_heading("Your best grade so far is $mygrade / $quiz->grade.");
+                    print_heading("$strbestgrade: $mygrade / $quiz->grade.");
                 }
                 echo "<BR>";
                 echo "<DIV align=CENTER>";

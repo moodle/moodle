@@ -67,7 +67,6 @@
                 error("Could not update question!");
             }
         } else {         // Question is a new one
-            $db->debug =true;
             if (!$question->id = insert_record("quiz_questions", $question)) {
                 error("Could not insert new question!");
             }

@@ -58,6 +58,8 @@ CREATE TABLE `quiz_attempts` (
   `user` int(10) unsigned NOT NULL default '0',
   `attempt` smallint(6) NOT NULL default '0',
   `sumgrades` varchar(10) NOT NULL default '0.0',
+  `timestart` int(10) unsigned NOT NULL default '0',
+  `timefinish` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Stores various attempts on a quiz';

@@ -144,6 +144,14 @@
 
 /// Print the quiz page
 
+/// Actually seeing the questions marks the start of an attempt
+ 
+    if (!$unfinished = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
+        if (! quiz_start_attempt($quiz->id, $USER->id, $numattempts)) {
+            error("Sorry! Could not start the quiz (could not save starting time)");
+        }
+    }
+
 /// First print the headings and so on
 
     print_heading($quiz->name);

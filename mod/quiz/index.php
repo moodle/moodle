@@ -40,29 +40,31 @@
     $strname  = get_string("name");
     $strweek  = get_string("week");
     $strtopic  = get_string("topic");
-    $strgrades  = get_string("grades");
+    $strbestgrade  = get_string("bestgrade", "quiz");
 
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname, $strgrades);
-        $table->align = array ("CENTER", "LEFT");
+        $table->head  = array ($strweek, $strname, $strbestgrade);
+        $table->align = array ("CENTER", "LEFT", "RIGHT");
         $table->width = array (10, "*", 10);
     } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname, $strgrades);
-        $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
+        $table->head  = array ($strtopic, $strname, $strbestgrade);
+        $table->align = array ("CENTER", "LEFT", "RIGHT");
         $table->width = array (10, "*", 10);
     } else {
-        $table->head  = array ($strname, $strgrades);
-        $table->align = array ("LEFT", "LEFT");
+        $table->head  = array ($strname, $strbestgrade);
+        $table->align = array ("LEFT", "RIGHT");
         $table->width = array ("*", 10);
     }
 
     foreach ($quizzes as $quiz) {
         $link = "<A HREF=\"view.php?id=$quiz->coursemodule\">$quiz->name</A>";
 
+        $bestgrade = quiz_get_best_grade($quiz->id, $USER->id);
+
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($quiz->section, $link);
+            $table->data[] = array ($quiz->section, $link, "$bestgrade / $quiz->grade");
         } else {
-            $table->data[] = array ($link);
+            $table->data[] = array ($link, "$bestgrade / $quiz->grade");
         }
     }
 

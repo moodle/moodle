@@ -6,10 +6,12 @@ function quiz_upgrade($oldversion) {
 
     global $CFG;
 
-    if ($oldversion < 2002110100) {
-
-        echo "The quiz module is under heavy development ... at this stage you should delete all existing quiz tables, as well as the quiz entry in the 'modules' table, then come back here to rebuild them.";
-
+    if ($oldversion < 2002101800) {
+        execute_sql(" ALTER TABLE `quiz_attempts` ".
+                    " ADD `timestart` INT(10) UNSIGNED DEFAULT '0' NOT NULL AFTER `sumgrades` , ".
+                    " ADD `timefinish` INT(10) UNSIGNED DEFAULT '0' NOT NULL AFTER `timestart` ");
+        execute_sql(" UPDATE `quiz_attempts` SET timestart = timemodified ");
+        execute_sql(" UPDATE `quiz_attempts` SET timefinish = timemodified ");
     }
 
     return true;

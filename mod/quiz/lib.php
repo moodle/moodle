@@ -622,9 +622,28 @@ function quiz_print_cat_question_list($categoryid) {
 }
 
 
+function quiz_start_attempt($quizid, $userid, $numattempt) {
+    $attempt->quiz = $quizid;
+    $attempt->user = $userid;
+    $attempt->attempt = $numattempt;
+    $attempt->timestart = time();
+    $attempt->timefinish = 0; 
+    $attempt->timemodified = time();
+
+    return insert_record("quiz_attempts", $attempt);
+}
+
+function quiz_get_user_attempt_unfinished($quizid, $userid) {
+// Returns an object containing an unfinished attempt (if there is one)
+    return get_record_sql("SELECT * FROM quiz_attempts 
+                           WHERE quiz = '$quizid' and user = '$userid' AND timefinish = 0");
+}
+
 function quiz_get_user_attempts($quizid, $userid) {
 // Returns a list of all attempts by a user
-    return get_records_sql("SELECT * FROM quiz_attempts WHERE quiz = '$quizid' and user = '$userid' ORDER by attempt ASC");
+    return get_records_sql("SELECT * FROM quiz_attempts 
+                            WHERE quiz = '$quizid' and user = '$userid' AND timefinish > 0 
+                            ORDER by attempt ASC");
 }
 
 
@@ -769,15 +788,25 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
 
     global $USER;
 
-    // First let's save the attempt record itself
+    // First find the attempt in the database (start of attempt)
 
-    $attempt->quiz = $quiz->id;
-    $attempt->user = $USER->id;
-    $attempt->attempt = $attemptnum;
+    if (!$attempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
+        notify("Trying to save an attempt that was not started!");
+        return false;
+    }
+
+    if ($attempt->attempt != $attemptnum) {  // Double check.
+        notify("Number of this attempt is different to the unfinished one!");
+        return false;
+    }
+
+    // Now let's complete this record and save it
+
     $attempt->sumgrades = $result->sumgrades;
+    $attempt->timefinish = time();
     $attempt->timemodified = time();
 
-    if (!$attempt->id = insert_record("quiz_attempts", $attempt)) {
+    if (! update_record("quiz_attempts", $attempt)) {
         notify("Error while saving attempt");
         return false;
     }
