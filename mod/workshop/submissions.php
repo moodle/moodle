@@ -1393,7 +1393,7 @@
 		
 		// save the anonymous option
 		set_field("workshop", "anonymous", $form->anonymous, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "league table", "view.php?id=$cm->id", $form->nentries);
+		add_to_log($course->id, "workshop", "league table", "view.php?id=$cm->id", $form->nentries, $cm->id);
 
 		redirect("submissions.php?action=adminlist&id=$cm->id");
 		}

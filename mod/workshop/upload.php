@@ -96,7 +96,7 @@
 					}
 					if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
 						print_heading(get_string("uploadsuccess", "assignment", $newfile_name) );
-					    add_to_log($course->id, "workshop", "submit", "view.php?id=$cm->id", "$workshop->id");
+					    add_to_log($course->id, "workshop", "submit", "view.php?id=$cm->id", "$workshop->id", "$cm->id");
                     }
 					else {
 						notify(get_string("uploaderror", "assignment") );

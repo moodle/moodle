@@ -879,7 +879,7 @@
 		}
 			
 	    add_to_log($course->id, "workshop", "assess",
-                "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
+                "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id", "$cm->id");
 		
 		// set up return address
 		if (!$returnto = $form->returnto) {
