@@ -113,6 +113,14 @@ function config_form($frm) {
                                 'AUD' => 'Australian Dollars'
                              );
 
+    $vars = array('enrol_cost', 'enrol_currency', 'enrol_paypalbusiness', 
+                  'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
+    foreach ($vars as $var) {
+        if (!isset($frm->$var)) {
+            $frm->$var = '';
+        } 
+    }
+
     include("$CFG->dirroot/enrol/paypal/config.html");
 }
 

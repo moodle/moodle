@@ -40,6 +40,13 @@ function check_entry($form, $course) {
 /// Override the base config_form() function
 function config_form($frm) {
     global $CFG;
+
+    $vars = array('enrol_flatfilelocation', 'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
+    foreach ($vars as $var) {
+        if (!isset($frm->$var)) {
+            $frm->$var = '';
+        } 
+    }
     include ("$CFG->dirroot/enrol/flatfile/config.html");    
 }
 

@@ -116,6 +116,17 @@ function get_access_icons($course) {
 /// Overide the base config_form() function
 function config_form($frm) {
     global $CFG;
+
+    $vars = array('enrol_dbhost', 'enrol_dbuser', 'enrol_dbpass', 
+                  'enrol_dbname', 'enrol_dbtable', 
+                  'enrol_localcoursefield', 'enrol_localuserfield', 
+                  'enrol_remotecoursefield', 'enrol_remoteuserfield',
+                  'enrol_allowinternal');
+    foreach ($vars as $var) {
+        if (!isset($frm->$var)) {
+            $frm->$var = '';
+        } 
+    }
     include("$CFG->dirroot/enrol/database/config.html");
 }
 
