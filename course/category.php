@@ -262,7 +262,8 @@
         $strhide     = get_string("hide");
         $strshow     = get_string("show");
         $strsummary  = get_string("summary");
-        $strassignteachers     = get_string("assignteachers");
+        $strsettings = get_string("settings");
+        $strassignteachers  = get_string("assignteachers");
         $strallowguests     = get_string("allowguests");
         $strrequireskey     = get_string("requireskey");
 
@@ -300,6 +301,8 @@
             if ($creatorediting) {
                 if ($adminediting) {
                     echo "<td>";
+                    echo "<a title=\"$strsettings\" href=\"$CFG->wwwroot/course/edit.php?id=$acourse->id\"><img".
+                         " src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
                     echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$acourse->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
                     echo "<a title=\"$strdelete\" href=\"delete.php?id=$acourse->id\"><img".
@@ -339,6 +342,8 @@
 
                 } else if (isteacheredit($acourse->id)) {
                     echo "<td>";
+                    echo "<a title=\"$strsettings\" href=\"$CFG->wwwroot/course/edit.php?id=$acourse->id\"><img".
+                         " src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
                     echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$acourse->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
                 }
