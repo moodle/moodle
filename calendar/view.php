@@ -495,14 +495,14 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 }
 
 function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $maxevents) {
+
     $events = calendar_get_upcoming($courses, $groups, $users, $futuredays, $maxevents);
-    $numevents = count($events);
 
     // New event button
     if(isguest()) {
         $text = get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming');
-    }
-    else {
+
+    } else {
         $text = '<div style="float: left;">'.get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming').'</div><div style="float: right;">';
         $text.= '<form style="display: inline;" action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<input type="hidden" name="action" value="new" />';
@@ -513,23 +513,35 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
     }
 
     print_side_block_start($text, '', 'mycalendar');
-    for($i = 0; $i < $numevents; ++$i) {
-        echo '<p>';
-        if(!empty($events[$i]->icon)) {
-            echo '<span class="cal_event">'.$events[$i]->icon.' </span>';
-        }
-        if(!empty($events[$i]->referer) && empty($events[$i]->icon)) {
-            echo '<span class="calendarreferer">'.$events[$i]->referer.': </span>';
-        }
-        echo '<span class="cal_event">'.$events[$i]->name.":</span>\n";
-        echo '<span class="cal_event_date">'.$events[$i]->time.'</span>';
-        echo '<div style="margin-top: -1em; padding-left: 20px;">'.$events[$i]->description.'</div>';
-        if($i < $numevents - 1) {
-            echo '<hr />';
-        }
-        echo '</p>';
+    foreach ($events as $event) {
+        calendar_print_event($event);
     }
     print_side_block_end();
+}
+
+
+function calendar_print_event($event) {
+    global $THEME;
+
+    echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost" width="100%">';
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"16\" valign=\"top\">";
+    if (!empty($event->icon)) {
+        echo $event->icon;
+    }
+    echo '</td>';
+    echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
+
+    if(!empty($event->referer) and empty($event->icon)) {
+        echo '<span class="calendarreferer">'.$event->referer.': </span>';
+    }
+    echo '<span class="cal_event">'.$event->name."</span>&nbsp;&nbsp;&nbsp;";
+    echo '<span class="cal_event_date">'.$event->time.'</span>';
+
+    echo "</td></tr>";
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" valign=\"top\" class=\"forumpostside\" width=\"16\">&nbsp;</td>";
+    echo "<td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
+    echo format_text($event->description, FORMAT_HTML);
+    echo "</td></tr>\n</table><br />\n\n";
 }
 
 
