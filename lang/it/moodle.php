@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004050300)
+      // moodle.php - created with Moodle 1.3 Beta + (2004051300)
 
 
 $string['action'] = 'Azione';
@@ -103,10 +103,13 @@ $string['backupsavetohelp'] = 'Percorso completo della directory dove vuoi salva
 $string['backupuserfileshelp'] = 'Scegli quali file utente (es immagini profilo) devono essere incluse nelle copie di sicurezza automatiche';
 $string['backupusershelp'] = 'Scegli se includere tutti gli utenti del sito o solo gli utenti iscritti a ogni corso.';
 $string['backupversion'] = 'Versione copia di sicurezza';
+$string['blockdeleteconfirm'] = 'Stai per cancellare completamente il blocco \'$a\'. Questo cancellerà completamente tutto quello che è associato a questo blocco nella base dati. Sei SICURO di voler continuare?';
+$string['blockdeletefiles'] = 'Tutti i dati associati al blocco \'$a->block\' sono stati cancellati dalla base dati. Per completare la cancellazione (e prevenire che il blocco si ri-installi da solo), devi cancellare questa directory dal tuo server: $a->directory';
 $string['blocks'] = 'Blocchi';
 $string['blocksetup'] = 'Impostazione tabelle blocchi';
 $string['blocksuccess'] = '$a tabelle sono state correttamente impostate';
 $string['bycourseorder'] = 'Ordina per corso';
+$string['byname'] = 'di $a';
 $string['cancel'] = 'Cancella';
 $string['categories'] = 'Categorie di corso';
 $string['category'] = 'Categoria';
@@ -140,6 +143,7 @@ $string['configcountry'] = 'Se scegli uno stato qui, questo verrà proposto di de
 $string['configdebug'] = 'Se si attiva questa opzione, Si incrementerà il livello di rapporto di errore e saranno stampati più avvertimenti. Questo è utile solo per sviluppatori.';
 $string['configdeleteunconfirmed'] = 'Se viene utilizzata l\'autenticazione via mail, questo è il periodo nel quale una risposta dell\'utente viene accettata. Dopo questo periodo, le registrazioni non confermate sono cancellate.';
 $string['configenablerssfeeds'] = 'Questa opzione abilita l\'utilizzo degli RSS nel sito. Per vedere i cambiamenti devi abilitare l\'RSS anche nei singoli moduli - gestione moduli nella pagina di configurazione.';
+$string['configenablerssfeedsdisabled'] = 'Questo non è disponibile perché gli RSS sono disabilitati in tutto il Sito. Per abilitali, vai a Configura variabili sotto Amministrazione Configurazione.';
 $string['configerrorlevel'] = 'Scegli il numero di messaggi di avvertimento PHP che vuoi siano mostrati. Questa <i>Normale</i> è, di solito la scelta migliore.';
 $string['configfilteruploadedfiles'] = 'Abilitando questa impostazione farà elaborare da Moodle con i filtri tutti i file HTML e di testo prima di visualizzarli.';
 $string['configforcelogin'] = 'Normalmente, la pagina principale del sito e la lista dei corsi (ma non i corsi) possono essere visualizzate senza registrarsi al sito. Se vuoi forzare le persone a registrarsi prima di poter fare QUALUNQUE COSA sul sito, allore devi abilitare questa impostazione.';
@@ -240,6 +244,7 @@ $string['datemostrecentfirst'] = 'Data - la più recente prima';
 $string['datemostrecentlast'] = 'Data - la più recente ultima';
 $string['day'] = 'giorno';
 $string['days'] = 'giorni';
+$string['decodinginternallinks'] = 'Decodifica collegamenti interni';
 $string['defaultcoursefullname'] = 'Corso Nome 101';
 $string['defaultcourseshortname'] = 'CF101';
 $string['defaultcoursestudent'] = 'Studente';
@@ -341,8 +346,8 @@ $string['emailpasswordsent'] = 'Grazie per aver confermato il cambiamento di pas
 
 <p>La nuova password é stata generata in modo automatico - se tu vuoi, puoi <a href=$a->link>cambiare la password</a> con qualcosa che sia più facile da ricordare.';
 $string['enable'] = 'Abilita';
-$string['enrolledincourse'] = 'Iscritto al corso \"$a\"';
-$string['enrolledincoursenot'] = 'Non iscritto al corso \"$a\"';
+$string['enrolledincourse'] = 'Iscritto al corso ';
+$string['enrolledincoursenot'] = 'Non iscritto al corso ';
 $string['enrolmentconfirmation'] = 'Stai per iscriverti a questo corso.<br /> Sei sicuro di volerlo fare?';
 $string['enrolmentkey'] = 'Chiave di accesso';
 $string['enrolmentkeyfrom'] = 'Questo corso richiede una \'chiave di accesso\' - una sola volta -<BR> password che dovresti ottenere da $a';
@@ -482,7 +487,7 @@ $string['includecoursefiles'] = 'Includi i file del corso';
 $string['includecourseusers'] = 'Includi gli utenti del corso';
 $string['included'] = 'Incluso';
 $string['includelogentries'] = 'Includi i log';
-$string['includemodules'] = 'Includi&nbsp;Moduli';
+$string['includemodules'] = 'Includi Moduli';
 $string['includeneededusers'] = 'Includi gli utenti necessari';
 $string['includeuserfiles'] = 'Includi i file degli utenti';
 $string['institution'] = 'Istituzione';
@@ -533,9 +538,9 @@ Questi sono i passi per aprire il tuo account:
 
 <LI>Adesso, seleziona il corso a cui intendi partecipare.
 
-<LI>Se è richiesta una &quot;chiave di accesso&quot; - chiedine
+<LI>Se è richiesta una \"chiave di accesso\" - chiedine
 
-l\'invio al tuo insegnante. Questa chiave ti &quot;iscriverà&quot; al corso.
+l\'invio al tuo insegnante. Questa chiave ti \"iscriverà\" al corso.
 
 <LI>Puoi adesso accedere pienamente al corso. Da ora avrai solo bisogno
 
@@ -760,6 +765,8 @@ $string['restoreto'] = 'Recupera a';
 $string['returningtosite'] = 'Ciao, sei ritornato?';
 $string['revert'] = 'Ripristina';
 $string['role'] = 'Funzione';
+$string['rssarticles'] = 'Numero di ultimi articoli RSS';
+$string['rsstype'] = 'RSS per questa attività';
 $string['savechanges'] = 'Salva modifiche';
 $string['saveto'] = 'Salva in';
 $string['scale'] = 'Scala di valutazione';

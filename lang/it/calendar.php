@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004043001)
+      // calendar.php - created with Moodle 1.3 Beta + (2004051300)
 
 
 $string['april'] = 'Aprile';
@@ -16,11 +16,14 @@ $string['december'] = 'Dicembre';
 $string['default'] = 'Impostazione base';
 $string['deleteevent'] = 'Cancella evento';
 $string['detailedmonthview'] = 'Vista mensile dettagliata';
+$string['durationminutes'] = 'Durata in minuti';
 $string['durationnone'] = 'Senza durata';
 $string['durationuntil'] = 'Fino al';
 $string['editevent'] = 'Modifica evento';
 $string['errorbeforecoursestart'] = 'Non puoi impostare un evento prima della data di inizio ';
 $string['errorinvaliddate'] = 'Data non corretta';
+$string['errorinvalidminutes'] = 'Specifica la durata in minuti impostando un numero tra 1 e 999.';
+$string['errorinvalidrepeats'] = 'Specifica il numero di eventi impostando un numero tra 1 e 99.';
 $string['errornodescription'] = 'La descrizione è richiesta';
 $string['errornoeventname'] = 'Il nome è richiesto';
 $string['eventdate'] = 'Data';
@@ -30,6 +33,7 @@ $string['eventendtime'] = 'Scadenza';
 $string['eventinstanttime'] = 'Ora';
 $string['eventkind'] = 'Tipo di evento';
 $string['eventname'] = 'Nome';
+$string['eventrepeat'] = 'Ripetizioni';
 $string['eventsfor'] = '$a eventi';
 $string['eventstarttime'] = 'Ora d\'inizio';
 $string['eventtime'] = 'Ora';
@@ -43,6 +47,7 @@ $string['february'] = 'Febbraio';
 $string['fri'] = 'Ven';
 $string['friday'] = 'Venerdì';
 $string['globalevents'] = 'Eventi generali';
+$string['gotocalendar'] = 'Vai al calendario';
 $string['groupevents'] = 'Eventi di gruppo';
 $string['hidden'] = 'Nascosto';
 $string['january'] = 'Gennaio';
@@ -65,6 +70,9 @@ $string['pref_startwday'] = 'Primo giorno della settimana';
 $string['pref_timeformat'] = 'Formato orario';
 $string['preferences'] = 'Preferenze';
 $string['preferences_available'] = 'Le tue preferenze';
+$string['repeatnone'] = 'Senza ripetizioni';
+$string['repeatweeksl'] = 'Ripeti settimanalmente, creandoli tutti insieme';
+$string['repeatweeksr'] = 'eventi';
 $string['sat'] = 'Sab';
 $string['saturday'] = 'Sabato';
 $string['september'] = 'Settembre';

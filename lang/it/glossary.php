@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 Beta + (2004030702)
+      // glossary.php - created with Moodle 1.3 Beta + (2004051300)
 
 
 $string['addcomment'] = 'Aggiungi commento';
@@ -49,6 +49,7 @@ $string['commentson'] = 'Commenti su';
 $string['commentupdated'] = 'Il commento è stato aggiornato';
 $string['concept'] = 'Concetto';
 $string['concepts'] = 'Concetti';
+$string['configenablerssfeeds'] = 'Questa impostazione abilita l\'utilizzo degli RSS per tutti i glossari. E\' comunque necessario abilitarli manualmente nelle impostazioni di ogni glossario.';
 $string['currentglossary'] = 'Glossario corrente';
 $string['dateview'] = 'Naviga per data';
 $string['defaultapproval'] = 'Stato di approvazione standard';
@@ -68,6 +69,7 @@ $string['displayformat6'] = 'Lista termini';
 $string['displayformatcontinuous'] = 'Continuo senza autore';
 $string['displayformatdefault'] = 'Semplice, stile dizionario';
 $string['displayformats'] = 'Formati di visualizzazione';
+$string['displayformatssetup'] = 'Impostazione del formato di visualizzazione';
 $string['duplicateentry'] = 'Termine duplicato';
 $string['editcategories'] = 'Modifica categorie';
 $string['editentry'] = 'Modifica termine';
@@ -81,6 +83,7 @@ $string['entryapproved'] = 'Questo termine è stato approvato';
 $string['entrydeleted'] = 'Termine cancellato.';
 $string['entryexported'] = 'Termine esportato correttamente.';
 $string['entryishidden'] = '(questo termine è attualmente nascosto)';
+$string['entryleveldefaultsettings'] = 'Impostazione del livello di ingresso standard';
 $string['entryusedynalink'] = 'Questo termine deve essere collegato automaticamente';
 $string['explainaddentry'] = 'Aggiungi un nuovo termine al glossario corrente.<br />Concetto e definizione sono campi necessari.';
 $string['explainall'] = '<b>TUTTI</b> mostrerà tutti i termini in una pagina.';
@@ -97,6 +100,7 @@ $string['filetoimport'] = 'File da importare';
 $string['fillfields'] = 'Concetto e definizione sono campi necessari.';
 $string['filtername'] = 'Auto-collegamento al glossario';
 $string['fullmatch'] = 'Trova tutte le parole solo<br /><small>(quando collegato automaticamente)</small>';
+$string['glossaryleveldefaultsettings'] = 'Impostazione del livello dei glossari standard';
 $string['glossarytype'] = 'Tipo di Glossario';
 $string['glosssaryexported'] = 'Glossario esportato';
 $string['importcategories'] = 'Importa categorie';
@@ -134,6 +138,7 @@ $string['ratingsuse'] = 'Utilizza le valutazioni';
 $string['ratingtime'] = 'Restringi la valutazione ai termini tra queste date:';
 $string['rejectedentries'] = 'Termini rigettati';
 $string['rejectionrpt'] = 'Rapporto rigettazione';
+$string['rsssubscriberss'] = 'Mostra gli RSS per \'$a\' concetti.';
 $string['searchindefinition'] = 'Cerco tra i concetti e le definizioni?';
 $string['secondaryglossary'] = 'Glossario secondario';
 $string['sendinratings'] = 'Spediscilo nella mia ultima valutazione';
@@ -151,6 +156,8 @@ $string['totalentries'] = 'Totale termini';
 $string['usedynalink'] = 'Collega automaticamente i termini del glossario';
 $string['waitingapproval'] = 'Attede approvazione';
 $string['warningstudentcapost'] = '(Questo viene applicato solo se il glossario non é quello generale)';
+$string['withauthor'] = 'Concetto con autore';
+$string['withoutauthor'] = 'Concetto senza autore';
 $string['writtenby'] = 'scritto da';
 $string['youarenottheauthor'] = 'Non puoi modificare questo commento perché non ne sei autore.';
 
