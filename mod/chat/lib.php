@@ -273,7 +273,7 @@ function chat_get_users($chatid, $groupid=0) {
         $groupselect = "";
     }
    
-    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping
+    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping
                               FROM {$CFG->prefix}chat_users c,
                                    {$CFG->prefix}user u
                              WHERE c.chatid = '$chatid'
