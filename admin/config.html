@@ -11,21 +11,6 @@
     </td>
 </tr>
 <tr valign=top>
-	<td align=right><p>langdir:</td>
-	<td>
-    <?php 
-       unset($options);
-       $options["LTR"] = get_string("langltr");
-       $options["RTL"] = get_string("langrtl");
-
-       choose_from_menu ($options, "langdir", $config->langdir, "", "", "");
-    ?>
-    </td>
-    <td>
-    <?php print_string("configlangdir") ?>
-    </td>
-</tr>
-<tr valign=top>
 	<td align=right><p>langmenu:</td>
 	<td>
     <?php 

@@ -763,7 +763,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=".get_string("thischarset")."\" />\n$meta\n";
     }
 
-    if (!empty($CFG->langdir) and $CFG->langdir == "RTL") {
+    if ( get_string("thisdirection") == "rtl" ) {
         $direction = " dir=\"rtl\"";
     } else {
         $direction = " dir=\"ltr\"";
