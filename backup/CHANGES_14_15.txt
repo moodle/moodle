@@ -33,7 +33,7 @@ Now I show the specific detailed status of every item in the process:
 20. PROG: Review the lesson module completely! Check the upgrade process to
           mimic it. Pending to decide if the grade field must go to the score
           one when restoring old files!! (sent to Michael, Mark and Martin).
-21. TODO: Review the workshop module completely! Check the upgrade process to
+21. DONE: Review the workshop module completely! Check the upgrade process to
           mimic it.
 22. PROG: Review the wiki module fully. Now the wiki backup & restore seems to
           be working fine. About binary contents loaded directly to DB, I
@@ -56,6 +56,7 @@ Now I show the specific detailed status of every item in the process:
 32. TODO: quiz_questions->hidden and quiz_responses->originalquestion
 33. TODO: quiz_question_version
 34. DONE: Group images aren't included at all in backup/restore. Bug 2674.
+35. TODO: New glossary log action: "view_entry".
          
 Eloy (stronk7)
 23-01-2004
