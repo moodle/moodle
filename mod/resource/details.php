@@ -144,8 +144,6 @@
                     $newwindow = $CFG->resource_popup;
                 }
 
-                echo $alloptions;
-
                 ?>
 
                 <tr valign="top">
@@ -253,8 +251,6 @@
                     }
                     $newwindow = $CFG->resource_popup;
                 }
-
-                echo $alloptions;
 
                 ?>
 
