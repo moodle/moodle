@@ -491,6 +491,7 @@ $string['included'] = 'Included';
 $string['includelogentries'] = 'Include Log Entries';
 $string['includemodules'] = 'Include&nbsp;Modules';
 $string['includeneededusers'] = 'Include Needed Users';
+$string['includenoneusers'] = 'Include None Users';
 $string['includeuserfiles'] = 'Include User Files';
 $string['institution'] = 'Institution';
 $string['invalidemail'] = 'Invalid email address';
