@@ -240,7 +240,9 @@
 /// Print out all the courses
     unset($course);    // To avoid unwanted language effects later
 
-    $courses = get_courses_page($category->id, "c.sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage);
+    $courses = get_courses_page($category->id, 'c.sortorder ASC', 
+                                'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible', 
+                                $totalcount, $page*$perpage, $perpage);
     $numcourses = count($courses);
 
     if (!$courses) {
