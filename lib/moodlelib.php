@@ -46,7 +46,7 @@ define('VISIBLEGROUPS', 2);
 function require_variable($var) {
 /// Variable must be present
     if (! isset($var)) {
-        error("A required parameter was missing");
+        error('A required parameter was missing');
     }
 }
 
@@ -65,12 +65,12 @@ function set_config($name, $value) {
 
     $CFG->$name = $value;  // So it's defined for this invocation at least
 
-    if (get_field("config", "name", "name", $name)) {
-        return set_field("config", "value", $value, "name", $name);
+    if (get_field('config', 'name', 'name', $name)) {
+        return set_field('config', 'value', $value, 'name', $name);
     } else {
         $config->name = $name;
         $config->value = $value;
-        return insert_record("config", $config);
+        return insert_record('config', $config);
     }
 }
 
@@ -107,7 +107,7 @@ function set_user_preference($name, $value, $user=NULL) {
     }
 
     if ($preference = get_record('user_preferences', 'userid', $user->id, 'name', $name)) {
-        if (set_field("user_preferences", "value", $value, "id", $preference->id)) {
+        if (set_field('user_preferences', 'value', $value, 'id', $preference->id)) {
             $user->preference[$name] = $value;
             return true;
         } else {
@@ -188,14 +188,14 @@ function format_time($totalsecs, $str=NULL) {
     $totalsecs = abs($totalsecs);
 
     if (!$str) {  // Create the str structure the slow way
-        $str->day   = get_string("day");
-        $str->days  = get_string("days");
-        $str->hour  = get_string("hour");
-        $str->hours = get_string("hours");
-        $str->min   = get_string("min");
-        $str->mins  = get_string("mins");
-        $str->sec   = get_string("sec");
-        $str->secs  = get_string("secs");
+        $str->day   = get_string('day');
+        $str->days  = get_string('days');
+        $str->hour  = get_string('hour');
+        $str->hours = get_string('hours');
+        $str->min   = get_string('min');
+        $str->mins  = get_string('mins');
+        $str->sec   = get_string('sec');
+        $str->secs  = get_string('secs');
     }
 
     $days      = floor($totalsecs/86400);
@@ -210,24 +210,24 @@ function format_time($totalsecs, $str=NULL) {
     $sh = ($hours == 1) ? $str->hour : $str->hours;
     $sd = ($days == 1)  ? $str->day  : $str->days;
 
-    $odays = "";
-    $ohours = "";
-    $omins = "";
-    $osecs = "";
+    $odays = '';
+    $ohours = '';
+    $omins = '';
+    $osecs = '';
 
-    if ($days)  $odays  = "$days $sd";
-    if ($hours) $ohours = "$hours $sh";
-    if ($mins)  $omins  = "$mins $sm";
-    if ($secs)  $osecs  = "$secs $ss";
+    if ($days)  $odays  = $days .' '. $sd;
+    if ($hours) $ohours = $hours .' '. $sh;
+    if ($mins)  $omins  = $mins .' '. $sm;
+    if ($secs)  $osecs  = $secs .' '. $ss;
 
-    if ($days)  return "$odays $ohours";
-    if ($hours) return "$ohours $omins";
-    if ($mins)  return "$omins $osecs";
-    if ($secs)  return "$osecs";
-    return get_string("now");
+    if ($days)  return $odays .' '. $ohours;
+    if ($hours) return $ohours .' '. $omins;
+    if ($mins)  return $omins .' '. $osecs;
+    if ($secs)  return $osecs;
+    return get_string('now');
 }
 
-function userdate($date, $format="", $timezone=99, $fixday = true) {
+function userdate($date, $format='', $timezone=99, $fixday = true) {
 /// Returns a formatted string that represents a date in user time
 /// WARNING: note that the format is for strftime(), not date().
 /// Because of a bug in most Windows time libraries, we can't use
@@ -238,11 +238,11 @@ function userdate($date, $format="", $timezone=99, $fixday = true) {
 /// If parammeter fixday = true (default), then take off leading
 /// zero from %d, else mantain it.
 
-    if ($format == "") {
-        $format = get_string("strftimedaydatetime");
+    if ($format == '') {
+        $format = get_string('strftimedaydatetime');
     }
 
-    $formatnoday = str_replace("%d", "DD", $format);
+    $formatnoday = str_replace('%d', 'DD', $format);
     if ($fixday) {
         $fixday = ($formatnoday != $format);
     }
@@ -252,8 +252,8 @@ function userdate($date, $format="", $timezone=99, $fixday = true) {
     if (abs($timezone) > 13) {
         if ($fixday) {
             $datestring = strftime($formatnoday, $date);
-            $daystring  = str_replace(" 0", "", strftime(" %d", $date));
-            $datestring = str_replace("DD", $daystring, $datestring);
+            $daystring  = str_replace(' 0', '', strftime(" %d", $date));
+            $datestring = str_replace('DD', $daystring, $datestring);
         } else {
             $datestring = strftime($format, $date);
         }
@@ -261,8 +261,8 @@ function userdate($date, $format="", $timezone=99, $fixday = true) {
         $date = $date + (int)($timezone * 3600);
         if ($fixday) {
             $datestring = gmstrftime($formatnoday, $date);
-            $daystring  = str_replace(" 0", "", gmstrftime(" %d", $date));
-            $datestring = str_replace("DD", $daystring, $datestring);
+            $daystring  = str_replace(' 0', '', gmstrftime(" %d", $date));
+            $datestring = str_replace('DD', $daystring, $datestring);
         } else {
             $datestring = gmstrftime($format, $date);
         }
@@ -282,16 +282,16 @@ function usergetdate($date, $timezone=99) {
     }
     //There is no gmgetdate so I have to fake it...
     $date = $date + (int)($timezone * 3600);
-    $getdate["seconds"] = gmstrftime("%S", $date);
-    $getdate["minutes"] = gmstrftime("%M", $date);
-    $getdate["hours"]   = gmstrftime("%H", $date);
-    $getdate["mday"]    = gmstrftime("%d", $date);
-    $getdate["wday"]    = gmstrftime("%u", $date);
-    $getdate["mon"]     = gmstrftime("%m", $date);
-    $getdate["year"]    = gmstrftime("%Y", $date);
-    $getdate["yday"]    = gmstrftime("%j", $date);
-    $getdate["weekday"] = gmstrftime("%A", $date);
-    $getdate["month"]   = gmstrftime("%B", $date);
+    $getdate['seconds'] = gmstrftime("%S", $date);
+    $getdate['minutes'] = gmstrftime("%M", $date);
+    $getdate['hours']   = gmstrftime("%H", $date);
+    $getdate['mday']    = gmstrftime("%d", $date);
+    $getdate['wday']    = gmstrftime("%u", $date);
+    $getdate['mon']     = gmstrftime("%m", $date);
+    $getdate['year']    = gmstrftime("%Y", $date);
+    $getdate['yday']    = gmstrftime("%j", $date);
+    $getdate['weekday'] = gmstrftime("%A", $date);
+    $getdate['month']   = gmstrftime("%B", $date);
     return $getdate;
 }
 
@@ -314,10 +314,10 @@ function usergetmidnight($date, $timezone=99) {
     $userdate = usergetdate($date, $timezone);
 
     if (abs($timezone) > 13) {
-        return mktime(0, 0, 0, $userdate["mon"], $userdate["mday"], $userdate["year"]);
+        return mktime(0, 0, 0, $userdate['mon'], $userdate['mday'], $userdate['year']);
     }
 
-    $timemidnight = gmmktime (0, 0, 0, $userdate["mon"], $userdate["mday"], $userdate["year"]);
+    $timemidnight = gmmktime (0, 0, 0, $userdate['mon'], $userdate['mday'], $userdate['year']);
     return usertime($timemidnight, $timezone); // Time of midnight of this user's day, in GMT
 
 }
@@ -328,15 +328,15 @@ function usertimezone($timezone=99) {
     $timezone = get_user_timezone($timezone);
 
     if (abs($timezone) > 13) {
-        return "server time";
+        return 'server time';
     }
     if (abs($timezone) < 0.5) {
-        return "GMT";
+        return 'GMT';
     }
     if ($timezone > 0) {
-        return "GMT+$timezone";
+        return 'GMT+'. $timezone;
     } else {
-        return "GMT$timezone";
+        return 'GMT'. $timezone;
     }
 }
 
@@ -371,8 +371,8 @@ function require_login($courseid=0, $autologinguest=true) {
     // First check that the user is logged in to the site.
     if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) { // They're not
         $SESSION->wantsurl = $FULLME;
-        if (!empty($_SERVER["HTTP_REFERER"])) {
-            $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
         $USER = NULL;
         if ($autologinguest and $CFG->autologinguests and $courseid and get_field('course','guest','id',$courseid)) {
@@ -381,10 +381,10 @@ function require_login($courseid=0, $autologinguest=true) {
             $loginguest = '';
         }
         if (empty($CFG->loginhttps)) {
-            redirect("$CFG->wwwroot/login/index.php$loginguest");
+            redirect($CFG->wwwroot .'/login/index.php'. $loginguest);
         } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
-            redirect("$wwwroot/login/index.php$loginguest");
+            $wwwroot = str_replace('http','https', $CFG->wwwroot);
+            redirect($wwwroot .'/login/index.php'. $loginguest);
         }
         die;
     }
@@ -393,19 +393,19 @@ function require_login($courseid=0, $autologinguest=true) {
     reload_user_preferences();
     if (isset($USER->preference['auth_forcepasswordchange'])){
         if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
-            redirect("$CFG->wwwroot/login/change_password.php");
+            redirect($CFG->wwwroot .'/login/change_password.php');
         } elseif($CFG->changepassword) {
             redirect($CFG->changepassword);
         } else {
-            error("You cannot proceed without changing your password. 
+            error('You cannot proceed without changing your password. 
                    However there is no available page for changing it.
-                   Please contact your Moodle Administrator.");
+                   Please contact your Moodle Administrator.');
         }
     }
 
     // Check that the user account is properly set up
     if (user_not_fully_set_up($USER)) {
-        redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&amp;course=".SITEID);
+        redirect($CFG->wwwroot .'/user/edit.php?id='. $USER->id .'&amp;course='. SITEID);
         die;
     }
 
@@ -415,23 +415,23 @@ function require_login($courseid=0, $autologinguest=true) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
                     print_header();
-                    notice(get_string("studentnotallowed", "", fullname($USER, true)), "$CFG->wwwroot/");
+                    notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
                 }
             }
             return;   // user is a member of this course.
         }
-        if (! $course = get_record("course", "id", $courseid)) {
-            error("That course doesn't exist");
+        if (! $course = get_record('course', 'id', $courseid)) {
+            error('That course doesn\'t exist');
         }
         if (!$course->visible) {
             print_header();
-            notice(get_string("studentnotallowed", "", fullname($USER, true)), "$CFG->wwwroot/");
+            notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
         }
-        if ($USER->username == "guest") {
+        if ($USER->username == 'guest') {
             switch ($course->guest) {
                 case 0: // Guests not allowed
                     print_header();
-                    notice(get_string("guestsnotallowed", "", $course->fullname));
+                    notice(get_string('guestsnotallowed', '', $course->fullname));
                     break;
                 case 1: // Guests allowed
                     return;
@@ -442,7 +442,7 @@ function require_login($courseid=0, $autologinguest=true) {
 
         // Currently not enrolled in the course, so see if they want to enrol
         $SESSION->wantsurl = $FULLME;
-        redirect("$CFG->wwwroot/course/enrol.php?id=$courseid");
+        redirect($CFG->wwwroot .'/course/enrol.php?id='. $courseid);
         die;
     }
 }
@@ -468,11 +468,11 @@ function update_user_login_times() {
 
     $user->id = $USER->id;
 
-    return update_record("user", $user);
+    return update_record('user', $user);
 }
 
 function user_not_fully_set_up($user) {
-    return ($user->username != "guest" and (empty($user->firstname) or empty($user->lastname) or empty($user->email)));
+    return ($user->username != 'guest' and (empty($user->firstname) or empty($user->lastname) or empty($user->email)));
 }
 
 function update_login_count() {
@@ -490,7 +490,7 @@ function update_login_count() {
 
     if ($SESSION->logincount > $max_logins) {
         unset($SESSION->wantsurl);
-        error(get_string("errortoomanylogins"));
+        error(get_string('errortoomanylogins'));
     }
 }
 
@@ -501,7 +501,7 @@ function reset_login_count() {
     $SESSION->logincount = 0;
 }
 
-function check_for_restricted_user($username=NULL, $redirect="") {
+function check_for_restricted_user($username=NULL, $redirect='') {
     global $CFG, $USER;
 
     if (!$username) {
@@ -515,7 +515,7 @@ function check_for_restricted_user($username=NULL, $redirect="") {
     if (!empty($CFG->restrictusers)) {
         $names = explode(',', $CFG->restrictusers);
         if (in_array($username, $names)) {
-            error(get_string("restricteduser", "error", fullname($USER)), $redirect);
+            error(get_string('restricteduser', 'error', fullname($USER)), $redirect);
         }
     }
 }
@@ -537,7 +537,7 @@ function isadmin($userid=0) {
         return true;
     } else if (in_array($userid, $nonadmins)) {
         return false;
-    } else if (record_exists("user_admins", "userid", $userid)){
+    } else if (record_exists('user_admins', 'userid', $userid)){
         $admins[] = $userid;
         return true;
     } else {
@@ -565,10 +565,10 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
     }
 
     if (!$courseid) {
-        return record_exists("user_teachers","userid",$userid);
+        return record_exists('user_teachers', 'userid', $userid);
     }
 
-    return record_exists("user_teachers", "userid", $userid, "course", $courseid);
+    return record_exists('user_teachers', 'userid', $userid, 'course', $courseid);
 }
 
 function isteacheredit($courseid, $userid=0) {
@@ -583,7 +583,7 @@ function isteacheredit($courseid, $userid=0) {
         return !empty($USER->teacheredit[$courseid]);
     }
 
-    return get_field("user_teachers", "editall", "userid", $userid, "course", $courseid);
+    return get_field('user_teachers', 'editall', 'userid', $userid, 'course', $courseid);
 }
 
 function iscreator ($userid=0) {
@@ -596,10 +596,10 @@ function iscreator ($userid=0) {
         return true;
     }
     if (empty($userid)) {
-        return record_exists("user_coursecreators", "userid", $USER->id);
+        return record_exists('user_coursecreators', 'userid', $USER->id);
     }
 
-    return record_exists("user_coursecreators", "userid", $userid);
+    return record_exists('user_coursecreators', 'userid', $userid);
 }
 
 function isstudent($courseid, $userid=0) {
@@ -636,7 +636,7 @@ function isstudent($courseid, $userid=0) {
 
   //  $timenow = time();   // todo:  add time check below
 
-    return record_exists("user_students", "userid", $userid, "course", $courseid);
+    return record_exists('user_students', 'userid', $userid, 'course', $courseid);
 }
 
 function isguest($userid=0) {
@@ -647,10 +647,10 @@ function isguest($userid=0) {
         if (empty($USER->username)) {
             return false;
         }
-        return ($USER->username == "guest");
+        return ($USER->username == 'guest');
     }
 
-    return record_exists("user", "id", $userid, "username", "guest");
+    return record_exists('user', 'id', $userid, 'username', 'guest');
 }
 
 
@@ -695,10 +695,10 @@ function fullname($user, $override=false) {
     }
 
     if ($CFG->fullnamedisplay == 'firstname lastname') {
-        return "$user->firstname $user->lastname";
+        return $user->firstname .' '. $user->lastname;
 
     } else if ($CFG->fullnamedisplay == 'lastname firstname') {
-        return "$user->lastname $user->firstname";
+        return $user->lastname .' '. $user->firstname;
 
     } else if ($CFG->fullnamedisplay == 'firstname') {
         if ($override) {
@@ -721,8 +721,8 @@ function set_moodle_cookie($thing) {
     $days = 60;
     $seconds = 60*60*24*$days;
 
-    setCookie($cookiename, "", time() - 3600, "/");
-    setCookie($cookiename, rc4encrypt($thing), time()+$seconds, "/");
+    setCookie($cookiename, '', time() - 3600, '/');
+    setCookie($cookiename, rc4encrypt($thing), time()+$seconds, '/');
 }
 
 
@@ -733,7 +733,7 @@ function get_moodle_cookie() {
     $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
 
     if (empty($_COOKIE[$cookiename])) {
-        return "";
+        return '';
     } else {
         return rc4decrypt($_COOKIE[$cookiename]);
     }
@@ -751,7 +751,7 @@ function is_internal_auth($auth='') {
         $method = $auth;
     }
 
-    return ($method == "email" || $method == "none" || $method == "manual");
+    return ($method == 'email' || $method == 'none' || $method == 'manual');
 }
 
 function create_user_record($username, $password, $auth='') {
@@ -783,8 +783,8 @@ function create_user_record($username, $password, $auth='') {
     $newuser->lastIP = getremoteaddr();
     $newuser->timemodified = time();
 
-    if (insert_record("user", $newuser)) {
-         $user = get_user_info_from_db("username", $newuser->username);
+    if (insert_record('user', $newuser)) {
+         $user = get_user_info_from_db('username', $newuser->username);
          if($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'}){
              set_user_preference('auth_forcepasswordchange', 1, $user);
          }
@@ -809,13 +809,13 @@ function update_user_record($username) {
             }
         }
     }
-    return get_user_info_from_db("username", $username);
+    return get_user_info_from_db('username', $username);
 }
 
 function guest_user() {
     global $CFG;
 
-    if ($newuser = get_record("user", "username", "guest")) {
+    if ($newuser = get_record('user', 'username', 'guest')) {
         $newuser->loggedin = true;
         $newuser->confirmed = 1;
         $newuser->site = $CFG->wwwroot;
@@ -839,12 +839,12 @@ function authenticate_user_login($username, $password) {
 
     // First try to find the user in the database
 
-    $user = get_user_info_from_db("username", $username);
+    $user = get_user_info_from_db('username', $username);
 
     // Sort out the authentication method we are using.
 
     if (empty($CFG->auth)) {
-        $CFG->auth = "manual";     // Default authentication module
+        $CFG->auth = 'manual';     // Default authentication module
     }
 
     if (empty($user->auth)) {      // For some reason it isn't set yet
@@ -861,11 +861,11 @@ function authenticate_user_login($username, $password) {
         $auth = $user->auth;
     }
 
-    if (!file_exists("$CFG->dirroot/auth/$auth/lib.php")) {
-        $auth = "manual";    // Can't find auth module, default to internal
+    if (!file_exists($CFG->dirroot .'/auth/'. $auth .'/lib.php')) {
+        $auth = 'manual';    // Can't find auth module, default to internal
     }
 
-    require_once("$CFG->dirroot/auth/$auth/lib.php");
+    require_once($CFG->dirroot .'/auth/'. $auth .'/lib.php');
 
     if (auth_user_login($username, $password)) {  // Successful authentication
         if ($user) {                              // User already exists in database
@@ -885,16 +885,16 @@ function authenticate_user_login($username, $password) {
 
         if (function_exists('auth_iscreator')) {    // Check if the user is a creator
             if (auth_iscreator($username)) {
-                if (! record_exists("user_coursecreators", "userid", $user->id)) {
+                if (! record_exists('user_coursecreators', 'userid', $user->id)) {
                     $cdata->userid = $user->id;
-                    if (! insert_record("user_coursecreators", $cdata)) {
-                        error("Cannot add user to course creators.");
+                    if (! insert_record('user_coursecreators', $cdata)) {
+                        error('Cannot add user to course creators.');
                     }
                 }
             } else {
-                if ( record_exists("user_coursecreators", "userid", $user->id)) {
-                    if (! delete_records("user_coursecreators", "userid", $user->id)) {
-                        error("Cannot remove user from course creators.");
+                if ( record_exists('user_coursecreators', 'userid', $user->id)) {
+                    if (! delete_records('user_coursecreators', 'userid', $user->id)) {
+                        error('Cannot remove user from course creators.');
                     }
                 }
             }
@@ -902,9 +902,9 @@ function authenticate_user_login($username, $password) {
         return $user;
 
     } else {
-        add_to_log(0, "login", "error", $_SERVER['HTTP_REFERER'], $username);
+        add_to_log(0, 'login', 'error', $_SERVER['HTTP_REFERER'], $username);
         $date = date('Y-m-d H:i:s');
-        error_log("$date\tfailed login\t".getremoteaddr()."\t".$_SERVER['HTTP_USER_AGENT']."\t$username");
+        error_log($date ."\tfailed login\t". getremoteaddr() ."\t". $_SERVER['HTTP_USER_AGENT'] ."\t". $username);
         return false;
     }
 }
@@ -912,17 +912,17 @@ function authenticate_user_login($username, $password) {
 function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
 /// Enrols (or re-enrols) a student in a given course
 
-    if (!$course = get_record("course", "id", $courseid)) {  // Check course
+    if (!$course = get_record('course', 'id', $courseid)) {  // Check course
         return false;
     }
-    if (!$user = get_record("user", "id", $userid)) {        // Check user
+    if (!$user = get_record('user', 'id', $userid)) {        // Check user
         return false;
     }
-    if ($student = get_record("user_students", "userid", $userid, "course", $courseid)) {
+    if ($student = get_record('user_students', 'userid', $userid, 'course', $courseid)) {
         $student->timestart = $timestart;
         $student->timeend = $timeend;
         $student->time = time();
-        return update_record("user_students", $student);
+        return update_record('user_students', $student);
 
     } else {
         $student->userid = $userid;
@@ -930,7 +930,7 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
         $student->timestart = $timestart;
         $student->timeend = $timeend;
         $student->time = time();
-        return insert_record("user_students", $student);
+        return insert_record('user_students', $student);
     }
 }
 
@@ -939,26 +939,26 @@ function unenrol_student($userid, $courseid=0) {
 
     if ($courseid) {
         /// First delete any crucial stuff that might still send mail
-        if ($forums = get_records("forum", "course", $courseid)) {
+        if ($forums = get_records('forum', 'course', $courseid)) {
             foreach ($forums as $forum) {
-                delete_records("forum_subscriptions", "forum", $forum->id, "userid", $userid);
+                delete_records('forum_subscriptions', 'forum', $forum->id, 'userid', $userid);
             }
         }
         if ($groups = get_groups($courseid, $userid)) {
             foreach ($groups as $group) {
-                delete_records("groups_members", "groupid", $group->id, "userid", $userid);
+                delete_records('groups_members', 'groupid', $group->id, 'userid', $userid);
             }
         }
-        return delete_records("user_students", "userid", $userid, "course", $courseid);
+        return delete_records('user_students', 'userid', $userid, 'course', $courseid);
 
     } else {
-        delete_records("forum_subscriptions", "userid", $userid);
-        delete_records("groups_members", "userid", $userid);
-        return delete_records("user_students", "userid", $userid);
+        delete_records('forum_subscriptions', 'userid', $userid);
+        delete_records('groups_members', 'userid', $userid);
+        return delete_records('user_students', 'userid', $userid);
     }
 }
 
-function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $timeend=0) {
+function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $timeend=0) {
 /// Add a teacher to a given course
     global $CFG;
 
@@ -978,11 +978,11 @@ function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $ti
         return update_record('user_teachers', $newteacher);
     }
 
-    if (!record_exists("user", "id", $userid)) {
+    if (!record_exists('user', 'id', $userid)) {
         return false;   // no such user
     }
 
-    if (!record_exists("course", "id", $courseid)) {
+    if (!record_exists('course', 'id', $courseid)) {
         return false;   // no such course
     }
 
@@ -994,24 +994,24 @@ function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $ti
     $teacher->timemodified = time();
     $newteacher->timestart = $timestart;
     $newteacher->timeend = $timeend;
-    if ($student = get_record("user_students", "userid", $userid, "course", $courseid)) {
+    if ($student = get_record('user_students', 'userid', $userid, 'course', $courseid)) {
         $teacher->timestart = $student->timestart;
         $teacher->timeend = $student->timeend;
         $teacher->timeaccess = $student->timeaccess;
     }
 
-    if (record_exists("user_teachers", "course", $courseid)) {
+    if (record_exists('user_teachers', 'course', $courseid)) {
         $teacher->authority = 2;
     } else {
         $teacher->authority = 1;
     }
-    delete_records("user_students", "userid", $userid, "course", $courseid); // Unenrol as student
+    delete_records('user_students', 'userid', $userid, 'course', $courseid); // Unenrol as student
 
     /// Add forum subscriptions for new users
     require_once('../mod/forum/lib.php');
     forum_add_user($userid, $courseid);
 
-    return insert_record("user_teachers", $teacher);
+    return insert_record('user_teachers', $teacher);
 
 }
 
@@ -1020,9 +1020,9 @@ function remove_teacher($userid, $courseid=0) {
 /// Does not delete the user account
     if ($courseid) {
         /// First delete any crucial stuff that might still send mail
-        if ($forums = get_records("forum", "course", $courseid)) {
+        if ($forums = get_records('forum', 'course', $courseid)) {
             foreach ($forums as $forum) {
-                delete_records("forum_subscriptions", "forum", $forum->id, "userid", $userid);
+                delete_records('forum_subscriptions', 'forum', $forum->id, 'userid', $userid);
             }
         }
 
@@ -1031,15 +1031,15 @@ function remove_teacher($userid, $courseid=0) {
         if (!isstudent($courseid, $userid)) {
             if ($groups = get_groups($courseid, $userid)) {
                 foreach ($groups as $group) {
-                    delete_records("groups_members", "groupid", $group->id, "userid", $userid);
+                    delete_records('groups_members', 'groupid', $group->id, 'userid', $userid);
                 }
             }
         }
 
-        return delete_records("user_teachers", "userid", $userid, "course", $courseid);
+        return delete_records('user_teachers', 'userid', $userid, 'course', $courseid);
     } else {
-        delete_records("forum_subscriptions", "userid", $userid);
-        return delete_records("user_teachers", "userid", $userid);
+        delete_records('forum_subscriptions', 'userid', $userid);
+        return delete_records('user_teachers', 'userid', $userid);
     }
 }
 
@@ -1047,10 +1047,10 @@ function remove_teacher($userid, $courseid=0) {
 function add_creator($userid) {
 /// Add a creator to the site
 
-    if (!record_exists("user_admins", "userid", $userid)) {
-        if (record_exists("user", "id", $userid)) {
+    if (!record_exists('user_admins', 'userid', $userid)) {
+        if (record_exists('user', 'id', $userid)) {
             $creator->userid = $userid;
-            return insert_record("user_coursecreators", $creator);
+            return insert_record('user_coursecreators', $creator);
         }
         return false;
     }
@@ -1061,14 +1061,14 @@ function remove_creator($userid) {
 /// Removes a creator from a site
     global $db;
 
-    return delete_records("user_coursecreators", "userid", $userid);
+    return delete_records('user_coursecreators', 'userid', $userid);
 }
 
 function add_admin($userid) {
 /// Add an admin to the site
 
-    if (!record_exists("user_admins", "userid", $userid)) {
-        if (record_exists("user", "id", $userid)) {
+    if (!record_exists('user_admins', 'userid', $userid)) {
+        if (record_exists('user', 'id', $userid)) {
             $admin->userid = $userid;
 
             // any admin is also a teacher on the site course
@@ -1078,7 +1078,7 @@ function add_admin($userid) {
                 }
             }
 
-            return insert_record("user_admins", $admin);
+            return insert_record('user_admins', $admin);
         }
         return false;
     }
@@ -1092,7 +1092,7 @@ function remove_admin($userid) {
     // remove also from the list of site teachers
     remove_teacher($userid, SITEID);
 
-    return delete_records("user_admins", "userid", $userid);
+    return delete_records('user_admins', 'userid', $userid);
 }
 
 
@@ -1104,36 +1104,36 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     $result = true;
 
-    if (! $course = get_record("course", "id", $courseid)) {
-        error("Course ID was incorrect (can't find it)");
+    if (! $course = get_record('course', 'id', $courseid)) {
+        error('Course ID was incorrect (can\'t find it)');
     }
 
-    $strdeleted = get_string("deleted");
+    $strdeleted = get_string('deleted');
 
     // First delete every instance of every module
 
-    if ($allmods = get_records("modules") ) {
+    if ($allmods = get_records('modules') ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
-            $modfile = "$CFG->dirroot/mod/$modname/lib.php";
-            $moddelete = $modname."_delete_instance";       // Delete everything connected to an instance
-            $moddeletecourse = $modname."_delete_course";   // Delete other stray stuff (uncommon)
+            $modfile = $CFG->dirroot .'/mod/'. $modname .'/lib.php';
+            $moddelete = $modname .'_delete_instance';       // Delete everything connected to an instance
+            $moddeletecourse = $modname .'_delete_course';   // Delete other stray stuff (uncommon)
             $count=0;
             if (file_exists($modfile)) {
                 include_once($modfile);
                 if (function_exists($moddelete)) {
-                    if ($instances = get_records($modname, "course", $course->id)) {
+                    if ($instances = get_records($modname, 'course', $course->id)) {
                         foreach ($instances as $instance) {
                             if ($moddelete($instance->id)) {
                                 $count++;
                             } else {
-                                notify("Could not delete $modname instance $instance->id ($instance->name)");
+                                notify('Could not delete '. $modname .' instance '. $instance->id .' ('. $instance->name .')');
                                 $result = false;
                             }
                         }
                     }
                 } else {
-                    notify("Function $moddelete() doesn't exist!");
+                    notify('Function '. $moddelete() .'doesn\'t exist!');
                     $result = false;
                 }
 
@@ -1142,26 +1142,26 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 }
             }
             if ($showfeedback) {
-                notify("$strdeleted $count x $modname");
+                notify($strdeleted .' '. $count .' x '. $modname);
             }
         }
     } else {
-        error("No modules are installed!");
+        error('No modules are installed!');
     }
 
     // Delete any user stuff
 
-    if (delete_records("user_students", "course", $course->id)) {
+    if (delete_records('user_students', 'course', $course->id)) {
         if ($showfeedback) {
-            notify("$strdeleted user_students");
+            notify($strdeleted .' user_students');
         }
     } else {
         $result = false;
     }
 
-    if (delete_records("user_teachers", "course", $course->id)) {
+    if (delete_records('user_teachers', 'course', $course->id)) {
         if ($showfeedback) {
-            notify("$strdeleted user_teachers");
+            notify($strdeleted .' user_teachers');
         }
     } else {
         $result = false;
@@ -1169,18 +1169,18 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     // Delete any groups
 
-    if ($groups = get_records("groups", "courseid", $course->id)) {
+    if ($groups = get_records('groups', 'courseid', $course->id)) {
         foreach ($groups as $group) {
-            if (delete_records("groups_members", "groupid", $group->id)) {
+            if (delete_records('groups_members', 'groupid', $group->id)) {
                 if ($showfeedback) {
-                    notify("$strdeleted groups_members");
+                    notify($strdeleted .' groups_members');
                 }
             } else {
                 $result = false;
             }
-            if (delete_records("groups", "id", $group->id)) {
+            if (delete_records('groups', 'id', $group->id)) {
                 if ($showfeedback) {
-                    notify("$strdeleted groups");
+                    notify($strdeleted .' groups');
                 }
             } else {
                 $result = false;
@@ -1190,9 +1190,9 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     // Delete events
 
-    if (delete_records("event", "courseid", $course->id)) {
+    if (delete_records('event', 'courseid', $course->id)) {
         if ($showfeedback) {
-            notify("$strdeleted event");
+            notify($strdeleted .' event');
         }
     } else {
         $result = false;
@@ -1200,9 +1200,9 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     // Delete logs
 
-    if (delete_records("log", "course", $course->id)) {
+    if (delete_records('log', 'course', $course->id)) {
         if ($showfeedback) {
-            notify("$strdeleted log");
+            notify($strdeleted .' log');
         }
     } else {
         $result = false;
@@ -1210,17 +1210,17 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     // Delete any course stuff
 
-    if (delete_records("course_sections", "course", $course->id)) {
+    if (delete_records('course_sections', 'course', $course->id)) {
         if ($showfeedback) {
-            notify("$strdeleted course_sections");
+            notify($strdeleted .' course_sections');
         }
     } else {
         $result = false;
     }
 
-    if (delete_records("course_modules", "course", $course->id)) {
+    if (delete_records('course_modules', 'course', $course->id)) {
         if ($showfeedback) {
-            notify("$strdeleted course_modules");
+            notify($strdeleted .' course_modules');
         }
     } else {
         $result = false;
@@ -1241,19 +1241,19 @@ function remove_course_userdata($courseid, $showfeedback=true,
 
     $result = true;
 
-    if (! $course = get_record("course", "id", $courseid)) {
-        error("Course ID was incorrect (can't find it)");
+    if (! $course = get_record('course', 'id', $courseid)) {
+        error('Course ID was incorrect (can\'t find it)');
     }
 
-    $strdeleted = get_string("deleted");
+    $strdeleted = get_string('deleted');
 
     // Look in every instance of every module for data to delete
 
-    if ($allmods = get_records("modules") ) {
+    if ($allmods = get_records('modules') ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
-            $modfile = "$CFG->dirroot/mod/$modname/lib.php";
-            $moddeleteuserdata = $modname."_delete_userdata";   // Function to delete user data
+            $modfile = $CFG->dirroot .'/mod/'. $modname .'/lib.php';
+            $moddeleteuserdata = $modname .'_delete_userdata';   // Function to delete user data
             $count=0;
             if (file_exists($modfile)) {
                 @include_once($modfile);
@@ -1263,26 +1263,26 @@ function remove_course_userdata($courseid, $showfeedback=true,
             }
         }
     } else {
-        error("No modules are installed!");
+        error('No modules are installed!');
     }
 
     // Delete other stuff
 
     if ($removestudents) {
         /// Delete student enrolments
-        if (delete_records("user_students", "course", $course->id)) {
+        if (delete_records('user_students', 'course', $course->id)) {
             if ($showfeedback) {
-                notify("$strdeleted user_students");
+                notify($strdeleted .' user_students');
             }
         } else {
             $result = false;
         }
         /// Delete group members (but keep the groups)
-        if ($groups = get_records("groups", "courseid", $course->id)) {
+        if ($groups = get_records('groups', 'courseid', $course->id)) {
             foreach ($groups as $group) {
-                if (delete_records("groups_members", "groupid", $group->id)) {
+                if (delete_records('groups_members', 'groupid', $group->id)) {
                     if ($showfeedback) {
-                        notify("$strdeleted groups_members");
+                        notify($strdeleted .' groups_members');
                     }
                 } else {
                     $result = false;
@@ -1292,9 +1292,9 @@ function remove_course_userdata($courseid, $showfeedback=true,
     }
 
     if ($removeteachers) {
-        if (delete_records("user_teachers", "course", $course->id)) {
+        if (delete_records('user_teachers', 'course', $course->id)) {
             if ($showfeedback) {
-                notify("$strdeleted user_teachers");
+                notify($strdeleted .' user_teachers');
             }
         } else {
             $result = false;
@@ -1302,11 +1302,11 @@ function remove_course_userdata($courseid, $showfeedback=true,
     }
 
     if ($removegroups) {
-        if ($groups = get_records("groups", "courseid", $course->id)) {
+        if ($groups = get_records('groups', 'courseid', $course->id)) {
             foreach ($groups as $group) {
-                if (delete_records("groups", "id", $group->id)) {
+                if (delete_records('groups', 'id', $group->id)) {
                     if ($showfeedback) {
-                        notify("$strdeleted groups");
+                        notify($strdeleted .' groups');
                     }
                 } else {
                     $result = false;
@@ -1316,9 +1316,9 @@ function remove_course_userdata($courseid, $showfeedback=true,
     }
 
     if ($removeevents) {
-        if (delete_records("event", "courseid", $course->id)) {
+        if (delete_records('event', 'courseid', $course->id)) {
             if ($showfeedback) {
-                notify("$strdeleted event");
+                notify($strdeleted .' event');
             }
         } else {
             $result = false;
@@ -1326,9 +1326,9 @@ function remove_course_userdata($courseid, $showfeedback=true,
     }
 
     if ($removelogs) {
-        if (delete_records("log", "course", $course->id)) {
+        if (delete_records('log', 'course', $course->id)) {
             if ($showfeedback) {
-                notify("$strdeleted log");
+                notify($strdeleted .' log');
             }
         } else {
             $result = false;
@@ -1368,7 +1368,7 @@ function ismember($groupid, $userid=0) {
         return false;
     }
 
-    return record_exists("groups_members", "groupid", $groupid, "userid", $userid);
+    return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
 }
 
 /**
@@ -1511,7 +1511,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
     }
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
-        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+        if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
             echo '<div align="center">';
             print_group_menu($groups, $groupmode, $currentgroup, $urlroot);
             echo '</div>';
@@ -1525,7 +1525,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
 /// CORRESPONDENCE  ////////////////////////////////////////////////
 
-function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $attachment="", $attachname="", $usetrueaddress=true) {
+function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true) {
 ///  user        - a user record as an object
 ///  from        - a user record as an object
 ///  subject     - plain text subject line of the email
@@ -1546,7 +1546,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
         $CFG->courselang = $course->lang;
     }
 
-    include_once("$CFG->libdir/phpmailer/class.phpmailer.php");
+    include_once($CFG->libdir .'/phpmailer/class.phpmailer.php');
 
     if (empty($user)) {
         return false;
@@ -1558,15 +1558,15 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $mail = new phpmailer;
 
-    $mail->Version = "Moodle $CFG->version";           // mailer version
-    $mail->PluginDir = "$CFG->libdir/phpmailer/";      // plugin directory (eg smtp plugin)
+    $mail->Version = 'Moodle '. $CFG->version;           // mailer version
+    $mail->PluginDir = $CFG->libdir .'/phpmailer/';      // plugin directory (eg smtp plugin)
 
 
-    if (current_language() != "en") {
-        $mail->CharSet = get_string("thischarset");
+    if (current_language() != 'en') {
+        $mail->CharSet = get_string('thischarset');
     }
 
-    if ($CFG->smtphosts == "qmail") {
+    if ($CFG->smtphosts == 'qmail') {
         $mail->IsQmail();                              // use Qmail system
 
     } else if (empty($CFG->smtphosts)) {
@@ -1575,10 +1575,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     } else {
         $mail->IsSMTP();                               // use SMTP directly
         if ($CFG->debug > 7) {
-            echo "<pre>\n";
+            echo '<pre>' . "\n";
             $mail->SMTPDebug = true;
         }
-        $mail->Host = "$CFG->smtphosts";               // specify main and backup servers
+        $mail->Host = $CFG->smtphosts;               // specify main and backup servers
 
         if ($CFG->smtpuser) {                          // Use SMTP authentication
             $mail->SMTPAuth = true;
@@ -1589,21 +1589,21 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $adminuser = get_admin();
 
-    $mail->Sender   = "$adminuser->email";
+    $mail->Sender   = $adminuser->email;
 
     if (is_string($from)) { // So we can pass whatever we want if there is need
         $mail->From     = $CFG->noreplyaddress;
         $mail->FromName = $from;
     } else if ($usetrueaddress and $from->maildisplay) {
-        $mail->From     = "$from->email";
+        $mail->From     = $from->email;
         $mail->FromName = fullname($from);
     } else {
-        $mail->From     = "$CFG->noreplyaddress";
+        $mail->From     = $CFG->noreplyaddress;
         $mail->FromName = fullname($from);
     }
     $mail->Subject  =  stripslashes($subject);
 
-    $mail->AddAddress("$user->email", fullname($user) );
+    $mail->AddAddress($user->email, fullname($user) );
 
     $mail->WordWrap = 79;                               // set word wrap
 
@@ -1619,7 +1619,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     if ($messagehtml) {
         $mail->IsHTML(true);
-        $mail->Encoding = "quoted-printable";           // Encoding to use
+        $mail->Encoding = 'quoted-printable';           // Encoding to use
         $mail->Body    =  $messagehtml;
         $mail->AltBody =  "\n$messagetext\n";
     } else {
@@ -1629,20 +1629,20 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     if ($attachment && $attachname) {
         if (ereg( "\\.\\." ,$attachment )) {    // Security check for ".." in dir path
-            $mail->AddAddress("$adminuser->email", fullname($adminuser) );
-            $mail->AddStringAttachment("Error in attachment.  User attempted to attach a filename with a unsafe name.", "error.txt", "8bit", "text/plain");
+            $mail->AddAddress($adminuser->email, fullname($adminuser) );
+            $mail->AddStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
         } else {
-            include_once("$CFG->dirroot/files/mimetypes.php");
-            $mimetype = mimeinfo("type", $attachname);
-            $mail->AddAttachment("$CFG->dataroot/$attachment", "$attachname", "base64", "$mimetype");
+            include_once($CFG->dirroot .'/files/mimetypes.php');
+            $mimetype = mimeinfo('type', $attachname);
+            $mail->AddAttachment($CFG->dataroot .'/'. $attachment, $attachname, 'base64', $mimetype);
         }
     }
 
     if ($mail->Send()) {
         return true;
     } else {
-        mtrace("ERROR: $mail->ErrorInfo");
-        add_to_log(SITEID, "library", "mailer", $_SERVER["REQUEST_URI"], "ERROR: $mail->ErrorInfo");
+        mtrace('ERROR: '. $mail->ErrorInfo);
+        add_to_log(SITEID, 'library', 'mailer', $_SERVER['REQUEST_URI'], 'ERROR: '. $mail->ErrorInfo);
         return false;
     }
 }
@@ -1656,20 +1656,20 @@ function reset_password_and_mail($user) {
 
     $newpassword = generate_password();
 
-    if (! set_field("user", "password", md5($newpassword), "id", $user->id) ) {
-        error("Could not set user password!");
+    if (! set_field('user', 'password', md5($newpassword), 'id', $user->id) ) {
+        error('Could not set user password!');
     }
 
     $a->firstname = $user->firstname;
     $a->sitename = $site->fullname;
     $a->username = $user->username;
     $a->newpassword = $newpassword;
-    $a->link = "$CFG->wwwroot/login/change_password.php";
-    $a->signoff = fullname($from, true)." ($from->email)";
+    $a->link = $CFG->wwwroot .'/login/change_password.php';
+    $a->signoff = fullname($from, true).' ('. $from->email .')';
 
-    $message = get_string("newpasswordtext", "", $a);
+    $message = get_string('newpasswordtext', '', $a);
 
-    $subject  = "$site->fullname: ".get_string("changedpassword");
+    $subject  = $site->fullname .': '. get_string('changedpassword');
 
     return email_to_user($user, $from, $subject, $message);
 
@@ -1684,11 +1684,11 @@ function send_confirmation_email($user) {
 
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
-    $data->link = "$CFG->wwwroot/login/confirm.php?p=$user->secret&amp;s=$user->username";
-    $data->admin = fullname($from)." ($from->email)";
+    $data->link = $CFG->wwwroot .'/login/confirm.php?p='. $user->secret .'&amp;s='. $user->username;
+    $data->admin = fullname($from) .' ('. $from->email .')';
 
-    $message = get_string("emailconfirmation", "", $data);
-    $subject = get_string("emailconfirmationsubject", "", $site->fullname);
+    $message = get_string('emailconfirmation', '', $data);
+    $subject = get_string('emailconfirmationsubject', '', $site->fullname);
 
     $messagehtml = text_to_html($message, false, false, true);
 
@@ -1705,11 +1705,11 @@ function send_password_change_confirmation_email($user) {
 
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
-    $data->link = "$CFG->wwwroot/login/forgot_password.php?p=$user->secret&amp;s=$user->username";
-    $data->admin = fullname($from)." ($from->email)";
+    $data->link = $CFG->wwwroot .'/login/forgot_password.php?p='. $user->secret .'&amp;s='. $user->username;
+    $data->admin = fullname($from).' ('. $from->email .')';
 
-    $message = get_string("emailpasswordconfirmation", "", $data);
-    $subject = get_string("emailpasswordconfirmationsubject", "", $site->fullname);
+    $message = get_string('emailpasswordconfirmation', '', $data);
+    $subject = get_string('emailpasswordconfirmationsubject', '', $site->fullname);
 
     return email_to_user($user, $from, $subject, $message);
 
@@ -1733,7 +1733,7 @@ function email_is_not_allowed($email) {
                 return false;
             }
         }
-        return get_string("emailonlyallowed", '', $CFG->allowemailaddresses);
+        return get_string('emailonlyallowed', '', $CFG->allowemailaddresses);
 
     } else if (!empty($CFG->denyemailaddresses)) {
         $denied = explode(' ', $CFG->denyemailaddresses);
@@ -1743,7 +1743,7 @@ function email_is_not_allowed($email) {
                 continue;
             }
             if (strpos($email, $deniedpattern) !== false) {   // Match!
-                return get_string("emailnotallowed", '', $CFG->denyemailaddresses);
+                return get_string('emailnotallowed', '', $CFG->denyemailaddresses);
             }
         }
     }
@@ -1769,20 +1769,20 @@ function make_upload_directory($directory, $shownotices=true) {
     if (!file_exists($currdir)) {
         if (! mkdir($currdir, $CFG->directorypermissions)) {
             if ($shownotices) {
-                notify("ERROR: You need to create the directory $currdir with web server write access");
+                notify('ERROR: You need to create the directory '. $currdir .' with web server write access');
             }
             return false;
         }
     }
 
-    $dirarray = explode("/", $directory);
+    $dirarray = explode('/', $directory);
 
     foreach ($dirarray as $dir) {
-        $currdir = "$currdir/$dir";
+        $currdir = $currdir .'/'. $dir;
         if (! file_exists($currdir)) {
             if (! mkdir($currdir, $CFG->directorypermissions)) {
                 if ($shownotices) {
-                    notify("ERROR: Could not find or create a directory ($currdir)");
+                    notify('ERROR: Could not find or create a directory ('. $currdir .')');
                 }
                 return false;
             }
@@ -1798,16 +1798,16 @@ function make_mod_upload_directory($courseid) {
 /// Makes an upload directory for a particular module
     global $CFG;
 
-    if (! $moddata = make_upload_directory("$courseid/$CFG->moddata")) {
+    if (! $moddata = make_upload_directory($courseid .'/'. $CFG->moddata)) {
         return false;
     }
 
-    $strreadme = get_string("readme");
+    $strreadme = get_string('readme');
 
-    if (file_exists("$CFG->dirroot/lang/$CFG->lang/docs/module_files.txt")) {
-        copy("$CFG->dirroot/lang/$CFG->lang/docs/module_files.txt", "$moddata/$strreadme.txt");
+    if (file_exists($CFG->dirroot .'/lang/'. $CFG->lang .'/docs/module_files.txt')) {
+        copy($CFG->dirroot .'/lang/'. $CFG->lang .'/docs/module_files.txt', $moddata .'/'. $strreadme .'.txt');
     } else {
-        copy("$CFG->dirroot/lang/en/docs/module_files.txt", "$moddata/$strreadme.txt");
+        copy($CFG->dirroot .'/lang/en/docs/module_files.txt', $moddata .'/'. $strreadme .'.txt');
     }
     return $moddata;
 }
@@ -1816,12 +1816,12 @@ function make_mod_upload_directory($courseid) {
 function valid_uploaded_file($newfile) {
 /// Returns current name of file on disk if true
     if (empty($newfile)) {
-        return "";
+        return '';
     }
     if (is_uploaded_file($newfile['tmp_name']) and $newfile['size'] > 0) {
         return $newfile['tmp_name'];
     } else {
-        return "";
+        return '';
     }
 }
 
@@ -1841,12 +1841,12 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
 /// Anything defined as 0 is ignored.
 /// The smallest of all the non-zero numbers is returned.
 
-    if (! $filesize = ini_get("upload_max_filesize")) {
-        $filesize = "5M";
+    if (! $filesize = ini_get('upload_max_filesize')) {
+        $filesize = '5M';
     }
     $minimumsize = get_real_size($filesize);
 
-    if ($postsize = ini_get("post_max_size")) {
+    if ($postsize = ini_get('post_max_size')) {
         $postsize = get_real_size($postsize);
         if ($postsize < $minimumsize) {
             $minimumsize = $postsize;
@@ -1950,10 +1950,7 @@ function print_file_upload_error($filearray = '', $returnerror = false) {
 }
 
 
-
-
-
-function get_directory_list($rootdir, $excludefile="", $descend=true, $getdirs=false, $getfiles=true) {
+function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=false, $getfiles=true) {
 /// Returns an array with all the filenames in
 /// all subdirectories, relative to the given rootdir.
 /// If excludefile is defined, then that file/directory is ignored
@@ -1977,18 +1974,18 @@ function get_directory_list($rootdir, $excludefile="", $descend=true, $getdirs=f
 
     while (false !== ($file = readdir($dir))) {
         $firstchar = substr($file, 0, 1);
-        if ($firstchar == "." or $file == "CVS" or $file == $excludefile) {
+        if ($firstchar == '.' or $file == 'CVS' or $file == $excludefile) {
             continue;
         }
-        $fullfile = "$rootdir/$file";
-        if (filetype($fullfile) == "dir") {
+        $fullfile = $rootdir .'/'. $file;
+        if (filetype($fullfile) == 'dir') {
             if ($getdirs) {
                 $dirs[] = $file;
             }
             if ($descend) {
                 $subdirs = get_directory_list($fullfile, $excludefile, $descend, $getdirs, $getfiles);
                 foreach ($subdirs as $subdir) {
-                    $dirs[] = "$file/$subdir";
+                    $dirs[] = $file .'/'. $subdir;
                 }
             }
         } else if ($getfiles) {
@@ -2002,7 +1999,7 @@ function get_directory_list($rootdir, $excludefile="", $descend=true, $getdirs=f
     return $dirs;
 }
 
-function get_directory_size($rootdir, $excludefile="") {
+function get_directory_size($rootdir, $excludefile='') {
 /// Adds up all the files in a directory and works out the size
 
     $size = 0;
@@ -2017,11 +2014,11 @@ function get_directory_size($rootdir, $excludefile="") {
 
     while (false !== ($file = readdir($dir))) {
         $firstchar = substr($file, 0, 1);
-        if ($firstchar == "." or $file == "CVS" or $file == $excludefile) {
+        if ($firstchar == '.' or $file == 'CVS' or $file == $excludefile) {
             continue;
         }
-        $fullfile = "$rootdir/$file";
-        if (filetype($fullfile) == "dir") {
+        $fullfile = $rootdir .'/'. $file;
+        if (filetype($fullfile) == 'dir') {
             $size += get_directory_size($fullfile, $excludefile);
         } else {
             $size += filesize($fullfile);
@@ -2074,7 +2071,7 @@ function display_size($size) {
     } else if ($size >= 1024) {
         $size = round($size / 1024 * 10) / 10 . $kb;
     } else {
-        $size = $size ." $b";
+        $size = $size .' '. $b;
     }
     return $size;
 }
@@ -2084,9 +2081,9 @@ function clean_filename($string) {
 /// Only these are allowed:
 ///    alphanumeric _ - .
 
-    $string = eregi_replace("\.\.+", "", $string);
+    $string = eregi_replace("\.\.+", '', $string);
     $string = preg_replace('/[^\.a-zA-Z\d\_-]/','_', $string ); // only allowed chars
-    $string = eregi_replace("_+", "_", $string);
+    $string = eregi_replace("_+", '_', $string);
     return    $string;
 }
 
@@ -2111,12 +2108,12 @@ function current_language() {
     }
 }
 
-function print_string($identifier, $module="", $a=NULL) {
+function print_string($identifier, $module='', $a=NULL) {
 /// Given a string to translate - prints it out.
     echo get_string($identifier, $module, $a);
 }
 
-function get_string($identifier, $module="", $a=NULL) {
+function get_string($identifier, $module='', $a=NULL) {
 /// Return the translated string specified by $identifier as
 /// for $module.  Uses the same format files as STphp.
 /// $a is an object, string or number that can be used
@@ -2136,12 +2133,12 @@ function get_string($identifier, $module="", $a=NULL) {
 
     $lang = current_language();
 
-    if ($module == "") {
-        $module = "moodle";
+    if ($module == '') {
+        $module = 'moodle';
     }
 
-    $langpath = "$CFG->dirroot/lang";
-    $langfile = "$langpath/$lang/$module.php";
+    $langpath = $CFG->dirroot .'/lang';
+    $langfile = $langpath .'/'. $lang .'/'. $module .'.php'.;
 
     // Look for the string - if found then return it
 
@@ -2154,9 +2151,9 @@ function get_string($identifier, $module="", $a=NULL) {
 
     // If it's a module, then look within the module pack itself mod/xxxx/lang/en/module.php
 
-    if ($module != "moodle") {
-        $modlangpath = "$CFG->dirroot/mod/$module/lang";
-        $langfile = "$modlangpath/$lang/$module.php";
+    if ($module != 'moodle') {
+        $modlangpath = $CFG->dirroot .'/mod/'. $module .'/lang';
+        $langfile = $modlangpath .'/'. $lang .'/'. $module .'.php';
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                 eval($result);
@@ -2166,16 +2163,16 @@ function get_string($identifier, $module="", $a=NULL) {
     }
 
     // If the preferred language was English we can abort now
-    if ($lang == "en") {
-        return "[[$identifier]]";
+    if ($lang == 'en') {
+        return '[['. $identifier .']]';
     }
 
     // Is a parent language defined?  If so, try it.
 
-    if ($result = get_string_from_file("parentlanguage", "$langpath/$lang/moodle.php", "\$parentlang")) {
+    if ($result = get_string_from_file('parentlanguage', $langpath .'/'. $lang .'/moodle.php', "\$parentlang")) {
         eval($result);
         if (!empty($parentlang)) {
-            $langfile = "$langpath/$parentlang/$module.php";
+            $langfile = $langpath .'/'. $parentlang .'/'. $module .'.php';
             if (file_exists($langfile)) {
                 if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                     eval($result);
@@ -2187,9 +2184,9 @@ function get_string($identifier, $module="", $a=NULL) {
 
     // Our only remaining option is to try English
 
-    $langfile = "$langpath/en/$module.php";
+    $langfile = $langpath .'/en/'. $module .'.php';
     if (!file_exists($langfile)) {
-        return "ERROR: No lang file ($langpath/en/$module.php)!";
+        return 'ERROR: No lang file ('. $langpath .'/en/'. $module .'.php)!';
     }
     if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
         eval($result);
@@ -2198,8 +2195,8 @@ function get_string($identifier, $module="", $a=NULL) {
 
     // If it's a module, then look within the module pack itself mod/xxxx/lang/en/module.php
 
-    if ($module != "moodle") {
-        $langfile = "$modlangpath/en/$module.php";
+    if ($module != 'moodle') {
+        $langfile = $modlangpath .'/en/'. $module .'.php';
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                 eval($result);
@@ -2208,7 +2205,7 @@ function get_string($identifier, $module="", $a=NULL) {
         }
     }
 
-    return "[[$identifier]]";  // Last resort
+    return '[['. $identifier .']]';  // Last resort
 }
 
 
@@ -2229,7 +2226,7 @@ function get_string_from_file($identifier, $langfile, $destination) {
         return false;
     }
 
-    return "$destination = sprintf(\"".$string[$identifier]."\");";
+    return $destination .'= sprintf("'. $string[$identifier] .'");';
 }
 
 function get_strings($array, $module='') {
@@ -2251,19 +2248,19 @@ function get_list_of_languages() {
     if (!empty($CFG->langlist)) {       // use admin's list of languages
         $langlist = explode(',', $CFG->langlist);
         foreach ($langlist as $lang) {
-            if (file_exists("$CFG->dirroot/lang/$lang/moodle.php")) {
-                include("$CFG->dirroot/lang/$lang/moodle.php");
-                $languages[$lang] = $string["thislanguage"]." ($lang)";
+            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/moodle.php')) {
+                include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
+                $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
                 unset($string);
             }
         }
     } else {
-        if (!$langdirs = get_list_of_plugins("lang")) {
+        if (!$langdirs = get_list_of_plugins('lang')) {
             return false;
         }
         foreach ($langdirs as $lang) {
-            include("$CFG->dirroot/lang/$lang/moodle.php");
-            $languages[$lang] = $string["thislanguage"]." ($lang)";
+            include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
+            $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
             unset($string);
         }
     }
@@ -2277,19 +2274,19 @@ function get_list_of_countries() {
 
     $lang = current_language();
 
-    if (!file_exists("$CFG->dirroot/lang/$lang/countries.php")) {
-        if ($parentlang = get_string("parentlanguage")) {
-            if (file_exists("$CFG->dirroot/lang/$parentlang/countries.php")) {
+    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
+        if ($parentlang = get_string('parentlanguage')) {
+            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/countries.php')) {
                 $lang = $parentlang;
             } else {
-                $lang = "en";  // countries.php must exist in this pack
+                $lang = 'en';  // countries.php must exist in this pack
             }
         } else {
-            $lang = "en";  // countries.php must exist in this pack
+            $lang = 'en';  // countries.php must exist in this pack
         }
     }
 
-    include("$CFG->dirroot/lang/$lang/countries.php");
+    include($CFG->dirroot .'/lang/'. $lang .'/countries.php');
 
     if (!empty($string)) {
         asort($string);
@@ -2304,19 +2301,19 @@ function get_list_of_pixnames() {
 
     $lang = current_language();
 
-    if (!file_exists("$CFG->dirroot/lang/$lang/pix.php")) {
-        if ($parentlang = get_string("parentlanguage")) {
-            if (file_exists("$CFG->dirroot/lang/$parentlang/pix.php")) {
+    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/pix.php')) {
+        if ($parentlang = get_string('parentlanguage')) {
+            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/pix.php')) {
                 $lang = $parentlang;
             } else {
-                $lang = "en";  // countries.php must exist in this pack
+                $lang = 'en';  // countries.php must exist in this pack
             }
         } else {
-            $lang = "en";  // countries.php must exist in this pack
+            $lang = 'en';  // countries.php must exist in this pack
         }
     }
 
-    include_once("$CFG->dirroot/lang/$lang/pix.php");
+    include_once($CFG->dirroot .'/lang/'. $lang .'/pix.php');
 
     return $string;
 }
@@ -2333,11 +2330,11 @@ function document_file($file, $include=true) {
         return false;
     }
 
-    $langs = array(current_language(), get_string("parentlanguage"), "en");
+    $langs = array(current_language(), get_string('parentlanguage'), 'en');
 
     foreach ($langs as $lang) {
-        $info->filepath = "$CFG->dirroot/lang/$lang/docs/$file";
-        $info->urlpath  = "$CFG->wwwroot/lang/$lang/docs/$file";
+        $info->filepath = $CFG->dirroot .'/lang/'. $lang .'/docs/'. $file;
+        $info->urlpath  = $CFG->wwwroot .'/lang/'. $lang .'/docs/'. $file;
 
         if (file_exists($info->filepath)) {
             if ($include) {
@@ -2354,13 +2351,13 @@ function document_file($file, $include=true) {
 /// ENCRYPTION  ////////////////////////////////////////////////
 
 function rc4encrypt($data) {
-    $password = "nfgjeingjk";
-    return endecrypt($password, $data, "");
+    $password = 'nfgjeingjk';
+    return endecrypt($password, $data, '');
 }
 
 function rc4decrypt($data) {
-    $password = "nfgjeingjk";
-    return endecrypt($password, $data, "de");
+    $password = 'nfgjeingjk';
+    return endecrypt($password, $data, 'de');
 }
 
 function endecrypt ($pwd, $data, $case) {
@@ -2370,9 +2367,9 @@ function endecrypt ($pwd, $data, $case) {
         $data = urldecode($data);
     }
 
-    $key[] = "";
-    $box[] = "";
-    $temp_swap = "";
+    $key[] = '';
+    $box[] = '';
+    $temp_swap = '';
     $pwd_length = 0;
 
     $pwd_length = strlen($pwd);
@@ -2391,11 +2388,11 @@ function endecrypt ($pwd, $data, $case) {
         $box[$x] = $temp_swap;
     }
 
-    $temp = "";
-    $k = "";
+    $temp = '';
+    $k = '';
 
-    $cipherby = "";
-    $cipher = "";
+    $cipherby = '';
+    $cipher = '';
 
     $a = 0;
     $j = 0;
@@ -2445,13 +2442,13 @@ function add_event($event) {
 
     $event->timemodified = time();
 
-    if (!$event->id = insert_record("event", $event)) {
+    if (!$event->id = insert_record('event', $event)) {
         return false;
     }
 
     if (!empty($CFG->calendar)) { // call the add_event function of the selected calendar
-        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
-            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+        if (file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
+            include_once($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php');
             $calendar_add_event = $CFG->calendar.'_add_event';
             if (function_exists($calendar_add_event)) {
                 $calendar_add_event($event);
@@ -2472,15 +2469,15 @@ function update_event($event) {
     $event->timemodified = time();
 
     if (!empty($CFG->calendar)) { // call the update_event function of the selected calendar
-        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
-            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+        if (file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
+            include_once($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php');
             $calendar_update_event = $CFG->calendar.'_update_event';
             if (function_exists($calendar_update_event)) {
                 $calendar_update_event($event);
             }
         }
     }
-    return update_record("event", $event);
+    return update_record('event', $event);
 }
 
 
@@ -2490,15 +2487,15 @@ function delete_event($id) {
     global $CFG;
 
     if (!empty($CFG->calendar)) { // call the delete_event function of the selected calendar
-        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
-            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+        if (file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
+            include_once($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php');
             $calendar_delete_event = $CFG->calendar.'_delete_event';
             if (function_exists($calendar_delete_event)) {
                 $calendar_delete_event($id);
             }
         }
     }
-    return delete_records("event", 'id', $id);
+    return delete_records('event', 'id', $id);
 }
 
 
@@ -2509,8 +2506,8 @@ function hide_event($event) {
     global $CFG;
 
     if (!empty($CFG->calendar)) { // call the update_event function of the selected calendar
-        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
-            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+        if (file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
+            include_once($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php');
             $calendar_hide_event = $CFG->calendar.'_hide_event';
             if (function_exists($calendar_hide_event)) {
                 $calendar_hide_event($event);
@@ -2528,8 +2525,8 @@ function show_event($event) {
     global $CFG;
 
     if (!empty($CFG->calendar)) { // call the update_event function of the selected calendar
-        if (file_exists("$CFG->dirroot/calendar/$CFG->calendar/lib.php")) {
-            include_once("$CFG->dirroot/calendar/$CFG->calendar/lib.php");
+        if (file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
+            include_once($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php');
             $calendar_show_event = $CFG->calendar.'_show_event';
             if (function_exists($calendar_show_event)) {
                 $calendar_show_event($event);
@@ -2542,18 +2539,18 @@ function show_event($event) {
 
 /// ENVIRONMENT CHECKING  ////////////////////////////////////////////////////////////
 
-function get_list_of_plugins($plugin="mod", $exclude="") {
+function get_list_of_plugins($plugin='mod', $exclude='') {
 /// Lists plugin directories within some directory
 
     global $CFG;
 
-    $basedir = opendir("$CFG->dirroot/$plugin");
+    $basedir = opendir($CFG->dirroot .'/'. $plugin);
     while ($dir = readdir($basedir)) {
         $firstchar = substr($dir, 0, 1);
-        if ($firstchar == "." or $dir == "CVS" or $dir == "_vti_cnf" or $dir == $exclude) {
+        if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == $exclude) {
             continue;
         }
-        if (filetype("$CFG->dirroot/$plugin/$dir") != "dir") {
+        if (filetype($CFG->dirroot .'/'. $plugin .'/'. $dir) != 'dir') {
             continue;
         }
         $plugins[] = $dir;
@@ -2564,18 +2561,18 @@ function get_list_of_plugins($plugin="mod", $exclude="") {
     return $plugins;
 }
 
-function check_php_version($version="4.1.0") {
+function check_php_version($version='4.1.0') {
 /// Returns true is the current version of PHP is greater that the specified one
-    $minversion = intval(str_replace(".", "", $version));
-    $curversion = intval(str_replace(".", "", phpversion()));
+    $minversion = intval(str_replace('.', '', $version));
+    $curversion = intval(str_replace('.', '', phpversion()));
     return ($curversion >= $minversion);
 }
 
-function check_browser_version($brand="MSIE", $version=5.5) {
+function check_browser_version($brand='MSIE', $version=5.5) {
 /// Checks to see if is a browser matches the specified
 /// brand and is equal or better version.
 
-    $agent = $_SERVER["HTTP_USER_AGENT"];
+    $agent = $_SERVER['HTTP_USER_AGENT'];
 
     if (empty($agent)) {
         return false;
@@ -2583,9 +2580,9 @@ function check_browser_version($brand="MSIE", $version=5.5) {
 
     switch ($brand) {
 
-      case "Gecko":   /// Gecko based browsers
+      case 'Gecko':   /// Gecko based browsers
 
-          if (substr_count($agent, "Camino")) {     // MacOS X Camino not supported.
+          if (substr_count($agent, 'Camino')) {     // MacOS X Camino not supported.
               return false;
           }
 
@@ -2600,16 +2597,16 @@ function check_browser_version($brand="MSIE", $version=5.5) {
           break;
 
 
-      case "MSIE":   /// Internet Explorer
+      case 'MSIE':   /// Internet Explorer
 
           if (strpos($agent, 'Opera')) {     // Reject Opera
               return false;
           }
-          $string = explode(";", $agent);
+          $string = explode(';', $agent);
           if (!isset($string[1])) {
               return false;
           }
-          $string = explode(" ", trim($string[1]));
+          $string = explode(' ', trim($string[1]));
           if (!isset($string[0]) and !isset($string[1])) {
               return false;
           }
@@ -2632,7 +2629,7 @@ function ini_get_bool($ini_get_arg) {
 
     $temp = ini_get($ini_get_arg);
 
-    if ($temp == "1" or strtolower($temp) == "on") {
+    if ($temp == '1' or strtolower($temp) == 'on') {
         return true;
     }
     return false;
@@ -2652,10 +2649,10 @@ function can_use_html_editor() {
     global $USER, $CFG;
 
     if (!empty($USER->htmleditor) and !empty($CFG->htmleditor)) {
-        if (check_browser_version("MSIE", 5.5)) {
-            return "MSIE";
-        } else if (check_browser_version("Gecko", 20030516)) {
-            return "Gecko";
+        if (check_browser_version('MSIE', 5.5)) {
+            return 'MSIE';
+        } else if (check_browser_version('Gecko', 20030516)) {
+            return 'Gecko';
         }
     }
     return false;
@@ -2668,9 +2665,9 @@ function check_gd_version() {
 
     if (function_exists('gd_info')){
         $gd_info = gd_info();
-        if (substr_count($gd_info['GD Version'], "2.")) {
+        if (substr_count($gd_info['GD Version'], '2.')) {
             $gdversion = 2;
-        } else if (substr_count($gd_info['GD Version'], "1.")) {
+        } else if (substr_count($gd_info['GD Version'], '1.')) {
             $gdversion = 1;
         }
 
@@ -2688,9 +2685,9 @@ function check_gd_version() {
             foreach ($parts as $key => $val) {
                 $parts[$key] = trim(strip_tags($val));
             }
-            if ($parts[0] == "GD Version") {
-                if (substr_count($parts[1], "2.0")) {
-                    $parts[1] = "2.0";
+            if ($parts[0] == 'GD Version') {
+                if (substr_count($parts[1], '2.0')) {
+                    $parts[1] = '2.0';
                 }
                 $gdversion = intval($parts[1]);
             }
@@ -2706,21 +2703,21 @@ function moodle_needs_upgrading() {
 /// if there are any mismatches ... returns true or false
     global $CFG;
 
-    include_once("$CFG->dirroot/version.php");  # defines $version and upgrades
+    include_once($CFG->dirroot .'/version.php');  # defines $version and upgrades
     if ($CFG->version) {
         if ($version > $CFG->version) {
             return true;
         }
-        if ($mods = get_list_of_plugins("mod")) {
+        if ($mods = get_list_of_plugins('mod')) {
             foreach ($mods as $mod) {
-                $fullmod = "$CFG->dirroot/mod/$mod";
+                $fullmod = $CFG->dirroot .'/mod/'. $mod;
                 unset($module);
-                if (!is_readable("$fullmod/version.php")) {
-                    notify("Module '$mod' is not readable - check permissions");
+                if (!is_readable($fullmod .'/version.php')) {
+                    notify('Module "'. $mod .'" is not readable - check permissions');
                     continue;
                 }
-                include_once("$fullmod/version.php");  # defines $module with version etc
-                if ($currmodule = get_record("modules", "name", $mod)) {
+                include_once($fullmod .'/version.php');  # defines $module with version etc
+                if ($currmodule = get_record('modules', 'name', $mod)) {
                     if ($module->version > $currmodule->version) {
                         return true;
                     }
@@ -2758,32 +2755,32 @@ function notify_login_failures() {
         $CFG->notifyloginthreshold = 10; // default to something sensible.
     }
 
-    $notifyipsrs = $db->Execute("SELECT ip FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure}
-                          AND module='login' AND action='error' GROUP BY ip HAVING count(*) > $CFG->notifyloginthreshold");
+    $notifyipsrs = $db->Execute('SELECT ip FROM '. $CFG->prefix .'log WHERE time > '. $CFG->lastnotifyfailure .'
+                          AND module=\'login\' AND action=\'error\' GROUP BY ip HAVING count(*) > '. $CFG->notifyloginthreshold);
 
-    $notifyusersrs = $db->Execute("SELECT info FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure}
-                          AND module='login' AND action='error' GROUP BY info HAVING count(*) > $CFG->notifyloginthreshold");
+    $notifyusersrs = $db->Execute('SELECT info FROM '. $CFG->prefix .'log WHERE time > '. $CFG->lastnotifyfailure .'
+                          AND module=\'login\' AND action=\'error\' GROUP BY info HAVING count(*) > '. $CFG->notifyloginthreshold);
 
     if ($notifyipsrs) {
         $ipstr = '';
         while ($row = $notifyipsrs->FetchRow()) {
-            $ipstr .= "'".$row['ip']."',";
+            $ipstr .= "'". $row['ip'] ."',";
         }
         $ipstr = substr($ipstr,0,strlen($ipstr)-1);
     }
     if ($notifyusersrs) {
         $userstr = '';
         while ($row = $notifyusersrs->FetchRow()) {
-            $userstr .= "'".$row['info']."',";
+            $userstr .= "'". $row['info'] ."',";
         }
         $userstr = substr($userstr,0,strlen($userstr)-1);
     }
 
     if (strlen($userstr) > 0 || strlen($ipstr) > 0) {
         $count = 0;
-        $logs = get_logs("time > {$CFG->lastnotifyfailure} AND module='login' AND action='error' "
-                 .((strlen($ipstr) > 0 && strlen($userstr) > 0) ? " AND ( ip IN ($ipstr) OR info IN ($userstr) ) "
-                 : ((strlen($ipstr) != 0) ? " AND ip IN ($ipstr) " : " AND info IN ($userstr) ")),"l.time DESC","","",$count);
+        $logs = get_logs('time > '. $CFG->lastnotifyfailure .' AND module=\'login\' AND action=\'error\' '
+                 .((strlen($ipstr) > 0 && strlen($userstr) > 0) ? ' AND ( ip IN ('. $ipstr .') OR info IN ('. $userstr .') ) '
+                 : ((strlen($ipstr) != 0) ? ' AND ip IN ('. $ipstr .') ' : ' AND info IN ('. $userstr .') ')), 'l.time DESC', '', '', $count);
 
         // if we haven't run in the last hour and we have something useful to report and we are actually supposed to be reporting to somebody
         if (is_array($recip) and count($recip) > 0 and ((time() - (60 * 60)) > $CFG->lastnotifyfailure)
@@ -2791,8 +2788,8 @@ function notify_login_failures() {
 
             $message = '';
             $site = get_site();
-            $subject = get_string('notifyloginfailuressubject','',$site->fullname);
-            $message .= get_string('notifyloginfailuresmessagestart','',$CFG->wwwroot)
+            $subject = get_string('notifyloginfailuressubject', '', $site->fullname);
+            $message .= get_string('notifyloginfailuresmessagestart', '', $CFG->wwwroot)
                  .(($CFG->lastnotifyfailure != 0) ? '('.userdate($CFG->lastnotifyfailure).')' : '')."\n\n";
             foreach ($logs as $log) {
                 $log->time = userdate($log->time);
@@ -2800,19 +2797,19 @@ function notify_login_failures() {
             }
             $message .= "\n\n".get_string('notifyloginfailuresmessageend','',$CFG->wwwroot)."\n\n";
             foreach ($recip as $admin) {
-                mtrace("Emailing $admin->username about ".count($logs)." failed login attempts");
+                mtrace('Emailing '. $admin->username .' about '. count($logs) .' failed login attempts');
                 email_to_user($admin,get_admin(),$subject,$message);
             }
-            $conf->name = "lastnotifyfailure";
+            $conf->name = 'lastnotifyfailure';
             $conf->value = time();
-            if ($current = get_record("config", "name", "lastnotifyfailure")) {
+            if ($current = get_record('config', 'name', 'lastnotifyfailure')) {
                 $conf->id = $current->id;
-                if (! update_record("config", $conf)) {
-                    mtrace("Could not update last notify time");
+                if (! update_record('config', $conf)) {
+                    mtrace('Could not update last notify time');
                 }
 
-            } else if (! insert_record("config", $conf)) {
-                mtrace("Could not set last notify time");
+            } else if (! insert_record('config', $conf)) {
+                mtrace('Could not set last notify time');
             }
         }
     }
@@ -2862,12 +2859,12 @@ function count_words($string) {
 }
 
 function random_string ($length=15) {
-    $pool  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    $pool .= "abcdefghijklmnopqrstuvwxyz";
-    $pool .= "0123456789";
+    $pool  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $pool .= 'abcdefghijklmnopqrstuvwxyz';
+    $pool .= '0123456789';
     $poollen = strlen($pool);
     mt_srand ((double) microtime() * 1000000);
-    $string = "";
+    $string = '';
     for ($i = 0; $i < $length; $i++) {
         $string .= substr($pool, (mt_rand()%($poollen)), 1);
     }
@@ -2892,7 +2889,7 @@ function generate_password($maxlen=10) {
 
     global $CFG;
 
-    $fillers = "1234567890!$-+";
+    $fillers = '1234567890!$-+';
     $wordlist = file($CFG->wordlist);
 
     srand((double) microtime() * 1000000);
@@ -2964,12 +2961,12 @@ function draw_rand_array($array, $draws) {
 }
 
 function microtime_diff($a, $b) {
-    list($a_dec, $a_sec) = explode(" ", $a);
-    list($b_dec, $b_sec) = explode(" ", $b);
+    list($a_dec, $a_sec) = explode(' ', $a);
+    list($b_dec, $b_sec) = explode(' ', $b);
     return $b_sec - $a_sec + $b_dec - $a_dec;
 }
 
-function make_menu_from_list($list, $separator=",") {
+function make_menu_from_list($list, $separator=',') {
 /// Given a list (eg a,b,c,d,e) this function returns
 /// an array of 1->a, 2->b, 3->c etc
 
@@ -2988,12 +2985,12 @@ function make_grades_menu($gradingtype) {
 
     $grades = array();
     if ($gradingtype < 0) {
-        if ($scale = get_record("scale", "id", - $gradingtype)) {
+        if ($scale = get_record('scale', 'id', - $gradingtype)) {
             return make_menu_from_list($scale->scale);
         }
     } else if ($gradingtype > 0) {
         for ($i=$gradingtype; $i>=0; $i--) {
-            $grades[$i] = "$i / $gradingtype";
+            $grades[$i] = $i .' / '. $gradingtype;
         }
         return $grades;
     }
@@ -3045,17 +3042,17 @@ function site_scale_used($scaleid) {
     return $return;
 }
 
-function make_unique_id_code($extra="") {
+function make_unique_id_code($extra='') {
 
-    $hostname = "unknownhost";
-    if (!empty($_SERVER["HTTP_HOST"])) {
-        $hostname = $_SERVER["HTTP_HOST"];
-    } else if (!empty($_ENV["HTTP_HOST"])) {
-        $hostname = $_ENV["HTTP_HOST"];
-    } else if (!empty($_SERVER["SERVER_NAME"])) {
-        $hostname = $_SERVER["SERVER_NAME"];
-    } else if (!empty($_ENV["SERVER_NAME"])) {
-        $hostname = $_ENV["SERVER_NAME"];
+    $hostname = 'unknownhost';
+    if (!empty($_SERVER['HTTP_HOST'])) {
+        $hostname = $_SERVER['HTTP_HOST'];
+    } else if (!empty($_ENV['HTTP_HOST'])) {
+        $hostname = $_ENV['HTTP_HOST'];
+    } else if (!empty($_SERVER['SERVER_NAME'])) {
+        $hostname = $_SERVER['SERVER_NAME'];
+    } else if (!empty($_ENV['SERVER_NAME'])) {
+        $hostname = $_ENV['SERVER_NAME'];
     }
 
     $date = gmdate("ymdHis");
@@ -3063,9 +3060,9 @@ function make_unique_id_code($extra="") {
     $random =  random_string(6);
 
     if ($extra) {
-        return "$hostname+$date+$random+$extra";
+        return $hostname .'+'. $date .'+'. $random .'+'. $extra;
     } else {
-        return "$hostname+$date+$random";
+        return $hostname .'+'. $date .'+'. $random;
     }
 }
 
@@ -3087,13 +3084,13 @@ function make_unique_id_code($extra="") {
 
 function address_in_subnet($addr, $subnetstr) {
 
-    $subnets = explode(",", $subnetstr);
+    $subnets = explode(',', $subnetstr);
     $found = false;
     $addr = trim($addr);
 
     foreach ($subnets as $subnet) {
         $subnet = trim($subnet);
-        if (strpos($subnet, "/") !== false) { /// type 1
+        if (strpos($subnet, '/') !== false) { /// type 1
 
             list($ip, $mask) = explode('/', $subnet);
             $mask = 0xffffffff << (32 - $mask);
@@ -3117,7 +3114,7 @@ function mtrace($string, $eol="\n") {
     if (defined('STDOUT')) {
         fwrite(STDOUT, $string.$eol);
     } else {
-        echo "$string$eol";
+        echo $string . $eol;
     }
 
     flush();
@@ -3125,9 +3122,9 @@ function mtrace($string, $eol="\n") {
 
 function getremoteaddr() {
 //Returns most reliable client address
-    if (getenv("HTTP_CLIENT_IP")) $ip = getenv("HTTP_CLIENT_IP");
-    else if(getenv("HTTP_X_FORWARDED_FOR")) $ip = getenv("HTTP_X_FORWARDED_FOR");
-    else if(getenv("REMOTE_ADDR")) $ip = getenv("REMOTE_ADDR");
+    if (getenv('HTTP_CLIENT_IP')) $ip = getenv('HTTP_CLIENT_IP');
+    else if(getenv('HTTP_X_FORWARDED_FOR')) $ip = getenv('HTTP_X_FORWARDED_FOR');
+    else if(getenv('REMOTE_ADDR')) $ip = getenv('REMOTE_ADDR');
     else $ip = false; //just in case
     return $ip;
 }

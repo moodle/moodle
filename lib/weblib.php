@@ -32,14 +32,14 @@
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
-define("FORMAT_MOODLE",   "0");   // Does all sorts of transformations and filtering
-define("FORMAT_HTML",     "1");   // Plain HTML (with some tags stripped)
-define("FORMAT_PLAIN",    "2");   // Plain text (even tags are printed in full)
-define("FORMAT_WIKI",     "3");   // Wiki-formatted text
-define("FORMAT_MARKDOWN", "4");   // Markdown-formatted text http://daringfireball.net/projects/markdown/
+define('FORMAT_MOODLE',   '0');   // Does all sorts of transformations and filtering
+define('FORMAT_HTML',     '1');   // Plain HTML (with some tags stripped)
+define('FORMAT_PLAIN',    '2');   // Plain text (even tags are printed in full)
+define('FORMAT_WIKI',     '3');   // Wiki-formatted text
+define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireball.net/projects/markdown/
 
 $ALLOWED_TAGS =
-"<p><br /><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>";
+'<p><br /><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>';
 
 
 /// Functions
@@ -48,7 +48,7 @@ function s($var) {
 /// returns $var with HTML characters (like "<", ">", etc.) properly quoted,
 
     if (empty($var)) {
-        return "";
+        return '';
     }
     return htmlSpecialChars(stripslashes_safe($var));
 }
@@ -57,12 +57,12 @@ function p($var) {
 /// prints $var with HTML characters (like "<", ">", etc.) properly quoted,
 
     if (empty($var)) {
-        echo "";
+        echo '';
     }
     echo htmlSpecialChars(stripslashes_safe($var));
 }
 
-function nvl(&$var, $default="") {
+function nvl(&$var, $default='') {
 /// if $var is undefined, return $default, otherwise return $var
 
     return isset($var) ? $var : $default;
@@ -81,7 +81,7 @@ function strip_querystring($url) {
 function get_referer() {
 /// returns the URL of the HTTP_REFERER, less the querystring portion
 
-    return strip_querystring(nvl($_SERVER["HTTP_REFERER"]));
+    return strip_querystring(nvl($_SERVER['HTTP_REFERER']));
 }
 
 
@@ -91,29 +91,29 @@ function me() {
 /// return different things depending on a lot of things like your OS, Web
 /// server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.)
 
-    if (!empty($_SERVER["REQUEST_URI"])) {
-        return $_SERVER["REQUEST_URI"];
+    if (!empty($_SERVER['REQUEST_URI'])) {
+        return $_SERVER['REQUEST_URI'];
 
-    } else if (!empty($_SERVER["PHP_SELF"])) {
-        if (!empty($_SERVER["QUERY_STRING"])) {
-            return $_SERVER["PHP_SELF"]."?".$_SERVER["QUERY_STRING"];
+    } else if (!empty($_SERVER['PHP_SELF'])) {
+        if (!empty($_SERVER['QUERY_STRING'])) {
+            return $_SERVER['PHP_SELF'] .'?'. $_SERVER['QUERY_STRING'];
         }
-        return $_SERVER["PHP_SELF"];
+        return $_SERVER['PHP_SELF'];
 
-    } else if (!empty($_SERVER["SCRIPT_NAME"])) {
-        if (!empty($_SERVER["QUERY_STRING"])) {
-            return $_SERVER["SCRIPT_NAME"]."?".$_SERVER["QUERY_STRING"];
+    } else if (!empty($_SERVER['SCRIPT_NAME'])) {
+        if (!empty($_SERVER['QUERY_STRING'])) {
+            return $_SERVER['SCRIPT_NAME'] .'?'. $_SERVER['QUERY_STRING'];
         }
-        return $_SERVER["SCRIPT_NAME"];
+        return $_SERVER['SCRIPT_NAME'];
 
-    } else if (!empty($_SERVER["URL"])) {     // May help IIS (not well tested)
-        if (!empty($_SERVER["QUERY_STRING"])) {
-            return $_SERVER["URL"]."?".$_SERVER["QUERY_STRING"];
+    } else if (!empty($_SERVER['URL'])) {     // May help IIS (not well tested)
+        if (!empty($_SERVER['QUERY_STRING'])) {
+            return $_SERVER['URL'] .'?'. $_SERVER['QUERY_STRING'];
         }
-        return $_SERVER["URL"];
+        return $_SERVER['URL'];
 
     } else {
-        notify("Warning: Could not find any of these web server variables: \$REQUEST_URI, \$PHP_SELF, \$SCRIPT_NAME or \$URL");
+        notify('Warning: Could not find any of these web server variables: $REQUEST_URI, $PHP_SELF, $SCRIPT_NAME or $URL');
         return false;
     }
 }
@@ -122,16 +122,16 @@ function me() {
 function qualified_me() {
 /// like me() but returns a full URL
 
-    if (!empty($_SERVER["SERVER_NAME"])) {
-        $hostname = $_SERVER["SERVER_NAME"];
-    } else if (!empty($_ENV["SERVER_NAME"])) {
-        $hostname = $_ENV["SERVER_NAME"];
-    } else if (!empty($_SERVER["HTTP_HOST"])) {
-        $hostname = $_SERVER["HTTP_HOST"];
-    } else if (!empty($_ENV["HTTP_HOST"])) {
-        $hostname = $_ENV["HTTP_HOST"];
+    if (!empty($_SERVER['SERVER_NAME'])) {
+        $hostname = $_SERVER['SERVER_NAME'];
+    } else if (!empty($_ENV['SERVER_NAME'])) {
+        $hostname = $_ENV['SERVER_NAME'];
+    } else if (!empty($_SERVER['HTTP_HOST'])) {
+        $hostname = $_SERVER['HTTP_HOST'];
+    } else if (!empty($_ENV['HTTP_HOST'])) {
+        $hostname = $_ENV['HTTP_HOST'];
     } else {
-        notify("Warning: could not find the name of this server!");
+        notify('Warning: could not find the name of this server!');
         return false;
     }
     if (isset($_SERVER['HTTPS'])) {
@@ -147,7 +147,7 @@ function qualified_me() {
 }
 
 
-function match_referer($goodreferer = "") {
+function match_referer($goodreferer = '') {
 /// returns true if the referer is the same as the goodreferer.  If
 /// goodreferer is not specified, use qualified_me as the goodreferer
     global $CFG;
@@ -156,7 +156,7 @@ function match_referer($goodreferer = "") {
         return true;
     }
 
-    if ($goodreferer == "nomatch") {   // Don't bother checking referer
+    if ($goodreferer == 'nomatch') {   // Don't bother checking referer
         return true;
     }
 
@@ -166,10 +166,10 @@ function match_referer($goodreferer = "") {
 
     $referer = get_referer();
 
-    return (($referer == $goodreferer) or ($referer == "$CFG->wwwroot/"));
+    return (($referer == $goodreferer) or ($referer == $CFG->wwwroot .'/'));
 }
 
-function data_submitted($url="") {
+function data_submitted($url='') {
 /// Used on most forms in Moodle to check for data
 /// Returns the data as an object, if it's found.
 /// This object can be used in foreach loops without
@@ -189,7 +189,7 @@ function data_submitted($url="") {
             return (object)$_POST;
         } else {
             if ($CFG->debug > 10) {
-                notice("The form did not come from this page! (referer = ".get_referer().")");
+                notice('The form did not come from this page! (referer = '. get_referer() .')');
             }
             return false;
         }
@@ -292,7 +292,7 @@ function read_template($filename, &$var) {
 ///
 /// WARNING: do not use this on big files!!
 
-    $temp = str_replace("\\", "\\\\", implode(file($filename), ""));
+    $temp = str_replace("\\", "\\\\", implode(file($filename), ''));
     $temp = str_replace('"', '\"', $temp);
     eval("\$template = \"$temp\";");
     return $template;
@@ -310,7 +310,7 @@ function checked(&$var, $set_value = 1, $unset_value = 0) {
     }
 }
 
-function frmchecked(&$var, $true_value = "checked", $false_value = "") {
+function frmchecked(&$var, $true_value = 'checked', $false_value = '') {
 /// prints the word "checked" if a variable is true, otherwise prints nothing,
 /// used for printing the word "checked" in a checkbox form input
 
@@ -322,8 +322,8 @@ function frmchecked(&$var, $true_value = "checked", $false_value = "") {
 }
 
 
-function link_to_popup_window ($url, $name="popup", $linkname="click here",
-                               $height=400, $width=500, $title="Popup window", $options="none", $return=false) {
+function link_to_popup_window ($url, $name='popup', $linkname='click here',
+                               $height=400, $width=500, $title='Popup window', $options='none', $return=false) {
 /// This will create a HTML link that will work on both
 /// Javascript and non-javascript browsers.
 /// Relies on the Javascript function openpopup in javascript.php
@@ -331,8 +331,8 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
 
     global $CFG;
 
-    if ($options == "none") {
-        $options = "menubar=0,location=0,scrollbars,resizable,width=$width,height=$height";
+    if ($options == 'none') {
+        $options = 'menubar=0,location=0,scrollbars,resizable,width='. $width .',height='. $height;
     }
     $fullscreen = 0;
 
@@ -340,7 +340,7 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
         $url = substr($url,strlen($CFG->wwwroot)+1);
     }
 
-    $link = "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot$url\" ".
+    $link = '<a target="'. $name .'" title="'. $title .'" href="'. $CFG->wwwroot . $url .'" '.
            "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
     if ($return) {
         return $link;
@@ -350,8 +350,8 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
 }
 
 
-function button_to_popup_window ($url, $name="popup", $linkname="click here",
-                                 $height=400, $width=500, $title="Popup window", $options="none") {
+function button_to_popup_window ($url, $name='popup', $linkname='click here',
+                                 $height=400, $width=500, $title='Popup window', $options='none') {
 /// This will create a HTML link that will work on both
 /// Javascript and non-javascript browsers.
 /// Relies on the Javascript function openpopup in javascript.php
@@ -359,12 +359,12 @@ function button_to_popup_window ($url, $name="popup", $linkname="click here",
 
     global $CFG;
 
-    if ($options == "none") {
-        $options = "menubar=0,location=0,scrollbars,resizable,width=$width,height=$height";
+    if ($options == 'none') {
+        $options = 'menubar=0,location=0,scrollbars,resizable,width='. $width .',height='. $height;
     }
     $fullscreen = 0;
 
-    echo "<input type=\"button\" name=\"popupwindow\" title=\"$title\" value=\"$linkname ...\" ".
+    echo '<input type="button" name="popupwindow" title="'. $title .'" value="'. $linkname .' ..." '.
          "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
 }
 
@@ -372,57 +372,57 @@ function button_to_popup_window ($url, $name="popup", $linkname="click here",
 function close_window_button() {
 /// Prints a simple button to close a window
 
-    echo "<center>\n";
-    echo "<script type=\"text/javascript\">\n";
-    echo "<!--\n";
+    echo '<center>' . "\n";
+    echo '<script type="text/javascript">' . "\n";
+    echo '<!--' . "\n";
     echo "document.write('<form>');\n";
     echo "document.write('<input type=\"button\" onClick=\"self.close();\" value=\"".get_string("closewindow")."\" />');\n";
     echo "document.write('</form>');\n";
-    echo "-->\n";
-    echo "</script>\n";
-    echo "<noscript>\n";
-    echo "<a href=\"".$_SERVER['HTTP_REFERER']."\"><---</a>\n";
-    echo "</noscript>\n";
-    echo "</center>\n";
+    echo '-->' . "\n";
+    echo '</script>' . "\n";
+    echo '<noscript>' . "\n";
+    echo '<a href="'. $_SERVER['HTTP_REFERER'] .'"><---</a>' . "\n";
+    echo '</noscript>' . "\n";
+    echo '</center>' . "\n";
 }
 
 
-function choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {
+function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='', $nothingvalue='0', $return=false) {
 /// Given an array of value, creates a popup menu to be part of a form
 /// $options["value"]["label"]
 
-    if ($nothing == "choose") {
-        $nothing = get_string("choose")."...";
+    if ($nothing == 'choose') {
+        $nothing = get_string('choose') .'...';
     }
 
     if ($script) {
-        $javascript = "onchange=\"$script\"";
+        $javascript = 'onchange="'. $script .'"';
     } else {
-        $javascript = "";
+        $javascript = '';
     }
 
-    $output = "<select name=\"$name\" $javascript>\n";
+    $output = '<select name="'. $name .'" '. $javascript .'>' . "\n";
     if ($nothing) {
-        $output .= "   <option value=\"$nothingvalue\"\n";
+        $output .= '   <option value="'. $nothingvalue .'"'. "\n";
         if ($nothingvalue === $selected) {
-            $output .= " selected=\"selected\"";
+            $output .= ' selected="selected"';
         }
-        $output .= ">$nothing</option>\n";
+        $output .= '>'. $nothing .'</option>' . "\n";
     }
     if (!empty($options)) {
         foreach ($options as $value => $label) {
-            $output .= "   <option value=\"$value\"";
+            $output .= '   <option value="'. $value .'"';
             if ($value == $selected) {
-                $output .= " selected=\"selected\"";
+                $output .= ' selected="selected"';
             }
-            if ($label === "") {
-                $output .= ">$value</option>\n";
+            if ($label === '') {
+                $output .= '>'. $value .'</option>' . "\n";
             } else {
-                $output .= ">$label</option>\n";
+                $output .= '>'. $label .'</option>' . "\n";
             }
         }
     }
-    $output .= "</select>\n";
+    $output .= '</select>' . "\n";
 
     if ($return) {
         return $output;
@@ -431,7 +431,7 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
     }
 }
 
-function popup_form ($common, $options, $formname, $selected="", $nothing="choose", $help="", $helptext="", $return=false, $targetwindow="self") {
+function popup_form ($common, $options, $formname, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self') {
 ///  Implements a complete little popup form
 ///  $common   = the URL up to the point of the variable that changes
 ///  $options  = A list of value-label pairs for the popup list
@@ -475,35 +475,35 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         return '';
     }
 
-    if ($nothing == "choose") {
-        $nothing = get_string("choose")."...";
+    if ($nothing == 'choose') {
+        $nothing = get_string('choose') .'...';
     }
 
     $startoutput = '<form action="" method="get" target="'.$CFG->framename.'" name="'.$formname.'">';
     $output = "<select name=\"popup\" onchange=\"$targetwindow.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value;\">\n";
 
-    if ($nothing != "") {
+    if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
     }
 
     foreach ($options as $value => $label) {
-        if (substr($label,0,2) == "--") {
-            $output .= "   <optgroup label=\"$label\"></optgroup>";   // Plain labels
+        if (substr($label,0,2) == '--') {
+            $output .= '   <optgroup label="'. $label .'"></optgroup>';   // Plain labels
             continue;
         } else {
-            $output .= "   <option value=\"$common$value\"";
+            $output .= '   <option value="'. $common . $value .'"';
             if ($value == $selected) {
                 $output .= ' selected="selected"';
             }
         }
         if ($label) {
-            $output .= ">$label</option>\n";
+            $output .= '>'. $label .'</option>' . "\n";
         } else {
-            $output .= ">$value</option>\n";
+            $output .= '>'. $value .'</option>' . "\n";
         }
     }
-    $output .= "</select>";
-    $output .= "</form>\n";
+    $output .= '</select>';
+    $output .= '</form>' . "\n";
 
     if ($help) {
         $button = helpbutton($help, $helptext, 'moodle', true, false, '', true);
@@ -523,7 +523,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
 function formerr($error) {
 /// Prints some red text
     if (!empty($error)) {
-        echo "<font color=\"#ff0000\">$error</font>";
+        echo '<font color="#ff0000">'. $error .'</font>';
     }
 }
 
@@ -551,7 +551,7 @@ function detect_munged_arguments($string, $allowdots=1) {
     return false;
 }
 
-function get_slash_arguments($file="file.php") {
+function get_slash_arguments($file='file.php') {
 /// Searches the current environment variables for some slash arguments
 
     if (!$string = me()) {
@@ -574,7 +574,7 @@ function parse_slash_arguments($string, $i=0) {
     if (detect_munged_arguments($string)) {
         return false;
     }
-    $args = explode("/", $string);
+    $args = explode('/', $string);
 
     if ($i) {     // return just the required argument
         return $args[$i];
@@ -587,11 +587,11 @@ function parse_slash_arguments($string, $i=0) {
 
 function format_text_menu() {
 /// Just returns an array of formats suitable for a popup menu
-    return array (FORMAT_MOODLE => get_string("formattext"),
-                  FORMAT_HTML   => get_string("formathtml"),
-                  FORMAT_PLAIN  => get_string("formatplain"),
-                  FORMAT_WIKI   => get_string("formatwiki"),
-                  FORMAT_MARKDOWN  => get_string("formatmarkdown"));
+    return array (FORMAT_MOODLE => get_string('formattext'),
+                  FORMAT_HTML   => get_string('formathtml'),
+                  FORMAT_PLAIN  => get_string('formatplain'),
+                  FORMAT_WIKI   => get_string('formatwiki'),
+                  FORMAT_MARKDOWN  => get_string('formatmarkdown'));
 }
 
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL ) {
@@ -631,7 +631,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         case FORMAT_PLAIN:
             $text = htmlentities($text);
             $text = rebuildnolinktag($text);
-            $text = str_replace("  ", "&nbsp; ", $text);
+            $text = str_replace('  ', '&nbsp; ', $text);
             $text = nl2br($text);
             break;
 
@@ -729,8 +729,8 @@ function filter_text($text, $courseid=NULL) {
     if (!empty($CFG->textfilters)) {
         $textfilters = explode(',', $CFG->textfilters);
         foreach ($textfilters as $textfilter) {
-            if (is_readable("$CFG->dirroot/$textfilter/filter.php")) {
-                include_once("$CFG->dirroot/$textfilter/filter.php");
+            if (is_readable($CFG->dirroot .'/'. $textfilter .'/filter.php')) {
+                include_once($CFG->dirroot .'/'. $textfilter .'/filter.php');
                 $functionname = basename($textfilter).'_filter';
                 if (function_exists($functionname)) {
                     $text = $functionname($courseid, $text);
@@ -791,7 +791,7 @@ function cleanAttributes2($htmlTag){
     ///         17/08/2004              ::          Eamon DOT Costello AT dcu DOT ie
 
     global $CFG;
-    require_once("$CFG->libdir/kses.php");
+    require_once($CFG->libdir .'/kses.php');
 
     $htmlTag = kses_stripslashes($htmlTag);
     if (substr($htmlTag, 0, 1) != '<'){
@@ -816,7 +816,7 @@ function cleanAttributes2($htmlTag){
     if (preg_match('%/\s*$%', $attrlist)){
         $xhtml_slash = ' /';
     }
-    return "<$slash$elem$attStr$xhtml_slash>";
+    return '<'. $slash . $elem . $attStr . $xhtml_slash .'>';
 }
 
 
@@ -858,7 +858,7 @@ function replace_smilies(&$text) {
             $alttext = get_string($image, 'pix');
 
             $e[] = $emoticon;
-            $img[] = "<img alt=\"$alttext\" width=\"15\" height=\"15\" src=\"$CFG->pixpath/s/$image.gif\" />";
+            $img[] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $CFG->pixpath .'/s/'. $image.gif .'" />';
         }
         $runonce = true;
     }
@@ -916,7 +916,7 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
 
 /// Wrap the whole thing in a paragraph tag if required
     if ($para) {
-        return "<p>".$text."</p>";
+        return '<p>'.$text.'</p>';
     } else {
         return $text;
     }
@@ -926,7 +926,7 @@ function wiki_to_html($text,$courseid) {
 /// Given Wiki formatted text, make it into XHTML using external function
     global $CFG;
 
-    require_once("$CFG->libdir/wiki.php");
+    require_once($CFG->libdir .'/wiki.php');
 
     $wiki = new Wiki;
     return $wiki->format($text,$courseid);
@@ -936,7 +936,7 @@ function markdown_to_html($text) {
 /// Given Markdown formatted text, make it into XHTML using external function
     global $CFG;
 
-    require_once("$CFG->libdir/markdown.php");
+    require_once($CFG->libdir .'/markdown.php');
 
     return Markdown($text);
 }
@@ -945,7 +945,7 @@ function html_to_text($html) {
 /// Given HTML text, make it into plain text using external function
     global $CFG;
 
-    require_once("$CFG->libdir/html2text.php");
+    require_once($CFG->libdir .'/html2text.php');
 
     return html2text($html);
 }
@@ -964,7 +964,7 @@ function convert_urls_into_links(&$text) {
 }
 
 function highlight($needle, $haystack, $case=0,
-                    $left_string="<span class=\"highlight\">", $right_string="</span>") {
+                    $left_string='<span class="highlight">', $right_string='</span>') {
 /// This function will highlight search words in a given string
 /// It cares about HTML and will not ruin links.  It's best to use
 /// this function after performing any conversions to HTML.
@@ -975,13 +975,13 @@ function highlight($needle, $haystack, $case=0,
     }
 
     $list_of_words = eregi_replace("[^-a-zA-Z0-9&']", " ", $needle);
-    $list_array = explode(" ", $list_of_words);
+    $list_array = explode(' ', $list_of_words);
     for ($i=0; $i<sizeof($list_array); $i++) {
         if (strlen($list_array[$i]) == 1) {
-            $list_array[$i] = "";
+            $list_array[$i] = '';
         }
     }
-    $list_of_words = implode(" ", $list_array);
+    $list_of_words = implode(' ', $list_array);
     $list_of_words_cp = $list_of_words;
     $final = array();
     preg_match_all('/<(.+?)>/is',$haystack,$list_of_words);
@@ -991,20 +991,20 @@ function highlight($needle, $haystack, $case=0,
     }
 
     $haystack = str_replace($final,array_keys($final),$haystack);
-    $list_of_words_cp = eregi_replace(" +", "|", $list_of_words_cp);
+    $list_of_words_cp = eregi_replace(' +', '|', $list_of_words_cp);
 
-    if ($list_of_words_cp{0}=="|") {
-        $list_of_words_cp{0} = "";
+    if ($list_of_words_cp{0}=='|') {
+        $list_of_words_cp{0} = '';
     }
-    if ($list_of_words_cp{strlen($list_of_words_cp)-1}=="|") {
-        $list_of_words_cp{strlen($list_of_words_cp)-1}="";
+    if ($list_of_words_cp{strlen($list_of_words_cp)-1}=='|') {
+        $list_of_words_cp{strlen($list_of_words_cp)-1}='';
     }
-    $list_of_words_cp = "(".trim($list_of_words_cp).")";
+    $list_of_words_cp = '('. trim($list_of_words_cp) .')';
 
     if (!$case){
-        $haystack = eregi_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
+        $haystack = eregi_replace($list_of_words_cp, $left_string ."\\1". $right_string, $haystack);
     } else {
-        $haystack = ereg_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
+        $haystack = ereg_replace($list_of_words_cp, $left_string ."\\1". $right_string, $haystack);
     }
     $haystack = str_replace(array_keys($final),$final,$haystack);
 
@@ -1024,7 +1024,7 @@ function highlightfast($needle, $haystack) {
         $parts[$key] = substr($haystack, $pos, strlen($part));
         $pos += strlen($part);
 
-        $parts[$key] .= "<span class=\"highlight\">".substr($haystack, $pos, strlen($needle))."</span>";
+        $parts[$key] .= '<span class="highlight">'.substr($haystack, $pos, strlen($needle)).'</span>';
         $pos += strlen($needle);
     }
 
@@ -1034,8 +1034,8 @@ function highlightfast($needle, $haystack) {
 
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
-function print_header ($title="", $heading="", $navigation="", $focus="", $meta="",
-                       $cache=true, $button="&nbsp;", $menu="", $usexml=false, $bodytags="") {
+function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
+                       $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 // $title - appears top of window
 // $heading - appears top of page
 // $navigation - premade navigation string
@@ -1054,21 +1054,21 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $CFG->courselang = $course->lang;
     }
 
-    if (file_exists("$CFG->dirroot/theme/$CFG->theme/styles.php")) {
+    if (file_exists($CFG->dirroot .'/theme/'. $CFG->theme .'/styles.php')) {
         $styles = $CFG->stylesheet;
     } else {
-        $styles = "$CFG->wwwroot/theme/standard/styles.php";
+        $styles = $CFG->wwwroot .'/theme/standard/styles.php';
     }
 
-    if ($navigation == "home") {
+    if ($navigation == 'home') {
         $home = true;
-        $navigation = "";
+        $navigation = '';
     } else {
         $home = false;
     }
 
-    if ($button == "") {
-        $button = "&nbsp;";
+    if ($button == '') {
+        $button = '&nbsp;';
     }
 
     if (!$menu and $navigation) {
@@ -1078,9 +1078,9 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
             $wwwroot = str_replace('http','https',$CFG->wwwroot);
         }
         if (isset($USER->id)) {
-            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$wwwroot/login/logout.php\">".get_string("logout")."</a></font>";
+            $menu = '<font size="2"><a target="'. $CFG->framename .'" href="'. $wwwroot .'/login/logout.php">'. get_string('logout') .'</a></font>';
         } else {
-            $menu = "<font size=\"2\"><a target=\"$CFG->framename\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a></font>";
+            $menu = '<font size="2"><a target="'. $CFG->framename .'" href="'. $wwwroot .'/login/index.php">'. get_string('login') .'</a></font>';
         }
     }
 
@@ -1109,26 +1109,26 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     $meta = "<style type=\"text/css\">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>\n$meta\n";
 
     if (!empty($CFG->unicode)) {
-        $encoding = "utf-8";
+        $encoding = 'utf-8';
     } else if (!empty($CFG->courselang)) {
-        $encoding = get_string("thischarset");
+        $encoding = get_string('thischarset');
         moodle_setlocale();
     } else {
         if (!empty($SESSION->encoding)) {
             $encoding = $SESSION->encoding;
         } else {
-            $SESSION->encoding = $encoding = get_string("thischarset");
+            $SESSION->encoding = $encoding = get_string('thischarset');
         }
     }
-    $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=$encoding\" />\n$meta\n";
+    $meta = '<meta http-equiv="content-type" content="text/html; charset='. $encoding .'" />'. "\n". $meta ."\n";
     if (!$usexml) {
         @header('Content-type: text/html; charset='.$encoding);
     }
 
-    if ( get_string("thisdirection") == "rtl" ) {
-        $direction = " dir=\"rtl\"";
+    if ( get_string('thisdirection') == 'rtl' ) {
+        $direction = ' dir="rtl"';
     } else {
-        $direction = " dir=\"ltr\"";
+        $direction = ' dir="ltr"';
     }
 
     if (!$cache) {   // Do everything we can to prevent clients and proxies caching
@@ -1138,8 +1138,8 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         @header('Cache-Control: post-check=0, pre-check=0', false);
         @header('Pragma: no-cache');
 
-        $meta .= "\n<meta http-equiv=\"pragma\" content=\"no-cache\" />";
-        $meta .= "\n<meta http-equiv=\"expires\" content=\"0\" />";
+        $meta .= "\n".'<meta http-equiv="pragma" content="no-cache" />';
+        $meta .= "\n".'<meta http-equiv="expires" content="0" />';
     }
 
     if ($usexml) {       // Added by Gustav Delius / Mad Alex for MathML output
@@ -1149,18 +1149,18 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         if(!$mathplayer) {
             header('Content-Type: application/xhtml+xml');
         }
-        echo "<?xml version=\"1.0\" ?>\n";
+        echo '<?xml version="1.0" ?>'."\n";
         if (!empty($CFG->xml_stylesheets)) {
-            $stylesheets = explode(";", $CFG->xml_stylesheets);
+            $stylesheets = explode(';', $CFG->xml_stylesheets);
             foreach ($stylesheets as $stylesheet) {
-                echo "<?xml-stylesheet type=\"text/xsl\" href=\"$CFG->wwwroot/$stylesheet\" ?>\n";
+                echo '<?xml-stylesheet type="text/xsl" href="'. $CFG->wwwroot .'/'. $stylesheet .'" ?>' . "\n";
             }
         }
-        echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1";
+        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1';
         if (!empty($CFG->xml_doctype_extra)) {
-            echo " plus $CFG->xml_doctype_extra";
+            echo ' plus '. $CFG->xml_doctype_extra;
         }
-        echo "//" . strtoupper($currentlanguage) . "\" \"$CFG->xml_dtd\">\n";
+        echo '//' . strtoupper($currentlanguage) . '" "'. $CFG->xml_dtd .'">'."\n";
         $direction = " xmlns=\"http://www.w3.org/1999/xhtml\"
                        xmlns:math=\"http://www.w3.org/1998/Math/MathML\"
                        xml:lang=\"en\"
@@ -1168,8 +1168,8 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
                        $direction";
         if($mathplayer) {
             $meta .= '<object id="mathplayer" classid="clsid:32F66A20-7614-11D4-BD11-00104BD3F987">' . "\n";
-            $meta .= "<!--comment required to prevent this becoming an empty tag-->\n";
-            $meta .= "</object>\n";
+            $meta .= '<!--comment required to prevent this becoming an empty tag-->'."\n";
+            $meta .= '</object>'."\n";
             $meta .= '<?import namespace="math" implementation="#mathplayer" ?>' . "\n";
         }
     }
@@ -1177,12 +1177,12 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     $title = str_replace('"', '&quot;', $title);
     $title = strip_tags($title);
 
-    include ("$CFG->dirroot/theme/$CFG->theme/header.html");
+    include ($CFG->dirroot .'/theme/'. $CFG->theme .'/header.html');
 }
 
 
-function print_header_simple($title="", $heading="", $navigation="", $focus="", $meta="",
-                       $cache=true, $button="&nbsp;", $menu="", $usexml=false, $bodytags="") {
+function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='',
+                       $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 /// This version of print_header is simpler because the course name does not have to be
 /// provided explicitly in the strings. It can be used on the site page as in courses
 /// Eventually all print_header could be replaced by print_header_simple
@@ -1191,10 +1191,10 @@ function print_header_simple($title="", $heading="", $navigation="", $focus="", 
 
     $shortname ='';
     if ($course->category) {
-        $shortname = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        $shortname = '<a href="../../course/view.php?id='. $course->id .'">'. $course->shortname .'</a> ->';
     }
 
-    print_header("$course->shortname: $title", "$course->fullname $heading", "$shortname $navigation", $focus, $meta,
+    print_header($course->shortname .': '. $title, $course->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,
                        $cache, $button, $menu, $usexml, $bodytags);
 }
 
@@ -1207,16 +1207,16 @@ function print_footer ($course=NULL, $usercourse=NULL) {
 
 /// Course links
     if ($course) {
-        if ($course == "home") {   // special case for site home page - please do not remove
-            $homelink  = "<p align=\"center\"><a title=\"moodle $CFG->release ($CFG->version)\" href=\"http://moodle.org/\" target=\"_blank\">";
-            $homelink .= "<br /><img width=\"100\" height=\"30\" src=\"pix/moodlelogo.gif\" border=\"0\" /></a></p>";
+        if ($course == 'home') {   // special case for site home page - please do not remove
+            $homelink  = '<p align="center"><a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/" target="_blank">';
+            $homelink .= '<br /><img width="100" height="30" src="pix/moodlelogo.gif" border="0" /></a></p>';
             $course = get_site();
             $homepage = true;
         } else {
             $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
         }
     } else {
-        $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">".get_string("home")."</a>";
+        $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">".get_string('home').'</a>';
         $course = get_site();
     }
 
@@ -1227,26 +1227,26 @@ function print_footer ($course=NULL, $usercourse=NULL) {
 /// User links
     $loggedinas = user_login_string($usercourse, $USER);
 
-    include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
+    include ($CFG->dirroot .'/theme/'. $CFG->theme .'/footer.html');
 }
 
-function style_sheet_setup($lastmodified=0, $lifetime=300, $themename="") {
+function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='') {
 /// This function is called by stylesheets to set up the header
 /// approriately as well as the current path
 
     global $CFG;
 
-    header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
-    header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-    header("Cache-control: max_age = $lifetime");
-    header("Pragma: ");
-    header("Content-type: text/css");  // Correct MIME type
+    header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $lastmodified) . ' GMT');
+    header('Expires: ' . gmdate("D, d M Y H:i:s", time() + $lifetime) . ' GMT');
+    header('Cache-control: max_age = '. $lifetime);
+    header('Pragma: ');
+    header('Content-type: text/css');  // Correct MIME type
 
     if (!empty($themename)) {
         $CFG->theme = $themename;
     }
 
-    return "$CFG->wwwroot/theme/$CFG->theme";
+    return $CFG->wwwroot .'/theme/'. $CFG->theme;
 
 }
 
@@ -1259,13 +1259,13 @@ function user_login_string($course, $user=NULL) {
     }
 
     if (isset($user->realuser)) {
-        if ($realuser = get_record("user", "id", $user->realuser)) {
+        if ($realuser = get_record('user', 'id', $user->realuser)) {
             $fullname = fullname($realuser, true);
             $realuserinfo = " [<a target=\"{$CFG->framename}\"
             href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=$realuser->id\">$fullname</a>] ";
         }
     } else {
-        $realuserinfo = "";
+        $realuserinfo = '';
     }
 
     if (empty($CFG->loginhttps)) {
@@ -1278,15 +1278,15 @@ function user_login_string($course, $user=NULL) {
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
         if (isguest($user->id)) {
-            $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
-                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a>)";
+            $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).
+                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
         } else {
-            $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
-                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a>)";
+            $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).
+                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string('logout').'</a>)';
         }
     } else {
-        $loggedinas = get_string("loggedinnot", "moodle").
-                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string("login")."</a>)";
+        $loggedinas = get_string('loggedinnot', 'moodle').
+                      " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
     }
     return $loggedinas;
 }
@@ -1297,7 +1297,7 @@ function print_navigation ($navigation) {
 
    if ($navigation) {
        if (! $site = get_site()) {
-           $site->shortname = get_string("home");;
+           $site->shortname = get_string('home');;
        }
        $navigation = str_replace('->', '&raquo;', $navigation);
        echo "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">$site->shortname</a> &raquo; $navigation";
@@ -1305,19 +1305,19 @@ function print_navigation ($navigation) {
 }
 
 function print_headline($text, $size=2) {
-    echo "<b><font size=\"$size\">$text</font></b><br />\n";
+    echo '<b><font size="'. $size .'">'. $text .'</font></b><br />'."\n";
 }
 
-function print_heading($text, $align="center", $size=3) {
-    echo "<p align=\"$align\"><font size=\"$size\"><b>".stripslashes_safe($text)."</b></font></p>";
+function print_heading($text, $align='center', $size=3) {
+    echo '<p align="'. $align .'"><font size="'. $size .'"><b>'. stripslashes_safe($text) .'</b></font></p>';
 }
 
-function print_heading_with_help($text, $helppage, $module="moodle", $icon="") {
+function print_heading_with_help($text, $helppage, $module='moodle', $icon='') {
 // Centered heading with attached help button (same title text)
 // and optional icon attached
-    echo "<p align=\"center\"><font size=\"3\">$icon<b>".stripslashes_safe($text);
+    echo '<p align="center"><font size="3">'. $icon .'<b>'. stripslashes_safe($text);
     helpbutton($helppage, $text, $module);
-    echo "</b></font></p>";
+    echo '</b></font></p>';
 }
 
 function print_continue($link) {
@@ -1325,83 +1325,83 @@ function print_continue($link) {
     global $CFG;
 
     if (!$link) {
-        $link = $_SERVER["HTTP_REFERER"];
+        $link = $_SERVER['HTTP_REFERER'];
     }
 
-    print_heading("<a target=\"{$CFG->framename}\" href=\"$link\">".get_string("continue")."</a>");
+    print_heading('<a target="'. $CFG->framename .'" href="'. $link .'">'. get_string('continue').'</a>');
 }
 
 
-function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5, $class="generalbox") {
+function print_simple_box($message, $align='', $width='', $color='#FFFFFF', $padding=5, $class='generalbox') {
     print_simple_box_start($align, $width, $color, $padding, $class);
     echo stripslashes_safe($message);
     print_simple_box_end();
 }
 
-function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding=5, $class="generalbox") {
+function print_simple_box_start($align='', $width='', $color='#FFFFFF', $padding=5, $class='generalbox') {
     global $THEME;
 
     if ($align) {
-        $align = "align=\"$align\"";
+        $align = 'align="'. $align .'"';
     }
     if ($width) {
-        $width = "width=\"$width\"";
+        $width = 'width="'. $width .'"';
     }
     echo "<table $align $width class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\"><tr><td bgcolor=\"$color\" class=\"$class"."content\">";
 }
 
 function print_simple_box_end() {
-    echo "</td></tr></table>";
+    echo '</td></tr></table>';
 }
 
-function print_single_button($link, $options, $label="OK", $method="get") {
-    echo "<form action=\"$link\" method=\"$method\">";
+function print_single_button($link, $options, $label='OK', $method='get') {
+    echo '<form action="'. $link .'" method="'. $method .'">';
     if ($options) {
         foreach ($options as $name => $value) {
-            echo "<input type=\"hidden\" name=\"$name\" value=\"$value\" />";
+            echo '<input type="hidden" name="'. $name .'" value="'. $value .'" />';
         }
     }
-    echo "<input type=\"submit\" value=\"$label\" /></form>";
+    echo '<input type="submit" value="'. $label .'" /></form>';
 }
 
 function print_spacer($height=1, $width=1, $br=true) {
     global $CFG;
-    echo "<img height=\"$height\" width=\"$width\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\" />";
+    echo '<img height="'. $height .'" width="'. $width .'" src="'. $CFG->wwwroot .'/pix/spacer.gif" alt="" />';
     if ($br) {
-        echo "<br />\n";
+        echo '<br />'."\n";
     }
 }
 
-function print_file_picture($path, $courseid=0, $height="", $width="", $link="") {
+function print_file_picture($path, $courseid=0, $height='', $width='', $link='') {
 // Given the path to a picture file in a course, or a URL,
 // this function includes the picture in the page.
     global $CFG;
 
     if ($height) {
-        $height = "height=\"$height\"";
+        $height = 'height="'. $height .'"';
     }
     if ($width) {
-        $width = "width=\"$width\"";
+        $width = 'width="'. $width .'"';
     }
     if ($link) {
-        echo "<a href=\"$link\">";
+        echo '<a href="'. $link .'">';
     }
-    if (substr(strtolower($path), 0, 7) == "http://") {
-        echo "<img border=\"0\" $height $width src=\"$path\" />";
+    if (substr(strtolower($path), 0, 7) == 'http://') {
+        echo '<img border="0" '.$height . $width .' src="'. $path .'" />';
 
     } else if ($courseid) {
-        echo "<img border=\"0\" $height $width src=\"";
+        echo '<img border="0" '. $height . $width .' src="';
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            echo "$CFG->wwwroot/file.php/$courseid/$path";
+            echo $CFG->wwwroot .'/file.php/'. $courseid .'/'. $path;
         } else {
-            echo "$CFG->wwwroot/file.php?file=/$courseid/$path";
+            echo $CFG->wwwroot .'/file.php?file=/'. $courseid .'/'. $path;
         }
-        echo "\" />";
+        echo '" />';
     } else {
-        echo "Error: must pass URL or course";
+        echo 'Error: must pass URL or course';
     }
     if ($link) {
-        echo "</a>";
+        echo '</a>';
     }
 }
 
@@ -1409,31 +1409,31 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     global $CFG;
 
     if ($link) {
-        $output = "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid\">";
+        $output = '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $userid .'&amp;course='. $courseid .'">';
     } else {
-        $output = "";
+        $output = '';
     }
     if ($large) {
-        $file = "f1";
+        $file = 'f1';
         $size = 100;
     } else {
-        $file = "f2";
+        $file = 'f2';
         $size = 35;
     }
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "<img align=\"middle\" src=\"$CFG->wwwroot/user/pix.php/$userid/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+            $output .= '<img align="middle" src="'. $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file.jpg .'"'.
+                       ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
         } else {
-            $output .= "<img align=\"middle\" src=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+            $output .= '<img align="middle" src="'. $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file.jpg .'"'.
+                       ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
         }
     } else {         // Print default user pictures (use theme version if available)
         $output .= "<img align=\"middle\" src=\"$CFG->pixpath/u/$file.png\"".
                    " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
     }
     if ($link) {
-        $output .= "</a>";
+        $output .= '</a>';
     }
 
     if ($returnstring) {
@@ -1456,25 +1456,25 @@ function print_user($user, $course) {
 
     if (empty($string)) {     // Cache all the strings for the rest of the page
 
-        $string->email       = get_string("email");
-        $string->location    = get_string("location");
-        $string->lastaccess  = get_string("lastaccess");
-        $string->activity    = get_string("activity");
-        $string->unenrol     = get_string("unenrol");
-        $string->loginas     = get_string("loginas");
-        $string->fullprofile = get_string("fullprofile");
-        $string->role        = get_string("role");
-        $string->name        = get_string("name");
-        $string->never       = get_string("never");
+        $string->email       = get_string('email');
+        $string->location    = get_string('location');
+        $string->lastaccess  = get_string('lastaccess');
+        $string->activity    = get_string('activity');
+        $string->unenrol     = get_string('unenrol');
+        $string->loginas     = get_string('loginas');
+        $string->fullprofile = get_string('fullprofile');
+        $string->role        = get_string('role');
+        $string->name        = get_string('name');
+        $string->never       = get_string('never');
 
-        $datestring->day     = get_string("day");
-        $datestring->days    = get_string("days");
-        $datestring->hour    = get_string("hour");
-        $datestring->hours   = get_string("hours");
-        $datestring->min     = get_string("min");
-        $datestring->mins    = get_string("mins");
-        $datestring->sec     = get_string("sec");
-        $datestring->secs    = get_string("secs");
+        $datestring->day     = get_string('day');
+        $datestring->days    = get_string('days');
+        $datestring->hour    = get_string('hour');
+        $datestring->hours   = get_string('hours');
+        $datestring->min     = get_string('min');
+        $datestring->mins    = get_string('mins');
+        $datestring->sec     = get_string('sec');
+        $datestring->secs    = get_string('secs');
 
         $countries = get_list_of_countries();
 
@@ -1492,13 +1492,13 @@ function print_user($user, $course) {
     echo '<font size="3"><b>'.fullname($user, $isteacher).'</b></font>';
     echo '<p>';
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
-        echo "$string->role: $user->role<br />";
+        echo $string->role .': '. $user->role .'<br />';
     }
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or $isteacher) {
-        echo "$string->email: <a href=\"mailto:$user->email\">$user->email</a><br />";
+        echo $string->email .': <a href="mailto:'. $user->email .'">'. $user->email .'</a><br />';
     }
     if ($user->city or $user->country) {
-        echo "$string->location: ";
+        echo $string->location .': ';
         if ($user->city) {
             echo $user->city;
         }
@@ -1508,30 +1508,30 @@ function print_user($user, $course) {
             }
             echo $countries[$user->country];
         }
-        echo "<br />";
+        echo '<br />';
     }
     if ($user->lastaccess) {
-        echo "$string->lastaccess: ".userdate($user->lastaccess);
-        echo "&nbsp (".format_time(time() - $user->lastaccess, $datestring).")";
+        echo $string->lastaccess .': '. userdate($user->lastaccess);
+        echo '&nbsp ('. format_time(time() - $user->lastaccess, $datestring) .')';
     } else {
-        echo "$string->lastaccess: $string->never";
+        echo $string->lastaccess .': '. $string->never;
     }
     echo '</td><td valign="bottom" bgcolor="#ffffff" nowrap="nowrap" class="userinfoboxlinkcontent">';
 
     echo '<font size="1">';
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
-        echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&amp;user=$user->id\">$string->activity</a><br />";
+        echo '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
         if (!iscreator($user->id) or ($isadmin and !isadmin($user->id))) {  // Includes admins
             if ($course->category and isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
-                echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&amp;user=$user->id\">$string->unenrol</a><br />";
+                echo '<a href="'. $CFG->wwwroot .'/course/unenrol.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->unenrol .'</a><br />';
             }
             if ($USER->id != $user->id) {
-                echo "<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;user=$user->id\">$string->loginas</a><br />";
+                echo '<a href="'. $CFG->wwwroot .'/course/loginas.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->loginas .'</a><br />';
             }
         }
     }
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$string->fullprofile...</a>";
+    echo '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $course->id .'">'. $string->fullprofile .'...</a>';
     echo '</font>';
 
     echo '</td></tr></table>';
@@ -1552,15 +1552,15 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
     }
 
     if ($link or $isteacheredit) {
-        $output = "<a href=\"$CFG->wwwroot/course/group.php?id=$courseid&amp;group=$group->id\">";
+        $output = '<a href="'. $CFG->wwwroot .'/course/group.php?id='. $courseid .'&amp;group='. $group->id .'">';
     } else {
         $output = '';
     }
     if ($large) {
-        $file = "f1";
+        $file = 'f1';
         $size = 100;
     } else {
-        $file = "f2";
+        $file = 'f2';
         $size = 35;
     }
     if ($group->picture) {  // Print custom group picture
@@ -1573,7 +1573,7 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
         }
     }
     if ($link or $isteacheredit) {
-        $output .= "</a>";
+        $output .= '</a>';
     }
 
     if ($returnstring) {
@@ -1627,88 +1627,88 @@ function print_table($table) {
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
             if ($aa) {
-                $align[$key] = " align=\"$aa\"";
+                $align[$key] = ' align="'. $aa .'"';
             } else {
-                $align[$key] = "";
+                $align[$key] = '';
             }
         }
     }
     if (isset($table->size)) {
         foreach ($table->size as $key => $ss) {
             if ($ss) {
-                $size[$key] = " width=\"$ss\"";
+                $size[$key] = ' width="'. $ss .'"';
             } else {
-                $size[$key] = "";
+                $size[$key] = '';
             }
         }
     }
     if (isset($table->wrap)) {
         foreach ($table->wrap as $key => $ww) {
             if ($ww) {
-                $wrap[$key] = " nowrap=\"nowrap\" ";
+                $wrap[$key] = ' nowrap="nowrap" ';
             } else {
-                $wrap[$key] = "";
+                $wrap[$key] = '';
             }
         }
     }
 
     if (empty($table->width)) {
-        $table->width = "80%";
+        $table->width = '80%';
     }
 
     if (empty($table->cellpadding)) {
-        $table->cellpadding = "5";
+        $table->cellpadding = '5';
     }
 
     if (empty($table->cellspacing)) {
-        $table->cellspacing = "1";
+        $table->cellspacing = '1';
     }
 
-    print_simple_box_start("center", "$table->width", "#ffffff", 0);
-    echo "<table width=\"100%\" border=\"0\" align=\"center\" ";
+    print_simple_box_start('center', $table->width, '#ffffff', 0);
+    echo '<table width="100%" border="0" align="center" ';
     echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"generaltable\">\n";
 
     $countcols = 0;
 
     if (!empty($table->head)) {
         $countcols = count($table->head);;
-        echo "<tr>";
+        echo '<tr>';
         foreach ($table->head as $key => $heading) {
 
             if (!isset($size[$key])) {
-                $size[$key] = "";
+                $size[$key] = '';
             }
             if (!isset($align[$key])) {
-                $align[$key] = "";
+                $align[$key] = '';
             }
-            echo "<th valign=\"top\" ".$align[$key].$size[$key]." nowrap=\"nowrap\" class=\"generaltableheader\">$heading</th>";
+            echo '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="generaltableheader">'. $heading .'</th>';
         }
-        echo "</tr>\n";
+        echo '</tr>'."\n";
     }
 
     if (!empty($table->data)) {
         foreach ($table->data as $row) {
-            echo "<tr valign=\"top\">";
-            if ($row == "hr" and $countcols) {
-                echo "<td colspan=\"$countcols\"><div class=\"tabledivider\"></div></td>";
+            echo '<tr valign="top">';
+            if ($row == 'hr' and $countcols) {
+                echo '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
             } else {  /// it's a normal row of data
                 foreach ($row as $key => $item) {
                     if (!isset($size[$key])) {
-                        $size[$key] = "";
+                        $size[$key] = '';
                     }
                     if (!isset($align[$key])) {
-                        $align[$key] = "";
+                        $align[$key] = '';
                     }
                     if (!isset($wrap[$key])) {
-                        $wrap[$key] = "";
+                        $wrap[$key] = '';
                     }
-                    echo "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"generaltablecell\">$item</td>";
+                    echo '<td '. $align[$key].$size[$key].$wrap[$key] .' class="generaltablecell">'. $item .'</td>';
                 }
             }
-            echo "</tr>\n";
+            echo '</tr>'."\n";
         }
     }
-    echo "</table>\n";
+    echo '</table>'."\n";
     print_simple_box_end();
 
     return true;
@@ -1732,96 +1732,96 @@ function make_table($table) {
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
             if ($aa) {
-                $align[$key] = " align=\"$aa\"";
+                $align[$key] = ' align="'. $aa .'"';
             } else {
-                $align[$key] = "";
+                $align[$key] = '';
             }
         }
     }
     if (isset($table->size)) {
         foreach ($table->size as $key => $ss) {
             if ($ss) {
-                $size[$key] = " width=\"$ss\"";
+                $size[$key] = ' width="'. $ss .'"';
             } else {
-                $size[$key] = "";
+                $size[$key] = '';
             }
         }
     }
     if (isset($table->wrap)) {
         foreach ($table->wrap as $key => $ww) {
             if ($ww) {
-                $wrap[$key] = " nowrap=\"nowrap\" ";
+                $wrap[$key] = ' nowrap="nowrap" ';
             } else {
-                $wrap[$key] = "";
+                $wrap[$key] = '';
             }
         }
     }
 
     if (empty($table->width)) {
-        $table->width = "80%";
+        $table->width = '80%';
     }
 
     if (empty($table->tablealign)) {
-        $table->tablealign = "center";
+        $table->tablealign = 'center';
     }
 
     if (empty($table->cellpadding)) {
-        $table->cellpadding = "5";
+        $table->cellpadding = '5';
     }
 
     if (empty($table->cellspacing)) {
-        $table->cellspacing = "1";
+        $table->cellspacing = '1';
     }
 
     if (empty($table->class)) {
-        $table->class = "generaltable";
+        $table->class = 'generaltable';
     }
 
     if (empty($table->fontsize)) {
-        $fontsize = "";
+        $fontsize = '';
     } else {
-        $fontsize = "<font size=\"$table->fontsize\">";
+        $fontsize = '<font size="'. $table->fontsize .'">';
     }
 
-    $output =  "<table width=\"$table->width\" valign=\"top\" align=\"$table->tablealign\" ";
-    $output .= " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class\">\n";
+    $output =  '<table width="'. $table->width .'" valign="top" align="'. $table->tablealign .'" ';
+    $output .= ' cellpadding="'. $table->cellpadding .'" cellspacing="'. $table->cellspacing .'" class="'. $table->class .'">'."\n";
 
     if (!empty($table->head)) {
-        $output .= "<tr>";
+        $output .= '<tr>';
         foreach ($table->head as $key => $heading) {
             if (!isset($size[$key])) {
-                $size[$key] = "";
+                $size[$key] = '';
             }
             if (!isset($align[$key])) {
-                $align[$key] = "";
+                $align[$key] = '';
             }
-            $output .= "<th valign=\"top\" ".$align[$key].$size[$key]." nowrap=\"nowrap\" class=\"{$table->class}header\">$fontsize$heading</th>";
+            $output .= '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="'. $table->class .'header">'.$fontsize.$heading.'</th>';
         }
-        $output .= "</tr>\n";
+        $output .= '</tr>'."\n";
     }
 
     foreach ($table->data as $row) {
-        $output .= "<tr valign=\"top\">";
+        $output .= '<tr valign="top">';
         foreach ($row as $key => $item) {
             if (!isset($size[$key])) {
-                $size[$key] = "";
+                $size[$key] = '';
             }
             if (!isset($align[$key])) {
-                $align[$key] = "";
+                $align[$key] = '';
             }
             if (!isset($wrap[$key])) {
-                $wrap[$key] = "";
+                $wrap[$key] = '';
             }
-            $output .= "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"{$table->class}cell\">$fontsize$item</td>";
+            $output .= '<td '. $align[$key].$size[$key].$wrap[$key] .' class="'. $table->class .'cell">'. $fontsize . $item .'</td>';
         }
-        $output .= "</tr>\n";
+        $output .= '</tr>'."\n";
     }
-    $output .= "</table>\n";
+    $output .= '</table>'."\n";
 
     return $output;
 }
 
-function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value="", $courseid=0) {
+function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0) {
 /// Prints a basic textarea field
 /// $width and height are legacy fields and no longer used
 
@@ -1835,13 +1835,13 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
     if ($usehtmleditor) {
         if (!empty($courseid) and isteacher($courseid)) {
-            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/htmlarea.php?id=$courseid\"></script>\n";
+            echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n";
         } else {
-            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/htmlarea.php\"></script>\n";
+            echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php"></script>'."\n";
         }
-        echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/dialog.js\"></script>\n";
-        echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/lang/en.php\"></script>\n";
-        echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/popupwin.js\"></script>\n";
+        echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/dialog.js"></script>'."\n";
+        echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/lang/en.php"></script>'."\n";
+        echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/popupwin.js"></script>'."\n";
 
         if ($rows < 10) {
             $rows = 10;
@@ -1853,15 +1853,15 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
     echo "<textarea id=\"$name\" name=\"$name\" rows=\"$rows\" cols=\"$cols\">";
     p($value);
-    echo "</textarea>\n";
+    echo '</textarea>'."\n";
 }
 
-function print_richedit_javascript($form, $name, $source="no") {
+function print_richedit_javascript($form, $name, $source='no') {
 /// Legacy function, provided for backward compatability
     use_html_editor($name);
 }
 
-function use_html_editor($name="") {
+function use_html_editor($name='') {
 /// Sets up the HTML editor on textareas in the current page.
 /// If a field name is provided, then it will only be
 /// applied to that field - otherwise it will be used
@@ -1869,14 +1869,14 @@ function use_html_editor($name="") {
 ///
 /// In most cases no arguments need to be supplied
 
-    echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"defer\">\n";
+    echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
     print_editor_config();
     if (empty($name)) {
-        echo "\nHTMLArea.replaceAll(config);\n";
+        echo "\n".'HTMLArea.replaceAll(config);'."\n";
     } else {
         echo "\nHTMLArea.replace('$name', config);\n";
     }
-    echo "</script>\n";
+    echo '</script>'."\n";
 }
 
 
@@ -1886,11 +1886,11 @@ function update_course_icon($courseid) {
 
     if (isteacheredit($courseid)) {
         if (!empty($USER->editing)) {
-            $string = get_string("turneditingoff");
-            $edit = "off";
+            $string = get_string('turneditingoff');
+            $edit = 'off';
         } else {
-            $string = get_string("turneditingon");
-            $edit = "on";
+            $string = get_string('turneditingon');
+            $edit = 'on';
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
@@ -1904,13 +1904,13 @@ function update_module_button($moduleid, $courseid, $string) {
     global $CFG;
 
     if (isteacheredit($courseid)) {
-        $string = get_string("updatethis", "", $string);
+        $string = get_string('updatethis', '', $string);
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
                "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
                "<input type=\"hidden\" name=\"return\" value=\"true\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
     } else {
-        return "";
+        return '';
     }
 }
 
@@ -1920,11 +1920,11 @@ function update_category_button($categoryid) {
 
     if (iscreator()) {
         if (!empty($USER->categoryediting)) {
-            $string = get_string("turneditingoff");
-            $edit = "off";
+            $string = get_string('turneditingoff');
+            $edit = 'off';
         } else {
-            $string = get_string("turneditingon");
-            $edit = "on";
+            $string = get_string('turneditingon');
+            $edit = 'on';
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$categoryid\" />".
@@ -1939,11 +1939,11 @@ function update_categories_button() {
 
     if (isadmin()) {
         if (!empty($USER->categoriesediting)) {
-            $string = get_string("turneditingoff");
-            $edit = "off";
+            $string = get_string('turneditingoff');
+            $edit = 'off';
         } else {
-            $string = get_string("turneditingon");
-            $edit = "on";
+            $string = get_string('turneditingon');
+            $edit = 'on';
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
@@ -1971,11 +1971,11 @@ function update_groups_button($courseid) {
 
     if (isteacheredit($courseid)) {
         if (!empty($USER->groupsediting)) {
-            $string = get_string("turneditingoff");
-            $edit = "off";
+            $string = get_string('turneditingoff');
+            $edit = 'off';
         } else {
-            $string = get_string("turneditingon");
-            $edit = "on";
+            $string = get_string('turneditingon');
+            $edit = 'on';
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/groups.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
@@ -1988,7 +1988,7 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
 /// Prints an appropriate group selection menu
 
 /// Add an "All groups" to the start of the menu
-    $groupsmenu[0] = get_string("allparticipants");
+    $groupsmenu[0] = get_string('allparticipants');
     foreach ($groups as $key => $groupname) {
         $groupsmenu[$key] = $groupname;
     }
@@ -2001,13 +2001,13 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
     }
     echo ':';
     echo '</td><td nowrap="nowrap" align="left">';
-    popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, "", "", "", false, "self");
+    popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', false, 'self');
     echo '</tr></table>';
 
 }
 
 
-function navmenu($course, $cm=NULL, $targetwindow="self") {
+function navmenu($course, $cm=NULL, $targetwindow='self') {
 // Given a course and a (current) coursemodule
 // This function returns a small popup menu with all the
 // course activity modules in it, as a navigation menu
@@ -2021,18 +2021,18 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     }
 
     if ($course->format == 'weeks') {
-        $strsection = get_string("week");
+        $strsection = get_string('week');
     } else {
-        $strsection = get_string("topic");
+        $strsection = get_string('topic');
     }
 
     if (!$modinfo = unserialize($course->modinfo)) {
-        return "";
+        return '';
     }
     $isteacher = isteacher($course->id);
     $section = -1;
-    $selected = "";
-    $url = "";
+    $selected = '';
+    $url = '';
     $previousmod = NULL;
     $backmod = NULL;
     $nextmod = NULL;
@@ -2042,10 +2042,10 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     $menu = array();
     $strjumpto = get_string('jumpto');
 
-    $sections = get_records('course_sections','course',$course->id,'section',"section,visible,summary");
+    $sections = get_records('course_sections','course',$course->id,'section','section,visible,summary');
 
     foreach ($modinfo as $mod) {
-        if ($mod->mod == "label") {
+        if ($mod->mod == 'label') {
             continue;
         }
 
@@ -2055,7 +2055,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
             if ($thissection->visible or !$course->hiddensections or $isteacher) {
                 $thissection->summary = strip_tags($thissection->summary);
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
-                    $menu[] = "-------------- $strsection $mod->section --------------";
+                    $menu[] = '-------------- '. $strsection ." ". $mod->section .' --------------';
                 } else {
                     if (strlen($thissection->summary) < 47) {
                         $menu[] = '-- '.$thissection->summary;
@@ -2070,7 +2070,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
 
         //Only add visible or teacher mods to jumpmenu
         if ($mod->visible or $isteacher) {
-            $url = "$mod->mod/view.php?id=$mod->cm";
+            $url = $mod->mod .'/view.php?id='. $mod->cm;
             if ($flag) { // the current mod is the "next" mod
                 $nextmod = $mod;
                 $flag = false;
@@ -2085,10 +2085,10 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
             } else {
                 $mod->name = strip_tags(urldecode($mod->name));
                 if (strlen($mod->name) > 55) {
-                    $mod->name = substr($mod->name, 0, 50)."...";
+                    $mod->name = substr($mod->name, 0, 50).'...';
                 }
                 if (!$mod->visible) {
-                    $mod->name = "(".$mod->name.")";
+                    $mod->name = '('.$mod->name.')';
                 }
             }
             $menu[$url] = $mod->name;
@@ -2111,10 +2111,10 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
                    "<input type=\"hidden\" name=\"id\" value=\"$nextmod->cm\" />".
                    "<input type=\"submit\" value=\"&gt;\" /></form>";
     }
-    return "<table><tr>$logslink<td>$backmod</td><td>" .
-            popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, $strjumpto,
-                       "", "", true, $targetwindow).
-            "</td><td>$nextmod</td></tr></table>";
+    return '<table><tr>'.$logslink .'<td>'. $backmod .'</td><td>' .
+            popup_form($CFG->wwwroot .'/mod/', $menu, 'navmenu', $selected, $strjumpto,
+                       '', '', true, $targetwindow).
+            '</td><td>'. $nextmod .'</td></tr></table>';
 }
 
 
@@ -2128,7 +2128,7 @@ function print_date_selector($day, $month, $year, $currenttime=0) {
     $currentdate = usergetdate($currenttime);
 
     for ($i=1; $i<=31; $i++) {
-        $days[$i] = "$i";
+        $days[$i] = $i;
     }
     for ($i=1; $i<=12; $i++) {
         $months[$i] = userdate(gmmktime(12,0,0,$i,1,2000), "%B");
@@ -2136,9 +2136,9 @@ function print_date_selector($day, $month, $year, $currenttime=0) {
     for ($i=2000; $i<=2010; $i++) {
         $years[$i] = $i;
     }
-    choose_from_menu($days,   $day,   $currentdate['mday'], "");
-    choose_from_menu($months, $month, $currentdate['mon'],  "");
-    choose_from_menu($years,  $year,  $currentdate['year'], "");
+    choose_from_menu($days,   $day,   $currentdate['mday'], '');
+    choose_from_menu($months, $month, $currentdate['mon'],  '');
+    choose_from_menu($years,  $year,  $currentdate['year'], '');
 }
 
 function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
@@ -2158,11 +2158,11 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
     for ($i=0; $i<=59; $i+=$step) {
         $minutes[$i] = sprintf("%02d",$i);
     }
-    choose_from_menu($hours,   $hour,   $currentdate['hours'],   "");
-    choose_from_menu($minutes, $minute, $currentdate['minutes'], "");
+    choose_from_menu($hours,   $hour,   $currentdate['hours'],   '');
+    choose_from_menu($minutes, $minute, $currentdate['minutes'], '');
 }
 
-function print_timer_selector($timelimit = 0, $unit = "") {
+function print_timer_selector($timelimit = 0, $unit = '') {
 /// Prints time limit value selector
 
     global $CFG;
@@ -2177,7 +2177,7 @@ function print_timer_selector($timelimit = 0, $unit = "") {
     for ($i=1; $i<=$maxvalue; $i++) {
         $minutes[$i] = $i.$unit;
     }
-    choose_from_menu($minutes, "timelimit", $timelimit, get_string("none"));
+    choose_from_menu($minutes, 'timelimit', $timelimit, get_string('none'));
 }
 
 function print_grade_menu($courseid, $name, $current, $includenograde=true) {
@@ -2186,24 +2186,24 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true) {
 
     global $CFG;
 
-    $strscale = get_string("scale");
-    $strscales = get_string("scales");
+    $strscale = get_string('scale');
+    $strscales = get_string('scales');
 
     $scales = get_scales_menu($courseid);
     foreach ($scales as $i => $scalename) {
-        $grades[-$i] = "$strscale: $scalename";
+        $grades[-$i] = $strscale .': '. $scalename;
     }
     if ($includenograde) {
-        $grades[0] = get_string("nograde");
+        $grades[0] = get_string('nograde');
     }
     for ($i=100; $i>=1; $i--) {
         $grades[$i] = $i;
     }
-    choose_from_menu($grades, "$name", "$current", "");
+    choose_from_menu($grades, $name, $current, '');
 
-    $helpicon = "$CFG->pixpath/help.gif";
+    $helpicon = $CFG->pixpath .'/help.gif';
     $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
-    link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true", "ratingscales",
+    link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                           $linkobject, 400, 500, $strscales);
 }
 
@@ -2213,11 +2213,11 @@ function print_scale_menu($courseid, $name, $current) {
 
     global $CFG;
 
-    $strscales = get_string("scales");
-    choose_from_menu(get_scales_menu($courseid), "$name", $current, "");
-    $helpicon = "$CFG->pixpath/help.gif";
+    $strscales = get_string('scales');
+    choose_from_menu(get_scales_menu($courseid), $name, $current, '');
+    $helpicon = $CFG->pixpath .'/help.gif';
     $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
-    link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true", "ratingscales",
+    link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                           $linkobject, 400, 500, $strscales);
 }
 
@@ -2228,27 +2228,27 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 
     global $CFG;
 
-    $strscales = get_string("scales");
-    $helpicon = "$CFG->pixpath/help.gif";
+    $strscales = get_string('scales');
+    $helpicon = $CFG->pixpath .'/help.gif';
     $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$scale->name\" src=\"$helpicon\" />";
-    link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true&amp;scale=$scale->id", "ratingscale",
+    link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true&amp;scale='. $scale->id, 'ratingscale',
                           $linkobject, 400, 500, $scale->name);
 }
 
 
-function error ($message, $link="") {
+function error ($message, $link='') {
     global $CFG, $SESSION;
 
-    print_header(get_string("error"));
-    echo "<br />";
-    print_simple_box($message, "center", "", "#FFBBBB");
+    print_header(get_string('error'));
+    echo '<br />';
+    print_simple_box($message, 'center', '', '#FFBBBB');
 
     if (!$link) {
         if ( !empty($SESSION->fromurl) ) {
-            $link = "$SESSION->fromurl";
+            $link = $SESSION->fromurl;
             unset($SESSION->fromurl);
         } else {
-            $link = "$CFG->wwwroot/";
+            $link = $CFG->wwwroot .'/';
         }
     }
     print_continue($link);
@@ -2256,7 +2256,7 @@ function error ($message, $link="") {
     die;
 }
 
-function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=false, $text="", $return=false) {
+function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=false, $text='', $return=false) {
     // $page = the keyword that defines a help page
     // $title = the title of links, rollover tips, alt tags etc
     // $module = which module is the page defined in
@@ -2265,12 +2265,12 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
     //         the $page variable is ignored.
     global $CFG, $THEME;
 
-    if ($module == "") {
-        $module = "moodle";
+    if ($module == '') {
+        $module = 'moodle';
     }
 
     if ($image) {
-        $icon = "$CFG->pixpath/help.gif";
+        $icon = $CFG->pixpath .'/help.gif';
         if ($linktext) {
             $linkobject = "<span style=\"cursor:help;\">$title<img align=\"middle\" border=\"0\" ".
                           " height=\"17\" width=\"22\" alt=\"\" src=\"$icon\" /></span>";
@@ -2279,15 +2279,15 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
                           " alt=\"$title\" style=\"cursor:help;\" src=\"$icon\" />";
         }
     } else {
-        $linkobject = "<span style=\"cursor:help;\">$title</span>";
+        $linkobject = '<span style="cursor:help;">'. $title .'</span>';
     }
     if ($text) {
-        $url = "/help.php?module=$module&amp;text=".htmlentities(urlencode($text));
+        $url = '/help.php?module='. $module .'&amp;text='. htmlentities(urlencode($text));
     } else {
-        $url = "/help.php?module=$module&amp;file=$page.html";
+        $url = '/help.php?module='. $module .'&amp;file='. $page .'.html';
     }
 
-    $link = link_to_popup_window ($url, "popup", $linkobject, 400, 500, $title, 'none', true);
+    $link = link_to_popup_window ($url, 'popup', $linkobject, 400, 500, $title, 'none', true);
 
     if ($return) {
         return $link;
@@ -2302,28 +2302,28 @@ function emoticonhelpbutton($form, $field) {
 
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
-    helpbutton("emoticons", get_string("helpemoticons"), "moodle", false, true);
-    echo "&nbsp;";
-    link_to_popup_window ("/help.php?module=moodle&amp;file=emoticons.html", "popup",
+    helpbutton('emoticons', get_string('helpemoticons'), 'moodle', false, true);
+    echo '&nbsp;';
+    link_to_popup_window ('/help.php?module=moodle&amp;file=emoticons.html', 'popup',
                           "<img src=\"$CFG->pixpath/s/smiley.gif\" border=\"0\" align=\"middle\" width=\"15\" height=\"15\" alt=\"\" />",
-                           400, 500, get_string("helpemoticons"));
-    echo "<br />";
+                           400, 500, get_string('helpemoticons'));
+    echo '<br />';
 }
 
-function notice ($message, $link="") {
+function notice ($message, $link='') {
     global $CFG, $THEME;
 
     if (!$link) {
-        if (!empty($_SERVER["HTTP_REFERER"])) {
-            $link = $_SERVER["HTTP_REFERER"];
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            $link = $_SERVER['HTTP_REFERER'];
         } else {
-            $link = "$CFG->wwwroot/";
+            $link = $CFG->wwwroot .'/';
         }
     }
 
-    echo "<br />";
-    print_simple_box($message, "center", "50%", "$THEME->cellheading", "20", "noticebox");
-    print_heading("<a href=\"$link\">".get_string("continue")."</a>");
+    echo '<br />';
+    print_simple_box($message, 'center', '50%', $THEME->cellheading, '20', 'noticebox');
+    print_heading('<a href="'. $link .'">'. get_string('continue') .'</a>');
     print_footer(get_site());
     die;
 }
@@ -2331,17 +2331,17 @@ function notice ($message, $link="") {
 function notice_yesno ($message, $linkyes, $linkno) {
     global $THEME;
 
-    print_simple_box_start("center", "60%", "$THEME->cellheading");
-    echo "<p align=\"center\"><font size=\"3\">$message</font></p>";
-    echo "<p align=\"center\"><font size=\"3\"><b>";
-    echo "<a href=\"$linkyes\">".get_string("yes")."</a>";
-    echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-    echo "<a href=\"$linkno\">".get_string("no")."</a>";
-    echo "</b></font></p>";
+    print_simple_box_start('center', '60%', $THEME->cellheading);
+    echo '<p align="center"><font size="3">'. $message .'</font></p>';
+    echo '<p align="center"><font size="3"><b>';
+    echo '<a href="'. $linkyes .'">'. get_string('yes') .'</a>';
+    echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    echo '<a href="'. $linkno .'">'. get_string('no') .'</a>';
+    echo '</b></font></p>';
     print_simple_box_end();
 }
 
-function redirect($url, $message="", $delay="0") {
+function redirect($url, $message='', $delay='0') {
 // Redirects the user to another page, after printing a notice
 
     // '&' needs to be encoded into '&amp;' for XHTML compliance,
@@ -2352,33 +2352,33 @@ function redirect($url, $message="", $delay="0") {
     $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
     $encodedurl = htmlentities($url);
     if (empty($message)) {
-        echo "<meta http-equiv=\"refresh\" content=\"$delay; url=$encodedurl\" />";
-        echo "<script type=\"text/javascript\">\n<!--\nlocation.replace('$url');\n//-->\n</script>";   // To cope with Mozilla bug
+        echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
+        echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". 'location.replace(\'$url\');'. "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
     } else {
         if (empty($delay)) {
             $delay = 3;  // There's no point having a message with no delay
         }
-        print_header("", "", "", "", "<meta http-equiv=\"refresh\" content=\"$delay; url=$encodedurl\" />");
-        echo "<center>";
-        echo "<p>$message</p>";
-        echo "<p>( <a href=\"$encodedurl\">".get_string("continue")."</a> )</p>";
-        echo "</center>";
+        print_header('', '', '', '', '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />');
+        echo '<center>';
+        echo '<p>'. $message .'</p>';
+        echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
+        echo '</center>';
         flush();
         sleep($delay);
-        echo "<script type=\"text/javascript\">\n<!--\nlocation.replace('$url');\n//-->\n</script>";   // To cope with Mozilla bug
+        echo '<script type="text/javascript">'."\n".'<!--'."\n".'location.replace(\'$url\');'."\n".'//-->'."\n".'</script>';   // To cope with Mozilla bug
     }
     die;
 }
 
-function notify ($message, $color="red", $align="center") {
-    echo "<p align=\"$align\"><b><font color=\"$color\">$message</font></b></p>\n";
+function notify ($message, $color='red', $align='center') {
+    echo '<p align="'. $align .'"><b><font color="'. $color .'">'. $message .'</font></b></p>' . "\n";
 }
 
 function obfuscate_email($email) {
 /// Given an email address, this function will return an obfuscated version of it
     $i = 0;
     $length = strlen($email);
-    $obfuscated = "";
+    $obfuscated = '';
     while ($i < $length) {
         if (rand(0,2)) {
             $obfuscated.='%'.dechex(ord($email{$i}));
@@ -2395,7 +2395,7 @@ function obfuscate_text($plaintext) {
 /// with HTML entity equivalents.   Return string is obviously longer.
     $i=0;
     $length = strlen($plaintext);
-    $obfuscated="";
+    $obfuscated='';
     $prev_obfuscated = false;
     while ($i < $length) {
         $c = ord($plaintext{$i});
@@ -2414,7 +2414,7 @@ function obfuscate_text($plaintext) {
     return $obfuscated;
 }
 
-function obfuscate_mailto($email, $label="", $dimmed=false) {
+function obfuscate_mailto($email, $label='', $dimmed=false) {
 /// This function uses the above two functions to generate a fully
 /// obfuscated email link, ready to use.
 
@@ -2439,16 +2439,16 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
     $maxdisplay = 18;
 
     if ($totalcount > $perpage) {
-        echo "<center>";
-        echo "<p>".get_string("page").":";
+        echo '<center>';
+        echo '<p>'.get_string('page').':';
         if ($page > 0) {
             $pagenum=$page-1;
-            echo "&nbsp;(<a  href=\"{$baseurl}page=$pagenum\">".get_string("previous")."</a>)&nbsp;";
+            echo '&nbsp;(<a  href="'. $baseurl .'page='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
         }
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;
-            echo "&nbsp<a href=\"{$baseurl}page=0\">1</a>&nbsp;...";
+            echo '&nbsp<a href="'. $baseurl .'page=0">1</a>&nbsp;...';
         } else {
             $startpage = 0;
         }
@@ -2457,23 +2457,23 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
         while ($displaycount < $maxdisplay and $currpage < $lastpage) {
             $displaypage = $currpage+1;
             if ($page == $currpage) {
-                echo "&nbsp;&nbsp;$displaypage";
+                echo '&nbsp;&nbsp;'. $displaypage;
             } else {
-                echo "&nbsp;&nbsp;<a href=\"{$baseurl}page=$currpage\">$displaypage</a>";
+                echo '&nbsp;&nbsp;<a href="'. $baseurl .'page='. $currpage .'">'. $displaypage .'</a>';
             }
             $displaycount++;
             $currpage++;
         }
         if ($currpage < $lastpage) {
             $lastpageactual = $lastpage - 1;
-            echo "&nbsp;...<a href=\"{$baseurl}page=$lastpageactual\">$lastpage</a>&nbsp;";
+            echo '&nbsp;...<a href="'. $baseurl .'page='. $lastpageactual .'">'. $lastpage .'</a>&nbsp;';
         }
         $pagenum = $page + 1;
         if ($pagenum != $displaypage) {
-            echo "&nbsp;&nbsp;(<a href=\"{$baseurl}page=$pagenum\">".get_string("next")."</a>)";
+            echo '&nbsp;&nbsp;(<a href="'. $baseurl .'page='. $pagenum .'">'. get_string('next') .'</a>)';
         }
-        echo "</p>";
-        echo "</center>";
+        echo '</p>';
+        echo '</center>';
     }
 }
 
@@ -2504,31 +2504,31 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     if ($content) {
         echo $content;
         if ($footer) {
-            echo "<center><font size=\"-2\">$footer</font></center>";
+            echo '<center><font size="-2">'. $footer .'</font></center>';
         }
     } else {
-        echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
+        echo '<table width="100%" border="0" cellspacing="0" cellpadding="2">';
         if ($list) {
             foreach ($list as $key => $string) {
-                echo "<tr bgcolor=\"$THEME->cellcontent2\">";
+                echo '<tr bgcolor="'. $THEME->cellcontent2 .'">';
                 if ($icons) {
-                    echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">".$icons[$key]."</td>";
+                    echo '<td class="sideblocklinks" valign="top" width="16">'. $icons[$key] .'</td>';
                 }
-                echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"*\"><font size=\"-1\">$string</font></td>";
-                echo "</tr>";
+                echo '<td class="sideblocklinks" valign="top" width="*"><font size="-1">'. $string .'</font></td>';
+                echo '</tr>';
             }
         }
         if ($footer) {
-            echo "<tr bgcolor=\"$THEME->cellcontent2\">";
-            echo "<td class=\"sideblocklinks\" ";
+            echo '<tr bgcolor="'. $THEME->cellcontent2 .'">';
+            echo '<td class="sideblocklinks" ';
             if ($icons) {
                 echo ' colspan="2" ';
             }
             echo '>';
-            echo "<center><font size=\"-2\">$footer</font></center>";
-            echo "</td></tr>";
+            echo '<center><font size="-2">'. $footer .'</font></center>';
+            echo '</td></tr>';
         }
-        echo "</table>";
+        echo '</table>';
     }
 
     print_side_block_end();
@@ -2579,7 +2579,7 @@ function print_editor_config() {
     global $CFG;
 
     // print new config
-    echo "var config = new HTMLArea.Config();\n";
+    echo 'var config = new HTMLArea.Config();'."\n";
     echo "config.pageStyle = \"body {";
     if(!(empty($CFG->editorbackgroundcolor))) {
         echo " background-color: $CFG->editorbackgroundcolor;";
@@ -2596,8 +2596,8 @@ function print_editor_config() {
     echo " }\";\n";
     echo "config.killWordOnPaste = ";
     echo(empty($CFG->editorkillword)) ? "false":"true";
-    echo ";\n";
-    echo "config.fontname = {\n";
+    echo ';'."\n";
+    echo 'config.fontname = {'."\n";
 
     $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
     $i = 1;                     // Counter is used to get rid of the last comma.
@@ -2605,15 +2605,15 @@ function print_editor_config() {
 
     foreach($fontlist as $fontline) {
         if(!empty($fontline)) {
-            list($fontkey, $fontvalue) = split(":", $fontline);
-            echo "\"". $fontkey ."\":\t'". $fontvalue ."'";
+            list($fontkey, $fontvalue) = split(':', $fontline);
+            echo '"'. $fontkey ."\":\t'". $fontvalue ."'";
             if($i < $count) {
-                echo ",\n";
+                echo ','."\n";
             }
         }
         $i++;
     }
-    echo "};";
+    echo '};';
     if(!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
         print_speller_code($usehtmleditor=true);
     }
@@ -2625,14 +2625,14 @@ function print_speller_code ($usehtmleditor=false) {
     global $CFG;
 
     if(!$usehtmleditor) {
-        echo "\n<script language=\"javascript\" type=\"text/javascript\">\n";
-        echo "function openSpellChecker() {\n";
+        echo "\n".'<script language="javascript" type="text/javascript">'."\n";
+        echo 'function openSpellChecker() {'."\n";
         echo "\tvar speller = new spellChecker();\n";
         echo "\tspeller.popUpUrl = \"" . $CFG->wwwroot ."/lib/speller/spellchecker.html\";\n";
         echo "\tspeller.spellCheckScript = \"". $CFG->wwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
         echo "\tspeller.spellCheckAll();\n";
-        echo "}\n";
-        echo "</script>\n";
+        echo '}'."\n";
+        echo '</script>'."\n";
     } else {
         echo "\nfunction spellClickHandler(editor, buttonId) {\n";
         echo "\teditor._textArea.value = editor.getHTML();\n";
@@ -2642,14 +2642,14 @@ function print_speller_code ($usehtmleditor=false) {
         echo "\tspeller._moogle_edit=1;\n";
         echo "\tspeller._editor=editor;\n";
         echo "\tspeller.openChecker();\n";
-        echo "}\n";
+        echo '}'."\n";
     }
 }
 
 function print_speller_button () {
 // print button for spellchecking
 // when editor is disabled
-    echo "<input type=\"button\" value=\"Check spelling\" onclick=\"openSpellChecker();\" />\n";
+    echo '<input type="button" value="Check spelling" onclick="openSpellChecker();" />'."\n";
 }
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
