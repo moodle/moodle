@@ -4,14 +4,14 @@
 // This code is completely untested so far - IT NEEDS TESTERS!
 // Looks like it should work though ...
 
-$CFG->auth_dbhost   = "localhost";
-$CFG->auth_dbtype   = "mysql";     // (postgresql, etc)
-$CFG->auth_dbname   = "authtest";
-$CFG->auth_dbtable  = "users";
-$CFG->auth_dbuser   = "user";
-$CFG->auth_dbpass   = "pass";
-$CFG->auth_dbfielduser   = "user";
-$CFG->auth_dbfieldpass   = "pass";
+$CFG->auth_dbhost   = "localhost"; // The computer hosting the database server
+$CFG->auth_dbtype   = "mysql";     // The database type (mysql, postgres7, access, oracle etc)
+$CFG->auth_dbname   = "authtest";  // Name of the database itself
+$CFG->auth_dbuser   = "user";      // Username with read access to the database
+$CFG->auth_dbpass   = "pass";      // Password matching the above username
+$CFG->auth_dbtable  = "users";     // Name of the table in the database
+$CFG->auth_dbfielduser = "user";   // Name of the field containing usernames
+$CFG->auth_dbfieldpass = "pass";   // Name of the field containing passwords
 
 function auth_user_login ($username, $password) {
 // Returns true if the username and password work
