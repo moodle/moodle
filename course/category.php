@@ -290,13 +290,8 @@
                     echo "<a title=\"$strbackup\" href=\"../backup/backup.php?id=$course->id\"><img".
                          " src=\"$pixpath/t/backup.gif\" height=11 width=11 border=0></a> ";
 
-                    //Only showed if "backupdata" dir exists    
-                    if (is_dir("$CFG->dataroot/$course->id/backupdata")) {
                         echo "<a title=\"$strrestore\" href=\"../files/index.php?id=$course->id&wdir=/backupdata\"><img".
                              " src=\"$pixpath/t/restore.gif\" height=11 width=11 border=0></a> ";
-                    } else {
-                        echo "<img src=\"$CFG->wwwroot/pix/spacer.gif\" height=11 width=11 border=0></a> ";
-                    }
             
                     if ($up) {
                         echo "<a title=\"$strmoveup\" href=\"category.php?id=$category->id&moveup=$course->id\"><img".
