@@ -73,7 +73,7 @@
 	//
 	$bodyscripts = "";
 	if ($scorm->popup != "") {
-	    $bodyscripts = "onLoad='SCOInitialize();' onUnload='API.SaveTotalTime(); closeMain();' onbeforeUnload='API.SaveTotalTime();'";
+	    $bodyscripts = "onLoad='SCOInitialize();' onUnload='SCOFinish(); closeMain();' onbeforeUnload='SCOFinish();'";
 	}
     	print_header($pagetitle, "$course->fullname",
 		"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\" title=\"$scorm->summary\">$scorm->name</a>",
@@ -173,8 +173,9 @@
     		    	}
     		    	$score = "";
     			if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
-    			    if ( $sco_user->cmi_core_lesson_status == "")
+    			    if ( $sco_user->cmi_core_lesson_status == "") {
     		    		$sco_user->cmi_core_lesson_status = "not attempted";
+    		    	    }
     			    echo "      <img src=\"pix/".scorm_remove_spaces($sco_user->cmi_core_lesson_status).".gif\" alt=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" title=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" />\n";
  			    if (($sco_user->cmi_core_lesson_status == "not attempted") || ($sco_user->cmi_core_lesson_status == "incomplete")) {
  			        if ($currentSCO == "") {
@@ -188,8 +189,12 @@
     			    	$score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
 			    }
     			} else {
-    			    echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
-    			    $incomplete = true;
+    			    if ($sco->type == 'sco') {
+    				echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
+    				$incomplete = true;
+    			    } else {
+    				echo "      <img src=\"pix/asset.gif\" alt=\"".get_string("asset","scorm")."\" />";
+    			    }
     			}
     			echo "      &nbsp;$startbold<a href=\"javascript:playSCO(".$sco->id.");\">$sco->title</a> $score$endbold\n    </li>\n";
     		    } else {
@@ -267,7 +272,7 @@
     	    echo "<html>\n";
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
             echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
-	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"API.SaveTotalTime();\" onbeforeUnload=\"API.SaveTotalTime();\">\n";
+	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"SCOFinish();\" onbeforeUnload=\"SCOFinish();\">\n";
             echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&mode=".$mode.'&currentorg='.$currentorg."&frameset=top\">\n";
             echo "\t    <frame name=\"main\" src=\"\">\n";
             echo "</frameset>\n";

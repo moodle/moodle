@@ -543,7 +543,7 @@ function scorm_parse($basedir,$file,$scorm_id) {
 	}
     } else {
     	foreach ($resources as $label => $resource) {
-    	    if ((isset($resource['type'])) && ($resource['type'] == 'sco')) {
+    	    if (!empty($resource['href'])) {
     	    	$sco->identifier = $label;
     	    	$sco->title = $label;
     	    	$sco->parent = '/';

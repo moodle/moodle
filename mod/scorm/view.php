@@ -163,8 +163,12 @@
     			    $score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
     		    	}
     		    } else {
-    			echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
-    			$incomplete = true;
+    			if ($sco->type == 'sco') {
+    			    echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
+    			    $incomplete = true;
+    			} else {
+    			    echo "      <img src=\"pix/asset.gif\" alt=\"".get_string("asset","scorm")."\" />";
+    			}
     		    }
     		    echo "      &nbsp;<a href=\"javascript:playSCO(".$sco->id.")\">$sco->title</a> $score\n    </li>\n";
     		} else {
