@@ -186,6 +186,36 @@ function assignment_cron () {
     return true;
 }
 
+function assignment_print_recent_activity(&$logs, $isteacher=false) {
+    global $CFG, $COURSE_TEACHER_COLOR;
+
+    $content = false;
+    $assignments = NULL;
+
+    foreach ($logs as $log) {
+        if ($log->module == "assignment" and $log->action == "upload") {
+            $assignments[$log->info] = get_record_sql("SELECT a.name, u.firstname, u.lastname
+                                                       FROM assignment a, user u
+                                                      WHERE a.id = '$log->info' AND u.id = '$log->user'");
+            $assignments[$log->info]->time = $log->time;
+            $assignments[$log->info]->url  = $log->url;
+        }
+    }
+
+    if ($assignments) {
+        $content = true;
+        print_headline(get_string("newsubmissions", "assignment").":");
+        foreach ($assignments as $assignment) {
+            $date = userdate($assignment->time, "%e %b, %H:%M");
+            echo "<P><FONT SIZE=1>$date - $assignment->firstname $assignment->lastname<BR>";
+            echo "\"<A HREF=\"$CFG->wwwroot/mod/assignment/$assignment->url\">";
+            echo "$assignment->name";
+            echo "</A>\"</FONT></P>";
+        }
+    }
+ 
+    return $content;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 

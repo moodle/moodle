@@ -17,6 +17,7 @@ $string['feedbackupdated'] = "Submissions feedback updated for \$a people";
 $string['late'] = "\$a late";
 $string['maximumgrade'] = "Maximum grade";
 $string['maximumsize'] = "Maximum size";
+$string['newsubmissions'] = "Assignments submitted";
 $string['notsubmittedyet'] = "Not submitted yet";
 $string['overwritewarning'] = "Warning: uploading again will REPLACE your current submission";
 $string['submissionfeedback'] = "Submission feedback";
