@@ -83,20 +83,39 @@
     echo get_string("name").":";
     echo "</B></td><td>";
     //Calculate the backup string
+
+    //Calculate the backup word
     //Take off some characters in the filename !!
     $takeoff = array(" ", ":", "/", "\\", "|");
-    $backup_name = str_replace($takeoff,"_",strtolower(get_string("backupfilename")));
+    $backup_word = str_replace($takeoff,"_",strtolower(get_string("backupfilename")));
     //If non-translated, use "backup"
-    if (substr($backup_name,0,1) == "[") {
-        $backup_name = "backup";
+    if (substr($backup_word,0,1) == "[") {
+        $backup_word= "backup";
     }
-    //Calculate the format string
-    $backup_name_format = str_replace(" ","_",get_string("backupnameformat"));
+
+    //Calculate the date format string
+    $backup_date_format = str_replace(" ","_",get_string("backupnameformat"));
     //If non-translated, use "%Y%m%d-%H%M"
-    if (substr($backup_name_format,0,1) == "[") {
-        $backup_name_format = "%%Y%%m%%d-%%H%%M";
+    if (substr($backup_date_format,0,1) == "[") {
+        $backup_date_format = "%%Y%%m%%d-%%H%%M";
     }
-    $backup_name .= str_replace($takeoff,"_","-".strtolower($course->shortname)."-".userdate(time(),$backup_name_format,99,false).".zip");
+
+    //Calculate the shortname
+    $backup_shortname = clean_filename($course->shortname);
+    if (empty($backup_shortname) or $backup_shortname == '_' ) {
+        $backup_shortname = $course->id;
+    }
+
+    //Calculate the final backup filename
+    //The backup word
+    $backup_name = $backup_word."-";
+    //The shortname
+    $backup_name .= strtolower($backup_shortname)."-";
+    //The date format
+    $backup_name .= userdate(time(),$backup_date_format,99,false);
+    //The extension
+    $backup_name .= ".zip";
+
     //Add as text field
     echo "<input type=\"text\" name=\"backup_name\" size=\"40\" value=\"".$backup_name."\">";
     echo "</td></tr>";
