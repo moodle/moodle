@@ -39,17 +39,31 @@
         foreach ($form as $key => $val) {
             if ($key == "new") {
                 if (!empty($val)) {
-                    $cat->name = $val;
-                    if (!insert_record("course_categories", $cat)) {
-                        error("Could not insert the new category '$val'");
+                    if (get_records("course_categories", "name", $val)) {
+                        notify(get_string("categoryduplicate", "", $val));
                     } else {
-                        notify(get_string("categoryadded", "", $val));
+                        $cat->name = $val;
+                        if (!insert_record("course_categories", $cat)) {
+                            error("Could not insert the new category '$val'");
+                        } else {
+                            notify(get_string("categoryadded", "", $val));
+                        }
                     }
                 }
             
             } else {
                 $cat->id   = substr($key,1);
                 $cat->name = $val;
+
+                if ($existingcats = get_records("course_categories", "name", $val)) {
+                    foreach($existingcats as $existingcat) {
+                        if ($existingcat->id != $cat->id) {
+                            notify(get_string("categoryduplicate", "", $val));
+                            continue 2;
+                        }
+                    }
+                }
+
                 if (!update_record("course_categories", $cat)) {
                     error("Could not update the category '$val'");
                 }

@@ -40,6 +40,7 @@ $string['categories'] = "Course categories";
 $string['category'] = "Category";
 $string['categoryadded'] = "The category '\$a' was added";
 $string['categorydeleted'] = "The category '\$a' was deleted";
+$string['categoryduplicate'] = "A category named '\$a' already exists!";
 $string['changepassword'] = "Change password";
 $string['changedpassword'] = "Changed password";
 $string['changessaved'] = "Changes saved";
