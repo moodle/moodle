@@ -36,6 +36,8 @@
     $usernotaddederror = get_string("usernotaddederror");
     $enroledincourse = get_string("enroledincourse");
     $notenroledincourse = get_string("notenroledincourse");
+    
+    $adminuser = get_record("user","id",1);
 
 /// Print the header
 
@@ -109,6 +111,10 @@
         }
         $linenum = 2; // since header is line 1
 
+        foreach ($optionalDefaults as $key => $value) {
+          $user->$key = $adminuser->$key;
+        }
+ 
         while (!feof ($fp)) {
             //Note: commas within a field should be encoded as &#44
             $line = split("\,", fgets($fp,1024));
