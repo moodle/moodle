@@ -232,6 +232,8 @@
 
 
     /// Print Page
+    echo '    <div id="wikiPageActions">
+    ';
 
     /// The top row contains links to other wikis, if applicable.
     if ($wiki_list = wiki_get_other_wikis($wiki, $USER, $course, $wiki_entry->id)) {
@@ -292,6 +294,10 @@
         echo '</tr></table>';
     }
 
+    echo '</div>
+    <div id="wiki-view" class="mwiki">
+    ';
+
     if($ewiki_title==$wiki_entry->pagename && !empty($wiki->summary)) {
       if (trim(strip_tags($wiki->summary))) {
           print "<br />";
@@ -342,5 +348,9 @@
     echo "<br clear=\"all\" />";
 
 /// Finish the page
+    echo '
+    </div>
+    ';
+
     print_footer($course);
 ?>
