@@ -48,36 +48,36 @@
             } else {
                 print_heading(get_string("nopostscontaining", "forum", $search));
             }
+            print_footer($course);
+            exit;
+        }
 
-        } else {
+        foreach ($posts as $post) {
 
-            foreach ($posts as $post) {
-
-                if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
-                    error("Discussion ID was incorrect");
-                }
-                if (! $forum = get_record("forum", "id", "$discussion->forum")) {
-                    error("Could not find forum $discussion->forum");
-                }
-
-                $post->subject = highlight("$search", $post->subject);
-                $discussion->name = highlight("$search", $discussion->name);
-
-                $fullsubject = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
-                if ($forum->type != "single") {
-                    $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">$discussion->name</a>";
-                    if ($post->parent != 0) {
-                        $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</a>";
-                    }
-                }
-
-                $post->subject = $fullsubject;
-
-                $fulllink = "<p align=\"right\"><a href=\"discuss.php?d=$post->discussion&parent=$post->id\">".get_string("postincontext", "forum")."</a></p>";
-                forum_print_post($post, $course->id, false, false, false, false, $fulllink, $search);
-
-                echo "<br />";
+            if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
+                error("Discussion ID was incorrect");
             }
+            if (! $forum = get_record("forum", "id", "$discussion->forum")) {
+                error("Could not find forum $discussion->forum");
+            }
+
+            $post->subject = highlight("$search", $post->subject);
+            $discussion->name = highlight("$search", $discussion->name);
+
+            $fullsubject = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
+            if ($forum->type != "single") {
+                $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">$discussion->name</a>";
+                if ($post->parent != 0) {
+                    $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</a>";
+                }
+            }
+
+            $post->subject = $fullsubject;
+
+            $fulllink = "<p align=\"right\"><a href=\"discuss.php?d=$post->discussion&parent=$post->id\">".get_string("postincontext", "forum")."</a></p>";
+            forum_print_post($post, $course->id, false, false, false, false, $fulllink, $search);
+
+            echo "<br />";
         }
 
         if (count($posts) == $perpage) {
