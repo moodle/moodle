@@ -10,27 +10,34 @@
   optional_variable($text, "No text to display");
   optional_variable($module, "moodle");
 
+  print_header();
+
   if (ereg("\\.\\.", $file)) {
-      error("Error: Filenames can not contain \"..\"");
+      error("Filenames can not contain \"..\"");
   }
 
-?>
-<HTML>
-<HEAD>
-<LINK rel="stylesheet" href="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme?>/styles.css">
-</HEAD>
-<BODY BGCOLOR="<?=$THEME->body ?>">
-<?  if ($file) {
+  if ($file) {
         if ($module == "moodle") {
-            $langpath = "$CFG->dirroot/lang";
+            $filepath = "$CFG->dirroot/lang/$CFG->lang/help/$file";
         } else {
-            $langpath = "$CFG->dirroot/mod/$module/lang";
+            $filepath = "$CFG->dirroot/lang/$CFG->lang/help/$module/$file";
         }
 
-        if (file_exists("$langpath/$CFG->lang/page/$file")) {
-            include("$langpath/$CFG->lang/page/$file");
-        } else {
-            include("$langpath/en/page/$file");
+        if (file_exists("$filepath")) {
+            include("$filepath");           // Chosen language
+
+        } else {                            // Fall back to English
+            if ($module == "moodle") {
+                $filepath = "$CFG->dirroot/lang/en/help/$file";
+            } else {
+                $filepath = "$CFG->dirroot/lang/en/help/$module/$file";
+            }
+
+            if (file_exists("$filepath")) {
+                include("$filepath");
+            } else {
+                error("Can not find the specified help file");
+            }
         }
     } else {
         echo "<P>";
