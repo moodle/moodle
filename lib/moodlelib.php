@@ -167,12 +167,11 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
 
     // Work out the best timezone to use, in order of precedence
     $timezones = array(
-        99, // this is a placeholder that gets skipped in the first next() call
         isset($USER->timezone) ? $USER->timezone : 99,
         isset($CFG->timezone) ? $CFG->timezone : 99,
         );
-    while($timezone == 99 && $next = next($timezones)) {
-        $timezone = (float)$next;
+    while($timezone == 99 && $next = each($timezones)) {
+        $timezone = (float)$next['value'];
     }
 
     /*
@@ -263,12 +262,11 @@ function userdate($date, $format="", $timezone=99, $fixday = true) {
 
     // Work out the best timezone to use, in order of precedence
     $timezones = array(
-        99, // this is a placeholder that gets skipped in the first next() call
         isset($USER->timezone) ? $USER->timezone : 99,
         isset($CFG->timezone) ? $CFG->timezone : 99,
         );
-    while($timezone == 99 && $next = next($timezones)) {
-        $timezone = (float)$next;
+    while($timezone == 99 && $next = each($timezones)) {
+        $timezone = (float)$next['value'];
     }
 
     /*
@@ -342,12 +340,11 @@ function usertime($date, $timezone=99) {
 
     // Work out the best timezone to use, in order of precedence
     $timezones = array(
-        99, // this is a placeholder that gets skipped in the first next() call
         isset($USER->timezone) ? $USER->timezone : 99,
         isset($CFG->timezone) ? $CFG->timezone : 99,
         );
-    while($timezone == 99 && $next = next($timezones)) {
-        $timezone = (float)$next;
+    while($timezone == 99 && $next = each($timezones)) {
+        $timezone = (float)$next['value'];
     }
 
     /*
@@ -372,12 +369,11 @@ function usergetmidnight($date, $timezone=99) {
 
     // Work out the best timezone to use, in order of precedence
     $timezones = array(
-        99, // this is a placeholder that gets skipped in the first next() call
         isset($USER->timezone) ? $USER->timezone : 99,
         isset($CFG->timezone) ? $CFG->timezone : 99,
         );
-    while($timezone == 99 && $next = next($timezones)) {
-        $timezone = (float)$next;
+    while($timezone == 99 && $next = each($timezones)) {
+        $timezone = (float)$next['value'];
     }
     /*
     if ($timezone == 99) {                    // Work out the best timezone to use
@@ -405,12 +401,11 @@ function usertimezone($timezone=99) {
 
     // Work out the best timezone to use, in order of precedence
     $timezones = array(
-        99, // this is a placeholder that gets skipped in the first next() call
         isset($USER->timezone) ? $USER->timezone : 99,
         isset($CFG->timezone) ? $CFG->timezone : 99,
         );
-    while($timezone == 99 && $next = next($timezones)) {
-        $timezone = (float)$next;
+    while($timezone == 99 && $next = each($timezones)) {
+        $timezone = (float)$next['value'];
     }
     /*
     if ($timezone == 99) {                    // Work out the best timezone to use
