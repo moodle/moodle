@@ -1532,7 +1532,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     if ($mail->Send()) {
         return true;
     } else {
-        echo "ERROR: $mail->ErrorInfo\n";
+        mtrace("ERROR: $mail->ErrorInfo");
         $site = get_site();
         add_to_log($site->id, "library", "mailer", $_SERVER["REQUEST_URI"], "ERROR: $mail->ErrorInfo");
         return false;
