@@ -55,25 +55,21 @@
 		case 'setcourse':
 			$id = intval($_GET['id']);
 			if($id == 0) {
-				$SESSION->cal_show_course = false;
+				$SESSION->cal_courses_shown = array();
 			}
 			else if($id == 1) {
-				$SESSION->cal_show_course = true;
+				$SESSION->cal_courses_shown = calendar_get_default_courses(true);
 			}
-			else if(isstudent($id, $USER->id) || isteacher($id, $USER->id)) {
-				$SESSION->cal_show_course = $id;
+			else {
+			    // We don't check for membership anymore: if(isstudent($id, $USER->id) || isteacher($id, $USER->id)) {
+				$SESSION->cal_courses_shown = $id;
 			}
 		break;
 		case 'showgroups':
 			$SESSION->cal_show_groups = !$SESSION->cal_show_groups;
 		break;
 		case 'showcourses':
-			if(empty($SESSION->cal_show_course)) {
-				$SESSION->cal_show_course = calendar_get_default_courses();
-			}
-			else {
-				$SESSION->cal_show_course = false;
-			}
+		    $SESSION->cal_show_course = !$SESSION->cal_show_course;
 		break;
 		case 'showglobal':
 			$SESSION->cal_show_global = !$SESSION->cal_show_global;

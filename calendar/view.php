@@ -94,6 +94,20 @@
         break;
     }
 
+    if(isguest($USER->id)) {
+        $defaultcourses = calendar_get_default_courses();
+        calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
+    }
+    else {
+        if($_GET['view'] == 'upcoming') {
+            $defaultcourses = calendar_get_default_courses();
+            calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses, false);
+        }
+        else {
+            calendar_set_filters($courses, $groups, $users);
+        }
+    }
+
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
     if($SESSION->cal_course_referer > 1 &&
@@ -103,7 +117,6 @@
     }
 
     $strcalendar = get_string('calendar', 'calendar');
-
     $prefsbutton = calendar_preferences_button();
 
     // Print title and header
@@ -120,37 +133,6 @@
 
     echo '<td style="vertical-align: top; width: 100%;">';
 
-    if($_GET['view'] == 'month') {
-        if(is_numeric($SESSION->cal_show_course)) {
-            $defaultcourses = array($SESSION->cal_show_course => 1);
-        }
-        else if($SESSION->cal_show_course === true) {
-            $defaultcourses = calendar_get_default_courses(true);
-        }
-        else if($SESSION->cal_show_course === false) {
-            $defaultcourses = array();
-        }
-    }
-    else {
-        $defaultcourses = calendar_get_default_courses();
-    }
-
-    $courses = array();
-
-    calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
-/*
-    // Are we left with a bad filter in effect?
-    if($_GET['view'] != 'month' && !empty($SESSION->cal_course_referer)) {
-        if(is_numeric($SESSION->cal_show_course)) {
-            if($SESSION->cal_course_referer != $SESSION->cal_show_course) {
-                $SESSION->cal_show_course = intval($SESSION->cal_course_referer);
-            }
-        }
-        if(is_array($SESSION->cal_show_course) && !in_array($SESSION->cal_course_referer, $SESSION->cal_show_course)) {
-            $SESSION->cal_show_course = intval($SESSION->cal_course_referer);
-        }
-    }
-*/
     switch($_GET['view']) {
         case 'event':
             optional_variable($_GET['id'], 0);
@@ -368,6 +350,34 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     }
 
     print_side_block_start($text, '', 'mycalendar');
+
+    if(isadmin($USER->id)) {
+        $coursesdata = get_courses('all', 'c.shortname');
+    }
+    elseif(!isguest($USER->id)) {
+        $coursesdata = get_my_courses($USER->id, 'shortname');
+    }
+    else {
+        $coursesdata = get_record('course', 'id', $SESSION->cal_course_referer);
+    }
+    $coursesdata = array_diff_assoc($coursesdata, array(1 => 1));
+
+    if(!isguest($USER->id)) {
+        echo '<p style="text-align: center; margin: 1em;"><strong>'.get_string('eventsfromcourse', 'calendar').': ';
+        echo '<select name="course" onchange="document.location.href=\''.CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=\' + this.value;">';
+        echo '<option value="1">'.get_string('all')."</option>\n";
+        if($coursesdata !== false) {
+            foreach($coursesdata as $coursedata) {
+                echo "\n<option value='$coursedata->id'";
+                if(is_numeric($SESSION->cal_courses_shown) && $coursedata->id == $SESSION->cal_courses_shown) {
+                    echo ' selected';
+                }
+                echo '>'.$coursedata->shortname."</option>\n";
+            }
+        }
+        echo '</select></strong></p>';
+    }
+
     echo calendar_top_controls('month', array('m' => $m, 'y' => $y));
 
     // Start calendar display
@@ -502,58 +512,41 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showglobal&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
     }
 
-    // Course events (this is kinda... tricky... :)
-    echo '<td ';
-    if($SESSION->cal_show_course !== false) {
-        echo 'class="cal_event_course" ';
-    }
-    echo 'style="width: 8px;"></td><td><strong>'.get_string('courseevents', 'calendar').':</strong> ';
-
-    if(isadmin($USER->id)) {
-        $coursesdata = get_courses('all', 'c.shortname');
+    // Course events
+    if(!empty($SESSION->cal_show_course)) {
+        echo '<td class="cal_event_course" style="width: 8px;"></td><td><strong>'.get_string('courseevents', 'calendar').':</strong> ';
+        echo get_string('shown', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'">'.get_string('clickhide', 'calendar').'</a>)</td>'."\n";
     }
     else {
-        $coursesdata = get_my_courses($USER->id, 'shortname');
+        echo '<td style="width: 8px;"></td><td><strong>'.get_string('courseevents', 'calendar').':</strong> ';
+        echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
     }
-    $coursesdata = array_diff_assoc($coursesdata, array(1 => 1));
 
-    echo '<select name="course" onchange="document.location.href=\''.CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=\' + this.value;">';
-    echo '<option value="0"'.($SESSION->cal_show_course === false?' selected':'').'>'.get_string('hidden', 'calendar')."</option>\n";
-    echo '<option value="1"'.($SESSION->cal_show_course === true?' selected':'').'>'.get_string('shown', 'calendar')."</option>\n";
-    if($coursesdata !== false) {
-        foreach($coursesdata as $coursedata) {
-            echo "\n<option value='$coursedata->id'";
-            if(is_int($SESSION->cal_show_course) && $coursedata->id == $SESSION->cal_show_course) {
-                echo ' selected';
-            }
-            echo '>'.$coursedata->shortname."</option>\n";
+    echo "</tr>\n";
+
+    if(!isguest($USER->id)) {
+        echo '<tr>';
+        // Group events
+        if($SESSION->cal_show_groups) {
+            echo '<td class="cal_event_group" style="width: 8px;"></td><td><strong>'.get_string('groupevents', 'calendar').':</strong> ';
+            echo get_string('shown', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'">'.get_string('clickhide', 'calendar').'</a>)</td>'."\n";
         }
-    }
-    echo '</select>';
-    echo '</td>';
-    echo "</tr>\n";
-    echo '<tr>';
-
-    // Group events
-    if($SESSION->cal_show_groups) {
-        echo '<td class="cal_event_group" style="width: 8px;"></td><td><strong>'.get_string('groupevents', 'calendar').':</strong> ';
-        echo get_string('shown', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'">'.get_string('clickhide', 'calendar').'</a>)</td>'."\n";
-    }
-    else {
-        echo '<td style="width: 8px;"></td><td><strong>'.get_string('groupevents', 'calendar').':</strong> ';
-        echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
-    }
-    // User events
-    if($SESSION->cal_show_user) {
-        echo '<td class="cal_event_user" style="width: 8px;"></td><td><strong>'.get_string('userevents', 'calendar').':</strong> ';
-        echo get_string('shown', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'">'.get_string('clickhide', 'calendar').'</a>)</td>'."\n";
-    }
-    else {
-        echo '<td style="width: 8px;"></td><td><strong>'.get_string('userevents', 'calendar').':</strong> ';
-        echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
+        else {
+            echo '<td style="width: 8px;"></td><td><strong>'.get_string('groupevents', 'calendar').':</strong> ';
+            echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
+        }
+        // User events
+        if($SESSION->cal_show_user) {
+            echo '<td class="cal_event_user" style="width: 8px;"></td><td><strong>'.get_string('userevents', 'calendar').':</strong> ';
+            echo get_string('shown', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'">'.get_string('clickhide', 'calendar').'</a>)</td>'."\n";
+        }
+        else {
+            echo '<td style="width: 8px;"></td><td><strong>'.get_string('userevents', 'calendar').':</strong> ';
+            echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
+        }
+        echo "</tr>\n";
     }
 
-    echo "</tr>\n";
     echo '<tbody></table><br />';
     print_side_block_end();
 }

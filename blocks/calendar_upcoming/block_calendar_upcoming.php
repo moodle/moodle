@@ -27,39 +27,20 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
         if($this->course === NULL) {
             // Overrides: use no course at all
             $courseshown = false;
-            $defaultcourses = NULL;
+            $filtercourse = array();
         }
         else {
             $courseshown = $this->course->id;
-            $defaultcourses = array($courseshown => 1);
+            $filtercourse = array($courseshown => 1);
         }
 
         // We 'll need this later
         calendar_set_referring_course($courseshown);
 
-        if($courseshown !== false && $SESSION->cal_show_course !== false) {
-            // By default, the course filter will show this course only
-            $SESSION->cal_show_course = $courseshown;
-        }
-
-        // [pj] Let's leave this in, the above may not be the final solution
-        /*
-        if($courseshown !== false && is_int($SESSION->cal_show_course) && $SESSION->cal_show_course != $courseshown) {
-            // There is a filter in action that shows events from a course other than the current
-            // Change it to show only the current course
-            $SESSION->cal_show_course = $courseshown;
-        }
-        else if($courseshown !== false && is_array($SESSION->cal_show_course) && !in_array($courseshown, $SESSION->cal_show_course)) {
-            // Same as above, only there are many courses being shown. Unfortunately, not this one.
-            // Change it to show only the current course
-            $SESSION->cal_show_course = $courseshown;
-        }
-        */
-
         // Be VERY careful with the format for default courses arguments!
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
 
-        calendar_set_filters($courses, $group, $user, $defaultcourses, $defaultcourses);
+        calendar_set_filters($courses, $group, $user, $filtercourse, $filtercourse, false);
 
         $this->content->text = calendar_get_sideblock_upcoming($courses, $group, $user, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
 

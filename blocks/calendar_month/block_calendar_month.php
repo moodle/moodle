@@ -26,20 +26,15 @@ class CourseBlock_calendar_month extends MoodleBlock {
         if($this->course === NULL) {
             // Overrides: use no course at all
             $courseshown = false;
-            $defaultcourses = NULL;
+            $filtercourse = array();
         }
         else {
             $courseshown = $this->course->id;
-            $defaultcourses = array($courseshown => 1);
+            $filtercourse = array($courseshown => 1);
         }
 
         // We 'll need this later
         calendar_set_referring_course($courseshown);
-
-        if($courseshown !== false && $SESSION->cal_show_course !== false) {
-            // By default, the course filter will show this course only
-            $SESSION->cal_show_course = $courseshown;
-        }
 
         // [pj] Let's leave this in, the above may not be the final solution
         /*
@@ -58,7 +53,7 @@ class CourseBlock_calendar_month extends MoodleBlock {
         // Be VERY careful with the format for default courses arguments!
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
 
-        calendar_set_filters($courses, $group, $user, $defaultcourses, $defaultcourses);
+        calendar_set_filters($courses, $group, $user, $filtercourse, $filtercourse);
 
         if($courseshown == 1) {
             // For the front page
