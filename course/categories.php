@@ -37,16 +37,18 @@
 
         // Peel out all the data from variable names.
         foreach ($form as $key => $val) {
-            if ($key == "new" and $val != "") {
-                $cat->name = $val;
-                if (!insert_record("course_categories", $cat)) {
-                    error("Could not insert the new category '$val'");
-                } else {
-                    notify(get_string("categoryadded", "", $val));
+            if ($key == "new") {
+                if (!empty($val)) {
+                    $cat->name = $val;
+                    if (!insert_record("course_categories", $cat)) {
+                        error("Could not insert the new category '$val'");
+                    } else {
+                        notify(get_string("categoryadded", "", $val));
+                    }
                 }
             
             } else {
-                $cat->id  = substr($key,1);
+                $cat->id   = substr($key,1);
                 $cat->name = $val;
                 if (!update_record("course_categories", $cat)) {
                     error("Could not update the category '$val'");
