@@ -5,26 +5,25 @@
     require_once("../config.php");
     require_once("lib.php");
 
+    $modes = array("outline", "complete", "todaylogs", "alllogs");
+
     require_variable($id);       // course id
     require_variable($user);     // user id
     optional_variable($mode, "outline");
 
-    $modes = array("outline", "complete", "todaylogs", "alllogs");
+    require_login();
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
     }
 
-    require_login($course->id);
+    if (!isteacher($course->id)) {
+        error("You are not allowed to look at this page");
+    }
 
     if (! $user = get_record("user", "id", $user)) {
         error("User ID is incorrect");
     }
-
-    if (!isteacher($course->id) and $user->id != $USER->id ) {
-        error("You are not allowed to look at this page");
-    }
-
 
     add_to_log($course->id, "course", "user report", "user.php?id=$course->id&user=$user->id&mode=$mode", "$user->id"); 
 
@@ -49,17 +48,18 @@
     }
     print_heading("$user->firstname $user->lastname");
 
-    echo "<TABLE CELLPADDING=10 ALIGN=CENTER><TR>";
-    echo "<TD>Reports: </TD>";
+    echo "<table cellpadding=10 align=center><tr>";
+    echo "<td>reports: </td>";
+
     foreach ($modes as $listmode) {
         $strmode = get_string($listmode);
         if ($mode == $listmode) {
-            echo "<TD><U>$strmode</U></TD>";
+            echo "<td><u>$strmode</u></td>";
         } else {
-            echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=$listmode>$strmode</A></TD>";
+            echo "<td><a href=user.php?id=$course->id&user=$user->id&mode=$listmode>$strmode</a></td>";
         }
     }
-    echo "</TR></TABLE>";
+    echo "</tr></table>";
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
