@@ -12,19 +12,17 @@
     }
 
     if ($eid) {
-        $entries[] = get_record("glossary_entries", "id", $eid);
+        $entry = get_record("glossary_entries", "id", $eid);
+        $glossary = get_record('glossary','id',$entry->glossaryid);
+        $entry->glossaryname = $glossary->name;
+        $entries[] = $entry;
 
     } else if ($concept) {
-        $entries = get_records_sql("select e.* from {$CFG->prefix}glossary_entries e, {$CFG->prefix}glossary g".
-                                  " where e.glossaryid = g.id and".
-                                      " (e.casesensitive != 0 and ucase(concept) = '" . strtoupper(trim($concept)). "' or".
-                                      " e.casesensitive = 0 and concept = '$concept') and".
-                                      " (g.course = $courseid or g.globalglossary) and".
-                                      " e.usedynalink != 0 and g.usedynalink != 0");
+        $entries = glossary_get_entries_search($concept, $courseid);
     }
 
-    foreach ($entries as $entry) {
-        $glossary = get_record('glossary','id',$entry->glossaryid);
+    foreach ($entries as $key => $entry) {
+        $entries[$key]->definition .= "<p align=\"right\">&raquo;&nbsp;<a target=\"_blank\" onClick=\"window.opener.location.href='$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid'\" href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">$entry->glossaryname</a></p>";
     }
 
     if (!empty($courseid)) {
@@ -38,10 +36,10 @@
 
         $CFG->framename = "newwindow";
         if ($course->category) {
-            print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
+            print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), "$course->fullname",
             "<a target=\"newwindow\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
         } else {
-            print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
+            print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), "$course->fullname",
             "$strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
         }
 
