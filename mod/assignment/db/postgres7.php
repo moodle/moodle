@@ -92,6 +92,11 @@ function assignment_upgrade($oldversion) {
         set_field("log_display", "action", "view submission", "module", "assignment", "action", "view submissions");
     }
 
+    if ($oldversion < 2004040100) {
+        include_once("$CFG->dirroot/mod/assignment/lib.php");
+        assignment_refresh_events();
+    }
+
     return true;
 }
 
