@@ -3,7 +3,9 @@
 /*************************************************
 	ACTIONS handled are:
 
-	addpage
+	addbranchtable
+    addendofbranch
+    addpage
     confirmdelete
     continue
 	delete
@@ -57,8 +59,8 @@
 	require_variable($action);
 	
 
-	/************** add page ************************************/
-	if ($action == 'addpage' ) {
+	/************** add branch table ************************************/
+	if ($action == 'addbranchtable' ) {
 
        	if (!isteacher($course->id)) {
 	    	error("Only teachers can look at this page");
@@ -86,7 +88,144 @@
         }
  
         // give teacher a blank proforma
-		print_heading_with_help(get_string("addanewpage", "lesson"), "overview", "lesson");
+		print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
+        ?>
+        <form name="form" method="post" action="lesson.php">
+        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
+        <input type="hidden" name="action" value="insertpage">
+        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>">
+        <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>">
+        <center><table cellpadding=5 border=1>
+        <tr><td align="center">
+        <tr valign="top">
+        <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
+        <input type="text" name="title" size="80" maxsize="255" value=""></td></tr>
+        <?PHP
+        echo "<tr><td><b>";
+        echo get_string("pagecontents", "lesson").":</b><br />\n";
+        print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
+        echo "</td></tr>\n";
+        for ($i = 0; $i < $lesson->maxanswers; $i++) {
+            $iplus1 = $i + 1;
+            echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b><br />\n";
+            print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$i]");
+            echo "</td></tr>\n";
+            echo "<tr><td><B>".get_string("jumpto", "lesson").":</b> \n";
+            if ($i) {
+                // answers 2, 3, 4... jumpto this page
+                lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
+            } else {
+                // answer 1 jumpto next page
+                lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
+            }
+            helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
+            echo "</td></tr>\n";
+        }
+        use_html_editor();
+        // close table and form
+        ?>
+        </table><br />
+        <input type="submit" value="<?php  print_string("addabranchtable", "lesson") ?>">
+        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+        </center>
+        </form>
+        <?PHP
+	}
+	
+
+	/************** add end of branch ************************************/
+    elseif ($action == 'addendofbranch' ) {
+
+       	if (!isteacher($course->id)) {
+	    	error("Only teachers can look at this page");
+	    }
+
+        // first get the preceeding page
+        $pageid = $_GET['pageid'];
+            
+        $timenow = time();
+        
+        // the new page is not the first page (end of branch always comes after an existing page)
+        if (!$page = get_record("lesson_pages", "id", $pageid)) {
+            error("Add end of branch: page record not found");
+        }
+        // chain back up to find the (nearest branch table)
+        $btpageid = $pageid;
+        if (!$btpage = get_record("lesson_pages", "id", $btpageid)) {
+            error("Add end of branch: btpage record not found");
+        }
+        while (($btpage->qtype != LESSON_BRANCHTABLE) AND ($btpage->prevpageid > 0)) {
+            $btpageid = $btpage->prevpageid;
+            if (!$btpage = get_record("lesson_pages", "id", $btpageid)) {
+                error("Add end of branch: btpage record not found");
+            }
+        }
+        if ($btpage->qtype == LESSON_BRANCHTABLE) {
+            $newpage->lessonid = $lesson->id;
+            $newpage->prevpageid = $pageid;
+            $newpage->nextpageid = $page->nextpageid;
+            $newpage->qtype = LESSON_ENDOFBRANCH;
+            $newpage->timecreated = $timenow;
+            $newpage->title = get_string("endofbranch", "lesson");
+            $newpage->contents = get_string("endofbranch", "lesson");
+            if (!$newpageid = insert_record("lesson_pages", $newpage)) {
+                error("Insert page: new page not inserted");
+            }
+            // update the linked list...
+            if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $pageid)) {
+                error("Add end of branch: unable to update link");
+            }
+            if ($page->nextpageid) {
+                // the new page is not the last page
+                if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->nextpageid)) {
+                    error("Insert page: unable to update previous link");
+                }
+            }
+            // ..and the single "answer"
+            $newanswer->lessonid = $lesson->id;
+            $newanswer->pageid = $newpageid;
+            $newanswer->timecreated = $timenow;
+            $newanswer->jumpto = $btpageid;
+            if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
+                error("Add end of branch: answer record not inserted");
+            }
+            redirect("view.php?id=$cm->id", get_string("ok"));
+        } else {
+            notice(get_string("nobranchtablefound", "lesson"), "view.php?id=$cm->id");
+        }
+	}
+	
+
+	/************** add page ************************************/
+    elseif ($action == 'addpage' ) {
+
+       	if (!isteacher($course->id)) {
+	    	error("Only teachers can look at this page");
+	    }
+
+        // first get the preceeding page
+        $pageid = $_GET['pageid'];
+            
+        // set of jump array
+        $jump[0] = get_string("thispage", "lesson");
+        $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
+        $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
+        if (!$apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
+            error("Add page: first page not found");
+        }
+        while (true) {
+            if ($apageid) {
+                $title = get_field("lesson_pages", "title", "id", $apageid);
+                $jump[$apageid] = $title;
+                $apageid = get_field("lesson_pages", "nextpageid", "id", $apageid);
+            } else {
+                // last page reached
+                break;
+            }
+        }
+ 
+        // give teacher a blank proforma
+		print_heading_with_help(get_string("addaquestionpage", "lesson"), "overview", "lesson");
         ?>
         <form name="form" method="post" action="lesson.php">
         <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
@@ -132,7 +271,7 @@
         // close table and form
         ?>
         </table><br />
-        <input type="submit" value="<?php  print_string("addanewpage", "lesson") ?>">
+        <input type="submit" value="<?php  print_string("addaquestionpage", "lesson") ?>">
         <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
         </center>
         </form>
@@ -419,6 +558,25 @@
                     }
                 }           
                 break;
+
+            case LESSON_BRANCHTABLE:
+                $noanswer = false;
+                $newpageid = $_POST['jumpto'];
+                // convert jumpto page into a proper page id
+                if ($newpageid == 0) {
+                    $newpageid = $pageid;
+                } elseif ($newpageid == LESSON_NEXTPAGE) {
+                    if (!$newpageid = $page->nextpageid) {
+                        // no nextpage go to end of lesson
+                        $newpageid = LESSON_EOL;
+                    }
+                }
+                // no need to record anything in lesson_attempts 
+                redirect("view.php?id=$cm->id&action=navigation&pageid=$newpageid");
+            	print_footer($course);
+                exit();
+                break;
+                
         }
         if ($noanswer) {
             $newpageid = $pageid; // display same page again
@@ -595,9 +753,16 @@
         }
         while (true) {
             if ($apageid) {
-                $title = get_field("lesson_pages", "title", "id", $apageid);
-                $jump[$apageid] = $title;
-                $apageid = get_field("lesson_pages", "nextpageid", "id", $apageid);
+                if (!$apage = get_record("lesson_pages", "id", $apageid)) {
+                    error("Edit page: apage record not found");
+                }
+                if ($apage->qtype != LESSON_ENDOFBRANCH) {
+                    // don't include EOB's in the list...
+                    if (trim($page->title)) { // ...nor nuffin pages
+                        $jump[$apageid] = $apage->title;
+                    }
+                }
+                $apageid = $apage->nextpageid;
             } else {
                 // last page reached
                 break;
@@ -622,10 +787,10 @@
         print_textarea($usehtmleditor, 25, 70, 630, 400, "contents", $page->contents);
         echo "</td></tr>\n";
         $n = 0;
-        echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
-        choose_from_menu($LESSON_QUESTION_TYPE, "qtype", $page->qtype, "");
         switch ($page->qtype) {
             case LESSON_SHORTANSWER :
+                echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
+                choose_from_menu($LESSON_QUESTION_TYPE, "qtype", $page->qtype, "");
                 echo "&nbsp;&nbsp;";
                 if ($page->qoption) {
                     echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
@@ -633,8 +798,11 @@
                     echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
                 }
                 echo " <b>".get_string("casesensitive", "lesson")."</b>\n";
+                helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
                 break;
             case LESSON_MULTICHOICE :
+                echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
+                choose_from_menu($LESSON_QUESTION_TYPE, "qtype", $page->qtype, "");
                 echo "&nbsp;&nbsp;";
                 if ($page->qoption) {
                     echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
@@ -642,20 +810,48 @@
                     echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
                 }
                 echo " <b>".get_string("multianswer", "lesson")."</b>\n";
+                helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
                 break;
+            case LESSON_TRUEFALSE :
+            case LESSON_MATCHING :
+            case LESSON_NUMERICAL :
+                echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
+                choose_from_menu($LESSON_QUESTION_TYPE, "qtype", $page->qtype, "");
+                helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
+                break;
+            case LESSON_BRANCHTABLE :
+                echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\">\n";
+                echo "<tr><td><b>".get_string("branchtable", "lesson")."</b> \n";
+                break;
+            case LESSON_ENDOFBRANCH :
+                echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\">\n";
+                echo "<tr><td><b>".get_string("endofbranch", "lesson")."</b> \n";
+                break;                
         }       
-        helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
         echo "</td></tr>\n";
         if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
             foreach ($answers as $answer) {
                 $nplus1 = $n + 1;
                 echo "<input type=\"hidden\" name=\"answerid[$n]\" value=\"$answer->id\">\n";
-                echo "<tr><td><b>".get_string("answer", "lesson")." $nplus1:</b><br />\n";
-                print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
-                echo "</td></tr>\n";
-                echo "<tr><td><b>".get_string("response", "lesson")." $nplus1:</b><br />\n";
-                print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
-                echo "</td></tr>\n";
+                switch ($page->qtype) {
+                    case LESSON_MULTICHOICE:
+                    case LESSON_TRUEFALSE:
+                    case LESSON_SHORTANSWER:
+                    case LESSON_NUMERICAL:
+                    case LESSON_MATCHING:
+                        echo "<tr><td><b>".get_string("answer", "lesson")." $nplus1:</b><br />\n";
+                        print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
+                        echo "</td></tr>\n";
+                        echo "<tr><td><b>".get_string("response", "lesson")." $nplus1:</b><br />\n";
+                        print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
+                        echo "</td></tr>\n";
+                        break;
+                    case LESSON_BRANCHTABLE:
+                        echo "<tr><td><b>".get_string("description", "lesson")." $nplus1:</b><br />\n";
+                        print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
+                        echo "</td></tr>\n";
+                        break;
+                }
                 echo "<tr><td><b>".get_string("jumpto", "lesson").":</b> \n";
                 lesson_choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
                 helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
@@ -663,19 +859,34 @@
                 $n++;
             }
         }
-        for ($i = $n; $i < $lesson->maxanswers; $i++) {
-            $iplus1 = $i + 1;
-            echo "<input type=\"hidden\" name=\"answerid[$i]\" value=\"0\">\n";
-            echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b><br />\n";
-            print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$i]");
-            echo "</td></tr>\n";
-            echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b><br />\n";
-            print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$i]");
-            echo "</td></tr>\n";
-            echo "<tr><td><B>".get_string("jumpto", "lesson").":</b> \n";
-            lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
-            helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
-            echo "</td></tr>\n";
+        if ($page->qtype != LESSON_ENDOFBRANCH) {
+            for ($i = $n; $i < $lesson->maxanswers; $i++) {
+                $iplus1 = $i + 1;
+                echo "<input type=\"hidden\" name=\"answerid[$i]\" value=\"0\">\n";
+                switch ($page->qtype) {
+                    case LESSON_MULTICHOICE:
+                    case LESSON_TRUEFALSE:
+                    case LESSON_SHORTANSWER:
+                    case LESSON_NUMERICAL:
+                    case LESSON_MATCHING:
+                        echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b><br />\n";
+                        print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$i]");
+                        echo "</td></tr>\n";
+                        echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b><br />\n";
+                        print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$i]");
+                        echo "</td></tr>\n";
+                        break;
+                    case LESSON_BRANCHTABLE:
+                        echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b><br />\n";
+                        print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$i]");
+                        echo "</td></tr>\n";
+                        break;
+                }
+                echo "<tr><td><B>".get_string("jumpto", "lesson").":</b> \n";
+                lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
+                helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
+                echo "</td></tr>\n";
+            }
         }
         use_html_editor();
         // close table and form
@@ -722,7 +933,13 @@
             }
             // update the linked list
             if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $form->pageid)) {
-                error("Insert page: unable to update link");
+                error("Insert page: unable to update next link");
+            }
+            if ($page->nextpageid) {
+                // new page is not the last page
+                if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->nextpageid)) {
+                    error("Insert page: unable to update previous link");
+                }
             }
         } else {
             // new page is the first page
@@ -776,7 +993,9 @@
                 $newanswer->pageid = $newpageid;
                 $newanswer->timecreated = $timenow;
                 $newanswer->answer = trim($form->answer[$i]);
-                $newanswer->response = trim($form->response[$i]);
+                if (isset($form->response[$i])) {
+                    $newanswer->response = trim($form->response[$i]);
+                }
                 if (isset($form->jumpto[$i])) {
                     $newanswer->jumpto = $form->jumpto[$i];
                 }
@@ -812,7 +1031,10 @@
             get_string("movepagehere", "lesson")."</small></a></td></tr>\n";
         while (true) {
             if ($page->id != $pageid) {
-                echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>$page->title</b></td></tr>\n";
+                if (!$title = trim($page->title)) {
+                    $title = "<< ".get_string("notitle", "lesson")."  >>";
+                }
+                echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>$title</b></td></tr>\n";
                 echo "<tr><td><a href=\"lesson.php?id=$cm->id&action=moveit&pageid=$pageid&after={$page->id}\"><small>".
                     get_string("movepagehere", "lesson")."</small></a></td></tr>\n";
             }
@@ -953,36 +1175,51 @@
         if (!update_record("lesson_pages", $page)) {
             error("Update page: page not updated");
         }
-        for ($i = 0; $i < $lesson->maxanswers; $i++) {
-            if (trim(strip_tags($form->answer[$i]))) { // strip_tags because the HTML gives <p><br />...
-                if ($form->answerid[$i]) {
-                    $oldanswer->id = $form->answerid[$i];
-                    $oldanswer->timemodified = $timenow;
-                    $oldanswer->answer = trim($form->answer[$i]);
-                    $oldanswer->response = trim($form->response[$i]);
-                    $oldanswer->jumpto = $form->jumpto[$i];
-                    if (!update_record("lesson_answers", $oldanswer)) {
-                        error("Update page: answer $i not updated");
+        if ($page->qtype == LESSON_ENDOFBRANCH) {
+            // there's just a single answer with a jump
+            $oldanswer->id = $form->answerid[0];
+            $oldanswer->timemodified = $timenow;
+            $oldanswer->jumpto = $form->jumpto[0];
+            if (!update_record("lesson_answers", $oldanswer)) {
+                error("Update page: EOB not updated");
+            }
+        } else {
+            // it's an "ordinary" page
+            for ($i = 0; $i < $lesson->maxanswers; $i++) {
+                if (trim(strip_tags($form->answer[$i]))) { // strip_tags because the HTML gives <p><br />...
+                    if ($form->answerid[$i]) {
+                        $oldanswer->id = $form->answerid[$i];
+                        $oldanswer->timemodified = $timenow;
+                        $oldanswer->answer = trim($form->answer[$i]);
+                        if (isset($form->response[$i])) {
+                            $oldanswer->response = trim($form->response[$i]);
+                        }
+                        $oldanswer->jumpto = $form->jumpto[$i];
+                        if (!update_record("lesson_answers", $oldanswer)) {
+                            error("Update page: answer $i not updated");
+                        }
+                    } else {
+                        // it's a new answer
+                        unset($newanswer); // need to clear id if more than one new answer is ben added
+                        $newanswer->lessonid = $lesson->id;
+                        $newanswer->pageid = $page->id;
+                        $newanswer->timecreated = $timenow;
+                        $newanswer->answer = trim($form->answer[$i]);
+                        if (isset($form->response[$i])) {
+                            $newanswer->response = trim($form->response[$i]);
+                        }
+                        $newanswer->jumpto = $form->jumpto[$i];
+                        $newanswerid = insert_record("lesson_answers", $newanswer);
+                        if (!$newanswerid) {
+                            error("Update page: answer record not inserted");
+                        }
                     }
                 } else {
-                    // it's a new answer
-                    unset($newanswer); // need to clear id if more than one new answer is ben added
-                    $newanswer->lessonid = $lesson->id;
-                    $newanswer->pageid = $page->id;
-                    $newanswer->timecreated = $timenow;
-                    $newanswer->answer = trim($form->answer[$i]);
-                    $newanswer->response = trim($form->response[$i]);
-                    $newanswer->jumpto = $form->jumpto[$i];
-                    $newanswerid = insert_record("lesson_answers", $newanswer);
-                    if (!$newanswerid) {
-                        error("Update page: answer record not inserted");
-                    }
-                }
-            } else {
-                if ($form->answerid[$i]) {
-                    // need to delete blanked out answer
-                    if (!delete_records("lesson_answers", "id", $form->answerid[$i])) {
-                        error("Update page: unable to delete answer record");
+                    if ($form->answerid[$i]) {
+                        // need to delete blanked out answer
+                        if (!delete_records("lesson_answers", "id", $form->answerid[$i])) {
+                            error("Update page: unable to delete answer record");
+                        }
                     }
                 }
             }

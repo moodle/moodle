@@ -49,9 +49,11 @@
                 fwrite ($bf,full_tag("MODTYPE",4,false,"lesson"));
                 fwrite ($bf,full_tag("NAME",4,false,$lesson->name));
                 fwrite ($bf,full_tag("GRADE",4,false,$lesson->grade));
+                fwrite ($bf,full_tag("USEMAXGRADE",4,false,$lesson->usemaxgrade));
                 fwrite ($bf,full_tag("MAXANSWERS",4,false,$lesson->maxanswers));
                 fwrite ($bf,full_tag("MAXATTEMPTS",4,false,$lesson->maxattempts));
                 fwrite ($bf,full_tag("NEXTPAGEDEFAULT",4,false,$lesson->nextpagedefault));
+                fwrite ($bf,full_tag("MINQUESTIONS",4,false,$lesson->minquestions));
                 fwrite ($bf,full_tag("MAXPAGES",4,false,$lesson->maxpages));
                 fwrite ($bf,full_tag("RETAKE",4,false,$lesson->retake));
                 fwrite ($bf,full_tag("AVAILABLE",4,false,$lesson->available));
@@ -171,9 +173,9 @@
                 $status =fwrite ($bf,start_tag("ATTEMPT",5,true));
                 //Print attempt contents
                 fwrite ($bf,full_tag("USERID",6,false,$attempt->userid));       
+                fwrite ($bf,full_tag("RETRY",6,false,$attempt->retry));       
                 fwrite ($bf,full_tag("CORRECT",6,false,$attempt->correct));       
                 fwrite ($bf,full_tag("TIMESEEN",6,false,$attempt->timeseen));       
-                fwrite ($bf,full_tag("RETRY",6,false,$attempt->retry));       
                 //End attempt
                 $status =fwrite ($bf,end_tag("ATTEMPT",5,true));
             }

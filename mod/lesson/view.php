@@ -60,7 +60,7 @@
         // display individual pages and their sets of answers
         // if pageid is EOL then the end of the lesson has been reached
         print_heading($lesson->name);
-	if (empty($pageid)) {
+    	if (empty($pageid)) {
             add_to_log($course->id, "lesson", "start", "view.php?id=$cm->id", "$lesson->id", $cm->id);
             // if no pageid given see if the lesson has been started
             if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND userid = $USER->id",
@@ -135,7 +135,55 @@
             if (!$page = get_record("lesson_pages", "id", $pageid)) {
                 error("Navigation: the page record not found");
             }
+            // before we output everything check to see if the page is a EOB, if so jump directly 
+            // to it's associated branch table
+            if ($page->qtype == LESSON_ENDOFBRANCH) {
+                if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
+                    // print_heading(get_string("endofbranch", "lesson"));
+                    foreach ($answers as $answer) {
+                        // just need the first answer
+                        redirect("view.php?id=$cm->id&action=navigation&pageid=$answer->jumpto",
+                                get_string("endofbranch", "lesson"));
+                        break;
+                    }
+                    print_footer($course);
+                    exit();
+                } else {
+                    error("Navigation: No answers on EOB");
+                }
+            }
+            // it's not a EOB process it...
             echo "<table align=\"center\" width=\"80%\" border=\"0\"><tr><td>\n";
+            if ($page->qtype == LESSON_BRANCHTABLE) {
+                if ($lesson->minquestions and isstudent($course->id)) {
+                    // tell student how many questions they have seen, how many are required and their grade
+                    $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
+                    $nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
+                            $USER->id, "retry", $ntries);
+                    if ($nviewed) {
+                        echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $nviewed).
+                                "; (".get_string("youshouldview", "lesson", $lesson->minquestions).")<br />";
+                        // count the number of distinct correct pages
+                        if ($correctpages = get_records_select("lesson_attempts",  "lessonid = $lesson->id
+                                AND userid = $USER->id AND retry = $ntries AND correct = 1")) {
+                            foreach ($correctpages as $correctpage) {
+                                $temp[$correctpage->pageid] = 1;
+                            }
+                            $ncorrect = count($temp);
+                        } else {
+                            $nccorrect = 0;
+                        }
+                        if ($nviewed < $lesson->minquestions) {
+                            $nviewed = $lesson->minquestions;
+                        }
+                        echo get_string("numberofcorrectanswers", "lesson", $ncorrect)."<br />\n";
+                        $thegrade = intval(100 * $ncorrect / $nviewed);
+                        echo get_string("yourcurrentgradeis", "lesson", 
+                                number_format($thegrade * $lesson->grade / 100, 1)).
+                            " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
+                    }
+                }
+            }
             print_heading($page->title);
             print_simple_box(format_text($page->contents), 'center');
             echo "<br />\n";
@@ -224,6 +272,21 @@
                         echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
                             get_string("pleasematchtheabovepairs", "lesson")."\"></p>\n";
                         break;
+
+                    case LESSON_BRANCHTABLE :
+                        echo "<tr><td><table width=\"100%\">";
+                        echo "<input type=\"hidden\" name=\"jumpto\">";
+                        // don't suffle answers
+                        foreach ($answers as $answer) {
+                            echo "<tr><td align=\"center\">";
+                            echo "<input type=\"button\" value=\"$answer->answer\"";
+                            echo "onclick=\"document.answerform.jumpto.value=$answer->jumpto;document.answerform.submit();\">";
+                            echo "</td></tr>";
+                        }
+                        echo '</table></table>';
+                        print_simple_box_end();
+                        break;
+
                 }
                 echo "</form>\n";
             } else {
@@ -248,74 +311,44 @@
             print_simple_box_start("center");
             $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
             if (isstudent($course->id)) {
-                // do a sanity check on the user's path through a normal lesson (not a Flash Card lesson) 
-                if ($attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND
-                        userid = $USER->id AND retry = $ntries", "timeseen ASC")) {
-                    $check = true;
-                    if ($lesson->nextpagedefault == 0) {
-                        if (!$thispageid = get_field("lesson_pages", "id", "lessonid", $lesson->id,
-                                    "prevpageid", 0)) {
-                            error("Navigation Check: first page not found");
+                if ($nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
+                        $USER->id, "retry", $ntries)) {
+                    // count the number of distinct correct pages
+                    if ($correctpages = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
+                            userid = $USER->id AND retry = $ntries AND correct = 1")) {
+                        foreach ($correctpages as $correctpage) {
+                            $temp[$correctpage->pageid] = 1;
                         }
-                        foreach ($attempts as $attempt) {
-                            // skip any page without answers
-                            while (!$answers = get_records("lesson_answers", "pageid", $thispageid)) {
-                                if (!$thispageid = get_field("lesson_pages", "nextpageid", "id", $thispageid)) {
-                                    error("Navigation Check: nextpageid not found");
-                                }
-                            }
-                            if ($attempt->pageid != $thispageid) {
-                                // something odd
-                                // echo "<p>\$thispageid: $thispageid; \$attempt->pageid: $attempt->pageid</p>\n";
-                                $check = false;
-                                break;
-                            }
-                            if (!$answer = get_record("lesson_answers", "id", $attempt->answerid)) {
-                                error("Navigation Check: answer not found");
-                            }
-                            if ($answer->jumpto) {
-                                if ($answer->jumpto == LESSON_NEXTPAGE) {
-                                    if (!$thispageid = get_field("lesson_pages", "nextpageid", "id", 
-                                                $thispageid)) {
-                                        $thispageid = LESSON_EOL; // end of foreach loop should have been reached
-                                    }
-                                } else {
-                                    $thispageid = $answer->jumpto;
-                                }
-                            }
+                        $ncorrect = count($temp);
+                    } else {
+                        $ncorrect = 0;
+                    }
+                    echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $nviewed).
+                        "</p>\n";
+                    if ($lesson->minquestions) {
+                        if ($nviewed < $lesson->minquestions) {
+                            // print a warning and set nviewed to minquestions
+                            echo "<p align=\"center\">".get_string("youshouldview", "lesson", 
+                                    $lesson->minquestions)." ".get_string("pages", "lesson")."</p>\n";
+                            $nviewed = $lesson->minquestions;
                         }
                     }
-                    if ($check) {
-                        $ncorrect = count_records_select("lesson_attempts", "lessonid = $lesson->id AND
-                                userid = $USER->id AND retry = $ntries AND correct = 1");
-                        $nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
-                                $USER->id, "retry", $ntries);
-                        if ($nviewed) {
-                            $thegrade = intval(100 * $ncorrect / $nviewed);
-                        } else {
-                            $thegrade = 0;
-                        }
-                        echo "<p align=\"center\">".get_string("numberofpagesviewed", "lesson", $nviewed).
-                            "</p>\n";
-                        echo "<p align=\"center\">".get_string("numberofcorrectanswers", "lesson", $ncorrect).
-                            "</p>\n";
-                        echo "<p align=\"center\">".get_string("gradeis", "lesson", 
-                                number_format($thegrade * $lesson->grade / 100, 1)).
-                            " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
-                        $grade->lessonid = $lesson->id;
-                        $grade->userid = $USER->id;
-                        $grade->grade = $thegrade;
-                        $grade->completed = time();
-                        if (!$newgradeid = insert_record("lesson_grades", $grade)) {
-                            error("Navigation: grade not inserted");
-                        }
-                    } else {
-                        print_string("sanitycheckfailed", "lesson");
-                        delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id,
-                                "retry", $ntries);
+                    echo "<p align=\"center\">".get_string("numberofcorrectanswers", "lesson", $ncorrect).
+                        "</p>\n";
+                    $thegrade = intval(100 * $ncorrect / $nviewed);
+                    echo "<p align=\"center\">".get_string("gradeis", "lesson", 
+                            number_format($thegrade * $lesson->grade / 100, 1)).
+                        " (".get_string("outof", "lesson", $lesson->grade).")</p>\n";
+                    $grade->lessonid = $lesson->id;
+                    $grade->userid = $USER->id;
+                    $grade->grade = $thegrade;
+                    $grade->completed = time();
+                    if (!$newgradeid = insert_record("lesson_grades", $grade)) {
+                        error("Navigation: grade not inserted");
                     }
                 } else {
                     print_string("noattemptrecordsfound", "lesson");
+                    $thegrade = 0;
                 }   
             } else { 
                 // display for teacher
@@ -409,8 +442,11 @@
             if (isteacheredit($course->id)) {
                 echo "<tr><td align=\"right\"><small><a href=\"import.php?id=$cm->id&pageid=0\">".
                     get_string("importquestions", "lesson")."</a> | ".
-                    "<a href=\"lesson.php?id=$cm->id&action=addpage&pageid=0\">".
-                    get_string("addpagehere", "lesson")."</a></small></td></tr>\n";
+                    "<a href=\"lesson.php?id=$cm->id&action=addbranchtable&pageid=0\">".
+                    get_string("addabranchtable", "lesson")."</a> | ".
+                    "<a href=\"lesson.php?id=$cm->id&action=addendofbranch&pageid=0\">".
+                    get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
+                    "</a></small></td></tr>\n";
             }
             echo "<tr><td>\n";
             while (true) {
@@ -434,42 +470,69 @@
                     foreach ($answers as $answer) {
                         echo "<tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\" align=\"center\"><b>\n";
                         if ($i == 1) {
-                            echo $LESSON_QUESTION_TYPE[$page->qtype];
                             switch ($page->qtype) {
                                 case LESSON_SHORTANSWER :
+                                    echo $LESSON_QUESTION_TYPE[$page->qtype];
                                     if ($page->qoption) {
                                         echo " - ".get_string("casesensitive", "lesson");
                                     }
                                     break;
                                 case LESSON_MULTICHOICE :
+                                    echo $LESSON_QUESTION_TYPE[$page->qtype];
                                     if ($page->qoption) {
                                         echo " - ".get_string("multianswer", "lesson");
                                     }
                                     break;
                                 case LESSON_MATCHING :
+                                    echo $LESSON_QUESTION_TYPE[$page->qtype];
                                     if (!lesson_iscorrect($page->id, $answer->jumpto)) {
                                         echo " - ".get_string("firstanswershould", "lesson");
                                     }
+                                    break;
+                                case LESSON_TRUEFALSE :
+                                case LESSON_NUMERICAL :
+                                    echo $LESSON_QUESTION_TYPE[$page->qtype];
+                                    break;
+                                case LESSON_BRANCHTABLE :    
+                                    echo get_string("branchtable", "lesson");
+                                    break;
+                                case LESSON_ENDOFBRANCH :
+                                    echo get_string("endofbranch", "lesson");
                                     break;
                             }
                         } else {
                             echo "&nbsp;";
                         }
                         echo "</b></td></tr>\n";
-                        echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
-                        if (lesson_iscorrect($page->id, $answer->jumpto)) {
-                            // underline correct answers
-                            echo "<b><u>".get_string("answer", "lesson")." $i:</u></b> \n";
-                        } else {
-                            echo "<b>".get_string("answer", "lesson")." $i:</b> \n";
+                        switch ($page->qtype) {
+                            case LESSON_MULTICHOICE:
+                            case LESSON_TRUEFALSE:
+                            case LESSON_SHORTANSWER:
+                            case LESSON_NUMERICAL:
+                            case LESSON_MATCHING:
+                                echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
+                                if (lesson_iscorrect($page->id, $answer->jumpto)) {
+                                    // underline correct answers
+                                    echo "<b><u>".get_string("answer", "lesson")." $i:</u></b> \n";
+                                } else {
+                                    echo "<b>".get_string("answer", "lesson")." $i:</b> \n";
+                                }
+                                echo "</td><td width=\"80%\">\n";
+                                echo format_text($answer->answer);
+                                echo "</td></tr>\n";
+                               echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("response", "lesson")." $i:</b> \n";
+                                echo "</td><td>\n";
+                                echo format_text($answer->response); 
+                                echo "</td></tr>\n";
+                                break;
+                            case LESSON_BRANCHTABLE:
+                                echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
+                                echo "<b>".get_string("description", "lesson")." $i:</b> \n";
+                                echo "</td><td width=\"80%\">\n";
+                                echo format_text($answer->answer);
+                                echo "</td></tr>\n";
+                                break;
                         }
-                        echo "</td><td width=\"80%\">\n";
-                        echo format_text($answer->answer);
-                        echo "</td></tr>\n";
-                        echo "<tr><td align=\"right\" valign=\"top\"><b>".get_string("response", "lesson")." $i:</b> \n";
-                        echo "</td><td>\n";
-                        echo format_text($answer->response); 
-                        echo "</td></tr>\n";
                         if ($answer->jumpto == 0) {
                             $jumptitle = get_string("thispage", "lesson");
                         } elseif ($answer->jumpto == LESSON_NEXTPAGE) {
@@ -481,25 +544,59 @@
                                 $jumptitle = "<b>".get_string("notdefined", "lesson")."</b>";
                             }
                         }
-                        echo "<tr><td align=\"right\"><b>".get_string("jumpto", "lesson").": </b>\n";
-                        echo "</td><td>\n";
+                        echo "<tr><td align=\"right\" width=\"20%\"><b>".get_string("jumpto", "lesson").": ";
+                        echo "</b></td><td width=\"80%\">\n";
                         echo "$jumptitle</td></tr>\n";
                         $i++;
                     }
                     // print_simple_box_end();
-                    echo "<tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\" align=\"center\">".
-                        "<input type=\"button\" value=\"".get_string("checkquestion", "lesson")."\" ".
-                        "onclick=\"document.lessonpages.pageid.value=$page->id;".
-                        "document.lessonpages.submit();\"></td></tr>\n";
+                    echo "<tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\" align=\"center\">";
+                    if ($page->qtype != LESSON_ENDOFBRANCH) {
+                        echo "<input type=\"button\" value=\"";
+                        if ($page->qtype == LESSON_BRANCHTABLE) {
+                            echo get_string("checkbranchtable", "lesson");
+                        } else {
+                            echo get_string("checkquestion", "lesson");
+                        }
+                        echo "\" onclick=\"document.lessonpages.pageid.value=$page->id;".
+                            "document.lessonpages.submit();\">";
+                    }
+                    echo "&nbsp;</td></tr>\n";
                 }
                 echo "</td></tr></table></td></tr>\n";
                 if (isteacheredit($course->id)) {
                     echo "<tr><td align=\"right\"><small><a href=\"import.php?id=$cm->id&pageid=$page->id\">".
                         get_string("importquestions", "lesson")."</a> | ".
-                        "<a href=\"lesson.php?id=$cm->id&action=addpage&pageid=$page->id\">".
-                        get_string("addpagehere", "lesson")."</a></small></td></tr>\n";
+                        "<a href=\"lesson.php?id=$cm->id&action=addbranchtable&pageid=$page->id\">".
+                        get_string("addabranchtable", "lesson")."</a> | ";
+                    // the current page or the next page is an end of branch don't show EOB link
+                    $nextqtype = 0; // set to anything else EOB
+                    if ($page->nextpageid) {
+                        $nextqtype = get_field("lesson_pages", "qtype", "id", $page->nextpageid);
+                    }
+                    if (($page->qtype != LESSON_ENDOFBRANCH) and ($nextqtype != LESSON_ENDOFBRANCH)) {
+                        echo "<a href=\"lesson.php?id=$cm->id&action=addendofbranch&pageid=$page->id\">".
+                        get_string("addanendofbranch", "lesson")."</a> | ";
+                    }
+                    echo "<a href=\"lesson.php?id=$cm->id&action=addpage&pageid=$page->id\">".
+                        get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
+                        "</a></small></td></tr>\n";
                 }
                 echo "<tr><td>\n";
+                // check the prev links - fix (silently) if necessary - there was a bug in
+                // versions 1 and 2 when add new pages. Not serious then as the backwards
+                // links were not used in those versions
+                if (isset($prevpageid)) {
+                    if ($page->prevpageid != $prevpageid) {
+                        // fix it
+                        set_field("lesson_pages", "prevpageid", $prevpageid, "id", $page->id);
+                        if ($CFG->debug) {
+                            echo "<p>***prevpageid of page $page->id set to $prevpageid***";
+                        }
+                    }
+                }
+                $prevpageid = $page->id;
+                // move to next page        
                 if ($page->nextpageid) {
                     if (!$page = get_record("lesson_pages", "id", $page->nextpageid)) {
                         error("Teacher view: Next page not found!");

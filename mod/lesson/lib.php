@@ -53,15 +53,21 @@ if (!defined("LESSON_NUMERICAL")) {
 if (!defined("LESSON_MULTIANSWER")) {
     define("LESSON_MULTIANSWER",   "9");
 }
-$LESSON_QUESTION_TYPE = array ( LESSON_MULTICHOICE   => get_string("multichoice", "quiz"),
+if (!defined("LESSON_BRANCHTABLE")) {
+    define("LESSON_BRANCHTABLE",   "20");
+}
+if (!defined("LESSON_ENDOFBRANCH")) {
+    define("LESSON_ENDOFBRANCH",   "21");
+}
+$LESSON_QUESTION_TYPE = array ( LESSON_MULTICHOICE => get_string("multichoice", "quiz"),
                               LESSON_TRUEFALSE     => get_string("truefalse", "quiz"),
                               LESSON_SHORTANSWER   => get_string("shortanswer", "quiz"),
                               LESSON_NUMERICAL     => get_string("numerical", "quiz"),
-                              LESSON_MATCHING         => get_string("match", "quiz")
+                              LESSON_MATCHING      => get_string("match", "quiz")
 //                            LESSON_DESCRIPTION   => get_string("description", "quiz"),
 //                            LESSON_RANDOM        => get_string("random", "quiz"),
 //                            LESSON_RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
-//                            LESSON_MULTIANSWER   => get_string("multianswer", "quiz")
+//                            LESSON_MULTIANSWER   => get_string("multianswer", "quiz"),
                               );
 
 
@@ -308,8 +314,13 @@ function lesson_grades($lessonid) {
 	if (!$lesson = get_record("lesson", "id", $lessonid)) {
 		error("Lesson record not found");
 	}
-    $grades = get_records_sql_menu("SELECT userid,MAX(grade) FROM {$CFG->prefix}lesson_grades WHERE
+    if ($lesson->usemaxgrade) {
+        $grades = get_records_sql_menu("SELECT userid,MAX(grade) FROM {$CFG->prefix}lesson_grades WHERE
+                lessonid = $lessonid GROUP BY userid");
+    } else {
+        $grades = get_records_sql_menu("SELECT userid,AVG(grade) FROM {$CFG->prefix}lesson_grades WHERE
             lessonid = $lessonid GROUP BY userid");
+    }
     
     // convert grades from percentages and tidy the numbers
     if ($grades) {

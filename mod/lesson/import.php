@@ -106,7 +106,6 @@
     print_string("fileformat", "lesson");
     echo ":</td><td>";
     choose_from_menu($fileformatnames, "format", "gift", "");
-    helpbutton("import", $strimportquestions, "lesson");
     echo "</tr>";
 
     echo "<tr><td align=right>";

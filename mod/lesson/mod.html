@@ -11,6 +11,9 @@ require("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
     if (!isset($form->grade)) {
         $form->grade = 0;
     }
+    if (!isset($form->usemaxgrade)) {
+        $form->usemaxgrade = 0;
+    }
     if (!isset($form->maxanswers)) {
         $form->maxanswers = 4;
     }
@@ -19,6 +22,9 @@ require("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
     }
     if (!isset($form->nextpagedefault)) {
         $form->nextpagedefault = 0;
+    }
+    if (!isset($form->minquestions)) {
+        $form->minquestions = 0;
     }
     if (!isset($form->maxpages)) {
         $form->maxpages = 0;
@@ -58,14 +64,14 @@ require("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("maximumnumberofanswers", "lesson") ?>:</B></P></TD>
+    <td align=right><P><B><?php  print_string("maximumnumberofanswersbranches", "lesson") ?>:</B></P></TD>
     <td>
         <?php
         for ($i=10; $i>1; $i--) {
             $numbers[$i] = $i;
         }
         choose_from_menu($numbers, "maxanswers", "$form->maxanswers", "");
-       helpbutton("maxanswers", get_string("maximumnumberofanswers", "lesson"), "lesson");
+       helpbutton("maxanswers", get_string("maximumnumberofanswersbranches", "lesson"), "lesson");
         ?>
     </td>
 </tr>
@@ -95,6 +101,20 @@ require("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
 </tr>
 
 <tr valign=top>
+    <td align=right><P><B><?php  print_string("minimumnumberofquestions", "lesson") ?>:</B></P></TD>
+    <td>
+        <?php
+        unset($numbers);
+        for ($i=100; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "minquestions", "$form->minquestions", "");
+        helpbutton("minquestions", get_string("minimumnumberofquestions", "lesson"), "lesson");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>
     <td align=right><P><B><?php  print_string("numberofpagestoshow", "lesson") ?>:</B></P></TD>
     <td>
         <?php
@@ -115,6 +135,17 @@ require("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "retake", $form->retake, "");
         helpbutton("retake", get_string("canretake", "lesson", $course->student), "lesson");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><P><B><?php  print_string("handlingofretakes", "lesson") ?>:</B></P></TD>
+    <td>
+    <?PHP 
+        $options[0] = get_string("usemean", "lesson"); $options[1] = get_string("usemaximum", "lesson");
+        choose_from_menu($options, "usemaxgrade", $form->usemaxgrade, "");
+        helpbutton("handlingofretakes", get_string("handlingofretakes", "lesson"), "lesson");
     ?>
     </td>
 </tr>

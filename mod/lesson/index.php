@@ -76,14 +76,17 @@
             if (isteacher($course->id)) {
                 $grade_value = $lesson->grade;
             } else {
-                // it's a student, show their maximum grade
-                if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND 
-                            userid = $USER->id", "grade DESC")) {
-                    foreach ($grades as $grade) {
-                        // grades are stored as percentages
-                        $grade_value = number_format($grade->grade * $lesson->grade / 100, 1);
-                        break;  // only the first (largest) grade needed
-                    }
+                // it's a student, show their mean or maximum grade
+                if ($lesson->usemaxgrade) {
+                    $grade = get_record_sql("SELECT MAX(grade) as grade FROM {$CFG->prefix}lesson_grades 
+                            WHERE lessonid = $lesson->id AND userid = $USER->id GROUP BY userid");
+                } else {
+                    $grade = get_record_sql("SELECT AVG(grade) as grade FROM {$CFG->prefix}lesson_grades 
+                            WHERE lessonid = $lesson->id AND userid = $USER->id GROUP BY userid");
+                }
+                if ($grade) {
+                    // grades are stored as percentages
+                    $grade_value = number_format($grade->grade * $lesson->grade / 100, 1);
                 } else {
                     $grade_value = 0;
                 }

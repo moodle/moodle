@@ -52,9 +52,11 @@
             $lesson->course = $restore->course_id;
             $lesson->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $lesson->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
+            $lesson->usemaxgrade = backup_todb($info['MOD']['#']['USEMAXGRADE']['0']['#']);
             $lesson->maxanswers = backup_todb($info['MOD']['#']['MAXANSWERS']['0']['#']);
             $lesson->maxattempts = backup_todb($info['MOD']['#']['MAXATTEMPTS']['0']['#']);
             $lesson->nextpagedefault = backup_todb($info['MOD']['#']['NEXTPAGEDEFAULT']['0']['#']);
+            $lesson->minquestions = backup_todb($info['MOD']['#']['MINQUESTIONS']['0']['#']);
             $lesson->maxpages = backup_todb($info['MOD']['#']['MAXPAGES']['0']['#']);
             $lesson->retake = backup_todb($info['MOD']['#']['RETAKE']['0']['#']);
             $lesson->available = backup_todb($info['MOD']['#']['AVAILABLE']['0']['#']);
@@ -254,9 +256,9 @@
                 $attempt->pageid = $pageid;
                 $attempt->answerid = $answerid;
                 $attempt->userid = backup_todb($attempt_info['#']['USERID']['0']['#']);
+                $attempt->retry = backup_todb($attempt_info['#']['RETRY']['0']['#']);
                 $attempt->correct = backup_todb($attempt_info['#']['CORRECT']['0']['#']);
                 $attempt->timeseen = backup_todb($attempt_info['#']['TIMESEEN']['0']['#']);
-                $attempt->retry = backup_todb($attempt_info['#']['RETRY']['0']['#']);
 
                 //We have to recode the userid field
                 $user = backup_getid($restore->backup_unique_code,"user",$olduserid);

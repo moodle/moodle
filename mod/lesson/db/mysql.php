@@ -30,7 +30,12 @@ function lesson_upgrade($oldversion) {
     if ($oldversion < 2004032000) {           // Upgrade some old beta lessons
 		execute_sql(" UPDATE `{$CFG->prefix}lesson_pages` SET qtype = 3 WHERE qtype = 0");
     }
-
+    
+    if ($oldversion < 2004032400) {
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson` ADD `usegrademax` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER grade");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson` ADD `minquestions` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER nextpagedefault");
+    }
+    
     return true;
 }
 
