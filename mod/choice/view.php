@@ -107,7 +107,7 @@
         foreach ($choice->answer as $key => $answer) {
             if ($answer) {
                 echo "<td align=\"center\">";
-                echo "<input type=\"radio\" name=\"answer\" value=\"$key\" ".$answerchecked[$key]." alt=\"$answer\" />";
+                echo "<input type=\"radio\" name=\"answer\" value=\"$key\" ".$answerchecked[$key]." alt=\"".s(strip_tags($answer))."\" />";
                 echo format_text($answer);
                 echo "</td>";
             }
