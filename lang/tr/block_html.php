@@ -6,6 +6,5 @@ $string['configcontent'] = 'Ýçerik';
 $string['configtitle'] = 'Blok Baþlýðý';
 $string['html'] = 'HTML';
 $string['leaveblanktohide'] = 'baþlýðý gizlemek için boþ býrakýn';
-$string['newhtmlblock'] = '(new HTML bloðu)';
 
 ?>

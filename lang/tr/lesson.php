@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4.4 (2004083140)
+      // lesson.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['accesscontrol'] = 'Eriþim Kontrolü';
@@ -100,6 +100,7 @@ $string['loginfail'] = 'Giriþ hatalý, tekrar deneyin...';
 $string['lowscore'] = 'Düþük Puan';
 $string['lowtime'] = 'Kýsa Zaman';
 $string['mainmenu'] = 'Ana Menü';
+$string['matchesanswer'] = 'Cevaplarla Eþleþtir';
 $string['maxhighscores'] = 'Yüksek Puan Gösterim Sayýsý';
 $string['maximumnumberofanswersbranches'] = 'Cevap sayýsý (max)';
 $string['maximumnumberofattempts'] = 'Maximum uygulama sayýsý';
@@ -150,6 +151,7 @@ $string['pleaseenteryouranswerinthebox'] = 'Cevabýnýzý kutucuða yazýnýz';
 $string['pleasematchtheabovepairs'] = 'Lütfen yukarýdakileri eþleþtirin';
 $string['pointsearned'] = 'Kazanýlan puan';
 $string['postsuccess'] = 'Gönderme Baþarýlý';
+$string['practice'] = 'Uygulama Dersi';
 $string['previouspage'] = 'Önceki Sayfa';
 $string['question'] = 'Soru';
 $string['questionoption'] = 'Soru';
