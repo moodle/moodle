@@ -68,6 +68,7 @@
     $USER->loggedin = true;
     $USER->site = $CFG->wwwroot;
     $USER->realuser = $teacher_id;
+    $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
 
     if (isset($SESSION->currentgroup[$course->id])) {    // Remember current setting for later
         $SESSION->oldcurrentgroup = $SESSION->currentgroup[$course->id];
