@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
 
-$string['thislanguage'] = "Francais";  // Francais, Italiano, etc etc
+$string['thislanguage'] = "Français";  // Français, Italiano, etc etc
 
 $string[activity] = "Activité";
 $string[activities] = "Activités";
