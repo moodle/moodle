@@ -170,7 +170,6 @@
                     // Calculate the last/next/current_offset variables
                     $preset->activate_time   = sprintf('%02d:%02d', $preset->activate_hour, $preset->activate_minute);
                     $preset->deactivate_time = sprintf('%02d:%02d', $preset->deactivate_hour, $preset->deactivate_minute);
-                    $preset = dst_update_preset($preset);
 
                     if($preset->id) {
                         update_record('dst_preset', $preset);
