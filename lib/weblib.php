@@ -657,7 +657,7 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
                         ' style="display: inline;">';
 
     $output = '<select name="jump" onchange="'.$targetwindow.'.location=document.'.$formname.
-                       '.jump.options[document.'.$formname.'.jump.selectedIndex].value;\">'."\n";
+                       '.jump.options[document.'.$formname.'.jump.selectedIndex].value;">'."\n";
 
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
