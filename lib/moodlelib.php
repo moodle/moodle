@@ -1542,13 +1542,15 @@ function get_directory_list($rootdir, $excludefile="", $descend=true, $justdirs=
             continue;
         }
         $fullfile = "$rootdir/$file";
-        if ($descend and filetype($fullfile) == "dir") {
+        if (filetype($fullfile) == "dir") {
             if ($justdirs) {
                 $dirs[] = $file;
             }
-            $subdirs = get_directory_list($fullfile, $excludefile, $descend, $justdirs);
-            foreach ($subdirs as $subdir) {
-                $dirs[] = "$file/$subdir";
+            if ($descend) {
+                $subdirs = get_directory_list($fullfile, $excludefile, $descend, $justdirs);
+                foreach ($subdirs as $subdir) {
+                    $dirs[] = "$file/$subdir";
+                }
             }
         } else if (!$justdirs) {
             $dirs[] = $file;
