@@ -1,5 +1,5 @@
 
-<SCRIPT LANGUAGE="JavaScript">
+<script language="JavaScript">
 <!-- //hide
 
 function popUpProperties(inobj) {
@@ -16,7 +16,7 @@ function fillmessagebox(text) {
 }
 
 function openpopup(url,name,height,width) {
-  fullurl = "<?=$CFG->wwwroot ?>" + url;
+  fullurl = "<?php echo $CFG->wwwroot ?>" + url;
   options = "menubar=0,location=0,scrollbars,resizable,width="+width+",height="+height;
   windowobj = window.open(fullurl,name, options);
   windowobj.focus();
@@ -35,7 +35,7 @@ function checkall() {
 }
 
 function inserttext(text) {
-<?PHP 
+<?php 
     if (!empty($SESSION->inserttextform)) {
         $insertfield = "opener.document.forms['$SESSION->inserttextform'].$SESSION->inserttextfield";
     } else {
@@ -52,8 +52,8 @@ function inserttext(text) {
 ?>
 }
 
-<?PHP if ($focus) { echo "function setfocus() { document.$focus.focus() }\n"; } ?>
+<?php if ($focus) { echo "function setfocus() { document.$focus.focus() }\n"; } ?>
 
 // done hiding -->
-</SCRIPT>
+</script>
 

@@ -31,7 +31,7 @@
     }
 
     print_header("$site->fullname", "$site->fullname", "home", "",
-                 "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
+                 "<meta name=\"description\" content=\"".stripslashes(strip_tags($site->summary))."\">",
                  true, "", "<div align=right>$loginstring$langmenu</div>");
 
     $firstcolumn = false;  // for now

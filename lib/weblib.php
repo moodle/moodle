@@ -665,9 +665,9 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 
     if (!$menu and $navigation) {
         if (isset($USER->id)) {
-            $menu = "<font size=2><a target=_parent href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a></font>";
+            $menu = "<font size=2><a target=\"$CFG->framename\" href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a></font>";
         } else {
-            $menu = "<font size=2><a target=_parent href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a></font>";
+            $menu = "<font size=2><a target=\"$CFG->framename\" href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a></font>";
         }
     }
 
