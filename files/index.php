@@ -279,20 +279,31 @@
                 displaydir($wdir);
                     
             } else {
+                $streditfile = get_string("edit", "", "<B>$file</B>");
                 $fileptr  = fopen($basedir.$file, "r");
                 $contents = fread($fileptr, filesize($basedir.$file));
                 fclose($fileptr);
 
-                echo "<P>Editing <B>$file</B>:";
+                if (mimeinfo("type", $file) == "text/html") {
+                    if ($usehtmleditor = can_use_richtext_editor()) {
+                        $onsubmit = "onsubmit=\"copyrichtext(document.form.text);\"";
+                    } else {
+                        $onsubmit = "";
+                    }
+                } else {
+                    $usehtmleditor = false;
+                    $onsubmit = "";
+                }
+
+                print_heading("$streditfile");
+
                 echo "<TABLE><TR><TD COLSPAN=2>";
-                echo "<FORM ACTION=index.php METHOD=post NAME=form>";
+                echo "<FORM ACTION=\"index.php\" METHOD=\"post\" NAME=\"form\" $onsubmit>";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
                 echo " <INPUT TYPE=hidden NAME=file VALUE=\"$file\">";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=edit>";
-                echo "<TEXTAREA ROWS=20 COLS=60 NAME=text>";
-                echo htmlspecialchars($contents);
-                echo "</TEXTAREA>";
+                print_textarea($usehtmleditor, 25, 80, 680, 400, "text", $contents);
                 echo "</TD></TR><TR><TD>";
                 echo " <INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\">";
                 echo "</FORM>";
@@ -304,6 +315,12 @@
                 echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\">";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
+
+                if ($usehtmleditor) { 
+                    print_richedit_javascript("form", "text", "yes");
+                }
+
+
             }
             html_footer();
             break;
