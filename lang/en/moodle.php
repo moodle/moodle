@@ -773,6 +773,7 @@ $string['userprofilefor'] = "User profile for \$a";
 $string['users'] = "Users";
 $string['usingexistingcourse'] = "Using existing course";
 $string['userzones'] = "User zones";
+$string['view'] = "View";
 $string['webpage'] = "Web page";
 $string['week'] = "Week";
 $string['weekhide'] = "Hide this week from \$a";
