@@ -48,7 +48,7 @@
     echo "<br />";
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-	include("$CFG->wwwroot/mod/$module/config.html");
+	include("$CFG->dirroot/mod/$module/config.html");
     print_simple_box_end();
 
     print_footer();
