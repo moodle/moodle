@@ -581,7 +581,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo format_text($post->message, $post->format);
     }
 
-    echo "<BR CLEAR=ALL><P ALIGN=right><FONT SIZE=-1>";
+    echo "<P ALIGN=right><FONT SIZE=-1>";
 
     $age = time() - $post->created;
     if ($ownpost) {
