@@ -2,26 +2,76 @@ README FOR CATALAN PLUGIN
 -------------------------
 
 
-Traducció de Moodle al català coordinada pel CENT, Centre d'Educació 
-i Noves Tecnologies de la Universitat Jaume I de Castelló.
+TraducciÛ de Moodle al catal‡ coordinada pel CENT, Centre d'EducaciÛ i
+Noves Tecnologies de la Universitat Jaume I de CastellÛ.
 
 http://cent.uji.es
 mailto:cent@uji.es
 
+(Han col?laborat en aquesta traducciÛ: Jordi Adell, Clara AndrÈs, Puri
+AndrÈs, Carles Bellver, FermÌn Cueva i Joan Queralt Gil.)
 
-Han colálaborat en aquesta traducció:
+Teniu en compte, si us plau, que la traducciÛ no Ès completa al 100%.
+Podeu col?laborar enviant suggeriments, comentaris o correccions, o
+fent-vos c‡rrec de la traducciÛ d'un mÚdul (i dels fitxers d'ajuda
+corresponents).
 
-- Jordi Adell <jordi@uji.es>
-- Clara Andrés <al051553@alumail.uji.es>
-- Puri Andrés <al058754@alumail.uji.es>
-- Carles Bellver <carles.bellver@cent.uji.es>
-- Fermín Cueva <fcueva@teleline.es>
-- Joan Queralt Gil <jqueralt@pie.xtec.es>
+Si us voleu fer c‡rrec d'un mÚdul, els ?nics requisits sÛn aquests:
 
-Si voleu colálaborar: 1) assegureu-vos de conèixer la Guia d'estil de Softcatalà i 2) escriviu-nos a l'adreça <cent@uji.es>.
+1. Un bon nivell de catal‡ i d'anglËs.
 
-Tasques pendents:
+2. Una mica d'experiËncia en la traducciÛ de programari o de textos
+   sobre inform‡tica. Us recomanem que tingueu sempre a m‡ la Guia
+   d'estil i el Recull de termes de Softcatal‡:
 
-- Completar la traducció dels fitxers d'ajuda.
-- Normalitzar les traduccions d'acord amb la Guia d'estil 
-de Softcatalà (sobretot les ajudes).
+   http://www.softcatala.org/projectes/eines/guiaestil/guiaestil.htm
+   http://www.softcatala.org/projectes/eines/recull/recull.htm
+
+3. Familiaritat amb el mÚdul en q¸estiÛ.
+
+4. CompromÌs de mantenir i actualitzar la traducciÛ durant un temps.
+
+La llista de mÚduls Ès la seg¸ent. La majoria dels mÚduls no assignats
+els tenim igualment traduÔts al catal‡, perÚ aquestes traduccions no han
+estat revisades o actualitzades recentment, o manquen les ajudes, etc.
+
+
+M“DUL              ASSIGNAT A:
+-----              -----------
+
+appointment.php    No assignat
+assignment.php     CENT
+attendance.php     No assignat
+chat.php           CENT
+choice.php         No assignat
+dialogue.php       No assignat
+exercise.php       No assignat
+forum.php          CENT
+glossary.php       No assignat
+journal.php        CENT
+lesson.php         No assignat
+quiz.php           No assignat
+resource.php       CENT
+scheduler.php      No assignat
+scorm.php          CENT
+survey.php         No assignat
+workshop.php       No assignat
+
+admin.php          CENT
+auth.php           CENT
+calendar.php       CENT
+countries.php      CENT
+editor.php         CENT
+error.php          CENT
+moodle.php         CENT
+pix.php            CENT
+
+docs/              No assignat
+
+
+
+----
+Centre d'EducaciÛ i Noves Tecnologies (CENT) de la Universitat Jaume I de CastellÛ
+http://cent.uji.es
+mailto:cent@uji.es
+

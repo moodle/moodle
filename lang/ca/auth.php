@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2004022000)
+      // auth.php - created with Moodle 1.3 (2004052500)
 
 
 $string['auth_dbdescription'] = 'Aquest mètode utilitza una taula d\'una base de dades externa per comprovar si un nom d\'usuari i una contrasenya són vàlids. Si el compte és nou, aleshores també es pot copiar en Moodle informació d\'altres camps.';
@@ -25,12 +25,13 @@ $string['auth_ldap_bind_dn'] = 'Si voleu utilitzar el bind-user per cercar usuar
 $string['auth_ldap_bind_pw'] = 'Contrasenya del bind-user.';
 $string['auth_ldap_contexts'] = 'Llista de contextos en què estan ubicats els usuaris. Separeu els contextos amb \';\'. Per exemple: \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'Si activeu la creació d\'usuaris mitjançant confirmació per correu electrònic, especifiqueu en quin context s\'han de crear els usuaris. Aquest context ha de ser diferent del d\'altres usuaris per tal de prevenir problemes de seguretat. No cal afegir aquest context a ldap_context-variable. Moodle cercarà els usuaris en aquest context automàticament.';
-$string['auth_ldap_creators'] = 'Llista de grups als membres dels quals els és permès de crear nous cursos. Separeu els grups amb \';\'. Generalment una cosa semblant a \'cn=teachers,ou=staff,o=myorg\'';
+$string['auth_ldap_creators'] = 'Llista de grups als membres dels quals els és permès  crear nous cursos. Separeu els grups amb \';\'. Generalment una cosa semblant a \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_host_url'] = 'Especifiqueu l\'hoste LDAP en format URL, per exemple \'ldap://ldap.myorg.com/\' o \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'Especifiqueu l\'atribut de membre de l\'usuari, quan els usuaris pertanyen a un grup. Generalment \'member\'';
-$string['auth_ldap_search_sub'] = 'Poseu el valor &lt;&gt; 0 si voleu cercar els usuaris en subcontextos.';
+$string['auth_ldap_search_sub'] = 'Poseu el valor <> 0 si voleu cercar els usuaris en subcontextos.';
 $string['auth_ldap_update_userinfo'] = 'Passar les dades de l\'usuari (nom, cognoms, adreça...) de LDAP a Moodle. Informació sobre mapatge en /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'L\'atribut utilitzat per anomenar/cercar usuaris. Generalment \'cn\'.';
+$string['auth_ldap_version'] = 'La versió del protocol LDAP que està utilitzant el servidor.';
 $string['auth_ldapdescription'] = 'Aquest mètode proporciona autenticació contra un servidor LDAP extern.
 
                                   Si un nom d\'usuari i una contrasenya són vàlids, Moodle crea una entrada per a un nou usuari 

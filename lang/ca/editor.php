@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 development (2004032800)
+      // editor.php - created with Moodle 1.3 (2004052500)
 
 
 $string['about'] = 'Referent a aquest editor';
@@ -27,6 +27,7 @@ $string['cut'] = 'Talla la selecció';
 $string['delete'] = 'Suprimeix';
 $string['filebrowser'] = 'Explorador de fitxers';
 $string['forecolor'] = 'Color de la lletra';
+$string['fullscreen'] = 'Editor a pantalla completa';
 $string['heading'] = 'Encapçalament';
 $string['height'] = 'Alçada';
 $string['hilitecolor'] = 'Color de fons';
@@ -47,6 +48,7 @@ $string['justifyleft'] = 'Justifica a l\'esquerra';
 $string['justifyright'] = 'Justifica a la dreta';
 $string['layout'] = 'Format';
 $string['left'] = 'Left';
+$string['lefttoright'] = 'Sentit d\'esquerra a dreta';
 $string['linkproperties'] = 'Propietats de l\'enllaç';
 $string['linktarget'] = 'Objectiu';
 $string['linktargetblank'] = 'Finestra nova';
@@ -57,6 +59,7 @@ $string['linktargettop'] = 'La mateixa finestra';
 $string['linktitle'] = 'Títol';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'Centre';
+$string['minimize'] = 'Minimitza l\'editor';
 $string['move'] = 'Mou';
 $string['normal'] = 'Normal';
 $string['notimage'] = 'El fitxer seleccionat no és una imatge. Si us plau trieu-ne un altre!';
@@ -76,7 +79,9 @@ $string['redo'] = 'Refés la darrera acció';
 $string['removelink'] = 'Suprimeix enllaç';
 $string['rename'] = 'Canvia el nom';
 $string['right'] = 'Right';
+$string['righttoleft'] = 'Sentit de dreta a esquerra';
 $string['rows'] = 'Files';
+$string['selectcolor'] = 'Selecciona el color';
 $string['selection'] = 'Selecció';
 $string['showhelp'] = 'Ajuda de l\'editor';
 $string['size'] = 'Mida';
@@ -95,6 +100,7 @@ $string['unorderedlist'] = 'Llista no numerada';
 $string['upload'] = 'Penja';
 $string['vertical'] = 'Vertical';
 $string['width'] = 'Amplada';
+$string['wordclean'] = 'Neteja l\'HTML del Word';
 $string['zip'] = 'Zip';
 
 ?>

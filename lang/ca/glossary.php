@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 Beta (2004022400)
+      // glossary.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addcomment'] = 'Afegeix un comentari';
@@ -49,6 +49,7 @@ $string['commentson'] = 'Comentaris actius';
 $string['commentupdated'] = 'S\'ha actualitzat el comentari';
 $string['concept'] = 'Concepte';
 $string['concepts'] = 'Conceptes';
+$string['configenablerssfeeds'] = 'Aquest commutador habilita la possibilitat de tenir RSS en tots els glossaris. Haureu d\'activar manualment l\'RSS en els paràmetres de cada glossari.';
 $string['currentglossary'] = 'Glossari actual';
 $string['dateview'] = 'Navega per data';
 $string['defaultapproval'] = 'Estat d\'aprovació per defecte';
@@ -62,12 +63,13 @@ $string['destination'] = 'Destinació';
 $string['displayformat'] = 'Format de visualització';
 $string['displayformat2'] = 'Complet amb autor';
 $string['displayformat3'] = 'Enciclopèdia';
-$string['displayformat4'] = 'FAQ';
+$string['displayformat4'] = 'PMF';
 $string['displayformat5'] = 'Complet sense autor';
 $string['displayformat6'] = 'Llista d\'entrades';
 $string['displayformatcontinuous'] = 'Continuat sense autor';
 $string['displayformatdefault'] = 'Simple, estil diccionari';
 $string['displayformats'] = 'Formats de visualització';
+$string['displayformatssetup'] = 'Configuració dels formats de visualització';
 $string['duplicateentry'] = 'Entrada duplicada';
 $string['editcategories'] = 'Edita categories';
 $string['editentry'] = 'Edita entrada';
@@ -81,6 +83,7 @@ $string['entryapproved'] = 'S\'ha aprovat aquesta entrada';
 $string['entrydeleted'] = 'S\'ha suprimit l\'entrada';
 $string['entryexported'] = 'L\'entrada s\'ha exportat amb èxit';
 $string['entryishidden'] = '(aquesta entrada actualment està oculta)';
+$string['entryleveldefaultsettings'] = 'Paràmetres per defecte al nivell d\'entrada';
 $string['entryusedynalink'] = 'Aquesta entrada s\'ha d\'ennllaçar automàticament';
 $string['explainaddentry'] = 'Afegiu una nova entrada al glossari actual.<br />El concepte i la definició són camps obligatoris.';
 $string['explainall'] = 'Visualitzeu TOTES les entrades en una pàgina';
@@ -97,6 +100,7 @@ $string['filetoimport'] = 'Fitxer per importar';
 $string['fillfields'] = 'El concepte i la definició són camps obligatoris.';
 $string['filtername'] = 'Enllaços automàtics al glossari';
 $string['fullmatch'] = 'Relaciona només les paraules completes';
+$string['glossaryleveldefaultsettings'] = 'Paràmetres per defecte al nivell de glossari';
 $string['glossarytype'] = 'Tipus de glossari';
 $string['glosssaryexported'] = 'S\'ha exportat el glossari.';
 $string['importcategories'] = 'Importa categories';
@@ -134,12 +138,13 @@ $string['ratingsuse'] = 'Utilitza valoracions';
 $string['ratingtime'] = 'Limita les valoracions a les entrades enviades en aquestes dates:';
 $string['rejectedentries'] = 'Entrades rebutjades';
 $string['rejectionrpt'] = 'Informe de rebuigs';
+$string['rsssubscriberss'] = 'Visualitza l\'RSS \'$a\'';
 $string['searchindefinition'] = 'Cerca en tot el text';
 $string['secondaryglossary'] = 'Glossari secundari';
 $string['sendinratings'] = 'Envia les meves darreres valoracions';
-$string['showall'] = 'Mostra l\'enllaç \"TOT\"';
+$string['showall'] = 'Mostra l\'enllaç ';
 $string['showalphabet'] = 'Mostra l\'alfabet';
-$string['showspecial'] = 'Mostra l\'enllaç \"ESPECIAL\"';
+$string['showspecial'] = 'Mostra l\'enllaç ';
 $string['sortby'] = 'Ordena per';
 $string['sortbycreation'] = 'Per data de creació';
 $string['sortbylastupdate'] = 'Per l\'última actualització';
@@ -151,6 +156,8 @@ $string['totalentries'] = 'Total d\'entrades';
 $string['usedynalink'] = 'Enllaça automàticament les entrades del glossari';
 $string['waitingapproval'] = 'S\'està esperant aprovació';
 $string['warningstudentcapost'] = '(Aplicable sols en cas que no sigui el glossari principal)';
+$string['withauthor'] = 'Conceptes amb autor';
+$string['withoutauthor'] = 'Conceptes sense autor';
 $string['writtenby'] = 'Escrit per';
 $string['youarenottheauthor'] = 'No sou l\'autor d\'aquest comentari, de manera que no podeu editar-lo.';
 

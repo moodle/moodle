@@ -117,6 +117,7 @@ $string['noquestions'] = 'Encara no s\'han afegit preguntes';
 $string['noresponse'] = 'Sense resposta';
 $string['noreview'] = 'No teniu permís per revisar aquest qüestionari';
 $string['noreviewuntil'] = 'No teniu permís per revisar aquest qüestionari fins el $a';
+$string['notenoughanswers'] = 'Aquest tipus de pregunta requereix com a mínim $a respostes';
 $string['notenoughsubquestions'] = 'No heu definit prou subpreguntes!<br />
 Voleu tornar enrere i arreglar aquesta pregunta?';
 $string['numerical'] = 'Numèrica';
