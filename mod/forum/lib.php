@@ -1178,6 +1178,8 @@ function forum_add_attachment($post, $newfile) {
 // $newfile is a full upload array from $_FILES
 // If successful, this function returns the name of the file
 
+    global $CFG;
+
     if (empty($newfile['name'])) {
         return "";
     }
@@ -1194,6 +1196,7 @@ function forum_add_attachment($post, $newfile) {
 
         } else {
             if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
+                chmod("$dir/$newfile_name", $CFG->directorypermissions);
                 forum_delete_old_attachments($post, $newfile_name);
             } else {
                 notify("An error happened while saving the file on the server");

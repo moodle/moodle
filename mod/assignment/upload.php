@@ -53,6 +53,7 @@
             $newfile_name = clean_filename($newfile['name']);
             if ($newfile_name) {
                 if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
+                    chmod("$dir/$newfile_name", $CFG->directorypermissions);
                     assignment_delete_user_files($assignment, $USER, $newfile_name);
                     if ($submission) {
                         $submission->timemodified = time();
