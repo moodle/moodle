@@ -199,3 +199,15 @@ table.minicalendar td {
 .glossarycomment .entry {
     -moz-border-radius-bottomright:20px;
 }
+
+.loginbox {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}
+
+.loginbox .content.left {
+    -moz-border-radius-bottomleft:20px;
+}
+.loginbox .content.right {
+    -moz-border-radius-bottomright:20px;
+}

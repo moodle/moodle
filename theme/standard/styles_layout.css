@@ -1111,6 +1111,12 @@ body#course-enrol .coursebox {
     margin-top: 20px;
 }
 
+.loginbox .content {
+    border-width:1px;
+    border-style:solid;
+    padding:15px;
+}
+
 .headingblock .link {
     text-align:right;
 }
