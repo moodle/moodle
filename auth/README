@@ -33,3 +33,11 @@ none  - no authentication at all .. very insecure!!
 
 
 ldap  - Uses an external LDAP server
+
+    - user logs in using username and password
+    - these are checked against an LDAP server
+    - if correct, user is logged in
+    - optionally, info is copied from the LDAP
+      database to the Moodle user database
+    
+    (see the ldap/README for more details on config etc...)
