@@ -1,21 +1,37 @@
-<?PHP // $Id$ 
-      // choice.php - created with Moodle 1.0.8.1 (2003011200)
+<?
+//Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
+//Modul choice.php
 
+$string['modulename'] = " Wybór";
 
-$string['answered'] = "Udzielono odpowiedzi";
+$string['modulenameplural'] = " Wybory";
+
+$string['answered'] = " z udzielon± odpowiedzi±";
+
 $string['choice'] = "Wybór \$a";
-$string['choicename'] = "Nazwa";
-$string['choicetext'] = "Tre¶æ";
-$string['modulename'] = "G³osowanie";
-$string['modulenameplural'] = "G³osowania";
-$string['notanswered'] = "Jeszcze nie udzielno odpowiedzi";
-$string['publish'] = "Publikuj rezultaty";
-$string['publishanonymous'] = "Publikuj rezultaty anonimowo, nie pokazuj nazw studentów.";
-$string['publishnames'] = "Publikuj pe³ne wyniki, pokazuj±c nazwy studentów i ich odpowiedzi";
-$string['publishnot'] = "Nie publikuj studentom rezultatów ";
-$string['responses'] = "Odpowiedzi";
-$string['responsesto'] = "Odpowiedzi do  \$a";
-$string['savemychoice'] = "Zapisz mój g³os";
-$string['viewallresponses'] = "Zobacz \$a odpowiedzi";
+
+$string['choicename'] = " Nazwa wyboru";
+
+$string['choicetext'] = " Tre¶æ pytania";
+
+$string['notanswered'] = " Jeszcze nie udzielono odpowiedzi";
+
+$string['publish'] = " Opublikuj wyniki";
+
+$string['publishanonymous'] = " Opublikuj wyniki anonimowo, bez pokazywania imion studentów";
+
+$string['publishnames'] = " Opublikuj wyniki w pe³ni, pokazuj±c imiona studentów i ich wybory";
+
+$string['publishnot'] = " Nie publikuj wyników studentom";
+
+$string['responses'] = " Odpowiedzi";
+
+$string['responsesto'] = " Odpowiedzi na \$a";
+
+$string['savemychoice'] = " Zapisz mój wybór";
+
+$string['viewallresponses'] = " Przejrzyj \$a odpowiedzi";
+
+$string[''] = "";
 
 ?>

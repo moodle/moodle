@@ -1,42 +1,83 @@
-<?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8.1 (2003011200)
+<?
+//Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
+//Modul assignment.php
 
+$string['allowresubmit'] = "Zezwól na wielokrotne przesy³anie";
 
-$string['allowresubmit'] = "Powtórne przes³anie zadania jest dozwolone";
-$string['assignmentdetails'] = "Szczegó³y zadania";
+$string['assignmentdetails'] = " Szczegó³y zadania";
+
+$string['assignmentmail'] = " \$a->teacher umie¶ci³ informacjê zwrotn± na temat twojego rozwi±zania zadania '\$a->assignment' Mo¿esz zobaczyæ j± za³±czon± do swojego rozwi±zania pod adresem \$a->url";
+
+$string['assignmentmailhtml'] = " \$a-> umie¶ci³ informacjê zwrotn± na temat twojego rozwi±zania zadania '<i>\$a->assignment</i>'<br /><br /> Mo¿esz zobaczyæ j± za³±czon± do <a href=\\\"\$a->url\\\"> swojego rozwi±zania </a>.";
+
 $string['assignmentname'] = "Nazwa zadania";
+
 $string['assignmenttype'] = "Rodzaj zadania";
+
 $string['description'] = "Opis";
-$string['duedate'] = "Termin oddania";
-$string['early'] = "za wcze¶nie";
-$string['failedupdatefeedback'] = "B³±d aktualizacji informacji zwrotnej dla u¿ytkownika  \$a";
-$string['feedback'] = "Informacja zwrotna";
-$string['feedbackupdated'] = "Informacje zwrotne dla u¿ytkowników \$a zosta³y zaktualizowane";
-$string['late'] = "\$a spó¼niony";
-$string['maximumgrade'] = "Maksymalna ocena";
-$string['maximumsize'] = "Maksymalny rozmiar";
-$string['modulename'] = "Zadanie";
-$string['modulenameplural'] = "Zadania";
-$string['newsubmissions'] = "Zadania zosta³y przes³ane";
-$string['notsubmittedyet'] = "Jeszcze nie przes³ano";
-$string['overwritewarning'] = "Ostrze¿enie: ponowne przes³anie ZAST¡PI zadanie przes³ane wcze¶niej";
-$string['saveallfeedback'] = "zapisz wszystkie moje informacja zwrotne";
-$string['submissionfeedback'] = "Informacja zwrotna";
-$string['submissions'] = "Przes³ano";
-$string['submitassignment'] = "Wy¶lij zadanie u¿ywaj±c tego formularza";
-$string['submitted'] = "Wys³any";
-$string['typeoffline'] = "Praca off-line";
-$string['typeuploadsingle'] = "Prze¶lij jeden plik";
-$string['uploadbadname'] = "Ta nazwa pliku zawiera dziwne znaki i plik nie móg³ byæ zapisany.";
-$string['uploadedfiles'] = "Przes³ane pliki";
-$string['uploaderror'] = "Podczas zapisywania pliku na dysk wyst±pi³ b³±d.";
-$string['uploadfailnoupdate'] = "Plik zosta³ przes³any poprawnie, ale nie mo¿na zaktualizowaæ informacji o nim";
-$string['uploadfiletoobig'] = "Niestety, plik jest zbyt duzy(limit wynosi \$a bajtów)";
-$string['uploadnofilefound'] = "Pliku nie znaleziono - czy masz pewno¶æ, ¿e wskazano plik do przes³ania?";
-$string['uploadnotregistered'] = "'\$a' zosta³ przes³any poprawnie ale nie zosta³ zarejstrowany!";
-$string['uploadsuccess'] = "Plik '\$a' zosta³ przes³any poprawnie";
-$string['viewfeedback'] = "Zobacz oceny i informacje zwrotne o zadaniu";
-$string['viewsubmissions'] = "Zobacz \$a przekazanych zadañ";
-$string['yoursubmission'] = "Twoje przes³ane zadania";
+
+$string['duedate'] = " Termin oddawania zadania";
+
+$string['early'] = " \$a przed terminem";
+
+$string['failedupdatefeedback'] = " Nie uda³o siê uaktualniæ informacji zwrotnej dla u¿ytkownika \$a";
+
+$string['feedback'] = " Informacja zwrotna";
+
+$string['feedbackupdated'] = " Informacja zwrotna zosta³a uaktualniona dla \$a osób";
+
+$string['late'] = " \$a zbyt pó¼no";
+
+$string['maximumgrade'] = " Maksymalna ocena";
+
+$string['maximumsize'] = " Maksymalny rozmiar";
+
+$string['modulename'] = " Zadanie";
+
+$string['modulenameplural'] = " Zadania";
+
+$string['newsubmissions'] = " Przes³ane rozwi±zania";
+
+$string['notsubmittedyet'] = " Nic jeszcze nie przes³ano";
+
+$string['overwritewarning'] = " UWAGA: Ponowne przes³anie zast±pi twoje aktualne rozwi±zanie";
+
+$string['saveallfeedback'] = " Zapisz moje wszystkie informacje zwrotne";
+
+$string['submissionfeedback'] = " Informacje zwrotne na temat rozwi±zania";
+
+$string['submissions'] = " Rozwi±zania";
+
+$string['submitassignment'] = " Prze¶lij swoje rozwi±zanie korzystaj±c z poni¿szego formularza";
+
+$string['submitted'] = " Przes³ano";
+
+$string['typeoffline'] = "Dzia³ania wykonywane w trybie off-line";
+
+$string['typeuploadsingle'] = " Prze¶lij jeden plik";
+
+$string['uploadbadname'] = " Nazwa pliku zawiera³a nieprawid³owe znaki i nie mog³a zostaæ przes³ana";
+
+$string['uploadedfiles'] = " Przes³ane pliki";
+
+$string['uploaderror'] = " Wyst±pi³ b³±d podczas próby zapisu na serwer";
+
+$string['uploadfailnoupdate'] = " Plik zosta³ przes³any prawid³owo, ale nie mo¿na by³o uaktualniæ twojego rozwi±zania";
+
+$string['uploadfiletoobig'] = " Niestety rozmiar pliku jest zbyt du¿y (limit : \$a bajtów)";
+
+$string['uploadnofilefound'] = " Nie znaleziono pliku - upewnij siê, ¿e wybra³e¶ plik do przes³ania";
+
+$string['uploadnotregistered'] = " '\$a' zosta³ przes³any prawid³owo, ale rozwi±zanie nie zosta³o zarejestrowane";
+
+$string['uploadsuccess'] = " Prawid³owo przes³ano '\$a'";
+
+$string['viewfeedback'] = " Obejrzyj wyniki i informacje zwrotne za zadanie";
+
+$string['viewsubmissions'] = " Przejrzyj \$a przes³anych rozwi±zañ";
+
+$string['yoursubmission'] = " Twoje rozwi±zanie";
+
+$string[''] = "";
 
 ?>
