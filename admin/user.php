@@ -17,6 +17,7 @@
         $user->password  = md5("admin");
         $user->email     = "root@localhost";
         $user->confirmed = 1;
+        $user->lang = $CFG->lang;
         $user->maildisplay = 1;
         $user->timemodified = time();
 
@@ -72,6 +73,7 @@
         $user->username  = "changeme";
         $user->password  = "";
         $user->email     = "";
+        $user->lang      = $CFG->lang;
         $user->confirmed = 1;
         $user->timemodified = time();
 
