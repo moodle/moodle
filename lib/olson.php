@@ -93,7 +93,7 @@ function olson_todst ($filename) {
         }        
 
         // Fix the from year to 1970
-        $mdl_tz['from'] = 1970;
+        $mdl_tz['year'] = 1970;
 
         // add to the array
         $mdl_zones[] = $mdl_tz;
@@ -132,7 +132,7 @@ function olson_todst ($filename) {
                     $mdl_tz = array_merge($zone, $rule);
 
                     // VERY IMPORTANT!!
-                    $mdl_tz['from'] = $y;
+                    $mdl_tz['year'] = $y;
 
                     //fix (de)activate_time (AT) field to be GMT
                     $mdl_tz['dst_time'] = olson_parse_at($mdl_tz['dst_time'], 'set',   $mdl_tz['gmtoff']);
