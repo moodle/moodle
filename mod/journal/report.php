@@ -70,9 +70,9 @@
         foreach ($feedback as $num => $vals) {
             $entry = $entrybyentry[$num];
             // Only update entries where feedback has actually changed.
-            if (($vals[r] <> $entry->rating) || ($vals[c] <> addslashes($entry->comment))) {
-                $newentry->rating     = $vals[r];
-                $newentry->comment    = $vals[c];
+            if (($vals['r'] <> $entry->rating) || ($vals['c'] <> addslashes($entry->comment))) {
+                $newentry->rating     = $vals['r'];
+                $newentry->comment    = $vals['c'];
                 $newentry->teacher    = $USER->id;
                 $newentry->timemarked = $timenow;
                 $newentry->mailed     = 0;           // Make sure mail goes out (again, even)
@@ -82,8 +82,8 @@
                 } else {
                     $count++;
                 }
-                $entrybyuser[$entry->userid]->rating     = $vals[r];
-                $entrybyuser[$entry->userid]->comment    = $vals[c];
+                $entrybyuser[$entry->userid]->rating     = $vals['r'];
+                $entrybyuser[$entry->userid]->comment    = $vals['c'];
                 $entrybyuser[$entry->userid]->teacher    = $USER->id;
                 $entrybyuser[$entry->userid]->timemarked = $timenow;
             }
