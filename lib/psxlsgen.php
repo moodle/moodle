@@ -155,6 +155,8 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
         header ( "Pragma: no-cache" );
         if (!strstr($HTTP_USER_AGENT,"MSIE")) {
             $attachment=" attachment;";
+        } else {
+            $attachment="";
         }
         header("Content-Type: application/x-msexcel\r\n");
         header("Content-Disposition:$attachment filename=$this->filename.xls\r\n\r\n");
