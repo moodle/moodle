@@ -120,12 +120,6 @@ form {
     border-style: solid;
 }
 
-.forumpostheader {
-}
-
-.forumpostheadertopic {
-}
-
 .forumpostpicture {
 }
 
@@ -187,3 +181,39 @@ form {
 .generalboxcontent {
 }
 
+.feedbacktext {
+    color: <?PHP echo $THEME->cellheading2?>;
+}
+
+a.dimmed:link {
+    text-decoration: none; 
+    color: #AAAAAA;
+}
+
+a.dimmed:visited {
+    text-decoration: none;
+    color: #AAAAAA;
+}
+
+a.dimmed:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+.forumpostheader {
+}
+
+.forumpostheaderpicture {
+}
+
+.forumpostheadername {
+    font-size: small;
+}
+
+.forumpostheaderreplies {
+    font-size: small;
+}
+
+.forumpostheaderdate {
+    font-size: small;
+}

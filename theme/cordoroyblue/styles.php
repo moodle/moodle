@@ -212,14 +212,6 @@ form {
     border-style: solid;
 }
 
-.forumpostheader {
-    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
-}
-
-.forumpostheadertopic {
-    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
-}
-
 .forumpostpicture {
     background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
 }
@@ -251,4 +243,46 @@ form {
 .generalboxcontent {
     background-image: none;
     background-color: <?PHP echo $THEME->cellcontent?>;
+}
+
+.feedbacktext {
+    color: <?PHP echo $THEME->cellheading2?>;
+}
+
+a.dimmed:link {
+    text-decoration: none; 
+    color: #AAAAAA;
+}
+
+a.dimmed:visited {
+    text-decoration: none;
+    color: #AAAAAA;
+}
+
+a.dimmed:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+.forumpostheader {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
+}
+
+.forumpostheadertopic {
+    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
+}
+
+.forumpostheaderpicture {
+}
+
+.forumpostheadername {
+    font-size: small;
+}
+
+.forumpostheaderreplies {
+    font-size: small;
+}
+
+.forumpostheaderdate {
+    font-size: small;
 }

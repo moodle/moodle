@@ -1496,7 +1496,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
 
     if ($forum_style == "header") {
         echo "<table width=\"100%\" border=0 cellpadding=3 cellspacing=1 class=\"forumpost\">";
-        echo "<tr>";
+        echo "<tr class=\"forumpostheader\">";
         echo "<th>".get_string("discussion", "forum")."</th>"; 
         echo "<th colspan=2>".get_string("startedby", "forum")."</th>";
         echo "<th>".get_string("replies", "forum")."</th>";

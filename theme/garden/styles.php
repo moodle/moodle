@@ -198,9 +198,45 @@ form {
 }
 
 
+.feedbacktext {
+    color: <?PHP echo $THEME->cellheading2?>;
+}
 
 
 .top {
     background-image: url(<?PHP echo "$themeurl"?>/top.jpg);
     background-repeat: repeat-x;
+}
+
+a.dimmed:link {
+    text-decoration: none; 
+    color: #AAAAAA;
+}
+
+a.dimmed:visited {
+    text-decoration: none;
+    color: #AAAAAA;
+}
+
+a.dimmed:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+.forumpostheader {
+}
+
+.forumpostheaderpicture {
+}
+
+.forumpostheadername {
+    font-size: small;
+}
+
+.forumpostheaderreplies {
+    font-size: small;
+}
+
+.forumpostheaderdate {
+    font-size: small;
 }
