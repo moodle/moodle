@@ -83,19 +83,18 @@ define('DAYMINS', 1440);
 define('HOURMINS', 60);
 
 /**
- * Parameter constant - if set then the parameter is cleaned of scripts etc
+ * Parameter constants - if set then the parameter is cleaned of scripts etc
  */
+define('PARAM_RAW',     0x00);
 define('PARAM_CLEAN',   0x01);
-
-/**
- * Parameter constant - if set then the parameter is cast to an integer
- */
 define('PARAM_INT',     0x02);
-
-/**
- * Parameter constant - alias for PARAM_INT
- */
-define('PARAM_INTEGER', 0x02);
+define('PARAM_INTEGER', 0x02);  // Alias for PARAM_INT
+define('PARAM_ALPHA',   0x04);
+define('PARAM_ACTION',  0x04);  // Alias for PARAM_ALPHA
+define('PARAM_FORMAT',  0x04);  // Alias for PARAM_ALPHA
+define('PARAM_NOTAGS',  0x08);
+define('PARAM_FILE',    0x10);
+define('PARAM_PATH',    0x20);
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
@@ -121,7 +120,7 @@ function required_param($varname, $options=PARAM_CLEAN) {
     } else if (isset($_GET[$varname])) {
         $param = $_GET[$varname];
     } else {
-        error('A required parameter ($'.$varname.') was missing');
+        error('A required parameter ('.$varname.') was missing');
     }
 
     return clean_param($param, $options);
@@ -165,6 +164,10 @@ function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
  */
 function clean_param($param, $options) {
 
+    if (!$options) {
+        return $param;                   // Return raw value
+    }
+
     if ((string)$param == (string)(int)$param) {  // It's just an integer
         return (int)$param;
     }
@@ -175,6 +178,24 @@ function clean_param($param, $options) {
 
     if ($options & PARAM_INT) {
         $param = (int)$param;            // Convert to integer
+    }
+
+    if ($options & PARAM_ALPHA) {        // Remove everything not a-z
+        $param = eregi_replace('[^a-z]', '', $param);
+    }
+
+    if ($options & PARAM_NOTAGS) {       // Strip all tags completely
+        $param = strip_tags($param);
+    }
+
+    if ($options & PARAM_FILE) {         // Strip all suspicious characters from filename
+        $param = eregi_replace('\.\.+', '', $param);
+        // TO BE EXPANDED WITH MORE CHECKS
+    }
+
+    if ($options & PARAM_PATH) {         // Strip all suspicious characters from file path
+        $param = eregi_replace('\.\.+', '', $param);
+        // TO BE EXPANDED WITH MORE CHECKS
     }
 
     return $param;
@@ -1422,8 +1443,7 @@ function authenticate_user_login($username, $password) {
 
     } else {
         add_to_log(0, 'login', 'error', $_SERVER['HTTP_REFERER'], $username);
-        $date = date('Y-m-d H:i:s');
-        error_log($date ."\tfailed login\t". getremoteaddr() ."\t". $_SERVER['HTTP_USER_AGENT'] ."\t". $username);
+        error_log('[client '.$_SERVER['REMOTE_ADDR']."]\t$CFG->wwwroot\tFailed Login:\t$username\t".$_SERVER['HTTP_USER_AGENT']);
         return false;
     }
 }
@@ -4184,6 +4204,64 @@ function mtrace($string, $eol="\n") {
     }
 
     flush();
+}
+
+//Replace 2 or more slashes to one
+function cleardoubleslashes ($path) {
+    return preg_replace('/(\/|\\\){1,}/','/',$path);
+}
+
+//Zip an array of files/dirs to a destination file
+function zip_files ($originalfiles, $destination) {
+
+    global $CFG;
+
+    //Extract everything from destination
+    $path_parts = pathinfo(cleardoubleslashes($destination));
+    $path = $path_parts["dirname"];
+    $filename = $path_parts["basename"];
+    $extension = $path_parts["extension"];
+
+    //If no file, error
+    if (empty($filename)) {
+        return false;
+    }
+
+    //If no extension, add it
+    if (empty($extension)) { 
+        $extension = 'zip';
+        $file = $file.'.'.$extension;
+    }
+
+    //Check path exists
+    if (!is_dir($path)) {
+        return false;
+    }
+
+    //Clean filename
+    $filename = clean_filename($filename);
+
+    if (empty($CFG->zip)) {    // Use built-in php-based zip function
+        $files = array();
+        foreach ($originalfiles as $file) {
+           $files[] = cleardoubleslashes($file); // no doubleslashes!
+        }
+        include_once("$CFG->libdir/pclzip/pclzip.lib.php");
+        $archive = new PclZip(cleardoubleslashes("$path/$filename"));
+        if (($list = $archive->create($files, PCLZIP_OPT_REMOVE_PATH,
+            rtrim(cleardoubleslashes($path), "/"))) == 0) { // no double slashes and trailing slash!
+            error($archive->errorInfo(true));
+        }
+    } else {                   // Use external zip program
+        $files = "";
+        foreach ($originalfiles as $file) {
+            $files .= basename($file);
+            $files .= " ";
+        }
+        $command = "cd $path ; $CFG->zip -r $filename $files";
+        Exec($command);
+    }
+    return true;
 }
 
 
