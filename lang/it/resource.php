@@ -63,7 +63,7 @@ pulsante indietro per ritornare alla pagina precedente e riprovare.';
 $string['pagedisplay'] = 'Mostra questa risorsa nella finestra corrente';
 $string['pagewindow'] = 'Stessa finestra';
 $string['parameter'] = 'Parametro';
-$string['parameters'] = 'Paremetri';
+$string['parameters'] = 'Parametri';
 $string['popupresource'] = 'Questa risorsa deve apparire in una finestra di popup';
 $string['popupresourcelink'] = 'Se non lo fa, cliccare qui: $a';
 $string['resourcetype'] = 'Tipo di risorsa';

@@ -21,6 +21,7 @@ $string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup
 $string['coursepacket'] = 'Pacchetto del corso';
 $string['coursestruct'] = 'Struttura del corso';
 $string['datadir'] = 'Errore Filesystem: non è possibile creare la directory dei dati';
+$string['display'] = 'Visualizzazione';
 $string['domxml'] = 'Libreria esterna DOMXML';
 $string['entercourse'] = 'Segui corso SCORM';
 $string['errorlogs'] = 'Errori';
