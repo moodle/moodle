@@ -66,7 +66,8 @@
 
         } else {
             require_once($CFG->dirroot.'/lib/uploadlib.php');
-            $um = new upload_manager('imagefile',false,false,null,false,0,false);
+
+            $um = new upload_manager('imagefile',false,false,null,false,0,false, true);
             if ($um->preprocess_files()) {
                 require_once("$CFG->libdir/gdlib.php");
                 $group->picture = save_profile_image($group->id, $um, 'groups');
