@@ -6,6 +6,7 @@
         error("404 - File Not Found");
     }
 
+    $string = array();
     if ($CFG->forcelogin) {
         require_login();
     }
