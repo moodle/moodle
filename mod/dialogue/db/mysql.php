@@ -14,7 +14,21 @@ function dialogue_upgrade($oldversion) {
 	if ($oldversion < 2003101300) {
 		execute_sql(" ALTER TABLE `{$CFG->prefix}dialogue_conversations` ADD `seenon` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `closed`");
 		}
+    
+    if ($oldversion < 2004111000) {
+        execute_sql('ALTER TABLE prefix_dialogue DROP KEY course;',false);
+        execute_sql('ALTER TABLE prefix_dialogue_conversations DROP KEY recipientid;',false);
+        execute_sql('ALTER TABLE prefix_dialogue_conversations DROP KEY userid;',false);
+        execute_sql('ALTER TABLE prefix_dialogue_entries DROP KEY dialogueid;',false);
+        execute_sql('ALTER TABLE prefix_dialogue_entries DROP KEY userid;',false);
 
+        modify_database('','ALTER TABLE prefix_dialogue ADD KEY course (course);');
+        modify_database('','ALTER TABLE prefix_dialogue_conversations ADD KEY recipientid (recipientid);');
+        modify_database('','ALTER TABLE prefix_dialogue_conversations ADD KEY userid (userid);');
+        modify_database('','ALTER TABLE prefix_dialogue_entries ADD KEY dialogueid (dialogueid);');
+        modify_database('','ALTER TABLE prefix_dialogue_entries ADD KEY userid (userid);');
+    }
+    
     $result = true;
     return $result;
 }
