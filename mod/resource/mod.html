@@ -1,3 +1,22 @@
+<?PHP
+    if (empty($form->name)) {
+        $form->name = "";
+    }
+    if (empty($form->type)) {
+        $form->type = "";
+    }
+    if (empty($form->summary)) {
+        $form->summary = "";
+    }
+    if (empty($form->reference)) {
+        $form->reference = "";
+    }
+    if (empty($form->alltext)) {
+        $form->alltext = "";
+    }
+?>
+
+
 <form name="form" method="post" action="<?=$CFG->wwwroot?>/mod/resource/details.php">
 <table cellpadding=5>
 <tr valign=top>

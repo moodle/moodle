@@ -1,3 +1,15 @@
+<?PHP
+    if (empty($form->name)) {
+        $form->name = "";
+    }
+    if (empty($form->intro)) {
+        $form->intro = "";
+    }
+    if (empty($form->days)) {
+        $form->days = "14";
+    }
+?>
+
 <form name="form" method="post" action="<?=$ME ?>">
 <table cellpadding=5>
 <tr valign=top>
@@ -32,9 +44,6 @@
             $options[$days] = get_string("numweeks", "", $i);
         }
         $options[365] = get_string("numweeks", "", 52);
-        if ($form->days == "") {
-            $form->days == "14";
-        }
         choose_from_menu($options, "days", "$form->days");
      ?>
     </TD>

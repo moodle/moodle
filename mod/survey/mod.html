@@ -1,3 +1,15 @@
+<?PHP
+    if (empty($form->name)) {
+        $form->name = "";
+    }
+    if (empty($form->template)) {
+        $form->template = "";
+    }
+    if (empty($form->intro)) {
+        $form->intro = "";
+    }
+?>
+
 <form name="form" method="post" action="<?=$CFG->wwwroot ?>/mod/survey/details.php">
 <table cellpadding=5>
 <tr valign=top>

@@ -1,3 +1,23 @@
+<?PHP
+    if (empty($form->name)) {
+        $form->name = "";
+    }
+    if (empty($form->type)) {
+        $form->type = "";
+    }
+    if (empty($form->intro)) {
+        $form->intro = "";
+    }
+    if (empty($form->open)) {
+        $form->open = "";
+    }
+    if (empty($form->assessed)) {
+        $form->assessed = "";
+    }
+    if (empty($form->forcesubscribe)) {
+        $form->forcesubscribe = "";
+    }
+?>
 <form name="form" method="post" action="<?=$ME ?>">
 <table cellpadding=5>
 <tr>

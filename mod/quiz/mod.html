@@ -1,7 +1,42 @@
 <!-- This page defines the form to create or edit an instance of this module -->
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 
-<? include_once("$CFG->dirroot/mod/quiz/lib.php") ?>
+<?PHP 
+    include_once("$CFG->dirroot/mod/quiz/lib.php");
+
+    if (empty($form->name)) {
+        $form->name = "";
+    }
+    if (empty($form->intro)) {
+        $form->intro = "";
+    }
+    if (empty($form->timeopen)) {
+        $form->timeopen = "";
+    }
+    if (empty($form->timeclose)) {
+        $form->timeclose = "";
+    }
+    if (empty($form->attempts)) {
+        $form->attempts = "";
+    }
+    if (empty($form->grademethod)) {
+        $form->grademethod = "";
+    }
+    if (empty($form->feedback)) {
+        $form->feedback = "";
+    }
+    if (empty($form->correctanswers)) {
+        $form->correctanswers = "";
+    }
+    if (empty($form->grade)) {
+        $form->grade = "";
+    }
+    if (empty($form->questions)) {
+        $form->questions = "";
+    }
+?>
+
+
 
 <FORM name="form" method="post" action="<?=$CFG->wwwroot?>/mod/quiz/edit.php">
 <CENTER>

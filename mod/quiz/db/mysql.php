@@ -29,6 +29,12 @@ function quiz_upgrade($oldversion) {
         execute_sql("ALTER TABLE `quiz_attempts` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
     }
 
+    // prefixes required from here on
+
+    if ($oldversion < 2003010100) {
+        execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD review TINYINT(4) UNSIGNED DEFAULT '0' NOT NULL AFTER `grademethod` ");
+    }
+
     return true;
 }
 
