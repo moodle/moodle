@@ -1520,10 +1520,11 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
     return $filesize;
 }
 
-function get_directory_list($rootdir, $excludefile="", $descend=true) {
+function get_directory_list($rootdir, $excludefile="", $descend=true, $justdirs=false) {
 /// Returns an array with all the filenames in
 /// all subdirectories, relative to the given rootdir.
 /// If excludefile is defined, then that file/directory is ignored
+/// If justdirs is defined, then only subdirectories are listed, otherwise just files
 
     $dirs = array();
 
@@ -1540,13 +1541,16 @@ function get_directory_list($rootdir, $excludefile="", $descend=true) {
         if ($firstchar == "." or $file == "CVS" or $file == $excludefile) {
             continue;
         }
-        $fullfile = $rootdir."/".$file;
+        $fullfile = "$rootdir/$file";
         if ($descend and filetype($fullfile) == "dir") {
-            $subdirs = get_directory_list($fullfile, $excludefile, $descend);
-            foreach ($subdirs as $subdir) {
-                $dirs[] = $file."/".$subdir;
+            if ($justdirs) {
+                $dirs[] = $file;
             }
-        } else {
+            $subdirs = get_directory_list($fullfile, $excludefile, $descend, $justdirs);
+            foreach ($subdirs as $subdir) {
+                $dirs[] = "$file/$subdir";
+            }
+        } else if (!$justdirs) {
             $dirs[] = $file;
         }
     }
