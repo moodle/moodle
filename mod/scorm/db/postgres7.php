@@ -68,7 +68,7 @@ function scorm_upgrade($oldversion) {
 		   
 	modify_database('','CREATE INDEX prefix_scorm_scoes_track_userdata_idx ON  prefix_scorm_scoes_track (userid, scormid, scoid);');
 		     
-	$oldTrackingData = get_records_select("scorm_sco_users","1","id ASC");
+	$oldTrackingData = get_records_select("scorm_sco_users",null,"id ASC");
 	$oldElementArray = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
 	foreach ($oldTrackingData as $oldTrack) {
 	    $newTrack = '';
