@@ -86,9 +86,10 @@
     $strauthentication        = get_string("authentication");
     $strauthenticationoptions = get_string("authenticationoptions","auth");
     $strsettings = get_string("settings");
+    $strusers = get_string("users");
 
     print_header("$site->shortname: $strauthenticationoptions", "$site->fullname",
-                  "<A HREF=\"index.php\">$stradministration</A> -> $strauthenticationoptions", "$focus");
+                  "<A HREF=\"index.php\">$stradministration</A> -> <a href=\"users.php\">$strusers</a> -> $strauthenticationoptions", "$focus");
 
     echo "<CENTER><P><B>";
     echo "<form TARGET=\"{$CFG->framename}\" NAME=\"authmenu\" method=\"post\" action=\"auth.php\">";

@@ -39,6 +39,7 @@
         "removecreator",
         "search",
         "searchagain",
+        "users",
         "toomanytoshow",
         );
 
@@ -55,8 +56,8 @@
 
 	print_header("$site->shortname: $strassigncreators", 
                  "$site->fullname", 
-                 "<a href=\"index.php\">$stradministration</a> -> 
-                  <a href=\"{$_SERVER['PHP_SELF']}\">$strassigncreators</a>", "");
+                 "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> ->
+                  $strassigncreators", "");
 
 /// Get all existing creators
     $creators = get_creators();

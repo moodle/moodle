@@ -40,6 +40,7 @@
         "search",
         "searchagain",
         "toomanytoshow",
+        "users",
         "searchresults"
         );
 
@@ -56,8 +57,7 @@
 
 	print_header("$site->shortname: $strassignadmins", 
                  "$site->fullname", 
-                 "<a href=\"index.php\">$stradministration</a> -> 
-                  <a href=\"{$_SERVER['PHP_SELF']}\">$strassignadmins</a>", "");
+                 "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $strassignadmins", "");
 
 /// Get all existing admins
     $admins = get_admins();

@@ -259,7 +259,7 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
     $options = "menubar=0,location=0,scrollbars,resizable,width=$width,height=$height";
     $fullscreen = 0;
 
-    echo "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot/$url\" ".
+    echo "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot$url\" ".
          "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
 }
 

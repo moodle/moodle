@@ -34,7 +34,15 @@
 
         global $CFG;
 
-        $strfiles = get_string("files");
+        if (! $site = get_site()) {
+            error("Invalid site!");
+        }
+
+        if ($course->id == $site->id) {
+            $strfiles = get_string("sitefiles");
+        } else {
+            $strfiles = get_string("files");
+        }
     
         if ($wdir == "/") {
             $fullnav = "$strfiles";
@@ -46,24 +54,24 @@
             for ($i=1; $i<$numdirs; $i++) {
                $navigation .= " -> ";
                $link .= "/".urlencode($dirs[$i]);
-               $navigation .= "<A HREF=\"index.php?id=$course->id&wdir=$link\">".$dirs[$i]."</A>";
+               $navigation .= "<a href=\"index.php?id=$course->id&wdir=$link\">".$dirs[$i]."</a>";
             }
             $fullnav = "<a href=\"index.php?id=$course->id&wdir=/\">$strfiles</a> $navigation";
-        }
-
-        if (! $site = get_site()) {
-            error("Invalid site!");
         }
 
         if ($course->id == $site->id) {
             print_header("$course->shortname: $strfiles", "$course->fullname", 
                          "<a href=\"../$CFG->admin/index.php\">".get_string("administration").
                          "</a> -> $fullnav", $formfield);
+
+            print_heading(get_string("publicsitefileswarning"), "center", 2);
+
         } else {
             print_header("$course->shortname: $strfiles", "$course->fullname", 
                          "<a href=\"../course/view.php?id=$course->id\">$course->shortname".
                          "</a> -> $fullnav", $formfield);
         }
+
         echo "<table border=0 align=center cellspacing=3 cellpadding=3 width=640>";
         echo "<tr>";
         echo "<td colspan=\"2\">";
@@ -728,10 +736,10 @@ function displaydir ($wdir) {
             $fileurlsafe = rawurlencode($fileurl);
             $filedate    = userdate(filectime($filename), "%d %b %Y, %I:%M %p");
 
-            echo "<TR>";
+            echo "<tr>";
 
             print_cell("center", "<INPUT TYPE=checkbox NAME=\"file$count\" VALUE=\"$fileurl\">");
-            echo "<TD ALIGN=left NOWRAP>";
+            echo "<td align=left nowrap>";
             if ($CFG->slasharguments) {
                 $ffurl = "/file.php/$id$fileurl";
             } else {
@@ -740,22 +748,22 @@ function displaydir ($wdir) {
             link_to_popup_window ($ffurl, "display", 
                                   "<IMG SRC=\"pix/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">", 
                                   480, 640);
-            echo "<FONT SIZE=\"-1\" FACE=\"Arial, Helvetica\">";
+            echo "<font size=\"-1\" face=\"Arial, Helvetica\">";
             link_to_popup_window ($ffurl, "display", 
                                   htmlspecialchars($file),
                                   480, 640);
-            echo "</FONT></TD>";
+            echo "</font></td>";
 
             $file_size = filesize($filename);
             print_cell("right", display_size($file_size));
             print_cell("right", $filedate);
             if ($icon == "text.gif" || $icon == "html.gif") {
-                $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</A>";
+                $edittext = "<a href=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</a>";
             } else if ($icon == "zip.gif") {
-                $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</A>&nbsp;";
-                $edittext .= "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</A> ";
+                $edittext = "<a href=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</a>&nbsp;";
+                $edittext .= "<a href=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</a> ";
                 if (!empty($CFG->backup_version) && isteacher($id)) {
-                    $edittext .= "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=restore\">$strrestore</A> ";
+                    $edittext .= "<a href=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=restore\">$strrestore</a> ";
                 }
             } else {
                 $edittext = "";

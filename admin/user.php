@@ -99,6 +99,7 @@
 
         $stredituser = get_string("edituser");
         $stradministration = get_string("administration");
+        $strusers = get_string("users");
         $stredit   = get_string("edit");
         $strdelete = get_string("delete");
         $strdeletecheck = get_string("deletecheck");
@@ -106,7 +107,7 @@
         $strshowallusers = get_string("showallusers");
 
         print_header("$site->shortname: $stredituser", $site->fullname, 
-                     "<A HREF=\"index.php\">$stradministration</A> -> $stredituser");
+                     "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $stredituser");
 
         if ($delete) {              // Delete a selected user, after confirmation
             if (!$user = get_record("user", "id", "$delete")) {

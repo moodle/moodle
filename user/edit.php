@@ -140,8 +140,8 @@
 
         $stradministration = get_string("administration");
         print_header("$course->shortname: $streditmyprofile", "$course->fullname",
-                     "<A HREF=\"$CFG->wwwroot/admin/\">$stradministration</A> ->
-                      $straddnewuser", "");
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/\">$stradministration</a> -> ".
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">$strusers</a> -> $straddnewuser", "");
     }
 
     $teacher = strtolower($course->teacher);

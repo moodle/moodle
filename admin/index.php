@@ -338,54 +338,66 @@
     }
 
 /// Check for valid admin user
-    if (!iscreator()) {
-        error("You need to be an admin user or teacher to use this page.", "$CFG->wwwroot/login/index.php");
+    if (!isadmin()) {
+        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
     }
 
 
 /// At this point everything is set up and the user is an admin, so print menu
 
     $stradministration = get_string("administration");
-    print_header("$site->shortname: $stradministration","$site->fullname: $stradministration", "$stradministration");
-    if (isadmin()) {
-        $table->head  = array (get_string("site"), get_string("courses"), get_string("users"));
-		$table->align = array ("CENTER", "CENTER", "CENTER");
-		$table->data[0][0] = "<p><a href=\"config.php\">".get_string("configvariables")."</a></p>".
-                         "<p><a href=\"site.php\">".get_string("sitesettings")."</a></p>".
-                         "<p><a href=\"../course/log.php?id=$site->id\">".get_string("sitelogs")."</a></p>".
-                         "<p><a href=\"../theme/index.php\">".get_string("choosetheme")."</a></p>".
-                         "<p><a href=\"lang.php\">".get_string("checklanguage")."</a></p>".
-                         "<p><a href=\"modules.php\">".get_string("managemodules")."</a></p>";
-		if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
-            $table->data[0][0] .= "<p><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></p>";
-		}
-		$table->data[0][1] = "<p><a href=\"../course/index.php?edit=on\">".get_string("coursemanagement")."</a></p>".
-        $table->data[0][1] .= "<p><a href=\"../files/index.php?id=$site->id\">".get_string("courserestore")."</a></p>";
-        if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual") {
-		    $table->data[0][2] = "<p><a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a></p>";
-        }    
-        $table->data[0][2] .=  "<p><a href=\"user.php\">".get_string("edituser")."</a></p>".
-                         "<p><a href=\"admin.php\">".get_string("assignadmins")."</a></p>".
-                         "<p><a href=\"creators.php\">".get_string("assigncreators")."</a></p>".
-                         "<p><a href=\"auth.php\">".get_string("authentication")."</a></p>";
-    } else { /// user is coursecreator
-	    $table->head  = array (get_string("courses"));
-		$table->align = array ("CENTER");
-		$table->data[0][1] = "<p><a href=\"../course/edit.php\">".get_string("addnewcourse")."</a></p>".
-		  "<p><a href=\"teacher.php\">".get_string("assignteachers")."</a></p>";
-	}
-    
+    print_header("$site->shortname: $stradministration","$site->fullname", "$stradministration");
+    print_simple_box_start("center", "80%", "#FFFFFF", 20);
+    print_heading($stradministration);
+
+    $table->align = array ("right", "left");
+    $table->data[] = array("<a href=\"../course/index.php?edit=on\">".get_string("courses")."</a>",
+                           "<font size=-1>".get_string("adminhelpcourses"));
+    $table->data[] = array("<a href=\"users.php\">".get_string("users")."</a>",
+                           "<font size=-1>".get_string("adminhelpusers"));
+    $table->data[] = array("<a href=\"config.php\">".get_string("configvariables")."</a>",
+                           "<font size=-1>".get_string("adminhelpconfiguration"));
+    $table->data[] = array("<a href=\"site.php\">".get_string("sitesettings")."</a>",
+                           "<font size=-1>".get_string("adminhelpsitesettings"));
+    $table->data[] = array("<a href=\"../files/index.php?id=$site->id\">".get_string("sitefiles")."</a>",
+                           "<font size=-1>".get_string("adminhelpsitefiles"));
+    $table->data[] = array("<a href=\"../theme/index.php\">".get_string("themes")."</a>",
+                           "<font size=-1>".get_string("adminhelpthemes"));
+    $table->data[] = array("<a href=\"lang.php\">".get_string("language")."</a>",
+                           "<font size=-1>".get_string("adminhelplanguage"));
+    $table->data[] = array("<a href=\"modules.php\">".get_string("managemodules")."</a>",
+                           "<font size=-1>".get_string("adminhelpmanagemodules"));
+    $table->data[] = array("<a href=\"../course/log.php?id=$site->id.php\">".get_string("logs")."</a>",
+                           "<font size=-1>".get_string("adminhelplogs"));
+    if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
+        $table->data[] = array("<a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a>",
+                               "<font size=-1>".get_string("adminhelpmanagedatabase"));
+    }
+
+    $table->width = "90%";
+
     print_table($table);
+    
+    $copyrighttext = "<a href=\"http://moodle.org/\">Moodle</a> ".
+                     "<a href=\"../doc/?frame=release.html\">$CFG->release</a> ($CFG->version)<br />".
+                     "Open Source under the terms of the ".
+                     "<a href=\"../doc/?frame=licence.html\">GNU Public License</a><br />".
+                     "Copyright &copy; 2000-2003 Martin Dougiamas";
 
-    echo "<br><div align=center>";
+    echo "<center><p><font size=1>$copyrighttext</font></p></center>";
+
+
+    echo "<table border=0 align=center width=100%><tr>";
+    echo "<td align=center width=50%>";
     print_single_button("$CFG->wwwroot/doc", NULL, get_string("documentation"));
-    echo "</div>";
+    echo "</td>";
 
-    echo "<br><div align=center>";
+    echo "<td align=center width=50%>";
     print_single_button("register.php", NULL, get_string("registration"));
-    echo "</div>";
+    echo "</td>";
+    echo "<tr></table>";
 
-    print_heading("Moodle $CFG->release ($CFG->version)", "CENTER", 1);
+    print_simple_box_end();
 
     print_footer($site);
 

@@ -11,6 +11,7 @@
     optional_variable($dir,"DESC");          //how to sort students
     optional_variable($showall,"");         //show all of the students?
 
+
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
     }

@@ -15,7 +15,7 @@
     }
 
     $stradministration = get_string("administration");
-    $strchecklanguage = get_string("checklanguage");
+    $strlanguage = get_string("language");
     $strcurrentlanguage = get_string("currentlanguage");
     $strmissingstrings = get_string("missingstrings");
     $strcomparelanguage = get_string("comparelanguage");
@@ -23,16 +23,16 @@
 
     switch ($mode) {
         case "missing":
-            $navigation = "<A HREF=\"lang.php\">$strchecklanguage</A> -> $strmissingstrings";
+            $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strmissingstrings";
             $title = $strmissingstrings;
             break;
         case "compare":
-            $navigation = "<A HREF=\"lang.php\">$strchecklanguage</A> -> $strcomparelanguage";
+            $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strcomparelanguage";
             $title = $strcomparelanguage;
             break;
         default:
-            $title = $strchecklanguage;
-            $navigation = $strchecklanguage;
+            $title = $strlanguage;
+            $navigation = $strlanguage;
             break;
     }
 
