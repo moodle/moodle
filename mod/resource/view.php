@@ -446,9 +446,9 @@
                 $icon = mimeinfo("icon", $file);
 
                 if ($CFG->slasharguments) {
-                    $relativeurl = "/file.php/$course->id/$resource->reference/$file";
+                    $relativeurl = "/file.php/$relativepath/$file";
                 } else {
-                    $relativeurl = "/file.php?file=/$course->id/$resource->reference/$file";
+                    $relativeurl = "/file.php?file=/$relativepath/$file";
                 }
                 $filesize = display_size(filesize("$CFG->dataroot/$course->id/$resource->reference/$file"));
 
