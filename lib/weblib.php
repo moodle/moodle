@@ -930,7 +930,7 @@ function print_footer ($course=NULL) {
     if ($course) {
         if ($course == "home") {   // special case for site home page - please do not remove
             $homelink  = "<p align=\"center\"><a title=\"moodle $CFG->release ($CFG->version)\" href=\"http://moodle.org/\" target=\"_blank\">";
-            $homelink .= "<br /><img width=\"130\" height=\"19\" src=\"pix/madewithmoodle.gif\" border=\"0\" /></a></p>";
+            $homelink .= "<br /><img width=\"100\" height=\"30\" src=\"pix/moodlelogo.gif\" border=\"0\" /></a></p>";
             $course = get_site();
             $homepage = true;
         } else {
