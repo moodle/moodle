@@ -315,12 +315,24 @@ th {
 
 
 /* glossary, wiki */
-.generaltab {
+.generaltab, .generaltabinactive {
     background-color:#BBBBBB; /* cellheading */
 }
 
 .generaltabselected {
     background-color:#DDDDDD; /* cellheading2 */
+}
+
+.generaltabinactive {
+    color:#CCCCCC;
+}
+
+.glossaryentryheader {
+    border-color: #BBBBBB;
+}
+
+.glossaryentry {
+    border-color: #BBBBBB;
 }
 
 

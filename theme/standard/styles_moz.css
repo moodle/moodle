@@ -60,7 +60,7 @@
 .userinfoboxsummary {
 }
 
-.generaltab {
+.generaltab, .generaltabinactive{
     -moz-border-radius-topleft:15px;
     -moz-border-radius-topright:15px;
 }
@@ -68,6 +68,14 @@
 .generaltabselected {
     -moz-border-radius-topleft:15px;
     -moz-border-radius-topright:15px;
+}
+
+.glossaryentryheader {
+    -moz-border-radius-topleft:10px;
+    -moz-border-radius-topright:10px;
+}
+
+.glossaryentry {
 }
 
 #calendar .eventlist .eventfull {

@@ -290,6 +290,12 @@ table.formtable tbody th {
 }
 
 
+/* glossary */
+.commands {
+    font-size: 0.7em;
+}
+
+
 /*****************************
 ***
 *** Calendar

@@ -316,6 +316,7 @@ table.formtable tbody th {
 }
 
 .userinfobox .links {
+    width: 100px;
     padding: 5px;
     vertical-align: bottom;
 }
@@ -430,8 +431,24 @@ dialouge, exercise, forum, lesson, quiz */
 
 /* glossary, wiki */
 .generaltab,
-.generaltabselected {
+.generaltabselected,
+.generaltabinactive {
     background:none;
+}
+
+.commands {
+    width: 200px;
+    white-space: nowrap;
+}
+
+.glossaryentryheader {
+    border-width: 1px 1px 0px 1px;
+    border-style: solid;
+}
+
+.glossaryentry {
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
 }
 
 
