@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 alpha (2004022200)
+      // exercise.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['absent'] = 'Afwezig';
@@ -41,7 +41,7 @@ $string['editingassessmentelements'] = 'bewerken van de elementen van de beoorde
 $string['element'] = 'Element';
 $string['elementweight'] = 'Weging element';
 $string['entriessaved'] = 'Inzending bewaard';
-$string['errorbanded'] = 'Foutenmarge';
+$string['errorbanded'] = 'Als fout aangeduid';
 $string['excellent'] = 'Schitterend';
 $string['exerciseassessments'] = 'Beoordelingen van de oefening';
 $string['exercisefeedback'] = 'Feedback van de oefening';
@@ -57,7 +57,7 @@ $string['gradingstrategy'] = 'Beoordelingsstrategie';
 $string['handlingofmultiplesubmissions'] = 'Behandeling van meerdere inzendingen';
 $string['hidenamesfromstudents'] = 'Verberg namen van leerlingen';
 $string['incorrect'] = 'Fout';
-$string['leaguetable'] = 'Scoretabel van ingezonden werk';
+$string['leaguetable'] = 'Scoretabel van de ingezonden taken';
 $string['mail1'] = 'Je opdracht \'$a\' is beoordeeld door';
 $string['mail2'] = 'De commentaren en het cijfer kun je bekijken bij opdracht \'$a\' van de oefening';
 $string['mail3'] = 'Je kunt het zien in je opdracht van de oefening';
@@ -84,10 +84,10 @@ te klikken op de opdracht in het vak. Als er nog geen elementen zijn, word je ge
 ze toe te voegen. Je kunt het aantal elementen wijzigen met het Bewerk Opdracht scherm,<br/>
 
 de elementen zelf kunnen aangepast worden op het &quot;Beheer opdracht&quot; scherm.';
-$string['noteonstudentassessments'] = '{Cijfer van leerling / Beoordelingscijfer van leraar}';
-$string['notgraded'] = 'Nog geen cijfer gegeven';
+$string['noteonstudentassessments'] = '{Zelfevaluatie / Cijfer van leraar voor de zelfevaluatie}';
+$string['notgraded'] = 'Geen cijfers';
 $string['notitlegiven'] = 'Nog geen titel gegeven';
-$string['nowpleasemakeyourownassessment'] = 'Beoordeel nu zelf het werk van $a.<br/>Merk op dat het beoordelingsformulier begint met de cijfers van het<br/>leerlingenformulier. Breng de nodige verbeteringen aan en <br/>klik dan op één van de knoppen onderaan de pagina.';
+$string['nowpleasemakeyourownassessment'] = 'Beoordeel nu zelf het werk van $a.<br/>Merk op dat het evaluatieformulier begint met de cijfers van de<br/>zelfevaluatie. Breng de nodige verbeteringen aan en <br/>klik dan op één van de knoppen onderaan de pagina.';
 $string['numberofassessmentelements'] = 'Aantal commentaren, beoordelingselementen, cijfers, criteria of categorieën in een rubriek';
 $string['numberofentries'] = 'Aantal te tonen taken';
 $string['numberofnegativeresponses'] = 'Aantal negatieve reacties';
@@ -95,13 +95,13 @@ $string['onesubmission'] = 'Eén inzending';
 $string['optionaladjustment'] = 'Optionele wijziging';
 $string['overallgrade'] = 'Totaalcijfer';
 $string['phase'] = 'Fase';
-$string['phase1'] = 'Instellingen oefening';
+$string['phase1'] = 'Opstarten van de oefening';
 $string['phase1short'] = 'Instellingen';
-$string['phase2'] = 'Laat $a beoordelingen en inzendingen toe';
+$string['phase2'] = '$a laten beoordelen en taken inzenden';
 $string['phase2short'] = 'Open';
 $string['phase3'] = 'Toon cijfers en scoretabel';
 $string['phase3short'] = 'Gesloten';
-$string['pleasegradetheassessment'] = 'Geef een cijfer voor de beoordeling van dit werkstuk door $a';
+$string['pleasegradetheassessment'] = 'Geef een cijfer voor de zelfevaluatie van deze taak door $a';
 $string['pleasesubmityourwork'] = 'Stuur je werk in met dit formulier';
 $string['pleaseusethisform'] = 'Vul dit formulier in wanneer je klaar bent<br/>met alle instructies van onderstaande
 oefening. ';
@@ -148,7 +148,7 @@ $string['theexercise'] = 'De oefening';
 $string['theexerciseandthesubmissionby'] = 'De oefening en de inzending door $a';
 $string['thegradeis'] = 'Het cijfer is$a';
 $string['thereisfeedbackfromthe'] = 'Er is feedback van de $a';
-$string['thisisaresubmission'] = 'Dit is een herinzending door $a.<br/>Jouw beoordelingen van hun vorige inzending wordt getoond.<br/>Verbeter deze evaluatie nadat je de nieuwe inzending bekeken hebt<br/>en klik dan op één van de knoppen onderaan de pagina.';
+$string['thisisaresubmission'] = 'Dit is een herinzending door $a.<br/>Jouw evaluatie van hun vorige inzending wordt getoond.<br/>Verbeter die evaluatie nadat je de nieuwe inzending bekeken hebt<br/>en klik dan op één van de knoppen onderaan de pagina.';
 $string['title'] = 'Titel';
 $string['typeofscale'] = 'Schaal';
 $string['ungradedstudentassessments'] = '$a evaluatie van een leerling zonder cijfer';
@@ -157,7 +157,7 @@ $string['usemean'] = 'Gebruik het gemiddelde cijfer';
 $string['verypoor'] = 'erg zwak';
 $string['view'] = 'Bekijk';
 $string['viewassessment'] = 'Bekijk de evaluatie';
-$string['warningonamendingelements'] = 'WAARSCHUWING: Er zijn evaluaties ingestuurd.<br/>Wijzig het aantal elementen, de evaluatieschaal of de weging van de elementen NIET.';
+$string['warningonamendingelements'] = 'WAARSCHUWING: Er zijn al evaluaties ingestuurd.<br/>Wijzig het aantal elementen, de evaluatieschaal of de weging van de elementen NIET.';
 $string['weightederrorcount'] = 'Gewogen fouten telling: $a';
 $string['weightforgradingofassessments'] = 'Weging van het cijfer voor de zelfevaluatie van de leerling';
 $string['weightforteacherassessments'] = 'Weging van de evaluatie van $a';

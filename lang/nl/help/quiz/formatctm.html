@@ -33,7 +33,7 @@ bestanden bevat, gebaseerd op de hoofdstukken van een boek of de delen van een c
 <a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>.  Om de CTM-databank te kunnen
 importeren op Linux, moet je dit kleine netwerkprogramma eerst installeren op het Windowssysteem waarop de
 CTM-databanken staan. Volg de installatie-instructies, geschreven in de ODBC Socket Server Installatie <b>niet</b>.
-Ze zijn veel moeilijker dan nodig! Volg in de plaats deze instructies om het programma te installeren op je 
+Ze zijn veel moeilijker dan nodig! Volg beter deze instructies om het programma te installeren op je 
 Windowssysteem:</P>
 
 <ol><li>Unzip op het Windowssysteem de bestanden die je gedownload hebt van
@@ -47,17 +47,17 @@ Je kunt dit door door deze opdracht te typen in Start-&gt;Uitvoeren... of aan ee
 
 <li>Open de Service Manager door te gaan naar, ofwel 
 Start-&gt;Instellingen-&gt;Configuratiescherm-&gt;Systeembeheer-&gt;Services of door met je muis rechts te klikken
-op<b>Mijn Computer</b>, kies <b>Beheren</b>, kies dan <B>Services en toepassingen-&gt;Services</b> van het rechter 
+op <b>Mijn Computer</b>, kies <b>Beheren</b>, kies dan <B>Services en toepassingen-&gt;Services</b> van het rechter 
 paneel.  Je kunt het Servicebeheer ook vinden door <b>services.msc</b> te typen in Start-&gt;Uitvoeren... 
 </li>
 
-<li>In het Servicebeheer klik je met rechtermuisknop op de ODBC Socket Server en kies<b>Start</b>.  De status
+<li>In het Servicebeheer klik je met rechtermuisknop op de ODBC Socket Server en kies <b>Start</b>.  De status
 zou moeten wijzigen in "gestart" wanneer je dit doet. Merk op dat je de service mag uitschakelen nadat
 het importproces afgelopen is.</li>
 
 <li>Verzeker jezelf er van dat system.mda en ctm.mdb access data bestanden op de machine staan en dat de 
 MS Access ODBC driver loopt. Die wordt geïnstalleerd tijdens een standaard Windowsinstallatie. Je kunt vaststellen
-dat die geïnstalleerd is door in "Gegevensbronnen (ODBC)" in Systeembeheer onder het"Stuurprogramma's" tabblad.
+dat die geïnstalleerd is door in "Gegevensbronnen (ODBC)" in Systeembeheer onder het "Stuurprogramma's" tabblad.
 Je gaat moeten bepalen waar CTM is geïnstalleerd en het system.mda-bestand en het ctm.mdb-databank dat je wil
 importeren zich bevinden. Noteer het volledige lokale pad naar deze bestanden, net zoals de computernaam of
 het IP-adres van de Windowsserver. Deze informatie zul je nodig hebben tijdens het importproces.</li>
@@ -77,7 +77,6 @@ IN MOODLE TE IMPORTEREN!</li>
 </ol>
 
 <P>Als je foutmeldingen krijgt tijdens dit proces, dan vindt je deze technische informatie misschien nuttig.
-f you received error messages during this process, you may find this technical information useful. 
 De ODBC Socket server gebruikt poort 9628 om een socket te openen en een XML query te sturen om een XML resultaattabel
 te krijgen. De importeermodule overloopt dat XML bestand en gebruikt het net zoals ik een locale query gebruik
 om te importeren.

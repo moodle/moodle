@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2003113000)
+      // workshop.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['absent'] = 'Afwezig';
-$string['accumulative'] = 'Cumulatief';
+$string['accumulative'] = 'Accumulatief';
 $string['action'] = 'Actie';
 $string['addacomment'] = 'Voeg commentaar toe';
 $string['afterdeadline'] = 'Na de deadline: $a';
@@ -113,7 +113,7 @@ $string['nosubmission'] = 'Geen inzending';
 $string['nosubmissionsavailableforassessment'] = 'Er zijn geen inzendingen beschikbaar ';
 $string['notavailable'] = 'Niet beschikbaar';
 $string['noteonassessmentelements'] = 'Merk op dat de beoordeling opgesplitst is in een aantal evaluatieonderdelen.<br>Dit maakt de beoordeling gemakkelijker en meer samenhangend.  Als leraar moet je deze elementen toevoegen voor je de taak beschikbaar stelt voor de leerlingen.<br>Dit doe je door te klikken op de taak in de cursus. Indien er nog geen onderdelen aangebracht zijn, zal je gevraagd worden ze toe te voegen. Je kan het aantal onderdelen veranderen door het \'taak uitgeven scherm\' te gebruiken. De onderdelen zelf kunnen verbeterd worden vanuit het &quot;Beheer van de beoordelingen&quot; scherm';
-$string['notgraded'] = 'Niet beoordeeld';
+$string['notgraded'] = 'Geen cijfers';
 $string['notitlegiven'] = 'Geen titel gegeven';
 $string['numberofassessmentelements'] = 'Aantal evaluatieonderdelen';
 $string['numberofassessments'] = 'Aantal evaluaties';
@@ -227,7 +227,7 @@ $string['workshopagreedassessments'] = 'Workshop Bevestiged Beoordeling';
 $string['workshopassessments'] = 'Workshop Beoordelingen';
 $string['workshopcomments'] = 'Workshop Opmerkingen';
 $string['workshopfeedback'] = 'Workshop Feedback';
-$string['workshopsubmissions'] = 'Workshoo Bijdragen';
+$string['workshopsubmissions'] = 'Workshop Bijdragen';
 $string['yourassessments'] = 'Jouw evaluaties';
 $string['yourassessmentsofexamplesfromtheteacher'] = 'Je beoordelingen van voorbeelden van de $a';
 $string['yourfeedbackgoeshere'] = 'Je feedback komt hier';
