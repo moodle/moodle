@@ -17,7 +17,7 @@
 CREATE TABLE `prefix_config` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
-  `value` varchar(255) NOT NULL default '',
+  `value` text NOT NULL default '',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
 ) TYPE=MyISAM COMMENT='Moodle configuration variables';

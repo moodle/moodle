@@ -1,7 +1,7 @@
 CREATE TABLE prefix_config (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default '',
-   value varchar(255) NOT NULL default '',
+   value text NOT NULL default '',
    CONSTRAINT config_name_uk UNIQUE (name)
 );
 

@@ -630,6 +630,9 @@ function main_upgrade($oldversion=0) {
                             ) TYPE=MyISAM COMMENT='Allows modules to store arbitrary user preferences'; ");
     }
 
+    if ($oldversion < 2004012900) {
+        table_column("config", "value", "value", "text", "", "", "");
+    }
 
     return $result;
 

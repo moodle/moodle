@@ -376,6 +376,10 @@ function main_upgrade($oldversion=0) {
         modify_database("", "CREATE INDEX prefix_user_preferences_useridname_idx ON prefix_user_preferences (userid,name);");
     }
 
+    if ($oldversion < 2004012900) {
+        table_column("config", "value", "value", "text", "", "", "");
+    }
+
     return $result;
 }
 
