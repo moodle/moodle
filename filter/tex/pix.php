@@ -46,7 +46,17 @@
             $texexp = str_replace('&gt;','>',$texexp);
             $texexp = preg_replace('!\r\n?!',' ',$texexp);
             $texexp = '\Large ' . $texexp;
-            system("QUERY_STRING=;export QUERY_STRING;$CFG->dirroot/$CFG->texfilterdir/mimetex -d ". escapeshellarg($texexp) . "  >$pathname");
+            switch (PHP_OS) {
+                case "Linux":
+                    system("QUERY_STRING=;export QUERY_STRING;$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -d ". escapeshellarg($texexp) . "  >$pathname");
+                break;
+                case "Windows":
+                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -d ". escapeshellarg($texexp) . "  >$pathname");
+                break;
+                case "Darwin":
+                    system("QUERY_STRING=;export QUERY_STRING;$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -d ". escapeshellarg($texexp) . "  >$pathname");
+                break;
+            }
         }
     }
 
