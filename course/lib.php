@@ -277,7 +277,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     }
 
     if (isadmin()) {
-        if ($ccc = get_records("course", "", "", "fullname")) {
+        if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
                     $courses["$cc->id"] = "$cc->fullname";
