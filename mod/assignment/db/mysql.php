@@ -99,7 +99,7 @@ function assignment_upgrade($oldversion) {
         assignment_refresh_events();
     }
 
-    if ($oldversion < 2004111200) { 
+    if ($oldversion < 2004060401) { 
         modify_database('','ALTER TABLE prefix_assignment ADD INDEX course (course);');
         modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX assignment(assignment);');
         modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX userid (userid);');

@@ -97,7 +97,7 @@ function assignment_upgrade($oldversion) {
         assignment_refresh_events();
     }
 
-    if ($oldversion < 2004111200) { 
+    if ($oldversion < 2004060401) { 
         modify_database('','CREATE INDEX prefix_assignment_course_idx ON prefix_assignment (course);');
         modify_database('','CREATE INDEX prefix_assignment_submissions_assignment_idx ON prefix_assignment_submissions (assignment);');
         modify_database('','CREATE INDEX prefix_assignment_submissions_userid_idx ON prefix_assignment_submissions (userid);');
