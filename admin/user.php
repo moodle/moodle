@@ -12,6 +12,7 @@
     optional_variable($sort, "name");
     optional_variable($dir, "ASC");
     optional_variable($page, 0);
+    optional_variable($search, "");
 
     if (! record_exists("user_admins")) {   // No admin user yet
         $user->firstname = "Admin";
@@ -94,6 +95,8 @@
         $stredit   = get_string("edit");
         $strdelete = get_string("delete");
         $strdeletecheck = get_string("deletecheck");
+        $strsearch = get_string("search");
+        $strshowallusers = get_string("showallusers");
 
         print_header("$site->shortname: $stredituser", $site->fullname, 
                      "<A HREF=\"index.php\">$stradministration</A> -> $stredituser");
@@ -125,7 +128,7 @@
 
         // Carry on with the user listing
 
-        $usercount = get_users_count();
+        $usertotalcount = get_users_count();
 
         $columns = array("name", "email", "city", "country", "lastaccess");
 
@@ -140,7 +143,7 @@
             if ($columnsort == $sort) {
                $$column = $string[$column];
             } else {
-               $$column = "<A HREF=\"user.php?sort=$columnsort&dir=$columndir\">".$string[$column]."</A>";
+               $$column = "<A HREF=\"user.php?sort=$columnsort&dir=$columndir&search=$search\">".$string[$column]."</A>";
             }
         }
 
@@ -148,89 +151,108 @@
             $sort = "firstname";
         }
 
-        if ($users = get_users_listing($sort, $dir, $page, $recordsperpage)) {
-            print_heading("$usercount ".get_string("users"));
-            
-            $a->start = $page;
-            $a->end = $page + $recordsperpage;
-            if ($a->end > $usercount) {
-                $a->end = $usercount;
+        if (!$users = get_users_listing($sort, $dir, $page, $recordsperpage, $search)) {
+            if (!$users = get_users_listing($sort, $dir, $page, $recordsperpage)) {
+                error("No users found!");
+            } else {
+                notify(get_string("nousersmatching", "", $search));
+                $search = "";
             }
-            echo "<TABLE align=center cellpadding=10><TR>";
-            echo "<TD>";
-            if ($page) {
-                $prevpage = $page - $recordsperpage;
-                if ($prevpage < 0) {
-                    $prevpage = 0;
-                }
-                $options["dir"] = $dir;
-                $options["page"] = 0;
-                $options["sort"] = $sort;
-                print_single_button("user.php", $options, "  <<  ");
-                echo "</TD><TD>";
-                $options["page"] = $prevpage;
-                print_single_button("user.php", $options, "  <  ");
-            }
-            echo "</TD><TD>";
-            print_heading(get_string("displayingusers", "", $a));
-            echo "</TD><TD>";
-            $nextpage = $page + $recordsperpage;
-            if ($nextpage < $usercount) {
-                $options["dir"] = $dir;
-                $options["page"] = $nextpage;
-                $options["sort"] = $sort;
-                print_single_button("user.php", $options, "  >  ");
-                echo "</TD><TD>";
-                $options["page"] = $usercount-$recordsperpage;
-                print_single_button("user.php", $options, "  >>  ");
-            }
-            echo "</TD></TR></TABLE>";
-
-            flush();
-
-            foreach ($users as $key => $user) {
-                $users[$key]->country = $COUNTRIES[$user->country];
-            }
-            if ($sort == "country") {  // Need to resort by full country name, not code
-                foreach ($users as $user) {
-                    $susers[$user->id] = $user->country;
-                }
-                asort($susers);
-                foreach ($susers as $key => $value) {
-                    $nusers[] = $users[$key];
-                }
-                $users = $nusers;
-            }
-
-            $table->head = array ($name, $email, $city, $country, $lastaccess, "", "");
-            $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER");
-            $table->width = "95%";
-            foreach ($users as $user) {
-                if ($user->id == $USER->id or $user->username == "changeme") {
-                    $deletebutton = "";
-                } else {
-                    $deletebutton = "<A HREF=\"user.php?delete=$user->id\" TARGET=\"$strdeletecheck\">$strdelete</A>";
-                }
-                if ($user->lastaccess) {
-                    $strlastaccess = format_time(time() - $user->lastaccess);
-                } else {
-                    $strlastaccess = get_string("never");
-                }
-                $table->data[] = array ("<A HREF=\"../user/view.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</A>",
-                                 "$user->email",
-                                 "$user->city",
-                                 "$user->country",
-                                 $strlastaccess,
-                                 "<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</A>",
-                                 $deletebutton);
-            }
-            print_table($table);
-
-            print_heading("<A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A>");
-        } else {
-            error("No users found!");
-            
         }
+
+        $usercount = count($users);
+        print_heading("$usercount/$usertotalcount ".get_string("users"));
+            
+        $a->start = $page;
+        $a->end = $page + $recordsperpage;
+        if ($a->end > $usercount) {
+            $a->end = $usercount;
+        }
+        echo "<TABLE align=center cellpadding=10><TR>";
+        echo "<TD>";
+        if ($page) {
+            $prevpage = $page - $recordsperpage;
+            if ($prevpage < 0) {
+                $prevpage = 0;
+            }
+            $options["dir"] = $dir;
+            $options["page"] = 0;
+            $options["sort"] = $sort;
+            $options["search"] = $search;
+            print_single_button("user.php", $options, "  <<  ");
+            echo "</TD><TD>";
+            $options["page"] = $prevpage;
+            print_single_button("user.php", $options, "  <  ");
+        }
+        echo "</TD><TD>";
+        print_heading(get_string("displayingusers", "", $a));
+        echo "</TD><TD>";
+        $nextpage = $page + $recordsperpage;
+        if ($nextpage < $usercount) {
+            $options["dir"] = $dir;
+            $options["page"] = $nextpage;
+            $options["sort"] = $sort;
+            $options["search"] = $search;
+            print_single_button("user.php", $options, "  >  ");
+            echo "</TD><TD>";
+            $options["page"] = $usercount-$recordsperpage;
+            print_single_button("user.php", $options, "  >>  ");
+        }
+        echo "</TD></TR></TABLE>";
+
+        flush();
+
+        foreach ($users as $key => $user) {
+            $users[$key]->country = $COUNTRIES[$user->country];
+        }
+        if ($sort == "country") {  // Need to resort by full country name, not code
+            foreach ($users as $user) {
+                $susers[$user->id] = $user->country;
+            }
+            asort($susers);
+            foreach ($susers as $key => $value) {
+                $nusers[] = $users[$key];
+            }
+            $users = $nusers;
+        }
+
+        $table->head = array ($name, $email, $city, $country, $lastaccess, "", "");
+        $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "CENTER", "CENTER");
+        $table->width = "95%";
+        foreach ($users as $user) {
+            if ($user->id == $USER->id or $user->username == "changeme") {
+                $deletebutton = "";
+            } else {
+                $deletebutton = "<A HREF=\"user.php?delete=$user->id\" TARGET=\"$strdeletecheck\">$strdelete</A>";
+            }
+            if ($user->lastaccess) {
+                $strlastaccess = format_time(time() - $user->lastaccess);
+            } else {
+                $strlastaccess = get_string("never");
+            }
+            $table->data[] = array ("<A HREF=\"../user/view.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</A>",
+                             "$user->email",
+                             "$user->city",
+                             "$user->country",
+                             $strlastaccess,
+                             "<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</A>",
+                             $deletebutton);
+        }
+
+        echo "<TABLE align=center cellpadding=10><TR><TD>";
+   	    echo "<FORM ACTION=user.php METHOD=POST>";
+   	    echo "<INPUT TYPE=text NAME=search VALUE=\"$search\" SIZE=20>";
+   	    echo "<INPUT TYPE=submit VALUE=\"$strsearch\">";
+        if ($search) {
+            echo "<INPUT type=\"button\" onClick=\"document.location='user.php';\" value=\"$strshowallusers\">";
+        }
+   	    echo "</FORM>";	
+        echo "</TD></TR></TABLE>";
+
+        print_table($table);
+
+        print_heading("<A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A>");
+
         print_footer();
     }
 

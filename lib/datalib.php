@@ -877,7 +877,7 @@ function get_users_count() {
     return count_records_select("user", "username <> 'guest' AND deleted <> 1");
 }
 
-function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20) {
+function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $search="") {
     global $CFG;
 
     switch ($CFG->dbtype) {
@@ -891,10 +891,16 @@ function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20) {
              $limit = "LIMIT $recordsperpage,$page";
     }
 
+    if ($search) {
+        $search = " AND (firstname LIKE '%$search%'
+                     OR lastname LIKE '%$search%'
+                     OR email LIKE '%$search%') ";
+    }
+
     return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess  
                               FROM {$CFG->prefix}user 
                              WHERE username <> 'guest' 
-                               AND deleted <> '1' 
+                               AND deleted <> '1' $search
                           ORDER BY $sort $dir $limit");
 
 }
