@@ -20,6 +20,11 @@
         error("Only teachers authorized to edit the course '{$course->fullname}' can use this page!");
     }
     
+    /// Header:
+    print_header_simple(get_string('editcategories', 'quiz'), '',
+                 "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+                 ' -> '.get_string('editcategories', 'quiz'));
+    
     /// CHECK FOR AND ACT UPON VARIABLES SUBMITTED VIA GET OR POST
     $qcobject = new quiz_category_object();
     $qcobject->set_course($course);
@@ -117,11 +122,6 @@ class quiz_category_object {
         $this->str->cancel         = get_string('cancel');
         $this->str->editcategories = get_string('editcategories', 'quiz');
         $this->pixpath = $CFG->pixpath;
-
-        /// Header:
-        print_header_simple($this->str->editcategories, '',
-                 "<a href=\"index.php?id=$this->course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-                 " -> {$this->str->editcategories}");
 
     }
 
