@@ -144,14 +144,14 @@ function display() {
 
 function setup($form) {
     global $CFG;
+
+    parent::setup($form);
     
     $rawdirs = get_directory_list("$CFG->dataroot/{$this->course->id}", 'moddata', true, true, false);
     $dirs = array();
     foreach ($rawdirs as $rawdir) {
         $dirs[$rawdir] = $rawdir;
     }
-    
-    parent::setup($form);
     
     include("$CFG->dirroot/mod/resource/type/directory/directory.html");
 
