@@ -52,7 +52,7 @@ function glossary_add_instance($glossary) {
 /// will create a new instance and return the id number
 /// of the new instance.
 
-    if (!$glossary->userating) {
+    if (!isset($glossary->userating) || !$glossary->userating) {
         $glossary->assessed = 0;
     }
 
