@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004090402)
+      // moodle.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['action'] = 'Acció';
@@ -296,6 +296,7 @@ $string['department'] = 'Departament';
 $string['description'] = 'Descripció';
 $string['detailedless'] = 'Menys detallat';
 $string['detailedmore'] = 'Més detallat';
+$string['directorypaths'] = 'Camins dels directoris';
 $string['disable'] = 'Inhabilitar';
 $string['displayingfirst'] = 'Només es mostren els primers $a->count $a->things ';
 $string['displayingrecords'] = 'S\'estan visualitzant $a registres';
@@ -763,6 +764,7 @@ $string['order'] = 'Ordre';
 $string['other'] = 'Altre';
 $string['outline'] = 'Esquema';
 $string['page'] = 'Pàgina';
+$string['parentlanguage'] = '<< TRADUCTORS: si voleu que Moodle faci servir un altre idioma quan faltin cadenes en el vostre idioma, especifiqueu-ne el codi aquí. Si el deixeu en blanc Moodle fara servir l\'anglès. P. ex.: es >>';
 $string['participants'] = 'Participants';
 $string['password'] = 'Contrasenya';
 $string['passwordchanged'] = 'S\'ha canviat la contrasenya';
@@ -773,6 +775,8 @@ $string['passwordsent'] = 'S\'ha enviat la contrasenya';
 $string['passwordsenttext'] = '<P>S\'ha enviat un correu a la vostra adreça electrònica $a->email.
 <P><B>Si us plau, busqueu la contrasenya nova al correu</B>
 <P>Aquesta contrasenya nova s\'ha generat automàticament, de manera que potser voldreu <A HREF=$a->link>canviar-la per una altra més fàcil de recordar</A>.';
+$string['pathnotexists'] = 'Aquest camí no existeix al servidor';
+$string['pathslasherror'] = 'El camí no pot acabar amb una barra';
 $string['paymentinstant'] = 'Utilitzeu el botó de baix per pagar i inscriure-us.';
 $string['paymentrequired'] = 'Aquest curs requereix pagament.';
 $string['paymentsorry'] = 'Gràcies per pagar. Dissortadament el pagament encara no ha estat completament processat i encara no podeu entrar al curs \"$a->fullname\". Torneu a intentar-ho d\'aquí a uns segons i si no podeu adreceu-vos al $a->teacher o a l\'administrador del lloc';
