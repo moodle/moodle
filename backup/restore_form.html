@@ -31,18 +31,16 @@
         error("Site not found!");
     } 
 
-   //Checks for the required files/functions to restore every mod
-    //And check if there is data about it 
+    //Checks for the required files/functions to restore every mod
     $count = 0;
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = "$mods_home/$modname/restorelib.php";
             $modrestore = $modname."_restore_mods";
-            $modcheckrestore = $modname."_check_restore_mods";
             if (file_exists($modfile)) {
                include_once($modfile);
-               if (function_exists($modrestore) and function_exists($modcheckrestore)) {
+               if (function_exists($modrestore)) {
                    $var = "exists_".$modname;
                    $$var = true;
                    $count++;
@@ -111,22 +109,39 @@
             $modname = $mod->name;
             $modrestore = $modname."_restore_mods";
             //If exists the lib & function
-            $var = "exists_".$modname;
-            if ($$var) {
-                //Print the full tr
-                echo "<tr>";
-                echo "<td align=\"right\"><P><B>";
-                echo get_string("include")." ". get_string("modulenameplural",$modname).":";
-                echo "</td><td>";
-                $restore_options[0] = get_string("no"); 
-                $restore_options[1] = get_string("yes");
-                $var = "restore_".$modname;
-                choose_from_menu($restore_options, $var, $$var, "");
-                $restore_user_options[0] = get_string("withoutuserdata"); 
-                $restore_user_options[1] = get_string("withuserdata");
-                $var = "restore_user_info_".$modname;
-                choose_from_menu($restore_user_options, $var, $$var, "");
-                echo "</td></tr>";
+            $exist = "exists_".$modname;
+            $var = "restore_".$modname;
+            if ($$exist) {
+                //Now check that we have that module info in the backup file
+                if ($info->mods[$modname]->backup == "true") {
+                    //Print the full tr
+                    echo "<tr>";
+                    echo "<td align=\"right\"><P><B>";
+                    echo get_string("include")." ". get_string("modulenameplural",$modname).":";
+                    echo "</td><td>";
+                    $restore_options[0] = get_string("no"); 
+                    $restore_options[1] = get_string("yes");
+                    choose_from_menu($restore_options, $var, $$var, "");
+                    $var = "restore_user_info_".$modname;
+                    //If backup contains user data, then show menu, else fix it to
+                    //without user data
+                    if ($info->mods[$modname]->userinfo == "true") {
+                        $restore_user_options[0] = get_string("withoutuserdata"); 
+                        $restore_user_options[1] = get_string("withuserdata");
+                        choose_from_menu($restore_user_options, $var, $$var, "");
+                    } else {
+                        //Module haven't userdata
+                        echo get_string("withoutuserdata");
+                        echo "<input type=\"hidden\" name=\"$var\" value=\"0\">";
+                    }
+                    echo "</td></tr>";
+                } else {
+                    //Module isn't restorable
+                    echo "<input type=\"hidden\" name=\"$var\" value=\"0\">";
+                }
+            } else {
+                //Module isn't restorable
+                echo "<input type=\"hidden\" name=\"$var\" value=\"0\">";
             }
         }
         //Line
@@ -137,8 +152,12 @@
         echo "<td align=\"right\"><P><B>";
         echo get_string("users").":";
         echo "</td><td>";
-        $user_options[0] = get_string("all");
+        //If all users are in the backup file
+        if ($info->backup_users == "all") {
+            $user_options[0] = get_string("all");
+        }
         $user_options[1] = get_string("course");
+        $user_options[2] = get_string("none");
         //$user_options[2] = get_string("needed");-->NOT IMPLEMENTED
         choose_from_menu($user_options, "restore_users", $restore_users, "");
         echo "</td></tr>";
@@ -148,9 +167,15 @@
         echo "<td align=\"right\"><P><B>";
         echo get_string("logs").":";                                               
         echo "</td><td>";
-        $log_options[0] = get_string("no");
-        $log_options[1] = get_string("yes"); 
-        choose_from_menu($log_options, "restore_logs", $restore_logs, ""); 
+        //If logs are in the backup file, show menu, else fixed to no
+        if ($info->backup_logs == "true") {
+            $log_options[0] = get_string("no");
+            $log_options[1] = get_string("yes"); 
+            choose_from_menu($log_options, "restore_logs", $restore_logs, ""); 
+        } else {
+            echo get_string("no");
+            echo "<input type=\"hidden\" name=\"restore_logs\" value=\"0\">";
+        }
         echo "</td></tr>";
 
         //Now print the User Files tr
@@ -158,9 +183,15 @@
         echo "<td align=\"right\"><P><B>";
         echo get_string ("userfiles").":";
         echo "</td><td>";
-        $user_file_options[0] = get_string("no"); 
-        $user_file_options[1] = get_string("yes"); 
-        choose_from_menu($user_file_options, "restore_user_files", $restore_user_files, "");
+        //If user files are in the backup file, show menu, else fixed to no
+        if ($info->backup_user_files == "true") {
+            $user_file_options[0] = get_string("no"); 
+            $user_file_options[1] = get_string("yes"); 
+            choose_from_menu($user_file_options, "restore_user_files", $restore_user_files, "");
+        } else {
+            echo get_string("no");
+            echo "<input type=\"hidden\" name=\"restore_user_files\" value=\"0\">";
+        }
         echo "</td></tr>";
 
         //Now print the Course Files tr
@@ -168,17 +199,25 @@
         echo "<td align=\"right\"><P><B>";
         echo get_string ("coursefiles").":";
         echo "</td><td>";
-        $course_file_options[0] = get_string("no");
-        $course_file_options[1] = get_string("yes");
-        choose_from_menu($course_file_options, "restore_course_files", $restore_course_files, "");
+        //If course files are in the backup file, show menu, else fixed to no
+        if ($info->backup_course_files == "true") {
+            $course_file_options[0] = get_string("no");
+            $course_file_options[1] = get_string("yes");
+            choose_from_menu($course_file_options, "restore_course_files", $restore_course_files, "");
+        } else {
+            echo get_string("no");
+            echo "<input type=\"hidden\" name=\"restore_course_files\" value=\"0\">";
+        }
         echo "</td></tr>";
+        echo "<input type=\"hidden\" name=\"backup_unique_code\" value=\"$backup_unique_code\">";
+        echo "<input type=\"hidden\" name=\"file\" value=\"$file\">";
     }
 ?>
 </table>
 <BR>
 <CENTER>
 <input type="hidden" name=id     value="<? p($id) ?>">
-<input type="hidden" name=launch value="check">
+<input type="hidden" name=launch value="form">
 <input type="submit" value="<? print_string("continue") ?>">
 <input type="submit" name=cancel value="<? print_string("cancel") ?>">
 </CENTER>
