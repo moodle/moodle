@@ -8,7 +8,6 @@
     optional_variable($user);   // login as this user
     optional_variable($return); // return to the page we came from
 
-
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
     }
@@ -22,8 +21,8 @@
         $USER->loggedin = true;
         $USER->site = $CFG->wwwroot;
 
-        if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group"
-            $SESSION->currentgroup[$course->id] = $SESSION->oldcurrentgroup;
+        if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
+            $SESSION->currentgroup = $SESSION->oldcurrentgroup;
             unset($SESSION->oldcurrentgroup);
         }
         if (isset($SESSION->oldtimeaccess)) {        // Restore previous timeaccess settings
@@ -69,9 +68,9 @@
     $USER->site = $CFG->wwwroot;
     $USER->realuser = $teacher_id;
 
-    if (isset($SESSION->currentgroup[$course->id])) {    // Remember current setting for later
-        $SESSION->oldcurrentgroup = $SESSION->currentgroup[$course->id];
-        unset($SESSION->currentgroup[$course->id]);
+    if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
+        $SESSION->oldcurrentgroup = $SESSION->currentgroup;
+        unset($SESSION->currentgroup);
     }
 
     set_moodle_cookie($USER->username);
