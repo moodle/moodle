@@ -142,7 +142,7 @@
 
 <p class="questionlink"><a href="#noadmin">During the initial setting-up process, I never get asked to create an admin account!</a></p>
 <p class="questionlink"><a href="#nologin">I can't log in at all- I just stay stuck on the login screen.</a></p>
-
+<p class="questionlink"><a href="#backup">How do I backup my Moodle site?</a></p>
 <p class="questionlink">&nbsp;</p>
 
 
@@ -417,6 +417,24 @@
 <p class="answer">Another possible cause of this problem is that sessions are not configured 
                   properly on the server.  You can test this by calling the script 
                   http://yourserver/moodle/lib/session-test.php.</p>
+
+<h4 class="question"><a name="backup"></a>How do I backup my Moodle site?</h4>
+
+<p class="answer">The Unix commands are as follows:
+<br>
+cd /backup/moodle.org (substitute your appropriate directory)
+<br>
+mv moodle-database.sql.gz moodle-database-old.sql.gz (keep an old copy)
+<br>
+mysqldump -h moodle.org -u username --password=moodlepass -C -Q -e -a moodle > moodle-database.sql
+<br>
+gzip moodle-database.sql (to compress the new one)
+<br><br>
+For the files:
+<br>
+rsync -auvtz --delete -e ssh username@moodle.org:/home/moodle/ /backup/moodle.org/moodle/
+<br>
+You're done.</p>
 
 <h2>&nbsp;</h2>
 
