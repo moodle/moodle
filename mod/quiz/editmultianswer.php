@@ -162,7 +162,7 @@
 
                formerr($err["questiontext"]); 
 
-               echo "<BR \>";
+               echo "<BR />";
 
            }
 

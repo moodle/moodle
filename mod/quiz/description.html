@@ -19,7 +19,7 @@
     <TD>
         <?php  if (isset($err["questiontext"])) {
                formerr($err["questiontext"]); 
-               echo "<BR \>";
+               echo "<BR />";
            }
            print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
            if ($usehtmleditor) {

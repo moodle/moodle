@@ -35,9 +35,9 @@
             <td align=right nowrap>
                 <p><b><?php print_string("introtext", "survey") ?>:</b></p><br>
                 <font size="1">
-                <?php helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?> <br \>
-                <?php helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br \>
-                <?php emoticonhelpbutton("form", "intro"); ?> <br \>
+                <?php helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?> <br />
+                <?php helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br />
+                <?php emoticonhelpbutton("form", "intro"); ?> <br />
                 </font>
             </td>
             <td>

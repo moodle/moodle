@@ -120,7 +120,7 @@
         </SELECT>
         </td>
         <td width="60%">
-        <?php print_string("cnfrelatedview", "glossary") ?><br \><br \>
+        <?php print_string("cnfrelatedview", "glossary") ?><br /><br />
         </td>
     </tr>
     <tr valign=top>
@@ -157,7 +157,7 @@
         </SELECT>
         </td>
         <td width="60%">
-        <?php print_string("cnfdefaultmode", "glossary") ?><br \><br \>
+        <?php print_string("cnfdefaultmode", "glossary") ?><br /><br />
         </td>
     </tr>
     <tr valign=top>
@@ -194,7 +194,7 @@
         </SELECT>
         </td>
         <td width="60%">
-        <?php print_string("cnfdefaulthook", "glossary") ?><br \><br \>
+        <?php print_string("cnfdefaulthook", "glossary") ?><br /><br />
         </td>
     </tr>
     <tr valign=top>
@@ -231,7 +231,7 @@
         </SELECT>
         </td>
         <td width="60%">
-        <?php print_string("cnfsortkey", "glossary") ?><br \><br \>
+        <?php print_string("cnfsortkey", "glossary") ?><br /><br />
         </td>
     </tr>
     <tr valign=top>
@@ -256,7 +256,7 @@
         </SELECT>
         </td>
         <td width="60%">
-        <?php print_string("cnfsortorder", "glossary") ?><br \><br \>
+        <?php print_string("cnfsortorder", "glossary") ?><br /><br />
         </td>
     </tr>
     <tr valign=top>
@@ -277,7 +277,7 @@
         </SELECT>
         </td>
         <td width="60%">
-        <?php print_string("cnfshowgroup", "glossary") ?><br \><br \>
+        <?php print_string("cnfshowgroup", "glossary") ?><br /><br />
         </td>
     </tr>
 	<tr>

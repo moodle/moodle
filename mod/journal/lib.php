@@ -209,7 +209,7 @@ function journal_print_recent_activity($course, $isteacher, $timestart) {
         print_headline(get_string("newjournalentries", "journal").":");
         foreach ($journals as $journal) {
             $date = userdate($journal->time, $strftimerecent);
-            echo "<p><font size=1>$date - ".fullname($journal)."<br \>";
+            echo "<p><font size=1>$date - ".fullname($journal)."<br />";
             echo "\"<a href=\"$CFG->wwwroot/mod/journal/$journal->url\">";
             echo "$journal->name";
             echo "</a>\"</font></p>";

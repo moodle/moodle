@@ -19,7 +19,7 @@
     <TD>
         <?php  if (isset($err["questiontext"])) {
                formerr($err["questiontext"]); 
-               echo "<BR \>";
+               echo "<BR />";
            }
            print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
            if ($usehtmleditor) {
@@ -56,7 +56,7 @@
     <TD align=right><P><B><?php  echo get_string("question", "quiz")." $i";  ?> :</B></P></TD>
     <TD>
         <textarea name="subquestions[]" rows=5 cols=50><?php  p($subquestions[$i-1]) ?></textarea>
-        <br \>
+        <br />
         <?php  echo get_string("matchanswer", "quiz")." $i";  ?>&nbsp;&nbsp;
         <INPUT type="text" name="subanswers[]" size=50 value="<?php  p($subanswers[$i-1]) ?>">
     </TD>

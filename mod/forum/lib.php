@@ -1192,7 +1192,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
     }
     echo "<p>";
-    echo "<font size=3><b>$post->subject</b></font><br \>";
+    echo "<font size=3><b>$post->subject</b></font><br />";
     echo "<font size=2>";
 
     $fullname = fullname($post, $isteacher);

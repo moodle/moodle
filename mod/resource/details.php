@@ -371,7 +371,7 @@
                 ?>
                 <tr valign="top">
                     <td align="right" nowrap="true">
-                        <p><b><?php echo $strfulltext?>:</b></p><br \>
+                        <p><b><?php echo $strfulltext?>:</b></p><br />
                         <font size="1">
                         <?php  helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
                         <?php  helpbutton("wiki", get_string("helpwiki"), "moodle", true, true) ?> <br />

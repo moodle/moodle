@@ -134,7 +134,7 @@ function survey_print_recent_activity($course, $isteacher, $timestart) {
         print_headline(get_string("newsurveyresponses", "survey").":");
         foreach ($surveys as $survey) {
             $date = userdate($survey->time, $strftimerecent);
-            echo "<p><font size=1>$date - ".fullname($survey)."<br \>";
+            echo "<p><font size=1>$date - ".fullname($survey)."<br />";
             echo "\"<a href=\"$CFG->wwwroot/mod/survey/$survey->url\">";
             echo "$survey->name";
             echo "</a>\"</font></p>";

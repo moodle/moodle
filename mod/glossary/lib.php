@@ -1199,7 +1199,7 @@ function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='',
 
 function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '<br \>';
+        echo '<center>' . get_string("explainalphabet","glossary") . '<br />';
     }
 
     glossary_print_sorting_links($cm, $mode, $sortkey,$sortorder);
@@ -1398,7 +1398,7 @@ global $CFG;
      }
 
      echo "<br>$sort: $sbtag<a title=\"$ssort $sordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$sorder$sneworder&mode=$mode\">$ssort$sicon</a>$sendbtag | ".
-                          "$fbtag<a title=\"$fsort $fordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$forder$fneworder&mode=$mode\">$fsort$ficon</a>$fendbtag<br \>";
+                          "$fbtag<a title=\"$fsort $fordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$forder$fneworder&mode=$mode\">$fsort$ficon</a>$fendbtag<br />";
 }
 
 function glossary_sort_entries ( $entry0, $entry1 ) {
@@ -1427,7 +1427,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo "</td>";
     echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
     echo "<p>";
-    echo "<font size=2><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br \>";
+    echo "<font size=2><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
     echo "<font size=1>".get_string("lastedited").": ".userdate($comment->timemodified)."</font>";
     echo "</p></td></tr>";
 

@@ -25,7 +25,7 @@
     <TD>
         <?php  if (isset($err["questiontext"])) {
                formerr($err["questiontext"]); 
-               echo "<BR \>";
+               echo "<BR />";
            }
            if (empty($question->questiontext)) {
                $question->questiontext =  get_string("randomsamatchintro", "quiz");

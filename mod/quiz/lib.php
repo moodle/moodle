@@ -805,7 +805,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
                        if ($randomanswers[$responseanswer[$key]] == $correct[$key]) {
                            echo '<span="highlight">';
                            choose_from_menu($randomanswers, "q$realquestion->id"."r$randomquestion->id", $responseanswer[$key]);
-                           echo '</span><br \>';
+                           echo '</span><br />';
                        } else {
                            choose_from_menu($randomanswers, "q$realquestion->id"."r$randomquestion->id", $responseanswer[$key]);
                            quiz_print_correctanswer($correct[$key]);

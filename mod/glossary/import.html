@@ -4,7 +4,7 @@
     <td align=right valign=top width="30%"><p><b><?php print_string("filetoimport","glossary") ?>:</b></p></td>
     <td width="70%">
     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size() ?>">
-    <input type="file" name="file" size=40> <br \>
+    <input type="file" name="file" size=40> <br />
     <?php 
        helpbutton("filetoimport", get_string("filetoimport", "glossary"), "glossary"); 
        print_string("maxsize", "", display_size(get_max_upload_file_size())); 
@@ -48,4 +48,4 @@
 <input type="hidden" name="l" value="<?PHP p($l) ?>">
 <input type="hidden" name="lasttab" value="<?PHP p($lasttab) ?>">
 <input type="hidden" name="step" value="1">
-</form>
+</form> 
