@@ -581,7 +581,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            } else {
                $value = "";
            }
-           echo "<p align=\"right\">$stranswer: <input type=\"text\" name=\"q$realquestion->id\" size=\"20\" $value /></p>";
+           echo "<p align=\"right\">$stranswer: <input type=\"text\" name=\"q$realquestion->id\" size=\"50\" $value /></p>";
            if ($feedback) {
                quiz_print_comment("<p align=\"right\">$feedback[0]</p>");
            }
