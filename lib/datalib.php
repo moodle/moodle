@@ -1024,6 +1024,31 @@ function get_all_instances_in_course($modulename, $courseid, $sort="cw.section")
 }
 
 
+function instance_is_visible($moduletype, $module) {
+/// Given a valid module object with info about the id and course, 
+/// and the module's type (eg "forum") returns whether the object 
+/// is visible or not
+
+    global $CFG;
+
+    if ($records = get_records_sql("SELECT f.id, cm.visible
+                                    FROM {$CFG->prefix}course_modules cm,
+                                         {$CFG->prefix}forum f,
+                                         {$CFG->prefix}modules m
+                                   WHERE cm.course = '$module->course' AND
+                                         cm.module = m.id AND 
+                                         m.name = '$moduletype' AND 
+                                         cm.instance = f.id AND 
+                                         f.id = '$module->id'")) {
+
+        foreach ($records as $record) { // there should only be one - use the first one
+            return $record->visible;
+        }
+    }
+
+    return true;  // visible by default!
+}
+
 
 
 
