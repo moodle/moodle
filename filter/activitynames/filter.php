@@ -2,7 +2,7 @@
     //This function provides automatic linking to
     //activities when its name (title) is found inside every Moodle text
     //It's based in the glosssary filter by Williams Castillo
-    //Modifications by stronk7. Enjoy! :-)
+    //Modifications by stronk7.
 
     $textfilter_function='activitynames_filter';
 
