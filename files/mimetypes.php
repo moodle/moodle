@@ -78,11 +78,11 @@ function mimeinfo($element, $filename) {
     );
 
     if (eregi("\.([a-z0-9]+)$", $filename, $match)) {
-        $result = $mimeinfo[strtolower($match[1])][$element];
-    }
-
-    if (!empty($result)) {
-        return $result;
+        if(isset($mimeinfo[strtolower($match[1])][$element])) {
+            return $mimeinfo[strtolower($match[1])][$element];
+        } else {
+            return $mimeinfo["xxx"][$element];   // By default
+        }
     } else {
         return $mimeinfo["xxx"][$element];   // By default
     }
