@@ -1283,6 +1283,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $mail->WordWrap = 70;                               // set word wrap
 
+    if (!empty($from->precedence)) {
+        $mail->Precedence = $from->precedence;          // set precedence level eg "bulk" "list" or "junk"
+    }
+
     if ($messagehtml) {
         $mail->IsHTML(true);
         $mail->Encoding = "quoted-printable";           // Encoding to use
