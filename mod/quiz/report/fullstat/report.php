@@ -1,9 +1,7 @@
 <?PHP  // $Id: report.php,
 //  created from the above 2003/11/20 by Tom Robb tom@robb.net
-// Version 2.2  Modified 2003/11/25 pm
-// Version 2.3  Modified 2004/01/17
-// Version 2.4  Modified 2004/01/18
-//  Error in percentage calculations for T/F items fixed
+// Version 2.5  Modified 2004/01/18
+//  Further errorsin percentage calculations corrected
 
 /// This report shows the specific responses made by each student for each question.
 
@@ -324,6 +322,9 @@ class quiz_report extends quiz_default_report {
         $formatbc =& $workbook->add_format();
         $formatbc->set_bold(1);
         $formatbc->set_align('center');
+        $formatbpct =& $workbook->add_format();
+        $formatbpct->set_bold(1);
+        $formatbpct->set_num_format('0.0%');
         $formatbrt =& $workbook->add_format();
         $formatbrt->set_bold(1);
         $formatbrt->set_align('right');
@@ -472,9 +473,10 @@ class quiz_report extends quiz_default_report {
 
         //Output the total percent correct
         $row++;
-        $myxls->write_string($row,1,"Percent Correct:",$formatbrt);
+
+        $myxls->write_string($row,0,"Percent Correct:",$formatbrt);
         for ($i = 1; $i<= $table_colcount;$i++){
-            $myxls->write_string($row,$i,$pct_correct[$i],$formatbc);
+            $myxls->write_number($row,$i,$pct_correct[$i]/100,$formatbpct);
         }
 
     //Finally display the itemanalysis
@@ -519,7 +521,7 @@ class quiz_report extends quiz_default_report {
                     $row++;
                     $label = "A-$thischoice[choiceno]";
                     $nowstat =  $analysis[$cno][$itemcount];
-                    $pct = qr_make_pct($nowstat,$total_user_count);
+                    $pct = qr_make_pct($nowstat,$total_user_count)/100;
                     $myxls->write_number($row,1,$nowstat,$formatb);
                     $myxls->write_number($row,2,$pct,$formatbpct);
                     $myxls->write_string($row,3,$thischoice[answer],$formatb);
@@ -530,7 +532,7 @@ class quiz_report extends quiz_default_report {
                 $row++;
                 $nowstat =  $analysis[1][$itemcount];
                 $nowresp = substr($nowstat,5);
-                $pct = qr_make_pct($nowresp,$total_user_count);
+                $pct = qr_make_pct($nowresp,$total_user_count)/100;
                 $myxls->write_number($row,1,$nowresp,$formatb);
                 $myxls->write_number($row,2,$pct,$formatbpct);
                 $myxls->write_string($row,3,'True',$formatb);
@@ -538,7 +540,7 @@ class quiz_report extends quiz_default_report {
                 $row++;
                 $nowstat =  $analysis[2][$itemcount];
                 $nowresp = substr($nowstat,6);
-                $pct = qr_make_pct($nowresp,$total_user_count);
+                $pct = qr_make_pct($nowresp,$total_user_count)/100;
                 $myxls->write_number($row,1,$nowresp,$formatb);
                 $myxls->write_number($row,2,$pct,$formatbpct);
                 $myxls->write_string($row,3,'False',$formatb);
@@ -714,6 +716,7 @@ class quiz_report extends quiz_default_report {
     print("</tr>\n");
     //Display the total percent correct
     print("<tr valign=top><th align=right colspan=2>$strpercentcorrect:</th>");
+
     for ($i = 0; $i< $table_colcount;$i++){
         print ("<th>{$pct_correct[$i]}</th> ");
     }
@@ -752,7 +755,7 @@ class quiz_report extends quiz_default_report {
                 $cno = $thischoice['choiceno'];
                 $nowstat =  $analysis[$cno][$itemcount];
                 $pct_cor = qr_make_pct($nowstat,$total_user_count);
-                print("<tr valign=top><td align='right' width='10%'>$nowstat ($pct_cor)&nbsp;</td>");
+                print("<tr valign=top><td align='right' width='10%'>$nowstat ($pct_cor%)&nbsp;</td>");
                 print("<td width='5%' align='center'><b>A-$cno</b></td><td>{$thischoice['answer']}</td></tr>\n");
             }
         }
@@ -907,12 +910,11 @@ function qr_make_footers(){
 function qr_make_pct($this_correct,$totusers){
     global  $qs_in_order,$qtally,$quests,$total_user_count;
     if($this_correct>0 and $totusers > 0){
-//        $pct_cor =round((($this_correct/$totusers)*100),1);
         $pct_cor =(floor(($this_correct/$totusers)*1000)/10);
     } else {
         $pct_cor = 0;
     }
-    return $pct_cor ."%";
+    return $pct_cor ;
 }
 
 function qr_answer_lookup($qid,$thisanswer){
