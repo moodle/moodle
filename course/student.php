@@ -65,7 +65,7 @@
 
     if (!empty($remove)) {
         if (! unenrol_student($remove, $course->id)) {
-            error("Could not add that student to this course!");
+            error("Could not remove that student from this course!");
         }
     }
 
