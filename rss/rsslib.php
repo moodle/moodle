@@ -1,8 +1,8 @@
 <?PHP  // $Id$
        // This file contains all the common stuff to be used in RSS System
 
-//This function prints the icon (from theme) with the link to rss/file.php
-function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext="") {
+//This function returns the icon (from theme) with the link to rss/file.php
+function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext="") {
 
  global $CFG, $THEME, $USER;
 
@@ -25,10 +25,16 @@ function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext="") {
 
     $rsspix = $pixpath."/i/rss.gif";
 
-     echo "<a href=\"".$rsspath."\"><img src=\"$rsspix\" title=\"$tooltiptext\"></a>";
+    return "<a href=\"".$rsspath."\"><img src=\"$rsspix\" title=\"$tooltiptext\"></a>";
 
 }
 
+//This function prints the icon (from theme) with the link to rss/file.php
+function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext="") {
+
+    echo rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext);
+
+}
 //This function iterates over each module in the server to see if
 //it supports generating rss feeds, searching for a MODULENAME_rss_feeds()
 //function and invoking it foreach activity as necessary
