@@ -54,7 +54,8 @@ define('PARAM_NOTAGS',  0x08);
 define('PARAM_FILE',    0x10);
 define('PARAM_PATH',    0x20);
 define('PARAM_HOST',    0x40);  // FQDN or IPv4 dotted quad
-
+define('PARAM_URL',     0x80);  
+//define('PARAM_LOCALURL',????); // need something that implies PARAM_URL
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -91,6 +92,8 @@ function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
 function clean_param($param, $options) {
 /// Given a parameter and a bitfield of options, this function
 /// will clean it up and give it the required type, etc.
+
+    global $CFG;
 
     if (!$options) {
         return $param;                   // Return raw value
@@ -158,6 +161,55 @@ function clean_param($param, $options) {
             $param='';               
         } 
     }
+
+    if ($options & PARAM_URL) { // allow safe ftp, http, mailto urls
+
+        include_once($CFG->dirroot . '/lib/validateurlsyntax.php');
+
+        //
+        // Parameters to validateurlsyntax()
+        //
+        // s? scheme is optional
+        //   H? http optional
+        //   S? https optional
+        //   F? ftp   optional
+        //   E? mailto optional
+        // u- user section not allowed
+        //   P- password not allowed
+        // a? address optional
+        //   I? Numeric IP address optional (can use IP or domain)
+        //   p-  port not allowed -- restrict to default port
+        // f? "file" path section optional
+        //   q? query section optional
+        //   r? fragment (anchor) optional
+        //
+        if (!empty($param) && validateUrlSyntax($param, 's?H?S?F?E?u-P-a?I?p-f?q?r?')) {
+            // all is ok, param is respected
+        } else {
+            $param =''; // not really ok
+        }
+    }
+
+    /*    
+    if ($options & PARAM_LOCALURL) { 
+        // assume we passed the PARAM_URL test...
+        // allow http absolute, root relative and relative URLs within wwwroot
+        if (!empty($param)) {
+            if (preg_match(':^/:', $param)) { 
+                // root-relative, ok!
+            } elseif (preg_match('/^'.preg_quote($CFG->wwwroot).'/i',$param)) {
+                // absolute, and matches our wwwroot
+            } else { 
+                // relative - let's make sure there are no tricks
+                if (validateUrlSyntax($param, 's-u-P-a-p-f+q?r?')) {
+                    // looks ok.
+                } else {
+                    $param = '';
+                }                
+            }
+        }
+    }
+    */
 
     return $param;
 }
