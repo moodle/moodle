@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003011300)
+      // moodle.php - created with Moodle 1.0.8 dev (2002122301)
 
 
 $string['action'] = "Aktion";
@@ -39,6 +39,7 @@ $string['categories'] = "Kurs-Kategorie";
 $string['category'] = "Kategorie";
 $string['categoryadded'] = "Die Kategorie '\$a' wurde angelegt";
 $string['categorydeleted'] = "Die Kategorie '\$a' wurde gelöscht";
+$string['categoryduplicate'] = "Eine Kategorie mit dem Namen '\$a' existiert bereits!";
 $string['changedpassword'] = "Passwort geändert";
 $string['changepassword'] = "Passwort ändern";
 $string['changessaved'] = "Änderungen gespeichert";
@@ -66,6 +67,7 @@ $string['configlocale'] = "Wählen Sie eine seitenweite locale - diese wird die A
 $string['configlongtimenosee'] = "Wenn sich Studenten nach einer sehr langen Zeit nicht mehr angemeldet haben, werden Studenten automatisch nach diesem Termin aus dem Kurs ausgetragen.";
 $string['configmaxeditingtime'] = "Hier bestimmen Sie die Zeitspanne, in der die Leute die Foren-Beiträge, Jounal-Antworten, eusw. erneut bearbeiten dürfen. Normalerweise sind 30 Minuten ein guter Wert. ";
 $string['configproxyhost'] = "Wenn dieser <B>Server</B> einen Proxy braucht (beispielsweise eine Firewall), um Internetzugriff zu bekommen, dann tragen Sie hier den Namen und den Port des Proxys ein. Anderenfalls lassen sie das Feld leer";
+$string['configsessiontimeout'] = "Wenn angemeldete Benutzer eine lange Zeit fern bleiben (ohne Seiten zu laden), dann werden diese automatisch abgemeldet (Ihre Session/Sitzung wird beendet). Diese Variable gibt an, wie lange diese Zeit sein soll.";
 $string['configslasharguments'] = "Dateien (Bilder, Dokumente, usw.) werden über ein Skript, das 'Slash-Argumente' benutz (hier die zweite Option). Diese Methode erlaubt es Dateien einfacher im Internet-Browsern, Proxy-Servern, usw., zwischengespeichert zu werden.
 Leider erlauben nicht alle PHP-Server diese Methode, so dass Sie, sofern Sie Probleme bei der Anzeige von Dateien oder Bildern (beispielsweise den Benutzer-Fotos) haben, diese Variable auf die erste Option stellen müssen. ";
 $string['configsmtphosts'] = "Geben Sie hier den vollen Namen von einem oder mehreren lokalen SMTP-Servern an, die Moodle für den Email-Versnad benutzen soll (beispielsweise 'email.a.de' oder 'email.a.de;email.b.de'). Wenn Sie dieses frei lassen, wird Moodle die Standard-Methode von PHP zum Senden von Emails verwenden.";
@@ -196,6 +198,7 @@ $string['fullprofile'] = "Ganzes Profil";
 $string['fullsitename'] = "Name der gesamten Seite";
 $string['gd1'] = "GD 1.x ist installiert";
 $string['gd2'] = "GD 2.x ist installiert";
+$string['gdneed'] = "GD muss installiert sein, um diese Grafik zu sehen";
 $string['gdnot'] = "GD ist nicht installiert";
 $string['gpl'] = "Copyright (C) 2001-2002 Martin Dougiamas (http://dougiamas.com) Dieses Programm ist freie Software; Sie können es weiterverbreiten bzw. es im Rahmen GNU General Public License, wie von der Free Software Foundation veröffentlicht,  modifizieren; entweder Version 2 der Lizenz, oder (sofer nötig) jede spätere Version. Dieses Programm wird in der Hoffnung ausgeteilt, dass es nützlich sein wird, aber OHNE JEDE GARANTIE; sogar ohne die implizierte Garantie der MARKTFÄHIGKEIT oder der MARKTREIFE FÜR EINEM BESONDEREN ZWECK. Lesen Sie die GNU-Öffentlichkeitslizenz für mehr Details: http: // www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Rang";
@@ -221,6 +224,7 @@ $string['hitsoncoursetoday'] = "Heutige Treffer bei \$a->coursename von \$a->use
 $string['home'] = "Startseite";
 $string['hour'] = "Stunde";
 $string['hours'] = "Stunden";
+$string['howtomakethemes'] = "Wie man neue Design macht";
 $string['htmleditor'] = "WYSIWYG HTML-Text-Eingabe verwenden (Nur IE 5.5. oder höher)";
 $string['htmleditoravailable'] = "Die Rich-Text-Eingabe ist verfügbar";
 $string['htmleditordisabled'] = "Sie haben die Rich-Text-Eingabe in Ihrem Benutzer-Profil deaktiviert.";
@@ -360,6 +364,7 @@ $string['nousersyet'] = "Bislang keine Benutzer";
 $string['now'] = "jetzt";
 $string['numberweeks'] = "Anzahl der Wochen/Themen";
 $string['numdays'] = "\$a Tage";
+$string['numhours'] = "\$a Stunden";
 $string['numminutes'] = "\$a Minuten";
 $string['numviews'] = "\$a Einsichten";
 $string['numweeks'] = "\$a Wochen";
@@ -485,6 +490,10 @@ $string['updatinga'] = "Aktualisiere \$a";
 $string['updatingain'] = "Aktualisiere \$a->what in \$a->in";
 $string['upload'] = "Hochladen";
 $string['uploadafile'] = "Eine Datei hochladen";
+$string['uploadedfileto'] = "\$a->file hochgeladen nach \$a->directory";
+$string['uploadnofilefound'] = "Es wurde keine Datei gefunden - Sind Sie sicher, dass Sie eine zum hochladen ausgewählt haben?";
+$string['uploadproblem'] = "Ein unbekanntes Problem ist während dem Hochladen der Datei aufgetreten
+'\$a' (Vielleicht war diese zu groß?)) ";
 $string['uploadthisfile'] = "Diese Datei hochladen";
 $string['userdeleted'] = "Dieser Benutzer-Zugang wurde gelöscht";
 $string['userdescription'] = "Beschreibung";

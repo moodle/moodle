@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6 dev 3 (2002102101)
+      // forum.php - created with Moodle 1.0.8 dev (2002122301)
 
 
 $string['addanewdiscussion'] = "Ein neues Diskussion-Thema hinzufügen";
@@ -70,19 +70,6 @@ $string['openmode2'] = "Discussions and replies are allowed";
 $string['parentofthispost'] = "Verfasser dieses Beitrags";
 $string['postadded'] = "Ihr Eintrag wurde erfolgreich hinzugefügt. <P>Sie haben \$a zu bearbeiten, sofern Sie Änderungen machen möchten.";
 $string['postincontext'] = "Diesen Beitrag im Zusammenhang einsehen";
-$string['postingtip'] = "<B>Eintragstipps
-für Antworten
-<UL>
-<LI>lesen Sie Ihre aufmerksam durch
-<LI>achten sie auf Dinge, die Sie kommentieren
-</UL>
-
-Beim Schreiben
-<UL>
-<LI>verfassen Sie Ihren Beitrag kurz und themenbezogen
-<LI>drücken Sie sich klar aus
-<LI>überlegen Sie sich Fragen die Sie stellen können
-</UL>";
 $string['postmailinfo'] = "Hiermit erhalten Sie die Kopie einer Mitteilung, die auf der internet-Seite \$a eingetragen wurde.
 Um auf diese zu antworten, folgen Sie bitte diesem Link:";
 $string['postrating1'] = "Durchaus differrnziertes Wissen";
@@ -92,6 +79,7 @@ $string['postupdated'] = "Ihr Beitrag wurde aktualisiert";
 $string['processingpost'] = "Bearbeite Beitrag \$a";
 $string['rate'] = "Bewerte";
 $string['ratings'] = "Bewertung";
+$string['ratingssaved'] = "Bewertung gespeichert";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lesen Sie den Rest des Themas";
 $string['repliesmany'] = "\$a Antworten bis jetzt";
