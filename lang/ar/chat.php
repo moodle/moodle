@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2003121500)
+      // chat.php - created with Moodle 1.2 development (2004012800)
 
 
 $string['beep'] = 'äÛãÉ';
@@ -12,15 +12,17 @@ $string['configrefreshroom'] = 'ãÇåí ÇáãÏÉ ÇáÊí íÍÈÐ Çä ÊäÔØ ÎáÇáåÇ ÛÑÝÉ ÇáãÍÇÏË
 $string['configrefreshuserlist'] = 'ãÇåí ÇáãÏÉ ÇáÊí ÎáÇáåÇ íÊã ÊäÔíØ ÞÇÆãÉ ÇáãÓÊÎÏãíä (ÈÇáËæÇäí)';
 $string['currentchats'] = 'äÔØ ÌáÓÉ ÇáãÍÇÏËÉ';
 $string['currentusers'] = 'ÇáãÓÊÎÏãíä ÇáÍÇáííä';
+$string['deletesession'] = 'ÍÐÝ åÐå ÇáÌáÓÉ';
+$string['deletesessionsure'] = 'åá ÇäÊ ãÊÃßÏ ááÞíÇã ÈÍÐÝ åÐå ÇáÌáÓÉ';
 $string['donotusechattime'] = 'áÇ ÊÞã ÈäÔÑ ÇáãÍÇÏËÉ Ýí Ãí æÞÊ';
 $string['enterchat'] = 'ÃÖÛØ åäÇÁ ááÏÎæá Åáì ÇáãÍÇÏËÉ';
 $string['errornousers'] = 'áÇ íæÌÏ Ãí ãÓÊÎÏã';
 $string['helpchatting'] = 'ãÓÇÚÏÉ ááãÍÇÏËÉ';
 $string['idle'] = 'ÎÇãá';
-$string['messagebeepseveryone'] = '$a ÅÑÓÇá äÛãÉ ááÌãíÚ!';
-$string['messagebeepsyou'] = '$a ÃÑÓá äÛãÉ áß!';
-$string['messageenter'] = '$a ÏÎá ÛÑÝÉ ãÍÇÏËÉ';
-$string['messageexit'] = '$a ÎÑÌ ãä ÛÑÝÉ ãÍÇÏËÉ';
+$string['messagebeepseveryone'] = 'a$ ÅÑÓÇá äÛãÉ ááÌãíÚ!';
+$string['messagebeepsyou'] = 'a$ ÃÑÓá äÛãÉ áß!';
+$string['messageenter'] = 'a$ ÏÎá ÛÑÝÉ ãÍÇÏËÉ';
+$string['messageexit'] = 'a$ ÎÑÌ ãä ÛÑÝÉ ãÍÇÏËÉ';
 $string['messages'] = 'ÑÓÇÆá';
 $string['modulename'] = 'ãÍÇÏËÉ';
 $string['modulenameplural'] = 'ãÍÇÏËÇÊ';

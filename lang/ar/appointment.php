@@ -1,45 +1,45 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.2 development (2003102900)
+      // appointment.php - created with Moodle 1.2 development (2004012800)
 
 
-$string['allowresubmit'] = "ÇáÓãÇÍ ÈÅÚÇÏÉ ÇáÊÓáíã";
-$string['appointmentdetails'] = "ÊÝÇÕíá ÇáãæÚÏ";
-$string['appointmentlocation'] = "ãßÇä ÇáãæÚÏ";
-$string['appointmentname'] = "ÇÓã ÇáãæÚÏ";
-$string['date'] = "ÊÇÑíÎ ÇáãæÚÏ";
-$string['description'] = "æÕÝ";
-$string['early'] = "ãÈßÑ";
-$string['failedupdatefeedback'] = "ÇÎØÇÁ áÊÓáíã ÇáÊÕÍíÇÊ ÇáãÍÏËÉ ááãÓÊÎÏã \$a";
-$string['feedback'] = "ÊÕÍíÍ";
-$string['feedbackupdated'] = "ÊÓáíã ÇáÊÕÍíÇÊ ÇáãÍÏËå \$a ááäÇÓ";
-$string['late'] = "ãÊÃÎÑ";
-$string['maximumgrade'] = "ÇáÏÑÌÉ ÇáÞÕæì";
-$string['maximumsize'] = "ÇáÍÌã ÇáÇÞÕì";
-$string['modulename'] = "ãæÚÏ";
-$string['modulenameplural'] = "ãæÇÚíÏ";
-$string['newsubmissions'] = "ãæÇÚíÏ ãÓáãå";
-$string['notgradedyet'] = "áã ÊÚØì ÏÑÌÉ ÈÚÏ";
-$string['notsubmittedyet'] = "áã ÊÓáã ÈÚÏ";
-$string['overwritewarning'] = "ÊÍÐíÑ: ÇáÊÍãíá ËÇäíÇð ÓíÓÊÈÏá ÇáÊÓáíã ÇáÍÇáí";
-$string['saveallfeedback'] = "ÇÍÝÙ ßá ÊÕÍíÍÇÊí";
-$string['submissionfeedback'] = "ÊÓáíã ÊÕÍíÍ";
-$string['submissions'] = "ÊÕÍíÍÇÊ";
-$string['submitappointment'] = "ÇÑÓá ãæÚÏß ÈÅÓÊÎÏÇã åÐÇ ÇáäãæÐÌ";
-$string['submitted'] = "õÓáã";
-$string['timeend'] = "ÅäÊåÇÁ ÇáãæÚÏ";
-$string['timestart'] = "ÈÏÇíÉ ÇáãæÚÏ";
-$string['typeoffline'] = "äÔÇØ ÈÏæä ÅÊÕÇá";
-$string['typeuploadsingle'] = "ÊÍãíá ãáÝ æÇÍÏ";
-$string['uploadbadname'] = "áÇíãßä ÊÍãíá åÐÇ ÇáãáÝ áÅÍÊæì ÇÓãå Úáì ÍÑæÝ ÛíÑ ãÚÑæÝå";
-$string['uploadedfiles'] = "ÇáãáÝÇÊ ÇáãÍãáå";
-$string['uploaderror'] = "áÞÏ Êã ÎØÇÁ ÃËäÇÁ ÍÝÙ ÇáãáÝ Ýí ÇáÎÇÏã";
-$string['uploadfailnoupdate'] = "Êã ÊÍãíá ÇáãáÝ æáßä áã íÍÏË ÊÓáíãß";
-$string['uploadfiletoobig'] = "ÚÐÑÇð¡ ÍÌã ÇáãáÝ ÃßÈÑ ãä ÇáÍÌã ÇáãÓãæÍ Èå (ÇáÍÌã ÇáãÓãæÍ Èå åæ\$a bytes)";
-$string['uploadnofilefound'] = "áÇ íæÌÏ ÇáãáÝ - åá ÃäÊ ãÊÃßÏ ãä ÇÎÊíÇÑß ãáÝ áÊÍãíá¿";
-$string['uploadnotregistered'] = "'\$a' Êã ÊÍãíáå ÈäÍÇÍ æáßä áã íÓÌá!";
-$string['uploadsuccess'] = "Íãá  '\$a' ÈäÌÇÍ";
-$string['viewfeedback'] = "ÃÚÑÖ ÏÑÌÇÊ ÇáãæÚÏ æÇáÊÕÍíÍÇÊ";
-$string['viewsubmissions'] = "\$a ÚÑÖ ÇáãæÇÚíÏ ÇáãÓáãå";
-$string['yoursubmission'] = "ÊÓáíãß";
+$string['allowresubmit'] = 'ÇáÓãÇÍ ÈÅÚÇÏÉ ÇáÊÓáíã';
+$string['appointmentdetails'] = 'ÊÝÇÕíá ÇáãæÚÏ';
+$string['appointmentlocation'] = 'ãßÇä ÇáãæÚÏ';
+$string['appointmentname'] = 'ÇÓã ÇáãæÚÏ';
+$string['date'] = 'ÊÇÑíÎ ÇáãæÚÏ';
+$string['description'] = 'æÕÝ';
+$string['early'] = 'ãÈßÑ a$';
+$string['failedupdatefeedback'] = 'ÇÎØÇÁ áÊÓáíã ÇáÊÕÍíÇÊ ÇáãÍÏËÉ ááãÓÊÎÏã a$';
+$string['feedback'] = 'ÊÕÍíÍ';
+$string['feedbackupdated'] = 'ÊÓáíã ÇáÊÕÍíÇÊ ÇáãÍÏËå  a$ ááäÇÓ';
+$string['late'] = 'ãÊÃÎÑ  a$';
+$string['maximumgrade'] = 'ÇáÏÑÌÉ ÇáÞÕæì';
+$string['maximumsize'] = 'ÇáÍÌã ÇáÇÞÕì';
+$string['modulename'] = 'ãæÚÏ';
+$string['modulenameplural'] = 'ãæÇÚíÏ';
+$string['newsubmissions'] = 'ãæÇÚíÏ ãÓáãå';
+$string['notgradedyet'] = 'áã ÊÚØì ÏÑÌÉ ÈÚÏ';
+$string['notsubmittedyet'] = 'áã ÊÓáã ÈÚÏ';
+$string['overwritewarning'] = 'ÊÍÐíÑ: ÇáÊÍãíá ËÇäíÇð ÓíÓÊÈÏá ÇáÊÓáíã ÇáÍÇáí';
+$string['saveallfeedback'] = 'ÇÍÝÙ ßá ÊÕÍíÍÇÊí';
+$string['submissionfeedback'] = 'ÊÓáíã ÊÕÍíÍ';
+$string['submissions'] = 'ÊÕÍíÍÇÊ';
+$string['submitappointment'] = 'ÇÑÓá ãæÚÏß ÈÅÓÊÎÏÇã åÐÇ ÇáäãæÐÌ';
+$string['submitted'] = 'õÓáã';
+$string['timeend'] = 'ÅäÊåÇÁ ÇáãæÚÏ';
+$string['timestart'] = 'ÈÏÇíÉ ÇáãæÚÏ';
+$string['typeoffline'] = 'äÔÇØ ÈÏæä ÅÊÕÇá';
+$string['typeuploadsingle'] = 'ÊÍãíá ãáÝ æÇÍÏ';
+$string['uploadbadname'] = 'áÇíãßä ÊÍãíá åÐÇ ÇáãáÝ áÅÍÊæì ÇÓãå Úáì ÍÑæÝ ÛíÑ ãÚÑæÝå';
+$string['uploadedfiles'] = 'ÇáãáÝÇÊ ÇáãÍãáå';
+$string['uploaderror'] = 'áÞÏ Êã ÎØÇÁ ÃËäÇÁ ÍÝÙ ÇáãáÝ Ýí ÇáÎÇÏã';
+$string['uploadfailnoupdate'] = 'Êã ÊÍãíá ÇáãáÝ æáßä áã íÍÏË ÊÓáíãß';
+$string['uploadfiletoobig'] = 'ÚÐÑÇð¡ ÍÌã ÇáãáÝ ÇßÈÑ ãä ÇáÍÌã ÇáãÓãæÍ Èå (ÇáÍÌã ÇáãÓãæÍ Èå åæ bytes $a  )';
+$string['uploadnofilefound'] = 'áÇ íæÌÏ ÇáãáÝ - åá ÃäÊ ãÊÃßÏ ãä ÇÎÊíÇÑß ãáÝ áÊÍãíá¿';
+$string['uploadnotregistered'] = '\'a$\' Êã ÊÍãíáå ÈäÍÇÍ æáßä áã íÓÌá!';
+$string['uploadsuccess'] = 'Íãá  \'a$\' ÈäÌÇÍ';
+$string['viewfeedback'] = 'ÃÚÑÖ ÏÑÌÇÊ ÇáãæÚÏ æÇáÊÕÍíÍÇÊ';
+$string['viewsubmissions'] = 'a$ ÚÑÖ ÇáãæÇÚíÏ ÇáãÓáãå';
+$string['yoursubmission'] = 'ÊÓáíãß';
 
 ?>

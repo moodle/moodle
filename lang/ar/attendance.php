@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.2 development (2004011700)
+
+
+$string['absentlong'] = 'ÛÇÆÈ';
+$string['absentshort'] = 'Û';
+$string['addingmultiple'] = 'ÅÖÇÝÉ ÞæÇÆã ÍÖæÑ ãÊÚÏÏÉ';
+$string['addmultiple'] = 'ÃÖÝ ÞæÇÆã ÍÖæÑ ãÊÚÏÏÉ';
+$string['allmodulename'] = 'ßá ÞæÇÆã ÇáÍÖæÑ';
+$string['auto'] = 'Âáí';
+$string['autoattend'] = 'ÊÏæíä ÇáÍÖæÑ ÂáíÇ ÈäÇÁ Úáì ÓÌáÇÊ äÔÇØ ÇáãÓÊÎÏã';
+$string['autoattendmulti'] = 'ÊÏæíä ÌãíÚ ÞæÇÆã ÇáÍÖæÑ ÂáíÇ ÈäÇÁ Úáì ÓÌáÇÊ äÔÇØ ÇáãÓÊÎÏã';
+$string['autoattendshort'] = 'ÂáíÇð ãä ÓÌáÇÊ ÇáÃÏÇÁ';
+$string['choosedays'] = 'ÃíÇã ßá ÃÓÈæÚ áÊÓÌíá ÇáÍÖæÑ';
+$string['dayofroll'] = 'ÊÇÑíÎ áÊÓÌá ÍÖæÑ áÜ';
+$string['defaultautoattend'] = 'åá íßæä ÊÏæä ÇáÍÖæÑ Úáì ÃÓÇÓ ÓÌáÇÊ äÔÇØ ÇáãÓÊÎÏã ÇÝÊÑÇÖíÇ';
+$string['defaultdynamicsection'] = 'åá ÊæÖÚ ÞæÇÆã ÇáÍÖæÑ Ýí ÇáÇÓÈæÚ ÇáÕÍíÍ ÇÝÊÑÇÖíÇ';
+$string['defaultgrade'] = 'åá ÊÌÚá ÞæÇÆã ÇáÍÖæÑ ÈÏÑÇÌÇÊ ÇÝÊÑÇÖíÇ';
+$string['defaulthoursinclass'] = 'ßã ÚÏÏ ÇáÓÇÚÇÊ ÇáÊì íÌÈ Çä Êßæä áßá ÞÇÆãÉ ÍÖæÑ ÇÝÊÑÇÖíå';
+$string['defaultmaxgrade'] = 'ãÇåí ÞíãÉ ÇáÏÑÌÉ ÇáÞÕæì ÇáÇÝÊÑÇÖíåÇáÊì íÌÈ Çä ÊÑÕÏ ááÍÖæÑ ÇáßÇãá';
+$string['defaultstudentstatus'] = 'ÇáÍÇáÉ ÇáÇÝÊÑÇÖíå áÍÖæÑ ÇáØÇáÈ Ýí ÞæÇÆã ÇáÍÖæÑ ÇáÌÏíÏÉ';
+$string['downloadexcelfull'] = 'ÊäÒíá ÌÏæá ÇßÓá ßÇãá';
+$string['downloadexceltotals'] = 'ÊäÒíá ÌÏæá ÇßÓá ãáÎÕ';
+$string['downloadtextfull'] = 'ÊäÒíá ÊÞÑíÑ ßÇãá ÈÕíÛÉ äÕíå';
+$string['downloadtexttotals'] = 'ÊäÒíá ÊÞÑíÑ ãáÎÕ ÈÕíÛÉ äÕíå';
+$string['dynamicsection'] = 'ÈäÇÁð Úáì åÐÇ ÇáÊÇÑíÎ ÍÏÏ ÇÓÈæÚ ÇáÍÖæÑ';
+$string['dynamicsectionmulti'] = 'ÖÚ ÞæÇÆã ÇáÍÖæÑ Ýí ÇÞÓÇãåÇ ÇáÇÓÈæÚíÉ ÂáíÇð';
+$string['dynsectionshort'] = 'ÍÑß åÐÇ ÇáÞÓã ÏíäãßíÇð';
+$string['endbeforestart'] = 'ÊÇÑíÎ ÇáÇäÊåÇÁ ÞÈá ÊÇÑíÎ ÇáÈÏÁ';
+$string['endmulti'] = 'ÊÇÑíÎ ÂÎÑ ÞÇÆãÉ ÍÖæÑ';
+$string['for'] = 'áÜ';
+$string['friday'] = 'ÇáÌãÚÉ';
+$string['gradeshort'] = 'ÈÏÑÌÉ';
+$string['gradevalue'] = 'ÇÌÚá ÞÇÆãÉ ÇáÍÖæÑ åÐå ÈÏÑÌÇÊ';
+$string['gradevaluemulti'] = 'ÇÌÚá ÞæÇÆã ÇáÍÖæÑ åÐå ÈÏÑÌÇÊ';
+$string['hoursinclass'] = 'ÚÏÏ ÇáÓÇÚÇÊ ááÝÊÑÉ ÏÑÇÓíÉ';
+$string['hoursineachclass'] = 'ÚÏÏ ÇáÓÇÚÇÊ áßá ÝÊÑÉ ÏÑÇÓíÉ';
+$string['hoursinfullreport'] = 'ÇáÍÏ ÇáÇÞÕì áÚÏÏ ÓÇÚÇÊ ÇáÍÖæÑ ÇáÊí íÌÈ ÚÑÖåÇ Ýí ÕÝÍÉ æÇÍÏ Ãæ ÊÞÑíÑ';
+$string['maxgradeshort'] = 'ÇáÏÑÌÉ ÇáÞÕæì';
+$string['maxgradevalue'] = 'ÞíãÉ ÇáÏÑÌÉ ÇáÞÕæì ááÍÖæÑ ÇáßÇãá';
+$string['modulename'] = 'ÍÖæÑ';
+$string['modulenameplural'] = 'ÞæÇÆã ÍÖæÑ';
+$string['monday'] = 'ÇáÇËäíä';
+$string['norolls'] = 'áÇ ÊæÌÏ ÞæÇÆã ÍÖæÑ áåÐå ÇáãäåÌ ÇáÏÑÇÓí';
+$string['notes'] = 'ãÚáæãÇÊ ÇÓÊËäÇÆíå';
+$string['notesfor'] = 'ãÚáæãÇÊ ÇÓÊËäÇÆíå áÜ';
+$string['noviews'] = 'ÚÐÑÇð¡ áÇ ÊæÌÏ ãÚáæãÇÊ Úä ÍÓÇÈß åäÇÁ';
+$string['of'] = 'ãä';
+$string['pages'] = 'ÕÝÍÇÊ';
+$string['presentlong'] = 'ÍÇÖÑ';
+$string['presentshort'] = 'Í';
+$string['saturday'] = 'ÇáÓÈÊ';
+$string['startafterend'] = 'ÊÃÑíÎ ÇáÈÏÇÁ åæ ÈÚÏ ÅäÊåÇÁ ÇáãäåÌ ÇáÏÑÇÓí';
+$string['startmulti'] = 'ÊÇÑíÎ áÃæá ÞÇÆãÉ ÍÖæÑ';
+$string['sunday'] = 'ÇáÃÍÏ';
+$string['takeroll'] = 'ÓÌá ÇáÍÖæÑ Ýí åÐÇ Çáíæã?';
+$string['tardiesperabsence'] = 'ßã ÊÃÎíÑ íãßä ÍÓÇÈå ßÛíÇÈ æÇÍÏ';
+$string['tardylong'] = 'ãÊÃÎÑ';
+$string['tardyshort'] = 'ã';
+$string['thursday'] = 'ÇáÎãíÓ';
+$string['tuesday'] = 'ÇáËáÇËÇÁ';
+$string['viewall'] = 'ÚÑÖ ÌãíÚ ÞæÇÆã ÇáÍÖæÑ';
+$string['viewmulti'] = 'ÚÑÖ ÇáÊÞÑíÑ Ýí ÚÏÉ ÕÝÍÇÊ';
+$string['viewone'] = 'ÚÑÖ ÌãíÚ ÕÝÍÇÊ ÇáÊÞÑíÑ';
+$string['viewsection'] = 'ÚÑÖ ÌãíÚ ÞæÇÆã ÍÖæÑ åÐÇ ÇáÌÒÁ';
+$string['viewtable'] = 'ÚÑÖ ÇáÊÞÇÑíÑ Ýí ÌÏæá æÇÍÏ';
+$string['viewweek'] = 'ÚÑÖ ÌãíÚ ÞæÇÆã ÇáÍÖæÑ ãä ÊÞæÓã ÇáÇÓÈæÚ';
+$string['wednesday'] = 'ÇáÃÑÈÚÇÁ';
+$string['weekmodulename'] = 'ÌãíÚ ÞæÇÆã ÍÖæÑ ÇáÇÓÈæÚ ÇáãÇÖí';
+
+?>

@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.2 development (2004012800)
+
+
+$string['about'] = 'Íæá åÐÇ ÇáãÍÑÑ';
+$string['absbottom'] = 'ÃÓÝá ÇáäÕ';
+$string['absmiddle'] = 'æÓØ ÇáÓØÑ';
+$string['address'] = 'ÚäæÇä';
+$string['alignment'] = 'ãÍÇÐÇÉ';
+$string['alternatetext'] = 'ÇáäÕ ÇáÈÏíá';
+$string['baseline'] = 'ÇÓÇÓ';
+$string['bold'] = 'ÏÇßä';
+$string['borderthickness'] = 'õÓãß ÇáÇØÇÑ ';
+$string['bottom'] = 'ÓÝáí';
+$string['browse'] = 'ÇÓÊÚÑÖ';
+$string['cancel'] = 'ÅáÛÇÁ';
+$string['cellpadding'] = 'äØÇÞ ÇáÎáíÉ';
+$string['cellspacing'] = 'ÇáãÓÇÝÉ Èíä ÇáÎáÇíÇ';
+$string['choosechar'] = 'ÃÎÊÑ ÍÑÝ';
+$string['chooseicon'] = 'ÃÎÊÑ ÃíÞæäå ááÃÏÑÇÌ';
+$string['close'] = 'ãÛáÞ';
+$string['cols'] = 'ÃÚãÏÉ';
+$string['copy'] = 'ÃäÓÎ ÇáãÎÊÇÑ';
+$string['createlink'] = 'ÃÏÑÇÌ ÑÇÈØ æíÈ';
+$string['cut'] = 'ÞÕ ÇáãÎÊÇÑ';
+$string['forecolor'] = 'áæä ÇáÎØ';
+$string['heading'] = 'ÚäæÇä';
+$string['hilitecolor'] = 'áæä ÇáÎáÝíÉ';
+$string['horizontal'] = 'ÇÝÞí';
+$string['horizontalrule'] = 'ÎØ ÊÓØíÑ ÃÝÞí';
+$string['htmlmode'] = 'ÊÈÏíá ãÕÏÑ HTML';
+$string['imageurl'] = 'ÇáÇÑÊÈÇØ ÇáÊÔÚÈí ááÕæÑÉ';
+$string['indent'] = 'ÒíÇÏÉ ÇáãÓÇÝÉ ÇáÈÇÏÆÉ';
+$string['insertchar'] = 'ÅÏÑÇÌ ÃÍÑÝ ÎÇÕÉ';
+$string['insertimage'] = 'ÅÏÑÇÌ ÕæÑÉ';
+$string['insertsmile'] = 'ÅÏÑÇÌ ÃæÌå';
+$string['inserttable'] = 'ÅÏÑÇÌ ÌÏæá';
+$string['italic'] = 'ãÇÆá';
+$string['justifycenter'] = 'ÖÈØ ÇáÊæÓíØ';
+$string['justifyfull'] = 'ÖÈØ ßÇãá';
+$string['justifyleft'] = 'ÖÈØ ÇáíÓÇÑ';
+$string['justifyright'] = 'ÖÈØ Çáíãíä';
+$string['layout'] = 'ÊÎØíØ';
+$string['left'] = 'íÓÇÑ';
+$string['middle'] = 'æÓØ';
+$string['normal'] = 'ÚÇÏí';
+$string['notset'] = 'áã íÚííä';
+$string['ok'] = 'OK';
+$string['orderedlist'] = 'ÞÇÆãÉ ãäØãÉ';
+$string['outdent'] = 'ÅäÞÇÕ ÇáãÓÇÝÉ ÇáÈÇÏÆÉ';
+$string['paste'] = 'ÇäÓÎ ãä ÇáÍÇÝÙÉ';
+$string['path'] = 'ãÓÇÑ';
+$string['percent'] = 'äÓÈå';
+$string['pixels'] = 'ÈßÓá';
+$string['popupeditor'] = 'ÊßÈíÑ ÇáãÍÑÑ';
+$string['preformatted'] = 'ãäÓÞ ÓÇÈÞÇð';
+$string['preview'] = 'ãÚÇíäÉ';
+$string['redo'] = 'ÅÚÇÏÉ ÇÎÑ Úãá';
+$string['right'] = 'íãíä';
+$string['rows'] = 'ÕÝæÝ';
+$string['showhelp'] = 'ÇáãÓÇÚÏÉ áÓÊÎÏÇã ÇáãÍÑÑ';
+$string['spacing'] = 'ÇáãÓÇÝÉ Èíä ÇáÇÓØÑ';
+$string['strikethrough'] = 'íÊæÓøóØå ÎØ';
+$string['subscript'] = 'ÇÍÑÝ ÓÝáíå';
+$string['superscript'] = 'ÇÍÑÝ ÚáæíÉ';
+$string['textindicator'] = 'ÇáÇÓáæÈ ÇáÍÇáí';
+$string['textmode'] = 'ÇäÊ Ýí æÖÚ ÇáäÕ.  ÇÓÊÎÏã ÃÒÑÇÑ[<>] áÊÊäÞá Åáì æÖÚ ÓÊÍÕá Úáì ãÇÊÔÇåÏ.';
+$string['texttop'] = 'ÃÚáì ÇáäÕ';
+$string['top'] = 'Úáæí';
+$string['underline'] = 'ÊÓØíÑ';
+$string['undo'] = 'ÅáÛí ÇÎÑ Úãá';
+$string['unorderedlist'] = 'ÞÇÆãÉ äÞØíÉ';
+$string['vertical'] = 'ÚãæÏíø/ ÑÃÓí';
+$string['width'] = 'ÚÑÖ';
+
+?>
