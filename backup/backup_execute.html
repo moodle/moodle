@@ -104,13 +104,6 @@
     //Start the main ul
     echo "<ul>";
 
-    //Delete old_entries from backup tables
-    echo "<li>Deteting old data";
-    $status = backup_delete_old_data();
-    if (!$status) {
-        error ("An error has ocurred");
-    }
-
     //Check for temp and backup and backup_unique_code directory
     //Create them as needed
     echo "<li>Creating temporary structures";
@@ -118,6 +111,13 @@
     //Empty dir
     if ($status) {
         $status = clear_backup_dir($backup_unique_code);
+    }
+
+    //Delete old_entries from backup tables
+    echo "<li>Deteting old data";
+    $status = backup_delete_old_data();
+    if (!$status) {
+        error ("An error has ocurred");
     }
 
     //Create the moodle.xml file
