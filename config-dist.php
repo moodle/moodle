@@ -172,7 +172,10 @@ $CFG->admin = 'admin';
 // locally-installed copy of Aspell (0.50.1 or newer)
 //      $CFG->aspellpath = '/usr/bin/aspell'; // *nix
 //      $CFG->aspellpath = '"c:\path\to\aspell\aspell.exe"'; // Windows
-
+//
+// Seconds for files to remain in caches. Decrease this if you are worried
+// about students being served outdated versions of uploaded files.
+//      $CFG->filelifetime = 86400;
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
