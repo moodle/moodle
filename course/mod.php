@@ -84,6 +84,13 @@
                 if (! $sectionid = add_mod_to_section($mod) ) {
                     error("Could not add the new course module to that section");
                 }
+                //We get the section's visible field status
+                $visible = get_field("course_sections","visible","id",$sectionid);
+
+                if (! set_field("course_modules", "visible", $visible, "id", $mod->coursemodule)) {
+                    error("Could not update the course module with the correct visibility");
+                }   
+
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct section");
                 }   
