@@ -46,7 +46,7 @@
         }
 
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
-        print_recent_selector_form($course, $user, $date, $modname, $modid, $modaction);
+        print_recent_selector_form($course, $user, $date, $modname, $modid, $modaction, $selectedgroup, $sortby);
 
     } else {
 
@@ -68,65 +68,163 @@
 
     }
 
-    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+   $tmpmodid = $modid;
 
-    $sections = get_all_sections($course->id);
+    switch ($tmpmodid) {
+      case "activity/Assignments" : $filter = "assignment"; break;
+      case "activity/Chats" : $filter = "chat"; break;
+      case "activity/Forums" : $filter = "forum"; break;
+      case "activity/Quizzes" : $filter = "quiz"; break;
+      case "activity/Workshops" : $filter = "workshop"; break;
+      default   : $filter = "";
+    }
 
-    for ($i=0; $i<=$course->numsections; $i++) {
+    if (!empty($filter)) {
+        $activityfilter = "AND m.name = '$filter'";
+    } else {
+        $activityfilter = "";
+    }
 
-        if (isset($sections[$i]) && $sections[$i]->visible) { 
+    $activities = array();
+    $sections = array();
 
-            $section = $sections[$i];
-        
-            if ($section->sequence) {
-                echo "<hr>";
-                echo "<h2>";
-                switch ($course->format) {
-                    case "weeks": print_string("week"); break;
-                    case "topics": print_string("topic"); break;
-                    default: print_string("section"); break;
-                }
-                echo " $i</h2>";
+    $index = 0;
 
-                echo "<ul>";
+    if (is_numeric($modid)) { // you chose a single activity
 
-                $sectionmods = explode(",", $section->sequence);
+        $sections[0]->sequence = "$modid";
 
-                foreach ($sectionmods as $sectionmod) {
-                    if (empty($mods[$sectionmod])) {
-                        continue;
+    } else { // you chose a group of activities
+
+        $sections = get_records_sql("SELECT cs.id, cs.section, cs.sequence
+                                       FROM {$CFG->prefix}course_sections cs
+                                       WHERE course = '$course->id'
+                                        AND cs.visible = '1'
+                                        AND sequence != '' 
+                                      ORDER by section");
+    }
+
+    if (!empty($sections)) {
+
+        echo "<hr>";
+
+        foreach ($sections as $section) {
+            $sectionmods = explode(",", $section->sequence);
+
+            foreach ($sectionmods as $sectionmod) {
+                $coursemod = get_record_sql("SELECT m.id, m.name, cm.groupmode
+                                               FROM {$CFG->prefix}course_modules cm,
+                                                    {$CFG->prefix}modules m
+                                              WHERE course = '$course->id'
+                                                AND m.id = cm.module $activityfilter
+                                                AND cm.id = '$sectionmod'");
+
+                $groupmode = groupmode($course, $coursemod);           
+                switch ($groupmode) {
+                    case SEPARATEGROUPS :  $groupid = mygroupid($course->id); break;
+                    case VISIBLEGROUPS  :  
+                                           if ($selectedgroup == "allgroups") {
+                                               $groupid == "";
+                                           } else {
+                                               $groupid = $selectedgroup;
+                                           } 
+                                           break;
+                    case NOGROUPS       :
+                    default             :  $groupid = "";
+                } 
+
+                $libfile = "$CFG->dirroot/mod/$coursemod->name/lib.php";
+            
+                if (file_exists($libfile)) {
+                    require_once($libfile);
+                    $get_recent_mod_activity = $coursemod->name."_get_recent_mod_activity";
+
+                    if (function_exists($get_recent_mod_activity)) {
+                        $get_recent_mod_activity($activities, $index, $date, $course->id, $sectionmod, $user, $groupid);
                     }
-                    $mod = $mods[$sectionmod];
-
-                    $instance = get_record("$mod->modname", "id", "$mod->instance");
-                    $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
-
-                    if (file_exists($libfile)) {
-                        require_once($libfile);
-                        $print_recent_instance_activity = $mod->modname."_print_recent_instance_activity";
-
-                        // fix modid if a section (or week) is selected, may want to enhance to get all mods from section (or week)
-                        if (!is_numeric($modid)) 
-                            $modid = "";
-
-                        if (function_exists($print_recent_instance_activity) && (($mod->id == $modid) || (empty($modid)))) {
-                            $image = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\" ".
-                                     "height=16 width=16 alt=\"$mod->modfullname\">";
-                            echo "<h4>$image $mod->modfullname: ".
-                                 "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                 "$instance->name</a></h4>";
-                            echo "<ul>";
-                            $print_recent_instance_activity($instance, $date, $user);
-                            echo "</ul>";
-                        }
-                    }
                 }
-
-                echo "</ul>";
             }
         }
     }
 
+    $detail = true;
+
+    switch ($sortby) {
+        case "datedesc" : usort($activities, "compare_activities_by_time_desc"); break;
+        case "dateasc"  : usort($activities, "compare_activities_by_time_asc"); break;
+        case "default"  : 
+        default         : $detail = false; $sortby = "default";
+         
+    }
+
+    if (!empty($activities)) {
+
+        echo "<ul>";
+        $newsection = true;
+        $lastsection = "";
+        $newinstance = true;
+        $lastinstance = "";
+
+        switch ($course->format) {
+            case "weeks": $sectiontitle = get_string("week"); break;
+            case "topics": $sectiontitle = get_string("topic"); break;
+            default: $sectiontitle = get_string("section"); break;
+        }
+
+        echo "<hr>";
+        foreach ($activities as $activity) {
+             
+            if ($sortby == "default") {
+                if ($lastsection != $activity->section) {
+                    $lastsection = $activity->section;
+                    $newsection = true;
+                }
+                if ($newsection) {
+//                    echo "<h2>$sectiontitle: $activity->section</h2>";
+                    $newsection = false;
+                }
+
+                if ($lastinstance != $activity->instance) {
+                    $lastinstance = $activity->instance;
+                    $newinstance = true;
+                }
+                if ($newinstance) {
+                    $image = "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
+                             "height=16 width=16 alt=\"$activity->type\">";
+                    echo "<h4>$image " . $activity->name . "</h4>";
+  
+                    $newinstance = false;
+                } 
+
+            }
+
+            $print_recent_mod_activity = $activity->type."_print_recent_mod_activity";
+
+            if (function_exists($print_recent_mod_activity)) {
+                echo "<ul>";
+                $print_recent_mod_activity($activity, $course->id, $detail);
+                echo "</ul>";
+            }
+        }
+        echo "</ul>";
+    } else {
+        echo "<h4><center>" . get_string("norecentactivity") . "</center></h2>";
+    }
+
+// fix modid for selection form
+    $modid =$tmpmodid;
+
     print_footer($course);
 
+function compare_activities_by_time_desc($a, $b) {
+    if ($a->timestamp == $b->timestamp)
+        return 0;
+    return ($a->timestamp > $b->timestamp) ? -1 : 1;
+}
+
+function compare_activities_by_time_asc($a, $b) {
+    if ($a->timestamp == $b->timestamp)
+        return 0;
+    return ($a->timestamp < $b->timestamp) ? -1 : 1;
+}
 ?>

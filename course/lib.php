@@ -20,31 +20,30 @@ define("FRONTPAGENEWS",           0);
 define("FRONTPAGECOURSELIST",     1);
 define("FRONTPAGECATEGORYNAMES",  2);
 
-function print_recent_selector_form($course, $selecteduser=0, $selecteddate="today",
-                                    $mod="", $modid=0, $modaction="") {
+function print_recent_selector_form($course, $selecteduser=0, $selecteddate="lastlogin",
+                                    $mod="", $modid="activity/All", $modaction="", $selectedgroup="", $selectedsort="default") {
 
     global $USER, $CFG;
-
 
     $isteacher = isteacher($course->id);
     // Get all the possible users
     $users = array();
-
+    
     if ($course->category) {
         $courseusers = get_course_users($course->id);
     } else {
         $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
-    }
-
+    } 
+        
     if ($courseusers) {
         foreach ($courseusers as $courseuser) {
             $users[$courseuser->id] = fullname($courseuser, $isteacher);
         }
-    }
+    }       
     if ($guest = get_guest()) {
         $users[$guest->id] = fullname($guest);
     }
-
+        
     if (isadmin()) {
         if ($ccc = get_records("course", "", "", "fullname")) {
             foreach ($ccc as $cc) {
@@ -52,26 +51,37 @@ function print_recent_selector_form($course, $selecteduser=0, $selecteddate="tod
                     $courses["$cc->id"] = "$cc->fullname";
                 } else {
                     $courses["$cc->id"] = " $cc->fullname (Site)";
-                }
+                } 
             }
-        }
+        }       
         asort($courses);
     }
 
     $activities = array();
-    $selectedactivity = "";
+
+    $selectedactivity = $modid;
 
     if ($modinfo = unserialize($course->modinfo)) {
         $section = 0;
-        if ($course->format == 'weeks') {  // Bodgy
+        if ($course->format == 'weeks') {  // Body
             $strsection = get_string("week");
         } else {
             $strsection = get_string("topic");
         }
+
+        $activities["activity/All"] = "All activities";
+        $activities["activity/Assignments"] =  "All assignments";
+        $activities["activity/Chats"] = "All chats";
+        $activities["activity/Forums"] = "All forums";
+        $activities["activity/Quizzes"] = "All quizzes";
+        $activities["activity/Workshops"] = "All workshops";
+
+        $activities["section/individual"] = "------------- Individual Activities --------------";
+
         foreach ($modinfo as $mod) {
             if ($mod->mod == "label") {
                 continue;
-            }
+            }   
             if ($mod->section > 0 and $section <> $mod->section) {
                 $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
             }
@@ -105,8 +115,9 @@ function print_recent_selector_form($course, $selecteduser=0, $selecteddate="tod
     // What day is it now for the user, and when is midnight that day (in GMT).
     $timemidnight = $today = usergetmidnight($timenow);
 
-    // Put today up the top of the list
-    $dates = array("$timemidnight" => get_string("today").", ".userdate($timenow, $strftimedate) );
+    $dates = array();
+    $dates["$USER->lastlogin"] = get_string("lastlogin").", ".userdate($USER->lastlogin, $strftimedate);
+    $dates["$timemidnight"] = get_string("today").", ".userdate($timenow, $strftimedate);
 
     if (!$course->startdate or ($course->startdate > $timenow)) {
         $course->startdate = $course->timecreated;
@@ -120,24 +131,67 @@ function print_recent_selector_form($course, $selecteduser=0, $selecteddate="tod
         $numdates++;
     }
 
-    if ($selecteddate == "today") {
-        $selecteddate = $today;
+    if ($selecteddate == "lastlogin") {
+        $selecteddate = $USER->lastlogin;
     }
 
-    echo '<center>';
     echo '<form action="recent.php" method="get">';
     echo '<input type=hidden name=chooserecent value="1">';
+    echo "<center>";
+    echo "<table>";
+
     if (isadmin()) {
+        echo "<tr><td><b>" . get_string("courses") . "</b></td><td>";
         choose_from_menu ($courses, "id", $course->id, "");
+        echo "</td></tr>";
     } else {
         echo "<input type=hidden name=id value=\"$course->id\">";
     }
+
+    $sortfields = array("default" => "By course order","dateasc" => "Date - Most recent last", "datedesc" => "Date - Most recent first");
+    
+    echo "<tr><td><b>" . get_string("participants") . "</b></td><td>";
     choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
+    echo "</td>";
+
+    echo "<td align='right'><b>" . get_string("since") . "</b></td><td>";
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
-    choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
+    echo "</td></tr>";
+    
+    echo "<tr><td><b>" . get_string("activities") . "</b></td><td>";
+    choose_from_menu ($activities, "modid", $selectedactivity, "");
+    echo "</td>";
+    
+    echo "<td align='right'><b>" . get_string("sortby") . "</b></td><td>";
+    choose_from_menu ($sortfields, "sortby", $selectedsort, "");
+    echo "</td></tr>";
+
+    echo '<tr>';
+
+    $groupmode =  groupmode($course);
+
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            echo '<td><b>';
+            if ($groupmode == VISIBLEGROUPS) {
+                print_string('groupsvisible');
+            } else {
+                print_string('groupsseparate');
+            }
+            echo ':</b></td><td>';
+            choose_from_menu($groups, "selectedgroup", $selectedgroup, get_string("allgroups"), "", "");
+            echo '</td>';
+        }
+    }
+
+
+    echo "<td colspan='2' align='right'>";
     echo "<input type=submit value=\"".get_string("showrecent")."\">";
-    echo "</form>";
+    echo "</td></tr>";
+
+    echo "</table>";
     echo "</center>";
+    echo "</form>";
 }
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
