@@ -602,34 +602,29 @@ TD.cal_event_description {
 }
 
 .cal_popup_fg {
-	background-color: <?php echo $THEME->cellcontent?>;
-	font-size: 75%;
-	font-family: Courier;
-	padding: 0px;
-	margin: 0px;
+    background-color: <?php echo $THEME->cellcontent?>;
 }
 
 .cal_popup_bg {
-	border-top: 2px #ffcc66 solid;
-	border-left: 2px #ffcc66 solid;
-	border-right: 2px #663300 solid;
-    border-bottom: 2px #663300 solid;
-	background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
-	padding: 0px;
-	margin: 0px;
+    border-top: 2px <?php echo $THEME->cellcontent2 ?> solid;
+    border-left: 2px <?php echo $THEME->cellcontent2 ?> solid;
+    border-right: 2px <?php echo $THEME->cellheading2 ?> solid;
+    border-bottom: 2px <?php echo $THEME->cellheading2 ?> solid;
+    background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
+    padding: 0px;
+    margin: 0px;
 }
 
 .cal_popup_caption {
-	font-size: 75%;
-	font-weight: bold;
-	font-family: sans-serif;
-	margin: 5px;
+    font-size: 75%;
+    font-weight: bold;
+    font-family: sans-serif;
 }
 
 .cal_popup_close {
 	font-size: 75%;
 	font-weight: bold;
-	font-family: Tahoma, Helvetica, sans-serif;
+    font-family: sans-serif;
 	margin-right: 5px;
 }
 

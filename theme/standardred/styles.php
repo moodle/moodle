@@ -662,10 +662,10 @@ TD.cal_event_description {
 }
 
 .cal_popup_bg {
-    border-top: 2px #ffcc66 solid;
-    border-left: 2px #ffcc66 solid;
-    border-right: 2px #663300 solid;
-    border-bottom: 2px #663300 solid;
+    border-top: 2px <?php echo $THEME->cellcontent2 ?> solid;
+    border-left: 2px <?php echo $THEME->cellcontent2 ?> solid;
+    border-right: 2px <?php echo $THEME->cellheading2 ?> solid;
+    border-bottom: 2px <?php echo $THEME->cellheading2 ?> solid;
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
     padding: 0px;
     margin: 0px;

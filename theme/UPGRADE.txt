@@ -171,3 +171,90 @@ a.autolink:hover {}
   subscribe link there, eg front page news, social forum  */
 
 .headingblockcontent {}
+
+
+
+================================
+Changes to 1.3 since 1.2
+--------------------------------
+
+
+/* Many styles for calendar! */
+
+TABLE.calendarmini { }
+
+TABLE.calendarmonth { }
+
+TABLE.calendarmini TBODY TD { }
+
+TABLE.calendarmonth TBODY TD { }
+
+.cal_event_global { }
+
+.cal_event_course { }
+
+.cal_event_group { }
+
+.cal_event_user { }
+
+.cal_duration_global { }
+
+.cal_duration_course { }
+
+.cal_duration_user { }
+
+.cal_duration_group { }
+
+.cal_weekend { }
+
+.cal_today { }
+
+TABLE.calendarmonth TBODY TD TABLE { }
+
+TABLE.calendarmonth TBODY TD TABLE TD { }
+
+TABLE.calendarmonth TBODY TD DIV { }
+
+TABLE.calendarmini THEAD TD { }
+
+TABLE.calendarmonth THEAD TD { }
+
+.sideblockmain .cal_event { }
+
+.sideblockmain .cal_event_date { }
+
+.mycalendar { }
+
+.mycalendar .cal_event { }
+
+.mycalendar .cal_event_date { }
+
+.mycalendar TABLE.cal_filters { }
+
+.mycalendar .cal_filters THEAD TD { }
+
+.mycalendar .cal_event_table { }
+
+.mycalendar .cal_event_table THEAD { }
+
+.sideblockmain HR { }
+
+.mycalendar HR { }
+
+.calendarreferer { }
+
+TD.cal_event_description { }
+
+.cal_popup_fg { }
+
+.cal_popup_bg { }
+
+.cal_popup_caption { }
+
+.cal_popup_close { }
+
+.sideblock .cal_controls { }
+
+A IMG { }
+
+TABLE.formtable TD { }
