@@ -1,3 +1,168 @@
+2002-10-29 Tuesday 23:33  moodler
+
+	* lib/setup.php: 
+	
+	On second thoughts, don't apply locale to numbers because it may
+	affect some calculations.   Just strings and times.
+
+2002-10-29 Tuesday 23:25  moodler
+
+	* lib/setup.php: 
+	
+	Use the locale to set everything (eg string conversions,
+	comparisons, money numbers etc instead of just the time)
+
+2002-10-29 Tuesday 23:02  moodler
+
+	* doc/: background.html, credits.html, developer.html,
+	features.html, future.html, install.html, intro.html, licence.html,
+	release.html, teacher.html, upgrade.html: 
+	
+	Fixed links back to top
+
+2002-10-29 Tuesday 22:57  moodler
+
+	* lang/en/moodle.php: 
+	
+	added documentation
+
+2002-10-29 Tuesday 22:48  moodler
+
+	* doc/: background.html, contents.html, contents.php, index.php,
+	install.html, release.html, top.php, view.php: 
+	
+	Improvements to documentation formatting, content etc
+
+2002-10-29 Tuesday 20:30  moodler
+
+	* lib/htaccess: 
+	
+	Added session.auto_start (off) ... having it turned on will break
+	Moodle on some versions of PHP
+
+2002-10-29 Tuesday 17:19  moodler
+
+	* contrib/: README.txt, compuproggy/merger.php: 
+	
+	
+	New contrib directory to contain miscellaneous user-contributed
+	code organised by sourceforge username
+
+2002-10-29 Tuesday 14:24  compuproggy
+
+	* lang/de/assignment.php: 
+	
+	[no log message]
+
+2002-10-29 Tuesday 12:04  moodler
+
+	* lib/htaccess: 
+	
+	Added short_open_tag
+
+2002-10-29 Tuesday 11:52  moodler
+
+	* README.txt, UPGRADING.txt: 
+	
+	Removed UPGRADING.txt (replaced by doc/upgrade.html) and updated
+	README.txt to make it a bit clearer about where all the docs are.
+
+2002-10-29 Tuesday 11:47  moodler
+
+	* doc/: contents.html, upgrade.html: 
+	
+	New upgrading page (replaces the old UPGRADING.txt)
+
+2002-10-28 Monday 21:24  compuproggy
+
+	* lang/de/help/: choice/options.html, coursecategory.html,
+	courseformats.html, coursefullname.html, coursenewsitems.html,
+	coursenumsections.html, courseshortname.html, coursestartdate.html,
+	enrolmentkey.html, guestaccess.html, html.html, langedit.html,
+	mods.html, picture.html, questions.html, richtext.html,
+	surveys.html, teachers.html, text.html, textformat.html,
+	forum/allowdiscussions.html, forum/attachment.html,
+	forum/forumtype.html, forum/ratings.html, forum/subscription.html,
+	quiz/attempts.html, quiz/categories.html, quiz/correctanswers.html,
+	quiz/feedback.html, quiz/grademethod.html, quiz/maxgrade.html,
+	quiz/multichoice.html, quiz/questiontypes.html, quiz/random.html,
+	quiz/shortanswer.html, quiz/timeopen.html, quiz/truefalse.html,
+	resource/resourcetype.html, resource/summary.html: 
+	
+	[no log message]
+
+2002-10-28 Monday 20:12  compuproggy
+
+	* lang/de/help/: coursecategory.html, courseformats.html,
+	coursefullname.html, coursenewsitems.html, coursenumsections.html,
+	courseshortname.html, coursestartdate.html, enrolmentkey.html,
+	guestaccess.html, html.html, langedit.html, picture.html,
+	questions.html, richtext.html, surveys.html, teachers.html,
+	text.html: 
+	
+	[no log message]
+
+2002-10-28 Monday 10:25  moodler
+
+	* mod/assignment/view.php: 
+	
+	Show date in red if assignment date has passed
+
+2002-10-28 Monday 10:24  moodler
+
+	* mod/assignment/upload.php: 
+	
+	Use translated strings for all upload feedback
+
+2002-10-28 Monday 10:24  moodler
+
+	* lang/en/assignment.php: 
+	
+	Added some new strings
+
+2002-10-28 Monday 09:30  moodler
+
+	* lang/en/assignment.php, mod/assignment/upload.php: 
+	
+	Fixed "uploaded assignment"   (uploadsuccess) string
+
+2002-10-27 Sunday 23:04  compuproggy
+
+	* lang/de/quiz.php: 
+	
+	[no log message]
+
+2002-10-27 Sunday 11:10  moodler
+
+	* doc/teacher.html: 
+	
+	Typo (Survey mentioned twice)
+
+2002-10-26 Saturday 22:36  moodler
+
+	* lang/en/moodle.php: 
+	
+	Missing a bracket )
+
+2002-10-26 Saturday 14:16  moodler
+
+	* CHANGES: 
+	
+	I mean it!! This is 1.0.6!!!!
+
+2002-10-26 Saturday 14:11  moodler
+
+	* mod/quiz/: lib.php, question.php: 
+	
+	Fixed small bug that was displaying fractions with too many decimal
+	places (eg 0.9999 instead of just 1)
+
+2002-10-26 Saturday 13:50  moodler
+
+	* CHANGES: 
+	
+	OK, this is 1.0.6
+
 2002-10-26 Saturday 13:37  moodler
 
 	* RELEASE.html, admin/index.php, doc/contents.html,
@@ -83,12 +248,6 @@
 	* mod/forum/index.php: 
 	
 	Remove "news" and "social" forums from learning forums.
-
-2002-10-25 Friday 18:18  compuproggy
-
-	* lang/de/merge_translations/merger.php: 
-	
-	[no log message]
 
 2002-10-25 Friday 17:14  moodler
 
@@ -1981,5 +2140,5 @@
 
 	* CHANGES: 
 	
-	1.0.5 RELEASED
+	CHANGES UP TO 1.0.5
 
