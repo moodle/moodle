@@ -860,17 +860,17 @@ function get_user_timezone($tz = 99) {
     return $tz;
 }
 
-function get_user_timezone_preset() {
+function calculate_user_dst_table() {
     global $CFG, $USER;
-    static $preset = NULL;
+    static $presetname = NULL;
 
-    if ($preset !== NULL) {
-        return $preset;
+    if (!empty($presetname)) {
+        return true;
     }
 
     if (empty($CFG->forcetimezone)) {
         if (empty($USER->timezonename)) {
-            return NULL;
+            return false;
         }
         $presetname = $USER->timezonename;
 
@@ -878,20 +878,26 @@ function get_user_timezone_preset() {
         $presetname = $CFG->forcetimezone;
     }
 
-    $presetrecords = get_records('timezone', 'name', $presetname);
-    
-    //print_object($presetrecords);
+    $presetrecords = get_records('timezone', 'name', $presetname, 'year ASC');
+    if(empty($presetrecords)) {
+        return false;
+    }
 
     if(!empty($USER)) {
         if(empty($USER->dstoffsets)) {
-            $USER->dstoffsets = array(0 => 0);
-            for($i = 1970; $i < 2030; ++$i) {
-                $changes = dst_changes_for_year($i, $preset);
-                if($changes['activate'] != 0) {
-                    $USER->dstoffsets[$changes['activate']] = $preset->dstoff * MINSECS;
+            $USER->dstoffsets = array(0 => NULL);
+            foreach($presetrecords as $presetrecord) {
+                print_object("calc changes");
+                $changes = dst_changes_for_year($presetrecord->year, $presetrecord);
+                
+                if($changes === NULL) {
+                    continue;
                 }
-                if($changes['deactivate'] != 0) {
-                    $USER->dstoffsets[$changes['deactivate']] = 0;
+                if($changes['dst'] != 0) {
+                    $USER->dstoffsets[$changes['dst']] = $presetrecord->dstoff * MINSECS;
+                }
+                if($changes['std'] != 0) {
+                    $USER->dstoffsets[$changes['std']] = 0;
                 }
             }
             $calcuntil = make_timestamp(2031, 1, 1, 00, 00, 00, get_user_timezone(99), false);
@@ -899,41 +905,35 @@ function get_user_timezone_preset() {
             krsort($USER->dstoffsets);
         }
     }
-    return $preset;
+
+    print_object($presetrecords);
+    print_object($USER->dstoffsets);
+    
+    return true;
 }
 
-function dst_changes_for_year($year, $dstpreset) {
+function dst_changes_for_year($year, $timezone) {
 
-    $monthdayactivate   = find_day_in_month($dstpreset->activate_index,   $dstpreset->activate_day,   $dstpreset->activate_month,   $year);
-    $monthdaydeactivate = find_day_in_month($dstpreset->deactivate_index, $dstpreset->deactivate_day, $dstpreset->deactivate_month, $year);
-
-    if (isset($dstpreset->activate_time)) {
-        list($activate_hour, $activate_minute)     = explode(':', $dstpreset->activate_time);
-
-    } else {
-        $activate_hour   = $dstpreset->activate_hour;
-        $activate_minute = $dstpreset->activate_minute;
+    if($timezone->dst_startday == 0 && $timezone->dst_weekday == 0 && $timezone->std_startday == 0 && $timezone->std_weekday == 0) {
+        return NULL;
     }
 
-    if (isset($dstpreset->deactivate_time)) {
-        list($deactivate_hour, $deactivate_minute) = explode(':', $dstpreset->deactivate_time);
-    } else {
-        $deactivate_hour   = $dstpreset->deactivate_hour;
-        $deactivate_minute = $dstpreset->deactivate_minute;
-    }
+    $monthdaydst = find_day_in_month($timezone->dst_startday, $timezone->dst_weekday, $timezone->dst_month, $year);
+    $monthdaystd = find_day_in_month($timezone->std_startday, $timezone->std_weekday, $timezone->std_month, $year);
 
-    $timezone       = get_user_timezone(99);
-    $timeactivate   = make_timestamp($year, $dstpreset->activate_month,   $monthdayactivate,   $activate_hour,   $activate_minute,   0, $timezone, false);
-    $timedeactivate = make_timestamp($year, $dstpreset->deactivate_month, $monthdaydeactivate, $deactivate_hour, $deactivate_minute, 0, $timezone, false);
+    list($dst_hour, $dst_min) = explode(':', $timezone->dst_time);
+    list($std_hour, $std_min) = explode(':', $timezone->std_time);
 
-    return array('activate' => $timeactivate, 0 => $timeactivate, 'deactivate' => $timedeactivate, 1 => $timedeactivate);
+    $tz      = get_user_timezone(99);
+    $timedst = make_timestamp($year, $timezone->dst_month, $monthdaydst, $dst_hour, $dst_min, 0, $tz, false);
+    $timestd = make_timestamp($year, $timezone->std_month, $monthdaystd, $std_hour, $std_min, 0, $tz, false);
+
+    return array('dst' => $timedst, 0 => $timedst, 'std' => $timestd, 1 => $timestd);
 }
 
 // $time must NOT be compensated at all, it has to be a pure timestamp
 function dst_offset_on($time) {
-    $preset = get_user_timezone_preset();
-
-    if(empty($preset)) {
+    if(!calculate_user_dst_table()) {
         return 0;
     }
 
