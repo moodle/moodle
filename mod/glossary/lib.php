@@ -562,6 +562,8 @@ function glossary_print_entry_definition($entry) {
     $definition = $entry->definition;
 
     $tags = array();
+    $urls = array();
+    $addrs = array();
 
     //Calculate all the strings to be no-linked
     //First, the concept
