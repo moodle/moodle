@@ -1,10 +1,6 @@
 <?PHP 
-
-// This translation was made by Learning Centre "Microtest"  2003
-// If you have any questions or suggestions concerning it 
-// please contact us contact@elearning.microtest.ru
-// or write some notes in forum http://moodle.org/mod/forum/discuss.php?d=1783
-
+ // This translation was made by Learning Centre "Microtest"  2003 // If you have any questions or suggestions concerning it  // please contact us contact@elearning.microtest.ru
+// or write some notes in forum http://moodle.org/mod/forum/discuss.php?d=1783 
 #------------------------------------------------------------
 $string['modulename'] = "Тест";
 $string['modulenameplural'] = "Тесты";
@@ -24,8 +20,7 @@ $string['attempt'] = "Попытка \$a";
 $string['attemptfirst'] = "Первая попытка";
 $string['attemptlast'] = "Последняя попытка";
 $string['attemptquiznow'] = "Начать тестирование";
-$string['attempts'] = "Попытки";
-$string["attempts_rp"] = "Попыток";
+$string['attempts'] = "Попытки"; $string["attempts_rp"] = "Попыток";
 $string['attemptsallowed'] = "Разрешено";
 $string['attemptsunlimited'] = "Неограниченное количество попыток";
 $string['backtoquiz'] = "Вернуться к редактированию ";
@@ -53,7 +48,7 @@ $string['deletequestioncheck'] = "Вы уверены, что хотите удалить '\$a'?";
 $string['description'] = "Описание";
 $string['editcategories'] = "Редактировать категории";
 $string['editingdescription'] = "Редактирование Описание";
-$string['editingmatch'] = "Редактирование вопроса на соответствия";
+$string['editingmatch'] = "Редактирование вопроса на соответствие";
 $string['editingmultichoice'] = "Вопрос в закрытой форме";
 $string['editingquestion'] = "Редактирование вопроса";
 $string['editingquiz'] = "Редактирование теста";
@@ -141,25 +136,6 @@ $string['reportregrade'] = "Переоценить попытку";
 $string['reportsimplestat'] = "Статистика";
 $string['review'] = "Обзор";
 $string['viewallreports'] = "Посмотреть отчёт по попыткам \$a";
-$string['acceptederror'] = "Допустимая ошибка";
-$string['addingquestions'] = "На этой странице Вы можете управлять базой Ваших вопросов.  Вопросы хранятся в категориях (для организации сортировки) и могут использоваться любым тестом в Вашем курсе, или даже нескольких курсах, при условии, что категория является 'Опубликованной' . <br /><br /> После того, как Вы создали категорию для вопросов, Вы сможете создавать или редактировать вопросы.  После создания выберите те вопросы, которые Вы хотите добавить в тест.";
-$string['countdown'] = "Отсчёт";
-$string['countdownfinished'] = "Время выполнения теста истекло. Отправьте Ваши ответы";
-$string['countdowntenminutes'] = "Тестирование завершится через 10 минут.";
-$string['randomsamatchintro'] = "Для каждого из следующих вопросов выберите соответствующий ответ из меню.";
-$string['notenoughsubquestions'] = "Было определено недостаточное количество подвопросов!<br>Вернуться к редактированию вопроса?";
-$string['editingnumerical'] = "Редактирование числового вопроса";
-$string['numerical'] = "Числовой";
-$string['toomanyrandom'] = "Необходимое число случайных вопросов, больше, чем содержит категория (\$a)";
-$string['answerswithacceptederrormarginmustbenumeric'] = "Ответы с допустимой ошибкой должны быть числовые";
-$string['quiztime'] = "Время теста (мин)";
-$string['recentlyaddedquestion'] = "Недавно добавленные вопросы";
-$string['makecategories'] = "Создать категории";
-$string['editingmultianswer'] = "Редактирование вложенных ответов";
-$string['multianswer'] = "Вложенные Ответы";
-$string['createmultiple'] = "Создание множественных вопросов";
-$string['eachattemptbuildsonthelast'] = "Зависимость попыток";
-$string['editingrandomsamatch'] = "Редактировать случайных вопросов в открытой форме на соответствие";
-$string['randomsamatch'] = "Случайные вопросы в открытой форме на соответствие";
-$string['randomsamatchcreate'] = "Создать случайные вопросы в открытой форме на соответствие";
-?>
+$string['acceptederror'] = "Допустимая ошибка"; $string['addingquestions'] = "На этой странице Вы можете управлять базой Ваших вопросов.  Вопросы хранятся в категориях (для организации сортировки) и могут использоваться любым тестом в Вашем курсе, или даже нескольких курсах, при условии, что категория является 'Опубликованной' . <br /><br /> После того, как Вы создали категорию для вопросов, Вы сможете создавать или редактировать вопросы.  После создания выберите те вопросы, которые Вы хотите добавить в тест.";
+$string['countdown'] = "Отсчёт"; $string['countdownfinished'] = "Время выполнения теста истекло. Отправьте Ваши ответы"; $string['countdowntenminutes'] = "Тестирование завершится через 10 минут."; $string['randomsamatchintro'] = "Для каждого из следующих вопросов выберите соответствующий ответ из меню."; $string['notenoughsubquestions'] = "Было определено недостаточное количество подвопросов!<br>Вернуться к редактированию вопроса?"; $string['editingnumerical'] = "Редактирование числового вопроса"; $string['numerical'] = "Числовой"; $string['toomanyrandom'] = "Необходимое число случайных вопросов, больше, чем содержит категория (\$a)"; $string['answerswithacceptederrormarginmustbenumeric'] = "Ответы с допустимой ошибкой должны быть числовые"; $string['quiztime'] = "Время теста (мин)"; $string['recentlyaddedquestion'] = "Недавно добавленные вопросы"; $string['makecategories'] = "Создать категории"; $string['editingmultianswer'] = "Редактирование вложенных ответов"; $string['multianswer'] = "Вложенные Ответы";
+$string['createmultiple'] = "Создание множественных вопросов"; $string['eachattemptbuildsonthelast'] = "Зависимость попыток"; $string['editingrandomsamatch'] = "Редактировать случайных вопросов в открытой форме на соответствие"; $string['randomsamatch'] = "Случайные вопросы в открытой форме на соответствие"; $string['randomsamatchcreate'] = "Создать случайные вопросы в открытой форме на соответствие"; ?>
