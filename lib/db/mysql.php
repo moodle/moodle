@@ -407,6 +407,7 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2003072800) {
         print_simple_box("The following database index improves performance, but can be quite large - if you are upgrading and you have problems with a limited quota you may want to delete this index later from the '{$CFG->prefix}log' table in your database", "center", "50%", "$THEME->cellheading", "20", "noticebox");
+        flush();
         execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX timecoursemoduleaction (time,course,module,action) ");
         execute_sql(" ALTER TABLE `{$CFG->prefix}user_students` ADD INDEX courseuserid (course,userid) ");
         execute_sql(" ALTER TABLE `{$CFG->prefix}user_teachers` ADD INDEX courseuserid (course,userid) ");
