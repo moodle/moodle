@@ -322,6 +322,83 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   </select> <?php helpbutton("shows", get_string("showall", "glossary"), "glossary") ?>
     </TD>
 </TR>
+<tr>
+    <td align=right valign=top><p><b><?php print_string("allowratings", "glossary") ?>:</b></p></td>
+    <td>
+        <?php 
+            echo "<script>";
+            echo "  var subitemstime = ['startday','startmonth','startyear','starthour', 'startminute',".
+                                   "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
+            echo "  var subitemsall = ['assessed', 'ratingtime', 'scale', 'startday','startmonth','startyear','starthour', 'startminute',".
+                                   "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
+            echo "</script>";
+
+            echo "<input name=\"userating\" type=checkbox value=1 ";
+            echo " onclick=\"return lockoptions('form','userating', subitemsall)\" ";
+            if ($form->assessed) {
+                echo " checked ";
+            }
+            echo ">";
+            echo get_string("ratingsuse", "glossary").":";
+            echo "<br />";
+
+            // The odd order below was to maintain backward compatibility
+            unset($options);
+            $options[2] = get_string("ratingonlyteachers", "glossary", moodle_strtolower($course->teachers));
+            $options[1] = get_string("ratingeveryone", "glossary");
+            echo get_string("users").":";
+            choose_from_menu($options, "assessed", $form->assessed, "");
+            echo "<br />";
+
+            echo get_string("grade").":";
+            print_grade_menu($course->id, "scale", $form->scale, false);
+            echo "<br />";
+
+            echo "<input name=\"ratingtime\" type=checkbox value=1 ";
+            echo " onclick=\"return lockoptions('form','ratingtime', subitemstime)\" ";
+            if ($form->assesstimestart and $form->assesstimefinish and $form->assessed) {
+                $form->ratingtime = 1;
+                echo " checked ";
+            }
+            echo ">";
+
+            print_string("ratingtime", "glossary");
+            echo "<table align=left><tr><td align=right nowrap>";
+            echo get_string("from").":";
+            print_date_selector("startday", "startmonth", "startyear", $form->assesstimestart);
+            print_time_selector("starthour", "startminute", $form->assesstimestart);
+            echo "<br />";
+            echo get_string("to").":";
+            print_date_selector("finishday", "finishmonth", "finishyear", $form->assesstimefinish);
+            print_time_selector("finishhour", "finishminute", $form->assesstimefinish);
+            echo "<br />";
+            echo "</td></tr></table>";
+            echo "<input type=\"hidden\" name=\"hratingtime\" value=0>";
+            echo "<input type=\"hidden\" name=\"hassessed\" value=0>";
+            echo "<input type=\"hidden\" name=\"hscale\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartday\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartmonth\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartyear\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstarthour\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartminute\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishday\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishmonth\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishyear\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishhour\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishminute\" value=0>";
+
+            echo "<script>";
+            echo "lockoptions('form','userating', subitemsall);";
+            echo "</script>";
+
+            if (empty($form->ratingtime)) {
+                echo "<script>";
+                echo "lockoptions('form','ratingtime', subitemstime);";
+                echo "</script>";
+            }
+        ?>
+    </td>
+</tr>
 </TABLE>
 <!-- These hidden variables are always the same -->
 <INPUT type="hidden" name=course        value="<?php p($form->course) ?>">

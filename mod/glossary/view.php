@@ -2,6 +2,7 @@
 /// This page prints a particular instance of glossary
     require_once("../../config.php");
     require_once("lib.php");
+    global $CFG, $THEME, $USER;
     $debug = 0;
     $CFG->startpagetime = microtime();            
     
@@ -40,7 +41,6 @@
     }
 
 /// setting the defaut number of entries per page if not set
-    global $CFG, $THEME, $USER;
     
     if ( !$entriesbypage = $glossary->entbypage ) {
         $entriesbypage = $CFG->glossary_entbypage;
@@ -275,6 +275,23 @@
         }
         echo $paging;
 
+        $ratings = NULL;
+        $ratingsmenuused = false;
+        if ($glossary->assessed and !empty($USER->id)) {
+            if ($ratings->scale = make_grades_menu($glossary->scale)) {
+                $ratings->assesstimestart = $glossary->assesstimestart;
+                $ratings->assesstimefinish = $glossary->assesstimefinish;
+                if ($glossary->assessed == 2 and !isteacher($course->id)) {
+                    $ratings->allow = false;
+                } else {
+                    $ratings->allow = true;
+                }
+
+                echo "<form name=form method=post action=rate.php>";
+                echo "<input type=hidden name=id value=\"$course->id\">";
+            }
+        }
+
         foreach ($allentries as $entry) {
         /// Setting the pivot for the current entry
             $pivot = $entry->pivot;
@@ -383,7 +400,9 @@
                 } 
 
                 /// and finally print the entry.
-                glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat);
+                if ( glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat,$ratings) ) {
+                    $ratingsmenuused = true;
+                }
 
                 $entriesshown++;
             }
@@ -399,6 +418,18 @@
     if ( !$entriesshown ) {
         print_simple_box('<center>' . get_string("noentries","glossary") . '</center>',"center","95%");
     }
+
+    if ($ratingsmenuused) {
+        echo "<center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\">";
+        if ($glossary->scale < 0) {
+            if ($scale = get_record("scale", "id", abs($glossary->scale))) {
+                print_scale_menu_helpbutton($course->id, $scale );
+            }
+        }
+        echo "</center>";
+        echo "</form>";
+    }
+
     if ( $paging ) {
         echo "<hr />$paging";
     }

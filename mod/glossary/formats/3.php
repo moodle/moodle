@@ -12,6 +12,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="
 
     echo "\n<tr>";
     echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostpicture\">";
+    $return = false;
     if ($entry) {
         print_user_picture($user->id, $course->id, $user->picture);
         echo "</td>";
@@ -41,6 +42,8 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="
         glossary_print_entry_definition($entry);
 
         glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
+        echo ' ';
+        $return = glossary_print_entry_ratings($course, $entry, $ratings);
 
     } else {
         echo "<center>";
@@ -50,6 +53,8 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="
     echo "</td></tr>";
 
     echo "</table>\n";
+    
+    return $return;
 }
 
 ?>

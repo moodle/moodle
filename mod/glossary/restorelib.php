@@ -63,6 +63,11 @@
             $glossary->timecreated = backup_todb($info['MOD']['#']['TIMECREATED']['0']['#']);
             $glossary->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
+            $glossary->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
+            $glossary->assesstimestart = backup_todb($info['MOD']['#']['ASSESSTIMESTART']['0']['#']);
+            $glossary->assesstimefinish = backup_todb($info['MOD']['#']['ASSESSTIMEFINISH']['0']['#']);
+            $glossary->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
+
             //The structure is equal to the db, so insert the glossary
             $newid = insert_record ("glossary",$glossary);
 

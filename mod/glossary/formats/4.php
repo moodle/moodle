@@ -2,7 +2,7 @@
 
 function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode="",$hook="",$printicons=1) {
     global $THEME, $USER;
-
+    $return = false;
     if ( $entry ) {
         $colour = $THEME->cellheading2;
 
@@ -23,6 +23,8 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode=""
 
 
         glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons);
+        echo ' ';
+        $return = glossary_print_entry_ratings($course, $entry, $ratings);
         echo '</td></tr></table>';
 
     } else {
@@ -30,7 +32,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode=""
         print_string("noentry", "glossary");
         echo '</center>';
     }
-
+    return $return;
 }
 
 ?>

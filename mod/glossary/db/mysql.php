@@ -214,12 +214,31 @@ function glossary_upgrade($oldversion) {
                       (fid, relatedview, defaultmode, defaulthook, sortkey, sortorder, showgroup, visible)
                       VALUES (5,5,'letter','ALL','CREATION','asc',1,1)");
         // Entry list
-        execute_sql(" INSERT INTO {$CFG->prefix}glossary_displayformats 
+        execute_sql("INSERT INTO {$CFG->prefix}glossary_displayformats 
                       (fid, relatedview, defaultmode, defaulthook, sortkey, sortorder, showgroup, visible)
                       VALUES (6,0,'letter','ALL','CREATION','asc',1,1)");
 
     }
-    return true;
+
+    if ($oldversion < 2003112100) {
+        table_column("glossary", "", "assessed", "integer", "10", "unsigned", "0");
+        table_column("glossary", "", "assesstimestart", "integer", "10", "unsigned", "0", "", "assessed");
+        table_column("glossary", "", "assesstimefinish", "integer", "10", "unsigned", "0", "", "assesstimestart");
+        
+        execute_sql("CREATE TABLE {$CFG->prefix}glossary_ratings (
+                      `id` int(10) unsigned NOT NULL auto_increment,
+                      `userid` int(10) unsigned NOT NULL default '0',
+                      `entryid` int(10) unsigned NOT NULL default '0',
+                      `time` int(10) unsigned NOT NULL default '0',
+                      `rating` tinyint(4) NOT NULL default '0',
+                      PRIMARY KEY  (`id`)
+                    ) COMMENT='Contains user ratings for entries'");
+    }
+
+    if ($oldversion < 2003112101) {
+        table_column("glossary", "", "scale", "integer", "10", "signed", "0", "", "assesstimefinish");
+    }
+  return true;
 }
 
 ?>

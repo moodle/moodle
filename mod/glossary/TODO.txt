@@ -1,14 +1,5 @@
 Things that are in the inkpot yet:
 ==================================
-
-
-- Adding a way to specify default values for display formats:
-    * Default view
-	* Default Order
-	* Show (or do not) the group breaks.
-        * Default view for automatic links, entry view, etc.
-	* What else? Post in http://moodle.org/mod/forum/view.php?id=742
-
 - Allow grading of entries
     * Evaluation
     * Self-evaluation?
@@ -16,7 +7,9 @@ Things that are in the inkpot yet:
 
 ********* IN BETA RIGHT NOW *********
 	
-- Allow to export/import entries (in beta now)
-- Add Alias to concepts in order to use dynalinks on them. (in beta now)
-- Allow to set default values for glossaries and entries settings (done)
-- Add printer friendly version of glossaries (in beta)
+- Adding a way to specify default values for display formats:
+    * Default view
+	* Default Order
+	* Show (or do not) the group breaks.
+        * Default view for automatic links, entry view, etc.
+	* What else? Post in http://moodle.org/mod/forum/view.php?id=742

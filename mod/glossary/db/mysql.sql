@@ -25,6 +25,10 @@ CREATE TABLE prefix_glossary (
      defaultapproval tinyint(2) unsigned NOT NULL default '1',
      globalglossary tinyint(2) unsigned NOT NULL default '0',
      entbypage tinyint(3) unsigned NOT NULL default '10',
+	 assessed int(10) unsigned NOT NULL default '0',
+	 assesstimestart int(10) unsigned NOT NULL default '0',
+	 assesstimefinish int(10) unsigned NOT NULL default '0',
+	 scale int(10) NOT NULL default '0',
      timecreated int(10) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
      PRIMARY KEY  (id)
@@ -114,6 +118,20 @@ CREATE TABLE prefix_glossary_displayformats (
 	 
      PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='Setting of the display formats';
+
+#
+# Table structure for table `forum_ratings`
+#
+
+CREATE TABLE prefix_glossary_ratings (
+  id int(10) unsigned NOT NULL auto_increment,
+  userid int(10) unsigned NOT NULL default '0',
+  entryid int(10) unsigned NOT NULL default '0',
+  time int(10) unsigned NOT NULL default '0',
+  rating tinyint(4) NOT NULL default '0',
+  PRIMARY KEY  (id)
+) COMMENT='Contains user ratings for entries';
+# --------------------------------------------------------
 
 #
 # Dumping data for table `log_display`

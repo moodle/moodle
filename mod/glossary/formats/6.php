@@ -4,6 +4,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode=""
     global $THEME, $USER;
 
     $colour = "#FFFFFF";
+    $return = false;
 
     echo "\n<table class=\"generalbox\" border=0 cellspacing=0 width=95% valign=top cellpadding=10>";
 
@@ -27,7 +28,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode=""
     echo "</td></tr>";
 
     echo "</table>\n";
-
+    return $return;
 }
 
 ?>

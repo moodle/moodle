@@ -58,6 +58,10 @@
                 fwrite ($bf,full_tag("ENTBYPAGE",4,false,$glossary->entbypage));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$glossary->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$glossary->timemodified));
+                fwrite ($bf,full_tag("ASSESSED",4,false,$glossary->assessed));
+                fwrite ($bf,full_tag("ASSESSTIMESTART",4,false,$glossary->assesstimestart));
+                fwrite ($bf,full_tag("ASSESSTIMEFINISH",4,false,$glossary->assesstimefinish));
+                fwrite ($bf,full_tag("SCALE",4,false,$glossary->scale));
                 
                 backup_glossary_entries($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
 

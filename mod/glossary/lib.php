@@ -27,6 +27,20 @@ function glossary_add_instance($glossary) {
 /// will create a new instance and return the id number
 /// of the new instance.
 
+    if (!$glossary->userating) {
+        $glossary->assessed = 0;
+    }
+
+    if (!empty($glossary->ratingtime)) {
+        $glossary->assesstimestart  = make_timestamp($glossary->startyear, $glossary->startmonth, $glossary->startday, 
+                                                  $glossary->starthour, $glossary->startminute, 0);
+        $glossary->assesstimefinish = make_timestamp($glossary->finishyear, $glossary->finishmonth, $glossary->finishday, 
+                                                  $glossary->finishhour, $glossary->finishminute, 0);
+    } else {
+        $glossary->assesstimestart  = 0;
+        $glossary->assesstimefinish = 0;
+    }
+
     if ( !isset($glossary->globalglossary) ) {
         $glossary->globalglossary = 0;
     } elseif ( !isadmin() ) {
@@ -53,6 +67,20 @@ global $CFG;
 
     $glossary->timemodified = time();
     $glossary->id = $glossary->instance;
+
+    if (!$glossary->userating) {
+        $glossary->assessed = 0;
+    }
+
+    if (!empty($glossary->ratingtime)) {
+        $glossary->assesstimestart  = make_timestamp($glossary->startyear, $glossary->startmonth, $glossary->startday, 
+                                                  $glossary->starthour, $glossary->startminute, 0);
+        $glossary->assesstimefinish = make_timestamp($glossary->finishyear, $glossary->finishmonth, $glossary->finishday, 
+                                                  $glossary->finishhour, $glossary->finishminute, 0);
+    } else {
+        $glossary->assesstimestart  = 0;
+        $glossary->assesstimefinish = 0;
+    }
 
     $return = update_record("glossary", $glossary);
 	if ($return and $glossary->defaultapproval) {
@@ -117,8 +145,8 @@ function glossary_user_outline($course, $user, $mod, $glossary) {
     if ($entries = glossary_get_user_entries($glossary->id, $user->id)) {
         $result->info = count($entries) . ' ' . get_string("entries", "glossary");
 
-        $lastpost = array_pop($entries);
-        $result->time = $lastpost->timemodified;
+        $lastentry = array_pop($entries);
+        $result->time = $lastentry->timemodified;
         return $result;
     }
     return NULL;
@@ -236,10 +264,66 @@ function glossary_cron () {
 function glossary_grades($glossaryid) {
 /// Must return an array of grades for a given instance of this module,
 /// indexed by user.  It also returns a maximum allowed grade.
+    if (!$glossary = get_record("glossary", "id", $glossaryid)) {
+        return false;
+    }
+    if (!$glossary->assessed) {
+        return false;
+    }
+    $scalemenu = make_grades_menu($glossary->scale);
 
-    $return->grades = NULL;
-    $return->maxgrade = NULL;
+    $currentuser = 0;
+    $ratingsuser = array();
 
+    if ($ratings = glossary_get_user_grades($glossaryid)) {
+        foreach ($ratings as $rating) {     // Ordered by user
+            if ($currentuser and $rating->userid != $currentuser) {
+                if (!empty($ratingsuser)) {
+                    if ($glossary->scale < 0) {
+                        $return->grades[$currentuser] = glossary_get_ratings_mean(0, $scalemenu, $ratingsuser);
+                        $return->grades[$currentuser] .= "<br />".glossary_get_ratings_summary(0, $scalemenu, $ratingsuser);
+                    } else {
+                        $total = 0;
+                        $count = 0;
+                        foreach ($ratingsuser as $ra) {
+                            $total += $ra;
+                            $count ++;
+                        }
+                        $return->grades[$currentuser] = format_float($total/$count, 2);
+                    }
+                } else {
+                    $return->grades[$currentuser] = "";
+                }
+                $ratingsuser = array();
+            }
+            $ratingsuser[] = $rating->rating;
+            $currentuser = $rating->userid;
+        }
+        if (!empty($ratingsuser)) {
+            if ($glossary->scale < 0) {
+                $return->grades[$currentuser] = glossary_get_ratings_mean(0, $scalemenu, $ratingsuser);
+                $return->grades[$currentuser] .= "<br />".glossary_get_ratings_summary(0, $scalemenu, $ratingsuser);
+            } else {
+                $total = 0;
+                $count = 0;
+                foreach ($ratingsuser as $ra) {
+                    $total += $ra;
+                    $count ++;
+                }
+                $return->grades[$currentuser] = format_float((float)$total/(float)$count, 2);
+            }
+        } else {
+            $return->grades[$currentuser] = "";
+        }
+    } else {
+        $return->grades = array();
+    }
+
+    if ($glossary->scale < 0) {
+        $return->maxgrade = "";
+    } else {
+        $return->maxgrade = $glossary->scale;
+    }
     return $return;
 }
 
@@ -313,11 +397,11 @@ global $CFG;
     }
     return      get_records_sql("SELECT $pivot ge.*
                                  FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories c
-                                 WHERE (ge.id = c.entryid and c.categoryid = $hook) and
+                                 WHERE (ge.id = c.entryidid and c.categoryid = $hook) and
                                              (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) $where $orderby");
 }
 
-function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1) {
+function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1, $ratings = NULL) {
     global $THEME, $USER, $CFG;
     if ( $displayformat < 0 ) {
         $displayformat = $glossary->displayformat;
@@ -341,14 +425,14 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
         }
     
         if ( !$basicformat and $permissiongranted or $displayformat >= 2) {
-            glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
+            return glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
         } else {
             switch ( $displayformat ) {
             case GLOSSARY_FORMAT_SIMPLE:
-                glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
+                return glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
             break;
             case GLOSSARY_FORMAT_CONTINUOUS:
-                glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
+                return glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
             break;
             }
         }
@@ -451,7 +535,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=16 width=16 border=0></a> ";
     }
 
-    if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
+    if ($isteacher or $glossary->studentcanentry and $entry->userid == $USER->id) {
         // only teachers can export entries so check it out
         if ($isteacher and !$ismainglossary and !$importedentry) {
             $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
@@ -548,7 +632,7 @@ function  glossary_print_entry_approval($cm, $entry, $mode) {
     }
 }
 
-function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode="",$hook="",$printicons=1) {
+function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode="",$hook="",$printicons=1, $ratings=NULL) {
     global $THEME, $USER;
 
     $colour = $THEME->cellheading2;
@@ -562,12 +646,16 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode="
         echo ":</b> ";
         glossary_print_entry_definition($entry);
         glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
+        echo ' ';
+        $return = glossary_print_entry_ratings($course, $entry, $ratings);
     echo "</td>";
     echo "</TR>";
+    return $return;
 }
 
-function glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode="",$hook="",$printicons=1) {
+function glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode="",$hook="",$printicons=1, $ratings = NULL) {
     global $THEME, $USER;
+    $return = false;
     if ($entry) {
         glossary_print_entry_approval($cm, $entry, $mode);
         glossary_print_entry_attachment($entry,"html","right");
@@ -579,7 +667,9 @@ function glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode="
             $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,"html");        
             echo "($icons)";
         }
+        $return = glossary_print_entry_ratings($course, $entry, $ratings);
     }
+    return $return;
 }
 
 function glossary_search_entries($searchterms, $glossary, $includedefinition) {
@@ -599,8 +689,8 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
         $onlyvisibletable = "";
     }
 
-    /// Some differences in syntax for PostgreSQL
-    if ($CFG->dbtype == "postgres7") {
+    /// Some differences in syntax for entrygreSQL
+    if ($CFG->dbtype == "entrygres7") {
         $LIKE = "ILIKE";   // case-insensitive
         $NOTLIKE = "NOT ILIKE";   // case-insensitive
         $REGEXP = "~*";
@@ -1274,6 +1364,34 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo "</td></tr></table>";
 }
 
+function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
+global $USER;
+    $ratingsmenuused = false;
+    if (!empty($ratings) and !empty($USER->id)) {
+        $useratings = true;
+        if ($ratings->assesstimestart and $ratings->assesstimefinish) {
+            if ($entry->timecreated < $ratings->assesstimestart or $entry->timecreated > $ratings->assesstimefinish) {
+                $useratings = false;
+            }
+        }
+        if ($useratings) {
+            if (isteacher($course->id)) {
+                glossary_print_ratings_mean($entry->id, $ratings->scale);
+                if ($USER->id != $entry->userid) {
+                     glossary_print_rating_menu($entry->id, $USER->id, $ratings->scale);
+                     $ratingsmenuused = true;
+                }
+            } else if ($USER->id == $entry->userid) {
+                glossary_print_ratings_mean($entry->id, $ratings->scale);
+            } else if (!empty($ratings->allow) ) {
+                glossary_print_rating_menu($entry->id, $USER->id, $ratings->scale);
+                $ratingsmenuused = true;
+            }
+        }
+    }
+    return $ratingsmenuused;
+}
+
 function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
     global $THEME, $USER;
 
@@ -1314,7 +1432,7 @@ global $CFG;
     $status = fwrite ($h,glossary_start_tag("INFO",1,true));
         fwrite ($h,glossary_full_tag("NAME",2,false,$glossary->name));
         fwrite ($h,glossary_full_tag("INTRO",2,false,$glossary->intro));
-        fwrite ($h,glossary_full_tag("STUDENTCANPOST",2,false,$glossary->studentcanpost));
+        fwrite ($h,glossary_full_tag("STUDENTCANentry",2,false,$glossary->studentcanentry));
         fwrite ($h,glossary_full_tag("ALLOWDUPLICATEDENTRIES",2,false,$glossary->allowduplicatedentries));
         fwrite ($h,glossary_full_tag("SHOWSPECIAL",2,false,$glossary->showspecial));
         fwrite ($h,glossary_full_tag("SHOWALPHABET",2,false,$glossary->showalphabet));
@@ -1507,4 +1625,172 @@ function glossary_check_dir_exists($dir,$create=false) {
     }
     return $status;
 }
+/*
+* Adding grading functions 
+*/
+
+function glossary_get_ratings($entryid, $sort="u.firstname ASC") {
+/// Returns a list of ratings for a particular entry - sorted.
+    global $CFG;
+    return get_records_sql("SELECT u.*, r.rating, r.time 
+                              FROM {$CFG->prefix}glossary_ratings r, 
+                                   {$CFG->prefix}user u
+                             WHERE r.entryid = '$entryid' 
+                               AND r.userid = u.id 
+                             ORDER BY $sort");
+}
+
+function glossary_get_user_grades($glossaryid) {
+/// Get all user grades for a glossary
+    global $CFG;
+
+    return get_records_sql("SELECT r.id, e.userid, r.rating
+                              FROM {$CFG->prefix}glossary_entries e, 
+                                   {$CFG->prefix}glossary_ratings r
+                             WHERE e.glossaryid = '$glossaryid' 
+                               AND r.entryid = e.id
+                             ORDER by e.userid ");
+}
+
+function glossary_count_unrated_entries($glossaryid, $userid) {
+// How many unrated entries are in the given glossary for a given user?
+    global $CFG;
+    if ($entries = get_record_sql("SELECT count(*) as num
+                                   FROM {$CFG->prefix}glossary_entries
+                                  WHERE glossaryid = '$glossaryid' 
+                                    AND userid <> '$userid' ")) {
+
+        if ($rated = get_record_sql("SELECT count(*) as num 
+                                       FROM {$CFG->prefix}glossary_entries e, 
+                                            {$CFG->prefix}glossary_ratings r
+                                      WHERE e.glossaryid = '$glossaryid'
+                                        AND e.id = r.entryid 
+                                        AND r.userid = '$userid'")) {
+            $difference = $entries->num - $rated->num;
+            if ($difference > 0) {
+                return $difference;
+            } else {
+                return 0;    // Just in case there was a counting error
+            }
+        } else {
+            return $entries->num;
+        }
+    } else {
+        return 0;
+    }
+}
+
+function glossary_print_ratings_mean($entryid, $scale) {
+/// Print the multiple ratings on a entry given to the current user by others.
+/// Scale is an array of ratings
+
+    static $strrate;
+
+    $mean = glossary_get_ratings_mean($entryid, $scale);
+    
+    if ($mean !== "") {
+
+        if (empty($strratings)) {
+            $strratings = get_string("ratings", "glossary");
+        }
+
+        echo "$strratings: ";
+        link_to_popup_window ("/mod/glossary/report.php?id=$entryid", "ratings", $mean, 400, 600);
+    }
+}
+
+
+function glossary_get_ratings_mean($entryid, $scale, $ratings=NULL) {
+/// Return the mean rating of a entry given to the current user by others.
+/// Scale is an array of possible ratings in the scale
+/// Ratings is an optional simple array of actual ratings (just integers)
+
+    if (!$ratings) {
+        $ratings = array();
+        if ($rates = get_records("glossary_ratings", "entryid", $entryid)) {
+            foreach ($rates as $rate) {
+                $ratings[] = $rate->rating;
+            }
+        }
+    }
+
+    $count = count($ratings);
+
+    if ($count == 0) {
+        return "";
+
+    } else if ($count == 1) {
+        return $scale[$ratings[0]];
+
+    } else {
+        $total = 0;
+        foreach ($ratings as $rating) {
+            $total += $rating;
+        }
+        $mean = round( ((float)$total/(float)$count) + 0.001);  // Little fudge factor so that 0.5 goes UP
+    
+        if (isset($scale[$mean])) {
+            return $scale[$mean]." ($count)";
+        } else {
+            return "$mean ($count)";    // Should never happen, hopefully
+        }
+    }
+}
+
+function glossary_get_ratings_summary($entryid, $scale, $ratings=NULL) {
+/// Return a summary of entry ratings given to the current user by others.
+/// Scale is an array of possible ratings in the scale
+/// Ratings is an optional simple array of actual ratings (just integers)
+
+    if (!$ratings) {
+        $ratings = array();
+        if ($rates = get_records("glossary_ratings", "entryid", $entryid)) {
+            foreach ($rates as $rate) {
+                $rating[] = $rate->rating;
+            }
+        }
+    }
+
+
+    if (!$count = count($ratings)) {
+        return "";
+    }
+
+
+    foreach ($scale as $key => $scaleitem) {
+        $sumrating[$key] = 0;
+    }
+
+    foreach ($ratings as $rating) {
+        $sumrating[$rating]++;
+    }
+
+    $summary = "";
+    foreach ($scale as $key => $scaleitem) {
+        $summary = $sumrating[$key].$summary;
+        if ($key > 1) {
+            $summary = "/$summary";
+        }
+    }
+    return $summary;
+}
+
+function glossary_print_rating_menu($entryid, $userid, $scale) {
+/// Print the menu of ratings as part of a larger form.  
+/// If the entry has already been - set that value.
+/// Scale is an array of ratings
+
+    static $strrate;
+
+    if (!$rating = get_record("glossary_ratings", "userid", $userid, "entryid", $entryid)) {
+        $rating->rating = 0;
+    }
+
+    if (empty($strrate)) {
+        $strrate = get_string("rate", "glossary");
+    }
+
+    choose_from_menu($scale, $entryid, $rating->rating, "$strrate...");
+}
+
 ?>
