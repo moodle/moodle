@@ -929,6 +929,7 @@
             $files = array();
             foreach ($filelist as $file) {
                 //If directory, append "/"
+                //Commented. Not needed wit version 2.0 of pclzip !!
                 //if (is_dir($basedir."/".$file)) {
                 //    $file = $file."/";
                 //}
@@ -937,16 +938,16 @@
                 $files[] = $basedir."/".$file;
             }
             include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
-            include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");
-            include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");
-            PclTraceOn(2);
+            //include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");   //Debug
+            //include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");   //Debug
+            //PclTraceOn(2);                                               //Debug
             $archive = new PclZip("$basedir/$name");
             if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,$basedir)) == 0) {
                 error($archive->errorInfo(true));
                 $status = false;
             } 
-            PclTraceDisplay();
-            PclTraceOff();
+            //PclTraceDisplay();                                           //Debug
+            //PclTraceOff();                                               //Debug
         } else {                   // Use external zip program
             //echo "<br>Using external zip";                               //Debug
             $files = "";

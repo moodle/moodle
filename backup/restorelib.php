@@ -11,15 +11,15 @@
 
         if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
             include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
-            include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");
-            include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");
-            PclTraceOn(2);
+            //include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");    //Debug
+            //include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");    //Debug
+            //PclTraceOn(2);                                          //Debug
             $archive = new PclZip($file);
             if (!$list = $archive->extract(dirname($file))) {
                 $status = false;
             }
-            PclTraceDisplay();
-            PclTraceOff();
+            //PclTraceDisplay();                                       //Debug
+            //PclTraceOff();                                           //Debug
         } else {                     // Use external unzip program
             $command = "cd ".dirname($file)."; $CFG->unzip -o ".basename($file);
             Exec($command);
