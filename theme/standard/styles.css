@@ -1,14 +1,14 @@
-A:link    {  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; text-decoration: none; color: blue}
-A:visited {  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; text-decoration: none; color: blue}
-A:hover   {  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; text-decoration: underline; color: red}
+a:link    {  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; text-decoration: none; color: blue;}
+a:visited {  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; text-decoration: none; color: blue;}
+a:hover   {  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; text-decoration: underline; color: red;}
 
-BODY {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
-P    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
-H1   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
-H2   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
-H3   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
-H4   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
-TH   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold; background-color: #FFD991;}
-TD   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
+body {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+p    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+h1   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+h2   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+h3   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+h4   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+th   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold; background-color: #FFD991;}
+td   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
 
 li { font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif }
