@@ -591,7 +591,7 @@ $string['loginsteps'] = 'こんにちは! コースにアクセスするため�
 
 <li>アカウントの作成
 <ul>
-<li type=disc><a href=\"$a\">新規アカウント作成</a> フォームに<b>必要事項を入力してください</b>。</li>
+<li type=disc><a href=\"$a\">新しいアカウントを作成する</a>で<b>必要事項を入力してください</b>。</li>
 </ul>
 
 <li>アカウントの確定
@@ -608,8 +608,7 @@ $string['loginsteps'] = 'こんにちは! コースにアクセスするため�
 <li type=disc>今後、登録したコースにアクセスするために必要なものは、ユーザ名とパスワードのみです。 このページの左側のユーザ名とパスワードの入力欄を利用してください。</li>
 </ul>
 
-</ol>
-';
+</ol>';
 $string['loginstepsnone'] = '<p>こんにちは!</p>
 <p>コースを利用するためにはアカウントを開設する必要があります。</p>
 <p>あなたがやることはユーザ名とパスワードをこのページのフォームを使って作成するだけです!</p>
@@ -708,9 +707,9 @@ $string['needed'] = '必要な';
 $string['never'] = '無し';
 $string['neverdeletelogs'] = 'ログを削除しない';
 $string['new'] = '新しい';
-$string['newaccount'] = '新規アカウント';
-$string['newcourse'] = '新規コース';
-$string['newpassword'] = '新規パスワード';
+$string['newaccount'] = '新しいアカウント';
+$string['newcourse'] = '新しいコース';
+$string['newpassword'] = '新しいパスワード';
 $string['newpasswordtext'] = '$a->firstname さんこんにちは、
 
 「 $a->sitename 」のパスワードリセットおよび仮パスワードの作成が完了しました。

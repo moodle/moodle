@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
 
 
 $string['about'] = 'エディタに関して';
@@ -22,6 +22,7 @@ $string['cellspacing'] = 'Cellspacing';
 $string['choosechar'] = 'キャラクタの選択';
 $string['chooseicon'] = '挿入するアイコンの選択';
 $string['close'] = '閉じる';
+$string['closeafterreplace'] = '置換後に閉じる';
 $string['cols'] = 'Cols';
 $string['copy'] = '選択したものをコピー';
 $string['createanchor'] = 'アンカーの作成';
@@ -30,6 +31,7 @@ $string['createlink'] = 'リンクの挿入';
 $string['cut'] = '選択したものを切り取る';
 $string['delete'] = '削除';
 $string['filebrowser'] = 'ファイルブラウザ';
+$string['findwhat'] = '検索';
 $string['fontname'] = 'フォント名';
 $string['fontsize'] = 'フォントサイズ';
 $string['forecolor'] = 'フォント色';
@@ -49,6 +51,7 @@ $string['insertlink'] = 'リンクの挿入';
 $string['insertsmile'] = 'スマイリーの挿入';
 $string['inserttable'] = 'テーブルの挿入';
 $string['italic'] = 'イタリック';
+$string['itemsreplaced'] = 'アイテムが置換されました!';
 $string['justifycenter'] = '中央寄せ';
 $string['justifyfull'] = '均等';
 $string['justifyleft'] = '左寄せ';
@@ -65,6 +68,7 @@ $string['linktargetself'] = '同一フレーム';
 $string['linktargettop'] = '同一ウインドウ';
 $string['linktitle'] = 'タイトル';
 $string['linkurl'] = 'URL';
+$string['matchcase'] = '大文字・小文字を区別する';
 $string['middle'] = '中央';
 $string['minimize'] = 'エディタを最小化する';
 $string['move'] = '移動';
@@ -73,6 +77,7 @@ $string['normal'] = 'ノーマル';
 $string['notimage'] = '選択したファイルはイメージではありません。イメージを選択してください。';
 $string['notset'] = '未設定';
 $string['ok'] = 'OK';
+$string['options'] = 'オプション';
 $string['orderedlist'] = '順序付きリスト';
 $string['outdent'] = 'インデントを減らす';
 $string['paste'] = 'クリップボードよりコピー';
@@ -84,11 +89,16 @@ $string['preformatted'] = '整形された';
 $string['preview'] = 'プレビュー';
 $string['properties'] = '属性';
 $string['redo'] = 'やり直す';
+$string['regularexpressions'] = '通常の表現を使う';
 $string['removelink'] = 'リンクの削除';
 $string['rename'] = 'リネーム';
+$string['replaceall'] = '全てを置換';
+$string['replacewith'] = '置換';
 $string['right'] = '右';
 $string['righttoleft'] = '右→左';
 $string['rows'] = '列';
+$string['searchandreplace'] = '検索および置換';
+$string['searchnotfound'] = '検索ストリングが見つかりませんでした!';
 $string['selectcolor'] = '色の選択';
 $string['selection'] = '選択';
 $string['showhelp'] = 'エディタのヘルプ';
