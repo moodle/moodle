@@ -57,7 +57,7 @@
             $LIKE = "ILIKE";
         }
 
-        if ($cmcount > 20) {
+        if ($cmcount > 10) {
             print_simple_box('This process may take a very long time ... please be patient and let it finish.', 
                              'center', '', '#ffcccc');
             $sleeptime = 1;
@@ -101,10 +101,10 @@
                     
                 case "journal": 
                     execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
-                                 WHERE module = '$cm->name' AND url = 'report.php?id=$cm->id'");
+                                 WHERE module = '$cm->name' AND url = 'report.php?id=$cm->id'", false);
 
                     execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
-                                 WHERE module = '$cm->name' AND url = 'view.php?id=$cm->id'");
+                                 WHERE module = '$cm->name' AND url = 'view.php?id=$cm->id'", false);
                     break;
 
             }
