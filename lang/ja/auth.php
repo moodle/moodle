@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
+$string['alternatelogin'] = 'ここにURLを入力した場合、このサイトのログインページとして使用されます。ログインページでは、action属性に<strong>「 $a 」</strong>をセットして、 <strong>username</strong>フィールドおよび<strong>password</strong>フィールドを適切にMoodleに渡す必要があります。<br />間違ったURLを設定すると、あなたのサイトから締め出されることになりますので注意してください。<br />デフォルトのログイン画面を使用する場合は、空白のままにしてください。';
+$string['alternateloginurl'] = '代替ログインURL';
 $string['auth_cas_baseuri'] = 'サーバのURI  ( ベースURIが無い場合は空白 )<br />CASサーバが host.domaine.fr/CAS/ に応答する場合、<br />cas_baseuri = CAS/';
 $string['auth_cas_create_user'] = 'MoodleデータベースにCAS認証ユーザを挿入したい場合は、「Yes」を選択してください。「No」を選択した場合は、Moodleデータベースに登録されているユーザのみがログインできます。';
 $string['auth_cas_enabled'] = 'CAS認証を利用したい場合は、「Yes」を選択してください。';
