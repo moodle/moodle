@@ -163,10 +163,14 @@ function get_user_preferences($name=NULL, $default=NULL) {
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99) {
 /// Given date parts in user time, produce a GMT timestamp
 
-    global $USER;
+    global $CFG, $USER;
 
     if ($timezone == 99) {
-        $timezone = (float)$USER->timezone;
+        if (isset($USER->timezone)) {         // A user is logged in
+            $timezone = (float)$USER->timezone;
+        } else if (isset($CFG->timezone)) {   // Use site's default timezone
+            $timezone = (float)$CFG->timezone;
+        }
     }
 
     if (abs($timezone) > 13) {
@@ -281,8 +285,12 @@ function usergetdate($date, $timezone=99) {
 
     global $USER;
 
-    if ($timezone == 99) {
-        $timezone = (float)$USER->timezone;
+    if ($timezone == 99) {                    // Work out the best timezone to use
+        if (isset($USER->timezone)) {         // A user is logged in
+            $timezone = (float)$USER->timezone;
+        } else if (isset($CFG->timezone)) {   // Use site's default timezone
+            $timezone = (float)$CFG->timezone;
+        }
     }
     if (abs($timezone) > 13) {
         return getdate($date);
@@ -307,8 +315,12 @@ function usertime($date, $timezone=99) {
 /// the timezone.  eg 3pm in India is 3pm GMT - 7 * 3600 seconds
     global $USER;
 
-    if ($timezone == 99) {
-        $timezone = (float)$USER->timezone;
+    if ($timezone == 99) {                    // Work out the best timezone to use
+        if (isset($USER->timezone)) {         // A user is logged in
+            $timezone = (float)$USER->timezone;
+        } else if (isset($CFG->timezone)) {   // Use site's default timezone
+            $timezone = (float)$CFG->timezone;
+        }
     }
     if (abs($timezone) > 13) {
         return $date;
@@ -321,8 +333,12 @@ function usergetmidnight($date, $timezone=99) {
 /// for the current user.
     global $USER;
 
-    if ($timezone == 99) {
-        $timezone = (float)$USER->timezone;
+    if ($timezone == 99) {                    // Work out the best timezone to use
+        if (isset($USER->timezone)) {         // A user is logged in
+            $timezone = (float)$USER->timezone;
+        } else if (isset($CFG->timezone)) {   // Use site's default timezone
+            $timezone = (float)$CFG->timezone;
+        }
     }
 
     $userdate = usergetdate($date, $timezone);
@@ -340,8 +356,12 @@ function usertimezone($timezone=99) {
 /// Returns a string that prints the user's timezone
     global $USER;
 
-    if ($timezone == 99) {
-        $timezone = (float)$USER->timezone;
+    if ($timezone == 99) {                    // Work out the best timezone to use
+        if (isset($USER->timezone)) {         // A user is logged in
+            $timezone = (float)$USER->timezone;
+        } else if (isset($CFG->timezone)) {   // Use site's default timezone
+            $timezone = (float)$CFG->timezone;
+        }
     }
     if (abs($timezone) > 13) {
         return "server time";
@@ -2258,7 +2278,7 @@ function generate_password($maxlen=10) {
     return substr($word1 . $filler1 . $word2, 0, $maxlen);
 }
 
-function format_float($num, $places=0) {
+function format_float($num, $places=1) {
 /// Given a float, prints it nicely
     return sprintf("%.$places"."f", $num);
 }
