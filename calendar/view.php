@@ -626,30 +626,31 @@ function calendar_print_event_table($event, $starttime, $endtime, &$coursecache,
 function calendar_course_filter_selector($getvars = '') {
     global $USER, $SESSION;
 
-    if(isguest($USER->id)) {
+    if (isguest($USER->id)) {
         return '';
     }
 
-    if(isadmin($USER->id)) {
-        $coursesdata = get_courses('all', 'c.shortname');
-    }
-    else {
-        $coursesdata = get_my_courses($USER->id, 'shortname');
+    if (isadmin($USER->id)) {
+        $courses = get_courses('all', 'c.shortname');
+
+    } else {
+        $courses = get_my_courses($USER->id, 'shortname');
     }
 
-    $coursesdata = array_diff_assoc($coursesdata, array(1 => 1));
-    $courseoptions = array(1 => get_string('fulllistofcourses'));
-
-    foreach($coursesdata as $cdata) {
-        $courseoptions[$cdata->id] = $cdata->shortname;
+    foreach ($courses as $course) {
+        $courseoptions[$course->id] = $course->shortname;
     }
-    if(is_numeric($SESSION->cal_courses_shown)) {
+    $courseoptions[1] = get_string('fulllistofcourses');
+
+    if (is_numeric($SESSION->cal_courses_shown)) {
         $selected = $SESSION->cal_courses_shown;
-    }
-    else {
+    } else {
         $selected = '';
     }
-    $form = popup_form(CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=', $courseoptions, 'cal_course_flt', $selected, '', '', '', true);
+
+    $form = popup_form(CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=', 
+                       $courseoptions, 'cal_course_flt', $selected, '', '', '', true);
+
     return str_replace('<form', '<form style="display: inline;"', $form);
 }
 
