@@ -12,10 +12,18 @@
 
 /// From here on it's nearly a normal stylesheet.
 /// First are some CSS definitions for normal tags, 
-/// then custom tags follow.
+/// then custom tags follow.  
 ///
-/// Note that colours are all defined in config.php
-/// in this directory
+/// New classes always get added to the end of the file.
+///
+/// Note that a group of standard colours are all 
+/// defined in config.php in this directory.  The
+/// reason for this is because Moodle uses the same
+/// colours to provide oldstyle formatting for 
+/// browsers without CSS.
+///
+/// You can hardcode colours in this file if you 
+/// don't care about this.
 
 ?>
 
@@ -67,12 +75,6 @@ form { margin-bottom: 0; }
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
 }
 
-.generalbox {
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
-}
-
 .generaltable {
 }
 
@@ -112,12 +114,6 @@ form { margin-bottom: 0; }
     border-style: solid;
 }
 
-.weeklyoutline {
-}
-
-.topicsoutline {
-}
-
 .forumpost {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
@@ -138,3 +134,50 @@ form { margin-bottom: 0; }
 
 .forumpostmessage {
 }
+
+
+.weeklyoutline {
+}
+
+.weeklyoutlineside {
+}
+
+.weeklyoutlinesidehighlight {
+}
+
+.weeklyoutlinecontent {
+}
+
+
+.topicsoutline {
+}
+
+.topicsoutlineside {
+}
+
+.topicsoutlinesidehighlight {
+}
+
+.topicsoutlinecontent {
+}
+
+
+.siteinfo {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.siteinfocontent {
+}
+
+
+.generalbox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.generalboxcontent {
+}
+
