@@ -53,10 +53,10 @@ function print_footer ($course=NULL) {
 function print_navigation ($navigation) {
    global $CFG;
 
-   if (! $site = get_record("course", "category", 0)) {
-       $site->shortname = "Home";
-   }
    if ($navigation) {
+       if (! $site = get_record("course", "category", 0)) {
+           $site->shortname = get_string("home");;
+       }
        echo "<A TARGET=_top HREF=\"$CFG->wwwroot/\">$site->shortname</A> -> $navigation";
    }
 }
@@ -193,7 +193,7 @@ function update_course_icon($courseid) {
     }
 }
 
-function update_module_icon($moduleid) {
+function update_module_icon($moduleid, $courseid) {
     global $CFG;
 
     if (isteacher($courseid)) {
@@ -1093,6 +1093,11 @@ function get_directory_list( $rootdir ) {
 }
 
 /// STRING TRANSLATION  ////////////////////////////////////////
+
+function print_string($identifier, $module="", $a="", $b="", $c="") {
+    echo get_string($identifier, $module, $a, $b, $c);
+}
+
 
 function get_string($identifier, $module="", $a="", $b="", $c="") {
 // Return the translated string specified by $identifier as 
