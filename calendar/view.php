@@ -123,13 +123,25 @@
 
     echo '<td width="100%" valign="top">';
 
-    $conform = ($_GET['view'] == 'month' && $SESSION->cal_show_course === true);
+    if($_GET['view'] == 'month') {
+        if(is_numeric($SESSION->cal_show_course)) {
+            $defaultcourses = array($SESSION->cal_show_course => 1);
+        }
+        else if($SESSION->cal_show_course === true) {
+            $defaultcourses = calendar_get_default_courses(true);
+        }
+        else if($SESSION->cal_show_course === false) {
+            $defaultcourses = array();
+        }
+    }
+    else {
+        $defaultcourses = calendar_get_default_courses();
+    }
 
-    $defaultcourses = calendar_get_default_courses(!$conform);
     $courses = array();
 
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
-
+/*
     // Are we left with a bad filter in effect?
     if($_GET['view'] != 'month' && !empty($SESSION->cal_course_referer)) {
         if(is_numeric($SESSION->cal_show_course)) {
@@ -141,7 +153,7 @@
             $SESSION->cal_show_course = intval($SESSION->cal_course_referer);
         }
     }
-
+*/
     switch($_GET['view']) {
         case 'event':
             optional_variable($_GET['id'], 0);

@@ -469,7 +469,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         // Just basic time filtering
         $whereclause = $timeclause;
     }
-    return $whereclause.' AND visible = 1';
+    return $whereclause;
 }
 
 function calendar_top_controls($type, $data) {
@@ -1145,10 +1145,10 @@ function calendar_edit_event_allowed($event) {
     return false;
 }
 
-function calendar_get_default_courses($overridereferer = true) {
+function calendar_get_default_courses($ignoreref = false) {
     global $USER, $CFG, $SESSION;
 
-    if(!empty($SESSION->cal_course_referer) && $overridereferer) {
+    if(!empty($SESSION->cal_course_referer) && !$ignoreref) {
         return array($SESSION->cal_course_referer => 1);
     }
 
