@@ -769,7 +769,7 @@ $string['nothingnew'] = '最終ログインより更新されたものはありません。';
 $string['noticenewerbackup'] = 'このバックアップファイルは、現在インストールされているMoodle $a->serverrelease ( $a->serverversion ) よりも新しいバージョンMoodle $a->backuprelease ($a->backupversion) により作成されました。旧バージョンへの互換性が保障されないため、バックアップデータの矛盾を生じる恐れがあります。';
 $string['notifyloginfailuresmessage'] = 'a->time, IP: $a->ip, ユーザ: $a->info';
 $string['notifyloginfailuresmessageend'] = 'ログは、$a/course/log.php?id=1&chooselog=1&modid=site_errors で閲覧できます。';
-$string['notifyloginfailuresmessagestart'] = '最後に通知されてから、$a におけるログイン失敗一覧です。';
+$string['notifyloginfailuresmessagestart'] = '前回通知以降の、$a におけるログイン失敗一覧です。';
 $string['notifyloginfailuressubject'] = '$a :: ログイン失敗通知';
 $string['notincluded'] = '含まない';
 $string['notingroup'] = '申し訳ございません。この活動を閲覧するためにはグループに属している必要があります。';
