@@ -157,59 +157,48 @@
     
 /// Print Section
     if ($site->numsections > 0) {
-        echo "<table class=\"topicsoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
+        print_simple_box_start('center', '100%', $THEME->cellcontent, 5, 'sitetopic');
     
         /// If currently moving a file then show the current clipboard
         if (ismoving($site->id)) {
             $stractivityclipboard = strip_tags(get_string("activityclipboard", "", addslashes($USER->activitycopyname)));
-            $strcancel= get_string("cancel");
-            echo "<tr>";
-            echo "<td colspan=3 valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicoutlineclip\" width=\"100%\">";
             echo "<p><font size=2>";
-            echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">$strcancel</a>)";
+            echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">".get_string("cancel")."</a>)";
             echo "</font></p>";
-            echo "</td>";
-            echo "</tr>";
-            echo "<tr><td colspan=3><img src=\"pix/spacer.gif\" width=1 height=1></td></tr>";
         }
 
-        $streditsummary   = get_string("editsummary");
-        $stradd           = get_string("add");
-        $stractivities    = get_string("activities");
 
-        $sections = get_all_sections($site->id);
-        get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
-        $section = 0;
-        $thissection = $sections[$section];
+        if (!$section = get_record('course_sections', 'course', $site->id, 'section', 1)) {
+            delete_records('course_sections', 'course', $site->id, 'section', 1); // Just in case
+            $section->course = $site->id;
+            $section->section = 1;
+            $section->summary = '';
+            $section->visible = 1;
+            $section->id = insert_record('course_sections', $section);
+        }
 
-        echo '<tr id="section_0">';
-        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top width=20>&nbsp;</td>";
-        echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
-
-        echo format_text($thissection->summary, FORMAT_HTML);
+        echo format_text($section->summary, FORMAT_HTML);
 
         if ($editing) {
+            $streditsummary = get_string('editsummary');
             echo "<a title=\"$streditsummary\" ".
-                 " href=\"course/editsection.php?id=$thissection->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
+                 " href=\"course/editsection.php?id=$section->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
                  " height=11 width=11 border=0 alt=\"$streditsummary\"></a><br />";
         }
 
         echo '<br clear="all">';
 
-        print_section($site, $thissection, $mods, $modnamesused, true);
+        get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
+        print_section($site, $section, $mods, $modnamesused, true);
 
         if ($editing) {
             echo "<div align=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$site->id&amp;section=$section&add=",
-                        $modnames, "section", "", "$stradd...", "mods", $stractivities);
+            popup_form("$CFG->wwwroot/course/mod.php?id=$site->id&amp;section=$section->section&add=",
+                        $modnames, "section", "", get_string('add').'...', "mods", get_string('activities'));
             echo "</div>";
         }
-
-        echo "</td>";
-        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top align=center width=10>";
-        echo "&nbsp;</td></tr>";
-        echo "<tr><td colspan=3><img src=\"pix/spacer.gif\" width=1 height=1></td></tr>";
-        echo '</table>';
+        print_simple_box_end();
+        print_spacer(10);
     }
 
     switch ($CFG->frontpage) {     /// Display the main part of the front page.
