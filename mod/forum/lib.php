@@ -653,7 +653,7 @@ function forum_get_user_discussions($courseid, $userid) {
                                AND p.userid = u.id 
                                AND u.id = '$userid' 
                                AND d.forum = f.id
-                          ORDER BY p.created ASC");
+                          ORDER BY p.created DESC");
 }
 
 
@@ -1389,13 +1389,20 @@ function forum_delete_post($post) {
 function forum_print_user_discussions($courseid, $userid) {
     global $CFG, $USER;
 
+    $maxdiscussions = 10;
+    $countdiscussions = 0;
+
 
     if ($discussions = forum_get_user_discussions($courseid, $userid)) {
         $user = get_record("user", "id", $userid);
         echo "<HR>";
-        print_heading( get_string("discussionsstartedby", "forum", "$user->firstname $user->lastname") );
+        print_heading( get_string("discussionsstartedbyrecent", "forum", "$user->firstname $user->lastname") );
         $replies = forum_count_discussion_replies();
         foreach ($discussions as $discussion) {
+            $countdiscussions++;
+            if ($countdiscussions > $maxdiscussions) {
+                break;
+            }
             if (($discussion->forumtype == "teacher") and !isteacher($courseid)) {
                 continue;
             }
