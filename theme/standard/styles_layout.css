@@ -81,6 +81,7 @@ a img {
 
 .headermenu {
     float:right;
+    text-align:right;
 }
 
 #nav-bar {
