@@ -51,8 +51,10 @@
         switch ($mod->mode) {
             case "update":
 
-                if (trim($mod->name) == '') {
-                    unset($mod->name);
+                if (isset($mod->name)) {
+                    if (trim($mod->name) == '') {
+                        unset($mod->name);
+                    }
                 }
 
                 $return = $updateinstancefunction($mod);
@@ -64,22 +66,18 @@
                     }
                     error("Could not update the $mod->modulename", "view.php?id=$course->id");
                 }
+
+                if (isset($mod->visible)) {
+                    set_coursemodule_visible($mod->coursemodule, $mod->visible);
+                }
+
+                if (isset($mod->groupmode)) {
+                    set_coursemodule_groupmode($mod->coursemodule, $mod->groupmode);
+                }
+
                 if (is_string($return)) {
                     error($return, "view.php?id=$course->id");
                 }
-
-                // to deal with pre-1.5 modules
-                if (!isset($mod->visible)) {
-                    //We get the section's visible field status
-                    $mod->visible = get_field("course_sections","visible","id",$sectionid);
-                }
-                if (!isset($mod->groupmode)) {
-                    $cm = get_record('course_modules', 'id', $mod->coursemodule);
-                    $mod->groupmode = groupmode($course, $cm);
-                }
-
-                set_coursemodule_visible($mod->coursemodule, $mod->visible);
-                set_coursemodule_groupmode($mod->coursemodule, $mod->groupmode);
 
                 if (isset($mod->redirect)) {
                     $SESSION->returnpage = $mod->redirecturl;
@@ -134,9 +132,7 @@
                     error("Could not update the course module with the correct section");
                 }
 
-                // to deal with pre-1.5 modules
-                if (!isset($mod->visible)) {
-                    //We get the section's visible field status
+                if (!isset($mod->visible)) {   // We get the section's visible field status
                     $mod->visible = get_field("course_sections","visible","id",$sectionid);
                 }
                 // make sure visibility is set correctly (in particular in calendar)
