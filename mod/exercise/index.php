@@ -66,7 +66,7 @@
                 else {
                     $submitted = userdate($submission->timecreated);
                     }
-                $link = "<a href=\"view.php?id=$exercise->coursemodule\">$exercise->name</a>";
+                $link = "<a href=\"view.php?id=$exercise->coursemodule\">".format_string($exercise->name,true)."</a>";
                 $title = $submission->title;
                 if ($course->format == "weeks" or $course->format == "topics") {
                     if (isteacher($course->id)) {
@@ -119,7 +119,7 @@
         } else {
             $submitted = get_string("no");
             $title = '';
-            $link = "<a href=\"view.php?id=$exercise->coursemodule\">$exercise->name</a>";
+            $link = "<a href=\"view.php?id=$exercise->coursemodule\">".format_string($exercise->name,true)."</a>";
             if ($course->format == "weeks" or $course->format == "topics") {
                 if (isteacher($course->id)) {
                     $table->data[] = array ($exercise->section, $link, $title, $exercise->phase, 

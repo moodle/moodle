@@ -43,8 +43,8 @@
     $strexercise  = get_string("modulename", "exercise");
 
     // ...display header...
-    print_header_simple("$exercise->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strexercises</a> -> $exercise->name",
+    print_header_simple(format_string($exercise->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strexercises</a> -> ".format_string($exercise->name),
                   "", "", true, update_module_button($cm->id, $course->id, $strexercise), navmenu($course, $cm));
 
     // ...and if necessary set default action
@@ -257,7 +257,7 @@
                     echo "<tr align=\"center\" style='color:#DF041E;'><td>".get_string("wrongpassword", "exercise").
                         "</td></tr>";
                 }
-                echo "<tr align=\"center\"><td>".get_string("passwordprotectedexercise", "exercise", $exercise->name).
+                echo "<tr align=\"center\"><td>".get_string("passwordprotectedexercise", "exercise", format_string($exercise->name)).
                     "</td></tr>";
                 echo "<tr align=\"center\"><td>".get_string("enterpassword", "exercise").
                     " <input type=\"password\" name=\"userpassword\" /></td></tr>";

@@ -2095,7 +2095,7 @@ function exercise_print_assignment_info($exercise) {
     }
     $strduedate = userdate($exercise->deadline)." ($strdifference)";
     print_simple_box_start("center");
-    print_heading($exercise->name, "center");
+    print_heading(format_string($exercise->name), "center");
     print_simple_box_start("center");
     echo "<b>".get_string("duedate", "exercise")."</b>: $strduedate<br />";
     $maxgrade = $exercise->grade + $exercise->gradinggrade;
@@ -2809,7 +2809,7 @@ function exercise_print_teacher_table($course) {
     $table->align[] = "center";
     $table->size[] = "*";
         foreach ($exercises as $exercise) {
-        $table->head[] = $exercise->name;
+        $table->head[] = format_string($exercise->name);
         $table->align[] = "center";
         $table->size[] = "*";
         }

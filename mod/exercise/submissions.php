@@ -46,9 +46,9 @@
     $strsubmissions = get_string("submissions", "exercise");
 
     // ... print the header and...
-    print_header_simple("$exercise->name", "",
+    print_header_simple(format_string($exercise->name), "",
                  "<a href=\"index.php?id=$course->id\">$strexercises</a> ->
-                  <a href=\"view.php?id=$cm->id\">$exercise->name</a> -> $strsubmissions",
+                  <a href=\"view.php?id=$cm->id\">".format_string($exercise->name,true)."</a> -> $strsubmissions",
                   "", "", true);
 
     //...get the action!

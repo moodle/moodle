@@ -26,9 +26,9 @@
     $strexercise  = get_string("modulename", "exercise");
     $strupload      = get_string("upload");
 
-    print_header_simple("$exercise->name : $strupload", "",
+    print_header_simple(format_string($exercise->name)." : $strupload", "",
                  "<a href=\"index.php?id=$course->id\">$strexercises</a> ->
-                  <a href=\"view.php?id=$cm->id\">$exercise->name</a> -> $strupload",
+                  <a href=\"view.php?id=$cm->id\">".format_string($exercise->name,true)."</a> -> $strupload",
                   "", "", true);
 
     // check that this is not a "rapid" second submission, caused by using the back button

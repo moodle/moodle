@@ -202,10 +202,10 @@ function exercise_cron() {
             // "Your assignment \"$submission->title\" has been assessed by"
             $msg = get_string("mail1", "exercise", $submission->title).' '.fullname($assessmentowner).".\n";
             // "The comments and grade can be seen in the exercise assignment '$exercise->name'
-            $msg .= get_string("mail2", "exercise", $exercise->name)."\n\n";
+            $msg .= get_string("mail2", "exercise", format_string($exercise->name,true))."\n\n";
     
-            $postsubject = "$course->shortname: $strexercises: $exercise->name";
-            $posttext  = "$course->shortname -> $strexercises -> $exercise->name\n";
+            $postsubject = "$course->shortname: $strexercises: ".format_string($exercise->name,true);
+            $posttext  = "$course->shortname -> $strexercises -> ".format_string($exercise->name,true)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= $msg;
             // "You can see it in your exercise assignment"
@@ -216,11 +216,11 @@ function exercise_cron() {
                 $posthtml = "<p><font face=\"sans-serif\">".
               "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
               "<a href=\"$CFG->wwwroot/mod/exercise/index.php?id=$course->id\">$strexercises</a> ->".
-              "<a href=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</a></font></p>";
+              "<a href=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">".format_string($exercise->name,true)."</a></font></p>";
               $posthtml .= "<hr /><font face=\"sans-serif\">";
               $posthtml .= "<p>$msg</p>";
               $posthtml .= "<p>".get_string("mail3", "exercise").
-                  " <a href=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</a>.</p></font><hr />";
+                  " <a href=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">".format_string($exercise->name,true)."</a>.</p></font><hr />";
             } else {
               $posthtml = "";
             }

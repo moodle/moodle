@@ -56,9 +56,9 @@
     $strassessments = get_string("assessments", "exercise");
 
     // ... print the header and...
-    print_header_simple("$exercise->name", "",
+    print_header_simple(format_string($exercise->name), "",
                  "<a href=\"index.php?id=$course->id\">$strexercises</a> ->
-                  <a href=\"view.php?id=$cm->id\">$exercise->name</a> -> $strassessments",
+                  <a href=\"view.php?id=$cm->id\">".format_string($exercise->name,true)."</a> -> $strassessments",
                   "", "", true);
 
     //...get the action
