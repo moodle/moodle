@@ -609,6 +609,14 @@
                                               $dest_dir."/".$data->new_id);
                                 $counter ++;
                             }
+                            //Do some output
+                            if ($counter % 2 == 0) {
+                                echo ".";
+                                if ($counter % 40 == 0) {
+                                echo "<br>";
+                                }
+                                backup_flush(300);
+                            }
                         }
                     }
                 }
@@ -651,6 +659,14 @@
                         $status = backup_copy_file($rootdir."/".$dir,
                                       $dest_dir."/".$dir);
                         $counter ++;
+                    }
+                    //Do some output
+                    if ($counter % 2 == 0) {       
+                        echo ".";
+                        if ($counter % 40 == 0) {       
+                        echo "<br>";
+                        }
+                        backup_flush(300);
                     }
                 }
             }
