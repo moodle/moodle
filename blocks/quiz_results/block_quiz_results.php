@@ -33,9 +33,10 @@ class block_quiz_results extends block_base {
         }
         else {
             // Assuming we are displayed in the quiz view page
-            // TODO
-            $quizid   = 0;
-            $courseid = 0;
+            $quizid    = $this->instance->pageid;
+            $modrecord = get_record('modules', 'name', 'quiz');
+            $cmrecord  = get_record('course_modules', 'module', $modrecord->id, 'instance', $quizid);
+            $courseid = $cmrecord->course;
         }
 
         if(empty($quizid)) {
