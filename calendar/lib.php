@@ -1032,7 +1032,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         // For each course...
         foreach($groupcourses as $courseid) {
             // If the user is an editing teacher in there,
-            if(!empty($USER) && isteacheredit($courseid, $USER->id)) {
+            if(!empty($USER->id) && isteacheredit($courseid, $USER->id)) {
                 // Show events from all groups
                 if(($grouprecords = get_groups($courseid)) !== false) {
                     $grouparray = array_merge($grouparray, array_keys($grouprecords));
@@ -1098,7 +1098,7 @@ function calendar_get_default_courses($ignoreref = false) {
     }
 
     $courses = array();
-    if(isadmin($USER->id)) {
+    if(!empty($USER->id) && isadmin($USER->id)) {
         $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
         return $courses;
     }
