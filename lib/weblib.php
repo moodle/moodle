@@ -2679,7 +2679,7 @@ function update_module_button($moduleid, $courseid, $string) {
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
                "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
                "<input type=\"hidden\" name=\"return\" value=\"true\" />".
-               "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
+               "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
     } else {
         return '';
