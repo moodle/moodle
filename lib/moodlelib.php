@@ -2618,35 +2618,35 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     // Delete gradebook stuff
 
-    if (delete_records("course_grade_category", "course", $course->id)) {
+    if (delete_records("grade_category", "course", $course->id)) {
         if ($showfeedback) {
             notify("$strdeleted grade categories");
         } else {
             $result = false;
         }
     }
-    if (delete_records("course_grade_exceptions", "course", $course->id)) {
+    if (delete_records("grade_exceptions", "course", $course->id)) {
         if ($showfeedback) {
             notify("$strdeleted grade exceptions");
         } else {
             $result = false;
         }
     }
-    if (delete_records("course_grade_item", "course", $course->id)) {
+    if (delete_records("grade_item", "course", $course->id)) {
         if ($showfeedback) {
             notify("$strdeleted grade items");
         } else {
             $result = false;
         }
     }       
-    if (delete_records("course_grade_letter", "course", $course->id)) {
+    if (delete_records("grade_letter", "course", $course->id)) {
         if ($showfeedback) {
             notify("$strdeleted grade letters");
         } else {
             $result = false;
         }
     }
-    if (delete_records("course_grade_preferences", "course", $course->id)) {
+    if (delete_records("grade_preferences", "course", $course->id)) {
         if ($showfeedback) {
             notify("$strdeleted grade preferences");
         } else {
@@ -3962,7 +3962,11 @@ function get_string($identifier, $module='', $a=NULL) {
 
     $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
     if ($module != 'moodle') {
-        $locations[] =  $CFG->dirroot .'/mod/'.$module.'/lang/';
+        if (strpos($module, 'block_') === 0) {  // It's a block lang file
+            $locations[] =  $CFG->dirroot .'/blocks/'.substr($module, 6).'/lang/';
+        } else {                                // It's a normal activity
+            $locations[] =  $CFG->dirroot .'/mod/'.$module.'/lang/';
+        }
     }
 
 /// First check all the normal locations for the string in the current language
