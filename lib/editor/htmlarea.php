@@ -5,7 +5,7 @@
     $lifetime = 1800;
     
     header("Content-type: application/x-javascript");  // Correct MIME type
-    header("Last-Modified: " . gmdate("D, d M Y H:i:s", lastmodified) . " GMT");
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
     header("Cache-control: max_age = $lifetime"); 
     header("Pragma: ");
