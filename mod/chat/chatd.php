@@ -84,6 +84,9 @@ class ChatDaemon {
     var $sets_info = array();    // Keyed by sessionid exactly like conn_sets, one of these for each of those
     var $chatrooms = array();    // Keyed by chatid, holding arrays of data
 
+    // IMPORTANT: $conn_sets, $sets_info and $chatrooms must remain synchronized!
+    //            Pay extra attention when you write code that affects any of them!
+
     function ChatDaemon() {
         $this->_trace_level         = E_ALL ^ E_USER_NOTICE;
         $this->_pcntl_exists        = function_exists('pcntl_fork');
@@ -113,7 +116,9 @@ class ChatDaemon {
                 if(!empty($chatroom['users'])) {
                     foreach($chatroom['users'] as $sessionid => $userid) {
                         // We will be polling each user as required
+                        $this->trace('...shall we poll '.$sessionid.'?');
                         if($this->sets_info[$sessionid]['chatuser']->lastmessageping < $this->_last_idle_poll) {
+                            $this->trace('YES!');
                             // This user hasn't been polled since his last message
                             if($this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], '<!-- poll -->') === false) {
                                 // User appears to have disconnected
@@ -627,6 +632,7 @@ class ChatDaemon {
         unset($this->conn_sets[$sessionid]);
         unset($this->sets_info[$sessionid]);
         unset($this->chatrooms[$chatroom]['users'][$sessionid]);
+        $this->trace('Removed all traces of user with session '.$sessionid, E_USER_NOTICE);
         return true;
     }
 
@@ -1036,7 +1042,7 @@ while(true) {
     $now = time();
 
     // Clean up chatrooms with no activity as required
-    if($now - $DAEMON->_last_idle_poll > $DAEMON->_freq_poll_idle_chat) {
+    if($now - $DAEMON->_last_idle_poll >= $DAEMON->_freq_poll_idle_chat) {
         $DAEMON->poll_idle_chats($now);
     }
 
