@@ -6,7 +6,8 @@
     require_once("../../config.php");
 	require_once("locallib.php");
 	require_once("styles.php");
-	
+	require_once("lib.php");
+
     require_variable($id);    // Course Module ID
     optional_variable($pageid);    // Lesson Page ID
 
@@ -530,12 +531,15 @@
                     }
                 }
             }
-          
-		   	//print_heading($page->title);
+		   	
 			/// CDC-FLAG /// moved name and title down here for Flow style, michaelp
 			echo "<div align=\"center\">";			
 			echo "<i><strong>";
 			echo ($lesson->name) . "</strong></i>";
+			if ($page->qtype == LESSON_BRANCHTABLE) {
+				echo ":<br>";
+				print_heading($page->title);
+			}
 			echo "<br><br></div>";
 			
 			/// CDC-FLAG ///
@@ -645,6 +649,7 @@
 								echo "<b>$answer->answer: </b></td><td valign=\"bottom\">";
 								echo "<label for=\"response[$answer->id]\" class=\"hidden-label\">response[$answer->id]</label><select id=\"response[$answer->id]\" name=\"response[$answer->id]\">"; //CDC hidden label added.
 								echo "<option value=\"0\" selected=\"selected\">Choose...</option>";
+								$responses = array_unique($responses);
 								foreach ($responses as $response) {
 									echo "<option value=\"$response\">$response</option>";
 								}
@@ -958,7 +963,6 @@
 			echo "<p align=\"center\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></p>\n"; //CDC Back to the menu (course view).
 			echo "<p align=\"center\"><a href=\"../../course/grade.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></p>\n"; //CDC Back to the menu (course view).
         }
-
 		/// CDC-FLAG ///
 		if($lesson->slideshow) {
 			echo "</td></tr></table></div>\n"; //Closes Mark's big div tag?
@@ -1106,7 +1110,7 @@
             echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
             echo "<input type=\"hidden\" name=\"pageid\" />\n";
 			/// CDC-FLAG /// link to grade essay questions
-			if (count_records("lesson_pages", "lessonid", $lesson->id, "qtype", LESSON_ESSAY) > 0) {
+			if (count_records("lesson_essay", "lessonid", $lesson->id) > 0) {
 				echo "<div align=\"center\"><a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("gradeessay", "lesson")."</a></div><br />";
 			}
 			/// CDC-FLAG /// tree code - in final release, will use lang file for all text output.
@@ -1459,7 +1463,7 @@
     elseif ($action == 'essayview') {
 		print_heading_with_help($lesson->name, "overview", "lesson");
 		if (!$essays = get_records_select("lesson_essay", "lessonid = $lesson->id", "timesubmitted")) {
-			error("Error: could not find essays");
+			error("No one has answered essay questions yet...");
 		}
 		if (!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id")) {
 			error("Error: could not find lesson pages");
