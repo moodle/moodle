@@ -183,7 +183,7 @@
 
 
 function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
-    global $CFG, $THEME, $USER, $db;
+    global $CFG, $THEME, $USER;
 
     if (!checkdate($m, $d, $y)) {
         $now = usergetdate(time());

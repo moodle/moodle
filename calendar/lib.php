@@ -843,7 +843,7 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
         $enddate   = usergetdate($event->timestart + $event->timeduration);
 
         // Simple arithmetic: $year * 13 + $month is a distinct integer for each distinct ($year, $month) pair
-        if(!($startdate['year'] * 13 + $startdate['mon'] >= $year * 13 + $month) && ($enddate['year'] * 13 + $enddate['mon'] <= $year * 13 + $month)) {
+        if(!($startdate['year'] * 13 + $startdate['mon'] <= $year * 13 + $month) && ($enddate['year'] * 13 + $enddate['mon'] >= $year * 13 + $month)) {
             // Out of bounds
             continue;
         }
@@ -875,7 +875,7 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
         }
 
         // The event starts on $month $year or before. So...
-        $lowerbound = $startdate['mon'] == $month && $startdate['year'] == $year ? intval($startdate['mday']) : 1;
+        $lowerbound = $startdate['mon'] == $month && $startdate['year'] == $year ? intval($startdate['mday']) : 0;
 
         // Also, it ends on $month $year or later...
         $upperbound = $enddate['mon'] == $month && $enddate['year'] == $year ? intval($enddate['mday']) : calendar_days_in_month($month, $year);
