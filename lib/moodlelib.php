@@ -91,19 +91,19 @@ define('HOURMINS', 60);
 /**
  * Parameter constants - if set then the parameter is cleaned of scripts etc
  */
-define('PARAM_RAW',     0x00);
-define('PARAM_CLEAN',   0x01);
-define('PARAM_INT',     0x02);
-define('PARAM_INTEGER', 0x02);  // Alias for PARAM_INT
-define('PARAM_ALPHA',   0x04);
-define('PARAM_ACTION',  0x04);  // Alias for PARAM_ALPHA
-define('PARAM_FORMAT',  0x04);  // Alias for PARAM_ALPHA
-define('PARAM_NOTAGS',  0x08);
-define('PARAM_FILE',    0x10);
-define('PARAM_PATH',    0x20);
-define('PARAM_HOST',    0x40);  // FQDN or IPv4 dotted quad
-define('PARAM_URL',     0x80);  
-//define('PARAM_LOCALURL',????); // need something that implies PARAM_URL
+define('PARAM_RAW',     0x0000);
+define('PARAM_CLEAN',   0x0001);
+define('PARAM_INT',     0x0002);
+define('PARAM_INTEGER', 0x0002);  // Alias for PARAM_INT
+define('PARAM_ALPHA',   0x0004);
+define('PARAM_ACTION',  0x0004);  // Alias for PARAM_ALPHA
+define('PARAM_FORMAT',  0x0004);  // Alias for PARAM_ALPHA
+define('PARAM_NOTAGS',  0x0008);
+define('PARAM_FILE',    0x0010);
+define('PARAM_PATH',    0x0020);
+define('PARAM_HOST',    0x0040);  // FQDN or IPv4 dotted quad
+define('PARAM_URL',     0x0080);  
+define('PARAM_LOCALURL',0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -269,7 +269,6 @@ function clean_param($param, $options) {
         }
     }
 
-    /*    
     if ($options & PARAM_LOCALURL) { 
         // assume we passed the PARAM_URL test...
         // allow http absolute, root relative and relative URLs within wwwroot
@@ -288,7 +287,6 @@ function clean_param($param, $options) {
             }
         }
     }
-    */
 
     return $param;
 }
