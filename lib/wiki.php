@@ -51,6 +51,7 @@ class Wiki {
   var $block_state;
   var $list_state;
   var $list_depth;
+  var $spelling_on;
   var $list_backtrack;
   var $output; // output buffer
 
@@ -92,7 +93,7 @@ class Wiki {
     $bodge = chr(1);
     $line = eregi_replace( '([[:alnum:]])'.$mark.'([[:alnum:]])', '\\1'.$bodge.'\\2',$line );
 
-    $regex = '(^| |[(.,])'.$mark.'([^'.$mark.']*)'.$mark.'([^[:alnum:]])';
+    $regex = '(^| |[(.,])'.$mark.'([^'.$mark.']*)'.$mark.'([^[:alnum:]]|$)';
     $replace = '\\1<'.$tag.'>\\2</'.$tag.'>\\3';
     $line = eregi_replace( $regex, $replace, $line );
 
@@ -210,7 +211,7 @@ class Wiki {
     $line = str_replace( "(TM)", "&#8482;", $line );
     $line = str_replace( "(tm)", "&#8482;", $line );
     $line = str_replace( "(C)", "&#169;", $line );
-    $line = str_replace( "(c)", "&#169;", $line );
+    // $line = str_replace( "(c)", "&#169;", $line );
     $line = str_replace( "1/4", "&#188;", $line );
     $line = str_replace( "1/2", "&#189;", $line );
     $line = str_replace( "3/4", "&#190;", $line );
@@ -227,7 +228,7 @@ class Wiki {
     $line = $this->do_replace_sub( $line, "~", "sub" );
     $line = $this->do_replace_sub( $line, "\^", "sup" );
     $line = $this->do_replace( $line, "\"", "q" );
-    $line = $this->do_replace( $line, "'", "q" );
+    // $line = $this->do_replace( $line, "'", "q" );
     $line = $this->do_replace( $line, "%", "code" );
     $line = $this->do_replace( $line, "@", "cite" );
    
@@ -273,6 +274,37 @@ class Wiki {
     return $line;
   }
 
+
+  function spellcheck( $line,$pspell_link ) {
+
+    // split line into words
+    $words = preg_split( "/[\s,-.]/ ", $line );
+
+    // run through words
+    $newline = "";
+    foreach($words as $word) {
+      $check_word = eregi_replace( "[,;:./&()* ?\"]", "", $word );
+      $check_word = eregi_replace( "^'|'$","",$check_word );
+
+      // words not to check
+      $docheck = true;
+      if (eregi("[0-9]",$check_word)) { $docheck=false; }
+
+      if ( $docheck && (!pspell_check( $pspell_link, $check_word)) ) {
+        $suggests = pspell_suggest( $pspell_link,$check_word );
+        $suggest_line = "";
+        foreach($suggests as $suggest) {
+          $suggest_line = $suggest_line . " " . $suggest;
+        }
+        $word = "<span class=\"spellcheck\"><acronym title=\"$suggest_line\">$word</acronym></span>";
+      }
+      $newline = $newline . " " . $word;
+    }
+
+    return $newline;
+  }
+
+
   function format( $content ) {
     // main entry point for processing TikiText
     // $content is string containing text with Tiki formatting
@@ -284,6 +316,7 @@ class Wiki {
     $this->list_state = LIST_NONE;
     $this->list_depth = 0;
     $this->list_backtrack = array();
+    $this->spelling_on = false;
 
     // split content into array of single lines
     $lines = explode( "\n",$content );
@@ -302,6 +335,20 @@ class Wiki {
         $buffer = $buffer . $this->close_block( $this->block_state );
         $this->block_state = STATE_NONE;
         continue;
+      }
+
+      // is this a spelling line
+      $spell_parms = array();
+      $spelling = eregi( "^!SPELL:([a-z]+):?(american|british|canadian)?(\r| |$)", $line,$spell_parms );
+      if ($spelling) {
+        $this->spelling_on = true;
+        $pspell_link = pspell_new( $spell_parms[1], $spell_parms[2] );
+        $line = "";
+      }
+
+      // spellcheck
+      if ($this->spelling_on) {
+        $line = $this->spellcheck( $line, $pspell_link );
       }
       
       // act now depending on current block state
@@ -328,14 +375,14 @@ class Wiki {
         	$this->block_state = STATE_NOTIKI;
         } 	
         else
-        if (eregi("^Q. ",$line) ) {
+        if (eregi("^Q\. ",$line) ) {
           // Question - para with a question class
           $buffer = $buffer . "<p class=\"question\">\n";
           $buffer = $buffer . eregi_replace( "^Q. ","",$line) . "\n";
           $this->block_state = STATE_PARAGRAPH;
         }
         else
-        if (eregi("^A. ",$line) ) {
+        if (eregi("^A\. ",$line) ) {
           // Answer - para with an answer class
           $buffer = $buffer . "<p class=\"answer\">\n";
           $buffer = $buffer . eregi_replace( "^A. ","",$line ) . "\n";
