@@ -7,16 +7,24 @@ require('lib.php');
 require_login(0, false);
 
 /// optional variables that may be passed in
-$tab            = optional_param('tab',       'contacts'); // current tab - default to contacts
-$addcontact     = optional_param('addcontact',     false); // adding a contact
-$removecontact  = optional_param('removecontact',  false); // removing a contact
-$blockcontact   = optional_param('blockcontact',   false); // blocking a contact
-$unblockcontact = optional_param('unblockcontact', false); // unblocking a contact
+$tab            = optional_param('tab', 'contacts'); // current tab - default to contacts
+$addcontact     = optional_param('addcontact',     0, PARAM_INT); // adding a contact
+$removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a contact
+$blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a contact
+$unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
 
-if (($addcontact     !== false) and confirm_sesskey()) message_add_contact($addcontact);
-if (($removecontact  !== false) and confirm_sesskey()) message_remove_contact($removecontact);
-if (($blockcontact   !== false) and confirm_sesskey()) message_block_contact($blockcontact);
-if (($unblockcontact !== false) and confirm_sesskey()) message_unblock_contact($unblockcontact);
+if ($addcontact and confirm_sesskey()) {
+    message_add_contact($addcontact);
+}
+if ($removecontact and confirm_sesskey()) {
+    message_remove_contact($removecontact);
+}
+if ($blockcontact and confirm_sesskey()) {
+    message_block_contact($blockcontact);
+}
+if ($unblockcontact and confirm_sesskey()) {
+    message_unblock_contact($unblockcontact);
+}
 
 
 /// a print function is associated with each tab
