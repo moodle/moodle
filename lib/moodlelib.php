@@ -31,7 +31,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         if (isset($USER->id)) {
             $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
         } else {
-            $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login\">".get_string("login")."</A></FONT>";
+            $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/\">".get_string("login")."</A></FONT>";
         }
     }
  
