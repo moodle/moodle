@@ -487,7 +487,7 @@ function assignment_get_users_done($assignment) {
 function assignment_get_unmailed_submissions($cutofftime) {
 /// Return list of marked submissions that have not been mailed out for currently enrolled students
     global $CFG;
-    $records = get_records_sql("SELECT s.*, a.course, a.name
+    return get_records_sql("SELECT s.*, a.course, a.name
                               FROM {$CFG->prefix}assignment_submissions s, 
                                    {$CFG->prefix}assignment a,
                                    {$CFG->prefix}user_students us
@@ -497,19 +497,6 @@ function assignment_get_unmailed_submissions($cutofftime) {
                                AND s.assignment = a.id
                                AND s.userid = us.userid
                                AND a.course = us.course");
-    $site = get_site();
-    if (record_exists('assignment', 'course', $site->id)) {
-        $records += get_records_sql("SELECT s.*, a.course, a.name
-                              FROM {$CFG->prefix}assignment_submissions s, 
-                                   {$CFG->prefix}assignment a,
-                                   {$CFG->prefix}user_students us
-                             WHERE s.mailed = 0 
-                               AND s.timemarked < $cutofftime 
-                               AND s.timemarked > 0
-                               AND s.assignment = a.id
-                               AND s.userid = us.userid
-                               AND a.course = $site->id");
-    }
 }
 
 
