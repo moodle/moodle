@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 (2004083100)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['addresource'] = 'Tilføj materiale';
@@ -50,7 +50,7 @@ $string['newwidth'] = 'Almindelig vinduebredde (i pixels)';
 $string['newwindow'] = 'Nyt vindue';
 $string['newwindowopen'] = 'Vis denne resource i et nyt popupvindue';
 $string['note'] = 'Note';
-$string['notefile'] = 'For at uploade filer til kurset(så de vises i denne liste) brug<A HREF=$a >File Manager</A>.';
+$string['notefile'] = 'For at uploade filer til kurset(så de vises i denne liste) brug<a href=\"$a\" >File Manager</a>.';
 $string['notypechosen'] = 'Du skal vælge en type. Brug tilbage knappen og prøv igen';
 $string['pagedisplay'] = 'Vis denne resource i dette vindue';
 $string['pagewindow'] = 'Samme vindue';

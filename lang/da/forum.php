@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 (2004083100)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['addanewdiscussion'] = 'Tilføj en ny diskusion';
@@ -91,7 +91,7 @@ $string['openmode1'] = 'Ingen diskussioner, men svar er tilladte';
 $string['openmode2'] = 'Diskussioner og svar er tilladte';
 $string['parent'] = 'Vis forgænger';
 $string['parentofthispost'] = 'Første indlæg';
-$string['postadded'] = 'Dit indlæg er tilføjet.<P>Du har $a til at redigere i det, hvis du vil ændre noget.';
+$string['postadded'] = '<p>Dit indlæg er tilføjet.</p><p>Du har $a til at redigere i det, hvis du vil ændre noget.</p>';
 $string['postincontext'] = 'Se dette indlægs indhold';
 $string['postmailinfo'] = 'Dette er en kopi af en meddelelse fra $a websted.
 For at give et svar via webstedet, klik på følgende link:';

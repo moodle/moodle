@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 (2004083100)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['action'] = 'Hændelse';
@@ -109,7 +109,7 @@ $string['backuplogshelp'] = 'Vælg hvis du ønsker at inkludere kursuslog-filer i 
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Bemærkning: Du har valgt at tage backup med \"Ingen brugere\", så alle modulbackups er skiftet til \"uden brugerdata\". Læg mærke til at \"opgave\" og \"projekt\" modulerne ikke er kompatibel med denne type backup, så de er blevet deaktiveret.';
 $string['backuporiginalname'] = 'Backup navn';
-$string['backupsavetohelp'] = 'Angiv den fulde sti til det bibliotek hvor backup-filerne skal gemmes i.<BR>(Lad det være blank for at bruge standart-stien)';
+$string['backupsavetohelp'] = 'Angiv den fulde sti til det bibliotek hvor backup-filerne skal gemmes i.<br />(Lad det være blank for at bruge standart-stien)';
 $string['backupuserfileshelp'] = 'Vælg hvis du ønsker at inkludere brugerfiler (avatars) i backup\'en';
 $string['backupusershelp'] = 'Vælg hvis du ønsker at inkludere alle brugere på serveren eller kun de nødvendige brugere i kurset i backup\'en';
 $string['backupversion'] = 'Backup version';
@@ -187,7 +187,7 @@ $string['confignoreplyaddress'] = 'Emails bliver nogen gange sendt ud på vegne a
 $string['confignotifyloginfailures'] = 'Hvis der bliver lavet et fejllogin der bliver logget kan der blive sendt en email ud. Hvem skal modtage disse.';
 $string['confignotifyloginthreshold'] = 'Hvis fejllogin-logging er slået hvor mange forkerte loginforsøg af den samme bruger eller IP adresse er det værd at sende en email omkring.';
 $string['configopentogoogle'] = 'Hvis du aktivere denne indstilling, kan Google søge på siden som gæst. Derudover vil folk som følger et link fra Google vil automatisk blive logget ind som gæst. Dette vil selvfølgelig kun være tilfælde for hvis kurset tillader gæsteadgang.';
-$string['configproxyhost'] = 'Hvis denne<B>server</B> skal bruge en proxy computer (f.eks. en firewall) for at komme på Internettet, så skriv proxy hostnavn og port her.';
+$string['configproxyhost'] = 'Hvis denne<b>server</b> skal bruge en proxy computer (f.eks. en firewall) for at komme på Internettet, så skriv proxy hostnavn og port her.';
 $string['configsecureforms'] = 'Moodle kan tilføje et ekstra nivau af sikkerhed, når man skriver data til den. Hvis dette er aktivt så bliver browserens HTTP_REFERER variabel sammenholdt med det der bliver sendt til moodle vha. forms. Dette kan i få tilfælde give problemer hvis der er en firewall imellem f.eks. zonealarm kan være konfigureret til at fjerne HTTP_REFERER fra HTTP trafikken, eller proxier kan også lave det samme. Symtomerne er at man bliver hængene i form. Hvis brugerne har den type problemer med loginsiden så kan du slå det fra. Det gør dog sitet mere sårbart for \'Brute force\' angreb. Hvis du er i tvivl så lad denne setting være slået til. ';
 $string['configsessioncookie'] = 'Denne indstilling angiver navnet på den cookie der bliver brugt til Moodle sessioner. Den er valgfri, og kun brugbar hvis der er flere kopier af moodle der kører på samme server.';
 $string['configsessiontimeout'] = 'Hvis brugere er inaktive på siden i lang tid (uden af skifte sider) så bliver de automatisk logget ud. (deres session slutter). Denne variabel specificere hvor lang tid der skal gå før de bliver logget ud.';
@@ -352,9 +352,9 @@ så kan du \"cut and paste\" addressen i addresse feltet i toppen af dit browserv
 Cheers fra \'$a->sitename\' administrator,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: konto bekræftigelse';
-$string['emailconfirmsent'] = '   <P>En email addresse skulle være sendt til din addresse <B>$a</B>
-   <P>Den indeholder anvisninger på, hvordan du kan blive registreret.
-   <P>Hvis du stadig har problemer, så kontakt web administratoren.';
+$string['emailconfirmsent'] = '<p>En email addresse skulle være sendt til din addresse <b>$a</b></p>
+<p>Den indeholder anvisninger på, hvordan du kan blive registreret.</p>
+<p>Hvis du stadig har problemer, så kontakt web administratoren.</p>';
 $string['emaildigest'] = 'Sammendrags email type';
 $string['emaildigestcomplete'] = 'Komplet (daglig  email med alle indlæg)';
 $string['emaildigestoff'] = 'Ingen sammendrag (en email per indlæg)';
@@ -386,13 +386,13 @@ så kan du \"cut and paste\" addressen i addresse feltet i toppen af dit browserv
 Cheers fra \'$a->sitename\' administrator,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: nyt kodeord godkendelse';
-$string['emailpasswordconfirmsent'] = '   <P>En email addresse skulle være sendt til din addresse <B>$a</B>
-   <P>Den indeholder anvisninger på, hvordan du kan blive registreret.
-   <P>Hvis du stadig har problemer, så kontakt web administratoren.';
+$string['emailpasswordconfirmsent'] = 'En email addresse skulle være sendt til din addresse <b>$a</b>
+<br />Den indeholder anvisninger på, hvordan du kan blive registreret.
+<br />Hvis du stadig har problemer, så kontakt web administratoren.';
 $string['emailpasswordsent'] = 'Du har accepteret at få et nyt kodeord.
-<p>Der er sendt en ny email til dig der indeholder det nye kodeord. 
+<br />Der er sendt en ny email til dig der indeholder det nye kodeord. 
 Email\'en er sendt til <b>$a->email</b> 
-<p>Det nye kodeord er genereret automatisk. Hvis du ønsker selv at skifte det til noget du lettere kan huske kan du gøre det her: <a href=$a->link>Skift Kodeord</a>';
+<br />Det nye kodeord er genereret automatisk. Hvis du ønsker selv at skifte det til noget du lettere kan huske kan du gøre det her: <a href=\"$a->link\">Skift Kodeord</a>';
 $string['enable'] = 'Aktiver';
 $string['encryptedcode'] = 'Krypteret kode';
 $string['enrolledincourse'] = 'Tilmeldt kursus \"$a\"';
@@ -401,9 +401,9 @@ $string['enrollfirst'] = 'Du skal være tilmeldt kurset for at kunne bruge kursus
 $string['enrolmentconfirmation'] = 'Du er ved at tilmelde dig dette kursus<br />
 Er du sikker på at du vil gennemføre dette?';
 $string['enrolmentkey'] = 'Kursus nøgle';
-$string['enrolmentkeyfrom'] = 'Dette kursus kræver en kursusnøgle\' - et en-gangs<BR>
+$string['enrolmentkeyfrom'] = 'Dette kursus kræver en kursusnøgle\' - et en-gangs<br />
 password som du skulle have fået fra $a';
-$string['enrolmentkeyhint'] = 'Forkert kursusnøgle - prøv igen<BR>
+$string['enrolmentkeyhint'] = 'Forkert kursusnøgle - prøv igen<br />
 (Her er et hint - det starter med \'$a\')';
 $string['enrolmentnew'] = 'Nye tilmeldinger i $a';
 $string['enrolmentnewuser'] = '$a->user  er tilmeldt til kurset \"$a->course\"';
@@ -554,7 +554,7 @@ $string['includecoursefiles'] = 'Indkluder alle kursusfiler';
 $string['includecourseusers'] = 'Indkluder alle kursusbrugere';
 $string['included'] = 'Indkluderet';
 $string['includelogentries'] = 'Indkluder logindlæg';
-$string['includemodules'] = 'Inkluder Moduler';
+$string['includemodules'] = 'Inkluder Moduler';
 $string['includeneededusers'] = 'Indkluder nødvendige brugere';
 $string['includenoneusers'] = 'Inkluder ikke brugere';
 $string['includeuserfiles'] = 'Indkluder brugerfiler';
@@ -593,15 +593,19 @@ $string['loginsite'] = 'Login til dette site';
 $string['loginsteps'] = 'Hej! For at få fuld adgang til dette kursus skal du lige bruge lidt tid til at lave en ny konto.
 
    Hvert enkelt kursus kan også have en    \"kursusnøgle\", den skal du først bruge senere. Sådan gør du:
-   <OL size=2>
-   <LI>Udfyld <A HREF=$a>Ny Konto</A> formularen med dine oplysninger.
-   <LI>En email vil derefter blive sendt til din email addresse.
-   <LI>Læs din email og klik på det medfølgende link.
-   <LI>Din konto bliver bekræftet og du bliver logget ind.
-   <LI>Vælg derefter det kursus, som du vil deltage i.
-   <LI>Hvis du bliver bedt om en  \"kursusnøgle\" - brug den, som du har fået tilsendt. Det vil \"give dig adgang\" til kurset.   <LI>Du har nu fuld adgang til kurset og fra nu af behøver du kun at bruge username og password for at logge dig ind på kurset.   
-  </OL>';
-$string['loginstepsnone'] = 'Hej!<P>For at få fuld adgang til kurset er du nødt til at lave dig en ny konto.<P>Det du skal gøre, er at lave dig et username og et password og indsætte det i formularen på denne side.<P>Hvis andre allerede har valgt dit username, er du nødt til at prøve igen med et andet.';
+<ol>
+<li>Udfyld <a href=\"$a\">Ny Konto</a> formularen med dine oplysninger.</li>
+<li>En email vil derefter blive sendt til din email addresse.</li>
+<li>Læs din email og klik på det medfølgende link.</li>
+<li>Din konto bliver bekræftet og du bliver logget ind.</li>
+<li>Vælg derefter det kursus, som du vil deltage i.</li>
+<li>Hvis du bliver bedt om en  \"kursusnøgle\" - brug den, som du har fået tilsendt. Det vil \"give dig adgang\" til kurset.</li>
+<li>Du har nu fuld adgang til kurset og fra nu af behøver du kun at bruge username og password for at logge dig ind på kurset.</li>
+</ol>';
+$string['loginstepsnone'] = '<p>Hej!</p>
+<p>For at få fuld adgang til kurset er du nødt til at lave dig en ny konto.</p>
+<p>Det du skal gøre, er at lave dig et username og et password og indsætte det i formularen på denne side.</p>
+<p>Hvis andre allerede har valgt dit username, er du nødt til at prøve igen med et andet.</p>';
 $string['loginto'] = 'Login til $a';
 $string['loginusing'] = 'Login her med username og password';
 $string['logout'] = 'Log ud';
@@ -764,10 +768,10 @@ $string['passwordconfirmchange'] = 'Godkend ændring af password';
 $string['passwordrecovery'] = 'Ja, hjælp mig med at logge ind';
 $string['passwordsdiffer'] = 'Disse passwords matcher ikke';
 $string['passwordsent'] = 'Password er sendt';
-$string['passwordsenttext'] = '   <P>An email has been sent to your address at $a->email.
-   <P><B>Check din email for nyt password</B>
-   <P>Det nye password er genereret automatisk, så du vil måske
-   <A HREF=$a->link>ændre det til noget, som du nemmere kan huske</A>.';
+$string['passwordsenttext'] = '<p>An email has been sent to your address at $a->email.</p>
+<p><b>Check din email for nyt password</b></p>
+<p>Det nye password er genereret automatisk, så du vil måske
+   <a href=\"=$a->link\">ændre det til noget, som du nemmere kan huske</a>.</p>';
 $string['paymentinstant'] = 'Brug knabben forneden til at betale og blive tilmeldt umiddelbart derefter.  ';
 $string['paymentrequired'] = 'Dette kursus koster penge at tilmelde sig.';
 $string['paymentsorry'] = 'Tak for betalingen. Desværre er din betaling ikke blevet færdigbehandlet, og du er derfor ikke tilmeldt kurset \"$a->fullname\". Prøv at tilgå kurset igen efter 5-10 sekundter. 
@@ -801,10 +805,10 @@ $string['registration'] = 'Moodle Registrering';
 $string['registrationemail'] = 'Email notifisering';
 $string['registrationinfo'] = '<p>Denne side kan du registrere dit moodle site hos moodle.org. 
 Registreringen er gratis.
-Hovedformålet med registreringen er at du vil blive tilføjet en sjældent brugt mailings liste der bruges til vigtige informationer såsom sikkerhedshuller, og nye versioner af moodle.
-<p>Som udgangspunkt vil dine informationer blive hemmeligholdt, og aldrig solgt eller givet videre til nogen anden. Den eneste årsag til at opsamle denne information er udelukkende til at opbygge et statistisk billede af moodle\'s udbredelse globalt set.
-<p>Hvis du ønsker det kan du tillade at dit sitenavn, land og URL bliver tilføjet til en frit tilgængelig liste af Moodlesites på moodle.org.
-<p>Alle nye registreringer er verificeret manuelt før de bliver tilføjet listen, men er du een gang blevet tilføjet kan du opdatere din registrering (og dine data på listen) hvornår det skal være ved at sende registreringen igen.';
+Hovedformålet med registreringen er at du vil blive tilføjet en sjældent brugt mailings liste der bruges til vigtige informationer såsom sikkerhedshuller, og nye versioner af moodle.</p>
+<p>Som udgangspunkt vil dine informationer blive hemmeligholdt, og aldrig solgt eller givet videre til nogen anden. Den eneste årsag til at opsamle denne information er udelukkende til at opbygge et statistisk billede af moodle\'s udbredelse globalt set.</p>
+<p>Hvis du ønsker det kan du tillade at dit sitenavn, land og URL bliver tilføjet til en frit tilgængelig liste af Moodlesites på moodle.org.</p>
+<p>Alle nye registreringer er verificeret manuelt før de bliver tilføjet listen, men er du een gang blevet tilføjet kan du opdatere din registrering (og dine data på listen) hvornår det skal være ved at sende registreringen igen.</p>';
 $string['registrationno'] = 'Nej, jeg ønsker ikke at modtage email';
 $string['registrationsend'] = 'Send registreringsinformation til moodle';
 $string['registrationyes'] = 'Ja, oplys mig om vigtige opdateringer';
@@ -844,7 +848,7 @@ $string['scheduledbackupstatus'] = 'Schedulere backup status';
 $string['search'] = 'Søg';
 $string['searchagain'] = 'Søg igen';
 $string['searchcourses'] = 'Søg kurser';
-$string['searchhelp'] = 'Du kan søge efter flere ord på samme tid:<p>ord: vil søge efter enhver forekomst af ordet i teksten også hvis det forekommer i sammesatte ord.<br>+ord: vil kun finde ordet hvis det står frit i teksten. <br>-ord: retunere kun de resultater hvor ordet ikke forekommer. ';
+$string['searchhelp'] = 'Du kan søge efter flere ord på samme tid:<br /><br />ord: vil søge efter enhver forekomst af ordet i teksten også hvis det forekommer i sammesatte ord.<br />+ord: vil kun finde ordet hvis det står frit i teksten. <br />-ord: retunere kun de resultater hvor ordet ikke forekommer. ';
 $string['searchresults'] = 'Søgeresultater';
 $string['sec'] = 'sekunder';
 $string['secs'] = 'sekunder';

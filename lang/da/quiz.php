@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 (2004083100)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['acceptederror'] = 'Accepteret fejl';
@@ -100,9 +100,9 @@ $string['filloutthreequestions'] = 'Du skal udfylde mindst tre spørgsmål. Blanke
 $string['fillouttwochoices'] = 'Du skal give mindst to svar.  Blanke felter vil ikke blive bedømt.';
 $string['forceregeneration'] = 'Gennemtving regenerering';
 $string['fractionsaddwrong'] = 'De positive bedømmelser giver ikke sammenlagt 100%%
-<BR>I stedet giver de $a%%
-<BR>Vil du vende tilbage og lave det om?';
-$string['fractionsnomax'] = 'Et eller flere svar skal give 100%%, så det er <BR>få fuld bedømmelse for dette spørgsmål<BR>Vil du vende tilbage og lave det om?';
+<br />I stedet giver de $a%%
+<br />Vil du vende tilbage og lave det om?';
+$string['fractionsnomax'] = 'Et eller flere svar skal give 100%%, så det er <br />få fuld bedømmelse for dette spørgsmål<br />Vil du vende tilbage og lave det om?';
 $string['functiontakesatleasttwo'] = 'Funktionen $a skal have mindst to argumenter';
 $string['functiontakesnoargs'] = 'Funktionen $a kan ikke modtage nogle argumenter';
 $string['functiontakesonearg'] = 'Funktionen $a skal have præcis eet argument';
