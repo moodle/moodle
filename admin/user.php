@@ -4,13 +4,14 @@
 	require("../user/lib.php");
     require("../lib/countries.php");
 
-    if (! record_exists_sql("SELECT * FROM user_admins")) {
+    if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
         $user->firstname = "Admin";
         $user->lastname  = "User";
         $user->username  = "admin";
         $user->password  = "";
         $user->email     = "root@localhost";
         $user->confirmed = 1;
+        $user->maildisplay = 1;
         $user->timemodified = time();
 
         if (! $user->id = insert_record("user", $user)) {

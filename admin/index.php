@@ -168,12 +168,12 @@
 
     // Set up the overall site name etc.
     if (! $site = get_site()) {
-        redirect("site.php");
+        redirect("$CFG->wwwroot/admin/site.php");
     }
 
     if (!isadmin()) {
-        if (! record_exists_sql("SELECT * FROM user_admins")) {
-            redirect("user.php");
+        if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
+            redirect("$CFG->wwwroot/admin/user.php");
         }
         error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/");
     }
