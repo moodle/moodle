@@ -167,11 +167,11 @@ h4 {
 
 
 /* entry page */
-#course-view #entry-page #layout-table { }
+#site-index #layout-table { }
 
-#course-view #entry-page #layout-table .sideblock a { }
+#site-index #layout-table .sideblock a { }
 
-#course-view #entry-page #block_course_summary {
+#site-index #block_course_summary {
     line-height:1.5em;
 }
 
