@@ -40,6 +40,7 @@ $string['adminhelpconfiguration'] = 'Configure how the site looks and works';
 $string['adminhelpconfigvariables'] = 'Configure variables that affect general operation of the site';
 $string['adminhelpcourses'] = 'Define courses and categories and assign people to them';
 $string['adminhelpedituser'] = 'Browse the list of user accounts and edit any of them';
+$string['adminhelpenrolments'] = 'Choose internal or external ways to control enrolments';
 $string['adminhelplanguage'] = 'For checking and editing the current language pack';
 $string['adminhelplogs'] = 'Browse logs of all activity on this site';
 $string['adminhelpmanageblocks'] = 'Manage installed blocks and their settings';
@@ -363,6 +364,8 @@ $string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one
 password that you should have received from $a';
 $string['enrolmentkeyhint'] = 'That enrolment key was incorrect, please try again<BR>
 (Here\'s a hint - it starts with \'$a\')';
+$string['enrolments'] = 'Enrolments';
+$string['enrolmentnointernal'] = 'Manual enrolments are currently not enabled';
 $string['entercourse'] = 'Click to enter this course';
 $string['enteremailaddress'] = 'Enter in your email address to reset your 
    password and have the new password sent to you via email.';
