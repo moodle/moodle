@@ -449,7 +449,7 @@ $string['gd2'] = 'GD 2.xインストール済';
 $string['gdneed'] = 'このグラフを表示するためにはGDのインストールが必要です。';
 $string['gdnot'] = 'GD未インストール';
 $string['go'] = 'Go';
-$string['gpl'] = 'Copyright (C) 1999-2004 Martin Dougiamas (http://dougiamas.com)
+$string['gpl'] = 'Copyright (C) 1999-2005 Martin Dougiamas (http://moodle.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -459,9 +459,7 @@ the Free Software Foundation; either version 2 of the License, or
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details:
-
-http://www.gnu.org/copyleft/gpl.html';
+GNU General Public License for more details:';
 $string['grade'] = '評点';
 $string['grades'] = '評点';
 $string['group'] = 'グループ';
