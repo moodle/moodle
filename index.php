@@ -22,9 +22,18 @@
             $headerbutton = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A></FONT>";
         }
     }
+
+    if (isset($lang)) {
+        $SESSION->lang = $lang;
+        save_session("SESSION");
+    }
+    $currlang = current_language();
+    $langs = get_list_of_languages();
+    $langmenu = popup_form ("$CFG->wwwroot/?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+
     print_header("$site->fullname", "$site->fullname", "home", "",
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
-                 true, "", $headerbutton);
+                 true, "", $headerbutton.$langmenu);
 
     $firstcolumn = false;  // for now
     $side = 175;

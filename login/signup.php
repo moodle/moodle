@@ -11,7 +11,7 @@
 
             $user->password = md5($user->password);
             $user->confirmed = 0;
-            $user->lang = $CFG->lang;
+            $user->lang = current_language();
             $user->firstaccess = time();
             $user->secret = random_string(15);
 
