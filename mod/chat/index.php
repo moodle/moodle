@@ -53,6 +53,7 @@
         $table->align = array ("left", "left", "left");
     }
 
+    $currentsection = "";
     foreach ($chats as $chat) {
         if (!$chat->visible) {
             //Show dimmed if the mod is hidden
@@ -61,12 +62,18 @@
             //Show normal if the mod is visible
             $link = "<a href=\"view.php?id=$chat->coursemodule\">$chat->name</a>";
         }
-        if ($course->format == "weeks" or $course->format == "topics") {
+        $printsection = "";
+        if ($chat->section !== $currentsection) {
             if ($chat->section) {
-                $table->data[] = array ($chat->section, $link);
-            } else {
-                $table->data[] = array ("", $link);
+                $printsection = $chat->section;
             }
+            if ($currentsection !== "") {
+                $table->data[] = 'hr';
+            }
+            $currentsection = $chat->section;
+        }
+        if ($course->format == "weeks" or $course->format == "topics") {
+            $table->data[] = array ($printsection, $link);
         } else {
             $table->data[] = array ($link);
         }

@@ -1,10 +1,8 @@
 <?php
     if ($usehtmleditor = can_use_richtext_editor()) {
         $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(document.form.description);\"";
     } else {
         $defaultformat = FORMAT_MOODLE;
-        $onsubmit = "";
     }
     if (empty($form->name)) {
         $form->name = "";
