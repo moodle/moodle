@@ -137,7 +137,13 @@
                     if (! $course  = get_record("course", "id", $courseid)) {
                         notify("Error finding course $courseid");
                     } else {
-                        if (!set_field("course", "category", $destcategory->id, "id", $course->id)) {
+                        // figure out a sortorder that we can use in the destination category
+                        $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
+                                                    FROM ' . $CFG->prefix . 'course WHERE category=' . $destcategory->id);
+                        $course->category  = $destcategory->id;
+                        $course->sortorder = $sortorder;
+ 
+                        if (!update_record('course', $course)) {
                             notify("An error occurred - course not moved!");
                         }
                         fix_course_sortorder();
