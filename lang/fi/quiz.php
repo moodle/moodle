@@ -97,6 +97,7 @@ $string['savemyanswers'] = "Tallenna vastaukseni";
 $string['savequiz'] = "Tallenna koko tentti";
 $string['score'] = "Tulos";
 $string['select'] = "Valitse";
+$string['selectall'] = "Valitse kaikki";
 $string['selectcategoryabove'] = "Valitse kategoria ylh‰‰lt‰";
 $string['shortanswer'] = "Lyhyt vastaus";
 $string['show'] = "N‰yt‰";
