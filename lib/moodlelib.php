@@ -1174,10 +1174,11 @@ function sync_metacourse($metacourseid) {
             FROM {$CFG->prefix}course_meta meta 
               JOIN {$CFG->prefix}user_students parent 
                 ON meta.parent_course = parent.course 
-                AND meta.parent_course = $metacourseid
-              LEFT JOIN {$CFG->prefix}user_students child
+              LEFT OUTER JOIN {$CFG->prefix}user_students child
                 ON meta.child_course = child.course 
-                WHERE child.course IS NULL";
+                AND child.userid = parent.userid
+                WHERE child.course IS NULL
+                AND meta.parent_course = $metacourseid";
 
     if ($enrolmentstodelete = get_records_sql($sql)) {
         foreach ($enrolmentstodelete as $enrolment) {
@@ -1191,10 +1192,11 @@ function sync_metacourse($metacourseid) {
             FROM {$CFG->prefix}course_meta meta 
               JOIN {$CFG->prefix}user_students child 
                  ON meta.child_course = child.course 
-                 AND meta.parent_course = $metacourseid
-              LEFT JOIN {$CFG->prefix}user_students parent 
+              LEFT OUTER JOIN {$CFG->prefix}user_students parent 
                  ON meta.parent_course = parent.course 
-                 WHERE parent.course IS NULL";
+                 AND parent.userid = child.userid
+                 WHERE parent.course IS NULL 
+                 AND meta.parent_course = $metacourseid";
 
     if ($userstoadd = get_records_sql($sql)) {
         foreach ($userstoadd as $user) {
