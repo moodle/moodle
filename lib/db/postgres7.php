@@ -415,6 +415,19 @@ function main_upgrade($oldversion=0) {
         set_config('textfilters', $textfilters);
     }
 
+    if ($oldversion < 2004021201) {
+        modify_database("", "CREATE TABLE prefix_cache_filters (
+                                id SERIAL PRIMARY KEY,
+                                filter varchar(32) NOT NULL default '',
+                                version integer NOT NULL default '0',
+                                md5key varchar(32) NOT NULL default '',
+                                rawtext text,
+                                timemodified integer NOT NULL default '0'
+                             );");
+
+        modify_database("", "CREATE INDEX prefix_cache_filters_filtermd5key_idx ON prefix_cache_filters (filter,md5key);");
+        modify_database("", "CREATE INDEX prefix_cache_text_md5key_idx ON prefix_cache_text (md5key);");
+    }
 
     return $result;
 

@@ -165,12 +165,28 @@ CREATE TABLE prefix_scale (
    timemodified integer NOT NULL default '0'
 );
 
+
+CREATE TABLE prefix_cache_filters (
+   id SERIAL PRIMARY KEY,
+   filter varchar(32) NOT NULL default '',
+   version integer NOT NULL default '0',
+   md5key varchar(32) NOT NULL default '',
+   rawtext text,
+   timemodified integer NOT NULL default '0'
+);
+
+CREATE INDEX prefix_cache_filters_filtermd5key_idx ON prefix_cache_filters (filter,md5key);
+
+
 CREATE TABLE prefix_cache_text (
    id SERIAL PRIMARY KEY,
    md5key varchar(32) NOT NULL default '',
    formattedtext text,
    timemodified integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_cache_text_md5key_idx ON prefix_cache_text (md5key);
+
 
 CREATE TABLE prefix_user (
    id SERIAL PRIMARY KEY,

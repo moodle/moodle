@@ -671,6 +671,19 @@ function main_upgrade($oldversion=0) {
         set_config('textfilters', $textfilters);
     }
 
+    if ($oldversion < 2004021201) {
+        modify_database("", "CREATE TABLE `prefix_cache_filters` (
+                                `id` int(10) unsigned NOT NULL auto_increment,
+                                `filter` varchar(32) NOT NULL default '',
+                                `version` int(10) unsigned NOT NULL default '0',
+                                `md5key` varchar(32) NOT NULL default '',
+                                `rawtext` text NOT NULL,
+                                `timemodified` int(10) unsigned NOT NULL default '0',
+                                PRIMARY KEY  (`id`),
+                                KEY `filtermd5key` (filter,md5key)
+                              ) TYPE=MyISAM COMMENT='For keeping information about cached data';");
+    }
+
 
     return $result;
 

@@ -158,6 +158,23 @@ CREATE TABLE `prefix_event` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `cache_filters`
+#
+
+CREATE TABLE `prefix_cache_filters` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `filter` varchar(32) NOT NULL default '',
+  `version` int(10) unsigned NOT NULL default '0',
+  `md5key` varchar(32) NOT NULL default '',
+  `rawtext` text NOT NULL,
+  `timemodified` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `filtermd5key` (filter,md5key)
+) TYPE=MyISAM COMMENT='For keeping information about cached data';
+# --------------------------------------------------------
+
+
+#
 # Table structure for table `cache_text`
 #
 
