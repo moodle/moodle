@@ -48,6 +48,7 @@ $string['correctanswerscore'] = 'Correct answer score';
 $string['correctresponse'] = 'Correct response';
 $string['customscoring'] = 'Custom scoring';
 $string['deadline'] = 'Deadline';
+$string['defaultessayresponse'] = 'Your essay will be graded by the course instructor.';
 $string['deleteattempts'] = 'Delete student attempts for this lesson (user id)';
 $string['deletedpage'] = 'Deleted page';
 $string['deleting'] = 'Deleting';
