@@ -208,6 +208,7 @@ class quiz_report extends quiz_default_report {
             }
 
             echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/quiz/report/overview/utility.js"></script>';
+            echo '<div id="tablecontainer">';
             echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'actionmenu\'); return confirm_if(menu.options[menu.selectedIndex].value == \'delete\', \''.$strreallydel.'\');">';
             echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
 
@@ -216,7 +217,6 @@ class quiz_report extends quiz_default_report {
         $table->print_html();
 
         if(!empty($attempts)) {
-            //There might be a more elegant way than using the <center> tag for this
             echo '<table id="commands">';
             echo '<tr><td>';
             echo '<a href="javascript:select_all();">'.get_string('selectall', 'quiz').'</a> / ';
@@ -225,11 +225,11 @@ class quiz_report extends quiz_default_report {
             $options = array('dummy' => ' ', 'delete' => get_string('delete'));
             $menu = str_replace('<select', '<select id="actionmenu"', choose_from_menu($options, 'action', '', get_string('selectedattempts', 'quiz'), 'if(this.selectedIndex > 1) submitFormById(\'attemptsform\');', '', true));
             echo $menu;
+            echo '<noscript id="noscriptactionmenu" style="display: inline;">';
+            echo '<input type="submit" value="'.get_string('go').'" /></noscript>';
+            echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptactionmenu").style.display = "none";'."\n-->\n".'</script>';
             echo '</td></tr></table>';
-            //echo '<noscript id="noscriptactionmenu" style="display: inline;">';
-            //echo '<input type="submit" value="'.get_string('go').'" /></noscript>';
-            //echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptactionmenu").style.display = "none";'."\n-->\n".'</script>';
-            echo '</form>';
+            echo '</form></div>';
         }
         else {
             print_heading(get_string('noattemptsmatchingfilter', 'quiz', strtolower($course->students)));
