@@ -86,6 +86,7 @@ $string['confirmdeletedstdefault'] = '<strong>Le réglage $a est actuellement uti
 $string['cronwarning'] = 'Le <a href=\"cron.php\">script de maintenance cron.php</a> n\'a pas été lancé depuis au moins 24 heures.<br />La <a href=\"../doc/?frame=install.html&sub=cron\">documentation d\'installation</a> explique comment vous pouvez automatiser cette tâche.';
 $string['dstisapreference'] = 'Chaque utilisateur peut choisir son propre réglage';
 $string['dstisforcedto'] = 'Imposer à tous les utilisateurs le réglage';
+$string['dstpresetforced'] = 'Ce réglage est imposé par l\'administrateur du site';
 $string['dstpresets'] = 'Réglages heure d\'été';
 $string['emptydstlist'] = 'Il n\'y a actuellement aucun réglage d\'heure d\'été défini. Vous pouvez en ajouter un en cliquant sur le bouton Ajouter...';
 $string['editingdstpreset'] = 'Modification d\'un réglage d\'heure d\'été';
