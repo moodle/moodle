@@ -390,6 +390,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
     if(is_bool($users) && is_bool($groups) && is_bool($courses)) {
         return false;
     }
+
     if(is_array($users) && !empty($users)) {
         // Events from a number of users
         if(!empty($whereclause)) $whereclause .= ' OR';
@@ -409,6 +410,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         // No user at all
         // No need to do anything
     }
+
     if(is_array($groups) && !empty($groups)) {
         // Events from a number of groups
         if(!empty($whereclause)) $whereclause .= ' OR';
@@ -424,6 +426,8 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         if(!empty($whereclause)) $whereclause .= ' OR ';
         $whereclause .= ' groupid != 0';
     }
+    // boolean false (no groups at all): we don't need to do anything
+
     if(is_array($courses)) {
         // A number of courses (maybe none at all!)
         if(!empty($courses)) {
@@ -446,6 +450,14 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         // Events from ALL courses
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' groupid = 0 AND courseid != 0';
+    }
+
+    // Security check: if, by now, we have NOTHING in $whereclause, then it means
+    // that NO event-selecting clauses were defined. Thus, we won't be returning ANY
+    // events no matter what. Allowing the code to proceed might return a completely
+    // valid query with only time constraints, thus selecting ALL events in that time frame!
+    if(empty($whereclause)) {
+        return false;
     }
 
     if ($ignorehidden) {
