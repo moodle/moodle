@@ -145,14 +145,16 @@ function survey_log_info($log) {
 
 function survey_get_responses($survey) {
     global $CFG;
-    return get_records_sql("SELECT a.time as time, count(*) as numanswers, u.*
+    return get_records_sql("SELECT MAX(a.time) as time, 
+                                   count(*) as numanswers, 
+                                   u.id, u.firstname, u.lastname
                               FROM {$CFG->prefix}survey_answers AS a, 
                                    {$CFG->prefix}user AS u
                              WHERE a.answer1 <> '0' AND a.answer2 <> '0'
                                    AND a.survey = $survey 
                                    AND a.userid = u.id
-                          GROUP BY a.userid 
-                          ORDER BY a.time ASC");
+                          GROUP BY u.id, u.firstname, u.lastname
+                          ORDER BY time ASC");
 }
 
 function survey_get_analysis($survey, $user) {
