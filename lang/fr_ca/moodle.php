@@ -142,34 +142,16 @@ $string['editthisactivity'] = "Modifier cette activité";
 $string['edituser'] = "Modifier les comptes des utilisateurs";
 $string['email'] = "Adresse de courriel";
 $string['emailconfirm'] = "Confirmer votre enregistrement";
-$string['emailconfirmation'] = "\$a->firstname,<br />La création d'un compte sur le site « \$a->sitename » a été demandée en utilisant votre adresse de courriel. Pour confirmer votre enregistrement, veuillez vous rendre à l'adresse suivante :
-
-
+$string['emailconfirmation'] = "\$a->firstname,
+La création d'un compte sur le site « \$a->sitename » a été demandée en utilisant votre adresse de courriel. Pour confirmer votre enregistrement, veuillez vous rendre à l'adresse suivante :
 
   \$a->link
 
-
-
 Si cela ne fonctionne pas, copiez et collez ce lien dans la ligne adresse de votre navigateur Web.
-
-
 
 Cordialement,
 
-
-
-
-
-
-
 \$a->admin
-
-
-
-
-
-
-
 Administrateur du site « \$a->sitename »";
 $string['emailconfirmationsubject'] = "\$a: confirmation du compte";
 $string['emailconfirmsent'] = "   <P>Un courriel vous a été envoyé à l'adresse <B>\$a</B>
@@ -189,48 +171,15 @@ $string['emailexists'] = "Cette adresse est déjà utilisée.";
 $string['emailformat'] = "Format des courriels";
 $string['emailmustbereal'] = "Note: votre adresse de courriel doit être valide";
 $string['emailpasswordconfirmation'] = "Bonjour \$a->firstname, 
-
-
-
-
-
-
-
 Quelqu'un (probablement vous-même) a demandé un nouveau mot de passe pour votre compte sur le site '\$a->sitename'.
-
-
-
-
-
-
 
 Pour confirmer ce changement et pour que le nouveau mot de passe vous soit envoyé par courriel, rendez-vous à l'adresse suivante :
 
-
-
-
-
-
-
 \$a->link
-
-
 
 Si cela ne fonctionne pas, copiez l'adresse dans la ligne d'adresse URL de votre navigateur.
 
-
-
-
-
-
-
 Si vous avez besoin d'aide, veuillez contacter l'administrateur de ce site :
-
-
-
-
-
-
 
 \$a->admin";
 $string['emailpasswordconfirmationsubject'] = "\$a: confirmation du changement du mot de passe";
@@ -364,7 +313,7 @@ $string['list'] = "Liste";
 $string['listfiles'] = "Liste des fichiers dans \$a";
 $string['listofallpeople'] = "Liste de tous les participants";
 $string['livelogs'] = "Évènements de la dernière heure";
-$string['locale'] = "fr_ca";
+$string['locale'] = "fr_CA";
 $string['location'] = "Emplacement";
 $string['loggedinas'] = "« \$a » connecté";
 $string['loggedinnot'] = "Non connecté.";
@@ -373,16 +322,9 @@ $string['loginas'] = "Connexion comme";
 $string['loginguest'] = "Connexion comme visiteur anonyme";
 $string['loginsite'] = "Se connecter sur le site";
 $string['loginsteps'] = "Bonjour. Pour un accès complet aux cours, prenez   une minute pour vous créer un compte personnel sur ce site.<BR>
-
-
-
 Chaque cours peut également nécessiter une clé d'inscription que vous aurez à entrer qu'une seule fois (vous n'en avez pas pas besoin pour l'instant.<br />
 
-
-
 Voici les étapes à suivre :
-
-
 
    <OL size=2>
 
