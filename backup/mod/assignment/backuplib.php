@@ -94,7 +94,6 @@
             //Write end tag
             $status =fwrite ($bf,end_tag("SUBMISSIONS",4,true));
         }
-
         return $status;
     }
 
