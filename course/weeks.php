@@ -19,9 +19,15 @@
         $news = forum_get_course_forum($course->id, "news");
     }
     
-    $streditsummary = get_string("editsummary");
-    $stradd         = get_string("add");
-    $stractivities  = get_string("activities");
+    $streditsummary  = get_string("editsummary");
+    $stradd          = get_string("add");
+    $stractivities   = get_string("activities");
+    $strshowallweeks = get_string("showallweeks");
+    if (isediting($course->id)) {
+        $strstudents = moodle_strtolower($course->students);
+        $strweekhide = get_string("weekhide", "", $strstudents);
+        $strweekshow = get_string("weekshow", "", $strstudents);
+    }
 
 
 /// Layout the whole page as three big columns.
@@ -72,37 +78,36 @@
 
     echo "<table class=\"weeklyoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
 
-/// Print Week 0 with general activities
+/// Print Section 0 with general activities
 
-    $week = 0;
-    $thisweek = $sections[$week];
+    $section = 0;
+    $thissection = $sections[$section];
 
-    if ($thisweek->summary or $thisweek->sequence or isediting($course->id)) {
+    if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
         echo "<tr>";
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=top width=20>&nbsp;</td>";
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" width=\"100%\">";
 
         if (isediting($course->id)) {
-            $thisweek->summary .= "&nbsp;<a title=\"$streditsummary\" ".
-                                  "href=\"editsection.php?id=$thisweek->id\"><img height=11 width=11 src=\"$pixpath/t/edit.gif\" ".
+            $thissection->summary .= "&nbsp;<a title=\"$streditsummary\" ".
+                                  "href=\"editsection.php?id=$thissection->id\"><img height=11 width=11 src=\"$pixpath/t/edit.gif\" ".
                                   "border=0 alt=\"$streditsummary\"></a></p>";
         }
     
-        echo text_to_html($thisweek->summary);
+        echo text_to_html($thissection->summary);
     
-        print_section($course, $thisweek, $mods, $modnamesused);
+        print_section($course, $thissection, $mods, $modnamesused);
 
         if (isediting($course->id)) {
             echo "<div align=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$week&add=", 
-                        $modnames, "section$week", "", "$stradd...", "mods", $stractivities);
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=", 
+                        $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
             echo "</div>";
         }
 
         echo "</td>";
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=top align=center width=10>";
-        echo "&nbsp;</td>";
-        echo "</tr>";
+        echo "&nbsp;</td></tr>";
         echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
     }
 
@@ -110,7 +115,7 @@
 /// Now all the weekly sections
     $timenow = time();
     $weekdate = $course->startdate;    // this should be 0:00 Monday of that week
-    $week = 1;
+    $section = 1;
     $weekofseconds = 604800;
     $course->enddate = $course->startdate + ($weekofseconds * $course->numsections);
 
@@ -119,19 +124,35 @@
     while ($weekdate < $course->enddate) {
 
         $nextweekdate = $weekdate + ($weekofseconds);
+        $weekday = userdate($weekdate, $strftimedateshort);
+        $endweekday = userdate($weekdate+518400, $strftimedateshort);
 
-        if (!empty($displaysection) and $displaysection != $week) {  // Check this week is visible
-            $week++;
+        if (!empty($displaysection) and $displaysection != $section) {  // Check this week is visible
+            $section++;
             $weekdate = $nextweekdate;
             continue;
         }
 
-        $thisweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
+        if (!empty($sections[$section])) {
+            $thissection = $sections[$section];
 
-        $weekday = userdate($weekdate, $strftimedateshort);
-        $endweekday = userdate($weekdate+518400, $strftimedateshort);
+        } else {
+            unset($thissection);
+            $thissection->course = $course->id;   // Create a new week structure
+            $thissection->section = $section;
+            $thissection->summary = "";
+            $thissection->visible = 1;
+            if (!$thissection->id = insert_record("course_sections", $thissection)) {
+                notify("Error inserting new week!");
+            }
+        }
 
-        if ($thisweek) {
+        $currentweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
+
+        if (!$thissection->visible) {
+            $colorsides = "bgcolor=\"$THEME->hidden\" class=\"weeklyoutlinesidehidden\"";
+            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontenthidden\"";
+        } else if ($currentweek) {
             $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"weeklyoutlinesidehighlight\"";
             $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontenthighlight\"";
         } else {
@@ -141,54 +162,66 @@
 
         echo "<tr>";
         echo "<td nowrap $colorsides valign=top width=20>";
-        echo "<p align=center><font size=3><b>$week</b></font></p>";
+        echo "<p align=center><font size=3><b>$section</b></font></p>";
         echo "</td>";
 
-        echo "<td $colormain valign=top width=\"100%\">";
-        echo "<p><font size=3 color=\"$THEME->cellheading2\">$weekday - $endweekday</font></p>";
+        echo "<td valign=top $colormain width=\"100%\">";
 
-        if (!empty($sections[$week])) {
-            $thisweek = $sections[$week];
+        if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
+            echo "<p class=\"weeklydatetext\">$weekday - $endweekday ";
+            echo "(".get_string("notavailable").")";
+            echo "</p>";
+            echo "</td>";
+
         } else {
-            unset($thisweek);
-            $thisweek->course = $course->id;   // Create a new week structure
-            $thisweek->section = $week;
-            $thisweek->summary = "";
-            if (!$thisweek->id = insert_record("course_sections", $thisweek)) {
-                notify("Error inserting new week!");
+
+            echo "<p class=\"weeklydatetext\">$weekday - $endweekday</p>";
+
+            if (isediting($course->id)) {
+                $thissection->summary .= "&nbsp;<a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
+                      "<img src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a></p>";
+            }
+
+            echo text_to_html($thissection->summary);
+
+            print_section($course, $thissection, $mods, $modnamesused);
+
+            if (isediting($course->id)) {
+                echo "<div align=right>";
+                popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=", 
+                            $modnames, "section$section", "", "$stradd...");
+                echo "</div>";
+            }
+
+            echo "</td>";
+        }   
+        echo "<td nowrap $colorsides valign=top align=center width=10>";
+        echo "<font size=1>";
+
+        if ($displaysection == $section) { 
+            echo "<a href=\"view.php?id=$course->id&week=all\" title=\"$strshowallweeks\">".
+                 "<img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br />";
+        } else {
+            $strshowonlyweek = get_string("showonlyweek", "", $section);
+            echo "<a href=\"view.php?id=$course->id&week=$section\" title=\"$strshowonlyweek\">".
+                 "<img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a><br />";
+        }
+
+        if (isediting($course->id)) {
+            if ($thissection->visible) {        // Show the hide/show eye
+                echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strweekhide\">".
+                     "<img src=\"$pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+            } else {
+                echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strweekshow\">".
+                     "<img src=\"$pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
             }
         }
 
-        if (isediting($course->id)) {
-            $thisweek->summary .= "&nbsp;<a title=\"$streditsummary\" href=\"editsection.php?id=$thisweek->id\"><img src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0 alt=\"$streditsummary\"></a></p>";
-        }
-
-        echo text_to_html($thisweek->summary);
-
-        print_section($course, $thisweek, $mods, $modnamesused);
-
-        if (isediting($course->id)) {
-            echo "<div align=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$week&add=", 
-                        $modnames, "section$week", "", "$stradd...");
-            echo "</div>";
-        }
-
-        echo "</td>";
-        echo "<td nowrap $colorsides valign=top align=center width=10>";
-        echo "<font size=1>";
-        if ($displaysection == $week) { 
-            $strshowallweeks = get_string("showallweeks");
-            echo "<a href=\"view.php?id=$course->id&week=all\" title=\"$strshowallweeks\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a></font>";
-        } else {
-            $strshowonlyweek = get_string("showonlyweek", "", $week);
-            echo "<a href=\"view.php?id=$course->id&week=$week\" title=\"$strshowonlyweek\"><img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a></font>";
-        }
         echo "</td>";
         echo "</tr>";
         echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
 
-        $week++;
+        $section++;
         $weekdate = $nextweekdate;
     }
     echo "</table>";

@@ -33,12 +33,12 @@
     $stradd         = get_string("add");
     $stractivities  = get_string("activities");
     $strshowalltopics = get_string("showalltopics");
-    $strcoursedisplay = get_string("coursedisplay");
     if (isediting($course->id)) { 
+        $strstudents = moodle_strtolower($course->students);
+        $strtopichide = get_string("topichide", "", $strstudents);
+        $strtopicshow = get_string("topicshow", "", $strstudents);
         $strmarkthistopic = get_string("markthistopic");
         $strmarkedthistopic = get_string("markedthistopic");
-        $strtopichide = get_string("topichide", "", moodle_strtolower($course->students));
-        $strtopicshow = get_string("topicshow", "", moodle_strtolower($course->students));
     }
 
 
@@ -91,28 +91,28 @@
 
 /// Print Section 0 
 
-    $topic = 0;
-    $thistopic = $sections[$topic];
+    $section = 0;
+    $thissection = $sections[$section];
 
-    if ($thistopic->summary or $thistopic->sequence or isediting($course->id)) {
+    if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
         echo "<tr>";
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top width=20>&nbsp;</td>";
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
     
         if (isediting($course->id)) {
-            $thistopic->summary .= "&nbsp;<a title=\"$streditsummary\" ".
-                                     "href=\"editsection.php?id=$thistopic->id\"><img src=\"$pixpath/t/edit.gif\" ".
+            $thissection->summary .= "&nbsp;<a title=\"$streditsummary\" ".
+                                     "href=\"editsection.php?id=$thissection->id\"><img src=\"$pixpath/t/edit.gif\" ".
                                      "height=11 width=11 border=0 alt=\"$streditsummary\"></a></p>";
         }
     
-        echo text_to_html($thistopic->summary);
+        echo text_to_html($thissection->summary);
     
-        print_section($course, $thistopic, $mods, $modnamesused);
+        print_section($course, $thissection, $mods, $modnamesused);
     
         if (isediting($course->id)) {
             echo "<div align=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$topic&add=", 
-                        $modnames, "section$topic", "", "$stradd...", "mods", $stractivities);
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=", 
+                        $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
             echo "</div>";
         }
     
@@ -177,7 +177,8 @@
             echo "<td valign=top $colormain width=\"100%\">";
 
             if (isediting($course->id)) {
-                $thissection->summary .= "&nbsp;<a href=editsection.php?id=$thissection->id><img src=\"$pixpath/t/edit.gif\" border=0 height=11 width=11 alt=\"$streditsummary\"></a>";
+                $thissection->summary .= "&nbsp;<a title=\"$streditsummary\" href=editsection.php?id=$thissection->id>".
+                     "<img src=\"$pixpath/t/edit.gif\" border=0 height=11 width=11></a>";
             }
     
             echo text_to_html($thissection->summary);
