@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------
-// PclZip 2.0-rc2 - readme.txt
+// PclZip 2.1 - readme.txt
 // --------------------------------------------------------------------------------
-// License GNU/GPL - january 2003
+// License GNU/LGPL - December 2003
 // Vincent Blavet - vincent@phpconcept.net
 // http://www.phpconcept.net
 // --------------------------------------------------------------------------------
@@ -31,7 +31,23 @@
 2 - What's new
 ==============
 
-  Version 2.0-rc2 :
+  Version 2.1 :
+    - Add the ability to abort the extraction by using a user callback function.
+      The user can now return the value '2' in its callback which indicates to stop the
+      extraction. For a pre call-back extract is stopped before the extration of the current
+      file. For a post call back, the extraction is stopped after.
+    - Add the ability to extract a file (or several files) directly in the standard output.
+      This is done by the new parameter PCLZIP_OPT_EXTRACT_IN_OUTPUT with method extract().
+    - Add support for parameters PCLZIP_OPT_COMMENT, PCLZIP_OPT_ADD_COMMENT,
+      PCLZIP_OPT_PREPEND_COMMENT. This will create, replace, add, or prepend comments
+      in the zip archive.
+    - When merging two archives, the comments are not any more lost, but merged, with a 
+      blank space separator.
+    - Corrected bug : Files are not deleted when all files are asked to be deleted.
+    - Corrected bug : Folders with name '0' made PclZip to abort the create or add feature.
+
+
+  Version 2.0 :
     ***** Warning : Some new features may break the backward compatibility for your scripts.
                     Please carefully read the readme file.
     - Add the ability to delete by Index, name and regular expression. This feature is 
