@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 - (2004052400)
+      // resource.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
@@ -21,6 +21,7 @@ $string['configwebsearch'] = 'Quando aggiungi un URL come una Pagina web o un Co
 $string['directlink'] = 'Collegamento diretto a questo file';
 $string['directoryinfo'] = 'Tutti i file nella cartella scelta verranno mostrati.';
 $string['editingaresource'] = 'Edita una risorsa';
+$string['encryptedcode'] = 'Codice criptato';
 $string['example'] = 'Esempio';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993)
 
@@ -35,6 +36,7 @@ $string['fetcherror'] = 'E\' stato rilevato un errore mentre provavo a recuperar
 $string['fetchservererror'] = 'E\' stato rilevato un errore con il server mentre provavo a recuperare la pagina web (potrebbe esserci un errore nel codice).<br />';
 $string['filename'] = 'Nome del file';
 $string['filtername'] = 'Auto-collegamento alla risorsa';
+$string['frameifpossible'] = 'Metti la risorsa in un frame per mantere la navigazione del sito visibile';
 $string['fulltext'] = 'Testo integrale';
 $string['htmlfragment'] = 'Codice HTML';
 $string['maindirectory'] = 'Cartella principale';
@@ -60,17 +62,20 @@ corso (come quelli che compaiono in questa lista) usa il <A HREF=$a >File Manage
 $string['notypechosen'] = 'È necessario che tu scelga un tipo. Usa il
 
 pulsante indietro per ritornare alla pagina precedente e riprovare.';
+$string['pagedisplay'] = 'Mostra questa risorsa nella finestra corrente';
+$string['pagewindow'] = 'Stessa finestra';
+$string['parameter'] = 'Parametro';
+$string['parameters'] = 'Paremetri';
 $string['popupresource'] = 'Questa risorsa deve apparire in una finestra di popup';
 $string['popupresourcelink'] = 'Se non lo fa, cliccare qui: $a';
 $string['resourcetype'] = 'Tipo di risorsa';
-$string['resourcetype1'] = 'Bibliografia';
-$string['resourcetype2'] = 'Pagina web';
-$string['resourcetype3'] = 'File presente su questo server ';
-$string['resourcetype4'] = 'Testo semplice';
-$string['resourcetype5'] = 'Collegamento web';
-$string['resourcetype6'] = 'Testo HTML';
-$string['resourcetype7'] = 'Programma';
-$string['resourcetype8'] = 'Testo Wiki';
-$string['resourcetype9'] = 'Cartella di file';
+$string['resourcetypedirectory'] = 'Mostra una cartella';
+$string['resourcetypefile'] = 'Collegamento a un file o a un sito';
+$string['resourcetypehtml'] = 'Componi una pagina web';
+$string['resourcetypelabel'] = 'Inserisci una etichetta';
+$string['resourcetypereference'] = 'Insrisci un riferimento';
+$string['resourcetypetext'] = 'Componi una pagina di testo';
+$string['searchweb'] = 'Cerca una pagina web';
+$string['variablename'] = 'Nome variabile';
 
 ?>

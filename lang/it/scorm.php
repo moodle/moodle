@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004070800)
+      // scorm.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['attr_error'] = 'Valore non valido per l\'attributo ($a->attr) del tag $a->tag.';
@@ -52,6 +52,7 @@ $string['noreports'] = 'Non ci sono tentativi da visualizzare';
 $string['normal'] = 'Normale';
 $string['not_corr_type'] = 'Tipo sbagliato per il tag $a->tag';
 $string['notattempted'] = 'Non provato';
+$string['organizations'] = 'Organizzazioni';
 $string['packagedir'] = 'Errore Filesystem: non è possibile creare la directory del pacchetto SCORM';
 $string['passed'] = 'Superato';
 $string['php5'] = 'PHP5 (libreria DOMXML nativa)';

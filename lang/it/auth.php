@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.3 development (2004041800)
+      // auth.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['auth_dbdescription'] = 'Questo metodo usa una tabella di una base di dati esterna per controllare se un dato username e password siano validi.  Se l\'utente è nuovo, allora le informazioni degli altri campi possono essere copiate in Moodle.';
@@ -16,6 +16,13 @@ $string['auth_dbtype'] = 'Il tipo di base di dati (guarda la <A HREF=../lib/adod
 $string['auth_dbuser'] = 'Nome utente con diritti di lettura nella base dati';
 $string['auth_emaildescription'] = 'La conferma tramite email é il metodo di autenticazione di default. Quando l\'utente si iscrive, scegliendo il suo nome utente e la password, un email di conferma viene spedita all\'indirizzo di posta elettronica dell\'utente. Questa email contiene un link sicuro a una pagina dove l\'utente può confermare la sua iscrizione. Ai successivi login verranno controllati il nome utente e la password con i valori salvati nella base di dati di Moodle.';
 $string['auth_emailtitle'] = 'Autenticazione via email';
+$string['auth_fccreators'] = 'Elenca i gruppi dei membri abilitati alla creazione di nuovi corsi. Separa gruppi multipli con \';\'. I nomi devo essere scritti esattamente come sul server FirstClass. Il sistema è sensibile alla capitalizzazione. ';
+$string['auth_fcdescription'] = 'Questo metodo utilizza un server FirstClass per controllare se l\'utente e la password sono validi.';
+$string['auth_fcfppport'] = 'Porta server (normalmente 3333)';
+$string['auth_fchost'] = 'Indirizzo del server FirstClass. Utilizza numero IP o un nome registrato sul DNS.';
+$string['auth_fcpasswd'] = 'Password per l\'account sopra.';
+$string['auth_fctitle'] = 'Utilizza un server FirstClass';
+$string['auth_fcuserid'] = 'Nome utente di FirstClass con privilegi di \'Subadministrator\'.';
 $string['auth_imapdescription'] = 'Questo metodo usa un server IMAP per controllare se il nome utente e la password dati sono validi. ';
 $string['auth_imaphost'] = 'Indirizzo server IMAP. Usa il numero IP, non il nome DNS.';
 $string['auth_imapport'] = 'Porta server IMAP. Normalmente é 143o 993.';
@@ -28,7 +35,7 @@ $string['auth_ldap_create_context'] = 'Se abiliti la creazione degli utenti con 
 $string['auth_ldap_creators'] = 'Lista dei gruppi nei quali i membri possono creare nuovi corsi. Separa i gruppi multipli con \';\'. Normalmente qualcosa come \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_host_url'] = 'Specifica il server LDAP con un URL tipo \'ldap://ldap.myorg.com/\' o \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'Specifica l\'attributo del utente membro, quando gli utenti appartengono a un gruppo. Normalmente \'menber\'';
-$string['auth_ldap_search_sub'] = 'Metti un valore &lt;&gt; 0 se preferisci cercare gli utenti da sottocontesti.';
+$string['auth_ldap_search_sub'] = 'Metti un valore <> 0 se preferisci cercare gli utenti da sottocontesti.';
 $string['auth_ldap_update_userinfo'] = 'Aggiorna le informazioni utente (nome, cognome, indirizzo...) da LDAP a Moodle. Guarda /auth/ldap/attr_mappings.php per le informazioni su mapping';
 $string['auth_ldap_user_attribute'] = 'L\'attributo usato per cercare gli utenti. Normalmente \'cn\'.';
 $string['auth_ldap_version'] = 'La versione del protocollo LDAP che il tuo server utilizza.';

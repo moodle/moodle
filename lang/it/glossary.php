@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004070800)
+      // glossary.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['addcomment'] = 'Aggiungi commento';
@@ -61,13 +61,13 @@ $string['deletingnoneemptycategory'] = 'Se una categoria non vuota viene cancell
 $string['descending'] = '(decrescente)';
 $string['destination'] = 'Destinazione';
 $string['displayformat'] = 'Formato di visualizzazione';
-$string['displayformat2'] = 'Completo con autore.';
-$string['displayformat3'] = 'Enciclopedia.';
-$string['displayformat4'] = 'FAQ';
-$string['displayformat5'] = 'Completo senza autore';
-$string['displayformat6'] = 'Lista termini';
 $string['displayformatcontinuous'] = 'Continuo senza autore';
-$string['displayformatdefault'] = 'Semplice, stile dizionario';
+$string['displayformatdictionary'] = 'Semplice, stile dizionario';
+$string['displayformatencyclopedia'] = 'Enciclopedia';
+$string['displayformatentrylist'] = 'Elenco termini';
+$string['displayformatfaq'] = 'FAQ';
+$string['displayformatfullwithauthor'] = 'Completo con autore';
+$string['displayformatfullwithoutauthor'] = 'Completo senza autore';
 $string['displayformats'] = 'Formati di visualizzazione';
 $string['displayformatssetup'] = 'Impostazione del formato di visualizzazione';
 $string['duplicateentry'] = 'Termine duplicato';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2004011700)
+      // chat.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['beep'] = 'campanella';
@@ -7,9 +7,14 @@ $string['chatintro'] = 'Testo di introduzione';
 $string['chatname'] = 'Nome di questa stanza di chat';
 $string['chatreport'] = 'Sessioni discussione';
 $string['chattime'] = 'Prossima ora di discussione';
+$string['configmethod'] = 'Il metodo normale della chat richiede che i client contattino regolarmente il server per gli aggiornamenti. Questo non richiede configurazioni e funziona dovunque, ma con molti utenti connessi può generare un grosso carico sul server. Utilizzare un server esterno richiede l\'utilizzo di una shell Unix, ma risulta essere un ambiente più facilmente ampliabile.';
 $string['configoldping'] = 'Dopo quanto tempo di inattività di un utente dobbiamo considerarlo uscito dalla chat?';
 $string['configrefreshroom'] = 'Ogni quanto tempo deve essere aggiornata la chat (in secondi)? Impostando un valore basso la chat sembra essere più veloce, ma può determinare un grande carico sul web server quando molte persone sono collegate. ';
 $string['configrefreshuserlist'] = 'Ogni quanto tempo deve essere aggiornata la lista degli utenti (in secondi)?';
+$string['configserverhost'] = 'Il nome del computer dove è locato il server';
+$string['configserverip'] = 'Indirizzo IP che corrisponde al nome soprastante';
+$string['configservermax'] = 'Numero massimo di utenti ammessi';
+$string['configserverport'] = 'Porta da utilizzare sul server per il demone';
 $string['currentchats'] = 'Sessioni di discussione attive';
 $string['currentusers'] = 'Utenti attuali';
 $string['deletesession'] = 'Cancella questa sessione';
@@ -24,6 +29,8 @@ $string['messagebeepsyou'] = '$a ti ha appena richiamato!';
 $string['messageenter'] = '$a é entrato nella chat';
 $string['messageexit'] = '$a ha lasciato la discussione';
 $string['messages'] = 'Messaggi';
+$string['methoddaemon'] = 'Server chat';
+$string['methodnormal'] = 'Metodo normale';
 $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chat';
 $string['neverdeletemessages'] = 'Non cancellare i messaggi';
