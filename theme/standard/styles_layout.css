@@ -448,6 +448,8 @@ body#mod-forum-search .introcontent {
 
 /* calendar, course, weblib,php, attandance
 dialouge, exercise, forum, lesson, quiz */
+table.generaltable td.header,
+table.generaltable th.header,
 .generaltableheader {
     background-image:url(gradient.jpg);
     background-position:top;
@@ -927,11 +929,13 @@ body#admin-index .c0 {
     background: #FAFAFA;
 } 
 
+body#admin-modules table.generaltable td.cell,
 body#admin-modules .generaltablecell {
     padding-top: 2px;
     padding-bottom: 2px;
 } 
 
+body#admin-blocks table.generaltable td.cell,
 body#admin-blocks .generaltablecell {
     padding-top: 1px;
     padding-bottom: 1px;
