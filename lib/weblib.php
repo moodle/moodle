@@ -287,8 +287,8 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         $nothing = get_string("choose")."...";
     }
 
-    $output = "<FORM NAME=$formname>";
-    $output .= "<SELECT NAME=popup onChange=\"window.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
+    $output = "<FORM TARGET=_top NAME=$formname>";
+    $output .= "<SELECT NAME=popup onChange=\"top.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
 
     if ($nothing != "") {
         $output .= "   <OPTION VALUE=\"javascript:void(0)\">$nothing</OPTION>\n";
