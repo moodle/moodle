@@ -102,12 +102,14 @@
             echo "</font></div>";
 
             if (forum_is_subscribed($USER->id, $forum->id)) {
+                $subtexttitle = get_string("subscribestop", "forum");
                 $subtext = get_string("unsubscribe", "forum");
             } else {
+                $subtexttitle = get_string("subscribestart", "forum");
                 $subtext = get_string("subscribe", "forum");
             }
             echo "<div align=right>";
-            echo "<font size=1><a href=\"subscribe.php?id=$forum->id\">$subtext</a></font>";
+            echo "<font size=1><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></font>";
             echo "</div>";
         }
     }

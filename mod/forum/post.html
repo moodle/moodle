@@ -64,12 +64,12 @@
        } else {
            unset($options);
            if (forum_is_subscribed($USER->id, $post->forum)) {
-               $options[0] = get_string("subscribed", "forum");
-               $options[1] = get_string("unsubscribe", "forum");
+               $options[0] = get_string("subscribestart", "forum");
+               $options[1] = get_string("subscribestop", "forum");
                choose_from_menu($options, "unsubscribe", 0, "");
            } else {
-               $options[0] = get_string("unsubscribed", "forum");
-               $options[1] = get_string("subscribe", "forum");
+               $options[0] = get_string("subscribestop", "forum");
+               $options[1] = get_string("subscribestart", "forum");
                choose_from_menu($options, "subscribe", 0, "");
            }
        }
