@@ -31,7 +31,7 @@
             if (!$u = get_record("user", "id", $user) ) {
                 error("That's an invalid user!");
             }
-            $userinfo = "$u->firstname $u->lastname";
+            $userinfo = fullname($u);
         }
         if ($date) 
             $dateinfo = userdate($date, get_string("strftimedaydate"));
@@ -53,7 +53,13 @@
     } else {
 
         if (empty($date)) { // no date picked, default to last login time
-            $date = $USER->lastlogin;
+            $date = time() - COURSE_MAX_RECENT_PERIOD;
+
+            if (!empty($USER->timeaccess[$course->id])) {
+                if ($USER->timeaccess[$course->id] > $date) {
+                    $date = $USER->timeaccess[$course->id];
+                }
+            }
         }
 
         if ($course->category) {

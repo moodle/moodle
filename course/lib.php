@@ -482,17 +482,12 @@ function print_recent_activity($course) {
 
     $isteacher = isteacher($course->id);
 
-    $timestart = $USER->lastlogin;
+    $timestart = time() - COURSE_MAX_RECENT_PERIOD;
 
     if (!empty($USER->timeaccess[$course->id])) {
-        if ($USER->timeaccess[$course->id] < $timestart) {
+        if ($USER->timeaccess[$course->id] > $timestart) {
             $timestart = $USER->timeaccess[$course->id];
         }
-    }
-
-    $timemaxrecent = time() - COURSE_MAX_RECENT_PERIOD;
-    if ($timestart < $timemaxrecent) {
-        $timestart = $timemaxrecent;
     }
 
     echo '<center><font size="1">';
