@@ -214,7 +214,7 @@
 			}
 		
 		// there can be an assessment record (for teacher submissions), if there isn't...
-		if (!$assessment = workshop_get_submission_assessment($submission, $USER)) {
+		if (!get_record("workshop_assessments", "submissionid", $submission->id, "userid", $USER->id)) {
 			$yearfromnow = time() + 365 * 86400;
 			// ...create one and set timecreated way in the future, this is reset when record is updated
 			$assessment->workshopid = $workshop->id;
@@ -321,6 +321,7 @@
 				$elements[$i]->weight = 11;
 				}
 			}
+        
 		switch ($workshop->gradingstrategy) {
 			case 0: // no grading
 				for ($i=0; $i<$workshop->nelements; $i++) {
@@ -388,7 +389,7 @@
 				echo "<CENTER><TABLE cellpadding=5 border=1><TR><TD ALIGN=\"CENTER\">".
 					get_string("numberofnegativeresponses", "workshop");
 				echo "</TD><TD>". get_string("suggestedgrade", "workshop")."</TD></TR>\n";
-				for ($j = 100; $j >= 0; $j--) {
+				for ($j = $workshop->grade; $j >= 0; $j--) {
 					$numbers[$j] = $j;
 					}
 				for ($i=0; $i<=$workshop->nelements; $i++) {
@@ -559,7 +560,7 @@
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
+		}
 
 		$form = (object)$HTTP_POST_VARS;
 		
@@ -578,9 +579,9 @@
 						$element->elementno = $key;
 						if (!$element->id = insert_record("workshop_elements", $element)) {
 							error("Could not insert workshop element!");
-							}
 						}
 					}
+				}
 				break;
 				
 			case 1: // accumulative grading
@@ -598,16 +599,16 @@
 														break;
 								case 'selection' :	$element->maxscore = $WORKSHOP_SCALES[$form->scale[$key]]['size'];
 														break;
-								}
-							}
-						if (isset($form->weight[$key])) {
-							$element->weight = $form->weight[$key];
-							}
-						if (!$element->id = insert_record("workshop_elements", $element)) {
-							error("Could not insert workshop element!");
 							}
 						}
+						if (isset($form->weight[$key])) {
+							$element->weight = $form->weight[$key];
+						}
+						if (!$element->id = insert_record("workshop_elements", $element)) {
+							error("Could not insert workshop element!");
+						}
 					}
+				}
 				break;
 				
 			case 2: // error banded grading...
@@ -620,14 +621,14 @@
 					$element->maxscore = $themaxscore;
 					if (isset($form->description[$key])) {
 						$element->description   = $form->description[$key];
-						}
+					}
 					if (isset($form->weight[$key])) {
 						$element->weight = $form->weight[$key];
-						}
+					}
 					if (!$element->id = insert_record("workshop_elements", $element)) {
 						error("Could not insert workshop element!");
-						}
 					}
+				}
 				break;
 				
 			case 4: // ...and criteria grading
@@ -641,12 +642,12 @@
 					for ($j=0;$j<5;$j++) {
 						if (empty($form->rubric[$key][$j]))
 							break;
-						}
+					}
 					$element->maxscore = $j - 1;
 					if (!$element->id = insert_record("workshop_elements", $element)) {
 						error("Could not insert workshop element!");
-						}
 					}
+				}
 				// let's not fool around here, dump the junk!
 				delete_records("workshop_rubrics", "workshopid", $workshop->id);
 				for ($i=0;$i<$workshop->nelements;$i++) {
@@ -654,23 +655,21 @@
 						unset($element);
 						if (empty($form->rubric[$i][$j])) {  // OK to have an element with fewer than 5 items
 							 break;
-							 }
+						 }
 						$element->workshopid = $workshop->id;
 						$element->elementno = $i;
 						$element->rubricno = $j;
 						$element->description   = $form->rubric[$i][$j];
 						if (!$element->id = insert_record("workshop_rubrics", $element)) {
 							error("Could not insert workshop element!");
-							}
 						}
 					}
+				}
 				break;
-			} // end of switch
+		} // end of switch
 
-		echo "<P>\n";
-		notice_yesno(get_string("amendassessmentelements","workshop")." ".get_string("again"), 
-			"assessments.php?id=$cm->id&action=editelements", "view.php?id=$cm->id");
-		}
+		redirect("view.php?id=$cm->id", get_string("savedok","workshop"));
+	}
 
 
 	/*********************** list assessments for grading (Student submissions)(by teachers)***********************/
@@ -799,8 +798,7 @@
 				if (!$element->id = insert_record("workshop_grades", $element)) {
 					error("Could not insert workshop element!");
 				}
-				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 
-                    $workshop->grade / 100;
+				$grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]);
 				echo "<P><B>".get_string("weightederrorcount", "workshop", intval($error + 0.5))."</B>\n";
 				break;
 			
@@ -890,7 +888,7 @@
 		// show grade if grading strategy is not zero
 		if ($workshop->gradingstrategy) {
 			redirect($returnto, get_string("thegradeis", "workshop").": ".number_format($grade, 2).
-                    "% (".get_string("maximumgrade")." ".number_format($workshop->grade)."%)");
+                    " (".get_string("maximumgrade")." ".number_format($workshop->grade).")");
 		}
 		else {
 			redirect($returnto);

@@ -97,7 +97,13 @@ function workshop_cron () {
         foreach ($assessments as $assessment) {
 
 			echo "Processing workshop assessment $assessment->id\n";
-			if (! $submission = get_record("workshop_submissions", "id", "$assessment->submissionid")) {
+            
+            // only process the entry once
+			if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
+				echo "Could not update the mailed field for id $assessment->id\n";
+			}
+			
+            if (! $submission = get_record("workshop_submissions", "id", "$assessment->submissionid")) {
 				echo "Could not find submission $assessment->submissionid\n";
 				continue;
 			}
@@ -129,7 +135,10 @@ function workshop_cron () {
                         $assessmentowner->id)) {
 				continue;  // Not an active participant
 			}
-	
+            // don't sent self assessment
+	        if ($submissionowner->id == $assessmentowner->id) {
+                continue;
+            }
 			$strworkshops = get_string("modulenameplural", "workshop");
 			$strworkshop  = get_string("modulename", "workshop");
 	
@@ -139,11 +148,11 @@ function workshop_cron () {
 			// "Your assignment \"$submission->title\" has been assessed by"
 			if (isstudent($course->id, $assessmentowner->id)) {
 				$msg = get_string("mail1", "workshop", $submission->title)." a $course->student.\n";
-				}
+			}
 			else {
 				$msg = get_string("mail1", "workshop", $submission->title).
                     " $assessmentowner->firstname $assessmentowner->lastname.\n";
-				}
+			}
 			// "The comments and grade can be seen in the workshop assignment '$workshop->name'
 			$msg .= get_string("mail2", "workshop", $workshop->name)."\n\n";
 	
@@ -156,31 +165,28 @@ function workshop_cron () {
 			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
 			$posttext .= "---------------------------------------------------------------------\n";
 			if ($sendto->mailformat == 1) {  // HTML
-				$posthtml = "<P><FONT FACE=sans-serif>".
-			  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-			  "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-			  "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
-			  $posthtml .= "<HR><FONT FACE=sans-serif>";
-			  $posthtml .= "<P>$msg</P>";
-			  $posthtml .= "<P>".get_string("mail3", "workshop").
-				  " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
+			    $posthtml = "<P><FONT FACE=sans-serif>".
+			        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+			        "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+			        "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
+			    $posthtml .= "<HR><FONT FACE=sans-serif>";
+			    $posthtml .= "<P>$msg</P>";
+			    $posthtml .= "<P>".get_string("mail3", "workshop").
+				    " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
 			} else {
-			  $posthtml = "";
+			    $posthtml = "";
 			}
 	
 			if (!$teacher = get_teacher($course->id)) {
 				echo "Error: can not find teacher for course $course->id!\n";
-				}
+			}
 				
 			if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
 				echo "Error: workshop cron: Could not send out mail for id $submission->id to 
                     user $sendto->id ($sendto->email)\n";
-				}
-			if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
-				echo "Could not update the mailed field for id $assessment->id\n";
-				}
 			}
 		}
+	}
 		
 	// look for new assessments of resubmissions
 	if ($assessments = workshop_get_unmailed_resubmissions($cutofftime)) {
@@ -189,7 +195,13 @@ function workshop_cron () {
         foreach ($assessments as $assessment) {
 
 			echo "Processing workshop assessment $assessment->id\n";
-			if (! $submission = get_record("workshop_submissions", "id", "$assessment->submissionid")) {
+            
+            // only process the entry once
+			if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
+				echo "Could not update the mailed field for id $assessment->id\n";
+			}
+			
+            if (! $submission = get_record("workshop_submissions", "id", "$assessment->submissionid")) {
 				echo "Could not find submission $assessment->submissionid\n";
 				continue;
 			}
@@ -263,9 +275,6 @@ function workshop_cron () {
 				echo "Error: workshop cron: Could not send out mail for id $submission->id to 
                     user $sendto->id ($sendto->email)\n";
 			}
-			if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
-				echo "Could not update the mailed field for id $assessment->id\n";
-			}
 		}
 	}
 	
@@ -276,7 +285,13 @@ function workshop_cron () {
         foreach ($comments as $comment) {
 
 			echo "Processing workshop comment $comment->id\n";
-			if (! $assessment = get_record("workshop_assessments", "id", "$comment->assessmentid")) {
+            
+            // only process the entry once
+			if (! set_field("workshop_comments", "mailed", "1", "id", "$comment->id")) {
+				echo "Could not update the mailed field for comment id $comment->id\n";
+			}
+			
+            if (! $assessment = get_record("workshop_assessments", "id", "$comment->assessmentid")) {
 				echo "Could not find assessment $comment->assessmentid\n";
 				continue;
 			}
@@ -361,9 +376,6 @@ function workshop_cron () {
 					echo "Error: workshop cron: Could not send out mail for id $submission->id to user 
                         $sendto->id ($sendto->email)\n";
 					}
-				if (! set_field("workshop_comments", "mailed", "1", "id", "$comment->id")) {
-					echo "Could not update the mailed field for comment id $comment->id\n";
-					}
 				}
 			// see if the assessor needs to to told
 			if ($comment->userid != $assessment->userid) {
@@ -425,6 +437,11 @@ function workshop_cron () {
         foreach ($assessments as $assessment) {
 
             echo "Processing workshop assessment $assessment->id (graded)\n";
+            
+            // only process the entry once
+            if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
+                echo "Could not update the mailed field for id $assessment->id\n";
+            }
 
 			if (! $submission = get_record("workshop_submissions", "id", "$assessment->submissionid")) {
                 echo "Could not find submission $assessment->submissionid\n";
@@ -499,9 +516,6 @@ function workshop_cron () {
             if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
                 echo "Error: workshop cron: Could not send out mail for id $submission->id to user 
                     $sendto->id ($sendto->email)\n";
-            }
-            if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
-                echo "Could not update the mailed field for id $assessment->id\n";
             }
         }
     }
@@ -1541,8 +1555,11 @@ function workshop_get_student_submissions($workshop, $order = "title") {
 
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_submission_assessment($submission, $user) {
-	// Return the user's assessment for this submission
-	return get_record("workshop_assessments", "submissionid", $submission->id, "userid", $user->id);
+	// Return the user's assessment for this submission (cold or warm, not hot)
+    
+    $timenow = time();
+	return get_record_select("workshop_assessments", "submissionid = $submission->id AND 
+            userid = $user->id AND timecreated < $timenow");
 }
 
 
@@ -2046,6 +2063,7 @@ function workshop_list_student_submissions($workshop, $user) {
 	// of assessments are show first
 	global $CFG;
 	
+    $timenow = time();
 	if (! $course = get_record("course", "id", $workshop->course)) {
         error("Course is misconfigured");
         }
@@ -2066,8 +2084,12 @@ function workshop_list_student_submissions($workshop, $user) {
 	if ($nassessed < $workshop->nsassessments) {
 		// count the number of assessments for each student submission
 		if ($submissions = workshop_get_student_submissions($workshop)) {
-			srand ((float)microtime()*1000000); // initialise random number generator
+			// srand ((float)microtime()*1000000); // now done automatically in PHP 4.2.0->
 			foreach ($submissions as $submission) {
+                // process only cold submissions
+                if (($submission->timecreated + $CFG->maxeditingtime) > $timenow) {
+                    continue;
+                }
 				$n = count_records("workshop_assessments", "submissionid", $submission->id);
 				// ...OK to have zero, we add a small random number to randomise things
 				$nassessments[$submission->id] = $n + rand(0, 98) / 100;
@@ -2085,7 +2107,8 @@ function workshop_list_student_submissions($workshop, $user) {
 					// skip submission if it belongs to this user
 					if ($submission->userid != $user->id) {
 						// add a "hot" assessment record if user has NOT already assessed this submission
-						if (!$assessment = workshop_get_submission_assessment($submission, $user)) {
+						if (!get_record("workshop_assessments", "submissionid", $submission->id, "userid",
+                                    $user->id)) {
 							$yearfromnow = time() + 365 * 86400;
 							// ...create one and set timecreated way in the future, this is reset when record is updated
 							$assessment->workshopid = $workshop->id;
@@ -2246,7 +2269,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 					$title .= $submission->title;
 					// test for allocated assesments which have not been done
 					if ($assessment->timecreated < $timenow) {
-						$title .= " {".number_format($assessment->grade, 0)."%";
+						$title .= " {".number_format($assessment->grade, 0);
 					}
 					else { // assessment record created but user has not yet assessed this submission
 						$title .= " {-";
@@ -2406,7 +2429,8 @@ function workshop_list_teacher_submissions($workshop, $user) {
 			foreach ($nassessments as $submissionid => $n) { // break out of loop when we allocated enough assessments...
 				$submission = get_record("workshop_submissions", "id", $submissionid);
 				// ... provided the user has NOT already assessed that submission...
-				if (!$assessment = workshop_get_submission_assessment($submission, $user)) {
+				if (!get_record("workshop_assessments", "submissionid", $submission->id, "userid",
+                                    $user->id)) {
 					$yearfromnow = time() + 365 * 86400;
 					// ...create one and set timecreated way in the future, this is reset when record is updated
 					$assessment->workshopid = $workshop->id;
@@ -2723,8 +2747,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 			
 		// only show the grade if grading strategy > 0 and the grade is positive
 		if ($showgrades and $assessment->grade >= 0) { 
-			echo "<CENTER><B>".get_string("thegradeis", "workshop").": ".number_format($assessment->grade, 2)."% (".
-				get_string("maximumgrade")." ".number_format($workshop->grade, 0)."%)</B></CENTER><BR CLEAR=ALL>\n";
+			echo "<CENTER><B>".get_string("thegradeis", "workshop").": ".number_format($assessment->grade, 2)." (".
+				get_string("maximumgrade")." ".number_format($workshop->grade, 0).")</B></CENTER><BR CLEAR=ALL>\n";
 			}
 		}
 		
@@ -2986,7 +3010,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 					}
 				}
 			echo "</TABLE></CENTER>\n";
-			echo "<P><CENTER><TABLE cellpadding=5 border=1><TR><TD>".get_string("adjustment", "workshop")."</TD><TD>\n";
+			echo "<P><CENTER><TABLE cellpadding=5 border=1><TR><TD><b>".get_string("optionaladjustment", 
+                    "workshop")."</b></TD><TD>\n";
 			unset($numbers);
 			for ($j = 20; $j >= -20; $j--) {
 				$numbers[$j] = $j;
@@ -3027,7 +3052,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 				echo "<TD align=center>{$elements[$i]->maxscore}</TD></TR>\n";
 				}
 			echo "</TABLE></CENTER>\n";
-			echo "<P><CENTER><TABLE cellpadding=5 border=1><TR><TD>".get_string("adjustment", "workshop")."</TD><TD>\n";
+			echo "<P><CENTER><TABLE cellpadding=5 border=1><TR><TD><b>".get_string("optionaladjustment", 
+                    "workshop")."</b></TD><TD>\n";
 			unset($numbers);
 			for ($j = 20; $j >= -20; $j--) {
 				$numbers[$j] = $j;
@@ -3102,7 +3128,15 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 	
 	// now get the general comment (present in all types)
 	echo "<tr valign=\"top\">\n";
-	echo "	<td align=\"right\"><P><B>". get_string("generalcomment", "workshop").":</B></P></TD>\n";
+	switch ($workshop->gradingstrategy) {
+		case 0:
+		case 1:
+		case 4 : // no grading, accumulative and rubic
+			echo "	<td align=\"right\"><P><B>". get_string("generalcomment", "workshop").":</B></P></TD>\n";
+			break; 
+		default : 
+			echo "	<td align=\"right\"><P><B>". get_string("reasonforadjustment", "workshop").":</B></P></TD>\n";
+		}
 	echo "	<td>\n";
 	if ($allowchanges) {
 		echo "		<textarea name=\"generalcomment\" rows=5 cols=75 wrap=\"virtual\">\n";
@@ -3354,7 +3388,7 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
 				foreach ($assessments as $assessment) {
 					if (isteacher($workshop->course, $assessment->userid)) {
 						$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">[";
-						$str .= number_format($assessment->grade, 0)."%";
+						$str .= number_format($assessment->grade, 0);
 						if ($assessment->gradinggrade) { // funny, teacher is grading self!
 							$str .= "/".number_format($assessment->gradinggrade*100/COMMENTSCALE, 0)."%";
 							}
@@ -3369,7 +3403,7 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
 				foreach ($assessments as $assessment) {
 					if (isstudent($workshop->course, $assessment->userid)) {
 						$str .= "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id\">{";
-						$str .= number_format($assessment->grade, 0)."%";
+						$str .= number_format($assessment->grade, 0);
 						if ($assessment->gradinggrade) {
 							$str .= "/".number_format($assessment->gradinggrade*100/COMMENTSCALE, 0)."%";
 							}

@@ -169,36 +169,38 @@
 
         $status = true;
 
-        //Get the workshop_rubrics array
-        $rubrics = $info['#']['RUBRICS']['0']['#']['RUBRIC'];
+        //Get the workshop_rubrics array (optional)
+        if (isset($info['#']['RUBRICS']['0']['#']['RUBRIC'])) {
+            $rubrics = $info['#']['RUBRICS']['0']['#']['RUBRIC'];
 
-        //Iterate over workshop_rubrics
-        for($i = 0; $i < sizeof($rubrics); $i++) {
-            $rub_info = $rubrics[$i];
-            //traverse_xmlize($rub_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
+            //Iterate over workshop_rubrics
+            for($i = 0; $i < sizeof($rubrics); $i++) {
+                $rub_info = $rubrics[$i];
+                //traverse_xmlize($rub_info);                             //Debug
+                //print_object ($GLOBALS['traverse_array']);              //Debug
+                //$GLOBALS['traverse_array']="";                          //Debug
 
-            //Now, build the WORKSHOP_RUBRICS record structure
-            $rubric->workshopid = $workshop_id;
-            $rubric->elementno = $elementno;
-            $rubric->rubricno = backup_todb($rub_info['#']['RUBRICNO']['0']['#']);
-            $rubric->description = backup_todb($rub_info['#']['DESCRIPTION']['0']['#']);
+                //Now, build the WORKSHOP_RUBRICS record structure
+                $rubric->workshopid = $workshop_id;
+                $rubric->elementno = $elementno;
+                $rubric->rubricno = backup_todb($rub_info['#']['RUBRICNO']['0']['#']);
+                $rubric->description = backup_todb($rub_info['#']['DESCRIPTION']['0']['#']);
 
-            //The structure is equal to the db, so insert the workshop_rubrics
-            $newid = insert_record ("workshop_rubrics",$rubric);
+                //The structure is equal to the db, so insert the workshop_rubrics
+                $newid = insert_record ("workshop_rubrics",$rubric);
 
-            //Do some output
-            if (($i+1) % 10 == 0) {
-                echo ".";
-                if (($i+1) % 200 == 0) {
-                    echo "<br>";
+                //Do some output
+                if (($i+1) % 10 == 0) {
+                    echo ".";
+                    if (($i+1) % 200 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
                 }
-                backup_flush(300);
-            }
 
-            if (!$newid) {
-                $status = false;
+                if (!$newid) {
+                    $status = false;
+                }
             }
         }
         return $status;
@@ -218,9 +220,9 @@
         //Iterate over submissions
         for($i = 0; $i < sizeof($submissions); $i++) {
             $sub_info = $submissions[$i];
-            //traverse_xmlize($sub_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
+            //traverse_xmlize($sub_info);                                     //Debug
+            //print_object ($GLOBALS['traverse_array']);                      //Debug
+            //$GLOBALS['traverse_array']="";                                  //Debug
 
             //We'll need this later!!
             $oldid = backup_todb($sub_info['#']['ID']['0']['#']);
@@ -357,47 +359,49 @@
 
         $status = true;
 
-        //Get the comments array
-        $comments = $info['#']['COMMENTS']['0']['#']['COMMENT'];
+        //Get the comments array (optional)
+        if (isset($info['#']['COMMENTS']['0']['#']['COMMENT'])) {
+            $comments = $info['#']['COMMENTS']['0']['#']['COMMENT'];
 
-        //Iterate over comments
-        for($i = 0; $i < sizeof($comments); $i++) {
-            $com_info = $comments[$i];
-            //traverse_xmlize($com_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
+            //Iterate over comments
+            for($i = 0; $i < sizeof($comments); $i++) {
+                $com_info = $comments[$i];
+                //traverse_xmlize($com_info);                            //Debug
+                //print_object ($GLOBALS['traverse_array']);             //Debug
+                //$GLOBALS['traverse_array']="";                         //Debug
 
-            //We'll need this later!!
-            $olduserid = backup_todb($com_info['#']['USERID']['0']['#']);
+                //We'll need this later!!
+                $olduserid = backup_todb($com_info['#']['USERID']['0']['#']);
 
-            //Now, build the WORKSHOP_COMMENTS record structure
-            $comment->workshopid = $new_workshop_id;
-            $comment->assessmentid = $new_assessment_id;
-            $comment->userid = backup_todb($com_info['#']['USERID']['0']['#']);
-            $comment->timecreated = backup_todb($com_info['#']['TIMECREATED']['0']['#']);
-            $comment->mailed = backup_todb($com_info['#']['MAILED']['0']['#']);
-            $comment->comments = backup_todb($com_info['#']['COMMENT_TEXT']['0']['#']);
+                //Now, build the WORKSHOP_COMMENTS record structure
+                $comment->workshopid = $new_workshop_id;
+                $comment->assessmentid = $new_assessment_id;
+                $comment->userid = backup_todb($com_info['#']['USERID']['0']['#']);
+                $comment->timecreated = backup_todb($com_info['#']['TIMECREATED']['0']['#']);
+                $comment->mailed = backup_todb($com_info['#']['MAILED']['0']['#']);
+                $comment->comments = backup_todb($com_info['#']['COMMENT_TEXT']['0']['#']);
 
-            //We have to recode the userid field
-            $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
-            if ($user) {
-                $comment->userid = $user->new_id;
-            }
-
-            //The structure is equal to the db, so insert the workshop_comment
-            $newid = insert_record ("workshop_comments",$comment);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                //We have to recode the userid field
+                $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
+                if ($user) {
+                    $comment->userid = $user->new_id;
                 }
-                backup_flush(300);
-            }
 
-            if (!$newid) {
-                $status = false;
+                //The structure is equal to the db, so insert the workshop_comment
+                $newid = insert_record ("workshop_comments",$comment);
+
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
+                }
+
+                if (!$newid) {
+                    $status = false;
+                }
             }
         }
 
@@ -411,37 +415,39 @@
 
         $status = true;
 
-        //Get the grades array
-        $grades = $info['#']['GRADES']['0']['#']['GRADE'];
+        //Get the grades array (optional)
+        if (isset($info['#']['GRADES']['0']['#']['GRADE'])) {
+            $grades = $info['#']['GRADES']['0']['#']['GRADE'];
 
-        //Iterate over grades
-        for($i = 0; $i < sizeof($grades); $i++) {
-            $gra_info = $grades[$i];
-            //traverse_xmlize($gra_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
+            //Iterate over grades
+            for($i = 0; $i < sizeof($grades); $i++) {
+                $gra_info = $grades[$i];
+                //traverse_xmlize($gra_info);                             //Debug
+                //print_object ($GLOBALS['traverse_array']);              //Debug
+                //$GLOBALS['traverse_array']="";                          //Debug
 
-            //Now, build the WORKSHOP_GRADES record structure
-            $grade->workshopid = $new_workshop_id;
-            $grade->assessmentid = $new_assessment_id;
-            $grade->elementno = backup_todb($gra_info['#']['ELEMENTNO']['0']['#']);
-            $grade->feedback = backup_todb($gra_info['#']['FEEDBACK']['0']['#']);
-            $grade->grade = backup_todb($gra_info['#']['GRADE_VALUE']['0']['#']);
+                //Now, build the WORKSHOP_GRADES record structure
+                $grade->workshopid = $new_workshop_id;
+                $grade->assessmentid = $new_assessment_id;
+                $grade->elementno = backup_todb($gra_info['#']['ELEMENTNO']['0']['#']);
+                $grade->feedback = backup_todb($gra_info['#']['FEEDBACK']['0']['#']);
+                $grade->grade = backup_todb($gra_info['#']['GRADE_VALUE']['0']['#']);
 
-            //The structure is equal to the db, so insert the workshop_grade
-            $newid = insert_record ("workshop_grades",$grade);
+                //The structure is equal to the db, so insert the workshop_grade
+                $newid = insert_record ("workshop_grades",$grade);
 
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
                 }
-                backup_flush(300);
-            }
 
-            if (!$newid) {
-                $status = false;
+                if (!$newid) {
+                    $status = false;
+                }
             }
         }
 
