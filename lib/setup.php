@@ -61,10 +61,10 @@
     require("$CFG->dirroot/theme/$CFG->theme/config.php");
 
 
-/// Set language/locale of printed times (must be supported by OS)
+/// Set language/locale of printed times etc (must be supported by OS)
 
-    if (! setlocale ("LC_TIME", $CFG->locale)) {
-        setlocale ("LC_TIME", $CFG->lang);        // Might work
+    if (! setlocale ("LC_ALL", $CFG->locale)) {
+        setlocale ("LC_ALL", $CFG->lang);        // Might work
     }
 
 /// Reference code to remove magic quotes from everything ... just in case.
