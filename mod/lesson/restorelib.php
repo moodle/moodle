@@ -53,6 +53,9 @@
             $lesson->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $lesson->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $lesson->maxanswers = backup_todb($info['MOD']['#']['MAXANSWERS']['0']['#']);
+            $lesson->maxattempts = backup_todb($info['MOD']['#']['MAXATTEMPTS']['0']['#']);
+            $lesson->nextpagedefault = backup_todb($info['MOD']['#']['NEXTPAGEDEFAULT']['0']['#']);
+            $lesson->maxpages = backup_todb($info['MOD']['#']['MAXPAGES']['0']['#']);
             $lesson->retake = backup_todb($info['MOD']['#']['RETAKE']['0']['#']);
             $lesson->available = backup_todb($info['MOD']['#']['AVAILABLE']['0']['#']);
             $lesson->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
@@ -113,6 +116,8 @@
             //Now, build the lesson_pages record structure
             $page->lessonid = $lessonid;
             $page->prevpageid = $prevpageid;
+            $page->qtype = backup_todb($page_info['#']['QTYPE']['0']['#']);
+            $page->qoption = backup_todb($page_info['#']['QOPTION']['0']['#']);
             $page->timecreated = backup_todb($page_info['#']['TIMECREATED']['0']['#']);
             $page->timemodified = backup_todb($page_info['#']['TIMEMODIFIED']['0']['#']);
             $page->title = backup_todb($page_info['#']['TITLE']['0']['#']);
@@ -192,12 +197,13 @@
                 $answer->pageid = $pageid;
                 // the absolute jumps will need fixing
                 $answer->jumpto = backup_todb($answer_info['#']['JUMPTO']['0']['#']);
+                $answer->grade = backup_todb($answer_info['#']['GRADE']['0']['#']);
                 $answer->timecreated = backup_todb($answer_info['#']['TIMECREATED']['0']['#']);
                 $answer->timemodified = backup_todb($answer_info['#']['TIMEMODIFIED']['0']['#']);
                 $answer->answer = backup_todb($answer_info['#']['ANSWERTEXT']['0']['#']);
                 $answer->response = backup_todb($answer_info['#']['RESPONSE']['0']['#']);
 
-                //The structure is equal to the db, so insert the lesson_rubrics
+                //The structure is equal to the db, so insert the lesson_answers
                 $newid = insert_record ("lesson_answers",$answer);
 
                 //Do some output

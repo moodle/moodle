@@ -1,6 +1,9 @@
 <!-- define a new instance of lesson -->
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 <?php
+
+require("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
+
 // set the defaults
     if (empty($form->name)) {
         $form->name = "";
@@ -10,6 +13,15 @@
     }
     if (!isset($form->maxanswers)) {
         $form->maxanswers = 4;
+    }
+    if (!isset($form->maxattempts)) {
+        $form->maxattempts = 5;
+    }
+    if (!isset($form->nextpagedefault)) {
+        $form->nextpagedefault = 0;
+    }
+    if (!isset($form->maxpages)) {
+        $form->maxpages = 0;
     }
     if (!isset($form->retake)) {
         $form->retake = 1;
@@ -58,13 +70,51 @@
     </td>
 </tr>
 
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("maximumnumberofattempts", "lesson") ?>:</B></P></TD>
+    <td>
+        <?php
+        unset($numbers);
+        for ($i=10; $i>0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "maxattempts", "$form->maxattempts", "");
+       helpbutton("maxattempts", get_string("maximumnumberofattempts", "lesson"), "lesson");
+        ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><P><B><?php  print_string("actionaftercorrectanswer", "lesson") ?>:</B></P></TD>
+    <td>
+    <?PHP 
+        choose_from_menu($LESSON_NEXTPAGE_ACTION, "nextpagedefault", $form->nextpagedefault, "");
+        helpbutton("nextpageaction", get_string("actionaftercorrectanswer", "lesson"), "lesson");
+    ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("numberofpagestoshow", "lesson") ?>:</B></P></TD>
+    <td>
+        <?php
+        unset($numbers);
+        for ($i=100; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "maxpages", "$form->maxpages", "");
+        helpbutton("maxpages", get_string("numberofpagestoshow", "lesson"), "lesson");
+        ?>
+    </td>
+</tr>
+
 <tr>
     <td align=right><P><B><?php  print_string("canretake", "lesson", $course->student) ?>:</B></P></TD>
     <td>
     <?PHP 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "retake", $form->retake, "");
-        helpbutton("retake", get_string("canretake", "lesson"), "lesson");
+        helpbutton("retake", get_string("canretake", "lesson", $course->student), "lesson");
     ?>
     </td>
 </tr>

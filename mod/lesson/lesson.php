@@ -69,8 +69,8 @@
             
         // set of jump array
         $jump[0] = get_string("thispage", "lesson");
-        $jump[NEXTPAGE] = get_string("nextpage", "lesson");
-        $jump[EOL] = get_string("endoflesson", "lesson");
+        $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
+        $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
         if (!$apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
             error("Add page: first page not found");
         }
@@ -102,6 +102,13 @@
         echo get_string("pagecontents", "lesson").":</b><br />\n";
         print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
         echo "</td></tr>\n";
+        echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
+        choose_from_menu($LESSON_QUESTION_TYPE, "qtype", LESSON_MULTICHOICE, "");
+        helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson");
+        echo "<br /><input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
+        echo " <b>".get_string("questionoption", "lesson")."</b>\n";
+        helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
+        echo "</td></tr>\n";
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
             $iplus1 = $i + 1;
             echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b><br />\n";
@@ -116,7 +123,7 @@
                 lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
             } else {
                 // answer 1 jumpto next page
-                lesson_choose_from_menu($jump, "jumpto[$i]", NEXTPAGE, "");
+                lesson_choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
             }
             helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
             echo "</td></tr>\n";
@@ -167,66 +174,343 @@
 
 	/****************** continue ************************************/
 	elseif ($action == 'continue' ) {
-        // record answer (if necessary) and show response (if any)
+        // record answer (if necessary) and show response (if none say if answer is correct or not)
 
-		if (empty($_POST['pageid'])) {
+
+        if (empty($_POST['pageid'])) {
 			error("Continue: pageid missing");
 		}
         $pageid = $_POST['pageid'];
-        // get the answer
-        if (empty($_POST['answerid'])) {
-            print_heading(get_string("noanswer", "lesson"));
-   		    redirect("view.php?id=$cm->id&action=navigation&pageid=$pageid", 
-                    get_string("continue", "lesson"));
+        if (!$page = get_record("lesson_pages", "id", $pageid)) {
+            error("Continue: Page record not found");
+        }
+        // set up some defaults
+        $answerid = 0;
+        $noanswer = false;
+        $correctanswer = false;
+        $newpageid = 0; // stay on the page
+        switch ($page->qtype) {
+            case LESSON_SHORTANSWER :
+                if (!$useranswer = $_POST['answer']) {
+                    $noanswer = true;
+                    break;
+                }
+                if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
+                    error("Continue: No answers found");
+                }
+                foreach ($answers as $answer) {
+                    if (lesson_iscorrect($pageid, $answer->jumpto)) {
+                        if ($page->qoption) {
+                            // case sensitive
+                            if ($answer->answer == $useranswer) {
+                                $correctanswer = true;
+                                $newpageid = $answer->jumpto;
+                                if (trim(strip_tags($answer->response))) {
+                                    $response = $answer->response;
+                                }
+                            }
+                        } else {
+                            // case insensitive
+                            if (strcasecmp($answer->answer, $useranswer) == 0) {
+                                $correctanswer = true;
+                                $newpageid = $answer->jumpto;
+                                if (trim(strip_tags($answer->response))) {
+                                    $response = $answer->response;
+                                }
+                            }
+                        }
+                    } else {
+                        // see if user typed in any of the wrong answers
+                        // don't worry about case
+                        if (strcasecmp($answer->answer, $useranswer) == 0) {
+                            $newpageid = $answer->jumpto;
+                            if (trim(strip_tags($answer->response))) {
+                                $response = $answer->response;
+                            }
+                        }
+                    }
+                }
+                if (!isset($response)) {
+                    if ($correctanswer) {
+                        $response = get_string("thatsthecorrectanswer", "lesson");
+                    } else {
+                        $response = get_string("thatsthewronganswer", "lesson");
+                    }
+                }
+                break;
+                
+            case LESSON_TRUEFALSE :
+                if (empty($_POST['answerid'])) {
+                    $noanswer = true;
+                    break;
+                }
+                $answerid = $_POST['answerid']; 
+                if (!$answer = get_record("lesson_answers", "id", $answerid)) {
+                    error("Continue: answer record not found");
+                } 
+                if (lesson_iscorrect($pageid, $answer->jumpto)) {
+                    $correctanswer = true;
+                }
+                $newpageid = $answer->jumpto;
+                if (!$response = trim($answer->response)) {
+                    if ($correctanswer) {
+                        $response = get_string("thatsthecorrectanswer", "lesson");
+                    } else {
+                        $response = get_string("thatsthewronganswer", "lesson");
+                    }
+                }
+                break;
+                
+            case LESSON_MULTICHOICE :
+                if ($page->qoption) {
+                    // MULTIANSWER allowed, user's answer is an array
+                    if (isset($_POST['answer'])) {
+                        $useranswers = $_POST['answer'];
+                    } else {
+                        $noanswer = true;
+                        break;
+                    }
+                    if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
+                        error("Continue: No answers found");
+                    }
+                    $ncorrect = 0;
+                    $nhits = 0;
+                    $correctresponse = '';
+                    $wrongresponse = '';
+                    foreach ($answers as $answer) {
+                        if (lesson_iscorrect($pageid, $answer->jumpto)) {
+                            $ncorrect++;
+                            foreach ($useranswers as $key => $answerid) {
+                                if ($answerid == $answer->id) {
+                                    $nhits++;
+                                }
+                            }
+                            // save the first jumpto page id, may be needed!...
+                            if (!isset($correctpageid)) {  
+                                // leave in its "raw" state - will converted into a proper page id later
+                                $correctpageid = $answer->jumpto;
+                            }
+                            // ...also save any response from the correct answers...
+                            if (trim(strip_tags($answer->response))) {
+                                $correctresponse = $answer->response;
+                            }
+                        } else {
+                            // save the first jumpto page id, may be needed!...
+                            if (!isset($wrongpageid)) {   
+                                // leave in its "raw" state - will converted into a proper page id later
+                                $wrongpageid = $answer->jumpto;
+                            }
+                            // ...and from the incorrect ones, don't know which to use at this stage
+                            if (trim(strip_tags($answer->response))) {
+                                $wrongresponse = $answer->response;
+                            }
+                        }
+                    }
+                    if ((count($useranswers) == $ncorrect) and ($nhits == $ncorrect)) {
+                        $correctanswer = true;
+                        if (!$response = $correctresponse) {
+                            $response = get_string("thatsthecorrectanswer", "lesson");
+                        }
+                        $newpageid = $correctpageid;
+                    } else {
+                        if (!$response = $wrongresponse) {
+                            $response = get_string("thatsthewronganswer", "lesson");
+                        }
+                        $newpageid = $wrongpageid;
+                    }
+                } else {
+                    // only one answer allowed
+                    if (empty($_POST['answerid'])) {
+                        $noanswer = true;
+                        break;
+                    }
+                    $answerid = $_POST['answerid']; 
+                    if (!$answer = get_record("lesson_answers", "id", $answerid)) {
+                        error("Continue: answer record not found");
+                    } 
+                    if (lesson_iscorrect($pageid, $answer->jumpto)) {
+                        $correctanswer = true;
+                    }
+                    $newpageid = $answer->jumpto;
+                    if (!$response = trim($answer->response)) {
+                        if ($correctanswer) {
+                            $response = get_string("thatsthecorrectanswer", "lesson");
+                        } else {
+                            $response = get_string("thatsthewronganswer", "lesson");
+                        }
+                    }
+                }
+                break;
+                
+            case LESSON_MATCHING :
+                if (isset($_POST['response'])) {
+                    $response = $_POST['response'];
+                } else {
+                    $noanswer = true;
+                    break;
+                }
+                if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
+                    error("Continue: No answers found");
+                }
+                $ncorrect = 0;
+                $i = 0;
+                foreach ($answers as $answer) {
+                    if ($answer->response == $response[$answer->id]) {
+                        $ncorrect++;
+                    }
+                    if ($i == 0) {
+                        $correctpageid = $answer->jumpto;
+                    }
+                    if ($i == 1) {
+                        $wrongpageid = $answer->jumpto;
+                    }
+                    $i++;
+                }
+                if ($ncorrect == count($answers)) {
+                    $response = get_string("thatsthecorrectanswer", "lesson");
+                    $newpageid = $correctpageid;
+                    $correctanswer = true;
+                } else {
+                    $response = get_string("numberofcorrectmatches", "lesson", $ncorrect);
+                    $newpageid = $wrongpageid;
+                }
+                break;
+
+            case LESSON_NUMERICAL :
+                // set defaults
+                $response = '';
+                $newpageid = 0;
+
+                if (!$useranswer = (float) $_POST['answer']) {
+                    $noanswer = true;
+                    break;
+                }
+                if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
+                    error("Continue: No answers found");
+                }
+                foreach ($answers as $answer) {
+                    if (strpos($answer->answer, ':')) {
+                        // there's a pairs of values
+                        list($min, $max) = explode(':', $answer->answer);
+                        $minimum = (float) $min;
+                        $maximum = (float) $max;
+                    } else {
+                        // there's only one value
+                        $minimum = (float) $answer->answer;
+                        $maximum = $minimum;
+                    }
+                    if (($useranswer >= $minimum) and ($useranswer <= $maximum)) {
+                        $newpageid = $answer->jumpto;
+                        $response = trim($answer->response);
+                        if (lesson_iscorrect($pageid, $newpageid)) {
+                            $correctanswer = true;
+                        }
+                        break;
+                    }
+                }
+                
+                if ($correctanswer) {
+                    if (!$response) {
+                        $response = get_string("thatsthecorrectanswer", "lesson");
+                    }
+                } else {
+                    if (!$response) {
+                        $response = get_string("thatsthewronganswer", "lesson");
+                    }
+                }           
+                break;
+        }
+        if ($noanswer) {
+            $newpageid = $pageid; // display same page again
+            print_simple_box(get_string("noanswer", "lesson"), "center");
         } else {
-            $answerid = $_POST['answerid']; 
-            if (!$answer = get_record("lesson_answers", "id", $answerid)) {
-                error("Continue: answer record not found");
-            } 
             $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
             if (isstudent($course->id)) {
                 // record student's attempt
-                $correct = get_field("lesson_answers", "correct", "id", $answerid);
                 $attempt->lessonid = $lesson->id;
                 $attempt->pageid = $pageid;
                 $attempt->userid = $USER->id;
                 $attempt->answerid = $answerid;
                 $attempt->retry = $ntries;
-                $attempt->correct = lesson_iscorrect($pageid, $answer->jumpto);
+                $attempt->correct = $correctanswer;
                 $attempt->timeseen = time();
                 if (!$newattemptid = insert_record("lesson_attempts", $attempt)) {
                     error("Continue: attempt not inserted");
                 }
-            }
-            
-            // convert jumpto to a proper page id
-            if ($answer->jumpto == 0) {
-                $newpageid = $pageid;
-            } elseif ($answer->jumpto == NEXTPAGE) {
-                if (!$newpageid = get_field("lesson_pages", "nextpageid", "id", $pageid)) {
-                    // no nextpage go to end of lesson
-                    $newpageid = EOL;
+                if (!$correctanswer and ($newpageid == 0)) {
+                    // wrong answer and student is stuck on this page - check how many attempts 
+                    // the student has had at this page/question
+                    $nattempts = count_records("lesson_attempts", "pageid", $pageid, "userid", $USER->id,
+                        "retry", $ntries);
+
+                    if ($nattempts >= $lesson->maxattempts) {
+                        print_heading(get_string("maximumnumberofattempts", "lesson")."<br />".
+                                get_string("movingtonextpage", "lesson"));
+                        $newpageid = LESSON_NEXTPAGE;
+                    }
                 }
-            } else {
-                $newpageid = $answer->jumpto;
+            }
+            // convert jumpto page into a proper page id
+            if ($newpageid == 0) {
+                $newpageid = $pageid;
+            } elseif ($newpageid == LESSON_NEXTPAGE) {
+                if ($lesson->nextpagedefault) {
+                    // in Flash Card mode...
+                    // ... first get the page ids (lessonid the 5th param is needed to make get_records play)
+                    $allpages = get_records("lesson_pages", "lessonid", $lesson->id, "id", "id,lessonid");
+                    shuffle ($allpages);
+                    $found = false;
+                    if ($lesson->nextpagedefault == LESSON_UNSEENPAGE) {
+                        foreach ($allpages as $thispage) {
+                            if (!count_records("lesson_attempts", "pageid", $thispage->id, "userid", 
+                                        $USER->id, "retry", $ntries)) {
+                                $found = true;
+                                break;
+                            }
+                        }
+                    } elseif ($lesson->nextpagedefault == LESSON_UNANSWEREDPAGE) {
+                        foreach ($allpages as $thispage) {
+                            if (!count_records_select("lesson_attempts", "pageid = $thispage->id AND
+                                        userid = $USER->id AND correct = 1 AND retry = $ntries")) {
+                                $found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if ($found) {
+                        $newpageid = $thispage->id;
+                        if ($lesson->maxpages) {
+                            // check number of pages viewed (in the lesson)
+                            if (count_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id,
+                                    "retry", $ntries) >= $lesson->maxpages) {
+                                $newpageid = LESSON_EOL;
+                            }
+                        }
+                    } else {
+                        $newpageid = LESSON_EOL;
+                    }
+                } elseif (!$newpageid = $page->nextpageid) {
+                    // no nextpage go to end of lesson
+                    $newpageid = LESSON_EOL;
+                }
             }
             
-            // display response (if there is one)
-            if ($answer->response) {
+            // display response (if there is one - there should be!)
+            if ($response) {
                 $title = get_field("lesson_pages", "title", "id", $pageid);
                 print_heading($title);
                 echo "<table width=\"80%\" border=\"0\" align=\"center\"><tr><td>\n";
-                print_simple_box(format_text($answer->response), 'center');
+                print_simple_box(format_text($response), 'center');
                 echo "</td></tr></table>\n";
             }
-            echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
-            echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-            echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
-            echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
-            echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                get_string("continue", "lesson")."\"></p>\n";
-            echo "</form>\n";
         }
+        echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+        echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
+        echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
+        echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
+            get_string("continue", "lesson")."\"></p>\n";
+        echo "</form>\n";
 	}
 	
 
@@ -304,8 +588,8 @@
         }
         // set of jump array
         $jump[0] = get_string("thispage", "lesson");
-        $jump[NEXTPAGE] = get_string("nextpage", "lesson");
-        $jump[EOL] = get_string("endoflesson", "lesson");
+        $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
+        $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
         if (!$apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
             error("Edit page: first page not found");
         }
@@ -338,6 +622,30 @@
         print_textarea($usehtmleditor, 25, 70, 630, 400, "contents", $page->contents);
         echo "</td></tr>\n";
         $n = 0;
+        echo "<tr><td><b>".get_string("questiontype", "lesson").":</b> \n";
+        choose_from_menu($LESSON_QUESTION_TYPE, "qtype", $page->qtype, "");
+        switch ($page->qtype) {
+            case LESSON_SHORTANSWER :
+                echo "&nbsp;&nbsp;";
+                if ($page->qoption) {
+                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
+                } else {
+                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
+                }
+                echo " <b>".get_string("casesensitive", "lesson")."</b>\n";
+                break;
+            case LESSON_MULTICHOICE :
+                echo "&nbsp;&nbsp;";
+                if ($page->qoption) {
+                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
+                } else {
+                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
+                }
+                echo " <b>".get_string("morethanoneanswer", "lesson")."</b>\n";
+                break;
+        }       
+        helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
+        echo "</td></tr>\n";
         if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
             foreach ($answers as $answer) {
                 $nplus1 = $n + 1;
@@ -348,7 +656,7 @@
                 echo "<tr><td><b>".get_string("response", "lesson")." $nplus1:</b><br />\n";
                 print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
                 echo "</td></tr>\n";
-                echo "<tr><td><B>".get_string("jumpto", "lesson").":</b> \n";
+                echo "<tr><td><b>".get_string("jumpto", "lesson").":</b> \n";
                 lesson_choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
                 helpbutton("jumpto", get_string("jumpto", "lesson"), "lesson");
                 echo "</td></tr>\n";
@@ -400,6 +708,12 @@
             $newpage->prevpageid = $form->pageid;
             $newpage->nextpageid = $page->nextpageid;
             $newpage->timecreated = $timenow;
+            $newpage->qtype = $form->qtype;
+            if (isset($form->qoption)) {
+                $newpage->qoption = $form->qoption;
+            } else {
+                $newpage->qoption = 0;
+            }
             $newpage->title = $form->title;
             $newpage->contents = trim($form->contents);
             $newpageid = insert_record("lesson_pages", $newpage);
@@ -419,6 +733,12 @@
                 $newpage->prevpageid = 0; // this is a first page
                 $newpage->nextpageid = 0; // this is the only page
                 $newpage->timecreated = $timenow;
+                $newpage->qtype = $form->qtype;
+                if (isset($form->qoption)) {
+                    $newpage->qoption = $form->qoption;
+                } else {
+                    $newpage->qoption = 0;
+                }
                 $newpage->title = $form->title;
                 $newpage->contents = trim($form->contents);
                 $newpageid = insert_record("lesson_pages", $newpage);
@@ -431,6 +751,12 @@
                 $newpage->prevpageid = 0; // this is a first page
                 $newpage->nextpageid = $page->id;
                 $newpage->timecreated = $timenow;
+                $newpage->qtype = $form->qtype;
+                if (isset($form->qoption)) {
+                    $newpage->qoption = $form->qoption;
+                } else {
+                    $newpage->qoption = 0;
+                }
                 $newpage->title = $form->title;
                 $newpage->contents = trim($form->contents);
                 $newpageid = insert_record("lesson_pages", $newpage);
@@ -616,6 +942,12 @@
 
         $page->id = $form->pageid;
         $page->timemodified = $timenow;
+        $page->qtype = $form->qtype;
+        if (isset($form->qoption)) {
+            $page->qoption = $form->qoption;
+        } else {
+            $page->qoption = 0;
+        }
         $page->title = $form->title;
         $page->contents = trim($form->contents);
         if (!update_record("lesson_pages", $page)) {

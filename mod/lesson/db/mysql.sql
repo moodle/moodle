@@ -10,6 +10,9 @@ CREATE TABLE `prefix_lesson` (
   `name` varchar(255) NOT NULL default '',
   `grade` tinyint(3) NOT NULL default '0',
   `maxanswers` int(3) unsigned NOT NULL default '4',
+  `maxattempts` int(3) unsigned NOT NULL default '5',
+  `nextpagedefault` int(3) unsigned NOT NULL default '0',
+  `maxpages` int(3) unsigned NOT NULL default '0',
   `retake` int(3) unsigned NOT NULL default '1',
   `available` int(10) unsigned NOT NULL default '0',
   `deadline` int(10) unsigned NOT NULL default '0',
@@ -23,6 +26,8 @@ CREATE TABLE `prefix_lesson_pages` (
   `lessonid` int(10) unsigned NOT NULL default '0',
   `prevpageid` int(10) unsigned NOT NULL default '0',
   `nextpageid` int(10) unsigned NOT NULL default '0',
+  `qtype` tinyint(3) unsigned NOT NULL default '0',
+  `qoption` tinyint(3) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `title` varchar(255) NOT NULL default '',
@@ -36,11 +41,13 @@ CREATE TABLE `prefix_lesson_answers` (
   `lessonid` int(10) unsigned NOT NULL default '0',
   `pageid` int(10) unsigned NOT NULL default '0',
   `jumpto` int(11) NOT NULL default '0',
+  `grade` tinyint(3) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `answer` text NOT NULL default '',
   `response` text NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY {`pageid`)
 ) COMMENT='Defines lesson_answers';
 # --------------------------------------------------------
 
@@ -53,7 +60,8 @@ CREATE TABLE `prefix_lesson_attempts` (
   `retry` int(3) unsigned NOT NULL default '0',
   `correct` int(10) unsigned NOT NULL default '0',
   `timeseen` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY (`userid`)
 ) COMMENT='Defines lesson_attempts';
 # --------------------------------------------------------
 

@@ -16,6 +16,17 @@ function lesson_upgrade($oldversion) {
 
     }
 
+    if ($oldversion < 2004022200) {
+
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson` ADD `maxattempts` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER maxanswers");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson` ADD `nextpagedefault` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER maxattempts");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson` ADD `maxpages` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER nextpagedefault");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_pages` ADD `qtype` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER lessonid");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_pages` ADD `qoption` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER qtype");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_answers` ADD `grade` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER jumpto");
+
+    }
+
     return true;
 }
 

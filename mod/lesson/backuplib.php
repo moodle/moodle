@@ -50,6 +50,9 @@
                 fwrite ($bf,full_tag("NAME",4,false,$lesson->name));
                 fwrite ($bf,full_tag("GRADE",4,false,$lesson->grade));
                 fwrite ($bf,full_tag("MAXANSWERS",4,false,$lesson->maxanswers));
+                fwrite ($bf,full_tag("MAXATTEMPTS",4,false,$lesson->maxattempts));
+                fwrite ($bf,full_tag("NEXTPAGEDEFAULT",4,false,$lesson->nextpagedefault));
+                fwrite ($bf,full_tag("MAXPAGES",4,false,$lesson->maxpages));
                 fwrite ($bf,full_tag("RETAKE",4,false,$lesson->retake));
                 fwrite ($bf,full_tag("AVAILABLE",4,false,$lesson->available));
                 fwrite ($bf,full_tag("DEADLINE",4,false,$lesson->deadline));
@@ -86,6 +89,8 @@
                 $status =fwrite ($bf,start_tag("PAGE",5,true));
                 //Print page contents (prevpageid and nextpageid not needed)
                 fwrite ($bf,full_tag("PAGEID",6,false,$page->id)); // needed to fix (absolute) jumps
+                fwrite ($bf,full_tag("QTYPE",6,false,$page->qtype));
+                fwrite ($bf,full_tag("QOPTION",6,false,$page->qoption));
                 fwrite ($bf,full_tag("TIMECREATED",6,false,$page->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$page->timemodified));
                 fwrite ($bf,full_tag("TITLE",6,false,$page->title));
@@ -130,6 +135,7 @@
                 $status =fwrite ($bf,start_tag("ANSWER",7,true));
                 //Print answer contents
                 fwrite ($bf,full_tag("JUMPTO",8,false,$answer->jumpto));
+                fwrite ($bf,full_tag("GRADE",8,false,$answer->grade));
                 fwrite ($bf,full_tag("TIMECREATED",8,false,$answer->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",8,false,$answer->timemodified));
                 fwrite ($bf,full_tag("ANSWERTEXT",8,false,$answer->answer));
