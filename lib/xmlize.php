@@ -20,11 +20,11 @@
  *
  */
 
-function xmlize($data, $WHITE=1) {
+function xmlize($data, $WHITE=1, $encoding='UTF-8') {
 
     $data = trim($data);
     $vals = $index = $array = array();
-    $parser = xml_parser_create();
+    $parser = xml_parser_create($encoding);
     xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
     xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, $WHITE);
     xml_parse_into_struct($parser, $data, $vals, $index);

@@ -103,7 +103,7 @@ class XMLParser {
     $this->texts['en'] = $data;
 
     /// Create parser
-    $xml_parser = xml_parser_create(); 
+    $xml_parser = xml_parser_create('UTF-8'); 
     xml_set_object($xml_parser, &$this); 
     xml_set_element_handler($xml_parser, 'startElement', 'endElement'); 
     xml_set_character_data_handler($xml_parser, 'characterData'); 
