@@ -1,0 +1,39 @@
+<p align="center"><b>Prze¶lij u¿ytkowników</b></p>
+
+<p>Po pierwsze zwróæ uwagê, ¿e <strong> zwykle nie ma potrzeby importowania wszystkich u¿ytkowników.</strong>. 
+Aby zminimalizowaæ nak³ad pracy zobacz czy mo¿na zastosowaæ inne formy identyfikacji u¿ytkowników, które nie wymagaj±
+¿mudnej, manualnej pracy jak n.p. ³±czenie siê z zewnêtrzn± baz± danych b±d¼ pozwolenie na stworzenie u¿ytkownikom 
+w³asnych kont. </p>
+<p>Je¶li jeste¶ pewien, ¿e chcesz zaimportowaæ konta u¿ytkowników z pliku tekstowego, musisz odpowiednio sformatowaæ
+ten plik:</p>
+
+<ul>
+  <li>Jeden rekord na jednej linii</li>
+  <li>Ka¿dy rekord zawiera dane oddzielone od siebie przecinkami</li>
+  <li>Pierwszy rekord zawiera listê pól. Ten rekord definiuje format ca³ego pliku.
+    <blockquote>
+      <p><strong>Obowi±zkowe pola:</strong> musz± byæ zawarte w pierwszym rekordzie i okre¶lone dla ka¿dego u¿ytkownika</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">u¿ytkownik, has³o, imiê, nazwisko, email</font></p>
+</p>
+      <p><strong>Domy¶lne pola:</strong> te s± ju¿ opcjonalne - je¶li nie s± zawarte, wówczas warto¶ci te bêd± pobrane od 
+      g³ównego administratora.</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">uczelnia, wydzia³, miasto, kraj, jêzyk, strefa czasowa</font> </p>
+      <p><strong>Opcjonalne pola: </strong> te warto¶ci s± zupe³nie opcjonalne. Nazwy przedmiotów mog± byæ skrócone.</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">numer legitymacji, icq, telefon, telefon 2, adres, url, 
+      opis, format emaila, wygl±d emaila, edytor html, autozapisywanie, kurs 1, kurs 2, kurs 3, kurs 4, kurs 5</font></p>
+    </blockquote>
+    </li>
+  <li>Przecinki powinny byæ zakodowane jako &amp;#44 - skrypt automatycznie odczyte ten znak jako przecinek. </li>
+  <li>Dla pól Fa³sz/Prawda u¿ywaj 0 dla fa³sz i 1 dla prawda. </li>
+  <li>Zauwa¿: Je¶li u¿ytkownik jest ju¿ zapisany w bazie danych Moodle, skrypt odnajdzie numer u¿ytkownika w indeksie bazy danych
+  i zapisze tego studenta na jakikolwiek z wymienionych kursów bez aktualizowania czy zmiany innych danych.</li>
+</ul>
+  
+  
+<p>Oto przyk³ad pliku do importu:</p>
+<p><font size="-1" face="Courier New, Courier, mono">u¿ytkownik, has³o, imiê, nazwisko, email, jêzyk, numer identyfikacyjny, 
+wygl±d emaila, kurs 1<br>
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101<br>
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202</font></p>
+
