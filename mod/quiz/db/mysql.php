@@ -298,8 +298,8 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2005010201) {
-        table_column('quiz_categories', '', 'parent', 'integer');
-        table_column('quiz_categories', '', 'sortorder', 'integer', '', '', '999');
+        table_column('quiz_categories', '', 'parent');
+        table_column('quiz_categories', '', 'sortorder', 'integer', '10', '', '999');
     }
 
     if ($oldversion < 2005010300) {
