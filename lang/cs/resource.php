@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 (2004083100)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['addresource'] = 'Pøidat studijní materiál';
@@ -54,7 +54,7 @@ $string['newwidth'] = 'Výchozí ¹íøka okna (v pixelech)';
 $string['newwindow'] = 'Nové okno';
 $string['newwindowopen'] = 'Zobrazovat tento studijní materiál v novém oknì';
 $string['note'] = 'Poznámka';
-$string['notefile'] = 'K nahrání dal¹ích souborù do tohoto kurzu (aby se ukazovaly v tomto seznamu) pou¾ijte <a href=$a >Správce souborù</a>.';
+$string['notefile'] = 'K nahrání dal¹ích souborù do tohoto kurzu (aby se ukazovaly v tomto seznamu) pou¾ijte <a href=\"$a\">Správce souborù</a>.';
 $string['notypechosen'] = 'Musíte vybrat typ. Vra»te se pomocí tlaèítka \'Zpìt\' a zkuste to znovu.';
 $string['pagedisplay'] = 'Zobrazovat tento materiál ve stávajícím oknì';
 $string['pagewindow'] = 'Stejné okno';

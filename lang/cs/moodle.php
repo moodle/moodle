@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['action'] = 'Akce';
@@ -117,7 +117,6 @@ $string['backupusershelp'] = 'Vyberte si, zda chcete zahrnout v¹echny u¾ivatele 
 $string['backupversion'] = 'Verze zálohy';
 $string['blockconfiga'] = 'Konfigurace bloku $a';
 $string['blockconfigbad'] = 'Tento blok nebyl korektnì implementován a nemá proto  konfiguraèní rozhraní';
-$string['blockconfigin'] = 'Kurz: Konfigurace bloku v $a';
 $string['blockdeleteconfirm'] = 'Chystáte se kompletnì odstranit blok \'$a\'. Tím odstraníte z databáze v¹e, co se vztahuje k tomuto bloku. Jste si ÚPLNÌ JISTI, ¾e chcete pokraèovat?';
 $string['blockdeletefiles'] = 'V¹echna data související s blokem \'$a->block\' byla odstranìna z databáze. Nyní byste mìli odstranit adresáø \'$a->directory\' na va¹em serveru, abyste zabránili opìtovné instalaci odstranìného bloku.';
 $string['blocks'] = 'Bloky';
@@ -371,7 +370,7 @@ Potvrdte prosim tuto zadost na teto webove adrese:  $a->link
 
 Toto je automaticky generovany email. Neni nutne na nej odpovidat jeho odesilateli. Potrebujete-li pomoc, spojte se se spravcem stranek $a->admin';
 $string['emailconfirmationsubject'] = '$a: potvrzeni uctu';
-$string['emailconfirmsent'] = '<p>Na va¹i adresu <b>$a</b> byl odeslán email s jednoduchými pokyny k dokonèení va¹í registrace.<p>Narazíte-li na nìjaké obtí¾e, spojte se se správcem tìchto stránek.';
+$string['emailconfirmsent'] = '<p>Na va¹i adresu <b>$a</b> byl odeslán email s jednoduchými pokyny k dokonèení va¹í registrace.</p><p>Narazíte-li na nìjaké obtí¾e, spojte se se správcem tìchto stránek.</p>';
 $string['emaildigest'] = 'Typ souhrnných emailù';
 $string['emaildigestcomplete'] = 'Kompletní (dennì email s plným textem pøíspìvkù)';
 $string['emaildigestoff'] = 'Nepou¾ívat souhrny (jeden email na ka¾dý pøíspìvek)';
@@ -397,8 +396,8 @@ Prejete-li si tuto zmenu potvrdit a obdrzet nove heslo emailem, navstivte nasled
 
 Ve vetsine emailovych programu se vam tato adresa zobrazuje jako odkaz, na ktery staci kliknout. Pokud toto vas postovni klient neumoznuje, zkopirujte si adresu do schranky a vlozte ji do pole adresa ve vasem webovem prohlizeci. Pri problemech se spojte se spravcem techto stranek: $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: potvrzeni zmeny hesla';
-$string['emailpasswordconfirmsent'] = 'Na va¹i adresu <b>$a</b> byl odeslán email obsahující jednoduché pokyny k potvrzení a dokonèení zmìny va¹eho hesla. <p>Pøi problémech se spojte se správcem tìchto stránek.';
-$string['emailpasswordsent'] = 'Dìkujeme za potvrzení zmìny va¹eho hesla.<p>Va¹e nové heslo bylo odesláno na adresu <b>$a->email</b>.<p>Toto heslo bylo vygenerováno automaticky, mo¾ná si jej budete chtít <a href=$a->link>zmìnit</a> na nìjaké snadnìji zapamatovatelné.';
+$string['emailpasswordconfirmsent'] = 'Na va¹i adresu <b>$a</b> byl odeslán email obsahující jednoduché pokyny k potvrzení a dokonèení zmìny va¹eho hesla. <br />Pøi problémech se spojte se správcem tìchto stránek.';
+$string['emailpasswordsent'] = 'Dìkujeme za potvrzení zmìny va¹eho hesla.<p>Va¹e nové heslo bylo odesláno na adresu <br /><b>$a->email</b>.<p><br />Toto heslo bylo vygenerováno automaticky, mo¾ná si jej budete chtít <a href=\"$a->link\">zmìnit</a> na nìjaké snadnìji zapamatovatelné.';
 $string['enable'] = 'Povolit';
 $string['encryptedcode'] = '©ifrovaný kód';
 $string['enrolledincourse'] = 'Zapsán do kurzu ';
@@ -595,7 +594,7 @@ $string['loginguest'] = 'Pøihlásit se jako host';
 $string['loginsite'] = 'Pøihlásit se na stránky';
 $string['loginsteps'] = 'Zdravíèko! K plnému pøístupu do kurzù budete muset strávit minutku vytvoøením si svého u¾ivatelského úètu k tìmto stránkám. Jednotlivé kurzy mohou rovnì¾ po¾adovat tzv. \"klíè k zápisu\", ale ten budete potøebovat a¾ pozdìji. Postupujte podle následujících krokù: 
 <ol>
-<li>Vyplòte formuláø <a href=\"$a\">Nový úèet</a>.
+<li>Vyplòte formuláø <a href=\"$a\">Nový úèet</a>.</li>
 <li>Na va¹i adresu bude zaslán email s vygenerovaným webovým odkazem.</li>
 <li>Nav¹tivte webovou adresu, která je vám zaslána.</li>
 <li>Vá¹ úèet tím bude potvrzen a vy budete pøihlá¹eni.</li>
@@ -603,7 +602,10 @@ $string['loginsteps'] = 'Zdravíèko! K plnému pøístupu do kurzù budete muset strá
 <li>Pokud budete vyzváni k vlo¾ení \"klíèe k zápisu\", zadejte text, který obdr¾íte od va¹eho uèitele. Tím se \"zapí¹ete\" do kurzu.</li>
 <li>Pak ji¾ máte pøístup k celému kurzu. Od té chvíle ji¾ budete zadávat pouze va¹e u¾ivatelské jméno a heslo (do formuláøe na této stránce) k pøihlá¹ení a pøístupu do v¹ech kurzù, v nich¾ jste zapsáni.</li>
 </ol>';
-$string['loginstepsnone'] = 'Zdravíèko!<p>K plnému pøístupu do kurzù si budete muset vytvoøit u¾ivatelský úèet.<p>Staèí vám pouze vymyslet si u¾ivatelské jméno a heslo a zadat jej do formuláøe na této stránce!<p>Pokud vás nìkdo pøedbìhl a va¹e u¾ivatelské jméno si ji¾ zaregistroval, budete to muset zkusit znovu s jiným jménem.';
+$string['loginstepsnone'] = '<p>Zdravíèko!</p>
+<p>K plnému pøístupu do kurzù si budete muset vytvoøit u¾ivatelský úèet.</p>
+<p>Staèí vám pouze vymyslet si u¾ivatelské jméno a heslo a zadat jej do formuláøe na této stránce!</p>
+<p>Pokud vás nìkdo pøedbìhl a va¹e u¾ivatelské jméno si ji¾ zaregistroval, budete to muset zkusit znovu s jiným jménem.</p>';
 $string['loginto'] = 'Pøihlásit se k $a';
 $string['loginusing'] = 'Pøihla¹te se zde pomocí va¹eho u¾ivatelského jména a hesla';
 $string['logout'] = 'Odhlásit se';
@@ -842,7 +844,7 @@ $string['scheduledbackupstatus'] = 'Stav plánovaných záloh';
 $string['search'] = 'Hledat';
 $string['searchagain'] = 'Hledat znovu';
 $string['searchcourses'] = 'Vyhledat kurzy';
-$string['searchhelp'] = 'Mù¾ete vyhledávat i nìkolik slov najednou.<p>slovo : hledej v textu jakoukoliv shodu s tímto slovem.<br />+slovo : bude nalezena pouze pøesná shoda.<br />-slovo : nezobrazuj výsledky s tímto slovem.';
+$string['searchhelp'] = 'Mù¾ete vyhledávat i nìkolik slov najednou.<br /><br />slovo : hledej v textu jakoukoliv shodu s tímto slovem.<br />+slovo : bude nalezena pouze pøesná shoda.<br />-slovo : nezobrazuj výsledky s tímto slovem.';
 $string['searchresults'] = 'Výsledky hledání';
 $string['sec'] = 'sek';
 $string['secs'] = 'sekund';
@@ -930,7 +932,7 @@ $string['theme'] = 'Motiv';
 $string['themes'] = 'Motivy';
 $string['themesaved'] = 'Nový motiv ulo¾en';
 $string['thischarset'] = 'iso-8859-2';
-$string['thisdirection'] = 'L->P';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Cestina';
 $string['time'] = 'Èas';
 $string['timezone'] = 'Èasové pásmo';
@@ -974,7 +976,7 @@ $string['uploadafile'] = 'Vlo¾it soubor';
 $string['uploadedfile'] = 'Soubor byl úspì¹nì ulo¾en';
 $string['uploadedfileto'] = '$a->file ulo¾en do $a->directory';
 $string['uploadedfiletoobig'] = 'Je mi líto, ale tento soubor je moc velký (limit je $a bytù) ';
-$string['uploadfailednotrecovering'] = 'Nahrávání souborù selhalo, proto¾e se vyskytl problém s jedním ze souborù: $a->name.<br/>Zde je protokol s problémy:<br />$a->problem<br />K zotavování nedochází.';
+$string['uploadfailednotrecovering'] = 'Nahrávání souborù selhalo, proto¾e se vyskytl problém s jedním ze souborù: $a->name.<br />Zde je protokol s problémy:<br />$a->problem<br />K zotavování nedochází.';
 $string['uploadfilelog'] = 'Protokol o nahrávání souboru $a';
 $string['uploadformlimit'] = 'Nahrávaný soubor pøesáhl maximální mo¾nou velikost nastavenou formuláøem';
 $string['uploadlabel'] = 'Název:';

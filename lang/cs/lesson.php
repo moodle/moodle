@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['actionaftercorrectanswer'] = 'Akce po správné odpovìdi';

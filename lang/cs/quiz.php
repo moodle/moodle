@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['acceptederror'] = 'Pøijatelná chyba';

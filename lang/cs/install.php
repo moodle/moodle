@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['admindirerror'] = 'Adresáø správy (admin) není urèen správnì';
@@ -78,12 +78,12 @@ $string['memorylimithelp'] = '<p>Limit pamìti pro PHP skripty je na va¹em server
 <p>Je-li to mo¾né, doporuèujeme vám nakonfigurovat PHP s vy¹¹ím limitem - napø. 16M. Je nìkolik zpùsobù, které mù¾ete zkusit:
 <ol>
 <li>Mù¾ete-li, pøekompilujte PHP s volbou <i>--enable-memory-limit</i>.
-Toto umo¾ní Moodlu nastavit si pro sebe po¾adovaný limit.
+Toto umo¾ní Moodlu nastavit si pro sebe po¾adovaný limit.</li>
 <li>Máte-li pøístup k va¹emu souboru php.ini, zmìòte nastavení <b>memory_limit</b>
-na hodnotu blízkou 16M. Nemáte-li taková práva, po¾ádejte va¹eho správce webového serveru, aby to pro vás udìlal.
+na hodnotu blízkou 16M. Nemáte-li taková práva, po¾ádejte va¹eho správce webového serveru, aby to pro vás udìlal.</li>
 <li>Na nìkterých PHP serverech mù¾ete v Moodle adresáøi vytvoøit soubor .htaccess s následujícím øádkem:
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Bohu¾el, na nìkterých serverech tímto vyøadíte z provozu <b>v¹echny</b> PHP stránky (pøi jejich prohlí¾ení uvidíte chybové zprávy), tak¾e budete muset soubor .htaccess odstranit.
+<p>Bohu¾el, na nìkterých serverech tímto vyøadíte z provozu <b>v¹echny</b> PHP stránky (pøi jejich prohlí¾ení uvidíte chybové zprávy), tak¾e budete muset soubor .htaccess odstranit.</li>
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nebylo korektnì nakonfigurováno pro komunikaci v MySQL. Zkontrolujte vá¹ php.ini nebo pøekompilujte PHP.';
 $string['pass'] = 'Pro¹lo';
