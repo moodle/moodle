@@ -1005,6 +1005,13 @@ function require_login($courseid=0) {
             if (!isset($USER->realuser)) {  // Don't update if this isn't a realuser
                 update_user_in_db();
             }
+            if (!$USER->email) {            // User logged in, but has not set up profile!
+                                            // This can occur with external authentication
+                $USER->email = "spam";      // To prevent auth loops
+                save_session("USER");
+                redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$courseid");
+                die;
+            }
             return;   // user is a member of this course.
         }
         if (! $course = get_record("course", "id", $courseid)) {
