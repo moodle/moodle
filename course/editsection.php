@@ -23,7 +23,7 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted()) {
+    if ($form = data_submitted() and confirm_sesskey()) {
 
         $timenow = time();
 
@@ -42,6 +42,8 @@
     if (empty($form)) {
         $form = $section;
     }
+
+    $form->sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     $usehtmleditor = can_use_html_editor();
 
