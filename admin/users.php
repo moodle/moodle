@@ -15,7 +15,7 @@
     $stradministration = get_string("administration");
     $strusers          = get_string("users");
 
-    print_header("$site->shortname: $stradministration", "$site->fullname", 
+    print_header("$site->shortname: $stradministration: $strusers", "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> $strusers");
 
     print_heading($strusers);

@@ -75,6 +75,11 @@
         }
     }
 
+/// Print a help notice about this page
+    if (empty($add) and empty($remove) and empty($search)) {
+        print_simple_box("<center>".get_string("adminhelpassigncreators")."</center>", "center", "50%");
+    }
+
 /// Get all existing creators
     $creators = get_creators();
 

@@ -60,7 +60,6 @@
                  "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $strassignadmins", "");
 
 /// Add an admin if one is specified
-
     if (!empty($_GET['add'])) {
         if (! add_admin($add)) {
             error("Could not add that admin!");
@@ -68,11 +67,15 @@
     }
 
 /// Remove an admin if one is specified.
-
     if (!empty($_GET['remove'])) {
         if (! remove_admin($remove)) {
             error("Could not remove that admin!");
         }
+    }
+
+/// Print a help notice about this page
+    if (empty($add) and empty($remove) and empty($search)) {
+        print_simple_box("<center>".get_string("adminhelpassignadmins")."</center>", "center", "50%");
     }
 
 /// Get all existing admins
