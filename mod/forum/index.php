@@ -68,7 +68,13 @@
 
         foreach ($forums as $forum) {
             if (!isset($forum->visible)) {
-                $forum->visible = true;
+                $forum->visible = instance_is_visible("forum", $forum);
+                if (!$forum->visible and !isteacher($course->id)) {
+                    if (isset($forum->keyreference)) {
+                        unset($learningforums[$forum->keyreference]);
+                    }
+                    continue;
+                }
             }
             switch ($forum->type) {
                 case "news":
