@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003122600)
+      // resource.php - created with Moodle 1.2 development (2004011700)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
@@ -18,6 +18,7 @@ $string['configpopupstatus'] = 'Le finestre di popup possono mostrare la barra d
 $string['configpopuptoolbar'] = 'Le finestre di popup possono mostrare la barra strumenti?';
 $string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup';
 $string['configwebsearch'] = 'Quando aggiungi un URL come una Pagina web o un Collegamento web, questo collegamento è offerto come un sito per aiutare gli utenti a cercare l\'URL che vogliono';
+$string['directlink'] = 'Collegamento diretto a questo file';
 $string['editingaresource'] = 'Edita una risorsa';
 $string['example'] = 'Esempio';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993)
@@ -56,6 +57,8 @@ corso (come quelli che compaiono in questa lista) usa il <A HREF=$a >File Manage
 $string['notypechosen'] = 'È necessario che tu scelga un tipo. Usa il
 
 pulsante indietro per ritornare alla pagina precedente e riprovare.';
+$string['popupresource'] = 'Questa risorsa deve apparire in una finestra di popup';
+$string['popupresourcelink'] = 'Se non lo fa, cliccare qui: $a';
 $string['resourcetype'] = 'Tipo di risorsa';
 $string['resourcetype1'] = 'Bibliografia';
 $string['resourcetype2'] = 'Pagina web';

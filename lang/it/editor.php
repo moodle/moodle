@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.2 development (2004011700)
+
+
+$string['about'] = 'Info su questo editor';
+$string['absbottom'] = 'Inferiore assoluto';
+$string['absmiddle'] = 'Centro assoluto';
+$string['address'] = 'Indirizzo';
+$string['alignment'] = 'Allineamento';
+$string['alternatetext'] = 'Testo alternativo';
+$string['baseline'] = 'Linea di base';
+$string['bold'] = 'Grassetto';
+$string['borderthickness'] = 'Spessore bordo';
+$string['bottom'] = 'Inferiore';
+$string['browse'] = 'Naviga';
+$string['cancel'] = 'Annulla';
+$string['cellpadding'] = 'Margine celle';
+$string['cellspacing'] = 'Spaziatura celle';
+$string['choosechar'] = 'Scegli carattere';
+$string['chooseicon'] = 'Scegli una icona da inserire';
+$string['close'] = 'Chiudi';
+$string['cols'] = 'Colonne';
+$string['copy'] = 'Copia selezione';
+$string['createlink'] = 'Inserisci collegamento web';
+$string['cut'] = 'Taglia selezione';
+$string['forecolor'] = 'Colore font';
+$string['heading'] = 'Intestazione';
+$string['hilitecolor'] = 'Colore sfondo';
+$string['horizontal'] = 'Orizzontale';
+$string['horizontalrule'] = 'Righello orizzontale';
+$string['htmlmode'] = 'Mostra sorgente HTML';
+$string['imageurl'] = 'URL immagine';
+$string['indent'] = 'Aumenta nidificazione';
+$string['insertchar'] = 'Inserisci carattere speciale';
+$string['insertimage'] = 'Inserisci immagine';
+$string['insertsmile'] = 'Inserisci faccina';
+$string['inserttable'] = 'Inserisci tabella';
+$string['italic'] = 'Italico';
+$string['justifycenter'] = 'Centrato';
+$string['justifyfull'] = 'Guistificato';
+$string['justifyleft'] = 'Sinistra';
+$string['justifyright'] = 'Destra';
+$string['layout'] = 'Schema';
+$string['left'] = 'Sinistra';
+$string['middle'] = 'Centro';
+$string['normal'] = 'Normale';
+$string['notset'] = 'Non impostato';
+$string['ok'] = 'OK';
+$string['orderedlist'] = 'Lista ordinata';
+$string['outdent'] = 'Diminuisci nidificazione';
+$string['paste'] = 'Incolla dagli appunti';
+$string['path'] = 'Percorso';
+$string['percent'] = 'Percentuale';
+$string['pixels'] = 'Punti';
+$string['popupeditor'] = 'Ingrandisci editor';
+$string['preformatted'] = 'Per formattato';
+$string['preview'] = 'Anteprima';
+$string['redo'] = 'Ripeti ultima azione';
+$string['right'] = 'Destra';
+$string['rows'] = 'Righe';
+$string['showhelp'] = 'Aiuto sull\'editor';
+$string['spacing'] = 'Spaziatura';
+$string['strikethrough'] = 'Barrato';
+$string['subscript'] = 'Pedice';
+$string['superscript'] = 'Apice';
+$string['textindicator'] = 'Stile corrente';
+$string['textmode'] = 'Sei nel MODO TESTO. Utilizza il pulsante [<>] per tornare al MODO WYSIWYG.';
+$string['texttop'] = 'Limite superiore testo';
+$string['top'] = 'In alto';
+$string['underline'] = 'Sottolineato';
+$string['undo'] = 'Annulla ultima azione';
+$string['unorderedlist'] = 'Lista puntata';
+$string['vertical'] = 'Verticale';
+$string['width'] = 'Larghezza';
+
+?>

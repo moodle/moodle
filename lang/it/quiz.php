@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003122600)
+      // quiz.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -16,6 +16,7 @@ $string['answerhowmany'] = 'Una risposta oppure risposte multiple?';
 $string['answersingleno'] = 'Risposte multiple permesse';
 $string['answersingleyes'] = 'Una sola risposta';
 $string['answerswithacceptederrormarginmustbenumeric'] = 'Le risposte con errore accettato devono essere numeriche';
+$string['answertoolong'] = 'Risposta troppo lunga dopo la linea $a (255 caratteri max)';
 $string['aon'] = 'Formato AON';
 $string['attempt'] = 'Tentativo $a';
 $string['attemptfirst'] = 'Primo tentativo';
@@ -27,6 +28,7 @@ $string['attemptsunlimited'] = 'Tentativi illimitati';
 $string['backtoquiz'] = 'Indietro alla modifica del quiz';
 $string['bestgrade'] = 'Voto migliore';
 $string['blackboard'] = 'Blackboard';
+$string['calculatedquestion'] = 'Domanda calcolata non supportata alla linea $a. La domanda sarà ignorata.';
 $string['caseno'] = 'Il maiuscolo non è importante';
 $string['casesensitive'] = 'Il maiuscolo è importante';
 $string['caseyes'] = 'Il maiuscolo è importante per tutte le lettere';
@@ -69,6 +71,7 @@ $string['editingrandomsamatch'] = 'Modifica una domanda a risposta breve con cor
 $string['editingshortanswer'] = 'Modifica una domanda a risposta breve';
 $string['editingtruefalse'] = 'Modifica una domanda vero/falso';
 $string['editquestions'] = 'Modifica domande';
+$string['errorsdetected'] = '$a errore(i) trovati';
 $string['false'] = 'Falso';
 $string['feedback'] = 'Commento';
 $string['fileformat'] = 'Formato file';
@@ -92,6 +95,7 @@ $string['gradehighest'] = 'Voto più alto';
 $string['grademethod'] = 'Metodo di valutazione';
 $string['guestsno'] = 'Spiacente, gli ospiti non possono vedere o provare il quiz';
 $string['imagedisplay'] = 'Immagine da mostrare';
+$string['imagemissing'] = 'Immagine non disponibile alla linea $a. Il nome del file sarà ignorato';
 $string['importquestions'] = 'Importa domande da file';
 $string['indivresp'] = 'Risposte dei singoli ad ogni elemento';
 $string['introduction'] = 'Introduzione';
@@ -100,8 +104,10 @@ $string['listitems'] = 'Elenco degli elementi di questo quiz';
 $string['marks'] = 'Punti';
 $string['match'] = 'Corrispondenza';
 $string['matchanswer'] = 'Risposta corrispondenza';
+$string['missinganswer'] = 'Troppo pochi :RISPOSTA, :Sx, :Dx punti per la linea di domanda $a. Devi definire come minimo 2 possibili risposte';
 $string['missingcorrectanswer'] = 'Deve essere specificata la risposta corretta';
 $string['missingname'] = 'Nome domanda mancante';
+$string['missingquestion'] = 'Etichetta della domanda mancante dopo la linea $a';
 $string['missingquestiontext'] = 'Testo della domanda mancante';
 $string['missingword'] = 'Formato parola mancante';
 $string['modulename'] = 'Quiz';
@@ -118,12 +124,14 @@ $string['noreview'] = 'Non hai il permesso di rivedere questo quiz';
 $string['noreviewuntil'] = 'Non hai il permesso di rivedere questo quiz fino a $a';
 $string['notenoughsubquestions'] = 'Non sono state definite abbastanza sottodomande!<br>Vuoi tornare indietro e correggere questa domanda?';
 $string['numerical'] = 'Numerica';
+$string['paragraphquestion'] = 'Domanda paragrafo non supportata alla linea $a. La domanda sarà ignorata';
 $string['percentcorrect'] = 'Percentuale corretta';
 $string['publish'] = 'Rendere pubblico';
 $string['qti'] = 'Formato IMS QTI';
 $string['question'] = 'Domanda';
 $string['questioninuse'] = 'La domanda \'$a\' è attualmente in uso:';
 $string['questionname'] = 'Nome della domanda';
+$string['questionnametoolong'] = 'Nome domanda troppo lungo alla linea $a (255 caratteri max). Sarà troncata.';
 $string['questions'] = 'Domande';
 $string['quizavailable'] = 'Il quiz è disponibile fino a: $a';
 $string['quizclose'] = 'Chiudi il quiz';
@@ -173,10 +181,13 @@ $string['toomanyrandom'] = 'Il numero di domande casuali richieste é maggiore di
 $string['true'] = 'Vero';
 $string['truefalse'] = 'Vero/Falso';
 $string['type'] = 'Tipo';
+$string['unknowntype'] = 'Tipo di domanda non supportato alla linea $a. La domanda sarà ignorata';
 $string['viewallanswers'] = 'Vedi $a quiz completati';
 $string['viewallreports'] = 'Vedi risultati per $a tentativi';
+$string['warningsdetected'] = '$a avvertinmento(i) rilevati';
 $string['webct'] = 'Formato WebCT';
 $string['withsummary'] = 'con Statistiche generali';
+$string['wronggrade'] = 'Punteggio sbagliato (dopo la linea $a):';
 $string['yourfinalgradeis'] = 'Il tuo voto finale per questo quiz è: $a';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003122600)
+      // moodle.php - created with Moodle 1.2 development (2004011700)
 
 
 $string['action'] = 'Azione';
@@ -44,12 +44,14 @@ $string['adminhelpmanagemodules'] = 'Gestisci i moduli installati e i loro setta
 $string['adminhelpsitefiles'] = 'Pubblica file generici e carica copie di salvataggio esterne';
 $string['adminhelpsitesettings'] = 'Definisci come la pagina principale deve essere visualizzata';
 $string['adminhelpthemes'] = 'Scegli il tema del sito';
+$string['adminhelpuploadusers'] = 'Importa registrazioni di nuovi utenti da un file di testo';
 $string['adminhelpusers'] = 'Definisci e configura il metodo di autenticazione degli utenti';
 $string['administration'] = 'Amministrazione';
 $string['administrator'] = 'Amministratore';
 $string['administrators'] = 'Amministratori';
 $string['again'] = 'ancora';
 $string['all'] = 'Tutto';
+$string['allactivities'] = 'Tutte le attività';
 $string['alldays'] = 'Tutti i giorni';
 $string['allfieldsrequired'] = 'La compilazione di tutti i campi è richiesta';
 $string['alllogs'] = 'Tutti i logs';
@@ -120,6 +122,7 @@ $string['configallowunenroll'] = 'Se selezioni \'Si\', gli studenti possono disi
 $string['configcountry'] = 'Se scegli uno stato qui, questo verrà proposto di default. Per obbligare un utente a scegliere il proprio stato, lascialo vuoto.';
 $string['configdebug'] = 'Se si attiva questa opzione, Si incrementerà il livello di rapporto di errore e saranno stampati più avvertimenti. Questo è utile solo per sviluppatori.';
 $string['configerrorlevel'] = 'Scegli il numero di messaggi di avvertimento PHP che vuoi siano mostrati. Questa <i>Normale</i> è, di solito la scelta migliore.';
+$string['configforcelogin'] = 'Normalmente, la pagina principale del sito e la lista dei corsi (ma non i corsi) possono essere visualizzate senza registrarsi al sito. Se vuoi forzare le persone a registrarsi prima di poter fare QUALUNQUE COSA sul sito, allore devi abilitare questa impostazione.';
 $string['configframename'] = 'Se incorporate Moodle in un web frame, mettete il nome del frame qui. Altrimenti questo valore può rimanere a \'_top\'';
 $string['configfullnamedisplay'] = 'Questo definisce come devono essere mostrati i nomi quando devono essere visualizzati in modo completo. Per la maggior parte  dei siti mono-lingua l\'impostazione migliore è quella standard \"Nome + Cognome\", ma puoi decideredi nascondere tutti i cognomi, o lasciare che lo scelga l\'impostazione della lingua corrente (alcuni linguaggi hanno convenzioni differenti).';
 $string['configgdversion'] = 'Indica la versione della libreria GD che è installata sul tuo webserver.  La versione mostrata come predefinita è quella che è stata automaticamente rilevata.  Non cambiare questa impostazione senza che tu realmente sappia quello che stai facendo.';
@@ -303,6 +306,8 @@ $string['emailpasswordsent'] = 'Grazie per aver confermato il cambiamento di pas
 <p>Una email contenente la tua nuova password é stata spedita al tuo indirizzo presso <b>$a->email</b>.</p>
 
 <p>La nuova password é stata generata in modo automatico - se tu vuoi, puoi <a href=$a->link>cambiare la password</a> con qualcosa che sia più facile da ricordare.';
+$string['enrolledincourse'] = 'Iscritto al corso \"$a\"';
+$string['enrolledincoursenot'] = 'Non iscritto al corso \"$a\"';
 $string['enrolmentconfirmation'] = 'Stai per iscriverti a questo corso.<br /> Sei sicuro di volerlo fare?';
 $string['enrolmentkey'] = 'Chiave di accesso';
 $string['enrolmentkeyfrom'] = 'Questo corso richiede una \'chiave di accesso\' - una sola volta -<BR> password che dovresti ottenere da $a';
@@ -629,6 +634,7 @@ $string['order'] = 'Ordine';
 $string['other'] = 'Altro';
 $string['outline'] = 'Profilo';
 $string['page'] = 'Pagina';
+$string['parentlanguage'] = ' ';
 $string['participants'] = 'Partecipanti';
 $string['password'] = 'Password';
 $string['passwordchanged'] = 'La password è stata modificata';
@@ -828,6 +834,7 @@ $string['uploadedfileto'] = 'File $a->file salvato nella directory $a->directory
 $string['uploadnofilefound'] = 'Non è stato trovato alcun file. Sei sicuro di averne selezionato un per l\'upload?';
 $string['uploadproblem'] = 'Un problema sconosciuto si è verificato salvando il file \'$a\' (può essere troppo grande?)';
 $string['uploadthisfile'] = 'Trasferisci questo file';
+$string['uploadusers'] = 'Trasferisci utenti';
 $string['user'] = 'Utente';
 $string['userdeleted'] = 'Questo account è stato cancellato';
 $string['userdescription'] = 'Descrizione';
@@ -836,6 +843,7 @@ $string['username'] = 'Username';
 $string['usernameexists'] = 'Questo username è già esistente, scegline un altro';
 $string['userprofilefor'] = 'Profilo utente per $a';
 $string['users'] = 'Utenti';
+$string['usersnew'] = 'Nuovi utenti';
 $string['userzones'] = 'Zone utenti';
 $string['usingexistingcourse'] = 'Utilizza corso esistente';
 $string['version'] = 'Versione';
