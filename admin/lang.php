@@ -75,8 +75,10 @@
     
         foreach ($stringfiles as $file) {
             if (!file_exists("$langdir/$file")) {
-                echo "<P><FONT COLOR=red>".get_string("filemissing", "", "$langdir/$file")."</FONT></P>";
-                continue;
+                if (!touch("$langdir/$file")) {
+                    echo "<p><font color=red>".get_string("filemissing", "", "$langdir/$file")."</font></p>";
+                    continue;
+                }
             }
     
             unset($string);
@@ -108,7 +110,7 @@
     
         foreach ($files as $filekey => $file) {    // check all the help files.
             if (!file_exists("$langdir/help/$file")) {
-                echo "<P><FONT COLOR=red>".get_string("filemissing", "", "$langdir/help/$file")."</FONT></P>";
+                echo "<p><font color=red>".get_string("filemissing", "", "$langdir/help/$file")."</font></p>";
                 $somethingfound = true;
                 continue;
             }
@@ -145,17 +147,19 @@
         }
 
         print_heading($strcomparelanguage);
-        echo "<CENTER>";
+        echo "<center>";
         helpbutton("langedit",$strcomparelanguage);
-        echo "</CENTER>";
+        echo "</center>";
 
         foreach ($stringfiles as $file) {
         
             print_heading("$file", "LEFT", 4);
 
             if (!file_exists("$langdir/$file")) {
-                echo "<P><FONT COLOR=red>".get_string("filemissing", "", "$langdir/$file")."</FONT></P>";
-                continue;
+                if (!touch("$langdir/$file")) {
+                    echo "<p><font color=red>".get_string("filemissing", "", "$langdir/$file")."</font></p>";
+                    continue;
+                }
             }
     
             error_reporting(0);
@@ -164,7 +168,7 @@
                 fclose($f);
             } else {
                 $editable = false;
-                echo "<P><FONT SIZE=1>".get_string("makeeditable", "", "$langdir/$file")."</FONT></P>";
+                echo "<p><font size=1>".get_string("makeeditable", "", "$langdir/$file")."</font></p>";
             }
             error_reporting(7);
 
@@ -178,17 +182,17 @@
             include("$langdir/$file");
 
             if ($editable) {
-                echo "<FORM NAME=\"$file\" ACTION=\"lang.php\" METHOD=\"POST\">";
+                echo "<form name=\"$file\" action=\"lang.php\" method=\"post\">";
             }
-            echo "<TABLE WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=3 BORDER=0>";
+            echo "<table width=\"100%\" cellpadding=2 cellspacing=3 border=0>";
             foreach ($enstring as $key => $envalue) {
                 $envalue = nl2br(htmlspecialchars($envalue));
                 $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
                 $envalue = str_replace("%%","%",$envalue);
 
-                echo "<TR>";
-                echo "<TD WIDTH=20% BGCOLOR=\"$THEME->cellheading\" NOWRAP VALIGN=TOP>$key</TD>";
-                echo "<TD WIDTH=40% BGCOLOR=\"$THEME->cellheading\" VALIGN=TOP>$envalue</TD>";
+                echo "<tr>";
+                echo "<td width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>";
+                echo "<td width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>";
 
                 $value = $string[$key];
                 $value = str_replace("\r","",$value);              // Bad character caused by Windows
@@ -204,7 +208,7 @@
                 $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
 
                 if ($editable) {
-                    echo "<TD WIDTH=40% BGCOLOR=\"$cellcolour\" VALIGN=TOP>";
+                    echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>";
                     if (isset($string[$key])) {
                         $valuelen = strlen($value);
                     } else {
@@ -213,28 +217,28 @@
                     $cols=50;
                     if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                         $rows = ceil($valuelen / $cols);
-                        echo "<TEXTAREA NAME=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</TEXTAREA>";
+                        echo "<textarea name=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</textarea>";
                     } else {
                         if ($valuelen) {
                             $cols = $valuelen + 2;
                         }
-                        echo "<INPUT TYPE=\"TEXT\" NAME=\"string-$key\" VALUE=\"$value\" SIZE=\"$cols\"></TD>";
+                        echo "<input type=\"text\" name=\"string-$key\" value=\"$value\" size=\"$cols\"></td>";
                     }
                     echo "</TD>";
 
                 } else {
-                    echo "<TD WIDTH=40% BGCOLOR=\"$cellcolour\" VALIGN=TOP>$value</TD>";
+                    echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>$value</td>";
                 }
             }
             if ($editable) {
-                echo "<TR><TD COLSPAN=2>&nbsp;<TD>";
-                echo "    <INPUT TYPE=\"hidden\" NAME=\"file\" VALUE=\"$file\">";
-                echo "    <INPUT TYPE=\"hidden\" NAME=\"mode\" VALUE=\"compare\">";
-                echo "    <INPUT TYPE=\"submit\" NAME=\"update\" VALUE=\"".get_string("savechanges").": $file\">";
-                echo "</TD></TR>";
+                echo "<tr><td colspan=2>&nbsp;<td>";
+                echo "    <input type=\"hidden\" name=\"file\" value=\"$file\">";
+                echo "    <input type=\"hidden\" name=\"mode\" value=\"compare\">";
+                echo "    <input type=\"submit\" name=\"update\" value=\"".get_string("savechanges").": $file\">";
+                echo "</td></tr>";
             }
-            echo "</TABLE>";
-            echo "</FORM>";
+            echo "</table>";
+            echo "</form>";
         }
 
         print_continue("lang.php");
