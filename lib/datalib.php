@@ -8,7 +8,7 @@
  * - moodlelib.php - general-purpose Moodle functions
  * @author Martin Dougiamas
  * @version $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
 
@@ -124,7 +124,14 @@ function modify_database($sqlfile='', $sqlstring='') {
  *
  * @uses $CFG
  * @uses $db
- * @param    type description
+ * @param string $table ?
+ * @param string $oldfield ?
+ * @param string $field ?
+  * @param string $type ?
+ * @param string $size ?
+ * @param string $signed ?
+ * @param string $default ?
+ * @param string $null ?
  * @todo Finish documenting this function
  */
 
@@ -1072,7 +1079,7 @@ function update_record($table, $dataobject) {
  * @uses SITEID
  * @param string $field The first table field to be checked for a given value. 
  * @param string $value The value to match for $field.
- * @return array
+ * @return user A {@link $USER} object.
  * @todo Finish documenting this function
  */
  */
@@ -1186,7 +1193,7 @@ function get_admin () {
  * Returns list of all admins
  *
  * @uses $CFG
- * @return array An associative array of user records.
+ * @return array An array of {@link $USER} records.
  * @todo Finish documenting this function
  */
 function get_admins() {
@@ -1204,7 +1211,7 @@ function get_admins() {
  * Returns list of all creators
  *
  * @uses $CFG
- * @return array An associative array.
+ * @return array An array of {@link $USER} objects.
  * @todo Finish documenting this function
  */
 function get_creators() {
@@ -1223,7 +1230,7 @@ function get_creators() {
  *
  * @uses $CFG
  * @param int $courseid The course in question.
- * @return array|false An associative array representing the user record of the main teacher for the specified course or false if error.
+ * @return user|false  A {@link $USER} record of the main teacher for the specified course or false if error.
  * @todo Finish documenting this function
  */
 function get_teacher($courseid) {
@@ -1248,7 +1255,7 @@ function get_teacher($courseid) {
  *
  * @uses $CFG
  * @param int $courseid The course in question.
- * @return array|false An associative array with the results from the SQL call or false if error.
+ * @return array|false An array of {@link $USER} records or false if error.
  * @todo Finish documenting this function
  */
 function get_recent_enrolments($courseid, $timestart) {
@@ -1286,7 +1293,7 @@ function get_recent_enrolments($courseid, $timestart) {
  * @param string $search ?
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
  * @param string $exceptions ?
- * @return array An associative array with the users requested.
+ * @return array An array of {@link $USER} records.
  * @todo Finish documenting this function
  */
 function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, $recordsperpage=99999,
@@ -1441,7 +1448,7 @@ function count_course_students($course, $search='', $firstinitial='', $lastiniti
  * @param int $courseid The course in question.
  * @param string $sort ?
  * @param string $exceptions ? 
- * @return array An associative array with the results from the SQL call.
+ * @return array An array of {@link $USER} records.
  * @todo Finish documenting this function
  */
 function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='') {
@@ -1471,7 +1478,7 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
  * @param string $sort ?
  * @param string $exceptions ?
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array An associative array.
+ * @return array An array of {@link $USER} records.
  * @todo Finish documenting this function
  */
 function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $fields='') {
@@ -1504,7 +1511,7 @@ function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $f
  * @param string $searchtext ?
  * @param string $sort ?
  * @param string $exceptions ? 
- * @return array An associative array.
+ * @return array  An array of {@link $USER} records.
  * @todo Finish documenting this function
  */
  */
@@ -1584,7 +1591,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
  * @uses SITEID
  * @deprecated Use {@link get_course_users()} instead.
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array|false An associative array with the results from the SQL call or false if error.
+ * @return array|false  An array of {@link $USER} records or false if error.
  * @todo Finish documenting this function. The return type need to be better defined.
  */
 function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
@@ -1607,7 +1614,7 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
  * @param string $page ?
  * @param string $recordsperpage ?
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array|false|int An associative array with the results from the SQL call unless get is true in which case the integer count of the records found is returned. False is returned if an error is encountered.
+ * @return array|false|int  An array of {@link $USER} records unless get is false in which case the integer count of the records found is returned. False is returned if an error is encountered.
  * @todo Finish documenting this function. The return type needs to be better defined.
  */
 function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sort='firstname ASC',
@@ -1680,7 +1687,7 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
  * @param string $search ?
  * @param string $firstinitial ?
  * @param string $lastinitial ?
- * @return array
+ * @return array  An array of {@link $USER} records
  * @todo Finish documenting this function
  */
 
@@ -1738,7 +1745,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
  * longdesc
  *
  * @uses $CFG
- * @return array
+ * @return array  An array of {@link $USER} records
  * @todo Finish documenting this function
  */
 function get_users_confirmed() {
@@ -1759,7 +1766,7 @@ function get_users_confirmed() {
  *
  * @uses $CFG
  * @param string $cutofftime ?
- * @return array
+ * @return array  An array of {@link $USER} records
  * @todo Finish documenting this function
  */
 function get_users_unconfirmed($cutofftime=2000000000) {
@@ -1779,7 +1786,7 @@ function get_users_unconfirmed($cutofftime=2000000000) {
  *
  * @uses $CFG
  * @param string $cutofftime ?
- * @return array
+ * @return array  An array of {@link $USER} records
  * @todo Finish documenting this function
  */
 function get_users_longtimenosee($cutofftime) {
@@ -1796,7 +1803,7 @@ function get_users_longtimenosee($cutofftime) {
  * list of all groups in the course.
  *
  * @uses $CFG
- * @param int $courseid The course in question.
+ * @param int $courseid The id of the course in question.
  * @param int $userid The id of the user in question as found in the 'user' table 'id' field.
  * @return array
  * @todo Finish documenting this function
@@ -1910,8 +1917,8 @@ function user_group($courseid, $userid) {
 /**
  * Returns $course object of the top-level site.
  *
- * @return array
- * @todo Finish documenting this function. Is $course an 'object(course)' or an associative 'array(course)' or simply an 'array'?
+ * @return course  A {@link $COURSE} object for the site
+ * @todo Finish documenting this function.
  */
 function get_site () {
 
@@ -1930,7 +1937,7 @@ function get_site () {
  * @param int $categoryid ?
  * @param string $sort ?
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array
+ * @return array  An array of {@link $COURSE} records
  * @todo Finish documenting this function
  */
 function get_courses($categoryid='all', $sort='c.sortorder ASC', $fields='c.*') {
@@ -1994,7 +2001,7 @@ function get_courses($categoryid='all', $sort='c.sortorder ASC', $fields='c.*') 
  * @param int $totalcount Passed by reference. ?
  * @param int $limitfrom ?
  * @param int $limitnum ? 
- * @return array
+ * @return array An array of {@link $COURSE} records
  * @todo Finish documenting this function
  */
 function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c.*',
@@ -2062,7 +2069,7 @@ function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c
  * @uses $CFG
  * @param int $userid ?
  * @param string $sort ?
- * @return array
+ * @return array  An array of {@link $COURSE} records
  * @todo Finish documenting this function
  */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
@@ -2111,7 +2118,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
  * @param int $page ?
  * @param int $recordsperpage ?
  * @param int $totalcount Passed in by reference. ?
- * @return array
+ * @return array  An array of {@link $COURSE} records
  * @todo Finish documenting this function
  */
 function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
@@ -2477,7 +2484,7 @@ function instance_is_visible($moduletype, $module) {
  * @uses $db
  * @uses $REMOTE_ADDR
  * @uses SITEID
- * @param    int     $course  The course id
+ * @param    int     $courseid  The course id
  * @param    string  $module  The module name - e.g. forum, journal, resource, course, user etc
  * @param    string  $action  View, edit, post (often but not always the same as the file.php)
  * @param    string  $url     The file and parameters used to see the results of the action

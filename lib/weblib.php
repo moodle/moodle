@@ -34,7 +34,7 @@
  * - moodlelib.php - general-purpose Moodle functions.
  * @author Martin Dougiamas
  * @version  $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
  
@@ -74,7 +74,6 @@ define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireba
  */
 $ALLOWED_TAGS =
 '<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>';
-
 
 /// Functions
 
@@ -316,7 +315,7 @@ function stripslashes_safe($string) {
  * long words to a given size by inserting the given character
  *
  * @param string $string the string to be modified
- * @param integer $maxsize maximum length of the string to be returned
+ * @param int $maxsize maximum length of the string to be returned
  * @param string $cutchar the string used to represent word breaks
  * @return string
  */
@@ -400,7 +399,7 @@ if (!function_exists('str_ireplace')) {    /// Only exists in PHP 5
  *
  * @param string $haystack The string to be searched
  * @param string $needle The string to search for
- * @param integer $offset The position in $haystack where the search should begin.
+ * @param int $offset The position in $haystack where the search should begin.
  */
 if (!function_exists('stripos')) {    /// Only exists in PHP 5
     function stripos($haystack, $needle, $offset=0) {
@@ -475,8 +474,8 @@ function frmchecked(&$var, $true_value = 'checked', $false_value = '') {
  * @param string $url Web link relative to home page
  * @param string $name Name to be assigned to the popup window
  * @param string $linkname Text to be displayed as web link
- * @param integer $height Height to assign to popup window
- * @param integer $width Height to assign to popup window
+ * @param int $height Height to assign to popup window
+ * @param int $width Height to assign to popup window
  * @param string $title Text to be displayed as popup page title
  * @param string $options List of additional options for popup window
  * @todo Add code examples and list of some options that might be used.
@@ -516,8 +515,8 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
  * @param string $url Web link relative to home page
  * @param string $name Name to be assigned to the popup window
  * @param string $linkname Text to be displayed as web link
- * @param integer $height Height to assign to popup window
- * @param integer $width Height to assign to popup window
+ * @param int $height Height to assign to popup window
+ * @param int $width Height to assign to popup window
  * @param string $title Text to be displayed as popup page title
  * @param string $options List of additional options for popup window
  * @todo Add code examples and list of some options that might be used.
@@ -610,46 +609,46 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 /**
  * Implements a complete little popup form
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $CFG
+ * @param string $common  The URL up to the point of the variable that changes
+ * @param array $options  Alist of value-label pairs for the popup list
+ * @param string $formname Name must be unique on the page
+ * @param string $selected The option that is already selected
+ * @param string $nothing The label for the "no choice" option
+ * @param string $help The name of a help page if help is required
+ * @param string $helptext The name of the label for the help button
+ * @param boolean $return Indicates whether the function should return the text
+ *         as a string or echo it directly to the page being rendered
+ * @param string $targetwindow The name of the target page to open the linked page in. 
+ * @return string If $return is true then the entire form is returned as a string.
+ * @todo Finish documenting this function<br>
+ *    Make sure it's W3C conformant (<form name=""> has to go for example)<br>
+ *    Code it in a way that doesn't require JS to be on. Example code:<br>
+ *<code>
+ *        $selector .= '<form method="get" action="" style="display: inline;"><span>';
+ *        $selector .= '<input type="hidden" name="var" value="value" />';
+ *        if(!empty($morevars)) {
+ *            $getarray = explode('&amp;', $morevars);
+ *            foreach($getarray as $thisvar) {
+ *                $selector .= '<input type="hidden" name="'.strtok($thisvar, '=').'" value="'.strtok('=').'" />';
+ *            }
+ *        }
+ *        $selector .= '<select name="" onchange="form.submit();">';
+ *        foreach($options as $id => $text) {
+ *            $selector .= "\n<option value='$id'";
+ *            if($option->id == $selected) {
+ *                $selector .= ' selected';
+ *            }
+ *            $selector .= '>'.$text."</option>\n";
+ *        }
+ *        $selector .= '</select>';
+ *        $selector .= '<noscript id="unique_id" style="display: inline;"> <input type="submit" value="'.get_string('somestring').'" /></noscript>';
+ *        $selector .= '<script type="text/javascript">'."\n<!--\n".'document.getElementById("unique_id").style.display = "none";'."\n<!--\n".'</script>';
+ *        $selector .= '</span></form>';
+ * </code>
  */
-function popup_form ($common, $options, $formname, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self') {
-///  Implements a complete little popup form
-///  $common   = the URL up to the point of the variable that changes
-///  $options  = A list of value-label pairs for the popup list
-///  $formname = name must be unique on the page
-///  $selected = the option that is already selected
-///  $nothing  = The label for the "no choice" option
-///  $help     = The name of a help page if help is required
-///  $helptext  = The name of the label for the help button
-///  $return   = Boolean indicating whether the function should return the text
-///    as a string or echo it directly to the page being rendered
+function popup_form($common, $options, $formname, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self') {
 
-// TODO:
-//
-//  * Make sure it's W3C conformant (<form name=""> has to go for example)
-//  * Code it in a way that doesn't require JS to be on. Example code:
-//        $selector .= '<form method="get" action="" style="display: inline;"><span>';
-//        $selector .= '<input type="hidden" name="var" value="value" />';
-//        if(!empty($morevars)) {
-//            $getarray = explode('&amp;', $morevars);
-//            foreach($getarray as $thisvar) {
-//                $selector .= '<input type="hidden" name="'.strtok($thisvar, '=').'" value="'.strtok('=').'" />';
-//            }
-//        }
-//        $selector .= '<select name="" onchange="form.submit();">';
-//        foreach($options as $id => $text) {
-//            $selector .= "\n<option value='$id'";
-//            if($option->id == $selected) {
-//                $selector .= ' selected';
-//            }
-//            $selector .= '>'.$text."</option>\n";
-//        }
-//        $selector .= '</select>';
-//        $selector .= '<noscript id="unique_id" style="display: inline;"> <input type="submit" value="'.get_string('somestring').'" /></noscript>';
-//        $selector .= '<script type="text/javascript">'."\n<!--\n".'document.getElementById("unique_id").style.display = "none";'."\n<!--\n".'</script>';
-//        $selector .= '</span></form>';
-//
 
     global $CFG;
 
@@ -719,7 +718,7 @@ function formerr($error) {
  * @param string $address The email address to validate.
  * @return boolean
  */
-function validate_email ($address) {
+function validate_email($address) {
 
     return (ereg('^[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+'.
                   '@'.
@@ -732,8 +731,8 @@ function validate_email ($address) {
  * Check for bad characters ?
  *
  * @param string $string ?
- * @param integer $allowdots ?
- * @todo Finish documenting this function
+ * @param int $allowdots ?
+ * @todo Finish documenting this function - more detail needed in description as well as details on arguments
  */
 function detect_munged_arguments($string, $allowdots=1) {
     if (substr_count($string, '..') > $allowdots) {   // Sometimes we allow dots in references
@@ -774,7 +773,9 @@ function get_slash_arguments($file='file.php') {
  * Extracts arguments from "/foo/bar/something"
  * eg http://mysite.com/script.php/foo/bar/something
  *
- * @param    type description
+ * @param string $string ?
+ * @param int $i ?
+ * @return array|string
  * @todo Finish documenting this function
  */
 function parse_slash_arguments($string, $i=0) {
@@ -794,10 +795,14 @@ function parse_slash_arguments($string, $i=0) {
 }
 
 /**
- * Just returns an array of formats suitable for a popup menu
+ * Just returns an array of text formats suitable for a popup menu
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses FORMAT_MOODLE
+ * @uses FORMAT_HTML
+ * @uses FORMAT_PLAIN
+ * @uses FORMAT_WIKI
+ * @uses FORMAT_MARKDOWN
+ * @return array
  */
 function format_text_menu() {
 
@@ -810,13 +815,20 @@ function format_text_menu() {
 
 /**
  * Given text in a variety of format codings, this function returns
- * the text as safe HTML.
- * 
- * $text is raw text (originally from a user)
- * $format is one of the format constants, defined above
+ * the text as safe HTML. 
  *
  * @uses $CFG
- * @param    type description
+ * @uses FORMAT_MOODLE
+ * @uses FORMAT_HTML
+ * @uses FORMAT_PLAIN
+ * @uses FORMAT_WIKI
+ * @uses FORMAT_MARKDOWN
+ * @param string $text The text to be formatted. This is raw text originally from user input.
+ * @param int $format Identifier of the text format to be used 
+ *            (FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN)
+ * @param  array $options ?
+ * @param int $courseid ?
+ * @return string
  * @todo Finish documenting this function
  */
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL ) {
@@ -904,12 +916,16 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 /**
  * Given text in a variety of format codings, this function returns
  * the text as plain text suitable for plain email.
- * 
- * $text is raw text (originally from a user)
- * $format is one of the format constants, defined above
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses FORMAT_MOODLE
+ * @uses FORMAT_HTML
+ * @uses FORMAT_PLAIN
+ * @uses FORMAT_WIKI
+ * @uses FORMAT_MARKDOWN
+ * @param string $text The text to be formatted. This is raw text originally from user input.
+ * @param int $format Identifier of the text format to be used 
+ *            (FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN)
+ * @return string
  */
 function format_text_email($text, $format) {
 
@@ -948,7 +964,8 @@ function format_text_email($text, $format) {
  * $textfilter_function which contains the name of the function
  * with $courseid and $text parameters
  *
- * @param    type description
+ * @param string $text The text to be passed through format filters
+ * @param int $courseid ?
  * @return string
  * @todo Finish documenting this function
  */
@@ -976,8 +993,13 @@ function filter_text($text, $courseid=NULL) {
  * Given raw text (eg typed in by a user), this function cleans it up
  * and removes any nasty tags that could mess up Moodle pages.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses FORMAT_MOODLE
+ * @uses FORMAT_PLAIN
+ * @uses ALLOWED_TAGS
+ * @param string $text The text to be cleaned
+ * @param int $format Identifier of the text format to be used 
+ *            (FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN)
+ * @return string The cleaned up text
  */
 function clean_text($text, $format=FORMAT_MOODLE) {
 
@@ -1004,7 +1026,7 @@ function clean_text($text, $format=FORMAT_MOODLE) {
 }
 
 /**
- * This function takes a string and examines it for html tags.
+ * This function takes a string and examines it for HTML tags.
  * If tags are detected it passes the string to a helper function {@link cleanAttributes2()}
  *  which checks for attributes and filters them for malicious content
  *         17/08/2004              ::          Eamon DOT Costello AT dcu DOT ie
@@ -1137,9 +1159,20 @@ function replace_smilies(&$text) {
     }
 }
 
+/**
+ * Given plain text, makes it into HTML as nicely as possible.
+ * May contain HTML tags already
+ *
+ * @uses $CFG
+ * @param string $text The string to convert.
+ * @param boolean $smiley Convert any smiley characters to smiley images?
+ * @param boolean $para If true then the returned string will be wrapped in paragraph tags
+ * @param boolean $newlines If true then lines newline breaks will be converted to HTML newline breaks.
+ * @return string
+ */
+
 function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
-/// Given plain text, makes it into HTML as nicely as possible.
-/// May contain HTML tags already
+/// 
 
     global $CFG;
 
@@ -1175,7 +1208,7 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
  *
  * @uses $CFG
  * @param string $text The text to be converted.
- * @param integer $courseid The id, as found in 'course' table, of the course this text is being placed in.
+ * @param int $courseid The id, as found in 'course' table, of the course this text is being placed in.
  * @return string
  */
 function wiki_to_html($text, $courseid) {
@@ -1191,8 +1224,9 @@ function wiki_to_html($text, $courseid) {
 /**
  * Given Markdown formatted text, make it into XHTML using external function
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $CFG
+ * @param string $text The markdown formatted text to be converted.
+ * @return string Converted text
  */
 function markdown_to_html($text) {
     global $CFG;
@@ -1203,15 +1237,14 @@ function markdown_to_html($text) {
 }
 
 /**
- * Extracts arguments from "/foo/bar/something"
- * eg http://mysite.com/script.php/foo/bar/something
+ * Given HTML text, make it into plain text using external function
  *
  * @uses $CFG
  * @param string $html The text to be converted.
  * @return string
  */
 function html_to_text($html) {
-/// Given HTML text, make it into plain text using external function
+
     global $CFG;
 
     require_once($CFG->libdir .'/html2text.php');
@@ -1240,7 +1273,10 @@ function convert_urls_into_links(&$text) {
  * this function after performing any conversions to HTML.
  * Function found here: http://forums.devshed.com/t67822/scdaa2d1c3d4bacb4671d075ad41f0854.html
  *
- * @param    type description
+ * @param string $needle The string to search for
+ * @param string $haystack The string to search for $needle in
+ * @param int $case ?
+ * @return string
  * @todo Finish documenting this function
  */
 function highlight($needle, $haystack, $case=0,
@@ -1318,21 +1354,23 @@ function highlightfast($needle, $haystack) {
 /**
  * Print a standard header
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $USER
+ * @uses $CFG
+ * @uses $THEME 
+ * @uses $SESSION
+ * @param string $title Appears at the top of the window
+ * @param string $heading Appears at the top of the page
+ * @param string $navigation Premade navigation string (for use as breadcrumbs links)
+ * @param string $focus Indicates form element to get cursor focus on load eg  inputform.password
+ * @param string $meta Meta tags to be added to the header
+ * @param boolean $cache Should this page be cacheable?
+ * @param string $button HTML code for a button (usually for module editing)
+ * @param string $menu HTML code for a popup menu
+ * @param boolean $usexml use XML for this page
+ * @param string $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
  */
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
-// $title - appears top of window
-// $heading - appears top of page
-// $navigation - premade navigation string
-// $focus - indicates form element eg  inputform.password
-// $meta - meta tags in the header
-// $cache - should this page be cacheable?
-// $button - HTML code for a button (usually for module editing)
-// $menu - HTML code for a popup menu
-// $usexml - use XML for this page
-// $bodytags - this text will be included verbatim in the <body> tag (useful for onload() etc)
 
     global $USER, $CFG, $THEME, $SESSION;
 
@@ -1472,8 +1510,16 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
  * provided explicitly in the strings. It can be used on the site page as in courses
  * Eventually all print_header could be replaced by print_header_simple
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $title Appears at the top of the window
+ * @param string $heading Appears at the top of the page
+ * @param string $navigation Premade navigation string (for use as breadcrumbs links)
+ * @param string $focus Indicates form element to get cursor focus on load eg  inputform.password
+ * @param string $meta Meta tags to be added to the header
+ * @param boolean $cache Should this page be cacheable?
+ * @param string $button HTML code for a button (usually for module editing)
+ * @param string $menu HTML code for a popup menu
+ * @param boolean $usexml use XML for this page
+ * @param string $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
  */
 function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
@@ -1497,7 +1543,8 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
  * @uses $CFG
  * @uses $USER
  * @uses $THEME
- * @param    type description
+ * @param course $course {@link $COURSE} object containing course information
+ * @param ? $usercourse ?
  * @todo Finish documenting this function
  */
 function print_footer ($course=NULL, $usercourse=NULL) {
@@ -1533,7 +1580,9 @@ function print_footer ($course=NULL, $usercourse=NULL) {
  * approriately as well as the current path
  *
  * @uses $CFG
- * @param    type description
+ * @param int $lastmodified ?
+ * @param int $lifetime ?
+ * @param string $thename ?
  * @todo Finish documenting this function
  */
 function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='') {
@@ -1559,7 +1608,9 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='') {
  *
  * @uses $CFG
  * @uses $USER
- * @param    type description
+ * @param course $course {@link $COURSE} object containing course information
+ * @param user $user {@link $USER} object containing user information
+ * @return string
  * @todo Finish documenting this function
  */
 function user_login_string($course, $user=NULL) {
@@ -1606,8 +1657,7 @@ function user_login_string($course, $user=NULL) {
  * Prints breadcrumbs links
  *
  * @uses $CFG
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $navigation The breadcrumbs string to be printed
  */
 function print_navigation ($navigation) {
    global $CFG;
@@ -1617,15 +1667,15 @@ function print_navigation ($navigation) {
            $site->shortname = get_string('home');;
        }
        $navigation = str_replace('->', '&raquo;', $navigation);
-       echo "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">$site->shortname</a> &raquo; $navigation";
+       echo '<a target="'. $CFG->framename .'" href="'. $CFG->wwwroot .'/">'. $site->shortname .'</a> &raquo; '. $navigation;
    }
 }
 
 /**
  * Prints a string in a specified size
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $text The text to be displayed
+ * @param int $size The size to set the font for text display.
  */
 function print_headline($text, $size=2) {
     echo '<strong><font size="'. $size .'">'. $text .'</font></strong><br />'."\n";
@@ -1634,8 +1684,9 @@ function print_headline($text, $size=2) {
 /**
  * Prints text in a format for use in headings.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $text The text to be displayed
+ * @param string $align The alignment of the printed paragraph of text
+ * @param int $size The size to set the font for text display.
  */
 function print_heading($text, $align='center', $size=3) {
     echo '<p align="'. $align .'"><font size="'. $size .'"><strong>'. stripslashes_safe($text) .'</strong></font></p>';
@@ -1645,8 +1696,10 @@ function print_heading($text, $align='center', $size=3) {
  * Centered heading with attached help button (same title text)
  * and optional icon attached
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $text The text to be displayed
+ * @param string $helppage The help page to link to
+ * @param string $module The module whose help should be linked to
+ * @param string $icon Image to display if needed
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon='') {
     echo '<p align="center"><font size="3">'. $icon .'<strong>'. stripslashes_safe($text);
@@ -1674,7 +1727,12 @@ function print_continue($link) {
 /**
  * Print a message in a standard themed box.
  *
- * @param    type description
+ * @param string $message ?
+ * @param string $align ?
+ * @param string $width ?
+ * @param string $color ?
+ * @param int $padding ?
+ * @param string $class ?
  * @todo Finish documenting this function
  */
 function print_simple_box($message, $align='', $width='', $color='#FFFFFF', $padding=5, $class='generalbox') {
@@ -1686,7 +1744,11 @@ function print_simple_box($message, $align='', $width='', $color='#FFFFFF', $pad
 /**
  * Print the top portion of a standard themed box.
  *
- * @param    type description
+ * @param string $align ?
+ * @param string $width ?
+ * @param string $color ?
+ * @param int $padding ?
+ * @param string $class ?
  * @todo Finish documenting this function
  */
 function print_simple_box_start($align='', $width='', $color='#FFFFFF', $padding=5, $class='generalbox') {
@@ -1703,9 +1765,6 @@ function print_simple_box_start($align='', $width='', $color='#FFFFFF', $padding
 
 /**
  * Print the end portion of a standard themed box.
- *
- * @param    type description
- * @todo Finish documenting this function
  */
 function print_simple_box_end() {
     echo '</td></tr></table>';
@@ -1714,7 +1773,10 @@ function print_simple_box_end() {
 /**
  * Print a self contained form with a single submit button.
  *
- * @param    type description
+ * @param string $link ?
+ * @param array $options ?
+ * @param string $label ?
+ * @param string $method ?
  * @todo Finish documenting this function
  */
 function print_single_button($link, $options, $label='OK', $method='get') {
@@ -1730,7 +1792,9 @@ function print_single_button($link, $options, $label='OK', $method='get') {
 /**
  * Print a spacer image with the option of including a line break.
  *
- * @param    type description
+ * @param int $height ?
+ * @param int $width ?
+ * @param boolean $br ?
  * @todo Finish documenting this function
  */
 function print_spacer($height=1, $width=1, $br=true) {
@@ -1745,7 +1809,11 @@ function print_spacer($height=1, $width=1, $br=true) {
  * Given the path to a picture file in a course, or a URL,
  * this function includes the picture in the page.
  *
- * @param    type description
+ * @param string $path ?
+ * @param int $courseid ?
+ * @param int $height ?
+ * @param int $width ?
+ * @param string $link ?
  * @todo Finish documenting this function
  */
 function print_file_picture($path, $courseid=0, $height='', $width='', $link='') {
@@ -1782,7 +1850,13 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='')
 /**
  * Print the specified user's avatar.
  *
- * @param    type description
+ * @param int $userid ?
+ * @param int $courseid ?
+ * @param boolean $picture Print the user picture?
+ * @param boolean $large Should the picture be printed at 100 pixels or 35?
+ * @param boolean $returnstring If false print picture to current page, otherwise return the output as string
+ * @param boolean $link Enclose printed image in a link to view specified course?
+ * return string
  * @todo Finish documenting this function
  */
 function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false, $link=true) {
@@ -1826,12 +1900,14 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
 /**
  * Prints a summary of a user in a nice little box.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $CFG
+ * @uses $USER
+ * @param user $user A {@link $USER} object representing a user
+ * @param course $course A {@link $COURSE} object representing a course
  */
 function print_user($user, $course) {
 
-    global $CFG,$USER;
+    global $CFG, $USER;
 
     static $string;
     static $datestring;
@@ -1925,7 +2001,12 @@ function print_user($user, $course) {
 /**
  * Print a specified group's avatar.
  *
- * @param    type description
+ * @param group $group A {@link group} object representing a group
+ * @param int $courseid ?
+ * @param boolean $large ?
+ * @param boolean $returnstring ?
+ * @param boolean $link ?
+ * @return string
  * @todo Finish documenting this function
  */
 function print_group_picture($group, $courseid, $large=false, $returnstring=false, $link=true) {
@@ -1976,7 +2057,11 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
 /**
  * Print a png image.
  *
- * @param    type description
+ * @param string $url ?
+ * @param int $sizex ?
+ * @param int $sizey ?
+ * @param boolean $returnstring ?
+ * @param string $parameters ?
  * @todo Finish documenting this function
  */
 function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
@@ -1988,13 +2073,14 @@ function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
     }
 
     if ($recentIE) {  // work around the HORRIBLE bug IE has with alpha transparencies
-        $output .= "<img src=\"$CFG->pixpath/spacer.gif\" width=\"$sizex\" height=\"$sizey\"".
-                   " border=\"0\" style=\"width: {$sizex}px; height: {$sizey}px; ".
-                   " filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$url', sizingMethod='scale') ".
-                   " $parameters />";
+        $output .= '<img src="'. $CFG->pixpath .'/spacer.gif" width="'. $sizex .'" height="'. $sizey .'"'.
+                   ' border="0" style="width: '. $sizex .'px; height: '. $sizey .'px; '.
+                   ' filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.
+                   "'$url', sizingMethod='scale') ".
+                   ' '. $parameters .' />';
     } else {
-        $output .= "<img src=\"$url\" border=\"0\" width=\"$sizex\" height=\"$sizey\" ".
-                   " $parameters />";
+        $output .= '<img src="'. $url .'" border="0" width="'. $sizex .'" height="'. $sizey .'" '.
+                   ' '. $parameters .' />';
     }
 
     if ($returnstring) {
@@ -2007,19 +2093,21 @@ function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
 /**
  * Print a nicely formatted table.
  *
- * @param    type description
+ * @uses $THEME
+ * @param array $table is an object with several properties.
+ *     <ul<li>$table->head - An array of heading names.
+ *     <li>$table->align - An array of column alignments
+ *     <li>$table->size  - An array of column sizes
+ *     <li>$table->wrap - An array of "nowrap"s or nothing
+ *     <li>$table->data[] - An array of arrays containing the data.
+ *     <li>$table->width  - A percentage of the page
+ *     <li>$table->cellpadding  - Padding on each cell
+ *     <li>$table->cellspacing  - Spacing between cells
+ * </ul>
+ * @return boolean
  * @todo Finish documenting this function
  */
 function print_table($table) {
-// $table is an object with several properties.
-//     $table->head      is an array of heading names.
-//     $table->align     is an array of column alignments
-//     $table->size      is an array of column sizes
-//     $table->wrap      is an array of "nowrap"s or nothing
-//     $table->data[]    is an array of arrays containing the data.
-//     $table->width     is an percentage of the page
-//     $table->cellpadding    padding on each cell
-//     $table->cellspacing    spacing between cells
 
     global $THEME;
 
@@ -2116,22 +2204,23 @@ function print_table($table) {
 /**
  * Creates a nicely formatted table and returns it.
  *
- * @param    type description
+ * @param array $table is an object with several properties.
+ *     <ul<li>$table->head - An array of heading names.
+ *     <li>$table->align - An array of column alignments
+ *     <li>$table->size  - An array of column sizes
+ *     <li>$table->wrap - An array of "nowrap"s or nothing
+ *     <li>$table->data[] - An array of arrays containing the data.
+ *     <li>$table->class -  A css class name
+ *     <li>$table->fontsize - Is the size of all the text
+ *     <li>$table->tablealign  - Align the whole table
+ *     <li>$table->width  - A percentage of the page
+ *     <li>$table->cellpadding  - Padding on each cell
+ *     <li>$table->cellspacing  - Spacing between cells
+ * </ul>
+ * @return string
  * @todo Finish documenting this function
  */
 function make_table($table) {
-// $table is an object with several properties.
-//     $table->head      is an array of heading names.
-//     $table->align     is an array of column alignments
-//     $table->size      is an array of column sizes
-//     $table->wrap      is an array of "nowrap"s or nothing
-//     $table->data[]    is an array of arrays containing the data.
-//     $table->width     is an percentage of the page
-//     $table->class     is a class
-//     $table->fontsize  is the size of all the text
-//     $table->tablealign     align the whole table
-//     $table->cellpadding    padding on each cell
-//     $table->cellspacing    spacing between cells
 
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
@@ -2228,7 +2317,15 @@ function make_table($table) {
 /**
  * Prints a basic textarea field.
  *
- * @param    type description
+ * @uses $CFG
+ * @param boolean $usehtmleditor ?
+ * @param int $rows ?
+ * @param int $cols ?
+ * @param null $width <b>Legacy field no longer used!</b>
+ * @param null $height <b>Legacy field no longer used!</b>
+ * @param string $name ?
+ * @param string $value ?
+ * @param int $courseid ?
  * @todo Finish documenting this function
  */
 function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0) {
@@ -2260,7 +2357,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         }
     }
 
-    echo "<textarea id=\"$name\" name=\"$name\" rows=\"$rows\" cols=\"$cols\">";
+    echo '<textarea id="'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
     p($value);
     echo '</textarea>'."\n";
 }
@@ -2269,7 +2366,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
  * Legacy function, provided for backward compatability. 
  * This method now simply calls {@link use_html_editor()}
  *
- * @param    type description
+ * @deprecated Use {@link use_html_editor()} instead.
+ * @param string $name Form element to replace with HTMl editor by name
  * @todo Finish documenting this function
  */
 function print_richedit_javascript($form, $name, $source='no') {
@@ -2284,8 +2382,7 @@ function print_richedit_javascript($form, $name, $source='no') {
  *
  * In most cases no arguments need to be supplied
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $name Form element to replace with HTMl editor by name
  */
 function use_html_editor($name='') {
     echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
@@ -2302,11 +2399,13 @@ function use_html_editor($name='') {
  * Returns a turn edit on/off button for course in a self contained form.
  * Used to be an icon, but it's now a simple form button
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $CFG
+ * @uses $USER
+ * @param int $courseid The course  to update by id as found in 'course' table
+ * @return string
  */
 function update_course_icon($courseid) {
-// 
+ 
     global $CFG, $USER;
 
     if (isteacheredit($courseid)) {
@@ -2350,7 +2449,8 @@ function update_module_button($moduleid, $courseid, $string) {
  *
  * @uses $CFG
  * @uses $USER
- * @param    type description
+ * @param int $categoryid ?
+ * @return string
  * @todo Finish documenting this function
  */
 function update_category_button($categoryid) {
@@ -2374,8 +2474,9 @@ function update_category_button($categoryid) {
 /**
  * Prints the editing button on categories listing
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $CFG
+ * @uses $USER
+ * @return string
  */
 function update_categories_button() {
     global $CFG, $USER;
@@ -2389,16 +2490,19 @@ function update_categories_button() {
             $edit = 'on';
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
-               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-               "<input type=\"submit\" value=\"$string\" /></form>";
+               '<input type="hidden" name="edit" value="'. $edit .'" />'.
+               '<input type="submit" value="'. $string .'" /></form>';
     }
 }
 
 /**
  * Prints the editing button on group page
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $CFG
+ * @uses $USER
+ * @param int $courseid The course group is associated with
+ * @param int $groupid The group to update
+ * @return string
  */
 function update_group_button($courseid, $groupid) {
     global $CFG, $USER;
@@ -2406,17 +2510,20 @@ function update_group_button($courseid, $groupid) {
     if (isteacheredit($courseid)) {
         $string = get_string('editgroupprofile');
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/group.php\">".
-               "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
-               "<input type=\"hidden\" name=\"group\" value=\"$groupid\" />".
-               "<input type=\"hidden\" name=\"edit\" value=\"on\" />".
-               "<input type=\"submit\" value=\"$string\" /></form>";
+               '<input type="hidden" name="id" value="'. $courseid .'" />'.
+               '<input type="hidden" name="group" value="'. $groupid .'" />'.
+               '<input type="hidden" name="edit" value="on" />'.
+               '<input type="submit" value="'. $string .'" /></form>';
     }
 }
 
 /**
  * Prints the editing button on groups page
  *
- * @param    type description
+ * @uses $CFG
+ * @uses $USER
+ * @param int $courseid The id of the course to be edited
+ * @return string
  * @todo Finish documenting this function
  */
 function update_groups_button($courseid) {
@@ -2440,7 +2547,11 @@ function update_groups_button($courseid) {
 /**
  * Prints an appropriate group selection menu
  *
- * @param    type description
+ * @uses VISIBLEGROUPS
+ * @param array $groups ?
+ * @param int $groupmode ?
+ * @param string $currentgroup ?
+ * @param string $urlroot ?
  * @todo Finish documenting this function
  */
 function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
@@ -2471,7 +2582,10 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
  * The data is taken from the serialised array stored in
  * the course record
  *
- * @param    type description
+ * @param course $course A {@link $COURSE} object.
+ * @param course $cm A {@link $COURSE} object.
+ * @param string $targetwindow ?
+ * @return string
  * @todo Finish documenting this function
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
@@ -2582,10 +2696,10 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 /**
  * Prints form items with the names $day, $month and $year
  *
- * @param ? $day ?
- * @param ? $month ?
- * @param ? $year ?
- * @param integer $currenttime A default timestamp in GMT
+ * @param int $day ?
+ * @param int $month ?
+ * @param int $year ?
+ * @param int $currenttime A default timestamp in GMT
  * @todo Finish documenting this function
  */
 function print_date_selector($day, $month, $year, $currenttime=0) {
@@ -2615,7 +2729,7 @@ function print_date_selector($day, $month, $year, $currenttime=0) {
  * @param ? $hour ?
  * @param ? $minute ?
  * @param $currenttime A default timestamp in GMT
- * @param integer $step ?
+ * @param int $step ?
  * @todo Finish documenting this function
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
@@ -2641,7 +2755,7 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
  * Prints time limit value selector
  *
  * @uses $CFG
- * @param integer $timelimit ?
+ * @param int $timelimit ?
  * @param string $unit ?
  * @todo Finish documenting this function
  */
@@ -2666,7 +2780,11 @@ function print_timer_selector($timelimit = 0, $unit = '') {
  * Prints a grade menu (as part of an existing form) with help
  * Showing all possible numerical grades and scales
  *
- * @param    type description
+ * @uses $CFG
+ * @param int $courseid ?
+ * @param string $name ?
+ * @param string $current ?
+ * @param boolean $includenograde ?
  * @todo Finish documenting this function
  */
 function print_grade_menu($courseid, $name, $current, $includenograde=true) { 
@@ -2696,9 +2814,11 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true) {
 
 /**
  * Prints a scale menu (as part of an existing form) including help button
- * Just like print_grade_menu but without the numerical grades
+ * Just like {@link print_grade_menu()} but without the numeric grades
  *
- * @param    type description
+ * @param int $courseid ?
+ * @param string $name ?
+ * @param string $current ?
  * @todo Finish documenting this function
  */
 function print_scale_menu($courseid, $name, $current) {
@@ -2708,7 +2828,7 @@ function print_scale_menu($courseid, $name, $current) {
     $strscales = get_string('scales');
     choose_from_menu(get_scales_menu($courseid), $name, $current, '');
     $helpicon = $CFG->pixpath .'/help.gif';
-    $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
+    $linkobject = '<img align="middle" border="0" height="17" width="22" alt="'. $strscales .'" src="'. $helpicon .'" />';
     link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                           $linkobject, 400, 500, $strscales);
 }
@@ -2735,6 +2855,8 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 /**
  * Print an error page displaying an error message.
  *
+ * @uses $SESSION
+ * @uses $CFG
  * @param string $message The message to display to the user about the error.
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  */
@@ -2761,16 +2883,19 @@ function error ($message, $link='') {
 /**
  * Print a help button.
  *
- * @param    type description
+ * @uses $CFG
+ * @uses $THEME
+ * @param string $page  The keyword that defines a help page
+ * @param string $title The title of links, rollover tips, alt tags etc
+ * @param string $module Which module is the page defined in
+ * @param mixed $image Use a help image for the link?  (true/false/"both")
+ * @param string $text If defined then this text is used in the page, and
+ *           the $page variable is ignored.
+ * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
+ * @return string
  * @todo Finish documenting this function
  */
 function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=false, $text='', $return=false) {
-    // $page = the keyword that defines a help page
-    // $title = the title of links, rollover tips, alt tags etc
-    // $module = which module is the page defined in
-    // $image = use a help image for the link?  (true/false/"both")
-    // $text = if defined then this text is used in the page, and
-    //         the $page variable is ignored.
     global $CFG, $THEME;
 
     if ($module == '') {
@@ -2807,11 +2932,15 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
 /**
  * Print a help button.
  *
- * @param    type description
+ * Prints a special help button that is a link to the "live" emoticon popup
+ * @uses $CFG
+ * @uses $SESSION
+ * @param string $form ?
+ * @param string $field ?
  * @todo Finish documenting this function
  */
 function emoticonhelpbutton($form, $field) {
-/// Prints a special help button that is a link to the "live" emoticon popup
+
     global $CFG, $SESSION;
 
     $SESSION->inserttextform = $form;
@@ -2819,7 +2948,7 @@ function emoticonhelpbutton($form, $field) {
     helpbutton('emoticons', get_string('helpemoticons'), 'moodle', false, true);
     echo '&nbsp;';
     link_to_popup_window ('/help.php?module=moodle&amp;file=emoticons.html', 'popup',
-                          "<img src=\"$CFG->pixpath/s/smiley.gif\" border=\"0\" align=\"middle\" width=\"15\" height=\"15\" alt=\"\" />",
+                          '<img src="'. $CFG->pixpath .'/s/smiley.gif" border="0" align="middle" width="15" height="15" alt="" />',
                            400, 500, get_string('helpemoticons'));
     echo '<br />';
 }
@@ -2827,7 +2956,10 @@ function emoticonhelpbutton($form, $field) {
 /**
  * Print a message and exit.
  *
- * @param    type description
+ * @uses $CFG
+ * @uses $THEME
+ * @param string $message ?
+ * @param string $link ?
  * @todo Finish documenting this function
  */
 function notice ($message, $link='') {
@@ -2851,8 +2983,10 @@ function notice ($message, $link='') {
 /**
  * Print a message along with "Yes" and "No" links for the user to continue.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $THEME
+ * @param string $message The text to display
+ * @param string $linkyes The link to take the user to if they choose "Yes"
+ * @param string $linkno The link to take the user to if they choose "No"
  */
 function notice_yesno ($message, $linkyes, $linkno) {
     global $THEME;
@@ -2870,15 +3004,17 @@ function notice_yesno ($message, $linkyes, $linkno) {
 /**
  * Redirects the user to another page, after printing a notice
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $url The url to take the user to
+ * @param string $message The text message to display to the user about the redirect, if any
+ * @param string $delay How long before refreshing to the new page at $url?
+ * @todo '&' needs to be encoded into '&amp;' for XHTML compliance,
+ *      however, this is not true for javascript. Therefore we
+ *      first decode all entities in $url (since we cannot rely on)
+ *      the correct input) and then encode for where it's needed
+ *      echo "<script type='text/javascript'>alert('Redirect $url');</script>";
+
  */
 function redirect($url, $message='', $delay='0') {
-    // '&' needs to be encoded into '&amp;' for XHTML compliance,
-    // however, this is not true for javascript. Therefore we
-    // first decode all entities in $url (since we cannot rely on)
-    // the correct input) and then encode for where it's needed
-    // echo "<script type='text/javascript'>alert('Redirect $url');</script>";
     $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
     $encodedurl = htmlentities($url);
     if (empty($message)) {
@@ -2903,8 +3039,9 @@ function redirect($url, $message='', $delay='0') {
 /**
  * Print a bold message in an optional color.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $message The message to print out
+ * @param string $color Optional color to display message text in
+ * @param string $align Paragraph alignment option
  */
 function notify ($message, $color='red', $align='center') {
     echo '<p align="'. $align .'"><strong><font color="'. $color .'">'. $message .'</font></strong></p>' . "\n";
@@ -2914,8 +3051,8 @@ function notify ($message, $color='red', $align='center') {
 /**
  * Given an email address, this function will return an obfuscated version of it
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $email The email address to obfuscate
+ * @return string
  */
  function obfuscate_email($email) {
 
@@ -2937,8 +3074,8 @@ function notify ($message, $color='red', $align='center') {
  * This function takes some text and replaces about half of the characters
  * with HTML entity equivalents.   Return string is obviously longer.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $plaintext The text to be obfuscated
+ * @return string
  */
 function obfuscate_text($plaintext) {
  
@@ -2964,11 +3101,13 @@ function obfuscate_text($plaintext) {
 }
 
 /**
- * This function uses the above two functions to generate a fully
- * obfuscated email link, ready to use.
+ * This function uses the {@link obfuscate_email()} and {@link obfuscate_text()}
+ * to generate a fully obfuscated email link, ready to use.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $email The email address to display
+ * @param string $label The text to dispalyed as hyperlink to $email
+ * @param boolean $dimmed If true then use css class 'dimmed' for hyperlink
+ * @return string
  */
 function obfuscate_mailto($email, $label='', $dimmed=false) {
 
@@ -2990,7 +3129,10 @@ function obfuscate_mailto($email, $label='', $dimmed=false) {
 /**
  * Prints a single paging bar to provide access to other pages  (usually in a search)
  *
- * @param    type description
+ * @param int $totalcount ?
+ * @param int $page ?
+ * @param int $perpage ?
+ * @param string $baseurl ?
  * @todo Finish documenting this function
  */
 function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
@@ -3040,8 +3182,8 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
  * This function is used to rebuild the <nolink> tag because some formats (PLAIN and WIKI)
  * will transform it to html entities
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @param string $text Text to search for nolink tag in
+ * @return string
  */
 function rebuildnolinktag($text) {
 
@@ -3061,8 +3203,14 @@ function rebuildnolinktag($text) {
  * Prints a nice side block with an optional header.  The content can either
  * be a block of HTML or a list of text with optional icons.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $THEME
+ * @param  string $heading ?
+ * @param  string $content ?
+ * @param  array $list ?
+ * @param  array $icons ?
+ * @param  string $footer ?
+ * @param  array $attributes ?
+ * @todo Finish documenting this function. Show example of various attributes, etc.
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) { 
 
@@ -3106,7 +3254,9 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 /**
  * Starts a nice side block with an optional header.
  *
- * @param    type description
+ * @uses $THEME
+ * @param string $heading ?
+ * @param array $attributes ?
  * @todo Finish documenting this function
  */
 function print_side_block_start($heading='', $attributes = array()) {
@@ -3143,9 +3293,6 @@ function print_side_block_start($heading='', $attributes = array()) {
 
 /**
  * Print table ending tags for a side block box.
- *
- * @param    type description
- * @todo Finish documenting this function
  */
 function print_side_block_end() {
     echo '</td></tr></tbody></table><br />';
@@ -3154,10 +3301,9 @@ function print_side_block_end() {
 
 
 /**
- * prints out the editor config.
+ * Prints out the HTML editor config.
  *
- * @param    type description
- * @todo Finish documenting this function
+ * @uses $CFG
  */
  function print_editor_config() {
 
@@ -3208,7 +3354,8 @@ function print_side_block_end() {
  * Prints out code needed for spellchecking.
  * Original idea by Ludo (Marc Alier).
  *
- * @param    type description
+ * @uses $CFG
+ * @param boolean $usehtmleditor ?
  * @todo Finish documenting this function
  */
 function print_speller_code ($usehtmleditor=false) { 
@@ -3238,9 +3385,6 @@ function print_speller_code ($usehtmleditor=false) {
 
 /**
  * Print button for spellchecking when editor is disabled
- *
- * @param    type description
- * @todo Finish documenting this function
  */
 function print_speller_button () {
     echo '<input type="button" value="Check spelling" onclick="openSpellChecker();" />'."\n";

@@ -24,7 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * Moodle main library
+ * moodlelib.php - Moodle main library
  *
  * Main library file of miscellaneous general-purpose Moodle functions.
  * Other main libraries:
@@ -32,7 +32,7 @@
  *  - datalib.php     - functions that access the database
  * @author Martin Dougiamas
  * @version $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
 /// CONSTANTS /////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ function optional_variable(&$var, $default=0) {
 /**
  * Set a key in global configuration
  *
- * Set a key/value pair in both this session's $CFG global variable
+ * Set a key/value pair in both this session's {@link $CFG} global variable
  * and in the 'config' database table for future sessions.
  *
  * @param string $name the key to set
@@ -302,7 +302,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  *
  * @param int $totalsecs ?
  * @param array $str ?
- * @retunr string
+ * @return string
  * @todo Finish documenting this function
  */
  function format_time($totalsecs, $str=NULL) {
@@ -531,7 +531,7 @@ function get_user_timezone($tz = 99) {
  * whether they are "logged in" or allowed to be in a particular course.
  * If not, then it redirects them to the site login or course enrolment.
  * $autologinguest determines whether visitors should automatically be
- * logged in as guests provide $CFG->autologinguests is set to 1
+ * logged in as guests provide {@link $CFG}->autologinguests is set to 1
  *
  * @uses $CFG
  * @uses $SESSION
@@ -667,7 +667,7 @@ function update_user_login_times() {
 /**
  * Determines if a user has completed setting up their account.
  *
- * @param array $user A user object to test for the existance of a valid name and email
+ * @param user $user A {@link $USER} object to test for the existance of a valid name and email
  * @return boolean
  */
 function user_not_fully_set_up($user) {
@@ -711,7 +711,10 @@ function reset_login_count() {
 /**
  * check_for_restricted_user
  *
- * @param    type description
+ * @uses $CFG
+ * @uses $USER
+ * @param string $username ?
+ * @param string $redirect ?
  * @todo Finish documenting this function
  */
 function check_for_restricted_user($username=NULL, $redirect='') {
@@ -738,7 +741,10 @@ function check_for_restricted_user($username=NULL, $redirect='') {
  *
  * @uses $USER
  * @param int $userid The id of the user as is found in the 'user' table
+ * @staticvar array $admin ?
+ * @staticvar array $nonadmins ?
  * @return boolean
+ * @todo Complete documentation for this function
  */
 function isadmin($userid=0) {
     global $USER;
@@ -916,7 +922,7 @@ function isguest($userid=0) {
  *
  * @uses $USER
  * @param int $courseid The id of the course being tested
- * @param array $user A user object. If null then the currently logged in user is used.
+ * @param user $user A {@link $USER} object. If null then the currently logged in user is used.
  * @return boolean
  */
 function isediting($courseid, $user=NULL) {
@@ -1071,7 +1077,7 @@ function get_user_fieldnames() {
  * @param string $username New user's username to add to record
  * @param string $password New user's password to add to record
  * @param string $auth Form of authentication required
- * @return array
+ * @return user A {@link $USER} object
  * @todo Outline auth types and provide code example
  */
 function create_user_record($username, $password, $auth='') {
@@ -1117,7 +1123,7 @@ function create_user_record($username, $password, $auth='') {
  *
  * @uses $CFG
  * @param string $username New user's username to add to record
- * @return array
+ * @return user A {@link $USER} object
  */
 function update_user_record($username) {
     global $CFG;
@@ -1141,7 +1147,7 @@ function update_user_record($username) {
  * Retrieve the guest user object
  *
  * @uses $CFG
- * @return array
+ * @return user A {@link $USER} object
  */
 function guest_user() {
     global $CFG;
@@ -1167,7 +1173,7 @@ function guest_user() {
  * @uses $CFG
  * @param string $username  User's username 
  * @param string $password  User's password 
- * @return array
+ * @return user|flase A {@link $USER} object or false if error
  */
 function authenticate_user_login($username, $password) {
 
@@ -1812,8 +1818,8 @@ function mygroupid($courseid) {
  * what the current default groupmode is:
  * NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
  *
- * @param array $course A course object
- * @param array $cm A course module object
+ * @param course $course A {@link $COURSE} object
+ * @param array? $cm A course module object
  * @return int A group mode (NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS)
  */
 function groupmode($course, $cm=null) {
@@ -1876,11 +1882,11 @@ function get_current_group($courseid, $full=false) {
  * that to reset the current group for the user.
  *
  * @uses VISIBLEGROUPS
- * @param array $course A course object
+ * @param course $course A {@link $COURSE} object
  * @param int $groupmode Either NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
  * @param int $groupid Will try to use this optional parameter to
  *            reset the current group for the user
- * @retunr int|false Returns the current group id or false if error.
+ * @return int|false Returns the current group id or false if error.
  * @todo Finish documenting this function
  */
 function get_and_set_current_group($course, $groupmode, $groupid=-1) {
@@ -1927,7 +1933,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
  *
  * @uses SEPARATEGROUPS
  * @uses VISIBLEGROUPS
- * @param array $course A course object
+ * @param course $course A {@link $COURSE} object
  * @param int $groupmode Either NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
  * @param string $urlroot ?
  * @todo Finish documenting this function
@@ -1973,8 +1979,8 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
  * @uses $CFG
  * @uses $_SERVER
  * @uses SITEID
- * @param array $user  a user record as an object
- * @param array $from a user record as an object
+ * @param user $user  A {@link $USER} object
+ * @param user $from A {@link $USER} object
  * @param string $subject plain text subject line of the email
  * @param string $messagetext plain text version of the message
  * @param string $messagehtml complete html version of the message (optional)
@@ -2099,7 +2105,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
  * Resets specified user's password and send the new password to the user via email.
  *
  * @uses $CFG
- * @param array $user An associative array representing a user object
+ * @param user $user A {@link $USER} object
  * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email 
  *          was blocked by user and "false" if there was another sort of error.
  */
@@ -2135,7 +2141,7 @@ function reset_password_and_mail($user) {
  * Send email to specified user with confirmation text and activation link.
  *
  * @uses $CFG
- * @param array $user An associative array representing a user object
+ * @param user $user A {@link $USER} object
  * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email 
  *          was blocked by user and "false" if there was another sort of error.
  */
@@ -2164,7 +2170,7 @@ function reset_password_and_mail($user) {
  * send_password_change_confirmation_email.
  *
  * @uses $CFG
- * @param array $user An associative array representing a user object
+ * @param user $user A {@link $USER} object
  * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email 
  *          was blocked by user and "false" if there was another sort of error.
  * @todo Finish documenting this function
@@ -2595,6 +2601,10 @@ function get_real_size($size=0) {
  *
  * @param string $size  ?
  * @return string
+ * @staticvar string $gb Localized string for size in gigabytes
+ * @staticvar string $mb Localized string for size in megabytes
+ * @staticvar string $kb Localized string for size in kilobytes
+ * @staticvar string $b Localized string for size in bytes
  * @todo Finish documenting this function. Verify return type.
  */
 function display_size($size) {
@@ -2787,6 +2797,7 @@ function get_string($identifier, $module='', $a=NULL) {
  * @param string $langfile ?
  * @param string $destination ?
  * @return string|false ?
+ * @staticvar array $strings Localized strings
  * @todo Finish documenting this function.
  */
 function get_string_from_file($identifier, $langfile, $destination) {
