@@ -58,7 +58,13 @@
     }
 
     foreach ($attendances as $attendance) {
-        $link = "<A HREF=\"view.php?id=$attendance->coursemodule\">$attendance->name</A>";
+        if (!$attendance->visible) {
+            //Show dimmed if the mod is hidden
+            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$attendance->coursemodule\">$attendance->name</A>";
+        } else {
+            //Show normal if the mod is visible
+            $link = "<A HREF=\"view.php?id=$attendance->coursemodule\">$attendance->name</A>";
+        }
 
         if ($course->format == "weeks" or $course->format == "topics") {
             $table->data[] = array ($attendance->section, $link);

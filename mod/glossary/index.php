@@ -57,7 +57,13 @@
     }
 
     foreach ($glossarys as $glossary) {
-        $link = "<A HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
+        if (!$glossary->visible) {
+            //Show dimmed if the mod is hidden
+            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
+        } else {
+            //Show normal if the mod is visible
+            $link = "<A HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
+        }
 
         if ($course->format == "weeks" or $course->format == "topics") {
             $table->data[] = array ($glossary->section, $link);

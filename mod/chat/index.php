@@ -54,8 +54,13 @@
     }
 
     foreach ($chats as $chat) {
-        $link = "<a href=\"view.php?id=$chat->coursemodule\">$chat->name</a>";
-
+        if (!$chat->visible) {
+            //Show dimmed if the mod is hidden
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$chat->coursemodule\">$chat->name</a>";
+        } else {
+            //Show normal if the mod is visible
+            $link = "<a href=\"view.php?id=$chat->coursemodule\">$chat->name</a>";
+        }
         if ($course->format == "weeks" or $course->format == "topics") {
             if ($chat->section) {
                 $table->data[] = array ($chat->section, $link);

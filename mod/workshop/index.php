@@ -54,8 +54,15 @@
 					$submitted = "<FONT COLOR=red>".userdate($submission->timecreated)."</FONT>";
 					}
 				$due = userdate($workshop->deadline);
-				$link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A><BR>".
-					"($submission->title)";
+                                if (!$workshop->visible) {
+                                    //Show dimmed if the mod is hidden
+				    $link = "<A class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A><BR>".
+					    "($submission->title)";
+                                } else {
+                                    //Show normal if the mod is visible
+				    $link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A><BR>".
+					    "($submission->title)";
+                                }
 				if ($course->format == "weeks" or $course->format == "topics") {
 					$table->data[] = array ($workshop->section, $link, $due, $submitted);
 					} 
@@ -67,7 +74,13 @@
 		else {
             $submitted = get_string("no");
 			$due = userdate($workshop->deadline);
-			$link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
+                        if (!$workshop->visible) {
+                            //Show dimmed if the mod is hidden
+                            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
+                        } else {
+                            //Show normal if the mod is visible
+                            $link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
+                        }
 			if ($course->format == "weeks" or $course->format == "topics") {
 				$table->data[] = array ($workshop->section, $link, $due, $submitted);
 				} 
