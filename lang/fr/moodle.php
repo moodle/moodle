@@ -843,6 +843,7 @@ $string['upload'] = 'Envoyer';
 $string['uploadafile'] = 'Envoyer un fichier';
 $string['uploadedfileto'] = 'Le fichier « $a->file » a été déposé dans le dossier « $a->directory »';
 $string['uploadnofilefound'] = 'Aucun fichier trouvé. En avez-vous vraiment choisi un à envoyer ?';
+$string['uploadnotallowed'] = 'Il n\'est pas permis d\'envoyer des fichiers';
 $string['uploadproblem'] = 'Un problème inconnu est survenu durant l\'envoi du fichier « $a » (peut-être est-il trop gros ?)';
 $string['uploadthisfile'] = 'Envoyer ce fichier';
 $string['uploadusers'] = 'Importer des utilisateurs';
