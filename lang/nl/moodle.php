@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['action'] = 'Actie';
@@ -964,7 +964,7 @@ $string['to'] = 'Tot';
 $string['today'] = 'Vandaag';
 $string['todaylogs'] = 'Statistieken van vandaag';
 $string['toomanytoshow'] = 'Er zijn teveel gebruikers om te laten zien';
-$string['top'] = 'Naar boven';
+$string['top'] = 'Hoogste niveau';
 $string['topic'] = 'Onderwerp';
 $string['topichide'] = 'Verberg dit onderwerp voor $a';
 $string['topicoutline'] = 'Overzicht van het onderwerp';
