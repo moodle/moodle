@@ -564,6 +564,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         case FORMAT_PLAIN:
             $text = htmlentities($text);
+            $text = rebuildnolinktag($text);
             $text = str_replace("  ", "&nbsp; ", $text);
             replace_smilies($text);
             $text = nl2br($text);
@@ -571,6 +572,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
+            $text = rebuildnolinktag($text);
             $text = filter_text($text, $courseid);
             break;
 
@@ -2177,6 +2179,15 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
         echo "</p>";
         echo "</center>";
     }
+}
+
+//This function is used to rebuild the <nolink> tag because some formats (PLAIN and WIKI)
+//will transform it to html entities
+function rebuildnolinktag($text) {
+    
+    $text = preg_replace('/&lt;(\/*nolink)&gt;/i','<$1>',$text);
+
+    return $text;
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
