@@ -49,8 +49,8 @@ class CourseBlock_site_main_menu extends MoodleBlock {
         $editbuttons = '';
 
         if ($ismoving) {
-            $this->content->items[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" height="11" width="11">';
-            $this->content->icons[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true">'.$strcancel.'</a>)';
+            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" height="11" width="11">';
+            $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true">'.$strcancel.'</a>)';
         }
 
         if (!empty($section->sequence)) {
@@ -92,6 +92,11 @@ class CourseBlock_site_main_menu extends MoodleBlock {
                     } else {
                         $extra = '';
                     }
+                    if (!empty($modinfo[$modnumber]->icon)) {
+                        $icon = $CFG->pixpath.'/'.urldecode($modinfo[$modnumber]->icon);
+                    } else {
+                        $icon = $CFG->modpixpath.'/'.$mod->modname.'/icon.gif';
+                    }
 
                     if ($mod->modname == 'label') {
                         $this->content->items[] = format_text($extra, FORMAT_HTML).$editbuttons;
@@ -99,7 +104,7 @@ class CourseBlock_site_main_menu extends MoodleBlock {
                     } else {
                         $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                             ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$instancename.'</a>'.$editbuttons;
-                        $this->content->icons[] = '<img src="'.$CFG->modpixpath.'/'.$mod->modname.'/icon.gif" height="16" width="16" alt="'.$mod->modfullname.'">';
+                        $this->content->icons[] = '<img src="'.$icon.'" height="16" width="16" alt="'.$mod->modfullname.'">';
                     }
                 }
             }
