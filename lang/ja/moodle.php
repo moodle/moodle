@@ -352,7 +352,7 @@ $a->link
 もし動作しない場合はカット&ペーストを使ってブラウザのアドレス欄にアドレスを入力してください。
 
 \'$a->sitename\' 管理者 $a->admin からのご挨拶でした。';
-$string['emailconfirmationsubject'] = '$a: 登録の確定';
+$string['emailconfirmationsubject'] = '$a: アカウントの確定';
 $string['emailconfirmsent'] = '<P>メールが <B>$a</B> 宛に送信されました。
 <P>メールには登録の確定を簡単に行うための説明が記述されています。
 <P>お分かりにならない場合は管理者にご連絡ください。';
