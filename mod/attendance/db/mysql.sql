@@ -12,6 +12,7 @@ CREATE TABLE prefix_attendance (
   notes varchar(64) NOT NULL default '',
   timemodified int(10) unsigned NOT NULL default '0',
   dynsection tinyint(1) NOT NULL default '0',
+  edited tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 
