@@ -185,7 +185,7 @@
     }
 
     print_heading(get_string("attempt", "quiz", $attemptnumber));
-    print_simple_box(text_to_html($quiz->intro), "CENTER");
+    print_simple_box(format_text($quiz->intro), "CENTER");
 
 
 /// Add the javascript timer in the title bar if the closing time appears close
