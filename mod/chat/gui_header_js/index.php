@@ -44,13 +44,13 @@
         $groupname = '';
     }
 
+    $strchat = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
+
     if (!$chat_sid = chat_login_user($chat->id, 'header_js', $groupid, $course, true)) {
         error('Could not log in to chat room!!');
     }
 
     $params = "chat_sid=$chat_sid";
-
-    $strchat = get_string('modulename', 'chat');
 
 ?>
 
@@ -66,7 +66,7 @@
   <frameset rows="0,0,*,50" border="0" framespacing="no" frameborder="no" marginwidth="2" marginheight="1">
    <frame src="../empty.php" name="empty" scrolling="no" marginwidth="0" marginheight="0">
    <frame src="jsupdate.php?<?php echo $params ?>" name="jsupdate" scrolling="no" marginwidth="0" marginheight="0">
-   <frame src="chatmsg.php" name="msg" scrolling="auto" marginwidth="2" marginheight="1">
+   <frame src="chatmsg.php?<?php echo $params ?>" name="msg" scrolling="auto" marginwidth="2" marginheight="1">
    <frame src="chatinput.php?<?php echo $params ?>" name="input" scrolling="no" marginwidth="2" marginheight="1">
   </frameset>
   <frame src="users.php?<?php echo $params ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5">
