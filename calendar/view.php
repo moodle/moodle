@@ -596,7 +596,7 @@ function calendar_print_event_table($event, $starttime, $endtime, &$coursecache,
         echo '<tr><td colspan="2">'.$event->name.'</td></tr>';
     }
 
-    echo "</thead>\n<tbody>\n<tr><td style='vertical-align: top;'>";
+    echo "</thead>\n<tbody>\n<tr><td style='vertical-align: top;' width=40%>";
 
     if(!empty($event->modulename)) {
         // The module name is set. This handling code should be synchronized with that in calendar_get_upcoming()
