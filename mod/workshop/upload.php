@@ -89,7 +89,7 @@
                             }
                         }
                         add_to_log($course->id, "workshop", "resubmit", "view.php?id=$cm->id", 
-                                "$workshop->id");
+                                "$workshop->id","$cm->id");
                     }
 					if (! $dir = workshop_file_area($workshop, $newsubmission)) {
 						error("Sorry, an error in the system prevents you from uploading files: contact your teacher or system administrator");
