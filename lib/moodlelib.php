@@ -10,7 +10,7 @@
 
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
-function print_header ($title="", $heading="", $navigation="", $focus="", $meta="", $cache=true, $button="", $menu="") {
+function print_header ($title="", $heading="", $navigation="", $focus="", $meta="", $cache=true, $button="&nbsp;", $menu="") {
 // $title - appears top of window
 // $heading - appears top of page
 // $navigation - premade navigation string
