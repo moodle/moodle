@@ -13,6 +13,7 @@
         error("You must be an administrator to edit users this way.");
     }
 
+
     if (! $site = get_site()) {
         error("Could not find site-level course");
     }
@@ -26,6 +27,15 @@
     $strchoose = get_string("choose");
     $struploadusers = get_string("uploadusers");
     $strusersnew = get_string("usersnew");
+    $invalidfieldname = get_string("invalidfieldname");
+    $fieldrequired = get_string("fieldrequired");
+    $missingfield = get_string("missingfield");
+    $erroronline = get_string("erroronline");
+    $unknowncourse = get_string("unknowncourse");
+    $usernotaddedregistered = get_string("usernotaddedregistered");
+    $usernotaddederror = get_string("usernotaddederror");
+    $enroledincourse = get_string("enroledincourse");
+    $notenroledincourse = get_string("notenroledincourse");
 
 /// Print the header
 
@@ -85,7 +95,7 @@
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
             if (!($required[$h] or $optionalDefaults[$h] or $optional[$h])) {
-                error("\"$h\" is not a valid field name.", 'uploaduser.php');
+                error("\"$h\" $invalidfieldname.", 'uploaduser.php');
             }
             if ($required[$h]) {
                 $required[$h] = 2;
@@ -94,18 +104,17 @@
         // check for required fields
         foreach ($required as $key => $value) {
             if ($value < 2) {
-                error("\"$key\" is a required field.", 'uploaduser.php');
+                error("\"$key\" $fieldrequired.", 'uploaduser.php');
             }
         }
         $linenum = 2; // since header is line 1
 
         while (!feof ($fp)) {
             //Note: commas within a field should be encoded as &#44
-            //Last field, courseid, is optional. If present it should be the Moodle
-            //course id number for the course in which student should be initially enroled
             $line = split("\,", fgets($fp,1024));
             foreach ($line as $key => $value) {
-                $record[$header[$key]] = trim($value);
+                //decode encoded commas
+                $record[$header[$key]] = preg_replace('/\&\#44/',',',trim($value));
             }
             if ($record[$header[0]]) {
                 // add a new user to the database
@@ -115,7 +124,7 @@
                 foreach ($record as $name => $value) {
                     // check for required values
                     if ($required[$name] and !$value) {
-                        error("Missing \"$name\" on line $linenum.", 'uploaduser.php');
+                        error("$missingfield \"$name\" $erroronline $linenum.", 'uploaduser.php');
                     }
                     // password needs to be encrypted
                     else if ($name == "password") {
@@ -148,7 +157,7 @@
                 }
                 for ($i=0; $i<5; $i++) {
                     if ($addcourse[$i] && !$courseid[$i]) {
-                        $notifytext .= "-1," . $addcourse[$i] . " unknown course<br \>\n";
+                        $notifytext .= "-1," . $addcourse[$i] . " $unknowncourse<br \>\n";
                     }
                 }
                 if (! $user->id = insert_record("user", $user)) {
@@ -161,9 +170,9 @@
                             $error_uid = $user->id;
                         }
                         if ($error_uid != -1) {
-                            $notifytext .= $error_uid . "," . $username . ",user not added - already registered";
+                            $notifytext .= $error_uid . "," . $username . ",$usernotaddedregistered";
                         } else {
-                            $notifytext .= $error_uid . ",failed to add user " . $username . " unknown error";
+                            $notifytext .= $error_uid . "," . $username . ",$usernotaddederror";
                         } 
                     }
                 } else if ($user->username != "changeme") {
@@ -175,9 +184,9 @@
                     if ($courseid[$i]) {
                         if (enrol_student($user->id, $courseid[$i])) {
                             $lbreak = 0;
-                            $notifytext .= ",enroled in course $addcourse[$i]<br \>\n";
+                            $notifytext .= ",$enroledincourse $addcourse[$i]<br \>\n";
                         } else {
-                            $notifytext .= ",error: enrolment in course $addcourse[$i] failed<br \>\n";
+                            $notifytext .= ",$notenroledincourse $addcourse[$i]<br \>\n";
                         }
                     }
                 }
@@ -188,7 +197,7 @@
             }
         }
         fclose($fp);
-        notify("$strusersnew: $numusers");
+        notify("$notifytext <br />\n$strusersnew: $numusers");
 
         echo '<hr />';
     }
@@ -224,3 +233,4 @@ function my_file_get_contents($filename, $use_include_path = 0) {
 }
 
 ?>
+
