@@ -279,6 +279,8 @@
 /// printing the entries
     $entriesshown = 0;
     $currentpivot = '';
+    $ratingsmenuused = NULL;
+    $paging = NULL;
     $tableisopen = 0;
     if ( $hook == 'SPECIAL' ) {
         $alphabet = explode(",", get_string("alphabet"));

@@ -84,6 +84,10 @@
     break;
     case GLOSSARY_AUTHOR_VIEW:
 
+        if (!isset($sqlsortkey)) {
+            $sqlsortkey = NULL;
+        }
+
         $where = '';
         switch ($CFG->dbtype) {
         case 'postgres7':

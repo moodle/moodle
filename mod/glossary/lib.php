@@ -1551,7 +1551,7 @@ global $CFG;
     $status = fwrite ($h,glossary_start_tag("INFO",1,true));
         fwrite ($h,glossary_full_tag("NAME",2,false,$glossary->name));
         fwrite ($h,glossary_full_tag("INTRO",2,false,$glossary->intro));
-        fwrite ($h,glossary_full_tag("STUDENTCANentry",2,false,$glossary->studentcanentry));
+        fwrite ($h,glossary_full_tag("STUDENTCANPOST",2,false,$glossary->studentcanpost));
         fwrite ($h,glossary_full_tag("ALLOWDUPLICATEDENTRIES",2,false,$glossary->allowduplicatedentries));
         fwrite ($h,glossary_full_tag("SHOWSPECIAL",2,false,$glossary->showspecial));
         fwrite ($h,glossary_full_tag("SHOWALPHABET",2,false,$glossary->showalphabet));
