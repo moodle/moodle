@@ -3,7 +3,7 @@
 $string['addcomment'] = 'Ajouter un commentaire';
 $string['addentry'] = 'Ajouter un nouvel article';
 $string['addingcomment'] = 'Ajout d\'un commentaire';
-$string['aliases'] = 'Synonymes(s)';
+$string['aliases'] = 'Termes associés';
 $string['allcategories'] = 'Toutes les catégories';
 $string['allentries'] = 'Tout';
 $string['allowcomments'] = 'Autoriser les commentaires';
