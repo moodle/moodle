@@ -179,8 +179,8 @@
         $teacheronly = "(".get_string("teacheronly", "", $teacher).")";
     }
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
     print_heading( get_string("userprofilefor", "", "$userfullname") );
+    print_simple_box_start("center", "", "$THEME->cellheading");
 	include("edit.html");
     print_simple_box_end();
     print_footer($course);
