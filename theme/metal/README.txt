@@ -1,7 +1,5 @@
 MOODLE THEME: METAL
 
-To install the theme, copy the "metal" directory to moodle's "theme" directory.
-
 This theme is designed by A. Chavan (chavan at users.sourceforge.net).
 
 It is based on moodle's "standardwhite" theme. 
