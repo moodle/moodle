@@ -3942,7 +3942,7 @@ function print_side_block_start($heading='', $attributes = array()) {
         $attrtext .= ' '.$attr.'="'.$val.'"';
     }
 
-    echo '<table'.$attrtext.'>';
+    echo '<table cellspacing="0" '.$attrtext.'>';  // cellspacing is to fix IE bug  :-(
     if ($heading) {
         echo '<tr><th class="header">'.$heading;
         if (!empty($CFG->allowuserblockhiding)) {
