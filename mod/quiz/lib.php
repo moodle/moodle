@@ -432,7 +432,7 @@ function quiz_update_instance($quiz) {
     $event->instance    = $quiz->id;
     $event->eventtype   = 'open';
     $event->timestart   = $quiz->timeopen;
-    $event->visible     = instance_is_visible('quiz', $quiz->id);
+    $event->visible     = instance_is_visible('quiz', $quiz);
     $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
     if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
@@ -630,7 +630,7 @@ function quiz_refresh_events($courseid = 0) {
         $event->userid      = 0;
         $event->modulename  = 'quiz';
         $event->instance    = $quiz->id;
-        $event->visible     = instance_is_visible('quiz', $quiz->id);
+        $event->visible     = instance_is_visible('quiz', $quiz);
         $event->timestart   = $quiz->timeopen;
         $event->eventtype   = 'open';
         $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
