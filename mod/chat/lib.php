@@ -366,9 +366,10 @@ function chat_delete_old_users() {
     global $CFG;
 
     $timeold = time() - $CFG->chat_old_ping;
+    $query = "lastping < '$timeold' AND version != 'sockets'";
 
-    if ($oldusers = get_records_select("chat_users", "lastping < '$timeold'") ) {
-        delete_records_select("chat_users", "lastping < '$timeold'");
+    if ($oldusers = get_records_select("chat_users", $query) ) {
+        delete_records_select("chat_users", $query);
         foreach ($oldusers as $olduser) {
             $message->chatid = $olduser->chatid;
             $message->userid = $olduser->userid;
