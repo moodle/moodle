@@ -134,6 +134,7 @@
                 fwrite ($bf,full_tag("FLAGS",8,false,$page->flags));
                 fwrite ($bf,full_tag("CONTENT",8,false,$page->content));
                 fwrite ($bf,full_tag("AUTHOR",8,false,$page->author));
+                fwrite ($bf,full_tag("USERID",8,false,$page->userid));
                 fwrite ($bf,full_tag("CREATED",8,false,$page->created));
                 fwrite ($bf,full_tag("LASTMODIFIED",8,false,$page->lastmodified));
                 fwrite ($bf,full_tag("REFS",8,false,$page->refs));

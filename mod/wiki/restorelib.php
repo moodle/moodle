@@ -177,6 +177,7 @@
             $page->flags = backup_todb($pag_info['#']['FLAGS']['0']['#']);
             $page->content = backup_todb($pag_info['#']['CONTENT']['0']['#']);
             $page->author = backup_todb($pag_info['#']['AUTHOR']['0']['#']);
+            $page->userid = backup_todb($pag_info['#']['USERID']['0']['#']);
             $page->created = backup_todb($pag_info['#']['CREATED']['0']['#']);
             $page->lastmodified = backup_todb($pag_info['#']['LASTMODIFIED']['0']['#']);
             $page->refs = backup_todb($pag_info['#']['REFS']['0']['#']);
