@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2004013101)
+      // dialogue.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['addmynewentries'] = '新しいエントリーを追加';
 $string['addmynewentry'] = '新しいエントリーを追加';
-$string['addsubject'] = '題名を追加';
+$string['addsubject'] = 'テーマの追加';
 $string['allowmultiple'] = '1人で1つ以上のダイアログの作成を許可する';
 $string['allowstudentdialogues'] = '学生 - 学生のダイアログを許可する';
 $string['close'] = '閉じる';
@@ -34,7 +34,7 @@ $string['newdialogueentries'] = '新しいダイアログエントリ';
 $string['newentry'] = '新しいエントリ';
 $string['noavailablepeople'] = 'ダイアログを行う相手がいません。';
 $string['nopersonchosen'] = '誰も選択していません';
-$string['nosubject'] = '題名が入力されていません';
+$string['nosubject'] = 'テーマが入力されていません';
 $string['notextentered'] = 'テキストが入力されていません';
 $string['notstarted'] = 'このダイアログをまだ開始していません';
 $string['notyetseen'] = 'まだ閲覧されていません';
@@ -58,8 +58,8 @@ $string['seen'] = '$a 以前に閲覧';
 $string['sendmailmessages'] = '新しいエントリーに関してメールを送信する';
 $string['status'] = 'ステータス';
 $string['studenttostudent'] = '学生 - 学生';
-$string['subject'] = '題名';
-$string['subjectadded'] = '題名が追加されました';
+$string['subject'] = 'テーマ';
+$string['subjectadded'] = 'テーマが追加されました';
 $string['teachertostudent'] = '教師 - 学生';
 $string['typefirstentry'] = '最初のエントリーをここに入力してください';
 $string['typefollowup'] = 'フォローアップをここに入力してください';

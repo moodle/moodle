@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 nearly beta! (2004022400)
+      // moodle.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['action'] = '操作';
@@ -16,6 +16,9 @@ $string['add'] = '追加';
 $string['addadmin'] = '管理者を追加';
 $string['addcreator'] = 'コース作成者を追加';
 $string['added'] = '$a が追加されました';
+$string['addedtogroup'] = 'グループ　$a に追加されました';
+$string['addedtogroupnot'] = 'グループ $a  に追加されませんでした';
+$string['addedtogroupnotenrolled'] = 'コースに登録されていない為、グループ $a に追加されませんでした';
 $string['addinganew'] = '新しい $a を追加する';
 $string['addinganewto'] = '新しい $a->what を $a->to へ追加する';
 $string['addingdatatoexisting'] = '既存データに追加する';
@@ -624,6 +627,7 @@ $string['notenrolled'] = '$a はこのコースには参加していません';
 $string['noteuserschangednonetocourse'] = '注意:ユーザデータをリストアする場合、コースユーザをリストアする必要があります。あなたの設定が変更されました。';
 $string['nothingnew'] = '最終ログインより更新されたものはありません';
 $string['notincluded'] = '含まない';
+$string['notingroup'] = '申し訳ございません。この活動を閲覧する為にはグループに属している必要があります。';
 $string['nousersmatching'] = 'ユーザ \'$a\' は見つかりませんでした';
 $string['nousersyet'] = 'まだ利用者がいません';
 $string['now'] = '現在';
