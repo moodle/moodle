@@ -113,7 +113,8 @@
 
 //  Print other functions
     echo "<CENTER><TABLE ALIGN=CENTER><TR>";
-    if ($course->category and !isguest() and (isteacher($course->id) and ($user->id != $USER->id)) ) {
+    if ((isstudent($course->id) and ($user->id == $USER->id)) or 
+        (isteacher($course->id) and isstudent($course->id, $user->id)) ) {
         echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
         echo "<INPUT type=hidden name=id value=\"$course->id\">";
         echo "<INPUT type=hidden name=user value=\"$user->id\">";
