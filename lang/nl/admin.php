@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111700)
 
 
+$string['blockinstances'] = 'In gebruik';
 $string['blockmultiple'] = 'Meer';
 $string['cachetext'] = 'Hoelang mag tekst in cache blijven';
 $string['change'] = 'wijzig';

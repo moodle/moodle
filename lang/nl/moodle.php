@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111700)
 
 
 $string['action'] = 'Actie';
@@ -300,6 +300,7 @@ $string['defaultcourseteacher'] = 'Leraar';
 $string['defaultcourseteachers'] = 'Leraren';
 $string['delete'] = 'Verwijder';
 $string['deleteall'] = 'Verwijder alle';
+$string['deletecategorycheck'] = 'Ben je er zeker van dat je heel de categorie <b>\'$a\'</b> wil verwijderen?<br /> Hierdoor zullen alle vakken van die categorie verplaatst worden: indien mogelijk naar de bovenliggende categorie en indien niet mogelijk naar de categorie \'Diversen\'.';
 $string['deletecheck'] = 'Verwijder $a?';
 $string['deletecheckfiles'] = 'Weet je zeker dat je deze bestanden wilt verwijderen?';
 $string['deletecheckfull'] = 'Weet je zeker dat je $a volledig wilt verwijderen?';
