@@ -83,25 +83,25 @@
 	    // Create user scoes records
 	    //
 	    foreach ($scoes as $sco) {
-		if ($sco->launch != "") {
-		    if (!isset($first))
+		if (($sco->launch != "") && ($sco->type != "sca") && ($sco->type != "asset")){
+		    if (!isset($first)) {
 			$first = $sco;
+		    }
 		    $sco_user->userid = $USER->id;
 		    $sco_user->scoid = $sco->id;
 		    $sco_user->scormid = $scorm->id;
 		    $element = "cmi_core_lesson_status";
-		    if ($sco->type == "sco") 
-			$sco_user->$element = "not attempted";
-		    else if (($sco->type == "sca") || ($sco->type == "asset"))
-			$sco_user->$element = "completed";
+		    $sco_user->$element = "not attempted";
 		    $ident = insert_record("scorm_sco_users",$sco_user);
 		}
 	    }
-	    if (isset($first))
+	    if (isset($first)) {
 	        $sco = $first;
+	    }
 	    if (!empty($scoid)) {
-		if ($sco = get_record("scorm_scoes","id",$scoid))
+		if ($sco = get_record("scorm_scoes","id",$scoid)) {
 		    unset($first);
+		}
 	    }
 	}
     }
@@ -147,10 +147,13 @@
 	}
     }
     $navObj = "top.";
-    if ($scorm->popup == "")
-        $navObj = "top.navigation.";
-        
-    include("api1_2.php");
+    if ($scorm->popup == "") {
+	$navObj = "top.navigation.";
+    }
+    
+    if ($sco->type == 'sco') {
+	include("api1_2.php");
+    }
 
 ?>
 
@@ -185,6 +188,12 @@ function SCOInitialize() {
     }
 ?>
 } 
+
+function SCOFinish(){
+    if (typeof API != "undefined") {
+	SaveTotalTime();
+    }
+}
 
 function changeSco(direction) {
     if (direction == "previous")
