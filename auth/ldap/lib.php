@@ -122,7 +122,7 @@ function auth_get_userinfo($username){
 
     $user_dn = auth_ldap_find_userdn($ldap_connection, $username);
 
-    if (! isset($CFG->ldap_objectclass)) {
+    if (empty($CFG->ldap_objectclass)) {        // Can't send empty filter
         $CFG->ldap_objectclass="objectClass=*";
     }
   
