@@ -2259,15 +2259,15 @@ function forum_add_discussion($discussion,&$message) {
     $discussion->usermodified = $post->userid;
     $discussion->userid = $USER->id;
 
-    if (! $discussion->id = insert_record("forum_discussions", $discussion) ) {
+    if (! $post->discussion = insert_record("forum_discussions", $discussion) ) {
         delete_records("forum_posts", "id", $post->id);
         return 0;
     }
 
     // Finally, set the pointer on the post.
-    if (! set_field("forum_posts", "discussion", $discussion->id, "id", $post->id)) {
+    if (! set_field("forum_posts", "discussion", $post->discussion, "id", $post->id)) {
         delete_records("forum_posts", "id", $post->id);
-        delete_records("forum_discussions", "id", $discussion->id);
+        delete_records("forum_discussions", "id", $post->discussion);
         return 0;
     }
 
@@ -2275,7 +2275,7 @@ function forum_add_discussion($discussion,&$message) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
 
-    return $discussion->id;
+    return $post->discussion;
 }
 
 
