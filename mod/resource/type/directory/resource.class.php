@@ -93,10 +93,10 @@ function display() {
     $strsize = get_string("size");
     $strmodified = get_string("modified");
 
-    echo '<table cellpadding="4" cellspacing="1">';
-    echo "<tr><th colspan=\"2\">$strname</th>".
-         "<th align=\"right\" colspan=\"2\">$strsize</th>".
-         "<th align=\"right\">$strmodified</th>".
+    echo '<table cellpadding="4" cellspacing="1" class="files">';
+    echo "<tr><th colspan=\"2\" class=\"header name\">$strname</th>".
+         "<th align=\"right\" colspan=\"2\" class=\"header size\">$strsize</th>".
+         "<th align=\"right\" class=\"header date\">$strmodified</th>".
          "</tr>";
     foreach ($files as $file) {
         if (is_dir("$CFG->dataroot/$relativepath/$file")) {          // Must be a directory
@@ -119,20 +119,21 @@ function display() {
         echo '<td>';
         echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"\"/>";
         echo '</td>';
-        echo '<td nowrap="nowrap"><p>';
         if ($icon == 'folder.gif') {
+            echo '<td nowrap="nowrap" class="name folder">';
             echo "<a href=\"view.php?id={$cm->id}&amp;subdir=$subdir/$file\">$file</a>";
         } else {
+            echo '<td nowrap="nowrap" class="name file">';
             link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "$file", 450, 600, '');
         }
-        echo '</p></td>';
+        echo '</td>';
         echo '<td>&nbsp;</td>';
-        echo '<td align="right" nowrap="nowrap"><p><font size="-1">';
+        echo '<td align="right" nowrap="nowrap" class="size">';
         echo $filesize;
-        echo '</font></p></td>';
-        echo '<td align="right" nowrap="nowrap"><p><font size="-1">';
+        echo '</td>';
+        echo '<td align="right" nowrap="nowrap" class="date">';
         echo userdate(filectime("$CFG->dataroot/$relativepath/$file"), $strftime);
-        echo '</font></p></td>';
+        echo '</td>';
         echo '</tr>';
     }
     echo '</table>';
