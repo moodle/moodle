@@ -33,22 +33,22 @@
 	$coursedir = "$CFG->dataroot/$course->id";
 
 	if ($scormdir = make_upload_directory("$course->id/$CFG->moddata/scorm")) {
-        if ($tempdir = scorm_datadir($scormdir, $form->datadir)) {
-            copy ("$coursedir/$form->reference", $tempdir."/".basename($form->reference));
-            if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
-                include_once($CFG->dirroot.'/lib/pclzip/pclzip.lib.php');
-                $archive = new PclZip($tempdir."/".basename($form->reference));
-                if (!$list = $archive->extract($tempdir)) {
-                    error($archive->errorInfo(true));
+            if ($tempdir = scorm_datadir($scormdir, $form->datadir)) {
+                copy ("$coursedir/$form->reference", $tempdir."/".basename($form->reference));
+                if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
+                    include_once($CFG->dirroot.'/lib/pclzip/pclzip.lib.php');
+                    $archive = new PclZip($tempdir."/".basename($form->reference));
+                    if (!$list = $archive->extract($tempdir)) {
+                        error($archive->errorInfo(true));
+                    }
+                } else {
+                    $command = "cd $tempdir; $CFG->unzip -o ".basename($form->reference)." 2>&1";
+                    exec($command);
                 }
+                $result = scorm_validate($tempdir."/imsmanifest.xml");
             } else {
-                $command = "cd $tempdir; $CFG->unzip -o ".basename($form->reference)." 2>&1";
-                exec($command);
+                $result = "packagedir";
             }
-            $result = scorm_validate($tempdir."/imsmanifest.xml");
-        } else {
-            $result = "packagedir";
-        }
 	} else {
 	    $result = "datadir";
 	}
@@ -103,13 +103,13 @@
 	    <input type="submit" name=cancel value="<?php print_string("cancel") ?>">
 	</center>
         </form>
-<?
+<?php
     	} else {
 ?>
 	<center>
            <input type="button" value="<?php print_string("continue") ?>" onClick="document.location='<?php echo $CFG->wwwroot ?>/course/view.php?id=<?php echo $course->id ?>';">
         </center>
-<?
+<?php
 	}
 	print_simple_box_end();
         print_footer($course);
