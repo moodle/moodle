@@ -25,6 +25,7 @@ if(record_exists('block_instance', 'pagetype', 'course')) {
  * Definition of course page type.
  */
 define('PAGE_COURSE_VIEW', 'course-view');
+define('PAGE_QUIZ_VIEW',   'mod-quiz-view');
 
 /**
  * Factory function page_create_object(). Called with a pagetype identifier and possibly with
@@ -66,7 +67,8 @@ function page_map_class($type, $classname = NULL) {
     
     if ($mappings === NULL) {
         $mappings = array(
-            PAGE_COURSE_VIEW => 'page_course'
+            PAGE_COURSE_VIEW => 'page_course',
+            PAGE_QUIZ_VIEW   => 'page_quiz',
         );
     }
 
@@ -499,6 +501,175 @@ class page_course extends page_base {
         } else if ($instance->position == BLOCK_POS_RIGHT && $move == BLOCK_MOVE_LEFT) {
             return BLOCK_POS_LEFT;
         }
+        return $instance->position;
+    }
+}
+
+/**
+ * Class that models the behavior of a moodle mod
+ *
+ * @author Jon Papaioannou
+ * @package pages
+ */
+
+class page_quiz extends page_base {
+
+    // Any data we might need to store specifically about ourself should be declared here.
+    // After init_full() is called for the first time, ALL of these variables should be
+    // initialized correctly and ready for use.
+    var $courserecord = NULL;
+    var $modulerecord = NULL;
+
+    // Do any validation of the officially recognized bits of the data and forward to parent.
+    // Do NOT load up "expensive" resouces (e.g. SQL data) here!
+    function init_quick($data) {
+        if(empty($data->pageid)) {
+            error('Cannot quickly initialize page: empty course id');
+        }
+        parent::init_quick($data);
+    }
+
+    // Here you should load up all heavy-duty data for your page. Basically everything that
+    // does not NEED to be loaded for the class to make basic decisions should NOT be loaded
+    // in init_quick() and instead deferred here. Of course this function had better recognize
+    // $this->full_init_done to prevent wasteful multiple-time data retrieval.
+    function init_full() {
+        if($this->full_init_done) {
+            return;
+        }
+        $module = get_record('modules', 'name', 'quiz');
+        $this->modulerecord = get_record('course_modules', 'module', $module->id, 'instance', $this->id);
+        if(empty($this->modulerecord)) {
+            error('Cannot fully initialize page: invalid quiz instance id '. $this->id);
+        }
+        $this->courserecord = get_record('course', 'id', $this->modulerecord->course);
+        if(empty($this->courserecord)) {
+            error('Cannot fully initialize page: invalid course id '. $this->id);
+        }
+        $this->full_init_done = true;
+    }
+
+    // USER-RELATED THINGS
+
+    // When is a user said to have "editing rights" in this page? This would have something
+    // to do with roles, in the future.
+    function user_allowed_editing() {
+        return isteacheredit($this->modulerecord->course);
+    }
+
+    // Is the user actually editing this page right now? This would have something
+    // to do with roles, in the future.
+    function user_is_editing() {
+        return isediting($this->modulerecord->course);
+    }
+
+    // HTML OUTPUT SECTION
+
+    // This function prints out the common part of the page's header.
+    // You should NEVER print the header "by hand" in other code.
+    function print_header($title, $morebreadcrumbs = NULL) {
+        global $USER, $CFG;
+
+        $this->init_full();
+        $replacements = array(
+            '%fullname%' => $this->courserecord->fullname
+        );
+        foreach($replacements as $search => $replace) {
+            $title = str_replace($search, $replace, $title);
+        }
+
+        if($this->courserecord->id == SITEID) {
+            $breadcrumbs = array();
+        }
+        else {
+            $breadcrumbs = array($this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id);
+        }
+
+        if(!empty($morebreadcrumbs)) {
+            $breadcrumbs = array_merge($breadcrumbs, $morebreadcrumbs);
+        }
+
+        $total     = count($breadcrumbs);
+        $current   = 1;
+        $crumbtext = '';
+        foreach($breadcrumbs as $text => $href) {
+            if($current++ == $total) {
+                $crumbtext .= ' '.$text;
+            }
+            else {
+                $crumbtext .= ' <a href="'.$href.'">'.$text.'</a> ->';
+            }
+        }
+
+        // The "Editing On" button will be appearing only in the "main" course screen
+        // (i.e., no breadcrumbs other than the default one added inside this function)
+        $button = empty($morebreadcrumbs) ? update_course_icon($this->courserecord->id) : '&nbsp;';
+
+        $loggedinas = '<p class="logininfo">'. user_login_string($this->courserecord, $USER) .'</p>';
+        print_header($title, $this->courserecord->fullname, $crumbtext,
+                     '', '', true, $button, $loggedinas);
+    }
+
+    // SELF-REPORTING SECTION
+
+    // This is hardwired here so the factory function page_create_object() can be sure there was no mistake.
+    // Also, it doubles as a way to let others inquire about our type.
+    function get_type() {
+        return PAGE_QUIZ_VIEW;
+    }
+
+    // This is like the "category" of a page of this "type". For example, if the type is PAGE_COURSE_VIEW
+    // the format_name is the actual name of the course format. If the type were PAGE_ACTIVITY_VIEW, then
+    // the format_name might be that activity's name etc.
+    function get_format_name() {
+        return 'quiz';
+    }
+
+    // This should return a fully qualified path to the URL which is responsible for displaying us.
+    function url_get_path() {
+        global $CFG;
+        return $CFG->wwwroot .'/mod/quiz/view.php';
+    }
+
+    // This should return an associative array of any GET/POST parameters that are needed by the URL
+    // which displays us to make it work. If none are needed, return an empty array.
+    function url_get_parameters() {
+        $this->init_full();
+        return array('id' => $this->modulerecord->id);
+    }
+
+    // BLOCKS RELATED SECTION
+
+    // Which are the positions in this page which support blocks? Return an array containing their identifiers.
+    // BE CAREFUL, ORDER DOES MATTER! In textual representations, lists of blocks in a page use the ':' character
+    // to delimit different positions in the page. The part before the first ':' in such a representation will map
+    // directly to the first item of the array you return here, the second to the next one and so on. This way,
+    // you can add more positions in the future without interfering with legacy textual representations.
+    function blocks_get_positions() {
+        return array(BLOCK_POS_LEFT);
+    }
+
+    // When a new block is created in this page, which position should it go to?
+    function blocks_default_position() {
+        return BLOCK_POS_LEFT;
+    }
+
+    // When we are creating a new page, use the data at your disposal to provide a textual representation of the
+    // blocks that are going to get added to this new page. Delimit block names with commas (,) and use double
+    // colons (:) to delimit between block positions in the page. See blocks_get_positions() for additional info.
+    function blocks_get_default() {
+        global $CFG;
+        return '';
+    }
+
+    // Given an instance of a block in this page and the direction in which we want to move it, where is
+    // it going to go? Return the identifier of the instance's new position. This allows us to tell blocklib
+    // how we want the blocks to move around in this page in an arbitrarily complex way. If the move as given
+    // does not make sense, make sure to return the instance's original position.
+    //
+    // Since this is going to get called a LOT, pass the instance by reference purely for speed. Do **NOT**
+    // modify its data in any way, this will actually confuse blocklib!!!
+    function blocks_move_position(&$instance, $move) {
         return $instance->position;
     }
 }
