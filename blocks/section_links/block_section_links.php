@@ -3,13 +3,15 @@
 class CourseBlock_section_links extends MoodleBlock {
 
     function CourseBlock_section_links ($course) {
-        if ($course->format == 'topics') {
-            $this->title = get_string('topics', 'block_section_links');
-        }
-        else if ($course->format == 'weeks') {
-            $this->title = get_string('weeks', 'block_section_links');
-        }
-        else {
+        if (isset($course->format)) {
+            if ($course->format == 'topics') {
+                $this->title = get_string('topics', 'block_section_links');
+            } else if ($course->format == 'weeks') {
+                $this->title = get_string('weeks', 'block_section_links');
+            } else {
+                $this->title = get_string('blockname', 'block_section_links');
+            }
+        } else {
             $this->title = get_string('blockname', 'block_section_links');
         }
         $this->content_type = BLOCK_TYPE_TEXT;
