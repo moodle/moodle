@@ -89,19 +89,30 @@
                              "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$encodedconcept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
                     }
                     $replace = "\\[]'\"*()\?";
-                    $currentconcept = glossary_addslashes($replace,$concept->concept);                    
+                    $currentconcept = glossary_addslashes($replace,$concept->concept);
                     if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
+                        //Avoid integers < 1000 to be linked. See bug 1446.
+                        $intcurrent = intval($currentconcept);
+                        if (!empty($intcurrent) && strval($intcurrent) == $currentconcept && $intcurrent < 1000) {
+                            $currentconcept = '';
+                        }
                         if ( !$concept->category ) {
                             if ( $aliases = get_records("glossary_alias","entryid",$concept->id, "alias") ) {
                                 foreach ($aliases as $alias) {
-                                    $currentalias = glossary_addslashes($replace,$alias->alias);
-                                    if ( trim( $currentalias ) != '' ) {
-                                        $currentconcept .= "|" . trim($currentalias);
+                                    $currentalias = trim(glossary_addslashes($replace,$alias->alias));
+                                    //Avoid integers < 1000 to be linked. See bug 1446.
+                                    $intcurrent = intval($currentalias);
+                                    if (!(!empty($intcurrent) && strval($intcurrent) == $currentalias && $intcurrent < 1000)) {
+                                        if ( $currentalias != '' ) {
+                                            $currentconcept .= "|" . trim($currentalias);
+                                        }
                                     }
                                 }
                             }
                         }
-                        $text = glossary_link_concepts($text,$currentconcept,$href_tag_begin, "</a>",$concept->casesensitive,$concept->fullmatch);
+                        if ($currentconcept) {
+                            $text = glossary_link_concepts($text,$currentconcept,$href_tag_begin, "</a>",$concept->casesensitive,$concept->fullmatch);
+                        }
                     }
                 }
             }
