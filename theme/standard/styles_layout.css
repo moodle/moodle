@@ -781,6 +781,7 @@ table.calendar-controls .next
 
 .block_adminblock .sideblockmain {
     text-align: center;
+    padding: 10px;
 }
 
 /* block_quiz_results.php */
