@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 development (2003012000)
+      // survey.php - created with Moodle 1.0.9 development (2003021600)
 
 
 $string['actual'] = "Toteutunut";
@@ -34,7 +34,7 @@ $string['attls1short'] = "keskity perustelujen laatuun";
 $string['attls2'] = "Haluan olla 'paholaisen asianajaja', puolustaa vastakohtaa toisten väitteille.";
 $string['attls20'] = "Käytän aikaa löytääkseni virheet. Etsin vaikka kirjallisesta ilmaisusta kohtia joita ei ole ilmaistu hyvin.";
 $string['attls20short'] = "mikä on vialla?";
-$string['attls2short'] = "Leiki \"paholaisen asianajajaa\"";
+$string['attls2short'] = "Leiki \\\"paholaisen asianajajaa\\\"";
 $string['attls3'] = "Yritän ymmärtää ihmisten taustat, ja sen mikä saa heidät tuntemaan niin kun he tuntevat.";
 $string['attls3short'] = "Ihmisten taustat";
 $string['attls4'] = "Tärkein osa koulutustani on ollut oppia ymmärtämään toisenlaisia ihmisiä.";
@@ -58,6 +58,13 @@ $string['attlsm2'] = "Sosiaalinen oppiminen";
 $string['attlsm3'] = "Eristyvä oppiminen";
 $string['attlsmintro'] = "Keskustelussa ...";
 $string['attlsname'] = "ATTLS  (20 kysymystä)";
+$string['ciq1'] = "Milloin tunsit olevasi kaikkein sitoutunein opiskeluun?";
+$string['ciq2'] = "Milloin tunsit olevasi kaikkein vähiten sitoutunut opiskeluun?";
+$string['ciq3'] = "Mikä foorumeissa tapahtunut seikka oli mielestäsi eniten avuksi tai hyödyllinen?";
+$string['ciq4'] = "Mikä foorumeissa tapahtunut seikka oli mielestäsi hankala tai hämmentävä?";
+$string['ciq5'] = "Mikä tapahtuma yllätti sinua eniten?";
+$string['ciqintro'] = "Mieti kurssin aikana sattuneita tapahtumia ja vastaa alla oleviin kysymyksiin.";
+$string['ciqname'] = "Kriittiset tapahtumat";
 $string['clicktocontinue'] = "Klikkaa tästä jatkaaksesi";
 $string['clicktocontinuecheck'] = "Klikkaa tästä jatkaaksesi";
 $string['colles1'] = "oppiseni keskittyy asihoin jotka kiinnostavat minua";

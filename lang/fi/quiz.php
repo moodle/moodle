@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.8 beta test (2003010400)
+      // quiz.php - created with Moodle 1.0.9 development (2003021600)
 
 
+$string['addquestions'] = "Lisää kysymyksiä";
 $string['addselectedtoquiz'] = "Lisää valittu tenttiin";
 $string['allowreview'] = "Salli tarkastelu";
 $string['alreadysubmitted'] = "Näyttäisi siltä että olet jo lähettänyt tämän vastauksen.";
@@ -32,6 +33,7 @@ $string['choices'] = "Vaihtoehdot";
 $string['correctanswer'] = "Oikea vastaus";
 $string['correctanswers'] = "Oikeat vastaukset";
 $string['createnewquestion'] = "Luo uusi kysymys";
+$string['custom'] = "Muokautettu muoto";
 $string['daysavailable'] = "Päivää esillä";
 $string['default'] = "Oletus";
 $string['defaultinfo'] = "Oletus kategoria kysymyksille.";
@@ -44,6 +46,7 @@ $string['editingshortanswer'] = "Muokataan lyhyttehtävää";
 $string['editingtruefalse'] = "Muokataan tosi/epätosi tehtävää";
 $string['false'] = "Epätosi";
 $string['feedback'] = "Palaute";
+$string['fileformat'] = "Tiedosto muoto";
 $string['filloutoneanswer'] = "Sinun pitää täyttää vähintään yksi vastaus. Tyhjiä vastuksia ei käytetä.";
 $string['fillouttwochoices'] = "Sinun pitää valita vähintään kaksi vaihtoehtoa. Tyhjiä vaihtoehtoja ei käytetä.";
 $string['fractionsaddwrong'] = "Valitsemasi luokittelu ei ole 100%% asti<br>, vaan \$a%%.<br>
@@ -55,10 +58,12 @@ $string['gradehighest'] = "Ylimmät pisteet";
 $string['grademethod'] = "Pisteytys tapa";
 $string['guestsno'] = "Pahus, vieraat eivät voi katsella tai täyttää kyselyitä.";
 $string['imagedisplay'] = "Näytettävä kuva";
+$string['importquestions'] = "Tuo kysymykset tiedostosta";
 $string['introduction'] = "Johdanto";
 $string['marks'] = "Pistettä";
 $string['missingname'] = "Puutuva kysymyksen nimi";
 $string['missingquestiontext'] = "Puutuva kysymyksen teksti";
+$string['missingword'] = "Puuttuva sana muoto";
 $string['modulename'] = "Tentti";
 $string['modulenameplural'] = "Tentit";
 $string['multichoice'] = "Monivalinta";
@@ -69,6 +74,7 @@ $string['noquestions'] = "Kysymyksiä ei ole vielä lisätty.";
 $string['noreview'] = "Et voi tarkastella tätä tenttiä";
 $string['noreviewuntil'] = "Et voi tarkastella tätä tenttiä ennen \$a";
 $string['publish'] = "Julkaise";
+$string['qti'] = "IMS QTI  muoto";
 $string['question'] = "Kysymys";
 $string['questioninuse'] = "Kysymys '\$a' on jo käytössä:";
 $string['questionname'] = "Kysymyksen nimi";
@@ -103,6 +109,7 @@ $string['true'] = "Tosi";
 $string['truefalse'] = "Tosi/Epätosi";
 $string['type'] = "Tyyppi";
 $string['viewallanswers'] = "Katso \$a suoritetut tentit";
+$string['webct'] = "WebCT muoto";
 $string['yourfinalgradeis'] = "Lopullinen tuloksesi tästä tentistä on: \$a";
 
 ?>
