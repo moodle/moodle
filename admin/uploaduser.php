@@ -111,12 +111,11 @@
         }
         $linenum = 2; // since header is line 1
 
-        foreach ($optionalDefaults as $key => $value) {
-          $user->$key = $adminuser->$key;
-        }
- 
         while (!feof ($fp)) {
-            //Note: commas within a field should be encoded as &#44
+            foreach ($optionalDefaults as $key => $value) {
+                $user->$key = $adminuser->$key;
+            }
+           //Note: commas within a field should be encoded as &#44
             $line = split("\,", fgets($fp,1024));
             foreach ($line as $key => $value) {
                 //decode encoded commas
