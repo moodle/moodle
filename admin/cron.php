@@ -101,7 +101,7 @@
 
         if (!empty($CFG->cachetext)) {   // Defined in config.php
             $cachelifetime = time() - $CFG->cachetext;
-            delete_records_select("text_cache", "timemodified < '$cachelifetime'");
+            delete_records_select("cache_text", "timemodified < '$cachelifetime'");
         }
     }
 
