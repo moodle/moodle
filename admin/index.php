@@ -251,6 +251,8 @@
 
     print_table($table);
 
+    print_heading("Moodle $CFG->release ($CFG->version)", "CENTER", 1);
+
     print_footer();
 
 ?>
