@@ -153,8 +153,6 @@
             error("This module doesn't exist");
         }
 
-        $sectionname = get_string("name$course->format");
-
         if (! $form = get_record($module->name, "id", $cm->instance)) {
             error("The required instance of this module doesn't exist");
         }
@@ -171,8 +169,16 @@
         $form->instance     = $cm->instance;
         $form->mode         = "update";
 
+        $sectionname    = get_string("name$course->format");
         $fullmodulename = strtolower(get_string("modulename", $module->name));
-        $pageheading = "Updating a $fullmodulename in $sectionname $cw->section";
+
+        if ($form->section) {
+            $heading->what = $fullmodulename;
+            $heading->in   = "$sectionname $cw->section";
+            $pageheading = get_string("updatingain", "moodle", $heading);
+        } else {
+            $pageheading = get_string("updatinga", "moodle", $fullmodulename);
+        }
 
         
     } else if (isset($add)) {
@@ -189,8 +195,6 @@
             error("This course doesn't exist");
         }
 
-        $sectionname = get_string("name$course->format");
-
         if (! $module = get_record("modules", "name", $add)) {
             error("This module type doesn't exist");
         }
@@ -202,12 +206,15 @@
         $form->instance   = $cm->instance;
         $form->mode       = "add";
 
+        $sectionname    = get_string("name$course->format");
         $fullmodulename = strtolower(get_string("modulename", $module->name));
 
-        $pageheading = "Adding a new $fullmodulename";
-
         if ($form->section) {
-            $pageheading .= " to $sectionname $form->section";
+            $heading->what = $fullmodulename;
+            $heading->to   = "$sectionname $form->section";
+            $pageheading = get_string("addinganewto", "moodle", $heading);
+        } else {
+            $pageheading = get_string("addinganew", "moodle", $fullmodulename);
         }
 
     } else {
@@ -220,15 +227,15 @@
         error("You can't modify this course!");
     }
 
+    $streditinga = get_string("editinga", "moodle", $fullmodulename);
+
     if ($course->category) {
-        print_header("$course->shortname: Editing a $fullmodulename", 
-                     "$course->shortname: Editing a $fullmodulename",
+        print_header("$course->shortname: $streditinga", "$course->fullname",
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-                      Editing a $fullmodulename", "form.name", "", false);
+                      $streditinga", "form.name", "", false);
     } else {
-        print_header("$course->shortname: Editing a $fullmodulename", 
-                     "$course->shortname: Editing a $fullmodulename",
-                     "Editing a $fullmodulename", "form.name", "", false);
+        print_header("$course->shortname: $streditinga", "$course->fullname",
+                     "$streditinga", "form.name", "", false);
     }
 
     $modform = "../mod/$module->name/mod.html";
