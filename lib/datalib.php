@@ -1008,7 +1008,7 @@ function get_all_instances_in_course($modulename, $courseid, $sort="cw.section")
         $showvisible = "AND cm.visible = '1'";
     }
 
-    return get_records_sql("SELECT m.*,cw.section,cm.id as coursemodule 
+    return get_records_sql("SELECT m.*,cw.section,cm.id as coursemodule,cm.visible as visible 
                             FROM {$CFG->prefix}course_modules cm, 
                                  {$CFG->prefix}course_sections cw, 
                                  {$CFG->prefix}modules md, 
