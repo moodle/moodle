@@ -312,10 +312,9 @@
         echo '</tr></table>';
     }
 
-    // The wiki Summary (Closes Bug #1496)
     if($ewiki_title==$wiki_entry->pagename && !empty($wiki->summary)) {
       print "<br>";
-      print_simple_box(format_text($wiki->summary, FORMAT_HTML), "center", "100%");
+      print_simple_box(format_text($wiki->summary, FORMAT_MOODLE), "center");
       print "<br>";
     }
     
