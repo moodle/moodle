@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.8 (2003010600)
+      // quiz.php - created with Moodle 1.0.9 development (2003032500)
 
 
+$string['addquestions'] = "クイズを追加";
 $string['addselectedtoquiz'] = "選択したものをクイズに追加する";
 $string['allowreview'] = "復習を許可する";
 $string['alreadysubmitted'] = "すでに解答されています
@@ -46,6 +47,7 @@ $string['editingshortanswer'] = "記述式の質問を編集する";
 $string['editingtruefalse'] = "○/×方式の質問を編集する";
 $string['false'] = "×";
 $string['feedback'] = "フィードバック";
+$string['fileformat'] = "ファイルフォーマット";
 $string['filloutoneanswer'] = "1つ以上の解答可能な質問を入力してください。文字の左側に空白は使用できません。";
 $string['fillouttwochoices'] = "2つ以上の選択を入力してください。文字の左側に空白は使用できません。";
 $string['fractionsaddwrong'] = "評価の合計が100%%に達していません。
@@ -61,6 +63,7 @@ $string['gradehighest'] = "最高得点";
 $string['grademethod'] = "評価方法";
 $string['guestsno'] = "申し訳ございません、ゲストユーザはクイズの閲覧及び解答が出来ません";
 $string['imagedisplay'] = "表示画像";
+$string['importquestions'] = "ファイルからクイズをインポートする";
 $string['introduction'] = "説明";
 $string['marks'] = "得点";
 $string['missingname'] = "質問名が見つかりません";

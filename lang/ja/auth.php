@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.8 (2003010600)
+      // auth.php - created with Moodle 1.0.9 development (2003032500)
 
 
 $string['auth_dbdescription'] = "ユーザ名とパスワードを確認するために外部のデータベースを使用します。新しいアカウントを作成する場合、他のフィールドの情報がMoodleへ複製されます。";
@@ -46,6 +46,7 @@ $string['auth_pop3host'] = "POP3サーバーアドレスです。IPアドレスではなくドメイン
 $string['auth_pop3port'] = "サーバーポート (110が一般的です)";
 $string['auth_pop3title'] = "POP3サーバを使用";
 $string['auth_pop3type'] = "サーバタイプです。もし認証が必要な場合はpop3certを選択してください。";
+$string['auth_user_create'] = "ユーザの作成を許可する";
 $string['authenticationoptions'] = "認証オプション";
 $string['authinstructions'] = "どのようなユーザ名やパスワードを使用したらよいのかユーザに説明します。ここに入力した文章はログインページに表示されます。空白の場合、何も表示されません。";
 $string['changepassword'] = "パスワードのURLを変更する";
