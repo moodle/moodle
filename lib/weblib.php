@@ -849,7 +849,7 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
 
 function wiki_to_html($text) {
 /// Given Wiki formatted text, make it into XHTML using external function
-    global $CFG;
+    global $CFG, $course;
 
     require_once("$CFG->libdir/wiki.php");
 
