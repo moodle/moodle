@@ -184,8 +184,8 @@
                 echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
                 if (isediting($course->id)) {
-                    echo " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
-                         "<img src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" height=\"11\" width=\"11\" alt=\"\" /></a><br /><br />";
+                    echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
+                         '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" height="11" width="11" alt="" /></a><br /><br />';
                 }
 
                 print_section($course, $thissection, $mods, $modnamesused);
