@@ -72,11 +72,11 @@
 
         } else {  // Print one big table with abbreviated info
             if ($numstudents > $USER_LARGE_CLASS and $showall == "0") {
-                $a->count  = $USER_LARGE_CLASS;
-                $a->things = strtolower($course->students);
-                echo "<p align=center>".get_string("displayingfirst", "", $a);
-                echo "(<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showallusers")."</a>)";
-                echo "</p>";
+                $moreinfo->count  = $USER_LARGE_CLASS;
+                $moreinfo->things = strtolower($course->students);
+                echo "<center><p>".get_string("displayingfirst", "", $moreinfo);
+                echo " (<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showallusers")."</a>)";
+                echo "</p></center>";
             }
             $columns = array("name", "city", "country", "lastaccess");
 
@@ -141,6 +141,12 @@
                     "<FONT SIZE=2>$lastaccess</FONT>");
             }
             print_table($table);
+
+            if ($numstudents > $USER_LARGE_CLASS and $showall == "0") {
+                echo "<center><p>";
+                echo "<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showallusers")."</a>";
+                echo "</p></center>";
+            }
 
         }
         if ($CFG->longtimenosee < 500) {
