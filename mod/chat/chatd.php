@@ -68,13 +68,12 @@ class ChatDaemon {
     var $message_queue = array(); // Holds messages that we haven't committed to the DB yet
 
     function ChatDaemon() {
-        // Check the STDOUT constant
-        $this->_trace_to_stdout     = defined('STDOUT');
         $this->_trace_level         = E_ALL ^ E_USER_NOTICE;
         $this->_pcntl_exists        = function_exists('pcntl_fork');
         $this->_time_rest_socket    = 20;
         $this->_beepsoundsrc        = $GLOBALS['CFG']->wwwroot.'/mod/chat/beep.wav';
         $this->_freq_update_records = 15;
+        $this->_stdout = fopen('php://stdout', 'w');
     }
 
     function query_start() {
@@ -102,7 +101,8 @@ class ChatDaemon {
 
             // Emit the message to wherever we should
             if($this->_trace_to_stdout) {
-                fwrite(STDOUT, $message);
+                fwrite($this->_stdout, $message);
+                fflush($this->_stdout);
             }
             if($this->_trace_to_console) {
                 echo $message;
@@ -323,7 +323,7 @@ class ChatDaemon {
 
                 if($this->sets_info[$sessionid]['lastmessageindex'] >= $messageindex) {
                     // We have already broadcasted that!
-                    $this->trace('discarding message with stale index');
+                    // $this->trace('discarding message with stale index');
                     break;
                 }
                 else {
@@ -437,7 +437,7 @@ class ChatDaemon {
             'quirks'    => $customdata['quirks']
         );
 
-        $this->trace('QUIRKS value for this connection is '.$customdata['quirks']);
+        // $this->trace('QUIRKS value for this connection is '.$customdata['quirks']);
 
         $this->dismiss_half($sessionid, false);
         chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
