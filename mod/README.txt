@@ -1,6 +1,10 @@
-This directory contains all the learning modules.
+ACTIVITY MODULES
+----------------
 
-Standard components expected of each module:
+These are main modules in Moodle, allowing various activities.
+
+
+Each of these modules contains a number of expected components:
 
   mod.html: a form to setup/update a module instance
 
@@ -31,5 +35,8 @@ Standard components expected of each module:
 
          modulename_print_recent_activity()
 
-See newmodule_template.zip in this directory for a blank template 
-to help you get started.
+
+If you are a developer and interested in developing new Modules see:
+  
+   Moodle Documentation:  http://moodle.org/doc
+   Moodle Community:      http://moodle.org/community
