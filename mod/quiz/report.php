@@ -64,9 +64,17 @@
 
     /// Print list of available quiz reports
     
-        $reports = get_list_of_plugins("mod/quiz/report");
+        $allreports = get_list_of_plugins("mod/quiz/report");
+        $reportlist = array ("overview", "regrade");   // Standard reports we want to show first
+
+        foreach ($allreports as $report) {
+            if (!in_array($report, $reportlist)) {
+                $reportlist[] = $report;
+            }
+        }
+
         echo "<table cellpadding=10 align=center><tr>";
-        foreach ($reports as $report) {
+        foreach ($reportlist as $report) {
             $strreport = get_string("report$report", "quiz");
             if ($report == $mode) {
                 echo "<td><u>$strreport</u></td>";
