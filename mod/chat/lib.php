@@ -121,6 +121,7 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
         }
         echo "&nbsp;&nbsp;&nbsp;<font size=1>- $chatuser->firstname $chatuser->lastname</font><br />";
     }
+    echo "<br />";
 
     return true;
 }
