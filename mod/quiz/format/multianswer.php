@@ -17,7 +17,7 @@
 // ANSWER_ALTERNATIVE regexes
 
 define("ANSWER_ALTERNATIVE_FRACTION_REGEX",
-       '=|%([0-9]+)%');
+       '=|%(-?[0-9]+)%');
 define("ANSWER_ALTERNATIVE_ANSWER_REGEX",
         '[^~#}]+');
 define("ANSWER_ALTERNATIVE_FEEDBACK_REGEX",

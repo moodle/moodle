@@ -819,10 +819,10 @@ function quiz_print_question($number, $question, $grade, $quizid,
                 $inputname= " name=\"q{$realquestion->id}ma$multianswer->id\" ";
                 
                 if (!empty($response)
-                    && $responseitems = explode('-', array_shift($response), 2))
+                    && ereg('(.[^-]*)-(.+)', array_shift($response), $responseitems))
                 {
-                    $responsefractiongrade = (float)$responseitems[0];
-                    $actualresponse = $responseitems[1];
+                    $responsefractiongrade = (float)$responseitems[1];
+                    $actualresponse = $responseitems[2];
 
                     if (1.0 == $responsefractiongrade) {
                         $style = 'style="background-color:lime"';
@@ -1593,7 +1593,10 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
     return true;
 }
 
-function quiz_grade_attempt_question_result($question, $answers) {
+function quiz_grade_attempt_question_result($question,
+                                            $answers,
+                                            $gradecanbenegative= false)
+{
     $grade    = 0;   // default
     $correct  = array();
     $feedback = array();
@@ -1767,7 +1770,7 @@ function quiz_grade_attempt_question_result($question, $answers) {
                         $subquestion->qtype = $multianswer->answertype;
                         $subquestion->grade = $multianswer->norm;
                         $subresult = quiz_grade_attempt_question_result
-                                ($subquestion, $multianswer->subanswers);
+                                ($subquestion, $multianswer->subanswers, true);
                         break;
                     }
                 }
@@ -1797,7 +1800,9 @@ function quiz_grade_attempt_question_result($question, $answers) {
             return quiz_grade_attempt_question_result($realquestion, $answers);
     }
 
-    $result->grade = max(0.0, $grade);  // No negative grades
+    $result->grade =
+            $gradecanbenegative ? $grade            // Grade can be negative
+                                : max(0.0, $grade); // Grade must not be negative
     $result->correct = $correct;
     $result->feedback = $feedback;
     $result->response = $response;
