@@ -385,8 +385,12 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2003050902) {
         if (get_records("modules", "name", "pgassignment")) {
-            print_simple_box("Note: the pgassignment module will soon be deleted from CVS!  Go to the new 'Manage Modules' page and DELETE IT from your system", "center", "50%", "$THEME->cellheading", "20", "noticebox");
+            print_simple_box("Note: the pgassignment module has been removed (it will be replaced later by the workshop module).  Go to the new 'Manage Modules' page and DELETE IT from your system", "center", "50%", "$THEME->cellheading", "20", "noticebox");
         }
+    }
+
+    if ($oldversion < 2003051600) {
+        print_simple_box("Thanks for upgrading!<p>There are many changes since the last release.  Please read the release notes carefully.  If you are using CUSTOM themes you will need to edit them.  You will also need to check your site's config.php file.", "center", "50%", "$THEME->cellheading", "20", "noticebox");
     }
 
     return $result;
