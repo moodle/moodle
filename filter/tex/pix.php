@@ -51,6 +51,7 @@
                     system("QUERY_STRING=;export QUERY_STRING;$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -d ". escapeshellarg($texexp) . "  >$pathname");
                 break;
                 case "WINNT":
+                case "Windows":
                     $texexp = str_replace('"','\"',$texexp);
                     system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"");
                 break;
