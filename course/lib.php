@@ -651,7 +651,7 @@ function print_admin_links ($siteid, $width=180) {
 		$modicon[]=$icon;
 		$moddata[]="<A HREF=\"$CFG->wwwroot/admin/admin.php\">".get_string("assignadmins")."</A>";
 		$modicon[]=$icon;
-        $moddata[]="<A HREF=\"$CFG->wwwroot/admin/admin.php\">".get_string("assigncreators")."</A>";
+        $moddata[]="<A HREF=\"$CFG->wwwroot/admin/creators.php\">".get_string("assigncreators")."</A>";
 		$modicon[]=$icon;
 		$moddata[]="<A HREF=\"$CFG->wwwroot/admin/auth.php\">".get_string("authentication")."</A>";
 		$modicon[]=$icon;
