@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1 development (2003073000)
+      // moodle.php - created with Moodle 1.1 (2003082800)
 
 
 $string['action'] = "Akcja";
@@ -404,6 +404,7 @@ $string['phone'] = "Telefon";
 $string['popupwindow'] = "Otwórz w nowym oknie";
 $string['potentialadmins'] = "Potencjalni administratorzy";
 $string['potentialcreators'] = "Potencjalni autorzy kursów";
+$string['potentialstudents'] = "Potencjalni studenci";
 $string['potentialteachers'] = "Potencjalni prowadz±cy";
 $string['preferredlanguage'] = "Preferowany jêzyk";
 $string['preview'] = "Podgl±d";
@@ -434,6 +435,12 @@ $string['returningtosite'] = "Powracasz na t± stronê WWW?";
 $string['revert'] = "Przywróæ";
 $string['role'] = "Rola";
 $string['savechanges'] = "Zapisz zmiany";
+$string['scale'] = "Skala ocen";
+$string['scales'] = "Skale ocen";
+$string['scalescustom'] = "W³asna skala ocen";
+$string['scalescustomcreate'] = "Dodaj now± skalê";
+$string['scalescustomno'] = "Nie utworzono jeszcze w³asnych skal ocen";
+$string['scalesstandard'] = "Standardowe skale ocen";
 $string['search'] = "Wyszukaj";
 $string['searchagain'] = "Wyszukaj ponownie";
 $string['searchresults'] = "Wyniki wyszukiwania";
@@ -495,10 +502,12 @@ $string['theme'] = "Temat";
 $string['themesaved'] = "Nowy temat zosta³ zapisany";
 $string['thischarset'] = "iso-8859-2";
 $string['thislanguage'] = "Polski";
+$string['time'] = "Czas";
 $string['timezone'] = "Strefa czasowa";
 $string['today'] = "Dzisiaj";
 $string['todaylogs'] = "Dzisiejsze logi";
 $string['toomanytoshow'] = "Zbyt wielu u¿ytkowników do pokazania";
+$string['top'] = "Góra";
 $string['topic'] = "Temat";
 $string['topichide'] = "Ukryj ten temat przed \$a";
 $string['topicoutline'] = "Tematyka";
@@ -510,10 +519,12 @@ $string['undecided'] = "Nie zdecydowano";
 $string['unenrol'] = "Wypisz siê";
 $string['unenrolme'] = "Wypisz mnie z  \$a";
 $string['unenrolsure'] = "Czy masz pewno¶æ, ¿e chcesz wypisaæ \$a z tego kursu?";
+$string['unknowncategory'] = "Nieznan kategoria";
 $string['unpacking'] = "Rozpakowywanie \$a";
 $string['unsafepassword'] = "Has³o nie jest bezpieczne - wybierz inne";
 $string['unusedaccounts'] = "Konta nie u¿ywane przez ponad \$a dni s± automatycznie wykluczane z kursu";
 $string['unzip'] = "Unzip";
+$string['unzippingbackup'] = "Rozpakowywanie Backupu";
 $string['update'] = "Zaktualizuj";
 $string['updated'] = "Zaktualizowano \$a";
 $string['updatemyprofile'] = "Zaktualizuj profil";
@@ -536,6 +547,8 @@ $string['username'] = "Nazwa u¿ytkownika";
 $string['usernameexists'] = "Ta nazwa u¿ytkownika ju¿ istnieje, wybierz inn±.";
 $string['userprofilefor'] = "Profil u¿ytkownika dla \$a";
 $string['users'] = "U¿ytkowników";
+$string['userzones'] = "Obszary u¿ytkowników";
+$string['view'] = "Widok";
 $string['webpage'] = "Strona WWW";
 $string['week'] = "Tydzieñ";
 $string['weekhide'] = "Ukryj ten tydzieñ przed \$a";
