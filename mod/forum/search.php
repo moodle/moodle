@@ -41,8 +41,7 @@
         print_header("$course->shortname: $strsearch", "$course->fullname",
                  "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> -> 
                   <A HREF=\"index.php?id=$course->id\">$strforums</A> -> $strsearch", "search.search",
-                  "", "");
-
+                  "", "", "&nbsp;", navmenu($course));
 
         print_simple_box_start("center");
         echo "<center>";
@@ -61,7 +60,7 @@
                      "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> 
                       <a href=\"index.php?id=$course->id\">$strforums</a> -> 
                       <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search", 
-                      "", "");
+                      "", "", "&nbsp;", navmenu($course));
             print_heading(get_string("nopostscontaining", "forum", $search));
 
             print_simple_box_start("center");
@@ -81,7 +80,7 @@
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> 
                   <a href=\"index.php?id=$course->id\">$strforums</a> -> 
                   <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search", 
-                  "", "",  $searchform);
+                  "", "",  $searchform, navmenu($course));
 
         print_heading("$strsearchresults: $totalcount");
 
