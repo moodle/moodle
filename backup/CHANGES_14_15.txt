@@ -41,7 +41,7 @@ Now I show the specific detailed status of every item in the process:
 24. DONE: Take out THEME from backup directory.
 25. TODO: Add support for forum_read table in backup and restore.
 26. DONE: chat_users->course and chat_users->lang. No changes required!
-27. PROG: Make the backup/restore/scheduled/logs XHTML 1.0 Transitional.
-          Done in manual backups.
+27. PROG: Make the backup/restore/config/logs/index.php XHTML 1.0 Transitional.
+          Done in manual backups and logs
 Eloy (stronk7)
 23-01-2004
