@@ -21,7 +21,7 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
 
         $this->content = New object;
         $this->content->text = '';
-        $this->content->footer = '<br /><a href="'.$CFG->wwwroot.'/calendar/view.php?view=month">'.get_string('gotocalendar', 'calendar').'</a>...';
+        $this->content->footer = '<br /><a href="'.$CFG->wwwroot.'/calendar/view.php?view=upcoming">'.get_string('gotocalendar', 'calendar').'</a>...';
         $this->content->footer .= '<br /><a href="'.$CFG->wwwroot.'/calendar/event.php?action=new">'.get_string('newevent', 'calendar').'</a>...';
 
         if($this->course === NULL) {
