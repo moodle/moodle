@@ -76,9 +76,9 @@
       <li>Si vous avez d&eacute;j&agrave; install&eacute; PHP auparavant, effacez tous les fichiers d&eacute;nomm&eacute;s
       <strong>php4ts.dll</strong> de votre dossier Windows, ainsi que tous les fichiers
       d&eacute;nomm&eacute;s <strong>php.ini</strong>.</li>
-      <li>T&eacute;l&eacute;chargez EasyPHP &agrave; cette adresse : <a href="http://www.easyphp.org/telechargements/dn.php?F=easyphp1-6.php3" target="_blank">http://www.easyphp.org/telechargements/dn.php?F=easyphp1-6.php3</a> 
+      <li>T&eacute;l&eacute;chargez EasyPHP &agrave; cette adresse : <a href="http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7">http://www.easyphp.org/telechargements/dn.php?F=easyphp1-7</a> 
       (environ 10 MO).</li>
-      <li>Lancez le fichier t&eacute;l&eacute;charg&eacute; <strong>easyphp1-6_setup.exe</strong>. Le processus
+      <li>Lancez le fichier t&eacute;l&eacute;charg&eacute; <strong>easyphp1-7_setup.exe</strong>. Le processus
       d'installation est en fran&ccedil;ais (Ouf!!) - nous vous conseillons d'accepter les r&eacute;glages
       par d&eacute;faut et de tout installer.</li>
       <li>&Agrave; la fin de l'installation, cochez la case &agrave; cocher &laquo;&nbsp;Lancer 
@@ -89,10 +89,10 @@
       obtiendrez un menu qui vous permet de contr&ocirc;ler les programmes. Vous n'en avez pas
       besoin pour l'instant.</li>
       <li>La prochaine chose &agrave; faire et de mettre en place une base de donn&eacute;es pour Moodle.
-      Avec un navigateur, allez &agrave; l'adresse <a href="http://localhost/mysql/"
-      target="_blank">http://localhost/mysql/</a> (attention &agrave; la barre oblique finale).</li>
-      <li>Si l'on vous demande un nom d'utilisateur, utilisez &laquo;&nbsp;root&nbsp;&raquo; avec un mot
-      de passe vide. L'interface web de phpMyAdmin s'affichera et vous permettra de cr&eacute;er de
+      Cliquez avec le bouton droit de la souris sur le E noir de votre barre des t&acirc;ches, et
+      choisissez Administration, puis cliquer sur DB Management (pr&egrave;s de PHPMyAdmin).</li>
+      <li>Si l'on vous demande un nom d'utilisateur, utilisez &laquo;&nbsp;<strong>root</strong>&nbsp;&raquo; avec un <strong>mot
+      de passe vide</strong>. L'interface web de phpMyAdmin s'affichera et vous permettra de cr&eacute;er de
       nouvelles bases de donn&eacute;es et de nouveaux comptes utilisateurs.</li>
       <li>Cr&eacute;ez une nouvelle base de donn&eacute;es en tapant &laquo;&nbsp;moodle&nbsp;&raquo; dans le champ et
       cliquez sur le bouton &laquo;&nbsp;Create&nbsp;&raquo;. Facile&nbsp;!</li>
@@ -116,18 +116,18 @@
       <li>Modifiez config.php avec un &eacute;diteur de texte (Notepad fera l'affaire&nbsp;;
       assurez-vous simplement qu'il n'ajoute pas d'espaces &agrave; la fin du fichier).</li>
       <li>Indiquez tous les param&egrave;tres concernant votre base de donn&eacute;es&nbsp;:<br/>
-      $CFG-&gt;dbtype = 'mysql';<br/>
-      $CFG-&gt;dbhost = 'localhost';<br/>
-      $CFG-&gt;dbname = 'moodle';<br/>
-      $CFG-&gt;dbuser = 'root'; <br/>
-      $CFG-&gt;dbpass = '';<br/>
-      $CFG-&gt;dbpersist = true;<br/>
-      $CFG-&gt;prefix = 'mdl_';</li>
+      $CFG->dbtype = 'mysql';<br/>
+      $CFG->dbhost = 'localhost';<br/>
+      $CFG->dbname = 'moodle';<br/>
+      $CFG->dbuser = 'root'; <br/>
+      $CFG->dbpass = '';<br/>
+      $CFG->dbpersist = true;<br/>
+      $CFG->prefix = 'mdl_';</li>
       <li>Puis indiquez tous les chemins des fichiers&nbsp;:<br/>
-      $CFG-&gt;wwwroot = 'http://localhost/moodle'; // Indiquez une adresse externe 
+      $CFG->wwwroot = 'http://localhost/moodle'; // Indiquez une adresse externe 
       si vous la connaissez.<br/>
-      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br/>
-      $CFG-&gt;dataroot = 'C:\moodledata';</li>
+      $CFG->dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br/>
+      $CFG->dataroot = 'C:\moodledata';</li>
       <li>Enregistrez config.php - tous les autres param&egrave;tres peuvent &ecirc;tre ignor&eacute;s.</li>
       <li>C'est presque fini&nbsp;! Le reste de la configuration s'effectue &agrave; travers
       une interface web. Pour continuer, visitez l'adresse <a href="http://localhost/moodle/admin/"
