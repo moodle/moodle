@@ -42,7 +42,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         }
     }
     if ($guest = get_guest()) {
-        $users[$guest->id] = "$guest->firstname $guest->lastname";
+        $users[$guest->id] = fullname($guest);
     }
 
     if (isadmin()) {
