@@ -77,6 +77,7 @@ $string['quizclosed'] = "This quiz closed on \$a";
 $string['quizopen'] = "Open the quiz";
 $string['quiznotavailable'] = "The quiz will not be available until: \$a";
 $string['random'] = "Random set";
+$string['readytosend'] = "You are about to send your whole quiz to be graded.  Are you sure you want to continue?";
 $string['regrade'] = "Regrade all attempts";
 $string['regradecomplete'] = "All attempts have been regraded";
 $string['regradecount'] = "\$a->changed out of \$a->attempt grades were changed";
