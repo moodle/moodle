@@ -2,7 +2,7 @@
 
 // Developer's debug assistant - if true then the display string will not cache, only
 // the magpie object's built in caching will be used
-define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', false);
+define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
 
 class block_rss_client extends block_base {
 
