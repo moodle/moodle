@@ -291,7 +291,7 @@
 
         /// Print all the news items.
 
-        if ($news) {
+        if (!empty($news)) {
             print_side_block_start(get_string("latestnews"), 210, "sideblocklatestnews");
             echo "<font size=\"-2\">";
             forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "", false);
