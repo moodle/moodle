@@ -63,13 +63,13 @@ function print_heading($text, $align="CENTER", $size=3) {
     echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>$text</B></FONT></P>";
 }
 
-function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5) {
-    print_simple_box_start($align, $width, $color, $padding);
+function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5, $border=1) {
+    print_simple_box_start($align, $width, $color, $padding, $border);
     echo "<P>$message</P>";
     print_simple_box_end();
 }
 
-function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding=5) {
+function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding=5, $border=1) {
     global $THEME;
 
     if ($align) {
@@ -79,7 +79,7 @@ function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding
         $tablewidth = "WIDTH=\"$width\"";
         $innertablewidth = "WIDTH=\"100%\"";
     }
-    echo "<TABLE $tablealign $tablewidth BORDER=0 CELLPADDING=1 CELLSPACING=0>";
+    echo "<TABLE $tablealign $tablewidth BORDER=0 CELLPADDING=\"$border\" CELLSPACING=0>";
     echo "<TR><TD BGCOLOR=\"$THEME->borders\">\n";
     echo "<TABLE $innertablewidth BORDER=0 CELLPADDING=\"$padding\" CELLSPACING=0><TR><TD BGCOLOR=\"$color\">";
 }
@@ -869,7 +869,7 @@ function email_to_users(&$users, $from, $subject, $messagetext, $messagehtml="",
 //  attachment  - a file on the filesystem, relative to $CFG->dataroot
 //  attachname  - the name of the file (extension indicates MIME)
 
-    global $CFG;
+    global $CFG, $_SERVER;
 
     include_once("$CFG->libdir/phpmailer/class.phpmailer.php");
 
@@ -905,8 +905,9 @@ function email_to_users(&$users, $from, $subject, $messagetext, $messagehtml="",
 
     if ($attachment && $attachname) {
         if (ereg( "\\.\\." ,$attachment )) {    // Security check for ".." in dir path
-            add_to_log ("Mailer error: attachment contained '..'");
-            $mail->AddStringAttachment("Error in attachment", "error.txt", "8bit", "text/plain");
+            $adminuser = get_admin();
+            $mail->AddAddress("$adminuser->email", "$adminuser->firstname $adminuser->lastname");
+            $mail->AddStringAttachment("Error in attachment.  User attempted to attach a filename with a unsafe name.", "error.txt", "8bit", "text/plain");
         } else {
             include_once("$CFG->dirroot/files/mimetypes.php");
             $mimetype = mimeinfo("type", $attachname);
@@ -917,8 +918,9 @@ function email_to_users(&$users, $from, $subject, $messagetext, $messagehtml="",
     if ($mail->Send()) {
         return true;
     } else {
-        echo "ERROR: $mail->ErrorInfo";
-        add_to_log ("Mailer error: ".$mail->ErrorInfo);
+        echo "ERROR: $mail->ErrorInfo\n";
+        $site = get_site();
+        add_to_log($site->id, "library", "mailer", $_SERVER["REQUEST_URI"], "ERROR: $mail->ErrorInfo");
         return false;
     }
 }
@@ -1036,18 +1038,34 @@ function getweek ($startdate, $thedate) {
     return floor(($thedate - $startdate) / 604800.0) + 1;
 }
 
-function add_to_log ($message, $course=0) {
+function add_to_log($course, $module, $action, $url="", $info="") {
+// Add an entry to the log table.  These are "action" focussed rather
+// than web server hits, and provide a way to easily reconstruct what 
+// any particular student has been doing.
+//
+// course = the course id
+// module = discuss, journal, reading, course, user etc
+// action = view, edit, post (often but not always the same as the file.php)
+// url    = the file and parameters used to see the results of the action
+// info   = additional description information 
+
+
     global $db, $USER, $REMOTE_ADDR;
 
     $timenow = time();
-    $me = me();
-    $message = addslashes($message);
+    $info = addslashes($info);
 
-    $result = $db->Execute("INSERT DELAYED INTO logs 
-                            SET user = '$USER->id', time = '$timenow', course = '$course',
-                                ip = '$REMOTE_ADDR', url = '$me', message = '$message'");
+    $result = $db->Execute("INSERT INTO log
+                            SET time = '$timenow', 
+                                user = '$USER->id',
+                                course = '$course',
+                                ip = '$REMOTE_ADDR', 
+                                module = '$module',
+                                action = '$action',
+                                url = '$url',
+                                info = '$info'");
     if (!$result) {
-        error("Could not insert a new entry to the Moodle log");
+        echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error
     }    
 }
 
