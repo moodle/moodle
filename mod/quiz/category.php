@@ -53,7 +53,7 @@
             if (!$category2 = get_record("quiz_categories", "id", $confirm)) {  // security
                 error("No such category $confirm!");
             }
-            if (! execute_sql("UPDATE quiz_questions SET category = '$category2->id' WHERE category = '$category->id'", false)) {
+            if (! quiz_move_questions($category->id, $category2->id)) {
                 error("Error while moving questions from category '$category->name' to '$category2->name'");
             }
 

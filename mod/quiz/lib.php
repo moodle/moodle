@@ -154,7 +154,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
-    if ($grade = get_record_sql("SELECT * FROM quiz_grades WHERE user = '$user->id' AND quiz = '$quiz->id'")) {
+    if ($grade = get_record("quiz_grades", "user", $user->id, "quiz", $quiz->id)) {
         
         if ($grade->grade) {
             $result->info = get_string("grade").": $grade->grade";
@@ -198,10 +198,107 @@ function quiz_cron () {
 function quiz_grades($quizid) {
 /// Must return an array of grades, indexed by user, and a max grade.
 
-    $return->grades = get_records_sql_menu("SELECT user,grade FROM quiz_grades WHERE quiz = '$quizid'");
+    $return->grades = get_records_menu("quiz_grades", "quiz", $quizid, "", "user,grade");
     $return->maxgrade = get_field("quiz", "grade", "id", "$quizid");
     return $return;
 }
+
+
+/// SQL FUNCTIONS ////////////////////////////////////////////////////////////////////
+
+function quiz_move_questions($category1, $category2) {
+    global $CFG;
+    return execute_sql("UPDATE {$CFG->prefix}quiz_questions 
+                           SET category = '$category2' 
+                         WHERE category = '$category1'", 
+                       false);
+}
+
+function quiz_get_question_grades($quizid, $questionlist) {
+    global $CFG;
+
+    return get_records_sql("SELECT question,grade 
+                            FROM {$CFG->prefix}quiz_question_grades 
+                            WHERE quiz = '$quizid' 
+                            AND question IN ($questionlist)");
+}
+
+function quiz_get_grade_records($quiz) {
+/// Gets all info required to display the table of quiz results
+/// for report.php
+    global $CFG;
+
+    return get_records_sql("SELECT qg.*, u.firstname, u.lastname, u.picture 
+                            FROM {$CFG->prefix}quiz_grades qg, 
+                                 {$CFG->prefix}user u
+                            WHERE qg.quiz = '$quiz->id'
+                              AND qg.user = u.id");
+}
+
+function quiz_get_answers($question) {
+// Given a question, returns the correct answers and grades
+    global $CFG;
+    switch ($question->type) {
+        case SHORTANSWER;       // Could be multiple answers
+            return get_records_sql("SELECT a.*, sa.usecase, g.grade
+                                      FROM {$CFG->prefix}quiz_shortanswer sa,  
+                                           {$CFG->prefix}quiz_answers a,  
+                                           {$CFG->prefix}quiz_question_grades g
+                                     WHERE sa.question = '$question->id' 
+                                       AND sa.question = a.question
+                                       AND sa.question = g.question");
+            break;
+
+        case TRUEFALSE;         // Should be always two answers
+            return get_records_sql("SELECT a.*, g.grade
+                                      FROM {$CFG->prefix}quiz_answers a, 
+                                           {$CFG->prefix}quiz_question_grades g
+                                     WHERE a.question = '$question->id' 
+                                       AND a.question = g.question");
+            break;
+
+        case MULTICHOICE;       // Should be multiple answers
+            return get_records_sql("SELECT a.*, mc.single, g.grade
+                                      FROM {$CFG->prefix}quiz_multichoice mc, 
+                                           {$CFG->prefix}quiz_answers a, 
+                                           {$CFG->prefix}quiz_question_grades g
+                                     WHERE mc.question = '$question->id' 
+                                       AND mc.question = a.question 
+                                       AND mc.question = g.question");
+            break;
+
+       case RANDOM:
+           return false;  // Not done yet
+           break;
+
+        default:
+            return false;
+    }
+}
+
+
+function quiz_get_attempt_responses($attempt) {
+// Given an attempt object, this function gets all the 
+// stored responses and returns them in a format suitable
+// for regrading using quiz_grade_attempt_results()
+    global $CFG;
+   
+    if (!$responses = get_records_sql("SELECT q.id, q.type, r.answer 
+                                        FROM {$CFG->prefix}quiz_responses r, 
+                                             {$CFG->prefix}quiz_questions q
+                                       WHERE r.attempt = '$attempt->id' 
+                                         AND q.id = r.question")) {
+        notify("Could not find any responses for that attempt!");
+        return false;
+    }
+
+    foreach ($responses as $key => $response) {
+        $responses[$key]->answer = explode(",",$response->answer);
+    }
+
+    return $responses;
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -469,13 +566,13 @@ function quiz_get_category_menu($courseid, $published=false) {
     if ($published) {
         $publish = "OR publish = '1'";
     }
-    return get_records_sql_menu("SELECT id,name FROM quiz_categories WHERE course='$courseid' $publish ORDER by name ASC");
+    return get_records_select_menu("quiz_categories", "course='$courseid' $publish", "name ASC", "id,name");
 }
 
 function quiz_print_category_form($course, $current) {
 // Prints a form to choose categories
 
-    if (!$categories = get_records_sql("SELECT * FROM quiz_categories WHERE course='$course->id' OR publish = '1' ORDER by name ASC")) {
+    if (!$categories = get_records_select("quiz_categories", "course='$course->id' OR publish = '1'", "name ASC")) {
         if (!$category = quiz_get_default_category($course->id)) {
             notify("Error creating a default category!");
             return false;
@@ -513,9 +610,7 @@ function quiz_get_all_question_grades($questionlist, $quizid) {
 // Given a list of question IDs, finds grades or invents them to 
 // create an array of matching grades
 
-    $questions = get_records_sql("SELECT question,grade FROM quiz_question_grades 
-                                  WHERE quiz = '$quizid' 
-                                    AND question IN ($questionlist)");
+    $questions = quiz_get_question_grades($quizid, $questionlist);
 
     $list = explode(",", $questionlist);
     $grades = array();
@@ -710,15 +805,13 @@ function quiz_start_attempt($quizid, $userid, $numattempt) {
 
 function quiz_get_user_attempt_unfinished($quizid, $userid) {
 // Returns an object containing an unfinished attempt (if there is one)
-    return get_record_sql("SELECT * FROM quiz_attempts 
-                           WHERE quiz = '$quizid' and user = '$userid' AND timefinish = 0");
+    return get_record("quiz_attempts", "quiz", $quizid, "user", $userid, "timefinish", 0);
 }
 
 function quiz_get_user_attempts($quizid, $userid) {
 // Returns a list of all attempts by a user
-    return get_records_sql("SELECT * FROM quiz_attempts 
-                            WHERE quiz = '$quizid' and user = '$userid' AND timefinish > 0 
-                            ORDER by attempt ASC");
+    return get_records_select("quiz_attempts", "quiz = '$quizid' AND user = '$userid' AND timefinish > 0", 
+                              "attempt ASC");
 }
 
 
@@ -740,21 +833,11 @@ function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
 
 function quiz_get_best_grade($quizid, $userid) {
 /// Get the best current grade for a particular user in a quiz
-    if (!$grade = get_record_sql("SELECT * FROM quiz_grades WHERE quiz = '$quizid' and user = '$userid'")) {
+    if (!$grade = get_record("quiz_grades", "quiz", $quizid, "user", $userid)) {
         return 0;
     }
 
     return (round($grade->grade,0));
-}
-
-function quiz_get_grade_records($quiz) {
-/// Gets all info required to display the table of quiz results
-/// for report.php
-
-    return get_records_sql("SELECT qg.*, u.firstname, u.lastname, u.picture 
-                            FROM quiz_grades qg, user u
-                            WHERE qg.quiz = '$quiz->id'
-                              AND qg.user = u.id");
 }
 
 function quiz_save_best_grade($quiz, $userid) {
@@ -769,7 +852,7 @@ function quiz_save_best_grade($quiz, $userid) {
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
     $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
 
-    if ($grade = get_record_sql("SELECT * FROM quiz_grades WHERE quiz='$quiz->id' AND user='$userid'")) {
+    if ($grade = get_record("quiz_grades", "quiz", $quiz->id, "user", $userid)) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!update_record("quiz_grades", $grade)) {
@@ -789,41 +872,6 @@ function quiz_save_best_grade($quiz, $userid) {
     return true;
 }
 
-
-function quiz_get_answers($question) {
-// Given a question, returns the correct answers and grades
-    switch ($question->type) {
-        case SHORTANSWER;       // Could be multiple answers
-            return get_records_sql("SELECT a.*, sa.usecase, g.grade
-                                      FROM quiz_shortanswer sa, quiz_answers a, quiz_question_grades g
-                                     WHERE sa.question = '$question->id' 
-                                       AND sa.question = a.question
-                                       AND sa.question = g.question");
-            break;
-
-        case TRUEFALSE;         // Should be always two answers
-            return get_records_sql("SELECT a.*, g.grade
-                                      FROM quiz_answers a, quiz_question_grades g
-                                     WHERE a.question = '$question->id' 
-                                       AND a.question = g.question");
-            break;
-
-        case MULTICHOICE;       // Should be multiple answers
-            return get_records_sql("SELECT a.*, mc.single, g.grade
-                                      FROM quiz_multichoice mc, quiz_answers a, quiz_question_grades g
-                                     WHERE mc.question = '$question->id' 
-                                       AND mc.question = a.question 
-                                       AND mc.question = g.question");
-            break;
-
-       case RANDOM:
-           return false;  // Not done yet
-           break;
-
-        default:
-            return false;
-    }
-}
 
 function quiz_calculate_best_grade($quiz, $attempts) {
 /// Calculate the best grade for a quiz given a number of attempts by a particular user.
@@ -1033,26 +1081,6 @@ function quiz_grade_attempt_results($quiz, $questions) {
     return $result;
 }
 
-
-function quiz_get_attempt_responses($attempt) {
-// Given an attempt object, this function gets all the 
-// stored responses and returns them in a format suitable
-// for regrading using quiz_grade_attempt_results()
-   
-    if (!$responses = get_records_sql("SELECT q.id, q.type, r.answer 
-                                        FROM quiz_responses r, quiz_questions q
-                                       WHERE r.attempt = '$attempt->id' 
-                                         AND q.id = r.question")) {
-        notify("Could not find any responses for that attempt!");
-        return false;
-    }
-
-    foreach ($responses as $key => $response) {
-        $responses[$key]->answer = explode(",",$response->answer);
-    }
-
-    return $responses;
-}
 
     
 ?>

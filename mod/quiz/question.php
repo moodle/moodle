@@ -66,7 +66,7 @@
             
         } else {
             if ($category->publish) {
-                $quizzes = get_records_sql("SELECT * FROM quiz");
+                $quizzes = get_records("quiz");
             } else {
                 $quizzes = get_records("quiz", "course", $course->id);
             }
