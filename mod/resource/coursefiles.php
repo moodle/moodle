@@ -3,8 +3,7 @@
 //  Manage all uploaded files in a course file area
 
 //  This file is a hack to files/index.php that removes
-//  the headers and adds some controls so that images
-//  can be selected within the Richtext editor.
+//  the headers and adds file selection capability
 
 //  All the Moodle-specific stuff is in this top section
 //  Configuration and access control occurs here.
@@ -14,10 +13,14 @@
     require("../../config.php");
     require("../../files/mimetypes.php");
 
-    require_variable($id);
-    optional_variable($file, "");
-    optional_variable($wdir, "");
-    optional_variable($action, "");
+    global $USER;
+
+    $id      = required_param('id', PARAM_INT);
+    $file    = optional_param('file', '', PARAM_PATH);
+    $wdir    = optional_param('wdir', '', PARAM_PATH);
+    $action  = optional_param('action', '', PARAM_ACTION);
+    $name    = optional_param('name', '', PARAM_FILE);
+    $oldname = optional_param('oldname', '', PARAM_FILE);
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -25,8 +28,8 @@
 
     require_login($course->id);
 
-    if (! isteacher($course->id) ) {
-        error("Only teachers can edit files");
+    if (! isteacheredit($course->id) ) {
+        error("You need to be a teacher with editing privileges");
     }
 
     function html_footer() {
@@ -54,12 +57,12 @@
             $numdirs = count($dirs);
             $link = "";
             $navigation = "";
-            for ($i=1; $i<$numdirs; $i++) {
+            for ($i=1; $i<$numdirs-1; $i++) {
                $navigation .= " -> ";
                $link .= "/".urlencode($dirs[$i]);
                $navigation .= "<a href=\"".$ME."?id=$course->id&wdir=$link\">".$dirs[$i]."</a>";
             }
-            $fullnav = "<a href=\"".$ME."?id=$course->id&wdir=/\">$strfiles</a> $navigation";
+            $fullnav = "<a href=\"".$ME."?id=$course->id&wdir=/\">$strfiles</a> $navigation -> ".$dirs[$numdirs-1];
         }
 
         print_header();
@@ -74,10 +77,11 @@
 	    </script>
         <?php
 
+        $fullnav = str_replace('->', '&raquo;', "$course->shortname -> $fullnav");
         echo '<table border="0" cellpadding="3" cellspacing="0" width="100%">';
         echo '<tr>';
         echo '<td bgcolor="'.$THEME->cellheading.'" class="navbar">';
-        echo '<font size="2"><b>'."$course->shortname -> $fullnav".'</b></font>';
+        echo '<font size="2"><b>'.$fullnav.'</b></font>';
         echo '</td>';
         echo '</tr>';
         echo '</table>';
@@ -100,15 +104,15 @@
 //  End of configuration and access control
 
 
-    $regexp="\\.\\.";
-    if (ereg( $regexp, $file, $regs )| ereg( $regexp, $wdir,$regs )) {
+    if (!$wdir) {
+        $wdir="/";
+    }
+
+    if (($wdir != '/' and detect_munged_arguments($wdir, 0))
+      or ($file != '' and detect_munged_arguments($file, 0))) {
         $message = "Error: Directories can not contain \"..\"";
         $wdir = "/";
         $action = "";
-    }
-
-    if (!$wdir) {
-        $wdir="/";
     }
 
 
@@ -122,7 +126,7 @@
             } else {
                 $save = false;
             }
-            if (!empty($save)) {
+            if (!empty($save) and confirm_sesskey()) {
                 if (!is_uploaded_file($userfile['tmp_name']) or $userfile['size'] == 0) {
                     notify(get_string("uploadnofilefound"));
                 } else {
@@ -158,6 +162,7 @@
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
+                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " <INPUT NAME=\"userfile\" TYPE=\"file\" size=\"60\">";
                 echo " </TD><TR><TD WIDTH=10>";
                 echo " <INPUT TYPE=submit NAME=save VALUE=\"$struploadthisfile\">";
@@ -175,7 +180,7 @@
             break;
 
         case "delete":
-            if (!empty($confirm)) {
+            if (!empty($confirm) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 foreach ($USER->filelist as $file) {
                     $fullfile = $basedir.$file;
@@ -196,7 +201,7 @@
                     print_simple_box_end();
                     echo "<br />";
                     notice_yesno (get_string("deletecheckfiles"),
-                                "".basename($ME)."?id=$id&wdir=$wdir&action=delete&confirm=1",
+                                "".basename($ME)."?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
                                 "".basename($ME)."?id=$id&wdir=$wdir&action=cancel");
                 } else {
                     displaydir($wdir);
@@ -207,7 +212,7 @@
 
         case "move":
             html_header($course, $wdir);
-            if ($count = setfilelist($_POST)) {
+            if (($count = setfilelist($_POST)) and confirm_sesskey()) {
                 $USER->fileop     = $action;
                 $USER->filesource = $wdir;
                 echo "<p align=center>";
@@ -220,7 +225,7 @@
 
         case "paste":
             html_header($course, $wdir);
-            if (isset($USER->fileop) and $USER->fileop == "move") {
+            if (isset($USER->fileop) and ($USER->fileop == "move") and confirm_sesskey()) {
                 foreach ($USER->filelist as $file) {
                     $shortfile = basename($file);
                     $oldfile = $basedir.$file;
@@ -236,10 +241,9 @@
             break;
 
         case "rename":
-            if (!empty($name)) {
+            if (!empty($name) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 $name    = clean_filename($name);
-                $oldname = clean_filename($oldname);
                 if (file_exists($basedir.$wdir."/".$name)) {
                     echo "Error: $name already exists!";
                 } else if (!rename($basedir.$wdir."/".$oldname, $basedir.$wdir."/".$name)) {
@@ -260,6 +264,7 @@
                 echo " <INPUT TYPE=hidden NAME=action VALUE=rename>";
                 echo " <INPUT TYPE=hidden NAME=oldname VALUE=\"$file\">";
                 echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"$file\">";
+                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " <INPUT TYPE=submit VALUE=\"$strrename\">";
                 echo "</FORM>";
                 echo "</TD><TD>";
@@ -275,7 +280,7 @@
             break;
 
         case "mkdir":
-            if (!empty($name)) {
+            if (!empty($name) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
                 if (file_exists("$basedir$wdir/$name")) {
@@ -297,6 +302,7 @@
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir>";
                 echo " <INPUT TYPE=text NAME=name SIZE=35>";
+                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " <INPUT TYPE=submit VALUE=\"$strcreate\">";
                 echo "</FORM>";
                 echo "</TD><TD>";
@@ -313,7 +319,7 @@
 
         case "edit":
             html_header($course, $wdir);
-            if (isset($text)) {
+            if (isset($text) and confirm_sesskey()) {
                 $fileptr = fopen($basedir.$file,"w");
                 fputs($fileptr, stripslashes($text));
                 fclose($fileptr);
@@ -345,6 +351,7 @@
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
                 echo " <INPUT TYPE=hidden NAME=file VALUE=\"$file\">";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=edit>";
+                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 print_textarea($usehtmleditor, 25, 80, 680, 400, "text", $contents);
                 echo "</TD></TR><TR><TD>";
                 echo " <INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\">";
@@ -368,7 +375,7 @@
             break;
 
         case "zip":
-            if (!empty($name)) {
+            if (!empty($name) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
 
@@ -400,6 +407,7 @@
                     echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
                     echo " <INPUT TYPE=hidden NAME=action VALUE=zip>";
                     echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"new.zip\">";
+                    echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                     echo " <INPUT TYPE=submit VALUE=\"".get_string("createziparchive")."\">";
                     echo "</FORM>";
                     echo "</TD><TD>";
@@ -420,7 +428,7 @@
 
         case "unzip":
             html_header($course, $wdir);
-            if (!empty($file)) {
+            if (!empty($file) and confirm_sesskey()) {
                 $strok = get_string("ok");
                 $strunpacking = get_string("unpacking", "", $file);
 
@@ -447,7 +455,7 @@
 
         case "listzip":
             html_header($course, $wdir);
-            if (!empty($file)) {
+            if (!empty($file) and confirm_sesskey()) {
                 $strname = get_string("name");
                 $strsize = get_string("size");
                 $strmodified = get_string("modified");
@@ -458,8 +466,8 @@
                 $file = basename($file);
 
                 include_once($CFG->libdir.'/pclzip/pclzip.lib.php');
-                $archive = new PclZip("$basedir/$wdir/$file");
-                if (!$list = $archive->listContent("$basedir/$wdir")) {
+                $archive = new PclZip(cleardoubleslashes("$basedir/$wdir/$file"));
+                if (!$list = $archive->listContent(cleardoubleslashes("$basedir/$wdir"))) {
                     notify($archive->errorInfo(true));
 
                 } else {
@@ -492,34 +500,6 @@
             html_footer();
             break;
 
-        case "torte":
-        	if($_POST)
-        	{
-	        	while(list($key, $val) = each($_POST))
-	        	{
-		        	if(ereg("file([0-9]+)", $key, $regs))
-		        	{
-			        	$file = $val;
-		        	}
-	        	}
-	        	if(@filetype($CFG->dataroot ."/". $course->id . $file) == "file")
-	        	{
-		        	if(mimeinfo("icon", $file) == "image.gif")
-		        	{
-		        		$url = $CFG->wwwroot ."/file.php?file=/" .$course->id . $file;
-		        		runjavascript($url);
-	        		}
-	        		else
-	        		{
-		        		print "File is not a image!";
-	        		}
-	        	}
-	        	else
-	        	{
-		        	print "You cannot insert FOLDER into richtext editor!!!";
-	        	}
-        	}
-        	break;
         case "cancel";
             clearfilelist();
 
@@ -576,7 +556,10 @@ function setfilelist($VARS) {
     foreach ($VARS as $key => $val) {
         if (substr($key,0,4) == "file") {
             $count++;
-            $USER->filelist[] = rawurldecode($val);
+            $val = rawurldecode($val);
+            if (!detect_munged_arguments($val, 0)) {
+                $USER->filelist[] = $val;
+            }
         }
     }
     return $count;
@@ -687,13 +670,13 @@ function displaydir ($wdir) {
             $filename = $fullpath."/".$dir;
             $fileurl  = rawurlencode($wdir."/".$dir);
             $filesafe = rawurlencode($dir);
-            $filedate = userdate(filectime($filename), "%d %b %Y, %I:%M %p");
-
+            $filesize = display_size(get_directory_size("$fullpath/$dir"));
+            $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
             echo "<TR>";
 
             print_cell("center", "<INPUT TYPE=checkbox NAME=\"file$count\" VALUE=\"$fileurl\">");
             print_cell("left", "<A HREF=\"".basename($ME)."?id=$id&wdir=$fileurl\"><IMG SRC=\"$CFG->pixpath/f/folder.gif\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"Folder\"></A> <A HREF=\"".basename($ME)."?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</A>");
-            print_cell("right", "-");
+            print_cell("right", "<b>$filesize</b>");
             print_cell("right", $filedate);
             print_cell("right", "<A HREF=\"".basename($ME)."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
 
@@ -713,7 +696,7 @@ function displaydir ($wdir) {
             $fileurl     = "$wdir/$file";
             $filesafe    = rawurlencode($file);
             $fileurlsafe = rawurlencode($fileurl);
-            $filedate    = userdate(filectime($filename), "%d %b %Y, %I:%M %p");
+            $filedate    = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
 
             if (substr($fileurl,0,1) == '/') {
                 $selectfile = substr($fileurl,1);
@@ -747,8 +730,8 @@ function displaydir ($wdir) {
             if ($icon == "text.gif" || $icon == "html.gif") {
                 $edittext .= "<a href=\"".basename($ME)."?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</a>";
             } else if ($icon == "zip.gif") {
-                $edittext .= "<a href=\"".basename($ME)."?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</a>&nbsp;";
-                $edittext .= "<a href=\"".basename($ME)."?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</a> ";
+                $edittext .= "<a href=\"".basename($ME)."?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=unzip&amp;sesskey=$USER->sesskey\">$strunzip</a>&nbsp;";
+                $edittext .= "<a href=\"".basename($ME)."?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=listzip&amp;sesskey=$USER->sesskey\">$strlist</a> ";
             }
 
             print_cell("right", "$edittext <A HREF=\"".basename($ME)."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
@@ -767,6 +750,7 @@ function displaydir ($wdir) {
     echo "<TR><TD>";
     echo "<INPUT TYPE=hidden NAME=id VALUE=\"$id\">";
     echo "<INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\"> ";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
     $options = array (
                    "move" => "$strmovetoanotherfolder",
                    "delete" => "$strdeletecompletely",
@@ -783,6 +767,7 @@ function displaydir ($wdir) {
         echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
         echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
         echo " <INPUT TYPE=hidden NAME=action VALUE=paste>";
+        echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo " <INPUT TYPE=submit VALUE=\"$strmovefilestohere\">";
         echo "</FORM>";
     }
