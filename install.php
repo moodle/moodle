@@ -68,7 +68,7 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 $SESSION->lang = (!empty($_POST['language'])) ? $_POST['language'] : $INSTALL['language'];
 $CFG->dirroot = $INSTALL['dirroot'];
 $CFG->dataroot = $INSTALL['dataroot'];
-$CFG->directorypermissions = 0777;
+$CFG->directorypermissions = 00777;
 
 
 /// Include some moodle libraries
@@ -162,26 +162,26 @@ if ($INSTALL['stage'] == 2) {
     if (($fh = @fopen($INSTALL['dirroot'].'/install.php', 'r')) === false ) {
         $CFG->dirroot = dirname(__FILE__);
         $INSTALL['dirroot'] = dirname(__FILE__);
-        $errormsg = get_string('dirrooterror', 'install');
-    } else {
-        fclose($fh);
+        $errormsg .= get_string('dirrooterror', 'install').'<br />';
+    } 
+    if ($fh) fclose($fh);
             
-        $CFG->dirroot = $INSTALL['dirroot'];
+    $CFG->dirroot = $INSTALL['dirroot'];
 
-        /// check wwwroot
+    /// check wwwroot
+    if (ini_get('allow_url_fopen')) {
         if (($fh = @fopen($INSTALL['wwwroot'].'/install.php', 'r')) === false) {
-            $errormsg = get_string('wwwrooterror', 'install');
-        } else {
-            fclose($fh);
-
-            /// check dataroot
-            $CFG->dataroot = $INSTALL['dataroot'];
-            if (make_upload_directory('sessions', false) === false ) {
-                $errormsg = get_string('datarooterror', 'install');
-            }            
+            $errormsg .= get_string('wwwrooterror', 'install').'<br />';
         }
     }
-    
+    if ($fh) fclose($fh);
+
+    /// check dataroot
+    $CFG->dataroot = $INSTALL['dataroot'];
+    if (make_upload_directory('sessions', false) === false ) {
+        $errormsg = get_string('datarooterror', 'install').'<br />';
+    }
+    if ($fh) fclose($fh); 
 
     if (!empty($errormsg)) $nextstage = 2;
 
@@ -213,24 +213,34 @@ if ($INSTALL['stage'] == 3) {
         }
     }
 
-    $db = &ADONewConnection($INSTALL['dbtype']);
+    if ($INSTALL['dbtype'] == 'mysql') {  /// Check MySQL extension is present
+        if (!extension_loaded('mysql')) {
+            $errormsg = get_string('mysqlextensionisnotpresentinphp', 'install');
+            $nextstage = 3;
+        }
+    }
 
-    error_reporting(0);  // Hide errors 
-    
-    if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
-        /// The following doesn't seem to work but we're working on it
-        /// If you come up with a solution for creating a database in MySQL 
-        /// feel free to put it in and let us know
-        if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
-            switch ($INSTALL['dbtype']) {   /// Try to create a database
-                case 'mysql':
-                    if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']};")) {
-                        $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
-                    } else {
-                        $errormsg = get_string('dbcreationerror', 'install');
-                        $nextstage = 3;
-                    }
-                break;
+    if (empty($errormsg)) {
+
+        $db = &ADONewConnection($INSTALL['dbtype']);
+
+        error_reporting(0);  // Hide errors 
+
+        if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
+            /// The following doesn't seem to work but we're working on it
+            /// If you come up with a solution for creating a database in MySQL 
+            /// feel free to put it in and let us know
+            if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
+                switch ($INSTALL['dbtype']) {   /// Try to create a database
+                    case 'mysql':
+                        if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']};")) {
+                            $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
+                        } else {
+                            $errormsg = get_string('dbcreationerror', 'install');
+                            $nextstage = 3;
+                        }
+                        break;
+                }
             }
         }
     }
@@ -296,7 +306,7 @@ if ($nextstage == 5) {
     $str .= '$CFG->admin     = \''.$INSTALL['admindirname']."';\r\n";
     $str .= "\r\n";
 
-    $str .= '$CFG->directorypermissions = 0777;'."\r\n";
+    $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
     $str .= "\r\n";
 
     $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n";
@@ -346,7 +356,7 @@ if (isset($_GET['help'])) {
 <table class="main" align="center" cellpadding="3" cellspacing="0">
     <tr>
         <td class="td_mainlogo">
-            <p class="p_mainlogo"><img src="pix/moodlelogo-med.gif" width="240" height="60"></p>
+            <p class="p_mainlogo"><img src="pix/moodlelogo-med.gif" width="240" height="60" alt=\"\"></p>
         </td>
         <td class="td_mainlogo" valign="bottom">
             <p class="p_mainheader"><?php print_string('installation', 'install') ?></p>
@@ -546,7 +556,7 @@ function form_table($nextstage = 0, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('password') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dbpass" value="<?php echo $INSTALL['dbpass'] ?>" />
+                    <input type="password" size="40" name="dbpass" value="<?php echo $INSTALL['dbpass'] ?>" />
                 </td>
             </tr>
             <tr>
@@ -624,7 +634,7 @@ function install_helpbutton($url, $title='') {
     }
     echo "<a href=\"javascript: void(0)\">";
     echo "<img src=\"./pix/help.gif\" height=\"17\" width=\"22\" alt=\"$title\"";
-    echo "border=\"0\" align=\"absmiddle\" title=\"$title\" ";
+    echo "border=\"0\" align=\"middle\" title=\"$title\" ";
     echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
     echo "</a>\n";
 }
