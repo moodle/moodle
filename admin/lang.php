@@ -86,7 +86,7 @@
     
             $first = true;
             foreach ($enstring as $key => $value) {
-                if (!isset($string[$key])) {
+                if (!isset($string[$key]) or $string[$key] == "") {
                     $value = htmlspecialchars($value);
                     $value = str_replace("$"."a", "\\$"."a", $value);
                     if ($first) {
@@ -189,8 +189,11 @@
 
                 $value = str_replace("\\","",$string[$key]);          // Delete all slashes
                 $value = htmlspecialchars($value);
+
+                $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
+
                 if ($editable) {
-                    echo "<TD WIDTH=40% VALIGN=TOP>";
+                    echo "<TD WIDTH=40% BGCOLOR=\"$cellcolour\" VALIGN=TOP>";
                     if (isset($string[$key])) {
                         $valuelen = strlen($value);
                     } else {
@@ -201,17 +204,15 @@
                         $rows = ceil($valuelen / $cols);
                         echo "<TEXTAREA NAME=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</TEXTAREA>";
                     } else {
-                        $cols = $valuelen + 2;
+                        if ($valuelen) {
+                            $cols = $valuelen + 2;
+                        }
                         echo "<INPUT TYPE=\"TEXT\" NAME=\"string-$key\" VALUE=\"$value\" SIZE=\"$cols\"></TD>";
                     }
                     echo "</TD>";
 
                 } else {
-                    if (isset($string[$key])) {
-                        echo "<TD WIDTH=40% BGCOLOR=white VALIGN=TOP>$value</TD>";
-                    } else {
-                        echo "<TD WIDTH=40% BGCOLOR=white ALIGN=CENTER VALIGN=TOP>-</TD>";
-                    }
+                    echo "<TD WIDTH=40% BGCOLOR=\"$cellcolour\" VALIGN=TOP>$value</TD>";
                 }
             }
             if ($editable) {
