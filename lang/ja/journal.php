@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 unstable development (2004091100)
+      // journal.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['alwaysopen'] = '常に利用可能';
@@ -35,6 +35,6 @@ $string['startoredit'] = '日誌を編集する';
 $string['thischarset'] = 'EUC-JP';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Japanese';
-$string['viewallentries'] = '$a 件の登録済み日誌を見る';
+$string['viewallentries'] = '$a 件の日誌エントリを表示する';
 
 ?>
