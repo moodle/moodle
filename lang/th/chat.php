@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 Beta (2004022400)
+      // chat.php - created with Moodle 1.3 (2004052500)
 
 
 $string['beep'] = 'เรียก';
-$string['chatintro'] = 'ข้อความแนะนำ';
+$string['chatintro'] = 'คำนำ';
 $string['chatname'] = 'ชื่อห้อง';
 $string['chatreport'] = 'กำหนดการเสวนา';
 $string['chattime'] = 'เวลาเสวนาครั้งต่อไป';
