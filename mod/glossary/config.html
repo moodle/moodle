@@ -11,7 +11,7 @@
 <tr valign=top>
     <td align=right><p>glossary_entbypage:</td>
     <td>
-    <input name=glossary_entbypage type=text size=3 value="<?php p($CFG->glossary_entbypage) ?>">
+    <input name=glossary_entbypage type=text size=3 value="<?php p(isset($CFG->glossary_entbypage) ? $CFG->glossary_entbypage : 10) ?>">
     </td>
     <td>
     <?php print_string("entbypage", "glossary") ?>
