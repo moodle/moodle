@@ -251,27 +251,29 @@ class ChatDaemon {
         echo '</script></head><body style="font-face: serif;" bgcolor="'.$THEME->body.'">';
 
         echo '<table style="width: 100%;"><tbody>';
-        if(empty($this->sets_info)) {
-            // No users
-            echo '<tr><td>&nbsp;</td></tr>';
+
+        // Get the users from that chatroom
+        $users = $this->chatrooms[$info['chatid']]['users'];
+
+        foreach ($users as $usersessionid => $userid) {
+            // Fetch each user's sessionid and then the rest of his data from $this->sets_info
+            $userinfo = $this->sets_info[$usersessionid];
+
+            $lastping = $timenow - $userinfo['chatuser']->lastmessageping;
+            $popuppar = '\'/user/view.php?id='.$userinfo['user']->id.'&amp;course='.$userinfo['courseid'].'\',\'user'.$userinfo['chatuser']->id.'\',\'\'';
+            echo '<tr><td width="35">';
+            echo '<a target="_new" onclick="return openpopup('.$popuppar.');" href="'.$CFG->wwwroot.'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'">';
+            print_user_picture($userinfo['user']->id, 0, $userinfo['user']->picture, false, false, false);
+            echo "</a></td><td valign=\"center\">";
+            echo "<p><font size=\"1\">";
+            echo fullname($userinfo['user'])."<br />";
+            echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font> ";
+            echo '<a target="empty" href="http://'.$CFG->chat_serverhost.':'.$CFG->chat_serverport.'/?win=beep&amp;beep='.$userinfo['user']->id.
+                 '&chat_sid='.$sessionid.'&amp;groupid='.$this->sets_info[$sessionid]['groupid'].'">'.$str->beep."</a>\n";
+            echo "</font></p>";
+            echo "<td></tr>";
         }
-        else {
-            foreach ($this->sets_info as $usersid => $userinfo) {
-                $lastping = $timenow - $userinfo['chatuser']->lastmessageping;
-                $popuppar = '\'/user/view.php?id='.$userinfo['user']->id.'&amp;course='.$userinfo['courseid'].'\',\'user'.$userinfo['chatuser']->id.'\',\'\'';
-                echo '<tr><td width="35">';
-                echo '<a target="_new" onclick="return openpopup('.$popuppar.');" href="'.$CFG->wwwroot.'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'">';
-                print_user_picture($userinfo['user']->id, 0, $userinfo['user']->picture, false, false, false);
-                echo "</a></td><td valign=\"center\">";
-                echo "<p><font size=\"1\">";
-                echo fullname($userinfo['user'])."<br />";
-                echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font> ";
-                echo '<a target="empty" href="http://'.$CFG->chat_serverhost.':'.$CFG->chat_serverport.'/?win=beep&amp;beep='.$userinfo['user']->id.
-                     '&chat_sid='.$sessionid.'&amp;groupid='.$this->sets_info[$sessionid]['groupid'].'">'.$str->beep."</a>\n";
-                echo "</font></p>";
-                echo "<td></tr>";
-            }
-        }
+
         echo '</tbody></table>';
 
         // About 2K of HTML comments to force browsers to render the HTML
