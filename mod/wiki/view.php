@@ -303,7 +303,7 @@
         echo '<table border="0">';
         echo '<tr>';
         $tabs = array('view', 'edit','links','info');
-        if ($binary) {
+        if ($wiki->ewikiacceptbinary) {
             $tabs[] = 'attachments';
         }
         foreach ($tabs as $tab) {

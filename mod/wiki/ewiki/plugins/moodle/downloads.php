@@ -223,7 +223,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
    #-- collect entries
    $files = array();
    $sorted = array();
-   $result = ewiki_database("GETALL", array("flags", "meta", "created", "hits"));
+   $result = ewiki_database("GETALL", array("flags", "meta", "created", "hits", "userid"));
 
    while ($row = $result->get()) {
       if (($row["flags"] & EWIKI_DB_F_TYPE) == EWIKI_DB_F_BINARY) {
@@ -278,7 +278,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
       foreach ($sorted as $id=>$uu) {
          $row = $files[$id];
-         $o .= ewiki_entry_downloads($row, $section[0]=="*");
+         $o .= ewiki_entry_downloads($row, $section[0]=="*", true);
       }
    }
 
@@ -291,7 +291,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
 
 
-function ewiki_entry_downloads($row, $show_section=0) {
+function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
    global $ewiki_binary_icons, $ewiki_upload_sections;
 
@@ -343,12 +343,31 @@ function ewiki_entry_downloads($row, $show_section=0) {
    $info->title = $p_title;
    $info->comment = $p_comment;
 
-   
-   $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br>'.
-        get_string("uploadedon","wiki").": ".$info->time.", ".get_string("downloadtimes","wiki",$info->hits)."<br>".
-        '(<a href="'.$info->url.'">'.$info->id."</a>)<br>".
-        $info->section." ".get_string("fileisoftype","wiki").": ".$info->type.
-        "$info->comment<br><br>";
+   if ($fullinfo) {
+        if ($user = get_record('user', 'id', $row['userid'])) {
+            if (!isset($course->id)) {
+                $course->id = 1;
+            }
+            $picture = print_user_picture($user->id, $course->id, $user->picture, false, true, true);
+            $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">".
+                     fullname($user)."</a>";
+        }
+
+        $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br>'.
+            $info->comment.
+            $info->section." ".get_string("fileisoftype","wiki").": ".$info->type.'<br>'.
+            get_string("uploadedon","wiki").": ".$info->time.", ".
+            ' by '.$value.'<br>'.
+            get_string("downloadtimes","wiki",$info->hits)."<br>".
+//            '(<a href="'.$info->url.'">'.$info->id."</a>)<br>".
+            '<br><br>';
+   }
+   else {
+//       global $moodle_format;   // from wiki/view.php
+        $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br>'.
+              $info->comment.'<br><br>';
+//        $o = format_text($o, $moodle_format);
+   }
 
    
    
