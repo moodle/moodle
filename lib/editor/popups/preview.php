@@ -3,8 +3,8 @@
     include("../../../config.php");
     require("../../../files/mimetypes.php");
     
-    require_variable($id);
-    require_variable($imageurl);
+    $id       = required_param('id', PARAM_INT);
+    $imageurl = required_param('imageurl', PARAM_URL);
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -19,7 +19,8 @@
     $imageurl = rawurldecode($imageurl);   /// Full URL starts with $CFG->wwwroot/file.php
     $imagepath = str_replace("$CFG->wwwroot/file.php", '', $imageurl);
     $imagepath = str_replace("?file=", '', $imagepath); // if we're using second option of file path.
-    
+
+    $size = null;
     if ($imagepath != $imageurl) {         /// This is an internal image
         $size = getimagesize($CFG->dataroot.$imagepath);
     }
