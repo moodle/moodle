@@ -3,7 +3,9 @@
 //  Lists all the users within a given course
 
     require_once("../config.php");
-    require_once("lib.php");
+
+    define('USER_SMALL_CLASS', 20);   // Below this is considered small
+    define('USER_LARGE_CLASS', 200);  // Above this is considered large
 
     require_variable($id);   //course
     optional_variable($sort, "lastaccess");  //how to sort students
@@ -20,34 +22,9 @@
 
     require_login($course->id);
 
-    $isteacher = isteacher($course->id);
-
     add_to_log($course->id, "user", "view all", "index.php?id=$course->id", "");
 
-    $string->email       = get_string("email");
-    $string->location    = get_string("location");
-    $string->lastaccess  = get_string("lastaccess");
-    $string->activity    = get_string("activity");
-    $string->unenrol     = get_string("unenrol");
-    $string->loginas     = get_string("loginas");
-    $string->fullprofile = get_string("fullprofile");
-    $string->role        = get_string("role");
-    $string->never       = get_string("never");
-    $string->name        = get_string("name");
-    $string->day         = get_string("day");
-    $string->days        = get_string("days");
-    $string->hour        = get_string("hour");
-    $string->hours       = get_string("hours");
-    $string->min         = get_string("min");
-    $string->mins        = get_string("mins");
-    $string->sec         = get_string("sec");
-    $string->secs        = get_string("secs");
-    $string->all         = get_string("all");
-
-    $countries = get_list_of_countries();
-
-    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
-
+    $isteacher = isteacher($course->id);
     $showteachers = ($page == 0 and $sort == "lastaccess" and $dir == "desc");
 
     if ($showteachers) {
@@ -59,19 +36,18 @@
     if ($course->category) {
         print_header("$course->shortname: ".get_string("participants"), "$course->fullname",
                      "<A HREF=../course/view.php?id=$course->id>$course->shortname</A> -> ".
-                     "$participantslink", "", "", true, "&nbsp;", $loggedinas);
+                     "$participantslink", "", "", true, "&nbsp;", navmenu($course));
     } else {
         print_header("$course->shortname: ".get_string("participants"), "$course->fullname", 
-                     "$participantslink", "", "", true, "&nbsp;", $loggedinas);
+                     "$participantslink", "", "", true, "&nbsp;", navmenu($course));
     }
-
 
     if ($showteachers) {
         if ( $teachers = get_course_teachers($course->id)) {
             echo "<h2 align=center>$course->teachers</h2>";
             foreach ($teachers as $teacher) {
                 if ($teacher->authority > 0) {    // Don't print teachers with no authority
-                    print_user($teacher, $course, $string, $countries);
+                    print_user($teacher, $course);
                 }
             }
         }
@@ -100,6 +76,8 @@
 
     if ($totalcount > $perpage) {
         $alphabet = explode(',', get_string('alphabet'));
+        $strall = get_string("all");
+
 
         /// Bar of first initials
 
@@ -107,9 +85,9 @@
         echo get_string("firstname")." : ";
         if ($firstinitial) {
             echo " <a href=\"index.php?id=$course->id&sort=firstname&dir=ASC&".
-                   "perpage=$perpage&lastinitial=$lastinitial\">$string->all</a> ";
+                   "perpage=$perpage&lastinitial=$lastinitial\">$strall</a> ";
         } else {
-            echo " <b>$string->all</b> ";
+            echo " <b>$strall</b> ";
         }
         foreach ($alphabet as $letter) {
             if ($letter == $firstinitial) {
@@ -126,9 +104,9 @@
         echo get_string("lastname")." : ";
         if ($lastinitial) {
             echo " <a href=\"index.php?id=$course->id&sort=lastname&dir=ASC&".
-                   "perpage=$perpage&firstinitial=$firstinitial\">$string->all</a> ";
+                   "perpage=$perpage&firstinitial=$firstinitial\">$strall</a> ";
         } else {
-            echo " <b>$string->all</b> ";
+            echo " <b>$strall</b> ";
         }
         foreach ($alphabet as $letter) {
             if ($letter == $lastinitial) {
@@ -153,13 +131,26 @@
 
     } if (0 < $matchcount and $matchcount < USER_SMALL_CLASS) {    // Print simple listing
         foreach ($students as $student) {
-            print_user($student, $course, $string, $countries);
+            print_user($student, $course);
         }
 
     } else if ($matchcount > 0) {
 
         // Print one big table with abbreviated info
         $columns = array("firstname", "lastname", "city", "country", "lastaccess");
+
+        $countries = get_list_of_countries();
+
+        $strnever = get_string("never");
+
+        $datestring->day   = get_string("day");
+        $datestring->days  = get_string("days");
+        $datestring->hour  = get_string("hour");
+        $datestring->hours = get_string("hours");
+        $datestring->min   = get_string("min");
+        $datestring->mins  = get_string("mins");
+        $datestring->sec   = get_string("sec");
+        $datestring->secs  = get_string("secs");
 
         foreach ($columns as $column) {
             $colname[$column] = get_string($column);
@@ -207,9 +198,9 @@
         foreach ($students as $student) {
 
             if ($student->lastaccess) {
-                $lastaccess = format_time(time() - $student->lastaccess, $string);
+                $lastaccess = format_time(time() - $student->lastaccess, $datestring);
             } else {
-                $lastaccess = $string->never;
+                $lastaccess = $strnever;
             }
 
             if ($showall and $numstudents > USER_LARGE_CLASS) {  // Don't show pictures

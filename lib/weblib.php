@@ -1106,6 +1106,83 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     }
 }
 
+function print_user($user, $course) {
+/// Prints a summary of a user in a nice little box
+
+    static $string;
+    static $datestring;
+    static $countries;
+    static $isteacher;
+
+    if (empty($string)) {     // Cache all the strings for the rest of the page
+
+        $string->email       = get_string("email");
+        $string->location    = get_string("location");
+        $string->lastaccess  = get_string("lastaccess");
+        $string->activity    = get_string("activity");
+        $string->unenrol     = get_string("unenrol");
+        $string->loginas     = get_string("loginas");
+        $string->fullprofile = get_string("fullprofile");
+        $string->role        = get_string("role");
+        $string->name        = get_string("name");
+        $string->never       = get_string("never");
+
+        $datestring->day     = get_string("day");
+        $datestring->days    = get_string("days");
+        $datestring->hour    = get_string("hour");
+        $datestring->hours   = get_string("hours");
+        $datestring->min     = get_string("min");
+        $datestring->mins    = get_string("mins");
+        $datestring->sec     = get_string("sec");
+        $datestring->secs    = get_string("secs");
+
+        $countries = get_list_of_countries();
+
+        $isteacher = isteacher($course->id);
+    }
+
+    echo '<table width="80%" align="center" border="0" cellpadding="10" cellspacing="0" class="userinfobox">';
+    echo '<tr>';
+    echo '<td width="100" bgcolor="#ffffff" valign="top" class="userinfoboxside">';
+    print_user_picture($user->id, $course->id, $user->picture, true);
+    echo '</td>';
+    echo '<td width="100%" bgcolor="#ffffff" valign="top" class="userinfoboxsummary">';
+    echo '<font size="-1">';
+    echo '<font size="3"><b>'.fullname($user, $isteacher).'</b></font>';
+    echo '<p>';
+    if (!empty($user->role) and ($user->role <> $course->teacher)) {
+        echo "$string->role: $user->role<br />";
+    }
+    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or $isteacher) {
+        echo "$string->email: <a href=\"mailto:$user->email\">$user->email</a><br />";
+    }
+    if ($user->city or $user->country) {
+        echo "$string->location: $user->city, ".$countries["$user->country"]."<br />";
+    }
+    if ($user->lastaccess) {
+        echo "$string->lastaccess: ".userdate($user->lastaccess);
+        echo "&nbsp (".format_time(time() - $user->lastaccess, $datestring).")";
+    } else {
+        echo "$string->lastaccess: $string->never";
+    }
+    echo '</td><td valign="bottom" bgcolor="#ffffff" nowrap="nowrap" class="userinfoboxlinkcontent">';
+
+    echo '<font size="1">';
+    if ($isteacher) {
+        $timemidnight = usergetmidnight(time());
+        echo "<a href=\"../course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
+        if (isstudent($course->id, $user->id) and !iscreator($user->id)) {  // Includes admins
+            echo "<a href=\"../course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
+            echo "<a href=\"../course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</a><br />";
+        }
+    } 
+    echo "<a href=\"view.php?id=$user->id&course=$course->id\">$string->fullprofile...</a>";
+    echo '</font>';
+
+    echo '</td></tr></table>';
+}
+
+
 function recent_internet_explorer() {
 /// Returns true if the current browser is a recent version 
 /// of Internet Explorer

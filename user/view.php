@@ -4,7 +4,6 @@
 
     require_once("../config.php");
     require_once("../mod/forum/lib.php");
-    require_once("lib.php");
 
     require_variable($id);
     require_variable($course);
@@ -34,16 +33,14 @@
     $personalprofile = get_string("personalprofile");
     $participants = get_string("participants");
 
-    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
-
     if ($course->category) {
         print_header("$personalprofile: $fullname", "$personalprofile: $fullname", 
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> 
                       <a href=\"index.php?id=$course->id\">$participants</a> -> $fullname",
-                      "", "", true, "&nbsp;", $loggedinas);
+                      "", "", true, "&nbsp;", navmenu($course));
     } else {
         print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname", 
-                     "$fullname", "", "", true, "&nbsp;", $loggedinas);
+                     "$fullname", "", "", true, "&nbsp;", navmenu($course));
     }
 
     if ($course->category and ! isguest() ) {

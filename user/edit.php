@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
     require_once("../config.php");
-    require_once("lib.php");
+    require_once("$CFG->libdir/gdlib.php");
 
     require_variable($id);       // user id
     require_variable($course);   // course id
