@@ -1558,7 +1558,7 @@ function notice_yesno ($message, $linkyes, $linkno) {
     print_simple_box_end();
 }
 
-function redirect($url, $message="", $delay="1") {
+function redirect($url, $message="", $delay="0") {
 // Uses META tags to redirect the user, after printing a notice
 
     if (empty($message)) {
