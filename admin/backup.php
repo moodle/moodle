@@ -119,7 +119,13 @@
     echo "<br />";
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    include("$CFG->dirroot/backup/config.html");
+
+    //Check for required functions...
+    if(!function_exists('utf8_encode')) {
+        print_simple_box("<font color=\"red\">You need to add XML support to your PHP installation</font>", "center", "70%", "$THEME->cellheading", "20", "noticebox");
+    } 
+    include ("$CFG->dirroot/backup/config.html");
+
     print_simple_box_end();
 
     print_footer();

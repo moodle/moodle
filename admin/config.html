@@ -447,7 +447,13 @@
     ?>
     </td>
     <td>
-    <?php print_string("configenablerssfeeds") ?>
+    <?php 
+        print_string("configenablerssfeeds");
+        //Check for required functions...
+        if(!function_exists('utf8_encode')) {
+            echo "<font color=\"red\"> You need to add XML support to your PHP installation.</font>";
+        } 
+    ?>
     </td>
 </tr>
 
