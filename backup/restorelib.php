@@ -803,9 +803,9 @@
                     if ($data) {
                         //Now get completed xmlized object
                         $info = $data->info;
-                        traverse_xmlize($info);                                                                     //Debug
-                        print_object ($GLOBALS['traverse_array']);                                                  //Debug
-                        $GLOBALS['traverse_array']="";                                                              //Debug
+                        //traverse_xmlize($info);                                                                     //Debug
+                        //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                        //$GLOBALS['traverse_array']="";                                                              //Debug
                         //Now build the GROUP record structure
                         $gro->id = backup_todb($info['GROUP']['#']['ID']['0']['#']);
                         $gro->courseid = backup_todb($info['GROUP']['#']['COURSEID']['0']['#']);
@@ -862,9 +862,9 @@
         //Iterate over members
         for($i = 0; $i < sizeof($members); $i++) {
             $mem_info = $members[$i];
-            traverse_xmlize($mem_info);                                                                 //Debug
-            print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            $GLOBALS['traverse_array']="";                                                              //Debug
+            //traverse_xmlize($mem_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the GROUPS_MEMBERS record structure
             $group_member->groupid = $group_id;
