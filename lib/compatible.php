@@ -136,7 +136,7 @@ function check_gd_version() {
     }
 
     if (!$gdversion = check_gd_version())  {
-        print_row("GD Library", "No", "The GD library should be present");
+        print_row("GD Library", "No", "The GD library should be present to process and create images");
         $error++;
     } else {
         print_row("GD Library", $gdversion);
