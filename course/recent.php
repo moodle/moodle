@@ -8,6 +8,7 @@
     require_variable($id);
 
     optional_variable($user);
+    optional_variable($sortby, 'default');
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -33,7 +34,7 @@
             }
             $userinfo = fullname($u);
         }
-        if ($date) 
+        if ($date)
             $dateinfo = userdate($date, get_string("strftimedaydate"));
 
         if ($course->category) {
@@ -172,22 +173,22 @@
                                                 AND m.id = cm.module $activityfilter
                                                 AND cm.id = '$sectionmod'");
 
-                $groupmode = groupmode($course, $coursemod);           
+                $groupmode = groupmode($course, $coursemod);
                 switch ($groupmode) {
                     case SEPARATEGROUPS :  $groupid = mygroupid($course->id); break;
-                    case VISIBLEGROUPS  :  
+                    case VISIBLEGROUPS  :
                                            if ($selectedgroup == "allgroups") {
                                                $groupid = "";
                                            } else {
                                                $groupid = $selectedgroup;
-                                           } 
+                                           }
                                            break;
                     case NOGROUPS       :
                     default             :  $groupid = "";
-                } 
+                }
 
                 $libfile = "$CFG->dirroot/mod/$coursemod->name/lib.php";
-            
+
                 if (file_exists($libfile)) {
                     require_once($libfile);
                     $get_recent_mod_activity = $coursemod->name."_get_recent_mod_activity";
@@ -196,7 +197,7 @@
                         $activity->type = "activity";
                         $activity->name = $instance->name;
                         $activity->visible = $coursemod->visible;
-                        $activity->content->fullname = $mod->modfullname;
+                        $activity->content->modfullname = $mod->modfullname;
                         $activity->content->modname = $mod->modname;
                         $activity->content->modid =$mod->id;
                         $activities[$index] = $activity;
@@ -213,9 +214,9 @@
     switch ($sortby) {
         case "datedesc" : usort($activities, "compare_activities_by_time_desc"); break;
         case "dateasc"  : usort($activities, "compare_activities_by_time_asc"); break;
-        case "default"  : 
+        case "default"  :
         default         : $detail = false; $sortby = "default";
-         
+
     }
 
     if (!empty($activities)) {
@@ -239,8 +240,8 @@
 
             // peak at next activity.  If it's another section, don't print this one!
             // this means there are no activities in the current section
-            if (($activity->type == "section") && 
-                (($activity_count == ($key + 1)) || 
+            if (($activity->type == "section") &&
+                (($activity_count == ($key + 1)) ||
                 ($activities[$key+1]->type == "section"))) {
 
                 continue;
@@ -266,21 +267,21 @@
                    }
                    $image = "<img src=\"$CFG->modpixpath/" . $activity->content->modname . "/icon.gif\"" .
                             "height=16 width=16 alt=\"" . $activity->content->modfullname . "\">";
-                   echo "<ul><h4>$image " . $activity->content->modfullname . 
-                        "<a href=\"$CFG->wwwroot/mod/" . $activity->content->modname . "/view.php?" . 
+                   echo "<ul><h4>$image " . $activity->content->modfullname .
+                        " <a href=\"$CFG->wwwroot/mod/" . $activity->content->modname . "/view.php?" .
                         "id=" . $activity->content->modid . "\" $linkformat>" .
                         $activity->name . "</a></h4></ul>";
                }
 
             } else {
-            
+
                 if (!$inbox) {
                     print_simple_box_start("center", "90%");
                     $inbox = true;
                 }
-    
+
                 $print_recent_mod_activity = $activity->type."_print_recent_mod_activity";
-    
+
                 if (function_exists($print_recent_mod_activity)) {
                     echo '<ul><ul>';
                     $print_recent_mod_activity($activity, $course->id, $detail);
