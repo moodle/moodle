@@ -295,6 +295,25 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
 }
 
 
+function button_to_popup_window ($url, $name="popup", $linkname="click here", 
+                                 $height=400, $width=500, $title="Popup window", $options="none") {
+/// This will create a HTML link that will work on both 
+/// Javascript and non-javascript browsers.
+/// Relies on the Javascript function openpopup in javascript.php
+/// $url must be relative to home page  eg /mod/survey/stuff.php
+
+    global $CFG;
+
+    if ($options == "none") {
+        $options = "menubar=0,location=0,scrollbars,resizable,width=$width,height=$height";
+    }
+    $fullscreen = 0;
+
+    echo "<input type=\"button\" name=\"popupwindow\" title=\"$title\" value=\"$linkname ...\" ".
+         "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">\n";
+}
+
+
 function close_window_button() {
 /// Prints a simple button to close a window
 

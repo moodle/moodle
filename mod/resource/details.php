@@ -84,10 +84,8 @@
                     <td>
                         <input name="reference" size="80" value="<?php  p($form->reference) ?>">
                         <?php 
-                          echo "<font size=\"-1\">";
-                          echo "<a target=\"websearch\" href=\"$CFG->resource_websearch\" ".
-                                "onClick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\">$strsearch</a>\n";
-                          echo "</font>";
+                          echo "<input type=button name=searchbutton value=\"$strsearch ...\" ".
+                                "onClick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\">\n";
                         ?>
                     </td>
                 </tr>
@@ -157,10 +155,8 @@
                     <td>
                         <input name="reference" size="80" value="<?php p($form->reference) ?>">
                         <?php 
-                          echo "<font size=\"-1\">";
-                          echo "<a target=\"websearch\" href=\"$CFG->resource_websearch\" ".
-                                "onClick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\">$strsearch</a>\n";
-                          echo "</font>";
+                          echo "<input type=button name=searchbutton value=\"$strsearch ...\" ".
+                                "onClick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\">\n";
                         ?>
                     </td>
                 </tr>
@@ -269,10 +265,8 @@
                     <td>
                         <?php
                           echo "<input name=\"reference\" size=\"50\" value=\"$form->reference\">&nbsp;";
-                          echo "<font size=\"-1\">";
-                          link_to_popup_window ("/mod/resource/coursefiles.php?id=$course->id", 
-                                                "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
-                          echo "</font>";
+                          button_to_popup_window ("/mod/resource/coursefiles.php?id=$course->id", 
+                                                  "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
                         ?>
                     </td>
                 </tr>
