@@ -43,6 +43,9 @@
     has magic_quotes applied (regardless of the PHP settings) so that you can safely
     insert it straight into the database.  All other raw data (from files, or from databases)
     must be escaped with <font color="#339900">addslashes()</font> before inserting it into the database.</li>
+  <li class="spaced">IMPORTANT:  All texts within Moodle, especially those that have 
+    come from users, should be printed using the format_text() function.  This ensures that 
+    text is filtered and cleaned correctly.</li>
 </ol>
 <p>&nbsp;</p>
 <h2>Coding Style</h2>
