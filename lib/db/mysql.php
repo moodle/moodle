@@ -874,6 +874,11 @@ function main_upgrade($oldversion=0) {
                       ) TYPE=MyISAM COMMENT='Optional database session storage, not used by default';");
     }
 
+    if ($oldversion < 2004111500) {  // Update any users/courses using wrongly-named lang pack
+        execute_sql("UPDATE {$CFG->prefix}user SET lang = 'mi_nt' WHERE lang = 'ma_nt'");
+        execute_sql("UPDATE {$CFG->prefix}course SET lang = 'mi_nt' WHERE lang = 'ma_nt'");
+    }
+
     return $result;
 
 }
