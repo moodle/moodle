@@ -12,7 +12,7 @@ $string['attachment'] = "┼║╔╒е╒ебедеы";
 $string['bynameondate'] = "\$a->date - \$a->name д╦дшды┼ъ╣╞";
 $string['couldnotadd'] = "еиещб╝д╬д┐дс┼ъ╣╞╜╨═шд▐д╗дєд╟д╖д┐";
 $string['couldnotdeleteratings'] = "┐╜д╖╠їд┤д╢ддд▐д╗дєбв╔╛▓┴║╤д▀д╬д┐дс║я╜№╜╨═шд▐д╗дєд╟д╖д┐";
-$string['couldnotdeletereplies'] = "┐╜д╖╠їд┤д╢ддд▐д╗дєбв╩╓┼·║╤д▀д╬д┐дс║я╜№╜╨═шд▐д╗дєд╟д╖д┐";
+$string['couldnotdeletereplies'] = "┐╜д╖╠їд┤д╢ддд▐д╗дєбв╩╓┐о║╤д▀д╬д┐дс║я╜№╜╨═шд▐д╗дєд╟д╖д┐";
 $string['couldnotupdate'] = "╠д│╬╟зеиещб╝д╬д┐дс┼ъ╣╞дЄ╣╣┐╖д╟днд▐д╗дєд╟д╖д┐";
 $string['delete'] = "║я╜№";
 $string['deleteddiscussion'] = "е╟еге╣еле├е╖ечеєе╚е╘е├епдм║я╜№д╡дьд▐д╖д┐";
@@ -21,7 +21,7 @@ $string['deletesure'] = "д│д╬┼ъ╣╞дЄ║я╜№д╖д╞дтдшдэд╖ддд╟д╣дл?";
 $string['discussion'] = "е╟еге╣еле├е╖ечеє";
 $string['discussions'] = "е╟еге╣еле├е╖ечеє";
 $string['discussionsstartedby'] = "\$a д╡дєдшдъ│л╗╧д╡дьд┐е╟еге╣еле├е╖ечеє";
-$string['discussthistopic'] = "┼ъ╣╞д╣ды";
+$string['discussthistopic'] = "┼ъ╣╞";
 $string['eachuserforum'] = "е╟еге╣еле├е╖ечеєдЄ1╖я┼ъ╣╞";
 $string['edit'] = "╩╘╜╕";
 $string['editing'] = "╩╘╜╕";
@@ -44,10 +44,10 @@ $string['introteacher'] = "╢╡╗╒└ь═╤д╬е╒ейб╝ещерд╟д╣";
 $string['learningforums'] = "ещб╝е╦еєе░е╒ейб╝ещер";
 $string['maxtimehaspassed'] = "┐╜д╖╠їд┤д╢ддд▐д╗дєбвд│д╬┼ъ╣╞(\$a)д╦┬╨д╣ды║╟┬ч╩╘╜╕▓є┐ЇдЄ─╢дид▐д╖д┐!";
 $string['message'] = "есе├е╗б╝е╕";
-$string['modeflatnewestfirst'] = "╩╓┼·дЄ┐╖д╖дддтд╬длдще╒еще├е╚╔╜╝и";
-$string['modeflatoldestfirst'] = "╩╓┼·дЄ╕┼дддтд╬длдще╒еще├е╚╔╜╝и";
-$string['modenested'] = "╩╓┼·дЄе═е╣е╚╔╜╝и";
-$string['modethreaded'] = "╩╓┼·дЄе╣еье├е╔╔╜╝и";
+$string['modeflatnewestfirst'] = "╩╓┐одЄ┐╖д╖дддтд╬длдще╒еще├е╚╔╜╝и";
+$string['modeflatoldestfirst'] = "╩╓┐одЄ╕┼дддтд╬длдще╒еще├е╚╔╜╝и";
+$string['modenested'] = "╩╓┐одЄе═е╣е╚╔╜╝и";
+$string['modethreaded'] = "╩╓┐одЄе╣еье├е╔╔╜╝и";
 $string['modulename'] = "е╒ейб╝ещер";
 $string['modulenameplural'] = "е╒ейб╝ещер";
 $string['more'] = "╛▄║┘";
@@ -64,15 +64,15 @@ $string['nownotsubscribed'] = "\$a->name д╧ '\$a->forum' д╬е│е╘б╝дЄесб╝еыд╟╝ї┐од
 $string['nowsubscribed'] = "\$a->name д╧ '\$a->forum' д╬е│е╘б╝дЄесб╝еыд╟╝ї┐од╖д▐д╣бг";
 $string['numposts'] = "\$a ┼ъ╣╞";
 $string['olderdiscussions'] = "▓с╡юд╬е╟еге╣еле├е╖ечеє";
-$string['openmode0'] = "е╟еге╣еле├е╖ечеє╔╘╡Ў▓─бв╩╓┼·╔╘╡Ў▓─";
-$string['openmode1'] = "е╟еге╣еле├е╖ечеє╔╘╡Ў▓─бв╩╓┼·╡Ў▓─";
-$string['openmode2'] = "е╟еге╣еле├е╖ечеєд╚╩╓┼·дЄ╡Ў▓─";
+$string['openmode0'] = "е╟еге╣еле├е╖ечеє╔╘╡Ў▓─бв╩╓┐о╔╘╡Ў▓─";
+$string['openmode1'] = "е╟еге╣еле├е╖ечеє╔╘╡Ў▓─бв╩╓┐о╡Ў▓─";
+$string['openmode2'] = "е╟еге╣еле├е╖ечеєд╚╩╓┐одЄ╡Ў▓─";
 $string['parentofthispost'] = "д│д╬┼ъ╣╞д╬┐╞╡н╗Ў";
 $string['postadded'] = "┼ъ╣╞дм─╔▓├д╡дьд▐д╖д┐<P>╩╤╣╣д╖д┐дд╛ь╣чд╧ \$a ╩╘╜╕▓─╟╜д╟д╣";
 $string['postincontext'] = "д│д╬┼ъ╣╞д╬╛ї┬╓дЄ╕лды";
 $string['postingtip'] = "<B>┼ъ╣╞д╬е╥еєе╚:</B>
 
-╩╓┼·д╣дыд╚днд╧:
+╩╓┐од╣дыд╚днд╧:
 
 <UL>
 
@@ -92,7 +92,7 @@ $string['postingtip'] = "<B>┼ъ╣╞д╬е╥еєе╚:</B>
 <LI>двд╩д┐дм▓є┼·д╟днды╝┴╠фдЄ╣═дид▐д╣
 
 </UL>";
-$string['postmailinfo'] = "д│дьд╧ \$a ежезе╓е╡еде╚д╦┼ъ╣╞д╡дьд┐┼ъ╣╞д╬е│е╘б╝д╟д╣бг╩╓┼·дЄежезе╓е╡еде╚╖╨═│д╟─╔▓├д╣ды╛ь╣чд╧бвд│д╬еъе├епдЄепеъе├епд╖д╞дпд└д╡дд:";
+$string['postmailinfo'] = "д│дьд╧ \$a ежезе╓е╡еде╚д╦┼ъ╣╞д╡дьд┐┼ъ╣╞д╬е│е╘б╝д╟д╣бг╩╓┐одЄежезе╓е╡еде╚╖╨═│д╟─╔▓├д╣ды╛ь╣чд╧бвд│д╬еъе├епдЄепеъе├епд╖д╞дпд└д╡дд:";
 $string['postrating1'] = "╝чд╦╩м╬е╟з╝▒д╬╖╣╕■дмдвды";
 $string['postrating2'] = "╩м╬е╟з╝▒д╚┤╪╧в╟з╝▒дЄ╞▒┼∙д╦╗¤д├д╞ддды";
 $string['postrating3'] = "╝чд╦┤╪╧в╟з╝▒д╬╖╣╕■дмдвды";
@@ -102,14 +102,14 @@ $string['rate'] = "╔╛▓┴";
 $string['ratings'] = "╔╛▓┴";
 $string['re'] = "Re:";
 $string['readtherest'] = "╗─дъд╬е╚е╘е├епдЄ╞╔др";
-$string['repliesmany'] = "╕╜║▀ \$a ╖яд╬╩╓┼·дмдвдъд▐д╣";
-$string['repliesone'] = "╕╜║▀ \$a ╖яд╬╩╓┼·дмдвдъд▐д╣";
+$string['repliesmany'] = "\$a ╖яд╬╩╓┐одмдвдъд▐д╣";
+$string['repliesone'] = "\$a ╖яд╬╩╓┐одмдвдъд▐д╣";
 $string['reply'] = "╩╓┐о";
 $string['search'] = "╕б║ў";
 $string['searchforums'] = "е╒ейб╝ещердЄ╕б║ў";
 $string['searchresults'] = "╕б║ў╖ы▓╠";
 $string['sendinratings'] = "║╟┐╖д╬еьб╝е╞егеєе░дЄ┴ў┐од╣ды";
-$string['showsubscribers'] = "╗▓▓├╝╘дЄ╔╜╝ид╣ды";
+$string['showsubscribers'] = "╗▓▓├╝╘дЄ╔╜╝и";
 $string['singleforum'] = "├▒░ье╟еге╣еле├е╖ечеє";
 $string['subject'] = "┬ъ╠╛";
 $string['subscribe'] = "д│д╬е╒ейб╝ещерд╦╗▓▓├д╣ды";
@@ -119,6 +119,6 @@ $string['subscribersto'] = " '\$a' д╬╗▓▓├╝╘";
 $string['unsubscribe'] = "д│д╬е╒ейб╝ещердлдщ┼╨╧┐╦ї╛├д╣ды";
 $string['youratedthis'] = "двд╩д┐д╬╔╛▓┴";
 $string['yournewtopic'] = "┐╖╡ме╟еге╣еле├е╖ечеєе╚е╘е├еп";
-$string['yourreply'] = "двд╩д┐д╬╩╓┼·";
+$string['yourreply'] = "двд╩д┐д╬╩╓┐о";
 
 ?>
