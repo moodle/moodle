@@ -125,6 +125,8 @@
         }
         $blockbyname[$blockobject->get_title()] = $block->id;
         $blockobjects[$block->id] = $blockobject;
+        //We need to add this property to use it later (see bug 1255)
+        $blockobjects[$block->id]->visible = $block->visible;
     }
     ksort($blockbyname);
 
@@ -162,7 +164,7 @@
         $count = blocks_get_courses_using_block_by_id($blockid);
         $class = ''; // Nothing fancy, by default
 
-        if ($block->visible) {
+        if ($blockobject->visible) {
             $visible = '<a href="blocks.php?hide='.$blockid.'" title="'.$strhide.'">'.
                        '<img src="'.$pixpath.'/i/hide.gif" style="height: 16px; width: 16px;" /></a>';
         } else {
