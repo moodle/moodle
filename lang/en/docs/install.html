@@ -164,7 +164,19 @@
   </blockquote>
   <p>Just make sure index.php is in the list (and preferably towards the start 
     of the list, for efficiency).</p>
-  <p>Secondly, Moodle requires a number of PHP settings to be active for it to 
+  <p>Secondly, if you are using Apache 2, then you should turn on the <i>AcceptPathInfo</i>
+     variable, which allows scripts to be passed arguments like http://server/file.php/arg1/arg2.
+     This is essential to allow relative links between your resources, and also 
+     provides a performance boost for people using your Moodle web site.  You can 
+     turn this on by adding these lines to your httpd.conf file.</p>
+<blockquote>
+<pre>&lt;IfDefine APACHE2>
+     <b>AcceptPathInfo</b> on
+&lt;/IfDefine>
+</pre>
+</blockquote>
+
+  <p>Thirdly, Moodle requires a number of PHP settings to be active for it to 
      work.  <B>On most servers these will already be the default settings.</B>
      However, some PHP servers (and some of the more recent PHP versions) may 
      have things set differently.  These are defined in PHP's configuration
@@ -188,6 +200,11 @@ session.bug_compat_warn = Off
      This only works on Apache servers and only when Overrides have been allowed.
      <BLOCKQUOTE><PRE>
 DirectoryIndex index.php index.html index.htm
+
+&lt;IfDefine APACHE2>
+     <b>AcceptPathInfo</b> on
+&lt;/IfDefine>
+
 php_value magic_quotes_gpc On
 php_value magic_quotes_runtime Off
 php_value file_uploads On

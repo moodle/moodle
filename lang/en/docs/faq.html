@@ -24,9 +24,27 @@ The requested URL /moodle/file.php/2/myfile.jpg was not found on this server.
 
 <blockquote>
 <hr>
-<p><b>Answer:</b> Some web servers don't support the default method Moodle uses to pass arguments to a script.</p>
-<p>As Admin, go into the "Configure Variables" page and change the setting for 
-   "slasharguments".  You should now be able to access your uploaded files.</p>
+<p><b>Answer:</b> Your web server needs to be configured to allow the part of the URL 
+after a script name to be passed directly to the script.  This is 
+usually enabled in Apache 1, but is usually disabled by default in 
+Apache 2.  To turn it on, add these lines to your httpd.conf, or to 
+a .htaccess file in your local directory (see the 
+<A HREF="./?file=install.html#webserver">Install documentation</A> for more details): 
+
+<blockquote>
+<pre>&lt;IfDefine APACHE2>
+     <b>AcceptPathInfo</b> on
+&lt;/IfDefine>
+</pre>
+</blockquote>
+
+<p>If you are not using another type of web server then you can switch Moodle 
+   to use an alternative method.  The disadvantages are a slight loss of 
+   performance for your users and you won't be able to use relative links 
+   within HTML resources.
+<p>To use this alternative method: login as Admin, go into the "Configure Variables" page 
+   and change the setting for "<b>slasharguments</b>".  You should now be able to 
+   access your uploaded files.</p>
 </blockquote>
 
 
