@@ -59,7 +59,7 @@
 
     print_header(strip_tags($site->fullname), $site->fullname, 'home', '',
                  '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',
-                 true, '', $loginstring . $langmenu);
+                 true, '', $loginstring . '<br />' . $langmenu);
 
     $editing = $PAGE->user_is_editing();
 
