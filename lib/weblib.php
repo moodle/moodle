@@ -3597,14 +3597,15 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 function print_side_block_start($heading='', $attributes = array()) {
 
     global $CFG;
+
     // If there are no special attributes, give a default CSS class
-    if(empty($attributes) || !is_array($attributes)) {
+    if (empty($attributes) || !is_array($attributes)) {
         $attributes = array('class' => 'sideblock');
-    }
-    else if(!isset($attributes['class'])) {
+
+    } else if(!isset($attributes['class'])) {
         $attributes['class'] = 'sideblock';
-    }
-    else if(!strpos($attributes['class'], 'sideblock')) {
+
+    } else if(!strpos($attributes['class'], 'sideblock')) {
         $attributes['class'] .= ' sideblock';
     }
 
@@ -3616,24 +3617,26 @@ function print_side_block_start($heading='', $attributes = array()) {
     // IE misery: if I do it this way, blocks which start hidden cannot be "unhidden"
     
     // If there is a cookie to hide this thing, start it hidden
-    if(!empty($attributes['id']) && isset($_COOKIE['hide:'.$attributes['id']])) {
+    if (!empty($attributes['id']) && isset($_COOKIE['hide:'.$attributes['id']])) {
         $attributes['class'] = 'hidden '.$attributes['class'];
     }
     */
 
     $attrtext = '';
-    foreach($attributes as $attr => $val) {
-       $attrtext .= ' '.$attr.'="'.$val.'"';
+    foreach ($attributes as $attr => $val) {
+        $attrtext .= ' '.$attr.'="'.$val.'"';
     }
 
     echo '<table'.$attrtext.'>';
     if ($heading) {
-        echo '<thead><tr><td class="sideblockheading">'.$heading;
-        echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" height="11" width="11" class="hide-show-image" /></a></div>';
-        echo '</td></tr></thead>';
+        echo '<tr><th class="sideblockheading">'.$heading;
+        if (!empty($CFG->allowuserblockhiding)) {
+            echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" height="11" width="11" class="hide-show-image" /></a></div>';
+        }
+        echo '</th></tr>';
     }
 
-    echo '<tbody><tr><td class="sideblockmain">';
+    echo '<tr><td class="sideblockmain">';
 }
 
 
@@ -3641,9 +3644,11 @@ function print_side_block_start($heading='', $attributes = array()) {
  * Print table ending tags for a side block box.
  */
 function print_side_block_end($attributes) {
-    echo '</td></tr></tbody></table>';
+    global $CFG;
+
+    echo '</td></tr></table>';
     // IE workaround: if I do it THIS way, it works! WTF?
-    if (isset($attributes['id'])) {
+    if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
         echo '<script type="text/javascript"><!-- '."\n".'elementCookieHide("'.$attributes['id'].'"); '."\n".'--></script>';
     }
 }

@@ -258,6 +258,10 @@ class configvarrss extends configvar {
     $interface['allowcoursethemes'] = new configvar (get_string('configallowcoursethemes', 'admin'),
         choose_from_menu ($noyesoptions, 'allowcoursethemes', $config->allowcoursethemes, '', '', '', true) );
 
+/// allowuserblockhiding
+    $interface['allowuserblockhiding'] = new configvar (get_string('configallowuserblockhiding', 'admin'),
+        choose_from_menu ($noyesoptions, 'allowuserblockhiding', $config->allowuserblockhiding, '', '', '', true) );
+
 
 
 
