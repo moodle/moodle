@@ -1654,7 +1654,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     }
 
     if ($section >= 0) {
-        $section = '&sr='.$section;   // Section return
+        $section = '&amp;sr='.$section;   // Section return
     } else {
         $section = '';
     }
