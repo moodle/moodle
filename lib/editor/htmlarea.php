@@ -147,7 +147,7 @@ HTMLArea.Config = function () {
           "inserthorizontalrule", "createanchor", "createlink", "unlink", "nolink", "separator",
           "insertimage", "inserttable",
           "insertsmile", "insertchar",
-          <?php if (!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) {
+          <?php if (!empty($CFG->aspellpath) && file_exists($CFG->aspellpath) && !empty($CFG->editorspelling)) {
               echo '"separator","spellcheck",';
             } ?>
           "separator", "htmlmode", "separator", "popupeditor"]
@@ -229,7 +229,7 @@ HTMLArea.Config = function () {
         clean: [ "Clean Word HTML", "ed_wordclean.gif", false, function(e) {e.execCommand("killword"); }],
         lefttoright: [ "Direction left to right", "ed_left_to_right.gif", false, function(e) {e.execCommand("lefttoright");} ],
         righttoleft: [ "Direction right to left", "ed_right_to_left.gif", false, function(e) {e.execCommand("righttoleft");} ],
-        <?php if (!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) {
+        <?php if (!empty($CFG->aspellpath) && file_exists($CFG->aspellpath) && !empty($CFG->editorspelling)) {
             echo 'spellcheck: ["Spell-check", "spell-check.gif", false, spellClickHandler ],'."\n";
         }?>
         insertsmile: ["Insert Smiley", "em.icon.smile.gif", false, function(e) {e.execCommand("insertsmile");} ],
