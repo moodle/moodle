@@ -3043,28 +3043,37 @@ function error ($message, $link='') {
  * @param string $text If defined then this text is used in the page, and
  *           the $page variable is ignored.
  * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
+ * @param string $imagetext The full text for the helpbutton icon. If empty use default help.gif
  * @return string
  * @todo Finish documenting this function
  */
-function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=false, $text='', $return=false) {
+function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=false, $text='', $return=false,
+                     $imagetext='') {
     global $CFG, $THEME;
 
     if ($module == '') {
         $module = 'moodle';
     }
 
+    $linkobject = '<span class="formhelplinks">';
+
     if ($image) {
-        $icon = $CFG->pixpath .'/help.gif';
-        if ($linktext) {
-            $linkobject = "<span class=\"formhelplinks\">$title<img align=\"middle\" border=\"0\" ".
-                          " height=\"17\" width=\"22\" alt=\"\" src=\"$icon\" /></span>";
-        } else {
-            $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" ".
-                          " alt=\"$title\" style=\"cursor:help;\" src=\"$icon\" />";
+        if ($imagetext == '') {
+            $imagetext = '<img align="middle" border="0" height="17" width="22" alt="'.$title.'" src="'.
+                          $CFG->pixpath .'/help.gif" />';
         }
+        if ($linktext) {
+            $linkobject .= $title.'&nbsp;';
+        }
+
+        $linkobject .= $imagetext;
+        
     } else {
-        $linkobject = '<span class="formhelplinks">'. $title .'</span>';
+        $linkobject .= $title;
     }
+
+    $linkobject .= '</span>';
+    
     if ($text) {
         $url = '/help.php?module='. $module .'&amp;text='. htmlentities(urlencode($text));
     } else {
@@ -3096,12 +3105,9 @@ function emoticonhelpbutton($form, $field) {
 
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
-    helpbutton('emoticons', get_string('helpemoticons'), 'moodle', false, true);
-    echo '&nbsp;';
-    link_to_popup_window ('/help.php?module=moodle&amp;file=emoticons.html', 'popup',
-                          '<img src="'. $CFG->pixpath .'/s/smiley.gif" border="0" align="middle" width="15" height="15" alt="" />',
-                           400, 500, get_string('helpemoticons'));
-    echo '<br />';
+    $imagetext = '<img src="' . $CFG->pixpath . '/s/smiley.gif" border="0" align="middle" width="15" height="15" alt="" />';
+
+    helpbutton('emoticons', get_string('helpemoticons'), 'moodle', true, true, '', false, $imagetext);
 }
 
 /**
