@@ -1256,10 +1256,12 @@ function check_gd_version() {
 
     if (function_exists('gd_info')){
         $gd_info = gd_info();
-        /// THIS IS UGLY AND NEEDS TO BE IMPROVED
-        if($gd_info['GD Version'] == 'bundled (2.0 compatible)'){
+        if (substr_count($gd_info['GD Version'], "2.")) {
             $gdversion = 2;
+        } else if (substr_count($gd_info['GD Version'], "1.")) {
+            $gdversion = 1;
         }
+
     } else {
         ob_start();
         phpinfo(8);
