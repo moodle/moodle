@@ -595,27 +595,12 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
         $time = usertime($time, $timezone);
     }
 
-    if(!$applydst) {
-        return $time;
+    if($applydst) {
+        $time -= dst_offset_on($time);
     }
 
-    if(($dstid = get_user_preferences('calendar_dstpreset')) !== NULL) {
-        $preset = get_record('dst_preset', 'id', $dstid);
-
-        if($time >= $preset->last_change && $time < $preset->next_change) {
-            $time -= $preset->current_offset * MINSECS;
-            return $time;
-        }
-
-        // It's in some other time period, we need to recalculate
-        $changes = dst_changes_for_year($year, $preset);
-
-        if($time >= $changes['activate'] && $time < $changes['deactivate']) {
-            // Compensation required
-            $time -= $preset->apply_offset * MINSECS;
-        }
-    }
     return $time;
+
 }
 
 /**
@@ -857,6 +842,33 @@ function get_user_timezone($tz = 99) {
     return $tz;
 }
 
+function get_user_dst_preset() {
+    global $CFG, $USER;
+    static $preset = NULL;
+
+    if(!empty($preset)) {
+        return $preset;
+    }
+
+    if(empty($CFG->calendar_dstforusers)) {
+        if(empty($USER)) {
+            return NULL;
+        }
+        $presetid = $USER->dstpreset;
+    }
+    else {
+        $presetid = $CFG->calendar_dstforusers;
+    }
+
+    $preset = get_record('dst_preset', 'id', $presetid);
+    if(time() >= $preset->next_change) {
+        $preset = dst_update_preset($preset);
+        update_record('dst_preset', $preset);
+    }
+    return $preset;
+
+}
+
 function dst_update_preset($dstpreset) {
 
     // What's the date according to our user right now?
@@ -921,27 +933,27 @@ function dst_changes_for_year($year, $dstpreset) {
 
 // $time must NOT be compensated at all, it has to be a pure timestamp
 function dst_offset_on($time) {
-    if(($dstid = get_user_preferences('calendar_dstpreset')) !== NULL) {
-        $preset = get_record('dst_preset', 'id', $dstid);
-
-        if($time >= $preset->last_change && $time < $preset->next_change) {
-            return $preset->current_offset * MINSECS;
-        }
-        else {
-            // It's in some other time period, we need to recalculate
-            $changes = dst_changes_for_year(gmdate('Y', $time), $preset);
-    
-            if($time >= $changes['activate'] && $time < $changes['deactivate']) {
-                // Compensation required
-                return $preset->apply_offset * MINSECS;
-            }
-            else {
-                return 0;
-            }
-        }
+    $preset = get_user_dst_preset();
+    if(empty($preset)) {
+        return 0;
     }
-}
 
+    if($time >= $preset->last_change && $time < $preset->next_change) {
+        return $preset->current_offset * MINSECS;
+    }
+
+    // It's in some other time period, we need to recalculate
+    $changes = dst_changes_for_year(gmdate('Y', $time), $preset);
+
+    if($time >= $changes['activate'] && $time < $changes['deactivate']) {
+        // Compensation required
+        return $preset->apply_offset * MINSECS;
+    }
+    else {
+        return 0;
+    }
+
+}
 
 // "Find the ($index as int, 1st, 2nd, etc, -1 = last) ($weekday as int, sunday = 0) in ($month) of ($year)"
 function find_day_in_month($index, $weekday, $month, $year) {
