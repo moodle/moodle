@@ -18,7 +18,7 @@ $string['assessmentform'] = 'Beoordelingsformulier';
 $string['assessmentmadebythe'] = 'Beoordeling gemaakt door de $a';
 $string['assessmentofthissubmission'] = 'Beoordeling van deze inzending';
 $string['assessments'] = 'Beoordelingen';
-$string['atthisstageyou'] = 'Je hebt nu een beoordeling afgewerkt.<br/>Misschien wil je je werk herzien met deze beoordeling in gedachte.<br/>Als je dat doet, vergeet dan niet om ook je beoordeling te herzien.<br/>Je kunt dit doen door hier onder op de Beoordeel opnieuw-link te klikken.';
+$string['atthisstageyou'] = 'Je hebt nu een beoordeling afgewerkt.<br/>Misschien wil je je werk herzien met deze beoordeling in gedachte.<br/>Als je dat doet, vergeet dan niet om ook je beoordeling te herzien.<br/>Je kunt dit doen door hier onder op de link \"Beoordeel opnieuw\" te klikken.';
 $string['awaitingassessmentbythe'] = 'Beoordeling van de $a verwacht';
 $string['clearlateflag'] = 'Toch niet te laat';
 $string['comment'] = 'Commentaar';
@@ -34,7 +34,7 @@ $string['deletesubmissionwarning'] = 'Waarschuwing: er zijn $a beoordelingen gea
 Je wordt sterk geadviseerd om deze inzending NIET te verwijderen.';
 $string['deleting'] = 'Verwijdering';
 $string['description'] = 'Beschrijving';
-$string['descriptionofexercise'] = 'De beschrijving van de opdracht die door de $a gedaan moet worden in deze Oefening, wordt in een Worddocument of HTML-bestand gezet. Dit bestand wordt in de Oefening geüpload voor de opdracht voor de $a geopend wordt. Het is ook mogelijk en set varianten te maken van dezelfde opdracht of taak als Word- of HTML-documenten en deze te uploaden in de Oefening voor ze voor de $a geopend wordt.';
+$string['descriptionofexercise'] = 'De beschrijving van de opdracht die door de $a gedaan moet worden in deze Oefening, wordt in een Worddocument of HTML-bestand gezet. Dit bestand wordt in de Oefening geüpload voor de opdracht voor de $a geopend wordt. Het is ook mogelijk een set varianten te maken van dezelfde opdracht of taak als Word- of HTML-documenten en deze te uploaden in de Oefening voor ze voor de $a geopend wordt.';
 $string['detailsofassessment'] = 'Details van de beoordeling';
 $string['displayoffinalgrades'] = 'Toon de totalen';
 $string['doubleupload'] = 'Waarschuwing: deze inzending is waarschijnlijk twee keer verzonden. Ga naar de Beheerpagina en controleer op twee inzendingen van deze gebruiker binnen een korte tijdsspanne. Verwijder één van deze inzendingen voor je verder gaat.';
@@ -59,7 +59,7 @@ $string['gradeforsubmission'] = 'Cijfer voor inzending';
 $string['gradetable'] = 'Cijfertabel';
 $string['gradinggrade'] = 'Beoordelingscijfer';
 $string['gradingstrategy'] = 'Beoordelingsstrategie';
-$string['handlingofmultiplesubmissions'] = 'Behandeling van meerdere inzendingen';
+$string['handlingofmultiplesubmissions'] = 'Behandeling van meer inzendingen';
 $string['hidenamesfromstudents'] = 'Verberg namen van leerlingen';
 $string['incorrect'] = 'Fout';
 $string['late'] = 'Te laat';
@@ -72,30 +72,25 @@ $string['mail6'] = 'Je beoordeling van de opdracht \'$a\' is herzien';
 $string['mail7'] = 'De commentaren die je $a gegeven heeft kunnen gelezen worden bij je opdracht van de oefening';
 $string['managingassignment'] = 'Beheer van de oefening';
 $string['maximum'] = 'Maximum';
-$string['maximumgradeforstudentassessments'] = 'Maximum cijfer voor beoordelingen van leerlingen: $a';
-$string['maximumgradeforsubmissions'] = 'Maximum cijfer voor inzendingen: $a';
+$string['maximumgradeforstudentassessments'] = 'Maximumcijfer voor beoordelingen van leerlingen: $a';
+$string['maximumgradeforsubmissions'] = 'Maximumcijfer voor inzendingen: $a';
 $string['maximumsize'] = 'Maximumgrootte';
 $string['mean'] = 'Gemiddelde';
 $string['minimum'] = 'Minimum';
 $string['modulename'] = 'Oefening';
 $string['modulenameplural'] = 'Oefeningen';
 $string['movingtophase'] = 'Verplaatsen naar fase $a';
-$string['multiplesubmissions'] = 'Meerdere inzendingen';
+$string['multiplesubmissions'] = 'Meer inzendingen';
 $string['noexercisedescriptionssubmitted'] = 'Geen oefeningsbeschrijvingen ingezonden';
 $string['nosubmissions'] = 'Geen inzendingen';
 $string['notassessedyet'] = 'Nog niet beoordeeld';
 $string['notavailable'] = 'Niet beschikbaar';
 $string['noteonassessmentelements'] = ' Merk op dat het beoordelen opgesplitst is in een aantal \'Beoordelingselementen\'.<br/>
-
-Dit maakt het beoordelen gemakkelijker en meer consequent. Als leraar moet je deze<br/>
-
+Dit maakt het beoordelen gemakkelijker consequenter. Als leraar moet je deze<br/>
 elementen toevoegen voor je de opdracht opent voor je leerlingen. Dit doe je door <br/>
-
 te klikken op de opdracht in het vak. Als er nog geen elementen zijn, word je gevraagd.<br/>
-
-ze toe te voegen. Je kunt het aantal elementen wijzigen met het Bewerk Opdracht scherm,<br/>
-
-de elementen zelf kunnen aangepast worden op het \"Beheer opdracht\" scherm.';
+ze toe te voegen. Je kunt het aantal elementen wijzigen met het scherm \"Bewerk Opdracht\",<br/>
+de elementen zelf kunnen aangepast worden op het scherm \"Beheer opdracht\".';
 $string['noteongradinggrade'] = 'Dit cijfer is een maat voor hoe goed jouw beoordeling overeenkomt met de beoordeling van <br/> jouw werk door de $a. Hoe hoger het cijfer, hoe meer overeenkomst.';
 $string['noteonstudentassessments'] = '{Zelfevaluatie / Cijfer van leraar voor de zelfevaluatie}';
 $string['notgraded'] = 'Geen cijfers';
@@ -127,8 +122,8 @@ $string['reasonforadjustment'] = 'Algemene opmerking / Reden voor aanpassing';
 $string['reassess'] = 'Beoordeel opnieuw';
 $string['regradestudentassessments'] = 'Geef opnieuw cijfers voor de leerlingbeoordelingen';
 $string['resubmissionfor'] = 'Herinzending voor $a';
-$string['resubmitnote'] = '* betekent dat de $a zijn inzending opnieuw mag doen.<br/>Dit vlagje kan aan elke inzending gegeven worden door te klikken <br/>op de <b>Laat $a toe opniew in te zenden</b>knop te drukken<br/>
-De leerling kan een inzending <b>naar keuze</b> opniew opsturen.';
+$string['resubmitnote'] = '* betekent dat de $a zijn inzending opnieuw mag doen.<br/>Dit vlagje kan aan elke inzending gegeven worden door te klikken <br/>op de knop <b>Laat $a toe opnieuw in te zenden</b> te drukken<br/>
+De leerling kan een inzending <b>naar keuze</b> opnieuw opsturen.';
 $string['rubric'] = 'Rubriek';
 $string['savedok'] = 'Bewaren succesvol';
 $string['saveentries'] = 'Bewaar invoer';
@@ -137,8 +132,8 @@ $string['saveweights'] = 'Bewaar wegingen';
 $string['scale10'] = 'Score op 10';
 $string['scale100'] = 'Score op 100';
 $string['scale20'] = 'Score op 20';
-$string['scalecorrect'] = '2 punten juis/fout schaal';
-$string['scaleexcellent4'] = '4 punten schitteren/erg zwak schaal';
+$string['scalecorrect'] = '2 punten juist/fout schaal';
+$string['scaleexcellent4'] = '4 punten schitterend/erg zwak schaal';
 $string['scaleexcellent5'] = '5 punten schitterend/erg zwak schaal';
 $string['scaleexcellent7'] = '7 punten schitterend/erg zwak schaal';
 $string['scalegood3'] = '3 punten goed/slecht schaal';
@@ -160,11 +155,11 @@ $string['submitted'] = 'Ingezonden';
 $string['submittedby'] = 'Ingezonden door';
 $string['suggestedgrade'] = 'Gesuggereerd cijfer';
 $string['teacherassessment'] = 'Evaluatie van $a';
-$string['teacherassessmenttable'] = 'Evaluatiestabel van $a';
+$string['teacherassessmenttable'] = 'Evaluatietabel van $a';
 $string['teacherscomment'] = 'Commentaar van de leraar';
 $string['theexercise'] = 'De oefening';
 $string['theexerciseandthesubmissionby'] = 'De oefening en de inzending door $a';
-$string['thegradeis'] = 'Het cijfer is$a';
+$string['thegradeis'] = 'Het cijfer is $a';
 $string['thereisfeedbackfromthe'] = 'Er is feedback van de $a';
 $string['thisisaresubmission'] = 'Dit is een herinzending door $a.<br/>Jouw evaluatie van hun vorige inzending wordt getoond.<br/>Verbeter die evaluatie nadat je de nieuwe inzending bekeken hebt<br/>en klik dan op één van de knoppen onderaan de pagina.';
 $string['title'] = 'Titel';

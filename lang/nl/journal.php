@@ -15,14 +15,14 @@ Het is toegevoegd bij je ingestuurde logboek: $a->url
 ';
 $string['journalmailhtml'] = '$a->teacher heeft feedback gepost op je ingestuurde logboek voor \'<i>$a->journal</i>\'<br /><br />
 Het is toegevoegd bij je  ingestuurde <a href=\"$a->url\">logboek</a>';
-$string['journalname'] = 'Logboek naam';
-$string['journalquestion'] = 'Logboek vraag';
+$string['journalname'] = 'Naam logboek';
+$string['journalquestion'] = 'Vraag logboek';
 $string['journalrating1'] = 'Niet tevreden';
 $string['journalrating2'] = 'Tevreden';
 $string['journalrating3'] = 'Zeer tevreden';
 $string['modulename'] = 'Logboek';
 $string['modulenameplural'] = 'Logboeken';
-$string['newjournalentries'] = 'Nieuwe logboek bijdragen';
+$string['newjournalentries'] = 'Nieuwe logboekbijdragen';
 $string['noentry'] = 'Geen bijdrage';
 $string['noratinggiven'] = 'Niet beoordeeld';
 $string['notopenuntil'] = 'Dit logboek wordt geopend op';
