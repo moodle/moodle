@@ -400,7 +400,7 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
         echo "<TD BGCOLOR=\"$THEME->cellheading\">";
     }
     echo get_string("feedback", "assignment").":";
-    choose_from_menu($grades, "g$submission->id", $submission->grade, get_string("grade")."...");
+    choose_from_menu($grades, "g$submission->id", $submission->grade, get_string("nograde"));
     if ($submission->timemarked) {
         echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($submission->timemarked)."</FONT>";
     }

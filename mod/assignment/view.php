@@ -60,17 +60,18 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-
-    $strdifference = format_time($assignment->timedue - time());
-    if (($assignment->timedue - time()) < 0) {
-        $strdifference = "<FONT COLOR=RED>$strdifference</FONT>";
-    }
-    $strduedate = userdate($assignment->timedue)." ($strdifference)";
-
     print_simple_box_start("CENTER");
     print_heading($assignment->name, "CENTER");
-    print_simple_box_start("CENTER");
-    echo "<b>".get_string("duedate", "assignment")."</b>: $strduedate<br />";
+
+    $timedifference = $assignment->timedue - time();
+    if ($timedifference < 31536000) {      // Don't bother showing dates over a year in the future
+        $strdifference = format_time($timedifference);
+        if ($timedifference < 0) {
+            $strdifference = "<font color=\"red\">$strdifference</font>";
+        }
+        $strduedate = userdate($assignment->timedue)." ($strdifference)";
+        echo "<b>".get_string("duedate", "assignment")."</b>: $strduedate<br />";
+    }
 
     if ($assignment->grade < 0) {
         $scaleid = - ($assignment->grade);
@@ -84,7 +85,6 @@
         echo "<b>".get_string("maximumgrade")."</b>: $assignment->grade<br>";
     }
 
-    print_simple_box_end();
     echo "<br />";
     echo format_text($assignment->description, $assignment->format);
     print_simple_box_end();
@@ -120,7 +120,7 @@
             }
             if (!$submission->timemarked or $assignment->resubmit) {
                 if ($submission and $submission->timemodified) {
-                    echo "<P ALIGN=CENTER>".get_string("overwritewarning", "assignment")."</P>";
+                    echo "<p align=\"center\">".get_string("overwritewarning", "assignment")."</p>";
                 }
                 print_heading(get_string("submitassignment", "assignment").":", "center");
                 assignment_print_upload_form($assignment);

@@ -103,7 +103,8 @@
         foreach ($scales as $i => $scalename) {
             $grades[-$i] = "$strscale: $scalename";
         }
-        for ($i=100; $i>=0; $i--) {
+        $grades[0] = get_string("nograde");
+        for ($i=100; $i>=1; $i--) {
             $grades[$i] = $i;
         }
         choose_from_menu($grades, "grade", "$form->grade", "");

@@ -133,10 +133,12 @@
         if ($scale = get_record("scale", "id", $scaleid)) {
             $grades = make_menu_from_list($scale->scale);
         }
-    }
-
-    for ($i=$assignment->grade; $i>=0; $i--) {
-        $grades[$i] = $i;
+    } else if ($assignment->grade == 0) {
+        $grades = NULL;
+    } else {
+        for ($i=$assignment->grade; $i>=0; $i--) {
+            $grades[$i] = $i;
+        }
     }
 
     // Submission sorting
