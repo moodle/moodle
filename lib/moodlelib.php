@@ -102,7 +102,7 @@ define('PARAM_NOTAGS',  0x0008);
 define('PARAM_FILE',    0x0010);
 define('PARAM_PATH',    0x0020);
 define('PARAM_HOST',    0x0040);  // FQDN or IPv4 dotted quad
-define('PARAM_URL',     0x0080);  
+define('PARAM_URL',     0x0080);
 define('PARAM_LOCALURL',0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
 define('PARAM_CLEANFILE',0x0200);
 define('PARAM_ALPHANUM',0x0400);  //numbers or letters only
@@ -237,13 +237,13 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_HOST) {         // allow FQDN or IPv4 dotted quad
-        preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars 
+        preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars
         // match ipv4 dotted quad
         if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/',$param, $match)){
             // confirm values are ok
             if ( $match[0] > 255
                  || $match[1] > 255
-                 || $match[3] > 255 
+                 || $match[3] > 255
                  || $match[4] > 255 ) {
                 // hmmm, what kind of dotted quad is this?
                 $param = '';
@@ -255,8 +255,8 @@ function clean_param($param, $options) {
             // all is ok - $param is respected
         } else {
             // all is not ok...
-            $param='';               
-        } 
+            $param='';
+        }
     }
 
     if ($options & PARAM_URL) { // allow safe ftp, http, mailto urls
@@ -288,21 +288,21 @@ function clean_param($param, $options) {
         $options ^= PARAM_URL; // Turn off the URL bit so that simple PARAM_URLs don't test true for PARAM_LOCALURL
     }
 
-    if ($options & PARAM_LOCALURL) { 
+    if ($options & PARAM_LOCALURL) {
         // assume we passed the PARAM_URL test...
         // allow http absolute, root relative and relative URLs within wwwroot
         if (!empty($param)) {
-            if (preg_match(':^/:', $param)) { 
+            if (preg_match(':^/:', $param)) {
                 // root-relative, ok!
             } elseif (preg_match('/^'.preg_quote($CFG->wwwroot, '/').'/i',$param)) {
                 // absolute, and matches our wwwroot
-            } else { 
+            } else {
                 // relative - let's make sure there are no tricks
                 if (validateUrlSyntax($param, 's-u-P-a-p-f+q?r?')) {
                     // looks ok.
                 } else {
                     $param = '';
-                }                
+                }
             }
         }
     }
@@ -584,7 +584,7 @@ function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
  * @param int $hour The hour part to create timestamp of.
  * @param int $minute The minute part to create timestamp of.
  * @param int $second The second part to create timestamp of.
- * @param float $timezone 
+ * @param float $timezone
  * @return int timestamp
  * @todo Finish documenting this function
  */
@@ -677,7 +677,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * @uses HOURSECS
  * @param  int $date timestamp in GMT
  * @param string $format strftime format
- * @param float $timezone 
+ * @param float $timezone
  * @param boolean $fixday If true (default) then the leading
  * zero from %d is removed. If false then the leading zero is mantained.
  * @return string
@@ -699,7 +699,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
     $timezone = get_user_timezone($timezone);
 
     if (abs($timezone) > 13) {   /// Server time
-        if ($fixday) {  
+        if ($fixday) {
             $datestring = strftime($formatnoday, $date);
             $daystring  = str_replace(' 0', '', strftime(' %d', $date));
             $datestring = str_replace('DD', $daystring, $datestring);
@@ -726,7 +726,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
  *
  * @uses HOURSECS
  * @param int $time Timestamp in GMT
- * @param float $timezone 
+ * @param float $timezone
  * @return array An array that represents the date in user time
  * @todo Finish documenting this function
  */
@@ -736,8 +736,8 @@ function usergetdate($time, $timezone=99) {
 
     if (abs($timezone) > 13) {    // Server time
         return getdate($time);
-    } 
-    
+    }
+
     // There is no gmgetdate so we use gmdate instead
     $time += dst_offset_on($time);
     $time += intval((float)$timezone * HOURSECS);
@@ -923,7 +923,7 @@ function dst_changes_for_year($year, $dstpreset) {
         $deactivate_hour   = $dstpreset->deactivate_hour;
         $deactivate_minute = $dstpreset->deactivate_minute;
     }
-    
+
     $timezone       = get_user_timezone(99);
     $timeactivate   = make_timestamp($year, $dstpreset->activate_month,   $monthdayactivate,   $activate_hour,   $activate_minute,   0, $timezone, false);
     $timedeactivate = make_timestamp($year, $dstpreset->deactivate_month, $monthdaydeactivate, $deactivate_hour, $deactivate_minute, 0, $timezone, false);
@@ -1027,7 +1027,7 @@ function sesskey() {
  * whether they are allowed to be in a particular course and view a particular
  * course module.
  * If they are not logged in, then it redirects them to the site login unless
- * $autologinguest is set and {@link $CFG}->autologinguests is set to 1 in which 
+ * $autologinguest is set and {@link $CFG}->autologinguests is set to 1 in which
  * case they are automatically logged in as guests.
  * If $courseid is given and the user is not enrolled in that course then the
  * user is redirected to the course enrolment page.
@@ -1041,7 +1041,7 @@ function sesskey() {
  * @uses SITEID
  * @uses $MoodleSession
  * @param int $courseid id of the course
- * @param boolean $autologinguest 
+ * @param boolean $autologinguest
  * @param $cm course module object
  */
 function require_login($courseid=0, $autologinguest=true, $cm=null) {
@@ -1121,7 +1121,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             if (isset($cm) and !$cm->visible and !isteacher(SITEID)) { // Not allowed to see module, send to course page
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
-            return;   
+            return;
         }
         if (!empty($USER->student[$courseid]) or !empty($USER->teacher[$courseid]) or !empty($USER->admin)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
@@ -1236,9 +1236,9 @@ function user_not_fully_set_up($user) {
 }
 
 function over_bounce_threshold($user) {
-    
+
     global $CFG;
-    
+
     if (empty($CFG->handlebounces)) {
         return false;
     }
@@ -1260,12 +1260,12 @@ function over_bounce_threshold($user) {
     return ($bouncecount >= $CFG->minbounces && $bouncecount/$sendcount >= $CFG->bounceratio);
 }
 
-/** 
+/**
  * @param $user - object containing an id
  * @param $reset - will reset the count to 0
  */
 function set_send_count($user,$reset=false) {
-    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_send_count')) {  
+    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_send_count')) {
         $pref->value = (!empty($reset)) ? 0 : $pref->value+1;
         update_record('user_preferences',$pref);
     }
@@ -1278,12 +1278,12 @@ function set_send_count($user,$reset=false) {
     }
 }
 
-/** 
+/**
 * @param $user - object containing an id
  * @param $reset - will reset the count to 0
  */
 function set_bounce_count($user,$reset=false) {
-    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_bounce_count')) {    
+    if ($pref = get_record('user_preferences','userid',$user->id,'name','email_bounce_count')) {
         $pref->value = (!empty($reset)) ? 0 : $pref->value+1;
         update_record('user_preferences',$pref);
     }
@@ -1365,7 +1365,7 @@ function sync_metacourses() {
     if (!$courses = get_records_sql("SELECT DISTINCT parent_course,1 FROM {$CFG->prefix}course_meta")) {
         return;
     }
-    
+
     foreach ($courses as $course) {
         sync_metacourse($course->parent_course);
     }
@@ -1374,7 +1374,7 @@ function sync_metacourses() {
 
 /**
  * Goes through all enrolment records for the courses inside the metacourse and sync with them.
- */ 
+ */
 
 function sync_metacourse($metacourseid) {
 
@@ -1395,15 +1395,15 @@ function sync_metacourse($metacourseid) {
     }
 
     // this will return a list of userids from user_student for enrolments in the metacourse that shouldn't be there.
-    $sql = "SELECT parent.userid,max(child.course) as course 
+    $sql = "SELECT parent.userid,max(child.course) as course
             FROM {$CFG->prefix}course_meta meta
-              JOIN {$CFG->prefix}user_students parent 
+              JOIN {$CFG->prefix}user_students parent
                 ON meta.parent_course = parent.course
-              LEFT OUTER JOIN {$CFG->prefix}user_students child 
-                ON child.course = meta.child_course 
+              LEFT OUTER JOIN {$CFG->prefix}user_students child
+                ON child.course = meta.child_course
                 AND child.userid = parent.userid
               WHERE  meta.parent_course = $metacourseid
-              GROUP BY child.course,parent.userid 
+              GROUP BY child.course,parent.userid
               ORDER BY parent.userid,child.course";
 
     $res = $db->Execute($sql);
@@ -1443,14 +1443,14 @@ function sync_metacourse($metacourseid) {
 
 
     // this will return a list of userids that need to be enrolled in the metacourse
-    $sql = "SELECT DISTINCT child.userid,1 
-            FROM {$CFG->prefix}course_meta meta 
-              JOIN {$CFG->prefix}user_students child 
-                 ON meta.child_course = child.course 
-              LEFT OUTER JOIN {$CFG->prefix}user_students parent 
-                 ON meta.parent_course = parent.course 
+    $sql = "SELECT DISTINCT child.userid,1
+            FROM {$CFG->prefix}course_meta meta
+              JOIN {$CFG->prefix}user_students child
+                 ON meta.child_course = child.course
+              LEFT OUTER JOIN {$CFG->prefix}user_students parent
+                 ON meta.parent_course = parent.course
                  AND parent.userid = child.userid
-                 WHERE parent.course IS NULL 
+                 WHERE parent.course IS NULL
                  AND meta.parent_course = $metacourseid";
 
     if ($userstoadd = get_records_sql($sql)) {
@@ -1458,7 +1458,7 @@ function sync_metacourse($metacourseid) {
             enrol_student($user->userid,$metacourseid);
         }
     }
-    
+
     // and next make sure that we have the right start time and end time (ie max and min) for them all.
     if ($enrolments = get_records('user_students','course',$metacourseid,'','id,userid')) {
         foreach ($enrolments as $enrol) {
@@ -1474,15 +1474,15 @@ function sync_metacourse($metacourseid) {
     return true;
 }
 
-/** 
+/**
  * Adds a record to the metacourse table and calls sync_metacoures
  */
 function add_to_metacourse ($metacourseid, $courseid) {
- 
+
     if (!$metacourse = get_record("course","id",$metacourseid)) {
         return false;
     }
-    
+
     if (!$course = get_record("course","id",$courseid)) {
         return false;
     }
@@ -1496,10 +1496,10 @@ function add_to_metacourse ($metacourseid, $courseid) {
         return sync_metacourse($metacourseid);
     }
     return true;
-   
+
 }
 
-/** 
+/**
  * Removes the record from the metacourse table and calls sync_metacourse
  */
 function remove_from_metacourse($metacourseid, $courseid) {
@@ -2699,7 +2699,7 @@ function add_user_to_group ($groupid, $userid) {
     if (ismember($groupid, $userid)) return true;
     $record->groupid = $groupid;
     $record->userid = $userid;
-    $record->timeadded = time(); 
+    $record->timeadded = time();
     return (insert_record('groups_members', $record) !== false);
 }
 
@@ -2883,7 +2883,7 @@ function generate_email_processing_address($modid,$modargs) {
     if (empty($CFG->siteidentifier)) {    // Unique site identification code
         set_config('siteidentifier', random_string(32));
     }
-    
+
     $header = $CFG->mailprefix . substr(base64_encode(pack('C',$modid)),0,2).$modargs;
     return $header . substr(md5($header.$CFG->sitesecret),0,16).'@'.$CFG->maildomain;
 }
@@ -2949,7 +2949,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     if (!empty($user->emailstop)) {
         return 'emailstop';
     }
-    
+
     if (over_bounce_threshold($user)) {
         error_log("User $user->id (".fullname($user).") is over bounce threshold! Not sending.");
         return false;
@@ -2995,7 +2995,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     }
     else {
         $mail->Sender   = $adminuser->email;
-    } 
+    }
 
     if (is_string($from)) { // So we can pass whatever we want if there is need
         $mail->From     = $CFG->noreplyaddress;
@@ -3010,7 +3010,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
             $mail->AddReplyTo($CFG->noreplyaddress,get_string('noreplyname'));
         }
     }
-        
+
     if (!empty($replyto)) {
         $mail->AddReplyTo($replyto,$replytoname);
     }
@@ -3145,7 +3145,7 @@ function send_password_change_confirmation_email($user) {
 
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
-    $data->link = $CFG->wwwroot .'/login/forgot_password.php?p='. $user->secret .'&amp;s='. $user->username;
+    $data->link = $CFG->wwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. $user->username;
     $data->admin = fullname($from).' ('. $from->email .')';
 
     $message = get_string('emailpasswordconfirmation', '', $data);
@@ -3223,7 +3223,7 @@ function make_upload_directory($directory, $shownotices=true) {
         }
         if ($handle = fopen($currdir.'/.htaccess', 'w')) {   // For safety
             @fwrite($handle, "deny from all\r\n");
-            @fclose($handle); 
+            @fclose($handle);
         }
     }
 
@@ -3598,7 +3598,7 @@ function display_size($size) {
 /*
  * Convert high ascii characters into low ascii
  * This code is from http://kalsey.com/2004/07/dirify_in_php/
- * 
+ *
  */
 function convert_high_ascii($s) {
     $HighASCII = array(
@@ -5384,7 +5384,7 @@ if(!function_exists('html_entity_decode')) {
 }
 
 /**
- * If new messages are waiting for the current user, then return 
+ * If new messages are waiting for the current user, then return
  * Javascript code to create a popup window
  *
  * @return string Javascript code
