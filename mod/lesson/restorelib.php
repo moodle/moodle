@@ -10,12 +10,12 @@
     //                                             |                         lesson_grades
     //                                             |                  (UL, pk->id,fk->lessonid)
     //                                      lesson_pages
-    //                                  (pk->id,fk->lessonid)
+    //                                  (CL,pk->id,fk->lessonid)
     //                                             |
     //                                             |
     //                                             |
     //                                       lesson_answers
-    //                                    (pk->id,fk->pageid)
+    //                                    (CL,pk->id,fk->pageid)
     //                                             |
     //                                             |
     //                                             |

@@ -276,9 +276,18 @@ function lesson_get_participants($lessonid) {
 //Must return an array of user records (all data) who are participants
 //for a given instance of lesson. Must include every user involved
 //in the instance, independient of his role (student, teacher, admin...)
-//See other modules as example.
 
-    return false;
+    global $CFG;
+    
+    //Get students
+    $students = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}lesson_attempts a
+                                 WHERE a.lessonid = '$lessonid' and
+                                       u.id = a.userid");
+
+    //Return students array (it contains an array of unique users)
+    return ($students);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
