@@ -343,7 +343,7 @@ class configvarrss extends configvar {
         '<input type="text" name="pathtoclam" size="30" value="'.$config->pathtoclam.'" alt="pathtoclam" />' );
 
 /// quarantinedir
-    $security['quaratinedir'] = new configvar (get_string('configquarantinedir', 'admin'),
+    $security['quarantinedir'] = new configvar (get_string('configquarantinedir', 'admin'),
         '<input type="text" name="quarantinedir" size="30" value="'.$config->quarantinedir.'" alt="quarantinedir" />' );
 
 /// clamfailureonupload
