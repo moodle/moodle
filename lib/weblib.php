@@ -653,26 +653,37 @@ function print_footer ($course=NULL) {
     }
 
 /// User links
-    if (isset($USER->realuser)) {
-        if ($realuser = get_record("user", "id", $USER->realuser)) {
-            $realuserinfo = " [<A HREF=\"$CFG->wwwroot/course/loginas.php?id=$course->id&return=$realuser->id\">$realuser->firstname $realuser->lastname</A>] ";
+    $loggedinas = user_login_string($course, $USER);
+
+    include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
+}
+
+
+function user_login_string($course, $user=NULL) {
+    global $USER, $CFG;
+
+    if (!$user) {
+        $user = $USER;
+    }
+
+    if (isset($user->realuser)) {
+        if ($realuser = get_record("user", "id", $user->realuser)) {
+            $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&return=$realuser->id\">$realuser->firstname $realuser->lastname</A>] ";
         }
     } else {
         $realuserinfo = "";
     }
 
-    if (isset($USER->id) and $USER->id) {
-        $username = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A>";
+    if (isset($user->id) and $user->id) {
+        $username = "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A>";
         $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
                       " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
     } else {
         $loggedinas = get_string("loggedinnot", "moodle").
                       " (<A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A>)";
     }
-
-    include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
+    return $loggedinas;
 }
-
 
 
 function print_navigation ($navigation) {
