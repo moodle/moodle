@@ -207,32 +207,16 @@ table.formtable tbody th {
 }
 
 .forumaddnew,
-.forumaddnewminimal,
 .forumnodiscuss,
-.forumnodiscussminimal,
-.forumolddiscussminimal,
 .noticeboxcontent {
     text-align:center;
 }
 
 .forumnodiscuss,
-.forumnodiscussminimal {
     font-weight:bold;
 }
 
-.forumpostheadername,
-.forumpostheaderreplies,
-.forumpostheaderdate {
-    font-size:small;
-}
 
-.forumaddnewminimal, 
-.forumnodiscussminimal,
-.forumheadminimal, 
-.foruminfominimal,
-.forumolddiscussminimal {
-    font-size:x-small;
-}
 
 .forumpost .topic .subject {
     font-weight: bold;
@@ -407,6 +391,12 @@ table.calendar-controls .next {
     font-size:0.75em;
     text-align:center;
 }
+
+.sideblock .head,
+.sideblock .info {
+    font-size: 0.85em;
+}
+
 
 /* block_rss_client.php */
 .rssclientlink {

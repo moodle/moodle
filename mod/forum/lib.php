@@ -1214,7 +1214,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
 }
 
 function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
-                               $user=0, $fullpost=true, $visiblegroups=-1) {
+                               $user=0, $fullpost=true, $visiblegroups=-1, $limit=0) {
 /// Get all discussions in a forum
     global $CFG;
 
@@ -1224,6 +1224,11 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $userselect = "";
     }
 
+    if ($limit) {
+        $limit = " LIMIT $limit ";
+    } else {
+        $limit = "";
+    }
 
     if ($visiblegroups == -1) {
         $groupselect = "";
@@ -1252,7 +1257,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                AND p.parent = 0
                                AND p.userid = u.id $groupselect $userselect
                                AND (d.usermodified = um.id OR d.usermodified = 0)
-                          ORDER BY $forumsort");
+                          ORDER BY $forumsort $limit");
 }
 
 
