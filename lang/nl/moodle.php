@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // moodle.php - created with Moodle 1.5 development (2004082300)
 
 
 $string['action'] = 'Actie';
@@ -321,6 +321,7 @@ $string['editordefaultfont'] = 'Standaard lettertype';
 $string['editorenablespelling'] = 'Schakel spellingcontrole in';
 $string['editorfontlist'] = 'Lettertype lijst';
 $string['editorfontsize'] = 'Standaard lettertypegrootte';
+$string['editorresettodefaults'] = 'Terug naar standaardinstellingen';
 $string['editorsettings'] = 'Instellingen editor';
 $string['editsummary'] = 'Wijzig samenvatting';
 $string['editthisactivity'] = 'Wijzig deze activiteit';
@@ -887,6 +888,7 @@ $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
 $string['strftimedayshort'] = '%%A %%d  %%B';
+$string['strftimedaytime'] = '%%a, %%H:%%M';
 $string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M';
