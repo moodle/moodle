@@ -329,7 +329,7 @@
                     $currentpivot = strtoupper($pivot);
 
                     echo '<div>';
-                    echo '<table width="95%" border="0" class="generaltabselected">';
+                    echo '<table cellspacing="0" class="categoryheader">';
 
                     echo '<tr>';
                     $pivottoshow = $currentpivot;

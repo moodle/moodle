@@ -60,9 +60,9 @@
 
     print_heading($strmodulename . ': ' . get_string("displayformats","glossary"));
 
-    echo '<table width="90%" align="center" bgcolor="#FFFFFF" class="generaltab" style="border-color: #000000; border-style: solid; border-width: 1px;">';
+    echo '<table cellspacing="0" align="center" class="glossaryformatheader">';
     echo '<tr><td align="center">';
-    echo get_string("configwarning");
+    echo get_string('configwarning','admin');
     echo '</td></tr></table>';
 
     $yes = get_string("yes");
@@ -73,7 +73,7 @@
     ?>
     <tr>
         <td colspan="3" align="center"><strong>
-        <?php echo get_string('displayformat'.$displayformat->name,"glossary"); ?>
+        <?php echo get_string('displayformat'.$displayformat->name,'glossary'); ?>
         </strong></td>
     </tr>
     <tr valign="top">
