@@ -1,6 +1,7 @@
 <?php
 
-/* xmlize() is by Hans Anderson, me@hansanderson.com
+/**
+ * xmlize.php - xmlize() is by Hans Anderson, {@link http://www.hansanderson.com/contact/}
  *
  * Ye Ole "Feel Free To Use it However" License [PHP, BSD, GPL].
  * some code in xml_depth is based on code written by other PHPers
@@ -8,28 +9,40 @@
  * on my part is to blame for the credit these people aren't receiving.
  * None of the code was copyrighted, though.
  *
- * This is a stable release, 1.0.  I don't foresee any changes, but you
- * might check http://www.hansanderson.com/php/xml/ to see
- *
- * usage: $xml = xmlize($array);
- *
- * See the function traverse_xmlize() for information about the
- * structure of the array, it's much easier to explain by showing you.
- * Be aware that the array is somewhat tricky.  I use xmlize all the time,
- * but still need to use traverse_xmlize quite often to show me the structure!
-
- ## THIS IS A PHP 5 VERSION:
-
-	> attached is the modified script. Basically it has a new optional parameter
-	> to specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
-	> I recommend you to read this PHP bug. There you can see how PHP4, PHP5.0.0
-	> and PHP5.0.2 will handle this.
-	> http://bugs.php.net/bug.php?id=29711
-	> Ciao, Eloy :-)
- ##
- *
+ * @author Hans Anderson
+ * @version This is a stable release, 1.0.  I don't foresee any changes, but you
+ * might check {@link http://www.hansanderson.com/php/xml/} to see
+ * @package moodlecore
  */
 
+/**
+ * Create xml formatted output from an array.
+ *
+ * usage:<br>
+ * <code>
+ * $xml = xmlize($array);
+ * </code>
+ * See the function {@link traverse_xmlize()} for information about the
+ * structure of the array, it's much easier to explain by showing you.
+ * Be aware that the array is somewhat tricky.  I use xmlize all the time,
+ * but still need to use {@link traverse_xmlize()} quite often to show me the structure!
+ *
+ * THIS IS A PHP 5 VERSION:
+ *
+ * This modified version basically has a new optional parameter
+ * to specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
+ * I recommend you to read this PHP bug. There you can see how PHP4, PHP5.0.0
+ * and PHP5.0.2 will handle this.
+ * {@link http://bugs.php.net/bug.php?id=29711}
+ * Ciao, Eloy :-)
+ *
+ *
+ * @author Hans Anderson
+ * @param array $data The array to be converted
+ * @param int $WHITE  If set to 1 allows the parser to skip "space" characters in xml document. Default is 0
+ * @param string $encoding Specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
+ * @return array
+ */
 function xmlize($data, $WHITE=1, $encoding='UTF-8') {
 
     $data = trim($data);
@@ -56,15 +69,11 @@ function xmlize($data, $WHITE=1, $encoding='UTF-8') {
     return $array;
 }
 
-/*
- *
- * You don't need to do anything with this function, it's called by
- * xmlize.  It's a recursive function, calling itself as it goes deeper
+/**
+ * @internal You don't need to do anything with this function, it's called by
+ * xmlize. It's a recursive function, calling itself as it goes deeper
  * into the xml levels.  If you make any improvements, please let me know.
- *
- *
  */
-
 function xml_depth($vals, &$i) {
     $children = array();
 
@@ -144,24 +153,29 @@ function xml_depth($vals, &$i) {
 }
 
 
-/* function by acebone@f2s.com, a HUGE help!
+/**
+ * This helps you understand the structure of the array {@link xmlize()} outputs
  *
- * this helps you understand the structure of the array xmlize() outputs
- *
- * usage:
+ * Function by acebone@f2s.com, a HUGE help!<br>
+ * Usage:<br>
+ * <code>
  * traverse_xmlize($xml, 'xml_');
  * print '<pre>' . implode("", $traverse_array . '</pre>';
- *
- *
+ * </code>
+ * @author acebone@f2s.com
+ * @param array $array ?
+ * @param string $arrName ?
+ * @param int $level ?
+ * @return int
+ * @todo Finish documenting this function
  */
-
-function traverse_xmlize($array, $arrName = "array", $level = 0) {
+function traverse_xmlize($array, $arrName = 'array', $level = 0) {
 
     foreach($array as $key=>$val)
     {
         if ( is_array($val) )
         {
-            traverse_xmlize($val, $arrName . "[" . $key . "]", $level + 1);
+            traverse_xmlize($val, $arrName . '[' . $key . ']', $level + 1);
         } else {
             $GLOBALS['traverse_array'][] = '$' . $arrName . '[' . $key . '] = "' . $val . "\"\n";
         }
