@@ -250,4 +250,37 @@ function journal_delete_instance($id) {
 }
 
 
+function journal_print_feedback($course, $entry) {
+    global $CFG, $THEME, $RATING;
+
+    if (! $teacher = get_record("user", "id", $entry->teacher)) {
+        error("Weird journal error");
+    }
+
+    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
+
+    echo "\n<TR>";
+    echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    print_user_picture($teacher->id, $course->id, $teacher->picture);
+    echo "</TD>";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$teacher->firstname $teacher->lastname";
+    echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($entry->timemarked)."</I>";
+    echo "</TR>";
+
+    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
+
+    echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
+    if ($RATING[$entry->rating]) {
+        echo "Overall rating: ";
+        echo $RATING[$entry->rating];
+    } else {
+        echo "No rating given";
+    }
+    echo "</I></FONT></P>";
+
+    echo text_to_html($entry->comment);
+    echo "</TD></TR></TABLE>";
+
+}
+
 ?>
