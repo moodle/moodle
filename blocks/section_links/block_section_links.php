@@ -33,10 +33,12 @@ class CourseBlock_section_links extends MoodleBlock {
         if ($this->course->format == 'weeks') {
             $highlight = ceil((time()-$this->course->startdate)/604800);
             $linktext = get_string('jumptocurrentweek', 'block_section_links');
+            $sectionname = 'week';
         }
         else if ($this->course->format == 'topics') {
             $highlight = $this->course->marker;
             $linktext = get_string('jumptocurrenttopic', 'block_section_links');
+            $sectionname = 'topic';
         }
         $inc = 1;
         if ($this->course->numsections > 22) {
@@ -47,7 +49,7 @@ class CourseBlock_section_links extends MoodleBlock {
         }
         $courseid = $this->course->id;
         if ($display = get_field('course_display', 'display', 'course', $courseid, 'userid', $USER->id)) {
-            $link = "$CFG->wwwroot/course/view.php?id=$courseid&amp;topic=";
+            $link = "$CFG->wwwroot/course/view.php?id=$courseid&amp;$sectionname=";
         } else {
             $link = '#';
         }
