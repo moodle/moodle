@@ -618,9 +618,10 @@ function insert_record($table, $dataobject, $returnid=true) {
     }
 
     if ($returnid) {
-        if ($CFG->dbtype == "mysql") { 
+        if ($CFG->dbtype == "mysql" || $CFG->dbtype == "postgres7") { 
             return $db->Insert_ID();   // ADOdb has stored the ID for us, but it isn't reliable
         }
+        
         
         // Try to pull the record out again to find the id.  This is the most cross-platform method.
         if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE $select")) {
