@@ -218,12 +218,12 @@ $string['defaultcourseteachers'] = 'Docenten';
 $string['delete'] = 'Verwijder';
 $string['deleteall'] = 'Verwijder alle';
 $string['deletecheck'] = 'Verwijder $a?';
-$string['deletecheckfiles'] = 'Weet je het 100 procent zeker dat je deze bestanden wilt verwijderen?';
-$string['deletecheckfull'] = 'Weet je het 100 procent zeker dat je $a volledig wilt verwijderen?';
+$string['deletecheckfiles'] = 'Weet je het zeker dat je deze bestanden wilt verwijderen?';
+$string['deletecheckfull'] = 'Weet je het zeker dat je $a volledig wilt verwijderen?';
 $string['deletecheckwarning'] = 'Je staat op het punt deze bestanden te verwijderen';
 $string['deletecompletely'] = 'Verwijder volledig';
 $string['deletecourse'] = 'Verwijder een vak';
-$string['deletecoursecheck'] = 'Weet je het 100 procent zeker dat je dit vak en alle gegevens die erin zitten volledig wilt verwijderen?';
+$string['deletecoursecheck'] = 'Weet je het zeker dat je dit vak en alle gegevens die erin zitten volledig wilt verwijderen?';
 $string['deleted'] = 'Verwijderd';
 $string['deletedactivity'] = '$a verwijderd';
 $string['deletedcourse'] = '$a is volledig verwijderd';
@@ -268,9 +268,9 @@ Veel succes en met vriendelijke groet,
 $a->admin
 (Beheerder van \'$a->sitename\')';
 $string['emailconfirmationsubject'] = '$a: Bevestiging van de account';
-$string['emailconfirmsent'] = '<P>Als het goed is is er een e-mail verzonden naar <B>$a</B>
-<P>Daarin staan simpele instructies voor het voltooien van de registratie.
-<P>Als je toch problemen blijft houden, neem dan contact op met de beheerder van de site.';
+$string['emailconfirmsent'] = '<P>Als het goed is, is er een e-mail verzonden naar <B>$a</B>
+<P>Daarin staan eenvoudige instructies voor het voltooien van de registratie.
+<P>Indien je blijft moeilijkheden ondervinden, neem dan contact op met je site-beheerder.';
 $string['emaildisplay'] = 'E-mail weergave';
 $string['emaildisplaycourse'] = 'Laat mijn e-mail adres alleen maar zien aan andere leden van dit vak';
 $string['emaildisplayno'] = 'Verberg mijn e-mail adres voor iedereen';
@@ -291,14 +291,13 @@ In de meeste e-mail programma\'s zou dit moeten verschijnen als een blauwe link 
 Als je hulp nodig hebt, neem dan contact op met de site-beheerder, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: bevestiging van de wijziging van het paswoord';
 $string['emailpasswordconfirmsent'] = 'Er is een e-mail verstuurd naar jouw adres: <b>$a</b>.
-<p>Daarin staan eenvoudige instructies om je aanvraag tot wijziging van je wachtwoord te bevestigen en om deze wijziging door te voeren.
-Indien je blijft moeilijkheden ondervinden, neem dan contact op met je site-beheerder.';
+<p>Indien je moeilijkheden blijft ondervinden, neem dan contact op met je site-beheerder.';
 $string['emailpasswordsent'] = 'Bedankt voor de bevestiging van de wijziging van je wachtwoord.
 <p>Er is een e-mail met je nieuw wachtwoord naar <b>$a->email</b> gestuurd.
 <p>Het nieuwe wachtwoord werd automatisch gegenereerd. Misschien wil je het <a href=$a->link>wachtwoord veranderen</a> in iets wat je gemakkelijker kunt onthouden.';
 $string['enrolmentconfirmation'] = 'Je staat op het punt jezelf aan te melden als lid van dit vak.<br />Weet je zeker dat je dit wilt doen?';
 $string['enrolmentkey'] = 'Vaksleutel';
-$string['enrolmentkeyfrom'] = 'Dit vak vereist een \'Vaksleutel\' een eenmalig<BR>
+$string['enrolmentkeyfrom'] = 'Dit vak vereist een \'Vaksleutel\', een eenmalig<BR>
 wachtwoord dat je moet hebben gekregen van $a
 ';
 $string['enrolmentkeyhint'] = 'Die \'Vaksleutel\' was niet correct. Probeer het nog eens.<BR>
@@ -613,7 +612,7 @@ $string['page'] = 'Pagina';
 $string['participants'] = 'Deelnemers';
 $string['password'] = 'Wachtwoord';
 $string['passwordchanged'] = 'Het wachtwoord is veranderd';
-$string['passwordconfirmchange'] = 'Bevestig de wijziging van he wachtwoord';
+$string['passwordconfirmchange'] = 'Bevestig de wijziging van het wachtwoord';
 $string['passwordrecovery'] = 'Ja, help me met inloggen';
 $string['passwordsdiffer'] = 'De wachtwoorden komen niet overeen';
 $string['passwordsent'] = 'Het wachtwoord is verzonden';
