@@ -43,16 +43,23 @@
         $table->align = array ("LEFT", "LEFT");
     }
 
+    $currentsection = '';
+
     foreach ($surveys as $survey) {
         if (survey_already_done($survey->id, $USER->id)) {
             $ss = $strdone;
         } else {
             $ss = $strnotdone;
         }
-        if ($survey->section) {
-            $section = "$survey->section";
-        } else {
-            $section = "";
+        $printsection = "";
+        if ($survey->section !== $currentsection) {
+            if ($survey->section) {
+                $printsection = $survey->section;
+            }
+            if ($currentsection !== "") {
+                $table->data[] = 'hr';
+            }
+            $currentsection = $survey->section;
         }
         //Calculate the href
         if (!$survey->visible) {
@@ -64,7 +71,7 @@
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($section, $tt_href, "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
+            $table->data[] = array ($printsection, $tt_href, "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
         } else {
             $table->data[] = array ($tt_href, "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
         }
