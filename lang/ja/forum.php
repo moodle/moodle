@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004070800)
+      // forum.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -125,7 +125,7 @@ $string['replyforum'] = 'フォーラムに返信';
 $string['rsssubscriberssdiscussions'] = '\'$a\'  件のディスカッションに関してRSSフィードを表示';
 $string['rsssubscriberssposts'] = '\'$a\'  件の投稿に関してRSSフィードを表示';
 $string['search'] = '検索';
-$string['searchforums'] = 'フォーラムを検索';
+$string['searchforums'] = 'フォーラム内を検索';
 $string['searcholderposts'] = '過去の投稿を検索 ...';
 $string['searchresults'] = '検索結果';
 $string['sendinratings'] = '最新のレーティングを送信する';
