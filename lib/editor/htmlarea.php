@@ -1454,25 +1454,34 @@ HTMLArea.prototype._insertImage = function(image) {
         }
         var img = image;
         if (!img) {
-        var sel = editor._getSelection();
-        var range = editor._createRange(sel);
-            editor._doc.execCommand("insertimage", false, param.f_url);
-        if (HTMLArea.is_ie) {
-            img = range.parentElement();
-            // wonder if this works...
-            if (img.tagName.toLowerCase() != "img") {
-                img = img.previousSibling;
+            var sel = editor._getSelection();
+            var range = editor._createRange(sel);
+                if (HTMLArea.is_ie) {
+                editor._doc.execCommand("insertimage", false, param.f_url);
+                }
+            if (HTMLArea.is_ie) {
+                img = range.parentElement();
+                // wonder if this works...
+                if (img.tagName.toLowerCase() != "img") {
+                    img = img.previousSibling;
+                }
+            } else {
+                // MOODLE HACK: startContainer.perviousSibling
+                // Doesn't work so we'll use createElement and
+                // insertNodeAtSelection
+                //img = range.startContainer.previousSibling;
+                var img = editor._doc.createElement("img");
+                img.setAttribute("src",""+ param.f_url +"");
+                img.setAttribute("alt",""+ param.f_alt +"");
+                editor.insertNodeAtSelection(img);
             }
-        } else {
-            img = range.startContainer.previousSibling;
-        }
         } else {
             img.src = param.f_url;
         }
         for (field in param) {
             var value = param[field];
             switch (field) {
-                case "f_alt"    : img.alt    = value; break;
+                case "f_alt"    : img.alt    = value; img.title = value; break;
                 case "f_border" : img.border = parseInt(value || "0"); break;
                 case "f_align"  : img.align  = value; break;
                 case "f_vert"   : img.vspace = parseInt(value || "0"); break;
