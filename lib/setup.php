@@ -15,6 +15,8 @@
 
 /// Connect to the database using adodb
 
+    $CFG->libdir = "$CFG->dirroot/lib";
+
     require_once("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
 
     $db = &ADONewConnection($CFG->dbtype);         

@@ -70,8 +70,8 @@ $CFG->wwwroot   = "http://example.com/moodle";
 //
 //    $CFG->dirroot = "C:\Program Files\Easyphp\www\moodle"
 //
-// Make sure all the upper/lower case is exactly the same as it is on your
-// computer otherwise you may experience some problems (a known bug in PHP)
+// NOTE: Make sure all the upper/lower case is EXACTLY the same as it is 
+// on your computer otherwise you may experience some problems (bug in PHP)
 
 $CFG->dirroot   = "/web/moodle";
 
@@ -109,8 +109,7 @@ $CFG->buggy_referer = false;
 //=========================================================================
 
 
-$CFG->libdir    = "$CFG->dirroot/lib";        // Do not change this
-require_once("$CFG->libdir/setup.php");       // Do not change this
+require_once("$CFG->dirroot/lib/setup.php");       // Do not change this
 
 // MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES, 
 // RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.
