@@ -5,7 +5,7 @@
 // database (backup_version) to determine whether upgrades should
 // be performed (see db/backup_*.php)
 
-$backup_version = 2004083120;  // YYYYMMDD   = date of first major branch release 1.4
+$backup_version = 2004083122;  // YYYYMMDD   = date of first major branch release 1.4
                                //         X  = point release version 1,2,3 etc
                                //          Y = increments between point releases
 
