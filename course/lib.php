@@ -121,6 +121,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 
     if ($course->category) {
         $selector = "WHERE l.course='$course->id' AND l.user = u.id";
+
     } else {
         $selector = "WHERE l.user = u.id";  // Show all courses
         if ($ccc = get_records_sql("SELECT * FROM course ORDER BY fullname")) {

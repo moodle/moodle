@@ -7,6 +7,8 @@
     require_variable($user);     // user id
     optional_variable($mode, "outline");
 
+    $modes = array("outline", "complete", "todaylogs", "alllogs");
+
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
     }
@@ -24,42 +26,43 @@
 
     add_to_log($course->id, "course", "user report", "user.php?id=$course->id&user=$user->id&mode=$mode", "$user->id"); 
 
-    print_header("$course->shortname: Activity Report ($mode)", "$course->fullname",
+    $stractivityreport = get_string("activityreport");
+    $strparticipants   = get_string("participants");
+    $stroutline        = get_string("outline");
+    $strcomplete       = get_string("complete");
+    $stralllogs        = get_string("alllogs");
+    $strtodaylogs      = get_string("todaylogs");
+    $strmode           = get_string($mode);
+
+    if ($course->category) {
+        print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
                  "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> ->
-                  <A HREF=\"../user/index.php?id=$course->id\">Participants</A> ->
+                  <A HREF=\"../user/index.php?id=$course->id\">$strparticipants</A> ->
                   <A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> -> 
-                  Activity Report ($mode)", "");
+                  $stractivityreport -> $strmode");
+    } else {
+        print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
+                 "<A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> -> 
+                  $stractivityreport -> $strmode");
+    }
     print_heading("$user->firstname $user->lastname");
 
     echo "<TABLE CELLPADDING=10 ALIGN=CENTER><TR>";
     echo "<TD>Reports: </TD>";
-    if ($mode != "outline") {
-        echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=outline>Outline</A></TD>";
-    } else {
-        echo "<TD><U>Outline</U></TD>";
-    }
-    if ($mode != "complete") {
-        echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=complete>Complete</A></TD>";
-    } else {
-        echo "<TD><U>Complete</U></TD>";
-    }
-    if ($mode != "today") {
-        echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=today>Today</A></TD>";
-    } else {
-        echo "<TD><U>Today</U></TD>";
-    }
-    if ($mode != "alllogs") {
-        echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=alllogs>All logs</A></TD>";
-    } else {
-        echo "<TD><U>All logs</U></TD>";
+    foreach ($modes as $listmode) {
+        $strmode = get_string($listmode);
+        if ($mode == $listmode) {
+            echo "<TD><U>$strmode</U></TD>";
+        } else {
+            echo "<TD><A HREF=user.php?id=$course->id&user=$user->id&mode=$listmode>$strmode</A></TD>";
+        }
     }
     echo "</TR></TABLE>";
-
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused, $modsectioncounts);
 
     switch ($mode) {
-        case "today" :
+        case "todaylogs" :
             echo "<HR><CENTER>";
             print_log_graph($course, $user->id, "userday.png", time() );
             echo "</CENTER>";
