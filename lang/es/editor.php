@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.1 (2003082800)
+
+
+$string['about'] = "Acerca de este editor";
+$string['absbottom'] = "Abajo";
+$string['absmiddle'] = "Centrar";
+$string['address'] = "Dirección";
+$string['alignment'] = "Alinear";
+$string['alternatetext'] = "Texto alternativo";
+$string['baseline'] = "Linea  de base";
+$string['bold'] = "Negrita";
+$string['borderthickness'] = "Borde";
+$string['bottom'] = "Abajo";
+$string['browse'] = "Buscar";
+$string['cancel'] = "Cancelar";
+$string['cellpadding'] = "Separación de Columnas";
+$string['cellspacing'] = "Espaciado de Columnas";
+$string['choosechar'] = "Seleccione caracter ";
+$string['chooseicon'] = "Seleccione un Icono para insertar";
+$string['close'] = "Cerrar";
+$string['cols'] = "Cols";
+$string['copy'] = "Copiar selección";
+$string['createlink'] = "Insertar Enlace";
+$string['cut'] = "Cortar selección";
+$string['forecolor'] = "Color de Letras";
+$string['heading'] = "Encabezado";
+$string['hilitecolor'] = "Color de Fondo";
+$string['horizontal'] = "Horizontal";
+$string['horizontalrule'] = "Linea Horizontal";
+$string['htmlmode'] = "Tabulación HTML";
+$string['imageurl'] = "Imagen URL";
+$string['indent'] = "Aumentar Sangría";
+$string['insertchar'] = "Insertar Caracteres Especiales";
+$string['insertimage'] = "Insertar Imágen";
+$string['insertsmile'] = "Insertar Emoticono";
+$string['inserttable'] = "Insertar Tabla";
+$string['italic'] = "Itálica";
+$string['justifycenter'] = "Centrado";
+$string['justifyfull'] = "Justificado";
+$string['justifyleft'] = "Izquierda";
+$string['justifyright'] = "Derecha";
+$string['layout'] = "Diseño";
+$string['left'] = "Izquierda";
+$string['middle'] = "Centrado";
+$string['normal'] = "Normal";
+$string['notset'] = "Ninguno";
+$string['ok'] = "OK";
+$string['orderedlist'] = "Lista con Numeros";
+$string['outdent'] = "Disminuir Sangria";
+$string['paste'] = "Pegar desde portapapeles";
+$string['path'] = "ruta";
+$string['percent'] = "Porcentaje";
+$string['pixels'] = "Pixeles";
+$string['popupeditor'] = "Agrandar Editor";
+$string['preformatted'] = "Preformatear";
+$string['preview'] = "Visualizar";
+$string['redo'] = "Rehacer la Última Acción";
+$string['right'] = "Derecho";
+$string['rows'] = "Filas";
+$string['showhelp'] = "Mostrar Ayuda";
+$string['spacing'] = "Espaciar";
+$string['strikethrough'] = "Tachado";
+$string['subscript'] = "Subscript";
+$string['superscript'] = "Superscript";
+$string['textindicator'] = "Estilo actual";
+$string['textmode'] = "Usted esta en MODO TEXTO.  Use el botón [<>] para regresar al MODO EDITOR.";
+$string['texttop'] = "Texto Arriba";
+$string['top'] = "Arriba";
+$string['underline'] = "Subrayar";
+$string['undo'] = "Deshacer la ultima acción";
+$string['unorderedlist'] = "Lista con Viñetas";
+$string['vertical'] = "Vertical";
+$string['width'] = "Ancho";
+
+?>
