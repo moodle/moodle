@@ -72,7 +72,12 @@
     echo "<TABLE ALIGN=CENTER cellpadding=7 cellspacing=5>";
     echo "<TR><TH class=\"generaltableheader\">$strtheme<TH class=\"generaltableheader\">&nbsp;</TR>";
     foreach ($themes as $theme) {
-        include ("$theme/config.php");
+
+        if (!file_exists("$CFG->dirroot/theme/$theme/config.php")) {   // bad folder
+            continue;
+        }
+        include ("$CFG->dirroot/theme/$theme/config.php");
+
         echo "<TR>";
         if ($CFG->theme == $theme) {
             echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">$theme</TD>";
