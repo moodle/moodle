@@ -25,6 +25,10 @@
             $SESSION->currentgroup[$course->id] = $SESSION->oldcurrentgroup;
             unset($SESSION->oldcurrentgroup);
         }
+        if (isset($SESSION->oldtimeaccess)) {        // Restore previous timeaccess settings
+            $USER->timeaccess = $SESSION->oldtimeaccess;
+            unset($SESSION->oldtimeaccess);
+        }
 
         redirect($_SERVER["HTTP_REFERER"]);
         exit;
@@ -42,6 +46,12 @@
 
     if (iscreator($user)) {
         error("You can not login as this person!");
+    }
+
+    // Remember current timeaccess settings for later
+
+    if (isset($USER->timeaccess)) {
+        $SESSION->oldtimeaccess = $USER->timeaccess;
     }
 
     // Login as this student and return to course home page.
