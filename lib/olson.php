@@ -1,4 +1,4 @@
-<?php 
+<?php //$Id$
 /***
  *** olson_simple_parser($filename)
  ***
@@ -57,10 +57,22 @@ function olson_simple_rule_parser ($filename) {
     foreach ($rules as $family => $rulesbyyear) {
         foreach ($rulesbyyear as $year => $rulesthisyear) {
 
-            if(!isset($rulesthisyear['set']) || !isset($rulesthisyear['reset'])) {
-                // What are we supposed to do with this???
-                print_object($family.' - '.$year.' was rejected');
-                continue;
+            if(!isset($rulesthisyear['reset'])) {
+                // No "reset" rule. We will assume that this is somewhere in the southern hemisphere
+                // after a period of not using DST, otherwise it doesn't make sense at all.
+                // With that assumption, we can put in a fake reset e.g. on Jan 1, 12:00.
+                $rulesthisyear['reset'] = array(
+                    NULL, NULL, NULL, NULL, NULL, 'jan', 1, '12:00', '00:00', NULL
+                );
+            }
+
+            if(!isset($rulesthisyear['set'])) {
+                // No "set" rule. We will assume that this is somewhere in the southern hemisphere
+                // and that it begins a period of not using DST, otherwise it doesn't make sense at all.
+                // With that assumption, we can put in a fake set on Dec 31, 12:00, shifting time by 0 minutes.
+                $rulesthisyear['set'] = array(
+                    NULL, $rulesthisyear['reset'][1], NULL, NULL, NULL, 'dec', 31, '12:00', '00:00', NULL
+                );
             }
 
             list($discard,
