@@ -473,19 +473,25 @@ function format_text_menu() {
                   FORMAT_WIKI   => get_string("formatwiki"));
 }
 
-function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
+function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL ) {
 /// Given text in a variety of format codings, this function returns 
 /// the text as safe HTML.
 ///
 /// $text is raw text (originally from a user)
 /// $format is one of the format constants, defined above
 
-    global $CFG, $course;
+    global $CFG, $course; 
+
+    if (empty($courseid)) {
+        if (!empty($course->id)) {     // An ugly hack for better compatibility
+            $courseid = $course->id;
+        }
+    }
 
     switch ($format) {
         case FORMAT_HTML:
             replace_smilies($text);
-            return filter_text($text);
+            return filter_text($text, $courseid);
             break;
 
         case FORMAT_PLAIN:
@@ -498,7 +504,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
 
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
-            return filter_text($text);
+            return filter_text($text, $courseid);
             break;
 
         default:  // FORMAT_MOODLE or anything else
@@ -509,7 +515,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
                 $options->para=true;
             }
             $text = text_to_html($text, $options->smiley, $options->para);
-            return filter_text($text);
+            return filter_text($text, $courseid);
 
             break;
     }
@@ -548,17 +554,17 @@ function format_text_email($text, $format) {
 }
 
 
-function filter_text($text) {
+function filter_text($text, $courseid=NULL) {
 /// Given some text in HTML format, this function will pass it 
 /// through any filters that have been defined in $CFG->textfilterx
 /// The variable defines a filepath to a file containing the 
 /// filter function.  The file must contain a variable called 
 /// $textfilter_function which contains the name of the function
-/// with $course->id and $text parameters
+/// with $courseid and $text parameters
 
-    global $CFG, $course;   // A dirty hack right now ... should not be assumed global
+    global $CFG;
 
-    if (empty($course->id)) {
+    if (empty($courseid)) {
         return $text;
     }
 
@@ -569,7 +575,7 @@ function filter_text($text) {
         }
         if (is_readable("$CFG->dirroot/".$CFG->$variable)) {
             include("$CFG->dirroot/".$CFG->$variable);
-            $text = $textfilter_function($course->id, $text);
+            $text = $textfilter_function($courseid, $text);
         }
     }
     return $text;
