@@ -67,6 +67,41 @@ class quiz_report extends quiz_default_report {
             return true;
         }
 
+    /// Check to see if groups are being used in this quiz
+    /// and if so, set $currentgroup to reflect the current group
+
+        $groupmode = groupmode($course, $cm);   // Groups are being used
+        $currentgroup = get_and_set_current_group($course, $groupmode, $_GET['group']);
+
+        if ($groupmode and !$currentgroup and !isteacheredit($course->id)) {
+            print_heading("Sorry, but you can't see this group");
+            print_footer();
+            exit;
+        }
+
+        if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+            if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+                echo '<table align="center"><tr><td>';
+                if ($groupmode == VISIBLEGROUPS) {
+                    print_string('groupsvisible');
+                } else {
+                    print_string('groupsseparate');
+                }
+                echo ':';
+                echo '</td><td nowrap="nowrap" align="left" width="50%">';
+                popup_form("report.php?id=$cm->id&mode=overview&group=", 
+                           $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
+                echo '</tr></table>';
+            }
+        }
+
+
+    /// Get all teachers and students
+        if ($currentgroup) {
+            $users = get_users_in_group($currentgroup);
+        }
+
+
         $table->head = array("&nbsp;", $strname, $strattempts, "$strbestgrade /$quiz->grade");
         $table->align = array("center", "left", "left", "center");
         $table->wrap = array("nowrap", "nowrap", "nowrap", "nowrap");
@@ -74,6 +109,11 @@ class quiz_report extends quiz_default_report {
         $table->size = array(10, "*", "80%", "*");
 
         foreach ($grades as $grade) {
+            if ($currentgroup) {
+                if (empty($users[$grade->userid])) {       /// Using groups, but this user not in group
+                    continue;
+                }
+            }
             $picture = print_user_picture($grade->userid, $course->id, $grade->picture, false, true);
 
             if ($attempts = quiz_get_user_attempts($quiz->id, $grade->userid)) {
