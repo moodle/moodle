@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004062600)
+      // glossary.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -100,6 +100,7 @@ $string['filetoimport'] = 'インポートするファイル';
 $string['fillfields'] = '概念と定義は必須入力項目です。';
 $string['filtername'] = '用語集オートリンク';
 $string['fullmatch'] = '完全一致<small>（自動的にリンクさせる場合）</small>';
+$string['globalglossary'] = 'グローバル用語集';
 $string['glossaryleveldefaultsettings'] = '用語集レベルデフォルト設定';
 $string['glossarytype'] = '用語集タイプ';
 $string['glosssaryexported'] = '用語集がエクスポートされました。';
