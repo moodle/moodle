@@ -27,7 +27,7 @@
     }
 
    ////Return an array of info (name,value)
-   function survey_check_backup_mods($course,$user_data=false) {
+   function survey_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","survey");
         if ($ids = survey_ids ($course)) {

@@ -48,12 +48,18 @@
     //
     //-----------------------------------------------------------
 
-    function quiz_backup_mods() {
+    //THIS MOD BACKUP NEEDS TO USE THE mdl_backup_ids TABLE
+
+    function quiz_backup_mods($course,$user_data=false,$backup_unique_code) {
         print "hola";
     }
 
    ////Return an array of info (name,value)
-   function quiz_check_backup_mods($course,$user_data=false) {
+   function quiz_check_backup_mods($course,$user_data=false,$backup_unique_code) {
+        //Deletes data from mdl_backup_ids (categories section)
+        delete_category_ids ($backup_unique_code);
+        //Create date into mdl_backup_ids (categories section)
+        insert_category_ids ($course,$backup_unique_code);
         //First the course data
         $info[0][0] = get_string("modulenameplural","quiz");
         if ($ids = quiz_ids ($course)) {
@@ -63,14 +69,14 @@
         }
         //Categories
         $info[1][0] = get_string("categories","quiz");
-        if ($ids = quiz_category_ids_by_course ($course)) {
+        if ($ids = quiz_category_ids_by_backup ($backup_unique_code)) {
             $info[1][1] = count($ids);
         } else {
             $info[1][1] = 0;
         }
         //Questions
         $info[2][0] = get_string("questions","quiz");
-        if ($ids = quiz_question_ids_by_course ($course)) {
+        if ($ids = quiz_question_ids_by_backup ($backup_unique_code)) {
             $info[2][1] = count($ids);
         } else {
             $info[2][1] = 0;
@@ -108,24 +114,24 @@
     }
 
     //Returns an array of categories id
-    function quiz_category_ids_by_course ($course) {
+    function quiz_category_ids_by_backup ($backup_unique_code) {
 
         global $CFG;
 
-        return get_records_sql ("SELECT a.id, a.course
-                                 FROM {$CFG->prefix}quiz_categories a
-                                 WHERE a.course = '$course'");
+        return get_records_sql ("SELECT a.old_id, a.backup_code
+                                 FROM {$CFG->prefix}backup_ids a
+                                 WHERE a.backup_code = '$backup_unique_code'");
     }
 
-    function quiz_question_ids_by_course ($course) {
+    function quiz_question_ids_by_backup ($backup_unique_code) {
 
         global $CFG;
 
         return get_records_sql ("SELECT q.id, q.category
-                                 FROM {$CFG->prefix}quiz_categories a,
+                                 FROM {$CFG->prefix}backup_ids a,
                                       {$CFG->prefix}quiz_questions q
-                                 WHERE a.course = '$course' and
-                                       q.category = a.id");
+                                 WHERE a.backup_code = '$backup_unique_code' and
+                                       q.category = a.old_id");
     }
 
     function quiz_grade_ids_by_course ($course) {

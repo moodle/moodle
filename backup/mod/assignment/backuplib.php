@@ -21,12 +21,12 @@
     //
     //-----------------------------------------------------------
 
-    function assignment_backup_mods($course,$user_data=false) {
+    function assignment_backup_mods($course,$user_data=false,$backup_unique_code) {
         print "hola";
     }
 
     //Return an array of info (name,value)
-    function assignment_check_backup_mods($course,$user_data=false) {
+    function assignment_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","assignment");
         if ($ids = assignment_ids ($course)) {

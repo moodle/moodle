@@ -16,12 +16,12 @@
     //
     //-----------------------------------------------------------
 
-    function resource_backup_mods($course,$user_data=false) {
+    function resource_backup_mods($course,$user_data=false,$backup_unique_code) {
         print "hola";
     }
    
    ////Return an array of info (name,value)
-   function resource_check_backup_mods($course,$user_data=false) {
+   function resource_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","resource");
         if ($ids = resource_ids ($course)) {

@@ -63,7 +63,7 @@
     echo "<tr>";
     echo "<td align=\"right\"><P><B>";
     echo get_string("name").":";
-    echo "</td><td>";
+    echo "</B></td><td>";
     //Calculate the backup string
     $backup_name = strtolower(get_string("backup"));
     //If non-translated, use "backup"
@@ -76,16 +76,17 @@
     if (substr($backup_name_format,0,1) == "[") {
         $backup_name_format = "%%Y%%m%%d-%%H%%M";
     }
-    $backup_name .= "-".userdate(time(),$backup_name_format,99,false).".zip";
+    $backup_name .= "-".strtolower($course->shortname)."-".userdate(time(),$backup_name_format,99,false).".zip";
     echo $backup_name;
     //Add as hidden name
     echo "<input type=\"hidden\" name=\"backup_name\" value=\"".$backup_name."\">";
     echo "</td></tr>";
 
-    //Calculate the temp dir name to do all the work
-    $tempdir_name = userdate(time(),"%Y%m%d%H%M",99,false);
+    //Calculate the backup unique code to allow simultaneus backups (to define
+    //the temp-directory name and records in backup temp tables
+    $backup_unique_code = time();
     //Add as hidden name
-    echo "<input type=\"hidden\" name=\"tempdir_name\" value=\"".$tempdir_name."\">";
+    echo "<input type=\"hidden\" name=\"backup_unique_code\" value=\"".$backup_unique_code."\">";
     
     //Line
     echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
@@ -124,7 +125,7 @@
                     echo $backup_user_options[$$var]."<P>";
                     //Call the check function to show more info
                     $modcheckbackup = $modname."_check_backup_mods";
-                    $table->data = $modcheckbackup($id,$$var);
+                    $table->data = $modcheckbackup($id,$$var,$backup_unique_code);
                     print_table($table); 
                     echo "</td></tr>";
                 }

@@ -26,12 +26,12 @@
     //
     //-----------------------------------------------------------
 
-    function pgassignment_backup_mods($course,$user_data=false) {
+    function pgassignment_backup_mods($course,$user_data=false,$backup_unique_code) {
         print "hola";
     }
 
    ////Return an array of info (name,value)
-   function pgassignment_check_backup_mods($course,$user_data=false) {
+   function pgassignment_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","pgassignment");
         if ($ids = pgassignment_ids ($course)) {

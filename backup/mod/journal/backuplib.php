@@ -21,12 +21,12 @@
     //
     //-----------------------------------------------------------
 
-    function journal_backup_mods($course,$user_data=false) {
+    function journal_backup_mods($course,$user_data=false,$backup_unique_code) {
         print "hola";
     }
    
    ////Return an array of info (name,value)
-   function journal_check_backup_mods($course,$user_data=false) {
+   function journal_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","journal");
         if ($ids = journal_ids ($course)) {

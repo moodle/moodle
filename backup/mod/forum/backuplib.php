@@ -36,7 +36,7 @@
     }
 
    ////Return an array of info (name,value)
-   function forum_check_backup_mods($course,$user_data=false) {
+   function forum_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","forum");
         if ($ids = forum_ids ($course)) {
