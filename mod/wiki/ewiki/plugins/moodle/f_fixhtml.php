@@ -13,7 +13,7 @@
 */
 
 
-define("EWIKI_XHTML", 0);
+define("EWIKI_XHTML", 1);
 $ewiki_plugins["page_final"][] = "ewiki_html_tag_balancer";
 
 
