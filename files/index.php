@@ -712,6 +712,9 @@ function displaydir ($wdir) {
     if ($wdir == "/") {
         $wdir = "";
     }
+    if (!empty($wdir)) {
+        $dirlist[] = '..';
+    }
 
     $count = 0;
 
@@ -719,22 +722,30 @@ function displaydir ($wdir) {
         asort($dirlist);
         foreach ($dirlist as $dir) {
 
-            $count++;
-
-            $filename = $fullpath."/".$dir;
-            $fileurl  = rawurlencode($wdir."/".$dir);
-            $filesafe = rawurlencode($dir);
-            $filesize = display_size(get_directory_size("$fullpath/$dir"));
-            $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
-    
             echo "<tr>";
 
-            print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />");
-            print_cell("left", "<a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\" /></a> <a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\">".htmlspecialchars($dir)."</a>");
-            print_cell("right", "<b>$filesize</b>");
-            print_cell("right", $filedate);
-            print_cell("right", "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename&amp;choose=$choose\">$strrename</a>");
-    
+            if($dir == '..') {
+                $fileurl = rawurlencode(dirname($wdir));
+                print_cell();
+                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt="'.get_string('parentfolder').'" /></a> <a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'">'.get_string('parentfolder').'</a>');
+                print_cell();
+                print_cell();
+                print_cell();
+            }
+            else {
+                $count++;
+                $filename = $fullpath."/".$dir;
+                $fileurl  = rawurlencode($wdir."/".$dir);
+                $filesafe = rawurlencode($dir);
+                $filesize = display_size(get_directory_size("$fullpath/$dir"));
+                $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
+                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />");
+                print_cell("left", "<a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\" /></a> <a href=\"index.php?id=$id&amp;wdir=$fileurl&amp;choose=$choose\">".htmlspecialchars($dir)."</a>");
+                print_cell("right", "<b>$filesize</b>");
+                print_cell("right", $filedate);
+                print_cell("right", "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename&amp;choose=$choose\">$strrename</a>");
+            }
+
             echo "</tr>";
         }
     }
