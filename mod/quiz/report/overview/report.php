@@ -156,12 +156,13 @@ class quiz_report extends quiz_default_report {
             $sort = ' ORDER BY '.implode(', ', $newsort);
         }
 
-        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uvsa, u.id AS userid, u.firstname, u.lastname, u.picture, qa.id AS attempt, qa.sumgrades, qa.timefinish, qa.timefinish - qa.timestart AS duration ';
+        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uvsa, u.id AS userid, u.firstname, u.lastname, u.picture, qa.id AS attempt, qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
         $group  = 'GROUP BY uvsa';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '.
                'LEFT JOIN '.$CFG->prefix.'quiz_responses qr ON qr.attempt = qa.id '.
-               'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') AND qa.timefinish != 0 AND ('.($noattempts ? sql_isnull('qa.quiz').' OR ' : '') . 'qa.quiz = '.$quiz->id.') ';
+               'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') AND ('.($noattempts ? sql_isnull('qa.quiz').' OR ' : '') . 'qa.quiz = '.$quiz->id.') ';
+
 
         $total = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$sql);
         $table->pagesize(10, $total);
@@ -185,8 +186,8 @@ class quiz_report extends quiz_default_report {
                           '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />',
                           $picture, 
                           '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$attempt->userid.'&amp;course='.$course->id.'">'.fullname($attempt).'</a>',
-                          empty($attempt->attempt) ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.userdate($attempt->timefinish, $strtimeformat).'</a>',
-                          empty($attempt->attempt) ? '-' : format_time($attempt->duration),
+                          empty($attempt->attempt) ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.userdate($attempt->timestart, $strtimeformat).'</a>',
+                          empty($attempt->attempt) || empty($attempt->timefinish) ? '-' : format_time($attempt->duration),
                           $attempt->sumgrades === NULL ? '-' : format_float($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints)
                        );
     
@@ -208,7 +209,7 @@ class quiz_report extends quiz_default_report {
             }
 
             echo '<div id="tablecontainer">';
-            echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'actionmenu\'); return confirm_if(menu.options[menu.selectedIndex].value == \'delete\', \''.$strreallydel.'\');">';
+            echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'actionmenu\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.$strreallydel.'\' : true);">';
             echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
 
         }
