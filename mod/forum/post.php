@@ -341,7 +341,9 @@
 
     if (!empty($parent)) {
         forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
-        forum_print_posts_threaded($parent->id, $course, 0, false, false);
+        if (empty($post->edit)) {
+            forum_print_posts_threaded($parent->id, $course, 0, false, false);
+        }
         echo "<center>";
         echo "<H2>".get_string("yourreply", "forum").":</H2>";
     } else {
