@@ -70,11 +70,11 @@
              </FORM>
              </CENTER>
       <?     break;
-           case "none":              ?>
-             <P><? print_string("loginstepsnone") ?></P>
-      <?     break;
+           case "none":
+             echo "<P>".get_string("loginstepsnone")."</P>";
+             break;
            default:
-             echo "ERROR: I don't know about the current authentication!";
+             echo format_text($CFG->auth_instructions);
          }
       ?>
 
