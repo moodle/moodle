@@ -77,6 +77,36 @@ function survey_delete_instance($id) {
     return $result;
 }
 
+function survey_print_recent_activity(&$logs, $isteacher=false) {
+    global $CFG, $COURSE_TEACHER_COLOR;
+
+    $content = false;
+    $surveys = NULL;
+
+    foreach ($logs as $log) {
+        if ($log->module == "survey" and $log->action == "submit") {
+            $surveys[$log->id] = get_record_sql("SELECT s.name, u.firstname, u.lastname
+                                                 FROM survey s, user u
+                                                 WHERE s.id = '$log->info' AND e.user = u.id");
+            $surveys[$log->info]->time = $log->time;
+            $surveys[$log->info]->url = $log->url;
+        }
+    }
+
+    if ($surveys) {
+        $content = true;
+        print_headline(get_string("newsurveyresponses", "survey").":");
+        foreach ($surveys as $survey) {
+            $date = userdate($survey->time, "%e %b, %H:%M");
+            echo "<P><FONT SIZE=1>$date - $survey->firstname $survey->lastname<BR>";
+            echo "\"<A HREF=\"$CFG->wwwroot/mod/survey/$survey->url\">";
+            echo "$survey->name";
+            echo "</A>\"</FONT></P>";
+        }
+    }
+ 
+    return $content;
+}
 
 function survey_already_done($survey, $user) {
    return record_exists_sql("SELECT * FROM survey_answers WHERE survey='$survey' AND user='$user'");

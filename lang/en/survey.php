@@ -21,6 +21,7 @@ $string['editingasurvey'] = "Editing a survey";
 $string['helpsurveys'] = "Help on the different types of surveys";
 $string['introtext'] = "Introduction text";
 $string['name'] = "Name";
+$string['newsurveyresponses'] = "New survey responses";
 $string['nobodyyet'] = "Nobody has yet completed this survey";
 $string['notdone'] = "Not done yet";
 $string['notes'] = "Your private analysis and notes";
