@@ -9,9 +9,19 @@
 
     if (!empty($courseid)) {
         require_login($courseid);
+        $course = get_record("course", "id", $courseid);
+
+        $strglossaries = get_string("modulenameplural", "glossary");
+        $strsearch = get_string("search");
+
+        $CFG->framename = "newwindow";
+        print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
+        "<a target=\"newwindow\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
+
+    } else {
+        print_header();    // Needs to be something here to allow linking back to the whole glossary
     }
 
-    print_header();    // Needs to be something here to allow linking back to the whole glossary
 
     if ( $eid ) {
         $entries = get_records_sql("select e.* from {$CFG->prefix}glossary_entries e, {$CFG->prefix}glossary g".
