@@ -2027,19 +2027,68 @@ function get_categories($parent="none", $sort="sortorder ASC") {
 * This recursive function makes sure that the courseorder is consecutive
 *
 * @param    type description
+*
+* $n is the starting point, offered only for compatilibity -- will be ignored!
+* $safe (bool) prevents it from assuming category-sortorder is unique, used to upgrade
+*       safely from 1.4 to 1.5
 */
-function fix_course_sortorder($categoryid=0, $n=0) {
+function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
+
+    global $CFG;
 
     $count = 0;
-    if ($courses = get_courses($categoryid)) {
-        foreach ($courses as $course) {
-            set_field('course', 'sortorder', $n, 'id', $course->id);
-            $n++;
-            $count++;
-        }
+    
+    $n=100;
+
+    // get some basic info
+    $info = get_record_sql('SELECT MIN(sortorder) AS min, 
+                                   MAX(sortorder) AS max,
+                                   COUNT(sortorder)  AS count
+                            FROM ' . $CFG->prefix . 'course 
+                            WHERE category=' . $categoryid);
+    if (is_object($info)) { // no courses?
+        $max   = $info->max;
+        $count = $info->count;
+        $min   = $info->min;
+        unset($info);
+    }
+
+    // actually sort only if there are courses,
+    // and we meet one ofthe triggers:
+    //  - safe flag
+    //  - they are not in a continuos block
+    //  - they are too close to the 'bottom'
+    if ($count && (    $safe 
+                    || ($max-$min+1!=$count)
+                    || $min < 10 ) ) {
+        if ($courses = get_courses($categoryid, 'c.sortorder ASC', 'c.id,c.sortorder')) {
+            begin_sql();
+
+            // find the ideal starting point
+            if ( ($min<$n&&$n<$max) || ($n+$count>=$min) || ($min<10) ) { 
+
+                $n = $max+100; // this is usually the ideal solution
+                
+                // if we are aiming way too high, try to bring it back to earth
+                if ($n > 100+3*$count) {
+                    if ($min > 100+$count){
+                        $n = 100;
+                    }
+                }
+            }
+
+            foreach ($courses as $course) { 
+                if ($course->sortorder != $n ) { // save db traffic
+                    set_field('course', 'sortorder', $n, 'id', $course->id);
+                }
+                $n++;
+            }
+            commit_sql();
+        }    
     }
     set_field("course_categories", "coursecount", $count, "id", $categoryid);
 
+    $n=0;
     if ($categories = get_categories($categoryid)) {
         foreach ($categories as $category) {
             $n = fix_course_sortorder($category->id, $n);
