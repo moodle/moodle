@@ -788,6 +788,8 @@ $string['passwordsenttext'] = '   <P>An email has been sent to your address at $
    <P><B>Please check your email for your new password</B>
    <P>The new password was automatically generated, so you might like to
    <A HREF=$a->link>change it to something easier to remember</A>.';
+$string['pathnotexists'] = 'Path doesn\'t exist in your server!';
+$string['pathslasherror'] = 'Path can\'t end with a slash!!';
 $string['paymentinstant'] = 'Use the button below to pay and be enrolled within minutes!';
 $string['paymentrequired'] = 'This course requires a payment for entry.';
 $string['paymentsorry'] = 'Thank you for your payment!  Unfortunately your payment has not yet been fully processed, and you are not yet registered to enter the course \"$a->fullname\".  Please try continuing to the course in a few seconds, but if you continue to have trouble then please alert the $a->teacher or the site administrator';
