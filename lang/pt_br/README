@@ -1,9 +1,23 @@
 Tradução para o português brasileiro
+coordenador: Paula de Waal
 
 Para participar do projeto de tradução ou indicar erros por favor contatar paula@dynamiclab.com ou participar do fórum Moodle Brasileiro em Moodle.org:
 http://moodle.org/course/view.php?id=35
 
 Agradecemos a todos os moodlers brasileiros que estão sugerindo soluções para melhorar a tradução da interface nos fóruns da comunidade
+
+12/10/2004
+
+Revisão ortográfica, tradução dos novos arquivos php da versão 1.4 de Moodle, adicionados alguns arquivos da documentação.
+
+O arquivo release.html foi traduzido por Rodrigo Avellar e revisto por Paula de Waal
+
+Os seguintes documentos ainda não foram incluidos na versão oficial mas encontram-se disponíveis para revisão na comunidade:
+
+future.html - Carlos Alberto
+install.html  - Augusto Christianini e marco Antonio
+coding - marcelo ukei
+background - Lazarte
 
 
 

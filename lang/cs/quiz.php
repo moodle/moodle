@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 (2004083100)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['acceptederror'] = 'Pøijatelná chyba';
@@ -49,8 +49,9 @@ $string['close'] = 'Zavøít náhled';
 $string['confirmstartattempt'] = 'Tento test má èasový limit. Jste si jistí, ¾e chcete teï zaèít?';
 $string['correctanswer'] = 'Správná odpovìï';
 $string['correctanswerformula'] = 'Vzorec správné odpovìdi';
+$string['correctanswerlength'] = 'Významné údaje';
 $string['correctanswers'] = 'Správné odpovìdi';
-$string['corrresp'] = 'Správná odezva';
+$string['corrresp'] = 'Správná ';
 $string['countdown'] = 'Odpoèítávání';
 $string['countdownfinished'] = 'Test se uzavírá, mìli byste okam¾itì odevzdat va¹e odpovìdi';
 $string['countdowntenminutes'] = 'Test bude uzavøen za deset minut.';
@@ -81,9 +82,9 @@ $string['editingnumerical'] = 'Úprava - numerická úloha';
 $string['editingquestion'] = 'Úprava úlohy';
 $string['editingquiz'] = 'Úprava testu';
 $string['editingrandom'] = 'Úprava - náhodnì vybraná úloha';
-$string['editingrandomsamatch'] = 'Úprava - pøiøazování pro náhodnì vybrané úlohy se struènou odpovìdí';
-$string['editingshortanswer'] = 'Úprava - úloha se struènou odpovìdí';
-$string['editingtruefalse'] = 'Úprava - Pravda/Nepravda úloha';
+$string['editingrandomsamatch'] = 'Úprava - pøiøazování pro náhodnì vybrané úlohy s krátkou tvoøenou odpovìdí';
+$string['editingshortanswer'] = 'Úprava - úloha s krátkou tvoøenou odpovìdí';
+$string['editingtruefalse'] = 'Úprava - pravda/nepravda úloha';
 $string['editquestions'] = 'Upravit úlohy';
 $string['errorsdetected'] = 'Poèet zji¹tìných chyb: $a';
 $string['exportfilename'] = 'test';
@@ -177,8 +178,8 @@ $string['quiztimelimit'] = 'Èasový limit: $a';
 $string['quiztimer'] = 'Èasomíra';
 $string['random'] = 'Náhodnì vybraná úloha';
 $string['randomcreate'] = 'Vytvoøit náhodnì vybrané úlohy';
-$string['randomsamatch'] = 'Pøiøazování pro náhodnì vybrané úlohy se struènou odpovìdí';
-$string['randomsamatchcreate'] = 'Vytvoøit pøiøazování pro náhodnì vybrané úlohy se struènou odpovìdí';
+$string['randomsamatch'] = 'Pøiøazování pro náhodnì vybrané úlohy s krátkou tvoøenou odpovìdí';
+$string['randomsamatchcreate'] = 'Vytvoøit pøiøazování pro náhodnì vybrané úlohy s krátkou tvoøenou odpovìdí';
 $string['randomsamatchintro'] = 'Ke ka¾dé z následujících úloh pøiøaïte odpovìï z nabídky.';
 $string['randomsamatchnumber'] = 'Poèet úloh k výbìru';
 $string['readytosend'] = 'Chystáte se odevzdat celý test k ohodnocení. Jste si jistí, ¾e chcete pokraèovat?';
@@ -210,7 +211,7 @@ $string['score'] = 'Hrubý skór';
 $string['select'] = 'Vybrat';
 $string['selectall'] = 'Vybrat v¹e';
 $string['selectcategoryabove'] = 'Vyberte vý¹e kategorii';
-$string['shortanswer'] = 'Krátká odpovìï';
+$string['shortanswer'] = 'Krátká tvoøená odpovìï';
 $string['show'] = 'Ukázat';
 $string['showcorrectanswer'] = 'Ukázat správnou odpovìï v hodnocení?';
 $string['showfeedback'] = 'Ukázat hodnocení po odpovìdi?';

@@ -17,6 +17,6 @@ $string['sessionipnomatch'] = 'Sinto muito, mas parece que o seu número de IP mu
 $string['unknowncourse'] = 'Curso \"$a\" desconhecido';
 $string['usernotaddederror'] = 'Usuário \"$a\" não foi adicionado - erro indefinido';
 $string['usernotaddedregistered'] = 'Usuário \"$a\" não foi adicionado - já foi registrado antes';
-$string['usernotavailable'] = 'Voc~e não tem autorização para acessar as informações detalhadas sobre este usuário';
+$string['usernotavailable'] = 'O acesso aos dados deste usuário é reservado.';
 
 ?>

@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['actual'] = '実体験';
@@ -129,10 +129,10 @@ $string['collesaintro'] = 'この調査の目的は、オンライン教材が�
 あなたの思慮深い回答は、この教材の将来的な改善に役立ちます。
 
 ありがとうございます。';
-$string['collesaname'] = 'COLLES (実体験)';
+$string['collesaname'] = 'COLLES ( 実体験 )';
 $string['collesapintro'] = 'この調査の目的は、オンライン教材があなたの学習にどのような影響をあたえているのかを知ることにあります。
 
-下記の24の質問では、学習内容に関するあなたの <b>要望<b> (理想的な) 及び <b>実体験</b> に関して尋ねます。
+下記の24の質問では、学習内容に関するあなたの <b>要望<b> ( 理想的な ) 及び <b>実体験</b> に関して尋ねます。
 
 回答には「正解」「不正解」はありません。私達はあなたの意見のみに関心を持っています。回答内容は高度に秘匿され、評価に影響を与えることはありません。
 
@@ -155,7 +155,7 @@ $string['collesm6short'] = '解釈';
 $string['collesmintro'] = 'このオンライン教材で ...';
 $string['collespintro'] = 'この調査の目的は、あなたがオンライン学習をどのように見ているのかを知ることにあります。
 
-下記の24の質問では、学習内容に関するあなたの<b>要望</b>(理想的な)に関して尋ねます。
+下記の24の質問では、学習内容に関するあなたの<b>要望</b> ( 理想的な ) に関して尋ねます。
 
 回答には「正解」「不正解」はありません。私達はあなたの意見のみに関心を持っています。回答内容は高度に秘匿され、評価に影響を与えることはありません。
 
@@ -204,9 +204,6 @@ $string['surveyname'] = '調査名';
 $string['surveysaved'] = '調査が保存されました';
 $string['surveytype'] = '調査タイプ';
 $string['thanksforanswers'] = '$a さん、調査にご協力いただきましてありがとうございます';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['time'] = '時間';
 $string['viewsurveyresponses'] = '$a 件の調査結果を見る';
 

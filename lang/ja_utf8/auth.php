@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['auth_common_settings'] = '一般設定';
@@ -14,7 +14,7 @@ $string['auth_dbpass'] = '上記ユーザ名に合致するパスワード';
 $string['auth_dbpasstype'] = 'パスワードフィールドで使用するフォーマットを特定してください。MD5暗号化はPostNukeのような他の一般的なウェブアプリケーションへの接続に便利です。';
 $string['auth_dbtable'] = 'データベースのテーブル名';
 $string['auth_dbtitle'] = '外部データベースを使用';
-$string['auth_dbtype'] = 'データベースタイプ(詳細は<a href=../lib/adodb/readme.htm#drivers>ADOdb documentation</a>をご覧ください';
+$string['auth_dbtype'] = 'データベースタイプ ( 詳細は<a href=../lib/adodb/readme.htm#drivers>ADOdb documentation</a>をご覧ください )';
 $string['auth_dbuser'] = 'データベースアクセス用のユーザ名';
 $string['auth_editlock'] = 'ロック値';
 $string['auth_editlock_expl'] = '<p><b>ロック値:</b> この設定を「Yes」にした場合、Moodleユーザ及び管理者がフィールドを直接編集できないようにします。外部認証システムにあるこの値をメンテナンスする時に使用してください。</p>';
@@ -22,7 +22,7 @@ $string['auth_emaildescription'] = 'メールによるアカウント確定は�
 $string['auth_emailtitle'] = 'Emailベースの認証';
 $string['auth_fccreators'] = 'メンバーがコースの作成を許可されているグループの一覧です。複数のグループは「;」で分けてください。グループ名はFirstClassサーバと厳密に同じ名前にしてください。システムは、大文字と小文字を区別します。';
 $string['auth_fcdescription'] = 'ここでは、ユーザ名とパスワードが正しいか否かをチェックするためにFisrtClassサーバを使用します。';
-$string['auth_fcfppport'] = 'サーバポート(3333が最も一般的)';
+$string['auth_fcfppport'] = 'サーバポート ( 3333が最も一般的 )';
 $string['auth_fchost'] = 'FirstClassサーバアドレス。IPアドレスまたはDNS名を使用してください。';
 $string['auth_fcpasswd'] = '上記アカウントのパスワード。';
 $string['auth_fctitle'] = 'FirstClassサーバを使用';
@@ -49,10 +49,11 @@ $string['auth_ldap_host_url'] = 'LDAPホストのURLを下記のように明示�
 $string['auth_ldap_login_settings'] = 'ログイン設定';
 $string['auth_ldap_memberattribute'] = 'ユーザがグループに属性している場合、ユーザの属性を特定してください。通常は\'member\'です。';
 $string['auth_ldap_objectclass'] = 'フィルタはユーザ名検索時に使用されます。通常は、objectClass=posixAccountのように設定します。デフォルトのobjectClass=*は全てのオブジェクトをLDAPより返します。';
+$string['auth_ldap_opt_deref'] = '検索時にエイリアスがどのように扱われるか決定してください。次の値から選択してください:  「No」 (LDAP_DEREF_NEVER) または 「Yes」 (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAPパスワード有効期限設定';
 $string['auth_ldap_search_sub'] = 'サブコンテキストからユーザを検索する場合は、  <> 0 のように入力してください。';
 $string['auth_ldap_server_settings'] = 'LDAPサーバ設定';
-$string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報(名、姓、住所等)を更新します。マッピング情報に関しては /auth/ldap/attr_mappings をご覧ください。';
+$string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報 ( 名、姓、住所等 ) を更新します。マッピング情報に関しては /auth/ldap/attr_mappings をご覧ください。';
 $string['auth_ldap_user_attribute'] = 'name/searchユーザに使われる属性です。通常は\'cn\'です。';
 $string['auth_ldap_user_settings'] = 'ユーザlookup設定';
 $string['auth_ldap_user_type'] = 'ユーザがどのようにLDAPに保存されるか選択してください。この設定では、有効期限、猶予ログイン、ユーザ作成がどのようになされるのかも指定します。';
@@ -62,7 +63,7 @@ $string['auth_ldapextrafields'] = 'これらのフィールドは任意項目で
 $string['auth_ldaptitle'] = 'LDAPサーバを使用';
 $string['auth_manualdescription'] = 'この方法ではユーザによるユーザアカウント作成機能を停止します。全てのアカウント作成は管理者により手動で行う必要があります。';
 $string['auth_manualtitle'] = '手動アカウント作成のみ';
-$string['auth_multiplehosts'] = '複数のホストを設定できます(例 host1.com;host2.com;host3.com)';
+$string['auth_multiplehosts'] = '複数のホストを設定できます ( 例 host1.com;host2.com;host3.com ) ';
 $string['auth_nntpdescription'] = 'ユーザ名とパスワードを確認するためにNNTPサーバを使用します。';
 $string['auth_nntphost'] = 'NNTPサーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
 $string['auth_nntpport'] = 'サーバーポート(119が一般的です)';
@@ -70,13 +71,13 @@ $string['auth_nntptitle'] = 'NNTPサーバを使用';
 $string['auth_nonedescription'] = 'ユーザはログインして外部サーバ及びメールによる認証無しにアカウントを直ちに作成できます。このオプションを使用するときは十分に注意してください - セキュリティー及び管理上の問題が発生するかもしれないことを考えてください。';
 $string['auth_nonetitle'] = '認証無し';
 $string['auth_pamdescription'] = 'この方式では、サーバのネイティブユーザ名にアクセスする手段としてPAMを使用します。このモジュールを使用するためには、<a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a>がインストールされている必要があります。';
-$string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
+$string['auth_pamtitle'] = 'PAM ( Pluggable Authentication Modules )';
 $string['auth_passwordisexpired'] = 'あなたのパスワードの有効期限が切れました。パスワードを変更しますか?';
 $string['auth_passwordwillexpire'] = 'あなたのパスワードの有効期限は、$a 日で切れます。パスワードを変更しますか?';
 $string['auth_pop3description'] = 'ユーザ名とパスワードを確認するためにPOP3サーバを使用します。';
 $string['auth_pop3host'] = 'POP3サーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
 $string['auth_pop3mailbox'] = '接続を試みるメールボックス名(通常は受信ボックス)';
-$string['auth_pop3port'] = 'サーバーポート (110が一般的です)';
+$string['auth_pop3port'] = 'サーバーポート ( 110が一般的です )';
 $string['auth_pop3title'] = 'POP3サーバを使用';
 $string['auth_pop3type'] = 'サーバタイプです。もし認証が必要な場合はpop3certを選択してください。';
 $string['auth_updatelocal'] = 'ローカルデータの更新';
@@ -85,7 +86,7 @@ $string['auth_updateremote'] = '外部データの更新';
 $string['auth_updateremote_expl'] = '<p><b>外部データの更新:</b> この設定を「Yes」にした場合、ユーザレコードが更新される時に外部認証が更新されます。編集できるようにフィールドをアンロックする必要があります。</p>';
 $string['auth_updateremote_ldap'] = '<p><b>注意:</b> 外部LDAPデータを更新するためには、binddnとbindpwを書き込み権を持ったbindユーザに設定する必要があります。現在、マルチバリュー属性を保護しません。また、更新時にエクストラバリューは取り除かれます。</p>';
 $string['auth_user_create'] = 'ユーザの作成を許可する';
-$string['auth_user_creation'] = '新しい(匿名の)ユーザは外部認証によりユーザアカウントを作成することができます。ユーザの確定はメールによって行われます。このオプションを有効にした場合、module-specificオプションも同時に有効にする必要があります。';
+$string['auth_user_creation'] = '新しい ( 匿名の ) ユーザは外部認証によりユーザアカウントを作成することができます。ユーザの確定はメールによって行われます。このオプションを有効にした場合、module-specificオプションも同時に有効にする必要があります。';
 $string['auth_usernameexists'] = 'このユーザ名は既に存在します。新しいものを選んでください。';
 $string['authenticationoptions'] = '認証オプション';
 $string['authinstructions'] = 'どのようなユーザ名やパスワードを使用したらよいのかユーザに説明します。ここに入力した文章はログインページに表示されます。空白の場合、何も表示されません。';
@@ -103,8 +104,5 @@ $string['showguestlogin'] = 'ログインページのゲストログインボタ
 $string['stdchangepassword'] = '標準パスワード変更ページを使用';
 $string['stdchangepassword_expl'] = '外部認証システムがMoodleにパスワードの変更を許可する場合、この設定を「Yes」にしてください。この設定は、「Change Password URL」を上書きします。';
 $string['stdchangepassword_explldap'] = '注意: LDAPサーバをリモートで使用する場合は、SSL暗号化トンネルを使用することをお勧めします。';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112200)
 
 
 $string['action'] = 'Actie';
@@ -99,7 +99,7 @@ $string['backup'] = 'Backup';
 $string['backupcoursefileshelp'] = 'Selecteer als je de bestanden van het vak in de backup wil';
 $string['backupdate'] = 'Datum backup';
 $string['backupdetails'] = 'Details van de backup';
-$string['backupfailed'] = 'Sommige vakke zijn niet bewaard!';
+$string['backupfailed'] = 'Sommige vakken zijn niet bewaard!';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'De backup is succesvol afgerond';
 $string['backupincludemoduleshelp'] = 'Selecteer als je vakmodules met of zonder gebruikersgegevens in de backup wil';
@@ -118,7 +118,6 @@ $string['backupusershelp'] = 'Selecteer als je alle gebruikers op de server of a
 $string['backupversion'] = 'Versie backup';
 $string['blockconfiga'] = 'Een $a blok configureren';
 $string['blockconfigbad'] = 'Dit blok is niet juist geïmplementeerd en kan dus geen configuratie-interface tonen.Vak: ';
-$string['blockconfigin'] = 'Vak: een blok in $a configureren';
 $string['blockdeleteconfirm'] = 'Je gaat het blok \'$a\' volledig verwijderen. Hiermee zal alles in de databank dat met dit blok geassocieerd is verwijderd worden. Ben je ZEKER dat je hiermee verder wil gaan?';
 $string['blockdeletefiles'] = 'Alle gegevens die met het blok \'$a->block\' geassocieerd zijn, zijn verwijderd uit de databank. Om het verwijderen af te ronden (en om te verhinderen dat het blok zich opnieuw zou installeren), moet je de map $a->directory van je server verwijderen';
 $string['blocks'] = 'Blokken';
@@ -259,6 +258,7 @@ $string['createaccount'] = 'Maak mijn nieuwe account aan';
 $string['createfolder'] = 'Maak een map in $a';
 $string['createuserandpass'] = 'Maak een nieuwe gebruikersnaam en een nieuw wachtwoord aan om mee in te loggen';
 $string['createziparchive'] = 'Maak een ZIP-archief';
+$string['creatingblocks'] = 'Blokken maken';
 $string['creatingcategoriesandquestions'] = 'Categorieën en vragen maken';
 $string['creatingcoursemodules'] = 'Vakmodulen maken';
 $string['creatingevents'] = 'Gebeurtenissen maken';
@@ -300,6 +300,7 @@ $string['defaultcourseteacher'] = 'Leraar';
 $string['defaultcourseteachers'] = 'Leraren';
 $string['delete'] = 'Verwijder';
 $string['deleteall'] = 'Verwijder alle';
+$string['deletecategorycheck'] = 'Ben je er zeker van dat je heel de categorie <b>\'$a\'</b> wil verwijderen?<br /> Hierdoor zullen alle vakken van die categorie verplaatst worden: indien mogelijk naar de bovenliggende categorie en indien niet mogelijk naar de categorie \'Diversen\'.';
 $string['deletecheck'] = 'Verwijder $a?';
 $string['deletecheckfiles'] = 'Weet je zeker dat je deze bestanden wilt verwijderen?';
 $string['deletecheckfull'] = 'Weet je zeker dat je $a volledig wilt verwijderen?';
@@ -612,8 +613,8 @@ $string['loginsite'] = 'Op de site inloggen';
 $string['loginsteps'] = 'Hallo! Om volledige toegang tot de vakken te krijgen moet je even de tijd nemen om een nieuwe account voor jezelf aan te maken op deze website. 
 Elk vak kan ook een eenmalige \"Vaksleutel\" hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
 <ol>
-<li>Vul het formulier <a href=\"=$a\">Nieuwe account</a> in.</li>
-<li>Er wordt meteen een e-mail verstuurd naar je e-mailadres.<li>
+<li>Vul het formulier <a href=\"$a\">Nieuwe account</a> in.</li>
+<li>Er wordt meteen een e-mail verstuurd naar je e-mailadres.</li>
 <li>Lees de e-mail en klik op de link die erin staat.</li>
 <li>Je account wordt bevestigd en je bent dan ingelogd.</li>
 <li>Kies nu het vak dat je wilt volgen.</li>
@@ -783,6 +784,7 @@ $string['order'] = 'Volgorde';
 $string['other'] = 'Andere';
 $string['outline'] = 'Overzicht';
 $string['page'] = 'Pagina';
+$string['pageheaderconfigablock'] = 'Blok configureren in %%fullname%%';
 $string['participants'] = 'Deelnemers';
 $string['password'] = 'Wachtwoord';
 $string['passwordchanged'] = 'Het wachtwoord is veranderd';
@@ -973,6 +975,7 @@ $string['topichide'] = 'Verberg dit onderwerp voor $a';
 $string['topicoutline'] = 'Overzicht van het onderwerp';
 $string['topicshow'] = 'Toon dit onderwerp aan $a';
 $string['total'] = 'Totaal';
+$string['trysearching'] = 'Probeer te zoeken';
 $string['turneditingoff'] = 'Zet wijzigen uit';
 $string['turneditingon'] = 'Zet wijzigen aan';
 $string['undecided'] = 'Onbeslist';

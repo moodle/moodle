@@ -1,13 +1,13 @@
-<?php // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['addresource'] = 'リソースを追加する';
 $string['chooseafile'] = 'ファイルの選択またはアップロード';
 $string['chooseparameter'] = 'パラメータを選択';
 $string['configdefaulturl'] = 'ここでは新しいURLベースのリソースを作成する場合に前もって入力される値を設定します。';
-$string['configfilterexternalpages'] = 'この設定により全ての外部リソース(ウェブページ、アップロードしたHTMLファイル)に現在設定されているフィルター(例えば用語集自動リンク)が適用されます。設定することでコースページの動作が著しく遅くなる恐れがあります。必要がある時のみ注意してお使いください。';
-$string['configframesize'] = 'フレーム内にウェブページやアップロードしたファイルが表示される場合のトップフレーム(ナビゲーションを含む)のサイズ(ピクセル)です。';
+$string['configfilterexternalpages'] = 'この設定により全ての外部リソース ( ウェブページ、アップロードしたHTMLファイル ) に現在設定されているフィルター  ( 例えば用語集自動リンク ) が適用されます。設定することでコースページの動作が著しく遅くなる恐れがあります。必要がある時のみ注意してお使いください。';
+$string['configframesize'] = 'フレーム内にウェブページやアップロードしたファイルが表示される場合のトップフレーム ( ナビゲーションを含む )のサイズ ( ピクセル ) です。';
 $string['configparametersettings'] = 'ここでは、新しいリソースを登録する際にフォームに表示されるデフォルトのパラメータの値を設定します。最初にリソースを登録した後、この値は個々のユーザのデフォルトとなります。';
 $string['configpopup'] = 'ポップアップウインドウに表示される新しいリソースを追加する場合、デフォルトでこのオプションを使用しますか?';
 $string['configpopupdirectories'] = 'デフォルトでダイレクトリンクをポップアップウインドウに表示しますか?';
@@ -34,7 +34,7 @@ $string['fetcherror'] = 'ウェブページを検索している時、エラーが発生しました。';
 $string['fetchservererror'] = 'ウェブページを検索している時、リモートサーバにエラーが発生しました。プログラムエラーだと思われます。';
 $string['filename'] = 'ファイル名';
 $string['filtername'] = 'リソースオートリンク';
-$string['frameifpossible'] = 'ナビゲーションを表示するため、リソースをフレーム内に表示';
+$string['frameifpossible'] = 'ナビゲーションを表示したままにするため、リソースをフレーム内に表示する';
 $string['fulltext'] = 'フルテキスト';
 $string['htmlfragment'] = 'HTMLフラグメント';
 $string['maindirectory'] = 'メインファイルディレクトリ';
@@ -43,18 +43,18 @@ $string['modulenameplural'] = 'リソース';
 $string['neverseen'] = '未確認';
 $string['newdirectories'] = 'ディレクトリリンクを表示';
 $string['newfullscreen'] = '全画面表示';
-$string['newheight'] = 'デフォルトウンドウ高(ピクセル)';
+$string['newheight'] = 'デフォルトウンドウ高 ( ピクセル )';
 $string['newlocation'] = 'ロケーションバーを表示';
 $string['newmenubar'] = 'メニューバーを表示';
 $string['newresizable'] = 'ウインドウのリサイズを許可';
 $string['newscrollbars'] = 'ウインドウのスクロールを許可';
 $string['newstatus'] = 'ステータスバーを表示';
 $string['newtoolbar'] = 'ツールバーを表示';
-$string['newwidth'] = 'デフォルトウンドウ幅(ピクセル)';
+$string['newwidth'] = 'デフォルトウンドウ幅 ( ピクセル )';
 $string['newwindow'] = '新しいウインドウ';
 $string['newwindowopen'] = 'ポップアップウインドウにリソースを表示';
 $string['note'] = '注意';
-$string['notefile'] = '更にファイルをアップロード(このリストに表示されます)する場合、<a href=$a >File Manager</a> を利用してください。';
+$string['notefile'] = '更にファイルをアップロード ( このリストに表示されます ) する場合、<a href=$a >File Manager</a> を利用してください。';
 $string['notypechosen'] = 'タイプを選択してください。「戻る」ボタンを押して再度入力してください。';
 $string['pagedisplay'] = 'リソースを現在のウインドウに表示';
 $string['pagewindow'] = '同一ウインドウ';
@@ -78,9 +78,6 @@ $string['resourcetypehtml'] = 'ウェブページの作成';
 $string['resourcetypelabel'] = 'ラベルの挿入';
 $string['resourcetypetext'] = 'テキストページの作成';
 $string['searchweb'] = 'ウェブページを検索';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['variablename'] = '変数名';
 
 ?>

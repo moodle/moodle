@@ -1,11 +1,12 @@
 <?php // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111200)
 
 
 $string['absent'] = '欠席';
 $string['accumulative'] = '累積方式';
 $string['action'] = '操作';
-$string['addacomment'] = 'コメントを追加';
+$string['addacomment'] = 'コメントの追加';
+$string['addcomment'] = 'コメントの追加';
 $string['afterdeadline'] = '提出期限後： $a';
 $string['ago'] = '$a 前';
 $string['agreetothisassessment'] = 'この評価に同意する';
@@ -46,6 +47,7 @@ $string['calculationoffinalgrades'] = '最終成績を計算';
 $string['clearlateflag'] = '遅刻フラグをクリア';
 $string['closeassignment'] = '課題を閉じる';
 $string['comment'] = 'コメント';
+$string['commentbank'] = 'コメントバンク';
 $string['commentby'] = 'コメント';
 $string['comparisonofassessments'] = '評価の比較';
 $string['confirmdeletionofthisitem'] = '$a の削除を確定する';
@@ -59,8 +61,9 @@ $string['deleting'] = '削除中';
 $string['description'] = '詳細';
 $string['detailsofassessment'] = '評価詳細';
 $string['disagreewiththisassessment'] = 'この評価に同意しない';
-$string['displayoffinalgrades'] = '最終成績を表示';
-$string['dontshowgrades'] = '成績を表示しない';
+$string['displayofcurrentgrades'] = '現在の評点を表示';
+$string['displayoffinalgrades'] = '最終評点を表示';
+$string['dontshowgrades'] = '評点を表示しない';
 $string['edit'] = '編集';
 $string['editacomment'] = 'コメントの編集';
 $string['editingassessmentelements'] = '評価要素を編集';
@@ -78,9 +81,9 @@ $string['feedbackgoeshere'] = 'フィードバックはここに表示されます';
 $string['generalcomment'] = '一般的なコメント';
 $string['good'] = '良い';
 $string['grade'] = '成績';
-$string['gradeassessment'] = '評価成績';
-$string['graded'] = '評価';
-$string['gradedbyteacher'] = '$a による評価';
+$string['gradeassessment'] = '評価評定';
+$string['graded'] = '評定';
+$string['gradedbyteacher'] = '$a による評定';
 $string['gradeforassessments'] = '評価に対する評点';
 $string['gradeforbias'] = 'バイアスに対する評点';
 $string['gradeforreliability'] = '信頼性に対する評点';
@@ -194,6 +197,7 @@ $string['present'] = '出席';
 $string['reasonforadjustment'] = '調整理由';
 $string['reassess'] = '再評価';
 $string['regradestudentassessments'] = '学生の評価を再評定する';
+$string['releaseteachergrades'] = '教師の評定を公開する';
 $string['removeallattachments'] = '全ての添付ファイルを削除';
 $string['repeatanalysis'] = '分析を繰り返す';
 $string['reply'] = '返事';
@@ -254,6 +258,7 @@ $string['thislanguage'] = 'Japanese';
 $string['timeassessed'] = '評価時間';
 $string['title'] = '題名';
 $string['typeofscale'] = '評価基準';
+$string['unassessed'] = '$a 未評価';
 $string['ungradedassessments'] = '$a 未評定評価';
 $string['ungradedassessmentsofstudentsubmissions'] = '$a 学生の提出物の未評定評価';
 $string['ungradedassessmentsofteachersubmissions'] = '$a 教師の提出物の未評定評価';

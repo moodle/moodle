@@ -1,11 +1,12 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112200)
 
 
 $string['absent'] = 'Afwezig';
 $string['accumulative'] = 'Accumulatief';
 $string['action'] = 'Actie';
-$string['addacomment'] = 'Voeg commentaar toe';
+$string['addacomment'] = 'Voeg een opmerking toe';
+$string['addcomment'] = 'Voeg commentaar toe';
 $string['afterdeadline'] = 'Na de deadline: $a';
 $string['ago'] = '$a geleden';
 $string['agreetothisassessment'] = 'Bevestig deze evaluatie';
@@ -46,6 +47,7 @@ $string['calculationoffinalgrades'] = 'Berekening van de eindbeoordeling';
 $string['clearlateflag'] = 'Wis de te laat vermelding';
 $string['closeassignment'] = 'Sluit de beoordeling';
 $string['comment'] = 'Commentaar';
+$string['commentbank'] = 'CommentarenbankTo';
 $string['commentby'] = 'Commentaar door';
 $string['comparisonofassessments'] = 'Vergelijking van beoordelingen';
 $string['confirmdeletionofthisitem'] = 'Bevestig het verwijderen van deze $a';
@@ -59,6 +61,7 @@ $string['deleting'] = 'Verwijderen';
 $string['description'] = 'Beschrijving';
 $string['detailsofassessment'] = 'Details van de beoordeling';
 $string['disagreewiththisassessment'] = 'Niet akkoord met deze beoordeling';
+$string['displayofcurrentgrades'] = 'Toon de huidige cijfers';
 $string['displayoffinalgrades'] = 'Toon de eindcijfers';
 $string['dontshowgrades'] = 'Toon de cijfers niet';
 $string['edit'] = 'Bewerk';
@@ -183,6 +186,7 @@ $string['present'] = 'Huidig';
 $string['reasonforadjustment'] = 'Reden voor bijsturing';
 $string['reassess'] = 'Evalueer opnieuw';
 $string['regradestudentassessments'] = 'Geef opnieuw een cijfer voor de inzendingen van d leerling';
+$string['releaseteachergrades'] = 'Toon de beoordeling van de leraar';
 $string['removeallattachments'] = 'Verwijder alle bijlages';
 $string['repeatanalysis'] = 'Herhaal analyse';
 $string['reply'] = 'Antwoord';
@@ -243,6 +247,7 @@ $string['thislanguage'] = 'Nederlands';
 $string['timeassessed'] = 'Tijd geëvalueerd';
 $string['title'] = 'Titel';
 $string['typeofscale'] = 'Soort van schaal';
+$string['unassessed'] = '$a niet beoordeeld';
 $string['ungradedassessments'] = '$a beoordelingen zonder cijfer';
 $string['ungradedassessmentsofstudentsubmissions'] = '$a Niet-beoordeelde evaluaties van leerlingenbijdragen.';
 $string['ungradedassessmentsofteachersubmissions'] = '$a Niet-beoordeelde evaluaties van lerarenbijdragen';

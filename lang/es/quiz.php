@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 alpha (2004081500)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -28,6 +28,7 @@ $string['attempts'] = 'Intentos';
 $string['attemptsallowed'] = 'Intentos permitidos';
 $string['attemptsexist'] = 'Ya ha intentado contestar este cuestionario';
 $string['attemptsunlimited'] = 'Intentos ilimitados';
+$string['back'] = 'Regresar a visión previa de la pregunta';
 $string['backtoquiz'] = 'Regresar a edición de cuestionario';
 $string['bestgrade'] = 'Calificación máxima';
 $string['blackboard'] = 'Blackboard';
@@ -51,6 +52,7 @@ $string['correctanswer'] = 'Respuesta correcta';
 $string['correctanswerformula'] = 'Fórmula de respuesta correcta';
 $string['correctanswerlength'] = 'Cifras significativas';
 $string['correctanswers'] = 'Respuestas correctas';
+$string['correctanswershows'] = 'La respuesta correcta muestra';
 $string['corrresp'] = 'Respuesta Correcta';
 $string['countdown'] = 'Cuenta atrás';
 $string['countdownfinished'] = 'Este cuestionario se está cerrando, debe enviar sus respuestas ahora.';
@@ -62,6 +64,7 @@ $string['custom'] = 'Formato personalizado';
 $string['datasetdefinitions'] = 'Definiciones reutilizables del conjunto de datos para la categoría $a';
 $string['datasetnumber'] = 'Número';
 $string['daysavailable'] = 'Días disponible';
+$string['decimalformat'] = 'decimales';
 $string['decimals'] = ' con $a';
 $string['default'] = 'Por defecto';
 $string['defaultgrade'] = 'Calificación por defecto de la pregunta';
@@ -175,6 +178,7 @@ $string['numerical'] = 'Numérico';
 $string['optional'] = 'opcional';
 $string['overdue'] = 'Vencido';
 $string['paragraphquestion'] = 'Pregunta de parágrafo no permitida en la línea $a. La pregunta no se tendrá en cuenta';
+$string['parentlanguage'] = 'es';
 $string['passworderror'] = 'La contraseña es incorrecta';
 $string['percentcorrect'] = 'Porcentaje correcto';
 $string['preview'] = 'Vista previa';
@@ -238,8 +242,12 @@ $string['showfeedback'] = '¿Mostrar resultado al finalizar?';
 $string['shuffleanswers'] = 'Barajar respuestas';
 $string['shufflequestions'] = 'Barajar preguntas';
 $string['significantfigures'] = 'con $a';
+$string['significantfiguresformat'] = 'dígitos significativos';
 $string['subneterror'] = 'Lo sentimos, este cuestionario ha sido bloqueado de modo que sólo es accesible desde ciertas direcciones. En este momento su ordenador no está autorizado para usar este cuestionario.';
 $string['substitutedby'] = 'serán sustituídas por';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'es';
 $string['time'] = 'Tiempo';
 $string['timecompleted'] = 'Completado';
 $string['timeleft'] = 'Tiempo restante';
@@ -266,5 +274,6 @@ $string['withsummary'] = 'con estadísticas resumidas';
 $string['wronggrade'] = 'Calificación equivocada (después de la línea $a) :';
 $string['xml'] = 'Formato Moodle XML';
 $string['yourfinalgradeis'] = 'Su calificación final en este cuestionario es $a';
+$string['zerosignificantfiguresnotallowed'] = '¡La respuesta correcta no puede tener cero dígitos significativos!';
 
 ?>

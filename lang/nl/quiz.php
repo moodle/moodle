@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112400)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -30,6 +30,7 @@ $string['attempts'] = 'Pogingen';
 $string['attemptsallowed'] = 'Toegestane pogingen ';
 $string['attemptsexist'] = 'Deze test is al eens geprobeerd';
 $string['attemptsunlimited'] = 'Onbeperkt aantal pogingen';
+$string['back'] = 'Terug naar controleer vraag';
 $string['backtoquiz'] = 'Terug naar het bewerken/wijzigen van de test';
 $string['bestgrade'] = 'Hoogste cijfer';
 $string['blackboard'] = 'Blackboard';
@@ -183,7 +184,7 @@ $string['overdue'] = 'Te laat';
 $string['paragraphquestion'] = 'Vraagparagraaf niet ondersteund op lijn $a. De vraag wordt genegeerd';
 $string['passworderror'] = 'Het wachtwoord was niet juist';
 $string['percentcorrect'] = 'Percentage juist';
-$string['preview'] = 'Weergave test';
+$string['preview'] = 'Controleer vraag';
 $string['previewquestion'] = 'Weergave van een vraag testen';
 $string['publish'] = 'Publiceer  ';
 $string['publishedit'] = 'Je moet rechten hebben in het vak dat deze vragen publiceert om in deze categorie vragen te kunnen toevoegen of bewerken.';

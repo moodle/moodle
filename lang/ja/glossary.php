@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -16,7 +16,7 @@ $string['approve'] = '承認';
 $string['areyousuredelete'] = '本当にこのエントリを削除してもよろしいですか?';
 $string['areyousuredeletecomment'] = '本当にこのコメントを削除してもよろしいですか?';
 $string['areyousureexport'] = '本当にこのエントリを次へエクスポートしてもよろしいですか';
-$string['ascending'] = '(降順)';
+$string['ascending'] = '( 降順 )';
 $string['attachment'] = '添付';
 $string['authorview'] = '著者順に表示';
 $string['back'] = '戻る';
@@ -58,7 +58,7 @@ $string['definitions'] = '定義';
 $string['deleteentry'] = 'エントリの削除';
 $string['deletingcomment'] = 'コメントを削除しています。';
 $string['deletingnoneemptycategory'] = '空でないカテゴリが削除された場合、関係するエントリも同時に削除されます。エントリを削除したい場合は、手動で行ってください。';
-$string['descending'] = '(昇順)';
+$string['descending'] = '( 昇順 )';
 $string['destination'] = 'インポート先';
 $string['displayformat'] = '表示フォーマット';
 $string['displayformatcontinuous'] = '連続、著者無し';
@@ -83,7 +83,7 @@ $string['entryalreadyexist'] = 'エントリが既に登録されています。';
 $string['entryapproved'] = 'エントリが承認されました。';
 $string['entrydeleted'] = 'エントリが削除されました。';
 $string['entryexported'] = 'エントリが正常にエクスポートされました。';
-$string['entryishidden'] = '(このエントリは現在非表示です)';
+$string['entryishidden'] = '( このエントリは現在非表示です )';
 $string['entryleveldefaultsettings'] = 'エントリレベルデフォルト設定';
 $string['entrysaved'] = 'エントリーが保存されました。';
 $string['entryupdated'] = 'エントリーが更新されました。';
@@ -122,7 +122,7 @@ $string['newglossary'] = '新しい用語集';
 $string['newglossarycreated'] = '新しい用語集が作成されました。';
 $string['newglossaryentries'] = '新規用語集エントリ';
 $string['nocomment'] = 'コメントが見つかりません';
-$string['nocomments'] = '(このエントリにはコメントがありません)';
+$string['nocomments'] = '( このエントリにはコメントがありません )';
 $string['noconceptfound'] = '用語または定義が見つかりませんでした。';
 $string['noentries'] = 'このセクションにはエントリがありません。';
 $string['noentry'] = 'エントリが見つかりませんでした。';
@@ -156,15 +156,12 @@ $string['sortchronogically'] = '日付順の並び替え';
 $string['special'] = '特別';
 $string['standardview'] = 'アルファベット順';
 $string['studentcanpost'] = '学生のエントリ追加を許可する';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['totalentries'] = 'エントリ合計';
 $string['usedynalink'] = 'エントリを自動的にリンクする';
 $string['waitingapproval'] = '承認待ち';
-$string['warningstudentcapost'] = '(用語集がメインで無い場合に適用)';
-$string['withauthor'] = '用語(著者有り)';
-$string['withoutauthor'] = '用語(著者無し)';
+$string['warningstudentcapost'] = '( 用語集がメインで無い場合に適用 )';
+$string['withauthor'] = '用語 ( 著者有り )';
+$string['withoutauthor'] = '用語 ( 著者無し )';
 $string['writtenby'] = '作成';
 $string['youarenottheauthor'] = 'あなたはこのコメントの作者ではありません。編集はできません。';
 

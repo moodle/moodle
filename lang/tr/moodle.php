@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 (2004083100)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['action'] = 'Eylem';
@@ -601,7 +601,7 @@ $string['themes'] = 'Temalar';
 $string['themesaved'] = 'Yeni tema kaydedildi';
 $string['thischarset'] = 'iso-8859-9';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Türkçe';
+$string['thislanguage'] = 'T&#252;rk&#231;e';
 $string['time'] = 'Zaman';
 $string['timezone'] = 'Zaman dilimi';
 $string['today'] = 'Bugün';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 (2004083100)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['addcomment'] = 'Pøidat komentáø';
@@ -85,6 +85,8 @@ $string['entrydeleted'] = 'Polo¾ka odstranìna';
 $string['entryexported'] = 'Polo¾ka úspì¹nì exportována';
 $string['entryishidden'] = '(tato polo¾ka je momentálnì skrytá)';
 $string['entryleveldefaultsettings'] = 'Výchozí nastavení pro polo¾ky';
+$string['entrysaved'] = 'Polo¾ka byla ulo¾ena';
+$string['entryupdated'] = 'Polo¾ka byla aktualizována';
 $string['entryusedynalink'] = 'Tato polo¾ka by mìla být automaticky propojována';
 $string['explainaddentry'] = 'Pøidat novou polo¾ku do stávajícího slovníku.<br />Pojem a jeho definice jsou povinná pole.';
 $string['explainall'] = 'Zobrazit V©ECHNY polo¾ky na jedné stránce';

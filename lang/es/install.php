@@ -98,7 +98,7 @@ $string['safemodehelp'] = '<p>Moodle puede tener varios problemas con \'safe mod
 
 <p>Si lo desea, puede seguir con la instalación, pero experimentará problemas más adelante.</p>';
 $string['sessionautostart'] = 'Autocomienzo de sesión';
-$string['sessionautostarterror'] = 'Deb e estar desactivado';
+$string['sessionautostarterror'] = 'Debe estar desactivado';
 $string['sessionautostarthelp'] = '<p>Moodle requiere apoyo de sesión y no funcionará sin él.</p>
 
 <p>Las sesiones deben estar activadas en el archhivo php.ini para el parámetro session.auto_start.</p>';

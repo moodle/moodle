@@ -130,7 +130,7 @@ Markdownは、余分(不必要)な<code>&lt;p&gt;</code>タグをブロック要素の周囲に追加す
 
 
 <p>注意: Markdownフォーマットシンタックスはブロック要素の中では処理されません 
-例、あなたはMarkdown-style <code>*強調*</code> をHTMLブロックの中で使用できません。</p>
+例、あなたはMarkdownスタイル <code>*強調*</code> をHTMLブロックの中で使用できません。</p>
 
 <p>汎用的なインライン要素 - 例 <code>&lt;span&gt;</code>、<code>&lt;cite&gt;</code>、<code>&lt;del&gt;</code> - は、
 Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場合、Markdownフォーマットの
@@ -141,241 +141,119 @@ Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場
 
 <h3 id="autoescape">スペシャルキャラクタの自動エスケープ</h3>
 
+<p>HTMLには特別に扱う必要のある2つの文字があります: <code>&lt;</code> と <code>&amp;</code>です。左鍵括弧タグの開始に使用し、アンパサンドはHTMLエンティティーを示すために使用します。
+これらの文字を使用する場合は、エンティティーとしてエスケープする必要があります。例、<code>&amp;lt;</code> と <code>&amp;amp;</code>です。</p>
 
-
-<p>In HTML, there are two characters that demand special treatment: <code>&lt;</code>
-
-and <code>&amp;</code>. Left angle brackets are used to start tags; ampersands are
-
-used to denote HTML entities. If you want to use them as literal
-
-characters, you must escape them as entities, e.g. <code>&amp;lt;</code>, and
-
-<code>&amp;amp;</code>.</p>
-
-
-
-<p>Ampersands in particular are bedeviling for web writers. If you want to
-
-write about &#8216;AT&amp;T&#8217;, you need to write &#8216;<code>AT&amp;amp;T</code>&#8217;. You even need to
-
-escape ampersands within URLs. Thus, if you want to link to:</p>
-
-
+<p>特にアンパサンドは、ホームページ製作者泣かせの存在です。&#8216;AT&amp;T&#8217;と書きたい場合、&#8216;<code>AT&amp;amp;T</code>&#8217;と書く必要があります。
+更に、URLの中でもアンパサンドをエスケープする必要があります。従って、次のようにリンクしたい場合:</p>
 
 <pre><code>http://images.google.com/images?num=30&amp;q=larry+bird
 
 </code></pre>
 
-
-
-<p>you need to encode the URL as:</p>
-
-
+<p>アンカータグ<code>href</code>の属性において、URLを次のようにエンコードする必要があります:</p>
 
 <pre><code>http://images.google.com/images?num=30&amp;amp;q=larry+bird
 
 </code></pre>
 
+<p>言うまでもなく、このことは忘れやすく、恐らく適切にマークアップされたウェブサイトでHTML妥当性エラーが発生する最も一般的な原因となっています。</p>
 
+<p>Markdownは必要に応じてエスケープ処理を行いますので、あなたはこれらの文字を自然に使うことができます。
+アンパサンドをHTMLエンティティーの一部として使用したい場合は、そのままの状態にされます。そうで無い場合は、<code>&amp;amp;</code>にエンコードされます。</p>
 
-<p>in your anchor tag <code>href</code> attribute. Needless to say, this is easy to
-
-forget, and is probably the single most common source of HTML validation
-
-errors in otherwise well-marked-up web sites.</p>
-
-
-
-<p>Markdown allows you to use these characters naturally, taking care of
-
-all the necessary escaping for you. If you use an ampersand as part of
-
-an HTML entity, it remains unchanged; otherwise it will be translated
-
-into <code>&amp;amp;</code>.</p>
-
-
-
-<p>So, if you want to include a copyright symbol in your article, you can write:</p>
-
-
+<p>ですから、あなたが著作権記号を記事に入れたい場合は、次のように記述できます:</p>
 
 <pre><code>&amp;copy;
 
 </code></pre>
 
-
-
-<p>and Markdown will leave it alone. But if you write:</p>
-
-
+<p>Markdownはアンパサンドをそのままにします。しかし、次のように記述すると:</p>
 
 <pre><code>AT&amp;T
 
 </code></pre>
 
-
-
-<p>Markdown will translate it to:</p>
-
-
+<p>Markdownは次のようにエンコードします:</p>
 
 <pre><code>AT&amp;amp;T
 
 </code></pre>
 
-
-
-<p>Similarly, because Markdown supports <a href="#html">inline HTML</a>, if you use
-
-angle brackets as delimiters for HTML tags, Markdown will treat them as
-
-such. But if you write:</p>
-
-
+<p>同様に、Markdownは<a href="#html">inline HTML</a>をサポートします。鍵括弧をHTMLの区切り文字として使用する場合、Markdownは鍵括弧をそのままにします。しかし、次のように記述すると:</p>
 
 <pre><code>4 &lt; 5
 
 </code></pre>
 
-
-
-<p>Markdown will translate it to:</p>
-
-
+<p>Markdownは次のようにエンコードします:</p>
 
 <pre><code>4 &amp;lt; 5
 
 </code></pre>
 
-
-
-<p>However, inside Markdown code spans and blocks, angle brackets and
-
-ampersands are <em>always</em> encoded automatically. This makes it easy to use
-
-Markdown to write about HTML code. (As opposed to raw HTML, which is a
-
-terrible format for writing about HTML syntax, because every single <code>&lt;</code>
-
-and <code>&amp;</code> in your example code needs to be escaped.)</p>
-
-
+<p>しかし、Markdownコードspansとblocksの中では、鍵括弧、アンパサンドは<em>常に</em>自動的にエンコードされます。このことにより、Markdownを使用すると簡単にHTMLコードを記述することができます。
+(逆に、生のHTMLでHTMLシンタックスを記述すると酷いことになります。あなたのサンプルコード内の全ての <code>&lt;</code> と <code>&amp;</code> をエスケープする必要があるからです。)</p>
 
 <hr />
 
-
-
 <h2 id="block">ブロック要素</h2>
-
-
 
 <h3 id="p">段落と改行</h3>
 
+<p>段落は、単純に1つまたはそれ以上の空白行で区切られた、1つまたはそれ以上の連続したテキストの行です。
+(空白行は空白行に見えるあらゆる行を指します - スペースまたはタブを含んでいるに過ぎない行も空白行と見なされます。)
+標準的な段落はスペースやタブで区切られることはありません。</p>
 
+<p>「1つまたはそれ以上の連続したテキストの行」ルールは、Markdownが「ハードラップ」テキストの段落をサポートすることを意味します。
+これは他の殆どのtext-toHTMLフォーマッタ(Movable Typeの「改行の変換」オプションも含む)が段落内の全ての改行を <code>&lt;br /&gt;</code>タグに変換する
+のと極めて異なる部分です。
+</p>
 
-<p>A paragraph is simply one or more consecutive lines of text, separated
+<p>あなたがMarkdownを使って<code>&lt;br /&gt;</code>タグを挿入<em>したい</em>場合は、行を1つまたはそれ以上のスペースで終わって、
+改行してください。</p>
 
-by one or more blank lines. (A blank line is any line that looks like a
-
-blank line &#8212; a line containing nothing but spaces or tabs is considered
-
-blank.) Normal paragraphs should not be intended with spaces or tabs.</p>
-
-
-
-<p>The implication of the &#8220;one or more consecutive lines of text&#8221; rule is
-
-that Markdown supports &#8220;hard-wrapped&#8221; text paragraphs. This differs
-
-significantly from most other text-to-HTML formatters (including Movable
-
-Type&#8217;s &#8220;Convert Line Breaks&#8221; option) which translate every line break
-
-character in a paragraph into a <code>&lt;br /&gt;</code> tag.</p>
-
-
-
-<p>When you <em>do</em> want to insert a <code>&lt;br /&gt;</code> break tag using Markdown, you
-
-end a line with two or more spaces, then type return.</p>
-
-
-
-<p>Yes, this takes a tad more effort to create a <code>&lt;br /&gt;</code>, but a simplistic
-
-&#8220;every line break is a <code>&lt;br /&gt;</code>&#8221; rule wouldn&#8217;t work for Markdown.
-
-Markdown&#8217;s email-style <a href="#blockquote">blockquoting</a> and multi-paragraph <a href="#list">list items</a>
-
-work best &#8212; and look better &#8212; when you format them with hard breaks.</p>
-
-
+<p>そうです、<code>&lt;br /&gt;</code>を作成するには少しばかり努力が必要ですが、単純に「全ての改行は<code>&lt;br /&gt;</code>に変換」
+というルールはMarkdownでは働きません。Markdownのemailスタイル<a href="#blockquote">引用</a>と複数段落の<a href="#list">リストアイテム</a>は、
+ハードブレークのフォーマットを行う時に、最も良く動作し、見栄えが良くなります。</p>
 
 <h3 id="header">ヘッダ</h3>
 
+<p>Markdownは、<a href="http://docutils.sourceforge.net/mirror/setext.html">Setext</a> と <a href="http://www.aaronsw.com/2002/atx/">atx</a> の2つのヘッダスタイルをサポートします。</p>
 
+<p>Setextスタイルヘッダは、 イコールサイン (第一レベルヘッダ) とダッシュ (第二レベルヘッダ) を使用して「下線」を引きます。例えば:</p>
 
-<p>Markdown supports two styles of headers, <a href="http://docutils.sourceforge.net/mirror/setext.html">Setext</a> and <a href="http://www.aaronsw.com/2002/atx/">atx</a>.</p>
-
-
-
-<p>Setext-style headers are &#8220;underlined&#8221; using equal signs (for first-level
-
-headers) and dashes (for second-level headers). For example:</p>
-
-
-
-<pre><code>This is an H1
+<pre><code>これは H1 です。
 
 =============
 
 
 
-This is an H2
+これは H2 です。
 
 -------------
 
 </code></pre>
 
+<p>下線は <code>=</code> の数に関わらず表示されます。</p>
 
-
-<p>Any number of underlining <code>=</code>&#8217;s or <code>-</code>&#8217;s will work.</p>
-
-
-
-<p>Atx-style headers use 1-6 hash characters at the start of the line,
-
-corresponding to header levels 1-6. For example:</p>
+<p>Atxスタイルのヘッダは、ヘッダレベル1〜6に応じて1〜6のハッシュキャラクタを行頭で使用します。例えば:</p>
 
 
 
-<pre><code># This is an H1
+<pre><code># これは H1 です。
 
 
 
-## This is an H2
+## これは H2 です。
 
 
 
-###### This is an H6
+###### これは H6 です。
 
 </code></pre>
 
-
-
-<p>Optionally, you may &#8220;close&#8221; atx-style headers. This is purely
-
-cosmetic &#8212; you can use this if you think it looks better. The
-
-closing hashes don&#8217;t even need to match the number of hashes
-
-used to open the header. (The number of opening hashes
-
-determines the header level.) :</p>
-
-
+<p>atxスタイルヘッダを「閉じる」こともできます。これは純粋に装飾的なものです - 見た目が良くなる場合は使ってください。ハッシュの数はヘッダを開始する時に使用するハッシュの数に合致する必要はありません。( ヘッダを開始する時のハッシュ数は、ヘッダレベルを決定します。):</p>
 
 <pre><code># This is an H1 #
 

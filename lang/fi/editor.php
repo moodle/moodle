@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['about'] = 'Tietoja editorista';
@@ -30,7 +30,7 @@ $string['cut'] = 'Leikkaa';
 $string['delete'] = 'Poista';
 $string['filebrowser'] = 'Tiedostoselain';
 $string['forecolor'] = 'Tekstin väri';
-$string['fullscreen'] = 'Täysdenruudun editori';
+$string['fullscreen'] = 'Täydenruudun editori';
 $string['heading'] = 'Otsikko';
 $string['height'] = 'Korkeus';
 $string['hilitecolor'] = 'Taustan väri';
@@ -47,8 +47,8 @@ $string['inserttable'] = 'Lisää taulukko';
 $string['italic'] = 'Kursivoitu';
 $string['justifycenter'] = 'Keskitä';
 $string['justifyfull'] = 'Tasaa molemmat reunat';
-$string['justifyleft'] = 'Tasaa vasemmat reunat';
-$string['justifyright'] = 'Tasaa oikeat reunat';
+$string['justifyleft'] = 'Tasaa vasen reuna';
+$string['justifyright'] = 'Tasaa oikea reuna';
 $string['layout'] = 'Ulkoasu';
 $string['left'] = 'Vasen';
 $string['lefttoright'] = 'Suunta vesemmalta oikealle';
@@ -82,18 +82,18 @@ $string['redo'] = 'Palauta viimeinen toiminto';
 $string['removelink'] = 'Poista linkki';
 $string['rename'] = 'Nimeä uudelleen';
 $string['right'] = 'Oikea';
-$string['righttoleft'] = 'Suunta oikealta vesemmalle';
+$string['righttoleft'] = 'Suunta oikealta vasemmalle';
 $string['rows'] = 'Rivit';
 $string['selectcolor'] = 'Valitse väri';
 $string['selection'] = 'Valinta';
 $string['showhelp'] = 'Ohje';
 $string['size'] = 'Koko';
-$string['spacing'] = 'Välys';
+$string['spacing'] = 'Välistys';
 $string['strikethrough'] = 'Yliviivattu';
 $string['subscript'] = 'Alaindeksi';
 $string['superscript'] = 'Ylädeksi';
 $string['textindicator'] = 'Nykyinen tyyli';
-$string['textmode'] = 'Olet tekstitilassa.  Käytä [<>] painiketta palataksesi takaisin WYSIWIG -tilaan.';
+$string['textmode'] = 'Olet tekstitilassa.  Käytä [<>] painiketta palataksesi takaisin WYSIWYG -tilaan.';
 $string['texttop'] = 'Texttop';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
