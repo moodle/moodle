@@ -653,7 +653,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         // System event
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
         $output->html  = '<table><tr><td style="vertical-align: top;">'.$message->picture.'</td><td>';
-        $output->html .= '<font size=2 color="#CCAAAA">'.$output->text.'</font></td></tr></table>';
+        $output->html .= '<font size="2" color="#ccaaaa">'.$output->text.'</font></td></tr></table>';
 
         // Don't forget to reset the language before returning!!!
         if(!empty($oldcfglang)) {

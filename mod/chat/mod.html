@@ -20,15 +20,14 @@
 ?>
 <form name="form" method="post" action="mod.php">
 <table cellpadding="5">
-<tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("chatname", "chat")?>:</b></p></td>
+    <td align="right"><b><?php print_string("chatname", "chat")?>:</b></td>
     <td>
-        <input type="text" name="name" size="30" value="<?php p($form->name) ?>" />
+        <input type="text" name="name" size="30" value="<?php p($form->name) ?>" alt="<?php print_string('chatname', 'chat') ?>" />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("chatintro", "chat")?>:</b></p>
+    <td align="right"><b><?php print_string("chatintro", "chat")?>:</b><br />
     <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
@@ -45,7 +44,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("chattime", "chat") ?>:</b></td>
+    <td align="right"><b><?php print_string("chattime", "chat") ?>:</b></td>
     <td><?php
            print_date_selector("chatday", "chatmonth", "chatyear", $form->chattime);
            echo "&nbsp;-&nbsp;";
@@ -53,7 +52,7 @@
     ?></td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("repeattimes", "chat") ?>:</b></td>
+    <td align="right"><b><?php print_string("repeattimes", "chat") ?>:</b></td>
     <td><?php
        unset($options);
        $options[0]  = get_string("donotusechattime", "chat");
@@ -64,7 +63,7 @@
     ?></td>
 </tr>
 <tr valign="top">
-	<td align="right"><p><b><?php print_string("savemessages", "chat")?>:</b></p>
+	<td align="right"><b><?php print_string("savemessages", "chat")?>:</b></td>
 	<td>
     <?php 
        unset($options);
@@ -86,7 +85,7 @@
     </td>
 </tr>
 <tr valign="top">
-	<td align="right"><p><b><?php print_string("studentseereports", "chat")?>:</b></p>
+	<td align="right"><b><?php print_string("studentseereports", "chat")?>:</b></td>
 	<td>
     <?php 
        unset($options);

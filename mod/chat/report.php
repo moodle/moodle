@@ -40,7 +40,7 @@
     $strdeletesession  = get_string("deletesession", "chat");
 
 
-/// Print a session if once has been specified
+/// Print a session if one has been specified
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
 
