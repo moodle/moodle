@@ -121,6 +121,13 @@ h4 {
 ******************************/
 /* many places */
 
+/* paging bar */
+.pagingbar .title {
+    font-weight: bold;
+}
+.pagingbar .thispage {
+    font-weight: bold;
+}
 
 /*****************************
 ***

@@ -173,6 +173,17 @@ a img {
 }
 
 
+/* paging bar */
+.pagingbar {
+    text-align:center;
+}
+.pagingbar a {
+    padding-left: 10px;
+}
+.pagingbar .thispage {
+    padding-left: 10px;
+}
+
 /*****************************
 ***
 *** Admin

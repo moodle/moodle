@@ -717,7 +717,7 @@ function quiz_print_navigation_panel($questions, $questionsperpage, $navigation)
         }
         $pagenavigationlayout[] = $currentpagestart .'-'. ($nextqnumber - 1);
         if ($currentpagestart < $navigation) {
-            // $firsquestion is out of sync so adjust it for robustness...
+            // $firstquestion is out of sync so adjust it for robustness...
             $navigation = $currentpagestart;
         }
     }
@@ -736,42 +736,28 @@ function quiz_print_navigation_panel($questions, $questionsperpage, $navigation)
     }
 
     ///////////////////////////////////////////////
-    /// Print the navigation meny
+    /// Print the navigation menu
     ///////////////////////////////////////////////
-    print_simple_box_start('center', '*');
-    echo '<table><tr><td colspan="5" align="center"><table><tr>';
+    echo '<div class="pagingbar">';
+    echo '<span class="title">'.get_string('questions', 'quiz').':</span>';
+    if (isset($previouspagelink)) {
+        $strprev = get_string('previous');
+        echo '<a href="' . quiz_navigation_javascript($previouspagelink) . '" title="'.$strprev.'">('.$strprev.')</a>';
+    }
     foreach ($pagelinkagelayout as $key => $link) {
-        echo '<td align="center">&nbsp;';
         if ($link != $navigation) {
             echo '<a href="' . quiz_navigation_javascript($link) . '">';
+        } else {
+            echo '<span class="thispage">';
         }
         echo $pagenavigationlayout[$key];
-        if ($link != $navigation) {
-            echo '</a>';
-        }
-        echo '&nbsp;</td>';
+        echo ($link != $navigation) ? '</a>' : '</span>';
     }
-    echo '</tr></table></td></tr><tr><td width="20%" align="left">';
-    if (isset($previouspagelink)) {
-        echo '<a href="' . quiz_navigation_javascript('1') . '">|&lt;&lt;&lt;</a></td><td width="20%" align="center" cellpadding="2">';
-        echo '<a href="' . quiz_navigation_javascript($previouspagelink) . '">&lt;&lt;&lt;</a></td>';
-    } else {
-        echo '</td><td width="20%"></td>';
-    }
-    echo '<td width="20%" align="center"><b>';
-    echo $currentnavigationtitle;
-    echo '</b></td><td width="20%" align="center" cellpadding="2">';
     if (isset($nextpagelink)) {
-        echo '<a href="';
-        echo quiz_navigation_javascript($nextpagelink);
-        echo '">&gt;&gt;&gt;</a></td><td width="20%" align="right"><a href="';
-        echo quiz_navigation_javascript($endpagelink);
-        echo '">&gt;&gt;&gt;|</a>';
-    } else {
-        echo '</td><td width="20%">';
+        $strnext = get_string('next');
+        echo '<a href="'.quiz_navigation_javascript($nextpagelink).'" title="'.$strnext.'">('.$strnext.')</a></span>';
     }
-    echo '</td></tr></table>';
-    print_simple_box_end();
+    echo '</div>';
 
     ////////////////////////////////////////////////
     /// Return the potentially adjusted $navigation
