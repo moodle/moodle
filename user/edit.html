@@ -62,6 +62,15 @@ if (isadmin()) {
 	</td>
 </tr>
 <tr valign=top>
+	<td><P><? print_string("textediting") ?>:</td>
+	<td><? 
+    unset($choices);
+    $choices["0"] = get_string("texteditor");
+    $choices["1"] = get_string("htmleditor");
+    choose_from_menu ($choices, "htmleditor", $user->htmleditor, "") ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("city") ?>:</td>
 	<td><input type="text" name="city" size=25 value="<? p($user->city) ?>">
 	<? formerr($err["city"]) ?>
