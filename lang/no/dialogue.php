@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003111400)
+      // dialogue.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['addmynewentries'] = 'Legg til mine nye innlegg';
@@ -14,7 +14,7 @@ $string['deleteafter'] = 'Slett avsluttede dialoger etter (antall dager)';
 $string['dialogueclosed'] = 'Dialogen er avsluttet';
 $string['dialogueintro'] = 'Introduksjon til dialog';
 $string['dialoguemail'] = '$a->userfrom har skrevet et nytt innlegg i din dialog \'$a->dialogue\' Du kan lese det i dialogen din: $a->url';
-$string['dialoguemailhtml'] = '$a->userfrom har skrevet et nytt innlegg i din dialog \'<i>$a->dialogue</i>\'<br /><br /> Du kan lese det i <a href="$a->url">dialogen din</a>.';
+$string['dialoguemailhtml'] = '$a->userfrom har skrevet et nytt innlegg i din dialog \'<i>$a->dialogue</i>\'<br /><br /> Du kan lese det i <a href=\"$a->url\">dialogen din</a>.';
 $string['dialoguename'] = 'Dialogens navn';
 $string['dialogueopened'] = 'En dialog med $a er startet';
 $string['dialoguewith'] = 'Dialog med $a';
@@ -25,7 +25,7 @@ $string['maildefault'] = 'Standardvalg for e-post';
 $string['modulename'] = 'Dialog';
 $string['modulenameplural'] = 'Dialoger';
 $string['namehascloseddialogue'] = '$a har avsluttet dialogen';
-$string['newdialogueentries'] = 'Nye innlegg i dialogen'
+$string['newdialogueentries'] = 'Nye innlegg i dialogen';
 $string['newentry'] = 'Nytt innlegg';
 $string['noavailablepeople'] = 'Det er ingen brukere tilgjengelig for å ha en dialog med.';
 $string['nopersonchosen'] = 'Ingen person valgt';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2003111400)
+      // glossary.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['addcomment'] = 'Legg til kommentar';
@@ -10,7 +10,6 @@ $string['allcategories'] = 'Alle kategorier';
 $string['allentries'] = 'ALLE';
 $string['allowcomments'] = 'Tillat kommentarer til oppføringer';
 $string['allowduplicatedentries'] = 'Tillat kopi av oppføringer';
-$string['alphabet'] = 'A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|Æ|Ø|Å';
 $string['answer'] = 'Svar';
 $string['approve'] = 'Godkjenn';
 $string['areyousuredelete'] = 'Er du sikker på at du vil slette denne oppføringen?';
@@ -31,16 +30,16 @@ $string['categoryview'] = 'Søk i kategorier';
 $string['cnfallowcomments'] = 'Bestem om ordboken skal tillate kommentarer til oppføringer som standard';
 $string['cnfallowdupentries'] = 'Bestem om ordboken skal tillate kopi av oppføringer som standard';
 $string['cnfapprovalstatus'] = 'Bestem standard for godkjenningsstatus for oppføringer lagt inn av studenter';
-$string['cnfcasesensitive'] = 'Bestem om standarden er at oppføringer som lenkes skal "bry seg om" store og små bokstaver';
-$string['cnffullmatch'] = 'Bestem om standarden er at oppføringer som lenkes skal "bry seg om" store og små bokstaver i målteksten';
+$string['cnfcasesensitive'] = 'Bestem om standarden er at oppføringer som lenkes skal \"bry seg om\" store og små bokstaver';
+$string['cnfdefaulthook'] = 'Velg standardvalg som skal vises når ordboken vises første gang';
+$string['cnfdefaultmode'] = 'Velg standard ramme som skal vises når ordboken vises første gang';
+$string['cnffullmatch'] = 'Bestem om standarden er at oppføringer som lenkes skal \"bry seg om\" store og små bokstaver i målteksten';
 $string['cnflinkentry'] = 'Bestem om en oppføring som standard skal lenkes automatisk';
 $string['cnflinkglossaries'] = 'Bestem om en ordbok skal lenkes automatisk som standard';
-$string['cnfstudentcanpost'] = 'Bestem om standard er at studenter kan eller ikke kan lage oppføringer';
 $string['cnfrelatedview'] = 'Velg visningsformatet som skal brukes i automatisk lenking og visning av oppføringer.';
-$string['cnfdefaultmode'] = 'Velg standard ramme som skal vises når ordboken vises første gang';
-$string['cnfdefaulthook'] = 'Velg standardvalg som skal vises når ordboken vises første gang';
-$string['cnfsortkey']     = 'Velg standard sorteringsnøkkel';
-$string['cnfsortorder']   = 'Velg standard sorteringsrekkefølge';
+$string['cnfsortkey'] = 'Velg standard sorteringsnøkkel';
+$string['cnfsortorder'] = 'Velg standard sorteringsrekkefølge';
+$string['cnfstudentcanpost'] = 'Bestem om standard er at studenter kan eller ikke kan lage oppføringer';
 $string['comment'] = 'Kommentar';
 $string['commentdeleted'] = 'Kommentaren er slettet.';
 $string['comments'] = 'Kommentarer';
@@ -59,7 +58,6 @@ $string['deletingnoneemptycategory'] = 'Dersom du sletter denne kategorien vil d
 $string['descending'] = '(synkende)';
 $string['destination'] = 'Mål';
 $string['displayformat'] = 'Visningsformat';
-$string['displayformats'] = 'Visningsformater';
 $string['displayformat2'] = 'Full med forfatter';
 $string['displayformat3'] = 'Leksikon';
 $string['displayformat4'] = 'OSS - Ofte Stilte Spørsmål';
@@ -67,8 +65,8 @@ $string['displayformat5'] = 'Full uten forfatter';
 $string['displayformat6'] = 'Liste over oppføringer';
 $string['displayformatcontinuous'] = 'Kontinuerlig uten forfatter';
 $string['displayformatdefault'] = 'Enkel ordlistestil';
+$string['displayformats'] = 'Visningsformater';
 $string['duplicateentry'] = 'Kopi av oppføring';
-$string['editalias'] = 'Rediger synonym';
 $string['editcategories'] = 'Rediger kategorier';
 $string['editentry'] = 'Rediger oppføring';
 $string['editingcomment'] = 'Redigerer kommentar';
@@ -82,18 +80,18 @@ $string['entrydeleted'] = 'Oppføringen er slettet';
 $string['entryexported'] = 'Oppføringen er eksportert';
 $string['entryishidden'] = '(oppføringen er skjult)';
 $string['entryusedynalink'] = 'Lag lenker til denne oppføringen automatisk';
-$string['explainaddentry'] = 'Legg til en ny oppføring til gjeldende ordbok. "Begrep" og "Definisjon" er obligatoriske felter.';
+$string['explainaddentry'] = 'Legg til en ny oppføring til gjeldende ordbok. \"Begrep\" og \"Definisjon\" er obligatoriske felter.';
 $string['explainall'] = 'Vis ALLE oppføringene på en side';
 $string['explainalphabet'] = 'Bla gjennom ordboken med dette indekset';
-$string['explainexport'] = 'En fil er opprettet.<br><small>(Se lenken nederst på denne siden, "Eksportert fil".)</small><br>Last den ned og lagre den. Du kan importere den senere i dette kurset eller i andre kurs.';
-$string['explainimport'] = '<b>Du må velge:</b> <li>Hvilken fil du vil importere (Klikk "Bla gjennom...")<li>Til hvilken ordliste den skal (Velg 'Mål.)<li>Skal kategorier også importeres (Sett en hake i boksen 'Importer kategorier')<p>Velg det du ønsker nedenfor og klikk "Lagre endringer" for å se resultatet.';
+$string['explainexport'] = 'En fil er opprettet.<br><small>(Se lenken nederst på denne siden, \"Eksportert fil\".)</small><br>Last den ned og lagre den. Du kan importere den senere i dette kurset eller i andre kurs.';
+$string['explainimport'] = '<b>Du må velge:</b> <li>Hvilken fil du vil importere (Klikk \"Bla gjennom...\")<li>Til hvilken ordliste den skal (Velg \'Mål.)<li>Skal kategorier også importeres (Sett en hake i boksen \'Importer kategorier\')<p>Velg det du ønsker nedenfor og klikk \"Lagre endringer\" for å se resultatet.';
 $string['explainspecial'] = 'Vis oppføringer som ikke starter med bokstaver (andre tegn)';
 $string['exportedentry'] = 'Eksportert oppføring';
 $string['exportedfile'] = 'Eksportert fil';
 $string['exportglossary'] = 'Eksporter ordbok';
 $string['exporttomainglossary'] = 'Eksporter til hovedordbok';
 $string['filetoimport'] = 'Fil du vil importere';
-$string['fillfields'] = '"Begrep" og "Definisjon" er obligatoriske felter';
+$string['fillfields'] = '\"Begrep\" og \"Definisjon\" er obligatoriske felter';
 $string['fullmatch'] = 'Bare hele ord blir lenket<br><small>(når det lenkes automatisk)</small>';
 $string['glossarytype'] = 'Type ordbok';
 $string['glosssaryexported'] = 'Ordbok eksportert.';
@@ -124,9 +122,9 @@ $string['rejectedentries'] = 'Avviste oppføringer';
 $string['rejectionrpt'] = 'Rapport om avviste oppføringer';
 $string['searchindefinition'] = 'Søk i hele teksten';
 $string['secondaryglossary'] = 'Sekundær ordbok';
-$string['showall'] = 'Vis lenken "ALLE"';
+$string['showall'] = 'Vis lenken \"ALLE\"';
 $string['showalphabet'] = 'Vis alfabet';
-$string['showspecial'] = 'Vis lenken "Spesielle tegn"';
+$string['showspecial'] = 'Vis lenken \"Spesielle tegn\"';
 $string['sortby'] = 'Sorter etter';
 $string['sortbycreation'] = 'Etter dato opprettet';
 $string['sortbylastupdate'] = 'Etter siste oppdatering';
@@ -142,4 +140,3 @@ $string['writtenby'] = 'av';
 $string['youarenottheauthor'] = 'Du er ikke forfatteren av denne kommentaren, så du kan ikke redigere den.';
 
 ?>
-

@@ -1,41 +1,41 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.1.1 (2003091111)
+      // exercise.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['absent'] = 'Fravær';
 $string['accumulative'] = 'Akkumulerende';
 $string['action'] = 'Handling';
-$string['ago'] = 'for \$a siden';
-$string['allgradeshaveamaximumof'] = 'Alle karakterer har en maksimumsverdi på: \$a';
+$string['ago'] = 'for $a siden';
+$string['allgradeshaveamaximumof'] = 'Alle karakterer har en maksimumsverdi på: $a';
 $string['amendassessmentelements'] = 'Legg til elementer for vurdering';
 $string['amendtitle'] = 'Forbedre tittelen';
 $string['assess'] = 'Vurder';
 $string['assessed'] = 'Vurdert';
 $string['assessment'] = 'Vurdering';
-$string['assessmentby'] = 'Vurdert av  \$a';
+$string['assessmentby'] = 'Vurdert av  $a';
 $string['assessmentform'] = 'Skjema for vurdering';
-$string['assessmentmadebythe'] = 'Vurdering gjort av \$a';
+$string['assessmentmadebythe'] = 'Vurdering gjort av $a';
 $string['assessmentofthissubmission'] = 'Vurdering til denne innlevering';
 $string['assessments'] = 'Vurderinger';
 $string['atthisstageyou'] = 'I denne fasen har du fullført en vurdering.<br>
 	Kanskje vil du revidere ditt arbeide i lys av denne innleveringen.<br>
 	Hvis du velger å gjøre dette, ikke glem også å revidere din vurdering.<br>
 	Du kan gjøre det ved å klikke på lenken for ny vurdering nedenfor.';
-$string['awaitingassessmentbythe'] = 'Venter på vurdering av \$a ';
-$string['awaitingfeedbackfromthe'] = 'Venter på tilbakemelding fra \$a';
+$string['awaitingassessmentbythe'] = 'Venter på vurdering av $a ';
+$string['awaitingfeedbackfromthe'] = 'Venter på tilbakemelding fra $a';
 $string['comment'] = 'Kommentar';
-$string['confirmdeletionofthisitem'] = 'Bekreft sletting av denne \$a';
+$string['confirmdeletionofthisitem'] = 'Bekreft sletting av denne $a';
 $string['correct'] = 'Riktig';
 $string['criterion'] = 'Kriterier';
 $string['deadline'] = 'Frist';
-$string['deadlineis'] = 'Fristen er \$a';
+$string['deadlineis'] = 'Fristen er $a';
 $string['delete'] = 'Slett ';
 $string['deleting'] = 'Sletter...';
 $string['description'] = 'Beskrivelse';
-$string['descriptionofexercise'] = '\$a lager en beskrivelse av en øvelse i Word- eller HTML-format og laster opp denne filen i øvelsen før den blir tilgjengelig. Det er mulig å lage oppsett med varianter av samme øvelse eller oppgave, enten i Word- eller HTML-format og laste opp disse til øvelsen innen den gjøres tilgjengelig av \$a';
+$string['descriptionofexercise'] = '$a lager en beskrivelse av en øvelse i Word- eller HTML-format og laster opp denne filen i øvelsen før den blir tilgjengelig. Det er mulig å lage oppsett med varianter av samme øvelse eller oppgave, enten i Word- eller HTML-format og laste opp disse til øvelsen innen den gjøres tilgjengelig av $a';
 $string['detailsofassessment'] = 'Detaljer om vurderingen';
 $string['displayoffinalgrades'] = 'Vis endelige karakterer';
-$string['doubleupload'] = 'Advarsel: Denne innleveringen er antakeligvis sendt to ganger. Gå til siden for 'Administrasjon' og sjekk om denne brukeren har sendt inn to innleveringer nesten samtidig. Fjern en av disse før du fortsetter.';
+$string['doubleupload'] = 'Advarsel: Denne innleveringen er antakeligvis sendt to ganger. Gå til siden for \'Administrasjon\' og sjekk om denne brukeren har sendt inn to innleveringer nesten samtidig. Fjern en av disse før du fortsetter.';
 $string['duedate'] = 'Innleveringsfrist';
 $string['edit'] = 'Rediger';
 $string['editingassessmentelements'] = 'Redigerer komponenter i det som er vurdert';
@@ -57,7 +57,7 @@ $string['gradingstrategy'] = 'Strategi for karaktersetting';
 $string['handlingofmultiplesubmissions'] = 'Håndtering av flere innleverte øvelser';
 $string['incorrect'] = 'Uriktig';
 $string['leaguetable'] = 'Tabelloversikt over innleverte arbeider';
-$string['mail1'] = 'Din øvelse '\$a\' er vurdert av';
+$string['mail1'] = 'Din øvelse \'$a\' er vurdert av';
 $string['mail2'] = 'Kommentarer og karakterer kan leses i øvelsen \'$a\'';
 $string['mail3'] = 'Du kan se det i øvelsen din';
 $string['mail6'] = 'Din vurdering av øvelsen \'$a\' er revurdert';
@@ -76,16 +76,16 @@ $string['noteonassessmentelements'] = 'Merk at karaktersettingen er delt inn i f
 	Dette gjør karaktersettingen enklere og mer konsekvent. Som lærer må du legge til disse <BR>
 	elementene før du gjør øvelsen tilgjengelig for studentene. Dette gjøres ved å<BR>
 	klikke på øvelsen på studiesiden. Hvis ingen elementer er til stede blir du spurt om <BR>
-	å legge dem til. Du kan endre antallet elementer med å bruke skjermbildet "Rediger øvelse",<BR>
-	elementene i seg selv kan hentes fra skjermbildet "Administrer øvelsen".';
+	å legge dem til. Du kan endre antallet elementer med å bruke skjermbildet \"Rediger øvelse\",<BR>
+	elementene i seg selv kan hentes fra skjermbildet \"Administrer øvelsen\".';
 $string['noteonstudentassessments'] = '{ Betyg/omdöme från lärande/Betyg/omdöme för betyg/omdöme av distanslärare';
 $string['notgraded'] = 'Ikke satt karakter';
 $string['notitlegiven'] = 'Ingen tittel satt';
-$string['nowpleasemakeyourownassessment'] = 'Nå skal du selv vurdere av det arbeidet som \$a har gjort.<br>
+$string['nowpleasemakeyourownassessment'] = 'Nå skal du selv vurdere av det arbeidet som $a har gjort.<br>
 	Legg merke til at skjemaet for vurdering som standardvalg (forhåndsinnstilt) har samme system for vurdering som <br>
 	skjemaet for studenter. Du bør gjøre alle endringer du mener er nødvendig og etterpå klikke på<br>
 	en av knappene nederst på siden.';
-$string['numberofassessmentelements'] = 'Antal kommentarer, komponenteri bedömning/värdering/betygssättning, 'grade bands', kriterier eller kategorier i en Rubrik';
+$string['numberofassessmentelements'] = 'Antal kommentarer, komponenteri bedömning/värdering/betygssättning, \'grade bands\', kriterier eller kategorier i en Rubrik';
 $string['numberofentries'] = 'Antall oppføringer';
 $string['numberofnegativeresponses'] = 'Antall negative svar';
 $string['onesubmission'] = 'En innlevert øvelse';
@@ -94,26 +94,24 @@ $string['overallgrade'] = 'Samlet karakter';
 $string['phase'] = 'Fase';
 $string['phase1'] = 'Lag øvelse';
 $string['phase1short'] = 'Lag';
-$string['phase2'] = 'Tillat \$a vurderinger og innleveringer';
+$string['phase2'] = 'Tillat $a vurderinger og innleveringer';
 $string['phase2short'] = 'Åpne';
-$string['phase3'] = 'Avsluttet \$a vurderinger og innleveringer';
+$string['phase3'] = 'Avsluttet $a vurderinger og innleveringer';
 $string['phase3short'] = 'Avsluttet';
-$string['phase4'] = 'Vis endelige karakterer og tabell';
-$string['phase4short'] = 'Vis';
-$string['pleasegradetheassessment'] = 'Vennligst sett karakter på vurderingen av arbeidet som \$a har levert';
+$string['pleasegradetheassessment'] = 'Vennligst sett karakter på vurderingen av arbeidet som $a har levert';
 $string['pleasesubmityourwork'] = 'Vennligst bruk dette skjemaet for levering';
 $string['pleaseusethisform'] = 'Vennligst fyll ut dette skjemaet når du har <br>
 	gjort alt som inngår i instruksjonen for øvelsen som vises nedenfor.';
 $string['pleaseviewtheexercise'] = 'Vennligst se på øvelsen nedenfor ved å klikke på tittelen.<br>
 	Du bør følge instruksjonene til denne øvelsen.<br>
-	Når du er fornøyd med å ha løst øvelsen bra bør du klikke på lenken "Vurder" eller lenken "Vurder på nytt" til høyre for tittelen. Når du har gjort denne vurderingen får du ytterligere instruksjoner.';
+	Når du er fornøyd med å ha løst øvelsen bra bør du klikke på lenken \"Vurder\" eller lenken \"Vurder på nytt\" til høyre for tittelen. Når du har gjort denne vurderingen får du ytterligere instruksjoner.';
 $string['poor'] = 'Dårlig';
 $string['present'] = 'Til stede';
 $string['reasonforadjustment'] = 'Årsak til endring';
 $string['reassess'] = 'Vurder på nytt';
-$string['resubmissionfor'] = 'Ny innlevering for \$a';
-$string['resubmitnote'] = '* betyr at \$a har rett til å levere inn på nytt.<br>
-	Dette merket kan du sette på hvilken innlevering som helst ved å vurdere den på nytt og klikke på <b>Tillat \$a å levere på nytt</b>-knappen. Studentene lan levere på nytt når dette merket vises ved <b>hvilken som helst</b> av deres innleverte bidrag.';
+$string['resubmissionfor'] = 'Ny innlevering for $a';
+$string['resubmitnote'] = '* betyr at $a har rett til å levere inn på nytt.<br>
+	Dette merket kan du sette på hvilken innlevering som helst ved å vurdere den på nytt og klikke på <b>Tillat $a å levere på nytt</b>-knappen. Studentene lan levere på nytt når dette merket vises ved <b>hvilken som helst</b> av deres innleverte bidrag.';
 $string['rubric'] = 'Rubrikk';
 $string['savedok'] = 'Lagret OK';
 $string['saveentries'] = 'Lagre oppføringer';
@@ -130,11 +128,11 @@ $string['scalegood3'] = '3 poengs Bra/Dårlig-skala';
 $string['scalepresent'] = '2 poengs Tilstede/Fraværende-skala';
 $string['scaleyes'] = '2 poengs Ja/Nei-skala';
 $string['specimenassessmentform'] = 'Eksempel på skjema for vurdering';
-$string['studentallowedtoresubmit'] = '\$a TILLATES å levere på nytt';
-$string['studentassessments'] = '\$a vurderinger';
-$string['studentnotallowed'] = '\$a tillates IKKE å levee på nytt (eller behøver ikke)';
-$string['studentsubmissions'] = '\$a innleveringer';
-$string['studentsubmissionsforassessment'] = '\$a av studentinnleveringer klare til vurdering';
+$string['studentallowedtoresubmit'] = '$a TILLATES å levere på nytt';
+$string['studentassessments'] = '$a vurderinger';
+$string['studentnotallowed'] = '$a tillates IKKE å levee på nytt (eller behøver ikke)';
+$string['studentsubmissions'] = '$a innleveringer';
+$string['studentsubmissionsforassessment'] = '$a av studentinnleveringer klare til vurdering';
 $string['submission'] = 'Innlevering';
 $string['submissions'] = 'Innleveringer';
 $string['submissionsnowclosed'] = 'Innlevering er avsluttet - fristen er gått ut';
@@ -142,24 +140,24 @@ $string['submitexercisedescription'] = 'Send beskrivelse av øvelse';
 $string['submitted'] = 'Levert';
 $string['submittedby'] = 'Levert av';
 $string['suggestedgrade'] = 'Foreslått karakter';
-$string['teacherassessment'] = '\$a vurderinger';
+$string['teacherassessment'] = '$a vurderinger';
 $string['teacherscomment'] = 'Lærerens kommentar';
-$string['theexerciseandthesubmissionby'] = 'Øvelsen og innleverte bidrag av \$a';
-$string['thegradeis'] = 'Karakteren er \$a';
+$string['theexerciseandthesubmissionby'] = 'Øvelsen og innleverte bidrag av $a';
+$string['thegradeis'] = 'Karakteren er $a';
 $string['thereisfeedbackfromthe'] = 'Det har kommet tilbakemelding fra $a';
-$string['thisisaresubmission'] = 'Dette er en ny innlevering fra \$a<br>
+$string['thisisaresubmission'] = 'Dette er en ny innlevering fra $a<br>
 	Din vurdering av tidligere levering vises.<br>
 	Når du har sett på de sist leverte bidragene, vennligst rett/endre vurderingen og klikk på en av knappene nederst på siden';
 $string['title'] = 'Tittel';
 $string['typeofscale'] = 'Type skala';
-$string['ungradedstudentassessments'] = '\$a ikke vurderte vurderinger av studenter';
+$string['ungradedstudentassessments'] = '$a ikke vurderte vurderinger av studenter';
 $string['usemaximum'] = 'Bruk maksimun';
 $string['usemean'] = 'Bruk middel';
 $string['verypoor'] = 'Svært dårlig';
 $string['view'] = 'Vis';
 $string['viewassessment'] = 'Vis vurdering';
 $string['warningonamendingelements'] = 'ADVARSEL: Det er innsendte vurderinger. <BR>IKKE endre antallet elementer, typen skala eller elementenes vekting.';
-$string['weightederrorcount'] = 'Feil med summering av vekting: \$a';
+$string['weightederrorcount'] = 'Feil med summering av vekting: $a';
 $string['weightforgradingofassessments'] = 'Vekting for karaktersetting av vurderinger';
 $string['weightforteacherassessments'] = 'Vekting for $a vurderinger';
 $string['weights'] = 'Vekting';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.1.1 (2003091111)
+      // attendance.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['absentlong'] = 'Fraværende';

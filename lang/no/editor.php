@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.1.1 (2003091111)
+      // editor.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['about'] = 'Om denne HTML-redigereren';
@@ -63,7 +63,7 @@ $string['strikethrough'] = 'Gjennomstreking';
 $string['subscript'] = 'Senket skrift';
 $string['superscript'] = 'Hevet skrift';
 $string['textindicator'] = 'Gjeldende stil ';
-$string['textmode'] = 'Du er i 'TEKST-MODUS'.  Bruk knappen [<>] for å gå tilbake til 'WYSIWYG-MODE'.';
+$string['textmode'] = 'Du er i \'TEKST-MODUS\'.  Bruk knappen [<>] for å gå tilbake til \'WYSIWYG-MODE\'.';
 $string['texttop'] = 'Øverst på tekstlinjen';
 $string['top'] = 'Topp';
 $string['underline'] = 'Understreking';

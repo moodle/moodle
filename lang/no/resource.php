@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1.1 (2003091111)
+      // resource.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['addresource'] = 'Ny ressurs';
@@ -27,7 +27,7 @@ $string['newwidth'] = 'Standard vindusbredde (pixler)';
 $string['newwindow'] = 'Nytt vindu';
 $string['newwindowopen'] = 'Vis denne ressursen i et nytt oppsprett-vindu';
 $string['note'] = 'Notat';
-$string['notefile'] = 'For å laste opp flere filer til kurset slik at de blir vist i denne liste, bruk <A HREF=\$a >filbehandleren</A>.';
+$string['notefile'] = 'For å laste opp flere filer til kurset slik at de blir vist i denne liste, bruk <A HREF=$a >filbehandleren</A>.';
 $string['notypechosen'] = 'Du må velge en type. Bruk tilbakeknappen og prøv på nytt.';
 $string['resourcetype'] = 'Type ressurs';
 $string['resourcetype1'] = 'Referanse (F.eks. til bok, nettsted, artikkel etc.)';

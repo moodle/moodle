@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // workshop.php - created with Moodle 1.2 development (2003111400)
+<?PHP // $Id$ 
+      // workshop.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['absent'] = 'Fravær';
@@ -76,7 +76,7 @@ $string['leaguetable'] = 'Tabelloversikt over innleverte arbeider';
 $string['listassessments'] = 'Liste over vurderinger';
 $string['listofallsubmissions'] = 'Liste over alle innleveringer';
 $string['liststudentsassessments'] = 'Liste over studentenes vurderinger';
-$string['mail1'] = 'Din oppgave '\$a\' er vurdert av';
+$string['mail1'] = 'Din oppgave \'$a\' er vurdert av';
 $string['mail10'] = 'Du får tilgang til det i workshop-oppgaven ';
 $string['mail2'] = 'Kommentarer og karakterer kan leses i workshop-oppgaven \'$a\'';
 $string['mail3'] = 'Du kan se det i workshop-oppgaven din';
@@ -102,8 +102,8 @@ $string['noteonassessmentelements'] = 'Merk at karaktersettingen er delt inn i f
 	Dette gjør karaktersettingen enklere og mer konsekvent. Som lærer må du legge til disse <BR>
 	elementene før du gjør workshopen tilgjengelig for studentene. Dette gjøres ved å<BR>
 	klikke på workshopen på studiesiden. Hvis ingen elementer er til stede blir du spurt om <BR>
-	å legge dem til. Du kan endre antallet elementer med å bruke skjermbildet "Rediger workshop",<BR>
-	elementene i seg selv kan hentes fra skjermbildet "Administrer workshopen".';
+	å legge dem til. Du kan endre antallet elementer med å bruke skjermbildet \"Rediger workshop\",<BR>
+	elementene i seg selv kan hentes fra skjermbildet \"Administrer workshopen\".';
 $string['notgraded'] = 'Ikke satt karakter';
 $string['notitlegiven'] = 'Ingen tittel satt';
 $string['numberofassessments'] = 'Antall vurderinger';
@@ -120,7 +120,7 @@ $string['ownwork'] = 'Eget arbeide';
 $string['phase'] = 'Fase';
 $string['phase1'] = 'Lag workshop';
 $string['phase1short'] = 'Lag';
-$string['phase2'] = 'Tillat \$a innleveringer';
+$string['phase2'] = 'Tillat $a innleveringer';
 $string['phase2short'] = 'Innleveringer';
 $string['phase3'] = 'Tillat $a innleveringer og vurderinger';
 $string['phase3short'] = 'Begge';
@@ -193,7 +193,6 @@ $string['weight'] = 'Vekting';
 $string['weightederrorcount'] = 'Feil med summering av vekting: $a';
 $string['weightforgradingofassessments'] = 'Vekting for karaktersetting av vurderinger';
 $string['weightforreliability'] = 'Vekting for troverdighet';
-$string['weightforteacherassessments'] = 'Vekting for $a vurderinger';
 $string['weights'] = 'Vekting';
 $string['weightsusedforfinalgrade'] = 'Vekting for endelig karakter';
 $string['weightsusedforsubmissions'] = 'Vekting for innleveringer';

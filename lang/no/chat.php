@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.1.1 (2003091111)
+      // chat.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['beep'] = 'tuut';
@@ -17,10 +17,10 @@ $string['enterchat'] = 'Klikk her for å starte chatten';
 $string['errornousers'] = 'Kunne ikke finne noen brukere!';
 $string['helpchatting'] = 'Hjelp til å chatte';
 $string['idle'] = 'uvirksom';
-$string['messagebeepseveryone'] = '\$a tut på alle';
-$string['messagebeepsyou'] = '\$a har tutet på deg';
-$string['messageenter'] = '\$a har akkurat ankommet';
-$string['messageexit'] = '\$a har forlatt denne praten';
+$string['messagebeepseveryone'] = '$a tut på alle';
+$string['messagebeepsyou'] = '$a har tutet på deg';
+$string['messageenter'] = '$a har akkurat ankommet';
+$string['messageexit'] = '$a har forlatt denne praten';
 $string['messages'] = 'Beskjeder';
 $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chatter';
