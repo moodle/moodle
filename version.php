@@ -5,9 +5,9 @@
 // database to determine whether upgrades should
 // be performed (see lib/db/*.php)
 
-$version = 2003052900;   // The current version is a date (YYYYMMDDXX)
+$version = 2003053000;   // The current version is a date (YYYYMMDDXX)
 
-$release = "1.0.9";  // User-friendly version number
+$release = "1.1 development";  // User-friendly version number
 
 
 ?>
