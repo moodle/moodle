@@ -65,6 +65,12 @@ form {
 }
 
 
+.editorhelptext
+{
+    font-size: x-small;
+}
+
+
 .highlight {
     background-color: <?PHP echo $THEME->highlight?>;
 }
@@ -302,6 +308,8 @@ form {
 
 .feedbacktext {
     color: <?PHP echo $THEME->cellheading2?>;
+    text-align: right;
+    display: block;
 }
 
 a.dimmed:link {
