@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003011300)
+      // moodle.php - created with Moodle 1.0.9 development (2003011600)
 
 
 $string['action'] = "操作";
@@ -39,6 +39,7 @@ $string['categories'] = "コースカテゴリー";
 $string['category'] = "カテゴリー";
 $string['categoryadded'] = "「 \$a 」 が追加されました";
 $string['categorydeleted'] = "「 \$a 」 が削除されました";
+$string['categoryduplicate'] = "「\$a」は既に登録されています! ";
 $string['changedpassword'] = "変更済みパスワード";
 $string['changepassword'] = "パスワードを変更する";
 $string['changessaved'] = "変更が保存されました";
