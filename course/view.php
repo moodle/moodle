@@ -44,6 +44,14 @@
         } 
     }
 
+    if (isset($hide)) {
+        set_section_visible($course->id, $hide, "0");
+    }
+
+    if (isset($show)) {
+        set_section_visible($course->id, $show, "1");
+    }
+
     $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
 
     if (! $course->category) {      // This course is not a real course.
@@ -75,6 +83,7 @@
             error("Error finding or creating section structures for this course");
         }
     }
+
 
     switch ($course->format) {
         case "weeks":

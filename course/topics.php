@@ -32,6 +32,9 @@
     $streditsummary = get_string("editsummary");
     $stradd         = get_string("add");
     $stractivities  = get_string("activities");
+    $strshowalltopics = get_string("showalltopics");
+    $strtopichide = get_string("topichide");
+    $strtopicshow = get_string("topicshow");
 
 
 /// Layout the whole page as three big columns.
@@ -110,6 +113,7 @@
     
         echo "</td>";
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top align=center width=10>&nbsp;";
+        echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br><br>";
         echo "</td>";
         echo "</tr>";
         echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
@@ -129,9 +133,26 @@
             continue;
         }
 
+        if (!empty($sections[$section])) {
+            $thissection = $sections[$section];
+
+        } else {
+            unset($thissection);
+            $thissection->course = $course->id;   // Create a new section structure
+            $thissection->section = $section;
+            $thissection->summary = "";
+            $thissection->visible = 1;
+            if (!$thissection->id = insert_record("course_sections", $thissection)) {
+                notify("Error inserting new topic!");
+            }
+        }
+
         $currenttopic = ($course->marker == $section);
 
-        if ($currenttopic) {
+        if (!$thissection->visible) {
+            $colorsides = "bgcolor=\"$THEME->hidden\" class=\"topicsoutlinesidehidden\"";
+            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontenthidden\"";
+        } else if ($currenttopic) {
             $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"topicsoutlinesidehighlight\"";
             $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontenthighlight\"";
         } else {
@@ -143,53 +164,60 @@
         echo "<td nowrap $colorsides valign=top width=20>";
         echo "<p align=center><font size=3><b>$section</b></font></p>";
         echo "</td>";
-
-        echo "<td valign=top $colormain width=\"100%\">";
-
-        if (!empty($sections[$section])) {
-            $thissection = $sections[$section];
+    
+        if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
+            echo "<td valign=top align=center $colormain width=\"100%\">";
+            echo get_string("notavailable");
+            echo "</td><td $colorsides width=20>";
+            echo "&nbsp;";
+            echo "</td></tr>";
 
         } else {
-            unset($thissection);
-            $thissection->course = $course->id;   // Create a new section structure
-            $thissection->section = $section;
-            $thissection->summary = "";
-            if (!$thissection->id = insert_record("course_sections", $thissection)) {
-                notify("Error inserting new topic!");
+            echo "<td valign=top $colormain width=\"100%\">";
+
+            if (isediting($course->id)) {
+                $thissection->summary .= "&nbsp;<a href=editsection.php?id=$thissection->id><img src=\"$pixpath/t/edit.gif\" border=0 height=11 width=11 alt=\"$streditsummary\"></a>";
             }
-        }
+    
+            echo text_to_html($thissection->summary);
+    
+            print_section($course, $thissection, $mods, $modnamesused);
+    
+            if (isediting($course->id)) {
+                echo "<div align=right>";
+                popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=", 
+                            $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
+                echo "</div>";
+            }
+    
+            echo "</td>";
+            echo "<td nowrap $colorsides valign=top align=center width=10>";
+            echo "<font size=1>";
 
-        if (isediting($course->id)) {
-            $thissection->summary .= "&nbsp;<a href=editsection.php?id=$thissection->id><img src=\"$pixpath/t/edit.gif\" border=0 height=11 width=11 alt=\"$streditsummary\"></a>";
-        }
+            if ($displaysection == $section) {      // Show the zoom box
+                echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br><br>";
+            } else {
+                $strshowonlytopic = get_string("showonlytopic", "", $section);
+                echo "<a href=\"view.php?id=$course->id&topic=$section\" title=\"$strshowonlytopic\"><img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a><br><br>";
+            }
 
-        echo text_to_html($thissection->summary);
+            if (isediting($course->id) and $course->marker != $section) {  // Show the "tick"
+                $strmarkthistopic = get_string("markthistopic");
+                echo "<a href=\"view.php?id=$course->id&marker=$section\" title=\"$strmarkthistopic\"><img src=\"$pixpath/i/marker.gif\" height=16 width=16 border=0></a><br><br>";
+            }
 
-        print_section($course, $thissection, $mods, $modnamesused);
+            if (isediting($course->id)) {      // Show the hide/show eye
+                if ($thissection->visible) {
+                    echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strtopichide\"><img src=\"$pixpath/i/hide.gif\" height=16 width=16 border=0></a><br><br>";
+                    
+                } else {
+                    echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strtopicshow\"><img src=\"$pixpath/i/show.gif\" height=16 width=16 border=0></a><br><br>";
+                }
+            }
 
-        if (isediting($course->id)) {
-            echo "<div align=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=", 
-                        $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
-            echo "</div>";
+            echo "</td>";
+            echo "</tr>";
         }
-
-        echo "</td>";
-        echo "<td nowrap $colorsides valign=top align=center width=10>";
-        echo "<font size=1>";
-        if ($displaysection == $section) {
-            $strshowalltopics = get_string("showalltopics");
-            echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br><br>";
-        } else {
-            $strshowonlytopic = get_string("showonlytopic", "", $section);
-            echo "<a href=\"view.php?id=$course->id&topic=$section\" title=\"$strshowonlytopic\"><img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a><br><br>";
-        }
-        if (isediting($course->id) and $course->marker != $section) {
-            $strmarkthistopic = get_string("markthistopic");
-            echo "<a href=\"view.php?id=$course->id&marker=$section\" title=\"$strmarkthistopic\"><img src=\"$pixpath/i/marker.gif\" height=16 width=16 border=0></a><br><br>";
-        }
-        echo "</td>";
-        echo "</tr>";
         echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
 
         $section++;

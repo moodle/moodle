@@ -504,7 +504,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 function get_all_sections($courseid) {
     
     return get_records("course_sections", "course", "$courseid", "section", 
-                       "section, id, course, summary, sequence");
+                       "section, id, course, summary, sequence, visible");
 }
 
 function course_set_display($courseid, $display=0) {
@@ -546,6 +546,20 @@ function course_section_visible($courseid, $section) {
     return $USER->display[$courseid] == $section;
 }
 
+function set_section_visible($courseid, $sectionnumber, $visibility) {
+/// For a given course section, markes it visible or hidden,
+/// and does the same for every activity in that section
+
+    if ($section = get_record("course_sections", "course", $courseid, "section", $sectionnumber)) {
+        set_field("course_sections", "visible", "$visibility", "id", $section->id);
+        if (!empty($section->sequence)) {
+            $modules = explode(",", $section->sequence);
+            foreach ($modules as $moduleid) {
+                set_field("course_modules", "visible", "$visibility", "id", $moduleid);
+            }
+        }
+    }
+}
 
 function print_section_block($heading, $course, $section, $mods, $modnames, $modnamesused, 
                              $absolute=true, $width="100%", $isediting=false) {
@@ -688,7 +702,7 @@ function print_side_block_start($heading="", $width=180, $class="sideblockmain")
 
 function print_side_block_end() {
     echo "</td></tr>";
-    echo "</table><br \>";
+    echo "</table><br />";
 }
 
 

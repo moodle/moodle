@@ -375,6 +375,10 @@ function main_upgrade($oldversion=0) {
                      ) TYPE=MyISAM COMMENT='Stores info about how to display the course'");
     }
 
+    if ($oldversion < 2003050400) {
+        table_column("course_sections", "", "visible", "integer", "1", "unsigned", "1", "", "");
+    }
+
     return $result;
 
 }

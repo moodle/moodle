@@ -137,6 +137,10 @@ function main_upgrade($oldversion=0) {
 
         execute_sql("CREATE INDEX {$CFG->prefix}course_display_courseuserid_idx ON {$CFG->prefix}course_display (course,userid)");
     }
+
+    if ($oldversion < 2003050400) {
+        table_column("course_sections", "", "visible", "integer", "1", "unsigned", "1", "", "");
+    }
                                                             
     return $result;
 }

@@ -110,6 +110,7 @@ CREATE TABLE `prefix_course_sections` (
   `section` int(10) unsigned NOT NULL default '0',
   `summary` text NOT NULL,
   `sequence` varchar(255) NOT NULL default '',
+  `visible` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM;
 # --------------------------------------------------------

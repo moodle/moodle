@@ -58,7 +58,8 @@ CREATE TABLE prefix_course_sections (
    course integer NOT NULL default '0',
    section integer NOT NULL default '0',
    summary text NOT NULL default '',
-   sequence varchar(255) NOT NULL default ''
+   sequence varchar(255) NOT NULL default '',
+   visible integer NOT NULL default '1'
 );
 
 CREATE TABLE prefix_log (
