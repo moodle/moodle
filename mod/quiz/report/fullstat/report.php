@@ -29,185 +29,198 @@ class quiz_report extends quiz_default_report {
     $strdiscrimination = get_string('discrimination', 'quiz');
 
     //Get the question ids
-    //$showtext causes M/C text to whos in top table.  This could be made into a user toggle if we want to complicate matters
+    //$showtext causes M/C text to whos in top table.  
+    //This could be made into a user toggle if we want to complicate matters
     $showtext = 1;
     $containsMCTF = 0;  //used to toggle title in final listing
     $thisquizid = $quiz->id;
-    $qs_in_order =qr_getqs($thisquizid);
-    $qcount = 0;
-    $max_choices = 0;  //for printing tallies we need to know how many rows to print
-    $table_colcount = 0;
-    foreach ($qs_in_order as $qid){
-        $table_colcount++;
-        //Get the question type and text and append to object
-        if ($question_data = get_records_select("quiz_questions",$select="id='$qid'","","qtype,questiontext")) {
-            foreach($question_data as $thiskey => $thisq){
-                $quests[$qid]["qtype"] =  $thiskey;
-                $quests[$qid]["qtext"] =  $question_data[$thiskey]->questiontext;
-            }
-        }
-        if($quests[$qid]['qtype'] == 3 or $quests[$qid]['qtype'] == 2){ $containsMCTF = 1;}
-        if($quests[$qid]['qtype'] == 5){
-            //for MATCH items we need to know how many items there are
-            $thismatch = get_record("quiz_match","question","$qid");
-            $temparray = explode(",",$thismatch->subquestions);
-            $match_number[$qid] = count($temparray);
-            $match_start[$qid] = $temparray[0];
-            $table_colcount = $table_colcount + $match_number[$qid] - 1;
-        }
-        $choice_data = get_records_select("quiz_answers",$select="question='$qid'","","id as cid,answer,fraction");
-        if($quests[$qid]['qtype'] == 8){
-              $thismin[$qid] = get_field("quiz_numerical","min","question","$qid");
-              $thismax[$qid] = get_field("quiz_numerical","max","question","$qid");
-              $quests[$qid]["correct"] = $thismin[$qid] ."< $choice_data->answer >" .  $thismax[$qid];
-        }
-        if($quests[$qid]['qtype'] >3) {continue;}
-        //only get choices here if type is SHORTANSWER,TRUEFALSE or MULTICHOICE
-        //Get the choices for each question and add to object['choice'] each choicd ID and text
-        $choice_count=0;
-        foreach($choice_data as $thiscid=>$thischoice){
-            $choice_count++;
-            $quests[$qid]["choice"]["$thiscid"]["answer"] =  $thischoice->answer;
-            $quests[$qid]["choice"]["$thiscid"]["choiceno"]  =  $choice_count;
-            //if the fraction = 1, then set this choice number as the correct answer
-            if ($thischoice->fraction == 1){
-                //append answer if more than one
-                if($quests[$qid]["correct"]){
-                    $quests[$qid]["correct"] .= "," . $thischoice->answer;
-                } else {
-                    if($quests[$qid]['qtype'] == 3) {
-                        $quests[$qid]["correct"] = $choice_count;
-                    } else {
-                        $quests[$qid]["correct"] = $thischoice->answer;
-                    }
+
+    if ($qs_in_order = qr_getqs($thisquizid)) {
+        $qcount = 0;
+        $max_choices = 0;  //for printing tallies we need to know how many rows to print
+        $table_colcount = 0;
+        foreach ($qs_in_order as $qid){
+            $table_colcount++;
+            //Get the question type and text and append to object
+            if ($question_data = get_records_select("quiz_questions",$select="id='$qid'","","qtype,questiontext")) {
+                foreach($question_data as $thiskey => $thisq){
+                    $quests[$qid]["qtype"] =  $thiskey;
+                    $quests[$qid]["qtext"] =  $question_data[$thiskey]->questiontext;
                 }
             }
-         }
+            if($quests[$qid]['qtype'] == 3 or $quests[$qid]['qtype'] == 2){ $containsMCTF = 1;}
+            if($quests[$qid]['qtype'] == 5){
+                //for MATCH items we need to know how many items there are
+                $thismatch = get_record("quiz_match","question","$qid");
+                $temparray = explode(",",$thismatch->subquestions);
+                $match_number[$qid] = count($temparray);
+                $match_start[$qid] = $temparray[0];
+                $table_colcount = $table_colcount + $match_number[$qid] - 1;
+            }
+            $choice_data = get_records_select("quiz_answers",$select="question='$qid'","","id as cid,answer,fraction");
+            if($quests[$qid]['qtype'] == 8){
+                  $thismin[$qid] = get_field("quiz_numerical","min","question","$qid");
+                  $thismax[$qid] = get_field("quiz_numerical","max","question","$qid");
+                  $quests[$qid]["correct"] = $thismin[$qid] ."< $choice_data->answer >" .  $thismax[$qid];
+            }
+            if($quests[$qid]['qtype'] >3) {continue;}
+            //only get choices here if type is SHORTANSWER,TRUEFALSE or MULTICHOICE
+            //Get the choices for each question and add to object['choice'] each choicd ID and text
+            $choice_count=0;
+            if ($choice_data) {
+                foreach($choice_data as $thiscid=>$thischoice){
+                    $choice_count++;
+                    $quests[$qid]["choice"]["$thiscid"]["answer"] =  $thischoice->answer;
+                    $quests[$qid]["choice"]["$thiscid"]["choiceno"]  =  $choice_count;
+                    //if the fraction = 1, then set this choice number as the correct answer
+                    if ($thischoice->fraction == 1){
+                        //append answer if more than one
+                        if($quests[$qid]["correct"]){
+                            $quests[$qid]["correct"] .= "," . $thischoice->answer;
+                        } else {
+                            if($quests[$qid]['qtype'] == 3) {
+                                $quests[$qid]["correct"] = $choice_count;
+                            } else {
+                                $quests[$qid]["correct"] = $thischoice->answer;
+                            }
+                        }
+                    }
+                }
+            } 
+        }
     }
+
     if($debug and !$download){
         print("<h3>Quests</h3>");
         print_object($quests);
     }
-    $user_resps = qr_quiz_responses($thisquizid);
+    if ($user_resps = qr_quiz_responses($thisquizid)) {
 //    //print_object($user_resps);
-    foreach($user_resps as $thiskey => $thisresp){
-        $userdata[$thisresp->userid][$thisresp->attemptno]['response'][$thisresp->question]=s($thisresp->answer);
-        $userdata[$thisresp->userid][$thisresp->attemptno]['grade']=$thisresp->sumgrades;
-        $userdata[$thisresp->userid][$thisresp->attemptno]['name']=fullname($thisresp);
-        $userdata[$thisresp->userid][$thisresp->attemptno]['attemptid']=$thisresp->aid;
-    }
-    if($debug and !$download){
-    print("<h3>User Data</h3>");
-    print_object($userdata);
-    }
-    //now go through $userdata and create tally by user, attempt, question storing both response and if correct
-    $reportline = 0;
-    foreach($userdata as $thisuser){
-        foreach($thisuser as $thiskey=>$thisattempt){
-//            //print_object($thisattempt);
-            $reportline++;
-            $data_tally[$reportline][$thisattempt['attemptid']][] = $thisattempt['name'];
-            $data_tally[$reportline][$thisattempt['attemptid']][] =round(($thisattempt['grade']/$quiz->sumgrades)*100,0); 
-            //now for each question, record response as it should be printed and whether right, wrong or skipped
-            //SHORTASNSWER the answer as in $userdata; TF or MULTI need response looked by from cid from $quests
-            //MATCH needs elaborate processing
-            //We need to go through the responses in the order Qs presented thus the use of $qs_in_order not just $thisattempt
-            foreach ($qs_in_order as $qid){
-                $thisanswer = $thisattempt['response'][$qid];
-                if($quests[$qid]['qtype']==5) {
-                    //for MATCH processing.  Treat each match couplet as an item for $data_tally
-                    //builds an array of all questions and answers for match questions
-                    $quiz_matches = qr_match_array($qid);
-                    $matchsets = explode(",",$thisanswer);
-                    //sort needed so that same items line up vertically
-                    sort($matchsets);
-                    $matchcnt = 0;
-                    foreach($matchsets as $thisset){
-                        $matchcnt++;
-                        $nowpair = explode("-",$thisset);
-                        $phrasepair[0] = $quiz_matches[$nowpair[0]][Q];
-                        $phrasepair[1] = $quiz_matches[$nowpair[1]][A];
-                        //$match_answers keeps the correct answers for use in Response Analysis
-                        //This will operate redundantly for each user but better than setting up separate routine to run once(?)
-                        $match_answers[$qid][$nowpair[0]] = $phrasepair[1];
-                        $match_qs[$qid][$nowpair[0]] = $phrasepair[0];
-                        $rid = $nowpair[1];
-                        $qtally[$qid][$nowpair[0]][$nowpair[1]]['tally']++;
-                        $qtally[$qid][$nowpair[0]][$nowpair[1]]['answer'] = $phrasepair[1];
-                        if ($quiz_matches[$nowpair[0]] == $quiz_matches[$nowpair[1]]) {
-                            $pairdata['score'] = 1;
-                            $qtally[$qid][$nowpair[0]]['correct']++;
-                        } else {
-                            $pairdata['score'] = 0;
-                        }
-                        $pairdata['data'] = $phrasepair;
-                        $pairdata['qtype'] = 5;
-                        $pairdata['qid'] = $qid;
-                        $data_tally[$reportline][$thisattempt['attemptid']][] = $pairdata;
-                     }
-                } elseif ($quests[$qid]['qtype']==8) {
-                    $thisdata = qr_answer_lookup($qid,$thisanswer);
-                    $data_tally[$reportline][$thisattempt['attemptid']][] = $thisdata;
-                } else {
-                    $thisdata = qr_answer_lookup($qid,$thisanswer);
-                    //$thisdata returns couplet of display string and right/wrong
-                    if(!$thisdata['data']) {$thisdata['data'] = "--";}
-                    if($thisdata) {
+        foreach($user_resps as $thiskey => $thisresp){
+            $userdata[$thisresp->userid][$thisresp->attemptno]['response'][$thisresp->question]=s($thisresp->answer);
+            $userdata[$thisresp->userid][$thisresp->attemptno]['grade']=$thisresp->sumgrades;
+            $userdata[$thisresp->userid][$thisresp->attemptno]['name']=fullname($thisresp);
+            $userdata[$thisresp->userid][$thisresp->attemptno]['attemptid']=$thisresp->aid;
+        }
+    
+        if($debug and !$download){
+        print("<h3>User Data</h3>");
+        print_object($userdata);
+        }
+        //now go through $userdata and create tally by user, attempt, question storing both response and if correct
+        $reportline = 0;
+        foreach($userdata as $thisuser){
+            foreach($thisuser as $thiskey=>$thisattempt){
+    //            //print_object($thisattempt);
+                $reportline++;
+                $data_tally[$reportline][$thisattempt['attemptid']][] = $thisattempt['name'];
+                $data_tally[$reportline][$thisattempt['attemptid']][] =round(($thisattempt['grade']/$quiz->sumgrades)*100,0); 
+                //now for each question, record response as it should be printed and whether right, wrong or skipped
+                //SHORTASNSWER the answer as in $userdata; TF or MULTI need response looked by from cid from $quests
+                //MATCH needs elaborate processing
+                //We need to go through the responses in the order Qs presented thus the use of $qs_in_order not just $thisattempt
+                foreach ($qs_in_order as $qid){
+                    $thisanswer = $thisattempt['response'][$qid];
+                    if($quests[$qid]['qtype']==5) {
+                        //for MATCH processing.  Treat each match couplet as an item for $data_tally
+                        //builds an array of all questions and answers for match questions
+                        $quiz_matches = qr_match_array($qid);
+                        $matchsets = explode(",",$thisanswer);
+                        //sort needed so that same items line up vertically
+                        sort($matchsets);
+                        $matchcnt = 0;
+                        foreach($matchsets as $thisset){
+                            $matchcnt++;
+                            $nowpair = explode("-",$thisset);
+                            $phrasepair[0] = $quiz_matches[$nowpair[0]][Q];
+                            $phrasepair[1] = $quiz_matches[$nowpair[1]][A];
+                            //$match_answers keeps the correct answers for use in Response Analysis
+                            //This will operate redundantly for each user but better than setting up separate routine to run once(?)
+                            $match_answers[$qid][$nowpair[0]] = $phrasepair[1];
+                            $match_qs[$qid][$nowpair[0]] = $phrasepair[0];
+                            $rid = $nowpair[1];
+                            $qtally[$qid][$nowpair[0]][$nowpair[1]]['tally']++;
+                            $qtally[$qid][$nowpair[0]][$nowpair[1]]['answer'] = $phrasepair[1];
+                            if ($quiz_matches[$nowpair[0]] == $quiz_matches[$nowpair[1]]) {
+                                $pairdata['score'] = 1;
+                                $qtally[$qid][$nowpair[0]]['correct']++;
+                            } else {
+                                $pairdata['score'] = 0;
+                            }
+                            $pairdata['data'] = $phrasepair;
+                            $pairdata['qtype'] = 5;
+                            $pairdata['qid'] = $qid;
+                            $data_tally[$reportline][$thisattempt['attemptid']][] = $pairdata;
+                         }
+                    } elseif ($quests[$qid]['qtype']==8) {
+                        $thisdata = qr_answer_lookup($qid,$thisanswer);
                         $data_tally[$reportline][$thisattempt['attemptid']][] = $thisdata;
+                    } else {
+                        $thisdata = qr_answer_lookup($qid,$thisanswer);
+                        //$thisdata returns couplet of display string and right/wrong
+                        if(!$thisdata['data']) {$thisdata['data'] = "--";}
+                        if($thisdata) {
+                            $data_tally[$reportline][$thisattempt['attemptid']][] = $thisdata;
+                        }
                     }
                 }
             }
         }
-    }
-    $total_user_count = $reportline;
-    //prepare headers (must do now because $table_colcount calculated here
-    if($debug and !$download){
-    print("<h3>Data Tally</h3>");
-    print_object($data_tally);
-    }
 
-    //Create a list of all attempts with their scores for item analysis
-    //Also create $data2 that has attempt id as key
-    foreach ($data_tally as $thistally){
-        foreach($thistally as $this_aid=>$thisattempt){
-            //this is the attempt id and the score
-            $data2[$this_aid] = $thisattempt;
-            $scores[$this_aid] = $thisattempt[1];
+        $total_user_count = $reportline;
+        //prepare headers (must do now because $table_colcount calculated here
+        if($debug and !$download){
+        print("<h3>Data Tally</h3>");
+        print_object($data_tally);
+        }
+    
+        //Create a list of all attempts with their scores for item analysis
+        //Also create $data2 that has attempt id as key
+        foreach ($data_tally as $thistally){
+            foreach($thistally as $this_aid=>$thisattempt){
+                //this is the attempt id and the score
+                $data2[$this_aid] = $thisattempt;
+                $scores[$this_aid] = $thisattempt[1];
+            }
         }
     }
-    arsort($scores);
+    
     //now go through scores from top to bottom and from $data2 accumulate number correct for top 1/3 and bottom 1/3 of scorers
-    $totscores = count($scores);
-    $numb_to_analyze = floor($totscores/3);
-    $skipval = $numb_to_analyze + 1;
-    $first_lowval = $totscores - $numb_to_analyze +1;
-    $count_scores = 0;
-    $tempscores = array();
-    $top_scores = array_pad($tempscores,$table_colcount+1,0);
-    $bott_scores = array_pad($tempscores,$table_colcount+1,0);
-    foreach($scores as $aid=>$score){
-        $count_scores++;
-        if ($count_scores < $skipval){
-            //array items 0 & 1 contain user name & tot score, not item data
-            $i = 2;
-            while($data2[$aid][$i]){
-                //let this array start from 1
-                if ($data2[$aid][$i]['score'] == 1){
-                    $top_scores[$i-1]++;
+    if ($scores) {
+        arsort($scores);
+        $totscores = count($scores);
+        $numb_to_analyze = floor($totscores/3);
+        $skipval = $numb_to_analyze + 1;
+        $first_lowval = $totscores - $numb_to_analyze +1;
+        $count_scores = 0;
+        $tempscores = array();
+        $top_scores = array_pad($tempscores,$table_colcount+1,0);
+        $bott_scores = array_pad($tempscores,$table_colcount+1,0);
+
+        foreach($scores as $aid=>$score){
+            $count_scores++;
+            if ($count_scores < $skipval){
+                //array items 0 & 1 contain user name & tot score, not item data
+                $i = 2;
+                while($data2[$aid][$i]){
+                    //let this array start from 1
+                    if ($data2[$aid][$i]['score'] == 1){
+                        $top_scores[$i-1]++;
+                    }
+                    $i++;
                 }
-                $i++;
-            }
-        } elseif ($count_scores >= $first_lowval) {
-            $i = 2;
-            while($data2[$aid][$i]){
-                //let this array start from 1
-                if ($data2[$aid][$i]['score'] == 1){
-                    $bott_scores[$i-1]++;
+            } elseif ($count_scores >= $first_lowval) {
+                $i = 2;
+                while($data2[$aid][$i]){
+                    //let this array start from 1
+                    if ($data2[$aid][$i]['score'] == 1){
+                        $bott_scores[$i-1]++;
+                    }
+                    $i++;
                 }
-                $i++;
+            } else {
+                continue;
             }
-        } else {
-            continue;
         }
     }
     
@@ -648,39 +661,43 @@ class quiz_report extends quiz_default_report {
     $totcolcount = $table_colcount+2;
     print("<tr><th colspan=$totcolcount>$strindivresp</th></tr>");
     qr_print_headers($data_tally,"$strname","$strgrade");
+
     //now print the lines of answers
-    foreach ($data_tally as $thisuserno=>$thisuser){
-        foreach($thisuser as $thisattemptno=>$thisattempt){
-            print("<tr>");
-            foreach($thisattempt as $thisitemkey=>$thisitem) {
-            //$thisitemkeys 1 & 2 are name and total score
-            //There needs to be a 3-way branch, keys0 & 1 just print $thisitem
-            //else if $thisitem['qtype'] = 5, then processing for MATCH is needed
-            //else the data to be printed is in $thisitem['data'] and $thisitem['score'] == 1 shows that the item was correct
-                if ($thisitem['score'] < 1) {$thiscolor = "ff0000";} else {$thiscolor = "000000";}
-                if ($thisitemkey == 0){
-                    print("<th align='left'>$thisitem&nbsp;</th>");
-                } elseif ($thisitemkey == 1){
-                    print("<td align='right'>&nbsp;$thisitem%&nbsp;&nbsp;</td>");
-                } elseif ($thisitemkey['qtype'] == 2){
-                    print("<td>&nbsp;&nbsp;$thisitem[data][answer]&nbsp;&nbsp;</td>");
-                } elseif ($thisitem['qtype'] == 5) {
-                    if ($thisitem['score'] == 1) {$thiscolor = "blue";}
-                    if(!$thisitem['data'][1]){$thisitem['data'][1]="($strnoresponse)";}
-                    print("<td align=center><font size=-2>{$thisitem['data'][0]}<br><font color='$thiscolor'>{$thisitem['data'][1]}</font></font></td>");
-                } elseif  ($thisitem['qtype'] == 3) {
-                    if ($showtext) {
-                        print("<td align=center><font color='$thiscolor' size=-2>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
+    if ($data_tally) {
+        foreach ($data_tally as $thisuserno=>$thisuser){
+            foreach($thisuser as $thisattemptno=>$thisattempt){
+                print("<tr>");
+                foreach($thisattempt as $thisitemkey=>$thisitem) {
+                //$thisitemkeys 1 & 2 are name and total score
+                //There needs to be a 3-way branch, keys0 & 1 just print $thisitem
+                //else if $thisitem['qtype'] = 5, then processing for MATCH is needed
+                //else the data to be printed is in $thisitem['data'] and $thisitem['score'] == 1 shows that the item was correct
+                    if ($thisitem['score'] < 1) {$thiscolor = "ff0000";} else {$thiscolor = "000000";}
+                    if ($thisitemkey == 0){
+                        print("<th align='left'>$thisitem&nbsp;</th>");
+                    } elseif ($thisitemkey == 1){
+                        print("<td align='right'>&nbsp;$thisitem%&nbsp;&nbsp;</td>");
+                    } elseif ($thisitemkey['qtype'] == 2){
+                        print("<td>&nbsp;&nbsp;$thisitem[data][answer]&nbsp;&nbsp;</td>");
+                    } elseif ($thisitem['qtype'] == 5) {
+                        if ($thisitem['score'] == 1) {$thiscolor = "blue";}
+                        if(!$thisitem['data'][1]){$thisitem['data'][1]="($strnoresponse)";}
+                        print("<td align=center><font size=-2>{$thisitem['data'][0]}<br><font color='$thiscolor'>{$thisitem['data'][1]}</font></font></td>");
+                    } elseif  ($thisitem['qtype'] == 3) {
+                        if ($showtext) {
+                            print("<td align=center><font color='$thiscolor' size=-2>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
+                        } else {
+                            print("<td align=center><font color='$thiscolor'>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
+                        }
                     } else {
                         print("<td align=center><font color='$thiscolor'>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
                     }
-                } else {
-                    print("<td align=center><font color='$thiscolor'>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
                 }
             }
+            print("</tr>\n");
         }
-        print("</tr>\n");
     }
+     
     print("</table><p>\n");
         
     if($debug and !$download){
