@@ -191,9 +191,18 @@ function assignment_print_recent_activity(&$logs, $isteacher=false) {
 
     foreach ($logs as $log) {
         if ($log->module == "assignment" and $log->action == "upload") {
-            $assignments[$log->info] = assignment_log_info($log);
-            $assignments[$log->info]->time = $log->time;
-            $assignments[$log->info]->url  = $log->url;
+            //Create a temp valid module structure (course,id)
+            $tempmod->course = $log->course;
+            $tempmod->id = $log->info;
+            //Obtain the visible property from the instance
+            $modvisible = instance_is_visible($log->module,$tempmod);
+
+            //Only if the mod is visible
+            if ($modvisible) {
+                $assignments[$log->info] = assignment_log_info($log);
+                $assignments[$log->info]->time = $log->time;
+                $assignments[$log->info]->url  = $log->url;
+            }
         }
     }
 
