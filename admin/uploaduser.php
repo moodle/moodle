@@ -32,14 +32,15 @@
 
     $csv_encode = '/\&\#44/';
     if (isset($CFG->CSV_DELIMITER)) {        
-      $csv_delimiter = "\" . $CFG->CSV_DELIMITER;
-      $csv_delimiter2 = $CFG->CSV_DELIMITER;
-      if (isset($CFG->CSV_ENCODE)) {
-         $csv_encode = '/\&\#' . $CFG->CSV_ENCODE . '/';
-      }
+        $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
+        $csv_delimiter2 = $CFG->CSV_DELIMITER;
+
+        if (isset($CFG->CSV_ENCODE)) {
+            $csv_encode = '/\&\#' . $CFG->CSV_ENCODE . '/';
+        }
     } else {
-      $csv_delimiter = "\,";
-      $csv_delimiter2 = ",";
+        $csv_delimiter = "\,";
+        $csv_delimiter2 = ",";
     }
 
 /// Print the header
