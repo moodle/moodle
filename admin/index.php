@@ -1,11 +1,18 @@
 <?PHP // $Id$
 
+/// Check that config.php exists
+    if (!file_exists("../config.php")) {
+        echo "<H2 align=center>You need to create a config.php.<BR>
+                  See the <A HREF=\"http://moodle.com/doc/?frame=install.html\">installation instructions</A>.</H2>";
+        die;
+    }
+
     require_once("../config.php");
 
 
 /// Check that PHP is of a sufficient version
 
-    if ( ! check_php_version("4.1.0") ) {
+    if (!check_php_version("4.1.0")) {
         $version = phpversion();
         print_heading("Sorry, Moodle requires PHP 4.1.0 or later (currently using version $version)");
         die;
@@ -24,6 +31,19 @@
     if ($CFG->wwwroot == "http://example.com/moodle") {
         error("Moodle has not been configured yet.  You need to to edit config.php first.");
     }
+
+
+/// Check settings in config.php
+
+    $dirroot = dirname(realpath("../config.php"));
+    if ($dirroot != $CFG->dirroot) {
+        error("Please fix your settings in config.php:
+              <P>You have:
+              <P>\$CFG->dirroot = \"$CFG->dirroot\";
+              <P>but it should be:
+              <P>\$CFG->dirroot = \"$dirroot\";");
+    }
+
 
 /// Check if the main tables have been installed yet or not.
 
