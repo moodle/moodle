@@ -70,25 +70,23 @@
 
         case UPLOADEDFILE:
             if ($CFG->slasharguments) {
-                $ffurl = "file.php/$course->id/$resource->reference";
+                $fullurl = "$CFG->wwwroot/file.php/$course->id/$resource->reference";
             } else {
-                $ffurl = "file.php?file=/$course->id/$resource->reference";
+                $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
             }
 
             if (!empty($frameset)) {
-                print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
-                         "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+                print_header("$course->shortname: $resource->name", "$course->fullname", 
+                             "$navigation <A TARGET=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
+                             "", "", true, update_module_button($cm->id, $course->id, $strresource), 
+                             navmenu($course, $cm));
                 echo "<CENTER><FONT SIZE=-1>".text_to_html($resource->summary, true, false)."</FONT></CENTER>";
-                echo "<HR><CENTER><FONT SIZE=-2>If you cannot see the file in your
-                browser, and were not prompted to save the file, please try the
-                following link (you may need to right click and choose
-                &quot;Save As&quot;):<a href=\"{$CFG->wwwroot}/$ffurl\">{$resource->name}</FONT></CENTER>";
             } else {
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
                 echo "<HEAD><TITLE>$course->shortname: $resource->name</TITLE></HEAD>\n";
                 echo "<FRAMESET ROWS=$RESOURCE_FRAME_SIZE,*>";
                 echo "<FRAME SRC=\"view.php?id=$cm->id&frameset=true\">";
-                echo "<FRAME SRC=\"$CFG->wwwroot/$ffurl\">";
+                echo "<FRAME SRC=\"$fullurl\">";
                 echo "</FRAMESET>";
             }
             break;
