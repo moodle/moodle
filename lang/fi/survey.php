@@ -3,7 +3,7 @@
 
 
 $string['actual'] = 'Toteutunut';
-$string['actualclass'] = 'Luokan toteutunut';
+$string['actualclass'] = 'Toteutunut';
 $string['actualstudent'] = '$a toteutunut';
 $string['allquestions'] = 'Kaikki kysymykset järjestyksessä, kaikki opiskelijat';
 $string['allscales'] = 'Kaikki asteikot, kaikki opiskelijat';
@@ -58,7 +58,7 @@ $string['attlsm1'] = 'Asenne ajatteluun ja oppimiseen';
 $string['attlsm2'] = 'Sosiaalinen oppiminen';
 $string['attlsm3'] = 'Eristyvä oppiminen';
 $string['attlsmintro'] = 'Keskustelussa ...';
-$string['attlsname'] = 'ATTLS  (20 kysymystä)';
+$string['attlsname'] = 'ATTLS (kysely asenteista oppimiseen ja ajatteluun, 20 kysymystä)';
 $string['ciq1'] = 'Milloin tunsit olevasi kaikkein sitoutunein opiskeluun?';
 $string['ciq2'] = 'Milloin tunsit olevasi kaikkein vähiten sitoutunut opiskeluun?';
 $string['ciq3'] = 'Mikä keskusteluissa ollut asia oli mielestäsi eniten avuksi tai hyödyllinen?';
@@ -125,7 +125,7 @@ Ei ole olemassa oikeata tai vääriä vastauksia, tahdomme sinun mielipiteesi asioi
 Vastaamalla huolellisesti ja ajatuksella autat meitä parantamaan tätä kurssia tulevaisuudessa.
 
 Kiitokset avustasi.';
-$string['collesaname'] = 'COLLES (Toteutunut)';
+$string['collesaname'] = 'COLLES toteutunut (actual)';
 $string['collesapintro'] = 'Tämän kyselyn tarkoituksena on selvittää kuinka hyvin tämä online-kurssi on auttanut sinua oppimaan.
 
 Jokainen seuravista 24 kysymyksestä pyytää sina vertaamaan <i>ideaalia</i> ja <i>toteutunutta</i> tilannetta kurssilla.
@@ -157,7 +157,7 @@ Ei ole olemassa oikeata tai vääriä vastauksia, tahdomme sinun mielipiteesi asioi
 Vastaamalla huolellisesti ja ajatuksella autat meitä parantamaan tätä kurssia tulevaisuudessa.
 
 ';
-$string['collespname'] = 'COLLES (Haluttu)';
+$string['collespname'] = 'COLLES haluttu (preferred) ';
 $string['done'] = 'Tehty';
 $string['download'] = 'Lataa';
 $string['downloadexcel'] = 'Lataa tiedot Excel-taulukkona';
@@ -181,16 +181,16 @@ $string['notes'] = 'Oma (henkilökohtainen) analyysisi ja muistiinpanosi.';
 $string['othercomments'] = 'Onko sinulla muita kommentteja?';
 $string['peoplecompleted'] = '$a henkilöä on suorittanut tämän kyselyn';
 $string['preferred'] = 'Haluttu';
-$string['preferredclass'] = 'Luokan haluttu';
+$string['preferredclass'] = 'Haluttu';
 $string['preferredstudent'] = '$a haluttu';
 $string['question'] = 'Kysymys';
 $string['questions'] = 'Kysymykset';
 $string['questionsnotanswered'] = 'Joihinkin monivalintoihin ei ole vastattu.';
 $string['report'] = 'Kyselyn raportti';
 $string['savednotes'] = 'Muistiinpanosi tallennettiin';
-$string['scaleagree5'] = 'Vahvasti erimieltä,Jotakuinkin erimieltä,Ei samaa tai eri mieltä,Jotakuinkin samaa mieltä,Vahvasti samaa mieltä';
+$string['scaleagree5'] = 'Vahvasti erimieltä, Jotakuinkin erimieltä, Ei samaa tai eri mieltä, Jotakuinkin samaa mieltä, Vahvasti samaa mieltä';
 $string['scales'] = 'Asteikot';
-$string['scaletimes5'] = 'Ei koskaan,Harvoin,Joskus,Usein,Miltei aina';
+$string['scaletimes5'] = 'Ei koskaan, Harvoin, Joskus, Usein, Miltei aina';
 $string['seemoredetail'] = 'Klikkaa tästä nähdäksesi lisätietoja ';
 $string['selectedquestions'] = 'Valitut kysymykset, kaikki opiskelijat';
 $string['summary'] = 'Yhteenveto';

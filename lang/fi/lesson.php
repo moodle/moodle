@@ -1,33 +1,42 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // lesson.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['actionaftercorrectanswer'] = 'Toiminto oikean vastauksen jälkeen';
-$string['addanewpage'] = 'Lisää uusi sivu';
-$string['addpagehere'] = 'Lisää sivu tähän';
+$string['addabranchtable'] = 'Lisää tietopuun haara';
+$string['addanendofbranch'] = 'Lisää tietopuun haaran pääte';
+$string['addaquestionpage'] = 'Lisää kysymyssivu';
 $string['answer'] = 'Vastaus';
 $string['answersfornumerical'] = 'Numeeristen kysymysten vastauksia pitäisi verrata minimi- ja maksimiarvoihin. Tälle välille osuva arvo katsotaan oikeaksi vastaukseksi.';
 $string['attempt'] = 'Yritys: $a';
 $string['attempts'] = 'Yritykset';
 $string['available'] = 'Tehtävissä';
+$string['branchtable'] = 'Tietopuun haara';
 $string['canretake'] = '$a voi aloittaa uudelleen';
 $string['casesensitive'] = 'Kirjainkoko merkityksellinen (case sensitive)';
+$string['checkbranchtable'] = 'Tarkista tietopuun haaran toiminta';
 $string['checknavigation'] = 'Tarkista navigointi';
 $string['checkquestion'] = 'Tarkista kysymys';
 $string['confirmdeletionofthispage'] = 'Vahvista tämän sivun poistaminen';
 $string['congratulations'] = 'Onnittelut - oppitunnin loppu saavutettu';
 $string['continue'] = 'Jatka';
 $string['deadline'] = 'Viimeinen suorituspäivä';
+$string['deleting'] = 'Poistetaan';
 $string['deletingpage'] = 'Poistetaan sivu $a';
+$string['description'] = 'Kuvaus';
 $string['displayofgrade'] = 'Arvosanan näyttäminen (vain opiskelijoille)';
+$string['endofbranch'] = 'Tietopuun haaran pääte';
 $string['endoflesson'] = 'Oppimitunnin loppu';
 $string['fileformat'] = 'Tiedoston tyyppi';
 $string['firstanswershould'] = 'Ensimmäinen vastaus hyppää &quot;oikealle&quot; sivulle.';
 $string['gradeis'] = 'Arvosana on $a';
+$string['handlingofretakes'] = 'Useiden yritysten arvioinnin käsittelytapa';
+$string['here'] = 'tänne';
 $string['importquestions'] = 'Tuo kysymykset';
 $string['jumpto'] = 'Hyppää kohtaan';
-$string['maximumnumberofanswers'] = 'Kysymysten maksimimäärä';
-$string['maximumnumberofattempts'] = 'Vastausten maksimimäärä';
+$string['maximumnumberofanswersbranches'] = 'Vastausten/haarojen maksimimäärä';
+$string['maximumnumberofattempts'] = 'Vastausyritysten maksimimäärä';
+$string['minimumnumberofquestions'] = 'Kysymysten minimimäärä';
 $string['modulename'] = 'Oppitunti';
 $string['modulenameplural'] = 'Oppitunnit';
 $string['movepagehere'] = 'Siirrä sivu tähän';
@@ -39,13 +48,17 @@ $string['nextpage'] = 'Seuraava sivu';
 $string['noanswer'] = 'Ei vastausta';
 $string['noattemptrecordsfound'] = 'Ei yrityksiä: ei arvosanaa';
 $string['normal'] = 'Normaali - seuraa oppitunnin polkua';
+$string['notdefined'] = 'Ei määritelty';
+$string['notitle'] = 'Otsikko puuttuu';
 $string['numberofcorrectanswers'] = 'Oikeiden vastausten lukumäärä: $a';
 $string['numberofcorrectmatches'] = 'Oikeiden parikysymysten määrä: $a ';
 $string['numberofpagestoshow'] = 'Näytettävien sivujen (korttien) määrä';
-$string['numberofpagesviewed'] = 'Katsottujen sivujen määrä: a$';
+$string['numberofpagesviewed'] = 'Katsottujen sivujen määrä: $a';
 $string['ordered'] = 'Järjestetty';
+$string['outof'] = 'maksimipisteet $a';
 $string['page'] = 'Sivu $a';
 $string['pagecontents'] = 'Sivun sisältö';
+$string['pages'] = 'Sivuja';
 $string['pagetitle'] = 'Sivun otsikko';
 $string['pleasecheckoneanswer'] = 'Valitse yksi vastausvaihtoehto';
 $string['pleasecheckoneormoreanswers'] = 'Valitse yksi tai useampia vastausvaihtoehdoista';
@@ -61,8 +74,13 @@ $string['showanunseenpage'] = 'Näytä vielä katsomaton sivu';
 $string['singleanswer'] = 'Yksi vastaus';
 $string['thatsthecorrectanswer'] = 'Vastaus on oikein';
 $string['thatsthewronganswer'] = 'Vastaus on väärin';
+$string['thefollowingpagesjumptothispage'] = 'Seuraavat sivut hyppäävät tälle sivulle';
 $string['thispage'] = 'Tämä sivu';
+$string['usemaximum'] = 'Valitse korkein';
+$string['usemean'] = 'Käytä keskiarvoa';
 $string['youhaveseen'] = 'Olet aikaisemmin aloittanut tämän oppitunnin.<br />Haluatko jatkaa sivulta, jolle viimeksi jäit?';
 $string['youranswer'] = 'Vastauksesi';
+$string['yourcurrentgradeis'] = 'Nykyinen arvosanasi on $a';
+$string['youshouldview'] = 'Sinun pitäisi katsoa ainakin $a sivua';
 
 ?>

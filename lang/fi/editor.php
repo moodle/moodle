@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // editor.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['about'] = 'Tietoja editorista';
@@ -73,6 +73,7 @@ $string['preformatted'] = 'Muotoiltu (pre)';
 $string['preview'] = 'Esikatsele';
 $string['properties'] = 'Ominaisuudet';
 $string['redo'] = 'Palauta viimeinen toiminto';
+$string['removelink'] = 'Poista linkki';
 $string['rename'] = 'Nimeä uudelleen';
 $string['right'] = 'Oikea';
 $string['rows'] = 'Rivit';
