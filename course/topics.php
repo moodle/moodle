@@ -14,7 +14,6 @@
         } else {
             $USER->topic = $topic;
         }
-        save_session("USER");
     }
 
     if (isteacher($course->id) and isset($marker)) {

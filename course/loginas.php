@@ -18,7 +18,6 @@
         $USER = get_user_info_from_db("id", $USER->realuser);
         $USER->loggedin = true;
         $USER->site = $CFG->wwwroot;
-        save_session("USER");
         redirect($_SERVER["HTTP_REFERER"]);
         exit;
     }
@@ -42,7 +41,6 @@
     $USER->loggedin = true;
     $USER->site = $CFG->wwwroot;
     $USER->realuser = $teacher_id;
-    save_session("USER");
 
     set_moodle_cookie($USER->username);
     $student_name = "$USER->firstname $USER->lastname";

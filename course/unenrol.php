@@ -34,7 +34,6 @@
 
         if ($user->id == $USER->id) {
             unset($USER->student["$id"]);
-            save_session("USER");
             redirect("$CFG->wwwroot");
         }
         

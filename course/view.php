@@ -33,7 +33,6 @@
             } else if ($edit == "off") {
                 $USER->editing = false;
             }
-            save_session("USER");
         }
     }
 
@@ -43,11 +42,9 @@
         } else if ($help == "off") {
             $USER->help = false;
         } 
-        save_session("USER");
     }
 
     $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
-    save_session("SESSION");
 
     if (! $course->category) {      // This course is not a real course.
         redirect("$CFG->wwwroot/");

@@ -74,7 +74,6 @@
                         }
 
                         $USER->teacher[$newcourseid] = true;
-                        save_session("USER");
 
                         redirect("view.php?id=$newcourseid", get_string("changessaved"));
                     }

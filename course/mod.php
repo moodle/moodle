@@ -9,7 +9,6 @@
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
             unset($SESSION->returnpage);
-            save_session("SESSION");
             redirect($return);
         } else {
             redirect("view.php?id=$mod->course");
@@ -22,7 +21,6 @@
         if (isset($SESSION->modform)) {   // Variables are stored in the session
             $mod = $SESSION->modform;
             unset($SESSION->modform);
-            save_session("SESSION");
         } else {
             $mod = (object)$_POST;
         }
@@ -94,7 +92,6 @@
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
             unset($SESSION->returnpage);
-            save_session("SESSION");
             redirect($return);
         } else {
             redirect("view.php?id=$mod->course");
@@ -192,7 +189,6 @@
 
         if (isset($return)) {  
             $SESSION->returnpage = "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
-            save_session("SESSION");
         }
 
         $form->coursemodule = $cm->id;
@@ -276,7 +272,6 @@
     }
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
-    save_session("SESSION");
 
     $modform = "../mod/$module->name/mod.html";
 
