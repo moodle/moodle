@@ -249,7 +249,7 @@ function assignment_get_all_submissions($assignment, $sort="timemodified", $dir=
                                    {$CFG->prefix}user_students s,
                                    {$CFG->prefix}user u
                              WHERE a.userid = s.userid
-			                   AND u.id = a.userid
+                               AND u.id = a.userid
                                AND s.course = '$assignment->course'
                                AND a.assignment = '$assignment->id' 
                           ORDER BY $sort");
