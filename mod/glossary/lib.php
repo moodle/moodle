@@ -243,7 +243,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
             $user = get_record("user","id",$entry->userid);
             $fullname = fullname($user, $isteacher);
             echo "<p><font size=1>$date - $fullname<br>";
-            echo "\"<a href=\"$CFG->wwwroot/mod/glossary/$entry->url\">";
+            echo "\"<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid&mode=entry&hook=$entry->id\">";
             echo "$entry->concept";
             echo "</a>\"</font></p>";
         }

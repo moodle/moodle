@@ -6,7 +6,9 @@
     $debug = 0;
     $CFG->startpagetime = microtime();            
     
-    require_variable($id);           // Course Module ID
+    optional_variable($id);           // Course Module ID
+    optional_variable($g);            // Glossary ID
+
     optional_variable($tab,GLOSSARY_NO_VIEW); // browsing entries by categories?
 
     optional_variable($mode,"");  // [ "term"   | "entry"  | "cat"     | "date" | 
@@ -25,15 +27,29 @@
     optional_variable($show,"");       // [ concept | alias ] => mode=term hook=$show
     optional_variable($displayformat,-1);  // override of the glossary display format
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
-        error("Course Module ID was incorrect");
-    }     
-    if (! $course = get_record("course", "id", $cm->course)) {
-        error("Course is misconfigured");
-    }     
-    if (! $glossary = get_record("glossary", "id", $cm->instance)) {
-        error("Course module is incorrect");
-    } 
+    if (!empty($id)) {
+        if (! $cm = get_record("course_modules", "id", $id)) {
+            error("Course Module ID was incorrect");
+        }     
+        if (! $course = get_record("course", "id", $cm->course)) {
+            error("Course is misconfigured");
+        }     
+        if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+            error("Course module is incorrect");
+        } 
+    } else if (!empty($g)) {
+        if (! $glossary = get_record("glossary", "id", $g)) {
+            error("Course module is incorrect");
+        } 
+        if (! $course = get_record("course", "id", $glossary->course)) {
+            error("Could not determine which course this belonged to!");
+        }     
+        if (!$cm = get_coursemodule_from_instance("glossary", $glossary->id, $course->id)) {
+            error("Could not determine which course module this belonged to!");
+        }
+    } else {
+        error("Must specify glossary ID or course module ID");
+    }
     
 /// redirecting if adding a new entry
     if ($tab == GLOSSARY_ADDENTRY_VIEW ) {
@@ -394,7 +410,7 @@
                 
                 if ( !$tableisopen ) {
                     if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
-                        $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE or $mode == 'entry') {
+                        $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE ) {
                         print_simple_box_start("center","95%","#ffffff","5","generalbox");
                         $tableisopen = 1;
                     }
@@ -420,7 +436,7 @@
         }
         if ( $tableisopen ) {
             if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
-                $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE or $mode == 'entry') {
+                $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
                 print_simple_box_end();
                 $tableisopen = 0;
             }
