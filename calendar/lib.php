@@ -530,7 +530,7 @@ function calendar_top_controls($type, $data) {
             $prevlink = calendar_get_link_tag('&lt;&lt;', 'view.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
             $content .= '<table class="generaltable" style="width: 100%;"><tr>';
             $content .= '<td style="text-align: left; width: 12%;">'.$prevlink."</td>\n";
-            $content .= '<td style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></td>\n";
+            $content .= '<td style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;course='.$data['id'].'&amp;', 1, $data['m'], $data['y']).'">'.strftime(get_string('strftimemonthyear'), $time)."</a></td>\n";
             $content .= '<td style="text-align: right; width: 12%;">'.$nextlink."</td>\n";
             $content .= '</tr></table>';
         break;

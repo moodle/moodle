@@ -47,6 +47,7 @@
     require_login();
 
     optional_variable($_GET['view'], 'upcoming');
+    optional_variable($_GET['course'], 0);
     optional_variable($_GET['cal_d']);
     optional_variable($_GET['cal_m']);
     optional_variable($_GET['cal_y']);
@@ -88,6 +89,13 @@
         case 'upcoming':
             $pagetitle = get_string('upcomingevents', 'calendar');
         break;
+    }
+
+    // If a course has been supplied in the URL, change the filters to show that one
+    if(!empty($_GET['course'])) {
+        if(is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
+            $SESSION->cal_courses_shown = $_GET['course'];
+        }
     }
 
     if(isguest($USER->id)) {
@@ -211,7 +219,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         foreach ($events as $event) {
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
                 unset($event->time);
-                calendar_print_event($event);  
+                calendar_print_event($event);
 
             } else {                                                                 // Save this for later
                 $underway[] = $event;
@@ -222,7 +230,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         if (!empty($underway)) {
             echo '<p style="text-align: center;"><strong>'.get_string('spanningevents', 'calendar').':</strong></p>';
             foreach ($underway as $event) {
-                calendar_print_event($event);  
+                calendar_print_event($event);
             }
         }
     }
@@ -494,8 +502,10 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         $text = '<div style="float: left;">'.get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming').'</div><div style="float: right;">';
         $text.= '<form style="display: inline;" action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<input type="hidden" name="action" value="new" />';
+        /*
         $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
         $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';
+        */
         $text.= '<input type="submit" value="'.get_string('newevent', 'calendar').'" />';
         $text.= '</form></div>';
     }
@@ -558,11 +568,11 @@ function calendar_print_event($event) {
             $editlink   = "$CFG->wwwroot/mod/$event->modulename/view.php?id=$event->cmid";
             $deletelink = "$CFG->wwwroot/course/mod.php?delete=$event->cmid";
         }
-        echo ' <a href="'.$editlink.'"><img 
-                  src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'" 
+        echo ' <a href="'.$editlink.'"><img
+                  src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'"
                   title="'.get_string('tt_editevent', 'calendar').'" /></a>';
-        echo ' <a href="'.$deletelink.'"><img 
-                  src="'.$CFG->pixpath.'/t/delete.gif" alt="'.get_string('tt_deleteevent', 'calendar').'" 
+        echo ' <a href="'.$deletelink.'"><img
+                  src="'.$CFG->pixpath.'/t/delete.gif" alt="'.get_string('tt_deleteevent', 'calendar').'"
                   title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
         echo '</div>';
     }
@@ -598,7 +608,7 @@ function calendar_course_filter_selector($getvars = '') {
         $selected = '';
     }
 
-    $form = popup_form(CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=', 
+    $form = popup_form(CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=',
                        $courseoptions, 'cal_course_flt', $selected, '', '', '', true);
 
     return str_replace('<form', '<form style="display: inline;"', $form);
