@@ -4,8 +4,9 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    require_login();
     require_variable($id);
+
+    require_login();
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");

@@ -4,6 +4,8 @@
 	require_once("../config.php");
 	require_once("lib.php");
 
+    require_login();
+
     if (!isadmin()) {
         error("Only administrators can use this course!");
     }

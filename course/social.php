@@ -1,4 +1,4 @@
-<?  // $Id$
+<?php  // $Id$
     // social.php - course format featuring social forum
     //              included from view.php
     
@@ -8,10 +8,10 @@
     $leftwidth = 210;
 ?>
 
-<TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
-  <TR>
-    <TD WIDTH="<?=$leftwidth?>" VALIGN="TOP"> 
-      <? 
+<table width="100%" border="0" cellspacing="5" cellpadding="5">
+  <tr>
+    <td width="<?php echo $leftwidth?>" valign="top"> 
+      <?php 
       $moddata[]="<a title=\"".get_string("listofallpeople")."\" href=\"../user/index.php?id=$course->id\">".get_string("participants")."</a>";
       $modicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
       $editmyprofile = "<a title=\"$USER->firstname $USER->lastname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".
@@ -57,7 +57,11 @@
           } else {
               $subtext = get_string("subscribe", "forum");
           }
-          $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0><tr><td>".get_string("socialheadline")."</td><td align=right><font size=1><a href=\"../mod/forum/subscribe.php?id=$social->id\">$subtext</a></td></tr></table>";
+          $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0><tr><td>".
+                         get_string("socialheadline").
+                         "</td><td align=right><font size=1>".
+                         "<a href=\"../mod/forum/subscribe.php?id=$social->id\">$subtext</a></td>".
+                         "</tr></table>";
           print_heading_block($headertext);
           echo "<img alt=\"\" height=7 src=\"../pix/spacer.gif\"><br>";
     
@@ -67,7 +71,7 @@
           notify("Could not find or create a social forum here");
       }
       ?>
-    </TD> 
-  </TR> 
-</TABLE>
+    </td> 
+  </tr> 
+</table>
 

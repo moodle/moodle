@@ -22,7 +22,7 @@
         }
     }
 
-    require_login($id);
+    require_login($course->id);
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 

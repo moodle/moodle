@@ -8,11 +8,11 @@
     require_variable($id);              // course id
     optional_variable($download, "");   // to download data 
 
+    require_login();
+
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
     }
-
-	require_login($course->id);
 
     if (!isteacher($course->id)) {
         error("Only teachers can use this page!");

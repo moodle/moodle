@@ -6,6 +6,8 @@
 
     require_variable($id);    // Week ID
 
+    require_login();
+
     if (! $section = get_record("course_sections", "id", $id)) {
         error("Course section is incorrect");
     }
@@ -14,8 +16,6 @@
         error("Could not find the course!");
     }
 
-    require_login($course->id);
-    
     if (!isteacher($course->id)) {
         error("Only teachers can edit this!");
     }

@@ -8,7 +8,7 @@
     optional_variable($user, 0); // User to display
     optional_variable($date, 0); // Date to display
 
-    require_login($id);
+    require_login();
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");

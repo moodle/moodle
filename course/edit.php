@@ -6,18 +6,17 @@
 
     optional_variable($id, 0);   // course id
 
+    require_login();
+
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {
             error("Course ID was incorrect");
         }
 
-	    require_login($course->id);
-
         if (!isteacher($course->id)) {
             error("Only teachers can edit the course!");
         }
     } else {  // Admin is creating a new course
-        require_login();
 
         if (!iscreator()) {
             error("Only administrators and teachers can use this page");

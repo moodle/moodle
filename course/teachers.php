@@ -6,11 +6,11 @@
 
     require_variable($id);   // course id
 
+	require_login();
+
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
     }
-
-	require_login($course->id);
 
     if (!isteacher($course->id)) {
         error("Only teachers can edit the course!");
