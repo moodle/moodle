@@ -222,10 +222,10 @@
         print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype).'</a>');
     }
     if ($user->yahoo) {
-        print_row(get_string('yahooid').':', s($user->yahoo));
+        print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.s($user->yahoo).'&amp;.src=pg">'.s($user->yahoo).'</a>');
     }
     if ($user->aim) {
-        print_row(get_string('aimid').':', s($user->aim));
+        print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.s($user->aim).'">'.s($user->aim).'</a>');
     }
     if ($user->msn) {
         print_row(get_string('msnid').':', s($user->msn));
