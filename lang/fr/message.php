@@ -5,6 +5,7 @@ $string['ago'] = 'Il y a $a';
 $string['allmine'] = 'Tous mes messages reçus ou envoyés';
 $string['allstudents'] = 'Tous les messages entre les étudiants du cours';
 $string['allusers'] = 'Tous les messages de tous les utilisateurs';
+$string['backupmessageshelp'] = 'Si ce paramètre est activé, les messages instantanés seront inclus dans les sauvegardes automatiques du site';
 $string['beepnewmessage'] = 'Bip à l\'arrivée d\'un message';
 $string['blockcontact'] = 'Bloquer ce contact';
 $string['blockedmessages'] = '$a message(s) de/pour des utilisateurs bloqués';
