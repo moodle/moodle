@@ -68,7 +68,7 @@
         not_found();
     }
 
-    $filename = $instance.'.xml';;
+    $filename = $instance.'.xml';
     $pathname = $CFG->dataroot.'/rss/'.$modulename.'/'.$filename;
 
     //Check that file exists
