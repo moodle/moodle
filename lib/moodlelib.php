@@ -4396,6 +4396,7 @@ function unzip_cleanfilename ($p_event, &$p_header) {
 //This function is used as callback in unzip_file() function
 //to clean illegal characters for given platform and to prevent directory traversal.
 //Produces the same result as info-zip unzip.
+    $p_header['filename'] = ereg_replace('[[:cntrl:]]', '', $p_header['filename']); //strip control chars first!
     $p_header['filename'] = ereg_replace('\.\.+', '', $p_header['filename']); //directory traversal protection
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
         $p_header['filename'] = ereg_replace('[:*"?<>|]', '_', $p_header['filename']); //replace illegal chars
