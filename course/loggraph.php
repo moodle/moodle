@@ -34,6 +34,14 @@
     switch ($type) {
      case "usercourse.png":
 
+       $site = get_site();
+        
+       if ($course->id == $site->id) {
+           $courseselect = 0;
+       } else {
+           $courseselect = $course->id;
+       }
+
        $maxseconds = COURSE_MAX_LOG_DISPLAY * 3600 * 24;  // seconds
        if ($timenow - $course->startdate > $maxseconds) {
            $course->startdate = $timenow - $maxseconds;
@@ -63,7 +71,7 @@
            $timestart = $timefinish;
        }
 
-       if ($rawlogs = get_logs_usercourse($user->id, $course->id, $coursestart)) {
+       if ($rawlogs = get_logs_usercourse($user->id, $courseselect, $coursestart)) {
            foreach ($rawlogs as $rawlog) {
                $logs[$rawlog->day] = $rawlog->num;
            }

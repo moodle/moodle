@@ -1249,11 +1249,14 @@ function get_logs($select, $order) {
 function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $CFG;
 
+    if ($courseid) {
+       $courseselect = " AND course = '$courseid' ";
+    }
+
     return get_records_sql("SELECT floor((`time` - $coursestart)/86400) as day, count(*) as num 
                             FROM {$CFG->prefix}log 
                            WHERE userid = '$userid' 
-                             AND course = '$courseid'
-                             AND `time` > '$coursestart'
+                             AND `time` > '$coursestart' $courseselect
                         GROUP BY day ");
 }
 
