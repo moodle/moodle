@@ -26,9 +26,19 @@
 <tr valign=top>
         <td align=right><P><?php print_string("frontpageformat") ?>:</td>
         <td><?php 
+           $options = array("0"  =>  get_string("frontpagenews"),
+                            "1"  =>  get_string("frontpagecourselist"),
+                            "2"  =>  get_string("frontpagecategorynames"));
+           choose_from_menu ($options, "frontpage", "$form->frontpage", "");
+        ?>
+        </td>
+</tr>
+<tr valign=top>
+        <td align=right><p><?php print_string("newsitemsnumber") ?>:</td>
+        <td><?php 
            $newsitem  = get_string("newsitem");
            $newsitems = get_string("newsitems");
-           $options = array("0"  =>  get_string("showlistofcourses"),
+           $options = array("0"  =>  "0 $newsitems",
                             "1"  =>  "1 $newsitem",
                             "2"  =>  "2 $newsitems",
                             "3"  =>  "3 $newsitems",

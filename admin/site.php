@@ -17,11 +17,13 @@
 
         if (count($err) == 0) {
 
+            set_config("frontpage", $form->frontpage);
+
             $form->timemodified = time();
 
             if ($form->id) {
                 if (update_record("course", $form)) {
-                    redirect("$CFG->wwwroot/admin/index.php", get_string("changessaved"));
+                    redirect("$CFG->wwwroot/", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not update the site record! (id = $form->id)");
                 }
@@ -29,7 +31,7 @@
                 if ($newid = insert_record("course", $form)) {
                     $cat->name = get_string("miscellaneous");
                     if (insert_record("course_categories", $cat)) {
-                        redirect("$CFG->wwwroot/admin/index.php", get_string("changessaved"));
+                        redirect("$CFG->wwwroot/", get_string("changessaved"));
                     } else {
                         error("Serious Error! Could not set up a default course category!");
                     }
@@ -55,12 +57,24 @@
         $form->fullname = "";
         $form->shortname = "";
         $form->summary = "";
-        $form->newsitems = 0;
+        $form->newsitems = 3;
         $form->id = "";
         $form->category = 0;
         $form->format = "social";
         $form->newsitems = 0;
         $firsttime = true;
+    }
+
+    if (isset($CFG->frontpage)) {
+        $form->frontpage = $CFG->frontpage;
+
+    } else {
+        if ($form->newsitems > 0) {
+            $form->frontpage = 0;
+        } else {
+            $form->frontpage = 1;
+        }
+        set_config("frontpage", $form->frontpage);
     }
 
     if (empty($focus)) {
