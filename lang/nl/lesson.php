@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
+$string['accesscontrol'] = 'Toegangscontrole';
 $string['actionaftercorrectanswer'] = 'Actie na juist antwoord';
 $string['addabranchtable'] = 'Voeg een vertakkingstabel toe';
 $string['addanendofbranch'] = 'voeg het einde van een tak toe';
@@ -77,10 +78,13 @@ $string['essayscore'] = 'Cijfer voor de open vragen';
 $string['fileformat'] = 'Bestandsformaat';
 $string['firstanswershould'] = 'Het eerste antwoord moet naar de \"juiste\" pagina verwijzen';
 $string['firstwrong'] = 'Jammer genoeg verdien je dit punt niet, omdat je antwoord fout was. Wil je alleen maar voor de pret van het leren nog eens gokken (maar zonder er punten mee te verdienen)?';
+$string['flowcontrol'] = 'Controle van het verloop';
+$string['general'] = 'Algemeen';
 $string['gobacktolesson'] = 'Ga terug naar de les';
 $string['grade'] = 'Cijfer';
 $string['gradeessay'] = 'Beoordeel open vragen';
 $string['gradeis'] = 'Cijfer is $a';
+$string['gradeoptions'] = 'Beoordelingsopties';
 $string['handlingofretakes'] = 'Behandeling van nieuwe pogingen';
 $string['havenotgradedyet'] = 'Nog geen cijfer gegeven';
 $string['here'] = 'hier';
@@ -94,6 +98,7 @@ $string['leftduringtimednoretake'] = 'Je bent weggegaan tijdens een getimede les
 $string['lesson'] = '$a Les';
 $string['lessonclosed'] = 'Deze les sluit op $a.';
 $string['lessondefault'] = 'Gebruik de instellingen van deze les als standaard';
+$string['lessonformating'] = 'Opmaken van de les';
 $string['lessonmenu'] = 'Lesmenu';
 $string['lessonopen'] = 'Deze les zal openen op $a.';
 $string['lessonstats'] = 'Statistieken van de les';
@@ -143,6 +148,7 @@ $string['ongoingcustom'] = 'Dit is een les op $a->grade punten. Je hebt nu al $a
 $string['ongoingnormal'] = 'Je hebt $a->correct vragen van de $a->viewed juist beantwoord.';
 $string['or'] = 'OF';
 $string['ordered'] = 'Gesorteerd';
+$string['other'] = 'Andere';
 $string['outof'] = 'Van $a';
 $string['outoftime'] = 'Tijd is op';
 $string['overview'] = 'Overzicht';
@@ -203,9 +209,6 @@ $string['teachertimerwarning'] = 'De timer werkt enkel voor leerlingen. Test de 
 $string['thatsthecorrectanswer'] = 'Dat is het juiste antwoord';
 $string['thatsthewronganswer'] = 'Dat is het verkeerde antwoord';
 $string['thefollowingpagesjumptothispage'] = 'Volgende pagina verwijst naar deze pagina';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['thispage'] = 'Deze pagina';
 $string['timed'] = 'Met tijdslimiet';
 $string['timeremaining'] = 'Resterende tijd';

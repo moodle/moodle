@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['action'] = 'Actie';
@@ -122,6 +122,7 @@ $string['blockconfigbad'] = 'Dit blok is niet juist geïmplementeerd en kan dus g
 $string['blockdeleteconfirm'] = 'Je gaat het blok \'$a\' volledig verwijderen. Hiermee zal alles in de databank dat met dit blok geassocieerd is verwijderd worden. Ben je ZEKER dat je hiermee verder wil gaan?';
 $string['blockdeletefiles'] = 'Alle gegevens die met het blok \'$a->block\' geassocieerd zijn, zijn verwijderd uit de databank. Om het verwijderen af te ronden (en om te verhinderen dat het blok zich opnieuw zou installeren), moet je de map $a->directory van je server verwijderen';
 $string['blocks'] = 'Blokken';
+$string['blocksaddedit'] = 'Blokken toevoegen/bewerken';
 $string['blocksetup'] = 'Installeren van de tabellen voor blokken';
 $string['blocksuccess'] = '$a tabellen zijn juist geïnstalleerd';
 $string['bycourseorder'] = 'In volgorde van vak';
@@ -203,6 +204,7 @@ $string['configloglifetime'] = 'Dit specificeert de lengte van de periode waarin
 $string['configlongtimenosee'] = 'Als het heel lang geleden is dat een leerling heeft ingelogd wordt hij/zij automatisch uit de vakken verwijderd. Deze parameter bepaalt deze tijdlimiet.';
 $string['configmaxbytes'] = 'Dit bepaalt de maximumgrootte van geüploade bestanden in heel de site. De instelling is beperkt door de PHP-instelling upload_max_filesize en de Apache-instelling LimitRequestBody. Anderzijds beperkt maxbytes het bereik van groottes dat gekozen kan worden op vak- of moduleniveau.';
 $string['configmaxeditingtime'] = 'Dit bepaalt hoe lang mensen de tijd hebben om hun forumbijdrage, logboek, feedback en dergelijke te wijzigen. Meestal is 30 minuten een goede tijd.';
+$string['configmessaging'] = 'Wil je dat het boodschappensysteem voor site-gebruikers ingeschakeld wordt?';
 $string['confignoreplyaddress'] = 'Soms verzendt Moodle e-mails voor een gebruiker (bijvoorbeeld bij forumberichten) Het e-mailadres dat je hier instelt wordt gebruikt als \"From\"-adres voor die gebruikers die ervoor gekozen hebben dat andere gebruikers niet rechtstreeks op hun mail mogen kunnen antwoorden (bijvoorbeeld wanneer een gebruiker zijn e-mailadres privé wil houden';
 $string['confignotifyloginfailures'] = 'Als er mislukte aanmeldingen gelogd worden, dan kunnen er e-mailnotificaties verstuurd worden. Wie moet deze notificaties zien?';
 $string['confignotifyloginthreshold'] = 'Als notificaties over mislukte aanmeldingen verzonden moeten worden, hoeveel aanmeldingspogingen  door één gebruiker of vanaf één IP-adres zijn het melden waard?';
@@ -254,6 +256,8 @@ $string['coursegrades'] = 'Vakcijfers';
 $string['courseinfo'] = 'Vakinformatie';
 $string['courserestore'] = 'Backup vakken terugzetten';
 $string['courses'] = 'Vakken';
+$string['coursescategory'] = 'Vakken in dezelfde categorie';
+$string['coursestaught'] = 'Vakken waarin ik les geef';
 $string['courseupdates'] = 'Vakupdates';
 $string['courseuploadlimit'] = 'Uploadlimiet per vak';
 $string['create'] = 'Maak';
@@ -573,6 +577,10 @@ $string['htmleditordisabledbrowser'] = 'De HTML-editor is niet beschikbaar omdat
 $string['htmlformat'] = 'Mooie HTML-opmaak';
 $string['icqnumber'] = 'ICQ-nummer';
 $string['idnumber'] = 'Nummer (ID)';
+$string['importdata'] = 'Importeer gegevens van het vak';
+$string['importdataexported'] = 'Gegevens met succes uit het bronvak geëxporteerd.<br />Ga verder om te importeren in het doelvak.';
+$string['importdatafinished'] = 'Import volledig! Ga verder met je vak';
+$string['importdatafrom'] = 'Zoek het vak waarvan je gegevens wil importeren:';
 $string['importmetacoursenote'] = 'Gebruik dit formulier om onderliggende vakken aan je koepelvak toe te voegen (hiermee worden de aanmeldingen geïmporteerd)';
 $string['inactive'] = 'Niet actief';
 $string['include'] = 'Voeg toe';
@@ -585,6 +593,7 @@ $string['includemodules'] = 'Voeg modules toe';
 $string['includeneededusers'] = 'Voeg de nodige gebruikers toe';
 $string['includenoneusers'] = 'Voeg geen gebruikers toe';
 $string['includeuserfiles'] = 'Voeg gebruikersbestanden toe';
+$string['info'] = 'Informatie';
 $string['institution'] = 'Instituut';
 $string['invalidemail'] = 'Ongeldig e-mailadres';
 $string['invalidlogin'] = 'Ongeldige log in, probeer het nog eens';
@@ -773,6 +782,7 @@ $string['nopotentialadmins'] = 'Geen mogelijke beheerders';
 $string['nopotentialcreators'] = 'Geen mogelijke vak-aanmakers';
 $string['nopotentialstudents'] = 'Geen mogelijke leerlingen';
 $string['nopotentialteachers'] = 'Geen mogelijke leraren';
+$string['noresults'] = 'Geen resultaten';
 $string['normal'] = 'Normaal';
 $string['normalfilter'] = 'Gewoon zoeken';
 $string['nostudentsfound'] = 'Geen $a gevonden';
@@ -1067,6 +1077,7 @@ $string['userprofilefor'] = 'Het gebruikersprofiel van $a';
 $string['users'] = 'Gebruikers';
 $string['usersnew'] = 'Nieuwe gebruikers';
 $string['userzones'] = 'Gebruikerzones';
+$string['usethiscourse'] = 'Gebruik dit vak';
 $string['usingexistingcourse'] = 'Gebruik bestaand vak';
 $string['version'] = 'Versie';
 $string['view'] = 'Zien';

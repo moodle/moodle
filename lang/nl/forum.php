@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -11,13 +11,17 @@ $string['allowsdiscussions'] = 'In dit forum mag iedereen precies één discussie 
 $string['anyfile'] = 'Een bestand';
 $string['attachment'] = 'Bijlage';
 $string['bynameondate'] = 'door  $a->name  - $a->date';
+$string['configcleanreadtime'] = 'Het uur van de dag waarop oude post van de \'gelezen\' -tabel moeten verwijderd worden.';
 $string['configdisplaymode'] = 'De standaardmanier voor het weergeven van discussies als er geen methode is ingesteld.';
 $string['configenablerssfeeds'] = 'Met deze instelling kun je de mogelijkheid voor het maken van RSS-feeds inschakelen voor alle forums. Je zult wel nog voor elk forum afzonderlijk het maken van de RSS-feeds moeten  inschakelen. ';
 $string['configlongpost'] = 'Elk bericht dat langer is dan deze waarde (HTML-code niet inbegrepen) wordt als lang beschouwd.';
 $string['configmanydiscussions'] = 'Maximale aantal discussies van een forum die per pagina getoond worden';
 $string['configmaxbytes'] = 'Standaard maximumgrootte voor alle forum bijlagen op deze site (afhankelijk van vaklimieten en andere lokale instellingen)';
+$string['configoldpostdays'] = 'Aantal dagen waarna elk bericht als gelezen moet beschouwd worden.';
 $string['configreplytouser'] = 'Wil je dat de e-mail van een bericht op het forum het e-mailadres van de verstuurder bevat, zodat de ontvangers eventueel ook persoonlijk kunnen antwoorden, eerder dan via het forum? Zelfs als je hier \'Ja\' instelt, kunnen gebruikers ervoor kiezen hun e-mailadres privé te houden via hun profielpagina';
 $string['configshortpost'] = 'Elk bericht dat korter is dan deze waarde (HTML-code niet inbegrepen) wordt als kort beschouwd.';
+$string['configtrackreadposts'] = 'Zet op \'ja\' als je gelezen/niet gelezen wil bijhouden voor elke gebruiker.';
+$string['configusermarksread'] = 'Indien \'ja\' moet de lezer de berichten manueel als gelezen markeren. Indien \'nee\' wordt het bericht als gelezen gemarkeerd wanneer het geopend werd.';
 $string['couldnotadd'] = 'Door een onbekende fout was het niet mogelijk om je bericht toe te voegen .';
 $string['couldnotdeleteratings'] = 'Helaas, dit kan niet worden verwijderd omdat iemand het bericht al beoordeeld heeft';
 $string['couldnotdeletereplies'] = 'Helaas, dit kan niet worden verwijderd omdat er al op geantwoord is.';
@@ -59,6 +63,8 @@ $string['introsocial'] = 'Een open forum om te chatten over wat je maar wilt';
 $string['introteacher'] = 'Een forum alleen bestemd voor discussies en aantekeningen van leraren';
 $string['lastpost'] = 'Laatste bericht';
 $string['learningforums'] = 'Leerforums';
+$string['markread'] = 'Markeer als gelezen';
+$string['markunread'] = 'Markeer als ongelezen';
 $string['maxattachmentsize'] = 'Maximum grootte van bijlagen';
 $string['maxtimehaspassed'] = 'Helaas is de maximale tijd voor het wijzigen van dit bericht ($a) verstreken!';
 $string['message'] = 'Bericht';
@@ -147,9 +153,10 @@ $string['subscribestart'] = 'Stuur me een kopie per e-mail wanneer iemand post o
 $string['subscribestop'] = 'Ik wil geen kopie van inzendingen op dit forum per e-mail ontvangen';
 $string['subscription'] = 'Lid worden';
 $string['subscriptions'] = 'Inschrijvingen';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
+$string['unread'] = 'Niet gelezen';
+$string['unreadposts'] = 'Niet gelezen berichten';
+$string['unreadpostsnumber'] = '$a berichten niet gelezen';
+$string['unreadpostsone'] = '1 bericht niet gelezen';
 $string['unsubscribe'] = 'Zeg het lidmaatschap van dit forum op';
 $string['unsubscribed'] = 'Lidmaatschap opgezegd';
 $string['unsubscribeshort'] = 'Lidmaatschap opzeggen';

@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['about'] = 'Info';
 $string['absbottom'] = 'Absbottom';
 $string['address'] = 'Adres';
+$string['alertnoselectedtext'] = 'Je moet eerst tekst selecteren.';
 $string['alignment'] = 'Uitlijning';
 $string['alternatetext'] = 'Alternatieve tekst';
 $string['anchorhelp'] = 'Dit plaatst alleen een anker. Je moet de link nog manueel creëren';
@@ -67,6 +68,7 @@ $string['linkurl'] = 'URL';
 $string['middle'] = 'Midden';
 $string['minimize'] = 'Verklein editor';
 $string['move'] = 'Verplaats';
+$string['nolink'] = 'Voorkom het linken aan een woordenlijst';
 $string['normal'] = 'Standaard';
 $string['notimage'] = 'Het geselecteerde bestand is geen afbeelding. Kies een afbeelding.';
 $string['notset'] = 'Niet ingesteld';
