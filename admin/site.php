@@ -31,7 +31,7 @@
                 if ($newid = insert_record("course", $form)) {
                     $cat->name = get_string("miscellaneous");
                     if (insert_record("course_categories", $cat)) {
-                        redirect("$CFG->wwwroot/$CFG->admin/index.php", get_string("changessaved"));
+                        redirect("$CFG->wwwroot/$CFG->admin/index.php", get_string("changessaved"), 1);
                     } else {
                         error("Serious Error! Could not set up a default course category!");
                     }

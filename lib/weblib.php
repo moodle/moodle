@@ -1350,13 +1350,13 @@ function notice_yesno ($message, $linkyes, $linkno) {
     print_simple_box_end();
 }
 
-function redirect($url, $message="", $delay=0) {
+function redirect($url, $message="", $delay="1") {
 // Uses META tags to redirect the user, after printing a notice
 
     if (empty($message)) {
         echo "<meta http-equiv='refresh' content='$delay; url=$url'>";
     } else {
-        if (! $delay) {  
+        if (empty($delay)) {  
             $delay = 3;  // There's no point having a message with no delay
         }
         echo "<meta http-equiv='refresh' content='$delay; url=$url'>";
