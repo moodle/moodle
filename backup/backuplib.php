@@ -88,7 +88,7 @@
                     $backupable_user->info .= "student";
                 }
                 //Is needed user (exists in needed_users) 
-                if ($needed_users[$backupable_user->id]) {
+                if (isset($needed_users[$backupable_user->id])) {
                     $backupable_user->info .= "needed";
                 }
                 //Now create the backup_id record
