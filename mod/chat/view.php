@@ -138,7 +138,7 @@
             echo "</a></td><td valign=center>";
             echo "<p><font size=1>";
             echo fullname($chatuser).'<br />';
-            echo "<font color=\"#888888\">$stridle: ".format_time($lastping, $str)."</font>";
+            echo "<font color=\"#888888\">$stridle: ".format_time($lastping)."</font>";
             echo "</font></p>";
             echo "<td></tr>";
         }
