@@ -11,7 +11,8 @@
 <P align=center>
 <? print_string("formattexttype");
    echo ":&nbsp;";
-   choose_from_menu(format_text_menu(), "format", $entry->format, ""); ?>
+   choose_from_menu(format_text_menu(), "format", $entry->format, "");
+   helpbutton("textformat", get_string("formattexttype")) ?>
 </P>
 
 <P align=center>
