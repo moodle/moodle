@@ -111,6 +111,7 @@
             }
 
             
+            add_to_log(SITEID, "user", "login", "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
             
             if (user_not_fully_set_up($USER)) {
                 $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
@@ -141,9 +142,9 @@
                 }
             }
 
-            redirect($urltogo);
-            
             reset_login_count();
+
+            redirect($urltogo);
 
             die;
     
