@@ -3,9 +3,9 @@ STATUS $Id$
 
 This documment shows the current status of the backup/restore option.
 
-Backup:  WORKING. COMPLETED except workshops.
+Backup:  WORKING. COMPLETED except workshops and chats.
 
-Restore: WORKING. COMPLETED except workshops and logs.
+Restore: WORKING. COMPLETED except workshops, chats and logs.
                   
 
 ========== ========== ========== ========== ========== ==========
@@ -56,6 +56,10 @@ Backup Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files........................................DONE
+              x chats...........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+                 + files........................................NO EXISTS
               x choices.........................................DONE
                  + course data..................................DONE
                  + user data....................................DONE
@@ -160,6 +164,10 @@ Restore Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files........................................DONE
+              x chats...........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+                 + files........................................NO EXISTS
               x choices.........................................DONE
                  + course data..................................DONE
                  + user data....................................DONE
