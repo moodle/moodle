@@ -144,7 +144,7 @@
             echo '  parent.messages.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset='.get_string('thischarset').'\" />");'."\n";
             echo '  parent.messages.document.write("<base target=\"_blank\" />");'."\n";
             echo '  parent.messages.document.write("'.addslashes($stylesheetshtml).'");'."\n";
-            echo '  parent.messages.document.write("<\/head><body><div style=\"display: none\" id=\"messagestarted\">&nbsp;<\/div>");'."\n";
+            echo '  parent.messages.document.write("<\/head><body class=\"message course-1\" id=\"message-user\"><div style=\"display: none\" id=\"messagestarted\">&nbsp;<\/div>");'."\n";
             echo '}'."\n";
 
             if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$user->id'", 
