@@ -54,7 +54,7 @@
 
 /// Check settings in config.php
 
-    $dirroot = dirname(realpath("../config.php"));
+    $dirroot = dirname(realpath("../index.php"));
     if (!empty($dirroot) and $dirroot != $CFG->dirroot) {
         error("Please fix your settings in config.php:
               <P>You have:
