@@ -251,7 +251,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
         }
     }
 
-    if($page->blocks_default_position() == $position) {
+    if($page->blocks_default_position() == $position && $page->user_is_editing()) {
         blocks_print_adminblock($page, $pageblocks);
     }
 
