@@ -1692,14 +1692,14 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
         $groupsmenu[$key] = $groupname;
     }
 
-    echo '<table><tr><td>';
+    echo '<table><tr><td align="right">';
     if ($groupmode == VISIBLEGROUPS) {
         print_string('groupsvisible');
     } else {
         print_string('groupsseparate');
     }
     echo ':';
-    echo '</td><td nowrap="nowrap" align="left" width="50%">';
+    echo '</td><td nowrap="nowrap" align="left">';
     popup_form($urlroot.'&group=', $groupsmenu, 'selectgroup', $currentgroup, "", "", "", false, "self");
     echo '</tr></table>';
 
