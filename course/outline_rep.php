@@ -81,7 +81,7 @@
 
                     $result = null;
                     if ($logs = get_records_select("log", "module='$mod->modname'
-                                           AND action='view' AND info='$mod->instance'", "time ASC")) {
+                                           AND action LIKE 'view%' AND info='$mod->instance'", "time ASC")) {
 
                         $numviews = count($logs);
                         $lastlog = array_pop($logs);
