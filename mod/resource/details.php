@@ -68,6 +68,7 @@
 
             case WEBPAGE:
             case WEBLINK:
+            case PROGRAM:
                 $strexampleurl = get_string("exampleurl", "resource");
                 ?>
                 <TR VALIGN=top>
@@ -75,7 +76,7 @@
                         <P><B><?=$strtypename?>:</B></P>
                     </TD>
                     <TD>
-                        <INPUT NAME="reference" SIZE=60 VALUE="<? p($form->reference) ?>">
+                        <INPUT NAME="reference" SIZE=\"100\" VALUE="<? p($form->reference) ?>">
                     </TD>
                 </TR>
                 <TR VALIGN=top>

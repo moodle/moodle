@@ -117,6 +117,53 @@
             print_footer($course);
             break;
 
+        case PROGRAM:   // Code provided by Mark Kimes <hectorp@buckfoodsvc.com>
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+
+            $temptime = gmdate("YmdHis",time());
+
+            $temproot = $CFG->wwwroot . "/mod/resource/";
+
+            // I tried to get around this.  I really did.  But here we
+            // are, redefining the navigation resources specifically anyway.
+            // On the plus side, you can change the format of the navigation
+            // strings above without worrying what it'll do to this code.  On
+            // the negative side, you'll have to update this code if you
+            // change the structure of the navigation completely.  Bonus
+            // is that now we can have a chain of cooperative sites, each
+            // adding to the navigation string as it moves down the line,
+            // which could be quite cool.  -- Mark
+
+            if ($course->category) {
+                $tempref = "<$course->shortname><" . $temproot . "../../course/view.php?id=$course->id>" .
+                           "<$strresources><" . $temproot . "index.php?id=$course->id>";
+            } else {
+                $tempref = "<$strresources><index.php?id=$course->id>";
+            }
+
+            $tempurl = trim($resource->reference);
+
+            if ($tempquerystring = strstr($tempurl,'?')) {
+                $tempquerystring = substr($tempquerystring,1);
+                $tempurl = substr($tempurl,0,strlen($tempurl) - strlen($tempquerystring));
+            }
+            if (!empty($tempquerystring)) {
+                $tempquerystring = preg_replace("/(.*=)([^&]*)/e", 
+                                                "'\\1' . urlencode('\\2')", 
+                                                $tempquerystring);
+            }
+            $temp = $tempurl . $tempquerystring .
+                    ((strstr($tempurl,'?')) ? "&amp;" : "?") .
+                    "extern_nav=" . urlencode($tempref) .
+                    "&amp;extern_usr=" . 
+                    urlencode($USER->username) .
+                    "&amp;extern_nam=" . urlencode("$USER->firstname $USER->lastname") .
+                    "&amp;extern_tim=" . urlencode($temptime) .
+                    "&amp;extern_pwd=" .
+                    urlencode(md5($temptime . $USER->password));
+            redirect($temp);
+            break;
+
         default:
             print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
@@ -127,6 +174,5 @@
             print_footer($course);
             break;
     }
-
 
 ?>
