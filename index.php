@@ -109,7 +109,7 @@
                  $subtext = get_string("subscribe", "forum");
              }
              $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0><tr>
-                            <td>$newsforum->name</td>
+                            <td class=\"headingblock\">$newsforum->name</td>
                             <td align=right><font size=1>
                             <a href=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</a>
                             </td></tr></table>";
