@@ -314,7 +314,11 @@ function assignment_file_area($assignment, $user) {
 }
 
 function assignment_get_submission($assignment, $user) {
-    return get_record("assignment_submissions", "assignment", $assignment->id, "userid", $user->id);
+    $record = get_record("assignment_submissions", "assignment", $assignment->id, "userid", $user->id);
+    if (!empty($record->timemodified)) {
+        return $record;
+    }
+    return NULL;
 }
 
 function assignment_print_difference($time) {
