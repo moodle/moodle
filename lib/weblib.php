@@ -680,19 +680,19 @@ function user_login_string($course, $user=NULL) {
 
     if (isset($user->realuser)) {
         if ($realuser = get_record("user", "id", $user->realuser)) {
-            $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&return=$realuser->id\">$realuser->firstname $realuser->lastname</A>] ";
+            $realuserinfo = " [<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&return=$realuser->id\">$realuser->firstname $realuser->lastname</A>] ";
         }
     } else {
         $realuserinfo = "";
     }
 
     if (isset($user->id) and $user->id) {
-        $username = "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A>";
+        $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a>";
         $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
-                      " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
+                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a>)";
     } else {
         $loggedinas = get_string("loggedinnot", "moodle").
-                      " (<A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A>)";
+                      " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a>)";
     }
     return $loggedinas;
 }
