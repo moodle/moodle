@@ -1410,7 +1410,7 @@ function sync_metacourses() {
 
 function sync_metacourse($metacourseid) {
 
-    global $CFG;
+    global $CFG,$db;
 
     if (!$metacourse = get_record("course","id",$metacourseid)) {
         return false;
@@ -1426,21 +1426,50 @@ function sync_metacourse($metacourseid) {
         return true;
     }
 
-
     // this will return a list of userids from user_student for enrolments in the metacourse that shouldn't be there.
-    $sql = "SELECT DISTINCT parent.userid,1 
-            FROM {$CFG->prefix}course_meta meta 
+    $sql = "SELECT parent.userid,max(child.course) as course 
+            FROM {$CFG->prefix}course_meta meta
               JOIN {$CFG->prefix}user_students parent 
-                ON meta.parent_course = parent.course 
-              LEFT OUTER JOIN {$CFG->prefix}user_students child
-                ON meta.child_course = child.course 
+                ON meta.parent_course = parent.course
+              LEFT OUTER JOIN {$CFG->prefix}user_students child 
+                ON child.course = meta.child_course 
                 AND child.userid = parent.userid
-                WHERE child.course IS NULL
-                AND meta.parent_course = $metacourseid";
+              WHERE  meta.parent_course = $metacourseid
+              GROUP BY child.course,parent.userid 
+              ORDER BY parent.userid,child.course";
 
-    if ($enrolmentstodelete = get_records_sql($sql)) {
+    $res = $db->Execute($sql);
+
+    //iterate results
+    $enrolmentstodelete = array();
+    while( !$res->EOF && isset($res->fields) ) {
+        $enrolmentstodelete[] = $res->fields;
+        $res->MoveNext();
+    }
+
+    if (!empty($enrolmentstodelete)) {
+        $last->id = 0;
+        $last->course = 0;
         foreach ($enrolmentstodelete as $enrolment) {
-            unenrol_student($enrolment->userid,$metacourseid); // doing it this way for forum subscriptions etc.
+            $enrolment = (object)$enrolment;
+            if (count($enrolmentstodelete) == 1 && empty($enrolment->course)) {
+                unenrol_student($enrolment->userid,$metacourseid);
+                break;
+            }
+            if ($last->id != $enrolment->userid) { // we've changed
+                if (empty($last->course) && !empty($last->id)) {
+                    unenrol_student($last->id,$metacourseid); // doing it this way for forum subscriptions etc.
+                }
+                $last->course = 0;
+                $last->id = $enrolment->userid;
+            }
+
+            if (!empty($enrolment->course)) {
+                $last->course = $enrolment->course;
+            }
+        }
+        if (!empty($last->id) && empty($last->course)) {
+            unenrol_student($last->id,$metacourseid); // doing it this way for forum subscriptions etc.
         }
     }
 
