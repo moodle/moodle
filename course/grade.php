@@ -59,7 +59,7 @@
                                              "height=\"16\" width=\"16\" alt=\"$mod->modfullname\" /></a>";
                                     $columnhtml[] = "$image ".
                                                  "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                 "$instance->name".
+                                                 format_string($instance->name,true).
                                                  "</a>";
         
                                     if (empty($modgrades->grades[$USER->id])) {

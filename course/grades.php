@@ -107,15 +107,15 @@
                                 if ($mod->visible) {
                                     $columnhtml[] = "$image ".
                                                  "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                 "$instance->name".
+                                                 format_string($instance->name,true).
                                                  "</a>$maxgradehtml";
                                 } else {
                                     $columnhtml[] = "$image ".
                                                  "<a class=\"dimmed\" href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                 "$instance->name".
+                                                 format_string($instance->name,true).
                                                  "</a>$maxgradehtml";
                                 }
-                                $columns[] = "$mod->modfullname: $instance->name - $maxgrade";
+                                $columns[] = "$mod->modfullname: ".format_string($instance->name)." - $maxgrade";
     
                                 foreach ($students as $student) {
                                     if (!empty($modgrades->grades[$student->id])) {
