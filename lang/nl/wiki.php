@@ -24,6 +24,7 @@ $string['initialcontent'] = 'Wiki inhoud bij start';
 $string['modulename'] = 'Wiki';
 $string['modulenameplural'] = 'Wikis';
 $string['nohtml'] = 'Geen HTML';
+$string['nowikicreated'] = 'Je kunt hier geen wiki maken en er is nog geen gemaakt om te bekijken.';
 $string['otherwikis'] = 'Andere Wikis';
 $string['pageactions'] = 'Pagina activiteiten';
 $string['pageinfo'] = 'Pagina informatie';
