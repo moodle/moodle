@@ -145,7 +145,9 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             //}
 
             if ($oldfield != "\"\"") {
-                execute_sql("ALTER TABLE {$CFG->prefix}$table RENAME COLUMN $oldfield TO $field");
+                if ($field != $oldfield) {
+                    execute_sql("ALTER TABLE {$CFG->prefix}$table RENAME COLUMN $oldfield TO $field");
+                }
             } else {
                 execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
             }
@@ -1124,13 +1126,11 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
     }
 
     $teachertable = "";
-    $teachergroup = "";
     $visiblecourses = "";
     if (!empty($USER)) {  // May need to check they are a teacher
         if (!iscreator()) {
             $visiblecourses = "AND ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
             $teachertable = ", {$CFG->prefix}user_teachers t";
-            $teachergroup = "GROUP BY c.id";
         }
     } else {
         $visiblecourses = "AND c.visible > 0";
@@ -1138,7 +1138,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 
     $selectsql = "{$CFG->prefix}course c $teachertable $categoryselect $visiblecourses";
 
-    return get_records_sql("SELECT $fields FROM $selectsql $teachergroup ORDER BY $sort");
+    return get_records_sql("SELECT DISTINCT $fields FROM $selectsql ORDER BY $sort");
 }
 
 
@@ -1155,13 +1155,11 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     }
 
     $teachertable = "";
-    $teachergroup = "";
     $visiblecourses = "";
     if (!empty($USER)) {  // May need to check they are a teacher
         if (!iscreator()) {
             $visiblecourses = "AND ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
             $teachertable = ", {$CFG->prefix}user_teachers t";
-            $teachergroup = "GROUP BY c.id";
         }
     } else {
         $visiblecourses = "AND c.visible > 0";
@@ -1186,7 +1184,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 
     $totalcount = count_records_sql("SELECT COUNT(DISTINCT c.id) FROM $selectsql");
 
-    return get_records_sql("SELECT $fields FROM $selectsql $teachergroup ORDER BY $sort $limit");
+    return get_records_sql("SELECT DISTINCT $fields FROM $selectsql ORDER BY $sort $limit");
 }
 
 
