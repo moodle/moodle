@@ -23,10 +23,10 @@ function mediaplugin_filter($courseid, $text) {
 
         $replace  = '\\0&nbsp;<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
-        $replace .= ' width="35" height="18" id="mp3player" align="">';
-        $replace .= " <param name=\"movie\" value=\"$CFG->wwwroot/filter/mediaplugin/mp3player.swf?src=\\2.mp3\">";
-        $replace .= ' <param name="quality" value="high">';
-        $replace .= ' <param name="bgcolor" value="#333333">';
+        $replace .= ' width="35" height="18" id="mp3player">';
+        $replace .= " <param name=\"movie\" value=\"$CFG->wwwroot/filter/mediaplugin/mp3player.swf?src=\\2.mp3\" />";
+        $replace .= ' <param name="quality" value="high" />';
+        $replace .= ' <param name="bgcolor" value="#333333" />';
         $replace .= " <embed src=\"$CFG->wwwroot/filter/mediaplugin/mp3player.swf?src=\\2.mp3\" ";
         $replace .= "  quality=\"high\" bgcolor=\"#333333\" width=\"35\" height=\"18\" name=\"mp3player\" ";
         $replace .= ' type="application/x-shockwave-flash" ';
@@ -42,9 +42,9 @@ function mediaplugin_filter($courseid, $text) {
 
         $replace  = '\\0<p class="mediaplugin"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
-        $replace .= ' width="400" height="300" id="mp3player" align="">';
-        $replace .= " <param name=\"movie\" value=\"\\2.swf\">";
-        $replace .= ' <param name="quality" value="high">';
+        $replace .= ' width="400" height="300" id="mp3player">';
+        $replace .= " <param name=\"movie\" value=\"\\2.swf\" />";
+        $replace .= ' <param name="quality" value="high" />';
         $replace .= " <embed src=\"\\2.swf\" ";
         $replace .= "  quality=\"high\" width=\"400\" height=\"300\" name=\"flashfilter\" ";
         $replace .= ' type="application/x-shockwave-flash" ';
@@ -61,7 +61,7 @@ function mediaplugin_filter($courseid, $text) {
         $replace  = '\\0<p class="mediaplugin"><object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
         $replace .= '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
         $replace .= '        height="300" width="400"';
-        $replace .= '        id="quicktime" align="" type="application/x-oleobject">';
+        $replace .= '        id="quicktime" type="application/x-oleobject">';
         $replace .= "<param name=\"src\" value=\"\\2.mov\" />";
         $replace .= '<param name="autoplay" value="false" />';
         $replace .= '<param name="loop" value="true" />';
@@ -83,8 +83,8 @@ function mediaplugin_filter($courseid, $text) {
         $replace  = '\\0<p class="mediaplugin"><object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
         $replace .= ' codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
         $replace .= ' standby="Loading Microsoft® Windows® Media Player components..." ';
-        $replace .= ' id="msplayer" align="" type="application/x-oleobject">';
-        $replace .= "<param name=\"Filename\" value=\"\\2.wmv\">";
+        $replace .= ' id="msplayer" type="application/x-oleobject">';
+        $replace .= "<param name=\"Filename\" value=\"\\2.wmv\" />";
         $replace .= '<param name="ShowControls" value="true" />';
         $replace .= '<param name="AutoRewind" value="true" />';
         $replace .= '<param name="AutoStart" value="false" />';
@@ -108,9 +108,9 @@ function mediaplugin_filter($courseid, $text) {
         $search = '/<a(.*?)href=\"([^<]+)\.(mpe?g)\"([^>]*)>(.*?)<\/a>/i';
 
         $replace = '\\0<p class="mediaplugin"><object width="240" height="180">';
-        $replace .= '<param name="src" value="\\2.\\3">';
-        $replace .= '<param name="controller" value="true">';
-        $replace .= '<param name="autoplay" value="false">';
+        $replace .= '<param name="src" value="\\2.\\3" />';
+        $replace .= '<param name="controller" value="true" />';
+        $replace .= '<param name="autoplay" value="false" />';
         $replace .= '<embed src="\\2.\\3" width="240" height="180" controller="true" autoplay="false"> </embed>';
         $replace .= '</object></p>';
         
@@ -121,9 +121,9 @@ function mediaplugin_filter($courseid, $text) {
         $search = '/<a(.*?)href=\"([^<]+)\.avi\"([^>]*)>(.*?)<\/a>/i';
 
         $replace = '\\0<p class="mediaplugin"><object width="240" height="180">';
-        $replace .= '<param name="src" value="\\2.avi">';
-        $replace .= '<param name="controller" value="true">';
-        $replace .= '<param name="autoplay" value="false">';
+        $replace .= '<param name="src" value="\\2.avi" />';
+        $replace .= '<param name="controller" value="true" />';
+        $replace .= '<param name="autoplay" value="false" />';
         $replace .= '<embed src="\\2.avi" width="240" height="180" controller="true" autoplay="false"> </embed>';
         $replace .= '</object></p>';
     
