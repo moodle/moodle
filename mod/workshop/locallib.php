@@ -1874,7 +1874,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             $showgrades = true;
             }
             
-        echo "<center><table border=\"1\" width=\"30%\"><tr>
+        echo "<center><table border=\"1\" width=\"95%\"><tr>
             <td align=\"center\" bgcolor=\"$THEME->cellcontent\">\n";
         if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
             error ("Workshop_print_assessment: Submission record not found");
@@ -1910,7 +1910,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     print_string("authorofsubmission", "workshop");
                     }
                 echo " ".get_string("on", "workshop", userdate($comment->timecreated))."</b></p></td></tr><tr><td>\n";
-                echo text_to_html($comment->comments)."&nbsp;\n";
+                echo format_text($comment->comments)."&nbsp;\n";
                 // add the links if needed
                 if ($firstcomment and $showcommentlinks and !$assessment->timeagreed) {
                     // show links depending on who doing the viewing
@@ -2005,7 +2005,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 $iplus1 = $i+1;
                 echo "<tr valign=\"top\">\n";
                 echo "  <td align=\"right\"><p><b>". get_string("element","workshop")." $iplus1:</b></p></td>\n";
-                echo "  <td>".text_to_html($elements[$i]->description);
+                echo "  <td>".format_text($elements[$i]->description);
                 echo "</td></tr>\n";
                 echo "<tr valign=\"top\">\n";
                 echo "  <td align=\"right\"><p><b>". get_string("feedback").":</b></p></td>\n";
@@ -2018,7 +2018,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     echo "</textarea>\n";
                     }
                 else {
-                    echo text_to_html($grades[$i]->feedback);
+                    echo format_text($grades[$i]->feedback);
                     }
                 echo "  </td>\n";
                 echo "</tr>\n";
@@ -2057,7 +2057,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 $iplus1 = $i+1;
                 echo "<tr valign=\"top\">\n";
                 echo "  <td align=\"right\"><p><b>". get_string("element","workshop")." $iplus1:</b></p></td>\n";
-                echo "  <td>".text_to_html($elements[$i]->description);
+                echo "  <td>".format_text($elements[$i]->description);
                 echo "<p align=\"right\"><font size=\"1\">".get_string("weight", "workshop").": ".
                     number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font>\n";
                 echo "</td></tr>\n";
@@ -2122,7 +2122,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     echo "</textarea>\n";
                     }
                 else {
-                    echo text_to_html($grades[$i]->feedback);
+                    echo format_text($grades[$i]->feedback);
                     }
                 echo "  </td>\n";
                 echo "</tr>\n";
@@ -2163,7 +2163,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 $iplus1 = $i+1;
                 echo "<tr valign=\"top\">\n";
                 echo "  <td align=\"right\"><p><b>". get_string("element","workshop")." $iplus1:</b></p></td>\n";
-                echo "  <td>".text_to_html($elements[$i]->description);
+                echo "  <td>".format_text($elements[$i]->description);
                 echo "<p align=\"right\"><font size=\"1\">".get_string("weight", "workshop").": ".
                     number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font>\n";
                 echo "</td></tr>\n";
@@ -2226,7 +2226,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                     }
                 else {
                     if (isset($grades[$i]->feedback)) {
-                        echo text_to_html($grades[$i]->feedback);
+                        echo format_text($grades[$i]->feedback);
                         }
                     }
                 echo "&nbsp;</td>\n";
@@ -2315,7 +2315,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             for ($i=0; $i < count($elements); $i++) {
                 $iplus1 = $i+1;
                 echo "<tr valign=\"top\">\n";
-                echo "  <td>$iplus1</td><td>".text_to_html($elements[$i]->description)."</td>\n";
+                echo "  <td>$iplus1</td><td>".format_text($elements[$i]->description)."</td>\n";
                 if ($selection == $i) {
                     echo "  <td align=\"center\"><input type=\"RADIO\" name=\"grade[0]\" value=\"$i\" checked=\"checked\" /></td>\n";
                     }
@@ -2346,7 +2346,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 $iplus1 = $i+1;
                 echo "<tr valign=\"top\">\n";
                 echo "<td align=\"right\"><b>".get_string("element", "workshop")." $iplus1:</b></td>\n";
-                echo "<td>".text_to_html($elements[$i]->description).
+                echo "<td>".format_text($elements[$i]->description).
                      "<p align=\"right\"><font size=\"1\">".get_string("weight", "workshop").": ".
                     number_format($WORKSHOP_EWEIGHTS[$elements[$i]->weight], 2)."</font></td></tr>\n";
                 echo "<tr valign=\"top\">\n";
@@ -2378,7 +2378,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                             echo "  <td align=\"center\"><input type=\"RADIO\" name=\"grade[$i]\" value=\"$j\" 
                                 /></td>\n";
                         }
-                        echo "<td>".text_to_html($rubrics[$j]->description)."</td>\n";
+                        echo "<td>".format_text($rubrics[$j]->description)."</td>\n";
                     }
                     echo "<tr valign=\"top\">\n";
                     echo "  <td align=\"right\"><p><b>". get_string("feedback").":</b></p></td>\n";
@@ -2390,7 +2390,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                         }
                         echo "</textarea>\n";
                     } else {
-                        echo text_to_html($grades[$i]->feedback);
+                        echo format_text($grades[$i]->feedback);
                     }
                     echo "  </td>\n";
                     echo "</tr>\n";
@@ -2448,7 +2448,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
         } else {
         if ($assessment) {
             if (isset($assessment->generalcomment)) {
-                echo text_to_html($assessment->generalcomment);
+                echo format_text($assessment->generalcomment);
             }
         } else {
             print_string("yourfeedbackgoeshere", "workshop");
@@ -2647,7 +2647,7 @@ function workshop_print_feedback($course, $submission) {
     }
     echo "</i></font></p>";
 
-    echo text_to_html($submission->assessorcomment);
+    echo format_text($submission->assessorcomment);
     echo "</td></tr></table>";
     echo "</td></tr></table>";
 }
