@@ -2,7 +2,6 @@
 
 $string['about'] = 'À propos de cet éditeur';
 $string['absbottom'] = 'Absbottom';
-$string['middle'] = 'middle';
 $string['address'] = 'Adresse';
 $string['alignment'] = 'Alignement';
 $string['alternatetext'] = 'Texte alt';
@@ -60,7 +59,8 @@ $string['linktargetself'] = 'Même cadre (frame)';
 $string['linktargettop'] = 'Même fenêtre';
 $string['linktitle'] = 'Titre';
 $string['linkurl'] = 'URL';
-$string['middle'] = 'Milieu';
+// $string['middle'] = 'Milieu';
+$string['middle'] = 'middle';
 $string['minimize'] = 'Minimiser l\'éditeur';
 $string['move'] = 'Déplacer';
 $string['normal'] = 'Normal';
