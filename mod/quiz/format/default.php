@@ -6,6 +6,7 @@
 /// Doesn't do everything on it's own -- it needs to be extended. //
 ////////////////////////////////////////////////////////////////////
 
+// Included by ../import.php
 
 class quiz_default_format {
 

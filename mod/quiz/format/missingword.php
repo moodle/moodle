@@ -24,7 +24,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////
 
-require("default.php");
+// Based on default.php, included by ../import.php
 
 class quiz_file_format extends quiz_default_format {
 

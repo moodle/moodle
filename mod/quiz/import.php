@@ -47,6 +47,7 @@
                 error("Format not known ($form->format)");
             }
 
+            require("format/default.php");  // Parent class
             require("format/$form->format".".php");
 
             $format = new quiz_file_format();
