@@ -1,7 +1,8 @@
 <?php // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
+$string['asset'] = 'アセット';
 $string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';
 $string['autocontinue'] = '自動継続';
 $string['badmanifest'] = 'マニフェストファイルエラー: エラーログをご覧ください。';
@@ -28,6 +29,8 @@ $string['found'] = 'マニフェストファイルが見つかりました';
 $string['gradeaverage'] = '平均得点';
 $string['gradehighest'] = '最高得点';
 $string['grademethod'] = '評価方法';
+$string['gradescoes'] = 'SCOの状態';
+$string['gradesum'] = '評点の合計';
 $string['guestsno'] = 'ゲストはscormのコースを閲覧できません';
 $string['incomplete'] = '不完全';
 $string['missing_attribute'] = 'タグ $a->tag に属性 $a->attr がありません';
@@ -59,13 +62,10 @@ $string['prev'] = '前の';
 $string['regular'] = '標準マニフェストファイル';
 $string['report'] = 'レポート';
 $string['review'] = 'レビュー';
-$string['scoes'] = 'Scoes';
-$string['score'] = '得点';
+$string['scoes'] = 'SCO';
+$string['score'] = 'スコア';
 $string['syntax'] = 'シンタックスエラー';
 $string['tag_error'] = 'コンテンツに不明なタグ($a->tag) があります:  $a->value';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['too_many_attributes'] = 'タグ $a->tag のアトリビュートが多過ぎます';
 $string['too_many_children'] = 'タグ $a->tag の子タグが多過ぎます';
 $string['trackingloose'] = '警告: SCORMデータのトラッキングデータは消滅します!';
