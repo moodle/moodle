@@ -120,7 +120,7 @@ function journal_cron () {
 }
 
 function journal_print_recent_activity(&$logs, $isteacher=false) {
-    global $CFG, $COURSE_TEACHER_COLOR;
+    global $CFG;
 
     $content = false;
     $journals = NULL;

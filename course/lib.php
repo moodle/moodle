@@ -2,17 +2,17 @@
    // Library of useful functions
 
 
-if (isset($COURSE_MAX_LOG_DISPLAY)) {  // Being included again - should never happen!!
+if (defined('COURSE_MAX_LOG_DISPLAY')) {  // Being included again - should never happen!!
     return;
 }
 
-$COURSE_MAX_LOG_DISPLAY = 150;       // days
+define('COURSE_MAX_LOG_DISPLAY', 150);       // days
 
-$COURSE_MAX_LOGS_PER_PAGE = 1000;    // records
+define('COURSE_MAX_LOGS_PER_PAGE', 1000);    // records
 
-$COURSE_TEACHER_COLOR = "#990000";   // To hilight certain items that are teacher-only
+define('COURSE_LIVELOG_REFRESH', 60);        // Seconds
 
-$COURSE_LIVELOG_REFRESH = 60;        // Seconds
+define('COURSE_MAX_RECENT_PERIOD', 60480);   // A week, in seconds
 
 
 
@@ -118,7 +118,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 // It is assumed that $date is the GMT time of midnight for that day, 
 // and so the next 86400 seconds worth of logs are printed.
 
-    global $CFG, $COURSE_MAX_LOGS_PER_PAGE;
+    global $CFG;
 
     if ($course->category) {
         $selector = "WHERE l.course='$course->id' AND l.userid = u.id";
@@ -150,8 +150,8 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
     $count=0;
     $tt = getdate(time());
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
-    if (($totalcountlogs = count($logs)) > $COURSE_MAX_LOGS_PER_PAGE) {
-        $totalcountlogs = "$COURSE_MAX_LOGS_PER_PAGE/$totalcountlogs";
+    if (($totalcountlogs = count($logs)) > COURSE_MAX_LOGS_PER_PAGE) {
+        $totalcountlogs = COURSE_MAX_LOGS_PER_PAGE."/$totalcountlogs";
     }
 
     $strftimedatetime = get_string("strftimedatetime");
@@ -166,7 +166,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 
         $countlogs++;
 
-        if ($countlogs > $COURSE_MAX_LOGS_PER_PAGE) {
+        if ($countlogs > COURSE_MAX_LOGS_PER_PAGE) {
             break;
         }
 
@@ -302,18 +302,23 @@ function print_recent_activity($course) {
     // This function trawls through the logs looking for 
     // anything new since the user's last login
 
-    global $CFG, $USER, $COURSE_TEACHER_COLOR;
+    global $CFG, $USER;
 
     if (! $USER->lastlogin ) {
-        echo "<P ALIGN=CENTER><FONT SIZE=1>";
+        echo "<p align=center><font size=1>";
         print_string("welcometocourse", "", $course->shortname);
-        echo "</FONT></P>";
+        echo "</font></p>";
         return;
     } else {
-        echo "<P ALIGN=CENTER><FONT SIZE=1>";
+        echo "<p align=center><font size=1>";
         echo get_string("yourlastlogin").":<BR>"; 
         echo userdate($USER->lastlogin, get_string("strftimerecentfull"));
-        echo "</FONT></P>";
+        echo "</font></p>";
+    }
+  
+    $timestart = $USER->lastlogin;
+    if (time() - $timestart > COURSE_MAX_RECENT_PERIOD) {
+        $timestart = time() - COURSE_MAX_RECENT_PERIOD;
     }
 
     if (! $logs = get_records_select("log", "time > '$USER->lastlogin' AND course = '$course->id'", "time ASC")) {
@@ -325,7 +330,7 @@ function print_recent_activity($course) {
 
     $heading = false;
     $content = false;
-    foreach ($logs as $log) {
+    foreach ($logs as $key => $log) {
         if ($log->module == "course" and $log->action == "enrol") {
             if (! $heading) {
                 print_headline(get_string("newusers").":");
@@ -334,14 +339,19 @@ function print_recent_activity($course) {
             }
             $user = get_record("user", "id", $log->info);
             if (isstudent($course->id, $user->id)) {
-                echo "<P><FONT SIZE=1><A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A></FONT></P>";
+                echo "<p><font size=1><a href=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a></font></p>";
             }
+            unset($logs[$key]);  // No further need for it
         }
+    }
+
+    if (! $logs) {
+        return;
     }
 
     // Next, have there been any changes to the course structure?
 
-    foreach ($logs as $log) {
+    foreach ($logs as $key => $log) {
         if ($log->module == "course") {
             if ($log->action == "add mod" or $log->action == "update mod" or $log->action == "delete mod") {
                 $info = split(" ", $log->info);
@@ -377,6 +387,7 @@ function print_recent_activity($course) {
                     }
                 }
             }
+            unset($logs[$key]);  // No further need for it
         }
     }
 
@@ -390,11 +401,14 @@ function print_recent_activity($course) {
             print_headline(get_string("courseupdates").":");
             $content = true;
             foreach ($changes as $changeinfo => $change) {
-                echo "<P><FONT SIZE=1>".$change["text"]."</FONT></P>";
+                echo "<p><font size=1>".$change["text"]."</font></p>";
             }
         }
     }
 
+    if (! $logs) {
+        return;
+    }
 
     // Now display new things from each module
 
@@ -403,7 +417,7 @@ function print_recent_activity($course) {
     foreach ($mods as $mod) {
         include_once("$CFG->dirroot/mod/$mod/lib.php");
         $print_recent_activity = $mod."_print_recent_activity";
-        if (function_exists($print_recent_activity)) {
+        if ($logs and function_exists($print_recent_activity)) {
             $modcontent = $print_recent_activity($logs, isteacher($course->id));
             if ($modcontent) {
                 $content = true;
@@ -411,9 +425,8 @@ function print_recent_activity($course) {
         }
     }
 
-
     if (! $content) {
-        echo "<FONT SIZE=2>".get_string("nothingnew")."</FONT>";
+        echo "<font size=2>".get_string("nothingnew")."</font>";
     }
 }
 

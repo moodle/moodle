@@ -184,7 +184,7 @@ function assignment_cron () {
 }
 
 function assignment_print_recent_activity(&$logs, $isteacher=false) {
-    global $CFG, $COURSE_TEACHER_COLOR;
+    global $CFG;
 
     $content = false;
     $assignments = NULL;

@@ -297,7 +297,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
 }
 
 function forum_print_recent_activity(&$logs, $isteacher=false) {
-    global $CFG, $COURSE_TEACHER_COLOR;
+    global $CFG;
 
     $heading = false;
     $content = false;
@@ -322,7 +322,7 @@ function forum_print_recent_activity(&$logs, $isteacher=false) {
                     if ($forum = get_record("forum", "id", $post->forum) ) {
                         if ($forum->type == "teacher") {
                             if ($isteacher) {
-                                $teacherpost = "COLOR=$COURSE_TEACHER_COLOR";
+                                $teacheronly = "class=\"teacheronly\"";
                             } else {
                                 continue;
                             }
@@ -334,14 +334,14 @@ function forum_print_recent_activity(&$logs, $isteacher=false) {
                         $content = true;
                     }
                     $date = userdate($post->modified, $strftimerecent);
-                    echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
-                    echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
+                    echo "<p $teacheronly><font size=1>$date - $post->firstname $post->lastname<br>";
+                    echo "\"<a href=\"$CFG->wwwroot/mod/forum/$log->url\">";
                     if ($log->action == "add") {
-                        echo "<B>$post->subject</B>";
+                        echo "<b>$post->subject</b>";
                     } else {
                         echo "$post->subject";
                     }
-                    echo "</A>\"</FONT></P>";
+                    echo "</a>\"</font></p>";
                 }
             }
         }

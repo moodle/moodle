@@ -101,7 +101,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
 }
 
 function survey_print_recent_activity(&$logs, $isteacher=false) {
-    global $CFG, $COURSE_TEACHER_COLOR;
+    global $CFG;
 
     $content = false;
     $surveys = NULL;

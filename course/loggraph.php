@@ -34,9 +34,9 @@
     switch ($type) {
      case "usercourse.png":
 
-       $COURSE_MAX_LOG_DISPLAY = $COURSE_MAX_LOG_DISPLAY * 3600 * 24;  // seconds
-       if ($timenow - $course->startdate > $COURSE_MAX_LOG_DISPLAY) {
-           $course->startdate = $timenow - $COURSE_MAX_LOG_DISPLAY;
+       $maxseconds = COURSE_MAX_LOG_DISPLAY * 3600 * 24;  // seconds
+       if ($timenow - $course->startdate > $maxseconds) {
+           $course->startdate = $timenow - $maxseconds;
        }
        $timestart = $coursestart = usergetmidnight($course->startdate);
 
