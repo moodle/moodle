@@ -8,8 +8,8 @@ $string['modulenameplural'] = "Chats";
 $string['beep'] = "beep";
 $string['chatintro'] = "Introduction text";
 $string['chatname'] = "Name of this chat room";
-$string['chatreport'] = "Chat report";
-$string['currentchats'] = "Currently active chats";
+$string['chatreport'] = "Chat sessions";
+$string['currentchats'] = "Active chat sessions";
 $string['enterchat'] = "Click here to enter the chat";
 $string['idle'] = "Idle";
 $string['messagebeepseveryone'] = "\$a beeps everyone!";
@@ -20,7 +20,7 @@ $string['neverdeletemessages'] = "Never delete messages";
 $string['savemessages'] = "Save messages";
 $string['sessions'] = "Chat sessions";
 $string['strftimemessage'] = "%%H:%%M";
-$string['studentseereports'] = "Allow everyone to see reports";
-$string['viewreport'] = "View chat reports";
+$string['studentseereports'] = "Everyone can see past sessions";
+$string['viewreport'] = "View past chat sessions";
 
 ?>
