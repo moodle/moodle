@@ -21,12 +21,8 @@
         $admin->country = $CFG->country;
     }
 
-    if (!$admin->secret) {    // secret field hasn't been set yet
-        $admin->secret = random_string(15);
-    
-        if (!set_field("user", "secret", $admin->secret, "id", $admin->id)) {
-            error("Could not set admin's secret string!");
-        }
+    if (empty($CFG->siteidentifier)) {    // Unique site identification code
+        set_config('siteidentifier', random_string(32));
     }
 
 
@@ -60,7 +56,7 @@
     echo "<!-- is flagged as a new entry and will be manually checked by the list maintainer -->\n";
    
     echo "<input type=\"hidden\" name=\"url\" value=\"$CFG->wwwroot\">\n";
-    echo "<input type=\"hidden\" name=\"secret\" value=\"$admin->secret\">\n";
+    echo "<input type=\"hidden\" name=\"secret\" value=\"$CFG->siteidentifier\">\n";
     echo "<input type=\"hidden\" name=\"host\" value=\"".$_SERVER["HTTP_HOST"]."\">\n";
     echo "<input type=\"hidden\" name=\"lang\" value=\"".current_language()."\">\n";
     echo "</td></tr>\n";
