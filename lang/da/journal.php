@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.8.1 (2003011200)
+      // journal.php - created with Moodle 1.1 (2003082800)
 
 
 $string['alwaysopen'] = "Altid åben";
@@ -7,7 +7,15 @@ $string['blankentry'] = "Tomt indlæg";
 $string['daysavailable'] = "Dage til rådighed";
 $string['editingended'] = "Redigerings perioden er slut";
 $string['editingends'] = "Redigeringsperioden slutter";
+$string['entries'] = "Adgange";
 $string['feedbackupdated'] = "Feedback opdateret for \$a indlæg";
+$string['journalmail'] = "\$a->teacher har skrevet en tilbagemelding til din journal '\$a->journal'
+
+Du kan se det tilføjet til din journal:
+
+\$a->url";
+$string['journalmailhtml'] = "\$a->teacher has skrevet en tilbagemelding til din journal entry '<i>\$a->journal</i>'<br /><br />
+Du kan se det tilføjet til din <a href=\\\"\$a->url\\\">Journal entry</a>";
 $string['journalname'] = "Logbog navn";
 $string['journalquestion'] = "Logbog spørgsmål";
 $string['journalrating1'] = "Ikke tilfredsstillende";

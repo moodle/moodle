@@ -1,9 +1,16 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8.1 (2003011200)
+      // assignment.php - created with Moodle 1.1 (2003082800)
 
 
 $string['allowresubmit'] = "Tillad gentagelser";
 $string['assignmentdetails'] = "Opgave detaljer";
+$string['assignmentmail'] = "\$a->teacher har kikket det du har afleveret igennem og kommenteret det '\$a->assignment'
+
+Du kan se evt. kommentarer i slutningen af det du har afleveret på
+
+\$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher har kikket det du har afleveret igennem og kommenteret det: '<i>\$a->assignment</i>'<br /><br />
+Du kan se evt kommentarer i slutningen på <a href=\\\"\$a->url\\\">det du har afleveret</a>.";
 $string['assignmentname'] = "Opgave navn";
 $string['assignmenttype'] = "Opgave type";
 $string['description'] = "Beskrivelse";
@@ -18,6 +25,7 @@ $string['maximumsize'] = "Maximum størrelse";
 $string['modulename'] = "Opgave";
 $string['modulenameplural'] = "Opgaver";
 $string['newsubmissions'] = "Opgaver afleveret";
+$string['notgradedyet'] = "Ikke bedømt endnu";
 $string['notsubmittedyet'] = "Ikke afleveret endnu";
 $string['overwritewarning'] = "Advarsel: hvis du uploader igen, vil det erstatte den nuværende version";
 $string['saveallfeedback'] = "Gem alt mit feedback";

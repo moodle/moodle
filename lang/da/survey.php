@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.8.1 (2003011200)
+      // survey.php - created with Moodle 1.1 (2003082800)
 
 
 $string['actual'] = "Aktuel";
@@ -9,6 +9,7 @@ $string['allquestions'] = "Alle spørgsmål i nr. orden, alle studerende";
 $string['allscales'] = "Alle svar, alle studerende";
 $string['alreadysubmitted'] = "Du har allerede indgivet svar på denne evaluering";
 $string['analysisof'] = "Analyse af \$a";
+$string['answers'] = "Svar";
 $string['attls1'] = "Når jeg bedømmer hvad andre siger, fokuserer jeg på kvaliteten af det siger og ikke på persone, der siger det.";
 $string['attls10'] = "Det er vigtigt for mig at forblive objektiv, når jeg analyserer noget.";
 $string['attls10short'] = "forblive objektiv";
@@ -57,6 +58,13 @@ $string['attlsm2'] = "Læring med andre";
 $string['attlsm3'] = "Individuel læring";
 $string['attlsmintro'] = "I diskussion...";
 $string['attlsname'] = "ATTLS (20 item version)";
+$string['ciq1'] = "På hvilket tidspunkt i klassen var du mest engageret for at lære noget?";
+$string['ciq2'] = "På hvilket tidspunkt i klassen syntes du mest distanceret som elev?";
+$string['ciq3'] = "Hvilken handling fra nogen i forummer fandt du mest hjælpsomt?";
+$string['ciq4'] = "Hvilken handlig fra nogle i forummer fandt du mest underlig eller forvirrende?";
+$string['ciq5'] = "Hvad overraskede dig mest?";
+$string['ciqintro'] = "Med tanke på det sidste stykke tid i klassen, besvar spørgsmålene nedenfor.";
+$string['ciqname'] = "Kritisk hændelse";
 $string['clicktocontinue'] = "Klik her for at fortsætte";
 $string['clicktocontinuecheck'] = "Klik her for at markere og fortsæt";
 $string['colles1'] = "Min læring fokuserer på ting der interesserer mig.";
@@ -156,6 +164,7 @@ $string['downloadexcel'] = "Download data i Excel format";
 $string['downloadinfo'] = "Du kan downloade de rå data for denne undersøgelse så du kan sætte dem ind i Excel, SPSS eller et andet program.";
 $string['downloadtext'] = "Download en tekst fil";
 $string['editingasurvey'] = "Ændrer en undersøgelse";
+$string['guestsnotallowed'] = "Det er ikke tilladt gæster at besvare undersøgelser";
 $string['helpsurveys'] = "Hjælp til de forskellige undersøgelser";
 $string['howlong'] = "Hvor lang tid har du været om at færdiggøre denne undersøgelse??";
 $string['howlongoptions'] = "under 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,mere end 10";

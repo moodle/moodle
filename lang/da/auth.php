@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.8.1 (2003011200)
+      // auth.php - created with Moodle 1.1 (2003082800)
 
 
 $string['auth_dbdescription'] = "Denne metode bruger en ekstern database for at kontrollere om et givet username og password er gyldigt. Hvis konto'en er ny, kan oplysninger fra andre felter også kopieres ind i Moodle.";
@@ -24,16 +24,20 @@ $string['auth_imaptype'] = "IMAP server typen. IMAP servere kan have forskellige
 $string['auth_ldap_bind_dn'] = "Hvis du bruger bind-user til søgning, skal det angives her. Noget  med 'cn=ldapuser,ou=public,o=org'";
 $string['auth_ldap_bind_pw'] = "Password for bind-user.";
 $string['auth_ldap_contexts'] = "Liste med indhold over brugere. deldifferent indhold med ';'. For example: 'ou=users,o=org; ou=others,o=org'";
+$string['auth_ldap_create_context'] = "Hvis du tillader brugeroprettelse med email verifiering, så angiv i hvilken sammenhæng brugerne bliver oprettet. Denne sammenhæng skulle være anderledes end andre p.g.a. sikkerhedsmæssige årsager. Du behøves ikke at tilføje sammenhængen til 'ldap_context' variablen, Moodle vil automatisk søge efter brugere i denne sammenhæng.";
+$string['auth_ldap_creators'] = "List af grupper hvis medlemmer kan oprette nye kurser. Adskil flere grupper med ';'. F.eks. i stil med 'cn=teachers, ou=staff, o=myirg'";
 $string['auth_ldap_host_url'] = "Angiv LDAP host i URL-form f.eks. 'ldap://ldap.myorg.com/' eller 'ldaps://ldap.myorg.com/' ";
+$string['auth_ldap_memberattribute'] = "Angiv bruger attribut, når en bruger tilhører en gruppe. Normalt 'member'";
 $string['auth_ldap_search_sub'] = "Sæt værdi &lt;&gt; 0 hvis du vil søge efter brugere ud fra underemner.";
 $string['auth_ldap_update_userinfo'] = "Updater bruger information (fornavn, efternavn, addresse..) fra LDAP til Moodle. Se /auth/ldap/attr_mappings.php for information";
 $string['auth_ldap_user_attribute'] = "Attributten til navngivning/søgning af brugere. Sædvanligvis 'cn'.";
 $string['auth_ldapdescription'] = "Denne metode kræver godkendelse op mod en ekstern LDAP server.
-                                  Hvis det givne username/password er gyldige opretter Moodle en ny bruger i databasen                                  Dette modul kan læse bruger attributter fra en LDAP server og udfylde ønskede felter i Moodle 
-                                  For følgende logins bliver kun username og 
-                                  password  kontrolleret.";
+Hvis det givne username/password er gyldige opretter Moodle en ny bruger i databasen.     Dette modul kan læse bruger attributter fra en LDAP server og udfylde ønskede felter i Moodle 
+For følgende logins bliver kun username og password kontrolleret.";
 $string['auth_ldapextrafields'] = "Disse felter er optional.  Du kan vælge at udfylde Moodle felter på forhånd fra <B>LDAP felterne</B> som du angiver her. <P>Hvis du ikke skriver noget her, vil intet overføres fra LDAP og Moodle defaults'ene vil blive brugt i stedet.<P>I alle tilfælde vil brugeren være i stand ændre i felterne efter de har logget ind.";
 $string['auth_ldaptitle'] = "Brug en LDAP server";
+$string['auth_manualdescription'] = "Denne metode fjerner enhver måde for brugerne selv at oprette en brugerkonto. Alle brugerkonti skal laves manuelt af en admin bruger.";
+$string['auth_manualtitle'] = "Kun manuel brugeroprettelse.";
 $string['auth_nntpdescription'] = "Denne metode bruger en NNTP server for at kontrollere om de givne username og password er gyldige.";
 $string['auth_nntphost'] = "NNTP server addressen. Brug IP nummeret, ikke DNS navn.";
 $string['auth_nntpport'] = "Server port (119 er den mest almindelige)";
@@ -45,6 +49,9 @@ $string['auth_pop3host'] = "POP3 server addressen. Brug IP nummeret, ikke DNS na
 $string['auth_pop3port'] = "Server port (110 er mest almindelig)";
 $string['auth_pop3title'] = "Brug en POP3 server";
 $string['auth_pop3type'] = "Server type. Hvis din server anvender certificate security, vælg pop3cert.";
+$string['auth_user_create'] = "Tillad bruger oprettelse";
+$string['auth_user_creation'] = "Nye (anonyme) brugere kan blive oprettet v.h.a. en extern authorisations kilde og bekræftiget via email. Hvis du tillader dette, så husk at konfigurer modul-afhængig mulighed for brugeroprettelse.";
+$string['auth_usernameexists'] = "Det valgte brugernavn eksistere allerede. Vælg venlist et andet.";
 $string['authenticationoptions'] = "Godkendelses options";
 $string['authinstructions'] = "Her kan du komme med anvisninger til dine brugere om, hvordan de skal oprette username og password. Teksten du skriver her, vil blive vist på login siden. Hvis du ikke skriver noget her, vil der ikke vises noget på login siden.";
 $string['changepassword'] = "Lav password URL om";
