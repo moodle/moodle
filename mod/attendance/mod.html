@@ -7,6 +7,16 @@
       $nohtmleditorneeded = true;
     //require_once("lib.php")
 
+if (empty($form->dynsection)) {
+    $form->dynsection = 0;
+}
+if (empty($form->autoattend)) {
+    $form->autoattend = 0;
+}
+if (empty($form->grade)) {
+    $form->grade = 0;
+}
+
 // error_reporting(E_ALL);
  // if we're adding a new instance
 if (empty($form->id)) {
