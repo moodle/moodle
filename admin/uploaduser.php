@@ -17,6 +17,10 @@
         error("Could not find site-level course");
     }
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
     if (!$adminuser = get_admin()) {
         error("Could not find site admin");
     }
@@ -105,7 +109,7 @@
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
             if (!($required[$h] or $optionalDefaults[$h] or $optional[$h])) {
-                error(get_string('invalidfieldname', 'error', $h), 'uploaduser.php');
+                error(get_string('invalidfieldname', 'error', $h), 'uploaduser.php?sesskey='.$USER->sesskey);
             }
             if ($required[$h]) {
                 $required[$h] = 2;
@@ -114,7 +118,7 @@
         // check for required fields
         foreach ($required as $key => $value) {
             if ($value < 2) {
-                error(get_string('fieldrequired', 'error', $key), 'uploaduser.php');
+                error(get_string('fieldrequired', 'error', $key), 'uploaduser.php?sesskey='.$USER->sesskey);
             }
         }
         $linenum = 2; // since header is line 1
@@ -140,7 +144,7 @@
                     if ($required[$name] and !$value) {
                         error(get_string('missingfield', 'error', $name). " ".
                               get_string('erroronline', 'error', $linenum), 
-                              'uploaduser.php');
+                              'uploaduser.php?sesskey='.$USER->sesskey);
                     }
                     // password needs to be encrypted
                     else if ($name == "password") {
@@ -258,6 +262,7 @@
     echo '<center>';
     echo '<form method="post" enctype="multipart/form-data" action="uploaduser.php">'.
          $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
+         '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">'.
          '<input type="file" name="userfile" size=30>'.
          '<input type="submit" value="'.$struploadusers.'">'.
          '</form></br>';
