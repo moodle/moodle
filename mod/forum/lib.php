@@ -313,6 +313,8 @@ function forum_cron () {
         }
     }
 
+    unset($CFG->courselang);
+
     /// Now see if there are any digest mails waiting to be sent, and if we should send them
     $datenow = getdate();
     $lastcron = get_field('modules', 'lastcron', 'name', 'forum');
