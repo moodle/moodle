@@ -33,7 +33,7 @@
                   <A HREF=\"view.php?a=$assignment->id\">$assignment->name</A> -> $strupload", 
                   "", "", true);
 
-    if ($submission = assignment_get_submission($assignment, $USER)) {
+    if ($submission = get_record("assignment_submissions", "assignment", $assignment->id, "userid", $USER->id)) {
         if ($submission->grade and !$assignment->resubmit) {
             error("You've already been graded - there's no point in uploading anything");
         }
