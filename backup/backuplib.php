@@ -805,8 +805,8 @@
             //End Users tag
             fwrite ($bf,end_tag("USERS",2,true));
         } else {
-            //There isn't users. Impossible !!
-            $status = false;
+            // There aren't any users.
+            $status = true;
         }
 
         return $status;
