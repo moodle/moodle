@@ -11,6 +11,10 @@ function chat_upgrade($oldversion) {
         table_column("chat_users",    "", "groupid", "integer", "10", "unsigned", "0", "not null", "userid");
     }
 
+    if ($oldversion < 2004042500) {
+        include_once("$CFG->dirroot/mod/chat/lib.php");
+        chat_refresh_events();
+    }
 
     return true;
 }

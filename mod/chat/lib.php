@@ -43,7 +43,24 @@ function chat_add_instance($chat) {
     $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday, 
                                      $chat->chathour, $chat->chatminute);
     
-    return insert_record("chat", $chat);
+    if ($returnid = insert_record("chat", $chat)) {
+
+        $event = NULL;
+        $event->name        = $chat->name;
+        $event->description = $chat->intro;
+        $event->courseid    = $chat->course;
+        $event->groupid     = 0;
+        $event->userid      = 0;
+        $event->modulename  = 'chat';
+        $event->instance    = $returnid;
+        $event->eventtype   = $chat->schedule;
+        $event->timestart   = $chat->chattime;
+        $event->timeduration = 0;
+
+        add_event($event);
+    }
+
+    return $returnid;
 }
 
 
@@ -58,7 +75,21 @@ function chat_update_instance($chat) {
     $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday, 
                                      $chat->chathour, $chat->chatminute);
 
-    return update_record("chat", $chat);
+    if ($returnid = update_record("chat", $chat)) {
+
+        $event = NULL;
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'chat', 'instance', $chat->id)) {
+
+            $event->name        = $chat->name;
+            $event->description = $chat->intro;
+            $event->timestart   = $chat->chattime;
+
+            update_event($event);
+        }
+    }
+
+    return $returnid;
 }
 
 
@@ -188,6 +219,47 @@ function chat_get_participants($chatid, $groupid=0) {
     return ($students);
 }
 
+function chat_refresh_events($courseid = 0) {
+// This standard function will check all instances of this module
+// and make sure there are up-to-date events created for each of them.
+// If courseid = 0, then every chat event in the site is checked, else
+// only chat events belonging to the course specified are checked.
+// This function is used, in its new format, by restore_refresh_events()
+
+    if ($courseid) {
+        if (! $chats = get_records("chat", "course", $courseid)) {
+            return true;
+        }
+    } else {
+        if (! $chats = get_records("chat")) {
+            return true;
+        }
+    }
+
+    foreach ($chats as $chat) {
+        $event = NULL;
+        $event->name        = addslashes($chat->name);
+        $event->description = addslashes($chat->intro);
+        $event->timestart   = $chat->chattime;
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'chat', 'instance', $chat->id)) {
+            update_event($event);
+
+        } else {
+            $event->courseid    = $chat->course;
+            $event->groupid     = 0;
+            $event->userid      = 0;
+            $event->modulename  = 'chat';
+            $event->instance    = $chat->id;
+            $event->eventtype   = $chat->schedule;
+            $event->timeduration = 0;
+
+            add_event($event);
+        }
+    }
+    return true;
+}
+
 //////////////////////////////////////////////////////////////////////
 /// Functions that require some SQL
 
@@ -312,6 +384,12 @@ function chat_update_chat_times($chatid=0) {
                     break;
         }
         update_record("chat", $chat);
+
+        $event = NULL;           // Update calendar too
+        if ($event->id = get_field('event', 'id', 'modulename', 'chat', 'instance', $chat->id)) {
+            $event->timestart   = $chat->chattime;
+            update_event($event);
+        }
     }
 }
 
