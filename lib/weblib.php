@@ -1244,9 +1244,13 @@ function print_user($user, $course) {
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
         echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
-        if (isstudent($course->id, $user->id) and !iscreator($user->id)) {  // Includes admins
-            echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
-            echo "<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</a><br />";
+        if (!iscreator($user->id)) {  // Includes admins
+            if (isstudent($course->id, $user->id)) {  // Includes admins
+                echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
+            }
+            if ($USER->id != $user->id) {
+                echo "<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</a><br />";
+            }
         }
     } 
     echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$string->fullprofile...</a>";
