@@ -637,10 +637,12 @@ function calendar_course_filter_selector($getvars = '') {
         $courses = get_my_courses($USER->id, 'shortname');
     }
 
+    unset($courses[1]);
+
+    $courseoptions[1] = get_string('fulllistofcourses');
     foreach ($courses as $course) {
         $courseoptions[$course->id] = $course->shortname;
     }
-    $courseoptions[1] = get_string('fulllistofcourses');
 
     if (is_numeric($SESSION->cal_courses_shown)) {
         $selected = $SESSION->cal_courses_shown;
