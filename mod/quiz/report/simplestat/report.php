@@ -7,6 +7,9 @@ class quiz_report extends quiz_default_report {
     function display($quiz, $cm, $course) {     /// This function just displays the report
 
         global $CFG;
+        global $download;
+
+        optional_variable($download, "");
 
         $data = array();
         $questionorder = explode(',', $quiz->questions);
@@ -16,7 +19,8 @@ class quiz_report extends quiz_default_report {
         if ($users = get_course_students($course->id, "u.lastname ASC")) {
             foreach ($users as $user) {
 
-                $data[$user->id]->name    = "$user->firstname $user->lastname";
+                $data[$user->id]->firstname = $user->firstname;
+                $data[$user->id]->lastname = $user->lastname;
                 $data[$user->id]->grades = array(); // by default
 
                 if (!$attempts = quiz_get_user_attempts($quiz->id, $user->id)) {
@@ -38,43 +42,138 @@ class quiz_report extends quiz_default_report {
                 foreach ($questionorder as $questionid) {
                     $count++;
                     $data[$user->id]->grades[$count] = $results->grades[$questionid];
+                    $question[$count] = $questions[$questionid];
                 }
             }
         }
 
-        optional_variable($output, "");
+        $count = count($questionorder);
+        $total = array();
+        $average = array();
+        for ($i=1; $i<=$count; $i++) {
+            $total[$i] = 0.0;
+            $average[$i] = 0.0;
+        }
+
+        $datacount = 0;
+        foreach ($data as $userid => $datum) {
+            if ($datum->grades) {
+                $datacount++;
+                foreach ($datum->grades as $key => $grade) {
+                    $total[$key]+= $grade;
+                }
+            }
+        }
+
+        if ($datacount) {
+            foreach ($total as $key => $sum) {
+                $average[$key] = format_float($sum/$datacount, 2);
+            }
+        }
+
 
     /// If spreadsheet is wanted, produce one
-        if ($output = "xls") {
+        if ($download == "xls") {
+            include("$CFG->libdir/psxlsgen.php");
+            $myxls = new PhpSimpleXlsGen();
+            $myxls->totalcol = $count+1;
+
+        /// Print names of all the fields
+            $myxls->ChangePos(0,0);
+            $myxls->InsertText($quiz->name);
+    
+            for ($i=1; $i<=$count; $i++) {
+                $myxls->InsertText($i);
+            }
+        
+        /// Print all the user data
+
+            $row=1;
+            foreach ($data as $userid => $datum) {
+                $myxls->ChangePos($row,0);
+                $myxls->InsertText("$datum->firstname $datum->lastname");
+                for ($i=1; $i<=$count; $i++) {
+                    if (isset($datum->grades[$i])) {
+                        $myxls->InsertNumber($datum->grades[$i]);
+                    } else {
+                        $myxls->InsertText("");
+                    }
+                }
+                $row++;
+            }
+
+            $myxls->ChangePos($row,0);
+
+        /// Print all the averages
+            $myxls->InsertText("");
+            for ($i=1; $i<=$count; $i++) {
+                $myxls->InsertNumber($average[$i]);
+            }
+
+            $myxls->SendFileName("$quiz->name simplestat");
+        
+            exit;
         }
+    
 
     /// If a text file is wanted, produce one
-        if ($output = "xls") {
+        if ($download == "txt") {
+        /// Print header to force download
+    
+            header("Content-Type: application/download\n"); 
+            header("Content-Disposition: attachment; filename=\"$course->shortname $strgrades.txt\"");
+
+        /// Print names of all the fields
+    
+            echo "$quiz->name";
+            for ($i=1; $i<=$count; $i++) {
+                echo "\t$i";
+            }
+            echo "\n";
+        
+        /// Print all the user data
+
+            foreach ($data as $userid => $datum) {
+                echo "$datum->firstname $datum->lastname";
+                for ($i=1; $i<=$count; $i++) {
+                    echo "\t";
+                    if (isset($datum->grades[$i])) {
+                        echo $datum->grades[$i];
+                    }
+                }
+                echo "\n";
+            }
+
+        /// Print all the averages
+            echo "\t";
+            for ($i=1; $i<=$count; $i++) {
+                echo "\t".$average[$i];
+            }
+            echo "\n";
+        
+            exit;
         }
+
+
+
 
     /// Otherwise, display the table as HTML
 
-        $count = count($questionorder);
-        $total = array();
    
         echo "<table border=1 align=\"center\">";
         echo "<tr>";
         echo "<td>&nbsp;</td>";
         for ($i=1; $i<=$count; $i++) {
-            $total[$i] = 0.0;
-            echo "<th>$i</th>";
+            echo "<th title=\"".$question[$i]->questiontext."\">$i</th>";
         }
         echo "</tr>";
 
-        $datacount = 0;
         foreach ($data as $userid => $datum) {
             echo "<tr>";
-            echo "<td><b>$datum->name</b></td>";
+            echo "<td><b>$datum->firstname $datum->lastname</b></td>";
             if ($datum->grades) {
-                $datacount++;
                 foreach ($datum->grades as $key => $grade) {
                     echo "<td>$grade</td>";
-                    $total[$key]+= $grade;
                 }
             }
             echo "</tr>";
@@ -83,12 +182,26 @@ class quiz_report extends quiz_default_report {
         echo "<tr>";
         echo "<td>&nbsp;</td>";
         for ($i=1; $i<=$count; $i++) {
-            $average = format_float($total[$i] / $datacount, 2);
-            echo "<td>$average</td>";
+            echo "<td>".$average[$i]."</td>";
         }
         echo "</tr>";
 
         echo "</table>";
+
+        echo "<br />";
+        echo "<table border=0 align=center><tr>";
+        echo "<td>";
+        unset($options);
+        $options["id"] = "$cm->id";
+        $options["mode"] = "simplestat";
+        $options["noheader"] = "yes";
+        $options["download"] = "xls";
+        print_single_button("report.php", $options, get_string("downloadexcel"));
+        echo "<td>";
+        $options["download"] = "txt";
+        print_single_button("report.php", $options, get_string("downloadtext"));
+        echo "</table>";
+    
 
         return true;
     }

@@ -44,36 +44,38 @@
     add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id");
 
 /// Print the page header
+    if (empty($noheader)) {
 
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    }
-
-    $strquizzes = get_string("modulenameplural", "quiz");
-    $strquiz  = get_string("modulename", "quiz");
-    $strreport  = get_string("report", "quiz");
-
-    print_header("$course->shortname: $quiz->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> 
-                  -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreport", 
-                 "", "", true);
-
-    print_heading($quiz->name);
-
-
-/// Print list of available quiz reports
-
-    $reports = get_list_of_plugins("mod/quiz/report");
-    echo "<table cellpadding=10 align=center><tr>";
-    foreach ($reports as $report) {
-        $strreport = get_string("report$report", "quiz");
-        if ($report == $mode) {
-            echo "<td><u>$strreport</u></td>";
-        } else {
-            echo "<td><a href=\"report.php?id=$cm->id&mode=$report\">$strreport</a></td>";
+        if ($course->category) {
+            $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         }
+    
+        $strquizzes = get_string("modulenameplural", "quiz");
+        $strquiz  = get_string("modulename", "quiz");
+        $strreport  = get_string("report", "quiz");
+    
+        print_header("$course->shortname: $quiz->name", "$course->fullname",
+                     "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> 
+                      -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreport", 
+                     "", "", true);
+    
+        print_heading($quiz->name);
+    
+
+    /// Print list of available quiz reports
+    
+        $reports = get_list_of_plugins("mod/quiz/report");
+        echo "<table cellpadding=10 align=center><tr>";
+        foreach ($reports as $report) {
+            $strreport = get_string("report$report", "quiz");
+            if ($report == $mode) {
+                echo "<td><u>$strreport</u></td>";
+            } else {
+                echo "<td><a href=\"report.php?id=$cm->id&mode=$report\">$strreport</a></td>";
+            }
+        }
+        echo "</tr></table><hr size=\"1\" noshade=\"noshade\" />";
     }
-    echo "</tr></table><hr size=\"1\" noshade=\"noshade\" />";
 
 
 /// Open the selected quiz report and display it
@@ -87,10 +89,13 @@
 
     $report = new quiz_report();
 
-    if (! $report->display($quiz, $cm, $course)) {             // Do anything before that we need to
+    if (! $report->display($quiz, $cm, $course)) {             // Run the report!
         error("Error occurred during pre-processing!");
     }
 
-    print_footer($course);
+    if (empty($noheader)) {
+        print_footer($course);
+    }
+
 
 ?>
