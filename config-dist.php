@@ -206,6 +206,10 @@ $CFG->admin = 'admin';
 //
 // This setting will make some graphs (eg user logs) use lines instead of bars
 //      $CFG->preferlinegraphs = true;
+//
+// Enabling this will make most text-based filters only match the first time
+// a phrase occurs in a given text.  Otherwise all are matched.
+//      $CFG->filtermatchfirstonly = true;
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
