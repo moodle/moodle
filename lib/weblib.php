@@ -1071,7 +1071,7 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
         }
     }
 
-    if ($CFG->filterall) {
+    if (!empty($CFG->filterall)) {
         $string = filter_text($string, $courseid);
     }
 
