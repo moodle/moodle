@@ -219,10 +219,12 @@
 
     //Now create categories and questions as needed (STEP1)
     if ($status and ($restore->mods['quiz']->restore)) {
-        echo "</li><li>".get_string("creatingcategoriesandquestions")."</li>";
+        echo "</li><li>".get_string("creatingcategoriesandquestions");
+        echo "<ul>";
         if (!$status = restore_create_questions($restore,$xml_file)) {
             notify("Could not restore categories and questions!");
         }
+        echo "</ul></li>";
     }
 
     //Now create user_files as needed

@@ -269,10 +269,10 @@
 
             //Do some output
             if ($status) {
-                echo "<li>".get_string("category")." \"".$quiz_cat->name."\"</li>";
+                echo "<li>".get_string("category")." \"".$quiz_cat->name."\"<br />";
             } else {
                 //We must never arrive here !!
-                echo "<li>".get_string("category")." \"".$quiz_cat->name."\" Error!</li>";
+                echo "<li>".get_string("category")." \"".$quiz_cat->name."\" Error!<br />";
             }
             backup_flush(300);
 
@@ -286,6 +286,7 @@
             } else {
                 $status = false;
             }
+            echo '</li>';
         }
 
         return $status;
