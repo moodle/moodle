@@ -256,7 +256,7 @@ CREATE TABLE prefix_quiz_attemptonlast_datasets (
     category INT8  NOT NULL default '0',
     userid INT8  NOT NULL default '0',
     datasetnumber INT8  NOT NULL default '0',
-    CONSTRAINT  category UNIQUE (category,userid)
+    CONSTRAINT  prefix_quiz_category_userid_unique UNIQUE (category,userid)
 );
 
 CREATE TABLE prefix_quiz_dataset_definitions (

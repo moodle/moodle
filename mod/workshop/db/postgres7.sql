@@ -26,7 +26,7 @@ CREATE TABLE prefix_workshop (
   overallocation INT  NOT NULL default '0',
   timemodified INT8  NOT NULL default '0',
   teacherweight INT  NOT NULL default '1',
-  showleaguetable INT4 NOT NULL default '0',
+  showleaguetable INT4 NOT NULL default '0'
 );
 # --------------------------------------------------------
 
@@ -121,13 +121,13 @@ CREATE TABLE prefix_workshop_comments (
   comments text NOT NULL default ''
 );
 
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'assessments', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'close', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'display', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'resubmit', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'set up', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'submissions', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'view', 'workshop', 'name');
-INSERT INTO `prefix_log_display` VALUES ('workshop', 'update', 'workshop', 'name');
+INSERT INTO prefix_log_display VALUES ('workshop', 'assessments', 'workshop', 'name');
+INSERT INTO prefix_log_display VALUES ('workshop', 'close', 'workshop', 'name');
+INSERT INTO prefix_log_display VALUES ('workshop', 'display', 'workshop', 'name');
+INSERT INTO prefix_log_display VALUES ('workshop', 'resubmit', 'workshop', 'name');
+INSERT INTO prefix_log_display VALUES ('workshop', 'set up', 'workshop', 'name');
+INSERT INTO prefix_log_display VALUES ('workshop', 'submissions', 'workshop', 'name');
+INSERT INTO prefix_log_display VALUES ('workshop', 'view', 'workshop', 'name');
+INSERT INTO prefix_log_display VALUES ('workshop', 'update', 'workshop', 'name');
 
 COMMIT;
