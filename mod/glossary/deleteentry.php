@@ -1,6 +1,7 @@
 <?PHP // $Id$
 
 	require_once("../../config.php");
+	require_once("lib.php");
 
     require_variable($id);    // course module ID
     require_variable($mode);  // edit or delete
