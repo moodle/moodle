@@ -40,18 +40,17 @@ function glossary_upgrade($oldversion) {
   if ( $oldversion < 2004072400) {
 
       //Create new table glossary_formats to store format info
-      execute_sql("CREATE TABLE `{$CFG->prefix}glossary_formats` (
-                       `id` INT(10) unsigned NOT NULL auto_increment,
-                       `name` VARCHAR(50) NOT NULL,
-                       `popupformatname` VARCHAR(50) NOT NULL, 
-                       `visible` int2 UNSIGNED NOT NULL default '1',
-                       `showgroup int2 UNSIGNED NOT NULL default '1',
-                       `defaultmode` VARCHAR(50) NOT NULL default '',
-                       `defaulthook` VARCHAR(50) NOT NULL default '',
-                       `sortkey` VARCHAR(50) NOT NULL default '',
-                       `sortorder` VARCHAR(50) NOT NULL default '',
-                   PRIMARY KEY  (`id`)                    
-                   ) TYPE=MyISAM COMMENT='Setting of the display formats'");
+      execute_sql("CREATE TABLE {$CFG->prefix}glossary_formats (
+                       id SERIAL8 PRIMARY KEY,
+                       name VARCHAR(50) NOT NULL,
+                       popupformatname VARCHAR(50) NOT NULL, 
+                       visible int2  NOT NULL default '1',
+                       showgroup int2  NOT NULL default '1',
+                       defaultmode VARCHAR(50) NOT NULL default '',
+                       defaulthook VARCHAR(50) NOT NULL default '',
+                       sortkey VARCHAR(50) NOT NULL default '',
+                       sortorder VARCHAR(50) NOT NULL default ''
+                   ) ");
 
       //Define current 0-6 format names
       $formatnames = array('dictionary','continuous','fullwithauthor','encyclopedia',
@@ -81,7 +80,7 @@ function glossary_upgrade($oldversion) {
       }
 
       //Drop the old formats table
-      execute_sql("DROP TABLE `{$CFG->prefix}glossary_displayformats`");
+      execute_sql("DROP TABLE {$CFG->prefix}glossary_displayformats");
 
       //Modify the glossary->displayformat field
       table_column('glossary', 'displayformat', 'displayformat', 'VARCHAR', '50', '', 'dictionary', 'NOT NULL');

@@ -150,7 +150,7 @@ function quiz_upgrade($oldversion) {
         quiz_refresh_events();
     }
     if ($oldversion < 2004060200) {
-        execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD timelimit integer DEFAULT '0' NOT NULL ");
+        table_column("quiz", "", "timelimit", "integer", "", "", "0", "NOT NULL", "");
     }
 
     if ($oldversion < 2004070700) {

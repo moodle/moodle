@@ -54,7 +54,7 @@ function forum_upgrade($oldversion) {
   }
 
   if ($oldversion < 2004060100) {
-      modify_database('', "CREATE TABLE `prefix_forum_queue` (
+      modify_database('', "CREATE TABLE prefix_forum_queue (
                            id SERIAL PRIMARY KEY,
                            userid integer default 0 NOT NULL,
                            discussionid integer default 0 NOT NULL,
