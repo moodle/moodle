@@ -1359,7 +1359,7 @@
             }
             break;
         default:
-            //echo "action (".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 
