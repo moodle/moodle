@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112400)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['action'] = '操作';
@@ -213,6 +213,7 @@ $string['configsecureforms'] = 'Moodleでは、フォームデータを受入れる場合の追加的
 $string['configsessioncookie'] = 'ここではMoodleのセッションで使用されるクッキーの名前を設定します。この設定は1つ以上のMoodleが同じウェブサイトで稼動している場合に、クッキーが混乱するのを防ぐためだけに任意でお使いください。';
 $string['configsessiontimeout'] = 'このサイトにログインして長時間何もしない(ページを更新しない)場合、自動的にログアウト(セッションを終了)させます。この変数はログアウトさせるまでの時間を設定します。';
 $string['configshowsiteparticipantslist'] = '全ての学生及び教師は参加者リストに表示されます。誰がこの参加者リストを閲覧することができますか?';
+$string['configsitepolicy'] = 'このサイトを使用する前に、サイト使用許諾に全てのユーザが同意する必要がある場合は、サイト使用許諾のURLを指定してください。同意する必要が無い場合は空白のままにしてください。URLは自由に指定することができます - 便利な場所はサイトファイルの中です。例 http://yoursite/file.php/1/policy.html';
 $string['configslasharguments'] = 'ファイル(イメージ、アップロード等)は/=スラッシュ(ここでは2つ目のオプション)を使ってプログラムに受け渡されます。この方法により簡単にブラウザ内やプロクシにイメージを一時保存させることが可能です。いくつかのPHPサーバではこの方法が取れない場合があります。もしファイルやイメージ(例 ユーザの顔写真等)のアップロードに問題がある場合は最初のオプションを選択してください。';
 $string['configsmtphosts'] = 'Moodleでメールを送信するときに使用する1つ以上のSMTPサーバを入力してください(例 mail.a.com またはmail.a.com;mail.b.com)　空白にした場合、Moodleは自動的にPHPのメール送信方法を使用します。';
 $string['configsmtpuser'] = '上記でSMTPサーバを設定して尚且つ認証が必要な場合はユーザ名とパスワードを設定してください。';
@@ -802,6 +803,9 @@ $string['people'] = '人';
 $string['personalprofile'] = 'プロフィール';
 $string['phone'] = '電話';
 $string['phpinfo'] = 'PHP情報';
+$string['policyagree'] = 'このサイトを継続して使用するには、使用許諾に同意する必要があります。';
+$string['policyagreement'] = 'サイト使用許諾';
+$string['policyagreementclick'] = 'サイト使用許諾を読む';
 $string['popupwindow'] = '新しいウインドでファイルを開く';
 $string['potentialadmins'] = '潜在的な管理者';
 $string['potentialcreators'] = '潜在的なコース作成者';
