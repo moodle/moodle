@@ -224,6 +224,7 @@
 			$assessment->timecreated = $yearfromnow;
 			$assessment->timegraded = 0;
 			$assessment->timeagreed = 0;
+			$assessment->resubmission = 0;
 			if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
 				error("Could not insert workshop assessment!");
 				}

@@ -101,16 +101,24 @@ function workshop_cron () {
 				echo "Could not find submission $assessment->submissionid\n";
 				continue;
 			}
+			if (! $workshop = get_record("workshop", "id", $submission->workshopid)) {
+				echo "Could not find workshop id $submission->workshopid\n";
+				continue;
+			}
+            if (! $course = get_record("course", "id", $workshop->course)) {
+                error("Could not find course id $workshop->course");
+                continue;
+            }
+            if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
+                error("Course Module ID was incorrect");
+                continue;
+            }
 			if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
 				echo "Could not find user $submission->userid\n";
 				continue;
 			}
 			if (! $assessmentowner = get_record("user", "id", "$assessment->userid")) {
 				echo "Could not find user $assessment->userid\n";
-				continue;
-			}
-			if (! $course = get_record("course", "id", "$assessment->course")) {
-				echo "Could not find course $assessment->course\n";
 				continue;
 			}
 			if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, 
@@ -120,11 +128,6 @@ function workshop_cron () {
 			if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, 
                         $assessmentowner->id)) {
 				continue;  // Not an active participant
-			}
-			if (! $workshop = get_coursemodule_from_instance("workshop", $assessment->workshopid, 
-                        $course->id)) {
-				echo "Could not find course module for workshop id $submission->workshop\n";
-				continue;
 			}
 	
 			$strworkshops = get_string("modulenameplural", "workshop");
@@ -150,17 +153,17 @@ function workshop_cron () {
 			$posttext .= $msg;
 			// "You can see it in your workshop assignment"
 			$posttext .= get_string("mail3", "workshop").":\n";
-			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
 			$posttext .= "---------------------------------------------------------------------\n";
 			if ($sendto->mailformat == 1) {  // HTML
 				$posthtml = "<P><FONT FACE=sans-serif>".
 			  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
 			  "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-			  "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+			  "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
 			  $posthtml .= "<HR><FONT FACE=sans-serif>";
 			  $posthtml .= "<P>$msg</P>";
 			  $posthtml .= "<P>".get_string("mail3", "workshop").
-				  " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A>.</P></FONT><HR>";
+				  " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
 			} else {
 			  $posthtml = "";
 			}
@@ -190,16 +193,24 @@ function workshop_cron () {
 				echo "Could not find submission $assessment->submissionid\n";
 				continue;
 			}
+			if (! $workshop = get_record("workshop", "id", $submission->workshopid)) {
+				echo "Could not find workshop id $submission->workshopid\n";
+				continue;
+			}
+            if (! $course = get_record("course", "id", $workshop->course)) {
+                error("Could not find course id $workshop->course");
+                continue;
+            }
+            if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
+                error("Course Module ID was incorrect");
+                continue;
+            }
 			if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
 				echo "Could not find user $submission->userid\n";
 				continue;
 			}
 			if (! $assessmentowner = get_record("user", "id", "$assessment->userid")) {
 				echo "Could not find user $assessment->userid\n";
-				continue;
-			}
-			if (! $course = get_record("course", "id", "$assessment->course")) {
-				echo "Could not find course $assessment->course\n";
 				continue;
 			}
 			if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, 
@@ -210,17 +221,12 @@ function workshop_cron () {
                         $assessmentowner->id)) {
 				continue;  // Not an active participant
 			}
-			if (! $workshop = get_coursemodule_from_instance("workshop", $assessment->workshopid, 
-                        $course->id)) {
-				echo "Could not find course module for workshop id $submission->workshop\n";
-				continue;
-			}
 	
 			$strworkshops = get_string("modulenameplural", "workshop");
 			$strworkshop  = get_string("modulename", "workshop");
 	
 			// it's a resubission assessment, tell the assessment owner to (re)assess
-			$USER->lang = $assessmentownerowner->lang;
+			$USER->lang = $assessmentowner->lang;
 			$sendto = $assessmentowner;
 			// "The assignment \"$submission->title\" is a revised piece of work. "
 			$msg = get_string("mail8", "workshop", $submission->title)."\n";
@@ -233,17 +239,17 @@ function workshop_cron () {
 			$posttext .= $msg;
 			// "You can assess it in your workshop assignment"
 			$posttext .= get_string("mail10", "workshop").":\n";
-			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
 			$posttext .= "---------------------------------------------------------------------\n";
 			if ($sendto->mailformat == 1) {  // HTML
 				$posthtml = "<P><FONT FACE=sans-serif>".
 	    		  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
 		    	  "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-			      "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+			      "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
 			    $posthtml .= "<HR><FONT FACE=sans-serif>";
 			    $posthtml .= "<P>$msg</P>";
 			    $posthtml .= "<P>".get_string("mail3", "workshop").
-				  " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A>.</P></FONT><HR>";
+				  " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
 			} 
             else {
 			  $posthtml = "";
@@ -278,16 +284,24 @@ function workshop_cron () {
 				echo "Could not find submission $assessment->submissionid\n";
 				continue;
 			}
+			if (! $workshop = get_record("workshop", "id", $submission->workshopid)) {
+				echo "Could not find workshop id $submission->workshopid\n";
+				continue;
+			}
+            if (! $course = get_record("course", "id", $workshop->course)) {
+                error("Could not find course id $workshop->course");
+                continue;
+            }
+            if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
+                error("Course Module ID was incorrect");
+                continue;
+            }
 			if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
 				echo "Could not find user $submission->userid\n";
 				continue;
 			}
 			if (! $assessmentowner = get_record("user", "id", "$assessment->userid")) {
 				echo "Could not find user $assessment->userid\n";
-				continue;
-			}
-			if (! $course = get_record("course", "id", "$comment->course")) {
-				echo "Could not find course $comment->course\n";
 				continue;
 			}
 			if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, 
@@ -297,10 +311,6 @@ function workshop_cron () {
 			if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, 
                         $assessmentowner->id)) {
 				continue;  // Not an active participant
-			}
-			if (! $workshop = get_coursemodule_from_instance("workshop", $assessment->workshopid, $course->id)) {
-				echo "Could not find course module for workshop id $submission->workshop\n";
-				continue;
 			}
 	
 			$strworkshops = get_string("modulenameplural", "workshop");
@@ -326,17 +336,17 @@ function workshop_cron () {
 				$posttext .= $msg;
 				// "You can see it in your workshop assignment"
 				$posttext .= get_string("mail3", "workshop").":\n";
-				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
 				$posttext .= "---------------------------------------------------------------------\n";
 				if ($sendto->mailformat == 1) {  // HTML
 					$posthtml = "<P><FONT FACE=sans-serif>".
 					"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
 					"<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
 					$posthtml .= "<HR><FONT FACE=sans-serif>";
 					$posthtml .= "<P>$msg</P>";
 					$posthtml .= "<P>".get_string("mail3", "workshop").
-						" <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A>
+						" <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>
                         .</P></FONT><HR>";
 					} 
 				else {
@@ -376,17 +386,17 @@ function workshop_cron () {
 				$posttext .= $msg;
 				// "You can see it in your workshop assignment"
 				$posttext .= get_string("mail3", "workshop").":\n";
-				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+				$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
 				$posttext .= "---------------------------------------------------------------------\n";
 				if ($sendto->mailformat == 1) {  // HTML
 					$posthtml = "<P><FONT FACE=sans-serif>".
 					"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
 					"<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
 					$posthtml .= "<HR><FONT FACE=sans-serif>";
 					$posthtml .= "<P>$msg</P>";
 					$posthtml .= "<P>".get_string("mail3", "workshop").
-						" <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A>.</P></FONT><HR>";
+						" <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
 					} 
 				else {
 					$posthtml = "";
@@ -421,35 +431,33 @@ function workshop_cron () {
                 continue;
             }
 
+			if (! $workshop = get_record("workshop", "id", $submission->workshopid)) {
+				echo "Could not find workshop id $submission->workshopid\n";
+				continue;
+			}
+            if (! $course = get_record("course", "id", $workshop->course)) {
+                error("Could not find course id $workshop->course");
+                continue;
+            }
+            if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
+                error("Course Module ID was incorrect");
+                continue;
+            }
 			if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
                 echo "Could not find user $submission->userid\n";
                 continue;
             }
-
 			if (! $assessmentowner = get_record("user", "id", "$assessment->userid")) {
                 echo "Could not find user $assessment->userid\n";
                 continue;
             }
-
-            if (! $course = get_record("course", "id", "$assessment->course")) {
-                echo "Could not find course $assessment->course\n";
-                continue;
-            }
-			
             if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, 
                         $submissionowner->id)) {
                 continue;  // Not an active participant
             }
-
             if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, 
                         $assessmentowner->id)) {
                 continue;  // Not an active participant
-            }
-
-            if (! $workshop = get_coursemodule_from_instance("workshop", $assessment->workshopid, 
-                        $course->id)) {
-                echo "Could not find course module for workshop id $submission->workshop\n";
-                continue;
             }
 
             $strworkshops = get_string("modulenameplural", "workshop");
@@ -469,17 +477,17 @@ function workshop_cron () {
             $posttext .= $msg;
 			// "You can see it in your workshop assignment"
 			$posttext .= get_string("mail3", "workshop").":\n";
-			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
 				$posthtml = "<P><FONT FACE=sans-serif>".
 					"<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
 					"<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
-					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A></FONT></P>";
+					"<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
 				$posthtml .= "<HR><FONT FACE=sans-serif>";
 				$posthtml .= "<P>$msg</P>";
 				$posthtml .= "<P>".get_string("mail3", "workshop").
-					" <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">$workshop->name</A>.</P></FONT><HR>";
+					" <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
             } else {
               $posthtml = "";
             }
