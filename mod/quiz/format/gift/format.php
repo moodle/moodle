@@ -447,15 +447,20 @@ function writequestion( $question ) {
     case TRUEFALSE:
         if ($question->trueanswer->fraction==1) {
             $answertext = 'TRUE';
-            $feedback = $question->falseanswer->feedback;
+            $wrong_feedback = $question->falseanswer->feedback;
+            $right_feedback = $question->trueanswer->feedback;
         }
         else {
             $answertext = 'FALSE';
-            $feedback = $question->trueanswer->feedback;
+            $wrong_feedback = $question->trueanswer->feedback;
+            $right_feedback = $question->falseanswer->feedback;
         }
         $expout .= "::".$question->name."::".$question->questiontext."{".$answertext;
-        if ($feedback!="") {
-            $expout .= "#".$feedback;
+        if ($wrong_feedback!="") {
+            $expout .= "#".$wrong_feedback;
+        }
+        if ($right_feedback!="") {
+            $expout .= "#".$right_feedback;
         }
         $expout .= "}\n";
         break;
