@@ -808,6 +808,17 @@
                     $user->city = addslashes($user->city);
                     $user->url = addslashes($user->url);
                     $user->description = restore_decode_absolute_links(addslashes($user->description));
+
+                    //We need to analyse the AUTH field to recode it:
+                    //   - if the destination site has any kind of INTERNAL authentication, 
+                    //     then apply it to the new user.
+                    //   - if the destination site has any kind of EXTERNAL authentication, 
+                    //     then leave the original authentication of the user.
+
+                    if (is_internal_auth($CFG->auth)) {
+                        $user->auth = $CFG->auth;
+                    }
+
                     //We are going to create the user
                     //The structure is exactly as we need
                     $newid = insert_record ("user",$user);
@@ -2426,6 +2437,9 @@
                         case "ID": 
                             $this->info->users[$this->getContents()] = $this->getContents();
                             $this->info->tempuser->id = $this->getContents();
+                            break;
+                        case "AUTH": 
+                            $this->info->tempuser->auth = $this->getContents();
                             break;
                         case "CONFIRMED": 
                             $this->info->tempuser->confirmed = $this->getContents();
