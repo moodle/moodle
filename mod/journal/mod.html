@@ -1,11 +1,11 @@
 <?PHP
-    if (empty($form->name)) {
+    if (!isset($form->name)) {
         $form->name = "";
     }
-    if (empty($form->intro)) {
+    if (!isset($form->intro)) {
         $form->intro = "";
     }
-    if (empty($form->days)) {
+    if (!isset($form->days)) {
         $form->days = "14";
     }
 ?>
