@@ -1,33 +1,42 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.2 Beta ++ (2004031100)
+      // lesson.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['actionaftercorrectanswer'] = 'Actie na juist antwoord';
-$string['addanewpage'] = 'Voeg een nieuwe pagina toe';
-$string['addpagehere'] = 'Voeg de pagina hier in';
+$string['addabranchtable'] = 'Voeg een vertakkingstabel toe';
+$string['addanendofbranch'] = 'voeg het einde van een tak toe';
+$string['addaquestionpage'] = 'Voeg een vragenpagina toe';
 $string['answer'] = 'Antwoord';
 $string['answersfornumerical'] = 'Antwoorden voor numerieke vragen moeten paren zijn van de minimum en de maximum waarde';
 $string['attempt'] = 'Poging: $a';
 $string['attempts'] = 'Pogingen';
 $string['available'] = 'Beschikbaar van';
+$string['branchtable'] = 'Vertakkingstabel';
 $string['canretake'] = '$a mag de les opnieuw doen';
 $string['casesensitive'] = 'Hoofdlettergevoelig';
+$string['checkbranchtable'] = 'Controleer vertakkingstabel';
 $string['checknavigation'] = 'Controleer de navigatie';
 $string['checkquestion'] = 'Controleer de vraag';
 $string['confirmdeletionofthispage'] = 'Bevestig het verwijderen van deze pagina';
 $string['congratulations'] = 'Proficiat - je hebt het einde van de les bereikt';
 $string['continue'] = 'Ga verder';
 $string['deadline'] = 'Deadline';
+$string['deleting'] = 'Verwijderen';
 $string['deletingpage'] = 'Pagina $a aan het verwijderen';
+$string['description'] = 'Beschrijving';
 $string['displayofgrade'] = 'Tonen van het cijfer (voor de leerling)';
+$string['endofbranch'] = 'Ende vertakking';
 $string['endoflesson'] = 'Einde van de les';
 $string['fileformat'] = 'Bestandsformaat';
 $string['firstanswershould'] = 'Het eerste antwoord moet naar de &quot;juiste&quot; pagina verwijzen';
 $string['gradeis'] = 'Cijfer is $a';
+$string['handlingofretakes'] = 'Behandeling van nieuwe pogingen';
+$string['here'] = 'hier';
 $string['importquestions'] = 'Importeer vragen';
 $string['jumpto'] = 'Ga naar';
-$string['maximumnumberofanswers'] = 'Maximum aantal antwoorden';
+$string['maximumnumberofanswersbranches'] = 'Maximum aantal antwoorden/vertakkingen';
 $string['maximumnumberofattempts'] = 'Maximum aantal pogingen';
+$string['minimumnumberofquestions'] = 'Minimum aantal vragen';
 $string['modulename'] = 'Les';
 $string['modulenameplural'] = 'Lessen';
 $string['movepagehere'] = 'Verplaats de pagina naar hier';
@@ -39,6 +48,8 @@ $string['nextpage'] = 'Volgende pagina';
 $string['noanswer'] = 'Er is niet geantwoord';
 $string['noattemptrecordsfound'] = 'Geen pogingen gevonden: geen cijfer gegeven.';
 $string['normal'] = 'Normaal - volg het lespad';
+$string['notdefined'] = 'Niet gedefinieerd';
+$string['notitle'] = 'Geen titel';
 $string['numberofcorrectanswers'] = 'Aantal juiste antwoorden: $a';
 $string['numberofcorrectmatches'] = 'Aantal juiste koppelingen: $a';
 $string['numberofpagestoshow'] = 'Aantal te tonen pagina\'s (Flash Cards)';
@@ -47,6 +58,7 @@ $string['ordered'] = 'Gesorteerd';
 $string['outof'] = 'Van $a';
 $string['page'] = 'Pagina: $a';
 $string['pagecontents'] = 'Inhoud van de pagina';
+$string['pages'] = 'Pagina\'s';
 $string['pagetitle'] = 'Titel van de pagina';
 $string['pleasecheckoneanswer'] = 'Duid één antwoord aan';
 $string['pleasecheckoneormoreanswers'] = 'Duid één of meer antwoorden aan';
@@ -62,8 +74,13 @@ $string['showanunseenpage'] = 'Toon een ongeziene pagina';
 $string['singleanswer'] = 'Één antwoord';
 $string['thatsthecorrectanswer'] = 'Dat is het juiste antwoord';
 $string['thatsthewronganswer'] = 'Dat is het verkeerde antwoord';
+$string['thefollowingpagesjumptothispage'] = 'Volgende pagina verwijst naar deze pagina';
 $string['thispage'] = 'Deze pagina';
+$string['usemaximum'] = 'Beste';
+$string['usemean'] = 'Gemiddelde';
 $string['youhaveseen'] = 'Je hebt al meer dan één pagina van deze les bekeken.<br />Wil je beginnen bij de laatste pagina die je vorige keer bekeken hebt?';
 $string['youranswer'] = 'Jouw antwoord';
+$string['yourcurrentgradeis'] = 'Je cijfer is nu $a';
+$string['youshouldview'] = 'Minimum te bekijken: $a';
 
 ?>

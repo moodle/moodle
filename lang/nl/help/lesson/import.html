@@ -1,0 +1,149 @@
+<P ALIGN=CENTER><B>Importeren van vragen uit een bestand</B></P>
+
+<P>
+Met deze functie kun je vragen importeren uit tekstbestanden op je eigen computer door ze te uploaden via een 
+formulier.
+<P>
+Een aantal bestandsformaten worden ondersteund:
+
+<P><B>GIFT</B></P>
+<ul>
+<p>GIFT is het meest uitgebreide importformaat beschikbaar voor het importeren van Moodle test vragen vanuit een
+tekstbestand. Het is ontworpen als gemakkelijke importeermethode voor Moodle test vragen vanuit tekstbestanden. Het ondersteunt
+meerkeuzevragen, waar/onwaar, kort antwoord, koppelvragen en numerieke vragen, evenals het invoeren van een __________ voor 
+het gatentekstformaat. Verschillende vragentypes kunnen gemixt worden in één tekstbestand en de opmaak ondersteund ook 
+commentaar, vraagnamen, feedback en procentuele weging van cijfers. Hieronder enkele voorbeelden:</p>
+<pre>
+Wie is er begraven in de tombe van Grant?{~Grant ~Jefferson =niemand}
+
+Grant is {~begraven =bijgezet ~levend} in Grant's tombe.
+
+Grant is begraven in Grant's tombe.{FALSE}
+
+Wie is begraven in Grant's tombe?{=niemand =helemaal niemand}
+
+Wanneer was Ulysses S. Grant geboren?{#1822:1}
+</pre>
+
+<p align=right><a href="help.php?file=formatgift.html&module=quiz">Meer info over "GIFT"</a></p>
+</ul>
+
+<P><B>Aiken</B></P>
+<ul>
+<p>De Aiken bestandsopmaak is een heel eenvoudige manier om meerkeuzevragen te creëren door gebruik te maken van een
+duidelijk, door mensen leesbare opmaak. Hieronder een voorbeeld van de opmaak:</p>
+<pre>
+Wat is het doel van eerste hulp?
+A. Levens redden, verdere kwetsuren voorkomen, goede gezondheid bewaren
+B. Medicijnen toedienen aan een gekwetste of gewonde persoon
+C. Verdere kwetsuren voorkomen
+D. Slachtoffers die hulp zoeken helpen
+ANSWER: A
+</pre>
+
+<p align=right><a href="help.php?file=formataiken.html&module=quiz">Meer info over "Aiken"</a></p>
+</ul>
+<P><B>Gatentekst</B></P>
+<UL>
+<P>
+Elk antwoord wordt gescheiden door een tilde (~). Het juiste antwoord wordt voorafgegaan door een gelijkheidsteken (=).
+Tussen de vragen moet je één vrije regel laten.
+Enkele voorbeelden:<br><br>
+<u>Meerkeuzevragen</u>
+<BLOCKQUOTE>
+Zodra we als kind onze lichaamsdelen beginnen te verkennen, bestuderen we 
+{=anatomie ~wetenschappen ~reflexen ~experimenten} en in feite blijven we studenten voor de rest van ons
+leven.
+</BLOCKQUOTE>
+
+<p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Meer info over "Gatentekst"</a></p>
+</UL
+<br>
+<u>Kort Antwoord</u>
+<BLOCKQUOTE>
+Zodra we als kind onze lichaamsdelen beginnen te verkennen, bestuderen we 
+{=anatomie} en in feite blijven we studenten voor de rest van ons
+leven.
+</BLOCKQUOTE>
+<u>Waar/Onwaar</u>
+<BLOCKQUOTE>
+Zodra we als kind onze lichaamsdelen beginnen te verkennen, bestuderen we 
+anatomie {=waar ~onwaar} en in feite blijven we studenten voor de rest van ons
+leven.
+</BLOCKQUOTE>
+<P>Meer informatie: <?php  helpbutton("formatmissingword", "", "quiz") ?></P>
+</UL>
+
+
+<P><B>AON</B></P>
+<UL>
+<P>Dit is hetzelfde als het 'Gatentekst' formaat, behalve dat alle 'korte antwoord' vragen per vier geconverteerd
+zullen worden in koppel vragen</P>
+<p>Het formaat is genoemd naar een organisatie die de ontwikkeling van testen gesponsord heeft.</p>
+<blockquote>
+1 m is gelijk aan ...<br>
+{<br>
+=100 cm;<br> 
+~1 cm;<br>
+~10 cm;<br>
+~1000 cm;<br>
+}<br>
+</blockquote>
+
+</UL>
+
+
+<P><B>Blackboard</B></P>
+<UL>
+<P>Met deze module kun je vragen importeren die in het exportformaat van Blackboard gemaakt zijn. Het steunt
+op xml-functies die door PHP gecompileerd worden.</P>
+
+<p align=right><a href="help.php?file=formatblackboard.html&module=quiz">Meer info over "Blackboard" formaat</a></p>
+</UL>
+
+
+<P><B>WebCT</B></P>
+<UL>
+<P>Deze module kan vragen importeren vanuit het tekstgebaseerde vragenformaat van WebCT.</P>
+ 
+<p align=right><a href="help.php?file=formatwebct.html&module=quiz">Meer informatie over het "WebCT" formaat</a></p>
+</UL>
+
+<P><B>Course Test Manager</B></P>
+<UL>
+<P>Deze module kan vragen importeren die bewaard zijn in een Course Test Manager test bank.
+Het steunt op verschillende manieren om de testbank, die in een Microsoft Access databank zit, te koppelen.
+De manier hangt er van af of je Moodleinstallatie op een Microsoft of op een Linux webserver loopt.</P>
+<p>Op Windows laat het je gewoon je access databank uploaden zoals je gelijk welk ander gegevensbestand zou importeren.</p>
+<p>Op Linux moet je eerst een windowsmachine installeren op hetzelfde netwerk als de  Course Test
+Manager databank en een stukje software installeren, nl de ODBC Socket Server, die XML gebruikt op data door te zenden
+naar Moodle op de Linux server.</p>  <p>Lees best eerst de volledige documentatie voor je deze importfilter
+gebruikt.</p>
+
+
+<p align=right><a href="help.php?file=formatctm.html&module=quiz">Meer info over het "CTM" formaat</a></p>
+</UL>
+
+<P><B>Ingebedde antwoorden (Cloze)</B></P>
+<UL>
+<P>Met dit importformaat kun je slechts één soort vragen importeren: de ingebedde antwoorden (ook bekend als "cloze")
+<p align=right><a href="help.php?file=multianswer.html&module=quiz">Meer informatie over het "Cloze" formaat</a></p>
+</UL>
+ 
+
+
+<P><B>Aangepast</B></P>
+<UL>
+<P>Als je je eigen opmaak hebt die geïmporteerd moet worden, dan kan je dit bouwen door mod/quiz/format/custom.php te bewerken.
+
+
+<P>
+De hoeveelheid niewe code die je moet maken is klein - juist genoeg om een stukje tekst om te zetten in een vraag.
+
+
+<p align=right><a href="help.php?file=formatcustom.html&module=quiz">Meer info over het aangepast formaat</a></p>
+</UL>
+
+
+<P>
+Er zijn nog meer formaten onderweg, zoals WebCT, IMS, QTI en gelijk welk formaat dat uitgewerkt wordt door Moodle-gebruikers!</p>
