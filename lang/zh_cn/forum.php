@@ -129,5 +129,8 @@ $string['unsubscribed'] = '不订阅';
 $string['youratedthis'] = '你对此评分';
 $string['yournewtopic'] = '你的新讨论话题';
 $string['yourreply'] = '你的答复';
-
+// new 
+$string['ratingpublic'] = "\$a can see everyone's ratings";
+$string['ratingpublicnot'] = "\$a can only see their own ratings";
+$string['replyforum'] = "Reply to forum";
 ?>

@@ -48,5 +48,15 @@ $string['resourcetype5'] = '网页链接';
 $string['resourcetype6'] = 'HTML文本';
 $string['resourcetype7'] = '程序';
 $string['resourcetype8'] = 'Wiki文本';
-
+//  new
+$string['configdefaulturl'] = "This value is used to prefill the URL form when creating a new URL-based resource.";
+$string['configfilterexternalpages'] = "Enabling this setting will cause all external resources (web pages, uploaded HTML files) to be processed by the currently defined site filters (such as glossary autolinks, for example).  Turning this option on may cause your course pages to slow down significantly - use with caution and only if you really need it.";
+$string['configframesize'] = "When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).";
+$string['configpopup'] = "When adding a new resource which is able to be shown in a popup window, should this option be enabled by default?";
+$string['configwebsearch'] = "When adding a URL as a webpage or weblink, this location is offered as a site to help the user search for the URL they want.";
+$string['directlink'] = "Direct link to this file";$string['fetchclienterror'] = "An error was found with your web client while trying to retrieve the web page (possibly a wrong URL).";
+$string['fetcherror'] = "An error was found while trying to retrieve the web page.";
+$string['fetchservererror'] = "An error was found with the remote server while trying to retrieve the web page (possibly a program error).</p>";
+$string['popupresource'] = "This resource should appear in a popup window.";
+$string['popupresourcelink'] = "If it didn't, click here: \$a";
 ?>

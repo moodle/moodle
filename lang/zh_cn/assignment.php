@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2003120700)
+      // assignment.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['allowresubmit'] = '允许重交';
@@ -17,6 +17,7 @@ $string['description'] = '描述';
 $string['duedate'] = '截止日期';
 $string['duedateno'] = '无截止日期';
 $string['early'] = '$a 之前';
+$string['existingfiledeleted'] = '已被删除的已经存在的文件: $a';
 $string['failedupdatefeedback'] = '为用户 $a 更新上交反馈失败';
 $string['feedback'] = '反馈';
 $string['feedbackupdated'] = '为 $a 个人更新上交反馈';

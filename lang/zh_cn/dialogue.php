@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003120700)
+      // dialogue.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['addmynewentries'] = '添加我的话题';
@@ -38,11 +38,13 @@ $string['notstarted'] = '你为启动该对话';
 $string['notyetseen'] = '未被浏览';
 $string['numberofentries'] = '话题数';
 $string['numberofentriesadded'] = '添加的话题数:$a';
+$string['of'] = 'of';
 $string['onwrote'] = '于 $a 写道';
 $string['onyouwrote'] = '你于 $a 写道';
 $string['open'] = '开启';
 $string['openadialoguewith'] = '启动一个对话和';
 $string['opendialogue'] = '开启对话';
+$string['opendialogueentries'] = '开始对话进程';
 $string['pane0'] = '开启一个对话';
 $string['pane1'] = '$a条来自于你自己的等待回复的对话';
 $string['pane1one'] = '1条来自于你自己的等待回复的对话';
@@ -52,7 +54,7 @@ $string['pane3'] = '$a条被关闭的对话';
 $string['pane3one'] = '1条被关闭的对话';
 $string['seen'] = '于 $a 前被查看';
 $string['sendmailmessages'] = '发送我的新话题的邮件信息';
-$string['status'] = '状??';
+$string['status'] = '状态';
 $string['studenttostudent'] = '学生和学生';
 $string['subject'] = '主题';
 $string['subjectadded'] = '主题已添加';

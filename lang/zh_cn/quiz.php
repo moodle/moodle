@@ -172,5 +172,22 @@ $string['viewallreports'] = '查看 $a 评语回复';
 $string['webct'] = 'WebCT格式';
 $string['withsummary'] = '纵览';
 $string['yourfinalgradeis'] = '这个测验你的最后得分是 $a';
-
+//  new
+$string['aiken'] = "Aiken format";
+$string['answertoolong'] = "Answer too long after line \$a (255 char. max)";
+$string['aon'] = "AON format";
+$string['attemptincomplete'] = "That attempt (by \$a) is not yet completed.";
+$string['calculatedquestion'] = "Calculated Question not supported at line \$a. The question will be ignored";
+$string['coursetestmanager'] = "Course Test Manager format";
+$string['deleteattemptcheck'] = "Are you absolutely sure you want to completely delete these attempts?";
+$string['errorsdetected'] = "\$a error(s) detected";
+$string['gift'] = "GIFT format";
+$string['imagemissing'] = "Image not available at line \$a. The filename will be ignored";
+$string['missinganswer'] = "Too few :ANSWER, :Lx, :Rx statements for question line \$a. You must define at last 2 possible answers";
+$string['missingquestion'] = "Missing question label after line \$a";
+$string['paragraphquestion'] = "Paragraph Question not supported at line \$a. The question will be ignored";
+$string['questionnametoolong'] = "Question name too long at line \$a (255 char. max). It has been truncated.";
+$string['unknowntype'] = "Question type not supported at line \$a. The question will be ignored";
+$string['warningsdetected'] = "\$a warning(s) detected";
+$string['wronggrade'] = "Wrong grade (after line \$a) : ";
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2003120700)
+      // chat.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['beep'] = 'ºô½Ð';
@@ -12,6 +12,8 @@ $string['configrefreshroom'] = 'ÁÄÌìÊÒ×Ô¶¯Ë¢ÐÂÊ±¼ä(Ãë),Èç¹ûÌ«¶Ì½«ºÄ·Ñ´óÁ¿·þÎñÆ÷×
 $string['configrefreshuserlist'] = 'ÓÃ»§ÁÐ±í×Ô¶¯Ë¢ÐÂÊ±¼ä(Ãë)';
 $string['currentchats'] = 'µ±Ç°»°Ìâ';
 $string['currentusers'] = 'µ±Ç°ÓÃ»§';
+$string['deletesession'] = 'É¾³ý¸Ãsession';
+$string['deletesessionsure'] = 'È·¶¨É¾³ý¸ÃsessionÂð?';
 $string['donotusechattime'] = '²»ÏÔÊ¾ÁÄÌìÊ±¼ä';
 $string['enterchat'] = 'µã´Ë½øÈëÁÄÌìÊÒ';
 $string['errornousers'] = 'Ã»ÓÃÓÃ»§';

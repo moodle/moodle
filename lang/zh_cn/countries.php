@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.2 development (2003120700)
+      // countries.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['AD'] = '安道尔';
@@ -161,7 +161,7 @@ $string['NF'] = '诺福克群岛';
 $string['NG'] = 'Nigeria';
 $string['NI'] = '尼加拉瓜';
 $string['NL'] = '荷兰';
-$string['NO'] = 'Norway';
+$string['NO'] = '挪威';
 $string['NP'] = 'Nepal';
 $string['NR'] = 'Nauru';
 $string['NU'] = 'Niue';
@@ -188,11 +188,11 @@ $string['RW'] = '卢旺达';
 $string['SA'] = '沙特阿拉伯';
 $string['SB'] = '所罗门群岛';
 $string['SC'] = 'Seychelles';
-$string['SD'] = 'Sudan';
+$string['SD'] = '苏丹';
 $string['SE'] = 'Sweden';
 $string['SG'] = '新加坡';
 $string['SH'] = 'St. Helena';
-$string['SI'] = 'Slovenia';
+$string['SI'] = '斯洛文尼亚';
 $string['SJ'] = '斯瓦尔巴特群岛';
 $string['SK'] = '斯洛伐克';
 $string['SL'] = '塞拉里昂';

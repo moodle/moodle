@@ -66,5 +66,6 @@ $string['instructions'] = '使用说明';
 $string['md5'] = 'MD5加密';
 $string['plaintext'] = '纯文本';
 $string['showguestlogin'] = '你可以在登录页面显示或隐藏访客登录按钮。';
-
+//  1.2
+$string['auth_multiplehosts'] = "Multiple hosts can be specified (eg host1.com;host2.com;host3.com";
 ?>
