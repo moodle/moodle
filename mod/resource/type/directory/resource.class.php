@@ -115,15 +115,17 @@ function display() {
             $filesize = display_size(filesize("$CFG->dataroot/$relativepath/$file"));
         }
 
-        echo '<tr>';
-        echo '<td>';
-        echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"\"/>";
-        echo '</td>';
         if ($icon == 'folder.gif') {
-            echo '<td nowrap="nowrap" class="name folder">';
+            echo '<tr class="folder"><td>';
+            echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"\"/>";
+            echo '</td>';
+            echo '<td nowrap="nowrap" class="name">';
             echo "<a href=\"view.php?id={$cm->id}&amp;subdir=$subdir/$file\">$file</a>";
         } else {
-            echo '<td nowrap="nowrap" class="name file">';
+            echo '<tr class="file"><td>';
+            echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" alt=\"\"/>";
+            echo '</td>';
+            echo '<td nowrap="nowrap" class="name">';
             link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "$file", 450, 600, '');
         }
         echo '</td>';
