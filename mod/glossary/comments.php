@@ -31,7 +31,7 @@
         notice(get_string("activityiscurrentlyhidden"));
     } 
     
-    add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id");
+    add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id",$cm->id);
     
     
 /// Printing the page header

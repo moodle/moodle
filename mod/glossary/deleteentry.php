@@ -78,7 +78,7 @@
                     print_simple_box_end();
                 }
                 print_footer($course);
-                add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&mode=$prevmode&hook=$hook", $entry);
+                add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&mode=$prevmode&hook=$hook", $entry,$cm->id);
                 redirect("view.php?id=$cm->id&mode=$prevmode&hook=$hook");
             } else {        // the operation has not been confirmed yet so ask the user to do so
                 if ( $mode == "delete") {				

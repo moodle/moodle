@@ -114,7 +114,7 @@ if ( $confirm ) {
             if (! update_record("glossary_entries", $newentry)) {
                 error("Could not update your glossary");
             } else {
-                add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", $newentry->id);
+                add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", $newentry->id,$cm->id);
            	}
         } else {
             error("Could not update this glossary entry because this concept already exist.");
@@ -143,7 +143,7 @@ if ( $confirm ) {
                      unset($newentry->attachment);
                 }
                 set_field("glossary_entries", "attachment", $newfilename, "id", $newentry->id);
-                add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", $newentry->id);
+                add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", $newentry->id,$cm->id);
             }
         } else {
             error("Could not insert this glossary entry because this concept already exist.");

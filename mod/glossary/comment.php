@@ -44,7 +44,7 @@
     if (isguest()) {
         error("Guests are not allowed to post comments", $_SERVER["HTTP_REFERER"]);
     }    
-    add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id");
+    add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id",$cm->id);
 
     /// Printing the page header
     if ($course->category) {
@@ -84,7 +84,7 @@
             print_simple_box_end();
 
             print_footer($course);
-            add_to_log($course->id, "glossary", "delete comment", "comments.php?id=$cm->id&eid=$entry->id", $comment);
+            add_to_log($course->id, "glossary", "delete comment", "comments.php?id=$cm->id&eid=$entry->id", $comment,$cm->id);
             redirect("comments.php?id=$cm->id&eid=$entry->id");
 
         } else {
@@ -138,7 +138,7 @@
                 if (! $newentry->id = insert_record("glossary_comments", $newentry)) {
                     error("Could not insert this new comment");
                 } else {
-                    add_to_log($course->id, "glossary", "add comment", "comments.php?id=$cm->id&eid=$entry->id", "$newentry->id");
+                    add_to_log($course->id, "glossary", "add comment", "comments.php?id=$cm->id&eid=$entry->id", "$newentry->id", $cm->id);
                 }
             } else {
                 $newentry->id = $form->cid;
@@ -147,7 +147,7 @@
                 if (! update_record("glossary_comments", $newentry)) {
                     error("Could not update this comment");
                 } else {
-                    add_to_log($course->id, "glossary", "update comment", "comments.php?id=$cm->id&eid=$entry->id", "$newentry->id");
+                    add_to_log($course->id, "glossary", "update comment", "comments.php?id=$cm->id&eid=$entry->id", "$newentry->id",$cm->id);
                 }
             }
             print_simple_box_start("center","40%", "#FFBBBB");
