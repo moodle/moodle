@@ -620,7 +620,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC", $us
         $forumsort = "d.timemodified DESC";
     }
     if (empty($fullpost)) {
-        $postdata = "p.subject,p.modified,p.discussion,p.userid";
+        $postdata = "p.id,p.subject,p.modified,p.discussion,p.userid";
     } else {
         $postdata = "p.*";
     }
@@ -1508,10 +1508,10 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
     }
 
     if (forum_user_can_post_discussion($forum)) {
-        echo "<P ALIGN=CENTER>";
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">";
+        echo "<p align=center>";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">";
         echo get_string("addanewdiscussion", "forum")."</A>...";
-        echo "</P>\n";
+        echo "</p>\n";
     }
 
     if ((!$forum_numdiscussions) && ($forum_style == "plain")) { 
@@ -1528,7 +1528,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
     }
 
     if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost) ) {
-        echo "<P ALIGN=CENTER><B>(".get_string("nodiscussions", "forum").")</B></P>";
+        echo "<p align=center><b>(".get_string("nodiscussions", "forum").")</b></p>";
         return;
     }
     
@@ -1574,11 +1574,11 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         }
         switch ($forum_style) {
             case "minimal":
-                echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, $strftimerecent)." - $discussion->firstname</FONT>";
-                echo "<BR>$discussion->subject ";
-                echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
-                echo $strmore."...</A>";
-                echo "</P>\n";
+                echo "<p><font color=#555555>".userdate($discussion->modified, $strftimerecent)." - $discussion->firstname</font>";
+                echo "<br>$discussion->subject ";
+                echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
+                echo $strmore."...</a>";
+                echo "</p>\n";
             break;
             case "header":
                 forum_print_discussion_header($discussion, $forum->course, $strdatestring);
@@ -1590,7 +1590,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
                     $link = false;
                 }
                 forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link, $assessed=false);
-                echo "<BR>\n";
+                echo "<br>\n";
             break;
         }
     }
