@@ -133,14 +133,24 @@
             break;
 
         case "eachuser":
-            print_simple_box(text_to_html($forum->intro), "CENTER");
-            echo "<P ALIGN=CENTER>";
+            if (!empty($forum->intro)) {
+                print_simple_box(text_to_html($forum->intro), "center");
+            }
+            echo "<p align=\"center\">";
             if (forum_user_can_post_discussion($forum)) {
                 print_string("allowsdiscussions", "forum");
             } else {
                 echo "&nbsp";
             }
-            echo "</P>";
+            echo "</p>";
+            if (!empty($showall)) {
+                forum_print_latest_discussions($forum->id, 0, "header");
+            } else {
+                forum_print_latest_discussions($forum->id, FORUM_MANY_DISCUSSIONS, "header");
+            }
+            break;
+
+        case "teacher":
             if (!empty($showall)) {
                 forum_print_latest_discussions($forum->id, 0, "header");
             } else {
@@ -149,8 +159,10 @@
             break;
 
         default:
-            print_simple_box(text_to_html($forum->intro), "CENTER");
-            echo "<P>&nbsp;</P>";
+            if (!empty($forum->intro)) {
+                print_simple_box(text_to_html($forum->intro), "center");
+            }
+            echo "<p>&nbsp;</p>";
             if (!empty($showall)) {
                 forum_print_latest_discussions($forum->id, 0, "header");
             } else {
