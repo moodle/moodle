@@ -354,7 +354,7 @@ function calendar_add_event_metadata($event) {
         $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
 
         $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="" title="'.$modulename.'" style="vertical-align: middle;" />';
-        $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
+        $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.format_string($event->name,true).'</a>';
         $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$coursecache[$module->course]->fullname.'</a>';
         $event->cmid = $module->id;
 
