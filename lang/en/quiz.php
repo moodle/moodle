@@ -132,6 +132,7 @@ $string['quizclosed'] = 'This quiz closed on $a';
 $string['quizcloses'] = 'Quiz closes';
 $string['quiznotavailable'] = 'The quiz will not be available until: $a';
 $string['quizopen'] = 'Open the quiz';
+$string['quizopens'] = 'Quiz opens';
 $string['random'] = 'Random Question';
 $string['randomcreate'] = 'Create Random Questions';
 $string['randomsamatch'] = 'Random Short-Answer Matching';
