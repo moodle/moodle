@@ -208,7 +208,9 @@ function qualified_me() {
 
     global $CFG;
 
-    $url = parse_url($CFG->wwwroot);
+    if (!empty($CFG->wwwroot)) {
+        $url = parse_url($CFG->wwwroot);
+    }
 
     if (!empty($url['host'])) {
         $hostname = $url['host'];
