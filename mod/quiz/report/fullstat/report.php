@@ -559,7 +559,8 @@ class quiz_report extends quiz_default_report {
         /// Print header to force download
 
         header("Content-Type: application/download\n"); 
-        header("Content-Disposition: attachment; filename=\"$course->shortname $quiz->name.txt\"");
+        $downloadfilename = clean_filename("$course->shortname $quiz->name");
+        header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
         header("Pragma: public");
