@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6 dev (2002101001)
+      // moodle.php - created with Moodle 1.0.6 dev (2002101500)
 
 
 $string['action'] = "Aktion";
@@ -303,7 +303,9 @@ $string['newusers'] = "Neue Benutzer";
 $string['no'] = "Kein";
 $string['nocoursesyet'] = "Keine Kurse in dieser Rubrik";
 $string['noexistingteachers'] = "Keine Lehrer angelegt";
+$string['nofilesyet'] = "Bislang wurden keine Dateien für Ihren Kurs hochgeladen";
 $string['nograde'] = "Keine Note";
+$string['noimagesyet'] = "Bislang wurden keine Grafiken für Ihren Kurs hochgeladen";
 $string['none'] = "Nichts";
 $string['nopotentialteachers'] = "Keine möglichen Lehrer";
 $string['normal'] = "Normal";
@@ -418,7 +420,8 @@ $string['update'] = "Aktualisieren";
 $string['updated'] = "\$a aktualisiert";
 $string['updatemyprofile'] = "Profil aktualisieren";
 $string['updatesevery'] = "Aktualisiere alle \$a Sekunden ";
-$string['updatethiscourse'] = "Kusr aktualisieren";
+$string['updatethis'] = "Aktualisiere deisen \$a";
+$string['updatethiscourse'] = "Diesen Kurs aktualisieren";
 $string['updatinga'] = "Aktualisiere \$a";
 $string['updatingain'] = "Aktualisiere \$a->what in \$a->in";
 $string['upload'] = "Hochladen";

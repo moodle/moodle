@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.6 dev (2002101001)
+      // quiz.php - created with Moodle 1.0.6 dev (2002101500)
 
 
 $string['addselectedtoquiz'] = "Auswahl zum Quiz hinzufügen";
@@ -27,6 +27,7 @@ $string['createnewquestion'] = "Eine neue Frage anlegen";
 $string['daysavailable'] = "Tage verfügbar";
 $string['default'] = "Standard";
 $string['defaultinfo'] = "Die Standard-Rubrik für diese Frage";
+$string['editcategories'] = "";
 $string['editingmultichoice'] = "Eine Frage mit Mehrfachauswahl bearbeiten";
 $string['editingquestion'] = "Eine Frage bearbeiten";
 $string['editingquiz'] = "Ein Quiz bearbeiten";
@@ -50,6 +51,11 @@ $string['nomoreattempts'] = "Kein Versuch mehr zugelassen";
 $string['noquestions'] = "Es wurden noch keine Fragen eingetragen";
 $string['question'] = "Frage";
 $string['questionname'] = "Title der Frage";
+$string['quizavailable'] = "Diese Quiz ist verfügbar bis: \$a";
+$string['quizclose'] = "Dieses Quiz schließen";
+$string['quizclosed'] = "Diese Quiz schließt am \$a";
+$string['quiznotavailable'] = "Diese Quiz ist nicht verfügbar bis: \$a";
+$string['quizopen'] = "Ein Quiz beginnen";
 $string['rename'] = "Umbenennen";
 $string['report'] = "Berichte";
 $string['save'] = "Speichern";
