@@ -72,10 +72,61 @@
     if ($status and ($restore->users == 0 or $restore->users == 1)) {
         echo "<li>Creating users";
         $status = restore_create_users($restore,$xml_file);
+        //Now print info about the work done
+        if ($status) {
+            $recs = get_records_sql("select old_id, info from {$CFG->prefix}backup_ids
+                                     where backup_code = '$restore->backup_unique_code' and
+                                     table_name = 'user'");
+            //We've records
+            if ($recs) {
+                $new_count = 0;
+                $exists_count = 0;
+                $student_count = 0;
+                $teacher_count = 0;
+                $coursecreator_count = 0;
+                $admin_count = 0;
+                $other_count = 0;
+                //Iterate, filling counters
+                foreach ($recs as $rec) {
+                    if (strpos($rec->info,"new") !== false) {
+                        $new_count++;
+                    } 
+                    if (strpos($rec->info,"exists") !== false) {
+                        $exists_count++;
+                    }
+                    if (strpos($rec->info,"admin")) {
+                        $admin_count++;
+                    } else if (strpos($rec->info,"coursecreator")) {
+                        $coursecreator_count++;
+                    } else if (strpos($rec->info,"teacher")) {
+                    $teacher_count++;
+                    } else if (strpos($rec->info,"student")) {
+                        $student_count++;
+                    } else if ($rec->info == "new" or $rec->info == "exists") {
+                        $other_count++;
+                    }
+                }
+                //Now print information gathered
+                echo " (new: ".$new_count.", existing: ".$exists_count.")";
+                echo "<ul>";
+                echo "<li>Students: ".$student_count;
+                echo "<li>Teachers: ".$teacher_count;
+                echo "<li>Course Creators: ".$coursecreator_count;
+                echo "<li>Admins: ".$admin_count;
+                echo "<li>Other: ".$other_count;
+                echo "</ul>";
+            } else {
+                //Something is wrong. There is no users !!
+                $status = false;
+            }
+        }
     }
 
+    //Now create users as needed
+    if ($status and ($restore->user_files)) {
+        echo "<li>Copying User Files";
 
-
+    }
 
 
 
