@@ -1199,7 +1199,7 @@ function get_courses_search($searchterms, $sort="fullname ASC", $page=0, $record
 
     }
 
-    $selectsql = "{$CFG->prefix}course WHERE ($fullnamesearch OR $summarysearch) and category > 0";
+    $selectsql = "{$CFG->prefix}course WHERE ($fullnamesearch OR $summarysearch) AND category > '0'";
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
