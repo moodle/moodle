@@ -546,9 +546,9 @@ function calendar_top_controls($type, $data) {
             $prevname = calendar_wday_name($prevdate['weekday']);
             $nextname = calendar_wday_name($nextdate['weekday']);
             $content .= "<table style='width: 100%;'><tr>\n";
-            $content .= '<td style="text-align: left; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']).'">&lt;&lt; '.$prevname.' '.$prevyear."</a></td>\n";
+            $content .= '<td style="text-align: left; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']).'">&lt;&lt; '.$prevname."</a></td>\n";
             $content .= '<td style="text-align: center"><strong>'.$dayname.', '.$data['d'].' <a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></strong></td>\n";
-            $content .= '<td style="text-align: right; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname.' '.$nextyear." &gt;&gt;</a></td>\n";
+            $content .= '<td style="text-align: right; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname." &gt;&gt;</a></td>\n";
             $content .= "</tr></table>\n";
         break;
     }
@@ -1090,10 +1090,10 @@ function calendar_get_default_courses() {
     global $USER;
 
     $courses = array();
-    if(is_array($USER->student)) {
+    if(isset($USER->student) && is_array($USER->student)) {
         $courses = $USER->student + $courses;
     }
-    if(is_array($USER->teacher)) {
+    if(isset($USER->teacher) && is_array($USER->teacher)) {
         $courses = $USER->teacher + $courses;
     }
     return $courses;
@@ -1151,7 +1151,7 @@ function calendar_get_tz_offset() {
         $tzfix = $timezone * 3600;
     }
     else {
-        $tzfix = date('Z', $starttime);
+        $tzfix = date('Z');
     }
 
     return $tzfix;
