@@ -1487,6 +1487,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
     $canreply = forum_user_can_post($forum);
 
     $discussioncount = 0;
+    $olddiscussionlink = false;
 
     if ($forum_style == "minimal") {
         $strftimerecent = get_string("strftimerecent");
@@ -1507,8 +1508,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         $discussioncount++;
 
         if ($forum_numdiscussions && ($discussioncount > $forum_numdiscussions)) {
-            echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&showall=1\">";
-            echo get_string("olderdiscussions", "forum")."</A> ...</P>";
+            $olddiscussionlink = true;
             break;
         }
         if (!empty($replies[$discussion->discussion])) {
@@ -1546,6 +1546,11 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
 
     if ($forum_style == "header") {
         echo "</table>";
+    }
+
+    if ($olddiscussionlink) {
+        echo "<p align=right><a href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&showall=1\">";
+        echo get_string("olderdiscussions", "forum")."</a> ...</p>";
     }
 }
 
