@@ -2,9 +2,9 @@
     // index.php - the front page.
     
     require("config.php");
-    include("course/lib.php");
-    include("mod/resource/lib.php"); 
-    include("mod/forum/lib.php");
+    require("course/lib.php");
+    require("mod/resource/lib.php"); 
+    require("mod/forum/lib.php");
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/admin/index.php");
