@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-$string['addcontact'] = 'Ajouter un contact';
+$string['addcontact'] = 'Ajouter ce contact';
 $string['ago'] = 'Il y a $a';
 $string['allmine'] = 'Tous mes messages reçus ou envoyés';
 $string['allstudents'] = 'Tous les messages entre les étudiants du cours';
@@ -44,8 +44,8 @@ $string['searchmessages'] = 'Rechercher des messages';
 $string['sendmessage'] = 'Envoyer message';
 $string['sendmessageto'] = 'Envoyer message à $a';
 $string['settingssaved'] = 'Vos réglages ont été enregistrés';
-$string['showmessagewindow'] = 'Ouvrir la messagerie lorsque de nouveaux messages arrivent (votre navigateur doit être configuré de façon à ne pas bloquer l\'ouverture des fenêtre popup de ce site)';
-$string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%I:%%M %%p';
+$string['showmessagewindow'] = 'Ouvrir la messagerie lorsque de nouveaux messages arrivent (votre navigateur doit être configuré de façon à ne pas bloquer l\'ouverture des fenêtres popup de ce site)';
+$string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
 $string['timenosee'] = 'Minutes depuis ma dernière présence en ligne';
 $string['timesent'] = 'Heure d\'envoi';
 $string['unblockcontact'] = 'Débloquer ce contact';
