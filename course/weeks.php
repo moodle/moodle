@@ -33,27 +33,30 @@
     
     // Layout the left column
 
-    // Print all the course links on the side
+
+    // Links to people
+
+    print_simple_box("People", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    $moddata[]="<A HREF=\"../user/index.php?id=$course->id\">Participants</A>";
+    $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"List of everyone\">";
+    $moddata[]="<A HREF=\"../user/view.php?id=$USER->id&course=$course->id\">Edit my profile</A>";
+    $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"Me\">";
+    print_side_block("", $moddata, "", $modicon);
+
 
     // Then all the links to module types
 
     $moddata = array();
     $modicon = array();
-
     if ($modtype) {
         foreach ($modtype as $modname => $modfullname) {
             $moddata[] = "<A HREF=\"../mod/$modname/index.php?id=$course->id\">".$modfullname."s</A>";
             $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$modfullname\">";
         }
     }
-
-    $moddata[]="<A HREF=\"../user/index.php?id=$course->id\">Participants</A>";
-    $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"Participants\">";
-    $moddata[]="<A HREF=\"../user/view.php?id=$USER->id&course=$course->id\">Edit my info</A>";
-    $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"Me\">";
-
     print_simple_box("Activities", $align="CENTER", $width="100%", $color="$THEME->cellheading");
     print_side_block("", $moddata, "", $modicon);
+
 
     // Admin links and controls
 

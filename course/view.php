@@ -47,6 +47,7 @@
             $mods[$mod->id] = $mod;
             $modtype[$mod->modname] = $mod->modfullname;
         }
+        ksort($modtype);
     }
 
     switch ($course->format) {
