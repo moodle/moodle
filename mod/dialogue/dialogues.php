@@ -15,6 +15,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    require_once("locallib.php");
 
     require_variable($id);    // Course Module ID
 
@@ -134,10 +135,8 @@
 					$item->conversationid = $conversation->id;
 					$item->userid = $USER->id;
 					$item->timecreated = time(); 
-					// set mailed flag if checkbox is not set
-					if (empty($_POST['sendthis'])) {
-						$item->mailed = 1;
-					}
+                    // reverse the dialogue mail default 
+					$item->mailed = !$dialogue->maildefault;
 					$item->text = $_POST[$textarea_name];
 					if (!$item->id = insert_record("dialogue_entries", $item)) {
 						error("Insert Entries: Could not insert dialogue record!");
@@ -197,10 +196,8 @@
 			$entry->conversationid = $conversation->id;
 			$entry->userid = $USER->id;
 			$entry->timecreated = time(); 
-			// set mailed flag if checkbox is not set
-			if (empty($_POST['sendthis'])) {
-				$entry->mailed = 1;
-				}
+			// reverse the dialogue default value
+			$entry->mailed = !$dialogue->maildefault;
 			$entry->text = $_POST['firstentry'];
 			if (!$entry->id = insert_record("dialogue_entries", $entry)) {
 				error("Insert Entries: Could not insert dialogue record!");
