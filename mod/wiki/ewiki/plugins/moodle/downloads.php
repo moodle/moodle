@@ -278,7 +278,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
       foreach ($sorted as $id=>$uu) {
          $row = $files[$id];
-         $o .= ewiki_entry_downloads($row, $section[0]=="*");
+         $o .= ewiki_entry_downloads($row, $section[0]=="*", true);
       }
    }
 
@@ -291,7 +291,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
 
 
-function ewiki_entry_downloads($row, $show_section=0) {
+function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
    global $ewiki_binary_icons, $ewiki_upload_sections;
 
@@ -344,11 +344,20 @@ function ewiki_entry_downloads($row, $show_section=0) {
    $info->comment = $p_comment;
 
    
-   $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br>'.
-        get_string("uploadedon","wiki").": ".$info->time.", ".get_string("downloadtimes","wiki",$info->hits)."<br>".
-        '(<a href="'.$info->url.'">'.$info->id."</a>)<br>".
-        $info->section." ".get_string("fileisoftype","wiki").": ".$info->type.
-        "$info->comment<br><br>";
+   if ($fullinfo) {
+        $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br>'.
+            get_string("uploadedon","wiki").": ".$info->time.", ".
+            get_string("downloadtimes","wiki",$info->hits)."<br>".
+//            '(<a href="'.$info->url.'">'.$info->id."</a>)<br>".
+            $info->section." ".get_string("fileisoftype","wiki").": ".$info->type.
+            $info->comment.'<br><br>';
+   }
+   else {
+//       global $moodle_format;   // from wiki/view.php
+        $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br>'.
+              $info->comment.'<br><br>';
+//        $o = format_text($o, $moodle_format);
+   }
 
    
    
