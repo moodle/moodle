@@ -746,8 +746,7 @@ table.minicalendar th {
     height: auto;
 }
 
-#calendar .maincalendar .heading,
-#calendar .sidecalendar .heading
+#calendar div.header
 {
     background-image:url(gradient.jpg);
     background-position:top;
@@ -755,7 +754,7 @@ table.minicalendar th {
     padding: 5px;
 }
 
-#calendar .maincalendar .heading .buttons {
+#calendar .maincalendar .buttons {
     float: right;
 }
 
@@ -813,6 +812,14 @@ table.minicalendar th {
 
 #calendar .maincalendar .eventlist {
     padding: 10px;
+}
+
+#calendar .maincalendar .eventlist .topic {
+    padding: 5px;
+    border-style:solid; /* borders */
+    border-width: 0px;
+    border-bottom-color: #EEEEEE;
+    border-bottom-width: 1px;
 }
 
 #calendar .maincalendar .eventlist .event {
@@ -1003,9 +1010,11 @@ table.calendar-controls .next
 }
 
 .sideblock .header .hide-show img.hide-show-image {
+    background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
 .sideblock.hidden .header .hide-show img.hide-show-image {
+    background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
 .sideblock.hidden .content {

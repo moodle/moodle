@@ -40,7 +40,7 @@ body, td, th, li {
 }
 
 th {
-    font-weight: normal;
+    font-weight: bold;
 }
 
 a:link,
@@ -76,7 +76,7 @@ h4 {
     font-size:1.0em;
 }
 
-.normal {
+.bold {
     font-weight:normal;
 }
 
@@ -123,17 +123,17 @@ h4 {
 /* many places */
 
 .errorbox .title {
-    font-weight: normal;
+    font-weight: bold;
     font-size: 1.2em;
     text-align: center;
 }
 
 /* paging bar */
 .pagingbar .title {
-    font-weight: normal;
+    font-weight: bold;
 }
 .pagingbar .thispage {
-    font-weight: normal;
+    font-weight: bold;
 }
 
 /*****************************
@@ -180,7 +180,7 @@ table.formtable tbody th {
 
 /* user */
 .userinfobox .username {
-    font-weight: normal;
+    font-weight: bold;
 }
 
 .userinfobox .links {
@@ -220,7 +220,7 @@ table.formtable tbody th {
 
 
 .forumpost .topic .subject {
-    font-weight: normal;
+    font-weight: bold;
 }
 
 .forumpost .topic .author {
@@ -294,7 +294,7 @@ body#mod-quiz-report .controls {
     font-style: italic;
 }
 .concept {
-    font-weight: normal;
+    font-weight: bold;
 }
 .glossarycomment .time {
     font-size: 0.7em;
@@ -325,8 +325,7 @@ body#mod-quiz-report .controls {
     line-height:1.2em;
 }
 
-#calendar .maincalendar .heading,
-#calendar .sidecalendar .heading
+#calendar div.header
 {
     font-weight:normal;
 }
@@ -342,7 +341,7 @@ body#mod-quiz-report .controls {
 }
 
 #calendar .maincalendar .day {
-    font-weight: normal;
+    font-weight: bold;
 }
 
 table.minicalendar {
@@ -381,7 +380,7 @@ table.calendar-controls .next {
     text-align: right;
 }
 #calendar .maincalendar .calendar-controls .current {
-    font-weight: normal;
+    font-weight: bold;
 }
 
 /*****************************
@@ -423,12 +422,12 @@ table.calendar-controls .next {
 }
 
 .sideblock.block_quiz_results h1 {
-    font-weight: normal;
+    font-weight: bold;
     font-size: 1.2em;
 }
 
 .sideblock.block_quiz_results table.grades caption {
-    font-weight: normal;
+    font-weight: bold;
 }
 
 .sideblock.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
@@ -462,7 +461,7 @@ body#user-index #longtimenosee {
 /* Messaging */
 
 .message .author {
-    font-weight: normal;
+    font-weight: bold;
 }
 
 .message .time {
@@ -478,11 +477,11 @@ body#user-index #longtimenosee {
 }
 
 .headingblock .title {
-    font-weight: normal;
+    font-weight: bold;
 }
 .headingblock .link {
     font-size: 0.9em;
-    font-weight: normal;
+    font-weight: bold;
 }
 
 .files .file {
@@ -494,5 +493,5 @@ body#user-index #longtimenosee {
 }
 
 .files .folder .size {
-    font-weight: normal;
+    font-weight: bold;
 }
