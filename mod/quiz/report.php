@@ -54,7 +54,10 @@
     $strreport  = get_string("report", "quiz");
     $strname  = get_string("name");
     $strattempts  = get_string("attempts", "quiz");
+    $strscore  = get_string("score", "quiz");
     $strgrade  = get_string("grade");
+    $strtimetaken     = get_string("timetaken", "quiz");
+    $strtimecompleted = get_string("timecompleted", "quiz");
 
     print_header("$course->shortname: $quiz->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> 
@@ -62,6 +65,38 @@
                  "", "", true);
 
     print_heading($quiz->name);
+
+    if ($attempt) {  // Show a particular attempt
+
+        if (! $attempt = get_record("quiz_attempts", "id", $attempt)) {
+            error("No such attempt ID exists");
+        }
+
+        if (! $questions = quiz_get_attempt_responses($attempt)) {
+            error("Could not reconstruct quiz results for attempt $attempt->id!");
+        }
+
+        if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
+            error("Could not re-grade this quiz attempt!");
+        }
+
+        $table->align  = array("RIGHT", "LEFT");
+        $table->data[] = array("$strtimetaken:", format_time($attempt->timefinish - $attempt->timestart));
+        $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
+        $table->data[] = array("$strscore:", "$result->sumgrades/$quiz->sumgrades ($result->percentage %)");
+        $table->data[] = array("$strgrade:", "$result->grade/$quiz->grade");
+        print_table($table);
+
+        print_continue("report.php?q=$quiz->id");
+
+        $quiz->feedback = true;
+        $quiz->correctanswers = true;
+        quiz_print_quiz_questions($quiz, $result);
+
+        print_continue("report.php?q=$quiz->id");
+        print_footer($course);
+        exit;
+    }
 
     if (!$grades = quiz_get_grade_records($quiz)) {
         print_footer($course);

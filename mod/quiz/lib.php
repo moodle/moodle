@@ -715,15 +715,15 @@ function quiz_get_user_attempts($quizid, $userid) {
 
 function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
 /// Returns a simple little comma-separated list of all attempts, 
-/// with the best grade bolded
+/// with each grade linked to the feedback report and with the best grade highlighted
 
     $bestgrade = format_float($bestgrade);
     foreach ($attempts as $attempt) {
         $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
         if ($attemptgrade == $bestgrade) {
-            $userattempts[] = "<B>$attemptgrade</B>";
+            $userattempts[] = "<SPAN CLASS=highlight><A HREF=\"report.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</A></SPAN>";
         } else {
-            $userattempts[] = "$attemptgrade";
+            $userattempts[] = "<A HREF=\"report.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</A>";
         }
     }
     return implode(",", $userattempts);
@@ -1022,5 +1022,27 @@ function quiz_grade_attempt_results($quiz, $questions) {
 
     return $result;
 }
+
+
+function quiz_get_attempt_responses($attempt) {
+// Given an attempt object, this function gets all the 
+// stored responses and returns them in a format suitable
+// for regrading using quiz_grade_attempt_results()
+   
+    if (!$responses = get_records_sql("SELECT q.id, q.type, r.answer 
+                                        FROM quiz_responses r, quiz_questions q
+                                       WHERE r.attempt = '$attempt->id' 
+                                         AND q.id = r.question")) {
+        notify("Could not find any responses for that attempt!");
+        return false;
+    }
+
+    foreach ($responses as $key => $response) {
+        $responses[$key]->answer = explode(",",$response->answer);
+    }
+
+    return $responses;
+}
+
     
 ?>
