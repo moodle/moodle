@@ -1259,7 +1259,7 @@ function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value=
     if ($richedit) {
         $richediturl = "$CFG->wwwroot/lib/rte/richedit.html";
         if (!empty($courseid) and isteacher($courseid)) {
-            $richediturl = "$CFG->wwwroot/lib/rte/richedit.php?id=$courseid&wwwroot=$CFG->wwwroot";
+            $richediturl = "$CFG->wwwroot/lib/rte/richedit.php?id=$courseid";
         }
 
         echo "<object id=\"richedit\" style=\"background-color: buttonface\"";

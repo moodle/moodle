@@ -102,6 +102,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+<?php  
+    include("../../config.php"); 
+
+    require_variable($id);
+
+?>
+
 // Internal (private) properties.  
 // RichEditor is the global RichEditor object (function) of which there is only
 // 1 instance.

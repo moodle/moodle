@@ -110,6 +110,9 @@
 -->
 <?php  
     include("../../config.php"); 
+
+    require_variable($id);
+
 ?>
 <html><head>
 <meta content="HTML 4.0" name="vs_targetSchema">
