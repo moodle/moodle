@@ -102,6 +102,8 @@
         link_to_popup_window ("/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam", 
                               "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, $strchat);
         print_simple_box_end();
+    } else {
+        notice(get_string('noguests', 'chat'));
     }
 
 
