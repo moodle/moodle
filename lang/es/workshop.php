@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.1 Beta (2003082001)
+      // workshop.php - created with Moodle 1.1 (2003082800)
 
 
 $string['absent'] = "Ausente";
@@ -69,6 +69,7 @@ $string['gradeforstudentsassessment'] = "Calificación de la evaluación de los al
 $string['gradeofsubmission'] = "Calificación del envío: \$a";
 $string['gradingstrategy'] = "Estrategia de calificación";
 $string['hidegradesbeforeagreement'] = "Ocultar calificaciones antes de ser aceptadas";
+$string['hidenamesfromstudents'] = "Ocultar nombres de \$a";
 $string['includeteachersgrade'] = "Incluir la calificación del profesor";
 $string['incorrect'] = "Incorrecto";
 $string['leaguetable'] = "Tabla de trabajos entregados";
@@ -87,6 +88,7 @@ $string['maximumsize'] = "Tamaño máximo";
 $string['modulename'] = "Taller";
 $string['modulenameplural'] = "Talleres";
 $string['movingtophase'] = "Cambiando a la fase \$a";
+$string['namesnotshowntostudents'] = "Nombres no mostrados a \$a";
 $string['newassessments'] = "Nuevas evaluaciones";
 $string['newgradings'] = "Nuevas calificaciones";
 $string['newsubmissions'] = "Nuevos envíos";
@@ -101,10 +103,12 @@ $string['numberofassessmentelements'] = "Número de comentarios, elementos de eva
 $string['numberofassessments'] = "Número de evaluaciones";
 $string['numberofassessmentsofstudentsubmissions'] = "Número de evaluaciones de los envíos de los estudiantes";
 $string['numberofassessmentsofteachersexamples'] = "Número de evaluaciones de ejemplo dadas por el profesor";
+$string['numberofentries'] = "Número de entradas";
 $string['on'] = "en \$a";
 $string['openassignment'] = "Tarea abierta";
 $string['optionforpeergrade'] = "Opción de calificación por los compañeros";
 $string['overallgrade'] = "Calificación total";
+$string['overallocation'] = "Over Allocation";
 $string['overallpeergrade'] = "Calificación total por los compañeros: \$a";
 $string['overallteachergrade'] = "Calificación total del profesor: \$a";
 $string['ownwork'] = "Trabajo propio";
@@ -113,6 +117,7 @@ $string['phase1'] = "Determinar la tarea";
 $string['phase2'] = "\$a Envíos y evaluaciones";
 $string['phase3'] = "Cálculo de la calificación final";
 $string['phase4'] = "Mostrar las calificaciones finales";
+$string['phase5'] = "Mostrar calificaciones finales";
 $string['pleaseassesstheseexamplesfromtheteacher'] = "Por favor evalúe estos ejemplos de la \$a";
 $string['pleaseassessthesestudentsubmissions'] = "Por favor evalúe estos \$a envíos";
 $string['pleaseassessyoursubmissions'] = "Por favor evalúe su(s) envío(s)";
@@ -127,6 +132,7 @@ $string['savedok'] = "Guardado correctamente";
 $string['savemyassessment'] = "Guardar mi evaluación";
 $string['savemycomment'] = "Guardar mi comentario";
 $string['savemygrading'] = "Guardar mi calificación";
+$string['saveoverallocation'] = "Save Over Allocation Level";
 $string['scale10'] = "Puntuación hasta 10";
 $string['scale100'] = "Puntuación hasta 100";
 $string['scale20'] = "Puntuación hasta 20";
@@ -139,6 +145,7 @@ $string['scalepresent'] = "Escala de 2 puntos: presente o ausente";
 $string['scaleyes'] = "Escala de 2 puntos: sí o no";
 $string['select'] = "Seleccionar";
 $string['selfassessment'] = "Autoevaluación";
+$string['setoverallocation'] = "Set Over Allocation Level";
 $string['showgrades'] = "Mostrar calificaciones";
 $string['specimenassessmentform'] = "Formulario de muestra de evaluación";
 $string['studentassessments'] = "\$a evaluaciones";
@@ -179,6 +186,7 @@ $string['weights'] = "Pesos";
 $string['weightsusedforfinalgrade'] = "Pesos usados para la calificación final";
 $string['weightsusedforsubmissions'] = "Pesos usados para los envíos";
 $string['yourassessments'] = "Sus evaluaciones";
+$string['yourassessmentsofexamplesfromtheteacher'] = "Sus evaluaciones de ejemplo de \$a";
 $string['yourfeedbackgoeshere'] = "Coloque aquí su respuesta";
 
 ?>
