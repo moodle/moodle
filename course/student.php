@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Script to assign students to courses
 
     require_once("../config.php");

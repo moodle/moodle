@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Produces a graph of log accesses
 
     require_once("../config.php");

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 // Display user activity reports for a course (totals)
 
@@ -32,16 +32,16 @@
 
     if ($course->category) {
         print_header("$course->shortname: $stractivityreport", "$course->fullname",
-                 "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> ->
+                 "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                   $stractivityreport");
     } else {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
-                 "<A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> -> 
+                 "<a href=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a> -> 
                   $stractivityreport -> $strmode");
     }
     print_heading("$course->fullname");
 
-    echo "<table cellpadding=10 align=center><tr>";
+    echo "<table cellpadding=\"10\" align=\"center\"><tr>";
     echo "<td>$stractivityreport: </td>";
     echo "</tr></table>";
 
@@ -56,18 +56,18 @@
             $section = $sections[$i];
 
             if ($section->sequence) {
-                echo "<HR>";
-                echo "<H2>";
+                echo "<hr />";
+                echo "<h2>";
                 switch ($course->format) {
                     case "weeks": print_string("week"); break;
                     case "topics": print_string("topic"); break;
                     default: print_string("section"); break;
                 }
-                echo " $i</H2>";
+                echo " $i</h2>";
 
-                echo "<UL>";
+                echo "<ul>";
 
-                echo "<TABLE CELLPADDING=4 CELLSPACING=0>";
+                echo "<table cellpadding=\"4\" cellspacing=\"0\">";
 
                 $sectionmods = explode(",", $section->sequence);
                 foreach ($sectionmods as $sectionmod) {
@@ -92,10 +92,10 @@
                     print_outline_row($mod, $instance, $result);
                 }
 
-                echo "</TABLE>";
+                echo "</table>";
                 print_simple_box_end();
 
-                echo "</UL>";
+                echo "</ul>";
             }
         }
     }
@@ -104,27 +104,27 @@
 
 
 function print_outline_row($mod, $instance, $result) {
-    $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+    $image = "<img src=\"../mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
 
-    echo "<TR>";
-    echo "<TD VALIGN=top>$image</TD>";
-    echo "<TD VALIGN=top width=300>";
-    echo "   <A TITLE=\"$mod->modfullname\"";
-    echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instance->name</A></TD>";
-    echo "<TD>&nbsp;&nbsp;&nbsp;</TD>";
-    echo "<TD VALIGN=top BGCOLOR=white>";
+    echo "<tr>";
+    echo "<td valign=\"top\">$image</td>";
+    echo "<td valign=\"top\" width=\"300\">";
+    echo "   <a title=\"$mod->modfullname\"";
+    echo "   href=\"../mod/$mod->modname/view.php?id=$mod->id\">$instance->name</a></td>";
+    echo "<td>&nbsp;&nbsp;&nbsp;</td>";
+    echo "<td valign=\"top\" bgcolor=\"white\">";
     if (isset($result->info)) {
         echo "$result->info";
     } else {
-        echo "<P ALIGN=CENTER>-</P>";
+        echo "<p align=\"center\">-</p>";
     }
-    echo "</TD>";
-    echo "<TD>&nbsp;&nbsp;&nbsp;</TD>";
+    echo "</td>";
+    echo "<td>&nbsp;&nbsp;&nbsp;</td>";
     if (isset($result->time)) {
         $timeago = format_time(time() - $result->time);
-        echo "<TD VALIGN=top NOWRAP>".userdate($result->time)." ($timeago)</TD>";
+        echo "<td valign=\"top\" nowrap=\"nowrap\">".userdate($result->time)." ($timeago)</td>";
     }
-    echo "</TR>";
+    echo "</tr>";
 }
 
 ?>

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 //  Removes a student from a class
 //  This will not delete any of their data from the course, 
@@ -48,7 +48,7 @@
     $strunenrol = get_string("unenrol");
 
     print_header("$course->shortname: $strunenrol", "$course->fullname", 
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> $strunenrol"); 
+                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strunenrol"); 
 
     if ($user->id == $USER->id) {
         $strunenrolsure  = get_string("unenrolsure", "", get_string("yourself"));

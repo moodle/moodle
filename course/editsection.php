@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Edit the introduction of a section
 
     require_once("../config.php");
@@ -49,7 +49,7 @@
     $stredit = get_string("edit", "", " $sectionname $section->section");
 
 	print_header("$course->shortname: $stredit", "$course->fullname", 
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                   -> $stredit");
 
     print_heading(get_string("summaryof", "", "$sectionname $form->section"));

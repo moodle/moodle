@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Allows a teacher/admin to login as another user (in stealth mode)
 
     require_once("../config.php");
@@ -81,7 +81,7 @@
     $strloggedinas = get_string("loggedinas", "", $student_name);
 
     print_header("$course->fullname: $strloginas $student_name", "$course->fullname", 
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
+                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
                   $strloginas $student_name");
     notice($strloggedinas, "$CFG->wwwroot/course/view.php?id=$course->id");
 

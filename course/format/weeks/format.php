@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Display the whole course as "weeks" made of of modules
       // Included from "view.php"
 
@@ -48,9 +48,9 @@
 
 
 /// Layout the whole page as three big columns.
-    echo "<table border=0 cellpadding=3 cellspacing=0 width=100%>";
+    echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width="100%">";
 
-    echo "<tr valign=top>\n";
+    echo "<tr valign=\"top\">\n";
 
 /// The left column ...
 
@@ -72,13 +72,13 @@
         $stractivityclipboard = strip_tags(get_string("activityclipboard", "", addslashes($USER->activitycopyname)));
         $strcancel= get_string("cancel");
         echo "<tr>";
-        echo "<td colspan=3 valign=top bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlineclip\" width=\"100%\">";
-        echo "<p><font size=2>";
+        echo "<td colspan=\"3\" valign=\"top\" bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlineclip\" width=\"100%\">";
+        echo "<p><font size=\"2\">";
         echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"mod.php?cancelcopy=true\">$strcancel</a>)";
         echo "</font></p>";
         echo "</td>";
         echo "</tr>";
-        echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
+        echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\"></td></tr>";
     }
 
 /// Print Section 0 with general activities
@@ -88,16 +88,16 @@
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
         echo "<tr>";
-        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=top width=20>&nbsp;</td>";
-        echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" width=\"100%\">";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=\"top\" width=\"20\">&nbsp;</td>";
+        echo "<td valign=\"top\" bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" width=\"100%\">";
 
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
         if (isediting($course->id)) {
             echo " <a title=\"$streditsummary\" ".
-                 " href=\"editsection.php?id=$thissection->id\"><img height=11 width=11 src=\"$CFG->pixpath/t/edit.gif\" ".
-                 " border=0 alt=\"$streditsummary\"></a><br />";
+                 " href=\"editsection.php?id=$thissection->id\"><img height=\"11\" width=\"11\" src=\"$CFG->pixpath/t/edit.gif\" ".
+                 " border=\"0\" alt=\"$streditsummary\"></a><br />";
         }
 
         echo '<br clear="all">';
@@ -109,9 +109,9 @@
         }
 
         echo "</td>";
-        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=top align=center width=10>";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=\"top\" align=\"center\" width=\"10\">";
         echo "&nbsp;</td></tr>";
-        echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
+        echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\"></td></tr>";
     }
 
 
@@ -171,11 +171,11 @@
             }
 
             echo "<tr>";
-            echo "<td nowrap $colorsides valign=top width=20>";
-            echo "<p align=center><font size=3><a name=\"$section\">$section</a></font></p>";
+            echo "<td nowrap $colorsides valign=\"top\" width=\"20\">";
+            echo "<p align=\"center\"><font size=\"3\"><a name=\"$section\">$section</a></font></p>";
             echo "</td>";
     
-            echo "<td valign=top $colormain width=\"100%\">";
+            echo "<td valign=\"top\" $colormain width=\"100%\">";
     
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
                 echo "<p class=\"weeklydatetext\">$weekday - $endweekday ";
@@ -192,7 +192,7 @@
     
                 if (isediting($course->id)) {
                     echo " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
-                         "<img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a><br />";
+                         "<img src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\"></a><br />";
                 }
     
                 echo '<br clear="all">';
@@ -205,42 +205,42 @@
     
                 echo "</td>";
             }
-            echo "<td nowrap $colorsides valign=top align=center width=10>";
-            echo "<font size=1>";
+            echo "<td nowrap $colorsides valign=\"top\" align=\"center\" width=\"10\">";
+            echo "<font size=\"1\">";
 
             if ($displaysection == $section) {
                 echo "<a href=\"view.php?id=$course->id&week=all\" title=\"$strshowallweeks\">".
-                     "<img src=\"$CFG->pixpath/i/all.gif\" height=25 width=16 border=0></a><br />";
+                     "<img src=\"$CFG->pixpath/i/all.gif\" height=\"25\" width=\"16\" border=\"0\"></a><br />";
             } else {
                 $strshowonlyweek = get_string("showonlyweek", "", $section);
                 echo "<a href=\"view.php?id=$course->id&week=$section\" title=\"$strshowonlyweek\">".
-                     "<img src=\"$CFG->pixpath/i/one.gif\" height=16 width=16 border=0></a><br />";
+                     "<img src=\"$CFG->pixpath/i/one.gif\" height=\"16\" width=\"16\" border=\"0\"></a><br />";
             }
     
             if (isediting($course->id)) {
                 if ($thissection->visible) {        // Show the hide/show eye
                     echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strweekhide\">".
-                         "<img src=\"$CFG->pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+                         "<img src=\"$CFG->pixpath/i/hide.gif\" vspace=\"3\" height=\"16\" width=\"16\" border=\"0\"></a><br />";
                 } else {
                     echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strweekshow\">".
-                         "<img src=\"$CFG->pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+                         "<img src=\"$CFG->pixpath/i/show.gif\" vspace=\"3\" height=\"16\" width=\"16\" border=\"0\"></a><br />";
                 }
     
                 if ($section > 1) {                       // Add a arrow to move section up
                     echo "<a href=\"view.php?id=$course->id&section=$section&move=-1\" title=\"$strmoveup\">".
-                         "<img src=\"$CFG->pixpath/t/up.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+                         "<img src=\"$CFG->pixpath/t/up.gif\" vspace=\"3\" height=\"11\" width=\"11\" border=\"0\"></a><br />";
                 }
     
                 if ($section < $course->numsections) {    // Add a arrow to move section down
                     echo "<a href=\"view.php?id=$course->id&section=$section&move=1\" title=\"$strmovedown\">".
-                         "<img src=\"$CFG->pixpath/t/down.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+                         "<img src=\"$CFG->pixpath/t/down.gif\" vspace=\"3\" height=\"11\" width=\"11\" border=\"0\"></a><br />";
                 }
     
             }
     
             echo "</td>";
             echo "</tr>";
-            echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
+            echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\"></td></tr>";
         }
 
         $section++;

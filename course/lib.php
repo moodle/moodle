@@ -531,7 +531,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         if (! $course->category) {
             echo '<td nowrap="nowrap"><font size="2"><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></td>';
         }
-        echo '<td nowrap align=right><font size="2">'.userdate($log->time, '%a').'</td>';
+        echo '<td nowrap="nowrap" align="right"><font size="2">'.userdate($log->time, '%a').'</td>';
         echo '<td nowrap="nowrap"><font size="2">'.userdate($log->time, $strftimedatetime).'</td>';
         echo '<td nowrap="nowrap"><font size="2">';
         link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", 'ipatlas',$log->ip, 400, 700);
@@ -633,12 +633,12 @@ function print_recent_activity($course) {
                 switch ($log->action) {
                     case "add mod":
                         $stradded = get_string("added", "moodle", get_string("modulename", $info[0]));
-                        $changelist["$log->info"] = array ("operation" => "add", "text" => "$stradded:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
+                        $changelist["$log->info"] = array ("operation" => "add", "text" => "$stradded:<br /><a href=\"$CFG->wwwroot/course/$log->url\">$modname</a>");
                     break;
                     case "update mod":
                        $strupdated = get_string("updated", "moodle", get_string("modulename", $info[0]));
                        if (empty($changelist["$log->info"])) {
-                           $changelist["$log->info"] = array ("operation" => "update", "text" => "$strupdated:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
+                           $changelist["$log->info"] = array ("operation" => "update", "text" => "$strupdated:<br /><a href=\"$CFG->wwwroot/course/$log->url\">$modname</a>");
                        }
                     break;
                     case "delete mod":
@@ -1167,25 +1167,25 @@ function print_category_info($category, $depth) {
                 echo "<tr><td valign=\"top\" width=\"30\">&nbsp;";
                 echo "</td>\n<td valign=\"top\" width=\"100%\" class=\"coursename\">";
                 echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
-                echo "</td>\n<td align=\"right\" valign=\"top\" nowrap class=\"coursename\">";
+                echo "</td>\n<td align=\"right\" valign=\"top\" nowrap=\"nowrap\" class=\"coursename\">";
                 if ($course->guest ) {
                     echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=1 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/guest.gif\"></a>";
+                    echo "<img hspace=\"1\" alt=\"$strallowguests\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/guest.gif\"></a>";
                 } else {
-                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
+                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\">";
                 }
                 if ($course->password) {
                     echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=1 alt=\"$strrequireskey\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/key.gif\"></a>";
+                    echo "<img hspace=\"1\" alt=\"$strrequireskey\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/key.gif\"></a>";
                 } else {
-                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
+                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\">";
                 }
                 if ($course->summary) {
                     link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo",
-                                          "<img hspace=1 alt=\"$strsummary\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/info.gif\">",
+                                          "<img hspace=\"1\" alt=\"$strsummary\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/info.gif\">",
                                            400, 500, $strsummary);
                 } else {
-                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
+                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\">";
                 }
                 echo "</td></tr>\n";
             }

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Admin-only code to delete a course utterly
 
 	require_once("../config.php");
@@ -37,7 +37,7 @@
                      "<a href=\"category.php?id=$course->category\">$category->name</a> -> ".
                      "$strdeletecheck");
 
-        notice_yesno("$strdeletecoursecheck<BR><BR>$course->fullname ($course->shortname)", 
+        notice_yesno("$strdeletecoursecheck<br /><br />$course->fullname ($course->shortname)", 
                      "delete.php?id=$course->id&delete=".md5($course->timemodified), 
                      "category.php?id=$course->category");
         exit;

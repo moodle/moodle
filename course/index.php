@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // For most people, just lists the course categories
       // Allows the admin to create, delete and rename course categories
 
@@ -251,8 +251,8 @@
 
     echo "<center>";
     echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
-    echo "<input type=\"text\" size=30 name=\"addcategory\">";
-    echo "<input type=\"submit\" value=\"$straddnewcategory\">";
+    echo "<input type=\"text\" size=\"30\" name=\"addcategory\" />";
+    echo "<input type=\"submit\" value=\"$straddnewcategory\" />";
     echo "</form>";
     echo "</center>";
 
@@ -272,7 +272,7 @@
     $displaylist[0] = get_string("top");
     make_categories_list($displaylist, $parentlist, "");
 
-    echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=5 class=\"generalbox\"><tr>";
+    echo "<table align=\"center\" border=\"0\" cellspacing=\"2\" cellpadding=\"5\" class=\"generalbox\"><tr>";
     echo "<th>$strcategories</th>";
     echo "<th>$strcourses</th>";
     echo "<th>$stredit</th>";
@@ -336,23 +336,23 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         echo "<td nowrap=\"nowrap\">";    /// Print little icons
 
         echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id\"><img".
-             " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> ";
+             " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
 
         if (!empty($category->visible)) {
             echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id\"><img".
-                 " src=\"$pixpath/t/hide.gif\" height=11 width=11 border=0></a> ";
+                 " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
         } else {
             echo "<a title=\"$str->show\" href=\"index.php?show=$category->id\"><img".
-                 " src=\"$pixpath/t/show.gif\" height=11 width=11 border=0></a> ";
+                 " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
         }
 
         if ($up) {
             echo "<a title=\"$str->moveup\" href=\"index.php?moveup=$category->id\"><img".
-                 " src=\"$pixpath/t/up.gif\" height=11 width=11 border=0></a> ";
+                 " src=\"$pixpath/t/up.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
         }
         if ($down) {
             echo "<a title=\"$str->movedown\" href=\"index.php?movedown=$category->id\"><img".
-                 " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> ";
+                 " src=\"$pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
         }
         echo "</td>";
 

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 /// Displays external information about a course
 
@@ -41,16 +41,16 @@
     echo "<center>";
     if ($course->guest) {
         $strallowguests = get_string("allowguests");
-        echo "<p><font size=1><img align=\"absmiddle\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/guest.gif\"></a>&nbsp;$strallowguests</font></p>";
+        echo "<p><font size=\"1\"><img align=\"absmiddle\" alt=\"\" height=\"16\" width=\"16\" border=\"0\" src=\"$pixpath/i/guest.gif\"></a>&nbsp;$strallowguests</font></p>";
     }
     if ($course->password) {
         $strrequireskey = get_string("requireskey");
-        echo "<p><font size=1><img align=\"absmiddle\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>&nbsp;$strrequireskey</font></p>";
+        echo "<p><font size=\"1\"><img align=\"absmiddle\" alt=\"\" height=\"16\" width=\"16\" border=\"0\" src=\"$pixpath/i/key.gif\"></a>&nbsp;$strrequireskey</font></p>";
     }
 
 
     if ($teachers = get_course_teachers($course->id)) {
-        echo "<table align=center><tr><td nowrap>";
+        echo "<table align=\"center\"><tr><td nowrap=\"nowrap\">";
         echo "<p><font size=\"1\">\n";
         foreach ($teachers as $teacher) {
             if ($teacher->authority > 0) {

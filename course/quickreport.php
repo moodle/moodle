@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Displays all activity for non-quiz modules for a course
 ///This version allows students to see their own activity, but not that of others.  
 ///For teachers only, clicking on a student's name brings up the Moodle user activity summary.
@@ -120,7 +120,7 @@ $modname_value = array_flip($modnames);
         foreach ($allposts as $rec){
             $forumval = $modname_value["forum"];
             $user_data[$forumval][$rec->forumid] = $user_data[$forumval][$rec->forumid] . ",$rec->userid,";
-//                    echo "<br>" . $rec->forumid  . $rec->name . "<br>";
+//                    echo "<br />" . $rec->forumid  . $rec->name . "<br />";
         }
     }
 
@@ -240,32 +240,32 @@ $modname_value = array_flip($modnames);
     //printer header line with weeks
     $options["id"] = $course->id;
     $options["download"] = "xls";
-    print ( "<tr valign=top><td  colspan=3>");
+    print ( "<tr valign=\"top\"><td  colspan=\"3\">");
     print_single_button("quickreport.php", $options, get_string("downloadexcel"));
     print ("</td>");
     if ($course->format == "weeks") {$formatname = "Week";} else {$formatname = "Section";}
     foreach($mods_week as $week=>$wkcount){
         print "<td colspan=$wkcount>$formatname $week</td>";
     }
-    echo "<tr valign=top><td width='150'>Student</td><td>Picture</td><td>Profile</td>";
+    echo "<tr valign=\"top\"><td width='150'>Student</td><td>Picture</td><td>Profile</td>";
     //get the names of each module instance and put in header
     foreach($mod_info as $thiscat=>$thismod){
         $modname = ucwords($modnames[$thismod[module]]);
-        print ("<td> $modname <br><font size=-1>$thismod[name]</font></td>");
+        print ("<td> $modname <br /><font size=-1>$thismod[name]</font></td>");
     }
     echo "</tr>\n";
     foreach ($user_contribs as $userid=>$thisuser){
         $quick_bgcount++;
         if ($quick_bgcount%3 == 0) {
-            echo "<tr align=center bgcolor='#ffffff'>";
+            echo "<tr align=\"center\" bgcolor=\"#ffffff\">";
         } else {
-            echo "<tr align=center>";
+            echo "<tr align=\"center\">";
         }
         $fullname = ucwords($allusers[$userid]->lastname) . ", " . ucwords($allusers[$userid]->firstname);
         if (!$isstudent){
-            $fullname = "<a href=user.php?id=$course->id&user=$userid>$fullname</a>";
+            $fullname = "<a href=\"user.php?id=$course->id&user=$userid>$fullname\"</a>";
         }
-        echo "<td align=left><b>$fullname</b></td>";
+        echo "<td align=\"left\"><b>$fullname</b></td>";
         $picture = print_user_picture($userid, $course->id, $allusers[$userid]->picture, false, true);
         echo "<td>" . $picture . "</td>";
         if (strlen($allusers[$userid]->description) > 10) {quick_show("X");} else {quick_show("-");}
@@ -330,7 +330,7 @@ function quick_findposts($courseid){
 
 function quick_moduleorder($courseid){
 //using course_sections which gives the sections & sequence, build an array with each section + item pair
-// echo "<br>Course= " . $courseid . "<br>";
+// echo "<br />Course= " . $courseid . "<br />";
     $allmods = get_records("course_sections","course",$courseid,"section","id,section,sequence");
 //    print_object($allmods);
 //    $modsequence 
@@ -344,7 +344,7 @@ function quick_moduleorder($courseid){
              }
 //             print_object($weeklist);
         } else {
-//            print ("<br>No modules this week<br>");
+//            print ("<br />No modules this week<br />");
         }
     }
     return $all_list;
@@ -353,12 +353,12 @@ function quick_moduleorder($courseid){
 function quick_headers($course){
     global  $CFG;
     print_header("$course->shortname: 'Quick Report'", "$course->fullname", 
-                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                       -> 'Quick Report'");
 }
 
 function quick_show($x){
-    echo "<td align=center>";
+    echo "<td align=\"center\">";
     print ("$x");
     echo "</td>";
 }

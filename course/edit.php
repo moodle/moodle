@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Edit course settings
 
     require_once("../config.php");

@@ -1,7 +1,7 @@
 
 <form name="studentform" id="studentform" method="post" action="student.php">
-<input type="hidden" name="previoussearch" value="<?php echo $previoussearch ?>">
-<input type="hidden" name="id" value="<?php echo $id?>">
+<input type="hidden" name="previoussearch" value="<?php echo $previoussearch ?>" />
+<input type="hidden" name="id" value="<?php echo $id?>" />
   <table align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
@@ -17,7 +17,7 @@
           <select name="removeselect[]" size="20" id="removeselect" multiple
                   onFocus="document.studentform.add.disabled=true;
                            document.studentform.remove.disabled=false;
-                           document.studentform.addselect.selectedIndex=-1;">
+                           document.studentform.addselect.selectedIndex=-1;" />
           <?php 
               foreach ($students as $student) {
                   $fullname = fullname($student, true);

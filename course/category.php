@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Displays the top level category or all courses
       // In editing mode, allows the admin to edit a category, 
       // and rearrange courses
@@ -378,7 +378,7 @@
         }
 
         if ($abletomovecourses) {
-            echo "<tr><td colspan=3 align=right>";
+            echo "<tr><td colspan=\"3\" align=\"right\">";
             echo "<br />";
             unset($displaylist[$category->id]);
             choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript:document.movecourses.submit()");

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Depending on the current enrolment method, this page 
       // presents the user with whatever they need to know when 
       // they try to enrol in a course.

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Allows a creator to edit custom scales, and also display help about scales
 
     require_once("../config.php");
@@ -176,37 +176,37 @@
             $scale->description = $form->description;
         }
         echo "<form method=\"post\" action=\"scales.php\" name=\"form$scale->id\">";
-        echo "<table cellpadding=9 cellspacing=0 align=center class=generalbox>";
-        echo "<tr valign=top>";
+        echo "<table cellpadding=\"9\" cellspacing=\"0\" align=\"center\" class=\"generalbox\">";
+        echo "<tr valign=\"top\">";
         if (!empty($errors[$scale->id]->name)) {
             $class = "class=\"highlight\"";
         } else {
             $class = "";
         }
         echo "<td align=\"right\"><p><b>$strname:</b></p></td>";
-        echo "<td $class><input type=\"text\" name=\"name\" size=\"50\" value=\"".s($scale->name)."\">";
+        echo "<td $class><input type=\"text\" name=\"name\" size=\"50\" value=\"".s($scale->name)."\" />";
         echo "</td>";
         echo "</tr>";
-        echo "<tr valign=top>";
+        echo "<tr valign=\"top\">";
         if (!empty($errors[$scale->id]->scalescale)) {
             $class = "class=\"highlight\"";
         } else {
             $class = "";
         }
         echo "<td align=\"right\"><p><b>$strscale:</b></p></td>";
-        echo "<td $class><textarea name=\"scalescale\" cols=50 rows=2 wrap=virtual>".s($scale->scale)."</textarea>";
+        echo "<td $class><textarea name=\"scalescale\" cols=\"50\" rows=\"2\" wrap=\"virtual\">".s($scale->scale)."</textarea>";
         echo "</td>";
         echo "</tr>";
-        echo "<tr valign=top>";
+        echo "<tr valign=\"top\">";
         echo "<td align=\"right\"><p><b>$strdescription:</b></p>";
         helpbutton("text", $strhelptext);
         echo "</td>";
-        echo "<td><textarea name=\"description\" cols=50 rows=8 wrap=virtual>".s($scale->description)."</textarea>";
+        echo "<td><textarea name=\"description\" cols=\"50\" rows=\"8\" wrap=\"virtual\">".s($scale->description)."</textarea>";
         echo "</td>";
         echo "</tr>";
         echo "<tr>";
         if ($scale->id) {
-            echo "<tr valign=top>";
+            echo "<tr valign=\"top\">";
             echo "<td align=\"right\">";
             echo "</td>";
             echo "<td>".get_string("usedinnplaces","",$scale_uses);
@@ -214,12 +214,12 @@
             echo "</tr>";
         }
         echo "<tr>";
-        echo "<td colspan=2 align=\"center\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\">";
-        echo "<input type=\"hidden\" name=\"courseid\" value=\"$scale->courseid\">";
-        echo "<input type=\"hidden\" name=\"scaleid\" value=\"$scale->id\">";
-        echo "<input type=\"hidden\" name=\"action\" value=\"sendform\">";
-        echo "<input type=\"submit\" name=\"save\" value=\"$strsavechanges\">";
+        echo "<td colspan=\"2\" align=\"center\">";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+        echo "<input type=\"hidden\" name=\"courseid\" value=\"$scale->courseid\" />";
+        echo "<input type=\"hidden\" name=\"scaleid\" value=\"$scale->id\" />";
+        echo "<input type=\"hidden\" name=\"action\" value=\"sendform\" />";
+        echo "<input type=\"submit\" name=\"save\" value=\"$strsavechanges\" />";
         echo "</td></tr></table>";
         echo "</form>";
         echo "<br />";
@@ -377,7 +377,7 @@
 /// Print out the main page
 
     print_header("$course->shortname: $strscales", "$course->fullname", 
-                 "<a href=\"view.php?id=$course->id\">$course->shortname</A> 
+                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> 
                   -> $strscales");
 
     print_heading_with_help($strscales, "scales");
@@ -432,7 +432,7 @@
                 $data[] = $line;
             }
             $line = array();
-            $line[] = "<a target=\"scale\" title=\"$scale->name\" href=\"$CFG->wwwroot/course/scales.php?id=$course->id&scaleid=$scale->id&action=details\" "."onClick=\"return openpopup('/course/scales.php?id=$course->id\&scaleid=$scale->id&action=details', 'scale', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">".$scale->name."</a><br><font size=\"-1\">".str_replace(",",", ",$scale->scale)."</font>";
+            $line[] = "<a target=\"scale\" title=\"$scale->name\" href=\"$CFG->wwwroot/course/scales.php?id=$course->id&scaleid=$scale->id&action=details\" "."onClick=\"return openpopup('/course/scales.php?id=$course->id\&scaleid=$scale->id&action=details', 'scale', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">".$scale->name."</a><br /><font size=\"-1\">".str_replace(",",", ",$scale->scale)."</font>";
             if (!empty($scale->courseid)) {
                 $scales_uses = course_scale_used($course->id,$scale->id);
             } else {
@@ -447,17 +447,17 @@
             $buttons = "";
             if (empty($scales_uses) && ($incustom || isadmin())) {
                 $buttons .= "<a title=\"$stredit\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=edit\"><img".
-                            " src=\"$pixpath/t/edit.gif\" hspace=2 height=11 width=11 border=0></a> ";
+                            " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 if ($incustom && isadmin()) {
                     $buttons .= "<a title=\"$strdown\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=down\"><img".
-                                " src=\"$pixpath/t/down.gif\" hspace=2 height=11 width=11 border=0></a> ";
+                                " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 }
                 if (!$incustom && isadmin()) {
                     $buttons .= "<a title=\"$strup\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=up\"><img".
-                                " src=\"$pixpath/t/up.gif\" hspace=2 height=11 width=11 border=0></a> ";
+                                " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a> ";
                 }
                 $buttons .= "<a title=\"$strdelete\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=delete\"><img".
-                            " src=\"$pixpath/t/delete.gif\" hspace=2 height=11 width=11 border=0></a> ";
+                            " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a> ";
             }
             $line[] = $buttons;
             

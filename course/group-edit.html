@@ -1,13 +1,13 @@
 <form method="post" enctype="multipart/form-data" action="group.php">
-<table cellpadding=9 cellspacing="0" align="center">
+<table cellpadding="9" cellspacing="0" align="center">
 <tr valign="top">
     <td align="right"><p><?php print_string("name") ?>:</td>
-    <td><input type="text" name="name" size=30 value="<?php p($group->name) ?>">
+    <td><input type="text" name="name" size="30" value="<?php p($group->name) ?>" />
     <?php if (isset($err["name"])) formerr($err["name"]); ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align="right"><P><?php print_string("description") ?>:</td>
+<tr valign="top">
+    <td align="right"><p><?php print_string("description") ?>:</td>
     <td><?php 
         print_textarea($usehtmleditor, 10, 50, 660, 200, "description", $group->description);
         helpbutton("text", get_string("helptext"));
@@ -16,8 +16,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align="right"><P><?php print_string("hidepicture") ?>:</td>
+<tr valign="top">
+    <td align="right"><p><?php print_string("hidepicture") ?>:</td>
     <td><?php 
         $options = NULL;
         $options[0] = get_string("no");
@@ -31,11 +31,11 @@
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
     if (!empty($CFG->gdversion) and $maxbytes) {  
 ?>
-<tr valign=top>
+<tr valign="top">
     <td align="right"><p><?php print_string("newpicture") ?>:</td>
     <td>
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>">
-    <input type="file" name="imagefile" size=40>
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>" />
+    <input type="file" name="imagefile" size="40" />
     <?php helpbutton("picture", get_string("helppicture"));
        print_string("maxsize", "", display_size($maxbytes)); 
        if (isset($err["imagefile"])) formerr($err["imagefile"]);
@@ -45,9 +45,9 @@
 <?php }  ?>
 <tr>
     <td></td>
-    <td><input type="submit" value="<?php print_string("savechanges") ?>"></td>
+    <td><input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </table>
 
-<input type="hidden" name="group" value="<?php p($group->id) ?>"> 
-<input type="hidden" name="id" value="<?php p($course->id) ?>"> 
+<input type="hidden" name="group" value="<?php p($group->id) ?>" /> 
+<input type="hidden" name="id" value="<?php p($course->id) ?>" /> 
 </form>

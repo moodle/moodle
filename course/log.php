@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Displays different views of the logs.
 
     require_once("../config.php");

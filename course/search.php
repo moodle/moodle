@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 /// Displays external information about a course
 

@@ -1,7 +1,7 @@
-<?PHP // $Id$
+<?php // $Id$
       // Admin-only script to assign teachers to courses
 
-	require_once("../config.php");
+    require_once("../config.php");
 
     define("MAX_USERS_PER_PAGE", 50);
 
@@ -58,7 +58,7 @@
 
 /// Print headers
 
-	print_header("$course->shortname: $strassignteachers", 
+    print_header("$course->shortname: $strassignteachers", 
                  "$course->fullname", 
                  "<a href=\"index.php\">$strcourses</a> -> ".
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> ".
@@ -90,8 +90,8 @@
                 error("Could not update teacher entry id = $teacher->id");
             }
         }
-		redirect("teacher.php?id=$course->id", get_string("changessaved"));
-	}
+        redirect("teacher.php?id=$course->id", get_string("changessaved"));
+    }
 
 /// Add a teacher if one is specified
 
@@ -115,7 +115,7 @@
     print_heading_with_help("$strexistingteachers $parateachers", "teachers");
 
     if (empty($teachers)) {
-        echo "<p align=center>$strnoexistingteachers</a>";
+        echo "<p align=\"center\">$strnoexistingteachers</a>";
         $teacherlist = "";
 
     } else {
@@ -136,7 +136,7 @@
 
         $teacherarray = array();
     
-        echo "<form action=teacher.php method=post>";
+        echo "<form action=\"teacher.php\" method=\"post\">";
         foreach ($teachers as $teacher) {
             $teacherarray[] = $teacher->id;
     
@@ -145,7 +145,7 @@
             $authority = choose_from_menu ($ordermenu, "a$teacher->id", $teacher->authority, "", "", "", true);
 
             if ($USER->id == $teacher->id) {
-                $editall = "<input name=\"e$teacher->id\" type=\"hidden\" value=\"1\">$stryes";
+                $editall = "<input name=\"e$teacher->id\" type=\"hidden\" value=\"1\" />$stryes";
             } else {
                 $editall = choose_from_menu ($editmenu, "e$teacher->id", $teacher->editall, "", "", "", true);
             }
@@ -157,15 +157,15 @@
             }
     
             $table->data[] = array ($picture, fullname($teacher, true), $authority,
-                                    "<input type=text name=\"r$teacher->id\" value=\"$teacher->role\" size=30>",
+                                    "<input type=\"text\" name=\"r$teacher->id\" value=\"$teacher->role\" size=\"30\" />",
                                     $editall, $removelink);
         }
         $teacherlist = implode(",",$teacherarray);
         unset($teacherarray);
 
         print_table($table);
-        echo "<input type=hidden name=id value=\"$course->id\">";
-        echo "<center><input type=submit value=\"".get_string("savechanges")."\"> ";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+        echo "<center><input type=\"submit\" value=\"".get_string("savechanges")."\" /> ";
         echo "</center>";
         echo "</form>";
         echo "<br />";
@@ -179,15 +179,15 @@
     $usercount = get_users(false, $search, true, $teacherlist);
 
     if ($usercount == 0) {
-        echo "<p align=center>$strnopotentialteachers</p>";
+        echo "<p align=\"center\">$strnopotentialteachers</p>";
 
     } else if ($usercount > MAX_USERS_PER_PAGE) {
-        echo "<p align=center>$strtoomanytoshow ($usercount) </p>";
+        echo "<p align=\"center\">$strtoomanytoshow ($usercount) </p>";
 
     } else {
 
         if ($search) {
-            echo "<p align=center>($strsearchresults : $search)</p>";
+            echo "<p align=\"center\">($strsearchresults : $search)</p>";
         }
 
         if (!$users = get_users(true, $search, true, $teacherlist)) {
@@ -210,10 +210,10 @@
 
     if ($search or $usercount > MAX_USERS_PER_PAGE) {
         echo "<center>";
-        echo "<form action=teacher.php method=get>";
-        echo "<input type=hidden name=id value=\"$course->id\">";
-        echo "<input type=text name=search size=20>";
-        echo "<input type=submit value=\"$searchstring\">";
+        echo "<form action=\"teacher.php\" method=\"get\">";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+        echo "<input type=\"text\" name=\"search\" size=\"20\" />";
+        echo "<input type=\"submit\" value=\"$searchstring\" />";
         echo "</form>";
         echo "</center>";
     }

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 //  Moves, adds, updates, duplicates or deletes modules in a course
 
@@ -579,8 +579,8 @@
 
     if ($course->category) {
         print_header("$course->shortname: $streditinga", "$course->fullname",
-                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-                      <A HREF=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</A> -> 
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
+                      <a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> -> 
                       $streditinga", $focuscursor, "", false);
     } else {
         print_header("$course->shortname: $streditinga", "$course->fullname",
@@ -600,7 +600,7 @@
             $defaultformat = FORMAT_MOODLE;
         }
 
-        $icon = "<img align=absmiddle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
+        $icon = "<img align=\"absmiddle\" height=\"16\" width=\"16\" src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
         print_simple_box_start("center", "", "$THEME->cellheading");
