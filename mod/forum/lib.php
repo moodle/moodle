@@ -3082,7 +3082,7 @@ function forum_tp_add_read_record($userid, $postid, $discussionid=-1, $forumid=-
         $readrecord->forumid = $forumid;
         $readrecord->firstread = time();
         $readrecord->lastread = $readrecord->firstread;
-        return insert_record('forum_read', $readrecord, true, 'userid');
+        return insert_record('forum_read', $readrecord, true);
     }
     else {
         /// Update read record
