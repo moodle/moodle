@@ -5,7 +5,7 @@ This documment shows the current status of the backup/restore option.
 
 Backup:  WORKING. COMPLETED except workshops.
 
-Restore: WORKING. COMPLETED except quizzes, workshops and logs.
+Restore: WORKING. COMPLETED except workshops and logs.
                   
 
 ========== ========== ========== ========== ========== ==========
@@ -172,10 +172,10 @@ Restore Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files.(NOT EXISTS)...........................DONE
-              x quizzes.(STEP 2)................................IN PROGRESS
-                 + course data..................................IN PROGRESS
-                 + user data....................................IN PROGRESS
-                 + files.(ARE COURSE FILES !!!).................IN PROGRESS
+              x quizzes.(STEP 2)................................DONE
+                 + course data..................................DONE
+                 + user data....................................DONE
+                 + files.(ARE COURSE FILES !!!).................DONE
               x resources.......................................DONE
                  + course data..................................DONE
                  + user data....................................DONE
