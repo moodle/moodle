@@ -127,6 +127,7 @@ $string['regradecomplete'] = 'All attempts have been regraded';
 $string['regradecount'] = '$a->changed out of $a->attempt grades were changed';
 $string['rename'] = 'Rename';
 $string['report'] = 'Reports';
+$string['reportfullstat'] = 'Detailed statistics';
 $string['reportoverview'] = 'Overview';
 $string['reportregrade'] = 'Regrade attempts';
 $string['reportsimplestat'] = 'Simple statistics';
