@@ -57,12 +57,12 @@
                             notify("File was uploaded OK but could not update your submission!");
                         }
                     } else {
-                        $submission->assignment   = $assignment->id;
-                        $submission->user         = $USER->id;
-                        $submission->timecreated  = time();
-                        $submission->timemodified = time();
-                        $submission->numfiles     = 1;
-                        if (insert_record("assignment_submissions", $submission)) {
+                        $newsubmission->assignment   = $assignment->id;
+                        $newsubmission->user         = $USER->id;
+                        $newsubmission->timecreated  = time();
+                        $newsubmission->timemodified = time();
+                        $newsubmission->numfiles     = 1;
+                        if (insert_record("assignment_submissions", $newsubmission)) {
                             print_heading("Uploaded '$newfile_name' successfully.");
                         } else {
                             notify("'$newfile_name' was uploaded OK but submission did not register!");
