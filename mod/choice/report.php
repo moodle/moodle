@@ -34,9 +34,23 @@
                   <a href=\"index.php?id=$course->id\">$strchoices</a> ->
                   <a href=\"view.php?id=$cm->id\">$choice->name</a> -> $strresponses", "");
 
+/// Check to see if groups are being used in this choice
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
+    } else {
+        $currentgroup = false;
+    }
 
-    if (! $users = get_course_users($course->id, "u.firstname ASC")) {
-        error("No users found (very strange)");
+    if ($currentgroup) {
+        $users = get_users_in_group($currentgroup, "u.firstname ASC");
+    } else {
+        $users = get_course_users($course->id, "u.firstname ASC");
+    }
+
+    if (!$users) {
+        print_heading(get_string("nousersyet"));
+        print_footer($course);
+        exit;
     }
 
     if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {

@@ -70,6 +70,13 @@
                  "$navigation <A HREF=index.php?id=$course->id>$strchoices</A> -> $choice->name", "", "", true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 
+/// Check to see if groups are being used in this choice
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
+    } else {
+        $currentgroup = false;
+    }
+
     if (isteacher($course->id)) {
         if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
             $responsecount = count($allanswers);
@@ -107,8 +114,16 @@
 
         print_heading(get_string("responses", "choice"));
 
-        if (! $users = get_course_users($course->id, "u.firstname ASC")) {
-            error("No users found (very strange)");
+        if ($currentgroup) {
+            $users = get_users_in_group($currentgroup, "u.firstname ASC");
+        } else {
+            $users = get_course_users($course->id, "u.firstname ASC");
+        }
+
+        if (!$users) {
+            print_heading(get_string("nousersyet"));
+            print_footer($course);
+            exit;
         }
 
         if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
