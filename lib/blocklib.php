@@ -445,8 +445,8 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             // Add a new instance of this block, if allowed
             $block = blocks_get_record($blockid);
 
-            if(!$block->visible) {
-                // Only allow adding if the block is enabled
+            if(empty($block) || !$block->visible) {
+                // Only allow adding if the block exists and is enabled
                 return false;
             }
 
@@ -589,8 +589,12 @@ function blocks_repopulate_page($page) {
             $newinstance->weight     = $weight;
             $newinstance->visible    = 1;
             $newinstance->configdata = '';
-            insert_record('block_instance', $newinstance);
-            ++$weight;
+
+            if(!empty($newinstance->blockid)) {
+                // Only add block if it was recognized
+                insert_record('block_instance', $newinstance);
+                ++$weight;
+            }
         }
     }
 
