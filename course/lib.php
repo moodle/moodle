@@ -1604,7 +1604,8 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     return "$leftright$move".
            "<a title=\"$str->update\" href=\"$path/mod.php?update=$mod->id\"><img".
            " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 border=0></a>".
-           "<a title=\"$str->duplicate\" href=\"$path/mod.php?duplicate=$mod->id\"> 2 </a>".
+      //   Following line is commented out until this feature is more definite -- martin
+      //     "<a title=\"$str->duplicate\" href=\"$path/mod.php?duplicate=$mod->id\"> 2 </a>".
            "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$mod->id\"><img".
            " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 border=0></a>$hideshow$groupmode";
 }
