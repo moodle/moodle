@@ -51,22 +51,6 @@ function lesson_upgrade($oldversion) {
 					  PRIMARY KEY  (`id`)
 					)");
 
-		execute_sql(" create table mdl_lesson_essay
-					( id int(10) unsigned not null auto_increment,
-					  lessonid int(10) unsigned not null,
-					  userid int(10) unsigned not null,
-					  pageid int(10) unsigned not null,
-					  answerid int(10) unsigned not null,
-					  try int(10) unsigned not null,
-					  answer text not null,
-					  graded tinyint(3) unsigned not null default 0,
-					  score int(10) unsigned not null default 0,
-					  response text not null,
-					  sent tinyint(3) unsigned not null default 0,
-					  timesubmitted int(10) unsigned not null,
-					  PRIMARY KEY  (`id`)
-					)");
-
 		execute_sql(" create table mdl_lesson_branch
 					( id int(10) unsigned not null auto_increment,
 					  lessonid int(10) unsigned not null,
@@ -147,6 +131,19 @@ function lesson_upgrade($oldversion) {
 		  PRIMARY KEY  (`id`)
 		) COMMENT = 'Defines lesson_default'");
 	}
+
+	if ($oldversion < 2004100400) {
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_attempts` ADD `useranswer` text NOT NULL AFTER correct");
+	}
+	
+	if ($oldversion < 2004100700) {
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson` ADD `modattempts` tinyint(3) unsigned NOT NULL default '0' AFTER practice");
+	}
+
+	if ($oldversion < 2004102600) {
+		execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_default` ADD `modattempts` tinyint(3) unsigned NOT NULL default '0' AFTER practice");
+	}
+
 	// CDC-FLAG end	
 
 	     
