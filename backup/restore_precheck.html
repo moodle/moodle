@@ -74,8 +74,6 @@
         $info = restore_read_xml_info ($xml_file);
         //Reading course_header from file
         $course_header = restore_read_xml_course_header ($xml_file);
-print_object ($info);
-print_object ($course_header);
     }
 
     //End the main ul
@@ -85,12 +83,17 @@ print_object ($course_header);
     echo "</tr></td>";
     echo "</table>";
 
+    //Now we print in other table, the backup and the course it contains info
+    if ($info and $course_header and $status) {
+        //First, the course info
+        $status = restore_print_course_header($course_header);
+        //Now, the backup info
+        if ($status) {
+            $status = restore_print_info($info);
+        }
+    }
+
     if (!$status) {
         error ("An error has ocurred");
     }
-    
-    if ($info and $course_header) {
-
-    }
-
 ?>

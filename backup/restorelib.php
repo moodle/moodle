@@ -64,6 +64,120 @@
 
         return $info;
     }
+
+    //This function prints the contents from the info parammeter passed
+    function restore_print_info ($info) {
+
+        $status = true;
+        if ($info) {
+            //This is tha align to every ingo table      
+            $table->align = array ("RIGHT","LEFT");
+            //This is the nowrap clause 
+            $table->wrap = array ("","NOWRAP");
+            //The width
+            $table->width = "70%";
+            //Put interesting info in table
+            //The backup original name
+            $tab[0][0] = "<b>".get_string("backuporiginalname").":</b>";
+            $tab[0][1] = $info->backup_name;
+            //The moodle version
+            $tab[1][0] = "<b>".get_string("moodleversion").":</b>";
+            $tab[1][1] = $info->backup_moodle_release." (".$info->backup_moodle_version.")";
+            //The backup version
+            $tab[2][0] = "<b>".get_string("backupversion").":</b>";
+            $tab[2][1] = $info->backup_backup_release." (".$info->backup_backup_version.")";
+            //The backup date
+            $tab[3][0] = "<b>".get_string("backupdate").":</b>";
+            $tab[3][1] = userdate($info->backup_date);
+            //Print title
+            print_heading(get_string("backup").":");
+            $table->data = $tab;
+            //Print backup general info
+            print_table($table);
+            //Now backup contents in another table
+            $tab = array();
+            //First mods info
+            $mods = $info->mods;
+            $elem = 0;
+            foreach ($mods as $key => $mod) {
+                $tab[$elem][0] = "<b>".get_string("modulenameplural",$key).":</b>";
+                if ($mod->backup == "false") {
+                    $tab[$elem][1] = get_string("notincluded");
+                } else {
+                    if ($mod->userinfo == "true") {
+                        $tab[$elem][1] = get_string("included")." ".get_string("withuserdata");
+                    } else {
+                        $tab[$elem][1] = get_string("included")." ".get_string("withoutuserdata");
+                    }
+                }
+                $elem++;
+            }
+            //Users info
+            $tab[$elem][0] = "<b>".get_string("users").":</b>";
+            $tab[$elem][1] = get_string($info->backup_users);
+            $elem++;
+            //Logs info
+            $tab[$elem][0] = "<b>".get_string("logs").":</b>";
+            if ($info->backup_logs == "true") {
+                $tab[$elem][1] = get_string("yes");
+            } else {
+                $tab[$elem][1] = get_string("no");
+            }
+            $elem++;
+            //User Files info
+            $tab[$elem][0] = "<b>".get_string("userfiles").":</b>";
+            if ($info->backup_user_files == "true") {
+                $tab[$elem][1] = get_string("yes");
+            } else {
+                $tab[$elem][1] = get_string("no");
+            }
+            $elem++;
+            //Course Files info
+            $tab[$elem][0] = "<b>".get_string("coursefiles").":</b>";
+            if ($info->backup_course_files == "true") {
+                $tab[$elem][1] = get_string("yes");
+            } else {
+                $tab[$elem][1] = get_string("no");
+            }
+            $elem++;
+            $table->data = $tab;
+            //Print title
+            print_heading(get_string("backupdetails").":");
+            //Print backup general info
+            print_table($table);
+        } else {
+            $status = false;
+        }
+
+        return $status;
+    }
+
+    //This function prints the contents from the course_header parammeter passed
+    function restore_print_course_header ($course_header) {
+
+        $status = true;
+        if ($course_header) {
+            //This is tha align to every ingo table
+            $table->align = array ("RIGHT","LEFT");
+            //The width
+            $table->width = "70%";
+            //Put interesting course header in table
+            //The course name
+            $tab[0][0] = "<b>".get_string("name").":</b>";
+            $tab[0][1] = $course_header->course_fullname." (".$course_header->course_shortname.")";
+            //The course summary
+            $tab[1][0] = "<b>".get_string("summary").":</b>";
+            $tab[1][1] = $course_header->course_summary;
+            $table->data = $tab;
+            //Print title
+            print_heading(get_string("course").":");
+            //Print backup course header info
+            print_table($table);
+        } else {
+            $status = false; 
+        }
+        return $status;
+    }
    
 
     //=====================================================================================
