@@ -11,20 +11,25 @@
 #     AllowOverride All 
 # </Directory>
 #
-# Firstly, set up some PHP variables that Moodle needs
+### Firstly, set up some PHP variables that Moodle needs
 
 php_value magic_quotes_gpc 1
 php_value file_uploads 1
 
 
-# These are optional - you may not want to override php.ini 
+### These are optional - you may not want to override php.ini 
 
 #php_value upload_max_filesize 2M
 #php_value post_max_size 2M
 
 
-# Change the following line to point to the error/index.php
-# file in your Moodle distribution.  It provides a form 
-# which emails you (the admin) about 404 errors.
+### Optional definition of default files
+
+#DirectoryIndex index.php index.html index.htm
+
+
+### Change the following line to point to the error/index.php
+### file in your Moodle distribution.  It provides a form 
+### which emails you (the admin) about 404 errors.
 
 #ErrorDocument 404 http://example.org/moodle/error/index.php
