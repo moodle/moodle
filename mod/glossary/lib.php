@@ -1587,7 +1587,7 @@ function glossary_open_xml($glossary) {
 
         //Open for writing
 
-        $file = $CFG->dataroot."/$glossary->course/glossary/". clean_filename($glossary->name) ."/glossary.xml";
+        $file = $CFG->dataroot."/$glossary->course/glossary/". clean_filename(strip_tags($glossary->name)) ."/glossary.xml";
         $h = fopen($file,"w");
         //Writes the header
         $status = fwrite ($h,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");

@@ -66,7 +66,7 @@
     glossary_generate_export_file($glossary,$lastl,$lastcat);
     print_string("glosssaryexported","glossary");
 
-    $ffurl = "/$course->id/glossary/" . clean_filename($glossary->name) ."/glossary.xml";
+    $ffurl = "/$course->id/glossary/" . clean_filename(strip_tags($glossary->name)) ."/glossary.xml";
     if ($CFG->slasharguments) {
         $ffurl = "../../file.php$ffurl" ;
     } else {
