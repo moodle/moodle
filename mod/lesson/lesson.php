@@ -791,7 +791,7 @@
         <tr><td align="center">
         <tr valign="top">
         <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-        <input type="text" name="title" size="80" maxsize="255" value="<?PHP echo $page->title ?>"></td>
+        <input type="text" name="title" size="80" maxsize="255" value="<?PHP p($page->title) ?>"></td>
         </tr>
         <?PHP
         echo "<tr><td><b>";
