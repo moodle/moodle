@@ -3585,14 +3585,16 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
         }
     } else {
         if ($list) {
-            echo '<table class="sideblocklist">';
+            $row = 0;
+            echo '<table class="list">';
             foreach ($list as $key => $string) {
-                echo '<tr>';
+                echo '<tr class="r'.$row.'">';
                 if ($icons) {
-                    echo '<td valign="top" width="16">'. $icons[$key] .'</td>';
+                    echo '<td class="c0" valign="top" width="16">'. $icons[$key] .'</td>';
                 }
-                echo '<td valign="top">'. $string .'</td>';
+                echo '<td class="c1" valign="top">'. $string .'</td>';
                 echo '</tr>';
+                $row = $row ? 0:1;
             }
             echo '</table>';
         }
@@ -3647,14 +3649,14 @@ function print_side_block_start($heading='', $attributes = array()) {
 
     echo '<table'.$attrtext.'>';
     if ($heading) {
-        echo '<tr><th class="sideblockheading">'.$heading;
+        echo '<tr><th class="heading">'.$heading;
         if (!empty($CFG->allowuserblockhiding)) {
             echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="hide-show-image" /></a></div>';
         }
         echo '</th></tr>';
     }
 
-    echo '<tr><td class="sideblockmain">';
+    echo '<tr><td class="content">';
 }
 
 

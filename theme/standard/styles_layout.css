@@ -805,37 +805,37 @@ table.calendar-controls .next
     border-style:solid;
 }
 
-.sideblockheading {
+.sideblock .heading {
     background-image:url(gradient.jpg);
     background-position:top;
     background-repeat:repeat-x;
     padding:4px;
 }
 
-.sideblockheading .hide-show {
+.sideblock .heading .hide-show {
     float:right;
 }
 
-.sideblockheading .hide-show img.hide-show-image {
+.sideblock .heading .hide-show img.hide-show-image {
     height:11px;
     width:11px;
     margin-top:0.25em;
 }
 
-.sideblock .sideblockheading .commands {
+.sideblock .heading .commands {
     float: right;
     margin-top: 0.3em;
 }
 
-.sideblock .sideblockheading .commands a {
+.sideblock .heading .commands a {
     margin: 0px 2px;
 }
 
-.sideblockmain {
+.sideblock .content {
     padding:4px;
 }
 
-.sideblockmain hr {
+.sideblock .content hr {
     height:1px;
     margin-top:4px;
     margin-bottom:4px;
@@ -843,20 +843,24 @@ table.calendar-controls .next
     border-top:1px solid;
 }
 
-.sideblock .sideblockheading .hide-show img.hide-show-image {
+.sideblock .heading .hide-show img.hide-show-image {
     background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
-.sideblock.hidden .sideblockheading .hide-show img.hide-show-image {
+.sideblock .hidden .heading .hide-show img.hide-show-image {
     background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
-.sideblock.hidden .sideblockmain {
+.sideblock .hidden .content {
     display: none;
 }
 
-.sideblock .sideblocklist {
+.sideblock .list {
     width: 100%;
+}
+
+.sideblock .list .c0{
+    padding: 2px;
 }
 
 .sideblock .footer {
@@ -864,13 +868,13 @@ table.calendar-controls .next
 }
 
 /* sideblock weblib.php */
-.block_course_summary .sideblockmain {
+.block_course_summary .content {
     padding:10px;
 }
 
 /* blocklib.php */
 
-.block_adminblock .sideblockmain {
+.block_adminblock .content {
     text-align: center;
     padding: 10px;
 }
