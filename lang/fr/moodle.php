@@ -1087,6 +1087,7 @@ $string['writingeventsinfo'] = 'Écriture du calendrier';
 $string['writinggeneralinfo'] = 'Écriture des informations générales';
 $string['writinggroupsinfo'] = 'Écriture des groupes';
 $string['writingheader'] = 'Écriture de l\'entête';
+$string['writingmessagesinfo'] = 'Écriture des informations des messages';
 $string['writingloginfo'] = 'Écriture des historiques';
 $string['writingmoduleinfo'] = 'Écriture des modules';
 $string['writingscalesinfo'] = 'Écriture des barèmes';
