@@ -329,6 +329,34 @@ function attendance_grades($attendanceid) {
     return $return;
 }
 
+/**
+* Returns user records for all users who have DATA in a given attendance instance
+*
+* This function is present only for the backup routines.  It won't return meaningful data
+* for an attendance roll because it only returns records for users who have been counted as
+* tardy or absent in the rolls for a single attendance instance, since these are the only
+* records I store in the database - for brevity's sake of course.
+*
+* @param        int     $attendanceid   the id of the attendance record we're looging for student data from
+* @return       (object)recordset       associative array of records containing the student records we wanted
+*/
+function attendance_get_participants($attendanceid) {
+//Returns the users with data in one attendance
+//(users with records in attendance_roll, students)
+
+    global $CFG;
+
+    //Get students
+    $students = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}attendance_roll a
+                                 WHERE a.dayid = '$attendanceid' and
+                                       u.id = a.userid");
+
+    //Return students array (it contains an array of unique users)
+    return ($students);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other attendance functions go here.  Each of them must have a name that 
@@ -534,34 +562,6 @@ function get_attendance_for_week($id, $courseid) {
           WHERE course = '$courseid' AND day<$maxday AND day>=$minday order by day ASC;";
 //  echo "<pre>$sql \n</pre>";
   return get_records_sql($sql);
-}
-
-/**
-* Returns user records for all users who have DATA in a given attendance instance
-* 
-* This function is present only for the backup routines.  It won't return meaningful data
-* for an attendance roll because it only returns records for users who have been counted as 
-* tardy or absent in the rolls for a single attendance instance, since these are the only 
-* records I store in the database - for brevity's sake of course.
-*
-* @param	int	$attendanceid	the id of the attendance record we're looging for student data from
-* @return	(object)recordset	associative array of records containing the student records we wanted 
-*/
-function attendance_get_participants($attendanceid) {
-//Returns the users with data in one attendance
-//(users with records in attendance_roll, students)
-
-    global $CFG;
-
-    //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}attendance_roll a
-                                 WHERE a.dayid = '$attendanceid' and
-                                       u.id = a.userid");
-
-    //Return students array (it contains an array of unique users)
-    return ($students);
 }
 
 /**

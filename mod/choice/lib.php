@@ -82,6 +82,23 @@ function choice_delete_instance($id) {
     return $result;
 }
 
+function choice_get_participants($choiceid) {
+//Returns the users with data in one choice
+//(users with records in choice_answers, students)
+
+    global $CFG;
+
+    //Get students
+    $students = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}choice_answers c
+                                 WHERE c.choice = '$choiceid' and
+                                       u.id = c.userid");
+
+    //Return students array (it contains an array of unique users)
+    return ($students);
+}
+
 
 function choice_get_answer($choice, $code) {
 // Returns text string which is the answer that matches the code
@@ -117,23 +134,6 @@ function choice_get_choice($choiceid) {
     } else {
         return false;
     }
-}
-
-function choice_get_participants($choiceid) {
-//Returns the users with data in one choice
-//(users with records in choice_answers, students)
-
-    global $CFG;
-
-    //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}choice_answers c
-                                 WHERE c.choice = '$choiceid' and
-                                       u.id = c.userid");
-
-    //Return students array (it contains an array of unique users)
-    return ($students);
 }
 
 ?>

@@ -262,6 +262,35 @@ function assignment_grades($assignmentid) {
     return $return;
 }
 
+function assignment_get_participants($assignmentid) {
+//Returns the users with data in one assignment
+//(users with records in assignment_submissions, students and teachers)
+
+    global $CFG;
+
+    //Get students
+    $students = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}assignment_submissions a
+                                 WHERE a.assignment = '$assignmentid' and
+                                       u.id = a.userid");
+    //Get teachers
+    $teachers = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}assignment_submissions a
+                                 WHERE a.assignment = '$assignmentid' and
+                                       u.id = a.teacher");
+
+    //Add teachers to students
+    if ($teachers) {
+        foreach ($teachers as $teacher) {
+            $students[$teacher->id] = $teacher;
+        }
+    }
+    //Return students array (it contains an array of unique users)
+    return ($students);
+}
+
 /// SQL STATEMENTS //////////////////////////////////////////////////////////////////
 
 function assignment_log_info($log) {
@@ -498,35 +527,6 @@ function assignment_print_upload_form($assignment) {
     echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\">";
     echo "</FORM>";
     echo "</DIV>";
-}
-
-function assignment_get_participants($assignmentid) {
-//Returns the users with data in one assignment
-//(users with records in assignment_submissions, students and teachers)
-
-    global $CFG;
-
-    //Get students
-    $students = get_records_sql("SELECT DISTINCT u.* 
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}assignment_submissions a
-                                 WHERE a.assignment = '$assignmentid' and
-                                       u.id = a.userid");
-    //Get teachers
-    $teachers = get_records_sql("SELECT DISTINCT u.*
-                                 FROM {$CFG->prefix}user u,       
-                                      {$CFG->prefix}assignment_submissions a       
-                                 WHERE a.assignment = '$assignmentid' and
-                                       u.id = a.teacher");
-
-    //Add teachers to students
-    if ($teachers) {
-        foreach ($teachers as $teacher) {
-            $students[$teacher->id] = $teacher;
-        }
-    }
-    //Return students array (it contains an array of unique users)
-    return ($students);
 }
 
 ?>

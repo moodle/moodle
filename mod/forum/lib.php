@@ -504,6 +504,53 @@ function forum_grades($forumid) {
     return $return;
 }
 
+function forum_get_participants($forumid) {
+//Returns the users with data in one forum
+//(users with records in forum_subscriptions, forum_posts and forum_ratings, students)     
+
+    global $CFG;
+
+    //Get students from forum_subscriptions
+    $st_subscriptions = get_records_sql("SELECT DISTINCT u.*
+                                         FROM {$CFG->prefix}user u,
+                                              {$CFG->prefix}forum_subscriptions s
+                                         WHERE s.forum = '$forumid' and
+                                               u.id = s.userid");    
+    //Get students from forum_posts
+    $st_posts = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}forum_discussions d,
+                                      {$CFG->prefix}forum_posts p
+                                 WHERE d.forum = '$forumid' and
+                                       p.discussion = d.id and
+                                       u.id = p.userid");
+
+    //Get students from forum_ratings
+    $st_ratings = get_records_sql("SELECT DISTINCT u.*
+                                   FROM {$CFG->prefix}user u,
+                                        {$CFG->prefix}forum_discussions d,
+                                        {$CFG->prefix}forum_posts p,
+                                        {$CFG->prefix}forum_ratings r
+                                   WHERE d.forum = '$forumid' and
+                                         p.discussion = d.id and
+                                         r.post = p.id and
+                                         u.id = r.userid");
+
+    //Add st_posts to st_subscriptions
+    if ($st_posts) {
+        foreach ($st_posts as $st_post) {
+            $st_subscriptions[$st_post->id] = $st_post;
+        }
+    }
+    //Add st_ratings to st_subscriptions
+    if ($st_ratings) {
+        foreach ($st_ratings as $st_rating) {
+            $st_subscriptions[$st_rating->id] = $st_rating;
+        }
+    }
+    //Return st_subscriptions array (it contains an array of unique users)
+    return ($st_subscriptions);
+}
 
 /// SQL FUNCTIONS ///////////////////////////////////////////////////////////
 
@@ -2130,54 +2177,6 @@ function forum_set_display_mode($mode=0) {
     } else if (empty($USER->mode)) {
         $USER->mode = $CFG->forum_displaymode;
     }
-}
-
-function forum_get_participants($forumid) {
-//Returns the users with data in one forum
-//(users with records in forum_subscriptions, forum_posts and forum_ratings, students)
-
-    global $CFG;
-
-    //Get students from forum_subscriptions
-    $st_subscriptions = get_records_sql("SELECT DISTINCT u.*
-                                         FROM {$CFG->prefix}user u,
-                                              {$CFG->prefix}forum_subscriptions s
-                                         WHERE s.forum = '$forumid' and
-                                               u.id = s.userid");
-    //Get students from forum_posts
-    $st_posts = get_records_sql("SELECT DISTINCT u.*
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}forum_discussions d,
-                                      {$CFG->prefix}forum_posts p
-                                 WHERE d.forum = '$forumid' and
-                                       p.discussion = d.id and
-                                       u.id = p.userid");
-
-    //Get students from forum_ratings
-    $st_ratings = get_records_sql("SELECT DISTINCT u.*
-                                   FROM {$CFG->prefix}user u,
-                                        {$CFG->prefix}forum_discussions d,    
-                                        {$CFG->prefix}forum_posts p,
-                                        {$CFG->prefix}forum_ratings r
-                                   WHERE d.forum = '$forumid' and          
-                                         p.discussion = d.id and
-                                         r.post = p.id and
-                                         u.id = r.userid");
-
-    //Add st_posts to st_subscriptions
-    if ($st_posts) {
-        foreach ($st_posts as $st_post) {
-            $st_subscriptions[$st_post->id] = $st_post;
-        }
-    }
-    //Add st_ratings to st_subscriptions
-    if ($st_ratings) {
-        foreach ($st_ratings as $st_rating) { 
-            $st_subscriptions[$st_rating->id] = $st_rating;
-        }
-    }
-    //Return st_subscriptions array (it contains an array of unique users)
-    return ($st_subscriptions);
 }
 
 ?>

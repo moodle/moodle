@@ -145,6 +145,22 @@ function glossary_grades($glossaryid) {
     return $return;
 }
 
+function glossary_get_participants($glossaryid) {
+//Returns the users with data in one glossary
+//(users with records in glossary_entries, students)
+
+    global $CFG;
+
+    //Get students
+    $students = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}glossary_entries g
+                                 WHERE g.glossaryid = '$glossaryid' and
+                                       u.id = g.userid");
+
+    //Return students array (it contains an array of unique users)
+    return ($students);
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other glossary functions go here.  Each of them must have a name that
@@ -326,24 +342,6 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
 	return get_records_sql("SELECT e.concept, e.definition, e.userid, e.timemodified, e.id, e.format  FROM
                             $selectsql ORDER BY e.concept ASC $limit");
 }
-
-function glossary_get_participants($glossaryid) {
-//Returns the users with data in one glossary
-//(users with records in glossary_entries, students)
-
-    global $CFG;
-
-    //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}glossary_entries g
-                                 WHERE g.glossaryid = '$glossaryid' and
-                                       u.id = g.userid");
-
-    //Return students array (it contains an array of unique users)
-    return ($students);
-}
-
 
 function glossary_file_area_name($entry) {
 //  Creates a directory file name, suitable for make_upload_directory()

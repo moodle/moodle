@@ -253,6 +253,34 @@ function journal_grades($journalid) {
     return $return;
 }
 
+function journal_get_participants($journalid) {
+//Returns the users with data in one journal
+//(users with records in journal_entries, students and teachers)
+
+    global $CFG;
+
+    //Get students
+    $students = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}journal_entries j
+                                 WHERE j.journal = '$journalid' and
+                                       u.id = j.userid");
+    //Get teachers
+    $teachers = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}journal_entries j
+                                 WHERE j.journal = '$journalid' and
+                                       u.id = j.teacher");
+
+    //Add teachers to students
+    if ($teachers) {
+        foreach ($teachers as $teacher) {
+            $students[$teacher->id] = $teacher;
+        }
+    }
+    //Return students array (it contains an array of unique users)
+    return ($students);
+}
 
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////////////
 
@@ -426,35 +454,6 @@ function journal_print_feedback($course, $entry, $grades) {
     echo text_to_html($entry->comment);
     echo "</TD></TR></TABLE>";
     echo "</TD></TR></TABLE>";
-}
-
-function journal_get_participants($journalid) {
-//Returns the users with data in one journal
-//(users with records in journal_entries, students and teachers)
-
-    global $CFG;
-
-    //Get students
-    $students = get_records_sql("SELECT DISTINCT u.*
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}journal_entries j
-                                 WHERE j.journal = '$journalid' and
-                                       u.id = j.userid");
-    //Get teachers
-    $teachers = get_records_sql("SELECT DISTINCT u.*
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}journal_entries j
-                                 WHERE j.journal = '$journalid' and
-                                       u.id = j.teacher");
-
-    //Add teachers to students
-    if ($teachers) {
-        foreach ($teachers as $teacher) {
-            $students[$teacher->id] = $teacher;
-        }
-    }
-    //Return students array (it contains an array of unique users)
-    return ($students);
 }
 
 ?>
