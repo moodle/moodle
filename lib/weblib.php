@@ -3923,7 +3923,7 @@ class tabobject {
  * @param string $selected  The id of the selected tab
  * @param array $inactive  Ids of inactive tabs
 **/
-function print_tabs($tabrows, $selected=NULL, $inactive=NULL) {
+function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $return=false) {
     global $CFG;
 
 /// Bring the row with the selected tab to the front
@@ -3954,11 +3954,11 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL) {
 
 /// A table to encapsulate the tabs    
     $str = '<table class="tabs" cellspacing="0">';
+    $str .= '<tr><td class="left side"></td><td>';
     
 /// Cycle through the tab rows
     foreach ($tabrows as $row) {
     
-        $str .= '<tr><td>';
         $str .= '<table class="tabrow" cellspacing="0">';
         $str .= '<tr>';
         
@@ -3979,12 +3979,14 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL) {
         
         $str .= '</tr>';
         $str .= '</table>';
-        $str .= '</td></tr>';
-        $str .= '</table>';
     }
+    $str .= '</td><td class="right side"></td></tr>';
+    $str .= '</table>';
     
-    return $str;
-
+    if ($return) {
+        return $str;
+    }
+    echo $str;
 }
 
 
