@@ -1342,7 +1342,7 @@ function quiz_print_category_form($course, $current) {
     echo "</td></tr></table>";
 }
 
-function quiz_category_select_menu($courseid,$published=false,$only_editable=false) {
+function quiz_category_select_menu($courseid,$published=false,$only_editable=false,$selected="") {
 /// displays a select menu of categories with appended coursenames
 /// optionaly non editable categories may be excluded
 /// added Howard Miller June '04
@@ -1356,8 +1356,12 @@ function quiz_category_select_menu($courseid,$published=false,$only_editable=fal
     foreach ($categories as $category) {
         $cid = $category->id;
         $cname = quiz_get_category_coursename( $category );
+        $seltxt = "";
+        if ($cid==$selected) {
+            $seltxt = "selected=\"true\"";
+        }
         if ((!$only_editable) || isteacheredit($category->course)) {
-            echo "    <option value=\"$cid\">$cname</option>\n";
+            echo "    <option value=\"$cid\" $seltxt>$cname</option>\n";
         }
     }
     echo "</select>\n";
