@@ -101,8 +101,8 @@
             error("Scale ID was incorrect");
         }
 
-        $scales_course_uses = course_scale_used($course->id,$scale->id);
-        $scales_site_uses = site_scale_used($scale->id,$courses);
+        //        $scales_course_uses = course_scale_used($course->id,$scale->id);
+        //        $scales_site_uses = site_scale_used($scale->id,$courses);
         $scalemenu = make_menu_from_list($scale->scale);
 
         print_header("$course->shortname: $strscales", "$course->fullname",
