@@ -47,6 +47,10 @@
             $courseformat = 0;
     }
 
+    //We *always* need to get active blocks (perhaps this should be cached
+    //in a session object and updated in when editing = true ????
+    $recblocks = get_records('blocks','visible','1');
+
     // Doing this now so we can pass the results to block_action()
     // and dodge the overhead of doing the same work twice.
 
@@ -107,7 +111,6 @@
         $allblocks = array_merge($leftblocks, $rightblocks);
 
         $missingblocks = array();
-        $recblocks = get_records('blocks','visible','1');
         if($editing && $recblocks) {
             foreach($recblocks as $recblock) {
                 // If it's not hidden or displayed right now...
@@ -121,8 +124,6 @@
             }
         }
 
-        $preferred_width_left = blocks_preferred_width($leftblocks, $recblocks);
-        $preferred_width_right = blocks_preferred_width($rightblocks, $recblocks);
 
         if (!empty($section)) {
             if (!empty($move)) {
@@ -169,6 +170,12 @@
             error("That's an invalid course id");
         }
     }
+
+    //Calculate left and right width. This has to be calculated *always*. Perhaps
+    //we could cache it in a session variable and update it only when editing=true ????
+    //This caused some display problems (100 width) in student mode.
+    $preferred_width_left = blocks_preferred_width($leftblocks, $recblocks);
+    $preferred_width_right = blocks_preferred_width($rightblocks, $recblocks);
 
     require("$CFG->dirroot/course/format/$course->format/format.php");  // Include the actual course format
 
