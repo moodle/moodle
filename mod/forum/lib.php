@@ -710,7 +710,7 @@ function forum_subscribed_users($course, $forum) {
         }
     }
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
-                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone
+                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.lang
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}forum_subscriptions s
                              WHERE s.forum = '$forum->id'
@@ -1617,7 +1617,11 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
     if (forum_user_can_post_discussion($forum)) {
         echo "<p align=center>";
         echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">";
-        echo get_string("addanewdiscussion", "forum")."</A>...";
+        if ($forum->type == "news") {
+            echo get_string("addanewtopic", "forum")."</a>...";
+        } else {
+            echo get_string("addanewdiscussion", "forum")."</a>...";
+        }
         echo "</p>\n";
     }
 
@@ -1635,7 +1639,11 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
     }
 
     if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost) ) {
-        echo "<p align=center><b>(".get_string("nodiscussions", "forum").")</b></p>";
+        if ($forum->type == "news") {
+            echo "<p align=center><b>(".get_string("nonews", "forum").")</b></p>";
+        } else {
+            echo "<p align=center><b>(".get_string("nodiscussions", "forum").")</b></p>";
+        }
         return;
     }
     
