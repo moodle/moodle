@@ -1180,6 +1180,11 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2005020800) {
+        // Expand module column to max 20 chars
+        table_column('log','module','module','varchar','20','','','not null');
+    }
+
     return $result;
 }
 
