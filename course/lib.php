@@ -31,6 +31,9 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
                 $users["$teacher->id"] = "$teacher->firstname $teacher->lastname";
             }
         }
+        if ($guest = get_user_info_from_db("username", "guest")) {
+            $users["$guest->id"] = "$guest->firstname $guest->lastname";
+        }
     }
 
     if (isadmin()) {
