@@ -44,7 +44,15 @@ function execute_sql($command, $feedback=true) {
 
     global $db;
 
+    $olddebug = $db->debug;
+
+    if (!$feedback) {
+        $db->debug = false;
+    }
+
     $result = $db->Execute($command);
+
+    $db->debug = $olddebug;
 
     if ($result) {
         if ($feedback) {
