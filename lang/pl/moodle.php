@@ -432,7 +432,7 @@ $string['displayingfirst'] = "Tylko pierwszych \$a->count elementów jest wy¶wiet
 
 $string['displayingrecords'] = "Wy¶wietlanie \$a rekordów";
 
-$string['displayingusers'] = "Wy¶wietlanie u¿ytkowników od $a->start do $a->end";
+$string['displayingusers'] = "Wy¶wietlanie u¿ytkowników od \$a->start do \$a->end";
 
 $string['documentation'] = "Dokumentacja Moodle";
 
@@ -1415,7 +1415,5 @@ $string['yourself'] = "samodzielnie";
 $string['yourteacher'] = "twój \$a";
 
 $string['zippingbackup'] = " Archiwizacja  kopii zapasowej";
-
-$string[''] = "";
 
 ?>
