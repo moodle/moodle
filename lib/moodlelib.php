@@ -31,7 +31,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         if (isset($USER->id)) {
             $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
         } else {
-            $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/\">".get_string("login")."</A></FONT>";
+            $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A></FONT>";
         }
     }
  
@@ -76,7 +76,7 @@ function print_footer ($course=NULL) {
                       " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
     } else { 
         $loggedinas = get_string("loggedinnot", "moodle").
-                      " (<A HREF=\"$CFG->wwwroot/login/\">".get_string("login")."</A>)";
+                      " (<A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A>)";
     } 
 
     include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
@@ -971,9 +971,9 @@ function require_login($courseid=0) {
         $USER = NULL;
         save_session("USER");
         if ($PHPSESSID) { // Cookies not enabled.
-            redirect("$CFG->wwwroot/login/?PHPSESSID=$PHPSESSID");
+            redirect("$CFG->wwwroot/login/index.php?PHPSESSID=$PHPSESSID");
         } else {
-            redirect("$CFG->wwwroot/login/");
+            redirect("$CFG->wwwroot/login/index.php");
         }
         die;
     }

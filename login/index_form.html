@@ -15,7 +15,7 @@
       (<? print_string("cookiesenabled") ?>)<BR>
 	  <? formerr($errormsg) ?>
       </p></font>
-      <FORM NAME="form" ACTION="<?=$CFG->wwwroot?>/login/" METHOD=post>
+      <FORM NAME="form" ACTION="<?=$CFG->wwwroot?>/login/index.php" METHOD=post>
         <table border="0" align="center">
         <tr>
             <td width="80%"><FONT SIZE=2>
@@ -43,7 +43,7 @@
       <HR>
         <P ALIGN=CENTER><? print_string("someallowguest") ?>:</P>
         <CENTER>
-        <FORM NAME="form2" ACTION="<?=$CFG->wwwroot?>/login/" METHOD=post>
+        <FORM NAME="form2" ACTION="<?=$CFG->wwwroot?>/login/index.php" METHOD=post>
         <INPUT TYPE="hidden" NAME="username" VALUE="guest">
         <INPUT TYPE="hidden" NAME="password" VALUE="guest">
         <INPUT type="submit" NAME="Submit"   VALUE="<? print_string("loginguest") ?>">
