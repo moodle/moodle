@@ -158,7 +158,7 @@ function journal_get_users_done($course, $journal) {
                             ORDER BY j.modified DESC");
 }
 
-function journal_print_user_entry($course, $user, $entry, $teachers) {
+function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
     global $THEME;
 
     echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
@@ -189,7 +189,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers) {
         }
         print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
         echo "<TD BGCOLOR=\"$THEME->cellheading\">Teacher Feedback:";
-        choose_from_menu($RATING, "r$entry->id", $entry->rating, "Rate...");
+        choose_from_menu($ratings, "r$entry->id", $entry->rating, "Rate...");
         if ($entry->timemarked) {
             echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
         }

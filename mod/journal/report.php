@@ -27,7 +27,7 @@
     if ( $eee = get_records_sql("SELECT * FROM journal_entries WHERE journal='$journal->id'")) {
         foreach ($eee as $ee) {
             $entrybyuser[$ee->user] = $ee;
-            $entrybyentry[$ee->id]     = $ee;
+            $entrybyentry[$ee->id]  = $ee;
         }
         
     } else {
@@ -60,17 +60,16 @@
             $entry = $entrybyentry[$num];
             // Only update entries where feedback has actually changed.
             if (($vals[r] <> $entry->rating) || ($vals[c] <> addslashes($entry->comment))) {
-                if (!$rs = $db->Execute("UPDATE journal_entries
-                                         SET rating='$vals[r]',   comment='$vals[c]',
-                                            teacher='$USER->id', timemarked='$timenow'
-                                         WHERE id = '$num'")) {
-                    error("Failed to update the journal feedback!");
-                }
-                $entrybyuser[$entry->user]->comment = $vals[c];
                 $entrybyuser[$entry->user]->rating = $vals[r];
-                $entrybyuser[$entry->user]->timemarked = $timenow;
+                $entrybyuser[$entry->user]->comment = $vals[c];
                 $entrybyuser[$entry->user]->teacher = $USER->id;
-                $count++;
+                $entrybyuser[$entry->user]->timemarked = $timenow;
+                $entrybyuser[$entry->user]->id = $num;
+                if (! update_record("journal_entries", $entrybyuser[$entry->user])) {
+                    error("Failed to update the journal feedback!");
+                } else {
+                    $count++;
+                }
             }
         }
         add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count users");
@@ -90,14 +89,14 @@
         if ($usersdone = journal_get_users_done($course, $journal)) {
             foreach ($usersdone as $user) {
                 $entry = $entrybyuser[$user->id];
-                journal_print_user_entry($course, $user, $entry, $teachers);
+                journal_print_user_entry($course, $user, $entry, $teachers, $RATING);
             }
         }
 
         foreach ($users as $user) {
             if (! $usersdone[$user->id]) {
                 $entry = NULL;
-                journal_print_user_entry($course, $user, $entry, $teachers);
+                journal_print_user_entry($course, $user, $entry, $teachers, $RATING);
             }
         }
         echo "<CENTER>";
