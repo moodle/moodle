@@ -70,7 +70,8 @@
 ///     or the default value in the 'lang' file if the specified value was empty.
         define("EWIKI_PAGE_INDEX",$wiki_entry->pagename);
 
-        $wikipage = ($wikipage === false) ?  EWIKI_PAGE_INDEX: $wikipage;
+        /// If the page has a ' in it, it may have slashes added to it. Remove them if it does.
+        $wikipage = ($wikipage === false) ?  stripslashes(EWIKI_PAGE_INDEX) : stripslashes($wikipage);
 
 ///     ### Prevent ewiki getting id as PageID...
         unset($_REQUEST["id"]);
@@ -299,8 +300,8 @@
     if ($canedit) {   /// Print tabs with commands for this page
         $tabstyle = ' style="padding-left: 5px;padding-right: 5px" ';
 
-        echo "<table border=0>";
-        echo "<tr>";
+        echo '<table border="0">';
+        echo '<tr>';
         $tabs = array('view', 'edit','links','info');
         if ($binary) {
             $tabs[] = 'attachments';
@@ -315,8 +316,8 @@
                 echo '<td class="generaltabselected" '.$tabstyle.' bgcolor="'.$THEME->cellcontent.'">'.$tabname.'</td>';
             }
         }
-        echo "</tr>";
-        echo "</table>";
+        echo '</tr>';
+        echo '</table>';
     }
     print_simple_box_start( "right", "100%", "$THEME->cellcontent", "20");
 
