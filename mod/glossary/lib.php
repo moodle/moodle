@@ -1053,7 +1053,7 @@ function glossary_add_attachment($entry, $inputname) {
     }
 
     require_once($CFG->dirroot.'/lib/uploadlib.php');
-    $um = new upload_manager($inputname,true,false,$course,false,0);
+    $um = new upload_manager($inputname,true,false,$course,false,0,false,true);
     $dir = glossary_file_area_name($entry);
 
     if ($um->process_file_uploads($dir)) {
