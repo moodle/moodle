@@ -110,7 +110,7 @@ function import_multichoice( $question ) {
 
   // run through the answers
   // $qo->answer = array();
-  $answers = $question['#']['answers'][0]['#']['answer'];  
+  $answers = $question['#']['answer'];  
   $a_count = 0;
   foreach ($answers as $answer) {
      $ans = $this->import_answer( $answer );
@@ -360,13 +360,23 @@ function get_single( $id ) {
   return $name;
 }
 
-function writetext( $raw ) {
+function writetext( $raw, $ilev=0, $short=true) {
     // generates <text></text> tags, processing raw text therein 
+    // $ilev is the current indent level
+    // $short=true sticks it on one line
+    $indent = str_repeat( "  ",$ilev );
 
     // encode the text to 'disguise' HTML content 
     $raw = htmlspecialchars( $raw );
 
-    return "<text>$raw</text>\n";
+    if ($short) {
+      $xml = "$indent<text>$raw</text>\n";
+    }
+    else {
+      $xml = "$indent<text>\n$raw\n$indent</text>\n";
+    }
+
+    return $xml;
 }
 
 function presave_process( $content ) {
@@ -395,10 +405,12 @@ function writequestion( $question ) {
     $name_text = $this->writetext( $question->name );
     $qtformat = $this->get_format($question->questiontextformat);
     $question_text = $this->writetext( $question->questiontext );
-    $expout .= "<question type=\"$question_type\">\n";   
-    $expout .= "<name>".$this->writetext($name_text)."</name>\n";
-    $expout .= "<questiontext format=\"$qtformat\">".$this->writetext($question_text)."</questiontext>\n";   
-    $expout .= "<image>".$question->image."</image>\n";
+    $expout .= "  <question type=\"$question_type\">\n";   
+    $expout .= "    <name>$name_text</name>\n";
+    $expout .= "    <questiontext format=\"$qtformat\">\n";
+    $expout .= $question_text;
+    $expout .= "    </questiontext>\n";   
+    $expout .= "    <image>".$question->image."</image>\n";
 
     // output depends on question type
     switch($question->qtype) {
@@ -406,29 +418,33 @@ function writequestion( $question ) {
         $true_percent = round( $question->trueanswer->fraction * 100 );
         $false_percent = round( $question->falseanswer->fraction * 100 );
         // true answer
-        $expout .= "<answer fraction=\"$true_percent\">\n";
-        $expout .= $this->writetext("true")."\n";
-        $expout .= "<feedback>".$this->writetext( $question->trueanswer->feedback )."</feedback>\n";
-        $expout .= "</answer>\n";
+        $expout .= "    <answer fraction=\"$true_percent\">\n";
+        $expout .= $this->writetext("true",3)."\n";
+        $expout .= "      <feedback>\n";
+        $expout .= $this->writetext( $question->trueanswer->feedback,4,false );
+        $expout .= "      </feedback>\n";
+        $expout .= "    </answer>\n";
 
 
         // false answer
-        $expout .= "<answer fraction=\"$false_percent\">\n";
+        $expout .= "    <answer fraction=\"$false_percent\">\n";
         $expout .= $this->writetext("false")."\n";
-        $expout .= "<feedback>".$this->writetext( $question->falseanswer->feedback )."</feedback>\n";
-        $expout .= "</answer>\n";
+        $expout .= "      <feedback>\n";
+        $expout .= $this->writetext( $question->falseanswer->feedback,4,false );
+        $expout .= "      </feedback>\n";
+        $expout .= "    </answer>\n";
         break;
     case MULTICHOICE:
-        $expout .= "<single>".$this->get_single($question->single)."</single>\n";
-        $expout .= "<answers>\n";
+        $expout .= "    <single>".$this->get_single($question->single)."</single>\n";
         foreach($question->answers as $answer) {
             $percent = $answer->fraction * 100;
-            $expout .= "<answer fraction=\"$percent\">\n";
-            $expout .= $this->writetext( $answer->answer );
-            $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
-            $expout .= "</answer>\n";
+            $expout .= "      <answer fraction=\"$percent\">\n";
+            $expout .= $this->writetext( $answer->answer,4,false );
+            $expout .= "      <feedback>\n";
+            $expout .= $this->writetext( $answer->feedback,4,false );
+            $expout .= "      </feedback>\n";
+            $expout .= "    </answer>\n";
             }
-        $expout .= "</answers>\n";
         break;
     case SHORTANSWER:
         foreach($question->answers as $answer) {
@@ -465,9 +481,9 @@ function writequestion( $question ) {
     $expout .= "</question>\n";
 
     // run through xml tidy function
-    $tidy_expout = $this->indent_xhtml( $expout, '    ' ) . "\n\n";
+    // $tidy_expout = $this->indent_xhtml( $expout, '    ' ) . "\n\n";
 
-    return $tidy_expout;
+    return $expout;
 }
 }
 
