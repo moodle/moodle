@@ -27,6 +27,14 @@
 
     if (isset($_POST["course"])) {    // add or update form submitted
 
+        //It caller is correct, $SESSION->sesskey must exist and coincide
+        if (empty($SESSION->sesskey) or !confirm_sesskey($SESSION->sesskey)) {
+            error(get_string('confirmsesskeybad', 'error'));
+        }
+
+        //Unset this, check done
+        unset($SESSION->sesskey);
+
         if (!$course = get_record("course", "id", $mod->course)) {
             error("This course doesn't exist");
         }
@@ -165,7 +173,7 @@
     }
 
 
-    if (isset($_GET['move'])) {  
+    if (isset($_GET['move']) and confirm_sesskey()) {  
 
         require_variable($id);   
 
@@ -189,7 +197,7 @@
         }
         exit;
 
-    } else if (isset($_GET['movetosection']) or isset($_GET['moveto'])) {  
+    } else if ((isset($_GET['movetosection']) or isset($_GET['moveto'])) and confirm_sesskey()) {  
         
         if (! $cm = get_record("course_modules", "id", $USER->activitycopy)) {
             error("The copied course module doesn't exist!");
@@ -233,7 +241,7 @@
             redirect("view.php?id=$section->course");
         }
 
-    } else if (isset($_GET['indent'])) {  
+    } else if (isset($_GET['indent']) and confirm_sesskey()) {  
 
         require_variable($id);   
 
@@ -259,7 +267,7 @@
         }
         exit;
 
-    } else if (isset($_GET['hide'])) {
+    } else if (isset($_GET['hide']) and confirm_sesskey()) {
 
         if (! $cm = get_record("course_modules", "id", $_GET['hide'])) {
             error("This course module doesn't exist");
@@ -281,7 +289,7 @@
         }
         exit;
 
-    } else if (isset($_GET['show'])) {
+    } else if (isset($_GET['show']) and confirm_sesskey()) {
 
         if (! $cm = get_record("course_modules", "id", $_GET['show'])) {
             error("This course module doesn't exist");
@@ -313,7 +321,7 @@
         }
         exit;
 
-    } else if (isset($_GET['groupmode'])) {
+    } else if (isset($_GET['groupmode']) and confirm_sesskey()) {
 
         if (! $cm = get_record("course_modules", "id", $_GET['id'])) {
             error("This course module doesn't exist");
@@ -335,7 +343,7 @@
         }
         exit;
 
-    } else if (isset($_GET['copy'])) { // value = course module
+    } else if (isset($_GET['copy']) and confirm_sesskey()) { // value = course module
 
         if (! $cm = get_record("course_modules", "id", $_GET['copy'])) {
             error("This course module doesn't exist");
@@ -363,7 +371,7 @@
 
         redirect("view.php?id=$cm->course");
 
-    } else if (isset($_GET['cancelcopy'])) { // value = course module
+    } else if (isset($_GET['cancelcopy']) and confirm_sesskey()) { // value = course module
 
         $courseid = $USER->activitycopycourse;
 
@@ -373,7 +381,7 @@
 
         redirect("view.php?id=$courseid");
 
-    } else if (isset($_GET['delete'])) {   // value = course module
+    } else if (isset($_GET['delete']) and confirm_sesskey()) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $_GET['delete'])) {
             error("This course module doesn't exist");
@@ -412,6 +420,7 @@
         $form->modulename   = $module->name;
         $form->fullmodulename  = $fullmodulename;
         $form->instancename = $instance->name;
+        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
         $strdeletecheck = get_string("deletecheck", "", "$form->fullmodulename");
         $strdeletecheckfull = get_string("deletecheckfull", "", "$form->fullmodulename '$form->instancename'");
@@ -428,7 +437,7 @@
         exit;
 
 
-    } else if (isset($_GET['update'])) {   // value = course module
+    } else if (isset($_GET['update']) and confirm_sesskey()) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $_GET['update'])) {
             error("This course module doesn't exist");
@@ -465,6 +474,7 @@
         $form->modulename   = $module->name;
         $form->instance     = $cm->instance;
         $form->mode         = "update";
+        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
         $sectionname    = get_string("name$course->format");
         $fullmodulename = strtolower(get_string("modulename", $module->name));
@@ -477,7 +487,7 @@
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
 
-    } else if (isset($_GET['duplicate'])) {   // value = course module
+    } else if (isset($_GET['duplicate']) and confirm_sesskey()) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $_GET['duplicate'])) {
             error("This course module doesn't exist");
@@ -516,6 +526,7 @@
         $form->modulename   = $module->name;
         $form->instance     = $cm->instance;
         $form->mode         = "add";
+        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
         $sectionname    = get_string("name$course->format");
         $fullmodulename = strtolower(get_string("modulename", $module->name));
@@ -529,7 +540,7 @@
         }
 
         
-    } else if (isset($_GET['add'])) {
+    } else if (isset($_GET['add']) and confirm_sesskey()) {
 
         if (empty($_GET['add'])) {
             redirect($_SERVER["HTTP_REFERER"]);
@@ -554,6 +565,7 @@
         $form->instance   = "";
         $form->coursemodule = "";
         $form->mode       = "add";
+        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
         if (isset($_GET['type'])) {
             $form->type = $_GET['type'];
         }
