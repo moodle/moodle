@@ -323,7 +323,7 @@ class ChatDaemon {
         socket_close($handle);
     }
 
-    function promote_final($sessionid, $groupid) {
+    function promote_final($sessionid, $groupid, $customdata) {
         if(isset($this->conn_sets[$sessionid])) {
             trace('Set cannot be finalized: Session '.$sessionid.' is already active');
             return false;
@@ -379,10 +379,10 @@ class ChatDaemon {
             'userid'    => $chatuser->userid,
             'groupid'   => $groupid,
             'lang'      => $lang,
-            'quirks'    => $this->conn_sets[$sessionid]['customdata']['quirks']
+            'quirks'    => $customdata['quirks']
         );
 
-        trace('QUIRKS value for this connection is '.$this->conn_sets[$sessionid]['customdata']['quirks']);
+        trace('QUIRKS value for this connection is '.$customdata['quirks']);
 
         $this->dismiss_half($sessionid, false);
         chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
@@ -446,7 +446,7 @@ class ChatDaemon {
                     $this->conn_half[$sessionid][$type] = $handle;
 
                     // Do the bookkeeping
-                    $this->promote_final($sessionid, $groupid);
+                    $this->promote_final($sessionid, $groupid, $customdata);
 
                     // It's not an UFO anymore
                     $this->dismiss_ufo($handle, false);
@@ -558,7 +558,6 @@ class ChatDaemon {
                     chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], '<embed src="'.$this->beepsoundsrc.'" autostart="true" hidden="true" />');
                 }
 
-                // Testing for Safari
                 if($info['quirks'] & QUIRK_CHUNK_UPDATE) {
                     $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
                     $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
