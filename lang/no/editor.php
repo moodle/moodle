@@ -1,0 +1,75 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.1.1 (2003091111)
+
+
+$string['about'] = 'Om denne HTML-redigereren';
+$string['absbottom'] = 'Absolutt bunn';
+$string['absmiddle'] = 'Midstilt på tekstlinjen';
+$string['address'] = 'Adresse';
+$string['alignment'] = 'Plassering';
+$string['alternatetext'] = 'Alternativ tekst';
+$string['baseline'] = 'På tekstlinjen';
+$string['bold'] = 'Fet';
+$string['borderthickness'] = 'Tykkelse på tabellramme';
+$string['bottom'] = 'Bunn';
+$string['browse'] = 'Bla gjennom';
+$string['cancel'] = 'Avbryt';
+$string['cellpadding'] = 'Celletykkelse';
+$string['cellspacing'] = 'Celleavstand';
+$string['choosechar'] = 'Velg tegn';
+$string['chooseicon'] = 'Velg ikonet du vil sette inn';
+$string['close'] = 'Lukk';
+$string['cols'] = 'Kolonner';
+$string['copy'] = 'Kopier  (Ctrl + C)';
+$string['createlink'] = 'Sett inn en lenke';
+$string['cut'] = 'Klipp ut (Ctrl + X)';
+$string['forecolor'] = 'Skriftfarge';
+$string['hilitecolor'] = 'bakgrunnsfarge';
+$string['horizontal'] = 'Horisontal';
+$string['horizontalrule'] = 'Horisontal linje';
+$string['htmlmode'] = 'Bytt til  HTML-kilde';
+$string['imageurl'] = 'URL til bilde';
+$string['indent'] = 'Øk innrykk';
+$string['insertchar'] = 'Sett inn spesialtegn';
+$string['insertimage'] = 'Sett inn bilde';
+$string['insertsmile'] = 'Sett inn smilefjes';
+$string['inserttable'] = 'Sett inn tabell';
+$string['italic'] = 'Kursiv';
+$string['justifycenter'] = 'Midtstill';
+$string['justifyfull'] = 'Jevn';
+$string['justifyleft'] = 'Venstrejustert';
+$string['justifyright'] = 'Høyrejustert';
+$string['layout'] = 'Utseende';
+$string['left'] = 'Venstre';
+$string['middle'] = 'Midten';
+$string['normal'] = 'Normal';
+$string['notset'] = 'Ikke angitt';
+$string['ok'] = 'OK';
+$string['orderedlist'] = 'Nummerert liste';
+$string['outdent'] = 'Reduser innrykk';
+$string['paste'] = 'Lim inn (Ctrl + V)';
+$string['path'] = 'søkesti';
+$string['percent'] = 'Prosent';
+$string['pixels'] = 'Pixler';
+$string['popupeditor'] = 'Forstørr redigereren';
+$string['preformatted'] = 'Forhåndsformattert';
+$string['preview'] = 'Forhåndsvis';
+$string['redo'] = 'Gjør om siste handling';
+$string['right'] = 'Høyre';
+$string['rows'] = 'Rader';
+$string['showhelp'] = 'Hjelp til å bruke HTML-redigereren';
+$string['spacing'] = 'Mellomrom';
+$string['strikethrough'] = 'Gjennomstreking';
+$string['subscript'] = 'Senket skrift';
+$string['superscript'] = 'Hevet skrift';
+$string['textindicator'] = 'Gjeldende stil ';
+$string['textmode'] = 'Du er i 'TEKST-MODUS'.  Bruk knappen [<>] for å gå tilbake til 'WYSIWYG-MODE'.';
+$string['texttop'] = 'Øverst på tekstlinjen';
+$string['top'] = 'Topp';
+$string['underline'] = 'Understreking';
+$string['undo'] = 'Angre siste handling';
+$string['unorderedlist'] = 'Punktliste';
+$string['vertical'] = 'Vertikal';
+$string['width'] = 'bredde';
+
+?>
