@@ -63,9 +63,12 @@
 
 /// Set language/locale of printed times etc (must be supported by OS)
 
-    if (! setlocale ("LC_ALL", $CFG->locale)) {
-        setlocale ("LC_ALL", $CFG->lang);        // Might work
+    if (!$CFG->locale) {
+        $CFG->locale = $CFG->lang; // Might work
     }
+    setlocale ("LC_TIME", $CFG->locale);
+    setlocale ("LC_CTYPE", $CFG->locale);
+    setlocale ("LC_COLLATE", $CFG->locale);
 
 /// Reference code to remove magic quotes from everything ... just in case.
 /// If you have problems with slashes everywhere then you might want to 
