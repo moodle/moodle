@@ -63,6 +63,22 @@ function schedule_backup_cron() {
     //Now we get a list of courses in the server
     if ($status) {
         mtrace("    Checking courses");
+        //First of all, we delete everything from backup tables related to deleted courses
+        mtrace("        Skipping deleted courses");
+        $skipped = 0;
+        if ($bckcourses = get_records('backup_courses')) {
+            foreach($bckcourses as $bckcourse) {
+                //Search if it exists
+                if (!$exists = get_record('course', 'id', "$bckcourse->courseid")) {
+                    //Doesn't exist, so delete from backup tables
+                    delete_records('backup_courses', 'courseid', "$bckcourse->courseid");
+                    delete_records('backup_log', 'courseid', "$bckcourse->courseid");
+                    $skipped++;
+                }
+            }
+        }
+        mtrace("            $skipped courses");
+        //Now process existing courses
         $courses = get_records("course");
         //For each course, we check (insert, update) the backup_course table
         //with needed data
