@@ -1,305 +1,174 @@
-<?php
-//Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona
-//Modul quiz.php
-
-$string['modulename'] = "Quiz";
-
-$string['modulenameplural'] = "Quizy";
-
-$string['acceptederror'] = "Zaakceptowany b³±d";
-
-$string['answerswithacceptederrormarginmustbenumeric'] = "Odpowiedzi z zaakceptowanym b³edem musz± byæ numeryczne";
-
-$string['countdown'] = "Odliczanie";
-
-$string['countdownfinished'] = "Quiz jest zamykany, powiniene¶ wys³aæ swoje odpowiedzi natychmiast.";
-
-$string['countdowntenminutes'] = "Quiz zostanie zamkniêty za 10 minut";
-
-$string['description'] = "Opis";
-
-$string['eachattemptbuildsonthelast'] = "Ka¿da nowa próba na podstawie poprzedniej";
-
-$string['editingdescription'] = "Edycja opisu";
-
-$string['editingmultianswer'] = "Edycja za³±czonych odpowiedzi";
-
-$string['editingnumerical'] = "Edycja pytania numerycznego";
-
-$string['missingcorrectanswer'] = "Poprawna odpowied¼ musi byæ okre¶lona";
-
-$string['multianswer'] = "Za³±czone odpowiedzi";
-
-$string['numerical'] = "Numeryczne";
-
-$string['quizcloses'] = "Quiz koñczy siê";
-
-$string['recentlyaddedquestion'] = "Ostatnio dodane pytanie!";
-
-$string['reportoverview'] = "Przegl±d";
-
-$string['reportregrade'] = "Ponownie oceñ próby";
-
-$string['reportsimplestat'] = "Proste statystyki";
-
-$string['review'] = "Przegl±d";
-
-$string['viewallreports'] = "Obejrzyj raporty dla próby \$a";
-
-$string['addquestions'] = "Dodaj pytania";
-
-$string['addingquestions'] = "Na tej stronie obywa siê zarz±dzanie twoj± baz± danych pytañ. Pytania przechowywane s± w kategoriach w celu u³atwienia ich organizacji. Pytania mog± byæ wykorzystane w dowolnym quizie wchodz±cym w sk³ad twojego kursu, lub nawet w innych kursach, je¶li zdecydujesz siê je opublikowaæ. <br /><br /> Gdy wybierzesz kategoriê wci¶niesz przycisk \'Poka¿\'  bêdziesz móg³ tworzyæ i edytowaæ pytania.  Dowolne z tych pytañ bêdziesz móg³ nastêpnie dodaæ do swojego quizu.";
-
-$string['addquestionstoquiz'] = "Dodaj pytania do aktualnego quizu";
-
-$string['addselectedtoquiz'] = "Dodaj wybrane pozycje do quizu";
-
-$string['allowreview'] = "Udostêpnij przegl±d";
-
-$string['alwaysavailable'] = "Zawsze dostêpne";
-
-$string['alreadysubmitted'] = "Najprawdopodobniej próba zosta³a ju¿ przes³ana";
-
-$string['answer'] = "Odpowied¼";
-
-$string['answerhowmany'] = "Jedna lub wiele odpowiedzi";
-
-$string['answersingleyes'] = "Wy³±cznie jedna odpowied¼";
-
-$string['answersingleno'] = "Odpowied¼ wielokrotna jest dozwolona";
-
-$string['attempt'] = "Próba \$a";
-
-$string['attemptfirst'] = "Pierwsza próba";
-
-$string['attemptlast'] = "Ostatnia próba";
-
-$string['attemptquiznow'] = "Spróbuj teraz rozwi±zaæ quiz";
-
-$string['attempts'] = "Próby";
-
-$string['attemptsallowed'] = "Próby dostêpne";
-
-$string['attemptsunlimited'] = "Nielimitowana liczba prób";
-
-$string['backtoquiz'] = "Powrót do edycji quizu";
-
-$string['bestgrade'] = "Najlepsza ocena";
-
-$string['blackboard'] = "Tablica";
-
-$string['casesensitive'] = "Uwzglêdnianie wielko¶ci liter";
-
-$string['caseyes'] = "Tak, wielko¶æ liter musi siê zgadzaæ";
-
-$string['caseno'] = "Nie, wielko¶æ liter jest niewa¿na";
-
-$string['categories'] = "Kategorie";
-
-$string['category'] = "Kategoria";
-
-$string['categoryinfo'] = "Informacje na temat kategorii";
-
-$string['categorymove'] = "Kategoria '\$a->name\' zawiera \$a->count pytañ. Wybierz kategoriê, do której maj± one zostaæ przeniesione";
-
-$string['categorymoveto'] = "Przenie¶ je do tej kategorii";
-
-$string['choice'] = "Wybór";
-
-$string['choices'] = "Mo¿liwe odpowiedzi";
-
-$string['correctanswer'] = "Poprawna odpowied¼";
-
-$string['correctanswers'] = "Poprawne odpowiedzi";
-
-$string['createmultiple'] = "Utwórz wiele pytañ";
-
-$string['createnewquestion'] = "Utwórz nowe pytanie";
-
-$string['custom'] = "Niestandardowy format";
-
-$string['daysavailable'] = "Dni dostêpno¶ci";
-
-$string['default'] = "Domy¶lny";
-
-$string['defaultgrade'] = "Domy¶lna ocena za pytanie";
-
-$string['defaultinfo'] = "Domy¶lna kategoria pytañ";
-
-$string['deletequestioncheck'] = "Czy masz ca³kowit± pewno¶æ, ¿e chcesz usun±æ '\$a\'?";
-
-$string['editcategories'] = "Modyfikuj kategorie";
-
-$string['editingmatch'] = "Modyfikowanie pytania typu \'Dopasuj Odpowied¼\'";
-
-$string['editingmultichoice'] = "Modyfikowanie pytania wielokrotnego wyboru";
-
-$string['editingquiz'] = "Modyfikowanie quizu";
-
-$string['editingquestion'] = "Modyfikowanie pytania";
-
-$string['editingrandom'] = "Modyfikowanie pytania wybieranego losowo";
-
-$string['editingrandomsamatch'] = "Modyfikowanie losowo wybieranego pytania typu \'Dopasuj Odpowied¼\'";
-
-$string['editingshortanswer'] = "Modyfikowania pytania do krótkiej odpowiedzi";
-
-$string['editingtruefalse'] = "Modyfikowanie pytania prawda/fa³sz";
-
-$string['false'] = "Fa³sz";
-
-$string['feedback'] = "informacja zwrotna";
-
-$string['filloutoneanswer'] = "Musisz stworzyæ przynajmniej jedn± odpowied¼. Pola odpowiedzi pozostawione puste bêd± ignorowane";
-
-$string['fillouttwochoices'] = "Musisz stworzyæ przynajmniej dwie odpowiedzi. Pola odpowiedzi pozostawione puste bêd± ignorowane";
-
-$string['filloutthreequestions'] = "Musisz stworzyæ przynajmniej trzy odpowiedzi. Pola odpowiedzi pozostawione puste bêd± ignorowane";
-
-$string['fileformat'] = "Format pliku";
-
-$string['fractionsaddwrong'] = "Wybrane odpowiedzi pozytywne nie sumuj± siê do 100%% <BR>Zamiast tego jest sumuj± siê \$a%% <BR>Czy chcesz wróciæ i poprawiæ pytanie?";
-
-$string['fractionsnomax'] = "Jedna z odpowiedzi powinna byæ warta 100%, dziêki czemu <BR>mo¿liwe jest uzyskanie maksymalnej oceny za to pytanie. <BR>Czy chcesz wróciæ i poprawiæ pytanie?";
-
-$string['gradeaverage'] = "¦rednia ocena";
-
-$string['gradehighest'] = "Najwy¿sza ocena";
-
-$string['grademethod'] = "Metoda oceniania";
-
-$string['grades'] = "Oceny";
-
-$string['guestsno'] = "Niestety, go¶cie nie mog± ogl±daæ ani rozwi±zywaæ quizów";
-
-$string['imagedisplay'] = "Grafika do wy¶wietlenia";
-
-$string['importquestions'] = "Importuj pytania z pliku";
-
-$string['introduction'] = "Wprowadzenie";
-
-$string['marks'] = "Punkty";
-
-$string['match'] = "Dopasuj odpowied¼";
-
-$string['matchanswer'] = "Pasuj±ca odpowied¼";
-
-$string['missingname'] = "Pominiêto nazwê pytania";
-
-$string['missingquestiontext'] = "Pominiêto tre¶æ pytania";
-
-$string['missingword'] = "Brak formatu s³owa";
-
-$string['multichoice'] = "Wielokrotny wybór";
-
-$string['noanswers'] = "Nie wybrano odpowiedzi!";
-
-$string['noattempts'] = "Nie podjêto próby rozwi±zania quizu";
-
-$string['nomoreattempts'] = "Dalsze próby nie s± dostêpne";
-
-$string['noquestions'] = "Nie dodano jeszcze ¿adnego pytania";
-
-$string['noreview'] = "Nie mo¿esz przegl±daæ tego quizu";
-
-$string['noreviewuntil'] = "Nie mo¿esz przegl±daæ tego quizu do \$a";
-
-$string['notenoughsubquestions'] = "Nie zdefiniowano wystarczaj±cej liczby podpunktów pytañ! <br> Czy chcesz wróciæ i poprawiæ pytanie?";
-
-$string['publish'] = "Opublikuj";
-
-$string['qti'] = "Format IMS QTI";
-
-$string['question'] = "Pytanie";
-
-$string['questioninuse'] = "Pytanie '\$a\' jest w u¿yciu:";
-
-$string['questions'] = "Pytania";
-
-$string['questionname'] = "Nazwa pytania";
-
-$string['quizavailable'] = "Quiz jest dostêpny do: \$a";
-
-$string['quizclose'] = "Zamknij quiz";
-
-$string['quizclosed'] = "Ten quiz zosta³ zamkniêty \$a";
-
-$string['quizopen'] = "Otwórz quiz";
-
-$string['quiznotavailable'] = "Quiz nie bêdzie dostêpny do dnia \$a";
-
-$string['random'] = "Pytanie wybierane losowo";
-
-$string['randomcreate'] = "Utwórz pytania wybierane losowo";
-
-$string['randomsamatch'] = "Losowo wybierane pytania typu \'Dopasuj odpowied¼\'";
-
-$string['randomsamatchcreate'] = "Utwórz Losowo wybierane pytania typu \'Dopasuj odpowied¼\'";
-
-$string['randomsamatchintro'] = "Dla ka¿dego z poni¿szych pytañ wybierz z menu pasuj±c± odpowied¼";
-
-$string['randomsamatchnumber'] = "Liczba pytañ do wybrania";
-
-$string['readytosend'] = "Za chwilê Twój ca³y quiz zostanie przes³any do ocenienia. Czy chcesz kontynuowaæ?";
-
-$string['regrade'] = "Ponownie oceñ wszystkie próby";
-
-$string['regradecomplete'] = "Wszystkie próby zosta³y ocenione ponownie";
-
-$string['regradecount'] = "Zmieniono \$a->changed z \$a->attempt ocen";
-
-$string['rename'] = "Zmieñ nazwê";
-
-$string['report'] = "Raporty";
-
-$string['save'] = "Zapisz";
-
-$string['savegrades'] = "Zapisz oceny";
-
-$string['savemyanswers'] = "Zapisz moje odpowiedzi";
-
-$string['savequiz'] = "Zapisz ca³y quiz";
-
-$string['score'] = "Wynik";
-
-$string['select'] = "Wybierz";
-
-$string['selectall'] = "Wybierz wszystkie";
-
-$string['selectcategoryabove'] = "Wybierz jedn± z powy¿szych kategorii";
-
-$string['shortanswer'] = "Krótka odpowied¼";
-
-$string['show'] = "Poka¿";
-
-$string['showfeedback'] = "Wy¶wietliæ informacjê zwrotn± po udzieleniu odpowiedzi?";
-
-$string['showcorrectanswer'] = "Czy informacja zwrotna ma zawieraæ poprawne odpowiedzi?";
-
-$string['shuffleanswers'] = "Wymieszaj kolejno¶æ odpowiedzi";
-
-$string['shufflequestions'] = "Wymieszaj kolejno¶æ pytañ";
-
-$string['time'] = "Czas";
-
-$string['timetaken'] = "Wykorzystany Czas";
-
-$string['timecompleted'] = "Zakoñczono";
-
-$string['toomanyrandom'] = "Liczba potrzebnych pytañ wybieranych losowo jest wiêksza od liczby pytañ w tej kategorii! (\$a)";
-
-$string['true'] = "Prawda";
-
-$string['truefalse'] = "Prawda/Fa³sz";
-
-$string['type'] = "Typ";
-
-$string['viewallanswers'] = "Przegl±daj \$a ukoñczonych quizów";
-
-$string['webct'] = "Format WebCT";
-
-$string['yourfinalgradeis'] = "Twoja ostateczna ocena za ten quiz wynosi \$a";
-
-$string[''] = "";
+<?PHP // $Id$ 
+      // quiz.php - created with Moodle 1.2 development (2004020300)
+
+
+$string['acceptederror'] = 'Zaakceptowany b³±d';
+$string['addingquestions'] = 'Na tej stronie obywa siê zarz±dzanie twoj± baz± danych pytañ. Pytania przechowywane s± w kategoriach w celu u³atwienia ich organizacji. Pytania mog± byæ wykorzystane w dowolnym quizie wchodz±cym w sk³ad twojego kursu, lub nawet w innych kursach, je¶li zdecydujesz siê je opublikowaæ. <br /><br /> Gdy wybierzesz kategoriê wci¶niesz przycisk \'Poka¿\'  bêdziesz móg³ tworzyæ i edytowaæ pytania.  Dowolne z tych pytañ bêdziesz móg³ nastêpnie dodaæ do swojego quizu.';
+$string['addquestions'] = 'Dodaj pytania';
+$string['addquestionstoquiz'] = 'Dodaj pytania do aktualnego quizu';
+$string['addselectedtoquiz'] = 'Dodaj wybrane pozycje do quizu';
+$string['aiken'] = 'Format Akien';
+$string['allowreview'] = 'Udostêpnij przegl±d';
+$string['alreadysubmitted'] = 'Najprawdopodobniej próba zosta³a ju¿ przes³ana';
+$string['alwaysavailable'] = 'Zawsze dostêpne';
+$string['answer'] = 'Odpowied¼';
+$string['answerhowmany'] = 'Jedna lub wiele odpowiedzi';
+$string['answersingleno'] = 'Odpowied¼ wielokrotna jest dozwolona';
+$string['answersingleyes'] = 'Wy³±cznie jedna odpowied¼';
+$string['answerswithacceptederrormarginmustbenumeric'] = 'Odpowiedzi z zaakceptowanym b³edem musz± byæ numeryczne';
+$string['answertoolong'] = 'Zbyt d³uga odpowied¼ (maks. 255 znaków)';
+$string['aon'] = 'Format AON';
+$string['attempt'] = 'Próba $a';
+$string['attemptfirst'] = 'Pierwsza próba';
+$string['attemptlast'] = 'Ostatnia próba';
+$string['attemptquiznow'] = 'Spróbuj teraz rozwi±zaæ quiz';
+$string['attempts'] = 'Próby';
+$string['attemptsallowed'] = 'Próby dostêpne';
+$string['attemptsunlimited'] = 'Nielimitowana liczba prób';
+$string['backtoquiz'] = 'Powrót do edycji quizu';
+$string['bestgrade'] = 'Najlepsza ocena';
+$string['blackboard'] = 'Tablica';
+$string['caseno'] = 'Nie, wielko¶æ liter jest niewa¿na';
+$string['casesensitive'] = 'Uwzglêdnianie wielko¶ci liter';
+$string['caseyes'] = 'Tak, wielko¶æ liter musi siê zgadzaæ';
+$string['categories'] = 'Kategorie';
+$string['category'] = 'Kategoria';
+$string['categoryinfo'] = 'Informacje na temat kategorii';
+$string['categorymove'] = 'Kategoria \'$a->name\' zawiera $a->count pytañ. Wybierz kategoriê, do której maj± one zostaæ przeniesione';
+$string['categorymoveto'] = 'Przenie¶ je do tej kategorii';
+$string['choice'] = 'Wybór';
+$string['choices'] = 'Mo¿liwe odpowiedzi';
+$string['correctanswer'] = 'Poprawna odpowied¼';
+$string['correctanswers'] = 'Poprawne odpowiedzi';
+$string['corrresp'] = 'W³a¶ciwa odpowied¼';
+$string['countdown'] = 'Odliczanie';
+$string['countdownfinished'] = 'Quiz jest zamykany, powiniene¶ wys³aæ swoje odpowiedzi natychmiast.';
+$string['countdowntenminutes'] = 'Quiz zostanie zamkniêty za 10 minut';
+$string['createmultiple'] = 'Utwórz wiele pytañ';
+$string['createnewquestion'] = 'Utwórz nowe pytanie';
+$string['custom'] = 'Niestandardowy format';
+$string['daysavailable'] = 'Dni dostêpno¶ci';
+$string['default'] = 'Domy¶lny';
+$string['defaultgrade'] = 'Domy¶lna ocena za pytanie';
+$string['defaultinfo'] = 'Domy¶lna kategoria pytañ';
+$string['deletequestioncheck'] = 'Czy masz ca³kowit± pewno¶æ, ¿e chcesz usun±æ \'$a\'?';
+$string['description'] = 'Opis';
+$string['eachattemptbuildsonthelast'] = 'Ka¿da nowa próba na podstawie poprzedniej';
+$string['editcategories'] = 'Modyfikuj kategorie';
+$string['editingdescription'] = 'Edycja opisu';
+$string['editingmatch'] = 'Modyfikowanie pytania typu \'Dopasuj Odpowied¼\'';
+$string['editingmultianswer'] = 'Edycja za³±czonych odpowiedzi';
+$string['editingmultichoice'] = 'Modyfikowanie pytania wielokrotnego wyboru';
+$string['editingnumerical'] = 'Edycja pytania numerycznego';
+$string['editingquestion'] = 'Modyfikowanie pytania';
+$string['editingquiz'] = 'Modyfikowanie quizu';
+$string['editingrandom'] = 'Modyfikowanie pytania wybieranego losowo';
+$string['editingrandomsamatch'] = 'Modyfikowanie losowo wybieranego pytania typu \'Dopasuj Odpowied¼\'';
+$string['editingshortanswer'] = 'Modyfikowania pytania do krótkiej odpowiedzi';
+$string['editingtruefalse'] = 'Modyfikowanie pytania prawda/fa³sz';
+$string['editquestions'] = 'Edytuj pytania';
+$string['errorsdetected'] = 'Wykryto $a b³êdów ';
+$string['false'] = 'Fa³sz';
+$string['feedback'] = 'informacja zwrotna';
+$string['fileformat'] = 'Format pliku';
+$string['filloutoneanswer'] = 'Musisz stworzyæ przynajmniej jedn± odpowied¼. Pola odpowiedzi pozostawione puste bêd± ignorowane';
+$string['filloutthreequestions'] = 'Musisz stworzyæ przynajmniej trzy odpowiedzi. Pola odpowiedzi pozostawione puste bêd± ignorowane';
+$string['fillouttwochoices'] = 'Musisz stworzyæ przynajmniej dwie odpowiedzi. Pola odpowiedzi pozostawione puste bêd± ignorowane';
+$string['fractionsaddwrong'] = 'Wybrane odpowiedzi pozytywne nie sumuj± siê do 100%% <BR>Zamiast tego jest sumuj± siê $a%% <BR>Czy chcesz wróciæ i poprawiæ pytanie?';
+$string['fractionsnomax'] = 'Jedna z odpowiedzi powinna byæ warta 100%%, dziêki czemu <BR>mo¿liwe jest uzyskanie maksymalnej oceny za to pytanie. <BR>Czy chcesz wróciæ i poprawiæ pytanie?';
+$string['gift'] = 'format GIFT';
+$string['gradeaverage'] = '¦rednia ocena';
+$string['gradehighest'] = 'Najwy¿sza ocena';
+$string['grademethod'] = 'Metoda oceniania';
+$string['guestsno'] = 'Niestety, go¶cie nie mog± ogl±daæ ani rozwi±zywaæ quizów';
+$string['imagedisplay'] = 'Grafika do wy¶wietlenia';
+$string['importquestions'] = 'Importuj pytania z pliku';
+$string['indivresp'] = 'Indywidualne odpowiedzi na dane pytanie';
+$string['introduction'] = 'Wprowadzenie';
+$string['itemanal'] = 'Analiza indywidualnych odpowiedzi na pytania';
+$string['listitems'] = 'Lista pytañ w tym quizie';
+$string['marks'] = 'Punkty';
+$string['match'] = 'Dopasuj odpowied¼';
+$string['matchanswer'] = 'Pasuj±ca odpowied¼';
+$string['missingcorrectanswer'] = 'Poprawna odpowied¼ musi byæ okre¶lona';
+$string['missingname'] = 'Pominiêto nazwê pytania';
+$string['missingquestion'] = 'Pominiêto opis pytnia (linia $a)';
+$string['missingquestiontext'] = 'Pominiêto tre¶æ pytania';
+$string['missingword'] = 'Brak formatu s³owa';
+$string['modulename'] = 'Quiz';
+$string['modulenameplural'] = 'Quizy';
+$string['multianswer'] = 'Za³±czone odpowiedzi';
+$string['multichoice'] = 'Wielokrotny wybór';
+$string['name'] = 'Imiê';
+$string['noanswers'] = 'Nie wybrano odpowiedzi!';
+$string['noattempts'] = 'Nie podjêto próby rozwi±zania quizu';
+$string['nomoreattempts'] = 'Dalsze próby nie s± dostêpne';
+$string['noquestions'] = 'Nie dodano jeszcze ¿adnego pytania';
+$string['noresponse'] = 'Brak odpowiedzi';
+$string['noreview'] = 'Nie mo¿esz przegl±daæ tego quizu';
+$string['noreviewuntil'] = 'Nie mo¿esz przegl±daæ tego quizu do $a';
+$string['notenoughsubquestions'] = 'Nie zdefiniowano wystarczaj±cej liczby podpunktów pytañ! <br> Czy chcesz wróciæ i poprawiæ pytanie?';
+$string['numerical'] = 'Numeryczne';
+$string['percentcorrect'] = 'Procent poprawnych odpowiedzi';
+$string['publish'] = 'Opublikuj';
+$string['qti'] = 'Format IMS QTI';
+$string['question'] = 'Pytanie';
+$string['questioninuse'] = 'Pytanie \'$a\' jest w u¿yciu:';
+$string['questionname'] = 'Nazwa pytania';
+$string['questionnametoolong'] = 'Nazwa pytania jest zbyt d³uga (maks. 255 liter). Nazwa zosta³a skrócona.';
+$string['questions'] = 'Pytania';
+$string['quizavailable'] = 'Quiz jest dostêpny do: $a';
+$string['quizclose'] = 'Zamknij quiz';
+$string['quizclosed'] = 'Ten quiz zosta³ zamkniêty $a';
+$string['quizcloses'] = 'Quiz koñczy siê';
+$string['quiznotavailable'] = 'Quiz nie bêdzie dostêpny do dnia $a';
+$string['quizopen'] = 'Otwórz quiz';
+$string['random'] = 'Pytanie wybierane losowo';
+$string['randomcreate'] = 'Utwórz pytania wybierane losowo';
+$string['randomsamatch'] = 'Losowo wybierane pytania typu \'Dopasuj odpowied¼\'';
+$string['randomsamatchcreate'] = 'Utwórz Losowo wybierane pytania typu \'Dopasuj odpowied¼\'';
+$string['randomsamatchintro'] = 'Dla ka¿dego z poni¿szych pytañ wybierz z menu pasuj±c± odpowied¼';
+$string['randomsamatchnumber'] = 'Liczba pytañ do wybrania';
+$string['readytosend'] = 'Za chwilê Twój ca³y quiz zostanie przes³any do ocenienia. Czy chcesz kontynuowaæ?';
+$string['recentlyaddedquestion'] = 'Ostatnio dodane pytanie!';
+$string['regrade'] = 'Ponownie oceñ wszystkie próby';
+$string['regradecomplete'] = 'Wszystkie próby zosta³y ocenione ponownie';
+$string['regradecount'] = 'Zmieniono $a->changed z $a->attempt ocen';
+$string['rename'] = 'Zmieñ nazwê';
+$string['report'] = 'Raporty';
+$string['reportfullstat'] = 'Szczegó³owa statystyka';
+$string['reportmulti_percent'] = 'Multi-Procenty*';
+$string['reportmulti_q_x_student'] = 'Wybory wielu studentów*';
+$string['reportmulti_resp'] = 'Indywidualne odpowiedzi';
+$string['reportoverview'] = 'Przegl±d';
+$string['reportregrade'] = 'Ponownie oceñ próby';
+$string['reportsimplestat'] = 'Proste statystyki';
+$string['review'] = 'Przegl±d';
+$string['save'] = 'Zapisz';
+$string['savegrades'] = 'Zapisz oceny';
+$string['savemyanswers'] = 'Zapisz moje odpowiedzi';
+$string['savequiz'] = 'Zapisz ca³y quiz';
+$string['score'] = 'Wynik';
+$string['select'] = 'Wybierz';
+$string['selectall'] = 'Wybierz wszystkie';
+$string['selectcategoryabove'] = 'Wybierz jedn± z powy¿szych kategorii';
+$string['shortanswer'] = 'Krótka odpowied¼';
+$string['show'] = 'Poka¿';
+$string['showcorrectanswer'] = 'Czy informacja zwrotna ma zawieraæ poprawne odpowiedzi?';
+$string['showfeedback'] = 'Wy¶wietliæ informacjê zwrotn± po udzieleniu odpowiedzi?';
+$string['shuffleanswers'] = 'Wymieszaj kolejno¶æ odpowiedzi';
+$string['shufflequestions'] = 'Wymieszaj kolejno¶æ pytañ';
+$string['time'] = 'Czas';
+$string['timecompleted'] = 'Zakoñczono';
+$string['timetaken'] = 'Wykorzystany Czas';
+$string['toomanyrandom'] = 'Liczba potrzebnych pytañ wybieranych losowo jest wiêksza od liczby pytañ w tej kategorii! ($a)';
+$string['true'] = 'Prawda';
+$string['truefalse'] = 'Prawda/Fa³sz';
+$string['type'] = 'Typ';
+$string['viewallanswers'] = 'Przegl±daj $a ukoñczonych quizów';
+$string['viewallreports'] = 'Obejrzyj raporty dla próby $a';
+$string['webct'] = 'Format WebCT';
+$string['wronggrade'] = 'B³êdna ocena (linia $a)';
+$string['yourfinalgradeis'] = 'Twoja ostateczna ocena za ten quiz wynosi $a';
 
 ?>

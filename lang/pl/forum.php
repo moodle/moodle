@@ -1,253 +1,135 @@
-<?php
-//Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
-//Modul forum.php
-
-$string['modulename'] = "Forum";
-
-$string['modulenameplural'] = "Fora dyskusyjne";
-
-$string['addanewdiscussion'] = "Dodaj nowy temat dyskusji";
-
-$string['addanewtopic'] = " Dodaj nowy temat";
-
-$string['allowchoice'] = "Zezwól ka¿demu u¿ytkownikowi na wybór";
-
-$string['allowdiscussions'] = "Czy \$a mo¿e wysy³aæ wiadomo¶ci na to forum?";
-
-$string['allowratings'] = "Czy posty mog± byæ oceniane?";
-
-$string['allowsdiscussions'] = "W tym forum ka¿dy mo¿e utworzyæ tylko jeden temat dyskusji.";
-
-$string['anyfile'] = "Jakikolwiek plik";
-
-$string['attachment'] = "Za³±cznik";
-
-$string['bynameondate'] = " \$a->name  w dniu \$a->date napisa³(a)";
-
-$string['configdisplaymode'] = " Domy¶lny tryb wy¶wietlania dyskusji, je¶li nie wybrano innego.";
-
-$string['configlongpost'] = " Ka¿dy post o d³ugo¶ci przekraczaj±cej t± liczbê (nie uwzglêdniaj±c kodu HTML) jest uwa¿any za d³ugi.";
-
-$string['configmanydiscussions'] = " Maksymalna ilo¶æ dyskusji pokazywanych na jednej stronie forum.";
-
-$string['configshortpost'] = " Ka¿dy post o d³ugo¶ci mniejszej od tej liczby (nie uwzglêdniaj±c kodu HTML) jest uwa¿any za krótki";
-
-$string['couldnotadd'] = "Nie mo¿na dodaæ twojego postu z powodu nieznanego b³êdu";
-
-$string['couldnotdeleteratings'] = "Niestety, nie mo¿na by³o  usun±æ tego postu, gdy¿ zosta³ on ju¿ oceniony przez innych";
-
-$string['couldnotdeletereplies'] = "Niestety, nie mo¿na by³o  usun±æ tego postu, gdy¿ inni u¿ytkownicy ju¿ na niego odpowiedzieli.";
-
-$string['couldnotupdate'] = "Nie mo¿na zaktualizowaæ twojego postu z powodu nieznanego b³êdu";
-
-$string['delete'] = "Usuñ";
-
-$string['deleteddiscussion'] = "Usuniêto temat dyskusji";
-
-$string['deletedpost'] = "Post zosta³ usuniêty";
-
-$string['deletesure'] = "Czy masz pewno¶æ, ¿e chcesz usun±æ te post?";
-
-$string['discussion'] = "Dyskusja";
-
-$string['discussionmoved'] = "Dyskusja ta zosta³a przeniesiona do '\$a '.";
-
-$string['discussions'] = "Dyskusje";
-
-$string['discussionsstartedby'] = "Dyskusje rozpoczête przez \$a";
-
-$string['discussionsstartedbyrecent'] = " Dyskusje rozpoczête ostatnio przez \$a";
-
-$string['discussthistopic'] = "Podyskutuj na ten temat";
-
-$string['eachuserforum'] = "Ka¿dy wysy³a jeden temat dyskusji";
-
-$string['edit'] = "Edycja";
-
-$string['editing'] = "Edycja";
-
-$string['emptymessage'] = "Co¶ nie tak z twoim postem. Byæ mo¿e by³  pusty lub za³±cznik by³ zbyt du¿y. Twoje zmiany nie zosta³y zapisane";
-
-$string['everyonecanchoose'] = "Ka¿dy mo¿e siê zapisaæ na forum";
-
-$string['everyoneissubscribed'] = "Ka¿dy jest zapisany na to forum";
-
-$string['forcesubscribe'] = "Ka¿dy jest automatycznie zapisywany na to forum";
-
-$string['forcesubscribeq'] = "Wymusiæ u ka¿dego zapis na to forum?";
-
-$string['forum'] = "Forum";
-
-$string['forumintro'] = "Wstêp";
-
-$string['forumname'] = "Nazwa Forum";
-
-$string['forums'] = "Fora dyskusyjne";
-
-$string['forumtype'] = "Rodzaj forum";
-
-$string['generalforum'] = "Forum standardowe do u¿ytku ogólnego";
-
-$string['generalforums'] = "Fora ogólne";
-
-$string['inforum'] = "w \$a";
-
-$string['intronews'] = "Wiadomo¶ci i og³oszenia";
-
-$string['introsocial'] = "Forum otwarte do dyskusji na dowolny temat";
-
-$string['introteacher'] = "Forum wy³±cznie dla prowadz±cych";
-
-$string['lastpost'] = "Ostatni post";
-
-$string['learningforums'] = "Forum dydaktyczne";
-
-$string['maxtimehaspassed'] = "Niestety, maksymalny czas dozwolony na edycjê tego postu (\$a) min±³!";
-
-$string['message'] = "Wiadomo¶æ";
-
-$string['modeflatoldestfirst'] = "Wy¶wietl odpowiedzi p³asko, z najdawniejszymi na pocz±tku";
-
-$string['modeflatnewestfirst'] = "Wy¶wietl odpowiedzi p³asko, z najnowszymi na pocz±tku";
-
-$string['modenested'] = "Wy¶wietl odpowiedzi tematycznie";
-
-$string['modethreaded'] = "Wy¶wietl odpowiedzi w±tkami";
-
-$string['more'] = "Wiêcej";
-
-$string['movethisdiscussionto'] = "Przenie¶ tê dyskusjê do ...";
-
-$string['namenews'] = "Forum aktualno¶ci";
-
-$string['namesocial'] = "Forum towarzyskie";
-
-$string['nameteacher'] = "Forum nauczycielskie";
-
-$string['newforumposts'] = "Nowe wiadomo¶ci na forum";
-
-$string['nodiscussions'] = "Nie ma ¿adnych tematów na tym forum";
-
-$string['noguestpost'] = "Niestety go¶cie nie mog± zabieraæ g³osu na tym forum";
-
-$string['nomorepostscontaining'] = " Nie znaleziono wiêcej postów zawieraj±cych '\$a'";
-
-$string['nonews'] = " Nie umieszczono jeszcze ¿adnych nowo¶ci";
-
-$string['noposts'] = "Brak wiadomo¶ci";
-
-$string['nopostscontaining'] = "Nie znaleziono wiadomo¶ci zawieraj±cych '\$a '";
-
-$string['nosubscribers'] = "Nikt jeszcze nie zapisa³ siê na to forum";
-
-$string['nownotsubscribed'] = "\$a ->name NIE bêdzie otrzymywaæ kopii '\$a->forum' poczt± elektroniczn±.";
-
-$string['nowsubscribed'] = "\$a->name bêdzie otrzymywaæ kopie '\$a->forum' poczt± elektroniczn±.";
-
-$string['numposts'] = "\$a wiadomo¶ci";
-
-$string['olderdiscussions'] = "Starsze dyskusje";
-
-$string['openmode0'] = "¯adnych dyskusji, ¿adnych odpowiedzi";
-
-$string['openmode1'] = "¯adnych dyskusji, ale odpowiedzi s± dozwolone";
-
-$string['openmode2'] = "Dyskusje i odpowiedzi s± dozwolone";
-
-$string['parentofthispost'] = "Wiadomo¶æ nadrzêdna";
-
-$string['postadded'] = "Twój post zosta³ dodany. <P>Je¿eli chcesz co¶ jeszcze zmieniæ masz \$a na edycjê.";
-
-$string['postincontext'] = "Zobacz ten post w kontek¶cie";
-
-$string['postmailinfo'] = "To jest kopia wiadomo¶ci wys³anej przez serwis  \$a. Aby dodaæ odpowied¼ poprzez stronê WWW kliknij poni¿szy link:";
-
-$string['postrating1'] = "Demonstruje g³ównie poznawanie odrêbne";
-
-$string['postrating2'] = "Demonstruje w równym stopniu poznawanie odrêbne i powi±zane";
-
-$string['postrating3'] = "Demonstruje g³ównie poznawanie powi±zane";
-
-$string['posts'] = "Posty";
-
-$string['postupdated'] = "Twój post zosta³ zaktualizowany";
-
-$string['processingpost'] = "Post \$a jest w trakcie przetwarzania";
-
-$string['rate'] = "Oceñ";
-
-$string['ratingeveryone'] = " Ka¿dy mo¿e oceniæ posty";
-
-$string['ratingno'] = " Brak ocen";
-
-$string['ratingonlyteachers'] = " Tylko \$a mo¿e oceniaæ posty";
-
-$string['ratings'] = "Oceny";
-
-$string['ratingssaved'] = "Oceny zosta³y zapisane";
-
-$string['rating'] = " Oceny";
-
-$string['ratingsuse'] = " Wykorzystanie ocen";
-
-$string['ratingtime'] = " Ogranicz wystawianie ocen do postów w nastêpuj±cym przedziale czasowym :";
-
-$string['readtherest'] = "Przeczytaj resztê tematu";
-
-$string['re'] = "Odp:";
-
-$string['replies'] = "Odpowiedzi";
-
-$string['repliesmany'] = "\$a odpowiedzi  (jak dot±d)";
-
-$string['repliesone'] = "\$a odpowied¼ (jak dot±d)";
-
-$string['reply'] = "Odpowiedz";
-
-$string['search'] = "Szukaj";
-
-$string['searcholderposts'] = "Przeszukaj dawniejsze posty...";
-
-$string['searchresults'] = "Szukaj w rezultatach";
-
-$string['searchforums'] = "Szukaj w forach";
-
-$string['sendinratings'] = "Wy¶lij moje ostatnie oceny";
-
-$string['showsubscribers'] = "Wy¶wietl u¿ytkowników zapisanych na forum";
-
-$string['singleforum'] = "Pojedyncza prosta dyskusja";
-
-$string['startedby'] = "Rozpoczêta przez";
-
-$string['subject'] = "Temat";
-
-$string['subscribe'] = "Zapisz siê na to forum";
-
-$string['subscribed'] = "Zapisany na forum";
-
-$string['subscribers'] = "Zapisani na forum";
-
-$string['subscribersto'] = "Zapisani na '\$a '";
-
-$string['subscribestart'] = "Przesy³aj mi kopie postów z tego forum poczt± elektroniczn±";
-
-$string['subscribestop'] = "Nie chcê otrzymywaæ kopii postów z tego forum";
-
-$string['subscription'] = "Zapisanie siê na forum";
-
-$string['subscriptions'] = "Zapisy na fora";
-
-$string['unsubscribe'] = "Wypisz siê z tego forum";
-
-$string['unsubscribed'] = "Wypisany z forum";
-
-$string['youratedthis'] = "Oceni³e¶(a¶) to";
-
-$string['yournewtopic'] = "Twoja nowa dyskusja";
-
-$string['yourreply'] = "Twoja odpowied¼";
-
-$string[''] = "";
+<?PHP // $Id$ 
+      // forum.php - created with Moodle 1.2 development (2004020300)
+
+
+$string['addanewdiscussion'] = 'Dodaj nowy temat dyskusji';
+$string['addanewtopic'] = ' Dodaj nowy temat';
+$string['allowchoice'] = 'Zezwól ka¿demu u¿ytkownikowi na wybór';
+$string['allowdiscussions'] = 'Czy $a mo¿e wysy³aæ wiadomo¶ci na to forum?';
+$string['allowratings'] = 'Czy posty mog± byæ oceniane?';
+$string['allowsdiscussions'] = 'W tym forum ka¿dy mo¿e utworzyæ tylko jeden temat dyskusji.';
+$string['anyfile'] = 'Jakikolwiek plik';
+$string['attachment'] = 'Za³±cznik';
+$string['bynameondate'] = ' $a->name  w dniu $a->date napisa³(a)';
+$string['configdisplaymode'] = ' Domy¶lny tryb wy¶wietlania dyskusji, je¶li nie wybrano innego.';
+$string['configlongpost'] = ' Ka¿dy post o d³ugo¶ci przekraczaj±cej t± liczbê (nie uwzglêdniaj±c kodu HTML) jest uwa¿any za d³ugi.';
+$string['configmanydiscussions'] = ' Maksymalna ilo¶æ dyskusji pokazywanych na jednej stronie forum.';
+$string['configmaxbytes'] = 'Domy¶lna wielko¶æ plików dla wszystkich za³±czników na tej stronie (chyba, ¿e przedmiot b±d¼ ustawienia strony nak³adaj± jeszcze inne ograniczenia)';
+$string['configshortpost'] = ' Ka¿dy post o d³ugo¶ci mniejszej od tej liczby (nie uwzglêdniaj±c kodu HTML) jest uwa¿any za krótki';
+$string['couldnotadd'] = 'Nie mo¿na dodaæ twojego postu z powodu nieznanego b³êdu';
+$string['couldnotdeleteratings'] = 'Niestety, nie mo¿na by³o  usun±æ tego postu, gdy¿ zosta³ on ju¿ oceniony przez innych';
+$string['couldnotdeletereplies'] = 'Niestety, nie mo¿na by³o  usun±æ tego postu, gdy¿ inni u¿ytkownicy ju¿ na niego odpowiedzieli.';
+$string['couldnotupdate'] = 'Nie mo¿na zaktualizowaæ twojego postu z powodu nieznanego b³êdu';
+$string['delete'] = 'Usuñ';
+$string['deleteddiscussion'] = 'Usuniêto temat dyskusji';
+$string['deletedpost'] = 'Post zosta³ usuniêty';
+$string['deletesure'] = 'Czy masz pewno¶æ, ¿e chcesz usun±æ te post?';
+$string['discussion'] = 'Dyskusja';
+$string['discussionmoved'] = 'Dyskusja ta zosta³a przeniesiona do \'$a \'.';
+$string['discussions'] = 'Dyskusje';
+$string['discussionsstartedby'] = 'Dyskusje rozpoczête przez $a';
+$string['discussionsstartedbyrecent'] = ' Dyskusje rozpoczête ostatnio przez $a';
+$string['discussthistopic'] = 'Podyskutuj na ten temat';
+$string['eachuserforum'] = 'Ka¿dy wysy³a jeden temat dyskusji';
+$string['edit'] = 'Edycja';
+$string['editing'] = 'Edycja';
+$string['emptymessage'] = 'Co¶ nie tak z twoim postem. Byæ mo¿e by³  pusty lub za³±cznik by³ zbyt du¿y. Twoje zmiany nie zosta³y zapisane';
+$string['everyonecanchoose'] = 'Ka¿dy mo¿e siê zapisaæ na forum';
+$string['everyoneissubscribed'] = 'Ka¿dy jest zapisany na to forum';
+$string['forcesubscribe'] = 'Ka¿dy jest automatycznie zapisywany na to forum';
+$string['forcesubscribeq'] = 'Wymusiæ u ka¿dego zapis na to forum?';
+$string['forum'] = 'Forum';
+$string['forumintro'] = 'Wstêp';
+$string['forumname'] = 'Nazwa Forum';
+$string['forums'] = 'Fora dyskusyjne';
+$string['forumtype'] = 'Rodzaj forum';
+$string['generalforum'] = 'Forum standardowe do u¿ytku ogólnego';
+$string['generalforums'] = 'Fora ogólne';
+$string['inforum'] = 'w $a';
+$string['intronews'] = 'Wiadomo¶ci i og³oszenia';
+$string['introsocial'] = 'Forum otwarte do dyskusji na dowolny temat';
+$string['introteacher'] = 'Forum wy³±cznie dla prowadz±cych';
+$string['lastpost'] = 'Ostatni post';
+$string['learningforums'] = 'Forum dydaktyczne';
+$string['maxattachmentsize'] = 'Maksymalna wielko¶æ za³±cznika';
+$string['maxtimehaspassed'] = 'Niestety, maksymalny czas dozwolony na edycjê tego postu ($a) min±³!';
+$string['message'] = 'Wiadomo¶æ';
+$string['modeflatnewestfirst'] = 'Wy¶wietl odpowiedzi p³asko, z najnowszymi na pocz±tku';
+$string['modeflatoldestfirst'] = 'Wy¶wietl odpowiedzi p³asko, z najdawniejszymi na pocz±tku';
+$string['modenested'] = 'Wy¶wietl odpowiedzi tematycznie';
+$string['modethreaded'] = 'Wy¶wietl odpowiedzi w±tkami';
+$string['modulename'] = 'Forum';
+$string['modulenameplural'] = 'Fora dyskusyjne';
+$string['more'] = 'Wiêcej';
+$string['movethisdiscussionto'] = 'Przenie¶ tê dyskusjê do ...';
+$string['namenews'] = 'Forum aktualno¶ci';
+$string['namesocial'] = 'Forum towarzyskie';
+$string['nameteacher'] = 'Forum nauczycielskie';
+$string['newforumposts'] = 'Nowe wiadomo¶ci na forum';
+$string['nodiscussions'] = 'Nie ma ¿adnych tematów na tym forum';
+$string['noguestpost'] = 'Niestety go¶cie nie mog± zabieraæ g³osu na tym forum';
+$string['nomorepostscontaining'] = ' Nie znaleziono wiêcej postów zawieraj±cych \'$a\'';
+$string['nonews'] = ' Nie umieszczono jeszcze ¿adnych nowo¶ci';
+$string['noposts'] = 'Brak wiadomo¶ci';
+$string['nopostscontaining'] = 'Nie znaleziono wiadomo¶ci zawieraj±cych \'$a \'';
+$string['nosubscribers'] = 'Nikt jeszcze nie zapisa³ siê na to forum';
+$string['nownotsubscribed'] = '$a ->name NIE bêdzie otrzymywaæ kopii \'$a->forum\' poczt± elektroniczn±.';
+$string['nowsubscribed'] = '$a->name bêdzie otrzymywaæ kopie \'$a->forum\' poczt± elektroniczn±.';
+$string['numposts'] = '$a wiadomo¶ci';
+$string['olderdiscussions'] = 'Starsze dyskusje';
+$string['openmode0'] = '¯adnych dyskusji, ¿adnych odpowiedzi';
+$string['openmode1'] = '¯adnych dyskusji, ale odpowiedzi s± dozwolone';
+$string['openmode2'] = 'Dyskusje i odpowiedzi s± dozwolone';
+$string['parent'] = 'Przejd¼ do wiadomo¶ci wy¿ej (&#8222;parent&#8221;)';
+$string['parentofthispost'] = 'Wiadomo¶æ nadrzêdna';
+$string['postadded'] = 'Twój post zosta³ dodany. <P>Je¿eli chcesz co¶ jeszcze zmieniæ masz $a na edycjê.';
+$string['postincontext'] = 'Zobacz ten post w kontek¶cie';
+$string['postmailinfo'] = 'To jest kopia wiadomo¶ci wys³anej przez serwis  $a. Aby dodaæ odpowied¼ poprzez stronê WWW kliknij poni¿szy link:';
+$string['postrating1'] = 'Demonstruje g³ównie poznawanie odrêbne';
+$string['postrating2'] = 'Demonstruje w równym stopniu poznawanie odrêbne i powi±zane';
+$string['postrating3'] = 'Demonstruje g³ównie poznawanie powi±zane';
+$string['posts'] = 'Posty';
+$string['postupdated'] = 'Twój post zosta³ zaktualizowany';
+$string['processingpost'] = 'Post $a jest w trakcie przetwarzania';
+$string['rate'] = 'Oceñ';
+$string['rating'] = ' Oceny';
+$string['ratingeveryone'] = ' Ka¿dy mo¿e oceniæ posty';
+$string['ratingno'] = ' Brak ocen';
+$string['ratingonlyteachers'] = ' Tylko $a mo¿e oceniaæ posty';
+$string['ratingpublic'] = '$a mo¿e zobaczyæ oceny wszystkich';
+$string['ratingpublicnot'] = '$a mo¿e zobaczyæ tylko swoje oceny';
+$string['ratings'] = 'Oceny';
+$string['ratingssaved'] = 'Oceny zosta³y zapisane';
+$string['ratingsuse'] = ' Wykorzystanie ocen';
+$string['ratingtime'] = ' Ogranicz wystawianie ocen do postów w nastêpuj±cym przedziale czasowym :';
+$string['re'] = 'Odp:';
+$string['readtherest'] = 'Przeczytaj resztê tematu';
+$string['replies'] = 'Odpowiedzi';
+$string['repliesmany'] = '$a odpowiedzi  (jak dot±d)';
+$string['repliesone'] = '$a odpowied¼ (jak dot±d)';
+$string['reply'] = 'Odpowiedz';
+$string['replyforum'] = 'Odpwiedz forum';
+$string['search'] = 'Szukaj';
+$string['searchforums'] = 'Szukaj w forach';
+$string['searcholderposts'] = 'Przeszukaj dawniejsze posty...';
+$string['searchresults'] = 'Szukaj w rezultatach';
+$string['sendinratings'] = 'Wy¶lij moje ostatnie oceny';
+$string['showsubscribers'] = 'Wy¶wietl u¿ytkowników zapisanych na forum';
+$string['singleforum'] = 'Pojedyncza prosta dyskusja';
+$string['startedby'] = 'Rozpoczêta przez';
+$string['subject'] = 'Temat';
+$string['subscribe'] = 'Zapisz siê na to forum';
+$string['subscribed'] = 'Zapisany na forum';
+$string['subscribers'] = 'Zapisani na forum';
+$string['subscribersto'] = 'Zapisani na \'$a \'';
+$string['subscribestart'] = 'Przesy³aj mi kopie postów z tego forum poczt± elektroniczn±';
+$string['subscribestop'] = 'Nie chcê otrzymywaæ kopii postów z tego forum';
+$string['subscription'] = 'Zapisanie siê na forum';
+$string['subscriptions'] = 'Zapisy na fora';
+$string['unsubscribe'] = 'Wypisz siê z tego forum';
+$string['unsubscribed'] = 'Wypisany z forum';
+$string['youratedthis'] = 'Oceni³e¶(a¶) to';
+$string['yournewtopic'] = 'Twoja nowa dyskusja';
+$string['yourreply'] = 'Twoja odpowied¼';
 
 ?>

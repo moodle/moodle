@@ -284,7 +284,7 @@ $string['guestsnotallowed'] = "Go¶cie nie mog± braæ udzia³u w ankietach";
 
 $string['helpsurveys'] = "Pomoc na temat ró¿nych rodzajów ankiet";
 
-$string['howlong'] = "Jak d³ugo zajê³o Ci wype³nienie tej ankiety>";
+$string['howlong'] = "Ile czasu zajê³o Ci wype³nienie tej ankiety>";
 
 $string['howlongoptions'] = "mniej ni¿ 1 min, 1-2 min, 2-3 min,3-4 min,4-5-min,5-10 min, wiêcej ni¿ 10 min";
 
