@@ -18,6 +18,7 @@ $string['configpopuptoolbar'] = 'La barre des outils est affichée par défaut dan
 $string['configpopupwidth'] = 'Largeur par défaut des fenêtres pop-up';
 $string['configwebsearch'] = 'URL affichée lors de l\'ajout d\'une page web ou d\'un lien, pour permettre à l\'utilisateur de rechercher l\'URL désirée.';
 $string['directlink'] = 'Lien direct vers ce fichier';
+$string['directoryinfo'] = 'Tous les fichiers du dossier choisi seront affichés.';
 $string['editingaresource'] = 'Modifier une ressource';
 $string['example'] = 'Exemple';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -28,6 +29,7 @@ $string['fetchservererror'] = 'Une erreur est survenue lors du chargement de la 
 $string['filename'] = 'Nom du fichier';
 $string['fulltext'] = 'Texte en format Moodle';
 $string['htmlfragment'] = 'Fragment de code HTML';
+$string['maindirectory'] = 'Dossier principal';
 $string['modulename'] = 'Ressource';
 $string['modulenameplural'] = 'Ressources';
 $string['neverseen'] = 'Jamais consulté';
@@ -57,5 +59,6 @@ $string['resourcetype5'] = 'Page web (externe)';
 $string['resourcetype6'] = 'Texte HTML';
 $string['resourcetype7'] = 'Programme';
 $string['resourcetype8'] = 'Texte Wiki';
+$string['resourcetype9'] = 'Dossier';
 
 ?>
