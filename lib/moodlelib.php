@@ -1142,7 +1142,7 @@ function get_current_group($courseid, $full=false) {
 *
 * @param	type description
 */
-function get_and_set_current_group($course, $groupmode, $groupid=0) {
+function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
     if (!$groupmode) {   // Groups don't even apply
         return false;  
@@ -1150,7 +1150,11 @@ function get_and_set_current_group($course, $groupmode, $groupid=0) {
 
     $currentgroupid = get_current_group($course->id);
 
-    if ($groupid) {     // Try to change the current group
+    if ($groupid < 0) {  // No change was specified
+        return $currentgroupid;
+    }
+
+    if ($groupid) {      // Try to change the current group to this groupid
         if ($group = get_record('groups', 'id', $groupid, 'courseid', $course->id)) { // Exists
             if (isteacheredit($course->id)) {          // Sets current default group
                 $currentgroupid = set_current_group($course->id, $group->id);
@@ -1158,6 +1162,13 @@ function get_and_set_current_group($course, $groupmode, $groupid=0) {
             } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
                 $currentgroupid = $group->id;
             }
+        }
+    } else {             // When groupid = 0 it means show ALL groups
+        if (isteacheredit($course->id)) {          // Sets current default group
+            $currentgroupid = set_current_group($course->id, 0);
+
+        } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
+            $currentgroupid = 0;
         }
     }
 
@@ -1177,9 +1188,15 @@ function get_and_set_current_group($course, $groupmode, $groupid=0) {
 */
 function setup_and_print_groups($course, $groupmode, $urlroot) {
 
-    $currentgroup = get_and_set_current_group($course, $groupmode, $_GET['group']);
+    if (isset($_GET['group'])) {
+        $changegroup = $_GET['group'];  /// 0 or higher
+    } else {
+        $changegroup = -1;              /// This means no group change was specified
+    }
 
-    if ($currentgroup == false) {
+    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+
+    if ($currentgroup === false) {
         return false;
     }
 
@@ -1191,7 +1208,9 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            echo '<div align="center">';
             print_group_menu($groups, $groupmode, $currentgroup, $urlroot);
+            echo '</div>';
         }
     }
 
