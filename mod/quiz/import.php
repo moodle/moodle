@@ -34,9 +34,9 @@
             $newfile = $_FILES['newfile'];
         }
         if (empty($newfile)) {
-            notify(get_string("uploadnofilefound") );
-        } else if (!is_uploaded_file($newfile['tmp_name']) or $newfile['size'] == 0) {
             notify(get_string("uploadproblem") );
+        } else if (!is_uploaded_file($newfile['tmp_name']) or $newfile['size'] == 0) {
+            notify(get_string("uploadnofilefound") );
         } else {
 
             if (! is_readable("format/$form->format".".php")) {
@@ -90,16 +90,37 @@
 
     /// Print upload form
 
-    echo "<DIV ALIGN=CENTER>";
+    if (!$categories = quiz_get_category_menu($course->id, true)) {
+        error("No categories!");
+    }
+
+
+    print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=import.php>";
+    echo "<TABLE cellpadding=5>";
+    echo "<TR><TD align=right>";
+    print_string("category", "quiz");
+    echo ":</TD><TD>";
+    choose_from_menu($categories, "category", "$category->id", "");
+    helpbutton("import", $strimportquestions, "quiz");
+    echo "</TR>";
+
+    echo "<TR><TD align=right>";
+    print_string("fileformat", "quiz");
+    echo ":</TD><TD>";
     choose_from_menu($QUIZ_FILE_FORMAT, "format", "missingword", "");
     helpbutton("import", $strimportquestions, "quiz");
-    echo "<BR>";
-    echo " <INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
+    echo "</TR><TR><TD align=right>";
+    print_string("upload");
+    echo ":</TD><TD>";
     echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\">";
+    echo "</TR><TR><TD>&nbsp;</TD><TD>";
+    echo " <INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
     echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\">";
+    echo "</TD></TR>";
+    echo "</TABLE>";
     echo "</FORM>";
-    echo "</DIV>";
+    print_simple_box_end();
 
     print_footer($course);
 

@@ -51,6 +51,7 @@ $string['false'] = "False";
 $string['feedback'] = "Feedback";
 $string['filloutoneanswer'] = "You must fill out at least one possible answer.  Answers left blank will not be used.";
 $string['fillouttwochoices'] = "You must fill out at least two choices.  Choices left blank will not be used.";
+$string['fileformat'] = "File format";
 $string['fractionsaddwrong'] = "The positive grades you have chosen do not add up to 100%%
 <BR>Instead, they add up to \$a%%
 <BR>Do you want to go back and fix this question?";
