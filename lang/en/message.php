@@ -13,6 +13,7 @@ $string['discussion'] = 'Discussion';
 $string['emailmessages'] = 'Email messages when I am offline';
 $string['emailtagline'] = 'This email is a copy of a message sent to you at \"$a\"';
 $string['emptysearchstring'] = 'You must search for something';
+$string['formorethan'] = 'For more than';
 $string['includeblockedusers'] = 'Include blocked users';
 $string['incomingcontacts'] = 'Incoming Contacts ($a)';
 $string['keywords'] = 'Keywords';
