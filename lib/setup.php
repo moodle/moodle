@@ -16,6 +16,10 @@
 
     error_reporting(7);   // use 0=none 7=normal 15=all 
 
+// Moodle overall version
+
+    $CFG->moodleversion = "1.0";
+
 // Default editing time for discussions and the like (in seconds)
 
     $CFG->maxeditingtime = 1800;
