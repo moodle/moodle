@@ -45,6 +45,14 @@
        if ($timenow - $course->startdate > $maxseconds) {
            $course->startdate = $timenow - $maxseconds;
        }
+
+       if (!empty($CFG->loglifetime)) {
+           $maxseconds = $CFG->loglifetime * 3600 * 24;  // seconds
+           if ($timenow - $course->startdate > $maxseconds) {
+               $course->startdate = $timenow - $maxseconds;
+           }
+       }
+
        $timestart = $coursestart = usergetmidnight($course->startdate);
 
        if ((($timenow - $timestart)/86400.0) > 40) {
