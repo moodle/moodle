@@ -20,7 +20,6 @@
     optional_variable($rssid, 'none');
     optional_variable($courseid, 'none');
     optional_variable($url);
-    optional_variable($rsstype);
     optional_variable($item);
     
     $straddedit = get_string('block_rss_feeds_add_edit', 'block_rss_client');
@@ -54,7 +53,7 @@
 
     if ($act == 'none') {
         rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $rsstype);
+        rss_get_form($act, $url, $rssid);
 
     } else if ($act == 'updfeed') {
         require_variable($url);
@@ -68,7 +67,6 @@
         ob_end_clean();
         
         $dataobject->id = $rssid;
-        $dataobject->type = $rsstype;
         if ($rss === false) {
             $dataobject->description = addslashes($rss->channel['description']);
             $dataobject->title = addslashes($rss->channel['title']);
@@ -84,15 +82,12 @@
                     
         rss_display_feeds($rssid);
         print '<strong>'. get_string('block_rss_feed_updated', 'block_rss_client') .'</strong>';                
-        rss_get_form($act, $url, $rssid, $rsstype);
+        rss_get_form($act, $url, $rssid);
             
     } else if ($act == 'addfeed' ) {
     
-        require_variable($url);
-        require_variable($rsstype);
-            
+        require_variable($url);            
         $dataobject->userid = $USER->id;
-        $dataobject->type = $rsstype;
         $dataobject->description = '';
         $dataobject->title = '';
         $dataobject->url = addslashes($url);
@@ -127,15 +122,14 @@
             print '<strong>'. get_string('block_rss_feed_added', 'block_rss_client') .'</strong>';
         }
         rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $rsstype);
+        rss_get_form($act, $url, $rssid);
             
     } else if ( $act == 'rss_edit') {
         
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         $fname = stripslashes_safe($rss_record->title);
         $url = stripslashes_safe($rss_record->url);
-        $rsstype = $rss_record->type;
-        rss_get_form($act, $url, $rssid, $rsstype);
+        rss_get_form($act, $url, $rssid);
         
     } else if ($act == 'delfeed') {
         
@@ -151,7 +145,7 @@
 
         rss_display_feeds();
         print '<strong>'. get_string('block_rss_feed_deleted', 'block_rss_client') .'</strong>';
-        rss_get_form($act, $url, $rssid, $rsstype);
+        rss_get_form($act, $url, $rssid);
 
     } else if ($act == 'view') {
         //              echo $sql; //debug
@@ -200,7 +194,7 @@
         }
     } else {
         rss_display_feeds();
-        rss_get_form($act, $url, $rssid, $rsstype);
+        rss_get_form($act, $url, $rssid);
     }
 
     print_footer();
