@@ -204,9 +204,19 @@
     <?php  if (isset($err["students"])) formerr($err["students"]); ?>
     </td>
 </tr>
+<tr valign=top>
+    <td align="right"><P><?php  print_string("forcelanguage") ?>:</td>
+	<td>
+    <?php 
+        $languages[''] = get_string("forceno");
+        $languages += get_list_of_languages();
+        choose_from_menu ($languages, "lang", $form->lang, "", "", ""); 
+    ?>
+    </td>
+</tr>
 <tr>
     <td></td>
     <td><input type="submit" value="<?php  print_string("savechanges") ?>"></td>
-</TABLE>
-<INPUT type="hidden" name="id" value="<?php echo $form->id ?>">
-</FORM>
+</table>
+<input type="hidden" name="id" value="<?php echo $form->id ?>">
+</form>
