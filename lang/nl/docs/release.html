@@ -1,0 +1,218 @@
+<head>
+    
+<title>Moodle Docs: Huidige release nota</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    
+<style type="text/css">
+<!--       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;} 
+.style1 {font-weight: bold}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Laatste release notes</h1>
+
+<h3> Moodle 1.4   (31 Augustus 2004)</h3>
+
+<ul><dl>
+    <dt>Hoofdpunten</dt>
+    <dd> 
+      <ul>
+        <li>Compatibiliteit met PHP 5</li>
+        <li>Nieuwe eenvoudige installatiewizard om het configuratiebestand aan te maken</li>
+        <li>Installatieproces kan gebeuren in een taal naar keuze</li>
+        <li>Compleet herwerkte bronmodule maakt het mogelijk om bronnen toe te voegen en er data naar te sturen.</li>
+        <li>Nieuwe aanmeldingsprocedure voor vakken met modules, zoals volledig geautomatiseerde Paypal betalingen, scannen van tekstbestand of controle via een externe databank.</li>
+        <li>Blokken werken nu ook op de startpagina, bovendien kun je nu ook een onderwerpsectie boven het middendeel plaatsen.</li>
+        <li>Bij de Chat zit nu een server-side daemon (in PHP) voor een schaalbare, instant chat</li>
+        <li>Nieuwe Wiki module!</li>
+        <li>Nieuwe ondersteuning voor het bewerken van tekst door gebruik te maken van het Markdown formaat</li>
+        <li>Herstelling van heel wat kleine fouten</li>
+      </ul>
+    </dd>
+
+    <dt>Onder de hoed</dt>
+    <dd> 
+      <ul>
+        <li>De bronmodule heeft nu zijn eigen menu om nieuwe bronnen toe te voegen en gebruikt class-gebaseerde submodules, waardoor het veel gemakkelijker zal zijn om nieuwe brontypes aan dit menu toe te voegen.</li>
+        <li>De testmodule is herbouwd tot class-gebaseerde plugins voor de verschillende vraagtypes.</li>
+        <li>Aanmeldingsproces is herbouwd tot class-gebaseerde aanmeldingsplugins.</li>
+        <li>De woordenlijst opmaakformaten zijn nu naamgebaseerd, zodat het eenvoudiger is om er nieuwe als plugin toe te voegen.</li>
+        <li>Een verbeterd gedrag voor veel modules wanneer die op de startpagina gebruikt worden.</li>
+        <li>Een verbeterde filterstructuur is sneller en nu compatibel met Turck MMcache.</li>
+        <li>Bij het toevoegen van activiteiten is het nu minder noodzakelijk om alle velden in te vullen.</li>
+        <li>We kunnen nu PostgreSQL kolommen wijzigen naar wens met table_column()</li>
+        <li>RSS genereren is veel sneller geworden met veel minder belastin op het cron proces</li>
+        <li>Sommige grote modules hebben lib.php opgesplitst naar locallib.php voor minder geheugengebruik.</li>
+      </ul>
+    </dd>
+
+    <dt>Talen en localisaties</dt>
+    <dd> 
+      <ul>
+        <li>Updates aan nagenoeg elk taalpakket</li>
+        <li>Moodle kan de standaard karakterset van Apache omzeilen, zodat de talen betrouwbaarder worden.</li>
+        <li>Multibyte talen worden nu beter verpakt</li>
+        <li>Beter afhandelen van localisaties en encodering op multitalensites (zoals moodle.org)</li>
+        <li>Nieuwe talen: Sloveens en Hebrews! </li>
+      </ul>
+    </dd>
+
+    <dt>Beveiligingsproblemen opgelost</dt>
+    <dd> 
+      <ul>
+        <li>Enkele mogelijke XSS ingangen en open paden hersteld</li>
+        <li>Attributen van HTML-tags worden nu nog betere doorlopen om schadelijke scripts uit te schakelen</li>
+        <li>Gebruikersprofielen zijn standaard niet meer toegankelijk voor gasten</li>
+        <li>Alle tekst wordt nu opgeschoond bij output (en niet alleen bij input)</li>
+        <li>E-mail addressen worden niet meer gebruikt voor vertrekkende mail als de gebruiker dat niet wil.</li>
+        <li>Nieuwe instelling <strong>loginhttps</strong> zal veilige https gebruiken voor de aanmelding en dan terug naar http omschakelen.</li>
+      </ul>
+    </dd>
+
+    <dt>Beheer</dt>
+    <dd> 
+      <ul>
+        <li>Verbeterde interfaces voor toevoegen/verwijderen van leerlingen, vakaanmakers en beheerders</li>
+        <li>Mislukte logins worden nu gelogd en kunnen aan gebruikers getoond worden bij aanmelden met succes</li>
+        <li>Logs ondersteunen nu tonen per groep en per fouten</li>
+        <li>Modules gedragen zich beter op de startpagina van de site.</li>
+        <li>Voorpagina&quot;leerlingen&quot; kunnen alle gebruikers van de site of alle gebruikers in minstens één vak op de site</li>
+        <li>E-mail sturen kan nu ingeschakeld/uitgeschakeld worden in het profiel van elke gebruiker</li>
+        <li>Bezoekers kunnen automatisch als gast aangemeld worden.</li>
+        <li>Ga naar menu toont nu altijd "Ga naar" om aan te geven waarvoor het dient.</li>
+        <li>Ga naar menu heeft nu een duidelijke manier om activiteiten in secties op te splitsen.</li>
+      </ul>
+    </dd>
+
+    <dt>Authenticatie</dt>
+    <dd> 
+      <ul>
+        <li>Alle authenticatiemethodes kunnen nu samenwerken met intern gecreeerde accounts</li>
+        <li>Nieuwe ondersteuning voor authenticatie tegen First Class servers</li>
+        <li>Herstelde fouten voor POP3 authenticatie</li>
+      </ul>
+    </dd>
+
+    <dt>Blokken</dt>
+    <dd> 
+      <ul>
+        <li>Bloksysteem kan nu omgaan met aangepaste vakindeling en wijzigingen in de opmaak.</li>
+        <li>Nieuw loginblok maakt login mogelijk van de voorpagina van de site.</li>
+        <li>Gebruikers online blok op de voorpagina toont alle gebruikers van de hele site</li>
+      </ul>
+    </dd>
+
+    <dt>Editor</dt>
+    <dd> 
+      <ul>
+        <li>Nieuw editorconfiguratiescherm voor de beheerder</li>
+        <li>Nieuwe ondersteuning voor ankers binnen de paginas.</li>
+        <li>Spell-checking is nu mogelijk in de editor, het gebruikt aspel op het server besturingssysteem</li>
+      </ul>
+    </dd>
+
+    <dt>Chat</dt>
+    <dd> 
+      <ul>
+        <li>Chat komt nu met een server-side daemon (in PHP) voor schaalbare instante chat</li>
+      </ul>
+    </dd>
+
+    <dt>Keuze</dt>
+    <dd> 
+      <ul>
+        <li>Nieuwe stijl, meer nut en met meer opties</li>
+      </ul>
+    </dd>
+
+    <dt>Forum</dt>
+    <dd> 
+      <ul>
+        <li>Verschillende herstelde fouten in groepen</li>
+        <li>Gebruikeres kunnen kiezen of ze forums dagelijks als digest krijgen van onderwerplijnen of hele berichten.</li>
+        <li>Discussielijsten zijn nu per pagina.</li>
+        <li>Leraars hebben nu volledige controle over forum inschrijvingen en kunnen iedereen naar believen inschrijven.</li>
+        <li>"Laatste bericht" -datum is ingekort en gelinkt naar het laatste bericht.</li>
+        <li>Forums tonen nu RSS-feeds op de indexpagina</li>
+        <li>Betere look van HTML-mail door het volledige stylesheet te gebruiken</li>
+        <li>Forum mail ouder dan twee dagen wordt niet gemaild (om een ongewenste e-mailstroom te voorkomen)</li>
+        <li>Geblokkeerde mail wordt gelogd, zodat leraars dat kunnen zien</li>
+        <li>Discussietakken kunnen afgesplitst worden van de hoofddiscussies en in een nieuwe discussie gezet worden</li>
+      </ul>
+    </dd>
+
+    <dt>Woordenlijst</dt>
+    <dd> 
+      <ul>
+        <li>Woordenlijstingangen kunnen "altijd bewerkbaar" gezet worden</li>
+        <li>Woordenlijsten tonen nu RSS-feeds op de indexpagina.</li>
+        <li>Veel herstelde fouten.</li>
+      </ul>
+    </dd>
+
+    <dt>Test</dt>
+    <dd> 
+      <ul>
+        <li>Nieuwe timer voor getimede testen</li>
+        <li>Pogingen van testen kunnen nu beperkt worden tot bepaalde computers.</li>
+        <li>Testen kunnen nu van een wachtwoord voorzien worden.</li>
+        <li>Nieuw vraagtype voor berekende vragen.</li>
+        <li>Numerieke vragen ondersteunen nu eenheden</li>
+        <li>Vragen kunnen nu getest worden vanuit de bewerkingspagina's.</li>
+        <li>Vragen kunnen nu in verschillende formaten geëxporteerd worden.</li>
+        <li>Meer inteligentie bij het behandelen van categorielijsten tijdens het bewerken van vragen.</li>
+        <li>Nieuw (en nog onvolledig) XML exportformaat, zal ooit alle testmogelijkheden bevatten</li>
+        <li>Korte antwoorden kunnen nu alle soorten vreemde karakters bevatten.</li>
+      </ul>
+    </dd>
+
+    <dt>Bron</dt>
+    <dd> 
+      <ul>
+        <li>Toevoegen van bronnen is nu een ééntrapsproces met meer controle.</li>
+        <li>Webpagina, weblink geüploaded bestand en programmabron zijn in één type gecombineerd!</li>
+        <li>Programmabronnen zijn vervangen door parameters die het mogelijk maken om interessante interactie met externe bronnen te doen, zowel buiten als binnen Moodle. </li>
+        <li>Inklapbare formulieren met geheugen om formulieren minder groot voor beginnens te maken zonder de ervaren gebruikers te vertragen.</li>
+      </ul>
+    </dd>
+
+    <dt>SCORM</dt>
+    <dd> 
+      <ul>
+        <li>Veel herstelde fouten en verbeteringen - werkt nu met een nog bredere waaier van paketten.</li>
+        <li>Optioneel extra verificatie van het manifestbestand</li>
+      </ul>
+    </dd>
+    </dl>
+  <p>&nbsp;</p>
+  <dl>
+    <dt>
+      <div align="center" class="style1"></div>
+    </dt>
+    <dd>&nbsp;</dd>
+    <dt>&nbsp; </dt>
+    <dd>
+      <div align="center" class="style1"><font size="+1">Vergeet tenslotte niet te kijken naar enkele van de <a href="http://moodle.org/download/modules/" target="_blank">vele optionele en vernieuwende modules onder ontwikkeling</a>.</font></div>
+    </dd>
+  </dl>
+  <p align="center"><strong><font size="+1">Als je fouten vindt in deze release, rapporteer ze dan aub in <a href="http://moodle.org/bugs" target="_blank">moodle.org/bugs</a> zoda we ze in de volgende versie kunnen herstellen.</font></strong></p>
+  <p>&nbsp;</p>
+</ul>
+
+<p>&nbsp;</p>
+<p><br />
+</p>
+<center>
+  <p>
+<a href="./?file=releaseold.html">Oude releaseinformatie</a>
+</p>
+</center>
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="../doc/" target="_top">Moodle Documentatie</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
