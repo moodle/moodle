@@ -118,7 +118,7 @@
                 foreach ($choice->option as $optionid => $text) {
                     if ($text) {                                                 
                         echo "<td align=\"center\">";
-                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"$text\" />";                
+                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\" />";                
                         echo format_text($text);
                         echo "</td>";
                     }
@@ -132,8 +132,8 @@
                 foreach ($choice->option as $optionid => $text) {
                     if ($text) {                                                                 
                         echo "<tr><td align=\"left\">";              
-                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"$text\" />".
-                              format_text($text, FORMAT_PLAIN);                            
+                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\" />".
+                              format_text($text);                            
                         echo "</td>";
                         echo "</tr>";
                     }

@@ -193,7 +193,7 @@ function choice_get_choice($choiceid) {
     if ($choice = get_record("choice", "id", $choiceid)) {
         if ($options = get_records("choice_options", "choiceid", $choiceid, "id")) {
             foreach ($options as $option) {                         
-                $choice->option[$option->id] = $option->text;     
+                $choice->option[$option->id] = $option->text; 
             }        
             return $choice;
         }
