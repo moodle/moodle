@@ -1144,14 +1144,15 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
         } else {
             $pngsrc = "$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.png";
         }
+        $title = s($group->description);
         if ($recentIE) {  // work around the HORRIBLE bug IE has with alpha transparencies
             $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/spacer.gif\" width=\"$size\" height=\"$size\"".
                        " border=\"0\" style=\"width: {$size}px; height: {$size}px; ".
                        " filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$pngsrc', sizingMethod='scale') ".
-                       " alt=\"\" title=\"$group->name\" />";
+                       " alt=\"\" title=\"$title\" />";
         } else {
             $output .= "<img align=\"absmiddle\" src=\"$pngsrc\" border=\"0\" width=\"$size\" height=\"$size\" ".
-                       " alt=\"\" title=\"$group->name\" />";
+                       " alt=\"\" title=\"$title\" />";
         }
     } else {                // Print nothing
         $output .= "";
