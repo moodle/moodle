@@ -1969,6 +1969,9 @@ function check_browser_version($brand="MSIE", $version=5.5) {
 
       case "MSIE":   /// Internet Explorer
 
+          if (strpos($agent, 'Opera')) {     // Reject Opera
+              return false;
+          }
           $string = explode(";", $agent);
           if (!isset($string[1])) {
               return false;
