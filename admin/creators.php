@@ -59,42 +59,24 @@
                  "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> ->
                   $strassigncreators", "");
 
+/// Add a creator if one is specified
+
+    if (!empty($_GET['add'])) {
+        if (! add_creator($add)) {
+            error("Could not add that creator!");
+        }
+    }
+
+/// Remove a creator if one is specified.
+
+    if (!empty($_GET['remove'])) {
+        if (! remove_creator($remove)) {
+            error("Could not remove that creator!");
+        }
+    }
+
 /// Get all existing creators
     $creators = get_creators();
-
-/// Add an creator if one is specified
-    if ($add) {
-        $user = @get_record("user", "id", $add) or
-            error("That account (id = $add) doesn't exist");
-
-        if ($creators) {
-            foreach ($creators as $aa) {
-                if ($aa->id == $user->id) {
-                    error("That user is already a creator .");
-                }            
-            }
-        }
-
-        $creator->userid = $user->id;
-        $creator->id = insert_record("user_coursecreators", $creator);
-        $creators[] = $user;
-    }
-
-/// Remove an creator if one is specified.
-    if ($remove) {
-        $user = @get_record("user", "id", $remove) or 
-            error("That account (id = $remove) doesn't exist");
-
-        if ($creators) {
-            foreach ($creators as $key => $aa) {
-                if ($aa->id == $user->id) {
-                        delete_records("user_coursecreators","userid",$user->id);
-                        unset($creators[$key]);
-                } 
-            }
-        }
-    }
-
 
 /// Print the lists of existing and potential creators
     echo "<table cellpadding=2 cellspacing=10 align=center>";
