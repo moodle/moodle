@@ -20,8 +20,8 @@
     $fullsearch = optional_param('fullsearch',0);// full search (concept and definition) when searching?
     $sortkey    = optional_param('sortkey');     // Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
     $sortorder  = optional_param('sortorder');   // it defines the order of the sorting (ASC or DESC)
-    $offset     = optional_param('offset',0);    // entries to bypass (for paging purpouses)
-    $page       = optional_param('page',0);      // Page to show (for paging purpouses)
+    $offset     = optional_param('offset',0,PARAM_INT);    // entries to bypass (for paging purpouses)
+    $page       = optional_param('page',0,PARAM_INT);      // Page to show (for paging purpouses)
     $show       = optional_param('show');        // [ concept | alias ] => mode=term hook=$show
 
     if (!empty($id)) {

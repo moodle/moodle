@@ -7,7 +7,7 @@
     
     require_variable($id);                         // Course Module ID
     optional_variable($sortorder,"asc");           // Sorting order 
-    optional_variable($offset);                    // number of entries to bypass
+    optional_variable($offset,0,PARAM_INT);        // number of entries to bypass
     optional_variable($displayformat,-1); 
 
     $mode    = required_param('mode');             // mode to show the entries
