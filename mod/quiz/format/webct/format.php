@@ -58,9 +58,194 @@ function unhtmlentities($string){
     return preg_replace ($search, $replace, $string);
 }
 
+class quiz_format_webct_modified_calculated_qtype extends quiz_calculated_qtype {
+// We need to make a modification of this qtype so that
+// it will be able to save webct style calculated questions
+// The difference between webct and Moodle is that webct
+// pass the individual data items as part of the question
+// while Moodle core treat them separately
+
+    function save_question_options($question, $options = false) {
+
+        if (false !== $options) {
+            // function is called from save_question...
+            return parent::save_question_options($question, $options);
+        }
+        
+        // function is called from format.php...
+        
+        $datasetdatas = $question->datasets;
+        
+        // Set dataset
+        $form->dataset = array();
+        foreach ($datasetdatas as $datasetname => $notimportant) {
+            // Literal  - question local - name
+            $form->dataset[] = "1-0-$datasetname";
+        }
+
+        $subtypeoptions->answers = $question->answers;
+        $subtypeoptions->units = $question->units;
+
+        unset($question->datasets);
+        unset($question->answers);
+        unset($question->units);
+
+        $this->save_question($question, $form, 'not used', $subtypeoptions);
+
+        // Save dataset options and items...
+        
+        // Get datasetdefinitions
+        global $CFG;
+        $datasetdefs = get_records_sql(
+                "SELECT a.*
+                   FROM {$CFG->prefix}quiz_dataset_definitions a,
+                        {$CFG->prefix}quiz_question_datasets b
+                  WHERE a.id = b.datasetdefinition
+                    AND b.question = '$question->id' ");
+        
+        foreach ($datasetdefs as $datasetdef) {
+            $datasetdata = $datasetdatas[$datasetdef->name];
+
+            // Set items and retrieve ->itemcout
+            $item->definition = $datasetdef->id;
+            for ($item->number=1 ; isset($datasetdata->items["$item->number"]) ; ++$item->number) {
+                $item->value = $datasetdata->items["$item->number"];
+                if (!insert_record('quiz_dataset_items', $item)) {
+                    error("Unable to insert dataset item $item->number with $item->value for $datasetdef->name");
+                }
+            }
+            $datasetdef->itemcount = $item->number - 1;
+            
+            // Retrieve ->options
+            if (is_numeric($datasetdata->min) && is_numeric($datasetdata->max)
+                    && $datasetdata->min <= $datasetdata->max) {
+                if (is_numeric($datasetdata->dec)) {
+                    $dec = max(0, ceil($datasetdata->dec));
+                } else {
+                    $dec = 1; // A try
+                }
+
+                $datasetdef->options = "uniform:$datasetdata->min:$datasetdata->max:$dec";
+            } else {
+                $datasetdef->options = '';
+            }
+
+            // Save definition
+            if ($datasetdef->itemcount || $datasetdef->options) {
+                if (!update_record('quiz_dataset_definitions', $datasetdef)) {
+                    error("Unable to update dataset definition $datasetdef->name on question $question->id");
+                }
+            }
+        }
+
+        // Done
+        return true;
+    }
+}
+$QUIZ_QTYPES[CALCULATED] = new quiz_format_webct_modified_calculated_qtype();
+
+function quiz_format_webct_convert_formula($formula) {
+
+    // Remove empty space, as it would cause problems otherwise:
+    $formula = str_replace(' ', '', $formula);
+    
+    // Remove paranthesis after e,E and *10**:
+    while (ereg('[0-9.](e|E|\\*10\\*\\*)\\([+-]?[0-9]+\\)', $formula, $regs)) {
+        $formula = str_replace(
+                $regs[0], ereg_replace('[)(]', '', $regs[0]), $formula);
+    }
+
+    // Replace *10** with e where possible
+    while (ereg(
+            '(^[+-]?|[^eE][+-]|[^0-9eE+-])[0-9.]+\\*10\\*\\*[+-]?[0-9]+([^0-9.eE]|$)',
+            $formula, $regs)) {
+        $formula = str_replace(
+                $regs[0], str_replace('*10**', 'e', $regs[0]), $formula);
+    }
+    
+    // Replace other 10** with 1e where possible
+    while (ereg('(^|[^0-9.eE])10\\*\\*[+-]?[0-9]+([^0-9.eE]|$)', $formula, $regs)) {
+        $formula = str_replace(
+                $regs[0], str_replace('10**', '1e', $regs[0]), $formula);
+    }
+
+    // Replace all other base**exp with the PHP equivalent function pow(base,exp)
+    // (Pretty tricky to exchange an operator with a function)
+    while (2 == count($splits = explode('**', $formula, 2))) {
+        
+        // Find $base
+        if (ereg('^(.*[^0-9.eE])?(([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?|\\{[^}]*\\})$',
+                $splits[0], $regs)) {
+            // The simple cases
+            $base = $regs[2];
+            $splits[0] = $regs[1];
+            
+        } else if (ereg('\\)$', $splits[0])) {
+            // Find the start of this parenthesis
+            $deep = 1;
+            for ($i = 1 ; $deep ; ++$i) {
+                if (!ereg('^(.*[^[:alnum:]_])?([[:alnum:]_]*([)(])([^)(]*[)(]){'.$i.'})$',
+                        $splits[0], $regs)) {
+                    error("Parenthesis before ** is not properly started in $splits[0]**");
+                }
+                if ('(' == $regs[3]) {
+                    --$deep;
+                } else if (')' == $regs[3]) {
+                    ++$deep;
+                } else {
+                    error("Impossible character $regs[3] detected as parenthesis character");
+                }
+            }
+            $base = $regs[2];
+            $splits[0] = $regs[1];
+            
+        } else {
+            error("Bad base before **: $splits[0]**");
+        }
+
+        // Find $exp (similar to above but a little easier)
+        if (ereg('^([+-]?(\\{[^}]\\}|([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?))(.*)',
+                $splits[1], $regs)) {
+            // The simple case
+            $exp = $regs[1];
+            $splits[1] = $regs[6];
+            
+        } else if (ereg('^[+-]?[[:alnum:]_]*\\(', $splits[1])) {
+            // Find the end of the parenthesis
+            $deep = 1;
+            for ($i = 1 ; $deep ; ++$i) {
+                if (!ereg('^([+-]?[[:alnum:]_]*([)(][^)(]*){'.$i.'}([)(]))(.*)',
+                        $splits[1], $regs)) {
+                    error("Parenthesis after ** is not properly closed in **$splits[1]");
+                }
+                if (')' == $regs[3]) {
+                    --$deep;
+                } else if ('(' == $regs[3]) {
+                    ++$deep;
+                } else {
+                    error("Impossible character $regs[3] detected as parenthesis character");
+                }
+            }
+            $exp = $regs[1];
+            $splits[1] = $regs[4];
+        }
+
+        // Replace it!
+        $formula = "$splits[0]pow($base,$exp)$splits[1]";
+    }
+
+    // Nothing more is known to need to be converted
+    
+    return $formula;
+}
+
 class quiz_file_format extends quiz_default_format {
 
     function readquestions ($lines) {
+
+        $qtypecalculated = new quiz_format_webct_modified_calculated_qtype();
+        $webctnumberregex =
+                '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
 
         $questions = array();
         $errors = array();
@@ -148,7 +333,7 @@ class quiz_file_format extends quiz_default_format {
                     // Perform sanity checks
                     $QuestionOK = TRUE;
                     if (strlen($question->questiontext) == 0) {
-                        $errors[] = get_string("missingquestion", "quiz", $nQuestionStartLine);
+                        $warnings[] = get_string("missingquestion", "quiz", $nQuestionStartLine);
                         $QuestionOK = FALSE;
                     }
                     if (sizeof($question->answer) < 1) {  // a question must have at least 1 answer
@@ -189,8 +374,7 @@ class quiz_file_format extends quiz_default_format {
                                         $errors[] = get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsnomax", "quiz", $maxfraction);
                                         $QuestionOK = FALSE;
                                     }
-                                }
-                                else {
+                                } else {
                                     $totalfraction = round($totalfraction,2);
                                     if ($totalfraction != 1) {
                                         $totalfraction = $totalfraction * 100;
@@ -198,14 +382,23 @@ class quiz_file_format extends quiz_default_format {
                                         $QuestionOK = FALSE;
                                     }
                                 }
+                                break;
+
+                            case CALCULATED:
+                                foreach ($question->answers as $answer) {
+                                    if ($formulaerror = quiz_qtype_calculated_find_formula_errors($answer->answer)) {
+                                        $warnings[] = $formulaerror;
+                                        $QuestionOK = FALSE;
+                                    }
+                                }
+                                break;
+
+                            default:
+                                // No problemo
                         }
                     }
-
+                    
                     if ($QuestionOK) {
-                        // a MULTIANSWER Question record use 'answers' variable instead of 'answer' (see lib.php)
-                        foreach ($question->answer as $key => $dataanswer) {
-                            $question->answers[$key] = $dataanswer;
-                        }
 
                         $questions[] = $question;    // store it
                         unset($question);            // and prepare a new one
@@ -240,6 +433,22 @@ class quiz_file_format extends quiz_default_format {
                 continue;
             }
 
+            if (eregi("^:TYPE:C",$line)) {
+                // Calculated Question
+                $question->qtype = CALCULATED;
+                $question->answers = array(); // No problem as they go as :FORMULA: from webct
+                $question->units = array();
+                $question->datasets = array();
+
+                // To make us pass the end-of-question sanity checks
+                $question->answer = array('dummy');
+                $question->fraction = array('1.0');
+                
+                $currentchoice = -1;
+                $ignore_rest_of_question = FALSE;
+                continue;
+            }
+
             if (eregi("^:TYPE:M",$line)) {
                 // Match Question
                 $question->qtype = MATCH;
@@ -250,13 +459,6 @@ class quiz_file_format extends quiz_default_format {
             if (eregi("^:TYPE:P",$line)) {
                 // Paragraph Question
                 $warnings[] = get_string("paragraphquestion", "quiz", $nLineCounter);
-                $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
-                continue;
-            }
-
-            if (eregi("^:TYPE:C",$line)) {
-                // Calculated Question
-                $warnings[] = get_string("calculatedquestion", "quiz", $nLineCounter);
                 $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
             }
@@ -290,6 +492,31 @@ class quiz_file_format extends quiz_default_format {
                 continue;
             }
 
+            // Need to put the parsing of calculated items here to avoid ambitiuosness:
+            if (CALCULATED == $question->qtype && ereg(
+                    "^:([[:lower:]].*|::.*)-(MIN|MAX|DEC|VAL([0-9]+))::?:?($webctnumberregex)", $line, $webct_options)) {
+                $datasetname = ereg_replace('^::', '', $webct_options[1]);
+                $datasetvalue = quiz_format_webct_convert_formula($webct_options[4]);
+                switch ($webct_options[2]) {
+                    case 'MIN':
+                        $question->datasets[$datasetname]->min = $datasetvalue;
+                        break;
+                    case 'MAX':
+                        $question->datasets[$datasetname]->max = $datasetvalue;
+                        break;
+                    case 'DEC':
+                        $datasetvalue = floor($datasetvalue); // int only!
+                        $question->datasets[$datasetname]->dec = max(0, $datasetvalue);
+                        break;
+                    default:
+                        // The VAL case:
+                        $question->datasets[$datasetname]->items[$webct_options[3]] = $datasetvalue;
+                        break;
+                }
+                continue;
+            }
+
+
             $bIsHTMLText = eregi(":H$",$line);	// True if next lines are coded in HTML
             if (eregi("^:QUESTION",$line)) {
                 $questiontext="";               // Start gathering next lines
@@ -310,6 +537,27 @@ class quiz_file_format extends quiz_default_format {
                 continue;
             }
 
+            if (eregi('^:FORMULA:(.*)', $line, $webct_options)) {
+                // Answer for a CALCULATED question
+                ++$currentchoice;
+                $question->answers[$currentchoice]->answer =
+                        quiz_format_webct_convert_formula($webct_options[1]);
+
+                // Default settings:
+                $question->answers[$currentchoice]->fraction = 1.0;
+                $question->answers[$currentchoice]->tolerance = 0.0;
+                $question->answers[$currentchoice]->tolerancetype = 2; // nominal (units in webct)
+                $question->answers[$currentchoice]->feedback = '';
+                $question->answers[$currentchoice]->correctanswerlength = 4;
+                
+                $datasetnames = $qtypecalculated
+                        ->find_dataset_names($webct_options[1]);
+                foreach ($datasetnames as $datasetname) {
+                    $question->datasets[$datasetname]->items = array();
+                }
+                continue;
+            }
+
             if (eregi("^:L([0-9]+)",$line,$webct_options)) {
                 $answertext="";                 // Start gathering next lines
                 $currentchoice=$webct_options[1];
@@ -325,6 +573,63 @@ class quiz_file_format extends quiz_default_format {
             if (eregi("^:REASON([0-9]+):?",$line,$webct_options)) {
                 $feedbacktext="";               // Start gathering next lines
                 $currentchoice=$webct_options[1];
+                continue;
+            }
+
+            if (CALCULATED == $question->qtype && eregi('^:ANS-DEC:([1-9][0-9]*)', $line, $webct_options)) {
+                // We can but hope that this always appear before the ANSTYPE property
+                $question->answers[$currentchoice]->correctanswerlength = $webct_options[1];
+                continue;
+            }
+
+            if (CALCULATED == $question->qtype && eregi("^:TOL:($webctnumberregex)", $line, $webct_options)) {
+                // We can but hope that this always appear before the TOL property
+                $question->answers[$currentchoice]->tolerance =
+                        quiz_format_webct_convert_formula($webct_options[1]);
+                continue;
+            }
+
+            if (CALCULATED == $question->qtype && eregi('^:TOLTYPE:percent', $line)) {
+                // Percentage case is handled as relative in Moodle:
+                $question->answers[$currentchoice]->tolerance /= 100;
+                $question->answers[$currentchoice]->tolerancetype = 1; // Relative
+                continue;
+            }
+
+            if (eregi('^:UNITS:(.+)', $line, $webct_options)
+                    and $webctunits = trim($webct_options[1])) {
+                // This is a guess - I really do not know how different webct units are separated...
+                $webctunits = explode(':', $webctunits);
+                $unitrec->multiplier = 1.0; // Webct does not seem to support this
+                foreach ($webctunits as $webctunit) {
+                    $unitrec->unit = trim($webctunit);
+                    $question->units[] = $unitrec;
+                }
+                continue;
+            }
+
+            if (!empty($question->units) && eregi('^:UNITREQ:(.*)', $line, $webct_options)
+                    && !$webct_options[1]) {
+                // There are units but units are not required so add the no unit alternative
+                // We can but hope that the UNITS property always appear before this property
+                $unitrec->unit = '';
+                $unitrec->multiplier = 1.0;
+                $question->units[] = $unitrec;
+                continue;
+            }
+
+            if (!empty($question->units) && eregi('^:UNITCASE:', $line)) {
+                // This could be important but I was not able to figure out how
+                // it works so I ignore it for now
+                continue;
+            }
+
+            if (CALCULATED == $question->qtype && eregi('^:ANSTYPE:dec', $line)) {
+                // Houston - we have a problem
+                // Moodle does not support this - we try something defensively by
+                // setting the correct answer length to 5, it shoud be enough for
+                // most cases
+                $question->answers[$currentchoice]->correctanswerlength = 5;
                 continue;
             }
         }
