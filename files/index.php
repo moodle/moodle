@@ -331,7 +331,7 @@
                 if (empty($CFG->zip)) {    // Use built-in php-based zip function
                     $files = array();
                     foreach ($USER->filelist as $file) {
-                        $files[] = "$basedir/$wdir$file";
+                        $files[] = "$basedir/$file";
                     }
                     include_once('../lib/pclzip/pclzip.lib.php');
                     $archive = new PclZip("$basedir/$wdir/$name");
