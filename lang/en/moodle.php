@@ -692,6 +692,7 @@ $string['noteachersyet'] = 'No teachers in this course yet';
 $string['notenrolled'] = '$a is not enrolled in this course.';
 $string['noteuserschangednonetocourse'] = 'Note: course users need to be restored when restoring user data. This setting has been changed for you.';
 $string['nothingnew'] = 'Nothing new since your last login';
+$string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guarantied.';
 $string['notincluded'] = 'Not included';
 $string['notingroup'] = 'Sorry, but you need to be part of a group to see this activity.';
 $string['nousersmatching'] = 'No users matching \'$a\' were found';

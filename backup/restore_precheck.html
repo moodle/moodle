@@ -109,6 +109,16 @@
     echo "</tr></td>";
     echo "</table>";
 
+    //We compare Moodle's versions
+    if ($CFG->version < $info->backup_moodle_version && $status) {
+        $message->serverversion = $CFG->version;
+        $message->serverrelease = $CFG->release;
+        $message->backupversion = $info->backup_moodle_version;
+        $message->backuprelease = $info->backup_moodle_release;
+        print_simple_box(get_string('noticenewerbackup','',$message), "center", "70%", "$THEME->cellheading2", "20", "noticebox");
+
+    }
+
     //Now we print in other table, the backup and the course it contains info
     if ($info and $course_header and $status) {
         //First, the course info
