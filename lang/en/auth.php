@@ -30,6 +30,11 @@ $string['auth_imaphost'] = 'The IMAP server address. Use the IP number, not DNS 
 $string['auth_imapport'] = 'IMAP server port number. Usually this is 143 or 993.';
 $string['auth_imaptitle'] = 'Use an IMAP server';
 $string['auth_imaptype'] = 'The IMAP server type.  IMAP servers can have different types of authentication and negotiation.';
+$string['auth_ldap_passwdexpire_settings'] = 'LDAP password expiration settings.';
+$string['auth_ldap_expiration_desc'] = 'Select No to disable expired password checking or LDAP to read passwordexpiration time directly from LDAP.Remeber to fill attribute name ldap_expireattr';
+$string['auth_ldap_expireattr_desc'] = 'Ldap-attribute what stores password expiration time asswordAxpirationTime';
+$string['auth_ldap_gracelogins_desc'] = 'Enable LDAP gracelogin support. After password has expired user can login until gracelogin count is 0. Enabling this setting displays grace login message if password is exprired.';
+$string['auth_ldap_graceattr_desc'] = 'LDAP gracelogin attribute';
 $string['auth_ldap_server_settings'] = 'LDAP server settings';
 $string['auth_ldap_bind_settings'] = 'Bind settings';
 $string['auth_ldap_user_settings'] = 'User lookup settings';
@@ -96,5 +101,6 @@ $string['stdchangepassword_expl'] = 'If the external authentication system allow
 $string['stdchangepassword_explldap'] = 'NOTE: It is recommended that you use LDAP over an SSL encrypted tunnel (ldaps://) if the LDAP server is remote.';
 $string['forcechangepassword'] = 'Force change password';
 $string['forcechangepassword_help'] = 'Force users to change password on their next login to Moodle.';$string['guestloginbutton'] = 'Guest login button';
+$string['forcechangepasswordfirst_help'] = 'Force users to change password on their first login to Moodle.';$string['guestloginbutton'] = 'Guest login button';
 
 ?>

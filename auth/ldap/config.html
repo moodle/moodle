@@ -11,11 +11,10 @@
     optional_variable($config->ldap_memberattribute,    "");
     optional_variable($config->ldap_creators,             "");
     optional_variable($config->ldap_create_context,     "");
-    optional_variable($config->auth_ldap_expirecheck,         "");
-    optional_variable($config->auth_ldap_expireattr,         "");
-    optional_variable($config->auth_ldap_expiredaysbefore,         "");
-    optional_variable($config->auth_ldap_gracecheck,         "");
-    optional_variable($config->auth_ldap_graceattr,         "");
+    optional_variable($config->ldap_expiration,         "");
+    optional_variable($config->ldap_expireattr,         "");
+    optional_variable($config->ldap_gracelogins,         "");
+    optional_variable($config->ldap_graceattr,         "");
     optional_variable($config->auth_user_create,         "");
     optional_variable($config->auth_user_create,         "");
     optional_variable($config->auth_ldap_forcepasswordchange,         "");
@@ -68,576 +67,650 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 ?>
 <tr>
    <td colspan="2">
-        <h2><?php print_string("auth_ldap_server_settings", "auth") ?> </h2>
+        <h4><?php print_string("auth_ldap_server_settings", "auth") ?> </h4>
    </td>
 </tr>
 
-<tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_host_url:</TD>
-    <TD>
-        <INPUT name=ldap_host_url TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_host_url?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_host_url:</td>
+    <td>
+        <input name="ldap_host_url" type="text" size="30" value="<?php echo $config->ldap_host_url?>">
     <?php  if (isset($err["ldap_host_url"])) formerr($err["ldap_host_url"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_host_url","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_version:</TD>
-    <TD>
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_version:</td>
+    <td>
     <?php
        $versions[2] = "2";
        $versions[3] = "3";
        choose_from_menu($versions, "ldap_version", $config->ldap_version, "");
        if (isset($err["ldap_version"])) formerr($err["ldap_version"]); 
     ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_version","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
 <tr>
    <td colspan="2">
-        <h2><?php print_string("auth_ldap_bind_settings", "auth") ?> </h2>
+        <h4><?php print_string("auth_ldap_bind_settings", "auth") ?> </h4>
    </td>
 </tr>
 
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_bind_dn:</TD>
-    <TD>
-    <INPUT name=ldap_bind_dn TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_bind_dn?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_bind_dn:</td>
+    <td>
+    <input name="ldap_bind_dn" type="text" size="30" value="<?php echo $config->ldap_bind_dn?>">
     <?php  if (isset($err["ldap_bind_dn"])) formerr($err["ldap_bind_dn"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_bind_dn","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_bind_pw:</TD>
-    <TD>
-    <INPUT name=ldap_bind_pw TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_bind_pw?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_bind_pw:</td>
+    <td>
+    <input name="ldap_bind_pw" type="password" size="30" value="<?php echo $config->ldap_bind_pw?>">
     <?php  if (isset($err["ldap_bind_pw"])) formerr($err["ldap_bind_pw"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_bind_pw","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
 
 <tr>
    <td colspan="2">
-        <h2><?php print_string("auth_ldap_user_settings", "auth") ?> </h2>
+        <h4><?php print_string("auth_ldap_user_settings", "auth") ?> </h4>
    </td>
 </tr>
 
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_user_attribute:</TD>
-    <TD>
-    <INPUT name=ldap_user_attribute TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_user_attribute?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_user_attribute:</td>
+    <td>
+    <input name="ldap_user_attribute" type="text" size="30" value="<?php echo $config->ldap_user_attribute?>">
     <?php  if (isset($err["ldap_user_attribute"])) formerr($err["ldap_user_attribute"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_user_attribute","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-        <TD ALIGN=RIGHT><P>ldap_memberattribute:</TD>
-        <TD>
-    <INPUT name=ldap_memberattribute TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_memberattribute?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+        <td align="right"><P>ldap_memberattribute:</td>
+        <td>
+    <input name="ldap_memberattribute" type="text" size="30" value="<?php echo $config->ldap_memberattribute?>">
     <?php  if (isset($err["ldap_memberattribute"])) formerr($err["ldap_memberattribute"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_memberattribute","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_objectclass:</TD>
-    <TD>
-    <INPUT name=ldap_objectclass TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_objectclass?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_objectclass:</td>
+    <td>
+    <input name="ldap_objectclass" type="text" size="30" value="<?php echo $config->ldap_objectclass?>">
     <?php  if (isset($err["ldap_objectclass"])) formerr($err["ldap_objectclass"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_objectclass","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_contexts:</TD>
-    <TD>
-    <INPUT name=ldap_contexts TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_contexts?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_contexts:</td>
+    <td>
+    <input name="ldap_contexts" type="text" size="30" value="<?php echo $config->ldap_contexts?>">
     <?php  if (isset($err["ldap_contexts"])) formerr($err["ldap_contexts"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_contexts","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_search_sub:</TD>
-    <TD>
-    <INPUT name=ldap_search_sub TYPE=text SIZE=1 VALUE="<?php echo $config->ldap_search_sub?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_search_sub:</td>
+    <td>
+    <input name="ldap_search_sub" type="text" size="1" value="<?php echo $config->ldap_search_sub?>">
     <?php  if (isset($err["ldap_search_sub"])) formerr($err["ldap_search_sub"]); ?>
-    </TD>
-    <TD>
+    </td>
+    <td>
     <?php  print_string("auth_ldap_search_sub","auth") ?>
-    </TD>
+    </td>
+</tr>
 <tr>
    <td colspan="2">
-        <h2><?php print_string("auth_user_create", "auth") ?> </h2>
+        <h4><?php print_string("forcechangepassword", "auth") ?> </h4>
    </td>
 </tr>
 
-</TR>
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P>ldap_create_context:</TD>
-    <TD>
-    <INPUT name=ldap_create_context TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_create_context?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>" >
+    <td align="right" valign="top"><P><?php  print_string('forcechangepassword', 'auth') ?>:</P></td>
+    <td>
+ 
+    <select name="auth_ldap_forcechangepassword">
+        <option value="0" <?php echo ($config->auth_ldap_forcechangepassword ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_ldap_forcechangepassword ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+ 
+    </td>
+    <td align="left" valign="top">
+        <P><?php  print_string('forcechangepasswordfirst_help', 'auth') ?></P>
+    </td>
+</tr>
+
+<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>" >
+    <td align="right" valign="top"><P><?php  print_string('stdchangepassword', 'auth') ?>:</P></td>
+    <td>
+ 
+    <select name="auth_ldap_stdchangepassword">
+        <option value="0" <?php echo ($config->auth_ldap_stdchangepassword ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_ldap_stdchangepassword ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+
+    </td>
+    <td align="left" valign="top">
+        <P><?php  print_string('stdchangepassword_expl', 'auth') ?></P>
+        <P><?php  print_string('stdchangepassword_explldap', 'auth') ?></P>
+    </td>
+</tr>
+
+<tr>
+   <td colspan="2">
+        <h4><?php print_string("auth_ldap_passwdexpire_settings", "auth") ?> </h4>
+        <p> NOTE! This just configuration interface for expiration, code does not support expiration yet.!</p>
+   </td>
+</tr>
+
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_expiration:</td>
+    <td>
+    <?php
+       $expiration['internal'] = "No";
+       $expiration['ldap'] = "LDAP";
+       choose_from_menu($expiration, "ldap_expriration", $config->ldap_expiration, "");
+       if (isset($err["ldap_expiration"])) formerr($err["ldap_expiration"]); 
+    ?>
+    </td>
+    <td>
+    <?php  print_string("auth_ldap_expiration_desc","auth") ?>
+    </td>
+</tr>
+
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_exprireattr:</td>
+    <td>
+    <input name="ldap_expireattr" type="text" size="30" value="<?php echo $config->ldap_expireattr?>">
+    <?php  if (isset($err["ldap_expireattr"])) formerr($err["ldap_expireattr"]); 
+    ?>
+    </td>
+    <td>
+    <?php  print_string("auth_ldap_expireattr_desc","auth") ?>
+    </td>
+</tr>
+
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_gracelogins:</td>
+    <td>
+    <?php
+       $grace['0'] = get_string("no");
+       $grace['1'] = get_string("yes");
+       choose_from_menu($grace, "ldap_gracelogins", $config->ldap_gracelogins, "");
+       if (isset($err["ldap_expiration"])) formerr($err["ldap_expiration"]); 
+    ?>
+    </td>
+    <td>
+    <?php  print_string("auth_ldap_gracelogins_desc","auth") ?>
+    </td>
+</tr>
+
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_graceattr:</td>
+    <td>
+    <input name="ldap_graceattr" type="text" size="30" value="<?php echo $config->ldap_graceattr?>">
+    <?php   if (isset($err["ldap_graceattr"])) formerr($err["ldap_graceattr"]); 
+    ?>
+    </td>
+    <td>
+    <?php  print_string("auth_ldap_graceattr_desc","auth") ?>
+    </td>
+</tr>
+
+
+
+<tr>
+   <td colspan="2">
+        <h4><?php print_string("auth_user_create", "auth") ?> </h4>
+   </td>
+</tr>
+
+</tr>
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_create_context:</td>
+    <td>
+    <input name="ldap_create_context" type="text" size="30" value="<?php echo $config->ldap_create_context?>">
     <?php  if (isset($err["ldap_create_context"])) formerr($err["ldap_create_context"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_create_context","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
 
 <tr>
    <td colspan="2">
-        <h2><?php print_string("coursecreators") ?> </h2>
+        <h4><?php print_string("coursecreators") ?> </h4>
    </td>
 </tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-        <TD ALIGN=RIGHT><P>ldap_creators:</TD>
-        <TD>
-    <INPUT name=ldap_creators TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_creators?>">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+        <td align="right"><P>ldap_creators:</td>
+        <td>
+    <input name="ldap_creators" type="text" size="30" value="<?php echo $config->ldap_creators?>">
     <?php  if (isset($err["ldap_creators"])) formerr($err["ldap_creators"]); ?>
-    </TD><TD>
+    </td><td>
     <?php  print_string("auth_ldap_creators","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
+
+
 <tr>
    <td colspan="2">
-        <h2><?php print_string("auth_data_mapping", "auth") ?> </h2>
+        <h4><?php print_string("auth_data_mapping", "auth") ?> </h4>
    </td>
 </tr>
 
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("firstname") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_firstname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_firstname?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("firstname") ?>:</td>
+    <td>
+    <input name="auth_user_firstname" type="text" size="30" value="<?php echo $config->auth_user_firstname?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_firstname_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_firstname_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_firstname_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_firstname_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_firstname_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_firstname_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_firstname_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_firstname_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_firstname_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_firstname_editlock">
+        <option value="0" <?php echo ($config->auth_user_firstname_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_firstname_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_firstname_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_firstname_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_firstname_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-    <TD rowspan=12 VALIGN=TOP>
+    <select name="auth_user_firstname_updateremote">
+        <option value="0" <?php echo ($config->auth_user_firstname_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_firstname_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+    <td rowspan=12 valign="top">
     <?php  print_string("auth_ldapextrafields","auth") ?>
     <?php  print_string("auth_updatelocal_expl","auth") ?>
     <?php  print_string("auth_editlock_expl","auth") ?>
     <?php  print_string("auth_updateremote_expl","auth") ?>
     <hr>
     <?php  print_string("auth_updateremote_ldap","auth") ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("lastname") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_lastname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lastname?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("lastname") ?>:</td>
+    <td>
+    <input name="auth_user_lastname" type="text" size="30" value="<?php echo $config->auth_user_lastname?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_lastname_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_lastname_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_lastname_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_lastname_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_lastname_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lastname_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock","auth") ?>
-    <SELECT NAME="auth_user_lastname_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_lastname_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_lastname_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_lastname_editlock">
+        <option value="0" <?php echo ($config->auth_user_lastname_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lastname_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_lastname_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_lastname_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_lastname_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_lastname_updateremote">
+        <option value="0" <?php echo ($config->auth_user_lastname_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lastname_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("email") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_email" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_email?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("email") ?>:</td>
+    <td>
+    <input name="auth_user_email" type="text" size="30" value="<?php echo $config->auth_user_email?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_email_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_email_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_email_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_email_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_email_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_email_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_email_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_email_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_email_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_email_editlock">
+        <option value="0" <?php echo ($config->auth_user_email_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_email_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_email_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_email_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_email_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_email_updateremote">
+        <option value="0" <?php echo ($config->auth_user_email_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_email_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 1:</TD>
-    <TD>
-    <INPUT name="auth_user_phone1" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone1?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("phone") ?> 1:</td>
+    <td>
+    <input name="auth_user_phone1" type="text" size="30" value="<?php echo $config->auth_user_phone1?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_phone1_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_phone1_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_phone1_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_phone1_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_phone1_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_phone1_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_phone1_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_phone1_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_phone1_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_phone1_editlock">
+        <option value="0" <?php echo ($config->auth_user_phone1_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_phone1_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_phone1_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_phone1_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_phone1_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_phone1_updateremote">
+        <option value="0" <?php echo ($config->auth_user_phone1_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_phone1_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 2:</TD>
-    <TD>
-    <INPUT name="auth_user_phone2" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone2?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("phone") ?> 2:</td>
+    <td>
+    <input name="auth_user_phone2" type="text" size="30" value="<?php echo $config->auth_user_phone2?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_phone2_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_phone2_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_phone2_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_phone2_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_phone2_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_phone2_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_phone2_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_phone2_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_phone2_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_phone2_editlock">
+        <option value="0" <?php echo ($config->auth_user_phone2_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_phone2_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_phone2_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_phone2_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_phone2_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_phone2_updateremote">
+        <option value="0" <?php echo ($config->auth_user_phone2_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_phone2_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("department") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_department" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_department?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("department") ?>:</td>
+    <td>
+    <input name="auth_user_department" type="text" size="30" value="<?php echo $config->auth_user_department?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_department_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_department_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_department_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_department_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_department_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_department_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_department_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_department_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_department_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_department_editlock">
+        <option value="0" <?php echo ($config->auth_user_department_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_department_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_department_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_department_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_department_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_department_updateremote">
+        <option value="0" <?php echo ($config->auth_user_department_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_department_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("address") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_address" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_address?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("address") ?>:</td>
+    <td>
+    <input name="auth_user_address" type="text" size="30" value="<?php echo $config->auth_user_address?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_address_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_address_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_address_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_address_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_address_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_address_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_address_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_address_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_address_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_address_editlock">
+        <option value="0" <?php echo ($config->auth_user_address_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_address_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_address_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_address_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_address_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_address_updateremote">
+        <option value="0" <?php echo ($config->auth_user_address_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_address_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("city") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_city" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_city?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("city") ?>:</td>
+    <td>
+    <input name="auth_user_city" type="text" size="30" value="<?php echo $config->auth_user_city?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_city_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_city_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_city_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_city_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_city_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_city_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_city_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_city_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_city_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_city_editlock">
+        <option value="0" <?php echo ($config->auth_user_city_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_city_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_city_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_city_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_city_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_city_updateremote">
+        <option value="0" <?php echo ($config->auth_user_city_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_city_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("country") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_country" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_country?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("country") ?>:</td>
+    <td>
+    <input name="auth_user_country" type="text" size="30" value="<?php echo $config->auth_user_country?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_country_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_country_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_country_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_country_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_country_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_country_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_country_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_country_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_country_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_country_editlock">
+        <option value="0" <?php echo ($config->auth_user_country_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_country_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_country_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_country_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_country_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_country_updateremote">
+        <option value="0" <?php echo ($config->auth_user_country_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_country_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("description") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_description" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_description?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("description") ?>:</td>
+    <td>
+    <input name="auth_user_description" type="text" size="30" value="<?php echo $config->auth_user_description?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_description_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_description_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_description_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_description_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_description_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_description_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_description_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_description_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_description_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_description_editlock">
+        <option value="0" <?php echo ($config->auth_user_description_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_description_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_description_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_description_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_description_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_description_updateremote">
+        <option value="0" <?php echo ($config->auth_user_description_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_description_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("idnumber") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_idnumber" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_idnumber?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("idnumber") ?>:</td>
+    <td>
+    <input name="auth_user_idnumber" type="text" size="30" value="<?php echo $config->auth_user_idnumber?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_idnumber_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_idnumber_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_idnumber_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_idnumber_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_idnumber_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_idnumber_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_idnumber_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_idnumber_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_idnumber_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_idnumber_editlock">
+        <option value="0" <?php echo ($config->auth_user_idnumber_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_idnumber_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_idnumber_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_idnumber_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_idnumber_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_idnumber_updateremote">
+        <option value="0" <?php echo ($config->auth_user_idnumber_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_idnumber_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("language") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_lang" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lang?>">
-    <DIV ALIGN="right">
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("language") ?>:</td>
+    <td>
+    <input name="auth_user_lang" type="text" size="30" value="<?php echo $config->auth_user_lang?>">
+    <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
-    <SELECT NAME="auth_user_lang_updatelocal">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_lang_updatelocal ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_lang_updatelocal ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
+    <select name="auth_user_lang_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_lang_updatelocal ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lang_updatelocal ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
-    <SELECT NAME="auth_user_lang_editlock">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_lang_editlock ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_lang_editlock ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
+    <select name="auth_user_lang_editlock">
+        <option value="0" <?php echo ($config->auth_user_lang_editlock ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lang_editlock ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
-    <SELECT NAME="auth_user_lang_updateremote">
-        <OPTION VALUE="0" <?php echo ($config->auth_user_lang_updateremote ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_user_lang_updateremote ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>    
-    </DIV>
-    </TD>
-</TR>
+    <select name="auth_user_lang_updateremote">
+        <option value="0" <?php echo ($config->auth_user_lang_updateremote ? '' : 'selectED="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lang_updateremote ? 'selectED="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </div>
+    </td>
+</tr>
 
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
-    <TD>
-    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
-    </TD>
-    <TD>
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P><?php  print_string("instructions", "auth") ?>:</td>
+    <td>
+    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
+    </td>
+    <td>
     <?php  print_string("authinstructions","auth") ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT VALIGN=TOP><P><?php  print_string('forcechangepassword', 'auth') ?>:</P></TD>
-    <TD>
 
-    <SELECT NAME="auth_ldap_forcechangepassword">
-        <OPTION VALUE="0" <?php echo ($config->auth_ldap_forcechangepassword ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_ldap_forcechangepassword ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
-
-    </TD>
-    <TD ALIGN=LEFT VALIGN=TOP>
-        <P><?php  print_string('forcechangepassword_help', 'auth') ?></P>
-    </TD>
-</TR>
-
-<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-    <TD ALIGN=RIGHT VALIGN=TOP><P><?php  print_string('stdchangepassword', 'auth') ?>:</P></TD>
-    <TD>
-
-    <SELECT NAME="auth_ldap_stdchangepassword">
-        <OPTION VALUE="0" <?php echo ($config->auth_ldap_stdchangepassword ? '' : 'SELECTED="yes"') ?> >
-            <?php  print_string("no")  ?></OPTION>
-        <OPTION VALUE="1" <?php echo ($config->auth_ldap_stdchangepassword ? 'SELECTED="yes"' : '') ?> >
-            <?php  print_string("yes") ?></OPTION>
-    </SELECT><BR>
-
-    </TD>
-    <TD ALIGN=LEFT VALIGN=TOP>
-        <P><?php  print_string('stdchangepassword_expl', 'auth') ?></P>
-        <P><?php  print_string('stdchangepassword_explldap', 'auth') ?></P>
-    </TD>
-</TR>
