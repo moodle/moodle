@@ -83,6 +83,8 @@
                                     $grades[$student->id][] = $modgrades->grades[$student->id]; // may be empty, that's ok
                                     if ($modgrades->maxgrade) {
                                         $totals[$student->id] = (float)($totals[$student->id]) + (float)($modgrades->grades[$student->id]);
+                                    } else {
+                                        $totals[$student->id] = (float)($totals[$student->id]) + 0;
                                     }
                                 }
                             }
