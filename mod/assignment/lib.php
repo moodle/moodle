@@ -638,7 +638,7 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
 
         $file = assignment_get_user_file($assignment, $user);
 
-        echo "<IMG SRC=\"$CFG->wwwroot/files/pix/$file->icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">";
+        echo "<img src=\"$CFG->pixpath/f/$file->icon\" height=16 width=16 border=0 alt=\"file\">";
         echo "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/$file->url\">$file->name</A>";
         echo "<BR>";
     }
