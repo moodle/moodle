@@ -7,7 +7,7 @@
     optional_variable($id);       // course id
 
     if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/admin/");
+        redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
 
     require_login();
@@ -30,7 +30,7 @@
 
     if (!$id) {
 	    print_header("$site->shortname: $strassignteachers", "$site->fullname", 
-                     "<A HREF=\"../admin/\">$stradministration</A> -> $strassignteachers");
+                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> $strassignteachers");
         
         $isadmin = isadmin(); /// cache value
         $courses = get_courses();
@@ -50,7 +50,7 @@
         
         if ($coursesfound == FALSE) {         
             print_heading(get_string("nocoursesyet"));
-            print_continue("$CFG->wwwroot/admin/");
+            print_continue("../$CFG->admin/index.php");
         }
 
         print_footer();
@@ -64,9 +64,8 @@
 
 	print_header("$site->shortname: $course->shortname: $strassignteachers", 
                  "$site->fullname", 
-                 "<A HREF=\"../admin/\">$stradministration</A> -> 
-                  <A HREF=\"teacher.php\">$strassignteachers</A> ->
-                  $course->shortname", "");
+                 "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> 
+                  <A HREF=\"teacher.php\">$strassignteachers</A> -> $course->shortname", "");
     print_heading("<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>");
 
 

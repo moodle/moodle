@@ -25,7 +25,7 @@
     $stradd = get_string("add");
 
 	print_header("$site->shortname: $strcategories", "$site->fullname", 
-                 "<A HREF=\"$CFG->wwwroot/admin/\">$stradministration</A> -> $strcategories");
+                 "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> $strcategories");
 
     print_heading($strcategories);
 

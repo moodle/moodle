@@ -25,7 +25,7 @@
     }
 
     if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/admin/");
+        redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
 
 
@@ -137,7 +137,7 @@
                       -> $streditcoursesettings", $focus);
     } else {
         print_header("$site->shortname: $straddnewcourse", "$site->fullname",
-                     "<A HREF=\"$CFG->wwwroot/admin/\">$stradministration</A> 
+                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> 
                       -> $straddnewcourse", $focus);
     }
 

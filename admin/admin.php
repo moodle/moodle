@@ -8,7 +8,7 @@
     optional_variable($remove, "");
 
     if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/admin/");
+        redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
 
     require_login();
@@ -47,7 +47,7 @@
 
 	print_header("$site->shortname: $course->shortname: $strassignadmins", 
                  "$site->fullname", 
-                 "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
+                 "<A HREF=\"index.php\">$stradministration</A> -> 
                   <A HREF=\"{$_SERVER['PHP_SELF']}\">$strassignadmins</A>", "");
 
 /// Get all existing admins

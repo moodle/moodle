@@ -615,18 +615,18 @@ function print_admin_links ($siteid, $width=180) {
     
     $icon = "<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     if (isadmin()) {
-	    $moddata[]="<A HREF=\"$CFG->wwwroot/admin/config.php\">".get_string("configvariables")."</A>";
+	    $moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/config.php\">".get_string("configvariables")."</A>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/admin/site.php\">".get_string("sitesettings")."</A>";
+		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/site.php\">".get_string("sitesettings")."</A>";
 		$modicon[]=$icon;
 		$moddata[]="<A HREF=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("sitelogs")."</A>";
 		$modicon[]=$icon;
 		$moddata[]="<A HREF=\"$CFG->wwwroot/theme/index.php\">".get_string("choosetheme")."</A>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/admin/lang.php\">".get_string("checklanguage")."</A>";
+		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/lang.php\">".get_string("checklanguage")."</A>";
 		$modicon[]=$icon;
-		if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
-            $moddata[]="<A HREF=\"$CFG->wwwroot/admin/$CFG->dbtype/frame.php\">".get_string("managedatabase")."</A>";
+		if (file_exists("$CFG->diradmin/$CFG->dbtype")) {
+            $moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".get_string("managedatabase")."</A>";
 			$modicon[]=$icon;
 		}
 		$moddata[]="<HR>";
@@ -646,17 +646,17 @@ function print_admin_links ($siteid, $width=180) {
 		$modicon[]=$icon;
 		$moddata[]="<HR>";
 		$modicon[]="";
-		$moddata[]="<A HREF=\"$CFG->wwwroot/admin/user.php?newuser=true\">".get_string("addnewuser")."</A>";
+		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".get_string("addnewuser")."</A>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/admin/user.php\">".get_string("edituser")."</A>";
+		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/user.php\">".get_string("edituser")."</A>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/admin/admin.php\">".get_string("assignadmins")."</A>";
+		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/admin.php\">".get_string("assignadmins")."</A>";
 		$modicon[]=$icon;
-        $moddata[]="<A HREF=\"$CFG->wwwroot/admin/creators.php\">".get_string("assigncreators")."</A>";
+        $moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/creators.php\">".get_string("assigncreators")."</A>";
 		$modicon[]=$icon;
-		$moddata[]="<A HREF=\"$CFG->wwwroot/admin/auth.php\">".get_string("authentication")."</A>";
+		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/auth.php\">".get_string("authentication")."</A>";
 		$modicon[]=$icon;
-        $fulladmin = "<P><A HREF=\"$CFG->wwwroot/admin/\">".get_string("admin")."</A>...";
+        $fulladmin = "<P><A HREF=\"$CFG->wwwroot/$CFG->admin/\">".get_string("admin")."</A>...";
     }
 
     print_side_block(get_string("administration"), "", $moddata, $modicon, $fulladmin, $width);

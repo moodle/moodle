@@ -21,7 +21,7 @@
 
     if (!$id) {
 	    print_header("$site->shortname: $strdeletecourse", $site->fullname, 
-                     "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strdeletecourse");
+                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> $strdeletecourse");
 
         if ($courses = get_courses()) {
             print_heading(get_string("choosecourse"));
@@ -32,7 +32,7 @@
             print_simple_box_end();
         } else {
             print_heading(get_string("nocoursesyet"));
-            print_continue("$CFG->wwwroot/admin/");
+            print_continue("../$CFG->admin/index.php");
         }
         print_footer();
         exit;
@@ -46,7 +46,7 @@
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");
 	    print_header("$site->shortname: $strdeletecheck", $site->fullname, 
-                     "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
+                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> 
                       <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletecheck");
 
         notice_yesno("$strdeletecoursecheck<BR><BR>$course->fullname", 
@@ -63,7 +63,7 @@
     $strdeletingcourse = get_string("deletingcourse", "", $course->shortname);
 
 	print_header("$site->shortname: $strdeletingcourse", $site->fullname, 
-                 "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
+                 "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> 
                   <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletingcourse");
 
     print_heading($strdeletingcourse);

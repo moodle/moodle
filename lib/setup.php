@@ -15,7 +15,7 @@
 
 /// Connect to the database using adodb
 
-    $CFG->libdir = "$CFG->dirroot/lib";
+    $CFG->libdir   = "$CFG->dirroot/lib";
 
     require_once("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
 
@@ -31,6 +31,12 @@
     }
     //$CFG->prefix = "$CFG->dbname.$CFG->prefix";
 
+
+/// Define admin directory
+
+    if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
+        $CFG->admin = "admin";   // This is relative to the wwwroot and dirroot
+    }
 
 
 /// Load up standard libraries 
