@@ -2,8 +2,8 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($courseid);
     require_variable($concept);
+    optional_variable($courseid,0);
 
     print_header();
     $entries = get_records_sql("select e.* from {$CFG->prefix}glossary_entries e, {$CFG->prefix}glossary g".
