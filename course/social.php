@@ -3,7 +3,7 @@
     //              included from view.php
     
     include_once("$CFG->dirroot/mod/forum/lib.php");
-    include_once("$CFG->dirroot/mod/reading/lib.php");
+    include_once("$CFG->dirroot/mod/resource/lib.php");
 ?>
 
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">

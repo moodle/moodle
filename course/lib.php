@@ -543,7 +543,7 @@ function print_course_admin_links($course, $width=180) {
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
 
     $admindata[]="<A HREF=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</A>";
-    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/reading/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/resource/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
 
 
     if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {

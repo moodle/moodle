@@ -1886,7 +1886,7 @@ function add_to_log($course, $module, $action, $url="", $info="") {
 // any particular student has been doing.
 //
 // course = the course id
-// module = forum, journal, reading, course, user etc
+// module = forum, journal, resource, course, user etc
 // action = view, edit, post (often but not always the same as the file.php)
 // url    = the file and parameters used to see the results of the action
 // info   = additional description information 

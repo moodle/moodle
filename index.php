@@ -3,7 +3,7 @@
     
     require("config.php");
     include("course/lib.php");
-    include("mod/reading/lib.php"); 
+    include("mod/resource/lib.php"); 
     include("mod/forum/lib.php");
 
     if (! $site = get_site()) {

@@ -1,0 +1,46 @@
+<form name="form" method="post" action="<?=$CFG->wwwroot?>/mod/resource/details.php">
+<table cellpadding=5>
+<tr valign=top>
+    <td align=right><P><B><? print_string("name") ?>:</B></P></TD>
+    <td>
+        <input type="text" name="name" size=50 value="<? p($form->name) ?>">
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><? print_string("resourcetype", "resource") ?>:</B></P></TD>
+    <td>
+    <?
+       require("$CFG->dirroot/mod/resource/lib.php");
+       asort($RESOURCE_TYPE);
+       if (!$form->type) {
+          $form->type = 4;
+       }
+       choose_from_menu($RESOURCE_TYPE, "type", $form->type, "");
+       helpbutton("resourcetype", get_string("resourcetype", "resource"), "resource");
+    ?>
+
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><? print_string("summary") ?>:</B></P></TD>
+    <td>
+        <textarea name="summary" rows=5 cols=50 wrap="virtual"><? p($form->summary) ?></textarea>
+        <? helpbutton("summary", get_string("summary"), "resource"); ?>
+    </td>
+</tr>
+</table>
+<CENTER>
+<input type="hidden" name=reference   value="<? p($form->reference) ?>">
+<input type="hidden" name=alltext    value="<? p($form->alltext) ?>">
+
+<input type="hidden" name=course      value="<? p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
+<input type="hidden" name=section        value="<? p($form->section) ?>">
+<input type="hidden" name=module      value="<? p($form->module) ?>">
+<input type="hidden" name=modulename  value="<? p($form->modulename) ?>">
+<input type="hidden" name=instance    value="<? p($form->instance) ?>">
+<input type="hidden" name=mode        value="<? p($form->mode) ?>">
+<input type="hidden" name=destination value="<?=$ME ?>">
+<input type="submit" value="<? print_string("continue") ?>">
+</CENTER>
+</FORM>
