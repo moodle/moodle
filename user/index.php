@@ -70,9 +70,10 @@
 
     $numstudentsall = count_records("user_students", "course", $course->id);
 
+    echo "<h2 align=center>$numstudentsall $course->students</h2>";
+
     if ($students = get_course_students($course->id, "$dsort $dir $limit")) {
         $numstudents = count($students);
-        echo "<h2 align=center>$numstudents $course->students</h2>";
         if ($numstudents < USER_SMALL_CLASS) {
             foreach ($students as $student) {
                 print_user($student, $course, $string);
@@ -92,7 +93,7 @@
                 if ($columnsort == $sort) {
                    $$column = $colname["$column"];
                 } else {
-                   $$column = "<A HREF=\"index.php?id=$course->id&sort=$columnsort&dir=$columndir&showall=$showall\">".$colname["$column"]."</A>";
+                   $$column = "<a href=\"index.php?id=$course->id&sort=$columnsort&dir=$columndir&showall=$showall\">".$colname["$column"]."</a>";
                 }
             }
 
@@ -132,10 +133,10 @@
                 }
 
                 $table->data[] = array ($picture,
-                    "<B><A HREF=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</A></B>",
-                    "<FONT SIZE=2>$student->city</FONT>", 
-                    "<FONT SIZE=2>$student->country</FONT>",
-                    "<FONT SIZE=2>$lastaccess</FONT>");
+                    "<b><a href=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</a></b>",
+                    "<font size=2>$student->city</font>", 
+                    "<font size=2>$student->country</font>",
+                    "<font size=2>$lastaccess</font>");
             }
             print_table($table);
 
@@ -149,9 +150,9 @@
 
         }
         if ($CFG->longtimenosee < 500) {
-            echo "<CENTER><P><FONT SIZE=1>(";
+            echo "<center><p><font size=1>(";
             print_string("unusedaccounts","",$CFG->longtimenosee);
-            echo ")</FONT></P></CENTER>";
+            echo ")</font></p></center>";
         }
     } 
 
