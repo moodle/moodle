@@ -73,6 +73,10 @@
             $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">Turn editing on</A>";
         }
 
+        if ($teacherforum = get_course_teacher_forum($course->id)) {
+            $admindata[]="<A HREF=\"../mod/forum/view.php?f=$teacherforum->id\">Teacher Forum...</A>";
+            $adminicon[]="<IMG SRC=\"../mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"Teacher Forum\">";
+        }
         $admindata[]="<A HREF=\"edit.php?id=$course->id\">Course settings...</A>";
         $adminicon[]="<IMG SRC=\"../pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"Course\">";
         $admindata[]="<A HREF=\"log.php?id=$course->id\">Logs...</A>";

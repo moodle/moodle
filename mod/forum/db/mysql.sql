@@ -5,7 +5,7 @@
 CREATE TABLE forum (
   id int(10) unsigned NOT NULL auto_increment,
   course int(10) unsigned NOT NULL default '0',
-  type enum('discussion','news','general','social','eachuser') NOT NULL default 'general',
+  type enum('discussion','news','general','social','eachuser','teacher') NOT NULL default 'general',
   name varchar(255) NOT NULL default '',
   intro tinytext NOT NULL,
   open tinyint(1) unsigned NOT NULL default '0',

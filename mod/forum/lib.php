@@ -40,6 +40,8 @@ function user_can_post_discussion($forum) {
 
     if ($forum->type == "eachuser") {
         return (! user_has_posted_discussion($forum->id, $USER->id));
+    } else if ($forum->type == "teacher") {
+        return isteacher($forum->course);
     } else if (isteacher($forum->course)) {
         return true;
     } else {
@@ -107,6 +109,23 @@ function get_course_discussion_forum($courseid) {
         $forum->intro= "Discussions about course content";
         $forum->open = 0;
         $forum->assessed = 1;
+        $forum->timemodified = time();
+        $forum->id = insert_record("forum", $forum);
+        return get_record_sql("SELECT * from forum WHERE id = '$forum->id'");
+    }
+}
+
+function get_course_teacher_forum($courseid) {
+    if ($forum = get_record_sql("SELECT * from forum WHERE course = '$courseid' AND type = 'teacher'")) {
+        return $forum;
+    } else {
+        // Doesn't exist, so create one now.
+        $forum->course = $courseid;
+        $forum->type = "teacher";
+        $forum->name = "Teacher Forum";
+        $forum->intro= "For teacher-only notes and discussion";
+        $forum->open = 0;
+        $forum->assessed = 0;
         $forum->timemodified = time();
         $forum->id = insert_record("forum", $forum);
         return get_record_sql("SELECT * from forum WHERE id = '$forum->id'");

@@ -40,6 +40,11 @@
 
     if ($forums = get_records("forum", "course", $id, "name ASC")) {
         foreach ($forums as $forum) {
+            if ($forum->type == "teacher") {
+                if (!isteacher($course->id)) {
+                    continue;
+                }
+            }
             $count = count_records("discuss", "forum", "$forum->id");
 
             if ($can_subscribe) {

@@ -25,6 +25,13 @@
         require_login();
     }
 
+    if ($forum->type == "teacher") {
+        if (!isteacher($course->id)) {
+            error("You must be a $course->teacher to subscribe to this forum");
+        }
+    }
+
+
     $returnto = go_back_to("index.php?id=$course->id");
 
     if ( is_subscribed($USER->id, $forum->id) ) {

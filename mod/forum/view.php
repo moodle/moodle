@@ -38,6 +38,13 @@
                        <A HREF=\"index.php?id=$course->id\">Forums</A> ->";
     }
 
+    if ($forum->type == "teacher") {
+        if (!isteacher($course->id)) {
+            error("You must be a $course->teacher to view this forum");
+        }
+    }
+
+
     add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
 
     print_header("$course->shortname: $forum->name", "$course->fullname",
