@@ -137,7 +137,7 @@
 
         if (!empty($displaysection) and $displaysection != $section) {
             if (!empty($sections[$section])) {
-                if (strlen($sections[$section]->summary < 57)) {
+                if (strlen($sections[$section]->summary) < 57) {
                     $strsummary = " - ".$sections[$section]->summary;
                 } else {
                     $strsummary = " - ".substr($sections[$section]->summary, 0, 60)."...";
