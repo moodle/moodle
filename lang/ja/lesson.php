@@ -10,6 +10,7 @@ $string['addcluster'] = 'クラスタの追加';
 $string['addendofcluster'] = '終了クラスタの追加';
 $string['answer'] = '選択肢';
 $string['answersfornumerical'] = '数字問題に対する解答は最大値及び最小値の範囲内に入る必要があります。';
+$string['arrangebuttonshorizontally'] = 'スライドショーで分岐ボタンを水平に配置しますか?';
 $string['attempt'] = '挑戦: $a';
 $string['attempts'] = '挑戦';
 $string['available'] = '利用開始';
