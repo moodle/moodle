@@ -38,7 +38,6 @@ function auth_user_login ($username, $password) {
     $ldap_connection = auth_ldap_connect();
 
     if ($ldap_connection) {
-      
         $ldap_user_dn = auth_ldap_find_userdn($ldap_connection, $username);
       
         //if ldap_user_dn is empty, user does not exist
@@ -51,6 +50,7 @@ function auth_user_login ($username, $password) {
         $ldap_login = @ldap_bind($ldap_connection, $ldap_user_dn, $password);
         ldap_close($ldap_connection);
         if ($ldap_login) {
+            ldap_close($ldap_connection);
             return true;
         }
     } else {
@@ -66,7 +66,7 @@ function auth_get_userinfo($username){
 /// reads userinformation from ldap and return it in array()
     global $CFG;
 
-    $config = (array)$CFGo;
+    $config = (array)$CFG;
     $moodleattributes = auth_ldap_attributes();
    
     $ldap_connection=auth_ldap_connect();
