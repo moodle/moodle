@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['absent'] = '欠席';
@@ -64,7 +64,7 @@ $string['comparisonofassessments'] = '評価の比較';
 $string['confirmdeletionofthisitem'] = '$a の削除を確定する';
 $string['correct'] = '正解';
 $string['count'] = 'カウント';
-$string['criterion'] = '標準';
+$string['criterion'] = '目標規準方式';
 $string['currentphase'] = '現在のフェーズ';
 $string['date'] = '日時';
 $string['datestr'] = '%%Y/%%m/%%d<br />%%H:%%M';
@@ -115,7 +115,7 @@ $string['gradesforsubmissionsare'] = '提出物に対する評点 $a';
 $string['gradetable'] = '評点テーブル';
 $string['gradingallassessments'] = '全ての提出物の評定';
 $string['gradinggrade'] = '評価のための評点';
-$string['gradingstrategy'] = '評定の方法';
+$string['gradingstrategy'] = '評価方法';
 $string['hidegradesbeforeagreement'] = '同意の前に評点を隠す';
 $string['hidenamesfromstudents'] = '$a より名前を隠す';
 $string['includeteachersgrade'] = '教師の評点を含む';
@@ -178,7 +178,7 @@ $string['notgraded'] = '評価無し';
 $string['notitle'] = '題名無し';
 $string['notitlegiven'] = '題名がありません。';
 $string['nowork'] = '提出期限が終了しました。<br />あなたは課題を提出していません。';
-$string['numberofassessmentelements'] = 'コメント数、評価要素数、評価の幅、基準数';
+$string['numberofassessmentelements'] = '目標規準のコメント数、評価要素数、評価の幅、規準数<br />または評価基準表のカテゴリ数';
 $string['numberofassessments'] = '評価数';
 $string['numberofassessmentschanged'] = '変更された評価数: $a';
 $string['numberofassessmentsdropped'] = '下げられた評価数: $a';
@@ -216,9 +216,9 @@ $string['phase4'] = '$a の評価を許可する';
 $string['phase4short'] = '評価';
 $string['phase5'] = '最終評価の計算';
 $string['phase5short'] = '計算';
-$string['pleaseassesstheseexamplesfromtheteacher'] = '$a によるこれらの模範解答を評価してください';
-$string['pleaseassessthesestudentsubmissions'] = 'これらの $a の提出物を評価してください';
-$string['pleaseassessyoursubmissions'] = 'あなたの提出物を評価してください';
+$string['pleaseassesstheseexamplesfromtheteacher'] = '$a によるこれらの模範解答を評価してください。';
+$string['pleaseassessthesestudentsubmissions'] = 'これらの $a の提出物を評価してください。';
+$string['pleaseassessyoursubmissions'] = 'あなたの提出物を評価してください。';
 $string['poor'] = '悪い';
 $string['present'] = '出席';
 $string['reasonforadjustment'] = '調整理由';
@@ -230,8 +230,8 @@ $string['repeatanalysis'] = '分析を繰り返す';
 $string['reply'] = '返事';
 $string['returnto'] = '戻る';
 $string['returntosubmissionpage'] = '登録ページに戻る';
-$string['rubric'] = '題名';
-$string['savedok'] = '正常に保存されました';
+$string['rubric'] = '評価基準方式';
+$string['savedok'] = '正常に保存されました。';
 $string['saveleaguetableoptions'] = 'リーグテーブルオプションを保存';
 $string['savemyassessment'] = '評価を保存';
 $string['savemycomment'] = 'コメントを保存';
@@ -287,7 +287,7 @@ $string['teachersgrade'] = '教師の採点';
 $string['teachersubmissionsforassessment'] = '$a 教師の評価対象提出物';
 $string['thegradeforthisassessmentis'] = 'この評価の評点 $a';
 $string['thegradeis'] = '評点 $a';
-$string['theseasessmentsaregradedbytheteacher'] = 'これらの評価は $a により評定されます';
+$string['theseasessmentsaregradedbytheteacher'] = 'これらの評価は $a により評定されます。';
 $string['thisisadroppedassessment'] = 'これは下げられた評価です。';
 $string['timeassessed'] = '評価時間';
 $string['title'] = '題名';
@@ -324,7 +324,7 @@ $string['workshopsubmissions'] = 'ワークショップ提出';
 $string['wrongpassword'] = 'ワークショップのパスワードが間違っています。';
 $string['yourassessments'] = 'あなたの課題に対する仲間の評価';
 $string['yourassessmentsofexamplesfromtheteacher'] = '$a によるあなたの評価例';
-$string['yourfeedbackgoeshere'] = 'あなたのフィードバックはここに表示されます';
+$string['yourfeedbackgoeshere'] = 'あなたのフィードバックはここに表示されます。';
 $string['yoursubmissions'] = 'あなたの提出物';
 
 ?>
