@@ -1043,7 +1043,15 @@ function get_string($identifier, $module="", $a=NULL) {
 
 function get_string_from_file($identifier, $langfile, $destination) {
 /// This function is only used from get_string().
-    include ($langfile);
+
+    static $strings;    // Keep the strings cached in memory.
+
+    if (empty($strings[$langfile])) {
+        include ($langfile);
+        $strings[$langfile] = $string;
+    } else {
+        $string = &$strings[$langfile];
+    }
 
     if (!isset ($string[$identifier])) {
         return false;
