@@ -213,7 +213,7 @@
     }
     if ($course->category and 
         ((isstudent($course->id) and ($user->id == $USER->id) and !isguest() and $CFG->allowunenroll) or 
-        (isteacher($course->id) and isstudent($course->id, $user->id))) ) {
+        (isteacheredit($course->id) and isstudent($course->id, $user->id))) ) {
         echo "<td nowrap><p><form action=\"../course/unenrol.php\" method=get>";
         echo "<input type=hidden name=id value=\"$course->id\">";
         echo "<input type=hidden name=user value=\"$user->id\">";

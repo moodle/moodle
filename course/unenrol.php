@@ -20,8 +20,8 @@
 
     require_login($course->id);
 
-    if ($user->id != $USER->id and !isteacher($course->id)) {
-        error("You must be a teacher to do this");
+    if ($user->id != $USER->id and !isteacheredit($course->id)) {
+        error("You must be a teacher with editing rights to do this");
     }
 
     if ($user->id == $USER->id and !$CFG->allowunenroll) {
