@@ -27,9 +27,6 @@
 
 
 /* basic styles */
-font {
-    font-size:100%;
-}
 
 .clearer {
     font-size:1px;
@@ -73,16 +70,26 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 h1 {
-    font-size:1.8em;
+    font-size:1.7em;
 }
 h2 {
-    font-size:1.5em;
+    font-size:1.4em;
 }
 h3 {
-    font-size:1.2em;
+    font-size:1.1em;
 }
 h4 {
-    font-size:1.1em;
+    font-size:1.0em;
+}
+
+.bold {
+    font-weight:bold;
+}
+
+.sideblock .content h3,
+.sideblock .content h2 {
+    text-align: left;
+    font-size:1.0em;
 }
 
 /* header styles */
@@ -405,6 +412,10 @@ table.calendar-controls .next {
 .sideblock .head,
 .sideblock .info {
     font-size: 0.85em;
+}
+
+.sideblock .date {
+    font-style: italic;
 }
 
 

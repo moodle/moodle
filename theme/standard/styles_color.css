@@ -315,18 +315,6 @@ th {
 
 
 /* glossary, wiki */
-.generaltab, .generaltabinactive {
-    background-color:#BBBBBB; /* cellheading */
-}
-
-.generaltabselected {
-    background-color:#DDDDDD; /* cellheading2 */
-}
-
-.generaltabinactive {
-    color:#CCCCCC;
-}
-
 .entryboxheader {
     border-color: #BBBBBB;
 }
@@ -343,6 +331,7 @@ th {
 }
 
 .glossarypost .entryheader,
+.glossarypost .entryapproval,
 .glossarypost .picture,
 .glossarypost .entryattachment,
 .glossarypost .left {
@@ -359,6 +348,33 @@ th {
     background-color: #F0F0F0;
 
 }
+
+/* the glossary tabs */
+.glossarydisplay .tabs .general,
+.glossarydisplay .tabs .inactive {
+    background-color:#BBBBBB;
+}
+.glossarydisplay .tabs .selected {
+    background-color:#DDDDDD; /* cellheading2 */
+}
+.glossarydisplay .tabs .inactive {
+    color:#CCCCCC;
+}
+
+
+
+.generaltab, .generaltabinactive {
+    background-color:#BBBBBB; /* cellheading */
+}
+
+.generaltabselected {
+    background-color:#DDDDDD; /* cellheading2 */
+}
+
+.generaltabinactive {
+    color:#CCCCCC;
+}
+
 
 
 #mod-glossary-report .generalbox .teacher {

@@ -70,6 +70,14 @@
     -moz-border-radius-topright:15px;
 }
 
+/* tabs for glossary */
+.glossarydisplay .tabs .general,
+.glossarydisplay .tabs .inactive,
+.glossarydisplay .tabs .selected {
+    -moz-border-radius-topleft:15px;
+    -moz-border-radius-topright:15px;
+}
+
 .entryboxheader {
     -moz-border-radius-topleft:10px;
     -moz-border-radius-topright:10px;
@@ -79,6 +87,19 @@
     -moz-border-radius-bottomleft:10px;
     -moz-border-radius-bottomright:10px;
 }
+
+.glossarypost {
+    -moz-border-radius-bottomleft:15px;
+    -moz-border-radius-bottomright:15px;
+}
+
+.glossarypost .side {
+    -moz-border-radius-bottomleft:15px;
+}
+.encyclopedia .entrylowersection {
+    -moz-border-radius-bottomright:15px;
+}
+
 
 #calendar .eventlist .event {
     -moz-border-radius-bottomleft:15px;

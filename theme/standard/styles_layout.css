@@ -467,12 +467,6 @@ table.generaltable th.header,
 
 
 /* glossary, wiki */
-.generaltab,
-.generaltabselected,
-.generaltabinactive {
-    background:none;
-}
-
 .glossarypost .commands {
     width: 200px;
     white-space: nowrap;
@@ -516,6 +510,10 @@ table.generaltable th.header,
 .entrylowersection .ratings {
     text-align:right;
     font-size: 0.8em;
+    padding-right: 5px;
+}
+.entrylowersection .ratings {
+    padding-bottom: 2px;
 }
 
 .glossarypost .entry {
@@ -547,6 +545,93 @@ table.generaltable th.header,
     text-align: right;
 }
 
+/* tabs for glossary */
+
+.generaltab,
+.generaltabselected,
+.generaltabinactive {
+    background:none;
+}
+
+.glossarydisplay {
+    width: 70%;
+}
+
+.glossarydisplay .tabs {
+    width: 100%;
+}
+
+.glossarydisplay .separator {
+    width: 4px;
+}
+
+.glossarydisplay .tabs .selected,
+.glossarydisplay .tabs .inactive,
+.glossarydisplay .tabs .general {
+}
+
+.glossarypopup {
+    width: 95%;
+}
+
+.glossaryapproval {
+    width: 100%;
+}
+
+/******************************************************************/
+/* Stretchy tabs code */
+/*#try4 table {
+.tabs {
+    border-collapse:collapse;
+    width:100%;
+    margin:0;
+}
+/*#try4 td {
+.tabs td {
+    height:34px;
+    padding:0 0 0 14px;
+    background:url(images/gray_left.png) top left no-repeat;
+}
+#try4 th {
+    display:none;
+}
+/*#try4 td a {
+.tabs td a {
+    display:block;
+    height:34px;
+    line-height:38px;
+    padding:0 14px 0 0;
+    background:url(images/gray_right.png) top right no-repeat;
+    text-align:center;
+    white-space:nowrap;
+    text-decoration:none;
+}
+/*#try4 td:hover {
+    background-image:url(images/gray_left_f2.png);
+}
+#try4 td:hover a {
+    line-height:32px;
+    background-image:url(images/gray_right_f2.png);
+}
+
+/*#try4 .last span {
+.tabs .last span {
+    display:block;
+    padding:0 1px 0 0;
+    background:url(imagesright_end.png) top right no-repeat;
+}
+/*html body #try4 .this {
+.glossarydisplay .tabs .selected {
+    background:url(images/active_left.png) top left no-repeat;
+}
+/*html body #try4 .this a {
+.glossarydisplay .tabs .selected a {
+    background:url(images/active_right.png) top right no-repeat;
+    line-height:38px;
+}
+*/
+
+/******************************************************************/
 
 /* message */
 .message_link {
