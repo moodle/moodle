@@ -32,5 +32,7 @@
         echo '</ul>';
     }
 
+    // Sloppy way to produce valid markup... there should be a print_footer_minimal().
+    echo '</div></div></body></html>';
     
 ?>
