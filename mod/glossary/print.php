@@ -5,13 +5,12 @@
     global $CFG;
     
     require_variable($id);                         // Course Module ID
-    require_variable($tab,GLOSSARY_STANDARD_VIEW); // format to show the entries
+    require_variable($mode,"letter"); // format to show the entries
     optional_variable($sortkey,"UPDATE");          // Sorting key if TAB = GLOSSARY_DATE_VIEW
     optional_variable($sortorder,"asc");           // Sorting order if TAB = GLOSSARY_DATE_VIEW
-    optional_variable($l,"ALL");          
+    optional_variable($hook,"ALL");          
     optional_variable($eid);          
     optional_variable($search);
-    optional_variable($cat,GLOSSARY_SHOW_ALL_CATEGORIES);          
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -33,19 +32,18 @@
     }
 
     if ( $eid ) {
-        $l = '';
-        $tab = GLOSSARY_STANDARD_VIEW;
+        $mode = 'entry';
     }
 /// Generating the SQL based on the format to show
-    switch ($tab) {
-    case GLOSSARY_CATEGORY_VIEW:
+    switch ($mode) {
+    case "cat":
         $where = '';
-        if ($cat) {
-            if ( $cat != GLOSSARY_SHOW_ALL_CATEGORIES and $cat != GLOSSARY_SHOW_NOT_CATEGORISED ) {
-                    $where = 'and c.id = ' . $cat;
+        if ($hook) {
+            if ( $hook != GLOSSARY_SHOW_ALL_CATEGORIES and $hook != GLOSSARY_SHOW_NOT_CATEGORISED ) {
+                    $where = 'and c.id = ' . $hook;
             }
         }
-        $entries = get_records_sql("SELECT c.name pivot, e.*
+        $entries = get_records_sql("SELECT ec.id, c.name pivot, e.*
                                     FROM {$CFG->prefix}glossary_entries e,
                                          {$CFG->prefix}glossary_entries_categories ec,
                                          {$CFG->prefix}glossary_categories as c
@@ -56,7 +54,7 @@
 
     break;
 
-    case GLOSSARY_DATE_VIEW:
+    case "date":
     //// Valid sorting values
         switch ($sortkey) {
         case 'CREATION':
@@ -79,7 +77,7 @@
                                     ORDER BY e.$sortkey $sortorder");
 
     break;
-    case GLOSSARY_STANDARD_VIEW:
+    case "letter":
     default:
         switch ($CFG->dbtype) {
         case "postgres7":
@@ -94,14 +92,14 @@
         break;
         }
 
-        if ( $l ) {
-            if ($l != 'ALL' and $l != 'SPECIAL') {
+        if ( $hook ) {
+            if ($hook != 'ALL' and $hook != 'SPECIAL') {
                 switch ($CFG->dbtype) {
                 case 'postgres7':
-                    $where = 'and substr(ucase(concept),1,' .  strlen($l) . ') = \'' . strtoupper($l) . '\'';
+                    $where = 'and substr(ucase(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
                 break;
                 case 'mysql':
-                    $where = 'and left(ucase(concept),' .  strlen($l) . ") = '$l'";
+                    $where = 'and left(ucase(concept),' .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
                 break;
                 default:
                     $where = '';
@@ -111,7 +109,7 @@
             $where = " and e.id = $eid";
         }
 
-        $entries = get_records_sql("SELECT $pivot pivot, e.*
+        $entries = get_records_sql("SELECT e.id, $pivot pivot, e.*
                                     FROM {$CFG->prefix}glossary_entries e
                                     WHERE (e.glossaryid = $glossary->id or e.sourceglossaryid = $glossary->id)
                                           AND e.approved != 0 $where
@@ -126,16 +124,17 @@
         echo get_string("noentries","glossary");
         exit;
     }
+                                    
     $groupheader = '';
     $tableisopen = 0;
     foreach ($entries as $entry) {
         $pivot = $entry->pivot;
-        if ( $CFG->dbtype != "postgres7" and $CFG->dbtype != "mysql" and $tab != GLOSSARY_CATEGORY_VIEW) {
+        if ( $CFG->dbtype != "postgres7" and $CFG->dbtype != "mysql" and $mode != "cat") {
             $pivot = $pivot[0];
         }
         
-        if ($tab != GLOSSARY_DATE_VIEW) {
-            if ($groupheader != $pivot) {
+        if ($mode != "date") {
+            if (strtoupper($groupheader) != strtoupper($pivot)) {
             /// Printing th eheader of the group
 
                 if ($tableisopen) {

@@ -6,8 +6,10 @@
     require_once("lib.php");
 
      require_variable($id);    // Course Module ID, or
-     optional_variable($cat);  // category ID
+     optional_variable($mode);  // cat
+     optional_variable($hook);  // category ID
      optional_variable($action);  // what to do
+     optional_variable($usedynalink);  // category ID
      optional_variable($confirm);  // confirm the action
 
      optional_variable($name);  // confirm the action
@@ -46,25 +48,27 @@
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                   navmenu($course, $cm));
 
-     if ( $cat ) {
-          $category = get_record("glossary_categories","id",$cat);
+     if ( $hook ) {
+          $category = get_record("glossary_categories","id",$hook);
 
           if ( $action == "edit" ) {
                if ( $confirm ) {
                     $action = "";
-                    $CategoryObject->id = $cat;
-                    $CategoryObject->name = $name;
+                    $cat->id = $hook;
+                    $cat->name = $name;
+                    $cat->usedynalink = $usedynalink;
 
-                    if ( !update_record("glossary_categories", $CategoryObject) ) {
+                    if ( !update_record("glossary_categories", $cat) ) {
      				    error("Weird error. The category was not updated.");
      				    redirect("editcategories.php?id=$cm->id");
                     } else {
-                        add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $cat);
+                        add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook);
                     }
                } else {
                     echo "<p align=\"center\">" . get_string("edit"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
                     $name = $category->name;
+                    $usedynalink = $category->usedynalink;
                     require "editcategories.html";
                     print_footer();
                     die;
@@ -72,8 +76,8 @@
           } elseif ( $action == "delete" ) {
                if ( $confirm ) {
                
-				    delete_records("glossary_entries_categories","categoryid", $cat);
-                    delete_records("glossary_categories","id", $cat);
+				    delete_records("glossary_entries_categories","categoryid", $hook);
+                    delete_records("glossary_categories","id", $hook);
 				
 				    print_simple_box_start("center","40%", "#FFBBBB");
 				    echo "<center>" . get_string("categorydeleted","glossary") ."</center>";
@@ -82,7 +86,7 @@
 				
          			print_footer($course);
 
-                    add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $cat);
+                    add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook);
                     
      			    redirect("editcategories.php?id=$cm->id");
                } else {
@@ -104,7 +108,8 @@
                     <input type="hidden" name=id 		   value="<?php p($cm->id) ?>">
                     <input type="hidden" name=action      value="delete">
                     <input type="hidden" name=confirm     value="1">
-                    <input type="hidden" name=cat         value="<?php echo $cat ?>">
+                    <input type="hidden" name=mode         value="<?php echo $mode ?>">
+                    <input type="hidden" name=hook         value="<?php echo $hook ?>">
                     <table border=0 widTH=100><tr><td align=right width=50%>
                     <input type="submit" value=" <?php print_string("yes")?> ">
                     </form>
@@ -135,15 +140,16 @@
 
                } else {
                     $action = "";
-                    $CategoryObject->name = $name;
-                    $CategoryObject->glossaryid = $glossary->id;
+                    $cat->name = $name;
+                    $cat->usedynalink = $usedynalink;
+                    $cat->glossaryid = $glossary->id;
 
-                    if ( ! $CategoryObject->id = insert_record("glossary_categories", $CategoryObject) ) {
+                    if ( ! $cat->id = insert_record("glossary_categories", $cat) ) {
      				    error("Weird error. The category was not inserted.");
               			
           			    redirect("editcategories.php?id=$cm->id");
                     } else {
-                        add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $CategoryObject->id);
+                        add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id);
                     }
              }
           } else {
@@ -189,8 +195,8 @@
                </td>
                <td width="10%" align="center"><b>
                <?php
-          		echo "<a href=\"editcategories.php?id=$cm->id&action=delete&cat=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a> ";
-          	  	echo "<a href=\"editcategories.php?id=$cm->id&action=edit&cat=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
+          		echo "<a href=\"editcategories.php?id=$cm->id&action=delete&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a> ";
+          	  	echo "<a href=\"editcategories.php?id=$cm->id&action=edit&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
                ?>
                </b></td>
              </tr>
@@ -213,7 +219,8 @@
              echo print_single_button("editcategories.php", $options, get_string("add") . " " . get_string("category","glossary"), "get");
              echo "</td><td align=left>";
              unset($options['action']);
-             $options['currentview'] = "categories";
+             $options['mode'] = 'cat';
+             $options['hook'] = $hook;
              echo print_single_button("view.php", $options, get_string("back","glossary") );
              echo "</td></tr>";
              echo "</tablee>";

@@ -5,19 +5,22 @@
 global $CFG;
 
 if (!isset($form->studentcanpost)) {
-    $form->studentcanpost = $CFG->cnfstudentcanpost;
+    $form->studentcanpost = $CFG->glossary_studentspost;
 }
 if (!isset($form->allowduplicatedentries)) {
-    $form->allowduplicatedentries = $CFG->cnfallowdupentries;
+    $form->allowduplicatedentries = $CFG->glossary_dupentries;
 }
 if (!isset($form->allowcomments)) {
-    $form->allowcomments = $CFG->cnfallowcomments;
+    $form->allowcomments = $CFG->glossary_allowcomments;
 }
 if (!isset($form->usedynalink)) {
-    $form->usedynalink = $CFG->cnflinkglossaries;
+    $form->usedynalink = $CFG->glossary_linkbydefault;
 }
 if (!isset($form->defaultapproval)) {
-    $form->defaultapproval = $CFG->cnfapprovalstatus;
+    $form->defaultapproval = $CFG->glossary_defaultapproval;
+}
+if (!isset($form->entbypage)) {
+    $form->entbypage = $CFG->glossary_entbypage;
 }
 if (!isset($form->mainglossary)) {
     $form->mainglossary = 0;
@@ -70,6 +73,13 @@ if (!isset($form->showspecial)) {
         <textarea name="intro" rows=5 cols=50 wrap="virtual"><?php p($form->intro) ?></textarea>
     </td>
 </tr>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("entbypage", "glossary") ?>:</B></P></TD>
+    <TD>
+		<input name=entbypage type=text size=2 value="<?php p($form->entbypage) ?>"> <?php helpbutton("entbypage", get_string("entbypage", "glossary"), "glossary") ?>
+    </TD>
+</TR>
+
 <!-- More rows go in here... -->
 <?php
 if (isadmin() ) {

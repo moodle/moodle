@@ -6,8 +6,8 @@
     require_variable($id);           // Course Module ID
     optional_variable($eid);         // Entry ID
 
-    optional_variable($tab,GLOSSARY_APPROVAL_VIEW);
-    optional_variable($l,"ALL");
+    optional_variable($mode,"approval");
+    optional_variable($hook,"ALL");
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -33,6 +33,6 @@
     } else {
         add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&eid=$eid", "$eid");
     }
-    redirect("view.php?id=$cm->id&tab=$tab&l=$l",get_string("entryapproved","glossary"),1);
+    redirect("view.php?id=$cm->id&mode=$mode&hook=$hook",get_string("entryapproved","glossary"),1);
     die;
 ?>

@@ -5,8 +5,8 @@
     	require_variable($id);    // course module ID
     	require_variable($entry);    // Entry ID
     	optional_variable($confirm);     // confirmation
-    	optional_variable($currentview);
-    	optional_variable($cat);
+    	optional_variable($mode);
+    	optional_variable($hook);
     	
     	global $THEME, $USER, $CFG;
 
@@ -53,10 +53,10 @@
 
 		if ( !$confirm ) {
 			echo "<center>";
-
-			notice_yesno ("<center><h2>$entry->concept</h2><p align=center>Seguro que desea agregar esta entrada a<br><b>$mainglossary->name</b>?",
-				"exportentry.php?id=$id&currentview=$currentview&cat=$cat&entry=$entry->id&confirm=1",
-				"view.php?id=$cm->id&currentview=$currentview&cat=$cat&eid=".$entry->id );
+            $areyousure = get_string("areyousureexport","glossary");
+			notice_yesno ("<center><h2>$entry->concept</h2><p align=center>$areyousure<br><b>$mainglossary->name</b>?",
+				"exportentry.php?id=$id&mode=$mode&hook=$hook&entry=$entry->id&confirm=1",
+				"view.php?id=$cm->id&mode=$mode&hook=$hook" );
 
 		} else {
 			if ( ! $mainglossary->allowduplicatedentries ) {
@@ -76,12 +76,12 @@
                     print_simple_box_start("center", "60%", "$THEME->cellheading");
                     echo "<p align=center><font size=3>$entryexported</font></p></font>";
 
-                    print_continue("view.php?id=$cm->id&eid=".$entry->id);
+                    print_continue("view.php?id=$cm->id&mode=entry&hook=".$entry->id);
                     print_simple_box_end();
 
      				print_footer();
 
-     	            redirect("view.php?id=$cm->id&eid=".$entry->id);
+     	            redirect("view.php?id=$cm->id&mode=entry&hook=".$entry->id);
      	            die;
 				}
 			} else {
@@ -89,16 +89,16 @@
 			    echo "<p align=center><font size=3>$entryalreadyexist</font></p></font>";
 				echo "<p align=center>";
 
-				print_continue("view.php?id=$cm->id&eid=".$entry->id);
+				print_continue("view.php?id=$cm->id&mode=entry&hook=".$entry->id);
 
 			    print_simple_box_end();
 			}
 		}
 	} else {
 	    	print_simple_box_start("center", "60%", "#FFBBBB");
-	    	echo "<p align=center><font size=3>A weird error was found while trying to export this entry. Operation cancelled.</font></p></font>";
+	    	notice("A weird error was found while trying to export this entry. Operation cancelled.");
 
-			print_continue("view.php?id=$cm->id&eid=".$entry->id);
+			print_continue("view.php?id=$cm->id&mode=entry&hook=".$entry->id);
 
 	    	print_simple_box_end();
 	}

@@ -24,6 +24,7 @@ CREATE TABLE prefix_glossary (
      usedynalink tinyint(2) unsigned NOT NULL default '1',
      defaultapproval tinyint(2) unsigned NOT NULL default '1',
      globalglossary tinyint(2) unsigned NOT NULL default '0',
+     entbypage tinyint(3) unsigned NOT NULL default '10',
      timecreated int(10) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
      PRIMARY KEY  (id)
@@ -71,6 +72,7 @@ CREATE TABLE prefix_glossary_categories (
      id int(10) unsigned NOT NULL auto_increment,
      glossaryid int(10) unsigned NOT NULL default '0',
      name varchar(255) NOT NULL default '',
+     usedynalink tinyint(2) unsigned NOT NULL default '1',
      PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='all categories for glossary entries';
 

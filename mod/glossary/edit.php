@@ -8,8 +8,8 @@ require_variable($id);    // Course Module ID
 optional_variable($e);    // EntryID
 optional_variable($confirm,0);    // proceed. Edit the edtry
 
-optional_variable($tab);   // categories if by category?
-optional_variable($cat);    // CategoryID
+optional_variable($mode);   // categories if by category?
+optional_variable($hook);    // CategoryID
 
 if (! $cm = get_record("course_modules", "id", $id)) {
     error("Course Module ID was incorrect");
@@ -32,6 +32,12 @@ if ( $confirm ) {
     $form = data_submitted();
     if ( !isset($form->usedynalink) ) {
         $form->usedynalink = 0;
+    }
+    if ( !isset($form->casesensitive) ) {
+        $form->casesensitive = 0;
+    }
+    if ( !isset($form->fullmatch) ) {
+        $form->fullmatch = 0;
     }
     $timenow = time();
     $form->text = clean_text($form->text, $form->format);
@@ -102,7 +108,7 @@ if ( $confirm ) {
             if (! update_record("glossary_entries", $newentry)) {
                 error("Could not update your glossary");
             } else {
-                add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&eid=$newentry->id&tab=$tab&cat=$cat", "$newentry->id");
+                add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", "$newentry->id");
            	}
         } else {
             error("Could not update this glossary entry because this concept already exist.");
@@ -131,7 +137,7 @@ if ( $confirm ) {
                      unset($newentry->attachment);
                 }
                 set_field("glossary_entries", "attachment", $newfilename, "id", $newentry->id);
-                add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&eid=$newentry->id&tab=$tab&cat=$cat", "$newentry->id");
+                add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", "$newentry->id");
             }
         } else {
             error("Could not insert this glossary entry because this concept already exist.");
@@ -165,7 +171,7 @@ if ( $confirm ) {
         }
     }
 
-    redirect("view.php?id=$cm->id&eid=$newentry->id&tab=$tab&cat=$cat");
+    redirect("view.php?id=$cm->id&mode=entry&hook=$newentry->id");
     die;
 } else {
     if ($e) {

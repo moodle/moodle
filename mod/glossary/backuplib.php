@@ -90,6 +90,7 @@
                 fwrite ($bf,full_tag("ID",6,false,$glo_cat->id));
                 fwrite ($bf,full_tag("GLOSSARYID",6,false,$glo_cat->glossaryid));
                 fwrite ($bf,full_tag("NAME",6,false,$glo_cat->name));
+                fwrite ($bf,full_tag("USEDYNALINK",6,false,$glo_cat->usedynalink));
 
                 $status = backup_glossary_entries_categories ($bf,$preferences,$glo_cat->id);
 

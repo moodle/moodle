@@ -1,65 +1,66 @@
-<?php // $Id$
-
+<?php
 /// This page prints a particular instance of glossary
     require_once("../../config.php");
     require_once("lib.php");
-    
+    $debug = 0;
+        
     require_variable($id);           // Course Module ID
-    optional_variable($l,"");        // letter to look for
-    optional_variable($offset,0);    // entries to bypass (paging purpouses)
-    optional_variable($eid);         // Entry ID
-    optional_variable($search, "");  // search string
-    optional_variable($includedefinition); // include definition in search function?
-    
-    optional_variable($tab); // browsing entries by categories?
-    optional_variable($cat);         // categoryID
+    optional_variable($tab,GLOSSARY_NO_VIEW); // browsing entries by categories?
 
-    optional_variable($sortkey,"");  // Sorted view: CREATION or UPDATE
-    optional_variable($sortorder,"");  // it define the order of the sorting (ASC or DESC)
+    optional_variable($mode,"letter");  // [ "term"   | "entry"  | "cat"     | "date" | 
+                                        //   "letter" | "search" | "author"  | "approval" ]
+    optional_variable($hook,"");  // the term, entry, cat, etc... to look for based on mode
 
-    global $CFG;
-    $entriesbypage = $CFG->glossary_entbypage;
+    optional_variable($fullsearch,0); // full search (concept and definition) when searching?
 
-    if (!$entriesbypage) {
-        $entriesbypage = 10;
-    }
+    optional_variable($sortkey,"");    // Sorted view: 
+                                       //    [ CREATION | UPDATE | concept | timecreated | ... ]
+    optional_variable($sortorder,"");  // it defines the order of the sorting (ASC or DESC)
+
+    optional_variable($offset,0);    // entries to bypass (for paging purpouses)
+
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
-    } 
-    
-    if ($tab == GLOSSARY_ADDENTRY_VIEW and !$eid) {
-        redirect("edit.php?id=$cm->id&tab=$tab");
-    }
-
+    }     
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
-    } 
-    
+    }     
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
         error("Course module is incorrect");
     } 
     
+/// redirecting if adding a new entry
+    if ($tab == GLOSSARY_ADDENTRY_VIEW ) {
+        redirect("edit.php?id=$cm->id&mode=$mode");
+    }
+
+/// setting the defaut number of entries per page if not set
+    global $CFG, $THEME, $USER;
+    
+    if ( !$entriesbypage = $glossary->entbypage ) {
+        $entriesbypage = 10;
+    }
+
+/// setting the right fram for a "Continuous" glossary
+    if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
+        $mode = 'date';
+    }
+
+/// Processing standard security processes
+    $navigation = "";
     if ($course->category) {
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
         require_login($course->id);
     }
     if (!$cm->visible and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     } 
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&tab=$tab", "$glossary->id");
-    
-/// stablishing default tab
-    $framebydefault = GLOSSARY_STANDARD_VIEW;
-    if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
-        $framebydefault = GLOSSARY_DATE_VIEW;
-    }
 
-/// checking for valid values for sortorder and sortkey
+/// stablishing flag variables
     if ( $sortorder = strtolower($sortorder) ) {
         if ($sortorder != 'asc' and $sortorder != 'desc') {
             $sortorder = '';
-        } else {
-            $l = ''; /// if we are sorting by date, reset the searching by terms or letters
-            $search = '';
         }
     }
     if ( $sortkey = strtoupper($sortkey) ) {
@@ -67,73 +68,81 @@
             $sortkey = '';
         }
     }
-/// in this point:
-///       $sortkey   = CREATION | UPDATE | ''
-///       $sortorder = asc | desc | ''
 
-    if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
-        $tab = $framebydefault;
+    switch ( $mode = strtolower($mode) ) {
+    case 'search': /// looking for terms containing certain word(s)
+        $tab = GLOSSARY_STANDARD_VIEW;
 
-        if ( !$sortkey ) {
-            $sortkey = 'CREATION';
-        } 
-        if ( !$sortorder ) {
-            $sortorder = 'asc';
-        }
-    } else {
-        if ( !$sortkey ) {
-            $sortkey = 'concept';
-        } 
-        if ( !$sortorder ) {
-            $sortorder = 'asc';
-        }
-    }
-
-// creating matrix of words to search if apply
-    $search = trim(strip_tags($search));
-    if ($search and !$eid) {   /// searching terms
-        $l = '';
-        $searchterms = explode(' ', $search); // Search for words independently
+        $searchterms = explode(' ', $hook); // Search for words independently
         foreach ($searchterms as $key => $searchterm) {
             if (strlen($searchterm) < 2) {
                 unset($searchterms[$key]);
             } 
         } 
-        $search = trim(implode(' ', $searchterms));
-        $tab = $framebydefault;
-    } elseif ($eid) {   /// searching a specify entry
+        $hook = trim(implode(' ', $searchterms));
+    break;
+    
+    case 'entry':  /// Looking for a certain entry id
         $tab = GLOSSARY_STANDARD_VIEW;
-        $search = '';
-    } 
-
-    $alphabet = explode(',', get_string("alphabet"));
-    if ($l == '' and $search == '' and !$eid) {
-        // if the user is just entering the glossary...
-        if ($tab != GLOSSARY_APPROVAL_VIEW) {
-            $l = $alphabet[0];
-        } else {
-            $l = 'ALL';  /// show ALL by default in the waiting approval frame
+    break;
+    
+    case 'cat':    /// Looking for a certain cat
+        $tab = GLOSSARY_CATEGORY_VIEW;
+        if ( $hook > 0 ) {
+            $category = get_record("glossary_categories","id",$hook);
         }
-    } elseif ($eid) {
-        $l = '';
-    } 
-    
-    $category = '';
-    if ($tab == GLOSSARY_CATEGORY_VIEW) {
-        $l = '';
-        if ($cat > 0) {
-            $category = get_record("glossary_categories", "id", $cat);
-            if (!$category) {
-                $cat = '';
-            } 
+    break;
+
+    case 'approval':    /// Looking for entries waiting for approval
+        $tab = GLOSSARY_APPROVAL_VIEW;
+        if ( !$hook and !$sortkey and !$sortorder) {
+            $hook = 'ALL';
+        }
+    break;
+
+    case 'term':   /// Looking for entries that include certain term in its concept, definition or aliases
+        $tab = GLOSSARY_STANDARD_VIEW;
+    break;
+
+    case 'date':
+        $tab = GLOSSARY_DATE_VIEW;
+        if ( !$sortkey ) {
+            $sortkey = 'UPDATE';
         } 
-    } 
+        if ( !$sortorder ) {
+            $sortorder = 'desc';
+        }
+    break;
     
-/// Printing the page header
-    if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    } 
+    case 'author':  /// Looking for entries, browsed by author
+        $tab = GLOSSARY_AUTHOR_VIEW;
+        if ( !$hook ) {
+            $hook = 'ALL';
+        } 
+    break;
+
+    case 'letter':  /// Looking for entries that begin with a certain letter, ALL or SPECIAL characters
+    default:
+        $tab = GLOSSARY_STANDARD_VIEW;
+        if ( !$hook ) {
+            $hook = 'ALL';  
+        } 
+    break;
+    }  
+
+    switch ( $tab ) {
+    case GLOSSARY_IMPORT_VIEW: 
+    case GLOSSARY_EXPORT_VIEW: 
+    case GLOSSARY_APPROVAL_VIEW:
+        $isuserframe = 0;
+    break;
     
+    default:
+        $isuserframe = 1;
+    break;
+    }
+
+/// Printing the heading
     $strglossaries = get_string("modulenameplural", "glossary");
     $strglossary = get_string("modulename", "glossary");
     $strallcategories = get_string("allcategories", "glossary");
@@ -149,16 +158,14 @@
         navmenu($course, $cm));
     
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
-    if ($tab == GLOSSARY_CATEGORY_VIEW | $tab == GLOSSARY_STANDARD_VIEW |
-        $tab == GLOSSARY_DATE_VIEW) {
+    if ($isuserframe ) {
     /// the "Print" icon
-        echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"_blank\" href=\"print.php?id=$cm->id&tab=$tab&cat=$cat&l=$l&eid=$eid&sortkey=$sortkey&sortorder=$sortorder\">";
+        echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"_blank\" href=\"print.php?id=$cm->id&tab=$tab&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder\">";
         echo '<img border=0 src="print.gif"/></a>';
     }
     echo '</b></font></p>';
 
 /// Info box
-
     if ( $glossary->intro ) {
         print_simple_box_start('center','70%');
         echo format_text($glossary->intro);
@@ -166,121 +173,237 @@
     }
 
 /// Search box
-
     echo '<p>';
     print_simple_box_start("center", "", $THEME->cellheading);
     echo '<p>';
     echo '<form method="POST" action="view.php">';
     echo '<input type="submit" value="'.$strsearch.'" name="searchbutton"> ';
-    echo '<input type="text" name="search" size="20" value=""> ';
-    echo '<input type="checkbox" name="includedefinition" value="1">';
-    echo $strsearchindefinition;
+    echo '<input type="text" name="hook" size="20" value=""> ';
+    echo '<input type="checkbox" name="fullsearch" value="1">';
+    echo '<input type="hidden" name="mode" value="search">';
     echo '<input type="hidden" name="id" value="'.$cm->id.'">';
+    echo $strsearchindefinition;
     echo '</form>';
     echo '</p>';
-    print_simple_box_end();
+    print_simple_box_end();    
 
-
-/// Tabbed browsing sections
     include("tabs.html");
-    
-/// Printing the entries
 
-    switch ($sortkey) {
-        case 'CREATION':
-            $orderby = "timecreated $sortorder";
-        break;
-        case 'UPDATE':
-            $orderby = "timemodified $sortorder";
-        break;
-		default:
-            $orderby .= "$sortkey $sortorder";
+    switch ( $sortkey ) {    
+    case "CREATION": 
+        $sortkey = "timecreated";
+    break;
+    
+    case "UPDATE": 
+        $sortkey = "timemodified";
+    default:
+    break;
     }
     
+/// Creating the SQL statements
+
+/// Pivot is the field that set the break by groups (category, initial, author name, etc)
+
+/// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
+/// printpivot indicate if the pivot should be printed or not
+    $fullpivot = 1;
+    $printpivot = 1;
+
+//    global $db;
+//    $db->debug = true;
+
     switch ($tab) {
-        case GLOSSARY_CATEGORY_VIEW:
-            if ($cat == GLOSSARY_SHOW_ALL_CATEGORIES) { 
-                $sqlselect = "SELECT gec.id gecid, gc.name, gc.id CID, ge.*";
-                $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge,
-                             {$CFG->prefix}glossary_entries_categories gec,
-                             {$CFG->prefix}glossary_categories gc";
-                $sqlwhere  = "WHERE (ge.glossaryid = '$glossary->id' or ge.sourceglossaryid = '$glossary->id') AND
-                              gec.entryid = ge.id AND
-                              gc.id = gec.categoryid";
+    case GLOSSARY_CATEGORY_VIEW:
+        if ($hook == GLOSSARY_SHOW_ALL_CATEGORIES  ) { 
 
-                if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
-                    $sqlorderby = ' ORDER BY gc.name, ge.timecreated';
-                } else {
-                    $sqlorderby = ' ORDER BY gc.name, ge.concept';
-                }
-                $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
-                $sqllimit = " LIMIT $offset, $entriesbypage";
+            $sqlselect = "SELECT gec.id, gc.name pivot, ge.*";
+            $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge,
+                         {$CFG->prefix}glossary_entries_categories gec,
+                         {$CFG->prefix}glossary_categories gc";
+            $sqlwhere  = "WHERE (ge.glossaryid = '$glossary->id' OR ge.sourceglossaryid = '$glossary->id') AND
+                          ge.id = gec.entryid AND gc.id = gec.categoryid AND
+                          (ge.approved != 0 OR ge.userid = $USER->id)";
 
-                $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+            if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
+                $sqlorderby = ' ORDER BY gc.name, ge.timecreated';
             } else {
-                if ( $cat == GLOSSARY_SHOW_NOT_CATEGORISED ) {
-                    $sqlselect  = "SELECT *";
-                    $sqlfrom    = "FROM {$CFG->prefix}glossary_entries";
-                    $sqlwhere   = "WHERE (glossaryid = $glossary->id or sourceglossaryid = $glossary->id)";
-                    $sqlorderby = "ORDER BY $orderby";
+                $sqlorderby = ' ORDER BY gc.name, ge.concept';
+            }
 
-                    $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
-                    $sqllimit   = " LIMIT $offset, $entriesbypage";
-                    $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
-                } else {
-                    $sqlselect  = "SELECT *";
-                    $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories c";
-                    $sqlwhere   = "WHERE (ge.id = c.entryid and c.categoryid = $cat) and
-                                  (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id)";
-                    $sqlorderby = "ORDER BY $orderby";
+        } elseif ($hook == GLOSSARY_SHOW_NOT_CATEGORISED ) { 
 
-                    $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
-                    $sqllimit   = " LIMIT $offset, $entriesbypage";
-                    $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+            $printpivot = 0;
+            $sqlselect = "SELECT concept pivot, ge.*";
+            $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge";
+            $sqlwhere  = "WHERE (glossaryid = '$glossary->id' OR sourceglossaryid = '$glossary->id') AND
+                          (ge.approved != 0 OR ge.userid = $USER->id)";
+
+
+            $sqlorderby = ' ORDER BY concept';
+
+        } else {
+
+            $printpivot = 0;
+            $sqlselect  = "SELECT ce.id, c.name pivot, ge.*";
+            $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories ce, {$CFG->prefix}glossary_categories c";
+            $sqlwhere   = "WHERE ge.id = ce.entryid AND ce.categoryid = $hook AND
+                                 ce.categoryid = c.id AND ge.approved != 0 AND
+                                 (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
+                          (ge.approved != 0 OR ge.userid = $USER->id)";
+
+            $sqlorderby = ' ORDER BY c.name, ge.concept';
+
+        }
+        $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+        $sqllimit = " LIMIT $offset, $entriesbypage";
+        $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+    break;
+    case GLOSSARY_AUTHOR_VIEW:
+
+        $where = '';
+        switch ($CFG->dbtype) {
+        case 'postgres7':
+            $usernamefield = "u.firstname || ' ' || u.lastname";
+            $where = "AND substr(ucase($usernamefield),1," .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
+        break;
+        case 'mysql':
+            $usernamefield = "CONCAT(CONCAT(u.firstname,' '), u.lastname)";
+            $where = "AND left(ucase($usernamefield)," .  strlen($hook) . ") = '$hook'";
+        break;
+        }
+        if ( $hook == 'ALL' ) {
+            $where = '';
+        }
+
+        $sqlselect  = "SELECT ge.id, $usernamefield pivot, u.id uid, ge.*";
+        $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
+        $sqlwhere   = "WHERE ge.userid = u.id  AND
+                             ge.approved != 0
+                             $where AND 
+                             (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id)";
+        $sqlorderby = "ORDER BY $usernamefield, ge.concept";
+
+        $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+        $sqllimit = " LIMIT $offset, $entriesbypage";
+        $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+    break;
+    case GLOSSARY_APPROVAL_VIEW:
+        $fullpivot = 0;
+        $printpivot = 0;
+
+        $where = '';
+        if ($hook != 'ALL' and $hook != 'SPECIAL') {
+            switch ($CFG->dbtype) {
+            case 'postgres7':
+                $where = 'AND substr(ucase(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
+            break;
+            case 'mysql':
+                $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '$hook'";
+            break;
+            }
+        }
+
+        $sqlselect  = "SELECT ge.concept pivot, ge.*";
+        $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
+        $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
+                             ge.approved = 0 $where";
+                             
+        if ( $sortkey ) {
+            $sqlorderby = "ORDER BY $sortkey $sortorder";
+        } else {
+            $sqlorderby = "ORDER BY ge.concept";
+        }
+        
+        $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+        $sqllimit   = " LIMIT $offset, $entriesbypage";
+        $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+    break;
+    case GLOSSARY_DATE_VIEW:
+    case GLOSSARY_STANDARD_VIEW:
+    default:
+        $sqlselect  = "SELECT ge.concept pivot, ge.*";
+        $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
+
+        $where = '';
+        $fullpivot = 0;
+        if ($CFG->dbtype == "postgres7") {
+            $LIKE = "ILIKE";   // case-insensitive
+        } else {
+            $LIKE = "LIKE";
+        }
+
+        switch ( $mode ) {
+        case 'search': 
+            $printpivot = 0;
+            $where = "AND ( ge.concept $LIKE '%$hook%'";
+            if ( $fullsearch ) {
+                $where .= "OR ge.definition $LIKE '%$hook%')";
+            } else {
+                $where .= ")";
+            }
+        break;
+        
+        case 'term': 
+            $printpivot = 0;
+            $sqlfrom .= ", {$CFG->prefix}glossary_alias ga";
+            $where = "AND ge.id = ga.entryid AND ( ge.concept = '$hook' OR ga.alias = '$hook' )";
+        break;
+
+        case 'entry': 
+            $printpivot = 0;
+            $where = "AND ge.id = $hook";
+        break;
+
+        case 'letter': 
+            if ($hook != 'ALL' and $hook != 'SPECIAL') {
+                switch ($CFG->dbtype) {
+                case 'postgres7':
+                    $where = 'AND substr(ucase(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
+                break;
+                case 'mysql':
+                    $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '$hook'";
+                break;
                 }
             }
-            $currentcategory = "";
         break;
-        case GLOSSARY_APPROVAL_VIEW:
-            $allentries = glossary_get_entries_sorted($glossary, 'approved = 0',$orderby);
-            $currentletter = '';
+        }
+        
+        $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) AND
+                             (ge.approved != 0 OR ge.userid = $USER->id)
+                              $where";
+        switch ( $tab ) {
+        case GLOSSARY_DATE_VIEW: 
+            $sqlorderby = "ORDER BY $sortkey $sortorder";
         break;
-        case GLOSSARY_DATE_VIEW:
-            $l = 'ALL';
-        case GLOSSARY_STANDARD_VIEW:
+        
+        case GLOSSARY_STANDARD_VIEW: 
+            $sqlorderby = "ORDER BY ge.concept";
         default:
-            if ($search) { // looking for a term
-                $allentries = glossary_search_entries($searchterms, $glossary, $includedefinition);
-            } elseif ($eid) { // looking for an entry
-                $allentries = get_records_select("glossary_entries", "id = $eid");
-            } elseif ( $l or $sortkey ) {
-                $where = '';
-                if ($l != 'ALL' and $l != 'SPECIAL') {
-                    switch ($CFG->dbtype) {
-                        case 'postgres7':
-                            $where = 'and substr(ucase(concept),1,' .  strlen($l) . ') = \'' . strtoupper($l) . '\'';
-                        break;
-                        case 'mysql':
-                            $where = 'and left(ucase(concept),' .  strlen($l) . ") = '$l'";
-                        break;
-                        default:
-                            $where = '';
-                    }
-                }
-                $sqlselect  = "SELECT *";
-                $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
-                $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) $where";
-                $sqlorderby = "ORDER BY $orderby";
-                $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
-                $sqllimit   = " LIMIT $offset, $entriesbypage";
-                $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
-            }
-            $currentletter = '';
         break;
+        }
+
+        $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+        $sqllimit   = " LIMIT $offset, $entriesbypage";
+        $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+
+    break;
     } 
-    
-    $dumpeddefinitions = 0;
+/*    
+    print_simple_box_start("center","85%");
+    print_object($allentries);
+    print_simple_box_end();
+    $db->debug=false;
+*/
+
+/// printing the entries
+
+    $entriesshown = 0;
+    $currentpivot = '';
+    if ( $hook == 'SPECIAL' ) {
+        $alphabet = explode(",", get_string("alphabet"));
+    }
     if ($allentries) {
+        /// printing the paging links
         $paging = '';
         if ($count > $entriesbypage ) {
             for ($i = 0; ($i*$entriesbypage) < $count  ; $i++   ) {
@@ -294,145 +417,140 @@
                 if ($offset / $entriesbypage == $i) {
                     $paging .= '<strong>' . ($i + 1 ) . '</strong>';
                 } else {
-                    $paging .= "<a href=\"view.php?id=$id&l=$l&search=$search&tab=$tab&cat=$cat&includedefinition=$includedefinition&sortkey=$sortkey&sortored=$sortorder&offset=" . ($i*$entriesbypage) . "\">" . ($i+1) . '</a>';
+                    $paging .= "<a href=\"view.php?id=$id&mode=$mode&hook=$hook&offset=" . ($i*$entriesbypage) . "\">" . ($i+1) . '</a>';
                 }
             }
             $paging  = "<font size=1><center>" . get_string ("jumpto") . " $paging</center></font>";
         }
-        echo "$paging<p>";
+        echo "$paging";
+        glossary_debug($debug,'<div align=right><font size=1>SELECT normal:' . count($allentries) . '</font></div>',0);
+        glossary_debug($debug,'<div align=right><font size=1>SELECT count(*):' . $count . '</font></div>',0);
+
         if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
-            echo '<table border=0 cellspacing=0 width=95% valign=top cellpadding=5><tr><td align=left bgcolor="#FFFFFF">';
+            $printpivot = 0;
         }
+        
         foreach ($allentries as $entry) {
-            $dumptoscreen = 0;
-            $firstletter = strtoupper(substr(ltrim($entry->concept), 0, strlen($l)));
-            if ($l) {
-                if ($l == 'ALL' or $sortkey == 'CREATION' or $sortkey == 'UPDATE' or $firstletter == $l) {
-                    if ($currentletter != $firstletter[0]) {
-                        if ($entry->approved or ($USER->id == $entry->userid and !isteacher($course->id)) or $tab == GLOSSARY_APPROVAL_VIEW) {
-                            $currentletter = $firstletter[0];
-    
-                            if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
-                                if ($dumpeddefinitions > 0) {
-                                    echo '</table></center><p>';
-                                } 
-                                echo "\n<center><table border=0 cellspacing=0 width=95% valign=top cellpadding=5><tr><td align=center bgcolor=\"$THEME->cellheading2\">";
-                            }
-                            if ($l == 'ALL' and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
-                                if ($tab != GLOSSARY_DATE_VIEW) {
-                                    echo "<b>$currentletter</b>";
-                                } 
-                            } 
-    
-                            if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
-                                echo '</center></td></tr></table></center>';
-                                    if ($dumpeddefinitions > 0) {
-                                        echo '<center><table border=0 cellspacing=0 width=95% valign=top cellpadding=5>';
-                                } 
-                            } 
-                        } 
-                    }
-                    $dumptoscreen = 1;
-                } elseif ($l == 'SPECIAL' and ord($firstletter) != ord('Ñ') and 
-                         (ord($firstletter) < ord('A') or ord($firstletter) > ord('Z'))) {
-                    $dumptoscreen = 1;
-                } 
-            } else {
-                if ($tab == GLOSSARY_CATEGORY_VIEW) {
-                    if ($category) {   // if we are browsing a category
-                            $dumptoscreen = 1;
-                    } else { 
-                        if ($cat == GLOSSARY_SHOW_NOT_CATEGORISED) { // Not categorized
-                            if (! record_exists("glossary_entries_categories", "entryid", $entry->id)) {
-                                $dumptoscreen = 1;
-                            } 
-                        } else { // All categories
-                            if ($currentcategory != $entry->CID) {
-                                if ($entry->approved or ($USER->id == $entry->userid and !isteacher($course->id)) or $tab == GLOSSARY_APPROVAL_VIEW) {
-                                    $currentcategory = $entry->CID;
-                                    if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
-                                        if ($dumpeddefinitions > 0) {
-                                            echo '</table></center><p>';
-                                        } 
-                                        echo "\n<center><table border=0 cellspacing=0 width=95% valign=top cellpadding=10><tr><td align=center bgcolor=\"$THEME->cellheading2\">";
-                                    } 
-                                    if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
-                                        echo '<center>';
-                                    }
-                                    echo "<b>$entry->name</b>";
-                                    if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
-                                        echo '</center><p>';
-                                    }
-                                }
-                            } 
-                            $dumptoscreen = 1;
-    
-                            if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
-                                echo '</center></td></tr></table></center>';
-                                if ($dumpeddefinitions > 0) {
-                                    echo '<center><table border=1 cellspacing=0 width=95% valign=top cellpadding=10>';
-                                } 
-                            } 
-    
-                            $dumptoscreen = 1;
-                        } 
-                    } 
-                } else {
-                    $dumptoscreen = 1;
-                } 
+//glossary_debug($debug,"<b>$entry->concept</b>");
+            $pivot = $entry->pivot;
+            if ( !$fullpivot ) {
+                $pivot = $pivot[0];
+            }            
+            
+            /// Validating special cases not covered by the SQL statement
+            $showentry = 1;
+            if ( $mode == 'letter' and $hook != 'SPECIAL' and $hook != 'ALL' ) {
+                if ( substr($entry->concept, 0, strlen($hook)) != $hook ) {
+                    $showentry = 0;
+                }
             } 
-    
-            if ($dumptoscreen) {
-                $dumpeddefinitions++;
-    
+$num=0;
+//glossary_debug($debug,(++$num) . ": $showentry");
+            if ( $hook == 'SPECIAL' ) {
+                $initial = $entry->concept[0];
+                for ($i = 0; $i < count($alphabet); $i++) {
+                    $curletter = $alphabet[$i];
+                    if ( $curletter == $initial ) {
+
+                        $showentry = 0;
+                        break;
+                    }
+                }
+            } 
+//glossary_debug($debug,(++$num) . ": $showentry");
+            if ( $mode == 'cat' and $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
+                if ( record_exists("glossary_entries_categories", "entryid", $entry->id)) {
+                    $showentry = 0;
+                } 
+            }
+//glossary_debug($debug,(++$num) . ": $showentry");
+            if ( $mode != 'approval' ) {
+                if ( !$entry->approved and isteacher($course->id, $entry->userid) ) {
+                    $showentry = 0;
+                }            
+            }
+//glossary_debug($debug,(++$num) . ": $showentry");
+            /// ok, if it's a valid entry.. Print it.
+            if ( $showentry ) {
+            
+                /// if there's a group break
+                if ( $currentpivot != $pivot ) {  
+
+                    // print the group break if apply and necessary
+                    if ( $printpivot )  {
+                        if ( $tableisopen ) {
+                            print_simple_box_end();
+                            $tableisopen = 0;
+                        }
+                        $currentpivot = $pivot;
+
+                        echo '<p>';
+                        echo '<table width="95%" border="0" class="generaltabselected" bgcolor="' . $THEME->cellheading2 . '">';
+
+                        echo '<tr>';
+                        if ( isset($entry->uid) ) {
+                        // printing the user icon if defined (only when browsing authors)
+                            echo '<td align="left">';
+                            
+                            $user = get_record("user","id",$entry->uid);
+                            print_user_picture($user->id, $course->id, $user->picture);
+                        } else {
+                            echo '<td align="center">';
+                        }
+
+                        echo "<strong> $currentpivot</strong>" ;
+                        echo '</td></tr></table>';
+
+                        if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
+                            $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE ) {
+                            print_simple_box_start("center","95%","#ffffff","5","generalbox");
+                            $tableisopen = 1;
+                        }
+                    }
+                }
+                
+                if ( !$tableisopen ) {
+                    if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
+                        $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
+                        print_simple_box_start("center","95%","#ffffff","5","generalbox");
+                        $tableisopen = 1;
+                    }
+                }
+
                 $concept = $entry->concept;
                 $definition = $entry->definition;
     
-                if ($dumpeddefinitions == 1) {
-                    if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
-                        echo '<center><table border=1 cellspacing=0 width=95% valign=top cellpadding=10>';
-                    } 
+                /// highligh the term if necessary
+                if ($mode == 'search') {
+                    $entry->concept = highlight($hook, $concept);
+                    $entry->definition = highlight($hook, $definition);
                 } 
-                if ($search) {
-                    $entry->concept = highlight($search, $concept);
-                    $entry->definition = highlight($search, $definition);
-                } 
-    
-                glossary_print_entry($course, $cm, $glossary, $entry, $tab, $cat);
-                if ($glossary->displayformat != GLOSSARY_FORMAT_SIMPLE) {
-                    echo '<p>';
-                } 
-            } 
-        } 
-    } 
-    if (! $dumpeddefinitions) {
-        print_simple_box_start("center", "70%", "$THEME->cellheading2");
-        if (!$search) {
-            echo "<center>$strnoentries</center>";
-        } else {
-            echo '<center>';
-            print_string("searchhelp");
-            echo '</center>';
-        } 
-        print_simple_box_end();
-    } else {
-        if ( $paging ) {
-            echo "<table border=0><tr><td>$paging</td></tr></table>";
+
+                /// and finally print the entry.
+                glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook);
+                $entriesshown++;
+//                echo '<p>';
+            }
         }
-        switch ($glossary->displayformat) {
-            case GLOSSARY_FORMAT_CONTINUOUS:
-                echo '</td></tr></table><p>';
-            break;
-            case GLOSSARY_FORMAT_SIMPLE:
-                echo '</table></center><p>';
-            break;
-        } 
-    } 
-    
+        if ( $tableisopen ) {
+            if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
+                $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE ) {
+                print_simple_box_end();
+                $tableisopen = 0;
+            }
+        }
+    }
+    if ( !$entriesshown ) {
+        print_simple_box('<center>' . get_string("noentries","glossary") . '</center>',"center","95%");
+    }
+
     echo '</center>';
     glossary_print_tabbed_table_end();
+    if ( $debug ) {
+        echo '<p>';
+        print_simple_box("$sqlselect<br> $sqlfrom<br> $sqlwhere<br> $sqlorderby<br> $sqllimit","center","85%");
+    }
 
 /// Finish the page
     print_footer($course);
-    
 ?>

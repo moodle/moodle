@@ -35,6 +35,12 @@
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
     
+    $navigation = "";
+    if ($course->category) {
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        require_login($course->id);
+    }
+
     print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
         "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),

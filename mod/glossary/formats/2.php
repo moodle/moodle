@@ -1,6 +1,6 @@
 <?PHP  // $Id$
 
-function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $tab="",$cat="") {
+function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1) {
     global $THEME, $CFG, $USER;
 
     $colour = $THEME->cellheading2;
@@ -18,7 +18,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $tab=""
         echo "</td>";
         echo "<td nowrap valign=\"top\" width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
 
-        glossary_print_entry_approval($cm, $entry, $tab);
+        glossary_print_entry_approval($cm, $entry, $mode);
         glossary_print_entry_attachment($entry,"html","right");
 
         echo "<b>";
@@ -35,7 +35,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $tab=""
         echo "\n<td width=100% bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
 
         glossary_print_entry_definition($entry);
-        glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$tab,$cat);
+        glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
 
     } else {
         echo "<center>";

@@ -35,7 +35,7 @@
             }
             
             $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0 and concept != ''","$ebylenght glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
-            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "$cbylenght glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
+            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
                 usort($concepts,'glossary_sort_entries_by_lenght');
@@ -60,7 +60,7 @@
                         }
                         $cm = get_coursemodule_from_instance("glossary", $glossary->id, $courseid);						
                         $title = strip_tags("$glossary->name: " . get_string("category","glossary"). " $category->name");
-                        $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&tab=1&cat=$concept->id\">";
+                        $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=cat&hook=$concept->id\">";
                     } else {
                         $concepttitle = urlencode($concept->concept);
                         $title = strip_tags("$glossary->name: $concepttitle");
@@ -70,6 +70,7 @@
 
                     $currentconcept = str_replace("|", "\|", $concept->concept);
                     $currentconcept = str_replace("'", "\'", $currentconcept);
+                    $currentconcept = str_replace("*", "\*", $currentconcept);
                     if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
                         if ( !$concept->category ) {
                             if ( $aliases = get_records("glossary_alias","entryid",$concept->id) ) {

@@ -7,8 +7,8 @@
     require_variable($mode);  // edit or delete
     optional_variable($go);  // commit the operation?
     optional_variable($entry);  // entry id
-    optional_variable($tab); // browsing entries by categories?
-    optional_variable($cat);         // categoryID
+    require_variable($prevmode);  //  current frame
+    optional_variable($hook);         // pivot id 
 
     $strglossary = get_string("modulename", "glossary");
     $strglossaries = get_string("modulenameplural", "glossary");
@@ -50,7 +50,7 @@
     
     if ($mode == "edit" or $mode == "delete" ) {
         echo "<p>";
-        if ( isteacher($cm->id) or $glossary->studentcanpost ) {
+        if ( isteacher($course->id) or $glossary->studentcanpost ) {
             if ($go) {	// the operation was confirmed.
                 if ( $mode == "delete") {
                     // if it is an imported entry, just delete the relation
@@ -74,8 +74,8 @@
                     print_simple_box_end();
                 }
                 print_footer($course);
-                add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&tab=$tab&cat=$cat", $entry);
-                redirect("view.php?id=$cm->id&tab=$tab&cat=$cat");
+                add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&mode=$prevmode&hook=$hook", $entry);
+                redirect("view.php?id=$cm->id&mode=$prevmode&hook=$hook");
             } else {        // the operation has not been confirmed yet so ask the user to do so
                 if ( $mode == "delete") {				
                     print_simple_box_start("center","40%", "#FFBBBB");
@@ -88,8 +88,8 @@
                         <input type="hidden" name=mode         value="delete">
                         <input type="hidden" name=go       value="1">
                         <input type="hidden" name=entry         value="<?php p($entry) ?>">
-                        <input type="hidden" name=tab value=<?php p($tab) ?>>
-                        <input type="hidden" name=cat=<?php p($cat) ?>>
+                        <input type="hidden" name=prevmode value=<?php p($prevmode) ?>>
+                        <input type="hidden" name=hook     value=<?php p($hook) ?>>
 
                         <input type="submit" value=" <?php print_string("yes")?> ">
                         <input type=button value=" <?php print_string("no")?> " onclick="javascript:history.go(-1);">

@@ -165,6 +165,15 @@ function glossary_upgrade($oldversion) {
                     PRIMARY KEY  (`id`)
                     ) TYPE=MyISAM COMMENT='entries alias'");
     }
+    
+    if ( $oldversion < 2003111500 ) {
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary_categories`
+                     ADD `usedynalink`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '1' AFTER `name`" );
+                     
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary`
+                     ADD `entbypage`  TINYINT(3) UNSIGNED NOT NULL DEFAULT '10' AFTER `globalglossary`" );
+                     
+    }
     return true;
 }
 

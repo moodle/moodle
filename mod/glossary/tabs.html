@@ -12,6 +12,7 @@
     $data[GLOSSARY_STANDARD_VIEW]->caption = get_string("standardview", "glossary");
     $data[GLOSSARY_CATEGORY_VIEW]->caption = get_string("categoryview", "glossary");
     $data[GLOSSARY_DATE_VIEW]->caption = get_string("dateview", "glossary");
+    $data[GLOSSARY_AUTHOR_VIEW]->caption = get_string("authorview","glossary");
     if (!isguest()) {
         if ( isteacher($course->id) or $glossary->studentcanpost  ) {
             $data[GLOSSARY_ADDENTRY_VIEW]->caption = get_string("addentry", "glossary");
@@ -24,16 +25,26 @@
         $data[GLOSSARY_EXPORT_VIEW]->caption = "Export Entries";
 
         $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
-        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&l=$l&cat=$cat&tab=".GLOSSARY_CATEGORY_VIEW;
+        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&tab=".GLOSSARY_CATEGORY_VIEW;
+
+        $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
+        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&mode=$mode&hook=$hook";
+
     }
 
-    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_DATE_VIEW;
+//    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_DATE_VIEW;
+
+    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&mode=date";
+
     if ( $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
         $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id";
         $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_CATEGORY_VIEW;
+
+        $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id";
+        $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&mode=cat";
+        $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&mode=author";
+
     }
-
-
 
     if (isteacher($course->id)) {
         $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");
@@ -43,6 +54,9 @@
         if ($hiddenentries) {
             $data[GLOSSARY_APPROVAL_VIEW]->caption .= "<br><font size=1>(" . count($hiddenentries) . " " . get_string("entries","glossary") . ")</font>";
             $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_APPROVAL_VIEW;
+
+            $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&mode=approval";
+
         } elseif ( $tab == GLOSSARY_APPROVAL_VIEW ) {
             $tab = $framebydefault;
         }
@@ -53,27 +67,32 @@
 /// printing header of the current tab
     echo '<center>';
     glossary_print_tabbed_table_start($data, $tab, $glossary_tCFG);
+    
     switch ($tab) {
         case GLOSSARY_CATEGORY_VIEW:
-            glossary_print_categories_menu($course, $cm, $glossary, $cat, $category);
+            glossary_print_categories_menu($cm, $glossary, $hook, $category);
         break;
         case GLOSSARY_APPROVAL_VIEW:
-            glossary_print_approval_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+            glossary_print_approval_menu($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
         break;
         case GLOSSARY_ADDENTRY_VIEW:
             $search = "";
             $l = "";
-            glossary_print_addentry_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+            glossary_print_addentry_menu($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
+        break;
+        case GLOSSARY_AUTHOR_VIEW:
+            $search = "";
+            glossary_print_author_menu($cm, $glossary, "author", $hook, $sortkey, $sortorder, 'print');
         break;
         case GLOSSARY_IMPORT_VIEW:
             $search = "";
             $l = "";
-            glossary_print_import_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+            glossary_print_import_menu($cm, $glossary, 'import', $hook, $sortkey, $sortorder);
         break;
         case GLOSSARY_EXPORT_VIEW:
             $search = "";
             $l = "";
-            glossary_print_export_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+            glossary_print_export_menu($cm, $glossary, 'export', $hook, $sortkey, $sortorder);
         break;
         case GLOSSARY_DATE_VIEW:
             if (!$sortkey) {
@@ -82,9 +101,11 @@
             if (!$sortorder) {
                 $sortorder = 'desc';
             }
+            glossary_print_alphabet_menu($cm, $glossary, "date", $hook, $sortkey, $sortorder);
+        break;
         case GLOSSARY_STANDARD_VIEW:
         default:
-            glossary_print_alphabet_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+            glossary_print_alphabet_menu($cm, $glossary, "letter", $hook, $sortkey, $sortorder);
             if ($search) {
                 echo "<h3>$strsearch: $search</h3>";
             } 

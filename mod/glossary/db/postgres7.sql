@@ -23,6 +23,7 @@ CREATE TABLE prefix_glossary (
      allowcomments int2 NOT NULL default '0',
      usedynalink int2 NOT NULL default '1',
      globalglossary int2 NOT NULL default '0',
+     entbypage int NOT NULL default '10',
      timecreated int4 NOT NULL default '0',
      timemodified int4 NOT NULL default '0',
      PRIMARY KEY  (id)
@@ -58,6 +59,7 @@ CREATE TABLE prefix_glossary_categories (
      id SERIAL,
      glossaryid int4 NOT NULL default '0',
      name varchar(255) NOT NULL default '',
+     usedynalink int2 NOT NULL default '1',
      PRIMARY KEY  (id)
 );
 

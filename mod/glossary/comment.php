@@ -80,8 +80,28 @@
         echo "<br />";
     }
 
-    glossary_print_entry($course, $cm, $glossary, $entry);
+    echo "<p align=center>";
+    echo "<table class=\"generalbox\" width=\"70%\" align=\"center\" border=\"0\" cellpadding=\"5\" cellspacing=\"0\">";
+	echo "<tr bgcolor=$THEME->cellheading2><td align=center>";
+	    echo "<table border=0 width=100%><tr><td width=33%></td><td width=33% align=center>";
+	    echo get_string("commentson","glossary") . " <b>$entry->concept</b></td>";
+	    echo "<td width=33% align=right>";	
+	    echo "</td></tr></table>";
+			
+	echo "</td></tr>";
+    echo "<tr><TD WIDTH=100% BGCOLOR=\"#FFFFFF\">";
+    if ($entry->attachment) {
+          $entry->course = $course->id;
+          echo "<table border=0 align=right><tr><td>";
+          echo glossary_print_attachments($entry,"html");
+          echo "</td></tr></table>";
+    }
+    echo "<b>$entry->concept</b>: ";
+    echo format_text($entry->definition, $entry->format);
+    echo "</td>";
+    echo "</TR></table>";
 
+    
     echo "<center>";
     echo "<br />";
 

@@ -11,8 +11,8 @@
     optional_variable($file);             // file to import
     optional_variable($catsincl,0);       // Import Categories too?
 
-    optional_variable($lasttab,GLOSSARY_STANDARD_VIEW);
-    optional_variable($l,"ALL");
+    optional_variable($mode,'letter');
+    optional_variable($hook,"ALL");
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -93,6 +93,7 @@
                 $glossary->name                   = addslashes(utf8_decode($xmlglossary['NAME'][0]['#']));
         		$glossary->course                 = $course->id;
                 $glossary->globalglossary         = $xmlglossary['GLOBALGLOSSARY'][0]['#'];
+                $glossary->entbypage              = $xmlglossary['ENTBYPAGE'][0]['#'];
         		$glossary->intro                  = addslashes(utf8_decode($xmlglossary['INTRO'][0]['#']));
                 $glossary->showspecial            = $xmlglossary['SHOWSPECIAL'][0]['#'];
                 $glossary->showalphabet           = $xmlglossary['SHOWALPHABET'][0]['#'];
@@ -219,6 +220,7 @@
                             unset($newcat);
         
                             $newcat->name = $xmlcat['#']['NAME'][0]['#'];
+                            $newcat->usedynalink = $xmlcat['#']['USEDYNALINK'][0]['#'];
                             if ( !$category = get_record("glossary_categories","glossaryid",$glossary->id,"name",$newcat->name) ) {
                                 // Create the category if it does not exist
                                 unset($category);

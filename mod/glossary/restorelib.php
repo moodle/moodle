@@ -283,6 +283,7 @@
             //Now, build the GLOSSARY_CATEGORIES record structure
             $category->glossaryid = $new_glossary_id;
             $category->name = backup_todb($cat_info['#']['NAME']['0']['#']);
+            $category->usedynalink = backup_todb($cat_info['#']['USEDYNALINK']['0']['#']);
 
             $newid = insert_record ("glossary_categories",$category);
 

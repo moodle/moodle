@@ -49,7 +49,13 @@ if (isset($errors)) {
     <table border=0>
         <tr>
         <td align=center width=58%>
-
+<?PHP 
+    if ( !$glossary->usedynalink ) {
+    	echo '<input type="hidden" name=usedynalink value="0">';
+    	echo '<input type="hidden" name=casesensitive value="0">';
+    	echo '<input type="hidden" name=fullmatch value="0">';
+    } else {
+?>
     <table border=0 width=100%>
         <tr><td align=right width=80%><small><?php echo get_string("entryusedynalink","glossary") ?>:</small></td><td width=20%>
     <script>
@@ -94,6 +100,9 @@ if (isset($errors)) {
     <input type="checkbox" name="fullmatch" value=1 <?php p($selected) ?>> <?php helpbutton("fullmatch", strip_tags(get_string("fullmatch", "glossary")), "glossary") ?>
         </td></tr>
     </table>
+<?PHP 
+    }  // end-if !$usedynalink
+?>
 
         </td>
         <td align=center width=42% valign=top>
@@ -164,8 +173,8 @@ if (isset($errors)) {
 	<input type="hidden" name=hfullmatch value="1">
 
 	<input type="hidden" name=id value="<?=$cm->id ?>">
-	<input type="hidden" name=tab value="<?=$tab ?>">
-	<input type="hidden" name=cat value="<?=$cat ?>">
+	<input type="hidden" name=mode value="<?=$mode ?>">
+	<input type="hidden" name=hook value="<?=$hook ?>">
 	<input type="hidden" name=confirm value="1">
 
 	<input type="submit" value="<?php print_string("savechanges") ?>">
