@@ -859,6 +859,7 @@
         $filelist = list_directories_and_files ($basedir);
 
         if (empty($CFG->zip)) {    // Use built-in php-based zip function
+            //echo "<br>Using pclzip";                                    //Debug
             $files = array();
             foreach ($filelist as $file) {
                 //If directory, append "/"
@@ -875,15 +876,18 @@
                 $status = false;
             } 
         } else {                   // Use external zip program
+            //echo "<br>Using external zip";                               //Debug
             $files = "";
             foreach ($filelist as $file) {
                 $files .= basename($file);
                 $files .= " ";
             }
             $command = "cd $basedir ; $CFG->zip -r $name $files";
+            //echo "<br>Executing command: ".$command;                     //Debug
             $status = Exec($command);
         }
 
+        //echo "<br>Status: ".$status;                                     //Debug
         return $status;
 
     } 
