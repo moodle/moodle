@@ -123,7 +123,7 @@
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/patchsaving.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/notify.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/feature/imgresize_gd.php");
-        #include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/moodle_highlight.php");  // problems?
+        include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/moodle_highlight.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/f_fixhtml.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/sitemap.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/moodle_wikidump.php");
