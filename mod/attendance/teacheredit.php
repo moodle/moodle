@@ -170,7 +170,7 @@ if ($form->hours >1) {
 
   $students = attendance_get_course_students($form->course, "u.lastname ASC");
   $i=0;
-  foreach ($students as $student) {
+  if ($students) foreach ($students as $student) {
     echo "<tr><td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->lastname."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\"  style=\"border-top: 1px solid;\">".$student->firstname."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->idnumber."</td>\n";

@@ -529,3 +529,5 @@ function attendance_HeaderingExcel($filename) {
 }
 
 ?>
+
+http://www.alpine-usa.com/company_info/press_release/010804_ipad.html

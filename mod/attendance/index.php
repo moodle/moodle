@@ -57,7 +57,7 @@
         $table->align = array ("LEFT", "LEFT", "LEFT");
     }
 
-    foreach ($attendances as $attendance) {
+   if ($attendances) foreach ($attendances as $attendance) {
         if (!$attendance->visible) {
             //Show dimmed if the mod is hidden
             $link = "<A class=\"dimmed\" HREF=\"view.php?id=$attendance->coursemodule\">$attendance->name</A>";

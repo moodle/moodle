@@ -1,4 +1,4 @@
-<?  // $Id$
+sou<?  // $Id$
 /// This page prints all instances of attendance in a given week
 
     require_once("../../config.php");
@@ -49,7 +49,7 @@ if ($attendances) {
 /// create an array of all the attendance objects for the week
    $numatt=0;
    $numhours=0;
-   foreach ($attendances as $attendance){
+   if ($attendances) foreach ($attendances as $attendance){
      // store the raw attendance object
      $cm = get_coursemodule_from_instance("attendance", $attendance->id, $course->id);
      $attendance->cmid = $cm->id;
@@ -123,7 +123,7 @@ if ($dlsub== "all") {
   $T = get_string("tardyshort","attendance");
   $P = get_string("presentshort","attendance");  
   $row=4;
-  foreach ($students as $student) {
+  if ($students) foreach ($students as $student) {
     $myxls->write_string($row,0,$student->lastname);
     $myxls->write_string($row,1,$student->firstname);
     $studentid=(($student->idnumber != "") ? $student->idnumber : " ");
@@ -188,7 +188,7 @@ if ($dlsub== "all") {
   $T = get_string("tardyshort","attendance");
   $P = get_string("presentshort","attendance");  
   $row=3;
-  foreach ($students as $student) {
+  if ($students) foreach ($students as $student) {
     echo $student->lastname;
     echo "\t".$student->firstname;
     $studentid=(($student->idnumber != "") ? $student->idnumber : " ");
@@ -403,7 +403,7 @@ while (($multipage || $onepage) && (!$endonepage)) {
   $A = get_string("absentshort","attendance");
   $T = get_string("tardyshort","attendance");
   $P = get_string("presentshort","attendance");  
-  foreach ($students as $student) {
+  if ($students) foreach ($students as $student) {
     if (isteacher($course->id)) {
       echo "<tr><td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->lastname."</td>\n";
       echo "<td align=\"left\" nowrap class=\"generaltablecell\"  style=\"border-top: 1px solid;\">".$student->firstname."</td>\n";

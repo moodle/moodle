@@ -101,7 +101,7 @@ function attendance_update_instance($attendance) {
   if ($data = data_submitted()) {      
     // Peel out all the data from variable names.
     $attrec->dayid = $attendance->id;
-    foreach ($data as $key => $val) {
+    if ($data) foreach ($data as $key => $val) {
       $pieces = explode('_',$key);
       if ($pieces[0] == 'student') {
      	  $attrec->userid=$pieces[1];
@@ -186,7 +186,7 @@ function attendance_user_outline($course, $user, $mod, $attendance) {
 		} else { 
 			// build array of all tardies
 			$tarr = array();
- 			foreach ($tardyrecs as $tardyrec) {
+ 			if ($tardyrecs) foreach ($tardyrecs as $tardyrec) {
   			array_push($tarr, $tardyrec->hour);
 	  		$tardystring = $tardystring . ", " . $tardyrec->hour;
 		  }
@@ -204,7 +204,7 @@ function attendance_user_outline($course, $user, $mod, $attendance) {
 		} else { 
 			// build array of all absences
 			$aarr = array();
- 			foreach ($absrecs as $absrec) {
+ 			if ($absrecs) foreach ($absrecs as $absrec) {
  				array_push($aarr, $absrec->hour);
  			}
  			$end=array_pop($aarr);
@@ -270,7 +270,7 @@ function attendance_cron () {
   }
 	$td = attendance_find_today(time());
 	$tm = attendance_find_tomorrow(time());
-	foreach($attendances as $attendance) {
+	if ($attendances) foreach($attendances as $attendance) {
     if (($attendance->day >=$td ) && ($attendance->day < $tm)) {
     echo "Attendance: Taking attendance for $attendance->name\n";
 
