@@ -139,12 +139,12 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
   
   $filestozip=array();
   #-- disable protected email
-  if(count($ewiki_plugins["link_url"])) {
-    foreach($ewiki_plugins["link_url"] as $key => $linkplugin){
-      if($linkplugin == "ewiki_email_protect_link"){
-        unset($ewiki_plugins["link_url"][$key]);
+  if (is_array($ewiki_plugins["link_url"])) {
+      foreach($ewiki_plugins["link_url"] as $key => $linkplugin){
+        if($linkplugin == "ewiki_email_protect_link"){
+          unset($ewiki_plugins["link_url"][$key]);
+        }
       }
-    }
   }
   
   /// HTML-Export
