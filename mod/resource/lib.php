@@ -24,6 +24,14 @@ if (!isset($CFG->resource_popup)) {
     set_config("resource_popup", "");
 }  
 
+if (!isset($CFG->resource_windowsettings)) {
+    set_config("resource_windowsettings", "0");
+}  
+
+if (!isset($CFG->resource_parametersettings)) {
+    set_config("resource_parametersettings", "0");
+}  
+
 $RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
                                  "menubar", "toolbar", "status", "height", "width");
 
@@ -155,6 +163,13 @@ function add_instance($resource) {
         }
     }
 
+    if (isset($resource->parametersettingspref)) {
+        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
+    }
+    if (isset($resource->windowsettingspref)) {
+        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
+    }
+
     return insert_record("resource", $resource);
 }
 
@@ -187,6 +202,13 @@ function update_instance($resource) {
             }
             $resource->popup = "";
         }
+    }
+
+    if (isset($resource->parametersettingspref)) {
+        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
+    }
+    if (isset($resource->windowsettingspref)) {
+        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
     }
 
     return update_record("resource", $resource);

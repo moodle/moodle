@@ -1,13 +1,26 @@
 <script language="javascript">
-    function showhide (id) {
+    function showhide (id, set) {
         divobj = document.getElementById(id);
         butobj = document.getElementById(id+'button');
-        if (divobj.style.display != 'none') {
-            divobj.style.display = 'none';
-            butobj.value = '<?php print_string("showsettings") ?>...';
+        prefobj = document.getElementById(id+'pref');
+        if (set == true) {
+            if (prefobj.value == '1') {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hidesettings") ?>';
+            } else {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showsettings") ?>...';
+            }
         } else {
-            divobj.style.display = 'block';
-            butobj.value = '<?php print_string("hidesettings") ?>';
+            if (prefobj.value == '1') {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showsettings") ?>...';
+                prefobj.value = '0';
+            } else {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hidesettings") ?>';
+                prefobj.value = '1';
+            }
         }
     }
 </script>
@@ -35,6 +48,8 @@
     <td align="right"><p><b><?php print_string("display", "resource") ?>:</b></p></td>
     <td>
         <input type="button" value="hide settings" id="windowsettingsbutton" onClick="javascript: return showhide('windowsettings');" />
+        <input type="hidden" name="windowsettingspref" id="windowsettingspref" 
+               value="<?php echo get_user_preferences('resource_windowsettingspref', $CFG->resource_windowsettings); ?>" />
     </td>
 </tr>
 <tr><td colspan="2">
@@ -116,6 +131,8 @@
     <td align="right"><p><b><?php print_string("parameters", "resource") ?>:</b></p></td>
     <td>
         <input type="button" value="hide settings" id="parametersettingsbutton" onClick="javascript: return showhide('parametersettings');" />
+        <input type="hidden" name="parametersettingspref" id="parametersettingspref" 
+               value="<?php echo get_user_preferences('resource_parametersettingspref', $CFG->resource_parametersettings); ?>" />
         <?php helpbutton("parameters", get_string("parameters", "resource"), "resource", true) ?>
     </td>
 </tr>
@@ -169,6 +186,6 @@ for ($i=0; $i < $this->maxparameters; $i++) {
 
 
 <script language="javascript">
-    showhide('parametersettings');
-    showhide('windowsettings');
+    showhide('parametersettings', true);
+    showhide('windowsettings', true);
 </script>
