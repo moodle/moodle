@@ -2636,9 +2636,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         $numdiscussions = count($discussions);
 
         ///Show the paging bar
-        echo "<center>";
         print_paging_bar($numdiscussions, $page, $forum_numdiscussions, "view.php?f=$forum->id&");
-        echo "</center>";
 
         //Calculate the page "window"
         $pagestart = ($page * $forum_numdiscussions) + 1;
@@ -2780,12 +2778,8 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         echo get_string("olderdiscussions", "forum")."</a> ...</div>";
     }
 
-    //If we want paging
-    if ($page != -1) {
-        ///Show the paging bar
-        echo "<center>";
+    if ($page != -1) { ///Show the paging bar
         print_paging_bar($numdiscussions, $page, $forum_numdiscussions, "view.php?f=$forum->id&");
-        echo "</center>";
     }
 }
 
