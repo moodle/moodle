@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1 Beta +++ (2003082702)
+      // moodle.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['action'] = "操作";
@@ -284,6 +284,7 @@ $string['entercourse'] = "Enterをクリックしてください。";
 $string['enteremailaddress'] = "パスワードをリセットして新しいパスワードを受け取るために、メールアドレスを入力してください";
 $string['error'] = "エラー";
 $string['errortoomanylogins'] = "ログイン失敗回数の上限に達しました。ブラウザを再起動してください。";
+$string['errorwhenconfirming'] = "エラーが発生したため、アカウントの認証は行われませんでした。メール本文のリンクをクリックして、このページにたどり着いた場合は、リンクが記されている行が崩れていないか確認してください。正しくリンクを動作させるためにコピー＆ペーストを使用してください。";
 $string['existing'] = "既存";
 $string['existingadmins'] = "既存の管理者";
 $string['existingcourse'] = "既存のコース";
@@ -685,7 +686,7 @@ $string['success'] = "成功";
 $string['summary'] = "概要";
 $string['summaryof'] = "\$a の概要";
 $string['supplyinfo'] = "個人情報を入力してください";
-$string['teacheronly'] = "\$a のみ";
+$string['teacheronly'] = "\$a のみのため";
 $string['teacherroles'] = "\$a 権限";
 $string['teachers'] = "教師";
 $string['textediting'] = "テキスト編集";
@@ -754,7 +755,8 @@ $string['weekshow'] = "\$a にこの週を表示する";
 $string['welcometocourse'] = "\$a へようこそ";
 $string['welcometocoursetext'] = "\$a->coursename へようこそ!
 
-私達があなたのことを理解出来るように、まず最初にプロフィールのページに個人情報を入力してください。
+受講している皆さんのことを知ることができるように、
+まず最初にプロフィールのページに個人情報を入力してください。
 
   \$a->profileurl";
 $string['whattocallzip'] = "Zipファイルの名称は?";
