@@ -639,6 +639,10 @@ function main_upgrade($oldversion=0) {
         set_config("upgrade", "logs");
     }
 
+    if ($oldversion < 2004020900) {
+        table_column("course", "", "lang", "varchar", "5", "", "", "", "groupmodeforce");
+    }
+
     return $result;
 
 }

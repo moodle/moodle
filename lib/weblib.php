@@ -805,6 +805,11 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 // $usexml - use XML for this page
     global $USER, $CFG, $THEME, $SESSION;
 
+    global $course;                // This is a bit of an ugly hack to be gotten rid of later
+    if (!empty($course->lang)) {
+        $CFG->courselang = $course->lang;
+    }
+
     if (file_exists("$CFG->dirroot/theme/$CFG->theme/styles.php")) {
         $styles = $CFG->stylesheet;
     } else {
@@ -1598,21 +1603,16 @@ function update_categories_button() {
     }
 }
 
-function update_group_button($courseid) {
+function update_group_button($courseid, $groupid) {
 // Prints the editing button on group page
     global $CFG, $USER;
 
     if (isteacheredit($courseid)) {
-        if (!empty($USER->groupediting)) {
-            $string = get_string("turneditingoff");
-            $edit = "off";
-        } else {
-            $string = get_string("turneditingon");
-            $edit = "on";
-        }
+        $string = get_string('editgroupprofile');
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/group.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
-               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+               "<input type=\"hidden\" name=\"group\" value=\"$groupid\" />".
+               "<input type=\"hidden\" name=\"edit\" value=\"on\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
     }
 }
