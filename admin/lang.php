@@ -274,7 +274,7 @@
             echo '</td></tr>';
         }
         echo '</table>';
-        echo '</form>';
+        echo '</form>'; 
 
     }
 
