@@ -29,14 +29,14 @@
 ##
 ## Original Developer:
 ##
-##	Austin David France
-##	Ramesys (Contracting Services) Limited
-##	Mentor House
-##	Ainsworth Street
-##	Blackburn
-##	Lancashire
-##	BB1 6AY
-##	United Kingdom
+##  Austin David France
+##  Ramesys (Contracting Services) Limited
+##  Mentor House
+##  Ainsworth Street
+##  Blackburn
+##  Lancashire
+##  BB1 6AY
+##  United Kingdom
 ##  email: Austin.France@Ramesys.com
 ##
 ## Home Page:    http://richtext.sourceforge.net/
@@ -45,7 +45,7 @@
 ################################################################################
 -->
 <?php
-	include("../../../config.php");
+    include("../../../config.php");
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html style="height: 270px;">
@@ -92,38 +92,38 @@ function Init() {
 var chars = ["!","&quot;","#","$","%","&","'","(",")","*","+","-",".","/","0","1","2","3","4","5","6","7","8","9",":",";","&lt;","=","&gt;","?","@","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","[","]","^","_","`","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","{","|","}","~","&euro;","ƒ","„","…","†","‡","ˆ","\‰","Š","‹","Œ","&lsquo;","&rsquo;","&rsquo;","&ldquo;","&rdquo;","•","&ndash;","&mdash;","˜","™","š","›","œ","Ÿ","&iexcl;","&cent;","&pound;","&pound;","&curren;","&yen;","&brvbar;","&sect;","&uml;","&copy;","&ordf;","&laquo;","&not;","­","&reg;","&macr;","&deg;","&plusmn;","&sup2;","&sup3;","&acute;","&micro;","&para;","&middot;","&cedil;","&sup1;","&ordm;","&raquo;","&frac14;","&frac12;","&frac34;","&iquest;","&Agrave;","&Aacute;","&Acirc;","&Atilde;","&Auml;","&Aring;","&AElig;","&Ccedil;","&Egrave;","&Eacute;","&Ecirc;","&Euml;","&Igrave;","&Iacute;","&Icirc;","&Iuml;","&ETH;","&Ntilde;","&Ograve;","&Oacute;","&Ocirc;","&Otilde;","&Ouml;","&times;","&Oslash;","&Ugrave;","&Uacute;","&Ucirc;","&Uuml;","&Yacute;","&THORN;","&szlig;","&agrave;","&aacute;","&acirc;","&atilde;","&auml;","&aring;","&aelig;","&ccedil;","&egrave;","&eacute;","&ecirc;","&euml;","&igrave;","&iacute;","&icirc;","&iuml;","&eth;","&ntilde;","&ograve;","&oacute;","&ocirc;","&otilde;","&ouml;","&divide;","&oslash;","&ugrave;","&uacute;","&ucirc;","&uuml;","&uuml;","&yacute;","&thorn;","&yuml;"]
 
 function tab(w,h) {
-	var strtab = ["<table border='0' cellspacing='0' cellpadding='0' align='center' bordercolor='#dcdcdc' bgcolor='#C0C0C0'>"]
-	var k = 0;
-	for(var i = 0; i < w; i++) {
-		strtab[strtab.length] = "<tr>";
-		for(var j = 0; j < h; j++) {
-			strtab[strtab.length] = "<td class='chr' width='14' align='center' onClick='getchar(this)' onMouseOver='hover(this,true)' onMouseOut='hover(this,false)'>"+(chars[k]||'')+"</td>";
-			k++;
-		}
-		strtab[strtab.length]="</tr>";
-	}
-	strtab[strtab.length] = "</table>";
-	return strtab.join("\n");
+    var strtab = ["<table border='0' cellspacing='0' cellpadding='0' align='center' bordercolor='#dcdcdc' bgcolor='#C0C0C0'>"]
+    var k = 0;
+    for(var i = 0; i < w; i++) {
+        strtab[strtab.length] = "<tr>";
+        for(var j = 0; j < h; j++) {
+            strtab[strtab.length] = "<td class='chr' width='14' align='center' onClick='getchar(this)' onMouseOver='hover(this,true)' onMouseOut='hover(this,false)'>"+(chars[k]||'')+"</td>";
+            k++;
+        }
+        strtab[strtab.length]="</tr>";
+    }
+    strtab[strtab.length] = "</table>";
+    return strtab.join("\n");
 }
 
 function hover(obj,val) {
-	if (!obj.innerHTML) {
-		obj.style.cursor = "default";
-		return;
-	}
-	obj.style.border = val ? "1px solid black" : "1px solid #dcdcdc";
-	//obj.style.backgroundColor = val ? "black" : "#C0C0C0"
-	//obj.style.color = val ? "white" : "black";
+    if (!obj.innerHTML) {
+        obj.style.cursor = "default";
+        return;
+    }
+    obj.style.border = val ? "1px solid black" : "1px solid #dcdcdc";
+    //obj.style.backgroundColor = val ? "black" : "#C0C0C0"
+    //obj.style.color = val ? "white" : "black";
 }
 function getchar(obj) {
-	if(!obj.innerHTML) return;
-	var sChar = obj.innerHTML || "";
-	__dlg_close(sChar);
-  	return false;
+    if(!obj.innerHTML) return;
+    var sChar = obj.innerHTML || "";
+    __dlg_close(sChar);
+    return false;
 }
 function cancel() {
-	__dlg_close(null);
-  	return false;
+    __dlg_close(null);
+    return false;
 }
 //-->
 </SCRIPT>
@@ -151,7 +151,7 @@ function cancel() {
   </tr>
 <tr><td><table width="100%"><tr><td valign="middle" width="90%"><hr width="100%"></td></tr></table></td></tr>
 <tr><td align="right">
-	<button type="button" onclick="cancel()"><?php print_string("close","editor") ?></button></td></tr>
+    <button type="button" onclick="cancel()"><?php print_string("close","editor") ?></button></td></tr>
 </table>
 </body>
 </body>

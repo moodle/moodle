@@ -15,7 +15,6 @@
 <title><?php print_string("insertimage","editor");?></title>
 <script type="text/javascript" src="popup.js"></script>
 <script type="text/javascript">
-window.resizeTo(730, 540);
 var preview_window = null;
 
 function Init() {

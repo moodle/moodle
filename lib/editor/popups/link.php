@@ -16,7 +16,6 @@
 <meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>">
 <script type="text/javascript" src="popup.js"></script>
 <script language="JavaScript" type="text/javascript">
-window.resizeTo(700, 460);
 
 //I18N = window.opener.HTMLArea.I18N.dialogs;
 

@@ -6,8 +6,8 @@
 #################################################################################
 -->
 <?php 
-	include('../../../config.php'); 
-	$pixpath = "$CFG->pixpath/s";
+    include('../../../config.php'); 
+    $pixpath = "$CFG->pixpath/s";
 
     $fullnames = get_list_of_pixnames();
 
@@ -47,15 +47,15 @@ function Init() {
   __dlg_init();
 }
 function attr(name, value) {
-	if (!value || value == "") return "";
-	return ' ' + name + '="' + value + '"';
+    if (!value || value == "") return "";
+    return ' ' + name + '="' + value + '"';
 }
 function insert(img,text) {
-	if (img) {
-			var strImage = img;
-			var strAlt = text;
-			var imgString = "<img src=\"" + strImage +"\" alt=\"" + strAlt +"\" />";
-	}
+    if (img) {
+            var strImage = img;
+            var strAlt = text;
+            var imgString = "<img src=\"" + strImage +"\" alt=\"" + strAlt +"\" />";
+    }
   // pass data back to the calling window
   __dlg_close(imgString);
   return false;
@@ -124,7 +124,7 @@ body {
   </tr>
 <tr><td><table width="100%"><tr><td valign="middle" width="90%"><hr width="100%"></td></tr></table></td></tr>
 <tr><td align="right">
-	<button type="button" onclick="cancel()"><?php print_string("close","editor") ?></button></td></tr>
+    <button type="button" onclick="cancel()"><?php print_string("close","editor") ?></button></td></tr>
 </table>
 </body>
 </html>
