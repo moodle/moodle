@@ -3423,16 +3423,83 @@ function display_size($size) {
     return $size;
 }
 
-/**
+/*
+ * Convert high ascii characters into low ascii
+ * This code is from http://kalsey.com/2004/07/dirify_in_php/
+ * 
+ */
+function convert_high_ascii($s) {
+    $HighASCII = array(
+        "!\xc0!" => 'A',    # A`
+        "!\xe0!" => 'a',    # a`
+        "!\xc1!" => 'A',    # A'
+        "!\xe1!" => 'a',    # a'
+        "!\xc2!" => 'A',    # A^
+        "!\xe2!" => 'a',    # a^
+        "!\xc4!" => 'Ae',   # A:
+        "!\xe4!" => 'ae',   # a:
+        "!\xc3!" => 'A',    # A~
+        "!\xe3!" => 'a',    # a~
+        "!\xc8!" => 'E',    # E`
+        "!\xe8!" => 'e',    # e`
+        "!\xc9!" => 'E',    # E'
+        "!\xe9!" => 'e',    # e'
+        "!\xca!" => 'E',    # E^
+        "!\xea!" => 'e',    # e^
+        "!\xcb!" => 'Ee',   # E:
+        "!\xeb!" => 'ee',   # e:
+        "!\xcc!" => 'I',    # I`
+        "!\xec!" => 'i',    # i`
+        "!\xcd!" => 'I',    # I'
+        "!\xed!" => 'i',    # i'
+        "!\xce!" => 'I',    # I^
+        "!\xee!" => 'i',    # i^
+        "!\xcf!" => 'Ie',   # I:
+        "!\xef!" => 'ie',   # i:
+        "!\xd2!" => 'O',    # O`
+        "!\xf2!" => 'o',    # o`
+        "!\xd3!" => 'O',    # O'
+        "!\xf3!" => 'o',    # o'
+        "!\xd4!" => 'O',    # O^
+        "!\xf4!" => 'o',    # o^
+        "!\xd6!" => 'Oe',   # O:
+        "!\xf6!" => 'oe',   # o:
+        "!\xd5!" => 'O',    # O~
+        "!\xf5!" => 'o',    # o~
+        "!\xd8!" => 'Oe',   # O/
+        "!\xf8!" => 'oe',   # o/
+        "!\xd9!" => 'U',    # U`
+        "!\xf9!" => 'u',    # u`
+        "!\xda!" => 'U',    # U'
+        "!\xfa!" => 'u',    # u'
+        "!\xdb!" => 'U',    # U^
+        "!\xfb!" => 'u',    # u^
+        "!\xdc!" => 'Ue',   # U:
+        "!\xfc!" => 'ue',   # u:
+        "!\xc7!" => 'C',    # ,C
+        "!\xe7!" => 'c',    # ,c
+        "!\xd1!" => 'N',    # N~
+        "!\xf1!" => 'n',    # n~
+        "!\xdf!" => 'ss'
+    );
+    $find = array_keys($HighASCII);
+    $replace = array_values($HighASCII);
+    $s = preg_replace($find,$replace,$s);
+    return $s;
+}
+
+
+
+/*
  * Cleans a given filename by removing suspicious or troublesome characters
  * Only these are allowed:
  *    alphanumeric _ - .
  *
  * @param string $string  ?
  * @return string
- * @todo Finish documenting this function
  */
 function clean_filename($string) {
+    $string = convert_high_ascii($string);
     $string = eregi_replace("\.\.+", '', $string);
     $string = preg_replace('/[^\.a-zA-Z\d\_-]/','_', $string ); // only allowed chars
     $string = eregi_replace("_+", '_', $string);
