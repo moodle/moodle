@@ -19,8 +19,16 @@
         }
     }
 
+    $frm = false;
+    if (!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,"username=guest")) {
+        /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
+        $frm->username = "guest";
+        $frm->password = "guest";
+    } else {
+        $frm = data_submitted();
+    }
 
-    if ($frm = data_submitted()) {
+    if ($frm) {
         $frm->username = trim(moodle_strtolower($frm->username));
         $user = authenticate_user_login($frm->username, $frm->password);
         update_login_count();
