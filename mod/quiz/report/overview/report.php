@@ -136,14 +136,24 @@ class quiz_report extends quiz_default_report {
         }
 
         if($sort = $table->get_sql_sort()) {
-            if(substr($sort, 0, 1) == '$') {
-                $qnum  = intval(substr($sort, 1));
-                $where.= '('.sql_isnull('qr.question').' OR qr.question = '.$qnum.') AND ';
-                $sort  = ' ORDER BY grade '.(strpos($sort, 'ASC')? 'ASC' : 'DESC');
+            $sortparts = explode(',', $sort);
+            $newsort   = array();
+            $firsttime = true;
+            foreach($sortparts as $sortpart) {
+                $sortpart = trim($sortpart);
+                if(substr($sortpart, 0, 1) == '$') {
+                    if($firsttime) {
+                        $qnum      = intval(substr($sortpart, 1));
+                        $where    .= '('.sql_isnull('qr.question').' OR qr.question = '.$qnum.') AND ';
+                        $newsort[] = 'grade '.(strpos($sortpart, 'ASC')? 'ASC' : 'DESC');
+                        $firsttime = false;
+                    }
+                }
+                else {
+                    $newsort[] = $sortpart;
+                }
             }
-            else {
-                $sort = ' ORDER BY '.$sort;
-            }
+            $sort = ' ORDER BY '.implode(', ', $newsort);
         }
 
         $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uvsa, u.id AS userid, u.firstname, u.lastname, u.picture, qa.id AS attempt, qa.sumgrades, qa.timefinish, qa.timefinish - qa.timestart AS duration ';
