@@ -155,92 +155,97 @@
             }
         }
 
-        $currentweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
+        $showsection = (isteacher($course->id) or $thissection->visible or !$course->hiddensections);
 
-        if (!$thissection->visible) {
-            $colorsides = "bgcolor=\"$THEME->hidden\" class=\"weeklyoutlinesidehidden\"";
-            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontenthidden\"";
-        } else if ($currentweek) {
-            $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"weeklyoutlinesidehighlight\"";
-            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontenthighlight\"";
-        } else {
-            $colorsides = "bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\"";
-            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\"";
-        }
+        if ($showsection) {
 
-        echo "<tr>";
-        echo "<td nowrap $colorsides valign=top width=20>";
-        echo "<p align=center><font size=3><b>$section</b></font></p>";
-        echo "</td>";
+            $currentweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
 
-        echo "<td valign=top $colormain width=\"100%\">";
-
-        if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
-            echo "<p class=\"weeklydatetext\">$weekday - $endweekday ";
-            echo "(".get_string("notavailable").")";
-            echo "</p>";
-            echo "</td>";
-
-        } else {
-
-            echo "<p class=\"weeklydatetext\">$weekday - $endweekday</p>";
-
-            echo format_text($thissection->summary, FORMAT_HTML);
-
-            if (isediting($course->id)) {
-                echo " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
-                     "<img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a><br />";
-            }
-
-            echo '<br clear="all">';
-
-            print_section($course, $thissection, $mods, $modnamesused);
-
-            if (isediting($course->id)) {
-                echo "<div align=right>";
-                popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
-                            $modnames, "section$section", "", "$stradd...");
-                echo "</div>";
-            }
-
-            echo "</td>";
-        }
-        echo "<td nowrap $colorsides valign=top align=center width=10>";
-        echo "<font size=1>";
-
-        if ($displaysection == $section) {
-            echo "<a href=\"view.php?id=$course->id&week=all\" title=\"$strshowallweeks\">".
-                 "<img src=\"$CFG->pixpath/i/all.gif\" height=25 width=16 border=0></a><br />";
-        } else {
-            $strshowonlyweek = get_string("showonlyweek", "", $section);
-            echo "<a href=\"view.php?id=$course->id&week=$section\" title=\"$strshowonlyweek\">".
-                 "<img src=\"$CFG->pixpath/i/one.gif\" height=16 width=16 border=0></a><br />";
-        }
-
-        if (isediting($course->id)) {
-            if ($thissection->visible) {        // Show the hide/show eye
-                echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strweekhide\">".
-                     "<img src=\"$CFG->pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+            if (!$thissection->visible) {
+                $colorsides = "bgcolor=\"$THEME->hidden\" class=\"weeklyoutlinesidehidden\"";
+                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontenthidden\"";
+            } else if ($currentweek) {
+                $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"weeklyoutlinesidehighlight\"";
+                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontenthighlight\"";
             } else {
-                echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strweekshow\">".
-                     "<img src=\"$CFG->pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+                $colorsides = "bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\"";
+                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\"";
             }
 
-            if ($section > 1) {                       // Add a arrow to move section up
-                echo "<a href=\"view.php?id=$course->id&section=$section&move=-1\" title=\"$strmoveup\">".
-                     "<img src=\"$CFG->pixpath/t/up.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+            echo "<tr>";
+            echo "<td nowrap $colorsides valign=top width=20>";
+            echo "<p align=center><font size=3><b>$section</b></font></p>";
+            echo "</td>";
+    
+            echo "<td valign=top $colormain width=\"100%\">";
+    
+            if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
+                echo "<p class=\"weeklydatetext\">$weekday - $endweekday ";
+                echo "(".get_string("notavailable").")";
+                echo "</p>";
+                echo "</td>";
+    
+            } else {
+    
+                echo "<p class=\"weeklydatetext\">$weekday - $endweekday</p>";
+    
+                echo format_text($thissection->summary, FORMAT_HTML);
+    
+                if (isediting($course->id)) {
+                    echo " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
+                         "<img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a><br />";
+                }
+    
+                echo '<br clear="all">';
+    
+                print_section($course, $thissection, $mods, $modnamesused);
+    
+                if (isediting($course->id)) {
+                    echo "<div align=right>";
+                    popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+                                $modnames, "section$section", "", "$stradd...");
+                    echo "</div>";
+                }
+    
+                echo "</td>";
             }
+            echo "<td nowrap $colorsides valign=top align=center width=10>";
+            echo "<font size=1>";
 
-            if ($section < $course->numsections) {    // Add a arrow to move section down
-                echo "<a href=\"view.php?id=$course->id&section=$section&move=1\" title=\"$strmovedown\">".
-                     "<img src=\"$CFG->pixpath/t/down.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+            if ($displaysection == $section) {
+                echo "<a href=\"view.php?id=$course->id&week=all\" title=\"$strshowallweeks\">".
+                     "<img src=\"$CFG->pixpath/i/all.gif\" height=25 width=16 border=0></a><br />";
+            } else {
+                $strshowonlyweek = get_string("showonlyweek", "", $section);
+                echo "<a href=\"view.php?id=$course->id&week=$section\" title=\"$strshowonlyweek\">".
+                     "<img src=\"$CFG->pixpath/i/one.gif\" height=16 width=16 border=0></a><br />";
             }
-
+    
+            if (isediting($course->id)) {
+                if ($thissection->visible) {        // Show the hide/show eye
+                    echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strweekhide\">".
+                         "<img src=\"$CFG->pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+                } else {
+                    echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strweekshow\">".
+                         "<img src=\"$CFG->pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+                }
+    
+                if ($section > 1) {                       // Add a arrow to move section up
+                    echo "<a href=\"view.php?id=$course->id&section=$section&move=-1\" title=\"$strmoveup\">".
+                         "<img src=\"$CFG->pixpath/t/up.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+                }
+    
+                if ($section < $course->numsections) {    // Add a arrow to move section down
+                    echo "<a href=\"view.php?id=$course->id&section=$section&move=1\" title=\"$strmovedown\">".
+                         "<img src=\"$CFG->pixpath/t/down.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+                }
+    
+            }
+    
+            echo "</td>";
+            echo "</tr>";
+            echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
         }
-
-        echo "</td>";
-        echo "</tr>";
-        echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
 
         $section++;
         $weekdate = $nextweekdate;

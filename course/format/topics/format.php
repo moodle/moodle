@@ -167,27 +167,23 @@
             }
         }
 
-        $currenttopic = ($course->marker == $section);
+        $showsection = (isteacher($course->id) or $thissection->visible or !$course->hiddensections);
 
-        if (!$thissection->visible) {
-            $colorsides = "bgcolor=\"$THEME->hidden\" class=\"topicsoutlinesidehidden\"";
-            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontenthidden\"";
-        } else if ($currenttopic) {
-            $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"topicsoutlinesidehighlight\"";
-            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontenthighlight\"";
-        } else {
-            $colorsides = "bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\"";
-            $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\"";
-        }
+        if ($showsection) {
 
-        //If is student and the section isn't visible and hidden topics are invisible
-        if (!isteacher($course->id) and !$thissection->visible and $course->hiddentopics == 1) {
-            $showtopicheader = false; //Don't show section at all
-        } else {
-            $showtopicheader = true; //Show section (full or collapsed)
-        }
+            $currenttopic = ($course->marker == $section);
 
-        if ($showtopicheader) {
+            if (!$thissection->visible) {
+                $colorsides = "bgcolor=\"$THEME->hidden\" class=\"topicsoutlinesidehidden\"";
+                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontenthidden\"";
+            } else if ($currenttopic) {
+                $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"topicsoutlinesidehighlight\"";
+                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontenthighlight\"";
+            } else {
+                $colorsides = "bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\"";
+                $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\"";
+            }
+
             echo "<tr>";
             echo "<td nowrap $colorsides valign=top width=20>";
             echo "<p align=center><font size=3><b>$section</b></font></p>";
