@@ -120,8 +120,8 @@ class graph {
     'y_axis_text_right'  =>  0,            // behaviour same as above for right hand y axis.
 
     'x_offset'           =>  0.5,          // x axis tick offset from y axis as fraction of tick spacing.
-    'y_ticks_colour'     => 'black',       // colour to draw y ticks, or 'none'.
-    'x_ticks_colour'     => 'black',       // colour to draw x ticks, or 'none'.
+    'y_ticks_colour'     => 'black',       // colour to draw y ticks, or 'none'
+    'x_ticks_colour'     => 'black',       // colour to draw x ticks, or 'none'
     'y_grid'             => 'line',        // grid lines. set to 'line' or 'dash'...
     'x_grid'             => 'line',        //   or if set to 'none' print nothing.
     'grid_colour'        => 'grayEE',      // default grid colour.
