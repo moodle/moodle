@@ -188,7 +188,7 @@
                 $value = str_replace("%%","%",$value);
                 $value = htmlspecialchars($value);
 
-                $cellcolour = $value==="" ? $THEME->highlight: $THEME->cellcontent;
+                $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
 
                 if ($editable) {
                     echo "<TD WIDTH=40% BGCOLOR=\"$cellcolour\" VALIGN=TOP>";
