@@ -27,6 +27,7 @@ $string['fetchclienterror'] = 'Votre navigateur web a rencontré une erreur en es
 $string['fetcherror'] = 'Une erreur est survenue lors du chargement de la page web.';
 $string['fetchservererror'] = 'Une erreur est survenue lors du chargement de la page web sur le serveur qui l\'héberge.</p>';
 $string['filename'] = 'Nom du fichier';
+$string['filtername'] = 'Liens automatiques des ressources';
 $string['fulltext'] = 'Texte en format Moodle';
 $string['htmlfragment'] = 'Fragment de code HTML';
 $string['maindirectory'] = 'Dossier principal';
