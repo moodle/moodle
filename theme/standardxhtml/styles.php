@@ -59,8 +59,6 @@ form {
 
 
 
-
-
 .highlight {
     background-color: <?PHP echo $THEME->highlight?>;
 }
@@ -381,6 +379,7 @@ a.dimmed:hover {
 }
 
 .courseboxsummary {
+    font-size: small;
 }
 
 a.autolink:link {

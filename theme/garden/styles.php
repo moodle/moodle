@@ -333,6 +333,7 @@ a.dimmed:hover {
 }
 
 .courseboxsummary {
+    font-size: small;
 }
 
 a.autolink:link {

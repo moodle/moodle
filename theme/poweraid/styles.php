@@ -275,6 +275,7 @@ select {
 }
 
 .courseboxsummary {
+    font-size: small;
 }
 
 a.autolink:link {
