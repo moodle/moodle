@@ -1013,13 +1013,15 @@ function print_side_block($heading="", $content="", $list=NULL, $icons=NULL, $fo
         echo "$content";
     } else {
         echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
-        foreach ($list as $key => $string) {
-            echo "<tr bgcolor=\"$THEME->cellcontent2\">";
-            if ($icons) {
-                echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">".$icons[$key]."</td>";
+        if ($list) {
+            foreach ($list as $key => $string) {
+                echo "<tr bgcolor=\"$THEME->cellcontent2\">";
+                if ($icons) {
+                    echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">".$icons[$key]."</td>";
+                }
+                echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"*\"><font size=\"-1\">$string</font></td>";
+                echo "</tr>";
             }
-            echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"*\"><font size=\"-1\">$string</font></td>";
-            echo "</tr>";
         }
         if ($footer) {
             echo "<tr bgcolor=\"$THEME->cellcontent2\">";
