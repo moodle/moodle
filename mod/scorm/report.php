@@ -45,6 +45,8 @@
 
         if ($course->category) {
             $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        } else {
+            $navigation = '';
         }
     
         $strscorms = get_string("modulenameplural", "scorm");
