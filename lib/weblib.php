@@ -1284,7 +1284,7 @@ function print_grade_menu($courseid, $name, $current) {
     $strscale = get_string("scale");
     $strscales = get_string("scales");
 
-    $scales = get_scales_menu($course->id);
+    $scales = get_scales_menu($courseid);
     foreach ($scales as $i => $scalename) {
         $grades[-$i] = "$strscale: $scalename";
     }
