@@ -126,6 +126,10 @@ global $CFG;
         $result = $result && table_column('block_instance', 'position', 'position', 'varchar', '10', '');
     }
 
+    if ($oldversion < 2004112900 && $result) {
+        execute_sql('UPDATE '.$CFG->prefix.'block_instance SET pagetype = \''.PAGE_COURSE_VIEW.'\' WHERE pagetype = \'\'');
+    }
+
     //Finally, return result
     return $result;
 }
