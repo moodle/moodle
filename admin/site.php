@@ -41,7 +41,7 @@
                 if ($newid = insert_record('course', $form)) {
 
                     // Site created, add blocks for it
-                    $page = MoodlePage::create_object(MOODLE_PAGE_COURSE, $newid);
+                    $page = page_base::create_object(MOODLE_PAGE_COURSE, $newid);
                     blocks_repopulate_page($page); // Return value not checked because you can always edit later
 
                     $cat->name = get_string('miscellaneous');
