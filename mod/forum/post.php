@@ -179,7 +179,6 @@
             $post->subject = "$strre $post->subject";
         }
 
-        forum_set_return();
         unset($SESSION->fromdiscussion);
 
     } else if (isset($edit)) {  // User is editing their own post
@@ -215,7 +214,6 @@
         $post->course  = $course->id;
         $post->forum  = $forum->id;
 
-        forum_set_return();
         unset($SESSION->fromdiscussion);
 
 
