@@ -13,7 +13,6 @@ class CourseBlock_admin extends MoodleBlock {
     }
 
     function get_content() {
-        global $USER, $CFG, $THEME;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -67,7 +66,7 @@ class CourseBlock_admin extends MoodleBlock {
     }
 
     function load_content_for_course() {
-        global $CFG;
+        global $CFG, $USER;
         require_once($CFG->dirroot.'/mod/forum/lib.php');
 
         if (isguest()) {
