@@ -85,7 +85,7 @@
     echo "<LI><B><A HREF=\"site.php\">Site settings</A></B>";
     echo "<LI><B><A HREF=\"../course/edit.php\">Create a new course</A></B>";
     echo "<LI><B><A HREF=\"user.php\">Edit a user's account</A></B>";
-    echo "<LI><B>Assign teachers to courses</B>";
+    echo "<LI><B><A HREF=\"teacher.php\">Assign teachers to courses</A></B>";
     echo "<LI><B>Delete a course</B>";
     echo "<LI><B>View Logs</B>";
     echo "</UL>";
