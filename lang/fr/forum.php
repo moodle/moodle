@@ -24,6 +24,10 @@ $string['delete'] = 'Supprimer';
 $string['deleteddiscussion'] = 'Le sujet de discussion a été supprimé';
 $string['deletedpost'] = 'Le message a été supprimé';
 $string['deletesure'] = 'Êtes-vous certain de vouloir supprimer ce message ?';
+$string['digestmailheader'] = 'Ceci est le courriel quotidien contenant tous les nouveaux messages des forums de $a->sitename. Pour modifier les réglages de votre abonnement, veuillez aller sur $a->userprefs.';
+$string['digestmailprefs'] = 'votre profil utilisateur';
+$string['digestmailsubject'] = 'Courriel quotidien de $a';
+$string['digestsentusers'] = 'Les courriels quotidiens ont été envoyés correctement ˆ $a utilisateurs.';
 $string['discussion'] = 'Discussion';
 $string['discussionmoved'] = 'Cette discussion a été déplacée vers  « $a ».';
 $string['discussionname'] = 'Nom de la discussion';
@@ -88,13 +92,15 @@ $string['postadded'] = 'Votre message a été enregistré.<p>Il vous est possible d
 $string['postincontext'] = 'Voir ce message dans son contexte';
 $string['postmailinfo'] = 'Ceci est une copie du message posté sur le site $a.
 
-Pour ajouter une réponse sur le site, cliquer sur ce lien:';
+Pour ajouter une réponse sur le site, cliquer sur ce lien :';
 $string['postrating1'] = 'Message plutôt détaché';
 $string['postrating2'] = 'Message équilibré, détaché et lié';
 $string['postrating3'] = 'Message plutôt lié';
 $string['posts'] = 'Messages';
+$string['posttoforum'] = 'Écrire dans le forum';
 $string['postupdated'] = 'Votre message a été modifié';
 $string['processingpost'] = 'Enregistrement de l\'article $a';
+$string['processingdigest'] = 'Traitement du courriel quotidien de l\'utilisateur $a';
 $string['prune'] = 'Interrompre';
 $string['pruneheading'] = 'Interrompre et passer à une nouvelle discussion';
 $string['rate'] = 'Note';

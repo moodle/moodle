@@ -141,6 +141,7 @@ $string['configcachetext'] = 'Ce réglage permet d\'accélérer le temps de réponse
 $string['configcountry'] = 'Si vous choisissez un pays ici, il sera sélectionné par défaut lors de la création de nouveaux comptes. Si vous souhaitez forcer les utilisateurs à choisir un pays, laissez ce champ vide.';
 $string['configdebug'] = 'Si vous activez cette option, le paramètre PHP « error_reporting » sera augmenté afin que les avertissements soient affichés. Ceci est utile essentiellement pour les développeurs.';
 $string['configdeleteunconfirmed'] = 'Si vous utilisez l\'authentification par courriel, c\'est la période pendant laquelle les confirmations des utilisateurs sont acceptées. À l\'échéance de cette période, les comptes non-confirmés sont supprimés.';
+$string['configdigestmailtime'] = 'Les utilisateurs désirant recevoir un courriel contenant tous les messages des forums le recevront quotidiennement. Ce réglage détermine l\'heure de la journée à laquelle le courriel sera envoyé (la tâche cron s\'exécutant immédiatement après cette heure enverra le message).';
 $string['configenablerssfeeds'] = 'Activation des canaux RSS pour tout le site. Il est également nécessaire d\'activer les canaux RSS dans les différents modules - voyez l\'option Modules sous Administration -&gt; Configuration.';
 $string['configenablerssfeedsdisabled'] = 'Non disponible, car les canaux RSS ne sont pas activés pour le site. Pour les activer, voyez l\'option Paramètres techniques sous Administration -&gt; Configuration.';
 $string['configerrorlevel'] = 'Choisir la quantité d\'avertissement PHP que vous souhaitez voir afficher. « Normal » est généralement le meilleur choix.';
@@ -308,6 +309,10 @@ $string['emailconfirmationsubject'] = '$a : confirmation de l\'ouverture du comp
 $string['emailconfirmsent'] = '<p>Un message vous a été envoyé à l\'adresse de courriel <b>$a</b>.</p>
 <p>Il contient les instructions pour terminer votre enregistrement.</p>
 <p>Si vous rencontrez des difficultés, contactez l\'administrateur du site.</p>';
+$string['emaildigest'] = 'Forme du courriel quotidien';
+$string['emaildigestoff'] = 'Pas de courriel quotidien (un courriel par message)';
+$string['emaildigestcomplete'] = 'Complet (courriel quotidien avec l\'intégralité des messages)';
+$string['emaildigestsubjects'] = 'Objets (courriel quotidien avec les objets des messages uniquement)';
 $string['emaildisable'] = 'Cette adresse de courriel est désactivée.';
 $string['emaildisplay'] = 'Affichage de l\'adresse de courriel';
 $string['emaildisplaycourse'] = 'Seuls les membres du cours sont autorisés à voir mon adresse de courriel';
