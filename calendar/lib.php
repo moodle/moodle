@@ -760,17 +760,6 @@ function calendar_mktime_check($m, $d, $y, $default = false) {
     }
 }
 
-function calendar_month_name($month) {
-    if(is_int($month)) {
-        // 1 ... 12 integer converted to month name
-        $months = array('january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december');
-        return get_string($months[$month - 1], 'calendar');
-    }
-    else {
-        return get_string(strtolower($month), 'calendar');
-    }
-}
-
 function calendar_wday_name($englishname) {
     return get_string(strtolower($englishname), 'calendar');
 }
