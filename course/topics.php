@@ -157,7 +157,9 @@
             foreach ($thisweekmods as $modnumber) {
                 $mod = $mods[$modnumber];
                 $instancename = get_field("$mod->modname", "name", "id", "$mod->instance");
-                echo "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\"> <A HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instancename</A>";
+                echo "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+                echo " <A TITLE=\"$mod->modfullname\"";
+                echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instancename</A>";
                 if ($USER->editing) {
                     echo make_editing_buttons($mod->id);
                 }
