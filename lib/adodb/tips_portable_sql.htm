@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>Tips on Writing Portable SQL for Multiple Databases for PHP</title>
+</head>
+
+<body bgcolor=white>
+<table width=100% border=0><tr><td><h2>Tips on Writing Portable SQL &nbsp;</h2></td><td>
+ <div align=right><img src="cute_icons_for_site/adodb.gif"></div></td></tr></table>
+ 
+ If you are writing an application that is used in multiple environments and 
+  operating systems, you need to plan to support multiple databases. This article 
+  is based on my experiences with multiple database systems, stretching from 4th 
+  Dimension in my Mac days, to the databases I currently use, which are: Oracle, 
+  FoxPro, Access, MS SQL Server and MySQL. Although most of the advice here applies 
+  to using SQL with Perl, Python and other programming languages, I will focus on PHP and how 
+  the <a href="http://php.weblogs.com/adodb">ADOdb</a> database abstraction library 
+  offers some solutions.<p></p>
+<p>Most database vendors practice product lock-in. The best or fastest way to 
+  do things is often implemented using proprietary extensions to SQL. This makes 
+  it extremely hard to write portable SQL code that performs well under all conditions. 
+  When the first ANSI committee got together in 1984 to standardize SQL, the database 
+  vendors had such different implementations that they could only agree on the 
+  core functionality of SQL. Many important application specific requirements 
+  were not standardized, and after so many years since the ANSI effort began, 
+  it looks as if much useful database functionality will never be standardized. 
+  Even though ANSI-92 SQL has codified much more, we still have to implement portability 
+  at the application level.</p>
+<h3><b>Selects</b></h3>
+<p>The SELECT statement has been standardized to a great degree. Nearly every 
+  database supports the following:</p>
+<p>SELECT [cols] FROM [tables]<br>
+  &nbsp;&nbsp;[WHERE conditions]<br>
+  &nbsp; [GROUP BY cols]<br>
+  &nbsp; [HAVING conditions] <br>
+  &nbsp; [ORDER BY cols]</p>
+<p>But so many useful techniques can only be implemented by using proprietary 
+  extensions. For example, when writing SQL to retrieve the first 10 rows for 
+  paging, you could write...</p>
+<table width="80%" border="1" cellspacing="0" cellpadding="0" align="center">
+  <tr> 
+    <td><b>Database</b></td>
+    <td><b>SQL Syntax</b></td>
+  </tr>
+  <tr> 
+    <td>DB2</td>
+    <td>select * from table fetch first 10 rows only</td>
+  </tr>
+  <tr> 
+    <td>Informix</td>
+    <td>select first 10 * from table</td>
+  </tr>
+  <tr> 
+    <td>Microsoft SQL Server and Access</td>
+    <td>select top 10 * from table</td>
+  </tr>
+  <tr> 
+    <td>MySQL and PostgreSQL</td>
+    <td>select * from table limit 10</td>
+  </tr>
+  <tr> 
+    <td>Oracle</td>
+    <td>select * from (select * from table) where rownum &lt;= 10</td>
+  </tr>
+</table>
+<p>This feature of getting a subset of data is so useful that in the PHP class 
+  library ADOdb, we have a SelectLimit( ) function that allows you to hide the 
+  implementation details within a function that will rewrite your SQL for you:</p>
+<pre>$connection-&gt;SelectLimit('select * from table', 10);
+</pre>
+<p><b>Selects: Fetch Modes</b></p>
+<p>PHP allows you to retrieve database records as arrays. You can choose to have 
+  the arrays indexed by field name or number. However different low-level PHP 
+  database drivers are inconsistent in their indexing efforts. ADOdb allows you 
+  to determine your prefered mode. You set this by setting the variable $ADODB_FETCH_MODE 
+  to either of the constants ADODB_FETCH_NUM (for numeric indexes) or ADODB_FETCH_ASSOC 
+  (using field names as an associative index).</p>
+<p>The default behaviour of ADOdb varies depending on the database you are using. 
+  For consistency, set the fetch mode to either ADODB_FETCH_NUM (for speed) or 
+  ADODB_FETCH_ASSOC (for convenience) at the beginning of your code. </p>
+<p><b>Selects: Counting Records</b></p>
+<p>Another problem with SELECTs is that some databases do not return the number 
+  of rows retrieved from a select statement. This is because the highest performance 
+  databases will return records to you even before the last record has been found. 
+</p>
+<p>In ADOdb, RecordCount( ) returns the number of rows returned, or will emulate 
+  it by buffering the rows and returning the count after all rows have been returned. 
+  This can be disabled for performance reasons when retrieving large recordsets 
+  by setting the global variable $ADODB_COUNTRECS = false. This variable is checked 
+  every time a query is executed, so you can selectively choose which recordsets 
+  to count.</p>
+<p>If you prefer to set $ADODB_COUNTRECS = false, ADOdb still has the PO_RecordCount( 
+  ) function. This will return the number of rows, or if it is not found, it will 
+  return an estimate using SELECT COUNT(*):</p>
+<pre>$rs = $db-&gt;Execute(&quot;select * from table where state=$state&quot;);
+$numrows = $rs-&gt;PO_RecordCount('table', &quot;state=$state&quot;);</pre>
+<p><b>Selects: Locking</b> </p>
+<p>SELECT statements are commonly used to implement row-level locking of tables. 
+  Other databases such as Oracle, Interbase, PostgreSQL and MySQL with InnoDB 
+  do not require row-level locking because they use versioning to display data 
+  consistent with a specific point in time.</p>
+<p>Currently, I recommend encapsulating the row-level locking in a separate function, 
+  such as RowLock($table, $where):</p>
+<pre>$connection-&gt;BeginTrans( );
+$connection-&gt;RowLock($table, $where); </pre>
+<pre><font color=green># some operation</font></pre>
+<pre>if ($ok) $connection-&gt;CommitTrans( );
+else $connection-&gt;RollbackTrans( );
+</pre>
+<p><b>Selects: Outer Joins</b></p>
+<p>Not all databases support outer joins. Furthermore the syntax for outer joins 
+  differs dramatically between database vendors. One portable (and possibly slower) 
+  method of implementing outer joins is using UNION.</p>
+<p>In Microsoft SQL Server a left outer join between two tables t1 and t2 could 
+  look like:</p>
+<pre>SELECT t1.col1, t1.col2, t2.cola <br>  FROM t1 LEFT JOIN t2 ON t1.col = t2.col</pre>
+<p>This can be emulated using:</p>
+<pre>SELECT t1.col1, t1.col2, t2.cola FROM t1, t2 <br>       WHERE t1.col = t2.col 
+   UNION ALL
+SELECT col1, col2, null FROM t1 <br>       WHERE t1.col not in (select distinct col from t2)</pre>
+<h3><b>Inserts</b> </h3>
+<p>When you create records, you need to generate unique id's for each record. 
+  There are two common techniques: (1) auto-incrementing columns and (2) sequences. 
+</p>
+<p>Auto-incrementing columns are supported by MySQL, Sybase and Microsoft Access 
+  and SQL Server. However most other databases do not support this feature. So 
+  for portability, you have little choice but to use sequences. Sequences are 
+  special functions that return a unique incrementing number every time you call 
+  it, suitable to be used as database keys. In ADOdb, we use the GenID( ) function. 
+  It has takes a parameter, the sequence name. Different tables can have different 
+  sequences. </p>
+<pre>$id = $connection-&gt;GenID('sequence_name');<br>$connection-&gt;Execute(&quot;insert into table (id, firstname, lastname) <br>               values ($id, $firstname, $lastname)&quot;);</pre>
+<p>For databases that do not support sequences natively, ADOdb emulates sequences 
+  by creating a table for every sequence.</p>
+<h3><b>Binding</b></h3>
+<p>Binding variables in an SQL statement is another tricky feature. Binding is 
+  useful because it allows pre-compilation of SQL. When inserting multiple records 
+  into a database in a loop, binding can offer a 50% (or greater) speedup. However 
+  many databases such as Access and MySQL do not support binding natively and 
+  there is some overhead in emulating binding. Furthermore, different databases 
+  (specificly Oracle!) implement binding differently. My recommendation is to 
+  use binding if your database queries are too slow, but make sure you are using 
+  a database that supports it like Oracle. </p>
+<p>ADOdb supports portable Prepare/Execute with:</p>
+<pre>$stmt = $db-&gt;Prepare('select * from customers where custid=? and state=?');
+$rs = $db-&gt;Execute($stmt, array($id,'New York'));</pre>
+<h2>DDL</h2>
+<p>There are database design tools such as ERWin or Dezign that allow you to generate 
+  data definition language commands such as ALTER TABLE or CREATE INDEX from Entity-Relationship 
+  diagrams. Other developers such as Manuel Lemos have developed portable XML 
+  based schemas for PHP with Metabase. I think this might suit many developers, 
+  but I prefer to manually define the database tables. This is because the placement 
+  of tables and selection of the different types of indexes has to be planned 
+  based on the number of hard disks and the i/o characteristics of the data. This 
+  can only be done manually. Here are some tuning hints:</p>
+<ul>
+  <li>The most important and frequently used tables deserve to be placed on their 
+    own separate hard disks. </li>
+  <li>Indexes and data should be kept on different hard disks. </li>
+  <li>Transaction logs and rollback segments deserve their own hard disks.</li>
+  <li>Be prepared to waste space. You probably need at least 5 hard disks for 
+    a high-performance database system:<br>
+    - 1 hard disk for the operating system and temporary data, <br>
+    - 1 for data,<br>
+    - 1 for indexes, <br>
+    - 1 for rollback, <br>
+    - 1 for transaction logs.</li>
+</ul>
+<h3>Data Types</h3>
+<p>Stick to a few data types that are available in most databases. Char, varchar 
+  and numeric/number are supported by most databases. Most other data types (including 
+  integer, boolean and float) cannot be relied on being available. I recommend 
+  using char(1) or number(1) to hold booleans. </p>
+<p>Different databases have different ways of representing dates and timestamps/datetime. 
+  ADOdb attempts to display all dates in ISO (YYYY-MM-DD) format. ADOdb also provides 
+  DBDate( ) and DBTimeStamp( ) to convert dates to formats that are acceptable 
+  to that database. Both functions accept Unix integer timestamps and date strings 
+  in ISO format.</p>
+<pre>$date1 = $connection-&gt;DBDate(time( ));<br>$date2 = $connection-&gt;DBTimeStamp('2002-02-23 13:03:33');</pre>
+<p>We also provide functions to convert database dates to Unix timestamps:</p>
+<pre>$unixts = $recordset-&gt;UnixDate('#2002-02-30#'); <font color="green"># MS Access date =&gt; unix timestamp</font></pre>
+<p>The maximum length of a char/varchar field is also database specific. You can 
+  only assume that field lengths of up to 250 characters are supported. This is 
+  normally impractical for web based forum or content management systems. You 
+  will need to be familiar with how databases handle large objects (LOBs). ADOdb 
+  implements two functions, UpdateBlob( ) and UpdateClob( ) that allow you to 
+  update fields holding Binary Large Objects (eg. pictures) and Character Large 
+  Objects (eg. HTML articles):</p>
+<pre><font color=green># for oracle </font>
+$conn->Execute('INSERT INTO blobtable (id, blobcol) VALUES (1,empty_blob())'); 
+$conn->UpdateBlob('blobtable','blobcol',$blobvalue,'id=1'); 
+   
+<font color=green># non-oracle databases</font>
+$conn->Execute('INSERT INTO blobtable (id, blobcol) VALUES (1, null)'); 
+$conn->UpdateBlob('blobtable','blobcol',$blobvalue,'id=1');
+</pre>
+<p>Null handling is another area where differences can occur. In general, I avoid 
+  using nulls except for dates and default all my numeric and character fields 
+  to 0 or the empty string. This maintains consistency with PHP, where empty strings 
+  and zero are treated as equivalent. However if your database has significant 
+  amounts of missing or unknown data, using nulls might be a good idea.
+<h3><b>Stored Procedures</b></h3>
+<p>Stored procedures are another problem area. Some databases allow recordsets 
+  to be returned in a stored procedure (Microsoft SQL Server and Sybase), and 
+  others only allow output parameters to be returned. Stored procedures sometimes 
+  need to be wrapped in special syntax. For example, Oracle requires such code 
+  to be wrapped in an anonymous block with BEGIN and END. Also internal sql functions 
+  such as +, ||, TRIM( ), SUBSTR( ) or INSTR( ) vary between vendors. </p>
+<p>An example of how to call a stored procedure with 2 parameters and 1 return 
+  value follows:</p>
+<pre>	switch ($db->databaseType) {
+	case '<font color="#993300">mssql</font>':
+	  $sql = <font color="#000000"><font color="#993333">'<font color="#993300">SP_RUNSOMETHING</font>'</font></font>; break;
+	case '<font color="#993300">oci8</font>':
+	  $sql = 
+<font color="#993300">	  </font><font color="#000000"><font color="#993300">&quot;declare RETVAL integer;begin :RETVAL := </font><font color="#000000"><font color="#993333"><font color="#993300">SP_RUNSOMETHING</font></font></font><font color="#993300">(:myid,:group);end;&quot;;
+</font>	  break;</font>
+	default:
+	  die('<font color="#993300">Unsupported feature</font>');
+	}
+<font color="#000000"><font color="green">	# @RETVAL = SP_RUNSOMETHING @myid,@group</font>
+	$stmt = $db-&gt;PrepareSP($sql);    <br>	$db-&gt;Parameter($stmt,$id,'<font color="#993300">myid</font>'); 
+	$db-&gt;Parameter($stmt,$group,'<font color="#993300">group</font>');
+	<font color="green"># true indicates output parameter<br>	</font>$db-&gt;Parameter($stmt,$ret,'<font color="#993300">RETVAL</font>',true); 
+	$db-&gt;Execute($stmt); </font></pre>
+<p>As you can see, the ADOdb API is the same for both databases. But the stored 
+  procedure SQL syntax is quite different between databases and is not portable, 
+  so be forewarned! However sometimes you have little choice as some systems only 
+  allow data to be accessed via stored procedures. This is when the ultimate portability 
+  solution might be the only solution: <i>treating portable SQL as a localization 
+  exercise...</i></p>
+<h3><b>SQL as a Localization Exercise</b></h3>
+<p> In general to provide real portability, you will have to treat SQL coding 
+  as a localization exercise. In PHP, it has become common to define separate 
+  language files for English, Russian, Korean, etc. Similarly, I would suggest 
+  you have separate Sybase, Intebase, MySQL, etc files, and conditionally include 
+  the SQL based on the database. For example, each MySQL SQL statement would be 
+  stored in a separate variable, in a file called 'mysql-lang.inc.php'.</p>
+<pre>$sqlGetPassword = '<font color="#993300">select password from users where userid=%s</font>';
+$sqlSearchKeyword = &quot;<font color="#993300">SELECT * FROM articles WHERE match (title,body) against (%s</font>)&quot;;</pre>
+<p>In our main PHP file:</p>
+<pre><font color=green># define which database to load...</font>
+<b>$database = '<font color="#993300">mysql</font>';
+include_once(&quot;<font color="#993300">$database-lang.inc.php</font>&quot;);</b>
+
+$db = NewADOConnection($database);
+$db->PConnect(...) or die('<font color="#993300">Failed to connect to database</font>');
+
+<font color=green># search for a keyword $word</font>
+$rs = $db-&gt;Execute(sprintf($sqlSearchKeyWord,$db-&gt;qstr($word)));</pre>
+<p>Note that we quote the $word variable using the qstr( ) function. This is because 
+  each database quotes strings using different conventions.</p>
+<p>
+<h3>Final Thoughts</h3>
+<p>The best way to ensure that you have portable SQL is to have your data tables designed using 
+sound principles. Learn the theory of normalization and entity-relationship diagrams and model 
+your data carefully. Understand how joins and indexes work and how they are used to tune performance.
+<p> Visit the following page for more references on database theory and vendors: 
+  <a href="http://php.weblogs.com/sql_tutorial">http://php.weblogs.com/sql_tutorial</a> 
+<p>
+<font size=1>(c) 2002 John Lim.</font>
+
+</body>
+</html>
