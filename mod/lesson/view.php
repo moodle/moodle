@@ -1565,7 +1565,7 @@
             }
         } /// CDC-FLAG /// end of else from above tree code!!!
         
-            echo "</table></center></form>\n";
+            echo "</table></form>\n";
             /// CDC-FLAG ///
             // NoticeFix both viewAll's
             if(isset($_GET['display']) && !isset($_GET['viewAll'])) {
