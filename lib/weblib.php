@@ -512,7 +512,8 @@ function clean_text($text, $format) {
         case FORMAT_WIKI:
             $text = strip_tags($text, $ALLOWED_TAGS);
             $text = str_ireplace("javascript:", " ", $text);           // Remove javascript: label
-            $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", " ", $text);  // Remove javascript triggers
+            $text = eregi_replace("([^a-z])language([[:space:]]*)=", " ", $text);    // Remove javascript/VBScript
+            $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", " ", $text);  // Remove script events
             return $text;
 
         case FORMAT_PLAIN:
