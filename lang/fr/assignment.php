@@ -4,7 +4,7 @@ $string['allowresubmit'] = 'Permettre plusieurs remises d\'un devoir';
 $string['assignmentdetails'] = 'Détails du devoir';
 $string['assignmentmail'] = '$a->teacher a écrit un feedback concernant votre devoir « $a->assignment »
 
-Vous pouvez le consulter en annexe à votre devoir:
+Vous pouvez le consulter en annexe à votre devoir :
 
 $a->url';
 $string['assignmentmailhtml'] = '$a->teacher a écrit un feedback concernant votre devoir rendu « <em>$a->assignment</em> »<br /><br />
@@ -17,6 +17,13 @@ $string['description'] = 'Description';
 $string['duedate'] = 'À rendre le';
 $string['duedateno'] = 'Pas de date de retour';
 $string['early'] = 'en avance de $a';
+$string['emailteachers'] = 'Envoyer aux enseignants les alertes par courriel';
+$string['emailteachermail'] = '$a->username a modifié son travail remis pour le devoir « $a->assignment ».
+
+Ce travail est disponible ici :
+
+$a->url';
+$string['emailteachermailhtml'] = '$a->username a modifié son travail remis pour le devoir «&nbsp;<em>$a->assignment</em>&nbsp;»<br /><br />Le travail remis est <a href=\"$a->url\">disponible sur le site web</a>.';
 $string['existingfiledeleted'] = 'Le fichier $a a été supprimé';
 $string['failedupdatefeedback'] = 'Impossible d\'enregistrer le feedback pour $a';
 $string['feedback'] = 'Feedback';
