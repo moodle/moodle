@@ -506,7 +506,7 @@
 
             //Now, build the QUIZ_RANDOMSAMATCH record structure
             $randomsamatch->question = $new_question_id;
-            $randomsamatch->choose = backup_todb($mul_info['#']['CHOOSE']['0']['#']);
+            $randomsamatch->choose = backup_todb($ran_info['#']['CHOOSE']['0']['#']);
 
             //The structure is equal to the db, so insert the quiz_randomsamatch
             $newid = insert_record ("quiz_randomsamatch",$randomsamatch);
