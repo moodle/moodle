@@ -17,7 +17,7 @@ if (isset($errors)) {
     <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="5">
         <tr>
           <td width="150" align=right><p><b><?php echo get_string("concept","glossary") ?>:</b></p></td>
-          <td><input type="text" name="concept" size=30 value="<?php p($newentry->concept) ?>"></td>
+          <td><input type="text" name="concept" size=30 value="<?php p(clean_text($newentry->concept)) ?>"></td>
         </tr>
         <tr>
           <td align="right"><p><b><?php echo get_string("categories","glossary") ?>:</b></p></td>
@@ -35,7 +35,7 @@ if (isset($errors)) {
                         echo "selected " ;
                     }
                 }
-                echo "value=\"$category->id\">$category->name</option>\n";
+                echo "value=\"$category->id\">".clean_text($category->name)."</option>\n";
             }
         }
         echo "</select>\n";
@@ -53,7 +53,7 @@ if (isset($errors)) {
             ?></b></p>
           </td>
           <td valign="top">
-             <textarea rows="2" name="aliases" cols="20"><?php p($newentry->aliases) ?></textarea>
+             <textarea rows="2" name="aliases" cols="20"><?php p(clean_text($newentry->aliases)) ?></textarea>
           </td>
         </tr>
         <tr>
