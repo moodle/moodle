@@ -1072,7 +1072,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     /// The efficient and transaction-safe strategy is to 
     /// move the sequence forward first, and make the insert
     /// with an explicit id.
-    if ( !isset($dataobject->{$primarykey}) 
+    if ( empty($dataobject->{$primarykey}) 
          && $CFG->dbtype === 'postgres7'      
          && $returnid == true ) {        
         if ($nextval = (int)get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
@@ -1100,7 +1100,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
 /// We already know the record PK if it's been passed explicitly,
 /// or if we've retrieved it from a sequence (Postgres).
-    if (isset($dataobject->{$primarykey})) {
+    if (!empty($dataobject->{$primarykey})) {
         return $dataobject->{$primarykey};
     }
 
