@@ -1,5 +1,8 @@
-<!-- This page defines the form to create or edit an instance of this module -->
-<!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
+<?php 
+    if (!isset($form->content)) {
+        $form->content = '';
+    }
+?>
 
 <form name="form" method="post" action="mod.php">
 <center>
