@@ -627,7 +627,7 @@
         //Now, if requested, the user_data
         if ($user_data) {
             //Grades 
-            $info[3][0] = get_string("grades","quiz"); 
+            $info[3][0] = get_string("grades"); 
             if ($ids = quiz_grade_ids_by_course ($course)) { 
                 $info[3][1] = count($ids);
             } else {
