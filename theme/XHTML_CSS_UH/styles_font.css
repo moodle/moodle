@@ -52,6 +52,9 @@ body {
     font-size:0.9em;
     text-align:left;
 }
+#admin-lang FORM {
+    font-size:0.9em;
+}
 .course {
     text-align:left;
 }

@@ -667,11 +667,20 @@ TABLE.formtable TD {
     border-style:solid;
 }
 
-#containerPageActions {
+#wikiPageActions {
     position:relative;
     width:auto !important;
     margin:auto;
 }
+
+#wikiPageActions td {
+    text-align:left !important;
+}
+#wikiPageActions INPUT {
+    padding:0px;
+    margin:0px;
+}
+
 .mwiki,
 .glossary,
 .forum {
