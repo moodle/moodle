@@ -2,7 +2,7 @@
       // Display the whole course as "weeks" made of of modules
       // Included from "view.php"
 
-    include("../mod/forum/lib.php");
+    include_once("../mod/forum/lib.php");
 
     if (! $sections = get_all_sections($course->id)) {
         $section->course = $course->id;   // Create a default section.

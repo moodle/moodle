@@ -2,8 +2,8 @@
     // social.php - course format featuring social forum
     //              included from view.php
     
-    include("../mod/forum/lib.php");
-    include("../mod/reading/lib.php"); 
+    include_once("../mod/forum/lib.php");
+    include_once("../mod/reading/lib.php"); 
 ?>
 
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
