@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 unstable development (2004091100)
+      // assignment.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['allowresubmit'] = '再提出を許可する';
@@ -42,10 +42,10 @@ $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Japanese';
 $string['typeoffline'] = 'オフライン課題';
 $string['typeuploadsingle'] = 'ファイルのアップロード';
-$string['uploadbadname'] = '不正な文字がファイル名に含まれているため、このファイルはアップロード出来ません';
+$string['uploadbadname'] = '不正な文字がファイル名に含まれているため、このファイルはアップロードできません';
 $string['uploadedfiles'] = 'ファイルをアップロードしました';
 $string['uploaderror'] = 'サーバにファイルを保存中にエラーが発生しました';
-$string['uploadfailnoupdate'] = 'ファイルはアップロードされましたが提出物の更新は出来ませんでした!';
+$string['uploadfailnoupdate'] = 'ファイルはアップロードされましたが提出物の更新はできませんでした!';
 $string['uploadfiletoobig'] = '申し訳ございません、ファイルサイズが制限を越えています($a バイト以内)';
 $string['uploadnofilefound'] = 'ファイルが見つかりませんでした - 実際に存在するファイルですか?';
 $string['uploadnotregistered'] = '\'$a\' は正常にアップロードされましたが登録されませんでした!';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.5 unstable development (2004091100)
+      // appointment.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['allowresubmit'] = '再提出を許可';
@@ -9,7 +9,7 @@ $string['appointmentname'] = '予約名';
 $string['date'] = '予約日';
 $string['description'] = '説明';
 $string['early'] = '$a 早い';
-$string['failedupdatefeedback'] = 'ユーザ $a の提出物に対するフィードバックを更新出来ませんでした。';
+$string['failedupdatefeedback'] = 'ユーザ $a の提出物に対するフィードバックを更新できませんでした。';
 $string['feedback'] = 'フィードバック';
 $string['feedbackupdated'] = '$a の提出物に対するフィードバックが更新されました。';
 $string['late'] = '$a 遅い';
@@ -33,7 +33,7 @@ $string['timeend'] = '予約終了';
 $string['timestart'] = '予約開始';
 $string['typeoffline'] = 'オフライン活動';
 $string['typeuploadsingle'] = 'ファイルのアップロード';
-$string['uploadbadname'] = 'ファイル名に不適切な文字が含まれている為、アップロード出来ませんでした。';
+$string['uploadbadname'] = 'ファイル名に不適切な文字が含まれている為、アップロードできませんでした。';
 $string['uploadedfiles'] = 'アップロードされたファイル';
 $string['uploaderror'] = 'ファイルをサーバに保存している最中にエラーが発生しました。';
 $string['uploadfailnoupdate'] = 'ファイルは正常にアップロードされましたが、あなたの提出物は更新されませんでした!';

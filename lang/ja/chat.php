@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 unstable development (2004091100)
+      // chat.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['beep'] = 'ビープ';
@@ -7,7 +7,7 @@ $string['chatintro'] = '紹介文';
 $string['chatname'] = 'チャットルーム名';
 $string['chatreport'] = 'チャットセッション';
 $string['chattime'] = '次回のチャットタイム';
-$string['configmethod'] = '通常のチャットメソッドでは、クライアントは定期的にサーバにアクセスして内容を更新します。このメソッドは設定を必要とせず、どこでも使うことが出来ますが、チャット参加者が多くなればサーバに対する多大な負担が生じます。サーバデーモンを使用する場合は、Unixのシェルアクセスが必要ですが、軽快なチャット環境を提供することが出来ます。';
+$string['configmethod'] = '通常のチャットメソッドでは、クライアントは定期的にサーバにアクセスして内容を更新します。このメソッドは設定を必要とせず、どこでも使うことができますが、チャット参加者が多くなればサーバに対する多大な負担が生じます。サーバデーモンを使用する場合は、Unixのシェルアクセスが必要ですが、軽快なチャット環境を提供することができます。';
 $string['configoldping'] = 'ユーザからの応答が無くなってから、どれくらいの時間で退室したと見なしますか?';
 $string['configrefreshroom'] = 'どのくらいのタイミング(秒数)でチャットルームをリフレッシュしますか?この通知を小さくすればチャットルームはレスポンスが良いように見えますが、多くの人がチャットをする場合、サーバにかかる負担が大きくなります。';
 $string['configrefreshuserlist'] = 'どのくらいのタイミング(秒数)でユーザリストをリフレッシュしますか?';
@@ -39,7 +39,7 @@ $string['modulename'] = 'チャット';
 $string['modulenameplural'] = 'チャット';
 $string['neverdeletemessages'] = 'メッセージを削除しない';
 $string['nextsession'] = '次のスケジュールセッション';
-$string['noguests'] = 'ゲストはこのチャットを利用出来ません。';
+$string['noguests'] = 'ゲストはこのチャットを利用できません。';
 $string['nomessages'] = 'メッセージがありません。';
 $string['repeatdaily'] = '毎日同じ時間に';
 $string['repeatnone'] = '繰り返し無し - 指定した時間にのみ表示';
@@ -49,7 +49,7 @@ $string['savemessages'] = '保存するメッセージ数';
 $string['seesession'] = 'このセッションを見る';
 $string['sessions'] = 'チャットセッション';
 $string['strftimemessage'] = '%%H:%%M';
-$string['studentseereports'] = '全ての人が過去のセッションを見ることが出来る';
+$string['studentseereports'] = '全ての人が過去のセッションを見ることができる';
 $string['thischarset'] = 'EUC-JP';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Japanese';

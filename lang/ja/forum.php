@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 unstable development (2004091100)
+      // forum.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -7,7 +7,7 @@ $string['addanewtopic'] = 'トピックを追加';
 $string['allowchoice'] = '選択可能';
 $string['allowdiscussions'] = '$a  はこのフォーラムに投稿可能ですか?';
 $string['allowratings'] = '投稿を評価可能にしますか?';
-$string['allowsdiscussions'] = 'このフォーラムでは一人1件のトピックを開始することが出来ます。';
+$string['allowsdiscussions'] = 'このフォーラムでは一人1件のトピックを開始することができます。';
 $string['anyfile'] = '全てのファイル';
 $string['attachment'] = '添付ファイル';
 $string['bynameondate'] = '$a->date - $a->name の投稿';
@@ -16,11 +16,11 @@ $string['configenablerssfeeds'] = 'ここでは全フォーラムのRSS使用設定を行います。
 $string['configlongpost'] = 'この文字長以上の長さ(HTMLは含まない)は長いと考えられます。';
 $string['configmanydiscussions'] = 'フォーラムページに表示されるディスカッションの最大数';
 $string['configmaxbytes'] = '全てのフォーラム添付ファイルに関するデフォルトの最大サイズ(コース制限及び他のローカル設定に従います)';
-$string['configreplytouser'] = 'フォーラムの投稿がメール送信される場合、受信者がフォーラムを通さずに個人的に返信できるように、メールにユーザメールアドレスを表示した方が良いですか?　\'Yes\'に設定した場合でも、ユーザはプロフィール内のメールアドレスを隠すことが出来ます。';
+$string['configreplytouser'] = 'フォーラムの投稿がメール送信される場合、受信者がフォーラムを通さずに個人的に返信できるように、メールにユーザメールアドレスを表示した方が良いですか?　\'Yes\'に設定した場合でも、ユーザはプロフィール内のメールアドレスを隠すことができます。';
 $string['configshortpost'] = 'この文字長以下の長さ(HTMLは含まない)は短いと考えられます。';
-$string['couldnotadd'] = 'エラーのため投稿出来ませんでした。';
-$string['couldnotdeleteratings'] = '申し訳ございません、評価済みのため削除出来ませんでした。';
-$string['couldnotdeletereplies'] = '申し訳ございません、返信済みのため削除出来ませんでした。';
+$string['couldnotadd'] = 'エラーのため投稿できませんでした。';
+$string['couldnotdeleteratings'] = '申し訳ございません、評価済みのため削除できませんでした。';
+$string['couldnotdeletereplies'] = '申し訳ございません、返信済みのため削除できませんでした。';
 $string['couldnotupdate'] = '未確認エラーのため投稿を更新できませんでした。';
 $string['delete'] = '削除';
 $string['deleteddiscussion'] = 'ディスカッショントピックが削除されました。';
@@ -41,7 +41,7 @@ $string['eachuserforum'] = 'トピック一人1件のフォーラム';
 $string['edit'] = '編集';
 $string['editing'] = '編集';
 $string['emptymessage'] = '投稿に異常があります。空白のままか添付ファイルのサイズが制限を越えています。変更は保存されませんでした。';
-$string['everyonecanchoose'] = 'ユーザはメール通知登録出来ます';
+$string['everyonecanchoose'] = 'ユーザはメール通知登録できます';
 $string['everyoneissubscribed'] = 'ユーザはメール通知登録されます';
 $string['existingsubscribers'] = 'メール通知登録ユーザ';
 $string['forcesubscribe'] = 'ユーザを強制メール通知登録する';
@@ -91,7 +91,7 @@ $string['openmode1'] = '新しい投稿不可、返信可';
 $string['openmode2'] = '新しい投稿可、返信可';
 $string['parent'] = '親記事を表示する';
 $string['parentofthispost'] = 'この投稿の親記事';
-$string['postadded'] = '投稿が追加されました。<P>更新したい場合は $a 編集出来ます。';
+$string['postadded'] = '投稿が追加されました。<P>更新したい場合は $a 編集できます。';
 $string['postincontext'] = '関連した投稿を見る';
 $string['postmailinfo'] = 'これは $a ウェブサイトに投稿された投稿のコピーです。返信をウェブサイト経由で追加する場合は、このリンクをクリックしてください:';
 $string['postrating1'] = '主に分離認識の傾向がある';
@@ -110,9 +110,9 @@ $string['rate'] = '評価';
 $string['rating'] = '評価';
 $string['ratingeveryone'] = '誰でも投稿を評価できる';
 $string['ratingno'] = '評価無し';
-$string['ratingonlyteachers'] = '$a のみが投稿を評価出来る';
-$string['ratingpublic'] = '$a は全員の評価を閲覧出来る';
-$string['ratingpublicnot'] = '$a は自分の評価のみ閲覧出来る';
+$string['ratingonlyteachers'] = '$a のみが投稿を評価できる';
+$string['ratingpublic'] = '$a は全員の評価を閲覧できる';
+$string['ratingpublicnot'] = '$a は自分の評価のみ閲覧できる';
 $string['ratings'] = '評価';
 $string['ratingssaved'] = '評価が保存されました';
 $string['ratingsuse'] = '評価を使用する';

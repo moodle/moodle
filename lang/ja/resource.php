@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 unstable development (2004091100)
+      // resource.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -19,7 +19,7 @@ $string['configpopupscrollbars'] = 'ポップアップウインドウをデフォルトでスクロー
 $string['configpopupstatus'] = 'ポップアップウインドウにデフォルトでステータスバーを表示しますか?';
 $string['configpopuptoolbar'] = 'ポップアップウインドウにデフォルトでツールバーを表示しますか?';
 $string['configpopupwidth'] = '新しいポップアップウインドウのデフォルトの幅は?';
-$string['configsecretphrase'] = 'このシークレットワードは、リソースをパラメータとして送信する時に使用する暗号コードを生成する為に使用されます。暗号コードは、ユーザのIPアドレスとシークレットワードを結びつけてmd5により生成されます。これにより、リソースが高度にセキュリティ対策をとられた通信を実現することが出来ます。';
+$string['configsecretphrase'] = 'このシークレットワードは、リソースをパラメータとして送信する時に使用する暗号コードを生成する為に使用されます。暗号コードは、ユーザのIPアドレスとシークレットワードを結びつけてmd5により生成されます。これにより、リソースが高度にセキュリティ対策をとられた通信を実現することができます。';
 $string['configwebsearch'] = 'URLをウェブページまたはリンクとして追加する時、このロケーションは、ユーザがURLを検索する為のヘルプとして提供されます。';
 $string['configwindowsettings'] = 'ここでは、新しいリソースを登録する際にフォームに表示されるウインドウ設定に関する値を登録します。最初にリソースを登録した後、この値は個々のユーザのデフォルトとなります。';
 $string['directlink'] = 'このファイルをダイレクトリンクする';

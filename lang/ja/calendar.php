@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 unstable development (2004091100)
+      // calendar.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['calendar'] = 'カレンダー';
@@ -17,7 +17,7 @@ $string['durationminutes'] = '期間(分)';
 $string['durationnone'] = '期間無し';
 $string['durationuntil'] = '終了日:';
 $string['editevent'] = 'イベントの編集';
-$string['errorbeforecoursestart'] = 'コースの開始日以前にはイベントを登録出来ません';
+$string['errorbeforecoursestart'] = 'コースの開始日以前にはイベントを登録できません';
 $string['errorinvaliddate'] = '日付に間違いがあります';
 $string['errorinvalidminutes'] = '期間(分)を1から999の間で指定してください。';
 $string['errorinvalidrepeats'] = 'イベントを1から999の間で指定してください。';
@@ -39,7 +39,7 @@ $string['expired'] = '期間終了';
 $string['explain_lookahead'] = 'ここではイベントが直近のイベントとして表示される為の最大日数を設定します。この範囲より後に開催されるイベントは、直近イベントとして表示されません。全てのイベントがこのスケジュール通りに開始されることは<strong>保証されません</strong>; もし数多く(「直近イベントの最大表示数」以上)のイベントが登録されている場合は、時間が遅いイベントが表示されません。';
 $string['explain_maxevents'] = 'ここでは直近イベントの最大表示数を設定します。ここで大きな数を設定した場合は、直近のイベントを大量に表示する為の画面スペースが必要になります。';
 $string['explain_startwday'] = 'ここでは全ての月間カレンダーの表示方法を設定します。あなたが慣れ親しんだ表示になるように設定してください。';
-$string['explain_timeformat'] = '時間の表示は12時間表示または24時間表示を選択することが出来ます。デフォルトを選択した場合は、使用言語に合わせてフォーマットが自動的に選択されます。';
+$string['explain_timeformat'] = '時間の表示は12時間表示または24時間表示を選択することができます。デフォルトを選択した場合は、使用言語に合わせてフォーマットが自動的に選択されます。';
 $string['fri'] = '金';
 $string['friday'] = '金曜日';
 $string['globalevents'] = '全体のイベント';

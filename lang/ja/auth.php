@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 unstable development (2004091100)
+      // auth.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['auth_dbdescription'] = 'ユーザ名とパスワードを確認するために外部のデータベースを使用します。新しいアカウントを作成する場合、他のフィールドの情報がMoodleへ複製されます。';
@@ -47,12 +47,12 @@ $string['auth_ldapextrafields'] = 'これらのフィールドは任意項目です。<B>LDAPフィ
 $string['auth_ldaptitle'] = 'LDAPサーバを使用';
 $string['auth_manualdescription'] = 'この方法ではユーザによるユーザアカウント作成機能を停止します。全てのアカウント作成は管理者により手動で行う必要があります。';
 $string['auth_manualtitle'] = '手動アカウント作成のみ';
-$string['auth_multiplehosts'] = '複数のホストを設定出来ます(例 host1.com;host2.com;host3.com)';
+$string['auth_multiplehosts'] = '複数のホストを設定できます(例 host1.com;host2.com;host3.com)';
 $string['auth_nntpdescription'] = 'ユーザ名とパスワードを確認するためにNNTPサーバを使用します。';
 $string['auth_nntphost'] = 'NNTPサーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
 $string['auth_nntpport'] = 'サーバーポート(119が一般的です)';
 $string['auth_nntptitle'] = 'NNTPサーバを使用';
-$string['auth_nonedescription'] = 'ユーザはログインして外部サーバ及びメールによる認証無しにアカウントを直ちに作成出来ます。このオプションを使用するときは十分に注意してください - セキュリティー及び管理上の問題が発生するかもしれないことを考えてください。';
+$string['auth_nonedescription'] = 'ユーザはログインして外部サーバ及びメールによる認証無しにアカウントを直ちに作成できます。このオプションを使用するときは十分に注意してください - セキュリティー及び管理上の問題が発生するかもしれないことを考えてください。';
 $string['auth_nonetitle'] = '認証無し';
 $string['auth_pop3description'] = 'ユーザ名とパスワードを確認するためにPOP3サーバを使用します。';
 $string['auth_pop3host'] = 'POP3サーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
@@ -61,7 +61,7 @@ $string['auth_pop3port'] = 'サーバーポート (110が一般的です)';
 $string['auth_pop3title'] = 'POP3サーバを使用';
 $string['auth_pop3type'] = 'サーバタイプです。もし認証が必要な場合はpop3certを選択してください。';
 $string['auth_user_create'] = 'ユーザの作成を許可する';
-$string['auth_user_creation'] = '新しい(匿名の)ユーザは外部認証によりユーザアカウントを作成することが出来ます。ユーザの確定はメールによって行われます。このオプションを有効にした場合、module-specificオプションも同時に有効にする必要があります。';
+$string['auth_user_creation'] = '新しい(匿名の)ユーザは外部認証によりユーザアカウントを作成することができます。ユーザの確定はメールによって行われます。このオプションを有効にした場合、module-specificオプションも同時に有効にする必要があります。';
 $string['auth_usernameexists'] = 'このユーザ名は既に存在します。新しいものを選んでください。';
 $string['authenticationoptions'] = '認証オプション';
 $string['authinstructions'] = 'どのようなユーザ名やパスワードを使用したらよいのかユーザに説明します。ここに入力した文章はログインページに表示されます。空白の場合、何も表示されません。';
@@ -72,7 +72,7 @@ $string['guestloginbutton'] = 'ゲストログインボタン';
 $string['instructions'] = '説明';
 $string['md5'] = 'MD5暗号化';
 $string['plaintext'] = 'テキスト';
-$string['showguestlogin'] = 'ログインページのゲストログインボタンを表示／非表示に出来ます。';
+$string['showguestlogin'] = 'ログインページのゲストログインボタンを表示／非表示にできます。';
 $string['thischarset'] = 'EUC-JP';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Japanese';

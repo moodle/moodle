@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 unstable development (2004091100)
+      // workshop.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['absent'] = '欠席';
@@ -92,13 +92,13 @@ $string['listofallsubmissions'] = '全提出物一覧';
 $string['liststudentsassessments'] = '学生の提出物を一覧表示する';
 $string['loadingforteacherassessments'] = '$a の提出物をローディング中';
 $string['mail1'] = 'あなたの提出物 \'$a\'  の評価者';
-$string['mail10'] = 'あなたのワークショップ提出物の中で評価することが出来ます';
-$string['mail2'] = 'コメントと評価はワークショップ提出物 \'$a\' で見ることが出来ます';
-$string['mail3'] = 'ワークショップ提出物で見ることが出来ます';
+$string['mail10'] = 'あなたのワークショップ提出物の中で評価することができます';
+$string['mail2'] = 'コメントと評価はワークショップ提出物 \'$a\' で見ることができます';
+$string['mail3'] = 'ワークショップ提出物で見ることができます';
 $string['mail4'] = 'コメントが提出物 \'$a\' に追加されました';
-$string['mail5'] = '新しいコメントはワークショップ提出物 \'$a\' で見ることが出来ます';
+$string['mail5'] = '新しいコメントはワークショップ提出物 \'$a\' で見ることができます';
 $string['mail6'] = 'あなたの提出物 \'$a\' に対する評価レビュー';
-$string['mail7'] = '$a によるコメントはワークショップ提出物で見ることが出来ます';
+$string['mail7'] = '$a によるコメントはワークショップ提出物で見ることができます';
 $string['mail8'] = '課題 $a は修正されています。';
 $string['mail9'] = 'ワークショップ提出物 $a の中で評価してください';
 $string['managingassignment'] = '課題を管理';
@@ -116,20 +116,20 @@ $string['noassessments'] = '評価無し';
 $string['noassessmentsdone'] = '評価されていません';
 $string['nosubmission'] = '提出物無し';
 $string['nosubmissionsavailableforassessment'] = '評価すべき提出物はありません。';
-$string['notavailable'] = '利用出来ません。';
+$string['notavailable'] = '利用できません。';
 $string['notenoughexamplessubmitted'] = '十分な例が提出されていません。';
 $string['noteonassessmentelements'] = '評価は数多くの「評価要素」により成立ちます。このことで評価を、
 <br />
-簡単且つ首尾一貫したものにすることが出来ます。
-課題を学生に利用出来る
+簡単且つ首尾一貫したものにすることができます。
+課題を学生に利用できる
 <br />
 ようにする前に、教師としてこれらの要素を追加しなければなりません。コース課題
 <br />
 をクリックして要素が存在しない場合、追加するかどうかを尋ねられます。
 <br />
-「課題の編集」画面で要素数を変更することが出来ます。
+「課題の編集」画面で要素数を変更することができます。
 <br />
-要素自体は「評価の管理」画面で変更出来ます。 ';
+要素自体は「評価の管理」画面で変更できます。 ';
 $string['notgraded'] = '評価無し';
 $string['notitlegiven'] = '題名がありません';
 $string['numberofassessmentelements'] = 'コメント数、評価要素数、評価の幅、基準数';
