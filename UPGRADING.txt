@@ -49,10 +49,11 @@ Upgrading the files using a downloaded archive
      mv moodle moodle.backup
 
   and then unpack the new tar or zip file into the old
-  location.   (Overwriting an old installation usually 
-  works fine, but I can't guarantee that it always will).
+  location.   DO NOT OVERWRITE AN OLD INSTALLATION
+  unless you know what you are doing - sometimes old
+  files can cause problems in new installations.
 
-     tar xvzf moodle-1.0.5.tgz 
+     tar xvzf moodle-1.0.6.tgz 
 
   Next, copy the config.php file from your old installation
   into the new installation (or make a new one by editing 
