@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+<?PHP // $Id$ 
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021601)
 
 
 $string['action'] = '操作';
@@ -16,9 +16,9 @@ $string['add'] = '追加';
 $string['addactivity'] = '活動の追加...';
 $string['addadmin'] = '管理者を追加';
 $string['addcreator'] = 'コース作成者を追加';
-$string['added'] = '$a が追加されました。';
-$string['addedtogroup'] = 'グループ $a に追加されました。';
-$string['addedtogroupnot'] = 'グループ $a  に追加されませんでした。';
+$string['added'] = '$a が追加されました';
+$string['addedtogroup'] = 'グループ $a に追加されました';
+$string['addedtogroupnot'] = 'グループ $a  に追加されませんでした';
 $string['addedtogroupnotenrolled'] = 'コースに登録されていないため、グループ $a に追加されませんでした。';
 $string['addinganew'] = '新しい $a の追加';
 $string['addinganewto'] = '新しい $a->what を $a->to へ追加';

@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021601)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
-$string['addanewtopic'] = 'トピックを追加';
+$string['addanewtopic'] = 'トピックの追加';
 $string['allowchoice'] = '選択可能';
 $string['allowdiscussions'] = '$a  はこのフォーラムに投稿可能ですか?';
 $string['allowratings'] = '投稿を評価可能にしますか?';
