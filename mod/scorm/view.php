@@ -149,10 +149,10 @@
     		} else {
     		    echo "      <img src=\"pix/spacer.gif\" />\n";
     		}
-    		print_r ($sco->title);
+    		//print_r ($sco->title);
     		if ($sco->title == "") {
     		    $sco->title = get_string('notitle','scorm');
-    		    echo '-'.$sco->title.'-';
+    		    //echo '-'.$sco->title.'-';
     		}
     		if ($sco->launch) {
     		    $score = "";
