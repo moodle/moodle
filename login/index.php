@@ -2,6 +2,23 @@
     require("../config.php");
 
 
+    // Check if the guest user exists.  If not, create one.
+    if (! record_exists("user", "username", "guest")) {
+        $guest->username    = "guest"; 
+        $guest->password    = md5("guest");
+        $guest->firstname   = "Guest";
+        $guest->lastname    = "User";
+        $guest->email       = "root@localhost";
+        $guest->description = "This user is a special user that allows read-only access to some courses.";
+        $guest->confirmed   = 1;
+        $guest->timemodified= time();
+
+        if (! $guest->id = insert_record("user", $guest)) {
+            notify("Could not create guest user record !!!");
+        }
+    }
+
+
     if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
 
         $frm = (object)$HTTP_POST_VARS;
