@@ -747,7 +747,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         if ($randomcats = quiz_get_random_categories($quiz->questions)) {
             foreach ($randomcats as $randomcat => $randomdraw) {
                 /// Get the appropriate amount of random questions from this category
-                if (!$catquestions[$randomcat] = quiz_choose_random_questions($randomcat, $randomdraw)) {
+                if (!$catquestions[$randomcat] = quiz_choose_random_questions($randomcat, $randomdraw, $quiz->questions)) {
                     notify(get_string("toomanyrandom", "quiz", $randomcat));
                     return false;
                 }
@@ -908,12 +908,12 @@ function quiz_print_category_form($course, $current) {
 
 
 
-function quiz_choose_random_questions($category, $draws) {
+function quiz_choose_random_questions($category, $draws, $excluded=0) {
 /// Given a question category and a number of draws, this function
 /// creates a random subset of that size - returned as an array of questions
 
     if (!$pool = get_records_select_menu("quiz_questions", 
-                "category = '$category' AND qtype <> ".RANDOM, "", "id,qtype")) {
+                "category = '$category' AND id NOT IN ($excluded) AND qtype <> ".RANDOM, "", "id,qtype")) {
         return false;
     }
 
