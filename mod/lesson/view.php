@@ -59,7 +59,7 @@
         // display individual pages and their sets of answers
         // if pageid is EOL then the end of the lesson has been reached
         print_heading($lesson->name);
-		if (empty($_GET['pageid'])) {
+		if (empty($_POST['pageid'])) {
             add_to_log($course->id, "lesson", "start", "view.php?id=$cm->id", "$lesson->id", $cm->id);
             // if no pageid given see if the lesson has been started
             if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND userid = $USER->id",
@@ -122,7 +122,7 @@
                 error("Navigation: first page not found");
             }
 		} else {
-            $pageid = $_GET['pageid'];
+            $pageid = $_POST['pageid'];
         }
         if ($pageid != EOL) {
             add_to_log($course->id, "lesson", "view", "view.php?id=$cm->id&action=navigation&pageid=$pageid", "$pageid", $cm->id);
@@ -155,11 +155,17 @@
                 echo "</form>\n";
             } else {
                 // a page without answers - find the next (logical) page
+                echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
+                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+                echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
                 if (!$newpageid = get_field("lesson_pages", "nextpageid", "id", $pageid)) {
                     // this is the last page - flag end of lesson
                     $newpageid = EOL;
                 }
-		        print_continue("view.php?id=$cm->id&action=navigation&pageid=$newpageid");
+                echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
+                echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
+                    get_string("continue", "lesson")."\"></p>\n";
+                echo "</form>\n";
             }
             echo "</table>\n";
         } else {
@@ -266,19 +272,24 @@
         } else {
             // print the pages
             echo "<center><table cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
-            echo "<tr><td align=\"right\"><a href=\"lesson.php?id=$cm->id&action=addpage&pageid=0\"><small>".
-                get_string("addpagehere", "lesson")."</small></a></td></tr><tr><td>\n";
+            if (isteacheredit($course>id)) {
+                echo "<tr><td align=\"right\"><a href=\"lesson.php?id=$cm->id&action=addpage&pageid=0\"><small>".
+                    get_string("addpagehere", "lesson")."</small></a></td></tr>\n";
+            }
+            echo "<tr><td>\n";
             while (true) {
                 echo "<table width=\"100%\" border=\"1\"><tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\"><b>$page->title</b>&nbsp;&nbsp;\n";
-                if ($npages > 1) {
-                    echo "<a title=\"".get_string("move")."\" href=\"lesson.php?id=$cm->id&action=move&pageid=$page->id\">\n".
-                        "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 border=0></a>\n";
-                }
-                echo "<a title=\"".get_string("update")."\" href=\"lesson.php?id=$cm->id&action=editpage&pageid=$page->id\">\n".
-                    "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 border=0></a>\n".
-                    "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&action=confirmdelete&pageid=$page->id\">\n".
-                    "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 border=0></a>".
-                    "</td></tr>\n";             
+                if (isteacheredit($course->id)) {
+                    if ($npages > 1) {
+                        echo "<a title=\"".get_string("move")."\" href=\"lesson.php?id=$cm->id&action=move&pageid=$page->id\">\n".
+                            "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 border=0></a>\n";
+                    }
+                    echo "<a title=\"".get_string("update")."\" href=\"lesson.php?id=$cm->id&action=editpage&pageid=$page->id\">\n".
+                        "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 border=0></a>\n".
+                        "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&action=confirmdelete&pageid=$page->id\">\n".
+                        "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 border=0></a>\n";
+                    }
+                    echo "</td></tr>\n";             
                 echo "<tr><td colspan=\"2\">\n";
                 print_simple_box(format_text($page->contents), "center");
                 echo "</td></tr>\n";
@@ -318,8 +329,12 @@
                     }
                     // print_simple_box_end();
                 }
-                echo "</td></tr></table></td></tr><tr><td align=\"right\"><a href=\"lesson.php?id=$cm->id&action=addpage&pageid=$page->id\"><small>".
-                    get_string("addpagehere", "lesson")."</small></a></td></tr><tr><td>\n";
+                echo "</td></tr></table></td></tr>\n";
+                if (isteacheredit($course->id)) {
+                    echo "<tr><td align=\"right\"><a href=\"lesson.php?id=$cm->id&action=addpage&pageid=$page->id\"><small>".
+                        get_string("addpagehere", "lesson")."</small></a></td></tr>\n";
+                }
+                echo "<tr><td>\n";
                 if ($page->nextpageid) {
                     if (!$page = get_record("lesson_pages", "id", $page->nextpageid)) {
                         error("Teacher view: Next page not found!");

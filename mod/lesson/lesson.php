@@ -217,12 +217,14 @@
                 echo "<table width=\"80%\" border=\"0\" align=\"center\"><tr><td>\n";
                 print_simple_box(format_text($answer->response), 'center');
                 echo "</td></tr></table>\n";
-		        print_continue("view.php?id=$cm->id&action=navigation&pageid=$newpageid");
-            } else {
-                // there's no response text - just go straight to the next page
-       		    redirect("lesson.php?id=$cm->id&action=navigation&pageid=$newpageid", 
-                        get_string("continue"));
             }
+            echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
+            echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+            echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
+            echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
+            echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
+                get_string("continue", "lesson")."\"></p>\n";
+            echo "</form>\n";
         }
 	}
 	
