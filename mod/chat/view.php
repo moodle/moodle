@@ -4,9 +4,12 @@
 
     require_once('../../config.php');
     require_once('lib.php');
+    require_once($CFG->dirroot.'/lib/blocklib.php');
 
-    $id = optional_param('id', 0, PARAM_INT);
-    $c  = optional_param('c', 0, PARAM_INT);
+    $id          = optional_param('id', 0, PARAM_INT);
+    $c           = optional_param('c', 0, PARAM_INT);
+    $edit        = optional_param('edit', '');
+    $blockaction = optional_param('blockaction');
 
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -46,19 +49,49 @@
 
     add_to_log($course->id, 'chat', 'view', "view.php?id=$cm->id", $chat->id, $cm->id);
 
+// Initialize $PAGE, compute blocks
+
+    $PAGE = page_create_instance($chat->id);
+    $pageblocks = blocks_get_by_page($PAGE);
+
+    if (!empty($blockaction)) {
+        blocks_execute_url_action($PAGE, $pageblocks);
+        $pageblocks = blocks_get_by_page($PAGE);
+    }
+    
+    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
+
+
 /// Print the page header
 
-    $strchats        = get_string('modulenameplural', 'chat');
-    $strchat         = get_string('modulename', 'chat');
     $strenterchat    = get_string('enterchat', 'chat');
     $stridle         = get_string('idle', 'chat');
     $strcurrentusers = get_string('currentusers', 'chat');
     $strnextsession  = get_string('nextsession', 'chat');
 
-    print_header_simple($chat->name, '',
-                 "<a href=\"index.php?id=$course->id\">$strchats</a> -> $chat->name",
-                  '', '', true, update_module_button($cm->id, $course->id, $strchat),
-                  navmenu($course, $cm));
+    if (!empty($edit) && $PAGE->user_allowed_editing()) {
+        if ($edit == 'on') {
+            $USER->editing = true;
+        } else if ($edit == 'off') {
+            $USER->editing = false;
+        }
+    }
+
+    $PAGE->print_header($course->shortname.': %fullname%');
+
+    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
+    echo '<tr valign="top">';
+
+    if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $PAGE->user_is_editing()) {
+        echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
+        blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
+        if ($PAGE->user_is_editing()) {
+            blocks_print_adminblock($PAGE, $pageblocks);
+        }
+        echo '</td>';
+    }
+
+    echo '<td valign="top" width="*" id="middle-column">';
 
     if (($chat->studentlogs or isteacher($course->id)) and !isguest()) {
         echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".
@@ -87,7 +120,7 @@
     if (!isguest()) {
         print_simple_box_start('center');
         link_to_popup_window ("/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam",
-                              "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, $strchat);
+                              "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
         print_simple_box_end();
     } else {
         notice(get_string('noguests', 'chat'));
@@ -137,6 +170,8 @@
 
 
 /// Finish the page
+    echo '</td></tr></table>';
+
     print_footer($course);
 
 ?>
