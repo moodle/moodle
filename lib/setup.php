@@ -132,6 +132,11 @@
         $ME = strip_querystring($FULLME);
     }
 
+/// In VERY rare cases old PHP server bugs (it has been found on PHP 4.1.2 running 
+/// as a CGI under IIS on Windows) may require that you uncomment the following:
+//  session_register("USER");
+//  session_register("SESSION");
+
 
 /// Set language/locale of printed times.  If user has chosen a language that 
 /// that is different from the site language, then use the locale specified 
