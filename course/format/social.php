@@ -25,6 +25,11 @@
       print_side_block(get_string("people"), "", $moddata, $modicon, "", $leftwidth);
 
       
+/// Print a form to search forums
+      $searchform = forum_print_search_form($course, "", true);
+      $searchform = "<div align=\"center\">$searchform</div>";
+      print_side_block(get_string("search","forum"), $searchform, "", "", "", $leftwidth);
+
 
 /// Then, print all the available resources (Section 0)
       print_section_block(get_string("activities"), $course, $sections[0], 
@@ -39,11 +44,6 @@
           print_side_block_end();
       }
 
-
-/// Print a form to search forums
-      $searchform = forum_print_search_form($course, "", true);
-      $searchform = "<div align=\"center\">$searchform</div>";
-      print_side_block(get_string("search","forum"), $searchform, "", "", "", $leftwidth);
 
 /// Admin links and controls
       print_course_admin_links($course);
