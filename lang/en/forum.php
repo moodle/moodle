@@ -55,6 +55,7 @@ $string['forcesubscribeq'] = 'Force everyone to be subscribed?';
 $string['forum'] = 'Forum';
 $string['forumintro'] = 'Forum introduction';
 $string['forumname'] = 'Forum name';
+$string['forumposts'] = 'Forum posts';
 $string['forums'] = 'Forums';
 $string['forumtype'] = 'Forum type';
 $string['generalforum'] = 'Standard forum for general use';

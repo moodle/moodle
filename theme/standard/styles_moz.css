@@ -57,8 +57,6 @@
     -moz-border-radius-bottomright:20px;
 }
 
-.userinfoboxsummary {
-}
 
 .generaltab, .generaltabinactive{
     -moz-border-radius-topleft:15px;
@@ -175,7 +173,7 @@ table.minicalendar td {
     -moz-border-radius:20px;
 }
 
-.userinfoboxlinkcontent, .forumpostmessage, .userinfoboxcontent {
+.forumpostmessage {
     -moz-border-radius-bottomright:20px;
 }
 
@@ -202,4 +200,8 @@ table.minicalendar td {
 }
 .loginbox .content.right {
     -moz-border-radius-bottomright:20px;
+}
+
+body#course-user .section {
+    -moz-border-radius:20px;
 }

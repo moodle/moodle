@@ -109,32 +109,22 @@
         print_heading(get_string("userdeleted"));
     }
 
-    echo "<table width=\"80%\" align=\"center\" border=\"0\" cellpadding=\"1\" cellspacing=\"1\" class=\"userinfobox\">";
+
+/// Print tabs at top
+/// This same call is made in:
+///     /user/view.php
+///     /user/edit.php
+///     /course/user.php
+    $currenttab = 'profile';
+    include('tabs.php');
+
+
+
+    echo "<table width=\"80%\" align=\"center\" border=\"0\" cellspacing=\"0\" class=\"userinfobox\">";
     echo "<tr>";
-    echo "<td width=\"100\" valign=\"top\" class=\"userinfoboxside\">";
+    echo "<td width=\"100\" valign=\"top\" class=\"side\">";
     print_user_picture($user->id, $course->id, $user->picture, true, false, false);
-    echo "</td><td width=\"100%\" class=\"userinfoboxcontent\">";
-
-
-    // Print name and edit button across top
-
-    echo "<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td nowrap=\"nowrap\">";
-    echo "<h3>$fullname</h3>";
-    echo "</td><td align=\"right\">";
-    if (($currentuser and !isguest()) or isadmin()) {
-        if(empty($CFG->loginhttps)) {
-            $wwwroot = $CFG->wwwroot;
-        } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
-        }
-        echo "<form action=\"$wwwroot/user/edit.php\" method=\"get\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
-        echo "<input type=\"hidden\" name=\"course\" value=\"$course->id\" />";
-        echo "<input type=\"submit\" value=\"".get_string("editmyprofile")."\" />";
-        echo "</form>";
-    }
-    echo "</td></tr></table>\n\n";
-
+    echo "</td><td width=\"100%\" class=\"content\">";
 
     // Print the description
 
@@ -144,7 +134,7 @@
 
     // Print all the little details in a list
 
-    echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\">";
+    echo '<table border="0" cellpadding="0" cellspacing="0" class="list">';
 
     if ($user->city or $user->country) {
         $countries = get_list_of_countries();
@@ -287,13 +277,14 @@
         echo "<input type=\"submit\" value=\"".get_string("unenrolme", "", $course->shortname)."\">";
         echo "</form></td>";
     }
-    if (isteacher($course->id) or ($course->showreports and $USER->id == $user->id)) {
+/*    if (isteacher($course->id) or ($course->showreports and $USER->id == $user->id)) {
         echo "<td nowrap=\"nowrap\"><form action=\"../course/user.php\" method=\"get\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
         echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
         echo "<input type=\"submit\" value=\"".get_string("activityreport")."\" />";
         echo "</form></td>";
     }
+*/
     if ((isadmin() and !isadmin($user->id)) or (isteacher($course->id) and ($USER->id != $user->id) and !iscreator($user->id))) {
         echo "<td nowrap=\"nowrap\"><form action=\"../course/loginas.php\" method=\"get\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
@@ -302,7 +293,7 @@
         echo "</form></td>";
     }
     if (!empty($CFG->messaging) and !isguest()) {
-        if ($USER->id == $user->id) {
+        if (!empty($USER->id) and ($USER->id == $user->id)) {
             if ($countmessages = count_records('message', 'useridto', $user->id)) {
                 $messagebuttonname = get_string("messages", "message")."($countmessages)";
             } else {
@@ -321,20 +312,13 @@
     echo "<td></td>";
     echo "</tr></table></div>\n";
 
-    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and
-                         $course->groupmodeforce and
-                         !isteacheredit($course->id));
-
-    $groupid = $isseparategroups ? get_current_group($course->id) : NULL;
-
-    forum_print_user_discussions($course->id, $user->id, $groupid);
 
     print_footer($course);
 
 /// Functions ///////
 
 function print_row($left, $right) {
-    echo "\n<tr><td nowrap=\"nowrap\" align=\"right\" valign=\"top\">$left</td><td align=\"left\" valign=\"top\">$right</td></tr>\n";
+    echo "\n<tr><td nowrap=\"nowrap\" align=\"right\" valign=\"top\" class=\"label c0\">$left</td><td align=\"left\" valign=\"top\" class=\"info c1\">$right</td></tr>\n";
 }
 
 ?>

@@ -49,36 +49,32 @@
                  "<a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
                   $stractivityreport -> $strmode");
     }
-    print_heading($fullname);
 
-    echo "<table cellpadding=\"10\" align=\"center\"><tr>";
-    echo "<td>$stractivityreport: </td>";
 
-    foreach ($modes as $listmode) {
-        $strmode = get_string($listmode);
-        if ($mode == $listmode) {
-            echo "<td><u>$strmode</u></td>";
-        } else {
-            echo "<td><a href=\"user.php?id=$course->id&amp;user=$user->id&amp;mode=$listmode\">$strmode</a></td>";
-        }
-    }
-    echo "</tr></table>";
+/// Print tabs at top
+/// This same call is made in:
+///     /user/view.php
+///     /user/edit.php
+///     /course/user.php
+    $currenttab = $mode;
+    include($CFG->dirroot.'/user/tabs.php');
+
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
     switch ($mode) {
         case "todaylogs" :
-            echo "<hr /><center>";
+            echo '<div class="graph">';
             print_log_graph($course, $user->id, "userday.png");
-            echo "</center>";
+            echo '</div>';
             print_log($course, $user->id, usergetmidnight(time()), "l.time DESC", $page, $perpage, 
                       "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
             break;
 
         case "alllogs" :
-            echo "<hr /><center>";
+            echo '<div class="graph">';
             print_log_graph($course, $user->id, "usercourse.png");
-            echo "</center>";
+            echo '</div>';
             print_log($course, $user->id, 0, "l.time DESC", $page, $perpage, 
                       "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
             break;
@@ -98,8 +94,8 @@
                     if ($showsection) { // prevent hidden sections in user activity. Thanks to Geoff Wilbert!
 
                         if ($section->sequence) {
-                            echo "<hr />";
-                            echo "<h2>";
+                            echo '<div class="section">';
+                            echo '<h2>';
                             switch ($course->format) {
                                 case "weeks": print_string("week"); break;
                                 case "topics": print_string("topic"); break;
@@ -107,7 +103,7 @@
                             }
                             echo " $i</h2>";
     
-                            echo "<ul>";
+                            echo '<div class="content">';
 
                             if ($mode == "outline") {
                                 echo "<table cellpadding=\"4\" cellspacing=\"0\">";
@@ -159,7 +155,8 @@
                                 echo "</table>";
                                 print_simple_box_end();
                             }
-                            echo "</ul>";
+                            echo '</div>';  // content
+                            echo '</div>';  // section
                         }
                     }
                 }
