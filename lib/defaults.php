@@ -23,6 +23,7 @@
        "maxeditingtime"   =>  1800,
        "changepassword"   =>  true,
        "country"          => "",
+       "prefix"           => "",
        "guestloginbutton" =>  1,
        "debug"            =>  7
     );
