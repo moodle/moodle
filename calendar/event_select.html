@@ -20,18 +20,11 @@
       </select>
       </div>
     <?php } ?>
-    <?php if(!empty($allowed->courses)) { ?><p><input type='radio' name='type' value='course' id='type_course' /><label for='type_course'><?php print_string('typecourse', 'calendar') ?></label></p>
-      <div style="padding-left: 1.5em;">
-      <?php print_string('course'); ?>:
-      <select name='courseid'>
-        <option value=''></option>
-      <?php foreach($allowed->courses as $course) {?>
-        <option value='<?php echo $course->id?>' <?php if($course->id == $courseid) echo 'selected="selected"';?>><?php echo $course->shortname.' - '.$course->fullname?></option>
-      <?php }?>
-      </select>
-      </div>
+    <?php if(!empty($allowed->courses)) { ?>
+      <p><input type='radio' name='type' value='course' id='type_course' /><input type="hidden" name="courseid" value="<?php echo($courseid) ?>" /><label for='type_course'><?php print_string('typecourse', 'calendar') ?></label></p>
     <?php } ?>
-    <?php if(!empty($allowed->site)) { ?><p><input type='radio' name='type' value='site' id='type_site' /><label for='type_site'><?php print_string('typesite', 'calendar') ?></label></p>
+    <?php if(!empty($allowed->site)) { ?>
+      <p><input type='radio' name='type' value='site' id='type_site' /><label for='type_site'><?php print_string('typesite', 'calendar') ?></label></p>
     <?php } ?>
     </td>
   </tr>

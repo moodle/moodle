@@ -163,7 +163,7 @@
 
                     /// Log the event entry.
                     add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
-                    
+
                     if ($form->repeat) {
                         for($i = 1; $i < $form->repeats; $i++) {
                             $form->timestart += 604800;  // add one week
@@ -173,7 +173,7 @@
                             add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
                         }
                     }
-                            
+
                     // OK, now redirect to day view
                     redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
                 }
@@ -381,7 +381,7 @@
             print_side_block_start(get_string('newevent', 'calendar').$header, '', 'mycalendar');
             if($_REQUEST['type'] == 'select') {
                 optional_variable($_REQUEST['groupid']);
-                optional_variable($_REQUEST['courseid']);
+                optional_variable($_REQUEST['courseid'], $SESSION->cal_course_referer);
                 $groupid = $_REQUEST['groupid'];
                 $courseid = $_REQUEST['courseid'];
                 include('event_select.html');
