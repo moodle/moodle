@@ -783,12 +783,10 @@ while(true) {
                 switch($type) {
                     case 'chat':
                        $type = CHAT_CONNECTION_CHANNEL;
-                        if(!ereg('Safari', $data)) {
+                        $customdata['quirks'] = 0;
+                        if(strpos($data, 'Safari')) {
                             trace('Safari identified...', E_USER_WARNING);
-                            $customdata['quirks'] = QUIRK_CHUNK_UPDATE;
-                        }
-                        else {
-                            $customdata['quirks'] = 0;
+                            $customdata['quirks'] += QUIRK_CHUNK_UPDATE;
                         }
                     break;
                     case 'users':
