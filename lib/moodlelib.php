@@ -3117,6 +3117,64 @@ function mtrace($string, $eol="\n") {
     flush();
 }
 
+//Replace 2 or more slashes to one
+function cleardoubleslashes ($path) {
+    return preg_replace('/(\/|\\\){1,}/','/',$path);
+}
+
+//Zip an array of files/dirs to a destination file
+function zip_files ($originalfiles, $destination) {
+
+    global $CFG;
+
+    //Extract everything from destination
+    $path_parts = pathinfo(cleardoubleslashes($destination));
+    $path = $path_parts["dirname"];
+    $filename = $path_parts["basename"];
+    $extension = $path_parts["extension"];
+
+    //If no file, error
+    if (empty($filename)) {
+        return false;
+    }
+
+    //If no extension, add it
+    if (empty($extension)) { 
+        $extension = 'zip';
+        $file = $file.'.'.$extension;
+    }
+
+    //Check path exists
+    if (!is_dir($path)) {
+        return false;
+    }
+
+    //Clean filename
+    $filename = clean_filename($filename);
+
+    if (empty($CFG->zip)) {    // Use built-in php-based zip function
+        $files = array();
+        foreach ($originalfiles as $file) {
+           $files[] = cleardoubleslashes($file); // no doubleslashes!
+        }
+        include_once("$CFG->libdir/pclzip/pclzip.lib.php");
+        $archive = new PclZip(cleardoubleslashes("$path/$filename"));
+        if (($list = $archive->create($files, PCLZIP_OPT_REMOVE_PATH,
+            rtrim(cleardoubleslashes($path), "/"))) == 0) { // no double slashes and trailing slash!
+            error($archive->errorInfo(true));
+        }
+    } else {                   // Use external zip program
+        $files = "";
+        foreach ($originalfiles as $file) {
+            $files .= basename($file);
+            $files .= " ";
+        }
+        $command = "cd $path ; $CFG->zip -r $filename $files";
+        Exec($command);
+    }
+    return true;
+}
+
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
