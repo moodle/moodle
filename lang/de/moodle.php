@@ -154,6 +154,7 @@ $string['currentversion'] = "Letzte Version";
 $string['databasechecking'] = "Moodle Datenbank von Version \$a->oldversion auf \$a->newversion aktualisieren...";
 $string['databasesetup'] = "Datenbank einspielen";
 $string['databasesuccess'] = "Datenbank wurde erfolgreich aktualisiert";
+$string['databaseupgradebackups'] = "Backupversion ist jetzt \$a";
 $string['databaseupgrades'] = "Aktualisiere Datenbank";
 $string['day'] = "Tag";
 $string['days'] = "Tage";
