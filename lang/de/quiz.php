@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+?PHP // $Id$ 
       // quiz.php - created with Moodle 1.0.8 dev (2002122301)
 
 
@@ -42,7 +42,7 @@ $string['daysavailable'] = "Tage verfügbar";
 $string['default'] = "Standard";
 $string['defaultgrade'] = "Standard-Note der Frage";
 $string['defaultinfo'] = "Die Standard-Kategorie für diese Frage";
-$string['deletequestioncheck'] = "Sind Sie sich absolut sicher, dass Sie '\$a' löschen ,öchten?";
+$string['deletequestioncheck'] = "Sind Sie sich absolut sicher, dass Sie '\$a' löschen möchten?";
 $string['editcategories'] = "Kategorien bearbeiten";
 $string['editingmatch'] = "Eine Zuordnungsfrage bearbeiten";
 $string['editingmultichoice'] = "Eine Frage mit Mehrfachauswahl bearbeiten";
