@@ -379,6 +379,12 @@ table.userinfobox {
     text-align:right;
 }
 
+.forumpost .link {
+    padding-top: 0.5em;
+    text-align:right;
+}
+
+
 .forumpost .left {
     width: 35px;
     padding: 4px;
@@ -388,6 +394,10 @@ table.userinfobox {
 
 .forumpostindent {
     margin-left: 30px;
+}
+
+body#user-view .forumpost {
+    width: 100%;
 }
 
 body#mod-forum-search .c0 {
