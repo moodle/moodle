@@ -9,7 +9,8 @@
 <input type="hidden" name=coursemodule value="<? p($form->coursemodule) ?>">
 <input type="hidden" name=modulename   value="<? p($form->modulename) ?>">
 <input type="hidden" name=instance     value="<? p($form->instance) ?>">
-<input type="submit" value=" Yes "> <input type=button value=" No " onclick="javascript:history.go(-1);">
+  <input type="submit" value=" <? print_string("yes")?> "> 
+  <input type=button value=" <? print_string("no")?> " onclick="javascript:history.go(-1);">
 </FORM>
 
 </td></tr></table>
