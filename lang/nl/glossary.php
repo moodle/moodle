@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2003102200)
+      // glossary.php - created with Moodle 1.2 development (2003103100)
 
 
 $string['addcomment'] = "Voeg commentaar toe";
@@ -60,8 +60,10 @@ $string['explainalphabet'] = "Blader door de woordenlijst met deze index";
 $string['explainspecial'] = "Toon items die niet met een letter beginnen";
 $string['exportedentry'] = "Geëxporteerd item";
 $string['exporttomainglossary'] = "Exporteer naar hoofdwoordenlijst";
+$string['fillfields'] = "Concept en definitie zijn verplichte velden.";
 $string['fullmatch'] = "Alleen volledige woorden gebruiken<br><small>(wanneer automatisch gelinkt)</small>";
 $string['glossarytype'] = "Type woordenlijst";
+$string['isglobal'] = "Is dit een globale woordenlijst?";
 $string['mainglossary'] = "Hoofdwoordenlijst";
 $string['maxtimehaspassed'] = "Sorry, maar de maximumtijd voor het bewerken van deze commentaar (\$a) is voorbij!";
 $string['modulename'] = "Woordenlijst";
