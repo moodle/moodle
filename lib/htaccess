@@ -11,7 +11,17 @@
 #     AllowOverride All 
 # </Directory>
 #
-### Firstly, set up some PHP variables that Moodle needs
+
+### Firstly, if you are using Apache 2, you need the following
+### three lines to allow Apache to pass a PATH_INFO variable 
+### correctly for URLs like http://server/file.php/arg1/arg2
+
+<IfDefine APACHE2>
+    AcceptPathInfo on
+</IfDefine>
+
+
+### Secondly, set up some PHP variables that Moodle needs
 
 php_value magic_quotes_gpc On
 php_value magic_quotes_runtime Off   
