@@ -1,27 +1,23 @@
 <p align="center"><b>「Course Test Manager」フォーマットファイルのインポート</b></p>
 
 <p>Course Test Managerは、Course Technology社による「開発を終了した」ソフトウェアパッケージです。 
-It is no longer being actively developed by Course Technology.  It has been replaced by 
-a new test manager called ExamView.  However, there has never been a migration path to allow
-this format to be exported from CTM testbanks to any other common test format.  This is why this
-module has been written.</p>
+現在は、Course Technologyによる積極的な開発は行われていません。
+ExamViewと呼ばれる新しいテストマネージャーが、Course Test Managerの後を継いでいます。
+しかしながら、今までCTMテストバンクからエクスポートされたフォーマットの移行手段が存在しませんでした。
+これが、このモジュールが作成された理由です。</p>
 
-<p> In order to import questions from CTM, you must have CTM installed on a Windows machine, and 
-have access to the MS Access data files on that machine.  Two data files are required in order to
-access the data files:</p>
-<ul><li>System.mda - This file is in the top directory of your CTM installation, and is referred to
-in MS access parlance as the "System Database".</li>
-<li>ctm.mdb - this is the database that contains the test bank questions.  There is one of these databases
-for each course installed in CTM.  It is located in a directory one level bellow your CTM installation 
-directory.</li>
+<p>CTMから問題をインポートするためには、WindowsマシンにCTMをインストールして、そのマシンのMS Accessデータファイル
+にアクセスする必要があります。データファイルにアクセスするために、下記の2つのファイルが必要です:</p>
+<ul><li>System.mda - このファイルはCTMディレクトリのルートディレクトリにあり、MS Accessより「システムデータベース」として認識されます。</li>
+<li>ctm.mdb - これはテストバンク問題を含んでいるデータベースです。CTMにインストールされたそれぞれのコースには、1つのctm.mdbデータベース
+が作成されます。ctm.mdbはCTMインストールディレクトリの下位ディレクトリに保存されます。</li>
 </ul>
 
-</p>The import process is somewhat different based on whether you're running moodle on Windows or Linux. 
-Regardless of what platfom moodle is running on, you must have a Windows system (Windows 2000 or Windows XP)
-on the same network as your moodle system in order to host the Access database while importing test banks.</p>
+</p>重要な処理は、あなたがmoodleをWindowsで動作しているか、Linuxで動作しているかによって幾分異なります。
+どのようなプラットフォームでmoodleを動かしていても、Accessデータベースからテストバンクをインポートするために、
+同一ネットワーク内にWindowsシステム(Windows 2000 または Windows XP)を置く必要があります。</p>
 
-<p>The process is somewhat easier on a <b>Windows-based</b> moodle system.  All you need to do to use the CTM import
-class is:</p>
+<p>処理方法は、<b>Windowsベース</b>のmoodleシステムの方が幾分簡単です。CTMインポートクラスを使用するために必要なことは:</p>
 
 <ol><li>upload the system.mda system database to moodle using the file manager.  It doesn't matter what course you
 upload the system.mda file to.  Moodle will find it regardless.</li>
