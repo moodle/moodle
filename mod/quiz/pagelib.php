@@ -71,7 +71,7 @@ class page_quiz extends page_generic_activity {
                '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
                '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
                '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
-               '<input type="submit" value="'.get_string($this->user_is_editing()?'turneditingoff':'blocksaddedit').'" /></form></td></tr></table>';
+               '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></form></td></tr></table>';
         }
         else {
             $buttons = '&nbsp;';
