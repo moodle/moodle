@@ -183,7 +183,43 @@ de cada formulario.</li>
   hay c&oacute;digos complicados, solo unas pocas etiquetas HTML). (NO UTILICES
   UN PROCESADOR DE TEXTOS para escribir los ficheros de ayuda porque estos programas
   a&ntilde;aden
-un mont&oacute;n de &quot;basura&quot; a los ficheros).<br /></p>
+un mont&oacute;n de &quot;basura&quot; a los ficheros).</p>
+
+<p style="margin-left: 80px;">Ten cuidado de escribir las p&aacute;ginas de ayuda para
+  que sean compatibles con XHTML. B&aacute;sicamente esto significa que:</p>
+<ul style="margin-left: 80px;">
+  <li>Todas las etiquetas deben ser cerradas: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span>lalala<span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>Todos los elementos deben estar anidados: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span> lalala <span style="color:rgb(0, 0, 255);" >&lt;em&gt;</span>lalala<span style="color:rgb(0, 0, 255);" >&lt;/em&gt;</span> <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>Todos los elementos y atribuos deben ir en min&uacute;sculas.</li>
+  <li>Todos los atributos deben ser escritos de forma completa y con comillas : <span style="color:rgb(255, 0, 0);" >&lt;p
+      align=&quot;right&quot;&gt;</span> lalala &lt;/p&gt;</li>
+  <li>Los elementos vac&iacute;os deben terminar con /&gt;: <span style="color:rgb(255, 0, 0);" >&lt;br
+      /&gt; &lt;hr
+      /&gt;</span>.
+    Debes a&ntilde;adir un espacio extra antes del car&aacute;cter "/".</li>
+  <li>Cada &lt;img debe tener un alt (puede estar vac&iacute;o) como <span style="color:rgb(255, 0, 0);" >&lt;img
+      alt src="picture.gif"></span></li>
+  <li><span style="color:rgb(255, 0, 0);" >&lt;?=</span> y <span style="color:rgb(255, 0, 0);" >&lt;?</span> tienen
+    que ser <span style="color:rgb(255, 0, 0);" >&lt;?php</span></li>
+  <li>No deber&iacute;a haber ninguna etiqueta font. <span style="color:rgb(255, 0, 0);" > &lt;p&gt;&lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> etc
+    deber&iacute;an ser suficiente para las p&aacute;ginas de los idiomas...</li>
+  <li>El nombre del idioma en el paquete ($string['thislanguage']  en moodle.php)
+    debe utilizar generalmente la &quot;Unicode Numeric
+    Character References&quot; (NCR) si es posible, porque esto permite al nombre
+    funcionar en cualquier contecto de codificaci&oacute;n (mira el idioma Chino como
+    ejemplo).</li>
+</ul>
+<p style="margin-left: 80px;">Ninguno de los ficheros en la carpeta &quot;help&quot; necesita
+  etiquetas doc type, html, body, head ya que son a&ntilde;adidas autom&aacute;ticamente por
+  el fichero help.php. Dicho gui&oacute;n se encargar&aacute; de construir las p&aacute;ginas de ayuda
+  correctamente. &iexcl;Esto significa que no hay demasiado espacio para la creatividad!
+  Se fiel al ejemplo en ingl&eacute;s.</p>
+<p style="margin-left: 80px;">Los ficheros en la carpeta de documentaci&oacute;n deben
+  ser compatibles XHTML, incluyendo el doc
+  type,
+  header
+  etc.</p>
+
 
  
 <p style="margin-left: 80px;">Seleccionando el bot&oacute;n &quot;Revisar cadenas ('strings') perdidas&quot;
