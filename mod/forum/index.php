@@ -115,7 +115,7 @@
         array_unshift($table->head, "");
         array_unshift($table->align, "center");
     
-        if ($learningforums = get_all_instances_in_course("forum", $course->id)) {
+        if ($learningforums = get_all_instances_in_course("forum", $course)) {
             foreach ($learningforums as $key => $forum) {
                 if ($forum->type == "news" or $forum->type == "social") {
                     unset($learningforums[$key]);  // Remove these

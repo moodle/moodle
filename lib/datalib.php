@@ -1080,31 +1080,46 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid) {
 
 }
 
-function get_all_instances_in_course($modulename, $courseid, $sort="cw.section") {
+function get_all_instances_in_course($modulename, $course) {
 /// Returns an array of all the active instances of a particular
-/// module in a given course.   Returns false on any errors.
+/// module in a given course, sorted in the order they are defined
+/// in the course.   Returns false on any errors.
+/// $course is a course object, this depends on an accurate $course->modinfo
 
     global $CFG;
 
-    // Hide non-visible instances from students
-    if (isteacher($courseid)) {
-        $showvisible = "";
-    } else {
-        $showvisible = "AND cm.visible = '1'";
+    if (!$modinfo = unserialize($course->modinfo)) {
+        return array();
     }
 
-    return get_records_sql("SELECT m.*,cw.section,cm.id as coursemodule,cm.visible as visible 
+    if (!$rawmods = get_records_sql("SELECT cm.id as coursemodule, m.*,cw.section,cm.visible as visible 
                             FROM {$CFG->prefix}course_modules cm, 
                                  {$CFG->prefix}course_sections cw, 
                                  {$CFG->prefix}modules md, 
                                  {$CFG->prefix}$modulename m 
-                            WHERE cm.course = '$courseid' AND 
+                            WHERE cm.course = '$course->id' AND 
                                   cm.instance = m.id AND 
                                   cm.deleted = '0' AND
                                   cm.section = cw.id AND 
                                   md.name = '$modulename' AND 
-                                  md.id = cm.module $showvisible
-                            ORDER BY $sort");
+                                  md.id = cm.module")) {
+        return array();
+    }
+
+    // Hide non-visible instances from students
+    if (isteacher($course->id)) {
+        $invisible = -1;
+    } else {
+        $invisible = 0;
+    }
+
+    foreach ($modinfo as $mod) {
+        if ($mod->mod == $modulename and $mod->visible > $invisible) {
+            $outputarray[] = $rawmods[$mod->cm];
+        }
+    }
+
+    return $outputarray;
 
 }
 

@@ -29,7 +29,7 @@
                  "", "", true, "", navmenu($course));
 
 
-    if (! $journals = get_all_instances_in_course("journal", $course->id, "cw.section ASC")) {
+    if (! $journals = get_all_instances_in_course("journal", $course)) {
         notice("There are no journals", "../../course/view.php?id=$course->id");
         die;
     }

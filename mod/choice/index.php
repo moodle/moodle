@@ -26,7 +26,7 @@
                  "$navigation $strchoices", "", "", true, "", navmenu($course));
 
 
-    if (! $choices = get_all_instances_in_course("choice", $course->id, "cw.section ASC")) {
+    if (! $choices = get_all_instances_in_course("choice", $course)) {
         notice("There are no choices", "../../course/view.php?id=$course->id");
     }
 

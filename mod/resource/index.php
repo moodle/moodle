@@ -26,13 +26,7 @@
     print_header("$course->shortname: $strresources", "$course->fullname", "$navigation $strresources", 
                  "", "", true, "", navmenu($course));
 
-    if ($course->format == "weeks" or $course->format == "topics") {
-        $sortorder = "cw.section ASC";
-    } else {
-        $sortorder = "m.timemodified DESC";
-    }
-
-    if (! $resources = get_all_instances_in_course("resource", $course->id, $sortorder)) {
+    if (! $resources = get_all_instances_in_course("resource", $course)) {
         notice("There are no resources", "../../course/view.php?id=$course->id");
         exit;
     }

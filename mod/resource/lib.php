@@ -21,76 +21,6 @@ $RESOURCE_TYPE = array (REFERENCE    => get_string("resourcetype1", "resource"),
 $RESOURCE_FRAME_SIZE = 130;
 
 
-function resource_list_all_resources($courseid=0, $sort="name ASC", $recent=0) {
-    // Returns list of all resource links in an array of strings
- 
-    global $CFG, $USER;
-
-    if ($courseid) {
-        if (! $course = get_record("course", "id", $courseid)) {
-            error("Could not find the specified course");
-        }
-
-        require_login($course->id);
-
-    } else {
-        if (! $course = get_record("course", "category", 0)) {
-            error("Could not find a top-level course!");
-        }
-    }
-
-    if ($resources = get_all_instances_in_course("resource", $course->id, $sort)) {
-        foreach ($resources as $resource) {
-            $link = "<A HREF=\"$CFG->wwwroot/mod/resource/view.php?id=$resource->coursemodule\">$resource->name</A>";
-            if ($USER->editing) {
-                $link .= "&nbsp; &nbsp; 
-                    <A HREF=\"$CFG->wwwroot/course/mod.php?delete=$resource->coursemodule\"><IMG 
-                       SRC=\"$CFG->wwwroot/pix/t/delete.gif\" BORDER=0 ALT=Delete></A>
-                    <A HREF=\"$CFG->wwwroot/course/mod.php?update=$resource->coursemodule\"><IMG 
-                       SRC=\"$CFG->wwwroot/pix/t/edit.gif\" BORDER=0 ALT=Update></A>";
-            }
-            $links[] = $link;
-        }
-    }
-
-    return $links;
-}
- 
-
-function resource_user_outline($course, $user, $mod, $resource) {
-    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource' 
-                                           AND action='view' AND info='$resource->id'", "time ASC")) {
-
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-
-        $result->info = get_string("numviews", "", $numviews);
-        $result->time = $lastlog->time;
-
-        return $result;
-    }
-    return NULL;
-}
-
-
-function resource_user_complete($course, $user, $mod, $resource) {
-    global $CFG, $THEME;
-
-    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource' 
-                                           AND action='view' AND info='$resource->id'", "time ASC")) {
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-
-        $strmostrecently = get_string("mostrecently");
-        $strnumviews = get_string("numviews", "", $numviews);
-
-        echo "$strnumviews - $strmostrecently ".userdate($lastlog->time);
-
-    } else {
-        print_string("neverseen", "resource");
-    }
-}
-
 function resource_add_instance($resource) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 
@@ -131,6 +61,41 @@ function resource_delete_instance($id) {
     }
 
     return $result;
+}
+
+
+function resource_user_outline($course, $user, $mod, $resource) {
+    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource' 
+                                           AND action='view' AND info='$resource->id'", "time ASC")) {
+
+        $numviews = count($logs);
+        $lastlog = array_pop($logs);
+
+        $result->info = get_string("numviews", "", $numviews);
+        $result->time = $lastlog->time;
+
+        return $result;
+    }
+    return NULL;
+}
+
+
+function resource_user_complete($course, $user, $mod, $resource) {
+    global $CFG, $THEME;
+
+    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource' 
+                                           AND action='view' AND info='$resource->id'", "time ASC")) {
+        $numviews = count($logs);
+        $lastlog = array_pop($logs);
+
+        $strmostrecently = get_string("mostrecently");
+        $strnumviews = get_string("numviews", "", $numviews);
+
+        echo "$strnumviews - $strmostrecently ".userdate($lastlog->time);
+
+    } else {
+        print_string("neverseen", "resource");
+    }
 }
 
 

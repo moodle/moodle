@@ -90,7 +90,7 @@
     }
 
     if (isteacher($course->id)) {    // Popup menu to allow discussions to be moved to other forums
-        if ($forums = get_all_instances_in_course("forum", $course->id, "cw.section ASC")) {
+        if ($forums = get_all_instances_in_course("forum", $course)) {
             foreach ($forums as $courseforum) {
                 if ($courseforum->id != $forum->id) {
                     $url = "discuss.php?d=$discussion->id&move=$courseforum->id";

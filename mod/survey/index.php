@@ -28,7 +28,7 @@
     print_header("$course->shortname: $strsurveys", "$course->fullname", "$navigation $strsurveys", 
                  "", "", true, "", navmenu($course));
 
-    if (! $surveys = get_all_instances_in_course("survey", $course->id, "cw.section ASC")) {
+    if (! $surveys = get_all_instances_in_course("survey", $course)) {
         notice("There are no surveys.", "../../course/view.php?id=$course->id");
     }
     

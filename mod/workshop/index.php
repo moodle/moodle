@@ -26,7 +26,7 @@
 
 	print_header("$course->shortname: $strworkshops", "$course->fullname", "$navigation $strworkshops", "", "", true, "", navmenu($course));
 
-    if (! $workshops = get_all_instances_in_course("workshop", $course->id, "cw.section ASC")) {
+    if (! $workshops = get_all_instances_in_course("workshop", $course)) {
         notice("There are no workshops", "../../course/view.php?id=$course->id");
         die;
     }
