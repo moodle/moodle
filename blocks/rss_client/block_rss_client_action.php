@@ -2,7 +2,7 @@
 
     require_once('../../config.php');
     global $USER, $CFG;
-    require($CFG->dirroot .'/rss/templib.php');
+    require($CFG->dirroot .'/rss/rsslib.php');
     
     require_login();
     

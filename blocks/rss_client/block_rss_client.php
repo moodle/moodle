@@ -22,7 +22,7 @@ class block_rss_client extends block_base {
     function get_content() {
         global $CFG, $editing;
 
-        require_once($CFG->dirroot .'/rss/templib.php');
+        require_once($CFG->dirroot .'/rss/rsslib.php');
 
         if($this->content !== NULL) {
             return $this->content;
