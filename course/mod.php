@@ -103,7 +103,7 @@
     }
 
 
-    if (isset($move)) {  
+    if (isset($_GET['move'])) {  
 
         require_variable($id);   
 
@@ -115,7 +115,7 @@
             error("You can't modify this course!");
         }
     
-        move_module($cm, $move);
+        move_module($cm, $_GET['move']);
 
         rebuild_course_cache($cm->course);
 
@@ -127,20 +127,20 @@
         }
         exit;
 
-    } else if (isset($movetosection) or isset($moveto)) {  
+    } else if (isset($_GET['movetosection']) or isset($_GET['moveto'])) {  
         
         if (! $cm = get_record("course_modules", "id", $USER->activitycopy)) {
             error("The copied course module doesn't exist!");
         }
 
-        if (isset($movetosection)) {
-            if (! $section = get_record("course_sections", "id", $movetosection)) {
+        if (isset($_GET['movetosection'])) {
+            if (! $section = get_record("course_sections", "id", $_GET['movetosection'])) {
                 error("This section doesn't exist");
             }
             $beforecm = NULL;
 
         } else {                      // normal moveto
-            if (! $beforecm = get_record("course_modules", "id", $moveto)) {
+            if (! $beforecm = get_record("course_modules", "id", $_GET['moveto'])) {
                 error("The destination course module doesn't exist");
             }
             if (! $section = get_record("course_sections", "id", $beforecm->section)) {
@@ -171,9 +171,35 @@
             redirect("view.php?id=$section->course");
         }
 
-    } else if (isset($hide)) {
+    } else if (isset($_GET['indent'])) {  
 
-        if (! $cm = get_record("course_modules", "id", $hide)) {
+        require_variable($id);   
+
+        if (! $cm = get_record("course_modules", "id", $id)) {
+            error("This course module doesn't exist");
+        }
+
+        $cm->indent += $_GET['indent'];
+
+        if ($cm->indent < 0) {
+            $cm->indent = 0;
+        }
+
+        if (!set_field("course_modules", "indent", $cm->indent, "id", $cm->id)) {
+            error("Could not update the indent level on that course module");
+        }
+
+        $site = get_site();
+        if ($site->id == $cm->course) {
+            redirect($CFG->wwwroot);
+        } else {
+            redirect("view.php?id=$cm->course");
+        }
+        exit;
+
+    } else if (isset($_GET['hide'])) {
+
+        if (! $cm = get_record("course_modules", "id", $_GET['hide'])) {
             error("This course module doesn't exist");
         }
 
@@ -193,9 +219,9 @@
         }
         exit;
 
-    } else if (isset($show)) {
+    } else if (isset($_GET['show'])) {
 
-        if (! $cm = get_record("course_modules", "id", $show)) {
+        if (! $cm = get_record("course_modules", "id", $_GET['show'])) {
             error("This course module doesn't exist");
         }
 
@@ -225,9 +251,9 @@
         }
         exit;
 
-    } else if (isset($copy)) { // value = course module
+    } else if (isset($_GET['copy'])) { // value = course module
 
-        if (! $cm = get_record("course_modules", "id", $copy)) {
+        if (! $cm = get_record("course_modules", "id", $_GET['copy'])) {
             error("This course module doesn't exist");
         }
 
@@ -253,7 +279,7 @@
 
         redirect("view.php?id=$cm->course");
 
-    } else if (isset($cancelcopy)) { // value = course module
+    } else if (isset($_GET['cancelcopy'])) { // value = course module
 
         $courseid = $USER->activitycopycourse;
 
@@ -263,9 +289,9 @@
 
         redirect("view.php?id=$courseid");
 
-    } else if (isset($delete)) {   // value = course module
+    } else if (isset($_GET['delete'])) {   // value = course module
 
-        if (! $cm = get_record("course_modules", "id", $delete)) {
+        if (! $cm = get_record("course_modules", "id", $_GET['delete'])) {
             error("This course module doesn't exist");
         }
 
@@ -293,7 +319,7 @@
                   "$CFG->wwwroot/course/view.php?id=$course->id");
         }
 
-        $fullmodulename = strtolower(get_string("modulename", $module->name));
+        $fullmodulename = get_string("modulename", $module->name);
 
         $form->coursemodule = $cm->id;
         $form->section      = $cm->section;
@@ -319,9 +345,9 @@
         exit;
 
 
-    } else if (isset($update)) {   // value = course module
+    } else if (isset($_GET['update'])) {   // value = course module
 
-        if (! $cm = get_record("course_modules", "id", $update)) {
+        if (! $cm = get_record("course_modules", "id", $_GET['update'])) {
             error("This course module doesn't exist");
         }
 
@@ -369,9 +395,9 @@
         }
 
         
-    } else if (isset($add)) {
+    } else if (isset($_GET['add'])) {
 
-        if (!$add) {
+        if (empty($_GET['add'])) {
             redirect($_SERVER["HTTP_REFERER"]);
             die;
         }
@@ -383,7 +409,7 @@
             error("This course doesn't exist");
         }
 
-        if (! $module = get_record("modules", "name", $add)) {
+        if (! $module = get_record("modules", "name", $_GET['add'])) {
             error("This module type doesn't exist");
         }
 

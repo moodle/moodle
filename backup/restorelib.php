@@ -394,6 +394,7 @@
                                     $course_module->added = $mod->added;
                                     $course_module->deleted = $mod->deleted;
                                     $course_module->score = $mod->score;
+                                    $course_module->indent = $mod->indent;
                                     $course_module->visible = $mod->visible;
                                     $course_module->instance = null;
                                     //NOTE: The instance (new) is calculated and updated in db in the
@@ -1320,6 +1321,8 @@
                                 $this->info->tempmod->deleted;
                             $this->info->tempsection->mods[$this->info->tempmod->id]->score = 
                                 $this->info->tempmod->score;
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->indent = 
+                                $this->info->tempmod->indent;
                             $this->info->tempsection->mods[$this->info->tempmod->id]->visible = 
                                 $this->info->tempmod->visible;
                             unset($this->info->tempmod);
@@ -1344,6 +1347,9 @@
                             break;
                         case "SCORE":
                             $this->info->tempmod->score = $this->getContents();
+                            break;
+                        case "INDENT":
+                            $this->info->tempmod->indent = $this->getContents();
                             break;
                         case "VISIBLE":
                             $this->info->tempmod->visible = $this->getContents();

@@ -250,6 +250,11 @@ function main_upgrade($oldversion=0) {
         table_column("course", "", "showrecent", "integer", "10", "unsigned", "1", "", "numsections");
     }
 
+    if ($oldversion < 2003091400) {
+        table_column("course_modules", "", "indent", "integer", "5", "unsigned", "0", "", "score");
+    }
+
+
     return $result;
 }
 ?>    

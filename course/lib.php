@@ -637,8 +637,18 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $extra = "";
                 }
 
+                if ($mod->indent) {
+                    print_spacer(12, 20 * $mod->indent, false);
+                }
+
                 if ($mod->modname == "label") {
+                    if (!$mod->visible) {
+                        echo "<span class=\"dimmed_text\">";
+                    }
                     echo format_text($extra, FORMAT_HTML);
+                    if (!$mod->visible) {
+                        echo "</span>";
+                    }
 
                 } else { // Normal activity
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
@@ -650,7 +660,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 echo "</td>";
                 if ($isediting) {
                     echo "<td align=\"right\" valign=\"top\" nowrap=\"nowrap\" class=\"activityeditbuttons\">";
-                    echo make_editing_buttons($mod->id, $absolute, $mod->visible);
+                    echo make_editing_buttons($mod->id, $absolute, $mod->visible, true, $mod->indent);
                     echo " </td>";
                 }
                 echo "</tr>";
@@ -1508,7 +1518,7 @@ function move_module($cm, $move) {
     }
 }
 
-function make_editing_buttons($moduleid, $absolute=false, $visible=true, $moveselect=true) {
+function make_editing_buttons($moduleid, $absolute=false, $visible=true, $moveselect=true, $indent=-1) {
     global $CFG, $THEME;
 
     static $str = '';
@@ -1517,6 +1527,8 @@ function make_editing_buttons($moduleid, $absolute=false, $visible=true, $movese
         $str->move     = get_string("move");
         $str->moveup   = get_string("moveup");
         $str->movedown = get_string("movedown");
+        $str->moveright   = get_string("moveright");
+        $str->moveleft = get_string("moveleft");
         $str->update   = get_string("update");
         $str->hide     = get_string("hide");
         $str->show     = get_string("show");
@@ -1552,7 +1564,17 @@ function make_editing_buttons($moduleid, $absolute=false, $visible=true, $movese
                     " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> ";
     }
 
-    return "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$moduleid\"><img".
+    $leftright = "";
+    if ($indent > 0) {
+        $leftright .= "<a title=\"$str->moveleft\" href=\"$path/mod.php?id=$moduleid&indent=-1\"><img".
+                      " src=\"$pixpath/t/left.gif\" height=11 width=11 border=0></a> ";
+    }
+    if ($indent >= 0) {
+        $leftright .= "<a title=\"$str->moveright\" href=\"$path/mod.php?id=$moduleid&indent=1\"><img".
+                      " src=\"$pixpath/t/right.gif\" height=11 width=11 border=0></a> ";
+    }
+
+    return "$leftright<a title=\"$str->delete\" href=\"$path/mod.php?delete=$moduleid\"><img".
            " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> $move".
            "<a title=\"$str->update\" href=\"$path/mod.php?update=$moduleid\"><img".
            " src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a> $hideshow";

@@ -530,6 +530,7 @@
                fwrite ($bf,full_tag("ADDED",6,false,$course_module[$tok]->added));
                fwrite ($bf,full_tag("DELETED",6,false,$course_module[$tok]->deleted));
                fwrite ($bf,full_tag("SCORE",6,false,$course_module[$tok]->score));
+               fwrite ($bf,full_tag("INDENT",6,false,$course_module[$tok]->indent));
                fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
                fwrite ($bf,end_tag("MOD",5,true));
             }

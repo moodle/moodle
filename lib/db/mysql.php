@@ -501,6 +501,10 @@ function main_upgrade($oldversion=0) {
         execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname,\" \",lastname)') ");
     }
 
+    if ($oldversion < 2003091400) {
+        table_column("course_modules", "", "indent", "integer", "5", "unsigned", "0", "", "score");
+    }
+
     return $result;
 
 }
