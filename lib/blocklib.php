@@ -312,23 +312,25 @@ function block_find($blockid, $leftblocks, $rightblocks) {
     return false;
 }
 
-//This function prints the add_block popup as necessary
-function block_print_add_block($courseid, $missingblocks) {
+//This function prints the block to admin blocks as necessary
+function block_print_blocks_admin($courseid, $missingblocks) {
     if (isediting($courseid)) {
-        $title = get_string('add');
-        if(!empty($missingblocks)) {
+        $strblocks = get_string('blocks');
+        $stradd    = get_string('add');
+        if (!empty($missingblocks)) {
             $blockdata = get_records_list('blocks', 'id', implode(',', $missingblocks));
-            if($blockdata !== false) {
-                foreach($blockdata as $block) {
+            if ($blockdata !== false) {
+                foreach ($blockdata as $block) {
                     $blockobject = block_instance($block->name, NULL);
-                    if($blockobject === false) {
+                    if ($blockobject === false) {
                         continue;
                     }
                     $menu[$block->id] = $blockobject->get_title();
                 }
-                $content = popup_form('view.php?id='.$courseid.'&amp;blockaction=add&amp;blockid=',$menu,'add_block','','choose','','',true);
+                $content = popup_form('view.php?id='.$courseid.'&amp;blockaction=add&amp;blockid=',
+                                      $menu, 'add_block', '', "$stradd...", '', '', true);
                 $content = '<div align="center">'.$content.'</div>';
-                print_side_block($title, $content, NULL, NULL, NULL);
+                print_side_block($strblocks, $content, NULL, NULL, NULL);
             }
         }
     }

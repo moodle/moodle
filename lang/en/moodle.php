@@ -100,6 +100,7 @@ $string['backupsavetohelp'] = 'Full path to the directory where you want to save
 $string['backupuserfileshelp'] = 'Choose whether user files (eg profile images) should be included in automated backups';
 $string['backupusershelp'] = 'Select whether you want to include all the users in the server or only the needed users for each course';
 $string['backupversion'] = 'Backup Version';
+$string['blocks'] = 'Blocks';
 $string['blocksetup'] = 'Setting up block tables';
 $string['blocksuccess'] = '$a tables have been set up correctly';
 $string['bycourseorder'] = 'By course order';

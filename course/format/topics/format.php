@@ -276,7 +276,7 @@
     if(block_have_active($rightblocks) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
         if ($editing && !empty($missingblocks)) {
-            block_print_add_block($course->id, $missingblocks);
+            block_print_blocks_admin($course->id, $missingblocks);
         }
         print_course_blocks($course, $rightblocks, BLOCK_RIGHT);
         print_spacer(1, 120, true);
