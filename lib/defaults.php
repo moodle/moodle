@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-// This file is generally only included from admin/index.php 
+// This file is generally only included from admin/index.php
 // It defines default values for any important configuration variables
 
    $defaults = array (
@@ -22,7 +22,7 @@
        "editorfontsize"           => '',
        "editorkillword"           => 1,
        "editorspelling"           => 0,
-       "editorfontlist"           => "Arial:arial,helvetica,sans-serif;Courier New:courier new,courier,monospace;Georgia:georgia,times new roman,times,serif;Tahoma:tahoma,arial,helvetica,sans-serif;Times New Roman:times new roman,times,serif;Verdana:verdana,arial,helvetica,sans-serif;Impact:impact;Wingdings:wingdings;",
+       "editorfontlist"           => "Arial:arial,helvetica,sans-serif;Courier New:courier new,courier,monospace;Georgia:georgia,times new roman,times,serif;Tahoma:tahoma,arial,helvetica,sans-serif;Times New Roman:times new roman,times,serif;Verdana:verdana,arial,helvetica,sans-serif;Impact:impact;Wingdings:wingdings",
        "filteruploadedfiles"      =>  true,
        "forcelogin"               =>  false,
        "forceloginforprofiles"    =>  false,
