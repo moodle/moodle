@@ -65,8 +65,11 @@
                 fwrite ($bf,full_tag("ASSESSTIMESTART",4,false,$glossary->assesstimestart));
                 fwrite ($bf,full_tag("ASSESSTIMEFINISH",4,false,$glossary->assesstimefinish));
                 fwrite ($bf,full_tag("SCALE",4,false,$glossary->scale));
-                
-                backup_glossary_entries($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
+               
+                //Only if preferences->backup_users != 2 (none users). Else, teachers entries will be included.
+                if ($preferences->backup_users != 2) { 
+                    backup_glossary_entries($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
+                }
 
                 backup_glossary_categories($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
 
@@ -100,7 +103,10 @@
                 fwrite ($bf,full_tag("NAME",6,false,$glo_cat->name));
                 fwrite ($bf,full_tag("USEDYNALINK",6,false,$glo_cat->usedynalink));
 
-                $status = backup_glossary_entries_categories ($bf,$preferences,$glo_cat->id);
+                //Only if preferences->backup_users != 2 (none users). Else, teachers entries will be included.
+                if ($preferences->backup_users != 2) {
+                    $status = backup_glossary_entries_categories ($bf,$preferences,$glo_cat->id);
+                }
 
                 $status =fwrite ($bf,end_tag("CATEGORY",5,true));
 
