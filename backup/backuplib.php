@@ -776,6 +776,7 @@
                         fwrite ($bf,full_tag("TEA_ROLE",6,false,$tea->role));
                         fwrite ($bf,full_tag("EDITALL",6,false,$tea->editall));
                         fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$tea->timemodified));
+                        fwrite ($bf,full_tag("TIMEACCESS",6,false,$tea->timeaccess));
                         //Print ROLE end
                         fwrite ($bf,end_tag("ROLE",5,true));   
                     }
@@ -790,6 +791,7 @@
                         fwrite ($bf,full_tag("TIMESTART",6,false,$stu->timestart));
                         fwrite ($bf,full_tag("TIMEEND",6,false,$stu->timeend));
                         fwrite ($bf,full_tag("TIME",6,false,$stu->time));
+                        fwrite ($bf,full_tag("TIMEACCESS",6,false,$stu->timeaccess));
                         //Print ROLE end
                         fwrite ($bf,end_tag("ROLE",5,true));   
                     }

@@ -1568,6 +1568,9 @@
                         case "TIME":
                             $this->info->temprole->time = $this->getContents();
                             break;
+                        case "TIMEACCESS":
+                            $this->info->temprole->timeaccess = $this->getContents();
+                            break;
                     }
                 }
             }
