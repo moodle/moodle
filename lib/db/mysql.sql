@@ -131,6 +131,7 @@ CREATE TABLE `prefix_log` (
   `url` varchar(100) NOT NULL default '',
   `info` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
+  KEY `timecoursemoduleaction` (time,course,module,action),
   KEY `coursemoduleaction` (course,module,action),
   KEY `courseuserid` (course,userid)
 ) TYPE=MyISAM COMMENT='Every action is logged as far as possible.';
@@ -233,7 +234,8 @@ CREATE TABLE `prefix_user_students` (
   `timeend` int(10) unsigned NOT NULL default '0',
   `time` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  KEY `courseuserid` (course,userid)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
@@ -248,7 +250,8 @@ CREATE TABLE `prefix_user_teachers` (
   `authority` int(10) NOT NULL default '3',
   `role` varchar(40) NOT NULL default '',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  KEY `courseuserid` (course,userid)
 ) TYPE=MyISAM COMMENT='One record per teacher per course';
 
 #

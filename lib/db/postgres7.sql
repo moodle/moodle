@@ -76,7 +76,7 @@ CREATE TABLE prefix_log (
 );
 
 CREATE INDEX prefix_log_coursemoduleaction_idx ON prefix_log (course,module,action);
-
+CREATE INDEX prefix_log_timecoursemoduleaction_idx ON prefix_log (time,course,module,action);
 CREATE INDEX prefix_log_courseuserid_idx ON prefix_log (course,userid);
 
 CREATE TABLE prefix_log_display (
@@ -147,6 +147,8 @@ CREATE TABLE prefix_user_students (
    time integer NOT NULL default '0'
 );
 
+CREATE INDEX prefix_user_students_courseuserid_idx ON prefix_user_students (course,userid);
+
 CREATE TABLE prefix_user_teachers (
    id SERIAL PRIMARY KEY,
    userid integer NOT NULL default '0',
@@ -155,7 +157,9 @@ CREATE TABLE prefix_user_teachers (
    role varchar(40) NOT NULL default ''
 );
 
-CREATE TABLE mdl_user_coursecreators (
+CREATE INDEX prefix_user_teachers_courseuserid_idx ON prefix_user_teachers (course,userid);
+
+CREATE TABLE prefix_user_coursecreators (
    id SERIAL8 PRIMARY KEY,
    userid int8  NOT NULL default '0'
 );

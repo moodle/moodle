@@ -176,6 +176,13 @@ function main_upgrade($oldversion=0) {
         table_column("course_sections", "sequence", "sequence", "text", "", "", "", "", "");
     }
 
+    if ($oldversion < 2003072800) {
+        print_simple_box("The following database index improves performance, but can be quite large - if you are upgrading and you have problems with a limited quota you may want to delete this index later from the '{$CFG->prefix}log' table in your database", "center", "50%", "$THEME->cellheading", "20", "noticebox");
+        execute_sql(" CREATE INDEX {$CFG->prefix}log_timecoursemoduleaction_idx ON {$CFG->prefix}log (time,course,module,action) ");
+        execute_sql(" CREATE INDEX {$CFG->prefix}user_students_courseuserid_idx ON {$CFG->prefix}user_students (course,userid) ");
+        execute_sql(" CREATE INDEX {$CFG->prefix}user_teachers_courseuserid_idx ON {$CFG->prefix}user_teachers (course,userid) ");
+    }
+
     return $result;
 }
 ?>    
