@@ -25,7 +25,7 @@ class block_messages extends block_base {
         $this->content->footer = '<a target="message" href="'.$CFG->wwwroot.'/message/index.php" onclick="return openpopup(\'/message/index.php\', \'message\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'.get_string('messages', 'message').'</a>...';
 
         $users = get_records_sql("SELECT m.useridfrom as id, COUNT(m.useridfrom) as count,
-                                         u.firstname, u.lastname, u.picture 
+                                         u.firstname, u.lastname, u.picture, u.lastaccess
                                        FROM {$CFG->prefix}user u, 
                                             {$CFG->prefix}message m 
                                        WHERE m.useridto = '$USER->id' 
@@ -48,6 +48,7 @@ class block_messages extends block_base {
                 } else {
                     $this->content->text .= '<img src="'.$CFG->pixpath.'/i/user.gif" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
                 }
+                $timeago = format_time(time() - $user->lastaccess);
                 $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->instance->pageid.'" title="'.$timeago.'">'.fullname($user).'</a>';
                 $this->content->text .= '&nbsp;<a target="message_'.$user->id.'" href="'.$CFG->wwwroot.'/message/user.php?id='.$user->id.'" onclick="return openpopup(\'/message/user.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img height="11" width="11" src="'.$CFG->pixpath.'/t/message.gif">&nbsp;'.$user->count.'</a>';
                 $this->content->text .= '</div>';
