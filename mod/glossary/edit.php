@@ -33,6 +33,12 @@ if (! $glossary = get_record("glossary", "id", $cm->instance)) {
     error("Course module is incorrect");
 }
 
+if ($CFG->dbtype == 'postgres7' ) {
+        $ucase = 'upper';
+} else {
+        $ucase = 'ucase';
+}
+
 if (!$glossary->studentcanpost && !isteacher($glossary->course)) {
     error("You can't add/edit entries to this glossary!");
 }
@@ -115,7 +121,7 @@ if ( $confirm ) {
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept))) {
+            if ($dupentries = get_records("glossary_entries","$ucase(concept)", strtoupper($newentry->concept))) {
                 foreach ($dupentries as $curentry) {
                     if ( $glossary->id == $curentry->glossaryid ) {
                        if ( $curentry->id != $e ) {
@@ -153,7 +159,7 @@ if ( $confirm ) {
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_record("glossary_entries","UCASE(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id)) {
+            if ($dupentries = get_record("glossary_entries","$ucase(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id)) {
                 $permissiongranted = 0;
             }
         }

@@ -94,7 +94,7 @@
             } else {
                 $usernamefield = "u.lastname || ' ' || u.firstname";
             }
-            $where = "AND substr(ucase($usernamefield),1," .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
+            $where = "AND substr(upper($usernamefield),1," .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
         break;
         case 'mysql':
             if ( $sqlsortkey == 'FIRSTNAME' ) {
@@ -129,7 +129,7 @@
         if ($hook != 'ALL' and $hook != 'SPECIAL') {
             switch ($CFG->dbtype) {
             case 'postgres7':
-                $where = 'AND substr(ucase(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
+                $where = 'AND substr(upper(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
             break;
             case 'mysql':
                 $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '$hook'";
@@ -189,7 +189,7 @@
             if ($hook != 'ALL' and $hook != 'SPECIAL') {
                 switch ($CFG->dbtype) {
                 case 'postgres7':
-                    $where = 'AND substr(ucase(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
+                    $where = 'AND substr(upper(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
                 break;
                 case 'mysql':
                     $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
@@ -208,7 +208,7 @@
                 }
                 switch ($CFG->dbtype) {
                 case 'postgres7':
-                    $where = 'AND substr(ucase(concept),1,1) NOT IN (' . strtoupper($sqlalphabet) . ')';
+                    $where = 'AND substr(upper(concept),1,1) NOT IN (' . strtoupper($sqlalphabet) . ')';
                 break;
                 case 'mysql':
                     $where = 'AND left(ucase(concept),1) NOT IN (' . strtoupper($sqlalphabet) . ')';

@@ -24,6 +24,12 @@
             $PermissionGranted = 0;
         }
     }
+    
+    if ($CFG->dbtype == 'postgres7' ) {
+            $ucase = 'upper';
+    } else {
+            $ucase = 'ucase';
+    }
 
     if ( !isteacher($cm->course) ) {
         $PermissionGranted = 0;
@@ -59,7 +65,7 @@
 
         } else {
             if ( ! $mainglossary->allowduplicatedentries ) {
-                $dupentry = get_record("glossary_entries","glossaryid", $mainglossary->id, "UCASE(concept)",strtoupper($entry->concept));
+                $dupentry = get_record("glossary_entries","glossaryid", $mainglossary->id, "$ucase(concept)",strtoupper($entry->concept));
                 if ( $dupentry ) {
                     $PermissionGranted = 0;
                 }
