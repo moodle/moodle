@@ -141,6 +141,7 @@
 <p class="questionlink"><a href="#resource1">When trying to add a resource I receive error messages.</a></p>
 
 <p class="questionlink"><a href="#noadmin">During the initial setting-up process, I never get asked to create an admin account!</a></p>
+<p class="questionlink"><a href="#nologin">I can't log in at all- I just stay stuck on the login screen.</a></p>
 
 <p class="questionlink">&nbsp;</p>
 
@@ -387,7 +388,7 @@
 
 <h4 class="question"><a name="resource1"></a>When trying to add a resource I receive error messages.</h4>
 
-<p class="answer">Assuming you are using Apache, then it's quite likely that your setting in config.php for $CFG->wwwroot is different from the actual URL you are using to access the site. Also try turning off "secureforms" in the admin settings.</p>
+<p class="answer">Assuming you are using Apache, then it's quite likely that your setting in config.php for $CFG->wwwroot is different from the actual URL you are using to access the site. Also try turning off "<b>secureforms</b>" in the admin settings.</p>
 
 
 
@@ -405,6 +406,17 @@
 <p class="answer">After performing any of these fixes it might be a good idea to drop all the tables in your database and re-install again from scratch.</p>
 
 
+<h4 class="question"><a name="nologin"></a>I can't log in - I just stay stuck on the login screen.</h4>
+
+<p class="answer">The most common cause for this is that your own computer (not your Moodle server) 
+                  has a firewall that is stripping referrer information from the browser.</p>
+
+<p class="answer">This can be fixed by editing the Moodle configuration page and changing the 
+                  variable "<b>secureforms</b>" to "No".</p>
+
+<p class="answer">Another possible cause of this problem is that sessions are not configured 
+                  properly on the server.  You can test this by calling the script 
+                  http://yourserver/moodle/lib/session-test.php.</p>
 
 <h2>&nbsp;</h2>
 
