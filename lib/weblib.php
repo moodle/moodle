@@ -534,7 +534,7 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
     }
 
     $link = '<a target="'. $name .'" title="'. $title .'" href="'. $CFG->wwwroot . $url .'" '.
-           "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
+           "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
     if ($return) {
         return $link;
     } else {
