@@ -1,7 +1,7 @@
 <P ALIGN=CENTER><B>Sobre o editor Richtext HTML</B></P>
 
 <P>Disponibilidade: <B>
-<?php  if (!$CFG->htmleditor) {
+<? if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");
