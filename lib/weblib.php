@@ -1122,7 +1122,13 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $direction = " dir=\"ltr\"";
     }
 
-    if (!$cache) {   // Do everything we can to prevent clients and proxies caching
+    if ($cache) {
+        @session_cache_limiter('private');
+        @header('Cache-Control: private');
+        @header('Pragma: ');
+        @header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+    } else {   // Do everything we can to prevent clients and proxies caching
         @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
         @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
         @header('Cache-Control: no-store, no-cache, must-revalidate');
