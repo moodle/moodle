@@ -36,11 +36,7 @@
             break;
     }
 
-    if ($USER->lang) {
-        $currentlang = $USER->lang;
-    } else {
-        $currentlang = $CFG->lang;
-    }
+    $currentlang = current_language();
 
     print_header("$site->shortname: $title", "$site->fullname",
                  "<A HREF=\"index.php\">$stradministration</A> -> $navigation");
