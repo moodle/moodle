@@ -1632,8 +1632,7 @@ function redirect($url, $message="", $delay="0") {
         if (empty($delay)) {  
             $delay = 3;  // There's no point having a message with no delay
         }
-        echo "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />";
-        print_header();
+        print_header("", "", "", "", "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />");
         echo "<center>";
         echo "<p>$message</p>";
         echo "<p>( <a href=\"$url\">".get_string("continue")."</a> )</p>";
