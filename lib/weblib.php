@@ -1679,6 +1679,9 @@ function redirect($url, $message="", $delay="0") {
         echo "<p>$message</p>";
         echo "<p>( <a href=\"$url\">".get_string("continue")."</a> )</p>";
         echo "</center>";
+        flush();
+        sleep($delay);
+        echo "<script>location.replace('$url');</script>";   // To cope with Mozilla bug
     }
     die; 
 }
