@@ -6,8 +6,8 @@
     require_variable($id);    // Assignment
     optional_variable($sort, "timemodified"); 
     optional_variable($dir, "DESC");
+    optional_variable($timewas);
 
-    $timewas = $_POST['timenow'];
     $timenow = time();
 
     if (! $assignment = get_record("assignment", "id", $id)) {
