@@ -1,0 +1,12 @@
+<BLOCKQUOTE>
+<FORM name="form" method="post" action="editsection.php">
+<P><B>Summary of <? echo "$sectionname $form->section"; ?></B></P>
+<TEXTAREA NAME=summary COLS=60 ROWS=4 WRAP=virtual><?=$form->summary ?></TEXTAREA>
+<BR><FONT SIZE=1>(Maximum of 255 characters)</FONT>
+<P>
+<INPUT type="hidden" name=id value="<?=$form->id ?>">
+<INPUT type="submit" value="Save all changes">
+<INPUT type="reset" value="Revert">
+</P>
+</FORM>
+</BLOCKQUOTE>
