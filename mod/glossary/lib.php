@@ -18,6 +18,34 @@ define("GLOSSARY_IMPORT_VIEW", 5);
 define("GLOSSARY_EXPORT_VIEW", 6);
 define("GLOSSARY_APPROVAL_VIEW", 7);
 
+//Check for global configure default variables
+
+if (!isset($CFG->glossary_studentspost)) {
+    set_config("glossary_studentspost", 1);  // Students can post entries.
+}
+
+if (!isset($CFG->glossary_dupentries)) {
+    set_config("glossary_dupentries", 0);  // Duplicate entries are not allowed.
+}
+
+if (!isset($CFG->glossary_allowcomments)) {
+    set_config("glossary_allowcomments", 0);  // Comments are not allowed.
+}
+
+if (!isset($CFG->glossary_linkbydefault)) {
+    set_config("glossary_linkbydefault", 1);  // Linking entries is enabled.
+}
+
+if (!isset($CFG->glossary_defaultapproval)) {
+    set_config("glossary_defaultapproval", 1);  // Entries are approved.
+}
+
+if (!isset($CFG->glossary_entbypage)) {
+    set_config("glossary_entbypage", 10);  // 10 entries are showed.
+}
+
+/// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
+
 function glossary_add_instance($glossary) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html) this function
