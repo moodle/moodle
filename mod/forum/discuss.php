@@ -117,7 +117,11 @@
 
     $canreply = NULL;   /// No override one way or the other
 
-    $groupmode = groupmode($course, $cm);
+    if ($forum->type == "teacher") {
+        $groupmode = NOGROUPS;
+    } else {
+        $groupmode = groupmode($course, $cm);
+    }
 
     if ($groupmode and !isteacheredit($course->id)) {   // Groups must be kept separate
         if ($groupmode == SEPARATEGROUPS) {

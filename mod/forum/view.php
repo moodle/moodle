@@ -89,7 +89,12 @@
 /// and if so, set $currentgroup to reflect the current group
 
     $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
-    $groupmode = groupmode($course, $cm);   // Groups are being used
+
+    if ($forum->type == "teacher") {
+        $groupmode = NOGROUPS;
+    } else {
+        $groupmode = groupmode($course, $cm);   // Groups are being used
+    }
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
 
     if ($groupmode and ($currentgroup === false) and !isteacheredit($course->id)) {
