@@ -4296,6 +4296,10 @@ function zip_files ($originalfiles, $destination) {
         $command = 'cd '.escapeshellarg($origpath).$separator.
                     escapeshellarg($CFG->zip).' -r '.
                     escapeshellarg(cleardoubleslashes("$destpath/$destfilename")).' '.$filestozip;
+        //All converted to backslashes in WIN
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $command = str_replace('/','\\',$command);
+        }
         Exec($command);
     }
     return true;
@@ -4364,6 +4368,10 @@ function unzip_file ($zipfile, $destination = '') {
                     escapeshellarg($CFG->unzip).' -o '.
                     escapeshellarg(cleardoubleslashes("$zippath/$zipfilename")).' -d '.
                     escapeshellarg($destpath).$redirection;
+        //All converted to backslashes in WIN
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $command = str_replace('/','\\',$command);
+        }
         Exec($command,$list);
     }
 
