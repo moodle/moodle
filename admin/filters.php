@@ -32,9 +32,9 @@
     $stractive = get_string("active");
     $strinactive = get_string("inactive");
     $strcachetext = get_string("cachetext", "admin");
-    $strconfigcachetext = get_string("configcachetext");
+    $strconfigcachetext = get_string("configcachetext", 'admin');
     $strfilteruploadedfiles = get_string("filteruploadedfiles", "admin");
-    $strconfigfilteruploadedfiles = get_string("configfilteruploadedfiles");
+    $strconfigfilteruploadedfiles = get_string("configfilteruploadedfiles", 'admin');
 
     print_header("$site->shortname: $strmanagefilters", "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> ".

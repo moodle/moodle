@@ -22,7 +22,7 @@
 
     $table->align = array ('right', 'left');
 
-    $table->data[] = array("<strong><a href=\"config.php\">". get_string('configvariables') .'</a></strong>',
+    $table->data[] = array("<strong><a href=\"config.php\">". get_string('configvariables', 'admin') .'</a></strong>',
                            get_string('adminhelpconfigvariables'));
     $table->data[] = array("<strong><a href=\"site.php\">". get_string('sitesettings') .'</a></strong>',
                            get_string('adminhelpsitesettings'));

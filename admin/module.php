@@ -48,7 +48,7 @@
 
     print_heading($strmodulename);
 
-    print_simple_box("<center>".get_string("configwarning")."</center>", "center", "50%");
+    print_simple_box("<center>".get_string("configwarning", 'admin')."</center>", "center", "50%");
     echo "<br />";
 
     print_simple_box_start("center", "");

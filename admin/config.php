@@ -71,9 +71,12 @@
         $focus = '';
     }
 
+    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
+
+
     $stradmin = get_string('administration');
     $strconfiguration = get_string('configuration');
-    $strconfigvariables = get_string('configvariables');
+    $strconfigvariables = get_string('configvariables', 'admin');
 
     if ($site) {
         print_header("$site->shortname: $strconfigvariables", $site->fullname,
@@ -84,14 +87,64 @@
         print_header();
         print_heading($strconfigvariables);
         print_simple_box(get_string('configintro'), 'center', "50%");
-        echo "<br />";
+        echo '<br />';
     }
 
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
+
+
+/// Get all the configuration fields and helptext
+    include('configvars.php');
+
+/// Cycle through the sections to get the sectionnames
+    $linktext = '';
+    foreach($configvars as $sectionname=>$section) {
+        if ($linktext !== '') {
+            $linktext .= ' | ';
+        }
+        $linktext .= '<a href="#configsection'.$sectionname.'">'.get_string('configsection'.$sectionname, 'admin').'</a>';
+    }
+        
+    echo "<center>$linktext</center>\n";
 
     print_simple_box_start('center');
-    include('config.html');
+    
+    echo '<form method="post" action="config.php" name="form">';
+
+/// Cycle through each section of the configuration
+    foreach ($configvars as $sectionname=>$section) {
+
+        print_heading('<a name="configsection'.$sectionname.'"></a>'.get_string('configsection'.$sectionname, 'admin'));
+
+        $table = NULL;
+        $table->data = array();
+        foreach ($section as $configvariable=>$configobject) {
+            $table->data[] = array ( $configvariable.': ',
+                                     $configobject->field
+                                   );
+            if ($configobject->display_warning()) {
+                $table->data[] = array ( '&nbsp;',
+                                         '<span class="configwarning">'.$configobject->warning.'</span>'
+                                       );
+            }
+            $table->data[] = array ( '&nbsp;',
+                                     '<span class="confighelp">'.$configobject->help.'</span>'
+                                   );
+            $table->align = array ('right', 'left');
+        }
+        print_table($table);
+
+    }
+    echo '<center>';
+    echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
+    echo '<input type="submit" value="'.get_string('savechanges').'" />';
+    echo '</center>';
+                
+    echo '</form>';
+    
     print_simple_box_end();
+
+
+    
 
     /// Lock some options
 

@@ -67,7 +67,7 @@
 
     print_heading($strblockname);
 
-    print_simple_box('<center>'.get_string('configwarning').'</center>', 'center', '50%');
+    print_simple_box('<center>'.get_string('configwarning', 'admin').'</center>', 'center', '50%');
     echo '<br />';
 
     echo '<form method="post" action="block.php">';

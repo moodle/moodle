@@ -295,7 +295,7 @@
     $table->cellspacing = 3;
     $table->width = "40%";
 
-    $configdata  = "<font size=+1>&nbsp;</font><a href=\"config.php\">".get_string("configvariables")."</a> - <font size=\"1\">".
+    $configdata  = "<font size=+1>&nbsp;</font><a href=\"config.php\">".get_string("configvariables", 'admin')."</a> - <font size=\"1\">".
                     get_string("adminhelpconfigvariables")."</font><br />";
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"site.php\">".get_string("sitesettings")."</a> - <font size=\"1\">".
                     get_string("adminhelpsitesettings")."</font><br />";

@@ -68,7 +68,7 @@
     print_simple_box_start("center", "80%");
     print_heading($options[$enrol]);
 
-    print_simple_box_start("center", "60%");
+    print_simple_box_start("center", "60%", '', 5, 'informationbox');
     print_string("description", "enrol_$enrol");
     print_simple_box_end();
 

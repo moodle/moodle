@@ -107,7 +107,7 @@
     print_simple_box_start("center", "100%");
     print_heading($options[$auth]);
 
-    print_simple_box_start("center", "60%");
+    print_simple_box_start("center", "60%", '', 5, 'informationbox');
     print_string("auth_$auth"."description", "auth");
     print_simple_box_end();
 
