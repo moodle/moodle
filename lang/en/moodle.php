@@ -202,6 +202,7 @@ $string['help'] = "Help";
 $string['helphtml'] = "How to write html";
 $string['helppicture'] = "How to upload a picture";
 $string['helptext'] = "How to write text";
+$string['helprichtext'] = "About the rich text editor";
 $string['helpquestions'] = "How to ask questions";
 $string['hide'] = "Hide";
 $string['home'] = "Home";
