@@ -27,23 +27,20 @@ class CourseBlock_course_summary extends MoodleBlock {
         $this->content->text = format_text($this->course->summary, FORMAT_HTML);
         if (isediting($this->course->id)) {
             if (empty($this->course->category)) {
-                $editpage = "$CFG->wwwroot/admin/site.php";
+                $editpage = $CFG->wwwroot.'/admin/site.php';
             } else {
                 $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->course->id;
             }
-            if (empty($THEME->custompix)) {
-                 $pixpath = $CFG->wwwroot.'/pix';
-            } else {
-                 $pixpath = $CFG->wwwroot.'/theme/'.$CFG->theme.'/pix';
-            }
-            $this->content->text .= "<div align=\"right\"><a href=\"$editpage\"><img src=\"$pixpath/t/edit.gif\" /></a></div>";
+            $this->content->text .= "<div align=\"right\"><a href=\"$editpage\"><img src=\"$CFG->pixpath/t/edit.gif\" /></a></div>";
         }
         $this->content->footer = '';
 
         return $this->content;
     }
 
-    function hide_header() {return true;}
+    function hide_header() {
+        return true;
+    }
 }
 
 ?>
