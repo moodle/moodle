@@ -2313,14 +2313,4 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
     return $ratingsmenuused;
 }
 
-function forum_set_display_mode($mode=0) {
-    global $USER, $CFG;
-
-    if ($mode) {
-        $USER->mode = $mode;
-    } else if (empty($USER->mode)) {
-        $USER->mode = $CFG->forum_displaymode;
-    }
-}
-
 ?>
