@@ -66,6 +66,26 @@ function quiz_upgrade($oldversion) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}quiz_responses` ADD INDEX(question) ");
     }
 
+	if ($oldversion < 2003033100) {
+        modify_database ("", "ALTER TABLE prefix_quiz_randommatch RENAME prefix_quiz_randomsamatch ");
+        modify_database ("", "CREATE TABLE `prefix_quiz_match` (
+                             `id` int(10) unsigned NOT NULL auto_increment,
+                             `question` int(10) unsigned NOT NULL default '0',
+                             `subquestions` varchar(255) NOT NULL default '',
+                             PRIMARY KEY  (`id`),
+                             KEY `question` (`question`)
+                           );");
+
+        modify_database ("", "CREATE TABLE `prefix_quiz_match_sub` (
+                             `id` int(10) unsigned NOT NULL auto_increment,
+                             `question` int(10) unsigned NOT NULL default '0',
+                             `questiontext` text NOT NULL,
+                             `answertext` varchar(255) NOT NULL default '',
+                             PRIMARY KEY  (`id`),
+                             KEY `question` (`question`)
+                           );");
+    }
+
     return true;
 }
 

@@ -99,6 +99,33 @@ CREATE TABLE `prefix_quiz_grades` (
 # --------------------------------------------------------
 
 #
+# Table structure for table `quiz_match`
+#
+
+CREATE TABLE `prefix_quiz_match` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `subquestions` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
+) TYPE=MyISAM COMMENT='Defines fixed matching questions';
+# --------------------------------------------------------
+
+#
+# Table structure for table `quiz_match_sub`
+#
+
+CREATE TABLE `prefix_quiz_match_sub` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `questiontext` text NOT NULL,
+  `answertext` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
+) TYPE=MyISAM COMMENT='Defines the subquestions that make up a matching question';
+# --------------------------------------------------------
+
+#
 # Table structure for table `quiz_multichoice`
 #
 
@@ -129,18 +156,6 @@ CREATE TABLE `prefix_quiz_question_grades` (
 # --------------------------------------------------------
 
 #
-# Table structure for table `quiz_randommatch`
-#
-
-CREATE TABLE `prefix_quiz_randommatch` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `question` int(10) unsigned NOT NULL default '0',
-  `choose` INT UNSIGNED DEFAULT '4' NOT NULL,
-  PRIMARY KEY ( `id` ),
-  KEY `question` (`question`)
-) TYPE=MyISAM COMMENT='Info about a random matching question';
-
-#
 # Table structure for table `quiz_questions`
 #
 
@@ -154,6 +169,19 @@ CREATE TABLE `prefix_quiz_questions` (
   `qtype` smallint(6) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='The quiz questions themselves';
+# --------------------------------------------------------
+
+#
+# Table structure for table `quiz_randomsamatch`
+#
+
+CREATE TABLE `prefix_quiz_randomsamatch` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `choose` INT UNSIGNED DEFAULT '4' NOT NULL,
+  PRIMARY KEY ( `id` ),
+  KEY `question` (`question`)
+) TYPE=MyISAM COMMENT='Info about a random short-answer matching question';
 # --------------------------------------------------------
 
 #

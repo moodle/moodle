@@ -27,6 +27,26 @@ function quiz_upgrade($oldversion) {
         table_column("quiz_questions", "", "defaultgrade", "INTEGER", "6", "UNSIGNED", "1", "NOT NULL", "image");
     }
 
+	if ($oldversion < 2003033100) {
+        modify_database ("", "ALTER TABLE prefix_quiz_randommatch RENAME prefix_quiz_randomsamatch ");
+        modify_database ("", "CREATE TABLE `prefix_quiz_match_sub` (
+                                 id SERIAL PRIMARY KEY,
+                                 question integer NOT NULL default '0',
+                                 questiontext text NOT NULL default '',
+                                 answertext varchar(255) NOT NULL default ''
+                              );");
+        modify_database ("", "CREATE INDEX question_prefix_quiz_match_sub_idx ON prefix_quiz_match_sub (question);");
+
+        modify_database ("", "CREATE TABLE prefix_quiz_multichoice (
+                                 id SERIAL PRIMARY KEY,
+                                 question integer NOT NULL default '0',
+                                 layout integer NOT NULL default '0',
+                                 answers varchar(255) NOT NULL default '',
+                                 single integer NOT NULL default '0'
+                               );");
+        modify_database ("", "CREATE INDEX question_quiz_multichoice_idx ON prefix_quiz_multichoice (question);");
+    }
+
     return true;
 }
 

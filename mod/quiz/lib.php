@@ -13,17 +13,18 @@ $QUIZ_GRADE_METHOD = array ( GRADEHIGHEST => get_string("gradehighest", "quiz"),
                              ATTEMPTFIRST => get_string("attemptfirst", "quiz"),
                              ATTEMPTLAST  => get_string("attemptlast", "quiz"));
 
-define("SHORTANSWER", "1");
-define("TRUEFALSE",   "2");
-define("MULTICHOICE", "3");
-define("RANDOM",      "4");
-define("MATCH",       "5");
-define("RANDOMMATCH", "6");
+define("SHORTANSWER",   "1");
+define("TRUEFALSE",     "2");
+define("MULTICHOICE",   "3");
+define("RANDOM",        "4");
+define("MATCH",         "5");
+define("RANDOMSAMATCH", "6");
 
-$QUIZ_QUESTION_TYPE = array ( MULTICHOICE => get_string("multichoice", "quiz"),
-                              TRUEFALSE   => get_string("truefalse", "quiz"),
-                              SHORTANSWER => get_string("shortanswer", "quiz"),
-                              RANDOMMATCH => get_string("randommatch", "quiz") );
+$QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
+                              TRUEFALSE     => get_string("truefalse", "quiz"),
+                              SHORTANSWER   => get_string("shortanswer", "quiz"),
+                              MATCH         => get_string("match", "quiz"),
+                              RANDOMSAMATCH => get_string("randomsamatch", "quiz") );
 
 $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
                             "webct"    => get_string("webct", "quiz"),
@@ -31,6 +32,8 @@ $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
                             "missingword" => get_string("missingword", "quiz") );
 
 define("QUIZ_PICTURE_DEFAULT_HEIGHT", "200");
+
+define("QUIZ_MAX_NUMBER_ANSWERS", "8");
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
@@ -283,7 +286,15 @@ function quiz_get_answers($question) {
            return false;  // Not done yet
            break;
 
-        case RANDOMMATCH:       // Could be any of many answers, return them all
+        case MATCH:
+            return get_records_sql("SELECT ms.*, g.grade
+                                      FROM {$CFG->prefix}quiz_match_sub ms, 
+                                           {$CFG->prefix}quiz_question_grades g
+                                     WHERE ms.question = '$question->id' 
+                                       AND ms.question = g.question");
+           break;
+
+        case RANDOMSAMATCH:       // Could be any of many answers, return them all
             return get_records_sql("SELECT a.*, g.grade
                                       FROM {$CFG->prefix}quiz_questions q,  
                                            {$CFG->prefix}quiz_answers a,  
@@ -360,7 +371,10 @@ function quiz_print_question_icon($question) {
         case RANDOM:
             echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/rs.gif\">";
             break;
-        case RANDOMMATCH:
+        case MATCH:
+            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/ma.gif\">";
+            break;
+        case RANDOMSAMATCH:
             echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/rm.gif\">";
             break;
     }
@@ -368,7 +382,7 @@ function quiz_print_question_icon($question) {
 }
 
 function quiz_print_question($number, $questionid, $grade, $courseid, 
-                              $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL) {
+                             $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL) {
 /// Prints a quiz question, any format
 
     if (!$question = get_record("quiz_questions", "id", $questionid)) {
@@ -524,8 +538,58 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            echo "<P>Random questions not supported yet</P>";
            break;
 
-       case RANDOMMATCH: 
-           if (!$options = get_record("quiz_randommatch", "question", $question->id)) {
+       case MATCH: 
+           if (!$options = get_record("quiz_match", "question", $question->id)) {
+               notify("Error: Missing question options!");
+           }
+           if (!$subquestions = get_records_list("quiz_match_sub", "id", $options->subquestions)) {
+               notify("Error: Missing subquestions for this question!");
+           }
+           echo text_to_html($question->questiontext);
+           if ($question->image) {
+               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
+           }
+
+           foreach ($subquestions as $subquestion) {
+               $answers[$subquestion->id] = $subquestion->answertext;
+           }
+
+           $answers = draw_rand_array($answers, count($answers));
+
+           echo "<table border=0 cellpadding=10 align=right>";
+           foreach ($subquestions as $key => $subquestion) {
+               echo "<tr><td align=left valign=top>";
+               echo $subquestion->questiontext;
+               echo "</td>";
+               if (empty($response)) {
+                   echo "<td align=right valign=top>";
+                   choose_from_menu($answers, "q$question->id"."r$subquestion->id");
+               } else {
+                   if (empty($response[$key])) {
+                       echo "<td align=right valign=top>";
+                       choose_from_menu($answers, "q$question->id"."r$subquestion->id");
+                   } else {
+                       if ($response[$key] == $correct[$key]) {
+                           echo "<td align=right valign=top class=highlight>";
+                           choose_from_menu($answers, "q$question->id"."r$subquestion->id", $response[$key]);
+                       } else {
+                           echo "<td align=right valign=top>";
+                           choose_from_menu($answers, "q$question->id"."r$subquestion->id", $response[$key]);
+                       }
+                   }
+
+                   if (!empty($feedback[$key])) {
+                       quiz_print_comment($feedback[$key]);
+                   }
+               }
+               echo "</td></tr>";
+           }
+           echo "</table>";
+
+           break;
+
+       case RANDOMSAMATCH: 
+           if (!$options = get_record("quiz_randomsamatch", "question", $question->id)) {
                notify("Error: Missing question options!");
            }
            echo text_to_html($question->questiontext);
@@ -1210,7 +1274,28 @@ function quiz_grade_attempt_results($quiz, $questions) {
                 }
                 break;
 
-            case RANDOMMATCH:
+            case MATCH:
+                $matchcount = $totalcount = 0;
+
+                foreach ($question->answer as $questionanswer) {  // Each answer is "questionid-answerid"
+                    $totalcount++;
+                    $qarr = explode('-', $questionanswer);        // Extract question/answer.
+                    if ($qarr[0] == $qarr[1]) {
+                        $matchcount++;
+                        $correct[$qarr[0]] = true;
+                        $response[$qarr[0]] = $qarr[1];
+                        $questiongrade = $answers[$qarr[0]]->grade;
+                    } else {
+                        $correct[$qarr[0]] = false;
+                        $response[$qarr[0]] = $qarr[1];
+                    }
+                }
+
+                $grade = $questiongrade * $matchcount / $totalcount;
+
+                break;
+
+            case RANDOMSAMATCH:
                 $bestanswer = array();
                 foreach ($answers as $answer) {  // Loop through them all looking for correct answers
                     if (empty($bestanswer[$answer->question])) {
@@ -1406,18 +1491,55 @@ function quiz_save_question_options($question) {
             }
         break;
 
-        case RANDOMMATCH:
+        case MATCH:
+            delete_records("quiz_match", "question", $question->id);
+            delete_records("quiz_match_sub", "question", $question->id);
+
+            $subquestions = array();
+
+            // Insert all the new question+answer pairs
+            foreach ($question->subquestions as $key => $questiontext) {
+                $answertext = $question->subanswers[$key];
+                if (!empty($questiontext) and !empty($answertext)) {
+                    unset($answer);
+                    $subquestion->question = $question->id;
+                    $subquestion->questiontext = $questiontext;
+                    $subquestion->answertext   = $answertext;
+                    if (!$subquestion->id = insert_record("quiz_match_sub", $subquestion)) {
+                        $result->error = "Could not insert quiz answer!";
+                        return $result;
+                    }
+                    $subquestions[] = $subquestion->id;
+                }
+            }
+
+            if (count($subquestions) < 3) {
+                $result->notice = get_string("notenoughsubquestions", "quiz");
+                return $result;
+            }
+
+            unset($options);
+            $options->question = $question->id;
+            $options->subquestions = implode(",",$subquestions);
+            if (!insert_record("quiz_match", $options)) {
+                $result->error = "Could not insert quiz match options!";
+                return $result;
+            }
+
+            break;
+
+        case RANDOMSAMATCH:
             $options->question = $question->id;
             $options->choose = $question->choose;
-            if ($existing = get_record("quiz_randommatch", "question", $options->question)) {
+            if ($existing = get_record("quiz_randomsamatch", "question", $options->question)) {
                 $options->id = $existing->id;
-                if (!update_record("quiz_randommatch", $options)) {
-                    $result->error = "Could not update quiz randommatch options!";
+                if (!update_record("quiz_randomsamatch", $options)) {
+                    $result->error = "Could not update quiz randomsamatch options!";
                     return $result;
                 }
             } else {
-                if (!insert_record("quiz_randommatch", $options)) {
-                    $result->error = "Could not insert quiz randommatch options!";
+                if (!insert_record("quiz_randomsamatch", $options)) {
+                    $result->error = "Could not insert quiz randomsamatch options!";
                     return $result;
                 }
             }

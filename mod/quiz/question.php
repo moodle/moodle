@@ -254,7 +254,7 @@
             if (!empty($options->answers)) {
                 $answersraw = get_records_list("quiz_answers", "id", $options->answers);
             }
-            for ($i=0; $i<6; $i++) {
+            for ($i=0; $i<QUIZ_MAX_NUMBER_ANSWERS; $i++) {
                 $answers[] = "";   // Make answer slots, default as blank
             }
             if (!empty($answersraw)) {
@@ -273,15 +273,40 @@
             print_continue("edit.php");
         break;
 
-        case RANDOMMATCH:
+        case MATCH:
             if (!empty($question->id)) {
-                $options = get_record("quiz_randommatch", "question", $question->id);
+                $options = get_record("quiz_match", "question", $question->id);
+                if (!empty($options->subquestions)) {
+                    $oldsubquestions = get_records_list("quiz_match_sub", "id", $options->subquestions);
+                }
+            }
+            if (empty($subquestions) and empty($subanswers)) {
+                for ($i=0; $i<QUIZ_MAX_NUMBER_ANSWERS; $i++) {
+                    $subquestions[] = "";   // Make question slots, default as blank
+                    $subanswers[] = "";     // Make answer slots, default as blank
+                }
+                if (!empty($oldsubquestions)) {
+                    $i=0;
+                    foreach ($oldsubquestions as $oldsubquestion) {
+                        $subquestions[$i] = $oldsubquestion->questiontext;   // insert questions into slots
+                        $subanswers[$i] = $oldsubquestion->answertext;       // insert answers into slots
+                        $i++;
+                    }
+                }
+            }
+            print_heading_with_help(get_string("editingmatch", "quiz"), "match", "quiz");
+            require("match.html");
+        break;
+
+        case RANDOMSAMATCH:
+            if (!empty($question->id)) {
+                $options = get_record("quiz_randomsamatch", "question", $question->id);
             } else {
                 $options->choose = "";
             }
             $numberavailable = count_records("quiz_questions", "category", $category->id, "qtype", SHORTANSWER);
-            print_heading_with_help(get_string("editingrandommatch", "quiz"), "randommatch", "quiz");
-            require("randommatch.html");
+            print_heading_with_help(get_string("editingrandomsamatch", "quiz"), "randomsamatch", "quiz");
+            require("randomsamatch.html");
         break;
 
         default:

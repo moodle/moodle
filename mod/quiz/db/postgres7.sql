@@ -89,6 +89,31 @@ CREATE TABLE prefix_quiz_grades (
 # --------------------------------------------------------
 
 #
+# Table structure for table quiz_match
+#
+
+CREATE TABLE prefix_quiz_match (
+  id SERIAL PRIMARY KEY,
+  question integer NOT NULL default '0',
+  subquestions varchar(255) NOT NULL default ''
+);
+# --------------------------------------------------------
+CREATE INDEX question_prefix_quiz_match_idx ON prefix_quiz_match (question);
+
+#
+# Table structure for table `quiz_match_sub`
+#
+
+CREATE TABLE `prefix_quiz_match_sub` (
+  id SERIAL PRIMARY KEY,
+  question integer NOT NULL default '0',
+  questiontext text NOT NULL default '',
+  answertext varchar(255) NOT NULL default ''
+);
+# --------------------------------------------------------
+CREATE INDEX question_prefix_quiz_match_sub_idx ON prefix_quiz_match_sub (question);
+
+#
 # Table structure for table quiz_multichoice
 #
 
@@ -130,10 +155,10 @@ CREATE TABLE prefix_quiz_questions (
 # --------------------------------------------------------
 
 #
-# Table structure for table quiz_randommatch
+# Table structure for table quiz_randomsamatch
 #
 
-CREATE TABLE prefix_quiz_randommatch (
+CREATE TABLE prefix_quiz_randomsamatch (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   choose integer NOT NULL default '4',

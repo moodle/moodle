@@ -88,15 +88,15 @@
 
                 $rm->choose = 4;                 /// Always 4, for now.
                 $rm->category = $category->id;
-                $rm->questiontext =  get_string("randommatchintro", "quiz");
+                $rm->questiontext =  get_string("randomsamatchintro", "quiz");
                 $rm->image = "";
-                $rm->qtype =  RANDOMMATCH;
+                $rm->qtype =  RANDOMSAMATCH;
                 $rm->defaultgrade = $rm->choose; 
 
                 echo "<hr>";
 
                 for ($i=1; $i<=$form->createrandom; $i++) {
-                    $rm->name =  get_string("randommatch", "quiz") . " $i ($rm->choose $strquestions)";
+                    $rm->name =  get_string("randomsamatch", "quiz") . " $i ($rm->choose $strquestions)";
 
                     $db->debug = true;
                     if (!$rm->id = insert_record("quiz_questions", $rm)) {
@@ -145,7 +145,7 @@
     choose_from_menu($QUIZ_FILE_FORMAT, "format", "missingword", "");
     helpbutton("import", $strimportquestions, "quiz");
     echo "</TR><TR><TD align=right>";
-    print_string("randommatchcreate", "quiz");
+    print_string("randomsamatchcreate", "quiz");
     echo ":</TD><TD>";
     for ($i=0;$i<=100;$i++) {
         $menu[$i] = $i;

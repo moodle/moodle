@@ -13,7 +13,7 @@
     <TD>
         <?PHP
            if (empty($question->name)) {
-               $question->name =  get_string("randommatch", "quiz");
+               $question->name =  get_string("randomsamatch", "quiz");
            }
         ?>
         <INPUT type="text" name="name" size=40 value="<? p($question->name) ?>">
@@ -28,7 +28,7 @@
                echo "<BR \>";
            }
            if (empty($question->questiontext)) {
-               $question->questiontext =  get_string("randommatchintro", "quiz");
+               $question->questiontext =  get_string("randomsamatchintro", "quiz");
            }
            print_textarea($usehtmleditor, 15, 60, 595, 300, "questiontext", $question->questiontext);
            if ($usehtmleditor) {
@@ -40,7 +40,7 @@
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? print_string("randommatchnumber", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><? print_string("randomsamatchnumber", "quiz") ?>:</B></P></TD>
     <TD>
     <?
         if ($numberavailable < 2) {
@@ -48,7 +48,7 @@
         } else if ($numberavailable < 6) {
             $maxrandom = $numberavailable;
         } else {
-            $maxrandom = 6;
+            $maxrandom = QUIZ_MAX_NUMBER_ANSWERS;
         }
 
         for ($i=2;$i<=$maxrandom;$i++) {
