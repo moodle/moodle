@@ -1668,7 +1668,7 @@
             $log->info = "";
             $toinsert = true;
             break;
-	case "recent":
+        case "recent":
             $log->url = "recent.php?id=".$log->course;
             $log->info = "";
             $toinsert = true;
