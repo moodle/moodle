@@ -20,7 +20,7 @@ function quiz_upgrade($oldversion) {
         modify_database ("", "CREATE TABLE prefix_quiz_randommatch (
                                   id SERIAL PRIMARY KEY,
                                   question integer NOT NULL default '0',
-                                  choose integer NOT NULL default '4',
+                                  choose integer NOT NULL default '4'
                               );");
     }
     if ($oldversion < 2003030303) {
