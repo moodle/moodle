@@ -36,6 +36,9 @@
 
 /// CONSTANTS /////////////////////////////////////////////////////////////
 
+define('MOODLE_INTERNAL', true);  // Used by some scripts to check they
+                                  // are being called by Moodle
+
 define('NOGROUPS', 0);
 define('SEPARATEGROUPS', 1);
 define('VISIBLEGROUPS', 2);
