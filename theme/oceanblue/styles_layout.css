@@ -172,11 +172,6 @@ a img {
     border-style:solid;
 }
 
-.userinfoboxside,
-.userinfoboxsummary,
-.userinfoboxlinkcontent { }
-
-
 /* weblib.php table */
 .tabledivider {
     border-width:1px;
@@ -334,6 +329,10 @@ table.formtable tbody th
     width: 100px;
     padding: 5px;
     vertical-align: bottom;
+}
+
+.userinfobox .list td {
+    padding: 3px;
 }
 
 .userinfobox .username {
@@ -594,14 +593,21 @@ table.generaltable th.header,
 }
 
 body#mod-quiz-report .tabs .side,
-body#message-index .tabs .side {
+body#message-index .tabs .side,
+body.course .tabs .side, 
+body.user .tabs .side,
+body#mod-forum-user .tabs .side {
     border-style: solid;
     border-width: 0px 0px 1px 0px;
     border-color: #AAAAAA;
     width: 50%;
 }
 
-body#mod-quiz-report .tabs {
+body#mod-quiz-report .tabs,
+body#message-index .tabs,
+body.course .tabs,
+body.user .tabs,
+body#mod-forum-user .tabs {
     margin-bottom: 15px;
 }
 
@@ -1137,4 +1143,26 @@ body#course-enrol .coursebox {
 
 .headingblock .link {
     text-align:right;
+}
+
+body#course-user .graph {
+    text-align: center;
+}
+
+body#course-user .section,
+body#course-user .content {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+body#course-user .section {
+    border-width:1px;
+    border-style:solid;
+    padding:10px;
+    border-color:#AAAAAA;
+    margin-bottom: 20px;
+}
+
+body#course-user .section h2 {
+    margin-top: 0px;
 }

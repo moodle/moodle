@@ -50,6 +50,20 @@ a.autolink.glossary:hover {
     cursor: help;
 }
 
+.tablink a:link,
+.tablink a:visited {
+    color:#000066;
+}
+
+.tablink a:hover {
+    text-decoration: none;
+}
+
+.selected .tablink a:link,
+.selected .tablink a:visited {
+    color:#000000;
+}
+
 
 /* general styles */
 body {
@@ -57,7 +71,8 @@ body {
     color:#000066;
 }
 
-th.header {
+th.header,
+td.header {
     background-color:#DDDDDD;
 }
 
@@ -148,12 +163,6 @@ th.header {
 .loginbox .content {
     border-color:#DDDDDD; /* borders */
 }
-
-/* summary of a user in a nice little box - weblib.php */
-.userinfobox {
-    border-color:#AAAAFF; /* borders */
-}
-
 
 /* weblib.php table */
 .tabledivider {
@@ -456,7 +465,7 @@ table.minicalendar {
     border-color:#DDDDDD;
 }
 
-#calendar .maincalendar .eventlist .event .header,
+#calendar .maincalendar .eventlist .event .topic,
 #calendar .maincalendar .eventlist .event .picture,
 #calendar .maincalendar .eventlist .event .side
 {
@@ -560,7 +569,6 @@ table.minicalendar {
     border-color:#AAAAFF; /* borders */
 }
 .sideblock .header {
-    background-color: #EEEEEE;
 }
 
 .sideblock .content {
