@@ -1,3 +1,91 @@
+2002-08-13 Tuesday 02:01  martin
+
+	* mod/survey/report.php: Got rid of some junk
+
+2002-08-13 Tuesday 02:01  martin
+
+	* lang/en/help/surveys.html: Help file for survey types (needs
+	work)
+
+2002-08-13 Tuesday 01:54  martin
+
+	* lang/en/: moodle.php, survey.php: Language additions
+
+2002-08-13 Tuesday 01:54  martin
+
+	* mod/survey/: details.php, index.php, lib.php, mod.html, save.php,
+	view.php: Language fixes
+
+2002-08-13 Tuesday 01:54  martin
+
+	* mod/survey/report.php: Cleaned up the whole interface (more
+	consistent now) and lots of labguage stuff
+
+2002-08-12 Monday 22:59  martin
+
+	* lang/en/: moodle.php, survey.php: More translating
+
+2002-08-12 Monday 22:59  martin
+
+	* course/mod.php: More translating ...
+
+2002-08-12 Monday 22:44  martin
+
+	* mod/reading/details.php: Better error checking for empty fields
+
+2002-08-12 Monday 21:45  martin
+
+	* lang/en/moodle.php, lang/en/reading.php, lib/moodlelib.php,
+	lib/weblib.php, theme/standard/header.html,
+	theme/standardblue/header.html, theme/standardgreen/header.html,
+	theme/standardred/header.html: Minor tweaking and cleaning up
+
+2002-08-12 Monday 21:45  martin
+
+	* mod/reading/: details.php, index.php, lib.php, mod.html,
+	view.php: Language fixes and minor tweaks
+
+2002-08-12 Monday 17:38  martin
+
+	* lang/en/forum.php, lang/en/journal.php, lang/en/moodle.php,
+	mod/forum/lib.php, mod/journal/edit.html, mod/journal/edit.php,
+	mod/journal/index.php, mod/journal/lib.php, mod/journal/mod.html,
+	mod/journal/report.php, mod/journal/view.php: More language fixes
+
+2002-08-12 Monday 16:56  martin
+
+	* mod/choice/: lib.php, view.php: 
+	Modernised insert and update of answers (using standard functions)
+
+2002-08-12 Monday 16:28  martin
+
+	* lang/en/choice.php, lang/en/moodle.php, mod/choice/index.php,
+	mod/choice/lib.php, mod/choice/mod.html, mod/choice/report.php,
+	mod/choice/view.html, mod/choice/view.php: Language changes to
+	choice module
+
+2002-08-12 Monday 15:44  martin
+
+	* lib/wordlist.txt: Slightly bigger wordlist
+
+2002-08-12 Monday 15:40  martin
+
+	* lang/en/moodle.php, lib/weblib.php: Language changes to weblib
+
+2002-08-12 Monday 15:37  martin
+
+	* lang/en/moodle.php, lib/moodlelib.php: Language changes for main
+	library
+
+2002-08-12 Monday 11:22  martin
+
+	* course/enrol.php: Some courses may not have a teacher - in this
+	case, make the enrolment welcome email "from" the admin
+
+2002-08-11 Sunday 23:48  martin
+
+	* CHANGES: Changes
+
 2002-08-11 Sunday 23:41  martin
 
 	* course/delete.php, course/edit.html, course/edit.php,
