@@ -59,13 +59,6 @@ $CFG->dirroot   = "/web/moodle";
 $CFG->dataroot  = "/home/moodledata";
 
 
-// Choose a theme from the "themes" folder.  Current choices include 
-// "standard", "standardblue", "standardgreen" and "standardred", 
-// but feel free to copy one and make new themes!
-
-$CFG->theme     = "standard";
-
-
 // Choose a sitewide language - this will affect text, buttons etc
 // See lib/languages.php for a full list of standard language codes.
 

@@ -98,7 +98,7 @@
     // Find and check all modules and load them up or upgrade them if necessary
 
 
-    if (!$mods = get_list_of_modules() ) {
+    if (!$mods = get_list_of_plugins("mod") ) {
         error("No modules installed!");
     }
 
@@ -187,7 +187,8 @@
     $table->head  = array (get_string("site"), get_string("courses"), get_string("users"));
     $table->align = array ("CENTER", "CENTER", "CENTER");
     $table->data[0][0] = "<P><A HREF=\"site.php\">".get_string("sitesettings")."</A></P>".
-                         "<P><A HREF=\"../course/log.php?id=$site->id\">".get_string("sitelogs")."</A></P>";
+                         "<P><A HREF=\"../course/log.php?id=$site->id\">".get_string("sitelogs")."</A></P>".
+                         "<P><A HREF=\"../theme/index.php\">".get_string("choosetheme")."</A></P>";
     $table->data[0][1] = "<P><A HREF=\"../course/edit.php\">".get_string("addnewcourse")."</A></P>".
                          "<P><A HREF=\"../course/teacher.php\">".get_string("assignteachers")."</A></P>".
                          "<P><A HREF=\"../course/delete.php\">".get_string("deletecourse")."</A></P>";

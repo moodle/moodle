@@ -511,6 +511,8 @@ function print_admin_links ($siteid) {
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/site.php\">".get_string("sitesettings")."</A>";
     $modicon[]=$icon;
+    $moddata[]="<A HREF=\"$CFG->wwwroot/theme/index.php\">".get_string("choosetheme")."</A>";
+    $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</A>";
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/teacher.php\">".get_string("assignteachers")."</A>";

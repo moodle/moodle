@@ -16,9 +16,30 @@
 
     error_reporting(7);   // use 0=none 7=normal 15=all 
 
+// Load up standard libraries 
+
+    require("$CFG->libdir/weblib.php");          // Standard web page functions
+    require("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
+    require("$CFG->libdir/adodb/tohtml.inc.php");// Database display functions
+    require("$CFG->libdir/moodlelib.php");       // Various Moodle functions
+
+// Connect to the database using adodb
+
+    ADOLoadCode($CFG->dbtype);          
+    $db = &ADONewConnection();         
+    $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname); 
+
 // Default editing time for posts and the like (in seconds)
 
     $CFG->maxeditingtime = 1800;
+
+// Load up any configuration from the config table
+    
+    if (!$CFG->theme = get_field("config", "value", "name", "theme")) {
+        $theme->name  = "theme";
+        $theme->value = $CFG->theme = "standard";
+        insert_record("config", $theme);
+    }
 
 // Location of standard files
 
@@ -29,6 +50,10 @@
     $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.css";
     $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
     $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
+
+// Load up theme variables (colours etc)
+
+    require("$CFG->dirroot/theme/$CFG->theme/config.php");
 
 // Set language/locale of printed times (must be supported by OS)
 
@@ -48,19 +73,6 @@
    if (isset($_SERVER)) { 
        extract($_SERVER);
    }
-
-// Load up theme variables (colours etc)
-
-    require("$CFG->dirroot/theme/$CFG->theme/config.php");
-
-
-// Load up standard libraries 
-
-    require("$CFG->libdir/weblib.php");          // Standard web page functions
-    require("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
-    require("$CFG->libdir/adodb/tohtml.inc.php");// Database display functions
-    require("$CFG->libdir/moodlelib.php");       // Various Moodle functions
-
     
 // Load up global environment variables
 
@@ -73,12 +85,6 @@
 
     $FULLME = qualified_me();
     $ME     = strip_querystring($FULLME);
-
-// Connect to the database using adodb
-
-    ADOLoadCode($CFG->dbtype);          
-    $db = &ADONewConnection();         
-    $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname); 
 
 
 ?>

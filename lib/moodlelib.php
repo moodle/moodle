@@ -176,6 +176,7 @@ function print_table($table) {
 //     $table->head      is an array of heading names.
 //     $table->align     is an array of column alignments
 //     $table->data[]    is an array of arrays containing the data.
+//     $table->width     is an percentage of the page
 
     if ($table->align) {
         foreach ($table->align as $key => $aa) {
@@ -187,7 +188,11 @@ function print_table($table) {
         }
     }
 
-    print_simple_box_start("CENTER", "80%", "#FFFFFF", 0);
+    if (!$table->width) {
+        $table->width = "80%";
+    }
+
+    print_simple_box_start("CENTER", "$table->width", "#FFFFFF", 0);
     echo "<TABLE WIDTH=100% BORDER=0 valign=top align=center cellpadding=10 cellspacing=1>\n";
 
     if ($table->head) {
@@ -1576,7 +1581,7 @@ function moodle_needs_upgrading() {
         if ($version > $dversion) {
             return true;
         }
-        if ($mods = get_list_of_modules()) {
+        if ($mods = get_list_of_plugins("mod")) {
             foreach ($mods as $mod) {
                 $fullmod = "$CFG->dirroot/mod/$mod";
                 unset($module);
@@ -1595,21 +1600,27 @@ function moodle_needs_upgrading() {
 }
 
 
-function get_list_of_modules() {
+function get_list_of_plugins($plugin="mod") {
+// Lists plugin directories within some directory
+
     global $CFG;
 
-    $dir = opendir("$CFG->dirroot/mod");
-    while ($mod = readdir($dir)) {
-        if ($mod == "." || $mod == ".." || $mod == "CVS") {
+    $basedir = opendir("$CFG->dirroot/$plugin");
+    while ($dir = readdir($basedir)) {
+        if ($dir == "." || $dir == ".." || $dir == "CVS") {
             continue;
         }
-        if (filetype("$CFG->dirroot/mod/$mod") != "dir") {
+        if (filetype("$CFG->dirroot/$plugin/$dir") != "dir") {
             continue;
         }
-        $mods[] = $mod;
+        $plugins[] = $dir;
     }
-    return $mods;
+    if ($plugins) {
+        asort($plugins);
+    }
+    return $plugins;
 }
+
 
 function iswindows() {
 // True if this is Windows, False if not.
