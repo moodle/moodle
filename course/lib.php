@@ -1139,7 +1139,7 @@ function print_category_info($category, $depth) {
     echo "\n\n<table border=0 cellpadding=3 cellspacing=0 width=\"100%\"><tr>";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-        $courses = get_courses($category->id, NULL, 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary');
+        $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary');
 
         echo "<tr>";
 
