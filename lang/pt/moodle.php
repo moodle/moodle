@@ -424,7 +424,7 @@ $string['emailpasswordconfirmsent'] = '<p>Foi enviada uma mensagem para o seu en
 <p>Se continuar a ter dificuldades, contacte o administrador do servidor.</p>';
 $string['emailpasswordsent'] = '<p>Obrigado por confirmar a alteração da sua palavra chave.</p>
 <p>A sua nova palavra chave foi enviada por correio para <b>$a->email</b>.</p>
-<p>A nova palavra chave foi gerada automaticamente - poderá querer <a href=$a->link>alterar a sua palavra chave</a> para algo que se recorde depois com mais facilidade (mas primeiro procure a nova palavra chave na mensagem que acabou de ser enviada).</p>';
+<p>A nova palavra chave foi gerada automaticamente - poderá querer <a href=\"$a->link\">alterar a sua palavra chave</a> para algo que se recorde depois com mais facilidade (mas primeiro procure a nova palavra chave na mensagem que acabou de ser enviada).</p>';
 $string['enable'] = 'Activar';
 $string['encryptedcode'] = 'Código encriptado';
 $string['enrolledincourse'] = 'Inscrito(a) na disciplina ';
@@ -641,7 +641,7 @@ $string['loginsteps'] = 'Viva!<br />
 <p>Para ter acesso completo às disciplinas precisa dedicar um minuto a criar uma nova conta de utilizador.</p>
 <p>Cada disciplina pode também ter uma \"chave de inscrição\", fornecida pelo docente.</p>
 <p>Siga as instruções:</p>
-<ol size=\"2\">
+<ol>
 <li>Preencha o <a href=$a>formulário</a> de nova conta com os seus dados.</li>
 <li>Será enviada imediatamente uma mensagem para o seu endereço de correio.</li>
 <li>Leia essa mensagem e visite o apontador fornecido para confirmar o registo e poder entrar no sítio.</li>
@@ -844,7 +844,7 @@ $string['passwordsdiffer'] = 'As palavras chave não coincidem';
 $string['passwordsent'] = 'Palavra chave enviada com sucesso';
 $string['passwordsenttext'] = '<p>Foi enviada uma mensagem foi para o seu endereço $a->email.</p>
 <p><b>Por favor procure a sua nova palavra chave no correio</b>.</p>
-<p>A nova palavra chave foi gerada automaticamente, sendo assim conveniente <a href=$a->link>mudá-la para outra mais fácil de lembrar</a>.</p>';
+<p>A nova palavra chave foi gerada automaticamente, sendo assim conveniente <a href=\"$a->link\">mudá-la para outra mais fácil de lembrar</a>.</p>';
 $string['pathnotexists'] = 'Esse caminho não existe no seu servidor!';
 $string['pathslasherror'] = 'O caminho não pode terminar com / !!';
 $string['paymentinstant'] = 'Use o botão em baixo para pagar e completar a inscrição!';
@@ -882,7 +882,7 @@ $string['registration'] = 'Registo do Moodle';
 $string['registrationemail'] = 'Notificações pelo correio electrónico';
 $string['registrationinfo'] = '<p>Esta página permite-lhe registar-se no site do Moodle (moodle.org). O registo é gratuito.
 O principal benefício de se registar é que será adicionado a uma lista de correio apenas para divulgação de alertas de segurança e de novas versões do Moodle.</p>
-<b>Por omissão, os seus dados serão mantidos confidenciais, e nunca serão vendidos ou facultados a mais ninguém. A única razão para a recolha desta informação é para efeitos de apoio, e para ajudar a criar estatísticas acerca da comunidade de utilizadores do Moodle.</p>
+<p>Por omissão, os seus dados serão mantidos confidenciais, e nunca serão vendidos ou facultados a mais ninguém. A única razão para a recolha desta informação é para efeitos de apoio, e para ajudar a criar estatísticas acerca da comunidade de utilizadores do Moodle.</p>
 <p>Se assim o entender, poderá permitir que o nome do seu sítio, país e URL sejam adicionados à lista pública de sítios que usam o Moodle.</p>
 <p>Todos os novos registos serão verificados manualmente antes de serem adicionados à lista, mas uma vez adicionados, poderá actualizar os dados do seu registo em qualquer altura submetendo novamente este formulário.</p>';
 $string['registrationno'] = 'Não pretendo receber mensagens de correio';
@@ -925,7 +925,7 @@ $string['scheduledbackupstatus'] = 'Estado de cópias de segurança programadas';
 $string['search'] = 'Procurar';
 $string['searchagain'] = 'Procurar novamente';
 $string['searchcourses'] = 'Procurar disciplinas';
-$string['searchhelp'] = 'Pode procurar várias palavras de uma só vez.<p>palavra: procurar ocorrências desta palavra, isolada ou dentro de outras.<br />+palavra: procura apenas ocorrências que contenham a palavra exacta.<br />-palavra: procura apenas ocorrências em que palavra não aparece.';
+$string['searchhelp'] = 'Pode procurar várias palavras de uma só vez.<br />palavra: procurar ocorrências desta palavra, isolada ou dentro de outras.<br />+palavra: procura apenas ocorrências que contenham a palavra exacta.<br />-palavra: procura apenas ocorrências em que palavra não aparece.';
 $string['searchresults'] = 'Procurar resultados';
 $string['sec'] = 'segundo';
 $string['secs'] = 'segundos';

@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = 'Metoda ta wykorzystuje tabelê zewnêtrznej bazy danych dla sprawdzenia czy podana nazwa u¿ytkownika i has³o s± poprawne. W przypadku nowego konta, informacje z innych pól równie¿ mog± zostaæ skopiowane do Moodle.';
-$string['auth_dbextrafields'] = 'Te pola s± opcjonalne. Mo¿esz wstêpnie wype³niæ niektóre pola dotycz±ce u¿ytkownika informacj± z <B>pól zewnêtrznej bazy danych</B>, które tutaj okre¶lasz. <P>Je¿eli nic w tym miejscu nie wpiszesz, u¿yte zostan± warto¶ci domy¶lne. <P> W obu przypadkach, u¿ytkownik bêdzie móg³ dokonaæ edycji tych pól po zalogowaniu';
+$string['auth_dbextrafields'] = 'Te pola s± opcjonalne. Mo¿esz wstêpnie wype³niæ niektóre pola dotycz±ce u¿ytkownika informacj± z <b>pól zewnêtrznej bazy danych</b>, które tutaj okre¶lasz. <br />Je¿eli nic w tym miejscu nie wpiszesz, u¿yte zostan± warto¶ci domy¶lne. <br /> W obu przypadkach, u¿ytkownik bêdzie móg³ dokonaæ edycji tych pól po zalogowaniu';
 $string['auth_dbfieldpass'] = 'Nazwa pola zawieraj±cego has³a';
 $string['auth_dbfielduser'] = 'Nazwa pola zawieraj±cego nazwy u¿ytkowników';
 $string['auth_dbhost'] = 'Komputer bêd±cy hostem serwera bazy danych.';
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = 'Has³o dla powy¿szej nazwy u¿ytkownika';
 $string['auth_dbpasstype'] = 'Okre¶l format stosowany przez pole has³a. Kodowanie MD5 przydatne jest przy ³±czeniu siê z innymi popularnymi aplikacjami sieci WWW, takimi jak PostNuke';
 $string['auth_dbtable'] = 'Nazwa tabeli w bazie danych';
 $string['auth_dbtitle'] = 'Korzystaj z zewnêtrznej bazy danych';
-$string['auth_dbtype'] = 'Rodzaj bazy danych (szczegó³owe informacje: <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A>';
+$string['auth_dbtype'] = 'Rodzaj bazy danych (szczegó³owe informacje: <a href\"=../lib/adodb/readme.htm#drivers\">ADOdb documentation</a>';
 $string['auth_dbuser'] = 'Nazwa u¿ytkownika maj±cego prawo dostêpu do odczytu z bazy';
 $string['auth_emaildescription'] = 'Potwierdzenie e-mailem jest domy¶ln± metod± uwierzytelniania. U¿ytkownik rejestruje siê wybieraj±c w³asn±, now± nazwê u¿ytkownika oraz has³o, a nastêpnie wysy³ane jest potwierdzenie na adres jego konta pocztowego. E-mail ten zawiera bezpieczny odno¶nik do strony, na której u¿ytkownik mo¿e potwierdziæ zarejestrowanie swojego konta. Przy kolejnych logowaniach dokonywane jest tylko porównanie nazwy u¿ytkownika i has³a z warto¶ciami zapisanymi w bazie danych Moodle.';
 $string['auth_emailtitle'] = 'Uwierzytelnienie z wykorzystaniem poczty elektronicznej';
@@ -40,8 +40,8 @@ $string['auth_ldap_search_sub'] = 'Wpisz warto¶æ &lt;&gt; 0 je¿eli chcesz szukaæ
 $string['auth_ldap_update_userinfo'] = 'Uaktualnij informacje o u¿ytkowniku (imiê, nazwisko, adres...) z LDAP do Moodle. Informacje na temat mapowania: /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'Atrybut u¿ywany do nazywania/szukania u¿ytkowników, zwykle \'cn\'.';
 $string['auth_ldap_version'] = 'Wersja protoko³u LDAP u¿ywana przez serwer.';
-$string['auth_ldapdescription'] = 'Metoda ta zapewnia uwierzytelnienie wzglêdem zewnêtrznego serwera LDAP.<br> Je¿eli podana nazwa u¿ytkownika i has³o s± poprawne, Moodle dokonuje wpisu nowego u¿ytkownika do swojej bazy danych. Modu³ ten mo¿e odczytywaæ atrybuty u¿ytkownika z LDAP i wstêpnie wype³niæ odpowiednie pola w Moodle. Przy kolejnych logowaniach sprawdzane s± tylko nazwa u¿ytkownika i has³o.';
-$string['auth_ldapextrafields'] = 'Te pola s± opcjonalne. Mo¿esz wstêpnie wype³niæ niektóre pola dotycz±ce u¿ytkowników Moodle informacjami z okre¶lonych tutaj <B>pól LDAP.<B> <P> Je¿eli pola te pozostawisz puste, ¿adne informacje nie zostan± przeniesione z LDAP i wykorzystane zostan± warto¶ci domy¶lne Moodle. <P> W obu przypadkach, u¿ytkownik bêdzie móg³ dokonaæ edycji tych pól po zalogowaniu.';
+$string['auth_ldapdescription'] = 'Metoda ta zapewnia uwierzytelnienie wzglêdem zewnêtrznego serwera LDAP.<br /> Je¿eli podana nazwa u¿ytkownika i has³o s± poprawne, Moodle dokonuje wpisu nowego u¿ytkownika do swojej bazy danych. Modu³ ten mo¿e odczytywaæ atrybuty u¿ytkownika z LDAP i wstêpnie wype³niæ odpowiednie pola w Moodle. Przy kolejnych logowaniach sprawdzane s± tylko nazwa u¿ytkownika i has³o.';
+$string['auth_ldapextrafields'] = 'Te pola s± opcjonalne. Mo¿esz wstêpnie wype³niæ niektóre pola dotycz±ce u¿ytkowników Moodle informacjami z okre¶lonych tutaj <b>pól LDAP</b>. <br /> Je¿eli pola te pozostawisz puste, ¿adne informacje nie zostan± przeniesione z LDAP i wykorzystane zostan± warto¶ci domy¶lne Moodle. <br /> W obu przypadkach, u¿ytkownik bêdzie móg³ dokonaæ edycji tych pól po zalogowaniu.';
 $string['auth_ldaptitle'] = 'U¿yj serwera LDAP';
 $string['auth_manualdescription'] = 'Metoda ta uniemo¿liwia u¿ytkownikom tworzenie w³asnych kont. Wszystkie konta musz± byæ rêcznie utworzone przez administratora (Admin User).';
 $string['auth_manualtitle'] = 'Tylko konta utworzone rêcznie';

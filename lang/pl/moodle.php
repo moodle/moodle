@@ -112,7 +112,7 @@ $string['backuplogshelp'] = 'Logi kursu bêd± automatycznie zapisane w kopii zapa
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Uwaga: Zaznaczy³e¶ opcjê kopii zapasowej dla \"nikogo\". W tym trybie nie s± zapisywane dane u¿ytkowników. Zauwa¿, ¿e modu³y \"Æwiczenie\" i \"Warsztaty\" nie dzia³aj± w tym trybie (s± wy³±czone).';
 $string['backuporiginalname'] = 'Nazwa kopii zapasowej';
-$string['backupsavetohelp'] = '¦cie¿ka dostêpu do katalogu w którym chcesz zapisaæ kopiê bezpieczeñstwa <br>(pozostaw puste je¶li chcesz zapisaæ w domy¶lnym katalogu kursu).';
+$string['backupsavetohelp'] = '¦cie¿ka dostêpu do katalogu w którym chcesz zapisaæ kopiê bezpieczeñstwa <br />(pozostaw puste je¶li chcesz zapisaæ w domy¶lnym katalogu kursu).';
 $string['backupuserfileshelp'] = 'Okre¶l czy pliki u¿ytkownika (np. zdjêcie) powinny byæ zapisane w kopii bezpieczeñstwa';
 $string['backupusershelp'] = 'Okre¶l czy chcesz uj±æ wszystkich u¿ytkowników, czy tylko tych przypisanych do kursów.';
 $string['backupversion'] = 'Wersja kopii zapasowej';
@@ -258,12 +258,12 @@ $string['doyouagree'] = 'Czy przeczyta³e¶(a¶) warunki i rozumiesz je?';
 $string['duplicate'] = 'Duplikuj';
 $string['duplicatinga'] = 'Duplikowanie: $a';
 $string['duplicatingain'] = 'Duplikowanie  $a->what w $a->in';
-$string['edhelpbgcolor'] = 'Ustaw kolor t³a w polu edycji.<br> Poprawn± warto¶ci± jest np. #FFFFFF lub white';
+$string['edhelpbgcolor'] = 'Ustaw kolor t³a w polu edycji.<br /> Poprawn± warto¶ci± jest np. #FFFFFF lub white';
 $string['edhelpcleanword'] = 'To ustawienie w³±cza lub wy³±cza specyficzne dla Worda filtrowanie formatów.';
 $string['edhelpenablespelling'] = 'W³±cz lub wy³±cz sprawdzanie pisowni. Je¶li w³±czone, <strong>aspell</strong> musi byæ zainstalowany na serwerze.';
 $string['edhelpfontfamily'] = 'Zmienna font-family jest list± czcionek. Kolejne nazwy czcionek musz± byæ oddzielone przecinkami.';
 $string['edhelpfontlist'] = 'Zdefiniuj czcionki dostêpne na rozwijanej li¶cie edytora.';
-$string['edhelpfontsize'] = 'Domy¶lny parametr font-size ustawia wielko¶æ czcionki.<br>Poprawnymi warto¶ciami s±: medium, large, smaller, larger, 10px, 11px.';
+$string['edhelpfontsize'] = 'Domy¶lny parametr font-size ustawia wielko¶æ czcionki.<br />Poprawnymi warto¶ciami s±: medium, large, smaller, larger, 10px, 11px.';
 $string['edit'] = 'Edytuj $a';
 $string['editcoursesettings'] = 'Zmieñ ustawienia kursu';
 $string['editfiles'] = 'Edytuj pliki';
@@ -298,7 +298,7 @@ W wiêkszo¶ci programów istnieje mo¿liwo¶æ przej¶cia pod powy¿szy adres poprzez k
 Pozdrowienia od administratora 
 $a->admin';
 $string['emailconfirmationsubject'] = 'Potwierdzenie dla konta $a';
-$string['emailconfirmsent'] = '<P>Zosta³ do Ciebie wys³any e-mail pod adres <B>$a</B>.<P>Zawiera on prost± instrukcjê jak dokoñczyæ rejestracjê.<P>Je¿eli nadal bêdziesz mieæ k³opoty skontaktuj siê z administratorem serwisu.';
+$string['emailconfirmsent'] = '<p>Zosta³ do Ciebie wys³any e-mail pod adres <b>$a</b>.</p><p>Zawiera on prost± instrukcjê jak dokoñczyæ rejestracjê.</p><p>Je¿eli nadal bêdziesz mieæ k³opoty skontaktuj siê z administratorem serwisu.</p>';
 $string['emaildigest'] = 'Typ streszczenia wysy³anego mailem';
 $string['emaildigestcomplete'] = 'Zakoñczono (codzienny email ze wszystkimi postami)';
 $string['emaildigestoff'] = 'Bez streszczenia (jeden email na ka¿dy post)';
@@ -325,17 +325,17 @@ W wiêkszo¶ci programów istnieje mo¿liwo¶æ przej¶cia pod powy¿szy adres poprzez k
 Je¶li potrzebujesz pomocy, skontaktuj siê z administratorem, 
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = 'Potwierdzenie zmiany has³a dla : $a';
-$string['emailpasswordconfirmsent'] = 'Zosta³ do Ciebie wys³any e-mail na adres <b>$a</b>.<p>Zawiera on proste instrukcje jak potwierdziæ i zakoñczyæ zmianê has³a. Je¶li nadal bêdziesz mia³ problemy, skontaktuj siê z administratorem.';
-$string['emailpasswordsent'] = 'Dziêkujemy za potwierdzenie zmiany has³a. <p>E-mail zawieraj±cy twoje nowe has³o zosta³ przes³any na twój adres <b>$a->email</b>. <p> Nowe has³o zosta³o wygenerowane w sposób automatyczny, mo¿esz je <a href=$a->link> zmieniæ</a> na ³atwiejsze do zapamiêtania.';
+$string['emailpasswordconfirmsent'] = 'Zosta³ do Ciebie wys³any e-mail na adres <b>$a</b>.<br />Zawiera on proste instrukcje jak potwierdziæ i zakoñczyæ zmianê has³a. Je¶li nadal bêdziesz mia³ problemy, skontaktuj siê z administratorem.';
+$string['emailpasswordsent'] = 'Dziêkujemy za potwierdzenie zmiany has³a. <br />E-mail zawieraj±cy twoje nowe has³o zosta³ przes³any na twój adres <b>$a->email</b>. <br /> Nowe has³o zosta³o wygenerowane w sposób automatyczny, mo¿esz je <a href=\"$a->link\"> zmieniæ</a> na ³atwiejsze do zapamiêtania.';
 $string['enable'] = 'W³±cz';
 $string['encryptedcode'] = 'Zakodowany kod';
 $string['enrolledincourse'] = 'Zapisany na kurs ';
 $string['enrolledincoursenot'] = 'Nie zapisany na kurs ';
 $string['enrollfirst'] = 'Musisz zapisaæ siê przynajmniej na jeden kurs aby korzystaæ z aktywno¶ci tego serwisu.';
-$string['enrolmentconfirmation'] = 'Zaraz zapiszesz siê na ten kurs.<br>Czy jeste¶ pewny, ¿e chcesz kontynuowaæ?';
+$string['enrolmentconfirmation'] = 'Zaraz zapiszesz siê na ten kurs.<br />Czy jeste¶ pewny, ¿e chcesz kontynuowaæ?';
 $string['enrolmentkey'] = 'Klucz dostêpu do kursu';
 $string['enrolmentkeyfrom'] = 'Ten kurs wymaga jednorazowego \'klucza dostêpu do kursu\', który powiniene¶ otrzymaæ od $a';
-$string['enrolmentkeyhint'] = 'Podany klucz dostêpu do kursu nie jest poprawny, spróbuj ponownie<BR>(wskazówka: klucz zaczyna siê na \'$a\')';
+$string['enrolmentkeyhint'] = 'Podany klucz dostêpu do kursu nie jest poprawny, spróbuj ponownie<br />(wskazówka: klucz zaczyna siê na \'$a\')';
 $string['enrolmentnew'] = 'Nowe zapisy w $a';
 $string['enrolmentnewuser'] = '$a->user zapisa³ siê na kurs \"$a->course\"';
 $string['enrolmentnointernal'] = 'Rêczne zapisywanie jest obecnie wy³±czone';
@@ -509,13 +509,10 @@ $string['login_failure_logs'] = 'Logi nieudanych prób logowania';
 $string['loginas'] = 'Zaloguj siê jako';
 $string['loginguest'] = 'Zaloguj siê jako go¶æ';
 $string['loginsite'] = 'Zaloguj siê do serwisu';
-$string['loginsteps'] = 'Witaj! 
-
-<p>Aby otrzymaæ pe³ny dostêp do kursów musisz po¶wiêciæ chwilkê aby stworzyæ sobie konto w tym serwisie. 
-<p>Ka¿dy z kursów mo¿e wymagaæ podania jednorazowego \"klucza dostêpu do kursu\", który bêdzie niezbêdny tylko przy zapisywaniu siê na kurs. Pó¼niej nie bêdzie ju¿ potrzebny. 
-
-<p> Oto kroki, które musisz wykonaæ: <OL size=2> <LI>Wype³nij formularz <A HREF=$a> Nowe konto</A> swoimi danymi. <p><LI>Niezw³ocznie zostanie wys³any do Ciebie e-mail na podany przez Ciebie adres.<p><LI>Przeczytaj e-mail i kliknij zawarty w nim link.   <p><LI>Twoje konto zostanie potwierdzone i zostaniesz zalogowany.   <p><LI>Wybierz kurs, w którym chcesz wzi±æ udzia³.   <p><LI>Je¿eli zostaniesz poproszony(a) o podanie \"klucza dostêpu do kursu\" - wpisz otrzymany od prowadz±cego klucz. To spowoduje zapisanie Ciê na kurs. <p><LI>Od tego momentu bêdziesz mieæ dostêp do kursu. Aby zalogowaæ siê i uzyskaæ dostêp do kursów, na które siê zapisa³e¶(a¶), konieczne bêdzie tylko wpisanie Twojej nazwy u¿ytkownika i has³a (w formularzu na tej stronie) aby zalogowaæ siê i otrzymaæ dostêp do dowolnego kursu na który jeste¶ zapisany.';
-$string['loginstepsnone'] = 'Dla uzyskania pe³nego dostêpu do kursów niezbêdne jest utworzenie konta.<p>Wszystko co musisz zrobiæ to wymy¶liæ nazwê u¿ytkownika i has³o oraz u¿yæ w formularza na tej stronie!<p> Je¿eli kto¶ inny wybra³ ju¿ tak± nazwê u¿ytkownika bêdziesz musia³(a) powtórzyæ operacjê u¿ywaj±c innej nazwy.';
+$string['loginsteps'] = '<p>Witaj!</p>
+<p>Aby otrzymaæ pe³ny dostêp do kursów musisz po¶wiêciæ chwilkê aby stworzyæ sobie konto w tym serwisie. </p>
+<p>Ka¿dy z kursów mo¿e wymagaæ podania jednorazowego \"klucza dostêpu do kursu\", który bêdzie niezbêdny tylko przy zapisywaniu siê na kurs. Pó¼niej nie bêdzie ju¿ potrzebny. </p><p>Oto kroki, które musisz wykonaæ: <ol> <li>Wype³nij formularz <a href=\"$a\"> Nowe konto</a> swoimi danymi. </li><li>Niezw³ocznie zostanie wys³any do Ciebie e-mail na podany przez Ciebie adres.</li><li>Przeczytaj e-mail i kliknij zawarty w nim link.   </li><li>Twoje konto zostanie potwierdzone i zostaniesz zalogowany.   </li><li>Wybierz kurs, w którym chcesz wzi±æ udzia³.   </li><li>Je¿eli zostaniesz poproszony(a) o podanie \"klucza dostêpu do kursu\" - wpisz otrzymany od prowadz±cego klucz. To spowoduje zapisanie Ciê na kurs. </li><li>Od tego momentu bêdziesz mieæ dostêp do kursu. Aby zalogowaæ siê i uzyskaæ dostêp do kursów, na które siê zapisa³e¶(a¶), konieczne bêdzie tylko wpisanie Twojej nazwy u¿ytkownika i has³a (w formularzu na tej stronie) aby zalogowaæ siê i otrzymaæ dostêp do dowolnego kursu na który jeste¶ zapisany.</li></ol>';
+$string['loginstepsnone'] = 'Dla uzyskania pe³nego dostêpu do kursów niezbêdne jest utworzenie konta.<br />Wszystko co musisz zrobiæ to wymy¶liæ nazwê u¿ytkownika i has³o oraz u¿yæ w formularza na tej stronie!<br /> Je¿eli kto¶ inny wybra³ ju¿ tak± nazwê u¿ytkownika bêdziesz musia³(a) powtórzyæ operacjê u¿ywaj±c innej nazwy.';
 $string['loginto'] = 'Zaloguj do $a';
 $string['loginusing'] = 'Zaloguj siê tutaj u¿ywaj±c twojej nazwy u¿ytkownika i has³a';
 $string['logout'] = 'Wyloguj';
@@ -679,7 +676,7 @@ $string['passwordconfirmchange'] = 'Potwierd¼ zmianê has³a';
 $string['passwordrecovery'] = 'Tak, pomó¿ mi zalogowaæ siê';
 $string['passwordsdiffer'] = 'Podane has³a ró¿ni± siê';
 $string['passwordsent'] = 'Has³o zosta³o wys³ane';
-$string['passwordsenttext'] = '   <P>Twoje has³o zosta³o wys³ane poczt± e-mail na adres $a->email. <P> Nowe has³o zosta³o wygenerowane w sposób automatyczny, mo¿esz je <a href=$a->link> zmieniæ </a> na ³atwiejsze do zapamiêtania.';
+$string['passwordsenttext'] = '   <p>Twoje has³o zosta³o wys³ane poczt± e-mail na adres $a->email. </p><p> Nowe has³o zosta³o wygenerowane w sposób automatyczny, mo¿esz je <a href=\"$a->link\"> zmieniæ </a> na ³atwiejsze do zapamiêtania.';
 $string['paymentinstant'] = 'U¿yj poni¿szego przyciku aby zap³aciæ i zapisaæ siê na kurs w ci±gu zaledwie kilku minut!';
 $string['paymentrequired'] = 'Ten kurs wymaga op³aty';
 $string['paymentsorry'] = 'Dziêkujemy za wp³atê. Niestety nie zosta³a ona jeszcze potwierdzona i nie mo¿esz jeszcze zapisaæ siê na kurs \"$a->fullname\". Proszê spróbuj za kilkadziesi±t sekund. Je¶li problem bêdzie siê powtarza³, skontaktuj siê z $a->teacher lub administratorem.';
@@ -710,7 +707,7 @@ $string['recentactivityreport'] = 'Raport ostatniej aktywno¶ci';
 $string['refreshingevents'] = 'Od¶wierzaj±ce zdarzenia';
 $string['registration'] = 'Rejestracja Moodle';
 $string['registrationemail'] = 'Powiadamianie e-mail';
-$string['registrationinfo'] = '<p> Ta strona umo¿liwia Ci rejestracjê twojego serwisu na stronie moodle.org. Rejestracja jest bezp³atna. G³ówn± zalet± rejestracji, jest fakt, i¿ zostaniesz dodany do cichej listy pocztowej zawieraj±cej istotne zawiadomienia, takie jak alarmy ochrony, czy nowe wersje Moodle. <P> Domy¶lnie twoje dane bêd± prywatne i nie zostan± udostêpnione lub odsprzedane nikomu innemu. Jedyn± przyczyn± zbierania tych danych jest budowanie statystycznego obrazu ca³ej populacji u¿ytkowników Moodle. <p> Je¶li zechcesz, mo¿esz zezwoliæ, by nazwa twojego serwisu, kraj, oraz URL zosta³y dodane do ogólnodostêpnej listy serwisów Moodle.<p>Wszystkie nowe rejestracje s± sprawdzane rêcznie przed wprowadzeniem ich na listê, ale pó¼niej mo¿esz uaktualniaæ swoj± rejestracjê (i wpis na li¶cie), wysy³aj±c ponownie ten formularz.';
+$string['registrationinfo'] = '<p> Ta strona umo¿liwia Ci rejestracjê twojego serwisu na stronie moodle.org. Rejestracja jest bezp³atna. G³ówn± zalet± rejestracji, jest fakt, i¿ zostaniesz dodany do cichej listy pocztowej zawieraj±cej istotne zawiadomienia, takie jak alarmy ochrony, czy nowe wersje Moodle. </p><p> Domy¶lnie twoje dane bêd± prywatne i nie zostan± udostêpnione lub odsprzedane nikomu innemu. Jedyn± przyczyn± zbierania tych danych jest budowanie statystycznego obrazu ca³ej populacji u¿ytkowników Moodle.</p> <p> Je¶li zechcesz, mo¿esz zezwoliæ, by nazwa twojego serwisu, kraj, oraz URL zosta³y dodane do ogólnodostêpnej listy serwisów Moodle.</p><p>Wszystkie nowe rejestracje s± sprawdzane rêcznie przed wprowadzeniem ich na listê, ale pó¼niej mo¿esz uaktualniaæ swoj± rejestracjê (i wpis na li¶cie), wysy³aj±c ponownie ten formularz.</p>';
 $string['registrationno'] = 'Nie, nie chcê otrzymywaæ e-mail\'i';
 $string['registrationsend'] = 'Prze¶lij informacje rejestracyjne do moodle.org';
 $string['registrationyes'] = 'Tak, proszê mnie powiadamiaæ o istotnych wydarzeniach.';
@@ -750,7 +747,7 @@ $string['scheduledbackupstatus'] = 'Status kopii zapasowej';
 $string['search'] = 'Wyszukaj';
 $string['searchagain'] = 'Wyszukaj ponownie';
 $string['searchcourses'] = ' Przeszukaj kursy';
-$string['searchhelp'] = 'Mo¿esz szukaæ kilku s³ów jednocze¶nie. : <br> s³owo : szukaj dowolnego wyst±pienia tego s³owa w tek¶cie <br> +s³owo : tylko s³owa dok³adnie pasuj±ce zostan± znalezione <br> -s³owo : nie pokazuj wyników zawieraj±cych to s³owo';
+$string['searchhelp'] = 'Mo¿esz szukaæ kilku s³ów jednocze¶nie. : <br /> s³owo : szukaj dowolnego wyst±pienia tego s³owa w tek¶cie <br /> +s³owo : tylko s³owa dok³adnie pasuj±ce zostan± znalezione <br /> -s³owo : nie pokazuj wyników zawieraj±cych to s³owo';
 $string['searchresults'] = 'Wyniki wyszukiwania';
 $string['sec'] = 'sek';
 $string['secs'] = 'sek.';
@@ -907,7 +904,7 @@ $string['weekhide'] = 'Ukryj ten tydzieñ przed $a';
 $string['weeklyoutline'] = 'Plan tygodniowy';
 $string['weekshow'] = 'Poka¿ ten tydzieñ $a';
 $string['welcometocourse'] = 'Witaj w $a';
-$string['welcometocoursetext'] = 'Witaj na kursie $a->coursename! <br>Jedn± z pierwszych rzeczy, któr± nale¿y zrobiæ jest zmodyfikowanie swojego profilu, aby inni mogli dowiedzieæ siê czego¶ o Tobie: $a->profileurl';
+$string['welcometocoursetext'] = 'Witaj na kursie $a->coursename! <br />Jedn± z pierwszych rzeczy, któr± nale¿y zrobiæ jest zmodyfikowanie swojego profilu, aby inni mogli dowiedzieæ siê czego¶ o Tobie: $a->profileurl';
 $string['whattocallzip'] = ' Jak chcesz nazwaæ to archiwum zip';
 $string['withchosenfiles'] = 'Z wybranymi plikami';
 $string['withoutuserdata'] = 'bez danych o u¿ytkowniku';
