@@ -212,8 +212,8 @@
         ou des nombres</li>
         <li>Un intervalle de dates peut &ecirc;tre fix&eacute; pour restreindre les
         messages pouvant &ecirc;tre &eacute;valu&eacute;s</li>
-        <li>L'administrateur peut acc&eacute;der &agrave; certains r&eacute;glages via Admin -&gt;
-        Modules -&gt; Forums</li>
+        <li>L'administrateur peut acc&eacute;der &agrave; certains r&eacute;glages via Admin ->
+        Modules -> Forums</li>
         <li>Apr&egrave;s modification d'un message, l'utilisateur est renvoy&eacute;
         au message dans son contexte</li>
         <li>Les images en annexe sont affich&eacute;es en ligne</li>
@@ -256,8 +256,8 @@
       <ul>
         <li>Les liens web peuvent maintenant &ecirc;tre ouvert dans d'autres
         fen&ecirc;tres enti&egrave;rement personnalisables</li>
-        <li>L'administrateur peut acc&eacute;der &agrave; certains r&eacute;glages via Admin -&gt;
-        Modules -&gt; Resources</li>
+        <li>L'administrateur peut acc&eacute;der &agrave; certains r&eacute;glages via Admin ->
+        Modules -> Resources</li>
       </ul>
     </dd>
   </dl>
@@ -299,67 +299,99 @@
   <dl>
     <dt>G&eacute;n&eacute;ralit&eacute;s</dt>
     <dd> 
-      <li>Various optimisations and significant performance enhancements</li>
-      <li>Several obscure security fixes</li>
-      <li>Moodle is now well-behaved when enclosed within a frame</li>
-      <li>Richtext editor can now be used in more text-editing fields</li>
-      <li>New format "Plain text format", useful when posting code or HTML.</li>
-      <li>New format "Wiki format", allows Wiki-style tagging in most places</li>
-      <li>New popup allows emoticons/smilies to be inserted by clicking on images</li>
-      <li>Ability to specify permissions of new folders and files created on the server</li>
-      <li>Some fixes for servers running in Safe Mode (some file problems remain)</li>
-      <li>Various fixes for cleaning some external text of quotes, etc</li>
-      <li>Various fixes for PostgreSQL 7.3 compatibility</li>
-      <li>Started migration of HTML code towards XHTML Transitional</li>
-      <li>Countless other little fixes all over the place</li>
+      <li>Diverses optimisations et am&eacute;liorations significatives des performaces</li>
+      <li>Plusieurs obscures corrections pour la s&eacute;curit&eacute;</li>
+      <li>Moodle se comporte correctement quand il est incorpor&eacute; dans un cadre</li>
+      <li>L'&eacute;diteur Richtext peut &ecirc;tre maintenant utilis&eacute; dans
+      plus de champs texte</li>
+      <li>Nouveau format &laquo;&nbsp;texte pur&nbsp;&raquo;, utile pour taper du code HTML</li>
+      <li>Nouveau format &laquo;&nbsp;Wiki&nbsp;&raquo;, permet l'ajout de balises en style
+      Wiki &agrave; de nombreux endroits</li>
+      <li>Nouvelle fen&ecirc;tre permettant d'ins&eacute;rer des binettes en cliquant
+      sur des images</li>
+      <li>Possibilit&eacute; d'indiquer les permissions des nouveaux dossiers et fichiers
+      cr&eacute;&eacute;s sur le serveur</li>
+      <li>Quelques corrections pour les serveurs tournant en Safe Mode (quelques
+      probl&egrave;mes de fichiers subsistent)</li>
+      <li>Diverses corrections pour le nettoyage des textes externes de
+      caract&egrave;res comme l'apostrophe, etc.</li>
+      <li>Diverses corrections pour compatibilit&eacute; avec PostgreSQL 7.3</li>
+      <li>D&eacute;but de transition du code HTML vers XHTML Transitional</li>
+      <li>D'innombrables autres petites corrections un peu partout</li>
     </dd>
     <dt>Langues</dt>
     <dd> 
-      <li><b>10</b> new language packs!   Argentinian Spanish, Czech, Portuguese, Slovakian, Romanian, Danish, Russian, Polish, Chinese Traditional and French Canadian.</li>
-      <li>Fixes and upgrades to almost all language packs</li>
-      <li>Language can be specified for the current session (see menu on home page and login page) and can be changed on any page by something to the url, eg:  http://moodle.org/?lang=ru </li>
-      <li>Language menu can be restricted to a subset of languages and even removed.
-      <li>Truetype fonts are now part of the language packs</li>
-      <li>ALL dates/times can now be reformatted as part of the language pack</li>
-      <li>A small but annoying bug was fixed with the web-based language editor on Windows servers that caused language files to grow</li>
+      <li><b>10</b> nouvelles langues ! Espagnola argentin, Tch&egrave;que, Portugais,
+      Slovaque, Roumain, Danois, Russe, Polonais, Chinois traditionnel et Canadien
+      fran&ccedil;ais.</li>
+      <li>Corrections et mises &agrave; jour pour presque toutes les langues</li>
+      <li>La langue peut &ecirc;tre choisie pour la session en cours (voir le menu sur
+      la page d'accueil et sur la page de connexion) et peut &ecirc;tre chang&eacute;e
+      pour chaque page &agrave; l'aide de l'URL, p. ex. http://moodle.org/?lang=ru</li>
+      <li>Le menu des langues peut maintenant &ecirc;tre retreint &agrave; certaines
+      langues, et m&ecirc;me retir&eacute;</li>
+      <li>Des polices TrueType sont maintenant int&eacute;gr&eacute;es aux langues
+      <li>TOUTES les heures et dates peuvent maintenant &ecirc;tre localis&eacute;es dans
+      les fichiers de langue</li>
+      <li>Un bogue petit, mais ennuyeux a &eacute;t&eacute; corrig&eacute; dans
+      l'&eacute;diteur des langues, qui causait sur les serveurs Windows un
+      grossissement des fichiers de langue.</li>
     </dd>
     <dt>D&eacute;veloppeurs</dt>
     <dd> 
-      <li>Global debug variable gives more feedback about uninitialised variables and the like</li>
-      <li>Various fixes to tidy up and further standardise some of the PHP code</li>
-      <li>Various fixes for robustness (ensuring variables are always initialised)</li>
+      <li>Une variable de d&eacute;bogage globale donne plus d'informations sur les
+      variables non initialis&eacute;e et d'autre param&egrave;tres analogues</li>
+      <li>Diverses corrections pour nettoyer et standardiser le code PHP</li>
+      <li>Diverses corrections pour plus de robustesse (assurance que les
+      variables sont toujours initialis&eacute;es)</li>
     </dd>
     <dt>Administration</dt>
     <dd> 
-      <li><font color=red>Some changed options and code in config-dist.php (if upgrading, compare with your current config.php or rebuild your config.php from scratch)</font></li>
-      <li><font color=red>Many changes to themes - authors of custom themes should read <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> </font></li>
-      <li>New moodle.org registration function for security notifications etc</li>
-      <li>Admin directory can be moved from /admin to something else (see config-dist.php)</li>
-      <li>User listing is now paged, and can now be searched for strings</li>
-      <li>Module management: activity modules can now be individually disabled or deleted completely</li>
-      <li>Improvements to the language editing page</li>
-      <li>Better checking of PHP environment during installation, with warnings</li>
-      <li>Cleaner installation procedure.</li>
+      <li><font color=red>Plusieurs options et du code de config-dist.php ont
+      &eacute;t&eacute; modifi&eacute;es (en cas de mise &agrave; jour, comparez-le avec
+      votre config.php ou reconstruisez compl&egrave;tement votre config.php)</font></li>
+      <li><font color=red>Nombreuses modifications dans les th&egrave;mes - les auteurs
+      de th&egrave;mes doivent lire
+      <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a></font></li>
+      <li>Nouvelle fonction d'enregistrement sur moodle.org permettant l'envoi
+      de bulletin de s&eacute;curit&eacute;, etc.</li>
+      <li>Le dossier admin peut &ecirc;tre d&eacute;plac&eacute; ailleurs que /admin
+      (voir config-dist.php)</li>
+      <li>Les listes d'utilisateurs sont maintenant pagin&eacute;es et l'on peut rechercher
+      des cha&icirc;nes de caract&egrave;res dans la liste des utilisateurs</li>
+      <li>Gestion des modules : les modules d'activit&eacute; peuvent maintenant
+      &ecirc;tre d&eacute;sactiv&eacute;s individuellement ou effac&eacute;s compl&egrave;tement</li>
+      <li>Am&eacute;lioration dans la page d'&eacute;dition des langues</li>
+      <li>Meilleure v&eacute;rification de l'environnement PHP durant l'installation,
+      avec notification d'avertissements</li>
+      <li>Proc&eacute;dure d'installation plus propre</li>
     </dd>
     <dt>Gestion des utilisateurs</dt>
     <dd> 
-      <li>New role: Course creator - just like teacher but can also create new courses</li>
-      <li>New authentication plug-in named "manual", prevents users from creating their own accounts</li>
-      <li>"Forgot Password" routine now uses an email confirmation before resetting password</li>
+      <li>Nouveau r&ocirc;le : Responsable de cours - un enseignant pouvant en outre 
+      cr&eacute;er des cours</li>
+      <li>Nouvelle extension pour l'authentification &laquo;&nbsp;manuelle&nbsp;&raquo;,
+      qui emp&ecirc;che les utilisateurs de cr&eacute;er leur accompte eux-m&ecirc;mes</li>
+      <li>La proc&eacute;dure &laquo;&nbsp;mot de passe oubli&eacute;&nbsp;&raquo;
+      utilise une confirmation par courriel avant d'attribuer un nouveau mot de passe</li>
     </dd>
     <dt>Cours</dt>
     <dd> 
-      <li>Activities on the course page now have a little button to hide/show that activity to students</li>
-      <li>Whole topics/weeks can also now be hidden or shown</li>
-      <li>The list of participants now has some paging, to cope with very large classes</li>
-      <li>Zip/Unzip is now supported by an internal zip library, removing 
-       the dependence on external programs to do this.  This also means that 
-       zip/unzip now works on Windows.</li>
+      <li>Un bouton plac&eacute; &agrave; c&ocirc;t&eacute; des activit&eacute;s permet
+      de les cacher ou de les montrer aux &eacute;tudiants</li>
+      <li>Des semaines ou th&egrave;mes entiers peuvent aussi &ecirc;tre cach&eacute;s</li>
+      <li>La liste des praticipants est elle aussi pagin&eacute;e, pour l'utilisation
+      avec de tr&egrave;s grandes classes</li>
+      <li>La compression et d&eacute;compression ZIP est effectu&eacute;e maintenant par
+      une librairie interne, supprimant la d&eacute;pendance vis-&agrave;-vis de programmes
+      externes. Une cons&eacute;quence en est que la compression fonctionne maintenant aussi
+      sous Windows</li>
     </dd>
     <dt>Devoirs</dt>
     <dd> 
-      <li>Assignment submissions can be sorted</li>
-      <li>Assignment notification mail isn't sent to unenrolled students</li>
+      <li>Les remises de devoirs peuvent &ecirc;tre tri&eacute;es</li>
+      <li>Les courriels de notification de devoir ne sont pas envoy&eacute;s
+      aux &eacute;tudiants non inscrits dans le cours</li>
     </dd>
     <dt>Forums</dt>
     <dd> 
