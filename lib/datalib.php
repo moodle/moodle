@@ -2287,9 +2287,11 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
 
     $count = 0;
     
-    $n=100;
+    $catgap    = 1000; # "standard" category gap
+    $tolerance = 200;  # how "close" categories can get
 
-    // get some basic info
+
+    // get some basic info about courses in the category
     $info = get_record_sql('SELECT MIN(sortorder) AS min, 
                                    MAX(sortorder) AS max,
                                    COUNT(sortorder)  AS count
@@ -2302,30 +2304,47 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
         unset($info);
     }
 
+    // $hasgap flag indicates whether there's a gap in the sequence
+    $hasgap    = false; 
+    if ($max-$min+1 != $count) {
+        $hasgap = true;
+    }
+    
+    // $mustshift indicates whether the sequence must be shifted to
+    // meet its range
+    $mustshift = false;
+    if ($min < $n+$tolerance || $min > $n+$tolerance+$catgap ) {
+        $mustshift = true;
+    }
+
     // actually sort only if there are courses,
     // and we meet one ofthe triggers:
     //  - safe flag
     //  - they are not in a continuos block
     //  - they are too close to the 'bottom'
-    if ($count && (    $safe 
-                    || ($max-$min+1!=$count)
-                    || $min < 10 ) ) {
-        if ($courses = get_records_sql("SELECT c.id, c.sortorder FROM {$CFG->prefix}course c WHERE category=$categoryid ORDER BY c.sortorder ASC")) {
-            begin_sql();
-
-            // find the ideal starting point
-            if ( ($min<$n&&$n<$max) || ($n+$count>=$min) || ($min<10) ) { 
-
-                $n = $max+100; // this is usually the ideal solution
-                
-                // if we are aiming way too high, try to bring it back to earth
-                if ($n > 100+3*$count) {
-                    if ($min > 100+$count){
-                        $n = 100;
-                    }
-                }
+    if ($count && ( $safe || $hasgap || $mustshift ) ) {
+        // special, optimized case where all we need is to shift
+        if ( $mustshift && !$safe && !$hasgap) {
+            $shift = $n + $catgap - $min;
+            // UPDATE course SET sortorder=sortorder+$shift
+            execute_sql("UPDATE {$CFG->prefix}course 
+                         SET sortorder=sortorder+$shift 
+                         WHERE category=$categoryid", 0);
+            $n = $n + $catgap + $count; 
+            
+        } else { // do it slowly
+            $n = $n + $catgap;             
+            // if the new sequence overlaps the current sequence, lack of transactions
+            // will stop us -- shift things aside for a moment...
+            if ($n >= $min && $n+$count+1 < $min && $CFG->dbtype==='mysql') {
+                $shift = $n + $count + 100;
+                execute_sql("UPDATE {$CFG->prefix}course 
+                         SET sortorder=sortorder+$shift 
+                         WHERE category=$categoryid", 0);
             }
 
+            $courses = get_courses($categoryid, 'c.sortorder ASC', 'c.id,c.sortorder');
+            begin_sql();
             foreach ($courses as $course) { 
                 if ($course->sortorder != $n ) { // save db traffic
                     set_field('course', 'sortorder', $n, 'id', $course->id);
@@ -2337,14 +2356,13 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
     }
     set_field('course_categories', 'coursecount', $count, 'id', $categoryid);
 
-    $n=0;
     if ($categories = get_categories($categoryid)) {
         foreach ($categories as $category) {
             $n = fix_course_sortorder($category->id, $n);
         }
     }
 
-    return $n;
+    return $n+1;
 }
 
 
