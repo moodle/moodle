@@ -38,7 +38,7 @@
         foreach ($list as $file) {
             $file_path = $CFG->dataroot."/temp/backup/".$file;
             $moddate = filemtime($file_path);
-            if ($status and $moddate < $delete_from) {
+            if ($status && $moddate < $delete_from) {
                 //If directory, recurse
                 if (is_dir($file_path)) {
                     $status = delete_dir_contents($file_path);
@@ -92,36 +92,62 @@
     }
 
     //Function to delete all the directory contents recursively
-    //Copied from admin/delete.php
-    function delete_dir_contents ($rootdir) {
+    //Copied from the web !!
+    function delete_dir_contents ($dir) {
 
-        $dir = opendir($rootdir);
+        $slash = "/";
 
-        $status = true;
+        // Create arrays to store files and directories
+        $dir_files      = array();
+        $dir_subdirs    = array();
 
-        while ($file = readdir($dir)) {
-            if ($file != "." and $file != "..") {
-                $fullfile = "$rootdir/$file";
-                if (filetype($fullfile) == "dir") {
-                    delete_dir_contents($fullfile);
-                    if (!rmdir($fullfile)) {
-                        $status = false;
-                    }
-                } else {
-                    if (!unlink("$fullfile")) {
-                        $status = false;
-                    }
+        // Make sure we can delete it
+        chmod($dir, 0777);
+
+        if ((($handle = opendir($dir))) == FALSE) {
+            // The directory could not be opened
+            return false;
+        }
+
+        // Loop through all directory entries, and construct two temporary arrays containing files and sub directories
+        while($entry = readdir($handle)) {
+            if (is_dir($dir. $slash .$entry) && $entry !=  ".." && $entry !=  ".") {
+                $dir_subdirs[] = $dir. $slash .$entry;
+            }
+            else if ($entry !=  ".." && $entry !=  ".") {
+                $dir_files[] = $dir. $slash .$entry;
+            }
+        }
+
+        // Delete all files in the curent directory return false and halt if a file cannot be removed
+        for($i=0; $i<count($dir_files); $i++) {
+            chmod($dir_files[$i], 0777);
+            if (((unlink($dir_files[$i]))) == FALSE) {
+                return false;
+            }
+        }
+
+        // Empty sub directories and then remove the directory
+        for($i=0; $i<count($dir_subdirs); $i++) {
+            chmod($dir_subdirs[$i], 0777);
+            if (delete_dir_contents($dir_subdirs[$i]) == FALSE) {
+                return false;
+            }
+            else {
+                if (rmdir($dir_subdirs[$i]) == FALSE) {
+                return false;
                 }
             }
         }
-        closedir($dir);
- 
-        return $status;
 
+        // Close directory
+        closedir($handle);
+
+        // Success, every thing is gone return true
+        return true;
     }
 
     //Function to clear (empty) the contents of the backup_dir
-    //Copied from admin/delete.php
     function clear_backup_dir($backup_unique_code) {
   
         global $CFG; 
@@ -305,23 +331,50 @@
     }
  
     //This function is used to insert records in the backup_ids table
+    //If the info field is greater than max_db_storage, then its info
+    //is saved to filesystem
     function backup_putid ($backup_unique_code, $table, $old_id, $new_id, $info="") {
 
         global $CFG;
+
+        $max_db_storage = 128;  //Max bytes to save to db, else save to file
+                                //MUST BE LOWER THAN 256 (VARCHAR LIMIT)
  
         $status = true;
         
         //First delete to avoid PK duplicates
         $status = backup_delid($backup_unique_code, $table, $old_id);
 
-        $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
-                                   (backup_code, table_name, old_id, new_id, info)
-                               VALUES 
-                                   ($backup_unique_code, '$table', '$old_id', '$new_id', '$info')",false);
+        //Now, serialize info
+        $info_ser = serialize($info);
+
+        //Now, if the size of $info_ser > $max_db_storage, save it to filesystem and 
+        //insert a "infile" in the info field
+
+        if (strlen($info_ser) > $max_db_storage) {
+            //Calculate filename (in current_backup_dir, $backup_unique_code_$table_$old_id.info)
+            $filename = $CFG->dataroot."/temp/backup/".$backup_unique_code."/".$backup_unique_code."_".$table."_".$old_id.".info";
+            //Save data to file
+            $status = backup_data2file($filename,$info_ser); 
+            //Set info_to save
+            $info_to_save = "infile";
+        } else {
+            //Saving to db, addslashes
+            $info_to_save = addslashes($info_ser);
+        }
+
+        //Now, insert the record
+        if ($status) {
+            $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
+                                       (backup_code, table_name, old_id, new_id, info)
+                                   VALUES 
+                                       ($backup_unique_code, '$table', '$old_id', '$new_id', '$info_to_save')",false);
+        }
         return $status;
     }
 
     //This function is used to delete recods from the backup_ids table
+    //If the info field is "infile" then the file is deleted too
     function backup_delid ($backup_unique_code, $table, $old_id) {
 
         global $CFG;
@@ -336,15 +389,36 @@
     }
 
     //This function is used to get a record from the backup_ids table
+    //If the info field is "infile" then its info
+    //is read from filesystem
     function backup_getid ($backup_unique_code, $table, $old_id) {
 
         global $CFG;
 
         $status = true;
+        $status2 = true;
 
         $status = get_record ("backup_ids","backup_code",$backup_unique_code,
                                            "table_name",$table, 
                                            "old_id", $old_id);
+
+        //If info field = "infile", get file contents
+        if ($status->info == "infile") {
+            $filename = $CFG->dataroot."/temp/backup/".$backup_unique_code."/".$backup_unique_code."_".$table."_".$old_id.".info";
+            //Read data from file
+            $status2 = backup_file2data($filename,$info);
+            if ($status2) {
+                //unserialize data
+                $status->info = unserialize($info);
+            } else {
+                $status = false;
+            }
+        } else {
+            ////First strip slashes
+            $temp = stripslashes($status->info);
+            //Now unserialize
+            $status->info = unserialize($temp);
+        }
 
         return $status;
     }
@@ -378,5 +452,30 @@
         flush();
     }
     
+    //This function creates the filename and write data to it
+    //returning status as result
+    function backup_data2file ($file,&$data) {
 
+        $status = true;
+        $status2 = true;
+    
+        $f = fopen($file,"w");
+        $status = fwrite($f,$data);
+        $status2 = fclose($f);
+
+        return ($status && $status2);
+    }
+
+    //This function read the filename and read data from it
+    function backup_file2data ($file,&$data) {
+
+        $status = true;
+        $status2 = true;
+
+        $f = fopen($file,"r");
+        $data = fread ($f,filesize($file));
+        $status2 = fclose($f);
+
+        return ($status && $status2);
+    }
 ?>

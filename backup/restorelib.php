@@ -443,10 +443,7 @@
             //For each, user, take its info from backup_ids
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid); 
-                //First strip slashes 
-                $temp = stripslashes($rec->info);
-                //Now unserialize
-                $user = unserialize($temp);
+                $user = $rec->info;
                 //Calculate if it is a course user
                 //Has role teacher or student or admin or coursecreator
                 $is_course_user = ($user->roles[teacher] or $user->roles[student] or
@@ -688,15 +685,17 @@
         //Now, if we have anything in info, we have to restore that mods
         //from backup_ids (calling every mod restore function)
         if ($info) {
-            //Iterate over each module
-            foreach ($info as $mod) {
-                $modrestore = $mod->modtype."_restore_mods";
-                if (function_exists($modrestore)) {
-                    //print_object ($mod);                                                //Debug
-                    $status = $modrestore($mod,$restore);
-                } else {
-                    //Something was wrong. Function should exist.
-                    $status = false;
+            if ($info !== true) {
+                //Iterate over each module
+                foreach ($info as $mod) {
+                    $modrestore = $mod->modtype."_restore_mods";
+                    if (function_exists($modrestore)) {
+                        //print_object ($mod);                                                //Debug
+                        $status = $modrestore($mod,$restore);
+                    } else {
+                        //Something was wrong. Function should exist.
+                        $status = false;
+                    }
                 }
             }
         } else {
@@ -714,23 +713,23 @@
         $status = true;
 
         //We are going to iterate over each course_module saved in backup_ids
-        $course_modules = get_records_sql("SELECT new_id,info as instance
+        $course_modules = get_records_sql("SELECT old_id,new_id
                                            FROM {$CFG->prefix}backup_ids
                                            WHERE backup_code = '$restore->backup_unique_code' AND
                                                  table_name = 'course_modules'");
         if ($course_modules) {
             foreach($course_modules as $cm) {
+                //Get full record, using backup_getids
+                $cm_module = backup_getid($restore->backup_unique_code,"course_modules",$cm->old_id);
                 //Now we are going to the REAL course_modules to get its type (field module)
-                $module = get_record("course_modules","id",$cm->new_id);
+                $module = get_record("course_modules","id",$cm_module->new_id);
                 if ($module) {
                     //We know the module type id. Get the name from modules
                     $type = get_record("modules","id",$module->module);
                     if ($type) {
                         //We know the type name and the old_id. Get its new_id
                         //from backup_ids. It's the instance !!!
-                        $instance = get_record("backup_ids","backup_code",$restore->backup_unique_code,
-                                                            "table_name",$type->name,
-                                                            "old_id",$cm->instance);
+                        $instance =  backup_getid($restore->backup_unique_code,$type->name,$cm_module->info);
                         if ($instance) {
                             //We have the new instance, so update the record in course_modules
                             $module->instance = $instance->new_id;
@@ -746,8 +745,6 @@
                     $status = false;
                }
             }
-        } else {
-            $status = false;
         }
 
 
@@ -764,6 +761,7 @@
     class MoodleParser {
 
         var $level = 0;        //Level we are
+        var $counter = 0;      //Counter
         var $tree = array();   //Array of levels we are
         var $content = "";     //Content under current level
         var $todo = "";        //What we hav to do when parsing
@@ -826,9 +824,6 @@
             $this->level++;
             $this->tree[$this->level] = $tagName;   
 
-            //Output something to avoid browser timeouts...
-            backup_flush();
-
             //Check if we are into USERS zone  
             //if ($this->tree[3] == "USERS")                                                            //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
@@ -839,6 +834,10 @@
             //Refresh properties
             $this->level++;
             $this->tree[$this->level] = $tagName;
+
+if ($tagName == "MOD" && $this->tree[3] == "MODULES") {
+echo "<P>MOD: ".strftime ("%X",time()),"-";
+}
 
             //Output something to avoid browser timeouts...
             backup_flush();
@@ -1135,14 +1134,21 @@
                 if ($this->level == 4) {
                     switch ($tagName) {
                         case "USER":
-                            //We've finalized a user, get it and save to db
-                            //First serialize
-                            $ser_temp = serialize($this->info->tempuser);
-                            //Now add slashes
-                            $sla_temp = addslashes($ser_temp);
+                            //Increment counter
+                            $this->counter++;
                             //Save to db
                             backup_putid($this->preferences->backup_unique_code,"user",$this->info->tempuser->id,
-                                          null,$sla_temp);
+                                          null,$this->info->tempuser);
+
+                            //Do some output   
+                            if ($this->counter % 10 == 0) {
+                                echo ".";
+                                if ($this->counter % 200 == 0) {
+                                echo "<br>";
+                                }
+                                backup_flush(300);
+                            }
+
                             //Delete temp obejct
                             unset($this->info->tempuser);
                             break;
@@ -1298,6 +1304,7 @@
             //Speed up a lot (avoid parse all)
             if ($tagName == "USERS" and $this->level == 3) {
                 $this->finished = true;
+                $this->counter = 0;
             }
 
             //Clear things
@@ -1321,7 +1328,9 @@
                     //Prepend XML standard header to info gathered
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
                     //Call to xmlize for this portion of xml data (one MOD)
+                    echo "-XMLIZE: ".strftime ("%X",time()),"-";
                     $data = xmlize($xml_data);
+                    echo strftime ("%X",time())."<p>";
                     //traverse_xmlize($data);                                                                     //Debug
                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                     //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -1331,21 +1340,17 @@
                     $mod_type = $data["MOD"]["#"]["MODTYPE"]["0"]["#"];
                     //Only if we've selected to restore it
                     if  ($this->preferences->mods[$mod_type]->restore) {
-                        //Serialize it
-                        $mod_temp = serialize($data);
-                        //Now add slashes
-                        $sla_mod_temp = addslashes($mod_temp);
                         //Save to db
                         $status = backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
-                                     null,$sla_mod_temp);
+                                     null,$data);
                         //echo "<p>id: ".$mod_id."-".$mod_type." len.: ".strlen($sla_mod_temp)." to_db: ".$status."<p>";   //Debug
                         //Create returning info
                         $ret_info->id = $mod_id;
                         $ret_info->modtype = $mod_type;
                         $this->info[] = $ret_info;
                     }
-                    //Reset info to empty
-                    $this->temp = "";
+                    //Reset temp
+                    unset($this->temp);
                 }
             }
 
@@ -1426,7 +1431,7 @@
         //Clear parser mem
         xml_parser_free($xml_parser);
 
-        if ($status) {
+        if ($status && $info) {
             return $info;
         } else {
             return $status;

@@ -866,13 +866,32 @@
     
         global $CFG;
 
-        //Backup zip file name
+        //Define zip location (from)
         $from_zip_file = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/".$preferences->backup_name;
-        $to_zip_file = $CFG->dataroot."/".$preferences->backup_course."/".get_string("backupdir")."/".$preferences->backup_name;
-   
-        //Check to directory
-        $status = check_dir_exists(dirname($to_zip_file),true);
-       
+
+        //Define zip destination (course dir)
+        $to_zip_file = $CFG->dataroot."/".$preferences->backup_course;
+
+        echo "<p>From: ".$from_zip_file."<br>";                                              //Debug
+
+        echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
+
+        //Checks course dir exists
+        $status = check_dir_exists($to_zip_file,true);
+
+        //Define zip destination (backup dir)
+        $to_zip_file = $to_zip_file."/".get_string("backupdir");
+
+        echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
+
+        //Checks backup dir exists
+        $status = check_dir_exists($to_zip_file,true);
+
+        //Define zip destination (zip file)
+        $to_zip_file = $to_zip_file."/".$preferences->backup_name;
+        
+        echo "<p>To: ".$to_zip_file."<br>";                                              //Debug
+
         //Copy zip file
         if ($status) {
             $status = backup_copy_file ($from_zip_file,$to_zip_file);
