@@ -1,27 +1,72 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.6 dev (2002100200)
+      // quiz.php - created with Moodle 1.0.6 dev (2002101001)
 
 
+$string['addselectedtoquiz'] = "Auswahl zum Quiz hinzufügen";
 $string['alwaysavailable'] = "Immer verfügbar";
 $string['answer'] = "Antwort";
+$string['answerhowmany'] = "Eine oder mehrere Antworten?";
+$string['answersingleno'] = "Mehrere Antworten erlaubt";
+$string['answersingleyes'] = "Nur eine Antwort";
 $string['attempt'] = "Versuch \$a";
 $string['attemptfirst'] = "Erster Versuch";
 $string['attemptlast'] = "Letzter Versuch";
 $string['attempts'] = "Versuche";
 $string['attemptsallowed'] = "Erlaubte Versuche";
 $string['attemptsunlimited'] = "Unbegrenzte Versuche";
+$string['caseno'] = "Nein, Schreibweise ist unwichtig";
+$string['casesensitive'] = "Schreibweise";
+$string['caseyes'] = "Ja, Schreibweise muss stimmen";
+$string['categories'] = "Kategorien";
+$string['category'] = "Kategorie";
+$string['choice'] = "Auswahl";
+$string['choices'] = "Verfügbare Auswahl";
+$string['correctanswer'] = "Richtige Antwort";
+$string['correctanswers'] = "Richtige Antworten";
+$string['createnewquestion'] = "Eine neue Frage anlegen";
 $string['daysavailable'] = "Tage verfügbar";
+$string['default'] = "Standard";
+$string['defaultinfo'] = "Die Standard-Rubrik für diese Frage";
+$string['editingmultichoice'] = "Eine Frage mit Mehrfachauswahl bearbeiten";
+$string['editingquestion'] = "Eine Frage bearbeiten";
+$string['editingquiz'] = "Ein Quiz bearbeiten";
+$string['editingshortanswer'] = "Kurzantwort der Frage bearbeiten";
+$string['editingtruefalse'] = "Ja/Nein-Frage bearbeiten";
 $string['false'] = "Falsch";
+$string['feedback'] = "Rückmeldung";
+$string['filloutoneanswer'] = "Sie müssen mindestens eine mögliche Antwort geben. Leere Antworten werden ignoriert.";
+$string['fillouttwochoices'] = "Sie müssen mindestens zwei mögliche Antwort geben. Leere Antworten werden ignoriert.";
 $string['gradeaverage'] = "Durchschnittsnote";
 $string['gradehighest'] = "Beste Note";
 $string['grademethod'] = "Bewertungsschema";
+$string['imagedisplay'] = "Bild für die Anzeige";
 $string['introduction'] = "Einleitung";
 $string['marks'] = "Anmerkungen";
 $string['modulename'] = "Quiz";
 $string['modulenameplural'] = "Quiz";
+$string['multichoice'] = "Mehrfachauswahl";
+$string['noanswers'] = "Es wurde keine Antworten ausgewählt!";
+$string['nomoreattempts'] = "Kein Versuch mehr zugelassen";
+$string['noquestions'] = "Es wurden noch keine Fragen eingetragen";
+$string['question'] = "Frage";
+$string['questionname'] = "Title der Frage";
+$string['rename'] = "Umbenennen";
+$string['report'] = "Berichte";
+$string['save'] = "Speichern";
+$string['savegrades'] = "Noten speichern";
 $string['savemyanswers'] = "Meine Antworten speichern";
+$string['savequiz'] = "Dieses gesamte Quiz speichern";
+$string['score'] = "Grobe Punktzahl";
+$string['select'] = "Auswählen";
+$string['selectcategoryabove'] = "Wählen Sie eine obige Rubrik";
+$string['shortanswer'] = "Kurzantwort";
+$string['show'] = "Zeigen";
 $string['showcorrectanswer'] = "Nach dem Antworten richtige Antwort anzeigen?";
 $string['showfeedback'] = "Nach dem Antworten Rückmeldung anzeigen?";
+$string['time'] = "Zeit";
 $string['true'] = "Wahr";
+$string['truefalse'] = "Wahr/Falsch";
+$string['viewallanswers'] = "Zeige \$a ausgefüllte Quiz";
+$string['yourfinalgradeis'] = "Ihre Gesamtnote für dieses Quiz ist \$a";
 
 ?>
