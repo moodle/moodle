@@ -19,7 +19,11 @@
         error("Forum ID was incorrect");
     }
 
-    if ($USER->id != $post->user) {
+    if (! $course = get_record("course", "id", $forum->course)) {
+        error("Course ID was incorrect");
+    }
+
+    if (!isteacher($course->id) and $USER->id != $post->user) {
         error("You can only look at results for posts you own");
     }
 

@@ -605,7 +605,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     echo "<DIV ALIGN=right><P ALIGN=right>";
     if ($rate && $USER->id) {
-        if ($USER->id == $post->userid) {
+        if (isteacher($courseid)) {
+            forum_print_ratings($post->id);
+            if ($USER->id != $post->userid) {
+                forum_print_rating($post->id, $USER->id);
+            }
+        } else if ($USER->id == $post->userid) {
             forum_print_ratings($post->id);
         } else {
             forum_print_rating($post->id, $USER->id);
