@@ -28,10 +28,10 @@
 
 /// If data submitted, process and store
 
-    if(confirm_sesskey() && $form = data_submitted()) {
+    if(($form = data_submitted()) && confirm_sesskey()) {
         if(isset($form->mode_dst)) {
             // Move to DST presets configuration
-            redirect('dst.php?sesskey='.$USER->sesskey);
+            redirect('dst.php');
             die();
         }
         // Normal configuration, just save the variables

@@ -307,15 +307,15 @@
                     get_string("adminhelpmanagemodules")."</font><br />";
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"blocks.php\">".get_string("manageblocks")."</a> - <font size=\"1\">".
                     get_string("adminhelpmanageblocks")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"filters.php?sesskey=$USER->sesskey\">".get_string("managefilters")."</a> - <font size=\"1\">".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"filters.php\">".get_string("managefilters")."</a> - <font size=\"1\">".
                     get_string("adminhelpmanagefilters")."</font><br />";
     if (!isset($CFG->disablescheduledbackups)) {
-        $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php?sesskey=$USER->sesskey\">".get_string("backup")."</a> - <font size=\"1\">".
+        $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php\">".get_string("backup")."</a> - <font size=\"1\">".
                         get_string("adminhelpbackup")."</font><br />";
     }
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"editor.php?sesskey=$USER->sesskey\">". get_string("editorsettings") ."</a> - <font size=\"1\">".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"editor.php\">". get_string("editorsettings") ."</a> - <font size=\"1\">".
                     get_string("adminhelpeditorsettings")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"calendar.php?sesskey=$USER->sesskey\">". get_string('calendarsettings', 'admin') ."</a> - <font size=\"1\">".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"calendar.php\">". get_string('calendarsettings', 'admin') ."</a> - <font size=\"1\">".
                     get_string('helpcalendarsettings', 'admin')."</font><br />";
 
     $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>", 

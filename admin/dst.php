@@ -14,8 +14,6 @@
         error('Site isn\'t defined!');
     }
 
-    confirm_sesskey();
-
     include_once('../calendar/lib.php');
 
 /// Print headings
@@ -28,7 +26,7 @@
     print_header("$site->shortname: $strcalendardstpresets", "$site->fullname",
                  "<a href=\"index.php\">$stradministration</a> -> ".
                  "<a href=\"configure.php\">$strconfiguration</a> -> ".
-                 "<a href=\"calendar.php?sesskey=$USER->sesskey\">$strcalendarsettings</a> -> $strcalendardstpresets");
+                 "<a href=\"calendar.php\">$strcalendarsettings</a> -> $strcalendardstpresets");
 
     $mode = '';
     $form = false;
@@ -51,12 +49,12 @@
         
 
     // $mode, on the other hand, may make us do something INSTEAD of displaying the preset list
-    if($form = data_submitted()) {
+    if(($form = data_submitted()) && confirm_sesskey()) {
         if(isset($form->result_cancel)) {
             $mode = '';
         }
         else if(isset($form->mode_return)) {
-            redirect('calendar.php?sesskey='.$USER->sesskey);
+            redirect('calendar.php');
             die();
         }
         else if(isset($form->mode_delete)) {
@@ -187,7 +185,7 @@
                         print_object("INSERT!");
                         insert_record('dst_preset', $preset);
                     }
-                    echo '<a href="dst.php?sesskey='.$USER->sesskey.'>Proceed</a>';
+                    echo '<a href="dst.php">Proceed</a>';
                     die();
                 }
                 else {

@@ -43,7 +43,7 @@
 
     $table->data[]= array("<strong><a href=\"editor.php\">". get_string('editorsettings') ."</a></strong>",
                     get_string('adminhelpeditorsettings'));
-    $table->data[]= array("<strong><a href=\"calendar.php?sesskey=$USER->sesskey\">". get_string('calendarsettings', 'admin') ."</a></strong>",
+    $table->data[]= array("<strong><a href=\"calendar.php\">". get_string('calendarsettings', 'admin') ."</a></strong>",
                     get_string('helpcalendarsettings', 'admin'));
 
     print_table($table);
