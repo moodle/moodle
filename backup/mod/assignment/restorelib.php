@@ -21,44 +21,169 @@
     //
     //-----------------------------------------------------------
 
-    //This function executes all the backup procedure about this mod
-    function aassignment_restore_mods($bf,$preferences) {
+    //This function executes all the restore procedure about this mod
+    function assignment_restore_mods($mod,$restore) {
 
         global $CFG;
 
         $status = true;
 
-        //Iterate over assignment table
-        $assignments = get_records ("assignment","course",$preferences->backup_course,"id");
-        if ($assignments) {
-            foreach ($assignments as $assignment) {
-                //Start mod
-                fwrite ($bf,start_tag("MOD",3,true));
-                //Print assignment data
-                fwrite ($bf,full_tag("ID",4,false,$assignment->id));
-                fwrite ($bf,full_tag("MODTYPE",4,false,"assignment"));
-                fwrite ($bf,full_tag("NAME",4,false,$assignment->name));
-                fwrite ($bf,full_tag("DESCRIPTION",4,false,$assignment->description));
-                fwrite ($bf,full_tag("FORMAT",4,false,$assignment->format));
-                fwrite ($bf,full_tag("RESUBMIT",4,false,$assignment->resubmit));
-                fwrite ($bf,full_tag("TYPE",4,false,$assignment->type));
-                fwrite ($bf,full_tag("MAXBYTES",4,false,$assignment->maxbytes));
-                fwrite ($bf,full_tag("TIMEDUE",4,false,$assignment->timedue));
-                fwrite ($bf,full_tag("GRADE",4,false,$assignment->grade));
-                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$assignment->timemodified));
-                //if we've selected to backup users info, then execute backup_assignment_submisions
-                if ($preferences->mods["assignment"]->userinfo) {
-                    $status = backup_assignment_submissions($bf,$preferences,$assignment->id);
+        //Get record from backup_ids
+        $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
+
+        if ($data) {
+            //We have info, get and unserialize info
+            //First strip slashes
+            $temp = stripslashes($data->info);     
+            //Now get completed xmlized object   
+            $info = unserialize($temp);
+            //traverse_xmlize($info);                                                                     //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the ASSIGNMENT record structure
+            $assignment->course = $restore->course_id;
+            $assignment->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
+            $assignment->description = backup_todb($info['MOD']['#']['DESCRIPTION']['0']['#']);
+            $assignment->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
+            $assignment->resubmit = backup_todb($info['MOD']['#']['RESUBMIT']['0']['#']);
+            $assignment->type = backup_todb($info['MOD']['#']['TYPE']['0']['#']);
+            $assignment->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
+            $assignment->timedue = backup_todb($info['MOD']['#']['TIMEDUE']['0']['#']);
+            $assignment->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
+            $assignment->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
+
+            //The structure is equal to the db, so insert the assignment
+            $newid = insert_record ("assignment",$assignment);
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,$mod->modtype,$mod->id,
+                             $newid,$data->info);
+                //Now check if want to restore user data and do it.
+                if ($restore->mods[assignment]->userinfo) {
+                    //Restore assignmet_submissions
+                    $status = assignment_submissions_restore_mods ($newid,$info,$restore);
                 }
-                //End mod
-                $status =fwrite ($bf,end_tag("MOD",3,true));
+            } else {
+                $status = false;
             }
+        
+        } else {
+            $status = false;
         }
-        //if we've selected to backup users info, then backup files too
-        if ($preferences->mods["assignment"]->userinfo) {
-            $status = backup_assignment_files($bf,$preferences);
-        }
-        return $status;  
+
+        return $status;
     }
 
+    //This function restores the assignment_submissions
+    function assignment_submissions_restore_mods($assignment_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the submissions array 
+        $submissions = $info['MOD']['#']['SUBMISSIONS']['0']['#']['SUBMISSION'];
+
+        //Iterate over submissions
+        for($i = 0; $i < sizeof($submissions); $i++) {
+            $sub_info = $submissions[$i];
+            //traverse_xmlize($sub_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($sub_info['#']['ID']['0']['#']);
+            $olduserid = backup_todb($sub_info['#']['USERID']['0']['#']);
+
+            //Now, build the ASSIGNMENT_SUBMISSIONS record structure
+            $submission->assignment = $assignment_id;
+            $submission->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
+            $submission->timecreated = backup_todb($sub_info['#']['TIMECREATED']['0']['#']);
+            $submission->timemodified = backup_todb($sub_info['#']['TIMEMODIFIED']['0']['#']);
+            $submission->numfiles = backup_todb($sub_info['#']['NUMFILES']['0']['#']);
+            $submission->grade = backup_todb($sub_info['#']['GRADE']['0']['#']);
+            $submission->comment = backup_todb($sub_info['#']['COMMENT']['0']['#']);
+            $submission->teacher = backup_todb($sub_info['#']['TEACHER']['0']['#']);
+            $submission->timemarked = backup_todb($sub_info['#']['TIMEMARKED']['0']['#']);
+            $submission->mailed = backup_todb($sub_info['#']['MAILED']['0']['#']);
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$submission->userid);
+            if ($user) {
+                $submission->userid = $user->new_id;
+            }
+
+            //We have to recode the teacher field
+            $user = backup_getid($restore->backup_unique_code,"user",$submission->teacher);
+            if ($user) {
+                $submission->teacher = $user->new_id;
+            } 
+
+            //The structure is equal to the db, so insert the assignment_submission
+            $newid = insert_record ("assignment_submissions",$submission);
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"assignment_submission",$oldid,
+                             $newid);
+
+                //Now copy moddata associated files
+                $status = assignment_restore_files ($oldid, $newid, $olduserid, $submission->userid, $restore);
+
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    //This function copies the assignment related info from backup temp dir to course moddata folder,
+    //creating it if needed and recoding everything (assignment id and user id) 
+    function assignment_restore_files ($oldassid, $newassid, $olduserid, $newuserid, $restore) {
+
+        global $CFG;
+
+        $status = true;
+        $todo = false;
+        $moddata_path = "";
+        $assignment_path = "";
+        $temp_path = "";
+
+        //First, locate course's moddata directory
+        $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
+   
+        //Check it exists and create it
+        $status = check_dir_exists($moddata_path,true);
+
+        //Now, locate assignment directory
+        if ($status) {
+            $assignment_path = $moddata_path."/assignment";
+            //Check it exists and create it
+            $status = check_dir_exists($assignment_path,true);
+        }
+
+        //Now locate the temp dir we are gong to restore
+        if ($status) {
+            $temp_path = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code.
+                         "/moddata/assignment/".$oldassid."/".$olduserid;
+            //Check it exists
+            if (is_dir($temp_path)) {
+                $todo = true;
+            }
+        }
+
+        //If todo, we create the neccesary dirs in course moddata/assignment
+        if ($status and $todo) {
+            //First this assignment id
+            $this_assignment_path = $assignment_path."/".$newassid;
+            $status = check_dir_exists($this_assignment_path,true);
+            //Now this user id
+            $user_assignment_path = $this_assignment_path."/".$newuserid;
+            //And now, copy temp_path to user_assignment_path
+            $status = backup_copy_file($temp_path, $user_assignment_path); 
+        }
+       
+        return $status;
+    }
 ?>
