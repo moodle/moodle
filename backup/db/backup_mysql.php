@@ -56,6 +56,11 @@ function backup_upgrade($oldversion=0) {
                                ) COMMENT  =  'To store and recode ids to user & course files.'");
     }
 
+    if ($oldversion < 2003052000 and $result) {
+        $result = execute_sql("ALTER TABLE `{$CFG->prefix}backup_ids`
+                         MODIFY `info` TEXT");
+    } 
+
     //Finally, return result
     return $result;
 
