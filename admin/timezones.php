@@ -21,7 +21,7 @@
     $stradministration = get_string('administration');
     $strconfiguration = get_string('configuration');
     $strcalendarsettings = get_string('calendarsettings', 'admin');
-    $strcalendardstpresets = get_string('dstpresets', 'admin');
+    $strcalendardstpresets = get_string('timezones', 'admin');
 
     print_header("$site->shortname: $strcalendardstpresets", "$site->fullname",
                  "<a href=\"index.php\">$stradministration</a> -> ".
@@ -74,7 +74,7 @@
             $presetid = optional_param('preset', 0, PARAM_INT);
             $preset = get_record('dst_preset', 'id', $presetid);
             if($preset !== false) {
-                // This variable used inside dst_edit.html
+                // This variable used inside timezone_edit.html
                 $weekdays = array(
                     -1 => get_string('day', 'calendar'),
                      0 => get_string('sunday', 'calendar'),
@@ -116,10 +116,10 @@
             if($preset !== false) {
                 print_heading(get_string('confirmation', 'admin'));
                 if(!empty($CFG->calendar_dstforusers) && $preset->id == $CFG->calendar_dstforusers) {
-                    notice_yesno(get_string('confirmdeletedstdefault', 'admin', $preset->name), 'dst.php?action=delete&amp;preset='.$presetid.'&amp;sesskey='.$USER->sesskey, 'dst.php?sesskey='.$USER->sesskey);
+                    notice_yesno(get_string('confirmdeletedstdefault', 'admin', $preset->name), 'timezones.php?action=delete&amp;preset='.$presetid.'&amp;sesskey='.$USER->sesskey, 'dst.php?sesskey='.$USER->sesskey);
                 }
                 else {
-                    notice_yesno(get_string('confirmdeletedst', 'admin', $preset->name), 'dst.php?action=delete&amp;preset='.$presetid.'&amp;sesskey='.$USER->sesskey, 'dst.php?sesskey='.$USER->sesskey);
+                    notice_yesno(get_string('confirmdeletedst', 'admin', $preset->name), 'timezones.php?action=delete&amp;preset='.$presetid.'&amp;sesskey='.$USER->sesskey, 'timezones.php?sesskey='.$USER->sesskey);
                 }
             }
             else {
@@ -127,7 +127,7 @@
             }
         break;
         case 'edit':
-            // These variables are used inside dst_edit.html
+            // These variables are used inside timezone_edit.html
             $preset = new stdClass;
             $preset->id                = optional_param('preset', 0, PARAM_INT);
         case 'add':
@@ -179,7 +179,7 @@
                         insert_record('dst_preset', $preset);
                     }
 
-                    redirect('dst.php');
+                    redirect('timezones.php');
                 }
                 else {
                     $errorhtml = '<div class="errorbox"><div class="title">'.get_string('therewereerrors', 'admin').':</div><ul>';
@@ -201,10 +201,10 @@
                  5 => get_string('friday', 'calendar'),
                  6 => get_string('saturday', 'calendar')
             );
-            print_heading(get_string('editingdstpreset', 'admin'));
+            print_heading(get_string('editingtimezone', 'admin'));
             echo $errorhtml;
             print_simple_box_start('center', '70%');
-            include('./dst_edit.html');
+            include('./timezone_edit.html');
             print_simple_box_end();
 
         break;
@@ -222,7 +222,7 @@
             }
         }
         print_heading($strcalendardstpresets);
-        include('./dst.html');
+        include('./timezones.html');
     }
 
     print_footer();
