@@ -1123,6 +1123,7 @@ function ewiki_page_search($id, &$data, $action) {
 function ewiki_page_info($id, &$data, $action) {
 
    global $ewiki_plugins, $ewiki_config, $ewiki_links;
+   global $CFG, $course;  // MOODLE HACK
 
    $o = ewiki_make_title($id, ewiki_t("INFOABOUTPAGE")." '{$id}'", 2, $action,"", "_MAY_SPLIT=1"); 
 
@@ -1131,7 +1132,7 @@ function ewiki_page_info($id, &$data, $action) {
       "APPENDONLY", "SYSTEM",
    );
    $show = array(
-      "version", "author", "created",
+      "version", "author", "userid", "created",
       "lastmodified", "refs",
       "flags", "meta", "content"
    );
@@ -1157,19 +1158,21 @@ function ewiki_page_info($id, &$data, $action) {
          continue;
       }
 
-      $o .= '<table class="version-info" border="1" cellpadding="2" cellspacing="1">' . "\n";
+      $o .= '<table align="center" class="version-info" cellpadding="2" cellspacing="1">' . "\n";
 
       #-- additional info-actions
-      $o .= '<tr><td></td><td class="action-links">';
+      $commands = '';
       foreach ($ewiki_config["action_links"]["info"] as $action=>$title)
       if (@$ewiki_plugins["action"][$action] || @$ewiki_plugins["action_always"][$action]) {
    ##### BEGIN MOODLE ADDITION #####
-         $o .= '<a href="' .
+         if ($commands) {
+             $commands .= '&nbsp;&nbsp;';
+         }
+         $commands .= '<a href="' .
            ewiki_script($action, $id, array("version"=>$current["version"])) .
-           '">' . get_string($title,"wiki") . '</a>&nbsp;';
+           '">' . get_string($title,"wiki") . '</a>';
    ##### END MOODLE ADDITION #####
       }
-      $o .= "</td></tr>\n";
 
       #-- print page database entry
       foreach($show as $i) {
@@ -1178,6 +1181,7 @@ function ewiki_page_info($id, &$data, $action) {
 
          #-- show database {fields} differently
          if ($i == "meta") {
+            continue;  // MOODLE DOESN'T USE IT
             $str = "";
             if ($first && $value) { foreach ($value as $n=>$d) {
                $str .= htmlentities("$n: $d") . "<br>\n";
@@ -1186,11 +1190,12 @@ function ewiki_page_info($id, &$data, $action) {
          }
          elseif ($value >= UNIX_MILLENNIUM) {    #-- {lastmodified}, {created}
             #### BEGIN MOODLE CHANGE
-            $value=userdate($value, $strftimedatetime);
+            $value=userdate($value);
             #$value = strftime("%c", $value);
             #### END MOODLE CHANGE
          }
          elseif ($i == "content") {
+            continue;  // MOODLE DOESN'T CARE
             $value = strlen(trim($value)) . " bytes";
             $i = "content size";
          }
@@ -1201,17 +1206,24 @@ function ewiki_page_info($id, &$data, $action) {
             foreach ($a as $n=>$link) {
                $a[$n] = ewiki_link_regex_callback(array("$link"), "force_noimg");
             }
-            $value = implode(", ", $a);
+            $value = trim(implode(", ", $a));
+            if (!$value) {
+                continue;
+            }
          }
          elseif (strpos($value, "\n") !== false) {       #-- also for {refs}
             $value = str_replace("\n", ", ", trim($value));
+            if (!$value) {
+                continue;
+            }
          }
          elseif ($i == "version") {
             $value = '<a href="' .
                ewiki_script("", $id, array("version"=>$value)) . '">' .
-               $value . '</a>';
+               $value . '</a> '."($commands)";
          }
          elseif ($i == "flags") {
+            continue;  // MOODLE DOESN'T USE IT
             $fstr = "";
             for ($n = 0; $n < 32; $n++) {
               if ($value & (1 << $n)) {
@@ -1222,18 +1234,32 @@ function ewiki_page_info($id, &$data, $action) {
             $value = $fstr;
          }
          elseif ($i == "author") {
+            continue;
             $ewiki_links=1;
             $value = preg_replace_callback("/((\w+:)?([".EWIKI_CHARS_U."]+[".EWIKI_CHARS_L."]+){2,}[\w\d]*)/", "ewiki_link_regex_callback", $value);
          }
+         elseif ($i == "userid") {
+             $i = 'author';
+             if ($user = get_record('user', 'id', $value)) {
+                 if (!isset($course->id)) {
+                     $course->id = 1;
+                 }
+                 $picture = print_user_picture($user->id, $course->id, $user->picture, false, true, true);
+                 $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">".fullname($user)."</a>";
+             } else {
+                 continue;
+                 //$value = @$current['author'];
+             }
+         }
 
    ##### BEGIN MOODLE ADDITION #####
-         $o .= '<tr class="page-'.$i.'"><td valign="top"><b>' .ewiki_t($i). '</b></td>' .
+         $o .= '<tr class="page-'.$i.'"><td valign="top" align="right"><b>' .ewiki_t($i). ':</b></td>' .
                '<td>' . $value . "</td></tr>\n";
    ##### END MOODLE ADDITION #####
 
       }
 
-      $o .= "</table><br>\n";
+      $o .= "</table><br /><br />\n";
    }
 
    #-- page result split
@@ -1450,13 +1476,16 @@ function ewiki_page_edit($id, $data, $action) {
 
 
 function ewiki_data_update(&$data, $author="") {
-   global $ewiki_links;
+   global $USER, $ewiki_links;
 
    #-- add backlinks entry
    ewiki_scan_wikiwords($data["content"], $ewiki_links, "_STRIP_EMAIL=1");
    $data["refs"] = "\n\n".implode("\n", array_keys($ewiki_links))."\n\n";
    $data["lastmodified"] = time();
    $data["author"] = ewiki_author($author);
+   if (isset($USER->id)) {
+       $data["userid"] = $USER->id;
+   }
 }
 
 
@@ -2452,6 +2481,7 @@ function ewiki_intermap_walking($id, &$data, $action) {
 */
 function ewiki_binary($break=0) {
    global $ewiki_plugins;
+   global $USER;   // MOODLE
 
    #-- reject calls
    if (!strlen($id = @$_REQUEST[EWIKI_UP_BINARY]) || !EWIKI_IDF_INTERNAL) {
@@ -2582,6 +2612,7 @@ EOF;
             "lastmodified" => time(),
             "created" => time(),
             "author" => ewiki_author("ewiki_binary_cache"),
+            "userid" => $USER->id,
             "content" => "",
             "meta" => array("Status"=>"404 Absent"),
          );
@@ -2617,6 +2648,7 @@ function ewiki_binary_save_image($filename, $id="", $return=0,
 $add_meta=array(), $accept_all=EWIKI_ACCEPT_BINARY, $care_for_images=1)
 {
    global $ewiki_plugins;
+   global $USER;   // MOODLE
 
    #-- break on empty files
    if (!filesize($filename)) {
@@ -2719,6 +2751,7 @@ $add_meta=array(), $accept_all=EWIKI_ACCEPT_BINARY, $care_for_images=1)
       "id" => $id,
       "version" => "1", 
       "author" => ewiki_author(),
+      "userid" => $USER->id,
       "flags" => EWIKI_DB_F_BINARY | EWIKI_DB_F_READONLY,
       "created" => time(),
       "lastmodified" => time(),
@@ -3096,6 +3129,8 @@ function ewiki_auth_user($username, $password) {
 */
 function ewiki_eventually_initialize(&$id, &$data, &$action) {
 
+   global $USER;
+
    #-- initialize database only if frontpage missing
    if (($id==EWIKI_PAGE_INDEX) && ($action=="edit") && empty($data["version"])) {
 
@@ -3117,6 +3152,7 @@ function ewiki_eventually_initialize(&$id, &$data, &$action) {
                      "flags" => "1",
                      "content" => $content,
                      "author" => ewiki_author("ewiki_initialize"),
+                     "userid" => $USER->id,
                      "refs" => $refs,
                      "lastmodified" => filemtime("$path/$filename"),
                      "created" => filectime("$path/$filename")   // (not exact)
@@ -3480,6 +3516,7 @@ function ewiki_database_mysql($action, &$args, $sw1, $sw2) {
             flags INTEGER UNSIGNED DEFAULT 0,
             content MEDIUMTEXT,
             author VARCHAR(100) DEFAULT 'ewiki',
+            userid INTEGER UNSIGNED DEFAULT 0,
             created INTEGER UNSIGNED DEFAULT ".time().",
             lastmodified INTEGER UNSIGNED DEFAULT 0,
             refs MEDIUMTEXT,

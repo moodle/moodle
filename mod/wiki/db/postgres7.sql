@@ -46,6 +46,7 @@ CREATE TABLE prefix_wiki_pages (
   flags INTEGER  DEFAULT 0,
   content TEXT,
   author VARCHAR(100) DEFAULT 'ewiki',
+  userid INTEGER  NOT NULL DEFAULT 0,
   created INTEGER  DEFAULT 0,
   lastmodified INTEGER  DEFAULT 0,
   refs TEXT,

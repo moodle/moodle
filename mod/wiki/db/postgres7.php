@@ -18,6 +18,9 @@ function wiki_upgrade($oldversion) {
        modify_database("", "ALTER TABLE ONLY prefix_wiki_pages 
                             ADD CONSTRAINT id PRIMARY KEY (pagename, \"version\", wiki);"); 
     }
+    if ($oldversion < 2004082200) {
+        table_column('wiki_pages', '', 'userid', "integer", "10", "unsigned", "0", "not null", "author");
+    }
     return true;
 }
 

@@ -48,6 +48,7 @@ CREATE TABLE `prefix_wiki_pages` (
   `flags` INTEGER UNSIGNED DEFAULT 0,
   `content` MEDIUMTEXT,
   `author` VARCHAR(100) DEFAULT 'ewiki',
+  `userid` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `created` INTEGER UNSIGNED DEFAULT 0,
   `lastmodified` INTEGER UNSIGNED DEFAULT 0,
   `refs` MEDIUMTEXT,

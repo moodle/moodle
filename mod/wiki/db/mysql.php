@@ -51,6 +51,10 @@ function wiki_upgrade($oldversion) {
                     .' ADD `disablecamelcase` TINYINT DEFAULT \'0\' NOT NULL AFTER `ewikiacceptbinary`');
     }
 
+    if ($oldversion < 2004082200) {
+        table_column('wiki_pages', '', 'userid', "integer", "10", "unsigned", "0", "not null", "author");
+    }
+
     return true;
 }
 
