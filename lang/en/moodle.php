@@ -780,7 +780,7 @@ $string['weekshow'] = "Show this week to \$a";
 $string['welcometocourse'] = "Welcome to \$a";
 $string['welcometocoursetext'] = "Welcome to \$a->coursename!
 
-One of the first things you should do is edit your profile page
+If you have not done so already, you should edit your profile page
 within the course so that we can learn more about you:
 
   \$a->profileurl";
