@@ -315,6 +315,10 @@ $string['emailconfirmationsubject'] = '$a: account confirmation';
 $string['emailconfirmsent'] = '   <P>An email should have been sent to your address at <B>$a</B>
    <P>It contains easy instructions to complete your registration.
    <P>If you continue to have difficulty, contact the site administrator.';
+$string['emaildigest'] = 'Email digest type';
+$string['emaildigestoff'] = 'No digest (single email per forum post)';
+$string['emaildigestcomplete'] = 'Complete (daily email with full posts)';
+$string['emaildigestsubjects'] = 'Subjects (daily email with subjects only)';
 $string['emaildisable'] = 'This email address is disabled.';
 $string['emaildisplay'] = 'Email display';
 $string['emaildisplaycourse'] = 'Allow only other course members to see my email address';

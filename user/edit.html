@@ -71,7 +71,7 @@ if (isadmin()) {
 </tr>
 <tr valign=top>
     <td><p><?php print_string("emaildisplay") ?>:</td>
-    <td><?php 
+    <td><?php
     $choices["0"] = get_string("emaildisplayno");
     $choices["1"] = get_string("emaildisplayyes");
     $choices["2"] = get_string("emaildisplaycourse");
@@ -80,7 +80,7 @@ if (isadmin()) {
 </tr>
 <tr valign=top>
     <td><p><?php print_string("emailformat") ?>:</td>
-    <td><?php 
+    <td><?php
     unset($choices);
     $choices["0"] = get_string("textformat");
     $choices["1"] = get_string("htmlformat");
@@ -88,8 +88,18 @@ if (isadmin()) {
     </td>
 </tr>
 <tr valign=top>
+    <td><p><?php print_string('emaildigest') ?>:</td>
+    <td><?php
+    unset($choices);
+    $choices['0'] = get_string('emaildigestoff');
+    $choices['1'] = get_string('emaildigestcomplete');
+    $choices['2'] = get_string('emaildigestsubjects');
+    choose_from_menu ($choices, 'maildigest', $user->maildigest, "") ?>
+    </td>
+</tr>
+<tr valign=top>
     <td><p><?php print_string("autosubscribe") ?>:</td>
-    <td><?php 
+    <td><?php
     unset($choices);
     $choices["1"] = get_string("autosubscribeyes");
     $choices["0"] = get_string("autosubscribeno");
@@ -99,7 +109,7 @@ if (isadmin()) {
 <?php if ($CFG->htmleditor) { ?>
 <tr valign=top>
     <td><p><?php print_string("textediting") ?>:</td>
-    <td><?php 
+    <td><?php
     unset($choices);
     $choices["0"] = get_string("texteditor");
     $choices["1"] = get_string("htmleditor");
@@ -115,12 +125,12 @@ if (isadmin()) {
 </tr>
 <tr valign=top>
     <td><p><?php print_string("country") ?>:</td>
-    <td><?php 
+    <td><?php
 
     if (!$user->country and $CFG->country) {
         $user->country = $CFG->country;
     }
-    
+
     choose_from_menu (get_list_of_countries(), "country", $user->country, get_string("selectacountry")."...", "", "") ?>
     <?php if (isset($err["country"])) formerr($err["country"]); ?>
     </td>
@@ -169,7 +179,7 @@ if (isadmin()) {
                formerr($err["description"]);
                echo "<br />";
            } ?>
-    <textarea name=description cols=50 rows=10 wrap=virtual><?php p($user->description) ?></textarea> 
+    <textarea name=description cols=50 rows=10 wrap=virtual><?php p($user->description) ?></textarea>
     <?php helpbutton("text", get_string("helptext")) ?>
     </td>
 </tr>
@@ -178,14 +188,14 @@ if (isadmin()) {
 </tr>
 
 
-<?php 
+<?php
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
-    if (!empty($CFG->gdversion) and $maxbytes and empty($CFG->disableuserimages)) {  
+    if (!empty($CFG->gdversion) and $maxbytes and empty($CFG->disableuserimages)) {
 ?>
 <tr valign=top>
     <td><p><?php print_string("currentpicture") ?>:</td>
     <td>
-       <?php print_user_picture($user->id, $course->id, $user->picture, false, false, false); 
+       <?php print_user_picture($user->id, $course->id, $user->picture, false, false, false);
              if ($user->picture) {
                  echo '&nbsp;&nbsp;<input type="checkbox" name="deletepicture" value="1">';
                  print_string("delete");
@@ -199,7 +209,7 @@ if (isadmin()) {
     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>">
     <input type="file" name="imagefile" size=40>
     <?php helpbutton("picture", get_string("helppicture"));
-       print_string("maxsize", "", display_size($maxbytes)); 
+       print_string("maxsize", "", display_size($maxbytes));
        if (isset($err["imagefile"])) formerr($err["imagefile"]);
     ?>
     </td>
@@ -259,5 +269,5 @@ if (isadmin()) {
     <td align=right><input type="submit" value="<?php print_string("updatemyprofile") ?>"></td>
 </table>
 <input type="hidden" name="course" value="<?php p($course->id) ?>">
-<input type="hidden" name="id" value="<?php p($user->id) ?>"> 
+<input type="hidden" name="id" value="<?php p($user->id) ?>">
 </form>
