@@ -42,8 +42,7 @@
                           <a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "");
         } else {
             print_header("$course->shortname: $strrecentactivity", "$course->fullname",
-                         "<a href=\"../$CFG->admin/index.php\">$stradministration</a> ->
-                          <a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "");
+                         "<a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "");
         }
 
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
@@ -67,15 +66,21 @@
                      "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strrecentactivity", "");
         } else {
             print_header("$course->shortname: $strrecentactivity", "$course->fullname",
-                     "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strrecentactivity", "");
+                     "$strrecentactivity", "");
         }
 
         print_heading(get_string("activitysince", "", userdate($date)));
 
+        if (!isset($advancedfilter)) {
+            $advancedfilter = 0;
+        }
         print_recent_selector_form($course, $advancedfilter);
 
     }
 
+    if (!isset($modid)) {
+        $modid="activity/All";
+    }
     $tmpmodid = $modid;
 
     switch ($tmpmodid) {
