@@ -1261,11 +1261,11 @@ function print_course($course, $width="100%") {
     echo "<table width=\"100%\">";
     echo '<tr valign="top">';
     echo '<td valign="top" width="50%" class="courseboxinfo">';
-    echo '<p><font size="3"><b><a title="'.get_string('entercourse').'"'.
+    echo '<b><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
-         $course->fullname.'</a></b></font></p>';
+         $course->fullname.'</a></b><br />';
     if ($teachers = get_course_teachers($course->id)) {
-        echo "<p><font size=\"1\">\n";
+        echo "<span class=\"courseboxteachers\">\n";
         foreach ($teachers as $teacher) {
             if ($teacher->authority > 0) {
                 if (!$teacher->role) {
@@ -1276,7 +1276,7 @@ function print_course($course, $width="100%") {
                      '&amp;course='.SITEID.'">'.$fullname.'</a><br />';
             }
         }
-        echo "</font></p>";
+        echo "</span>\n";
     }
 
     echo $enrol->get_access_icons($course);
@@ -1284,6 +1284,7 @@ function print_course($course, $width="100%") {
     echo '</td><td valign="top" width="50%" class="courseboxsummary">';
     $options = NULL;
     $options->noclean = true;
+    $options->para = false;
     echo format_text($course->summary, FORMAT_MOODLE, $options,  $course->id);
     echo "</td></tr>";
     echo "</table>";

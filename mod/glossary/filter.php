@@ -78,7 +78,7 @@
                         $encodedconcept = urlencode($concept->concept);
                         $title = str_replace('"', "'", strip_tags("$glossary->name: $concept->concept"));
                         $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&amp;concept=$encodedconcept\" ".
-                             "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&amp;concept=$encodedconcept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
+                             "onclick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&amp;concept=$encodedconcept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
                     }
                     $currentconcept = $concept->concept;
                     if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
