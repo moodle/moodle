@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004040500)
+      // calendar.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['april'] = 'Abril';
@@ -36,8 +36,9 @@ $string['eventtime'] = 'Hora';
 $string['eventview'] = 'Detalles del evento';
 $string['expired'] = 'Expirado';
 $string['explain_lookahead'] = 'Esta preferencia establece el número máximo de días en el futuro en que un evento debe comenzar con el fin de mostrarse como un evento próximo. Los eventos que comienzan más tarde no se mostrarán como próximos. Por favor, note que <strong>no se garantiza</strong> que se muestren todos los eventos que comienzan en ese rango de fechas; si son demasiados (más que los fijados en la preferencia \"Número máximo de eventos próximos\") entonces los eventos más distantes no se mostrarán.';
-$string['explain_maxevents'] = 'Esta preferencia establece el número máximo de eventos próximos a mostrar. Si selecciona un número algo, es posible que se ocupe un amplio espacio de la pantalla.';
+$string['explain_maxevents'] = 'Esta preferencia establece el número máximo de eventos próximos a mostrar. Si selecciona un número alto, es posible que se ocupe un amplio espacio de la pantalla.';
 $string['explain_startwday'] = 'Esta preferencia configura la forma en que se muestran todos los calendarios mensuales. Utilícela para acomodarla a su conveniencia.';
+$string['explain_timeformat'] = 'Esta preferencia controla cómo aparecen las horas en el calendario. Puede elegir entre los formatos de 12 y 24 horas. Si elige la opción \"por defecto\", entonces el formato se seleccionará automáticamente de acuerdo con el idioma que usted utilice en el sitio.';
 $string['february'] = 'Febrero';
 $string['fri'] = 'Vie';
 $string['friday'] = 'Viernes';
@@ -61,6 +62,7 @@ $string['oneevent'] = '1 evento';
 $string['pref_lookahead'] = 'Plazo de comienzo de eventos próximos';
 $string['pref_maxevents'] = 'Nº máximo de eventos próximos';
 $string['pref_startwday'] = 'Primer día de la semana';
+$string['pref_timeformat'] = 'Formato de hora';
 $string['preferences'] = 'Preferencias';
 $string['preferences_available'] = 'Sus preferencias personales';
 $string['sat'] = 'Sáb';
@@ -72,6 +74,8 @@ $string['sun'] = 'Dom';
 $string['sunday'] = 'Domingo';
 $string['thu'] = 'Jue';
 $string['thursday'] = 'Jueves';
+$string['timeformat_12'] = '12 horas (am/pm)';
+$string['timeformat_24'] = '24 horas';
 $string['today'] = 'Hoy';
 $string['tomorrow'] = 'Mañana';
 $string['tt_deleteevent'] = 'Eliminar evento';

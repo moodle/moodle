@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004040500)
+      // moodle.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['action'] = 'Acción';
@@ -42,7 +42,8 @@ $string['adminhelpcourses'] = 'Definir cursos y categorías y asignar personas a 
 $string['adminhelpedituser'] = 'Navegar por la lista de usuarios y editar alguno de ellos';
 $string['adminhelplanguage'] = 'Para revisar y editar el presente idioma';
 $string['adminhelplogs'] = 'Navegar por los registros de toda la actividad del sitio';
-$string['adminhelpmanagedatabase'] = 'acceder directamente a la base de datos (¡cuidado!)';
+$string['adminhelpmanageblocks'] = 'Manejar bloques instalados y sus ajustes';
+$string['adminhelpmanagedatabase'] = 'Acceder directamente a la base de datos (¡cuidado!)';
 $string['adminhelpmanagefilters'] = 'Selecciona filtros de texto y su configuración';
 $string['adminhelpmanagemodules'] = 'Administrar los módulos instalados y sus configuraciones';
 $string['adminhelpsitefiles'] = 'Para publicar archivos en general o subir copia de seguridad externos';
@@ -100,6 +101,8 @@ $string['backupsavetohelp'] = 'Ruta completa del directorio en el que desea que 
 $string['backupuserfileshelp'] = 'Para seleccionar si desea incluir los archivos personales de los usuario (imágen) en la copia de seguridad';
 $string['backupusershelp'] = 'Para seleccionar si desea incluir todos los usuarios del servidor o solo los vinculados al curso en la copia de seguridad';
 $string['backupversion'] = 'Versión de la copia de seguridad';
+$string['blocksetup'] = 'Ajustando tablas de bloque';
+$string['blocksuccess'] = '$a tablas han sido ajustadas correctamente';
 $string['bycourseorder'] = 'Orden del curso';
 $string['cancel'] = 'Cancelar';
 $string['categories'] = 'Categorías';
@@ -233,6 +236,7 @@ $string['databaseperformance'] = 'Rendimiento de la base de datos';
 $string['databasesetup'] = 'Configurando la base de datos';
 $string['databasesuccess'] = 'La base de datos se ha actualizado satisfactoriamente';
 $string['databaseupgradebackups'] = 'La versión de la copia de seguridad es $a';
+$string['databaseupgradeblocks'] = 'La versión de los bloques es $a';
 $string['databaseupgrades'] = 'Actualizando la base de datos';
 $string['datemostrecentfirst'] = 'Fecha - primero el más reciente';
 $string['datemostrecentlast'] = 'Fecha - último el más reciente';
@@ -530,6 +534,7 @@ $string['logs'] = 'Registros';
 $string['mainmenu'] = 'Menú principal';
 $string['makeafolder'] = 'Crear un directorio';
 $string['makeeditable'] = 'Si \'$a\' tiene CHMOD 777 Ud. puede editar el idioma desde aquí.';
+$string['manageblocks'] = 'Bloques';
 $string['managedatabase'] = 'Administrar la base de datos';
 $string['managefilters'] = 'Filtros';
 $string['managemodules'] = 'Administrar módulos';
