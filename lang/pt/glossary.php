@@ -49,6 +49,7 @@ $string['commentson'] = 'Comentários sobre';
 $string['commentupdated'] = 'O comentário foi actualizado';
 $string['concept'] = 'Conceito';
 $string['concepts'] = 'Conceitos';
+$string['configenablerssfeeds'] = 'Esta opção activará a possibilidade de produzir listagens RSS em todos os glossários. Será ainda preciso activar a opção manualmente em cada glossário.';
 $string['currentglossary'] = 'Glossário actual';
 $string['dateview'] = 'Ver por datas';
 $string['defaultapproval'] = 'Estado de aprovação, por omissão';
