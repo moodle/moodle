@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // forum.php - created with Moodle 1.3 development (2004050200)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -116,20 +116,23 @@ $string['searchforums'] = 'Etsi keskustelualueilta';
 $string['searcholderposts'] = 'Selaa vanhoja viestejä';
 $string['searchresults'] = 'Haun tulokset';
 $string['sendinratings'] = 'Lähetä viimeisimmät arvioinnit viesteistä';
-$string['showsubscribers'] = 'Näytä tilaajat';
+$string['showsubscribers'] = 'Näytä/Muokaa tilaajia';
 $string['singleforum'] = 'Yksinkertainen keskustelu';
 $string['startedby'] = 'Aloittanut:';
 $string['subject'] = 'Aihe';
 $string['subscribe'] = 'Tilaa tämä keskustelualue';
+$string['subscribeall'] = 'Tilaa tämä keskustelualue kaikille';
 $string['subscribed'] = 'Tilaaja';
+$string['subscribenone'] = 'Peru tämän keskustelualueen tilaukset kaikilta';
 $string['subscribers'] = 'Tilaajat';
 $string['subscribersto'] = 'Tilaa \'$a\'';
 $string['subscribestart'] = 'Lähetä kopiot viesteistä tälle keskustelualueelle sähköpostiini';
 $string['subscribestop'] = 'En halua kopioita viesteistä tälle keskustelualueelle';
 $string['subscription'] = 'Tilaus';
 $string['subscriptions'] = 'Tilaukset';
-$string['unsubscribe'] = 'Poista tämän keskustelualueen tilaus';
+$string['unsubscribe'] = 'Peru tämän keskustelualueen tilaus';
 $string['unsubscribed'] = 'Tilaamaton';
+$string['unsubscribeshort'] = 'Peru tilaus';
 $string['youratedthis'] = 'Arvioit tämän';
 $string['yournewtopic'] = 'Uusi keskustelun aihe';
 $string['yourreply'] = 'Vastauksesi';

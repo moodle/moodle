@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // auth.php - created with Moodle 1.3 development (2004050200)
 
 
 $string['auth_dbdescription'] = 'Tämä moduli tarkistaa ulkoisen tietokannan taulusta käyttäjätunnuksen ja salasanan. Jos käyttäjätunnus on uusi, myös muita tietoja voidaan kopioda Moodleen.';
@@ -33,6 +33,7 @@ $string['auth_ldap_memberattribute'] = 'Määritä käyttäjän ryhmäjäsenyysattribuut
 $string['auth_ldap_search_sub'] = 'Aseta arvo &lt;&gt; 0, jos haluat hakea käyttäjiä myös alikonteksteista.';
 $string['auth_ldap_update_userinfo'] = 'Päivitä käyttäjätiedot LDAP:ista Moodleen (etunimi, sukunimi, osoite..). Katso <a href=\"/auth/ldap/attr_mappings.php\">/auth/ldap/attr_mappings.php</a> tarkempia määrittelytietoja.';
 $string['auth_ldap_user_attribute'] = 'Attribuutti käyttäjänimille. Yleensä \'cn\'.';
+$string['auth_ldap_version'] = 'Palvelimella käytettävä LDAP protokolla versio';
 $string['auth_ldapdescription'] = 'Tämä tapa tarjoaa käyttäjätunnistuksen LDAP-palvelimelta. Jos salasana ja tunnus täsmäävät, Moodle luo uuden käyttäjän  tietokantaansa. Jos olet valinnut \'auth_ldap_update_userinfo\'-option, myös käyttäjätiedot kopioidaan LDAP:sta Moodleen.
 
 Seuraavilla kerroilla ainostaan tunnus ja salasana tarkistetaan.';

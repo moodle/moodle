@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // resource.php - created with Moodle 1.3 development (2004050200)
 
 
 $string['addresource'] = 'Lisää aineisto';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Näytetäänkö ponnahdusikkunoissa työkalurivi?';
 $string['configpopupwidth'] = 'Ponnahdusikkunoiden leveys?';
 $string['configwebsearch'] = 'Kun lisätää WWW-sivun tai -linkin osoite, tätä osoitetta tarjotaan käyttäjälle etsimisen helpottamiseksi (esimerkiksi sopivan hakukoneen URL).';
 $string['directlink'] = 'Suora linkki tähän tiedostoon';
+$string['directoryinfo'] = 'Kaikki valitun hakemiston tiedostot näytetään';
 $string['editingaresource'] = 'Aineiston muokkaus';
 $string['example'] = 'Esimerkki';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -29,6 +30,7 @@ $string['fetchservererror'] = 'Etäpalvelimella tapahtui virhe haettaessa sivua (
 $string['filename'] = 'Tiedoston nimi';
 $string['fulltext'] = 'Teksti';
 $string['htmlfragment'] = 'HTML';
+$string['maindirectory'] = 'Tiedostojen hakemisto';
 $string['modulename'] = 'Aineisto';
 $string['modulenameplural'] = 'Aineistot';
 $string['neverseen'] = 'Lukematta';
@@ -59,5 +61,6 @@ $string['resourcetype5'] = 'WWW-linkki';
 $string['resourcetype6'] = 'HTML';
 $string['resourcetype7'] = 'Ohjelma';
 $string['resourcetype8'] = 'Wiki-teksti';
+$string['resourcetype9'] = 'Hakemisto';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // workshop.php - created with Moodle 1.3 development (2004050200)
 
 
 $string['absent'] = 'Poissa';
@@ -129,6 +129,7 @@ $string['optionaladjustment'] = 'Vaihtoehtoinen tarkennus';
 $string['optionforpeergrade'] = 'Optio vertaisarvosanaan ';
 $string['optionsusedinanalysis'] = 'Analyysissä käytetyt asetukset';
 $string['overallgrade'] = 'Kokonaisarvosana';
+$string['overallocation'] = 'Ylivaraus';
 $string['overallpeergrade'] = 'Vertaisryhmän antama kokonaisarvosana: $a';
 $string['overallteachergrade'] = 'Opettajan antama kokonaisarvosana: $a';
 $string['ownwork'] = 'Oma työ';
@@ -163,6 +164,7 @@ $string['saveleaguetableoptions'] = 'Tallenna taulukoinnin asetukset';
 $string['savemyassessment'] = 'Tallenna arviointi';
 $string['savemycomment'] = 'Tallenna kommentti';
 $string['savemygrading'] = 'Tallenna arvostelu';
+$string['saveoverallocation'] = 'Tallenna ylivaraustaso';
 $string['scale10'] = 'Pistettä 10 pisteestä';
 $string['scale100'] = 'Pistettä 100 pisteestä';
 $string['scale20'] = 'Pistettä 20 pisteestä';
@@ -175,6 +177,7 @@ $string['scalepresent'] = ' 2-pisteinen Läsnä/Poissaoleva-asteikko';
 $string['scaleyes'] = '2-pisteinen Kyllä/Ei-asteikko';
 $string['select'] = 'Valitse';
 $string['selfassessment'] = 'Itsearviointi';
+$string['setoverallocation'] = 'Aseta ylivaraustaso';
 $string['showgrades'] = 'Näytä arvosanat';
 $string['specimenassessmentform'] = 'Arviointilomakkeen mallikappale';
 $string['standarddeviation'] = 'Arviointielementin $a keskihajonta';

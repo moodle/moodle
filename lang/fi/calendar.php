@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004040500)
+      // calendar.php - created with Moodle 1.3 development (2004050200)
 
 
 $string['april'] = 'Huhtikuu';
@@ -38,6 +38,7 @@ $string['expired'] = 'Tapahtuma on jo mennyt';
 $string['explain_lookahead'] = 'Tämä oletusasetus määrittää, kuinka monen päivän päässä tulevaisuudessa tapahtuman pitää olla, jotta se näytettäisiin \"tulevana tapahtumana\". Tapahtumia, jotka alkavat myöhemmin, ei näytetä koskaan tulevien tapahtumien listassa. Huomaa, että <strong>ei ole mitään takeita</strong> siitä, että kaikki tämän ajan sisällä olevat tapahtumat näytettäisiin tulevien listassa; mikäli niitä on paljon (enemmän kuin asetus \"Tulevien tapahtumien listan maksimikoko\", kaukaisimmat tulevista tapahtumista eivät näy listassa.';
 $string['explain_maxevents'] = 'Tämä asetus määrittää tulevien tapahtumien listan maksimikoon. Mikäli valitset tähän suuren luvun, saattaa tulevien tapahtumien lista viedä huomattavan paljon tilaa ruudultasi.';
 $string['explain_startwday'] = 'Tämä asetus määrittää tavan, jolla kuukausittainen kalenteri näytetään. Käytä tätä asettaaksesi näkymälle tavan, johon olet tottunut.';
+$string['explain_timeformat'] = 'Voit nättää ajatjoko 12 tai 24 tunnin muodossa. Jos valitset \"oletus\", valinta suoritetaan sivuston asetusten maukaisesti.';
 $string['february'] = 'Helmikuu';
 $string['fri'] = 'Pe';
 $string['friday'] = 'Perjantai';
@@ -61,6 +62,7 @@ $string['oneevent'] = '1 tapahtuma';
 $string['pref_lookahead'] = 'Tulevien tapahtumien tarkastelu';
 $string['pref_maxevents'] = 'Tulevien tapahtumien listan maksimikoko';
 $string['pref_startwday'] = 'Viikon ensimmäinen päivä';
+$string['pref_timeformat'] = 'Aikojen muoto';
 $string['preferences'] = 'Asetukset';
 $string['preferences_available'] = 'Henkilökohtaiset asetuksesi';
 $string['sat'] = 'La';
@@ -72,6 +74,8 @@ $string['sun'] = 'Su';
 $string['sunday'] = 'Sunnuntai';
 $string['thu'] = 'To';
 $string['thursday'] = 'Torstai';
+$string['timeformat_12'] = '12-tuntinen (AP/IP)';
+$string['timeformat_24'] = '24-tuntinen';
 $string['today'] = 'Tänään';
 $string['tomorrow'] = 'Huomenna';
 $string['tt_deleteevent'] = 'Poista tapahtuma';
