@@ -46,6 +46,8 @@
 
         $form->startdate = make_timestamp($form->startyear, $form->startmonth, $form->startday);
 
+        $form->format = optional_param('format', 'social', PARAM_ALPHA);
+
         validate_form($course, $form, $err);
 
         if (count($err) == 0) {
