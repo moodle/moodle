@@ -368,15 +368,12 @@ function scorm_validate($manifest)
     }
 }
 
-function scorm_delete_files($directory)
-{
-    if (is_dir($directory))
-    {
-        $files=scandir($directory);
-        foreach($files as $file)
-        {
-            if ($file != '.' && $file != '..')
-            {
+function scorm_delete_files($directory) {
+    if (is_dir($directory)) {
+        $files=scorm_scandir($directory);
+        //print_r($files);
+        foreach($files as $file) {
+            if (($file != '.') && ($file != '..')) {
             	if (!is_dir($directory.'/'.$file)) {
             	    //chmod($directory.'/'.$file,0777);
                     unlink($directory.'/'.$file);
@@ -386,6 +383,21 @@ function scorm_delete_files($directory)
             }
         }
         rmdir($directory);
+    }
+}
+
+function scorm_scandir($directory) {
+    if (version_compare(phpversion(),'5.0.0','>=')) {
+   	return scandir($directory);
+    } else {
+        $files = null;
+	if ($dh = opendir($directory)) {
+	    while (($file = readdir($dh)) !== false) {
+           	$files[] = $file;
+	    }
+	    closedir($dh);
+	}
+	return $files;
     }
 }
 
