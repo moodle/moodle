@@ -46,6 +46,12 @@
         if (set_config("theme", $choose)) {
             print_heading(get_string("themesaved"));
             print_continue("$CFG->wwwroot");
+            if (file_exists("$choose/README.txt")) {
+                print_simple_box_start("center");
+                $file = file("$choose/README.txt");
+                echo format_text(implode('', $file), FORMAT_MOODLE);
+                print_simple_box_end();
+            }
             print_footer();
             exit;
         } else {
@@ -71,15 +77,15 @@
             echo "</TD>";
             echo "<TD>&nbsp;</TD>";
         }
-        echo "</TR>";
+        echo "</tr>";
     }
-    echo "</TABLE>";
+    echo "</table>";
 
-    echo "<BR><DIV align=center>";
+    echo "<br><div align=center>";
     $options["frame"] = "developer.html";
     $options["sub"] = "themes";
     print_single_button("$CFG->wwwroot/doc/index.php", $options, get_string("howtomakethemes"));
-    echo "</DIV>";
+    echo "</div>";
     print_footer();
 
 ?>
