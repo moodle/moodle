@@ -668,8 +668,8 @@ function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
 }
 
 /**
-* Get a number of records as an array of objects
-*
+* Get a number of records as an array of values
+* 
 * Can optionally be sorted eg "time ASC" or "time DESC"
 * "select" is a fragment of SQL to define the selection criteria
 * Returns associative array of first two fields
