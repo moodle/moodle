@@ -5,10 +5,8 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->fullname = "Journal";
 $module->version  = 200208010;
 $module->cron     = 60;
-$module->search   = "";
 
 function journal_upgrade($oldversion) {
 // This function does anything necessary to upgrade

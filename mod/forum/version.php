@@ -5,10 +5,8 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->fullname = "Forum";
 $module->version  = 2002080100;
 $module->cron     = 60;
-$module->search   = "";
 
 function forum_upgrade($oldversion) {
 // This function does anything necessary to upgrade

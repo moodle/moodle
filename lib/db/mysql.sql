@@ -129,7 +129,6 @@ CREATE TABLE `log_display` (
 CREATE TABLE `modules` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(20) NOT NULL default '',
-  `fullname` varchar(255) NOT NULL default '',
   `version` int(10) NOT NULL default '0',
   `cron` int(10) unsigned NOT NULL default '0',
   `lastcron` int(10) unsigned NOT NULL default '0',
