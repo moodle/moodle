@@ -2321,7 +2321,7 @@ function forum_user_can_post($forum, $user=NULL) {
 
 function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                                         $forum_style="plain", $forum_sort="",
-                                        $currentgroup=0, $groupmode=-1) {
+                                        $currentgroup=0, $groupmode=-1, $page=-1) {
     global $CFG, $USER;
 
     if ($forum_id) {
@@ -2398,6 +2398,27 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         return;
     }
 
+    //If forum_numdiscussions <= 0 don't paging (to avoid some divided by 0 errors)
+    if ($forum_numdiscussions <= 0) {
+        $page = -1;
+        $forum_numdiscussions = 0;
+    }
+
+    //If we want paging
+    if ($page != -1) {
+        ///Get the number of discussions found
+        $numdiscussions = count($discussions);
+
+        ///Show the paging bar
+        echo "<center>";
+        print_paging_bar($numdiscussions, $page, $forum_numdiscussions, "view.php?f=$forum->id&");
+        echo "</center>";
+
+        //Calculate the page "window"
+        $pagestart = ($page * $forum_numdiscussions) + 1;
+        $pageend  = $pagestart + $forum_numdiscussions - 1;
+    }
+
     $replies = forum_count_discussion_replies($forum->id);
 
     $canreply = forum_user_can_post($forum);
@@ -2426,7 +2447,15 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
     foreach ($discussions as $discussion) {
         $discussioncount++;
 
-        if ($forum_numdiscussions && ($discussioncount > $forum_numdiscussions)) {
+        //If we want paging
+        if ($page != -1) {
+            //And we aren't inside the page "window"
+            if ($discussioncount < $pagestart || $discussioncount > $pageend) {
+                //Skip this discussion
+                continue;
+            }
+        //Without paging, old approach
+        } else if ($forum_numdiscussions && ($discussioncount > $forum_numdiscussions)) {
             $olddiscussionlink = true;
             break;
         }
@@ -2485,6 +2514,14 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         }
         echo "<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&showall=1\">";
         echo get_string("olderdiscussions", "forum")."</a> ...</p>";
+    }
+
+    //If we want paging
+    if ($page != -1) {
+        ///Show the paging bar
+        echo "<center>";
+        print_paging_bar($numdiscussions, $page, $forum_numdiscussions, "view.php?f=$forum->id&");
+        echo "</center>";
     }
 }
 

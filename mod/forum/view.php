@@ -10,6 +10,7 @@
     optional_variable($search, "");    // search string
     optional_variable($showall, "");   // show all discussions on one page
     optional_variable($group, -1);     // choose the current group
+    optional_variable($page, "0");    // which page to show
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -212,7 +213,7 @@
             if (!empty($showall)) {
                 forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup, $groupmode);
             } else {
-                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
             }
             break;
 
@@ -220,7 +221,7 @@
             if (!empty($showall)) {
                 forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup, $groupmode);
             } else {
-                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
             }
             break;
 
@@ -232,7 +233,7 @@
             if (!empty($showall)) {
                 forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup, $groupmode);
             } else {
-                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
             }
             break;
     }
