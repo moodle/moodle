@@ -747,6 +747,9 @@ function calendar_get_sideblock_upcoming($events, $linkhref = NULL) {
     }
 
     for ($i = 0; $i < $lines; ++$i) {
+        if (!isset($events[$i]->time)) {   // Just for robustness
+            continue;
+        }
         $content .= '<div class="cal_event">'.$events[$i]->icon.' ';
         if (!empty($events[$i]->referer)) {
             // That's an activity event, so let's provide the hyperlink
