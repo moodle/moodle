@@ -117,8 +117,7 @@ function send_confirmation_email($user) {
 
     $subject  = "$site->fullname account confirmation";
 
-    $users[] = $user;
-    return email_to_users($users, $from, $subject, $message);
+    return email_to_user($user, $from, $subject, $message);
 
 }
 

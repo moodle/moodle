@@ -93,8 +93,7 @@ function reset_password_and_mail($user) {
 
     $subject  = "$site->fullname: Changed password";
 
-    $users[] = $user;
-    return email_to_users($users, $from, $subject, $message);
+    return email_to_user($user, $from, $subject, $message);
 
 }
 

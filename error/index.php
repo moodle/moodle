@@ -3,11 +3,11 @@
     require("../config.php");
 
     if (isset($text)) {    // form submitted
-        if (!$user = get_records("users", "id", 1)) {
+        if (!$admin = get_admin() ) {
             error("Could not find the admin user to mail to!");
         }
 
-        email_to_users($user, $USER, "Error: $referer -> $requested", "$text");
+        email_to_user($admin, $USER, "Error: $referer -> $requested", "$text");
 
         redirect("$CFG->wwwroot/course/", "Message sent, thanks", 3);
         die;

@@ -178,22 +178,31 @@ function print_editing_switch($courseid) {
 }
 
 
-function userdate($date, $format="l, j F Y, g:i A") {
+function userdate($date, $format="", $timezone=99) {
     global $USER;
 
-    if (abs($USER->timezone) > 12) {
+    if ($format == "") {
+        $format = "l, j F Y, g:i A";
+    }
+    if ($timezone == 99) {
+        $timezone = (float)$USER->timezone;
+    }
+    if (abs($timezone) > 12) {
         return date("$format T", $date);
     }
-    return gmdate($format, $date + (int)($USER->timezone * 3600));
+    return gmdate($format, $date + (int)($timezone * 3600));
 }
 
-function usergetdate($date) {
+function usergetdate($date, $timezone=99) {
     global $USER;
 
-    if (abs($USER->timezone) > 12) {
+    if ($timezone == 99) {
+        $timezone = (float)$USER->timezone;
+    }
+    if (abs($timezone) > 12) {
         return getdate($date);
     }
-    return getdate($date + (int)($USER->timezone * 3600));
+    return getdate($date + (int)($timezone * 3600));
 }
 
 
@@ -879,8 +888,10 @@ function print_update_module_icon($moduleid) {
 
 /// CORRESPONDENCE  ////////////////////////////////////////////////
 
-function email_to_users(&$users, $from, $subject, $messagetext, $messagehtml="", $attachment="", $attachname="") {
-//  users       - an array of user records as returned by get_records_sql
+function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $attachment="", $attachname="") {
+//  user        - a user record as an object
+//  from        - a user record as an object
+//  subject     - plain text subject line of the email
 //  messagetext - plain text version of the message
 //  messagehtml - complete html version of the message (optional)
 //  attachment  - a file on the filesystem, relative to $CFG->dataroot
@@ -890,7 +901,7 @@ function email_to_users(&$users, $from, $subject, $messagetext, $messagehtml="",
 
     include_once("$CFG->libdir/phpmailer/class.phpmailer.php");
 
-    if (!$users) {
+    if (!$user) {
         return false;
     }
     
@@ -905,9 +916,7 @@ function email_to_users(&$users, $from, $subject, $messagetext, $messagehtml="",
     $mail->FromName = "$from->firstname $from->lastname";
     $mail->Subject  =  stripslashes($subject);
 
-    foreach ($users as $user) {
-        $mail->AddAddress("$user->email","$user->firstname $user->lastname"); 
-    }
+    $mail->AddBCC("$user->email","$user->firstname $user->lastname"); 
 
     $mail->WordWrap = 70;                               // set word wrap
 
