@@ -58,10 +58,9 @@
 </table>
 </FORM>
 
-<? if ($usehtmleditor) { ?>
-    <SCRIPT language="JavaScript" event="onload" for="window">
-        document.richedit.options = "history=no;source=no";
-        document.richedit.docHtml = theform.message.innerText;
-    </SCRIPT>
-<? } ?>
+<? 
+   if ($usehtmleditor) { 
+       print_richedit_javascript("theform", "message", "no");
+   }
+?>
 

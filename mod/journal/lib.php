@@ -32,7 +32,7 @@ function journal_user_complete($course, $user, $mod, $journal) {
             echo "<P><FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT></P>";
         }
         if ($entry->text) {
-            echo text_to_html($entry->text);
+            echo format_text($entry->text, $entry->format);
         }
         if ($entry->teacher) {
             journal_print_feedback($course, $entry);
@@ -190,7 +190,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
 
     echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
     if ($entry) {
-        echo text_to_html($entry->text);
+        echo format_text($entry->text, $entry->format);
     } else {
         print_string("noentry", "journal");
     }
