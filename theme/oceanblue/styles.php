@@ -1,45 +1,25 @@
 <?PHP // $Id$
 
-
-
 /// We use PHP so we can do value substitutions into the styles
-
 
     require_once("../../config.php"); 
 
-
+    header("Content-type: text/css");  /// Correct MIME type
 
     if (isset($themename)) {
-
         $CFG->theme = $themename;
-
     }
-
-
 
     $themeurl = "$CFG->wwwroot/theme/$CFG->theme";
 
-
-
 /// From here on it's nearly a normal stylesheet.
-
 /// First are some CSS definitions for normal tags, 
-
 /// then custom tags follow.
-
 ///
-
 /// Note that colours are all defined in config.php
-
 /// in this directory
 
-
-
 ?>
-
-
-
-
 
 a:link    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
 
@@ -263,12 +243,24 @@ form { margin-bottom: 0; }
 .weeklyoutlinesidehighlight {
 }
 
+.weeklyoutlinesidehidden {
+    background-color: <?PHP echo $THEME->hidden?>;
+}
+
 .weeklyoutlinecontent {
 }
 
 .weeklyoutlinecontenthighlight {
 }
 
+.weeklyoutlinecontenthidden {
+}
+
+.weeklydatetext {
+    font-size: medium;
+    font-weight: bold; 
+    color: <?PHP echo $THEME->cellheading2?>;
+}
 
 .topicsoutline {
 }
@@ -279,14 +271,14 @@ form { margin-bottom: 0; }
 .topicsoutlinesidehighlight {
 }
 
+.topicsoutlinesidehidden {
+    background-color: <?PHP echo $THEME->hidden?>;
+}
+
 .topicsoutlinecontent {
 }
 
 .topicsoutlinecontenthighlight {
-}
-
-.topicsoutlinesidehidden {
-    background-color: <?PHP echo $THEME->hidden?>;
 }
 
 .topicsoutlinecontenthidden {

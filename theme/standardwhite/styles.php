@@ -2,6 +2,8 @@
 
 /// We use PHP so we can do value substitutions into the styles
 
+    header("Content-type: text/css");
+
     require_once("../../config.php"); 
 
     if (isset($themename)) {
