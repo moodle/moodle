@@ -585,7 +585,7 @@ table.generaltable th.header,
 .tabrow td {
     height:34px;
     padding:0 0 0 14px;
-    background:url(images/tab_left.gif) top left no-repeat;
+    background:url(pix/tab/left.gif) top left no-repeat;
 }
 .tabrow th {
     display:none;
@@ -595,36 +595,36 @@ table.generaltable th.header,
     height:34px;
     line-height:38px;
     padding:0 14px 0 0;
-    background:url(images/tab_right.gif) top right no-repeat;
+    background:url(pix/tab/right.gif) top right no-repeat;
     text-align:center;
     white-space:nowrap;
     text-decoration:none;
 }
 .tabrow td:hover {
-    background-image:url(images/tab_left_hover.gif);
+    background-image:url(pix/tab/left_hover.gif);
 }
 .tabrow td:hover .tablink {
     line-height:32px;
-    background-image:url(images/tab_right_hover.gif);
+    background-image:url(pix/tab/right_hover.gif);
 }
 
 .tabrow .last span {
     display:block;
     padding:0px 1px 0px 0px;
-    background:url(images/tab_right_end.gif) top right no-repeat;
+    background:url(pix/tab/right_end.gif) top right no-repeat;
 }
 .tabrow .selected {
-    background:url(images/tab_left_active.gif) top left no-repeat;
+    background:url(pix/tab/left_active.gif) top left no-repeat;
 }
 .tabrow .selected .tablink {
-    background:url(images/tab_right_active.gif) top right no-repeat;
+    background:url(pix/tab/right_active.gif) top right no-repeat;
     line-height:38px;
 }
 .tabrow td.selected:hover {
-    background-image:url(images/tab_left_active_hover.gif);
+    background-image:url(pix/tab/left_active_hover.gif);
 }
 .tabrow td.selected:hover .tablink {
-    background-image:url(images/tab_right_active_hover.gif);
+    background-image:url(pix/tab/right_active_hover.gif);
 }
 
 /******************************************************************/

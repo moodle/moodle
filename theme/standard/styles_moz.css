@@ -70,14 +70,6 @@
     -moz-border-radius-topright:15px;
 }
 
-/* tabs for glossary */
-.glossarydisplay .tabs .general,
-.glossarydisplay .tabs .inactive,
-.glossarydisplay .tabs .selected {
-    -moz-border-radius-topleft:15px;
-    -moz-border-radius-topright:15px;
-}
-
 .entryboxheader {
     -moz-border-radius-topleft:10px;
     -moz-border-radius-topright:10px;
