@@ -102,7 +102,51 @@ class page_base {
      */
     var $full_init_done = false;
 
+    /**
+     * The class attribute that Moodle has to assign to the BODY tag for this page.
+     * @var string $body_class
+     */
+    var $body_class     = NULL;
+
+    /**
+     * The id attribute that Moodle has to assign to the BODY tag for this page.
+     * @var string $body_id
+     */
+    var $body_id        = NULL;
+
 /// Class Functions
+
+    // CONSTRUCTION
+
+    // A whole battery of functions to allow standardized-name constructors in all versions of PHP.
+    // The constructor is actually called construct()
+    function page_base() {
+        $this->construct();
+    }
+
+    function __construct() {
+        $this->construct();
+    }
+
+    function construct() {
+        global $CFG, $ME;
+
+        $path = substr($ME, strlen($CFG->wwwroot) + 1);
+        $path = str_replace('.php', '', $path);
+        if (substr($path, -1) == '/') {
+            $path .= 'index';
+        }
+
+        if (empty($path)) {
+            $this->body_id    = 'index';
+            $this->body_class = 'course-view';
+        } else {
+            $this->body_id    = str_replace('/', '-', $path);
+            $classarray = explode('-', $this->body_id);
+            array_pop($classarray);
+            $this->body_class = implode('-', $classarray);
+        }
+    }
 
     // USER-RELATED THINGS
 
@@ -124,6 +168,16 @@ class page_base {
     function print_header($title, $morebreadcrumbs) {
         trigger_error('Page class does not implement method <strong>print_header()</strong>', E_USER_WARNING);
         return;
+    }
+
+    // Returns $this->body_class
+    function body_class() {
+        return $this->body_class;
+    }
+
+    // Returns $this->body_id
+    function body_id() {
+        return $this->body_id;
     }
 
     // BLOCKS RELATED SECTION
