@@ -1,0 +1,45 @@
+<table cellpadding="20" width=75% align="center"> <tr> <td bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox">
+
+<form action="prefs.php" method="post" name="form" id="form">
+<p><b><?php print_string("intro","block_glossary_random") ?>:</b></p>
+
+<table>
+<tr valign=top>
+<td align=right><p><?php print_string("title","block_glossary_random") ?>:</p></td>
+<td><input type="text" name="title" size="50" value="<?php p($prefs->title) ?>" /></td>
+</tr>
+
+<tr valign=top>	
+<td align=right><p><?php print_string("select_glossary","block_glossary_random") ?>:</p></td>
+<td><?php choose_from_menu($glossaries,"glossary",$prefs->glossary) ?></td>
+</tr>
+
+<tr valign=top>	
+<td align=right><p><?php print_string("refresh","block_glossary_random") ?>:</p></td>
+<td><input type="text" name="refresh" size="5" value="<?php p($prefs->refresh) ?>" /></td>
+</tr>
+
+<tr valign=top>	
+<td align=right><p><?php print_string("type","block_glossary_random") ?>:</p></td>	
+<td><?php
+     choose_from_menu($type, "type", $prefs->type, "");
+     helpbutton("",get_string("type","block_glossary_random"),"moodle",true,false,get_string("typehelp","block_glossary_random"));
+		 ?></td>
+</tr> 
+</table>
+
+	<p><b><?php print_string("aboutfooter","block_glossary_random") ?>:</b></p>
+	<p><?php print_string("askaddentry", "block_glossary_random") ?></p>
+	<input type="text" name="addentry" size="80" value="<?php p($prefs->addentry) ?>" /><br />
+<p><?php print_string("askviewglossary", "block_glossary_random") ?></p>
+	<input type="text" name="viewglossary" size="80" value="<?php p($prefs->viewglossary) ?>" /><br />
+	<p><?php print_string("askinvisible", "block_glossary_random") ?></p>
+	<input type="text" name="invisible" size="80" value="<?php p($prefs->invisible) ?>" /><br />
+
+<input type="hidden" name=course     value="<?php p($course) ?>">
+<input type="hidden" name=id         value="<?php p($prefs->id) ?>">
+
+<br /><center><input type="submit" value="<?php print_string("savechanges") ?>"></center>
+</form>
+
+</td></tr></table>
