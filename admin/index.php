@@ -306,7 +306,7 @@
                  get_string("uploadusers")."</a> - <font size=1>".
                  get_string("adminhelpuploadusers")."</font><br />";
 
-    $userdata .= "<hr><font size=+1>&nbsp;</font><a href=\"enrol.php\">".get_string("enrolments")."</a> - <font size=1>".
+    $userdata .= "<hr><font size=+1>&nbsp;</font><a href=\"enrol.php?sesskey=$USER->sesskey\">".get_string("enrolments")."</a> - <font size=1>".
                  get_string("adminhelpenrolments")."</font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a> - <font size=1>".
                  get_string("adminhelpassignstudents")."</font><br />";

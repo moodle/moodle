@@ -34,7 +34,7 @@
                                get_string("adminhelpuploadusers"));
     }
     $table->data[] = array('', '<hr />');
-    $table->data[] = array("<b><a href=\"enrol.php\">".get_string("enrolments")."</a></b>",
+    $table->data[] = array("<b><a href=\"enrol.php?sesskey=$USER->sesskey\">".get_string("enrolments")."</a></b>",
                            get_string("adminhelpenrolments"));
     $table->data[] = array("<b><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a></b>",
                            get_string("adminhelpassignstudents"));
