@@ -59,6 +59,9 @@
                 add_to_log($mod->course, "course", "update mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
                            "$mod->modulename $mod->instance"); 
+                add_to_log($mod->course, $mod->modulename, "update", 
+                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
+                           "$mod->instance"); 
                 break;
 
             case "add":
