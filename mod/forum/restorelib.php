@@ -60,10 +60,12 @@
             $forum->forcesubscribe = backup_todb($info['MOD']['#']['FORCESUBSCRIBE']['0']['#']);
             $forum->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
-            //We have to recode the scale field
-            $scale = backup_getid($restore->backup_unique_code,"scale",$forum->scale);
-            if ($scale) {
-                $forum->scale = $scale->new_id;
+            //We have to recode the scale field if it's <0 (default now always)
+            if ($forum->scale < 0) {
+                $scale = backup_getid($restore->backup_unique_code,"scale",abs($forum->scale));
+                if ($scale) {
+                    $forum->scale = -($scale->new_id);
+                }
             }
 
             //The structure is equal to the db, so insert the forum
