@@ -136,6 +136,8 @@
 
 <p class="questionlink"><a href="#fixdirroot">When I go to the admin page, I get told to make dirroot blank!</a></p>
 
+<p class="questionlink"><a href="#loginsetting">I login but the login link at top of page doesn't change. I am logged in and can navigate freely within the site.</a></p>
+
 <p class="questionlink">&nbsp;</p>
 
 <h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
@@ -373,7 +375,9 @@
 <p class="answercode">if (!empty($dirroot) and $dirroot != $CFG->dirroot) {</p>
 
 
+<h4 class="question"><a name="fixdirroot"></a>I login but the login link at top of page doesn't change. I am logged in and can navigate freely within the site.
 
+<p class="answer">Make sure the URL in your $CFG->wwwroot setting is exactly the same as the one you are actually using to access the site.</p>
 
 
 <h2>&nbsp;</h2>
