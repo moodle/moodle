@@ -126,7 +126,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         $selector .= " AND l.time > '$date' AND l.time < '$enddate'";
     }
 
-    if (!$logs = get_logs($select, $order)) {
+    if (!$logs = get_logs($selector, $order)) {
         notify("No logs found!");
         print_footer($course);
         exit;

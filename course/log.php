@@ -5,8 +5,8 @@
     require("lib.php");
 
     require_variable($id);    // Course ID
-    optional_variable($user); // User to display
-    optional_variable($date); // Date to display
+    optional_variable($user, 0); // User to display
+    optional_variable($date, 0); // Date to display
 
     require_login($id);
 
