@@ -204,6 +204,7 @@
 
             $message = trim($message);
 
+
             if ($message and confirm_sesskey()) {   /// Current user has just sent a message
 
             /// Save it to the database...
@@ -242,14 +243,18 @@
             echo '<input type="hidden" name="frame" value="edit" />';
             echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 
-            $usehtmleditor = can_use_html_editor();
-            $usehtmleditor = false; // REMOVE
-            print_textarea($usehtmleditor, 5, 40, 450, 200, 'message', '');
+            $usehtmleditor = (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 1));
             if ($usehtmleditor) {
-                use_html_editor("message");
+                echo '<table align="center"><tr><td align="center">';
+                print_textarea($usehtmleditor, 7, 34, 0, 0, 'message', '');
+                echo '</td></tr></table>';
+                use_html_editor('message', 'formatblock subscript superscript copy cut paste clean undo redo justifyleft justifycenter justifyright justifyfull lefttoright righttoleft insertorderedlist insertunorderedlist outdent indent forecolor hilitecolor inserthorizontalrule createanchor nolink inserttable');
+                echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+            } else {
+                print_textarea(false, 5, 34, 0, 0, 'message', '');
+                echo '<input type="hidden" name="format" value="'.FORMAT_MOODLE.'" />';
             }
             echo '<br /><input type="submit" value="'.get_string('sendmessage', 'message').'" />';
-            echo '<input type="hidden" name="format" value="'.(int)$usehtmleditor.'" />';
             echo '</form>';
             echo '</center>';
 

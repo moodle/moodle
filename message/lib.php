@@ -234,6 +234,7 @@ function message_print_settings() {
         $pref = array();
         $pref['message_showmessagewindow'] = (isset($frm->showmessagewindow)) ? '1' : '0';
         $pref['message_beepnewmessage'] = (isset($frm->beepnewmessage)) ? '1' : '0';
+        $pref['message_usehtmleditor'] = (isset($frm->usehtmleditor)) ? '1' : '0';
         $pref['message_emailmessages'] = (isset($frm->emailmessages)) ? '1' : '0';
         $pref['message_emailtimenosee'] = ((int)$frm->emailtimenosee > 0) ? (int)$frm->emailtimenosee : '10';
         $pref['message_emailaddress'] = (!empty($frm->emailaddress)) ? $frm->emailaddress : $USER->email;
@@ -246,6 +247,7 @@ function message_print_settings() {
 
     $cbshowmessagewindow = (get_user_preferences('message_showmessagewindow', 1) == '1') ? 'checked="checked"' : '';
     $cbbeepnewmessage = (get_user_preferences('message_beepnewmessage', 0) == '1') ? 'checked="checked"' : '';
+    $cbusehtmleditor = (get_user_preferences('message_usehtmleditor', 1) == '1') ? 'checked="checked"' : '';
     $cbemailmessages = (get_user_preferences('message_emailmessages', 1) == '1') ? 'checked="checked"' : '';
     $txemailaddress = get_user_preferences('message_emailaddress', $USER->email);
     $txemailtimenosee = get_user_preferences('message_emailtimenosee', 10);
