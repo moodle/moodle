@@ -996,35 +996,48 @@ function get_string($identifier, $module="", $a=NULL) {
     $langpath = "$CFG->dirroot/lang";
     $langfile = "$langpath/$lang/$module.php";
 
-    if (!file_exists($langfile)) {                // try English instead
-        $langfile = "$langpath/en/$module.php";
-        if (!file_exists($langfile)) {
-            return "ERROR: No lang file ($langpath/en/$module.php)!";
+    // Look for the string - if found then return it
+
+    if (file_exists($langfile)) {
+        if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+            eval($result);
+            return $resultstring;
         }
     }
 
-    if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+    // If the preferred language was English we can abort now
 
+    if ($lang == "en") { 
+        return "[[$identifier]]";
+    }
+
+    // Is a parent language defined?  If so, try it.
+            
+    if ($result = get_string_from_file("parentlanguage", "$langpath/$lang/moodle.php", "\$parentlang")) {
+        eval($result);
+        if (!empty($parentlang)) {
+            $langfile = "$langpath/$parentlang/$module.php";
+            if (file_exists($langfile)) {
+                if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+                    eval($result);
+                    return $resultstring;
+                }
+            }
+        }
+    }
+
+    // Our only remaining option is to try English
+
+    $langfile = "$langpath/en/$module.php";
+    if (!file_exists($langfile)) {
+        return "ERROR: No lang file ($langpath/en/$module.php)!";
+    }
+    if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
         eval($result);
         return $resultstring;
-
-    } else {
-        if ($lang == "en") {
-            return "[[$identifier]]";
-
-        } else {   // Try looking in the english file.
-            $langfile = "$langpath/en/$module.php";
-            if (!file_exists($langfile)) {
-                return "ERROR: No lang file ($langpath/en/$module.php)!";
-            }
-            if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
-                eval($result);
-                return $resultstring;
-            } else {
-                return "[[$identifier]]";
-            }
-        }
     }
+
+    return "[[$identifier]]";  // Last resort
 }
 
 
