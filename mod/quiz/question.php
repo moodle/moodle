@@ -42,6 +42,12 @@
         error("Must specify question id or category");
     }
 
+    if (empty($qtype)) {
+        error("No question type was specified!");
+    } else if (!isset($QUIZ_QTYPES[$qtype])) {
+        error("Could not find question type: '$qtype'");
+    }
+
     require_login($course->id);
 
     if (!isteacheredit($course->id)) {
@@ -99,8 +105,7 @@
     }
 
     if ($form = data_submitted()) {
-        $question = $QUIZ_QTYPES[$qtype]->save_question($question,
-                                                        $form, $course);
+        $question = $QUIZ_QTYPES[$qtype]->save_question($question, $form, $course);
     } 
 
     $grades = array(1,0.9,0.8,0.75,0.70,0.66666,0.60,0.50,0.40,0.33333,0.30,0.25,0.20,0.16666,0.10,0.05,0);
@@ -147,13 +152,29 @@
     // Set up some Richtext editing if necessary
     if ($usehtmleditor = can_use_richtext_editor()) {
         $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(theform.questiontext);\"";
     } else {
         $defaultformat = FORMAT_MOODLE;
-        $onsubmit = "";
     }
 
+    echo '<script lang="Javascript">';
+    echo 'function validatequestion() {';
+    echo '  if (document.theform.name.value == "") {';
+    echo '    alert("'.get_string('specifyname').'");';
+    echo '    focus(document.theform.name.value);';
+    echo '    return false;';
+    echo '  } else {';
+    echo '    return true; ';
+    echo '  }';
+    echo '}';
+    echo '</script>'."\n\n";
+
+    $onsubmit = ' onSubmit="return validatequestion();" ';
+
     require('questiontypes/'.$QUIZ_QTYPES[$qtype]->name().'/editquestion.php');
+
+    if ($usehtmleditor) { 
+        use_html_editor('questiontext');
+    }
 
     print_footer($course);
 

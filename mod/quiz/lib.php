@@ -284,7 +284,7 @@ function quiz_load_questiontypes() {
     $qtypenames= get_list_of_plugins('mod/quiz/questiontypes');
     foreach($qtypenames as $qtypename) {
         // Instanciates all plug-in question types
-        $qtypefilepath= "questiontypes/$qtypename/questiontype.php";
+        $qtypefilepath= "$CFG->dirroot/mod/quiz/questiontypes/$qtypename/questiontype.php";
 
         // echo "Loading $qtypename<br/>"; // Uncomment for debugging
         if (is_readable($qtypefilepath)) {

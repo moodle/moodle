@@ -37,7 +37,7 @@
 
            print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
 
-           if ($usehtmleditor) {   /// Trying this out for a while
+           if ($usehtmleditor) {
                echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'">';
            } else {
                echo "<div align=right>";
@@ -73,8 +73,3 @@
 
 </CENTER>
 </FORM>
-<?php  
-   if ($usehtmleditor) { 
-       print_richedit_javascript("theform", "questiontext", "no");
-   }
-?>
