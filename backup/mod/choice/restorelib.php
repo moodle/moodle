@@ -21,40 +21,106 @@
     //
     //-----------------------------------------------------------
 
-    function cchoice_restore_mods($bf,$preferences) {
-        
+    //This function executes all the restore procedure about this mod
+    function choice_restore_mods($mod,$restore) {
+
         global $CFG;
 
         $status = true;
 
-        //Iterate over choice table
-        $choices = get_records ("choice","course",$preferences->backup_course,"id");
-        if ($choices) {
-            foreach ($choices as $choice) {
-                //Start mod
-                fwrite ($bf,start_tag("MOD",3,true));
-                //Print choice data
-                fwrite ($bf,full_tag("ID",4,false,$choice->id));
-                fwrite ($bf,full_tag("MODTYPE",4,false,"choice"));
-                fwrite ($bf,full_tag("NAME",4,false,$choice->name));
-                fwrite ($bf,full_tag("TEXT",4,false,$choice->text));
-                fwrite ($bf,full_tag("FORMAT",4,false,$choice->format));
-                fwrite ($bf,full_tag("ANSWER1",4,false,$choice->answer1));
-                fwrite ($bf,full_tag("ANSWER2",4,false,$choice->answer2));
-                fwrite ($bf,full_tag("ANSWER3",4,false,$choice->answer3));
-                fwrite ($bf,full_tag("ANSWER4",4,false,$choice->answer4));
-                fwrite ($bf,full_tag("ANSWER5",4,false,$choice->answer5));
-                fwrite ($bf,full_tag("ANSWER6",4,false,$choice->answer6));
-                fwrite ($bf,full_tag("PUBLISH",4,false,$choice->publish));
-                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$choice->timemodified));
-                //if we've selected to backup users info, then execute backup_choice_answers
-                if ($preferences->mods["choice"]->userinfo) {
-                    $status = backup_choice_answers($bf,$preferences,$choice->id);
+        //Get record from backup_ids
+        $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
+
+        if ($data) {
+            //We have info, get and unserialize info
+            //First strip slashes
+            $temp = stripslashes($data->info);
+            //Now get completed xmlized object
+            $info = unserialize($temp);
+            //traverse_xmlize($info);                                                                     //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the CHOICE record structure
+            $choice->course = $restore->course_id;
+            $choice->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
+            $choice->text = backup_todb($info['MOD']['#']['TEXT']['0']['#']);
+            $choice->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
+            $choice->answer1 = backup_todb($info['MOD']['#']['ANSWER1']['0']['#']);
+            $choice->answer2 = backup_todb($info['MOD']['#']['ANSWER2']['0']['#']);
+            $choice->answer3 = backup_todb($info['MOD']['#']['ANSWER3']['0']['#']);
+            $choice->answer4 = backup_todb($info['MOD']['#']['ANSWER4']['0']['#']);
+            $choice->answer5 = backup_todb($info['MOD']['#']['ANSWER5']['0']['#']);
+            $choice->answer6 = backup_todb($info['MOD']['#']['ANSWER6']['0']['#']);
+            $choice->publish = backup_todb($info['MOD']['#']['PUBLISH']['0']['#']);
+            $choice->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
+
+            //The structure is equal to the db, so insert the choice
+            $newid = insert_record ("choice",$choice);
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,$mod->modtype,$mod->id,
+                             $newid,$data->info);
+                //Now check if want to restore user data and do it.
+                if ($restore->mods[choice]->userinfo) {
+                    //Restore choice_answers
+                    $status = choice_answers_restore_mods ($newid,$info,$restore);
                 }
-                //End mod
-                $status =fwrite ($bf,end_tag("MOD",3,true));
+            } else {
+                $status = false;
+            }
+
+        } else {
+            $status = false;
+        }
+
+        return $status;
+    }
+
+    //This function restores the choice_answers
+    function choice_answers_restore_mods($choice_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the submissions array
+        $answers = $info['MOD']['#']['ANSWERS']['0']['#']['ANSWER'];
+
+        //Iterate over submissions
+        for($i = 0; $i < sizeof($answers); $i++) {
+            $sub_info = $answers[$i];
+            traverse_xmlize($sub_info);                                                                 //Debug
+            print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            $GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($sub_info['#']['ID']['0']['#']);
+            $olduserid = backup_todb($sub_info['#']['USERID']['0']['#']);
+
+            //Now, build the CHOICE_ANSWERS record structure
+            $answer->choice = $choice_id;
+            $answer->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
+            $answer->answer = backup_todb($sub_info['#']['CHOICE_ANSWER']['0']['#']);
+            $answer->timemodified = backup_todb($sub_info['#']['TIMEMODIFIED']['0']['#']);
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$answer->userid);
+            if ($user) {
+                $answer->userid = $user->new_id;
+            }
+
+            //The structure is equal to the db, so insert the choice_answers
+            $newid = insert_record ("choice_answers",$answer);
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"choice_answers",$oldid,
+                             $newid);
+            } else {
+                $status = false;
             }
         }
+
         return $status;
     }
 

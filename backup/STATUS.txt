@@ -6,7 +6,8 @@ This documment shows the current status of the backup/restore option.
 Backup:  WORKING. COMPLETED but only assignments, resources,
                   choices and surveys.
 
-Restore: WORKING. COMPLETED but only assignments and resources.
+Restore: WORKING. COMPLETED but only assignments, resources 
+                  and choices.
                   
 
 ========== ========== ========== ========== ========== ==========
@@ -159,10 +160,10 @@ Restore Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files........................................DONE
-              x choices.........................................IN PROGRESS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files.(NOT EXISTS)...........................NO EXISTS
+              x choices.........................................DONE
+                 + course data..................................DONE
+                 + user data....................................DONE
+                 + files.(NOT EXISTS)...........................DONE
               x forums..........................................NO EXISTS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
@@ -179,16 +180,16 @@ Restore Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files.(ARE COURSE FILES !!!).................DONE
-              x surveys.........................................NO EXISTS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files.(NOT EXISTS)...........................NO EXISTS
+              x surveys.........................................IN PROGRESS
+                 + course data..................................IN PROGRESS
+                 + user data....................................IN PROGRESS
+                 + files.(NOT EXISTS)...........................IN PROGRESS
    - User files from temp.......................................DONE
    - Course files from temp.....................................DONE
    - Log entries................................................NO EXISTS
    - Readjust instance in course_modules........................DONE
    - Readjust modinfo in course (serialize).....................DONE
-   - Delete old entries at restore end.  .......................DONE   
+   - Delete old entries at restore end.  .......................DONE (COMMENTED !!!) 
       - From database...........................................DONE
       - From filesystem.........................................DONE
    - Upload backup files........................................DONE
