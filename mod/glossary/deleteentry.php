@@ -4,8 +4,7 @@
     require_once("lib.php");
 
     require_variable($id);    // course module ID
-    require_variable($mode);  // edit or delete
-    optional_variable($go);  // commit the operation?
+    optional_variable($confirm);  // commit the operation?
     optional_variable($entry);  // entry id
     require_variable($prevmode);  //  current frame
     optional_variable($hook);         // pivot id 
@@ -27,11 +26,15 @@
     require_login($course->id);
 
     if (isguest()) {
-        error("Guests are not allowed to edit ir delete entries", $_SERVER["HTTP_REFERER"]);
+        error("Guests are not allowed to edit or delete entries", $_SERVER["HTTP_REFERER"]);
     }
 
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
         error("Glossary is incorrect");
+    }
+
+    if (!isteacher($course->id) and !$glossary->studentcanpost ) {
+        error("You are not allowed to edit or delete entries");
     }
 
     $entryfields = get_record("glossary_entries", "id", $entry);
@@ -48,65 +51,38 @@
 
 /// If data submitted, then process and store.
     
-    if ($mode == "edit" or $mode == "delete" ) {
-        echo "<p>";
-        if ( isteacher($course->id) or $glossary->studentcanpost ) {
-            if ($go) {	// the operation was confirmed.
-                if ( $mode == "delete") {
-                    // if it is an imported entry, just delete the relation
-                    $entry = get_record("glossary_entries","id", $entry);
-                    if ( $entry->sourceglossaryid ) {
-                        $entry->glossaryid = $entry->sourceglossaryid;
-                        $entry->sourceglossaryid = 0;
-                        if (! update_record("glossary_entries", $entry)) {
-                   	        error("Could not update your glossary");
-                        }
-                    } else {
-                        if ( $entry->attachment ) {
-                            glossary_delete_old_attachments($entry);
-                        }
-                        delete_records("glossary_comments", "entryid",$entry->id);
-                        delete_records("glossary_alias", "entryid", $entry->id);
-                        delete_records("glossary_ratings", "entryid", $entry->id);
+    if ($confirm) {	// the operation was confirmed.
+        // if it is an imported entry, just delete the relation
+        $entry = get_record("glossary_entries","id", $entry);
 
-                        delete_records("glossary_entries","id", $entry->id);				
-                    }
-
-                    print_simple_box_start("center","40%", "#FFBBBB");
-                    echo "<center>$entrydeleted"; 
-                    echo "</center>";
-                    print_simple_box_end();
-                }
-                print_footer($course);
-                add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&mode=$prevmode&hook=$hook", $entry,$cm->id);
-                redirect("view.php?id=$cm->id&mode=$prevmode&hook=$hook");
-            } else {        // the operation has not been confirmed yet so ask the user to do so
-                if ( $mode == "delete") {				
-                    print_simple_box_start("center","40%", "#FFBBBB");
-                    echo "<center><b>$entryfields->concept</b><br>$strareyousuredelete";
-
-                    ?>
-                        <form name="form" method="post" action="deleteentry.php">
-
-                        <input type="hidden" name=id 		   value="<?php p($cm->id) ?>">
-                        <input type="hidden" name=mode         value="delete">
-                        <input type="hidden" name=go       value="1">
-                        <input type="hidden" name=entry         value="<?php p($entry) ?>">
-                        <input type="hidden" name=prevmode value=<?php p($prevmode) ?>>
-                        <input type="hidden" name=hook     value=<?php p($hook) ?>>
-
-                        <input type="submit" value=" <?php print_string("yes")?> ">
-                        <input type=button value=" <?php print_string("no")?> " onclick="javascript:history.go(-1);">
-
-                        </form>
-                   	</center>
-                   	<?php
-                    print_simple_box_end();
-                }
+        if ( $entry->sourceglossaryid ) {
+            $entry->glossaryid = $entry->sourceglossaryid;
+            $entry->sourceglossaryid = 0;
+            if (! update_record("glossary_entries", $entry)) {
+       	        error("Could not update your glossary");
             }
+
         } else {
-            error("You are not allowed to edit or delete entries");
+            if ( $entry->attachment ) {
+                glossary_delete_old_attachments($entry);
+            }
+            delete_records("glossary_comments", "entryid",$entry->id);
+            delete_records("glossary_alias", "entryid", $entry->id);
+            delete_records("glossary_ratings", "entryid", $entry->id);
+            delete_records("glossary_entries","id", $entry->id);				
         }
+
+        add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&mode=$prevmode&hook=$hook", $entry,$cm->id);
+        redirect("view.php?id=$cm->id&mode=$prevmode&hook=$hook", $entrydeleted);
+
+    } else {        // the operation has not been confirmed yet so ask the user to do so
+
+        notice_yesno("<b>$entryfields->concept</b><p>$strareyousuredelete</p>",
+                      "deleteentry.php?id=$cm->id&mode=delete&confirm=1&entry=".s($entry)."&prevmode=$prevmode&hook=$hook",
+                      "view.php?id=$cm->id&mode=$prevmode&hook=$hook");
+
     }
+
     print_footer($course);
+
 ?>
