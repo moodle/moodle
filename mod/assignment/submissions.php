@@ -96,6 +96,9 @@
                 $newsubmission->timemarked = $timenow;
                 $newsubmission->mailed     = 0;           // Make sure mail goes out (again, even)
                 $newsubmission->id         = $num;
+                if (empty($submission->timemodified)) {   // eg for offline assignments
+                    $newsubmission->timemodified = $timenow;
+                }
                 if (! update_record("assignment_submissions", $newsubmission)) {
                     notify(get_string("failedupdatefeedback", "assignment", $submission->userid));
                 } else {
