@@ -2,8 +2,8 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("format/default.php");
-    require_once("format/multianswer.php");
+    require_once("format.php");
+    require_once("format/multianswer/format.php");
     require_once("../../files/mimetypes.php");
 
     if ($form = data_submitted("nomatch")) {
@@ -99,7 +99,8 @@
                 $parsableanswerdef .= $separator
                         . '%' . round(100*$subanswer->fraction) . '%';
                 $parsableanswerdef .= $subanswer->answer;
-                if ($subanswer->min || $subanswer->max) {
+                if (isset($subanswer->min) && isset($subanswer->max)
+                        and $subanswer->min || $subanswer->max) {
                     // Special for numerical answers:
                     $errormargin = $subanswer->answer - $subanswer->min;
                     $parsableanswerdef .= ":$errormargin";
