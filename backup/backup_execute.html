@@ -196,18 +196,7 @@
                 $status = backup_modules_end ($backup_file,$preferences);
             }
         }
-        
-        
-        
 
-
-
-
-
-
-
-
- 
         //Prints course end 
         if ($status) {
             $status = backup_course_end($backup_file,$preferences);
@@ -219,6 +208,22 @@
 
         //End xml contents (close ul)
         echo "</ul>";
+    }
+    
+    //Now, if selected, copy user files
+    if ($status) {
+        if ($preferences->backup_user_files) {
+            echo "<li>Copying user files (not yet)";
+
+        }
+    }
+
+    //Now, if selected, copy course files
+    if ($status) {
+        if ($preferences->backup_course_files) {
+            echo "<li>Copying course files (not yet)";
+
+        }
     }
 
     if (!$status) {

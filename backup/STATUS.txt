@@ -82,12 +82,14 @@ Backup Details:
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
-              x user files to temp..............................NO EXISTS
-              x course files to temp............................NO EXISTS
+              x user files to temp..............................IN PROGRESS
+              x course files to temp............................IN PROGRESS
    - Compress the backup (zip)..................................NO EXISTS
       - XML File................................................NO EXISTS
+      - moddata files...........................................NO EXISTS
       - Course Files............................................NO EXISTS
       - User Files..............................................NO EXISTS
+   - Copy finished file to browseable dir.......................NO EXISTS
    - Delete old entries at backup end...........................NO EXISTS
       - From database...........................................NO EXISTS      
       - From filesystem.........................................NO EXISTS
