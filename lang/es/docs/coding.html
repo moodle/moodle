@@ -1,13 +1,13 @@
-<h2>Reglas generales de c&oacute;digo en Moodle<br>
+<h2>Reglas generales de código en Moodle<br>
 </h2>
 <h3>Reglas Generales<br>
 </h2>
 <ol>
-  <li>Todos los archivos deben utilizar la extensi&oacute;n .php.</li>
+  <li>Todos los archivos deben utilizar la extensión .php.</li>
   <li>Deben mantenerse todas las notas de copyright. Ud. puede colocar
 la suya si es necesario.</li>
   <li>Cada archivo debe incluir el config.php principal.</li>
-  <li>Cada archivo debe certificar que el usuario est&eacute;
+  <li>Cada archivo debe certificar que el usuario esté
 correctamente autenticado, utilizando require_login() and isadmin(),
 isteacher(), iscreator() o isstudent().</li>
   <li>Todo acceso a la base de datos debe utilizar las funciones
@@ -15,8 +15,8 @@ incluidas en lib/datalib.php en cuanto sea posible --esto permite la
 compatibilidad entre un amplio rango de bases de datos. Con esas
 funciones es posible hacer casi todo. Cualquier otra sentencia
 SQL debe ser: inter-plataforma, restringida a funciones
-espec&iacute;ficas dentro del c&oacute;digo (a menudo un archivo
-lib.php), y se&ntilde;alado con claridad.</li>
+específicas dentro del código (a menudo un archivo
+lib.php), y señalado con claridad.</li>
   <li>Todas las cadenas deben ser traducibles --crear nuevos textos en
 los archivos de "lang/en" y llamarlos utilizando get_string() o
 print_string().</li>
@@ -27,10 +27,10 @@ helpbutton().</li>
 <p>&nbsp;</p>
 <h3>Estilo de código</h2>
 <ol>
-  <li>No utilice tabuladores. Use sangr&iacute;a consistente con 4
+  <li>No utilice tabuladores. Use sangría consistente con 4
 espacio.</li>
   <li>Siempre se deben utilizar llaves para los bloques de
-c&oacute;digo (aunque sean de una sola l&iacute;nea). Moodle usa este
+código (aunque sean de una sola línea). Moodle usa este
 estilo:
     <p> <font color="#006600">if (</font><font
  color="#0000cc">$quiz</font><font color="#006600">-&gt;</font><font
@@ -47,7 +47,7 @@ estilo:
 &nbsp;&nbsp;&nbsp;&nbsp;}<br>
 }</font></p>
   </li>
-  <li>M&aacute;s por venir... este documento a&uacute;n no est&aacute;
+  <li>Más por venir... este documento aún no está
 completo.</li>
 </ol>
 <p align="center">&nbsp;</p>

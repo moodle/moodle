@@ -1,21 +1,42 @@
 <?PHP // $Id$
+
       // Names of the documentation files
-	  // Traducci&oacute;n al espa&ntilde;ol: Emmanuelle Guti&eacute;rrez
+
+	  // Traducción al español: Emmanuelle Gutiérrez
+
 	  // (emmanuelle@sidar.org) y Claudio Tavares (claudio@enlaceacademico.com)
 
-$string['intro.html'] = "Introducci&oacute;n";
+
+
+$string['intro.html'] = "Introducción";
+
 $string['background.html'] = "Antecedentes";
-$string['features.html'] = "Caracter&iacute;sticas";
+
+$string['features.html'] = "Características";
+
 $string['release.html'] = "Notas de versiones";
-$string['install.html'] = "Instalaci&oacute;n";
-$string['upgrade.html'] = "Actualizaci&oacute;n";
+
+$string['install.html'] = "Instalación";
+
+$string['upgrade.html'] = "Actualización";
+
 $string['faq.html'] = "FAQ";
+
 $string['teacher.html'] = "Manual del Profesor";
+
 $string['developer.html'] = "Manual del Desarrollador";
-$string['cvs.html'] = "C&oacute;mo usar el CVS";
+
+$string['cvs.html'] = "Cómo usar el CVS";
+
 $string['future.html'] = "Futuro";
-$string['credits.html'] = "Cr&eacute;ditos";
+
+$string['credits.html'] = "Créditos";
+
 $string['licence.html'] = "Licencia";
 
 
+
+
+
 ?>
+

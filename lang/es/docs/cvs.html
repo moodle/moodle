@@ -1,6 +1,6 @@
-<h2>C&oacute;mo usar el <abbr title="Concurrent Versions System"
+<h2>Cómo usar el <abbr title="Concurrent Versions System"
 
- lang="en">CVS</abbr> para acceder y actualizar el c&oacute;digo fuente
+ lang="en">CVS</abbr> para acceder y actualizar el código fuente
 
 de Moodle</h2>
 
@@ -10,15 +10,15 @@ de Moodle</h2>
 
 Sistema Concurrente de Versiones. Normalmente se usa como un forma de
 
-almacenar el c&oacute;digo fuente, ya que mantiene las versiones de
+almacenar el código fuente, ya que mantiene las versiones de
 
 todos los archivos de manera que no se pierda nada, y se registra el
 
-uso que hacen diferentes personas. Tambi&eacute;n proporciona maneras
+uso que hacen diferentes personas. También proporciona maneras
 
-de combinar c&oacute;digo si hay dos o m&aacute;s personas trabajando
+de combinar código si hay dos o más personas trabajando
 
-en el mismo archivo. Todo el c&oacute;digo y todas las versiones se
+en el mismo archivo. Todo el código y todas las versiones se
 
 almacenan en un servidor central (en este caso, en <a
 
@@ -32,19 +32,19 @@ almacenan en un servidor central (en este caso, en <a
 
  href="http://sourceforge.net/project/memberlist.php?group_id=30935">desarrollador
 
-con acceso de escritura</a>), necesitar&aacute; tener antes una <a
+con acceso de escritura</a>), necesitará tener antes una <a
 
  href="http://sourceforge.net/account/register.php">cuenta en
 
 Sourceforge</a>. Para los ejemplos que presentamos en esta
 
-p&aacute;gina vamos a asumir que su nombre de usuario (<span lang="en">username</span>)
+página vamos a asumir que su nombre de usuario (<span lang="en">username</span>)
 
 es <strong
 
  style="color: rgb(153, 0, 0); background-color: transparent;">myusername</strong>
 
-y que su contrase&ntilde;a (<span lang="en">password</span>) es <strong
+y que su contraseña (<span lang="en">password</span>) es <strong
 
  style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>.
 
@@ -64,17 +64,17 @@ cada vez que ejecute el comando de CVS, siga las <a
 
 para usar claves autorizadas en Sourceforge</a>. Este paso es opcional,
 
-pero puede hacer que su experiencia del uso de CVS sea m&aacute;s
+pero puede hacer que su experiencia del uso de CVS sea más
 
 agradable.</p>
 
 <p>Una vez hecho esto debe tener todos los permisos que necesita, de
 
-manera que s&oacute;lo necesitar&aacute; arrancar su m&aacute;quina y
+manera que sólo necesitará arrancar su máquina y
 
-descargar los actuales c&oacute;digos fuente para poder empezar a
+descargar los actuales códigos fuente para poder empezar a
 
-trabajar en ellos. A continuaci&oacute;n hay instrucciones para los
+trabajar en ellos. A continuación hay instrucciones para los
 
 sistemas Unix y Windows.</p>
 
@@ -82,7 +82,7 @@ sistemas Unix y Windows.</p>
 
 <p>El CVS de Sourceforge usa por seguridad <span>ssh</span> como <span
 
- lang="en">transport layer</span>, de manera que usted tendr&aacute;
+ lang="en">transport layer</span>, de manera que usted tendrá
 
 que establecer esta variable del entorno CVS_RSH en Unix:</p>
 
@@ -98,7 +98,7 @@ que establecer esta variable del entorno CVS_RSH en Unix:</p>
 
 que escribirlo todas las veces. Entonces, revise Moodle usando lo
 
-siguiente (todo en una l&iacute;nea): </p>
+siguiente (todo en una línea): </p>
 
 <blockquote>
 
@@ -116,7 +116,7 @@ de moodle que ya exista. Comience con un directorio nuevo.</p>
 
 para cada comando a menos que establezca una <a
 
- href="http://sourceforge.net/account/editsshkeys.php">contrase&ntilde;a
+ href="http://sourceforge.net/account/editsshkeys.php">contraseña
 
 autorizada</a></p>
 
@@ -130,7 +130,7 @@ y moverlo si lo desea. Vaya a:</p>
 
 </blockquote>
 
-<p>Aparecer&aacute;n todos los &uacute;ltimos archivos de Moodle. Ahora
+<p>Aparecerán todos los últimos archivos de Moodle. Ahora
 
 usted puede cambiar archivos en su copia. Para comparar sus archivos
 
@@ -144,7 +144,7 @@ ejemplo: </p>
 
 </blockquote>
 
-<p>Para localizar las &uacute;ltimas actualizaciones en el servidor,
+<p>Para localizar las últimas actualizaciones en el servidor,
 
 use:</p>
 
@@ -156,7 +156,7 @@ use:</p>
 
 <p>Para copiar sus nuevos archivos de vuelta en el servidor
 
-podr&iacute;a hacer algo como:</p>
+podría hacer algo como:</p>
 
 <blockquote>
 
@@ -164,19 +164,19 @@ podr&iacute;a hacer algo como:</p>
 
 </blockquote>
 
-<p>Se le pedir&aacute; que a&ntilde;ada algunos comentarios (esto
+<p>Se le pedirá que añada algunos comentarios (esto
 
-depende de su editor de texto) ... a&ntilde;ada un comentario
+depende de su editor de texto) ... añada un comentario
 
-significativo y cierre el editor ... los archivos se enviar&aacute;n a
+significativo y cierre el editor ... los archivos se enviarán a
 
-Sourceforge y ser&aacute;n almacenados. &iexcl;Hecho! </p>
+Sourceforge y serán almacenados. &iexcl;Hecho! </p>
 
-<p>Para ahorrar tiempo puede poner argumentos por omisi&oacute;n en el
+<p>Para ahorrar tiempo puede poner argumentos por omisión en el
 
 archivo llamado <span>.cvsrc </span> en su directorio principal. Por
 
-ejemplo, el m&iacute;o contiene:</p>
+ejemplo, el mío contiene:</p>
 
 <blockquote>
 
@@ -184,7 +184,7 @@ ejemplo, el m&iacute;o contiene:</p>
 
 </blockquote>
 
-<p>Intente "cvs help" para obtener m&aacute;s detalles ... </p>
+<p>Intente "cvs help" para obtener más detalles ... </p>
 
 <p>&nbsp;</p>
 
@@ -192,7 +192,7 @@ ejemplo, el m&iacute;o contiene:</p>
 
 <blockquote>
 
-  <p>Estas instrucciones est&aacute;n basadas en notas proporcionadas
+  <p>Estas instrucciones están basadas en notas proporcionadas
 
 por Mitsuhiro Yoshida &lt;mits@mitstek.com&gt;.</p>
 
@@ -208,7 +208,7 @@ por Mitsuhiro Yoshida &lt;mits@mitstek.com&gt;.</p>
 
   <p>Segundo, descargue <span>sfsetup</span> para tener acceso a
 
-SourceForge ssh, inst&aacute;lelo y reinicie Windows.</p>
+SourceForge ssh, instálelo y reinicie Windows.</p>
 
   <blockquote>
 
@@ -216,11 +216,11 @@ SourceForge ssh, inst&aacute;lelo y reinicie Windows.</p>
 
   </blockquote>
 
-  <p>A continuaci&oacute;n, configure WinCVS. Arr&aacute;nquelo, y vaya
+  <p>A continuación, configure WinCVS. Arránquelo, y vaya
 
-al men&uacute; "Admin" -&gt; "Preferences".       Luego
+al menú "Admin" -&gt; "Preferences".       Luego
 
-modif&iacute;quelas como sigue:</p>
+modifíquelas como sigue:</p>
 
   <blockquote>
 
@@ -266,25 +266,25 @@ seleccionado<br>
 
   </blockquote>
 
-  <p>Enhorabuena, WinCVS est&aacute; configurado. Ahora, ahora debe
+  <p>Enhorabuena, WinCVS está configurado. Ahora, ahora debe
 
-descargarse una copia completa del c&oacute;digo de Moodle:</p>
+descargarse una copia completa del código de Moodle:</p>
 
   <ol>
 
     <li>Seleccione 'Create -&gt; checkout'</li>
 
-    <li>Para la configuraci&oacute;n de "<span lang="en">Module name
+    <li>Para la configuración de "<span lang="en">Module name
 
 and path on the server</span>", escriba "moodle",         luego haga
 
 clic en OK.</li>
 
-    <li>Escriba ah&iacute; <strong
+    <li>Escriba ahí <strong
 
  style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>
 
-y presione la tecla "Enter" del cuadro de di&aacute;logo.</li>
+y presione la tecla "Enter" del cuadro de diálogo.</li>
 
   </ol>
 
@@ -296,17 +296,17 @@ actualizados desde el servidor CVS de la siguiente manera:</p>
 
     <li>Seleccione las carpetas o archivos que quiere actualizar</li>
 
-    <li>Presione el bot&oacute;n derecho del rat&oacute;n y seleccione 
+    <li>Presione el botón derecho del ratón y seleccione 
 
 "<strong lang="en">Update selection</strong>"</li>
 
-    <li>Presione el bot&oacute;n OK</li>
+    <li>Presione el botón OK</li>
 
     <li>Escriba <strong
 
  style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>
 
-y presione la tecla Enter del cuadro de di&aacute;logo.</li>
+y presione la tecla Enter del cuadro de diálogo.</li>
 
   </ol>
 
@@ -318,13 +318,13 @@ CVS de la siguiente manera:</p>
 
     <li>Seleccione las carpetas o archivos que quiere actualizar</li>
 
-    <li>Presione el bot&oacute;n derecho del rat&oacute;n y seleccione "<strong
+    <li>Presione el botón derecho del ratón y seleccione "<strong
 
  lang="en">Commit selection</strong>"</li>
 
-    <li>Presione el bot&oacute;n OK</li>
+    <li>Presione el botón OK</li>
 
-    <li>Escriba un comentario significativo y presione el bot&oacute;n
+    <li>Escriba un comentario significativo y presione el botón
 
 OK.</li>
 
@@ -332,7 +332,7 @@ OK.</li>
 
  style="color: rgb(153, 0, 0); background-color: transparent;">mypassword</strong>
 
-y presione "Enter" en el cuadro de di&aacute;logo.</li>
+y presione "Enter" en el cuadro de diálogo.</li>
 
   </ol>
 
@@ -348,7 +348,7 @@ y presione "Enter" en el cuadro de di&aacute;logo.</li>
 
 <p style="text-align: center; font-size: 0.7em;"><a href="."
 
- target="_top">Documentaci&oacute;n de Moodle</a></p>
+ target="_top">Documentación de Moodle</a></p>
 
 <p style="text-align: center; font-size: 0.7em;">Version: $Id:
 

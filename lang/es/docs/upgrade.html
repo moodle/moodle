@@ -1,10 +1,10 @@
-<h2>Actualizaci&oacute;n de Moodle</h2>
+<h2>Actualización de Moodle</h2>
 
-<p>Moodle est&aacute; dise&ntilde;ado para actualizarse limpiamente
+<p>Moodle está diseñado para actualizarse limpiamente
 
-desde una versi&oacute;n preliminar a cualquiera posterior.</p>
+desde una versión preliminar a cualquiera posterior.</p>
 
-<p>Al actualizar una instalaci&oacute;n de Moodle debe seguir estos
+<p>Al actualizar una instalación de Moodle debe seguir estos
 
 pasos:</p>
 
@@ -14,49 +14,49 @@ pasos:</p>
 
 <p>Aunque no es estrictamente necesario, es siempre una buena idea
 
-hacer una copia de respaldo de cualquier sistema de producci&oacute;n
+hacer una copia de respaldo de cualquier sistema de producción
 
-antes de hacer una actualizaci&oacute;n importante, para el caso de que
+antes de hacer una actualización importante, para el caso de que
 
-tenga que volver a la versi&oacute;n antigua por cualquier
+tenga que volver a la versión antigua por cualquier
 
-raz&oacute;n. De hecho, es una buena idea automatizar su servidor para
+razón. De hecho, es una buena idea automatizar su servidor para
 
 que haga copias de respaldo (<span lang="en">backup</span>) diariamente
 
-de la instalaci&oacute;n de Moodle, de manera que pueda saltarse estos
+de la instalación de Moodle, de manera que pueda saltarse estos
 
 pasos.</p>
 
-<p>Hay tres &aacute;reas que necesitan ser salvaguardadas:</p>
+<p>Hay tres áreas que necesitan ser salvaguardadas:</p>
 
-<h4>1. El directorio del software de Moodle en s&iacute;</h4>
+<h4>1. El directorio del software de Moodle en sí</h4>
 
 <p>Haga una copia separada de estos archivos antes de hacer la
 
-actualizaci&oacute;n, de manera que pueda recuperar su <span>config.php</span>
+actualización, de manera que pueda recuperar su <span>config.php</span>
 
-y de cualquier m&oacute;dulo que haya a&ntilde;adido como temas,
+y de cualquier módulo que haya añadido como temas,
 
 idiomas, etc.</p>
 
 <h4>2. Su directorio de datos.</h4>
 
-<p>Aqu&iacute; es donde reside el contenido subido (como los materiales
+<p>Aquí es donde reside el contenido subido (como los materiales
 
-de los cursos y las tareas de los estudiantes) as&iacute; que de todas
+de los cursos y las tareas de los estudiantes) así que de todas
 
 maneras es muy importante tener una copia de respaldo de estos
 
-archivos. Algunas veces la actualizaci&oacute;n puede mover o renombrar
+archivos. Algunas veces la actualización puede mover o renombrar
 
 directorios dentro de su directorio de datos.</p>
 
 <h4>3. Su base de datos</h4>
 
-<p>La mayor&iacute;a de las actualizaci&oacute;nes de Moodle
+<p>La mayoría de las actualizaciónes de Moodle
 
-alterar&aacute;n las tablas de la base de datos, a&ntilde;adiendo o
+alterarán las tablas de la base de datos, añadiendo o
 
 cambiando campos. Cada base de datos tiene formas diferentes de hacer
 
@@ -72,7 +72,7 @@ de datos llamada "moodle":</p>
 
 moodle &gt; moodle-backup-2002-10-26.sql</p>
 
-<p>Tambi&eacute;n puede usar la opci&oacute;n "Administrar
+<p>También puede usar la opción "Administrar
 Base de Datos" la interfaz Web de Moodle para hacer lo mismo en cualquier
 
 plataforma.</p>
@@ -87,17 +87,17 @@ plataforma.</p>
 
 <h4>Usar un archivo descargado</h4>
 
-<p>No sobreescriba una antigua instalaci&oacute;n a menos que
+<p>No sobreescriba una antigua instalación a menos que
 
-est&eacute; seguro de lo que est&aacute; haciendo... algunas veces los
+esté seguro de lo que está haciendo... algunas veces los
 
 archivos antiguos peuden causar problemas a la nueva
 
-instalaci&oacute;n. La mejor manera es renombrar el directorio actual
+instalación. La mejor manera es renombrar el directorio actual
 
 de Moodle, y luego descomprimir el nuevo archivo de Moodle en la
 
-antigua localizaci&oacute;n.</p>
+antigua localización.</p>
 
 	
 
@@ -109,9 +109,9 @@ moodle moodle.backup<br>
 
 tar xvzf moodle-1.0.6.tgz</p>
 
-<p>A continuaci&oacute;n, copie su config.php y cualquier otra
+<p>A continuación, copie su config.php y cualquier otra
 
-modificaci&oacute;n,&nbsp;<em lang="en"></em>como los temas
+modificación,&nbsp;<em lang="en"></em>como los temas
 
 personalizados:</p>
 
@@ -125,11 +125,11 @@ cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</p>
 
 <h4>Uso del <abbr title="Concurrent Versions System" lang="en">CVS</abbr></h4>
 
-<p>Si usted est&aacute; usando el <abbr
+<p>Si usted está usando el <abbr
 
- title="Concurrent Versions System" lang="en">CVS</abbr>, s&oacute;lo
+ title="Concurrent Versions System" lang="en">CVS</abbr>, sólo
 
-tiene que ir al directorio ra&iacute;z de Moodle y actualizar los
+tiene que ir al directorio raíz de Moodle y actualizar los
 
 nuevos archivos:</p>
 
@@ -139,35 +139,35 @@ nuevos archivos:</p>
 
 update -dP</p>
 
-<p>Aseg&uacute;rese de usar el par&aacute;metro "d" para crear nuevos
+<p>Asegúrese de usar el parámetro "d" para crear nuevos
 
-directorios si es necesario, y el par&aacute;metro "P" para cortar los
+directorios si es necesario, y el parámetro "P" para cortar los
 
-directorios vac&iacute;os.</p>
+directorios vacíos.</p>
 
 <p>Si usted ha estado editando archivos de Moodle, mire atentamente los
 
 mensajes para detectar posibles conflictos. Todos sus temas
 
-personalizados y <em lang="en">plugins</em> no est&aacute;ndar
+personalizados y <em lang="en">plugins</em> no estándar
 
-estar&aacute;n intactos.</p>
+estarán intactos.</p>
 
 <p>&nbsp;</p>
 
 </div>
 
-<h3>3. Concluir la actualizaci&oacute;n</h3>
+<h3>3. Concluir la actualización</h3>
 
 <div style="padding-left: 3em;">
 
-<p>El &uacute;ltimo paso es poner en funcionamiento el proceso de
+<p>El último paso es poner en funcionamiento el proceso de
 
-actualizaci&oacute;n dentro de Moodle.</p>
+actualización dentro de Moodle.</p>
 
-<p>Para hacerlo, vaya a la <a href="../admin/index.php" target="_top">p&aacute;gina
+<p>Para hacerlo, vaya a la <a href="../admin/index.php" target="_top">página
 
-de <span>admin</span> de su instalaci&oacute;n</a>.</p>
+de <span>admin</span> de su instalación</a>.</p>
 
 <p
 
@@ -175,31 +175,31 @@ de <span>admin</span> de su instalaci&oacute;n</a>.</p>
 
 <p>No importa si usted ha entrado como administrador o no.</p>
 
-<p>Moodle detecta autom&aacute;ticamente la actualizaci&oacute;n y
+<p>Moodle detecta automáticamente la actualización y
 
 lleva a cabo todas las actualizaciones necesarias de las bases de datos
 
-y archivos de sistema. Si hay algo que no puede hacerse por s&iacute;
+y archivos de sistema. Si hay algo que no puede hacerse por sí
 
-mismo (caso muy raro) entonces aparecer&aacute; un mensaje
+mismo (caso muy raro) entonces aparecerá un mensaje
 
-dici&eacute;ndole lo que necesita hacer.<br>
+diciéndole lo que necesita hacer.<br>
 
 <br>
 
-Suponiendo que todo vaya bien (que no aparezca ning&uacute;n mensaje de
+Suponiendo que todo vaya bien (que no aparezca ningún mensaje de
 
-error) entonces &iexcl;puede comenzar a usar su nueva versi&oacute;n de
+error) entonces &iexcl;puede comenzar a usar su nueva versión de
 
-Moodle y disfrutar de sus nuevas caracter&iacute;sticas!</p>
+Moodle y disfrutar de sus nuevas características!</p>
 
-<p>Si tiene problemas con la actualizaci&oacute;n, visite <a
+<p>Si tiene problemas con la actualización, visite <a
 
  href="http://moodle.com/" target="_top">moodle.com</a> y colcoque un
 
 mensaje en el <a href="http://moodle.com/mod/forum/view.php?id=28"
 
- target="_top">Foro de ayuda con la instalaci&oacute;n</a>.</p>
+ target="_top">Foro de ayuda con la instalación</a>.</p>
 
 <p>&nbsp;</p>
 
