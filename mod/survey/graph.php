@@ -422,10 +422,10 @@
 
        $graph->y_data['answers1']   = $buckets1;
        $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
-                                            'shadow_offset' => 4, 'legend' => 'class actual');
+                                            'shadow_offset' => 0.1, 'legend' => 'class actual');
        $graph->y_data['answers2']   = $buckets2;
        $graph->y_format['answers2'] = array('colour' => 'ltgreen', 'line' => 'line', 'point' => 'square', 
-                                                'shadow_offset' => 4, 'legend' => 'class preferred');
+                                                'shadow_offset' => 0.1, 'legend' => 'class preferred');
        $graph->y_data['studanswers1']   = $studbuckets1;
        $graph->y_format['studanswers1'] = array('colour' => 'blue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => 'student actual');
@@ -434,10 +434,10 @@
                                                 'shadow_offset' => 4, 'legend' => 'student preferred');
        $graph->y_data['stdev1']   = $stdev1;
        $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
-                                            'shadow_offset' => '4', 'legend' => 'none');
+                                            'shadow_offset' => 0.1, 'legend' => 'none');
        $graph->y_data['stdev2']   = $stdev2;
        $graph->y_format['stdev2'] = array('colour' => 'ltltgreen', 'bar' => 'fill', 
-                                            'shadow_offset' => '4', 'legend' => 'none');
+                                            'shadow_offset' => 0.1, 'legend' => 'none');
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
 
@@ -448,7 +448,7 @@
        $graph->parameter['legend_offset'] = 4;
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
-              $graph->y_order = array('stdev1', 'answers1', 'stdev2', 'answers2', 'studanswers1', 'studanswers2');
+              $graph->y_order = array('stdev1', 'stdev2', 'answers1', 'answers2', 'studanswers1', 'studanswers2');
        } else if ($maxbuckets1 > 0.0) {
            $graph->y_order = array('stdev1', 'answers1', 'studanswers1');
        } else {
@@ -560,10 +560,10 @@
        $graph->x_data               = $names;
        $graph->y_data['answers1']   = $buckets1;
        $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
-                                            'shadow_offset' => 4, 'legend' => 'class actual');
+                                            'shadow_offset' => 0.1, 'legend' => 'class actual');
        $graph->y_data['answers2']   = $buckets2;
        $graph->y_format['answers2'] = array('colour' => 'ltgreen', 'line' => 'line', 'point' => 'square', 
-                                                'shadow_offset' => 4, 'legend' => 'class preferred');
+                                                'shadow_offset' => 0.1, 'legend' => 'class preferred');
        $graph->y_data['studanswers1']   = $studbuckets1;
        $graph->y_format['studanswers1'] = array('colour' => 'blue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => 'student actual');
@@ -572,10 +572,10 @@
                                                 'shadow_offset' => 4, 'legend' => 'student preferred');
        $graph->y_data['stdev1']   = $stdev1;
        $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
-                                            'shadow_offset' => '4', 'legend' => 'none');
+                                            'shadow_offset' => 0.1, 'legend' => 'none');
        $graph->y_data['stdev2']   = $stdev2;
        $graph->y_format['stdev2'] = array('colour' => 'ltltgreen', 'bar' => 'fill', 
-                                            'shadow_offset' => '4', 'legend' => 'none');
+                                            'shadow_offset' => 0.1, 'legend' => 'none');
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
 
@@ -586,7 +586,7 @@
        $graph->parameter['legend_offset'] = 4;
 
        if (($maxbuckets1 > 0.0) && ($maxbuckets2 > 0.0)) {
-              $graph->y_order = array('stdev1', 'answers1', 'studanswers1', 'stdev2', 'answers2', 'studanswers2');
+              $graph->y_order = array('stdev1', 'stdev2', 'answers1', 'answers2', 'studanswers1', 'studanswers2');
        } else if ($maxbuckets1 > 0.0) {
            $graph->y_order = array('stdev1', 'answers1', 'studanswers1');
        } else {
