@@ -52,7 +52,7 @@
         }
 
         foreach ($usernew as $key => $data) {
-            $usernew->$key = clean_text($usernew->$key, FORMAT_MOODLE);
+            $usernew->$key = addslashes(clean_text(stripslashes($usernew->$key), FORMAT_MOODLE));
         }
 
         $usernew->firstname = trim(strip_tags($usernew->firstname));
