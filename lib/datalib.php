@@ -123,6 +123,10 @@ function count_records_select($table, $select="") {
 
     global $CFG;
 
+    if ($select) {
+        $select = "WHERE $select";
+    }
+
     return count_records_sql("SELECT COUNT(*) FROM $CFG->prefix$table $select");
 }
 
@@ -202,6 +206,10 @@ function get_records_select($table, $select="", $sort="", $fields="*") {
         $sortorder = "ORDER BY $sort";
     }
 
+    if ($select) {
+        $select = "WHERE $select";
+    }
+
     return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
 }
 
@@ -279,6 +287,10 @@ function get_records_select_menu($table, $select="", $sort="", $fields="*") {
 
     if ($sort) {
         $sortorder = "ORDER BY $sort";
+    }
+
+    if ($select) {
+        $select = "WHERE $select";
     }
 
     return get_records_sql_menu("SELECT $fields FROM $CFG->prefix$table $select $sortorder");

@@ -1234,7 +1234,7 @@ function forum_subscribe($userid, $forumid) {
 
 function forum_unsubscribe($userid, $forumid) {
 /// Removes user from the subscriber list
-    return delete_records("forum_subscriptions", "user", $userid, "forum", $forumid)
+    return delete_records("forum_subscriptions", "user", $userid, "forum", $forumid);
 }
 
 

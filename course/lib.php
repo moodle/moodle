@@ -444,7 +444,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 
 function get_all_sections($courseid) {
     
-    return get_records("course_sections", "course", "$courseid", "sections", 
+    return get_records("course_sections", "course", "$courseid", "section", 
                        "section, id, course, summary, sequence");
 }
 
