@@ -39,7 +39,7 @@
         require_login($course->id);
     }
 
-    if ($USER->id <> $user->id and !isadmin()) {
+    if (($USER->id <> $user->id) && !isadmin()) {
         error("You can only edit your own information");
     }
 
@@ -64,6 +64,10 @@
 /// If data submitted, then process and store.
 
     if ($usernew = data_submitted()) {
+
+        if (($USER->id <> $usernew->id) && !isadmin()) {
+            error("You can only edit your own information");
+        }
 
         if (isset($USER->username)) {
             check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
