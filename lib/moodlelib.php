@@ -1585,7 +1585,7 @@ function iswindows() {
 
    global $WINDIR;
 
-   return empty($WINDIR);
+   return isset($WINDIR);
 }
 
 
