@@ -51,8 +51,11 @@ function print_footer ($course=NULL) {
 function print_navigation ($navigation) {
    global $CFG;
 
+   if (! $site = get_record("course", "category", 0)) {
+       $site->shortname = "Home";
+   }
    if ($navigation) {
-       echo "<A TARGET=_top HREF=\"$CFG->wwwroot/\">Home</A> -> $navigation";
+       echo "<A TARGET=_top HREF=\"$CFG->wwwroot/\">$site->shortname</A> -> $navigation";
    }
 }
 
