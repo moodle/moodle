@@ -20,8 +20,8 @@
     backup_required_functions();
 
     //Adjust some php variables to the execution of this script
-    ini_set("max_execution_time","3000");
-    ini_set("memory_limit","56M");
+    @ini_set("max_execution_time","3000");
+    @ini_set("memory_limit","128M");
 
     echo "<pre>\n";
 
