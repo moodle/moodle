@@ -1241,8 +1241,8 @@ function auth_ldap_connect($binddn='',$bindpwd=''){
     $urls = explode(";",$CFG->ldap_host_url);
         
     foreach ($urls as $server){
-        $url = trim($server);
-        if (empty($url)) {
+        $server = trim($server);
+        if (empty($server)) {
             continue;
         }
 
