@@ -575,6 +575,7 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
             }
             $menu[$block->id] = $blockobject->get_title();
         }
+        asort($menu);
 
         $target = $page->url_get_full(array('sesskey' => $USER->sesskey, 'blockaction' => 'add'));
         $content = popup_form($target.'&amp;blockid=', $menu, 'add_block', '', $stradd .'...', '', '', true);
