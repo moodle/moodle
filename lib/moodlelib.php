@@ -200,7 +200,8 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_ALPHA) {        // Remove everything not a-z
-        $param = eregi_replace('[^a-z]', '', $param);
+        $param = eregi_replace('[^a-zA-Z]', '', $param);
+        $param = strtolower($param);
     }
 
     if ($options & PARAM_ALPHANUM) {     // Remove everything not a-zA-Z0-9
