@@ -8,10 +8,6 @@ class block_search_forums extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG, $SESSION;
-        optional_variable($_GET['cal_m']);
-        optional_variable($_GET['cal_y']);
-
         if($this->content !== NULL) {
             return $this->content;
         }
@@ -24,11 +20,8 @@ class block_search_forums extends block_base {
         $course = get_record('course', 'id', $this->instance->pageid);
 
         $this->content = new stdClass;
-        $this->content->text = '';
+        $this->content->text = forum_print_search_form($course, '', true, 'block');
         $this->content->footer = '';
-
-        $form = forum_print_search_form($course, '', true, 'block');
-        $this->content->text = '<div align="center">'.$form.'</div>';
 
         return $this->content;
     }
