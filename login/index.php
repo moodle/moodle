@@ -44,13 +44,13 @@
 
     $frm = false;
     $user = false;
-    if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,"username=guest")) or $loginguest) {
+    if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,'username=guest')) or $loginguest) {
         /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
-        $frm->username = "guest";
-        $frm->password = "guest";
-    } else if (!empty($SESSION->wantsurl) && file_exists($CFG->dirroot . "/login/weblinkauth.php")) {
-        //Handles the case of another Moodle site linking into a page on this site
-        include $CFG->dirroot . "/login/weblinkauth.php";
+        $frm->username = 'guest';
+        $frm->password = 'guest';
+    } else if (!empty($SESSION->wantsurl) && file_exists($CFG->dirroot.'/login/weblinkauth.php')) {
+        // Handles the case of another Moodle site linking into a page on this site
+        include($CFG->dirroot.'/login/weblinkauth.php');
         if (function_exists(weblink_auth)) {
         	$user = weblink_auth($SESSION->wantsurl);
         }
@@ -108,9 +108,6 @@
 
             set_moodle_cookie($USER->username);
 
-            $wantsurl = $SESSION->wantsurl;
-
-            unset($SESSION->wantsurl);
             unset($SESSION->lang);
             $SESSION->justloggedin = true;
 
@@ -141,16 +138,18 @@
 
             
             add_to_log(SITEID, "user", "login", "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
-            
-            if (user_not_fully_set_up($USER)) {
-                $SESSION->wantsurl = $wantsurl;    /// Postpone this redirect a while longer!
-                $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
 
-            } else if (strpos($wantsurl, $CFG->wwwroot) === 0) {   /// Matches site address
-                $urltogo = $wantsurl;
+            if (user_not_fully_set_up($USER)) {
+                $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
+                // We don't delete $SESSION->wantsurl yet, so we get there later
+
+            } else if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
+                $urltogo = $SESSION->wantsurl;    /// Because it's an address in this site
+                unset($SESSION->wantsurl);
 
             } else {
                 $urltogo = $CFG->wwwroot.'/';      /// Go to the standard home page
+                unset($SESSION->wantsurl);         /// Just in case
             }
 
             // check if user password has expired
@@ -176,7 +175,7 @@
 
             redirect($urltogo);
 
-            die;
+            exit;
     
         } else {
             $errormsg = get_string("invalidlogin");
