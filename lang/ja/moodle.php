@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004090600)
+      // moodle.php - created with Moodle 1.5 unstable development (2004091100)
 
 
 $string['action'] = '操作';
@@ -358,7 +358,7 @@ $string['emailconfirmsent'] = '<P>メールが <B>$a</B> 宛に送信されました。
 <P>メールには登録の確定を簡単に行うための説明が記述されています。
 <P>お分かりにならない場合は管理者にご連絡ください。';
 $string['emaildigest'] = 'メール要約タイプ';
-$string['emaildigestcomplete'] = '全部 (全投稿を毎日メール)';
+$string['emaildigestcomplete'] = '全部 (全ての投稿を毎日メール)';
 $string['emaildigestoff'] = '要約無し (フォーラムの投稿毎にメール)';
 $string['emaildigestsubjects'] = '題名 (題名のみを毎日メール)';
 $string['emaildisable'] = 'このメールアドレスは無効です';
