@@ -114,13 +114,14 @@
         print_heading($strsitesettings);
     }
 
-    if (!isset($USER)) {
+    if (empty($USER->id)) {  // New undefined admin user
         $USER->htmleditor = true;
+        $sesskey = '';
+    } else {
+        $sesskey = $USER->sesskey;
     }
     $usehtmleditor = can_use_html_editor();
     $defaultformat = FORMAT_HTML;
-
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     include("site.html");
