@@ -29,10 +29,11 @@
         $news = forum_get_course_forum($course->id, "news");
     }
 
-    $streditsummary = get_string("editsummary");
-    $stradd         = get_string("add");
-    $stractivities  = get_string("activities");
+    $streditsummary   = get_string("editsummary");
+    $stradd           = get_string("add");
+    $stractivities    = get_string("activities");
     $strshowalltopics = get_string("showalltopics");
+    $strtopic         = get_string("topic");
     if (isediting($course->id)) { 
         $strstudents = moodle_strtolower($course->students);
         $strtopichide = get_string("topichide", "", $strstudents);
@@ -130,10 +131,16 @@
 
     $timenow = time();
     $section = 1;
+    $sectionmenu = array();
 
     while ($section <= $course->numsections) {
 
         if (!empty($displaysection) and $displaysection != $section) {
+            $strsummary= "";
+            if (!empty($sections[$section])) {
+                $strsummary = " - ".substr($sections[$section]->summary, 0, 100);
+            }
+            $sectionmenu["topic=$section"] = "$section$strsummary";
             $section++;
             continue;
         }
@@ -244,6 +251,13 @@
         $section++;
     }
     echo "</table>";
+
+    if (!empty($sectionmenu)) {
+        echo "<center>";
+        echo popup_form("$CFG->wwwroot/course/view.php?id=$course->id&", $sectionmenu, 
+                   "sectionmenu", "", get_string("jumpto"), "", "", true);
+        echo "</center>";
+    }
     
 
     if ($news or $course->showrecent) {
