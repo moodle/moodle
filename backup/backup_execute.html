@@ -196,7 +196,7 @@
                 $status = backup_modules_start ($backup_file,$preferences);
                 //Open ul for module list
                 echo "<ul>";
-                //Iterate over modules and call backupa
+                //Iterate over modules and call backup
                 foreach ($preferences->mods as $module) {
                     if ($module->backup and $status) {
                         echo "<li>".$module->name;
