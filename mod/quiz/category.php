@@ -4,13 +4,13 @@
     require_once("../../config.php");
     require_once("locallib.php");
 
-    require_variable($id);   // course
+    $id = required_param('id');   // course id
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
     }
 
-    if (isset($backtoquiz)) {
+    if (isset($_REQUEST['backtoquiz'])) {
         redirect("edit.php");
     }
 
@@ -29,46 +29,44 @@
     $qcobject = new quiz_category_object();
     $qcobject->set_course($course);
     
-    if (isset($delete) and !isset($cancel)) {
-    /// Delete category if the user wants to delete it
-        if (isset($confirm)) {
-            /// 'confirm' is the category to move existing questions to
-            $qcobject->delete_category($delete, $confirm);
-        } else {
-            $qcobject->delete_category($delete);
+    // Execute commands, but only if sesskey is o.k.
+    if (isset($_REQUEST['sesskey']) and confirm_sesskey()) {
+        if (isset($_REQUEST['delete']) and !isset($_REQUEST['cancel'])) {
+            if (isset($_REQUEST['confirm'])) {
+                /// 'confirm' is the category to move existing questions to
+                $qcobject->delete_category($_REQUEST['delete'], $_REQUEST['confirm']);
+            } else {
+                $qcobject->delete_category($_REQUEST['delete']);
+            }
+        } else if (isset($_REQUEST['moveup'])) {
+            $qcobject->move_category_up_down('up', $_REQUEST['moveup']);
+        } else if (isset($_REQUEST['movedown'])) {
+            $qcobject->move_category_up_down('down', $_REQUEST['movedown']);
+        } else if (isset($_REQUEST['hide'])) {
+            $qcobject->publish_category(false, $_REQUEST['hide']);
+        } else if (isset($_REQUEST['move']) and isset($_REQUEST['moveto'])) {
+            $qcobject->move_category($_REQUEST['move'], $_REQUEST['moveto']);
+        } else if (isset($_REQUEST['publish'])) {
+            $qcobject->publish_category(true, $_REQUEST['publish']);
+        } else if (isset($_REQUEST['addcategory'])) {
+            $newparent   = required_param('newparent');
+            $newcategory = required_param('newcategory');
+            $newinfo     = required_param('newinfo');
+            $newpublish  = required_param('newpublish');
+            $qcobject->add_category($newparent, $newcategory, $newinfo, $newpublish, $course->id);
+        } else if (isset($_REQUEST['edit'])) {
+            $qcobject->edit_single_category($_REQUEST['edit']);
+        } else if (isset($_REQUEST['updateid'])) {
+            $updateparent  = required_param('updateparent');
+            $updatename    = required_param('updatename');
+            $updateinfo    = required_param('updateinfo');
+            $updatepublish = required_param('updatepublish');
+            $qcobject->update_category($_REQUEST['updateid'], $updateparent, $updatename, $updateinfo, $updatepublish, $course->id);
         }
-    } else if (isset($moveup)) {
-        $qcobject->move_category_up_down('up', $moveup);
-    } else if (isset($movedown)) {
-        $qcobject->move_category_up_down('down', $movedown);
-    } else if (isset($hide)) {
-        $qcobject->publish_category(false, $hide);
-    } else if (isset($move) and isset($moveto)) {
-        $qcobject->move_category($move, $moveto);
-    } else if (isset($publish)) {
-        $qcobject->publish_category(true, $publish);
-    } else if (isset($addcategory)) {
-        require_variable($newparent);
-        require_variable($newcategory);
-        require_variable($newinfo);
-        require_variable($newpublish);
-        $qcobject->add_category($newparent, $newcategory, $newinfo, $newpublish, $course->id);
-    } else if (isset($edit)) {
-        $qcobject->edit_single_category($edit);
-    } else if (isset($updateid)) {
-        require_variable($updateparent);
-        require_variable($updatename);
-        require_variable($updateinfo);
-        require_variable($updatepublish);
-        $qcobject->update_category($updateid, $updateparent, $updatename, $updateinfo, $updatepublish, $course->id);
     }
 
     /// DISPLAY THE NORMAL USER INTERFACE
-    if (isset($modform)) {
-        $qcobject->display_user_interface($modform);    
-    } else {
-        $qcobject->display_user_interface();    
-    }
+    $qcobject->display_user_interface();
 
 /**
 * Class quiz_category_object
@@ -139,7 +137,7 @@ class quiz_category_object {
 *
 * @param object modform 
 */
-    function display_user_interface($modform = null) {
+    function display_user_interface() {
         $this->initialize();
         
         /// Interface for adding a new category:
@@ -190,6 +188,7 @@ class quiz_category_object {
 *
 */
     function output_new_table() {
+        global $USER;
         $publishoptions[0] = get_string("no");
         $publishoptions[1] = get_string("yes");
         
@@ -228,6 +227,7 @@ class quiz_category_object {
         
         // wrap the table in a form and output it
         echo '<form action="category.php" method="post">';
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="addcategory" value="true" />';
         echo make_table($this->newtable);
@@ -313,6 +313,7 @@ class quiz_category_object {
 * @param boolean down can it be moved down?
 */
     function quiz_edit_category_row($category, $shortname, $depth, $up = false, $down = false) {
+        global $USER;
         $fill = str_repeat($this->tab, $depth); 
         
         $linkcss = $category->publish ? '' : ' class="dimmed"';
@@ -325,13 +326,13 @@ class quiz_category_object {
         $this->edittable->align["$category->id.name"] =  "left";
         $this->edittable->wrap["$category->id.name"] = "nowrap";
         $row["$category->id.name"] = '<a ' . $linkcss . 'title="' . $this->str->edit. '" href="category.php?id=' . $this->course->id . 
-            '&amp;edit=' . $category->id . '"><img src="' . $this->pixpath . '/t/edit.gif" height="11" width="11" border="0" 
+            '&amp;edit=' . $category->id . '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/edit.gif" height="11" width="11" border="0" 
             alt="' .$this->str->edit. '" /> ' . $fill . $category->name . '</a>';
         
         $this->edittable->align["$category->id.info"] =  "left";
         $this->edittable->wrap["$category->id.info"] = "nowrap";
         $row["$category->id.info"] = '<a ' . $linkcss . 'title="' . $this->str->edit .'" href="category.php?id=' . $this->course->id . 
-            '&amp;edit=' . $category->id . '">' . $category->info . '</a>';
+            '&amp;edit=' . $category->id . '&amp;sesskey='.$USER->sesskey.'">' . $category->info . '</a>';
         
         $this->edittable->align["$category->id.qcount"] = "center";
         $row["$category->id.qcount"] = $category->questioncount;
@@ -340,17 +341,17 @@ class quiz_category_object {
         $this->edittable->wrap["$category->id.publish"] = "nowrap";
         if (!empty($category->publish)) {
               $row["$category->id.publish"] = '<a title="' . $this->str->hide . '" href="category.php?id=' . $this->course->id . '&amp;hide=' . $category->id . 
-              '"><img src="' . $this->pixpath . '/t/hide.gif" height="11" width="11" border="0" alt="' .$this->str->hide. '" /></a> ';
+              '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/hide.gif" height="11" width="11" border="0" alt="' .$this->str->hide. '" /></a> ';
         } else {
             $row["$category->id.publish"] = '<a title="' . $this->str->publish . '" href="category.php?id=' . $this->course->id . '&amp;publish=' . $category->id .
-                 '"><img src="' . $this->pixpath . '/t/show.gif" height="11" width="11" border="0" alt="' .$this->str->publish. '" /></a> ';
+                 '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/show.gif" height="11" width="11" border="0" alt="' .$this->str->publish. '" /></a> ';
         }
         
         if ($category->id != $this->defaultcategory) {
             $this->edittable->align["$category->id.delete"] =  "center";
             $this->edittable->wrap["$category->id.delete"] = "nowrap";
             $row["$category->id.delete"] =  '<a title="' . $this->str->delete . '" href="category.php?id=' . $this->course->id . 
-                    '&amp;delete=' . $category->id . '"><img src="' . $this->pixpath . '/t/delete.gif" height="11" width="11" border="0" alt="' .$this->str->delete. '" /></a> ';
+                    '&amp;delete=' . $category->id . '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/delete.gif" height="11" width="11" border="0" alt="' .$this->str->delete. '" /></a> ';
         } else {
             $row["$category->id.delete"] = '';
         }
@@ -359,11 +360,11 @@ class quiz_category_object {
         $this->edittable->wrap["$category->id.order"] = "nowrap";
         $icons = '';
         if ($up) {
-            $icons .= '<a title="' . $this->str->moveup .'" href="category.php?id=' . $this->course->id . '&amp;moveup=' . $category->id . '">
+            $icons .= '<a title="' . $this->str->moveup .'" href="category.php?id=' . $this->course->id . '&amp;moveup=' . $category->id . '&amp;sesskey='.$USER->sesskey.'">
                 <img src="' . $this->pixpath . '/t/up.gif" height="11" width="11" border="0" alt="' . $this->str->moveup. '" /></a> ';
         }
         if ($down) {
-            $icons .= '<a title="' . $this->str->movedown .'" href="category.php?id=' . $this->course->id . '&amp;movedown=' . $category->id . '">
+            $icons .= '<a title="' . $this->str->movedown .'" href="category.php?id=' . $this->course->id . '&amp;movedown=' . $category->id . '&amp;sesskey='.$USER->sesskey.'">
                  <img src="' . $this->pixpath . '/t/down.gif" height="11" width="11" border="0" alt="' .$this->str->movedown. '" /></a> ';
         }
         $row["$category->id.order"]= $icons;
@@ -375,7 +376,7 @@ class quiz_category_object {
             $this->set_viable_parents($viableparents, $category);
             $viableparents = array(0=>$this->str->top) + $viableparents;
         
-            $row["$category->id.moveto"] = popup_form ("category.php?id={$this->course->id}&amp;move={$category->id}&amp;moveto=", 
+            $row["$category->id.moveto"] = popup_form ("category.php?id={$this->course->id}&amp;move={$category->id}&amp;sesskey=$USER->sesskey&amp;moveto=", 
                $viableparents, "moveform{$category->id}", "$category->parent", "", "", "", true);
         } else {
             $row["$category->id.moveto"]='---';
@@ -388,6 +389,7 @@ class quiz_category_object {
     
     function edit_single_category($categoryid) {
     /// Interface for adding a new category
+        global $USER;
         $this->initialize();
 
         /// Interface for editing existing categories
@@ -400,6 +402,7 @@ class quiz_category_object {
             $this->output_edit_single_table($category);
             echo '</td></tr></table>';
             echo '<p><div align="center"><form action="category.php" method="get">
+                <input type="hidden" name="sesskey" value="'.$USER->sesskey.'">
                 <input type="hidden" name="id" value="' . $this->course->id . '" />
                 <input type="submit" value="' . $this->str->cancel . '" /></form></div></p>';
             print_footer($this->course);
@@ -416,7 +419,8 @@ class quiz_category_object {
 * @param object category
 */
     function output_edit_single_table($category) {
-         $publishoptions[0] = get_string("no");
+        global $USER;
+        $publishoptions[0] = get_string("no");
         $publishoptions[1] = get_string("yes");
         $strupdate = get_string('update');
         
@@ -457,6 +461,7 @@ class quiz_category_object {
 
         // wrap the table in a form and output it
         echo '<p><form action="category.php" method="post">';
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="updateid" value=' . $category->id . '" />';
         echo make_table($edittable);
@@ -592,6 +597,7 @@ class quiz_category_object {
 * @param    int destcategoryid id of category which will inherit the orphans of deletecat
 */
     function delete_category($deletecat, $destcategoryid = null) {
+        global $USER;
         
         if (!$category = get_record("quiz_categories", "id", $deletecat)) {  // security
             error("No such category $deletecat!", "category.php?id={$this->course->id}");
@@ -614,6 +620,7 @@ class quiz_category_object {
                 $categorystrings = $this->categorystrings;
                 unset ($categorystrings[$category->id]);
                 echo "<p><div align=\"center\"><form action=category.php method=get>";
+                echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
                 echo "<input type=\"hidden\" name=\"id\" value=\"{$this->course->id}\" />";
                 echo "<input type=\"hidden\" name=\"delete\" value=\"$category->id\" />";
                 choose_from_menu($categorystrings, "confirm", "", "");
