@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
@@ -339,7 +339,7 @@ $string['duplicatinga'] = 'Duplicating: $a';
 $string['duplicatingain'] = 'Duplicating $a->what in $a->in';
 $string['edhelpbgcolor'] = 'Define editarea\'s background-color.<br />Valid values are for example: #ffffff or white';
 $string['edhelpcleanword'] = 'This setting enables or disables Word specific format filtering.';
-$string['edhelpenablespelling'] = 'Enable or disable spellchecking. When enabled, <strong>aspell</strong> must be installed on the server.';
+$string['edhelpenablespelling'] = 'Enable or disable spellchecking. When enabled, <strong>aspell</strong> must be installed on the server. The second value is the <strong>default dictionary</strong>. This value will be used if aspell doesn\'t have dictionary for users own language.';
 $string['edhelpfontfamily'] = 'The font-family property is a list of font family names and/or generic family names. Family names must be seperated with comma.';
 $string['edhelpfontlist'] = 'Define the fonts used on editors dropdown menu.';
 $string['edhelpfontsize'] = 'The default font-size sets the size of a font. <br />Valid values are for example: medium, large, smaller, larger, 10pt, 11px.';

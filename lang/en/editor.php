@@ -108,5 +108,8 @@ $string['wordclean'] = 'Clean Word HTML';
 $string['zip'] = 'Zip';
 $string['createanchor'] = 'Create anchor';
 $string['anchorname'] = 'Anchorname';
+$string['fontname'] = 'Fontname';
+$string['fontsize'] = 'Font-size';
+$string['formatblock'] = 'Format';
 
 ?>
