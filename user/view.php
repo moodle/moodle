@@ -61,7 +61,7 @@
     echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0><TR><TD NOWRAP>";
     echo "<H3>$fullname</H3>";
     echo "</TD><TD align=right>";
-    if ($id == $USER->id and !isguest()) {
+    if (($id == $USER->id and !isguest()) or isadmin()) {
         echo "<P><FORM ACTION=edit.php METHOD=GET>";
         echo "<INPUT type=hidden name=id value=\"$id\">";
         echo "<INPUT type=hidden name=course value=\"$course->id\">";
@@ -117,7 +117,7 @@
 
 //  Print other functions
     echo "<CENTER><TABLE ALIGN=CENTER><TR>";
-    if ($course->category and (isteacher($course->id) or ($user->id == $USER->id and !isguest())) ) {
+    if ($course->category and !isguest() and (isteacher($course->id) and ($user->id != $USER->id)) ) {
         echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
         echo "<INPUT type=hidden name=id value=\"$course->id\">";
         echo "<INPUT type=hidden name=user value=\"$user->id\">";
