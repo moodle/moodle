@@ -4,14 +4,14 @@
 
 $string['action'] = 'Действие';
 $string['active'] = 'Активно';
-$string['activities'] = 'Действия';
-$string['activity'] = 'Действие';
-$string['activityclipboard'] = 'Перенос действия: <b>$a</b>';
-$string['activityiscurrentlyhidden'] = 'Извините, данное действие сейчас скрыто';
-$string['activitymodule'] = 'Модуль действий';
-$string['activityreport'] = 'Отчет по действиям';
-$string['activityselect'] = 'Выбрать действие для переноса';
-$string['activitysince'] = 'Действия с $a';
+$string['activities'] = 'Элементы курса';
+$string['activity'] = 'Элемент курса';
+$string['activityclipboard'] = 'Перенос элемента курса: <b>$a</b>';
+$string['activityiscurrentlyhidden'] = 'Извините, данный элемент курса сейчас скрыт';
+$string['activitymodule'] = 'Модуль элемента курса';
+$string['activityreport'] = 'Отчет по элементам курса';
+$string['activityselect'] = 'Выбрать элемент курса для переноса';
+$string['activitysince'] = 'Элементы курса с $a';
 $string['add'] = 'Добавить';
 $string['addadmin'] = 'Добавить администратора';
 $string['addcreator'] = 'Добавить создателя курсов';
