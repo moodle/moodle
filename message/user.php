@@ -58,6 +58,13 @@
               scrolling="no"  marginwidth="2" marginheight="2">
      </frameset>
      <noframes>Sorry, but support for Frames is required to use Messaging</noframes>
+
+     <!-- The following is a wierd hack that makes ADDING text to the *messages* frame work later.
+          Don't ask me why, I don't know, but it works.  -->
+     <script language="Javascript">
+        info.document.location.replace('<?php echo "$CFG->wwwroot/message/user.php?id=$user->id&frame=info"?>');
+     </script>
+
     </html>
     <?php
     }
