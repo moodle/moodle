@@ -2129,7 +2129,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
              $limit = 'LIMIT '. $page .','. $recordsperpage;
              break;
         case 'postgres7':
-             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.($page * $recordsperpage);
+             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.$page;
              break;
         default:
              $limit = 'LIMIT '. $recordsperpage .','. $page;
