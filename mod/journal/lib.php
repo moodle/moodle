@@ -125,7 +125,7 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
     $content = false;
     $journals = NULL;
 
-    foreach ($logs as $log) {
+    foreach ($logs as $key => $log) {
         if ($log->module == "journal") {
             if ($log->action == "add entry" or $log->action == "update entry") {
                 ///Get journal info.  I'll need it later
@@ -146,6 +146,7 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
                     }
                 }
             }
+            unset($logs[$key]);  // No longer need this record
         }
     }
 

@@ -106,20 +106,23 @@ function survey_print_recent_activity(&$logs, $isteacher=false) {
     $content = false;
     $surveys = NULL;
 
-    foreach ($logs as $log) {
-        if ($log->module == "survey" and $log->action == "submit") {
-            //Create a temp valid module structure (course,id)
-            $tempmod->course = $log->course;
-            $tempmod->id = $log->info;
-            //Obtain the visible property from the instance
-            $modvisible = instance_is_visible($log->module,$tempmod);
-
-            //Only if the mod is visible
-            if ($modvisible) {
-                $surveys[$log->id] = survey_log_info($log);
-                $surveys[$log->id]->time = $log->time;
-                $surveys[$log->id]->url = $log->url;
+    foreach ($logs as $key => $log) {
+        if ($log->module == "survey") {
+            if ($log->action == "submit") {
+                //Create a temp valid module structure (course,id)
+                $tempmod->course = $log->course;
+                $tempmod->id = $log->info;
+                //Obtain the visible property from the instance
+                $modvisible = instance_is_visible($log->module,$tempmod);
+    
+                //Only if the mod is visible
+                if ($modvisible) {
+                    $surveys[$log->id] = survey_log_info($log);
+                    $surveys[$log->id]->time = $log->time;
+                    $surveys[$log->id]->url = $log->url;
+                }
             }
+            unset($logs[$key]);  // No longer need this record
         }
     }
 
