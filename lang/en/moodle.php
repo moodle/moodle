@@ -707,6 +707,7 @@ $string['readinginfofrombackup'] = 'Reading info from backup';
 $string['readme'] = 'README';
 $string['recentactivity'] = 'Recent activity';
 $string['recentactivityreport'] = 'Full report of recent activity...';
+$string['refreshingevents'] = 'Refreshing events';
 $string['registration'] = 'Moodle Registration';
 $string['registrationemail'] = 'Email notifications';
 $string['registrationinfo'] = '<p>This page allows you to register your Moodle site with moodle.org.  Registration is free.
