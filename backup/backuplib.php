@@ -167,7 +167,7 @@
     }
 
     //Calculate the number of course files to backup
-    //under $CFG->dataroot/$course, except $CFG->moddata, and get_string("backupdir)
+    //under $CFG->dataroot/$course, except $CFG->moddata, and backupdata
     //and put them (their path) in backup_ids
     //Return an array of info (name,value)
     function course_files_check_backup($course,$backup_unique_code) {
@@ -178,10 +178,10 @@
         //Check if directory exists
         if (is_dir($rootdir)) {
             $coursedirs = get_directory_list($rootdir,$CFG->moddata);
-            $backupdir = get_string("backupdir");
+            $backupdata_dir = "backupdata";
             foreach ($coursedirs as $dir) {
-                //Check it isn't backupdir
-                if (strpos($dir,$backupdir)!==0) {
+                //Check it isn't backupdata_dir
+                if (strpos($dir,$backupdata_dir)!==0) {
                     //Insert them into backup_files
                     $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
                                                   (backup_code, file_type, path)
@@ -686,49 +686,64 @@
     function backup_log_info($bf,$preferences) {
 
         global $CFG;
+
+        //Number of records to get in every chunk
+        $recordset_size = 1000;
   
         $status = true;
+ 
+        //Counter, points to current record
+        $counter = 0;
 
-        $logs = get_records ("log","course",$preferences->backup_course,"time");
+        //Count records
+        $count_logs = count_records("log","course",$preferences->backup_course);
 
-        //We have logs
-        if ($logs) {
-            //Pring logs header
+        //Pring logs header
+        if ($count_logs > 0 ) {
             fwrite ($bf,start_tag("LOGS",2,true));
-            $counter = 0;
-            //Iterate 
-            foreach ($logs as $log) {
-                //See if it is a valid module to backup
-                if ($log->module == "course" or 
-                    $log->module == "user" or
-                    $preferences->mods[$log->module]->backup == 1) {
-                    //Begin log tag
-                     fwrite ($bf,start_tag("LOG",3,true));
+        }
+        while ($counter < $count_logs) {
+            //Get a chunk of records
+            $logs = get_records ("log","course",$preferences->backup_course,"time","*",$counter,$recordset_size);
 
-                    //Output log tag
-                    fwrite ($bf,full_tag("ID",4,false,$log->id));
-                    fwrite ($bf,full_tag("TIME",4,false,$log->time));
-                    fwrite ($bf,full_tag("USERID",4,false,$log->userid));
-                    fwrite ($bf,full_tag("IP",4,false,$log->ip));
-                    fwrite ($bf,full_tag("MODULE",4,false,$log->module));
-                    fwrite ($bf,full_tag("ACTION",4,false,$log->action));
-                    fwrite ($bf,full_tag("URL",4,false,$log->url));
-                    fwrite ($bf,full_tag("INFO",4,false,$log->info));
-
-                    //End log tag
-                     fwrite ($bf,end_tag("LOG",3,true));
-                }
-                //Do some output
-                $counter++;
-                if ($counter % 10 == 0) {
-                    echo ".";
-                    if ($counter % 200 == 0) {
-                        echo "<br>";
+            //We have logs
+            if ($logs) {
+                //Iterate 
+                foreach ($logs as $log) {
+                    //See if it is a valid module to backup
+                    if ($log->module == "course" or 
+                        $log->module == "user" or
+                        $preferences->mods[$log->module]->backup == 1) {
+                        //Begin log tag
+                         fwrite ($bf,start_tag("LOG",3,true));
+    
+                        //Output log tag
+                        fwrite ($bf,full_tag("ID",4,false,$log->id));
+                        fwrite ($bf,full_tag("TIME",4,false,$log->time));
+                        fwrite ($bf,full_tag("USERID",4,false,$log->userid));
+                        fwrite ($bf,full_tag("IP",4,false,$log->ip));
+                        fwrite ($bf,full_tag("MODULE",4,false,$log->module));
+                        fwrite ($bf,full_tag("ACTION",4,false,$log->action));
+                        fwrite ($bf,full_tag("URL",4,false,$log->url));
+                        fwrite ($bf,full_tag("INFO",4,false,$log->info));
+    
+                        //End log tag
+                         fwrite ($bf,end_tag("LOG",3,true));
                     }
-                    backup_flush(300);
+                    //Do some output
+                    $counter++;
+                    if ($counter % 10 == 0) {
+                        echo ".";
+                        if ($counter % 200 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
                 }
             }
-            //End logs tag
+        }
+        //End logs tag
+        if ($count_logs > 0 ) {
             $status = fwrite ($bf,end_tag("LOGS",2,true));
         }
         return $status;
@@ -817,13 +832,13 @@
         //in temp/backup/$backup_code  dir
         $status = check_and_create_course_files_dir($preferences->backup_unique_code);
 
-        //Now iterate over files and directories except $CFG->moddata and get_string("backupdir") to be
+        //Now iterate over files and directories except $CFG->moddata and backupdata to be
         //copied to backup
 
         $rootdir = $CFG->dataroot."/".$preferences->backup_course;
 
         $name_moddata = $CFG->moddata;
-        $name_backupdata = get_string("backupdir");
+        $name_backupdata = "backupdata";
         //Check if directory exists
         if (is_dir($rootdir)) {
             $list = list_directories_and_files ($rootdir);
@@ -911,7 +926,7 @@
         $status = check_dir_exists($to_zip_file,true);
 
         //Define zip destination (backup dir)
-        $to_zip_file = $to_zip_file."/".get_string("backupdir");
+        $to_zip_file = $to_zip_file."/backupdata";
 
         //echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
 
