@@ -378,7 +378,14 @@ function forum_cron () {
 
                 $posttext = get_string('digestmailheader', 'forum', $headerdata)."\n\n";
                 $headerdata->userprefs = '<a target="_blank" href="'.$headerdata->userprefs.'">'.get_string('digestmailprefs', 'forum').'</a>';
-                $posthtml = "<body bgcolor=\"$THEME->cellcontent2\">";
+
+                $posthtml = "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$CFG->stylesheet."\" /></head>\n";
+                $posthtml .= "<body bgcolor=\"$THEME->cellcontent2\">";
+                $posthtml .= "<style> <!--";       /// Inline styles for autolinks
+                $posthtml .= "a.autolink:link {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
+                $posthtml .= "a.autolink:visited {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
+                $posthtml .= "a.autolink:hover {text-decoration: underline; color: red}\n";
+                $posthtml .= "--> </style>\n\n";
                 $posthtml .= '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
 
                 foreach($thesediscussions as $discussionid) {
@@ -548,14 +555,22 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         $canreply = forum_user_can_post($forum, $userto);
         $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
 
-        $posthtml = "<p><font face=\"sans-serif\">".
-        "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
-        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> -> ".
+        $posthtml = '';
+        $posthtml .= "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"".$CFG->stylesheet."\" /></head>\n";
+        $posthtml .= "<body><style> <!--";       /// Inline styles for autolinks
+        $posthtml .= "a.autolink:link {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
+        $posthtml .= "a.autolink:visited {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
+        $posthtml .= "a.autolink:hover {text-decoration: underline; color: red}\n";
+        $posthtml .= "--> </style>\n\n";
+
+        $posthtml .= "<p><font face=\"sans-serif\">".
+        "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> &raquo; ".
+        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> &raquo; ".
         "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</a>";
         if ($discussion->name == $forum->name) {
             $posthtml .= "</font></p>";
         } else {
-            $posthtml .= " -> <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</a></font></p>";
+            $posthtml .= " &raquo; <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</a></font></p>";
         }
         $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
 
@@ -1281,23 +1296,16 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output = "";
 
-    $output .= "<style> <!--";       /// Styles for autolinks
-    $output .= "a.autolink:link {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-    $output .= "a.autolink:visited {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
-    $output .= "a.autolink:hover {text-decoration: underline; color: red}\n";
-    $output .= "--> </style>\n\n";
+    $output .= '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
-    $output .= '<table border="0" cellpadding="1" cellspacing="1"><tr><td bgcolor="'.$THEME->borders.'">';
-    $output .= '<table border="0" cellpadding="3" cellspacing="0">';
-
-    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"35\" valign=\"top\">";
+    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"35\" valign=\"top\" class=\"forumpostpicture\">";
     $output .= print_user_picture($user->id, $course->id, $user->picture, false, true);
     $output .= "</td>";
 
     if ($post->parent) {
-        $output .= "<td nowrap bgcolor=\"$THEME->cellheading\">";
+        $output .= "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
     } else {
-        $output .= "<td nowrap bgcolor=\"$THEME->cellheading2\">";
+        $output .= "<td nowrap bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\">";
     }
     $output .= "<p>";
     $output .= "<font size=3><b>$post->subject</b></font><br />";
@@ -1309,9 +1317,9 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= get_string("bynameondate", "forum", $by);
 
     $output .= "</font></p></td></tr>";
-    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=10>";
+    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"10\" class=\"forumpostside\">";
     $output .= "&nbsp;";
-    $output .= "</td><td bgcolor=\"$THEME->cellcontent\">\n";
+    $output .= "</td><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
 
     if ($post->attachment) {
         $post->course = $course->id;
@@ -1357,7 +1365,6 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     if ($footer) {
         $output .= "<p>$footer</p>";
     }
-    $output .= "</td></tr></table>\n";
     $output .= "</td></tr></table>\n\n";
 
     return $output;
