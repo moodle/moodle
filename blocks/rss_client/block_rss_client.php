@@ -20,8 +20,9 @@ class block_rss_client extends block_base {
     }
     
     function get_content() {
-        require_once($CFG->dirroot .'/rss/templib.php');
         global $CFG, $editing;
+
+        require_once($CFG->dirroot .'/rss/templib.php');
 
         if($this->content !== NULL) {
             return $this->content;
@@ -30,9 +31,8 @@ class block_rss_client extends block_base {
         $this->content = new stdClass;
         $this->content->footer = '';
         
-        if (empty($this->instance) || empty($CFG->blog_version)) {
-            // Either we're being asked for content without
-            // an associated instance of the Blog module has never been installed.
+        if (empty($this->instance)) {
+            // We're being asked for content without an associated instance
             $this->content->text = '';
             return $this->content;
         }
@@ -48,7 +48,7 @@ class block_rss_client extends block_base {
 
         if (!empty($this->config)) {
             if (!empty($this->config->rssid)) {
-                if (blog_array_count($this->config->rssid)) {
+                if (is_array($this->config->rssid)) {
                     // rssid is an array of rssids
                     $rssidarray = $this->config->rssid;
                 } else {
@@ -125,8 +125,6 @@ class block_rss_client extends block_base {
 
             for ($y = 0; $y < $count_to; $y++) {
                 if ($rss->items[$y]['title'] == '') {
-//                    $rss->items[$y]['description'] = blog_unhtmlentities($rss->items[$y]['description']);
-                    //Daryl Hawes note: might want to define an additional instance/admin config item for this (20) - max_description_length
                     $rss->items[$y]['title'] = substr(strip_tags($rss->items[$y]['description']), 0, 20) . '...';
                 }
         
