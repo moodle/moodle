@@ -38,7 +38,7 @@ download               télécharger (vers votre ordinateur)
 email                  courriel, adresse de courriel
 emoticons              binettes
 entry                  contribution
-feedback               feedback                rétroaction
+feedback               feedback                rétroaction, remarque
 grade                  note ou niveau
 guest                  visiteur anonyme
 hit                    requête
@@ -67,9 +67,7 @@ TODO
   Beaucoup de choses encore. Entre autres :
   - trouver une bonne traduction de "Separate and Connected ways of knowing",
     de "Connected Learning", "Separate Learning" et de "Reflective Thinking" ;
-  - traduire le dossier docs (en cours) ;
-  - terminer la traduction du dossier help (en cours, en collaboration
-    avec Jean-François Nadeau) ;
+  - intégrer la traduction du dossier help de Jean-François Nadeau ;
   - traduire chatarea.php ;
   - traduire glossary.php ;
   - traduire label.php ;
