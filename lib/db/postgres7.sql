@@ -64,6 +64,10 @@ CREATE TABLE prefix_log (
    info varchar(255) NOT NULL default ''
 );
 
+CREATE INDEX coursemoduleaction ON prefix_log (course,module,action);
+
+CREATE INDEX courseuserid ON prefix_log (course,userid);
+
 CREATE TABLE prefix_log_display (
    module varchar(20) NOT NULL default '',
    action varchar(20) NOT NULL default '',

@@ -121,6 +121,12 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2003042700) {
+        /// Changing to multiple indexes
+        execute_sql(" CREATE INDEX coursemoduleaction ON {$CFG->prefix}log (course,module,action) ");
+        execute_sql(" CREATE INDEX courseuserid ON {$CFG->prefix}log (course,userid) ");
+    }
+                                                            
     return $result;
 }
 ?>    
