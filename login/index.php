@@ -43,10 +43,32 @@
 
 
     $frm = false;
+    $user = false;
     if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,"username=guest")) or $loginguest) {
         /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
         $frm->username = "guest";
         $frm->password = "guest";
+    } else if (!empty($SESSION->wantsurl) && $CFG->allowweblinktarget && preg_match('/username=([^&]+)\&clicktime=([^&]+)\&pwdauthentication=([^&]+)/',$SESSION->wantsurl,$target_matches)) {
+        //Handles the case of another Moodle site linking into a page on this site
+        $username = urldecode($target_matches[1]);
+        $clicktime = urldecode($target_matches[2]);
+        $pwdauthentication = urldecode($target_matches[3]);
+        $user = get_user_info_from_db("username", $username);
+        if ($user) {
+          $currentTime = time();
+          //guards against replay attacks
+          if (($currentTime < $clicktime) || ($currentTime - $clicktime>60)) {
+          	$pwdauthentication = '';
+          }          
+          if ((md5($username . $clicktime . $user->password) != $pwdauthentication)|| ($user->auth == 'disabled')) {
+          	$user = false;
+          }
+        }
+        if ($user) {
+        	$frm->username = $username;
+        } else {
+            $frm = data_submitted();
+        }
     } else {
         $frm = data_submitted();
     }
@@ -62,7 +84,7 @@
         if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
             $user = false;    /// Can't log in as guest if guest button is disabled
             $frm = false;
-        } else {
+        } else if (!$user) {
             $user = authenticate_user_login($frm->username, $frm->password);
         }
         update_login_count();
