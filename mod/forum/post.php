@@ -10,7 +10,7 @@
         error(get_string("noguestpost", "forum"), $_SERVER["HTTP_REFERER"]);
     }
 
-    require_login();   // Script is useless unless they're logged in
+    require_login(0, false);   // Script is useless unless they're logged in
 
     if ($post = data_submitted()) {
 

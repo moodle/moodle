@@ -351,10 +351,12 @@ function get_user_timezone($tz = 99) {
 
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
 
-function require_login($courseid=0) {
+function require_login($courseid=0, $autologinguest=true) {
 /// This function checks that the current user is logged in, and optionally
 /// whether they are "logged in" or allowed to be in a particular course.
 /// If not, then it redirects them to the site login or course enrolment.
+/// $autologinguest determines whether visitors should automatically be
+/// logged in as guests provide $CFG->autologinguests is set to 1
 
     global $CFG, $SESSION, $USER, $FULLME, $MoodleSession;
 
@@ -365,8 +367,10 @@ function require_login($courseid=0) {
             $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
         }
         $USER = NULL;
-        if (!empty($CFG->autologinguests)) {
-            $loginguest = ($courseid and get_field('course','guest','id',$courseid)) ? '?loginguest=true' : '';
+        if ($autologinguest and $CFG->autologinguests and $courseid and get_field('course','guest','id',$courseid)) {
+            $loginguest = '?loginguest=true';
+        } else {
+            $loginguest = '';
         }
         if (empty($CFG->loginhttps)) {
             redirect("$CFG->wwwroot/login/index.php$loginguest");
