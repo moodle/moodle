@@ -316,7 +316,7 @@
                     }
                 } else {
                     $db->debug=false;
-                    notify("Upgrade failed!  See backup_version.php");
+                    notify("Upgrade failed!  See version.php");
                     die;
                 }
             } else if ($updgradeto < $CFG->backup_version) {
