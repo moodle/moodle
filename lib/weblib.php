@@ -1364,7 +1364,7 @@ function update_course_icon($courseid) {
             $string = get_string("turneditingon");
             $edit = "on";
         }
-        return "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
+        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
@@ -1377,7 +1377,7 @@ function update_module_button($moduleid, $courseid, $string) {
 
     if (isteacheredit($courseid)) {
         $string = get_string("updatethis", "", $string);
-        return "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
+        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
                "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
                "<input type=\"hidden\" name=\"return\" value=\"true\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
@@ -1398,7 +1398,7 @@ function update_category_button($categoryid) {
             $string = get_string("turneditingon");
             $edit = "on";
         } 
-        return "<form method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
+        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$categoryid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
@@ -1417,7 +1417,7 @@ function update_categories_button() {
             $string = get_string("turneditingon");
             $edit = "on";
         }
-        return "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
+        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
     }
