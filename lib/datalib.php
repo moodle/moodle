@@ -1108,7 +1108,7 @@ function get_site () {
 }
 
 
-function get_courses($categoryid="all", $sort="sortorder ASC", $fields="c.*", 
+function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*", 
                      &$totalcount, $limitfrom="", $limitnum="") {
 /// Returns list of courses, for whole site, or category
 
@@ -1120,11 +1120,13 @@ function get_courses($categoryid="all", $sort="sortorder ASC", $fields="c.*",
     }
 
     $teachertable = "";
+    $teachergroup = "";
     $visiblecourses = "";
     if (!empty($USER)) {  // May need to check they are a teacher
         if (!isadmin()) {
             $visiblecourses = "AND ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
             $teachertable = ", {$CFG->prefix}user_teachers t";
+            $teachergroup = "GROUP BY c.id";
         }
     } else {
         $visiblecourses = "AND c.visible > 0";
@@ -1145,11 +1147,11 @@ function get_courses($categoryid="all", $sort="sortorder ASC", $fields="c.*",
         $limit = "";
     }
 
-    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses ";
+    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses";
 
-    $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
+    $totalcount = count_records_sql("SELECT COUNT(DISTINCT c.id) FROM $selectsql");
 
-    return get_records_sql("SELECT $fields FROM $selectsql ORDER BY $sort $limit");
+    return get_records_sql("SELECT $fields FROM $selectsql $teachergroup ORDER BY $sort $limit");
 }
 
 
