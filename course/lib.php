@@ -960,6 +960,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 echo "</tr>";
             }
         }
+    } else {
+        echo "<tr><td></td></tr>"; // needed for XHTML compatibility
     }
     if ($ismoving) {
         echo '<tr><td><a title="'.$strmovefull.'"'.
@@ -1141,7 +1143,7 @@ function print_category_info($category, $depth) {
         $catimage = "&nbsp";
     }
 
-    echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%"><tr>';
+    echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%">';
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         $courses = get_courses($category->id);
@@ -1333,24 +1335,24 @@ function print_course_search($value="", $return=false, $format="plain") {
     $strsearchcourses= get_string("searchcourses");
 
     if ($format == 'plain') {
-        $output  = '<center><p align="center" class="coursesearchbox">';
-        $output .= '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<input type="text" size="30" name="search" value="'.$value.'" />';
+        $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output .= '<center><p align="center" class="coursesearchbox">';
+        $output .= '<input type="text" size="30" name="search" alt="'.$strsearchcourses.'" value="'.$value.'" />';
         $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
-        $output .= '</form></p></center>';
+        $output .= '</p></center></form>';
     } else if ($format == 'short') {
-        $output  = '<center><p align="center" class="coursesearchbox">';
-        $output .= '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<input type="text" size="12" name="search" value="'.$value.'" />';
+        $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output .= '<center><p align="center" class="coursesearchbox">';
+        $output .= '<input type="text" size="12" name="search" alt="'.$strsearchcourses.'" value="'.$value.'" />';
         $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
-        $output .= '</form></p></center>';
+        $output .= '</p></center></form>';
     } else if ($format == 'navbar') {
-        $output = '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
-        $output .= '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<input type="text" size="20" name="search" value="'.$value.'" />';
+        $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $output .= '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
+        $output .= '<input type="text" size="20" name="search" alt="'.$strsearchcourses.'" value="'.$value.'" />';
         $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
-        $output .= '</form>';
         $output .= '</td></tr></table>';
+        $output .= '</form>';
     }
 
     if ($return) {

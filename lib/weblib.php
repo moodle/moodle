@@ -1506,8 +1506,8 @@ function print_footer ($course=NULL, $usercourse=NULL) {
 /// Course links
     if ($course) {
         if ($course == 'home') {   // special case for site home page - please do not remove
-            $homelink  = '<p align="center"><a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/" target="_blank">';
-            $homelink .= '<br /><img width="100" height="30" src="pix/moodlelogo.gif" border="0" /></a></p>';
+            $homelink  = '<a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/" target="_blank">';
+            $homelink .= '<br /><img width="100" height="30" src="pix/moodlelogo.gif" border="0" alt="moodlelogo" /></a>';
             $course = get_site();
             $homepage = true;
         } else {
@@ -2950,9 +2950,9 @@ function obfuscate_text($plaintext) {
         $c = ord($plaintext{$i});
         $numerical = ($c >= ord('0')) && ($c <= ord('9'));
         if ($prev_obfuscated and $numerical ) {
-            $obfuscated.='&#'.ord($plaintext{$i});
+            $obfuscated.='&#'.ord($plaintext{$i}).';';
         } else if (rand(0,2)) {
-            $obfuscated.='&#'.ord($plaintext{$i});
+            $obfuscated.='&#'.ord($plaintext{$i}).';';
             $prev_obfuscated = true;
         } else {
             $obfuscated.=$plaintext{$i};
