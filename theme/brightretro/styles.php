@@ -199,6 +199,9 @@ a.dimmed:hover {
     text-decoration: underline;
     color: red;
 }
+.dimmed_text {
+    color: #AAAAAA;
+}
 
 .forumpostheader {
 }

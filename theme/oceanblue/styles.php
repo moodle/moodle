@@ -325,6 +325,10 @@ a.dimmed:hover {
     color: red;
 }
 
+.dimmed_text {
+    color: #AAAAAA;
+}
+
 .forumpostheader {
 }
 

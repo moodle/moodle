@@ -264,6 +264,9 @@ a.dimmed:hover {
     text-decoration: underline;
     color: red;
 }
+.dimmed_text {
+    color: #AAAAAA;
+}
 
 .forumpostheader {
     background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
