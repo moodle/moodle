@@ -1146,6 +1146,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     } else {
         echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
     }
+
+    if (!empty($CFG->filterall)) {      /// Put the subject through the filters
+        $post->subject = filter_text($post->subject, $courseid);
+    }
     echo "<p>";
     echo "<font size=3><b>$post->subject</b></font><br />";
     echo "<font size=2>";
