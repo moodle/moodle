@@ -41,7 +41,6 @@
             if ($USER->username == "guest") {
                 $USER->lang = $CFG->lang;  // Guest language always same as site
             }
-            save_session("USER");
     
             if (!update_user_in_db()) {
                 error("Weird error: User not found");
@@ -54,7 +53,6 @@
             set_moodle_cookie($USER->username);
 
             unset($SESSION->lang);
-            save_session("SESSION");
 
             if (user_not_fully_set_up($USER)) {
                 $site = get_site();
@@ -66,7 +64,6 @@
             } else {
                 $wantsurl = $SESSION->wantsurl;
                 unset($SESSION->wantsurl);
-                save_session("SESSION");
                 redirect($wantsurl);
             }
     
@@ -86,7 +83,6 @@
 
     if (empty($SESSION->wantsurl)) {
         $SESSION->wantsurl = $_SERVER["HTTP_REFERER"];
-        save_session("SESSION");
     }
     
     if (empty($frm->username)) {

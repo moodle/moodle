@@ -54,7 +54,6 @@
         $USER->site = $CFG->wwwroot;
         $USER->admin = true;
         $USER->teacher["$site->id"] = true;
-        save_session("USER");
 
         redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$site->id");
 

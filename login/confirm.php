@@ -42,12 +42,10 @@
 
                 $USER->loggedin = true;
                 $USER->site = $CFG->wwwroot;
-                save_session("USER");
 
                 if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
                     $goto = $SESSION->wantsurl;
                     unset($SESSION->wantsurl);
-                    save_session("SESSION");
                     redirect("$goto");
                 }
  

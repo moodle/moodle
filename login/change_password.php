@@ -35,7 +35,6 @@
 			$USER = $user;
 			$USER->loggedin = true;
             $USER->site = $CFG->wwwroot;   // for added security
-            save_session("USER");
 
 			set_moodle_cookie($USER->username);
 

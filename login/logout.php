@@ -5,8 +5,6 @@
 
     $USER = NULL;
     $SESSION = NULL;
-    save_session("USER");
-    save_session("SESSION");
     redirect($CFG->wwwroot);
 
 ?>
