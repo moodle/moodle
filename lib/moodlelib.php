@@ -163,26 +163,7 @@ function get_user_preferences($name=NULL, $default=NULL) {
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99) {
 /// Given date parts in user time, produce a GMT timestamp
 
-    global $CFG, $USER;
-
-    // Work out the best timezone to use, in order of precedence
-    $timezones = array(
-        isset($USER->timezone) ? $USER->timezone : 99,
-        isset($CFG->timezone) ? $CFG->timezone : 99,
-        );
-    while($timezone == 99 && $next = each($timezones)) {
-        $timezone = (float)$next['value'];
-    }
-
-    /*
-    if ($timezone == 99) {
-        if (isset($USER->timezone)) {         // A user is logged in
-            $timezone = (float)$USER->timezone;
-        } else if (isset($CFG->timezone)) {   // Use site's default timezone
-            $timezone = (float)$CFG->timezone;
-        }
-    }
-    */
+    $timezone = get_user_timezone($timezone);
 
     if (abs($timezone) > 13) {
         return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
@@ -249,8 +230,6 @@ function userdate($date, $format="", $timezone=99, $fixday = true) {
 /// If parammeter fixday = true (default), then take off leading
 /// zero from %d, else mantain it.
 
-    global $USER, $CFG;
-
     if ($format == "") {
         $format = get_string("strftimedaydatetime");
     }
@@ -260,24 +239,7 @@ function userdate($date, $format="", $timezone=99, $fixday = true) {
         $fixday = ($formatnoday != $format);
     }
 
-    // Work out the best timezone to use, in order of precedence
-    $timezones = array(
-        isset($USER->timezone) ? $USER->timezone : 99,
-        isset($CFG->timezone) ? $CFG->timezone : 99,
-        );
-    while($timezone == 99 && $next = each($timezones)) {
-        $timezone = (float)$next['value'];
-    }
-
-    /*
-    if ($timezone == 99) {                    // Work out the best timezone to use
-        if (isset($USER->timezone)) {         // A user is logged in
-            $timezone = (float)$USER->timezone;
-        } else if (isset($CFG->timezone)) {   // Use site's default timezone
-            $timezone = (float)$CFG->timezone;
-        }
-    }
-    */
+    $timezone = get_user_timezone($timezone);
 
     if (abs($timezone) > 13) {
         if ($fixday) {
@@ -305,16 +267,8 @@ function usergetdate($date, $timezone=99) {
 /// Given a $date timestamp in GMT, returns an array
 /// that represents the date in user time
 
-    global $USER, $CFG;
+    $timezone = get_user_timezone($timezone);
 
-
-    if ($timezone == 99) {                    // Work out the best timezone to use
-        if (isset($USER->timezone)) {         // A user is logged in
-            $timezone = (float)$USER->timezone;
-        } else if (isset($CFG->timezone)) {   // Use site's default timezone
-            $timezone = (float)$CFG->timezone;
-        }
-    }
     if (abs($timezone) > 13) {
         return getdate($date);
     }
@@ -336,26 +290,8 @@ function usergetdate($date, $timezone=99) {
 function usertime($date, $timezone=99) {
 /// Given a GMT timestamp (seconds since epoch), offsets it by
 /// the timezone.  eg 3pm in India is 3pm GMT - 7 * 3600 seconds
-    global $USER, $CFG;
 
-    // Work out the best timezone to use, in order of precedence
-    $timezones = array(
-        isset($USER->timezone) ? $USER->timezone : 99,
-        isset($CFG->timezone) ? $CFG->timezone : 99,
-        );
-    while($timezone == 99 && $next = each($timezones)) {
-        $timezone = (float)$next['value'];
-    }
-
-    /*
-    if ($timezone == 99) {                    // Work out the best timezone to use
-        if (isset($USER->timezone)) {         // A user is logged in
-            $timezone = (float)$USER->timezone;
-        } else if (isset($CFG->timezone)) {   // Use site's default timezone
-            $timezone = (float)$CFG->timezone;
-        }
-    }
-    */
+    $timezone = get_user_timezone($timezone);
     if (abs($timezone) > 13) {
         return $date;
     }
@@ -365,25 +301,8 @@ function usertime($date, $timezone=99) {
 function usergetmidnight($date, $timezone=99) {
 /// Given a time, return the GMT timestamp of the most recent midnight
 /// for the current user.
-    global $USER, $CFG;
 
-    // Work out the best timezone to use, in order of precedence
-    $timezones = array(
-        isset($USER->timezone) ? $USER->timezone : 99,
-        isset($CFG->timezone) ? $CFG->timezone : 99,
-        );
-    while($timezone == 99 && $next = each($timezones)) {
-        $timezone = (float)$next['value'];
-    }
-    /*
-    if ($timezone == 99) {                    // Work out the best timezone to use
-        if (isset($USER->timezone)) {         // A user is logged in
-            $timezone = (float)$USER->timezone;
-        } else if (isset($CFG->timezone)) {   // Use site's default timezone
-            $timezone = (float)$CFG->timezone;
-        }
-    }
-    */
+    $timezone = get_user_timezone($timezone);
     $userdate = usergetdate($date, $timezone);
 
     if (abs($timezone) > 13) {
@@ -397,25 +316,9 @@ function usergetmidnight($date, $timezone=99) {
 
 function usertimezone($timezone=99) {
 /// Returns a string that prints the user's timezone
-    global $USER, $CFG;
 
-    // Work out the best timezone to use, in order of precedence
-    $timezones = array(
-        isset($USER->timezone) ? $USER->timezone : 99,
-        isset($CFG->timezone) ? $CFG->timezone : 99,
-        );
-    while($timezone == 99 && $next = each($timezones)) {
-        $timezone = (float)$next['value'];
-    }
-    /*
-    if ($timezone == 99) {                    // Work out the best timezone to use
-        if (isset($USER->timezone)) {         // A user is logged in
-            $timezone = (float)$USER->timezone;
-        } else if (isset($CFG->timezone)) {   // Use site's default timezone
-            $timezone = (float)$CFG->timezone;
-        }
-    }
-    */
+    $timezone = get_user_timezone($timezone);
+
     if (abs($timezone) > 13) {
         return "server time";
     }
@@ -429,6 +332,22 @@ function usertimezone($timezone=99) {
     }
 }
 
+function get_user_timezone($tz = 99) {
+// Returns a float which represents the user's timezone difference from GMT in hours
+// Checks various settings and picks the most dominant of those which have a value
+
+    // Variables declared explicitly global here so that if we add
+    // something later we won't forget to global it...
+    $timezones = array(
+        isset($GLOBALS['USER']->timezone) ? $GLOBALS['USER']->timezone : 99,
+        isset($GLOBALS['CFG']->timezone) ? $GLOBALS['CFG']->timezone : 99,
+        );
+    while($tz == 99 && $next = each($timezones)) {
+        $tz = (float)$next['value'];
+    }
+
+    return $tz;
+}
 
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
 
