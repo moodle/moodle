@@ -44,11 +44,7 @@
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
 
-    optional_variable($_GET['view'], 'upcoming');
     optional_variable($_GET['course'], 0);
-    optional_variable($_GET['cal_d']);
-    optional_variable($_GET['cal_m']);
-    optional_variable($_GET['cal_y']);
 
     if(!$site = get_site()) {
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
@@ -60,10 +56,14 @@
 
     $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
 
-    // Make sure that the GET variables are correct
-    $day = intval($_GET['cal_d']);
-    $mon = intval($_GET['cal_m']);
-    $yr = intval($_GET['cal_y']);
+    optional_param('view', 'upcoming');
+    optional_param('cal_d', 0, PARAM_INT);
+    optional_param('cal_m', 0, PARAM_INT);
+    optional_param('cal_y', 0, PARAM_INT);
+    $day = $cal_d;
+    $mon = $cal_m;
+    $yr  = $cal_y;
+    
     if(!checkdate($mon, $day, $yr)) {
         $day = intval($now['mday']);
         $mon = intval($now['mon']);
@@ -71,7 +71,7 @@
     }
     $time = mktime(0, 0, 0, $mon, $day, $yr);
 
-    switch($_GET['view']) {
+    switch($view) {
         case 'day':
             $text = strftime(get_string('strftimedate'), $time);
             if($text[0] == '0') {
@@ -139,7 +139,7 @@
 
     echo '<td style="vertical-align: top; width: 100%;">';
 
-    switch($_GET['view']) {
+    switch($view) {
         case 'day':
             calendar_show_day($day, $mon, $yr, $courses, $groups, $users);
         break;
@@ -161,7 +161,7 @@
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
-    echo calendar_filter_controls($_GET['view'], $getvars);
+    echo calendar_filter_controls($view, $getvars);
     echo '<div style="margin: 10px 0px;">';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
