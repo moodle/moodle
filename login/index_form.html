@@ -60,13 +60,24 @@
       </FONT> </TD>
     <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>">
       <FONT SIZE=2>
-      <P><? print_string("loginsteps", "", "signup.php") ?></P>
-      </FONT>
-        <CENTER>
-        <FORM NAME="form4" ACTION="signup.php" METHOD=post>
-        <INPUT type="submit" NAME="Submit" VALUE="<? print_string("startsignup") ?>">
-        </FORM>
-        </CENTER>
+      <? switch ($CFG->auth) {
+           case "email":             ?>
+             <P><? print_string("loginsteps", "", "signup.php") ?></P>
+             </FONT>
+             <CENTER>
+             <FORM NAME="form4" ACTION="signup.php" METHOD=post>
+             <INPUT type="submit" NAME="Submit" VALUE="<? print_string("startsignup") ?>">
+             </FORM>
+             </CENTER>
+      <?     break;
+           case "none":              ?>
+             <P><? print_string("loginstepsnone") ?></P>
+      <?     break;
+           default:
+             echo "ERROR: I don't know about the current authentication!";
+         }
+      ?>
+
       </TD>
   </TR>
 </TABLE>

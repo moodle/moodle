@@ -237,6 +237,10 @@ $string['loginsteps'] = "Hi! For full access to courses you'll need to take
    to enter your personal username and password (in the form on this page)
    to log in and access any course you have enrolled in.
    </OL>";
+$string['loginstepsnone'] = "Hi!<P>For full access to courses you'll need to create 
+yourself an account.<P>All you need to do is make up a username and password and use it in
+the form on this page!<P>If someone else has already chosen your username
+then you'll have to try again using a different username.";
 $string['logout'] = "Logout";
 $string['logs'] = "Logs";
 $string['makeafolder'] = "Make a folder";
