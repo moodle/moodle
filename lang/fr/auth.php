@@ -15,7 +15,7 @@ $string['auth_dbtable'] = 'Nom de la table dans la base de données';
 $string['auth_dbtitle'] = 'Utiliser une base de données externe';
 $string['auth_dbtype'] = 'Type de la base de données (Pour plus d\'information, voir la <a href=\'../lib/adodb/readme.htm#drivers\'>documentation de ADOdb</a>)';
 $string['auth_dbuser'] = 'Compte avec accès en lecture à la base de données';
-$string['auth_editlock_expl'] = '<p><strong>Verrouiller cette valeur&nbsp;:</strong> si cette option est activée, elle empêchera les utilsateurs et les administrateurs de modifier le champ directement. Utilisez cette option si vous maintenez ces données dans le système d\'authentification externe.</p>';
+$string['auth_editlock_expl'] = '<p><strong>Verrouiller cette valeur&nbsp;:</strong> si cette option est activée, elle empêchera les utilisateurs et les administrateurs de modifier le champ directement. Utilisez cette option si vous maintenez ces données dans le système d\'authentification externe.</p>';
 $string['auth_editlock'] = 'Verrouiller cette valeur';
 $string['auth_emaildescription'] = 'La confirmation par courriel est la méthode d\'authentification par défaut. Lorsqu\'un utilisateur s\'enregistre en choisissant ses nom d\'utilisateur et mot de passe, un message de confirmation est envoyé à son adresse de courriel. Ce message contient un lien sécurisé vers une page Web où il peut confirmer son inscription. Les connexions suivantes ne vérifient que les nom d\'utilisateur et mot de passe précédemment enregistrés dans la base de données de Moodle.';
 $string['auth_emailtitle'] = 'Authentification par courriel';
@@ -45,7 +45,7 @@ $string['auth_ldap_gracelogins_desc'] = 'Activer le support du gracelogin LDAP. 
 $string['auth_ldap_host_url'] = 'Indiquer le serveur LDAP sous form d\'URL comme ceci :<br />« ldap://ldap.organisation.fr/ »<br />ou&nbsp;:<br />« ldaps://ldap.organisation.fr/ ». Si vous utilisez plusieurs serveurs LDAP par sécurité, séparez leurs adresses avec des points-virgules (;).';
 $string['auth_ldap_login_settings'] = 'Configuration de la connexion';
 $string['auth_ldap_memberattribute'] = 'Indiquer l\'attribut d\'appartenance à un groupe. D\'habitude cet attribut est « member ».';
-$string['auth_ldap_objectclass'] = 'Le filtre utilisé pour rechercher/renommer des utilisateurs. On y mettra d\'habitude quelque chose comme objectClass=posixAccount. La valeur par défaut est objectClass=*, ce que retournera tous les objets du serveur LDAP.';
+$string['auth_ldap_objectclass'] = 'Le filtre utilisé pour rechercher/renommer des utilisateurs. On y mettra d\'habitude quelque chose comme objectClass=posixAccount. La valeur par défaut est objectClass=*, ce qui retournera tous les objets du serveur LDAP.';
 $string['auth_ldap_opt_deref'] = 'Détermine le traitement des alias durant la recherche. Veuillez sélectionner une des valeurs suivantes&nbsp;: «&nbsp;Non&nbsp;» (LDAP_DEREF_NEVER) ou «&nbsp;Oui&nbsp;» (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Réglages de l\'échéance du mot de passe LDAP.';
 $string['auth_ldap_search_sub'] = 'Mettre une valeur différente de 0 pour rechercher les enregistrements dans les sous-contextes.';
@@ -80,7 +80,7 @@ $string['auth_pop3type'] = 'Type de serveur. Si le serveur POP3 utilise « certif
 $string['auth_updatelocal_expl'] = '<p><strong>Mise à jour des données locales&nbsp;:</strong> lorsque cette option est activée, le champ est mis à jour (depuis la source externe) chaque fois que l\'utilisateur se connecte ou qu\'une synchronisation a lieu. Les champs destinés à être mis à jour ainsi devraient être verrouillés.</p>';
 $string['auth_updatelocal'] = 'Mise à jour des données locales';
 $string['auth_updateremote_expl'] = '<p><strong>Mise à jour des données externes&nbsp;:</strong> lorsque cette option est activée, la source d\'authentification externe est mise à jour chaque fois que les données de l\'utilisateur le sont. Pour permettre leur modification, les champs devraient être déverrouillés.</p>';
-$string['auth_updateremote_ldap'] = '<p><strong>Remarque&nbsp;:</strong> la mise à jour externe des données LDAP nécessite de fixer pour tous les enregistrements les valeurs binddn et bindpw à un utilisateur-lien avec des privilèges de modification. Elle ne conserve pas les attributs à plusieurs valeurs multi-valued attributes et supprimera les valeurs en trop lors des mises à jour.</p>';
+$string['auth_updateremote_ldap'] = '<p><strong>Remarque&nbsp;:</strong> la mise à jour externe des données LDAP nécessite de fixer pour tous les enregistrements les valeurs binddn et bindpw à un utilisateur-lien avec des privilèges de modification. Elle ne conserve pas les attributs à plusieurs valeurs et supprimera les valeurs en trop lors des mises à jour.</p>';
 $string['auth_updateremote'] = 'Mise à jour des données externes';
 $string['auth_user_create'] = 'Activer la création des utilisateurs';
 $string['auth_user_creation'] = 'Les nouveaux utilisateurs (anonymes) peuvent créer des comptes sur la source d\'authentification externe, avec confirmation par courriel. Ne pas oublier de configurer les éventuelles options dans les différents modules lors de l\'activation de cette possibilité.';
