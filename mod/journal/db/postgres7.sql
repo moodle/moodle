@@ -14,7 +14,7 @@
 # Table structure for table `journal`
 #
 
-CREATE TABLE journal (
+CREATE TABLE prefix_journal (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   name varchar(255) default NULL,
@@ -29,7 +29,7 @@ CREATE TABLE journal (
 # Table structure for table `journal_entries`
 #
 
-CREATE TABLE journal_entries (
+CREATE TABLE prefix_journal_entries (
   id SERIAL PRIMARY KEY,
   journal integer NOT NULL default '0',
   userid integer NOT NULL default '0',
@@ -47,7 +47,7 @@ CREATE TABLE journal_entries (
 # Dumping data for table `log_display`
 #
 
-INSERT INTO log_display VALUES ('journal', 'view', 'journal', 'name');
-INSERT INTO log_display VALUES ('journal', 'add entry', 'journal', 'name');
-INSERT INTO log_display VALUES ('journal', 'update entry', 'journal', 'name');
-INSERT INTO log_display VALUES ('journal', 'view responses', 'journal', 'name');
+INSERT INTO prefix_log_display VALUES ('journal', 'view', 'journal', 'name');
+INSERT INTO prefix_log_display VALUES ('journal', 'add entry', 'journal', 'name');
+INSERT INTO prefix_log_display VALUES ('journal', 'update entry', 'journal', 'name');
+INSERT INTO prefix_log_display VALUES ('journal', 'view responses', 'journal', 'name');

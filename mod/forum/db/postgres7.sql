@@ -2,7 +2,7 @@
 # Table structure for table `forum`
 #
 
-CREATE TABLE forum (
+CREATE TABLE prefix_forum (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   type varchar(10) CHECK (type IN ('single','news','general','social','eachuser','teacher')) NOT NULL default 'general',
@@ -19,7 +19,7 @@ CREATE TABLE forum (
 # Table structure for table `forum_discussions`
 #
 
-CREATE TABLE forum_discussions (
+CREATE TABLE prefix_forum_discussions (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   forum integer NOT NULL default '0',
@@ -34,7 +34,7 @@ CREATE TABLE forum_discussions (
 # Table structure for table `forum_posts`
 #
 
-CREATE TABLE forum_posts (
+CREATE TABLE prefix_forum_posts (
   id SERIAL PRIMARY KEY,
   discussion integer NOT NULL default '0',
   parent integer NOT NULL default '0',
@@ -54,7 +54,7 @@ CREATE TABLE forum_posts (
 # Table structure for table `forum_ratings`
 #
 
-CREATE TABLE forum_ratings (
+CREATE TABLE prefix_forum_ratings (
   id SERIAL PRIMARY KEY,
   userid integer NOT NULL default '0',
   post integer NOT NULL default '0',
@@ -67,7 +67,7 @@ CREATE TABLE forum_ratings (
 # Table structure for table `forum_subscriptions`
 #
 
-CREATE TABLE forum_subscriptions (
+CREATE TABLE prefix_forum_subscriptions (
   id SERIAL PRIMARY KEY,
   userid integer NOT NULL default '0',
   forum integer NOT NULL default '0'
@@ -78,14 +78,14 @@ CREATE TABLE forum_subscriptions (
 # Dumping data for table `log_display`
 #
 
-INSERT INTO log_display VALUES ('forum', 'add', 'forum', 'name');
-INSERT INTO log_display VALUES ('forum', 'update', 'forum', 'name');
-INSERT INTO log_display VALUES ('forum', 'add discussion', 'forum_discussions', 'name');
-INSERT INTO log_display VALUES ('forum', 'add post', 'forum_posts', 'subject');
-INSERT INTO log_display VALUES ('forum', 'update post', 'forum_posts', 'subject');
-INSERT INTO log_display VALUES ('forum', 'view subscribers', 'forum', 'name');
-INSERT INTO log_display VALUES ('forum', 'view discussion', 'forum_discussions', 'name');
-INSERT INTO log_display VALUES ('forum', 'view forum', 'forum', 'name');
-INSERT INTO log_display VALUES ('forum', 'subscribe', 'forum', 'name');
-INSERT INTO log_display VALUES ('forum', 'unsubscribe', 'forum', 'name');
+INSERT INTO prefix_log_display VALUES ('forum', 'add', 'forum', 'name');
+INSERT INTO prefix_log_display VALUES ('forum', 'update', 'forum', 'name');
+INSERT INTO prefix_log_display VALUES ('forum', 'add discussion', 'forum_discussions', 'name');
+INSERT INTO prefix_log_display VALUES ('forum', 'add post', 'forum_posts', 'subject');
+INSERT INTO prefix_log_display VALUES ('forum', 'update post', 'forum_posts', 'subject');
+INSERT INTO prefix_log_display VALUES ('forum', 'view subscribers', 'forum', 'name');
+INSERT INTO prefix_log_display VALUES ('forum', 'view discussion', 'forum_discussions', 'name');
+INSERT INTO prefix_log_display VALUES ('forum', 'view forum', 'forum', 'name');
+INSERT INTO prefix_log_display VALUES ('forum', 'subscribe', 'forum', 'name');
+INSERT INTO prefix_log_display VALUES ('forum', 'unsubscribe', 'forum', 'name');
 

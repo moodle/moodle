@@ -1,11 +1,11 @@
-CREATE TABLE config (
+CREATE TABLE prefix_config (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default '',
    value varchar(255) NOT NULL default '',
    CONSTRAINT config_name_uk UNIQUE (name)
 );
 
-CREATE TABLE course (
+CREATE TABLE prefix_course (
    id SERIAL PRIMARY KEY,
    category integer NOT NULL default '0',
    password varchar(50) NOT NULL default '',
@@ -27,12 +27,12 @@ CREATE TABLE course (
    timemodified integer NOT NULL default '0'
 );
 
-CREATE TABLE course_categories (
+CREATE TABLE prefix_course_categories (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default ''
 );
 
-CREATE TABLE course_modules (
+CREATE TABLE prefix_course_modules (
    id SERIAL PRIMARY KEY,
    course integer NOT NULL default '0',
    module integer NOT NULL default '0',
@@ -43,7 +43,7 @@ CREATE TABLE course_modules (
    score integer NOT NULL default '0'
 );
 
-CREATE TABLE course_sections (
+CREATE TABLE prefix_course_sections (
    id SERIAL PRIMARY KEY,
    course integer NOT NULL default '0',
    section integer NOT NULL default '0',
@@ -51,7 +51,7 @@ CREATE TABLE course_sections (
    sequence varchar(255) NOT NULL default ''
 );
 
-CREATE TABLE log (
+CREATE TABLE prefix_log (
    id SERIAL PRIMARY KEY,
    time integer NOT NULL default '0',
    userid integer NOT NULL default '0',
@@ -63,14 +63,14 @@ CREATE TABLE log (
    info varchar(255) NOT NULL default ''
 );
 
-CREATE TABLE log_display (
+CREATE TABLE prefix_log_display (
    module varchar(20) NOT NULL default '',
    action varchar(20) NOT NULL default '',
    mtable varchar(20) NOT NULL default '',
    field varchar(40) NOT NULL default ''
 );
 
-CREATE TABLE modules (
+CREATE TABLE prefix_modules (
    id SERIAL PRIMARY KEY,
    name varchar(20) NOT NULL default '',
    version integer NOT NULL default '0',
@@ -79,7 +79,7 @@ CREATE TABLE modules (
    search varchar(255) NOT NULL default ''
 );
 
-CREATE TABLE "user" (
+CREATE TABLE prefix_user (
    id SERIAL PRIMARY KEY,
    confirmed integer NOT NULL default '0',
    deleted integer NOT NULL default '0',
@@ -113,12 +113,12 @@ CREATE TABLE "user" (
    CONSTRAINT user_username_uk UNIQUE (username)
 );
 
-CREATE TABLE user_admins (
+CREATE TABLE prefix_user_admins (
    id SERIAL PRIMARY KEY,
    userid integer NOT NULL default '0'
 );
 
-CREATE TABLE user_students (
+CREATE TABLE prefix_user_students (
    id SERIAL PRIMARY KEY,
    userid integer NOT NULL default '0',
    course integer NOT NULL default '0',
@@ -127,10 +127,13 @@ CREATE TABLE user_students (
    time integer NOT NULL default '0'
 );
 
-CREATE TABLE user_teachers (
+CREATE TABLE prefix_user_teachers (
    id SERIAL PRIMARY KEY,
    userid integer NOT NULL default '0',
    course integer NOT NULL default '0',
    authority integer NOT NULL default '3',
    role varchar(40) NOT NULL default ''
 );
+
+
+INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');

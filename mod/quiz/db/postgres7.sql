@@ -13,7 +13,7 @@
 # Table structure for table quiz
 #
 
-CREATE TABLE quiz (
+CREATE TABLE prefix_quiz (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
@@ -36,7 +36,7 @@ CREATE TABLE quiz (
 # Table structure for table quiz_answers
 #
 
-CREATE TABLE quiz_answers (
+CREATE TABLE prefix_quiz_answers (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   answer varchar(255) NOT NULL default '',
@@ -49,7 +49,7 @@ CREATE TABLE quiz_answers (
 # Table structure for table quiz_attempts
 #
 
-CREATE TABLE quiz_attempts (
+CREATE TABLE prefix_quiz_attempts (
   id SERIAL PRIMARY KEY,
   quiz integer NOT NULL default '0',
   userid integer NOT NULL default '0',
@@ -65,7 +65,7 @@ CREATE TABLE quiz_attempts (
 # Table structure for table quiz_categories
 #
 
-CREATE TABLE quiz_categories (
+CREATE TABLE prefix_quiz_categories (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
@@ -78,7 +78,7 @@ CREATE TABLE quiz_categories (
 # Table structure for table quiz_grades
 #
 
-CREATE TABLE quiz_grades (
+CREATE TABLE prefix_quiz_grades (
   id SERIAL PRIMARY KEY,
   quiz integer NOT NULL default '0',
   userid integer NOT NULL default '0',
@@ -91,7 +91,7 @@ CREATE TABLE quiz_grades (
 # Table structure for table quiz_multichoice
 #
 
-CREATE TABLE quiz_multichoice (
+CREATE TABLE prefix_quiz_multichoice (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   layout integer NOT NULL default '0',
@@ -99,13 +99,13 @@ CREATE TABLE quiz_multichoice (
   single integer NOT NULL default '0'
 );
 # --------------------------------------------------------
-CREATE INDEX question_quiz_multichoice_idx ON quiz_multichoice (question);
+CREATE INDEX question_quiz_multichoice_idx ON prefix_quiz_multichoice (question);
 
 #
 # Table structure for table quiz_question_grades
 #
 
-CREATE TABLE quiz_question_grades (
+CREATE TABLE prefix_quiz_question_grades (
   id SERIAL PRIMARY KEY,
   quiz integer NOT NULL default '0',
   question integer NOT NULL default '0',
@@ -117,7 +117,7 @@ CREATE TABLE quiz_question_grades (
 # Table structure for table quiz_questions
 #
 
-CREATE TABLE quiz_questions (
+CREATE TABLE prefix_quiz_questions (
   id SERIAL PRIMARY KEY,
   category integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
@@ -131,7 +131,7 @@ CREATE TABLE quiz_questions (
 # Table structure for table quiz_responses
 #
 
-CREATE TABLE quiz_responses (
+CREATE TABLE prefix_quiz_responses (
   id SERIAL PRIMARY KEY,
   attempt integer NOT NULL default '0',
   question integer NOT NULL default '0',
@@ -144,30 +144,30 @@ CREATE TABLE quiz_responses (
 # Table structure for table quiz_shortanswer
 #
 
-CREATE TABLE quiz_shortanswer (
+CREATE TABLE prefix_quiz_shortanswer (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   answers varchar(255) NOT NULL default '',
   usecase integer NOT NULL default '0'
 );
 # --------------------------------------------------------
-CREATE INDEX question_quiz_shortanswer_idx ON quiz_shortanswer (question);
+CREATE INDEX prefix_question_quiz_shortanswer_idx ON quiz_shortanswer (question);
 
 #
 # Table structure for table quiz_truefalse
 #
 
-CREATE TABLE quiz_truefalse (
+CREATE TABLE prefix_quiz_truefalse (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
   "true" integer NOT NULL default '0',
   "false" integer NOT NULL default '0'
 );
-CREATE INDEX question_quiz_truefalse_idx ON quiz_truefalse (question);
+CREATE INDEX prefix_question_quiz_truefalse_idx ON quiz_truefalse (question);
 
 
-INSERT INTO log_display VALUES ('quiz', 'view', 'quiz', 'name');
-INSERT INTO log_display VALUES ('quiz', 'report', 'quiz', 'name');
-INSERT INTO log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
-INSERT INTO log_display VALUES ('quiz', 'submit', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'report', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('quiz', 'submit', 'quiz', 'name');
 

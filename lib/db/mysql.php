@@ -225,6 +225,12 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `user_students` CHANGE `end` `timeend` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
     }
 
+    if ($oldversion < 2002122301) {
+        if (! record_exists_select("log_display", "", "user", "", "view")) {
+            execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname,' ',lastname)') ");
+        }
+    }
+
 
     return true;
 }

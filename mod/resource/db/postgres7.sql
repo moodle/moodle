@@ -14,7 +14,7 @@
 # Table structure for table `resource`
 #
 
-CREATE TABLE resource (
+CREATE TABLE prefix_resource (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
@@ -30,4 +30,4 @@ CREATE TABLE resource (
 # Dumping data for table `log_display`
 #
 
-INSERT INTO log_display VALUES ('resource', 'view', 'resource', 'name');
+INSERT INTO prefix_log_display VALUES ('resource', 'view', 'resource', 'name');

@@ -14,7 +14,7 @@
 # Table structure for table `choice`
 #
 
-CREATE TABLE choice (
+CREATE TABLE prefix_choice (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
@@ -35,7 +35,7 @@ CREATE TABLE choice (
 # Table structure for table `choice_answers`
 #
 
-CREATE TABLE choice_answers (
+CREATE TABLE prefix_choice_answers (
   id SERIAL PRIMARY KEY,
   choice integer NOT NULL default '0',
   userid integer NOT NULL default '0',
@@ -47,10 +47,10 @@ CREATE TABLE choice_answers (
 # Dumping data for table `log_display`
 #
 
-INSERT INTO log_display VALUES ('choice', 'view', 'choice', 'name');
-INSERT INTO log_display VALUES ('choice', 'update', 'choice', 'name');
-INSERT INTO log_display VALUES ('choice', 'add', 'choice', 'name');
-INSERT INTO log_display VALUES ('choice', 'report', 'choice', 'name');
+INSERT INTO prefix_log_display VALUES ('choice', 'view', 'choice', 'name');
+INSERT INTO prefix_log_display VALUES ('choice', 'update', 'choice', 'name');
+INSERT INTO prefix_log_display VALUES ('choice', 'add', 'choice', 'name');
+INSERT INTO prefix_log_display VALUES ('choice', 'report', 'choice', 'name');
 
     
 
