@@ -1,4 +1,4 @@
-<?PHP  // $Id: lib.php,v 1.1 23 Aug 2003
+<?php  // $Id: lib.php,v 1.1 23 Aug 2003
 
 // exercise constants and standard moodle functions plus those functions called directly
 // see locallib.php for other non-standard exercise functions
@@ -86,31 +86,31 @@ function exercise_choose_from_menu ($options, $name, $selected="", $nothing="cho
         $javascript = "";
     }
 
-    $output = "<SELECT NAME=$name $javascript>\n";
+    $output = "<select name=$name $javascript>\n";
     if ($nothing) {
-        $output .= "   <OPTION VALUE=\"$nothingvalue\"\n";
+        $output .= "   <option value=\"$nothingvalue\"\n";
         if ($nothingvalue == $selected) {
             $output .= " SELECTED";
         }
-        $output .= ">$nothing</OPTION>\n";
+        $output .= ">$nothing</option>\n";
     }
     if (!empty($options)) {
         foreach ($options as $value => $label) {
-            $output .= "   <OPTION VALUE=\"$value\"";
+            $output .= "   <option value=\"$value\"";
             if ($value == $selected) {
                 $output .= " SELECTED";
             }
             // stop zero label being replaced by array index value
             // if ($label) {
-            //    $output .= ">$label</OPTION>\n";
+            //    $output .= ">$label</option>\n";
             // } else {
-            //     $output .= ">$value</OPTION>\n";
+            //     $output .= ">$value</option>\n";
             //  }
-            $output .= ">$label</OPTION>\n";
+            $output .= ">$label</option>\n";
             
         }
     }
-    $output .= "</SELECT>\n";
+    $output .= "</select>\n";
 
     if ($return) {
         return $output;
@@ -195,14 +195,14 @@ function exercise_cron() {
             $posttext .= "   $CFG->wwwroot/mod/exercise/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<P><FONT FACE=sans-serif>".
-              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-              "<A HREF=\"$CFG->wwwroot/mod/exercise/index.php?id=$course->id\">$strexercises</A> ->".
-              "<A HREF=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</A></FONT></P>";
-              $posthtml .= "<HR><FONT FACE=sans-serif>";
-              $posthtml .= "<P>$msg</P>";
-              $posthtml .= "<P>".get_string("mail3", "exercise").
-                  " <A HREF=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</A>.</P></FONT><HR>";
+                $posthtml = "<p><font face=\"sans-serif\">".
+              "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+              "<a href=\"$CFG->wwwroot/mod/exercise/index.php?id=$course->id\">$strexercises</a> ->".
+              "<a href=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</a></font></p>";
+              $posthtml .= "<hr /><font face=\"sans-serif\">";
+              $posthtml .= "<p>$msg</p>";
+              $posthtml .= "<p>".get_string("mail3", "exercise").
+                  " <a href=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</a>.</p></font><hr />";
             } else {
               $posthtml = "";
             }
@@ -709,8 +709,8 @@ function exercise_print_submission_title($exercise, $submission) {
             } else {
                 $ffurl = "file.php?file=/$filearea/$file";
             }
-            return "<IMG SRC=\"$CFG->pixpath/f/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">".
-                "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/$ffurl\">$submission->title</A>";
+            return "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"File\">".
+                "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$submission->title</a>";
         }
     }
 }

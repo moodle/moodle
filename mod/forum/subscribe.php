@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 //  Subscribe to or unsubscribe from a forum.
 

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 require_once("../../config.php");
 require_once("lib.php");
@@ -78,8 +78,8 @@ if ( $confirm ) {
         }
 
         print_header_simple(strip_tags("$glossary->name"), "",
-             "<A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
-              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
+             "<a href=\"index.php?id=$course->id\">$strglossaries</a> ->
+              <a href=\"view.php?id=$cm->id\">$glossary->name</a> -> $stredit", "form.text",
               "", true, "", navmenu($course, $cm));
 
         print_heading($glossary->name);
@@ -272,8 +272,8 @@ if ($usehtmleditor = can_use_richtext_editor()) {
 }
 
 print_header_simple(strip_tags("$glossary->name"), "",
-             "<A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
-              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "",
+             "<a href=\"index.php?id=$course->id\">$strglossaries</a> ->
+              <a href=\"view.php?id=$cm->id\">$glossary->name</a> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
 
 $ineditperiod = ((time() - $newentry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);

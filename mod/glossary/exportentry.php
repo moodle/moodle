@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
     require_once("../../config.php");
     require_once("lib.php");
 
@@ -43,7 +43,7 @@
     $entryexported = get_string("entryexported","glossary");
 
     print_header_simple("$glossary->name", "",
-                 "<A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
+                 "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
                   "", "", true, "",
                   navmenu($course, $cm));
 
@@ -53,7 +53,7 @@
         if ( !$confirm ) {
             echo "<center>";
             $areyousure = get_string("areyousureexport","glossary");
-            notice_yesno ("<center><h2>$entry->concept</h2><p align=center>$areyousure<br /><b>$mainglossary->name</b>?",
+            notice_yesno ("<center><h2>$entry->concept</h2><p align=\"center\">$areyousure<br /><b>$mainglossary->name</b>?",
                 "exportentry.php?id=$id&mode=$mode&hook=$hook&entry=$entry->id&confirm=1",
                 "view.php?id=$cm->id&mode=$mode&hook=$hook" );
 
@@ -73,7 +73,7 @@
                     error("Could not export the entry to the main glossary");
                 } else {
                     print_simple_box_start("center", "60%", "$THEME->cellheading");
-                    echo "<p align=center><font size=3>$entryexported</font></p></font>";
+                    echo "<p align=\"center\"><font size=\"3\">$entryexported</font></p></font>";
 
                     print_continue("view.php?id=$cm->id&mode=entry&hook=".$entry->id);
                     print_simple_box_end();
@@ -85,8 +85,8 @@
                 }
             } else {
                 print_simple_box_start("center", "60%", "#FFBBBB");
-                echo "<p align=center><font size=3>$entryalreadyexist</font></p></font>";
-                echo "<p align=center>";
+                echo "<p align=\"center\"><font size=\"3\">$entryalreadyexist</font></p></font>";
+                echo "<p align=\"center\">";
 
                 print_continue("view.php?id=$cm->id&mode=entry&hook=".$entry->id);
 

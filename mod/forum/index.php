@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -268,7 +268,7 @@
 
     if ($course->category) {
         print_header("$course->shortname: $strforums", "$course->fullname",
-                    "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> $strforums",
+                    "<a href=../../course/view.php?id=$course->id>$course->shortname</a> -> $strforums",
                     "", "", true, $searchform, navmenu($course));
     } else {
         print_header("$course->shortname: $strforums", "$course->fullname", "$strforums", 

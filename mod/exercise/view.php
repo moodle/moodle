@@ -1,4 +1,4 @@
-<?PHP  // $Id: view.php, v1.1 23 Aug 2003
+<?php  // $Id: view.php, v1.1 23 Aug 2003
 
 /*************************************************
     ACTIONS handled are:
@@ -44,7 +44,7 @@
 
     // ...display header...
     print_header_simple("$exercise->name", "",
-                 "<A HREF=index.php?id=$course->id>$strexercises</A> -> $exercise->name", 
+                 "<a href=\"index.php?id=$course->id\">$strexercises</a> -> $exercise->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strexercise), navmenu($course, $cm));
 
     // ...and if necessary set default action 
@@ -87,12 +87,12 @@
             echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submissions", "exercise")."</b></td>";
             echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessment", "exercise")."</b></td>";
             echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", "exercise", $course->teacher)."</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></TR>\n";
+            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></tr>\n";
             // now the weights
-            echo "<TR><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("maximumgrade")."</b></td>";
+            echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("maximumgrade")."</b></td>";
             echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->gradinggrade</b></td>\n";
             echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->grade</b></td>\n";
-            echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td></TR>\n";
+            echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td></tr>\n";
             // first get user's own assessment reord, it should contain their grading grade
             if ($ownassessments = exercise_get_user_assessments($exercise, $USER)) {
                 foreach ($ownassessments as $ownassessment) {
@@ -114,15 +114,15 @@
                             $grade = "<font color=\"red\">(".$grade.")</font>";
                             $overallgrade = "<font color=\"red\">(".$overallgrade.")</font>";
                         }
-                        echo "<TR><td>".exercise_print_submission_title($exercise, $submission)."</td>\n";
+                        echo "<tr><td>".exercise_print_submission_title($exercise, $submission)."</td>\n";
                         echo "<td align=\"center\">$gradinggrade</td>";
                         echo "<td align=\"center\">$grade</td>";
-                        echo "<td align=\"center\">$overallgrade</td></TR>\n";
+                        echo "<td align=\"center\">$overallgrade</td></tr>\n";
                     }
                 }
             }
         }
-        echo "</TABLE><BR CLEAR=ALL>\n";
+        echo "</table><br clear=\"all\">\n";
         if ($exercise->showleaguetable) {
             exercise_print_league_table($exercise);
         }
@@ -318,7 +318,7 @@
         // list previous submissions from this user
         exercise_list_user_submissions($exercise, $USER);
     
-        echo "<HR SIZE=1 NOSHADE>";
+        echo "<hr size=\"1\" NOSHADE>";
     
         // print upload form
         print_heading(get_string("submitexercisedescription", "exercise").":");
@@ -392,11 +392,11 @@
                           exercise_count_unassessed_student_submissions($exercise))."</a></b> \n";
                     helpbutton("grading", get_string("studentsubmissionsforassessment", "exercise"), 
                             "exercise");
-                    print_heading("<A HREF=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
-                          get_string("displayoffinalgrades", "exercise")."</A>");
+                    print_heading("<a href=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
+                          get_string("displayoffinalgrades", "exercise")."</a>");
         }
-        print_heading("<A HREF=\"submissions.php?id=$cm->id&action=adminlist\">".
-            get_string("administration")."</A>");
+        print_heading("<a href=\"submissions.php?id=$cm->id&action=adminlist\">".
+            get_string("administration")."</a>");
     }
     
     

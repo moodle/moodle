@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
     //This file adds support to rss feeds generation
 
     //This function is the main entry point to glossary

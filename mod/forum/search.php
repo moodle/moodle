@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -39,7 +39,7 @@
 
     if (!$search) {
         print_header_simple("$strsearch", "",
-                 "<A HREF=\"index.php?id=$course->id\">$strforums</A> -> $strsearch", "search.search",
+                 "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", "search.search",
                   "", "", "&nbsp;", navmenu($course));
 
         print_simple_box_start("center");

@@ -1,4 +1,4 @@
-<FORM name="form" method="post" action="comment.php">
+<form name="form" method="post" action="comment.php">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <tr valign=top>
     <td align=right><p><b>
@@ -9,9 +9,9 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" valign="center" nowrap>
+    <td align="right" valign="center" nowrap="nowrap">
     
-    <font SIZE="1">
+    <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -58,7 +58,7 @@
 
 	<input type="submit" value="<?php print_string("savechanges") ?>" />
 	<input type="reset" value="<?php print_string("revert") ?>" />
-	</P>
+	</p>
 </td>
 </tr>
 </table>

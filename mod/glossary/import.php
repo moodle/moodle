@@ -45,7 +45,7 @@
     $strsearch = get_string("search");
     
     print_header_simple(strip_tags("$glossary->name"), "",
-        "<A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
+        "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
     
@@ -316,20 +316,20 @@
             }
         }
         // processed entries
-        echo '<table border=0 width=100%>';
+        echo '<table border="0" width="100%">';
         echo '<tr>';
-        echo '<td width=50% align=right>';
+        echo '<td width="50%" align="right">';
         echo get_string("totalentries","glossary");
         echo ':</td>';
-        echo '<td width=50%>';
+        echo '<td width="50%">';
         echo $importedentries + $entriesrejected;
         echo '</td>';
         echo '</tr>';
         echo '<tr>';
-        echo '<td width=50% align=right>';
+        echo '<td width="50%" align="right">';
         echo get_string("importedentries","glossary");
         echo ':</td>';
-        echo '<td width=50%>';
+        echo '<td width="50%">';
         echo $importedentries;
         if ( $entriesrejected ) {
             echo ' <small>(' . get_string("rejectedentries","glossary") . ": $entriesrejected)</small>";
@@ -338,22 +338,22 @@
         echo '</tr>';
         if ( $catsincl ) {
             echo '<tr>';
-            echo '<td width=50% align=right>';
+            echo '<td width="50%" align="right">';
             echo get_string("importedcategories","glossary");
             echo ':</td>';
-            echo '<td width=50%>';
+            echo '<td width="50%">';
             echo $importedcats;
             echo '</td>';
             echo '</tr>';
         }
-        echo '</table><hr width=75%>';
+        echo '</table><hr width="75%">';
 
         // rejected entries 
         if ($rejections) {
-            echo '<center><table border=0 width=70%>';
-            echo '<tr><td align=center colspan=2 width=100%><strong>' . get_string("rejectionrpt","glossary") . '</strong></tr>';
+            echo '<center><table border="0" width="70%">';
+            echo '<tr><td align="center" colspan="2" width="100%"><strong>' . get_string("rejectionrpt","glossary") . '</strong></tr>';
             echo $rejections;
-            echo '</table></center><p><hr width=75%>';
+            echo '</table></center><p><hr width="75%">';
         }
     } else {
         notify("Error while trying to read the file.");

@@ -49,7 +49,7 @@
 
         $hiddenentries = get_records_select("glossary_entries","glossaryid  = $glossary->id and approved = 0");
         if ($hiddenentries) {
-            $data[GLOSSARY_APPROVAL_VIEW]->caption .= "<br /><font size=1>(" . count($hiddenentries) . " " . get_string("entries","glossary") . ")</font>";
+            $data[GLOSSARY_APPROVAL_VIEW]->caption .= "<br /><font size=\"1\">(" . count($hiddenentries) . " " . get_string("entries","glossary") . ")</font>";
             $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_APPROVAL_VIEW;
 
             $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&mode=approval";

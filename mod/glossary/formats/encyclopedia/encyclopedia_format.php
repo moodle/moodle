@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {
     global $THEME, $CFG, $USER;
@@ -8,25 +8,25 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
     $user = get_record("user", "id", $entry->userid);
     $strby = get_string("writtenby", "glossary");
 
-    echo "\n<br /><table border=0 width=95% cellspacing=0 valign=top cellpadding=3 class=forumpost align=center>";
+    echo "\n<br /><table border=\"0\" width=\"95%\" cellspacing=\"0\" valign=\"top\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">";
 
     echo "\n<tr>";
-    echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostpicture\">";
+    echo "\n<td bgcolor=\"$colour\" width=\"35\" valign=\"top\" class=\"forumpostpicture\">";
     $return = false;
     if ($entry) {
         print_user_picture($user->id, $course->id, $user->picture);
     
         echo "</td>";
-        echo "<td valign=\"top\" width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+        echo "<td valign=\"top\" width=\"100%\" bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
         echo "<b>";
         glossary_print_entry_concept($entry);
         echo "</b><br />";
     
         echo "<font size=\"2\">$strby " . fullname($user, isteacher($course->id)) . "</font>";
-        echo "&nbsp;&nbsp;<font size=1>(".get_string("lastedited").": ".
+        echo "&nbsp;&nbsp;<font size=\"1\">(".get_string("lastedited").": ".
              userdate($entry->timemodified).")</font>";
         echo "</td>";
-        echo "\n<td bgcolor=\"$THEME->cellheading\" width=35 valign=top class=\"forumpostheader\">";
+        echo "\n<td bgcolor=\"$THEME->cellheading\" width=\"35\" valign=\"top\" class=\"forumpostheader\">";
 
         glossary_print_entry_approval($cm, $entry, $mode);
         echo "</td>";
@@ -34,8 +34,8 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo "</tr>";
 
         echo "\n<tr>";
-        echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostside\">&nbsp;</td>";
-        echo "\n<td width=100% colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
+        echo "\n<td bgcolor=\"$colour\" width=\"35\" valign=\"top\" class=\"forumpostside\">&nbsp;</td>";
+        echo "\n<td width=\"100%\" colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
 
         if ($entry->attachment) {
             $entry->course = $course->id;

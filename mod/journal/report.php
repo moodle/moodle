@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -134,8 +134,8 @@
 
         if ($allowedtograde) {
             echo "<center>";
-            echo "<input type=hidden name=id value=\"$cm->id\" />";
-            echo "<input type=submit value=\"".get_string("saveallfeedback", "journal")."\" />";
+            echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
+            echo "<input type=\"submit\" value=\"".get_string("saveallfeedback", "journal")."\" />";
             echo "</center>";
             echo "</form>";
         }

@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -122,7 +122,7 @@
             $streveryoneissubscribed = get_string("everyoneissubscribed", "forum");
             $strallowchoice = get_string("allowchoice", "forum");
             helpbutton("subscription", $streveryoneissubscribed, "forum");
-            echo "<font size=1>";
+            echo "<font size=\"1\">";
             if (isteacher($course->id)) {
                 echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&force=no\">$streveryoneissubscribed</a>";
             } else {
@@ -136,11 +136,11 @@
             $strshowsubscribers = get_string("showsubscribers", "forum");
 
             helpbutton("subscription", $streveryonecanchoose, "forum");
-            echo "<font size=1>";
+            echo "<font size=\"1\">";
 
             if (isteacher($course->id)) {
                 echo "<a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&force=yes\">$streveryonecanchoose</a>";
-                echo "</font><br /><font size=1>";
+                echo "</font><br /><font size=\"1\">";
                 echo "<a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a>";
             } else {
                 echo $streveryonecanchoose;
@@ -155,7 +155,7 @@
                 $subtext = get_string("subscribe", "forum");
             }
             echo "<br />";
-            echo "<font size=1><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></font>";
+            echo "<font size=\"1\"><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></font>";
         }
 
         //If rss are activated at site and forum level and this forum has rss defined, show link

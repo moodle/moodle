@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
       // Import quiz questions into the given category
 
     require_once("../../config.php");
@@ -30,7 +30,7 @@
     $strlessons = get_string("modulenameplural", "lesson");
 
     print_header_simple("$strimportquestions", " $strimportquestions",
-                 "<A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>-> $strimportquestions");
+                 "<a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>-> $strimportquestions");
 
     if ($form = data_submitted()) {   /// Filename
 
@@ -96,23 +96,23 @@
     print_heading_with_help($strimportquestions, "import", "lesson");
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=import.php>";
+    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"import.php\">";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
     echo "<input type=\"hidden\" name=\"pageid\" value=\"".$_GET['pageid']."\" />\n";
-    echo "<table cellpadding=5>";
+    echo "<table cellpadding=\"5\">";
 
-    echo "<tr><td align=right>";
+    echo "<tr><td align=\"right\">";
     print_string("fileformat", "lesson");
     echo ":</td><td>";
     choose_from_menu($fileformatnames, "format", "gift", "");
     echo "</tr>";
 
-    echo "<tr><td align=right>";
+    echo "<tr><td align=\"right\">";
     print_string("upload");
     echo ":</td><td>";
     echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
     echo "</tr><tr><td>&nbsp;</td><td>";
-    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\" />";
+    echo " <input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
     echo "</td></tr>";
 
     echo "</table>";

@@ -1,4 +1,4 @@
-<?PHP  // $Id: submissions.php,v 1.0 22 Aug 2003
+<?php  // $Id: submissions.php,v 1.0 22 Aug 2003
 
 /*************************************************
     ACTIONS handled are:
@@ -47,8 +47,8 @@
 
     // ... print the header and...
     print_header_simple("$exercise->name", "",
-                 "<A HREF=index.php?id=$course->id>$strexercises</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$exercise->name</A> -> $strsubmissions", 
+                 "<a href=\"index.php?id=$course->id\">$strexercises</a> -> 
+                  <a href=\"view.php?id=$cm->id\">$exercise->name</a> -> $strsubmissions", 
                   "", "", true);
 
     //...get the action!
@@ -70,19 +70,19 @@
         ?>
         <form name="amendtitleform" action="submissions.php" method="post">
         <input type="hidden" name="action" value="adminupdatetitle">
-        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
-        <input type="hidden" name="sid" value="<?PHP echo $_REQUEST['sid'] ?>">
+        <input type="hidden" name="id" value="<?php echo $cm->id ?>">
+        <input type="hidden" name="sid" value="<?php echo $_REQUEST['sid'] ?>">
         <center>
         <table celpadding="5" border="1">
-        <?PHP
+        <?php
 
         // now get the comment
         echo "<tr valign=\"top\">\n";
-        echo "    <td align=\"right\"><P><B>". get_string("title", "exercise").":</b></p></td>\n";
+        echo "    <td align=\"right\"><p><b>". get_string("title", "exercise").":</b></p></td>\n";
         echo "    <td>\n";
         echo "        <input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\">\n";
         echo "    </td></tr></table>\n";
-        echo "<input type=submit VALUE=\"".get_string("amendtitle", "exercise")."\">\n";
+        echo "<input type=\"submit\" value=\"".get_string("amendtitle", "exercise")."\">\n";
         echo "</center></form>\n";
 
         }
@@ -239,7 +239,7 @@
         echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submission", "exercise")."</b></td>";
         echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessment", "exercise")."</b></td>";
         echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", "exercise")."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></TR>\n";
+        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></tr>\n";
         // now the weights
         echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("maximumgrade")."</b></td>";
         echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td>\n";

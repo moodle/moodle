@@ -68,7 +68,7 @@
     $strcomments = get_string("comments", "glossary");
 
     print_header_simple(strip_tags("$glossary->name"), "",
-            "<A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id>$glossary->name</a> -> <A HREF=comments.php?id=$cm->id&eid=$entry->id>$strcomments</a> -> " . $straction,
+            "<a href=index.php?id=$course->id>$strglossaries</a> -> <a href=view.php?id=$cm->id>$glossary->name</a> -> <a href=comments.php?id=$cm->id&eid=$entry->id>$strcomments</a> -> " . $straction,
             "", "", true, update_module_button($cm->id, $course->id, $strglossary),
             navmenu($course, $cm));
     

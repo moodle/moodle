@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 function forum_upgrade($oldversion) {
 // This function does anything necessary to upgrade
@@ -39,7 +39,7 @@ function forum_upgrade($oldversion) {
 
   if ($oldversion < 2002091000) {
     if (! execute_sql(" ALTER TABLE `forum_posts` ADD `attachment` VARCHAR(100) NOT NULL AFTER `message` ")) {
-      echo "<P>Don't worry about this error - your server already had this upgrade applied";
+      echo "<p>Don't worry about this error - your server already had this upgrade applied";
     }
   }
 

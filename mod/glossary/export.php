@@ -42,7 +42,7 @@
     }
 
     print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-        "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
+        "$navigation <a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
     
@@ -72,5 +72,5 @@
     } else {
         $ffurl = "../../file.php?file=$ffurl";
     }
-    echo '<p><center><a href="' . $ffurl . '" target=_blank>' . get_string("exportedfile","glossary") .  '</a></center><p>'
+    echo '<p><center><a href="' . $ffurl . '" target="_blank">' . get_string("exportedfile","glossary") .  '</a></center><p>'
 ?>

@@ -1,4 +1,4 @@
-<?PHP  // $Id: upload.php, v1.0 30th April 2003
+<?php  // $Id: upload.php, v1.0 30th April 2003
 
     require("../../config.php");
     require("lib.php");
@@ -29,8 +29,8 @@
     $strupload      = get_string("upload");
 
     print_header_simple("$exercise->name : $strupload", "",
-                 "<A HREF=index.php?id=$course->id>$strexercises</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$exercise->name</A> -> $strupload", 
+                 "<a href=\"index.php?id=$course->id\">$strexercises</a> -> 
+                  <a href=\"view.php?id=$cm->id\">$exercise->name</a> -> $strupload", 
                   "", "", true);
 
     // check that this is not a "rapid" second submission, caused by using the back button

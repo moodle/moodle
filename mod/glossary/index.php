@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 /// This page lists all the instances of glossary in a particular course
 /// Replace glossary with the name of your module
@@ -68,10 +68,10 @@
     foreach ($glossarys as $glossary) {
         if (!$glossary->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$glossary->coursemodule\">$glossary->name</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<A HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
+            $link = "<a href=\"view.php?id=$glossary->coursemodule\">$glossary->name</a>";
         }
         $printsection = "";
         if ($glossary->section !== $currentsection) {

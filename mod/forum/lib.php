@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 require_once("$CFG->dirroot/files/mimetypes.php");
 
@@ -647,7 +647,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
         }
 
     } else {
-        echo "<P>".get_string("noposts", "forum")."</P>";
+        echo "<p>".get_string("noposts", "forum")."</p>";
     }
 }
 
@@ -720,7 +720,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 }
                 $date = userdate($post->modified, $strftimerecent);
                 $fullname = fullname($post, $isteacher);
-                echo "<p $teacheronly><font size=1>$date - $fullname<br />";
+                echo "<p $teacheronly><font size=\"1\">$date - $fullname<br />";
                 echo "\"<a href=\"$CFG->wwwroot/mod/forum/$log->url\">";
                 if (!empty($CFG->filterall)) {
                     $post->subject = filter_text("<nolink>$post->subject</nolink>", $course->id);
@@ -1349,13 +1349,13 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= "</td>";
 
     if ($post->parent) {
-        $output .= "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+        $output .= "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
     } else {
-        $output .= "<td nowrap bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\">";
+        $output .= "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\">";
     }
     $output .= "<p>";
-    $output .= "<font size=3><b>$post->subject</b></font><br />";
-    $output .= "<font size=2>";
+    $output .= "<font size=\"3\"><b>$post->subject</b></font><br />";
+    $output .= "<font size=\"2\">";
 
     $fullname = fullname($user, isteacher($course->id));
     $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a>";
@@ -1370,14 +1370,14 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     if ($post->attachment) {
         $post->course = $course->id;
         $post->forum = get_field("forum_discussions", "forum", "id", $post->discussion);
-        $output .= "<div align=right>";
+        $output .= "<div align=\"right\">";
         $output .= forum_print_attachments($post, "html");
         $output .= "</div>";
     }
 
     $output .= $formattedtext;
 
-    $output .= "<p align=right><font size=-1>";
+    $output .= "<p align=\"right\"><font size=-1>";
 
     if ($post->parent) {
         $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">".get_string("parent", "forum")."</a> | ";
@@ -1397,7 +1397,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     }
 
     $output .= "</p>";
-    $output .= "<div align=right><p align=right>";
+    $output .= "<div align=\"right\"><p align=\"right\">";
 
     if ($link) {
         if ($post->replies == 1) {
@@ -1405,7 +1405,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         } else {
             $replystring = get_string("repliesmany", "forum", $post->replies);
         }
-        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>".get_string("discussthistopic", "forum")."</b></a> ($replystring)&nbsp;&nbsp;";
+        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><b>".get_string("discussthistopic", "forum")."</b></a> ($replystring)&nbsp;&nbsp;";
     }
     $output .= "</p></div>";
     if ($footer) {
@@ -1457,8 +1457,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $post->subject = filter_text("<nolink>$post->subject</nolink>", $courseid);
     }
     echo "<p>";
-    echo "<font size=3><b>$post->subject</b></font><br />";
-    echo "<font size=2>";
+    echo "<font size=\"3\"><b>$post->subject</b></font><br />";
+    echo "<font size=\"2\">";
 
     $fullname = fullname($post, $isteacher);
     $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$fullname</a>";
@@ -1529,11 +1529,11 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     if ($reply) {
         $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>";
     }
-    echo "<p align=right><font size=-1>";
+    echo "<p align=\"right\"><font size=-1>";
     echo implode(' | ', $commands).'&nbsp;&nbsp;';
     echo "</font></p>";
 
-    echo "<div align=right><p align=right>";
+    echo "<div align=\"right\"><p align=\"right\">";
 
     $ratingsmenuused = false;
     if (!empty($ratings) and !empty($USER->id)) {
@@ -1604,23 +1604,23 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
     echo "</td>\n";
 
     // Picture
-    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderpicture\" width=35>";
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderpicture\" width=\"35\">";
     print_user_picture($post->userid, $forum->course, $post->picture);
     echo "</td>\n";
 
     // User name
     $fullname = fullname($post, isteacher($forum->course));
-    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheadername\" align=left nowrap>";
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheadername\" align=\"left\" nowrap=\"nowrap\">";
     echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$forum->course\">$fullname</a>";
     echo "</td>\n";
 
     if ($forum->open or $forum->type == "teacher") {   // Show the column with replies
-        echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderreplies\" align=center nowrap>";
+        echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderreplies\" align=\"center\" nowrap=\"nowrap\">";
         echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->replies</a>";
         echo "</td>\n";
     }
 
-    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=right nowrap>";
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=\"right\" nowrap=\"nowrap\">";
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&parent='.$post->lastpostid;
     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.$parenturl.'">'.
@@ -1812,23 +1812,23 @@ function forum_print_search_form($course, $search="", $return=false, $type="") {
     global $CFG;
 
     if ($type == "plain") {
-        $output = "<table border=0 cellpadding=0 cellspacing=0><tr><td nowrap>";
-        $output .= "<form name=search action=\"$CFG->wwwroot/mod/forum/search.php\">";
+        $output = "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td nowrap=\"nowrap\">";
+        $output .= "<form name=\"search\" action=\"$CFG->wwwroot/mod/forum/search.php\">";
         $output .= "<font size=\"-1\">";
-        $output .= "<input name=search type=text size=15 value=\"$search\">";
-        $output .= "<input value=\"".get_string("searchforums", "forum")."\" type=submit>";
+        $output .= "<input name=\"search\" type=\"text\" size=\"15\" value=\"$search\">";
+        $output .= "<input value=\"".get_string("searchforums", "forum")."\" type=\"submit\">";
         $output .= "</font>";
-        $output .= "<input name=id type=hidden value=\"$course->id\">";
+        $output .= "<input name=\"id\" type=\"hidden\" value=\"$course->id\">";
         $output .= "</form>";
         $output .= "</td></tr></table>";
     } else {
-        $output = "<table border=0 cellpadding=10 cellspacing=0><tr><td align=center>";
-        $output .= "<form name=search action=\"$CFG->wwwroot/mod/forum/search.php\">";
+        $output = "<table border=\"0\" cellpadding=\"10\" cellspacing=\"0\"><tr><td align=\"center\">";
+        $output .= "<form name=\"search\" action=\"$CFG->wwwroot/mod/forum/search.php\">";
         $output .= "<font size=\"-1\">";
-        $output .= "<input name=search type=text size=15 value=\"$search\"><br />";
-        $output .= "<input value=\"".get_string("searchforums", "forum")."\" type=submit>";
+        $output .= "<input name=\"search\" type=\"text\" size=\"15\" value=\"$search\"><br />";
+        $output .= "<input value=\"".get_string("searchforums", "forum")."\" type=\"submit\">";
         $output .= "</font>";
-        $output .= "<input name=id type=hidden value=\"$course->id\">";
+        $output .= "<input name=\"id\" type=\"hidden\" value=\"$course->id\">";
         $output .= "</form>";
         $output .= "</td></tr></table>";
     }
@@ -2231,7 +2231,7 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
             } else {
                 $discussion->replies = 0;
             }
-            $inforum = get_string("inforum", "forum", "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$discussion->forumid\">$discussion->forumname</A>");
+            $inforum = get_string("inforum", "forum", "<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$discussion->forumid\">$discussion->forumname</a>");
             $discussion->subject .= " ($inforum)";
             if (!empty($USER->id)) {
                 $ownpost = ($discussion->userid == $USER->id);
@@ -2239,7 +2239,7 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
                 $ownpost = false;
             }
             forum_print_post($discussion, $courseid, $ownpost, $reply=0, $link=1, $assessed=false);
-            echo "<BR>\n";
+            echo "<br />\n";
         }
     }
 }
@@ -2384,7 +2384,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
     
 
     if (forum_user_can_post_discussion($forum, $currentgroup)) {
-        echo "<p align=center>";
+        echo "<p align=\"center\">";
         echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">";
         if ($forum->type == "news") {
             echo get_string("addanewtopic", "forum")."</a>...";
@@ -2420,9 +2420,9 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
 
     if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $visiblegroups) ) {
         if ($forum->type == "news") {
-            echo "<p align=center><b>(".get_string("nonews", "forum").")</b></p>";
+            echo "<p align=\"center\"><b>(".get_string("nonews", "forum").")</b></p>";
         } else {
-            echo "<p align=center><b>(".get_string("nodiscussions", "forum").")</b></p>";
+            echo "<p align=\"center\"><b>(".get_string("nodiscussions", "forum").")</b></p>";
         }
         return;
     }
@@ -2462,10 +2462,10 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
     }
 
     if ($forum_style == "header") {
-        echo "<table width=\"100%\" border=0 cellpadding=3 cellspacing=1 class=\"forumheaderlist\">";
+        echo "<table width=\"100%\" border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"forumheaderlist\">";
         echo "<tr class=\"forumpostheader\">";
         echo "<th>".get_string("discussion", "forum")."</th>";
-        echo "<th colspan=2>".get_string("startedby", "forum")."</th>";
+        echo "<th colspan=\"2\">".get_string("startedby", "forum")."</th>";
         if ($forum->open or $forum->type == "teacher") {
             echo "<th>".get_string("replies", "forum")."</th>";
         }
@@ -2579,8 +2579,8 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
             $ratings->assesstimefinish = $forum->assesstimefinish;
             $ratings->allow = ($forum->assessed != 2 or isteacher($course->id));
 
-            echo "<form name=form method=post action=rate.php>";
-            echo "<input type=hidden name=id value=\"$course->id\">";
+            echo "<form name=\"form\" method=\"post\" action=\"rate.php\">";
+            echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\">";
         }
     }
 
@@ -2801,7 +2801,7 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "height=16 width=16 alt=\"$activity->name\">  ";
+             "height=\"16\" width=\"16\" alt=\"$activity->name\">  ";
     }
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=" . $activity->content->discussion
          . "#" . $activity->content->id . "\">";

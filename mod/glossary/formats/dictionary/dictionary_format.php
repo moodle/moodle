@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {
 
@@ -6,7 +6,7 @@ function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode="
 
     $colour = $THEME->cellheading2;
 
-    echo "\n<table border=0 width=95% cellspacing=0 valign=top cellpadding=3 class=forumpost align=center>\n";
+    echo "\n<table border=\"0\" width=\"95%\" cellspacing=\"0\" valign=\"top\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">\n";
     echo "<tr>\n";
     echo "<td width=\"100%\" valign=\"top\" bgcolor=\"#FFFFFF\">\n";
     glossary_print_entry_approval($cm, $entry, $mode);

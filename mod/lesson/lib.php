@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// Library of functions and constants for module lesson
 /// (replace lesson with the name of your module and delete this line)
@@ -93,31 +93,31 @@ function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choos
         $javascript = "";
     }
 
-    $output = "<SELECT NAME=$name $javascript>\n";
+    $output = "<select name=$name $javascript>\n";
     if ($nothing) {
-        $output .= "   <OPTION VALUE=\"$nothingvalue\"\n";
+        $output .= "   <option value=\"$nothingvalue\"\n";
         if ($nothingvalue == $selected) {
             $output .= " SELECTED";
         }
-        $output .= ">$nothing</OPTION>\n";
+        $output .= ">$nothing</option>\n";
     }
     if (!empty($options)) {
         foreach ($options as $value => $label) {
-            $output .= "   <OPTION VALUE=\"$value\"";
+            $output .= "   <option value=\"$value\"";
             if ($value == $selected) {
                 $output .= " SELECTED";
             }
             // stop zero label being replaced by array index value
             // if ($label) {
-            //    $output .= ">$label</OPTION>\n";
+            //    $output .= ">$label</option>\n";
             // } else {
-            //     $output .= ">$value</OPTION>\n";
+            //     $output .= ">$value</option>\n";
             //  }
-            $output .= ">$label</OPTION>\n";
+            $output .= ">$label</option>\n";
             
         }
     }
-    $output .= "</SELECT>\n";
+    $output .= "</select>\n";
 
     if ($return) {
         return $output;

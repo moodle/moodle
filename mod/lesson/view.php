@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// This page prints a particular instance of lesson
 /// (Replace lesson with the name of your module)
@@ -30,7 +30,7 @@
     $strlesson  = get_string("modulename", "lesson");
 
     print_header_simple("$lesson->name", "",
-                 "<A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>",
+                 "<a href=index.php?id=$course->id>$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>",
                   "", "", true, update_module_button($cm->id, $course->id, $strlesson),
                   navmenu($course, $cm));
 
@@ -421,15 +421,15 @@
             // if there are no pages give teacher a blank proforma
             ?>
             <form name="form" method="post" action="lesson.php">
-            <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
+            <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
             <input type="hidden" name="action" value="insertpage" />
             <input type="hidden" name="pageid" value="0" />
-            <center><table cellpadding=5 border=1>
+            <center><table cellpadding="5" border="1">
             <tr><td align="center">
             <tr valign="top">
             <td><p><b><?php print_string("pagetitle", "lesson"); ?>:</b></p></td></tr>
             <tr><td><input type="text" name="title" size="80" maxsize="255" value="" /></td></tr>
-            <?PHP
+            <?php
             echo "<tr><td><b>";
             echo get_string("pagecontents", "lesson").":</b><br />\n";
             print_textarea($usehtmleditor, 25, 70, 630, 400, "contents");
@@ -464,7 +464,7 @@
             <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
             </center>
             </form>
-            <?PHP
+            <?php
             use_html_editor("contents"); // Lets give IE more time load the page before replacing textarea.
             // show import link
             print_heading("<a href=\"import.php?id=$cm->id&pageid=0\">".get_string("importquestions",
@@ -491,12 +491,12 @@
                 if (isteacheredit($course->id)) {
                     if ($npages > 1) {
                         echo "<a title=\"".get_string("move")."\" href=\"lesson.php?id=$cm->id&action=move&pageid=$page->id\">\n".
-                            "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 border=0></a>\n";
+                            "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a>\n";
                     }
                     echo "<a title=\"".get_string("update")."\" href=\"lesson.php?id=$cm->id&action=editpage&pageid=$page->id\">\n".
-                        "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 border=0></a>\n".
+                        "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a>\n".
                         "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&action=confirmdelete&pageid=$page->id\">\n".
-                        "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 border=0></a>\n";
+                        "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a>\n";
                     }
                     echo "</td></tr>\n";
                 echo "<tr><td colspan=\"2\">\n";

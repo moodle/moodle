@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {
 

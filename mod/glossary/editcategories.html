@@ -1,18 +1,18 @@
-<?PHP  // $Id$
+<?php  // $Id$
 	global $CFG, $THEME;
     require_once("../../config.php");
 ?>
 <center>
-<FORM name="form" method="post" action="editcategories.php">
-<table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
-<tr valign=top>
-    <td align=right><p><b><?php echo get_string("name") ?>:</b></p></td>
+<form name="form" method="post" action="editcategories.php">
+<table  class="generalbox" cellpadding="5" bgcolor="<?php p($THEME->cellheading)?>">
+<tr valign="top">
+    <td align="right"><p><b><?php echo get_string("name") ?>:</b></p></td>
     <td>
-        <INPUT type="text" name="name" size=30 value="<?php p($name) ?>" />
+        <input type="text" name="name" size="30" value="<?php p($name) ?>" />
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php echo get_string("linkcategory","glossary") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php echo get_string("linkcategory","glossary") ?>:</b></p></td>
     <td>
       <select size="1" name="usedynalink">
       <option value="1" <?php
@@ -29,16 +29,16 @@
       </select> <?php helpbutton("linkcategory", get_string("linkcategory", "glossary"), "glossary") ?>
     </td>
 </tr>
-<td colspan=2>
-	<p align=center>
-	<input type="hidden" name=id value="<?php p($cm->id) ?>" />
-	<input type="hidden" name=action value="<?php p($action) ?>" />
-	<input type="hidden" name=confirm value=1 />
-	<input type="hidden" name=mode value='cat' />
-	<input type="hidden" name=hook value="<?php p($hook) ?>" />
+<td colspan="2">
+	<p align="center">
+	<input type="hidden" name="id" value="<?php p($cm->id) ?>" />
+	<input type="hidden" name="action" value="<?php p($action) ?>" />
+	<input type="hidden" name="confirm" value="1" />
+	<input type="hidden" name="mode" value='cat' />
+	<input type="hidden" name="hook" value="<?php p($hook) ?>" />
 	<input type="submit" value="<?php print_string("savechanges") ?>" />
 	<input type="reset" value="<?php print_string("back","glossary") ?>"  onclick="javascript:history.go(-1);" />
-	</P>
+	</p>
 </td>
 </tr>
 </table>

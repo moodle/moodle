@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
 
@@ -76,8 +76,8 @@
     }
 
     print_header_simple("$journal->name", "",
-                 "<A HREF=\"index.php?id=$course->id\">$strjournals</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$journal->name</A> -> $stredit", "",
+                 "<a href=\"index.php?id=$course->id\">$strjournals</a> -> 
+                  <a href=\"view.php?id=$cm->id\">$journal->name</a> -> $stredit", "",
                   "", true, "", navmenu($course, $cm));
 
     echo "<center>\n";

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 
 if (!isset($CFG->journal_showrecentactivity)) {
@@ -28,7 +28,7 @@ function journal_user_complete($course, $user, $mod, $journal) {
 
         print_simple_box_start();
         if ($entry->modified) {
-            echo "<P><FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT></P>";
+            echo "<p><font size=\"1\">".get_string("lastedited").": ".userdate($entry->modified)."</font></p>";
         }
         if ($entry->text) {
             echo format_text($entry->text, $entry->format);
@@ -66,7 +66,7 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
     print_simple_box_start("left", "90%");
     echo format_text($journal->intro,  $journal->introformat);
     print_simple_box_end();
-    echo "<br clear=all />";
+    echo "<br clear=\"all\" />";
     echo "<br />";
     
     if (isstudent($course->id) or isteacher($course->id)) {
@@ -74,16 +74,16 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
         print_simple_box_start("right", "90%");
     
         if ($journalopen) {
-            echo "<p align=right><a href=\"edit.php?id=$journal->coursemodule\">";
+            echo "<p align=\"right\"><a href=\"edit.php?id=$journal->coursemodule\">";
             echo get_string("edit")."</a></p>";
         } else {
-            echo "<p align=right><a href=\"view.php?id=$journal->coursemodule\">";
+            echo "<p align=\"right\"><a href=\"view.php?id=$journal->coursemodule\">";
             echo get_string("view")."</a></p>";
         }
     
         if ($entry = get_record("journal_entries", "userid", $user->id, "journal", $journal->id)) {
             if ($entry->modified) {
-                echo "<p align=\"center\"><font size=1>".get_string("lastedited").": ".userdate($entry->modified)."</font></p>";
+                echo "<p align=\"center\"><font size=\"1\">".get_string("lastedited").": ".userdate($entry->modified)."</font></p>";
             }
             if ($entry->text) {
                 echo format_text($entry->text, $entry->format);
@@ -97,7 +97,7 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
         }
     
         print_simple_box_end();
-        echo "<br clear=all />";
+        echo "<br clear=\"all\" />";
         echo "<br />";
     }
 
@@ -223,7 +223,7 @@ function journal_print_recent_activity($course, $isteacher, $timestart) {
         print_headline(get_string("newjournalentries", "journal").":");
         foreach ($journals as $journal) {
             $date = userdate($journal->time, $strftimerecent);
-            echo "<p><font size=1>$date - ".fullname($journal)."<br />";
+            echo "<p><font size=\"1\">$date - ".fullname($journal)."<br />";
             echo "\"<a href=\"$CFG->wwwroot/mod/journal/$journal->url\">";
             echo "$journal->name";
             echo "</a>\"</font></p>";
@@ -428,44 +428,44 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
         $colour = $THEME->cellheading;
     }
 
-    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
+    echo "\n<table border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"10\">";
         
-    echo "\n<TR>";
-    echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    echo "\n<tr>";
+    echo "\n<td rowspan=\"2\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
     print_user_picture($user->id, $course->id, $user->picture);
-    echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$colour\">".fullname($user);
+    echo "</td>";
+    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$colour\">".fullname($user);
     if ($entry) {
-        echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT>";
+        echo "&nbsp;&nbsp;<font size=\"1\">".get_string("lastedited").": ".userdate($entry->modified)."</font>";
     }
-    echo "</TR>";
+    echo "</tr>";
 
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=\"100%\" bgcolor=\"$THEME->cellcontent\">";
     if ($entry) {
         echo format_text($entry->text, $entry->format);
     } else {
         print_string("noentry", "journal");
     }
-    echo "</TD></TR>";
+    echo "</td></tr>";
 
     if ($entry) {
-        echo "\n<TR>";
-        echo "<TD WIDTH=35 VALIGN=TOP>";
+        echo "\n<tr>";
+        echo "<td width=\"35\" valign=\"top\">";
         if (!$entry->teacher) {
             $entry->teacher = $USER->id;
         }
         print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
-        echo "<TD BGCOLOR=\"$colour\">".get_string("feedback").":";
+        echo "<td bgcolor=\"$colour\">".get_string("feedback").":";
         choose_from_menu($grades, "r$entry->id", $entry->rating, get_string("nograde")."...");
         if ($entry->timemarked) {
-            echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
+            echo "&nbsp;&nbsp;<font size=\"1\">".userdate($entry->timemarked)."</font>";
         }
-        echo "<BR><TEXTAREA NAME=\"c$entry->id\" ROWS=12 COLS=60 WRAP=virtual>";
+        echo "<br /><textarea name=\"c$entry->id\" rows=\"12\" cols=\"60\" wrap=\"virtual\">";
         p($entry->comment);
-        echo "</TEXTAREA><BR>";
-        echo "</TD></TR>";
+        echo "</textarea><br />";
+        echo "</td></tr>";
     }
-    echo "</TABLE><BR CLEAR=ALL>\n";
+    echo "</table><br clear=\"all\">\n";
 }
 
 
@@ -524,31 +524,31 @@ function journal_print_feedback($course, $entry, $grades) {
         error("Weird journal error");
     }
 
-    echo "\n<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=CENTER><TR><TD BGCOLOR=#888888>";
-    echo "\n<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 VALIGN=TOP>";
+    echo "\n<table border=\"0\" cellpadding=\"1\" cellspacing=\"1\" align=\"center\"><tr><td bgcolor=#888888>";
+    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" valign=\"top\">";
 
-    echo "\n<TR>";
-    echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    echo "\n<tr>";
+    echo "\n<td rowspan=\"3\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
-    echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">".fullname($teacher);
-    echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($entry->timemarked)."</I>";
-    echo "</TR>";
+    echo "</td>";
+    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$THEME->cellheading\">".fullname($teacher);
+    echo "&nbsp;&nbsp;<font size=\"2\"><i>".userdate($entry->timemarked)."</i>";
+    echo "</tr>";
 
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=\"100%\" bgcolor=\"$THEME->cellcontent\">";
 
-    echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
+    echo "<p align=\"right\"><font size=\"-1\"><i>";
     if ($grades[$entry->rating]) {
         echo get_string("grade").": ";
         echo $grades[$entry->rating];
     } else {
         print_string("nograde");
     }
-    echo "</I></FONT></P>";
+    echo "</i></font></p>";
 
     echo format_text($entry->comment);
-    echo "</TD></TR></TABLE>";
-    echo "</TD></TR></TABLE>";
+    echo "</td></tr></table>";
+    echo "</td></tr></table>";
 }
 
 ?>

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 //  Edit and save a new post to a discussion
 
@@ -333,7 +333,7 @@
                          "post.php?delete=$delete&confirm=$delete",
                          $_SERVER["HTTP_REFERER"]);
                          
-            echo "<CENTER><HR>";
+            echo "<center><hr />";
             forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
         }
 
@@ -453,7 +453,7 @@
     }
 
     if ($post->parent) {
-        $navtail = "<A HREF=\"discuss.php?d=$discussion->id\">$toppost->subject</A> -> ".get_string("editing", "forum");
+        $navtail = "<a href=\"discuss.php?d=$discussion->id\">$toppost->subject</a> -> ".get_string("editing", "forum");
     } else {
         $navtail = "$toppost->subject";
     }
@@ -465,7 +465,7 @@
     $strforums = get_string("modulenameplural", "forum");
 
 
-    $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">$strforums</A> -> <A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
+    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> <a href=\"view.php?f=$forum->id\">$forum->name</a>";
 
     $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
 
@@ -475,7 +475,7 @@
 
     if ($course->category) {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
-                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
+                 "<a href=../../course/view.php?id=$course->id>$course->shortname</a> ->
                   $navmiddle -> $navtail", $formstart, "", true, "", navmenu($course, $cm));
     } else {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
@@ -489,10 +489,10 @@
             forum_print_posts_threaded($parent->id, $course, 0, false, false);
         }
         echo "<center>";
-        echo "<H2>".get_string("yourreply", "forum").":</H2>";
+        echo "<h2>".get_string("yourreply", "forum").":</h2>";
     } else {
         echo "<center>";
-        echo "<H2>".get_string("yournewtopic", "forum")."</H2>";
+        echo "<h2>".get_string("yournewtopic", "forum")."</h2>";
     }
     if (!empty($post->error)) {
         notify($post->error);

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 //  Displays a post, and all the posts below it.
 //  If no post is given, displays all posts in a discussion
@@ -94,16 +94,16 @@
     }
 
     if (empty($navtail)) {
-        $navtail = "<A HREF=\"discuss.php?d=$discussion->id\">$discussion->name</A> -> $post->subject";
+        $navtail = "<a href=\"discuss.php?d=$discussion->id\">$discussion->name</a> -> $post->subject";
     }
 
-    $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</A> -> <A HREF=\"../forum/view.php?f=$forum->id\">$forum->name</A>";
+    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</a> -> <a href=\"../forum/view.php?f=$forum->id\">$forum->name</a>";
 
     $searchform = forum_print_search_form($course, "", true, "plain");
 
     if ($course->category) {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
-                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
+                 "<a href=../../course/view.php?id=$course->id>$course->shortname</a> ->
                   $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     } else {
         print_header("$course->shortname: $discussion->name", "$course->fullname",

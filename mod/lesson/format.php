@@ -1,4 +1,4 @@
-<?PHP  // $Id$ 
+<?php  // $Id$ 
 
 ////////////////////////////////////////////////////////////////////
 /// format.php  - Default format class for file imports/exports.  //

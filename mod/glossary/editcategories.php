@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// This page allows to edit entries categories for a particular instance of glossary
 
@@ -53,7 +53,7 @@
     $strglossary     = get_string("modulename", "glossary");
 
     print_header_simple(strip_tags("$glossary->name"), "",
-                        "<A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id&tab=GLOSSARY_CATEGORY_VIEW>$glossary->name</a> -> " . get_string("categories","glossary"),
+                        "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> <a href=\"view.php?id=$cm->id&tab=GLOSSARY_CATEGORY_VIEW\">$glossary->name</a> -> " . get_string("categories","glossary"),
                         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                         navmenu($course, $cm));
 
@@ -111,15 +111,15 @@
 ?>
                 <form name="form" method="post" action="editcategories.php">
 
-                <input type="hidden" name=id          value="<?php p($cm->id) ?>" />
-                <input type="hidden" name=action      value="delete" />
-                <input type="hidden" name=confirm     value="1" />
-                <input type="hidden" name=mode         value="<?php echo $mode ?>" />
-                <input type="hidden" name=hook         value="<?php echo $hook ?>" />
-                <table border=0 widTH=100><tr><td align=right width="50%" />
+                <input type="hidden" name="id"          value="<?php p($cm->id) ?>" />
+                <input type="hidden" name="action"      value="delete" />
+                <input type="hidden" name="confirm"     value="1" />
+                <input type="hidden" name="mode"         value="<?php echo $mode ?>" />
+                <input type="hidden" name="hook"         value="<?php echo $hook ?>" />
+                <table border="0" width="100"><tr><td align="right" width="50%" />
                 <input type="submit" value=" <?php print_string("yes")?> " />
                 </form>
-                </td><td align=left width=50%>
+                </td><td align="left" width="50%">
 
 <?php
                 unset($options);
@@ -177,17 +177,17 @@
 
 <div align="center">
 
-<FORM name="theform" method="post" action="editcategories.php">
-<table width="40%" class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
+<form name="theform" method="post" action="editcategories.php">
+<table width="40%" class="generalbox" cellpadding="5" bgcolor="<?php p($THEME->cellheading)?>">
         <tr>
           <td width="90%" align="center"><b>
           <?php p(get_string("categories","glossary")) ?></b></td>
           <td width="10%" align="center"><b>
           <?php p(get_string("action")) ?></b></td>
         </tr>
-        <tr><td width=100% colspan=2  bgcolor="<?php p($THEME->cellheading2)?>">
+        <tr><td width="100%" colspan="2"  bgcolor="<?php p($THEME->cellheading2)?>">
         
-        <table width=100%>
+        <table width="100%">
 
 <?php
     $categories = get_records("glossary_categories","glossaryid",$glossary->id,"name ASC");
@@ -205,8 +205,8 @@
                </td>
                <td width="10%" align="center"><b>
                <?php
-                echo "<a href=\"editcategories.php?id=$cm->id&action=delete&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a> ";
-                echo "<a href=\"editcategories.php?id=$cm->id&action=edit&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
+                echo "<a href=\"editcategories.php?id=$cm->id&action=delete&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                echo "<a href=\"editcategories.php?id=$cm->id&action=edit&mode=cat&hook=$category->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\"></a>";
                ?>
                </b></td>
              </tr>
@@ -219,15 +219,15 @@
         
         </td>
         <tr>
-        <td width=100% colspan=2  align=center bgcolor="<?php p($THEME->cellheading2)?>">
+        <td width="100%" colspan="2"  align="center" bgcolor="<?php p($THEME->cellheading2)?>">
             <?php
             
              $options['id'] = $cm->id;
              $options['action'] = "add";
              
-             echo "<table border=0><tr><td align=right>";
+             echo "<table border=\"0\"><tr><td align=\"right\">";
              echo print_single_button("editcategories.php", $options, get_string("add") . " " . get_string("category","glossary"), "get");
-             echo "</td><td align=left>";
+             echo "</td><td align=\"left\">";
              unset($options['action']);
              $options['mode'] = 'cat';
              $options['hook'] = $hook;

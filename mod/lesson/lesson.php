@@ -1,4 +1,4 @@
-<?PHP  // $Id: lesson.php, v 1.0 25 Jan 2004
+<?php  // $Id: lesson.php, v 1.0 25 Jan 2004
 
 /*************************************************
 	ACTIONS handled are:
@@ -42,7 +42,7 @@
     
     $navigation = "";
     if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
     $strlessons = get_string("modulenameplural", "lesson");
@@ -51,8 +51,8 @@
 	
 	// ... print the header and...
     print_header("$course->shortname: $lesson->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$lesson->name</A>", 
+                 "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> 
+                  <a href=\"view.php?id=$cm->id\">$lesson->name</a>", 
                   "", "", true);
 
 	//...get the action 
@@ -91,16 +91,16 @@
 		print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
         ?>
         <form name="form" method="post" action="lesson.php">
-        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
+        <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="action" value="insertpage" />
-        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>" />
-        <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>" />
-        <center><table cellpadding=5 border=1>
+        <input type="hidden" name="pageid" value="<?php echo $_GET['pageid'] ?>" />
+        <input type="hidden" name="qtype" value="<?php echo LESSON_BRANCHTABLE ?>" />
+        <center><table cellpadding="5" border="1">
         <tr><td align="center">
         <tr valign="top">
         <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
         <input type="text" name="title" size="80" maxsize="255" value="" /></td></tr>
-        <?PHP
+        <?php
         echo "<tr><td><b>";
         echo get_string("pagecontents", "lesson").":</b><br />\n";
         print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
@@ -110,7 +110,7 @@
             echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b><br />\n";
             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$i]");
             echo "</td></tr>\n";
-            echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
+            echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
             if ($i) {
                 // answers 2, 3, 4... jumpto this page
                 lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
@@ -129,7 +129,7 @@
         <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </center>
         </form>
-        <?PHP
+        <?php
 	}
 	
 
@@ -228,15 +228,15 @@
 		print_heading_with_help(get_string("addaquestionpage", "lesson"), "overview", "lesson");
         ?>
         <form name="form" method="post" action="lesson.php">
-        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
+        <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="action" value="insertpage" />
-        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>" />
-        <center><table cellpadding=5 border=1>
+        <input type="hidden" name="pageid" value="<?php echo $_GET['pageid'] ?>" />
+        <center><table cellpadding="5" border="1">
         <tr><td align="center">
         <tr valign="top">
         <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
         <input type="text" name="title" size="80" maxsize="255" value="" /></td></tr>
-        <?PHP
+        <?php
         echo "<tr><td><b>";
         echo get_string("pagecontents", "lesson").":</b><br />\n";
         print_textarea($usehtmleditor, 25,70, 630, 400, "contents");
@@ -257,7 +257,7 @@
             echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b><br />\n";
             print_textarea(false, 6, 70, 630, 300, "response[$i]");
             echo "</td></tr>\n";
-            echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
+            echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
             if ($i) {
                 // answers 2, 3, 4... jumpto this page
                 lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
@@ -275,7 +275,7 @@
         <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </center>
         </form>
-        <?PHP
+        <?php
 		}
 	
 
@@ -786,17 +786,17 @@
         // give teacher a proforma
         ?>
         <form name="editpage" method="post" action="lesson.php">
-        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
+        <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="action" value="updatepage" />
-        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>" />
+        <input type="hidden" name="pageid" value="<?php echo $_GET['pageid'] ?>" />
         <input type="hidden" name="redisplay" value="0" />
-        <center><table cellpadding=5 border=1>
+        <center><table cellpadding="5" border="1">
         <tr><td align="center">
         <tr valign="top">
         <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-        <input type="text" name="title" size="80" maxsize="255" value="<?PHP echo $page->title ?>" /></td>
+        <input type="text" name="title" size="80" maxsize="255" value="<?php echo $page->title ?>" /></td>
         </tr>
-        <?PHP
+        <?php
         echo "<tr><td><b>";
         echo get_string("pagecontents", "lesson").":</b><br />\n";
         print_textarea($usehtmleditor, 25, 70, 630, 400, "contents", $page->contents);
@@ -953,7 +953,7 @@
                         echo "</td></tr>\n";
                         break;
                 }
-                echo "<tr><td><B>".get_string("jump", "lesson")." $iplus1:</b> \n";
+                echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
                 lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
                 helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                 echo "</td></tr>\n";
@@ -968,7 +968,7 @@
         <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </center>
         </form>
-        <?PHP
+        <?php
 		}
 	
 

@@ -1,4 +1,4 @@
-<?PHP    // $Id$
+<?php    // $Id$
     /// This file allows to manage the default behave of the display formats
     
     require_once("../../config.php");
@@ -62,7 +62,7 @@
     print_heading($strmodulename . ': ' . get_string("displayformats","glossary"));
 
     echo '<table width="90%" align="center" bgcolor="#FFFFFF" class="generaltab" style="border-color: #000000; border-style: solid; border-width: 1px;">';
-    echo '<tr><td align=center>';
+    echo '<tr><td align="center">';
     echo get_string("configwarning");
     echo '</td></tr></table>';
 
@@ -73,14 +73,14 @@
     echo '<table width="90%" align="center" bgcolor="' . $THEME->cellheading . '" class="generalbox">';
     ?>
     <tr>
-        <td colspan=3 align=center><strong>
+        <td colspan="3" align="center"><strong>
         <?php echo get_string('displayformat'.$displayformat->name,"glossary"); ?>
         </strong></td>
     </tr>
-    <tr valign=top>
-        <td align="right" width="20%"><?PHP print_string('popupformat','glossary'); ?></td>
+    <tr valign="top">
+        <td align="right" width="20%"><?php print_string('popupformat','glossary'); ?></td>
         <td>
-     <?PHP
+     <?php
         //get and update available formats
         $recformats = glossary_get_available_formats();
 
@@ -100,10 +100,10 @@
         <?php print_string("cnfrelatedview", "glossary") ?><br /><br />
         </td>
     </tr>
-    <tr valign=top>
-        <td align="right" width="20%"><?PHP print_string('defaultmode','glossary'); ?></td>
+    <tr valign="top">
+        <td align="right" width="20%"><?php print_string('defaultmode','glossary'); ?></td>
         <td>
-        <SELECT size=1 name=defaultmode>
+        <select size="1" name="defaultmode">
     <?php 
         $sletter = '';
         $scat = '';
@@ -127,20 +127,20 @@
         break;
         }
     ?>
-        <OPTION value="letter" <?PHP p($sletter)?>>letter</OPTION>
-        <OPTION value="cat" <?PHP p($scat)?>>cat</OPTION>
-        <OPTION value="date" <?PHP p($sdate)?>>date</OPTION>
-        <OPTION value="author" <?PHP p($sauthor)?>>author</OPTION>
-        </SELECT>
+        <option value="letter" <?php p($sletter)?>>letter</option>
+        <option value="cat" <?php p($scat)?>>cat</option>
+        <option value="date" <?php p($sdate)?>>date</option>
+        <option value="author" <?php p($sauthor)?>>author</option>
+        </select>
         </td>
         <td width="60%">
         <?php print_string("cnfdefaultmode", "glossary") ?><br /><br />
         </td>
     </tr>
-    <tr valign=top>
-        <td align="right" width="20%"><?PHP print_string('defaulthook','glossary'); ?></td>
+    <tr valign="top">
+        <td align="right" width="20%"><?php print_string('defaulthook','glossary'); ?></td>
         <td>
-        <SELECT size=1 name=defaulthook>
+        <select size="1" name="defaulthook">
     <?php 
         $sall = '';
         $sspecial = '';
@@ -164,20 +164,20 @@
         break;
         }
     ?>
-        <OPTION value="ALL" <?PHP p($sall)?>><?PHP p(get_string("allentries","glossary"))?></OPTION>
-        <OPTION value="SPECIAL" <?PHP p($sspecial)?>><?PHP p(get_string("special","glossary"))?></OPTION>
-        <OPTION value="0" <?PHP p($sallcategories)?>><?PHP p(get_string("allcategories","glossary"))?></OPTION>
-        <OPTION value="-1" <?PHP p($snocategorised)?>><?PHP p(get_string("notcategorised","glossary"))?></OPTION>
-        </SELECT>
+        <option value="ALL" <?php p($sall)?>><?php p(get_string("allentries","glossary"))?></option>
+        <option value="SPECIAL" <?php p($sspecial)?>><?php p(get_string("special","glossary"))?></option>
+        <option value="0" <?php p($sallcategories)?>><?php p(get_string("allcategories","glossary"))?></option>
+        <option value="-1" <?php p($snocategorised)?>><?php p(get_string("notcategorised","glossary"))?></option>
+        </select>
         </td>
         <td width="60%">
         <?php print_string("cnfdefaulthook", "glossary") ?><br /><br />
         </td>
     </tr>
-    <tr valign=top>
-        <td align="right" width="20%"><?PHP print_string('defaultsortkey','glossary'); ?></td>
+    <tr valign="top">
+        <td align="right" width="20%"><?php print_string('defaultsortkey','glossary'); ?></td>
         <td>
-        <SELECT size=1 name=sortkey>
+        <select size="1" name="sortkey">
     <?php 
         $sfname = '';
         $slname = '';
@@ -201,20 +201,20 @@
         break;
         }
     ?>
-        <OPTION value="CREATION" <?PHP p($screation)?>><?PHP p(get_string("sortbycreation","glossary"))?></OPTION>
-        <OPTION value="UPDATE" <?PHP p($supdate)?>><?PHP p(get_string("sortbylastupdate","glossary"))?></OPTION>
-        <OPTION value="FIRSTNAME" <?PHP p($sfname)?>><?PHP p(get_string("firstname"))?></OPTION>
-        <OPTION value="LASTNAME" <?PHP p($slname)?>><?PHP p(get_string("lastname"))?></OPTION>
-        </SELECT>
+        <option value="CREATION" <?php p($screation)?>><?php p(get_string("sortbycreation","glossary"))?></option>
+        <option value="UPDATE" <?php p($supdate)?>><?php p(get_string("sortbylastupdate","glossary"))?></option>
+        <option value="FIRSTNAME" <?php p($sfname)?>><?php p(get_string("firstname"))?></option>
+        <option value="LASTNAME" <?php p($slname)?>><?php p(get_string("lastname"))?></option>
+        </select>
         </td>
         <td width="60%">
         <?php print_string("cnfsortkey", "glossary") ?><br /><br />
         </td>
     </tr>
-    <tr valign=top>
-        <td align="right" width="20%"><?PHP print_string('defaultsortorder','glossary'); ?></td>
+    <tr valign="top">
+        <td align="right" width="20%"><?php print_string('defaultsortorder','glossary'); ?></td>
         <td>
-        <SELECT size=1 name=sortorder>
+        <select size="1" name="sortorder">
     <?php 
         $sasc = '';
         $sdesc = '';
@@ -228,18 +228,18 @@
         break;
         }
     ?>
-        <OPTION value="asc" <?PHP p($sasc)?>><?PHP p(get_string("ascending","glossary"))?></OPTION>
-        <OPTION value="desc" <?PHP p($sdesc)?>><?PHP p(get_string("descending","glossary"))?></OPTION>
-        </SELECT>
+        <option value="asc" <?php p($sasc)?>><?php p(get_string("ascending","glossary"))?></option>
+        <option value="desc" <?php p($sdesc)?>><?php p(get_string("descending","glossary"))?></option>
+        </select>
         </td>
         <td width="60%">
         <?php print_string("cnfsortorder", "glossary") ?><br /><br />
         </td>
     </tr>
-    <tr valign=top>
+    <tr valign="top">
         <td align="right" width="20%"><p>Include Group Breaks:</td>
         <td>
-        <SELECT size=1 name=showgroup>
+        <select size="1" name="showgroup">
     <?php
         $yselected = "";
         $nselected = "";
@@ -249,21 +249,21 @@
             $nselected = " SELECTED ";
         }
     ?>
-        <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
-        <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
-        </SELECT>
+        <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
+        <option value="0" <?php p($nselected) ?>><?php p($no)?></option>
+        </select>
         </td>
         <td width="60%">
         <?php print_string("cnfshowgroup", "glossary") ?><br /><br />
         </td>
     </tr>
     <tr>
-        <td colspan=3 align=center>
+        <td colspan="3" align="center">
         <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
     </tr>
-    <input type="hidden" name=id    value="<?php p($id) ?>" />
-    <input type="hidden" name=mode    value="edit" />
-    <?PHP
+    <input type="hidden" name="id"    value="<?php p($id) ?>" />
+    <input type="hidden" name="mode"    value="edit" />
+    <?php
     
     print_simple_box_end();    
     echo '</form>';

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 function forum_upgrade($oldversion) {
 // This function does anything necessary to upgrade

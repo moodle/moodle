@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
 
 /// Library of functions and constants for module glossary
 /// (replace glossary with the name of your module and delete this line)
@@ -262,7 +262,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
             
             $user = get_record("user","id",$entry->userid);
             $fullname = fullname($user, $isteacher);
-            echo "<p><font size=1>$date - $fullname<br />";
+            echo "<p><font size=\"1\">$date - $fullname<br />";
             echo "\"<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid&mode=entry&hook=$entry->id\">";
             echo "$entry->concept";
             echo "</a>\"</font></p>";
@@ -460,7 +460,7 @@ function glossary_get_available_formats() {
 
 function glossary_debug($debug,$text,$br=1) {
     if ( $debug ) {
-        echo '<font color=red>' . $text . '</font>';
+        echo '<font color="red">' . $text . '</font>';
         if ( $br ) {
             echo '<br />';
         }
@@ -660,7 +660,7 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",
         }
         if ($return != '') {
             $return .= '</select>';
-//            $return = "<table border=0 align=$align><tr><td>$return</td></tr></table>";
+//            $return = "<table border=\"0\" align=$align><tr><td>$return</td></tr></table>";
         }
     } 
     if ($type == 'print') {
@@ -677,7 +677,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
     $isteacher = isteacher($course->id);
     $ismainglossary = $glossary->mainglossary;
 	
-    $return = "<font size=1>";
+    $return = "<font size=\"1\">";
     if (!$entry->approved) {
         $return .= get_string("entryishidden","glossary");
     }
@@ -687,7 +687,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
 
     
     if ( ($glossary->allowcomments && !isguest()) || isteacher($glossary->course)) {
-        $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=11 width=11 border=0></a> ";
+        $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
     }
 
     if ($isteacher or ($glossary->studentcanpost and $entry->userid == $USER->id)) {
@@ -696,7 +696,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
             $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
 
-                $return .= " <a title=\"" . get_string("exporttomainglossary","glossary") . "\" href=\"exportentry.php?id=$cm->id&entry=$entry->id&mode=$mode&hook=$hook\"><img src=\"export.gif\" height=11 width=11 border=0></a> ";
+                $return .= " <a title=\"" . get_string("exporttomainglossary","glossary") . "\" href=\"exportentry.php?id=$cm->id&entry=$entry->id&mode=$mode&hook=$hook\"><img src=\"export.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
 
             }
         }
@@ -714,11 +714,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         if ( !$importedentry and ($isteacher or ($entry->userid == $USER->id and $ineditperiod))) {
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&prevmode=$mode&hook=$hook\"><img src=\"";
             $return .= $icon;
-            $return .= "\" height=11 width=11 border=0></a> ";
+            $return .= "\" height=\"11\" width=\"11\" border=\"0\"></a> ";
             
-            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&e=$entry->id&mode=$mode&hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a>";
+            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&e=$entry->id&mode=$mode&hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\"></a>";
         } elseif ( $importedentry ) {
-            $return .= " <font size=-1>" . get_string("exportedentry","glossary") . "</font>";
+            $return .= " <font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }
     }
     $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
@@ -734,7 +734,7 @@ function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode
 
     $count = count_records("glossary_comments","entryid",$entry->id);
     if ($count) {
-        $return = "<font size=1>";
+        $return = "<font size=\"1\">";
         $return .= "<a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count ";
         if ($count == 1) {
             $return .= get_string("comment", "glossary");
@@ -765,14 +765,14 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
     if ($aliases || $printicons || $ratings) {
         echo '<table border="0" width="100%" align="center">';
         if ( $aliases ) {
-            echo '<tr><td align="center"  valign="top"><font size=1>' .
+            echo '<tr><td align="center"  valign="top"><font size="1">' .
                   get_string("aliases","glossary") . ': ' . $aliases . '</td></tr>';
         }
         if ($icons) {
-            echo '<tr><td align=right valign=top>'.  $icons . '</td></tr>';
+            echo '<tr><td align="right" valign="top">'.  $icons . '</td></tr>';
         }
         if ($ratings) {
-            echo '<tr><td align=right valign=top>';
+            echo '<tr><td align="right" valign="top">';
             $return = glossary_print_entry_ratings($course, $entry, $ratings);
             echo '</td></tr>';
         }
@@ -789,7 +789,7 @@ function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$ins
           $glossary = get_record("glossary","id",$entry->glossaryid);		  
           $entry->course = $glossary->course; //used inside print_attachment
           if ($insidetable) {
-              echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\" nowrap>\n";
+              echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\" nowrap=\"nowrap\">\n";
           }
           echo glossary_print_attachments($entry,$format,$align);
           if ($insidetable) {
@@ -803,7 +803,7 @@ function  glossary_print_entry_approval($cm, $entry, $mode,$align="right",$insid
         if ($insidetable) {
             echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\">\n";
         }
-        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&mode=$mode\"><img align=\"$align\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>\n";
+        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&mode=$mode\"><img align=\"$align\" src=\"check.gif\" border=\"0\" width=\"34\" height=\"34\"></a>\n";
         if ($insidetable) {
             echo "</td></tr></table>\n";
         }
@@ -1095,11 +1095,11 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
                 } else {
                     $ffurl = "file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=0 src=\"$CFG->pixpath/f/$icon\" height=16 width=16 alt=\"$strpopupwindow\">";
+                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"$strpopupwindow\">";
 
                 if ($return == "html") {
-                    $output .= "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
-                    $output .= "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$file</a><br />";
+                    $output .= "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
+                    $output .= "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$file</a><br />";
                 } else if ($return == "text") {
                     $output .= "$strattachment $file:\n$CFG->wwwroot/$ffurl\n";
 
@@ -1108,7 +1108,7 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
                         $imagereturn .= "<img src=\"$CFG->wwwroot/$ffurl\" align=$align>";
                     } else {
                         link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
-                        echo "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$file</a>";
+                        echo "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$file</a>";
                         echo "<br />";
                     }
                 }
@@ -1328,10 +1328,10 @@ function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', 
 
 function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
 global $CFG, $THEME;
-     echo '<table border=0 width=100%>';
+     echo '<table border="0" width="100%">';
      echo '<tr>';
 
-     echo '<td align=center width=20%>';
+     echo '<td align="center" width="20%">';
      if ( isteacher($glossary->course) ) {
              $options['id'] = $cm->id;
              $options['mode'] = 'cat';
@@ -1340,7 +1340,7 @@ global $CFG, $THEME;
      }
      echo '</td>';
 
-     echo '<td align=center width=60%>';
+     echo '<td align="center" width="60%">';
      echo '<b>';
 
      $menu[GLOSSARY_SHOW_ALL_CATEGORIES] = get_string("allcategories","glossary");
@@ -1379,7 +1379,7 @@ global $CFG, $THEME;
         }
      }
      echo '</b></td>';
-     echo '<td align=center width=20%>';
+     echo '<td align="center" width="20%">';
 
      echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=cat&hook=", $menu, "catmenu", $selected, "",
                       "", "", false);
@@ -1453,7 +1453,7 @@ global $CFG;
              $neworder = '&sortorder=asc';
              $newordertitle = $asc;
          }
-         $icon = " <img src=\"$sortorder.gif\" border=0 width=16 height=16>";
+         $icon = " <img src=\"$sortorder.gif\" border=\"0\" width=\"16\" height=\"16\">";
      } else {
          if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' and
                $sortkey != 'FIRSTNAME' and $sortkey != 'LASTNAME' ) {
@@ -1462,7 +1462,7 @@ global $CFG;
          } else {
              $newordertitle = $desc;
              $neworder = '&sortorder=desc';
-             $icon = ' <img src="asc.gif" border=0 width=16 height=16>';
+             $icon = ' <img src="asc.gif" border="0" width="16" height="16">';
          }
      }
      $ficon     = '';
@@ -1545,8 +1545,8 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo "</td>";
     echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
     echo "<p>";
-    echo "<font size=2><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
-    echo "<font size=1>".get_string("lastedited").": ".userdate($comment->timemodified)."</font>";
+    echo "<font size=\"2\"><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
+    echo "<font size=\"1\">".get_string("lastedited").": ".userdate($comment->timemodified)."</font>";
     echo "</p></td></tr>";
 
     echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostside\" width=\"10\">";
@@ -1555,15 +1555,15 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
 
     echo format_text($comment->comment, $comment->format);
 
-    echo "<div align=right><p align=right>";
+    echo "<div align=\"right\"><p align=\"right\">";
     $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
     if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  
-               alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
+               alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
     }
     if ( ($glossary->allowcomments && $USER->id == $comment->userid) || isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=delete\"><img  
-               alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=11 width=11 border=0></a>";
+               alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a>";
     }
     
     echo "</p>";
@@ -1607,8 +1607,8 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
 
     $colour = $THEME->cellheading2;
 
-    echo "\n<center><table width=95% border=0><tr>";
-    echo "<td width=100%\">";
+    echo "\n<center><table width=\"95%\" border=\"0\"><tr>";
+    echo "<td width=\"100%\"\">";
     if ( $entries ) {
         foreach ( $entries as $entry ) {
             if (! $glossary = get_record("glossary", "id", $entry->glossaryid)) {
@@ -1933,7 +1933,7 @@ function glossary_print_ratings_mean($entryid, $scale) {
             $strratings = get_string("ratings", "glossary");
         }
 
-        echo "<font size=-1>$strratings: ";
+        echo "<font size=\"-1\">$strratings: ";
         link_to_popup_window ("/mod/glossary/report.php?id=$entryid", "ratings", $mean, 400, 600);
         echo "</font>";
     }

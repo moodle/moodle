@@ -224,7 +224,7 @@
     $strsearch = get_string("search");
     
     print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-        "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
+        "$navigation <a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 
@@ -243,7 +243,7 @@
     if ( $isuserframe and $mode != 'search') {
     /// the "Print" icon
         echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder&offset=$offset\">";
-        echo '<img border=0 src="print.gif"/></a>';
+        echo '<img border="0" src="print.gif"/></a>';
     }
     echo '</b></font></p>';
 
@@ -256,7 +256,7 @@
 
 /// Search box
 //    echo '<p>';
-    echo '<table align="center" width="70%" bgcolor="' . $THEME->cellheading .'" class="generalbox"><tr><td align=center>';
+    echo '<table align="center" width="70%" bgcolor="' . $THEME->cellheading .'" class="generalbox"><tr><td align="center">';
     
     echo '<p align="center">';
     echo '<form method="POST" action="view.php">';
@@ -315,7 +315,7 @@
                     $paging .= "<a href=\"view.php?id=$id&mode=$mode&hook=$hook&offset=" . ($i*$entriesbypage) . "&sortkey=$sortkey&sortorder=$sortorder&fullsearch=$fullsearch\">" . $pagenumber . '</a>';
                 }
             }
-            $paging  = "<font size=1><center>" . get_string ("jumpto") . " $paging</center></font>";
+            $paging  = "<font size=\"1\"><center>" . get_string ("jumpto") . " $paging</center></font>";
         } else {
             $paging = '';
         }
@@ -334,8 +334,8 @@
                 $ratings->allow = true;
             }
 
-            echo "<form name=form method=post action=rate.php>";
-            echo "<input type=hidden name=id value=\"$course->id\" />";
+            echo "<form name=\"form\" method=\"post\" action=\"rate.php\">";
+            echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
         }
 
         foreach ($allentries as $entry) {
@@ -417,7 +417,7 @@
         echo '<p>';
         print_simple_box("$sqlselect<br /> $sqlfrom<br /> $sqlwhere<br /> $sqlorderby<br /> $sqllimit","center","85%");
 
-        echo "<p align=right><font size=-3>";
+        echo "<p align=\"right\"><font size=\"-3\">";
         echo microtime_diff($CFG->startpagetime, microtime());
         echo "</font></p>";
     }

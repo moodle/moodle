@@ -42,18 +42,18 @@
 
 ?>
 
-<FORM name="form" method="post" action="<?php echo $ME ?>">
-<CENTER>
-<TABLE cellpadding=5>
-<TR valign=top>
-    <TD align=right><P><B><?php  print_string("name") ?>:</B></P></TD>
-    <TD>
-        <INPUT type="text" name="name" size=30 value="<?php  p($form->name) ?>" />
-    </TD>
-</TR>
+<form name="form" method="post" action="<?php echo $ME ?>">
+<center>
+<table cellpadding="5">
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("name") ?>:</b></p></td>
+    <td>
+        <input type="text" name="name" size="30" value="<?php  p($form->name) ?>" />
+    </td>
+</tr>
 
-<tr valign=top>
-    <td align=right><P><B><?php  print_string("maximumgrade") ?>:</B></P></TD>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("maximumgrade") ?>:</b></p></td>
     <td>
         <?php
         for ($i=100; $i>=0; $i--) {
@@ -65,8 +65,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><P><B><?php  print_string("maximumnumberofanswersbranches", "lesson") ?>:</B></P></TD>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("maximumnumberofanswersbranches", "lesson") ?>:</b></p></td>
     <td>
         <?php
         for ($i=10; $i>1; $i--) {
@@ -78,8 +78,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><P><B><?php  print_string("maximumnumberofattempts", "lesson") ?>:</B></P></TD>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("maximumnumberofattempts", "lesson") ?>:</b></p></td>
     <td>
         <?php
         unset($numbers);
@@ -93,17 +93,17 @@
 </tr>
 
 <tr>
-    <td align=right><P><B><?php  print_string("actionaftercorrectanswer", "lesson") ?>:</B></P></TD>
+    <td align="right"><p><b><?php  print_string("actionaftercorrectanswer", "lesson") ?>:</b></p></td>
     <td>
-    <?PHP 
+    <?php 
         choose_from_menu($LESSON_NEXTPAGE_ACTION, "nextpagedefault", $form->nextpagedefault, "");
         helpbutton("nextpageaction", get_string("actionaftercorrectanswer", "lesson"), "lesson");
     ?>
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><P><B><?php  print_string("minimumnumberofquestions", "lesson") ?>:</B></P></TD>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("minimumnumberofquestions", "lesson") ?>:</b></p></td>
     <td>
         <?php
         unset($numbers);
@@ -116,8 +116,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><P><B><?php  print_string("numberofpagestoshow", "lesson") ?>:</B></P></TD>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("numberofpagestoshow", "lesson") ?>:</b></p></td>
     <td>
         <?php
         unset($numbers);
@@ -131,9 +131,9 @@
 </tr>
 
 <tr>
-    <td align=right><P><B><?php  print_string("canretake", "lesson", $course->student) ?>:</B></P></TD>
+    <td align="right"><p><b><?php  print_string("canretake", "lesson", $course->student) ?>:</b></p></td>
     <td>
-    <?PHP 
+    <?php 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "retake", $form->retake, "");
         helpbutton("retake", get_string("canretake", "lesson", $course->student), "lesson");
@@ -142,9 +142,9 @@
 </tr>
 
 <tr>
-    <td align=right><P><B><?php  print_string("handlingofretakes", "lesson") ?>:</B></P></TD>
+    <td align="right"><p><b><?php  print_string("handlingofretakes", "lesson") ?>:</b></p></td>
     <td>
-    <?PHP 
+    <?php 
         $options[0] = get_string("usemean", "lesson"); $options[1] = get_string("usemaximum", "lesson");
         choose_from_menu($options, "usemaxgrade", $form->usemaxgrade, "");
         helpbutton("handlingofretakes", get_string("handlingofretakes", "lesson"), "lesson");
@@ -152,8 +152,8 @@
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><P><B><?php  print_string("available", "lesson") ?>:</B></td>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("available", "lesson") ?>:</b></td>
     <td><?php
            print_date_selector("availableday", "availablemonth", "availableyear", $form->available);
            echo "&nbsp;-&nbsp;";
@@ -161,8 +161,8 @@
     ?></td>
 </tr>
 
-<tr valign=top>
-    <td align=right><P><B><?php  print_string("deadline", "lesson") ?>:</B></td>
+<tr valign="top">
+    <td align="right"><p><b><?php  print_string("deadline", "lesson") ?>:</b></td>
     <td><?php
            print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
            echo "&nbsp;-&nbsp;";
@@ -170,15 +170,15 @@
     ?></td>
 </tr>
 
-</TABLE>
+</table>
 <!-- These hidden variables are always the same -->
-<INPUT type="hidden" name=course        value="<?php  p($form->course) ?>" />
-<INPUT type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>" />
-<INPUT type="hidden" name=section       value="<?php  p($form->section) ?>" />
-<INPUT type="hidden" name=module        value="<?php  p($form->module) ?>" />
-<INPUT type="hidden" name=modulename    value="<?php  p($form->modulename) ?>" />
-<INPUT type="hidden" name=instance      value="<?php  p($form->instance) ?>" />
-<INPUT type="hidden" name=mode          value="<?php  p($form->mode) ?>" />
-<INPUT type="submit" value="<?php  print_string("savechanges") ?>" />
-</CENTER>
-</FORM>
+<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>" />
+<input type="hidden" name="section"       value="<?php  p($form->section) ?>" />
+<input type="hidden" name="module"        value="<?php  p($form->module) ?>" />
+<input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
+<input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
+<input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
+<input type="submit" value="<?php  print_string("savechanges") ?>" />
+</center>
+</form>

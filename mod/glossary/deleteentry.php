@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -47,7 +47,7 @@
     $strareyousuredelete = get_string("areyousuredelete","glossary");
 
     print_header_simple("$glossary->name", "",
-                 "<A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name", 
+                 "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary), 
                   navmenu($course, $cm));
 

@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 /// This page lists all the instances of lesson in a particular course
 
@@ -56,16 +56,16 @@
     foreach ($lessons as $lesson) {
         if (!$lesson->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$lesson->coursemodule\">$lesson->name</A>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$lesson->coursemodule\">$lesson->name</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<A HREF=\"view.php?id=$lesson->coursemodule\">$lesson->name</A>";
+            $link = "<a href=\"view.php?id=$lesson->coursemodule\">$lesson->name</a>";
         }
 
         if ($lesson->deadline > $timenow) {
             $due = userdate($lesson->deadline);
         } else {
-            $due = "<FONT COLOR=\"red\">".userdate($lesson->deadline)."</FONT>";
+            $due = "<font color=\"red\">".userdate($lesson->deadline)."</font>";
         }
 
         $grade_value = '';
@@ -92,7 +92,7 @@
         }
     }
 
-    echo "<BR>";
+    echo "<br />";
 
     print_table($table);
 

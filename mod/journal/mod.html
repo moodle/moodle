@@ -18,16 +18,16 @@
 ?>
 
 <form name="form" method="post" action="mod.php">
-<table cellpadding=5>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("journalname", "journal") ?>:</b></p></td>
+<table cellpadding="5">
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("journalname", "journal") ?>:</b></p></td>
     <td>
-        <input type="text" name="name" size=30 value="<?php p($form->name) ?>" />
+        <input type="text" name="name" size="30" value="<?php p($form->name) ?>" />
     </td>
 </tr>
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("journalquestion", "journal") ?>:</b></p>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("journalquestion", "journal") ?>:</b></p>
     <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
@@ -50,7 +50,7 @@
        if ($usehtmleditor) {
            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
        } else {
-           echo "<p align=right>";
+           echo "<p align=\"right\">";
            helpbutton("textformat", get_string("formattexttype"));
            print_string("formattexttype");
            echo ":&nbsp;";
@@ -65,16 +65,16 @@
 </tr>
 
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("grade") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("grade") ?>:</b></p></td>
     <td>
         <?php
         print_grade_menu($course->id, "assessed", "$form->assessed");
         ?>
     </td>
 </tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("daysavailable", "journal") ?>:</b></p></td>
+<tr valign="top">
+    <td align="right"><p><b><?php print_string("daysavailable", "journal") ?>:</b></p></td>
     <td>
     <?php
         $options = array();
@@ -94,14 +94,14 @@
 
 </table>
 <center>
-<input type="hidden" name=course     value="<?php p($form->course) ?>" />
-<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name=section       value="<?php p($form->section) ?>" />
-<input type="hidden" name=module     value="<?php p($form->module) ?>" />
-<input type="hidden" name=modulename value="<?php p($form->modulename) ?>" />
-<input type="hidden" name=instance   value="<?php p($form->instance) ?>" />
-<input type="hidden" name=mode       value="<?php p($form->mode) ?>" />
+<input type="hidden" name="course"     value="<?php p($form->course) ?>" />
+<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>" />
+<input type="hidden" name="section"       value="<?php p($form->section) ?>" />
+<input type="hidden" name="module"     value="<?php p($form->module) ?>" />
+<input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
+<input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
+<input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
 <input type="submit" value="<?php print_string("savechanges") ?>" />
-<input type="submit" name=cancel value="<?php print_string("cancel") ?>" />
+<input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
 </form>
 </center>
