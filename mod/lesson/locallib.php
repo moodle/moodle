@@ -1134,9 +1134,15 @@ function lesson_check_nickname($name) {
 
 /*******************************************************************/
 function lesson_clean_data_submitted() {
-//
-//
+// this function runs through all post/get data submitted to a page
+// and runs clean_param on each
+// returns an object
+	
+	// get the data
 	$form = data_submitted();
+	
+	// run through and clean each form value
+	  // detect arrays as well and process them accordingly
 	foreach ($form as $valuename => $formvalue) {
 		if (is_array($formvalue)) {
 			foreach ($formvalue as $index => $formsubvalue) {
