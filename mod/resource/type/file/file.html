@@ -35,7 +35,7 @@
     <td>
     <?php
         echo "<input name=\"reference\" size=\"90\" value=\"$form->reference\"><br />";
-        button_to_popup_window ("/mod/resource/coursefiles.php?id=$form->course", "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
+        button_to_popup_window ("/files/index.php?id=$form->course&choose=form.reference", "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
         echo "<input type=\"button\" name=\"searchbutton\" value=\"$strsearch ...\" ".
              "onClick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\">\n";
     ?>
