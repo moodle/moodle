@@ -1260,7 +1260,7 @@ function moodle_strtolower ($string, $encoding='') {
         if($encoding===''){
            return mb_strtolower($string);          //use multibyte support with default encoding
         } else {
-           return mb_strtolower($string,encoding); //use given encoding
+           return mb_strtolower($string,$encoding); //use given encoding
         }   
     } else {
         return strtolower($string);                // use common function what rely on current locale setting
