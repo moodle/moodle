@@ -38,10 +38,10 @@
 
 
 /// Print all the recent activity
-      print_simple_box(get_string("recentactivity"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-      echo "<TABLE CELLPADDING=4 CELLSPACING=0><TR><TD>";
+      print_simple_box(get_string("recentactivity"), "CENTER", "100%", $THEME->cellheading);
+      print_simple_box_start("CENTER", "100%", $THEME->body, 3, 0);
       print_recent_activity($course);
-      echo "</TD></TR></TABLE>";
+      print_simple_box_end();
       echo "<BR>";
 
 
