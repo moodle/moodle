@@ -81,7 +81,7 @@ function get_user_courses(&$user, $type) {
                 error_log("User $user->username enrolled to a nonexistant course $course_ext_id \n");
             }
         } else { // the course object exists before we call...
-            if ($courseobj->visible==0) {
+            if ($course_obj->visible==0) {
                 // non-visible courses don't show up in the enrolled 
                 // array, so we should skip them -- 
                 unset($user->{$type}[$course_obj->id]);
