@@ -2010,7 +2010,11 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
 
     if ($ratings) {
         echo "<center><input type=\"submit\" value=\"".get_string("sendinratings", "forum")."\">";
-        print_scale_menu_helpbutton($course->id, $scale);
+        if ($forum->scale < 0) {
+            if ($scale = get_record("scale", "id", abs($forum->scale))) {
+                print_scale_menu_helpbutton($course->id, $scale );
+            }
+        }
         echo "</center>";
         echo "</form>";
     }
