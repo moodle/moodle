@@ -66,10 +66,10 @@
                             $lastglossary = $glossary->id;
                         }
 
-                        $concepttitle = urlencode($concept->concept);
-                        $title = strip_tags("$glossary->name: $concepttitle");
-                        $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$concepttitle\" ".
-                             "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$concepttitle', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
+                        $encodedconcept = urlencode($concept->concept);
+                        $title = str_replace('"', "'", strip_tags("$glossary->name: $concept->concept"));
+                        $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$encodedconcept\" ".
+                             "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$encodedconcept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
                     }
                     $replace = "\\[]'\"*()\?";
                     $currentconcept = glossary_addslashes($replace,$concept->concept);                    
