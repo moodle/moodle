@@ -213,6 +213,7 @@ CREATE TABLE `prefix_groups` (
   `courseid` int(10) unsigned NOT NULL default '0',
   `name` varchar(254) NOT NULL default '',
   `description` text NOT NULL,
+  `password` varchar(50) NOT NULL default '',
   `lang` varchar(10) NOT NULL default 'en',
   `picture` int(10) unsigned NOT NULL default '0',
   `hidepicture` int(2) unsigned NOT NULL default '0',

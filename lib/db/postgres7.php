@@ -777,6 +777,10 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004112900) {
         table_column('user', '', 'policyagreed', 'integer', '1', 'unsigned', '0', 'not null', 'confirmed');
     }
+
+    if ($oldversion < 2004121400) {
+        table_column('groups', '', 'password', 'varchar', '50', '', '', 'not null', 'description');
+    }
     
     return $result;
 }

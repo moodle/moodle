@@ -121,6 +121,7 @@ CREATE TABLE prefix_groups (
    courseid integer NOT NULL default '0',
    name varchar(255) NOT NULL default '',
    description text,
+   password varchar(50) NOT NULL default '',
    lang varchar(10) NOT NULL default '',
    picture integer NOT NULL default '0',
    hidepicture integer NOT NULL default '0',
