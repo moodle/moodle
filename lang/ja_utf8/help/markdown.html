@@ -86,79 +86,33 @@ Markdownのシンタックスは、
 しかし、Markdownのシンタックスの一番大きなインスピレーションの源は、プレインテキストメールのフォーマットです。
 </p>
 
-
-
-<p>To this end, Markdown&#8217;s syntax is comprised entirely of punctuation
-
-characters, which punctuation characters have been carefully chosen so
-
-as to look like what they mean. E.g., asterisks around a word actually
-
-look like *emphasis*. Markdown lists look like, well, lists. Even
-
-blockquotes look like quoted passages of text, assuming you&#8217;ve ever
-
-used email.</p>
-
-
+<p>このため、Markdownのシンタックスは、完全に句読記号文字から成ります。句読記号文字は、それらが意味するとおりに見えるように慎重に選ばれました。
+例えば、言葉の周りのアスタリスクは実際には*強調*のように見えます。Markdownではリストとして表示されます。
+あなたがメールを使用したことがあると仮定して、blockquotes(引用)は引用されたテキストのように見えます。
+</p>
 
 <h3 id="html">インラインHTML</h3>
 
+<p>Markdownのシンタックスは、1つの事柄を目的としています: ウェブを<em>記述</em>するようなフォーマットとして使用する。</p>
 
+<p>Markdownは、HTMLの代替物ではなく、むしろHTMLに近いと言えます。
+シンタックスは非常にコンパクトで、HTMLタグの非常に小さなサブセットのみと一致します。
+Markdownのアイディアは、HTMLタグを簡単に挿入できるシンタックスを作成することでは<em>ありません</em>。
+私の見解として、HTMLタグは既に簡単に挿入することができるからです。
+Markdownのアイディアは、簡単に読め、簡単に書け、散文的に編集できることにあります。
+HTMLは<em>出版するための</em>フォーマットです。これに対して、Markdownは<em>書くための</em>フォーマットです。
+従って、Markdownフォーマットシンタックスは、プレインテキストで表現することのみに重点を置いています。</p>
 
-<p>Markdown&#8217;s syntax is intended for one purpose: to be used as a
+<p>Markdownシンタックスで表現できないマークアップには、単純にHTMLそのものを使用できます。
+MarkdownからHTMLに切り替える場合、事前に記したり、区切り文字を入れる必要はありません。タグを使用するだけです。</p>
 
-format for <em>writing</em> for the web.</p>
+<p>唯一の制限事項は、ブロック要素を使用する場合です - 例 <code>&lt;div&gt;</code>、<code>&lt;table&gt;</code>、<code>&lt;pre&gt;</code>、<code>&lt;p&gt;</code>等
+ - これらは空白行で囲まれたコンテンツで分離する必要があります。また、開始および終了タグはタブまた空白でインデントしてはいけません。
+Markdownは、余分(不必要)な<code>&lt;p&gt;</code>タグをブロック要素の周囲に追加することはありません。</p>
 
+<p>例えば、HTMLテーブルをMarkdown記事に追加する場合:</p>
 
-
-<p>Markdown is not a replacement for HTML, or even close to it. Its
-
-syntax is very small, corresponding only to a very small subset of
-
-HTML tags. The idea is <em>not</em> to create a syntax that makes it easier
-
-to insert HTML tags. In my opinion, HTML tags are already easy to
-
-insert. The idea for Markdown is to make it easy to read, write, and
-
-edit prose. HTML is a <em>publishing</em> format; Markdown is a <em>writing</em>
-
-format. Thus, Markdown&#8217;s formatting syntax only addresses issues that
-
-can be conveyed in plain text.</p>
-
-
-
-<p>For any markup that is not covered by Markdown&#8217;s syntax, you simply
-
-use HTML itself. There&#8217;s no need to preface it or delimit it to
-
-indicate that you&#8217;re switching from Markdown to HTML; you just use
-
-the tags.</p>
-
-
-
-<p>The only restrictions are that block-level HTML elements &#8212; e.g. <code>&lt;div&gt;</code>,
-
-<code>&lt;table&gt;</code>, <code>&lt;pre&gt;</code>, <code>&lt;p&gt;</code>, etc. &#8212; must be separated from surrounding
-
-content by blank lines, and the start and end tags of the block should
-
-not be indented with tabs or spaces. Markdown is smart enough not
-
-to add extra (unwanted) <code>&lt;p&gt;</code> tags around HTML block-level tags.</p>
-
-
-
-<p>For example, to add an HTML table to a Markdown article:</p>
-
-
-
-<pre><code>This is a regular paragraph.
-
-
+<pre><code>これは通常の段落です。
 
 &lt;table&gt;
 
@@ -170,39 +124,20 @@ to add extra (unwanted) <code>&lt;p&gt;</code> tags around HTML block-level tags
 
 &lt;/table&gt;
 
-
-
-This is another regular paragraph.
+これはもう1つの通常の段落です。
 
 </code></pre>
 
 
+<p>注意: Markdownフォーマットシンタックスはブロック要素の中では処理されません 
+例、あなたはMarkdown-style <code>*強調*</code> をHTMLブロックの中で使用できません。</p>
 
-<p>Note that Markdown formatting syntax is not processed within block-level
+<p>汎用的なインライン要素 - 例 <code>&lt;span&gt;</code>、<code>&lt;cite&gt;</code>、<code>&lt;del&gt;</code> - は、
+Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場合、Markdownフォーマットの
+代わりにHTMLタグを使用することもできます。例えば、HTMLの<code>&lt;a&gt;</code>または<code>&lt;img&gt;</code>タグをMarkdown
+のリンクやイメージのシンタックスの代わりに使用できます。</p>
 
-HTML tags. E.g., you can&#8217;t use Markdown-style <code>*emphasis*</code> inside an
-
-HTML block.</p>
-
-
-
-<p>Span-level HTML tags &#8212; e.g. <code>&lt;span&gt;</code>, <code>&lt;cite&gt;</code>, or <code>&lt;del&gt;</code> &#8212; can be
-
-used anywhere in a Markdown paragraph, list item, or header. If you
-
-want, you can even use HTML tags instead of Markdown formatting; e.g. if
-
-you&#8217;d prefer to use HTML <code>&lt;a&gt;</code> or <code>&lt;img&gt;</code> tags instead of Markdown&#8217;s
-
-link or image syntax, go right ahead.</p>
-
-
-
-<p>Unlike block-level HTML tags, Markdown syntax <em>is</em> processed within
-
-span-level tags.</p>
-
-
+<p>HTMLのブロック要素と異なり、Markdownシンタックスは汎用的なインライン要素の中でも処理<em>されます</em>。</p>
 
 <h3 id="autoescape">スペシャルキャラクタの自動エスケープ</h3>
 
