@@ -10,6 +10,10 @@ function forum_upgrade($oldversion) {
       execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('forum', 'move discussion', 'forum_discussions', 'name')");
   }
 
+  if ($oldversion < 2003082500) {
+      table_column("forum", "", "assesstimestart", "integer", "10", "unsigned", "0", "", "assessed");
+      table_column("forum", "", "assesstimefinish", "integer", "10", "unsigned", "0", "", "assesstimestart");
+  }
 
   return true;
 

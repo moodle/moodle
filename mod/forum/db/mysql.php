@@ -65,6 +65,11 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2003081403) {
       table_column("forum", "assessed", "assessed", "integer", "10", "unsigned", "0");
   }
+
+  if ($oldversion < 2003082500) {
+      table_column("forum", "", "assesstimestart", "integer", "10", "unsigned", "0", "", "assessed");
+      table_column("forum", "", "assesstimefinish", "integer", "10", "unsigned", "0", "", "assesstimestart");
+  }
   
   return true;
 

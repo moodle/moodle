@@ -54,6 +54,8 @@
             $forum->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
             $forum->open = backup_todb($info['MOD']['#']['OPEN']['0']['#']);
             $forum->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
+            $forum->assesstimestart = backup_todb($info['MOD']['#']['ASSESSTIMESTART']['0']['#']);
+            $forum->assesstimefinish = backup_todb($info['MOD']['#']['ASSESSTIMEFINISH']['0']['#']);
             $forum->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
             $forum->forcesubscribe = backup_todb($info['MOD']['#']['FORCESUBSCRIBE']['0']['#']);
             $forum->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);

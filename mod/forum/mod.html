@@ -94,6 +94,45 @@
             helpbutton("ratings", get_string("allowratings", "forum"), "forum");
             echo "<br />";
             print_scale_menu($course->id, "scale", $form->scale);
+            echo "<br />";
+            echo "<script>";
+            echo "  var subitems = ['startday','startmonth','startyear','starthour', 'startminute',".
+                                   "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
+            echo "</script>";
+            echo "<input name=\"ratingtime\" type=checkbox value=1 ";
+            echo " onclick=\"return lockoptions('form','ratingtime', subitems)\" ";
+            if ($form->assesstimestart and $form->assesstimefinish and $form->assessed) {
+                $form->ratingtime = 1;
+                echo " checked ";
+            }
+            echo ">";
+            print_string("ratingtime", "forum");
+            echo "<table align=left><tr><td align=right nowrap>";
+            echo get_string("from").":";
+            print_date_selector("startday", "startmonth", "startyear", $form->assesstimestart);
+            print_time_selector("starthour", "startminute", $form->assesstimestart);
+            echo "<br />";
+            echo get_string("to").":";
+            print_date_selector("finishday", "finishmonth", "finishyear", $form->assesstimefinish);
+            print_time_selector("finishhour", "finishminute", $form->assesstimefinish);
+            echo "<br />";
+            echo "</td></tr></table>";
+            echo "<input type=\"hidden\" name=\"hstartday\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartmonth\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartyear\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstarthour\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartminute\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishday\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishmonth\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishyear\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishhour\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishminute\" value=0>";
+
+            if (empty($form->ratingtime)) {
+                echo "<script>";
+                echo "lockoptions('form','ratingtime', subitems);";
+                echo "</script>";
+            }
         ?>
     </td>
 </tr>

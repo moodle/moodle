@@ -10,6 +10,8 @@ CREATE TABLE prefix_forum (
   intro text NOT NULL,
   open tinyint(2) unsigned NOT NULL default '2',
   assessed int(10) unsigned NOT NULL default '0',
+  assesstimestart int(10) unsigned NOT NULL default '0',
+  assesstimefinish int(10) unsigned NOT NULL default '0',
   scale int(10) unsigned NOT NULL default '0',
   forcesubscribe tinyint(1) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',

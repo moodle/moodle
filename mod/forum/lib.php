@@ -51,8 +51,17 @@ function forum_add_instance($forum) {
         return false;
     }
 
-    if ($forum->type == "single") {  // Create related discussion.
+    if (!empty($forum->ratingtime)) {
+        $forum->assesstimestart  = make_timestamp($forum->startyear, $forum->startmonth, $forum->startday, 
+                                                  $forum->starthour, $forum->startminute, 0);
+        $forum->assesstimefinish = make_timestamp($forum->finishyear, $forum->finishmonth, $forum->finishday, 
+                                                  $forum->finishhour, $forum->finishminute, 0);
+    } else {
+        $forum->assesstimestart  = 0;
+        $forum->assesstimefinish = 0;
+    }
 
+    if ($forum->type == "single") {  // Create related discussion.
         $discussion->course   = $forum->course;
         $discussion->forum    = $forum->id;
         $discussion->name     = $forum->name;
@@ -76,6 +85,16 @@ function forum_update_instance($forum) {
 
     $forum->timemodified = time();
     $forum->id = $forum->instance;
+
+    if (!empty($forum->ratingtime)) {
+        $forum->assesstimestart  = make_timestamp($forum->startyear, $forum->startmonth, $forum->startday, 
+                                                  $forum->starthour, $forum->startminute, 0);
+        $forum->assesstimefinish = make_timestamp($forum->finishyear, $forum->finishmonth, $forum->finishday, 
+                                                  $forum->finishhour, $forum->finishminute, 0);
+    } else {
+        $forum->assesstimestart  = 0;
+        $forum->assesstimefinish = 0;
+    }
 
     if ($forum->type == "single") {  // Update related discussion and post.
         if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
@@ -968,7 +987,8 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 }
 
 
-function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $ratings=NULL, $footer="", $highlight="") {
+function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, 
+                          $ratings=NULL, $footer="", $highlight="") {
     global $THEME, $USER, $CFG;
 
     echo "<a name=\"$post->id\"></a>";
@@ -1049,15 +1069,23 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     echo "<div align=right><p align=right>";
     if (!empty($ratings) and !empty($USER->id)) {
-        if (isteacher($courseid)) {
-            forum_print_ratings_mean($post->id, $ratings->scale);
-            if ($USER->id != $post->userid) {
-                 forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
+        $useratings = true;
+        if ($ratings->assesstimestart and $ratings->assesstimefinish) {
+            if ($post->created < $ratings->assesstimestart or $post->created > $ratings->assesstimefinish) {
+                $useratings = false;
             }
-        } else if ($USER->id == $post->userid) {
-            forum_print_ratings_mean($post->id, $ratings->scale);
-        } else if (!empty($ratings->allow) ) {
-            forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
+        }
+        if ($useratings) {
+            if (isteacher($courseid)) {
+                forum_print_ratings_mean($post->id, $ratings->scale);
+                if ($USER->id != $post->userid) {
+                     forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
+                }
+            } else if ($USER->id == $post->userid) {
+                forum_print_ratings_mean($post->id, $ratings->scale);
+            } else if (!empty($ratings->allow) ) {
+                forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
+            }
         }
     }
     
@@ -1913,6 +1941,8 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     if ($forum->assessed and !empty($USER->id)) {
         if ($scale = get_record("scale", "id", $forum->scale)) {
             $ratings->scale = make_menu_from_list($scale->scale);
+            $ratings->assesstimestart = $forum->assesstimestart;
+            $ratings->assesstimefinish = $forum->assesstimefinish;
             if ($forum->assessed == 2 and !isteacher($course->id)) {
                 $ratings->allow = false;
             } else {

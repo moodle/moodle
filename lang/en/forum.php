@@ -98,6 +98,7 @@ $string['ratingonlyteachers'] = "Only \$a can rate posts";
 $string['rating'] = "Rating";
 $string['ratings'] = "Ratings";
 $string['ratingssaved'] = "Ratings saved";
+$string['ratingtime'] = "Restrict ratings to posts with dates in this range:";
 $string['re'] = "Re:";    // Put in front of subjects that are replies to another post
 $string['readtherest'] = "Read the rest of this topic";
 $string['replies'] = "Replies";
