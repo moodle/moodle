@@ -552,9 +552,14 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     $defaultcourses = array_diff_assoc($defaultcourses, array(1 => 1)); // Filter the site out
     $getcourses = array_keys($defaultcourses);
 
-    $select = 'id IN ('.implode(',', $getcourses).')';
+    if(!empty($getcourses)) {
+        $select = 'id IN ('.implode(',', $getcourses).')';
+        $coursesdata = get_records_select('course', $select, 'fullname');
+    }
+    else {
+        $coursedata = false;
+    }
 
-    $coursesdata = get_records_select('course', $select, 'fullname');
     echo '<select name="course" onchange="document.location.href=\''.CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=\' + this.value;">';
     echo '<option value="0"'.($SESSION->cal_show_course === false?' selected':'').'>'.get_string('hidden', 'calendar')."</option>\n";
     echo '<option value="1"'.($SESSION->cal_show_course === true?' selected':'').'>'.get_string('shown', 'calendar')."</option>\n";
