@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004060400)
+      // quiz.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -132,6 +132,7 @@ $string['notenoughanswers'] = 'Voor dit type vraag zijn minstens $a antwoorden n
 $string['notenoughsubquestions'] = 'Er zijn onvoldoende deelvragen gedefinieerd!<br>Wil je teruggaan en deze vraag herstellen?';
 $string['numerical'] = 'Numeriek';
 $string['paragraphquestion'] = 'Vraagparagraaf niet ondersteund op lijn $a. De vraag wordt genegeerd';
+$string['passworderror'] = 'Het wachtwoord was niet juist';
 $string['percentcorrect'] = 'Percentage juist';
 $string['publish'] = 'Publiceer  ';
 $string['publishedit'] = 'Je moet rechten hebben in het vak dat deze vragen publiceert om in deze categorie vragen te kunnen toevoegen of bewerken.';
@@ -170,6 +171,9 @@ $string['reportmulti_resp'] = 'Individuele reacties';
 $string['reportoverview'] = 'Overzicht';
 $string['reportregrade'] = 'Herwaarderen van de pogingen';
 $string['reportsimplestat'] = 'Eenvoudige statistieken';
+$string['requirepassword'] = 'Er is een wachtwoord nodig';
+$string['requirepasswordmessage'] = 'Je hebt het wachtwoord voor deze test nodig om de test te kunnen maken';
+$string['requiresubnet'] = 'Het juiste netwerkadres is nodig';
 $string['review'] = 'Lees na';
 $string['save'] = 'Bewaar';
 $string['savegrades'] = 'Bewaar cijfers';
@@ -185,6 +189,7 @@ $string['showcorrectanswer'] = 'In de feedback, de juiste antwoorden laten zien?
 $string['showfeedback'] = 'Feedback laten zien na het beantwoorden?';
 $string['shuffleanswers'] = 'Mix de antwoorden';
 $string['shufflequestions'] = 'Mix de vragen';
+$string['subneterror'] = 'Deze test is zo beveiligd dat hij alleen toegankelijk is vanop bepaalde plaatsen. Jouw computer staat niet in de lijst met toegelaten machines om deze test te maken.';
 $string['time'] = 'Tijd  ';
 $string['timecompleted'] = 'Voltooid';
 $string['timeleft'] = 'Resterende tijd';
