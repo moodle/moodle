@@ -83,7 +83,7 @@ function survey_upgrade($oldversion) {
 
     if ($oldversion < 2002110903) {
         if (! execute_sql("ALTER TABLE `survey_questions` ADD `shorttext` VARCHAR(30) NOT NULL AFTER `text` ")) {
-            notice("If you get an error above, don't worry, just ignore it.  Everything is OK.");
+            notify("If you get an error above, don't worry, just ignore it.  Everything is OK.");
         }
 
         execute_sql("UPDATE `survey` SET `name` = 'collesaname', `intro` = 'collesaintro' WHERE name = 'COLLES (Actual)' AND template = 0 ");
