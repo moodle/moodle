@@ -62,8 +62,14 @@
     <blockquote> 
       <pre><strong>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
     </blockquote>
-    <p>Ne tentez pas de lancer cette première commande CVS depuis un dossier de Moodle
-    préexistant. Commencez avec un nouveau dossier vide.</p>
+    <p>La commande est similaire pour d'autres modules (comme le dossier
+    contrib ou le dossier MySQL Admin)&nbsp;:</p>
+    <blockquote>
+  	  <pre><strong>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co contrib</strong><br />
+<strong>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co mysql</strong></pre>
+  	</blockquote>
+    <p>Ne tentez pas de lancer cette premi&egrave;re commande CVS dans une installation de Moodle
+    pr&eacute;existante. Commencez avec un nouveau dossier vide.</p>
     <p>Vous devrez taper <strong><font color="#990000">mypassword</font></strong> 
     pour chaque commande, &agrave; moins que vous ne mettiez en place des <a target="_top"
     href="http://sourceforge.net/account/editsshkeys.php">clefs autoris&eacute;es</a>.</p>
@@ -121,10 +127,10 @@ update -dP</strong> </pre>
         <pre>:ext:<font color="#990000">myusername</font>@cvs.sourceforge.net:/cvsroot/moodle</pre>
       </blockquote>
       <p>
-      5. Cliquez sur le bouton &laquo;&nbsp;<strong>Fetch list...</strong>&nbsp;&raquo;.<br /><br />
-      6. Une liste de modules est affich&eacute;e &agrave; droite du bouton&nbsp;: s&eacute;lectionnez-y
-      &laquo;&nbsp;<strong>moodle</strong>&nbsp;&raquo;.<br /><br />
-      7.  Cliquez sur le bouton &laquo;&nbsp;<strong>OK</strong>&nbsp;&raquo; tout sera alors
+      5. Sous le champ &laquo;&nbsp;Module&nbsp;&raquo;, tapez &laquo;&nbsp;<strong>Moodle</strong>&nbsp;&raquo; pour obtenir
+      Moodle, &laquo;&nbsp;<strong>contrib</strong>&nbsp;&raquo; pour obtenir le dossier des contributions et
+      &laquo;&nbsp;<strong>mysql</strong>&nbsp;&raquo; pour obtenir le module MySQL Admin.<br /><br />
+      6. Cliquez sur le bouton &laquo;&nbsp;<strong>OK</strong>&nbsp;&raquo; tout sera alors
       t&eacute;l&eacute;charg&eacute;.</p>
     </blockquote>
     <p>Une bo&icirc;te de dialogue affichera tous les fichiers en cours de t&eacute;l&eacute;chargement,
