@@ -165,6 +165,35 @@ function quiz_delete_instance($id) {
     return $result;
 }
 
+function quiz_delete_course($course) {
+/// Given a course object, this function will clean up anything that
+/// would be leftover after all the instances were deleted
+/// In this case, all the quiz categories and questions
+
+    if ($categories = get_records("quiz_categories", "course", $course->id)) {
+        foreach ($categories as $category) {
+            if ($questions = get_records("quiz_questions", "category", $category->id)) {
+                foreach ($questions as $question) {
+                    delete_records("quiz_answers", "question", $question->id);
+                    delete_records("quiz_match", "question", $question->id);
+                    delete_records("quiz_match_sub", "question", $question->id);
+                    delete_records("quiz_multianswers", "question", $question->id);
+                    delete_records("quiz_multichoice", "question", $question->id);
+                    delete_records("quiz_numerical", "question", $question->id);
+                    delete_records("quiz_randommatch", "question", $question->id);
+                    delete_records("quiz_responses", "question", $question->id);
+                    delete_records("quiz_shortanswer", "question", $question->id);
+                    delete_records("quiz_truefalse", "question", $question->id);
+                }
+                delete_records("quiz_questions", "category", $category->id);
+            }
+        }
+        return delete_records("quiz_categories", "course", $course->id);
+    }
+    return true;
+}
+
+
 function quiz_user_outline($course, $user, $mod, $quiz) {
 /// Return a small object with summary information about what a 
 /// user has done with a given particular instance of this module
