@@ -1,13 +1,27 @@
 README FOR CATALAN PLUGIN
 -------------------------
 
-Han col·laborat en la traducció:
+
+Traducció de Moodle al català coordinada pel CENT, Centre d'Educació 
+i Noves Tecnologies de la Universitat Jaume I de Castelló.
+
+http://cent.uji.es
+mailto:cent@uji.es
+
+
+Autors de les traduccions:
 
 - Jordi Adell <jordi@uji.es>
 - Clara Andrés <al051553@alumail.uji.es>
 - Puri Andrés <al058754@alumail.uji.es>
 - Carles Bellver <carles.bellver@cent.uji.es>
-- Ferm’n Cueva <fcueva@teleline.es>
+- Fermín Cueva <fcueva@teleline.es>
 - Joan Queralt Gil <jqueralt@pie.xtec.es>
 - Mercè Renau Rodríguez <mrenau@guest.uji.es>
 
+
+Tasques pendents:
+
+- Completar la traducció dels fitxers d'ajuda
+- Normalitzar les traduccions d'acord amb la Guia d'estil 
+de Softcatalà
