@@ -13,6 +13,10 @@
     if (!isset($CFG->wwwroot)) {
         die;
     }
+    
+    if (!isset($CFG->enrol)) { // This is a hack to fix bug 1598
+        $CFG->enrol = 'internal';
+    }
 
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
