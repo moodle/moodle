@@ -4,8 +4,8 @@
     require_once("lib.php");
 
     require_variable($id);    // Assignment
-    optional_variable($sort, "lastname"); 
-    optional_variable($dir, "ASC");
+    optional_variable($sort, "timemodified"); 
+    optional_variable($dir, "DESC");
 
     $timewas = $_POST['timenow'];
     $timenow = time();
@@ -62,7 +62,8 @@
             }
             echo ':';
             echo '</td><td nowrap="nowrap" align="left" width="50%">';
-            popup_form("submissions.php?id=$assignment->id&group=", $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
+            popup_form("submissions.php?id=$assignment->id&sort=$sort&dir=$dir&group=", 
+                       $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
             echo '</tr></table>';
         }
     }
@@ -184,7 +185,7 @@
              $diricon = $dir == 'ASC' ? 'down' : 'up';
              echo " <img src=\"$CFG->pixpath/t/$diricon.gif\" />";
         }
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
     }
 
     echo "</p>";
@@ -192,7 +193,11 @@
 
     print_spacer(8,1);
 
-    echo '<form action="submissions.php" method="post">';
+    $allowedtograde = ($groupmode != VISIBLEGROUPS or isteacheredit($course->id) or ismember($currentgroup));
+
+    if ($allowedtograde) {
+        echo '<form action="submissions.php" method="post">';
+    }
     
     $grades = make_grades_menu($assignment->grade);
 
@@ -203,7 +208,7 @@
         }
     }
 
-    if ($groupmode != VISIBLEGROUPS or isteacheredit($course->id) or ismember($currentgroup)) {
+    if ($allowedtograde) {
         echo "<center>";
         echo "<input type=hidden name=sort value=\"$sort\">";
         echo "<input type=hidden name=timenow value=\"$timenow\">";
