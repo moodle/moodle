@@ -127,7 +127,7 @@
     
         if (isset($form->versioning)) { // use new code that 
             // handles whether to overwrite or copy a question and keeps
-            // track of the versions in the quiz_question_version table
+            // track of the versions in the quiz_question_versions table
             
             // $replaceinquiz is an array with the ids of all quizzes in which the teacher has chosen to replace the old version
             $replaceinquiz = array();
@@ -187,7 +187,7 @@
 
                 foreach($replaceinquiz as $qid) {
                     $version->quiz = $qid;
-                    if(!insert_record("quiz_question_version", $version)) {
+                    if(!insert_record("quiz_question_versions", $version)) {
                         error("Could not store version information of question $oldquestionid in quiz $qid!");
                     }
                 }

@@ -203,10 +203,10 @@ CREATE INDEX prefix_quiz_question_grades_question_idx ON prefix_quiz_question_gr
 # --------------------------------------------------------
 
 #
-# Table structure for table `quiz_question_version`
+# Table structure for table `quiz_question_versions`
 #
 
-CREATE TABLE prefix_quiz_question_version (
+CREATE TABLE prefix_quiz_question_versions (
   id SERIAL PRIMARY KEY,
   quiz integer NOT NULL default '0',
   oldquestion integer NOT NULL default '0',

@@ -291,10 +291,10 @@ CREATE TABLE `prefix_quiz_question_grades` (
 # --------------------------------------------------------
 
 #
-# Table structure for table `quiz_question_version`
+# Table structure for table `quiz_question_versions`
 #
 
-CREATE TABLE `prefix_quiz_question_version` (
+CREATE TABLE `prefix_quiz_question_versions` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
   `oldquestion` int(10) unsigned NOT NULL default '0',

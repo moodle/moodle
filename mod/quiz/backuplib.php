@@ -13,7 +13,7 @@
     //           |                        |                    |                   |             |.......................................
     //           |                        |                    |                   |             |                                      .
     //           |                        |                    |                   |             |                                      .
-    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_version  |    ----quiz_question_datasets----    .
+    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_versions  |    ----quiz_question_datasets----    .
     // (UL,pk->id, fk->quiz) (UL,pk->id,fk->quiz)  (CL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)  |    |  (CL,pk->id,fk->question,  |    .
     //             |                                              |                      .       |    |   fk->dataset_definition)  |    .             
     //             |                                              |                      .       |    |                            |    .
@@ -86,7 +86,7 @@
 
     // 2.-Standard module backup (Invoked via quiz_backup_mods). It includes this tables:
     //     - quiz
-    //     - quiz_question_version
+    //     - quiz_question_versions
     //     - quiz_question_grades
     //     - quiz_attempts
     //     - quiz_grades
@@ -654,7 +654,7 @@
 
         $status = true;
 
-        $quiz_question_versions = get_records("quiz_question_version","quiz",$quiz,"id");
+        $quiz_question_versions = get_records("quiz_question_versions","quiz",$quiz,"id");
         //If there are question_versions
         if ($quiz_question_versions) {
             //Write start tag
@@ -662,7 +662,7 @@
             //Iterate over each question_version
             foreach ($quiz_question_versions as $que_ver) {
                 //Start question version
-                $status =fwrite ($bf,start_tag("QUESTION_VERSION",5,true));
+                $status =fwrite ($bf,start_tag("QUESTION_VERSIONS",5,true));
                 //Print question_version contents
                 fwrite ($bf,full_tag("ID",6,false,$que_ver->id));
                 fwrite ($bf,full_tag("OLDQUESTION",6,false,$que_ver->oldquestion));
@@ -670,7 +670,7 @@
                 fwrite ($bf,full_tag("USERID",6,false,$que_ver->userid));
                 fwrite ($bf,full_tag("TIMESTAMP",6,false,$que_ver->timestamp));
                 //End question version
-                $status =fwrite ($bf,end_tag("QUESTION_VERSION",5,true));
+                $status =fwrite ($bf,end_tag("QUESTION_VERSIONS",5,true));
             }
             //Write end tag
             $status =fwrite ($bf,end_tag("QUESTION_VERSIONS",4,true));

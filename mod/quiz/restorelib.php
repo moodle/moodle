@@ -13,7 +13,7 @@
     //           |                        |                    |                   |             |.......................................
     //           |                        |                    |                   |             |                                      .
     //           |                        |                    |                   |             |                                      .
-    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_version  |    ----quiz_question_datasets----    .
+    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_versions  |    ----quiz_question_datasets----    .
     // (UL,pk->id, fk->quiz) (UL,pk->id,fk->quiz)  (CL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)  |    |  (CL,pk->id,fk->question,  |    .
     //             |                                              |                      .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
@@ -84,7 +84,7 @@
 
     // 2.-Standard module restore (Invoked via quiz_restore_mods). It includes this tables:
     //     - quiz
-    //     - quiz_question_version
+    //     - quiz_question_versions
     //     - quiz_question_grades
     //     - quiz_attempts
     //     - quiz_grades
@@ -1452,7 +1452,7 @@
         $status = true;
 
         //Get the quiz_question_versions array
-        $versions = $info['MOD']['#']['QUESTION_VERSIONS']['0']['#']['QUESTION_VERSION'];
+        $versions = $info['MOD']['#']['QUESTION_VERSIONS']['0']['#']['QUESTION_VERSIONS'];
 
         //Iterate over question_versions
         for($i = 0; $i < sizeof($versions); $i++) {
@@ -1492,7 +1492,7 @@
             }
 
             //The structure is equal to the db, so insert the quiz_question_versions
-            $newid = insert_record ("quiz_question_version",$version);
+            $newid = insert_record ("quiz_question_versions",$version);
 
             //Do some output
             if (($i+1) % 10 == 0) {

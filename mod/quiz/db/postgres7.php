@@ -315,6 +315,10 @@ function quiz_upgrade($oldversion) {
         execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'editquestions', 'quiz', 'name') ");
     }
 
+    if ($oldversion < 2005032300) {
+        modify_database ('', 'ALTER TABLE prefix_quiz_question_version RENAME prefix_quiz_question_versions;');
+    }
+
     return true;
 }
 

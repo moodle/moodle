@@ -281,7 +281,7 @@ function quiz_get_participants($quizid) {
     //Get users from question_versions
     $us_versions = get_records_sql("SELECT DISTINCT u.id, u.id
                                     FROM {$CFG->prefix}user u,
-                                         {$CFG->prefix}quiz_question_version v
+                                         {$CFG->prefix}quiz_question_versions v
                                     WHERE v.quiz = '$quizid' and
                                           u.id = v.userid");
 
