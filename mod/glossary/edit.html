@@ -17,7 +17,7 @@
 	<?php
 		$categories = get_records("glossary_categories","glossaryid",$glossary->id);
 		echo "<select size=\"6\" name=\"categories[]\" multiple=\"yes\">";
-		echo "<option value=\"0\">" . get_string("nocategorized","glossary") . "</optioon>";
+		echo "<option value=\"0\">" . get_string("notcategorised","glossary") . "</optioon>";
 
 		if ( $categories ) {
             foreach ( $categories as $category ) {
@@ -31,6 +31,63 @@
 		}
 	?>
 	</select>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php echo get_string("entryusedynalink","glossary") ?>:</b></p></td>
+    <td>
+    <select size="1" name="usedynalink">
+     <option value="1" <?php
+      if ( $form->usedynalink ) {
+         echo "selected";
+      }
+      ?> 
+      ><?php echo get_string("yes") ?></option>
+     <option value="0" <?php
+      if ( !$form->usedynalink ) {
+         echo "selected";
+      }
+      ?>><?php echo get_string("no") ?>
+     </option>
+     </select> <?php helpbutton("usedynalink", get_string("usedynalink", "glossary"), "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php echo get_string("casesensitive","glossary") ?>:</b></p></td>
+    <td>
+    <select size="1" name="casesensitive">
+     <option value="1" <?php
+      if ( $form->casesensitive ) {
+         echo "selected";
+      }
+      ?> 
+      ><?php echo get_string("yes") ?></option>
+     <option value="0" <?php
+      if ( !$form->casesensitive ) {
+         echo "selected";
+      }
+      ?>><?php echo get_string("no") ?>
+     </option>
+     </select> <?php helpbutton("casesensitive", get_string("casesensitive", "glossary"), "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php echo get_string("fullmatch","glossary") ?>:</b></p></td>
+    <td>
+    <select size="1" name="fullmatch">
+     <option value="1" <?php
+      if ( $form->fullmatch ) {
+         echo "selected";
+      }
+      ?> 
+      ><?php echo get_string("yes") ?></option>
+     <option value="0" <?php
+      if ( !$form->fullmatch ) {
+         echo "selected";
+      }
+      ?>><?php echo get_string("no") ?>
+     </option>
+     </select> <?php helpbutton("fullmatch", get_string("fullmatch", "glossary"), "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
@@ -99,7 +156,7 @@
 
 <?PHP 
    if ($usehtmleditor) { 
-       print_richedit_javascript("theform", "text", "no");
+       print_richedit_javascript("theform", "text", "yes");
    }
 ?>
 

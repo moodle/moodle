@@ -235,18 +235,19 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview
     $isteacher = isteacher($course->id);
     $ismainglossary = $glossary->mainglossary;
     
-    echo "<table width=100% border=0><tr>";
-        
-    if ( $glossary->allowcomments ) {
-        echo "<td>";
-        $count = count_records("glossary_comments","entryid",$entry->id);
+    echo "<table width=100% border=0>";    
+    echo "<tr><td>";
+    $count = count_records("glossary_comments","entryid",$entry->id);
+    if ( $count ) {
         echo "<a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count " . get_string("comments","glossary") . "</a>";
-        echo "</td><td align=\"right\">";
-        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=16 width=16 border=0></a> ";
-    } else {
-        echo "<td align=\"right\">";
     }
-	
+    echo "</td><td align=\"right\">";
+
+    echo "<td align=\"right\">";
+    if ( $glossary->allowcomments ) {
+        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=16 width=16 border=0></a> ";
+    }
+
     if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
         // only teachers can export entries so check it out
 

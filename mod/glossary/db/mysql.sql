@@ -21,6 +21,7 @@ CREATE TABLE prefix_glossary (
      showalphabet tinyint(2) unsigned NOT NULL default '1',
      showall tinyint(2) unsigned NOT NULL default '1',
      allowcomments tinyint(2) unsigned NOT NULL default '0',
+     usedynalink tinyint(2) unsigned NOT NULL default '1',
      timecreated int(10) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
      PRIMARY KEY  (id)
@@ -42,6 +43,9 @@ CREATE TABLE prefix_glossary_entries (
      timemodified int(10) unsigned NOT NULL default '0',
      teacherentry tinyint(2) unsigned NOT NULL default '0',
      sourceglossaryid int(10) unsigned NOT NULL default '0',
+     usedynalink tinyint(2) unsigned NOT NULL default '1',
+     casesensitive tinyint(2) unsigned NOT NULL default '0',
+     fullmatch tinyint(2) unsigned NOT NULL default '1',
      PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='all glossary entries';
 

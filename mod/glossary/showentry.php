@@ -22,21 +22,18 @@
         echo "<TD WIDTH=100% BGCOLOR=\"#FFFFFF\">";
         if ( $entries ) {
             foreach ( $entries as $entry ) {
-                if( $ConceptIsPrinted ) {
-                    echo "<hr>";
+
+                if (! $glossary = get_record("glossary", "id", $entry->glossaryid)) {
+                    error("Glossary ID was incorrect or no longer exists");
                 }
-                if ( !$ConceptIsPrinted ) {
-                    echo "<b>" . $entry->concept . "</b>:<br>";
-                    $ConceptIsPrinted = 1;
+                if (! $course = get_record("course", "id", $glossary->course)) {
+                    error("Glossary is misconfigured - don't know what course it's from");
+                }
+                if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $courseid) ) {
+                    error("Glossary is misconfigured - don't know what course module it is ");
                 }
 
-                if ($entry->attachment) {
-                    $entry->course = $courseid;
-                    echo "<table border=0 align=right><tr><td>";
-                    echo glossary_print_attachments($entry,"html");
-                    echo "</td></tr></table>";
-                }
-                echo format_text($entry->definition, $entry->format);
+                glossary_print_entry($course, $cm, $glossary, $entry);
             }
         }
         echo "</td>";

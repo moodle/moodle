@@ -54,13 +54,16 @@ if ($e) {
                 $newentry->concept = $form->concept;
                 $newentry->definition = $form->text;
                 $newentry->format = $form->format;
+                $newentry->usedynalink = $form->usedynalink;
+                $newentry->casesensitive = $form->casesensitive;
+                $newentry->fullmatch = $form->fullmatch;
                 $newentry->timemodified = time();		
                 $newentry->teacherentry = isteacher($course->id,$USER->id);
 
                 $permissiongranted = 1;
                 if ( !$glossary->allowduplicatedentries ) {
-          	         $dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept));
-          	         if ($dupentries) {          	
+                    $dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept));
+                    if ($dupentries) {          	
                          foreach ($dupentries as $curentry) {
                              if ( $glossary->id == $curentry->glossaryid ) {
                                  if ( $curentry->id != $entry ) {
@@ -68,7 +71,7 @@ if ($e) {
                                  }
                               }
                          }
-    	             }
+                     }
                 }
                 if ( $permissiongranted ) {
                     $newentry->attachment = $_FILES["attachment"];
@@ -93,6 +96,9 @@ if ($e) {
                 $newentry->definition = $form->text;
                 $newentry->format = $form->format;
                 $newentry->timecreated = time();
+                $newentry->usedynalink = $form->usedynalink;
+                $newentry->casesensitive = $form->casesensitive;
+                $newentry->fullmatch = $form->fullmatch;
                 $newentry->timemodified = time();
                 $newentry->teacherentry = isteacher($course->id,$USER->id);
                 $newentry->sourceglossaryid = 0;
@@ -159,7 +165,7 @@ if (empty($entry)) {
     $entry->format = $defaultformat;
 }
 
-print_header("$course->shortname: $glossary->name", "$course->fullname",
+print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
               <A HREF=\"index.php?id=$course->id\">$strglossaries</A> -> 
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "theform.text",

@@ -21,6 +21,7 @@ CREATE TABLE prefix_glossary (
      showalphabet int2 NOT NULL default '1',
      showall int2 NOT NULL default '1',
      allowcomments int2 NOT NULL default '0',
+     usedynalink int2 NOT NULL default '1',
      timecreated int4 NOT NULL default '0',
      timemodified int4 NOT NULL default '0',
      PRIMARY KEY  (id)
@@ -42,6 +43,9 @@ CREATE TABLE prefix_glossary_entries (
      timemodified int4 NOT NULL default '0',
      teacherentry int2 NOT NULL default '0',
      sourceglossaryid int4 NOT NULL default '0',
+     usedynalink int2 NOT NULL default '1',
+     casesensitive int2 NOT NULL default '0',
+     fullmatch tinyint(2) NOT NULL default '1',
      PRIMARY KEY(id)
 );
 

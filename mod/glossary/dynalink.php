@@ -1,92 +1,114 @@
 <?PHP // $Id$
 
+    define("GLOSSARY_CONCEPT_IS_ENTRY", "0");
+    define("GLOSSARY_CONCEPT_IS_CATEGORY", "1");
+
     $textfilter_function = 'glossary_dynamic_link';
 
     if (function_exists($textfilter_function)) {
         return;
     }
 
-    function glossary_dynamic_link($courseid, $text,$glossaryid = NULL) {
+    function glossary_dynamic_link($courseid, $text) {
     global $CFG;
-    static $entries;     // to avoid repeated calls to database
-    static $glossary;    //    even when dealing with the same glossary
-    
-        if ( !$glossary and !$glossaryid ) {
-            $permissiongranted = 1;   // if it is the first call and no glossary was specify
-        } elseif ( $glossaryid ) {
-            if ( $glossary ) {   // if it is not the first call
-                if ( $glossary->id != $glossaryid ) {   // ...and the specified glossary is different from the previous call
-                    $permissiongranted = 1;
-                }
-            } else {
-                $permissiongranted = 1;   // if it is the first call and a glossary was specify
+
+        $glossarieslist = get_records_select("glossary", "usedynalink = 1 and course = $courseid","id");
+        if ( $glossarieslist ) {
+            $glossaries = "";
+            foreach ( $glossarieslist as $glossary ) {
+                $glossaries .= "$glossary->id,";
             }
-        }
-        if ( $permissiongranted ) {
-            if ( !$glossaryid ) {  // If no glossary was specify, fetch the main glossary of the course
-                $glossary = get_record("glossary","course",$courseid,"mainglossary",1);
-            } else {               // if a glossary as specify, fetch this one
-                $glossary = get_record("glossary","course",$courseid,"id",$glossaryid);
+            $glossaries=substr($glossaries,0,-1);
+
+            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink = 1","glossaryid","id,glossaryid,concept,casesensitive,".GLOSSARY_CONCEPT_IS_ENTRY." category,fullmatch");
+            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "glossaryid,id","id,glossaryid,name concept, 1 casesensitive,".GLOSSARY_CONCEPT_IS_CATEGORY." category, 1 fullmatch");
+            if ( $entries and $categories ) {
+                $concepts = array_merge($entries, $categories);
+            } elseif ( $categories ) {
+                $concepts = $categories;
+            } elseif ( $entries ) {
+                $concepts = $entries;
             }
-        }
-        if ( $glossary ) {
-            if ( !$entries ) {
-                // char_lenght is compatible with PostgreSQL and MySQL. Other DBMS must be implemented
-                
-                /* I'm ordering the cursor by the lenght of the concept trying to avoid the bug that occurs
-                      when a concept in contained in other entry's concept (i.e. HOUSE is in DOLL HOUSE).
-                      However, I haven't find a solution yet.
-                      Will (Sept. 30, 2003)
-                */
-                if ($CFG->dbtype == "postgres7" or $CFG->dbtype == "mysql") {
-                    $ORDER_BY = "CHAR_LENGTH(concept) DESC";
-                } else {
-                    $ORDER_BY = "concept ASC";
-                }
 
-                $ownentries = get_records("glossary_entries", "glossaryid", $glossary->id,$ORDER_BY);
-                $importedentries = get_records("glossary_entries", "sourceglossaryid", $glossary->id,$ORDER_BY);
+            if ( $concepts ) {
+                $lastglossary = 0;
+                $lastcategory = 0;
+                foreach ( $concepts as $concept ) {
+                    if ( $lastglossary != $concept->glossaryid ) {
+                        $glossary = get_record("glossary","id",$concept->glossaryid);
+                        $lastglossary = $glossary->id;
+                    }
 
-                if ( $ownentries and $importedentries ) {
-                    $entries = array_merge($ownentries, $importedentries);
-                    usort($entries, glossary_sort_entries_by_lenght);		
-                } elseif ( $importedentries ) {
-                    $entries = $importedentries;
-                } elseif ( $ownentries ) {
-                    $entries = $ownentries;
-                }
-            }
-            if ( $entries ) {
-                foreach ( $entries as $entry ) {
-                    $title = strip_tags("$glossary->name: $entry->concept");
-                    $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$entry->concept\" ".
-                         "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$entry->concept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
+                    if ( $concept->category ) {
+                        if ( $lastcategory != $concept->id ) {
+                            $category = get_record("glossary_categories","id",$concept->id);
+                            $lastcategory = $concept->id;
+                        }
 
-                    $concept = trim(strip_tags($entry->concept));
+                        $title = strip_tags("$glossary->name: " . get_string("category","glossary"). " $category->name");
+                        $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=182&currentview=categories&cat=$concept->id\">";
+                    } else {
+                        $title = strip_tags("$glossary->name: $concept->concept");
+                        $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$concept->concept\" ".
+                             "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$concept->concept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
+                    }
 
-                    $text = glossary_link_concepts($text,$concept,$href_tag_begin, "</a>");
+                    $currentconcept = trim(strip_tags($concept->concept));
+                    $text = glossary_link_concepts($text,$currentconcept,$href_tag_begin, "</a>",$concept->casesensitive,$concept->fullmatch);
                 }
             }
         }
-        
         return $text;
     }
     
-    function glossary_link_concepts($text,$concept,$href_tag_begin,$href_tag_end = "</a>") {
+    function glossary_link_concepts($text,$concept,$href_tag_begin,$href_tag_end = "</a>",$casesensitive,$fullmatch) {
         $list_of_words_cp = $concept;
 
-        // getting ride of "A" tags
-        $final = array();
+        if ($list_of_words_cp{0}=="|") {
+            $list_of_words_cp{0} = "";
+        }
+        if ($list_of_words_cp{strlen($list_of_words_cp)-1}=="|") {
+            $list_of_words_cp{strlen($list_of_words_cp)-1}="";
+        }
+        $list_of_words_cp = trim($list_of_words_cp);
+        if ($fullmatch) {
+            $invalidprefixs = "([a-zA-Z0-9])";
+            $invalidsufixs  = "([a-zA-Z0-9])";
 
+            // getting ride of words or phrases that containg the pivot concept on it		
+            $words = array();
+            $regexp = '/' . $invalidprefixs . "(" . $list_of_words_cp . ")" . "|"  . "(" . $list_of_words_cp . ")". $invalidsufixs .  '/is';
+            preg_match_all($regexp,$text,$list_of_words);
+
+            foreach (array_unique($list_of_words[0]) as $key=>$value) {
+                $words['<*'.$key.'*>'] = $value;
+            }
+            if ( $words ) {
+                $text = str_replace($words,array_keys($words),$text);
+            }
+        }
+
+        // getting ride of "nolink" tags
+        $excludes = array();
+        preg_match_all('/<nolink>(.+?)<\/nolink>/is',$text,$list_of_excludes);
+        foreach (array_unique($list_of_excludes[0]) as $key=>$value) {
+            $excludes['<+'.$key.'+>'] = $value;
+        }
+        if ( $excludes ) {
+            $text = str_replace($excludes,array_keys($excludes),$text);
+        }
+
+        // getting ride of "A" tags
+        $links = array();
         preg_match_all('/<A (.+?)>(.+?)<\/A>/is',$text,$list_of_links);
 
         foreach (array_unique($list_of_links[0]) as $key=>$value) {
-            $links['<|*'.$key.'*|>'] = $value;
+            $links['<@'.$key.'@>'] = $value;
         }
-		if ( $links ) {
+        if ( $links ) {
             $text = str_replace($links,array_keys($links),$text);
         }
-        // getting ride of all other tahs
+        // getting ride of all other tags
         $final = array();
         preg_match_all('/<(.+?)>/is',$text,$list_of_words);
 
@@ -96,18 +118,21 @@
 
         $text = str_replace($final,array_keys($final),$text);
 
-        if ($list_of_words_cp{0}=="|") {
-            $list_of_words_cp{0} = "";
+        $list_of_words_cp = "(".$list_of_words_cp."$nocharsend)";
+        if ( $casesensitive ) {
+            $text = ereg_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
+        } else {
+            $text = eregi_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
         }
-        if ($list_of_words_cp{strlen($list_of_words_cp)-1}=="|") {
-            $list_of_words_cp{strlen($list_of_words_cp)-1}="";
-        }
-        $list_of_words_cp = "(".trim($list_of_words_cp).")";
-
-        $text = eregi_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
         $text = str_replace(array_keys($final),$final,$text);
-		if ( $links ) {
+        if ( $links ) {
             $text = str_replace(array_keys($links),$links,$text);
+        }
+        if ( $excludes ) {
+            $text = str_replace(array_keys($excludes),$excludes,$text);
+        }
+        if ( $words and $fullmatch ) {
+            $text = str_replace(array_keys($words),$words,$text);
         }
         return stripslashes($text);
     }

@@ -91,6 +91,19 @@ function glossary_upgrade($oldversion) {
         execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'delete comment', 'glossary', 'name') ");
     }
 
+    if ( $oldversion < 2003101600 ) {
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary` " .
+                    "ADD `usedynalink`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '1' AFTER `allowcomments` " );
+					
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary_entries` " .
+                    "ADD `usedynalink`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '1' AFTER `sourceglossaryid`, ".
+                    "ADD `casesensitive`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '0' AFTER `usedynalink` ");
+    }
+
+    if ( $oldversion < 2003101601 ) {
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary_entries` " .
+                    "ADD `fullmatch`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '1' AFTER `casesensitive` ");
+    }
     return true;
 }
 
