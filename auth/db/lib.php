@@ -8,8 +8,7 @@ function auth_user_login ($username, $password) {
 
     global $CFG;
 
-    ADOLoadCode($CFG->auth_dbtype);          
-    $authdb = &ADONewConnection();         
+    $authdb = &ADONewConnection($CFG->auth_dbtype);         
     $authdb->PConnect($CFG->auth_dbhost,$CFG->auth_dbuser,$CFG->auth_dbpass,$CFG->auth_dbname); 
 
     switch ($CFG->auth_dbpasstype) {   // Re-format password accordingly

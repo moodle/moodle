@@ -16,8 +16,9 @@
 /// Connect to the database using adodb
 
     require("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
-    ADOLoadCode($CFG->dbtype);          
-    $db = &ADONewConnection();         
+
+    $db = &ADONewConnection($CFG->dbtype);         
+
     if (! $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname)) {
         echo "<P><FONT COLOR=RED>The database details specified in config.php are not correct, or the database is down.</P>";
         die;
