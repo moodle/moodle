@@ -194,12 +194,22 @@ for ($i=1; $i<=$standardblanks; $i++) {
     </td>
 </tr>
 
+<script type="text/javascript">
+function lockprivacy() { /* lockoptions() doesn't work with select's so use this method instead.*/
+  if (document.form.release.options[0].selected) {    
+      lockoption('form', 'publish');   
+  } else {
+      unlockoption('form', 'publish');   
+  }
+  return(true);
+}
+</script>
 <tr valign="top">
     <td align="right"><strong><?php print_string("publish","choice") ?>:</strong></td>
     <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
-        choose_from_menu($CHOICE_RELEASE, "release", "$form->release", "");
+        choose_from_menu($CHOICE_RELEASE, "release", "$form->release", "", "return lockprivacy()");
         ?>
         <br />
     </td>
@@ -213,6 +223,7 @@ for ($i=1; $i<=$standardblanks; $i++) {
         choose_from_menu($CHOICE_PUBLISH, "publish", "$form->publish", "");
         ?>
         <br />
+        <input type="hidden" name="hpublish" value="0" />
     </td>
 </tr>
 
