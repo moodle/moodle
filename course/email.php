@@ -21,12 +21,12 @@
 
         $link = "$CFG->wwwroot/course/view.php?id=$course->id";
 
+        //XXXX The following function is now wrong - needs fixing
+        //if (! email_to_course($USER, $course, true, $subject, $message, "$link")) {
+        //    error("An error occurred while trying to send mail!");
+        //}
 
-        if (! email_to_course($USER, $course, true, $subject, $message, "$link")) {
-            error("An error occurred while trying to send mail!");
-        }
-
-        add_to_log("Sent mail to everyone", $course->id);
+        add_to_log($course->id, "course", "email", "email.php?id=$course->id", "");
         
         redirect("view.php?id=$course->id", "Email sent", 1);
         exit;

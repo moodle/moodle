@@ -19,7 +19,7 @@
         error("User ID is incorrect");
     }
 
-    add_to_log("View total report of $user->firstname $user->lastname", $course->id);
+    add_to_log($course->id, "course", "user record", "user.php?id=$course->id&user=$user->id", "$user->id"); 
 
     print_header("$course->shortname: Report", "$course->fullname",
                  "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> ->
@@ -27,17 +27,41 @@
                   <A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> -> 
                   Full Report", "");
 
-    if ($mods = get_records_sql("SELECT * FROM modules ORDER BY fullname")) {
-        foreach ($mods as $mod) {
-            $userfile = "$CFG->dirroot/mod/$mod->name/user.php";
-            if (file_exists($userfile)) {
-                echo "<H2>".$mod->fullname."s</H2>";
-                echo "<BLOCKQUOTE>";
-                include($userfile);
-                echo "</BLOCKQUOTE>";
-                echo "<HR WIDTH=100%>";
+    if ( $rawmods = get_records_sql("SELECT cm.*, m.name as modname, m.fullname as modfullname
+                                   FROM modules m, course_modules cm
+                                   WHERE cm.course = '$course->id' 
+                                     AND cm.deleted = '0'
+                                     AND cm.module = m.id") ) {
+
+        foreach($rawmods as $mod) {    // Index the mods
+            $mods[$mod->id] = $mod;
+            $modtype[$mod->modname] = $mod->modfullname;
+        }
+    }
+
+
+    // Replace all the following with a better log-based method.
+    if ($course->format == 1) {
+        if ($weeks = get_records_sql("SELECT * FROM course_weeks WHERE course = '$course->id' ORDER BY week")) {
+            foreach ($weeks as $www) {
+                $week = (object)$www;
+                echo "<H2>Week $week->week</H2>";
+                if ($week->sequence) {
+                    $weekmods = explode(",", $week->sequence);
+                    foreach ($weekmods as $weekmod) {
+                        $mod = $mods[$weekmod];
+                        $instance = get_record("$mod->modname", "id", "$mod->instance");
+                        $userfile = "$CFG->dirroot/mod/$mod->name/user.php";
+                        include($userfile);
+                    }
+                    
+                } else {
+                    echo "<P>No modules</P>";
+                }
             }
         }
+    } else { 
+        echo "<P>Not implemented yet</P>";
     }
 
     print_footer($course);

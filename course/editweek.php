@@ -13,8 +13,6 @@
     }
 
     require_login($course->id);
-
-    add_to_log("Edit week", $course->id);
     
     if (!isteacher($course->id)) {
         error("Only teachers can edit this!");
@@ -30,6 +28,8 @@
         if (! set_field("course_weeks", "summary", $summary, "id", $week->id)) {
             error("Could not update the summary!");
         }
+
+        add_to_log($course->id, "course", "editweek", "editweek.php?id=$week->id", "$week->week");
         
         redirect("view.php?id=$course->id");
         exit;

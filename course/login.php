@@ -8,15 +8,18 @@
     require_login();
     require_variable($id);
 
+    if (! $course = get_record("course", "id", $id) ) {
+        error("That's an invalid course id");
+    }
 
     if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
 
-        $actual_password = get_field("course", "password", "id", $id);
+        if ($password == $course->password) {
 
-        if ($password == $actual_password) {
-
-            enrol_student_in_course($USER->id, $id);
-            add_to_log("Enrolled in course", $id);
+            if (! enrol_student_in_course($USER->id, $course->id)) {
+                error("An error occurred while trying to enrol you.");
+            }
+            add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
 
             $USER->student["$id"] = true;
             
@@ -35,9 +38,6 @@
         }
     }
 
-    if (! $course = get_record("course", "id", $id) ) {
-        error("That's an invalid course id");
-    }
 
     if (! $site = get_record("course", "category", "0") ) {
         error("Could not find a site!");
@@ -48,7 +48,7 @@
             error("An error occurred while trying to enrol you.");
         }
 
-        add_to_log("Enrolled in course", $id);
+        add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
 
         $USER->student["$id"] = true;
         

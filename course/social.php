@@ -32,18 +32,25 @@
       print_simple_box("Readings", $align="CENTER", $width="100%", $color="$THEME->cellheading");
 
       if ($readings = list_all_readings($course->id, "timemodified ASC", 0, true)) {
-         foreach ($readings as $reading) {
-             $readingdata[] = $reading;
-             $readingicon[] = "<IMG SRC=\"../mod/reading/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"Reading\">";
-         }
-         if ($USER->editing) {
-             $readingdata[] = "<A HREF=\"mod.php?id=$course->id&week=0&add=reading\">Add reading...</A>";
-             $readingicon[] = "&nbsp;";
-         }
+          foreach ($readings as $reading) {
+              $readingdata[] = $reading;
+              $readingicon[] = "<IMG SRC=\"../mod/reading/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"Reading\">";
+          }
+      }
+      if ($USER->editing) {
+          $readingdata[] = "<A HREF=\"mod.php?id=$course->id&week=0&add=reading\">Add reading...</A>";
+          $readingicon[] = "&nbsp;";
       }
       print_side_block("", $readingdata, "", $readingicon);
 
-      if (isteacher($USER->id)) {
+      // Print all the recent activity
+      print_simple_box("Recent Activity", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+      echo "<TABLE CELLPADDING=4 CELLSPACING=0><TR><TD>";
+      print_recent_activity($course);
+      echo "</TD></TR></TABLE>";
+
+      // Print Admin links for teachers and admin.
+      if (isteacher($USER->id) || isadmin()) {
           print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
           $adminicon[]="<IMG SRC=\"../pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"Edit\">";
           if ($USER->editing) {

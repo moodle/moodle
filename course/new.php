@@ -14,7 +14,7 @@
 
     require_login($course->id);
 
-    add_to_log("View Whats New", $course->id);
+    add_to_log($course->id, "course", "view new", "new.php?id=$course->id", ""); 
 
     print_header("$course->shortname: What's new", "$course->fullname",
                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> What's new");

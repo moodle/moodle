@@ -1,7 +1,8 @@
 <?PHP // $Id$
+      // Display the whole course as "weeks" made of of modules
+      // Included from "view.php"
 
-//  Display the whole course as "weeks" made of of modules
-//  Included from "view.php"
+    include("../mod/discuss/lib.php");
 
     if (! $rawweeks = get_records("course_weeks", "course", $course->id) ) {
         $week->course = $course->id;   // Create a default week.
@@ -16,10 +17,19 @@
         $weeks[$cw->week] = $cw;
     }
 
+    if (isset($week)) {
+        if ($week == "all") {
+            unset($USER->week);
+        } else {
+            $USER->week = $week;
+        }
+    }
+
+
+
     // Layout the whole page as three big columns.
-    echo "<TABLE BORDER=0 CELLPADDING=4>";
+    echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
     echo "<TR VALIGN=top><TD VALIGN=top WIDTH=180>";
-    echo "<IMG ALT=\"\" SRC=\"../pix/spacer.gif\" WIDTH=180 HEIGHT=1><BR>";
     
     // Layout the left column
 
@@ -42,7 +52,8 @@
     $moddata[]="<A HREF=\"../user/view.php?id=$USER->id&course=$course->id\">Edit my info</A>";
     $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"Me\">";
 
-    print_side_block("Activities", $moddata, "", $modicon);
+    print_simple_box("Activities", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_side_block("", $moddata, "", $modicon);
 
     // Admin links and controls
 
@@ -61,20 +72,17 @@
         $admindata[]="<A HREF=\"../files/index.php?id=$course->id\">Files...</A>";
         $adminicon[]="<IMG SRC=\"../files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"Files\">";
 
-        print_side_block("Administration", $admindata, "", $adminicon);
+        print_simple_box("Administration", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+        print_side_block("", $admindata, "", $adminicon);
     }
 
 
     // Start main column
     echo "</TD><TD WIDTH=\"*\">";
 
-    echo "<TABLE WIDTH=100% CELLSPACING=0 CELLPADDING=0><TR><TD>";
-    echo "<P><IMG ALT=\"\" SRC=\"../pix/spacer.gif\" WIDTH=100% HEIGHT=3><BR>";
-    echo "<B><FONT SIZE=2>Weekly Outline</FONT></B>\n";
+    print_simple_box("Weekly Outline", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    echo "<IMG SRC=\"../pix/spacer.gif\" HEIGHT=6 WIDTH=1><BR>";
     
-    echo "</FONT>";
-    echo "</TD></TR></TABLE>";
-
     // Now all the weekly modules
     $timenow = time();
     $weekdate = $course->startdate;    // this should be 0:00 Monday of that week
@@ -83,9 +91,17 @@
 
     echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
     while ($weekdate < $course->enddate) {
-        echo "<TR>";
 
         $nextweekdate = $weekdate + ($weekofseconds);
+
+        if (isset($USER->week)) {         // Just display a single week
+            if ($USER->week != $week) { 
+                $week++;
+                $weekdate = $nextweekdate;
+                continue;
+            }
+        }
+
         $thisweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
 
         $weekday = date("j F", $weekdate);
@@ -97,6 +113,7 @@
             $highlightcolor = $THEME->cellheading;
         }
 
+        echo "<TR>";
         echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top>";
         echo "<P ALIGN=CENTER><FONT SIZE=3><B>$week</B></FONT></P>";
         echo "</TD>";
@@ -142,9 +159,16 @@
         }
 
         echo "</TD>";
-        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top>&nbsp;</TD>";
+        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top ALIGN=CENTER>";
+        echo "<FONT SIZE=1>";
+        if (isset($USER->week)) {
+            echo "<A HREF=\"view.php?id=$course->id&week=all\" TITLE=\"Show all weeks\"><IMG SRC=../pix/i/allweeks.gif BORDER=0></A></FONT>";
+        } else {
+            echo "<A HREF=\"view.php?id=$course->id&week=$week\" TITLE=\"Show only week $week\"><IMG SRC=../pix/i/oneweek.gif BORDER=0></A></FONT>";
+        }
+        echo "</TD>";
         echo "</TR>";
-        echo "<TR><TD COLSPAN=3><IMG ALT=\"\" SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
+        echo "<TR><TD COLSPAN=3><IMG SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
 
         $week++;
         $weekdate = $nextweekdate;
@@ -154,22 +178,23 @@
 
     echo "</TD><TD WIDTH=180>";
 
-    // Print What's New
+    // Print all the news items.
 
-    print_side_block("<A HREF=\"new.php?id=$course->id\">What's New!</A>", 
-                     "", "<FONT SIZE=1>...since your last login</FONT>");
-
-    // Then, print all the news items.
-
-    include("../mod/discuss/lib.php");
     if ($news = get_course_news_forum($course->id)) {
-        echo "<P><B><FONT SIZE=2>Latest News</FONT></B><BR>";
-        print_simple_box_start("CENTER", "100%", "#FFFFFF", 3);
+        print_simple_box("Latest News", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+        print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
         echo "<FONT SIZE=1>";
         forum_latest_topics($news->id, 5, "minimal", "DESC", false);
         echo "</FONT>";
         print_simple_box_end();
     }
+    echo "<BR>";
+    
+    // Print all the recent activity
+    print_simple_box("Recent Activity", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
+    print_recent_activity($course);
+    print_simple_box_end();
 
     echo "</TD></TR></TABLE>\n";
 

@@ -12,7 +12,7 @@
         error("That's an invalid course id");
     }
 
-    add_to_log("View course: $course->shortname", $id);
+    add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 
     if ( isteacher($course->id) ) {
         if ($edit == "on") {

@@ -31,10 +31,8 @@
 
     $student_name = "$USER->firstname $USER->lastname";
     
-    add_to_log("$teacher_name logged in as $student_name", $course->id);
+    add_to_log($course->id, "course", "loginas", "loginas.php?id=$course->id&user=$user", "$teacher_name");
 
     notice("You are now logged in as $student_name", "$CFG->wwwroot/course/view.php?id=$course->id");
-
-    die;
 
 ?>
