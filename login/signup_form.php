@@ -14,7 +14,7 @@
 </tr>
 <tr valign=top>
 	<td><P><? print_string("password") ?>:</td>
-	<td><input type="text" name="password" size=12 value="<? p($user->password) ?>">
+	<td><input type="password" name="password" size=12 value="<? p($user->password) ?>">
 	<? formerr($err->password) ?>
 	</td>
 </tr>
