@@ -142,6 +142,7 @@ http://www.gnu.org/copyleft/gpl.html";
 $string[grade] = "Grade";
 $string[guestsno] = "No, do not allow guests in";
 $string[guestsyes] = "Yes, allow 'guest' student in";
+$string[help] = "Help";
 $string[helppicture] = "How to upload a picture";
 $string[helptext] = "How to write text";
 $string[helpquestions] = "How to ask questions";

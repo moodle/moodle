@@ -528,6 +528,34 @@ function print_admin_links ($siteid) {
     echo "<IMG SRC=\"$CFG->wwwroot/pix/spacer.gif\" WIDTH=200 HEIGHT=0><BR>";
 }
 
+function print_course_admin_links($courseid) {
+    global $THEME, $CFG;
+
+    echo "<BR>";
+    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    if (isediting($courseid)) {
+        $admindata[]="<A HREF=\"view.php?id=$courseid&edit=off\">".get_string("turneditingoff")."</A>";
+    } else {
+        $admindata[]="<A HREF=\"view.php?id=$courseid&edit=on\">".get_string("turneditingon")."</A>";
+    }
+    $admindata[]="<A HREF=\"edit.php?id=$courseid\">".get_string("settings")."...</A>";
+    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    $admindata[]="<A HREF=\"log.php?id=$courseid\">".get_string("logs")."...</A>";
+    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/log.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    $admindata[]="<A HREF=\"$CFG->wwwroot/files/index.php?id=$courseid\">".get_string("files")."...</A>";
+    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+
+    $admindata[]="<A TARGET=helpwindow HREF=\"$CFG->wwwroot/doc/teacher.html\">".get_string("help")."...</A>";
+    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/reading/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+
+    if ($teacherforum = forum_get_course_forum($courseid, "teacher")) {
+        $admindata[]="<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">".get_string("teacherforum")."</A>";
+        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    }
+
+    print_simple_box(get_string("administration"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_side_block("", $admindata, "", $adminicon);
+}
 
 
 function print_log_graph($course, $userid=0, $type="course.png", $date=0) {

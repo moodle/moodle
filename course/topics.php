@@ -78,32 +78,9 @@
     echo "</DIV>";
 
     // Admin links and controls
-
     if (isteacher($course->id)) {
-        echo "<BR>";
-        $admindata[]="<A HREF=\"edit.php?id=$course->id\">".get_string("settings")."...</A>";
-        $adminicon[]="<IMG SRC=\"../pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-        $admindata[]="<A HREF=\"log.php?id=$course->id\">".get_string("logs")."...</A>";
-        $adminicon[]="<IMG SRC=\"../pix/i/log.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-        $admindata[]="<A HREF=\"../files/index.php?id=$course->id\">".get_string("files")."...</A>";
-        $adminicon[]="<IMG SRC=\"../files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-
-        if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {
-            $admindata[]="<A HREF=\"../mod/forum/view.php?f=$teacherforum->id\">".get_string("teacherforum")."</A>";
-            $adminicon[]="<IMG SRC=\"../mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-        }
-
-        $adminicon[]="<IMG SRC=\"../pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-        if (isediting($course->id)) {
-            $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</A>";
-        } else {
-            $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">".get_string("turneditingon")."</A>";
-        }
-
-        print_simple_box(get_string("administration"),"CENTER", "100%", $THEME->cellheading);
-        print_side_block("", $admindata, "", $adminicon);
+        print_course_admin_links($course->id);
     }
-
 
     // Start main column
     echo "</TD><TD WIDTH=\"*\">";
