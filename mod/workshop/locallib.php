@@ -1819,7 +1819,8 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             
         // only show the grade if grading strategy > 0 and the grade is positive
         if ($showgrades and $workshop->gradingstrategy and $assessment->grade >= 0) { 
-            echo "<center><b>".get_string("thegradeis", "workshop").": ".number_format($assessment->grade, 2)." (".
+            echo "<center><b>".get_string("thegradeis", "workshop").": ".
+                number_format($assessment->grade * $workshop->grade / 100, 2)." (".
                 get_string("maximumgrade")." ".number_format($workshop->grade, 0).")</b></center><br clear=\"all\" />\n";
             }
         }
@@ -2688,7 +2689,7 @@ function workshop_print_upload_form($workshop) {
     }
 
     echo "<div align=\"center\">";
-    echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload\".php>";
+    echo "<form enctype=\"multipart/form-data\" method=\"POST\" action=\"upload.php\">";
     echo " <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
     require_once($CFG->dirroot.'/lib/uploadlib.php');
     upload_print_form_fragment(1,array('newfile'),null,true,array('title'),$course->maxbytes,$workshop->maxbytes,false);

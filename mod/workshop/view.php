@@ -56,7 +56,7 @@
 				$action = "teachersview";
 			}
 			else {
-    			redirect("assessments.php?action=editelements&amp;id=$cm->id");
+    			redirect("assessments.php?action=editelements&id=$cm->id");
 			}
 		}
 	}

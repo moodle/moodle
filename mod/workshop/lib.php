@@ -1183,9 +1183,11 @@ function workshop_compare_assessments($workshop, $assessment1, $assessment2) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_count_ungraded_assessments($workshop) {
-    // function returns the number of ungraded assessments (ANY assessments)
+    // function returns the number of ungraded assessments (assessments must be warm or cold)
     
-    return count_records("workshop_assessments", "workshopid", $workshop->id, "timegraded", 0) ;
+    $timenow = time();
+    return count_records_select("workshop_assessments", "workshopid = $workshop->id AND 
+            timecreated < $timenow AND timegraded = 0") ;
     }
 
 
