@@ -58,8 +58,8 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     }
     
     if ( is_array($ignoretagsopen) ) {
-        $filterignoretagsopen  += $ignoretagsopen; // gotta love PHP's array handling!
-        $filterignoretagsclose += $ignoretagsclose;
+        foreach ($ignoretagsopen as $open) $filterignoretagsopen[] = $open;
+        foreach ($ignoretagsclose as $close) $filterignoretagsclose[] = $close;
     }
 
 
@@ -68,6 +68,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     foreach ($filterignoretagsopen as $key=>$opentag) {
         $closetag = $filterignoretagsclose[$key];
     /// form regular expression
+        $opentag  = str_replace('/','\/',$opentag); // delimit forward slashes
         $closetag = str_replace('/','\/',$closetag); // delimit forward slashes
         $pregexp = '/'.$opentag.'(.+?)'.$closetag.'/is';
         
