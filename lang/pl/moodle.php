@@ -1,0 +1,478 @@
+<?PHP // $Id$ 
+      // moodle.php - created with Moodle 1.0.8.1 (2003011200)
+
+
+$string['action'] = "Akcja";
+$string['activities'] = "Aktywno¶ci";
+$string['activity'] = "Aktywno¶æ";
+$string['activityreport'] = "Raport aktywno¶ci";
+$string['add'] = "Dodaj";
+$string['addadmin'] = "dodaj Admina";
+$string['added'] = "dodano \$a";
+$string['addinganew'] = "Dodano nowego \$a";
+$string['addinganewto'] = "Dodawanie nowego \$a->what do \$a->to";
+$string['addnewcourse'] = "Dodaj nowy kurs";
+$string['addnewuser'] = "Nowy u¿ytkownik";
+$string['address'] = "Adres";
+$string['addteacher'] = "Dodaj prowadz±cego";
+$string['admin'] = "Admin";
+$string['administration'] = "Administracja";
+$string['again'] = "ponownie";
+$string['all'] = "Wszystko";
+$string['alldays'] = "Wszystkie dni";
+$string['allfieldsrequired'] = "Wszystkie pola s± wymagane";
+$string['alllogs'] = "Wszystkie logi";
+$string['allow'] = "zezwala";
+$string['allowguests'] = "W tym kursie mog± uczestniczyæ równie¿ u¿ytkownicy zalogowani jako go¶cie";
+$string['allownot'] = "Nie zezwala";
+$string['allparticipants'] = "Wszyscy uczestnicy";
+$string['alphanumerical'] = "Mo¿e zawieraæ wy³±cznie litery alfabetu i cyfry.";
+$string['alreadyconfirmed'] = "Rejestracja zosta³a ju¿ potwierdzona";
+$string['answer'] = "Odpowied¼";
+$string['assignadmins'] = "Przypisz administratorów";
+$string['assignteachers'] = "Przypisz prowadz±cych";
+$string['authentication'] = "Autentykacja";
+$string['availablecourses'] = "Dostêpne kursy";
+$string['cancel'] = "Porzuæ";
+$string['categories'] = "Kategorie kursów";
+$string['category'] = "Kategoria";
+$string['categoryadded'] = "Kategoria '\$a' zosta³a dodana";
+$string['categorydeleted'] = "Kategoria '\$a' zosta³a usuniêta";
+$string['changedpassword'] = "Has³o zosta³ zmienione";
+$string['changepassword'] = "Zmieñ has³o";
+$string['changessaved'] = "Zmiany zosta³y zapisane";
+$string['checklanguage'] = "Sprawd¼ jêzyk";
+$string['choose'] = "Wybierz";
+$string['choosecourse'] = "Wybierz kurs";
+$string['chooselivelogs'] = "lub przejrzyj bie¿±c± aktywno¶æ";
+$string['chooselogs'] = "Wybierz logi, które chcesz obejrzeæ";
+$string['choosetheme'] = "Wybierz temat";
+$string['chooseuser'] = "Wybierz u¿ytkownika";
+$string['city'] = "Miasto";
+$string['closewindow'] = "Zamknij to okno";
+$string['comparelanguage'] = "Porównaj i popraw bie¿±cy jêzyk";
+$string['complete'] = "Zakoñcz";
+$string['configcountry'] = "Je¿eli ustawisz tutaj kraj, wówczas ten kraj bêdzie domy¶lny dla nowych u¿ytkowników. Je¿eli chcesz wymusiæ, aby u¿ytkownicy wyberali kraj samodzielnie zostaw to pole niewype³nione.";
+$string['configlang'] = "Wybierz domy¶lny jêzyk dla tego serwisu. U¿ytkownicy mog± pó¼niej wybraæ dla siebie inne ustawienie.";
+$string['configvariables'] = "Konfiguruj zmienne";
+$string['confirmed'] = "Twoja rejestracja zosta³a potwierdzona";
+$string['continue'] = "Kontynuuj";
+$string['cookiesenabled'] = "Mechanizm Cookies musi byæ w³±czony na Twojej przegl±darce";
+$string['copyrightnotice'] = "Prawa autorskie";
+$string['country'] = "Kraj";
+$string['course'] = "Kurs";
+$string['courseformats'] = "Format kursu";
+$string['courses'] = "Kursy";
+$string['courseupdates'] = "Aktualizacje kursów";
+$string['createaccount'] = "Utwórz moje nowe konto";
+$string['createuserandpass'] = "Utwórz now± nazwê u¿ytkownika oraz has³o aby zalogowaæ siê z";
+$string['createziparchive'] = "Utwórz archwum zip";
+$string['currentlanguage'] = "Aktualny jêzyk";
+$string['currentlocaltime'] = "twój aktualny czas lokalny";
+$string['databasesetup'] = "Tworzenie bazy danych";
+$string['databasesuccess'] = "Baza danych zosta³a poprawnie zaktualizowana ";
+$string['databaseupgrades'] = "Aktualizacja bazy danych";
+$string['day'] = "dzieñ";
+$string['days'] = "dni";
+$string['defaultcoursefullname'] = "Pe³na nazwa kursu 101";
+$string['defaultcourseshortname'] = "NK 101";
+$string['defaultcoursestudent'] = "Student";
+$string['defaultcoursestudents'] = "Studenci";
+$string['defaultcoursesummary'] = "Wpisz tutaj zwiêz³y i interesuj±cy tekst, który wyja¶nia o czym jest ten kurs ";
+$string['defaultcourseteacher'] = "Prowadz±cy";
+$string['defaultcourseteachers'] = "Prowadz±cy";
+$string['delete'] = "Usuñ";
+$string['deletecheck'] = "Usun±æ \$a ?";
+$string['deletecheckfull'] = "Czy masz ca³kowit± pewno¶æ, ¿e chcesz ca³kowicie usun±æ \$a ?";
+$string['deletecompletely'] = "Usuñ ca³kowicie";
+$string['deletecourse'] = "Usuñ kurs";
+$string['deletecoursecheck'] = "Czy masz absolutn± pewno¶æ, ¿e chcesz ca³kowicie usun±æ ten kurs i wszystkie zawarte w nim dane?";
+$string['deleted'] = "Usuniêty";
+$string['deletedactivity'] = "Usuniêto \$a";
+$string['deletedcourse'] = "\$a zaosta³ ca³kowicie usuniêty.";
+$string['deletednot'] = "Nie mo¿na usun±æ \$a !";
+$string['deletingcourse'] = "Usuwanie \$a";
+$string['department'] = "Departament";
+$string['description'] = "Opis";
+$string['displayingrecords'] = "Wy¶wietl \$a rekordów";
+$string['displayingusers'] = "Wy¶wietlanie u¿ytkowników od \$a->start do \$a->end";
+$string['documentation'] = "Dokumentacja Moodl'a";
+$string['downloadexcel'] = "Prze¶lij w formacie Excela";
+$string['downloadtext'] = "Prz¶lij w formacie tekstowym";
+$string['doyouagree'] = "Czy przeczyta³e¶(a¶) warunki i rozumiesz je?";
+$string['edit'] = "Zmieñ \$a";
+$string['editcoursesettings'] = "Zmieñ ustawienia kursu";
+$string['editinga'] = "Poprawianie \$a";
+$string['editmyprofile'] = "Modyfikuj profil";
+$string['editsummary'] = "Zmieñ podsumowanie";
+$string['editthisactivity'] = "Zmieñ t± aktywno¶æ";
+$string['edituser'] = "Modyfikuj konta u¿ytkowników";
+$string['email'] = "adres e-mail";
+$string['emailconfirm'] = "Potwierd¼ Twoje konto";
+$string['emailconfirmation'] = "Witaj \$a->firstname,
+
+W serwisie '\$a->sitename' za¿±dano utworzenia nowego konta z u¿yciem twojego adresu e-mail.
+
+Aby potwierdziæ zamiar utworzenia konta przejd¼ na stronê:
+
+  \$a->link
+
+W wiêkszo¶ci programów istnieje mo¿liwo¶æ przej¶cia pod powy¿szy adres poprzez klikniêcie go.
+Je¿eli to nie dzia³a skopiuj adres do pola adresowego przegl±darki internetowej i naci¶nij klawisz enter.
+
+Pozdrowienia od administraotra '\$a->sitename',
+\$a->admin";
+$string['emailconfirmsent'] = "   <P>Zosta³ do Ciebie wys³any e-mail <B>\$a</B>
+   <P>Zawiera on prost± instrukacjê jak dokoñczyæ rejestracjê.
+   <P>Je¿eli nadal bêdziesz mieæ k³opoty skontaktuj siê z administratorem serwisu.";
+$string['emaildisplay'] = "Wy¶wietlanie adresu e-mail";
+$string['emaildisplaycourse'] = "Tylko inni uczestnicy kursu mog± zobaczyc mój e-mail";
+$string['emaildisplayno'] = "Ukryj mój adres e-mail dla wszystkich";
+$string['emaildisplayyes'] = "Poka¿ wszystkim mój adres e-mail";
+$string['emailexists'] = "Ten adres e-mail jest ju¿ zarejestrowany";
+$string['emailformat'] = "Format e-mail";
+$string['emailmustbereal'] = "Uwaga: Twój adres e-mail musi byæ prawdziwy";
+$string['enrolmentkey'] = "Klucz dostêpu do kursu";
+$string['enrolmentkeyfrom'] = "Ten kurs wymaga jednorazowego klucza, który powiniene¶ otrzymaæ od \$a";
+$string['enrolmentkeyhint'] = "Ten klucz dostêpu do kursu nie jest poprawny, spróbuj ponownie <BR>
+(sugestia: klucz zaczyna siê na '\$a')";
+$string['entercourse'] = "Kliknij, aby wej¶æ na kurs";
+$string['enteremailaddress'] = "Wprowad¼ swój adres e-mail, aby automatycznie wygenerowaæ nowe has³o, które zostanie tobie przes³ane poczt± elektroniczn±.";
+$string['error'] = "B³±d";
+$string['errortoomanylogins'] = "Przekroczona dozwolona liczba prób logowania. Zrestartuj swoj± przegl±darkê. ";
+$string['existingadmins'] = "Istniej±cy administratorzy";
+$string['existingteachers'] = "Istniej±cy nauczyciele";
+$string['feedback'] = "Informacja zwrotna";
+$string['filemissing'] = "brak \$a ";
+$string['files'] = "Pliki";
+$string['filloutallfields'] = "Nale¿y wype³niæ wszystkie pola formularza";
+$string['firstname'] = "Imiê";
+$string['firsttime'] = "Czy to jest twój pierwszy raz?";
+$string['followingoptional'] = "Nastêpuj±ce punkty s± opcjonalne";
+$string['followingrequired'] = "Nastêpuj±ce punkty s± wymagane";
+$string['forgotten'] = "Zapomnia³e¶(a¶) nazwy u¿ytkownika lub has³a?";
+$string['format'] = "Format";
+$string['formathtml'] = "HTML format";
+$string['formatsocial'] = "Format 'towarzyski'";
+$string['formattext'] = "Automatyczny format Moodl'a";
+$string['formattexttype'] = "Formatowanie";
+$string['formattopics'] = "Uk³ad tematyczny";
+$string['formatweeks'] = "Uk³ad tygodniowy";
+$string['frontpagedescription'] = "Opis strony g³ównej";
+$string['frontpageformat'] = "Uk³ad strony g³ównej";
+$string['fulllistofcourses'] = "Wszystkie kursy";
+$string['fullname'] = "Pe³na nazwa";
+$string['fullprofile'] = "Pe³ny profil";
+$string['fullsitename'] = "Pe³na nazwa serwisu";
+$string['gd1'] = "Bilbioteka GD 1.x jest zainstalowana";
+$string['gd2'] = "Bilbioteka GD 2.x jest zainstalowana";
+$string['gdneed'] = "Bilbioteka GD musi byæ zainstalowana oby mo¿na by³o widzieæ grafiki";
+$string['gdnot'] = "Bilbioteka GD nie jest zainstalowana";
+$string['grade'] = "Stopieñ";
+$string['grades'] = "Stopnie";
+$string['guestskey'] = "Zezwól go¶ciom posiadaj±cym klucz";
+$string['guestsno'] = "Wej¶cie dla go¶ci nie jest dozwolone";
+$string['guestsnotallowed'] = "Niestety, kurs '\$a' nie jest dostêpny dla go¶ci.";
+$string['guestsyes'] = "Wej¶cie dla go¶ci bez klucza jest dozwolone";
+$string['guestuser'] = "Go¶æ";
+$string['guestuserinfo'] = "To jest specjalny u¿ytkownik, który umo¿liwia dostêp do niektórych kursów wy³acznie w trybie 'do odczytu'.";
+$string['help'] = "Pomoc";
+$string['helphtml'] = "Jak pisaæ w html'u";
+$string['helppicture'] = "Jaz przes³aæ obrazek";
+$string['helpquestions'] = "Zadawaj dobre pytania";
+$string['helpreading'] = "Przeczytaj uwa¿nie";
+$string['helprichtext'] = "O edytorze  Richtext ";
+$string['helptext'] = "Jak napisaæ tekst";
+$string['helpwriting'] = "Pisz uwa¿nie";
+$string['hide'] = "Ukryj";
+$string['hits'] = "Ods³ony";
+$string['hitsoncourse'] = "Ods³on \$a->coursename przez \$a->username";
+$string['hitsoncoursetoday'] = "Dzisiejszych ods³on na $->coursename przez \$a->username ";
+$string['home'] = "Strona g³ówna";
+$string['hour'] = "godzina";
+$string['hours'] = "godziny";
+$string['howtomakethemes'] = "Jak utworzyæ nowy temat";
+$string['htmleditor'] = "U¿ywaj edytora Richtext HTML  (tylko IE , 5.5 lub pó¼niejszy)";
+$string['htmleditoravailable'] = "Edytor Richtext jest dostêpny";
+$string['htmleditordisabled'] = "Masz wy³±czony edytor Richtext w swoim profilu u¿ytkownika";
+$string['htmleditordisabledadmin'] = "Administrator wy³±czy³ edytor Richtekst w tym serwisie";
+$string['htmleditordisabledbrowser'] = "Edytor Richtext jest niedostêpny poniewa¿ nie u¿ywasz Internet Explorera 5.5 lub lepszego.";
+$string['htmlformat'] = "£adny format HTML";
+$string['icqnumber'] = "Numer ICQ";
+$string['idnumber'] = "Numer ID";
+$string['invalidemail'] = "Niew³a¶ciwy adres e-mail";
+$string['invalidlogin'] = "b³±d logowania, spróbuj jeszcze raz";
+$string['jumpto'] = "Skocz do...";
+$string['langltr'] = "Kierunek jêzyka z lewej-do-prawej";
+$string['langrtl'] = "Kierunek jêzyka z prawej-do-lewej";
+$string['language'] = "Jêzyk";
+$string['languagegood'] = "Ten pakiet jêzykowy jest aktualny! :-)";
+$string['lastaccess'] = "Ostatni dostêp";
+$string['lastedited'] = "Ostatnia modyfikcja";
+$string['lastmodified'] = "Ostatnia modyfikcja";
+$string['lastname'] = "Nazwisko";
+$string['latestnews'] = "Naj¶wie¿sze wiadomo¶ci";
+$string['leavetokeep'] = "Pozostaw puste aby zachowaæ dotychczasowe has³o";
+$string['license'] = "Licenicja GPL";
+$string['listofallpeople'] = "Lista wszystkich osób";
+$string['livelogs'] = "Bie¿±ce logi z ostatniej godziny";
+$string['locale'] = "pl_PL";
+$string['location'] = "Po³o¿enie";
+$string['loggedinas'] = "Jeste¶ zalogowany(a) jako \$a ";
+$string['loggedinnot'] = "Nie jeste¶ zalogowany(a)";
+$string['login'] = "Zaloguj siê";
+$string['loginas'] = "Zaloguj siê jako";
+$string['loginguest'] = "Zaloguj siê jako go¶æ";
+$string['loginsite'] = "Zaloguj siê do serwisu";
+$string['loginsteps'] = "   Witaj! W celu uzyskania pe³nego dostêpu do kursów musisz spêdziæ kilka minut nad stworzeniem w tym serwisie nowego konta dla siebie.
+   Ka¿dy z kursów mo¿e wymagaæ podania jednorazowego &quot;klucza&quot;, który bêdzie niezbêdny tylko przy zapisywaniu siê na kurs. Pó¼niej nie bêdzie ju¿ potrzebny.
+   Oto kroki, które musisz wykonaæ:
+   <OL size=2>
+   <LI>Wype³nij formulrz <A HREF=\$a> Nowe konto</A> swoimi danymi.
+   <LI>Niezw³ocznie zostanie wys³any do Ciebie e-mail na podany przez Ciebie adres.
+   <LI>Przeczytaj e-mail i kliknij zawarty w nim link.   <LI>Twoje konto zostanie potwierdzone i zostaniesz zalogowany.   <LI>Wybierz kurs, w ktorym chcesz wzi±æ udzia³.   <LI>Je¿eli zostaniesz poproszony(a) o podanie &quot;klucza&quot; - wpisz otrzymany od prowadz±cego klucz. To spowoduje zapisanie Ciê na kurs.
+   <LI>Od tego momentu bêdziesz mieæ dostêp do kursu. Aby zalogowaæ siê i uzyskaæ dostêp do kursów, na które siê zapisa³e¶, konieczne bêdzie tylko wpisanie Twojej nazwy u¿ytkownika i has³a (w formularzu na tej stronie) </OL>";
+$string['loginstepsnone'] = "Dla uzyskania pe³nego dostêpu do kursów niezbêdne jest utworzenie konta.<p>Wszystko co musisz zrobiæ to wymysliæ nazwê u¿ytkownika i has³o oraz u¿yæ w formularza na tej stronie!<p>
+Je¿eli kto¶ inny wybra³ ju¿ tak± nazwê u¿ytkownika bêdziesz musia³(a) powtórzyæ operacjê u¿ywaj±c innej nazwy. ";
+$string['loginto'] = "Zaloguj do \$a";
+$string['loginusing'] = "Zaloguj siê tutaj u¿ywaj±c twojej nazwy u¿ytkownika i has³a";
+$string['logout'] = "Wyloguj";
+$string['logs'] = "Logi";
+$string['mainmenu'] = "Menu g³ówne";
+$string['makeafolder'] = "Utwórz folder";
+$string['managedatabase'] = "Zarz±dzaj baz± danych";
+$string['markthistopic'] = "Mark this topic as the current topic";
+$string['maximumchars'] = "Maximum of \$a characters";
+$string['maximumgrade'] = "Maksymalna ocena";
+$string['maximumshort'] = "Max";
+$string['maxsize'] = "Maksymalny rozmiar: \$a";
+$string['min'] = "min";
+$string['mins'] = "min.";
+$string['miscellaneous'] = "Inne";
+$string['missingcategory'] = "Musisz wybraæ kategoriê";
+$string['missingcity'] = "Pominiêto miejscowo¶æ";
+$string['missingcountry'] = "Pominiêto kraj";
+$string['missingdescription'] = "Pominiêto opis";
+$string['missingemail'] = "Pominiêto adres e-mail";
+$string['missingfirstname'] = "Pominiêto imiê";
+$string['missingfullname'] = "Pominiêto pe³n± nazwê";
+$string['missinglastname'] = "Pominiêto nazwisko";
+$string['missingnewpassword'] = "Pominiêto nowe has³o";
+$string['missingpassword'] = "Pominiêto has³o";
+$string['missingshortname'] = "Pominiêto nazwê skrócon±";
+$string['missingshortsitename'] = "Pominiêto skrócon± nazwê serwisu";
+$string['missingsitedescription'] = "Pominiêto opis serwisu";
+$string['missingsitename'] = "Pominiêto nazwê serwisu";
+$string['missingstrings'] = "Poszukaj brakuj±cych napisów";
+$string['missingstudent'] = "Nale¿y co¶ wybraæ";
+$string['missingsummary'] = "Pominiêto podsumowanie";
+$string['missingteacher'] = "Nale¿y co¶ wybraæ";
+$string['missingusername'] = "Pominiêto nazwê u¿ytkownika";
+$string['modified'] = "Zmodyfikowano";
+$string['modulesetup'] = "Tworzenie tablic modu³ów";
+$string['modulesuccess'] = "\$a tablic utworzono poprawnie";
+$string['mostrecently'] = "naj¶wie¿sze";
+$string['movedown'] = "Przesuñ w dó³";
+$string['movefilestohere'] = "Przesuñ plki tutaj";
+$string['movetoanotherfolder'] = "Przesuñ do innego folderu";
+$string['moveup'] = "Przesuñ w górê";
+$string['mustconfirm'] = "Musisz potwierdziæ swój login";
+$string['mycourses'] = "Moje kursy";
+$string['name'] = "Nazwa";
+$string['namesocial'] = "sekcja";
+$string['nametopics'] = "topic";
+$string['nameweeks'] = "tydzieñ";
+$string['never'] = "Nigdy";
+$string['new'] = "Nowy";
+$string['newaccount'] = "Nowe konto";
+$string['newpassword'] = "Nowe has³o";
+$string['newpasswordtext'] = "Witaj \$a->firstname,
+
+Twoje dotychczasowe has³o w serwisie '\$a->sitename' zosta³o usuniête, a w jego miesce ustawione has³o podane ni¿ej.
+
+Twoje obecne parametry logowania s± nastêpuj±ce:
+   nazwa u¿ytkownika: \$a->username
+               has³o: \$a->newpassword
+
+Wejd¼ na t± stronê i zmieñ swoje has³o:
+   \$a->link
+
+W wiêkszo¶ci programów pocztowych powy¿szy adres jest linkiem, który mo¿esz klikn±æ przenosz±c siê automatycznie na stronê zmiany has³a. Je¿eli twój program pocztowy nie daje takiej mo¿liwo¶ci, skopiuj podany adres do pola adresowego przegl±darki internetowej i naci¶nij klawiesz ener. 
+
+Pozdrowienia od administratora '\$a->sitename',
+\$a->signoff
+";
+$string['newpicture'] = "Nowy obraz";
+$string['newsitem'] = "Wiadomo¶æ";
+$string['newsitems'] = "Wiadomo¶ci";
+$string['newsitemsnumber'] = "Wiadomo¶ci do pokazania";
+$string['newuser'] = "Nowy u¿ytkownik";
+$string['newusers'] = "Nowi u¿ytkownicy";
+$string['no'] = "Nie";
+$string['nocoursesyet'] = "Brak kursów w tej kategorii";
+$string['noexistingadmins'] = "Brak administratorów. To jest powa¿ny b³±d, a ta informacja nigdy nie powinna siê poajwiæ.";
+$string['noexistingteachers'] = "Brak istniej±cych prowadz±cych";
+$string['nofilesyet'] = "Nie przes³ano jeszcze ¿adnych plików w zwi±zku z tym kursem";
+$string['nograde'] = "Brak oceny";
+$string['noimagesyet'] = "¯adnych obrazów nie przes³ano do twojego kursu";
+$string['none'] = "¯aden";
+$string['nopotentialadmins'] = "Brak potencjalnych administratorów";
+$string['nopotentialteachers'] = "Brak potencjalnych prowadz±cych";
+$string['normal'] = "Zwyk³y";
+$string['nostudentsyet'] = "Brak zapisanych na ten kurs studentów";
+$string['nosuchemail'] = "Nie ma takiego adresu e-mail";
+$string['noteachersyet'] = "Jak dot±d brak prowadz±cych ten kurs";
+$string['notenrolled'] = "\$a nie jest jeszcze zapisany na kurs";
+$string['nothingnew'] = "Nic nowego od ostatniego zalogowania";
+$string['nousersyet'] = "Brak u¿ytkowników (jak dot±d)";
+$string['now'] = "teraz";
+$string['numberweeks'] = "Liczba tygodni/tematów";
+$string['numdays'] = "\$a dni";
+$string['numminutes'] = "\$a minut";
+$string['numviews'] = "\$a views";
+$string['numweeks'] = "\$a tygodni";
+$string['numwords'] = "\$a s³ów";
+$string['numyears'] = "\$a lat";
+$string['ok'] = "OK";
+$string['opentoguests'] = "Dostêp jako go¶æ";
+$string['optional'] = "opcjonalnie";
+$string['order'] = "Kolejno¶æ";
+$string['outline'] = "Zarys";
+$string['participants'] = "Uczestnicy";
+$string['password'] = "Has³o";
+$string['passwordchanged'] = "Has³o zosta³o zmienione";
+$string['passwordrecovery'] = "Tak, pomó¿ mi zalogowaæ siê";
+$string['passwordsdiffer'] = "Te has³a nie pasuj±";
+$string['passwordsent'] = "Has³o zosta³o wys³ane";
+$string['passwordsenttext'] = "   <P>Twoje has³o zosta³o wys³ane poczt± e-mail na adres \$a->email.
+   <P>Nowe has³o zosta³o wygenerowane automatycznie, wiêc zapewne bêdziesz chcia³(a) je
+   <A HREF=\$a->link>zmieniæ</A> na ³atwiejsze do zapamietania.";
+$string['people'] = "Osoby";
+$string['personalprofile'] = "Profil osobisty";
+$string['phone'] = "Telefon";
+$string['potentialadmins'] = "Potencjalni administratorzy";
+$string['potentialteachers'] = "Potencjalni prowadz±cy";
+$string['preferredlanguage'] = "Preferowany jêzyk";
+$string['preview'] = "Podgl±d";
+$string['previeworchoose'] = "Przejrzyj lub wybierz temat";
+$string['question'] = "Pytanie";
+$string['readme'] = "Czytaj to";
+$string['recentactivity'] = "Ostatnia aktywno¶æ";
+$string['removeadmin'] = "Usuñ administratora";
+$string['removeteacher'] = "Usuñ prowadz±cego";
+$string['rename'] = "Zmieñ nazwê";
+$string['requireskey'] = "Kurs wymaga klucza aktywacyjnego";
+$string['resources'] = "Zasoby";
+$string['returningtosite'] = "Powracasz na t± stronê WWW?";
+$string['revert'] = "Przywróæ";
+$string['role'] = "Rola";
+$string['savechanges'] = "Zapisz zmiany";
+$string['search'] = "Wyszukaj";
+$string['searchagain'] = "Wyszukaj ponownie";
+$string['searchresults'] = "Szukaj w rezultatach";
+$string['sec'] = "sek";
+$string['secs'] = "sek.";
+$string['section'] = "Sekcja";
+$string['selectacountry'] = "Wybie¿ kraj";
+$string['senddetails'] = "Przy¶lij informacje o mnie e-mail'em";
+$string['serverlocaltime'] = "Lokalny czas serwera";
+$string['settings'] = "Ustawienia";
+$string['shortname'] = "Srócona nazwa";
+$string['shortsitename'] = "Skrócona nazwa serwisu";
+$string['show'] = "Poka¿";
+$string['showallcourses'] = "Poka¿ wszystkie kursy";
+$string['showalltopics'] = "Poka¿ wszystkie tematy";
+$string['showallweeks'] = "Poka¿ wszystkie tygodnie";
+$string['showlistofcourses'] = "Poka¿ listê kursów";
+$string['showonlytopic'] = "Wy¶wietl tylko temat \$a";
+$string['showonlyweek'] = "Poka¿ tylko tydzieñ \$a";
+$string['showrecent'] = "Poka¿ ostatnie wydarzenia";
+$string['showtheselogs'] = "Poka¿ te logi";
+$string['site'] = "Serwis";
+$string['sitelogs'] = "Logi serwisu";
+$string['sitenews'] = "Wie¶ci z serwisu";
+$string['sites'] = "Serwisy";
+$string['sitesettings'] = "Ustawienia serwisu";
+$string['size'] = "Rozmiar";
+$string['socialheadline'] = "Forum towarzyskie - ostatnie tematy";
+$string['someallowguest'] = "Niektóre kursy dostêpne s± dla u¿ytkowników zalogowanych jako go¶cie.";
+$string['someerrorswerefound'] = "Czê¶æ informacji zosta³a pominiêta lub jest niepoprawna. Poni¿ej znajdziesz szczegó³y.";
+$string['startdate'] = "Data uruchomienia kursu";
+$string['startsignup'] = "Zacznij terez od utworzenia nowego konta!";
+$string['status'] = "Status";
+$string['stringsnotset'] = "Nastêpujace napisy nie s± zdefiniowane \$a";
+$string['studentnotallowed'] = "Przykro nam, ale nie mo¿esz przyst±piæ do kursu jako '\$a'";
+$string['success'] = "Gotowe";
+$string['summary'] = "Podsumowanie";
+$string['summaryof'] = "Podsumowanie \$a";
+$string['supplyinfo'] = "Proszê wpisaæ gar¶æ informacje o sobie";
+$string['teacheronly'] = "wy³±cznie dla \$a ";
+$string['textediting'] = "Edytuj±c tekst";
+$string['texteditor'] = "U¿yj standardowych formularzy WWW";
+$string['textformat'] = "Zwyk³y tekst";
+$string['thanks'] = "Dziêkujê";
+$string['theme'] = "Temat";
+$string['themesaved'] = "Nowy temat zosta³ zapisany";
+$string['thischarset'] = "iso-8859-2";
+$string['thislanguage'] = "Polski";
+$string['timezone'] = "Strefa czasowa";
+$string['today'] = "Dzisiaj";
+$string['todaylogs'] = "Dzisiejsze logi";
+$string['toomanytoshow'] = "Zbyt wielu u¿ytkowników do pokazania";
+$string['topic'] = "Temat";
+$string['topicoutline'] = "Tematyka";
+$string['total'] = "Razem";
+$string['turneditingoff'] = "Wy³±cz tryb edycji";
+$string['turneditingon'] = "W³±cz tryb edycji";
+$string['undecided'] = "Nia zdecydowano";
+$string['unenrol'] = "Wypisz siê";
+$string['unenrolme'] = "Wypisz mnie z  \$a";
+$string['unenrolsure'] = "Czy masz pewno¶æ, ¿e chcesz wypisaæ  \$a z tego kursu?";
+$string['unsafepassword'] = "Has³o nie jest bezpieczne - wybierz inne";
+$string['unusedaccounts'] = "Konta nie u¿ywane przez \$a s± automatycznie wykluczane z kursu";
+$string['unzip'] = "Unzip";
+$string['update'] = "Zaktualizuj";
+$string['updated'] = "Zaktualizowano \$a";
+$string['updatemyprofile'] = "Zaktualizuj profil";
+$string['updatesevery'] = "Aktualizacje co  \$a sekund";
+$string['updatethis'] = "Zaktualizuj \$a";
+$string['updatethiscourse'] = "Zaktualizuj ten kurs";
+$string['updatinga'] = "Aktualizacja \$a";
+$string['updatingain'] = "Aktualizacja \$a->what w \$a->in";
+$string['upload'] = "Prze¶lij ";
+$string['uploadafile'] = "Prze¶lij plik";
+$string['uploadedfileto'] = "Przes³ano \$a->file do \$a->directory";
+$string['uploadnofilefound'] = "Nie znaleziono ¿adnego pliku. Masz pewno¶æ, ¿e zosta³ wskazany plik do przes³ania?";
+$string['uploadproblem'] = "Pojawi³ siê nieznany b³±d podczas przesy³ania pliku'\$a' (byæ mo¿e by³ za du¿y)";
+$string['uploadthisfile'] = "Prze¶lij ten plik";
+$string['userdeleted'] = "To konto u¿ytkownika zosta³o usunieta";
+$string['userdescription'] = "Opis";
+$string['username'] = "Nazwa u¿ytkownika";
+$string['usernameexists'] = "Ta nazwa u¿ytkownika ju¿ istnieje, wybierz inn±.";
+$string['userprofilefor'] = "Profil u¿ytkownika dla \$a";
+$string['users'] = "U¿ytkownicy";
+$string['webpage'] = "Strona WWW";
+$string['week'] = "Tydzieñ";
+$string['weeklyoutline'] = "Plan tygodniowy";
+$string['welcometocourse'] = "Witaj w \$a";
+$string['welcometocoursetext'] = "Witaj na kursie \$a->coursename!
+
+Jedn± z pierwszych rzeczy, któr± nale¿y zrobiæ jest zmodyfikowanie twojego profilu, aby inni mogli dowiedzieæ siê czego¶ o tobie:
+
+\$a->profileurl";
+$string['withchosenfiles'] = "Z wybranymi plikami";
+$string['wordforstudent'] = "Twój odpowiednik s³owa Student";
+$string['wordforstudenteg'] = "np. Student, Uczestnik itd.";
+$string['wordforstudents'] = "Twój odpowiednik s³owa Studenci";
+$string['wordforstudentseg'] = "np. Studenci, Uczestnicy itd.";
+$string['wordforteacher'] = "Twój odpowiednik s³owa Prowadz±cy";
+$string['wordforteachereg'] = "np. Prowadz±cy, Trener itp.";
+$string['wordforteachers'] = "Twój odpowiednik s³owa Prowadz±cy (l.mnoga)";
+$string['wordforteacherseg'] = "np. Prowadz±cy, Trenerzy itp.";
+$string['wrongpassword'] = "B³êdne has³o dla tej nazwy u¿ytkownika";
+$string['yes'] = "Tak";
+$string['yourlastlogin'] = "Ostatnie logowanie ";
+$string['yourself'] = "samodzielnie";
+$string['yourteacher'] = "twój \$a";
+
+?>
