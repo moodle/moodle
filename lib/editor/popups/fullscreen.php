@@ -136,10 +136,10 @@ function init() {
     // continuously update parent editor window
     setInterval(update_parent, 500);
 
-    // setup event handlers
-    document.body.onkeypress = _CloseOnEsc;
-    editor._doc.body.onkeypress = _CloseOnEsc;
-    editor._textArea.onkeypress = _CloseOnEsc;
+    // setup event handlers FAST FIX IS UNCOMMENT THESE, NOT WORKING!
+    //document.body.onkeypress = _CloseOnEsc;
+    //editor._doc.body.onkeypress = _CloseOnEsc;
+    //editor._textArea.onkeypress = _CloseOnEsc;
     window.onresize = resize_editor;
   }, 333);                      // give it some time to meet the new frame
 }
