@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -181,6 +181,7 @@ $string['overdue'] = '期限切れ';
 $string['paragraphquestion'] = '$a 行目の段落問題はサポートされていません。問題は無視されます。';
 $string['passworderror'] = 'パスワードが間違っています。';
 $string['percentcorrect'] = '正答率';
+$string['popup'] = '問題を「セキュア」ウインドウに表示する';
 $string['preview'] = 'プレビュー';
 $string['previewquestion'] = '問題のプレビュー';
 $string['publish'] = '公開';

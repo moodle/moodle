@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
 
 
 $string['action'] = '操作';
@@ -692,6 +692,7 @@ $string['moveright'] = '右へ';
 $string['moveselectedcoursesto'] = '選択したコースの移動 ...';
 $string['movetoanotherfolder'] = '他のフォルダへ移動する';
 $string['moveup'] = '上へ';
+$string['mustchangepassword'] = '新しいパスワードは現在のパスワードと異なるものを指定してください。';
 $string['mustconfirm'] = 'ログインを確認してください。';
 $string['mycourses'] = 'マイ　コース';
 $string['name'] = '名称';

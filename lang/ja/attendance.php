@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
 
 
 $string['absentlong'] = '欠席';
@@ -28,6 +28,7 @@ $string['dynamicsectionmulti'] = '出席簿を週に自動的に設置する';
 $string['dynsectionshort'] = '自動設置';
 $string['endbeforestart'] = '設置終了日が設置開始日の前にあります';
 $string['endmulti'] = '出席簿設置終了日';
+$string['for'] = ' ';
 $string['friday'] = '金';
 $string['gradeshort'] = '評定済み';
 $string['gradevalue'] = '出席を評定する';
