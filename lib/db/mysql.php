@@ -441,24 +441,24 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2003081500) {
-        print_simple_box("Some important changes have been made to how course creators work.  Formerly, they could create new courses and assign teachers, and teachers could edit courses.  Now, ordinary teachers can no longer edit courses - they <b>need to be a teacher of a course AND a course creator</b>.  A new site-wide configuration variable allows you to choose whether to allow course creators to create new courses as well (by default this is off).  <p>The following update will automatically convert all your existing teachers into course creators, to maintain backward compatibility.  Make sure you look at your upgraded site carefully and understand these new changes.", "center", "50%", "$THEME->cellheading", "20", "noticebox");
+//        print_simple_box("Some important changes have been made to how course creators work.  Formerly, they could create new courses and assign teachers, and teachers could edit courses.  Now, ordinary teachers can no longer edit courses - they <b>need to be a teacher of a course AND a course creator</b>.  A new site-wide configuration variable allows you to choose whether to allow course creators to create new courses as well (by default this is off).  <p>The following update will automatically convert all your existing teachers into course creators, to maintain backward compatibility.  Make sure you look at your upgraded site carefully and understand these new changes.", "center", "50%", "$THEME->cellheading", "20", "noticebox");
         
-        $count = 0;
-        $errorcount = 0;
-        if ($teachers = get_records("user_teachers")) {
-            foreach ($teachers as $teacher) {
-                if (! record_exists("user_coursecreators", "userid", $teacher->userid)) {
-                    $creator = NULL;
-                    $creator->userid = $teacher->userid;
-                    if (!insert_record("user_coursecreators", $creator)) {
-                        $errorcount++;
-                    } else {
-                        $count++;
-                    }
-                }
-            }
-        }
-        print_simple_box("$count teachers were upgraded to course creators (with $errorcount errors)", "center", "50%", "$THEME->cellheading", "20", "noticebox");
+//        $count = 0;
+//        $errorcount = 0;
+//        if ($teachers = get_records("user_teachers")) {
+//            foreach ($teachers as $teacher) {
+//                if (! record_exists("user_coursecreators", "userid", $teacher->userid)) {
+//                    $creator = NULL;
+//                    $creator->userid = $teacher->userid;
+//                    if (!insert_record("user_coursecreators", $creator)) {
+//                        $errorcount++;
+//                    } else {
+//                        $count++;
+//                    }
+//                }
+//            }
+//        }
+//        print_simple_box("$count teachers were upgraded to course creators (with $errorcount errors)", "center", "50%", "$THEME->cellheading", "20", "noticebox");
 
     }
 
