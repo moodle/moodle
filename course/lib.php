@@ -893,6 +893,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false) {
 // Prints the menus to add activities and resources
 
+    global $CFG;
     static $straddactivity, $straddresource, $resources;
 
     if (!isset($straddactivity)) {
