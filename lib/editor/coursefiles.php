@@ -14,11 +14,14 @@
     require("../../config.php");
     require("../../files/mimetypes.php");
 
-    require_variable($id);
-    optional_variable($file, "");
-    optional_variable($wdir, "");
-    optional_variable($action, "");
-    optional_variable($usecheckboxes, true);
+    $id      = required_param('id', PARAM_INT);
+    $file    = optional_param('file', '', PARAM_PATH);
+    $wdir    = optional_param('wdir', '', PARAM_PATH);
+    $action  = optional_param('action', '', PARAM_ACTION);
+    $name    = optional_param('name', '', PARAM_FILE);
+    $oldname = optional_param('oldname', '', PARAM_FILE);
+    $usecheckboxes  = optional_param('usecheckboxes', 1, PARAM_INT);
+
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -26,8 +29,8 @@
 
     require_login($course->id);
 
-    if (! isteacher($course->id) ) {
-        error("Only teachers can edit files");
+    if (! isteacheredit($course->id) ) {
+        error("You need to be a teacher with editing privileges");
     }
 
     function html_footer() {
@@ -37,10 +40,6 @@
     function html_header($course, $wdir, $formfield=""){
 
         global $CFG;
-
-        if (! $site = get_site()) {
-            error("Invalid site!");
-        }
 
         ?>
         <html>
@@ -406,27 +405,15 @@
                 $contents = fread($fileptr, filesize($basedir.$file));
                 fclose($fileptr);
 
-                if (mimeinfo("type", $file) == "text/html") {
-                    if ($usehtmleditor = can_use_richtext_editor()) {
-                        $onsubmit = "onsubmit=\"copyrichtext(document.form.text);\"";
-                    } else {
-                        $onsubmit = "";
-                    }
-                } else {
-                    $usehtmleditor = false;
-                    $onsubmit = "";
-                }
-                $usehtmleditor = false;    // Always keep it off for now
-
                 print_heading("$streditfile");
 
                 echo "<TABLE><TR><TD COLSPAN=2>";
-                echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=\"post\" NAME=\"form\" $onsubmit>";
+                echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=\"post\" NAME=\"form\">";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
                 echo " <INPUT TYPE=hidden NAME=file VALUE=\"$file\">";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=edit>";
-                print_textarea($usehtmleditor, 25, 80, 680, 400, "text", $contents);
+                print_textarea(false, 25, 80, 680, 400, "text", $contents);
                 echo "</TD></TR><TR><TD>";
                 echo " <INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\">";
                 echo "</FORM>";
@@ -438,11 +425,6 @@
                 echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\">";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
-
-                if ($usehtmleditor) {
-                    print_richedit_javascript("form", "text", "yes");
-                }
-
 
             }
             html_footer();
