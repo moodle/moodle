@@ -226,6 +226,7 @@
         $firstentry = true;
         foreach ($subcategories as $subcategory) {
             if ($subcategory->visible or iscreator()) {
+                $subcategorieswereshown = true;
                 if ($firstentry) {
                     echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox">';
                     echo '<tr><th>'.get_string('subcategories').'</th></tr>';
@@ -253,7 +254,9 @@
     $numcourses = count($courses);
 
     if (!$courses) {
-        print_heading(get_string("nocoursesyet"));
+        if (empty($subcategorieswereshown)) {
+            print_heading(get_string("nocoursesyet"));
+        }
 
     } else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$page and !$creatorediting) {
         print_courses($category, "80%");
