@@ -171,12 +171,13 @@ function workshop_delete_instance($id) {
 }
 
 function workshop_user_outline($course, $user, $mod, $workshop) {
+/// Just lists rough details about a workshop submission
     if ($submission = workshop_get_student_submission($workshop, $user)) {
-        
-        if ($submission->grade) {
-            $result->info = get_string("grade").": $submission->grade";
+        $result->info = $submission->title;
+        if ($submission->finalgrade) {
+            $result->info .= ", ".get_string("grade").": $submission->finalgrade";
         }
-        $result->time = $submission->timemodified;
+        $result->time = $submission->timecreated;
         return $result;
     }
     return NULL;
@@ -194,17 +195,12 @@ function workshop_user_complete($course, $user, $mod, $workshop) {
         }
 
         print_simple_box_start();
-        echo "<P><FONT SIZE=1>";
-        echo get_string("lastmodified").": ";
-        echo userdate($submission->timemodified);
-        echo workshop_print_difference($workshop->timedue - $submission->timemodified);
-        echo "</FONT></P>";
 
-        workshop_print_user_files($workshop, $user);
+        //workshop_print_user_files($workshop, $user);
 
-        echo "<BR>";
+        echo "Submission was made but no way to show you yet.";   //xxx
 
-        workshop_print_feedback($course, $submission);
+        //workshop_print_feedback($course, $submission);
 
         print_simple_box_end();
 
@@ -1058,7 +1054,7 @@ function workshop_get_student_submission($workshop, $user) {
 	global $CFG;
 
     $submission = get_record("workshop_submissions", "workshopid", $workshop->id, "userid", $user->id);
-    if (!empty($submission->timemodified)) {
+    if (!empty($submission->timecreated)) {
         return $submission;
     }
     return NULL;
