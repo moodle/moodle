@@ -302,10 +302,10 @@
         $toppost->subject = get_string("yournewtopic", "forum");
     }
 
-    if ($post->subject) {
-        $formstart = "theform.message";
-    } else {
+    if (empty($post->subject)) {
         $formstart = "theform.subject";
+    } else {
+        $formstart = "";
     }
 
     if ($post->parent) {
@@ -332,7 +332,7 @@
     if ($course->category) {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
-                  $navmiddle -> $navtail", "$formstart", "", true, "", navmenu($course, $cm));
+                  $navmiddle -> $navtail", $formstart, "", true, "", navmenu($course, $cm));
     } else {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
                  "$navmiddle -> $navtail", "$formstart", "", true, "", navmenu($course, $cm));
