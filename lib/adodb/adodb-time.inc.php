@@ -1,4 +1,5 @@
 <?php
+
 /**
 ADOdb Date Library, part of the ADOdb abstraction library
 Download: http://php.weblogs.com/adodb_date_time_library
