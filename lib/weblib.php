@@ -265,6 +265,13 @@ function text_to_html($text, $smiley=true, $para=true) {
 
     global $CFG;
 
+    // Remove any whitespace that may be between HTML tags
+    $text = eregi_replace(">([[:space:]]+)<", "><", $text);
+
+    // Remove any returns that precede or follow HTML tags
+    $text = eregi_replace("([\n\r])+<", " <", $text);
+    $text = eregi_replace(">([\n\r])+", "> ", $text);
+
     // Make URLs into links.   eg http://moodle.com/
     $text = eregi_replace("([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])", 
                           "<A HREF=\"\\1://\\2\\3\" TARGET=\"newpage\">\\1://\\2\\3</A>", $text);
@@ -272,13 +279,6 @@ function text_to_html($text, $smiley=true, $para=true) {
     // eg www.moodle.com
     $text = eregi_replace("([[:space:]])www.([^[:space:]]*)([[:alnum:]#?/&=])", 
                           "\\1<A HREF=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</A>", $text);
-
-    // Remove any whitespace that may be between HTML tags
-    $text = eregi_replace(">([[:space:]]+)<", "><", $text);
-
-    // Remove any returns that precede or follow HTML tags
-    $text = eregi_replace("([\n\r])+<", " <", $text);
-    $text = eregi_replace(">([\n\r])+", "> ", $text);
 
     // Make returns into HTML newlines.
     $text = nl2br($text);
