@@ -15,17 +15,19 @@
 
 <body bgcolor="#FFFFFF">
 <h1>Latest Release notes</h1>
-<h3> New in Moodle 1.2 Alpha (Due soon, in mid February, 2004):</h3>
+<h3> New in Moodle 1.2 <font color="#00CC33">Beta</font> (24th February, 2004)</h3>
 <ul>
+  <p>This Beta release is a <strong>test release</strong>.  Many sites are already using it in production, but it will have some cosmetic bugs, missing documentation and other small problems (some we know about, some we don't).  Please help us find all of these and fix them before the final polished release of Moodle 1.2 in early March. The best way to do this is to file a bug report on <a href="http://moodle.org/bugs/">http://moodle.org/bugs/</a></p>
   <dl>
     <dt>Major new features</dt>
     <dd> 
       <ul>
         <li>New support for <strong>groups</strong> and cohorts within courses (with many options)</li>
-        <li>A fantastic new <strong>glossary module</strong> (thanks to Williams Castillo!) with many different ways to contruct learning activities based around collecting definitions.</li>
-        <li>An improved <strong>WYSIWYG editor</strong>,  faster and more cross-platform than the old one.</li>
-        <li><strong>Text filters</strong> allow arbitrary processing on all text in Moodle, including automatic linking, mathematics support, multi-language content and infinitely more possibilities.</li>
-        <li>New <strong>label module</strong> allows arbitrary HTML in the course page</li>
+        <li><strong>Text filters</strong> allow arbitrary processing on all text in Moodle, including <strong>automatic linking</strong>, <strong>mathematics support</strong>, <strong>multi-language content</strong> and infinitely more possibilities</li>
+        <li>A fantastic new <strong>Glossary module</strong> (thanks to Williams Castillo!) with many different ways to contruct learning activities based around collecting definitions</li>
+        <li>A great new  <strong>Lesson module</strong> (thanks to Ray Kingdon!) easily creates active content with pathways and multiple-choice questions</li>
+        <li>A new <strong>Label module</strong> allows arbitrary HTML in the course page</li>
+        <li>An improved <strong>WYSIWYG editor</strong>,  faster and more cross-platform than the old one</li>
         <li><strong>Automatic backups</strong> can be scheduled by the administrator for all courses at once</li>
       </ul>
     </dd>
@@ -33,6 +35,7 @@
     <dd> 
       <ul>
         <li>Activities can now be indented on the course outline, allowing more structure</li>
+        <li>A new report for Recent Activity makes it easier to see what's happened recently</li>
         <li>A new logs button on every activity links to the logs page to show logs per-activity</li>
         <li>Restore button now always functional</li>
         <li>Improved &quot;index&quot; view for all modules</li>
@@ -56,6 +59,7 @@
       <ul>
         <li>An important security fix preventing teachers from logging in as admins</li>
         <li>User's names can now be configured so student's can only see &quot;firstname lastname&quot;, &quot;lastname firstname&quot; or &quot;firstname&quot;</li>
+        <li>Individual users can have their email disabled by the teacher or admin (useful for dealing with broken mail accounts that are bouncing)</li>
         <li>A new setting &quot;forcelogin&quot;  can force people to log in before they can see any of the site</li>
         <li>Upload sizes can now be controlled throughout Moodle using &quot;maxbytes&quot;. There is a site limit (bounded by the current PHP limits), which itself is the upper bound for course limits, which is the upper bound for activity limits.</li>
         <li>Students can be allowed/disallowed self-unenrolling</li>
@@ -68,6 +72,8 @@
         <li>If $CFG-&gt;disableuserimages is defined then user images can not be changed</li>
         <li>If $CFG-&gt;opentogoogle is defined then Google can get in as guest
 and people referred by google also get in as guest</li>
+        <li>If $CFG-&gt;admineditalways is defined then the administrator can edit ANY post at any time.</li>
+        <li>If $CFG-&gt;filterall is defined then even little things liks forum subjects and activity names are filtered</li>
         <li>Support for restricted demo users (eg the teacher demo on Moodle.org) - usernames can be added to a list of  names in config.php. eg $CFG-&gt;restrictusers = 'teacher,fred';</li>
       </ul>
     </dd>
