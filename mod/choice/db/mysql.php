@@ -56,36 +56,56 @@ function choice_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_choice_answers ADD INDEX userid (userid);');
     }
     
-    if ($oldversion < 2005033000){  
-        execute_sql("RENAME TABLE {$CFG->prefix}choice_answers TO {$CFG->prefix}choice_responses;");
-        execute_sql("CREATE TABLE {$CFG->prefix}choice_answers (id int(10) unsigned NOT NULL auto_increment, choice int(10) unsigned NOT NULL default '0', answer TEXT, timemodified int(10) NOT NULL default '0', PRIMARY KEY  (id), UNIQUE KEY id (id), KEY choice (choice)) TYPE=MyISAM;",false);      
-        execute_sql("ALTER TABLE {$CFG->prefix}choice ADD `display` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL AFTER `release`;");
-        execute_sql("ALTER TABLE {$CFG->prefix}choice_responses CHANGE answer answerid integer(10) NOT NULL default '0';");        
-        
-        //move old answers into new answers table.
-        $records = get_records('choice');
-        if (!empty($records)) {
-            foreach ($records as $thischoice) {
-                for ($i = 1; $i < 7; $i++) {                
-                    $instance = new stdClass;
-                    $instance->choice = $thischoice->id;
-                    $instance->answerid = $thischoice->{'answer'.$i};
-                    $instance->timemodified = $thischoice->timemodified;
-                    $result = insert_record('choice_answers', $instance);
-                    //now fix all responses to the answers.
-                    execute_sql("UPDATE {$CFG->prefix}choice_responses SET answerid={$result} WHERE choice={$thischoice->id} AND answerid={$i}");                                                            
+    if ($oldversion < 2005033001){  
+        if (execute_sql("CREATE TABLE {$CFG->prefix}choice_options (
+                             `id` int(10) unsigned NOT NULL auto_increment, 
+                             `choiceid` int(10) unsigned NOT NULL default '0', 
+                             `answer` TEXT, 
+                             `timemodified` int(10) NOT NULL default '0', 
+                             PRIMARY KEY  (id), 
+                             UNIQUE KEY id (id), 
+                             KEY choiceid (choiceid)
+                         ) TYPE=MyISAM;")) {
+    
+            table_column('choice_answers', 'choice', 'choiceid', 'integer', '10', 'unsigned', 0, 'not null');
+            table_column('choice_answers', 'answer', 'optionid', 'integer', '10', 'unsigned', 0, 'not null');
+    
+            table_column('choice', '', 'display', 'integer', '4', 'unsigned', 0, 'not null', 'release');
+    
+            
+            /// move old answers from choice to choice_options
+    
+            if ($choices = get_records('choice')) {
+                foreach ($choices as $choice) {
+                    for ($i=1; $i<=6; $i++) {      // We used to have six columns
+                        $option = new stdClass;
+                        $option->choiceid = $choice->id;
+                        $option->answer = $choice->{'answer'.$i};
+                        $option->timemodified = $choice->timemodified;
+                        if ($option->id = insert_record('choice_options', $option)) { 
+                            /// Update all the user answers to fit the new value
+                            execute_sql("UPDATE {$CFG->prefix}choice_answers 
+                                            SET optionid='$option->id' 
+                                          WHERE choiceid='$choice->id' 
+                                            AND optionid='$i'");                                                            
+                        }
+                    }
                 }
             }
+            
+            //drop old fields
+    
+            modify_database('','ALTER TABLE prefix_choice DROP `answer1`;');
+            modify_database('','ALTER TABLE prefix_choice DROP `answer2`;');
+            modify_database('','ALTER TABLE prefix_choice DROP `answer3`;');
+            modify_database('','ALTER TABLE prefix_choice DROP `answer4`;');
+            modify_database('','ALTER TABLE prefix_choice DROP `answer5`;');
+            modify_database('','ALTER TABLE prefix_choice DROP `answer6`;');
+
+        } else {
+            notify('SERIOUS PROBLEM OCCURRED WHILE UPGRADING A TABLE - you may have to manually upgrade your tables ... see mod/choice/db/mysql.php');
+            return false;
         }
-        
-        //drop old fields
-        modify_database('','ALTER TABLE prefix_choice DROP `answer1`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer2`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer3`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer4`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer5`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer6`;');
-        
     }
     
 

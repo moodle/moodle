@@ -21,7 +21,8 @@ CREATE TABLE prefix_choice (
   text text NOT NULL,
   format tinyint(2) unsigned NOT NULL default '0',
   publish tinyint(2) unsigned NOT NULL default '0',
-  release tinyint(2) unsigned NOT NULL default '0',    display tinyint(2) unsigned NOT NULL default '0',
+  release tinyint(2) unsigned NOT NULL default '0',
+  display tinyint(4) unsigned NOT NULL default '0',
   allowupdate tinyint(2) unsigned NOT NULL default '0',
   showunanswered tinyint(2) unsigned NOT NULL default '0',
   timeopen int(10) unsigned NOT NULL default '0',
@@ -36,36 +37,36 @@ CREATE TABLE prefix_choice (
 # --------------------------------------------------------
 
 #
-# Table structure for table `choice_responses`
+# Table structure for table `choice_answers`
 #
 
-CREATE TABLE prefix_choice_responses (
+CREATE TABLE prefix_choice_answers (
   id int(10) unsigned NOT NULL auto_increment,
-  choice int(10) unsigned NOT NULL default '0',
+  choiceid int(10) unsigned NOT NULL default '0',
   userid int(10) unsigned NOT NULL default '0',
-  answerid int(10) NOT NULL default '0',
+  optionid int(10) NOT NULL default '0',
   timemodified int(10) NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id),
   KEY userid (userid),
-  KEY choice (choice)
+  KEY choiceid (choiceid)
 ) TYPE=MyISAM;
 
 
 # --------------------------------------------------------
 
 #
-# Table structure for table `choice_answers`
+# Table structure for table `choice_options`
 #
 
-CREATE TABLE prefix_choice_answers (
+CREATE TABLE prefix_choice_options (
   id int(10) unsigned NOT NULL auto_increment,
-  choice int(10) unsigned NOT NULL default '0',
-  answer TEXT,
+  choiceid int(10) unsigned NOT NULL default '0',
+  `text` TEXT,
   timemodified int(10) NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id),
-  KEY choice (choice)
+  KEY choiceid (choiceid)
 ) TYPE=MyISAM;
 
 #
