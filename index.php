@@ -77,7 +77,7 @@
 
     </TD>
 
-    <TD WIDTH="60%" VALIGN="TOP">
+    <TD WIDTH="70%" VALIGN="TOP">
       <? if ($site->newsitems == 0 ) {
              print_simple_box(get_string("availablecourses"), "CENTER", "100%", "$THEME->cellheading");
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
@@ -110,7 +110,7 @@
       ?>
 
     </TD>
-    <TD WIDTH="20%" VALIGN="TOP"> 
+    <TD WIDTH="30%" VALIGN="TOP"> 
       <? 
          if (isediting($site->id)) {
              $site->summary .= "<BR><CENTER><A HREF=\"admin/site.php\"><IMG SRC=\"pix/i/edit.gif\" BORDER=0></A>";
