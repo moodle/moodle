@@ -3200,6 +3200,109 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
             '</td><td>'. $nextmod .'</td></tr></table>';
 }
 
+
+/**
+ * Given a course 
+ * This function returns a small popup menu with all the
+ * course activity modules in it, as a navigation menu
+ * outputs a simple list structure in XHTML 
+ * The data is taken from the serialised array stored in
+ * the course record
+ *
+ * @param course $course A {@link $COURSE} object.
+ * @return string
+ * @todo Finish documenting this function
+ */
+function navmenulist($course, $width=50) {
+
+    global $CFG;
+
+    if (empty($course)) {
+        return '';
+    }
+
+    if ($course->format == 'weeks') {
+        $strsection = get_string('week');
+    } else {
+        $strsection = get_string('topic');
+    }
+
+    if (!$modinfo = unserialize($course->modinfo)) {
+        return '';
+    }
+    $isteacher = isteacher($course->id);
+    $section = -1;
+    $selected = '';
+    $url = '';
+    $previousmod = NULL;
+    $backmod = NULL;
+    $nextmod = NULL;
+    $selectmod = NULL;
+    $logslink = NULL;
+    $flag = false;
+    $menu = array();
+
+    $sections = get_records('course_sections','course',$course->id,'section','section,visible,summary');
+
+    $menu[] = '<ul>';
+    foreach ($modinfo as $mod) {
+        if ($mod->mod == 'label') {
+            continue;
+        }
+
+        if ($mod->section > $course->numsections) {   /// Don't show excess hidden sections
+            break;
+        }
+
+        if ($mod->section > 0 and $section <> $mod->section) {
+            $thissection = $sections[$mod->section];
+
+            if ($thissection->visible or !$course->hiddensections or $isteacher) {
+                $thissection->summary = strip_tags(format_string($thissection->summary,true));
+                if (!empty($doneheading)) {
+                    $menu[] = '</ul>';
+                }
+                if ($course->format == 'weeks' or empty($thissection->summary)) {
+                    $menu[] = '<li>'. $strsection ." ". $mod->section .'</li>';
+                } else {
+                    if (strlen($thissection->summary) < ($width-3)) {
+                        $menu[] = '<li>'.$thissection->summary.'</li>';
+                    } else {
+                        $menu[] = '<li>'.substr($thissection->summary, 0, $width).'...</li>';
+                    }
+                }
+                $menu[] = '<ul>';
+                $doneheading = true;
+            }
+        }
+
+        $section = $mod->section;
+
+        //Only add visible or teacher mods to jumpmenu
+        if ($mod->visible or $isteacher) {
+            $url = $mod->mod .'/view.php?id='. $mod->cm;
+            if ($flag) { // the current mod is the "next" mod
+                $nextmod = $mod;
+                $flag = false;
+            }
+            $mod->name = strip_tags(format_string(urldecode($mod->name),true));
+            if (strlen($mod->name) > ($width+5)) {
+                $mod->name = substr($mod->name, 0, $width).'...';
+            }
+            if (!$mod->visible) {
+                $mod->name = '('.$mod->name.')';
+            }
+            $menu[] = '<li><a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
+            $previousmod = $mod;
+        }
+    }
+    $menu[] = '</ul>';
+
+    return implode("\n", $menu);
+}
+
+
+
 /**
  * Prints form items with the names $day, $month and $year
  *
