@@ -48,11 +48,12 @@
         $options[$module] = get_string("auth_$module"."title", "auth");
     }
     asort($options);
-    if (isset($_GET['auth'])) {
-        $auth = $_GET['auth'];
-    } else {
-          $auth = $config->auth;
-    } 
+	if (isset($_GET['auth'])) {
+	    $auth = $_GET['auth'];
+	} else {
+        $auth = $config->auth;
+	} 
+    $auth = clean_filename($auth);
     require_once("$CFG->dirroot/auth/$auth/lib.php"); //just to make sure that current authentication functions are loaded
     if (! isset($config->guestloginbutton)) {
         $config->guestloginbutton = 1;
