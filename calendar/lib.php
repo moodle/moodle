@@ -487,8 +487,10 @@ function calendar_top_controls($type, $data) {
         case 'frontpage':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
-            $nextlink = calendar_get_link_tag('&gt;&gt;', 'index.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear);
-            $prevlink = calendar_get_link_tag('&lt;&lt;', 'index.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
+            //$nextlink = calendar_get_link_tag('&gt;&gt;', 'index.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear);
+            //$prevlink = calendar_get_link_tag('&lt;&lt;', 'index.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
+            $nextlink = calendar_get_link_tag('&gt;&gt;', 'index.php?', 0, $nextmonth, $nextyear);
+            $prevlink = calendar_get_link_tag('&lt;&lt;', 'index.php?', 0, $prevmonth, $prevyear);
             $content .= '<table class="generaltable" style="width: 100%;"><tr>';
             $content .= '<td style="text-align: left; width: 12%;">'.$prevlink."</td>\n";
             $content .= '<td style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></td>\n";
