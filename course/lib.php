@@ -660,8 +660,13 @@ function get_array_of_activities($courseid) {
                    include_once("$CFG->dirroot/mod/$modname/lib.php");
 
                    if (function_exists($functionname)) {
-                       if ($extra = $functionname($rawmods[$seq])) {
-                           $mod[$seq]->extra = $extra;
+                       if ($info = $functionname($rawmods[$seq])) {
+                           if (!empty($info->extra)) {
+                               $mod[$seq]->extra = $info->extra;
+                           }
+                           if (!empty($info->icon)) {
+                               $mod[$seq]->icon = $info->icon;
+                           }
                        }
                    }
                }
@@ -832,11 +837,17 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
                     $extra = "";
                 }
 
+                if (!empty($modinfo[$modnumber]->icon)) {
+                    $icon = "$CFG->pixpath/".urldecode($modinfo[$modnumber]->icon);
+                } else {
+                    $icon = "$CFG->modpixpath/$mod->modname/icon.gif";
+                }
+
                 if ($mod->modname == "label") {
                     $modicon[] = "";
                     $moddata[] = format_text($extra, FORMAT_HTML).$editbuttons;
                 } else {
-                    $modicon[] = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\"".
+                    $modicon[] = "<img src=\"$icon\"".
                                  " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
                     $moddata[] = "<a title=\"$mod->modfullname\" $linkcss $extra".
                                  "href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a>".
@@ -924,6 +935,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $extra = "";
                 }
 
+                if (!empty($modinfo[$modnumber]->icon)) {
+                    $icon = "$CFG->pixpath/".urldecode($modinfo[$modnumber]->icon);
+                } else {
+                    $icon = "$CFG->modpixpath/$mod->modname/icon.gif";
+                }
+
                 if ($mod->indent) {
                     print_spacer(12, 20 * $mod->indent, false);
                 }
@@ -939,7 +956,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                 } else { // Normal activity
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                    echo "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\"".
+                    echo "<img src=\"$icon\"".
                          " height=16 width=16 alt=\"$mod->modfullname\">".
                          " <font size=2><a title=\"$mod->modfullname\" $linkcss $extra".
                          " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";

@@ -170,16 +170,29 @@ function resource_get_coursemodule_info($coursemodule) {
 /// See get_array_of_activities() in course/lib.php
 ///
 
+   global $CFG;
+
+   $info = NULL;
+
    if ($resource = get_record("resource", "id", $coursemodule->instance)) {
        if (($resource->type == UPLOADEDFILE or $resource->type == WEBLINK) and !empty($resource->alltext)) {
-           return urlencode("target=\"resource$resource->id\" onClick=\"return ".
+           $info->extra =  urlencode("target=\"resource$resource->id\" onClick=\"return ".
                             "openpopup('/mod/resource/view.php?inpopup=true&id=".
                             $coursemodule->id.
                             "','resource$resource->id','$resource->alltext');\"");
        }
+
+       require_once("$CFG->dirroot/files/mimetypes.php");
+
+       if ($resource->type == UPLOADEDFILE) {
+	       $icon = mimeinfo("icon", $resource->reference);
+           if ($icon != 'unknown.gif') {
+		       $info->icon ="f/$icon";
+           }
+       }
    }
 
-   return false;
+   return $info;
 }
  
 function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
