@@ -272,13 +272,6 @@ function assignment_print_difference($time) {
 function assignment_print_submission($assignment, $user, $submission, $teachers, $grades) {
     global $THEME;
 
-    switch ($assignment->type) {
-        case OFFLINE:
-            break;
-        case UPLOADSINGLE:
-            break;
-    }
-
     echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10 align=center>";
 
     echo "\n<TR>";
@@ -300,7 +293,7 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
 
     if ($assignment->type != OFFLINE) {
         echo "\n<TR><TD BGCOLOR=\"$THEME->cellcontent\">";
-        if ($submission->numfiles) {
+        if ($submission->timemodified) {
             assignment_print_user_files($assignment, $user);
         } else {
             print_string("notsubmittedyet", "assignment");
