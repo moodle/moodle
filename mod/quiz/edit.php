@@ -120,15 +120,7 @@
     }
 
     if ($cat) { //-----------------------------------------------------------
-        if ($catshow) {
-            $modform->category = $cat;
-        } else if ($catrename) {
-            redirect("category.php?rename=$cat");
-        } else if ($catdelete) {
-            redirect("category.php?delete=$cat");
-        } else if ($catnew) {
-            redirect("category.php?new=$cat");
-        }
+        $modform->category = $cat;
     }
 
     $modform->sumgrades = 0;

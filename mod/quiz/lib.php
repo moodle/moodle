@@ -358,7 +358,7 @@ function quiz_print_category_form($course, $current) {
     echo "<FORM METHOD=POST ACTION=edit.php>"; 
     echo "<B>$strcategory:</B>&nbsp;";
     choose_from_menu($categories, "cat", "$current");
-    echo "<INPUT TYPE=submit NAME=catshow VALUE=\"$strshow\">";
+    echo "<INPUT TYPE=submit VALUE=\"$strshow\">";
     echo "</FORM>";
     echo "</TD><TD align=right>";
     echo "<FORM METHOD=GET ACTION=category.php>"; 
@@ -373,7 +373,7 @@ function quiz_get_all_question_grades($questionlist, $quizid) {
 // Given a list of question IDs, finds grades or invents them to 
 // create an array of matching grades
 
-    $questions = get_records_sql("SELECT * FROM quiz_question_grades 
+    $questions = get_records_sql("SELECT question,grade FROM quiz_question_grades 
                                   WHERE quiz = '$quizid' 
                                     AND question IN ($questionlist)");
 
