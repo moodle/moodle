@@ -95,7 +95,7 @@ $string['openmode1'] = 'Aucune discussion, mais les réponses sont autorisées';
 $string['openmode2'] = 'Discussions et réponses';
 $string['parent'] = 'Niveau supérieur';
 $string['parentofthispost'] = 'Niveau supérieur de cet article';
-$string['postadded'] = 'Votre message a été enregistré.<p>Il vous est possible de le modifier pendant $a.';
+$string['postadded'] = '<p>Votre message a été enregistré.</p><p>Il vous est possible de le modifier pendant $a.</p>';
 $string['postincontext'] = 'Voir ce message dans son contexte';
 $string['postmailinfo'] = 'Ceci est une copie du message posté sur le site $a.
 
