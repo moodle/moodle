@@ -53,7 +53,7 @@ class quiz_file_format extends quiz_default_format {
     /// readquestion(). 
 
     $text = implode($lines, " ");
-    $xml = xmlize($text);
+    $xml = xmlize($text, 0);
 
     $questions = array();
 
