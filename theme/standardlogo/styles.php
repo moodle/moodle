@@ -442,3 +442,13 @@ a.autolink:hover {
 .smallinfohead {
     color: #555555;
 }
+
+.tabledivider {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    border-left: 0px;
+    border-right: 0px;
+    border-top: 0px;
+}
+

@@ -260,3 +260,94 @@ select {
 .coursename {
 }
 
+
+.coursebox {
+}
+
+.courseboxcontent {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    -moz-border-radius: 20px;
+}
+
+.courseboxinfo {
+}
+
+.courseboxsummary {
+}
+
+a.autolink:link {
+    text-decoration: none;
+    color: #000000;
+    background-color: <?PHP echo $THEME->autolink?>;
+}
+
+a.autolink:visited {
+    text-decoration: none;
+    color: #000000;
+    background-color: <?PHP echo $THEME->autolink?>;
+}
+
+a.autolink:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+.userinfobox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
+    margin-bottom: 5px;
+}
+
+.userinfoboxside {
+    -moz-border-radius-bottomleft: 20px;
+}
+
+.userinfoboxcontent {
+    -moz-border-radius-bottomright: 20px;
+}
+
+
+.userinfoboxsummary {
+}
+
+.userinfoboxlinkcontent {
+    -moz-border-radius-bottomright: 20px;
+}
+
+.generaltab {
+    -moz-border-radius-topleft: 15px;
+    -moz-border-radius-topright: 15px;
+}
+
+.generaltabselected {
+    -moz-border-radius-topleft: 15px;
+    -moz-border-radius-topright: 15px;
+}
+
+.forumheaderlist {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.smallinfo {
+}
+
+.smallinfohead {
+    color: #555555;
+}
+
+.tabledivider {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    border-left: 0px;
+    border-right: 0px;
+    border-top: 0px;
+}
+

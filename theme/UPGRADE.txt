@@ -161,3 +161,8 @@ a.autolink:hover {}
 
 .smallinfo {}
 .smallinfohead {}
+
+
+/* Just a small table cell dividing others in a list */
+.tabledivider {}
+

@@ -41,6 +41,10 @@ $THEME->borders      = "#555555";  // Table borders
 $THEME->frontlogo    = "images/frontlogo.jpg";       // Logo on front page
 $THEME->smalllogo    = "images/smalllogo.jpg";  // Header logo on other pages
 
+$THEME->highlight    = "#AAFFAA";  // Highlighted text (eg after a search)
+$THEME->hidden       = "#AAAAAA";  // To color things that are hidden
+$THEME->autolink     = "#DDDDDD";  // To color auto-generated links (eg glossary)
+
 $THEME->custompix    = false;      // If true, then this theme must have a "pix" 
                                    // subdirectory that contains copies of all 
                                    // files from the moodle/pix directory
