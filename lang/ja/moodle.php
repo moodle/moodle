@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['action'] = '操作';
@@ -62,6 +62,7 @@ $string['administrators'] = '管理者';
 $string['administratorsall'] = '全ての管理者';
 $string['administratorsandteachers'] = '管理者及び教師';
 $string['advancedfilter'] = '検索オプション';
+$string['advancedsettings'] = '高度な設定';
 $string['again'] = 'もう一度';
 $string['all'] = '全て';
 $string['allactivities'] = '全ての活動';
@@ -345,6 +346,7 @@ $string['editcoursesettings'] = 'コース設定';
 $string['editfiles'] = 'ファイルの編集';
 $string['editgroupprofile'] = 'グループプロフィールの編集';
 $string['editinga'] = '$a 編集';
+$string['editingteachershort'] = 'エディタ';
 $string['editlock'] = 'この値は編集できません!';
 $string['editmyprofile'] = 'プロフィールの編集';
 $string['editorbgcolor'] = '背景色';
@@ -458,7 +460,6 @@ $string['findmorecourses'] = 'さらにコースを探す...';
 $string['firstdayofweek'] = '0';
 $string['firstname'] = '名';
 $string['firsttime'] = 'はじめての方ですか?';
-$string['fix'] = 'フィックス';
 $string['followingoptional'] = '下記は任意入力項目です';
 $string['followingrequired'] = '下記は必須入力項目です';
 $string['force'] = '強制';
@@ -554,6 +555,7 @@ $string['hiddensections'] = 'セクションの非表示';
 $string['hiddensectionscollapsed'] = '非表示セクションを折りたたんで表示する';
 $string['hiddensectionsinvisible'] = '非表示セクションを完全に見えなくする';
 $string['hide'] = '非表示';
+$string['hideadvancedsettings'] = '高度な設定を隠す';
 $string['hidepicture'] = '写真を隠す';
 $string['hidesettings'] = '設定を隠す';
 $string['hits'] = 'アクセス';
@@ -655,6 +657,7 @@ $string['maximumupload'] = '最大アップロードサイズ';
 $string['maxsize'] = '最大サイズ: $a';
 $string['min'] = '分';
 $string['mins'] = '分';
+$string['minutes'] = '分';
 $string['miscellaneous'] = 'その他';
 $string['missingcategory'] = 'カテゴリを選んでください。';
 $string['missingcity'] = '都道府県が入力されていません。';
@@ -895,6 +898,7 @@ $string['shortname'] = '省略名 ( 半角英数字 )';
 $string['shortnametaken'] = '省略名は他のコース ( $a ) で使用されています。';
 $string['shortsitename'] = '短いサイト名 ( 例 単語 )';
 $string['show'] = '表示';
+$string['showadvancedsettings'] = '高度な設定を表示';
 $string['showall'] = '$a 全てを表示';
 $string['showallcourses'] = '全てのコースを表示';
 $string['showalltopics'] = '全てのトピックを表示';
