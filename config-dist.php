@@ -188,6 +188,13 @@ $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_
 // then all addresses are ALLOWED EXCEPT those listed.
 //      $CFG->allowemailaddresses = "myschool.edu.au hotmail.com";
 //      $CFG->denyemailaddresses = "hotmail.com yahoo.com";
+// 
+// If this setting is set to true, then Moodle will track the IP of the 
+// current user to make sure it hasn't changed during a session.  This 
+// will prevent the possibility of sessions being hijacked via XSS, but it 
+// may break things for users coming using proxies that change all the time,
+// like AOL.
+//      $CFG->tracksessionip = true;
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

@@ -12,6 +12,7 @@ $string['missingfield'] = 'Field \"$a\" is missing';
 $string['modulerequirementsnotmet'] = 'Module \"$a->modulename\" ($a->moduleversion) could not be installed.  It requires a newer version of Moodle (currently you are using $a->currentmoodle, you need $a->requiremoodle).';
 $string['notavailable'] = 'That is not currently available';
 $string['restricteduser'] = 'Sorry, but your current account \"$a\" is restricted from doing that.';
+$string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site.  Normal users should not be seeing this message - please ask the site administrator for help.';
 $string['unknowncourse'] = 'Unknown course named \"$a\"';
 $string['usernotaddederror'] = 'User \"$a\" not added - unknown error';
 $string['usernotaddedregistered'] = 'User \"$a\" not added - already registered';

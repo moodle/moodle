@@ -588,6 +588,13 @@ function require_login($courseid=0, $autologinguest=true) {
         die;
     }
 
+    // Make sure current IP matches the one for this session (if required)
+    if (!empty($CFG->tracksessionip)) {    
+        if ($USER->sessionIP != md5(getremoteaddr())) {
+            error(get_string('sessionipnomatch', 'error'));
+        }
+    }
+
     // Next, check if the user can be in a particular course
     if ($courseid) {
         if ($courseid == SITEID) {   
@@ -1076,7 +1083,6 @@ function get_user_fieldnames() {
  * Creates a bare-bones user record
  *
  * @uses $CFG
- * @uses $REMOTE_ADDR
  * @param string $username New user's username to add to record
  * @param string $password New user's password to add to record
  * @param string $auth Form of authentication required
@@ -1084,7 +1090,7 @@ function get_user_fieldnames() {
  * @todo Outline auth types and provide code example
  */
 function create_user_record($username, $password, $auth='') {
-    global $REMOTE_ADDR, $CFG;
+    global $CFG;
 
     //just in case check text case
     $username = trim(moodle_strtolower($username));
@@ -1160,6 +1166,7 @@ function guest_user() {
         $newuser->confirmed = 1;
         $newuser->site = $CFG->wwwroot;
         $newuser->lang = $CFG->lang;
+        $newuser->lastIP = getremoteaddr();
     }
 
     return $newuser;
@@ -1226,8 +1233,7 @@ function authenticate_user_login($username, $password) {
             if ($md5password <> $user->password) {   // Update local copy of password for reference
                 set_field('user', 'password', $md5password, 'username', $username);
             }
-            // update user record from external DB
-            if ($user->auth != 'manual' && $user->auth != 'email'){
+            if (!is_internal_auth()) {            // update user record from external DB
                 $user = update_user_record($username);
             }
         } else {
@@ -1243,13 +1249,14 @@ function authenticate_user_login($username, $password) {
                     }
                 }
             } else {
-                if ( record_exists('user_coursecreators', 'userid', $user->id)) {
+                if (record_exists('user_coursecreators', 'userid', $user->id)) {
                     if (! delete_records('user_coursecreators', 'userid', $user->id)) {
                         error('Cannot remove user from course creators.');
                     }
                 }
             }
         }
+        $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
         return $user;
 
     } else {
