@@ -1122,14 +1122,6 @@ function rebuild_course_cache($courseid=0) {
 }
 
 
-function print_heading_block($heading, $class = NULL) {
-    $divclass = 'headingblock';
-    if(!empty($class)) {
-        $divclass .= ' '.$class;
-    }
-    echo '<div class="'.$divclass.'">'.stripslashes($heading).'</div>';
-}
-
 
 function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 /// Given an empty array, this function recursively travels the

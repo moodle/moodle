@@ -2021,6 +2021,12 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon='') {
     echo '</h2>';
 }
 
+
+function print_heading_block($heading, $class='') {
+    echo '<div class="headingblock '.$class.'">'.stripslashes($heading).'</div>';
+}
+
+
 /**
  * Print a link to continue on to another page.
  *
