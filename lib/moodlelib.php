@@ -38,6 +38,12 @@
 /// CONSTANTS /////////////////////////////////////////////////////////////
 
 /**
+ * Used by some scripts to check they are being called by Moodle
+ */
+define('MOODLE_INTERNAL', true);
+
+
+/**
  * No groups used?
  */
 define('NOGROUPS', 0);

@@ -1,3 +1,5 @@
+<?php defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.'); ?>
+
 <script language="JavaScript" type="text/javascript"
 
         src="<?php echo "$CFG->wwwroot/lib/overlib.js" ?>"></script>
