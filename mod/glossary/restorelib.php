@@ -66,7 +66,7 @@
                 //Restore glossary_entries
                 $status = glossary_entries_restore_mods($mod->id,$newid,$info,$restore);
                 //Restore glossary_categories and glossary_category_entries
-//                $status = glossary_categories_restore_mods($mod->id,$newid,$info,$restore);
+                $status = glossary_categories_restore_mods($mod->id,$newid,$info,$restore);
             } else {
                 $status = false;
             }
@@ -148,7 +148,7 @@
         return $status;
     }
 
-    //This function restores the glossary_categories and entries_categories
+    //This function restores the glossary_categories
     function glossary_categories_restore_mods($old_glossary_id,$new_glossary_id,$info,$restore) {
 
         global $CFG;
@@ -158,9 +158,12 @@
         //Get the categories array
         $categories = $info['MOD']['#']['CATEGORIES']['0']['#']['CATEGORY'];
 
-        //Iterate over entries
+        //Iterate over categories
         for($i = 0; $i < sizeof($categories); $i++) {
             $cat_info = $categories[$i];
+            //traverse_xmlize($cat_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //We'll need this later!!
             $oldid = backup_todb($cat_info['#']['ID']['0']['#']);
@@ -179,11 +182,60 @@
                 }
                 backup_flush(300);
             }
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"glossary_categories",$oldid,$newid);
-                //Now copy moddata associated files if needed
+                //Now restore glossary_entries_categories
+                $status = glossary_entries_categories_restore_mods($old,$newid,$cat_info,$restore);
             } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+
+    //This function restores the glossary_entries_categories
+    function glossary_entries_categories_restore_mods($old_category_id,$new_category_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;     
+
+        //Get the entryids array
+        $entryids = $info['#']['ENTRIES']['0']['#']['ENTRY'];
+
+        //Iterate over entryids
+        for($i = 0; $i < sizeof($entryids); $i++) {
+            $ent_info = $entryids[$i];
+            //traverse_xmlize($ent_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the GLOSSARY_ENTRIES_CATEGORIES record structure
+            $entry_category->categoryid = $new_category_id;
+            $entry_category->entryid = backup_todb($ent_info['#']['ENTRYID']['0']['#']);
+            
+            //We have to recode the entryid field
+            $entry = backup_getid($restore->backup_unique_code,"glossary_entries",$entry_category->entryid);
+            if ($entry) {
+                $entry_category->entryid = $entry->new_id;
+             }
+
+            $newid = insert_record ("glossary_entries_categories",$entry_category);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if (!$newid) {
                 $status = false;
             }
         }

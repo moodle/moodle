@@ -84,7 +84,9 @@
                 if ($entries) {
                     $status =fwrite ($bf,start_tag("ENTRIES",6,true));
                     foreach ($entries as $entry) {
-                        fwrite ($bf,full_tag("ENTRYID",7,false,$entry->entryid));
+                        fwrite ($bf,start_tag("ENTRY",7,true));
+                        fwrite ($bf,full_tag("ENTRYID",8,false,$entry->entryid));
+                        $status =fwrite ($bf,end_tag("ENTRY",7,true));
                     }
                     $status =fwrite ($bf,end_tag("ENTRIES",6,true));
                 }
