@@ -40,8 +40,8 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
             // There is a filter in action that shows events from a course other than the current
             // Obviously we have to cut it out
             $SESSION->cal_show_course = true;
-        }
-       else if($courseshown !== false && is_array($SESSION->cal_show_course) && !in_array($courseshown, $SESSION->cal_show_course)) {
+
+        } else if($courseshown !== false && is_array($SESSION->cal_show_course) && !in_array($courseshown, $SESSION->cal_show_course)) {
             // Same as above, only there are many courses being shown. Unfortunately, not this one.
             $SESSION->cal_show_course = true;
         }
