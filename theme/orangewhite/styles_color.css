@@ -272,7 +272,7 @@ body {
 	background-color:#FFFFFF;
 }
 
-.forumpostside {
+.forumpost .side {
     background-color:#EEF0F2;
 }
 
@@ -283,10 +283,15 @@ body {
     border-color:#D1D7DC;
 }
 
-.forumpostheadertopic {
-    background-color:#FFC86C}
+.forumpost .header .topic {
+    background-color:#C0CAD4;
+}
 
-.forumpostheaderpicture {
+.forumpost .header .starter {
+    background-color:#FFC86C;
+}
+
+.forumpost .picture {
 	background-color:#EEF0F2;
 }
 
@@ -303,7 +308,7 @@ body {
 }
 
 .forumthread .unread {
-    background: #FFD991;
+    background:#FFD991;
 }
 
 .unread {
