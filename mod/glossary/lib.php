@@ -1198,7 +1198,7 @@ global $CFG;
                                 fwrite($h,glossary_full_tag("NAME",6,false,$alias->alias));
                             $status = fwrite($h,glossary_end_tag("ALIAS",5,true));
                         }
-                        $status = fwrite($h,glossary_end_tag("CATEGORIES",4,true));
+                        $status = fwrite($h,glossary_end_tag("ALIASES",4,true));
                     }
                     if ( $catentries = get_records("glossary_entries_categories","entryid",$entry->id) ) {
                         $status = fwrite ($h,glossary_start_tag("CATEGORIES",4,true));
