@@ -47,7 +47,7 @@ $CFG->wwwroot   = "http://example.com/moodle";
 $CFG->dirroot   = "/web/moodle";
 
 
-// And where it can save files.  This directory should be writeable
+// ...and where it can save files.  This directory should be writeable
 // by the web server user (usually 'nobody' or 'apache'), but it should 
 // not be accessible directly via the web.
 
@@ -60,6 +60,7 @@ $CFG->theme     = "standard";
 
 
 // Choose a sitewide language - this will affect navigation, help etc
+// See lib/languages.php for a full list of standard language codes.
 
 $CFG->lang     = "en";
 
