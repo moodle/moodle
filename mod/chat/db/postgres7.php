@@ -20,7 +20,7 @@ function chat_upgrade($oldversion) {
         modify_database("", "INSERT INTO prefix_log_display VALUES ('chat', 'talk', 'chat', 'name');");
     }
 
-    if ($oldversion < 2004111200) {
+    if ($oldversion < 2004060401) {
         modify_database('','CREATE INDEX prefix_chat_course_idx ON prefix_chat(course);');
         modify_database('','CREATE INDEX prefix_chat_messages_chatid_idx ON prefix_chat_messages (chatid);');
         modify_database('','CREATE INDEX prefix_chat_messages_userid_idx ON prefix_chat_messages (userid);');
