@@ -41,7 +41,7 @@
 /// Edit these lines to correspond to your installation
 // File path to the directory where mathml_filter.php resides
     $CFG->algebrafilterdir = "filter/algebra";
-
+    $CFG->texfilterdir = "filter/tex";
 
 /// These lines are important - the variable must match the name 
 /// of the actual function below
@@ -76,8 +76,11 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
     if (!file_exists("$CFG->dataroot/$CFG->algebrafilterdir/$imagefile") && isadmin()) {
       $output .= "<a href=\"$CFG->wwwroot/$CFG->algebrafilterdir/algebradebug.php\">";
     } else {
-      $output .= "<a href=\"javascript:prompt('The TeX code used to generate this formula is:','";
-      $output .= preg_replace('/(\\\)/',"\$1\$1",$tex) .  "')\">";
+      $output .= "<a target=\"popup\" title=\"TeX\" href=";
+      $output .= "\"$CFG->wwwroot/$CFG->texfilterdir/displaytex.php?";
+      $output .= urlencode($tex) . "\" onClick=\"return openpopup('/$CFG->texfilterdir/displaytex.php?";
+      $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
+      $output .= "resizable,width=300,height=240', 0);\">";
     }
     $output .= "<img border=\"0\" $title $height $width src=\"";
     if ($CFG->slasharguments) {        // Use this method if possible for better caching

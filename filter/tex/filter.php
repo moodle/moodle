@@ -71,8 +71,11 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="") {
         if (!file_exists("$CFG->dataroot/$CFG->texfilterdir/$imagefile") && isadmin()) {
 	  $output .= "<a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">";
         } else {
-	  $output .= "<a href=\"javascript:prompt('The TeX code used to generate this formula is:','";
-	  $output .= preg_replace('/(\\\)/',"\$1\$1",$tex) .  "')\">";
+          $output .= "<a target=\"popup\" title=\"TeX\" href=";
+          $output .= "\"$CFG->wwwroot/$CFG->texfilterdir/displaytex.php?";
+          $output .= urlencode($tex) . "\" onClick=\"return openpopup('/$CFG->texfilterdir/displaytex.php?";
+          $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
+          $output .= "resizable,width=300,height=240', 0);\">";
 	}
         $output .= "<img border=\"0\" $title $height $width src=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
@@ -125,7 +128,6 @@ function tex_filter ($courseid, $text) {
 
     // <tex> TeX expression </tex>
     // or $$ TeX expression $$
-
     preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$/is', $text, $matches);  
     for ($i=0; $i<count($matches[0]); $i++) {
         $texexp = $matches[1][$i] . $matches[2][$i];
