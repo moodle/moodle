@@ -16,6 +16,10 @@
         error("Only administrators can use this page!");
     }
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
     if (!$site = get_site()) {
         error("Site isn't defined!");
     }

@@ -1,6 +1,7 @@
 <?php print_simple_box_start("center", "", "$THEME->cellheading"); ?>
 
 <form name="filters" id="filters" method="post" action="filters.php">
+<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
   <table align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top"><div align="right">
@@ -80,6 +81,7 @@
 <?php print_simple_box_start("center", "", "$THEME->cellheading"); ?>
 
 <form name="options" id="options" method="post" action="filters.php">
+<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
 <input type="hidden" name="options" value="1">
 <table cellpadding="20">
 <tr valign=top>

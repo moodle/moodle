@@ -282,7 +282,7 @@
                     get_string("adminhelpmanagemodules")."</font><br />";
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"blocks.php\">".get_string("manageblocks")."</a> - <font size=1>".
                     get_string("adminhelpmanageblocks")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"filters.php\">".get_string("managefilters")."</a> - <font size=1>".
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"filters.php?sesskey=$USER->sesskey\">".get_string("managefilters")."</a> - <font size=1>".
                     get_string("adminhelpmanagefilters")."</font><br />";
     if (!isset($CFG->disablescheduledbackups)) {
         $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php?sesskey=$USER->sesskey\">".get_string("backup")."</a> - <font size=1>".
