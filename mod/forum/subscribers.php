@@ -5,7 +5,7 @@
 
     require_variable($id);                // forum
     optional_variable($group);            // change of group
-    
+
     optional_variable($edit);     // Turn editing on and off
 
     if (! $forum = get_record("forum", "id", $id)) {
@@ -29,7 +29,7 @@
     unset($SESSION->fromdiscussion);
 
     add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", $forum->id, $cm->id);
-    
+
     if (isset($_GET['edit'])) {
         if($edit == "on") {
             $USER->subscriptionsediting = true;
@@ -43,11 +43,13 @@
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
 
-    $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> -> 
+    $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->
        <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
 
-    print_header_simple("$strsubscribers", "", "$navigation", 
+    print_header_simple("$strsubscribers", "", "$navigation",
         "", "", true, forum_update_subscriptions_button($course->id, $id), true);
+
+    echo '<div id="forum-subscribers" class="forum">';  // forum-subscribers wrapper start
 
 /// Check to see if groups are being used in this forum
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
@@ -57,15 +59,15 @@
     }
 
     if (empty($USER->subscriptionsediting)) {         /// Display an overview of subscribers
-        
+
         if (! $users = forum_subscribed_users($course, $forum, $currentgroup) ) {
-    
+
             print_heading(get_string("nosubscribers", "forum"));
-    
+
         } else {
-    
+
             print_heading(get_string("subscribersto","forum", "'$forum->name'"));
-    
+
             echo '<table align="center" cellpadding="5" cellspacing="5">';
             foreach ($users as $user) {
                 echo "<tr><td>";
@@ -78,7 +80,9 @@
             }
             echo "</table>";
         }
-    
+
+        echo '</div>';  // forum-subscribers wrapper end
+
         print_footer($course);
         exit;
     }
@@ -124,13 +128,13 @@
     if (!$subscribers = forum_subscribed_users($course, $forum, $currentgroup)) {
         $subscribers = array();
     }
-    
+
     $subscriberarray = array();
     foreach ($subscribers as $subscriber) {
         $subscriberarray[] = $subscriber->id;
     }
     $subscriberlist = implode(',', $subscriberarray);
-    
+
     unset($subscriberarray);
 
 /// Get search results excluding any users already subscribed
@@ -138,7 +142,7 @@
     if (!empty($frm->searchtext) and $previoussearch) {
         $searchusers = search_users($course->id, $currentgroup, $frm->searchtext, 'firstname ASC, lastname ASC', $subscriberlist);
     }
-    
+
 /// If no search results then get potential subscribers for this forum excluding users already subscribed
     if (empty($searchusers)) {
         if ($currentgroup) {
@@ -160,6 +164,8 @@
     include('subscriber.html');
 
     print_simple_box_end();
+
+    echo '</div>';  // forum-subscribers wrapper end
 
     print_footer();
 

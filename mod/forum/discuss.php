@@ -105,9 +105,13 @@
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
+
+        echo '<div id="forum-discuss" class="forum">';  // forum-discuss wrapper start
     } else {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
+
+        echo '<div id="forum-discuss" class="forum">';  // forum-discuss wrapper start
     }
 
 
@@ -194,6 +198,7 @@
 
     forum_print_discussion($course, $forum, $discussion, $post, $displaymode, $canreply);
 
+    echo '</div>';  // forum-discuss wrapper end
 
     print_footer($course);
 

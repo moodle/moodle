@@ -52,7 +52,7 @@
 
     if (!$buttontext) {
         $buttontext = forum_print_search_form($course, $search, true, "plain");
-    } 
+    }
 
     if ($CFG->forcelogin) {
         require_login();
@@ -60,7 +60,7 @@
 
     if ($course->category) {
         require_login($course->id);
-    } 
+    }
     $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->";
 
     if ($forum->type == "teacher") {
@@ -77,6 +77,8 @@
 
     print_header_simple("$forum->name", "",
                  "$navigation $forum->name", "", "", true, $buttontext, navmenu($course, $cm));
+
+    echo '<div id="forum-view" class="forum">';  // forum-view wrapper start
 
     if (!$cm->visible and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
@@ -167,7 +169,7 @@
         echo '</tr><tr><td align="right">';
         if ($forum->rsstype == 1) {
             $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
-        } else { 
+        } else {
             $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
         }
         if (empty($USER->id)) {
@@ -242,6 +244,7 @@
             break;
     }
 
+    echo '</div>';  // forum-view wrapper end
 
     print_footer($course);
 

@@ -42,6 +42,8 @@
                  "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", "search.search",
                   "", "", "&nbsp;", navmenu($course), true);
 
+        echo '<div id="forum-search" class="forum">';  // forum-search wrapper start
+
         print_simple_box_start("center");
         echo "<center>";
         echo "<br />";
@@ -62,6 +64,9 @@
                      "<a href=\"index.php?id=$course->id\">$strforums</a> ->
                       <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
                       "", "", "&nbsp;", navmenu($course), true);
+
+            echo '<div id="forum-search" class="forum">';  // forum-search wrapper start
+
             print_heading(get_string("nopostscontaining", "forum", $search));
 
             print_simple_box_start("center");
@@ -73,6 +78,9 @@
             echo "</p>";
             echo "</center>";
             print_simple_box_end();
+
+            echo '</div>';  // forum-search wrapper end
+
             print_footer($course);
             exit;
         }
@@ -81,6 +89,8 @@
                  "<a href=\"index.php?id=$course->id\">$strforums</a> ->
                   <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
                   "", "",  $searchform, navmenu($course), true);
+
+        echo '<div id="forum-search" class="forum">';  // forum-search wrapper start
 
         print_heading("$strsearchresults: $totalcount");
 
@@ -120,6 +130,8 @@
         print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
         echo "</center>";
     }
+
+    echo '</div>';  // forum-search wrapper end
 
     print_footer($course);
 

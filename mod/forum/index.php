@@ -50,7 +50,7 @@
         $generaltable->align[] = "center";
     }
 
-    if ($show_rss = (($can_subscribe || $course->id == SITEID) && 
+    if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
                      isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
         $generaltable->head[] = $strrss;
@@ -202,7 +202,7 @@
         $learningtable->align[] = "center";
     }
 
-    if ($show_rss = (($can_subscribe || $course->id == SITEID) && 
+    if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
                      isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
         $learningtable->head[] = $strrss;
@@ -268,7 +268,7 @@
                         $rsslink = rss_get_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
                     }
                 }
-    
+
                 if ($can_subscribe) {
                     if (forum_is_forcesubscribed($forum->id)) {
                         $sublink = get_string("yes");
@@ -315,9 +315,13 @@
         print_header("$course->shortname: $strforums", "$course->fullname",
                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $strforums",
                     "", "", true, $searchform, navmenu($course));
+
+        echo '<div id="forum-index" class="forum">';  // forum-index wrapper start
     } else {
         print_header("$course->shortname: $strforums", "$course->fullname", "$strforums",
                     "", "", true, $searchform, navmenu($course));
+
+        echo '<div id="forum-index" class="forum">';  // forum-index wrapper start
     }
 
     if ($generalforums) {
@@ -329,6 +333,8 @@
         print_heading(get_string("learningforums", "forum"));
         print_table($learningtable);
     }
+
+    echo '</div>';  // forum-index wrapper end
 
     print_footer($course);
 

@@ -99,7 +99,7 @@
             $message = '';
             if ($discussion->id = forum_add_discussion($discussion,$message)) {
 
-                add_to_log($course->id, "forum", "add discussion", 
+                add_to_log($course->id, "forum", "add discussion",
                            "discuss.php?d=$discussion->id", "$discussion->id", $cm->id);
 
                 $timemessage = 2;
@@ -462,7 +462,7 @@
             error("Could not find top parent of post $post->id");
         }
     } else {
-        $toppost->subject = ($forum->type == "news") ? get_string("addanewtopic", "forum") : 
+        $toppost->subject = ($forum->type == "news") ? get_string("addanewtopic", "forum") :
                                                        get_string("addanewdiscussion", "forum");
     }
 
@@ -497,10 +497,13 @@
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   $navmiddle -> $navtail", $formstart, "", true, "", navmenu($course, $cm));
+
+        echo '<div id="forum-post" class="forum">';  // forum-post wrapper start
     } else {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
                  "$navmiddle -> $navtail", "$formstart", "", true, "", navmenu($course, $cm));
 
+        echo '<div id="forum-post" class="forum">';  // forum-post wrapper start
     }
 
     if (!empty($parent)) {
@@ -530,6 +533,8 @@
     if ($usehtmleditor) {
         use_html_editor("message");
     }
+
+    echo '</div>';  // forum-post wrapper end
 
     print_footer($course);
 
