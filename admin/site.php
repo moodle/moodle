@@ -12,7 +12,7 @@
 
 /// If data submitted, then process and store.
 
-	if ($form = data_submitted()) {
+    if ($form = data_submitted()) {
 
         if (!empty($USER->id)) {             // Additional identity check
             if (!confirm_sesskey()) {
@@ -108,7 +108,7 @@
     if ($firsttime) {
         print_header();
         print_heading($strsitesettings);
-        print_simple_box(get_string("configintrosite"), "center", "50%");
+        print_simple_box(get_string("configintrosite", 'admin'), "center", "50%");
         echo "<br />";
     } else {
         print_header("$site->shortname: $strsitesettings", "$site->fullname",

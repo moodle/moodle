@@ -243,7 +243,7 @@
     print_heading( get_string("userprofilefor", "", "$userfullname") );
 
     if (isset($USER->newadminuser)) {
-        print_simple_box(get_string("configintroadmin"), "center", "50%");
+        print_simple_box(get_string("configintroadmin", 'admin'), "center", "50%");
         echo "<br />";
     }
 

@@ -19,7 +19,7 @@
 
 /// If data submitted, then process and store.
 
-	if ($config = data_submitted($match)) {  
+    if ($config = data_submitted($match)) {  
 
         if (!empty($USER->id)) {             // Additional identity check
             if (!confirm_sesskey()) {
@@ -57,7 +57,7 @@
                 $focus = "form.$key";
             }
         }
-	}
+    }
 
 /// Otherwise fill and print the form.
 
@@ -86,7 +86,7 @@
     } else {
         print_header();
         print_heading($strconfigvariables);
-        print_simple_box(get_string('configintro'), 'center', "50%");
+        print_simple_box(get_string('configintro', 'admin'), 'center', "50%");
         echo '<br />';
     }
 
