@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 development version (2003050700)
+      // survey.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['actual'] = "实际的";
@@ -51,9 +51,6 @@ $string['attls8short'] = "了解人们为什么做";
 $string['attls9'] = "我发现自己常常和我读的书作者争论，试图从逻辑上推断他们为什么错。";
 $string['attls9short'] = "与作者争论";
 $string['attlsintro'] = "该问卷的目的是为了了解你对思考和学习的态度。
-
-
-
 这里没有‘正确’或‘错误’的答案；我们只对你的观点感兴趣。请相信我们对你的回答保持高度机密，也不必担心影响对你的评分。";
 $string['attlsm1'] = "对于思考和学习的态度";
 $string['attlsm2'] = "情景型学习";
@@ -118,72 +115,36 @@ $string['colles8short'] = "批判审察读物";
 $string['colles9'] = "我向其他同学解释自己的观点。";
 $string['colles9short'] = "解释自己的观点";
 $string['collesaintro'] = "该问卷调查的目的是为了了解这个在线单元对促进你的学习有多大的作用。
-
-
-
 以下24个问题问的是你在此单元中的体会。
-
-
-
 这里无所谓“正确”或“错误”答案；我们只对你的观点感兴趣。请相信我们对你的回答保持高度机密，也不必担心会影响对你的评分。
-
-
-
 你深思熟虑的回答将有助于我们对该单元作进一步的改善。
-
-
-
 非常感谢！";
-$string['collesaname'] = "建构主义网上学习环境问卷调查（实际的）";
+$string['collesaname'] = "建构主义在线学习环境问卷调查（实际的）";
 $string['collesapintro'] = "该问卷调查的目的是为了了解这个在线单元对促进你的学习有多大的作用。 
-
-
-
 以下有24个问题，每个问题要求你比较在此单元中，你所<B>希望的</B>（理想的）和<B>实际的</B>体会。
-
-
-
 这里无所谓“正确”或“错误”答案；我们只对你的观点感兴趣。请相信我们对你的回答保持高度机密，也不必担心会影响对你的评分。
-
-
-
 你深思熟虑的回答将有助于我们对该单元作进一步的改善。
-
-
-
 非常感谢！";
-$string['collesapname'] = "建构主义网上学习环境问卷调查（希望的和实际的）";
+$string['collesapname'] = "建构主义在线学习环境问卷调查（希望的和实际的）";
 $string['collesm1'] = "实用性";
 $string['collesm1short'] = "实用性";
 $string['collesm2'] = "深思";
 $string['collesm2short'] = "深思";
-$string['collesm3'] = "交互性";
-$string['collesm3short'] = "交互性";
-$string['collesm4'] = "老师支持";
-$string['collesm4short'] = "老师支持";
-$string['collesm5'] = "同学支持";
-$string['collesm5short'] = "同学支持";
-$string['collesm6'] = "解释清晰度";
-$string['collesm6short'] = "解释清晰度";
+$string['collesm3'] = "互动性";
+$string['collesm3short'] = "互动性";
+$string['collesm4'] = "教师的支持";
+$string['collesm4short'] = "教师的支持";
+$string['collesm5'] = "同学的支持";
+$string['collesm5short'] = "同学的支持";
+$string['collesm6'] = "解释的清晰程度";
+$string['collesm6short'] = "解释的清晰程度";
 $string['collesmintro'] = "在此在线单元中……";
 $string['collespintro'] = "该问卷调查的目的是为了了解你对网上学习的看法如何。
-
-
-
 以下有24个问题，每个问题要求你回答在此单元中，你所<B>希望的</B>（理想的）。
-
-
-
 这里无所谓“正确”或“错误”答案；我们只对你的观点感兴趣。请相信我们对你的回答保持高度机密，也不必担心会影响对你的评分。
-
-
-
 你深思熟虑的回答将有助于我们对该单元作进一步的改善。
-
-
-
 非常感谢！";
-$string['collespname'] = "建构主义网上学习环境问卷调查（希望的）";
+$string['collespname'] = "建构主义在线学习环境问卷调查（希望的）";
 $string['done'] = "完成";
 $string['download'] = "下载";
 $string['downloadexcel'] = "以Excel电子表格形式下载数据";
