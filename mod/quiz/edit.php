@@ -159,13 +159,15 @@
 
     $SESSION->modform = $modform;
 
+    $strname    = get_string('name');
+    $strquizzes = get_string('modulenameplural', 'quiz');
     $strediting = get_string(isset($modform->instance) ? "editingquiz"
                                                        : "editquestions",
                              "quiz");
-    $strname    = get_string("name");
 
     print_header("$course->shortname: $strediting", "$course->shortname: $strediting",
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> $strediting");
+                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
+                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a> -> $strediting");
 
     // Print basic page layout.
 
