@@ -1,3 +1,12 @@
+# phpMyAdmin MySQL-Dump
+# version 2.3.0-dev
+# http://phpwizard.net/phpMyAdmin/
+# http://www.phpmyadmin.net/ (download page)
+#
+# Host: localhost
+# Generation Time: May 29, 2002 at 05:19 PM
+# Server version: 3.23.49
+# PHP Version: 4.1.2
 # Database : `moodle`
 # --------------------------------------------------------
 
@@ -18,7 +27,7 @@ CREATE TABLE course (
   enddate int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
-);
+) TYPE=MyISAM;
 # --------------------------------------------------------
 
 #
@@ -30,7 +39,7 @@ CREATE TABLE course_categories (
   name varchar(255) NOT NULL default '',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
-);
+) TYPE=MyISAM COMMENT='Course categories';
 # --------------------------------------------------------
 
 #
@@ -48,7 +57,7 @@ CREATE TABLE course_modules (
   score tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
-) ;
+) TYPE=MyISAM;
 # --------------------------------------------------------
 
 #
@@ -62,23 +71,37 @@ CREATE TABLE course_weeks (
   summary varchar(255) NOT NULL default '',
   sequence varchar(255) NOT NULL default '',
   PRIMARY KEY  (id)
-) ;
+) TYPE=MyISAM;
 # --------------------------------------------------------
 
 #
-# Table structure for table `logs`
+# Table structure for table `log`
 #
 
-CREATE TABLE logs (
+CREATE TABLE log (
   id int(10) unsigned NOT NULL auto_increment,
   time int(10) unsigned NOT NULL default '0',
   user int(10) unsigned NOT NULL default '0',
-  course int(10) unsigned NOT NULL default '0',
   ip varchar(15) NOT NULL default '',
-  url varchar(200) NOT NULL default '',
-  message varchar(255) NOT NULL default '',
+  course int(10) unsigned NOT NULL default '0',
+  module varchar(10) NOT NULL default '',
+  action varchar(15) NOT NULL default '',
+  url varchar(100) NOT NULL default '',
+  info varchar(255) NOT NULL default '',
   PRIMARY KEY  (id)
-) ;
+) TYPE=MyISAM COMMENT='Every action is logged as far as possible.';
+# --------------------------------------------------------
+
+#
+# Table structure for table `log_display`
+#
+
+CREATE TABLE log_display (
+  module varchar(20) NOT NULL default '',
+  action varchar(20) NOT NULL default '',
+  table varchar(20) NOT NULL default '',
+  field varchar(40) NOT NULL default ''
+) TYPE=MyISAM COMMENT='For a particular module/action, specifies a table field.';
 # --------------------------------------------------------
 
 #
@@ -95,7 +118,7 @@ CREATE TABLE modules (
   search varchar(255) NOT NULL default '',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
-) ;
+) TYPE=MyISAM;
 # --------------------------------------------------------
 
 #
@@ -132,9 +155,9 @@ CREATE TABLE user (
   forwardmail tinyint(1) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY username (username),
-  UNIQUE KEY id (id)
-) ;
+  UNIQUE KEY id (id),
+  UNIQUE KEY username (username)
+) TYPE=MyISAM COMMENT='One record for each person';
 # --------------------------------------------------------
 
 #
@@ -146,7 +169,7 @@ CREATE TABLE user_admins (
   user int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
-) ;
+) TYPE=MyISAM COMMENT='One record per administrator user';
 # --------------------------------------------------------
 
 #
@@ -162,7 +185,7 @@ CREATE TABLE user_students (
   time int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
-) ;
+) TYPE=MyISAM;
 # --------------------------------------------------------
 
 #
@@ -176,5 +199,8 @@ CREATE TABLE user_teachers (
   authority varchar(10) default NULL,
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
-) ;
+) TYPE=MyISAM COMMENT='One record per teacher per course';
+
+    
+
 
