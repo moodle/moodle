@@ -387,8 +387,7 @@ function attendance_get_course_students($courseid, $sort="u.lastaccess DESC") {
 
     // make sure it works on the site course
     $select = "s.course = '$courseid' AND";
-    $site = get_site();
-    if ($courseid == $site->id) {
+    if ($courseid == SITEID) {
         $select = '';
     }
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,

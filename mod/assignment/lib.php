@@ -425,8 +425,7 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
                                       AND a.userid = g.userid ");
     } else {
         $select = "s.course = '$assignment->course' AND";
-        $site = get_site();
-        if ($assignment->course == $site->id) {
+        if ($assignment->course == SITEID) {
             $select = '';
         }     
         return count_records_sql("SELECT COUNT(*)
@@ -451,8 +450,7 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
     }
     
     $select = "s.course = '$assignment->course' AND";
-    $site = get_site();
-    if ($assignment->course == $site->id) {
+    if ($assignment->course == SITEID) {
         $select = '';
     }
     return get_records_sql("SELECT a.* 
@@ -470,8 +468,7 @@ function assignment_get_users_done($assignment) {
     global $CFG;
     
     $select = "s.course = '$assignment->course' AND";
-    $site = get_site();
-    if ($assignment->course == $site->id) {
+    if ($assignment->course == SITEID) {
         $select = '';
     }
     return get_records_sql("SELECT u.* 
@@ -497,8 +494,8 @@ function assignment_get_unmailed_submissions($cutofftime) {
                                AND s.assignment = a.id
                                AND s.userid = us.userid
                                AND a.course = us.course");
-    $site = get_site();
-    if (record_exists('assignment', 'course', $site->id)) {
+    $siteid = SITEID;
+    if (record_exists('assignment', 'course', $siteid)) {
         $records += get_records_sql("SELECT s.*, a.course, a.name
                               FROM {$CFG->prefix}assignment_submissions s, 
                                    {$CFG->prefix}assignment a,
@@ -508,7 +505,7 @@ function assignment_get_unmailed_submissions($cutofftime) {
                                AND s.timemarked > 0
                                AND s.assignment = a.id
                                AND s.userid = us.userid
-                               AND a.course = $site->id");
+                               AND a.course = $siteid");
     }
 }
 

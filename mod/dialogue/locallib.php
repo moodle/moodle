@@ -235,8 +235,7 @@ function dialogue_get_users_done($dialogue) {
 
     // make sure it works on the site course
     $select = "s.course = '$dialogue->course' AND";
-    $site = get_site();
-    if ($courseid == $site->id) {
+    if ($courseid == SITEID) {
         $select = '';
     }
     if (!$students = get_records_sql("SELECT u.* 

@@ -38,10 +38,6 @@
 
         global $CFG;
 
-        if (! $site = get_site()) {
-            error("Invalid site!");
-        }
-
         ?>
         <html>
         <head>

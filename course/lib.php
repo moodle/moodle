@@ -1252,11 +1252,6 @@ function print_course($course, $width="100%") {
         $enrol = new enrolment_plugin;
     }
 
-    if (! $site = get_site()) {
-        error("Could not find a site!");
-    }
-
-
     print_simple_box_start("center", "$width", $THEME->cellcontent, 5, "coursebox");
 
     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
@@ -1274,7 +1269,7 @@ function print_course($course, $width="100%") {
                     $teacher->role = $course->teacher;
                 }
                 $fullname = fullname($teacher, isteacher($course->id)); // is the USER a teacher of that course
-                echo "$teacher->role: <a href=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$fullname</a><br />";
+                echo "$teacher->role: <a href=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=".SITEID."\">$fullname</a><br />";
             }
         }
         echo "</font></p>";

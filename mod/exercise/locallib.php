@@ -239,8 +239,7 @@ function exercise_count_student_submissions($exercise) {
 
     // make sure it works on the site course
     $select = "u.course = '$exercise->course' AND";
-    $site = get_site();
-    if ($exercise->course == $site->id) {
+    if ($exercise->course == SITEID) {
         $select = '';
     }
 
@@ -489,8 +488,7 @@ function exercise_get_best_submission_grades($exercise) {
 
     // make sure it works on the site course
     $select = "u.course = '$exercise->course' AND";
-    $site = get_site();
-    if ($exercise->course == $site->id) {
+    if ($exercise->course == SITEID) {
         $select = '';
     }
 
@@ -543,8 +541,7 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
                     
             // make sure it works on the site course
             $select = "u.course = '$exercise->course' AND";
-            $site = get_site();
-            if ($exercise->course == $site->id) {
+            if ($exercise->course == SITEID) {
                 $select = '';
             }
 
@@ -570,8 +567,7 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
 
     // make sure it works on the site course
     $select = "u.course = '$exercise->course' AND";
-    $site = get_site();
-    if ($exercise->course == $site->id) {
+    if ($exercise->course == SITEID) {
         $select = '';
     }
 
@@ -591,8 +587,7 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
 
             // make sure it works on the site course
             $select = "u.course = '$exercise->course' AND";
-            $site = get_site();
-            if ($exercise->course == $site->id) {
+            if ($exercise->course == SITEID) {
                 $select = '';
             }
 
@@ -615,8 +610,7 @@ function exercise_get_student_submissions($exercise, $order = "time", $groupid =
 
         // make sure it works on the site course
         $select = "u.course = '$exercise->course' AND";
-        $site = get_site();
-        if ($exercise->course == $site->id) {
+        if ($exercise->course == SITEID) {
             $select = '';
         }
 
@@ -670,8 +664,7 @@ function exercise_get_ungraded_assessments_student($exercise) {
 
     // make sure it works on the site course
     $select = "u.course = '$exercise->course' AND";
-    $site = get_site();
-    if ($exercise->course == $site->id) {
+    if ($exercise->course == SITEID) {
         $select = '';
     }
 

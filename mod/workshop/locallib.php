@@ -250,8 +250,7 @@ function workshop_count_student_submissions($workshop) {
 
     // make sure it works on the site course
     $select = "s.course = '$workshop->course' AND";
-    $site = get_site();
-    if ($workshop->course == $site->id) {
+    if ($workshop->course == SITEID) {
         $select = '';
     }
 
@@ -515,8 +514,7 @@ function workshop_get_student_assessments($workshop, $user) {
 
     // make sure it works on the site course
     $select = "u.course = '$workshop->course' AND";
-    $site = get_site();
-    if ($workshop->course == $site->id) {
+    if ($workshop->course == SITEID) {
         $select = '';
     }
 
@@ -538,8 +536,7 @@ function workshop_get_student_submission_assessments($workshop) {
 
     // make sure it works on the site course
     $select = "u.course = '$workshop->course' AND";
-    $site = get_site();
-    if ($workshop->course == $site->id) {
+    if ($workshop->course == SITEID) {
         $select = '';
     }
 
@@ -608,8 +605,7 @@ function workshop_get_ungraded_assessments_student($workshop) {
 
     // make sure it works on the site course
     $select = "u.course = '$workshop->course' AND";
-    $site = get_site();
-    if ($workshop->course == $site->id) {
+    if ($workshop->course == SITEID) {
         $select = '';
     }
 
@@ -668,8 +664,7 @@ function workshop_get_users_done($workshop) {
 
     // make sure it works on the site course
     $select = "s.course = '$workshop->course' AND";
-    $site = get_site();
-    if ($workshop->course == $site->id) {
+    if ($workshop->course == SITEID) {
         $select = '';
     }
 

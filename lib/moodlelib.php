@@ -383,8 +383,7 @@ function require_login($courseid=0, $autologinguest=true) {
 
     // Check that the user account is properly set up
     if (user_not_fully_set_up($USER)) {
-        $site = get_site();
-        redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
+        redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=SITEID");
         die;
     }
 
@@ -588,8 +587,7 @@ function isstudent($courseid, $userid=0) {
         return false;
     }
 
-    $site = get_site();
-    if ($courseid == $site->id) {
+    if ($courseid == SITEID) {
         if (!$userid) {
             $userid = $USER->id;
         }
@@ -968,9 +966,8 @@ function add_admin($userid) {
             $admin->userid = $userid;
             
             // any admin is also a teacher on the site course
-            $site = get_site();
-            if (!record_exists('user_teachers', 'course', $site->id, 'userid', $userid)) {
-                if (!add_teacher($userid, $site->id)) {
+            if (!record_exists('user_teachers', 'course', SITEID, 'userid', $userid)) {
+                if (!add_teacher($userid, SITEID)) {
                     return false;
                 }
             }
@@ -987,8 +984,7 @@ function remove_admin($userid) {
     global $db;
 
     // remove also from the list of site teachers
-    $site = get_site();
-    remove_teacher($userid, $site->id);
+    remove_teacher($userid, SITEID);
 
     return delete_records("user_admins", "userid", $userid);
 }
@@ -1534,8 +1530,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
         return true;
     } else {
         mtrace("ERROR: $mail->ErrorInfo");
-        $site = get_site();
-        add_to_log($site->id, "library", "mailer", $_SERVER["REQUEST_URI"], "ERROR: $mail->ErrorInfo");
+        add_to_log(SITEID, "library", "mailer", $_SERVER["REQUEST_URI"], "ERROR: $mail->ErrorInfo");
         return false;
     }
 }

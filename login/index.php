@@ -74,8 +74,7 @@
             $SESSION->justloggedin = true;
 
             if (user_not_fully_set_up($USER)) {
-                $site = get_site();
-                redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
+                redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=".SITEID);
 
             } else if (strpos($wantsurl, $CFG->wwwroot) === 0) {   /// Matches site address
                 redirect($wantsurl);

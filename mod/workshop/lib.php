@@ -1205,8 +1205,7 @@ function workshop_get_student_submissions($workshop, $order = "title") {
 
     // make sure it works on the site course
     $select = "u.course = '$workshop->course' AND";
-    $site = get_site();
-    if ($workshop->course == $site->id) {
+    if ($workshop->course == SITEID) {
         $select = '';
     }
 

@@ -34,11 +34,7 @@
 
         global $CFG;
 
-        if (! $site = get_site()) {
-            error("Invalid site!");
-        }
-
-        if ($course->id == $site->id) {
+        if ($course->id == SITEID) {
             $strfiles = get_string("sitefiles");
         } else {
             $strfiles = get_string("files");
@@ -59,7 +55,7 @@
             $fullnav = "<a href=\"index.php?id=$course->id&wdir=/\">$strfiles</a> $navigation -> ".$dirs[$numdirs-1];
         }
 
-        if ($course->id == $site->id) {
+        if ($course->id == SITEID) {
             print_header("$course->shortname: $strfiles", "$course->fullname", 
                          "<a href=\"../$CFG->admin/index.php\">".get_string("administration").
                          "</a> -> $fullnav", $formfield);

@@ -407,18 +407,17 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
     $mygroupid = mygroupid($course->id);
     $isteacher = isteacher($course->id, $user->id);
     $isteacheredit = isteacheredit($course->id, $user->id);
-    $site = get_site();
 
     switch ($wiki->wtype) {
 
     case 'student':
         /// Get all the existing entries for this wiki.
         $wiki_entries = wiki_get_entries($wiki, 'student');
-        if ($isteacher and ($site->id != $course->id)) {
+        if ($isteacher and (SITEID != $course->id)) {
 
             /// If the user is an editing teacher, or a non-editing teacher not assigned to a group, show all student
             /// wikis, regardless of creation.
-            if (($site->id != $course->id) and ($isteacheredit or ($groupmode == NOGROUPS))) {
+            if ((SITEID != $course->id) and ($isteacheredit or ($groupmode == NOGROUPS))) {
 
                 if ($students = get_course_students($course->id)) {
                     /// Default pagename is dependent on the wiki settings.
@@ -494,7 +493,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
             /// group (for separate groups) or there are visible groups, or if this is
             /// a site-level wiki, and they are an administrator.
             if (($groupmode == VISIBLEGROUPS) or
-                (($site->id == $course->id) and isadmin())) {
+                ((SITEID == $course->id) and isadmin())) {
                 $viewall = true;
             }
             else if ($groupmode == SEPARATEGROUPS) {
@@ -706,7 +705,6 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
     /// Get the groupmode. It's been added to the wiki object.
     $groupmode = groupmode($course, $wiki);
     $mygroupid = mygroupid($course->id);
-    $site = get_site();
 
     switch ($wiki->wtype) {
 
@@ -715,7 +713,7 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
 ///     A user can create their own wiki at the site level.
         if ($userid == 0) {
             return (isstudent($course->id, $user->id) or
-                    (($site->id == $course->id) and !empty($user) and !isguest()));
+                    ((SITEID == $course->id) and !empty($user) and !isguest()));
         }
 ///     An editing teacher can create any student wiki, or
 ///     a non-editing teacher, if not assigned to a group can create any student wiki, or if assigned to a group can
@@ -730,7 +728,7 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
         /// If mode is 'nogroups', then all participants can add wikis.
         if (!$groupmode) {
             return (isstudent($course->id, $user->id) or isteacher($course->id, $user->id) or
-                    (($site->id == $course->id) and !empty($user) and !isguest()));
+                    ((SITEID == $course->id) and !empty($user) and !isguest()));
         }
         /// If not requesting a group, must be a member of a group.
         else if ($groupid == 0) {
@@ -747,7 +745,7 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
     case 'teacher':
         /// If mode is 'nogroups', then all teachers can add wikis.
         if (!$groupmode) {
-            return (isteacher($course->id, $user->id) or (($site->id == $course->id) and isadmin()));
+            return (isteacher($course->id, $user->id) or ((SITEID == $course->id) and isadmin()));
         }
         /// If not requesting a group, must be a member of a group.
         else if ($groupid == 0) {
@@ -771,7 +769,6 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
     $can_edit = false;
     $groupmode = groupmode($course, $wiki);
     $mygroupid = mygroupid($course->id);
-    $site = get_site();
 
     /// Editing teacher's and admins can edit all wikis, non-editing teachers can edit wikis in their groups, 
     /// or all wikis if group mode is 'no groups' or they don't belong to a group.
@@ -798,7 +795,7 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
             /// If mode is 'nogroups', then all participants can edit the wiki.
             else {
                 $can_edit = (isstudent($course->id, $user->id) or isteacher($course->id, $user->id) or
-                            (($site->id == $course->id) and !empty($user) and !isguest()));
+                            ((SITEID == $course->id) and !empty($user) and !isguest()));
             }
             break;
 
@@ -809,7 +806,7 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
                 $can_edit = (isteacher($course->id, $user->id) and ismember($wiki_entry->groupid, $user->id));
             }
             else {
-                $can_edit = (isteacher($course->id, $user->id) or (($site->id == $course->id) and isadmin()));
+                $can_edit = (isteacher($course->id, $user->id) or ((SITEID == $course->id) and isadmin()));
             }
             break;
         }

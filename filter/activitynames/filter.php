@@ -9,9 +9,7 @@
         global $CFG;
 
         if (empty($courseid)) {
-            if ($site = get_site()) {
-                $courseid = $site->id;
-            }
+            $courseid = SITEID;
         }
 
         $course = get_record("course","id",$courseid);

@@ -1,6 +1,12 @@
 <?PHP // $Id$
 
+/// CONSTANTS /////////////////////////////////////////////////////////////
+
+define('SITEID', 1);
+
+
 /// FUNCTIONS FOR DATABASE HANDLING  ////////////////////////////////
+
 /**
 * execute a given sql command string
 * 
@@ -947,9 +953,7 @@ function get_user_info_from_db($field, $value) {
         $user->admin = true;
     }
 
-    if ($site = get_site()) {
-        $user->student[$site->id] = isstudent($site->id, $user->id);
-    }
+    $user->student[SITEID] = isstudent(SITEID, $user->id);
 
 /// Determine enrolments based on current enrolment module
 
@@ -1173,8 +1177,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
 
     // make sure it works on the site course
     $select = "s.course = '$courseid' AND ";
-    $site = get_site();
-    if ($courseid == $site->id) {
+    if ($courseid == SITEID) {
         $select = '';
     }
 
@@ -1367,8 +1370,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
         $order = '';
     }
     
-    $site = get_site();
-    if (!$courseid or $courseid == $site->id) {
+    if (!$courseid or $courseid == SITEID) {
         if (!$admins = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
                       FROM {$CFG->prefix}user u, 
                            {$CFG->prefix}user_admins s
@@ -2279,9 +2281,9 @@ function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user
         echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error
     }    
     if (!$user and isset($USER->id)) {
-        $site = get_site();
-        if ($courseid == $site->id) {
-            update_user_in_db();
+        if ($courseid == SITEID) {
+            $db->Execute("UPDATE {$CFG->prefix}user SET lastIP='$REMOTE_ADDR', lastaccess='$timenow' 
+                     WHERE id = '$USER->id' ");
         } else if (isstudent($courseid)) {
             $db->Execute("UPDATE {$CFG->prefix}user_students SET timeaccess = '$timenow' ".
                          "WHERE course = '$courseid' AND userid = '$userid'");

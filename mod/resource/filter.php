@@ -9,9 +9,7 @@
         global $CFG;
 
         if (empty($courseid)) {
-            if ($site = get_site()) {
-                $courseid = $site->id;
-            }
+            $courseid = SITEID;
         }
 
         switch ($CFG->dbtype) {

@@ -68,8 +68,7 @@
     $guest = get_guest();
     $exceptions .= $guest->id;
     
-    $site = get_site();
-    if ($course->id == $site->id) { // Show all site users (even unconfirmed)
+    if ($course->id == SITEID) { // Show all site users (even unconfirmed)
         $students = get_users(true, '', true, $exceptions, $sort.' '.$dir, $firstinitial, $lastinitial, $page*$perpage, $perpage);
         $totalcount = get_users(false, '', true, '', '', '', '') - 1; // -1 to not count guest user
         if ($firstinitial or $lastinitial) {

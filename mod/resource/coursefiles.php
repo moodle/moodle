@@ -37,11 +37,7 @@
 
         global $CFG,$THEME;
 
-        if (! $site = get_site()) {
-            error("Invalid site!");
-        }
-
-        if ($course->id == $site->id) {
+        if ($course->id == SITEID) {
             $strfiles = get_string("sitefiles");
         } else {
             $strfiles = get_string("files");
@@ -64,14 +60,14 @@
 
         print_header();
         ?>
-	    <script language="javascript" type="text/javascript">
-	    <!--
-	    function set_value(txt) {
-		    opener.document.forms['form'].reference.value = txt;
-		    window.close();
-	    }
+        <script language="javascript" type="text/javascript">
+        <!--
+        function set_value(txt) {
+            opener.document.forms['form'].reference.value = txt;
+            window.close();
+        }
         -->
-	    </script>
+        </script>
         <?php
 
         echo '<table border="0" cellpadding="3" cellspacing="0" width="100%">';
@@ -82,7 +78,7 @@
         echo '</tr>';
         echo '</table>';
 
-        if ($course->id == $site->id) {
+        if ($course->id == SITEID) {
             print_heading(get_string("publicsitefileswarning"), "center", 2);
         }
 
@@ -537,33 +533,33 @@
             break;
 
         case "torte":
-        	if($_POST)
-        	{
-	        	while(list($key, $val) = each($_POST))
-	        	{
-		        	if(ereg("file([0-9]+)", $key, $regs))
-		        	{
-			        	$file = $val;
-		        	}
-	        	}
-	        	if(@filetype($CFG->dataroot ."/". $course->id . $file) == "file")
-	        	{
-		        	if(mimeinfo("icon", $file) == "image.gif")
-		        	{
-		        		$url = $CFG->wwwroot ."/file.php?file=/" .$course->id . $file;
-		        		runjavascript($url);
-	        		}
-	        		else
-	        		{
-		        		print "File is not a image!";
-	        		}
-	        	}
-	        	else
-	        	{
-		        	print "You cannot insert FOLDER into richtext editor!!!";
-	        	}
-        	}
-        	break;
+            if($_POST)
+            {
+                while(list($key, $val) = each($_POST))
+                {
+                    if(ereg("file([0-9]+)", $key, $regs))
+                    {
+                        $file = $val;
+                    }
+                }
+                if(@filetype($CFG->dataroot ."/". $course->id . $file) == "file")
+                {
+                    if(mimeinfo("icon", $file) == "image.gif")
+                    {
+                        $url = $CFG->wwwroot ."/file.php?file=/" .$course->id . $file;
+                        runjavascript($url);
+                    }
+                    else
+                    {
+                        print "File is not a image!";
+                    }
+                }
+                else
+                {
+                    print "You cannot insert FOLDER into richtext editor!!!";
+                }
+            }
+            break;
         case "cancel";
             clearfilelist();
 

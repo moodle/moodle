@@ -316,8 +316,7 @@ function journal_get_users_done($journal) {
 
     // make sure it works on the site course
     $select = "s.course = '$journal->course' AND";
-    $site = get_site();
-    if ($journal->course == $site->id) {
+    if ($journal->course == SITEID) {
         $select = '';
     }
 
@@ -369,8 +368,7 @@ function journal_count_entries($journal, $groupid=0) {
     
         // make sure it works on the site course
         $select = "s.course = '$journal->course' AND";
-        $site = get_site();
-        if ($journal->course == $site->id) {
+        if ($journal->course == SITEID) {
             $select = '';
         }
 

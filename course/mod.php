@@ -179,8 +179,7 @@
 
         rebuild_course_cache($cm->course);
 
-        $site = get_site();
-        if ($site->id == $cm->course) {
+        if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
             redirect("view.php?id=$cm->course");
@@ -224,8 +223,7 @@
 
         rebuild_course_cache($section->course);
 
-        $site = get_site();
-        if ($site->id == $section->course) {
+        if (SITEID == $section->course) {
             redirect($CFG->wwwroot);
         } else {
             redirect("view.php?id=$section->course");
@@ -249,8 +247,7 @@
             error("Could not update the indent level on that course module");
         }
 
-        $site = get_site();
-        if ($site->id == $cm->course) {
+        if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
             redirect("view.php?id=$cm->course");
@@ -271,8 +268,7 @@
 
         rebuild_course_cache($cm->course);
 
-        $site = get_site();
-        if ($site->id == $cm->course) {
+        if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
             redirect("view.php?id=$cm->course");
@@ -297,14 +293,12 @@
             error("This module doesn't exist");
         }
 
-        $site = get_site();
-
-        if ($module->visible and ($section->visible or ($site->id == $cm->course))) {
+        if ($module->visible and ($section->visible or (SITEID == $cm->course))) {
             show_course_module($cm->id);
             rebuild_course_cache($cm->course);
         }
 
-        if ($site->id == $cm->course) {
+        if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
             redirect("view.php?id=$cm->course");
@@ -325,8 +319,7 @@
 
         rebuild_course_cache($cm->course);
 
-        $site = get_site();
-        if ($site->id == $cm->course) {
+        if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
             redirect("view.php?id=$cm->course");

@@ -4,9 +4,7 @@
         global $CFG;
 
         if (empty($courseid)) {
-            if ($site = get_site()) {
-                $courseid = $site->id;
-            }
+            $courseid = SITEID;
         }
 
         $GLOSSARY_CONCEPT_IS_ENTRY = 0;
