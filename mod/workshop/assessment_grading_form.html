@@ -6,8 +6,8 @@
 <form name="gradingform" action="assessments.php" method="post">
   <input type="hidden" name="action" value="updategrading" />
   <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-  <input type="hidden" name="stype" value="<?php echo $_GET['stype'] ?>" />
-  <input type="hidden" name="aid" value="<?php echo $_GET['aid'] ?>" />
+  <input type="hidden" name="redirect" value="<?php echo $redirect ?>" />
+  <input type="hidden" name="aid" value="<?php echo $aid ?>" />
   <center>
     <table cellpadding="5" border="1">
       <tr valign="top">
@@ -20,8 +20,7 @@
         <td align="right">
           <b><?php print_string("gradeforstudentsassessment", "workshop") ?></td>
         <td>
-          <input type="text" name="gradinggrade" size="3" value="<?php p($assessment->gradinggrade) ?>" />
-          /<?php echo $workshop->gradinggrade; ?>
+          <input type="text" name="gradinggrade" size="3" value="<?php p($assessment->gradinggrade) ?>" />%
         </td>
       </tr>
     </table>

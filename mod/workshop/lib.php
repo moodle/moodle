@@ -894,6 +894,7 @@ function workshop_update_instance($workshop) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 
 // will update an existing instance with new data.
+    global $CFG;
 
     $workshop->timemodified = time();
 
@@ -969,6 +970,12 @@ function workshop_update_instance($workshop) {
                 add_event($event);
             }
         }
+    }
+
+    if (time() > $workshop->assessmentstart) {
+        // regrade all the submissions...
+        set_field("workshop_submissions", "nassessments", 0, "workshopid", $workshop->id);
+        workshop_grade_assessments($workshop);
     }
 
     return $returnid;
@@ -1314,21 +1321,21 @@ function workshop_get_assess_logs($course, $timestart) {
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_assessments($submission, $all = '', $order = '') {
     // Return assessments for this submission ordered oldest first, newest last
-    // new assessments made within the editing time are NOT returned unless the
-    // second argument is set to ALL
-    global $CFG;
-    
+    // new assessments made within the editing time are NOT returned unless they
+    // belong to the user or the second argument is set to ALL
+    global $CFG, $USER;
 
+    $timenow = time();
     if (!$order) {
         $order = "timecreated DESC";
     }
     if ($all != 'ALL') {
-        $timenow = time();
         return get_records_select("workshop_assessments", "(submissionid = $submission->id) AND 
-            (timecreated < $timenow - $CFG->maxeditingtime)", $order);
+            ((timecreated < $timenow - $CFG->maxeditingtime) or 
+                ((timecreated < $timenow) AND (userid = $USER->id)))", $order);
     } else {
-        return get_records_select("workshop_assessments", "submissionid = $submission->id", 
-                $order);
+        return get_records_select("workshop_assessments", "submissionid = $submission->id AND 
+            (timecreated < $timenow)", $order);
     }
 }
 
@@ -1511,7 +1518,7 @@ function workshop_get_user_submissions($workshop, $user) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function workshop_grade_assessments($workshop) {
+function workshop_grade_assessments($workshop, $verbose=false) {
     global $WORKSHOP_EWEIGHTS;
     
     // timeout after 10 minutes
@@ -1598,8 +1605,10 @@ function workshop_grade_assessments($workshop) {
                     $total += $n; // weighted total
                 }
             }
-            echo "<p align=\"center\">".get_string("numberofsubmissions", "workshop", count($num))."<br />\n";
-            echo get_string("numberofassessmentsweighted", "workshop", $total)."</p>\n";
+            if ($verbose) {
+                echo "<p align=\"center\">".get_string("numberofsubmissions", "workshop", count($num))."<br />\n";
+                echo get_string("numberofassessmentsweighted", "workshop", $total)."</p>\n";
+            }
 
             // now get an estimate of the standard deviation of each element in the assessment
             // this is just a rough measure, all assessments are included and teacher's assesments are not weighted
@@ -1629,9 +1638,11 @@ function workshop_grade_assessments($workshop) {
                 set_field("workshop_elements", "stddev", $sd[$i], "workshopid", $workshop->id, "elementno", $i);
                 set_field("workshop_elements", "totalassessments", $totalassessments, "workshopid", $workshop->id,
                         "elementno", $i);
-                echo get_string("standarddeviationofelement", "workshop", $i+1)." $sd[$i]<br />";
-                if ($sd[$i] <= $minvar) {
-                    print_string("standarddeviationnote", "workshop")."<br />\n";
+                if ($verbose) {
+                    echo get_string("standarddeviationofelement", "workshop", $i+1)." $sd[$i]<br />";
+                    if ($sd[$i] <= $minvar) {
+                        print_string("standarddeviationnote", "workshop")."<br />\n";
+                    }
                 }
             }
         } 
@@ -1656,7 +1667,7 @@ function workshop_grade_assessments($workshop) {
                 // ...if there are three or more assessments calculate the variance of each assessment.
                 // Use the variance to find the "best" assessment. (When there is only one or two assessments they 
                 // are not altered by this routine.)
-                echo "Processing submission $submission->id ($nassessments asessments)...\n"; 
+                if ($verbose) echo "Processing submission $submission->id ($nassessments asessments)...\n"; 
                 if ($nassessments > 2) {
                     $num = 0; // weighted number of assessments
                     for ($i = 0; $i < $workshop->nelements; $i++) {
@@ -1694,7 +1705,7 @@ function workshop_grade_assessments($workshop) {
                         if ($num) { // could all the assessments be duff? 
                             for ($i = 0; $i < $workshop->nelements; $i++) {
                                 $mean[$i] = $sum[$i] / $num;
-                                echo "Submission: $submission->id; Element: $i; Mean: {$mean[$i]}\n";
+                                if ($verbose) echo "Submission: $submission->id; Element: $i; Mean: {$mean[$i]}\n";
                             }
                         } else {
                             continue; // move to the next submission
@@ -1729,7 +1740,7 @@ function workshop_grade_assessments($workshop) {
                         if (!$best = get_record("workshop_assessments", "id", $bestassessmentid)) {
                             error("Workshop grade assessments: cannot find best assessment");
                         }
-                        echo "Best assessment is $bestassessmentid;\n";
+                        if ($verbose) echo "Best assessment is $bestassessmentid;\n";
                         foreach ($assessments as $assessment) {
                             // don't overwrite teacher's grade
                             if ($assessment->teachergraded) {
@@ -1823,6 +1834,17 @@ function workshop_submission_grade($workshop, $submission) {
         }
     }
     return number_format($grade * $workshop->grade / 100, 1);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+function workshop_fullname($userid, $courseid) {
+    global $CFG;
+    if (!$user = get_record('user', 'id', $userid)) {
+        return '';
+    }
+    return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$courseid.'">'.
+        fullname($user).'</a>';
 }
 
 ?>

@@ -3,19 +3,16 @@
 /*************************************************
     ACTIONS handled are:
 
-    dminamendtitle
-    adminconfirmdelete
-    admindelete
+    adminamendtitle
+    confirmdelete
+    delete
     adminlist
-    displayfinalgrades (teachers only)
     editsubmission
     listallsubmissions
     listforassessmentstudent
     listforassessmentteacher
     showsubmission
     updatesubmission
-    userconfirmdelete
-    userdelete
     
 
 ************************************************/
@@ -55,7 +52,7 @@
     optional_variable($action);
     if (empty($action)) {
         $action = "listallsubmissions";
-        }
+    }
 
 
 /******************* admin amend title ************************************/
@@ -63,10 +60,10 @@
 
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
-            }
+        }
         if (empty($_GET['sid'])) {
             error("Admin Amend Title: submission id missing");
-            }
+        }
         
         $submission = get_record("workshop_submissions", "id", $_GET['sid']);
         print_heading(get_string("amendtitle", "workshop"));
@@ -87,8 +84,9 @@
         echo "  </td></tr></table>\n";
         echo "<input type=\"submit\" value=\"".get_string("amendtitle", "workshop")."\" />\n";
         echo "</center></form>\n";
-
-        }
+        
+        print_heading("<a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id#sid=$submission->id\">".get_string("cancel")."</a>");
+    }
     
 
     /******************* admin clear late (flag) ************************************/
@@ -110,38 +108,40 @@
         
         add_to_log($course->id, "workshop", "late flag cleared", "view.php?id=$cm->id", "submission $submission->id");
         
-        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
+        redirect("view.php?id=$cm->id");
     }
     
 
-    /******************* admin confirm delete ************************************/
-    elseif ($action == 'adminconfirmdelete' ) {
+    /******************* confirm delete ************************************/
+    elseif ($action == 'confirmdelete' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-            }
         if (empty($_GET['sid'])) {
-            error("Admin confirm delete: submission id missing");
+            error("Confirm delete: submission id missing");
             }
-            
+        $sid = $_GET['sid'];
         notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("submission", "workshop")), 
-             "submissions.php?action=admindelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "submissions.php?id=$cm->id&amp;action=adminlist");
+             "submissions.php?action=delete&amp;id=$cm->id&amp;sid=$sid", "view.php?id=$cm->id#sid=$sid");
         }
     
 
-    /******************* admin delete ************************************/
-    elseif ($action == 'admindelete' ) {
+    /******************* delete ************************************/
+    elseif ($action == 'delete' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-            }
         if (empty($_GET['sid'])) {
-            error("Admin delete: submission id missing");
-            }
+            error("Delete: submission id missing");
+        }
     
         if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
             error("Admin delete: can not get submission record");
-            }
+        }
+        
+        // students are only allowed to delete their own submission and only up to the deadline
+        if (!(isteacher($course->id) or 
+               (($USER->id = $submission->userid) and ($timenow < $workshop->submissionend)
+                   and (($timenow < $workshop->assessmentstart) or ($timenow < $submission->timecreated + $CFG->maxeditingtime))))) {
+            error("You are not authorized to delete this submission");
+        }
+        
         print_string("deleting", "workshop");
         // first get any assessments...
         if ($assessments = workshop_get_assessments($submission, 'ALL')) {
@@ -150,17 +150,17 @@
                 delete_records("workshop_comments", "assessmentid", $assessment->id);
                 delete_records("workshop_grades", "assessmentid", $assessment->id);
                 echo ".";
-                }
+            }
             // ...now delete the assessments...
             delete_records("workshop_assessments", "submissionid", $submission->id);
-            }
+        }
         // ...and the submission record...
         delete_records("workshop_submissions", "id", $submission->id);
         // ..and finally the submitted file
         workshop_delete_submitted_files($workshop, $submission);
-        
-        print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
-        }
+
+        redirect("view.php?id=$cm->id");
+    }
     
 
     /******************* admin (confirm) late flag ************************************/
@@ -168,18 +168,18 @@
 
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
-            }
+        }
         if (empty($_GET['sid'])) {
             error("Admin confirm late flag: submission id missing");
-            }
+        }
         if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
             error("Admin confirm late flag: can not get submission record");
-            }
+        }
 
         notice_yesno(get_string("clearlateflag","workshop")."?", 
              "submissions.php?action=adminclearlate&amp;id=$cm->id&amp;sid=$_GET[sid]", 
-             "submissions.php?id=$cm->id&amp;action=adminlist");
-        }
+             "view.php?id=$cm->id");
+    }
     
 
     /******************* list all submissions ************************************/
@@ -187,18 +187,18 @@
 
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
-            }
+        }
         if (empty($_GET['order'])) {
             $order = "name";
-            }
+        }
         else {
             $order = $_GET['order'];
-            }
+        }
             
         workshop_list_submissions_for_admin($workshop, $order);
         print_continue("view.php?id=$cm->id");
         
-        }
+    }
     
 
     /******************* admin update title ************************************/
@@ -206,16 +206,16 @@
 
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
-            }
+        }
         if (empty($_POST['sid'])) {
             error("Admin Update Title: submission id missing");
-            }
+        }
     
         if (set_field("workshop_submissions", "title", $_POST['title'], "id", $_POST['sid'])) {
             print_heading(get_string("amendtitle", "workshop")." ".get_string("ok"));
-            }
-        print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
         }
+        print_continue("view.php?id=$cm->id");
+    }
     
 
     /******************* confirm remove attachments ************************************/
@@ -223,122 +223,16 @@
 
         if (empty($_GET['sid'])) {
             error("Admin confirm delete: submission id missing");
-            }
+        }
         if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
             error("Admin delete: can not get submission record");
-            }
+        }
 
         notice_yesno(get_string("confirmremoveattachments","workshop"), 
              "submissions.php?action=removeattachments&amp;id=$cm->id&amp;sid=$_GET[sid]", 
              "view.php?id=$cm->id");
-        }
-    
-
-    /*************** display grades (by teacher) ***************************/
-    elseif ($action == 'displaygrades' or $action == 'displayfinalgrades' or $action == 'displaycurrentgrades') {
-
-        if (groupmode($course, $cm) == SEPARATEGROUPS) {
-            $groupid = get_current_group($course->id);
-        } else {
-            $groupid = 0;
-        }
-        
-        print_heading_with_help(get_string("displayofgrades", "workshop"), "finalgrades", "workshop");
-
-        if ($workshop->ntassessments) {
-            // display the teacher's submissions
-            echo "<center><table border=\"1\" width=\"90%\"><tr>\n";
-            echo "<td bgcolor=\"$THEME->cellheading2\"><b>$course->teacher ".get_string("submission", "workshop").
-                "</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop",
-                    $course->teachers)."</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop",
-                   $course->students)."</b></td></tr>";
-            if ($submissions = workshop_get_teacher_submissions($workshop)) {
-                foreach ($submissions as $submission) {
-                    echo "<tr><td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
-                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission,
-                                "teacher")."</td>";
-                    echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission,
-                                "student")."</td></tr>";
-                }
-            }
-            echo "</table><br clear=\"all\" />\n";
-            workshop_print_key($workshop);
-        }
-
-        // Get all the students
-        if (!$users = get_course_students($course->id, "u.lastname, u.firstname")) {
-            print_heading(get_string("nostudentsyet"));
-            print_footer($course);
-            exit;
-        }
-        
-        // show the grades as stored in the tables...     
-        echo "<center><table border=\"1\" width=\"90%\"><tr>
-            <td bgcolor=\"$THEME->cellheading2\" width=\"120\"><b>".$course->student."</b></td>";
-        if ($workshop->wtype) {
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsdone", "workshop").
-                "</b></td>";
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessments", 
-                "workshop")."</b></td>";
-        }
-        echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submission", "workshop")."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
-                $course->teachers)."</b></td>";
-        if ($workshop->wtype) {
-            echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("assessmentsby", "workshop", 
-                $course->students)."</b></td>";
-        }
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", 
-                "workshop")."</b></td>";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "workshop").
-                "</b></td></tr>\n";
-
-        foreach ($users as $user) {
-            // skip if student not in group
-            if ($groupid) {
-                if (!ismember($groupid, $user->id)) {
-                    continue;
-                }
-            }
-            if ($submissions = workshop_get_user_submissions($workshop, $user)) {
-                $gradinggrade = workshop_gradinggrade($workshop, $user);
-                foreach ($submissions as $submission) {
-                    $grade = workshop_submission_grade($workshop, $submission);
-                    echo "<tr><td><a href=\"{$CFG->wwwroot}/user/view.php?id=$user->id&amp;course=$course->id\">".
-                        fullname($user).'</a></td>';
-                    if ($workshop->wtype) {
-                        echo "<td align=\"center\">".workshop_print_user_assessments($workshop, $user)."</td>";
-                        echo "<td align=\"center\">$gradinggrade</td>";
-                    }
-                    echo "<td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
-                    $strteachergrades = workshop_print_submission_assessments($workshop, $submission, "teacher");
-                    if ($strteachergrades == '&nbsp;') {
-                        $strteachergrades = '<a href="assessments.php?action=assesssubmission&id='.
-                            $cm->id.'&sid='.$submission->id.'">'.get_string('assess', 'workshop').'</a>';
-                    }
-                    echo "<td align=\"center\">$strteachergrades</td>";
-                    if ($workshop->wtype) {
-                        echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, 
-                            "student")."</td>";
-                    }
-                    echo "<td align=\"center\">$grade</td>";
-                    echo "<td align=\"center\">".number_format($gradinggrade + $grade, 1)."</td></tr>\n";
-                }
-            }
-        }
-        echo "</table><br clear=\"all\" />\n";
-        workshop_print_key($workshop);
-        if ($workshop->showleaguetable and time() > $workshop->assessmentend) {
-            workshop_print_league_table($workshop);
-            if ($workshop->anonymous) {
-                echo "<p>".get_string("namesnotshowntostudents", "workshop", $course->students)."</p>\n";
-            }
-        }
-        print_continue("view.php?id=$cm->id");
     }
-
+    
 
     /******************* edit submission ************************************/
     elseif ($action == 'editsubmission' ) {
@@ -408,7 +302,7 @@
         echo "</table>\n";
         echo "<input type=\"submit\" value=\"".get_string("savemysubmission", "workshop")."\" />\n";
         echo "</center></form>\n";
-        }
+    }
     
 
     /******************* list all submissions ************************************/
@@ -417,12 +311,12 @@
             print_heading(get_string("nostudentsyet"));
             print_footer($course);
             exit;
-            }
+        }
         print_heading(get_string("listofallsubmissions", "workshop").":", "CENTER");
         workshop_list_all_submissions($workshop, $USER);
         print_continue("view.php?id=$cm->id");
         
-        }
+    }
     
 
     /******************* list for assessment student (submissions) ************************************/
@@ -431,11 +325,11 @@
             print_heading(get_string("nostudentsyet"));
             print_footer($course);
             exit;
-            }
+        }
         workshop_list_unassessed_student_submissions($workshop, $USER);
         print_continue("view.php?id=$cm->id");
         
-        }
+    }
     
 
     /******************* list for assessment teacher (submissions) ************************************/
@@ -443,23 +337,32 @@
    
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
-            }
+        }
 
         workshop_list_unassessed_teacher_submissions($workshop, $USER);
         print_continue("view.php?id=$cm->id");
         
-        }
+    }
     
 
     /******************* remove (all) attachments ************************************/
     elseif ($action == 'removeattachments' ) {
-
+    
         $form = data_submitted();
         
         if (empty($form->sid)) {
             error("Update submission: submission id missing");
-            }
+        }
+        
         $submission = get_record("workshop_submissions", "id", $form->sid);
+        
+        // students are only allowed to remove their own attachments and only up to the deadline
+        if (!(isteacher($course->id) or 
+               (($USER->id = $submission->userid) and ($timenow < $workshop->submissionend)
+                   and (($timenow < $workshop->assessmentstart) or ($timenow < $submission->timecreated + $CFG->maxeditingtime))))) {
+            error("You are not authorized to delete these attachments");
+        }
+        
         // amend title... just in case they were modified
         // check existence of title
         if (empty($form->title)) {
@@ -472,21 +375,27 @@
         workshop_delete_submitted_files($workshop, $submission);
         add_to_log($course->id, "workshop", "removeattachments", "view.php?id=$cm->id", "submission $submission->id");
         
-        print_continue("view.php?id=$cm->id");
-        }
+        print_continue("view.php?id=$cm->id#sid=$submission->id");
+    }
     
 
     /******************* show submission ************************************/
     elseif ($action == 'showsubmission' ) {
 
         if (empty($_GET['sid'])) {
-            error("Edit submission: submission id missing");
-            }
+            error("Show submission: submission id missing");
+        }
         
         $submission = get_record("workshop_submissions", "id", $_GET['sid']);
-        workshop_print_submission($workshop, $submission);
-        print_continue("view.php?id=$cm->id");
+        $title = '"'.$submission->title.'" ';
+        if (isteacher($course->id)) {
+            $title .= get_string('by', 'workshop').' '.workshop_fullname($submission->userid, $course->id);
         }
+        print_heading($title);
+        echo '<center>'.get_string('submitted', 'workshop').': '.userdate($submission->timecreated).'</center><br />';
+        workshop_print_submission($workshop, $submission);
+        print_continue($_SERVER['HTTP_REFERER'].'#sid='.$submission->id);
+    }
     
 
     /*************** update (league table options teacher) ***************************/
@@ -501,15 +410,15 @@
         // save number of entries in showleaguetable option
         if ($form->nentries == 'All') {
             $form->nentries = 99;
-            }
+        }
         set_field("workshop", "showleaguetable", $form->nentries, "id", "$workshop->id");
         
         // save the anonymous option
         set_field("workshop", "anonymous", $form->anonymous, "id", "$workshop->id");
         add_to_log($course->id, "workshop", "league table", "view.php?id=$cm->id", $form->nentries, $cm->id);
 
-        redirect("submissions.php?action=adminlist&amp;id=$cm->id");
-        }
+        redirect("view.php?id=$cm->id");
+    }
 
 
     /*************** update submission ***************************/
@@ -519,8 +428,16 @@
         
         if (empty($form->sid)) {
             error("Update submission: submission id missing");
-            }
+        }
         $submission = get_record("workshop_submissions", "id", $form->sid);
+        
+        // students are only allowed to update their own submission and only up to the deadline
+        if (!(isteacher($course->id) or 
+               (($USER->id = $submission->userid) and ($timenow < $workshop->submissionend)
+                   and (($timenow < $workshop->assessmentstart) or ($timenow < $submission->timecreated + $CFG->maxeditingtime))))) {
+            error("You are not authorized to update your submission");
+        }
+        
         // check existence of title
         if (empty($form->title)) {
             $title = get_string("notitle", "workshop");
@@ -541,52 +458,10 @@
             } 
             print_continue("view.php?id=$cm->id");
         } else {
-            redirect("view.php?id=$cm->id");
+            redirect("view.php?id=$cm->id#sid=$submission->id");
         }
     }
-                
-     /******************* user confirm delete ************************************/
-    elseif ($action == 'userconfirmdelete' ) {
 
-        if (empty($_GET['sid'])) {
-            error("User Confirm Delete: submission id missing");
-            }
-            
-        notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("submission", "workshop")), 
-             "submissions.php?action=userdelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "view.php?id=$cm->id");
-        }
-    
-
-    /******************* user delete ************************************/
-    elseif ($action == 'userdelete' ) {
-
-        if (empty($_GET['sid'])) {
-            error("User Delete: submission id missing");
-            }
-    
-        if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
-            error("User Delete: can not get submission record");
-            }
-        print_string("deleting", "workshop");
-        // first get any assessments...
-        if ($assessments = workshop_get_assessments($submission, 'ALL')) {
-            foreach($assessments as $assessment) {
-                // ...and all the associated records...
-                delete_records("workshop_comments", "assessmentid", $assessment->id);
-                delete_records("workshop_grades", "assessmentid", $assessment->id);
-                echo ".";
-                }
-            // ...now delete the assessments...
-            delete_records("workshop_assessments", "submissionid", $submission->id);
-            }
-        // ...and the submission record...
-        delete_records("workshop_submissions", "id", $submission->id);
-        // ..and finally the submitted file
-        workshop_delete_submitted_files($workshop, $submission);
-        
-        print_continue("view.php?id=$cm->id");
-        }
-    
 
     /*************** no man's land **************************************/
 
@@ -594,7 +469,7 @@
 
         error("Fatal Error: Unknown Action: ".$action."\n");
 
-        }
+    }
 
 
     print_footer($course);

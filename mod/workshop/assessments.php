@@ -5,11 +5,10 @@
 
     addcomment
     addstockcomment
-    adminconfirmdelete
-    admindelete
+    confirmdelete
+    delete
     adminlist
     agreeassessment
-    assesssubmission
     displaygradingform
     editcomment
     editelements (teachers only)
@@ -24,9 +23,6 @@
     updateassessment
     updatecomment
     updategrading
-    userconfirmdelete
-    userdelete
-    viewassessment
 
 ************************************************/
 
@@ -34,17 +30,29 @@
     require("lib.php"); 
     require("locallib.php");
 
-    require_variable($id);    // Course Module ID
+    optional_variable($id, '');    // Course Module ID
+    optional_variable($wid, '');    // Workshop ID
 
     // get some useful stuff...
-    if (! $cm = get_record("course_modules", "id", $id)) {
-        error("Course Module ID was incorrect");
+    if ($id) {
+        if (! $cm = get_record("course_modules", "id", $id)) {
+            error("Course Module ID was incorrect");
+        }
+        if (! $workshop = get_record("workshop", "id", $cm->instance)) {
+            error("Course module is incorrect");
+        }
+    } else if ($wid) {
+        if (! $workshop = get_record("workshop", "id", $wid)) {
+            error("Workshop id is incorrect");
+        }
+        if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $workshop->course)) {
+            error("No coursemodule found");
+        }
+    } else {
+        error("No id given");
     }
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
-    }
-    if (! $workshop = get_record("workshop", "id", $cm->instance)) {
-        error("Course module is incorrect");
     }
 
     require_login($course->id);
@@ -75,11 +83,11 @@
         // get assessment record
         if (!$assessmentid = $_REQUEST['aid']) { // comes from link or hidden form variable
             error("Assessment id not given");
-            }
+        }
         $assessment = get_record("workshop_assessments", "id", $assessmentid);
         if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
             error("Submission not found");
-            }
+        }
         ?>
         <form name="commentform" action="assessments.php" method="post">
         <input type="hidden" name="action" value="insertcomment" />
@@ -104,8 +112,7 @@
         echo "</center></form>\n";
         echo "<center><b>".get_string("assessment", "workshop"). "</b></center>\n";
         workshop_print_assessment($workshop, $assessment);
-        }
-
+    }
 
 
     /*************** add stock comment (by teacher ) ***************************/
@@ -303,34 +310,28 @@
         // redisplay form, going back to original returnto address
         workshop_print_assessment($workshop, $assessment, true, true, $form->returnto);
         
-        // add_to_log($course->id, "workshop", "assess", "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
+        // add_to_log($course->id, "workshop", "assess", "viewassessment.php?id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
         
     }
 
 
-    /******************* admin confirm delete ************************************/
-    elseif ($action == 'adminconfirmdelete' ) {
+    /******************* confirm delete ************************************/
+    elseif ($action == 'confirmdelete' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-            }
         if (empty($_GET['aid'])) {
-            error("Admin confirm delete: assessment id missing");
+            error("Confirm delete: assessment id missing");
             }
             
         notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("assessment", "workshop")), 
-             "assessments.php?action=admindelete&amp;id=$cm->id&amp;aid=$_GET[aid]", "submissions.php?action=adminlist&amp;id=$cm->id");
+             "assessments.php?action=delete&amp;id=$cm->id&amp;aid=$_GET[aid]", "submissions.php?action=adminlist&amp;id=$cm->id");
         }
     
 
-    /******************* admin delete ************************************/
-    elseif ($action == 'admindelete' ) {
+    /******************* delete ************************************/
+    elseif ($action == 'delete' ) {
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can look at this page");
-            }
         if (empty($_GET['aid'])) {
-            error("Admin delete: submission id missing");
+            error("Delete: submission id missing");
             }
             
         print_string("deleting", "workshop");
@@ -340,7 +341,7 @@
         // ...now delete the assessment...
         delete_records("workshop_assessments", "id", $_GET['aid']);
         
-        print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
+        print_continue("view.php?id=$cm->id");
         }
     
 
@@ -387,84 +388,10 @@
         set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
         echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br />\n";
             
-        add_to_log($course->id, "workshop", "agree", "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$assessment->id");
+        add_to_log($course->id, "workshop", "agree", "viewassessment.php?id=$cm->id&amp;aid=$assessment->id", "$assessment->id");
         print_continue("view.php?id=$cm->id");
         }
 
-
-
-    /*************** Assess submission (by teacher or student) ***************************/
-    elseif ($action == 'assesssubmission') {
-
-        require_variable($sid);
-        
-        optional_variable($allowcomments);
-        if (!isset($allowcomments)) {
-            $allowcomments = false;
-            }
-    
-        if (! $submission = get_record("workshop_submissions", "id", $sid)) {
-            error("Assess submission is misconfigured - no submission record!");
-            }
-        
-        // there can be an assessment record (for teacher submissions), if there isn't...
-        if (!$assessment = get_record("workshop_assessments", "submissionid", $submission->id, "userid", 
-                    $USER->id)) {
-            // if it's the teacher see if the user has done a self assessment if so copy it
-            if (isteacher($course->id) and  ($assessment = get_record("workshop_assessments", "submissionid", 
-                            $submission->id, "userid", $submission->userid))) {
-                $assessment = workshop_copy_assessment($assessment, $submission, true);
-                // need to set owner of assessment
-                set_field("workshop_assessments", "userid", $USER->id, "id", $assessment->id);
-                $assessment->resubmission = 0; // not set by workshop_copy_assessment
-                $assessment->timegraded = 0; // not set by workshop_copy_assessment
-                $assessment->timeagreed = 0; // not set by workshop_copy_assessment
-            } else {
-                $yearfromnow = time() + 365 * 86400;
-                // ...create one and set timecreated way in the future, this is reset when record is updated
-                $assessment->workshopid = $workshop->id;
-                $assessment->submissionid = $submission->id;
-                $assessment->userid = $USER->id;
-                $assessment->timecreated = $yearfromnow;
-                $assessment->grade = -1; // set impossible grade
-                $assessment->timegraded = 0;
-                $assessment->timeagreed = 0;
-                $assessment->resubmission = 0;
-                if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
-                    error("Could not insert workshop assessment!");
-                }
-                // if it's the teacher and the workshop is error banded set all the elements to Yes
-                if (isteacher($course->id) and ($workshop->gradingstrategy == 2)) {
-                    for ($i =0; $i < $workshop->nelements; $i++) {
-                        unset($element);
-                        $element->workshopid = $workshop->id;
-                        $element->assessmentid = $assessment->id;
-                        $element->elementno = $i;
-                        $element->feedback = '';
-                        $element->grade = 1;
-                        if (!$element->id = insert_record("workshop_grades", $element)) {
-                            error("Could not insert workshop grade!");
-                        }
-                    }
-                    // now set the adjustment
-                    unset($element);
-                    $i = $workshop->nelements;
-                    $element->workshopid = $workshop->id;
-                    $element->assessmentid = $assessment->id;
-                    $element->elementno = $i;
-                    $element->grade = 0;
-                    if (!$element->id = insert_record("workshop_grades", $element)) {
-                        error("Could not insert workshop grade!");
-                    }
-                }
-            }
-        }
-        
-        print_heading_with_help(get_string("assessthissubmission", "workshop"), "grading", "workshop");
-        
-        // show assessment and allow changes
-        workshop_print_assessment($workshop, $assessment, true, $allowcomments, $_SERVER["HTTP_REFERER"]);
-    }
 
 
     /*************** display grading form (viewed by student) *********************************/
@@ -766,7 +693,7 @@
             
         add_to_log($course->id, "workshop", "comment", "view.php?id=$cm->id", "$comment->id");
 
-        print_continue("assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id");
+        print_continue("viewassessment.php?id=$cm->id&amp;aid=$assessment->id");
         }
 
 
@@ -936,6 +863,7 @@
         }
         echo "<pre>";
         workshop_grade_assessments($workshop);
+        echo '</pre>';
         print_continue("submissions.php?id=$cm->id&action=adminlist");
     }
     
@@ -1122,7 +1050,7 @@
         // redisplay form, going back to original returnto address
         workshop_print_assessment($workshop, $assessment, true, true, $form->returnto);
         
-        // add_to_log($course->id, "workshop", "assess", "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
+        // add_to_log($course->id, "workshop", "assess", "viewassessment.php?id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
         
     }
 
@@ -1301,16 +1229,17 @@
         
         // set grade...
         set_field("workshop_assessments", "grade", $grade, "id", $assessment->id);
-        // ...and clear the timegraded but set the graddinggrade to maximum, may to reduced subsequently...
+        // ...and clear the timegraded but set the graddinggrade to maximum, may be reduced subsequently...
         set_field("workshop_assessments", "timegraded", 0, "id", $assessment->id);
         set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
         // ...and the resubmission flag
         set_field("workshop_assessments", "resubmission", 0, "id", $assessment->id);
 
         // if there's examples or peer assessments clear the counter in the submission so that
-        // the cron job will regrade this assessment (and the other assessments fo the submission)
+        // all assessments for this submission will be regraded
         if ($workshop->ntassessments or $workshop->nsassessments) {
             set_field("workshop_submissions", "nassessments", 0, "id", $submission->id);
+            workshop_grade_assessments($workshop);
         } else { // it could be self assessment....
             // now see if there's a corresponding assessment so that the gradinggrade can be set
             if (isteacher($course->id)) {
@@ -1346,7 +1275,7 @@
         }
             
         add_to_log($course->id, "workshop", "assess",
-                "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
+                "viewassessment.php?id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
         
         // set up return address
         if (!$returnto = $form->returnto) {
@@ -1387,10 +1316,10 @@
             echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br />\n";
             
             add_to_log($course->id, "workshop", "comment", 
-                    "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$comment->id");
+                    "viewassessment.php?id=$cm->id&amp;aid=$assessment->id", "$comment->id");
         }
 
-        print_continue("assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id");
+        print_continue("viewassessment.php?id=$cm->id&amp;aid=$assessment->id");
     }
 
 
@@ -1417,47 +1346,9 @@
             echo "<centre><b>".get_string("savedok", "workshop")."</b></centre><br />\n";
             
             add_to_log($course->id, "workshop", "grade", 
-                 "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
+                 "viewassessment.php?id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
         }
-        switch ($form->stype) {
-            case "student" : 
-                redirect("assessments.php?action=listungradedstudentsubmissions&amp;id=$cm->id");
-                break;
-            case "teacher" : 
-                redirect("assessments.php?action=listungradedteachersubmissions&amp;id=$cm->id");
-                break;
-        }
-    }
-
-
-    /****************** user confirm delete ************************************/
-    elseif ($action == 'userconfirmdelete' ) {
-
-        if (empty($_GET['aid'])) {
-            error("User confirm delete: assessment id missing");
-        }
-            
-        notice_yesno(get_string("confirmdeletionofthisitem","workshop", 
-                get_string("assessment", "workshop")), 
-                "assessments.php?action=userdelete&amp;id=$cm->id&amp;aid=$_GET[aid]", "view.php?id=$cm->id");
-    }
-    
-
-    /****************** user delete ************************************/
-    elseif ($action == 'userdelete' ) {
-
-        if (empty($_GET['aid'])) {
-            error("User delete: assessment id missing");
-        }
-            
-        print_string("deleting", "workshop");
-        // first delete all the associated records...
-        delete_records("workshop_comments", "assessmentid", $_GET['aid']);
-        delete_records("workshop_grades", "assessmentid", $_GET['aid']);
-        // ...now delete the assessment...
-        delete_records("workshop_assessments", "id", $_GET['aid']);
-        
-        print_continue("view.php?id=$cm->id");
+        redirect($form->redirect);
     }
     
 
@@ -1476,32 +1367,6 @@
         // only called from list all submissions
         print_continue("submissions.php?action=listallsubmissions&amp;id=$cm->id");
     }
-
-
-    /****************** view assessment *****************************/
-    elseif ($action == 'viewassessment') {
-
-        optional_variable($allowcomments);
-        if (!isset($allowcomments)) {
-            $allowcomments = false;
-        }
-    
-        // get the assessment record
-        if (!$assessment = get_record("workshop_assessments", "id", $_GET['aid'])) {
-            error("Assessment record not found");
-        }       
-
-        // show assessment but don't allow changes
-        workshop_print_assessment($workshop, $assessment, false, $allowcomments);
-        
-        if (isteacher($course->id) and !isteacher($course->id, $assessment->userid)) {
-            print_heading('<a href="assessments.php?action=gradeassessment&amp;id='.$cm->id.'&amp;stype=student&amp;aid='.$assessment->id.'">'.
-                get_string('assessthisassessment', 'workshop').'</a>');
-        }
-        
-        print_continue("view.php?id=$cm->id");
-    }
-
 
     /*************** no man's land **************************************/
     else {
