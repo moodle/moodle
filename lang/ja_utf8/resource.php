@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -58,6 +58,7 @@ $string['notefile'] = 'さらにファイルをアップロード ( このリス
 $string['notypechosen'] = 'タイプを選択してください。「戻る」ボタンを押して再度入力してください。';
 $string['pagedisplay'] = 'リソースを現在のウインドウに表示';
 $string['pagewindow'] = '同一ウインドウ';
+$string['pan'] = 'Pan';
 $string['parameter'] = 'パラメータ';
 $string['parameters'] = 'パラメータ';
 $string['popupresource'] = 'リソースをポップアップウインドウに表示';
@@ -80,5 +81,6 @@ $string['resourcetypetext'] = 'テキストページの作成';
 $string['searchweb'] = 'ウェブページを検索';
 $string['serverurl'] = '$CFG->wwwroot';
 $string['variablename'] = '変数名';
+$string['vol'] = 'Vol';
 
 ?>
