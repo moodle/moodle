@@ -260,6 +260,7 @@ $string['createaccount'] = 'Crea el meu compte';
 $string['createfolder'] = 'Crea una carpeta en $a';
 $string['createuserandpass'] = 'Crea un nou nom d\'usuari i una contrasenya per entrar-hi';
 $string['createziparchive'] = 'Comprimeix-los en un fitxer zip';
+$string['creatingblocks'] = 'S\'estan creant blocs';
 $string['creatingcategoriesandquestions'] = 'S\'estan creant categories i preguntes';
 $string['creatingcoursemodules'] = 'S\'estan creant els mòduls del curs';
 $string['creatingevents'] = 'S\'estan creant els esdeveniments';
