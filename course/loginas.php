@@ -76,7 +76,6 @@
         unset($SESSION->currentgroup[$course->id]);
     }
 
-    set_moodle_cookie($USER->username);
     $student_name = fullname($USER, true);
 
     add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&amp;user=$user", "$teacher_name -> $student_name");
