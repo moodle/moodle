@@ -1133,6 +1133,4 @@ function dialogue_show_other_conversations($dialogue, $conversation) {
 }
 
 
-
 ?>
-
