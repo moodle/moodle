@@ -22,7 +22,7 @@ Now I show the specific detailed status of every item in the process:
 12. TODO: quiz_responses->answer (analyse).
 13. TODO: quiz_calculated->correctaswerformat.
 14. DONE: quiz->questionsperpage.
-15. TODO: quiz_categories->parent and sortorder.
+15. DONE: quiz_categories->parent and sortorder.
 16. DONE: Message subsystem (MIM). Available in SITE backups!
 17. DONE: Detect questions without categories and create a category for them
           (in backup process). See bug 2380. fix_orphaned_questions() function.
