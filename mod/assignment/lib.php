@@ -305,7 +305,7 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
         if ($modvisible) {
             $assignments[$log->info] = assignment_log_info($log);
             $assignments[$log->info]->time = $log->time;
-            $assignments[$log->info]->url  = $log->url;
+            $assignments[$log->info]->url  = str_replace('&', '&amp;', $log->url);
         }
     }
 

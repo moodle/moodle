@@ -581,12 +581,14 @@ function print_recent_activity($course) {
         }
     }
 
-    echo '<center><font size="1">';
+    echo '<div class="activitydate">';
     echo get_string("activitysince", "", userdate($timestart));
+    echo '</div>';
+    echo '<div class="activityhead">';
 
-    echo '<p><a href="'.$CFG->wwwroot.'/course/recent.php?id='.$course->id.'">'.get_string('recentactivityreport').'</a></p>';
+    echo '<a href="'.$CFG->wwwroot.'/course/recent.php?id='.$course->id.'">'.get_string('recentactivityreport').'</a>';
 
-    echo '</font></center>';
+    echo '</div>';
 
 
     // Firstly, have there been any new enrolments?
