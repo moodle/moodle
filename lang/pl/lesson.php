@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.2 Beta (2004022400)
+      // lesson.php - created with Moodle 1.2.1 beta (2004032200)
 
 
 $string['actionaftercorrectanswer'] = 'Reakcja po poprawnej odpowiedzi';
@@ -30,10 +30,10 @@ $string['maximumnumberofanswers'] = 'Maksymalna liczba odpowiedzi';
 $string['maximumnumberofattempts'] = 'Maksymalna liczba prób';
 $string['modulename'] = 'Lekcja';
 $string['modulenameplural'] = 'Lekcje';
-$string['morethanoneanswer'] = 'Wiêcej ni¿ jedna odpowied¼';
 $string['movepagehere'] = 'Przesuñ stronê tutaj';
 $string['moving'] = 'Przesuwanie strony: $a';
 $string['movingtonextpage'] = 'Do nastêpnej strony';
+$string['multianswer'] = 'Wiele odpowiedzi';
 $string['multipleanswer'] = 'Wielokrotne odpowiedzi';
 $string['nextpage'] = 'Nastêpna strona';
 $string['noanswer'] = 'Brak odpowiedzi';
@@ -52,6 +52,7 @@ $string['pleasecheckoneanswer'] = 'Proszê sprawd¼ jedn± odpowied¼';
 $string['pleasecheckoneormoreanswers'] = 'Sprawd¼ jedn± lub wiêcej odpowiedzi';
 $string['pleaseenteryouranswerinthebox'] = 'Proszê wpisz swoj± odpowied¼';
 $string['pleasematchtheabovepairs'] = 'Po³±cz powy¿sze pary';
+$string['questionoption'] = 'Opcja pytania';
 $string['questiontype'] = 'Typ pytania';
 $string['response'] = 'Informacja zwrotna';
 $string['sanitycheckfailed'] = 'Ta próba zosta³a usuniêta!';

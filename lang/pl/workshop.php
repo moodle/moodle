@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2004021201)
+      // workshop.php - created with Moodle 1.2.1 beta (2004032200)
 
 
 $string['absent'] = 'Nieobecny';
@@ -220,6 +220,7 @@ $string['weightforbias'] = 'Waga przek³amania';
 $string['weightforgradingofassessments'] = 'Waga Oceny ocen wspó³uczestników';
 $string['weightforpeerassessments'] = 'Waga oceny wystawionej przez wspó³uczestników';
 $string['weightforreliability'] = 'Waga rzetelno¶ci';
+$string['weightforteacherassessments'] = 'Waga oceny nauczyciela';
 $string['weights'] = 'Wagi';
 $string['weightsusedforfinalgrade'] = 'Wagi wykorzystane do obliczenia oceny koñcowej';
 $string['weightsusedforsubmissions'] = 'Wagi wykorzystane przy przes³anych pracach';

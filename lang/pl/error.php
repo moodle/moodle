@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.2 Beta (2004022400)
+      // error.php - created with Moodle 1.2.1 beta (2004032200)
 
 
 $string['coursegroupunknown'] = 'Nie okre¶lono kursu dla grupy $a';
@@ -10,6 +10,7 @@ $string['groupunknown'] = 'Grupa $a nie jest przypisana do tego kursu';
 $string['invalidfieldname'] = '\"$a\" nie jest dozwolon± nazw±.';
 $string['missingfield'] = 'Brakuje pola \"$a\" .';
 $string['modulerequirementsnotmet'] = 'Modu³ \"$a->modulename\" ($a->moduleversion) nie zosta³ poprawnie zainstalowany. Zainstaluj nowsz± wersjê Moodle! Aktualnie u¿ywasz wersji $a->currentmoodle, a potrzebujesz $a->requiremoodle).';
+$string['notavailable'] = 'Nie jest to w tej chwili dostêpne';
 $string['restricteduser'] = 'Twoje konto \"$a\" nie daje Tobie uprawnieñ do wykonania tej operacji.';
 $string['unknowncourse'] = 'Kurs o nazwie \"$a\" nie istnieje.';
 $string['usernotaddederror'] = 'Nieznany b³±d - u¿ytkownik \"$a\" nie zosta³ dodany.';

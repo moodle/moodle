@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta (2004022400)
+      // moodle.php - created with Moodle 1.2.1 beta (2004032200)
 
 
 $string['action'] = 'Akcja';
@@ -68,6 +68,7 @@ $string['allparticipants'] = 'Wszyscy uczestnicy';
 $string['alphabet'] = 'A,¡,B,C,Æ,D,E,Ê,F,G,H,I,J,K,L,£,M,N,Ñ,O,Ó,P,Q,R,S,¦,T,U,V,W,X,Y,Z,¬,¯';
 $string['alphanumerical'] = 'Mo¿e zawieraæ wy³±cznie litery alfabetu i cyfry.';
 $string['alreadyconfirmed'] = 'Rejestracja zosta³a ju¿ potwierdzona';
+$string['always'] = 'Zawsze';
 $string['answer'] = 'Odpowiedz';
 $string['areyousuretorestorethis'] = 'Czy jeste¶ pewny, ¿e chcesz to odtworzyæ?';
 $string['areyousuretorestorethisinfo'] = ' W dalszej czê¶ci tego procesu bêdziesz mia³ mo¿liwo¶æ dodania tej kopii zapasowej do istniej±cego kursu lub utworzenia zupe³nie nowego kursu';
@@ -131,7 +132,9 @@ $string['configallowunenroll'] = 'Je¶li ta opcja jest ustawiona na \"Tak\", wówc
 $string['configcachetext'] = 'Dla wiêkszych stron lub stron, które u¿ywaj± filtrów ustawienie tego parametru mo¿e poprawiæ szybko¶æ dzia³ania strony. Kopia tekstu bêdzie zapisana w pamiêci przez czas okre¶lony w tym parametrze. Zbyt ma³a warto¶æ mo¿e spowolniæ dzia³anie systemu. Z kolei, zbyt du¿a warto¶æ, mo¿e oznaczaæ, ¿e zbyt d³ugo trzeba bêdzie czekaæ na od¶wie¿enie tekstu (n.p. z nowymi linkami).';
 $string['configcountry'] = 'Je¿eli ustawisz tutaj kraj, wówczas ten kraj bêdzie domy¶lny dla nowych u¿ytkowników. Je¿eli chcesz wymusiæ, aby u¿ytkownicy wybierali kraj samodzielnie zostaw to pole niewype³nione.';
 $string['configdebug'] = 'Je¶li w³±czysz t± funkcjê to podniesiony zostanie poziom raportowania b³êdów PHP, dziêki czemu wiêcej ostrze¿eñ bêdzie drukowanych. Ta opcja przydatna jest tylko dla programistów.';
+$string['configdeleteunconfirmed'] = 'Je¶li korzystasz z uwierzytelnienia emailowego, jest to okres przez który przyjmowane bêd± odpowiedzi od u¿ytkowników. Po tym okresie, stare i niepotwierdzone konta zostan± usuniête';
 $string['configerrorlevel'] = 'Wybierz ilo¶æ ostrze¿eñ z PHP, która a byæ wy¶wietlana. Zwykle najlepszym wyborem jest Normalna';
+$string['configfilteruploadedfiles'] = 'W³±czenie tej opcji spowoduje przefiltrowanie wszystkich plików HTML i plików tekstowych przed ich wy¶wietleniem.';
 $string['configforcelogin'] = 'Normalnie pierwsza strona i opis kursu (ale nie kursy) mog± byæ przegl±dane przez wszystkich bez logowania siê. Wybierz ten parametr je¶li chcesz zmusiæ u¿ytkowników do logowania siê zanim bêd± mogli cokolwiek zobaczyæ.';
 $string['configframename'] = 'Je¿eli osadzasz platformê Moodle wewn±trz ramki WWW, wpisz tutaj nazwê ramki. W przeciwnym przypadku pozostaw warto¶æ \'_top\'';
 $string['configfullnamedisplay'] = 'Parametr ten okre¶la jak bêd± wy¶wietlane imiona i nazwiska. ';
@@ -165,6 +168,7 @@ $string['configuration'] = ' Konfiguracja';
 $string['configvariables'] = 'Konfiguruj zmienne';
 $string['configwarning'] = ' B±d¼ ostro¿ny podczas modyfikowania tych ustawieñ - nieprawid³owe warto¶ci mog± powodowaæ problemy';
 $string['configzip'] = 'Wska¿ miejsce gdzie znajduje siê Twój program zip (jest to polecenie opcjonalne i dotyczy tylko systemu Unix). Je¿eli lokalizacja zostanie podana, program ten bêdzie stosowany do tworzenia na serwerze archiwów zip. Je¿eli nic tutaj nie wpiszesz, Moodle zastosuje do tego celu procedury wewnêtrzne.';
+$string['confirm'] = 'Potwierd¼';
 $string['confirmed'] = 'Twoja rejestracja zosta³a potwierdzona';
 $string['confirmednot'] = 'Twoja rejestracja nie zosta³a jeszcze potwierdzona!';
 $string['continue'] = 'Kontynuuj';
@@ -378,6 +382,7 @@ $string['groupmode'] = 'Rodzaj grup';
 $string['groupmodeforce'] = 'Wymu¶ rodzaj grup';
 $string['groupmy'] = 'Moja grupa';
 $string['groupnonmembers'] = 'Ludzie nie w mojej grupie';
+$string['groupnotamember'] = 'Niestety nie jeste¶ przypisany do tej grupy';
 $string['grouprandomassign'] = 'Losowo przypisz wszystkich do grup';
 $string['groupremove'] = 'Usuñ zaznaczon± grupê';
 $string['groupremovemembers'] = 'Usuñ zaznaczonych cz³onków';
@@ -793,11 +798,13 @@ $string['uploadproblem'] = 'Pojawi³ siê nieznany b³±d podczas przesy³ania pliku 
 $string['uploadthisfile'] = 'Prze¶lij ten plik';
 $string['uploadusers'] = 'Prze¶lij u¿ytkowników';
 $string['user'] = 'U¿ytkownik';
+$string['userconfirmed'] = '$a zosta³ potwierdzony';
 $string['userdeleted'] = 'To konto u¿ytkownika zosta³o usuniêta';
 $string['userdescription'] = 'Opis';
 $string['userfiles'] = 'Pliki u¿ytkowników';
 $string['username'] = 'Nazwa u¿ytkownika';
 $string['usernameexists'] = 'Ta nazwa u¿ytkownika ju¿ istnieje, wybierz inn±.';
+$string['usernotconfirmed'] = '$a nie zosta³ potwierdzony';
 $string['userprofilefor'] = 'Profil u¿ytkownika dla $a';
 $string['users'] = 'U¿ytkownicy';
 $string['usersnew'] = 'Nowi u¿ytkownicy';
