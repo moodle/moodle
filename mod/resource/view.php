@@ -70,7 +70,7 @@
             } else {
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
                 echo "<head><title>$course->shortname: $resource->name</title></head>\n";
-                echo "<frameset rows=$CFG->resource_framesize,*>";
+                echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
                 echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
                 echo "<frame src=\"$resource->reference\">";
                 echo "</frameset>";
@@ -122,7 +122,7 @@
                 
             } else {               // Display resource in a frame of it's own.
                 echo "<head><title>$course->shortname: $resource->name</title></head>\n";
-                echo "<frameset rows=$CFG->resource_framesize,*>";
+                echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
                 echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
                 echo "<frame src=\"$fullurl\">";
                 echo "</frameset>";
