@@ -182,7 +182,14 @@ var tEdit = null;
 		<img id="btnRule"   onclick="doStyle('InsertHorizontalRule')" alt="@{InsertLine}" src="images/icon_rule.gif" align="absMiddle" width="20" height="20">
 		<img id="btnSmile"  onclick="insert('smile')" alt="@{InsertSmily}" src="images/em.icon.smile.gif" align="absMiddle" width="15" height="15">
 		<img id="btnChar"	onclick="insert('char')" alt="@{InsertCharacter}" src="images/icon_ins_char.gif" align="absMiddle" width="20" height="20" border="0">
-    </span></nobr></td></tr>
+	<span id="featureSource">
+		<img class="spacer" src="images/spacer.gif" width="2"><span class="start"></span>&nbsp;
+		<span class="label">@{Source}</span>
+		<input title="@{SourceTitle}" class="checkbox" hidefocus type="checkbox" name="switchMode"
+				onclick="tEdit.stopCellResize(true); tEdit.unSetTableElements(); setEditMode(switchMode)">
+    </span>
+	</span>
+    </nobr></td></tr>
 	<tr id="featureStyleBar" ondragstart="handleDrag(0)" onmouseup="press(false)" onmousedown="press(true)" onmouseover="hover(true)" onmouseout="hover(false)">
     <td colspan=2 class="rebar"><nobr><span class="toolbar">
 		<img class="spacer" src="images/spacer.gif" width="2"><span class="start"></span>&nbsp;
@@ -222,12 +229,6 @@ var tEdit = null;
 			<span class="sep"></span>
 			<img id="btnText"  onclick="pickColor('ForeColor')" alt="@{TextColor}" src="images/icon_color_text.gif" align="absMiddle" width="36" height="20">
 			<img id="btnFill"  onclick="pickColor('BackColor')" alt="@{BackgroundColor}" src="images/icon_color_fill.gif" align="absMiddle" width="36" height="20">
-		</span>
-		<span id="featureSource">
-			<img class="spacer" src="images/spacer.gif" width="2"><span class="start"></span>&nbsp;
-			<span class="label">@{Source}</span>
-			<input title="@{SourceTitle}" class="checkbox" hidefocus type="checkbox" name="switchMode"
-					onclick="tEdit.stopCellResize(true); tEdit.unSetTableElements(); setEditMode(switchMode)">
 		</span>
 	</span></nobr></td>
 </tr>
