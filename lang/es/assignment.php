@@ -5,13 +5,7 @@
 $string['allowresubmit'] = "Permitir corrección";
 $string['assignmentdetails'] = "Detalles de la tarea";
 $string['assignmentmail'] = "El maestro \$a->teacher ya ha revisado tu tarea '\$a->assignment'
-
-
-
 Puedes ver sus comentarios en:
-
-
-
 \$a->url";
 $string['assignmentmailhtml'] = "El maestro \$a->teacher ya ha revisado tu tarea '<i>\$a->assignment</i>'<br /><br />
 
@@ -30,6 +24,7 @@ $string['maximumsize'] = "Tamaño máximo";
 $string['modulename'] = "Tarea";
 $string['modulenameplural'] = "Tareas";
 $string['newsubmissions'] = "Tareas enviadas";
+$string['notgradedyet'] = "No calificado aún";
 $string['notsubmittedyet'] = "Aún no ha realizado esta tarea";
 $string['overwritewarning'] = "Advertencia: Si envía un nuevo archivo REEMPLAZARÁ al anterior.";
 $string['saveallfeedback'] = "Guardar respuesta";
