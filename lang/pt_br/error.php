@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.2.1 (2004032500)
+      // error.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['coursegroupunknown'] = 'O curso correspondente ao grupo $a não foi definido';
 $string['erroronline'] = 'Erro na linha $a';
 $string['fieldrequired'] = '\"$a\" é um campo obrigatório';
+$string['filenotfound'] = 'Sinto muito, o arquivo não foi encontrado';
 $string['groupalready'] = 'O usuário já participa do grupo $a';
 $string['groupunknown'] = 'O grupo $a não é associado ao curso especificado';
 $string['invalidfieldname'] = '\"$a\" não é um nome de campo válido';
@@ -15,5 +16,6 @@ $string['restricteduser'] = 'Sinto muito, mas a sua conta atual, \"$a\" , não te
 $string['unknowncourse'] = 'Curso \"$a\" desconhecido';
 $string['usernotaddederror'] = 'Usuário \"$a\" não foi adicionado - erro indefinido';
 $string['usernotaddedregistered'] = 'Usuário \"$a\" não foi adicionado - já foi registrado antes';
+$string['usernotavailable'] = 'Voc~e não tem autorização para acessar as informações detalhadas sobre este usuário';
 
 ?>

@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.3.3 (2004052503)
+      // scorm.php - created with Moodle 1.4.1 (2004083101)
 
 
+$string['asset'] = 'Recurso';
 $string['attr_error'] = 'Valor errado para o atributo ($a->attr) na etiqueta (tag)$a->tag.';
 $string['autocontinue'] = 'Continuação Automática';
 $string['badmanifest'] = 'Erros no manifesto: consulte o relatório de erros';

@@ -1,12 +1,14 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3.3 (2004052503)
+      // resource.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['addresource'] = 'Adicionar material';
 $string['chooseafile'] = 'Escolher ou carregar arquivo';
+$string['chooseparameter'] = 'Escolher parâmentro';
 $string['configdefaulturl'] = 'Este valor é usado para completar o form da URL automaticamente quando o material é baseado em URL';
 $string['configfilterexternalpages'] = 'Se esta opção estiver ativa, todos os materiais externos como paginas web e arquivos html carregados no servidor serão processados pelos filtros do site, como os autolinks do glossário. Isto pode reduzir a velocidade de visualização das páginas do curso - use esta opção apenas nos casos em que for realmente necessário.';
 $string['configframesize'] = 'Quando uma página web ou um arquivo é visualizado em um frame, este valor é o tamanho, em pixels, do frame que contém a navegação (top frame).';
+$string['configparametersettings'] = 'Isto define o valôr padrão dos parâmetros do painel do formulário quando são adicionados novos materiais. Depois da primeira vez, passa a ser uma preferência individual do usuário.';
 $string['configpopup'] = 'A opção de visualizar os materiais em janela popup deve ser preconfigurada?';
 $string['configpopupdirectories'] = 'As janelas popup devem mostrar o diretório de links?';
 $string['configpopupheight'] = 'Qual é a altura predefinida das janelas popup?';
@@ -17,18 +19,22 @@ $string['configpopupscrollbars'] = 'As janelas popup devem ter a barra de rolage
 $string['configpopupstatus'] = 'As janelas popup devem mostrar a brra de estado?';
 $string['configpopuptoolbar'] = 'As janelas popup devem  mostrar a barra de instrumentos?';
 $string['configpopupwidth'] = 'Qual é a largura predefinida das janelas popup?';
-$string['configwebsearch'] = 'Quando se adiciona uma URL como pagina web ou link, este endereço é apresentado como referimento para ajudar o usuário a buscar a URL que está procurando.';
+$string['configsecretphrase'] = 'Esta frase secreta é usada para produzir códigos com valôres cifrados que podem ser enviados aos materiais como parâmetros. O código cifrado é produzido por um valôr md5 do endereço IP ligado a current_users e concatenado à frase secreta: code = md5(IP.secretphrase). isto permite ao destinatário de verificar a conexão como medida adicional de segurança.';
+$string['configwebsearch'] = 'Quando se adiciona uma URL como uma página web ou link, este endereço é apresentado como referimento para ajudar o usuário a buscar a URL que está procurando.';
+$string['configwindowsettings'] = 'Isto define o valôr padrão do painel de configuração da janela do formulário quando são adicionados novos materiais. Depois da primeira vez, passa a ser uma preferência individual do usuário.';
 $string['directlink'] = 'Direcionar link a este arquivo';
 $string['directoryinfo'] = 'Todos os documentos no diretório selecionado serão visualizados';
+$string['display'] = 'Janela';
 $string['editingaresource'] = 'Editar material';
+$string['encryptedcode'] = 'Código cifrado';
 $string['example'] = 'Exemplo';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.exemplo.com/diretorio/arquivo.html';
 $string['fetchclienterror'] = 'Um erro relacionado ao seu navegador impediu o acesso a este endereço (provavelmente o endereço não existe ou foi escrito em modo impreciso)';
 $string['fetcherror'] = 'Não foi possível o acesso a esta página.';
 $string['fetchservererror'] = 'Um erro de acesso ao servidor remoto foi identificado (provavelmente um erro daquele programa) </p>';
 $string['filename'] = 'Nome do arquivo';
 $string['filtername'] = 'Link automático aos materiais';
+$string['frameifpossible'] = 'Colocar o material em un frame par que a navegação do site continue visível';
 $string['fulltext'] = 'Texto completo';
 $string['htmlfragment'] = 'Fragmento de HTML';
 $string['maindirectory'] = 'Diretório principal';
@@ -50,6 +56,10 @@ $string['newwindowopen'] = 'Mostre este material em uma janela popup';
 $string['note'] = 'Nota';
 $string['notefile'] = 'Para transferir mais arquivos ao curso (in modo que aparecerem nesta lista) use o <a href=$a>Administrador de Arquivos</a>.';
 $string['notypechosen'] = 'Você tem que escolher um tipo. Use seu botão de retorno e tente novamente.';
+$string['pagedisplay'] = 'Visualizar este material nesta janela';
+$string['pagewindow'] = 'Mesma janela';
+$string['parameter'] = 'Parâmetro';
+$string['parameters'] = 'Parâmetros';
 $string['popupresource'] = 'Este material deve ser mostrado em uma janela popup';
 $string['popupresourcelink'] = 'Em caso contrário, clicar aqui: $a';
 $string['resourcetype'] = 'Tipo de material';
@@ -62,5 +72,12 @@ $string['resourcetype6'] = 'Texto HTML';
 $string['resourcetype7'] = 'Programa';
 $string['resourcetype8'] = 'Texto WIKI';
 $string['resourcetype9'] = 'Diretório';
+$string['resourcetypedirectory'] = 'Visualizar diretório';
+$string['resourcetypefile'] = 'Fazer link a um arquivo ou site';
+$string['resourcetypehtml'] = 'Criar uma página web';
+$string['resourcetypelabel'] = 'Inserir rótulo';
+$string['resourcetypetext'] = 'Criar uma página de texto simples';
+$string['searchweb'] = 'Buscar página web';
+$string['variablename'] = 'Nome da variável';
 
 ?>

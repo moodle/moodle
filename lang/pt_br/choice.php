@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.3.3 (2004052503)
+      // choice.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['allowupdate'] = 'Permitir a atualização da pesquisa de opinião';
@@ -9,6 +9,7 @@ $string['choiceclose'] = 'até';
 $string['choicename'] = 'Nome da pesquisa de opinião';
 $string['choiceopen'] = 'Abrir';
 $string['choicetext'] = 'Texto da pesquisa de opinião';
+$string['havetologin'] = 'Você deve fazer o acesso ao site antes de enviar a sua resposta';
 $string['modulename'] = 'Pesquisa de opinião';
 $string['modulenameplural'] = 'Pesquisas de opinião';
 $string['mustchooseone'] = 'Você deve escolher uma resposta antes de salvar. ';

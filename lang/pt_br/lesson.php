@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3.3 (2004052503)
+      // lesson.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['actionaftercorrectanswer'] = 'Ação depois da resposta correta';
@@ -47,6 +47,7 @@ $string['multipleanswer'] = 'Resposta múltipla';
 $string['nextpage'] = 'Próxima página';
 $string['noanswer'] = 'Não foi dada nenhuma resposta';
 $string['noattemptrecordsfound'] = 'Não foram encontrados registros de tentativas para esta lição: não foi definida nenhum resultado';
+$string['nobranchtablefound'] = 'Não foi encontrado nenum painel de navegação';
 $string['normal'] = 'Normal - seguir percurso da lição';
 $string['notdefined'] = 'Não definido';
 $string['notitle'] = 'Nenhum titulo';
