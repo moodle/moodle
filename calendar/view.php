@@ -123,19 +123,22 @@
 
     echo '<td width="100%" valign="top">';
 
-    $defaultcourses = calendar_get_default_courses();
+    $conform = ($_GET['view'] == 'month' && $SESSION->cal_show_course === true);
+
+    $defaultcourses = calendar_get_default_courses(!$conform);
     $courses = array();
 
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
 
     // Are we left with a bad filter in effect?
-    if($_GET['view'] != 'month') {
-        if(is_int($SESSION->cal_show_course)) {
-            // There is a filter in action that shows events from courses other than the current.
-            // Reset the filter... this effectively allows course filtering only in the month display.
-            // This filter resetting is also done in the course sideblock display, in case someone
-            // sets a filter for course X and then goes to view course Y.
-            $SESSION->cal_show_course = true;
+    if($_GET['view'] != 'month' && !empty($SESSION->cal_course_referer)) {
+        if(is_numeric($SESSION->cal_show_course)) {
+            if($SESSION->cal_course_referer != $SESSION->cal_show_course) {
+                $SESSION->cal_show_course = intval($SESSION->cal_course_referer);
+            }
+        }
+        if(is_array($SESSION->cal_show_course) && !in_array($SESSION->cal_course_referer, $SESSION->cal_show_course)) {
+            $SESSION->cal_show_course = intval($SESSION->cal_course_referer);
         }
     }
 

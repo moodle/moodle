@@ -1145,8 +1145,12 @@ function calendar_edit_event_allowed($event) {
     return false;
 }
 
-function calendar_get_default_courses() {
-    global $USER, $CFG;
+function calendar_get_default_courses($overridereferer = true) {
+    global $USER, $CFG, $SESSION;
+
+    if(!empty($SESSION->cal_course_referer) && $overridereferer) {
+        return array($SESSION->cal_course_referer => 1);
+    }
 
     $courses = array();
     if(isadmin($USER->id)) {
