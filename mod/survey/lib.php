@@ -410,4 +410,33 @@ function survey_print_graph($url) {
     }
 }
 
+function survey_get_participants($surveyid) {
+//Returns the users with data in one survey
+//(users with records in survey_analysis and survey_answers, students)
+
+    global $CFG;
+
+    //Get students from survey_analysis
+    $st_analysis = get_records_sql("SELECT DISTINCT u.*    
+                                    FROM {$CFG->prefix}user u,
+                                         {$CFG->prefix}survey_analysis a
+                                    WHERE a.survey = '$surveyid' and
+                                          u.id = a.userid");
+    //Get students from survey_answers
+    $st_answers = get_records_sql("SELECT DISTINCT u.*    
+                                   FROM {$CFG->prefix}user u,
+                                        {$CFG->prefix}survey_answers a
+                                   WHERE a.survey = '$surveyid' and
+                                         u.id = a.userid");
+
+    //Add st_answers to st_analysis
+    if ($st_answers) {
+        foreach ($st_answers as $st_answer) {
+            $st_analysis[$st_answer->id] = $st_answer;
+        }
+    }
+    //Return st_analysis array (it contains an array of unique users)
+    return ($st_analysis);
+}
+
 ?>
