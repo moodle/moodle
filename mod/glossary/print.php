@@ -120,6 +120,10 @@
     echo '<p><STRONG>' . get_string("course") . ': <i>' . $course->fullname . '</i><br />';
     echo get_string("modulename","glossary") . ': <i>' . $glossary->name . '</i></STRONG></p>';
 
+    if ( !$entries ) {
+        echo get_string("noentries","glossary");
+        exit;
+    }
     $groupheader = '';
     $tableisopen = 0;
     foreach ($entries as $entry) {
