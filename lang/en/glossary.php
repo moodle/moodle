@@ -95,6 +95,7 @@ $string['exportglossary'] = 'Export glossary';
 $string['exportentries'] = 'Export entries';
 $string['exporttomainglossary'] = 'Export to main glossary';
 $string['filetoimport'] = 'File to import';
+$string['filtername'] = 'Glossary auto-linking';
 $string['fillfields'] = 'Concept and definition are mandatory fields.';
 $string['fullmatch'] = 'Match whole words only';
 $string['glossarytype'] = 'Glossary Type';
