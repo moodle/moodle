@@ -575,7 +575,8 @@ table.generaltable th.header,
     width: auto;
 }
 
-body#mod-quiz-report .tabs .side {
+body#mod-quiz-report .tabs .side,
+body#message-index .tabs .side {
     border-style: solid;
     border-width: 0px 0px 1px 0px;
     border-color: #AAAAAA;
