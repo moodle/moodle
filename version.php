@@ -7,7 +7,6 @@
 
 $version = 2004052500;   // The current version is a date (YYYYMMDDXX)
 
-$release = "1.3 Stable";   // User-friendly version number
-
-
+$release = "1.3 Stable (001)";   // User-friendly version number
+                                 // Bugfix sequence number between brackets
 ?>

@@ -102,7 +102,7 @@
 
         //Now avoid searching inside links
         $links = array();
-        preg_match_all('/<A (.+?)>(.+?)<\/A>/is',$text,$list_of_links);
+        preg_match_all('/<A[\s](.+?)>(.+?)<\/A>/is',$text,$list_of_links);
         foreach (array_unique($list_of_links[0]) as $key=>$value) {
             $links['<@'.$key.'@>'] = $value;
         }
