@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.60 16 June 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -17,7 +17,7 @@ define('ADODB_ERROR_HANDLER','ADODB_Error_PEAR');
 /*
 * Enabled the following if you want to terminate scripts when an error occurs
 */
-//PEAR::setErrorHandling (PEAR_ERROR_DIE);
+/* PEAR::setErrorHandling (PEAR_ERROR_DIE); */
 
 /*
 * Name of the PEAR_Error derived class to call.
@@ -43,7 +43,7 @@ function ADODB_Error_PEAR($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
 {
 global $ADODB_Last_PEAR_Error;
 	
-	if (error_reporting() == 0) return; // obey @ protocol
+	if (error_reporting() == 0) return; /*  obey @ protocol */
 	switch($fn) {
 	case 'EXECUTE':
 		$sql = $p1;
@@ -71,7 +71,7 @@ global $ADODB_Last_PEAR_Error;
 		$GLOBALS['_PEAR_default_error_options'], 
 		$errmsg);
 		
-	//print "<p>!$s</p>";
+	/* print "<p>!$s</p>"; */
 }
 
 /**

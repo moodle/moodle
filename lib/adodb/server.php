@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.60 16 June 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -32,13 +32,13 @@ $ACCEPTIP = '';
  * Connection parameters
  */
 $driver = 'mysql';
-$host = 'localhost'; // DSN for odbc
+$host = 'localhost'; /*  DSN for odbc */
 $uid = 'root';
 $pwd = '';
 $database = 'northwind';
 
 /*============================ DO NOT MODIFY BELOW HERE =================================*/
-// $sep must match csv2rs() in adodb.inc.php
+/*  $sep must match csv2rs() in adodb.inc.php */
 $sep = ' :::: ';
 
 include('./adodb.inc.php');
@@ -49,11 +49,11 @@ function err($s)
 	die('**** '.$s.' ');
 }
 
-// undo stupid magic quotes
+/*  undo stupid magic quotes */
 function undomq(&$m) 
 {
 	if (get_magic_quotes_gpc()) {
-		// undo the damage
+		/*  undo the damage */
 		$m = str_replace('\\\\','\\',$m);
 		$m = str_replace('\"','"',$m);
 		$m = str_replace('\\\'','\'',$m);
@@ -62,7 +62,7 @@ function undomq(&$m)
 	return $m;
 }
 
-///////////////////////////////////////// DEFINITIONS
+/* /////////////////////////////////////// DEFINITIONS */
 
 
 $remote = $HTTP_SERVER_VARS["REMOTE_ADDR"]; 
@@ -88,7 +88,7 @@ if (isset($HTTP_GET_VARS['nrows'])) {
 } else 
 	$rs = $conn->Execute($sql);
 if ($rs){ 
-	//$rs->timeToLive = 1;
+	/* $rs->timeToLive = 1; */
 	echo _rs2serialize($rs,$conn,$sql);
 	$rs->Close();
 } else

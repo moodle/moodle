@@ -1,6 +1,6 @@
 <?php
 /*
-V3.40 7 April 2003  (c) 2000-2003 John Lim. All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -17,7 +17,7 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim. All rights reserved.
 class ADODB_informix72 extends ADOConnection {
 	var $databaseType = "informix72";
 	var $dataProvider = "informix";
-	var $replaceQuote = "''"; // string to use to replace quotes
+	var $replaceQuote = "''"; /*  string to use to replace quotes */
 	var $fmtDate = "'Y-m-d'";
 	var $fmtTimeStamp = "'Y-m-d H:i:s'";
 	var $hasInsertID = true;
@@ -30,17 +30,17 @@ class ADODB_informix72 extends ADOConnection {
 	var $has_insertid = true;
 
 	var $_autocommit = true;
-	var $_bindInputArray = true;  // set to true if ADOConnection.Execute() permits binding of array parameters.
+	var $_bindInputArray = true;  /*  set to true if ADOConnection.Execute() permits binding of array parameters. */
 	var $sysDate = 'TODAY';
 	var $sysTimeStamp = 'CURRENT';
    
 	function ADODB_informix72()
 	{
 
-		// alternatively, use older method:
-		//putenv("DBDATE=Y4MD-");
+		/*  alternatively, use older method: */
+		/* putenv("DBDATE=Y4MD-"); */
 
-		// force ISO date format
+		/*  force ISO date format */
 		putenv('GL_DATE=%Y-%m-%d');
 	}
 
@@ -105,7 +105,7 @@ class ADODB_informix72 extends ADOConnection {
 	  return ifx_error();
    }
 
-   function MetaColumns($table)
+   function &MetaColumns($table)
    {
 		return ADOConnection::MetaColumns($table,false);
    }
@@ -121,7 +121,7 @@ class ADODB_informix72 extends ADOConnection {
    {
    		return @ifx_get_blob($blobid);
    }
-	// returns true or false
+	/*  returns true or false */
    function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		$dbs = $argDatabasename . "@" . $argHostname;
@@ -131,7 +131,7 @@ class ADODB_informix72 extends ADOConnection {
 		return true;
 	}
 
-	// returns true or false
+	/*  returns true or false */
    function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		$dbs = $argDatabasename . "@" . $argHostname;
@@ -149,12 +149,12 @@ class ADODB_informix72 extends ADOConnection {
 		else return array($sql,$stmt);
 	}
 */
-	// returns query ID if successful, otherwise false
+	/*  returns query ID if successful, otherwise false */
 	function _query($sql,$inputarr)
 	{
 	global $ADODB_COUNTRECS;
 	
-	  // String parameters have to be converted using ifx_create_char
+	  /*  String parameters have to be converted using ifx_create_char */
 	  if ($inputarr) {
 		 foreach($inputarr as $v) {
 			if (gettype($v) == 'string') {
@@ -166,9 +166,9 @@ class ADODB_informix72 extends ADOConnection {
 		 }
 	  }
 
-	  // In case of select statement, we use a scroll cursor in order
-	  // to be able to call "move", or "movefirst" statements
-	  if (!$ADODB_COUNTRECS && preg_match("/^\s*select/i", $sql)) {
+	  /*  In case of select statement, we use a scroll cursor in order */
+	  /*  to be able to call "move", or "movefirst" statements */
+	  if (!$ADODB_COUNTRECS && preg_match("/^\s*select/is", $sql)) {
 		 if ($inputarr) {
 			$this->lastQuery = ifx_query($sql,$this->_connectionID, IFX_SCROLL, $tab);
 		 }
@@ -185,15 +185,15 @@ class ADODB_informix72 extends ADOConnection {
 		 }
 	  }
 
-	  // Following line have been commented because autocommit mode is
-	  // not supported by informix SE 7.2
+	  /*  Following line have been commented because autocommit mode is */
+	  /*  not supported by informix SE 7.2 */
 
-	  //if ($this->_autocommit) ifx_query('COMMIT',$this->_connectionID);
+	  /* if ($this->_autocommit) ifx_query('COMMIT',$this->_connectionID); */
 
 		return $this->lastQuery;
 	}
 
-	// returns true or false
+	/*  returns true or false */
 	function _close()
 	{
 		$this->lastQuery = false;
@@ -235,10 +235,11 @@ class ADORecordset_informix72 extends ADORecordSet {
 			foreach($fp as $k => $v) {
 				$o = new ADOFieldObject;
 				$o->name = $k;
-				$arr = split(';',$v); //"SQLTYPE;length;precision;scale;ISNULLABLE"
+				$arr = split(';',$v); /* "SQLTYPE;length;precision;scale;ISNULLABLE" */
 				$o->type = $arr[0];
 				$o->max_length = $arr[1];
 				$this->_fieldprops[] = $o;
+				$o->not_null = $arr[4]=="N";
 			}
 		}
 		return $this->_fieldprops[$fieldOffset];
@@ -246,7 +247,7 @@ class ADORecordset_informix72 extends ADORecordSet {
 
 	function _initrs()
 	{
-		$this->_numOfRows = -1; // ifx_affected_rows not reliable, only returns estimate -- ($ADODB_COUNTRECS)? ifx_affected_rows($this->_queryID):-1;
+		$this->_numOfRows = -1; /*  ifx_affected_rows not reliable, only returns estimate -- ($ADODB_COUNTRECS)? ifx_affected_rows($this->_queryID):-1; */
 		$this->_numOfFields = ifx_num_fields($this->_queryID);
 	}
 

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-/* W3C//DTD HTML 4.0 Transitional//EN"> */
 
 <html>
 <head>
@@ -8,7 +8,7 @@
 <body>
 <?php
 /*
-  V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -30,9 +30,9 @@ if (!$c1->PConnect('','scott','tiger'))
 $c1->debug=1;
 $rs = $c1->Execute('select rownum, p1.firstname,p2.lastname,p2.firstname,p1.lastname from adoxyz p1, adoxyz p2');
 print "Records=".$rs->RecordCount()."<br><pre>";
-//$rs->_array = false;
-//$rs->connection = false;
-//print_r($rs);
+/* $rs->_array = false; */
+/* $rs->connection = false; */
+/* print_r($rs); */
 rs2html($rs);
 ?>
 

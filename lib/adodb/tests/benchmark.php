@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-/* W3C//DTD HTML 4.0 Transitional//EN"> */
 
 <html>
 <head>
@@ -8,7 +8,7 @@
 <body>
 <?php 
 /*
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -18,15 +18,15 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
   It should not be used as proof of the superiority of one database over the other.
 */ 
  
-//$testmssql = true;
-//$testvfp = true;
+/* $testmssql = true; */
+/* $testvfp = true; */
 $testoracle = true;
-//$testado = true; 
-//$testibase = true;
+/* $testado = true;  */
+/* $testibase = true; */
 $testaccess = true;
 $testmysql = true;
 
-set_time_limit(240); // increase timeout
+set_time_limit(240); /*  increase timeout */
 
 include("../tohtml.inc.php");
 include("../adodb.inc.php");
@@ -42,20 +42,20 @@ GLOBAL $ADODB_version,$ADODB_FETCH_MODE;
 	
 	print "<h3>ADODB Version: $ADODB_version Host: <i>$db->host</i> &nbsp; Database: <i>$db->database</i></h3>";
 	
-	// perform query once to cache results so we are only testing throughput 
+	/*  perform query once to cache results so we are only testing throughput  */
 	$rs = $db->Execute($sql);
 	if (!$rs){
 		print "Error in recordset<p>";
 		return;
 	}	
 	$arr = $rs->GetArray();
-	//$db->debug = true;
+	/* $db->debug = true; */
 
 	$start = microtime();
 	for ($i=0; $i < $max; $i++) {
 		$rs = $db->Execute($sql);	
 		$arr = $rs->GetArray();
-	   //		 print $arr[0][1];
+	   /* 		 print $arr[0][1]; */
 	}
 	$end =  microtime();
 	$start = explode(' ',$start);
@@ -64,7 +64,7 @@ GLOBAL $ADODB_version,$ADODB_FETCH_MODE;
 	print_r($start);
 	print_r($end);
 	
-	  //  print_r($arr);
+	  /*   print_r($arr); */
 	$total = $end[0]+trim($end[1]) - $start[0]-trim($start[1]);
 	printf ("<p>seconds = %8.2f for %d iterations each with %d records</p>",$total,$max, sizeof($arr));
 	flush();
@@ -74,7 +74,7 @@ GLOBAL $ADODB_version,$ADODB_FETCH_MODE;
 	<table width=100% ><tr><td bgcolor=beige>&nbsp;</td></tr></table>
 	</p>
 <?php
-		//$db->Close();
+		/* $db->Close(); */
 }
 include("testdatabases.inc.php");
 

@@ -1,6 +1,6 @@
 <?php
 /*
- @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ @version V3.60 16 June 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -47,7 +47,7 @@ class ADODB_fbsql extends ADOConnection {
 		return $arr;
 	}
 
-	// returns concatenated string
+	/*  returns concatenated string */
 	function Concat()
 	{
 		$s = "";
@@ -59,7 +59,7 @@ class ADODB_fbsql extends ADOConnection {
 		else return '';
 	}
 	
-	// returns true or false
+	/*  returns true or false */
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		$this->_connectionID = fbsql_connect($argHostname,$argUsername,$argPassword);
@@ -68,7 +68,7 @@ class ADODB_fbsql extends ADOConnection {
 		return true;	
 	}
 	
-	// returns true or false
+	/*  returns true or false */
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		$this->_connectionID = fbsql_pconnect($argHostname,$argUsername,$argPassword);
@@ -91,7 +91,7 @@ class ADODB_fbsql extends ADOConnection {
 				$fld->name = $rs->fields[0];
 				$fld->type = $rs->fields[1];
 					
-				// split type into type(length):
+				/*  split type into type(length): */
 				if (preg_match("/^(.+)\((\d+)\)$/", $fld->type, $query_array)) {
 					$fld->type = $query_array[1];
 					$fld->max_length = $query_array[2];
@@ -112,7 +112,7 @@ class ADODB_fbsql extends ADOConnection {
 		return false;
 	}
 		
-	// returns true or false
+	/*  returns true or false */
 	function SelectDB($dbName) 
 	{
 		$this->databaseName = $dbName;
@@ -123,7 +123,7 @@ class ADODB_fbsql extends ADOConnection {
 	}
 	
 	
-	// returns queryID or false
+	/*  returns queryID or false */
 	function _query($sql,$inputarr)
 	{
 		return fbsql_query("$sql;",$this->_connectionID);
@@ -142,7 +142,7 @@ class ADODB_fbsql extends ADOConnection {
 		return @fbsql_errno($this->_connectionID);
 	}
 	
-	// returns true or false
+	/*  returns true or false */
 	function _close()
 	{
 		return @fbsql_close($this->_connectionID);
@@ -186,13 +186,13 @@ class ADORecordSet_fbsql extends ADORecordSet{
 	function &FetchField($fieldOffset = -1) {
 		if ($fieldOffset != -1) {
 			$o =  @fbsql_fetch_field($this->_queryID, $fieldOffset);
-			//$o->max_length = -1; // fbsql returns the max length less spaces -- so it is unrealiable
+			/* $o->max_length = -1; // fbsql returns the max length less spaces -- so it is unrealiable */
 			$f = @fbsql_field_flags($this->_queryID,$fieldOffset);
 			$o->binary = (strpos($f,'binary')!== false);
 		}
 		else if ($fieldOffset == -1) {	/*	The $fieldOffset argument is not provided thus its -1 	*/
-			$o = @fbsql_fetch_field($this->_queryID);// fbsql returns the max length less spaces -- so it is unrealiable
-			//$o->max_length = -1;
+			$o = @fbsql_fetch_field($this->_queryID);/*  fbsql returns the max length less spaces -- so it is unrealiable */
+			/* $o->max_length = -1; */
 		}
 		
 		return $o;
@@ -220,7 +220,7 @@ class ADORecordSet_fbsql extends ADORecordSet{
 			$t = $fieldobj->type;
 			$len = $fieldobj->max_length;
 		}
-		$len = -1; // fbsql max_length is not accurate
+		$len = -1; /*  fbsql max_length is not accurate */
 		switch (strtoupper($t)) {
 		case 'CHARACTER':
 		case 'CHARACTER VARYING': 
@@ -230,7 +230,7 @@ class ADORecordSet_fbsql extends ADORecordSet{
 		case 'BIT VARYING': 
 			if ($len <= $this->blobSize) return 'C';
 			
-		// so we have to check whether binary...
+		/*  so we have to check whether binary... */
 		case 'IMAGE':
 		case 'LONGBLOB': 
 		case 'BLOB':
@@ -257,6 +257,6 @@ class ADORecordSet_fbsql extends ADORecordSet{
 		}
 	}
 
-} //class
-} // defined
+} /* class */
+} /*  defined */
 ?>

@@ -1,6 +1,6 @@
 <?php
 /* 
-version V3.40 7 April 2003 (c) 2000-2003  John Lim (jlim@natsoft.com.my). All rights
+version V3.60 16 June 2003 (c) 2000-2003  John Lim (jlim@natsoft.com.my). All rights
 reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -147,7 +147,7 @@ if (!defined('ADODB_SYBASE_SQLANYWHERE')){
    $this->drop_blobvar($blobVarName);
    return true;
   }
- }; //class
+ }; /* class */
 
  class  ADORecordSet_sqlanywhere extends ADORecordSet_odbc {	
 
@@ -159,8 +159,8 @@ if (!defined('ADODB_SYBASE_SQLANYWHERE')){
  }
 
 
- }; //class
+ }; /* class */
 
 
-} //define
+} /* define */
 ?>

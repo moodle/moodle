@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -74,15 +74,29 @@ define('ADODB_DB2',1);
 
 class ADODB_DB2 extends ADODB_odbc {
 	var $databaseType = "db2";	
-	var $concat_operator = 'CONCAT';
-	var $sysDate = 'CURRENT DATE';
+	var $concat_operator = '||';
+	var $sysDate = 'CURRENT_DATE';
 	var $sysTimeStamp = 'CURRENT TIMESTAMP';
 	var $ansiOuter = true;
-	//var $curmode = SQL_CUR_USE_ODBC;
+	var $identitySQL = 'values IDENTITY_VAL_LOCAL()';
 	
 	function ADODB_DB2()
 	{
+		if (strpos(PHP_OS,'WIN') !== false) $this->curmode = SQL_CUR_USE_ODBC;
 		$this->ADODB_odbc();
+	}
+	
+	function ServerInfo()
+	{
+		/* odbc_setoption($this->_connectionID,1,101 /*SQL_ATTR_ACCESS_MODE*/, 1 /*SQL_MODE_READ_ONLY*/); */
+		$vers = $this->GetOne('select versionnumber from sysibm.sysversions');
+		/* odbc_setoption($this->_connectionID,1,101, 0 /*SQL_MODE_READ_WRITE*/); */
+		return array('description'=>'DB2 ODBC driver', 'version'=>$vers);
+	}
+	
+	function _insertid()
+	{
+		return $this->GetOne($this->identitySQL);
 	}
 	
 	function RowLock($tables,$where)
@@ -91,16 +105,45 @@ class ADODB_DB2 extends ADODB_odbc {
 		return $this->GetOne("select 1 as ignore from $tables where $where for update");
 	}
 	
-	// Format date column in sql string given an input format that understands Y M D
+	function &MetaTables($showSchema=false)
+	{
+	global $ADODB_FETCH_MODE;
+	
+		$savem = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		$qid = odbc_tables($this->_connectionID);
+		
+		$rs = new ADORecordSet_odbc($qid);
+		
+		$ADODB_FETCH_MODE = $savem;
+		if (!$rs) return false;
+		
+		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
+		
+		/* print_r($rs); */
+		$arr =& $rs->GetArray();
+		$rs->Close();
+		$arr2 = array();
+		/* print_r($arr); */
+		for ($i=0; $i < sizeof($arr); $i++) {
+			$row = $arr[$i];
+			if ($row[2] && strncmp($row[1],'SYS',3) != 0)
+				 if ($showSchema) $arr2[] = $row[1].'.'.$row[2];
+				 else $arr2[] = $row[2];
+		}
+		return $arr2;
+	}
+	
+	/*  Format date column in sql string given an input format that understands Y M D */
 	function SQLDate($fmt, $col=false)
 	{	
-	// use right() and replace() ?
+	/*  use right() and replace() ? */
 		if (!$col) $col = $this->sysDate;
 		$s = '';
 		
 		$len = strlen($fmt);
 		for ($i=0; $i < $len; $i++) {
-			if ($s) $s .= '+';
+			if ($s) $s .= '||';
 			$ch = $fmt[$i];
 			switch($ch) {
 			case 'Y':
@@ -108,6 +151,8 @@ class ADODB_DB2 extends ADODB_odbc {
 				$s .= "char(year($col))";
 				break;
 			case 'M':
+				$s .= "substr(monthname($col),1,3)";
+				break;
 			case 'm':
 				$s .= "right(digits(month($col)),2)";
 				break;
@@ -115,7 +160,28 @@ class ADODB_DB2 extends ADODB_odbc {
 			case 'd':
 				$s .= "right(digits(day($col)),2)";
 				break;
+			case 'H':
+			case 'h':
+				if ($col != $this->sysDate) $s .= "right(digits(hour($col)),2)";	
+				else $s .= "''";
+				break;
+			case 'i':
+			case 'I':
+				if ($col != $this->sysDate)
+					$s .= "right(digits(minute($col)),2)";
+					else $s .= "''";
+				break;
+			case 'S':
+			case 's':
+				if ($col != $this->sysDate)
+					$s .= "right(digits(second($col)),2)";
+				else $s .= "''";
+				break;
 			default:
+				if ($ch == '\\') {
+					$i++;
+					$ch = substr($fmt,$i,1);
+				}
 				$s .= $this->qstr($ch);
 			}
 		}
@@ -123,18 +189,21 @@ class ADODB_DB2 extends ADODB_odbc {
 	} 
  
 	
-	function &SelectLimit($sql,$nrows=-1,$offset=-1,$arg3=false)
-	{
-		if ($offset <= 0) {
-		// could also use " OPTIMIZE FOR $nrows ROWS "
-			$sql .=  " FETCH FIRST $nrows ROWS ONLY ";
-			return $this->Execute($sql,false,$arg3);
-		} else {
-			$nrows += $offset;
-			$sql .=  " FETCH FIRST $nrows ROWS ONLY ";
-			return ADOConnection::SelectLimit($sql,-1,$offset,$arg3);
+		function &SelectLimit($sql,$nrows=-1,$offset=-1,$arg3=false)
+		{
+			if ($offset <= 0) {
+			/*  could also use " OPTIMIZE FOR $nrows ROWS " */
+				if ($nrows >= 0) $sql .=  " FETCH FIRST $nrows ROWS ONLY ";
+				return $this->Execute($sql,false,$arg3);
+			} else {
+				if ($offset > 0 && $nrows < 0);
+				else {
+					$nrows += $offset;
+					$sql .=  " FETCH FIRST $nrows ROWS ONLY ";
+				}
+				return ADOConnection::SelectLimit($sql,-1,$offset,$arg3);
+			}
 		}
-	}
 	
 };
  
@@ -159,7 +228,7 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 		case 'LONGCHAR':
 		case 'TEXT':
 		case 'CLOB':
-		case 'DBCLOB': // double-byte
+		case 'DBCLOB': /*  double-byte */
 			return 'X';
 		
 		case 'BLOB':
@@ -174,12 +243,12 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 		case 'TIMESTAMP':
 			return 'T';
 		
-		//case 'BOOLEAN': 
-		//case 'BIT':
-		//	return 'L';
+		/* case 'BOOLEAN':  */
+		/* case 'BIT': */
+		/* 	return 'L'; */
 			
-		//case 'COUNTER':
-		//	return 'R';
+		/* case 'COUNTER': */
+		/* 	return 'R'; */
 			
 		case 'INT':
 		case 'INTEGER':
@@ -192,5 +261,5 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 	}
 }
 
-} //define
+} /* define */
 ?>

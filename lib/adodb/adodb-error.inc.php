@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.60 16 June 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -44,40 +44,14 @@ if (!defined("DB_ERROR_SYNTAX")) {
 
 function adodb_errormsg($value)
 {
-    static $ERRMSG;
-    if (!isset($ERRMSG)) {
-        $ERRMSG = array(
-            DB_ERROR                    => 'unknown error',
-            DB_ERROR_ALREADY_EXISTS     => 'already exists',
-            DB_ERROR_CANNOT_CREATE      => 'can not create',
-            DB_ERROR_CANNOT_DELETE      => 'can not delete',
-            DB_ERROR_CANNOT_DROP        => 'can not drop',
-            DB_ERROR_CONSTRAINT         => 'constraint violation',
-            DB_ERROR_DIVZERO            => 'division by zero',
-            DB_ERROR_INVALID            => 'invalid',
-            DB_ERROR_INVALID_DATE       => 'invalid date or time',
-            DB_ERROR_INVALID_NUMBER     => 'invalid number',
-            DB_ERROR_MISMATCH           => 'mismatch',
-            DB_ERROR_NODBSELECTED       => 'no database selected',
-            DB_ERROR_NOSUCHFIELD        => 'no such field',
-            DB_ERROR_NOSUCHTABLE        => 'no such table',
-            DB_ERROR_NOT_CAPABLE        => 'DB backend not capable',
-            DB_ERROR_NOT_FOUND          => 'not found',
-            DB_ERROR_NOT_LOCKED         => 'not locked',
-            DB_ERROR_SYNTAX             => 'syntax error',
-            DB_ERROR_UNSUPPORTED        => 'not supported',
-            DB_ERROR_VALUE_COUNT_ON_ROW => 'value count on row',
-            DB_ERROR_INVALID_DSN        => 'invalid DSN',
-            DB_ERROR_CONNECT_FAILED     => 'connect failed',
-            0	                       => 'no error', // DB_OK
-            DB_ERROR_NEED_MORE_DATA     => 'insufficient data supplied',
-            DB_ERROR_EXTENSION_NOT_FOUND=> 'extension not found',
-            DB_ERROR_NOSUCHDB           => 'no such database',
-            DB_ERROR_ACCESS_VIOLATION   => 'insufficient permissions'
-        );
-    }
+global $ADODB_LANG,$ADODB_LANG_ARRAY;
 
-    return isset($ERRMSG[$value]) ? $ERRMSG[$value] : $ERRMSG[DB_ERROR];
+	if (empty($ADODB_LANG)) $ADODB_LANG = 'en';
+	if (isset($ADODB_LANG_ARRAY['LANG']) && $ADODB_LANG_ARRAY['LANG'] == $ADODB_LANG) ;
+	else {
+		include_once(ADODB_DIR."/lang/adodb-$ADODB_LANG.inc.php");
+    }
+	return isset($ADODB_LANG_ARRAY[$value]) ? $ADODB_LANG_ARRAY[$value] : $ADODB_LANG_ARRAY[DB_ERROR];
 }
 
 function adodb_error($provider,$dbType,$errno)
@@ -109,7 +83,7 @@ function adodb_error($provider,$dbType,$errno)
 	return DB_ERROR;
 }
 
-//**************************************************************************************
+/* ************************************************************************************** */
 
 function adodb_error_pg($errormsg)
 {
@@ -128,7 +102,7 @@ function adodb_error_pg($errormsg)
             return $code;
         }
     }
-    // Fall back to DB_ERROR if there was no mapping.
+    /*  Fall back to DB_ERROR if there was no mapping. */
     return DB_ERROR;
 }
 	

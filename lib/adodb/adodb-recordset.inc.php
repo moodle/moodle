@@ -23,21 +23,21 @@
 	 * public variables	
 	 */
 	var $dataProvider = "native";
-	var $fields = false; 	/// holds the current row data
-	var $blobSize = 64; 	/// any varchar/char field this size or greater is treated as a blob
-							/// in other words, we use a text area for editting.
-	var $canSeek = false; 	/// indicates that seek is supported
-	var $sql; 				/// sql text
-	var $EOF = false;		/// Indicates that the current record position is after the last record in a Recordset object. 
+	var $fields = false; 	/* / holds the current row data */
+	var $blobSize = 64; 	/* / any varchar/char field this size or greater is treated as a blob */
+							/* / in other words, we use a text area for editting. */
+	var $canSeek = false; 	/* / indicates that seek is supported */
+	var $sql; 				/* / sql text */
+	var $EOF = false;		/* / Indicates that the current record position is after the last record in a Recordset object.  */
 	
-	var $emptyTimeStamp = '&nbsp;'; /// what to display when $time==0
-	var $emptyDate = '&nbsp;'; /// what to display when $time==0
+	var $emptyTimeStamp = '&nbsp;'; /* / what to display when $time==0 */
+	var $emptyDate = '&nbsp;'; /* / what to display when $time==0 */
 	var $debug = false;
-	var $timeCreated=0; 	/// datetime in Unix format rs created -- for cached recordsets
+	var $timeCreated=0; 	/* / datetime in Unix format rs created -- for cached recordsets */
 
-	var $bind = false; 		/// used by Fields() to hold array - should be private?
-	var $fetchMode;			/// default fetch mode
-	var $connection = false; /// the parent connection
+	var $bind = false; 		/* / used by Fields() to hold array - should be private? */
+	var $fetchMode;			/* / default fetch mode */
+	var $connection = false; /* / the parent connection */
 	/*
 	 *	private variables	
 	 */
@@ -82,7 +82,7 @@
 		if ($this->_numOfRows != 0 && $this->_numOfFields && $this->_currentRow == -1) {
 			$this->_currentRow = 0;
 			if ($this->EOF = ($this->_fetch() === false)) {
-				$this->_numOfRows = 0; // _numOfRows could be -1
+				$this->_numOfRows = 0; /*  _numOfRows could be -1 */
 			}
 		} else {
 			$this->EOF = true;
@@ -240,16 +240,16 @@
 				}
 			}
 		} else {
-			// return scalar values
+			/*  return scalar values */
 			if ($numIndex) {
 				while (!$this->EOF) {
-				// some bug in mssql PHP 4.02 -- doesn't handle references properly so we FORCE creating a new string
+				/*  some bug in mssql PHP 4.02 -- doesn't handle references properly so we FORCE creating a new string */
 					$results[trim(($this->fields[0]))] = $this->fields[1];
 					$this->MoveNext();
 				}
 			} else {
 				while (!$this->EOF) {
-				// some bug in mssql PHP 4.02 -- doesn't handle references properly so we FORCE creating a new string
+				/*  some bug in mssql PHP 4.02 -- doesn't handle references properly so we FORCE creating a new string */
 					$v1 = trim(reset($this->fields));
 					$v2 = ''.next($this->fields); 
 					$results[$v1] = $v2;
@@ -271,7 +271,7 @@
 	function UserTimeStamp($v,$fmt='Y-m-d H:i:s')
 	{
 		$tt = $this->UnixTimeStamp($v);
-		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
+		/*  $tt == -1 if pre TIMESTAMP_FIRST_YEAR */
 		if (($tt === false || $tt == -1) && $v != false) return $v;
 		if ($tt == 0) return $this->emptyTimeStamp;
 		return adodb_date($fmt,$tt);
@@ -287,10 +287,10 @@
 	function UserDate($v,$fmt='Y-m-d')
 	{
 		$tt = $this->UnixDate($v);
-		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
+		/*  $tt == -1 if pre TIMESTAMP_FIRST_YEAR */
 		if (($tt === false || $tt == -1) && $v != false) return $v;
 		else if ($tt == 0) return $this->emptyDate;
-		else if ($tt == -1) { // pre-TIMESTAMP_FIRST_YEAR
+		else if ($tt == -1) { /*  pre-TIMESTAMP_FIRST_YEAR */
 		}
 		return adodb_date($fmt,$tt);
 	
@@ -309,7 +309,7 @@
 			($v), $rr)) return false;
 			
 		if ($rr[1] <= 1903) return 0;
-		// h-m-s-MM-DD-YY
+		/*  h-m-s-MM-DD-YY */
 		return @adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 	}
 	
@@ -327,7 +327,7 @@
 			($v), $rr)) return false;
 		if ($rr[1] <= 1903 && $rr[2]<= 1) return 0;
 	
-		// h-m-s-MM-DD-YY
+		/*  h-m-s-MM-DD-YY */
 		if (!isset($rr[5])) return  adodb_mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 		return  @adodb_mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
 	}
@@ -386,7 +386,7 @@
 		if ($this->EOF) return (defined('PEAR_ERROR_RETURN')) ? new PEAR_Error('EOF',-1): false;
 		$arr = $this->fields;
 		$this->MoveNext();
-		return 1; // DB_OK
+		return 1; /*  DB_OK */
 	}
 	
 	
@@ -548,9 +548,9 @@
 	 */
 	function Close() 
 	{
-		// free connection object - this seems to globally free the object
-		// and not merely the reference, so don't do this...
-		// $this->connection = false; 
+		/*  free connection object - this seems to globally free the object */
+		/*  and not merely the reference, so don't do this... */
+		/*  $this->connection = false;  */
 		if (!$this->_closed) {
 			$this->_closed = true;
 			return $this->_close();		
@@ -594,7 +594,7 @@
 	function PO_RecordCount($table="", $condition="") {
 		
 		$lnumrows = $this->_numOfRows;
-		// the database doesn't support native recordcount, so we do a workaround
+		/*  the database doesn't support native recordcount, so we do a workaround */
 		if ($lnumrows == -1 && $this->connection) {
 			IF ($table) {
 				if ($condition) $condition = " WHERE " . $condition; 
@@ -633,7 +633,7 @@
 	 */
 	function &FetchField($fieldoffset) 
 	{
-		// must be defined by child class
+		/*  must be defined by child class */
 	}	
 	
 	/**
@@ -758,7 +758,7 @@
 			$t = $fieldobj->type;
 			$len = $fieldobj->max_length;
 		}
-	// changed in 2.32 to hashing instead of switch stmt for speed...
+	/*  changed in 2.32 to hashing instead of switch stmt for speed... */
 	static $typeMap = array(
 		'VARCHAR' => 'C',
 		'VARCHAR2' => 'C',
@@ -787,7 +787,7 @@
 		'LONGBINARY' => 'B',
 		'B' => 'B',
 		##
-		'YEAR' => 'D', // mysql
+		'YEAR' => 'D', /*  mysql */
 		'DATE' => 'D',
 		'D' => 'D',
 		##
@@ -803,7 +803,7 @@
 		##
 		'COUNTER' => 'R',
 		'R' => 'R',
-		'SERIAL' => 'R', // ifx
+		'SERIAL' => 'R', /*  ifx */
 		##
 		'INT' => 'I',
 		'INTEGER' => 'I',
@@ -812,8 +812,8 @@
 		'SMALLINT' => 'I',
 		'I' => 'I',
 		##
-		'LONG' => 'N', // interbase is numeric, oci8 is blob
-		'BIGINT' => 'N', // this is bigger than PHP 32-bit integers
+		'LONG' => 'N', /*  interbase is numeric, oci8 is blob */
+		'BIGINT' => 'N', /*  this is bigger than PHP 32-bit integers */
 		'DECIMAL' => 'N',
 		'DEC' => 'N',
 		'REAL' => 'N',
@@ -850,7 +850,7 @@
 		switch ($tmap) {
 		case 'C':
 		
-			// is the char field is too long, return as text field... 
+			/*  is the char field is too long, return as text field...  */
 			if (!empty($this)) {
 				if ($len > $this->blobSize) return 'X';
 			} else if ($len > 250) {
@@ -914,6 +914,6 @@
 		if ($status != false) $this->_atLastPage = $status;
 		return $this->_atLastPage;
 	}
-} // end class ADORecordSet
+} /*  end class ADORecordSet */
 
 ?>

@@ -2,7 +2,7 @@
 <body>
 <?php
 /* 
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -22,7 +22,7 @@ if (1) {
 	if (!empty($testblob)) {
 		$varHoldingBlob = 'ABC DEF GEF John TEST';
 		$num = time()%10240;
-		// create table atable (id integer, ablob blob);
+		/*  create table atable (id integer, ablob blob); */
 		$db->Execute('insert into ATABLE (id,ablob) values('.$num.',empty_blob())');
 		$db->UpdateBlob('ATABLE', 'ablob', $varHoldingBlob, 'id='.$num, 'BLOB');
 		
@@ -51,8 +51,8 @@ if (1) {
 	print $db->Affected_Rows().'<BR>';
 	$stmt = &$db->Prepare('insert into emp (empno, ename) values (:empno, :ename)');
 	$rs = $db->Execute($stmt,array('empno'=>4321,'ename'=>'John'));
-	// prepare not quite ready for prime time
-	//$rs = $db->Execute($stmt,array('empno'=>3775,'ename'=>'John'));
+	/*  prepare not quite ready for prime time */
+	/* $rs = $db->Execute($stmt,array('empno'=>3775,'ename'=>'John')); */
 	if (!$rs) die("Empty RS");
 }
 

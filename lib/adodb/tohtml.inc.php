@@ -1,6 +1,6 @@
 <?php 
 /*
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -8,33 +8,33 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
   Some pretty-printing by Chris Oxenreider <oxenreid@state.net>
 */ 
   
-// specific code for tohtml
+/*  specific code for tohtml */
 GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 	 
-$gSQLMaxRows = 1000; // max no of rows to download
-$gSQLBlockRows=20; // max no of rows per table block
+$gSQLMaxRows = 1000; /*  max no of rows to download */
+$gSQLBlockRows=20; /*  max no of rows per table block */
 
-// RecordSet to HTML Table
-//------------------------------------------------------------
-// Convert a recordset to a html table. Multiple tables are generated
-// if the number of rows is > $gSQLBlockRows. This is because
-// web browsers normally require the whole table to be downloaded
-// before it can be rendered, so we break the output into several
-// smaller faster rendering tables.
-//
-// $rs: the recordset
-// $ztabhtml: the table tag attributes (optional)
-// $zheaderarray: contains the replacement strings for the headers (optional)
-//
-//  USAGE:
-//	include('adodb.inc.php');
-//	$db = ADONewConnection('mysql');
-//	$db->Connect('mysql','userid','password','database');
-//	$rs = $db->Execute('select col1,col2,col3 from table');
-//	rs2html($rs, 'BORDER=2', array('Title1', 'Title2', 'Title3'));
-//	$rs->Close();
-//
-// RETURNS: number of rows displayed
+/*  RecordSet to HTML Table */
+/* ------------------------------------------------------------ */
+/*  Convert a recordset to a html table. Multiple tables are generated */
+/*  if the number of rows is > $gSQLBlockRows. This is because */
+/*  web browsers normally require the whole table to be downloaded */
+/*  before it can be rendered, so we break the output into several */
+/*  smaller faster rendering tables. */
+/*  */
+/*  $rs: the recordset */
+/*  $ztabhtml: the table tag attributes (optional) */
+/*  $zheaderarray: contains the replacement strings for the headers (optional) */
+/*  */
+/*   USAGE: */
+/* 	include('adodb.inc.php'); */
+/* 	$db = ADONewConnection('mysql'); */
+/* 	$db->Connect('mysql','userid','password','database'); */
+/* 	$rs = $db->Execute('select col1,col2,col3 from table'); */
+/* 	rs2html($rs, 'BORDER=2', array('Title1', 'Title2', 'Title3')); */
+/* 	$rs->Close(); */
+/*  */
+/*  RETURNS: number of rows displayed */
 function rs2html(&$rs,$ztabhtml=false,$zheaderarray=false,$htmlspecialchars=true)
 {
 $s ='';$rows=0;$docnt = false;
@@ -46,7 +46,7 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 	}
 	
 	if (! $ztabhtml) $ztabhtml = "BORDER='1' WIDTH='98%'";
-	//else $docnt = true;
+	/* else $docnt = true; */
 	$typearr = array();
 	$ncols = $rs->FieldCount();
 	$hdr = "<TABLE COLS=$ncols $ztabhtml>\n\n";
@@ -55,14 +55,14 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 		if ($zheaderarray) $fname = $zheaderarray[$i];
 		else $fname = htmlspecialchars($field->name);	
 		$typearr[$i] = $rs->MetaType($field->type,$field->max_length);
- 		//print " $field->name $field->type $typearr[$i] ";
+ 		/* print " $field->name $field->type $typearr[$i] "; */
 			
 		if (strlen($fname)==0) $fname = '&nbsp;';
 		$hdr .= "<TH>$fname</TH>";
 	}
 
 	print $hdr."\n\n";
-	// smart algorithm - handles ADODB_FETCH_MODE's correctly!
+	/*  smart algorithm - handles ADODB_FETCH_MODE's correctly! */
 	$numoffset = isset($rs->fields[0]);
 
 	while (!$rs->EOF) {
@@ -91,25 +91,25 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 				$s .= "	<TD>". str_replace("\n",'<br>',stripslashes((trim($v)))) ."&nbsp;</TD>\n";
 			  
 			}
-		} // for
+		} /*  for */
 		$s .= "</TR>\n\n";
 			  
 		$rows += 1;
 		if ($rows >= $gSQLMaxRows) {
 			$rows = "<p>Truncated at $gSQLMaxRows</p>";
 			break;
-		} // switch
+		} /*  switch */
 
 		$rs->MoveNext();
 	
-	// additional EOF check to prevent a widow header
+	/*  additional EOF check to prevent a widow header */
 		if (!$rs->EOF && $rows % $gSQLBlockRows == 0) {
 	
-		//if (connection_aborted()) break;// not needed as PHP aborts script, unlike ASP
+		/* if (connection_aborted()) break;// not needed as PHP aborts script, unlike ASP */
 			print $s . "</TABLE>\n\n";
 			$s = $hdr;
 		}
-	} // while
+	} /*  while */
 
 	print $s."</TABLE>\n\n";
 
@@ -118,12 +118,12 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 	return $rows;
  }
  
-// pass in 2 dimensional array
+/*  pass in 2 dimensional array */
 function arr2html(&$arr,$ztabhtml='',$zheaderarray='')
 {
 	if (!$ztabhtml) $ztabhtml = 'BORDER=1';
 	
-	$s = "<TABLE $ztabhtml>";//';print_r($arr);
+	$s = "<TABLE $ztabhtml>";/* ';print_r($arr); */
 
 	if ($zheaderarray) {
 		$s .= '<TR>';

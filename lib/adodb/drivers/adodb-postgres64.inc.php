@@ -1,6 +1,6 @@
 <?php
 /*
- V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -22,7 +22,7 @@ function adodb_addslashes($s)
 {
 	$len = strlen($s);
 	if ($len == 0) return "''";
-	if (substr($s,0,1) == "'" && substr(s,$len-1) == "'") return $s; // already quoted
+	if (substr($s,0,1) == "'" && substr(s,$len-1) == "'") return $s; /*  already quoted */
 	
 	return "'".addslashes($s)."'";
 }
@@ -33,9 +33,10 @@ class ADODB_postgres64 extends ADOConnection{
 	var $hasInsertID = true;
 	var $_resultid = false;
   	var $concat_operator='||';
+	var $metaDatabasesSQL = "select datname from pg_database where datname not in ('template0','template1') order by 1";
 	var $metaTablesSQL = "select tablename from pg_tables where tablename not like 'pg\_%' order by 1";
-	//"select tablename from pg_tables where tablename not like 'pg_%' order by 1";
-	var $isoDates = true; // accepts dates in ISO format
+	/* "select tablename from pg_tables where tablename not like 'pg_%' order by 1"; */
+	var $isoDates = true; /*  accepts dates in ISO format */
 	var $sysDate = "CURRENT_DATE";
 	var $sysTimeStamp = "CURRENT_TIMESTAMP";
 	var $blobEncodeType = 'C';
@@ -48,17 +49,19 @@ class ADODB_postgres64 extends ADOConnection{
 UNION 
 SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 */
-	var $metaColumnsSQL = "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum  FROM pg_class c, pg_attribute a,pg_type t WHERE relkind = 'r' AND c.relname='%s' AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
-	// get primary key etc -- from Freek Dijkstra
+	var $metaColumnsSQL = "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
+		FROM pg_class c, pg_attribute a,pg_type t 
+		WHERE relkind = 'r' AND c.relname='%s' AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
+	/*  get primary key etc -- from Freek Dijkstra */
 	var $metaKeySQL = "SELECT ic.relname AS index_name, a.attname AS column_name,i.indisunique AS unique_key, i.indisprimary AS primary_key FROM pg_class bc, pg_class ic, pg_index i, pg_attribute a WHERE bc.oid = i.indrelid AND ic.oid = i.indexrelid AND (i.indkey[0] = a.attnum OR i.indkey[1] = a.attnum OR i.indkey[2] = a.attnum OR i.indkey[3] = a.attnum OR i.indkey[4] = a.attnum OR i.indkey[5] = a.attnum OR i.indkey[6] = a.attnum OR i.indkey[7] = a.attnum) AND a.attrelid = bc.oid AND bc.relname = '%s'";
 	
 	var $hasAffectedRows = true;
-	var $hasLimit = false;	// set to true for pgsql 7 only. support pgsql/mysql SELECT * FROM TABLE LIMIT 10
-	// below suggested by Freek Dijkstra 
-	var $true = 't';		// string that represents TRUE for a database
-	var $false = 'f';		// string that represents FALSE for a database
-	var $fmtDate = "'Y-m-d'";	// used by DBDate() as the default date format used by the database
-	var $fmtTimeStamp = "'Y-m-d G:i:s'"; // used by DBTimeStamp as the default timestamp fmt.
+	var $hasLimit = false;	/*  set to true for pgsql 7 only. support pgsql/mysql SELECT * FROM TABLE LIMIT 10 */
+	/*  below suggested by Freek Dijkstra  */
+	var $true = 't';		/*  string that represents TRUE for a database */
+	var $false = 'f';		/*  string that represents FALSE for a database */
+	var $fmtDate = "'Y-m-d'";	/*  used by DBDate() as the default date format used by the database */
+	var $fmtTimeStamp = "'Y-m-d G:i:s'"; /*  used by DBTimeStamp as the default timestamp fmt. */
 	var $hasMoveFirst = true;
 	var $hasGenID = true;
 	var $_genIDSQL = "SELECT NEXTVAL('%s')";
@@ -67,17 +70,17 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 	var $metaDefaultsSQL = "SELECT d.adnum as num, d.adsrc as def from pg_attrdef d, pg_class c where d.adrelid=c.oid and c.relname='%s' order by d.adnum";
 	
 	
-	// The last (fmtTimeStamp is not entirely correct: 
-	// PostgreSQL also has support for time zones, 
-	// and writes these time in this format: "2001-03-01 18:59:26+02". 
-	// There is no code for the "+02" time zone information, so I just left that out. 
-	// I'm not familiar enough with both ADODB as well as Postgres 
-	// to know what the concequences are. The other values are correct (wheren't in 0.94)
-	// -- Freek Dijkstra 
+	/*  The last (fmtTimeStamp is not entirely correct:  */
+	/*  PostgreSQL also has support for time zones,  */
+	/*  and writes these time in this format: "2001-03-01 18:59:26+02".  */
+	/*  There is no code for the "+02" time zone information, so I just left that out.  */
+	/*  I'm not familiar enough with both ADODB as well as Postgres  */
+	/*  to know what the concequences are. The other values are correct (wheren't in 0.94) */
+	/*  -- Freek Dijkstra  */
 
 	function ADODB_postgres64() 
 	{
-	// changes the metaColumnsSQL, adds columns: attnum[6]
+	/*  changes the metaColumnsSQL, adds columns: attnum[6] */
 	}
 	
 	function ServerInfo()
@@ -87,7 +90,7 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 		return $arr;
 	}
 	
-	// get the last id - never tested
+	/*  get the last id - never tested */
 	function pg_insert_id($tablename,$fieldname)
 	{
 		$result=pg_exec($this->_connectionID, "SELECT last_value FROM ${tablename}_${fieldname}_seq");
@@ -109,8 +112,8 @@ a different OID if a database must be reloaded. */
 	   return pg_getlastoid($this->_resultid);
 	}
 
-// I get this error with PHP before 4.0.6 - jlim
-// Warning: This compilation does not support pg_cmdtuples() in d:/inetpub/wwwroot/php/adodb/adodb-postgres.inc.php on line 44
+/*  I get this error with PHP before 4.0.6 - jlim */
+/*  Warning: This compilation does not support pg_cmdtuples() in d:/inetpub/wwwroot/php/adodb/adodb-postgres.inc.php on line 44 */
    function _affectedrows()
    {
    		if (!is_resource($this->_resultid)) return false;
@@ -118,7 +121,7 @@ a different OID if a database must be reloaded. */
    }
 
 	
-		// returns true/false
+		/*  returns true/false */
 	function BeginTrans()
 	{
 		if ($this->transOff) return true;
@@ -132,7 +135,7 @@ a different OID if a database must be reloaded. */
 		return $this->GetOne("select 1 as ignore from $tables where $where for update");
 	}
 
-	// returns true/false. 
+	/*  returns true/false.  */
 	function CommitTrans($ok=true) 
 	{ 
 		if ($this->transOff) return true;
@@ -142,7 +145,7 @@ a different OID if a database must be reloaded. */
 		return @pg_Exec($this->_connectionID, "commit");
 	}
 	
-	// returns true/false
+	/*  returns true/false */
 	function RollbackTrans()
 	{
 		if ($this->transOff) return true;
@@ -169,45 +172,74 @@ a different OID if a database must be reloaded. */
 	}
 	*/
 	
-	// Format date column in sql string given an input format that understands Y M D
+	
+	/*  Format date column in sql string given an input format that understands Y M D */
 	function SQLDate($fmt, $col=false)
 	{	
-		if (!$col) $col = $this->sysDate;
-		$s = '';
+		if (!$col) $col = $this->sysTimeStamp;
+		$s = 'TO_CHAR('.$col.",'";
 		
 		$len = strlen($fmt);
 		for ($i=0; $i < $len; $i++) {
-			if ($s) $s .= '||';
 			$ch = $fmt[$i];
 			switch($ch) {
 			case 'Y':
 			case 'y':
-				$s .= "date_part('year',$col)";
+				$s .= 'YYYY';
 				break;
 			case 'Q':
 			case 'q':
-				$s .= "date_part('quarter',$col)";
+				$s .= 'Q';
 				break;
 				
 			case 'M':
+				$s .= 'Mon';
+				break;
+				
 			case 'm':
-				$s .= "lpad(date_part('month',$col),2,'0')";
+				$s .= 'MM';
 				break;
 			case 'D':
 			case 'd':
-				$s .= "lpad(date_part('day',$col),2,'0')";
+				$s .= 'DD';
 				break;
+			
+			case 'H':
+				$s.= 'HH24';
+				break;
+				
+			case 'h':
+				$s .= 'HH';
+				break;
+				
+			case 'i':
+				$s .= 'MI';
+				break;
+			
+			case 's':
+				$s .= 'SS';
+				break;
+			
+			case 'a':
+			case 'A':
+				$s .= 'AM';
+				break;
+				
 			default:
+			/*  handle escape characters... */
 				if ($ch == '\\') {
 					$i++;
 					$ch = substr($fmt,$i,1);
 				}
-				$s .= $this->qstr($ch);
-				break;
+				if (strpos('-/.:;, ',$ch) !== false) $s .= $ch;
+				else $s .= '"'.$ch.'"';
+				
 			}
 		}
-		return $s;
+		return $s. "')";
 	}
+	
+	
 	
 	/* 
 	* Load a Large Object from a file 
@@ -230,8 +262,8 @@ a different OID if a database must be reloaded. */
 		pg_lo_write($handle, $contents);
 		pg_lo_close($handle);
 		
-		// $oid = pg_lo_import ($path); 
-		pg_exec ($this->_connectionID, "commit"); 
+		/*  $oid = pg_lo_import ($path);  */
+		pg_exec($this->_connectionID, "commit"); 
 		$rs = ADOConnection::UpdateBlob($table,$column,$oid,$where,$blobtype); 
 		$rez = !empty($rs); 
 		return $rez; 
@@ -248,6 +280,8 @@ a different OID if a database must be reloaded. */
 	*/ 
 	function BlobDecode( $blob) 
 	{ 
+		if (strlen($blob) > 24) return $blob;
+		
 		@pg_exec("begin"); 
 		$fd = @pg_lo_open($blob,"r");
 		if ($fd === false) {
@@ -268,12 +302,13 @@ a different OID if a database must be reloaded. */
 		backend.
 	*/
 	function BlobEncode($blob)
-	{ // requires php 4.0.5
+	{
+		if (ADODB_PHPVER >= 0x4200) return pg_escape_bytea($blob);
 		$badch = array(chr(92),chr(0),chr(39)); # \  null  '
 		$fixch = array('\\\\134','\\\\000','\\\\047');
 		return adodb_str_replace($badch,$fixch,$blob);
 		
-		// note that there is a pg_escape_bytea function only for php 4.2.0 or later
+		/*  note that there is a pg_escape_bytea function only for php 4.2.0 or later */
 	}
 	
 	function UpdateBlob($table,$column,$val,$where,$blobtype='BLOB')
@@ -289,7 +324,7 @@ a different OID if a database must be reloaded. */
 	}
 	
 
-	// converts field names to lowercase 
+	/*  converts field names to lowercase  */
 	function &MetaColumns($table) 
 	{
 	global $ADODB_FETCH_MODE;
@@ -307,16 +342,16 @@ a different OID if a database must be reloaded. */
 			if ($rs === false) return false;
 			
 			if (!empty($this->metaKeySQL)) {
-				// If we want the primary keys, we have to issue a separate query
-				// Of course, a modified version of the metaColumnsSQL query using a 
-				// LEFT JOIN would have been much more elegant, but postgres does 
-				// not support OUTER JOINS. So here is the clumsy way.
+				/*  If we want the primary keys, we have to issue a separate query */
+				/*  Of course, a modified version of the metaColumnsSQL query using a  */
+				/*  LEFT JOIN would have been much more elegant, but postgres does  */
+				/*  not support OUTER JOINS. So here is the clumsy way. */
 				
 				$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 				
 				$rskey = $this->Execute(sprintf($this->metaKeySQL,($table)));
-				// fetch all result in once for performance.
-				$keys = $rskey->GetArray();
+				/*  fetch all result in once for performance. */
+				$keys =& $rskey->GetArray();
 				if (isset($savem)) $this->SetFetchMode($savem);
 				$ADODB_FETCH_MODE = $save;
 				
@@ -359,26 +394,26 @@ a different OID if a database must be reloaded. */
 				if ($fld->max_length <= 0) $fld->max_length = $rs->fields[3]-4;
 				if ($fld->max_length <= 0) $fld->max_length = -1;
 				
-				// dannym
-				// 5 hasdefault; 6 num-of-column
+				/*  dannym */
+				/*  5 hasdefault; 6 num-of-column */
 				$fld->has_default = ($rs->fields[5] == 't');
 				if ($fld->has_default) {
 					$fld->default_value = $rsdefa[$rs->fields[6]];
 				}
 
-				//Freek
+				/* Freek */
 				if ($rs->fields[4] == $this->true) {
 					$fld->not_null = true;
 				}
 				
-				// Freek
+				/*  Freek */
 				if (is_array($keys)) {
 					reset ($keys);
 					while (list($x,$key) = each($keys)) {
 						if ($fld->name == $key['column_name'] AND $key['primary_key'] == $this->true) 
 							$fld->primary_key = true;
 						if ($fld->name == $key['column_name'] AND $key['unique_key'] == $this->true) 
-							$fld->unique = true; // What name is more compatible?
+							$fld->unique = true; /*  What name is more compatible? */
 					}
 				}
 				
@@ -392,71 +427,62 @@ a different OID if a database must be reloaded. */
 		return false;
 	}
 
-	 function &MetaDatabases()
-	 {
-	 	$arr = array();
-	  	$sql="select datname from pg_database";
-		$rs = $this->Execute($sql);
-		if (!$rs) return false;
-		while (!$rs->EOF) {
-			$arr[] = reset($rs->fields);
-			$rs->MoveNext();
-		}
-		
-		return $arr;
-	 }
-
-
-	// returns true or false
-	//
-	// examples:
-	// 	$db->Connect("host=host1 user=user1 password=secret port=4341");
-	// 	$db->Connect('host1','user1','secret');
+	/*  returns true or false */
+	/*  */
+	/*  examples: */
+	/*  	$db->Connect("host=host1 user=user1 password=secret port=4341"); */
+	/*  	$db->Connect('host1','user1','secret'); */
 	function _connect($str,$user='',$pwd='',$db='',$persist=false)
-	{		   
+	{
 		if ($user || $pwd || $db) {
-			$str = adodb_addslashes($str);
 			$user = adodb_addslashes($user);
 			$pwd = adodb_addslashes($pwd);
+			if (strlen($db) == 0) $db = 'template1';
 			$db = adodb_addslashes($db);
 		   	if ($str)  {
 			 	$host = split(":", $str);
-				if ($host[0]) $str = "host=$host[0]";
-				else $str = 'localhost';
+				if ($host[0]) $str = "host=".adodb_addslashes($host[0]);
+				else $str = 'host=localhost';
 				if (isset($host[1])) $str .= " port=$host[1]";
+			} else {
+				$str = 'host=localhost';
 			}
 		   		if ($user) $str .= " user=".$user;
 		   		if ($pwd)  $str .= " password=".$pwd;
-			if ($db)   $str .= " dbname=".$db;
+				if ($db)   $str .= " dbname=".$db;
 		}
-		
-		//if ($user) $linea = "user=$user host=$linea password=$pwd dbname=$db port=5432";
+
+		/* if ($user) $linea = "user=$user host=$linea password=$pwd dbname=$db port=5432"; */
 		if ($persist) $this->_connectionID = pg_pconnect($str);
 		else $this->_connectionID = pg_connect($str);
+		
 		if ($this->_connectionID === false) return false;
 		$this->Execute("set datestyle='ISO'");
 		return true;
 	}
 	
-	// returns true or false
-	//
-	// examples:
-	// 	$db->PConnect("host=host1 user=user1 password=secret port=4341");
-	// 	$db->PConnect('host1','user1','secret');
+	/*  returns true or false */
+	/*  */
+	/*  examples: */
+	/*  	$db->PConnect("host=host1 user=user1 password=secret port=4341"); */
+	/*  	$db->PConnect('host1','user1','secret'); */
 	function _pconnect($str,$user='',$pwd='',$db='')
 	{
 		return $this->_connect($str,$user,$pwd,$db,true);
 	}
 
-	// returns queryID or false
+	/*  returns queryID or false */
 	function _query($sql,$inputarr)
 	{
 		$rez = pg_Exec($this->_connectionID,$sql);
-		// check if no data returned, then no need to create real recordset
+		/* print_r($rez); */
+		/*  check if no data returned, then no need to create real recordset */
 		if ($rez && pg_numfields($rez) <= 0) {
+			if ($this->_resultid) pg_freeresult($this->_resultid);
 			$this->_resultid = $rez;
 			return true;
 		}
+		
 		return $rez;
 	}
 	
@@ -486,11 +512,14 @@ a different OID if a database must be reloaded. */
 		return (strlen($e)) ? $e : 0;
 	}
 
-	// returns true or false
+	/*  returns true or false */
 	function _close()
 	{
 		if ($this->transCnt) $this->RollbackTrans();
-		$this->_resultid = false;
+		if ($this->_resultid) {
+			@pg_freeresult($this->_resultid);
+			$this->_resultid = false;
+		}
 		@pg_close($this->_connectionID);
 		$this->_connectionID = false;
 		return true;
@@ -502,7 +531,7 @@ a different OID if a database must be reloaded. */
 	*/
 	function CharMax()
 	{
-		return 1000000000;  // should be 1 Gb?
+		return 1000000000;  /*  should be 1 Gb? */
 	}
 	
 	/*
@@ -510,7 +539,7 @@ a different OID if a database must be reloaded. */
 	*/
 	function TextMax()
 	{
-		return 1000000000; // should be 1 Gb?
+		return 1000000000; /*  should be 1 Gb? */
 	}
 	
 		
@@ -553,7 +582,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		$this->_numOfRows = ($ADODB_COUNTRECS)? @pg_numrows($this->_queryID):-1;
 		$this->_numOfFields = @pg_numfields($this->_queryID);
 		
-		// cache types for blob decode check
+		/*  cache types for blob decode check */
 		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) { 
 			$f1 = $this->FetchField($i);
 			if ($f1->type == 'bytea') $this->_blobArr[$i] = $f1->name;
@@ -577,14 +606,14 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 
 	function &FetchField($fieldOffset = 0) 
 	{
-		$off=$fieldOffset; // offsets begin at 0
+		$off=$fieldOffset; /*  offsets begin at 0 */
 		
 		$o= new ADOFieldObject();
 		$o->name = @pg_fieldname($this->_queryID,$off);
 		$o->type = @pg_fieldtype($this->_queryID,$off);
 		$o->max_length = @pg_fieldsize($this->_queryID,$off);
-		//print_r($o);		
-		//print "off=$off name=$o->name type=$o->type len=$o->max_length<br>";
+		/* print_r($o);		 */
+		/* print "off=$off name=$o->name type=$o->type len=$o->max_length<br>"; */
 		return $o;	
 	}
 
@@ -595,11 +624,10 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	
 	function _decode($blob)
 	{
-		
 		eval('$realblob="'.adodb_str_replace(array('"','$'),array('\"','\$'),$blob).'";');
-		return $realblob;
-		
+		return $realblob;	
 	}
+	
 	function _fixblobs()
 	{
 		if ($this->fetchMode == PGSQL_NUM || $this->fetchMode == PGSQL_BOTH) {
@@ -614,7 +642,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		}
 	}
 	
-	// 10% speedup to move MoveNext to child class
+	/*  10% speedup to move MoveNext to child class */
 	function MoveNext() 
 	{
 		if (!$this->EOF) {
@@ -645,7 +673,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	}
 
 	function _close() 
-	{
+	{ 
 		return @pg_freeresult($this->_queryID);
 	}
 
@@ -668,9 +696,9 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 				case 'TEXT':
 					return 'X';
 		
-				case 'IMAGE': // user defined type
-				case 'BLOB': // user defined type
-				case 'BIT':	// This is a bit string, not a single bit, so don't return 'L'
+				case 'IMAGE': /*  user defined type */
+				case 'BLOB': /*  user defined type */
+				case 'BIT':	/*  This is a bit string, not a single bit, so don't return 'L' */
 				case 'VARBIT':
 				case 'BYTEA':
 					return 'B';

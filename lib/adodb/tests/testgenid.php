@@ -1,6 +1,6 @@
 <?php
 /*
-	V3.40 7 April 2003 
+	V3.60 16 June 2003 
 	
 	Run multiple copies of this php script at the same time
 	to test unique generation of id's in multiuser mode
@@ -14,7 +14,7 @@ function testdb(&$db,$createtab="create table ADOXYZ (id int, firstname char(24)
 	$table = 'adodbseq';
 	
 	$db->Execute("drop table $table");
-	//$db->debug=true;
+	/* $db->debug=true; */
 	
 	$ctr = 5000;
 	$lastnum = 0;

@@ -1,0 +1,130 @@
+<html>
+<head>
+<title>ADODB Session Management Manual</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<XSTYLE
+	body,td {font-family:Arial,Helvetica,sans-serif;font-size:11pt}
+	pre {font-size:9pt}
+	.toplink {font-size:8pt}
+	/>
+</head>	
+<body bgcolor="#FFFFFF">
+<h3>ADODB Session Management Manual</h3>
+<p>
+V3.60 16 June 2003 (c) 2000-2003 John Lim (jlim#natsoft.com.my)
+<p>
+<font size=1>This software is dual licensed using BSD-Style and LGPL. Where there is any discrepancy, the BSD-Style license will take precedence. This means you can use it in proprietary and commercial products.
+</font>
+<h3>Introduction</h3>
+<p>PHP is packed with good features. One of the most popular is session variables. 
+These are variables that persist throughout a session, as the user moves from page to page. Session variables are great holders of state information and other useful stuff.
+<p>
+To use session variables, call session_start() at the beginning of your web page, 
+before your HTTP headers are sent. Then for every variable you want to keep alive 
+for the duration of the session, call session_register($variable_name). By default, 
+the session handler will keep track of the session by using a cookie. You can save objects
+ or arrays in session variables also.
+<p>The default method of storing sessions is to store it in a file. However if you have multiple web servers,
+or need to do special processing of each session, or require notification when a session expires, you
+need to override the default session storage behaviour. 
+<p>The ADOdb session handler provides you with the above additional capabilities by storing
+the session information as records in a database table that can be shared by multiple servers.
+<h3>Setup</h3>
+<p>There are 3 session management files that you can use:
+<pre>
+adodb-session.inc.php        : The default
+adodb-session-clob.inc.php   : Use this if you are storing DATA in clobs
+adodb-cryptsession.inc.php   : Use this if you want to store encrypted session data in the database
+
+<strong>Examples</strong>
+ 
+ 	GLOBAL $HTTP_SESSION_VARS;
+	include('adodb.inc.php');
+	include('adodb-session.php');
+	session_start();
+	session_register('AVAR');
+	$HTTP_SESSION_VARS['AVAR'] += 1;
+	print "<p>\$HTTP_SESSION_VARS['AVAR']={$HTTP_SESSION_VARS['AVAR']}</p>";
+	
+To force non-persistent connections, call adodb_session_open first before session_start():
+
+ 	GLOBAL $HTTP_SESSION_VARS;
+	include('adodb.inc.php');
+	include('adodb-session.php');
+	adodb_sess_open(false,false,false);
+	session_start();
+	session_register('AVAR');
+	$HTTP_SESSION_VARS['AVAR'] += 1;
+	print "<p>\$HTTP_SESSION_VARS['AVAR']={$HTTP_SESSION_VARS['AVAR']}</p>";
+
+To use a encrypted sessions, simply replace the file:
+
+	GLOBAL $HTTP_SESSION_VARS;
+	include('adodb.inc.php');
+	include('adodb-cryptsession.php');
+	session_start();
+	
+And the same technique for adodb-session-clob.inc.php:
+
+	GLOBAL $HTTP_SESSION_VARS;
+	include('adodb.inc.php');
+	include('adodb-session-clob.php');
+	session_start();
+	
+ <strong>Installation</strong>
+ 1. Create this table in your database (syntax might vary depending on your db):
+ 
+  create table sessions (
+	   SESSKEY char(32) not null,
+	   EXPIRY int(11) unsigned not null,
+	   EXPIREREF varchar(64),
+	   DATA text not null,
+	  primary key (sesskey)
+  );
+  
+  For the adodb-session-clob.inc.php version, create this:
+  
+	create table sessions (
+	   SESSKEY char(32) not null,
+	   EXPIRY int(11) unsigned not null,
+	   EXPIREREF varchar(64),
+	   DATA CLOB,
+	  primary key (sesskey)
+  );
+
+  2. Then define the following parameters in this file:
+  	$ADODB_SESSION_DRIVER='database driver, eg. mysql or ibase';
+	$ADODB_SESSION_CONNECT='server to connect to';
+	$ADODB_SESSION_USER ='user';
+	$ADODB_SESSION_PWD ='password';
+	$ADODB_SESSION_DB ='database';
+	$ADODB_SESSION_TBL = 'sessions'
+	
+  3. Recommended is PHP 4.0.6 or later. There are documented
+	 session bugs in earlier versions of PHP.
+
+  4. If you want to receive notifications when a session expires, then
+  	 you can tag a session with an EXPIREREF, and before the session
+	 record is deleted, we can call a function that will pass the EXPIREREF
+	 as the first parameter, and the session key as the second parameter.
+	 
+	 To do this, define a notification function, say NotifyFn:
+	 
+	 	function NotifyFn($expireref, $sesskey)
+	 	{
+	 	}
+	 
+	 Then define a global variable, with the first parameter being the
+	 global variable you would like to store in the EXPIREREF field, and
+	 the second is the function name.
+	 
+	 In this example, we want to be notified when a user's session 
+	 has expired, so we store the user id in $USERID, and make this
+	 the value stored in the EXPIREREF field:
+	 
+	 	$ADODB_SESSION_EXPIRE_NOTIFY = array('USERID','NotifyFn');
+</pre>
+<p>
+Also see the <a href=docs-adodb.htm>core ADOdb documentation</a>.
+</body>
+</html>

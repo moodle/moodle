@@ -159,32 +159,29 @@ SELECT col1, col2, null FROM t1 <br>	   WHERE t1.col not in (select distinct col
 <pre>$stmt = $db-&gt;Prepare('select * from customers where custid=? and state=?');
 $rs = $db-&gt;Execute($stmt, array($id,'New York'));</pre>
 <h2>DDL and Tuning</h2>
-<p>There are database design tools such as ERWin or Dezign that allow you to generate 
-  data definition language commands such as ALTER TABLE or CREATE INDEX from Entity-Relationship 
-  diagrams. Other developers such as Manuel Lemos have developed portable XML 
-  based schemas for PHP with Metabase. I think this might suit many developers, 
-  but I prefer to manually define the database tables. This is because for high 
-  performance, the placement of tables and selection of the different types of 
-  indexes has to be planned based on the number of hard disks and the i/o characteristics 
-  of the data. This can only be done manually. Here are some tuning hints:</p>
-<ul>
-  <li>The most important and frequently used tables deserve to be placed on their 
-	own separate hard disks. </li>
-  <li>Indexes and data should be kept on different hard disks. </li>
-  <li>Transaction logs and rollback segments deserve their own hard disks.</li>
-  <li>Using Striping (RAID 5) is only useful when you rarely write to your database. 
-	Mirroring is a better compromise between reading and writing.</li>
-  <li>Consider bypassing the file system and using raw disks.</li>
-  <li>Make sure you have asynchronous IO enabled for your database and operating 
-	system.</li>
-  <li>Be prepared to waste space. You probably need at least 5 hard disks for 
-	a high-performance database system:<br>
-	- 1 hard disk for the operating system and temporary data, <br>
-	- 1 for data,<br>
-	- 1 for indexes, <br>
-	- 1 for rollback, <br>
-	- 1 for transaction logs.</li>
-</ul>
+There are database design tools such as ERWin or Dezign that allow you to generate data definition language commands such as ALTER TABLE or CREATE INDEX from Entity-Relationship diagrams. 
+<p>
+However if you prefer to use a PHP-based table creation scheme, adodb provides you with this feature. Here is the code to generate the SQL to create a table with: 
+<ol>
+	<li> Auto-increment primary key 'ID', </li>
+	<li>The person's 'NAME' VARCHAR(32) NOT NULL and defaults to '', </li>
+	<li>The date and time of record creation 'CREATED', </li>
+	<li> The person's 'AGE', defaulting to 0, type NUMERIC(16). </li>
+</ol>
+<p>
+Also create a compound index consisting of 'NAME' and 'AGE': 
+<pre>
+$datadict = <strong>NewDataDictionary</strong>($connection);
+$flds = " 
+<font color="#660000">  ID I AUTOINCREMENT PRIMARY,
+  NAME C(32) DEFAULT '' NOTNULL,
+  CREATED T DEFTIMESTAMP,
+  AGE N(16) DEFAULT 0</font>
+";
+$sql1 = $datadict-><strong>CreateTableSQL</strong>('tabname', $flds);
+$sql2 = $datadict-><strong>CreateIndexSQL</strong>('idx_name_age', 'tabname', 'NAME,AGE');
+</pre>
+
 <h3>Data Types</h3>
 <p>Stick to a few data types that are available in most databases. Char, varchar 
   and numeric/number are supported by most databases. Most other data types (including 

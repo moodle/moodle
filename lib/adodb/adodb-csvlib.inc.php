@@ -1,7 +1,7 @@
 <?php
 
 /* 
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.50 14 Nov 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -17,8 +17,6 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
   ==============
 */
 
-
-
 	/**
  	 * convert a recordset into special format
 	 *
@@ -31,9 +29,9 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 		$max = ($rs) ? $rs->FieldCount() : 0;
 		
 		if ($sql) $sql = urlencode($sql);
-		// metadata setup
+		/*  metadata setup */
 		
-		if ($max <= 0 || $rs->dataProvider == 'empty') { // is insert/update/delete
+		if ($max <= 0 || $rs->dataProvider == 'empty') { /*  is insert/update/delete */
 			if (is_object($conn)) {
 				$sql .= ','.$conn->Affected_Rows();
 				$sql .= ','.$conn->Insert_ID();
@@ -46,7 +44,7 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 			$tt = ($rs->timeCreated) ? $rs->timeCreated : time();
 			$line = "====0,$tt,$sql\n";
 		}
-		// column definitions
+		/*  column definitions */
 		for($i=0; $i < $max; $i++) {
 			$o = $rs->FetchField($i);
 			$line .= urlencode($o->name).':'.$rs->MetaType($o->type,$o->max_length).":$o->max_length,";
@@ -54,7 +52,7 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 		$text = substr($line,0,strlen($line)-1)."\n";
 		
 		
-		// get data
+		/*  get data */
 		if ($rs->databaseType == 'array') {
 			$text .= serialize($rs->_array);
 		} else {
@@ -83,29 +81,28 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 */
 	function &csv2rs($url,&$err,$timeout=0)
 	{
-		$ishttp = strpos(substr($url,3,10),':') !== false;
 		$fp = @fopen($url,'r');
 		$err = false;
 		if (!$fp) {
 			$err = $url.'file/URL not found';
 			return false;
 		}
-		if (!$ishttp) flock($fp, LOCK_SH);
+		flock($fp, LOCK_SH);
 		$arr = array();
 		$ttl = 0;
 		
-		if ($meta = fgetcsv($fp, 32000, ",")) { // first read is larger because contains sql
-			// check if error message
-			if (strncmp($meta[0],'****',4) === 0) {
+		if ($meta = fgetcsv ($fp, 32000, ",")) {
+			/*  check if error message */
+			if (substr($meta[0],0,4) === '****') {
 				$err = trim(substr($meta[0],4,1024));
 				fclose($fp);
 				return false;
 			}
-			// check for meta data
-			// $meta[0] is -1 means return an empty recordset
-			// $meta[1] contains a time 
+			/*  check for meta data */
+			/*  $meta[0] is -1 means return an empty recordset */
+			/*  $meta[1] contains a time  */
 	
-			if (strncmp($meta[0],'====',4) === 0) {
+			if (substr($meta[0],0,4) ===  '====') {
 			
 				if ($meta[0] == "====-1") {
 					if (sizeof($meta) < 5) {
@@ -129,13 +126,9 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 					$rs->insertid = $meta[4];	
 					return $rs;
 				}
-			
-			# If detect timeout here return false, forcing a fresh query and new cache values
-			#
 			# Under high volume loads, we want only 1 thread/process to _write_file
 			# so that we don't have 50 processes queueing to write the same data.
-			#
-			# We implement a probabilistic blocking write:
+			# Would require probabilistic blocking write 
 			#
 			# -2 sec before timeout, give processes 1/16 chance of writing to file with blocking io
 			# -1 sec after timeout give processes 1/4 chance of writing with blocking
@@ -146,14 +139,14 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 						if ($tdiff <= 2) {
 							switch($tdiff) {
 							case 2: 
-								if ((rand() & 0xf) == 0) {
+								if ((rand() & 15) == 0) {
 									fclose($fp);
 									$err = "Timeout 2";
 									return false;
 								}
 								break;
 							case 1:
-								if ((rand() & 0x3) == 0) {
+								if ((rand() & 3) == 0) {
 									fclose($fp);
 									$err = "Timeout 1";
 									return false;
@@ -163,10 +156,10 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 								fclose($fp);
 								$err = "Timeout 0";
 								return false;
-							} // switch
+							} /*  switch */
 							
-						} // if check flush cache
-					}// (timeout>0)
+						} /*  if check flush cache */
+					}/*  (timeout>0) */
 					$ttl = $meta[1];
 				}
 				$meta = false;
@@ -178,7 +171,7 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 				}
 			}
 
-			// Get Column definitions
+			/*  Get Column definitions */
 			$flds = array();
 			foreach($meta as $o) {
 				$o2 = explode(':',$o);
@@ -199,7 +192,7 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 			return false;
 		}
 		
-		// slurp in the data
+		/*  slurp in the data */
 		$MAXSIZE = 128000;
 		$text = fread($fp,$MAXSIZE);
 		$cnt = 1;
@@ -209,12 +202,9 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 		}
 			
 		fclose($fp);
-		//print "<hr>";
-		//print_r($text);
-		//if (strlen($text) == 0) $arr = array();
-		//else 
-		$arr = unserialize($text);
-		//print_r($arr);
+		$arr = @unserialize($text);
+		
+		/* var_dump($arr); */
 		if (!is_array($arr)) {
 			$err = "Recordset had unexpected EOF (in serialized recordset)";
 			if (get_magic_quotes_runtime()) $err .= ". Magic Quotes Runtime should be disabled!";
@@ -225,5 +215,4 @@ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights res
 		$rs->InitArrayFields($arr,$flds);
 		return $rs;
 	}
-	
 ?>

@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.60 16 June 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -38,7 +38,7 @@
 	else $hidecnt = false;
 	
 	
-	//$hidecnt = false;
+	/* $hidecnt = false; */
 	
  	if ($where) $where = "\nWHERE $where";
 	if (!is_array($colfield)) $colarr = $db->GetCol("select distinct $colfield from $tables $where order by 1");
@@ -116,7 +116,7 @@ SELECT CompanyName,QuantityPerUnit,
 FROM products p ,categories c ,suppliers s  WHERE p.CategoryID = c.CategoryID and s.SupplierID= p.SupplierID 
 GROUP BY CompanyName,QuantityPerUnit
 */
-//=====================================================================
+/* ===================================================================== */
 
 # example2
 #

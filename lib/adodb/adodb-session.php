@@ -1,6 +1,6 @@
 <?php
 /*
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -28,7 +28,7 @@ To force non-persistent connections, call adodb_session_open first before sessio
  	GLOBAL $HTTP_SESSION_VARS;
 	include('adodb.inc.php');
 	include('adodb-session.php');
-	adodb_session_open(false,false,false);
+	adodb_sess_open(false,false,false);
 	session_start();
 	session_register('AVAR');
 	$HTTP_SESSION_VARS['AVAR'] += 1;
@@ -109,16 +109,16 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	
 	$ADODB_SESS_LIFE = ini_get('session.gc_maxlifetime');
 	if ($ADODB_SESS_LIFE <= 1) {
-	 // bug in PHP 4.0.3 pl 1  -- how about other versions?
-	 //print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>";
+	 /*  bug in PHP 4.0.3 pl 1  -- how about other versions? */
+	 /* print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>"; */
 	 	$ADODB_SESS_LIFE=1440;
 	}
 	$ADODB_SESSION_CRC = false;
-	//$ADODB_SESS_DEBUG = true;
+	/* $ADODB_SESS_DEBUG = true; */
 	
-	//////////////////////////////////
+	/* //////////////////////////////// */
 	/* SET THE FOLLOWING PARAMETERS */
-	//////////////////////////////////
+	/* //////////////////////////////// */
 	
 	if (empty($ADODB_SESSION_DRIVER)) {
 		$ADODB_SESSION_DRIVER='mysql';
@@ -131,7 +131,7 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	if (empty($ADODB_SESSION_EXPIRE_NOTIFY)) {
 		$ADODB_SESSION_EXPIRE_NOTIFY = false;
 	}
-	//  Made table name configurable - by David Johnson djohnson@inpro.net
+	/*   Made table name configurable - by David Johnson djohnson@inpro.net */
 	if (empty($ADODB_SESSION_TBL)){
 		$ADODB_SESSION_TBL = 'sessions';
 	}
@@ -166,7 +166,7 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESSION_DB,
 	$ADODB_SESS_DEBUG;
 	
-	// cannot use & below - do not know why...
+	/*  cannot use & below - do not know why... */
 	$ADODB_SESS_CONN = ADONewConnection($ADODB_SESSION_DRIVER);
 	if (!empty($ADODB_SESS_DEBUG)) {
 		$ADODB_SESS_CONN->debug = true;
@@ -207,13 +207,13 @@ global $ADODB_SESS_CONN,$ADODB_SESSION_TBL,$ADODB_SESSION_CRC;
 			
 		$rs->Close();
 		
-		// new optimization adodb 2.1
+		/*  new optimization adodb 2.1 */
 		$ADODB_SESSION_CRC = strlen($v).crc32($v);
 		
 		return $v;
 	}
 	
-	return ''; // thx to Jorma Tuomainen, webmaster#wizactive.com
+	return ''; /*  thx to Jorma Tuomainen, webmaster#wizactive.com */
 }
 
 /****************************************************************************************\
@@ -233,8 +233,8 @@ function adodb_sess_write($key, $val)
 
 	$expiry = time() + $ADODB_SESS_LIFE;
 	
-	// crc32 optimization since adodb 2.1
-	// now we only update expiry date, thx to sebastian thom in adodb 2.32
+	/*  crc32 optimization since adodb 2.1 */
+	/*  now we only update expiry date, thx to sebastian thom in adodb 2.32 */
 	if ($ADODB_SESSION_CRC !== false && $ADODB_SESSION_CRC == strlen($val).crc32($val)) {
 		if ($ADODB_SESS_DEBUG) echo "<p>Session: Only updating date - crc32 not changed</p>";
 		$qry = "UPDATE $ADODB_SESSION_TBL SET expiry=$expiry WHERE sesskey='$key' AND expiry >= " . time();
@@ -255,8 +255,8 @@ function adodb_sess_write($key, $val)
 	if (!$rs) {
 		ADOConnection::outp( '<p>Session Replace: '.$ADODB_SESS_CONN->ErrorMsg().'</p>',false);
 	}  else {
-		// bug in access driver (could be odbc?) means that info is not commited
-		// properly unless select statement executed in Win2000
+		/*  bug in access driver (could be odbc?) means that info is not commited */
+		/*  properly unless select statement executed in Win2000 */
 		if ($ADODB_SESS_CONN->databaseType == 'access') 
 			$rs = $ADODB_SESS_CONN->Execute("select sesskey from $ADODB_SESSION_TBL WHERE sesskey='$key'");
 	}
@@ -318,7 +318,7 @@ function adodb_sess_gc($maxlifetime)
 	
 		if ($ADODB_SESS_DEBUG) ADOConnection::outp("<p><b>Garbage Collection</b>: $qry</p>");
 	}
-	// suggested by Cameron, "GaM3R" <gamr@outworld.cx>
+	/*  suggested by Cameron, "GaM3R" <gamr@outworld.cx> */
 	if (defined('ADODB_SESSION_OPTIMIZE')) {
 	global $ADODB_SESSION_DRIVER;
 	

@@ -1,0 +1,293 @@
+<html>
+<head>
+<title>ADODB Data Dictionary Manual</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<XSTYLE
+	body,td {font-family:Arial,Helvetica,sans-serif;font-size:11pt}
+	pre {font-size:9pt}
+	.toplink {font-size:8pt}
+	/>
+</head>	
+<body bgcolor="#FFFFFF">
+
+<h2>ADOdb Data Dictionary Library for PHP</h2>
+<p> V3.60 16 June 2003 (c) 2000-2003 John Lim (<a href="mailto:jlim#natsoft.com.my">jlim#natsoft.com.my</a>)</p>
+<p><font size=1>This software is dual licensed using BSD-Style and LGPL. 
+Where there is any discrepancy, the BSD-Style license will take precedence. 
+This means you can use it in proprietary and commercial products.</font></p>
+
+<p>This documentation describes a class library to automate the creation of tables, 
+  indexes and foreign key constraints portably for multiple databases. Download 
+  from <a href="http://php.weblogs.com/adodb">http://php.weblogs.com/adodb</a> 
+<p>Currently the following databases are supported: 
+<p> Well-tested: PostgreSQL, MySQL, Oracle, MSSQL. <br>
+Beta-quality: DB2, Informix, Sybase, Interbase, Firebird.<br>
+Alpha-quality: MS Access (does not support DEFAULT values) and generic ODBC.</p>
+<h3>Example Usage</h3>
+<pre>include_once('adodb.inc.php');
+<font color="#006600">
+# First create a normal connection
+</font>$db->NewADOConnection('mysql');
+$db->Connect(...);
+<br>
+<font color="#006600"># Then create a data dictionary object, using this connection
+</font>$dict = <strong>NewDataDictionary</strong>($db);
+
+<font color="#006600"># We have a portable declarative data dictionary format in ADOdb 3.50, similar to SQL.
+# Field types use 1 character codes, and fields are separated by commas.
+# The following example creates three fields: "col1", "col2" and "col3":</font>
+$flds = " 
+<font color="#663300"><strong> col1 C(32) NOTNULL DEFAULT 'abc',
+ col2 I  DEFAULT 0,
+ col3 N(12.2)</strong></font>
+";<br>
+<font color="#006600"># We demonstrate creating tables and indexes</font>
+$sqlarray = $dict-><strong>CreateTableSQL</strong>($tabname, $flds, $taboptarray);
+$dict-><strong>ExecuteSQLArray</strong>($sqlarray);<br>
+$idxflds = 'co11, col2';
+$sqlarray = $dict-><strong>CreateIndexSQL</strong>($idxname, $tabname, $idxflds);
+$dict-><strong>ExecuteSQLArray</strong>($sqlarray);
+</pre>
+<h3>Functions</h3>
+<p><b>function CreateDatabase($dbname, $optionsarray=false)</b>
+<p>Create a database with the name $dbname;
+<p><b>function CreateTableSQL($tabname, $fldarray, $taboptarray=false)</b>
+<pre>
+	RETURNS:	an array of strings, the sql to be executed, or false
+	$tabname: 	name of table
+	$fldarray:	string (or array) containing field info
+	$taboptarray:	array containing table options
+</pre>
+<p>
+	The new format of $fldarray uses a free text format, where each field is comma-delimited.
+	The first token for each field is the field name, followed by the type and optional
+	field size. Then optional keywords in $otheroptions:
+	<pre>	"$fieldname $type $colsize $otheroptions"</pre>
+<p>	The older (and still supported) format of $fldarray is a 2-dimensional array, where each row in the 
+	1st dimension represents one field. Each row has this format:
+<pre>	array($fieldname, $type, [,$colsize] [,$otheroptions]*)</pre>
+	The first 2 fields must be the field name and the field type. The field type
+	can be a portable type codes or the actual type for that database. 
+	<p>
+	Legal portable type codes include:
+<pre>
+C:  varchar
+X:  Largest varchar size 
+XL: For Oracle, returns CLOB, otherwise same as 'X' above
+
+C2: Multibyte varchar
+X2: Multibyte varchar (largest size)
+
+B:  BLOB (binary large object)<br>
+D:  Date (some databases do not support this, and we return a datetime type)
+T:  Datetime or Timestamp
+L:  Integer field suitable for storing booleans (0 or 1)
+I:  Integer (mapped to I4)
+I1: 1-byte integer
+I2: 2-byte integer
+I4: 4-byte integer
+I8: 8-byte integer
+F:  Floating point number
+N:  Numeric or decimal number
+</pre>
+<p>	The $colsize field represents the size of the field. If a decimal number is 
+	used, then it is assumed that the number following the dot is the precision,
+	so 6.2 means a number of size 6 digits and 2 decimal places. It is 
+	recommended that the default for number types be represented as a string to 
+	avoid any rounding errors.
+<p>
+	The $otheroptions include the following keywords (case-insensitive):
+<pre>
+AUTO			For autoincrement number. Emulated with triggers if not available.
+				Sets NOTNULL also.
+AUTOINCREMENT	Same as auto.
+KEY			Primary key field. Sets NOTNULL also. Compound keys are supported.
+PRIMARY 		Same as KEY.
+DEF			Synonym for DEFAULT for lazy typists.
+DEFAULT		The default value. Character strings are auto-quoted unless
+				the string begins and ends with spaces, eg ' SYSDATE '.
+NOTNULL		If field is not null.
+DEFDATE		Set default value to call function to get today's date.
+DEFTIMESTAMP	Set default to call function to get today's datetime.
+NOQUOTE		Prevents autoquoting of default string values.
+CONSTRAINTS	Additional constraints defined at the end of the field
+				definition.
+</pre>
+<p> The Data Dictonary accepts two formats, the older array specification: </p>
+<pre>
+$flds = array(
+	array('COLNAME', 'DECIMAL', '8.4', 'DEFAULT' => 0, 'NotNull'),
+	array('ID',      'I'      , 'AUTO'),
+	array('MYDATE',  'D'      , 'DEFDATE'),
+	array('NAME',    'C'      ,'32', 
+		  'CONSTRAINTS' => 'FOREIGN KEY REFERENCES reftable')
+);  </pre>
+Or the simpler declarative format:
+<pre> $flds = "
+<font color="#660000"><strong> COLNAME DECIMAL(8.4) DEFAULT 0 NotNull,
+ ID I AUTO,
+ MYDATE D DEFDATE, 
+ NAME C(32) CONSTRAINTS 'FOREIGN KEY REFERENCES reftable' </strong></font>
+"; 
+</pre>
+<p>
+	The $taboptarray is the 3rd parameter of the CreateTableSQL function. 
+	This contains table specific settings. Legal keywords include:
+	 
+<ul>
+	<li>REPLACE <br>
+		Indicates that the previous table definition should be removed (dropped)together 
+		with ALL data. See first example below.<br>
+	</li>
+	<li>CONSTRAINTS <br>
+		Define this as the key, with the constraint as the value. See the postgresql 
+		example below. Additional constraints defined for the whole table. You 
+		will probably need to prefix this with a comma. </li>
+</ul>
+<p> Database specific table options can be defined also using the name of the 
+	database type as the array key. In the following example, <em>create the table 
+	as ISAM with MySQL, and store the table in the &quot;users&quot; tablespace 
+	if using Oracle</em>. And if the table already exists, drop the table first.
+<pre> 	$taboptarray = array('mysql' => 'TYPE=ISAM', 'oci8' => 'tablespace users', 'REPLACE'); 	</pre>
+<p>
+	You can also define foreignkey constraints. The following is syntax for 
+	postgresql:<pre>
+	$taboptarray = array('constraints' => 
+					', FOREIGN KEY (col1) REFERENCES reftable (refcol)');
+</pre>
+<p><strong>function ChangeTableSQL($tabname, $flds)</strong>
+<p>Checks to see if table exists, if table does not exist, behaves like CreateTableSQL. 
+  If table exists, generates appropriate ALTER TABLE MODIFY COLUMN commands if 
+  field already exists, or ALTER TABLE ADD $column if field does not exist. 
+<p>The class must be connected to the database for ChangeTableSQL to detect the 
+  existance of the table. Idea and code contributed by Florian Buzin.
+<p><b>function CreateIndexSQL($idxname, $tabname, $flds, $idxoptarray=false)</b> 
+<p>
+	RETURNS:		an array of strings, the sql to be executed, or false
+	<pre>
+	$idxname:		name of index
+	$tabname: 		name of table
+	$flds:  		list of fields as a comma delimited string or an array of strings
+	$idxoptarray:	array of index creation options
+	</pre>
+<p>	$idxoptarray is similar to $taboptarray in that index specific information can
+	be embedded in the array. Other options include:
+	<pre>
+	CLUSTERED		Create clustered index (only mssql)
+	BITMAP			Create bitmap index (only oci8)
+	UNIQUE			Make unique index
+	FULLTEXT		Make fulltext index (only mysql)
+	HASH			Create hash index (only postgres)
+	</pre>	
+<p> <strong>function AddColumnSQL($tabname, $flds)</strong>
+<p>Add one or more columns. Not guaranteed to work under all situations.
+<p><strong>function AlterColumnSQL($tabname, $flds)</strong>
+<p>Warning, not all databases support this feature.
+<p> <strong>function DropColumnSQL($tabname, $flds)</strong>
+<p>Drop 1 or more columns.
+<p> <strong>function ExecuteSQLArray($sqlarray, $contOnError = true)</strong> 
+<pre>
+	RETURNS:		0 if failed, 1 if executed all but with errors, 2 if executed successfully
+	$sqlarray:		an array of strings with sql code (no semicolon at the end of string)
+	$contOnError:	if true, then continue executing even if error occurs
+</pre>	
+<p>Executes an array of SQL strings returned by CreateTableSQL or CreateIndexSQL.
+<hr><a name=xmlschema></a>
+<h2>XML Schema</h2>
+This is a class contributed by Richard Tango-Lowy that allows the user to quickly
+ and easily build a database using the excellent 
+ADODB database library and a simple XML formatted file.
+
+
+<H3>Quick Start</H3>
+<P>First, create an XML database schema. Let's call it "schema.xml:"</P><PRE>
+&lt;?xml version="1.0"?&gt;
+&lt;schema&gt;
+  &lt;table name="mytable"&gt;
+    &lt;field name="row1" type="I"&gt;
+      &lt;descr&gt;An integer row that's a primary key and autoincrements&lt;/descr&gt;
+      &lt;KEY/&gt;
+      &lt;AUTOINCREMENT/&gt;
+    &lt;/field&gt;
+    &lt;field name="row2" type="C" size="16"&gt;
+      &lt;descr&gt;A 16 character varchar row that can't be null&lt;/descr&gt;
+      &lt;NOTNULL/&gt;
+    &lt;/field&gt;
+  &lt;/table&gt;
+  &lt;index name="myindex" table="mytable"&gt;
+    &lt;col&gt;row1&lt;/col&gt;
+    &lt;col&gt;row2&lt;/col&gt;
+  &lt;/index&gt;
+  &lt;sql&gt;
+    &lt;descr&gt;SQL to be executed only on specific platforms&lt;/descr&gt;
+    &lt;query platform="postgres|postgres7"&gt;
+      insert into mytable ( row1, row2 ) values ( 12, 'stuff' )
+    &lt;/query&gt;
+    &lt;query platform="mysql"&gt;
+      insert into mytable ( row1, row2 ) values ( 12, 'different stuff' )
+    &lt;/query&gt;
+  &lt;/sql&gt;
+&lt;/schema&gt;
+</PRE><P>Create a new database using the appropriate tool for your platform.
+Executing the following PHP code will create the a <i>mytable</i> and <i>myindex</i>
+in the database and insert one row into <i>mytable</i> if the platform is postgres or mysql. </P><PRE>				
+include_once('/path/to/adodb.inc.php');
+include_once('/path/to/adodb-xmlschema.inc.php');
+
+// To build the schema, start by creating a normal ADOdb connection:
+$db->NewADOConnection( 'mysql' );
+$db->Connect( ... );
+
+// Create the schema object and build the query array.
+$schema = <B>new adoSchema</B>( $db );
+
+// Build the SQL array
+$sql = $schema-><B>ParseSchema</B>( "schema.xml" );
+
+// Execute the SQL on the database
+$result = $schema-><B>ExecuteSchema</B>( $sql );
+
+// Finally, clean up after the XML parser
+// (PHP won't do this for you!)
+$schema-><B>Destroy</B>();
+</PRE>
+	
+<H3>XML Schema Format:</H3>
+<P>(See <a href="http://arscognita.com/xmlschema.dtd">ADOdb_schema.dtd</a> for the full specification)</P>
+<PRE>
+&lt;?xml version="1.0"?&gt;
+&lt;schema&gt;
+  &lt;table name="tablename" platform="platform1|platform2|..."&gt;
+    &lt;descr&gt;Optional description&lt;/descr&gt;
+    &lt;field name="fieldname" type="datadict_type" size="size"&gt;
+      &lt;KEY/&gt;
+      &lt;NOTNULL/&gt;
+      &lt;AUTOINCREMENT/&gt;
+      &lt;DEFAULT value="value"/&gt;
+    &lt;/field&gt;
+	... <i>more fields</i>
+  &lt;/table&gt;
+  ... <i>more tables</i>
+  
+  &lt;index name="indexname" platform="platform1|platform2|..."&gt;
+    &lt;descr&gt;Optional description&lt;/descr&gt;
+    &lt;col&gt;fieldname&lt;/col&gt;
+    ... <i>more columns</i>
+  &lt;/index&gt;
+  ... <i>more indices</i>
+  
+  &lt;sql platform="platform1|platform2|..."&gt;
+    &lt;descr&gt;Optional description&lt;/descr&gt;
+    &lt;query platform="platform1|platform2|..."&gt;SQL query&lt;/query&gt;
+    ... <i>more queries</i>
+  &lt;/sql&gt;
+  ... <i>more SQL</i>
+  &lt;/schema&gt;
+</PRE>
+<HR>
+
+<address>If you have any questions or comments, please email them to me  at 
+<a href="mailto:richtl#arscognita.com">richtl#arscognita.com</a>.</address>
+
+</body>
+</html>

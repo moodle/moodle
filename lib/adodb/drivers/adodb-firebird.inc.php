@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -15,7 +15,6 @@ include_once(ADODB_DIR."/drivers/adodb-ibase.inc.php");
 
 class ADODB_firebird extends ADODB_ibase {
 	var $databaseType = "firebird";	
-	
 	function ADODB_firebird()
 	{	
 		$this->ADODB_ibase();
@@ -36,9 +35,9 @@ class ADODB_firebird extends ADODB_ibase {
 		return $arr;
 	}
 	
-	// Note that Interbase 6.5 uses this ROWS instead - don't you love forking wars!
-	// 		SELECT col1, col2 FROM table ROWS 5 -- get 5 rows 
-	//		SELECT col1, col2 FROM TABLE ORDER BY col1 ROWS 3 TO 7 -- first 5 skip 2
+	/*  Note that Interbase 6.5 uses this ROWS instead - don't you love forking wars! */
+	/*  		SELECT col1, col2 FROM table ROWS 5 -- get 5 rows  */
+	/* 		SELECT col1, col2 FROM TABLE ORDER BY col1 ROWS 3 TO 7 -- first 5 skip 2 */
 	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false, $arg3=false,$secs=0)
 	{
 		$str = 'SELECT ';

@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -17,7 +17,7 @@ include_once('../adodb-pager.inc.php');
 
 $driver = 'oci8';
 $sql = 'select  ID, firstname as "First Name", lastname as "Last Name" from adoxyz  order  by  id';
-//$sql = 'select count(*),firstname from adoxyz group by firstname order by 2 ';
+/* $sql = 'select count(*),firstname from adoxyz group by firstname order by 2 '; */
 $sql = 'select distinct firstname, lastname from adoxyz  order  by  firstname';
 
 if ($driver == 'postgres') {
@@ -55,7 +55,7 @@ if (empty($driver) or $driver == 'mysql') {
 	$db->Connect('localhost','root','','xphplens');
 }
 
-//$db->pageExecuteCountRows = false;
+/* $db->pageExecuteCountRows = false; */
 
 $db->debug = true;
 
