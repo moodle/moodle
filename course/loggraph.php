@@ -79,7 +79,7 @@
        $graph = new graph(750, 400);
 
        $a->coursename = $course->shortname;
-       $a->username = "$user->firstname $user->lastname";
+       $a->username = fullname($user, true);
        $graph->parameter['title'] = get_string("hitsoncourse", "", $a);
 
        $graph->x_data           = $days;
@@ -132,7 +132,7 @@
        $graph = new graph(750, 400);
 
        $a->coursename = $course->shortname;
-       $a->username = "$user->firstname $user->lastname";
+       $a->username = fullname($user, true);
        $graph->parameter['title'] = get_string("hitsoncoursetoday", "", $a);
 
        $graph->x_data           = $hours;
