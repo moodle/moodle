@@ -213,6 +213,116 @@
 </ul>
 <hr>
 
+<h3>Novit&agrave; in Moodle 1.0.9 (29 maggio 2003) :</h3>
+<ul>
+  <dl>
+    <dt> Generale</dt>
+    <dd> 
+      <li>Varie ottimizzazioni e significativi miglioramenti nell'esecuzione</li>
+      <li>Apportate diverse correzioni alla protezione nascosta</li>
+      <li>Moodle ora si comporta bene quando &egrave; racchiuso all'interno di una schermata</li>
+      <li>L'editor di formato richtext pu&ograve; essere ora utilizzato in ulteriori campi relativi all'editing del testo</li>
+      <li>Nuovo fornato &quot;Formato di testo normale&quot;, utile quando si invia un codice o HTML</li>
+      <li>Nuovo fornato &quot;Formato Wiki&quot;, consente l'esecuzione del tag nello stile Wiki nella maggior parte dei posti</li>
+      <li>la nuova finestra di popup consente di inserire emoticon e smilie facendo clic sulle immagini</li>
+      <li>Capacit&agrave; di specificare i permessi delle nuove cartelle e dei nuovi file creati sul server</li>
+      <li>Alcune correzioni apportate ai server che funzionano in Safe Mode (restano alcuni problemi con i file)</li>
+      <li>Sono state apportate varie correzioni alla pulizia di testo esterno composto da citazioni, ecc.</li>
+      <li>Sono state apportate varie correzioni alla compatibilit&agrave; con il database PostgreSQL 7.3</li>
+      <li>&Egrave; stata iniziata la migrazione del codice HTML verso l'XHTML Transitional</li>
+      <li>Innumerevoli piccole correzioni ovunque</li>
+    </dd>
+    <dt> Lingue</dt>
+    <dd> 
+      <li><b>10</b> nuovi pacchetti linguistici! Argentino, spagnolo, ceco, portoghese, slovacco, rumeno, danese, russo, polacco, cinese, canadese tradizionale e canadese francese.</li>
+      <li>Correzioni ed aggiornamenti in quasi tutti i pacchetti linguistici</li>
+      <li>&Egrave; possibile specificare la lingua della presente sessione (consultare il menu sulla home page e sulla pagina di connessione) essa pu&ograve; essere, inoltre, cambiata su qualsiasi pagina da qualcosa nell'url, ad esempio: http://moodle.org/?lang=ru</li>
+      <li>Il menu linguistico pu&ograve; essere limitato ad un sottoinsieme di lingue ed anche rimosso</li>
+      <li>I caratteri Truetype fanno ora parte dei pacchetti linguistici</li>
+      <li>TUTTE le date/ore possono ora essere riformattate come parte del pacchetto linguistico</li>
+      <li>&Egrave; stato corretto un errore, piccolo ma fastidioso, grazie all'editor di lingua basato sulla rete nei server Windows che causavano la crescita dei file linguistici</li>
+    </dd>
+    <dt> Sviluppatori</dt>
+    <dd> 
+      <li>La variabile di debug globale d&agrave; maggiore feedback sulle variabili non inizializzate e simili</li>
+      <li>Sono state apportate varie correzioni per riordinare e standardizzare ulteriormente alcuni codici PHP</li>
+      <li>Sono state apportate varie correzioni allo scopo di conferire solidit&agrave; (assicurando che le variabili siano sempre inizializzate)</li>
+    </dd>
+    <dt> Amministrazione</dt>
+    <dd> 
+      <li><font color=red>Sono state cambiate alcune opzioni e codici in config-dist.php (qualora si esegue un aggiornamento, occorre confrontarlo con l'attuale config-dist.php o ricostruire il proprio config.php da zero)</font></li>
+      <li><font color=red>Sono state apportate molte modifiche ai temi - gli autori di temi personalizzati dovrebbero leggere <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> </font></li>
+      <li>&Egrave; stata introdotta la nuova funzione di registrazione moodle.org per le notifiche di protezione, ecc</li>
+      <li>La directory dell'amministratore pu&ograve; essere spostata da /admin a qualcos'altro (consultare config-dist.php)</li>
+      <li>L'elenco utenti &egrave; ora paginato ed &egrave; possibile ricercarvi stringhe</li>
+      <li>Gestione del modulo: i moduli delle attivit&agrave; adesso possono essere disabilitati individualmente o completamente eliminati</li>
+      <li>Miglioramenti nella pagina di modifica delle lingue</li>
+      <li>&Egrave; stata migliorata la verifica dell'ambiente PHP durante l'installazione, con avvertimenti</li>
+      <li>Procedura di installazione pi&ugrave; semplice.</li>
+    </dd>
+    <dt> Gestione dell'utente</dt>
+    <dd> 
+      <li>Nuovo ruolo: creatore di corso - &egrave; come un docente ma &egrave; anche in grado di creare nuovi corsi</li>
+      <li>Nuovo plug-in di autenticazione denominato &quot;manuale&quot;, impedisce che gli utenti creino i propri account</li>
+      <li>La routine &quot;Forgot Password&quot; adesso utilizza una conferma di posta elettronica prima di reimpostare la password</li>
+    </dd>
+    <dt> Corsi</dt>
+    <dd> 
+      <li>Le attivit&agrave; sulla pagina dei corsi ora presentano un piccolo pulsante che consente di nascondere/mostrare quell'attivit&agrave; agli studenti</li>
+      <li>Adesso &egrave; anche possibile nascondere o mostrare interi argomenti/settimane </li>
+      <li>L'elenco dei partecipanti ora presenta una certa paginazione per far fronte a classi molto numerose</li>
+      <li>Zip/Unzip &egrave; ora supportato da una biblioteca zip interna che, per farlo, elimina la dipendenza da programmi esterni. Inoltre, ci&ograve; significa che zip/unzip ora funziona su Windows.</li>
+    </dd>
+    <dt> Compiti</dt>
+    <dd> 
+      <li>&Egrave; possibile dare un ordine all'invio dei compiti</li>
+      <li>L'e-mail di notifica del compito non &egrave; inviata agli studenti non iscritti</li>
+    </dd>
+    <dt> Forum</dt>
+    <dd> 
+      <li>La visualizzazione degli elenchi delle discussioni del forum &egrave; stata ampiamente migliorata</li>
+      <li>&Egrave; possibile spostare intere discussioni ad un altro forum con un semplice clic</li>
+      <li>La data/ora degli interventi ora corrisponde a &quot;modificato l'ultima volta&quot;, non a &quot;creato&quot;</li>
+      <li>Non &egrave; consentito inviare righe oggetto o messaggi vuoti</li>
+      <li>Parsing pi&ugrave; intelligente e visualizzazione del testo negli interventi</li>
+      <li>Iscrizione Obbligatoria ora funziona sul forum &quot;Notizie sul sito&quot; (invia messaggi di posta a tutti gli studenti/docenti attivi)</li>
+      <li>Migliore gestione della posta in uscita per impedire la possibilit&agrave; di doppie copie che si &egrave; a volte verificata con classi molto ampie.</li>
+    </dd>
+    <dt> Modulo Workshop (non incluso: sar&agrave; presto disponibile da scaricare separatamente)</dt>
+    <dd> 
+      <li>Un nuovo modulo molto interessante realizzato da Ray Kingdon</li>
+      <li>Uno strumento flessibile che implementa molti schemi relativi all'assegnazione di voti tra pari ed alla impostazione di esempi, essi coinvolgono un intero gruppo nella disamina e nell'assegnazione di voti ai lavori.</li>
+    </dd>
+    <dt> Quiz</dt>
+    <dd> 
+      <li>Nuovo tipo di domanda: Domanda Casuale (seleziona tra tutte le domande presenti nella stessa categoria)</li>
+      <li>Nuovo tipo di domanda: Domanda Abbinata (gli studenti devono abbinare le risposte alle domande) </li>
+      <li>Nuovo tipo di domanda: Risposte Brevi Abbinate Casualmente (crea Domande Abbinate in maniera casuale dalle domande Risposta Breve disponibili nella stessa categoria)</li>
+      <li>Importazione delle domande per il questionario dai file di testo (il design modulare consente l'espansione a nuovi formati - &egrave; incluso un modulo Blackboard beta)</li>
+      <li>La procedura guidata &quot;crea domande multiple&quot; consente di creare velocemente un questionario casuale</li>
+      <li>&Egrave; possibile mescolare casualmente le domande del questionario</li>
+      <li>Le risposte al questionario (a scelta multipla, ecc) possono essere mescolate a caso</li>
+      <li>&Egrave; stato corretto l'errore off-by-one che si verificava quando il pulsante &quot;Salva i Voti&quot; non era utilizzato</li>
+      <li>La seconda assegnazione del voto funziona correttamente qualora il questionario sia stato cambiato</li>
+      <li>Modificare una domanda dopo che questa &egrave; gi&agrave; stata utilizzata in un questionario non incide pi&ugrave; sui risultati del questionario</li>
+      <li>Le risposte a scelta multipla sono contrassegnate con a, b, c non con 1, 2, 3</li>
+    </dd>
+    <dt> Risorse</dt>
+    <dd> 
+      <li>Migliore prestazione quando si modifica un testo esteso o risorse HTML</li>
+      <li>Le immagini semplici ora si visualizzano centrate all'interno di una pagina web vera e propria (non grezza)</li>
+      <li>&Egrave; stato aggiunto il formato Wiki come nuova opzione per la pagina delle Risorse</li>
+    </dd>
+    <dt> Temi Personalizzati</dt>
+    <dd> 
+      <li>Sono stati aggiunti molti nuovi stili a tutti i temi incorporati. Alcuni di questi sono ESSENZIALI per la visione di alcune nuove funzioni. SI PREGA DI CONSULTARE 
+        <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> PER VISUALIZZARE LE MODIFICHE CHE OCCORRER&Agrave; APPORTARE AI TEMI PIÙ VECCHI.</li>
+      <li>I temi personalizzati adesso presentano la capacit&agrave; di ridefinire tutti i grafici dei pulsanti piccoli. C'&egrave; una nuova voce in theme/x/config.php ($THEME->custompix) ed una nuova subdirectory facoltativa &quot;pix&quot;. Consultare il Cordoroyblue del tema per un esempio.</li>
+    </dd>
+  </dl>
+</ul>
+<hr>
+
 <p>&Egrave; possibile visualizzare le versioni pi&ugrave; vecchie nel <a href="http://moodle.org/mod/forum/view.php?f=1">forum degli annunci di Moodle.org</a>.
 
 
