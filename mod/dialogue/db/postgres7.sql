@@ -28,7 +28,7 @@ CREATE TABLE prefix_dialogue (
   multipleconversations INT NOT NULL default '0',
   maildefault INT NOT NULL default '0',
   timemodified INT8  NOT NULL default '0',
-  name varchar(255) default NULL,
+  name varchar(255) NOT NULL default '',
   intro text
 ) ;
 
@@ -81,3 +81,4 @@ CREATE INDEX prefix_dialogue_entries_userid_idx ON prefix_dialogue_entries (user
 #
 
 INSERT INTO prefix_log_display VALUES ('dialogue', 'view', 'dialogue', 'name');
+

@@ -48,7 +48,18 @@
 
 
     require_variable($action); // need something to do!
-    
+
+    // vet conversation id, if present
+    if (!empty($_REQUEST['cid'])) {
+        if ($conversation = get_record("dialogue_conversations", "id", $_REQUEST['cid'])) {
+            if (($conversation->userid <> $USER->id) and ($conversation->recipientid <> $USER->id)) {
+                error("Dialogue id incorrect");
+            }
+        } else {
+            error("Dialogue: Conversation record not found");
+        }
+    }
+
     /************** close conversation ************************************/
     if ($action == 'closeconversation') {
         if (empty($_GET['cid'])) {

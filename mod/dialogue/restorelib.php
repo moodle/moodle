@@ -182,7 +182,7 @@
                 $olduserid = backup_todb($entry_info['#']['USERID']['0']['#']);
 
                 //Now, build the dialogue_ENTRIES record structure
-                $entry->dialogue = $new_dialogue_id;
+                $entry->dialogueid = $new_dialogue_id;
                 $entry->conversationid = $new_conversation_id;
                 $entry->userid = backup_todb($entry_info['#']['USERID']['0']['#']);
                 $entry->timecreated = backup_todb($entry_info['#']['TIMECREATED']['0']['#']);
