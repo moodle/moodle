@@ -1,6 +1,6 @@
 <?php
 /*
-V2.00 13 May 2002 (c) 2000-2002 John Lim. All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -123,10 +123,20 @@ class ADODB_informix72 extends ADOConnection {
 		#if ($argDatabasename) return $this->SelectDB($argDatabasename);
 		return true;
 	}
-
+/*
+	// ifx_do does not accept bind parameters - wierd ???
+	function Prepare($sql)
+	{
+		$stmt = ifx_prepare($sql);
+		if (!$stmt) return $sql;
+		else return array($sql,$stmt);
+	}
+*/
 	// returns query ID if successful, otherwise false
 	function _query($sql,$inputarr)
 	{
+	global $ADODB_COUNTRECS;
+	
       // String parameters have to be converted using ifx_create_char
       if ($inputarr) {
          foreach($inputarr as $v) {
@@ -141,7 +151,7 @@ class ADODB_informix72 extends ADOConnection {
 
       // In case of select statement, we use a scroll cursor in order
       // to be able to call "move", or "movefirst" statements
-      if (preg_match("/^[\\t\\n ]*select/i", $sql)) {
+      if ($ADODB_COUNTRECS && preg_match("/^[\\t\\n ]*select/i", $sql)) {
          if ($inputarr) {
             $this->lastQuery = ifx_query($sql,$this->_connectionID, IFX_SCROLL, $tab);
          }

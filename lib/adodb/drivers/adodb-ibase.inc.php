@@ -1,6 +1,6 @@
 <?php
 /*
-V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.  
+V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.  
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -39,7 +39,7 @@ class ADODB_ibase extends ADOConnection {
 	var $dialect = 1;
 	var $sysDate = "cast('TODAY' as date)";
 	var $sysTimeStamp = "cast('NOW' as timestamp)";
-
+	
     function ADODB_ibase() 
 	{
         ibase_timefmt('%Y-%m-%d');
@@ -83,6 +83,12 @@ class ADODB_ibase extends ADOConnection {
 		if ($this->autoCommit) $this->BeginTrans();
 		$this->Execute("UPDATE $table SET $col=$col WHERE $where "); // is this correct - jlim?
 		return 1;
+	}
+	
+	function Replace($table, $fieldArray, $keyCol,$autoQuote=false)
+	{
+		print "<p>ADOdb: Replace not supported because affected_rows does not work with Interbase</p>";
+		return 0;
 	}
 	
 	function GenID($seqname='adodbseq',$startID=1)
@@ -316,8 +322,9 @@ class ADORecordset_ibase extends ADORecordSet
         {
                  $fld = new ADOFieldObject;
                  $ibf = ibase_field_info($this->_queryID,$fieldOffset);
-                 $fld->name = strtolower($ibf['name']);
-				 if (empty($fld->name)) $fld->name = $ibf['alias'];
+			
+                 $fld->name = strtolower($ibf['alias']);
+				 if (empty($fld->name)) $fld->name = strtolower($ibf['name']);
                  $fld->type = $ibf['type'];
                  $fld->max_length = $ibf['length'];
                  if ($this->debug) print_r($fld);

@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -9,14 +9,6 @@ V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reser
   Less commonly used functions are placed here to reduce size of adodb.inc.php. 
 */ 
 
-function _adodb_totalpages(&$rs)
-{
-	if  ($rs->rowsPerPage) {
-		$rows = ($rs->RecordCount()+$rs->rowsPerPage-1) / $rs->rowsPerPage;
-		if ($rows < 0) return -1;
-		else return $rows;
-	} else return -1;
-}
 
 // Requires $ADODB_FETCH_MODE = ADODB_FETCH_NUM
 function _adodb_getmenu(&$zthis, $name,$defstr='',$blank1stItem=true,$multiple=false,
@@ -30,38 +22,43 @@ function _adodb_getmenu(&$zthis, $name,$defstr='',$blank1stItem=true,$multiple=f
 		if (!strpos($name,'[]')) $name .= '[]';
 	} else if ($size) $attr = " size=$size";
 	else $attr ='';
-	
-			
+
 	$s = "<select name=\"$name\"$attr $selectAttr>";
 	if ($blank1stItem) $s .= "\n<option></option>";
 
 	if ($zthis->FieldCount() > 1) $hasvalue=true;
 	else $compareFields0 = true;
 	
+	$value = '';
 	while(!$zthis->EOF) {
-		$zval = trim($zthis->fields[0]);
-		$selected = trim($zthis->fields[$compareFields0 ? 0 : 1]);
+		$zval = trim(reset($zthis->fields));
+		if (sizeof($zthis->fields) > 1) {
+			if (isset($zthis->fields[1]))
+				$zval2 = trim($zthis->fields[1]);
+			else
+				$zval2 = trim(next($zthis->fields));
+		}
+		$selected = ($compareFields0) ? $zval : $zval2;
 		
 		if ($blank1stItem && $zval=="") {
 			$zthis->MoveNext();
 			continue;
 		}
 		if ($hasvalue) 
-			$value = 'value="'.htmlspecialchars(trim($zthis->fields[1])).'"';
-		
+			$value = ' value="'.htmlspecialchars($zval2).'"';
 		
 		if (is_array($defstr))  {
 			
 			if (in_array($selected,$defstr)) 
-				$s .= "<option selected $value>".htmlspecialchars($zval).'</option>';
+				$s .= "<option selected$value>".htmlspecialchars($zval).'</option>';
 			else 
-				$s .= "\n<option ".$value.'>'.htmlspecialchars($zval).'</option>';
+				$s .= "\n<option".$value.'>'.htmlspecialchars($zval).'</option>';
 		}
 		else {
 			if (strcasecmp($selected,$defstr)==0) 
-				$s .= "<option selected $value>".htmlspecialchars($zval).'</option>';
+				$s .= "<option selected$value>".htmlspecialchars($zval).'</option>';
 			else 
-				$s .= "\n<option ".$value.'>'.htmlspecialchars($zval).'</option>';
+				$s .= "\n<option".$value.'>'.htmlspecialchars($zval).'</option>';
 		}
 		$zthis->MoveNext();
 	} // while
@@ -69,7 +66,106 @@ function _adodb_getmenu(&$zthis, $name,$defstr='',$blank1stItem=true,$multiple=f
 	return $s ."\n</select>\n";
 }
 
-function &_adodb_pageexecute(&$zthis, $sql, $nrows, $page, $inputarr=false, $arg3=false, $secs2cache=0) 
+/*
+ 	Code originally from "Cornel G" <conyg@fx.ro>
+
+	This code will not work with SQL that has UNION in it	
+	
+	Also if you are using CachePageExecute(), there is a strong possibility that
+	data will get out of synch. use CachePageExecute() only with tables that
+	rarely change.
+*/
+function &_adodb_pageexecute_all_rows(&$zthis, $sql, $nrows, $page, 
+						$inputarr=false, $arg3=false, $secs2cache=0) 
+{
+	$atfirstpage = false;
+	$atlastpage = false;
+	$lastpageno=1;
+
+	// If an invalid nrows is supplied, 
+	// we assume a default value of 10 rows per page
+	if (!isset($nrows) || $nrows <= 0) $nrows = 10;
+
+	$qryRecs = false; //count records for no offset
+	
+	// jlim - attempt query rewrite first
+	$rewritesql = preg_replace(
+		'/^\s*SELECT\s.*\sFROM\s/is','SELECT COUNT(*) FROM ',$sql);
+		
+	if ($rewritesql != $sql){
+		
+		// fix by alexander zhukov, alex#unipack.ru, because count(*) and 'order by' fails 
+		// with mssql, access and postgresql
+		$rewritesql = preg_replace('/(\sORDER\s+BY\s.*)/is','',$rewritesql); 
+		
+		if ($secs2cache) {
+			// we only use half the time of secs2cache because the count can quickly
+			// become inaccurate if new records are added
+			$rs = $zthis->CacheExecute($secs2cache/2,$rewritesql);
+			if ($rs) {
+				if (!$rs->EOF) $qryRecs = reset($rs->fields);
+				$rs->Close();
+			}
+		} else $qryRecs = $zthis->GetOne($rewritesql);
+      	if ($qryRecs !== false)
+	   		$lastpageno = (int) ceil($qryRecs / $nrows);
+	}
+	
+	// query rewrite failed - so try slower way...
+	if ($qryRecs === false) {
+		$rstest = &$zthis->Execute($sql);
+		if ($rstest) {
+	        //save total records
+	   	    $qryRecs = $rstest->RecordCount();
+			if ($qryRecs == -1)
+				if (!$rstest->EOF) {
+					$rstest->MoveLast();
+					$qryRecs = $zthis->_currentRow;
+				} else
+					$qryRecs = 0;
+					
+	       	$lastpageno = (int) ceil($qryRecs / $nrows);
+		}
+		if ($rstest) $rstest->Close();
+	}
+	
+	$zthis->_maxRecordCount = $qryRecs;
+    
+	// If page number <= 1, then we are at the first page
+	if (!isset($page) || $page <= 1) {	
+		$page = 1;
+		$atfirstpage = true;
+	}
+
+	// ***** Here we check whether $page is the last page or 
+	// whether we are trying to retrieve 
+	// a page number greater than the last page number.
+	if ($page >= $lastpageno) {
+		$page = $lastpageno;
+		$atlastpage = true;
+	}
+	
+	// We get the data we want
+	$offset = $nrows * ($page-1);
+	if ($secs2cache > 0) 
+		$rsreturn = &$zthis->CacheSelectLimit($secs2cache, $sql, $nrows, $offset, $inputarr, $arg3);
+	else 
+		$rsreturn = &$zthis->SelectLimit($sql, $nrows, $offset, $inputarr, $arg3, $secs2cache);
+
+	
+	// Before returning the RecordSet, we set the pagination properties we need
+	if ($rsreturn) {
+		$rsreturn->rowsPerPage = $nrows;
+		$rsreturn->AbsolutePage($page);
+		$rsreturn->AtFirstPage($atfirstpage);
+		$rsreturn->AtLastPage($atlastpage);
+		$rsreturn->LastPageNo($lastpageno);
+	}
+	return $rsreturn;
+}
+
+// Iván Oliva version
+function &_adodb_pageexecute_no_last_page(&$zthis, $sql, $nrows, $page, $inputarr=false, $arg3=false, $secs2cache=0) 
 {
 
 	$atfirstpage = false;

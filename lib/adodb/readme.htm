@@ -12,7 +12,7 @@
 <body bgcolor="#FFFFFF">
 
 <h2>ADOdb Library for PHP</h2>
-<p>V2.00 13 May 2002 (c) 2000-2002 John Lim (<a href="mailto:jlim@natsoft.com.my">jlim@natsoft.com.my</a>)</p>
+<p>V2.12 12 June 2002 (c) 2000-2002 John Lim (<a href="mailto:jlim@natsoft.com.my">jlim@natsoft.com.my</a>)</p>
 <p>This software is dual licensed using BSD-Style and LGPL. 
 Where there is any discrepancy, the BSD-Style license will take precedence. 
 This means you can use it in proprietary and commercial products.</p>
@@ -20,7 +20,7 @@ This means you can use it in proprietary and commercial products.</p>
  <a href="#features">Unique Features</a><br>
  <a href="#users">How People are using ADOdb</a><br>
  <a href="#bugs">Feature Requests and Bug Reports</a><br>
- </b><b><a href="#install">Installation<br>
+ </b><b><a href="#install">Installation<br>R
  </a><a href="#coding">Initializing Code</a></b> 
  <font size="2"><a href=#adonewconnection>ADONewConnection</a></font>
   <font size="2"><a href=#adonewconnection>NewADOConnection</a></font><br>
@@ -45,8 +45,8 @@ This means you can use it in proprietary and commercial products.</p>
   Executing SQL: <a href="#execute">Execute</a> <a href="#cacheexecute">CacheExecute</a> 
   <a href="#SelectLimit">SelectLimit</a> <a href="#cacheSelectLimit">CacheSelectLimit</a> 
   <a href="#prepare">Prepare</a> <a href=#preparesp>PrepareSP</a> <a href="#parameter">Parameter</a> 
-  <a href="#getone">GetOne</a> <a href="#getrow">GetRow</a><br>
-  Generate Updates/Inserts: <a href="#getupdatesql">GetUpdateSQL</a> <a href="#getinsertsql">GetInsertSQL</a></font><font size="2"><br>
+  <a href="#getone">GetOne</a> <a href="#getrow">GetRow</a> <a href="#replace">Replace</a> <br>
+  Generates SQL: <a href="#getupdatesql">GetUpdateSQL</a> <a href="#getinsertsql">GetInsertSQL</a></font><font size="2"><br>
   Blobs: <a href="#updateblob">UpdateBlob</a> <a href="#updateclob">UpdateClob</a> 
   <a href="#updateblobfile">UpdateBlobFile</a> <br>
   Paging/Scrolling: <a href="#pageexecute">PageExecute</a> <a href="#cachepageexecute">CachePageExecute</a><br>
@@ -54,7 +54,7 @@ This means you can use it in proprietary and commercial products.</p>
   Transactions: <a href="#begintrans">BeginTrans</a> <a href="#committrans">CommitTrans</a> 
   <a href="#rollbacktrans">RollbackTrans</a> <br>
   Fetching Data: <a href="#adodb_fetch_mode">$ADODB_FETCH_MODE</a></font> <br>
-  Strings: <a href="#concat">Concat</a> <a href="#qstr">qstr</a> <br>
+  Strings: <a href="#concat">concat</a> <a href="#qstr">qstr</a> <a href="#quote">quote</a><br>
   Dates: <a href="#dbdate">DBDate</a> <a href="#dbtimestamp">DBTimeStamp</a> <a href="#unixdate">UnixDate</a> 
   <a href="#unixtimestamp">UnixTimeStamp</a><br>
   Rows Management: <a href="#affected_rows">Affected_Rows</a> <a href="#inserted_id">Insert_ID</a> 
@@ -733,50 +733,85 @@ $conn->Close();
 ?>
 </pre>
 <h3>Example 8: Implementing Scrolling with Next and Previous<a name="ex8"></a></h3>
-<p>
-Code and idea by Iv&aacute;n Oliva ivan.oliva#amena.com. <p>
-We use the HTTP Get variable $next_page to keep track of what page to go next and
- store the current page in the session variable $curr_page.
-<p>
-We call the connection object's PageExecute() function to generate the appropriate recordset, 
-then use the recordset's AtFirstPage() and AtLastPage() functions to determine 
-whether to display the next and previous buttons. <p>
-
+<p> The following code creates a very simple recordset pager, where you can scroll 
+  from page to page of a recordset.</p>
+  
 <pre>
-&lt;?php
-include_once('adodb.inc.php');
-include_once('tohtml.inc.php');
-<b>session_register('curr_page');</b>
+include_once('../adodb.inc.php');
+include_once('../adodb-pager.inc.php');
+session_start();
 
 $db = NewADOConnection('mysql');
+
 $db->Connect('localhost','root','','xphplens');
-<b>$num_of_rows_per_page = 10;
-$sql = 'select * from products';
 
-if (isset($HTTP_GET_VARS['next_page']))
-	$curr_page = $HTTP_GET_VARS['next_page'];
-if (empty($curr_page)) $curr_page = 1; ## at first page</b><b>
+$sql = "select * from adoxyz ";
 
-$rs = $db->PageExecute($sql, $num_of_rows_per_page, $curr_page);</b>
-if (!$rs) die('Query Failed');
+$pager = new ADODB_Pager($db,$sql);
+$pager->Render($rows_per_page=5);</pre>
+<p>This will create a basic record pager that looks like this: <a name=scr></a>
+<p>
+<table border=1 bgcolor=beige><tr>
+	<td> <a href="#scr"><code>|&lt;</code></a> &nbsp; <a href="#scr"><code>&lt;&lt;</code></a> 
+	  &nbsp; <a href="#scr"><code>>></code></a> &nbsp; <a href="#scr"><code>>|</code></a> 
+	  &nbsp; </td>
+  </tr><tr><td><TABLE COLS=4 width=100% border=1 bgcolor=white>
 
-if (!$rs->EOF && (!$rs-><b>AtFirstPage</b>() || !$rs-><b>AtLastPage</b>())) &#123;
-	if (!$rs-><b>AtFirstPage</b>()) &#123;
-?>
-&lt;a href="&lt;?php echo $PHPSELF,'?next_page=',$rs-><b>AbsolutePage</b>() - 1 ?>">Previous page&lt;/a>
-&lt;?php
-	&#125;
-	if (!$rs-><b>AtLastPage</b>()) &#123;
-?>
-&lt;a href="&lt;?php echo $PHPSELF,'?next_page=',$rs-><b>AbsolutePage</b>() + 1 ?>">Next page&lt;/a>
-&lt;?php
-	&#125;
-	rs2html($rs);
-&#125;
-?>
-</pre>
-The above code can be found in the <i>testpaging.php</i> example included with 
-this release.
+<TH>ID</TH><TH>First Name</TH><TH>Last Name</TH><TH>Date Created</TH>
+
+<TR>
+	<TD align=right>36&nbsp;</TD>
+	<TD>Alan&nbsp;</TD>
+	<TD>Turing&nbsp;</TD>
+	<TD>Sat 06, Oct 2001&nbsp;</TD>
+</TR>
+
+<TR>
+	<TD align=right>37&nbsp;</TD>
+	<TD>Serena&nbsp;</TD>
+	<TD>Williams&nbsp;</TD>
+	<TD>Sat 06, Oct 2001&nbsp;</TD>
+</TR>
+
+<TR>
+	<TD align=right>38&nbsp;</TD>
+	<TD>Yat Sun&nbsp;</TD>
+	<TD>Sun&nbsp;</TD>
+	<TD>Sat 06, Oct 2001&nbsp;</TD>
+</TR>
+
+<TR>
+	<TD align=right>39&nbsp;</TD>
+	<TD>Wai Hun&nbsp;</TD>
+	<TD>See&nbsp;</TD>
+	<TD>Sat 06, Oct 2001&nbsp;</TD>
+</TR>
+
+<TR>
+	<TD align=right>40&nbsp;</TD>
+	<TD>Steven&nbsp;</TD>
+	<TD>Oey&nbsp;</TD>
+	<TD>Sat 06, Oct 2001&nbsp;</TD>
+</TR>
+
+</TABLE>
+
+</td></tr><tr><td><font size=-1>Page 8/10</font></td></tr></table>
+<p>The number of rows to display at one time is controled by the Render($rows) 
+  method. If you do not pass any value to Render(), ADODB_Pager will default to 
+  10 records per page. 
+<p>You can control the column titles by modifying your SQL (supported by most 
+  databases):
+<pre>$sql = 'select id as &quot;ID&quot;, firstname as &quot;First Name&quot;, 
+          lastname as &quot;Last Name&quot;, created as &quot;Date Created&quot; <br>        from adoxyz';</pre>
+<p>The above code can be found in the <i>adodb/tests/testpaging.php</i> example 
+  included with this release, and the class ADODB_Pager in <i>adodb/adodb-pager.inc.php</i>. 
+  The ADODB_Pager code can be adapted by a programmer so that the text links can 
+  be replaced by images, and the dull white background be replaced with more interesting 
+  colors.
+<p>Some of the code used here was contributed by Iv&aacute;n Oliva and Cornel 
+  G. </p>
+<p> 
 <h2><a name="errorhandling"></a>Using Custom Error Handlers and PEAR_Error</h2>
 Apart from the old $con->debug = true; way of debugging, ADOdb 1.50 onwards provides 
 another way of handling errors using ADOdb's custom error handlers. 
@@ -915,7 +950,7 @@ CacheExecute(). If you leave it out, it will use the $connection->cacheSecs para
 to 60 minutes.
 <pre>
 	$conn->Connect(...);
-	$conn->cacheSecs = 3600*24; // cache 24 hours
+	$conn->cacheSecs = 3600*24; # cache 24 hours
 	$rs = $conn->CacheExecute('select * from table');
 </pre>
 <font color="#000000"> 
@@ -1006,14 +1041,16 @@ to 60 minutes.
 <p><b>autoCommit</b>: indicates whether automatic commit is enabled. Default is 
   true.</p>
 <p><b>charSet</b>: set the default charset to use. Currently only interbase supports 
-  this. </p>
+  this.</p>
+<p><b>dialect</b>: set the default sql dialect to use. Currently only interbase supports
+this.</p>
 <p><b>metaTablesSQL</b>: SQL statement to return a list of available tables. Eg. 
   <i>SHOW TABLES</i> in MySQL.</p>
 <p><b>genID</b>: The latest id generated by GenID() if supported by the database.</p>
 <p><b>cacheSecs</b>: The number of seconds to cache recordsets if CacheExecute() 
   or CacheSelectLimit() do not define the $secs2cache parameter.</p>
-<p><b>sysDate</b>: The database function to call to get the current date and time 
-  using the native date/timestamp type.</p>
+<p><b>sysDate</b>: String that holds the name of the database function to call to get the current date. Useful for inserts and updates.</p>
+<p><b>sysTimeStamp</b>: String that holds the name of the database function to call to get the current timestamp/datetime value.</p>
 <hr>
 <h3>ADOConnection Main Functions</h3>
 <p><b>ADOConnection( )</b></p>
@@ -1243,7 +1280,41 @@ Similar to UpdateBlob (see above), but for Character Large OBjects.
 <p><b>UpdateBlobFile<a name="updateblobfile"></a>($table,$column,$path,$where,$blobtype='BLOB')</b></p>
 <p>Similar to UpdateBlob, except that we pass in a file path to where the blob 
   resides. 
-<p>returns true if successful, false otherwise. 
+<p>returns true if successful, false otherwise.
+<p><b>Replace<a name="replace"></a>($table, $arrFields, $keyCols,$autoQuote=false)</b></p>
+<p>Try to update a record, and if the record is not found,
+an insert statement is generated and executed. 
+Returns 0 on failure, 1 if update statement worked, 2 if no record
+was found and the insert was executed successfully. This differs from the MySQL replace which deletes
+the record and inserts a new record. This also means you cannot update the primary key.
+<p>The parameters are $table which is the table name, the $keyCols which is an associative array where
+the keys are the field names, and keyCols is the name of the primary key, or an array of field names if
+it is a compound key. If $autoQuote is set to true, then Replace() will quote all values that are non-numeric; 
+auto-quoting will not quote nulls. Note that auto-quoting will not work if you use SQL functions or operators.
+<p>Examples:
+<pre>
+# single field primary key
+$ret = $db->Replace('atable', 
+	array('id'=>1000,'firstname'=>'Harun','lastname'=>'Al-Rashid'),
+	'id',
+	'firstname',$autoquote = true);	
+# generates UPDATE atable SET firstname='Harun',lastname='Al-Rashid' WHERE id=1000
+# or INSERT INTO atable (id,firstname,lastname) VALUES (1000,'Harun','Al-Rashid')
+
+# compound key
+$ret = $db->Replace('atable2', 
+	array('firstname'=>'Harun','lastname'=>'Al-Rashid', 'age' => 33, 'birthday' => 'null'),
+	array('lastname','firstname'),
+	'firstname',$autoquote = true);
+
+# no auto-quoting
+$ret = $db->Replace('atable2', 
+	array('firstname'=>"'Harun'",'lastname'=>"'Al-Rashid'", 'age' => 'null'),
+	array('lastname','firstname'),
+	'firstname');	
+
+</pre>
+
 <p><b>GetUpdateSQL<a name="getupdatesql"></a>(&$rs, $arrFields, $forceUpdate=false,$magicq=false)</b></p>
 <p>Generate SQL to update a table given a recordset $rs, and the modified fields 
   of the array $arrFields (which must be an associative array holding the column 
@@ -1447,6 +1518,9 @@ for ($i = 0; $i &lt; $max; $i++) {
   and once by the <i>magic_quotes_gpc</i>.</p>
 <p>Eg.<font face="Courier New, Courier, mono"> $s = $db-&gt;qstr(HTTP_GET_VARS['name'],get_magic_quotes_gpc());</font></p>
 <p>Returns the quoted string.</p>
+<p><b>Quote<a name="quote"></a>($s)</b></p>
+<p>Quotes the string, automatically checking get_magic_quotes_gpc() first. 
+If get_magic_quotes_gpc() is set, then we do not quote the string.
 <p><b>Affected_Rows<a name="Affected_Rows"></a>( )</b></p>
 <p>Returns the number of rows affected by a update or delete statement. Returns 
   false if function not supported.</p>
@@ -1829,9 +1903,42 @@ $<font color="#663300">rs</font>   = $<font color="#663300">conn</font>->Execute
 <h2>ToDo:</h2>
 <p>See the <a href=http://php.weblogs.com/adodb-todo-roadmap>RoadMap</a> article.</p>
 <p>Also see the ADOdb <a href=http://php.weblogs.com/adodb_csv>proxy</a> article 
-  for bridging Windows and Unix databases using http remote procedure calls.</p>
+  for bridging Windows and Unix databases using http remote procedure calls. For
+  your education, visit <a href=http://palslib.com/>palslib.com</a> for database info,
+  and read this article 
+  on <a href=http://phplens.com/lens/php-book/optimizing-debugging-php.php>Optimizing PHP</a>.
+</p>
 </font>
 <h2>Change Log<a name="Changes"></a><a name=ChangeLog></a></h2>
+<p><b>2.12 12 June 2002</b></p>
+<p>Added toexport.inc.php to export recordsets in CSV and tab-delimited format.
+<p>CachePageExecute() does not work - fixed - thx John Huong.
+<p>Interbase aliases not set properly in FetchField() - fixed. Thx Stefan Goethals.
+<p>Added cache property to adodb pager class. The number of secs to cache recordsets.
+<p>SQL rewriting bug in pageexecute() due to skipping of newlines due to missing /s modifier. Fixed.
+<p>Max size of cached recordset due to a bug was 256000 bytes. Fixed.
+<p>Speedup of 1st invocation of CacheExecute() by tuning code.
+<p>We compare $rewritesql with $sql in pageexecute code in case of rewrite failure.
+<p><b>2.11 7 June 2002</b></p>
+<p>Fixed PageExecute() rewrite sql problem - COUNT(*) and ORDER BY don't go together with
+	mssql, access and postgres. Thx to Alexander Zhukov alex#unipack.ru
+<p>DB2 support for CHARACTER type added - thx John Huong huongch#bigfoot.com
+<p>For ado, $argProvider not properly checked. Fixed - kalimero#ngi.it
+<p>Added $conn->Replace() function for update with automatic insert if the record does not exist. 
+	Supported by all databases except interbase.
+<p><b>2.10 4 June 2002</b></p>
+<p>Added uniqueSort property to indicate mssql ORDER BY cols must be unique.
+<p>Optimized session handler by crc32 the data. We only write if session data has changed.
+<p>adodb_sess_read in adodb-session.php now returns ''correctly - thanks to Jorma Tuomainen, webmaster#wizactive.com
+<p>Mssql driver did not throw EXECUTE errors correctly because ErrorMsg() and ErrorNo() called in wrong order. 
+Pointed out by Alexios Fakos. Fixed.
+<p>Changed ado to use client cursors. This fixes BeginTran() problems with ado.
+<p>Added handling of timestamp type in ado.
+<p>Added to ado_mssql support for insert_id() and affected_rows().
+<p>Added support for mssql.datetimeconvert=0, available since php 4.2.0.
+<p>Made UnixDate() less strict, so that the time is ignored if present.
+<p>Changed quote() so that it checks for magic_quotes_gpc.
+<p>Changed maxblobsize for odbc to default to 64000.
 <p><b>2.00 13 May 2002</b></p>
 <p>Added drivers <i>informix72</i> for pre-7.3 versions, and <i>oci805</i> for 
   oracle 8.0.5, and postgres64 for postgresql 6.4 and earlier. The postgres and postgres7 drivers

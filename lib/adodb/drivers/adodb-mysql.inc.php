@@ -1,6 +1,6 @@
 <?php
 /*
-V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -29,6 +29,7 @@ class ADODB_mysql extends ADOConnection {
 	var $isoDates = true; // accepts dates in ISO format
 	var $sysDate = 'CURDATE()';
 	var $sysTimeStamp = 'NOW()';
+	var $forceNewConnect = false;
 	
 	function ADODB_mysql() 
 	{			
@@ -104,7 +105,10 @@ class ADODB_mysql extends ADOConnection {
 	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		$this->_connectionID = mysql_connect($argHostname,$argUsername,$argPassword);
+		if ($this->forceNewConnect && (strnatcmp(PHP_VERSION,'4.2.0')>=0))
+			$this->_connectionID = mysql_connect($argHostname,$argUsername,$argPassword,true);
+		else
+			$this->_connectionID = mysql_connect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
 		if ($argDatabasename) return $this->SelectDB($argDatabasename);
 		return true;	
@@ -295,9 +299,11 @@ class ADORecordSet_mysql extends ADORecordSet{
 		$this->_numOfFields = @mysql_num_fields($this->_queryID);
 	}
 	
-	function &FetchField($fieldOffset = -1) {
+	function &FetchField($fieldOffset = -1) 
+	{	
+	
 		if ($fieldOffset != -1) {
-			$o =  @mysql_fetch_field($this->_queryID, $fieldOffset);
+			$o =  mysql_fetch_field($this->_queryID, $fieldOffset);
 			$f = @mysql_field_flags($this->_queryID,$fieldOffset);
 			$o->max_length = @mysql_field_len($this->_queryID,$fieldOffset); // suggested by: Jim Nicholson (jnich@att.com)
 			//$o->max_length = -1; // mysql returns the max length less spaces -- so it is unrealiable
@@ -308,7 +314,7 @@ class ADORecordSet_mysql extends ADORecordSet{
 			$o->max_length = @mysql_field_len($this->_queryID); // suggested by: Jim Nicholson (jnich@att.com)
 			//$o->max_length = -1; // mysql returns the max length less spaces -- so it is unrealiable
 		}
-		
+			
 		return $o;
 	}
 

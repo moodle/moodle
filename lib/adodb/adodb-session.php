@@ -1,12 +1,10 @@
 <?php
 /*
-V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
-	Made table name configurable - by David Johnson djohnson@inpro.net
-
-  Set tabs to 4 for best viewing.
+	  Set tabs to 4 for best viewing.
   
   Latest version of ADODB is available at http://php.weblogs.com/adodb
   ======================================================================
@@ -28,8 +26,7 @@ wrapper library.
  
  Installation
  ============
- 1. Create a new database in MySQL or Access "sessions" like
-so:
+ 1. Create this table in your database (syntax might vary depending on your db):
  
   create table sessions (
        SESSKEY char(32) not null,
@@ -37,7 +34,8 @@ so:
        DATA text not null,
       primary key (sesskey)
   );
-  
+
+
   2. Then define the following parameters in this file:
   	$ADODB_SESSION_DRIVER='database driver, eg. mysql or ibase';
 	$ADODB_SESSION_CONNECT='server to connect to';
@@ -46,22 +44,22 @@ so:
 	$ADODB_SESSION_DB ='database';
 	$ADODB_SESSION_TBL = 'sessions'
 	
-  3. Recommended is PHP 4.0.2 or later. There are documented
-session bugs in 
-     earlier versions of PHP.
+  3. Recommended is PHP 4.0.6 or later. There are documented
+     session bugs in earlier versions of PHP.
 
 */
 
 if (!defined('_ADODB_LAYER')) {
-	include ('adodb.inc.php');
+	include (dirname(__FILE__).'/adodb.inc.php');
 }
-
-
 
 if (!defined('ADODB_SESSION')) {
 
  define('ADODB_SESSION',1);
- 
+
+/****************************************************************************************\
+	Global definitions
+\****************************************************************************************/
 GLOBAL 	$ADODB_SESSION_CONNECT, 
 	$ADODB_SESSION_DRIVER,
 	$ADODB_SESSION_USER,
@@ -70,29 +68,40 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESS_CONN,
 	$ADODB_SESS_LIFE,
 	$ADODB_SESS_DEBUG,
-	$ADODB_SESS_INSERT; 
-
+	$ADODB_SESS_INSERT, 
+	$ADODB_SESSION_CRC;
+	
+	$ADODB_SESS_LIFE = get_cfg_var('session.gc_maxlifetime');
+	if ($ADODB_SESS_LIFE <= 1) {
+	 // bug in PHP 4.0.3 pl 1  -- how about other versions?
+	 //print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>";
+	 	$ADODB_SESS_LIFE=1440;
+	}
+	$ADODB_SESSION_CRC = false;
 	//$ADODB_SESS_DEBUG = true;
 	
+	//////////////////////////////////
 	/* SET THE FOLLOWING PARAMETERS */
-if (empty($ADODB_SESSION_DRIVER)) {
-	$ADODB_SESSION_DRIVER='mysql';
-	$ADODB_SESSION_CONNECT='localhost';
-	$ADODB_SESSION_USER ='root';
-	$ADODB_SESSION_PWD ='';
-	$ADODB_SESSION_DB ='xphplens_2';
-}
-if (empty($ADODB_SESSION_TBL)){
-	$ADODB_SESSION_TBL = 'sessions';
-}
+	//////////////////////////////////
+	
+	if (empty($ADODB_SESSION_DRIVER)) {
+		$ADODB_SESSION_DRIVER='mysql';
+		$ADODB_SESSION_CONNECT='localhost';
+		$ADODB_SESSION_USER ='root';
+		$ADODB_SESSION_PWD ='';
+		$ADODB_SESSION_DB ='xphplens_2';
+	}
+	
+	//  Made table name configurable - by David Johnson djohnson@inpro.net
+	if (empty($ADODB_SESSION_TBL)){
+		$ADODB_SESSION_TBL = 'sessions';
+	}
 
-$ADODB_SESS_LIFE = get_cfg_var('session.gc_maxlifetime');
-if ($ADODB_SESS_LIFE <= 1) {
-	// bug in PHP 4.0.3 pl 1  -- how about other versions?
-	//print "<h3>Session Error: PHP.INI setting <i>session.gc_maxlifetime</i>not set: $ADODB_SESS_LIFE</h3>";
-	$ADODB_SESS_LIFE=1440;
-}
-
+/****************************************************************************************\
+	Create the connection to the database. 
+	
+	If $ADODB_SESS_CONN already exists, reuse that connection
+\****************************************************************************************/
 function adodb_sess_open($save_path, $session_name,$persist=true) 
 {
 GLOBAL $ADODB_SESS_CONN;
@@ -106,18 +115,23 @@ GLOBAL 	$ADODB_SESSION_CONNECT,
 	$ADODB_SESSION_DB,
 	$ADODB_SESS_DEBUG;
 	
+	// cannot use & below - do not know why...
 	$ADODB_SESS_CONN = ADONewConnection($ADODB_SESSION_DRIVER);
 	if (!empty($ADODB_SESS_DEBUG)) {
 		$ADODB_SESS_CONN->debug = true;
-		print" conn=$ADODB_SESSION_CONNECT user=$ADODB_SESSION_USER pwd=$ADODB_SESSION_PWD db=$ADODB_SESSION_DB ";
+		print " conn=$ADODB_SESSION_CONNECT user=$ADODB_SESSION_USER pwd=$ADODB_SESSION_PWD db=$ADODB_SESSION_DB ";
 	}
-	if ($persist) $ADODB_SESS_CONN->PConnect($ADODB_SESSION_CONNECT,
+	if ($persist) $ok = $ADODB_SESS_CONN->PConnect($ADODB_SESSION_CONNECT,
 			$ADODB_SESSION_USER,$ADODB_SESSION_PWD,$ADODB_SESSION_DB);
-	else $ADODB_SESS_CONN->Connect($ADODB_SESSION_CONNECT,
+	else $ok = $ADODB_SESS_CONN->Connect($ADODB_SESSION_CONNECT,
 			$ADODB_SESSION_USER,$ADODB_SESSION_PWD,$ADODB_SESSION_DB);
 	
+	if (!$ok) print "<p>Session: connection failed</p>";
 }
 
+/****************************************************************************************\
+	Close the connection
+\****************************************************************************************/
 function adodb_sess_close() 
 {
 global $ADODB_SESS_CONN;
@@ -126,10 +140,14 @@ global $ADODB_SESS_CONN;
 	return true;
 }
 
+/****************************************************************************************\
+	Slurp in the session variables and return the serialized string
+\****************************************************************************************/
 function adodb_sess_read($key) 
 {
-global $ADODB_SESS_CONN,$ADODB_SESS_INSERT,$ADODB_SESSION_TBL;
-	$ADODB_SESS_INSERT = false;
+global $ADODB_SESS_CONN,$ADODB_SESS_INSERT,$ADODB_SESSION_TBL,$ADODB_SESSION_CRC;
+
+	$ADODB_SESS_INSERT = false;	
 	$rs = $ADODB_SESS_CONN->Execute("SELECT data FROM $ADODB_SESSION_TBL WHERE sesskey = '$key' AND expiry >= " . time());
 	if ($rs) {
 		if ($rs->EOF) {
@@ -139,19 +157,38 @@ global $ADODB_SESS_CONN,$ADODB_SESS_INSERT,$ADODB_SESSION_TBL;
 			$v = rawurldecode(reset($rs->fields));
 			
 		$rs->Close();
+		
+		// new optimization adodb 2.1
+		$ADODB_SESSION_CRC = crc32($v);
+		
 		return $v;
 	}
 	else $ADODB_SESS_INSERT = true;
 	
-	return false;
+	return ''; // thx to Jorma Tuomainen, webmaster#wizactive.com
 }
 
+/****************************************************************************************\
+	Write the serialized data to a database.
+	
+	If the data has not been modified since adodb_sess_read(), we do not write.
+\****************************************************************************************/
 function adodb_sess_write($key, $val) 
 {
-	global $ADODB_SESS_INSERT,$ADODB_SESS_CONN, $ADODB_SESS_LIFE, $ADODB_SESSION_TBL;
+	global $ADODB_SESS_INSERT,
+		$ADODB_SESS_CONN, 
+		$ADODB_SESS_LIFE, 
+		$ADODB_SESSION_TBL,
+		$ADODB_SESS_DEBUG, 
+		$ADODB_SESSION_CRC;
 
 	$expiry = time() + $ADODB_SESS_LIFE;
 	
+	// new optimization adodb 2.1
+	if ($ADODB_SESSION_CRC !== false && $ADODB_SESSION_CRC == crc32($val)) {
+		if ($ADODB_SESS_DEBUG) echo "<p>Session: No need to update - crc32 not changed</p>";
+		return true;
+	}
 	$val = rawurlencode($val);
 	$qry = "UPDATE $ADODB_SESSION_TBL SET expiry=$expiry,data='$val' WHERE sesskey='$key'";
 	$rs = $ADODB_SESS_CONN->Execute($qry);
@@ -180,7 +217,8 @@ function adodb_sess_destroy($key)
 	return $rs ? true : false;
 }
 
-function adodb_sess_gc($maxlifetime) {
+function adodb_sess_gc($maxlifetime) 
+{
 	global $ADODB_SESS_CONN, $ADODB_SESSION_TBL,$ADODB_SESSION_DRIVER;
 
 	$qry = "DELETE FROM $ADODB_SESSION_TBL WHERE expiry < " . time();

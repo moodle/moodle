@@ -1,6 +1,6 @@
 <?php
 /*
-V2.00 13 May 2002 (c) 2000-2002 John Lim. All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -37,7 +37,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $dataProvider = 'oci8';
     var $replaceQuote = "''"; // string to use to replace quotes
     var $concat_operator='||';
-	var $sysDate = "TO_DATE(TO_CHAR(SYSDATE,'YYYY-MM-DD'),'YYYY-MM-DD')";
+	var $sysDate = "TRUNC(SYSDATE)";
 	var $sysTimeStamp = 'SYSDATE';
 	
 	var $_stmt;
@@ -594,6 +594,7 @@ NATSOFT.DOMAIN =
 			return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
 		}
 	}
+	
 }
 
 /*--------------------------------------------------------------------------------------
@@ -631,22 +632,12 @@ class ADORecordset_oci8 extends ADORecordSet {
 		$this->fields = array();
 		
 		if ($this->_queryID) {
-		/*
-			if ($this->connection->_getarray) { 
-				if ($this->connection->_hasOCIFetchStatement) {
-					$arr = array();
-					if (OCIFetchStatement($this->_queryID,$arr,0,(integer)-1,OCI_FETCHSTATEMENT_BY_ROW|$this->fetchMode)) {
-						$this->_arr = $arr;
-					}
-					$this->EOF = false;
-				}
-			} else */
-			{		
-				$this->EOF = !$this->_fetch(); 			
-				$this->_currentRow = 0;
-			}
-		
+						
+			$this->_currentRow = 0;
+			
 			@$this->_initrs();
+			
+			$this->EOF = !$this->_fetch(); 	
 		
 		} else {
 			$this->_numOfRows = 0;

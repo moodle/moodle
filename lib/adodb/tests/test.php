@@ -1,7 +1,7 @@
 <?php
 
 /* 
-V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -86,8 +86,8 @@ GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COU
 	print "<h3>ADODB Version: $ADODB_vers Host: <i>$db->host</i> &nbsp; Database: <i>$db->database</i> &nbsp; PHP: $phpv</h3>";
 	$e = error_reporting(E_ALL-E_WARNING);
 	
-	
-	print "<i>date1</i> (1999-02-20) = ".$db->DBDate('1999-2-20');
+	print "<i>date1</i> (1969-02-20) = ".$db->DBDate('1969-2-20');
+	print "<br><i>date1</i> (1999-02-20) = ".$db->DBDate('1999-2-20');
 	print "<br><i>date2</i> (1970-1-2) = ".$db->DBDate(24*3600)."<p>";
 	print "<i>ts1</i> (1999-02-20 3:40:50) = ".$db->DBTimeStamp('1999-2-20 3:40:50');
 	print "<br><i>ts2</i> (1999-02-20) = ".$db->DBTimeStamp('1999-2-20');
@@ -140,12 +140,13 @@ GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COU
 	if ($rs) $rs->Close();
 	
 	
-	$db->debug=false;	
+	//$db->debug=true;	
 	print "<p>Testing Commit: ";
 	$time = $db->DBDate(time());
 	if (!$db->BeginTrans()) print '<b>Transactions not supported</b></p>';
 	else { /* COMMIT */
-		$rs = $db->Execute("insert into ADOXYZ values (99,'Should Not','Exist (Commit)',$time)");
+		
+		$rs = $db->Execute("insert into ADOXYZ (id,firstname,lastname,created) values (99,'Should Not','Exist (Commit)',$time)");
 		if ($rs && $db->CommitTrans()) {
 			$rs->Close();
 			$rs = &$db->Execute("select * from ADOXYZ where id=99");
@@ -156,13 +157,16 @@ GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COU
 				die();
 			} else print 'OK</p>';
 			if ($rs) $rs->Close();
-		} else
-			print "<b>Commit failed</b></p>";
-		
+		} else {
+			if (!$rs) {
+				print "<b>Insert failed</b></p>";
+				$db->RollbackTrans();
+			} else print "<b>Commit failed</b></p>";
+		}
 		/* ROLLBACK */	
 		if (!$db->BeginTrans()) print "<p><b>Error in BeginTrans</b>()</p>";
 		print "<p>Testing Rollback: ";
-		$db->Execute("insert into ADOXYZ values (100,'Should Not','Exist (Rollback)',$time)");
+		$db->Execute("insert into ADOXYZ (id,firstname,lastname,created) values (100,'Should Not','Exist (Rollback)',$time)");
 		if ($db->RollbackTrans()) {
 			$rs = $db->Execute("select * from ADOXYZ where id=100");
 			if ($rs && !$rs->EOF) print '<b>Fail: Data should rollback</b></p>';
@@ -307,11 +311,10 @@ GO
 	$db->debug = false;
 
 	$ADODB_FETCH_MODE = ADODB_FETCH_BOTH;
- ///////////////////////////////
- 	
-	$rs = &$db->Execute("select * from ADOXYZ order by id");
+ //////////////////////////////////////////////////////////////////////////////////////////
+	
+	$rs = &$db->Execute("select id,firstname as TheFirstName,lastname,created from ADOXYZ order by id");
 	if ($rs) {
-	//	print_r($rs);
 		if ($rs->RecordCount() != 50) {
 			print "<p><b>RecordCount returns -1</b></p>";
 			if ($rs->PO_RecordCount('ADOXYZ') == 50) print "<p> &nbsp; &nbsp; PO_RecordCount passed</p>";
@@ -586,7 +589,7 @@ GO
 	if ($val == 0) echo " <p><b>GenID not supported</b>";
 	echo "<p>";
 	
-	if (substr($db->dataProvider,0,3) != 'ado') { // crashes ado
+	if (substr($db->dataProvider,0,3) != 'notused') { // used to crash ado
 		$sql = "select firstnames from adoxyz";
 		print "<p>Testing execution of illegal statement: <i>$sql</i></p>";
 		if ($db->Execute($sql) === false) {
@@ -655,7 +658,9 @@ GO
 			print "<p><b>Invalid date {$rs->fields[0]}</b></p>";
 		} else
 			print "<p>Passed \$sysDate test ({$rs->fields[0]})</p>";
-			
+		
+		print_r($rs->FetchField(0));
+		print time();
 		$db->debug=$saved;
 	} else {
 		print "<p><b>\$db->sysDate not defined</b></p>";
@@ -678,10 +683,44 @@ GO
 		}
 		$rs->Close();
 	}
+	
+	print "<p>Test CSV</p>";
+	include_once('../toexport.inc.php');
+	$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
+	$rs = $db->SelectLimit('select id,firstname,lastname,created,\'The	"young man", he said\' from adoxyz',10);	
+	
+	print "<pre>";
+	print rs2csv($rs);
+	print "</pre>";
+	
+	$rs = $db->SelectLimit('select id,firstname,lastname,created,\'The	"young man", he said\' from adoxyz',10);	
+	
+	print "<pre>";
+	tab2csvout($rs);
+	print "</pre>";
+	$db->debug=1;
+	
+	print "<p>Test Replace</p>";
+	
+	$ret = $db->Replace('adoxyz', 
+		array('id'=>1000,'firstname'=>'Harun','lastname'=>'Al-Rashid'),
+		array('id','firstname'),
+		$autoq = true);
+	if ($ret != 2) print "<b>Replace failed: </b>";
+	print "test A return value=$ret (2 expected) <p>";
+	
+	$ret = $db->Replace('adoxyz', 
+		array('id'=>1000,'firstname'=>'Sherazade','lastname'=>'Al-Rashid'),
+		'id',
+		$autoq = true);
+	if ($ret != 1) print "<b>Replace failed: </b>";
+	print "test B return value=$ret (1 expected) <p>";
+	
+	/////////////////////////////////////////////////////////////
+
 
 	
 	include_once "PEAR.php";
-	$db->debug =true;
 	if ($i != 50) {
 		print "<p><b>PEAR DB emulation error 1.1 EOF ($i)</b></p>";
 		$pear = false;
@@ -713,14 +752,21 @@ GO
 	
 
 	global $TESTERRS;
+	$debugerr = true;
+		
 	$db->debug = false;
 	$TESTERRS = 0;
 	$db->raiseErrorFn = 'adodb_test_err';
 	$db->Execute('select * from nowhere');
+	if ($TESTERRS != 1) print "<b>raiseErrorFn select nowhere failed</b><br>";
 	$rs = $db->Execute('select * from adoxyz');
+	if ($debugerr) print " Move";
 	$rs->Move(100);
 	$rs->_queryID = false;
+	if ($debugerr) print " MoveNext";
 	$rs->MoveNext();
+	
+	if ($debugerr) print " $rs=false";
 	$rs = false;
 	$conn = NewADOConnection($db->databaseType);
 	$conn->raiseErrorFn = 'adodb_test_err';

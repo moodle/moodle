@@ -1,7 +1,7 @@
 <?php
 
 /* 
-V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -18,13 +18,13 @@ V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reser
 */
 
 	/**
- 	 * convert a recordset into CSV format
+ 	 * convert a recordset into special format
 	 *
 	 * @param rs	the recordset
 	 *
 	 * @return	the CSV formated data
 	 */
-	function &rs2csv(&$rs,$conn=false,$sql='')
+	function _rs2serialize(&$rs,$conn=false,$sql='')
 	{
 		$max = ($rs) ? $rs->FieldCount() : 0;
 		
@@ -196,12 +196,13 @@ V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reser
 		// slurp in the data
 		$MAXSIZE = 128000;
 		$text = fread($fp,$MAXSIZE);
-		if (strlen($text) == $MAXSIZE) {
-			$text .= fread($fp,filesize($url)-$MAXSIZE);
+		$cnt = 1;
+		while (strlen($text) == $MAXSIZE*$cnt) {
+			$text .= fread($fp,$MAXSIZE);
+			$cnt += 1;
 		}
 			
 		fclose($fp);
-		//$text = substr($text,0,44);
 		$arr = @unserialize($text);
 		
 		//var_dump($arr);

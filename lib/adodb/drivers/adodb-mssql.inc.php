@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -33,13 +33,19 @@ Set tabs to 4 for best viewing.
 //----------------------------------------------------------------
 
 global $ADODB_mssql_date_order; // 'dmy' and 'mdy' supported
-global $ADODB_mssql_mths;		// array, months must be upper-case
 
-$ADODB_mssql_date_order = 'mdy'; 
-$ADODB_mssql_mths = array(
+$ADODB_mssql_has_datetimeconvert = (strnatcmp(PHP_VERSION,'4.2.0')>=0);
+if ($ADODB_mssql_has_datetimeconvert) {
+	ini_set('mssql.datetimeconvert',0); 
+} else {
+global $ADODB_mssql_mths;		// array, months must be upper-case
+global $ADODB_mssql_has_datetimeconvert;
+
+	$ADODB_mssql_date_order = 'mdy'; 
+	$ADODB_mssql_mths = array(
 		'JAN'=>1,'FEB'=>2,'MAR'=>3,'APR'=>4,'MAY'=>5,'JUN'=>6,
 		'JUL'=>7,'AUG'=>8,'SEP'=>9,'OCT'=>10,'NOV'=>11,'DEC'=>12);
-
+}
 //---------------------------------------------------------------------------
 // Call this to autoset $ADODB_mssql_date_order at the beginning of your code,
 // just after you connect to the database. Supports mdy and dmy only
@@ -78,11 +84,11 @@ class ADODB_mssql extends ADOConnection {
 	var $_has_mssql_init;
 	var $maxParameterLen = 4000;
 	var $arrayClass = 'ADORecordSet_array_mssql';
+	var $uniqueSort = true;
 	
 	function ADODB_mssql() 
 	{			
-		$this->_has_mssql_init = (strnatcmp(PHP_VERSION,'4.1.0')>=0);
-	
+		$this->_has_mssql_init = (strnatcmp(PHP_VERSION,'4.1.0')>=0);	
 	}
 
     // might require begintrans -- committrans
@@ -194,12 +200,17 @@ class ADODB_mssql extends ADOConnection {
 		Note: This function is NOT available for Microsoft SQL Server.	*/
 	function ErrorMsg() 
 	{
-		$this->_errorMsg = mssql_get_last_message();
+		if (empty($this->_errorMsg)){
+			$this->_errorMsg = mssql_get_last_message();
+		}
 		return $this->_errorMsg;
 	}
 	
 	function ErrorNo() 
 	{
+		if (empty($this->_errorMsg)) {
+			$this->_errorMsg = mssql_get_last_message();	print " D E F $this->_errorMsg";
+		}
 		$id = @mssql_query("select @@ERROR",$this->_connectionID);
 		if (!$id) return false;
 		$arr = mssql_fetch_array($id);
@@ -306,6 +317,7 @@ class ADODB_mssql extends ADOConnection {
 	// returns query ID if successful, otherwise false
 	function _query($sql,$inputarr)
 	{
+		$this->_errorMsg = false;
 		if (is_array($sql)) return mssql_execute($sql[1]);
 		return mssql_query($sql,$this->_connectionID);
 	}
@@ -458,6 +470,9 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 		// mssql uses a default date like Dec 30 2000 12:00AM
 	function UnixDate($v)
 	{
+	global $ADODB_mssql_has_datetimeconvert;
+		if ($ADODB_mssql_has_datetimeconvert) return parent::UnixDate($v);
+		
 	global $ADODB_mssql_mths,$ADODB_mssql_date_order;
 	
 		//Dec 30 2000 12:00AM 
@@ -465,7 +480,7 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 			if (!preg_match( "|^([0-9]{1,2})[-/\. ]+([A-Za-z]{3})[-/\. ]+([0-9]{4})|" ,$v, $rr)) {
 				return parent::UnixDate($v);
 			}
-			if ($rr[3] <= 1970) return 0;
+			if ($rr[3] <= TIMESTAMP_FIRST_YEAR) return 0;
 			
 			$theday = $rr[1];
 			$themth =  substr(strtoupper($rr[2]),0,3);
@@ -473,7 +488,7 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 			if (!preg_match( "|^([A-Za-z]{3})[-/\. ]+([0-9]{1,2})[-/\. ]+([0-9]{4})|" ,$v, $rr)) {
 				return parent::UnixDate($v);
 			}
-			if ($rr[3] <= 1970) return 0;
+			if ($rr[3] <= TIMESTAMP_FIRST_YEAR) return 0;
 			
 			$theday = $rr[2];
 			$themth = substr(strtoupper($rr[1]),0,3);
@@ -486,20 +501,23 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 	
 	function UnixTimeStamp($v)
 	{
+	global $ADODB_mssql_has_datetimeconvert;
+		if ($ADODB_mssql_has_datetimeconvert) return parent::UnixTimeStamp($v);
+		
 	global $ADODB_mssql_mths,$ADODB_mssql_date_order;
 	
 		//Dec 30 2000 12:00AM
 		 if ($ADODB_mssql_date_order == 'dmy') {
 			 if (!preg_match( "|^([0-9]{1,2})[-/\. ]+([A-Za-z]{3})[-/\. ]+([0-9]{4}) +([0-9]{1,2}):([0-9]{1,2}) *([apAP]{0,1})|"
 			,$v, $rr)) return parent::UnixTimeStamp($v);
-			if ($rr[3] <= 1970) return 0;
+			if ($rr[3] <= TIMESTAMP_FIRST_YEAR) return 0;
 		
 			$theday = $rr[1];
 			$themth =  substr(strtoupper($rr[2]),0,3);
 		} else {
 			if (!preg_match( "|^([A-Za-z]{3})[-/\. ]+([0-9]{1,2})[-/\. ]+([0-9]{4}) +([0-9]{1,2}):([0-9]{1,2}) *([apAP]{0,1})|"
 			,$v, $rr)) return parent::UnixTimeStamp($v);
-			if ($rr[3] <= 1970) return 0;
+			if ($rr[3] <= TIMESTAMP_FIRST_YEAR) return 0;
 		
 			$theday = $rr[2];
 			$themth = substr(strtoupper($rr[1]),0,3);
@@ -522,4 +540,5 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 		return  mktime($rr[4],$rr[5],0,$themth,$theday,$rr[3]);
 	}
 }
+
 ?>

@@ -1,7 +1,7 @@
 <?php
   
 /*
-V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -106,7 +106,7 @@ ADOLoadCode('oci805');
 ADOLoadCode("oci8po");
 if (!empty($testoracle)) { 
 	
-	$db = ADONewConnection();
+	$db = ADONewConnection('oci8po');
 	print "<h1>Connecting $db->databaseType...</h1>";
 	if ($db->Connect('', "scott", "tiger",'natsoft.ecosystem.natsoft.com.my'))
 	//if ($db->PConnect("", "scott", "tiger", "juris.ecosystem.natsoft.com.my"))
@@ -127,7 +127,7 @@ if (false && !empty($testoracle)) {
 
 
 ADOLoadCode("odbc_mssql");
-if (!empty($testmssql) and false) { // MS SQL Server via ODBC
+if (!empty($testmssql) && false) { // MS SQL Server via ODBC
 	
 	$db = ADONewConnection();
 	
@@ -143,10 +143,11 @@ ADOLoadCode("ado_mssql");
 if (!empty($testmssql) && !empty($testado) ) { // ADO ACCESS MSSQL -- thru ODBC -- DSN-less
 	
 	$db = &ADONewConnection("ado_mssql");
+	$db->debug=1;
 	print "<h1>Connecting DSN-less $db->databaseType...</h1>";
 	
 	$myDSN="PROVIDER=MSDASQL;DRIVER={SQL Server};"
-		. "SERVER=(local);DATABASE=NorthWind;UID=sa;PWD=natsoft;"  ;
+		. "SERVER=mangrove;DATABASE=NorthWind;UID=sa;PWD=natsoft;"  ;
 
 		
 	if (@$db->PConnect($myDSN, "", "", ""))
@@ -159,6 +160,7 @@ if (!empty($testmssql) && !empty($testado) ) { // ADO ACCESS MSSQL -- thru ODBC 
 ADOLoadCode("mssql");
 if (!empty($testmssql)) { // MS SQL Server -- the extension is buggy -- probably better to use ODBC
 	$db = ADONewConnection();
+	$db->debug=1;
 	print "<h1>Connecting $db->databaseType...</h1>";
 	
 	$db->Connect('(local)\NetSDK','','','northwind');
@@ -174,7 +176,7 @@ if (!empty($testmssql) && !empty($testado)) { // ADO ACCESS MSSQL with OLEDB pro
 
 	$db = &ADONewConnection("ado_mssql");
 	print "<h1>Connecting DSN-less OLEDB Provider $db->databaseType...</h1>";
-	
+	$db->debug=1;
 	$myDSN="SERVER=mangrove;DATABASE=ai;";
 	//$myDSN='SERVER=(local)\NetSDK;DATABASE=northwind;';
 	if ($db->PConnect($myDSN, "sa", "natsoft", 'SQLOLEDB'))

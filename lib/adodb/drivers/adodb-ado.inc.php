@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -25,6 +25,12 @@ class ADODB_ado extends ADOConnection {
 	var $adoParameterType = 201; // 201 = long varchar, 203=long wide varchar, 205 = long varbinary
 	var $_affectedRows = false;
 	var $_thisTransactions;
+	var $_inTransaction = 0;
+	var $_cursor_type = 3; // 3=adOpenStatic,0=adOpenForwardOnly,1=adOpenKeyset,2=adOpenDynamic
+	var $_cursor_location = 3; // 2=adUseServer, 3 = adUseClient;
+	var $_lock_type = -1;
+	var $_execute_option = -1;
+                      
 	
 	function ADODB_ado() 
 	{ 	
@@ -35,7 +41,10 @@ class ADODB_ado extends ADOConnection {
     {
             return $this->_affectedRows;
     }
-         
+    
+	// you can also pass a connection string like this:
+	//
+	// $DB->Connect('USER ID=sa;PASSWORD=pwd;SERVER=mangrove;DATABASE=ai',false,false,'SQLOLEDB');
 	function _connect($argHostname, $argUsername, $argPassword, $argProvider= 'MSDASQL')
 	{
 		$u = 'UID';
@@ -43,13 +52,22 @@ class ADODB_ado extends ADOConnection {
 	
 		$dbc = new COM('ADODB.Connection');
 		if (! $dbc) return false;
-		/* // handle SQL server provider specially ? no need
-		if ($argProvider) {
-			if ($argProvider == "SQLOLEDB") { // SQL Server Provider
-			} 
-		}*/
-		if ($argProvider) $dbc->Provider = $argProvider;
-		else $dbc->Provider ='MSDASQL';
+
+		/* special support if provider is mssql or access */
+		if ($argProvider=='mssql') {
+			$u = 'User Id';  //User parameter name for OLEDB
+			$p = 'Password'; 
+			$argProvider = "SQLOLEDB"; // SQL Server Provider
+			
+			// not yet
+			//if ($argDatabasename) $argHostname .= ";Initial Catalog=$argDatabasename";
+			
+			//use trusted conection for SQL if username not specified
+			if (!$argUsername) $argHostname .= ";Trusted_Connection=Yes";
+		} else if ($argProvider=='access')
+			$argProvider = "Microsoft.Jet.OLEDB.4.0"; // Microsoft Jet Provider
+		
+		if ($argProvider) $dbc->Provider = $argProvider;	
 		
 		if ($argUsername) $argHostname .= ";$u=$argUsername";
 		if ($argPassword)$argHostname .= ";$p=$argPassword";
@@ -57,28 +75,17 @@ class ADODB_ado extends ADOConnection {
 		if ($this->debug) print "<p>Host=".$argHostname."<BR>version=$dbc->version</p>";
 		// @ added below for php 4.0.1 and earlier
 		@$dbc->Open((string) $argHostname);
-
+		
 		$this->_connectionID = $dbc;
-		return  $dbc != false;
+		
+		$dbc->CursorLocation = $this->_cursor_location;
+		return  $dbc->State > 0;
 	}
 	
 	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argProvider='MSDASQL')
 	{
-		$dbc = new COM("ADODB.Connection");
-		if (! $dbc) return false;
-		
-		if ($argProvider) $dbc->Provider = $argProvider;
-		else $dbc->Provider ='MSDASQL';
-		
-		if ($argUsername) $argHostname .= ";UID=$argUsername";
-		if ($argPassword)$argHostname .= ";PWD=$argPassword";
-		
-		if ($this->debug) print "<p>Host=".$argHostname."<BR>version=$dbc->version</p>";
-		$dbc->Open((string) $argHostname);
-		
-		$this->_connectionID = $dbc;
-		return  $dbc != false;
+		return $this->_connect($argHostname,$argUsername,$argPassword,$argProvider);
 	}	
 	
 /*
@@ -202,8 +209,14 @@ class ADODB_ado extends ADOConnection {
 			if ($dbc->Errors->Count > 0) return false;
 			return $rs;
 		}
-		$rs = @$dbc->Execute($sql,&$this->_affectedRows);
-			
+		
+		$rs = @$dbc->Execute($sql,&$this->_affectedRows, $this->_execute_option);
+		/*
+			$rs =  new COM('ADODB.Recordset');
+			if ($rs) {
+				$rs->Open ($sql, $dbc, $this->_cursor_type,$this->_lock_type, $this->_execute_option);            				
+			}
+		*/
 		if ($dbc->Errors->Count > 0) return false;
 		if (! $rs) return false;
 		
@@ -222,16 +235,19 @@ class ADODB_ado extends ADOConnection {
 			if (!$o) return false;
 		}
 		@$this->_connectionID->BeginTrans();
+		$this->_inTransaction += 1;
 		return true;
 	}
 	function CommitTrans($ok=true) 
 	{ 
 		if (!$ok) return $this->RollbackTrans();
 		@$this->_connectionID->CommitTrans();
+		if ($this->_inTransaction) @$this->_inTransaction -= 1;
 		return true;
 	}
 	function RollbackTrans() {
 		@$this->_connectionID->RollbackTrans();
+		if ($this->_inTransaction) @$this->_inTransaction -= 1;
 		return true;
 	}
 	
@@ -295,8 +311,10 @@ class ADORecordSet_ado extends ADORecordSet {
 		$rs = $this->_queryID;
 		$f = $rs->Fields($fieldOffset);
 		$o->name = $f->Name;
-		$o->type = $this->MetaType($f->Type);
+		$t = $f->Type;
+		$o->type = $this->MetaType($t);
 		$o->max_length = $f->DefinedSize;
+		$o->ado_type = $t;
 		
 
 		//print "off=$off name=$o->name type=$o->type len=$o->max_length<br>";
@@ -472,7 +490,7 @@ class ADORecordSet_ado extends ADORecordSet {
 	function _fetch()
 	{	
 		$rs = $this->_queryID;
-		if ($rs->EOF) return false;
+		if (!$rs or $rs->EOF) return false;
 		$this->fields = array();
 	
 		if (!$this->_tarr) {
@@ -494,6 +512,9 @@ class ADORecordSet_ado extends ADORecordSet {
 		for ($i=0,$max = $this->_numOfFields; $i < $max; $i++) {
 
 			switch($t) {
+			case 135: // timestamp
+				$this->fields[] = date('Y-m-d H:i:s',(integer)$f->value);
+				break;
 				
 			case 133:// A date value (yyyymmdd) 
 				$val = $f->value;

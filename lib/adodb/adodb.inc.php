@@ -1,7 +1,7 @@
 <?php 
 
 /** 
- * @version V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -42,6 +42,12 @@
 	 * This constant was formerly called $ADODB_RootPath
 	 */
 	if (!defined('ADODB_DIR')) define('ADODB_DIR',dirname(__FILE__));
+	
+	if (strpos(strtoupper(PHP_OS),'WIN') !== false) {
+	// windows, negative timestamps are illegal as of php 4.2.0
+		define('TIMESTAMP_FIRST_YEAR',1970);
+	} else
+		define('TIMESTAMP_FIRST_YEAR',1904);
 	
 	//==============================================================================================	
 	// GLOBAL VARIABLES
@@ -84,7 +90,7 @@
 	/**
 	 * ADODB version as a string.
 	 */
-	$ADODB_vers = 'V2.00 13 May 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+	$ADODB_vers = 'V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 
 	/**
 	 * Determines whether recordset->RecordCount() is used. 
@@ -134,7 +140,7 @@
 	var $user = ''; 			// The username which is used to connect to the database server. 
 	var $password = ''; 		// Password for the username
 	var $debug = false; 		// if set to true will output sql statements
-	var $maxblobsize = 8000; 	// maximum size of blobs or large text fields -- some databases die otherwise like foxpro
+	var $maxblobsize = 64000; 	// maximum size of blobs or large text fields -- some databases die otherwise like foxpro
 	var $concat_operator = '+'; // default concat operator -- change to || for Oracle/Interbase	
 	var $fmtDate = "'Y-m-d'";	// used by DBDate() as the default date format used by the database
 	var $fmtTimeStamp = "'Y-m-d, h:i:s A'"; // used by DBTimeStamp as the default timestamp fmt.
@@ -160,6 +166,10 @@
 	var $arrayClass = 'ADORecordSet_array';
 	// oracle specific stuff
 	var $noNullStrings = false;
+	var $numCacheHits = 0;
+	var $numCacheMisses = 0;
+	var $pageExecuteCountRows = true;
+	var $uniqueSort = false; // indicates that all fields in order by must be unique
 	
 	/*
 	 * PRIVATE VARS
@@ -212,7 +222,7 @@
 		} else 
 			if ($this->_connect($this->host, $this->user, $this->password, $this->database)) return true;
 
-		if ($this->debug) print $this->host.': '.$this->ErrorMsg()."<br>\n";
+		if ($this->debug) print $this->host.': '.$this->ErrorMsg()."<br />\n";
 		
 		return false;
 	}	
@@ -245,7 +255,7 @@
 		} else 
 			if ($this->_pconnect($this->host, $this->user, $this->password, $this->database)) return true;
 
-		if ($this->debug) print $this->host.': '.$this->ErrorMsg()."<br>\n";
+		if ($this->debug) print $this->host.': '.$this->ErrorMsg()."<br />\n";
 		
 		return false;
 	}
@@ -295,11 +305,11 @@
 	}
 	
 	/**
-	* PEAR DB Compat - do not use internally. 
+	* PEAR DB Compat - Quote with auto-checking of magic-quotes-gpc.
 	*/
 	function Quote($s)
 	{
-		return $this->qstr($s);
+		return $this->qstr($s,get_magic_quotes_gpc());
 	}
 
 	
@@ -458,26 +468,30 @@
 			$inBrowser = isset($HTTP_SERVER_VARS['HTTP_USER_AGENT']);
 			
 			if ($inBrowser)
-				print "<hr>\n($this->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<hr>\n";
+				print "<hr />\n($this->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<hr />\n";
 			else
 				print "=----\n($this->databaseType): ".($sqlTxt)." \n-----\n";
 			flush();
 			
 			$this->_queryID = $this->_query($sql,$inputarr,$arg3);
 
+			/* 
+				Alexios Fakios notes that ErrorMsg() must be called before ErrorNo() for mssql
+				because ErrorNo() calls Execute('SELECT @ERROR'), causing recure
+			*/
 			if ($this->databaseType == 'mssql') { 
 			// ErrorNo is a slow function call in mssql, and not reliable
 			// in PHP 4.0.6
-				if($this->ErrorMsg()) {
+				if($emsg = $this->ErrorMsg()) {
 					$err = $this->ErrorNo();
 					if ($err) {
-						print $err.': '.$this->ErrorMsg().(($inBrowser) ? "<br>\n" : "\n");
+						print $err.': '.$emsg.(($inBrowser) ? "<br />\n" : "\n");
 						flush();
 					}
 				}
 			} else 
 				if (!$this->_queryID) {
-					print $this->ErrorNo().': '.$this->ErrorMsg().(($inBrowser) ? "<br>\n" : "\n");
+					print $this->ErrorNo().': '.$this->ErrorMsg() .(($inBrowser) ? "<br />\n" : "\n");
 					flush();
 				}
 		} else 
@@ -506,14 +520,14 @@
 		else $rs->sql = $sql;
 		
 		global $ADODB_COUNTRECS;
-		if ($rs->_numOfRows <= 0 && !$rs->EOF && $ADODB_COUNTRECS) {
+		if ($rs->_numOfRows <= 0 && !$rs->EOF && $ADODB_COUNTRECS) { 
 			$rs = &$this->_rs2rs($rs);
 			$rs->_queryID = $this->_queryID;
 		}
 		return $rs;
 	}
 
-	
+
 	/**
 	 * Generates a sequence id and stores it in $this->genID;
 	 * GenID is only available if $this->hasGenID = true;
@@ -522,7 +536,7 @@
 	 * @startID		if sequence does not exist, start at this ID
 	 * @return		0 if not supported, otherwise a sequence id
 	 */
-	
+
 	function GenID($seqname='adodbseq',$startID=1)
 	{
 		if (!$this->hasGenID) {
@@ -538,12 +552,12 @@
 		}
 		if ($rs && !$rs->EOF) $this->genID = (integer) reset($rs->fields);
 		else $this->genID = 0; // false
-		
+	
 		if ($rs) $rs->Close();
-		
+
 		return $this->genID;
 	}	
-	
+
 	/**
 	 * @return  the last inserted ID. Not all databases support this.
 	 */ 
@@ -699,6 +713,7 @@
 	*/
 	function &_rs2rs(&$rs,$nrows=-1,$offset=-1)
 	{
+		if (! $rs) return false;
 		$arr = &$rs->GetArrayLimit($nrows,$offset);
 		$flds = array();
 		for ($i=0, $max=$rs->FieldCount(); $i < $max; $i++)
@@ -768,7 +783,76 @@
 		}
 		return false;
 	}
+	/**
+	* Insert or replace a single record
+	*
+	* $this->Replace('products', array('prodname' =>"'Nails'","price" => 3.99), 'prodname');
+	*
+	* $table		table name
+	* $fieldArray	associative array of data (you must quote strings yourself).
+	* $keyCol		the primary key field name or if compound key, array of field names
+	* autoQuote		set to true to use a hueristic to quote strings. Works with nulls and numbers
+	*					but does not work with dates nor SQL functions.
+	*
+	* Currently blob replace not supported
+	*
+	* returns 0 = fail, 1 = update, 2 = insert 
+	*/
 	
+	function Replace($table, $fieldArray, $keyCol,$autoQuote=false)
+	{
+		if (count($fieldArray) == 0) return 0;
+		$first = true;
+		$uSet = '';
+		
+		if (!is_array($keyCol)) {
+			$keyCol = array($keyCol);
+		}
+		foreach($fieldArray as $k => $v) {
+			if ($autoQuote && !is_numeric($v) and $v[0] != "'" and strcasecmp($v,'null')!=0) {
+				$v = $this->qstr($v);
+				$fieldArray[$k] = $v;
+			}
+			if (in_array($k,$keyCol)) continue; // skip UPDATE if is key
+			
+			if ($first) {
+				$first = false;			
+				$uSet = "$k=$v";
+			} else
+				$uSet .= ",$k=$v";
+		}
+		 
+		$first = true;
+		foreach ($keyCol as $v) {
+			if ($first) {
+				$first = false;
+				$where = "$v=$fieldArray[$v]";
+			} else {
+				$where .= " and $v=$fieldArray[$v]";
+			}
+		}
+		
+		if ($uSet) {
+			$update = "UPDATE $table SET $uSet WHERE $where";
+		
+			$rs = $this->Execute($update);
+			if ($rs and $this->Affected_Rows()>0) return 1;
+		}
+		$first = true;
+		foreach($fieldArray as $k => $v) {
+			if ($first) {
+				$first = false;			
+				$iCols = "$k";
+				$iVals = "$v";
+			} else {
+				$iCols .= ",$k";
+				$iVals .= ",$v";
+			}				
+		}
+		$insert = "INSERT INTO $table ($iCols) VALUES ($iVals)"; 
+		$rs = $this->Execute($insert);
+		return ($rs) ? 2 : 0;
+	}
 	
 	
 	/**
@@ -798,7 +882,7 @@
 			                          // sql,    nrows, offset,inputarr,arg3
 			return $this->SelectLimit($secs2cache,$sql,$nrows,$offset,$inputarr,$this->cacheSecs);
 		}
-		if ($sql === false) echo "Warning: \$sql missing from CacheSelectLimit()<br>\n";
+		if ($sql === false) echo "Warning: \$sql missing from CacheSelectLimit()<br />\n";
 		return $this->SelectLimit($sql,$nrows,$offset,$inputarr,$arg3,$secs2cache);
 	}
 	
@@ -849,10 +933,13 @@
 		$md5file = $this->_gencachename($sql,true);
 		$err = '';
 		
-		if ($secs2cache > 0)$rs = &csv2rs($md5file,$err,$secs2cache);
-		else {
+		if ($secs2cache > 0){
+			$rs = &csv2rs($md5file,$err,$secs2cache);
+			$this->numCacheHits += 1;
+		} else {
 			$err='Timeout 1';
 			$rs = false;
+			$this->numCacheMisses += 1;
 		}
 		
 		if (!$rs) {
@@ -862,8 +949,8 @@
 			if ($rs) {
 				$eof = $rs->EOF;
 				$rs = &$this->_rs2rs($rs); // read entire recordset into memory immediately
-				$txt = &rs2csv($rs,false,$sql); // serialize
-				
+				$txt = _rs2serialize($rs,false,$sql); // serialize
+		
 				if (!adodb_write_file($md5file,$txt,$this->debug)) {
 					if ($fn = $this->raiseErrorFn) {
 						$fn($this->databaseType,'CacheExecute',-32000,"Cache write error",$md5file,$sql);
@@ -871,7 +958,8 @@
 					if ($this->debug) print " Cache write error<br>\n";
 				}
 				if ($rs->EOF && !$eof) {
-					$rs = &csv2rs($md5file,$err);		
+					$rs->MoveFirst();
+					//$rs = &csv2rs($md5file,$err);		
 					$rs->connection = &$this; // Pablo suggestion
 				}  
 				
@@ -1182,7 +1270,6 @@
 	function DBDate($d)
 	{
 	
-	// note that we are limited to 1970 to 2038
 		if (empty($d) && $d !== 0) return 'null';
 
 		if (is_string($d) && !is_numeric($d)) 
@@ -1214,14 +1301,14 @@
 	 * Also in ADORecordSet.
 	 * @param $v is a date string in YYYY-MM-DD format
 	 *
-	 * @return date in unix timestamp format, or 0 if before 1970, or false if invalid date format
+	 * @return date in unix timestamp format, or 0 if before TIMESTAMP_FIRST_YEAR, or false if invalid date format
 	 */
 	function UnixDate($v)
 	{
-		if (!preg_match( "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})$|", 
+		if (!preg_match( "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})|", 
 			($v), $rr)) return false;
-			
-		if ($rr[1] <= 1970) return 0;
+
+		if ($rr[1] <= TIMESTAMP_FIRST_YEAR) return 0;
 		// h-m-s-MM-DD-YY
 		return mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 	}
@@ -1231,21 +1318,22 @@
 	 * Also in ADORecordSet.
 	 * @param $v is a timestamp string in YYYY-MM-DD HH-NN-SS format
 	 *
-	 * @return date in unix timestamp format, or 0 if before 1970, or false if invalid date format
+	 * @return date in unix timestamp format, or 0 if before TIMESTAMP_FIRST_YEAR, or false if invalid date format
 	 */
 	function UnixTimeStamp($v)
 	{
 		if (!preg_match( 
 			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9]{1,2}))?$|", 
 			($v), $rr)) return false;
-		if ($rr[1] <= 1970 && $rr[2]<= 1) return 0;
+		if ($rr[1] <= TIMESTAMP_FIRST_YEAR && $rr[2]<= 1) return 0;
 	
 		// h-m-s-MM-DD-YY
 		return  @mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
 	}
 	
 	/**
-	 * Converts a timestamp "ts" to a string that the database can understand.
+	 * Correctly quotes a string so that all strings are escaped. We prefix and append
+	 * to the string single-quotes.
 	 * An example is  $db->qstr("Don't bother",magic_quotes_runtime());
 	 * 
 	 * @param s			the string to quote
@@ -1275,7 +1363,7 @@
 			return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
 		}
 	}
-
+	
 	
 	/**
 	* Will select the supplied $page number from a recordset, given that it is paginated in pages of 
@@ -1298,7 +1386,8 @@
 	function &PageExecute($sql, $nrows, $page, $inputarr=false, $arg3=false, $secs2cache=0) 
 	{
 		include_once(ADODB_DIR.'/adodb-lib.inc.php');
-		return _adodb_pageexecute($this, $sql, $nrows, $page, $inputarr, $arg3, $secs2cache);
+		if ($this->pageExecuteCountRows) return _adodb_pageexecute_all_rows($this, $sql, $nrows, $page, $inputarr, $arg3, $secs2cache);
+		return _adodb_pageexecute_no_last_page($this, $sql, $nrows, $page, $inputarr, $arg3, $secs2cache);
 
 	}
 	
@@ -1317,8 +1406,7 @@
 	* @return		the recordset ($rs->databaseType == 'array')
 	*/
 	function &CachePageExecute($secs2cache, $sql, $nrows, $page,$inputarr=false, $arg3=false) {
-		include_once(ADODB_DIR.'/adodb-lib.inc.php');
-		return _adodb_pageexecute($this, $sql, $nrows, $page, $inputarr, $arg3,$secs2cache);
+		return $this->PageExecute($sql,$nrows,$page,$inputarr,$arg3,$secs2cache);
 	}
 
 } // end class ADOConnection
@@ -1402,8 +1490,8 @@
 	var $_currentPage = -1;	/* Added by Iván Oliva to implement recordset pagination */
 	var $_atFirstPage = false;	/* Added by Iván Oliva to implement recordset pagination */
 	var $_atLastPage = false;	/* Added by Iván Oliva to implement recordset pagination */
-
-	
+	var $_lastPageNo = -1; 
+	var $_maxRecordCount = 0;
 	/**
 	 * Constructor
 	 *
@@ -1414,6 +1502,7 @@
 	{
 		$this->_queryID = $queryID;
 	}
+	
 	
 	
 	function Init()
@@ -1606,7 +1695,7 @@
 	function UserTimeStamp($v,$fmt='Y-m-d H:i:s')
 	{
 		$tt = $this->UnixTimeStamp($v);
-		// $tt == -1 if pre 1970
+		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
 		if (($tt === false || $tt == -1) && $v != false) return $v;
 		if ($tt == 0) return $this->emptyTimeStamp;
 		
@@ -1623,10 +1712,10 @@
 	function UserDate($v,$fmt='Y-m-d')
 	{
 		$tt = $this->UnixDate($v);
-		// $tt == -1 if pre 1970
+		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
 		if (($tt === false || $tt == -1) && $v != false) return $v;
 		else if ($tt == 0) return $this->emptyDate;
-		else if ($tt == -1) { // pre-1970
+		else if ($tt == -1) { // pre-TIMESTAMP_FIRST_YEAR
 		}
 		return date($fmt,$tt);
 	
@@ -1636,14 +1725,14 @@
 	/**
 	 * @param $v is a date string in YYYY-MM-DD format
 	 *
-	 * @return date in unix timestamp format, or 0 if before 1970, or false if invalid date format
+	 * @return date in unix timestamp format, or 0 if before TIMESTAMP_FIRST_YEAR, or false if invalid date format
 	 */
 	function UnixDate($v)
 	{
-		if (!preg_match( "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})$|", 
+		if (!preg_match( "|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})|", 
 			($v), $rr)) return false;
 			
-		if ($rr[1] <= 1970) return 0;
+		if ($rr[1] <= 1903) return 0;
 		// h-m-s-MM-DD-YY
 		return mktime(0,0,0,$rr[2],$rr[3],$rr[1]);
 	}
@@ -1652,14 +1741,14 @@
 	/**
 	 * @param $v is a timestamp string in YYYY-MM-DD HH-NN-SS format
 	 *
-	 * @return date in unix timestamp format, or 0 if before 1970, or false if invalid date format
+	 * @return date in unix timestamp format, or 0 if before TIMESTAMP_FIRST_YEAR, or false if invalid date format
 	 */
 	function UnixTimeStamp($v)
 	{
 		if (!preg_match( 
 			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ -]?(([0-9]{1,2}):?([0-9]{1,2}):?([0-9]{1,2}))?$|", 
 			($v), $rr)) return false;
-		if ($rr[1] <= 1970 && $rr[2]<= 1) return 0;
+		if ($rr[1] <= 1903 && $rr[2]<= 1) return 0;
 	
 		// h-m-s-MM-DD-YY
 		return  @mktime($rr[5],$rr[6],$rr[7],$rr[2],$rr[3],$rr[1]);
@@ -1875,6 +1964,15 @@
 	function RecordCount() {return $this->_numOfRows;}
 	
 	
+	/*
+	* If we are using PageExecute(), this will return the maximum possible rows
+	* that can be returned when paging a recordset.
+	*/
+	function MaxRecordCount()
+	{
+		return ($this->_maxRecordCount) ? $this->_maxRecordCount : $this->RecordCount();
+	}
+	
 	/**
 	 * synonyms RecordCount and RowCount	
 	 *
@@ -1935,6 +2033,18 @@
 	{
 		// must be defined by child class
 	}	
+	
+	/**
+	 * Get the ADOFieldObjects of all columns in an array.
+	 *
+	 */
+	function FieldTypesArray()
+	{
+		$arr = array();
+		for ($i=0, $max=$this->_numOfFields; $i < $max; $i++) 
+			$arr[] = $this->FetchField($i);
+		return $arr;
+	}
 	
 	/**
 	* Return the fields array of the current row as an object for convenience.
@@ -2022,6 +2132,7 @@
 		case 'NVARCHAR':
 		case 'VARYING':
 		case 'BPCHAR':
+		case 'CHARACTER':
 			if (!empty($this)) if ($len <= $this->blobSize) return 'C';
 			else if ($len <= 250) return 'C';
 		
@@ -2094,6 +2205,12 @@
 	{
 		if ($status != false) $this->_atFirstPage = $status;
 		return $this->_atFirstPage;
+	}
+	
+	function LastPageNo($page = false)
+	{
+		if ($page != false) $this->_lastPageNo = $page;
+		return $this->_lastPageNo;
 	}
 	
 	/**
@@ -2347,7 +2464,7 @@
 				$ok = false;
 			}
 			if (!$ok) {
-				if ($debug) print " Rename $tmpname ".($ok? 'ok' : 'failed')." <br>\n";
+				if ($debug) print " Rename $tmpname ".($ok? 'ok' : 'failed')." <br />\n";
 			}
 			return $ok;
 		}
