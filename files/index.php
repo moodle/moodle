@@ -488,7 +488,7 @@ function displaydir ($wdir) {
 
     global $basedir;
     global $id;
-    global $USER;
+    global $USER, $CFG;
 
     $fullpath = $basedir.$wdir;
 
