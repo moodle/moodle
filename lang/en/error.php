@@ -1,5 +1,6 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.2 development (2003122600)
+      // error.php - created with Moodle 1.3.1 + (2004052501)
+
 
 $string['coursegroupunknown'] = 'Course corresponding to group $a not specified';
 $string['erroronline'] = 'Error on line $a';
