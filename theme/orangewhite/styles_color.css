@@ -352,12 +352,28 @@ body {
     background-color:#F9FAFA;
 }
 
-.glossary .generaltab {
+.glossary .generaltabselected {
+    background-color:#FFD991 !important;
+}
+
+/* new glossary styles */
+.glossarypost .entry,
+.glossary .glossaryintrobox {
+  background-color:#FFFFFF;
+}
+
+.glossary .generaltab,
+.glossary .general {
     background-color:#D1D7DC !important;
 }
 
-.glossary .generaltabselected {
-    background-color:#FFD991 !important;
+.glossary table.tabs {
+    border-color:#D1D7DC;
+}
+
+.glossary .inactive {
+    background-color:transparent;
+    border-color:#D1D7DC;
 }
 
 

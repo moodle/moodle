@@ -272,10 +272,15 @@ h4 {
 
 /* glossary */
 .glossary .generaltab B,
-.glossary .generaltabselected B {
+.glossary .generaltabselected B,
+.glossary .general B,
+.glossary .inactive B {
     font-weight:normal;
 }
 
+.glossaryintrobox {
+  text-align:left;
+}
 
 /* wiki */
 .mwiki {

@@ -436,18 +436,33 @@ table.formtable td {
     border:1px solid;
 }
 
+.glossary table {
+    width:100%;
+}
+
 #glossary-edit {
     margin:0px;
     width:auto;
 }
 
 .glossary .generaltab,
-.glossary .generaltabselected  {
-    padding:0px 1px;
+.glossary .generaltabselected,
+.glossary .general,
+.glossary .inactive  {
+  width:25%;
+  padding:0px 1px;
 }
 
-.glossary table {
-    width:100%;
+.glossary table.tabs td.separator {
+  width:1%;
+}
+
+.glossary table.tabs {
+    border:1px solid;
+}
+
+.glossary .inactive {
+    border:1px solid;
 }
 
 
@@ -745,7 +760,7 @@ table.calendar-controls .next
     background:url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
-.sideblock.hidden .sideblockheading .hide-show img.hide-show-image {
+.sideblock.hidden .heading .hide-show img.hide-show-image {
     background:url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
