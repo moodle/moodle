@@ -27,8 +27,6 @@
 
              if ($site->format > 0 ) {
                  echo "<LI><A TITLE=\"Available courses on this server\" HREF=\"course/\"><B>Courses</B></A><BR></LI>";
-                 echo "<LI><A TITLE=\"Site-level Forums\" 
-                       HREF=\"mod/discuss/index.php?id=<?=$site->id?>\">Forums</A></LI>";
              } 
 
              if ($readings) {
