@@ -12,7 +12,7 @@ Antonio Navarro (anavarro@sextaisla.com)
 Emmanuelle Gutiérrez y Restrepo (emmanuelle@mi.madritel.es)
 Sergio Alfaro (salfaro@humanos.cl)
 Benito Arias (barias@benitoarias.com)
-
+Daniel Delgado (davidds@aprend-d.com)
 
 Si desea contribuir puede hacerlo de diferentes maneras:
 

@@ -1,3 +1,22 @@
+<head>
+    <title>Documentación de Moodle: Actualización</title>
+	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<style type="text/css">
+    <!--
+    .sectionheading {
+	  font-size: medium;
+	  font-weight: bold;
+	  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	  border: 1px dotted;
+	  padding: 10px;
+	  background-color: #EEEEEE;
+    }
+    -->
+    </style>
+</head>
+
+<body bgcolor="#FFFFFF">
 <h2>Actualización de Moodle</h2>
 
 <p>Moodle está diseñado para actualizarse limpiamente
@@ -8,96 +27,65 @@ desde una versión preliminar a cualquiera posterior.</p>
 
 pasos:</p>
 
-<h3>1. Copia de seguridad de datos importantes</h3>
+<h3 class="sectionheading">1. Copia de seguridad de datos importantes</h3>
 
-<div style="padding-left: 3em;">
-
-<p>Aunque no es estrictamente necesario, es siempre una buena idea
-
-hacer una copia de seguridad de cualquier sistema de producción
-
-antes de hacer una actualización importante, para el caso de que
-
-tenga que volver a la versión antigua por cualquier
-
-razón. De hecho, es una buena idea automatizar su servidor para
-
-que haga copias de seguridad (<span lang="en">backup</span>) diariamente
-
-de la instalación de Moodle, de manera que pueda saltarse estos
-
-pasos.</p>
+<div style="padding-left: 3em;"> 
+  <p>Aunque no es estrictamente necesario, es siempre una buena idea hacer una 
+    copia de seguridad de cualquier sistema en producción antes de hacer una actualización 
+    importante, para el caso de que tenga que volver a la versión antigua por 
+    cualquier razón. De hecho, es una buena idea automatizar su servidor para 
+    que haga copias de seguridad (<span lang="en">backup</span>) de la instalación 
+    de Moodle diariamente, de manera que pueda saltarse este paso.</p>
 
 <p>Hay tres áreas que necesitan ser salvaguardadas:</p>
-
-<h4>1. El directorio del software de Moodle en sí</h4>
-
-<p>Haga una copia separada de estos archivos antes de hacer la
-
-actualización, de manera que pueda recuperar su <span>config.php</span>
-
-y de cualquier módulo que haya añadido como temas,
-
-idiomas, etc.</p>
-
-<h4>2. Su directorio de datos.</h4>
-
-<p>Aquí es donde reside el contenido subido (como los materiales
-
-de los cursos y las tareas de los estudiantes) así que de todas
-
-maneras es muy importante tener una copia de seguridad de estos
-
-archivos. Algunas veces la actualización puede mover o renombrar
-
-directorios dentro de su directorio de datos.</p>
-
-<h4>3. Su base de datos</h4>
-
-<p>La mayoría de las actualizaciónes de Moodle
-
-alterarán las tablas de la base de datos, añadiendo o
-
-cambiando campos. Cada base de datos tiene formas diferentes de hacer
-
-la copia de seguridad. Una manera de hacer una copia de seguridad de una
-
-base de datos MySQL es 'descargarla' en una simple archivo SQL. El
-
-siguiente ejemplo muestra los comandos en Unix para descargar la base
-
-de datos llamada "moodle":</p>
+  <blockquote> 
+    <p><strong>1. El directorio del software de Moodle en sí</strong></p>
+	<blockquote>
+		<p>Haga una copia separada de estos archivos antes de hacer la
+actualización, de manera que pueda recuperar su config.php
+y de cualquier módulo que haya añadido como temas, idiomas, etc.<strong><br>
+      		</strong></p>
+	</blockquote>
+    <p><strong>2. Su directorio de datos.</strong></p>
+	<blockquote>
+    	<p>Aquí es donde reside el contenido enviado (como los materiales de los cursos 
+      y las tareas de los estudiantes) así que es muy importante tener una copia 
+      de seguridad de estos archivos. Algunas veces la actualización puede mover 
+      o renombrar directorios dentro de su directorio de datos.<strong><br>
+        </strong></p>
+	</blockquote>
+    <p><strong>3. Su base de datos</strong></p>
+	<blockquote> 
+    	<p>La mayoría de las actualizaciónes de Moodle alterarán las tablas de la 
+      base de datos, añadiendo o cambiando campos. Cada base de datos tiene formas 
+      diferentes de hacer la copia de seguridad. Una manera de hacer una copia 
+      de seguridad de una base de datos MySQL es 'vocarla' en un &uacute;nico archivo 
+      SQL. El siguiente ejemplo muestra los comandos en Unix para volcar la base 
+      de datos llamada "moodle":</p>
 
 <p style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">mysqldump
 
 moodle &gt; moodle-backup-2002-10-26.sql</p>
 
-<p>También puede usar la opción "Administrar
-Base de Datos" la interfaz Web de Moodle para hacer lo mismo en cualquier
+    <p>También puede usar la opción &quot;Exportar&quot; en la interfaz web de 
+      Moodle "Administrar Base de Datos" para hacer lo mismo en cualquier plataforma.</p>
 
-plataforma.</p>
-
-<p>&nbsp;</p>
-
+	<p>&nbsp;</p>
+	</blockquote>
+</blockquote>
 </div>
 
-<h3>2. Instalar el nuevo software de Moodle</h3>
+<h3 class="sectionheading">2. Instalar el nuevo software de Moodle</h3>
 
-<div style="padding-left: 3em;">
+<blockquote>
 
-<h4>Usar un archivo descargado</h4>
-
-<p>No sobreescriba una antigua instalación a menos que
-
-esté seguro de lo que está haciendo... algunas veces los
-
-archivos antiguos peuden causar problemas a la nueva
-
-instalación. La mejor manera es renombrar el directorio actual
-
-de Moodle, y luego descomprimir el nuevo archivo de Moodle en la
-
-antigua localización.</p>
+  <p><strong>Usar un archivo descargado</strong></p>
+  <blockquote>
+    <p>No sobreescriba una antigua instalación a menos que esté seguro de lo que 
+      está haciendo... algunas veces los archivos antiguos pueden causar problemas 
+      a la nueva instalación. La mejor manera es renombrar el directorio actual 
+      de Moodle, y luego descomprimir el nuevo archivo de Moodle en la antigua 
+      localización.</p>
 
 	
 
@@ -106,14 +94,8 @@ antigua localización.</p>
  style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">mv
 
 moodle moodle.backup<br>
-
-tar xvzf moodle-1.0.6.tgz</p>
-
-<p>A continuación, copie su config.php y cualquier otra
-
-modificación,&nbsp;<em lang="en"></em>como los temas
-
-personalizados:</p>
+      tar xvzf moodle-1.1.tgz</p>    <p>A continuación, copie su config.php y cualquier otra extensi&oacute;n,&nbsp;<em lang="en"></em>como 
+      los temas personalizados:</p>
 
 <p
 
@@ -122,22 +104,14 @@ personalizados:</p>
 moodle.backup/config.php moodle<br>
 
 cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</p>
+ 
+</blockquote>
 
-<h4>Uso del <abbr title="Concurrent Versions System" lang="en">CVS</abbr></h4>
-
-<p>Si usted está usando el <abbr
-
- title="Concurrent Versions System" lang="en">CVS</abbr>, sólo
-
-tiene que ir al directorio raíz de Moodle y actualizar los
-
-nuevos archivos:</p>
-
-<p
-
- style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">cvs
-
-update -dP</p>
+<p><strong>Uso del CVS</strong></p>
+  <blockquote> 
+  <p>Si está usando el CVS, sólo tiene que ir al directorio raíz de Moodle y actualizar 
+    los nuevos archivos:</p>
+<p style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">cvs update -dP</p>
 
 <p>Asegúrese de usar el parámetro "d" para crear nuevos
 
@@ -145,45 +119,34 @@ directorios si es necesario, y el parámetro "P" para cortar los
 
 directorios vacíos.</p>
 
-<p>Si usted ha estado editando archivos de Moodle, mire atentamente los
-
-mensajes para detectar posibles conflictos. Todos sus temas
-
-personalizados y <em lang="en">plugins</em> no estándar
-
-estarán intactos.</p>
+  <p>Si ha estado editando archivos de Moodle, mire atentamente los mensajes para 
+    detectar posibles conflictos. Todos sus temas personalizados y extensiones 
+    no estándar permanecer&aacute;n intactos.</p>
 
 <p>&nbsp;</p>
-
-</div>
-
-<h3>3. Concluir la actualización</h3>
+</blockquote>
+</blockquote>
+<h3 class="sectionheading">3. Concluir la actualización</h3>
 
 <div style="padding-left: 3em;">
 
-<p>El último paso es poner en funcionamiento el proceso de
+  <p>El último paso es poner en funcionamiento los procesos de actualización dentro 
+    de Moodle.</p>
 
-actualización dentro de Moodle.</p>
+<p>Para hacerlo, vaya a la <a target=_top href="../admin/index.php">página
 
-<p>Para hacerlo, vaya a la <a href="../admin/index.php" target="_top">página
+de admin de su instalación</a>.</p>
 
-de <span>admin</span> de su instalación</a>.</p>
+  <p
 
-<p
-
- style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">http://example.com/moodle/admin</p>
+ style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">http://ejemplo.com/moodle/admin</p>
 
 <p>No importa si usted ha entrado como administrador o no.</p>
 
-<p>Moodle detecta automáticamente la actualización y
-
-lleva a cabo todas las actualizaciones necesarias de las bases de datos
-
-y archivos de sistema. Si hay algo que no puede hacerse por sí
-
-mismo (caso muy raro) entonces aparecerá un mensaje
-
-diciéndole lo que necesita hacer.<br>
+  <p>Moodle detecta automáticamente la nueva versi&oacute;n y lleva a cabo todas 
+    las actualizaciones necesarias de las bases de datos y archivos de sistema. 
+    Si hay algo que no puede hacer por sí mismo (caso muy raro) entonces aparecerán 
+    mensajes diciéndole lo que tiene que hacer.<br>
 
 <br>
 
@@ -193,24 +156,17 @@ error) entonces &iexcl;puede comenzar a usar su nueva versión de
 
 Moodle y disfrutar de sus nuevas características!</p>
 
-<p>Si tiene problemas con la actualización, visite <a
-
- href="http://moodle.com/" target="_top">moodle.com</a> y colcoque un
-
-mensaje en el <a href="http://moodle.com/mod/forum/view.php?id=28"
-
- target="_top">Foro de ayuda con la instalación</a>.</p>
-
+<p>Si tiene problemas con la actualización, visite <a target=_top href="http://moodle.org/">moodle.org</a>
+y mande un mensaje al <a target=_top href="http://moodle.org/mod/forum/view.php?id=28">Foro de ayuda a la instalación</a>.</p>
 <p>&nbsp;</p>
 
 <p>&nbsp;</p>
 
 </div>
 
-<p style="text-align: center; font-size: 0.7em;"><a href="."
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentaci&oacute;n 
+  de Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
 
- target="_top">Moodle Documentation</a></p>
 
-<p style="text-align: center; font-size: 0.7em;">Version: $Id:
-
-upgrade.html,v 1.2 2003/01/28 03:06:52 moodler Exp $</p>
+</body>

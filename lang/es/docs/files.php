@@ -9,7 +9,7 @@
 $string['intro.html'] = "Introducción";
 $string['background.html'] = "Antecedentes";
 $string['features.html'] = "Características";
-$string['release.html'] = "Notas de versiones";
+$string['release.html'] = "Notas sobre versiones";
 $string['install.html'] = "Instalación";
 $string['upgrade.html'] = "Actualización";
 $string['faq.html'] = "Preguntas frecuentes (FAQ)";

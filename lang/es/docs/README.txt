@@ -1,21 +1,23 @@
 Moodle documentation
 --------------------
 
-If you want to translate this documentation into another language,
-I would suggest that you:
+Si quiere traducir esta documentación a otro idioma,
+le sugiero que:
 
- 1) don't include English versions of the files in this directory
-    because they will be used automatically anyway if it is missing
-    from your language pack.
+ 1) no incluya las versiones en inglés de los archivos en este directorio
+    ya que serán usadas automáticamente de todas formas si no se encuentran
+    en su paquete de idioma.
 
- 2) translate them in this order (starting with the important ones):
-  
-    MOST IMPORTANT
+ 2) traduzca los archivos en este orden (empezando por los más importantes):  
+
+    MÁS IMPORTANTES
     |-------------------
     |
     |   - files.php
     |   - install.html
+    |   - installamp.html
     |   - upgrade.html
+    |   - faq.html
     |
     |  -----------------
     |
@@ -37,8 +39,9 @@ I would suggest that you:
     |  -----------------
     |   
     |   - license.html
-    |   - credits.html
     |
     |-------------------
-    LEAST IMPORTANT
+    MENOS IMPORTANTES
+
+ 3) Por favor, no traduzca credits.html - cambia demadiado a menudo.
 
