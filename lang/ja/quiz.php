@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 unstable development (2004092000)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -194,7 +194,7 @@ $string['reportmulti_percent'] = 'マルチ - パーセンテージ';
 $string['reportmulti_q_x_student'] = 'マルチ - 学生選択';
 $string['reportmulti_resp'] = '個別の返答';
 $string['reportoverview'] = '概観';
-$string['reportregrade'] = '受験の最評定';
+$string['reportregrade'] = '受験の再評定';
 $string['reportsimplestat'] = '単純統計';
 $string['requirepassword'] = 'パスワード';
 $string['requirepasswordmessage'] = '小テストを行うためにパスワードを入力してください。';
