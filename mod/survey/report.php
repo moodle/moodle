@@ -113,34 +113,40 @@
             survey_print_graph("id=$id&group=$currentgroup&type=overall.png");
             echo "</a>";
         } else {
-            echo "<p align=center>".get_string("nobodyyet","survey")."</p>";
+            notify(get_string("nobodyyet","survey"));
         }
         break;
 
       case "scales":
         print_heading($strscales);
 
-        $questions = get_records_list("survey_questions", "id", $survey->questions);
-        $questionorder = explode(",", $survey->questions);
+        if (! $results = survey_get_responses($survey->id, $currentgroup) ) {
+            notify(get_string("nobodyyet","survey"));
 
-        foreach ($questionorder as $key => $val) {
-            $question = $questions[$val];
-            if ($question->type < 0) {  // We have some virtual scales.  Just show them.
-                $virtualscales = true;
-                break;
-            }
-        }
+        } else {
 
-        foreach ($questionorder as $key => $val) {
-            $question = $questions[$val];
-            if ($question->multi) {
-                if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
-                    continue;
+            $questions = get_records_list("survey_questions", "id", $survey->questions);
+            $questionorder = explode(",", $survey->questions);
+
+            foreach ($questionorder as $key => $val) {
+                $question = $questions[$val];
+                if ($question->type < 0) {  // We have some virtual scales.  Just show them.
+                    $virtualscales = true;
+                    break;
                 }
-                echo "<p align=center><a title=\"$strseemoredetail\" href=report.php?action=questions&id=$id&qid=$question->multi>";
-                survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=multiquestion.png");
-                echo "</a></p><br>";
-            } 
+            }
+
+            foreach ($questionorder as $key => $val) {
+                $question = $questions[$val];
+                if ($question->multi) {
+                    if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
+                        continue;
+                    }
+                    echo "<p align=center><a title=\"$strseemoredetail\" href=report.php?action=questions&id=$id&qid=$question->multi>";
+                    survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=multiquestion.png");
+                    echo "</a></p><br>";
+                } 
+            }
         }
 
         break;
@@ -165,63 +171,69 @@
             print_heading($strallquestions);
         }
 
-        foreach ($questionorder as $key => $val) {
-            $question = $questions[$val];
-            if ($question->type < 0) {  // We have some virtual scales.  DON'T show them.
-                $virtualscales = true;
-                break;
-            }
-        }
+        if (! $results = survey_get_responses($survey->id, $currentgroup) ) {
+            notify(get_string("nobodyyet","survey"));
 
-        foreach ($questionorder as $key => $val) {
-            $question = $questions[$val];
+        } else {
 
-            if ($question->type < 0) {  // We have some virtual scales.  DON'T show them.
-                continue;
-            }
-            $question->text = get_string($question->text, "survey");
-
-            if ($question->multi) {
-                echo "<h3>$question->text:</h3>";
-
-                $subquestions = get_records_list("survey_questions", "id", $question->multi);
-                $subquestionorder = explode(",", $question->multi);
-                foreach ($subquestionorder as $key => $val) {
-                    $subquestion = $subquestions[$val];
-                    if ($subquestion->type > 0) {
-                        echo "<p align=center>";
-                        echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$subquestion->id\">";
-                        survey_print_graph("id=$id&qid=$subquestion->id&group=$currentgroup&type=question.png");
-                        echo "</a></p>";
-                    }
+            foreach ($questionorder as $key => $val) {
+                $question = $questions[$val];
+                if ($question->type < 0) {  // We have some virtual scales.  DON'T show them.
+                    $virtualscales = true;
+                    break;
                 }
-            } else if ($question->type > 0 ) {
-                echo "<p align=center>";
-                echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$question->id\">";
-                survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=question.png");
-                echo "</a></p>";
+            }
 
-            } else {
-                $table = NULL;
-                $table->head = array($question->text);
-                $table->align = array ("left");
+            foreach ($questionorder as $key => $val) {
+                $question = $questions[$val];
 
-                $contents = '<table cellpadding="15" width="100%">';
-
-                if ($aaa = survey_get_user_answers($survey->id, $question->id, $currentgroup, "sa.time ASC")) {
-                    foreach ($aaa as $a) {
-                        $contents .= "<tr>";
-                        $contents .= '<td nowrap="nowrap" width="10%" valign="top">'.fullname($a).'</td>';
-                        $contents .= '<td valign="top">'.$a->answer1.'</td>';
-                        $contents .= "</tr>";
-                    }
+                if ($question->type < 0) {  // We have some virtual scales.  DON'T show them.
+                    continue;
                 }
-                $contents .= "</table>";
+                $question->text = get_string($question->text, "survey");
 
-                $table->data[] = array($contents);
+                if ($question->multi) {
+                    echo "<h3>$question->text:</h3>";
 
-                print_table($table);
-                print_spacer(30);
+                    $subquestions = get_records_list("survey_questions", "id", $question->multi);
+                    $subquestionorder = explode(",", $question->multi);
+                    foreach ($subquestionorder as $key => $val) {
+                        $subquestion = $subquestions[$val];
+                        if ($subquestion->type > 0) {
+                            echo "<p align=center>";
+                            echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$subquestion->id\">";
+                            survey_print_graph("id=$id&qid=$subquestion->id&group=$currentgroup&type=question.png");
+                            echo "</a></p>";
+                        }
+                    }
+                } else if ($question->type > 0 ) {
+                    echo "<p align=center>";
+                    echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$question->id\">";
+                    survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=question.png");
+                    echo "</a></p>";
+
+                } else {
+                    $table = NULL;
+                    $table->head = array($question->text);
+                    $table->align = array ("left");
+
+                    $contents = '<table cellpadding="15" width="100%">';
+
+                    if ($aaa = survey_get_user_answers($survey->id, $question->id, $currentgroup, "sa.time ASC")) {
+                        foreach ($aaa as $a) {
+                            $contents .= "<tr>";
+                            $contents .= '<td nowrap="nowrap" width="10%" valign="top">'.fullname($a).'</td>';
+                            $contents .= '<td valign="top">'.$a->answer1.'</td>';
+                            $contents .= "</tr>";
+                        }
+                    }
+                    $contents .= "</table>";
+
+                    $table->data[] = array($contents);
+
+                    print_table($table);
+                    print_spacer(30);
+                }
             }
         }
 
