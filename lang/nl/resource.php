@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003113000)
+      // resource.php - created with Moodle 1.2 development (2003121500)
 
 
 $string['addresource'] = 'Voeg bron toe';
@@ -7,6 +7,16 @@ $string['chooseafile'] = 'Kies of upload een bestand';
 $string['configdefaulturl'] = 'Deze waarde wordt gebruikt om een deel van de URL in te vullen wanneer er een nieuwe URL-gebaseerde bron gemaakt wordt.';
 $string['configfilterexternalpages'] = 'Door deze instelling in te schakelen zullen alle externe bronnen (web paginas, geüploade HTML-pagina\'s) verwerkt worden door de site-filters (zoals de autolinks van de woordenlijst bijvoorbeeld). Door deze optie in te schakelen kan je site behoorlijk vertragen - gebruik dit voorzichtig en alleen als je het echt nodig hebt';
 $string['configframesize'] = 'Als een webpagina of een geüpload bestand binnen een frame wordt weergegeven, dan is deze waarde de hoogte (in pixels) van het bovenste frame (dat de navigatie bevat).';
+$string['configpopup'] = 'Als een nieuwe bron toegevoegd wordt die in een popup-venster getoond kan worden, moet dat dan de standaard optie zijn?';
+$string['configpopupdirectories'] = 'Wil je dat in popup-vensters standaard de links naar mappen getoond worden?';
+$string['configpopupheight'] = 'Welke hoogte is de standaardhoogte voor popup-vensters?';
+$string['configpopuplocation'] = 'Wil je dat popup-vensters standaard een adresbalk hebben?';
+$string['configpopupmenubar'] = 'Wil je dat popup-venster standaard een menubalk hebben?';
+$string['configpopupresizable'] = 'Wil je dat de grootte van popup-vensters standaard kan gewijzigd worden?';
+$string['configpopupscrollbars'] = 'Wil je dat standaard scrollen in popup-vensters mogelijk is?';
+$string['configpopupstatus'] = 'Wil je dat popup-vensters standaard een statusbalk hebben?';
+$string['configpopuptoolbar'] = 'Wil je dat popup-vensters standaard een knoppenbalk hebben?';
+$string['configpopupwidth'] = 'Hoe breed zou een popup-venster standaard moeten zijn?';
 $string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegd, wordt deze plaats aangeboden als een site om de gebruiker te helpen de URL te zoeken.';
 $string['editingaresource'] = 'Bewerk een bron';
 $string['example'] = 'Voorbeeld';

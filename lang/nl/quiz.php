@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003113000)
+      // quiz.php - created with Moodle 1.2 development (2003121500)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -9,6 +9,7 @@ Je kunt gelijk welke van die vragen selecteren om ze toe te voegen bij je test a
 $string['addquestions'] = 'Voeg vragen toe';
 $string['addquestionstoquiz'] = 'Voeg vragen aan de huidige test toe';
 $string['addselectedtoquiz'] = 'Voeg het geselecteerde toe aan de test';
+$string['aiken'] = 'Aiken opmaak';
 $string['allowreview'] = 'Sta nalezen toe';
 $string['alreadysubmitted'] = 'Waarschijnlijk heb je deze poging al ingestuurd';
 $string['alwaysavailable'] = 'Altijd beschikbaar ';
@@ -17,6 +18,7 @@ $string['answerhowmany'] = 'Eén of meerdere antwoorden';
 $string['answersingleno'] = 'Meerdere antwoorden toegestaan';
 $string['answersingleyes'] = 'Slechts één antwoord';
 $string['answerswithacceptederrormarginmustbenumeric'] = 'Antwoorden met een geaccepteerde fout moeten numeriek zijn';
+$string['aon'] = 'AON opmaak';
 $string['attempt'] = 'Poging $a';
 $string['attemptfirst'] = 'Eerste poging';
 $string['attemptlast'] = 'Laatste poging';
@@ -43,6 +45,7 @@ $string['corrresp'] = 'Juiste reactie';
 $string['countdown'] = 'Aftellen';
 $string['countdownfinished'] = 'De test gaat dicht. Je moet nu je antwoorden insturen.';
 $string['countdowntenminutes'] = 'De test gaat over tien minuten dicht.';
+$string['coursetestmanager'] = 'Course Test Manager opmaak';
 $string['createmultiple'] = 'Maak meerdere vragen';
 $string['createnewquestion'] = 'Maak een nieuwe vraag';
 $string['custom'] = 'Aangepast formaat';
@@ -50,6 +53,7 @@ $string['daysavailable'] = 'Dagen beschikbaar';
 $string['default'] = 'Standaard';
 $string['defaultgrade'] = 'Standaard beoordeling vraag';
 $string['defaultinfo'] = 'De standaardcategorie voor vragen.';
+$string['deleteattemptcheck'] = 'Ben je er zeker van dat je deze pogingen wil verwijderen?';
 $string['deletequestioncheck'] = 'Weet je heel zeker dat je \'$a\' wilt verwijderen?';
 $string['description'] = 'Beschrijving';
 $string['discrimination'] = 'Discrim. Index';
@@ -66,6 +70,7 @@ $string['editingrandom'] = 'Een willekeurige vraag bewerken';
 $string['editingrandomsamatch'] = 'Een willekeurige vraag met kort antwoord bewerken';
 $string['editingshortanswer'] = 'Een vraag met kort antwoord bewerken';
 $string['editingtruefalse'] = 'Een waar/onwaar vraag bewerken';
+$string['editquestions'] = 'Bewerk vragen';
 $string['false'] = 'Onwaar';
 $string['feedback'] = 'Feedback';
 $string['fileformat'] = 'Bestandsformaat';
@@ -78,6 +83,7 @@ $string['fractionsaddwrong'] = 'De positieve cijfers die je hebt gekozen tellen 
 $string['fractionsnomax'] = 'Eén van de antwoorden moet 100%% zijn, zodat het mogelijk is
 <BR>om een vol punt voor deze vraag te krijgen.
 <BR>Wil je terug gaan en deze vraag verbeteren?';
+$string['gift'] = 'GIFT opmaak';
 $string['gradeaverage'] = 'Gemiddelde cijfer';
 $string['gradehighest'] = 'Hoogste cijfer';
 $string['grademethod'] = 'Beoordelingsmethode';

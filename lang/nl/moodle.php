@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003113000)
+      // moodle.php - created with Moodle 1.2 development (2003121500)
 
 
 $string['action'] = 'Actie';
@@ -208,6 +208,7 @@ $string['defaultcoursesummary'] = 'Schrijf hier een korte en interessante paragr
 $string['defaultcourseteacher'] = 'Docent';
 $string['defaultcourseteachers'] = 'Docenten';
 $string['delete'] = 'Verwijder';
+$string['deleteall'] = 'Verwijder alle';
 $string['deletecheck'] = 'Verwijder $a?';
 $string['deletecheckfiles'] = 'Weet je het 100 procent zeker dat je deze bestanden wilt verwijderen?';
 $string['deletecheckfull'] = 'Weet je het 100 procent zeker dat je $a volledig wilt verwijderen?';
@@ -219,6 +220,7 @@ $string['deleted'] = 'Verwijderd';
 $string['deletedactivity'] = '$a verwijderd';
 $string['deletedcourse'] = '$a is volledig verwijderd';
 $string['deletednot'] = 'Kon $a niet verwijderen!';
+$string['deleteselected'] = 'Verwijder geselecteerde';
 $string['deletingcourse'] = '$a verwijderen';
 $string['deletingexistingcoursedata'] = 'Bestaande data van een vak verwijderen';
 $string['deletingolddata'] = 'Oude data verwijderen';
