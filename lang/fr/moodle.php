@@ -194,6 +194,7 @@ $string['coursecreators'] = 'Responsables de cours';
 $string['coursefiles'] = 'Fichiers du cours';
 $string['courseformats'] = 'Formats de cours';
 $string['coursegrades'] = 'Notes du cours';
+$string['coursehidden'] = 'Ce cours n\'est actuellement pas disponible pour les étudiants';
 $string['courseinfo'] = 'Informations du cours';
 $string['courserestore'] = 'Restauration du cours';
 $string['courses'] = 'Cours';
