@@ -59,49 +59,24 @@
                  "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $strassignadmins", "");
 
-/// Get all existing admins
-    $admins = get_admins();
-
 /// Add an admin if one is specified
-    if ($add) {
-        $user = @get_record("user", "id", $_REQUEST['add']) or
-            error("That account (id = {$_REQUEST['add']}) doesn't exist");
 
-        if ($admins) {
-            foreach ($admins as $aa) {
-                if ($aa->id == $user->id) {
-                    error("That user is already an admin.");
-                }            
-            }
+    if (!empty($_GET['add'])) {
+        if (! add_admin($add)) {
+            error("Could not add that admin!");
         }
-
-        $admin->userid = $user->id;
-        $admin->id = insert_record("user_admins", $admin);
-        $admins[] = $user;
     }
 
 /// Remove an admin if one is specified.
-    if ($remove) {
 
-        $user = @get_record("user", "id", $_REQUEST['remove']) or 
-            error("That account (id = {$_REQUEST['remove']}) doesn't exist");
-
-        if ($admins) {
-            foreach ($admins as $key => $aa) {
-                if ($aa->id == $user->id) {
-                    /// make sure that we don't delete the primary admin
-                    /// account, so that there is always at least on admin
-                    if ($aa->id == $primaryadmin->id) {
-                        error("That user is the primary admin, and shouldn't be removed.");
-                    } else {
-                        remove_admin($user->id);
-                        unset($admins[$key]);
-                    }
-                } 
-            }
+    if (!empty($_GET['remove'])) {
+        if (! remove_admin($remove)) {
+            error("Could not remove that admin!");
         }
     }
 
+/// Get all existing admins
+    $admins = get_admins();
 
 /// Print the lists of existing and potential admins
     echo "<table cellpadding=2 cellspacing=10 align=center>";
@@ -111,8 +86,7 @@
 /// First, show existing admins
 
     if (! $admins) { 
-        echo "<p align=center>$strnoexistingadmins</a>";
-
+        echo "<p align=center>$strnoexistingadmins</p>";
         $adminlist = "";
 
     } else {
