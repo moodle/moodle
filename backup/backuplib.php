@@ -48,6 +48,7 @@ $db->debug=true;
         if ($users) {
             //Iterate over users putting their roles
             foreach ($users as $user) {
+echo $user->id."<br>";
                    $user->info = "";
                 //Is Admin in tables (not is_admin()) !!
                 if (record_exists("user_admins","userid",$user->id)) {
