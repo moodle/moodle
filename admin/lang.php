@@ -176,9 +176,6 @@
             }
             echo "<TABLE WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=3 BORDER=0>";
             foreach ($enstring as $key => $envalue) {
-                $envalue = trim($envalue);
-                $envalue = str_replace("\n\r\n\r","\n",$envalue);
-                $envalue = str_replace("\n\n","\n",$envalue);
                 $envalue = nl2br(htmlspecialchars($envalue));
                 $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
                 $envalue = str_replace("%%","%",$envalue);
@@ -187,13 +184,7 @@
                 echo "<TD WIDTH=20% BGCOLOR=\"$THEME->cellheading\" NOWRAP VALIGN=TOP>$key</TD>";
                 echo "<TD WIDTH=40% BGCOLOR=\"$THEME->cellheading\" VALIGN=TOP>$envalue</TD>";
 
-                $value = $string[$key];
-                $value = trim($value);
-                $value = str_replace("\n\r","\n",$value);
-                $value = str_replace("\n\n","\n",$value);
-                $value = str_replace("\n\n","\n",$value);
-                $value = str_replace("\n\n","\n",$value);
-                $value = str_replace("\\","",$value);          // Delete all slashes
+                $value = str_replace("\\","",$string[$key]);          // Delete all slashes
                 $value = str_replace("%%","%",$value);
                 $value = htmlspecialchars($value);
 
