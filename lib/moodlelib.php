@@ -752,12 +752,13 @@ function make_upload_directory($directory) {
 
     $currdir = $CFG->dataroot;
 
+    umask(0000);
+
     if (!file_exists($currdir)) {
-        if (! mkdir($currdir, 0750)) {
+        if (! mkdir($currdir, $CFG->directorypermissions)) {
             notify("ERROR: You need to create the directory $currdir with web server write access");
             return false;
         }
-        chmod($currdir,0750);
     }
 
     $dirarray = explode("/", $directory);
@@ -765,11 +766,10 @@ function make_upload_directory($directory) {
     foreach ($dirarray as $dir) {
         $currdir = "$currdir/$dir";
         if (! file_exists($currdir)) {
-            if (! mkdir($currdir, 0750)) {
+            if (! mkdir($currdir, $CFG->directorypermissions)) {
                 notify("ERROR: Could not find or create a directory ($currdir)");
                 return false;
             }
-            chmod($currdir,0750);
         }
     }
 

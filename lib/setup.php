@@ -60,6 +60,13 @@
     error_reporting($CFG->debug);   
 
 
+/// File permissions on created directories in the $CFG->dataroot
+
+    if (empty($CFG->directorypermissions)) {
+        $CFG->directorypermissions = 0777;      // Must be octal (that's why it's here)
+    }
+
+
 /// Location of standard files
 
     $CFG->wordlist    = "$CFG->libdir/wordlist.txt";
