@@ -65,6 +65,9 @@
                     error("Could not find forum $discussion->forum");
                 }
 
+                $post->subject = highlight("$search", $post->subject);
+                $discussion->name = highlight("$search", $discussion->name);
+
                 $fullsubject = "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
                 if ($forum->type != "single") {
                     $fullsubject .= " -> <A HREF=\"discuss.php?d=$discussion->id\">$discussion->name</A>";
