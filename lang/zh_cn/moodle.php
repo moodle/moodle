@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta (2004022400)
+      // moodle.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['action'] = '动作';
@@ -16,6 +16,9 @@ $string['add'] = '添加';
 $string['addadmin'] = '添加网站管理员';
 $string['addcreator'] = '添加课程管理员';
 $string['added'] = '已添加 $a';
+$string['addedtogroup'] = '已经加入组 $a';
+$string['addedtogroupnot'] = '未加入组 $a';
+$string['addedtogroupnotenrolled'] = '未加入组 $a, 因为未选课';
 $string['addinganew'] = '添加一个新的 $a';
 $string['addinganewto'] = '正在添加一个新 $a->what 到 $a->to';
 $string['addingdatatoexisting'] = '加入数据到现有的';
@@ -65,6 +68,7 @@ $string['allparticipants'] = '所有学员';
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = '只允许用字母或阿拉伯数字';
 $string['alreadyconfirmed'] = '登记已经确认';
+$string['always'] = '经常';
 $string['answer'] = '回答';
 $string['areyousuretorestorethis'] = '你确定继续吗？';
 $string['areyousuretorestorethisinfo'] = '稍后，在此过程中你将选择是将备份添加到一门现有课程或是创建一门新课程。';
@@ -128,7 +132,9 @@ $string['configallowunenroll'] = '是否允许学生自行退学';
 $string['configcachetext'] = '该设置可加速大站或是使用文字过滤的站.将其设置的过小可能会稍微减慢速度,将其设置的过大会导致数据刷新缓慢(如新链接).';
 $string['configcountry'] = '如果你在这里设定了国家，那么新用户在默认情况下选择此项.不设定是用户必须自行选择.';
 $string['configdebug'] = '如果你打开这个选项，那么PHP的错误报告会增加，页面上会出现更多的警告信息。这只对开发人员有用。';
+$string['configdeleteunconfirmed'] = '设置认证时限.使用email认证注册时,超过该时限未认证的拥护将被删除.';
 $string['configerrorlevel'] = '选择显示的PHP警告数目。‘正常’是最佳选择。';
+$string['configfilteruploadedfiles'] = '使用该设置将使得Moodle在上传的html,txt文件显示前先对其实施过滤。';
 $string['configforcelogin'] = '正常地，不需要登陆即可看到首页和课表 ( 但是不课程) 。如果你想要禁止在登陆前做任何事，请使用该项设置。';
 $string['configframename'] = '如果你把本系统嵌入于网页框架（frame）中，那么在此填入该框架名称。否则这里须保持为‘_top’';
 $string['configfullnamedisplay'] = '如何显示名字';
@@ -162,6 +168,7 @@ $string['configuration'] = '设置';
 $string['configvariables'] = '设置变量';
 $string['configwarning'] = '不要随便修改此项--未知变量可能导致错误';
 $string['configzip'] = '指定压缩程序的位置（只有Unix系统才需要），服务器解压zip文件时需要用到它。';
+$string['confirm'] = '确认';
 $string['confirmed'] = '你的登记已经得到确认';
 $string['confirmednot'] = '你的登记尚未得到确认！';
 $string['continue'] = '继续';
@@ -304,7 +311,7 @@ $string['emailpasswordconfirmation'] = '$a->lastname ：
 
 有人（一般情况下是你自己）为你在‘ $a->sitename ’上的帐号申请了新的密码。
 
-如果你要确认申请，并希望通过email获取新密码，请点击以下链接：
+如果你要确认?昵耄⑾Ｍü齟mail获取新密码，请点击以下链接：
 
     $a->link
 
@@ -408,6 +415,7 @@ $string['groupmode'] = '组模式';
 $string['groupmodeforce'] = '强制组模式';
 $string['groupmy'] = '我的组';
 $string['groupnonmembers'] = '不属于某组的用户';
+$string['groupnotamember'] = '抱歉，你不是那个组的成员';
 $string['grouprandomassign'] = '随机分配所有人到组';
 $string['groupremove'] = '删除选定的组';
 $string['groupremovemembers'] = '删除选定的成员';
@@ -847,11 +855,13 @@ $string['uploadproblem'] = '上载文件 \'$a\' 时有一个未知错误发生（也许是它太大？
 $string['uploadthisfile'] = '上载这个文件';
 $string['uploadusers'] = '上传用户';
 $string['user'] = '用户';
+$string['userconfirmed'] = '确认 $a';
 $string['userdeleted'] = '该用户帐号已被删除';
 $string['userdescription'] = '自述';
 $string['userfiles'] = '用户的文件';
 $string['username'] = '用户名';
 $string['usernameexists'] = '这个用户名已经存在，用别的吧';
+$string['usernotconfirmed'] = '不能确认 $a';
 $string['userprofilefor'] = '用于 $a 的用户个人资料';
 $string['users'] = '用户';
 $string['usersnew'] = '新用户';

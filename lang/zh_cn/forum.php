@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta (2004022400)
+      // forum.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['addanewdiscussion'] = '添加一个新的讨论话题';
@@ -22,7 +22,7 @@ $string['couldnotdeletereplies'] = '抱歉，已经有跟贴的贴子不能删除';
 $string['couldnotupdate'] = '由于一个未知的错误，你的贴子无法更新';
 $string['delete'] = '删除';
 $string['deleteddiscussion'] = '讨论话题已被删除';
-$string['deletedpost'] = '贴子已?簧境?';
+$string['deletedpost'] = '贴子已删除';
 $string['deletesure'] = '你确定要删除该贴吗？';
 $string['discussion'] = '话题';
 $string['discussionmoved'] = '该讨论已被移到 $a ';
@@ -79,7 +79,7 @@ $string['nowsubscribed'] = '$a->name 将收到 \'$a->forum\' 复件的电子邮件。';
 $string['numposts'] = '$a 个贴子';
 $string['olderdiscussions'] = '旧的讨论话题';
 $string['openmode0'] = '不能发起新话题，也不能回贴';
-$string['openmode1'] = '不能发起新话题，但?市砘靥?';
+$string['openmode1'] = '不能发起新话题，但允许回复';
 $string['openmode2'] = '发起新话题和回贴均允许';
 $string['parent'] = '显示父类别';
 $string['parentofthispost'] = '该贴的父贴';

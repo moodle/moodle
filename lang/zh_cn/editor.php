@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 Beta (2004022400)
+      // editor.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['about'] = '关于此编辑器';
@@ -73,6 +73,7 @@ $string['preformatted'] = '默认段落字体';
 $string['preview'] = '预览';
 $string['properties'] = 'Properties';
 $string['redo'] = '重做';
+$string['removelink'] = '删除连接';
 $string['rename'] = '重命名';
 $string['right'] = '右';
 $string['rows'] = '行';
