@@ -1,3 +1,104 @@
+2002-06-10 Monday 17:44  martin
+
+	* course/: lib.php, log.php: Fixes related to user timezones.  All
+	times are now displayed as expected.
+
+2002-06-10 Monday 17:43  martin
+
+	* lib/moodlelib.php: Fixes to functions relating to user timezones
+
+2002-06-10 Monday 14:56  martin
+
+	* course/weeks.php: Display tweaks
+
+2002-06-10 Monday 13:41  martin
+
+	* index.php: More tweaks for admin view
+
+2002-06-10 Monday 13:19  martin
+
+	* index.php, admin/site.html, admin/site.php, course/index.php,
+	course/lib.php: Changes to allow choice of format on home page of
+	site
+
+2002-06-10 Monday 12:41  martin
+
+	* course/weeks.php: Layout tweak
+
+2002-06-10 Monday 12:33  martin
+
+	* user/: edit.php, view.php: Better handling of guest user
+
+2002-06-10 Monday 12:24  martin
+
+	* admin/user.php, login/index.php: Moved creation of guest user to
+	login page - this means it can be trashed any time and it will
+	recreate itself as necessary.
+
+2002-06-10 Monday 11:49  martin
+
+	* user/view.php: All users are viewable in the "site" course.
+
+2002-06-10 Monday 10:46  martin
+
+	* login/index_form.html: Tweaking formatting
+
+2002-06-10 Monday 10:42  martin
+
+	* login/: forgot_password.php, index_form.html: Improved formatting
+	for consistency and clarity
+
+2002-06-09 Sunday 22:44  martin
+
+	* login/index_form.html: Little more documentation about guest
+	account
+
+2002-06-09 Sunday 22:14  martin
+
+	* admin/user.php, course/edit.html, course/enrol.php,
+	course/index.php, course/lib.php, lib/moodlelib.php,
+	lib/db/mysql.sql, mod/discuss/post.php, mod/discuss/rate.php,
+	mod/discuss/subscribe.php, mod/journal/edit.php,
+	mod/journal/view.php, mod/survey/save.php, pix/i/key.gif: Changes
+	to support guest user across any course (guest/guest)
+
+2002-06-09 Sunday 22:12  martin
+
+	* pix/poo.html: This file was here by mistake
+
+2002-06-08 Saturday 14:52  martin
+
+	* course/view.php, mod/choice/view.php, mod/discuss/view.php,
+	mod/journal/view.php, mod/reading/view.php, mod/survey/view.php,
+	theme/standard/header.html, theme/standardblue/header.html: Changes
+	to put update/edit icons in the headers of module and course pages
+
+2002-06-08 Saturday 14:47  martin
+
+	* lib/moodlelib.php: Changes so that an icon can be displayed in
+	the header
+
+2002-06-08 Saturday 10:13  martin
+
+	* lib/db/mysql.sql: Put backquotes around some field names to avoid
+	errors
+
+2002-06-07 Friday 11:57  martin
+
+	* lib/moodlelib.php: Added Moodle version number
+
+2002-06-07 Friday 11:54  martin
+
+	* lib/moodlelib.php: More tweaking of the mail formatting
+
+2002-06-07 Friday 11:54  martin
+
+	* mod/discuss/cron.php: More tweaking of the plain text mailouts
+
+2002-06-07 Friday 11:37  martin
+
+	* CHANGES: CH CH CH CH Changes.
+
 2002-06-06 Thursday 23:25  martin
 
 	* config-dist.php: Altered smtphosts and removed cronpassword
