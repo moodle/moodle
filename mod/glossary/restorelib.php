@@ -50,6 +50,7 @@
             $glossary->showalphabet = backup_todb($info['MOD']['#']['SHOWALPHABET']['0']['#']);
             $glossary->showall = backup_todb($info['MOD']['#']['SHOWALL']['0']['#']);
             $glossary->allowcomments = backup_todb($info['MOD']['#']['ALLOWCOMMENTS']['0']['#']);
+            $glossary->usedynalink = backup_todb($info['MOD']['#']['USEDYNALINK']['0']['#']);
             $glossary->timecreated = backup_todb($info['MOD']['#']['TIMECREATED']['0']['#']);
             $glossary->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
@@ -112,6 +113,9 @@
             $entry->format = backup_todb($ent_info['#']['FORMAT']['0']['#']);
             $entry->attachment = backup_todb($ent_info['#']['ATTACHMENT']['0']['#']);
             $entry->sourceglossaryid = backup_todb($ent_info['#']['SOURCEGLOSSARYID']['0']['#']);
+            $entry->usedynalink = backup_todb($ent_info['#']['USEDYNALINK']['0']['#']);
+            $entry->casesensitive = backup_todb($ent_info['#']['CASESENSITIVE']['0']['#']);
+            $entry->fullmatch = backup_todb($ent_info['#']['FULLMATCH']['0']['#']);
             $entry->timecreated = backup_todb($ent_info['#']['TIMECREATED']['0']['#']);
             $entry->timemodified = backup_todb($ent_info['#']['TIMEMODIFIED']['0']['#']);
             $entry->teacherentry = backup_todb($ent_info['#']['TEACHERENTRY']['0']['#']);
