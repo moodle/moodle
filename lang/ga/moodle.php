@@ -289,9 +289,9 @@ ar do bhrabhsálaí.
 Má tá cabhair uait, déan teagmháil led\' thoil le riarthóir an tsuímh,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: dearbhú cuntais';
-$string['emailconfirmsent'] = '   <p>Ba cheart r-phost a bheith seolta chuig do sheoladh ag <b>$a</b>
-   <p>Tá treoracha éasca ann le do chlárúchán a chur i gcrích.
-   <p>Má bhíonn deacrachtaí ar bith agat, déan teagmháil le riarthóir an tsuímh.';
+$string['emailconfirmsent'] = 'Ba cheart r-phost a bheith seolta chuig do sheoladh ag <b>$a</b>
+   <br />Tá treoracha éasca ann le do chlárúchán a chur i gcrích.
+   <br />Má bhíonn deacrachtaí ar bith agat, déan teagmháil le riarthóir an tsuímh.';
 $string['emaildisable'] = 'Tá an seoladh r-phoist seo míchumasaithe.';
 $string['emaildisplay'] = 'Léiriú r-phoist';
 $string['emaildisplaycourse'] = 'Ná lig ach do bhaill eile an chúrsa mo sheoladh r-phoist a fheiceáil';
@@ -317,12 +317,12 @@ Má tá cabhair uait, déan teagmháil led\' thoil le riarthóir an tsuímh,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: dearbhú athrú pasfhocail';
 $string['emailpasswordconfirmsent'] = 'Ba cheart r-phost a bheith seolta chuig do sheoladh ag <b>$a</b>.
-<p>Tá treoracha éasca ann leis an athrú pasfhocail a dhearbhú agus a chur i gcrích.
+<br />Tá treoracha éasca ann leis an athrú pasfhocail a dhearbhú agus a chur i gcrích.
 Má bhíonn deacracht fós agat, téigh i dteagmháil le riarthóir an tsuímh.';
 $string['emailpasswordsent'] = 'Go raibh maith agat as athrú an phasfhocail a dhearbhú.
-<p>Seoladh r-phost le do phasfhocal nua chuig do sheoladh ag <b>$a->email</b>.
-<p>Gineadh go huathoibríoch an pasfhocal - b\'fhéidir gur mhaith leat an
-<a href=$a->link>pasfhocal a athrú</a> go rud éigin a bheadh níos éasca cuimhniú air.';
+<br />Seoladh r-phost le do phasfhocal nua chuig do sheoladh ag <b>$a->email</b>.
+<br />Gineadh go huathoibríoch an pasfhocal - b\'fhéidir gur mhaith leat an
+<a href=\"$a->link\">pasfhocal a athrú</a> go rud éigin a bheadh níos éasca cuimhniú air.';
 $string['enable'] = 'Cumasaigh';
 $string['enrolledincourse'] = 'Cláraithe ar an gcúrsa \"$a\"';
 $string['enrolledincoursenot'] = 'Níl cláraithe ar an gcúrsa \"$a\"';
@@ -495,7 +495,7 @@ $string['loginguest'] = 'Logáil isteach mar aoi';
 $string['loginsite'] = 'Logáil isteach sa suíomh';
 $string['loginsteps'] = 'Dia duit! Le rochtain iomlán a bheith agat ar chúrsaí, beidh ort nóiméad a ghlacadh le cuntas nua a chruthú duit féin ar an suíomh gréasáin seo.
    D\'fhéadfadh &quot;eochair clárúcháin&quot; aon-uaire a bheith ag baint le cúrsaí ar leith, ach ní bheidh sé uait go dtí ar ball. Seo iad na céimeann:
-   <ol size=\"2\">
+   <ol>
    <li>Líon amach an fhoirm <a href=\"$a\">Cuntas Nua</a> le do chuid sonraí.</li>
    <li>Seolfar r-phost láithreach chuig do sheoladh r-phoist.</li>
    <li>Léigh do r-phost, agus cliceáil ar an nasc gréasáin atá ann.</li>
@@ -663,10 +663,10 @@ $string['passwordconfirmchange'] = 'Dearbhaigh athrú an phasfhocail';
 $string['passwordrecovery'] = 'Cabhraigh liom logáil isteach';
 $string['passwordsdiffer'] = 'Níl na pasfhocail seo ag teacht le chéile';
 $string['passwordsent'] = 'Seoladh an pasfhocal';
-$string['passwordsenttext'] = '   <p>Seoladh r-phost chuig do sheoladh ag $a->email.
-   <p><b>Seiceáil do r-post, led\' thoil, dod\' phasfhocal nua</b>
-   <p>Gineadh go huathoirbíodh an pasfhocal nua, b\'fhéidir gur mhaith leat
-   <A HREF=$a->link>é a athrú go rud éigin a bheadh ní b\'éasca cuimhniú air</A>.';
+$string['passwordsenttext'] = 'Seoladh r-phost chuig do sheoladh ag $a->email.
+   <br /><b>Seiceáil do r-post, led\' thoil, dod\' phasfhocal nua</b>
+   <br />Gineadh go huathoirbíodh an pasfhocal nua, b\'fhéidir gur mhaith leat
+   <a href=\"$a->link\">é a athrú go rud éigin a bheadh ní b\'éasca cuimhniú air</a>.';
 $string['people'] = 'Daoine';
 $string['personalprofile'] = 'Próifíl phearsanta';
 $string['phone'] = 'Fón';
@@ -692,11 +692,11 @@ $string['recentactivity'] = 'Gníomhaíocht nua';
 $string['recentactivityreport'] = 'Tuairisc iomlán de ghníomhaíocht a tharla le gairid...';
 $string['registration'] = 'Clárú Moodle';
 $string['registrationemail'] = 'Fógraí r-phoist';
-$string['registrationinfo'] = '<p>Ligeann an leathanach seo duit do shuíomh Moodle a chlárú le moodle.org.  Tá an clárú saor in aisce.
+$string['registrationinfo'] = 'Ligeann an leathanach seo duit do shuíomh Moodle a chlárú le moodle.org.  Tá an clárú saor in aisce.
 An príomhbhuntáiste a bhaineann le clárú ná go gcuirfear ar liosta poist ísealmhéide thú le fógraí tábhachtacha a fháil ar nós teachtaireachtaí foláirimh agus leaganachanua de Moodle.
-<p>Is é an réamhshocrú go gcoinneofaí príobháideach an t-eolas seo agus ní dhíolfar ná ní thabharfar do dhuine ar bith eile é. An t-aon chúis atá ann an t-eolas seo a bhailiú ná ar chúiseanna tacaíochta agus le cuidiú íomhá staitisticiúil a ghiniúint de phobal Moodle ina iomláine.
-<p>Más é do rogha é, féadfaidh tú ainm do shuímh, do thíre agus an URL a chur leis an liosta poiblí de Shuíomhanna Moodle.
-<p>Dearbhaítear gach clárú nua de láimh sula gcuirtear leis an liosta iad, ach ó cuirtear leis an liosta iad féadfaidh tú do chlárúchán (agus d\'iontráil ar an liosta poiblí) a uasdhátú  ag am ar bith tríd an fhoirm seo a athsheoladh.';
+<br />Is é an réamhshocrú go gcoinneofaí príobháideach an t-eolas seo agus ní dhíolfar ná ní thabharfar do dhuine ar bith eile é. An t-aon chúis atá ann an t-eolas seo a bhailiú ná ar chúiseanna tacaíochta agus le cuidiú íomhá staitisticiúil a ghiniúint de phobal Moodle ina iomláine.
+<br />Más é do rogha é, féadfaidh tú ainm do shuímh, do thíre agus an URL a chur leis an liosta poiblí de Shuíomhanna Moodle.
+<br />Dearbhaítear gach clárú nua de láimh sula gcuirtear leis an liosta iad, ach ó cuirtear leis an liosta iad féadfaidh tú do chlárúchán (agus d\'iontráil ar an liosta poiblí) a uasdhátú  ag am ar bith tríd an fhoirm seo a athsheoladh.';
 $string['registrationno'] = 'Ní mian liom r-phost a fháil';
 $string['registrationsend'] = 'Seol faisnéis clárúcháin chuig moodle.org';
 $string['registrationyes'] = 'Sea, cuir teachtaireacht chugam led\' thoil faoi cheisteanna tábhachtacha';
@@ -732,7 +732,7 @@ $string['scheduledbackupstatus'] = 'Stádas cúltaca sceidealaithe';
 $string['search'] = 'Cuardaigh';
 $string['searchagain'] = 'Cuardaigh arís';
 $string['searchcourses'] = 'Cuardaigh cúrsaí';
-$string['searchhelp'] = 'Féadfaidh tú focail iolracha a lorg ag an aon am amháin.<p>focal : aimsigh aon mheaits den fhocal seo sa téacs.<br />+focal : ní aimseofar ach meaits dhíreach den fhocal.<br />-focal : ná cuir san áireamh torthaí ina bhfuil an focal seo.';
+$string['searchhelp'] = 'Féadfaidh tú focail iolracha a lorg ag an aon am amháin.<br />focal : aimsigh aon mheaits den fhocal seo sa téacs.<br />+focal : ní aimseofar ach meaits dhíreach den fhocal.<br />-focal : ná cuir san áireamh torthaí ina bhfuil an focal seo.';
 $string['searchresults'] = 'Torthaí cuardaigh';
 $string['sec'] = 'soic';
 $string['secs'] = 'soic';

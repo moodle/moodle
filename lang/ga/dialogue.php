@@ -19,7 +19,7 @@ Féadfaidh tú é a fheiceáil ceangailte le d\'iontráil dialóige:
 
     $a->url';
 $string['dialoguemailhtml'] = 'Tá iontráil nua curtha isteach ag $a->userfrom le do iontráil dialóige do \'<i>$a->dialogue</i>\'<br /><br />
-Féadfaidh tú é a fheiceáil ceangailte le: <a href="$a->url">d\'iontráil dialóige</a>.';
+Féadfaidh tú é a fheiceáil ceangailte le: <a href=\"$a->url\">d\'iontráil dialóige</a>.';
 $string['dialoguename'] = 'Ainm dialóige';
 $string['dialogueopened'] = 'Dialóg oscailte le $a';
 $string['dialoguewith'] = 'Dialóg le $a';

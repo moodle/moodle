@@ -83,7 +83,7 @@ $string['openmode1'] = 'Gan plé ach ceadaítear freagraí';
 $string['openmode2'] = 'Ceadaítear plé agus freagraí';
 $string['parent'] = 'Taispeáin máthairphost';
 $string['parentofthispost'] = 'Máthair an phoist seo';
-$string['postadded'] = 'Cuireadh isteach go rathúil do phost.<p>Tá $a agat eagar a chur air más mian leat é a athrú.';
+$string['postadded'] = 'Cuireadh isteach go rathúil do phost.<br />Tá $a agat eagar a chur air más mian leat é a athrú.';
 $string['postincontext'] = 'Féach an post seo ina chomhthéacs';
 $string['postmailinfo'] = 'Seo cóip de theachtaireacht postáilte ar shuíomh $a.
 Le do fhreagra a chur leis tríd an suíomh gréasáin, cliceáil ar an nasc seo:';
