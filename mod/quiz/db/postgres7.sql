@@ -46,7 +46,7 @@ CREATE TABLE prefix_quiz (
 CREATE TABLE prefix_quiz_answers (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
-  answer text NOT NULL default '',
+  answer varchar(255) NOT NULL default '',
   fraction varchar(10) NOT NULL default '0.0',
   feedback text NOT NULL default ''
 );
@@ -211,7 +211,7 @@ CREATE TABLE prefix_quiz_responses (
   id SERIAL PRIMARY KEY,
   attempt integer NOT NULL default '0',
   question integer NOT NULL default '0',
-  answer varchar(255) NOT NULL default '',
+  answer text NOT NULL default '',
   grade varchar(10) NOT NULL default '0.0'
 );
 # --------------------------------------------------------

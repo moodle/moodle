@@ -267,8 +267,8 @@ function quiz_upgrade($oldversion) {
                 ) TYPE=MyISAM COMMENT='Options for questions of type calculated'; ");
     }
 
-    if ($oldversion < 2004101700) {
-        table_column("quiz_answers", "answer", "answer", "text", "", "", "", "not null");
+    if ($oldversion < 2004111400) {
+        table_column("quiz_responses", "answer", "answer", "text", "", "", "", "not null");
     }
     
     return true;
