@@ -354,6 +354,7 @@
                                 if (trim(strip_tags($answer->response))) {
                                     $response = $answer->response;
                                 }
+                                break;
                             }
                         } else {
                             // case insensitive
@@ -363,6 +364,7 @@
                                 if (trim(strip_tags($answer->response))) {
                                     $response = $answer->response;
                                 }
+                                break;
                             }
                         }
                     } else {
