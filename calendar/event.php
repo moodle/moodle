@@ -221,7 +221,7 @@
 
     switch($_REQUEST['action']) {
         case 'delete':
-            if($_REQUEST['confirm'] == 1) {
+            if(!empty($_REQUEST['confirm']) && $_REQUEST['confirm'] == 1) {
                 // Kill it and redirect to day view
                 if(($event = get_record('event', 'id', $_REQUEST['id'])) !== false) {
                     /// Log the event delete.
