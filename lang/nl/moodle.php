@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004040500)
+      // moodle.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['action'] = 'Actie';
@@ -42,6 +42,7 @@ $string['adminhelpcourses'] = 'Definieer vakken en vak categorieën en voeg mense
 $string['adminhelpedituser'] = 'Bekijk de lijst met gebruikersaccounts en bewerk de accounts';
 $string['adminhelplanguage'] = 'Voor het controleren en bewerken van het huidige taalpakket';
 $string['adminhelplogs'] = 'Bekijk de statistieken van alle activiteiten op deze site';
+$string['adminhelpmanageblocks'] = 'Beheer de geïnstalleerde blokken en hun instellingen';
 $string['adminhelpmanagedatabase'] = 'Gebruik/beheer de database op directe wijze (voorzichtig!)';
 $string['adminhelpmanagefilters'] = 'Kies tekstfilters en daarmee samenhangende instellingen';
 $string['adminhelpmanagemodules'] = 'Beheer de geïnstalleerde modulen en hun instellingen';
@@ -100,6 +101,8 @@ $string['backupsavetohelp'] = 'Volledig pad naar de map waar je de backupbestand
 $string['backupuserfileshelp'] = 'Selecteer als je gebruikersbestanden in de de backup';
 $string['backupusershelp'] = 'Selecteer als je alle gebruikers op de server of alleen de gebruikers van het vak in de backup wil';
 $string['backupversion'] = 'Versie backup';
+$string['blocksetup'] = 'Installeren van de tabellen voor blokken';
+$string['blocksuccess'] = '$a tabellen zijn juist geïnstalleerd';
 $string['bycourseorder'] = 'In volgorde van vak';
 $string['cancel'] = 'Annuleer ';
 $string['categories'] = 'Vak categorieën';
@@ -226,6 +229,7 @@ $string['databaseperformance'] = 'Performantie van de databank';
 $string['databasesetup'] = 'Klaarmaken van de database';
 $string['databasesuccess'] = 'De database werd met succes opgewaardeerd';
 $string['databaseupgradebackups'] = 'Versie backup is nu $a';
+$string['databaseupgradeblocks'] = 'De versie van de blokken is nu $a';
 $string['databaseupgrades'] = 'Opwaarderen van de database';
 $string['datemostrecentfirst'] = 'Datum - nieuwste eerst';
 $string['datemostrecentlast'] = 'Datum - oudste eerst';
@@ -514,6 +518,7 @@ $string['logs'] = 'Statistieken';
 $string['mainmenu'] = 'Hoofdmenu  ';
 $string['makeafolder'] = 'Maak een map';
 $string['makeeditable'] = 'Als je \'$a\' bewerkbaar maakt door het proces op de web server (bijv. apache), dan kun je dit bestand rechtstreeks vanuit deze pagina bewerken';
+$string['manageblocks'] = 'Blokken';
 $string['managedatabase'] = 'Beheer de database';
 $string['managefilters'] = 'Filters';
 $string['managemodules'] = 'Beheer de modules';
