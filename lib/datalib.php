@@ -1220,11 +1220,30 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
         $sort = " ORDER BY $sort ";
     }
 
-    return get_records_sql("SELECT $fields
+    $students = get_records_sql("SELECT $fields
                             FROM {$CFG->prefix}user u,
                                  {$CFG->prefix}user_students s
                                  $groupmembers
                             WHERE $select $search $sort $dir $limit");
+
+    if ($courseid != SITEID) {
+        return $students;
+    }
+    
+    // We are here because we need the students for the site.
+    // These also include teachers on real courses
+    $select .= "AND s.course <> '".SITEID."'";
+    if (!$teachers = get_records_sql("SELECT $fields
+                            FROM {$CFG->prefix}user u,
+                                 {$CFG->prefix}user_teachers s
+                                 $groupmembers
+                            WHERE $select $search $sort $dir $limit")) {
+        return $students;
+    }
+    if (!$students) {
+        return $teachers;
+    }
+    return $teachers + $students;
 }
 
 /**
