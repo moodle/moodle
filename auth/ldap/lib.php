@@ -466,7 +466,7 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
     $sql = 'SELECT u.id, u.username 
             FROM ' . $CFG->prefix .'user u LEFT JOIN ' . $CFG->prefix .'extuser e 
                     ON u.idnumber = e.idnumber 
-            WHERE u.auth=\'ldap\' AND u.deleted=\'0\' AND e.idnumber IS NULL';
+            WHERE u.auth=\'' . AUTH_LDAP_NAME . '\' AND u.deleted=\'0\' AND e.idnumber IS NULL';
     //print($sql);            
     $remove_users = get_records_sql($sql); 
 
@@ -517,7 +517,7 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
         
     }
     if ( $do_updates && !(empty($updatekeys)) ) { // run updates only if relevant
-        $users = get_records_sql('SELECT u.username, u.id FROM ' . $CFG->prefix . 'user  AS u WHERE u.deleted=0 and u.auth=\'ldap\'' );
+        $users = get_records_sql('SELECT u.username, u.id FROM ' . $CFG->prefix . 'user  AS u WHERE u.deleted=0 and u.auth=\'' . AUTH_LDAP_NAME . '\'' );
         if (!empty($users)) {
             print "User entries to update: ". count($users). "\n";
             
