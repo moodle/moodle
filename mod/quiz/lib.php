@@ -1888,7 +1888,14 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
         }
 
         if (!empty($question->answer)) {
-            $response->answer = implode(",",$question->answer);
+            if (is_array($question->answer))
+            {
+                $response->answer = implode(",",$question->answer);
+            }
+            else
+            {
+                $response->answer=$question->answer;
+            }
         } else {
             $response->answer = "";
         }
