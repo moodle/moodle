@@ -1,5 +1,5 @@
 <?PHP
-   if (empty($user->htmleditor)) {
+   if (!isset($user->htmleditor)) {
        $user->htmleditor = 1;
    }
    if (empty($user->lang)) {
