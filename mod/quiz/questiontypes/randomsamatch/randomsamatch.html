@@ -35,7 +35,7 @@
     </td>
     <td>
         <?php  if (isset($err["questiontext"])) {
-               formerr($err["questiontext"]); 
+               formerr($err["questiontext"]);
                echo "<br />";
            }
            if (empty($question->questiontext)) {
@@ -48,7 +48,7 @@
                echo '<div align="right">';
                print_string("formattexttype");
                echo ":&nbsp;";
-               if (!$question->questiontextformat) {
+               if (empty($question->questiontextformat)) {
                    $question->questiontextformat = FORMAT_MOODLE;
                }
                choose_from_menu(format_text_menu(), "questiontextformat", $question->questiontextformat, "");
@@ -61,7 +61,7 @@
 <tr valign="top">
     <td align="right"><b><?php  print_string("randomsamatchnumber", "quiz") ?>:</b></td>
     <td>
-    <?php 
+    <?php
         if ($numberavailable < 2) {
             echo get_string('createfirst', 'quiz');
             $maxrandom=2;
@@ -78,7 +78,7 @@
      ?>
     </td>
 </tr>
-<?php 
+<?php
     $QUIZ_QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
     $QUIZ_QTYPES[$question->qtype]->print_question_form_end($question);
 ?>
