@@ -85,7 +85,7 @@
     // Print the description
 
     if ($user->description) {
-        echo "<p>".text_to_html($user->description)."</p><hr>";
+        echo "<p>".format_text($user->description)."</p><hr>";
     }
 
     // Print all the little details in a list
