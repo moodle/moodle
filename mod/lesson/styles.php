@@ -1,9 +1,9 @@
 .mod-lesson img {
-    border:0;
+  border:0;
 }
 
 .mod-lesson .hidden-label {
-    display: none;
+  display: none;
 }
 
 .mod-lesson .footer {
@@ -14,21 +14,20 @@
 }
 
 .mod-lesson .leftmenutable {
-    width:170px;
-    height:400px;
-    overflow:auto;    
-    background-color: <?PHP echo $THEME->cellheading2 ?>;
-    vertical-align:top;
+  width:170px;
+  height:400px;
+  overflow:auto;    
+  vertical-align:top;
 }
 
 .mod-lesson .leftmenu a:link, .leftmenu a:active, .leftmenu a:visited, .leftmenu1 a:link, .leftmenu1 a:active, .leftmenu1 a:visited{
-    font-size:.7em;
-    vertical-align:top;
+  font-size:.7em;
+  vertical-align:top;
 }
 
 .mod-lesson .main a:link, .main a:active, .main a:visited{
-    font-size:.9em; 
-    vertical-align:top;
+  font-size:.9em; 
+  vertical-align:top;
 }
 
 .mod-lesson .viewpos {
