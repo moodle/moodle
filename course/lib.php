@@ -929,7 +929,6 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
 /// MODULE FUNCTIONS /////////////////////////////////////////////////////////////////
 
 function add_course_module($mod) {
-    GLOBAL $db;
 
     $mod->added = time();
 
@@ -974,7 +973,6 @@ function delete_course_module($mod) {
 }
 
 function delete_mod_from_section($mod, $section) {
-    GLOBAL $db;
 
     if ($section = get_record("course_sections", "id", "$section") ) {
 
@@ -993,9 +991,43 @@ function delete_mod_from_section($mod, $section) {
     }
 }
 
+function move_section($course, $section, $move) {
+/// Moves a whole course section up and down within the course
+
+    if (!$move) {
+        return true;
+    }
+
+    $sectiondest = $section + $move;
+
+    if ($sectiondest > $course->numsections or $sectiondest < 1) {
+        return false;
+    }
+
+    if (!$sectionrecord = get_record("course_sections", "course", $course->id, "section", $section)) {
+        return false;
+    }
+
+    if (!$sectiondestrecord = get_record("course_sections", "course", $course->id, "section", $sectiondest)) {
+        return false;
+    }
+
+    $sectionrecord->section = $sectiondest;
+    $sectiondestrecord->section = $section;
+
+    if (!update_record("course_sections", $sectionrecord)) {
+        return false;
+    }
+    if (!update_record("course_sections", $sectiondestrecord)) {
+        return false;
+    }
+    return true;
+}
+
+
 
 function move_module($cm, $move) {
-    GLOBAL $db;
+/// Moves an activity module up and down within the course
 
     if (!$move) {
         return true;

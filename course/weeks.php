@@ -215,6 +215,17 @@
                 echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strweekshow\">".
                      "<img src=\"$pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
             }
+
+            if ($section > 1) {                       // Add a arrow to move section up
+                echo "<a href=\"view.php?id=$course->id&section=$section&move=-1\" title=\"$strtopicup\">".
+                     "<img src=\"$pixpath/t/up.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+            }
+
+            if ($section < $course->numsections) {    // Add a arrow to move section down
+                echo "<a href=\"view.php?id=$course->id&section=$section&move=1\" title=\"$strtopicdown\">".
+                     "<img src=\"$pixpath/t/down.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+            }
+
         }
 
         echo "</td>";

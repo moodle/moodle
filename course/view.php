@@ -42,6 +42,12 @@
         if (isset($show)) {
             set_section_visible($course->id, $show, "1");
         }
+
+        if (!empty($section)) {
+            if (!empty($move)) {
+                move_section($course, $section, $move);
+            }
+        }
     }
 
     $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
