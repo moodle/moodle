@@ -1,25 +1,36 @@
 <?PHP
 // $Id: lib.php
-// author: romualdLorthioir $
+// author: romuald Lorthioir
 //CHANGELOG:
+//16/03/2005 Use of LDAP Module
 //05.02.2005 Added CAS module
 
 /* README!
 CAS Module
 This Module can be turn ON/OFF on admin screen.
 The /login/index.php module is intercepted and replace with the login.php.
-And use the /auth/cas/index_form.html and /auth/cas/caslogin.php.
+This Module is using the /auth/cas/index_form.html.
 This module is using the LDAP Module so you need the /auth/ldap directory.
+You can see /auth/ldap/lib.php for the other functions.
 */
 
+define('AUTH_LDAP_NAME', 'cas'); // for ldap module
 require_once($CFG->dirroot.'/config.php');
-include_once($CFG->dirroot.'/lib/cas/CAS.php');
+require_once($CFG->dirroot.'/auth/ldap/lib.php');
+require_once($CFG->dirroot.'/lib/cas/CAS.php');
 $cas_validate=false;
-define("AUTH_METHOD", 'cas');
-require_once($CFG->dirroot.'/auth/cas/commonlib.php');
 
-
-function auth_user_login ($username, $password) {
+/**
+ * replace the ldap auth_user_login function
+ * authenticates user againt CAS with ldap
+ * Returns true if the username and password work
+ * and false if they don't
+ *
+ * @param string  $username
+ * @param string  $password
+ *
+*/
+function cas_ldap_auth_user_login ($username, $password) {
 /// Returns true if the username and password work
 /// and false if they don't
 
@@ -28,7 +39,7 @@ function auth_user_login ($username, $password) {
         return false;
     }
  
-    if ($CFG->auth == "cas" && !empty($CFG->cas_enabled)){
+    if ($CFG->auth == "cas" && !empty($CFG->cas_enabled)){ //cas specific
        if ($CFG->cas_create_user=="0"){
           if (get_user_info_from_db("username", $username)){
              return true;
@@ -55,7 +66,7 @@ function auth_user_login ($username, $password) {
         $ldap_login = ldap_bind($ldap_connection, $ldap_user_dn, $password);
         ldap_close($ldap_connection);
         if ($ldap_login) {
-           if ($CFG->cas_create_user=="0"){
+           if ($CFG->cas_create_user=="0"){  //cas specific
               if (get_user_info_from_db("username", $username)){
                 return true;
               }else{
@@ -95,7 +106,7 @@ function cas_authenticate_user_login ($username, $password) {
    }
    if ($CFG->cas_create_user=="0"){
       if (get_user_info_from_db("username", phpCAS::getUser())){
-         $user = authenticate_user_login(phpCAS::getUser(), 'cas');
+        $user = authenticate_user_login(phpCAS::getUser(), 'cas');
       }else{
          //login as guest if CAS but not Moodle and not automatic creation
          if ($CFG->guestloginbutton){
@@ -142,6 +153,7 @@ function cas_automatic_authenticate ($user="") {
                  }
               }
            }else{
+
               $user = authenticate_user_login(phpCAS::getUser(), 'cas');
            }
            return $user;
