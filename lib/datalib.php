@@ -1114,7 +1114,7 @@ function get_recent_enrolments($courseid, $timestart) {
 *
 * @param	type description
 */
-function get_course_students($courseid, $sort="u.lastaccess", $dir="ASC", $page=1, $recordsperpage=20) {
+function get_course_students($courseid, $sort="u.lastaccess", $dir="", $page=0, $recordsperpage=99999) {
 
     global $CFG;
 
