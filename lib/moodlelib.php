@@ -56,8 +56,8 @@ function print_navigation ($navigation) {
    }
 }
 
-function print_heading($heading) {
-    echo "<P ALIGN=CENTER><FONT SIZE=4><B>$heading</B></FONT></P>";
+function print_heading($text, $align="CENTER", $size=3) {
+    echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>$text</B></FONT></P>";
 }
 
 function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5) {
