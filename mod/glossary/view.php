@@ -240,6 +240,7 @@
 /// printing the entries
     $entriesshown = 0;
     $currentpivot = '';
+    $tableisopen = 0;
     if ( $hook == 'SPECIAL' ) {
         $alphabet = explode(",", get_string("alphabet"));
     }

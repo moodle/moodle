@@ -22,6 +22,7 @@
         $sqlsortkey = "timemodified";
     break;
     }
+    $sqlsortorder = $sortorder;
 
     $fullpivot = 1;
 

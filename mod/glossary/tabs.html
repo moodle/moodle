@@ -101,8 +101,8 @@
         case GLOSSARY_STANDARD_VIEW:
         default:
             glossary_print_alphabet_menu($cm, $glossary, "letter", $hook, $sortkey, $sortorder);
-            if ($search) {
-                echo "<h3>$strsearch: $search</h3>";
+            if ($mode == 'search' and $hook) {
+                echo "<h3>$strsearch: $hook</h3>";
             } 
         break;
     } 

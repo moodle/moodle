@@ -47,6 +47,7 @@
             if ( isset($concepts) ) {
                 $lastglossary = 0;
                 $lastcategory = 0;                
+                $cm = '';
                 foreach ( $concepts as $concept ) {
                     if ( $concept->category ) {
                         if ( $lastcategory != $concept->id ) {

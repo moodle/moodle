@@ -1176,7 +1176,12 @@ global $CFG;
 
      $sicon     = '';
      $sneworder = '';
-     $stag      = '';
+
+     $sbtag      = '';
+     $fbtag      = '';
+     $fendbtag      = '';
+     $sendbtag      = '';
+
      $sendbtag  = '';
 
      if ( $sortkey == 'CREATION' or $sortkey == 'FIRSTNAME' ) {
