@@ -177,13 +177,15 @@ function workshop_upgrade($oldversion) {
         table_column('workshop', '', 'assessmentend', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL', 'submissionend');
         
         $workshops = get_records('workshop');
-        foreach ($workshops as $workshop) {
-            $early = (time() < $workshop->submissionend) ? 0 : $workshop->submissionend;
-            $late = (time() > $workshop->submissionend) ? 0 : $workshop->submissionend;
-            set_field('workshop', 'submissionstart', ($workshop->phase > 1) ? $early : $late, 'id', $workshop->id);
-            set_field('workshop', 'assessmentstart', ($workshop->phase > 2) ? $early : $late, 'id', $workshop->id);
-            set_field('workshop', 'submissionend', ($workshop->phase > 3) ? $early : $late, 'id', $workshop->id);
-            set_field('workshop', 'assessmentend', ($workshop->phase > 4) ? $early : $late, 'id', $workshop->id);
+        if(!empty($workshops)) {
+            foreach ($workshops as $workshop) {
+                $early = (time() < $workshop->submissionend) ? 0 : $workshop->submissionend;
+                $late = (time() > $workshop->submissionend) ? 0 : $workshop->submissionend;
+                set_field('workshop', 'submissionstart', ($workshop->phase > 1) ? $early : $late, 'id', $workshop->id);
+                set_field('workshop', 'assessmentstart', ($workshop->phase > 2) ? $early : $late, 'id', $workshop->id);
+                set_field('workshop', 'submissionend', ($workshop->phase > 3) ? $early : $late, 'id', $workshop->id);
+                set_field('workshop', 'assessmentend', ($workshop->phase > 4) ? $early : $late, 'id', $workshop->id);
+            }
         }
         execute_sql('ALTER TABLE  '. $CFG->prefix .'workshop DROP COLUMN phase');
         
