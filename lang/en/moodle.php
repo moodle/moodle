@@ -324,6 +324,7 @@ $string['lastaccess'] = "Last access";
 $string['lastedited'] = "Last edited";
 $string['lastmodified'] = "Last modified";
 $string['lastname'] = "Last name";
+$string['latestlanguagepack'] = "Check for latest language pack on moodle.org";
 $string['latestnews'] = "Latest news";
 $string['list'] = "List";
 $string['listfiles'] = "List of files in \$a";
