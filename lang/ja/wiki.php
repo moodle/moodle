@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['action'] = '-- ¥¢¥¯¥·¥ç¥ó --';
@@ -105,6 +105,7 @@ $string['nocandidatestoremove'] = 'ºï½ü¸õÊä¥Ú¡¼¥¸¤¬¤¢¤ê¤Þ¤»¤ó¡¢¥Ú¡¼¥¸Á´Éô¤òÉ½¼¨¤
 $string['nochangestorevert'] = 'Á°¤Î¾õÂÖ¤ËÌá¤¹ÊÑ¹¹¤Ï¤¢¤ê¤Þ¤»¤ó¡£';
 $string['nohtml'] = 'HTMLÌµ¤·';
 $string['nolinksfound'] = '¥Ú¡¼¥¸¤Ë¥ê¥ó¥¯¤Ï¸«¤Ä¤«¤ê¤Þ¤»¤ó¤Ç¤·¤¿¡£';
+$string['noregexp'] = '¥¹¥È¥ê¥ó¥°¤òÄûÀµ¤·¤Æ¤¯¤À¤µ¤¤ ( * ¤ä regex ¤Ï»ÈÍÑ¤Ç¤­¤Þ¤»¤ó )¡£ºÇÎÉ¤ÎÊýË¡¤Ï¹¶·â¼Ô¤Î¡ÖIP¥¢¥É¥ì¥¹¤Þ¤¿¤Ï¥Û¥¹¥ÈÌ¾¡×¤ò»ÈÍÑ¤¹¤ë¤³¤È¤Ç¤¬¡¢¥Ý¡¼¥ÈÈÖ¹æ¤ò´Þ¤á¤Ê¤¤¤Ç¤¯¤À¤µ¤¤  ( Á´¤Æ¤Îhttp¥¢¥¯¥»¥¹¤Ë´Ø¤·¤Æµ­½Ò¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¤Î¤Ç¡¢ÀßÄê¿ô¤òÁý¤ä¤¹¤³¤È¤Ë¤Ê¤ê¤Þ¤¹ )¡£';
 $string['notadministratewiki'] = '¤³¤Îwiki¤Î´ÉÍý¤òµö²Ä¤µ¤ì¤Æ¤¤¤Þ¤»¤ó!';
 $string['nothingtostrip'] = '1¤Ä¤Î¥Ð¡¼¥¸¥ç¥ó°Ê³°¤Ë¥Ú¡¼¥¸¤¬¤¢¤ê¤Þ¤»¤ó¡£';
 $string['nowikicreated'] = '¤³¤Îwiki¤Ë¤Ï¥¨¥ó¥È¥ê¤¬¤¢¤ê¤Þ¤»¤ó¡£';
@@ -131,6 +132,7 @@ $string['removepagecheck'] = 'ËÜÅö¤Ë¤³¤ì¤é¤Î¥Ú¡¼¥¸¤òºï½ü¤·¤Æ¤â¤è¤í¤·¤¤¤Ç¤¹¤«?';
 $string['removepages'] = '¥Ú¡¼¥¸¤Îºï½ü';
 $string['removeselectedpages'] = 'ÁªÂò¤·¤¿¥Ú¡¼¥¸¤òºï½ü';
 $string['revertchanges'] = 'ÊÑ¹¹¤ò¸µ¤ËÌá¤¹';
+$string['revertlastonly'] = 'ºÇ¿·¤Î¹¹¿·¤Î¤ß¸µ¤ËÌá¤¹';
 $string['revertpages'] = 'ÊÑ¹¹¤ÎÂçÎÌ¼è¾Ã¤·';
 $string['revertpagescheck'] = 'ËÜÅö¤Ë¼¡¤ÎÊÑ¹¹¤ò¸µ¤ËÌá¤·¤Æ¤â¤è¤í¤·¤¤¤Ç¤¹¤«:';
 $string['safehtml'] = '¥»¡¼¥ÕHTML';

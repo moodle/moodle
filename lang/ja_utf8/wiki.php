@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['action'] = '-- アクション --';
@@ -105,6 +105,7 @@ $string['nocandidatestoremove'] = '削除候補ページがありません、ペ
 $string['nochangestorevert'] = '前の状態に戻す変更はありません。';
 $string['nohtml'] = 'HTML無し';
 $string['nolinksfound'] = 'ページにリンクは見つかりませんでした。';
+$string['noregexp'] = 'ストリングを訂正してください ( * や regex は使用できません )。最良の方法は攻撃者の「IPアドレスまたはホスト名」を使用することでが、ポート番号を含めないでください  ( 全てのhttpアクセスに関して記述する必要がありますので、設定数を増やすことになります )。';
 $string['notadministratewiki'] = 'このwikiの管理を許可されていません!';
 $string['nothingtostrip'] = '1つのバージョン以外にページがありません。';
 $string['nowikicreated'] = 'このwikiにはエントリがありません。';
@@ -131,6 +132,7 @@ $string['removepagecheck'] = '本当にこれらのページを削除しても�
 $string['removepages'] = 'ページの削除';
 $string['removeselectedpages'] = '選択したページを削除';
 $string['revertchanges'] = '変更を元に戻す';
+$string['revertlastonly'] = '最新の更新のみ元に戻す';
 $string['revertpages'] = '変更の大量取消し';
 $string['revertpagescheck'] = '本当に次の変更を元に戻してもよろしいですか:';
 $string['safehtml'] = 'セーフHTML';
