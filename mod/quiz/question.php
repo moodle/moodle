@@ -167,9 +167,8 @@
             $replaceold   = (!$makecopy && $noresponses && ($notused || $replaceinall));
 
             if (!$replaceold) { // create a new question
-                $oldquestion = clone($question);
+                $oldquestionid = $question->id;
                 if (!$makecopy) {
-                    $oldquestion->hidden =  1;
                     if (!set_field("quiz_questions", 'hidden', 1, 'id', $question->id)) {
                         error("Could not hide question!");
                     }
@@ -184,10 +183,10 @@
                 error("Failed to save the question!");
             }
 
-            if(isset($oldquestion->id)) {
+            if(isset($oldquestionid)) {
                 // create version entries for different quizzes
                 $version = new object();
-                $version->oldquestion = $oldquestion->id;
+                $version->oldquestion = $oldquestionid;
                 $version->newquestion = $question->id;
                 $version->userid      = $USER->id; // field still needs to be added to table
                 $version->timestamp   = time();
@@ -195,7 +194,7 @@
                 foreach($replaceinquiz as $qid) {
                     $version->quiz = $qid;
                     if(!insert_record("quiz_question_version", $version)) {
-                        error("Could not store version information of question $oldquestion->id in quiz $qid!");
+                        error("Could not store version information of question $oldquestionid in quiz $qid!");
                     }
                 }
 
@@ -207,27 +206,27 @@
                 }
                 foreach($quizzes as $quiz) {
                     $questionlist = ",$quiz->questions,"; // a little hack with the commas here. not nice but effective
-                    $questionlist = str_replace(",$oldquestion->id,", ",$question->id,", $questionlist);
+                    $questionlist = str_replace(",$oldquestionid,", ",$question->id,", $questionlist);
                     $questionlist = substr($questionlist, 1, -1); // and get rid of the surrounding commas again
                     if (!set_field("quiz", 'questions', $questionlist, 'id', $quiz->id)) {
                         error("Could not update questionlist in quiz $quiz->id!");
                     }
                     // the quiz_question_grades table needs to be updated too (aah, the joys of duplication :)
-                    if (!set_field('quiz_question_grades', 'question', $question->id, 'quiz', $quiz->id, 'question', $oldquestion->id)) {
+                    if (!set_field('quiz_question_grades', 'question', $question->id, 'quiz', $quiz->id, 'question', $oldquestionid)) {
                         error("Could not update question grade!");
                     }
                     if (isset($SESSION->modform) && (int)$SESSION->modform->instance === (int)$quiz->id) {
                         $SESSION->modform->questions = $questionlist;
-                        $SESSION->modform->grades[$question->id] = $SESSION->modform->grades[$oldquestion->id];
-                        unset($SESSION->modform->grades[$oldquestion->id]);
+                        $SESSION->modform->grades[$question->id] = $SESSION->modform->grades[$oldquestionid];
+                        unset($SESSION->modform->grades[$oldquestionid]);
                     }
                 }
                 
                 // fix responses
                 if ($attempts = get_records_list('quiz_attempts', 'quiz', implode(',', $replaceinquiz))) {
                     foreach ($attempts as $attempt) {
-                        if (!set_field('quiz_responses', 'originalquestion', $oldquestion->id, 'attempt', $attempt->id, 'question', $oldquestion->id)
-                            or !set_field('quiz_responses', 'question', $question->id, 'attempt', $attempt->id, 'question', $oldquestion->id)) {
+                        if (!set_field('quiz_responses', 'originalquestion', $oldquestionid, 'attempt', $attempt->id, 'question', $oldquestionid)
+                            or !set_field('quiz_responses', 'question', $question->id, 'attempt', $attempt->id, 'question', $oldquestionid)) {
                             error("Could not point responses to new question");
                         }
                     }
