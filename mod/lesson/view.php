@@ -5,7 +5,6 @@
 
     require_once('../../config.php');
     require_once('locallib.php');
-    require_once('styles.php');
     require_once('lib.php');
 
     require_variable($id);    // Course Module ID
@@ -41,8 +40,9 @@
             $action = 'teacherview';
         } elseif  (time() < $lesson->available) {
             print_header($course->shortname .': '. $lesson->name, $course->fullname,
-                         $navigation .'<A HREF=index.php?id='. $course->id .'>'. $strlessons .'</A> -> <a href="view.php?id='. $cm->id .'">'. $lesson->name .'</a>', 
-                          '', '', true, '', navmenu($course, $cm));
+                         $navigation .'<a href="index.php?id='. $course->id .'">'. $strlessons .'</a> -> <a href="view.php?id='. $cm->id .'">'. $lesson->name .'</a>', '',
+                         "<style type=\"text/css\">@import url($CFG->wwwroot/mod/lesson/styles.php);</style>", true,
+                         '', navmenu($course, $cm));
             print_simple_box_start('center');
             echo '<div align="center">';
             echo get_string('lessonopen', 'lesson', userdate($lesson->available)).'<br />';
@@ -53,8 +53,9 @@
             exit();
         } elseif (time() > $lesson->deadline) {
             print_header($course->shortname .': '. $lesson->name, $course->fullname,
-                         "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", 
-                          '', '', true, '', navmenu($course, $cm));
+                         "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", '',
+                         "<style type=\"text/css\">@import url($CFG->wwwroot/mod/lesson/styles.php);</style>", true,
+                          '', navmenu($course, $cm));
             print_simple_box_start('center');
             echo '<div align="center">';
             echo get_string('lessonclosed', 'lesson', userdate($lesson->deadline)) .'<br />';
@@ -91,8 +92,9 @@
     }
 
     print_header($course->shortname .': '. $lesson->name, $course->fullname,
-                 "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", 
-                  '', '', true, $button, // took out update_module_button($cm->id, $course->id, $strlesson) and replaced it with $button
+                 "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", '',
+                 "<style type=\"text/css\">@import url($CFG->wwwroot/mod/lesson/styles.php);</style>", true,
+                 $button, // took out update_module_button($cm->id, $course->id, $strlesson) and replaced it with $button
                   navmenu($course, $cm));
 
     // set up some general variables
@@ -103,7 +105,7 @@
     } else {
         $pixpath = $path .'/../theme/'. $CFG->theme .'/pix';
     }
-	                
+
     /************** navigation **************************************/
     if ($action == 'navigation') {
         //CDC Chris Berri added this echo call for left menu.  must match that in lesson.php for styles
@@ -112,9 +114,9 @@
                if($page = get_record_select('lesson_pages', 'lessonid = '. $lesson->id .' AND prevpageid = 0')) {
                         // print the pages
                         echo '<form name="lessonpages2" method="post" action="view.php">';
-                        echo '<input type="hidden" name="id" value="'. $cm->id .'">';
-                        echo '<input type="hidden" name="action" value="navigation">';
-                        echo '<input type="hidden" name="pageid">';
+                        echo '<input type="hidden" name="id" value="'. $cm->id .'" />';
+                        echo '<input type="hidden" name="action" value="navigation" />';
+                        echo '<input type="hidden" name="pageid" />';
                                 echo "<div class='lmlinks'><table bgcolor=\"$THEME->cellheading\"><tr></tr>";
                                 echo "<tr><td class='lmheading'>".get_string('lessonmenu', 'lesson') .'</td></tr><br>';
                                 echo "<tr><td class='lmMainlinks'>";
@@ -145,18 +147,18 @@
             if (!$correctpass) {
                 print_simple_box_start('center');
                 echo '<form name="password" method="post" action="view.php">' . "\n";
-                echo '<input type="hidden" name="id" value="'. $cm->id .'">' . "\n";
-                echo '<input type="hidden" name="action" value="navigation">' . "\n";
+                echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
+                echo '<input type="hidden" name="action" value="navigation" />' . "\n";
                 echo '<table cellpadding="7px">';
                 if (isset($_POST['userpassword'])) {
                     echo "<tr align=\"center\" style='color:#DF041E;'><td>".get_string('loginfail', 'lesson') .'</td></tr>';
                 }
                 echo '<tr align="center"><td>'. get_string('passwordprotectedlesson', 'lesson', $lesson->name) .'</td></tr>';
-                echo '<tr align="center"><td>'. get_string('enterpassword', 'lesson').' <input type="password" name="userpassword"></td></tr>';
+                echo '<tr align="center"><td>'. get_string('enterpassword', 'lesson').' <input type="password" name="userpassword" /></td></tr>';
                         
                 echo '<tr align="center"><td>';
-                echo '<input type="button" value="'. get_string('cancel', 'lesson') .'" onclick="parent.location=\'../../course/view.php?id='. $course->id .'\';">  ';
-                echo '<input type="button" value="'. get_string('continue', 'lesson') .'" onclick="document.password.submit();">';
+                echo '<input type="button" value="'. get_string('cancel', 'lesson') .'" onclick="parent.location=\'../../course/view.php?id='. $course->id .'\';" />  ';
+                echo '<input type="button" value="'. get_string('continue', 'lesson') .'" onclick="document.password.submit();" />';
                 echo '</td></tr></table>';
                 print_simple_box_end();
                 exit();
@@ -246,13 +248,13 @@
                     if ($lesson->timed) {
                         if ($lesson->retake) {
                             echo '<form name="queryform" method ="post" action="view.php">' . "\n";
-                            echo '<input type="hidden" name="id" value="'. $cm->id .'">' . "\n";
-                            echo '<input type="hidden" name="action" value="navigation">' . "\n";
-                            echo '<input type="hidden" name="pageid">' . "\n";
-                            echo '<input type="hidden" name="startlastseen">' . "\n";  /// CDC-FLAG added this line
+                            echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
+                            echo '<input type="hidden" name="action" value="navigation" />' . "\n";
+                            echo '<input type="hidden" name="pageid" />' . "\n";
+                            echo '<input type="hidden" name="startlastseen" />' . "\n";  /// CDC-FLAG added this line
                             print_simple_box('<p align="center">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
                             echo '<p align="center"><input type="button" value="'. get_string('continue', 'lesson').
-                                "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\"></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
+                                "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\" /></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
                             echo '</form>' . "\n"; 
 							echo '</div></div>';///CDC Chris Berri added close div tag
                         } else {
@@ -263,17 +265,18 @@
                             echo '</div>';
                             print_simple_box_end();
                         }
+                        
                     } else {
                         echo "<form name=\"queryform\" method =\"post\" action=\"view.php\">\n";
-                        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-                        echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
-                        echo "<input type=\"hidden\" name=\"pageid\">\n";
-                        echo "<input type=\"hidden\" name=\"startlastseen\">\n";  /// CDC-FLAG added this line
+                        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+                        echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
+                        echo "<input type=\"hidden\" name=\"pageid\" />\n";
+                        echo "<input type=\"hidden\" name=\"startlastseen\" />\n";  /// CDC-FLAG added this line
                         print_simple_box("<p align=\"center\">".get_string('youhaveseen','lesson').'</p>',
                                 "center");
                         echo "<p align=\"center\"><input type=\"button\" value=\"".get_string('yes').
-                            "\" onclick=\"document.queryform.pageid.value='$lastpageseen';document.queryform.startlastseen.value='yes';document.queryform.submit();\">&nbsp;&nbsp;&nbsp;<input type=\"button\" value=\"".get_string("no").  /// CDC-FLAG 6/11/04 ///
-                            "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\"></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
+                            "\" onclick=\"document.queryform.pageid.value='$lastpageseen';document.queryform.startlastseen.value='yes';document.queryform.submit();\" />&nbsp;&nbsp;&nbsp;<input type=\"button\" value=\"".get_string("no").  /// CDC-FLAG 6/11/04 ///
+                            "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\" /></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
                         echo "</form>\n"; echo "</div></div>";///CDC Chris Berri added close div tag
                     }
                     print_footer($course);
@@ -404,7 +407,7 @@
 						print_simple_box_end();
 						echo "<br /><br /><br /><br />";
                     } else {
-                        redirect("view.php?id=$cm->id&action=navigation&pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
+                        redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=".LESSON_EOL."&amp;outoftime=normal", get_string("outoftime", "lesson"));
                     }
                     // update clock when viewing a new page... no special treatment
                     if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60) {
@@ -458,7 +461,7 @@
                 } else {
                     $nextpageid = $page->nextpageid;
                 }
-                redirect("view.php?id=$cm->id&action=navigation&pageid=$nextpageid", get_string('endofclustertitle', 'lesson'));
+                redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$nextpageid", get_string('endofclustertitle', 'lesson'));
             }
             /// CDC-FLAG ///
 
@@ -582,9 +585,9 @@
             // get the answers in a set order, the id order
             if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
                 echo "<form name=\"answerform\" method =\"post\" action=\"lesson.php\">";
-                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">";
-                echo "<input type=\"hidden\" name=\"action\" value=\"continue\">";
-                echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">";
+                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
+                echo "<input type=\"hidden\" name=\"action\" value=\"continue\" />";
+                echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
                 /// CDC-FLAG ///
                 if (!$lesson->slideshow || $page->qtype != 20) {
                     print_simple_box_start("center");
@@ -600,12 +603,12 @@
 							$value = "";
 						}       
                         echo "<tr><td align=\"center\">".get_string("youranswer", "lesson").
-                            ": <label for=\"answer\" class=\"hidden-label\">Answer</label><input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value>\n"; //CDC hidden label added.
+                            ": <label for=\"answer\" class=\"hidden-label\">Answer</label><input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n"; //CDC hidden label added.
                         echo '</table>';
                         print_simple_box_end();
                         if (!$lesson->slideshow) {
                             echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                 get_string("pleaseenteryouranswerinthebox", "lesson")."\"></p>\n";
+                                 get_string("pleaseenteryouranswerinthebox", "lesson")."\" /></p>\n";
                         }
                         break;
                     case LESSON_TRUEFALSE :
@@ -617,7 +620,7 @@
 							} else {
 								$checked = "";
 							} 
-                            echo "<label for=\"answerid\" class=\"hidden-label\">Answer ID</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked>"; //CDC hidden label added.
+                            echo "<label for=\"answerid\" class=\"hidden-label\">Answer ID</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />"; //CDC hidden label added.
                             echo "</td><td>";
                             $options->para = false; // no <p></p>
                             echo format_text(trim($answer->answer), FORMAT_MOODLE, $options);
@@ -630,7 +633,7 @@
                         print_simple_box_end();
                         if (!$lesson->slideshow) {
                             echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                get_string("pleasecheckoneanswer", "lesson")."\"></p>\n"; 
+                                get_string("pleasecheckoneanswer", "lesson")."\" /></p>\n"; 
                         }
                         break;
                     case LESSON_MULTICHOICE :
@@ -649,7 +652,7 @@
 									}
 								}
                                 // more than one answer allowed 
-                                echo "<label for=\"answer[$i]\" class=\"hidden-label\">answer[$i]</label><input type=\"checkbox\" id=\"answer[$i]\" name=\"answer[$i]\" value=\"{$answer->id}\" $checked>"; //CDC hidden label added.
+                                echo "<label for=\"answer[$i]\" class=\"hidden-label\">answer[$i]</label><input type=\"checkbox\" id=\"answer[$i]\" name=\"answer[$i]\" value=\"{$answer->id}\" $checked />"; //CDC hidden label added.
                             } else {
 								if (isset($USER->modattempts[$lesson->id]) && $answer->id == $attempt->answerid) {
 									$checked = "CHECKED";
@@ -657,7 +660,7 @@
 									$checked = "";
 								} 
                                 // only one answer allowed
-                                echo "<label for=\"answerid\" class=\"hidden-label\">answer id</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked>"; //CDC hidden label added.
+                                echo "<label for=\"answerid\" class=\"hidden-label\">answer id</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked />"; //CDC hidden label added.
                             }
                             echo "</td><td>";
                             $options->para = false; // no <p></p>
@@ -674,10 +677,10 @@
                         if (!$lesson->slideshow) {
                             if ($page->qoption) {
                                 echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                    get_string("pleasecheckoneormoreanswers", "lesson")."\"></p>\n";
+                                    get_string("pleasecheckoneormoreanswers", "lesson")."\" /></p>\n";
                             } else {
                                 echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                    get_string("pleasecheckoneanswer", "lesson")."\"></p>\n";
+                                    get_string("pleasecheckoneanswer", "lesson")."\" /></p>\n";
                             }
                         }
                         /// CDC-FLAG ///
@@ -731,21 +734,21 @@
                         print_simple_box_end();
                         if (!$lesson->slideshow) {						
                             echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                get_string("pleasematchtheabovepairs", "lesson")."\"></p>\n";
+                                get_string("pleasematchtheabovepairs", "lesson")."\" /></p>\n";
                         }
                         break;
                     /// CDC-FLAG ///
 
                     case LESSON_BRANCHTABLE :
                         echo "<tr><td><table width=\"100%\">";
-                        echo "<input type=\"hidden\" name=\"jumpto\">";
+                        echo "<input type=\"hidden\" name=\"jumpto\" />";
                         // don't suffle answers
                         /// CDC-FLAG ///
                         if(!$lesson->slideshow) {
                             foreach ($answers as $answer) {
                                 echo "<tr><td align=\"center\">";
                                 echo "<input type=\"button\" value=\"$answer->answer\"";
-                                echo "onclick=\"document.answerform.jumpto.value=$answer->jumpto;document.answerform.submit();\">";
+                                echo "onclick=\"document.answerform.jumpto.value=$answer->jumpto;document.answerform.submit();\" />";
                                 echo "</td></tr>";
                             }
                         }
@@ -767,7 +770,7 @@
                         print_simple_box_end();
                         if (!$lesson->slideshow) {
                             echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                 get_string("pleaseenteryouranswerinthebox", "lesson")."\"></p>\n";
+                                 get_string("pleaseenteryouranswerinthebox", "lesson")."\" /></p>\n";
                         }
                         break;
                 }
@@ -779,8 +782,8 @@
             } else {
                 // a page without answers - find the next (logical) page
                 echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
-                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-                echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
+                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+                echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
                 if ($lesson->nextpagedefault) {
                     // in Flash Card mode...
                     // ...first get number of retakes
@@ -825,9 +828,9 @@
                         $newpageid = LESSON_EOL;
                     }
                 }
-                echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
+                echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\" />\n";
                 echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                     get_string("continue", "lesson")."\"></p>\n";
+                     get_string("continue", "lesson")."\" /></p>\n";
                 echo "</form>\n";
             }
             echo "</table>\n"; 
@@ -1020,11 +1023,11 @@
                 echo "<div align=\"center\"><br>";
                 if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
                     echo get_string("youmadehighscore", "lesson", $lesson->maxhighscores)."<br>";
-                    echo "<a href=\"view.php?id=$cm->id&action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
+                    echo "<a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
                 } else {
                     if (!$highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
                         echo get_string("youmadehighscore", "lesson", $lesson->maxhighsores)."<br>";
-                        echo "<a href=\"view.php?id=$cm->id&action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
+                        echo "<a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
                     } else {
                         // get all the high scores into an array
                         foreach ($highscores as $highscore) {
@@ -1037,13 +1040,13 @@
                         
                         if ($thegrade >= $lowscore || count($topscores) <= $lesson->maxhighscores) {
                             echo get_string("youmadehighscore", "lesson", $lesson->maxhighscores)."<br>";
-                            echo "<a href=\"view.php?id=$cm->id&action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
+                            echo "<a href=\"view.php?id=$cm->id&amp;action=nameforhighscores\">".get_string("clicktopost", "lesson")."</a><br>";
                         } else {
                             echo get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br>";
                         }
                     }
                 }
-                echo "<br><a href=\"view.php?id=$cm->id&action=highscores&link=1\">".get_string("viewhighscores", "lesson")."</a>";
+                echo "<br><a href=\"view.php?id=$cm->id&amp;action=highscores&link=1\">".get_string("viewhighscores", "lesson")."</a>";
                 echo "</div>";							
             }
             /// CDC-FLAG ///			
@@ -1060,7 +1063,7 @@
 				$lastattempt = end($attempts);
 				$USER->modattempts[$lesson->id] = $lastattempt->pageid;
 				echo "<form name=\"reviewform\" method=\"post\" action=\"view.php?id=$cm->id\">";
-				echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">";
+				echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
 				echo "</form>";
 				echo "<p align=\"center\"><a href=\"javascript:document.reviewform.submit();\">".get_string("reviewlesson", "lesson")."</a></p>\n"; 
 			} elseif ($lesson->modattempts && isteacher($course->id)) {
@@ -1084,28 +1087,28 @@
                 case LESSON_SHORTANSWER :
                 case LESSON_NUMERICAL :
                     echo "<tr><td><p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                         get_string("pleaseenteryouranswerinthebox", "lesson")."\"></p></td></tr>\n";
+                         get_string("pleaseenteryouranswerinthebox", "lesson")."\" /></p></td></tr>\n";
                     break;
                 case LESSON_TRUEFALSE :
                     echo "<tr><td><p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                        get_string("pleasecheckoneanswer", "lesson")."\"></p></td></tr>\n"; 
+                        get_string("pleasecheckoneanswer", "lesson")."\" /></p></td></tr>\n"; 
                     break;
                 case LESSON_MULTICHOICE :
                     if ($page->qoption) {
                         echo "<tr><td><p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                            get_string("pleasecheckoneormoreanswers", "lesson")."\"></p></td></tr>\n";
+                            get_string("pleasecheckoneormoreanswers", "lesson")."\" /></p></td></tr>\n";
                     } else {
                         echo "<tr><td><p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                             get_string("pleasecheckoneanswer", "lesson")."\"></p></td></tr>\n";
+                             get_string("pleasecheckoneanswer", "lesson")."\" /></p></td></tr>\n";
                     }
                     break;
                 case LESSON_MATCHING :
                     echo "<tr><td><p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                        get_string("pleasematchtheabovepairs", "lesson")."\"></p></td></tr>\n";
+                        get_string("pleasematchtheabovepairs", "lesson")."\" /></p></td></tr>\n";
                     break;
                 case LESSON_ESSAY :
                     echo "<tr><td><p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                         get_string("pleaseenteryouranswerinthebox", "lesson")."\"></p></td></tr>\n";
+                         get_string("pleaseenteryouranswerinthebox", "lesson")."\" /></p></td></tr>\n";
                     break;
                 case LESSON_BRANCHTABLE : 
 					if (!empty($answers)) {
@@ -1125,19 +1128,19 @@
 							foreach ($nextprevious as $jump) {
 								if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
 									echo "<td align=\"left\"><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-										 "value = \"$jump->answer\"></td>";
+										 "value = \"$jump->answer\" /></td>";
 								}
 							}
 							echo "<td align=\"center\"><table><tr>";
 							foreach ($otherjumps as $otherjump) {
 									echo "<td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
-										 "value = \"$otherjump->answer\"></td>";
+										 "value = \"$otherjump->answer\" /></td>";
 							}
 							echo "</tr></table></td>";
 							foreach ($nextprevious as $jump) {
 								if ($jump->jumpto == LESSON_NEXTPAGE) {
 									echo "<td align=\"right\"><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-										 "value = \"$jump->answer\"></td>";
+										 "value = \"$jump->answer\" /></td>";
 								}
 							}
 							echo "</tr>";
@@ -1146,17 +1149,17 @@
 							foreach ($nextprevious as $jump) {
 								if ($jump->jumpto == LESSON_NEXTPAGE) {
 									echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-										 "value = \"$jump->answer\"></td></tr>";
+										 "value = \"$jump->answer\" /></td></tr>";
 								}
 							}
 							foreach ($otherjumps as $otherjump) {
 									echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
-										 "value = \"$otherjump->answer\"></td></tr>";
+										 "value = \"$otherjump->answer\" /></td></tr>";
 							}
 							foreach ($nextprevious as $jump) {
 								if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
 									echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-										 "value = \"$jump->answer\"></td></tr>";
+										 "value = \"$jump->answer\" /></td></tr>";
 								}
 							}
 						}
@@ -1225,7 +1228,7 @@
 				// get only the attempts that are in response to essay questions
 				$essaypageids = implode(",", array_keys($essaypages)); // all the pageids in comma seperated list
 				if ($essayattempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid IN($essaypageids)")) {
-					echo "<div align=\"center\"><a href=\"view.php?id=$cm->id&action=essayview\">".get_string("gradeessay", "lesson")."</a></div><br />";
+					echo "<div align=\"center\"><a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("gradeessay", "lesson")."</a></div><br />";
 				}
 			}
             /// CDC-FLAG /// tree code - in final release, will use lang file for all text output.
@@ -1291,7 +1294,7 @@
                             get_string("importquestions", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addcluster&amp;pageid=0\">".
                             get_string("addcluster", "lesson")."</a> | ".
-                            "<a href=\"lesson.php?id=$cm->id&action=addbranchtable&pageid=0\">".
+                            "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=0\">".
                             get_string("addabranchtable", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0\">".
                             get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
@@ -1312,8 +1315,8 @@
                         "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"edit\" /></a>\n".
                         "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&amp;action=confirmdelete&amp;pageid=$page->id\">\n".
                         "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"delete\" /></a>\n";
-                    }
-                    echo "</td></tr>\n";             
+                }
+                echo "</td></tr>\n";             
                 echo "<tr><td colspan=\"2\">\n";
                 print_simple_box(format_text($page->contents), "center");
                 echo "</td></tr>\n";
@@ -1351,7 +1354,7 @@
                             echo get_string("endofbranch", "lesson");
                             break;
                     }
-                    echo "</td></tr>\n";
+                    echo "</b></td></tr>\n";
                     $i = 1;
                     $n = 0;
                     foreach ($answers as $answer) {
@@ -1497,11 +1500,11 @@
                             echo get_string("checkquestion", "lesson");
                         }
                         echo "\" onclick=\"document.lessonpages.pageid.value=$page->id;".
-                            "document.lessonpages.submit();\">";
+                            "document.lessonpages.submit();\" />";
                     }
                     echo "&nbsp;</td></tr>\n";
                 }
-                echo "</td></tr></table></td></tr>\n";
+                echo "</table></td></tr>\n";
                 if (isteacheredit($course->id)) {
                     /// CDC-FLAG /// 6/16/04				
                     echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->id\">".
@@ -1526,7 +1529,7 @@
                         get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
                         "</a></small></td></tr>\n";
                 }
-                echo "<tr><td>\n";
+//                echo "<tr><td>\n";
                 // check the prev links - fix (silently) if necessary - there was a bug in
                 // versions 1 and 2 when add new pages. Not serious then as the backwards
                 // links were not used in those versions
@@ -1557,7 +1560,7 @@
             }
         } /// CDC-FLAG /// end of else from above tree code!!!
         
-            echo "</table></form>\n";
+            echo "</table></center></form>\n";
             /// CDC-FLAG ///
             // NoticeFix both viewAll's
             if(isset($_GET['display']) && !isset($_GET['viewAll'])) {
@@ -1638,16 +1641,16 @@
 						$style = "style='color:#999999;'";
 					}
 					// link for each essay
-					$essaylinks[] = "<a $style href=\"view.php?id=$cm->id&action=essaygrade&attemptid=$essay->id\">".$pages[$essay->pageid]->title."</a>";
+					$essaylinks[] = "<a $style href=\"view.php?id=$cm->id&amp;action=essaygrade&attemptid=$essay->id\">".$pages[$essay->pageid]->title."</a>";
 				}
             }
 			// email link for this user
-			$emaillink = "<a href=\"view.php?id=$cm->id&action=emailessay&userid=".$id."\">".get_string("emailgradedessays", "lesson")."</a>";
+			$emaillink = "<a href=\"view.php?id=$cm->id&amp;action=emailessay&userid=".$id."\">".get_string("emailgradedessays", "lesson")."</a>";
 
 			$table->data[] = array($studentname, implode(", ", $essaylinks), $emaillink);        
 		}
 		// email link for all users
-		$emailalllink = "<a href=\"view.php?id=$cm->id&action=emailessay\">".get_string("emailallgradedessays", "lesson")."</a>";
+		$emailalllink = "<a href=\"view.php?id=$cm->id&amp;action=emailessay\">".get_string("emailallgradedessays", "lesson")."</a>";
         
 		$table->data[] = array(" ", " ", $emailalllink);
 		
@@ -1675,9 +1678,9 @@
 
 
         echo "<form name=\"essaygrade\" method=\"post\" action=\"view.php\">\n";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-        echo "<input type=\"hidden\" name=\"action\">\n";
-        echo "<input type=\"hidden\" name=\"attemptid\" value=\"$attemptid\">\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+        echo "<input type=\"hidden\" name=\"action\" />\n";
+        echo "<input type=\"hidden\" name=\"attemptid\" value=\"$attemptid\" />\n";
 	
 		// all tables will have these
         $table->align = array("left");
@@ -1719,10 +1722,10 @@
 		echo "<br />";
         echo "<table align=\"center\"><tr><td>";
         echo "<input type=\"button\" value=\"Cancel\" onclick=\"document.essaygrade.action.value='essayview';".
-             "document.essaygrade.submit();\">";
+             "document.essaygrade.submit();\" />";
         echo "</td><td>";
         echo "<input type=\"button\" value=\"Submit Grade\" onclick=\"document.essaygrade.action.value='updategrade';".
-             "document.essaygrade.submit();\">";
+             "document.essaygrade.submit();\" />";
         echo "</td></tr></table>";
 		echo "</form>";
 		
@@ -1765,10 +1768,10 @@
 		$essay->useranswer = serialize($essayinfo);
 		
         if(update_record("lesson_attempts", $essay) && update_record("lesson_grades", $updategrade)) {
-            redirect("view.php?id=$cm->id&action=essayview", get_string("updatesuccess", "lesson"));
+            redirect("view.php?id=$cm->id&amp;action=essayview", get_string("updatesuccess", "lesson"));
         } else {
             echo get_string("updatefailed", "lesson")."!<br>";
-            echo "<a href=\"view.php?id=$cm->id&action=essayview\">".get_string("continue", "lesson")."</a>";
+            echo "<a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("continue", "lesson")."</a>";
             exit();
         }
     }
@@ -1840,13 +1843,13 @@
                     update_record("lesson_attempts", $essay);
                 } else {
                     echo "Email Failed!<br>";
-                    echo "<a href=\"view.php?id=$cm->id&action=essayview\">".get_string("continue", "lesson")."</a>";
+                    echo "<a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("continue", "lesson")."</a>";
                     echo "</div>";
                     exit();
                 }
             }
         }
-        redirect("view.php?id=$cm->id&action=essayview", get_string("emailsuccess", "lesson"));
+        redirect("view.php?id=$cm->id&amp;action=essayview", get_string("emailsuccess", "lesson"));
     }
 
     /*******************high scores **************************************/
@@ -1893,7 +1896,7 @@
         if (isset($_GET['link'])) {
             echo "<br><a href=\"../../course/view.php?id=$course->id\">".get_string("returntocourse", "lesson")."</a>";
         } else {
-            echo "<br><a href=\"../../course/view.php?id=$course->id\">".get_string("cancel", "lesson")."</a> | <a href=\"view.php?id=$cm->id&action=navigation\">".get_string("startlesson", "lesson")."</a>";
+            echo "<br><a href=\"../../course/view.php?id=$course->id\">".get_string("cancel", "lesson")."</a> | <a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("startlesson", "lesson")."</a>";
         }
         echo "</div>";
             
@@ -1920,7 +1923,7 @@
         if ($pasthighscore = get_record_select("lesson_high_scores", "lessonid = $lesson->id and userid = $USER->id")) {
             $pastgrade = $grades[$pasthighscore->gradeid]->grade;
             if ($pastgrade >= $newgrade->grade) {
-                redirect("view.php?id=$cm->id&action=highscores&link=1", "Update Successful");
+                redirect("view.php?id=$cm->id&amp;action=highscores&amp;link=1", "Update Successful");
             } else {
                 // delete old and find out where new one goes
                 if (!delete_records("lesson_high_scores", "id", $pasthighscore->id)) {
@@ -1971,7 +1974,7 @@
             error("Insert of new high score Failed!");
         }
         
-        redirect("view.php?id=$cm->id&action=highscores&link=1", get_string("postsuccess", "lesson"));
+        redirect("view.php?id=$cm->id&amp;action=highscores&amp;link=1", get_string("postsuccess", "lesson"));
         echo "</div>";
     }
     /*******************name for highscores **************************************/
@@ -1980,18 +1983,18 @@
         echo "<div align=\"center\">";
         if (isset($_POST['name'])) {
             if (lesson_check_nickname(trim($_POST['name']))) {
-                redirect("view.php?id=$cm->id&action=updatehighscores&name=".trim($_POST['name']), get_string("nameapproved", "lesson"));
+                redirect("view.php?id=$cm->id&amp;action=updatehighscores&amp;name=".trim($_POST['name']), get_string("nameapproved", "lesson"));
             } else {
                 echo get_string("namereject", "lesson")."<br><br>";
             }
         }
                 
         echo "<form name=\"nickname\" method =\"post\" action=\"view.php\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">";
-        echo "<input type=\"hidden\" name=\"action\" value=\"nameforhighscores\">";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
+        echo "<input type=\"hidden\" name=\"action\" value=\"nameforhighscores\" />";
         
-        echo get_string("entername", "lesson").": <input type=\"text\" name=\"name\" maxlength=\"5\"><br>";
-        echo "<input type=\"submit\" value=\"".get_string("submitname", "lesson")."\">";
+        echo get_string("entername", "lesson").": <input type=\"text\" name=\"name\" maxlength=\"5\"><br />";
+        echo "<input type=\"submit\" value=\"".get_string("submitname", "lesson")."\" />";
         echo "</form>";
         echo "</div>";
     }	
