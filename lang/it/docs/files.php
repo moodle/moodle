@@ -8,7 +8,7 @@ $string['licence.html'] = "Licenza";
 $string['features.html'] = "Caratteristiche";
 $string['release.html'] = "Note di rilascio";
 $string['future.html'] = "Novit&agrave; nelle prossime versioni";
-$string['credits.html'] = "Credits";
+$string['credits.html'] = "Ringraziamenti";
 
 $string['-installation'] = "Amministrazione";
 $string['install.html'] = "Installazione";
