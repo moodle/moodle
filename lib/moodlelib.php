@@ -909,8 +909,12 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $mail->Version = "Moodle";                         // mailer version 
     $mail->PluginDir = "$CFG->libdir/phpmailer/";      // plugin directory (eg smtp plugin)
-    $mail->IsSMTP();                                   // set mailer to use SMTP
-    $mail->Host = "$CFG->smtphosts";                   // specify main and backup servers
+    if ($CFG->smtphosts) {
+        $mail->IsSMTP();                                   // use SMTP directly
+        $mail->Host = "$CFG->smtphosts";                   // specify main and backup servers
+    } else {
+        $mail->IsMail();                                   // use PHP mail() = sendmail
+    }
 
     $mail->From     = "$from->email";
     $mail->FromName = "$from->firstname $from->lastname";
