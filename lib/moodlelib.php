@@ -47,6 +47,19 @@ function print_footer ($course=NULL) {
     } else {
         $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot\">Home</A>";
     }
+    if ($USER->realuser) {
+        if ($realuser = get_record("user", "id", $USER->realuser)) {
+            $realuserinfo = " [$realuser->firstname $realuser->lastname] ";
+        }
+    }
+    if ($USER->id) {
+        $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$USER->firstname $USER->lastname").
+                      " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
+    } else { 
+        $loggedinas = get_string("loggedinnot", "moodle").
+                      " (<A HREF=\"$CFG->wwwroot/login/\">".get_string("login")."</A>)";
+    } 
+
     include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
 }
 
@@ -921,7 +934,9 @@ function require_login($courseid=0) {
     // Next, check if the user can be in a particular course
     if ($courseid) {
         if ($USER->student[$courseid] || $USER->teacher[$courseid] || $USER->admin) {
-            update_user_in_db();
+            if (!isset($USER->realuser)) {  // Don't log if this isn't a realuser
+                update_user_in_db();
+            }
             return;   // user is a member of this course.
         }
         if (! $course = get_record("course", "id", $courseid)) {
