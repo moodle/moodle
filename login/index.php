@@ -43,7 +43,9 @@
             }
 
             $USER = $user;
-            $USER->description = "";       // No need to cart this around
+            if (!empty($USER->description)) {
+                $USER->description = true;       // No need to cart all of it around
+            }
             $USER->loggedin = true;
             $USER->site = $CFG->wwwroot;   // for added security
             
