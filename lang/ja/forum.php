@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
+      // forum.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['addanewdiscussion'] = "トピックを追加";
@@ -97,7 +97,7 @@ $string['showsubscribers'] = "登録者を表示";
 $string['singleforum'] = "単一ディスカッション";
 $string['startedby'] = "ディスカッションの開始";
 $string['subject'] = "題名";
-$string['subscribe'] = "フォーラムに登録する";
+$string['subscribe'] = "メール通知登録";
 $string['subscribed'] = "登録";
 $string['subscribers'] = "登録者";
 $string['subscribersto'] = "\$a の登録者";
@@ -105,8 +105,8 @@ $string['subscribestart'] = "フォーラムの投稿記事をメール送信する";
 $string['subscribestop'] = "フォーラムの投稿記事をメール送信しない";
 $string['subscription'] = "登録";
 $string['subscriptions'] = "登録";
-$string['unsubscribe'] = "フォーラムから登録抹消する";
-$string['unsubscribed'] = "フォーラムに登録しない";
+$string['unsubscribe'] = "メール通知解除";
+$string['unsubscribed'] = "メール通知を解除しました";
 $string['youratedthis'] = "あなたの評価";
 $string['yournewtopic'] = "新規トピック";
 $string['yourreply'] = "あなたの返信";
