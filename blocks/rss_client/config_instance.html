@@ -42,9 +42,9 @@
     </td>
     <td>
         <?php 
-            $selectedarray = '';
+            $selectedarray = array();
             if (isset($this->config) && isset($this->config->rssid)) {
-                if (blog_array_count($this->config->rssid)) {
+                if (is_array($this->config->rssid)) {
                     // rssid is an array of rssids
                     $selectedarray = $this->config->rssid;
                 } else {
@@ -66,9 +66,11 @@
 
                 // since there may be multiple rssids to select
                 // we need to check for each
-                foreach ($selectedarray as $selected) {
-                    $selected = intval($selected);
-                    $dropdownmenustring = preg_replace("|\"$selected\">*|","\"$selected\" selected>", $dropdownmenustring);
+                if (!empty($selectedarray)) {
+                    foreach ($selectedarray as $selected) {
+                        $selected = intval($selected);
+                        $dropdownmenustring = preg_replace("|\"$selected\">*|","\"$selected\" selected>", $dropdownmenustring);
+                    }
                 }
 
                 print $dropdownmenustring;
