@@ -1035,7 +1035,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 
     if ($lexer->parse($searchstring)) {
         $parsearray = $parser->get_parsed_array();
-        $messagesearch = search_generate_SQL($parsearray,'p.message','p.subject','p.userid','u.id','u.firstname','u.lastname','p.modified');
+        $messagesearch = search_generate_SQL($parsearray,'p.message','p.subject','p.userid','u.id','u.firstname','u.lastname','p.modified', 'd.forum');
     }
 
     $selectsql = "{$CFG->prefix}forum_posts p,

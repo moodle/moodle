@@ -4,6 +4,7 @@
 
 $string['addanewdiscussion'] = 'Add a new discussion topic';
 $string['addanewtopic'] = 'Add a new topic';
+$string['allforums'] = 'All forums';
 $string['allowchoice'] = 'Allow everyone to choose';
 $string['allowdiscussions'] = 'Can a $a post to this forum?';
 $string['allowratings'] = 'Allow posts to be rated?';
@@ -151,6 +152,7 @@ $string['searchuserid'] = 'The Moodle ID of the author';
 $string['searchwords'] = 'These words can appear anywhere in the post';
 $string['searcholderposts'] = 'Search older posts...';
 $string['searchresults'] = 'Search results';
+$string['searchwhichforums'] = 'Choose which forums to search';
 $string['seeallposts'] = 'See all posts made by this user';
 $string['sendinratings'] = 'Send in my latest ratings';
 $string['showsubscribers'] = 'Show/edit current subscribers';

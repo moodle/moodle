@@ -10,6 +10,7 @@
 
     $user    = trim(optional_param('user', '', PARAM_NOTAGS));    // Names to search for
     $userid  = trim(optional_param('userid', 0, PARAM_INT));      // UserID to search for
+    $forumid = trim(optional_param('forumid', 0, PARAM_INT));      // ForumID to search for
     $subject = trim(optional_param('subject', '', PARAM_NOTAGS)); // Subject
     $phrase  = trim(optional_param('phrase', '', PARAM_NOTAGS));  // Phrase
     $words   = trim(optional_param('words', '', PARAM_NOTAGS));   // Words
@@ -48,6 +49,9 @@
         }
         if (!empty($userid)) {
             $search .= ' userid:'.$userid;
+        }
+        if (!empty($forumid)) {
+            $search .= ' forumid:'.$forumid;
         }
         if (!empty($user)) {
             $search .= ' '.forum_clean_search_terms($user, 'user:');
@@ -104,7 +108,8 @@
 
 /// We need to do a search now and print results
 
-    $searchterms = explode(' ', $search);
+    $searchterms = str_replace('forumid:', 'instance:', $search);
+    $searchterms = explode(' ', $searchterms);
 
     $searchform = forum_print_search_form($course, "", true, "navbar");
 
@@ -127,6 +132,8 @@
         }
 
         forum_print_big_search_form($course);
+
+        print_footer($course);
         exit;
     }
 
@@ -289,6 +296,13 @@ function forum_print_big_search_form($course) {
     echo '</tr>';
 
     echo '<tr>';
+    echo '<td class="c0">'.get_string('searchwhichforums', 'forum').':</td>';
+    echo '<td class="c1">';
+    choose_from_menu(forum_menu_list($course), 'forumid', '', get_string('allforums', 'forum'), '');
+    echo '</td>';
+    echo '</tr>';
+
+    echo '<tr>';
     echo '<td class="c0">'.get_string('searchsubject', 'forum').':</td>';
     echo '<td class="c1"><input type="text" size="35" name="subject" value="'.s($subject).'" alt=""></td>';
     echo '</tr>';
@@ -325,6 +339,51 @@ function forum_clean_search_terms($words, $prefix='') {
         }
     }
     return trim(implode(' ', $searchterms));
+}
+
+function forum_menu_list($course)  {
+
+    $menu = array();
+
+    $currentgroup = get_current_group($course->id);
+    $isteacher = isteacher($course->id);
+
+    if ($isteacher) {   // Add teacher forum
+        if ($forum = forum_get_course_forum($course->id, 'teacher')) {
+            $menu[$forum->id] = $forum->name;
+        }
+    }
+
+    if ($forums = get_all_instances_in_course("forum", $course)) {
+        if ($course->format == 'weeks') {
+            $strsection = get_string('week');
+        } else {
+            $strsection = get_string('topic');
+        }
+
+        foreach ($forums as $forum) {
+            if (!$isteacher) {   // Non-teachers
+                if ($forum->type == "teacher") {
+                    continue;
+                }
+                if (!isset($forum->visible)) {
+                    if (! instance_is_visible("forum", $forum)) {
+                        continue;
+                    }
+                }
+                if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+                    $groupmode = groupmode($course, $cm);   // Groups are being used
+                    if (($groupmode == SEPARATEGROUPS) and ($currentgroup === false)) {
+                        continue;
+                    }
+                }
+            }
+
+            $menu[$forum->id] = $forum->name;
+        }
+    }
+
+    return $menu;
 }
 
 ?>
