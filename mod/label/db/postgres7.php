@@ -30,7 +30,11 @@ function label_upgrade($oldversion) {
 
     }
 
+    if ($oldversion < 2004111200) { //DROP first
+        execute_sql("DROP INDEX {$CFG->prefix}label_course_idx;",false);
 
+        modify_database('','CREATE INDEX prefix_label_course_idx ON prefix_label (course);');
+    }
 
     return true;
 

@@ -30,9 +30,11 @@ function label_upgrade($oldversion) {
 
     }
 
+    if ($oldversion < 2004111200) { //DROP first
+        execute_sql("ALTER TABLE {$CFG->prefix}label DROP INDEX course;",false);
 
-
-
+        modify_database('','ALTER TABLE prefix_label ADD INDEX course (course);');
+    }
 
     return true;
 
