@@ -388,7 +388,9 @@ function scorm_delete_files($directory)
 }
 
 function scorm_startElement($parser, $name, $attrs) {
+
     global $scoes,$i,$resources,$parent,$level,$organization,$manifest,$defaultorg;
+
     if ($name == 'ITEM') {
         $i++;
         $scoes[$i]['manifest'] = $manifest;
@@ -409,15 +411,30 @@ function scorm_startElement($parser, $name, $attrs) {
             $attrs['HREF'] = '';
         }
         $resources[$attrs['IDENTIFIER']]['href']=$attrs['HREF'];
+        if (!isset($attrs['ADLCP:SCORMTYPE'])) {
+            $attrs['ADLCP:SCORMTYPE'] = '';
+        }
         $resources[$attrs['IDENTIFIER']]['type']=$attrs['ADLCP:SCORMTYPE'];
     }
     if ($name == 'ORGANIZATION') {
+        $i++;
+        $scoes[$i]['manifest'] = $manifest;
+        $scoes[$i]['organization'] = '';
+        $scoes[$i]['identifier'] = $attrs['IDENTIFIER'];
+        $scoes[$i]['identifierref'] = '';
+        $scoes[$i]['isvisible'] = '';
+        $scoes[$i]['parent'] = $parent[$level];
+        $level++;
+        $parent[$level] = $attrs['IDENTIFIER'];
     	$organization = $attrs['IDENTIFIER'];
     }
     if ($name == 'MANIFEST') {
     	$manifest = $attrs['IDENTIFIER'];
     }
     if ($name == 'ORGANIZATIONS') {
+    	if (!isset($attrs['DEFAULT'])) {
+    	    $attrs['DEFAULT'] = '';
+    	}
     	$defaultorg = $attrs['DEFAULT'];
     }
 }
@@ -427,12 +444,23 @@ function scorm_endElement($parser, $name) {
     if ($name == 'ITEM') {
         $level--;
     }
-    if ($name == 'TITLE' && $level>0)
+    //if ($name == 'TITLE' && $level>0) {
+    if ($name == 'TITLE') {
         $scoes[$i]['title'] = $datacontent;
-    if ($name == 'ADLCP:HIDERTSUI')
+    }
+    if ($name == 'ADLCP:HIDERTSUI') {
         $scoes[$i][$datacontent] = 1;
-    if ($name == 'ADLCP:DATAFROMLMS')
+    }
+    if ($name == 'ADLCP:DATAFROMLMS') {
     	$scoes[$i]['datafromlms'] = $datacontent;
+    }
+    if ($name == 'ORGANIZATION') {
+    	$organization = '';
+	$level--;
+    }
+    if ($name == 'MANIFEST') {
+    	$manifest = '';
+    }
 }
 
 function scorm_characterData($parser, $data) {
@@ -508,7 +536,8 @@ function scorm_parse($basedir,$file,$scorm_id) {
     	    if (scorm_remove_spaces($scoes[$j]['isvisible']) != 'false') {
         	$id = insert_record('scorm_scoes',$sco);
             }
-    	    if (($launch==0) && (isset($sco->launch)) && ($defaultorg==$sco->organization)) {
+    	    //if (($launch==0) && (isset($sco->launch)) && ($defaultorg==$sco->organization)) {
+    	    if (($launch==0) && ($defaultorg==$sco->identifier)) {
         	$launch = $id;
             }
 	}

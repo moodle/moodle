@@ -93,10 +93,29 @@
         print_simple_box_start("CENTER");
     	echo "<table>\n";
     	echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
+	$organization = $scorm->launch;
+	if ($orgs = get_records_select_menu('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,title')) {
+	    if (count($orgs) > 1) {
+		if (isset($_POST['organization'])) {
+		    $organization = $_POST['organization'];
+		}
+		echo "<tr><td align='center'><form name='changeorg' method='POST' action='view.php?id=$cm->id'>".get_string('organizations','scorm').": \n";
+		choose_from_menu($orgs, 'organization', "$organization", '','submit()');
+		echo "</form></td></tr>\n"; 
+	    }
+	}
+	$orgidentifier = '';
+	if ($org = get_record('scorm_scoes','id',$organization)) {
+	    if (($org->organization == '') && ($org->launch == '')) {
+	    	$orgidentifier = $org->identifier;
+	    } else {
+	    	$orgidentifier = $org->organization;
+	    }
+	}
     	echo "  <tr><td nowrap>\n<ul class=\"scormlist\"'>\n";
     	$incomplete = false;
-    	if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' order by id ASC")){
-    	    $level=0;
+    	if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$orgidentifier' order by id ASC")){
+	    $level=0;
     	    $sublist=0;
     	    $parents[$level]="/";
     	    foreach ($scoes as $sco) {
@@ -111,7 +130,7 @@
 	    	 	    $closelist .= "  </ul></li>\n";
 	    	 	    $i--;
 	    	 	}
-	    	 	if (($i == 0) && ($sco->parent != "/")) {
+	    	 	if (($i == 0) && ($sco->parent != $orgidentifier)) {
 	    	 	    echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
     			    $level++;
     			} else {
@@ -131,6 +150,7 @@
     		    echo "      <img src=\"pix/spacer.gif\" />\n";
     		}
     		if ($sco->launch) {
+    		    $score = "";
     		    if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
     		    	if ( $sco_user->cmi_core_lesson_status == "") {
     		    	    $sco_user->cmi_core_lesson_status = "not attempted";
@@ -139,13 +159,12 @@
  			if (($sco_user->cmi_core_lesson_status == "not attempted") || ($sco_user->cmi_core_lesson_status == "incomplete")) {
  			    $incomplete = true;
  			}
+ 			if ($sco_user->cmi_core_score_raw > 0) {
+    			    $score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
+    		    	}
     		    } else {
     			echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
     			$incomplete = true;
-    		    }
-    		    $score = "";
-    		    if ($sco_user->cmi_core_score_raw > 0) {
-    			$score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
     		    }
     		    echo "      &nbsp;<a href=\"javascript:playSCO(".$sco->id.")\">$sco->title</a> $score\n    </li>\n";
     		} else {
@@ -170,6 +189,7 @@
 	}
 	echo "</td>\n</tr>\n<tr><td align=\"center\">";
 	echo '<input type="hidden" name="scoid" />
+	<input type="hidden" name="currentorg" value="'.$orgidentifier.'" />
 	<input type="submit" value="'.get_string("entercourse","scorm").'" />';
         echo "\n</td>\n</tr>\n</table>\n</form><br />";
 ?>

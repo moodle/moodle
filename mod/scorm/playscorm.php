@@ -58,6 +58,9 @@
     
     if (!empty($_POST["scoid"]))
     	    $scoid = "&scoid=".$_POST["scoid"];
+    if (!empty($_POST['currentorg'])) {
+	$currentorg = $_POST['currentorg'];
+    }
     if (($scorm->popup != "") && (!empty($_POST["mode"])))
     	$mode = $_POST["mode"];
     if (($scorm->popup == "") && (!empty($_GET["mode"])))
@@ -121,7 +124,7 @@
     	    echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
     	    echo "  <tr><td nowrap>\n<ul class=\"scormlist\"'>\n";
     	    $incomplete = false;
-    	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' order by id ASC")){
+    	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$currentorg' order by id ASC")){
     		$level=0;
     		$sublist=0;
     		$parents[$level]="/";
@@ -137,7 +140,7 @@
 	    	 	    	$closelist .= "  </ul></li>\n";
 	    	 	    	$i--;
 	    	 	    }
-	    	 	    if (($i == 0) && ($sco->parent != "/")) {
+	    	 	    if (($i == 0) && ($sco->parent != $currentorg)) {
 	    	 	    	echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
     			    	$level++;
     			    } else {
@@ -168,6 +171,7 @@
  			    $startbold = '-> <b>';
     			    $endbold = '</b> <-';
     		    	}
+    		    	$score = "";
     			if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
     			    if ( $sco_user->cmi_core_lesson_status == "")
     		    		$sco_user->cmi_core_lesson_status = "not attempted";
@@ -180,14 +184,14 @@
     			    	    $endbold = '</b> <-';
  				}
  			    }
+ 			    if ($sco_user->cmi_core_score_raw > 0) {
+    			    	$score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
+			    }
     			} else {
     			    echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
     			    $incomplete = true;
     			}
-    			$score = "";
-    			if ($sco_user->cmi_core_score_raw > 0)
-    			    $score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
-    		        echo "      &nbsp;$startbold<a href=\"javascript:playSCO(".$sco->id.");\">$sco->title</a> $score$endbold\n    </li>\n";
+    			echo "      &nbsp;$startbold<a href=\"javascript:playSCO(".$sco->id.");\">$sco->title</a> $score$endbold\n    </li>\n";
     		    } else {
 			echo "      &nbsp;$sco->title\n    </li>\n";
 		    }
@@ -207,11 +211,16 @@
 		     <iframe name=\"cmi\" width=\"1\" height=\"1\" src=\"cmi.php?id=$cm->id\" style=\"visibility: hidden\"></iframe>
 		     <form name=\"navform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\" target=\"_top\">
 		     	<input name=\"scoid\" type=\"hidden\" />
+			<input name=\"currentorg\" type=\"hidden\" value=\"$currentorg\" />
 		     	<input name=\"mode\" type=\"hidden\" value=\"".$mode."\" />
 		     	<input name=\"prev\" type=\"button\" value=\"".get_string("prev","scorm")."\" onClick=\"top.changeSco('previous');\" />&nbsp;\n";
 		     	
 	if ($scorm->popup == "") {
-	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' order by id ASC")){
+	    $currentorg = '';
+	    if (isset($_GET['currentorg'])) {
+		$currentorg = $_GET['currentorg'];
+	    }
+	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$currentorg' order by id ASC")){
     	    	$level=0;			
     	    	$parents[$level]="/";
     	    	foreach ($scoes as $sco) {
@@ -223,7 +232,7 @@
     			    while (($i > 0) && ($parents[$level] != $sco->parent)) {
 	    	 	    	$i--;
 	    	 	    }
-	    	 	    if (($i == 0) && ($sco->parent != "/")) {
+	    	 	    if (($i == 0) && ($sco->parent != $currentorg)) {
     			    	$level++;
     			    } else {
     			    	$level = $i;
@@ -245,7 +254,11 @@
 		</td>\n";
 	
     	echo "</tr>\n</table>\n";
-	echo "</body>\n</html>\n";
+	if ($scorm->popup == "") {
+	    echo "</body>\n</html>\n";
+	} else {
+	    print_footer($course);
+	}
     } else {
         if ($scorm->popup == "") {
     	    // 
@@ -255,7 +268,7 @@
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
             echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
 	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"API.SaveTotalTime();\" onbeforeUnload=\"API.SaveTotalTime();\">\n";
-            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&mode=".$mode."&frameset=top\">\n";
+            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&mode=".$mode.'&currentorg='.$currentorg."&frameset=top\">\n";
             echo "\t    <frame name=\"main\" src=\"\">\n";
             echo "</frameset>\n";
             echo "</html>\n";

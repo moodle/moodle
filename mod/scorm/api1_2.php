@@ -208,8 +208,16 @@ function SCORMapi() {
 		    errorCode = "0";
 		    return "true";
 		break;
-		case "cmi.suspend_data":
 		case "cmi.comments":
+		    if ((value.length + cmi.comments.length) > 4096) {
+		        errorCode = "405";
+		        return "false";
+		    }
+		    eval(param+'=cmi.comments + "'+value+'";');
+		    errorCode = "0";
+		    return "true";
+		break;
+		case "cmi.suspend_data":
 		    if (value.length > 4096) {
 		        errorCode = "405";
 		        return "false";
