@@ -396,7 +396,7 @@ function navmenu($course, $cm) {
 
     global $CFG;
 
-    if ($course->format = 'weeks') {
+    if ($course->format == 'weeks') {
         $strsection = get_string("week");
     } else {
         $strsection = get_string("topic");
