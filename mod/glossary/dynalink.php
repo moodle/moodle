@@ -20,17 +20,32 @@
             }
             $glossaries=substr($glossaries,0,-1);
 
-            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0","glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
-            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
+///         sorting by the lenght of the concept in order to assure that large concepts 
+///            could be linked first, if they exist in the text to parse
+            switch ($CFG->dbtype) {
+                case "postgres7":
+                case "mysql":
+                    $ebylenght = "CHAR_LENGTH(concept) desc,";
+                    $cbylenght = "CHAR_LENGTH(name) desc,";
+                break;
+                default:
+                    $ebylenght = "";
+                    $cbylenght = "";
+                break;
+            }
+            
+            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0","$ebylenght glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
+            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "$cbylenght glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
+                usort($concepts,glossary_sort_entries_by_lenght);
             } elseif ( $categories ) {
                 $concepts = $categories;
             } elseif ( $entries ) {
                 $concepts = $entries;
             }
 
-            if ( $concepts ) {
+            if ( isset($concepts) ) {
                 $lastglossary = 0;
                 $lastcategory = 0;                
                 foreach ( $concepts as $concept ) {
