@@ -79,7 +79,7 @@
                     if (!user_group($courseid, $userid)) {  // Just to make sure (another teacher could be editing)
                         $record->groupid = $data->groupid;
                         $record->userid = $userid;
-                        if (!insert_record('group_members', $record)) {
+                        if (!insert_record('groups_members', $record)) {
                             notify("Error occurred while adding user $userid to group $data->groupid");
                         }
                     }
@@ -96,8 +96,8 @@
 
         } else if (!empty($data->groupsremove)) {      /// Remove a group, all members become nonmembers
             if (!empty($data->groups)) {
-                delete_records("group", "id", $data->groups);
-                delete_records("group_members", "groupid", $data->groups);
+                delete_records("groups", "id", $data->groups);
+                delete_records("groups_members", "groupid", $data->groups);
                 unset($groups[$data->groups]);
             }
             
@@ -110,7 +110,7 @@
                 $newgroup->name = $data->newgroupname;
                 $newgroup->courseid = $course->id;
                 $newgroup->lang = current_language();
-                if (!insert_record("group", $newgroup)) {
+                if (!insert_record("groups", $newgroup)) {
                     notify("Could not insert the new group '$newgroup->name'");
                 }
                 $groups = get_groups($course->id);
@@ -120,7 +120,7 @@
 
             if (!empty($data->members) and !empty($data->groupid)) {
                 foreach ($data->members as $userid) {
-                    delete_records('group_members', 'userid', $userid, "groupid", $data->groupid);
+                    delete_records('groups_members', 'userid', $userid, "groupid", $data->groupid);
                 }
             }
             $selectedgroup = $data->groupid;
