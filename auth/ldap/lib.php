@@ -50,7 +50,6 @@ function auth_user_login ($username, $password) {
         $ldap_login = @ldap_bind($ldap_connection, $ldap_user_dn, $password);
         ldap_close($ldap_connection);
         if ($ldap_login) {
-            ldap_close($ldap_connection);
             return true;
         }
     } else {
@@ -67,7 +66,7 @@ function auth_get_userinfo($username){
     global $CFG;
 
     $config = (array)$CFG;
-    $moodleattributes = auth_ldap_attributes();
+    $attrmap = auth_ldap_attributes();
    
     $ldap_connection=auth_ldap_connect();
 
