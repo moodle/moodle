@@ -1838,7 +1838,7 @@ function print_footer($course=NULL, $usercourse=NULL) {
 
     include ($CFG->themedir.$CFG->theme.'/footer.html');
 
-    if ($CFG->perfdebug  && function_exists('memory_get_usage')) {
+    if (!empty($CFG->perfdebug) && function_exists('memory_get_usage')) {
         error_log("Page $_SERVER[REQUEST_URI] completed. Memory allocated: "
                   . memory_get_usage());
     }
