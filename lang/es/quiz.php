@@ -148,7 +148,7 @@ $string['true'] = "Verdadero";
 $string['truefalse'] = "Verdadero/Falso";
 $string['type'] = "Escriba";
 $string['viewallanswers'] = "Ver \$a cuestionarios resueltos";
-$string['viewallreports'] = "Ver los reportes de \$a intentos";
+$string['viewallreports'] = "Ver los informes de \$a intentos";
 $string['webct'] = "Formato WebCT";
 $string['yourfinalgradeis'] = "Su calificación final en este cuestionario es \$a";
 

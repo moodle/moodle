@@ -47,7 +47,7 @@ $string['generalforums'] = "Foro general";
 $string['inforum'] = "en \$a";
 $string['intronews'] = "Novedades y anuncios";
 $string['introsocial'] = "Foro abierto a todos los temas";
-$string['introteacher'] = "Foro exclusivo para maestros";
+$string['introteacher'] = "Foro exclusivo para profesores";
 $string['lastpost'] = "Último mensaje";
 $string['learningforums'] = "Foros de aprendizaje";
 $string['maxtimehaspassed'] = "Lo sentimos, pero el tiempo máximo para editar (\$a) ya venció.";
@@ -62,7 +62,7 @@ $string['more'] = " más";
 $string['movethisdiscussionto'] = "Mover este tema a...";
 $string['namenews'] = "Novedades";
 $string['namesocial'] = "Foro social";
-$string['nameteacher'] = "Foro de maestros";
+$string['nameteacher'] = "Foro de profesores";
 $string['newforumposts'] = "Nuevos mensajes";
 $string['nodiscussions'] = "Aún no hay temas en este foro";
 $string['noguestpost'] = "Lo sentimos, los invitados no pueden escribir aquí";
@@ -82,6 +82,8 @@ $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para hacer cualquier cambio.";
 $string['postincontext'] = "Ver el mensaje en su contexto";
 $string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a.
+
+
 
 Para responder a este mensaje diríjase a:";
 $string['postrating1'] = "Atinado";

@@ -9,12 +9,17 @@ $string['editingended'] = "El período de edición ha terminado";
 $string['editingends'] = "Finaliza el período de edición";
 $string['entries'] = "Entradas";
 $string['feedbackupdated'] = "Respuesta actualizada para \$a";
-$string['journalmail'] = "El maestro \$a->teacher ya ha revisado el diario '\$a->journal'
+$string['journalmail'] = "El profesor \$a->teacher ya ha revisado el diario '\$a->journal'
+
+
 
 Puedes ver sus comentarios en:
 
+
+
 \$a->url";
-$string['journalmailhtml'] = "El maestro \$a->teacher ya ha revisado el diario '<i>\$a->journal</i>'<br /><br />
+$string['journalmailhtml'] = "El profesor \$a->teacher ya ha revisado el diario '<i>\$a->journal</i>'<br /><br />
+
 Puedes ver sus comentarios <a href=\\\"\$a->url\\\">aquí</a>.";
 $string['journalname'] = "Nombre del diario";
 $string['journalquestion'] = "Pregunta de diario";

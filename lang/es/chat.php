@@ -32,7 +32,7 @@ $string['savemessages'] = "Número de mensajes a guardar";
 $string['seesession'] = "Ver la sesión";
 $string['sessions'] = "Sesiones";
 $string['strftimemessage'] = "%%H:%%M";
-$string['studentseereports'] = "Todos pueden ver las sesioens pasadas";
+$string['studentseereports'] = "Todos pueden ver las sesiones pasadas";
 $string['viewreport'] = "Ver las sesiones anteriores";
 
 ?>
