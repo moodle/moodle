@@ -612,7 +612,7 @@ function clam_scan_file(&$file, $course) {
         else {
             $info->course = 'No course';
         }
-        $info->user = $USER->firstname .' '. $USER->lastname;
+        $info->user = fullname($USER);
         $notice = get_string('virusfound', 'moodle', $info);
         $notice .= "\n\n". implode("\n", $output);
         $notice .= "\n\n". clam_handle_infected_file($fullpath); 
@@ -730,7 +730,7 @@ function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
     $user = get_record('user', 'id', $userid);
     
     $errorstr = 'Clam AV has found a file that is infected with a virus. It was uploaded by '
-        . ((empty($user) ? ' an unknown user ' : $user->firstname . ' '. $user->lastname))
+        . ((empty($user) ? ' an unknown user ' : fullname($user)))
         . ((empty($oldfilepath)) ? '. The infected file was caught on upload ('.$oldfilepath.')' 
            : '. The original file path of the infected file was '. $oldfilepath)
         . ((empty($newfilepath)) ? '. The file has been deleted ' : '. The file has been moved to a quarantine directory and the new path is '. $newfilepath);

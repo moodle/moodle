@@ -36,7 +36,7 @@
                   $stractivityreport");
     } else {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
-                 "<a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$user->firstname $user->lastname</a> -> 
+                 "<a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">".fullname($user)."</a> -> 
                   $stractivityreport -> $strmode");
     }
     print_heading("$course->fullname");

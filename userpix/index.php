@@ -26,9 +26,9 @@
     
     foreach ($users as $user) {
        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=1\"".
-            "title=\"$user->firstname $user->lastname\">";
+            "title=\"".fullname($user)."\">";
        echo "<img border=0 src=\"$CFG->wwwroot/user/pix.php/$user->id/f1.jpg\" ".
-            "width=100 height=100 alt=\"$user->firstname $user->lastname\" />";
+            "width=100 height=100 alt=\"".fullname($user)."\" />";
        echo "</a> \n";
     }
     

@@ -45,7 +45,7 @@ while(!feof($fd)) {
 
     $a->action = $action;
     $a->course = $course->fullname;
-    $a->user = $user->firstname.' '.$user->lastname;
+    $a->user = fullname($user);
 
     notify_user($user,$subject,$a);
     notify_admins($user,$subject,$a);

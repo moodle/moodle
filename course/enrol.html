@@ -10,9 +10,7 @@
 
           if ($teacher) {
 
-              $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=$site->id\">".
-
-                             "$teacher->firstname $teacher->lastname</a>.";
+              $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=$site->id\">".fullname($teacher)."</a>.";
 
           } else {
 
