@@ -38,7 +38,7 @@
     $strname   = get_string("name");
     $strorder   = get_string("order");
     $strrole   = get_string("role");
-    $stredit   = get_string("edit");
+    $stredit   = get_string("editingteachershort");
     $stryes   = get_string("yes");
     $strno   = get_string("no");
 
@@ -121,7 +121,7 @@
 
     } else {
 
-        $table->head  = array ("", $strname, $strorder, $strrole, $stredit, "&nbsp");
+        $table->head  = array ("", $strname, $strorder, $strrole, $stredit, "&nbsp;");
         $table->align = array ("right", "left", "center", "center", "center", "center");
         $table->size  = array ("35", "", "", "", "10", "");
     
